@@ -205,7 +205,7 @@ const Header = () => {
         :
         <>
           <Wrappers style={{
-            background: `${theme.palette.mode == 'dark' ? '#000' : '#fff'}`
+            background: `${themeMode == 'dark' ? '#000' : '#fff'}`
           }}
           >
             <TopMenuContainer>

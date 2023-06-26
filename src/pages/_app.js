@@ -2,6 +2,7 @@
 
 import Head from 'next/head';
 import '../../styles/globals.css'
+import { SettingsProvider } from 'src/components/settings';
 
 const App = (props) => {
   const { Component, pageProps } = props;
@@ -13,7 +14,9 @@ const App = (props) => {
       <Head>
         <meta name="viewport" content="initial-scale=1, width=device-width" />
       </Head>
-      {getLayout(<Component {...pageProps} />)}
+      <SettingsProvider>
+        {getLayout(<Component {...pageProps} />)}
+      </SettingsProvider>
     </>
   );
 }

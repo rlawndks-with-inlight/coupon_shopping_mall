@@ -64,7 +64,7 @@ export function SettingsProvider({ children }) {
 
 
 
-  const isArabic = langStorage === 'ar';
+  const isArabic = false;
 
   useEffect(() => {
     if (isArabic) {

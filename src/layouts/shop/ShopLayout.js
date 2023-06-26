@@ -2,7 +2,6 @@ import { StyledEngineProvider } from "@mui/material";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import ShopLayout1 from "./shop/demo-1/ShopLayout1";
-
 import BlogLayout1 from "./blog/demo-1/BlogLayout1";
 import BlogLayout2 from "./blog/demo-2/BlogLayout2";
 import ShopLayout2 from "./shop/demo-2/ShopLayout2";

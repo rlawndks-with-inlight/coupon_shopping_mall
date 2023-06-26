@@ -112,7 +112,7 @@ const Header = () => {
             handleClose={handleDialogClose}
           />
           <Wrappers style={{
-            background: `${isProductPage ? 'transparent' : (theme.palette.mode == 'dark' ? '#000' : '#fff')}`
+            background: `${isProductPage ? 'transparent' : (themeMode == 'dark' ? '#000' : '#fff')}`
           }}
           >
             <TopMenuContainer>

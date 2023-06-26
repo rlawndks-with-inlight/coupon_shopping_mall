@@ -198,6 +198,7 @@ const Header = () => {
     hover_items[category_name] = true;
     setHoverItems(hover_items);
   }
+
   const returnDropdownMenu = (item, num) => {
     return (
       <>
@@ -206,17 +207,38 @@ const Header = () => {
           <div>{item.children.length > 0 ? '>' : ''}</div>
           {item.children.length > 0 ?
             <>
-              <SubDropDownMenuContainer parentId={item?.id}
-                style={{
-                  background: `${themeMode == 'dark' ? '#000' : '#fff'}`,
-                  border: `1px solid ${theme.palette.grey[300]}`,
-                }}>
-                {item.children.map((item2, idx) => (
-                  <>
-                    {returnDropdownMenu(item2, num + 1)}
-                  </>
-                ))}
-              </SubDropDownMenuContainer>
+              {num == 1 ?
+                <>
+                  <SubDropDownMenuContainer parentId={item?.id}
+                    style={{
+                      background: `${themeMode == 'dark' ? '#000' : '#fff'}`,
+                      border: `1px solid ${theme.palette.grey[300]}`,
+                    }}>
+                    {item.children.map((item2, idx) => (
+                      <>
+                        {returnDropdownMenu(item2, num + 1)}
+                      </>
+                    ))}
+                  </SubDropDownMenuContainer>
+                </>
+                :
+                ''}
+                {num == 2 ?
+                <>
+                  <SubSubDropDownMenuContainer parentId={item?.id}
+                    style={{
+                      background: `${themeMode == 'dark' ? '#000' : '#fff'}`,
+                      border: `1px solid ${theme.palette.grey[300]}`,
+                    }}>
+                    {item.children.map((item2, idx) => (
+                      <>
+                        {returnDropdownMenu(item2, num + 1)}
+                      </>
+                    ))}
+                  </SubSubDropDownMenuContainer>
+                </>
+                :
+                ''}
             </>
             :
             <>
@@ -514,7 +536,7 @@ const returnSidebarMenu = (item, num) => {
   return (
     <>
       <TreeItem label={item.category_name}
-      nodeId={item.id}
+        nodeId={item.id}
       // style={{ paddingLeft: `${num}rem` }}
       >
         {item.children.map((item2, idx) => (

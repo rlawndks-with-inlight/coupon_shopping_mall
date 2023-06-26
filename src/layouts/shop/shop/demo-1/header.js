@@ -115,6 +115,7 @@ transition-duration:0.5s;
 display:flex;
 justify-content:space-between;
 position: relative;
+cursor:pointer;
 &:hover{
   background: ${props => props.theme.palette.grey[300]};
 }
@@ -202,10 +203,15 @@ const Header = () => {
   const returnDropdownMenu = (item, num) => {
     return (
       <>
-        <DropDownMenu theme={theme} className={`menu-${item?.id}`}>
+      <div style={{position:'relative'}} className={`menu-${item?.id}`}>
+        <DropDownMenu theme={theme}
+        onClick={()=>{
+          router.push(`/shop/items/${item?.id}?depth=${num}`)
+        }}>
           <div>{item.category_name}</div>
           <div>{item.children.length > 0 ? '>' : ''}</div>
-          {item.children.length > 0 ?
+        </DropDownMenu>
+        {item.children.length > 0 ?
             <>
               {num == 1 ?
                 <>
@@ -243,7 +249,7 @@ const Header = () => {
             :
             <>
             </>}
-        </DropDownMenu>
+      </div>
       </>
     )
   }
@@ -259,7 +265,11 @@ const Header = () => {
           }}
           >
             <TopMenuContainer>
-              <img src={'https://backend.comagain.kr/storage/images/logos/IFFUcyTPtgF887r0RPOGXZyLLPvp016Je17MENFT.svg'} style={{ height: '40px', width: 'auto' }} />
+              <img src={'https://backend.comagain.kr/storage/images/logos/IFFUcyTPtgF887r0RPOGXZyLLPvp016Je17MENFT.svg'} style={{ height: '40px', width: 'auto', cursor:'pointer' }}
+              onClick={()=>{
+                router.push('/shop')
+              }}
+              />
               <NoneShowMobile>
                 <TextField
                   label='통합검색'
@@ -291,19 +301,37 @@ const Header = () => {
                 />
                 <IconButton
                   sx={iconButtonStyle}
-                  onClick={() => onSearch()}
+                  onClick={() => {
+                    if(themeAuth?.id){
+                      router.push(`/shop/auth/my-page`)
+                    }else{
+                      router.push(`/shop/auth/login`)
+                    }
+                  }}
                 >
                   <Icon icon={'basil:user-outline'} fontSize={'1.8rem'} color={themeMode == 'dark' ? '#fff' : '#000'} />
                 </IconButton>
                 <IconButton
                   sx={iconButtonStyle}
-                  onClick={() => onSearch()}
+                  onClick={() => {
+                    if(themeAuth?.id){
+                      router.push(`/shop/auth/wish`)
+                    }else{
+                      router.push(`/shop/auth/login`)
+                    }
+                  }}
                 >
                   <Icon icon={'basil:heart-outline'} fontSize={'2rem'} color={themeMode == 'dark' ? '#fff' : '#000'} />
                 </IconButton>
                 <IconButton
                   sx={iconButtonStyle}
-                  onClick={() => onSearch()}
+                  onClick={() => {
+                    if(themeAuth?.id){
+                      router.push(`/shop/auth/cart`)
+                    }else{
+                      router.push(`/shop/auth/login`)
+                    }
+                  }}
                 >
                   <Icon icon={'basil:shopping-bag-outline'} fontSize={'1.8rem'} color={themeMode == 'dark' ? '#fff' : '#000'} />
                 </IconButton>
@@ -375,11 +403,13 @@ const Header = () => {
               <NoneShowMobile style={{ justifyContent: 'space-between', width: '100%' }}>
                 {categories.map((item1, idx1) => (
                   <>
-                    <CategoryMenu borderColor={themeMode == 'dark' ? '#fff' : '#000'} className={`menu-${item1?.id}`} onClick={() => {
-
+                  <div style={{position:'relative'}} className={`menu-${item1?.id}`}>
+                    <CategoryMenu borderColor={themeMode == 'dark' ? '#fff' : '#000'} onClick={() => {
+                      router.push(`/shop/items/${item1?.id}?depth=0`)
                     }}>
                       <div>{item1.category_name}</div>
-                      {item1?.children.length > 0 ?
+                    </CategoryMenu>
+                    {item1?.children.length > 0 ?
                         <>
                           <DropDownMenuContainer parentId={item1?.id} style={{
                             border: `1px solid ${theme.palette.grey[300]}`,
@@ -411,8 +441,7 @@ const Header = () => {
                         :
                         <>
                         </>}
-
-                    </CategoryMenu>
+                  </div>
                   </>
                 ))}
                 <CategoryMenu borderColor={themeMode == 'dark' ? '#fff' : '#000'} className={`menu-service`} >
@@ -537,7 +566,7 @@ const returnSidebarMenu = (item, num) => {
     <>
       <TreeItem label={item.category_name}
         nodeId={item.id}
-      // style={{ paddingLeft: `${num}rem` }}
+        style={{padding:'0.1rem 0'}}
       >
         {item.children.map((item2, idx) => (
           <>

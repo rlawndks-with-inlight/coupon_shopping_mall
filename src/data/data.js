@@ -34,3 +34,11 @@ export const demoInfoByNum = {//데모 번호에 따라 블로그인지 일반�
     category: 'blog'
   }
 }
+export const returnArticleCategory = {
+  notice: {
+    title: '공지사항'
+  },
+  faq: {
+    title: '자주 묻는 질문'
+  }
+}

@@ -1,5 +1,5 @@
 import { useRouter } from "next/router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import ShopLayout from "src/layouts/shop/ShopLayout";
 import Demo1 from "src/views/shop/service/article_category/list/demo-1";
 

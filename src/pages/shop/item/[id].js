@@ -1,7 +1,7 @@
 import { useRouter } from "next/router";
 import { useState } from "react";
 import ShopLayout from "src/layouts/shop/ShopLayout";
-import Demo1 from "src/views/blog/service/article_category/list/demo-1";
+import Demo1 from "src/views/shop/item/id/demo-1";
 
 const getDemo = (num, common) => {
 

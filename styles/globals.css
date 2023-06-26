@@ -9,3 +9,6 @@ body {
 .none-scroll::-webkit-scrollbar {
   display: none; /* Chrome, Safari, Opera*/
 }
+.MuiTreeItem-content{
+  background-color: transparent !important;
+}

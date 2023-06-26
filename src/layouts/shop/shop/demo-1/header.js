@@ -1,13 +1,14 @@
 import Logo from "src/components/logo/Logo"
 import styled from "styled-components"
 import { IconButton, TextField, InputAdornment, Drawer } from "@mui/material"
-import { useEffect, useState } from "react"
+import { forwardRef, useEffect, useState } from "react"
 import { Icon } from "@iconify/react"
 import { Row } from 'src/components/elements/styled-components'
 import { useTheme } from '@mui/material/styles';
 import { useSettingsContext } from "src/components/settings"
 import { test_categories } from "src/data/test-data"
 import { useRouter } from "next/router"
+import { TreeItem, TreeView } from "@mui/lab"
 
 const Wrappers = styled.header`
 width: 100%;
@@ -197,6 +198,33 @@ const Header = () => {
     hover_items[category_name] = true;
     setHoverItems(hover_items);
   }
+  const returnDropdownMenu = (item, num) => {
+    return (
+      <>
+        <DropDownMenu theme={theme} className={`menu-${item?.id}`}>
+          <div>{item.category_name}</div>
+          <div>{item.children.length > 0 ? '>' : ''}</div>
+          {item.children.length > 0 ?
+            <>
+              <SubDropDownMenuContainer parentId={item?.id}
+                style={{
+                  background: `${themeMode == 'dark' ? '#000' : '#fff'}`,
+                  border: `1px solid ${theme.palette.grey[300]}`,
+                }}>
+                {item.children.map((item2, idx) => (
+                  <>
+                    {returnDropdownMenu(item2, num + 1)}
+                  </>
+                ))}
+              </SubDropDownMenuContainer>
+            </>
+            :
+            <>
+            </>}
+        </DropDownMenu>
+      </>
+    )
+  }
   return (
     <>
       {loading ?
@@ -272,8 +300,8 @@ const Header = () => {
                 }}
               >
                 <div className="fade-in-text" style={{ display: `${isAuthMenuOver ? 'flex' : 'none'}`, alignItems: 'center' }}>
-                  <AuthMenu theme={theme} hoverColor={themeMode == 'dark' ? '#fff' : '#000'} onClick={()=>{router.push('/shop/auth/sign-up')}}>회원가입</AuthMenu>
-                  <AuthMenu theme={theme} hoverColor={themeMode == 'dark' ? '#fff' : '#000'} onClick={()=>{router.push('/shop/auth/login')}}>로그인</AuthMenu>
+                  <AuthMenu theme={theme} hoverColor={themeMode == 'dark' ? '#fff' : '#000'} onClick={() => { router.push('/shop/auth/sign-up') }}>회원가입</AuthMenu>
+                  <AuthMenu theme={theme} hoverColor={themeMode == 'dark' ? '#fff' : '#000'} onClick={() => { router.push('/shop/auth/login') }}>로그인</AuthMenu>
                   <AuthMenu theme={theme} hoverColor={themeMode == 'dark' ? '#fff' : '#000'} >주문조회</AuthMenu>
                   <AuthMenu theme={theme} hoverColor={themeMode == 'dark' ? '#fff' : '#000'}>최근본상품</AuthMenu>
                   <AuthMenu theme={theme} hoverColor={themeMode == 'dark' ? '#fff' : '#000'} style={{ borderRight: 'none' }}>좋아요 0개</AuthMenu>
@@ -325,7 +353,7 @@ const Header = () => {
               <NoneShowMobile style={{ justifyContent: 'space-between', width: '100%' }}>
                 {categories.map((item1, idx1) => (
                   <>
-                    <CategoryMenu borderColor={themeMode == 'dark' ? '#fff' : '#000'} className={`menu-${item1?.id}`} onClick={()=>{
+                    <CategoryMenu borderColor={themeMode == 'dark' ? '#fff' : '#000'} className={`menu-${item1?.id}`} onClick={() => {
 
                     }}>
                       <div>{item1.category_name}</div>
@@ -345,50 +373,7 @@ const Header = () => {
                             }}>
                               {item1?.children.map((item2, idx2) => (
                                 <>
-                                  <DropDownMenu theme={theme} className={`menu-${item2?.id}`}>
-                                    <div>{item2.category_name}</div>
-                                    <div>{item2.children.length > 0 ? '>' : ''}</div>
-                                    {item2.children.length > 0 ?
-                                      <>
-                                        <SubDropDownMenuContainer parentId={item2?.id}
-                                          style={{
-                                            background: `${themeMode == 'dark' ? '#000' : '#fff'}`,
-                                            border: `1px solid ${theme.palette.grey[300]}`,
-                                          }}>
-                                          {item2.children.map((item3, idx3) => (
-                                            <>
-                                              <DropDownMenu theme={theme} className={`menu-${item3?.id}`}>
-                                                <div>{item3.category_name}</div>
-                                                <div>{item3.children.length > 0 ? '>' : ''}</div>
-                                                {item3.children.length > 0 ?
-                                                  <>
-                                                    <SubSubDropDownMenuContainer parentId={item3?.id}
-                                                      style={{
-                                                        background: `${themeMode == 'dark' ? '#000' : '#fff'}`,
-                                                        border: `1px solid ${theme.palette.grey[300]}`,
-                                                      }}>
-                                                      {item3.children.map((item4, idx4) => (
-                                                        <>
-                                                          <DropDownMenu theme={theme} className={`menu-${item4?.id}`}>
-                                                            <div>{item4.category_name}</div>
-                                                            <div>{item4.children.length > 0 ? '>' : ''}</div>
-                                                          </DropDownMenu>
-                                                        </>
-                                                      ))}
-                                                    </SubSubDropDownMenuContainer>
-                                                  </>
-                                                  :
-                                                  <>
-                                                  </>}
-                                              </DropDownMenu>
-                                            </>
-                                          ))}
-                                        </SubDropDownMenuContainer>
-                                      </>
-                                      :
-                                      <>
-                                      </>}
-                                  </DropDownMenu>
+                                  {returnDropdownMenu(item2, 1)}
                                 </>
                               ))}
                             </div>
@@ -424,19 +409,19 @@ const Header = () => {
                     }}>
                       {[
                         {
-                          name:'공지사항',
-                          link_key:'notice'
+                          name: '공지사항',
+                          link_key: 'notice'
                         },
                         {
-                          name:'FAQ',
-                          link_key:'faq'
+                          name: 'FAQ',
+                          link_key: 'faq'
                         },
-                        ].map((item, idx) => (
+                      ].map((item, idx) => (
                         <>
                           <DropDownMenu theme={theme}
-                          onClick={()=>{
-                            router.push(`/shop/service/${item.link_key}`)
-                          }}>
+                            onClick={() => {
+                              router.push(`/shop/service/${item.link_key}`)
+                            }}>
                             <div>{item.name}</div>
                           </DropDownMenu>
                         </>
@@ -478,15 +463,92 @@ const Header = () => {
         onClose={() => {
           setSideMenuOpen(false);
         }}
+        style={{
+        }}
       >
+        <ColumnMenuContainer style={{
+          background: (themeMode == 'dark' ? '#222' : '#fff'),
+          color: (themeMode == 'dark' ? '#fff' : '#000'),
+        }}
+          className="none-scroll"
+        >
+          <ColumnMenuTitle>쇼핑 카테고리</ColumnMenuTitle>
+          <TreeView
+            aria-label="icon expansion"
+            defaultCollapseIcon={<Icon icon={'ic:baseline-minus'} />}
+            defaultExpandIcon={<Icon icon={'ic:baseline-plus'} />}
+          >
+            {categories.map((item1, idx) => (
+              <>
+                {returnSidebarMenu(item1, 1)}
+              </>
+            ))}
+          </TreeView>
+
+          <ColumnMenuTitle>고객센터</ColumnMenuTitle>
+          {[
+            {
+              name: '공지사항',
+              link_key: 'notice'
+            },
+            {
+              name: 'FAQ',
+              link_key: 'faq'
+            },
+          ].map((item, idx) => (
+            <>
+              <ColumnMenuContent onClick={() => {
+                router.push(`/shop/service/${item.link_key}`)
+              }} style={{ paddingLeft: '1rem' }}>{item.name}</ColumnMenuContent>
+            </>
+          ))}
+          <ColumnMenuTitle style={{
+            cursor: 'pointer'
+          }}>마이페이지</ColumnMenuTitle>
+        </ColumnMenuContainer>
       </Drawer>
     </>
   )
 }
+const returnSidebarMenu = (item, num) => {
+  return (
+    <>
+      <TreeItem label={item.category_name}
+      nodeId={item.id}
+      // style={{ paddingLeft: `${num}rem` }}
+      >
+        {item.children.map((item2, idx) => (
+          <>
+            {returnSidebarMenu(item2, num + 1)}
+          </>
+        ))}
+      </TreeItem>
+    </>
+  )
+}
+
 const ColumnMenuContainer = styled.div`
-
-`
-
+        width: 400px;
+        padding:0 2rem 4rem 2rem;
+        height:100vh;
+        overflow-y:auto;
+        display:flex;
+        flex-direction:column;
+        @media (max-width:800px){
+          width: 70vw;
+        padding:0 5vw 4rem 5vw;
+}
+        `
+const ColumnMenuTitle = styled.div`
+        padding:2rem 0 0.5rem 0;
+        font-weight: bold;
+        `
+const ColumnMenuContent = styled.div`
+        display:flex;
+        align-items:center;
+        padding:0.5rem 0;
+        cursor:pointer;
+        `
 const iconButtonStyle = {
   padding: '0.1rem',
   marginLeft: '0.5rem'

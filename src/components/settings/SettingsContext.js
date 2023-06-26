@@ -2,7 +2,7 @@ import PropTypes from 'prop-types';
 import { useMemo, useState, useEffect, useContext, useCallback, createContext } from 'react';
 //
 import { defaultSettings } from './config-setting';
-
+import { defaultPreset, getPresets, presetsOption } from './presets';
 // ----------------------------------------------------------------------
 
 const initialState = {
@@ -21,6 +21,9 @@ const initialState = {
   onToggleContrast: () => { },
   onChangeContrast: () => { },
   // Color
+  onChangeColorPresets: () => {},
+  presetsColor: defaultPreset,
+  presetsOption: [],
   // Stretch
   onToggleStretch: () => { },
   // Reset
@@ -57,6 +60,7 @@ export function SettingsProvider({ children }) {
   const [themeStretch, setThemeStretch] = useState(defaultSettings.themeStretch);
   const [themeContrast, setThemeContrast] = useState(defaultSettings.themeContrast);
   const [themeDirection, setThemeDirection] = useState(defaultSettings.themeDirection);
+  const [themeColorPresets, setThemeColorPresets] = useState(defaultSettings.themeColorPresets);
   const [themeDnsData, setThemeDnsData] = useState(defaultSettings.themeDnsData);
   const [themeCurrentPageObj, setThemeCurrentPageObj] = useState(defaultSettings.themeCurrentPageObj);
   const [themeAuth, setThemeAuth] = useState(defaultSettings.themeAuth);
@@ -80,6 +84,7 @@ export function SettingsProvider({ children }) {
       const stretch = getCookie('themeStretch') || defaultSettings.themeStretch;
       const contrast = getCookie('themeContrast') || defaultSettings.themeContrast;
       const direction = getCookie('themeDirection') || defaultSettings.themeDirection;
+      const colorPresets = getCookie('themeColorPresets') || defaultSettings.themeColorPresets;
       const dnsData = getCookie('themeDnsData') || defaultSettings.themeDnsData;
       const currentPageObj = getCookie('themeCurrentPageObj') || defaultSettings.themeCurrentPageObj;
       const auth = getCookie('themeAuth') || defaultSettings.themeAuth;
@@ -89,6 +94,7 @@ export function SettingsProvider({ children }) {
       setThemeStretch(stretch);
       setThemeContrast(contrast);
       setThemeDirection(direction);
+      setThemeColorPresets(colorPresets);
       setThemeDnsData(dnsData);
       setThemeCurrentPageObj(currentPageObj);
       setThemeAuth(auth);
@@ -153,8 +159,12 @@ export function SettingsProvider({ children }) {
     setCookie('themeContrast', value);
   }, []);
 
-  // Color
-
+ // Color
+ const onChangeColorPresets = useCallback((event) => {
+  const { value } = event.target;
+  setThemeColorPresets(value);
+  setCookie('themeColorPresets', value);
+}, []);
 
   // Stretch
   const onToggleStretch = useCallback(() => {
@@ -184,6 +194,7 @@ export function SettingsProvider({ children }) {
     setThemeStretch(defaultSettings.themeStretch);
     setThemeContrast(defaultSettings.themeContrast);
     setThemeDirection(defaultSettings.themeDirection);
+    setThemeColorPresets(defaultSettings.themeColorPresets);
     setThemeDnsData(defaultSettings.themeDnsData);
     setThemeCurrentPageObj(defaultSettings.themeCurrentPageObj);
     setThemeAuth(defaultSettings.themeAuth);
@@ -192,6 +203,7 @@ export function SettingsProvider({ children }) {
     removeCookie('themeStretch');
     removeCookie('themeContrast');
     removeCookie('themeDirection');
+    removeCookie('themeColorPresets');
     removeCookie('themeDnsData');
     removeCookie('themeCurrentPageObj');
     removeCookie('themeAuth');
@@ -220,6 +232,10 @@ export function SettingsProvider({ children }) {
       themeStretch,
       onToggleStretch,
       // Color
+      themeColorPresets,
+      onChangeColorPresets,
+      presetsOption,
+      presetsColor: getPresets(themeColorPresets),
       // Reset
       onResetSetting,
       // dns data
@@ -236,6 +252,8 @@ export function SettingsProvider({ children }) {
       onChangeMode,
       onToggleMode,
       // Color
+      themeColorPresets,
+      onChangeColorPresets,
       onChangeContrast,
       // Direction
       themeDirection,

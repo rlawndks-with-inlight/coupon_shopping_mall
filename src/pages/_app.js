@@ -3,6 +3,7 @@
 import Head from 'next/head';
 import '../../styles/globals.css'
 import { SettingsProvider } from 'src/components/settings';
+import ThemeColorPresets from 'src/components/settings/ThemeColorPresets';
 
 const App = (props) => {
   const { Component, pageProps } = props;
@@ -14,9 +15,12 @@ const App = (props) => {
       <Head>
         <meta name="viewport" content="initial-scale=1, width=device-width" />
       </Head>
+      <ThemeColorPresets>
+
       <SettingsProvider>
         {getLayout(<Component {...pageProps} />)}
       </SettingsProvider>
+      </ThemeColorPresets>
     </>
   );
 }

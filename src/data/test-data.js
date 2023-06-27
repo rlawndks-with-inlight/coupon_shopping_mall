@@ -336,7 +336,7 @@ export const test_item = {
   name: "양념치킨",
   mkt_pr: 18000,
   item_pr: 18000,
-  product_img: null,
+  product_img: 'https://backend.comagain.kr/storage/images/advertisements/1682780973e13c43e720132a9575ff3b6f8f88fec6.webp',
   brand_nm: "BHC",
   origin_nm: "치킨은 맛있어 !",
   mfg_nm: "BHC",

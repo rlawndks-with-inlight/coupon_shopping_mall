@@ -1,11 +1,16 @@
 import styled from 'styled-components'
-
 import { useTheme } from "@emotion/react";
 import { Button } from "@mui/material";
 import { commarNumber } from 'src/utils/function';
 import { test_item } from 'src/data/test-data';
 import { themeObj } from 'src/components/elements/styled-components';
 
+import 'react-quill/dist/quill.snow.css';
+import dynamic from 'next/dynamic'
+const ReactQuill = dynamic(() => import('react-quill'), {
+  ssr: false,
+  loading: () => <p>Loading ...</p>,
+})
 const Wrapper = styled.div`
 display:flex;
 flex-direction:column;
@@ -65,7 +70,7 @@ border-bottom: 1px solid ${themeObj.grey[300]};
 const PriceContainer = styled.div`
 border-bottom: 1px solid ${themeObj.grey[300]};
 padding:2rem 0;
-font-size:${themeObj.font_size.size5};
+font-size:${themeObj.font_size.size6};
 `
 
 const KeyContent = styled.div`
@@ -143,27 +148,33 @@ const ItemDetailCard = (props) => {
 }
 
 const Demo1 = (props) => {
-    const {
-        data: {
+  const {
+    data: {
 
-        },
-        func: {
-            router
-        },
-    } = props;
+    },
+    func: {
+      router
+    },
+  } = props;
 
-    return (
-        <>
-         <Wrapper>
+  return (
+    <>
+      <Wrapper>
         <ContentWrapper>
           <ItemContainer>
             <ItemDetailCard item={test_item} />
             <ProductExplain>
+              <ReactQuill
+                value={test_item?.content ?? `<body></body>`}
+                readOnly={true}
+                theme={"bubble"}
+                bounds={'.app'}
+              />
             </ProductExplain>
           </ItemContainer>
         </ContentWrapper>
       </Wrapper>
-        </>
-    )
+    </>
+  )
 }
 export default Demo1

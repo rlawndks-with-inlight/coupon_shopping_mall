@@ -150,7 +150,7 @@ const Header = () => {
 
   const router = useRouter();
   const theme = useTheme();
-  const { themeMode, onToggleMode, themeAuth } = useSettingsContext();
+  const { themeMode, onToggleMode, themeAuth, themeCategoryList, onChangeCategoryList } = useSettingsContext();
   const [keyword, setKeyword] = useState("");
   const onSearch = () => {
 
@@ -160,11 +160,15 @@ const Header = () => {
 
   })
   const [sideMenuOpen, setSideMenuOpen] = useState(false);
-  const [categories, setCategories] = useState(test_categories)
+  const [categories, setCategories] = useState([])
   const [loading, setLoading] = useState(true);
   useEffect(() => {
+    console.log(themeCategoryList)
     setLoading(true);
-    let hover_list = getAllIdsWithParents(categories);
+    let data = [...test_categories];
+    onChangeCategoryList(data);
+    setCategories(data);
+    let hover_list = getAllIdsWithParents(data);
     let hover_items = {};
     for (var i = 0; i < hover_list.length; i++) {
       hover_list[i] = hover_list[i].join('_');

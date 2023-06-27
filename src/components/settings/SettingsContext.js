@@ -21,7 +21,7 @@ const initialState = {
   onToggleContrast: () => { },
   onChangeContrast: () => { },
   // Color
-  onChangeColorPresets: () => {},
+  onChangeColorPresets: () => { },
   presetsColor: defaultPreset,
   presetsOption: [],
   // Stretch
@@ -34,6 +34,8 @@ const initialState = {
   onChangeCurrentPageObj: () => { },
   //auth
   onChangeAuth: () => { },
+  //category-list
+  onChangeCategoryList: () => { },
 };
 
 // ----------------------------------------------------------------------
@@ -64,6 +66,7 @@ export function SettingsProvider({ children }) {
   const [themeDnsData, setThemeDnsData] = useState(defaultSettings.themeDnsData);
   const [themeCurrentPageObj, setThemeCurrentPageObj] = useState(defaultSettings.themeCurrentPageObj);
   const [themeAuth, setThemeAuth] = useState(defaultSettings.themeAuth);
+  const [themeCategoryList, setThemeCategoryList] = useState(defaultSettings.themeCategoryList);
 
 
 
@@ -88,6 +91,7 @@ export function SettingsProvider({ children }) {
       const dnsData = getCookie('themeDnsData') || defaultSettings.themeDnsData;
       const currentPageObj = getCookie('themeCurrentPageObj') || defaultSettings.themeCurrentPageObj;
       const auth = getCookie('themeAuth') || defaultSettings.themeAuth;
+      const categoryList = getCookie('themeCategoryList') || defaultSettings.themeCategoryList;
 
       setThemeMode(mode);
       setThemeLayout(layout);
@@ -98,6 +102,7 @@ export function SettingsProvider({ children }) {
       setThemeDnsData(dnsData);
       setThemeCurrentPageObj(currentPageObj);
       setThemeAuth(auth);
+      setThemeCategoryList(categoryList);
     }
   }, []);
 
@@ -159,12 +164,12 @@ export function SettingsProvider({ children }) {
     setCookie('themeContrast', value);
   }, []);
 
- // Color
- const onChangeColorPresets = useCallback((event) => {
-  const { value } = event.target;
-  setThemeColorPresets(value);
-  setCookie('themeColorPresets', value);
-}, []);
+  // Color
+  const onChangeColorPresets = useCallback((event) => {
+    const { value } = event.target;
+    setThemeColorPresets(value);
+    setCookie('themeColorPresets', value);
+  }, []);
 
   // Stretch
   const onToggleStretch = useCallback(() => {
@@ -176,17 +181,22 @@ export function SettingsProvider({ children }) {
   const onChangeDnsData = useCallback((dns_data) => {
     setThemeDnsData(dns_data);
     setCookie('themeDnsData', JSON.stringify(dns_data));
-  })
+  }, [])
   // current page
   const onChangeCurrentPageObj = useCallback((data) => {
     setThemeCurrentPageObj(data);
     setCookie('themeCurrentPageObj', JSON.stringify(data));
-  })
+  }, [])
   // auth
   const onChangeAuth = useCallback((data) => {
     setThemeAuth(data);
-    setCookie('auth', JSON.stringify(data));
-  })
+    setCookie('themeAuth', JSON.stringify(data));
+  }, [])
+  // categoryList
+  const onChangeCategoryList = useCallback((data) => {
+    setThemeCategoryList(data);
+    setCookie('themeCategoryList', JSON.stringify(data));
+  }, [])
   // Reset
   const onResetSetting = useCallback(() => {
     setThemeMode(defaultSettings.themeMode);
@@ -198,6 +208,7 @@ export function SettingsProvider({ children }) {
     setThemeDnsData(defaultSettings.themeDnsData);
     setThemeCurrentPageObj(defaultSettings.themeCurrentPageObj);
     setThemeAuth(defaultSettings.themeAuth);
+    setThemeCategoryList(defaultSettings.themeCategoryList);
     removeCookie('themeMode');
     removeCookie('themeLayout');
     removeCookie('themeStretch');
@@ -207,6 +218,7 @@ export function SettingsProvider({ children }) {
     removeCookie('themeDnsData');
     removeCookie('themeCurrentPageObj');
     removeCookie('themeAuth');
+    removeCookie('themeCategoryList');
   }, []);
 
   const memoizedValue = useMemo(
@@ -244,7 +256,10 @@ export function SettingsProvider({ children }) {
       //current page
       themeCurrentPageObj,
       onChangeCurrentPageObj,
+      themeAuth,
       onChangeAuth,
+      themeCategoryList,
+      onChangeCategoryList,
     }),
     [
       // Mode
@@ -280,6 +295,8 @@ export function SettingsProvider({ children }) {
       onChangeCurrentPageObj,
       themeAuth,
       onChangeAuth,
+      themeCategoryList,
+      onChangeCategoryList,
     ]
   );
 

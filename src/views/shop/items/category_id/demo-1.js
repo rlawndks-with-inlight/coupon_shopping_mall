@@ -6,6 +6,7 @@ import { useRouter } from "next/router";
 import { LazyLoadImage } from "react-lazy-load-image-component";
 import { commarNumber } from 'src/utils/function';
 import { Title, themeObj } from 'src/components/elements/styled-components';
+import { useSettingsContext } from 'src/components/settings';
 
 const Wrapper = styled.div`
     display: -webkit-box;
@@ -97,9 +98,11 @@ const Demo1 = (props) => {
       router
     },
   } = props;
+  const { themeCategoryList } = useSettingsContext();
   useEffect(() => {
-    console.log(test_items)
-  }, [])
+    console.log(themeCategoryList)
+  }, [themeCategoryList])
+
   return (
     <>
       <ContentWrapper>

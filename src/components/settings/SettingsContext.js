@@ -90,9 +90,8 @@ export function SettingsProvider({ children }) {
       const colorPresets = getCookie('themeColorPresets') || defaultSettings.themeColorPresets;
       const dnsData = getCookie('themeDnsData') || defaultSettings.themeDnsData;
       const currentPageObj = getCookie('themeCurrentPageObj') || defaultSettings.themeCurrentPageObj;
-      const auth = getCookie('themeAuth') || defaultSettings.themeAuth;
-      const categoryList = getCookie('themeCategoryList') || defaultSettings.themeCategoryList;
-
+      //const auth = getCookie('themeAuth') || defaultSettings.themeAuth;
+      //const categoryList = getCookie('themeCategoryList') || defaultSettings.themeCategoryList;
       setThemeMode(mode);
       setThemeLayout(layout);
       setThemeStretch(stretch);
@@ -101,8 +100,6 @@ export function SettingsProvider({ children }) {
       setThemeColorPresets(colorPresets);
       setThemeDnsData(dnsData);
       setThemeCurrentPageObj(currentPageObj);
-      setThemeAuth(auth);
-      setThemeCategoryList(categoryList);
     }
   }, []);
 
@@ -194,8 +191,9 @@ export function SettingsProvider({ children }) {
   }, [])
   // categoryList
   const onChangeCategoryList = useCallback((data) => {
-    setThemeCategoryList(data);
-    setCookie('themeCategoryList', JSON.stringify(data));
+      console.log(data);
+      setThemeCategoryList(data);
+      setCookie('themeCategoryList', JSON.stringify(data));
   }, [])
   // Reset
   const onResetSetting = useCallback(() => {
@@ -324,10 +322,10 @@ function getCookie(name) {
 }
 
 function setCookie(name, value, exdays = 3) {
-  const date = new Date();
-  date.setTime(date.getTime() + exdays * 24 * 60 * 60 * 1000);
-  const expires = `expires=${date.toUTCString()}`;
-  document.cookie = `${name}=${value};${expires};path=/`;
+    const date = new Date();
+    date.setTime(date.getTime() + exdays * 24 * 60 * 60 * 1000);
+    const expires = `expires=${date.toUTCString()}`;
+    document.cookie = `${name}=${value};${expires};path=/`;
 }
 
 function removeCookie(name) {

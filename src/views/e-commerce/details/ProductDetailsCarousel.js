@@ -8,7 +8,7 @@ import { bgGradient } from 'src/utils/cssStyles';
 // components
 import Image from 'src/components/image/Image';
 import Lightbox from 'src/components/lightbox/Lightbox';
-import Carousel, { CarouselArrowIndex } from 'src/components/carousel';
+import Carousel, { CarouselArrowIndex }  from 'src/components/carousel';
 // ----------------------------------------------------------------------
 
 const THUMB_SIZE = 64;
@@ -68,15 +68,7 @@ ProductDetailsCarousel.propTypes = {
   product: PropTypes.object,
 };
 
-export default function ProductDetailsCarousel({  }) {
-  const product = {
-    images:[
-      'https://backend.comagain.kr/storage/images/advertisements/1682780973e13c43e720132a9575ff3b6f8f88fec6.webp',
-      'https://backend.comagain.kr/storage/images/advertisements/1682780973e13c43e720132a9575ff3b6f8f88fec6.webp',
-      'https://backend.comagain.kr/storage/images/advertisements/1682780973e13c43e720132a9575ff3b6f8f88fec6.webp',
-      'https://backend.comagain.kr/storage/images/advertisements/1682780973e13c43e720132a9575ff3b6f8f88fec6.webp',
-    ]
-  }
+export default function ProductDetailsCarousel({ product }) {
   const theme = useTheme();
 
   const carousel1 = useRef(null);
@@ -92,7 +84,6 @@ export default function ProductDetailsCarousel({  }) {
   const [selectedImage, setSelectedImage] = useState(-1);
 
   const imagesLightbox = product.images.map((img) => ({ src: img }));
-
   const handleOpenLightbox = (imageUrl) => {
     const imageIndex = imagesLightbox.findIndex((image) => image.src === imageUrl);
     setSelectedImage(imageIndex);
@@ -158,7 +149,6 @@ export default function ProductDetailsCarousel({  }) {
           />
         ))}
       </Carousel>
-
       <CarouselArrowIndex
         index={currentIndex}
         total={product.images.length}
@@ -169,7 +159,7 @@ export default function ProductDetailsCarousel({  }) {
   );
 
   const renderThumbnails = (
-    <StyledThumbnailsContainer length={product.images.length}>
+    <StyledThumbnailsContainer length={product.images.length} >
       <Carousel {...carouselSettings2} asNavFor={nav1} ref={carousel2}>
         {product.images.map((img, index) => (
           <Image
@@ -202,7 +192,6 @@ export default function ProductDetailsCarousel({  }) {
         }}
       >
         {renderLargeImg}
-
         {renderThumbnails}
       </Box>
 

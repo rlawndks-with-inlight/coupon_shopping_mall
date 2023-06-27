@@ -261,11 +261,11 @@ export default function ProductDetailsSummary({ product, onAddCart, onGotoStep, 
             onClick={handleAddCart}
             sx={{ whiteSpace: 'nowrap' }}
           >
-            Add to Cart
+            장바구니
           </Button>
 
           <Button fullWidth size="large" type="submit" variant="contained">
-            Buy Now
+            바로구매
           </Button>
         </Stack>
 

@@ -5,7 +5,7 @@ import { useTheme } from "@emotion/react";
 import { useRouter } from "next/router";
 import { LazyLoadImage } from "react-lazy-load-image-component";
 import { commarNumber } from 'src/utils/function';
-import { Title, themeObj } from 'src/components/elements/styled-components';
+import { Row, Title, themeObj } from 'src/components/elements/styled-components';
 import { useSettingsContext } from 'src/components/settings';
 
 const Wrapper = styled.div`
@@ -28,10 +28,10 @@ const Wrapper = styled.div`
 `
 const Name = styled.div`
 font-weight: bold;
-font-size:${themeObj.font_size.size5};
+font-size:${themeObj.font_size.size6};
 `
 const Price = styled.div`
-font-size:${themeObj.font_size.size5};
+font-size:${themeObj.font_size.size6};
 `
 const Item = (props) => {
 
@@ -98,9 +98,11 @@ const Demo1 = (props) => {
       router
     },
   } = props;
-  const { themeCategoryList } = useSettingsContext();
+  const { themeCategoryList, themeMode } = useSettingsContext();
   useEffect(() => {
-    console.log(themeCategoryList)
+    if (themeCategoryList.length > 0) {
+
+    }
   }, [themeCategoryList])
 
   return (
@@ -109,6 +111,9 @@ const Demo1 = (props) => {
         <div style={{ display: 'flex', width: '100%', flexDirection: 'column' }}>
           <Title>asd</Title>
         </div>
+        <Row>
+
+        </Row>
         <Items items={test_items} router={router} />
       </ContentWrapper>
     </>

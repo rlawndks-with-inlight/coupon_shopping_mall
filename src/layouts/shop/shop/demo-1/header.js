@@ -98,7 +98,7 @@ border-right: 1px solid ${props => props.theme.palette.grey[300]};
 `
 const DropDownMenuContainer = styled.div`
 position: absolute;
-top:53px;
+top:58px;
 z-index:10;
 left: -22px;
 display: none;
@@ -122,12 +122,12 @@ cursor:pointer;
 `
 const SubDropDownMenuContainer = styled.div`
 position: absolute;
-left: 144px;
+left: 136px;
 top:0;
 display: none;
 text-align:left;
 padding:0.5rem;
-width:144px;
+width:154px;
 flex-direction:column;
 .menu-${props => props.parentId}:hover & {
   display: flex;
@@ -135,12 +135,12 @@ flex-direction:column;
 `
 const SubSubDropDownMenuContainer = styled.div`
 position: absolute;
-left: 144px;
+left: 136px;
 top:0;
 display: none;
 text-align:left;
 padding:0.5rem;
-width:144px;
+width:154px;
 flex-direction:column;
 .menu-${props => props.parentId}:hover & {
   display: flex;

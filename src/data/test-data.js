@@ -326,10 +326,6 @@ export const test_categories = [
     ]
   },
 ]
-
-export const test_items = [
-
-]
 export const test_item = {
   id: 58,
   cate_id: 15,
@@ -345,3 +341,7 @@ export const test_item = {
   created_at: "2023-03-09 14:30:18",
   updated_at: "2023-03-09 14:30:18"
 }
+export const test_items = [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,].map((item, idx)=>{
+  return test_item;
+})
+

@@ -41,25 +41,32 @@ const Demo1 = (props) => {
   const { themeStretch } = useSettingsContext();
 
   const [loading, setLoading] = useState(true);
-  const [item, setItem] = useState({});
-  useEffect(() => {
-    setTimeout(() => {
-      setLoading(false);
-    }, 1500)
-  }, [])
-  const product = test_item
 
   const [currentTab, setCurrentTab] = useState('description');
+  const [item, setItem] = useState({});
+  const [product, setProduct] = useState({});
+  useEffect(() => {
+    getItemInfo(1);
+  }, [])
 
+  const getItemInfo = (review_page) => {
+    let data = test_item;
+    if(data?.product_img){
+      data['images'].unshift(data?.product_img)
+    }
+    setProduct(data);
+
+    setLoading(false);
+  }
   const TABS = [
     {
       value: 'description',
-      label: 'description',
-      component: product ? <Markdown children={product?.description} /> : null,
+      label: '상세정보',
+      component: product ? <Markdown children={product?.content} /> : null,
     },
     {
       value: 'reviews',
-      label: `Reviews (100)`,
+      label: `상품후기 (100)`,
       component: product ? <ProductDetailsReview product={product} /> : null,
     },
   ];

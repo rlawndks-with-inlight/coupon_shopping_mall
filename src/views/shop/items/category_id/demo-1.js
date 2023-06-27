@@ -7,88 +7,16 @@ import { LazyLoadImage } from "react-lazy-load-image-component";
 import { commarNumber } from 'src/utils/function';
 import { Row, Title, themeObj } from 'src/components/elements/styled-components';
 import { useSettingsContext } from 'src/components/settings';
+import { Item, Items } from 'src/components/elements/shop/common';
 
-const Wrapper = styled.div`
-    display: -webkit-box;
-    display: flex;
-    -webkit-box-orient: vertical;
-    -webkit-box-direction: normal;
-    flex-direction: column;
-    width:285px;
-    cursor: pointer;
-    @media (max-width: 1350px) {
-      width:31%;
-    }
-    @media (max-width: 1000px) {
-      width:47%;
-    }
-    @media (max-width: 650px) {
-      width:100%;
-    }
-`
-const Name = styled.div`
-font-weight: bold;
-font-size:${themeObj.font_size.size6};
-`
-const Price = styled.div`
-font-size:${themeObj.font_size.size6};
-`
-const Item = (props) => {
-
-  const { item, router } = props;
-
-  return (
-    <>
-      <Wrapper
-        onClick={() => {
-          router.push(`/shop/item/${item?.id}`)
-        }}
-      >
-        <LazyLoadImage src={item?.product_img}
-          className="item-img"
-        />
-        <Name>{item.name}</Name>
-        <Price>{commarNumber(item.item_pr)} 원</Price>
-      </Wrapper>
-    </>
-  )
-}
 const ContentWrapper = styled.div`
 max-width:1200px;
 width:90%;
 margin: 1rem auto;
 `
+const CategoryContainer = styled.div`
 
-const ItemsContainer = styled.div`
-display:flex;
-flex-wrap:wrap;
-column-gap: 20px;
-grid-row-gap: 40px;
-row-gap: 40px;
-width:100%;
-@media (max-width: 1350px) {
-  column-gap: 3%;
-}
-@media (max-width: 1000px) {
-  column-gap: 6%;
-}
-@media (max-width: 650px) {
-  column-gap: 0;
-}
 `
-const Items = (props) => {
-  const { items, router } = props;
-  return (
-    <>
-      <ItemsContainer>
-        {items && items.map((item, idx) => {
-          return <Item item={item} router={router} />
-        })}
-      </ItemsContainer>
-    </>
-  )
-}
-
 const Demo1 = (props) => {
   const {
     data: {
@@ -98,18 +26,24 @@ const Demo1 = (props) => {
       router
     },
   } = props;
-  const { themeCategoryList, themeMode } = useSettingsContext();
+  const { themeCategoryList } = useSettingsContext();
+
   useEffect(() => {
     if (themeCategoryList.length > 0) {
-
+      let result = returnCategoryRoot(router.query?.category_id);
     }
   }, [themeCategoryList])
-
+  const returnCategoryRoot = (id, categories) => {
+    
+  }
   return (
     <>
       <ContentWrapper>
         <div style={{ display: 'flex', width: '100%', flexDirection: 'column' }}>
           <Title>asd</Title>
+          <CategoryContainer>
+
+          </CategoryContainer>
         </div>
         <Row>
 

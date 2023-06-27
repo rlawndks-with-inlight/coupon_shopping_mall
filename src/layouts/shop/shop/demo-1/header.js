@@ -452,7 +452,7 @@ const Header = () => {
                   <div>고객센터</div>
                   <DropDownMenuContainer parentId={'service'} style={{
                     border: `1px solid ${theme.palette.grey[300]}`,
-                    width: `144px`,
+                    width: `154px`,
                     fontSize: '12px',
                     fontWeight: 'normal',
                     background: `${themeMode == 'dark' ? '#000' : '#fff'}`

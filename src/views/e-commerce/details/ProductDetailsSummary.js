@@ -51,7 +51,7 @@ export default function ProductDetailsSummary({ product, onAddCart, onGotoStep, 
     colors=[],
     available,
     priceSale,
-    totalRating,
+    rating,
     totalReview,
     inventoryType,
   } = product;
@@ -147,11 +147,11 @@ export default function ProductDetailsSummary({ product, onAddCart, onGotoStep, 
           <Typography variant="h5">{name}</Typography>
 
           <Stack direction="row" alignItems="center" spacing={1}>
-            <Rating value={totalRating} precision={0.1} readOnly />
+            <Rating value={rating} precision={0.1} readOnly />
 
             <Typography variant="body2" sx={{ color: 'text.secondary' }}>
               ({fShortenNumber(totalReview)}
-              reviews)
+              리뷰)
             </Typography>
           </Stack>
 

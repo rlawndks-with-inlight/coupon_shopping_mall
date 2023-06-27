@@ -8,7 +8,7 @@ import { commarNumber } from 'src/utils/function';
 import { Row, Title, themeObj } from 'src/components/elements/styled-components';
 import { useSettingsContext } from 'src/components/settings';
 import { Item, Items } from 'src/components/elements/shop/common';
-
+import _ from 'lodash';
 const ContentWrapper = styled.div`
 max-width:1200px;
 width:90%;
@@ -30,17 +30,16 @@ const Demo1 = (props) => {
 
   useEffect(() => {
     if (themeCategoryList.length > 0) {
-      let result = returnCategoryRoot(router.query?.category_id);
+
+      // let result = returnCategoryRoot(router.query?.category_id);
     }
   }, [themeCategoryList])
-  const returnCategoryRoot = (id, categories) => {
-    
-  }
+
   return (
     <>
       <ContentWrapper>
         <div style={{ display: 'flex', width: '100%', flexDirection: 'column' }}>
-          <Title>asd</Title>
+          <Title>카테고리</Title>
           <CategoryContainer>
 
           </CategoryContainer>

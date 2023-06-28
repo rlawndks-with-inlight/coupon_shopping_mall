@@ -19,6 +19,7 @@ const ReactQuill = dynamic(() => import('react-quill'), {
   ssr: false,
   loading: () => <p>Loading ...</p>,
 })
+import Slider from 'react-slick'
 const Wrapper = styled.div`
 display:flex;
 flex-direction:column;

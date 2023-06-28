@@ -5,7 +5,7 @@ import NextLink from 'next/link';
 // @mui
 import { Box, Card, Link, Stack, Fab } from '@mui/material';
 // routes
-import { PATH_DASHBOARD } from '../../../../routes/paths';
+import { PATH_MANAGER } from '../../../../data/manager-data';
 // utils
 import { fCurrency } from '../../../../utils/formatNumber';
 // redux
@@ -28,7 +28,7 @@ export default function ShopProductCard({ product }) {
 
   const dispatch = useDispatch();
 
-  const linkTo = PATH_DASHBOARD.eCommerce.view(paramCase(name));
+  const linkTo = PATH_MANAGER.eCommerce.view(paramCase(name));
 
   const handleAddCart = async () => {
     const newProduct = {

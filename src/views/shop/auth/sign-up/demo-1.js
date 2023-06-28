@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
-import { Button, Checkbox, Divider, FormControlLabel, Step, StepConnector, StepLabel, Stepper, Typography, stepConnectorClasses } from '@mui/material';
+import { Button, Checkbox, Divider, FormControlLabel, InputAdornment, Step, StepConnector, StepLabel, Stepper, TextField, Typography, stepConnectorClasses } from '@mui/material';
 import { useState } from 'react';
-import { Row, Title, themeObj } from 'src/components/elements/styled-components';
+import { Col, Row, Title, themeObj } from 'src/components/elements/styled-components';
 import styled from 'styled-components'
 import { styled as muiStyled } from '@mui/material/styles';
 import Iconify from 'src/components/iconify/Iconify';
@@ -9,6 +9,7 @@ import { bgGradient } from 'src/utils/cssStyles';
 import { useTheme } from '@emotion/react';
 import Policy from 'src/pages/shop/auth/policy';
 import { toast } from 'react-hot-toast';
+import { Icon } from '@iconify/react';
 
 const Wrappers = styled.div`
 max-width:700px;
@@ -107,7 +108,6 @@ const Demo1 = (props) => {
     },
   } = props;
   const theme = useTheme();
-  console.log(theme)
   const [activeStep, setActiveStep] = useState(0);
   const [checkboxObj, setCheckboxObj] = useState({
     check_1: false,
@@ -115,6 +115,14 @@ const Demo1 = (props) => {
     check_3: false,
     check_4: false,
     check_5: false,
+  })
+  const [user, setUser] = useState({
+    username: '',
+    password: '',
+    passwordCheck: '',
+    name: '',
+    phone: '',
+    email: '',
   })
   const onClickPrevButton = () => {
     if (activeStep == 1) {
@@ -127,17 +135,30 @@ const Demo1 = (props) => {
   }
   const onClickNextButton = () => {
     if (activeStep == 0) {
-      if(
+      if (
         !checkboxObj.check_1 ||
         !checkboxObj.check_2 ||
         !checkboxObj.check_3
-      ){
+      ) {
         toast.error("필수 항목에 체크해 주세요.");
         return;
       }
     }
     if (activeStep == 1) {
-
+      if (
+        !user.username ||
+        !user.password ||
+        !user.passwordCheck ||
+        !user.name ||
+        !user.phone ||
+        !user.email
+      ) {
+        toast.error("필수 항목에 체크해 주세요.");
+        return;
+      }
+    }
+    if (activeStep == 2) {
+      router.push('/shop');
     }
     setActiveStep(activeStep + 1);
   }
@@ -224,11 +245,100 @@ const Demo1 = (props) => {
           </>}
         {activeStep == 1 &&
           <>
-
+            <TextField
+              label='아이디'
+              onChange={(e) => {
+                setUser({ ...user, ['username']: e.target.value })
+              }}
+              value={user.username}
+              style={inputStyle}
+              autoComplete='new-password'
+              onKeyPress={(e) => {
+                if (e.key == 'Enter') {
+                }
+              }}
+              InputProps={{
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <Icon icon="eva:person-fill" width={24} />
+                  </InputAdornment>
+                ),
+              }}
+            />
+            <TextField
+              label='비밀번호'
+              onChange={(e) => {
+                setUser({ ...user, ['password']: e.target.value })
+              }}
+              type='password'
+              value={user.password}
+              style={inputStyle}
+              autoComplete='new-password'
+              onKeyPress={(e) => {
+                if (e.key == 'Enter') {
+                }
+              }}
+            />
+            <TextField
+              label='비밀번호 확인'
+              onChange={(e) => {
+                setUser({ ...user, ['passwordCheck']: e.target.value })
+              }}
+              type='password'
+              value={user.passwordCheck}
+              style={inputStyle}
+              autoComplete='new-password'
+              onKeyPress={(e) => {
+                if (e.key == 'Enter') {
+                }
+              }}
+            />
+            <TextField
+              label='이름'
+              onChange={(e) => {
+                setUser({ ...user, ['name']: e.target.value })
+              }}
+              value={user.name}
+              style={inputStyle}
+              autoComplete='new-password'
+              onKeyPress={(e) => {
+                if (e.key == 'Enter') {
+                }
+              }}
+            />
+            <TextField
+              label='휴대전화'
+              onChange={(e) => {
+                setUser({ ...user, ['phone']: e.target.value })
+              }}
+              value={user.phone}
+              style={inputStyle}
+              autoComplete='new-password'
+              onKeyPress={(e) => {
+                if (e.key == 'Enter') {
+                }
+              }}
+            />
+            <TextField
+              label='이메일'
+              onChange={(e) => {
+                setUser({ ...user, ['email']: e.target.value })
+              }}
+              value={user.email}
+              style={inputStyle}
+              autoComplete='new-password'
+              onKeyPress={(e) => {
+                if (e.key == 'Enter') {
+                }
+              }}
+            />
           </>}
         {activeStep == 2 &&
           <>
-
+            <Col>
+              <Icon icon={'fluent-mdl2:completed'} style={{ margin: '8rem auto 1rem auto', fontSize: themeObj.font_size.size1, color: theme.palette.primary.main }} />
+              <div style={{ margin: 'auto auto 8rem auto' }}>회원가입이 완료되었습니다.</div>
+            </Col>
           </>}
         <Row style={{ width: '100%', justifyContent: 'space-between' }}>
           <Button variant="outlined" style={{
@@ -244,10 +354,13 @@ const Demo1 = (props) => {
             width: '49%'
           }}
             onClick={onClickNextButton}
-          >다음</Button>
+          >{activeStep == 2 ? '완료' : '다음'}</Button>
         </Row>
       </Wrappers>
     </>
   )
+}
+const inputStyle = {
+  marginTop: '1rem',
 }
 export default Demo1

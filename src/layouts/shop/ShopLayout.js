@@ -68,9 +68,7 @@ const ShopLayout = ({ children, scrollToTop }) => {
         scrollToTop
       })}
       <ScrollToTop className='mui-fixed'>
-        <Fab size='small' aria-label='scroll back to top' style={{
-          bottom: '3rem'
-        }}>
+        <Fab size='small' aria-label='scroll back to top'>
           <Icon icon='tabler:arrow-up' />
         </Fab>
       </ScrollToTop>

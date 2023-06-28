@@ -31,6 +31,10 @@ export const themeObj = {
 export const Row = styled.div`
 display: flex;
 `
+export const Col = styled.div`
+display: flex;
+flex-direction:column;
+`
 export const RowMobileColumn = styled.div`
 display: flex;
 @media (max-width:1000px) {

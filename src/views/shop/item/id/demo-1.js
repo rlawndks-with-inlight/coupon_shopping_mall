@@ -14,6 +14,7 @@ import { useEffect, useState } from 'react';
 import Markdown from 'src/components/markdown/Markdown';
 import CartWidget from 'src/views/e-commerce/CartWidget';
 import Iconify from 'src/components/iconify/Iconify';
+import 'react-quill/dist/quill.snow.css';
 import { SkeletonProductDetails } from 'src/components/skeleton';
 const ReactQuill = dynamic(() => import('react-quill'), {
   ssr: false,
@@ -63,7 +64,14 @@ const Demo1 = (props) => {
     {
       value: 'description',
       label: '상세정보',
-      component: product ? <Markdown children={product?.content} /> : null,
+      component: product ?
+      <ReactQuill
+      className='none-padding'
+      value={product?.content ?? `<body></body>`}
+      readOnly={true}
+      theme={"bubble"}
+      bounds={'.app'}
+    /> : null,
     },
     {
       value: 'reviews',

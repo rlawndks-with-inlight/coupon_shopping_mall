@@ -1,18 +1,20 @@
 import PropTypes from 'prop-types';
-import { Step, StepConnector, StepLabel, Stepper, stepConnectorClasses } from '@mui/material';
+import { Button, Checkbox, Divider, FormControlLabel, Step, StepConnector, StepLabel, Stepper, Typography, stepConnectorClasses } from '@mui/material';
 import { useState } from 'react';
-import { Title } from 'src/components/elements/styled-components';
+import { Row, Title, themeObj } from 'src/components/elements/styled-components';
 import styled from 'styled-components'
 import { styled as muiStyled } from '@mui/material/styles';
 import Iconify from 'src/components/iconify/Iconify';
 import { bgGradient } from 'src/utils/cssStyles';
 import { useTheme } from '@emotion/react';
+import Policy from 'src/pages/shop/auth/policy';
+import { toast } from 'react-hot-toast';
 
 const Wrappers = styled.div`
 max-width:700px;
 display:flex;
 flex-direction:column;
-margin: 0 auto;
+margin: 0 auto 5rem auto;
 width: 90%;
 min-height:90vh;
 `
@@ -107,6 +109,38 @@ const Demo1 = (props) => {
   const theme = useTheme();
   console.log(theme)
   const [activeStep, setActiveStep] = useState(0);
+  const [checkboxObj, setCheckboxObj] = useState({
+    check_1: false,
+    check_2: false,
+    check_3: false,
+    check_4: false,
+    check_5: false,
+  })
+  const onClickPrevButton = () => {
+    if (activeStep == 1) {
+
+    }
+    if (activeStep == 2) {
+
+    }
+    setActiveStep(activeStep - 1);
+  }
+  const onClickNextButton = () => {
+    if (activeStep == 0) {
+      if(
+        !checkboxObj.check_1 ||
+        !checkboxObj.check_2 ||
+        !checkboxObj.check_3
+      ){
+        toast.error("필수 항목에 체크해 주세요.");
+        return;
+      }
+    }
+    if (activeStep == 1) {
+
+    }
+    setActiveStep(activeStep + 1);
+  }
   return (
     <>
       <Wrappers>
@@ -118,6 +152,100 @@ const Demo1 = (props) => {
             </Step>
           ))}
         </Stepper>
+        <div style={{ marginTop: '2rem' }} />
+        {activeStep == 0 &&
+          <>
+            <FormControlLabel label={<Typography style={{ fontWeight: 'bold', fontSize: themeObj.font_size.size5 }}> 이용약관 및 개인정보수집 및 이용, 쇼핑정보 수신(선택)에 모두 동의합니다.</Typography>} control={<Checkbox />} onChange={(e) => {
+              let check_obj = {}
+              if (e.target.checked) {
+                for (let key in checkboxObj) {
+                  check_obj[key] = true;
+                }
+              } else {
+                for (let key in checkboxObj) {
+                  check_obj[key] = false;
+                }
+              }
+              setCheckboxObj(check_obj)
+            }} />
+            <div style={{ marginTop: '1rem' }} />
+            <Divider />
+            <div style={{ marginTop: '1rem' }} />
+            <FormControlLabel label={<Typography style={{ fontSize: themeObj.font_size.size6 }}>이용약관 동의 (필수)</Typography>} control={<Checkbox checked={checkboxObj.check_1} onChange={(e) => {
+              setCheckboxObj({ ...checkboxObj, ['check_1']: e.target.checked })
+            }} />} />
+            <div style={{ marginTop: '0.5rem' }} />
+            <div style={{
+              height: '10rem',
+              overflowY: 'auto',
+              border: `1px solid ${themeObj.grey[300]}`
+            }}>
+              <Policy type={0} />
+            </div>
+            <div style={{ marginTop: '1rem' }} />
+            <FormControlLabel label={<Typography style={{ fontSize: themeObj.font_size.size6 }}>개인정보 수집 및 이용 동의 (필수)</Typography>} control={<Checkbox checked={checkboxObj.check_2} onChange={(e) => {
+              setCheckboxObj({ ...checkboxObj, ['check_2']: e.target.checked })
+            }} />} />
+            <div style={{ marginTop: '0.5rem' }} />
+            <div style={{
+              height: '10rem',
+              overflowY: 'auto',
+              border: `1px solid ${themeObj.grey[300]}`
+            }}>
+              <Policy type={1} />
+            </div>
+            <div style={{ marginTop: '1rem' }} />
+            <FormControlLabel label={<Typography style={{ fontSize: themeObj.font_size.size6 }}>쇼핑정보 수신 동의 (선택)</Typography>} control={<Checkbox checked={checkboxObj.check_3} onChange={(e) => {
+              setCheckboxObj({ ...checkboxObj, ['check_3']: e.target.checked })
+            }} />} />
+            <div style={{ marginTop: '1rem' }} />
+            <Divider />
+            <div style={{ marginTop: '1rem' }} />
+            <Row>
+              <FormControlLabel label={<Typography style={{ fontSize: themeObj.font_size.size7 }}>SMS 수신 동의 (선택)</Typography>} control={<Checkbox checked={checkboxObj.check_4} onChange={(e) => {
+                setCheckboxObj({ ...checkboxObj, ['check_4']: e.target.checked })
+              }} />} />
+              <FormControlLabel label={<Typography style={{ fontSize: themeObj.font_size.size7 }}>이메일 수신 동의 (선택)</Typography>} control={<Checkbox checked={checkboxObj.check_5} onChange={(e) => {
+                setCheckboxObj({ ...checkboxObj, ['check_5']: e.target.checked })
+              }} />} />
+            </Row>
+            <div style={{ marginTop: '0.5rem' }} />
+            <div style={{
+              height: '10rem',
+              overflowY: 'auto',
+              border: `1px solid ${themeObj.grey[300]}`,
+              padding: '2rem',
+              fontSize: themeObj.font_size.size7
+            }}>
+              할인쿠폰 및 혜택, 이벤트, 신상품 소식 등 쇼핑몰에서 제공하는 유익한 쇼핑정보를 SMS나 이메일로 받아보실 수 있습니다. 단, 주문/거래 정보 및 주요 정책과 관련된 내용은 수신동의 여부와 관계없이 발송됩니다.
+
+              선택 약관에 동의하지 않으셔도 회원가입은 가능하며, 회원가입 후 회원정보수정 페이지에서 언제든지 수신여부를 변경하실 수 있습니다.
+            </div>
+          </>}
+        {activeStep == 1 &&
+          <>
+
+          </>}
+        {activeStep == 2 &&
+          <>
+
+          </>}
+        <Row style={{ width: '100%', justifyContent: 'space-between' }}>
+          <Button variant="outlined" style={{
+            height: '56px',
+            marginTop: '1rem',
+            width: '49%'
+          }}
+            onClick={onClickPrevButton}
+          >이전</Button>
+          <Button variant="contained" style={{
+            height: '56px',
+            marginTop: '1rem',
+            width: '49%'
+          }}
+            onClick={onClickNextButton}
+          >다음</Button>
+        </Row>
       </Wrappers>
     </>
   )

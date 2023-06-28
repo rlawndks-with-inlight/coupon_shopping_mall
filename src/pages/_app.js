@@ -18,6 +18,7 @@ import 'slick-carousel/slick/slick-theme.css';
 
 // lazy image
 import 'react-lazy-load-image-component/src/effects/blur.css';
+import { Toaster } from 'react-hot-toast';
 const App = (props) => {
   const { Component, pageProps } = props;
 
@@ -32,6 +33,7 @@ const App = (props) => {
         <SettingsProvider>
           <ThemeProvider>
           {getLayout(<Component {...pageProps} />)}
+          <Toaster position={'right-top'} toastOptions={{ className: 'react-hot-toast' }} />
           </ThemeProvider>
         </SettingsProvider>
       </ThemeColorPresets>

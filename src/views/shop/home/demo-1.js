@@ -33,7 +33,7 @@ const returnHomeContent = (column, data, func) => {
     const NextArrow = ({ onClick }) => {
       return (
         <div className="nextArrow" onClick={onClick}>
-          <Icon style={{ color: '#fff' }} icon={'ooui:previous-rtl'} />
+          <Icon style={{ color: '#fff',margin:'auto' }} icon={'ooui:previous-rtl'} />
         </div>
       );
     };
@@ -41,7 +41,7 @@ const returnHomeContent = (column, data, func) => {
     const PrevArrow = ({ onClick }) => {
       return (
         <div className="prevArrow" onClick={onClick}>
-          <Icon style={{ color: '#fff' }} icon={'ooui:previous-ltr'} />
+          <Icon style={{ color: '#fff',margin:'auto' }} icon={'ooui:previous-ltr'} />
         </div>
       );
     };
@@ -51,7 +51,7 @@ const returnHomeContent = (column, data, func) => {
         centerPadding: (windowWidth > 1200 ? '10%' : 0), // 이미지 간격을 조절할 수 있는 값입니다.
         infinite: true,
         speed: 500,
-        autoplay: false,
+        autoplay: true,
         autoplaySpeed: 2500,
         slidesToShow: 1,
         slidesToScroll: 1,

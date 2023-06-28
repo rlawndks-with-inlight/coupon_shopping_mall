@@ -10,7 +10,7 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { LoadingButton } from '@mui/lab';
 import { Box, Card, Grid, Stack, Typography, InputAdornment } from '@mui/material';
 // routes
-import { PATH_DASHBOARD } from '../../../routes/paths';
+import { PATH_MANAGER } from '../../../data/manager-data';
 // components
 import { useSnackbar } from '../../../components/snackbar';
 import FormProvider, {
@@ -122,7 +122,7 @@ export default function ProductNewEditForm({ isEdit, currentProduct }) {
       await new Promise((resolve) => setTimeout(resolve, 500));
       reset();
       enqueueSnackbar(!isEdit ? 'Create success!' : 'Update success!');
-      push(PATH_DASHBOARD.eCommerce.list);
+      push(PATH_MANAGER.eCommerce.list);
       console.log('DATA', data);
     } catch (error) {
       console.error(error);

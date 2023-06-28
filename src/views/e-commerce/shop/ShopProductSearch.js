@@ -9,7 +9,7 @@ import { Link, Typography, Autocomplete, InputAdornment } from '@mui/material';
 // utils
 import axios from '../../../../utils/axios';
 // routes
-import { PATH_DASHBOARD } from '../../../../routes/paths';
+import { PATH_MANAGER } from '../../../../data/manager-data';
 // components
 import Image from '../../../../components/image';
 import Iconify from '../../../../components/iconify';
@@ -41,7 +41,7 @@ export default function ShopProductSearch() {
   };
 
   const handleGotoProduct = (name) => {
-    push(PATH_DASHBOARD.eCommerce.view(paramCase(name)));
+    push(PATH_MANAGER.eCommerce.view(paramCase(name)));
   };
 
   const handleKeyUp = (event) => {

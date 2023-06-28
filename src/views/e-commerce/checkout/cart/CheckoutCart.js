@@ -5,7 +5,7 @@ import NextLink from 'next/link';
 // @mui
 import { Grid, Card, Button, CardHeader, Typography } from '@mui/material';
 // routes
-import { PATH_DASHBOARD } from '../../../../../routes/paths';
+import { PATH_MANAGER } from '../../../../../data/manager-data';
 // components
 import Iconify from '../../../../../components/iconify';
 import EmptyContent from '../../../../../components/empty-content';
@@ -72,7 +72,7 @@ export default function CheckoutCart({
 
         <Button
           component={NextLink}
-          href={PATH_DASHBOARD.eCommerce.root}
+          href={PATH_MANAGER.eCommerce.root}
           color="inherit"
           startIcon={<Iconify icon="eva:arrow-ios-back-fill" />}
         >

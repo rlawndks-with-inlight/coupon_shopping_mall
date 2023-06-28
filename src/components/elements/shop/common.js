@@ -11,14 +11,15 @@ const ItemWrapper = styled.div`
     flex-direction: column;
     width:285px;
     cursor: pointer;
+    margin:0;
     @media (max-width: 1350px) {
-      width:31%;
+      width:27.6vw;
     }
     @media (max-width: 1000px) {
-      width:47%;
+      width:41vw;
     }
     @media (max-width: 650px) {
-      width:100%;
+      width:90vw;
     }
 `
 const ItemName = styled.div`

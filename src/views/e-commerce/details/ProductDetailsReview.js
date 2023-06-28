@@ -18,7 +18,7 @@ ProductDetailsReview.propTypes = {
 };
 
 export default function ProductDetailsReview({ product }) {
-  const { totalRating, totalReview, ratings=[] } = product;
+  const { rating, totalReview, ratings=[] } = product;
 
   const [openReview, setOpenReview] = useState(false);
 
@@ -51,12 +51,12 @@ export default function ProductDetailsReview({ product }) {
           }}
         >
           <Typography variant="subtitle1" sx={{ color: 'text.secondary' }}>
-            Average rating
+            평점
           </Typography>
 
-          <Typography variant="h2">{totalRating}/5</Typography>
+          <Typography variant="h2">{rating}/5</Typography>
 
-          <Rating readOnly value={totalRating} precision={0.1} />
+          <Rating readOnly value={rating} precision={0.1} />
 
           <Typography variant="caption" sx={{ color: 'text.secondary' }}>
             ({fShortenNumber(totalReview)} reviews)
@@ -95,7 +95,7 @@ export default function ProductDetailsReview({ product }) {
             variant="outlined"
             startIcon={<Iconify icon="eva:edit-fill" />}
           >
-            Write your review
+            리뷰 작성하기
           </Button>
         </Stack>
       </Box>

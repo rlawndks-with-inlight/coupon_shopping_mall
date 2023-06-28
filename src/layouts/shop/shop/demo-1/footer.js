@@ -20,7 +20,7 @@ const Bold = styled.div`
 font-weight:bold;
 margin-right:0.5rem;
 `
-const marginRight = styled.div`
+const MarginRight = styled.div`
 margin-right:0.5rem;
 `
 const Footer = (props) => {
@@ -44,26 +44,26 @@ const Footer = (props) => {
           </Row>
           <Row>
             <Bold>회사명</Bold>
-            <marginRight></marginRight>
+            <MarginRight></MarginRight>
             <Bold>주소</Bold>
-            <marginRight></marginRight>
+            <MarginRight></MarginRight>
           </Row>
           <Row>
             <Bold>사업자 등록번호</Bold>
-            <marginRight></marginRight>
+            <MarginRight></MarginRight>
             <Bold>대표</Bold>
-            <marginRight></marginRight>
+            <MarginRight></MarginRight>
             <Bold>전화</Bold>
-            <marginRight></marginRight>
+            <MarginRight></MarginRight>
             <Bold>팩스</Bold>
-            <marginRight></marginRight>
+            <MarginRight></MarginRight>
           </Row>
           <Row>
             <Bold>개인정보 보호책임자</Bold>
-            <marginRight></marginRight>
+            <MarginRight></MarginRight>
           </Row>
           <Row>
-            <marginRight></marginRight>
+            <MarginRight></MarginRight>
           </Row>
         </ContentWrapper>
       </Wrapper>

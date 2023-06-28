@@ -30,8 +30,8 @@ const NavBar = styled.div`
 display:flex;
 justify-content:space-around;
 align-items:center;
-background-color:lightgray;
-padding:10px;
+background-color:white;
+padding:50px;
 cursor:pointer;
 `
 const NavBarMenu = styled.div`
@@ -39,7 +39,7 @@ margin-top:2rem;
 border-top: 1px solid ;
 `
 
-const ItemContent = styled.div`
+const Contents = styled.div`
 width:100%;
 display:flex;
 align-items:flex-start;
@@ -140,18 +140,21 @@ const Demo1 = (props) => {
           icon: 'ic:round-verified-user',
         },
       ];*/
+      
+      let category = test_categories.map(function(element){
+        return <NavBarMenu>{element.category_name}</NavBarMenu>;
+      })
+
+      let content = test_categories.flatMap(function(element){
+        return <Contents>{element.category_name}{element.category_img}</Contents>
+      })
+
       return (
         <>
           <Wrapper>
             <ContentWrapper>
-                <NavBar>
-                    <NavBarMenu>홈스마트</NavBarMenu>
-                    <NavBarMenu>가구/소품</NavBarMenu>
-                    <NavBarMenu>가방/잡화</NavBarMenu>
-                    <NavBarMenu>패션의류</NavBarMenu>
-                    <NavBarMenu>타임세일</NavBarMenu>
-                    <NavBarMenu>베스트100</NavBarMenu>
-                </NavBar>
+                <NavBar>{category}</NavBar>
+                <div>{content}</div>
             </ContentWrapper>
           </Wrapper>
         </>

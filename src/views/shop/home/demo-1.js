@@ -222,7 +222,7 @@ const Demo1 = (props) => {
               height: '34vw',
               maxWidth: '1200px',
               width: '90%',
-              height:'70vh',
+              height: '70vh',
               margin: '1rem auto'
             }} />
           </Stack>
@@ -235,7 +235,7 @@ const Demo1 = (props) => {
             </>
           ))}
           <div style={{
-            marginTop:'5rem'
+            marginTop: '5rem'
           }} />
         </>}
     </>

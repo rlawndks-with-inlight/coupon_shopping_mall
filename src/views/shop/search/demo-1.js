@@ -1,10 +1,10 @@
 import { useEffect, useState } from 'react';
 import { test_items } from 'src/data/test-data';
 import styled from 'styled-components'
-import { Row, Title, themeObj } from 'src/components/elements/styled-components';
+import { Col, Row, Title, themeObj } from 'src/components/elements/styled-components';
 import { Item, Items } from 'src/components/elements/shop/common';
 import _ from 'lodash';
-import { IconButton, InputAdornment, TextField } from '@mui/material';
+import { Divider, IconButton, InputAdornment, TextField } from '@mui/material';
 import { Icon } from '@iconify/react';
 
 const Wrappers = styled.div`
@@ -27,7 +27,7 @@ const Demo1 = (props) => {
   } = props;
   const [keyword, setKeyword] = useState("")
   useEffect(() => {
-    if(router.query?.keyword){
+    if (router.query?.keyword) {
 
     }
   }, [router.query])
@@ -77,7 +77,21 @@ const Demo1 = (props) => {
         <div style={{
           marginTop: '1rem'
         }} />
-        <Items items={test_items} router={router} />
+        <Divider />
+        <div style={{
+          marginTop: '1rem'
+        }} />
+        {test_items.length > 0 ?
+          <>
+            <Items items={test_items} router={router} />
+          </>
+          :
+          <>
+          <Col>
+              <Icon icon={'basil:cancel-outline'} style={{ margin: '8rem auto 1rem auto', fontSize: themeObj.font_size.size1, color: themeObj.grey[300] }} />
+              <div style={{ margin: 'auto auto 8rem auto' }}>검색결과가 없습니다.</div>
+            </Col>
+          </>}
       </Wrappers>
     </>
   )

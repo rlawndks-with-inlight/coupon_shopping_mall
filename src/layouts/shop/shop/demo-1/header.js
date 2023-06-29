@@ -173,7 +173,7 @@ const Header = () => {
     let hover_items = {};
     for (var i = 0; i < hover_list.length; i++) {
       hover_list[i] = hover_list[i].join('_');
-      hover_items[`hover_${hover_list[i]}`] = false;
+      hover_items[`hover_${hover_list[i]?.id}`] = false;
     }
     hover_items['service'] = false;
     setHoverItems(hover_items);

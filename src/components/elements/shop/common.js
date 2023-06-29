@@ -24,10 +24,17 @@ const ItemWrapper = styled.div`
 `
 const ItemName = styled.div`
 font-weight: bold;
-font-size:${themeObj.font_size.size6};
+margin-top:0.5rem;
+font-size:${themeObj.font_size.size7};
+`
+const ItemSubName = styled.div`
+margin-top:0.25rem;
+color:${themeObj.grey[500]};
+font-size:${themeObj.font_size.size8};
 `
 const ItemPrice = styled.div`
-font-size:${themeObj.font_size.size6};
+margin-top:0.5rem;
+font-size:${themeObj.font_size.size7};
 display:flex;
 align-items:end;
 `
@@ -63,6 +70,7 @@ export const Item = (props) => {
           className="item-img"
         />
         <ItemName>{item.name}</ItemName>
+        <ItemSubName>{item.sub_name}</ItemSubName>
         <ItemPrice>
           {item.item_pr < item.mkt_pr &&
             <>

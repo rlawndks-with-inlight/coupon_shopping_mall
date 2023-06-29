@@ -80,6 +80,7 @@ const returnHomeContent = (column, data, func) => {
         marginBottom: '1rem',
       }}>
         <ReactQuill
+          className='none-padding'
           value={column?.content ?? `<body></body>`}
           readOnly={true}
           theme={"bubble"}
@@ -154,19 +155,19 @@ const Demo1 = (props) => {
       type: 'banner',
       list: [
         {
-          src: 'https://purplevery19.cafe24.com:8443/image/content1/1680157858237-content1.png',
+          src: '/images/test/1.jpg',
           link: ''
         },
         {
-          src: 'https://purplevery19.cafe24.com:8443/image/content2/1680157858272-content2.png',
+          src: '/images/test/2.jpg',
           link: ''
         },
         {
-          src: 'https://purplevery19.cafe24.com:8443/image/content3/1680157858300-content3.png',
+          src: '/images/test/3.jpg',
           link: ''
         },
         {
-          src: 'https://purplevery19.cafe24.com:8443/image/content4/1680157858315-content4.png',
+          src: '/images/test/4.jpg',
           link: ''
         },
       ],
@@ -174,7 +175,7 @@ const Demo1 = (props) => {
     },
     {
       type: 'editor',
-      content: "<p><img src=\"https://purplevery6.cafe24.com:8443/image/note/1672217758271-note.jpeg\"></p><p><br></p><p><br></p><p><strong>KOSDAQ</strong></p><p><strong>종목명: 하나기술 (299030)</strong></p><p><br></p><p><strong>공시 내용: 단일판매·공급계약 체결</strong></p><p><strong>﻿</strong><img src=\"https://purplevery6.cafe24.com:8443/image/note/1687855566011-note.png\"></p><p><strong>계약금액: 172,364,921,680원</strong></p><p><strong>최근 매출액: 113,857,990,967원</strong></p><p><strong>매출액 대비: 151.39%</strong></p><p><strong>계약기간: 2023.06.26 ~ 2024.06.26</strong></p>",
+      content: `<h2><span class="ql-size-huge">What is a Good Interior?</span></h2><h2><span class="ql-size-huge">The Daily Guide to Architecture</span></h2><p><img style="width: 100%;" src="/images/test/3.jpg"></p><h2><span class="ql-size-huge">COMPANY INTRODUCTION</span></h2><p><span class="ql-size-large">회사소개, 브랜드소개, 포트폴리오등 연결 영역입니다.</span></p>`,
     },
     {
       type: 'items',

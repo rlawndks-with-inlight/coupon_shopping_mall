@@ -1,31 +1,26 @@
 import styled from 'styled-components'
 import { useTheme } from "@emotion/react";
-import { Box, Tab, Tabs, Card, Grid, Divider, Container, Typography, Stack, Button } from '@mui/material';
+import { Box, Tab, Tabs, Card, Grid, Divider, Container, Typography, Button } from '@mui/material';
 import { commarNumber } from 'src/utils/function';
-import { test_categories } from 'src/data/test-data';
+import { test_categories, test_items } from 'src/data/test-data';
 import { themeObj } from 'src/components/elements/styled-components';
 import 'react-quill/dist/quill.snow.css';
-import dynamic from 'next/dynamic'
-import { useSettingsContext } from 'src/components/settings';
-import { useRouter } from 'next/router';
-import { ProductDetailsCarousel, ProductDetailsReview, ProductDetailsSummary } from 'src/views/e-commerce/details';
-import { useSelector } from 'react-redux';
 import { useState, useEffect } from 'react';
-import Markdown from 'src/components/markdown/Markdown';
-import CartWidget from 'src/views/e-commerce/CartWidget';
-import Iconify from 'src/components/iconify/Iconify';
-import { SkeletonProductDetails } from 'src/components/skeleton';
+import Slider from 'react-slick';
+import { Skeleton, Stack } from '@mui/material'
+import { Item } from 'src/components/elements/blog/demo-1';
 
 const Wrapper = styled.div`
 display:flex;
 flex-direction:column;
 min-height:76vh;
 `
+
 const ContentWrapper = styled.div`
 max-width:1200px;
-width:90%;
-margin: 1rem auto;
+width:100%;
 `
+
 const NavBar = styled.div`
 display:flex;
 justify-content:space-around;
@@ -33,62 +28,97 @@ align-items:center;
 background-color:white;
 padding:50px;
 cursor:pointer;
+margin:0 auto;
 `
+
 const NavBarMenu = styled.div`
 margin-top:2rem;
 border-top: 1px solid ;
 `
 
-const Contents = styled.div`
-width:100%;
-display:flex;
-align-items:flex-start;
-@media (max-width: 900px) {
-  flex-direction: column;
-}
-`
-const ProductImgContainer = styled.div`
-width:50%;
-display:flex;
-padding-top:2rem;
-@media (max-width: 900px) {
-  width:100%;
-  padding-top:0rem;
-}
-`
-const ProductImg = styled.img`
-margin:auto;
-width:300px;
-height:auto;
-@media (max-width: 900px) {
-  width:80%;
-}
-`
-const ExampleContainer = styled.div`
-width:50%;
-padding-top:1.1rem;
-@media (max-width: 900px) {
-  width:100%;
-}
-`
-const Name = styled.div`
-font-weight:bold;
-font-size:${themeObj.font_size.size2};
-border-bottom: 1px solid ${themeObj.grey[300]};
-`
-const PriceContainer = styled.div`
-border-bottom: 1px solid ${themeObj.grey[300]};
-padding:2rem 0;
-font-size:${themeObj.font_size.size6};
+const Banner = styled.div`
+margin=bottom:-120px;
+background-color:gray;
 `
 
-const KeyContent = styled.div`
-width: 100px;
+const BannerMessage1 = styled.h2`
+font-weight=bold;
+color=white;
 `
-const Row = styled.div`
-display: flex;
-margin:0.5rem 0;
+
+const BannerMessage2 = styled.p`
+font-weight=regular;
+color=gray400;
+margin-top=16px;
 `
+
+const BannerLink = styled.a`
+target=_blank;
+rel=nofollow;
+`
+
+const BannerImage = styled.span`
+box-sizing:border-box;
+display:block;
+overflow:hidden;
+width:initial;
+background:none;
+opacity:1;
+border:0px;
+margin:0px;
+padding:0px;
+position:relative;
+`
+
+const ContentTitle = styled.p`
+font-weight=bold;
+`
+
+const contents = (column, func) => {
+    const { router } = func;
+    let type = column?.type;
+    let content = undefined;
+  
+    if (type == 'banner') {
+        content = <>
+        <Wrapper>
+            <Banner>
+                <BannerMessage1>테스트 문구 1<br />테스트 문구 1</BannerMessage1>
+                <BannerMessage2>테스트 문구 2<br />테스트 문구 2</BannerMessage2>
+                <BannerLink>
+                    <BannerImage>
+                        <img src={column?.src} />
+                    </BannerImage>
+                </BannerLink>
+            </Banner>
+        </Wrapper>
+      </>
+    }
+  
+    if (type == 'items') {
+        let slide_setting = {
+            infinite: true,
+            speed: 500,
+            autoplay: true,
+            autoplaySpeed: 2500,
+            slidesToScroll: 1,
+            dots: false,
+        }
+    content = <>
+    <ContentWrapper>
+        <ContentTitle>{column?.title}</ContentTitle>
+        <Slider {...slide_setting}>
+        {column?.list && column?.list.map((item, idx) => (
+            <>
+              <Item item={item} router={router} />
+            </>
+          ))}
+        </Slider>
+      </ContentWrapper>
+      </>
+      }
+      return content
+    }
 
 // 메인화면 김인욱
 const Demo1 = (props) => {
@@ -100,63 +130,90 @@ const Demo1 = (props) => {
           router
         },
       } = props;
-      const { themeStretch } = useSettingsContext();
-    
-      const {
-        query: { name },
-      } = useRouter();
-    
-      //const product = test_categories
-    
-      const [currentTab, setCurrentTab] = useState('description');
-    
-    
-     /* const TABS = [
-        {
-          value: 'description',
-          label: 'description',
-          component: product ? <Markdown children={product?.description} /> : null,
-        },
-        {
-          value: 'reviews',
-          label: `Reviews (100)`,
-          component: product ? <ProductDetailsReview product={product} /> : null,
-        },
-      ];
-      const SUMMARY = [
-        {
-          title: '100% Original',
-          description: 'Chocolate bar candy canes ice cream toffee cookie halvah.',
-          icon: 'ic:round-verified',
-        },
-        {
-          title: '10 Day Replacement',
-          description: 'Marshmallow biscuit donut dragée fruitcake wafer.',
-          icon: 'eva:clock-fill',
-        },
-        {
-          title: 'Year Warranty',
-          description: 'Cotton candy gingerbread cake I love sugar sweet.',
-          icon: 'ic:round-verified-user',
-        },
-      ];*/
+      const [loading, setLoading] = useState(true)
+
+      const pageLoad = () => {
+        setTimeout(() => {
+            setLoading(false)
+        }, 500)
+      }
+
+      useEffect(() => {
+        pageLoad()
+      }, [])
       
       let category = test_categories.map(function(element){
         return <NavBarMenu>{element.category_name}</NavBarMenu>;
       })
 
-      let content = test_categories.flatMap(function(element){
-        return <Contents>{element.category_name}{element.category_img}</Contents>
-      })
+      const home_content_list = [
+        {
+          type: 'banner',
+          src: 'https://backend.comagain.kr/storage/images/advertisements/1682780973e13c43e720132a9575ff3b6f8f88fec6.webp'
+        },
+        {
+          type: 'items',
+          list: test_items,
+          title: '핫한상품',
+          sub_title: '가장 인기있는 상품을 만나 보세요 !',
+          sort_type: '',
+          side_img: '',
+          item_slide_auto: true,
+          item_type: 1
+        },
+        {
+          type: 'items',
+          list: test_items,
+          title: '멋진상품',
+          sub_title: '가장 멋있는 상품을 만나 보세요 !',
+          sort_type: '',
+          side_img: '',
+          item_slide_auto: true,
+          item_type: 1
+        },
+        {
+          type: 'reviews'
+        }
+      ];
+
+      const returnContentsByColumn = (column) => {
+        return contents(
+            column,
+            {
+                router
+            })
+        }
 
       return (
         <>
           <Wrapper>
             <ContentWrapper>
                 <NavBar>{category}</NavBar>
-                <div>{content}</div>
             </ContentWrapper>
           </Wrapper>
+          {loading ?
+        <>
+          <Stack spacing={'1rem'}>
+            <Skeleton variant='rectangular' style={{
+              height: '40vw'
+            }} />
+            <Skeleton variant='rounded' style={{
+              height: '34vw',
+              maxWidth: '1200px',
+              width: '90%',
+              height:'70vh',
+              margin: '1rem auto'
+            }} />
+          </Stack>
+        </>
+        :
+        <>
+          {home_content_list.map((column, idx) => (
+            <>
+              {returnContentsByColumn(column)}
+            </>
+          ))}
+        </>}
         </>
       )
 }

@@ -11,6 +11,7 @@ import { useRouter } from "next/router"
 import { TreeItem, TreeView } from "@mui/lab"
 import { getAllIdsWithParents } from "src/utils/function"
 import DialogSearch from "src/components/dialog/DialogSearch"
+import { useAuthContext } from "src/layouts/manager/auth/useAuthContext"
 
 const Wrappers = styled.header`
 width: 100%;
@@ -59,6 +60,7 @@ position:relative;
 }
 &:hover:after {
   transform: scaleX(1.5);
+
 }
 @media (max-width:1000px) {
   padding:0.5rem 1.5rem 0 1.5rem;
@@ -147,11 +149,44 @@ flex-direction:column;
   display: flex;
 }
 `
+const authList = [
+  {
+    name: '장바구니',
+    link_key: 'cart'
+  },
+  {
+    name: '찜목록',
+    link_key: 'wish'
+  },
+  {
+    name: '주문조회',
+    link_key: 'history'
+  },
+  {
+    name: '최근본상품',
+    link_key: 'recent'
+  },
+]
+const noneAuthList = [
+  {
+    name: '로그인',
+    link_key: 'login'
+  },
+  {
+    name: '회원가입',
+    link_key: 'sign-up'
+  },
+  {
+    name: '비회원 주문조회',
+    link_key: 'none-user-history'
+  },
+]
 const Header = () => {
 
   const router = useRouter();
   const theme = useTheme();
   const { themeMode, onToggleMode, themeAuth, themeCategoryList, onChangeCategoryList } = useSettingsContext();
+  const { user } = useAuthContext();
   const [keyword, setKeyword] = useState("");
   const onSearch = () => {
     router.push(`/shop/search?keyword=${keyword}`)
@@ -163,6 +198,9 @@ const Header = () => {
   const [sideMenuOpen, setSideMenuOpen] = useState(false);
   const [categories, setCategories] = useState([])
   const [loading, setLoading] = useState(true);
+  useEffect(() => {
+    console.log(user)
+  }, [user])
   useEffect(() => {
     setLoading(true);
     let data = [...test_categories];
@@ -353,15 +391,46 @@ const Header = () => {
                 }}
               >
                 <div className="fade-in-text" style={{ display: `${isAuthMenuOver ? 'flex' : 'none'}`, alignItems: 'center' }}>
-                  <AuthMenu theme={theme} hoverColor={themeMode == 'dark' ? '#fff' : '#000'} onClick={() => { router.push('/shop/auth/sign-up') }}>회원가입</AuthMenu>
-                  <AuthMenu theme={theme} hoverColor={themeMode == 'dark' ? '#fff' : '#000'} onClick={() => { router.push('/shop/auth/login') }}>로그인</AuthMenu>
-                  <AuthMenu theme={theme} hoverColor={themeMode == 'dark' ? '#fff' : '#000'} >주문조회</AuthMenu>
-                  <AuthMenu theme={theme} hoverColor={themeMode == 'dark' ? '#fff' : '#000'}>최근본상품</AuthMenu>
-                  <AuthMenu theme={theme} hoverColor={themeMode == 'dark' ? '#fff' : '#000'} style={{ borderRight: 'none' }}>좋아요 0개</AuthMenu>
+                  {user ?
+                    <>
+                      {authList.map((item, idx) => (
+                        <>
+                          <AuthMenu
+                            theme={theme}
+                            hoverColor={themeMode == 'dark' ? '#fff' : '#000'}
+                            onClick={() => { router.push(`/shop/auth/${item.link_key}`) }}
+                            style={{ borderRight: `${idx == authList.length - 1 ? 'none' : ''}` }}
+                          >{item.name}</AuthMenu>
+                        </>
+                      ))}
+                    </>
+                    :
+                    <>
+                      {noneAuthList.map((item, idx) => (
+                        <>
+                          <AuthMenu
+                            theme={theme}
+                            hoverColor={themeMode == 'dark' ? '#fff' : '#000'}
+                            onClick={() => { router.push(`/shop/auth/${item.link_key}`) }}
+                            style={{ borderRight: `${idx == noneAuthList.length - 1 ? 'none' : ''}` }}
+                          >{item.name}</AuthMenu>
+                        </>
+                      ))}
+
+                    </>}
+
                 </div>
                 <div className="fade-in-text" style={{ display: `${isAuthMenuOver ? 'none' : 'flex'}`, alignItems: 'center' }}>
-                  <AuthMenu theme={theme}>회원가입</AuthMenu>
-                  <AuthMenu theme={theme} style={{ borderRight: 'none' }}>로그인</AuthMenu>
+                  {user ?
+                    <>
+                      <AuthMenu theme={theme} style={{ borderRight: 'none' }}>마이페이지</AuthMenu>
+                    </>
+                    :
+                    <>
+                      <AuthMenu theme={theme}>회원가입</AuthMenu>
+                      <AuthMenu theme={theme} style={{ borderRight: 'none' }}>로그인</AuthMenu>
+                    </>}
+
                   <Icon icon={'ic:baseline-plus'} color={themeMode == 'dark' ? '#fff' : '#000'} />
                 </div>
               </NoneShowMobile>
@@ -459,9 +528,7 @@ const Header = () => {
                   </>
                 ))}
                 <div style={{ position: 'relative' }} className={`menu-service`}>
-                  <CategoryMenu borderColor={themeMode == 'dark' ? '#fff' : '#000'} onClick={() => {
-                    router.push(`/shop/service/notice/`)
-                  }}>
+                  <CategoryMenu borderColor={themeMode == 'dark' ? '#fff' : '#000'} >
                     <div>고객센터</div>
                   </CategoryMenu>
                   <DropDownMenuContainer parentId={'service'} style={{
@@ -546,13 +613,16 @@ const Header = () => {
         >
           <ColumnMenuTitle>쇼핑 카테고리</ColumnMenuTitle>
           <TreeView
-            aria-label="icon expansion"
             defaultCollapseIcon={<Icon icon={'ic:baseline-minus'} />}
             defaultExpandIcon={<Icon icon={'ic:baseline-plus'} />}
+            defaultEndIcon={<Icon icon={'mdi:dot'} />}
           >
             {categories.map((item1, idx) => (
               <>
-                {returnSidebarMenu(item1, 1)}
+                {returnSidebarMenu(item1, 0, {
+                  router,
+                  setSideMenuOpen
+                })}
               </>
             ))}
           </TreeView>
@@ -570,30 +640,66 @@ const Header = () => {
           ].map((item, idx) => (
             <>
               <ColumnMenuContent onClick={() => {
-                router.push(`/shop/service/${item.link_key}`)
+                router.push(`/shop/service/${item.link_key}`);
+                setSideMenuOpen(false);
               }} style={{ paddingLeft: '1rem' }}>{item.name}</ColumnMenuContent>
             </>
           ))}
-          <ColumnMenuTitle style={{
-            cursor: 'pointer'
-          }}>마이페이지</ColumnMenuTitle>
+          <ColumnMenuTitle>마이페이지</ColumnMenuTitle>
+          {user ?
+            <>
+              {authList.map((item, idx) => (
+                <>
+                  <ColumnMenuContent onClick={() => {
+                    router.push(`/shop/auth/${item.link_key}`);
+                    setSideMenuOpen(false);
+                  }} style={{ paddingLeft: '1rem' }}>{item.name}</ColumnMenuContent>
+                </>
+              ))}
+            </>
+            :
+            <>
+              {noneAuthList.map((item, idx) => (
+                <>
+                  <ColumnMenuContent onClick={() => {
+                    router.push(`/shop/auth/${item.link_key}`);
+                    setSideMenuOpen(false);
+                  }} style={{ paddingLeft: '1rem' }}>{item.name}</ColumnMenuContent>
+                </>
+              ))}
+            </>}
+
         </ColumnMenuContainer>
       </Drawer>
     </>
   )
 }
-const returnSidebarMenu = (item, num) => {
+const returnSidebarMenu = (item, num, func) => {
+  const {
+    router,
+    setSideMenuOpen
+  } = func;
   return (
     <>
-      <TreeItem label={item.category_name}
+      <TreeItem label={<div
+        style={{
+          marginLeft: '0.25rem'
+        }}
+        onClick={() => {
+          router.push(`/shop/items/${item?.id}/?depth=${num}`);
+          setSideMenuOpen(false);
+        }}>{item.category_name}</div>}
         nodeId={item.id}
-        style={{ padding: '0.1rem 0' }}
+        style={{ margin: '0.25rem 0' }}
       >
-        {item.children.map((item2, idx) => (
+        {item.children.length > 0 &&
           <>
-            {returnSidebarMenu(item2, num + 1)}
-          </>
-        ))}
+            {item.children.map((item2, idx) => (
+              <>
+                {returnSidebarMenu(item2, num + 1, func)}
+              </>
+            ))}
+          </>}
       </TreeItem>
     </>
   )
@@ -612,13 +718,13 @@ const ColumnMenuContainer = styled.div`
 }
         `
 const ColumnMenuTitle = styled.div`
-        padding:2rem 0 0.5rem 0;
+        margin: 2rem 0 0.5rem 0;
         font-weight: bold;
-        `
+`
 const ColumnMenuContent = styled.div`
         display:flex;
         align-items:center;
-        padding:0.5rem 0;
+        padding:0.25rem 0;
         cursor:pointer;
         `
 const iconButtonStyle = {

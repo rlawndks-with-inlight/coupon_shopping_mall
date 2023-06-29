@@ -12,11 +12,11 @@ NavSectionVertical.propTypes = {
 };
 
 export default function NavSectionVertical({ data, sx, ...other }) {
-
+  console.log(data)
   return (
     <Stack sx={sx} {...other}>
       {data.map((group) => {
-        const key = group.subheader || group.items[0].title;
+        const key = group.subheader || group.items[0].title
 
         return (
           <List key={key} disablePadding sx={{ px: 2 }}>

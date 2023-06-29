@@ -79,9 +79,8 @@ export default function ManagerLayout({ children }) {
   };
 
   return (
-    <AuthProvider>
+    <>
         {renderContent()}
-    </AuthProvider>
-
+    </>
   )
 }

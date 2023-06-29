@@ -19,6 +19,7 @@ import 'slick-carousel/slick/slick-theme.css';
 // lazy image
 import 'react-lazy-load-image-component/src/effects/blur.css';
 import { Toaster } from 'react-hot-toast';
+import { AuthProvider } from 'src/layouts/manager/auth/JwtContext';
 const App = (props) => {
   const { Component, pageProps } = props;
 
@@ -29,6 +30,7 @@ const App = (props) => {
       <Head>
         <meta name="viewport" content="initial-scale=1, width=device-width" />
       </Head>
+      <AuthProvider>
       <ThemeColorPresets>
         <SettingsProvider>
           <ThemeProvider>
@@ -37,6 +39,8 @@ const App = (props) => {
           </ThemeProvider>
         </SettingsProvider>
       </ThemeColorPresets>
+      </AuthProvider>
+
     </>
   );
 }

@@ -110,6 +110,7 @@ const Demo1 = (props) => {
   const theme = useTheme();
   const [activeStep, setActiveStep] = useState(0);
   const [checkboxObj, setCheckboxObj] = useState({
+    check_0: false,
     check_1: false,
     check_2: false,
     check_3: false,
@@ -132,14 +133,13 @@ const Demo1 = (props) => {
 
     }
     setActiveStep(activeStep - 1);
-    window.scrollTo(0,0)
+    window.scrollTo(0, 0)
   }
   const onClickNextButton = () => {
     if (activeStep == 0) {
       if (
         !checkboxObj.check_1 ||
-        !checkboxObj.check_2 ||
-        !checkboxObj.check_3
+        !checkboxObj.check_2
       ) {
         toast.error("필수 항목에 체크해 주세요.");
         return;
@@ -162,7 +162,7 @@ const Demo1 = (props) => {
       router.push('/shop');
     }
     setActiveStep(activeStep + 1);
-    window.scrollTo(0,0)
+    window.scrollTo(0, 0)
   }
   return (
     <>
@@ -178,7 +178,7 @@ const Demo1 = (props) => {
         <div style={{ marginTop: '2rem' }} />
         {activeStep == 0 &&
           <>
-            <FormControlLabel label={<Typography style={{ fontWeight: 'bold', fontSize: themeObj.font_size.size5 }}> 이용약관 및 개인정보수집 및 이용, 쇼핑정보 수신(선택)에 모두 동의합니다.</Typography>} control={<Checkbox />} onChange={(e) => {
+            <FormControlLabel label={<Typography style={{ fontWeight: 'bold', fontSize: themeObj.font_size.size5 }}> 이용약관 및 개인정보수집 및 이용, 쇼핑정보 수신(선택)에 모두 동의합니다.</Typography>} control={<Checkbox checked={checkboxObj.check_0} />} onChange={(e) => {
               let check_obj = {}
               if (e.target.checked) {
                 for (let key in checkboxObj) {

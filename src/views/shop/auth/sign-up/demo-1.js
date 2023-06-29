@@ -132,6 +132,7 @@ const Demo1 = (props) => {
 
     }
     setActiveStep(activeStep - 1);
+    window.scrollTo(0,0)
   }
   const onClickNextButton = () => {
     if (activeStep == 0) {
@@ -153,7 +154,7 @@ const Demo1 = (props) => {
         !user.phone ||
         !user.email
       ) {
-        toast.error("필수 항목에 체크해 주세요.");
+        toast.error("필수 항목을 입력해 주세요.");
         return;
       }
     }
@@ -161,6 +162,7 @@ const Demo1 = (props) => {
       router.push('/shop');
     }
     setActiveStep(activeStep + 1);
+    window.scrollTo(0,0)
   }
   return (
     <>

@@ -110,6 +110,7 @@ const Header = () => {
           <DialogSearch
             open={dialogOpenObj.search}
             handleClose={handleDialogClose}
+            root_path={'blog'}
           />
           <Wrappers style={{
             background: `${isProductPage ? 'transparent' : (themeMode == 'dark' ? '#000' : '#fff')}`

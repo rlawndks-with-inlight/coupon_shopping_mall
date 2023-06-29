@@ -7,6 +7,7 @@ import dynamic from 'next/dynamic'
 import 'react-quill/dist/quill.snow.css';
 import { Row, themeObj } from 'src/components/elements/styled-components'
 import { Item } from 'src/components/elements/shop/common'
+import { Skeleton, Stack } from '@mui/material'
 const ReactQuill = dynamic(() => import('react-quill'), {
   ssr: false,
   loading: () => <p>Loading ...</p>,
@@ -33,7 +34,7 @@ const returnHomeContent = (column, data, func) => {
     const NextArrow = ({ onClick }) => {
       return (
         <div className="nextArrow" onClick={onClick}>
-          <Icon style={{ color: '#fff',margin:'auto' }} icon={'ooui:previous-rtl'} />
+          <Icon style={{ color: '#fff', margin: 'auto' }} icon={'ooui:previous-rtl'} />
         </div>
       );
     };
@@ -41,7 +42,7 @@ const returnHomeContent = (column, data, func) => {
     const PrevArrow = ({ onClick }) => {
       return (
         <div className="prevArrow" onClick={onClick}>
-          <Icon style={{ color: '#fff',margin:'auto' }} icon={'ooui:previous-ltr'} />
+          <Icon style={{ color: '#fff', margin: 'auto' }} icon={'ooui:previous-ltr'} />
         </div>
       );
     };
@@ -213,6 +214,18 @@ const Demo1 = (props) => {
     <>
       {loading ?
         <>
+          <Stack spacing={'1rem'}>
+            <Skeleton variant='rectangular' style={{
+              height: '40vw'
+            }} />
+            <Skeleton variant='rounded' style={{
+              height: '34vw',
+              maxWidth: '1200px',
+              width: '90%',
+              height:'70vh',
+              margin: '1rem auto'
+            }} />
+          </Stack>
         </>
         :
         <>

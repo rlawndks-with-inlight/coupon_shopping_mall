@@ -11,14 +11,15 @@ const ItemWrapper = styled.div`
     flex-direction: column;
     width:285px;
     cursor: pointer;
+    margin:0;
     @media (max-width: 1350px) {
-      width:31%;
+      width:27.6vw;
     }
     @media (max-width: 1000px) {
-      width:47%;
+      width:41vw;
     }
     @media (max-width: 650px) {
-      width:100%;
+      width:90vw;
     }
 `
 const ItemName = styled.div`
@@ -27,6 +28,8 @@ font-size:${themeObj.font_size.size6};
 `
 const ItemPrice = styled.div`
 font-size:${themeObj.font_size.size6};
+display:flex;
+align-items:end;
 `
 const ItemsContainer = styled.div`
 display:flex;
@@ -60,7 +63,22 @@ export const Item = (props) => {
           className="item-img"
         />
         <ItemName>{item.name}</ItemName>
-        <ItemPrice>{commarNumber(item.item_pr)} 원</ItemPrice>
+        <ItemPrice>
+          {item.item_pr < item.mkt_pr &&
+            <>
+              <div style={{ color: 'red', marginRight: '0.25rem' }}>
+                {commarNumber((item.mkt_pr - item.item_pr) * 100 / item.mkt_pr) + '%'}
+              </div>
+            </>}
+          <div>{commarNumber(item.item_pr)} 원</div>
+          {item.item_pr < item.mkt_pr &&
+            <>
+              <div style={{ textDecoration: 'line-through', marginLeft: '0.25rem', fontSize: themeObj.font_size.size7, color: themeObj.grey[500] }}>
+                {item.item_pr < item.mkt_pr ? commarNumber(item.mkt_pr) : ''}
+              </div>
+            </>}
+
+        </ItemPrice>
       </ItemWrapper>
     </>
   )

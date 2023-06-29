@@ -199,7 +199,6 @@ const Header = () => {
   const [categories, setCategories] = useState([])
   const [loading, setLoading] = useState(true);
   useEffect(() => {
-    console.log(user)
   }, [user])
   useEffect(() => {
     setLoading(true);

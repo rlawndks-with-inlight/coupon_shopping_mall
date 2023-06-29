@@ -12,7 +12,6 @@ NavSectionVertical.propTypes = {
 };
 
 export default function NavSectionVertical({ data, sx, ...other }) {
-  console.log(data)
   return (
     <Stack sx={sx} {...other}>
       {data.map((group) => {

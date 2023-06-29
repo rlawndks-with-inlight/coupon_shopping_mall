@@ -191,7 +191,6 @@ export function SettingsProvider({ children }) {
   }, [])
   // categoryList
   const onChangeCategoryList = useCallback((data) => {
-      console.log(data);
       setThemeCategoryList(data);
       setCookie('themeCategoryList', JSON.stringify(data));
   }, [])

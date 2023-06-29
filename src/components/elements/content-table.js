@@ -65,7 +65,7 @@ const ContentTable = (props) => {
           <div style={{ width: '100%', display: 'flex', flexDirection: 'column' }}>
             <div className='subtype-container' style={{ overflowX: 'auto', display: 'flex', width: '100%', margin: '0 auto', flexDirection: 'column' }} >
               <Table>
-                <Tr style={{ fontWeight: `bold`, background: themeObj.grey[200], borderBottom: 'none' }}>
+                <Tr style={{ fontWeight: `bold`, background: `${themeMode == 'dark' ? themeObj.grey[700] : themeObj.grey[200]}`, borderBottom: 'none' }}>
                   {columns && columns.map((item, idx) => (
                     <>
                       <Td style={{ width: item.width, borderBottom: 'none' }}>{item.name}</Td>

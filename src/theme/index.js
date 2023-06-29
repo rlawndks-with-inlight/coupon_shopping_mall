@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types';
-import { useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 // @mui
 import { CssBaseline } from '@mui/material';
 import {
@@ -24,11 +24,22 @@ ThemeProvider.propTypes = {
 };
 
 export default function ThemeProvider({ children }) {
-  const { themeMode, themeDirection } = useSettingsContext();
-
+  const { themeMode, themeDirection, themeDnsData } = useSettingsContext();
+  const [paletteObj, setPaletteObj] = useState(palette(themeMode))
+  useEffect(()=>{
+    if(themeDnsData?.theme_css?.main_color){
+      let palette_obj = {...paletteObj};
+      palette_obj['primary']['main'] = themeDnsData?.theme_css?.main_color;
+      palette_obj['primary']['dark'] = themeDnsData?.theme_css?.main_color;
+      palette_obj['primary']['darker'] = themeDnsData?.theme_css?.main_color;
+      palette_obj['primary']['light'] = themeDnsData?.theme_css?.main_color;
+      palette_obj['primary']['lighter'] = themeDnsData?.theme_css?.main_color;
+      setPaletteObj(palette_obj);
+    }
+  },[themeDnsData])
   const themeOptions = useMemo(
     () => ({
-      palette: palette(themeMode),
+      palette: paletteObj,
       typography,
       shape: { borderRadius: 8 },
       direction: themeDirection,
@@ -37,7 +48,6 @@ export default function ThemeProvider({ children }) {
     }),
     [themeDirection, themeMode]
   );
-
   const theme = createTheme(themeOptions);
 
   theme.components = componentsOverride(theme);

@@ -5,6 +5,7 @@ import { Box, Link, Typography } from '@mui/material';
 import { useAuthContext } from '../auth/useAuthContext';
 // components
 import { CustomAvatar } from '../../../components/custom-avatar';
+import { useEffect } from 'react';
 
 // ----------------------------------------------------------------------
 
@@ -23,15 +24,17 @@ const StyledRoot = styled('div')(({ theme }) => ({
 
 export default function NavAccount() {
   const { user } = useAuthContext();
-
+  useEffect(()=>{
+    console.log(user)
+  },[user])
   return (
     <Link underline="none" color="inherit">
       <StyledRoot>
-        <CustomAvatar src={user?.photoURL} alt={user?.displayName} name={user?.displayName} />
+        <CustomAvatar src={user?.photoURL} alt={user?.name} name={user?.name} />
 
         <Box sx={{ ml: 2, minWidth: 0 }}>
           <Typography variant="subtitle2" noWrap>
-            {user?.displayName}
+            {user?.name}
           </Typography>
 
           <Typography variant="body2" noWrap sx={{ color: 'text.secondary' }}>

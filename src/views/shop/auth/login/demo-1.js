@@ -43,8 +43,10 @@ const Demo1 = (props) => {
     password: ''
   })
   useEffect(() => {
-    console.log(presetsColor)
-  }, [])
+    if(router.query?.scroll_to){
+      window.scrollTo(0, router.query?.scroll_to);
+    }
+  }, [router.query])
   return (
     <>
       <Wrappers>

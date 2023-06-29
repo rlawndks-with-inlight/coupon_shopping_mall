@@ -178,7 +178,7 @@ const noneAuthList = [
   },
   {
     name: '비회원 주문조회',
-    link_key: 'none-user-history'
+    link_key: 'login?scroll_to=100000'
   },
 ]
 const Header = () => {

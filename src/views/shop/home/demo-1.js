@@ -4,7 +4,6 @@ import Slider from 'react-slick'
 import { test_items } from 'src/data/test-data'
 import styled from 'styled-components'
 import dynamic from 'next/dynamic'
-import 'react-quill/dist/quill.snow.css';
 import { Row, themeObj } from 'src/components/elements/styled-components'
 import { Item } from 'src/components/elements/shop/common'
 import { Skeleton, Stack } from '@mui/material'

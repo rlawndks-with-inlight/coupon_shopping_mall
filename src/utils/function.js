@@ -314,3 +314,20 @@ export default function useCountNum(end, start = 0, duration = 2000) {
 export const isPc = () => {
   return window.innerWidth > 1000;
 }
+export function getAllIdsWithParents(categories) {
+  const result = [];
+  function traverseCategories(category, parentIds = []) {
+    const idsWithParents = [...parentIds, category.id];
+    result.push(idsWithParents);
+
+    if (category.children && category.children.length > 0) {
+      for (const child of category.children) {
+        traverseCategories(child, idsWithParents);
+      }
+    }
+  }
+  for (const category of categories) {
+    traverseCategories(category);
+  }
+  return result;
+}

@@ -9,6 +9,8 @@ import { useSettingsContext } from "src/components/settings"
 import { test_categories } from "src/data/test-data"
 import { useRouter } from "next/router"
 import { TreeItem, TreeView } from "@mui/lab"
+import { getAllIdsWithParents } from "src/utils/function"
+import DialogSearch from "src/components/dialog/DialogSearch"
 
 const Wrappers = styled.header`
 width: 100%;
@@ -163,7 +165,6 @@ const Header = () => {
   const [categories, setCategories] = useState([])
   const [loading, setLoading] = useState(true);
   useEffect(() => {
-    console.log(themeCategoryList)
     setLoading(true);
     let data = [...test_categories];
     onChangeCategoryList(data);
@@ -178,23 +179,7 @@ const Header = () => {
     setHoverItems(hover_items);
     setLoading(false);
   }, [])
-  function getAllIdsWithParents(categories) {
-    const result = [];
-    function traverseCategories(category, parentIds = []) {
-      const idsWithParents = [...parentIds, category.id];
-      result.push(idsWithParents);
 
-      if (category.children && category.children.length > 0) {
-        for (const child of category.children) {
-          traverseCategories(child, idsWithParents);
-        }
-      }
-    }
-    for (const category of categories) {
-      traverseCategories(category);
-    }
-    return result;
-  }
   const onHoverCategory = (category_name) => {
     let hover_items = hoverItems;
     for (let key in hover_items) {
@@ -257,8 +242,23 @@ const Header = () => {
       </>
     )
   }
+  const [dialogOpenObj, setDialogOpenObj] = useState({
+    search: false
+  })
+  const handleDialogClose = () => {
+    let obj = { ...dialogOpenObj };
+    for (let key in obj) {
+      obj[key] = false
+    }
+    setDialogOpenObj(obj);
+  }
   return (
     <>
+      <DialogSearch
+        open={dialogOpenObj.search}
+        handleClose={handleDialogClose}
+        root_path={'shop'}
+      />
       {loading ?
         <>
         </>
@@ -375,13 +375,24 @@ const Header = () => {
                 </IconButton>
                 <IconButton
                   sx={iconButtonStyle}
-                  onClick={() => onSearch()}
+                  onClick={() => {
+                    setDialogOpenObj({
+                      ...dialogOpenObj,
+                      ['search']: true
+                    })
+                  }}
                 >
                   <Icon icon={'tabler:search'} fontSize={'1.5rem'} color={themeMode == 'dark' ? '#fff' : '#000'} />
                 </IconButton>
                 <IconButton
                   sx={iconButtonStyle}
-                  onClick={() => onSearch()}
+                  onClick={() => {
+                    if (themeAuth?.id) {
+                      router.push(`/shop/auth/cart`)
+                    } else {
+                      router.push(`/shop/auth/login`)
+                    }
+                  }}
                 >
                   <Icon icon={'basil:shopping-bag-outline'} fontSize={'1.8rem'} color={themeMode == 'dark' ? '#fff' : '#000'} />
                 </IconButton>

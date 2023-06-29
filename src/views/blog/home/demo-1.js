@@ -87,7 +87,7 @@ const contents = (column, func) => {
                 <BannerMessage2>테스트 문구 2<br />테스트 문구 2</BannerMessage2>
                 <BannerLink>
                     <BannerImage>
-                        <img src={column?.src} />
+                        <img src={column?.src} href='./login/demo-1.js'/>
                     </BannerImage>
                 </BannerLink>
             </Banner>

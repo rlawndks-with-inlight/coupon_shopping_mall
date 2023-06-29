@@ -155,7 +155,7 @@ const Header = () => {
   const { themeMode, onToggleMode, themeAuth, themeCategoryList, onChangeCategoryList } = useSettingsContext();
   const [keyword, setKeyword] = useState("");
   const onSearch = () => {
-
+    router.push(`/shop/search?keyword=${keyword}`)
   }
   const [isAuthMenuOver, setIsAuthMenuOver] = useState(false)
   const [hoverItems, setHoverItems] = useState({
@@ -506,6 +506,9 @@ const Header = () => {
                   <>
                     <CategoryMenu borderColor={themeMode == 'dark' ? '#fff' : '#000'} onMouseOver={() => {
                       onHoverCategory(`hover_${item1?.id}`)
+                    }}
+                    onClick={() => {
+                      router.push(`/shop/items/${item1?.id}?depth=0`)
                     }}
                     >
                       <div>{item1.category_name}</div>

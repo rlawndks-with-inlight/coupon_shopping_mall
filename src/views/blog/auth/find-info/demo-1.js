@@ -57,23 +57,27 @@ const Demo1 = (props) => {
             sx={{ width: '100%' }}
           >
             {Object.keys(returnFindType).map((key) => (
-              <Tab key={returnFindType[key].title} value={key} label={returnFindType[key].title} style={{width:'50%',margin:'0'}} />
+              <Tab key={returnFindType[key].title} value={key} label={returnFindType[key].title} style={{ width: '50%', margin: '0' }} />
             ))}
           </Tabs>
         </Title>
-        <TextField
-          label='전화번호'
-          onChange={(e) => {
-            setPhoneNum(e.target.value)
-          }}
-          value={phoneNum}
-          style={inputStyle}
-          autoComplete='new-password'
-          onKeyPress={(e) => {
-            if (e.key == 'Enter') {
-            }
-          }}
-        />
+        {findType == 0 &&
+          <>
+            <TextField
+              label='전화번호'
+              onChange={(e) => {
+                setPhoneNum(e.target.value)
+              }}
+              value={phoneNum}
+              style={inputStyle}
+              autoComplete='new-password'
+              onKeyPress={(e) => {
+                if (e.key == 'Enter') {
+                }
+              }}
+            />
+          </>}
+
 
       </Wrappers>
     </>

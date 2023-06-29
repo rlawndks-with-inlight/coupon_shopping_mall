@@ -317,7 +317,7 @@ export const isPc = () => {
 export function getAllIdsWithParents(categories) {
   const result = [];
   function traverseCategories(category, parentIds = []) {
-    const idsWithParents = [...parentIds, category.id];
+    const idsWithParents = [...parentIds, category];
     result.push(idsWithParents);
 
     if (category.children && category.children.length > 0) {

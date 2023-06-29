@@ -110,6 +110,7 @@ const Demo1 = (props) => {
   const theme = useTheme();
   const [activeStep, setActiveStep] = useState(0);
   const [checkboxObj, setCheckboxObj] = useState({
+    check_0: false,
     check_1: false,
     check_2: false,
     check_3: false,
@@ -132,14 +133,13 @@ const Demo1 = (props) => {
 
     }
     setActiveStep(activeStep - 1);
-    window.scrollTo(0,0)
+    window.scrollTo(0, 0)
   }
   const onClickNextButton = () => {
     if (activeStep == 0) {
       if (
         !checkboxObj.check_1 ||
-        !checkboxObj.check_2 ||
-        !checkboxObj.check_3
+        !checkboxObj.check_2
       ) {
         toast.error("필수 항목에 체크해 주세요.");
         return;
@@ -162,7 +162,7 @@ const Demo1 = (props) => {
       router.push('/shop');
     }
     setActiveStep(activeStep + 1);
-    window.scrollTo(0,0)
+    window.scrollTo(0, 0)
   }
   return (
     <>
@@ -178,7 +178,7 @@ const Demo1 = (props) => {
         <div style={{ marginTop: '2rem' }} />
         {activeStep == 0 &&
           <>
-            <FormControlLabel label={<Typography style={{ fontWeight: 'bold', fontSize: themeObj.font_size.size5 }}> 이용약관 및 개인정보수집 및 이용, 쇼핑정보 수신(선택)에 모두 동의합니다.</Typography>} control={<Checkbox />} onChange={(e) => {
+            <FormControlLabel label={<Typography style={{ fontWeight: 'bold', fontSize: themeObj.font_size.size5 }}> 이용약관 및 개인정보수집 및 이용, 쇼핑정보 수신(선택)에 모두 동의합니다.</Typography>} control={<Checkbox checked={checkboxObj.check_0} />} onChange={(e) => {
               let check_obj = {}
               if (e.target.checked) {
                 for (let key in checkboxObj) {
@@ -241,7 +241,6 @@ const Demo1 = (props) => {
               fontSize: themeObj.font_size.size7
             }}>
               할인쿠폰 및 혜택, 이벤트, 신상품 소식 등 쇼핑몰에서 제공하는 유익한 쇼핑정보를 SMS나 이메일로 받아보실 수 있습니다. 단, 주문/거래 정보 및 주요 정책과 관련된 내용은 수신동의 여부와 관계없이 발송됩니다.
-
               선택 약관에 동의하지 않으셔도 회원가입은 가능하며, 회원가입 후 회원정보수정 페이지에서 언제든지 수신여부를 변경하실 수 있습니다.
             </div>
           </>}

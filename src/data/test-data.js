@@ -345,3 +345,40 @@ export const test_items = [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,].map((item, 
   return test_item;
 })
 
+export const test_articles = [
+  {
+    id: 1,
+    title: '몰 오픈을 축하합니다.',
+    edit_user_name: '홍길동',
+    date: '2023-06-29 01:01:01',
+    views: 1200,
+  },
+  {
+    id: 2,
+    title: '모바일 결제 서비스 OPEN',
+    edit_user_name: '관리자',
+    date: '2023-06-29 01:01:01',
+    views: 121,
+  },
+  {
+    id: 3,
+    title: '카카오톡 친구 추가하고 가장 먼저 이벤트 소식을 받아보세요',
+    edit_user_name: '홍길동',
+    date: '2023-06-29 01:01:01',
+    views: 12989,
+  },
+  {
+    id: 4,
+    title: '추석 연휴 배송 안내',
+    edit_user_name: '홍길동',
+    date: '2023-06-29 01:01:01',
+    views: 1223,
+  },
+  {
+    id: 5,
+    title: '개인정보처리방침 변경 안내',
+    edit_user_name: '관리자',
+    date: '2023-06-29 01:01:01',
+    views: 1320,
+  },
+]

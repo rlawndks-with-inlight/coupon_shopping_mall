@@ -34,12 +34,34 @@ export const demoInfoByNum = {//데모 번호에 따라 블로그인지 일반�
     category: 'blog'
   }
 }
+export const columnObjFormat = (name, width, type, column) => {
+  return {
+      name: name,
+      width: width,
+      type: type,
+      column: column,
+  }
+}
 export const returnArticleCategory = {
   notice: {
-    title: '공지사항'
+    title: '공지사항',
+    columns: [
+      columnObjFormat('번호', '', 'number', 'id'),
+      columnObjFormat('제목', '', 'title', 'title'),
+      columnObjFormat('작성자', '', 'text', 'edit_user_name'),
+      columnObjFormat('작성일', '', 'text', 'date'),
+      columnObjFormat('조회', '', 'number', 'views'),
+  ]
   },
   faq: {
-    title: '자주 묻는 질문'
+    title: '자주 묻는 질문',
+    columns:[
+      columnObjFormat('번호', '', 'number', 'id'),
+      columnObjFormat('제목', '', 'title', 'title'),
+      columnObjFormat('작성자', '', 'text', 'edit_user_name'),
+      columnObjFormat('작성일', '', 'text', 'date'),
+      columnObjFormat('조회', '', 'number', 'views'),
+    ]
   }
 }
 export const react_quill_data = {

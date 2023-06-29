@@ -59,7 +59,6 @@ position:relative;
 }
 &:hover:after {
   transform: scaleX(1.5);
-
 }
 @media (max-width:1000px) {
   padding:0.5rem 1.5rem 0 1.5rem;
@@ -173,7 +172,7 @@ const Header = () => {
     let hover_items = {};
     for (var i = 0; i < hover_list.length; i++) {
       hover_list[i] = hover_list[i].join('_');
-      hover_items[`hover_${hover_list[i]}`] = false;
+      hover_items[`hover_${hover_list[i]?.id}`] = false;
     }
     hover_items['service'] = false;
     setHoverItems(hover_items);
@@ -459,8 +458,12 @@ const Header = () => {
                     </div>
                   </>
                 ))}
-                <CategoryMenu borderColor={themeMode == 'dark' ? '#fff' : '#000'} className={`menu-service`} >
-                  <div>고객센터</div>
+                <div style={{ position: 'relative' }} className={`menu-service`}>
+                  <CategoryMenu borderColor={themeMode == 'dark' ? '#fff' : '#000'} onClick={() => {
+                    router.push(`/shop/service/notice/`)
+                  }}>
+                    <div>고객센터</div>
+                  </CategoryMenu>
                   <DropDownMenuContainer parentId={'service'} style={{
                     border: `1px solid ${theme.palette.grey[300]}`,
                     width: `154px`,
@@ -471,7 +474,7 @@ const Header = () => {
                     <div style={{
                       display: 'flex',
                       flexDirection: 'column',
-                      width: '144px'
+                      width: '154px'
                     }}>
                       {[
                         {
@@ -494,7 +497,7 @@ const Header = () => {
                       ))}
                     </div>
                   </DropDownMenuContainer>
-                </CategoryMenu>
+                </div>
               </NoneShowMobile>
               <ShowMobile style={{
                 whiteSpace: 'nowrap',
@@ -507,9 +510,9 @@ const Header = () => {
                     <CategoryMenu borderColor={themeMode == 'dark' ? '#fff' : '#000'} onMouseOver={() => {
                       onHoverCategory(`hover_${item1?.id}`)
                     }}
-                    onClick={() => {
-                      router.push(`/shop/items/${item1?.id}?depth=0`)
-                    }}
+                      onClick={() => {
+                        router.push(`/shop/items/${item1?.id}?depth=0`)
+                      }}
                     >
                       <div>{item1.category_name}</div>
                     </CategoryMenu>

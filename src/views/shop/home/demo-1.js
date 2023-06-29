@@ -175,7 +175,7 @@ const Demo1 = (props) => {
     },
     {
       type: 'editor',
-      content: `<h2><span class="ql-size-huge">What is a Good Interior?</span></h2><h2><span class="ql-size-huge">The Daily Guide to Architecture</span></h2><p><img style="width: 100%;" src="/images/test/3.jpg"></p><h2><span class="ql-size-huge">COMPANY INTRODUCTION</span></h2><p><span class="ql-size-large">회사소개, 브랜드소개, 포트폴리오등 연결 영역입니다.</span></p>`,
+      content: `<h2><span class="ql-size-huge">What is a Good Interior?</span></h2><h2><span class="ql-size-huge">The Daily Guide to Architecture</span></h2><p><img style="width: 100%;" src="/images/test/3.jpg"></p><h2><span class="ql-size-huge">COMPANY INTRODUCTION</span></h2><p><span class="ql-size-large">원하는 디자인으로 쇼핑몰을 개발해 보세요 !</span></p>`,
     },
     {
       type: 'items',

@@ -5,7 +5,7 @@ import { useTheme } from "@emotion/react";
 import { useRouter } from "next/router";
 import { LazyLoadImage } from "react-lazy-load-image-component";
 import { commarNumber, getAllIdsWithParents } from 'src/utils/function';
-import { Col, Row, Title, themeObj } from 'src/components/elements/styled-components';
+import { Col, Row, RowMobileColumn, Title, themeObj } from 'src/components/elements/styled-components';
 import { useSettingsContext } from 'src/components/settings';
 import { Item, Items } from 'src/components/elements/shop/common';
 import _ from 'lodash';
@@ -53,7 +53,9 @@ const Demo1 = (props) => {
         {curCategories.length > 1 ?
           <>
             <Breadcrumbs separator={<Icon icon='material-symbols:navigate-next' />} style={{
-              padding: '0.5rem 0'
+              padding: '0.5rem 0',
+              width:'100%',
+              overflowX:'auto'
             }}>
               {curCategories.map((item, idx) => (
                 <>
@@ -77,12 +79,13 @@ const Demo1 = (props) => {
         <Title style={{ marginTop: '38px' }}>
           {curCategories[curCategories.length - 1]?.category_name}
         </Title>
-        <Row style={{ margin: '0 auto' }}>
+        <Row style={{ margin: '0 auto', overflowX: 'auto', width: '100%', whiteSpace: 'nowrap' }} className='none-scroll'>
           {curCategories[curCategories.length - 1]?.children && curCategories[curCategories.length - 1]?.children.map((item, idx) => (
             <>
               <Button variant="outlined" style={{
                 height: '36px',
-                marginRight: '0.25rem'
+                marginRight: `${idx == curCategories[curCategories.length - 1]?.children.length - 1 ? 'auto' : '0.25rem'}`,
+                marginLeft: `${idx == 0 ? 'auto' : '0'}`
               }}
                 onClick={() => {
                   router.push(`/shop/items/${item?.id}?depth=${parseInt(router.query?.depth) + 1}`)

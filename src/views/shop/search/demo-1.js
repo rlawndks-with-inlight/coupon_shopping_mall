@@ -28,7 +28,7 @@ const Demo1 = (props) => {
   const [keyword, setKeyword] = useState("")
   useEffect(() => {
     if (router.query?.keyword) {
-
+      setKeyword(router.query?.keyword)
     }
   }, [router.query])
 
@@ -47,6 +47,7 @@ const Demo1 = (props) => {
           value={keyword}
           style={{ width: '50%', margin: '0 auto 1rem auto' }}
           autoComplete='new-password'
+
           onKeyPress={(e) => {
             if (e.key == 'Enter') {
               router.push(`/shop/search?keyword=${keyword}`)

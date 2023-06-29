@@ -234,6 +234,9 @@ const Demo1 = (props) => {
               {returnHomeContentByColumn(column)}
             </>
           ))}
+          <div style={{
+            marginTop:'5rem'
+          }} />
         </>}
     </>
   )

@@ -37,7 +37,7 @@ export default function NavItem({ item, depth, open, active, isExternalLink, ...
       )}
 
       <ListItemText
-        primary={`title`}
+        primary={title}
         secondary={
           caption && (
             <Tooltip title={`caption`} placement="top-start">

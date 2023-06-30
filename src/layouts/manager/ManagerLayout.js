@@ -5,7 +5,6 @@ import { Box } from '@mui/material';
 // hooks
 import useResponsive from '../../hooks/useResponsive';
 // auth
-import AuthGuard from './auth/AuthGuard';
 // components
 import { useSettingsContext } from '../../components/settings';
 //
@@ -13,7 +12,7 @@ import Main from './Main';
 import Header from './header';
 import NavMini from './nav/NavMini';
 import NavVertical from './nav/NavVertical';
-import { AuthProvider } from './auth/JwtContext';
+import NavHorizontal from './nav/NavHorizontal';
 
 // ----------------------------------------------------------------------
 
@@ -28,6 +27,7 @@ export default function ManagerLayout({ children }) {
 
   const [open, setOpen] = useState(false);
 
+  const isNavHorizontal = themeLayout === 'horizontal';
 
   const isNavMini = themeLayout === 'mini';
 
@@ -42,6 +42,17 @@ export default function ManagerLayout({ children }) {
   const renderNavVertical = <NavVertical openNav={open} onCloseNav={handleClose} />;
 
   const renderContent = () => {
+    if (isNavHorizontal) {
+      return (
+        <>
+          <Header onOpenNav={handleOpen} />
+
+          {isDesktop ? <NavHorizontal /> : renderNavVertical}
+
+          <Main>{children}</Main>
+        </>
+      );
+    }
 
     if (isNavMini) {
       return (
@@ -54,6 +65,7 @@ export default function ManagerLayout({ children }) {
             }}
           >
             {isDesktop ? <NavMini /> : renderNavVertical}
+
             <Main>{children}</Main>
           </Box>
         </>
@@ -63,7 +75,6 @@ export default function ManagerLayout({ children }) {
     return (
       <>
         <Header onOpenNav={handleOpen} />
-
         <Box
           sx={{
             display: { lg: 'flex' },
@@ -78,9 +89,7 @@ export default function ManagerLayout({ children }) {
     );
   };
 
-  return (
-    <>
-        {renderContent()}
-    </>
-  )
+  return <>
+   {renderContent()}
+  </>
 }

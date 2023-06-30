@@ -75,7 +75,6 @@ export function AuthProvider({ children }) {
 
   const initialize = useCallback(async () => {
     try {
-      const accessToken = storageAvailable ? localStorage.getItem('accessToken') : '';
       const response = await axiosIns().post('/api/v1/auth/ok', {}, {
         headers: {
           "Authorization": `Bearer ${getCookie('o')}`,
@@ -83,29 +82,14 @@ export function AuthProvider({ children }) {
           "Content-Type": "application/json",
         }
       });
-
-      if (accessToken && isValidToken(accessToken)) {
-
-        const response = await axios.get('/api/v1/auth/ok');
-
-        const { user } = response.data;
-        dispatch({
-          type: 'INITIAL',
-          payload: {
-            isAuthenticated: true,
-            user,
-          },
-        });
-      } else {
-        deleteCookie('o');
-        dispatch({
-          type: 'INITIAL',
-          payload: {
-            isAuthenticated: false,
-            user: null,
-          },
-        });
-      }
+      const user = response.data;
+      dispatch({
+        type: 'INITIAL',
+        payload: {
+          isAuthenticated: true,
+          user,
+        },
+      });
     } catch (error) {
       deleteCookie('o');
       dispatch({
@@ -124,7 +108,7 @@ export function AuthProvider({ children }) {
 
   // LOGIN
   const login = useCallback(async (user_name, user_pw) => {
-    try{
+    try {
       let dns_data = getCookie('themeDnsData')
       const response = await axiosIns().post('/api/v1/auth/sign-in', {
         brand_id: dns_data.id,
@@ -143,9 +127,11 @@ export function AuthProvider({ children }) {
           user: response?.data?.user,
         },
       });
-    }catch(error){
+      return response?.data?.user;
+    } catch (error) {
       console.log(error);
       toast.error(error?.response?.data?.message);
+      return false;
     }
   }, []);
 
@@ -160,7 +146,6 @@ export function AuthProvider({ children }) {
     const { accessToken, user } = response.data;
 
     localStorage.setItem('accessToken', accessToken);
-
     dispatch({
       type: 'REGISTER',
       payload: {
@@ -183,7 +168,9 @@ export function AuthProvider({ children }) {
         type: 'LOGOUT',
       });
     } catch (error) {
-      console.log(error)
+      dispatch({
+        type: 'LOGOUT',
+      });
     }
 
   }, []);

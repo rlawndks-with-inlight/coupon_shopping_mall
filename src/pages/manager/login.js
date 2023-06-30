@@ -18,9 +18,12 @@ import { LoadingButton } from '@mui/lab';
 // components
 import Iconify from '../../components/iconify';
 import $ from 'jquery';
+import { useRouter } from 'next/router';
 
 export default function Login() {
   const { login } = useAuthContext();
+
+  const router = useRouter();
 
   const [loading, setLoading] = useState(true);
   const [username, setUsername] = useState("");
@@ -54,18 +57,10 @@ export default function Login() {
   } = methods;
 
   const onSubmit = async () => {
-    console.log(username)
-    console.log(password)
-    try {
-      await login(username, password);
-    } catch (error) {
-      console.error(error);
-      reset();
-      setError('afterSubmit', {
-        ...error,
-        message: error.message || error,
-      });
-    }
+      let user = await login(username, password);
+      if(user){
+        router.push('/manager/one')
+      }
   };
 
   return (

@@ -6,6 +6,7 @@ import { useAuthContext } from '../auth/useAuthContext';
 // components
 import { CustomAvatar } from '../../../components/custom-avatar';
 import { useEffect } from 'react';
+import { getUserLevelByNumber } from 'src/utils/function';
 
 // ----------------------------------------------------------------------
 
@@ -34,11 +35,11 @@ export default function NavAccount() {
 
         <Box sx={{ ml: 2, minWidth: 0 }}>
           <Typography variant="subtitle2" noWrap>
-            {user?.name}
+            {user?.user_name}
           </Typography>
 
           <Typography variant="body2" noWrap sx={{ color: 'text.secondary' }}>
-            {user?.role}
+            {getUserLevelByNumber(user?.level)}
           </Typography>
         </Box>
       </StyledRoot>

@@ -16,11 +16,11 @@ export default function NavSectionVertical({ data, sx, ...other }) {
     <Stack sx={sx} {...other}>
       {data.map((group) => {
         const key = group.subheader || group.items[0].title
-
+        console.log(group)
         return (
           <List key={key} disablePadding sx={{ px: 2 }}>
             {group.subheader && (
-              <StyledSubheader disableSticky>{`group.subheader`}</StyledSubheader>
+              <StyledSubheader disableSticky>{group.subheader}</StyledSubheader>
             )}
 
             {group.items.map((list) => (

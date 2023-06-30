@@ -82,7 +82,7 @@ export default function AccountPopover() {
           }),
         }}
       >
-        <CustomAvatar src={user?.photoURL} alt={user?.user_name} name={user?.user_name} />
+        <CustomAvatar src={user?.profile_img} alt={user?.user_name} name={user?.user_name} />
       </IconButtonAnimate>
 
       <MenuPopover open={openPopover} onClose={handleClosePopover} sx={{ width: 200, p: 0 }}>

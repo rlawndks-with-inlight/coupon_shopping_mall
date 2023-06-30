@@ -34,6 +34,8 @@ export default function NavSectionVertical({ data, sx, ...other }) {
           </List>
         );
       })}
+      <div style={{ marginTop: '2rem' }} />
+
     </Stack>
   );
 }

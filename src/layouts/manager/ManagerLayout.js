@@ -13,6 +13,7 @@ import Header from './header';
 import NavMini from './nav/NavMini';
 import NavVertical from './nav/NavVertical';
 import NavHorizontal from './nav/NavHorizontal';
+import { useAuthContext } from './auth/useAuthContext';
 
 // ----------------------------------------------------------------------
 
@@ -21,8 +22,8 @@ ManagerLayout.propTypes = {
 };
 
 export default function ManagerLayout({ children }) {
-  const { themeLayout } = useSettingsContext();
-
+  const { themeLayout, themeMode } = useSettingsContext();
+  const { user } = useAuthContext();
   const isDesktop = useResponsive('up', 'lg');
 
   const [open, setOpen] = useState(false);
@@ -74,6 +75,7 @@ export default function ManagerLayout({ children }) {
 
     return (
       <>
+
         <Header onOpenNav={handleOpen} />
         <Box
           sx={{
@@ -90,6 +92,12 @@ export default function ManagerLayout({ children }) {
   };
 
   return <>
-   {renderContent()}
+    {!user ?
+      <>
+      </>
+      :
+      <>
+          {renderContent()}
+      </>}
   </>
 }

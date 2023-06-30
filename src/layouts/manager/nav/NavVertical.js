@@ -40,9 +40,8 @@ export default function NavVertical({ openNav, onCloseNav }) {
   const renderContent = (
     <Scrollbar
       sx={{
-        height: 1,
         '& .simplebar-content': {
-          height: 1,
+          height: '100vh',
           display: 'flex',
           flexDirection: 'column',
         },
@@ -61,11 +60,7 @@ export default function NavVertical({ openNav, onCloseNav }) {
 
         <NavAccount />
       </Stack>
-
       <NavSectionVertical data={navConfig} />
-
-      <Box sx={{ flexGrow: 1 }} />
-
     </Scrollbar>
   );
 

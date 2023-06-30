@@ -14,13 +14,28 @@ export const PATH_AUTH = {
 
 export const PATH_MANAGER = {
   root: ROOTS_MANAGER,
-  one: path(ROOTS_MANAGER, '/one'),
-  two: path(ROOTS_MANAGER, '/two'),
-  three: path(ROOTS_MANAGER, '/three'),
+  dashboard: path(ROOTS_MANAGER, '/dashboard'),
   user: {
     root: path(ROOTS_MANAGER, '/user'),
-    four: path(ROOTS_MANAGER, '/user/four'),
-    five: path(ROOTS_MANAGER, '/user/five'),
-    six: path(ROOTS_MANAGER, '/user/six'),
+    seller: path(ROOTS_MANAGER, '/user/seller'),
+    sales: path(ROOTS_MANAGER, '/user/sales'),
+  },
+  order: {
+    root: path(ROOTS_MANAGER, '/order'),
+  },
+  product: {
+    root: path(ROOTS_MANAGER, '/product'),
+  },
+  article: {
+    root: path(ROOTS_MANAGER, '/article'),
+  },
+  design: {
+    root: path(ROOTS_MANAGER, '/design'),
+  },
+  setting: {
+    root: path(ROOTS_MANAGER, '/setting'),
+  },
+  pay: {
+    root: path(ROOTS_MANAGER, '/pay'),
   },
 };

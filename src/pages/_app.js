@@ -31,14 +31,14 @@ const App = (props) => {
         <meta name="viewport" content="initial-scale=1, width=device-width" />
       </Head>
       <AuthProvider>
-      <ThemeColorPresets>
-        <SettingsProvider>
-          <ThemeProvider>
-          {getLayout(<Component {...pageProps} />)}
-          <Toaster position={'right-top'} toastOptions={{ className: 'react-hot-toast' }} />
-          </ThemeProvider>
-        </SettingsProvider>
-      </ThemeColorPresets>
+        <ThemeColorPresets>
+          <SettingsProvider>
+            <ThemeProvider>
+                {getLayout(<Component {...pageProps} />)}
+              <Toaster position={'right-top'} toastOptions={{ className: 'react-hot-toast' }} />
+            </ThemeProvider>
+          </SettingsProvider>
+        </ThemeColorPresets>
       </AuthProvider>
 
     </>

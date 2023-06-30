@@ -8,7 +8,6 @@ body {
   scrollbar-width: none;
   /* Firefox */
 }
-
 .none-scroll::-webkit-scrollbar {
   display: none;
   /* Chrome, Safari, Opera*/

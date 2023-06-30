@@ -23,7 +23,7 @@ const NavItem = forwardRef(({ item, depth, open, active, isExternalLink, ...othe
       {icon && <StyledIcon>{icon}</StyledIcon>}
 
       <ListItemText
-        primary={`title`}
+        primary={title}
         primaryTypographyProps={{
           noWrap: true,
           sx: {

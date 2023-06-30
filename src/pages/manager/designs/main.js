@@ -1,5 +1,6 @@
 import ManagerLayout from "src/layouts/manager/ManagerLayout";
 
+//메인화면
 const Main = () =>{
   return (
     <>

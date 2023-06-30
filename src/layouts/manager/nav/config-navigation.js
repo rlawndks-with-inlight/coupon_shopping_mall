@@ -38,22 +38,22 @@ const ICONS = {
 const navConfig = [
   {
     items: [
-      { title: '대시보드', path: PATH_MANAGER.dashboard, icon: ICONS.dashboard },
+      { title: '대시보드', path: PATH_MANAGER.dashboards, icon: ICONS.dashboard },
     ],
   },
   {
     items: [
       {
         title: '주문관리',
-        path: PATH_MANAGER.order.root,
+        path: PATH_MANAGER.orders.root,
         icon: ICONS.ecommerce,
         children: [
-          { title: '주문내역', path: PATH_MANAGER.order.root },
-          { title: '배송준비중관리', path: PATH_MANAGER.order.root },
-          { title: '배송대기관리', path: PATH_MANAGER.order.root },
-          { title: '배송중관리', path: PATH_MANAGER.order.root },
-          { title: '배송완료관리', path: PATH_MANAGER.order.root },
-          { title: '취소관리', path: PATH_MANAGER.order.root },
+          { title: '주문내역', path: PATH_MANAGER.orders.list },
+          { title: '배송준비중관리', path: PATH_MANAGER.orders.ready },
+          { title: '배송대기관리', path: PATH_MANAGER.orders.wait },
+          { title: '배송중관리', path: PATH_MANAGER.orders.delivery },
+          { title: '배송완료관리', path: PATH_MANAGER.orders.complete },
+          { title: '취소관리', path: PATH_MANAGER.orders.cancel },
         ],
       },
     ],
@@ -62,11 +62,11 @@ const navConfig = [
     items: [
       {
         title: '상품관리',
-        path: PATH_MANAGER.product.root,
+        path: PATH_MANAGER.products.root,
         icon: ICONS.cart,
         children: [
-          { title: '카테고리관리', path: PATH_MANAGER.product.root },
-          { title: '상품관리', path: PATH_MANAGER.product.root },
+          { title: '카테고리관리', path: PATH_MANAGER.products.categories },
+          { title: '상품관리', path: PATH_MANAGER.products.list },
         ],
       },
     ],
@@ -75,12 +75,12 @@ const navConfig = [
     items: [
       {
         title: '회원관리',
-        path: PATH_MANAGER.user.root,
+        path: PATH_MANAGER.users.root,
         icon: ICONS.user,
         children: [
-          { title: '회원관리', path: PATH_MANAGER.user.root },
-          { title: '셀러관리', path: PATH_MANAGER.user.seller },
-          { title: '매출관리', path: PATH_MANAGER.user.sales },
+          { title: '회원관리', path: PATH_MANAGER.users.list },
+          { title: '셀러관리', path: PATH_MANAGER.users.sellers },
+          { title: '매출관리', path: PATH_MANAGER.users.sales },
         ],
       },
     ],
@@ -89,13 +89,13 @@ const navConfig = [
     items: [
       {
         title: '게시판관리',
-        path: PATH_MANAGER.article.root,
+        path: PATH_MANAGER.articles.root,
         icon: ICONS.calendar,
         children: [
-          { title: '공지사항', path: PATH_MANAGER.article.root },
-          { title: '자주묻는질문', path: PATH_MANAGER.article.root },
-          { title: '1:1문의', path: PATH_MANAGER.article.root },
-          { title: '관리자켈린더', path: PATH_MANAGER.article.root },
+          { title: '공지사항', path: PATH_MANAGER.articles.notices },
+          { title: '자주묻는질문', path: PATH_MANAGER.articles.faqs },
+          { title: '1:1문의', path: PATH_MANAGER.articles.oneToOne },
+          { title: '관리자켈린더', path: PATH_MANAGER.articles.calendar },
         ],
       },
     ],
@@ -104,12 +104,12 @@ const navConfig = [
     items: [
       {
         title: '디자인관리',
-        path: PATH_MANAGER.design.root,
+        path: PATH_MANAGER.designs.root,
         icon: ICONS.label,
         children: [
-          { title: '메인페이지관리', path: PATH_MANAGER.design.root },
-          { title: '셀러페이지관리', path: PATH_MANAGER.design.root },
-          { title: '팝업관리', path: PATH_MANAGER.design.root },
+          { title: '메인페이지관리', path: PATH_MANAGER.designs.main },
+          { title: '셀러페이지관리', path: PATH_MANAGER.designs.sellerMain },
+          { title: '팝업관리', path: PATH_MANAGER.designs.popup },
         ],
       },
     ],
@@ -118,10 +118,10 @@ const navConfig = [
     items: [
       {
         title: '설정관리',
-        path: PATH_MANAGER.setting.root,
+        path: PATH_MANAGER.settings.root,
         icon: ICONS.setting,
         children: [
-          { title: '분양관리', path: PATH_MANAGER.setting.root },
+          { title: '분양관리', path: PATH_MANAGER.settings.parcelOut },
         ],
       },
     ],
@@ -130,10 +130,10 @@ const navConfig = [
     items: [
       {
         title: '결제관리',
-        path: PATH_MANAGER.pay.root,
+        path: PATH_MANAGER.pays.root,
         icon: ICONS.invoice,
         children: [
-          { title: '결제관리', path: PATH_MANAGER.pay.root },
+          { title: '결제관리', path: PATH_MANAGER.pays.list },
         ],
       },
     ],

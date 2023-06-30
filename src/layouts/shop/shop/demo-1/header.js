@@ -185,7 +185,7 @@ const Header = () => {
 
   const router = useRouter();
   const theme = useTheme();
-  const { themeMode, onToggleMode, themeAuth, themeCategoryList, onChangeCategoryList } = useSettingsContext();
+  const { themeMode, onToggleMode, onChangeCategoryList } = useSettingsContext();
   const { user } = useAuthContext();
   const [keyword, setKeyword] = useState("");
   const onSearch = () => {
@@ -342,7 +342,7 @@ const Header = () => {
                 <IconButton
                   sx={iconButtonStyle}
                   onClick={() => {
-                    if (themeAuth?.id) {
+                    if (user) {
                       router.push(`/shop/auth/my-page`)
                     } else {
                       router.push(`/shop/auth/login`)
@@ -354,7 +354,7 @@ const Header = () => {
                 <IconButton
                   sx={iconButtonStyle}
                   onClick={() => {
-                    if (themeAuth?.id) {
+                    if (user) {
                       router.push(`/shop/auth/wish`)
                     } else {
                       router.push(`/shop/auth/login`)
@@ -366,7 +366,7 @@ const Header = () => {
                 <IconButton
                   sx={iconButtonStyle}
                   onClick={() => {
-                    if (themeAuth?.id) {
+                    if (user) {
                       router.push(`/shop/auth/cart`)
                     } else {
                       router.push(`/shop/auth/login`)
@@ -454,7 +454,7 @@ const Header = () => {
                 <IconButton
                   sx={iconButtonStyle}
                   onClick={() => {
-                    if (themeAuth?.id) {
+                    if (user) {
                       router.push(`/shop/auth/cart`)
                     } else {
                       router.push(`/shop/auth/login`)

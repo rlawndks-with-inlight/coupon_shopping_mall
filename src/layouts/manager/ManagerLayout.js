@@ -22,7 +22,7 @@ ManagerLayout.propTypes = {
 };
 
 export default function ManagerLayout({ children }) {
-  const { themeLayout, themeMode } = useSettingsContext();
+  const { themeLayout, themeMode, themeDnsData } = useSettingsContext();
   const { user } = useAuthContext();
   const isDesktop = useResponsive('up', 'lg');
 
@@ -92,12 +92,12 @@ export default function ManagerLayout({ children }) {
   };
 
   return <>
-    {!user ?
+    {themeDnsData?.id > 0 && user ?
       <>
+        {renderContent()}
       </>
       :
       <>
-          {renderContent()}
       </>}
   </>
 }

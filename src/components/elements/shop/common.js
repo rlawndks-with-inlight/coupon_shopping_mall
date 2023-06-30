@@ -57,7 +57,7 @@ width:100%;
 `
 export const Item = (props) => {
 
-  const { item, router } = props;
+  const { item, router, style } = props;
 
   return (
     <>

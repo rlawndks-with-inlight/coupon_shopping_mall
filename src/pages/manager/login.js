@@ -59,7 +59,7 @@ export default function Login() {
   const onSubmit = async () => {
       let user = await login(username, password);
       if(user){
-        router.push('/manager/one')
+        router.push('/manager/users')
       }
   };
 

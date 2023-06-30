@@ -163,8 +163,8 @@ const authList = [
     link_key: 'history'
   },
   {
-    name: '최근본상품',
-    link_key: 'recent'
+    name: '마이페이지',
+    link_key: 'my-page'
   },
 ]
 const noneAuthList = [

@@ -47,6 +47,7 @@ export const PATH_MANAGER = {
     main: path(ROOTS_MANAGER, '/designs/main'),
     popup: path(ROOTS_MANAGER, '/designs/popup'),
     sellerMain: path(ROOTS_MANAGER, '/designs/seller-main'),
+    itemCard: path(ROOTS_MANAGER, '/designs/item-card'),
   },
   settings: {
     root: path(ROOTS_MANAGER, '/settings'),

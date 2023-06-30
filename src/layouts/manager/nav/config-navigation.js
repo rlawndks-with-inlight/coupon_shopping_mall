@@ -109,6 +109,7 @@ const navConfig = [
         children: [
           { title: '메인페이지관리', path: PATH_MANAGER.designs.main },
           { title: '셀러페이지관리', path: PATH_MANAGER.designs.sellerMain },
+          { title: '상품카드관리', path: PATH_MANAGER.designs.itemCard },
           { title: '팝업관리', path: PATH_MANAGER.designs.popup },
         ],
       },

@@ -11,8 +11,7 @@ export default function Index() {
     if(!user){
       router.push('/manager/login');
     }else{
-      router.push('/manager/one');
-
+      router.push('/manager/users');
     }
   });
 

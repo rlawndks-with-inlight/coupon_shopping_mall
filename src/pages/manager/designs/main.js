@@ -1,4 +1,4 @@
-import { Card, Container, Grid, MenuItem, Select, Stack, Typography } from "@mui/material";
+import { Button, Card, Container, Grid, MenuItem, Select, Stack, Typography } from "@mui/material";
 import { useState } from "react";
 import ManagerLayout from "src/layouts/manager/ManagerLayout";
 
@@ -21,11 +21,11 @@ const Main = () => {
                     콘텐츠가 없습니다.
                   </Typography>
                 </>}
-                {contentList.map((item, idx)=>(
-                  <>
+              {contentList.map((item, idx) => (
+                <>
 
-                  </>
-                ))}
+                </>
+              ))}
             </Stack>
           </Card>
         </Grid>
@@ -35,13 +35,41 @@ const Main = () => {
               <Typography variant="subtitle2" sx={{ color: 'text.secondary' }}>
                 추가할 섹션
               </Typography>
-              <Select sx={{ width: '100%' }} value={sectionType} onChange={(e)=>{
+              <Select sx={{ width: '100%' }} value={sectionType} onChange={(e) => {
                 setSectionType(e.target.value)
               }}>
                 <MenuItem value={0}>배너슬라이드</MenuItem>
                 <MenuItem value={1}>상품슬라이드</MenuItem>
                 <MenuItem value={2}>에디터</MenuItem>
               </Select>
+              {sectionType == 0 &&
+                <>
+
+                </>}
+              {sectionType == 1 &&
+                <>
+
+                </>}
+              {sectionType == 2 &&
+                <>
+
+                </>}
+              <Button variant="contained" style={{
+                height: '48px'
+              }}>
+                추가
+              </Button>
+            </Stack>
+          </Card>
+        </Grid>
+        <Grid item xs={12} md={12}>
+          <Card sx={{ p: 3 }}>
+            <Stack spacing={1}>
+              <Button variant="contained" style={{
+                height: '48px', width: '120px', marginLeft: 'auto'
+              }}>
+                저장
+              </Button>
             </Stack>
           </Card>
         </Grid>

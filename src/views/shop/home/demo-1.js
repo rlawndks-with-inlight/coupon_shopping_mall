@@ -116,7 +116,7 @@ const returnHomeContent = (column, data, func) => {
               </>}
           </>}
         <div style={{ marginTop: '1rem' }} />
-        <Slider {...slide_setting[column?.item_type]}>
+        <Slider {...slide_setting[column?.item_type]} className='margin-slide'>
           {column?.list && column?.list.map((item, idx) => (
             <>
               <Item item={item} router={router} />

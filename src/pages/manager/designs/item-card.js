@@ -1,5 +1,6 @@
 import { Card, CardHeader, Container, Grid, Input, MenuItem, Select, Slider, Stack, TextField, Typography } from "@mui/material";
 import { useEffect, useState } from "react";
+import { Item } from "src/components/elements/shop/common";
 import { themeObj } from "src/components/elements/styled-components";
 import ManagerLayout from "src/layouts/manager/ManagerLayout";
 import { commarNumber } from "src/utils/function";
@@ -38,17 +39,17 @@ flex-direction: column;
 export const itemThemeCssDefaultSetting = {
   image: {
     ratio: 1,
-    border_radius: 0,
+    border_radius: 8,
   },
   shadow: {
     color: '#000000',
     darkness: 0,
-    width: 0,
+    width: 16,
     x: 0,
     y: 0
   },
   container: {
-    is_vertical: false,
+    is_vertical: 0,
     padding: 0,
     border_color: '#000000',
     border_width: 0,
@@ -64,9 +65,7 @@ const ItemCard = () => {
     mkt_pr: 10000,
     item_pr: 8000
   })
-  useEffect(() => {
-    console.log(itemThemeCss)
-  }, [itemThemeCss])
+
   return (
     <>
       <Grid container spacing={3}>
@@ -106,74 +105,7 @@ const ItemCard = () => {
                 step={1}
                 max={50}
               />
-              <CardHeader title="컨테이너" sx={{ paddingLeft: '0' }} />
-              <Typography variant="subtitle2" sx={{ color: 'text.secondary' }}>
-                이미지 및 텍스트 배치
-              </Typography>
-              <Select value={itemThemeCss.container.is_vertical} onChange={(e) => {
-                setItemThemeCss({ ...itemThemeCss, ['container']: { ...itemThemeCss.container, ['is_vertical']: e.target.value } })
-              }}>
-                <MenuItem value={false}>수평형 (horizontality)</MenuItem>
-                <MenuItem value={true}>수직형 (verticality)</MenuItem>
-              </Select>
 
-
-              <Typography variant="subtitle2" sx={{ color: 'text.secondary' }}>
-                패딩
-              </Typography>
-              <Slider
-                value={itemThemeCss.container.padding}
-                onChange={(e) => {
-                  setItemThemeCss({ ...itemThemeCss, ['container']: { ...itemThemeCss.container, ['padding']: e.target.value } })
-                }}
-                valueLabelFormat={(value) => {
-                  return `컨텐츠 가로기준 ${value}%`
-                }}
-                valueLabelDisplay="auto"
-                min={0}
-                step={0.05}
-                max={20}
-              />
-              <Typography variant="subtitle2" sx={{ color: 'text.secondary' }}>
-                테두리색
-              </Typography>
-              <Input type="color"
-                value={itemThemeCss.container.border_color}
-                onChange={(e) => {
-                  setItemThemeCss({ ...itemThemeCss, ['container']: { ...itemThemeCss.container, ['border_color']: e.target.value } })
-                }} />
-              <Typography variant="subtitle2" sx={{ color: 'text.secondary' }}>
-                테두리두께
-              </Typography>
-              <Slider
-                value={itemThemeCss.container.border_width}
-                onChange={(e) => {
-                  setItemThemeCss({ ...itemThemeCss, ['container']: { ...itemThemeCss.container, ['border_width']: e.target.value } })
-                }}
-                valueLabelFormat={(value) => {
-                  return `${value}px`
-                }}
-                valueLabelDisplay="auto"
-                min={0}
-                step={1}
-                max={20}
-              />
-              <Typography variant="subtitle2" sx={{ color: 'text.secondary' }}>
-                테두리둥근정도
-              </Typography>
-              <Slider
-                value={itemThemeCss.container.border_radius}
-                onChange={(e) => {
-                  setItemThemeCss({ ...itemThemeCss, ['container']: { ...itemThemeCss.container, ['border_radius']: e.target.value } })
-                }}
-                valueLabelFormat={(value) => {
-                  return `${value}px`
-                }}
-                valueLabelDisplay="auto"
-                min={0}
-                step={1}
-                max={50}
-              />
               <CardHeader title="그림자" sx={{ paddingLeft: '0' }} />
               <Typography variant="subtitle2" sx={{ color: 'text.secondary' }}>
                 그림자색상
@@ -246,6 +178,74 @@ const ItemCard = () => {
                 step={1}
                 max={50}
               />
+              <CardHeader title="컨테이너" sx={{ paddingLeft: '0' }} />
+              <Typography variant="subtitle2" sx={{ color: 'text.secondary' }}>
+                이미지 및 텍스트 배치
+              </Typography>
+              <Select value={itemThemeCss.container.is_vertical} onChange={(e) => {
+                setItemThemeCss({ ...itemThemeCss, ['container']: { ...itemThemeCss.container, ['is_vertical']: e.target.value } })
+              }}>
+                <MenuItem value={0}>수평형 (horizontality)</MenuItem>
+                <MenuItem value={1}>수직형 (verticality)</MenuItem>
+              </Select>
+
+
+              <Typography variant="subtitle2" sx={{ color: 'text.secondary' }}>
+                패딩
+              </Typography>
+              <Slider
+                value={itemThemeCss.container.padding}
+                onChange={(e) => {
+                  setItemThemeCss({ ...itemThemeCss, ['container']: { ...itemThemeCss.container, ['padding']: e.target.value } })
+                }}
+                valueLabelFormat={(value) => {
+                  return `컨텐츠 가로기준 ${value}%`
+                }}
+                valueLabelDisplay="auto"
+                min={0}
+                step={0.05}
+                max={20}
+              />
+              <Typography variant="subtitle2" sx={{ color: 'text.secondary' }}>
+                테두리색
+              </Typography>
+              <Input type="color"
+                value={itemThemeCss.container.border_color}
+                onChange={(e) => {
+                  setItemThemeCss({ ...itemThemeCss, ['container']: { ...itemThemeCss.container, ['border_color']: e.target.value } })
+                }} />
+              <Typography variant="subtitle2" sx={{ color: 'text.secondary' }}>
+                테두리두께
+              </Typography>
+              <Slider
+                value={itemThemeCss.container.border_width}
+                onChange={(e) => {
+                  setItemThemeCss({ ...itemThemeCss, ['container']: { ...itemThemeCss.container, ['border_width']: e.target.value } })
+                }}
+                valueLabelFormat={(value) => {
+                  return `${value}px`
+                }}
+                valueLabelDisplay="auto"
+                min={0}
+                step={1}
+                max={20}
+              />
+              <Typography variant="subtitle2" sx={{ color: 'text.secondary' }}>
+                테두리둥근정도
+              </Typography>
+              <Slider
+                value={itemThemeCss.container.border_radius}
+                onChange={(e) => {
+                  setItemThemeCss({ ...itemThemeCss, ['container']: { ...itemThemeCss.container, ['border_radius']: e.target.value } })
+                }}
+                valueLabelFormat={(value) => {
+                  return `${value}px`
+                }}
+                valueLabelDisplay="auto"
+                min={0}
+                step={1}
+                max={50}
+              />
               <CardHeader title="테스트 상품 정보 입력" sx={{ paddingLeft: '0' }} />
               <Typography variant="subtitle2" sx={{ color: 'text.secondary' }}>
                 테스트 상품명
@@ -277,42 +277,15 @@ const ItemCard = () => {
             <Typography variant="subtitle2" sx={{ color: 'text.secondary' }}>
               상품예시
             </Typography>
-            <ItemContainer style={{
-              padding: `${itemThemeCss.container.padding}%`,
-              columnGap: `0.5rem`,
-              rowGap: `0.5rem`,
-              flexDirection: `${itemThemeCss.container.is_vertical ? 'row' : 'column'}`,
-              border: `${itemThemeCss.container.border_width}px solid ${itemThemeCss.container.border_color}`,
-              borderRadius: `${itemThemeCss.container.border_radius}px`,
-              boxShadow: `${itemThemeCss.shadow.x}px ${itemThemeCss.shadow.y * (-1)}px ${itemThemeCss.shadow.width}px ${itemThemeCss.shadow.color}${itemThemeCss.shadow.darkness > 9 ? '' : '0'}${itemThemeCss.shadow.darkness}`
-            }}>
-              <ItemImg src={'/images/test/testitem9.jpg'} style={{
-                width: `${itemThemeCss.container.is_vertical ? '50%' : '100%'}`,
-                height: `${itemThemeCss.container.is_vertical ? `50%` : `100%`}`,
-                borderRadius: `${itemThemeCss.image.border_radius}px`,
-              }} />
-              <ItemTextContainer>
-                <ItemName>{testText.name}</ItemName>
-                <ItemSubName>{testText.sub_name}</ItemSubName>
-                <ItemPrice style={{
-                  marginTop: 'auto'
-                }}>
-                  {testText.item_pr < testText.mkt_pr &&
-                    <>
-                      <div style={{ color: 'red', marginRight: '0.25rem' }}>
-                        {commarNumber((testText.mkt_pr - testText.item_pr) * 100 / testText.mkt_pr) + '%'}
-                      </div>
-                    </>}
-                  <div>{commarNumber(testText.item_pr)} 원</div>
-                  {testText.item_pr < testText.mkt_pr &&
-                    <>
-                      <div style={{ textDecoration: 'line-through', marginLeft: '0.25rem', fontSize: themeObj.font_size.size7, color: themeObj.grey[500] }}>
-                        {testText.item_pr < testText.mkt_pr ? commarNumber(testText.mkt_pr) : ''}
-                      </div>
-                    </>}
-                </ItemPrice>
-              </ItemTextContainer>
-            </ItemContainer>
+            <Item item={{
+              product_img: '/images/test/testitem9.jpg',
+              name: testText.name,
+              sub_name: testText.sub_name,
+              item_pr: testText.item_pr,
+              mkt_pr: testText.mkt_pr,
+            }}
+              theme_css={itemThemeCss}
+            />
           </Stack>
         </Grid>
         <Grid item xs={12} md={0.5} />

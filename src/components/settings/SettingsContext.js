@@ -99,16 +99,20 @@ const theme = useTheme();
     }
   }, []);
   const getDnsData = async () => {
-    const url = `${process.env.BACK_URL}/api/v1/auth/domain?dns=${window.location.host.split(':')[0]}`;
-    const res = await fetch(url);
-    let dns_data = await res.json();
-    if(typeof dns_data?.theme_css == 'string' || !dns_data?.theme_css){
-      dns_data['theme_css'] = JSON.parse(dns_data?.theme_css??"{}");
+    try{
+      const url = `${process.env.BACK_URL}/api/v1/auth/domain?dns=${window.location.host.split(':')[0]}`;
+      const res = await fetch(url);
+      let dns_data = await res.json();
+      if(typeof dns_data?.theme_css == 'string' || !dns_data?.theme_css){
+        dns_data['theme_css'] = JSON.parse(dns_data?.theme_css??"{}");
+      }
+      if(typeof dns_data?.options == 'string' || !dns_data?.options){
+        dns_data['options'] = JSON.parse(dns_data?.options??"{}");
+      }
+      onChangeDnsData(dns_data);
+    }catch(err){
+      console.log(err)
     }
-    if(typeof dns_data?.options == 'string' || !dns_data?.options){
-      dns_data['options'] = JSON.parse(dns_data?.options??"{}");
-    }
-    onChangeDnsData(dns_data);
   }
   // Mode
   const onToggleMode = useCallback(() => {

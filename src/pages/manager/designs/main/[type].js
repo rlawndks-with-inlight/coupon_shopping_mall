@@ -126,7 +126,7 @@ const Main = () => {
   return (
     <>
       <CustomBreadcrumbs
-        heading="Profile"
+        heading={returnKoNameBySectionType[router.query?.type] ?? ""}
         links={[
           { name: '디자인관리', href: PATH_MANAGER.designs.root },
           { name: '메인페이지관리', href: PATH_MANAGER.designs.main },

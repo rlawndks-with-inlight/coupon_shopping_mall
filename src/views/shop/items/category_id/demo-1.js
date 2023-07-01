@@ -50,7 +50,6 @@ const Demo1 = (props) => {
           break;
         }
       }
-      console.log(use_list)
       setCurCategories(use_list);
     }
   }, [themeCategoryList, router.query])

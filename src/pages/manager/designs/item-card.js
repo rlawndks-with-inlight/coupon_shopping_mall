@@ -1,4 +1,4 @@
-import { Card, CardHeader, Container, Grid, Input, MenuItem, Select, Slider, Stack, TextField, Typography } from "@mui/material";
+import { Button, Card, CardHeader, Container, Grid, Input, MenuItem, Select, Slider, Stack, TextField, Typography } from "@mui/material";
 import { useEffect, useState } from "react";
 import { Item } from "src/components/elements/shop/common";
 import { themeObj } from "src/components/elements/styled-components";
@@ -73,7 +73,7 @@ const ItemCard = () => {
           <Card sx={{ p: 5 }}>
             <Stack spacing={1}>
               <CardHeader title="이미지" sx={{ paddingLeft: '0' }} />
-              <Typography variant="subtitle2" sx={{ color: 'text.secondary' }}>
+              {/* <Typography variant="subtitle2" sx={{ color: 'text.secondary' }}>
                 이미지 가로세로 비율
               </Typography>
               <Slider
@@ -88,7 +88,7 @@ const ItemCard = () => {
                 min={0.5}
                 step={0.05}
                 max={2}
-              />
+              /> */}
               <Typography variant="subtitle2" sx={{ color: 'text.secondary' }}>
                 테두리둥근정도
               </Typography>
@@ -289,7 +289,19 @@ const ItemCard = () => {
           </Stack>
         </Grid>
         <Grid item xs={12} md={0.5} />
+        <Grid item xs={12} md={12}>
+        <Card sx={{ p: 3 }}>
+          <Stack spacing={1}>
+            <Button variant="contained" style={{
+              height: '48px', width: '120px', marginLeft: 'auto'
+            }}>
+              저장
+            </Button>
+          </Stack>
+        </Card>
       </Grid>
+      </Grid>
+
     </>
   )
 }

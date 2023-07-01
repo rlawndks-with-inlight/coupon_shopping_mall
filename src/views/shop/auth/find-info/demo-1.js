@@ -50,7 +50,6 @@ const Demo1 = (props) => {
   })
   useEffect(() => {
     if (router.query?.type >= 0) {
-      console.log(router.query?.type)
 
       setFindType(router.query?.type)
     }

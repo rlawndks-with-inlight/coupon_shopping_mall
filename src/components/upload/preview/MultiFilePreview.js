@@ -19,7 +19,7 @@ MultiFilePreview.propTypes = {
   thumbnail: PropTypes.bool,
 };
 
-export default function MultiFilePreview({ thumbnail, files, onRemove, sx }) {
+export default function MultiFilePreview({ thumbnail, files, onRemove, sx, imageSize }) {
   if (!files?.length) {
     return null;
   }
@@ -36,14 +36,13 @@ export default function MultiFilePreview({ thumbnail, files, onRemove, sx }) {
             <Stack
               key={key}
               component={m.div}
-              {...varFade().inUp}
               alignItems="center"
               display="inline-flex"
               justifyContent="center"
               sx={{
                 m: 0.5,
-                width: 80,
-                height: 80,
+                width: imageSize?.width ?? 80,
+                height: imageSize?.height ?? 80,
                 borderRadius: 1.25,
                 overflow: 'hidden',
                 position: 'relative',

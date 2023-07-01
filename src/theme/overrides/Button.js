@@ -25,13 +25,13 @@ export default function Button(theme) {
     const defaultStyle = {
       ...(inheritColor && {
         // CONTAINED
-        // ...(containedVariant && {
-        //   color: theme.palette.grey[800],
-        //   '&:hover': {
-        //     boxShadow: 'red',
-        //     backgroundColor: theme.palette.grey[400],
-        //   },
-        // }),
+        ...(containedVariant && {
+          color: theme.palette.grey[800],
+          '&:hover': {
+            boxShadow: '',
+            backgroundColor: theme.palette.grey[400],
+          },
+        }),
         // OUTLINED
         ...(outlinedVariant && {
           borderColor: alpha(theme.palette.grey[500], 0.32),
@@ -60,11 +60,11 @@ export default function Button(theme) {
     const colorStyle = COLORS.map((color) => ({
       ...(ownerState.color === color && {
         // CONTAINED
-        // ...(containedVariant && {
-        //   '&:hover': {
-        //     boxShadow: 'red',
-        //   },
-        // }),
+        ...(containedVariant && {
+          '&:hover': {
+            boxShadow: '',
+          },
+        }),
         // SOFT
         ...(softVariant && {
           color: theme.palette[color][isLight ? 'dark' : 'light'],

@@ -31,7 +31,7 @@ const ICONS = {
   ecommerce: icon('ic_ecommerce'),
   analytics: icon('ic_analytics'),
   dashboard: icon('ic_dashboard'),
-  setting: icon('ic_setting','setting'),
+  setting: icon('ic_setting', 'setting'),
 };
 
 
@@ -107,7 +107,14 @@ const navConfig = [
         path: PATH_MANAGER.designs.root,
         icon: ICONS.label,
         children: [
-          { title: '메인페이지관리', path: PATH_MANAGER.designs.main },
+          {
+            title: '메인페이지관리', path: PATH_MANAGER.designs.main, children: [
+              { title: '전체', path: PATH_MANAGER.designs.main + '/all'},
+              { title: '배너슬라이드', path: PATH_MANAGER.designs.main + '/banner' },
+              { title: '상품슬라이드', path: PATH_MANAGER.designs.main + '/items' },
+              { title: '에디터', path: PATH_MANAGER.designs.main + '/editor' },
+            ],
+          },
           { title: '셀러페이지관리', path: PATH_MANAGER.designs.sellerMain },
           { title: '상품카드관리', path: PATH_MANAGER.designs.itemCard },
           { title: '팝업관리', path: PATH_MANAGER.designs.popup },

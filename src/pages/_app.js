@@ -5,6 +5,8 @@ import '../../styles/globals.css'
 import { SettingsProvider } from 'src/components/settings';
 import ThemeColorPresets from 'src/components/settings/ThemeColorPresets';
 import ThemeProvider from 'src/theme';
+import { LocalizationProvider } from '@mui/x-date-pickers';
+import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import 'yet-another-react-lightbox/styles.css';
 import 'yet-another-react-lightbox/plugins/captions.css';
 import 'yet-another-react-lightbox/plugins/thumbnails.css';
@@ -31,6 +33,7 @@ const App = (props) => {
         <meta name="viewport" content="initial-scale=1, width=device-width" />
       </Head>
       <AuthProvider>
+      <LocalizationProvider dateAdapter={AdapterDateFns}>
         <ThemeColorPresets>
           <SettingsProvider>
             <ThemeProvider>
@@ -39,6 +42,7 @@ const App = (props) => {
             </ThemeProvider>
           </SettingsProvider>
         </ThemeColorPresets>
+        </LocalizationProvider>
       </AuthProvider>
 
     </>

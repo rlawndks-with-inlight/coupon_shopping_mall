@@ -4,217 +4,219 @@ import 'react-quill/dist/quill.snow.css';
 import { useState, useEffect } from 'react';
 import Slider from 'react-slick';
 import { Skeleton, Stack } from '@mui/material'
-import { Item } from 'src/components/elements/blog/demo-1';
 
-// const signed = useContext(SignedContext);
+import { useSettingsContext } from 'src/components/settings';
+import { themeObj } from 'src/components/elements/styled-components';
+import { useAuthContext } from 'src/layouts/manager/auth/useAuthContext';
 
-const Wrapper = styled.div`
+const Wrappers = styled.div`
+max-width: 840px;
+width:100%;
+margin: 56px auto 0 auto;
 display:flex;
 flex-direction:column;
-position:relative; 
-min-height:17vh;
-max-width:1000px;
-margin: 0 auto;
 `
-
-const ContentWrapper = styled.div`
+const BannerContainer = styled.div`
+padding: 1rem 1rem 10rem 1rem;
+display:flex;
+flex-direction:column;
 position:relative;
+@media (max-width:840px){
+    padding: 5% 5% 22vw 5%;
+}
+`
+const Title = styled.div`
+font-size:${themeObj.font_size.size5};
+font-weight:bold;
+color:#fff;
+`
+const SubTitle = styled.div`
+color:${themeObj.grey[400]};
+`
+const CardImg = styled.img`
+position: absolute;
+width:calc(100% - 32px);
+left:1rem;
+bottom:-280px;
+height:424px;
+@media (max-width:840px){
+    width:90%;
+    height:45vw;
+    left:5%;
+    bottom:-25vw;
+}
+`
+const test_home_data = [
+    {
+        title: '마켓 오픈했어요 ✨',
+        list: test_items
+    },
+    {
+        title: '인기있는 상품 🔥',
+        list: test_items
+    },
+    {
+        title: '인기있는 셀러 ❤️',
+        list: test_items
+    },
+    {
+        title: '# Food',
+        list: test_items
+    },
+    {
+        title: '# Beauty',
+        list: test_items
+    },
+    {
+        title: '# Top',
+        list: test_items
+    },
+    {
+        title: '# Pants',
+        list: test_items
+    },
+    {
+        title: '# Blouse/Shirts',
+        list: test_items
+    },
+]
+const ItemWrapper = styled.div`
+display:flex;
+flex-direction:column;
+width:calc(100% - 32px);
+margin: 300px auto 0 auto;
+@media (max-width:840px){
+    margin: 30vw auto 0 auto;
+    width:90%;
+}
+`
+const SectionTitle = styled.div`
+font-weight:bold;
+`
+const ItemContainer = styled.div`
+display:flex;
+flex-wrap:wrap;
+column-gap: 2%;
+row-gap: 1rem;
+margin:1rem 0 4rem 0;
+@media (max-width:840px){
+    display:none;
+}
+`
+const SlideContainer = styled.div`
+display: none;
+@media (max-width:840px){
+    margin:1rem 0 4rem 0;
+    display: block;
+}
+`
+const ItemContent = styled.div`
+display:flex;
+flex-direction:column;
+width:23.5%;
+cursor:pointer;
+@media (max-width:840px){
+    width:95%;
+}
+`
+const ItemImg = styled.img`
 width:100%;
 `
-
-
-const NavBar = styled.div`
-display:flex;
-margin:0 auto;
-font-weight:bold;
-justify-content:space-around;
-align-items:center;
-text-align:center;
-position:fixed;
-left:0;
-right:0;
-max-width:1000px;
-background-color:white;
-padding:30px;
-cursor:pointer;
-border-bottom:1px solid lightgray;
-z-index:1;
+const ItemText = styled.div`
+font-size:${themeObj.font_size.size8};
+margin-top:0.5rem;
 `
-
-const NavBarMenu = styled.span`
-margin-top:2rem;
-`
-
-const Banner = styled.div`
-display:flex;
-flex-direction:column;
-background-color:gray;
-max-width:1000px;
-max-height:800px;
-padding:30px;
-`
-
-const BannerMessage1 = styled.h2`
-font-weight:bold;
-color:white;
-`
-
-const BannerMessage2 = styled.p`
-font-weight:regular;
-color:black;
-margin-top:16px;
-`
-
-const BannerLink = styled.a`
-target:_blank;
-rel:nofollow;
-`
-
-const BannerImage = styled.a`
-box-sizing:content-box;
-overflow:hidden;
-width:auto;
-background:none;
-border:0px;
-margin:0px;
-padding:0px;
-position:relative;
-cursor:pointer;
-`
-
-const ContentTitle = styled.p`
-font-weight:bold;
-`
-
-const contents = (column, func) => {
-    const { router } = func;
-    let type = column?.type;
-    let content = undefined;
-  
-    if (type == 'banner') {
-        content = <>
-        <Wrapper>
-            <Banner>
-                <BannerMessage1>테스트 문구 1<br />테스트 문구 1</BannerMessage1>
-                <BannerMessage2>테스트 문구 2<br />테스트 문구 2</BannerMessage2>
-                <BannerLink>
-                    <BannerImage>
-                        <img src={column?.src} />
-                    </BannerImage>
-                </BannerLink>
-            </Banner>
-        </Wrapper>
-      </>
+const Item = (props) => {
+    const { item, router } = props;
+    return (
+        <>
+            <ItemContent onClick={()=>{
+                router.push(`/blog/product/${item.id}`)
+            }}>
+                <ItemImg src={item?.product_img} />
+                <ItemText>{item?.name}</ItemText>
+                <ItemText style={{ color: themeObj.grey[500] }}>{item?.sub_name}</ItemText>
+            </ItemContent>
+        </>
+    )
+}
+const ItemSectionContent = (props) => {
+    const { data, router } = props;
+    const item_list_setting = {
+        infinite: true,
+        speed: 500,
+        autoplay: false,
+        autoplaySpeed: 2500,
+        slidesToShow: 2,
+        slidesToScroll: 1,
+        dots: false,
     }
-  
-    if (type == 'items') {
-        let slide_setting = {
-            infinite: true,
-            speed: 500,
-            autoplay: false,
-            slidesToScroll: 1,
-            dots: false,
-        }
-    content = <>
-    <ContentWrapper>
-        <ContentTitle>{column?.title}</ContentTitle>
-        <Slider {...slide_setting}>
-        {column?.list && column?.list.map((item, idx) => (
-            <>
-              <Item item={item} router={router} />
-            </>
-          ))}
-        </Slider>
-    </ContentWrapper>
-      </>
-      }
-      return content
-    }
+    return (
+        <>
+            <SectionTitle>{data?.title}</SectionTitle>
 
+            <ItemContainer>
+                {data?.list && data?.list.slice(0, 8).map((item, idx) => (
+                    <>
+                        <Item item={item} router={router} />
+                    </>
+                ))}
+
+            </ItemContainer>
+            <SlideContainer>
+                <Slider {...item_list_setting}>
+                    {data?.list && data?.list.map((item, idx) => (
+                        <>
+                            <Item item={item} router={router} />
+                        </>
+                    ))}
+                </Slider>
+            </SlideContainer>
+
+        </>
+    )
+}
 // 메인화면 김인욱
 const Demo1 = (props) => {
     const {
         data: {
-    
+
         },
         func: {
-          router
+            router
         },
-      } = props;
-      const [loading, setLoading] = useState(true)
+    } = props;
+    const { themeDnsData } = useSettingsContext();
+    const {user} = useAuthContext();
+    const [homeContent, setHomeContent] = useState({});
 
-      const pageLoad = () => {
-        setTimeout(() => {
-            setLoading(false)
-        }, 500)
-      }
+    useEffect(() => {
+        console.log(user)
+        console.log(themeDnsData)
+    }, [themeDnsData])
 
-      useEffect(() => {
-        pageLoad()
-      }, [])
-      
-      let category = test_categories.map(function(element){
-        return <NavBarMenu>{element.category_name}</NavBarMenu>;
-      })
-
-      const home_content_list = [
-        {
-            type: 'banner',
-            src: 'https://backend.comagain.kr/storage/images/advertisements/1682780973e13c43e720132a9575ff3b6f8f88fec6.webp'
-        },
-        {
-          type: 'items',
-          list: test_items,
-          title: 'HOT ITEMS',
-          sub_title: '가장 핫한 상품들을 만나 보세요',
-        },
-        {
-          type: 'items',
-          list: test_items,
-          title: 'NEW ITEMS',
-          sub_title: '새로 나온 상품들을 만나 보세요',
-        },
-      ];
-
-      const returnContentsByColumn = (column) => {
-        return contents(
-            column,
-            {
-                router
-            })
-        }
-
-      return (
+    return (
         <>
-          <Wrapper>
-            <ContentWrapper>
-                <NavBar>{category}</NavBar>
-            </ContentWrapper>
-          </Wrapper>
-          {loading ?
-        <>
-          <Stack spacing={'1rem'}>
-            <Skeleton variant='rectangular' style={{
-              height: '40vw'
-            }} />
-            <Skeleton variant='rounded' style={{
-              height: '34vw',
-              maxWidth: '1200px',
-              width: '90%',
-              height:'70vh',
-              margin: '1rem auto'
-            }} />
-          </Stack>
+            <Wrappers>
+                <BannerContainer style={{
+                    background: `${themeDnsData?.theme_css?.main_color}`
+                }}>
+                    <Title>아직도 일일이</Title>
+                    <Title>주문받는 당신에게</Title>
+                    <SubTitle style={{ marginTop: '1rem' }}>판매, 주문관리, 송장, 현금영수증, 고객관리</SubTitle>
+                    <SubTitle>모든 기능이 100% 무료</SubTitle>
+                    <CardImg
+                        src={'https://www.inpock.co.kr/_next/image?url=https%3A%2F%2Fstorage.googleapis.com%2Finpock-store-asset-prod%2Fclient%2Fimg%2Finpock-image-thumbnail-store.60df99b.png&w=3840&q=75'} />
+                </BannerContainer>
+                <ItemWrapper>
+                    {test_home_data.map((data, idx) => (
+                        <>
+                            <ItemSectionContent data={data} router={router} />
+                        </>
+                    ))}
+                </ItemWrapper>
+            </Wrappers>
         </>
-        :
-        <>
-          {home_content_list.map((column, idx) => (
-            <>
-              {returnContentsByColumn(column)}
-            </>
-          ))}
-        </>}
-        </>
-      )
+    )
 }
 export default Demo1

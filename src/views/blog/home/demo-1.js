@@ -5,15 +5,13 @@ import { useState, useEffect } from 'react';
 import Slider from 'react-slick';
 import { Skeleton, Stack } from '@mui/material'
 import { Item } from 'src/components/elements/blog/demo-1';
-import { useContext } from 'react';
-import { SignedContext } from '../auth/login/demo-1';
 
 // const signed = useContext(SignedContext);
 
 const Wrapper = styled.div`
 display:flex;
 flex-direction:column;
-position:relative;
+position:relative; 
 min-height:17vh;
 max-width:1000px;
 margin: 0 auto;

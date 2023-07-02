@@ -329,13 +329,9 @@ export const test_categories = [
 export const test_item = {
   id: 58,
   cate_id: 15,
-<<<<<<< HEAD
-  name: "양념치킨",
-=======
   name: "생활비달력 머니어터",
   sub_name:"유연함으로 흠집 방지 및 보호에 도움",
   rating: 3.5,
->>>>>>> f12bd51bf45f50fe7b06ff51c913fedf466b2d9e
   mkt_pr: 18000,
   item_pr: 18000,
   product_img: '/images/test/testitem1.jpg',
@@ -343,24 +339,16 @@ export const test_item = {
   origin_nm: "치킨은 맛있어 !",
   mfg_nm: "BHC",
   model_nm: "치킨",
-<<<<<<< HEAD
-=======
   images: [
     '/images/test/testitem2.jpg',
     '/images/test/testitem3.jpg',
     '/images/test/testitem4.jpg',
     '/images/test/testitem5.jpg',
   ],
->>>>>>> f12bd51bf45f50fe7b06ff51c913fedf466b2d9e
   content: "<th colspan=\"2\" class=\"menu_tit al\"><span class=\"menuname\">\uc591\ub150\uce58\ud0a8<\/span>\ub9f5\ub2e8\ub9f5\ub2e8! \ubc14\uc0ad\ud55c \ud6c4\ub77c\uc774\ub4dc\uc5d0 \ub9e4\ucf64\ub2ec\ub2ec \uc18c\uc2a4\ub97c \uc785\ud78c \uce58\ud0a8<br><br>\n[\ub2ed\uace0\uae30 : \uad6d\ub0b4\uc0b0] <br>\n\uc870\ub9ac \uc804 \uc911\ub7c9 950g \uc774\uc0c1<br>\n\u203b\uc870\ub9ac\uc2dc \uacc4\uc721 \ub0b4 \uc720\/\uc218\ubd84 \uc99d\ubc1c\ub85c \uc911\ub7c9\ucc28\uc774\uac00 \ubc1c\uc0dd\ud569\ub2c8\ub2e4.\n\t\t\t\t\t\t\t\t\t\t\t<br> \uac00\uaca9 : 18000<\/th>",
   created_at: "2023-03-09 14:30:18",
   updated_at: "2023-03-09 14:30:18"
 }
-<<<<<<< HEAD
-export const test_items = [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,].map((item, idx)=>{
-  return test_item;
-})
-=======
 function repeatArray(arr, n) {
   const repeatedArray = [];
   for (let i = 0; i < n; i++) {
@@ -610,7 +598,6 @@ export const test_items = [
     updated_at: "2023-03-09 14:30:18"
   },
 ]
->>>>>>> f12bd51bf45f50fe7b06ff51c913fedf466b2d9e
 
 export const test_articles = [
   {

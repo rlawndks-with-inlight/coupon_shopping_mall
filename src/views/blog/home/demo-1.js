@@ -1,10 +1,7 @@
 import styled from 'styled-components'
 import { test_categories, test_items } from 'src/data/test-data';
-import 'react-quill/dist/quill.snow.css';
 import { useState, useEffect } from 'react';
 import Slider from 'react-slick';
-import { Skeleton, Stack } from '@mui/material'
-
 import { useSettingsContext } from 'src/components/settings';
 import { themeObj } from 'src/components/elements/styled-components';
 import { useAuthContext } from 'src/layouts/manager/auth/useAuthContext';

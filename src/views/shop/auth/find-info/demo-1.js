@@ -39,10 +39,17 @@ const Demo1 = (props) => {
 
   const [findType, setFindType] = useState(undefined);
   const [phoneNum, setPhoneNum] = useState("");
-  const [userName, setUserName] = useState("")
+  const [findUsernameObj, setFindUsernameObj] = useState({
+    phone: '',
+    phoneCheck: ''
+  })
+  const [findPasswordObj, setFindPasswordObj] = useState({
+    username: '',
+    phone: '',
+    phoneCheck: ''
+  })
   useEffect(() => {
     if (router.query?.type >= 0) {
-      console.log(router.query?.type)
 
       setFindType(router.query?.type)
     }
@@ -57,23 +64,83 @@ const Demo1 = (props) => {
             sx={{ width: '100%' }}
           >
             {Object.keys(returnFindType).map((key) => (
-              <Tab key={returnFindType[key].title} value={key} label={returnFindType[key].title} style={{width:'50%',margin:'0'}} />
+              <Tab key={returnFindType[key].title} value={key} label={returnFindType[key].title} style={{ width: '50%', margin: '0' }} />
             ))}
           </Tabs>
         </Title>
-        <TextField
-          label='전화번호'
-          onChange={(e) => {
-            setPhoneNum(e.target.value)
-          }}
-          value={phoneNum}
-          style={inputStyle}
-          autoComplete='new-password'
-          onKeyPress={(e) => {
-            if (e.key == 'Enter') {
-            }
-          }}
-        />
+        {findType == 0 &&
+          <>
+            <TextField
+              label='인증번호'
+              onChange={(e) => {
+                setFindUsernameObj({ ...findUsernameObj, ['phone']: e.target.value })
+              }}
+              value={findUsernameObj.phone}
+              style={inputStyle}
+              autoComplete='new-password'
+              onKeyPress={(e) => {
+                if (e.key == 'Enter') {
+                }
+              }}
+            />
+            <TextField
+              label='인증번호'
+              onChange={(e) => {
+                setFindUsernameObj({ ...findUsernameObj, ['phoneCheck']: e.target.value })
+              }}
+              value={findUsernameObj.phoneCheck}
+              style={inputStyle}
+              autoComplete='new-password'
+              onKeyPress={(e) => {
+                if (e.key == 'Enter') {
+                }
+              }}
+            />
+
+          </>}
+        {findType == 1 &&
+          <>
+            <TextField
+              label='아이디'
+              onChange={(e) => {
+                setFindPasswordObj({ ...findPasswordObj, ['username']: e.target.value })
+              }}
+              value={findPasswordObj.username}
+              style={inputStyle}
+              autoComplete='new-password'
+              onKeyPress={(e) => {
+                if (e.key == 'Enter') {
+                }
+              }}
+            />
+            <TextField
+              label='전화번호'
+              onChange={(e) => {
+                setFindPasswordObj({ ...findPasswordObj, ['phone']: e.target.value })
+              }}
+              value={findPasswordObj.phone}
+              style={inputStyle}
+              autoComplete='new-password'
+              onKeyPress={(e) => {
+                if (e.key == 'Enter') {
+                }
+              }}
+            />
+            <TextField
+              label='인증번호'
+              onChange={(e) => {
+                setFindPasswordObj({ ...findPasswordObj, ['phoneCheck']: e.target.value })
+              }}
+              value={findPasswordObj.phoneCheck}
+              style={inputStyle}
+              autoComplete='new-password'
+              onKeyPress={(e) => {
+                if (e.key == 'Enter') {
+                }
+              }}
+            />
+          </>}
+
 
       </Wrappers>
     </>

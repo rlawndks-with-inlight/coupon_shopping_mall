@@ -34,15 +34,15 @@ export const StyledItem = styled(ListItemButton, {
     marginBottom: theme.spacing(0.5),
     color: theme.palette.text.secondary,
     borderRadius: theme.shape.borderRadius,
-    height: NAV.H_DASHBOARD_ITEM,
+    height: NAV.H_MANAGER_ITEM,
     // Sub item
     ...(subItem && {
-      height: NAV.H_DASHBOARD_ITEM_SUB,
+      height: NAV.H_MANAGER_ITEM_SUB,
       ...(depth > 2 && {
         paddingLeft: theme.spacing(depth),
       }),
       ...(caption && {
-        height: NAV.H_DASHBOARD_ITEM,
+        height: NAV.H_MANAGER_ITEM,
       }),
     }),
     // Active item

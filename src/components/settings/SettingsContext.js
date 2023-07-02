@@ -3,6 +3,7 @@ import { useMemo, useState, useEffect, useContext, useCallback, createContext } 
 //
 import { defaultSettings } from './config-setting';
 import { defaultPreset, getPresets, presetsOption } from './presets';
+import { useTheme } from '@emotion/react';
 // ----------------------------------------------------------------------
 
 const initialState = {
@@ -67,12 +68,8 @@ export function SettingsProvider({ children }) {
   const [themeCurrentPageObj, setThemeCurrentPageObj] = useState(defaultSettings.themeCurrentPageObj);
   const [themeAuth, setThemeAuth] = useState(defaultSettings.themeAuth);
   const [themeCategoryList, setThemeCategoryList] = useState(defaultSettings.themeCategoryList);
-
-
-
-
   const isArabic = false;
-
+const theme = useTheme();
   useEffect(() => {
     if (isArabic) {
       onChangeDirectionByLang('ar');
@@ -88,7 +85,6 @@ export function SettingsProvider({ children }) {
       const contrast = getCookie('themeContrast') || defaultSettings.themeContrast;
       const direction = getCookie('themeDirection') || defaultSettings.themeDirection;
       const colorPresets = getCookie('themeColorPresets') || defaultSettings.themeColorPresets;
-      const dnsData = getCookie('themeDnsData') || defaultSettings.themeDnsData;
       const currentPageObj = getCookie('themeCurrentPageObj') || defaultSettings.themeCurrentPageObj;
       //const auth = getCookie('themeAuth') || defaultSettings.themeAuth;
       //const categoryList = getCookie('themeCategoryList') || defaultSettings.themeCategoryList;
@@ -98,11 +94,26 @@ export function SettingsProvider({ children }) {
       setThemeContrast(contrast);
       setThemeDirection(direction);
       setThemeColorPresets(colorPresets);
-      setThemeDnsData(dnsData);
       setThemeCurrentPageObj(currentPageObj);
+      getDnsData();
     }
   }, []);
-
+  const getDnsData = async () => {
+    try{
+      const url = `${process.env.BACK_URL}/api/v1/auth/domain?dns=${window.location.host.split(':')[0]}`;
+      const res = await fetch(url);
+      let dns_data = await res.json();
+      if(typeof dns_data?.theme_css == 'string' || !dns_data?.theme_css){
+        dns_data['theme_css'] = JSON.parse(dns_data?.theme_css??"{}");
+      }
+      if(typeof dns_data?.options == 'string' || !dns_data?.options){
+        dns_data['options'] = JSON.parse(dns_data?.options??"{}");
+      }
+      onChangeDnsData(dns_data);
+    }catch(err){
+      console.log(err)
+    }
+  }
   // Mode
   const onToggleMode = useCallback(() => {
     const value = themeMode === 'light' ? 'dark' : 'light';
@@ -191,7 +202,6 @@ export function SettingsProvider({ children }) {
   }, [])
   // categoryList
   const onChangeCategoryList = useCallback((data) => {
-      console.log(data);
       setThemeCategoryList(data);
       setCookie('themeCategoryList', JSON.stringify(data));
   }, [])

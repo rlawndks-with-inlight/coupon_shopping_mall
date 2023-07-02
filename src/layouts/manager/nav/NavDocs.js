@@ -2,13 +2,15 @@
 import { Stack, Button, Typography, Box } from '@mui/material';
 // auth
 import { useAuthContext } from '../auth/useAuthContext';
+import { useEffect } from 'react';
 
 // ----------------------------------------------------------------------
 
 export default function NavDocs() {
   const { user } = useAuthContext();
-
-
+  useEffect(()=>{
+    console.log(user)
+  },[])
   return (
     <Stack
       spacing={3}
@@ -25,7 +27,7 @@ export default function NavDocs() {
 
       <div>
         <Typography gutterBottom variant="subtitle1">
-          {`hi, ${user?.displayName}`}
+          {`hi, ${user?.name}`}
         </Typography>
 
         <Typography variant="body2" sx={{ color: 'text.secondary', whiteSpace: 'pre-line' }}>

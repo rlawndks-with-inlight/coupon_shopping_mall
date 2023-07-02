@@ -1,4 +1,5 @@
 // theme
+import { useEffect } from 'react';
 import palette from '../../theme/palette';
 
 // ----------------------------------------------------------------------
@@ -76,6 +77,7 @@ export const presetsOption = presets.map((color) => ({
 }));
 
 export function getPresets(key) {
+
   return {
     default: defaultPreset,
     cyan: cyanPreset,

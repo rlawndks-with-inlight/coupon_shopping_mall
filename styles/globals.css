@@ -33,6 +33,18 @@ body {
   display: none !important;
 }
 
+.margin-slide>.slick-list {
+  margin: 0 -0.75rem;
+}
+
+.margin-slide>div>div>.slick-slide>div {
+  padding: 0 0.75rem;
+}
+
+.margin-slide>div>.slick-track {
+  margin: 1rem auto;
+}
+
 .prevArrow {
   position: absolute;
   top: 15vw;
@@ -72,12 +84,15 @@ body {
   height: 285px;
   border-radius: 10px;
 }
+
 .none-padding {
   padding: 0;
 }
-.none-padding > .ql-container > .ql-editor {
+
+.none-padding>.ql-container>.ql-editor {
   padding: 0;
 }
+
 @media (max-width: 1350px) {
   .item-img {
     width: 27.6vw;

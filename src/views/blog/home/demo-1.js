@@ -1,77 +1,91 @@
 import styled from 'styled-components'
-import { useTheme } from "@emotion/react";
-import { Box, Tab, Tabs, Card, Grid, Divider, Container, Typography, Button } from '@mui/material';
-import { commarNumber } from 'src/utils/function';
 import { test_categories, test_items } from 'src/data/test-data';
-import { themeObj } from 'src/components/elements/styled-components';
 import 'react-quill/dist/quill.snow.css';
 import { useState, useEffect } from 'react';
 import Slider from 'react-slick';
 import { Skeleton, Stack } from '@mui/material'
 import { Item } from 'src/components/elements/blog/demo-1';
+import { useContext } from 'react';
+import { SignedContext } from '../auth/login/demo-1';
+
+// const signed = useContext(SignedContext);
 
 const Wrapper = styled.div`
 display:flex;
 flex-direction:column;
-min-height:76vh;
+position:relative;
+min-height:17vh;
+max-width:1000px;
+margin: 0 auto;
 `
 
 const ContentWrapper = styled.div`
-max-width:1200px;
+position:relative;
 width:100%;
 `
 
+
 const NavBar = styled.div`
 display:flex;
+margin:0 auto;
+font-weight:bold;
 justify-content:space-around;
 align-items:center;
+text-align:center;
+position:fixed;
+left:0;
+right:0;
+max-width:1000px;
 background-color:white;
-padding:50px;
+padding:30px;
 cursor:pointer;
-margin:0 auto;
+border-bottom:1px solid lightgray;
+z-index:1;
 `
 
-const NavBarMenu = styled.div`
+const NavBarMenu = styled.span`
 margin-top:2rem;
-border-top: 1px solid ;
 `
 
 const Banner = styled.div`
-margin=bottom:-120px;
+display:flex;
+flex-direction:column;
 background-color:gray;
+max-width:1000px;
+max-height:800px;
+padding:30px;
 `
 
 const BannerMessage1 = styled.h2`
-font-weight=bold;
-color=white;
+font-weight:bold;
+color:white;
 `
 
 const BannerMessage2 = styled.p`
-font-weight=regular;
-color=gray400;
-margin-top=16px;
+font-weight:regular;
+color:black;
+margin-top:16px;
 `
 
 const BannerLink = styled.a`
-target=_blank;
-rel=nofollow;
+target:_blank;
+rel:nofollow;
 `
 
-const BannerImage = styled.span`
-box-sizing:border-box;
-display:block;
+const BannerImage = styled.a`
+box-sizing:content-box;
 overflow:hidden;
-width:initial;
+width:auto;
 background:none;
-opacity:1;
 border:0px;
 margin:0px;
 padding:0px;
 position:relative;
+cursor:pointer;
 `
 
 const ContentTitle = styled.p`
-font-weight=bold;
+font-weight:bold;
 `
 
 const contents = (column, func) => {
@@ -87,7 +101,7 @@ const contents = (column, func) => {
                 <BannerMessage2>테스트 문구 2<br />테스트 문구 2</BannerMessage2>
                 <BannerLink>
                     <BannerImage>
-                        <img src={column?.src} href='./login/demo-1.js'/>
+                        <img src={column?.src} />
                     </BannerImage>
                 </BannerLink>
             </Banner>
@@ -99,8 +113,7 @@ const contents = (column, func) => {
         let slide_setting = {
             infinite: true,
             speed: 500,
-            autoplay: true,
-            autoplaySpeed: 2500,
+            autoplay: false,
             slidesToScroll: 1,
             dots: false,
         }
@@ -114,7 +127,7 @@ const contents = (column, func) => {
             </>
           ))}
         </Slider>
-      </ContentWrapper>
+    </ContentWrapper>
       </>
       }
       return content
@@ -148,32 +161,21 @@ const Demo1 = (props) => {
 
       const home_content_list = [
         {
-          type: 'banner',
-          src: 'https://backend.comagain.kr/storage/images/advertisements/1682780973e13c43e720132a9575ff3b6f8f88fec6.webp'
+            type: 'banner',
+            src: 'https://backend.comagain.kr/storage/images/advertisements/1682780973e13c43e720132a9575ff3b6f8f88fec6.webp'
         },
         {
           type: 'items',
           list: test_items,
-          title: '핫한상품',
-          sub_title: '가장 인기있는 상품을 만나 보세요 !',
-          sort_type: '',
-          side_img: '',
-          item_slide_auto: true,
-          item_type: 1
+          title: 'HOT ITEMS',
+          sub_title: '가장 핫한 상품들을 만나 보세요',
         },
         {
           type: 'items',
           list: test_items,
-          title: '멋진상품',
-          sub_title: '가장 멋있는 상품을 만나 보세요 !',
-          sort_type: '',
-          side_img: '',
-          item_slide_auto: true,
-          item_type: 1
+          title: 'NEW ITEMS',
+          sub_title: '새로 나온 상품들을 만나 보세요',
         },
-        {
-          type: 'reviews'
-        }
       ];
 
       const returnContentsByColumn = (column) => {

@@ -32,10 +32,17 @@ const Demo1 = (props) => {
   } = props;
   const { themeCategoryList, themeMode } = useSettingsContext();
 
+  const [parentList, setParentList] = useState([]);
   const [curCategories, setCurCategories] = useState([]);
   useEffect(() => {
     if (themeCategoryList.length > 0) {
-      let parent_list = getAllIdsWithParents(themeCategoryList);
+      let parent_list = []
+      if (parentList.length > 0) {
+        parent_list = parentList;
+      } else {
+        parent_list = getAllIdsWithParents(themeCategoryList);
+      }
+      setParentList(parent_list);
       let use_list = [];
       for (var i = 0; i < parent_list.length; i++) {
         if (parent_list[i][router.query?.depth]?.id == router.query?.category_id) {
@@ -54,8 +61,8 @@ const Demo1 = (props) => {
           <>
             <Breadcrumbs separator={<Icon icon='material-symbols:navigate-next' />} style={{
               padding: '0.5rem 0',
-              width:'100%',
-              overflowX:'auto'
+              width: '100%',
+              overflowX: 'auto'
             }}>
               {curCategories.map((item, idx) => (
                 <>

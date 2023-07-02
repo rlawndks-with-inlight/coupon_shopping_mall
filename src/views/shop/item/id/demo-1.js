@@ -4,7 +4,6 @@ import { Box, Tab, Tabs, Card, Grid, Divider, Container, Typography, Stack, Butt
 import { commarNumber } from 'src/utils/function';
 import { test_item } from 'src/data/test-data';
 import { themeObj } from 'src/components/elements/styled-components';
-import 'react-quill/dist/quill.snow.css';
 import dynamic from 'next/dynamic'
 import { useSettingsContext } from 'src/components/settings';
 import { useRouter } from 'next/router';
@@ -14,7 +13,6 @@ import { useEffect, useState } from 'react';
 import Markdown from 'src/components/markdown/Markdown';
 import CartWidget from 'src/views/e-commerce/CartWidget';
 import Iconify from 'src/components/iconify/Iconify';
-import 'react-quill/dist/quill.snow.css';
 import { SkeletonProductDetails } from 'src/components/skeleton';
 const ReactQuill = dynamic(() => import('react-quill'), {
   ssr: false,

@@ -28,7 +28,7 @@ export default function Button(theme) {
         ...(containedVariant && {
           color: theme.palette.grey[800],
           '&:hover': {
-            boxShadow: theme.customShadows.z8,
+            boxShadow: '',
             backgroundColor: theme.palette.grey[400],
           },
         }),
@@ -62,7 +62,7 @@ export default function Button(theme) {
         // CONTAINED
         ...(containedVariant && {
           '&:hover': {
-            boxShadow: theme.customShadows[color],
+            boxShadow: '',
           },
         }),
         // SOFT
@@ -75,7 +75,6 @@ export default function Button(theme) {
         }),
       }),
     }));
-
     const disabledState = {
       '&.Mui-disabled': {
         // SOFT

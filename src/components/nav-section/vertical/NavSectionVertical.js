@@ -12,16 +12,14 @@ NavSectionVertical.propTypes = {
 };
 
 export default function NavSectionVertical({ data, sx, ...other }) {
-
   return (
     <Stack sx={sx} {...other}>
       {data.map((group) => {
-        const key = group.subheader || group.items[0].title;
-
+        const key = group.subheader || group.items[0].title
         return (
           <List key={key} disablePadding sx={{ px: 2 }}>
             {group.subheader && (
-              <StyledSubheader disableSticky>{`group.subheader`}</StyledSubheader>
+              <StyledSubheader disableSticky>{group.subheader}</StyledSubheader>
             )}
 
             {group.items.map((list) => (
@@ -35,6 +33,8 @@ export default function NavSectionVertical({ data, sx, ...other }) {
           </List>
         );
       })}
+      <div style={{ marginTop: '2rem' }} />
+
     </Stack>
   );
 }

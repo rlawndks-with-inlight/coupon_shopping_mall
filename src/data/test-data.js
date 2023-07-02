@@ -3,39 +3,39 @@ export const test_categories = [
   {
     id: 1,
     category_name: '홈스마트',
-    category_img: 'https://backend.comagain.kr/storage/images/advertisements/1682780973e13c43e720132a9575ff3b6f8f88fec6.webp',
+    category_img: '/images/test/2.jpg',
     category_description: '어쩌고저쩌고',
     children: [
       {
         id: 10,
         category_name: '카테고리는',
-        category_img: 'https://backend.comagain.kr/storage/images/advertisements/1682780973e13c43e720132a9575ff3b6f8f88fec6.webp',
+        category_img: '/images/test/2.jpg',
         category_description: '어쩌고저쩌고',
         children: [
           {
             id: 110,
             category_name: 'TV',
-            category_img: 'https://backend.comagain.kr/storage/images/advertisements/1682780973e13c43e720132a9575ff3b6f8f88fec6.webp',
+            category_img: '/images/test/2.jpg',
             category_description: '어쩌고저쩌고',
             children: [
               {
                 id: 1110,
                 category_name: '대형TV',
-                category_img: 'https://backend.comagain.kr/storage/images/advertisements/1682780973e13c43e720132a9575ff3b6f8f88fec6.webp',
+                category_img: '/images/test/2.jpg',
                 category_description: '어쩌고저쩌고',
                 children: [],
               },
               {
                 id: 1111,
                 category_name: '중형TV',
-                category_img: 'https://backend.comagain.kr/storage/images/advertisements/1682780973e13c43e720132a9575ff3b6f8f88fec6.webp',
+                category_img: '/images/test/2.jpg',
                 category_description: '어쩌고저쩌고',
                 children: [],
               },
               {
                 id: 1112,
                 category_name: '소형TV',
-                category_img: 'https://backend.comagain.kr/storage/images/advertisements/1682780973e13c43e720132a9575ff3b6f8f88fec6.webp',
+                category_img: '/images/test/2.jpg',
                 category_description: '어쩌고저쩌고',
                 children: [],
               },
@@ -44,14 +44,14 @@ export const test_categories = [
           {
             id: 111,
             category_name: '세탁기',
-            category_img: 'https://backend.comagain.kr/storage/images/advertisements/1682780973e13c43e720132a9575ff3b6f8f88fec6.webp',
+            category_img: '/images/test/2.jpg',
             category_description: '어쩌고저쩌고',
             children: [],
           },
           {
             id: 112,
             category_name: '에어컨',
-            category_img: 'https://backend.comagain.kr/storage/images/advertisements/1682780973e13c43e720132a9575ff3b6f8f88fec6.webp',
+            category_img: '/images/test/2.jpg',
             category_description: '어쩌고저쩌고',
             children: [],
           },
@@ -60,7 +60,7 @@ export const test_categories = [
       {
         id: 11,
         category_name: '분류관리메뉴와',
-        category_img: 'https://backend.comagain.kr/storage/images/advertisements/1682780973e13c43e720132a9575ff3b6f8f88fec6.webp',
+        category_img: '/images/test/2.jpg',
         category_description: '어쩌고저쩌고',
         children: [],
       },
@@ -69,33 +69,33 @@ export const test_categories = [
   {
     id: 2,
     category_name: '가구/소품',
-    category_img: 'https://backend.comagain.kr/storage/images/advertisements/1682780973e13c43e720132a9575ff3b6f8f88fec6.webp',
+    category_img: '/images/test/2.jpg',
     category_description: '어쩌고저쩌고',
     children: [
       {
         id: 21,
         category_name: '쇼핑몰별',
-        category_img: 'https://backend.comagain.kr/storage/images/advertisements/1682780973e13c43e720132a9575ff3b6f8f88fec6.webp',
+        category_img: '/images/test/2.jpg',
         category_description: '어쩌고저쩌고',
         children: [
           {
             id: 121,
             category_name: '침대',
-            category_img: 'https://backend.comagain.kr/storage/images/advertisements/1682780973e13c43e720132a9575ff3b6f8f88fec6.webp',
+            category_img: '/images/test/2.jpg',
             category_description: '어쩌고저쩌고',
             children: [],
           },
           {
             id: 122,
             category_name: '매트리스',
-            category_img: 'https://backend.comagain.kr/storage/images/advertisements/1682780973e13c43e720132a9575ff3b6f8f88fec6.webp',
+            category_img: '/images/test/2.jpg',
             category_description: '어쩌고저쩌고',
             children: [],
           },
           {
             id: 123,
             category_name: '옷장',
-            category_img: 'https://backend.comagain.kr/storage/images/advertisements/1682780973e13c43e720132a9575ff3b6f8f88fec6.webp',
+            category_img: '/images/test/2.jpg',
             category_description: '어쩌고저쩌고',
             children: [],
 
@@ -105,49 +105,49 @@ export const test_categories = [
       {
         id: 22,
         category_name: '학생가구',
-        category_img: 'https://backend.comagain.kr/storage/images/advertisements/1682780973e13c43e720132a9575ff3b6f8f88fec6.webp',
+        category_img: '/images/test/2.jpg',
         category_description: '어쩌고저쩌고',
         children: [
           {
             id: 221,
-            category_name: '침대',
-            category_img: 'https://backend.comagain.kr/storage/images/advertisements/1682780973e13c43e720132a9575ff3b6f8f88fec6.webp',
+            category_name: '독서실책상',
+            category_img: '/images/test/2.jpg',
             category_description: '어쩌고저쩌고',
             children: [],
           },
           {
             id: 222,
-            category_name: '매트리스',
-            category_img: 'https://backend.comagain.kr/storage/images/advertisements/1682780973e13c43e720132a9575ff3b6f8f88fec6.webp',
+            category_name: '책꽂이',
+            category_img: '/images/test/2.jpg',
             category_description: '어쩌고저쩌고',
             children: [],
           },
           {
             id: 223,
-            category_name: '옷장',
-            category_img: 'https://backend.comagain.kr/storage/images/advertisements/1682780973e13c43e720132a9575ff3b6f8f88fec6.webp',
+            category_name: '책장',
+            category_img: '/images/test/2.jpg',
             category_description: '어쩌고저쩌고',
             children: [],
 
           },
           {
             id: 321,
-            category_name: '침대',
-            category_img: 'https://backend.comagain.kr/storage/images/advertisements/1682780973e13c43e720132a9575ff3b6f8f88fec6.webp',
+            category_name: '스탠드',
+            category_img: '/images/test/2.jpg',
             category_description: '어쩌고저쩌고',
             children: [],
           },
           {
             id: 322,
-            category_name: '매트리스',
-            category_img: 'https://backend.comagain.kr/storage/images/advertisements/1682780973e13c43e720132a9575ff3b6f8f88fec6.webp',
+            category_name: '고정형의자',
+            category_img: '/images/test/2.jpg',
             category_description: '어쩌고저쩌고',
             children: [],
           },
           {
             id: 323,
-            category_name: '옷장',
-            category_img: 'https://backend.comagain.kr/storage/images/advertisements/1682780973e13c43e720132a9575ff3b6f8f88fec6.webp',
+            category_name: '교정형의자',
+            category_img: '/images/test/2.jpg',
             category_description: '어쩌고저쩌고',
             children: [],
 
@@ -157,7 +157,7 @@ export const test_categories = [
       {
         id: 23,
         category_name: '주방가구',
-        category_img: 'https://backend.comagain.kr/storage/images/advertisements/1682780973e13c43e720132a9575ff3b6f8f88fec6.webp',
+        category_img: '/images/test/2.jpg',
         category_description: '어쩌고저쩌고',
         children: [],
 
@@ -167,27 +167,27 @@ export const test_categories = [
   {
     id: 3,
     category_name: '가방/잡화',
-    category_img: 'https://backend.comagain.kr/storage/images/advertisements/1682780973e13c43e720132a9575ff3b6f8f88fec6.webp',
+    category_img: '/images/test/2.jpg',
     category_description: '어쩌고저쩌고',
     children: [
       {
         id: 33,
         category_name: '여성가방',
-        category_img: 'https://backend.comagain.kr/storage/images/advertisements/1682780973e13c43e720132a9575ff3b6f8f88fec6.webp',
+        category_img: '/images/test/2.jpg',
         category_description: '어쩌고저쩌고',
         children: [],
       },
       {
         id: 34,
         category_name: '남성가방',
-        category_img: 'https://backend.comagain.kr/storage/images/advertisements/1682780973e13c43e720132a9575ff3b6f8f88fec6.webp',
+        category_img: '/images/test/2.jpg',
         category_description: '어쩌고저쩌고',
         children: [],
       },
       {
         id: 35,
         category_name: '여행가방',
-        category_img: 'https://backend.comagain.kr/storage/images/advertisements/1682780973e13c43e720132a9575ff3b6f8f88fec6.webp',
+        category_img: '/images/test/2.jpg',
         category_description: '어쩌고저쩌고',
         children: [],
 
@@ -197,27 +197,27 @@ export const test_categories = [
   {
     id: 4,
     category_name: '패션의류',
-    category_img: 'https://backend.comagain.kr/storage/images/advertisements/1682780973e13c43e720132a9575ff3b6f8f88fec6.webp',
+    category_img: '/images/test/2.jpg',
     category_description: '어쩌고저쩌고',
     children: [
       {
         id: 44,
         category_name: '남성정장',
-        category_img: 'https://backend.comagain.kr/storage/images/advertisements/1682780973e13c43e720132a9575ff3b6f8f88fec6.webp',
+        category_img: '/images/test/2.jpg',
         category_description: '어쩌고저쩌고',
         children: [],
       },
       {
         id: 45,
         category_name: '영캐주얼',
-        category_img: 'https://backend.comagain.kr/storage/images/advertisements/1682780973e13c43e720132a9575ff3b6f8f88fec6.webp',
+        category_img: '/images/test/2.jpg',
         category_description: '어쩌고저쩌고',
         children: [],
       },
       {
         id: 46,
         category_name: '언더웨어',
-        category_img: 'https://backend.comagain.kr/storage/images/advertisements/1682780973e13c43e720132a9575ff3b6f8f88fec6.webp',
+        category_img: '/images/test/2.jpg',
         category_description: '어쩌고저쩌고',
         children: [],
 
@@ -227,26 +227,26 @@ export const test_categories = [
   {
     id: 5,
     category_name: '가방/생활',
-    category_img: 'https://backend.comagain.kr/storage/images/advertisements/1682780973e13c43e720132a9575ff3b6f8f88fec6.webp',
+    category_img: '/images/test/2.jpg',
     category_description: '어쩌고저쩌고',
     children: [
       {
         id: 55,
         category_name: 'TV/냉장고',
-        category_img: 'https://backend.comagain.kr/storage/images/advertisements/1682780973e13c43e720132a9575ff3b6f8f88fec6.webp',
+        category_img: '/images/test/2.jpg',
         category_description: '어쩌고저쩌고',
         children: [
           {
             id: 256,
             category_name: 'TV',
-            category_img: 'https://backend.comagain.kr/storage/images/advertisements/1682780973e13c43e720132a9575ff3b6f8f88fec6.webp',
+            category_img: '/images/test/2.jpg',
             category_description: '어쩌고저쩌고',
             children: [],
           },
           {
             id: 255,
             category_name: '냉장고',
-            category_img: 'https://backend.comagain.kr/storage/images/advertisements/1682780973e13c43e720132a9575ff3b6f8f88fec6.webp',
+            category_img: '/images/test/2.jpg',
             category_description: '어쩌고저쩌고',
             children: [],
           },
@@ -255,20 +255,20 @@ export const test_categories = [
       {
         id: 56,
         category_name: '세탁기/에어컨',
-        category_img: 'https://backend.comagain.kr/storage/images/advertisements/1682780973e13c43e720132a9575ff3b6f8f88fec6.webp',
+        category_img: '/images/test/2.jpg',
         category_description: '어쩌고저쩌고',
         children: [
           {
             id: 155,
             category_name: '세탁기',
-            category_img: 'https://backend.comagain.kr/storage/images/advertisements/1682780973e13c43e720132a9575ff3b6f8f88fec6.webp',
+            category_img: '/images/test/2.jpg',
             category_description: '어쩌고저쩌고',
             children: [],
           },
           {
             id: 156,
             category_name: '에어컨',
-            category_img: 'https://backend.comagain.kr/storage/images/advertisements/1682780973e13c43e720132a9575ff3b6f8f88fec6.webp',
+            category_img: '/images/test/2.jpg',
             category_description: '어쩌고저쩌고',
             children: [],
           },
@@ -277,27 +277,27 @@ export const test_categories = [
       {
         id: 57,
         category_name: '주방/생활/계절가전',
-        category_img: 'https://backend.comagain.kr/storage/images/advertisements/1682780973e13c43e720132a9575ff3b6f8f88fec6.webp',
+        category_img: '/images/test/2.jpg',
         category_description: '어쩌고저쩌고',
         children: [
           {
             id: 100,
             category_name: '주방가전',
-            category_img: 'https://backend.comagain.kr/storage/images/advertisements/1682780973e13c43e720132a9575ff3b6f8f88fec6.webp',
+            category_img: '/images/test/2.jpg',
             category_description: '어쩌고저쩌고',
             children: [],
           },
           {
             id: 101,
             category_name: '생활가전',
-            category_img: 'https://backend.comagain.kr/storage/images/advertisements/1682780973e13c43e720132a9575ff3b6f8f88fec6.webp',
+            category_img: '/images/test/2.jpg',
             category_description: '어쩌고저쩌고',
             children: [],
           },
           {
             id: 102,
             category_name: '계절가전',
-            category_img: 'https://backend.comagain.kr/storage/images/advertisements/1682780973e13c43e720132a9575ff3b6f8f88fec6.webp',
+            category_img: '/images/test/2.jpg',
             category_description: '어쩌고저쩌고',
             children: [],
 
@@ -310,7 +310,7 @@ export const test_categories = [
   {
     id: 6,
     category_name: '타임세일',
-    category_img: 'https://backend.comagain.kr/storage/images/advertisements/1682780973e13c43e720132a9575ff3b6f8f88fec6.webp',
+    category_img: '/images/test/2.jpg',
     category_description: '어쩌고저쩌고',
     children: [
 
@@ -319,7 +319,7 @@ export const test_categories = [
   {
     id: 7,
     category_name: '베스트100',
-    category_img: 'https://backend.comagain.kr/storage/images/advertisements/1682780973e13c43e720132a9575ff3b6f8f88fec6.webp',
+    category_img: '/images/test/2.jpg',
     category_description: '어쩌고저쩌고',
     children: [
 
@@ -329,21 +329,288 @@ export const test_categories = [
 export const test_item = {
   id: 58,
   cate_id: 15,
+<<<<<<< HEAD
   name: "양념치킨",
+=======
+  name: "생활비달력 머니어터",
+  sub_name:"유연함으로 흠집 방지 및 보호에 도움",
+  rating: 3.5,
+>>>>>>> f12bd51bf45f50fe7b06ff51c913fedf466b2d9e
   mkt_pr: 18000,
   item_pr: 18000,
-  product_img: 'https://backend.comagain.kr/storage/images/advertisements/1682780973e13c43e720132a9575ff3b6f8f88fec6.webp',
+  product_img: '/images/test/testitem1.jpg',
   brand_nm: "BHC",
   origin_nm: "치킨은 맛있어 !",
   mfg_nm: "BHC",
   model_nm: "치킨",
+<<<<<<< HEAD
+=======
+  images: [
+    '/images/test/testitem2.jpg',
+    '/images/test/testitem3.jpg',
+    '/images/test/testitem4.jpg',
+    '/images/test/testitem5.jpg',
+  ],
+>>>>>>> f12bd51bf45f50fe7b06ff51c913fedf466b2d9e
   content: "<th colspan=\"2\" class=\"menu_tit al\"><span class=\"menuname\">\uc591\ub150\uce58\ud0a8<\/span>\ub9f5\ub2e8\ub9f5\ub2e8! \ubc14\uc0ad\ud55c \ud6c4\ub77c\uc774\ub4dc\uc5d0 \ub9e4\ucf64\ub2ec\ub2ec \uc18c\uc2a4\ub97c \uc785\ud78c \uce58\ud0a8<br><br>\n[\ub2ed\uace0\uae30 : \uad6d\ub0b4\uc0b0] <br>\n\uc870\ub9ac \uc804 \uc911\ub7c9 950g \uc774\uc0c1<br>\n\u203b\uc870\ub9ac\uc2dc \uacc4\uc721 \ub0b4 \uc720\/\uc218\ubd84 \uc99d\ubc1c\ub85c \uc911\ub7c9\ucc28\uc774\uac00 \ubc1c\uc0dd\ud569\ub2c8\ub2e4.\n\t\t\t\t\t\t\t\t\t\t\t<br> \uac00\uaca9 : 18000<\/th>",
   created_at: "2023-03-09 14:30:18",
   updated_at: "2023-03-09 14:30:18"
 }
+<<<<<<< HEAD
 export const test_items = [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,].map((item, idx)=>{
   return test_item;
 })
+=======
+function repeatArray(arr, n) {
+  const repeatedArray = [];
+  for (let i = 0; i < n; i++) {
+    repeatedArray.push(...arr);
+  }
+  return repeatedArray;
+}
+export const test_items = [
+  {
+    id: 58,
+    cate_id: 15,
+    name: "생활비달력 머니어터",
+    sub_name:"유연함으로 흠집 방지 및 보호에 도움",
+    rating: 3.5,
+    mkt_pr: 18000,
+    item_pr: 18000,
+    product_img: '/images/test/testitem1.jpg',
+    brand_nm: "BHC",
+    origin_nm: "치킨은 맛있어 !",
+    mfg_nm: "BHC",
+    model_nm: "치킨",
+    images: [
+      'https://purplevery19.cafe24.com:8443/image/content/1680678103115-content.png',
+      'https://purplevery19.cafe24.com:8443/image/content/1680616811070-content.png',
+      'https://purplevery19.cafe24.com:8443/image/content/1680616575532-content.png',
+      'https://purplevery19.cafe24.com:8443/image/content/1680591667443-content.png',
+      'https://purplevery19.cafe24.com:8443/image/content/1680591574260-content.png',
+    ],
+    content: "<th colspan=\"2\" class=\"menu_tit al\"><span class=\"menuname\">\uc591\ub150\uce58\ud0a8<\/span>\ub9f5\ub2e8\ub9f5\ub2e8! \ubc14\uc0ad\ud55c \ud6c4\ub77c\uc774\ub4dc\uc5d0 \ub9e4\ucf64\ub2ec\ub2ec \uc18c\uc2a4\ub97c \uc785\ud78c \uce58\ud0a8<br><br>\n[\ub2ed\uace0\uae30 : \uad6d\ub0b4\uc0b0] <br>\n\uc870\ub9ac \uc804 \uc911\ub7c9 950g \uc774\uc0c1<br>\n\u203b\uc870\ub9ac\uc2dc \uacc4\uc721 \ub0b4 \uc720\/\uc218\ubd84 \uc99d\ubc1c\ub85c \uc911\ub7c9\ucc28\uc774\uac00 \ubc1c\uc0dd\ud569\ub2c8\ub2e4.\n\t\t\t\t\t\t\t\t\t\t\t<br> \uac00\uaca9 : 18000<\/th>",
+    created_at: "2023-03-09 14:30:18",
+    updated_at: "2023-03-09 14:30:18"
+  },
+  {
+    id: 59,
+    cate_id: 15,
+    name: "몰타 펜던트",
+    sub_name:"헬로키티 프렌즈",
+    rating: 3.5,
+    mkt_pr: 20000,
+    item_pr: 17000,
+    product_img: '/images/test/testitem8.jpg',
+    brand_nm: "BHC",
+    origin_nm: "치킨은 맛있어 !",
+    mfg_nm: "BHC",
+    model_nm: "치킨",
+    images: [
+      'https://purplevery19.cafe24.com:8443/image/content/1680678103115-content.png',
+      'https://purplevery19.cafe24.com:8443/image/content/1680616811070-content.png',
+      'https://purplevery19.cafe24.com:8443/image/content/1680616575532-content.png',
+      'https://purplevery19.cafe24.com:8443/image/content/1680591667443-content.png',
+      'https://purplevery19.cafe24.com:8443/image/content/1680591574260-content.png',
+    ],
+    content: "<th colspan=\"2\" class=\"menu_tit al\"><span class=\"menuname\">\uc591\ub150\uce58\ud0a8<\/span>\ub9f5\ub2e8\ub9f5\ub2e8! \ubc14\uc0ad\ud55c \ud6c4\ub77c\uc774\ub4dc\uc5d0 \ub9e4\ucf64\ub2ec\ub2ec \uc18c\uc2a4\ub97c \uc785\ud78c \uce58\ud0a8<br><br>\n[\ub2ed\uace0\uae30 : \uad6d\ub0b4\uc0b0] <br>\n\uc870\ub9ac \uc804 \uc911\ub7c9 950g \uc774\uc0c1<br>\n\u203b\uc870\ub9ac\uc2dc \uacc4\uc721 \ub0b4 \uc720\/\uc218\ubd84 \uc99d\ubc1c\ub85c \uc911\ub7c9\ucc28\uc774\uac00 \ubc1c\uc0dd\ud569\ub2c8\ub2e4.\n\t\t\t\t\t\t\t\t\t\t\t<br> \uac00\uaca9 : 18000<\/th>",
+    created_at: "2023-03-09 14:30:18",
+    updated_at: "2023-03-09 14:30:18"
+  },
+  {
+    id: 60,
+    cate_id: 15,
+    name: "LED 레몬트리 스탠드",
+    sub_name:"비주얼팩토리",
+    rating: 3.5,
+    mkt_pr: 20000,
+    item_pr: 16000,
+    product_img: '/images/test/testitem9.jpg',
+    brand_nm: "BHC",
+    origin_nm: "치킨은 맛있어 !",
+    mfg_nm: "BHC",
+    model_nm: "치킨",
+    images: [
+      'https://purplevery19.cafe24.com:8443/image/content/1680678103115-content.png',
+      'https://purplevery19.cafe24.com:8443/image/content/1680616811070-content.png',
+      'https://purplevery19.cafe24.com:8443/image/content/1680616575532-content.png',
+      'https://purplevery19.cafe24.com:8443/image/content/1680591667443-content.png',
+      'https://purplevery19.cafe24.com:8443/image/content/1680591574260-content.png',
+    ],
+    content: "<th colspan=\"2\" class=\"menu_tit al\"><span class=\"menuname\">\uc591\ub150\uce58\ud0a8<\/span>\ub9f5\ub2e8\ub9f5\ub2e8! \ubc14\uc0ad\ud55c \ud6c4\ub77c\uc774\ub4dc\uc5d0 \ub9e4\ucf64\ub2ec\ub2ec \uc18c\uc2a4\ub97c \uc785\ud78c \uce58\ud0a8<br><br>\n[\ub2ed\uace0\uae30 : \uad6d\ub0b4\uc0b0] <br>\n\uc870\ub9ac \uc804 \uc911\ub7c9 950g \uc774\uc0c1<br>\n\u203b\uc870\ub9ac\uc2dc \uacc4\uc721 \ub0b4 \uc720\/\uc218\ubd84 \uc99d\ubc1c\ub85c \uc911\ub7c9\ucc28\uc774\uac00 \ubc1c\uc0dd\ud569\ub2c8\ub2e4.\n\t\t\t\t\t\t\t\t\t\t\t<br> \uac00\uaca9 : 18000<\/th>",
+    created_at: "2023-03-09 14:30:18",
+    updated_at: "2023-03-09 14:30:18"
+  },
+  {
+    id: 61,
+    cate_id: 15,
+    name: "핸드메이드 원목조명",
+    sub_name:"유연함으로 흠집 방지 및 보호에 도움",
+    rating: 3.5,
+    mkt_pr: 18000,
+    item_pr: 18000,
+    product_img: '/images/test/testitem10.jpg',
+    brand_nm: "BHC",
+    origin_nm: "치킨은 맛있어 !",
+    mfg_nm: "BHC",
+    model_nm: "치킨",
+    images: [
+      'https://purplevery19.cafe24.com:8443/image/content/1680678103115-content.png',
+      'https://purplevery19.cafe24.com:8443/image/content/1680616811070-content.png',
+      'https://purplevery19.cafe24.com:8443/image/content/1680616575532-content.png',
+      'https://purplevery19.cafe24.com:8443/image/content/1680591667443-content.png',
+      'https://purplevery19.cafe24.com:8443/image/content/1680591574260-content.png',
+    ],
+    content: "<th colspan=\"2\" class=\"menu_tit al\"><span class=\"menuname\">\uc591\ub150\uce58\ud0a8<\/span>\ub9f5\ub2e8\ub9f5\ub2e8! \ubc14\uc0ad\ud55c \ud6c4\ub77c\uc774\ub4dc\uc5d0 \ub9e4\ucf64\ub2ec\ub2ec \uc18c\uc2a4\ub97c \uc785\ud78c \uce58\ud0a8<br><br>\n[\ub2ed\uace0\uae30 : \uad6d\ub0b4\uc0b0] <br>\n\uc870\ub9ac \uc804 \uc911\ub7c9 950g \uc774\uc0c1<br>\n\u203b\uc870\ub9ac\uc2dc \uacc4\uc721 \ub0b4 \uc720\/\uc218\ubd84 \uc99d\ubc1c\ub85c \uc911\ub7c9\ucc28\uc774\uac00 \ubc1c\uc0dd\ud569\ub2c8\ub2e4.\n\t\t\t\t\t\t\t\t\t\t\t<br> \uac00\uaca9 : 18000<\/th>",
+    created_at: "2023-03-09 14:30:18",
+    updated_at: "2023-03-09 14:30:18"
+  },
+  {
+    id: 62,
+    cate_id: 15,
+    name: "메모리폼 원형방석",
+    sub_name:"갤럭시 S7 매치4 캡슐카드",
+    rating: 3.5,
+    mkt_pr: 20000,
+    item_pr: 15000,
+    product_img: '/images/test/testitem2.jpg',
+    brand_nm: "BHC",
+    origin_nm: "치킨은 맛있어 !",
+    mfg_nm: "BHC",
+    model_nm: "치킨",
+    images: [
+      'https://purplevery19.cafe24.com:8443/image/content/1680678103115-content.png',
+      'https://purplevery19.cafe24.com:8443/image/content/1680616811070-content.png',
+      'https://purplevery19.cafe24.com:8443/image/content/1680616575532-content.png',
+      'https://purplevery19.cafe24.com:8443/image/content/1680591667443-content.png',
+      'https://purplevery19.cafe24.com:8443/image/content/1680591574260-content.png',
+    ],
+    content: "<th colspan=\"2\" class=\"menu_tit al\"><span class=\"menuname\">\uc591\ub150\uce58\ud0a8<\/span>\ub9f5\ub2e8\ub9f5\ub2e8! \ubc14\uc0ad\ud55c \ud6c4\ub77c\uc774\ub4dc\uc5d0 \ub9e4\ucf64\ub2ec\ub2ec \uc18c\uc2a4\ub97c \uc785\ud78c \uce58\ud0a8<br><br>\n[\ub2ed\uace0\uae30 : \uad6d\ub0b4\uc0b0] <br>\n\uc870\ub9ac \uc804 \uc911\ub7c9 950g \uc774\uc0c1<br>\n\u203b\uc870\ub9ac\uc2dc \uacc4\uc721 \ub0b4 \uc720\/\uc218\ubd84 \uc99d\ubc1c\ub85c \uc911\ub7c9\ucc28\uc774\uac00 \ubc1c\uc0dd\ud569\ub2c8\ub2e4.\n\t\t\t\t\t\t\t\t\t\t\t<br> \uac00\uaca9 : 18000<\/th>",
+    created_at: "2023-03-09 14:30:18",
+    updated_at: "2023-03-09 14:30:18"
+  },
+  {
+    id: 63,
+    cate_id: 15,
+    name: "로아 테이블 조명 스탠드",
+    sub_name:"프렌즈 테이블 조명",
+    rating: 3.5,
+    mkt_pr: 20000,
+    item_pr: 14000,
+    product_img: '/images/test/testitem3.jpg',
+    brand_nm: "BHC",
+    origin_nm: "치킨은 맛있어 !",
+    mfg_nm: "BHC",
+    model_nm: "치킨",
+    images: [
+      'https://purplevery19.cafe24.com:8443/image/content/1680678103115-content.png',
+      'https://purplevery19.cafe24.com:8443/image/content/1680616811070-content.png',
+      'https://purplevery19.cafe24.com:8443/image/content/1680616575532-content.png',
+      'https://purplevery19.cafe24.com:8443/image/content/1680591667443-content.png',
+      'https://purplevery19.cafe24.com:8443/image/content/1680591574260-content.png',
+    ],
+    content: "<th colspan=\"2\" class=\"menu_tit al\"><span class=\"menuname\">\uc591\ub150\uce58\ud0a8<\/span>\ub9f5\ub2e8\ub9f5\ub2e8! \ubc14\uc0ad\ud55c \ud6c4\ub77c\uc774\ub4dc\uc5d0 \ub9e4\ucf64\ub2ec\ub2ec \uc18c\uc2a4\ub97c \uc785\ud78c \uce58\ud0a8<br><br>\n[\ub2ed\uace0\uae30 : \uad6d\ub0b4\uc0b0] <br>\n\uc870\ub9ac \uc804 \uc911\ub7c9 950g \uc774\uc0c1<br>\n\u203b\uc870\ub9ac\uc2dc \uacc4\uc721 \ub0b4 \uc720\/\uc218\ubd84 \uc99d\ubc1c\ub85c \uc911\ub7c9\ucc28\uc774\uac00 \ubc1c\uc0dd\ud569\ub2c8\ub2e4.\n\t\t\t\t\t\t\t\t\t\t\t<br> \uac00\uaca9 : 18000<\/th>",
+    created_at: "2023-03-09 14:30:18",
+    updated_at: "2023-03-09 14:30:18"
+  },
+  {
+    id: 64,
+    cate_id: 15,
+    name: "반스 어센틱 블랙",
+    sub_name:"상품 요약설명",
+    rating: 3.5,
+    mkt_pr: 18000,
+    item_pr: 18000,
+    product_img: '/images/test/testitem4.jpg',
+    brand_nm: "BHC",
+    origin_nm: "치킨은 맛있어 !",
+    mfg_nm: "BHC",
+    model_nm: "치킨",
+    images: [
+      'https://purplevery19.cafe24.com:8443/image/content/1680678103115-content.png',
+      'https://purplevery19.cafe24.com:8443/image/content/1680616811070-content.png',
+      'https://purplevery19.cafe24.com:8443/image/content/1680616575532-content.png',
+      'https://purplevery19.cafe24.com:8443/image/content/1680591667443-content.png',
+      'https://purplevery19.cafe24.com:8443/image/content/1680591574260-content.png',
+    ],
+    content: "<th colspan=\"2\" class=\"menu_tit al\"><span class=\"menuname\">\uc591\ub150\uce58\ud0a8<\/span>\ub9f5\ub2e8\ub9f5\ub2e8! \ubc14\uc0ad\ud55c \ud6c4\ub77c\uc774\ub4dc\uc5d0 \ub9e4\ucf64\ub2ec\ub2ec \uc18c\uc2a4\ub97c \uc785\ud78c \uce58\ud0a8<br><br>\n[\ub2ed\uace0\uae30 : \uad6d\ub0b4\uc0b0] <br>\n\uc870\ub9ac \uc804 \uc911\ub7c9 950g \uc774\uc0c1<br>\n\u203b\uc870\ub9ac\uc2dc \uacc4\uc721 \ub0b4 \uc720\/\uc218\ubd84 \uc99d\ubc1c\ub85c \uc911\ub7c9\ucc28\uc774\uac00 \ubc1c\uc0dd\ud569\ub2c8\ub2e4.\n\t\t\t\t\t\t\t\t\t\t\t<br> \uac00\uaca9 : 18000<\/th>",
+    created_at: "2023-03-09 14:30:18",
+    updated_at: "2023-03-09 14:30:18"
+  },
+  {
+    id: 65,
+    cate_id: 15,
+    name: "레트로 공중전화",
+    sub_name:"두 가지 타입의 카드 수납 가능",
+    rating: 3.5,
+    mkt_pr: 20000,
+    item_pr: 18000,
+    product_img: '/images/test/testitem5.jpg',
+    brand_nm: "BHC",
+    origin_nm: "치킨은 맛있어 !",
+    mfg_nm: "BHC",
+    model_nm: "치킨",
+    images: [
+      'https://purplevery19.cafe24.com:8443/image/content/1680678103115-content.png',
+      'https://purplevery19.cafe24.com:8443/image/content/1680616811070-content.png',
+      'https://purplevery19.cafe24.com:8443/image/content/1680616575532-content.png',
+      'https://purplevery19.cafe24.com:8443/image/content/1680591667443-content.png',
+      'https://purplevery19.cafe24.com:8443/image/content/1680591574260-content.png',
+    ],
+    content: "<th colspan=\"2\" class=\"menu_tit al\"><span class=\"menuname\">\uc591\ub150\uce58\ud0a8<\/span>\ub9f5\ub2e8\ub9f5\ub2e8! \ubc14\uc0ad\ud55c \ud6c4\ub77c\uc774\ub4dc\uc5d0 \ub9e4\ucf64\ub2ec\ub2ec \uc18c\uc2a4\ub97c \uc785\ud78c \uce58\ud0a8<br><br>\n[\ub2ed\uace0\uae30 : \uad6d\ub0b4\uc0b0] <br>\n\uc870\ub9ac \uc804 \uc911\ub7c9 950g \uc774\uc0c1<br>\n\u203b\uc870\ub9ac\uc2dc \uacc4\uc721 \ub0b4 \uc720\/\uc218\ubd84 \uc99d\ubc1c\ub85c \uc911\ub7c9\ucc28\uc774\uac00 \ubc1c\uc0dd\ud569\ub2c8\ub2e4.\n\t\t\t\t\t\t\t\t\t\t\t<br> \uac00\uaca9 : 18000<\/th>",
+    created_at: "2023-03-09 14:30:18",
+    updated_at: "2023-03-09 14:30:18"
+  },
+  {
+    id: 66,
+    cate_id: 15,
+    name: "몰타 2등 펜던트",
+    sub_name:"헬로키티 프렌즈",
+    rating: 3.5,
+    mkt_pr: 20000,
+    item_pr: 18000,
+    product_img: '/images/test/testitem6.jpg',
+    brand_nm: "BHC",
+    origin_nm: "치킨은 맛있어 !",
+    mfg_nm: "BHC",
+    model_nm: "치킨",
+    images: [
+      'https://purplevery19.cafe24.com:8443/image/content/1680678103115-content.png',
+      'https://purplevery19.cafe24.com:8443/image/content/1680616811070-content.png',
+      'https://purplevery19.cafe24.com:8443/image/content/1680616575532-content.png',
+      'https://purplevery19.cafe24.com:8443/image/content/1680591667443-content.png',
+      'https://purplevery19.cafe24.com:8443/image/content/1680591574260-content.png',
+    ],
+    content: "<th colspan=\"2\" class=\"menu_tit al\"><span class=\"menuname\">\uc591\ub150\uce58\ud0a8<\/span>\ub9f5\ub2e8\ub9f5\ub2e8! \ubc14\uc0ad\ud55c \ud6c4\ub77c\uc774\ub4dc\uc5d0 \ub9e4\ucf64\ub2ec\ub2ec \uc18c\uc2a4\ub97c \uc785\ud78c \uce58\ud0a8<br><br>\n[\ub2ed\uace0\uae30 : \uad6d\ub0b4\uc0b0] <br>\n\uc870\ub9ac \uc804 \uc911\ub7c9 950g \uc774\uc0c1<br>\n\u203b\uc870\ub9ac\uc2dc \uacc4\uc721 \ub0b4 \uc720\/\uc218\ubd84 \uc99d\ubc1c\ub85c \uc911\ub7c9\ucc28\uc774\uac00 \ubc1c\uc0dd\ud569\ub2c8\ub2e4.\n\t\t\t\t\t\t\t\t\t\t\t<br> \uac00\uaca9 : 18000<\/th>",
+    created_at: "2023-03-09 14:30:18",
+    updated_at: "2023-03-09 14:30:18"
+  },
+  {
+    id: 67,
+    cate_id: 15,
+    name: "레몬트리 스탠드",
+    sub_name:"비주얼팩토리",
+    rating: 3.5,
+    mkt_pr: 18000,
+    item_pr: 18000,
+    product_img: '/images/test/testitem7.jpg',
+    brand_nm: "BHC",
+    origin_nm: "치킨은 맛있어 !",
+    mfg_nm: "BHC",
+    model_nm: "치킨",
+    images: [
+      'https://purplevery19.cafe24.com:8443/image/content/1680678103115-content.png',
+      'https://purplevery19.cafe24.com:8443/image/content/1680616811070-content.png',
+      'https://purplevery19.cafe24.com:8443/image/content/1680616575532-content.png',
+      'https://purplevery19.cafe24.com:8443/image/content/1680591667443-content.png',
+      'https://purplevery19.cafe24.com:8443/image/content/1680591574260-content.png',
+    ],
+    content: "<th colspan=\"2\" class=\"menu_tit al\"><span class=\"menuname\">\uc591\ub150\uce58\ud0a8<\/span>\ub9f5\ub2e8\ub9f5\ub2e8! \ubc14\uc0ad\ud55c \ud6c4\ub77c\uc774\ub4dc\uc5d0 \ub9e4\ucf64\ub2ec\ub2ec \uc18c\uc2a4\ub97c \uc785\ud78c \uce58\ud0a8<br><br>\n[\ub2ed\uace0\uae30 : \uad6d\ub0b4\uc0b0] <br>\n\uc870\ub9ac \uc804 \uc911\ub7c9 950g \uc774\uc0c1<br>\n\u203b\uc870\ub9ac\uc2dc \uacc4\uc721 \ub0b4 \uc720\/\uc218\ubd84 \uc99d\ubc1c\ub85c \uc911\ub7c9\ucc28\uc774\uac00 \ubc1c\uc0dd\ud569\ub2c8\ub2e4.\n\t\t\t\t\t\t\t\t\t\t\t<br> \uac00\uaca9 : 18000<\/th>",
+    created_at: "2023-03-09 14:30:18",
+    updated_at: "2023-03-09 14:30:18"
+  },
+]
+>>>>>>> f12bd51bf45f50fe7b06ff51c913fedf466b2d9e
 
 export const test_articles = [
   {

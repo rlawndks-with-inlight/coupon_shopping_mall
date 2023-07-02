@@ -105,6 +105,7 @@ export default function Upload({
               opacity: 0,
             }),
           }}
+          {...other}
         />
 
         {hasFile && <SingleFilePreview file={file} />}
@@ -137,13 +138,13 @@ export default function Upload({
       {hasFiles && (
         <>
           <Box sx={{ my: 3 }}>
-            <MultiFilePreview files={files} thumbnail={thumbnail} onRemove={onRemove} />
+            <MultiFilePreview files={files} thumbnail={thumbnail} onRemove={onRemove} {...other} />
           </Box>
 
           <Stack direction="row" justifyContent="flex-end" spacing={1.5}>
             {onRemoveAll && (
               <Button color="inherit" variant="outlined" size="small" onClick={onRemoveAll}>
-                Remove all
+                모두 지우기
               </Button>
             )}
 
@@ -189,23 +190,14 @@ function Placeholder({ sx, ...other }) {
 
       <div>
         <Typography gutterBottom variant="h5">
-          Drop or Select file
+          파일을 업로드 해주세요.
         </Typography>
 
         <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-          Drop files here or click
-          <Typography
-            variant="body2"
-            component="span"
-            sx={{
-              mx: 0.5,
-              color: 'primary.main',
-              textDecoration: 'underline',
-            }}
-          >
-            browse
-          </Typography>
-          thorough your machine
+          파일을 드롭다운 하거나 업로드 해주세요.
+        </Typography>
+        <Typography variant="body2" sx={{ color: 'text.secondary' }}>
+          {other.fileExplain?.width}
         </Typography>
       </div>
     </Stack>

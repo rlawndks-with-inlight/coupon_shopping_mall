@@ -1,4 +1,5 @@
 import { alpha } from '@mui/material/styles';
+import { useSettingsContext } from 'src/components/settings';
 
 // ----------------------------------------------------------------------
 

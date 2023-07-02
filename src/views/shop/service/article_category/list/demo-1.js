@@ -56,7 +56,6 @@ const Demo1 = (props) => {
   const [page, setPage] = useState(1);
   const [maxPage, setMaxPage] = useState(20)
   useEffect(() => {
-    console.log(router.query?.article_category)
   }, [router.query?.article_category])
 
   const onChangePage = (num) => {

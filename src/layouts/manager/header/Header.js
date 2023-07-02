@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 // @mui
 import { useTheme } from '@mui/material/styles';
-import { Stack, AppBar, Toolbar, IconButton } from '@mui/material';
+import { Stack, AppBar, Toolbar, IconButton, Badge } from '@mui/material';
 // utils
 import { bgBlur } from '../../../utils/cssStyles';
 // hooks
@@ -57,7 +57,9 @@ export default function Header({ onOpenNav }) {
         justifyContent="flex-end"
         spacing={{ xs: 0.5, sm: 1.5 }}
       >
+
         <NotificationsPopover />
+
         <ContactsPopover />
 
         <AccountPopover />
@@ -78,19 +80,19 @@ export default function Header({ onOpenNav }) {
           duration: theme.transitions.duration.shorter,
         }),
         ...(isDesktop && {
-          width: `calc(100% - ${NAV.W_DASHBOARD + 1}px)`,
-          height: HEADER.H_DASHBOARD_DESKTOP,
+          width: `calc(100% - ${NAV.W_MANAGER + 1}px)`,
+          height: HEADER.H_MANAGER_DESKTOP,
           ...(isOffset && {
-            height: HEADER.H_DASHBOARD_DESKTOP_OFFSET,
+            height: HEADER.H_MANAGER_DESKTOP_OFFSET,
           }),
           ...(isNavHorizontal && {
             width: 1,
             bgcolor: 'background.default',
-            height: HEADER.H_DASHBOARD_DESKTOP_OFFSET,
+            height: HEADER.H_MANAGER_DESKTOP_OFFSET,
             borderBottom: `dashed 1px ${theme.palette.divider}`,
           }),
           ...(isNavMini && {
-            width: `calc(100% - ${NAV.W_DASHBOARD_MINI + 1}px)`,
+            width: `calc(100% - ${NAV.W_MANAGER_MINI + 1}px)`,
           }),
         }),
       }}

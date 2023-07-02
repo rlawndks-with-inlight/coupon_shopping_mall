@@ -16,7 +16,6 @@ export default function ThemeColorPresets({ children }) {
   const outerTheme = useTheme();
 
   const { presetsColor } = useSettingsContext();
-
   const themeOptions = useMemo(
     () => ({
       palette: {

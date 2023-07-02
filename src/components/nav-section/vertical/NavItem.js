@@ -31,13 +31,13 @@ export default function NavItem({ item, depth, open, active, isExternalLink, ...
       {icon && <StyledIcon>{icon}</StyledIcon>}
 
       {subItem && (
-        <StyledIcon>
+        <StyledIcon style={{ marginLeft: '0.5rem' }}>
           <StyledDotIcon active={active && subItem} />
         </StyledIcon>
       )}
 
       <ListItemText
-        primary={`title`}
+        primary={title}
         secondary={
           caption && (
             <Tooltip title={`caption`} placement="top-start">

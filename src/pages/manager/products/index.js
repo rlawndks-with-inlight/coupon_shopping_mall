@@ -1,16 +1,2 @@
-import { useRouter } from "next/router";
-import { useEffect } from "react";
-import ManagerLayout from "src/layouts/manager/ManagerLayout";
-const Root = () => {
-  const router = useRouter();
-  useEffect(() => {
-    router.push('/manager/products/list')
-  }, [])
-  return (
-    <>
-
-    </>
-  )
-}
-Root.getLayout = (page) => <ManagerLayout>{page}</ManagerLayout>;
-export default Root
+import ProductList from "./list";
+export default ProductList

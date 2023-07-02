@@ -22,7 +22,7 @@ const Demo1 = (props) => {
     return (
         <>
         <Wrappers>
-        <Title>주문내역</Title>
+        <Title>주문조회</Title>
         </Wrappers>
         </>
     )

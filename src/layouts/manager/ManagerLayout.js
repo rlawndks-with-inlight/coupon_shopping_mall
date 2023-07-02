@@ -14,7 +14,7 @@ import NavMini from './nav/NavMini';
 import NavVertical from './nav/NavVertical';
 import NavHorizontal from './nav/NavHorizontal';
 import { useAuthContext } from './auth/useAuthContext';
-
+import NextNProgress from 'nextjs-progressbar';
 // ----------------------------------------------------------------------
 
 ManagerLayout.propTypes = {
@@ -92,6 +92,7 @@ export default function ManagerLayout({ children }) {
   };
 
   return <>
+   <NextNProgress color={themeDnsData?.theme_css?.main_color??"#000"} />
     {themeDnsData?.id > 0 && user ?
       <>
         {renderContent()}

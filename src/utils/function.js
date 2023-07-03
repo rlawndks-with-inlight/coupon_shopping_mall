@@ -331,3 +331,15 @@ export function getAllIdsWithParents(categories) {
   }
   return result;
 }
+export function hexToRgb(hex) {
+  // hex 값의 # 기호를 제거합니다.
+  hex = hex.replace("#", "");
+
+  // hex 값을 R, G, B로 나눕니다.
+  var r = parseInt(hex.substring(0, 2), 16);
+  var g = parseInt(hex.substring(2, 4), 16);
+  var b = parseInt(hex.substring(4, 6), 16);
+
+  // RGB 값을 객체로 반환합니다.
+  return { r, g, b };
+}

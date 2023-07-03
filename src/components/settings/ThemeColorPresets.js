@@ -5,6 +5,7 @@ import { useMemo } from 'react';
 import { alpha, ThemeProvider, createTheme, useTheme } from '@mui/material/styles';
 //
 import { useSettingsContext } from './SettingsContext';
+import { hexToRgb } from 'src/utils/function';
 
 // ----------------------------------------------------------------------
 
@@ -15,14 +16,14 @@ ThemeColorPresets.propTypes = {
 export default function ThemeColorPresets({ children }) {
   const outerTheme = useTheme();
 
-  const { presetsColor } = useSettingsContext();
+  const { presetsColor, themeDnsData } = useSettingsContext();
   const themeOptions = useMemo(
     () => ({
       palette: {
         primary: presetsColor,
       },
       customShadows: {
-        primary: `0 8px 16px 0 ${alpha(presetsColor.main, 0.24)}`,
+        primary: `0 8px 16px 0 #00000029`,
       },
     }),
     [presetsColor]

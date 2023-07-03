@@ -77,7 +77,6 @@ export const presetsOption = presets.map((color) => ({
 }));
 
 export function getPresets(key) {
-
   return {
     default: defaultPreset,
     cyan: cyanPreset,

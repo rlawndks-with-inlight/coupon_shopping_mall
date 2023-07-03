@@ -13,6 +13,7 @@ const DARK_MODE = themeColor.common.black;
 
 function createShadow(color) {
   const transparent = alpha(color, 0.16);
+
   return {
     z1: `0 1px 2px 0 ${transparent}`,
     z4: `0 4px 8px 0 ${transparent}`,
@@ -22,7 +23,7 @@ function createShadow(color) {
     z20: `0 20px 40px -4px ${transparent}`,
     z24: `0 24px 48px 0 ${transparent}`,
     //
-    primary: `0 8px 16px 0 ${alpha(themeColor.primary.main, 0.24)}`,
+    primary: `0 8px 16px 0 #00000029`,
     info: `0 8px 16px 0 ${alpha(themeColor.info.main, 0.24)}`,
     secondary: `0 8px 16px 0 ${alpha(themeColor.secondary.main, 0.24)}`,
     success: `0 8px 16px 0 ${alpha(themeColor.success.main, 0.24)}`,

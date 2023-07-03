@@ -4,6 +4,7 @@ import ManagerLayout from "src/layouts/manager/ManagerLayout";
 import ManagerTable from "src/views/manager/mui/table/ManagerTable";
 import { Icon } from "@iconify/react";
 import { useRouter } from "next/router";
+import { Row } from "src/components/elements/styled-components";
 //매출 리스트
 const test_data = [
   {
@@ -17,7 +18,7 @@ const test_data = [
     phone: '01000000000',
   }
 ]
-const UserList = () => {
+const SellerList = () => {
   const defaultColumns = [
     {
       id: 'id',
@@ -66,7 +67,7 @@ const UserList = () => {
       action: (row) => {
         return (
           <>
-            <IconButton>
+          <IconButton>
               <Icon icon='material-symbols:edit-outline' onClick={() => {
                 router.push(`/manager/users/edit/${row?.id}`)
               }} />
@@ -114,5 +115,5 @@ const UserList = () => {
     </>
   )
 }
-UserList.getLayout = (page) => <ManagerLayout>{page}</ManagerLayout>;
-export default UserList
+SellerList.getLayout = (page) => <ManagerLayout>{page}</ManagerLayout>;
+export default SellerList

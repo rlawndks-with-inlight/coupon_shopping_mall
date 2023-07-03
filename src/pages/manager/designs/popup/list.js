@@ -1,6 +1,6 @@
 import ManagerLayout from "src/layouts/manager/ManagerLayout";
 
-//메인화면
+//상품관리
 const PopupList = () =>{
   return (
     <>
@@ -9,4 +9,4 @@ const PopupList = () =>{
   )
 }
 PopupList.getLayout = (page) => <ManagerLayout>{page}</ManagerLayout>;
-export default PopupList;
+export default PopupList

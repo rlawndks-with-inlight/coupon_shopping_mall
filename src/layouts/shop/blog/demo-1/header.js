@@ -21,7 +21,7 @@ z-index: 10;
 const TopMenuContainer = styled.div`
 display:flex;
 padding: 0.5rem 0;
-max-width: 840px;
+max-width: 798px;
 width:90%;
 margin: 0 auto;
 align-items:center;
@@ -35,7 +35,7 @@ const Header = () => {
 
   const { themeMode, onToggleMode } = useSettingsContext();
   const [keyword, setKeyword] = useState("");
-  const [isProductPage, setIsProductPage] = useState(false);
+  const [isSellerPage, setIsSellerPage] = useState(false);
   const [dialogOpenObj, setDialogOpenObj] = useState({
     search: false
   })
@@ -48,6 +48,7 @@ const Header = () => {
   })
   const [categories, setCategories] = useState(test_categories)
   const [loading, setLoading] = useState(true);
+  const [scrollY, setScrollY] = useState(0);
   useEffect(() => {
     setLoading(true);
     let hover_list = getAllIdsWithParents(categories);
@@ -62,10 +63,10 @@ const Header = () => {
   }, [])
 
   useEffect(() => {
-    if (router.asPath.split('/')[2] == 'product') {
-      setIsProductPage(true)
+    if (router.asPath.split('/')[2] == 'seller') {
+      setIsSellerPage(true)
     } else {
-      setIsProductPage(false)
+      setIsSellerPage(false)
     }
   }, [router.asPath])
   function getAllIdsWithParents(categories) {
@@ -85,6 +86,17 @@ const Header = () => {
     }
     return result;
   }
+  useEffect(() => {
+    const handleScroll = () => {
+      const currentScrollHeight = window.scrollY;
+      setScrollY(currentScrollHeight)
+    };
+    window.addEventListener('scroll', handleScroll);
+
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+    };
+  }, []);
   const onHoverCategory = (category_name) => {
     let hover_items = hoverItems;
     for (let key in hover_items) {
@@ -113,7 +125,7 @@ const Header = () => {
             root_path={'blog'}
           />
           <Wrappers style={{
-            background: `${isProductPage ? 'transparent' : (themeMode == 'dark' ? '#000' : '#fff')}`
+            background: `${isSellerPage ? 'transparent' : (themeMode == 'dark' ? '#000' : '#fff')}`
           }}
           >
             <TopMenuContainer>
@@ -127,25 +139,25 @@ const Header = () => {
                   })
                 }}
               >
-                <Icon icon={'tabler:search'} fontSize={'1.5rem'} color={themeMode == 'dark' ? '#fff' : '#000'} />
+                <Icon icon={'tabler:search'} fontSize={'1.5rem'} color={themeMode == 'dark' || (isSellerPage && scrollY < 350) ? '#fff' : '#000'} />
               </IconButton>
               <IconButton
                 sx={iconButtonStyle}
                 onClick={() => router.push('/blog/auth/login')}
               >
-                <Icon icon={'basil:user-outline'} fontSize={'1.8rem'} color={themeMode == 'dark' ? '#fff' : '#000'} />
+                <Icon icon={'basil:user-outline'} fontSize={'1.8rem'} color={themeMode == 'dark' || (isSellerPage && scrollY < 350) ? '#fff' : '#000'} />
               </IconButton>
               <IconButton
                 sx={iconButtonStyle}
                 onClick={() => router.push('/blog/auth/cart')}
               >
-                <Icon icon={'basil:shopping-bag-outline'} fontSize={'1.8rem'} color={themeMode == 'dark' ? '#fff' : '#000'} />
+                <Icon icon={'basil:shopping-bag-outline'} fontSize={'1.8rem'} color={themeMode == 'dark' || (isSellerPage && scrollY < 350) ? '#fff' : '#000'} />
               </IconButton>
               <IconButton
                 sx={iconButtonStyle}
                 onClick={() => onToggleMode()}
               >
-                <Icon icon={themeMode === 'dark' ? 'tabler:sun' : 'tabler:moon-stars'} fontSize={'1.5rem'} color={themeMode == 'dark' ? '#fff' : '#000'} />
+                <Icon icon={themeMode === 'dark' ? 'tabler:sun' : 'tabler:moon-stars'} fontSize={'1.5rem'} color={themeMode == 'dark' || (isSellerPage && scrollY < 350) ? '#fff' : '#000'} />
               </IconButton>
             </TopMenuContainer>
           </Wrappers>

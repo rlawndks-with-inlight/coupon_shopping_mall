@@ -13,7 +13,7 @@ const Demo1 = (props) => {
 
     return (
         <>
-        {signed ? ``:router.push(`../auth/login/demo-1.js`)}
+        
         </>
     )
 }

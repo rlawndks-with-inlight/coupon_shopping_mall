@@ -28,8 +28,8 @@ display:flex;
 flex-direction:column;
 margin: 0 auto;
 @media (max-width:840px){
-    padding:5%;일
-}일
+  padding:5%;
+}
 `
 
 const TextFieldTitle = styled.label`

@@ -1,32 +1,61 @@
 import { useTheme } from '@emotion/react';
 import { Button, TextField } from '@mui/material';
 import { useEffect, useState } from 'react';
-import { Col, Row, Title, themeObj } from 'src/components/elements/styled-components';
 import { useSettingsContext } from 'src/components/settings';
 import styled from 'styled-components'
 
 const Wrappers = styled.div`
-max-width:500px;
+max-width:840px;
+display:flex;
+flex-direction:column;
+margin:56px auto 0 auto;
+width:100%;
+`
+
+const TitleBox = styled.h2`
+font-size:1.5rem;
+font-weight:bold;
+line-height:1.38462;
+padding:1rem 0 0.5rem 0;
+@media (max-width:840px){
+    padding: 0 5% 0 5%;
+}
+`
+
+const TextFieldContainer = styled.div`
+width:100%;
 display:flex;
 flex-direction:column;
 margin: 0 auto;
-width: 100%;
-min-height:90vh;
-margin-bottom:10vh;
+@media (max-width:840px){
+    padding:5%;일
+}일
 `
 
-const ImageWrapper = styled.img`
-width:auto;
-height:50px;
+const TextFieldTitle = styled.label`
+font-size:1rem;
+font-weight:regular;
+margin:1.5rem 0 1rem 0;
 `
 
-const HoverText = styled.div`
-padding:0 1rem;
-color:${themeObj.grey[500]};
+const FindInfo = styled.span`
+text-align:right;
+font-size:1rem;
+font-weight:regular;
+margin:1.5rem 0 2rem 0;
+color:black;
+text-decoration:underline;
 cursor:pointer;
-&:hover{
-  color:${props => props.presetsColor?.main};
-}
+`
+
+const NotSignup = styled.span`
+text-align:center;
+font-size:1rem;
+font-weight:regular;
+margin:1.5rem 0 2rem 0;
+color:black;
+text-decoration:underline;
+cursor:pointer;
 `
 
 // 로그인 김인욱
@@ -53,56 +82,49 @@ const Demo1 = (props) => {
   return (
     <>
       <Wrappers>
-        <ImageWrapper src='https://backend.comagain.kr/storage/images/logos/IFFUcyTPtgF887r0RPOGXZyLLPvp016Je17MENFT.svg' />
-        <TextField
-          label='ID'
-          onChange={(e) => {
-            setId(e.target.value)
-          }}
-          type='id'
-          value={id}
-          style={inputStyle}
-          autoComplete='off'
-        />
-        <TextField
-          label='비밀번호'
-          onChange={(e) => {
-            setPassword(e.target.value)
-          }}
-          type='password'
-          value={password}
-          style={inputStyle}
-          autoComplete='off'
-        />
-        <Button variant="contained" style={{
-          height: '56px',
-          marginTop: '1rem',
-        }}
-        onClick={() => {
-            if(signed === false){
-                setSigned(true)
-            }
-        }}
-        >로그인</Button>
-        <Row style={{ margin: '2rem auto' }}>
-          <HoverText style={{ borderRight: `1px solid ${themeObj.grey[300]}` }} presetsColor={presetsColor} onClick={()=>{router.push(`/blog/auth/find-info?type=0`)}}>아이디 찾기</HoverText>
-          <HoverText presetsColor={presetsColor}  onClick={()=>{router.push(`/blog/auth/find-info?type=1`)}}>비밀번호 찾기</HoverText>
-        </Row>
-        <Col style={{ alignItems: 'center', margin: '2rem auto' }}>
-          <div style={{ fontSize: themeObj.font_size.size4, marginBottom: '1rem' }}>아직 회원이 아니신가요?</div>
-          <div style={{ color: themeObj.grey[500] }}>지금 회원가입을 하시면</div>
-          <div style={{ color: themeObj.grey[500] }}>다양하고 특별한 혜택이 준비되어 있습니다.</div>
-          <Button variant="outlined" style={{
-            height: '56px',
-            marginTop: '1rem',
-            maxWidth: '500px',
-            width: '50%'
-          }}
-            onClick={() => {
-              router.push('/blog/auth/sign-up')
-            }}
-          >회원가입</Button>
-        </Col>
+        <TitleBox>로그인</TitleBox>
+        <TextFieldContainer>
+            <TextFieldTitle>아이디</TextFieldTitle>
+            <TextField 
+                name='id'
+                autoComplete='id'
+                placeholder='아이디를 입력해주세요'
+                onChange={(e) => {
+                    setId(e.target.value)
+                }}
+            />
+            <TextFieldTitle>비밀번호</TextFieldTitle>
+            <TextField 
+                name='password'
+                autoComplete='password'
+                placeholder='비밀번호를 입력해주세요'
+                onChange={(e) => {
+                    setPassword(e.target.value)
+                }}
+            />
+            <FindInfo onClick={() => {router.push('/blog/auth/find-info')}}>아이디 / 비밀번호 찾기</FindInfo>
+            <Button
+                variant='contained'
+                color='primary'
+                size='large'
+                style={{
+                    marginTop:'1rem',
+                }}
+            >로그인</Button>
+            <Button
+                variant='outlined'
+                color='primary'
+                size='large'
+                href='../sign-up/demo-1'
+                onClick={() => {
+                    router.push('/blog/auth/sign-up')
+                }}
+                style={{
+                    marginTop:'1rem',
+                }}
+            >3초만에 빠른 회원가입</Button>
+            <NotSignup>비회원 주문 조회</NotSignup>
+        </TextFieldContainer>
       </Wrappers>
     </>
   )

@@ -1,98 +1,96 @@
-// 자주 쓰이는 컴포넌트 모아놓기 김인욱
-import styled from "styled-components";
-import { themeObj } from "../styled-components";
-import { LazyLoadImage } from "react-lazy-load-image-component";
-import { commarNumber } from "src/utils/function";
 
-const ItemWrapper = styled.div`
-    display: -webkit-box;
-    display: flex;
-    -webkit-box-orient: vertical;
-    -webkit-box-direction: normal;
-    flex-direction: column;
-    width:285px;
-    cursor: pointer;
-    margin:0;
-    @media (max-width: 1350px) {
-      width:27.6vw;
-    }
-    @media (max-width: 1000px) {
-      width:41vw;
-    }
-    @media (max-width: 650px) {
-      width:90vw;
-    }
-`
-const ItemName = styled.div`
-font-weight: bold;
-font-size:${themeObj.font_size.size6};
-`
-const ItemPrice = styled.div`
-font-size:${themeObj.font_size.size6};
+import styled from "styled-components"
+import { themeObj } from "../styled-components"
+import { IconButton } from "@mui/material"
+import { Icon } from "@iconify/react"
+
+const ItemContent = styled.div`
 display:flex;
-align-items:end;
+flex-direction:column;
+width:23.5%;
+cursor:pointer;
+@media (max-width:840px){
+    width:95%;
+}
 `
-const ItemsContainer = styled.div`
+const SellerItemContent = styled.div`
 display:flex;
-flex-wrap:wrap;
-column-gap: 20px;
-grid-row-gap: 40px;
-row-gap: 40px;
+flex-direction:column;
+width:48%;
+cursor:pointer;
+position:relative;
+`
+const ItemImg = styled.img`
 width:100%;
-@media (max-width: 1350px) {
-  column-gap: 3%;
+`
+const SellerImg = styled.div`
+width:100%;
+height:199px;
+@media (max-width:840px){
+    height:41.75vw;
 }
-@media (max-width: 1000px) {
-  column-gap: 6%;
-}
-@media (max-width: 650px) {
-  column-gap: 0;
-}
+`
+const ItemText = styled.div`
+font-size:${themeObj.font_size.size8};
+margin-top:0.5rem;
 `
 export const Item = (props) => {
-
   const { item, router } = props;
-
   return (
     <>
-      <ItemWrapper
-        onClick={() => {
-          router.push(`/shop/item/${item?.id}`)
-        }}
-      >
-        <LazyLoadImage src={item?.product_img}
-          className="item-img"
-        />
-        <ItemName>{item.name}</ItemName>
-        <ItemPrice>
-          {item.item_pr < item.mkt_pr &&
-            <>
-              <div style={{ color: 'red', marginRight: '0.25rem' }}>
-                {commarNumber((item.mkt_pr - item.item_pr) * 100 / item.mkt_pr) + '%'}
-              </div>
-            </>}
-          <div>{commarNumber(item.item_pr)} 원</div>
-          {item.item_pr < item.mkt_pr &&
-            <>
-              <div style={{ textDecoration: 'line-through', marginLeft: '0.25rem', fontSize: themeObj.font_size.size7, color: themeObj.grey[500] }}>
-                {item.item_pr < item.mkt_pr ? commarNumber(item.mkt_pr) : ''}
-              </div>
-            </>}
-
-        </ItemPrice>
-      </ItemWrapper>
+      <ItemContent onClick={() => {
+        router.push(`/blog/product/${item.id}`)
+      }}>
+        <ItemImg src={item?.product_img} />
+        <ItemText style={{ fontWeight: 'bold' }}>{item?.name}</ItemText>
+        <ItemText style={{ color: themeObj.grey[500] }}>{item?.sub_name}</ItemText>
+      </ItemContent>
     </>
   )
 }
-export const Items = (props) => {
-  const { items, router } = props;
+export const SellerItem = (props) => {
+  const { item, router, onClickCartButton } = props;
   return (
     <>
-      <ItemsContainer>
-        {items && items.map((item, idx) => {
-          return <Item item={item} router={router} />
-        })}
-      </ItemsContainer>
+      <SellerItemContent>
+        <div style={{ width: '100%', position: 'relative' }}>
+          <ItemImg src={item?.product_img} onClick={() => {
+            router.push(`/blog/product/${item.id}`)
+          }} />
+          <IconButton sx={{ position: 'absolute', right: '0', bottom: '0' }} 
+          onClick={()=>{
+            onClickCartButton(item)
+          }}>
+            <Icon icon='iconamoon:shopping-bag' />
+          </IconButton>
+        </div>
+        <ItemText style={{ fontWeight: 'bold' }} onClick={() => {
+          router.push(`/blog/product/${item.id}`)
+        }}>{item?.name}</ItemText>
+        <ItemText style={{ color: themeObj.grey[500] }} onClick={() => {
+          router.push(`/blog/product/${item.id}`)
+        }}>{item?.sub_name}</ItemText>
+
+      </SellerItemContent>
+    </>
+  )
+}
+export const Seller = (props) => {
+  const { item, router } = props;
+  return (
+    <>
+      <ItemContent onClick={() => {
+        router.push(`/blog/seller/${item.id}`)
+      }}>
+        <SellerImg style={{
+          backgroundImage: `url(${item?.main_img})`,
+          backgroundSize: 'cover',
+          backgroundRepeat: 'no-repeat',
+          backgroundPosition: 'center'
+        }} />
+        <ItemText style={{ fontWeight: 'bold' }}>{item?.title}</ItemText>
+        <ItemText style={{ color: themeObj.grey[500] }}>{item?.sub_title}</ItemText>
+      </ItemContent>
     </>
   )
 }

@@ -330,7 +330,7 @@ export const test_item = {
   id: 58,
   cate_id: 15,
   name: "생활비달력 머니어터",
-  sub_name:"유연함으로 흠집 방지 및 보호에 도움",
+  sub_name: "유연함으로 흠집 방지 및 보호에 도움",
   rating: 3.5,
   mkt_pr: 18000,
   item_pr: 18000,
@@ -361,7 +361,7 @@ export const test_items = [
     id: 58,
     cate_id: 15,
     name: "생활비달력 머니어터",
-    sub_name:"유연함으로 흠집 방지 및 보호에 도움",
+    sub_name: "유연함으로 흠집 방지 및 보호에 도움",
     rating: 3.5,
     mkt_pr: 18000,
     item_pr: 18000,
@@ -385,7 +385,7 @@ export const test_items = [
     id: 59,
     cate_id: 15,
     name: "몰타 펜던트",
-    sub_name:"헬로키티 프렌즈",
+    sub_name: "헬로키티 프렌즈",
     rating: 3.5,
     mkt_pr: 20000,
     item_pr: 17000,
@@ -409,7 +409,7 @@ export const test_items = [
     id: 60,
     cate_id: 15,
     name: "LED 레몬트리 스탠드",
-    sub_name:"비주얼팩토리",
+    sub_name: "비주얼팩토리",
     rating: 3.5,
     mkt_pr: 20000,
     item_pr: 16000,
@@ -433,7 +433,7 @@ export const test_items = [
     id: 61,
     cate_id: 15,
     name: "핸드메이드 원목조명",
-    sub_name:"유연함으로 흠집 방지 및 보호에 도움",
+    sub_name: "유연함으로 흠집 방지 및 보호에 도움",
     rating: 3.5,
     mkt_pr: 18000,
     item_pr: 18000,
@@ -457,7 +457,7 @@ export const test_items = [
     id: 62,
     cate_id: 15,
     name: "메모리폼 원형방석",
-    sub_name:"갤럭시 S7 매치4 캡슐카드",
+    sub_name: "갤럭시 S7 매치4 캡슐카드",
     rating: 3.5,
     mkt_pr: 20000,
     item_pr: 15000,
@@ -481,7 +481,7 @@ export const test_items = [
     id: 63,
     cate_id: 15,
     name: "로아 테이블 조명 스탠드",
-    sub_name:"프렌즈 테이블 조명",
+    sub_name: "프렌즈 테이블 조명",
     rating: 3.5,
     mkt_pr: 20000,
     item_pr: 14000,
@@ -505,7 +505,7 @@ export const test_items = [
     id: 64,
     cate_id: 15,
     name: "반스 어센틱 블랙",
-    sub_name:"상품 요약설명",
+    sub_name: "상품 요약설명",
     rating: 3.5,
     mkt_pr: 18000,
     item_pr: 18000,
@@ -529,7 +529,7 @@ export const test_items = [
     id: 65,
     cate_id: 15,
     name: "레트로 공중전화",
-    sub_name:"두 가지 타입의 카드 수납 가능",
+    sub_name: "두 가지 타입의 카드 수납 가능",
     rating: 3.5,
     mkt_pr: 20000,
     item_pr: 18000,
@@ -553,7 +553,7 @@ export const test_items = [
     id: 66,
     cate_id: 15,
     name: "몰타 2등 펜던트",
-    sub_name:"헬로키티 프렌즈",
+    sub_name: "헬로키티 프렌즈",
     rating: 3.5,
     mkt_pr: 20000,
     item_pr: 18000,
@@ -577,7 +577,7 @@ export const test_items = [
     id: 67,
     cate_id: 15,
     name: "레몬트리 스탠드",
-    sub_name:"비주얼팩토리",
+    sub_name: "비주얼팩토리",
     rating: 3.5,
     mkt_pr: 18000,
     item_pr: 18000,
@@ -634,5 +634,49 @@ export const test_articles = [
     edit_user_name: '관리자',
     date: '2023-06-29 01:01:01',
     views: 1320,
+  },
+]
+export const test_seller = [
+  {
+    id: 2,
+    title: 'dabong_',
+    sub_title: '다봉마켓_',
+    main_img: 'https://d32rratnkhh4zp.cloudfront.net/media/images/2023/7/3/thumb@1080_1688392560-af83c715-83f0-4fa6-9246-3aa9dbfce2be.jpeg'
+  },
+  {
+    id: 3,
+    title: 'R O A',
+    sub_title: 'R O A',
+    main_img: 'https://d32rratnkhh4zp.cloudfront.net/media/images/2023/2/1/thumb@1080_1675239650-123ced85-8a35-46a4-a8a3-2a8bf5ad3eda.jpeg'
+  },
+  {
+    id: 4,
+    title: 'La:um',
+    sub_title: 'La:um',
+    main_img: 'https://d32rratnkhh4zp.cloudfront.net/media/images/2023/6/26/thumb@1080_1687783770-6078426f-257a-4f39-a382-f83cecea11f5.jpeg'
+  },
+  {
+    id: 5,
+    title: '룩아웃사이드',
+    sub_title: 'Lookoutside',
+    main_img: 'https://d32rratnkhh4zp.cloudfront.net/media/images/2019/10/1/thumb@1080_2019-10-01-383927.jpeg'
+  },
+  {
+    id: 6,
+    title: '베이브',
+    sub_title: 'Babe.',
+    main_img: 'https://d32rratnkhh4zp.cloudfront.net/media/images/2023/3/31/thumb@1080_1680223659-d492c1f9-4605-4718-834d-80d6af56a857.jpeg'
+  },
+  {
+    id: 7,
+    title: '힌트오브썸머',
+    sub_title: '힌트오브썸머 사이트',
+    main_img: 'https://d32rratnkhh4zp.cloudfront.net/media/images/2022/10/20/thumb@1080_1666270542-1f6eeee7-4b36-42c5-b1ed-e327c5e71de9.png'
+  },
+  {
+    id: 8,
+    title: '몽실이네 복숭아',
+    sub_title: '주문서',
+    main_img: 'https://d32rratnkhh4zp.cloudfront.net/media/images/2023/6/29/thumb@1080_1688045487-b68ee378-6189-4b96-b385-dc596763d01f.png'
   },
 ]

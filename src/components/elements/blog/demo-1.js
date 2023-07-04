@@ -10,7 +10,8 @@ flex-direction:column;
 width:23.5%;
 cursor:pointer;
 @media (max-width:840px){
-    width:95%;
+    width:90%;
+    margin:0 auto;
 }
 `
 const SellerItemContent = styled.div`

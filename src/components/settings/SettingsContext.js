@@ -69,7 +69,7 @@ export function SettingsProvider({ children }) {
   const [themeAuth, setThemeAuth] = useState(defaultSettings.themeAuth);
   const [themeCategoryList, setThemeCategoryList] = useState(defaultSettings.themeCategoryList);
   const isArabic = false;
-const theme = useTheme();
+  const theme = useTheme();
   useEffect(() => {
     if (isArabic) {
       onChangeDirectionByLang('ar');
@@ -99,18 +99,18 @@ const theme = useTheme();
     }
   }, []);
   const getDnsData = async () => {
-    try{
-      const url = `${process.env.BACK_URL}/api/v1/auth/domain?dns=${window.location.host.split(':')[0]}`;
+    try {
+      const url = `${process.env.BACK_URL}/api/v1/auth/domain?dns=${process.env.IS_TEST ? 'localhost' : window.location.host.split(':')[0]}`;
       const res = await fetch(url);
       let dns_data = await res.json();
-      if(typeof dns_data?.theme_css == 'string' || !dns_data?.theme_css){
-        dns_data['theme_css'] = JSON.parse(dns_data?.theme_css??"{}");
+      if (typeof dns_data?.theme_css == 'string' || !dns_data?.theme_css) {
+        dns_data['theme_css'] = JSON.parse(dns_data?.theme_css ?? "{}");
       }
-      if(typeof dns_data?.options == 'string' || !dns_data?.options){
-        dns_data['options'] = JSON.parse(dns_data?.options??"{}");
+      if (typeof dns_data?.options == 'string' || !dns_data?.options) {
+        dns_data['options'] = JSON.parse(dns_data?.options ?? "{}");
       }
       onChangeDnsData(dns_data);
-    }catch(err){
+    } catch (err) {
       console.log(err)
     }
   }
@@ -202,8 +202,8 @@ const theme = useTheme();
   }, [])
   // categoryList
   const onChangeCategoryList = useCallback((data) => {
-      setThemeCategoryList(data);
-      setCookie('themeCategoryList', JSON.stringify(data));
+    setThemeCategoryList(data);
+    setCookie('themeCategoryList', JSON.stringify(data));
   }, [])
   // Reset
   const onResetSetting = useCallback(() => {
@@ -332,10 +332,10 @@ function getCookie(name) {
 }
 
 function setCookie(name, value, exdays = 3) {
-    const date = new Date();
-    date.setTime(date.getTime() + exdays * 24 * 60 * 60 * 1000);
-    const expires = `expires=${date.toUTCString()}`;
-    document.cookie = `${name}=${value};${expires};path=/`;
+  const date = new Date();
+  date.setTime(date.getTime() + exdays * 24 * 60 * 60 * 1000);
+  const expires = `expires=${date.toUTCString()}`;
+  document.cookie = `${name}=${value};${expires};path=/`;
 }
 
 function removeCookie(name) {

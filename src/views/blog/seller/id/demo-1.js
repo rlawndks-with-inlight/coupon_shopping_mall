@@ -1,12 +1,13 @@
 import { Icon } from '@iconify/react';
-import { Drawer } from '@mui/material';
+import { SwipeableDrawer, Select, MenuItem, Chip, Drawer, FormControl, InputLabel, IconButton } from '@mui/material';
 import { useEffect, useState } from 'react';
 import { SellerItem } from 'src/components/elements/blog/demo-1';
 import { Row, themeObj } from 'src/components/elements/styled-components';
 import { useSettingsContext } from 'src/components/settings';
 import { test_categories, test_items, test_seller } from 'src/data/test-data';
 import styled from 'styled-components'
-
+import _ from 'lodash'
+import { commarNumber } from 'src/utils/function';
 const Wrappers = styled.div`
 max-width: 840px;
 width:100%;
@@ -64,6 +65,21 @@ flex-wrap:wrap;
 column-gap:4%;
 row-gap:1rem;
 `
+
+const DrawerBox = styled.div`
+width:100%;
+border-bottom: 1px solid;
+display:flex;
+flex-direction:column;
+padding:1rem 0;
+`
+
+const test_color_list = [
+    { id: 1, name: "블랙", price: 0 },
+    { id: 2, name: "베이지", price: 500 },
+    { id: 17, name: "크림", price: 1500 },
+]
+const test_item_price = 20000;
 // 셀러별 메인페이지 김인욱
 const Demo1 = (props) => {
     const {
@@ -85,6 +101,8 @@ const Demo1 = (props) => {
     const [categoryId, setCategoryId] = useState(0);
     const [scrollY, setScrollY] = useState(0);
     const [cartOpen, setCartOpen] = useState(false);
+    const [itemColor, setItemColor] = useState("");
+    const [selectOptions, setSelectOptions] = useState([]);
     useEffect(() => {
         setSellerData(test_seller_data);
     }, [])
@@ -99,9 +117,11 @@ const Demo1 = (props) => {
             window.removeEventListener('scroll', handleScroll);
         };
     }, []);
-    const onClickCartButton = (item) =>{
+    const onClickCartButton = (item) => {
         setCartOpen(true);
     }
+
+
     return (
         <>
             <Wrappers>
@@ -127,16 +147,16 @@ const Demo1 = (props) => {
                 </BannerImg>
                 <CategoryWrapper style={{
                     background: `${themeMode == 'dark' ? '#000' : '#fff'}`,
-                    borderRadius:`${scrollY >=350?'0':''}`,
-                    position:`${scrollY >=350?'fixed':''}`,
-                    top:`${scrollY >=350?'0':''}`,
-                    zIndex:9
+                    borderRadius: `${scrollY >= 350 ? '0' : ''}`,
+                    position: `${scrollY >= 350 ? 'fixed' : ''}`,
+                    top: `${scrollY >= 350 ? '0' : ''}`,
+                    zIndex: 9
                 }}>
                     {scrollY < 350 &&
-                    <>
-                    <div style={{ margin: '0 auto', fontSize: themeObj.font_size.size8 }}>Product</div>
-                    <Icon icon='mdi:dot' style={{ margin: '0 auto' }} />
-                    </>}
+                        <>
+                            <div style={{ margin: '0 auto', fontSize: themeObj.font_size.size8 }}>Product</div>
+                            <Icon icon='mdi:dot' style={{ margin: '0 auto' }} />
+                        </>}
                     <CategoryContainer className='none-scroll'>
                         <Category onClick={() => { setCategoryId(0) }}
                             style={{
@@ -168,19 +188,118 @@ const Demo1 = (props) => {
                 </ItemContainer>
             </Wrappers>
             <Drawer
-            anchor={'bottom'}
-            open={cartOpen}
-            onClose={() => {
-              setCartOpen(false);
-            }}
-            style={{
-            }}
+                anchor={'bottom'}
+                open={cartOpen}
+                onClose={() => {
+                    setCartOpen(false);
+                    setSelectOptions([]);
+                }}
+                sx={{
+                    width: '100vw'
+                }}
+                PaperProps={{
+                    sx: {
+                        maxWidth: '840px',
+                        width: '100%',
+                        minHeight: '200px',
+                        margin: '0 auto',
+                        borderTopLeftRadius: '24px',
+                        borderTopRightRadius: '24px',
+                        paddingBottom: '2rem'
+                    }
+                }}
             >
-                <div style={{padding:'5rem'}}>
-                    asd
-                </div>
+                <SelectContainer>
+                    <FormControl sx={{ width: '100%' }}>
+                        <InputLabel>컬러</InputLabel>
+                        <Select
+                            label='컬러'
+                            sx={{
+                                width: '100%'
+                            }}
+                            placeholder='컬러'
+                            onChange={(e) => {
+                                if (e.target.value) {
+                                    if (_.findIndex(selectOptions, { id: e.target.value }) < 0) {
+                                        setSelectOptions([...selectOptions, {
+                                            id: e.target.value,
+                                            count: 1
+                                        }])
+                                    }
+                                }
+                                console.log(e.target.value)
+                            }}
+                        >
+                            {test_color_list.map((data) => (
+                                <MenuItem
+                                    key={data?.name}
+                                    value={data?.id}
+                                    onClick={() => {
+                                        let find_index = _.findIndex(selectOptions, { id: data?.id });
+                                        if (find_index < 0) {
+                                            setSelectOptions([...selectOptions, {
+                                                id: data?.id,
+                                                count: 1
+                                            }])
+                                        } else {
+                                            let select_options = [...selectOptions];
+                                            select_options[find_index].count++;
+                                            setSelectOptions(select_options);
+                                        }
+                                    }}
+                                >{data?.name} {data.price > 0 ? '+' + commarNumber(data.price) : ''}</MenuItem>
+                            ))}
+                        </Select>
+                    </FormControl>
+                    {selectOptions.map((item, idx) => (
+                        <>
+                            <DrawerBox>
+                                <Row style={{ justifyContent: 'space-between' }}>
+                                    <div>{_.find(test_color_list, { id: item?.id })?.name}</div>
+                                    <Icon icon='fluent-mdl2:cancel' style={{ cursor: 'pointer' }}
+                                        onClick={() => {
+                                            let select_options = [...selectOptions];
+                                            let find_index = _.findIndex(selectOptions, { id: item?.id });
+                                            select_options.splice(find_index, 1);
+                                            setSelectOptions(select_options)
+                                        }} />
+                                </Row>
+                                <Row style={{ justifyContent: 'space-between' }}>
+                                    <Row style={{ border: `1px solid ${themeObj.grey[300]}`, width: '150px', justifyContent: 'space-between', alignItems: 'center', padding: '0.25rem' }}>
+                                        <Icon icon='ic:baseline-minus' style={{ cursor: 'pointer' }}
+                                            onClick={() => {
+                                                let select_options = [...selectOptions];
+                                                let find_index = _.findIndex(selectOptions, { id: item?.id });
+                                                if(select_options[find_index].count==1){
+                                                    select_options.splice(find_index, 1);
+                                                    setSelectOptions(select_options)
+                                                }else{
+                                                    select_options[find_index].count--;
+                                                    setSelectOptions(select_options)
+                                                }
+                                             
+                                            }} />
+                                        <div>{item.count}</div>
+                                        <Icon icon='ic:baseline-plus' style={{ cursor: 'pointer' }}
+                                            onClick={() => {
+                                                let select_options = [...selectOptions];
+                                                let find_index = _.findIndex(selectOptions, { id: item?.id });
+                                                select_options[find_index].count++;
+                                                setSelectOptions(select_options)
+                                            }} />
+                                    </Row>
+                                    <div>{commarNumber((test_item_price + _.find(test_color_list, { id: item?.id }).price) * (item.count))}원</div>
+                                </Row>
+                            </DrawerBox>
+                        </>
+                    ))}
+
+                </SelectContainer>
             </Drawer>
         </>
     )
 }
+const SelectContainer = styled.div`
+padding:4rem 2.5% 0 2.5%;
+`
 export default Demo1

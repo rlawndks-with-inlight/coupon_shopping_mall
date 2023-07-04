@@ -1,4 +1,4 @@
-import { Tab, Tabs, TextField } from '@mui/material';
+import { Tab, Tabs, TextField, Button } from '@mui/material';
 import { useEffect, useState } from 'react';
 import styled from 'styled-components'
 
@@ -37,6 +37,12 @@ font-weight:regular;
 margin:1.5rem 0 1rem 0;
 `
 
+const TextFieldBox = styled.div`
+display:flex;
+width:100%;
+margin: 0 auto;
+`
+
 const returnFindType = {
   0: {
     title: '아이디 찾기',
@@ -63,14 +69,28 @@ const Demo1 = (props) => {
 
   const [findType, setFindType] = useState(undefined);
   const [phoneNum, setPhoneNum] = useState("");
-  const [userName, setUserName] = useState("")
-  const [userId, setUserId] = useState("")
+  const [username, setUsername] = useState("")
+  const [userid, setUserid] = useState("")
+  const [certificationNum, setCertificationNum] = useState("")
+  const [findIdObj, setFindIdObj] = useState({
+    name:'',
+    nameCheck:'',
+    phone:'',
+    phoneCheck:''
+  })
+  const [findPasswordObj, setFindPasswordObj] = useState({
+    id:'',
+    idCheck:'',
+    phone:'',
+    phoneCheck:''
+  })
 
   useEffect(() => {
     if (router.query?.type >= 0) {
       setFindType(router.query?.type)
     }
   }, [router.query])
+
   return (
     <>
       <Wrappers>
@@ -80,16 +100,19 @@ const Demo1 = (props) => {
             indicatorColor='primary'
             textColor='primary'
             value={findType}
+            scrollButtons='false'
             sx={{width:'100%'}}
+            onChange={(event, newValue) => router.push(`/blog/auth/find-info?type=${newValue}`)}
           >
             {Object.keys(returnFindType).map((key) => (
               <Tab key={returnFindType[key].title} value={key} label={returnFindType[key].title} sx={{
                 borderBottom:'1px solid',
                 borderColor:'inherit',
+                textColor:'inherit',
                 fontSize:'1rem',
-                fontWeight:'regular',
+                fontWeight:'bold',
                 width:'50%',
-                margin:'0',
+                margin:'0 auto',
               }} />
             ))}
           </Tabs>
@@ -98,41 +121,101 @@ const Demo1 = (props) => {
               <TextFieldTitle>이름</TextFieldTitle>
               <TextField
                 name='userId'
-                autoComplete='userId'
+                autoComplete='new-password'
                 placeholder='이름'
                 onChange={(e) => {
                   setUserId(e.target.value)
                 }}
               />
               <TextFieldTitle>연락처</TextFieldTitle>
+              <TextFieldBox>
+                <TextField
+                  name='phoneNum'
+                  autoComplete='new-password'
+                  placeholder='연락처'
+                  sx={{
+                    width:'84%',
+                    marginRight:'1%'
+                  }}
+                  onChange={(e) => {
+                    setPhoneNum(e.target.value)
+                  }}
+                />
+                <Button
+                  variant='outlined'
+                  color='primary'
+                  style={{
+                    width:'15%'
+                  }}
+                >인증받기</Button>
+              </TextFieldBox>
               <TextField
-                name='phoneNum'
-                autoComplete='phoneNum'
-                placeholder='연락처'
-                onChange={(e) => {
-                  setPhoneNum(e.target.value)
+                name='certificationNum'
+                autoComplete='new-password'
+                placeholder='인증번호 입력'
+                sx={{
+                  marginTop:'1%'
                 }}
               />
+              <Button
+                variant='contained'
+                color='primary'
+                style={{
+                  height:'56px',
+                  marginTop:'10%',
+                  fontSize:'15px'
+                }}
+              >인증완료</Button>
             </> : 
             <>
               <TextFieldTitle>아이디</TextFieldTitle>
               <TextField
                 name='userName'
-                autoComplete='userName'
+                autoComplete='new-password'
                 placeholder='아이디'
                 onChange={(e) => {
                   setUserName(e.target.value)
                 }}
               />
               <TextFieldTitle>연락처</TextFieldTitle>
+              <TextFieldBox>
+                <TextField
+                  name='phoneNum'
+                  autoComplete='new-password'
+                  placeholder='연락처'
+                  sx={{
+                    width:'84%',
+                    marginRight:'1%'
+                  }}
+                  onChange={(e) => {
+                    setPhoneNum(e.target.value)
+                  }}
+                />
+                <Button
+                  variant='outlined'
+                  color='primary'
+                  style={{
+                    width:'15%'
+                  }}
+                >인증받기</Button>
+              </TextFieldBox>
               <TextField
-                name='phoneNum'
-                autoComplete='phoneNum'
-                placeholder='연락처'
-                onChange={(e) => {
-                  setPhoneNum(e.target.value)
+                name='certificationNum'
+                autoComplete='new-password'
+                placeholder='인증번호 입력'
+                sx={{
+                  marginTop:'1%'
                 }}
               />
+              <Button
+                variant='contained'
+                color='primary'
+                style={{
+                  height:'56px',
+                  marginTop:'10%',
+                  fontSize:'15px'
+                }}
+              >인증완료</Button>
             </>}
         </TabsContainer>
       </Wrappers>

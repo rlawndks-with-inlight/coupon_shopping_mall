@@ -1,10 +1,11 @@
 import styled from 'styled-components'
-import { test_categories, test_items } from 'src/data/test-data';
+import { test_categories, test_items, test_seller } from 'src/data/test-data';
 import { useState, useEffect } from 'react';
 import Slider from 'react-slick';
 import { useSettingsContext } from 'src/components/settings';
 import { themeObj } from 'src/components/elements/styled-components';
 import { useAuthContext } from 'src/layouts/manager/auth/useAuthContext';
+import { Item, Seller } from 'src/components/elements/blog/demo-1';
 
 const Wrappers = styled.div`
 max-width: 840px;
@@ -46,35 +47,43 @@ height:424px;
 const test_home_data = [
     {
         title: '마켓 오픈했어요 ✨',
-        list: test_items
+        list: test_seller,
+        type: 'seller'
     },
     {
         title: '인기있는 상품 🔥',
-        list: test_items
+        list: test_items,
+        type: 'items'
     },
     {
         title: '인기있는 셀러 ❤️',
-        list: test_items
+        list: test_items,
+        type: 'items'
     },
     {
         title: '# Food',
-        list: test_items
+        list: test_items,
+        type: 'items'
     },
     {
         title: '# Beauty',
-        list: test_items
+        list: test_items,
+        type: 'items'
     },
     {
         title: '# Top',
-        list: test_items
+        list: test_items,
+        type: 'items'
     },
     {
         title: '# Pants',
-        list: test_items
+        list: test_items,
+        type: 'items'
     },
     {
         title: '# Blouse/Shirts',
-        list: test_items
+        list: test_items,
+        type: 'items'
     },
 ]
 const ItemWrapper = styled.div`
@@ -107,36 +116,7 @@ display: none;
     display: block;
 }
 `
-const ItemContent = styled.div`
-display:flex;
-flex-direction:column;
-width:23.5%;
-cursor:pointer;
-@media (max-width:840px){
-    width:95%;
-}
-`
-const ItemImg = styled.img`
-width:100%;
-`
-const ItemText = styled.div`
-font-size:${themeObj.font_size.size8};
-margin-top:0.5rem;
-`
-const Item = (props) => {
-    const { item, router } = props;
-    return (
-        <>
-            <ItemContent onClick={()=>{
-                router.push(`/blog/product/${item.id}`)
-            }}>
-                <ItemImg src={item?.product_img} />
-                <ItemText>{item?.name}</ItemText>
-                <ItemText style={{ color: themeObj.grey[500] }}>{item?.sub_name}</ItemText>
-            </ItemContent>
-        </>
-    )
-}
+
 const ItemSectionContent = (props) => {
     const { data, router } = props;
     const item_list_setting = {
@@ -151,20 +131,32 @@ const ItemSectionContent = (props) => {
     return (
         <>
             <SectionTitle>{data?.title}</SectionTitle>
-
             <ItemContainer>
                 {data?.list && data?.list.slice(0, 8).map((item, idx) => (
                     <>
-                        <Item item={item} router={router} />
+                        {data?.type == 'seller' &&
+                            <>
+                                <Seller item={item} router={router} type={data?.type} />
+                            </>}
+                        {data?.type == 'items' &&
+                            <>
+                                <Item item={item} router={router} type={data?.type} />
+                            </>}
                     </>
                 ))}
-
             </ItemContainer>
             <SlideContainer>
                 <Slider {...item_list_setting}>
                     {data?.list && data?.list.map((item, idx) => (
                         <>
-                            <Item item={item} router={router} />
+                            {data?.type == 'seller' &&
+                                <>
+                                    <Seller item={item} router={router} type={data?.type} />
+                                </>}
+                            {data?.type == 'items' &&
+                                <>
+                                    <Item item={item} router={router} type={data?.type} />
+                                </>}
                         </>
                     ))}
                 </Slider>
@@ -184,9 +176,8 @@ const Demo1 = (props) => {
         },
     } = props;
     const { themeDnsData } = useSettingsContext();
-    const {user} = useAuthContext();
+    const { user } = useAuthContext();
     const [homeContent, setHomeContent] = useState({});
-
     useEffect(() => {
         console.log(user)
         console.log(themeDnsData)

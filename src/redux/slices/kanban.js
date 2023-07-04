@@ -2,7 +2,7 @@ import keyBy from 'lodash/keyBy';
 import { createSlice } from '@reduxjs/toolkit';
 import omit from 'lodash/omit';
 // utils
-import axios from '../../utils/axios';
+import { axiosIns } from 'src/utils/axios';
 
 // ----------------------------------------------------------------------
 
@@ -115,7 +115,7 @@ export function getBoard() {
   return async (dispatch) => {
     dispatch(slice.actions.startLoading());
     try {
-      const response = await axios.get('/api/kanban/board');
+      const response = await axiosIns().get('/api/kanban/board');
       dispatch(slice.actions.getBoardSuccess(response.data.board));
     } catch (error) {
       dispatch(slice.actions.hasError(error));
@@ -129,7 +129,7 @@ export function createColumn(newColumn) {
   return async (dispatch) => {
     dispatch(slice.actions.startLoading());
     try {
-      const response = await axios.post('/api/kanban/columns/new', newColumn);
+      const response = await axiosIns().post('/api/kanban/columns/new', newColumn);
       dispatch(slice.actions.createColumnSuccess(response.data.column));
     } catch (error) {
       dispatch(slice.actions.hasError(error));
@@ -143,7 +143,7 @@ export function updateColumn(columnId, column) {
   return async (dispatch) => {
     dispatch(slice.actions.startLoading());
     try {
-      const response = await axios.post('/api/kanban/columns/update', {
+      const response = await axiosIns().post('/api/kanban/columns/update', {
         columnId,
         column,
       });
@@ -160,7 +160,7 @@ export function deleteColumn(columnId) {
   return async (dispatch) => {
     dispatch(slice.actions.startLoading());
     try {
-      await axios.post('/api/kanban/columns/delete', { columnId });
+      await axiosIns().post('/api/kanban/columns/delete', { columnId });
       dispatch(slice.actions.deleteColumnSuccess({ columnId }));
     } catch (error) {
       dispatch(slice.actions.hasError(error));

@@ -1,2 +1,2 @@
-import UserEdit from "./[id]";
-export default UserEdit
+import ArticleEdit from "./[id]";
+export default ArticleEdit

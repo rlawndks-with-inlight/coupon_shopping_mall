@@ -1,6 +1,6 @@
 import { createSlice } from '@reduxjs/toolkit';
 // utils
-import axios from '../../utils/axios';
+import { axiosIns } from 'src/utils/axios';
 
 // ----------------------------------------------------------------------
 
@@ -66,7 +66,7 @@ export function getEvents() {
   return async (dispatch) => {
     dispatch(slice.actions.startLoading());
     try {
-      const response = await axios.get('/api/calendar/events');
+      const response = await axiosIns().get('/api/calendar/events');
       dispatch(slice.actions.getEventsSuccess(response.data.events));
     } catch (error) {
       dispatch(slice.actions.hasError(error));
@@ -80,7 +80,7 @@ export function createEvent(newEvent) {
   return async (dispatch) => {
     dispatch(slice.actions.startLoading());
     try {
-      const response = await axios.post('/api/calendar/events/new', newEvent);
+      const response = await axiosIns().post('/api/calendar/events/new', newEvent);
       dispatch(slice.actions.createEventSuccess(response.data.event));
     } catch (error) {
       dispatch(slice.actions.hasError(error));
@@ -94,7 +94,7 @@ export function updateEvent(eventId, event) {
   return async (dispatch) => {
     dispatch(slice.actions.startLoading());
     try {
-      const response = await axios.post('/api/calendar/events/update', {
+      const response = await axiosIns().post('/api/calendar/events/update', {
         eventId,
         event,
       });
@@ -111,7 +111,7 @@ export function deleteEvent(eventId) {
   return async (dispatch) => {
     dispatch(slice.actions.startLoading());
     try {
-      await axios.post('/api/calendar/events/delete', { eventId });
+      await axiosIns().post('/api/calendar/events/delete', { eventId });
       dispatch(slice.actions.deleteEventSuccess(eventId));
     } catch (error) {
       dispatch(slice.actions.hasError(error));

@@ -7,6 +7,9 @@ import { useRouter } from "next/router";
 import { AppWidget } from "src/views/@dashboard/general/app";
 import { useTheme } from "@emotion/react";
 import _ from 'lodash'
+import { BookingCheckInWidgets, BookingWidgetSummary } from "src/views/@dashboard/general/booking";
+import { CheckInIllustration, CheckOutIllustration } from "src/assets/illustrations";
+import { AnalyticsWidgetSummary } from "src/views/@dashboard/general/analytics";
 //매출 리스트
 const test_data = [
   {
@@ -20,7 +23,7 @@ const test_data = [
     phone: '01000000000',
   }
 ]
-const OrderList = () => {
+const CashBillList = () => {
   const defaultColumns = [
     {
       id: 'id',
@@ -82,13 +85,11 @@ const OrderList = () => {
       }
     },
   ]
-  const test_total = [
-    52,
-    6,
-    12,
-    22,
-    44,
-  ]
+  const test_total = {
+    count: 72,
+    card_price: 2310000,
+    money_price: 12310000
+  }
   const theme = useTheme();
   const router = useRouter();
   const [columns, setColumns] = useState([]);
@@ -111,58 +112,6 @@ const OrderList = () => {
   return (
     <>
       <Stack spacing={3}>
-        <Grid container spacing={2}>
-          <Grid item xs={12} md={2.4}>
-            <AppWidget
-              title="배송준비중"
-              total={test_total[0]}
-              icon="pajamas:status-preparing-borderless"
-              chart={{
-                series: parseInt(test_total[0] / _.sum(test_total) * 100),
-              }}
-            />
-          </Grid>
-          <Grid item xs={12} md={2.4}>
-            <AppWidget
-              title="배송대기"
-              total={test_total[1]}
-              icon="nimbus:stop"
-              chart={{
-                series: parseInt(test_total[1] / _.sum(test_total) * 100),
-              }}
-            />
-          </Grid>
-          <Grid item xs={12} md={2.4}>
-            <AppWidget
-              title="배송중"
-              total={38566}
-              icon="icon-park-solid:play"
-              chart={{
-                series: parseInt(test_total[2] / _.sum(test_total) * 100),
-              }}
-            />
-          </Grid>
-          <Grid item xs={12} md={2.4}>
-            <AppWidget
-              title="배송완료"
-              total={test_total[3]}
-              icon="fluent-mdl2:completed-solid"
-              chart={{
-                series: parseInt(test_total[3] / _.sum(test_total) * 100),
-              }}
-            />
-          </Grid>
-          <Grid item xs={12} md={2.4}>
-            <AppWidget
-              title="배송취소"
-              total={test_total[4]}
-              icon="ic:baseline-cancel"
-              chart={{
-                series: parseInt(test_total[4] / _.sum(test_total) * 100),
-              }}
-            />
-          </Grid>
-        </Grid>
         <Card>
           <ManagerTable
             data={data}
@@ -177,5 +126,5 @@ const OrderList = () => {
     </>
   )
 }
-OrderList.getLayout = (page) => <ManagerLayout>{page}</ManagerLayout>;
-export default OrderList
+CashBillList.getLayout = (page) => <ManagerLayout>{page}</ManagerLayout>;
+export default CashBillList

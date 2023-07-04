@@ -186,7 +186,7 @@ const Header = () => {
   const router = useRouter();
   const theme = useTheme();
   const { themeMode, onToggleMode, onChangeCategoryList } = useSettingsContext();
-  const { user } = useAuthContext();
+  const { user, logout } = useAuthContext();
   const [keyword, setKeyword] = useState("");
   const onSearch = () => {
     router.push(`/shop/search?keyword=${keyword}`)
@@ -398,10 +398,15 @@ const Header = () => {
                             theme={theme}
                             hoverColor={themeMode == 'dark' ? '#fff' : '#000'}
                             onClick={() => { router.push(`/shop/auth/${item.link_key}`) }}
-                            style={{ borderRight: `${idx == authList.length - 1 ? 'none' : ''}` }}
                           >{item.name}</AuthMenu>
                         </>
                       ))}
+                      <AuthMenu
+                        theme={theme}
+                        hoverColor={themeMode == 'dark' ? '#fff' : '#000'}
+                        onClick={() => { logout() }}
+                        style={{ borderRight: `none` }}
+                      >{'로그아웃'}</AuthMenu>
                     </>
                     :
                     <>
@@ -655,6 +660,10 @@ const Header = () => {
                   }} style={{ paddingLeft: '1rem' }}>{item.name}</ColumnMenuContent>
                 </>
               ))}
+              <ColumnMenuContent onClick={() => {
+                logout();
+                setSideMenuOpen(false);
+              }} style={{ paddingLeft: '1rem' }}>로그아웃</ColumnMenuContent>
             </>
             :
             <>

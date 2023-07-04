@@ -26,17 +26,17 @@ ThemeProvider.propTypes = {
 export default function ThemeProvider({ children }) {
   const { themeMode, themeDirection, themeDnsData } = useSettingsContext();
   const [paletteObj, setPaletteObj] = useState(palette(themeMode))
-  useEffect(()=>{
-    if(themeDnsData?.theme_css?.main_color){
-      let palette_obj = {...paletteObj};
+  useEffect(() => {
+    if (themeDnsData?.theme_css?.main_color) {
+      let palette_obj = { ...paletteObj };
       palette_obj['primary']['main'] = themeDnsData?.theme_css?.main_color;
       palette_obj['primary']['dark'] = themeDnsData?.theme_css?.main_color;
       palette_obj['primary']['darker'] = themeDnsData?.theme_css?.main_color;
-      palette_obj['primary']['light'] = themeDnsData?.theme_css?.main_color;
-      palette_obj['primary']['lighter'] = themeDnsData?.theme_css?.main_color;
+      palette_obj['primary']['light'] = themeDnsData?.theme_css?.main_color + '29';
+      palette_obj['primary']['lighter'] = themeDnsData?.theme_css?.main_color + '29';
       setPaletteObj(palette_obj);
     }
-  },[themeDnsData])
+  }, [themeDnsData])
   const themeOptions = useMemo(
     () => ({
       palette: paletteObj,

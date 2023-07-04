@@ -1,2 +1,2 @@
-import UserEdit from "./[id]";
-export default UserEdit
+import PopupEdit from "./[id]";
+export default PopupEdit

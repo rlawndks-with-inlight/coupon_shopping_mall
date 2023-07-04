@@ -7,7 +7,7 @@ import {
   MobileDatePicker,
   DesktopDatePicker,
 } from '@mui/x-date-pickers';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Row } from 'src/components/elements/styled-components';
 import styled from 'styled-components';
 import Scrollbar from 'src/components/scrollbar/Scrollbar';
@@ -45,7 +45,7 @@ export default function ManagerTable(props) {
                     setSDt(newValue);
                   }}
                   renderInput={(params) => <TextField fullWidth {...params} margin="normal" />}
-                  sx={{ marginRight: '0.75rem', width: '180px' }}
+                  sx={{ marginRight: '0.75rem', width: '180px', height:'' }}
                 />
                 <DesktopDatePicker
                   label="종료일 선택"

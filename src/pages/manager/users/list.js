@@ -1,9 +1,11 @@
-import { Card, Container, IconButton, Stack } from "@mui/material";
+import { Card, Container, Grid, IconButton, Stack } from "@mui/material";
 import { useEffect, useState } from "react";
 import ManagerLayout from "src/layouts/manager/ManagerLayout";
 import ManagerTable from "src/views/manager/mui/table/ManagerTable";
 import { Icon } from "@iconify/react";
 import { useRouter } from "next/router";
+import { AppWidgetSummary } from "src/views/@dashboard/general/app";
+import { useTheme } from "@emotion/react";
 //매출 리스트
 const test_data = [
   {
@@ -79,6 +81,7 @@ const UserList = () => {
       }
     },
   ]
+  const theme = useTheme();
   const router = useRouter();
   const [columns, setColumns] = useState([]);
   const [data, setData] = useState([]);
@@ -100,6 +103,53 @@ const UserList = () => {
   return (
     <>
       <Stack spacing={3}>
+        <Grid container spacing={3}>
+
+          <Grid item xs={12} md={3}>
+            <AppWidgetSummary
+              title="신규회원"
+              percent={2.6}
+              total={18765}
+              chart={{
+                colors: [theme.palette.info.main],
+                series: [50, 180, 120, 510, 680, 110, 390, 370, 270, 200],
+              }}
+            />
+          </Grid>
+          <Grid item xs={12} md={3}>
+            <AppWidgetSummary
+              title="방문회원"
+              percent={0.2}
+              total={4876}
+              chart={{
+                colors: [theme.palette.primary.main],
+                series: [20, 41, 63, 33, 28, 35, 50, 46, 11, 26],
+              }}
+            />
+          </Grid>
+          <Grid item xs={12} md={3}>
+            <AppWidgetSummary
+              title="탈퇴회원"
+              percent={-0.1}
+              total={678}
+              chart={{
+                colors: [theme.palette.error.main],
+                series: [80, 9, 31, 8, 16, 37, 8, 33, 46, 31],
+              }}
+            />
+          </Grid>
+          <Grid item xs={12} md={3}>
+            <AppWidgetSummary
+              title="유저수"
+              percent={-0.1}
+              total={678}
+              chart={{
+                colors: [theme.palette.warning.main],
+                series: [8, 9, 31, 8, 16, 37, 8, 33, 46, 31],
+              }}
+            />
+          </Grid>
+        </Grid>
         <Card>
           <ManagerTable
             data={data}

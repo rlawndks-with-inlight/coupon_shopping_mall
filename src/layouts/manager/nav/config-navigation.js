@@ -95,7 +95,7 @@ const navConfig = [
           { title: '공지사항', path: PATH_MANAGER.articles.notices },
           { title: '자주묻는질문', path: PATH_MANAGER.articles.faqs },
           { title: '1:1문의', path: PATH_MANAGER.articles.oneToOne },
-          { title: '관리자켈린더', path: PATH_MANAGER.articles.calendar },
+          // { title: '관리자켈린더', path: PATH_MANAGER.articles.calendar },
         ],
       },
     ],

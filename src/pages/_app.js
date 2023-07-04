@@ -10,7 +10,8 @@ import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import 'yet-another-react-lightbox/styles.css';
 import 'yet-another-react-lightbox/plugins/captions.css';
 import 'yet-another-react-lightbox/plugins/thumbnails.css';
-
+import { Provider as ReduxProvider } from 'react-redux';
+import { store } from '../redux/store';
 // editor
 import 'react-quill/dist/quill.snow.css';
 
@@ -35,6 +36,7 @@ const App = (props) => {
         <meta name="viewport" content="initial-scale=1, width=device-width" />
       </Head>
       <AuthProvider>
+      <ReduxProvider store={store}>
         <LocalizationProvider dateAdapter={AdapterDateFns}>
           <ThemeColorPresets>
             <SettingsProvider>
@@ -45,6 +47,7 @@ const App = (props) => {
             </SettingsProvider>
           </ThemeColorPresets>
         </LocalizationProvider>
+        </ReduxProvider>
       </AuthProvider>
 
     </>

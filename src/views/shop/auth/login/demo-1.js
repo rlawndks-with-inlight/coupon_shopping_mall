@@ -3,6 +3,7 @@ import { Box, Button, TextField } from '@mui/material';
 import { useEffect, useState } from 'react';
 import { Col, Row, Title, themeObj } from 'src/components/elements/styled-components';
 import { useSettingsContext } from 'src/components/settings';
+import { useAuthContext } from 'src/layouts/manager/auth/useAuthContext';
 import styled from 'styled-components'
 
 const Wrappers = styled.div`
@@ -23,6 +24,7 @@ cursor:pointer;
 }
 `
 const Demo1 = (props) => {
+  const { user, login } = useAuthContext();
   const { presetsColor } = useSettingsContext();
   const {
     data: {
@@ -43,7 +45,7 @@ const Demo1 = (props) => {
     password: ''
   })
   useEffect(() => {
-    if(router.query?.scroll_to){
+    if (router.query?.scroll_to) {
       window.scrollTo(0, router.query?.scroll_to);
     }
   }, [router.query])
@@ -81,10 +83,17 @@ const Demo1 = (props) => {
         <Button variant="contained" style={{
           height: '56px',
           marginTop: '1rem',
-        }}>로그인</Button>
+        }}
+          onClick={async() => {
+            let user = await login(username, password)
+            if(user){
+              router.push('/shop/auth/my-page')
+            }
+          }}
+        >로그인</Button>
         <Row style={{ margin: '2rem auto' }}>
-          <HoverText style={{ borderRight: `1px solid ${themeObj.grey[300]}` }} presetsColor={presetsColor} onClick={()=>{router.push(`/shop/auth/find-info?type=0`)}}>아이디 찾기</HoverText>
-          <HoverText presetsColor={presetsColor}  onClick={()=>{router.push(`/shop/auth/find-info?type=1`)}}>비밀번호 찾기</HoverText>
+          <HoverText style={{ borderRight: `1px solid ${themeObj.grey[300]}` }} presetsColor={presetsColor} onClick={() => { router.push(`/shop/auth/find-info?type=0`) }}>아이디 찾기</HoverText>
+          <HoverText presetsColor={presetsColor} onClick={() => { router.push(`/shop/auth/find-info?type=1`) }}>비밀번호 찾기</HoverText>
         </Row>
         <Col style={{ alignItems: 'center', margin: '2rem auto' }}>
           <div style={{ fontSize: themeObj.font_size.size4, marginBottom: '1rem' }}>아직 회원이 아니신가요?</div>

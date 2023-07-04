@@ -1,10 +1,15 @@
-import { Card, Container, IconButton, Stack } from "@mui/material";
+import { Card, Container, Grid, IconButton, Stack } from "@mui/material";
 import { useEffect, useState } from "react";
 import ManagerLayout from "src/layouts/manager/ManagerLayout";
 import ManagerTable from "src/views/manager/mui/table/ManagerTable";
 import { Icon } from "@iconify/react";
 import { useRouter } from "next/router";
-import { Row } from "src/components/elements/styled-components";
+import { AppWidget } from "src/views/@dashboard/general/app";
+import { useTheme } from "@emotion/react";
+import _ from 'lodash'
+import { BookingCheckInWidgets, BookingWidgetSummary } from "src/views/@dashboard/general/booking";
+import { CheckInIllustration, CheckOutIllustration } from "src/assets/illustrations";
+import { AnalyticsWidgetSummary } from "src/views/@dashboard/general/analytics";
 //매출 리스트
 const test_data = [
   {
@@ -67,7 +72,7 @@ const SaleList = () => {
       action: (row) => {
         return (
           <>
-          <IconButton>
+            <IconButton>
               <Icon icon='material-symbols:edit-outline' onClick={() => {
                 router.push(`/manager/users/edit/${row?.id}`)
               }} />
@@ -80,6 +85,12 @@ const SaleList = () => {
       }
     },
   ]
+  const test_total = {
+    count: 72,
+    card_price: 2310000,
+    money_price: 12310000
+  }
+  const theme = useTheme();
   const router = useRouter();
   const [columns, setColumns] = useState([]);
   const [data, setData] = useState([]);
@@ -101,6 +112,46 @@ const SaleList = () => {
   return (
     <>
       <Stack spacing={3}>
+        <Grid container spacing={2}>
+          <Grid item xs={12} md={3}>
+            <AnalyticsWidgetSummary
+              title="주문"
+              total={1352831}
+              color="primary"
+              icon="solar:bag-4-bold"
+            />
+          </Grid>
+          <Grid item xs={12} md={3}>
+            <AnalyticsWidgetSummary
+              title="총 매출"
+              total={test_total.card_price + test_total.money_price}
+              color="info"
+              label='₩'
+              not_use_number_format={true}
+              icon="nimbus:money"
+            />
+          </Grid>
+          <Grid item xs={12} md={3}>
+            <AnalyticsWidgetSummary
+              title="카드 매출"
+              total={test_total.card_price}
+              color="warning"
+              label='₩'
+              not_use_number_format={true}
+              icon="ion:card"
+            />
+          </Grid>
+          <Grid item xs={12} md={3}>
+            <AnalyticsWidgetSummary
+              title="무통장입금 매출"
+              total={test_total.money_price}
+              color="error"
+              label='₩'
+              not_use_number_format={true}
+              icon="solar:hand-money-outline"
+            />
+          </Grid>
+        </Grid>
         <Card>
           <ManagerTable
             data={data}

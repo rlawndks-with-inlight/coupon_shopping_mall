@@ -108,7 +108,6 @@ const SellerList = () => {
             page={page}
             maxPage={maxPage}
             onChangePage={onChangePage}
-
           />
         </Card>
       </Stack>

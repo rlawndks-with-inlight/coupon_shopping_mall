@@ -125,17 +125,9 @@ const Main = () => {
   }
   return (
     <>
-      <CustomBreadcrumbs
-        heading={returnKoNameBySectionType[router.query?.type] ?? ""}
-        links={[
-          { name: '디자인관리', href: PATH_MANAGER.designs.root },
-          { name: '메인페이지관리', href: PATH_MANAGER.designs.main },
-          (router.query?.type ? { name: returnKoNameBySectionType[router.query?.type] ?? "" } : {}),
-        ]}
-      />
       <Grid container spacing={3}>
         <Grid item xs={12} md={8}>
-          <Card sx={{ p: 3 }}>
+          <Card sx={{ p: 3,minHeight:'100%' }}>
             <Stack spacing={1}>
               {contentList.length == 0 &&
                 <>

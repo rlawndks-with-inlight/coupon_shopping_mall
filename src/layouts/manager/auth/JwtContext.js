@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import { createContext, useEffect, useReducer, useCallback, useMemo } from 'react';
 // utils
-import axios, { axiosIns } from 'src/utils/axios'
+import { axiosIns } from 'src/utils/axios'
 import localStorageAvailable from 'src/utils/localStorageAvailable';
 //
 import { isValidToken, setSession } from './utils';
@@ -137,12 +137,7 @@ export function AuthProvider({ children }) {
 
   // REGISTER
   const register = useCallback(async (email, password, firstName, lastName) => {
-    const response = await axios.post('/api/account/register', {
-      email,
-      password,
-      firstName,
-      lastName,
-    });
+
     const { accessToken, user } = response.data;
 
     localStorage.setItem('accessToken', accessToken);

@@ -124,7 +124,14 @@ const Demo1 = (props) => {
         setCartOpen(true);
     }
 
-
+    const getTotalPrice = () =>{
+        let total_price = 0;
+        for(var i = 0;i<selectOptions.length;i++){
+            let find_item = _.find(test_color_list, {id: selectOptions[i]?.id});
+            total_price += (test_item_price + find_item?.price)*selectOptions[i]?.count;
+        }
+        return total_price
+    }
     return (
         <>
             <Wrappers>
@@ -306,8 +313,8 @@ const Demo1 = (props) => {
                                         <div>총 {_.sum(selectOptions.map(item=>{return item.count}))}개 상품 금액</div>
                                     </Row>
                                     <div>
-                                        {console.log(commarNumber(selectOptions.map(item=>{(test_item_price + _.find(test_color_list, { id: item?.id }).price) * (item.count)})))}
-                                        {commarNumber(_.sum(selectOptions.map(item=>{return item.count*(test_item_price+item.price)})))}원</div>
+                                       {commarNumber(getTotalPrice())}원
+                                    </div>
                                 </Row>
                             </DrawerBox>
                             <Button
@@ -333,8 +340,6 @@ const Demo1 = (props) => {
                             >바로구매</Button>
                         </> : ""
                     }
-                    
-
                 </SelectContainer>
             </Drawer>
         </>

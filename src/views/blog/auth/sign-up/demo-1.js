@@ -1,102 +1,67 @@
 import PropTypes from 'prop-types';
-import { Button, Checkbox, Divider, FormControlLabel, InputAdornment, Step, StepConnector, StepLabel, Stepper, TextField, Typography, stepConnectorClasses } from '@mui/material';
+import { Checkbox, FormControlLabel, TextField, Typography, IconButton, Drawer, Button, Select, MenuItem } from '@mui/material';
 import { useState } from 'react';
-import { Col, Row, Title, themeObj } from 'src/components/elements/styled-components';
+import { Row, themeObj } from 'src/components/elements/styled-components';
 import styled from 'styled-components'
-import { styled as muiStyled } from '@mui/material/styles';
 import Iconify from 'src/components/iconify/Iconify';
-import { bgGradient } from 'src/utils/cssStyles';
 import { useTheme } from '@emotion/react';
-import Policy from 'src/pages/shop/auth/policy';
-import { toast } from 'react-hot-toast';
+import Policy from 'src/pages/blog/auth/policy';
 import { Icon } from '@iconify/react';
+import { useEffect } from 'react';
 
 const Wrappers = styled.div`
-max-width:700px;
+max-width:840px;
 display:flex;
 flex-direction:column;
-margin: 0 auto 5rem auto;
-width: 90%;
-min-height:90vh;
+margin:56px auto 0 auto;
+width:100%;
 `
 
-const STEPS = ['약관동의', '정보입력', '가입완료'];
-const ColorlibConnector = muiStyled(StepConnector)(({ theme }) => ({
-  [`&.${stepConnectorClasses.alternativeLabel}`]: {
-    top: 22,
-  },
-  [`&.${stepConnectorClasses.active}`]: {
-    [`& .${stepConnectorClasses.line}`]: {
-      ...bgGradient({
-        startColor: theme.palette.primary.light,
-        endColor: theme.palette.primary.main,
-      }),
-    },
-  },
-  [`&.${stepConnectorClasses.completed}`]: {
-    [`& .${stepConnectorClasses.line}`]: {
-      ...bgGradient({
-        startColor: theme.palette.primary.light,
-        endColor: theme.palette.primary.main,
-      }),
-    },
-  },
-  [`& .${stepConnectorClasses.line}`]: {
-    height: 3,
-    border: 0,
-    borderRadius: 1,
-    backgroundColor: theme.palette.divider,
-  },
-}));
-const ColorlibStepIconRoot = muiStyled('div')(({ theme, ownerState }) => ({
-  zIndex: 1,
-  width: 50,
-  height: 50,
-  display: 'flex',
-  borderRadius: '50%',
-  alignItems: 'center',
-  justifyContent: 'center',
-  color: theme.palette.text.disabled,
-  backgroundColor:
-    theme.palette.mode === 'light' ? theme.palette.grey[300] : theme.palette.grey[700],
-  ...(ownerState.active && {
-    boxShadow: '0 4px 10px 0 rgba(0,0,0,.25)',
-    color: theme.palette.common.white,
-    ...bgGradient({
-      startColor: theme.palette.primary.light,
-      endColor: theme.palette.primary.main,
-    }),
-  }),
-  ...(ownerState.completed && {
-    color: theme.palette.common.white,
-    ...bgGradient({
-      startColor: theme.palette.primary.light,
-      endColor: theme.palette.primary.main,
-    }),
-  }),
-}));
-
-function ColorlibStepIcon(props) {
-  const { active, completed, className, icon } = props;
-
-  const icons = {
-    1: <Iconify icon="eva:settings-2-outline" width={24} />,
-    2: <Iconify icon="eva:person-add-outline" width={24} />,
-    3: <Iconify icon="fluent-mdl2:completed" width={24} />,
-  };
-
-  return (
-    <ColorlibStepIconRoot ownerState={{ completed, active }} className={className}>
-      {icons[String(icon)]}
-    </ColorlibStepIconRoot>
-  );
+const Title = styled.h2`
+font-size:1.5rem;
+font-weight:bold;
+line-height:1.38462;
+padding:1rem 0 0.5rem 0;
+word-spacing: 0.2rem;
+@media (max-width:840px){
+    padding: 0 5% 0 5%;
 }
-ColorlibStepIcon.propTypes = {
-  active: PropTypes.bool,
-  icon: PropTypes.number,
-  completed: PropTypes.bool,
-  className: PropTypes.string,
-};
+`
+
+const CheckBoxes = styled.div`
+display:flex;
+flex-direction:column;
+@media (max-width:840px){
+  padding:5%;
+}
+`
+
+const ChildCheckboxes = styled.div`
+display:flex;
+flex-direction:column;
+padding: 0 0 0 2.5%;
+`
+
+const DetailedCheckbox = styled.div`
+display:flex;
+`
+
+const TextFieldTitle = styled.label`
+font-size:1rem;
+font-weight:regular;
+margin:1.5rem 0 1rem 0;
+`
+
+const TextFieldBox = styled.div`
+display:flex;
+width:100%;
+margin: 0 auto;
+`
+
+const SelectBox = styled.div`
+display:flex;
+justify-content:'space-between'
+`
 
 // 회원가입 김인욱
 const Demo1 = (props) => {
@@ -108,260 +73,205 @@ const Demo1 = (props) => {
       router
     },
   } = props;
+
   const theme = useTheme();
   const [activeStep, setActiveStep] = useState(0);
   const [checkboxObj, setCheckboxObj] = useState({
+    check_0: false,
     check_1: false,
     check_2: false,
     check_3: false,
     check_4: false,
-    check_5: false,
   })
   const [user, setUser] = useState({
-    username: '',
+    id: '',
     password: '',
     passwordCheck: '',
     name: '',
     phone: '',
     email: '',
   })
+  const [openPolicy, setOpenPolicy] = useState(false)
+
   const onClickPrevButton = () => {
-    if (activeStep == 1) {
-
-    }
-    if (activeStep == 2) {
-
-    }
-    setActiveStep(activeStep - 1);
+    setActiveStep(activeStep - 1)
   }
+
   const onClickNextButton = () => {
     if (activeStep == 0) {
-      if (
-        !checkboxObj.check_1 ||
-        !checkboxObj.check_2 ||
-        !checkboxObj.check_3
-      ) {
-        toast.error("필수 항목에 체크해 주세요.");
-        return;
-      }
+    
     }
     if (activeStep == 1) {
-      if (
-        !user.username ||
-        !user.password ||
-        !user.passwordCheck ||
-        !user.name ||
-        !user.phone ||
-        !user.email
-      ) {
-        toast.error("필수 항목에 체크해 주세요.");
-        return;
-      }
+
     }
     if (activeStep == 2) {
-      router.push('/shop');
+
     }
-    setActiveStep(activeStep + 1);
+    setActiveStep(activeStep + 1)
   }
+
   return (
     <>
       <Wrappers>
-        <Title>회원가입</Title>
-        <Stepper alternativeLabel activeStep={activeStep} connector={<ColorlibConnector />}>
-          {STEPS.map((label) => (
-            <Step key={label}>
-              <StepLabel StepIconComponent={ColorlibStepIcon}>{label}</StepLabel>
-            </Step>
-          ))}
-        </Stepper>
-        <div style={{ marginTop: '2rem' }} />
         {activeStep == 0 &&
           <>
-            <FormControlLabel label={<Typography style={{ fontWeight: 'bold', fontSize: themeObj.font_size.size5 }}> 이용약관 및 개인정보수집 및 이용, 쇼핑정보 수신(선택)에 모두 동의합니다.</Typography>} control={<Checkbox />} onChange={(e) => {
-              let check_obj = {}
-              if (e.target.checked) {
-                for (let key in checkboxObj) {
-                  check_obj[key] = true;
+            <Title>Comagain 회원가입<br />서비스 이용약관 동의</Title>
+            <div style={{ marginTop: '2rem' }} />
+            <CheckBoxes>
+              <FormControlLabel label={<Typography>전체 동의(선택 항목 포함)</Typography>} control={<Checkbox checked={checkboxObj.check_0} />} onChange={(e) => {
+                let check_obj = {}
+                if (e.target.checked) {
+                  for (let key in checkboxObj) {
+                    check_obj[key] = true;
+                  }
+                } else {
+                  for (let key in checkboxObj) {
+                    check_obj[key] = false;
+                  }
                 }
-              } else {
-                for (let key in checkboxObj) {
-                  check_obj[key] = false;
-                }
-              }
-              setCheckboxObj(check_obj)
-            }} />
-            <div style={{ marginTop: '1rem' }} />
-            <Divider />
-            <div style={{ marginTop: '1rem' }} />
-            <FormControlLabel label={<Typography style={{ fontSize: themeObj.font_size.size6 }}>이용약관 동의 (필수)</Typography>} control={<Checkbox checked={checkboxObj.check_1} onChange={(e) => {
-              setCheckboxObj({ ...checkboxObj, ['check_1']: e.target.checked })
-            }} />} />
-            <div style={{ marginTop: '0.5rem' }} />
-            <div style={{
-              height: '10rem',
-              overflowY: 'auto',
-              border: `1px solid ${themeObj.grey[300]}`
-            }}>
-              <Policy type={0} />
-            </div>
-            <div style={{ marginTop: '1rem' }} />
-            <FormControlLabel label={<Typography style={{ fontSize: themeObj.font_size.size6 }}>개인정보 수집 및 이용 동의 (필수)</Typography>} control={<Checkbox checked={checkboxObj.check_2} onChange={(e) => {
-              setCheckboxObj({ ...checkboxObj, ['check_2']: e.target.checked })
-            }} />} />
-            <div style={{ marginTop: '0.5rem' }} />
-            <div style={{
-              height: '10rem',
-              overflowY: 'auto',
-              border: `1px solid ${themeObj.grey[300]}`
-            }}>
-              <Policy type={1} />
-            </div>
-            <div style={{ marginTop: '1rem' }} />
-            <FormControlLabel label={<Typography style={{ fontSize: themeObj.font_size.size6 }}>쇼핑정보 수신 동의 (선택)</Typography>} control={<Checkbox checked={checkboxObj.check_3} onChange={(e) => {
-              setCheckboxObj({ ...checkboxObj, ['check_3']: e.target.checked })
-            }} />} />
-            <div style={{ marginTop: '1rem' }} />
-            <Divider />
-            <div style={{ marginTop: '1rem' }} />
-            <Row>
-              <FormControlLabel label={<Typography style={{ fontSize: themeObj.font_size.size7 }}>SMS 수신 동의 (선택)</Typography>} control={<Checkbox checked={checkboxObj.check_4} onChange={(e) => {
-                setCheckboxObj({ ...checkboxObj, ['check_4']: e.target.checked })
-              }} />} />
-              <FormControlLabel label={<Typography style={{ fontSize: themeObj.font_size.size7 }}>이메일 수신 동의 (선택)</Typography>} control={<Checkbox checked={checkboxObj.check_5} onChange={(e) => {
-                setCheckboxObj({ ...checkboxObj, ['check_5']: e.target.checked })
-              }} />} />
-            </Row>
-            <div style={{ marginTop: '0.5rem' }} />
-            <div style={{
-              height: '10rem',
-              overflowY: 'auto',
-              border: `1px solid ${themeObj.grey[300]}`,
-              padding: '2rem',
-              fontSize: themeObj.font_size.size7
-            }}>
-              할인쿠폰 및 혜택, 이벤트, 신상품 소식 등 쇼핑몰에서 제공하는 유익한 쇼핑정보를 SMS나 이메일로 받아보실 수 있습니다. 단, 주문/거래 정보 및 주요 정책과 관련된 내용은 수신동의 여부와 관계없이 발송됩니다.
-
-              선택 약관에 동의하지 않으셔도 회원가입은 가능하며, 회원가입 후 회원정보수정 페이지에서 언제든지 수신여부를 변경하실 수 있습니다.
-            </div>
-          </>}
+                setCheckboxObj(check_obj)
+              }} />
+              <ChildCheckboxes>
+                <FormControlLabel label={<Typography>만 14세 이상입니다<span style={{ color: 'red' }}>(필수)</span></Typography>} control={<Checkbox checked={checkboxObj.check_1} onChange={(e) => {
+                  setCheckboxObj({ ...checkboxObj, ['check_1']: e.target.checked })
+                }} />} />
+                <DetailedCheckbox>
+                  <FormControlLabel label={<Typography>서비스 이용약관<span style={{ color: 'red' }}>(필수)</span></Typography>} control={<Checkbox checked={checkboxObj.check_2} onChange={(e) => {
+                    setCheckboxObj({ ...checkboxObj, ['check_2']: e.target.checked })
+                  }} />} />
+                  <IconButton style={{ width: '24px', height: '40px', padding: '0' }} >
+                    <Icon icon='ep:arrow-right' color='black' />
+                  </IconButton>
+                </DetailedCheckbox>
+                <DetailedCheckbox>
+                  <FormControlLabel label={<Typography>개인정보 수집 이용 동의<span style={{ color: 'red' }}>(필수)</span></Typography>} control={<Checkbox checked={checkboxObj.check_3} onChange={(e) => {
+                    setCheckboxObj({ ...checkboxObj, ['check_3']: e.target.checked })
+                  }} />} />
+                  <IconButton style={{ width: '24px', height: '40px', padding: '0' }} >
+                    <Icon icon='ep:arrow-right' color='black' />
+                  </IconButton>
+                </DetailedCheckbox>
+                <DetailedCheckbox>
+                  <FormControlLabel label={<Typography>마케팅 정보 수신 동의<span style={{ color: 'gray' }}>(선택)</span></Typography>} control={<Checkbox checked={checkboxObj.check_4} onChange={(e) => {
+                    setCheckboxObj({ ...checkboxObj, ['check_4']: e.target.checked })
+                  }} />} />
+                  <IconButton style={{ width: '24px', height: '40px', padding: '0' }} >
+                    <Icon icon='ep:arrow-right' color='black' />
+                  </IconButton>
+                </DetailedCheckbox>
+              </ChildCheckboxes>
+            </CheckBoxes>
+            <Button
+              disabled={checkboxObj.check_1 && checkboxObj.check_2 && checkboxObj.check_3 ? false : true}
+              variant='contained'
+              color='primary'
+              size='large'
+              style={{
+                margin: '3rem 2.5% 0 2.5%',
+                fontSize: 'large'
+              }}
+              onClick={() => {setActiveStep(activeStep+1)}}
+            >다음으로</Button>
+          </>
+        }
         {activeStep == 1 &&
           <>
+            <Title>휴대폰 번호 인증</Title>
+            <TextFieldTitle>휴대폰 번호</TextFieldTitle>
+            <TextFieldBox>
+              <TextField
+                name='phoneNum'
+                autoComplete='new-password'
+                placeholder='휴대폰 번호 입력'
+                sx={{
+                  width: '84%',
+                  marginRight: '1%'
+                }}
+              />
+              <Button
+                variant='outlined'
+                color='primary'
+                style={{
+                  width: '15%'
+                }}
+              >인증받기</Button>
+            </TextFieldBox>
             <TextField
-              label='아이디'
-              onChange={(e) => {
-                setUser({ ...user, ['username']: e.target.value })
-              }}
-              value={user.username}
-              style={inputStyle}
+              name='certificationNum'
               autoComplete='new-password'
-              onKeyPress={(e) => {
-                if (e.key == 'Enter') {
-                }
-              }}
-              InputProps={{
-                startAdornment: (
-                  <InputAdornment position="start">
-                    <Icon icon="eva:person-fill" width={24} />
-                  </InputAdornment>
-                ),
+              placeholder='인증번호 입력'
+              sx={{
+                marginTop: '1%'
               }}
             />
-            <TextField
-              label='비밀번호'
-              onChange={(e) => {
-                setUser({ ...user, ['password']: e.target.value })
+            <Button
+              variant='contained'
+              color='primary'
+              style={{
+                height: '56px',
+                marginTop: '10%',
+                fontSize: 'large'
               }}
-              type='password'
-              value={user.password}
-              style={inputStyle}
-              autoComplete='new-password'
-              onKeyPress={(e) => {
-                if (e.key == 'Enter') {
-                }
-              }}
-            />
-            <TextField
-              label='비밀번호 확인'
-              onChange={(e) => {
-                setUser({ ...user, ['passwordCheck']: e.target.value })
-              }}
-              type='password'
-              value={user.passwordCheck}
-              style={inputStyle}
-              autoComplete='new-password'
-              onKeyPress={(e) => {
-                if (e.key == 'Enter') {
-                }
-              }}
-            />
-            <TextField
-              label='이름'
-              onChange={(e) => {
-                setUser({ ...user, ['name']: e.target.value })
-              }}
-              value={user.name}
-              style={inputStyle}
-              autoComplete='new-password'
-              onKeyPress={(e) => {
-                if (e.key == 'Enter') {
-                }
-              }}
-            />
-            <TextField
-              label='휴대전화'
-              onChange={(e) => {
-                setUser({ ...user, ['phone']: e.target.value })
-              }}
-              value={user.phone}
-              style={inputStyle}
-              autoComplete='new-password'
-              onKeyPress={(e) => {
-                if (e.key == 'Enter') {
-                }
-              }}
-            />
-            <TextField
-              label='이메일'
-              onChange={(e) => {
-                setUser({ ...user, ['email']: e.target.value })
-              }}
-              value={user.email}
-              style={inputStyle}
-              autoComplete='new-password'
-              onKeyPress={(e) => {
-                if (e.key == 'Enter') {
-                }
-              }}
-            />
-          </>}
+              onClick={() => {setActiveStep(activeStep+1)}}
+            >인증완료</Button>
+          </>
+        }
         {activeStep == 2 &&
           <>
-            <Col>
-              <Icon icon={'fluent-mdl2:completed'} style={{ margin: '8rem auto 1rem auto', fontSize: themeObj.font_size.size1, color: theme.palette.primary.main }} />
-              <div style={{ margin: 'auto auto 8rem auto' }}>회원가입이 완료되었습니다.</div>
-            </Col>
-          </>}
-        <Row style={{ width: '100%', justifyContent: 'space-between' }}>
-          <Button variant="outlined" style={{
-            height: '56px',
-            marginTop: '1rem',
-            width: '49%'
-          }}
-            onClick={onClickPrevButton}
-          >이전</Button>
-          <Button variant="contained" style={{
-            height: '56px',
-            marginTop: '1rem',
-            width: '49%'
-          }}
-            onClick={onClickNextButton}
-          >{activeStep == 2 ? '완료' : '다음'}</Button>
-        </Row>
+            <Title>회원가입</Title>
+            <TextFieldTitle>아이디</TextFieldTitle>
+              <TextField
+                name='id'
+                placeholder='영문 소문자, 숫자, 특수문자 가능 / 4~20자'
+                sx={{
+                  marginBottom: '1%'
+                }}
+              />
+            <TextFieldTitle>비밀번호</TextFieldTitle>
+              <TextField
+                name='password'
+                placeholder='영문 소문자, 숫자 조합 / 8~20자'
+                sx={{
+                  marginBottom: '1%'
+                }}
+              />
+              <TextFieldTitle>비밀번호 확인</TextFieldTitle>
+              <TextField
+                name='passwordCheck'
+                placeholder='비밀번호를 다시 입력해주세요'
+                sx={{
+                  marginBottom: '1%'
+                }}
+              />
+              <TextFieldTitle>생년월일</TextFieldTitle>
+              <Select
+              placeholder='년'
+              >
+              </Select>
+              <Select
+              placeholder='월'
+              >
+              </Select>
+              <Select
+              placeholder='일'
+              >
+              </Select>
+            <Button
+              variant='contained'
+              color='primary'
+              style={{
+                height: '56px',
+                marginTop: '10%',
+                fontSize: '15px'
+              }}
+              onClick={() => {setActiveStep(activeStep+1)}}
+            >완료</Button>
+          </>
+        }
       </Wrappers>
+      <Drawer></Drawer>
     </>
   )
 }
-const inputStyle = {
-  marginTop: '1rem',
-}
+
 export default Demo1

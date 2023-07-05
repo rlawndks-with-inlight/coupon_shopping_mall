@@ -36,6 +36,7 @@ const Header = () => {
   const { themeMode, onToggleMode } = useSettingsContext();
   const [keyword, setKeyword] = useState("");
   const [isSellerPage, setIsSellerPage] = useState(false);
+  const [isProductPage, setIsProductPage] = useState(false);
   const [dialogOpenObj, setDialogOpenObj] = useState({
     search: false
   })
@@ -68,13 +69,17 @@ const Header = () => {
     } else {
       setIsSellerPage(false)
     }
+    if (router.asPath.split('/')[2] == 'product') {
+      setIsProductPage(true)
+    } else {
+      setIsProductPage(false)
+    }
   }, [router.asPath])
   function getAllIdsWithParents(categories) {
     const result = [];
     function traverseCategories(category, parentIds = []) {
       const idsWithParents = [...parentIds, category.id];
       result.push(idsWithParents);
-
       if (category.children && category.children.length > 0) {
         for (const child of category.children) {
           traverseCategories(child, idsWithParents);
@@ -112,6 +117,9 @@ const Header = () => {
     }
     setDialogOpenObj(obj);
   }
+  const isBackArrowShow = ()=>{
+    return isProductPage
+  }
   return (
     <>
       {loading ?
@@ -125,11 +133,23 @@ const Header = () => {
             root_path={'blog'}
           />
           <Wrappers style={{
-            background: `${isSellerPage ? 'transparent' : (themeMode == 'dark' ? '#000' : '#fff')}`
+            background: `${(isSellerPage || isProductPage) && scrollY <350 ? 'transparent' : (themeMode == 'dark' ? '#000' : '#fff')}`
           }}
           >
             <TopMenuContainer>
+              {isBackArrowShow()?
+              <>
+               <IconButton
+                sx={{...iconButtonStyle,marginLeft:'-4px'}}
+                onClick={() => router.back()}
+              >
+                <Icon icon={'ic:round-arrow-back'} fontSize={'1.8rem'} color={themeMode == 'dark' || ((isSellerPage || isProductPage) && scrollY < 350) ? '#fff' : '#000'} />
+              </IconButton>
+              </>
+              :
+              <>
               <img src={'https://backend.comagain.kr/storage/images/logos/IFFUcyTPtgF887r0RPOGXZyLLPvp016Je17MENFT.svg'} style={{ height: '40px', width: 'auto', cursor: 'pointer' }} onClick={() => { router.push('/blog') }} />
+              </>}
               <IconButton
                 sx={{ ...iconButtonStyle, marginLeft: 'auto' }}
                 onClick={() => {
@@ -139,25 +159,25 @@ const Header = () => {
                   })
                 }}
               >
-                <Icon icon={'tabler:search'} fontSize={'1.5rem'} color={themeMode == 'dark' || (isSellerPage && scrollY < 350) ? '#fff' : '#000'} />
+                <Icon icon={'tabler:search'} fontSize={'1.5rem'} color={themeMode == 'dark' || ((isSellerPage || isProductPage) && scrollY < 350) ? '#fff' : '#000'} />
               </IconButton>
               <IconButton
                 sx={iconButtonStyle}
                 onClick={() => router.push('/blog/auth/login')}
               >
-                <Icon icon={'basil:user-outline'} fontSize={'1.8rem'} color={themeMode == 'dark' || (isSellerPage && scrollY < 350) ? '#fff' : '#000'} />
+                <Icon icon={'basil:user-outline'} fontSize={'1.8rem'} color={themeMode == 'dark' || ((isSellerPage || isProductPage) && scrollY < 350) ? '#fff' : '#000'} />
               </IconButton>
               <IconButton
                 sx={iconButtonStyle}
                 onClick={() => router.push('/blog/auth/cart')}
               >
-                <Icon icon={'basil:shopping-bag-outline'} fontSize={'1.8rem'} color={themeMode == 'dark' || (isSellerPage && scrollY < 350) ? '#fff' : '#000'} />
+                <Icon icon={'basil:shopping-bag-outline'} fontSize={'1.8rem'} color={themeMode == 'dark' || ((isSellerPage || isProductPage) && scrollY < 350) ? '#fff' : '#000'} />
               </IconButton>
               <IconButton
                 sx={iconButtonStyle}
                 onClick={() => onToggleMode()}
               >
-                <Icon icon={themeMode === 'dark' ? 'tabler:sun' : 'tabler:moon-stars'} fontSize={'1.5rem'} color={themeMode == 'dark' || (isSellerPage && scrollY < 350) ? '#fff' : '#000'} />
+                <Icon icon={themeMode === 'dark' ? 'tabler:sun' : 'tabler:moon-stars'} fontSize={'1.5rem'} color={themeMode == 'dark' || ((isSellerPage || isProductPage) && scrollY < 350) ? '#fff' : '#000'} />
               </IconButton>
             </TopMenuContainer>
           </Wrappers>

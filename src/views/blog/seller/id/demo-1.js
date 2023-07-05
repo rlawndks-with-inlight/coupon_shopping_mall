@@ -1,5 +1,5 @@
 import { Icon } from '@iconify/react';
-import { SwipeableDrawer, Select, MenuItem, Chip, Drawer, FormControl, InputLabel, IconButton } from '@mui/material';
+import { Select, MenuItem, Drawer, FormControl, InputLabel, Button } from '@mui/material';
 import { useEffect, useState } from 'react';
 import { SellerItem } from 'src/components/elements/blog/demo-1';
 import { Row, themeObj } from 'src/components/elements/styled-components';
@@ -8,6 +8,7 @@ import { test_categories, test_items, test_seller } from 'src/data/test-data';
 import styled from 'styled-components'
 import _ from 'lodash'
 import { commarNumber } from 'src/utils/function';
+
 const Wrappers = styled.div`
 max-width: 840px;
 width:100%;
@@ -77,7 +78,7 @@ padding:1rem 0;
 const test_color_list = [
     { id: 1, name: "블랙", price: 0 },
     { id: 2, name: "베이지", price: 500 },
-    { id: 17, name: "크림", price: 1500 },
+    { id: 3, name: "크림", price: 1500 },
 ]
 const test_item_price = 20000;
 // 셀러별 메인페이지 김인욱
@@ -103,6 +104,8 @@ const Demo1 = (props) => {
     const [cartOpen, setCartOpen] = useState(false);
     const [itemColor, setItemColor] = useState("");
     const [selectOptions, setSelectOptions] = useState([]);
+    
+
     useEffect(() => {
         setSellerData(test_seller_data);
     }, [])
@@ -280,6 +283,7 @@ const Demo1 = (props) => {
                                              
                                             }} />
                                         <div>{item.count}</div>
+
                                         <Icon icon='ic:baseline-plus' style={{ cursor: 'pointer' }}
                                             onClick={() => {
                                                 let select_options = [...selectOptions];
@@ -289,10 +293,47 @@ const Demo1 = (props) => {
                                             }} />
                                     </Row>
                                     <div>{commarNumber((test_item_price + _.find(test_color_list, { id: item?.id }).price) * (item.count))}원</div>
+                                    
                                 </Row>
                             </DrawerBox>
                         </>
                     ))}
+                    {selectOptions[0] ?
+                        <>
+                            <DrawerBox style={{borderBottom:'none'}}>
+                                <Row style={{justifyContent:'space-between'}}>
+                                    <Row style={{width:'150px', justifyContent:'space-between', alignItems:'center', padding:'0.25rem'}}>
+                                        <div>총 {_.sum(selectOptions.map(item=>{return item.count}))}개 상품 금액</div>
+                                    </Row>
+                                    <div>
+                                        {console.log(commarNumber(selectOptions.map(item=>{(test_item_price + _.find(test_color_list, { id: item?.id }).price) * (item.count)})))}
+                                        {commarNumber(_.sum(selectOptions.map(item=>{return item.count*(test_item_price+item.price)})))}원</div>
+                                </Row>
+                            </DrawerBox>
+                            <Button
+                            variant='outlined'
+                            color='primary'
+                            style={{
+                                width:'30%',
+                                height:'56px',
+                                marginTop:'1rem',
+                                marginRight:'1%',
+                                fontSize:'large'
+                            }}
+                            >장바구니</Button>
+                            <Button
+                            variant='contained'
+                            color='primary'
+                            style={{
+                                width:'69%',
+                                height:'56px',
+                                marginTop:'1rem',
+                                fontSize:'large'
+                            }}
+                            >바로구매</Button>
+                        </> : ""
+                    }
+                    
 
                 </SelectContainer>
             </Drawer>

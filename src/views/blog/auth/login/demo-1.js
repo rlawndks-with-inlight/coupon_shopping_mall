@@ -115,7 +115,6 @@ const Demo1 = (props) => {
                 variant='outlined'
                 color='primary'
                 size='large'
-                href='../sign-up/demo-1'
                 onClick={() => {
                     router.push('/blog/auth/sign-up')
                 }}

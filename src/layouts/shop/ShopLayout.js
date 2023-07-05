@@ -58,9 +58,9 @@ const ShopLayout = ({ children, scrollToTop }) => {
     }
   }, [router.asPath])
   useEffect(() => {
-    // if (themeDnsData?.id > 0) {
-    // }
-    setLoading(false);
+    if (themeDnsData?.id > 0) {
+      setLoading(false);
+    }
   }, [themeDnsData])
   return (
     <>

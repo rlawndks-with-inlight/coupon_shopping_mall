@@ -45,7 +45,8 @@ export default function ManagerTable(props) {
                     setSDt(newValue);
                   }}
                   renderInput={(params) => <TextField fullWidth {...params} margin="normal" />}
-                  sx={{ marginRight: '0.75rem', width: '180px', height:'' }}
+                  sx={{ marginRight: '0.75rem', width: '180px', height:'32px' }}
+                  slotProps={{ textField: { size: 'small' } }}
                 />
                 <DesktopDatePicker
                   label="종료일 선택"
@@ -56,6 +57,7 @@ export default function ManagerTable(props) {
                   }}
                   renderInput={(params) => <TextField fullWidth {...params} margin="normal" />}
                   sx={{ width: '180px' }}
+                  slotProps={{ textField: { size: 'small' } }}
                 />
               </>
               :
@@ -69,6 +71,7 @@ export default function ManagerTable(props) {
                   }}
                   renderInput={(params) => <TextField fullWidth {...params} margin="normal" />}
                   sx={{ marginRight: '0.75rem', flexGrow: 1 }}
+                  slotProps={{ textField: { size: 'small' } }}
                 />
                 <MobileDatePicker
                   label="종료일 선택"
@@ -79,11 +82,12 @@ export default function ManagerTable(props) {
                   }}
                   renderInput={(params) => <TextField fullWidth {...params} margin="normal" />}
                   sx={{ flexGrow: 1 }}
+                  slotProps={{ textField: { size: 'small' } }}
                 />
               </>}
           </Row>
           <Row>
-            <TextField sx={{ flexGrow: 1 }} value={keyword} onChange={(e)=>{setKeyWord(e.target.value)}} />
+            <TextField sx={{ flexGrow: 1 }} value={keyword} onChange={(e)=>{setKeyWord(e.target.value)}} size='small' />
             <Button variant='contained' sx={{ marginLeft: '0.75rem' }} onClick={()=>router.push(`add`)}>
               + 회원 추가
             </Button>

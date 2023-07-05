@@ -21,44 +21,31 @@ const test_data = [
 const ArticleList = () => {
   const defaultColumns = [
     {
-      id: 'id',
-      label: 'No.',
+      id: 'main_img',
+      label: '메인이미지',
       action: (row) => {
-        return row['id']
+        return row['main_img'] ?? "---"
       }
     },
     {
-      id: 'user_name',
-      label: '회원아이디',
+      id: 'title',
+      label: '제목',
       action: (row) => {
-        return row['user_name'] ?? "---"
+        return row['title'] ?? "---"
       }
     },
     {
-      id: 'name',
-      label: '이름',
+      id: 'created_at',
+      label: '생성시간',
       action: (row) => {
-        return row['name'] ?? "---"
+        return row['created_at'] ?? "---"
       }
     },
     {
-      id: 'phone',
-      label: '전화번호',
+      id: 'updated_at',
+      label: '최종수정시간',
       action: (row) => {
-        return row['phone'] ?? "---"
-      }
-    },
-    {
-      id: 'order',
-      label: '주문내역',
-      action: (row) => {
-        return (
-          <>
-            <IconButton>
-              <Icon icon='material-symbols:history' />
-            </IconButton>
-          </>
-        )
+        return row['updated_at'] ?? "---"
       }
     },
     {

@@ -93,22 +93,24 @@ export default function Upload({
             pointerEvents: 'none',
           }),
           ...(hasFile && {
-            padding: '12% 0',
+            height:'254px',
+            display:'flex'
           }),
         }}
       >
         <input {...getInputProps()} />
-
-        <Placeholder
-          sx={{
-            ...(hasFile && {
-              opacity: 0,
-            }),
-          }}
-          {...other}
-        />
-
-        {hasFile && <SingleFilePreview file={file} />}
+        {hasFile ?
+          <SingleFilePreview file={file} />
+          :
+          <Placeholder
+            sx={{
+              ...(hasFile && {
+                opacity: 0,
+              }),
+            }}
+            {...other}
+          />
+        }
       </StyledDropZone>
 
       {helperText && helperText}

@@ -26,44 +26,73 @@ const test_data = [
 const CashBillList = () => {
   const defaultColumns = [
     {
-      id: 'id',
-      label: 'No.',
-      action: (row) => {
-        return row['id']
-      }
-    },
-    {
-      id: 'user_name',
-      label: '회원아이디',
-      action: (row) => {
-        return row['user_name'] ?? "---"
-      }
-    },
-    {
       id: 'name',
-      label: '이름',
+      label: '주문번호',
       action: (row) => {
         return row['name'] ?? "---"
       }
     },
     {
-      id: 'phone',
-      label: '전화번호',
+      id: 'name',
+      label: '구매자아이디',
       action: (row) => {
-        return row['phone'] ?? "---"
+        return row['name'] ?? "---"
       }
     },
     {
-      id: 'order',
-      label: '주문내역',
+      id: 'name',
+      label: '연락처',
       action: (row) => {
-        return (
-          <>
-            <IconButton>
-              <Icon icon='material-symbols:history' />
-            </IconButton>
-          </>
-        )
+        return row['name'] ?? "---"
+      }
+    },
+    {
+      id: 'name',
+      label: '결제금액',
+      action: (row) => {
+        return row['name'] ?? "---"
+      }
+    },
+    {
+      id: 'name',
+      label: '주문내용',
+      action: (row) => {
+        return row['name'] ?? "---"
+      }
+    },
+    {
+      id: 'name',
+      label: '주문시간',
+      action: (row) => {
+        return row['name'] ?? "---"
+      }
+    },
+    {
+      id: 'name',
+      label: '입금확인시간',
+      action: (row) => {
+        return row['name'] ?? "---"
+      }
+    },
+    {
+      id: 'name',
+      label: '상태',
+      action: (row) => {
+        return row['name'] ?? "---"
+      }
+    },
+    {
+      id: 'name',
+      label: '용도',
+      action: (row) => {
+        return row['name'] ?? "---"
+      }
+    },
+    {
+      id: 'name',
+      label: '식별번호',
+      action: (row) => {
+        return row['name'] ?? "---"
       }
     },
     {

@@ -28,37 +28,66 @@ const ProductList = () => {
       }
     },
     {
-      id: 'user_name',
-      label: '회원아이디',
+      id: 'product_img',
+      label: '상품이미지',
+      action: (row) => {
+        return row['product_img'] ?? "---"
+      }
+    },
+    {
+      id: 'product_name',
+      label: '상품명',
       action: (row) => {
         return row['user_name'] ?? "---"
       }
     },
     {
-      id: 'name',
-      label: '이름',
+      id: 'category',
+      label: '카테고리',
       action: (row) => {
         return row['name'] ?? "---"
       }
     },
     {
-      id: 'phone',
-      label: '전화번호',
+      id: 'mkt_pr',
+      label: '시장가',
       action: (row) => {
-        return row['phone'] ?? "---"
+        return row['name'] ?? "---"
       }
     },
     {
-      id: 'order',
-      label: '주문내역',
+      id: 'item_pr',
+      label: '판매가',
       action: (row) => {
-        return (
-          <>
-            <IconButton>
-              <Icon icon='material-symbols:history' />
-            </IconButton>
-          </>
-        )
+        return row['name'] ?? "---"
+      }
+    },
+    {
+      id: 'inventory',
+      label: '재고',
+      action: (row) => {
+        return row['name'] ?? "---"
+      }
+    },
+    {
+      id: 'status',
+      label: '상태',
+      action: (row) => {
+        return row['name'] ?? "---"
+      }
+    },
+    {
+      id: 'created_at',
+      label: '생성시간',
+      action: (row) => {
+        return row['name'] ?? "---"
+      }
+    },
+    {
+      id: 'updated_at',
+      label: '최종수정시간',
+      action: (row) => {
+        return row['name'] ?? "---"
       }
     },
     {
@@ -69,7 +98,7 @@ const ProductList = () => {
           <>
           <IconButton>
               <Icon icon='material-symbols:edit-outline' onClick={() => {
-                router.push(`/manager/users/edit/${row?.id}`)
+                router.push(`edit/${row?.id}`)
               }} />
             </IconButton>
             <IconButton>

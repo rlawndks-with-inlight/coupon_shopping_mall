@@ -16,17 +16,13 @@ export default function SingleFilePreview({ file }) {
   const imgUrl = typeof file === 'string' ? file : file.preview;
 
   return (
-    <Image
+    <img
       alt="file preview"
       src={imgUrl}
-      sx={{
-        top: 8,
-        left: 8,
-        zIndex: 8,
-        borderRadius: 1,
-        position: 'absolute',
-        width: 'calc(100% - 16px)',
-        height: 'calc(100% - 16px)',
+      style={{
+        margin:'auto',
+        height:'100%',
+        width:'auto'
       }}
     />
   );

@@ -109,6 +109,8 @@ const Demo1 = (props) => {
                 size='large'
                 style={{
                     marginTop:'1rem',
+                    fontSize:'large',
+                    height:'56px'
                 }}
             >로그인</Button>
             <Button
@@ -120,6 +122,8 @@ const Demo1 = (props) => {
                 }}
                 style={{
                     marginTop:'1rem',
+                    fontSize:'large',
+                    height:'56px'
                 }}
             >3초만에 빠른 회원가입</Button>
             <NotSignup>비회원 주문 조회</NotSignup>
@@ -128,7 +132,5 @@ const Demo1 = (props) => {
     </>
   )
 }
-const inputStyle = {
-  marginTop: '1rem',
-}
+
 export default Demo1

@@ -1,5 +1,5 @@
 // @mui
-import { Table, TableRow, TableBody, TableCell, TableContainer, Pagination, Divider, Box, TextField, Button } from '@mui/material';
+import { Table, TableRow, TableBody, TableCell, TableContainer, Pagination, Divider, Box, TextField, Button, FormControl, InputLabel, OutlinedInput, InputAdornment, IconButton } from '@mui/material';
 import { TableHeadCustom, TableNoData } from '../../../../components/table';
 import {
   DatePicker,
@@ -12,6 +12,7 @@ import { Row } from 'src/components/elements/styled-components';
 import styled from 'styled-components';
 import Scrollbar from 'src/components/scrollbar/Scrollbar';
 import { useRouter } from 'next/router';
+import { Icon } from '@iconify/react';
 // ----------------------------------------------------------------------
 const TableHeaderContainer = styled.div`
 padding: 0.75rem;
@@ -87,14 +88,33 @@ export default function ManagerTable(props) {
               </>}
           </Row>
           <Row>
-            <TextField sx={{ flexGrow: 1 }} value={keyword} onChange={(e) => { setKeyWord(e.target.value) }} size='small' />
+            <FormControl variant="outlined">
+              <OutlinedInput
+                size='small'
+                label=''
+                value={keyword}
+                endAdornment={<>
+                  <IconButton position="end" sx={{transform: 'translateX(14px)'}}>
+                    <Icon icon='material-symbols:search'/>
+                  </IconButton>
+                </>}
+                onChange={(e) => {
+                  setKeyWord(e.target.value)
+                }}
+                onKeyPress={(e)=>{
+                  if(e.key=='Enter'){
+
+                  }
+                }}
+                />
+            </FormControl>
             {add_button_text ?
               <>
                 <Button variant='contained' sx={{ marginLeft: '0.75rem' }} onClick={() => {
                   console.log(router.asPath)
                   let path = router.asPath;
-                  if(router.asPath.includes('list')){
-                    path = path.replace('list','');
+                  if (router.asPath.includes('list')) {
+                    path = path.replace('list', '');
                   }
                   router.push(`${path}add`)
                 }}>

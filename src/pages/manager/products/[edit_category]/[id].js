@@ -61,7 +61,7 @@ const ProductEdit = () => {
     product_name: '',
     category_id: undefined,
     content: '',
-    options:[]
+    options: []
   })
 
   useEffect(() => {
@@ -153,18 +153,23 @@ const ProductEdit = () => {
                           }
                         );
                       }
-                    }} onDelete={() => {
+                    }}
+                    onDelete={() => {
                       setItem(
                         {
                           ...item,
                           ['product_img']: ''
                         }
                       )
-                    }} />
+                    }}
+                    fileExplain={{
+                      width: '(512x512 추천)'//파일 사이즈 설명
+                    }}
+                    />
                   </Stack>
                   <Stack spacing={1}>
                     <Typography variant="subtitle2" sx={{ color: 'text.secondary' }}>
-                      개별이미지등록
+                      개별이미지등록 (여러장 업로드)
                     </Typography>
                     <Upload
                       multiple
@@ -180,7 +185,7 @@ const ProductEdit = () => {
                         handleRemoveAllFiles();
                       }}
                       fileExplain={{
-                        width: '(520x520 추천)'//파일 사이즈 설명
+                        width: '(512x512 추천)'//파일 사이즈 설명
                       }}
                       imageSize={{ //썸네일 사이즈
                         width: 200,
@@ -373,23 +378,96 @@ const ProductEdit = () => {
                     <Typography variant="subtitle2" sx={{ color: 'text.secondary' }}>
                       상품옵션
                     </Typography>
-                    {item.options.map((group, idx)=>(
+                    {item.options.map((group, index) => (
                       <>
+                        <FormControl variant="outlined">
+                          <InputLabel>옵션그룹명</InputLabel>
+                          <OutlinedInput
+                            label='옵션그룹명'
+                            placeholder="예시) 색상"
+                            value={group.group_name}
+                            endAdornment={<>
+                              <Button style={{ width: '94px', height: '56px', transform: 'translateX(14px)' }}
+                                variant="contained"
+                                onClick={() => {
+                                  let option_list = item?.options;
+                                  option_list[index].list.push({
+                                    option_name: '',
+                                    var_price: 0,
+                                  })
+                                  setItem(
+                                    {
+                                      ...item,
+                                      ['options']: option_list
+                                    }
+                                  )
+                                }}
+                              >옵션추가</Button>
+                            </>}
+                            onChange={(e) => {
+                              let option_list = item?.options;
+                              option_list[index].group_name = e.target.value;
+                              setItem(
+                                {
+                                  ...item,
+                                  ['options']: option_list
+                                }
+                              )
+                            }} />
+                        </FormControl>
+                        {group?.list && group?.list.map((option, idx) => (
+                          <>
+                            <Row style={{ columnGap: '0.5rem' }}>
+                              <TextField
+                                sx={{ flexGrow: 1 }}
+                                label='옵션명'
+                                placeholder="예시) 블랙"
+                                value={option.option_name}
+                                onChange={(e) => {
+                                  let option_list = item?.options;
+                                  option_list[index].list[idx].option_name = e.target.value;
+                                  setItem(
+                                    {
+                                      ...item,
+                                      ['options']: option_list
+                                    }
+                                  )
+                                }} />
+                              <FormControl variant="outlined" sx={{ flexGrow: 1 }}>
+                                <InputLabel>변동가</InputLabel>
+                                <OutlinedInput
+                                  label='변동가'
+                                  type="number"
+                                  value={option.var_price}
+                                  endAdornment={<InputAdornment position="end">원</InputAdornment>}
+                                  onChange={(e) => {
+                                    let option_list = item?.options;
+                                    option_list[index].list[idx].var_price = e.target.value;
+                                    setItem(
+                                      {
+                                        ...item,
+                                        ['options']: option_list
+                                      }
+                                    )
+                                  }} />
+                              </FormControl>
+                            </Row>
 
-                      
+                          </>
+                        ))}
                       </>
                     ))}
-                    <Button variant="outlined" sx={{height:'48px'}} onClick={()=>{
+                    <Button variant="outlined" sx={{ height: '48px' }} onClick={() => {
                       let option_list = [...item.options];
                       option_list.push({
-                        title:'',
+                        group_name: '',
                         list: []
                       })
                       setItem({
                         ...item,
                         ['options']: option_list
                       })
-                    }}>옵션 추가</Button>
+                    }}>옵션그룹 추가</Button>
                   </Stack>
                 </Stack>
               </Card>
@@ -397,13 +475,6 @@ const ProductEdit = () => {
             <Grid item xs={12} md={12}>
               <Card sx={{ p: 3 }}>
                 <Stack spacing={1} style={{ display: 'flex' }}>
-                  <Button variant="contained" style={{
-                    height: '48px', width: '120px', marginLeft: 'auto'
-                  }} onClick={() => {
-
-                  }}>
-                    저장
-                  </Button>
                   <Button variant="contained" style={{
                     height: '48px', width: '120px', marginLeft: 'auto'
                   }} onClick={() => {

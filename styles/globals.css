@@ -92,7 +92,14 @@ body {
 .none-padding>.ql-container>.ql-editor {
   padding: 0;
 }
+.max-height-editor {
+}
 
+.max-height-editor>.ql-container>.ql-editor {
+  max-height: 350px;
+  min-height: 350px;
+  overflow-y: auto;
+}
 @media (max-width: 1350px) {
   .item-img {
     width: 27.6vw;

@@ -21,7 +21,7 @@ import $ from 'jquery';
 import { useRouter } from 'next/router';
 
 export default function Login() {
-  const { login } = useAuthContext();
+  const { login, user } = useAuthContext();
 
   const router = useRouter();
 
@@ -31,6 +31,9 @@ export default function Login() {
   const [showPassword, setShowPassword] = useState(false);
   useEffect(() => {
     setTimeout(() => {
+      if(user){
+        router.push(`/manager/dashboards`)
+      }
       setLoading(false);
     }, 100)
   }, [])

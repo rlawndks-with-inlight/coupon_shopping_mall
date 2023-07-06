@@ -37,7 +37,7 @@ export default function Input(theme) {
       styleOverrides: {
         root: {
           '& .MuiInputLabel-root.Mui-focused': {
-            color: theme.palette.text.primary,
+            color: theme.palette.primary.main,
           },
         },
       },
@@ -73,7 +73,7 @@ export default function Input(theme) {
           '&.Mui-focused': {
             '& .MuiOutlinedInput-notchedOutline': {
               borderWidth: 1,
-              borderColor: theme.palette.text.primary,
+              borderColor: theme.palette.primary.main,
             },
           },
           '&.Mui-disabled': {

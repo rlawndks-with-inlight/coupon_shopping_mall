@@ -93,7 +93,7 @@ export default function ManagerLayout({ children }) {
 
   return <>
    <NextNProgress color={themeDnsData?.theme_css?.main_color??"#000"} />
-    {themeDnsData?.id > 0 && user ?
+    {themeDnsData?.id > 0 && user && themeDnsData ?
       <>
         {renderContent()}
       </>

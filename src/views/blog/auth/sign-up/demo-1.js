@@ -186,7 +186,7 @@ const Demo1 = (props) => {
                     <FormControlLabel label={<Typography>서비스 이용약관<span style={{ color: 'red' }}>(필수)</span></Typography>} control={<Checkbox checked={checkboxObj.check_2} onChange={(e) => {
                       setCheckboxObj({ ...checkboxObj, ['check_2']: e.target.checked })
                     }} />} />
-                    <IconButton style={{ width: '24px', height: '40px', padding: '0' }} >
+                    <IconButton style={{ width: '24px', height: '40px', padding: '0' }}>
                       <Icon icon='ep:arrow-right' color='black' onClick={() => {
                         setOpenPolicy(true)
                         setPolicyType(0)

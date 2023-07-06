@@ -108,6 +108,7 @@ const PopupList = () => {
             page={page}
             maxPage={maxPage}
             onChangePage={onChangePage}
+            add_button_text={'팝업 추가'}
           />
         </Card>
       </Stack>

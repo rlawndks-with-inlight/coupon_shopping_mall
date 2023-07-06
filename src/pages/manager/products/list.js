@@ -137,6 +137,7 @@ const ProductList = () => {
             page={page}
             maxPage={maxPage}
             onChangePage={onChangePage}
+            add_button_text={'상품 추가'}
           />
         </Card>
       </Stack>

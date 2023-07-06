@@ -8,6 +8,7 @@ import { useTheme } from '@emotion/react';
 import Policy from 'src/pages/blog/auth/policy';
 import { Icon } from '@iconify/react';
 import { useEffect } from 'react';
+import Header from 'src/layouts/shop/blog/demo-1/header';
 
 const Wrappers = styled.div`
 max-width:840px;
@@ -105,9 +106,9 @@ const Demo1 = (props) => {
   const [policyType, setPolicyType] = useState("")
   const [buttonText, setButtonText] = useState("인증받기")
   const [birthDate, setBirthDate] = useState({
-    year : "",
-    month : "",
-    day : ""
+    year: "",
+    month: "",
+    day: ""
   })
 
   const onClickPrevButton = () => {
@@ -147,6 +148,16 @@ const Demo1 = (props) => {
 
   return (
     <>
+      <Header
+        data={{
+        }}
+        func={{
+          router
+        }}
+        is_use_step={true}
+        activeStep={activeStep}
+        setActiveStep={setActiveStep}
+        />
       <Wrappers>
         {activeStep == 0 &&
           <>
@@ -321,43 +332,43 @@ const Demo1 = (props) => {
               />
               <TextFieldTitle>생년월일</TextFieldTitle>
               <SelectContainer>
-              <Select
-                value={birthDate.year}
-                placeholder='년'
-                
-                style={{
-                  
-                }}
-                onChange={(e) => {
-                  setBirthDate({...birthDate, year:e.target.value})
-                }}
-              >
-                {years.map(item => (
-                  <MenuItem value={item} key={item}>{item}</MenuItem>
-                ))}
-              </Select>
-              <Select
-                value={birthDate.month}
-                placeholder='월'
-                onChange={(e) => {
-                  setBirthDate({...birthDate, month:e.target.value})
-                }}
-              >
-                {months.map(item => (
-                  <MenuItem value={item} key={item}>{item}</MenuItem>
-                ))}
-              </Select>
-              <Select
-                value={birthDate.day}
-                placeholder='일'
-                onChange={(e) => {
-                  setBirthDate({...birthDate, day:e.target.value})
-                }}
-              >
-                {days.map(item => (
-                  <MenuItem value={item} key={item}>{item}</MenuItem>
-                ))}
-              </Select>
+                <Select
+                  value={birthDate.year}
+                  placeholder='년'
+
+                  style={{
+
+                  }}
+                  onChange={(e) => {
+                    setBirthDate({ ...birthDate, year: e.target.value })
+                  }}
+                >
+                  {years.map(item => (
+                    <MenuItem value={item} key={item}>{item}</MenuItem>
+                  ))}
+                </Select>
+                <Select
+                  value={birthDate.month}
+                  placeholder='월'
+                  onChange={(e) => {
+                    setBirthDate({ ...birthDate, month: e.target.value })
+                  }}
+                >
+                  {months.map(item => (
+                    <MenuItem value={item} key={item}>{item}</MenuItem>
+                  ))}
+                </Select>
+                <Select
+                  value={birthDate.day}
+                  placeholder='일'
+                  onChange={(e) => {
+                    setBirthDate({ ...birthDate, day: e.target.value })
+                  }}
+                >
+                  {days.map(item => (
+                    <MenuItem value={item} key={item}>{item}</MenuItem>
+                  ))}
+                </Select>
               </SelectContainer>
               <Button
                 variant='contained'
@@ -386,7 +397,7 @@ const Demo1 = (props) => {
                 }}
                 onClick={() => {
                   router.push('/blog/auth/login')
-              }}
+                }}
               >로그인하러 가기</Button>
             </TextFieldContainer>
           </>

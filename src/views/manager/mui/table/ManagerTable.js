@@ -24,7 +24,7 @@ justify-content:space-between;
 }
 `
 export default function ManagerTable(props) {
-  const { columns, data, page, maxPage, onChangePage,  } = props;
+  const { columns, data, page, add_button_text, maxPage, onChangePage, } = props;
   const router = useRouter();
   const [sDt, setSDt] = useState(undefined);
   const [eDt, setEDt] = useState(undefined);
@@ -45,7 +45,7 @@ export default function ManagerTable(props) {
                     setSDt(newValue);
                   }}
                   renderInput={(params) => <TextField fullWidth {...params} margin="normal" />}
-                  sx={{ marginRight: '0.75rem', width: '180px', height:'32px' }}
+                  sx={{ marginRight: '0.75rem', width: '180px', height: '32px' }}
                   slotProps={{ textField: { size: 'small' } }}
                 />
                 <DesktopDatePicker
@@ -87,10 +87,23 @@ export default function ManagerTable(props) {
               </>}
           </Row>
           <Row>
-            <TextField sx={{ flexGrow: 1 }} value={keyword} onChange={(e)=>{setKeyWord(e.target.value)}} size='small' />
-            <Button variant='contained' sx={{ marginLeft: '0.75rem' }} onClick={()=>router.push(`add`)}>
-              + 회원 추가
-            </Button>
+            <TextField sx={{ flexGrow: 1 }} value={keyword} onChange={(e) => { setKeyWord(e.target.value) }} size='small' />
+            {add_button_text ?
+              <>
+                <Button variant='contained' sx={{ marginLeft: '0.75rem' }} onClick={() => {
+                  console.log(router.asPath)
+                  let path = router.asPath;
+                  if(router.asPath.includes('list')){
+                    path = path.replace('list','');
+                  }
+                  router.push(`${path}add`)
+                }}>
+                  + {add_button_text}
+                </Button>
+              </>
+              :
+              <>
+              </>}
           </Row>
         </TableHeaderContainer>
         <Scrollbar sx={{ maxHeight: 400 }}>

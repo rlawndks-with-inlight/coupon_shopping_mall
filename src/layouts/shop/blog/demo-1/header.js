@@ -29,7 +29,9 @@ position:relative;
 `
 
 
-const Header = () => {
+const Header = (props) => {
+
+  const {activeStep, setActiveStep, is_use_step} = props;
   const theme = useTheme();
   const router = useRouter();
 
@@ -137,11 +139,17 @@ const Header = () => {
           }}
           >
             <TopMenuContainer>
-              {isBackArrowShow()?
+              {isBackArrowShow() || is_use_step ?
               <>
                <IconButton
                 sx={{...iconButtonStyle,marginLeft:'-4px'}}
-                onClick={() => router.back()}
+                onClick={() => {
+                  if(is_use_step){
+                    setActiveStep(activeStep-1);
+                    return;
+                  }
+                  router.back()
+                }}
               >
                 <Icon icon={'ic:round-arrow-back'} fontSize={'1.8rem'} color={themeMode == 'dark' || ((isSellerPage || isProductPage) && scrollY < 350) ? '#fff' : '#000'} />
               </IconButton>

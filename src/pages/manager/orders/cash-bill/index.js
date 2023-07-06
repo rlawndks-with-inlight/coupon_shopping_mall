@@ -148,7 +148,7 @@ const CashBillList = () => {
             page={page}
             maxPage={maxPage}
             onChangePage={onChangePage}
-
+            add_button_text={'현금영수증 추가'}
           />
         </Card>
       </Stack>

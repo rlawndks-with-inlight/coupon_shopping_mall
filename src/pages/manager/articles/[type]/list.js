@@ -18,6 +18,17 @@ const test_data = [
     phone: '01000000000',
   }
 ]
+const listSetting = {
+  notices:{
+    add_button_text:'공지사항 추가'
+  },
+  faqs:{
+    add_button_text:'FAQ 추가'
+  },
+  'one-to-one':{
+    add_button_text:''
+  }
+}
 const ArticleList = () => {
   const defaultColumns = [
     {
@@ -95,6 +106,7 @@ const ArticleList = () => {
             page={page}
             maxPage={maxPage}
             onChangePage={onChangePage}
+            add_button_text={listSetting[router.query?.type].add_button_text}
           />
         </Card>
       </Stack>

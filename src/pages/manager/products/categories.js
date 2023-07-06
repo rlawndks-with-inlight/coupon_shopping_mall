@@ -191,6 +191,7 @@ const CategoryList = () => {
                         {returnTree(category, 0)}
                       </>
                     ))}
+
                   </StyledTreeView>
                 </>
                 :
@@ -203,6 +204,11 @@ const CategoryList = () => {
                     <div style={{ margin: 'auto' }}>카테고리를 추가해 주세요.</div>
                   </Row>
                 </>}
+              <Tooltip title="새로운 대분류 카테고리를 추가하시려면 클릭해주세요." sx={{ margin: 'auto' }} >
+                <Button variant="contained" sx={{ width: '100%', marginTop: '2rem', height: '56px' }}>
+                  카테고리 추가
+                </Button>
+              </Tooltip>
             </Card>
           </Grid>
           <Grid item xs={12} md={6}>

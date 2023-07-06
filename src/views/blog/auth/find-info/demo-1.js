@@ -71,6 +71,7 @@ const Demo1 = (props) => {
   const [phoneNum, setPhoneNum] = useState("");
   const [username, setUsername] = useState("")
   const [userid, setUserid] = useState("")
+  const [buttonText, setButtonText] = useState("인증받기")
   const [certificationNum, setCertificationNum] = useState("")
   const [findIdObj, setFindIdObj] = useState({
     name:'',
@@ -135,7 +136,7 @@ const Demo1 = (props) => {
                   placeholder='연락처'
                   sx={{
                     width:'84%',
-                    marginRight:'1%'
+                    marginRight:'1%',
                   }}
                   onChange={(e) => {
                     setPhoneNum(e.target.value)
@@ -145,9 +146,12 @@ const Demo1 = (props) => {
                   variant='outlined'
                   color='primary'
                   style={{
-                    width:'15%'
+                    width:'15%',
                   }}
-                >인증받기</Button>
+                  onClick={() => {
+                    setButtonText("재전송")
+                  }}
+                >{buttonText}</Button>
               </TextFieldBox>
               <TextField
                 name='certificationNum'
@@ -163,7 +167,7 @@ const Demo1 = (props) => {
                 style={{
                   height:'56px',
                   marginTop:'10%',
-                  fontSize:'15px'
+                  fontSize:'large'
                 }}
               >인증완료</Button>
             </> : 
@@ -197,7 +201,10 @@ const Demo1 = (props) => {
                   style={{
                     width:'15%'
                   }}
-                >인증받기</Button>
+                  onClick={() => {
+                    setButtonText("재전송")
+                  }}
+                >{buttonText}</Button>
               </TextFieldBox>
               <TextField
                 name='certificationNum'
@@ -213,7 +220,7 @@ const Demo1 = (props) => {
                 style={{
                   height:'56px',
                   marginTop:'10%',
-                  fontSize:'15px'
+                  fontSize:'large'
                 }}
               >인증완료</Button>
             </>}

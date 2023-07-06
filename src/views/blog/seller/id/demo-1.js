@@ -8,6 +8,7 @@ import { test_categories, test_items, test_seller } from 'src/data/test-data';
 import styled from 'styled-components'
 import _ from 'lodash'
 import { commarNumber } from 'src/utils/function';
+import { position } from 'stylis';
 
 const Wrappers = styled.div`
 max-width: 840px;
@@ -204,6 +205,7 @@ const Demo1 = (props) => {
                     setCartOpen(false);
                     setSelectOptions([]);
                 }}
+                disableScrollLock={true}
                 sx={{
                     width: '100vw'
                 }}
@@ -215,7 +217,8 @@ const Demo1 = (props) => {
                         margin: '0 auto',
                         borderTopLeftRadius: '24px',
                         borderTopRightRadius: '24px',
-                        paddingBottom: '2rem'
+                        paddingBottom: '2rem',
+                        position:'fixed'
                     }
                 }}
             >

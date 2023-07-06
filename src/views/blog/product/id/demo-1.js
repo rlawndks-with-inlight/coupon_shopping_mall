@@ -1,5 +1,5 @@
 import { Icon } from '@iconify/react';
-import { Select, MenuItem, Drawer, FormControl, InputLabel, Button, Avatar, Divider } from '@mui/material';
+import { Select, MenuItem, Drawer, FormControl, InputLabel, Button, Avatar, Divider, Dialog, DialogTitle, DialogContent, DialogActions } from '@mui/material';
 import { useEffect, useState } from 'react';
 import { Row, themeObj } from 'src/components/elements/styled-components';
 import { useSettingsContext } from 'src/components/settings';
@@ -10,6 +10,7 @@ import { commarNumber } from 'src/utils/function';
 import Slider from 'react-slick';
 import { useTheme } from '@emotion/react';
 import dynamic from 'next/dynamic';
+
 const ReactQuill = dynamic(() => import('react-quill'), {
     ssr: false,
     loading: () => <p>Loading ...</p>,
@@ -55,6 +56,26 @@ display:flex;
 flex-direction:column;
 padding:1rem 0;
 `
+
+const DrawerBox = styled.div`
+width:100%;
+border-bottom: 1px solid;
+display:flex;
+flex-direction:column;
+padding:1rem 0;
+`
+
+const SelectContainer = styled.div`
+padding:4rem 2.5% 0 2.5%;
+`
+
+const DialogBox = styled.div`
+display:flex;
+flex-direction:column;
+margin: 0 auto;
+width:100%;
+`
+
 const test_item = {
     product_name: '[국내제작/고퀄/보풀X]플레인 나시 - t',
     product_img: 'https://d32rratnkhh4zp.cloudfront.net/media/images/2023/6/29/thumb@1080_1687996041-a03a48a3-6c08-4856-9aa9-15d05fa9c444.jpeg',
@@ -72,7 +93,15 @@ const test_item = {
         nickname: 'Merrymond'
     }
 }
-// 셀러별 메인페이지 김인욱
+
+const test_color_list = [
+    { id: 1, name: "블랙", price: 0 },
+    { id: 2, name: "베이지", price: 500 },
+    { id: 3, name: "크림", price: 1500 },
+]
+
+
+// 상품별 메인페이지 김인욱
 const Demo1 = (props) => {
     const {
         data: {
@@ -88,6 +117,10 @@ const Demo1 = (props) => {
 
     const [item, setItem] = useState({});
     const [scrollY, setScrollY] = useState(0);
+    const [cartOpen, setCartOpen] = useState(false)
+    const [selectOptions, setSelectOptions] = useState([]);
+    const [dialogOpen, setDialogOpen] = useState(false);
+    const [dialogType, setDialogType] = useState("");
 
     useEffect(() => {
         let data = test_item
@@ -113,6 +146,16 @@ const Demo1 = (props) => {
         slidesToShow: 1,
         slidesToScroll: 1,
     }
+
+    const getTotalPrice = () => {
+        let total_price = 0;
+        for (var i = 0; i < selectOptions.length; i++) {
+            let find_item = _.find(test_color_list, { id: selectOptions[i]?.id });
+            total_price += (test_item.item_pr + find_item?.price) * selectOptions[i]?.count;
+        }
+        return total_price
+    }
+
     return (
         <>
 
@@ -135,7 +178,7 @@ const Demo1 = (props) => {
                     <Row style={{ justifyContent: 'space-between' }}>
                         <Row style={{ alignItems: 'center', cursor: 'pointer' }} onClick={() => { router.push(`/blog/seller/${item.seller?.id}`) }}>
                             <Avatar src={item.seller?.profile_img} sx={{ width: '30px', height: '30px' }} />
-                            <div style={{ marginLeft: '0.25rem',fontSize:themeObj.font_size.size8 }}>{item.seller?.nickname}</div>
+                            <div style={{ marginLeft: '0.25rem', fontSize: themeObj.font_size.size8 }}>{item.seller?.nickname}</div>
                         </Row>
                         <Button variant='outlined' sx={{
                             height: '30px',
@@ -159,10 +202,9 @@ const Demo1 = (props) => {
                             <div style={{ fontSize: themeObj.font_size.size8, marginLeft: '0.25rem' }}>원</div>
                         </Row>
                     </PriceContainer>
-                    <Button variant='contained'>
+                    <Button variant='contained' onClick={() => { setCartOpen(true) }}>
                         구매하기
                     </Button>
-
                     <div style={{ marginTop: '1rem' }} />
                     <Divider />
                     <ContentContainer>
@@ -177,6 +219,214 @@ const Demo1 = (props) => {
                     </ContentContainer>
                 </ContentWrappers>
             </Wrappers>
+            <Drawer
+                anchor={'bottom'}
+                open={cartOpen}
+                onClose={() => {
+                    setCartOpen(false);
+                    setSelectOptions([]);
+                }}
+                disableScrollLock={true}
+                sx={{
+                    width: '100vw'
+                }}
+                PaperProps={{
+                    sx: {
+                        maxWidth: '840px',
+                        width: '100%',
+                        minHeight: '200px',
+                        margin: '0 auto',
+                        borderTopLeftRadius: '24px',
+                        borderTopRightRadius: '24px',
+                        paddingBottom: '2rem',
+                        position: 'fixed'
+                    }
+                }}
+            >
+                <SelectContainer>
+                    <FormControl sx={{ width: '100%' }}>
+                        <InputLabel>컬러</InputLabel>
+                        <Select
+                            label='컬러'
+                            sx={{
+                                width: '100%'
+                            }}
+                            placeholder='컬러'
+                            onChange={(e) => {
+                                if (e.target.value) {
+                                    if (_.findIndex(selectOptions, { id: e.target.value }) < 0) {
+                                        setSelectOptions([...selectOptions, {
+                                            id: e.target.value,
+                                            count: 1
+                                        }])
+                                    }
+                                }
+                                console.log(e.target.value)
+                            }}
+                        >
+                            {test_color_list.map((data) => (
+                                <MenuItem
+                                    key={data?.name}
+                                    value={data?.id}
+                                    onClick={() => {
+                                        let find_index = _.findIndex(selectOptions, { id: data?.id });
+                                        if (find_index < 0) {
+                                            setSelectOptions([...selectOptions, {
+                                                id: data?.id,
+                                                count: 1
+                                            }])
+                                        } else {
+                                            let select_options = [...selectOptions];
+                                            select_options[find_index].count++;
+                                            setSelectOptions(select_options);
+                                        }
+                                    }}
+                                >{data?.name} {data.price > 0 ? '+' + commarNumber(data.price) : ''}</MenuItem>
+                            ))}
+                        </Select>
+                    </FormControl>
+                    {selectOptions.map((item, idx) => (
+                        <>
+                            <DrawerBox>
+                                <Row style={{ justifyContent: 'space-between' }}>
+                                    <div>{_.find(test_color_list, { id: item?.id })?.name}</div>
+                                    <Icon icon='fluent-mdl2:cancel' style={{ cursor: 'pointer' }}
+                                        onClick={() => {
+                                            let select_options = [...selectOptions];
+                                            let find_index = _.findIndex(selectOptions, { id: item?.id });
+                                            select_options.splice(find_index, 1);
+                                            setSelectOptions(select_options)
+                                        }} />
+                                </Row>
+                                <Row style={{ justifyContent: 'space-between' }}>
+                                    <Row style={{ border: `1px solid ${themeObj.grey[300]}`, width: '150px', justifyContent: 'space-between', alignItems: 'center', padding: '0.25rem' }}>
+                                        <Icon icon='ic:baseline-minus' style={{ cursor: 'pointer' }}
+                                            onClick={() => {
+                                                let select_options = [...selectOptions];
+                                                let find_index = _.findIndex(selectOptions, { id: item?.id });
+                                                if (select_options[find_index].count == 1) {
+                                                    select_options.splice(find_index, 1);
+                                                    setSelectOptions(select_options)
+                                                } else {
+                                                    select_options[find_index].count--;
+                                                    setSelectOptions(select_options)
+                                                }
+
+                                            }} />
+                                        <div>{item.count}</div>
+
+                                        <Icon icon='ic:baseline-plus' style={{ cursor: 'pointer' }}
+                                            onClick={() => {
+                                                let select_options = [...selectOptions];
+                                                let find_index = _.findIndex(selectOptions, { id: item?.id });
+                                                select_options[find_index].count++;
+                                                setSelectOptions(select_options)
+                                            }} />
+                                    </Row>
+                                    <div>{commarNumber((test_item.item_pr + _.find(test_color_list, { id: item?.id }).price) * (item.count))}원</div>
+
+                                </Row>
+                            </DrawerBox>
+                        </>
+                    ))}
+                    {selectOptions[0] ?
+                        <>
+                            <DrawerBox style={{ borderBottom: 'none' }}>
+                                <Row style={{ justifyContent: 'space-between' }}>
+                                    <Row style={{ width: '150px', justifyContent: 'space-between', alignItems: 'center', padding: '0.25rem' }}>
+                                        <div>총 {_.sum(selectOptions.map(item => { return item.count }))}개 상품 금액</div>
+                                    </Row>
+                                    <div>
+                                        <span style={{ color: 'red' }}>{commarNumber(getTotalPrice())}</span>원
+                                    </div>
+                                </Row>
+                            </DrawerBox>
+                            <Button
+                                variant='outlined'
+                                color='primary'
+                                style={{
+                                    width: '30%',
+                                    height: '56px',
+                                    marginTop: '1rem',
+                                    marginRight: '1%',
+                                    fontSize: 'large'
+                                }}
+                                onClick={() => {
+                                    setDialogOpen(true)
+                                    setDialogType(0)
+                                }}
+                            >장바구니</Button>
+                            <Button
+                                variant='contained'
+                                color='primary'
+                                style={{
+                                    width: '69%',
+                                    height: '56px',
+                                    marginTop: '1rem',
+                                    fontSize: 'large'
+                                }}
+                                onClick={() => {
+                                    setDialogOpen(true)
+                                    setDialogType(1)
+                                }}
+                            >바로구매</Button>
+                        </> : ""
+                    }
+                </SelectContainer>
+            </Drawer>
+            <Dialog
+                open={dialogOpen}
+                onClose={() => { setDialogOpen(false) }}
+                fullWidth
+                PaperProps={{
+                    sx: {
+                        maxWidth: '840px'
+                    }
+                }}
+            >
+                {dialogType == 0 ?
+                    <>
+                        <DialogTitle><img src={'https://backend.comagain.kr/storage/images/logos/IFFUcyTPtgF887r0RPOGXZyLLPvp016Je17MENFT.svg'} style={{ height: '40px', width: 'auto' }} /></DialogTitle>
+                        <DialogContent
+                            style={{ textAlign: 'center', marginBottom: '4%' }}
+                        >로그인하시면<br />장바구니 이용이 가능합니다!
+                        </DialogContent>
+                        <DialogActions>
+                            <DialogBox>
+                                <Button
+                                    variant='contained'
+                                    size='large'
+                                    sx={{ marginBottom: '2%' }}
+                                    onClick={() => { router.push('/blog/auth/login') }}>로그인하기</Button>
+                                <Button
+                                    variant='outlined'
+                                    size='large'
+                                    onClick={() => { setDialogOpen(false) }}>돌아가기</Button>
+                            </DialogBox>
+                        </DialogActions>
+                    </>
+                    :
+                    <>
+                        <DialogTitle><img src={'https://backend.comagain.kr/storage/images/logos/IFFUcyTPtgF887r0RPOGXZyLLPvp016Je17MENFT.svg'} style={{ height: '40px', width: 'auto' }} /></DialogTitle>
+                        <DialogContent
+                            style={{ textAlign: 'center', marginBottom: '4%' }}
+                        >로그인하시면<br />더 편하게 구매 가능합니다!</DialogContent>
+                        <DialogActions>
+                            <DialogBox>
+                                <Button
+                                    variant='contained'
+                                    size='large'
+                                    sx={{ marginBottom: '2%' }}
+                                    onClick={() => { router.push('/blog/auth/login') }}>로그인하기</Button>
+                                <Button
+                                    variant='outlined'
+                                    size='large'
+                                    onClick={() => { setDialogOpen(false) }}>비회원으로 구매할게요</Button>
+                            </DialogBox>
+                        </DialogActions>
+                    </>
+                }
+            </Dialog>
         </>
     )
 }

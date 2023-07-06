@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types';
-import { Checkbox, FormControlLabel, TextField, Typography, IconButton, Drawer, Button, Select, MenuItem } from '@mui/material';
+import { Checkbox, FormControlLabel, TextField, Typography, IconButton, Drawer, Button, Select, MenuItem, InputLabel } from '@mui/material';
 import { useState } from 'react';
 import { Row, themeObj } from 'src/components/elements/styled-components';
 import styled from 'styled-components'
@@ -72,6 +72,12 @@ const SelectContainer = styled.div`
 display:flex;
 width:100%;
 margin:0 auto;
+`
+
+const SelectBox = styled.div`
+display:flex;
+flex-direction:column;
+margin-right:1%;
 `
 
 // 회원가입 김인욱
@@ -157,7 +163,7 @@ const Demo1 = (props) => {
         is_use_step={true}
         activeStep={activeStep}
         setActiveStep={setActiveStep}
-        />
+      />
       <Wrappers>
         {activeStep == 0 &&
           <>
@@ -332,43 +338,57 @@ const Demo1 = (props) => {
               />
               <TextFieldTitle>생년월일</TextFieldTitle>
               <SelectContainer>
-                <Select
-                  value={birthDate.year}
-                  placeholder='년'
-
-                  style={{
-
-                  }}
-                  onChange={(e) => {
-                    setBirthDate({ ...birthDate, year: e.target.value })
-                  }}
-                >
-                  {years.map(item => (
-                    <MenuItem value={item} key={item}>{item}</MenuItem>
-                  ))}
-                </Select>
-                <Select
-                  value={birthDate.month}
-                  placeholder='월'
-                  onChange={(e) => {
-                    setBirthDate({ ...birthDate, month: e.target.value })
-                  }}
-                >
-                  {months.map(item => (
-                    <MenuItem value={item} key={item}>{item}</MenuItem>
-                  ))}
-                </Select>
-                <Select
-                  value={birthDate.day}
-                  placeholder='일'
-                  onChange={(e) => {
-                    setBirthDate({ ...birthDate, day: e.target.value })
-                  }}
-                >
-                  {days.map(item => (
-                    <MenuItem value={item} key={item}>{item}</MenuItem>
-                  ))}
-                </Select>
+                <SelectBox>
+                  <InputLabel>년</InputLabel>
+                  <Select
+                    value={birthDate.year}
+                    label='년'
+                    style={{
+                      width: '100px'
+                    }}
+                    onChange={(e) => {
+                      setBirthDate({ ...birthDate, year: e.target.value })
+                    }}
+                  >
+                    {years.map(item => (
+                      <MenuItem value={item} key={item}>{item}</MenuItem>
+                    ))}
+                  </Select>
+                </SelectBox>
+                <SelectBox>
+                  <InputLabel>월</InputLabel>
+                  <Select
+                    value={birthDate.month}
+                    label='월'
+                    style={{
+                      width: '80px'
+                    }}
+                    onChange={(e) => {
+                      setBirthDate({ ...birthDate, month: e.target.value })
+                    }}
+                  >
+                    {months.map(item => (
+                      <MenuItem value={item} key={item}>{item}</MenuItem>
+                    ))}
+                  </Select>
+                </SelectBox>
+                <SelectBox>
+                  <InputLabel>일</InputLabel>
+                  <Select
+                    value={birthDate.day}
+                    label='일'
+                    style={{
+                      width: '80px'
+                    }}
+                    onChange={(e) => {
+                      setBirthDate({ ...birthDate, day: e.target.value })
+                    }}
+                  >
+                    {days.map(item => (
+                      <MenuItem value={item} key={item}>{item}</MenuItem>
+                    ))}
+                  </Select>
+                </SelectBox>
               </SelectContainer>
               <Button
                 variant='contained'

@@ -31,7 +31,7 @@ position:relative;
 
 const Header = (props) => {
 
-  const {activeStep, setActiveStep, is_use_step} = props;
+  const { activeStep, setActiveStep, is_use_step } = props;
   const theme = useTheme();
   const router = useRouter();
 
@@ -119,7 +119,7 @@ const Header = (props) => {
     }
     setDialogOpenObj(obj);
   }
-  const isBackArrowShow = ()=>{
+  const isBackArrowShow = () => {
     return isProductPage
   }
   return (
@@ -135,29 +135,29 @@ const Header = (props) => {
             root_path={'blog'}
           />
           <Wrappers style={{
-            background: `${(isSellerPage || isProductPage) && scrollY <350 ? 'transparent' : (themeMode == 'dark' ? '#000' : '#fff')}`
+            background: `${(isSellerPage || isProductPage) && scrollY < 350 ? 'transparent' : (themeMode == 'dark' ? '#000' : '#fff')}`
           }}
           >
             <TopMenuContainer>
               {isBackArrowShow() || is_use_step ?
-              <>
-               <IconButton
-                sx={{...iconButtonStyle,marginLeft:'-4px'}}
-                onClick={() => {
-                  if(is_use_step){
-                    setActiveStep(activeStep-1);
-                    return;
-                  }
-                  router.back()
-                }}
-              >
-                <Icon icon={'ic:round-arrow-back'} fontSize={'1.8rem'} color={themeMode == 'dark' || ((isSellerPage || isProductPage) && scrollY < 350) ? '#fff' : '#000'} />
-              </IconButton>
-              </>
-              :
-              <>
-              <img src={'https://backend.comagain.kr/storage/images/logos/IFFUcyTPtgF887r0RPOGXZyLLPvp016Je17MENFT.svg'} style={{ height: '40px', width: 'auto', cursor: 'pointer' }} onClick={() => { router.push('/blog') }} />
-              </>}
+                <>
+                  <IconButton
+                    sx={{ ...iconButtonStyle, marginLeft: '-4px' }}
+                    onClick={() => {
+                      if (is_use_step && activeStep > 0) {
+                        setActiveStep(activeStep - 1);
+                        return;
+                      }
+                      router.back()
+                    }}
+                  >
+                    <Icon icon={'ic:round-arrow-back'} fontSize={'1.8rem'} color={themeMode == 'dark' || ((isSellerPage || isProductPage) && scrollY < 350) ? '#fff' : '#000'} />
+                  </IconButton>
+                </>
+                :
+                <>
+                  <img src={'https://backend.comagain.kr/storage/images/logos/IFFUcyTPtgF887r0RPOGXZyLLPvp016Je17MENFT.svg'} style={{ height: '40px', width: 'auto', cursor: 'pointer' }} onClick={() => { router.push('/blog') }} />
+                </>}
               <IconButton
                 sx={{ ...iconButtonStyle, marginLeft: 'auto' }}
                 onClick={() => {

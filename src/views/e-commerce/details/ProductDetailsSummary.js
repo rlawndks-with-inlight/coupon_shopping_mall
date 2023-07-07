@@ -168,7 +168,6 @@ export default function ProductDetailsSummary({ product, onAddCart, onGotoStep, 
           <Typography variant="subtitle2" sx={{ height: 40, lineHeight: '40px', flexGrow: 1 }}>
             사이즈
           </Typography>
-
           <Select
             name="size"
             size="small"

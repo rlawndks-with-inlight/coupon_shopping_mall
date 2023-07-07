@@ -46,7 +46,7 @@ const StyledThumbnailsContainer = styled('div', {
       ...bgGradient({
         direction: 'to left',
         startColor: `${alpha(theme.palette.background.default, 0)} 0%`,
-        endColor: `${theme.palette.background.default} 100%`,
+        endColor: `${theme.palette.background.default} 10%`,
       }),
       top: 0,
       zIndex: 9,

@@ -67,7 +67,7 @@ const Demo1 = (props) => {
     },
   } = props;
 
-  const [findType, setFindType] = useState(undefined);
+  const [findType, setFindType] = useState(0);
   const [phoneNum, setPhoneNum] = useState("");
   const [username, setUsername] = useState("")
   const [userid, setUserid] = useState("")

@@ -27,6 +27,7 @@ import Label from 'src/components/label/Label';
 import Iconify from 'src/components/iconify/Iconify';
 import { IncrementerButton } from 'src/components/custom-input';
 import { ColorSinglePicker } from 'src/components/color-utils';
+import { commarNumber } from 'src/utils/function';
 
 // ----------------------------------------------------------------------
 
@@ -54,6 +55,7 @@ export default function ProductDetailsSummary({ product, onAddCart, onGotoStep, 
     rating,
     totalReview,
     inventoryType,
+    inventory
   } = product;
 
   const alreadyProduct = cart.map((item) => item.id).includes(id);
@@ -126,14 +128,6 @@ export default function ProductDetailsSummary({ product, onAddCart, onGotoStep, 
         {...other}
       >
         <Stack spacing={2}>
-          <Label
-            variant="soft"
-            color={inventoryType === 'in_stock' ? 'success' : 'error'}
-            sx={{ textTransform: 'uppercase', mr: 'auto' }}
-          >
-            {sentenceCase(inventoryType || '')}
-          </Label>
-
           <Typography
             variant="overline"
             component="div"
@@ -150,8 +144,7 @@ export default function ProductDetailsSummary({ product, onAddCart, onGotoStep, 
             <Rating value={rating} precision={0.1} readOnly />
 
             <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-              ({fShortenNumber(totalReview)}
-              리뷰)
+              ({commarNumber(rating)})
             </Typography>
           </Stack>
 
@@ -171,31 +164,9 @@ export default function ProductDetailsSummary({ product, onAddCart, onGotoStep, 
 
         <Divider sx={{ borderStyle: 'dashed' }} />
 
-        <Stack direction="row" alignItems="center" justifyContent="space-between">
-          <Typography variant="subtitle2">Color</Typography>
-
-          <Controller
-            name="colors"
-            control={control}
-            render={({ field }) => (
-              <ColorSinglePicker
-                colors={colors}
-                value={field.value}
-                onChange={field.onChange}
-                sx={{
-                  ...(colors.length > 4 && {
-                    maxWidth: 144,
-                    justifyContent: 'flex-end',
-                  }),
-                }}
-              />
-            )}
-          />
-        </Stack>
-
         <Stack direction="row" justifyContent="space-between">
           <Typography variant="subtitle2" sx={{ height: 40, lineHeight: '40px', flexGrow: 1 }}>
-            Size
+            사이즈
           </Typography>
 
           <Select
@@ -215,7 +186,7 @@ export default function ProductDetailsSummary({ product, onAddCart, onGotoStep, 
               },
             }}
           >
-            {sizes.map((size) => (
+            {['라지','스몰'].map((size) => (
               <MenuItem key={size} value={size}>
                 {size}
               </MenuItem>
@@ -225,7 +196,7 @@ export default function ProductDetailsSummary({ product, onAddCart, onGotoStep, 
 
         <Stack direction="row" justifyContent="space-between">
           <Typography variant="subtitle2" sx={{ height: 36, lineHeight: '36px' }}>
-            Quantity
+            수량
           </Typography>
 
           <Stack spacing={1}>
@@ -243,7 +214,7 @@ export default function ProductDetailsSummary({ product, onAddCart, onGotoStep, 
               component="div"
               sx={{ textAlign: 'right', color: 'text.secondary' }}
             >
-              Available: {available}
+              재고: ({commarNumber(inventory)})
             </Typography>
           </Stack>
         </Stack>

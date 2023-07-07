@@ -1,24 +1,15 @@
 import styled from 'styled-components'
-import { useTheme } from "@emotion/react";
-import { Box, Tab, Tabs, Card, Grid, Divider, Container, Typography, Stack, Button } from '@mui/material';
-import { commarNumber } from 'src/utils/function';
+import { Box, Tab, Tabs, Card, Grid, Divider, } from '@mui/material';
 import { test_item } from 'src/data/test-data';
-import { themeObj } from 'src/components/elements/styled-components';
 import dynamic from 'next/dynamic'
 import { useSettingsContext } from 'src/components/settings';
-import { useRouter } from 'next/router';
 import { ProductDetailsCarousel, ProductDetailsReview, ProductDetailsSummary } from 'src/views/e-commerce/details';
-import { useSelector } from 'react-redux';
 import { useEffect, useState } from 'react';
-import Markdown from 'src/components/markdown/Markdown';
-import CartWidget from 'src/views/e-commerce/CartWidget';
-import Iconify from 'src/components/iconify/Iconify';
 import { SkeletonProductDetails } from 'src/components/skeleton';
 const ReactQuill = dynamic(() => import('react-quill'), {
   ssr: false,
   loading: () => <p>Loading ...</p>,
 })
-import Slider from 'react-slick'
 const Wrapper = styled.div`
 display:flex;
 flex-direction:column;
@@ -86,8 +77,6 @@ const Demo1 = (props) => {
             <SkeletonProductDetails />
             :
             <>
-              <CartWidget totalItems={100} />
-
               {product && (
                 <>
                   <Grid container spacing={3}>

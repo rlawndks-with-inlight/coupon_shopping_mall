@@ -6,6 +6,7 @@ import { Typography, Box, IconButton } from '@mui/material';
 import { bgBlur } from '../../utils/cssStyles';
 //
 import { LeftIcon, RightIcon } from './Icon';
+import { useEffect } from 'react';
 
 // ----------------------------------------------------------------------
 
@@ -56,7 +57,9 @@ export default function CarouselArrowIndex({
   const theme = useTheme();
 
   const isRTL = theme.direction === 'rtl';
-
+  useEffect(()=>{
+    console.log(index)
+  },[index])
   return (
     <StyledRoot sx={sx} {...other}>
       <StyledIconButton color="inherit" onClick={onPrevious}>

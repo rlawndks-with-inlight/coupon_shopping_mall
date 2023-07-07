@@ -106,7 +106,7 @@ const ArticleList = () => {
             page={page}
             maxPage={maxPage}
             onChangePage={onChangePage}
-            add_button_text={listSetting[router.query?.type].add_button_text}
+            add_button_text={listSetting[router.query?.table].add_button_text}
           />
         </Card>
       </Stack>

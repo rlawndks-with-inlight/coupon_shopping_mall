@@ -124,7 +124,7 @@ export default function ProductDetailsCarousel({ product }) {
   }, []);
 
   useEffect(() => {
-    carousel1.current?.slickGoTo(currentIndex);
+    carousel1.current?.slickGoTo(currentIndex?.index);
   }, [currentIndex]);
 
   const handlePrev = () => {
@@ -200,7 +200,9 @@ export default function ProductDetailsCarousel({ product }) {
         slides={imagesLightbox}
         open={selectedImage >= 0}
         close={handleCloseLightbox}
-        onGetCurrentIndex={(index) => setCurrentIndex(index)}
+        onGetCurrentIndex={(index) => {
+          setSelectedImage(index?.index)
+        }}
       />
     </>
   );

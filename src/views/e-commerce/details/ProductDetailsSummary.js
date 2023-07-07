@@ -28,6 +28,7 @@ import Iconify from 'src/components/iconify/Iconify';
 import { IncrementerButton } from 'src/components/custom-input';
 import { ColorSinglePicker } from 'src/components/color-utils';
 import { commarNumber } from 'src/utils/function';
+import { themeObj } from 'src/components/elements/styled-components';
 
 // ----------------------------------------------------------------------
 
@@ -45,6 +46,7 @@ export default function ProductDetailsSummary({ product, onAddCart, onGotoStep, 
   const {
     id,
     name,
+    sub_name,
     sizes=[],
     price,
     cover,
@@ -139,6 +141,7 @@ export default function ProductDetailsSummary({ product, onAddCart, onGotoStep, 
           </Typography>
 
           <Typography variant="h5">{name}</Typography>
+          <Typography variant="h7" color={themeObj.grey[500]}>{sub_name}</Typography>
 
           <Stack direction="row" alignItems="center" spacing={1}>
             <Rating value={rating} precision={0.1} readOnly />

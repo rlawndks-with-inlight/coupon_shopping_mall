@@ -10,7 +10,7 @@ flex-direction:column;
 width:23.5%;
 cursor:pointer;
 @media (max-width:840px){
-    width:90%;
+    width:97%;
     margin:0 auto;
 }
 `
@@ -58,7 +58,7 @@ export const SellerItem = (props) => {
           <ItemImg src={item?.product_img} onClick={() => {
             router.push(`/blog/product/${item.id}`)
           }} />
-          <IconButton sx={{ position: 'absolute', right: '0', bottom: '0' }} 
+          <IconButton sx={{ position: 'absolute', right: '0', bottom: '0' }}
           onClick={()=>{
             onClickCartButton(item)
           }}>

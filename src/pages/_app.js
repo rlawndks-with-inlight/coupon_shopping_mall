@@ -25,6 +25,7 @@ import { Toaster } from 'react-hot-toast';
 import { AuthProvider } from 'src/layouts/manager/auth/JwtContext';
 import NextNProgress from 'nextjs-progressbar';
 import { useEffect } from 'react';
+import ThemeContrast from 'src/components/settings/ThemeContrast';
 
 const App = (props) => {
   const { Component, pageProps } = props;
@@ -36,17 +37,19 @@ const App = (props) => {
         <meta name="viewport" content="initial-scale=1, width=device-width" />
       </Head>
       <AuthProvider>
-      <ReduxProvider store={store}>
-        <LocalizationProvider dateAdapter={AdapterDateFns}>
-          <ThemeColorPresets>
-            <SettingsProvider>
-              <ThemeProvider>
-                {getLayout(<Component {...pageProps} />)}
-                <Toaster position={'right-top'} toastOptions={{ className: 'react-hot-toast' }} />
-              </ThemeProvider>
-            </SettingsProvider>
-          </ThemeColorPresets>
-        </LocalizationProvider>
+        <ReduxProvider store={store}>
+          <LocalizationProvider dateAdapter={AdapterDateFns}>
+            <ThemeColorPresets>
+              <ThemeContrast>
+                <SettingsProvider>
+                  <ThemeProvider>
+                    {getLayout(<Component {...pageProps} />)}
+                    <Toaster position={'right-top'} toastOptions={{ className: 'react-hot-toast' }} />
+                  </ThemeProvider>
+                </SettingsProvider>
+              </ThemeContrast>
+            </ThemeColorPresets>
+          </LocalizationProvider>
         </ReduxProvider>
       </AuthProvider>
 

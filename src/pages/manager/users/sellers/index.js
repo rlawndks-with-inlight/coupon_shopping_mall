@@ -69,7 +69,7 @@ const SellerList = () => {
           <>
           <IconButton>
               <Icon icon='material-symbols:edit-outline' onClick={() => {
-                router.push(`/manager/users/edit/${row?.id}`)
+                router.push(`/manager/users/sellers/edit/${row?.id}`)
               }} />
             </IconButton>
             <IconButton>

@@ -15,7 +15,6 @@ ThemeContrast.propTypes = {
 
 export default function ThemeContrast({ children }) {
   const outerTheme = useTheme();
-
   const { themeContrast, themeMode } = useSettingsContext();
 
   const isLight = themeMode === 'light';

@@ -13,6 +13,8 @@ import styled from 'styled-components';
 import Scrollbar from 'src/components/scrollbar/Scrollbar';
 import { useRouter } from 'next/router';
 import { Icon } from '@iconify/react';
+import { styled as muiStyled } from '@mui/material';
+import { useTheme } from '@emotion/react';
 // ----------------------------------------------------------------------
 const TableHeaderContainer = styled.div`
 padding: 0.75rem;
@@ -24,8 +26,17 @@ justify-content:space-between;
   row-gap:0.75rem;
 }
 `
+const CustomTableRow = muiStyled(TableRow)(({ theme }) => ({
+  '&:hover': {
+    background: `${theme.palette.mode == 'dark' ? '' : theme.palette.grey[100]}`,
+  },
+}));
+
 export default function ManagerTable(props) {
   const { columns, data, page, add_button_text, maxPage, onChangePage, } = props;
+
+  const theme = useTheme();
+  console.log(theme)
   const router = useRouter();
   const [sDt, setSDt] = useState(undefined);
   const [eDt, setEDt] = useState(undefined);
@@ -94,19 +105,19 @@ export default function ManagerTable(props) {
                 label=''
                 value={keyword}
                 endAdornment={<>
-                  <IconButton position="end" sx={{transform: 'translateX(14px)'}}>
-                    <Icon icon='material-symbols:search'/>
+                  <IconButton position="end" sx={{ transform: 'translateX(14px)' }}>
+                    <Icon icon='material-symbols:search' />
                   </IconButton>
                 </>}
                 onChange={(e) => {
                   setKeyWord(e.target.value)
                 }}
-                onKeyPress={(e)=>{
-                  if(e.key=='Enter'){
+                onKeyPress={(e) => {
+                  if (e.key == 'Enter') {
 
                   }
                 }}
-                />
+              />
             </FormControl>
             {add_button_text ?
               <>
@@ -131,13 +142,13 @@ export default function ManagerTable(props) {
             <TableHeadCustom headLabel={columns} />
             <TableBody>
               {data.map((row, index) => (
-                <TableRow key={index}>
+                <CustomTableRow key={index}>
                   {columns && columns.map((col, idx) => (
                     <>
-                      <TableCell align="left">{col.action(row)}</TableCell>
+                      <TableCell align="left" sx={{...col.sx}} >{col.action(row)}</TableCell>
                     </>
                   ))}
-                </TableRow>
+                </CustomTableRow>
               ))}
             </TableBody>
             <TableNoData isNotFound={data.length == 0} />

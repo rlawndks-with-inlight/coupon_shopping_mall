@@ -21,53 +21,27 @@ const test_data = [
 const PopupList = () => {
   const defaultColumns = [
     {
-      id: 'id',
-      label: 'No.',
+      id: 'title',
+      label: '제목',
       action: (row) => {
-        return row['id']
+        return row['title'] ?? "---"
       }
     },
     {
-      id: 'user_name',
-      label: '회원아이디',
+      id: 'created_at',
+      label: '생성시간',
       action: (row) => {
-        return row['user_name'] ?? "---"
-      }
-    },
-    {
-      id: 'name',
-      label: '이름',
-      action: (row) => {
-        return row['name'] ?? "---"
-      }
-    },
-    {
-      id: 'phone',
-      label: '전화번호',
-      action: (row) => {
-        return row['phone'] ?? "---"
-      }
-    },
-    {
-      id: 'order',
-      label: '주문내역',
-      action: (row) => {
-        return (
-          <>
-            <IconButton>
-              <Icon icon='material-symbols:history' />
-            </IconButton>
-          </>
-        )
+        return row['created_at'] ?? "---"
       }
     },
     {
       id: 'edit',
       label: '수정/삭제',
+      width: 160,
       action: (row) => {
         return (
           <>
-          <IconButton>
+            <IconButton>
               <Icon icon='material-symbols:edit-outline' onClick={() => {
                 router.push(`/manager/users/edit/${row?.id}`)
               }} />

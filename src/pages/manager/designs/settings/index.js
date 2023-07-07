@@ -2,7 +2,7 @@
 import { Button, Card, CardHeader, Grid, Stack, Tab, Tabs, TextField, Typography } from "@mui/material";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
-import { themeObj } from "src/components/elements/styled-components";
+import { Row, themeObj } from "src/components/elements/styled-components";
 import { useSettingsContext } from "src/components/settings";
 import { Upload } from "src/components/upload";
 import ManagerLayout from "src/layouts/manager/ManagerLayout";
@@ -16,7 +16,7 @@ const ReactQuill = dynamic(() => import('react-quill'), {
   loading: () => <p>Loading ...</p>,
 })
 
-const tabList = [
+const tab_list = [
   {
     label: '데모설정',
     value: 0
@@ -51,11 +51,16 @@ const Settings = () => {
     <>
       {!loading &&
         <>
-          <Tabs value={currentTab} onChange={(event, newValue) => setCurrentTab(newValue)} sx={{ marginBottom: '1rem' }}>
-            {tabList.slice(0, 3).map((tab) => (
-              <Tab key={tab.value} value={tab.value} label={tab.label} />
+         <Row style={{ margin: '0 0 1rem 0', columnGap: '0.5rem' }}>
+            {tab_list.map((tab) => (
+              <Button
+                variant={tab.value == currentTab ? 'contained' : 'outlined'}
+                onClick={() => {
+                  setCurrentTab(tab.value)
+                }}
+              >{tab.label}</Button>
             ))}
-          </Tabs>
+          </Row>
           <Grid container spacing={3}>
             {currentTab == 0 &&
               <>

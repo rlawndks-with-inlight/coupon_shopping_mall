@@ -139,7 +139,7 @@ const Demo1 = (props) => {
                   autoComplete='new-password'
                   placeholder='연락처'
                   sx={{
-                    width:'84%',
+                    width:'72%',
                     marginRight:'1%',
                   }}
                   onChange={(e) => {
@@ -150,7 +150,8 @@ const Demo1 = (props) => {
                   variant='outlined'
                   color='primary'
                   style={{
-                    width:'15%',
+                    width:'27%',
+                    height:'56px'
                   }}
                   onClick={() => {
                     setButtonText("재전송")
@@ -192,7 +193,7 @@ const Demo1 = (props) => {
                   autoComplete='new-password'
                   placeholder='연락처'
                   sx={{
-                    width:'84%',
+                    width:'72%',
                     marginRight:'1%'
                   }}
                   onChange={(e) => {
@@ -203,7 +204,8 @@ const Demo1 = (props) => {
                   variant='outlined'
                   color='primary'
                   style={{
-                    width:'15%'
+                    width:'27%',
+                    height:'56px'
                   }}
                   onClick={() => {
                     setButtonText("재전송")

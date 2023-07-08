@@ -171,7 +171,7 @@ const Header = (props) => {
               </IconButton>
               <IconButton
                 sx={iconButtonStyle}
-                onClick={() => router.push('/blog/auth/login')}
+                onClick={() => router.push('/blog/auth/my-page')}
               >
                 <Icon icon={'basil:user-outline'} fontSize={'1.8rem'} color={themeMode == 'dark' || ((isSellerPage || isProductPage) && scrollY < 350) ? '#fff' : '#000'} />
               </IconButton>

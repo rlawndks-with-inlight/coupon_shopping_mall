@@ -35,7 +35,6 @@ width:100%;
 
 const ChooseBox = styled.div`
 display:flex;
-margin:'5% 0 5% 0';
 justify-content:space-between;
 `
 
@@ -61,8 +60,9 @@ fontWeight:bold;
 `
 
 const ContentBox = styled.div`
-margin:2.5%;
+margin:2.5% auto;
 background-color:white;
+width:95%;
 `
 
 const TextBox = styled.div`
@@ -161,10 +161,10 @@ const Demo1 = (props) => {
                     <ContentContainer>
                         <ContainerTitle style={{fontWeight:'bold'}}>일반배송 상품</ContainerTitle>
                         <ContentBox /*추후에 map을 활용해 장바구니 array 안의 판매자별 상품 목록을 불러와야 함*/>
-                            <FormControlLabel
+                            <FormControlLabel sx={{}}
                                 label={
                                     <>
-                                        <div style={{ display: 'flex', marginTop:'5%'}}>
+                                        <div style={{ display: 'flex', width:'100%'}}>
                                             <img src={test_item.product_img} width='48px' height='48px' onClick={() => { router.push(`/blog/product/58`) }} />
                                             <TextBox>
                                                 <Typography>{test_item.product_name}</Typography>
@@ -179,7 +179,7 @@ const Demo1 = (props) => {
                                 control={
                                     <Checkbox
                                         checked={checkboxObj.check_1}
-                                        style={{margin:"-20% 0 0 2.5%"}}
+                                        style={{ margin:"0% 0 0 2.5%"}}
                                         onChange={(e) => {
                                             setCheckboxObj({ ...checkboxObj, ['check_1']: e.target.checked })
                                         }} />} />

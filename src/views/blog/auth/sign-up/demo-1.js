@@ -233,7 +233,8 @@ const Demo1 = (props) => {
                 size='large'
                 style={{
                   margin: '3rem 0 0 0',
-                  fontSize: 'large'
+                  fontSize: 'large',
+                  height:'56px'
                 }}
                 onClick={() => { setActiveStep(activeStep + 1) }}
               >다음으로</Button>
@@ -275,7 +276,7 @@ const Demo1 = (props) => {
                   autoComplete='new-password'
                   placeholder='휴대폰 번호 입력'
                   sx={{
-                    width: '84%',
+                    width: '72%',
                     marginRight: '1%'
                   }}
                 />
@@ -283,7 +284,8 @@ const Demo1 = (props) => {
                   variant='outlined'
                   color='primary'
                   style={{
-                    width: '15%'
+                    width: '27%',
+                    height:'56px'
                   }}
                   onClick={() => {
                     setButtonText("재전송")
@@ -399,7 +401,7 @@ const Demo1 = (props) => {
                 style={{
                   height: '56px',
                   marginTop: '10%',
-                  fontSize: '15px'
+                  fontSize: 'large'
                 }}
                 onClick={() => { setActiveStep(activeStep + 1) }}
               >완료</Button>

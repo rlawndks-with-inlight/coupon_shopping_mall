@@ -1,5 +1,5 @@
 import { Icon } from '@iconify/react';
-import { Select, MenuItem, Drawer, FormControl, InputLabel, Button, Dialog, DialogContent, DialogActions, DialogTitle } from '@mui/material';
+import { Select, MenuItem, Drawer, FormControl, InputLabel, Button, Dialog, DialogContent, DialogActions, DialogTitle, IconButton } from '@mui/material';
 import { useEffect, useState } from 'react';
 import { SellerItem } from 'src/components/elements/blog/demo-1';
 import { Row, themeObj } from 'src/components/elements/styled-components';
@@ -377,7 +377,22 @@ const Demo1 = (props) => {
             >
                 {dialogType == 0 ?
                     <>
-                        <DialogTitle><img src={'https://backend.comagain.kr/storage/images/logos/IFFUcyTPtgF887r0RPOGXZyLLPvp016Je17MENFT.svg'} style={{ height: '40px', width: 'auto' }} /></DialogTitle>
+                        <DialogTitle
+                            sx={{
+                                display: 'flex',
+                                justifyContent: 'space-between'
+                            }}
+                        >
+                            <img src={'https://backend.comagain.kr/storage/images/logos/IFFUcyTPtgF887r0RPOGXZyLLPvp016Je17MENFT.svg'} style={{ height: '40px', width: 'auto' }} />
+                            <IconButton
+                                sx={{}}
+                                onClick={() => {
+                                    setDialogOpen(false)
+                                }}
+                            >
+                                <Icon icon={'ic:round-close'} fontSize={'1.8rem'} />
+                            </IconButton>
+                        </DialogTitle>
                         <DialogContent
                             style={{ textAlign: 'center', marginBottom: '4%' }}
                         >로그인하시면<br />장바구니 이용이 가능합니다!
@@ -398,7 +413,22 @@ const Demo1 = (props) => {
                     </>
                     :
                     <>
-                        <DialogTitle><img src={'https://backend.comagain.kr/storage/images/logos/IFFUcyTPtgF887r0RPOGXZyLLPvp016Je17MENFT.svg'} style={{ height: '40px', width: 'auto' }} /></DialogTitle>
+                        <DialogTitle
+                            sx={{
+                                display: 'flex',
+                                justifyContent: 'space-between'
+                            }}
+                        >
+                            <img src={'https://backend.comagain.kr/storage/images/logos/IFFUcyTPtgF887r0RPOGXZyLLPvp016Je17MENFT.svg'} style={{ height: '40px', width: 'auto' }} />
+                            <IconButton
+                                sx={{}}
+                                onClick={() => {
+                                    setDialogOpen(false)
+                                }}
+                            >
+                                <Icon icon={'ic:round-close'} fontSize={'1.8rem'} />
+                            </IconButton>
+                        </DialogTitle>
                         <DialogContent
                             style={{ textAlign: 'center', marginBottom: '4%' }}
                         >로그인하시면<br />더 편하게 구매 가능합니다!</DialogContent>

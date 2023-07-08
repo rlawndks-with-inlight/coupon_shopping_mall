@@ -72,7 +72,7 @@ export default function Input(theme) {
           },
           '&.Mui-focused': {
             '& .MuiOutlinedInput-notchedOutline': {
-              borderWidth: 1,
+              borderWidth: 2,
               borderColor: theme.palette.primary.main,
             },
           },

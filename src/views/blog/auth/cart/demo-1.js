@@ -1,17 +1,20 @@
 import styled from 'styled-components'
-import { Tab, Tabs, TextField, Button } from '@mui/material';
+import { Tab, Tabs, TextField, Button, Checkbox, FormControlLabel, Typography } from '@mui/material';
 import { useEffect, useState } from 'react';
 import Iconify from 'src/components/iconify/Iconify';
 import { Icon } from '@iconify/react';
+import { commarNumber } from 'src/utils/function';
+import _ from 'lodash'
 
 const Wrappers = styled.div`
-max-width:840px;
+max-width:798px;
 display:flex;
 flex-direction:column;
 margin: 56px auto 0 auto;
-width: 100%;
-@media (max-width:840px){
-    padding: 0 5% 0 5%;
+width:90%;
+@media (max-width:798px){
+    width:100%;
+    padding:5%;
 }
 `
 
@@ -30,10 +33,42 @@ padding-top: 5%;
 width:100%;
 `
 
+const ChooseBox = styled.div`
+display:flex;
+justify-content:space-between;
+`
+
+const ChooseDelete = styled.span`
+text-align:right;
+font-size:1rem;
+font-weight:regular;
+margin:1.5rem 0 2rem 0;
+color:gray;
+text-decoration:underline;
+cursor:pointer;
+`
+
 const ContentContainer = styled.div`
 display:flex;
 flex-direction:column;
 background-color:#F6F6F6;
+`
+
+const ContainerTitle = styled.div`
+padding:2.5% 0 0 2.5%;
+fontWeight:bold;
+`
+
+const ContentBox = styled.div`
+margin:2.5% auto;
+background-color:white;
+width:95%;
+`
+
+const TextBox = styled.div`
+display:flex;
+flex-direction:column;
+margin-left:5%;
 `
 
 const test_item = {
@@ -50,15 +85,19 @@ const test_item = {
     seller: {
         id: 123,
         profile_img: 'https://d32rratnkhh4zp.cloudfront.net/media/images/2021/7/5/thumb@1080_1625479198-59043e92-67de-46b1-8755-f21c5ca0a9ae.jpg',
-        nickname: 'Merrymond'
-    }
+        nickname: 'Merrymond',
+        delivery_fee: 3000,
+    },
+    option: [
+        { id: 1, name: "블랙", price: 0, count: 3 },
+        { id: 2, name: "베이지", price: 500, count: 2 },
+        { id: 3, name: "크림", price: 1500, count: 1 },
+    ],
 }
 
-const test_color_list = [
-    { id: 1, name: "블랙", price: 0 },
-    { id: 2, name: "베이지", price: 500 },
-    { id: 3, name: "크림", price: 1500 },
-]
+const test_text = test_item.option.map((name, price, count) => {
+    return {count, count}
+})
 
 // 장바구니 김인욱
 const Demo1 = (props) => {
@@ -71,6 +110,12 @@ const Demo1 = (props) => {
         },
     } = props;
 
+    const [checkboxObj, setCheckboxObj] = useState({
+        check_0: false,
+        check_1: false,
+        //장바구니에 담은 상품 개수에 따라 check_2, check_3 ... 늘어나야 함
+    })
+
     return (
         <>
             <Wrappers>
@@ -80,9 +125,14 @@ const Demo1 = (props) => {
                         indicatorColor='primary'
                         textColor='primary'
                         scrollButtons='false'
+                        variant='scrollable'
                         onChange={(event, newValue) => router.push(`/blog/auth/cart?type=${newValue}`)}
+                        sx={{
+                            width: '100%',
+                            float: 'left'
+                        }}
                     >
-                        <Tab 
+                        <Tab //추후에 map을 활용해 장바구니 array 안의 판매자 이름을 각각 불러와 Tab으로 만들어야 함
                             label={test_item.seller.nickname}
                             sx={{
                                 borderBottom: '1px solid',
@@ -90,11 +140,51 @@ const Demo1 = (props) => {
                                 textColor: 'inherit',
                                 fontSize: '1rem',
                                 fontWeight: 'bold',
-                                width: '50%',
-                                margin: '0 auto',
                             }} />
                     </Tabs>
-                    <ContentContainer>df</ContentContainer>
+                    <ChooseBox>
+                        <FormControlLabel label={<Typography>전체 선택</Typography>} control={<Checkbox checked={checkboxObj.check_0} />} onChange={(e) => {
+                            let check_obj = {}
+                            if (e.target.checked) {
+                                for (let key in checkboxObj) {
+                                    check_obj[key] = true;
+                                }
+                            } else {
+                                for (let key in checkboxObj) {
+                                    check_obj[key] = false;
+                                }
+                            }
+                            setCheckboxObj(check_obj)
+                        }} />
+                        <ChooseDelete /*추후에 이 버튼을 누르면 장바구니 array 안의 상품을 개별적으로 삭제할 수 있어야 함*/>선택 삭제</ChooseDelete>
+                    </ChooseBox>
+                    <ContentContainer>
+                        <ContainerTitle style={{fontWeight:'bold'}}>일반배송 상품</ContainerTitle>
+                        <ContentBox /*추후에 map을 활용해 장바구니 array 안의 판매자별 상품 목록을 불러와야 함*/>
+                            <FormControlLabel sx={{}}
+                                label={
+                                    <>
+                                        <div style={{ display: 'flex', width:'100%'}}>
+                                            <img src={test_item.product_img} width='48px' height='48px' onClick={() => { router.push(`/blog/product/58`) }} />
+                                            <TextBox>
+                                                <Typography>{test_item.product_name}</Typography>
+                                                <Typography style={{fontWeight:'bold'}}>{commarNumber(test_item.item_pr)}원</Typography>
+                                                <Typography>{_.find(test_item, {id:test_item.option.id})?.name}
+                                                </Typography>
+                                                <Typography style={{marginTop:'2.5%', fontWeight:'bold'}}>원</Typography>
+                                            </TextBox>
+                                        </div>
+                                    </>
+                                }
+                                control={
+                                    <Checkbox
+                                        checked={checkboxObj.check_1}
+                                        style={{ margin:"0% 0 0 2.5%"}}
+                                        onChange={(e) => {
+                                            setCheckboxObj({ ...checkboxObj, ['check_1']: e.target.checked })
+                                        }} />} />
+                        </ContentBox>
+                    </ContentContainer>
                 </ContentWrappers>
             </Wrappers>
         </>

@@ -11,11 +11,14 @@ import { useEffect } from 'react';
 import Header from 'src/layouts/shop/blog/demo-1/header';
 
 const Wrappers = styled.div`
-max-width:840px;
+max-width:798px;
 display:flex;
 flex-direction:column;
 margin:56px auto 0 auto;
-width:100%;
+width:90%;
+@media (max-width:798px){
+  width:100%;
+}
 `
 
 const Title = styled.h2`
@@ -24,15 +27,14 @@ font-weight:bold;
 line-height:1.38462;
 padding:1rem 0 0.5rem 0;
 word-spacing: 0.2rem;
-
+@media (max-width:798px){
+  padding: 0 auto;
+}
 `
 
 const CheckBoxes = styled.div`
 display:flex;
 flex-direction:column;
-@media (max-width:840px){
-  padding:5%;
-}
 `
 
 const ChildCheckboxes = styled.div`
@@ -54,8 +56,9 @@ margin:1.5rem 0 1rem 0;
 const TextFieldContainer = styled.div`
 display:flex;
 flex-direction:column;
-margin:3rem 2.5% 0 2.5%
-
+@media (max-width:798px){
+  padding:5%;
+}
 `
 
 const TextFieldBox = styled.div`
@@ -229,8 +232,9 @@ const Demo1 = (props) => {
                 color='primary'
                 size='large'
                 style={{
-                  margin: '3rem 2.5% 0 2.5%',
-                  fontSize: 'large'
+                  margin: '3rem 0 0 0',
+                  fontSize: 'large',
+                  height:'56px'
                 }}
                 onClick={() => { setActiveStep(activeStep + 1) }}
               >다음으로</Button>
@@ -243,9 +247,9 @@ const Demo1 = (props) => {
                 }}
                 PaperProps={{
                   sx: {
-                    maxWidth: '840px',
-                    width: '100%',
-                    minHeight: '500px',
+                    maxWidth: '790px',
+                    width: '90%',
+                    maxHeight: '500px',
                     margin: '0 auto',
                     borderTopLeftRadius: '24px',
                     borderTopRightRadius: '24px',
@@ -272,7 +276,7 @@ const Demo1 = (props) => {
                   autoComplete='new-password'
                   placeholder='휴대폰 번호 입력'
                   sx={{
-                    width: '84%',
+                    width: '72%',
                     marginRight: '1%'
                   }}
                 />
@@ -280,7 +284,8 @@ const Demo1 = (props) => {
                   variant='outlined'
                   color='primary'
                   style={{
-                    width: '15%'
+                    width: '27%',
+                    height:'56px'
                   }}
                   onClick={() => {
                     setButtonText("재전송")
@@ -396,7 +401,7 @@ const Demo1 = (props) => {
                 style={{
                   height: '56px',
                   marginTop: '10%',
-                  fontSize: '15px'
+                  fontSize: 'large'
                 }}
                 onClick={() => { setActiveStep(activeStep + 1) }}
               >완료</Button>

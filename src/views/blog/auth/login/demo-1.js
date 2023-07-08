@@ -5,11 +5,14 @@ import { useSettingsContext } from 'src/components/settings';
 import styled from 'styled-components'
 
 const Wrappers = styled.div`
-max-width:840px;
+max-width:798px;
 display:flex;
 flex-direction:column;
 margin:56px auto 0 auto;
-width:100%;
+width:90%;
+@media (max-width:798px){
+  width:100%;
+}
 `
 
 const TitleBox = styled.h2`
@@ -17,7 +20,7 @@ font-size:1.5rem;
 font-weight:bold;
 line-height:1.38462;
 padding:1rem 0 0.5rem 0;
-@media (max-width:840px){
+@media (max-width:798px){
     padding: 0 5% 0 5%;
 }
 `
@@ -27,7 +30,7 @@ width:100%;
 display:flex;
 flex-direction:column;
 margin: 0 auto;
-@media (max-width:840px){
+@media (max-width:798px){
   padding:5%;
 }
 `

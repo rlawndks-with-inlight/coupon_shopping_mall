@@ -3,7 +3,7 @@ import styled from "styled-components"
 import { themeObj } from "../styled-components"
 import { IconButton } from "@mui/material"
 import { Icon } from "@iconify/react"
-
+//김인욱 컴포넌트
 const ItemContent = styled.div`
 display:flex;
 flex-direction:column;
@@ -95,3 +95,9 @@ export const Seller = (props) => {
     </>
   )
 }
+export const Title = styled.h2`
+font-size:1.5rem;
+font-weight:bold;
+line-height:1.38462;
+padding:1rem 0 0.5rem 0;
+`

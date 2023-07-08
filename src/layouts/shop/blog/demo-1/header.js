@@ -45,7 +45,6 @@ const Header = (props) => {
   const onSearch = () => {
 
   }
-  const [isAuthMenuOver, setIsAuthMenuOver] = useState(false)
   const [hoverItems, setHoverItems] = useState({
 
   })
@@ -120,7 +119,13 @@ const Header = (props) => {
     setDialogOpenObj(obj);
   }
   const isBackArrowShow = () => {
-    return isProductPage
+    if(isProductPage){
+      return true;
+    }
+    if(router.asPath.includes('/my-page')){
+      return true;
+    }
+    return false;
   }
   return (
     <>

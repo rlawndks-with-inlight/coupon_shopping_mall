@@ -1,6 +1,6 @@
 import styled from 'styled-components'
 
-// 구매 준비 김인욱
+// 공지사항, faq 등 상세페이지 김인욱
 const Demo1 = (props) => {
     const {
         data: {

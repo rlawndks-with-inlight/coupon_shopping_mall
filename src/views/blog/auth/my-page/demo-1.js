@@ -51,7 +51,7 @@ max-width:798px;
 const MenuBox = styled.div`
 display:flex;
 flex-direction:column;
-margin-bottom:32px;
+margin-bottom:16px;
 `
 
 const MenuButton = styled.div`
@@ -75,6 +75,7 @@ const PolicyBox = styled.div`
 display:flex;
 text-decoration:underline;
 color:gray;
+margin-top:16px;
 `
 
 const PolicyContainer = styled.div`

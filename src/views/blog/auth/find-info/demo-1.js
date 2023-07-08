@@ -4,11 +4,14 @@ import styled from 'styled-components'
 
 //아이디 찾기 및 비밀번호 찾기 김인욱
 const Wrappers = styled.div`
-max-width:840px;
+max-width:798px;
 display:flex;
 flex-direction:column;
 margin: 56px auto 0 auto;
-width: 100%;
+width: 90%;
+@media (max-width:798px){
+  width:100%;
+}
 `
 
 const Title = styled.h2`
@@ -16,7 +19,7 @@ font-size:1.5rem;
 font-weight:bold;
 line-height:1.38462;
 padding:1rem 0 0.5rem 0;
-@media (max-width:840px){
+@media (max-width:798px){
     padding: 0 5% 0 5%;
 }
 `
@@ -26,7 +29,7 @@ width:100%;
 display:flex;
 flex-direction:column;
 margin: 0 auto;
-@media (max-width:840px){
+@media (max-width:798px){
   padding:5%;
 }
 `
@@ -102,6 +105,7 @@ const Demo1 = (props) => {
             textColor='primary'
             value={findType}
             scrollButtons='false'
+            variant='fullWidth'
             sx={{width:'100%'}}
             onChange={(event, newValue) => router.push(`/blog/auth/find-info?type=${newValue}`)}
           >

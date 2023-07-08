@@ -11,11 +11,14 @@ import { useEffect } from 'react';
 import Header from 'src/layouts/shop/blog/demo-1/header';
 
 const Wrappers = styled.div`
-max-width:840px;
+max-width:798px;
 display:flex;
 flex-direction:column;
 margin:56px auto 0 auto;
-width:100%;
+width:90%;
+@media (max-width:798px){
+  width:100%;
+}
 `
 
 const Title = styled.h2`
@@ -24,15 +27,14 @@ font-weight:bold;
 line-height:1.38462;
 padding:1rem 0 0.5rem 0;
 word-spacing: 0.2rem;
-
+@media (max-width:798px){
+  padding: 0 auto;
+}
 `
 
 const CheckBoxes = styled.div`
 display:flex;
 flex-direction:column;
-@media (max-width:840px){
-  padding:5%;
-}
 `
 
 const ChildCheckboxes = styled.div`
@@ -54,8 +56,9 @@ margin:1.5rem 0 1rem 0;
 const TextFieldContainer = styled.div`
 display:flex;
 flex-direction:column;
-margin:3rem 2.5% 0 2.5%
-
+@media (max-width:798px){
+  padding:5%;
+}
 `
 
 const TextFieldBox = styled.div`
@@ -229,7 +232,7 @@ const Demo1 = (props) => {
                 color='primary'
                 size='large'
                 style={{
-                  margin: '3rem 2.5% 0 2.5%',
+                  margin: '3rem 0 0 0',
                   fontSize: 'large'
                 }}
                 onClick={() => { setActiveStep(activeStep + 1) }}
@@ -243,9 +246,9 @@ const Demo1 = (props) => {
                 }}
                 PaperProps={{
                   sx: {
-                    maxWidth: '840px',
-                    width: '100%',
-                    minHeight: '500px',
+                    maxWidth: '790px',
+                    width: '90%',
+                    maxHeight: '500px',
                     margin: '0 auto',
                     borderTopLeftRadius: '24px',
                     borderTopRightRadius: '24px',

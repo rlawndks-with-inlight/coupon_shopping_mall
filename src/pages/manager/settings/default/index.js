@@ -33,6 +33,9 @@ min-height:400px;
 display:flex;
 padding-bottom: 1rem;
 `
+const BubbleTail = styled.div`
+
+`
 const OgWrappers = styled.div`
 border-radius:16px;
 background:#fff;

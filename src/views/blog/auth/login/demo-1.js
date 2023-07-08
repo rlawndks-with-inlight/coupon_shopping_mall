@@ -2,6 +2,7 @@ import { useTheme } from '@emotion/react';
 import { Button, TextField } from '@mui/material';
 import { useEffect, useState } from 'react';
 import { useSettingsContext } from 'src/components/settings';
+import { useAuthContext } from 'src/layouts/manager/auth/useAuthContext';
 import styled from 'styled-components'
 
 const Wrappers = styled.div`
@@ -64,6 +65,7 @@ cursor:pointer;
 // 로그인 김인욱
 const Demo1 = (props) => {
   const { presetsColor } = useSettingsContext();
+  const { user, login } = useAuthContext();
   const {
     data: {
 
@@ -74,62 +76,77 @@ const Demo1 = (props) => {
   } = props;
   const theme = useTheme();
 
-  const [id, setId] = useState("");
+  const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [signed, setSigned] = useState(false);
 
 
   useEffect(() => {
-    
+
   }, [])
+  const onLogin = async () => {
+    let user = await login(username, password);
+    console.log(user)
+    if (user) {
+      router.push('/blog/auth/my-page');
+    }
+  }
   return (
     <>
       <Wrappers>
         <TitleBox>로그인</TitleBox>
         <TextFieldContainer>
-            <TextFieldTitle>아이디</TextFieldTitle>
-            <TextField 
-                name='id'
-                autoComplete='id'
-                placeholder='아이디를 입력해주세요'
-                onChange={(e) => {
-                    setId(e.target.value)
-                }}
-            />
-            <TextFieldTitle>비밀번호</TextFieldTitle>
-            <TextField 
-                name='password'
-                autoComplete='password'
-                placeholder='비밀번호를 입력해주세요'
-                onChange={(e) => {
-                    setPassword(e.target.value)
-                }}
-            />
-            <FindInfo onClick={() => {router.push('/blog/auth/find-info')}}>아이디 / 비밀번호 찾기</FindInfo>
-            <Button
-                variant='contained'
-                color='primary'
-                size='large'
-                style={{
-                    marginTop:'1rem',
-                    fontSize:'large',
-                    height:'56px'
-                }}
-            >로그인</Button>
-            <Button
-                variant='outlined'
-                color='primary'
-                size='large'
-                onClick={() => {
-                    router.push('/blog/auth/sign-up')
-                }}
-                style={{
-                    marginTop:'1rem',
-                    fontSize:'large',
-                    height:'56px'
-                }}
-            >3초만에 빠른 회원가입</Button>
-            <NotSignup>비회원 주문 조회</NotSignup>
+          <TextField
+            label='아이디'
+            name='id'
+            autoComplete='new-password'
+            placeholder='아이디를 입력해주세요'
+            onChange={(e) => {
+              setUsername(e.target.value)
+            }}
+          />
+          <TextField
+            sx={{ marginTop: '1rem' }}
+            label='비밀번호'
+            name='password'
+            type='password'
+            autoComplete='new-password'
+            placeholder='비밀번호를 입력해주세요'
+            onKeyPress={(e) => {
+              if (e.key == 'Enter') {
+                onLogin();
+              }
+            }}
+            onChange={(e) => {
+              setPassword(e.target.value)
+            }}
+          />
+          <FindInfo onClick={() => { router.push('/blog/auth/find-info') }}>아이디 / 비밀번호 찾기</FindInfo>
+          <Button
+            variant='contained'
+            color='primary'
+            size='large'
+            style={{
+              marginTop: '1rem',
+              fontSize: 'large',
+              height: '56px'
+            }}
+            onClick={onLogin}
+          >로그인</Button>
+          <Button
+            variant='outlined'
+            color='primary'
+            size='large'
+            onClick={() => {
+              router.push('/blog/auth/sign-up')
+            }}
+            style={{
+              marginTop: '1rem',
+              fontSize: 'large',
+              height: '56px'
+            }}
+          >3초만에 빠른 회원가입</Button>
+          <NotSignup>비회원 주문 조회</NotSignup>
         </TextFieldContainer>
       </Wrappers>
     </>

@@ -36,30 +36,24 @@ margin: 0 auto;
 }
 `
 
-const TextFieldTitle = styled.label`
-font-size:1rem;
-font-weight:regular;
-margin:1.5rem 0 1rem 0;
-`
-
-const FindInfo = styled.span`
-text-align:right;
+const FindInfo = styled.div`
+display:flex;
+justify-content:right;
 font-size:1rem;
 font-weight:regular;
 margin:1.5rem 0 2rem 0;
-color:black;
+color:${props=>props.themeMode=='dark'?'#fff':'#000'};
 text-decoration:underline;
-cursor:pointer;
 `
 
-const NotSignup = styled.span`
-text-align:center;
+const NotSignup = styled.div`
+display:flex;
+justify-content:center;
 font-size:1rem;
 font-weight:regular;
 margin:1.5rem 0 2rem 0;
-color:black;
+color:${props=>props.themeMode=='dark'?'#fff':'#000'};
 text-decoration:underline;
-cursor:pointer;
 `
 
 // 로그인 김인욱
@@ -74,7 +68,7 @@ const Demo1 = (props) => {
       router
     },
   } = props;
-  const theme = useTheme();
+  const { themeMode } = useSettingsContext();
 
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
@@ -99,7 +93,6 @@ const Demo1 = (props) => {
             label='아이디'
             name='id'
             autoComplete='new-password'
-            placeholder='아이디를 입력해주세요'
             onChange={(e) => {
               setUsername(e.target.value)
             }}
@@ -110,7 +103,6 @@ const Demo1 = (props) => {
             name='password'
             type='password'
             autoComplete='new-password'
-            placeholder='비밀번호를 입력해주세요'
             onKeyPress={(e) => {
               if (e.key == 'Enter') {
                 onLogin();
@@ -120,7 +112,8 @@ const Demo1 = (props) => {
               setPassword(e.target.value)
             }}
           />
-          <FindInfo onClick={() => { router.push('/blog/auth/find-info') }}>아이디 / 비밀번호 찾기</FindInfo>
+          </TextFieldContainer>
+          <FindInfo themeMode={themeMode}><div style={{cursor:'pointer'}} onClick={() => { router.push('/blog/auth/find-info') }}>아이디 / 비밀번호 찾기</div></FindInfo>
           <Button
             variant='contained'
             color='primary'
@@ -145,8 +138,7 @@ const Demo1 = (props) => {
               height: '56px'
             }}
           >3초만에 빠른 회원가입</Button>
-          <NotSignup>비회원 주문 조회</NotSignup>
-        </TextFieldContainer>
+          <NotSignup themeMode={themeMode}><div style={{cursor:'pointer'}} onClick={() => { router.push('/blog/auth/find-info') }}>비회원 주문 조회</div></NotSignup>
       </Wrappers>
     </>
   )

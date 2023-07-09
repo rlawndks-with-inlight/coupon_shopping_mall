@@ -34,16 +34,10 @@ margin: 0 auto;
 }
 `
 
-const TextFieldTitle = styled.label`
-font-size:1rem;
-font-weight:regular;
-margin:1.5rem 0 1rem 0;
-`
-
 const TextFieldBox = styled.div`
 display:flex;
 width:100%;
-margin: 0 auto;
+margin-top: 1.5rem;
 `
 
 const returnFindType = {
@@ -100,6 +94,7 @@ const Demo1 = (props) => {
       <Wrappers>
         <Title>아이디/비밀번호 찾기</Title>
         <TabsContainer>
+          <div>
           <Tabs
             indicatorColor='primary'
             textColor='primary'
@@ -110,34 +105,34 @@ const Demo1 = (props) => {
             onChange={(event, newValue) => router.push(`/blog/auth/find-info?type=${newValue}`)}
           >
             {Object.keys(returnFindType).map((key) => (
-              <Tab key={returnFindType[key].title} value={key} label={returnFindType[key].title} sx={{
+              <Tab key={returnFindType[key].title} value={key} label={returnFindType[key].title} style={{
                 borderBottom:'1px solid',
                 borderColor:'inherit',
                 textColor:'inherit',
                 fontSize:'1rem',
                 fontWeight:'bold',
-                width:'50%',
-                margin:'0 auto',
+                width: '50%', 
+                margin: '0'
               }} />
             ))}
           </Tabs>
+          </div>
           {findType == 0 ? 
             <>
-              <TextFieldTitle>이름</TextFieldTitle>
               <TextField
                 name='userId'
                 autoComplete='new-password'
-                placeholder='이름'
+                label='이름'
+                sx={{marginTop:'1.5rem'}}
                 onChange={(e) => {
                   setUserId(e.target.value)
                 }}
               />
-              <TextFieldTitle>연락처</TextFieldTitle>
               <TextFieldBox>
                 <TextField
                   name='phoneNum'
                   autoComplete='new-password'
-                  placeholder='연락처'
+                  label='연락처'
                   sx={{
                     width:'72%',
                     marginRight:'1%',
@@ -161,7 +156,7 @@ const Demo1 = (props) => {
               <TextField
                 name='certificationNum'
                 autoComplete='new-password'
-                placeholder='인증번호 입력'
+                label='인증번호 입력'
                 sx={{
                   marginTop:'1%'
                 }}
@@ -177,21 +172,20 @@ const Demo1 = (props) => {
               >인증완료</Button>
             </> : 
             <>
-              <TextFieldTitle>아이디</TextFieldTitle>
               <TextField
                 name='userName'
                 autoComplete='new-password'
-                placeholder='아이디'
+                label='아이디'
+                sx={{marginTop:'1.5rem'}}
                 onChange={(e) => {
                   setUserName(e.target.value)
                 }}
               />
-              <TextFieldTitle>연락처</TextFieldTitle>
               <TextFieldBox>
                 <TextField
                   name='phoneNum'
                   autoComplete='new-password'
-                  placeholder='연락처'
+                  label='연락처'
                   sx={{
                     width:'72%',
                     marginRight:'1%'

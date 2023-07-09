@@ -195,14 +195,14 @@ const Demo1 = (props) => {
                             </MenuBox>
                             <PolicyBox>
                                 <div
-                                    style={{ marginRight: '5%' }}
+                                    style={{ marginRight: '5%', cursor:'pointer'}}
                                     onClick={() => {
                                         setOpenPolicy(true)
                                         setPolicyType(1)
                                     }}
                                 >개인정보 처리방침</div>
                                 <div
-                                    style={{ marginRight: '5%' }}
+                                    style={{ marginRight: '5%', cursor:'pointer' }}
                                     onClick={() => {
                                         setOpenPolicy(true)
                                         setPolicyType(0)

@@ -269,12 +269,11 @@ const Demo1 = (props) => {
           <>
             <TextFieldContainer>
               <Title>휴대폰 번호 인증</Title>
-              <TextFieldTitle>휴대폰 번호</TextFieldTitle>
-              <TextFieldBox>
+              <TextFieldBox style={{marginTop:'2.5rem'}}>
                 <TextField
                   name='phoneNum'
                   autoComplete='new-password'
-                  placeholder='휴대폰 번호 입력'
+                  label='연락처'
                   sx={{
                     width: '72%',
                     marginRight: '1%'
@@ -295,7 +294,7 @@ const Demo1 = (props) => {
               <TextField
                 name='certificationNum'
                 autoComplete='new-password'
-                placeholder='인증번호 입력'
+                label='인증번호 입력'
                 sx={{
                   marginTop: '1%'
                 }}
@@ -319,7 +318,7 @@ const Demo1 = (props) => {
               <Title>회원가입</Title>
               <TextFieldTitle>아이디</TextFieldTitle>
               <TextField
-                name='id'
+                name='username'
                 placeholder='영문 소문자, 숫자, 특수문자 가능 / 4~20자'
                 sx={{
                   marginBottom: '1%'
@@ -347,7 +346,6 @@ const Demo1 = (props) => {
                   <InputLabel>년</InputLabel>
                   <Select
                     value={birthDate.year}
-                    label='년'
                     style={{
                       width: '100px'
                     }}
@@ -364,7 +362,6 @@ const Demo1 = (props) => {
                   <InputLabel>월</InputLabel>
                   <Select
                     value={birthDate.month}
-                    label='월'
                     style={{
                       width: '80px'
                     }}
@@ -381,7 +378,6 @@ const Demo1 = (props) => {
                   <InputLabel>일</InputLabel>
                   <Select
                     value={birthDate.day}
-                    label='일'
                     style={{
                       width: '80px'
                     }}

@@ -49,6 +49,13 @@ const Demo1 = (props) => {
       window.scrollTo(0, router.query?.scroll_to);
     }
   }, [router.query])
+
+  const onLogin = async () => {
+    let user = await login(username, password)
+    if (user) {
+      router.push('/shop/auth/my-page')
+    }
+  }
   return (
     <>
       <Wrappers>
@@ -77,6 +84,7 @@ const Demo1 = (props) => {
           autoComplete='new-password'
           onKeyPress={(e) => {
             if (e.key == 'Enter') {
+              onLogin();
             }
           }}
         />
@@ -84,12 +92,7 @@ const Demo1 = (props) => {
           height: '56px',
           marginTop: '1rem',
         }}
-          onClick={async() => {
-            let user = await login(username, password)
-            if(user){
-              router.push('/shop/auth/my-page')
-            }
-          }}
+          onClick={onLogin}
         >로그인</Button>
         <Row style={{ margin: '2rem auto' }}>
           <HoverText style={{ borderRight: `1px solid ${themeObj.grey[300]}` }} presetsColor={presetsColor} onClick={() => { router.push(`/shop/auth/find-info?type=0`) }}>아이디 찾기</HoverText>

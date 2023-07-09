@@ -98,17 +98,19 @@ const CustomContent = forwardRef(function CustomContent(props, ref) {
             <div style={{ width: '20px' }} />
           </>}
       </div>
+      <Typography
+        component="div"
+        className={classes.label}
+        style={{
+          width: `${200 + 10 * parseInt(depth)}px`,
+        }}
+      >
+        {label}
+      </Typography>
       <Tooltip title="해당 카테고리를 수정하시려면 클릭해주세요.">
-        <Typography
-          onClick={() => onClickCategoryLabel(category)}
-          component="div"
-          className={classes.label}
-          style={{
-            width: `${200 + 10 * parseInt(depth)}px`,
-          }}
-        >
-          {label}
-        </Typography>
+        <IconButton onClick={() => onClickCategoryLabel(category)}>
+          <Icon icon='tabler:edit' fontSize={16} />
+        </IconButton>
       </Tooltip>
       <Tooltip title="하위 카테고리를 추가하시려면 클릭해 주세요.">
         <IconButton onClick={() => {
@@ -202,7 +204,7 @@ const CategoryList = () => {
                   </Row>
                 </>}
               <Tooltip title="새로운 대분류 카테고리를 추가하시려면 클릭해주세요." sx={{ margin: 'auto' }} >
-                <Button variant="contained" sx={{ width: '100%', marginTop: '2rem', height: '56px' }}>
+                <Button variant="outlined" sx={{ width: '284px', marginTop: '0.5rem' }}>
                   카테고리 추가
                 </Button>
               </Tooltip>

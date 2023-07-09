@@ -1,4 +1,5 @@
 import styled from 'styled-components'
+import { Wrappers, Title } from 'src/components/elements/blog/demo-1';
 
 // 공지사항, faq 등 상세페이지 김인욱
 const Demo1 = (props) => {
@@ -13,6 +14,9 @@ const Demo1 = (props) => {
 
     return (
         <>
+            <Wrappers>
+                <Title>주문/배송 조회</Title>
+            </Wrappers>
         </>
     )
 }

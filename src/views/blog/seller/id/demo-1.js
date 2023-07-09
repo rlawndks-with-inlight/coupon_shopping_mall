@@ -252,7 +252,6 @@ const Demo1 = (props) => {
                                         }])
                                     }
                                 }
-                                console.log(e.target.value)
                             }}
                         >
                             {test_color_list.map((data) => (

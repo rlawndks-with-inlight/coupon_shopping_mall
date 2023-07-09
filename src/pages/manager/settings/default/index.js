@@ -77,7 +77,6 @@ const DefaultSetting = () => {
   })
 
   useEffect(() => {
-    console.log(window.location)
 
     setLoading(false);
   }, [])
@@ -230,11 +229,11 @@ const DefaultSetting = () => {
                   <Card sx={{ p: 2, height: '100%' }}>
                     <Stack spacing={3}>
                       <Stack spacing={1}>
-                        <CardHeader title={`카카오 og 설정`} sx={{ padding: '0' }} />
+                        <CardHeader title={`카카오 미리보기 설정`} sx={{ padding: '0' }} />
                       </Stack>
                       <TextField
                         fullWidth
-                        label="og 디스트립션"
+                        label="미리보기 디스트립션"
                         multiline
                         rows={4}
                         value={item.og_description}
@@ -247,7 +246,7 @@ const DefaultSetting = () => {
                       />
                       <Stack spacing={1}>
                         <Typography variant="subtitle2" sx={{ color: 'text.secondary' }}>
-                          og 이미지
+                          미리보기 이미지
                         </Typography>
                         <Upload file={item.og_img} onDrop={(acceptedFiles) => {
                           const newFile = acceptedFiles[0];
@@ -283,7 +282,7 @@ const DefaultSetting = () => {
                           <Avatar style={{ margin: '0.5rem' }} />
                           <Row style={{ flexDirection: 'column', marginTop: '0.5rem' }}>
                             <div>사용자</div>
-                            <div style={{ background: '#fff', padding: '0.5rem', borderRadius: '16px', color: 'blue', textDecoration: 'underline', width: 'auto', maxWidth:'300px' }}>
+                            <div style={{ background: '#fff', padding: '0.5rem', borderRadius: '16px', color: 'blue', textDecoration: 'underline', width: 'auto', maxWidth: '300px' }}>
                               {window.location.origin}
                             </div>
                             <OgWrappers>

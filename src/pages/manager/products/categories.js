@@ -131,7 +131,6 @@ display:flex;
 const CategoryList = () => {
 
   const theme = useTheme();
-  console.log(theme)
   const [categories, setCategories] = useState([]);
   const [category, setCategory] = useState({
     category_img: '',
@@ -164,11 +163,9 @@ const CategoryList = () => {
     })
   }
   const onSaveCategory = () => {
-    console.log(category)
 
   }
   const onClickCategoryLabel = (category) => {
-    console.log(category)
     setCategory({
       id: category?.id,
       category_name: category?.category_name,

@@ -179,8 +179,6 @@ const Demo1 = (props) => {
     const { user } = useAuthContext();
     const [homeContent, setHomeContent] = useState({});
     useEffect(() => {
-        console.log(user)
-        console.log(themeDnsData)
     }, [themeDnsData])
 
     return (

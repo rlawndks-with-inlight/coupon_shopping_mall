@@ -25,9 +25,7 @@ const StyledRoot = styled('div')(({ theme }) => ({
 
 export default function NavAccount() {
   const { user } = useAuthContext();
-  useEffect(()=>{
-    console.log(user)
-  },[user])
+
   return (
     <Link underline="none" color="inherit">
       <StyledRoot>

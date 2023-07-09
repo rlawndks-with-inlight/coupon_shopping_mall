@@ -121,7 +121,6 @@ const Main = () => {
   }
 
   const onSave = () => {
-    console.log(contentList)
   }
   return (
     <>

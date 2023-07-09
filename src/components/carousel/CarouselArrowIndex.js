@@ -58,7 +58,6 @@ export default function CarouselArrowIndex({
 
   const isRTL = theme.direction === 'rtl';
   useEffect(()=>{
-    console.log(index)
   },[index])
   return (
     <StyledRoot sx={sx} {...other}>

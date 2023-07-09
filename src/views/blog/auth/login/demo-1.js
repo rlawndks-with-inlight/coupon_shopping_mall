@@ -86,7 +86,6 @@ const Demo1 = (props) => {
   }, [])
   const onLogin = async () => {
     let user = await login(username, password);
-    console.log(user)
     if (user) {
       router.push('/blog/auth/my-page');
     }

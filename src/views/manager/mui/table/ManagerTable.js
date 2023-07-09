@@ -36,7 +36,6 @@ export default function ManagerTable(props) {
   const { columns, data, page, add_button_text, maxPage, onChangePage, } = props;
 
   const theme = useTheme();
-  console.log(theme)
   const router = useRouter();
   const [sDt, setSDt] = useState(undefined);
   const [eDt, setEDt] = useState(undefined);
@@ -122,7 +121,6 @@ export default function ManagerTable(props) {
             {add_button_text ?
               <>
                 <Button variant='contained' sx={{ marginLeft: '0.75rem' }} onClick={() => {
-                  console.log(router.asPath)
                   let path = router.asPath;
                   if (router.asPath.includes('list')) {
                     path = path.replace('list', '');

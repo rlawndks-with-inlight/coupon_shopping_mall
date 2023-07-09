@@ -47,13 +47,13 @@ export default function ProductDetailsSummary({ product, onAddCart, onGotoStep, 
     id,
     name,
     sub_name,
-    item_pr=0,
-    mkt_pr=0,
-    sizes=[],
+    item_pr = 0,
+    mkt_pr = 0,
+    sizes = [],
     price,
     cover,
     status,
-    colors=[],
+    colors = [],
     available,
     priceSale,
     rating,
@@ -61,7 +61,6 @@ export default function ProductDetailsSummary({ product, onAddCart, onGotoStep, 
     inventoryType,
     inventory
   } = product;
-  console.log(product)
   const alreadyProduct = cart.map((item) => item.id).includes(id);
 
   const isMaxQuantity =
@@ -190,7 +189,7 @@ export default function ProductDetailsSummary({ product, onAddCart, onGotoStep, 
               },
             }}
           >
-            {['라지','스몰'].map((size) => (
+            {['라지', '스몰'].map((size) => (
               <MenuItem key={size} value={size}>
                 {size}
               </MenuItem>

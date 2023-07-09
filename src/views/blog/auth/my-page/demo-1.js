@@ -97,13 +97,12 @@ const Demo1 = (props) => {
     const [activeStep, setActiveStep] = useState(0);
 
     useEffect(() => {
-        console.log(user)
     }, [])
 
     return (
         <>
             <Wrappers>
-               
+
                         <TitleContainer>
                             <Title>마이페이지</Title>
                             {user ?

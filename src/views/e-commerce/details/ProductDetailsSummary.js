@@ -47,6 +47,8 @@ export default function ProductDetailsSummary({ product, onAddCart, onGotoStep, 
     id,
     name,
     sub_name,
+    item_pr=0,
+    mkt_pr=0,
     sizes=[],
     price,
     cover,
@@ -59,7 +61,7 @@ export default function ProductDetailsSummary({ product, onAddCart, onGotoStep, 
     inventoryType,
     inventory
   } = product;
-
+  console.log(product)
   const alreadyProduct = cart.map((item) => item.id).includes(id);
 
   const isMaxQuantity =
@@ -152,16 +154,16 @@ export default function ProductDetailsSummary({ product, onAddCart, onGotoStep, 
           </Stack>
 
           <Typography variant="h4">
-            {priceSale && (
+            {mkt_pr > item_pr && (
               <Box
                 component="span"
                 sx={{ color: 'text.disabled', textDecoration: 'line-through', mr: 0.5 }}
               >
-                {fCurrency(priceSale)}
+                {fCurrency(mkt_pr)}
               </Box>
             )}
 
-            {fCurrency(price)}
+            {commarNumber(item_pr)} 원
           </Typography>
         </Stack>
 

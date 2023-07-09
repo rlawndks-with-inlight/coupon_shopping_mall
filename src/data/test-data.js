@@ -332,7 +332,7 @@ export const test_item = {
   name: "생활비달력 머니어터",
   sub_name: "유연함으로 흠집 방지 및 보호에 도움",
   rating: 3.5,
-  mkt_pr: 18000,
+  mkt_pr: 20000,
   item_pr: 18000,
   product_img: '/images/test/testitem1.jpg',
   brand_nm: "BHC",

@@ -707,3 +707,47 @@ export const pay_list = [
     description:'구매를 안전하게 완료하기 위해 인증결제 웹사이트로 리디렉션됩니다.'
   }
 ]
+export const test_option_list = [
+  {
+    id:12,
+    name:'색상',
+    children:[
+      {
+        id:312,
+        name:'화이트',
+        price:0
+      },
+      {
+        id:122,
+        name:'블랙',
+        price:100
+      },
+      {
+        id:222,
+        name:'베이지',
+        price:500
+      },
+    ]
+  },
+  {
+    id:212,
+    name:'사이즈',
+    children:[
+      {
+        id:1112,
+        name:'XL',
+        price:1000
+      },
+      {
+        id:1212,
+        name:'L',
+        price:500
+      },
+      {
+        id:2221,
+        name:'M',
+        price:0
+      },
+    ]
+  }
+]

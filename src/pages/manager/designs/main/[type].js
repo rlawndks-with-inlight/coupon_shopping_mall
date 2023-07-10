@@ -17,6 +17,10 @@ const ReactQuill = dynamic(() => import('react-quill'), {
   ssr: false,
   loading: () => <p>Loading ...</p>,
 })
+const Tour = dynamic(
+  () => import('reactour'),
+  { ssr: false },
+);
 //메인화면
 const ITEM_HEIGHT = 48
 const ITEM_PADDING_TOP = 8
@@ -83,9 +87,10 @@ const Main = () => {
   }
   useEffect(() => {
     setProductList(test_items);
-
+    openTour('content-add', "'추가' 버튼을 클릭하여 메인페이지 섹션을 추가해 주세요.")
   }, [])
   const addSection = () => {
+    closeTour();
     setContentList([...contentList, homeSectionDefaultSetting[sectionType]])
   }
   const deleteSection = (idx) => {
@@ -122,6 +127,22 @@ const Main = () => {
 
   const onSave = () => {
   }
+  const [tourOpen, setTourOpen] = useState(false);
+  const [tourSteps, setTourSteps] = useState([]);
+
+  const openTour = (class_name, text, ) =>{
+    setTourSteps([
+      {
+        selector: `.${class_name}`,
+        content: text,
+      },
+    ])
+    setTourOpen(true);
+  }
+  const closeTour = () => {
+    setTourOpen(false);
+    setTourSteps([]);
+  };
   return (
     <>
       <Grid container spacing={3}>
@@ -272,6 +293,7 @@ const Main = () => {
                 <MenuItem value={'editor'}>에디터 ({hasTypeCount(contentList, 'editor')})</MenuItem>
               </Select>
               <Button variant="contained"
+                className="content-add"
                 onClick={addSection}
                 style={{
                   height: '48px'
@@ -293,6 +315,11 @@ const Main = () => {
           </Card>
         </Grid>
       </Grid>
+      <Tour
+        steps={tourSteps}
+        isOpen={tourOpen}
+        disableInteraction={false}
+        onRequestClose={closeTour} />
     </>
   )
 }

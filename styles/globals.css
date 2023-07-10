@@ -101,6 +101,34 @@ body {
   min-height: 350px;
   overflow-y: auto;
 }
+#___reactour > div:nth-child(4) > div {
+  border-radius: 8px;
+  white-space: pre-wrap;
+  padding-top: 2rem;
+  font-size: 0.9rem !important;
+  font-weight: bold !important;
+}
+#___reactour > div:nth-child(4) > div > span {
+  display: none;
+}
+#___reactour > div:nth-child(4) > div > div {
+  display: none;
+}
+#mask-main > rect:nth-child(2) {
+  webkit-rx: 16;
+  -moz-rx: 16;
+  -o-rx: 16;
+  rx: 16;
+  webkit-ry: 16;
+  -moz-ry: 16;
+  -o-ry: 16;
+  ry: 16;
+  border-radius: 16px;
+}
+#___reactour > div:nth-child(4) > div > button {
+  top: 17px;
+  right: 16px;
+}
 @media (max-width: 1350px) {
   .item-img {
     width: 27.6vw;

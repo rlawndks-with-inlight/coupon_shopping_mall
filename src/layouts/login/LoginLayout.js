@@ -6,6 +6,8 @@ import Logo from '../../components/logo';
 import Image from '../../components/image';
 //
 import { StyledRoot, StyledSectionBg, StyledSection, StyledContent } from './styles';
+import { useSettingsContext } from 'src/components/settings';
+import { useEffect, useState } from 'react';
 
 // ----------------------------------------------------------------------
 
@@ -16,9 +18,19 @@ LoginLayout.propTypes = {
 };
 
 export default function LoginLayout({ children, illustration, title }) {
+  const { themeDnsData } = useSettingsContext();
+  const [loading, setLoading] = useState(true);
+  useEffect(() => {
+    if (Object.keys(themeDnsData).length > 0) {
+      setLoading(false);
+    }
+  }, [themeDnsData])
   return (
-    <StyledRoot>
-      {/* <Logo
+    <>
+      {!loading &&
+        <>
+          <StyledRoot>
+            {/* <Logo
         sx={{
           zIndex: 9,
           position: 'absolute',
@@ -43,9 +55,11 @@ export default function LoginLayout({ children, illustration, title }) {
         <StyledSectionBg />
       </StyledSection> */}
 
-      <StyledContent>
-        <Stack sx={{ width: 1 }}> {children} </Stack>
-      </StyledContent>
-    </StyledRoot>
+            <StyledContent>
+              <Stack sx={{ width: 1 }}> {children} </Stack>
+            </StyledContent>
+          </StyledRoot>
+        </>}
+    </>
   );
 }

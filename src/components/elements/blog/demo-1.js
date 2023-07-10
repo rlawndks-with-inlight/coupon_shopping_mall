@@ -101,3 +101,14 @@ font-weight:bold;
 line-height:1.38462;
 padding:1rem 0 0.5rem 0;
 `
+
+export const Wrappers = styled.div`
+max-width:798px;
+display:flex;
+flex-direction:column;
+margin: 56px auto 3rem auto;
+width: 90%;
+@media (max-width:798px){
+  width:100%;
+}
+`

@@ -94,9 +94,9 @@ const test_cart = [
             delivery_fee: 3000,
         },
         option: [
-            { id: 1, name: "블랙", price: 0, count: 3 },
+            { id: 1, name: "블랙", price: 0, count: 1 },
             { id: 2, name: "베이지", price: 500, count: 2 },
-            { id: 3, name: "크림", price: 1500, count: 1 },
+            { id: 3, name: "크림", price: 1500, count: 3 },
         ],
     },
     {
@@ -115,12 +115,11 @@ const test_cart = [
             id: 2,
             profile_img: 'https://d32rratnkhh4zp.cloudfront.net/media/images/2021/7/5/thumb@1080_1625479198-59043e92-67de-46b1-8755-f21c5ca0a9ae.jpg',
             nickname: '벨르시 마켓',
-            delivery_fee: 3000,
+            delivery_fee: 5000,
         },
         option: [
-            { id: 1, name: "블랙", price: 0, count: 3 },
-            { id: 2, name: "베이지", price: 500, count: 2 },
-            { id: 3, name: "크림", price: 1500, count: 1 },
+            { id: 1, name: "백도", price: 0, count: 10 },
+            { id: 2, name: "황도", price: 5000, count: 10 },
         ],
     },
     {
@@ -139,15 +138,16 @@ const test_cart = [
             id: 2,
             profile_img: 'https://d32rratnkhh4zp.cloudfront.net/media/images/2021/7/5/thumb@1080_1625479198-59043e92-67de-46b1-8755-f21c5ca0a9ae.jpg',
             nickname: '벨르시 마켓',
-            delivery_fee: 3000,
+            delivery_fee: 5000,
         },
         option: [
-            { id: 1, name: "블랙", price: 0, count: 3 },
-            { id: 2, name: "베이지", price: 500, count: 2 },
-            { id: 3, name: "크림", price: 1500, count: 1 },
+            { id: 1, name: "레드", price: 0, count: 3 },
+            { id: 2, name: "블루", price: 0, count: 2 },
+            { id: 3, name: "그린", price: 0, count: 1 },
         ],
     }
 ]
+
 // 장바구니 김인욱
 const Demo1 = (props) => {
     const {
@@ -163,6 +163,10 @@ const Demo1 = (props) => {
     const [wantBuyList, setWantBuyList] = useState([]);
     const [cartList, setCartList] = useState([]);
     const [sellerList, setSellerList] = useState([]);
+    const [itemCount, setItemCount] = useState(0)
+    const [priceSum, setPriceSum] = useState(0)
+    const [deliveryFee, setDeliveryFee] = useState(0)
+
     useEffect(() => {
         let cart_data = test_cart;
         setSellerId(cart_data[0]?.seller.id);
@@ -193,7 +197,7 @@ const Demo1 = (props) => {
                         }}
                     >
                         {_.uniqBy(sellerList, 'id').map((seller, idx) => {
-                            return <Tab //추후에 map을 활용해 장바구니 array 안의 판매자 이름을 각각 불러와 Tab으로 만들어야 함
+                            return <Tab
                                 label={seller.nickname}
                                 value={seller.id}
                                 sx={{
@@ -222,46 +226,70 @@ const Demo1 = (props) => {
                         }} />} />
                         <ChooseDelete /*추후에 이 버튼을 누르면 장바구니 array 안의 상품을 개별적으로 삭제할 수 있어야 함*/>선택 삭제</ChooseDelete>
                     </ChooseBox>
-                    {cartList.map((item, idx) => (
-                        <>
-                            {item.seller.id == sellerId &&
-                                <>
-                                    <ContentContainer style={{
-                                        background: `${themeMode == 'dark' ? '#000' : '#F6F6F6'}`
-                                    }}>
-                                        <ContainerTitle style={{ fontWeight: 'bold' }}>일반배송 상품</ContainerTitle>
-                                        <ItemBox style={{
-                                            background: `${themeMode == 'dark' ? '#222' : '#fff'}`
-                                        }}>
-                                            <FormControlLabel label={<Typography style={{ fontSize: themeObj.font_size.size7 }}>
-                                                {item.product_name}
-                                            </Typography>} control={<Checkbox checked={wantBuyList.includes(item.id)} onChange={(e) => { }} />} />
-                                        </ItemBox>
-                                    </ContentContainer>
-                                </>
-                            }
-                        </>
-                    ))}
+
+                    <ContentContainer style={{
+                        background: `${themeMode == 'dark' ? '#000' : '#F6F6F6'}`
+                    }}>
+                        <ContainerTitle style={{ fontWeight: 'bold' }}>일반배송 상품</ContainerTitle>
+                        {cartList.map((item, idx) => (
+                            <>
+                                {item.seller.id == sellerId &&
+                                    <>
+                                        {item.option.map(option => (
+                                            <ItemBox style={{
+                                                background: `${themeMode == 'dark' ? '#222' : '#fff'}`
+                                            }}>
+
+                                                <div style={{padding:'1rem'}}>
+                                                    <FormControlLabel label={<Typography style={{ fontSize: themeObj.font_size.size7, display: 'flex' }}>
+                                                        <img src={item.product_img} width='48px' height='48px' style={{margin:'0 1rem 0 0.5rem'}}/>
+                                                        <div style={{ display: 'flex', flexDirection: 'column' }}>
+                                                            <div>{item.product_name}</div>
+                                                            <div>{commarNumber(item.item_pr + option.price)}원</div>
+                                                            <div>옵션 : {option.name} / {option.count}개</div>
+                                                            <div style={{marginTop:'0.5rem'}}>{commarNumber((item.item_pr + option.price) * option.count)}원</div>
+                                                        </div>
+                                                    </Typography>} control={<Checkbox checked={wantBuyList.includes(item.id)} onChange={(e) => {
+                                                        let want_buy_list = [...wantBuyList];
+                                                        if (e.target.checked) {
+                                                            want_buy_list.pop(item.id)
+                                                        }
+                                                        else {
+                                                            want_buy_list.push(item.id)
+                                                        }
+                                                        want_buy_list = _.uniq(want_buy_list);
+                                                        setWantBuyList(want_buy_list)
+                                                    }} />} />
+                                                </div>
+                                            </ItemBox>
+                                        ))}
+                                        <Row style={{justifyContent:'right'}}>상품 {} + 배송비 {deliveryFee} = {}</Row>
+                                    </>
+                                }
+                            </>
+                        ))}
+                    </ContentContainer>
+
                     <ContentContainer style={{
                         background: `${themeMode == 'dark' ? '#000' : '#F6F6F6'}`,
                     }}>
                         <Row style={{ margin: '0.5rem 0', justifyContent: 'space-between' }}>
                             <div>주문 상품 수</div>
-                            <div>{ }개</div>
+                            <div>{itemCount}개</div>
                         </Row>
                         <Row style={{ margin: '0.5rem 0', justifyContent: 'space-between' }}>
                             <div>총 주문금액</div>
-                            <div>{ }원</div>
+                            <div>{commarNumber(priceSum)}원</div>
                         </Row>
                         <Row style={{ margin: '0.5rem 0', justifyContent: 'space-between' }}>
                             <div>배송비</div>
-                            <div>무료</div>
+                            <div>{test_cart.seller}</div>
                         </Row>
-                        <Row style={{ margin: '1rem 0 2rem 0', justifyContent: 'space-between', color: themeDnsData.theme_css?.main_color }}>
+                        <Row style={{ margin: '1rem 0 2rem 0', justifyContent: 'space-between', fontWeight:'bold', color: themeDnsData.theme_css?.main_color }}>
                             <div>총 결제 금액</div>
-                            <div>{ }원</div>
+                            <div>{commarNumber(priceSum)}원</div>
                         </Row>
-                        <Button variant='contained'>
+                        <Button variant='contained' style={{height:'56px', fontSize:'large'}}>
                             구매하기
                         </Button>
                     </ContentContainer>

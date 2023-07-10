@@ -2,6 +2,7 @@ import { useRouter } from "next/router";
 import { useState } from "react";
 import ShopLayout from "src/layouts/shop/ShopLayout";
 import Demo1 from "src/views/blog/auth/cart/demo-1";
+import { useSettingsContext } from "src/components/settings";
 
 const getDemo = (num, common) => {
 
@@ -11,11 +12,11 @@ const getDemo = (num, common) => {
 
 const Cart = () => {
     const router = useRouter();
-    const [layoutDemoNum, setLayoutDemoNum] = useState(1);
+    const { themeDnsData } = useSettingsContext();
 
     return (
         <>
-            {getDemo(layoutDemoNum, {
+            {getDemo(themeDnsData?.blog_demo_num, {
                 data: {
                 },
                 func: {

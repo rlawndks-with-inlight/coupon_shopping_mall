@@ -109,6 +109,8 @@ export function SettingsProvider({ children }) {
       if (typeof dns_data?.options == 'string' || !dns_data?.options) {
         dns_data['options'] = JSON.parse(dns_data?.options ?? "{}");
       }
+      dns_data['blog_demo_num'] = 1;
+      dns_data['shop_demo_num'] = 1;
       onChangeDnsData(dns_data);
     } catch (err) {
       console.log(err)

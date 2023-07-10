@@ -13,6 +13,7 @@ margin: 56px auto 3rem auto;
 width: 90%;
 @media (max-width:798px){
   width:100%;
+  padding:5%;
 }
 `
 
@@ -25,9 +26,6 @@ margin:1.5rem 0 1rem 0;
 const TextFieldContainer = styled.div`
 display:flex;
 flex-direction:column;
-@media (max-width:798px){
-  padding:5%;
-}
 `
 
 const Demo1 = (props) => {
@@ -129,14 +127,17 @@ const Demo1 = (props) => {
             >
             </Select>
           </FormControl>
+          <div style={{display:'flex', justifyContent:'flex-end'}}>
           <Button
             variant='contained'
             style={{
               marginTop: '1rem',
               height: '56px',
               width: '19%',
+              whiteSpace:'nowrap'
             }}
-          >배송지 추가</Button>
+          >배송지<br />추가</Button>
+          </div>
           <TextFieldTitle>마케팅 수신 동의</TextFieldTitle>
           <div style={{ display: 'flex' }}>
             <FormControlLabel label={<Typography>SMS</Typography>} control={<Checkbox checked={checkboxObj.check_0} />} onChange={(e) => {
@@ -152,6 +153,9 @@ const Demo1 = (props) => {
               marginTop: '2rem',
               height: '56px',
               fontSize: 'large'
+            }}
+            onClick={() => {
+              //로그아웃 기능 넣어야 함
             }}
           >로그아웃</Button>
           <div style={{
@@ -176,4 +180,5 @@ const Demo1 = (props) => {
     </>
   )
 }
+
 export default Demo1

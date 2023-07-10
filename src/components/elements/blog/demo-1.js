@@ -110,5 +110,6 @@ margin: 56px auto 3rem auto;
 width: 90%;
 @media (max-width:798px){
   width:100%;
+  padding:5%;
 }
 `

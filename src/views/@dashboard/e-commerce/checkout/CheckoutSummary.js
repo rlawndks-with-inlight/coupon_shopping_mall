@@ -36,7 +36,6 @@ export default function CheckoutSummary({
   discount,
   subtotal,
   shipping,
-  onApplyDiscount,
   enableEdit = false,
   enableDiscount = false,
 }) {
@@ -45,7 +44,7 @@ export default function CheckoutSummary({
   return (
     <Card sx={{ mb: 3 }}>
       <CardHeader
-        title="Order Summary"
+        title="주문 요약정보"
         action={
           enableEdit && (
             <Button size="small" onClick={onEdit} startIcon={<Iconify icon="eva:edit-fill" />}>
@@ -54,62 +53,35 @@ export default function CheckoutSummary({
           )
         }
       />
-
       <CardContent>
         <Stack spacing={2}>
           <Stack direction="row" justifyContent="space-between">
             <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-              Sub Total
+              총액
             </Typography>
-            <Typography variant="subtitle2">{fCurrency(subtotal)}</Typography>
+            <Typography variant="subtitle2">{fCurrency(subtotal??0)}원</Typography>
           </Stack>
 
           <Stack direction="row" justifyContent="space-between">
             <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-              Discount
+              할인
             </Typography>
-            <Typography variant="subtitle2">{discount ? fCurrency(-discount) : '-'}</Typography>
-          </Stack>
-
-          <Stack direction="row" justifyContent="space-between">
-            <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-              Shipping
-            </Typography>
-            <Typography variant="subtitle2">
-              {shipping ? fCurrency(shipping) : displayShipping}
-            </Typography>
+            <Typography variant="subtitle2">{discount ? fCurrency(-discount) : '-'}원</Typography>
           </Stack>
 
           <Divider />
 
           <Stack direction="row" justifyContent="space-between">
-            <Typography variant="subtitle1">Total</Typography>
+            <Typography variant="subtitle1">총 결제 금액</Typography>
             <Box sx={{ textAlign: 'right' }}>
               <Typography variant="subtitle1" sx={{ color: 'error.main' }}>
-                {fCurrency(total)}
+                {fCurrency(total??0)}원
               </Typography>
-              <Typography variant="caption" sx={{ fontStyle: 'italic' }}>
+              {/* <Typography variant="caption" sx={{ fontStyle: 'italic' }}>
                 (VAT included if applicable)
-              </Typography>
+              </Typography> */}
             </Box>
           </Stack>
-
-          {enableDiscount && onApplyDiscount && (
-            <TextField
-              fullWidth
-              placeholder="Discount codes / Gifts"
-              value="DISCOUNT5"
-              InputProps={{
-                endAdornment: (
-                  <InputAdornment position="end">
-                    <Button onClick={() => onApplyDiscount(5)} sx={{ mr: -0.5 }}>
-                      Apply
-                    </Button>
-                  </InputAdornment>
-                ),
-              }}
-            />
-          )}
         </Stack>
       </CardContent>
     </Card>

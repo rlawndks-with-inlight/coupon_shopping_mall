@@ -348,7 +348,7 @@ export const test_item = {
   content: "<th colspan=\"2\" class=\"menu_tit al\"><span class=\"menuname\">\uc591\ub150\uce58\ud0a8<\/span>\ub9f5\ub2e8\ub9f5\ub2e8! \ubc14\uc0ad\ud55c \ud6c4\ub77c\uc774\ub4dc\uc5d0 \ub9e4\ucf64\ub2ec\ub2ec \uc18c\uc2a4\ub97c \uc785\ud78c \uce58\ud0a8<br><br>\n[\ub2ed\uace0\uae30 : \uad6d\ub0b4\uc0b0] <br>\n\uc870\ub9ac \uc804 \uc911\ub7c9 950g \uc774\uc0c1<br>\n\u203b\uc870\ub9ac\uc2dc \uacc4\uc721 \ub0b4 \uc720\/\uc218\ubd84 \uc99d\ubc1c\ub85c \uc911\ub7c9\ucc28\uc774\uac00 \ubc1c\uc0dd\ud569\ub2c8\ub2e4.\n\t\t\t\t\t\t\t\t\t\t\t<br> \uac00\uaca9 : 18000<\/th>",
   created_at: "2023-03-09 14:30:18",
   updated_at: "2023-03-09 14:30:18",
-  inventory:123
+  inventory: 123
 }
 function repeatArray(arr, n) {
   const repeatedArray = [];
@@ -680,4 +680,30 @@ export const test_seller = [
     sub_title: '주문서',
     main_img: 'https://d32rratnkhh4zp.cloudfront.net/media/images/2023/6/29/thumb@1080_1688045487-b68ee378-6189-4b96-b385-dc596763d01f.png'
   },
+]
+export const test_address_list = [
+  {
+    receiver: '홍길동',
+    address_type: '집',
+    address: '서울 노원구 공릉동 123-11',
+    phone: '010-0000-0000',
+    is_default: true,
+  },
+  {
+    receiver: '김철수',
+    address_type: '사무실',
+    address: '서존특별자치시 소담동 123',
+    phone: '010-0000-0000',
+    is_default: false,
+  },
+]
+export const pay_list = [
+  {
+    title:'카드결제',
+    description:'Mastercard, Visa 등을 지원합니다.'
+  },
+  {
+    title:'인증결제',
+    description:'구매를 안전하게 완료하기 위해 인증결제 웹사이트로 리디렉션됩니다.'
+  }
 ]

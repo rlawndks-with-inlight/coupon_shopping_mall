@@ -10,21 +10,12 @@ import CheckoutCartProduct from './CheckoutCartProduct';
 // ----------------------------------------------------------------------
 
 const TABLE_HEAD = [
-  { id: 'product', label: 'Product' },
-  { id: 'price', label: 'Price' },
-  { id: 'quantity', label: 'Quantity' },
-  { id: 'totalPrice', label: 'Total Price', align: 'right' },
+  { id: 'product', label: '상품' },
+  { id: 'price', label: '가격' },
+  { id: 'quantity', label: '수량' },
+  { id: 'totalPrice', label: '총액', align: 'right' },
   { id: '' },
 ];
-
-// ----------------------------------------------------------------------
-
-CheckoutCartProductList.propTypes = {
-  onDelete: PropTypes.func,
-  products: PropTypes.array,
-  onDecreaseQuantity: PropTypes.func,
-  onIncreaseQuantity: PropTypes.func,
-};
 
 export default function CheckoutCartProductList({
   products,
@@ -33,11 +24,9 @@ export default function CheckoutCartProductList({
   onDecreaseQuantity,
 }) {
   return (
-    <TableContainer sx={{ overflow: 'unset' }}>
-      <Scrollbar>
-        <Table sx={{ minWidth: 720 }}>
+    <TableContainer>
+        <Table sx={{ minWidth: 720, overflowX: 'auto' }}>
           <TableHeadCustom headLabel={TABLE_HEAD} />
-
           <TableBody>
             {products.map((row) => (
               <CheckoutCartProduct
@@ -50,7 +39,6 @@ export default function CheckoutCartProductList({
             ))}
           </TableBody>
         </Table>
-      </Scrollbar>
     </TableContainer>
   );
 }

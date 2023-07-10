@@ -1,9 +1,11 @@
 import styled from "styled-components";
-import { themeObj } from "../styled-components";
+import { Row, themeObj } from "../styled-components";
 import { LazyLoadImage } from "react-lazy-load-image-component";
 import { commarNumber } from "src/utils/function";
 import { itemThemeCssDefaultSetting } from "src/pages/manager/designs/item-card";
 import { useEffect, useState } from "react";
+import { IconButton } from "@mui/material";
+import { Icon } from "@iconify/react";
 
 const ItemName = styled.div`
 font-weight: bold;
@@ -27,9 +29,13 @@ const ItemContainer = styled.div`
 width:100%;
 display:flex;
 cursor:pointer;
+transition: 0.5s;
+position: relative;
+&:hover{
+  transform: translateY(-8px);
+}
 `
 const ItemImg = styled.img`
-
 `
 const ItemTextContainer = styled.div`
 display:flex;
@@ -56,18 +62,29 @@ export const Item = (props) => {
         borderRadius: `${itemThemeCss.container.border_radius}px`,
         boxShadow: `${itemThemeCss.shadow.x}px ${itemThemeCss.shadow.y * (-1)}px ${itemThemeCss.shadow.width}px ${itemThemeCss.shadow.color}${itemThemeCss.shadow.darkness > 9 ? '' : '0'}${itemThemeCss.shadow.darkness}`
       }}
-      onClick={()=>{
-        if(item?.id){
-          router.push(`/shop/item/${item?.id}`)
-        }
-      }}
+
       >
+        <IconButton sx={{ position: 'absolute', right: '2px', top:'2px' }}>
+          <Icon icon={'basil:heart-outline'} fontSize={'2rem'} />
+        </IconButton>
         <ItemImg src={item.product_img} style={{
           width: `${itemThemeCss.container.is_vertical == 1 ? '50%' : '100%'}`,
           height: `${itemThemeCss.container.is_vertical == 1 ? `50%` : `100%`}`,
           borderRadius: `${itemThemeCss.image.border_radius}px`,
-        }} />
-        <ItemTextContainer>
+        }}
+          onClick={() => {
+            if (item?.id) {
+              router.push(`/shop/item/${item?.id}`)
+            }
+          }} >
+
+          </ItemImg>
+        <ItemTextContainer
+          onClick={() => {
+            if (item?.id) {
+              router.push(`/shop/item/${item?.id}`)
+            }
+          }}>
           <ItemName>{item.name}</ItemName>
           <ItemSubName>{item.sub_name}</ItemSubName>
           <ItemPrice style={{

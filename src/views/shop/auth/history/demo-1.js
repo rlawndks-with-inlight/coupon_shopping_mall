@@ -43,6 +43,10 @@ const Demo1 = (props) => {
   useEffect(() => {
     setHistoryList(test_items)
   }, [])
+
+  const onChangePage = (num) =>{
+    setPage(num)
+  }
   return (
     <>
       <Wrappers>

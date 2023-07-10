@@ -167,7 +167,7 @@ export function AuthProvider({ children }) {
         type: 'LOGOUT',
       });
     }
-
+    return true;
   }, []);
 
   const memoizedValue = useMemo(

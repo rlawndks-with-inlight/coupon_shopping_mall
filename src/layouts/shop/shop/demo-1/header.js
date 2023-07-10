@@ -288,6 +288,12 @@ const Header = () => {
     }
     setDialogOpenObj(obj);
   }
+  const onLogout = async () =>{
+    let result = await logout();
+    if(result){
+      router.push('/shop/auth/login');
+    }
+  }
   return (
     <>
       <DialogSearch
@@ -404,7 +410,7 @@ const Header = () => {
                       <AuthMenu
                         theme={theme}
                         hoverColor={themeMode == 'dark' ? '#fff' : '#000'}
-                        onClick={() => { logout() }}
+                        onClick={onLogout}
                         style={{ borderRight: `none` }}
                       >{'로그아웃'}</AuthMenu>
                     </>
@@ -661,7 +667,7 @@ const Header = () => {
                 </>
               ))}
               <ColumnMenuContent onClick={() => {
-                logout();
+                onLogout();
                 setSideMenuOpen(false);
               }} style={{ paddingLeft: '1rem' }}>로그아웃</ColumnMenuContent>
             </>

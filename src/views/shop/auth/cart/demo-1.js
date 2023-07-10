@@ -215,7 +215,6 @@ const Demo1 = (props) => {
                                 </Typography>
                               </Box>
                             </Paper>
-
                           </>
                         ))}
 

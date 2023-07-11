@@ -7,6 +7,7 @@ import { Box, Grid, Link, Stack, Divider, Container, Typography, IconButton } fr
 // _mock
 // components
 import Logo from '../../components/logo';
+import { logoSrc } from 'src/data/data';
 
 // ----------------------------------------------------------------------
 
@@ -53,12 +54,11 @@ export default function Footer() {
       }}
     >
       <Container>
-        <Logo sx={{ mb: 1, mx: 'auto' }} />
-
+        <img src={logoSrc} style={{ marginBottom: '0.5rem', width:'120px',margin:'auto' }} />
         <Typography variant="caption" component="div">
           © All rights reserved
           <br /> made by &nbsp;
-          <Link href="https://minimals.cc/"> minimals.cc </Link>
+          <Link href="https://minimals.cc/"> comagain </Link>
         </Typography>
       </Container>
     </Box>

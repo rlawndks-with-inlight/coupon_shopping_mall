@@ -194,7 +194,6 @@ function Description() {
               color="inherit"
               size="large"
               variant="contained"
-              startIcon={<Iconify icon="eva:flash-fill" width={24} />}
               sx={{
                 bgcolor: 'text.primary',
                 color: (theme) => (theme.palette.mode === 'light' ? 'common.white' : 'grey.800'),
@@ -203,7 +202,7 @@ function Description() {
                 },
               }}
             >
-              디자인 체험하기
+              신청하러 가기
             </Button>
           </Stack>
 

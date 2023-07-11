@@ -41,21 +41,21 @@ export default function HomePricingPlans() {
 function Description() {
   return (
     <Stack spacing={3} sx={{ mb: 10, textAlign: 'center' }}>
-      <m.div variants={varFade().inUp}>
+      {/* <m.div variants={varFade().inUp}>
         <Typography component="div" variant="overline" sx={{ mb: 2, color: 'text.disabled' }}>
           pricing plans
         </Typography>
-      </m.div>
+      </m.div> */}
 
       <m.div variants={varFade().inDown}>
         <Typography variant="h2">
-          The right plan for <br /> your business
+          필요에 따른 <br /> 자유로운 선택이 가능합니다.
         </Typography>
       </m.div>
 
       <m.div variants={varFade().inDown}>
         <Typography sx={{ color: 'text.secondary' }}>
-          Choose the perfect plan for your needs. Always flexible to grow
+          필요에 의한 서비스를 선택하세요. 추후에 변경이 가능합니다.
         </Typography>
       </m.div>
     </Stack>
@@ -70,13 +70,46 @@ function Content() {
   const [currentTab, setCurrentTab] = useState('Standard');
 
   const desktopList = (
-    <>
-    </>
+    <Box
+      display="grid"
+      gridTemplateColumns="repeat(3, 1fr)"
+      sx={{ borderRadius: 2, border: (theme) => `dashed 1px ${theme.palette.divider}` }}
+    >
+      {[].map((plan) => (
+        <m.div key={plan.license} variants={varFade().in}>
+          <PlanCard key={plan.license} plan={plan} />
+        </m.div>
+      ))}
+    </Box>
   );
 
   const mobileList = (
     <>
+      <Stack alignItems="center" sx={{ mb: 5 }}>
+        <Tabs value={currentTab} onChange={(event, newValue) => setCurrentTab(newValue)}>
+          {[].map((tab) => (
+            <Tab key={tab.license} value={tab.license} label={tab.license} />
+          ))}
+        </Tabs>
+      </Stack>
 
+      <Box
+        sx={{
+          borderRadius: 2,
+          border: (theme) => `dashed 1px ${theme.palette.divider}`,
+        }}
+      >
+        {[].map(
+          (tab) =>
+            tab.license === currentTab && (
+              <PlanCard
+                key={tab.license}
+                plan={tab}
+                sx={{ borderLeft: (theme) => `dashed 1px ${theme.palette.divider}` }}
+              />
+            )
+        )}
+      </Box>
     </>
   );
 
@@ -95,12 +128,12 @@ function Content() {
           }}
         >
           <m.div variants={varFade().inDown}>
-            <Typography variant="h4">Still have questions?</Typography>
+            <Typography variant="h4">질문사항이 있다면?</Typography>
           </m.div>
 
           <m.div variants={varFade().inDown}>
             <Typography sx={{ mt: 2, mb: 5, color: 'text.secondary' }}>
-              Please describe your case to receive the most accurate advice.
+              정확한 답변을 원한다면 아래의 버튼을 통해 문의하세요.
             </Typography>
           </m.div>
 
@@ -118,7 +151,7 @@ function Content() {
                 },
               }}
             >
-              Contact us
+              문의하기
             </Button>
           </m.div>
         </Box>

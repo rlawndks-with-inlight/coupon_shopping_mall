@@ -27,7 +27,7 @@ export default function HomeLookingFor() {
   return (
     <StyledRoot>
       <Container component={MotionViewport}>
-        <Grid
+        {/* <Grid
           container
           alignItems="center"
           justifyContent="space-between"
@@ -46,7 +46,7 @@ export default function HomeLookingFor() {
               {VisitButton}
             </Grid>
           )}
-        </Grid>
+        </Grid> */}
       </Container>
     </StyledRoot>
   );

@@ -3,8 +3,10 @@ import PropTypes from 'prop-types';
 import dynamic from 'next/dynamic';
 import { useRouter } from 'next/router';
 // @mui
-import { Box } from '@mui/material';
+import { Box, Fab } from '@mui/material';
 import { useSettingsContext } from 'src/components/settings';
+import ScrollToTop from 'src/components/scroll-to-top';
+import { Icon } from '@iconify/react';
 //
 const Header = dynamic(() => import('./Header'), { ssr: false });
 const Footer = dynamic(() => import('./Footer'), { ssr: false });
@@ -39,6 +41,11 @@ export default function MainLayout({ children }) {
             </Box>
             <Footer />
           </Box>
+          <ScrollToTop className='mui-fixed'>
+            <Fab size='small' aria-label='scroll back to top'>
+              <Icon icon='tabler:arrow-up' />
+            </Fab>
+          </ScrollToTop>
         </>
         :
         <>

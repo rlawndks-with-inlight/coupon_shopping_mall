@@ -54,8 +54,8 @@ function Description() {
         variants={varFade().inDown}
         sx={{ color: 'common.white', mb: 5, typography: 'h2' }}
       >
-        Get started with
-        <br /> minimal kit today
+        컴어게인과 함께
+        <br /> 여행을 떠나볼까요?
       </Box>
 
       <Stack
@@ -76,7 +76,7 @@ function Description() {
               bgcolor: 'common.white',
             }}
           >
-            Purchase Now
+            신청하러 가기
           </Button>
         </m.div>
 
@@ -91,7 +91,7 @@ function Description() {
             endIcon={<Iconify icon="eva:external-link-fill" width={16} sx={{ mr: 0.5 }} />}
             sx={{ color: 'common.white', '&:hover': { borderColor: 'currentColor' } }}
           >
-            Get Free Version
+            디자인 미리보기
           </Button>
         </m.div>
       </Stack>

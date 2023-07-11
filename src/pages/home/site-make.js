@@ -1,11 +1,9 @@
 import MainLayout from "src/layouts/main/MainLayout";
 
 
-const SiteMake = () =>{
-
+const SiteMake = () => {//디자인 미리보기
   return (
     <>
-ㄴㅁㅇㄹㄴㄹㅁㅇ
     </>
   )
 }

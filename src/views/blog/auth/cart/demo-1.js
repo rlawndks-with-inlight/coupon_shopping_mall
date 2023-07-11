@@ -111,7 +111,6 @@ const Demo1 = (props) => {
     const [wantBuyList, setWantBuyList] = useState([]);
     const [cartList, setCartList] = useState([]);
     const [optionList, setOptionList] = useState([]);
-    const [sellerList, setSellerList] = useState([]);
     const [itemQuantity, setItemQuantity] = useState(0)
     const [priceSum, setPriceSum] = useState(0)
     const [deliveryFee, setDeliveryFee] = useState(0)
@@ -124,18 +123,19 @@ const Demo1 = (props) => {
         let seller_data = [...test_seller];
         let option_data = [...test_option_list];
         let option_list = [];
-        for(var i=  0;i<option_data.length;i++){
+        for (var i = 0; i < option_data.length; i++) {
             option_list = [...option_list, ...option_data[i].children];
         }
-        cart_data = cart_data.map((item)=>{
+        cart_data = cart_data.map((item) => {
             return {
                 ...item,
-                product:_.find(product_data, { id: item.product_id }),
-                optioin:_.find(option_list, { id: item.option_id }),
-                seller:_.find(seller_data, { id: item.seller_id })
+                product: _.find(product_data, { id: item.product_id }),
+                option: _.find(option_list, { id: item.option_id }),
+                seller: _.find(seller_data, { id: item.seller_id })
             }
         })
         setCartList(cart_data);
+        console.log(cartList)
     }
     return (
         <>
@@ -156,10 +156,10 @@ const Demo1 = (props) => {
                             float: 'left'
                         }}
                     >
-                        {_.uniqBy(sellerList, 'id').map((seller, idx) => {
+                        {_.uniqBy(cartList, 'seller.title').map((data, idx) => {
                             return <Tab
-                                label={seller.title}
-                                value={seller.id}
+                                label={data.seller.title}
+                                value={data.seller.id}
                                 sx={{
                                     borderBottom: '1px solid',
                                     borderColor: 'inherit',
@@ -176,7 +176,7 @@ const Demo1 = (props) => {
                             if (e.target.checked) {
                                 for (var i = 0; i < cartList.length; i++) {
                                     if (cartList[i].seller_id == sellerId) {
-                                        want_buy_list.push(cartList[i].product_id)
+                                        want_buy_list.push(cartList[i])
                                     }
                                 }
                                 want_buy_list = _.uniq(want_buy_list);
@@ -185,11 +185,12 @@ const Demo1 = (props) => {
                             else {
                                 for (var i = 0; i < cartList.length; i++) {
                                     if (cartList[i].seller_id == sellerId) {
-                                        want_buy_list.pop(cartList[i].product_id)
+                                        want_buy_list.pop(cartList[i])
                                     }
                                 }
                                 want_buy_list = _.uniq(want_buy_list);
                                 setWantBuyList(want_buy_list)
+                                console.log(want_buy_list)
                             }
                         }} />} />
                         <ChooseDelete /*추후에 이 버튼을 누르면 장바구니 array 안의 상품을 개별적으로 삭제할 수 있어야 함*/>선택 삭제</ChooseDelete>
@@ -203,7 +204,36 @@ const Demo1 = (props) => {
                             <>
                                 {item.seller_id == sellerId &&
                                     <>
-                                        <Title>{item.seller_id}</Title>
+                                        <ItemBox style={{
+                                            background: `${themeMode == 'dark' ? '#222' : '#fff'}`
+                                        }}>
+
+                                            <div style={{ padding: '1rem' }}>
+                                                <FormControlLabel label={<Typography style={{ fontSize: themeObj.font_size.size7, display: 'flex' }}>
+                                                    <img src={item.product.product_img} width='48px' height='48px' style={{ margin: '0 1rem 0 0.5rem' }} />
+                                                    <div style={{ display: 'flex', flexDirection: 'column' }}>
+                                                        <div>{item.product.name}</div>
+                                                        <div>{commarNumber(item.product.item_pr + item.option.price)}원</div>
+                                                        <div>옵션 : {item.option.name} / {item.quantity}개</div>
+                                                        <div style={{ marginTop: '0.5rem' }}>{commarNumber((item.product.item_pr + item.option.price) * item.quantity)}원</div>
+                                                    </div>
+                                                </Typography>} control={<Checkbox checked={wantBuyList.includes(item)} onChange={(e) => {
+                                                    let want_buy_list = [...wantBuyList];
+                                                    if (e.target.checked) {
+                                                        want_buy_list.push(item)
+                                                        setPriceSum(price => price + ((item.product.item_pr + item.option.price) * item.quantity))
+                                                        setItemQuantity(quantity => quantity + item.quantity)
+                                                    }
+                                                    else {
+                                                        want_buy_list.pop(item)
+                                                        setPriceSum(price => price - ((item.product.item_pr + item.option.price) * item.quantity))
+                                                        setItemQuantity(quantity => quantity - item.quantity)
+                                                    }
+                                                    want_buy_list = _.uniq(want_buy_list);
+                                                    setWantBuyList(want_buy_list)
+                                                }} />} />
+                                            </div>
+                                        </ItemBox>
                                     </>
                                 }
                             </>
@@ -224,7 +254,7 @@ const Demo1 = (props) => {
                         </Row>
                         <Row style={{ margin: '0.5rem 0', justifyContent: 'space-between' }}>
                             <div>배송비</div>
-                            <div>{deliveryFee}</div>
+                            <div>{deliveryFee}원</div>
                         </Row>
                         <Row style={{ margin: '1rem 0 2rem 0', justifyContent: 'space-between', fontWeight: 'bold', color: themeDnsData.theme_css?.main_color }}>
                             <div>총 결제 금액</div>

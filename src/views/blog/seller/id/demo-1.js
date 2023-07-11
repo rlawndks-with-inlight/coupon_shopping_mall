@@ -8,6 +8,7 @@ import { test_categories, test_items, test_seller } from 'src/data/test-data';
 import styled from 'styled-components'
 import _ from 'lodash'
 import { commarNumber } from 'src/utils/function';
+import { logoSrc } from 'src/data/data';
 
 const Wrappers = styled.div`
 max-width: 840px;
@@ -382,7 +383,7 @@ const Demo1 = (props) => {
                                 justifyContent: 'space-between'
                             }}
                         >
-                            <img src={'https://backend.comagain.kr/storage/images/logos/IFFUcyTPtgF887r0RPOGXZyLLPvp016Je17MENFT.svg'} style={{ height: '40px', width: 'auto' }} />
+                            <img src={logoSrc} style={{ height: '40px', width: 'auto' }} />
                             <IconButton
                                 sx={{}}
                                 onClick={() => {
@@ -418,7 +419,7 @@ const Demo1 = (props) => {
                                 justifyContent: 'space-between'
                             }}
                         >
-                            <img src={'https://backend.comagain.kr/storage/images/logos/IFFUcyTPtgF887r0RPOGXZyLLPvp016Je17MENFT.svg'} style={{ height: '40px', width: 'auto' }} />
+                            <img src={logoSrc} style={{ height: '40px', width: 'auto' }} />
                             <IconButton
                                 sx={{}}
                                 onClick={() => {

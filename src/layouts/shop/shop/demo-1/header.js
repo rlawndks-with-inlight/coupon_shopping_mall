@@ -12,6 +12,7 @@ import { TreeItem, TreeView } from "@mui/lab"
 import { getAllIdsWithParents } from "src/utils/function"
 import DialogSearch from "src/components/dialog/DialogSearch"
 import { useAuthContext } from "src/layouts/manager/auth/useAuthContext"
+import { logoSrc } from "src/data/data"
 
 const Wrappers = styled.header`
 width: 100%;
@@ -311,7 +312,7 @@ const Header = () => {
           }}
           >
             <TopMenuContainer>
-              <img src={'https://backend.comagain.kr/storage/images/logos/IFFUcyTPtgF887r0RPOGXZyLLPvp016Je17MENFT.svg'} style={{ height: '40px', width: 'auto', cursor: 'pointer' }}
+              <img src={logoSrc} style={{ height: '40px', width: 'auto', cursor: 'pointer' }}
                 onClick={() => {
                   router.push('/shop')
                 }}

@@ -19,6 +19,7 @@ import { LoadingButton } from '@mui/lab';
 import Iconify from '../../components/iconify';
 import $ from 'jquery';
 import { useRouter } from 'next/router';
+import { logoSrc } from 'src/data/data';
 
 export default function Login() {
   const { login, user } = useAuthContext();
@@ -72,7 +73,7 @@ export default function Login() {
         <>
           <Card>
             <CardContent>
-              <img src={'https://backend.comagain.kr/storage/images/logos/IFFUcyTPtgF887r0RPOGXZyLLPvp016Je17MENFT.svg'} style={{ maxWidth: '200px', margin: '1rem auto' }} />
+              <img src={logoSrc} style={{ maxWidth: '200px', margin: '1rem auto' }} />
               <Stack spacing={3}>
                 <TextField
                   name="username"

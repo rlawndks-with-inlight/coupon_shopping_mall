@@ -10,6 +10,7 @@ import { commarNumber } from 'src/utils/function';
 import Slider from 'react-slick';
 import { useTheme } from '@emotion/react';
 import dynamic from 'next/dynamic';
+import { logoSrc } from 'src/data/data';
 
 const ReactQuill = dynamic(() => import('react-quill'), {
     ssr: false,
@@ -391,7 +392,7 @@ const Demo1 = (props) => {
                                 justifyContent: 'space-between'
                             }}
                         >
-                            <img src={'https://backend.comagain.kr/storage/images/logos/IFFUcyTPtgF887r0RPOGXZyLLPvp016Je17MENFT.svg'} style={{ height: '40px', width: 'auto' }} />
+                            <img src={logoSrc} style={{ height: '40px', width: 'auto' }} />
                             <IconButton
                                 sx={{}}
                                 onClick={() => {
@@ -427,7 +428,7 @@ const Demo1 = (props) => {
                                 justifyContent: 'space-between'
                             }}
                         >
-                            <img src={'https://backend.comagain.kr/storage/images/logos/IFFUcyTPtgF887r0RPOGXZyLLPvp016Je17MENFT.svg'} style={{ height: '40px', width: 'auto' }} />
+                            <img src={logoSrc} style={{ height: '40px', width: 'auto' }} />
                             <IconButton
                                 sx={{}}
                                 onClick={() => {

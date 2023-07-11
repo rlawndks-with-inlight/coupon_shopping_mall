@@ -1,7 +1,7 @@
 import { Icon } from '@iconify/react';
 
 export const backUrl = process.env.BACK_URL;
-
+export const logoSrc = 'https://backend.comagain.kr/storage/images/logos/IFFUcyTPtgF887r0RPOGXZyLLPvp016Je17MENFT.svg';
 export const KAKAO_OBJ = {
   BACKGROUND: '#F9E000',
   FONT_COLOR: '#371C1D'
@@ -36,10 +36,10 @@ export const demoInfoByNum = {//데모 번호에 따라 블로그인지 일반�
 }
 export const columnObjFormat = (name, width, type, column) => {
   return {
-      name: name,
-      width: width,
-      type: type,
-      column: column,
+    name: name,
+    width: width,
+    type: type,
+    column: column,
   }
 }
 export const returnArticleCategory = {
@@ -51,11 +51,11 @@ export const returnArticleCategory = {
       columnObjFormat('작성자', '', 'text', 'edit_user_name'),
       columnObjFormat('작성일', '', 'text', 'date'),
       columnObjFormat('조회', '', 'number', 'views'),
-  ]
+    ]
   },
   faq: {
     title: '자주 묻는 질문',
-    columns:[
+    columns: [
       columnObjFormat('번호', '', 'number', 'id'),
       columnObjFormat('제목', '', 'title', 'title'),
       columnObjFormat('작성자', '', 'text', 'edit_user_name'),

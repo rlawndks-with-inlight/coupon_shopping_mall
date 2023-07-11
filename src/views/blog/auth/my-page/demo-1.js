@@ -7,6 +7,7 @@ import Policy from 'src/pages/blog/auth/policy';
 import { useAuthContext } from 'src/layouts/manager/auth/useAuthContext';
 import { useEffect } from 'react';
 import { Title } from 'src/components/elements/blog/demo-1';
+import { logoSrc } from 'src/data/data';
 
 const Wrappers = styled.div`
 max-width:798px;
@@ -262,7 +263,7 @@ const Demo1 = (props) => {
                         justifyContent: 'space-between'
                     }}
                 >
-                    <img src={'https://backend.comagain.kr/storage/images/logos/IFFUcyTPtgF887r0RPOGXZyLLPvp016Je17MENFT.svg'} style={{ height: '40px', width: 'auto' }} />
+                    <img src={logoSrc} style={{ height: '40px', width: 'auto' }} />
                     <IconButton
                         sx={{}}
                         onClick={() => {

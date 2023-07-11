@@ -142,7 +142,7 @@ function Description() {
     <StyledDescription>
       <m.div variants={varFade().in}>
         <Typography variant="h2" sx={{ textAlign: 'center' }}>
-          Start a <br />
+          쇼핑몰을  <br />
           new project with
         </Typography>
       </m.div>

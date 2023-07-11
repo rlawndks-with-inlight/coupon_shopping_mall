@@ -65,7 +65,7 @@ const HomePage = () => {
       >
         <HomeMinimal />
 
-        <HomeHugePackElements />
+        {/* <HomeHugePackElements /> */}
 
         <HomeForDesigner />
 

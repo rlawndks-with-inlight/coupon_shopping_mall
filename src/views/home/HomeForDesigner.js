@@ -100,11 +100,11 @@ function Description() {
 
   return (
     <StyledDescription>
-      <m.div variants={varFade().inUp}>
+      {/* <m.div variants={varFade().inUp}>
         <Typography component="div" variant="overline" sx={{ color: 'text.disabled' }}>
           Professional Kit
         </Typography>
-      </m.div>
+      </m.div> */}
 
       <m.div variants={varFade().inUp}>
         <Typography
@@ -117,7 +117,7 @@ function Description() {
             ),
           }}
         >
-          For Designer
+          깔끔하고 아름다운 디자인
         </Typography>
       </m.div>
 
@@ -138,7 +138,7 @@ function Description() {
             },
           }}
         >
-          Go to Figma Workspace
+          신청하러 가기
         </Button>
       </m.div>
     </StyledDescription>

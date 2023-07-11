@@ -42,11 +42,11 @@ function Description() {
         textAlign: { xs: 'center', md: 'left' },
       }}
     >
-      <m.div variants={varFade().inUp}>
+      {/* <m.div variants={varFade().inUp}>
         <Typography component="div" variant="overline" sx={{ color: 'text.disabled' }}>
           clean & clear
         </Typography>
-      </m.div>
+      </m.div> */}
 
       <m.div variants={varFade().inUp}>
         <Typography
@@ -58,7 +58,7 @@ function Description() {
                 : `4px 4px 16px ${alpha(theme.palette.grey[800], 0.48)}`,
           }}
         >
-          Beautiful, modern and clean user interfaces
+          아름답고 깔끔한 디자인을 제공합니다.
         </Typography>
       </m.div>
     </Stack>

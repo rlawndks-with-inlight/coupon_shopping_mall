@@ -59,7 +59,7 @@ export default function Header() {
 
           {isDesktop && <NavDesktop isOffset={isOffset} data={navConfig} />}
 
-          <Button variant="contained" target="_blank" rel="noopener" >
+          <Button variant="contained" target="_blank" rel="noopener" href='/manager/login'>
             신청하러 가기
           </Button>
 

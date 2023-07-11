@@ -70,7 +70,7 @@ function Description() {
             variant="contained"
             target="_blank"
             rel="noopener"
-            href={'#'}
+            href='/manager/login'
             sx={{
               color: 'grey.800',
               bgcolor: 'common.white',
@@ -87,7 +87,7 @@ function Description() {
             variant="outlined"
             target="_blank"
             rel="noopener"
-            href={'#'}
+            href={'/home/site-make'}
             endIcon={<Iconify icon="eva:external-link-fill" width={16} sx={{ mr: 0.5 }} />}
             sx={{ color: 'common.white', '&:hover': { borderColor: 'currentColor' } }}
           >

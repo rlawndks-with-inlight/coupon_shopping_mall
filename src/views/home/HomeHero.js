@@ -190,7 +190,7 @@ function Description() {
           <Stack alignItems="center" spacing={2}>
             <Button
               component={NextLink}
-              href={'#'}
+              href='/manager/login'
               color="inherit"
               size="large"
               variant="contained"
@@ -213,7 +213,7 @@ function Description() {
             startIcon={<Iconify icon="eva:external-link-fill" width={24} />}
             target="_blank"
             rel="noopener"
-            href={'#'}
+            href={'/home/site-make'}
             sx={{ borderColor: 'text.primary' }}
           >
             디자인 미리보기

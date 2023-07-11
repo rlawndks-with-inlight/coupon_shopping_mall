@@ -38,7 +38,7 @@ const ICONS = {
 const navConfig = [
   {
     items: [
-      { title: '대시보드', path: PATH_MANAGER.dashboards, icon: ICONS.dashboard },
+      { title: '대시보드', path: PATH_MANAGER.manager, icon: ICONS.dashboard },
     ],
   },
   {

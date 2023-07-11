@@ -129,7 +129,7 @@ function Description() {
           endIcon={<Iconify icon="ic:round-arrow-right-alt" />}
           target="_blank"
           rel="noopener"
-          href={'#'}
+          href='/manager/login'
           sx={{
             bgcolor: 'text.primary',
             color: theme.palette.mode === 'light' ? 'common.white' : 'grey.800',

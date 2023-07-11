@@ -66,7 +66,8 @@ const Demo1 = (props) => {
                 variant='contained'
                 style={{
                     height:'56px',
-                    fontSize:'large'
+                    fontSize:'large',
+                    marginBottom:'1rem'
                 }}
                 onClick={() => {
                     //router.push('/blog/auth/my-page/address/create')
@@ -78,7 +79,7 @@ const Demo1 = (props) => {
                         <>
                         <AddressContainer>
                             <div>
-                            {data.nickname}({data.receiver})<br /><br />
+                            <span style={{fontWeight:'bold'}}>{data.nickname}({data.receiver})<br /><br /></span>
                             {data.phone}<br />
                             {data.address} {data.detail}
                             </div>

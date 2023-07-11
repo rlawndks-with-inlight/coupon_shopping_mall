@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import Iconify from 'src/components/iconify/Iconify';
 import { Icon } from '@iconify/react';
 import { commarNumber } from 'src/utils/function';
-import _ from 'lodash'
+import _, { set } from 'lodash'
 import { Row, themeObj } from 'src/components/elements/styled-components';
 import { useSettingsContext } from 'src/components/settings';
 import { test_items, test_seller, test_option_list } from 'src/data/test-data';
@@ -58,23 +58,13 @@ flex-direction:column;
 padding:1rem;
 `
 const ItemBox = styled.div`
-margin 1rem 0;
+margin: 1rem 0;
 `
+
 const ContainerTitle = styled.div`
 fontWeight:bold;
 `
 
-const ContentBox = styled.div`
-margin:2.5% auto;
-background-color:white;
-width:95%;
-`
-
-const TextBox = styled.div`
-display:flex;
-flex-direction:column;
-margin-left:5%;
-`
 const test_cart = [
     {
         product_id: 64,
@@ -107,7 +97,7 @@ const Demo1 = (props) => {
         },
     } = props;
     const { themeMode, themeDnsData } = useSettingsContext();
-    const [sellerId, setSellerId] = useState(0)
+    const [sellerId, setSellerId] = useState(test_cart[0].seller_id)
     const [wantBuyList, setWantBuyList] = useState([]);
     const [cartList, setCartList] = useState([]);
     const [optionList, setOptionList] = useState([]);
@@ -150,6 +140,9 @@ const Demo1 = (props) => {
                         value={sellerId}
                         onChange={(event, newValue) => {
                             setSellerId(newValue)
+                            setWantBuyList([])
+                            setPriceSum(0)
+                            setItemQuantity(0)
                         }}
                         sx={{
                             width: '100%',
@@ -173,10 +166,13 @@ const Demo1 = (props) => {
                     <ChooseBox>
                         <FormControlLabel label={<Typography style={{ fontSize: themeObj.font_size.size7 }}>전체 선택</Typography>} control={<Checkbox onChange={(e) => {
                             let want_buy_list = [...wantBuyList];
+                            console.log(want_buy_list)
                             if (e.target.checked) {
                                 for (var i = 0; i < cartList.length; i++) {
                                     if (cartList[i].seller_id == sellerId) {
                                         want_buy_list.push(cartList[i])
+                                        //setPriceSum(price => price + ((cartList[i].product.item_pr + cartList[i].option.price) * cartList[i].quantity))
+                                       // setItemQuantity(quantity => quantity + cartList[i].quantity)
                                     }
                                 }
                                 want_buy_list = _.uniq(want_buy_list);
@@ -186,11 +182,12 @@ const Demo1 = (props) => {
                                 for (var i = 0; i < cartList.length; i++) {
                                     if (cartList[i].seller_id == sellerId) {
                                         want_buy_list.pop(cartList[i])
+                                       // setPriceSum(price => price - ((cartList[i].product.item_pr + cartList[i].option.price) * cartList[i].quantity))
+                                        //setItemQuantity(quantity => quantity - cartList[i].quantity)
                                     }
                                 }
                                 want_buy_list = _.uniq(want_buy_list);
                                 setWantBuyList(want_buy_list)
-                                console.log(want_buy_list)
                             }
                         }} />} />
                         <ChooseDelete /*추후에 이 버튼을 누르면 장바구니 array 안의 상품을 개별적으로 삭제할 수 있어야 함*/>선택 삭제</ChooseDelete>

@@ -19,12 +19,6 @@ import {
   HomeCleanInterfaces,
   HomeHugePackElements,
 } from 'src/views/home';
-import { useEffect } from 'react';
-
-// ----------------------------------------------------------------------
-
-
-// ----------------------------------------------------------------------
 
 const HomePage = () => {
   const theme = useTheme();
@@ -56,9 +50,8 @@ const HomePage = () => {
   return (
     <>
       <Head>
-        <title> The starting point for your next project | Minimal UI</title>
+        <title>컴어게인에서 꿈을 펼쳐보세요 !</title>
       </Head>
-
       {progress}
 
       <HomeHero />
@@ -91,5 +84,6 @@ const HomePage = () => {
     </>
   );
 }
+
 HomePage.getLayout = (page) => <MainLayout> {page} </MainLayout>;
 export default HomePage

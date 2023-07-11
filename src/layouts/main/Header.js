@@ -16,12 +16,14 @@ import Label from '../../components/label';
 import NavMobile from './nav/mobile';
 import navConfig from './nav/config-navigation';
 import NavDesktop from './nav/desktop';
+import { useRouter } from 'next/router';
+import { logoSrc } from 'src/data/data';
 
 // ----------------------------------------------------------------------
 
 export default function Header() {
   const theme = useTheme();
-
+  const router = useRouter();
   const isDesktop = useResponsive('up', 'md');
 
   const isOffset = useOffSetTop(HEADER.H_MAIN_DESKTOP);
@@ -48,18 +50,11 @@ export default function Header() {
         }}
       >
         <Container sx={{ height: 1, display: 'flex', alignItems: 'center' }}>
-          <Logo />
-
-          <Link
-            href='#'
-            target="_blank"
-            rel="noopener"
-            underline="none"
-            sx={{ ml: 1 }}
-          >
-            <Label color="info"> v4.2.0 </Label>
-          </Link>
-
+          <img src={logoSrc} style={{ height: '40px', width: 'auto', cursor: 'pointer' }}
+            onClick={() => {
+              router.push('/shop')
+            }}
+          />
           <Box sx={{ flexGrow: 1 }} />
 
           {isDesktop && <NavDesktop isOffset={isOffset} data={navConfig} />}

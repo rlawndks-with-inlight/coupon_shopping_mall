@@ -9,6 +9,7 @@ import { useSettingsContext } from "src/components/settings"
 import { test_categories } from "src/data/test-data"
 import { useRouter } from "next/router"
 import DialogSearch from "src/components/dialog/DialogSearch"
+import { logoSrc } from "src/data/data"
 
 const Wrappers = styled.header`
 width: 100%;
@@ -161,7 +162,7 @@ const Header = (props) => {
                 </>
                 :
                 <>
-                  <img src={'https://backend.comagain.kr/storage/images/logos/IFFUcyTPtgF887r0RPOGXZyLLPvp016Je17MENFT.svg'} style={{ height: '40px', width: 'auto', cursor: 'pointer' }} onClick={() => { router.push('/blog') }} />
+                  <img src={logoSrc} style={{ height: '40px', width: 'auto', cursor: 'pointer' }} onClick={() => { router.push('/blog') }} />
                 </>}
               <IconButton
                 sx={{ ...iconButtonStyle, marginLeft: 'auto' }}

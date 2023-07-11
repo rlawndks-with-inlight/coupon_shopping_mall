@@ -46,6 +46,7 @@ const getDemo = (num, common) => {
 
 const ShopLayout = ({ children, scrollToTop }) => {
   const router = useRouter();
+
   const [layoutDemoNum, setLayoutDemoNum] = useState(1);// 데모 번호
   const [category, setCategory] = useState("");
   const [loading, setLoading] = useState(true);
@@ -62,11 +63,18 @@ const ShopLayout = ({ children, scrollToTop }) => {
       setLoading(false);
     }
   }, [themeDnsData])
+  const getDemoNum = ()=>{
+    if(router.asPath.split('/')[1]=='shop'){
+      return themeDnsData?.shop_demo_num
+    }else if(router.asPath.split('/')[1]=='blog') {
+      return themeDnsData?.blog_demo_num
+    }
+  }
   return (
     <>
       {!loading &&
         <>
-          {getDemo(layoutDemoNum, {
+          {getDemo(getDemoNum(), {
             data: {
               category: router.asPath.split('/')[1]
             },

@@ -26,6 +26,7 @@ import { AuthProvider } from 'src/layouts/manager/auth/JwtContext';
 import NextNProgress from 'nextjs-progressbar';
 import { useEffect } from 'react';
 import ThemeContrast from 'src/components/settings/ThemeContrast';
+import { MotionLazyContainer } from 'src/components/animate';
 
 const App = (props) => {
   const { Component, pageProps } = props;
@@ -42,17 +43,18 @@ const App = (props) => {
             <ThemeColorPresets>
               <ThemeContrast>
                 <SettingsProvider>
+                <MotionLazyContainer>
                   <ThemeProvider>
                     {getLayout(<Component {...pageProps} />)}
                     <Toaster position={'right-top'} toastOptions={{ className: 'react-hot-toast' }} />
                   </ThemeProvider>
+                  </MotionLazyContainer>
                 </SettingsProvider>
               </ThemeContrast>
             </ThemeColorPresets>
           </LocalizationProvider>
         </ReduxProvider>
       </AuthProvider>
-
     </>
   );
 }

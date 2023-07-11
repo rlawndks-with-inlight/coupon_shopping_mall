@@ -1,7 +1,12 @@
-import { useTheme } from "@emotion/react";
-import { useScroll, useSpring, m } from "framer-motion";
-import { useRouter } from "next/router";
-import { useEffect, useState } from "react";
+import { m, useScroll, useSpring } from 'framer-motion';
+// next
+import Head from 'next/head';
+// @mui
+import { useTheme } from '@mui/material/styles';
+import { Box } from '@mui/material';
+// layouts
+import MainLayout from '../layouts/main';
+// sections
 import {
   HomeHero,
   HomeMinimal,
@@ -13,21 +18,17 @@ import {
   HomeAdvertisement,
   HomeCleanInterfaces,
   HomeHugePackElements,
-} from '../views/home';
-import MainLayout from "src/layouts/main/MainLayout";
-import { Box } from "@mui/material";
-const category = 'blog';
-const Index = () => {
-  const router = useRouter();
+} from 'src/views/home';
+import { useEffect } from 'react';
+
+// ----------------------------------------------------------------------
+
+
+// ----------------------------------------------------------------------
+
+const HomePage = () => {
   const theme = useTheme();
-  const [loading, setLoading] = useState(true);
-  useEffect(() => {
-    if (category == 'blog') {
-      router.push('/blog')
-    } else if (category == 'shop') {
-      router.push('/shop')
-    }
-  }, [])
+
   const { scrollYProgress } = useScroll();
 
   const scaleX = useSpring(scrollYProgress, {
@@ -54,9 +55,9 @@ const Index = () => {
 
   return (
     <>
-      {/* <Head>
+      <Head>
         <title> The starting point for your next project | Minimal UI</title>
-      </Head> */}
+      </Head>
 
       {progress}
 
@@ -90,5 +91,5 @@ const Index = () => {
     </>
   );
 }
-Index.getLayout = (page) => <MainLayout> {page} </MainLayout>;
-export default Index
+HomePage.getLayout = (page) => <MainLayout> {page} </MainLayout>;
+export default HomePage

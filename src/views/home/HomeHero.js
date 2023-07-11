@@ -117,7 +117,6 @@ export default function HomeHero() {
             <Grid item xs={12} md={6} sx={{ height: 1 }}>
               <Description />
             </Grid>
-
             {isDesktop && (
               <Grid item xs={12} md={6}>
                 <Content />
@@ -259,7 +258,6 @@ function Content() {
   const theme = useTheme();
 
   const isLight = theme.palette.mode === 'light';
-
   const transition = {
     repeatType: 'loop',
     ease: 'linear',

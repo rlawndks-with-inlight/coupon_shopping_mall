@@ -50,19 +50,19 @@ export default function HomeColorPresets() {
 function Description() {
   return (
     <Stack spacing={3} sx={{ textAlign: 'center' }}>
-      <m.div variants={varFade().inDown}>
+      {/* <m.div variants={varFade().inDown}>
         <Typography component="div" variant="overline" sx={{ color: 'text.disabled' }}>
           choose your style
         </Typography>
-      </m.div>
+      </m.div> */}
 
       <m.div variants={varFade().inDown}>
-        <Typography variant="h2"> Color presets </Typography>
+        <Typography variant="h2"> 자유로운 색상 설정 </Typography>
       </m.div>
 
       <m.div variants={varFade().inDown}>
         <Typography sx={{ color: 'text.secondary' }}>
-          Express your own style with just one click
+          원하는 색상을 자유롭게 선택할 수 있습니다.
         </Typography>
       </m.div>
     </Stack>

@@ -55,7 +55,7 @@ const StyledGradientText = styled(m.h1)(({ theme }) => ({
   fontFamily: secondaryFont.style.fontFamily,
   fontSize: `${64 / 16}rem`,
   textAlign: 'center',
-  lineHeight: 1,
+  lineHeight: 1.2,
   padding: 0,
   marginTop: 8,
   marginBottom: 24,
@@ -142,8 +142,8 @@ function Description() {
     <StyledDescription>
       <m.div variants={varFade().in}>
         <Typography variant="h2" sx={{ textAlign: 'center' }}>
-          쇼핑몰을  <br />
-          new project with
+          쇼핑몰을 제작하고 <br />
+          분양하고 싶다면?
         </Typography>
       </m.div>
 
@@ -157,14 +157,13 @@ function Description() {
             repeat: Infinity,
           }}
         >
-          Minimal
+          Comagain
         </StyledGradientText>
       </m.div>
 
       <m.div variants={varFade().in}>
         <Typography variant="body2" sx={{ textAlign: 'center' }}>
-          The starting point for your next project is based on MUI.Easy customization Helps you
-          build apps faster and better.
+          본 플랫폼은 일반 쇼핑몰 및 블로그 쇼핑몰을 제작하며, 쇼핑몰 분양 솔루션을 제공합니다. 컴어게인에서 꿈을 실현하세요 !
         </Typography>
       </m.div>
 
@@ -176,13 +175,13 @@ function Description() {
           justifyContent="center"
           sx={{ my: 3 }}
         >
-          <Rating readOnly value={4.95} precision={0.1} max={5} />
+          {/* <Rating readOnly value={4.95} precision={0.1} max={5} />
           <Typography variant="caption" sx={{ color: 'text.secondary' }}>
             <Box component="strong" sx={{ mr: 0.5, color: 'text.primary' }}>
               4.95/5
             </Box>
             (99+ reviews)
-          </Typography>
+          </Typography> */}
         </Stack>
       </m.div>
 
@@ -204,20 +203,8 @@ function Description() {
                 },
               }}
             >
-              Live Preview
+              디자인 체험하기
             </Button>
-
-            <Link
-              color="inherit"
-              variant="caption"
-              target="_blank"
-              rel="noopener"
-              href={'#'}
-              sx={{ textDecoration: 'underline', display: 'inline-flex', alignItems: 'center' }}
-            >
-              <Iconify icon="eva:external-link-fill" width={16} sx={{ mr: 0.5 }} />
-              Get Free Version
-            </Link>
           </Stack>
 
           <Button
@@ -230,14 +217,14 @@ function Description() {
             href={'#'}
             sx={{ borderColor: 'text.primary' }}
           >
-            Design Preview
+            디자인 미리보기
           </Button>
         </Stack>
       </m.div>
 
       <Stack spacing={3} sx={{ textAlign: 'center', opacity: 0.48 }}>
         <m.div variants={varFade().in}>
-          <Typography variant="overline">Available For</Typography>
+          <Typography variant="overline">무엇으로 개발하나요?</Typography>
         </m.div>
 
         <Stack spacing={2} direction="row" justifyContent="center">

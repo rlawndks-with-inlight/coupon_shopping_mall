@@ -30,16 +30,16 @@ export default function HomeDarkMode() {
   return (
     <StyledRoot>
       <Container component={MotionViewport}>
-        <m.div variants={varFade().inUp}>
+        {/* <m.div variants={varFade().inUp}>
           <Typography component="div" variant="overline" sx={{ color: 'primary.main' }}>
             Easy switch between styles.
           </Typography>
-        </m.div>
+        </m.div> */}
 
         <m.div variants={varFade().inUp}>
           <Stack spacing={2} direction="row" alignItems="center" display="inline-flex">
             <Typography variant="h2" sx={{ my: 3, color: 'common.white' }}>
-              Dark mode
+              자유로운 다크모드 제공
             </Typography>
 
             <IconButton color={themeMode === 'dark' ? 'warning' : 'default'} onClick={onToggleMode}>
@@ -52,7 +52,7 @@ export default function HomeDarkMode() {
 
         <m.div variants={varFade().inUp}>
           <Typography sx={{ color: 'grey.500' }}>
-            A dark theme that feels easier on the eyes.
+            다크모드 배경색 및 폰트색상을 설정할 수 있습니다.
           </Typography>
         </m.div>
 

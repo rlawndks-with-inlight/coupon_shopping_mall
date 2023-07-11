@@ -11,19 +11,19 @@ import { MotionViewport, varFade } from '../../components/animate';
 const CARDS = [
   {
     icon: ' /assets/icons/home/ic_make_brand.svg',
-    title: 'Branding',
-    description: 'Consistent design makes it easy to brand your own.',
+    title: '브랜딩',
+    description: '일관된 디자인으로 나만의 브랜드를 쉽게 만들 수 있습니다.',
   },
   {
     icon: ' /assets/icons/home/ic_design.svg',
-    title: 'UI & UX Design',
+    title: 'UI & UX 디자인',
     description:
-      'The kit is built on the principles of the atomic design system. It helps you to create projects fastest and easily customized packages for your projects.',
+      '쇼핑몰을 제작하기에 쉽고 빠르게 만들 수 있게 도움을 줍니다.',
   },
   {
     icon: ' /assets/icons/home/ic_development.svg',
-    title: 'Development',
-    description: 'Easy to customize and extend, saving you time and money.',
+    title: '개발',
+    description: '기능 개발 및 확장에 자유롭습니다.',
   },
 ];
 
@@ -56,15 +56,10 @@ export default function HomeMinimal() {
             mb: { xs: 5, md: 10 },
           }}
         >
-          <m.div variants={varFade().inUp}>
-            <Typography component="div" variant="overline" sx={{ color: 'text.disabled' }}>
-              Minimal UI
-            </Typography>
-          </m.div>
 
           <m.div variants={varFade().inDown}>
             <Typography variant="h2">
-              What minimal <br /> helps you?
+              컴어게인은 <br /> 무엇을 도와줄까요?
             </Typography>
           </m.div>
         </Stack>

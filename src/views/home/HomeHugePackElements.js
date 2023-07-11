@@ -199,13 +199,13 @@ function Content() {
       <StyledRow>
         <m.div variants={varFade().in}>
           <Button variant="contained" startIcon={<Iconify icon="ic:round-add-shopping-cart" />}>
-            Add To Cart
+            장바구니
           </Button>
         </m.div>
 
         <m.div variants={varFade().in}>
           <Button variant="soft" startIcon={<Iconify icon="eva:cloud-upload-fill" />}>
-            Upload
+            업로드
           </Button>
         </m.div>
 

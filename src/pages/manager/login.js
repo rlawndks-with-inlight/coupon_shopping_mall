@@ -1,21 +1,11 @@
-// @mui
 import { Stack, TextField, InputAdornment, IconButton, Card, CardContent, Link, Typography } from '@mui/material';
-// auth
-// layouts
 import LoginLayout from '../../layouts/login';
-// routes
-//
 import { useAuthContext } from 'src/layouts/manager/auth/useAuthContext';
 import { useEffect, useState } from 'react';
 import * as Yup from 'yup';
-// next
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
-// @mui
 import { LoadingButton } from '@mui/lab';
-// routes
-// auth
-// components
 import Iconify from '../../components/iconify';
 import $ from 'jquery';
 import { useRouter } from 'next/router';
@@ -24,9 +14,12 @@ import { useSettingsContext } from 'src/components/settings';
 import NextLink from 'next/link';
 import { StyledContent, StyledSection, StyledSectionBg } from 'src/layouts/login/styles';
 import Image from 'src/components/image/Image';
-
-export default function Login() {
-  const { themeDnsData } = useSettingsContext();
+import dynamic from 'next/dynamic';
+const Tour = dynamic(
+  () => import('reactour'),
+  { ssr: false },
+);
+const Login = () => {
   const { login, user } = useAuthContext();
 
   const router = useRouter();
@@ -38,33 +31,20 @@ export default function Login() {
   useEffect(() => {
     setTimeout(() => {
       if (user) {
-        router.push(`/manager`)
+        router.push(`/manager`);
       }
       setLoading(false);
     }, 300)
   }, [])
-
+  useEffect(() => {
+    if (router.query?.is_first) {
+      openTour('is-first', "판매자 계정이 없으시면 클릭 후 가입해 주세요.\n5분 내에 가입이 완료됩니다 !")
+    }
+  }, [router.query?.is_first])
   const LoginSchema = Yup.object().shape({
     email: Yup.string().required('Email is required').email('Email must be a valid email address'),
     password: Yup.string().required('Password is required'),
   });
-
-  const defaultValues = {
-    email: 'demo@minimals.cc',
-    password: 'demo1234',
-  };
-
-  const methods = useForm({
-    resolver: yupResolver(LoginSchema),
-    defaultValues,
-  });
-
-  const {
-    reset,
-    setError,
-    handleSubmit,
-    formState: { errors, isSubmitting, isSubmitSuccessful },
-  } = methods;
 
   const onSubmit = async () => {
     let user = await login(username, password);
@@ -72,9 +52,24 @@ export default function Login() {
       router.push('/manager')
     }
   };
+  const [tourOpen, setTourOpen] = useState(false);
+  const [tourSteps, setTourSteps] = useState([]);
 
+  const openTour = (class_name, text,) => {
+    setTourSteps([
+      {
+        selector: `.${class_name}`,
+        content: text,
+      },
+    ])
+    setTourOpen(true);
+  }
+  const closeTour = () => {
+    setTourOpen(false);
+    setTourSteps([]);
+  };
   return (
-    <LoginLayout>
+    <>
       {!loading &&
         <>
           <StyledSection>
@@ -139,7 +134,6 @@ export default function Login() {
                 size="large"
                 type="submit"
                 variant="contained"
-                loading={isSubmitSuccessful || isSubmitting}
                 sx={{
                   bgcolor: 'text.primary',
                   color: (theme) => (theme.palette.mode === 'light' ? 'common.white' : 'grey.800'),
@@ -160,16 +154,21 @@ export default function Login() {
                   variant="body2"
                   color="inherit"
                   underline="always"
+                  className='is-first'
                 >
                   컴어게인이 처음이신가요?
                 </Link>
               </Stack>
             </Stack>
           </StyledContent>
-
-
+          <Tour
+            steps={tourSteps}
+            isOpen={tourOpen}
+            disableInteraction={false}
+            onRequestClose={closeTour} />
         </>}
-
-    </LoginLayout>
+    </>
   );
 }
+Login.getLayout = (page) => <LoginLayout>{page}</LoginLayout>;
+export default Login;

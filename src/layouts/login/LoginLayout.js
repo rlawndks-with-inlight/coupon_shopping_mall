@@ -10,6 +10,8 @@ import { logoSrc } from 'src/data/data';
 import { Row } from 'src/components/elements/styled-components';
 import styled from 'styled-components';
 import { useSettingsContext } from 'src/components/settings';
+import { useEffect, useState } from 'react';
+import { useRouter } from 'next/router';
 
 // ----------------------------------------------------------------------
 
@@ -20,21 +22,36 @@ LoginLayout.propTypes = {
 };
 const TopLogoImg = styled.img`
 height: 48px;
-margin: 1rem auto 1rem 1rem;
+cursor:pointer;
 @media (max-width:900px){
-  display:none;
+  height: 32px;
 }
 `
 export default function LoginLayout({ children }) {
 
   const { themeDnsData } = useSettingsContext();
+  const router = useRouter();
+  const [loading, setLoading] = useState(true);
+  useEffect(() => {
+    if (themeDnsData?.id) {
+      setLoading(false);
+    }
+  }, [themeDnsData])
   return (
     <>
-      {themeDnsData?.id &&
+      {!loading &&
         <>
           <StyledRoot style={{ flexDirection: 'column' }}>
-            <TopLogoImg src={logoSrc} />
-            <Row>
+            <Row style={{
+              margin: '1rem auto 1rem 1rem',
+              alignItems: 'center',
+              fontWeight:'bold',
+              columnGap:'0.5rem'
+            }}>
+              <TopLogoImg src={logoSrc} onClick={() => { router.push('/manager/login') }} />
+              <div>판매자 센터</div>
+            </Row>
+            <Row style={{minHeight:'90vh'}}>
               {children}
             </Row>
           </StyledRoot>

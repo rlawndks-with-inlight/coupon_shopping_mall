@@ -70,7 +70,7 @@ function Description() {
             variant="contained"
             target="_blank"
             rel="noopener"
-            href='/manager/login'
+            href='/manager/login?is_first=1'
             sx={{
               color: 'grey.800',
               bgcolor: 'common.white',

@@ -1,4 +1,4 @@
-import { Chip, MenuItem, Select } from "@mui/material";
+import { Button, Chip, MenuItem, Select } from "@mui/material";
 import { useState } from "react";
 import { Row, Title, themeObj } from "src/components/elements/styled-components";
 import MainLayout from "src/layouts/main/MainLayout";
@@ -37,6 +37,8 @@ height:288px;
 
 const Template = (props) => {
   const { item } = props;
+
+  const [isMouseOver, setIsMouseOver] = useState(false)
   return (
     <>
       <TemplateContainer>
@@ -47,7 +49,13 @@ const Template = (props) => {
             backgroundRepeat: 'no-repeat',
             backgroundPosition: 'center'
           }}
+          onMouseOver={() => setIsMouseOver(true)}
+          onMouseLeave={() => { setIsMouseOver(false) }}
         >
+          <Row style={{ opacity: `${isMouseOver ? 1 : 0}`, flexDirection: 'column', height: '100%', background: '#00000099', transition: '0.3s' }}>
+            <Button variant="contained" sx={{ width: '120px', margin: 'auto auto 0.25rem auto' }}>개설하기</Button>
+            <Button variant="outlined" sx={{ width: '120px', margin: '0.25rem auto auto auto', background: '#fff', '&:hover': { background: '#fff' } }}>미리보기</Button>
+          </Row>
         </TemplateImg>
         <Row style={{ marginTop: '1rem', alignItems: 'center', fontWeight: 'bold' }}>
           <div>{item.title}</div>

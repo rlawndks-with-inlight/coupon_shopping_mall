@@ -190,7 +190,7 @@ function Description() {
           <Stack alignItems="center" spacing={2}>
             <Button
               component={NextLink}
-              href='/manager/login'
+              href='/manager/login?is_first=1'
               color="inherit"
               size="large"
               variant="contained"
@@ -205,7 +205,6 @@ function Description() {
               신청하러 가기
             </Button>
           </Stack>
-
           <Button
             color="inherit"
             size="large"

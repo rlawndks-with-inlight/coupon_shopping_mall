@@ -371,7 +371,8 @@ const Demo1 = (props) => {
                 fullWidth
                 PaperProps={{
                     sx: {
-                        maxWidth: '840px'
+                        maxWidth: '540px',
+                        width:'90vw'
                     }
                 }}
             >
@@ -385,7 +386,6 @@ const Demo1 = (props) => {
                         >
                             <img src={logoSrc} style={{ height: '40px', width: 'auto' }} />
                             <IconButton
-                                sx={{}}
                                 onClick={() => {
                                     setDialogOpen(false)
                                 }}

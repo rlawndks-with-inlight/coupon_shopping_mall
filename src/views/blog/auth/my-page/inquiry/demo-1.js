@@ -1,8 +1,9 @@
 import styled from 'styled-components'
 import { Wrappers, Title } from 'src/components/elements/blog/demo-1';
-import { Tabs, Tab, Accordion, AccordionSummary, AccordionDetails, IconButton } from '@mui/material';
+import { Tabs, Tab, Accordion, AccordionSummary, AccordionDetails, IconButton, Typography, Card } from '@mui/material';
 import { useState, useEffect } from 'react';
 import { Icon } from '@iconify/react';
+import Iconify from 'src/components/iconify/Iconify';
 
 const SubTitle = styled.h3`
 font-size:14px;
@@ -28,6 +29,7 @@ const returnInquiryType = {
 
 const test_inquiry = [
     {
+        id:1,
         inquiry_type: 0,
         inquiry_title: '주문문의',
         inquiry_detail: '입금했는데 입금 확인이 안됩니다',
@@ -35,12 +37,14 @@ const test_inquiry = [
         answer: '죄송합니다. 입금이 누락되어 다시 보냈으니 확인 바랍니다.'
     },
     {
+        id:2,
         inquiry_type: 1,
         inquiry_title: '일반문의',
         inquiry_detail: '배송지를 변경하고 싶어요',
         answer: '배송지 변경은 배송 시작 전에만 가능하며 판매자가 직접 변경해야 합니다. 판매자에게 문의하여 배송지 변경 요청을 해주시길 바랍니다.'
     },
     {
+        id:232,
         inquiry_type: 0,
         inquiry_title: '주문문의',
         inquiry_detail: '취소하고 싶어요',
@@ -62,8 +66,7 @@ const Demo1 = (props) => {
 
     const [inquiryType, setInquiryType] = useState(0)
     const [inquiryList, setInquiryList] = useState([])
-    const [arrowType, setArrowType] = useState(true)
-
+    const [controlled, setControlled] = useState(undefined)
     useEffect(() => {
         settingPage();
     }, [])
@@ -110,37 +113,32 @@ const Demo1 = (props) => {
                         }} />
                     ))}
                 </Tabs>
-                {inquiryList.map((item, idx) => (
-                    <>
-                        {item.inquiry_type == inquiryType &&
-                            <>
-                                <Accordion
-                                    style={{
-                                        border: '1px solid black',
+                    {inquiryList.map((item, idx) => (
+                        <>
+                            {item.inquiry_type == inquiryType &&
+                                <>
+                                    <Accordion 
+                                    key={idx}
+                                    expanded={controlled === item.id}
+                                    onChange={()=>{
+                                        if(item.id == controlled){
+                                            setControlled(undefined);
+                                        }else{
+                                            setControlled(item.id)
+                                        }
                                     }}
-                                    disabled={!item.answer}
-                                    onClick={() => {
-                                        setArrowType(arrow => !arrow)
-                                    }}
-                                >
-                                    <AccordionSummary sx={{display:'flex', justifyContent:'space-between'}}>
-                                        <div>[{item.inquiry_title}{item.inquiry_seller ? `-${item.inquiry_seller}` : ""}] {item.inquiry_detail}</div>
-                                        {item.answer ?
-                                            <>
-                                                <IconButton style={{height:'24px', float:'right'}}>
-                                                    <Icon icon={arrowType ? 'ep:arrow-down':'ep-arrow-up'} color='black' />
-                                                </IconButton>
-                                            </>
-                                            :
-                                            ""}
-                                    </AccordionSummary>
-                                    <AccordionDetails style={{ borderTop: '1px solid black', }}><div>{item.answer ? item.answer : "아직 답변이 등록되지 않았습니다."}</div></AccordionDetails>
-                                </Accordion>
-                            </>
-
-                        }
-                    </>
-                ))}
+                                    >
+                                        <AccordionSummary expandIcon={<Iconify icon="eva:arrow-ios-downward-fill" />}>
+                                            <Typography variant="subtitle1">{item.inquiry_detail}</Typography>
+                                        </AccordionSummary>
+                                        <AccordionDetails>
+                                            <Typography>{item.answer}</Typography>
+                                        </AccordionDetails>
+                                    </Accordion>
+                                </>
+                            }
+                        </>
+                    ))}
             </Wrappers>
         </>
     )

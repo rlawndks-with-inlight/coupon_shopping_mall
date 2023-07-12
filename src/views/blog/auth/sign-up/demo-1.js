@@ -75,12 +75,14 @@ const SelectContainer = styled.div`
 display:flex;
 width:100%;
 margin:0 auto;
+justify-content:space-between;
+column-gap:0.5rem;
 `
 
 const SelectBox = styled.div`
 display:flex;
 flex-direction:column;
-margin-right:1%;
+flex-grow:1;
 `
 
 // 회원가입 김인욱
@@ -343,12 +345,12 @@ const Demo1 = (props) => {
               />
               <TextFieldTitle>생년월일</TextFieldTitle>
               <SelectContainer>
-                <SelectBox>
+                <SelectBox style={{width:'45%'}}>
                   <InputLabel>년</InputLabel>
                   <Select
                     value={birthDate.year}
                     style={{
-                      width: '100px'
+                      width: '100%'
                     }}
                     onChange={(e) => {
                       setBirthDate({ ...birthDate, year: e.target.value })
@@ -359,12 +361,12 @@ const Demo1 = (props) => {
                     ))}
                   </Select>
                 </SelectBox>
-                <SelectBox>
+                <SelectBox style={{width:'25%'}}>
                   <InputLabel>월</InputLabel>
                   <Select
                     value={birthDate.month}
                     style={{
-                      width: '80px'
+                      width: '100%'
                     }}
                     onChange={(e) => {
                       setBirthDate({ ...birthDate, month: e.target.value })
@@ -375,12 +377,12 @@ const Demo1 = (props) => {
                     ))}
                   </Select>
                 </SelectBox>
-                <SelectBox>
+                <SelectBox style={{width:'25%'}}>
                   <InputLabel>일</InputLabel>
                   <Select
                     value={birthDate.day}
                     style={{
-                      width: '80px'
+                      width: '100%'
                     }}
                     onChange={(e) => {
                       setBirthDate({ ...birthDate, day: e.target.value })

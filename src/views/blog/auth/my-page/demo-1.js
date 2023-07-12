@@ -253,7 +253,8 @@ const Demo1 = (props) => {
                 fullWidth
                 PaperProps={{
                     sx: {
-                        maxWidth: '840px'
+                        maxWidth: '540px',
+                        width:'90vw'
                     }
                 }}
             >

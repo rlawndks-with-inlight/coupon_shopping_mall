@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types';
-import { Button, Card, Checkbox, Divider, FormControlLabel, InputAdornment, Step, StepConnector, StepLabel, Stepper, TextField, Typography, stepConnectorClasses } from '@mui/material';
+import { Button, Card, Checkbox, Divider, FormControlLabel, InputAdornment, Step, StepConnector, StepLabel, Stepper, Tab, Tabs, TextField, Typography, stepConnectorClasses } from '@mui/material';
 import { useState } from 'react';
 import { Col, Row, Title, themeObj } from 'src/components/elements/styled-components';
 import styled from 'styled-components'
@@ -21,7 +21,7 @@ margin: 1rem auto auto auto;
 width: 90%;
 `
 
-const STEPS = ['약관동의', '휴대폰인증', '정보입력', '결제수단등록', '가입완료'];
+const STEPS = ['약관동의', '정보입력', '가입완료'];
 const ColorlibConnector = muiStyled(StepConnector)(({ theme }) => ({
   [`&.${stepConnectorClasses.alternativeLabel}`]: {
     top: 22,
@@ -81,10 +81,8 @@ function ColorlibStepIcon(props) {
   const { active, completed, className, icon } = props;
   const icons = {
     1: <Iconify icon="eva:settings-2-outline" width={24} />,
-    2: <Iconify icon="gridicons:phone" width={24} />,
-    3: <Iconify icon="eva:person-add-outline" width={24} />,
-    4: <Iconify icon="ion:card-outline" width={24} />,
-    5: <Iconify icon="fluent-mdl2:completed" width={24} />,
+    2: <Iconify icon="eva:person-add-outline" width={24} />,
+    3: <Iconify icon="fluent-mdl2:completed" width={24} />,
   };
   return (
     <ColorlibStepIconRoot ownerState={{ completed, active }} className={className}>
@@ -117,6 +115,7 @@ const Register = () => {
     name: '',
     phone: '',
     email: '',
+    member_type: undefined,
   })
   const onClickPrevButton = () => {
     if (activeStep == 0) {
@@ -126,12 +125,6 @@ const Register = () => {
     if (activeStep == 1) {
     }
     if (activeStep == 2) {
-
-    }
-    if (activeStep == 3) {
-
-    }
-    if (activeStep == 4) {
 
     }
     setActiveStep(activeStep - 1);
@@ -147,7 +140,7 @@ const Register = () => {
         return;
       }
     }
-    if (activeStep == 2) {
+    if (activeStep == 1) {
       if (
         !user.username ||
         !user.password ||
@@ -160,7 +153,7 @@ const Register = () => {
         return;
       }
     }
-    if (activeStep == 4) {
+    if (activeStep == 2) {
       router.push('/manager/login');
     }
     setActiveStep(activeStep + 1);
@@ -246,20 +239,8 @@ const Register = () => {
               선택 약관에 동의하지 않으셔도 회원가입은 가능하며, 회원가입 후 회원정보수정 페이지에서 언제든지 수신여부를 변경하실 수 있습니다.
             </div>
           </>}
+
         {activeStep == 1 &&
-          <>
-            <div style={{
-              margin: '0 auto'
-            }}>휴대폰 인증을 완료해 주세요.</div>
-            <Button variant='contained' style={{
-              height: '56px',
-              width: '300px',
-              margin: '3rem auto'
-            }}>
-              인증하기
-            </Button>
-          </>}
-        {activeStep == 2 &&
           <>
             <TextField
               label='아이디'
@@ -309,6 +290,39 @@ const Register = () => {
                 }
               }}
             />
+            <Typography variant="subtitle2" sx={{ color: 'text.secondary', margin: '1rem 0 0 0' }}>
+              회원유형 선택
+            </Typography>
+            <Tabs
+              indicatorColor='primary'
+              textColor='primary'
+              value={user.member_type}
+              scrollButtons='false'
+              variant='fullWidth'
+              sx={{ width: '100%' }}
+              onChange={(event, newValue) => {
+                setUser({ ...user, ['member_type']: newValue })
+              }}
+            >
+              {[
+                {
+                  label: '개인',
+                  value: 0
+                },
+                {
+                  label: '기업',
+                  value: 1
+                },
+              ].map((item) => (
+                <Tab key={item.label} value={item.value} label={item.label} />
+              ))}
+            </Tabs>
+            {user.member_type == 0 &&
+              <>
+              </>}
+            {user.member_type == 1 &&
+              <>
+              </>}
             <TextField
               label='이름'
               onChange={(e) => {
@@ -349,10 +363,7 @@ const Register = () => {
               }}
             />
           </>}
-        {activeStep == 3 &&
-          <>
-          </>}
-        {activeStep == 4 &&
+        {activeStep == 2 &&
           <>
             <Col>
               <Icon icon={'fluent-mdl2:completed'} style={{ margin: '8rem auto 1rem auto', fontSize: themeObj.font_size.size1, color: theme.palette.primary.main }} />

@@ -7,6 +7,8 @@ import Image from '../../components/image';
 //
 import { StyledRoot, StyledSectionBg, StyledSection, StyledContent } from './styles';
 import { logoSrc } from 'src/data/data';
+import { Row } from 'src/components/elements/styled-components';
+import styled from 'styled-components';
 import { useSettingsContext } from 'src/components/settings';
 
 // ----------------------------------------------------------------------
@@ -16,35 +18,25 @@ LoginLayout.propTypes = {
   children: PropTypes.node,
   illustration: PropTypes.string,
 };
-
-export default function LoginLayout({ children, illustration, title }) {
+const TopLogoImg = styled.img`
+height: 48px;
+margin: 1rem auto 1rem 1rem;
+@media (max-width:900px){
+  display:none;
+}
+`
+export default function LoginLayout({ children }) {
 
   const { themeDnsData } = useSettingsContext();
   return (
     <>
       {themeDnsData?.id &&
         <>
-          <StyledRoot>
-            <img src={logoSrc} style={{ height: '48px', margin: '1rem' }} />
-
-            <StyledSection>
-              <Typography variant="h3" sx={{ mb: 10, maxWidth: 520, textAlign: 'center' }}>
-                컴어게인 쇼핑몰에 오신것을 환영합니다!
-              </Typography>
-
-              <Image
-                disabledEffect
-                visibleByDefault
-                alt="auth"
-                src={illustration || '/assets/illustrations/illustration_dashboard.png'}
-                sx={{ maxWidth: 720 }}
-              />
-
-              <StyledSectionBg />
-            </StyledSection>
-            <StyledContent>
-              <Stack sx={{ width: 1 }}> {children} </Stack>
-            </StyledContent>
+          <StyledRoot style={{ flexDirection: 'column' }}>
+            <TopLogoImg src={logoSrc} />
+            <Row>
+              {children}
+            </Row>
           </StyledRoot>
         </>}
     </>

@@ -1,5 +1,5 @@
 // @mui
-import { Stack, TextField, InputAdornment, IconButton, Card, CardContent, Link } from '@mui/material';
+import { Stack, TextField, InputAdornment, IconButton, Card, CardContent, Link, Typography } from '@mui/material';
 // auth
 // layouts
 import LoginLayout from '../../layouts/login';
@@ -22,6 +22,8 @@ import { useRouter } from 'next/router';
 import { logoSrc } from 'src/data/data';
 import { useSettingsContext } from 'src/components/settings';
 import NextLink from 'next/link';
+import { StyledContent, StyledSection, StyledSectionBg } from 'src/layouts/login/styles';
+import Image from 'src/components/image/Image';
 
 export default function Login() {
   const { themeDnsData } = useSettingsContext();
@@ -75,78 +77,97 @@ export default function Login() {
     <LoginLayout>
       {!loading &&
         <>
+          <StyledSection>
+            <Typography variant="h3" sx={{ mb: 10, maxWidth: 520, textAlign: 'center' }}>
+              컴어게인 쇼핑몰에 오신것을 환영합니다!
+            </Typography>
+            <Image
+              disabledEffect
+              visibleByDefault
+              alt="auth"
+              src={'/assets/illustrations/illustration_dashboard.png'}
+              sx={{ maxWidth: 720 }}
+            />
+            <StyledSectionBg />
+          </StyledSection>
+          <StyledContent style={{ minHeight: '90vh' }}>
+            <Stack sx={{ width: 1 }}>
 
-          <img src={logoSrc} style={{ maxWidth: '200px', margin: '1rem auto' }} />
-          <Stack spacing={3}>
-            <TextField
-              name="username"
-              label="아이디를 입력해 주세요."
-              autoComplete='new-password'
-              onChange={(e) => {
-                setUsername(e.target.value)
-              }}
-              onKeyPress={(e) => {
-                if (e.key == 'Enter') {
-                  $('#id').focus();
-                }
-              }}
-            />
-            <TextField
-              name="password"
-              id="password"
-              label="패스워드를 입력해 주세요."
-              type={showPassword ? 'text' : 'password'}
-              autoComplete='new-password'
-              onKeyPress={(e) => {
-                if (e.key == 'Enter') {
-                  onSubmit();
-                }
-              }}
-              onChange={(e) => {
-                setPassword(e.target.value)
-              }}
-              InputProps={{
-                endAdornment: (
-                  <InputAdornment position="end">
-                    <IconButton onClick={() => setShowPassword(!showPassword)} edge="end">
-                      <Iconify icon={showPassword ? 'eva:eye-fill' : 'eva:eye-off-fill'} />
-                    </IconButton>
-                  </InputAdornment>
-                ),
-              }}
-            />
-          </Stack>
-          <LoadingButton
-            fullWidth
-            color="inherit"
-            size="large"
-            type="submit"
-            variant="contained"
-            loading={isSubmitSuccessful || isSubmitting}
-            sx={{
-              bgcolor: 'text.primary',
-              color: (theme) => (theme.palette.mode === 'light' ? 'common.white' : 'grey.800'),
-              '&:hover': {
-                bgcolor: 'text.primary',
-                color: (theme) => (theme.palette.mode === 'light' ? 'common.white' : 'grey.800'),
-              },
-              marginTop: '24px'
-            }}
-            onClick={onSubmit}
-          >
-            로그인
-          </LoadingButton>
-          <Stack alignItems="flex-end" sx={{ my: 2 }}>
-            <Link
-              component={NextLink}
-              href={'/manager/sign-up'}
-              variant="body2"
-              color="inherit"
-              underline="always"
-            >
-              컴어게인이 처음이신가요?
-            </Link>
-          </Stack>
+              <img src={logoSrc} style={{ maxWidth: '200px', margin: '1rem auto' }} />
+              <Stack spacing={3}>
+                <TextField
+                  name="username"
+                  label="아이디를 입력해 주세요."
+                  autoComplete='new-password'
+                  onChange={(e) => {
+                    setUsername(e.target.value)
+                  }}
+                  onKeyPress={(e) => {
+                    if (e.key == 'Enter') {
+                      $('#id').focus();
+                    }
+                  }}
+                />
+                <TextField
+                  name="password"
+                  id="password"
+                  label="패스워드를 입력해 주세요."
+                  type={showPassword ? 'text' : 'password'}
+                  autoComplete='new-password'
+                  onKeyPress={(e) => {
+                    if (e.key == 'Enter') {
+                      onSubmit();
+                    }
+                  }}
+                  onChange={(e) => {
+                    setPassword(e.target.value)
+                  }}
+                  InputProps={{
+                    endAdornment: (
+                      <InputAdornment position="end">
+                        <IconButton onClick={() => setShowPassword(!showPassword)} edge="end">
+                          <Iconify icon={showPassword ? 'eva:eye-fill' : 'eva:eye-off-fill'} />
+                        </IconButton>
+                      </InputAdornment>
+                    ),
+                  }}
+                />
+              </Stack>
+              <LoadingButton
+                fullWidth
+                color="inherit"
+                size="large"
+                type="submit"
+                variant="contained"
+                loading={isSubmitSuccessful || isSubmitting}
+                sx={{
+                  bgcolor: 'text.primary',
+                  color: (theme) => (theme.palette.mode === 'light' ? 'common.white' : 'grey.800'),
+                  '&:hover': {
+                    bgcolor: 'text.primary',
+                    color: (theme) => (theme.palette.mode === 'light' ? 'common.white' : 'grey.800'),
+                  },
+                  marginTop: '24px'
+                }}
+                onClick={onSubmit}
+              >
+                로그인
+              </LoadingButton>
+              <Stack alignItems="flex-end" sx={{ my: 2 }}>
+                <Link
+                  component={NextLink}
+                  href={'/manager/register'}
+                  variant="body2"
+                  color="inherit"
+                  underline="always"
+                >
+                  컴어게인이 처음이신가요?
+                </Link>
+              </Stack>
+            </Stack>
+          </StyledContent>
+
+
         </>}
 
     </LoginLayout>

@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 // @mui
 import { Box } from '@mui/material';
 // hooks
@@ -15,6 +15,7 @@ import NavVertical from './nav/NavVertical';
 import NavHorizontal from './nav/NavHorizontal';
 import { useAuthContext } from './auth/useAuthContext';
 import NextNProgress from 'nextjs-progressbar';
+import { useRouter } from 'next/router';
 // ----------------------------------------------------------------------
 
 ManagerLayout.propTypes = {
@@ -24,6 +25,9 @@ ManagerLayout.propTypes = {
 export default function ManagerLayout({ children }) {
   const { themeLayout, themeMode, themeDnsData } = useSettingsContext();
   const { user } = useAuthContext();
+
+  const router = useRouter();
+
   const isDesktop = useResponsive('up', 'lg');
 
   const [open, setOpen] = useState(false);
@@ -32,6 +36,11 @@ export default function ManagerLayout({ children }) {
 
   const isNavMini = themeLayout === 'mini';
 
+  useEffect(()=>{
+    if(!user){
+      router.push('/manager/login')
+    }
+  },[])
   const handleOpen = () => {
     setOpen(true);
   };

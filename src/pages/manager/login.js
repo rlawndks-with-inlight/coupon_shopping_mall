@@ -29,15 +29,13 @@ const Login = () => {
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   useEffect(() => {
-    setTimeout(() => {
       if (user) {
-        router.push(`/manager`);
+        router.push(`/manager/dashboards`);
       }
       setLoading(false);
-    }, 300)
-  }, [])
+  }, [user])
   useEffect(() => {
-    if (router.query?.is_first) {
+    if (router.query?.is_first && !user) {
       openTour('is-first', "판매자 계정이 없으시면 클릭 후 가입해 주세요.\n5분 내에 가입이 완료됩니다 !")
     }
   }, [router.query?.is_first])
@@ -49,7 +47,7 @@ const Login = () => {
   const onSubmit = async () => {
     let user = await login(username, password);
     if (user) {
-      router.push('/manager')
+      router.push('/manager/dashboards')
     }
   };
   const [tourOpen, setTourOpen] = useState(false);

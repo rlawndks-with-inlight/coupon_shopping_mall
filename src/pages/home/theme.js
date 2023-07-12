@@ -1,4 +1,5 @@
 import { Button, Chip, MenuItem, Select } from "@mui/material";
+import { useRouter } from "next/router";
 import { useState } from "react";
 import { Row, Title, themeObj } from "src/components/elements/styled-components";
 import MainLayout from "src/layouts/main/MainLayout";
@@ -36,7 +37,7 @@ height:288px;
 `
 
 const Template = (props) => {
-  const { item } = props;
+  const { item, router } = props;
 
   const [isMouseOver, setIsMouseOver] = useState(false)
   return (
@@ -53,7 +54,9 @@ const Template = (props) => {
           onMouseLeave={() => { setIsMouseOver(false) }}
         >
           <Row style={{ opacity: `${isMouseOver ? 1 : 0}`, flexDirection: 'column', height: '100%', background: '#00000099', transition: '0.3s' }}>
-            <Button variant="contained" sx={{ width: '120px', margin: 'auto auto 0.25rem auto' }}>개설하기</Button>
+            <Button variant="contained" sx={{ width: '120px', margin: 'auto auto 0.25rem auto' }} onClick={()=>{
+              router.push('/manager/login?is_first=1')
+            }}>개설하기</Button>
             <Button variant="outlined" sx={{ width: '120px', margin: '0.25rem auto auto auto', background: '#fff', '&:hover': { background: '#fff' } }}>미리보기</Button>
           </Row>
         </TemplateImg>
@@ -89,6 +92,9 @@ const test_template_list = [// type = 1 -> 일반 쇼핑몰, type = 2 -> 블로�
   },
 ]
 const Theme = () => { //디자인 미리보기
+
+  const router = useRouter();
+
   const [selectTemplateType, setSelectTemplateType] = useState(0);
   return (
     <>
@@ -113,7 +119,7 @@ const Theme = () => { //디자인 미리보기
             <>
               {(selectTemplateType == 0 || selectTemplateType == template.type) &&
                 <>
-                  <Template item={template} />
+                  <Template item={template} router={router} />
                 </>}
             </>
           ))}

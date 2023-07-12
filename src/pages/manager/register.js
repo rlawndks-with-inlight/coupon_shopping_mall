@@ -169,7 +169,7 @@ const Register = () => {
   return (
     <>
       <Wrappers>
-        <Title style={{ margin: '0 auto 2rem auto' }}>회원가입</Title>
+        <Title style={{ margin: '0 auto 2rem auto' }}>판매자 가입</Title>
         <Stepper alternativeLabel activeStep={activeStep} connector={<ColorlibConnector />}>
           {STEPS.map((label) => (
             <Step key={label}>

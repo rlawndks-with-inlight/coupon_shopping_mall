@@ -157,6 +157,7 @@ const Register = () => {
     }
     if (activeStep == 2) {
       router.push('/manager/login');
+      return;
     }
     setActiveStep(activeStep + 1);
     window.scrollTo(0, 0)
@@ -418,7 +419,7 @@ const Register = () => {
             width: '49%'
           }}
             onClick={onClickNextButton}
-          >{activeStep == 4 ? '완료' : '다음'}</Button>
+          >{activeStep == 2 ? '완료' : '다음'}</Button>
         </Row>
       </Wrappers>
     </>

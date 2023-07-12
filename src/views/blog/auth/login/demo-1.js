@@ -5,6 +5,7 @@ import { useSettingsContext } from 'src/components/settings';
 import { useAuthContext } from 'src/layouts/manager/auth/useAuthContext';
 import styled from 'styled-components'
 import { Icon } from '@iconify/react';
+import { Title } from 'src/components/elements/blog/demo-1';
 
 const Wrappers = styled.div`
 max-width:798px;
@@ -12,51 +13,45 @@ display:flex;
 flex-direction:column;
 margin:56px auto 0 auto;
 width:90%;
-@media (max-width:798px){
-  width:100%;
-}
+
 `
 
-const TitleBox = styled.h2`
-font-size:1.5rem;
-font-weight:bold;
-line-height:1.38462;
-padding:1rem 0 0.5rem 0;
-@media (max-width:798px){
-    padding: 0 5% 0 5%;
-}
-`
 
 const TextFieldContainer = styled.div`
 width:100%;
 display:flex;
 flex-direction:column;
 margin: 0 auto;
-@media (max-width:798px){
-  padding:5%;
-}
+
 `
 
 const FindInfo = styled.div`
 display:flex;
-justify-content:right;
 font-size:1rem;
 font-weight:regular;
-margin:1.5rem 0 2rem 0;
-color:${props=>props.themeMode=='dark'?'#fff':'#000'};
+color:${props => props.themeMode == 'dark' ? '#fff' : '#000'};
 text-decoration:underline;
-`
+width:100%;
+margin: 1rem auto;
 
+`
 const NotSignup = styled.div`
 display:flex;
 justify-content:center;
 font-size:1rem;
 font-weight:regular;
 margin:1.5rem 0 2rem 0;
-color:${props=>props.themeMode=='dark'?'#fff':'#000'};
+color:${props => props.themeMode == 'dark' ? '#fff' : '#000'};
 text-decoration:underline;
 `
+const ButtonContainer = styled.div`
+width:100%;
+margin: 0 auto;
+display:flex;
+flex-direction:column;
+row-gap:1rem;
 
+`
 // 로그인 김인욱
 const Demo1 = (props) => {
   const { presetsColor } = useSettingsContext();
@@ -89,7 +84,7 @@ const Demo1 = (props) => {
   return (
     <>
       <Wrappers>
-        <TitleBox>로그인</TitleBox>
+        <Title>로그인</Title>
         <TextFieldContainer>
           <TextField
             label='아이디'
@@ -116,21 +111,24 @@ const Demo1 = (props) => {
             InputProps={{
               endAdornment: (
                 <InputAdornment position='end'>
-                  <Icon icon='ri:eye-line' color='black' cursor='pointer' style={{height:'20px', width:'20px'}} onClick={() => {setWatchable(true)}} onMouseLeave={() => {setWatchable(false)}}/>
+                  <Icon icon={watchable ? 'ri:eye-line' : 'ri:eye-off-line'} color='black' cursor='pointer' style={{ height: '20px', width: '20px' }} onClick={() => { setWatchable(!watchable) }} onMouseLeave={() => { setWatchable(false) }} />
                 </InputAdornment>
               )
             }}
           />
-          </TextFieldContainer>
-          <FindInfo themeMode={themeMode}><div style={{cursor:'pointer'}} onClick={() => { router.push('/blog/auth/find-info') }}>아이디 / 비밀번호 찾기</div></FindInfo>
+        </TextFieldContainer>
+        <FindInfo themeMode={themeMode}>
+          <div style={{ cursor: 'pointer', marginLeft: 'auto' }} onClick={() => { router.push('/blog/auth/find-info?type=0') }}>아이디 / 비밀번호 찾기</div>
+        </FindInfo>
+        <ButtonContainer>
           <Button
             variant='contained'
             color='primary'
             size='large'
             style={{
-              marginTop: '1rem',
               fontSize: 'large',
-              height: '56px'
+              height: '56px',
+              width: `100%`,
             }}
             onClick={onLogin}
           >로그인</Button>
@@ -142,12 +140,14 @@ const Demo1 = (props) => {
               router.push('/blog/auth/sign-up')
             }}
             style={{
-              marginTop: '1rem',
               fontSize: 'large',
-              height: '56px'
+              height: '56px',
+              width: `100%`,
             }}
           >3초만에 빠른 회원가입</Button>
-          <NotSignup themeMode={themeMode}><div style={{cursor:'pointer'}} onClick={() => { router.push('/blog/auth/find-info') }}>비회원 주문 조회</div></NotSignup>
+        </ButtonContainer>
+
+        <NotSignup themeMode={themeMode}><div style={{ cursor: 'pointer' }} onClick={() => { router.push('/blog/auth/find-info?type=0') }}>비회원 주문 조회</div></NotSignup>
       </Wrappers>
     </>
   )

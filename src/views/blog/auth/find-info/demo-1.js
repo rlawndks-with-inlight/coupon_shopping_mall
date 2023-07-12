@@ -71,18 +71,17 @@ const Demo1 = (props) => {
   const [buttonText, setButtonText] = useState("인증받기")
   const [certificationNum, setCertificationNum] = useState("")
   const [findIdObj, setFindIdObj] = useState({
-    name:'',
-    nameCheck:'',
-    phone_num:'',
-    phoneCheck:''
+    name: '',
+    nameCheck: '',
+    phone_num: '',
+    phoneCheck: ''
   })
   const [findPasswordObj, setFindPasswordObj] = useState({
-    id:'',
-    idCheck:'',
-    phone_num:'',
-    phoneCheck:''
+    id: '',
+    idCheck: '',
+    phone_num: '',
+    phoneCheck: ''
   })
-
   useEffect(() => {
     if (router.query?.type >= 0) {
       setFindType(router.query?.type)
@@ -96,24 +95,12 @@ const Demo1 = (props) => {
         <TabsContainer>
           <div>
           <Tabs
-            indicatorColor='primary'
-            textColor='primary'
             value={findType}
-            scrollButtons='false'
-            variant='fullWidth'
-            sx={{width:'100%'}}
             onChange={(event, newValue) => router.push(`/blog/auth/find-info?type=${newValue}`)}
+            sx={{ width: '100%' }}
           >
             {Object.keys(returnFindType).map((key) => (
-              <Tab key={returnFindType[key].title} value={key} label={returnFindType[key].title} style={{
-                borderBottom:'1px solid',
-                borderColor:'inherit',
-                textColor:'inherit',
-                fontSize:'1rem',
-                fontWeight:'bold',
-                width: '50%',
-                margin: '0'
-              }} />
+              <Tab key={returnFindType[key].title} value={key} label={returnFindType[key].title} style={{ width: '50%', margin: '0' }} />
             ))}
           </Tabs>
           </div>
@@ -123,7 +110,7 @@ const Demo1 = (props) => {
                 name='userId'
                 autoComplete='new-password'
                 label='이름'
-                sx={{marginTop:'1.5rem'}}
+                sx={{ marginTop: '1.5rem' }}
                 onChange={(e) => {
                   setUserId(e.target.value)
                 }}
@@ -134,8 +121,8 @@ const Demo1 = (props) => {
                   autoComplete='new-password'
                   label='연락처'
                   sx={{
-                    width:'72%',
-                    marginRight:'1%',
+                    width: '72%',
+                    marginRight: '1%',
                   }}
                   onChange={(e) => {
                     setPhoneNum(e.target.value)
@@ -145,8 +132,8 @@ const Demo1 = (props) => {
                   variant='outlined'
                   color='primary'
                   style={{
-                    width:'27%',
-                    height:'56px'
+                    width: '27%',
+                    height: '56px'
                   }}
                   onClick={() => {
                     setButtonText("재전송")
@@ -158,25 +145,26 @@ const Demo1 = (props) => {
                 autoComplete='new-password'
                 label='인증번호 입력'
                 sx={{
-                  marginTop:'1%'
+                  marginTop: '1%'
                 }}
               />
               <Button
                 variant='contained'
                 color='primary'
                 style={{
-                  height:'56px',
-                  marginTop:'10%',
-                  fontSize:'large'
+                  height: '56px',
+                  marginTop: '10%',
+                  fontSize: 'large'
                 }}
               >인증완료</Button>
-            </> :
+            </>
+            :
             <>
               <TextField
                 name='userName'
                 autoComplete='new-password'
                 label='아이디'
-                sx={{marginTop:'1.5rem'}}
+                sx={{ marginTop: '1.5rem' }}
                 onChange={(e) => {
                   setUserName(e.target.value)
                 }}
@@ -187,8 +175,8 @@ const Demo1 = (props) => {
                   autoComplete='new-password'
                   label='연락처'
                   sx={{
-                    width:'72%',
-                    marginRight:'1%'
+                    width: '72%',
+                    marginRight: '1%'
                   }}
                   onChange={(e) => {
                     setPhoneNum(e.target.value)
@@ -198,8 +186,8 @@ const Demo1 = (props) => {
                   variant='outlined'
                   color='primary'
                   style={{
-                    width:'27%',
-                    height:'56px'
+                    width: '27%',
+                    height: '56px'
                   }}
                   onClick={() => {
                     setButtonText("재전송")
@@ -211,16 +199,16 @@ const Demo1 = (props) => {
                 autoComplete='new-password'
                 placeholder='인증번호 입력'
                 sx={{
-                  marginTop:'1%'
+                  marginTop: '1%'
                 }}
               />
               <Button
                 variant='contained'
                 color='primary'
                 style={{
-                  height:'56px',
-                  marginTop:'10%',
-                  fontSize:'large'
+                  height: '56px',
+                  marginTop: '10%',
+                  fontSize: 'large'
                 }}
               >인증완료</Button>
             </>}

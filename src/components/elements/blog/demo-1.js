@@ -59,9 +59,9 @@ export const SellerItem = (props) => {
             router.push(`/blog/product/${item.id}`)
           }} />
           <IconButton sx={{ position: 'absolute', right: '0', bottom: '0' }}
-          onClick={()=>{
-            onClickCartButton(item)
-          }}>
+            onClick={() => {
+              onClickCartButton(item)
+            }}>
             <Icon icon='iconamoon:shopping-bag' />
           </IconButton>
         </div>
@@ -101,7 +101,17 @@ font-weight:bold;
 line-height:1.38462;
 padding:1rem 0 0.5rem 0;
 `
-
+export const TitleBox = styled.h2`
+font-size:1.5rem;
+font-weight:bold;
+line-height:1.38462;
+padding:1rem 0 0.5rem 0;
+width:100%;
+margin:0 auto;
+@media (max-width:798px){
+width:90%;
+}
+`
 export const Wrappers = styled.div`
 max-width:798px;
 display:flex;

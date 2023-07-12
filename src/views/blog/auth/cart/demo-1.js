@@ -9,6 +9,7 @@ import { Row, themeObj } from 'src/components/elements/styled-components';
 import { useSettingsContext } from 'src/components/settings';
 import { test_items, test_seller, test_option_list } from 'src/data/test-data';
 import { data } from 'jquery';
+import { Title } from 'src/components/elements/blog/demo-1';
 
 const Wrappers = styled.div`
 max-width:798px;
@@ -17,18 +18,8 @@ flex-direction:column;
 margin: 56px auto 2rem auto;
 width:90%;
 @media (max-width:798px){
-    width:100%;
-    padding:5%;
 }
 `
-
-const Title = styled.h2`
-font-size:1.5rem;
-font-weight:bold;
-line-height:1.38462;
-padding:1rem 0 0.5rem 0;
-`
-
 const ContentWrappers = styled.div`
 display:flex;
 flex-direction:column;
@@ -127,8 +118,11 @@ const Demo1 = (props) => {
             }
         })
         setCartList(cart_data);
-        console.log(cartList)
+        console.log(cart_data)
     }
+    useEffect(() => {
+        console.log(wantBuyList)
+    }, [wantBuyList])
     return (
         <>
             <Wrappers>
@@ -162,8 +156,11 @@ const Demo1 = (props) => {
                                     textColor: 'inherit',
                                     fontSize: '1rem',
                                     fontWeight: 'bold',
+                                }} 
+                                style={{
                                     marginRight: '1rem'
-                                }} />
+                                }}
+                                />
                         })}
                     </Tabs>
                     <ChooseBox>
@@ -181,21 +178,15 @@ const Demo1 = (props) => {
                                     }
                                 }
                                 want_buy_list = _.uniq(want_buy_list);
-                                setWantBuyList(want_buy_list)
-                                setPriceSum(price_sum)
-                                setItemQuantity(item_quantity)
-                            }
-                            else {
-                                for (var i = 0; i < cartList.length; i++) {
-                                    if (cartList[i].seller_id == sellerId) {
-                                        want_buy_list.pop(cartList[i])
-                                    }
-                                }
+                            } else {
+                                _.remove(want_buy_list, function (itm) {
+                                    return itm.seller_id == sellerId
+                                })
                                 want_buy_list = _.uniq(want_buy_list);
-                                setWantBuyList(want_buy_list)
-                                setPriceSum(0)
-                                setItemQuantity(0)
                             }
+                            setWantBuyList(want_buy_list)
+                            setPriceSum(price_sum)
+                            setItemQuantity(item_quantity)
                         }} />} />
                         <ChooseDelete /*추후에 이 버튼을 누르면 장바구니 array 안의 상품을 개별적으로 삭제할 수 있어야 함*/>선택 삭제</ChooseDelete>
                     </ChooseBox>
@@ -206,6 +197,7 @@ const Demo1 = (props) => {
                         <ContainerTitle style={{ fontWeight: 'bold' }}>일반배송 상품</ContainerTitle>
                         {cartList.map((item, idx) => (
                             <>
+
                                 {item.seller_id == sellerId &&
                                     <>
                                         <ItemBox style={{
@@ -221,15 +213,16 @@ const Demo1 = (props) => {
                                                         <div>옵션 : {item.option.name} / {item.quantity}개</div>
                                                         <div style={{ marginTop: '0.5rem' }}>{commarNumber((item.product.item_pr + item.option.price) * item.quantity)}원</div>
                                                     </div>
-                                                </Typography>} control={<Checkbox checked={wantBuyList.includes(item)} onChange={(e) => {
+                                                </Typography>} control={<Checkbox checked={_.find(wantBuyList, { option_id: item.option_id, product_id: item.product_id }) ? true : false} onChange={(e) => {
                                                     let want_buy_list = [...wantBuyList];
                                                     if (e.target.checked) {
                                                         want_buy_list.push(item)
                                                         setPriceSum(price => price + ((item.product.item_pr + item.option.price) * item.quantity))
                                                         setItemQuantity(quantity => quantity + item.quantity)
-                                                    }
-                                                    else {
-                                                        want_buy_list.pop(item)
+                                                    } else {
+                                                        _.remove(want_buy_list, function (itm) {
+                                                            return itm.option_id == item.option_id && itm.product_id == item.product_id
+                                                        })
                                                         setPriceSum(price => price - ((item.product.item_pr + item.option.price) * item.quantity))
                                                         setItemQuantity(quantity => quantity - item.quantity)
                                                     }

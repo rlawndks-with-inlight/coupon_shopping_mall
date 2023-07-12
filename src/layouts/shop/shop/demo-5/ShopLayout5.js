@@ -8,7 +8,7 @@ display:flex;
 flex-direction:column;
 min-height:100vh;
 `
-const ShopLayout2 = (props) => {
+const ShopLayout5 = (props) => {
     const { themeMode, onToggleMode } = useSettingsContext();
     const {
         data: {
@@ -43,4 +43,4 @@ const ShopLayout2 = (props) => {
         </>
     )
 }
-export default ShopLayout2
+export default ShopLayout5

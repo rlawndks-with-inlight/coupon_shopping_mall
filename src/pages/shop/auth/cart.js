@@ -1,13 +1,17 @@
 import { useRouter } from "next/router";
 import { useState } from "react";
 import ShopLayout from "src/layouts/shop/ShopLayout";
-import Demo1 from "src/views/shop/auth/cart/demo-1";
 import { useSettingsContext } from "src/components/settings";
+
+import Demo1 from "src/views/shop/auth/cart/demo-1";
+import Demo2 from "src/views/shop/auth/cart/demo-2";
 
 const getDemo = (num, common) => {
 
   if (num == 1)
     return <Demo1 {...common} />
+  else if (num == 2)
+    return <Demo2 {...common} />
 }
 
 const Cart = () => {

@@ -8,6 +8,9 @@ import ShopLayout2 from "./shop/demo-2/ShopLayout2";
 import ScrollToTop from "src/components/scroll-to-top";
 import { Icon } from "@iconify/react";
 import { useSettingsContext } from "src/components/settings";
+import ShopLayout3 from "./shop/demo-3/ShopLayout3";
+import ShopLayout4 from "./shop/demo-4/ShopLayout4";
+import ShopLayout5 from "./shop/demo-5/ShopLayout5";
 
 const test_data = {
   categories: [
@@ -30,6 +33,12 @@ const getDemo = (num, common) => {
       return <ShopLayout1 {...common} />
     else if (num == 2)
       return <ShopLayout2 {...common} />
+    else if (num == 2)
+      return <ShopLayout3 {...common} />
+    else if (num == 2)
+      return <ShopLayout4 {...common} />
+    else if (num == 2)
+      return <ShopLayout5 {...common} />
     else
       return { children }
   } else if (category == 'blog') {
@@ -63,10 +72,10 @@ const ShopLayout = ({ children, scrollToTop }) => {
       setLoading(false);
     }
   }, [themeDnsData])
-  const getDemoNum = ()=>{
-    if(router.asPath.split('/')[1]=='shop'){
+  const getDemoNum = () => {
+    if (router.asPath.split('/')[1] == 'shop') {
       return themeDnsData?.shop_demo_num
-    }else if(router.asPath.split('/')[1]=='blog') {
+    } else if (router.asPath.split('/')[1] == 'blog') {
       return themeDnsData?.blog_demo_num
     }
   }

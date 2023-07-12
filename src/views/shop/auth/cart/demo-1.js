@@ -144,7 +144,6 @@ const Demo1 = (props) => {
       <Wrappers>
         <Title>장바구니</Title>
         <CheckoutSteps activeStep={activeStep} steps={STEPS} />
-
         <Grid container spacing={3}>
           <Grid item xs={12} md={8}>
             {activeStep == 0 &&
@@ -193,7 +192,6 @@ const Demo1 = (props) => {
                       />
                     </Card>
                   </>}
-
               </>}
             {activeStep == 2 &&
               <>
@@ -217,7 +215,6 @@ const Demo1 = (props) => {
                             </Paper>
                           </>
                         ))}
-
                       </Stack>
                     </RadioGroup>
                   </CardContent>

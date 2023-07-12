@@ -291,7 +291,7 @@ const Demo1 = (props) => {
                         <Button
                             variant='outlined'
                             size='large'
-                            onClick={() => { setDialogOpen(false) }}>
+                            onClick={() => { dialogType == 0 ? router.push('/blog/auth/my-page/order') : router.push('/blog/auth/my-page/inquiry') }}>
                             {dialogType == 0 ?
                                 <>비회원으로 주문/배송조회 할게요</>
                                 :

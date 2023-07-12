@@ -1,7 +1,8 @@
 import styled from 'styled-components'
 import { Wrappers, Title } from 'src/components/elements/blog/demo-1';
-import { Tabs, Tab, Accordion, AccordionSummary, AccordionDetails } from '@mui/material';
+import { Tabs, Tab, Accordion, AccordionSummary, AccordionDetails, IconButton } from '@mui/material';
 import { useState, useEffect } from 'react';
+import { Icon } from '@iconify/react';
 
 const SubTitle = styled.h3`
 font-size:14px;
@@ -30,6 +31,7 @@ const test_inquiry = [
         inquiry_type: 0,
         inquiry_title: '주문문의',
         inquiry_detail: '입금했는데 입금 확인이 안됩니다',
+        inquiry_seller: '룩아웃사이드',
         answer: '죄송합니다. 입금이 누락되어 다시 보냈으니 확인 바랍니다.'
     },
     {
@@ -42,7 +44,8 @@ const test_inquiry = [
         inquiry_type: 0,
         inquiry_title: '주문문의',
         inquiry_detail: '취소하고 싶어요',
-        answer:""
+        inquiry_seller: '베이브',
+        answer: ""
     },
 ]
 
@@ -59,6 +62,7 @@ const Demo1 = (props) => {
 
     const [inquiryType, setInquiryType] = useState(0)
     const [inquiryList, setInquiryList] = useState([])
+    const [arrowType, setArrowType] = useState(true)
 
     useEffect(() => {
         settingPage();
@@ -88,7 +92,8 @@ const Demo1 = (props) => {
                     value={inquiryType}
                     sx={{
                         width: '100%',
-                        float: 'left'
+                        float: 'left',
+                        marginBottom: '1rem'
                     }}
                     onChange={(event, newValue) => {
                         setInquiryType(newValue)
@@ -110,14 +115,29 @@ const Demo1 = (props) => {
                         {item.inquiry_type == inquiryType &&
                             <>
                                 <Accordion
-                                style={{
-                                    border:'1px solid black'
-                                }}
+                                    style={{
+                                        border: '1px solid black',
+                                    }}
+                                    disabled={!item.answer}
+                                    onClick={() => {
+                                        setArrowType(arrow => !arrow)
+                                    }}
                                 >
-                                    <AccordionSummary><div>[{item.inquiry_title}] {item.inquiry_detail}</div></AccordionSummary>
-                                    <AccordionDetails style={{borderTop:'1px solid black'}}><div>{item.answer}</div></AccordionDetails>
+                                    <AccordionSummary sx={{display:'flex', justifyContent:'space-between'}}>
+                                        <div>[{item.inquiry_title}{item.inquiry_seller ? `-${item.inquiry_seller}` : ""}] {item.inquiry_detail}</div>
+                                        {item.answer ?
+                                            <>
+                                                <IconButton style={{height:'24px', float:'right'}}>
+                                                    <Icon icon={arrowType ? 'ep:arrow-down':'ep-arrow-up'} color='black' />
+                                                </IconButton>
+                                            </>
+                                            :
+                                            ""}
+                                    </AccordionSummary>
+                                    <AccordionDetails style={{ borderTop: '1px solid black', }}><div>{item.answer ? item.answer : "아직 답변이 등록되지 않았습니다."}</div></AccordionDetails>
                                 </Accordion>
                             </>
+
                         }
                     </>
                 ))}

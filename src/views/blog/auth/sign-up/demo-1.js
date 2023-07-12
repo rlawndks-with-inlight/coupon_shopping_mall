@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types';
-import { Checkbox, FormControlLabel, TextField, Typography, IconButton, Drawer, Button, Select, MenuItem, InputLabel } from '@mui/material';
+import { Checkbox, FormControlLabel, TextField, Typography, IconButton, Drawer, Button, Select, MenuItem, InputLabel, InputAdornment } from '@mui/material';
 import { useState } from 'react';
 import { Row, themeObj } from 'src/components/elements/styled-components';
 import styled from 'styled-components'
@@ -114,28 +114,13 @@ const Demo1 = (props) => {
   const [openPolicy, setOpenPolicy] = useState(false)
   const [policyType, setPolicyType] = useState("")
   const [buttonText, setButtonText] = useState("인증받기")
+  const [watchable_1, setWatchable_1] = useState(false)
+  const [watchable_2, setWatchable_2] = useState(false)
   const [birthDate, setBirthDate] = useState({
     year: "",
     month: "",
     day: ""
   })
-
-  const onClickPrevButton = () => {
-    setActiveStep(activeStep - 1)
-  }
-
-  const onClickNextButton = () => {
-    if (activeStep == 0) {
-
-    }
-    if (activeStep == 1) {
-
-    }
-    if (activeStep == 2) {
-
-    }
-    setActiveStep(activeStep + 1)
-  }
 
   const now = new Date();
 
@@ -327,17 +312,33 @@ const Demo1 = (props) => {
               <TextFieldTitle>비밀번호</TextFieldTitle>
               <TextField
                 name='password'
+                type={watchable_1 ? '' : 'password'}
                 placeholder='영문 소문자, 숫자 조합 / 8~20자'
                 sx={{
                   marginBottom: '1%'
+                }}
+                InputProps={{
+                  endAdornment: (
+                    <InputAdornment position='end'>
+                      <Icon icon='ri:eye-line' color='black' cursor='pointer' style={{height:'20px', width:'20px'}} onClick={() => {setWatchable_1(true)}} onMouseLeave={() => {setWatchable_1(false)}}/>
+                    </InputAdornment>
+                  )
                 }}
               />
               <TextFieldTitle>비밀번호 확인</TextFieldTitle>
               <TextField
                 name='passwordCheck'
+                type={watchable_2 ? '' : 'password'}
                 placeholder='비밀번호를 다시 입력해주세요'
                 sx={{
                   marginBottom: '1%'
+                }}
+                InputProps={{
+                  endAdornment: (
+                    <InputAdornment position='end'>
+                      <Icon icon='ri:eye-line' color='black' cursor='pointer' style={{height:'20px', width:'20px'}} onClick={() => {setWatchable_2(true)}} onMouseLeave={() => {setWatchable_2(false)}}/>
+                    </InputAdornment>
+                  )
                 }}
               />
               <TextFieldTitle>생년월일</TextFieldTitle>

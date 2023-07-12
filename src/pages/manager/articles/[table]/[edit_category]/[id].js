@@ -29,7 +29,7 @@ const ArticleEdit = () => {
     password: '',
     name: '',
     nickname: '',
-    phone: '',
+    phone_num: '',
     note: '',
   })
 

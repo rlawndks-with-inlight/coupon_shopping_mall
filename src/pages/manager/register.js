@@ -148,7 +148,7 @@ const Register = () => {
         !user.password ||
         !user.passwordCheck ||
         !user.name ||
-        !user.phone ||
+        !user.phone_num ||
         !user.email
       ) {
         toast.error("필수 항목을 입력해 주세요.");

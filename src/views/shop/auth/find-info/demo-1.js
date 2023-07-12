@@ -40,12 +40,12 @@ const Demo1 = (props) => {
   const [findType, setFindType] = useState(undefined);
   const [phoneNum, setPhoneNum] = useState("");
   const [findUsernameObj, setFindUsernameObj] = useState({
-    phone: '',
+    phone_num: '',
     phoneCheck: ''
   })
   const [findPasswordObj, setFindPasswordObj] = useState({
     username: '',
-    phone: '',
+    phone_num: '',
     phoneCheck: ''
   })
   useEffect(() => {
@@ -73,9 +73,9 @@ const Demo1 = (props) => {
             <TextField
               label='인증번호'
               onChange={(e) => {
-                setFindUsernameObj({ ...findUsernameObj, ['phone']: e.target.value })
+                setFindUsernameObj({ ...findUsernameObj, ['phone_num']: e.target.value })
               }}
-              value={findUsernameObj.phone}
+              value={findUsernameObj.phone_num}
               style={inputStyle}
               autoComplete='new-password'
               onKeyPress={(e) => {
@@ -116,9 +116,9 @@ const Demo1 = (props) => {
             <TextField
               label='전화번호'
               onChange={(e) => {
-                setFindPasswordObj({ ...findPasswordObj, ['phone']: e.target.value })
+                setFindPasswordObj({ ...findPasswordObj, ['phone_num']: e.target.value })
               }}
-              value={findPasswordObj.phone}
+              value={findPasswordObj.phone_num}
               style={inputStyle}
               autoComplete='new-password'
               onKeyPress={(e) => {

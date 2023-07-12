@@ -40,7 +40,7 @@ const Settings = () => {
     password: '',
     name: '',
     nickname: '',
-    phone: '',
+    phone_num: '',
     note: '',
   })
 

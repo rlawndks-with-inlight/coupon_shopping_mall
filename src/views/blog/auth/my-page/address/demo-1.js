@@ -28,7 +28,7 @@ const test_address = [
         zipcode:'01234',
         address:'서울 강북구 오패산로30길 xx (길동빌라)',
         detail:'101호',
-        phone:'01012345678',
+        phone_num:'01012345678',
         nickname:'집',
         default:true
     },
@@ -37,7 +37,7 @@ const test_address = [
         zipcode:'04383',
         address:'서울 용산구 이태원로 22',
         detail:'305호',
-        phone:'01099999999',
+        phone_num:'01099999999',
         nickname:'회사',
         default:false
     },
@@ -80,7 +80,7 @@ const Demo1 = (props) => {
                         <AddressContainer>
                             <div>
                             <span style={{fontWeight:'bold'}}>{data.nickname}({data.receiver})<br /><br /></span>
-                            {data.phone}<br />
+                            {data.phone_num}<br />
                             {data.address} {data.detail}
                             </div>
                             <AddressButton>

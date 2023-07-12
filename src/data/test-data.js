@@ -686,14 +686,14 @@ export const test_address_list = [
     receiver: '홍길동',
     address_type: '집',
     address: '서울 노원구 공릉동 123-11',
-    phone: '010-0000-0000',
+    phone_num: '010-0000-0000',
     is_default: true,
   },
   {
     receiver: '김철수',
     address_type: '사무실',
     address: '서존특별자치시 소담동 123',
-    phone: '010-0000-0000',
+    phone_num: '010-0000-0000',
     is_default: false,
   },
 ]

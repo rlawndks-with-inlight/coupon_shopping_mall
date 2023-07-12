@@ -29,7 +29,7 @@ const UserEdit = () => {
     password: '',
     name: '',
     nickname: '',
-    phone: '',
+    phone_num: '',
     note: '',
   })
 
@@ -124,14 +124,14 @@ const UserEdit = () => {
                     }} />
                       <TextField
                     label='전화번호'
-                    value={item.phone}
+                    value={item.phone_num}
                     placeholder="하이픈(-) 제외 입력"
                     type='number'
                     onChange={(e) => {
                       setItem(
                         {
                           ...item,
-                          ['phone']: e.target.value
+                          ['phone_num']: e.target.value
                         }
                       )
                     }} />

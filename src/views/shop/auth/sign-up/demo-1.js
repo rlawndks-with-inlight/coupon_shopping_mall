@@ -122,7 +122,7 @@ const Demo1 = (props) => {
     password: '',
     passwordCheck: '',
     name: '',
-    phone: '',
+    phone_num: '',
     email: '',
   })
   const onClickPrevButton = () => {
@@ -151,7 +151,7 @@ const Demo1 = (props) => {
         !user.password ||
         !user.passwordCheck ||
         !user.name ||
-        !user.phone ||
+        !user.phone_num ||
         !user.email
       ) {
         toast.error("필수 항목을 입력해 주세요.");
@@ -310,9 +310,9 @@ const Demo1 = (props) => {
             <TextField
               label='휴대전화'
               onChange={(e) => {
-                setUser({ ...user, ['phone']: e.target.value })
+                setUser({ ...user, ['phone_num']: e.target.value })
               }}
-              value={user.phone}
+              value={user.phone_num}
               style={inputStyle}
               autoComplete='new-password'
               onKeyPress={(e) => {

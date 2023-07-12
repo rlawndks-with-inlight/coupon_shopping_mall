@@ -73,13 +73,13 @@ const Demo1 = (props) => {
   const [findIdObj, setFindIdObj] = useState({
     name:'',
     nameCheck:'',
-    phone:'',
+    phone_num:'',
     phoneCheck:''
   })
   const [findPasswordObj, setFindPasswordObj] = useState({
     id:'',
     idCheck:'',
-    phone:'',
+    phone_num:'',
     phoneCheck:''
   })
 
@@ -111,13 +111,13 @@ const Demo1 = (props) => {
                 textColor:'inherit',
                 fontSize:'1rem',
                 fontWeight:'bold',
-                width: '50%', 
+                width: '50%',
                 margin: '0'
               }} />
             ))}
           </Tabs>
           </div>
-          {findType == 0 ? 
+          {findType == 0 ?
             <>
               <TextField
                 name='userId'
@@ -170,7 +170,7 @@ const Demo1 = (props) => {
                   fontSize:'large'
                 }}
               >인증완료</Button>
-            </> : 
+            </> :
             <>
               <TextField
                 name='userName'

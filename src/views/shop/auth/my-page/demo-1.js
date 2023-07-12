@@ -68,7 +68,7 @@ const Demo1 = (props) => {
 
                 <TextField name="email" label="이름" />
 
-                <TextField name="phoneNumber" label="닉네임" />
+                <TextField name="phone_num" label="닉네임" />
 
                 <TextField name="address" label="이메일" />
               </Box>

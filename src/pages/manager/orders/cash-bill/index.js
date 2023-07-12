@@ -15,12 +15,12 @@ const test_data = [
   {
     id: 1,
     user_name: 'test1',
-    phone: '01000000000',
+    phone_num: '01000000000',
   },
   {
     id: 2,
     user_name: 'test2',
-    phone: '01000000000',
+    phone_num: '01000000000',
   }
 ]
 const CashBillList = () => {

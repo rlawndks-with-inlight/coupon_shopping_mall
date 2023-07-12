@@ -113,8 +113,10 @@ const Register = () => {
     password: '',
     passwordCheck: '',
     name: '',
-    phone: '',
+    phone_num: '',
     email: '',
+    company_nm: '',
+    business_num: '',
     member_type: undefined,
   })
   const onClickPrevButton = () => {
@@ -317,51 +319,83 @@ const Register = () => {
                 <Tab key={item.label} value={item.value} label={item.label} />
               ))}
             </Tabs>
+
             {user.member_type == 0 &&
               <>
               </>}
             {user.member_type == 1 &&
               <>
+                <TextField
+                  label='기업명'
+                  onChange={(e) => {
+                    setUser({ ...user, ['company_nm']: e.target.value })
+                  }}
+                  value={user.company_nm}
+                  style={inputStyle}
+                  autoComplete='new-password'
+                  onKeyPress={(e) => {
+                    if (e.key == 'Enter') {
+                    }
+                  }}
+                />
+                <TextField
+                  label='사업자등록번호'
+                  onChange={(e) => {
+                    setUser({ ...user, ['business_num']: e.target.value })
+                  }}
+                  value={user.business_num}
+                  style={inputStyle}
+                  autoComplete='new-password'
+                  onKeyPress={(e) => {
+                    if (e.key == 'Enter') {
+                    }
+                  }}
+                />
               </>}
-            <TextField
-              label='이름'
-              onChange={(e) => {
-                setUser({ ...user, ['name']: e.target.value })
-              }}
-              value={user.name}
-              style={inputStyle}
-              autoComplete='new-password'
-              onKeyPress={(e) => {
-                if (e.key == 'Enter') {
-                }
-              }}
-            />
-            <TextField
-              label='휴대전화'
-              onChange={(e) => {
-                setUser({ ...user, ['phone']: e.target.value })
-              }}
-              value={user.phone}
-              style={inputStyle}
-              autoComplete='new-password'
-              onKeyPress={(e) => {
-                if (e.key == 'Enter') {
-                }
-              }}
-            />
-            <TextField
-              label='이메일'
-              onChange={(e) => {
-                setUser({ ...user, ['email']: e.target.value })
-              }}
-              value={user.email}
-              style={inputStyle}
-              autoComplete='new-password'
-              onKeyPress={(e) => {
-                if (e.key == 'Enter') {
-                }
-              }}
-            />
+            {(user.member_type == 0 || user.member_type == 1) &&
+              <>
+                <TextField
+                  label={user.member_type == 0 ? '이름' : '담당자명'}
+                  onChange={(e) => {
+                    setUser({ ...user, ['name']: e.target.value })
+                  }}
+                  value={user.name}
+                  style={inputStyle}
+                  autoComplete='new-password'
+                  onKeyPress={(e) => {
+                    if (e.key == 'Enter') {
+                    }
+                  }}
+                />
+                <TextField
+                  label='휴대전화'
+                  onChange={(e) => {
+                    setUser({ ...user, ['phone_num']: e.target.value })
+                  }}
+                  value={user.phone_num}
+                  style={inputStyle}
+                  autoComplete='new-password'
+                  onKeyPress={(e) => {
+                    if (e.key == 'Enter') {
+                    }
+                  }}
+                />
+                <TextField
+                  label='이메일'
+                  onChange={(e) => {
+                    setUser({ ...user, ['email']: e.target.value })
+                  }}
+                  value={user.email}
+                  style={inputStyle}
+                  autoComplete='new-password'
+                  onKeyPress={(e) => {
+                    if (e.key == 'Enter') {
+                    }
+                  }}
+                />
+              </>}
+
+
           </>}
         {activeStep == 2 &&
           <>

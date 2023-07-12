@@ -104,6 +104,8 @@ const Demo1 = (props) => {
     const [itemQuantity, setItemQuantity] = useState(0)
     const [priceSum, setPriceSum] = useState(0)
     const [deliveryFee, setDeliveryFee] = useState(0)
+    const [buttonChecked, setButtonChecked] = useState(false)
+
     useEffect(() => {
         settingPage();
     }, [])
@@ -143,6 +145,7 @@ const Demo1 = (props) => {
                             setWantBuyList([])
                             setPriceSum(0)
                             setItemQuantity(0)
+                            setButtonChecked(false)
                         }}
                         sx={{
                             width: '100%',
@@ -164,30 +167,34 @@ const Demo1 = (props) => {
                         })}
                     </Tabs>
                     <ChooseBox>
-                        <FormControlLabel label={<Typography style={{ fontSize: themeObj.font_size.size7 }}>전체 선택</Typography>} control={<Checkbox onChange={(e) => {
+                        <FormControlLabel label={<Typography style={{ fontSize: themeObj.font_size.size7 }}>전체 선택</Typography>} control={<Checkbox checked={buttonChecked} onChange={(e) => {
+                            setButtonChecked(val => !val)
                             let want_buy_list = [...wantBuyList];
-                            console.log(want_buy_list)
+                            let price_sum = 0;
+                            let item_quantity = 0;
                             if (e.target.checked) {
                                 for (var i = 0; i < cartList.length; i++) {
                                     if (cartList[i].seller_id == sellerId) {
                                         want_buy_list.push(cartList[i])
-                                        //setPriceSum(price => price + ((cartList[i].product.item_pr + cartList[i].option.price) * cartList[i].quantity))
-                                       // setItemQuantity(quantity => quantity + cartList[i].quantity)
+                                        price_sum += ((cartList[i].product.item_pr + cartList[i].option.price) * cartList[i].quantity)
+                                        item_quantity += cartList[i].quantity
                                     }
                                 }
                                 want_buy_list = _.uniq(want_buy_list);
                                 setWantBuyList(want_buy_list)
+                                setPriceSum(price_sum)
+                                setItemQuantity(item_quantity)
                             }
                             else {
                                 for (var i = 0; i < cartList.length; i++) {
                                     if (cartList[i].seller_id == sellerId) {
                                         want_buy_list.pop(cartList[i])
-                                       // setPriceSum(price => price - ((cartList[i].product.item_pr + cartList[i].option.price) * cartList[i].quantity))
-                                        //setItemQuantity(quantity => quantity - cartList[i].quantity)
                                     }
                                 }
                                 want_buy_list = _.uniq(want_buy_list);
                                 setWantBuyList(want_buy_list)
+                                setPriceSum(0)
+                                setItemQuantity(0)
                             }
                         }} />} />
                         <ChooseDelete /*추후에 이 버튼을 누르면 장바구니 array 안의 상품을 개별적으로 삭제할 수 있어야 함*/>선택 삭제</ChooseDelete>

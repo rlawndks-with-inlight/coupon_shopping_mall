@@ -96,11 +96,11 @@ const Demo1 = (props) => {
                     value={inquiryType}
                     sx={{
                         width: '100%',
-                        float: 'left'
+                        float: 'left',
+                        marginBottom:'1rem'
                     }}
                     onChange={(event, newValue) => {
                         setInquiryType(newValue)
-                        console.log(newValue)
                     }}
                 >
                     {Object.keys(returnInquiryType).map((key) => (

@@ -1,9 +1,10 @@
 import { useTheme } from '@emotion/react';
-import { Button, TextField } from '@mui/material';
+import { Button, TextField, IconButton, InputAdornment } from '@mui/material';
 import { useEffect, useState } from 'react';
 import { useSettingsContext } from 'src/components/settings';
 import { useAuthContext } from 'src/layouts/manager/auth/useAuthContext';
 import styled from 'styled-components'
+import { Icon } from '@iconify/react';
 
 const Wrappers = styled.div`
 max-width:798px;
@@ -72,6 +73,7 @@ const Demo1 = (props) => {
 
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [watchable, setWatchable] = useState(false)
   const [signed, setSigned] = useState(false);
 
 
@@ -101,7 +103,7 @@ const Demo1 = (props) => {
             sx={{ marginTop: '1rem' }}
             label='비밀번호'
             name='password'
-            type='password'
+            type={watchable ? '' : 'password'}
             autoComplete='new-password'
             onKeyPress={(e) => {
               if (e.key == 'Enter') {
@@ -110,6 +112,13 @@ const Demo1 = (props) => {
             }}
             onChange={(e) => {
               setPassword(e.target.value)
+            }}
+            InputProps={{
+              endAdornment: (
+                <InputAdornment position='end'>
+                  <Icon icon='ri:eye-line' color='black' cursor='pointer' style={{height:'20px', width:'20px'}} onClick={() => {setWatchable(true)}} onMouseLeave={() => {setWatchable(false)}}/>
+                </InputAdornment>
+              )
             }}
           />
           </TextFieldContainer>

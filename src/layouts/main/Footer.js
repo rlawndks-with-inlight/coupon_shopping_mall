@@ -54,7 +54,7 @@ export default function Footer() {
       }}
     >
       <Container>
-        <img src={logoSrc} style={{ marginBottom: '0.5rem', width:'120px',margin:'auto' }} />
+        <img src={logoSrc} style={{ marginBottom: '0.5rem', width: '120px', margin: 'auto' }} />
         <Typography variant="caption" component="div">
           © All rights reserved
           <br /> made by &nbsp;
@@ -89,7 +89,7 @@ export default function Footer() {
           }}
         >
           <Grid item xs={12} sx={{ mb: 3 }}>
-            <Logo sx={{ mx: { xs: 'auto', md: 'inherit' } }} />
+            <img src={logoSrc} style={{ height: '48px' }} />
           </Grid>
 
           <Grid item xs={8} md={3}>
@@ -141,7 +141,6 @@ export default function Footer() {
             textAlign: { xs: 'center', md: 'left' },
           }}
         >
-          © 2021. All rights reserved
         </Typography>
       </Container>
     </Box>

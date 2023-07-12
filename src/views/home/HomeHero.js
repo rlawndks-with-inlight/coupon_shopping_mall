@@ -213,7 +213,7 @@ function Description() {
             startIcon={<Iconify icon="eva:external-link-fill" width={24} />}
             target="_blank"
             rel="noopener"
-            href={'/home/site-make'}
+            href={'/home/theme'}
             sx={{ borderColor: 'text.primary' }}
           >
             디자인 미리보기

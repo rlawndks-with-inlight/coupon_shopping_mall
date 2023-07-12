@@ -87,7 +87,7 @@ function Description() {
             variant="outlined"
             target="_blank"
             rel="noopener"
-            href={'/home/site-make'}
+            href={'/home/theme'}
             endIcon={<Iconify icon="eva:external-link-fill" width={16} sx={{ mr: 0.5 }} />}
             sx={{ color: 'common.white', '&:hover': { borderColor: 'currentColor' } }}
           >

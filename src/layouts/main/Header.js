@@ -52,7 +52,7 @@ export default function Header() {
         <Container sx={{ height: 1, display: 'flex', alignItems: 'center' }}>
           <img src={logoSrc} style={{ height: '40px', width: 'auto', cursor: 'pointer' }}
             onClick={() => {
-              router.push('/shop')
+              router.push('/')
             }}
           />
           <Box sx={{ flexGrow: 1 }} />

@@ -14,11 +14,8 @@ const Wrappers = styled.div`
 max-width:798px;
 display:flex;
 flex-direction:column;
-margin:56px auto 0 auto;
+margin:56px auto;
 width:90%;
-@media (max-width:798px){
-  width:100%;
-}
 `
 
 const Title = styled.h2`
@@ -56,9 +53,7 @@ margin:1.5rem 0 1rem 0;
 const TextFieldContainer = styled.div`
 display:flex;
 flex-direction:column;
-@media (max-width:798px){
-  padding:5%;
-}
+
 `
 
 const TextFieldBox = styled.div`
@@ -291,7 +286,7 @@ const Demo1 = (props) => {
                 color='primary'
                 style={{
                   height: '56px',
-                  marginTop: '10%',
+                  marginTop: '3rem',
                   fontSize: 'large'
                 }}
                 onClick={() => { setActiveStep(activeStep + 1) }}
@@ -399,7 +394,7 @@ const Demo1 = (props) => {
                 color='primary'
                 style={{
                   height: '56px',
-                  marginTop: '10%',
+                  marginTop: '3rem',
                   fontSize: 'large'
                 }}
                 onClick={() => { setActiveStep(activeStep + 1) }}
@@ -416,7 +411,7 @@ const Demo1 = (props) => {
                 color='primary'
                 style={{
                   height: '56px',
-                  marginTop: '10%',
+                  marginTop: '3rem',
                   fontSize: 'large'
                 }}
                 onClick={() => {

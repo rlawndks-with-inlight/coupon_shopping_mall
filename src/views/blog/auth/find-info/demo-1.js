@@ -7,11 +7,8 @@ const Wrappers = styled.div`
 max-width:798px;
 display:flex;
 flex-direction:column;
-margin: 56px auto 0 auto;
+margin: 56px auto;
 width: 90%;
-@media (max-width:798px){
-  width:100%;
-}
 `
 
 const Title = styled.h2`
@@ -19,9 +16,6 @@ font-size:1.5rem;
 font-weight:bold;
 line-height:1.38462;
 padding:1rem 0 0.5rem 0;
-@media (max-width:798px){
-    padding: 0 5% 0 5%;
-}
 `
 
 const TabsContainer = styled.div`
@@ -29,9 +23,6 @@ width:100%;
 display:flex;
 flex-direction:column;
 margin: 0 auto;
-@media (max-width:798px){
-  padding:5%;
-}
 `
 
 const TextFieldBox = styled.div`
@@ -96,6 +87,8 @@ const Demo1 = (props) => {
           <div>
           <Tabs
             value={findType}
+            scrollButtons='false'
+            variant='fullWidth'
             onChange={(event, newValue) => router.push(`/blog/auth/find-info?type=${newValue}`)}
             sx={{ width: '100%' }}
           >
@@ -153,7 +146,7 @@ const Demo1 = (props) => {
                 color='primary'
                 style={{
                   height: '56px',
-                  marginTop: '10%',
+                  margin: '3rem 0',
                   fontSize: 'large'
                 }}
               >인증완료</Button>
@@ -207,7 +200,7 @@ const Demo1 = (props) => {
                 color='primary'
                 style={{
                   height: '56px',
-                  marginTop: '10%',
+                  margin: '3rem 0',
                   fontSize: 'large'
                 }}
               >인증완료</Button>

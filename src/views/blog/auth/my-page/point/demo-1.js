@@ -36,8 +36,8 @@ const test_point = [
             nickname: 'Merrymond',
         },
         point: [
-            { id: 1, date: 20230101, count: 1000},
-            { id: 2, date: 20230710, count: 2000},
+            { id: 1, date: 20230101, count: 1000 },
+            { id: 2, date: 20230710, count: 2000 },
         ],
     },
     {
@@ -80,51 +80,55 @@ const Demo1 = (props) => {
     return (
         <>
             <Wrappers>
-                <Title style={{paddingBottom:'0'}}>포인트 조회</Title>
+                <Title style={{ paddingBottom: '0' }}>포인트 조회</Title>
                 <SubTitle>
                     상품 구매 포인트는 구매 14일 이후 사용할 수 있습니다
                     <br />
                     각 셀러별로 쌓인 포인트를 사용할 수 있습니다
                 </SubTitle>
                 <Tabs
-                        indicatorColor='primary'
-                        textColor='primary'
-                        scrollButtons='false'
-                        variant='scrollable'
-                        value={sellerId}
-                        onChange={(event, newValue) => {
-                            setSellerId(newValue)
-                        }}
-                        sx={{
-                            width: '100%',
-                            float: 'left'
-                        }}
-                    >
-                        {_.uniqBy(sellerList, 'id').map((seller, idx) => {
-                            return <Tab
-                                label={seller.nickname}
-                                value={seller.id}
-                                sx={{
-                                    borderBottom: '1px solid',
-                                    borderColor: 'inherit',
-                                    textColor: 'inherit',
-                                    fontSize: '1rem',
-                                    fontWeight: 'bold',
-                                    marginRight: '1rem'
-                                }} />
-                        })}
-                    </Tabs>
-                    <ContentContainer>
-                        {sellerList.map((seller, idx) => (
-                            <>
-                                {seller.id == sellerId &&
-                                    <>
+                    indicatorColor='primary'
+                    textColor='primary'
+                    scrollButtons='false'
+                    variant='scrollable'
+                    value={sellerId}
+                    onChange={(event, newValue) => {
+                        setSellerId(newValue)
+                    }}
+                    sx={{
+                        width: '100%',
+                        float: 'left'
+                    }}
+                >
+                    {_.uniqBy(sellerList, 'id').map((seller, idx) => {
+                        return <Tab
+                            label={seller.nickname}
+                            value={seller.id}
+                            sx={{
+                                borderBottom: '1px solid',
+                                borderColor: 'inherit',
+                                textColor: 'inherit',
+                                fontSize: '1rem',
+                                fontWeight: 'bold',
+                                marginRight: '1rem'
+                            }}
+                            style={{
+                                marginRight: '1rem'
+                            }}
+                        />
+                    })}
+                </Tabs>
+                <ContentContainer>
+                    {sellerList.map((seller, idx) => (
+                        <>
+                            {seller.id == sellerId &&
+                                <>
                                     {seller.id}
-                                    </>
-                                }
-                            </>
-                        ))}
-                    </ContentContainer>
+                                </>
+                            }
+                        </>
+                    ))}
+                </ContentContainer>
             </Wrappers>
         </>
     )

@@ -15,16 +15,14 @@ const Wrappers = styled.div`
 max-width:798px;
 display:flex;
 flex-direction:column;
-margin: 56px auto 2rem auto;
+margin: 56px auto;
 width:90%;
-@media (max-width:798px){
-}
 `
 const ContentWrappers = styled.div`
 display:flex;
 flex-direction:column;
 margin:0 auto;
-padding-top: 5%;
+margin-top: 3rem;
 width:100%;
 `
 

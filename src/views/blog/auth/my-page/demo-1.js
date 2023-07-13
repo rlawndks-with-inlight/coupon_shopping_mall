@@ -13,11 +13,8 @@ const Wrappers = styled.div`
 max-width:798px;
 display:flex;
 flex-direction:column;
-margin: 56px auto 3rem auto;
+margin: 56px auto;
 width: 90%;
-@media (max-width:798px){
-  width:100%;
-}
 `
 
 const SubTitle = styled.h3`
@@ -31,18 +28,12 @@ const TitleContainer = styled.div`
 display:flex;
 flex-direction:column;
 max-width:798px;
-@media (max-width:798px){
-    padding:5%;
-}
 `
 
 const MenuContainer = styled.div`
 display:flex;
 flex-direction:column;
 max-width:798px;
-@media (max-width:798px){
-    padding:5%;
-}
 `
 
 const MenuBox = styled.div`
@@ -261,17 +252,17 @@ const Demo1 = (props) => {
                 <DialogTitle
                     sx={{
                         display: 'flex',
-                        justifyContent: 'space-between'
+                        justifyContent: 'space-between',
+                        padding:'0 0 1.5rem 1.5rem'
                     }}
                 >
-                    <img src={logoSrc} style={{ height: '40px', width: 'auto' }} />
+                    <img src={logoSrc} style={{ height: '56px', width: 'auto' }} />
                     <IconButton
-                        sx={{}}
                         onClick={() => {
                             setDialogOpen(false)
                         }}
                     >
-                        <Icon icon={'ic:round-close'} fontSize={'1.8rem'} />
+                        <Icon icon={'ic:round-close'} fontSize={'2.5rem'} />
                     </IconButton>
                 </DialogTitle>
                 <DialogContent

@@ -10,7 +10,7 @@ import { Item, Seller } from 'src/components/elements/blog/demo-1';
 const Wrappers = styled.div`
 max-width: 840px;
 width:100%;
-margin: 56px auto 0 auto;
+margin: 56px auto;
 display:flex;
 flex-direction:column;
 `

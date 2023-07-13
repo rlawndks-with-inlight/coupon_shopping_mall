@@ -127,9 +127,10 @@ const Demo1 = (props) => {
                                             setControlled(item.id)
                                         }
                                     }}
+                                    disabled={item.answer? false : true}
                                     >
                                         <AccordionSummary expandIcon={<Iconify icon="eva:arrow-ios-downward-fill" />}>
-                                            <Typography variant="subtitle1">{item.inquiry_detail}</Typography>
+                                            <Typography variant="subtitle1">{item.inquiry_seller ? `[${item.inquiry_seller}]` : ""} {item.inquiry_detail} {item.answer? "(답변 완료)" : "(답변 대기중)"}</Typography>
                                         </AccordionSummary>
                                         <AccordionDetails>
                                             <Typography>{item.answer}</Typography>

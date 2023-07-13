@@ -11,9 +11,8 @@ const Wrappers = styled.div`
 max-width:798px;
 display:flex;
 flex-direction:column;
-margin:56px auto 0 auto;
+margin:56px auto;
 width:90%;
-
 `
 
 
@@ -22,7 +21,6 @@ width:100%;
 display:flex;
 flex-direction:column;
 margin: 0 auto;
-
 `
 
 const FindInfo = styled.div`
@@ -32,9 +30,9 @@ font-weight:regular;
 color:${props => props.themeMode == 'dark' ? '#fff' : '#000'};
 text-decoration:underline;
 width:100%;
-margin: 1rem auto;
-
+margin: 1rem auto 2.5rem auto;
 `
+
 const NotSignup = styled.div`
 display:flex;
 justify-content:center;
@@ -44,14 +42,15 @@ margin:1.5rem 0 2rem 0;
 color:${props => props.themeMode == 'dark' ? '#fff' : '#000'};
 text-decoration:underline;
 `
+
 const ButtonContainer = styled.div`
 width:100%;
 margin: 0 auto;
 display:flex;
 flex-direction:column;
 row-gap:1rem;
-
 `
+
 // 로그인 김인욱
 const Demo1 = (props) => {
   const { presetsColor } = useSettingsContext();
@@ -147,7 +146,7 @@ const Demo1 = (props) => {
           >3초만에 빠른 회원가입</Button>
         </ButtonContainer>
 
-        <NotSignup themeMode={themeMode}><div style={{ cursor: 'pointer' }} onClick={() => { router.push('/blog/auth/find-info?type=0') }}>비회원 주문 조회</div></NotSignup>
+        <NotSignup themeMode={themeMode}><div style={{ cursor: 'pointer' }} onClick={() => { router.push('/blog/auth/my-page/order') }}>비회원 주문 조회</div></NotSignup>
       </Wrappers>
     </>
   )

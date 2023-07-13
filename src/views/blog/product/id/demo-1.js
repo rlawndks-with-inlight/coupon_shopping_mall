@@ -19,7 +19,7 @@ const ReactQuill = dynamic(() => import('react-quill'), {
 const Wrappers = styled.div`
 max-width: 840px;
 width:100%;
-margin: 0 auto;
+margin: 0 auto 56px auto;
 display:flex;
 flex-direction:column;
 position:relative;
@@ -380,7 +380,7 @@ const Demo1 = (props) => {
                 fullWidth
                 PaperProps={{
                     sx: {
-                        maxWidth: '840px',
+                        maxWidth: '540px',
                         width:'90vw'
                     }
                 }}
@@ -390,17 +390,18 @@ const Demo1 = (props) => {
                         <DialogTitle
                             sx={{
                                 display: 'flex',
-                                justifyContent: 'space-between'
+                                justifyContent: 'space-between',
+                                padding: '0 0 1.5rem 1.5rem'
                             }}
                         >
-                            <img src={logoSrc} style={{ height: '40px', width: 'auto' }} />
+                            <img src={logoSrc} style={{ height: '56px', width: 'auto' }} />
                             <IconButton
                                 sx={{}}
                                 onClick={() => {
                                     setDialogOpen(false)
                                 }}
                             >
-                                <Icon icon={'ic:round-close'} fontSize={'1.8rem'} />
+                                <Icon icon={'ic:round-close'} fontSize={'2.5rem'} />
                             </IconButton>
                         </DialogTitle>
                         <DialogContent
@@ -426,17 +427,18 @@ const Demo1 = (props) => {
                         <DialogTitle
                             sx={{
                                 display: 'flex',
-                                justifyContent: 'space-between'
+                                justifyContent: 'space-between',
+                                padding: '0 0 1.5rem 1.5rem'
                             }}
                         >
-                            <img src={logoSrc} style={{ height: '40px', width: 'auto' }} />
+                            <img src={logoSrc} style={{ height: '56px', width: 'auto' }} />
                             <IconButton
                                 sx={{}}
                                 onClick={() => {
                                     setDialogOpen(false)
                                 }}
                             >
-                                <Icon icon={'ic:round-close'} fontSize={'1.8rem'} />
+                                <Icon icon={'ic:round-close'} fontSize={'2.5rem'} />
                             </IconButton>
                         </DialogTitle>
                         <DialogContent

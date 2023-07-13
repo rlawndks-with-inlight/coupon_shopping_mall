@@ -117,7 +117,7 @@ const Demo1 = (props) => {
           />
         </TextFieldContainer>
         <FindInfo themeMode={themeMode}>
-          <div style={{ cursor: 'pointer', marginLeft: 'auto' }} onClick={() => { router.push('/blog/auth/find-info?type=0') }}>아이디 / 비밀번호 찾기</div>
+          <div style={{ cursor: 'pointer', marginLeft: 'auto' }} onClick={() => { router.push('/blog/auth/find-info?type=0', '/blog/auth/find-info') }}>아이디 / 비밀번호 찾기</div>
         </FindInfo>
         <ButtonContainer>
           <Button

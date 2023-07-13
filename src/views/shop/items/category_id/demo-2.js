@@ -1,5 +1,6 @@
 import styled from "styled-components";
 
+//카테고리 클릭시 상품 리스트 박이규
 const Demo2 = (props) => {
   const {
     data: {
@@ -11,7 +12,6 @@ const Demo2 = (props) => {
   } = props;
   return (
     <>
-
     </>
   )
 }

@@ -49,6 +49,13 @@ display:flex;
 align-items:center;
 position:relative;
 `
+const CategoryMenuContainer = styled.div`
+position:relative;
+&:hover{
+  color:#fff;
+  background: ${props => props.theme?.palette?.primary?.main};
+}
+`
 const CategoryMenu = styled.div`
 padding:1rem 1.5rem;
 text-align: center;
@@ -59,12 +66,17 @@ cursor:pointer;
 font-weight:bold;
 position:relative;
 font-size:${themeObj.font_size.size7};
+color:${props => props.is_page_category == 1 ? (props => props.theme?.palette?.primary?.main) : ''};
 &:hover{
   color:#fff;
   background: ${props => props.theme?.palette?.primary?.main};
 }
 @media (max-width:1000px) {
   padding:0.5rem 1.5rem;
+  &:hover{
+    color:${props => props.theme?.palette?.primary?.main};
+    background: ${props => props.themeMode == 'dark' ? '#000' : '#fff'};
+  }
 }
 `
 
@@ -83,9 +95,9 @@ align-items:center;
 }
 `
 const PaddingTop = styled.div`
-margin-top:131px;
+margin-top:193px;
 @media (max-width:1000px) {
-  margin-top:99px;
+  margin-top:96px;
 }
 `
 
@@ -143,11 +155,20 @@ box-shadow: 0px 4px 4px #00000029;
   display: flex;
 }
 `
-const ScrollTopTextContainer = styled.div`
-
-`
-const ScrollTopText = styled.div`
-
+const LogoImg = styled.img`
+height: 40px;
+width: auto;
+cursor: pointer;
+@media (max-width:1000px) {
+  position:absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+@media (max-width:300px) {
+  width:52px;
+  height:auto;
+}
 `
 const ranking_text_list = [
   '티셔츠',
@@ -164,7 +185,7 @@ const authList = [
     link_key: 'wish'
   },
   {
-    name: '주문조회',
+    name: '주문내역',
     link_key: 'history'
   },
   {
@@ -220,7 +241,9 @@ const Header = () => {
     setHoverItems(hover_items);
     setLoading(false);
   }, [])
-
+  useEffect(() => {
+    console.log(router.query)
+  }, [router.query])
   const onHoverCategory = (category_name) => {
     let hover_items = hoverItems;
     for (let key in hover_items) {
@@ -303,6 +326,16 @@ const Header = () => {
     dots: false,
     vertical: true,
   }
+  const isPageCategory = (id) => {
+    let parent_list = getAllIdsWithParents(categories);
+    for (var i = 0; i < parent_list.length; i++) {
+      if (parent_list[i][parent_list[i].length - 1]?.id == router.query?.category_id && parent_list[i][0]?.id == id) {
+        return true;
+      }
+    }
+    return false;
+  }
+
   return (
     <>
       <DialogSearch
@@ -324,13 +357,18 @@ const Header = () => {
                 <Row style={{ marginLeft: 'auto', columnGap: '1rem' }}>
                   {user ?
                     <>
-                      <Button variant="outlined" sx={{ height: '24px' }}>로그아웃</Button>
+                      <Button sx={{ height: '24px' }} onClick={() => router.push('/shop/auth/my-page')}>마이페이지</Button>
+                      <Button sx={{ height: '24px' }} onClick={() => router.push('/shop/service/history')}>주문내역</Button>
+                      <Button variant="outlined" sx={{ height: '24px' }} onClick={() => {
+                        logout();
+                        router.push('/shop/auth/login')
+                      }}>로그아웃</Button>
                     </>
                     :
                     <>
-                      <Button sx={{ height: '24px' }}>회원가입</Button>
-                      <Button sx={{ height: '24px' }}>고객센터</Button>
-                      <Button variant="outlined" sx={{ height: '24px' }}>로그인</Button>
+                      <Button sx={{ height: '24px' }} onClick={() => router.push('/shop/auth/sign-up')}>회원가입</Button>
+                      <Button sx={{ height: '24px' }} onClick={() => router.push('/shop/service/notice')}>고객센터</Button>
+                      <Button variant="outlined" sx={{ height: '24px' }} onClick={() => router.push('/shop/auth/login')}>로그인</Button>
                     </>}
                 </Row>
               </TopMenuContainer>
@@ -355,7 +393,7 @@ const Header = () => {
                   <Icon icon={'iconamoon:search-thin'} fontSize={'1.7rem'} color={themeMode == 'dark' ? '#fff' : '#000'} />
                 </IconButton>
               </ShowMobile>
-              <img src={logoSrc} style={{ height: '40px', width: 'auto', cursor: 'pointer' }}
+              <LogoImg src={logoSrc}
                 onClick={() => {
                   router.push('/shop')
                 }}
@@ -421,20 +459,32 @@ const Header = () => {
                 </IconButton>
               </NoneShowMobile>
               <NoneShowMobile style={{ marginLeft: 'auto' }}>
-                <ScrollTopTextContainer>
+                <div>
                   <Slider {...text_setting} style={{ width: '200px' }}>
                     {ranking_text_list.map((text, idx) => (
                       <>
                         <Row style={{ columnGap: '0.5rem', cursor: 'pointer' }}>
                           <Chip label={idx + 1} size="small" variant="outlined" />
-                          <ScrollTopText>{text}</ScrollTopText>
+                          <div>{text}</div>
                         </Row>
                       </>
                     ))}
                   </Slider>
-                </ScrollTopTextContainer>
+                </div>
               </NoneShowMobile>
               <ShowMobile style={{ marginLeft: 'auto' }}>
+                <IconButton
+                  sx={iconButtonStyle}
+                  onClick={() => {
+                    if (user) {
+                      router.push(`/shop/auth/wish`)
+                    } else {
+                      router.push(`/shop/auth/login`)
+                    }
+                  }}
+                >
+                  <Icon icon={'ph:heart-thin'} fontSize={'1.8rem'} color={themeMode == 'dark' ? '#fff' : '#000'} />
+                </IconButton>
                 <IconButton
                   sx={iconButtonStyle}
                   onClick={() => {
@@ -447,6 +497,7 @@ const Header = () => {
                 >
                   <Icon icon={'ph:shopping-bag-open-thin'} fontSize={'1.8rem'} color={themeMode == 'dark' ? '#fff' : '#000'} />
                 </IconButton>
+
                 <IconButton
                   sx={iconButtonStyle}
                   onClick={() => onToggleMode()}
@@ -467,43 +518,58 @@ const Header = () => {
               <NoneShowMobile style={{ justifyContent: 'space-between', width: '100%' }}>
                 {categories.map((item1, idx1) => (
                   <>
-                    <div style={{ position: 'relative' }} className={`menu-${item1?.id}`}>
+                    <CategoryMenuContainer
+                      theme={theme}
+                      className={`menu-${item1?.id}`}
+                      style={{
+                        borderTopRightRadius: '8px',
+                        borderTopLeftRadius: '8px',
+                        borderBottomRightRadius: `${item1?.children.length == 0 && '8px'}`,
+                        borderBottomLeftRadius: `${item1?.children.length == 0 && '8px'}`,
+                      }}
+                    >
                       <CategoryMenu
                         theme={theme}
+                        is_page_category={isPageCategory(item1?.id) ? 1 : 0}
+                        style={{
+                          borderTopRightRadius: '8px',
+                          borderTopLeftRadius: '8px',
+                          borderBottomRightRadius: `${item1?.children.length == 0 && '8px'}`,
+                          borderBottomLeftRadius: `${item1?.children.length == 0 && '8px'}`,
+                        }}
                         onClick={() => {
                           router.push(`/shop/items/${item1?.id}?depth=0`)
                         }}>
                         <div>{item1.category_name}</div>
-                        {item1?.children.length > 0 &&
-                          <>
-                            <DropDownMenuContainer parentId={item1?.id} theme={theme} style={{
-                              width: `${item1.category_img ? '430px' : '144px'}`,
-                              fontSize: themeObj.font_size.size8,
-                              fontWeight: 'normal',
-                            }}>
-                              <div style={{
-                                display: 'flex',
-                                flexDirection: 'column',
-                                width: '154px'
-                              }}>
-                                {item1?.children.map((item2, idx2) => (
-                                  <>
-                                    {returnDropdownMenu(item2, 1)}
-                                  </>
-                                ))}
-                              </div>
-                              {item1.category_img ?
-                                <>
-                                  <img src={item1.category_img} style={{ height: 'auto', width: '270px' }} />
-                                </>
-                                :
-                                <>
-                                </>}
-                            </DropDownMenuContainer>
-                          </>}
                       </CategoryMenu>
-
-                    </div>
+                      {item1?.children.length > 0 &&
+                        <>
+                          <DropDownMenuContainer parentId={item1?.id} theme={theme} style={{
+                            width: `${item1.category_img ? '430px' : '144px'}`,
+                            fontSize: themeObj.font_size.size8,
+                            fontWeight: 'normal',
+                          }}>
+                            <div style={{
+                              display: 'flex',
+                              flexDirection: 'column',
+                              width: '154px'
+                            }}>
+                              {item1?.children.map((item2, idx2) => (
+                                <>
+                                  {returnDropdownMenu(item2, 1)}
+                                </>
+                              ))}
+                            </div>
+                            {item1.category_img ?
+                              <>
+                                <img src={item1.category_img} style={{ height: 'auto', width: '270px' }} />
+                              </>
+                              :
+                              <>
+                              </>}
+                          </DropDownMenuContainer>
+                        </>}
+                    </CategoryMenuContainer>
                   </>
                 ))}
               </NoneShowMobile>
@@ -515,7 +581,7 @@ const Header = () => {
               >
                 {categories.map((item1, idx1) => (
                   <>
-                    <CategoryMenu borderColor={themeMode == 'dark' ? '#fff' : '#000'} theme={theme} onMouseOver={() => {
+                    <CategoryMenu borderColor={themeMode == 'dark' ? '#fff' : '#000'} themeMode={themeMode} theme={theme} onMouseOver={() => {
                       onHoverCategory(`hover_${item1?.id}`)
                     }}
                       onClick={() => {
@@ -672,6 +738,6 @@ const ColumnMenuContent = styled.div`
         `
 const iconButtonStyle = {
   padding: '0.1rem',
-  marginLeft: '0.5rem'
+  marginLeft: '0.2rem'
 }
 export default Header

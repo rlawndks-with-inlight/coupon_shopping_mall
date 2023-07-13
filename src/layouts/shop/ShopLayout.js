@@ -33,11 +33,11 @@ const getDemo = (num, common) => {
       return <ShopLayout1 {...common} />
     else if (num == 2)
       return <ShopLayout2 {...common} />
-    else if (num == 2)
+    else if (num == 3)
       return <ShopLayout3 {...common} />
-    else if (num == 2)
+    else if (num == 4)
       return <ShopLayout4 {...common} />
-    else if (num == 2)
+    else if (num == 5)
       return <ShopLayout5 {...common} />
     else
       return { children }

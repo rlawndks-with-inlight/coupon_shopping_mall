@@ -87,7 +87,7 @@ const Demo1 = (props) => {
     return (
         <>
             <Wrappers>
-                <Title style={{ paddingBottom: '0' }}>자주 묻는 질문</Title>
+                <Title style={{ paddingBottom: '0' }}>테스트용테스트용</Title>
                 <Tabs
                     indicatorColor='primary'
                     textColor='primary'

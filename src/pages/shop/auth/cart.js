@@ -5,6 +5,7 @@ import { useSettingsContext } from "src/components/settings";
 
 import Demo1 from "src/views/shop/auth/cart/demo-1";
 import Demo2 from "src/views/shop/auth/cart/demo-2";
+import Demo3 from "src/views/shop/auth/cart/demo-3";
 
 const getDemo = (num, common) => {
 
@@ -12,6 +13,8 @@ const getDemo = (num, common) => {
     return <Demo1 {...common} />
   else if (num == 2)
     return <Demo2 {...common} />
+  else if (num == 3)
+    return <Demo3 {...common} />
 }
 
 const Cart = () => {

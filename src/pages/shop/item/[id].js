@@ -4,6 +4,7 @@ import ShopLayout from "src/layouts/shop/ShopLayout";
 import { useSettingsContext } from "src/components/settings";
 import Demo1 from "src/views/shop/item/id/demo-1";
 import Demo2 from "src/views/shop/item/id/demo-2";
+import Demo3 from "src/views/shop/item/id/demo-3";
 
 const getDemo = (num, common) => {
 
@@ -11,6 +12,8 @@ const getDemo = (num, common) => {
     return <Demo1 {...common} />
   else if (num == 2)
     return <Demo2 {...common} />
+  else if (num == 3)
+    return <Demo3 {...common} />
 }
 const Item = () => {
   const router = useRouter();

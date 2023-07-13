@@ -6,12 +6,15 @@ import { useSettingsContext } from "src/components/settings";
 
 import Demo1 from "src/views/shop/auth/history/demo-1";
 import Demo2 from "src/views/shop/auth/history/demo-2";
+import Demo3 from "src/views/shop/auth/history/demo-3";
 const getDemo = (num, common) => {
 
   if (num == 1)
     return <Demo1 {...common} />
   else if (num == 2)
     return <Demo2 {...common} />
+  else if (num == 3)
+    return <Demo3 {...common} />
 }
 const History = () => {
   const router = useRouter();

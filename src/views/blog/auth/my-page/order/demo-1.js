@@ -116,7 +116,11 @@ const Demo1 = (props) => {
                                 fontSize: '1rem',
                                 fontWeight: 'bold',
                                 marginRight: '1rem'
-                            }} />
+                            }}
+                            style={{
+                                marginRight: '1rem'
+                            }}
+                        />
                     })}
                 </Tabs>
                 <ContentContainer style={{
@@ -130,29 +134,29 @@ const Demo1 = (props) => {
                                         background: `${themeMode == 'dark' ? '#222' : '#fff'}`
                                     }}>
 
-                                        <div style={{ display: 'flex', justifyContent:'space-between',padding: '1rem' }}>
-                                            <div style={{ display: 'flex'}}>
-                                            <img src={item.product.product_img} width='48px' height='48px' style={{ margin: '0 1rem 0 0' }} />
-                                            <div style={{ display: 'flex', flexDirection: 'column' }}>
-                                                <div>{item.product.name}</div>
-                                                <div>{commarNumber(item.product.item_pr + item.option.price)}원</div>
-                                                <div>옵션 : {item.option.name} / {item.quantity}개</div>
-                                                <div style={{ marginTop: '0.5rem' }}>{commarNumber((item.product.item_pr + item.option.price) * item.quantity)}원</div>
-                                            </div>
+                                        <div style={{ display: 'flex', justifyContent: 'space-between', padding: '1rem' }}>
+                                            <div style={{ display: 'flex' }}>
+                                                <img src={item.product.product_img} width='48px' height='48px' style={{ margin: '0 1rem 0 0' }} />
+                                                <div style={{ display: 'flex', flexDirection: 'column' }}>
+                                                    <div>{item.product.name}</div>
+                                                    <div>{commarNumber(item.product.item_pr + item.option.price)}원</div>
+                                                    <div>옵션 : {item.option.name} / {item.quantity}개</div>
+                                                    <div style={{ marginTop: '0.5rem' }}>{commarNumber((item.product.item_pr + item.option.price) * item.quantity)}원</div>
+                                                </div>
                                             </div>
                                             <AddressButton>
                                                 <Button
                                                     variant='outlined'
                                                     style={{
                                                         marginBottom: '1rem',
-                                                        whiteSpace:'nowrap'
+                                                        whiteSpace: 'nowrap'
                                                     }}
                                                 >주문정보</Button>
                                                 <Button
                                                     variant='outlined'
                                                     style={{
                                                         marginBottom: '1rem',
-                                                        whiteSpace:'nowrap'
+                                                        whiteSpace: 'nowrap'
                                                     }}
                                                 >배송정보</Button>
                                             </AddressButton>

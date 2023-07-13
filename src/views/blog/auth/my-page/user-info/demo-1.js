@@ -9,12 +9,8 @@ const Wrappers = styled.div`
 max-width:798px;
 display:flex;
 flex-direction:column;
-margin: 56px auto 3rem auto;
+margin: 56px auto;
 width: 90%;
-@media (max-width:798px){
-  width:100%;
-  padding:5%;
-}
 `
 
 const TextFieldTitle = styled.label`
@@ -38,12 +34,19 @@ const Demo1 = (props) => {
     },
   } = props;
 
-  const { user } = useAuthContext();
+  const { user, logout } = useAuthContext();
   const [buttonText, setButtonText] = useState("변경")
   const [checkboxObj, setCheckboxObj] = useState({
     check_0: false,
     check_1: false,
   })
+
+  const onLogout = async () => {
+    let user = await logout();
+    if (user) {
+      router.push('/blog/auth/my-page');
+    }
+  }
 
   return (
     <>
@@ -155,7 +158,7 @@ const Demo1 = (props) => {
               fontSize: 'large'
             }}
             onClick={() => {
-              //로그아웃 기능 넣어야 함
+              onLogout()
             }}
           >로그아웃</Button>
           <div style={{

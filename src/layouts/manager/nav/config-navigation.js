@@ -46,7 +46,7 @@ export const navConfig = () => {
   return [
     {
       items: [
-        { title: '대시보드', path: PATH_MANAGER.manager, icon: ICONS.dashboard },
+        { title: '대시보드', path: PATH_MANAGER.dashboards, icon: ICONS.dashboard },
       ],
     },
     {

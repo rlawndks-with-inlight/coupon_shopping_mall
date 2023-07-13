@@ -19,8 +19,9 @@ import {
   HomeCleanInterfaces,
   HomeHugePackElements,
 } from 'src/views/home';
+import HeadContent from 'src/components/head';
 
-const HomePage = () => {
+const HomePage = ({ domain, dns_data }) => {
   const theme = useTheme();
 
   const { scrollYProgress } = useScroll();
@@ -49,13 +50,9 @@ const HomePage = () => {
 
   return (
     <>
-      <Head>
-        <title>컴어게인에서 꿈을 펼쳐보세요 !</title>
-      </Head>
+      <HeadContent dns_data={dns_data} />
       {progress}
-
       <HomeHero />
-
       <Box
         sx={{
           overflow: 'hidden',
@@ -86,4 +83,20 @@ const HomePage = () => {
 }
 
 HomePage.getLayout = (page) => <MainLayout> {page} </MainLayout>;
+
+export async function getServerSideProps({ req }) {
+
+  const domain = req.headers.host.split(':')[0];
+  const url = `${process.env.BACK_URL}/api/v1/auth/domain?dns=${domain}`;
+  const res = await fetch(url);
+  let dns_data = await res.json();
+  return {
+    props: {
+      domain,
+      dns_data
+    }
+  };
+
+}
+
 export default HomePage

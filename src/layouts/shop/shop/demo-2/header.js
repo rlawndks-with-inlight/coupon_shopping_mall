@@ -1,6 +1,6 @@
 import Logo from "src/components/logo/Logo"
 import styled from "styled-components"
-import { IconButton, TextField, InputAdornment, Drawer, Button, Chip } from "@mui/material"
+import { IconButton, TextField, InputAdornment, Drawer, Button, Chip, Dialog } from "@mui/material"
 import { forwardRef, useEffect, useState } from "react"
 import { Icon } from "@iconify/react"
 import { Row, themeObj } from 'src/components/elements/styled-components'
@@ -221,6 +221,7 @@ const Header = () => {
   const [hoverItems, setHoverItems] = useState({
 
   })
+  const [dialogMenuOpen, setDialogMenuOpen] = useState(false);
   const [sideMenuOpen, setSideMenuOpen] = useState(false);
   const [categories, setCategories] = useState([])
   const [loading, setLoading] = useState(true);
@@ -509,7 +510,7 @@ const Header = () => {
             <CategoryContainer>
               <NoneShowMobile>
                 <IconButton
-                  onClick={() => setSideMenuOpen(true)}
+                  onClick={() => setDialogMenuOpen(true)}
                   sx={{ marginRight: '1rem' }}
                 >
                   <Icon icon={'oi:menu'} fontSize={'2rem'} color={themeMode == 'dark' ? '#fff' : '#000'} />
@@ -601,6 +602,21 @@ const Header = () => {
           </Wrappers>
         </>}
       <PaddingTop />
+
+      <Dialog
+      open={dialogMenuOpen}
+      onClose={()=>{
+        setDialogMenuOpen(false);
+      }}
+      PaperProps={{
+        style: {
+          backgroundColor: 'transparent',
+          boxShadow: 'none',
+        },
+      }}
+      >
+
+      </Dialog>
       <Drawer
         anchor={'left'}
         open={sideMenuOpen}

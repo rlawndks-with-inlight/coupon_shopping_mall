@@ -68,7 +68,7 @@ margin-top:16px;
 `
 
 const PolicyContainer = styled.div`
-padding:4rem 2.5% 0 2.5%
+padding:0 2.5%;
 `
 
 const DialogBox = styled.div`
@@ -76,6 +76,14 @@ display:flex;
 flex-direction:column;
 margin: 0 auto;
 width:100%;
+`
+
+const DrawerTitle = styled.div`
+display:flex;
+margin-left:auto;
+width:95%;
+padding-left:2.5%;
+justify-content:space-between;
 `
 
 //마이페이지 김인욱
@@ -233,6 +241,17 @@ const Demo1 = (props) => {
                         }
                     }}
                 >
+                    <DrawerTitle>
+                        <img src={logoSrc} style={{ height: '56px', width: 'auto' }} />
+                        <IconButton
+                            sx={{}}
+                            onClick={() => {
+                                setOpenPolicy(false)
+                            }}
+                        >
+                            <Icon icon={'ic:round-close'} fontSize={'2.5rem'} />
+                        </IconButton>
+                    </DrawerTitle>
                     <PolicyContainer>
                         <Policy type={policyType} />
                     </PolicyContainer>
@@ -245,7 +264,7 @@ const Demo1 = (props) => {
                 PaperProps={{
                     sx: {
                         maxWidth: '540px',
-                        width:'90vw'
+                        width: '90vw'
                     }
                 }}
             >
@@ -253,7 +272,7 @@ const Demo1 = (props) => {
                     sx={{
                         display: 'flex',
                         justifyContent: 'space-between',
-                        padding:'0 0 1.5rem 1.5rem'
+                        padding: '0 0 1.5rem 1.5rem'
                     }}
                 >
                     <img src={logoSrc} style={{ height: '56px', width: 'auto' }} />

@@ -89,7 +89,7 @@ const Demo1 = (props) => {
             value={findType}
             scrollButtons='false'
             variant='fullWidth'
-            onChange={(event, newValue) => router.push(`/blog/auth/find-info?type=${newValue}`)}
+            onChange={(event, newValue) => router.push(`/blog/auth/find-info?type=${newValue}`, '/blog/auth/find-info')}
             sx={{ width: '100%' }}
           >
             {Object.keys(returnFindType).map((key) => (

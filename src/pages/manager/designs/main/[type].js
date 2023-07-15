@@ -130,7 +130,7 @@ const Main = () => {
   const [tourOpen, setTourOpen] = useState(false);
   const [tourSteps, setTourSteps] = useState([]);
 
-  const openTour = (class_name, text, ) =>{
+  const openTour = (class_name, text,) => {
     setTourSteps([
       {
         selector: `.${class_name}`,
@@ -147,7 +147,7 @@ const Main = () => {
     <>
       <Grid container spacing={3}>
         <Grid item xs={12} md={8}>
-          <Card sx={{ p: 3,minHeight:'100%' }}>
+          <Card sx={{ p: 3, minHeight: '100%' }}>
             <Stack spacing={1}>
               {contentList.length == 0 &&
                 <>
@@ -319,7 +319,8 @@ const Main = () => {
         steps={tourSteps}
         isOpen={tourOpen}
         disableInteraction={false}
-        onRequestClose={closeTour} />
+        onRequestClose={closeTour}
+      />
     </>
   )
 }

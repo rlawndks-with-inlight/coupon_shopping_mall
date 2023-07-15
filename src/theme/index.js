@@ -39,7 +39,7 @@ export default function ThemeProvider({ children }) {
   }, [themeDnsData])
   const themeOptions = useMemo(
     () => ({
-      palette: paletteObj,
+      palette: palette(themeMode),
       typography,
       shape: { borderRadius: 8 },
       direction: themeDirection,
@@ -48,6 +48,7 @@ export default function ThemeProvider({ children }) {
     }),
     [themeDirection, themeMode]
   );
+
   const theme = createTheme(themeOptions);
 
   theme.components = componentsOverride(theme);

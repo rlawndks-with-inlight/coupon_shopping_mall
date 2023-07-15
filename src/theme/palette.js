@@ -92,8 +92,7 @@ const COMMON = {
     disabledOpacity: 0.48,
   },
 };
-
-export default function palette(themeMode, themeDnsData) {
+export default function palette(themeMode) {
   const light = {
     ...COMMON,
     mode: 'light',

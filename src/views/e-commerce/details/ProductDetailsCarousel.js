@@ -8,14 +8,15 @@ import { bgGradient } from 'src/utils/cssStyles';
 // components
 import Image from 'src/components/image/Image';
 import Lightbox from 'src/components/lightbox/Lightbox';
-import Carousel, { CarouselArrowIndex }  from 'src/components/carousel';
+import Carousel, { CarouselArrowIndex } from 'src/components/carousel';
+import { useSettingsContext } from 'src/components/settings';
 // ----------------------------------------------------------------------
 
 const THUMB_SIZE = 64;
 
 const StyledThumbnailsContainer = styled('div', {
   shouldForwardProp: (prop) => prop !== 'length',
-})(({ length, theme }) => ({
+})(({ length, theme, themeMode }) => ({
   margin: theme.spacing(0, 'auto'),
   position: 'relative',
 
@@ -46,7 +47,7 @@ const StyledThumbnailsContainer = styled('div', {
       ...bgGradient({
         direction: 'to left',
         startColor: `${alpha(theme.palette.background.default, 0)} 0%`,
-        endColor: `${theme.palette.background.default} 10%`,
+        endColor: `${themeMode == 'dark' ? '#000' : theme.palette.background.default} 10%`,
       }),
       top: 0,
       zIndex: 9,
@@ -69,6 +70,8 @@ ProductDetailsCarousel.propTypes = {
 };
 
 export default function ProductDetailsCarousel({ product }) {
+
+  const { themeMode } = useSettingsContext();
   const theme = useTheme();
 
   const carousel1 = useRef(null);
@@ -159,7 +162,7 @@ export default function ProductDetailsCarousel({ product }) {
   );
 
   const renderThumbnails = (
-    <StyledThumbnailsContainer length={product.images.length} >
+    <StyledThumbnailsContainer length={product.images.length} themeMode={themeMode}>
       <Carousel {...carouselSettings2} asNavFor={nav1} ref={carousel2}>
         {product.images.map((img, index) => (
           <Image

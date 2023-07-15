@@ -105,9 +105,7 @@ const Demo1 = (props) => {
                         <Tab key={tab.value} value={tab.value} label={tab.label} />
                       ))}
                     </Tabs>
-
                     <Divider />
-
                     {TABS.map(
                       (tab) =>
                         tab.value === currentTab && (

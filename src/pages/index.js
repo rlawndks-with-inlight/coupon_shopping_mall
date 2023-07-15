@@ -21,7 +21,9 @@ import {
 } from 'src/views/home';
 import HeadContent from 'src/components/head';
 
-const HomePage = ({ domain, dns_data }) => {
+const HomePage = ({
+  //dns_data
+}) => {
   const theme = useTheme();
 
   const { scrollYProgress } = useScroll();
@@ -50,7 +52,7 @@ const HomePage = ({ domain, dns_data }) => {
 
   return (
     <>
-      <HeadContent dns_data={dns_data} />
+      {/* <HeadContent dns_data={dns_data} /> */}
       {progress}
       <HomeHero />
       <Box
@@ -84,19 +86,18 @@ const HomePage = ({ domain, dns_data }) => {
 
 HomePage.getLayout = (page) => <MainLayout> {page} </MainLayout>;
 
-export async function getServerSideProps({ req }) {
+// export async function getServerSideProps({ req }) {
 
-  const domain = req.headers.host.split(':')[0];
-  const url = `${process.env.BACK_URL}/api/v1/auth/domain?dns=team.comagain.kr`;
-  const res = await fetch(url);
-  let dns_data = await res.json();
-  return {
-    props: {
-      domain,
-      dns_data
-    }
-  };
+//   const domain = req.headers.host.split(':')[0];
+//   const url = `${process.env.BACK_URL}/api/v1/auth/domain?dns=team.comagain.kr`;
+//   const res = await fetch(url);
+//   let dns_data = await res.json();
+//   return {
+//     props: {
+//       dns_data
+//     }
+//   };
 
-}
+// }
 
 export default HomePage

@@ -32,7 +32,7 @@ export default function ThemeProvider({ children }) {
       palette_obj['primary']['main'] = themeDnsData?.theme_css?.main_color;
       palette_obj['primary']['dark'] = themeDnsData?.theme_css?.main_color;
       palette_obj['primary']['darker'] = themeDnsData?.theme_css?.main_color;
-      palette_obj['primary']['light'] = themeDnsData?.theme_css?.main_color + '29';
+      palette_obj['primary']['light'] = themeDnsData?.theme_css?.main_color + '';
       palette_obj['primary']['lighter'] = themeDnsData?.theme_css?.main_color + '29';
       setPaletteObj(palette_obj);
     }

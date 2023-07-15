@@ -31,6 +31,8 @@ const initialState = {
   onResetSetting: () => { },
   // dns data
   onChangeDnsData: () => { },
+  // cart data
+  onChangeCartData: () => { },
   // current page
   onChangeCurrentPageObj: () => { },
   //auth
@@ -65,6 +67,7 @@ export function SettingsProvider({ children }) {
   const [themeDirection, setThemeDirection] = useState(defaultSettings.themeDirection);
   const [themeColorPresets, setThemeColorPresets] = useState(defaultSettings.themeColorPresets);
   const [themeDnsData, setThemeDnsData] = useState(defaultSettings.themeDnsData);
+  const [themeCartData, setThemeCartData] = useState(defaultSettings.themeCartData);
   const [themeCurrentPageObj, setThemeCurrentPageObj] = useState(defaultSettings.themeCurrentPageObj);
   const [themeAuth, setThemeAuth] = useState(defaultSettings.themeAuth);
   const [themeCategoryList, setThemeCategoryList] = useState(defaultSettings.themeCategoryList);
@@ -86,6 +89,7 @@ export function SettingsProvider({ children }) {
       const direction = getCookie('themeDirection') || defaultSettings.themeDirection;
       const colorPresets = getCookie('themeColorPresets') || defaultSettings.themeColorPresets;
       const currentPageObj = getCookie('themeCurrentPageObj') || defaultSettings.themeCurrentPageObj;
+      const cartData = getCookie('themeCartData') || defaultSettings.themeCartData;
       //const auth = getCookie('themeAuth') || defaultSettings.themeAuth;
       //const categoryList = getCookie('themeCategoryList') || defaultSettings.themeCategoryList;
       setThemeMode(mode);
@@ -95,6 +99,7 @@ export function SettingsProvider({ children }) {
       setThemeDirection(direction);
       setThemeColorPresets(colorPresets);
       setThemeCurrentPageObj(currentPageObj);
+      setThemeCartData(cartData);
       getDnsData();
     }
   }, []);
@@ -192,6 +197,11 @@ export function SettingsProvider({ children }) {
     setThemeDnsData(dns_data);
     setCookie('themeDnsData', JSON.stringify(dns_data));
   }, [])
+  // cart data
+  const onChangeCartData = useCallback((cart_data) => {
+    setThemeCartData(cart_data);
+    setCookie('themeCartData', JSON.stringify(cart_data));
+  }, [])
   // current page
   const onChangeCurrentPageObj = useCallback((data) => {
     setThemeCurrentPageObj(data);
@@ -216,6 +226,7 @@ export function SettingsProvider({ children }) {
     setThemeDirection(defaultSettings.themeDirection);
     setThemeColorPresets(defaultSettings.themeColorPresets);
     setThemeDnsData(defaultSettings.themeDnsData);
+    setThemeCartData(defaultSettings.themeCartData);
     setThemeCurrentPageObj(defaultSettings.themeCurrentPageObj);
     setThemeAuth(defaultSettings.themeAuth);
     setThemeCategoryList(defaultSettings.themeCategoryList);
@@ -226,6 +237,7 @@ export function SettingsProvider({ children }) {
     removeCookie('themeDirection');
     removeCookie('themeColorPresets');
     removeCookie('themeDnsData');
+    removeCookie('themeCartData');
     removeCookie('themeCurrentPageObj');
     removeCookie('themeAuth');
     removeCookie('themeCategoryList');
@@ -263,6 +275,9 @@ export function SettingsProvider({ children }) {
       // dns data
       themeDnsData,
       onChangeDnsData,
+      // cart data
+      themeCartData,
+      onChangeCartData,
       //current page
       themeCurrentPageObj,
       onChangeCurrentPageObj,
@@ -300,6 +315,9 @@ export function SettingsProvider({ children }) {
       // dns data
       themeDnsData,
       onChangeDnsData,
+      // cart data
+      themeCartData,
+      onChangeCartData,
       //current page
       themeCurrentPageObj,
       onChangeCurrentPageObj,

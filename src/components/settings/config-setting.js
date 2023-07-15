@@ -9,7 +9,7 @@ export const defaultSettings = {
   themeColorPresets: 'default',
   themeStretch: true,
   themeDnsData: {},// dns정보
-  themeCart: [],// 장바구니
+  themeCartData: [],// 장바구니
   themeCurrentPageObj: {}, // 현재페이지 불러올 내용
   themeAuth: {},
   themeCategoryList: []

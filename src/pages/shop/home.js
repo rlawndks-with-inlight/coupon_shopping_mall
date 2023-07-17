@@ -13,7 +13,7 @@ const getDemo = (num, common) => {
   else if (num == 2)
     return <Demo2 {...common} />
   else if (num == 3)
-    return <Demo3 {...common} />
+    return <Demo1 {...common} />
 }
 const Home = () => {
   const router = useRouter();

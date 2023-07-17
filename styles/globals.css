@@ -107,7 +107,9 @@ body {
   padding-top: 2rem;
   font-size: 0.9rem !important;
   font-weight: bold !important;
+  color: #000;
 }
+
 #___reactour > div:nth-child(4) > div > span {
   display: none;
 }

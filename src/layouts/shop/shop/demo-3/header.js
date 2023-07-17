@@ -312,7 +312,9 @@ const Header = () => {
             </CategoryContainer>
           </Wrappers>
         </>}
-      <BottomMenuContainer>
+      <BottomMenuContainer style={{
+        background: `${themeMode == 'dark' ? '#000' : '#fff'}`
+      }}>
         <MenuContainer>
           <OneMenuContainer
             onClick={() => router.push('/shop')}

@@ -9,6 +9,7 @@ import { deleteCookie, getCookie, setCookie } from 'src/utils/react-cookie';
 import { useSettingsContext } from 'src/components/settings';
 import { toast } from 'react-hot-toast';
 import { useRouter } from 'next/router';
+import { PATH_AUTH } from 'src/data/manager-data';
 
 // ----------------------------------------------------------------------
 
@@ -99,6 +100,9 @@ export function AuthProvider({ children }) {
           user: null,
         },
       });
+      if(router.asPath.split('/')[1] == 'manager'){
+        router.push(PATH_AUTH.login);
+      }
     }
   }, [storageAvailable]);
 

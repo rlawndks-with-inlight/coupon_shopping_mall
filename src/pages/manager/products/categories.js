@@ -11,6 +11,7 @@ import PropTypes from 'prop-types';
 import clsx from "clsx";
 import { Icon } from "@iconify/react";
 import { useTheme } from "@emotion/react";
+import { getAllIdsWithParents } from "src/utils/function";
 // ----------------------------------------------------------------------
 
 const StyledTreeView = muiStyled(TreeView)({
@@ -108,13 +109,13 @@ const CustomContent = forwardRef(function CustomContent(props, ref) {
         {label}
       </Typography>
       <Tooltip title="해당 카테고리를 수정하시려면 클릭해주세요.">
-        <IconButton onClick={() => onClickCategoryLabel(category)}>
+        <IconButton onClick={() => onClickCategoryLabel(category, depth)}>
           <Icon icon='tabler:edit' fontSize={16} />
         </IconButton>
       </Tooltip>
       <Tooltip title="하위 카테고리를 추가하시려면 클릭해 주세요.">
         <IconButton onClick={() => {
-          onClickAddIcon(category)
+          onClickAddIcon(category, depth)
         }}>
           <Icon icon='uiw:plus' fontSize={14} />
         </IconButton>
@@ -133,10 +134,12 @@ display:flex;
 const CategoryList = () => {
 
   const theme = useTheme();
-  const [categories, setCategories] = useState([]);
-  const [category, setCategory] = useState({
+  const [categories, setCategories] = useState([]); // 전체카테고리가 저장될 변수
+  const [curCategories, setCurCategories] = useState([]); // 카테고리 깊이를 보여주기 용
+  const [category, setCategory] = useState({ // 수정하거나 추가할때 사용될 디비 커넥트용 변수
     category_img: '',
     category_name: '',
+    category_description: '',
   })
   useEffect(() => {
     setCategories(test_categories)
@@ -157,7 +160,16 @@ const CategoryList = () => {
       </>
     )
   }
-  const onClickAddIcon = (category) => {
+  const onClickAddIcon = (category, depth) => { // 하위 카테고리 추가
+    let parent_list = getAllIdsWithParents(categories);
+    let use_list = [];
+    for (var i = 0; i < parent_list.length; i++) {
+      if (parent_list[i][depth]?.id == category?.id) {
+        use_list = parent_list[i];
+        break;
+      }
+    }
+    setCurCategories(use_list);
     setCategory({
       category_img: '',
       category_name: '',
@@ -167,7 +179,16 @@ const CategoryList = () => {
   const onSaveCategory = () => {
 
   }
-  const onClickCategoryLabel = (category) => {
+  const onClickCategoryLabel = (category, depth) => { // 해당 카테고리 수정
+    let parent_list = getAllIdsWithParents(categories);
+    let use_list = [];
+    for (var i = 0; i < parent_list.length; i++) {
+      if (parent_list[i][depth]?.id == category?.id) {
+        use_list = parent_list[i];
+        break;
+      }
+    }
+    setCurCategories(use_list);
     setCategory({
       id: category?.id,
       category_name: category?.category_name,
@@ -216,18 +237,32 @@ const CategoryList = () => {
                 display: 'flex', flexDirection: 'column', height: '100%',
                 minHeight: '700px'
               }}>
-                {category?.id &&
+                {(category?.id || category?.parent) &&
                   <>
                     <Row>
-                      <div style={{ color: theme.palette.error.main, fontWeight: 'bold', marginRight: '0.5rem' }}>{category?.category_name}</div>
-                      카테고리 수정
-                    </Row>
-                  </>}
-                {category?.parent &&
-                  <>
-                    <Row>
-                      <div style={{ color: theme.palette.error.main, fontWeight: 'bold', marginRight: '0.5rem' }}>{category?.parent?.category_name}</div>
-                      의 하위 카테고리 추가
+                      <Row style={{ color: theme.palette.error.main, fontWeight: 'bold' }}>
+                        {curCategories.map((item, idx) => (
+                          <>
+                            <div style={{ marginRight: '0.25rem' }}>
+                              {item.category_name}
+                            </div>
+                            {idx != curCategories.length - 1 &&
+                              <>
+                                <div style={{ marginRight: '0.25rem' }}>
+                                  {'>'}
+                                </div>
+                              </>}
+                          </>
+                        ))}
+                      </Row>
+                      {category?.id &&
+                        <>
+                          카테고리 수정
+                        </>}
+                      {category?.parent &&
+                        <>
+                          의 하위 카테고리 추가
+                        </>}
                     </Row>
                   </>}
                 <Upload file={category.category_img} onDrop={(acceptedFiles) => {
@@ -256,6 +291,19 @@ const CategoryList = () => {
                     ['category_name']: e.target.value
                   })
                 }} />
+                <TextField
+                  fullWidth
+                  label="카테고리 설명"
+                  multiline
+                  rows={4}
+                  value={category.category_description}
+                  onChange={(e) => {
+                    setCategory({
+                      ...category,
+                      ['category_description']: e.target.value
+                    })
+                  }}
+                />
                 <Button variant="contained" style={{ marginTop: 'auto', height: '56px' }}>{category?.id > 0 ? '수정' : '추가'}</Button>
               </Stack>
             </Card>

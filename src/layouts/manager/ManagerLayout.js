@@ -36,11 +36,6 @@ export default function ManagerLayout({ children }) {
 
   const isNavMini = themeLayout === 'mini';
 
-  useEffect(()=>{
-    if(!user){
-      router.push('/manager/login')
-    }
-  },[])
   const handleOpen = () => {
     setOpen(true);
   };

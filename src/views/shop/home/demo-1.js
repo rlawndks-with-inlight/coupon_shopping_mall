@@ -22,6 +22,54 @@ width:100%;
 const returnTypeObj = {
 
 }
+const NextArrowStyle = styled.div`
+position: absolute;
+  top: 15vw;
+  right: 12px;
+  z-index: 2;
+  width: 3rem;
+  height: 3rem;
+  cursor: pointer;
+  font-size: 28px;
+  border-radius: 50%;
+  background: #aaaaaa55;
+  color: #fff !important;
+  display: flex;
+  @media (max-width:1200px) {
+    top: 18vw;
+    font-size: 1rem;
+    width: 1.5rem;
+    height: 1.5rem;
+  }
+`
+const PrevArrowStyle = styled.div`
+position: absolute;
+top: 15vw;
+left: 12px;
+z-index: 2;
+cursor: pointer;
+font-size: 28px;
+width: 3rem;
+height: 3rem;
+border-radius: 50%;
+background: #aaaaaa55;
+color: #fff !important;
+display: flex;
+@media (max-width:1200px) {
+  top: 18vw;
+  font-size: 1rem;
+  width: 1.5rem;
+  height: 1.5rem;
+}
+`
+const BannerImg = styled.img`
+width: 80vw;
+height: 34vw;
+@media (max-width:1200px) {
+    width: 100vw;
+    height: 42.5vw;
+}
+`
 const returnHomeContent = (column, data, func) => {
   let { windowWidth } = data;
   const { router } = func;
@@ -32,17 +80,17 @@ const returnHomeContent = (column, data, func) => {
     let img_list = [...column?.list];
     const NextArrow = ({ onClick }) => {
       return (
-        <div className="nextArrow" onClick={onClick}>
+        <NextArrowStyle className="nextArrow" onClick={onClick}>
           <Icon style={{ color: '#fff', margin: 'auto' }} icon={'ooui:previous-rtl'} />
-        </div>
+        </NextArrowStyle>
       );
     };
 
     const PrevArrow = ({ onClick }) => {
       return (
-        <div className="prevArrow" onClick={onClick}>
+        <PrevArrowStyle className="prevArrow" onClick={onClick}>
           <Icon style={{ color: '#fff', margin: 'auto' }} icon={'ooui:previous-ltr'} />
-        </div>
+        </PrevArrowStyle>
       );
     };
     let slide_setting = {
@@ -65,7 +113,7 @@ const returnHomeContent = (column, data, func) => {
         <Slider {...slide_setting[column?.item_type]}>
           {img_list.map((item, idx) => (
             <>
-              <img src={item?.src} className={`home-banner-img-type-${column?.item_type}`} />
+              <BannerImg src={item?.src} />
             </>
           ))}
         </Slider>

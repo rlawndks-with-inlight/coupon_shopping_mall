@@ -7,7 +7,7 @@ const ScrollToTopStyled = styled('div')(({ theme }) => ({
   zIndex: 11,
   position: 'fixed',
   right: '2rem',
-  bottom: '3rem',
+  bottom: '4rem',
 }))
 
 const ScrollToTop = props => {

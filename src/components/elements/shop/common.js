@@ -6,6 +6,7 @@ import { itemThemeCssDefaultSetting } from "src/pages/manager/designs/item-card"
 import { useEffect, useState } from "react";
 import { IconButton } from "@mui/material";
 import { Icon } from "@iconify/react";
+import Slider from "react-slick";
 
 const ItemName = styled.div`
 font-weight: bold;
@@ -64,7 +65,7 @@ export const Item = (props) => {
       }}
 
       >
-        <IconButton sx={{ position: 'absolute', right: '2px', top:'2px' }}>
+        <IconButton sx={{ position: 'absolute', right: '2px', top: '2px' }}>
           <Icon icon={'basil:heart-outline'} fontSize={'2rem'} />
         </IconButton>
         <ItemImg src={item.product_img} style={{
@@ -77,8 +78,7 @@ export const Item = (props) => {
               router.push(`/shop/item/${item?.id}`)
             }
           }} >
-
-          </ItemImg>
+        </ItemImg>
         <ItemTextContainer
           onClick={() => {
             if (item?.id) {
@@ -133,22 +133,44 @@ width:${props => props.theme_css?.container?.is_vertical == 1 ? '32%' : '23.5%'}
 }
 `
 export const Items = (props) => {
-  const { items, router, theme_css } = props;
+  const { items, router, theme_css, is_slide } = props;
   const [itemThemeCss, setItemThemeCss] = useState(itemThemeCssDefaultSetting);
   useEffect(() => {
     if (theme_css) {
       setItemThemeCss(Object.assign(itemThemeCss, theme_css));
     }
   }, [theme_css])
+  const items_setting = {
+    infinite: true,
+    speed: 500,
+    autoplay: true,
+    autoplaySpeed: 2500,
+    slidesToShow: (window.innerWidth > 1350 ? 4 : window.innerWidth > 1000 ? 3 : theme_css?.container?.is_vertical == 1 ? 1 : 2),
+    slidesToScroll: 1,
+    dots: false,
+  }
   return (
     <>
-      <ItemsContainer theme_css={itemThemeCss}>
-        {items && items.map((item, idx) => {
-          return <ItemWrapper theme_css={itemThemeCss}>
-            <Item item={item} router={router} theme_css={itemThemeCss} />
-          </ItemWrapper>
-        })}
-      </ItemsContainer>
+      {is_slide ?
+        <>
+          <Slider {...items_setting} className='margin-slide'>
+            {items && items.map((item, idx) => {
+              return <ItemWrapper theme_css={itemThemeCss}>
+                <Item item={item} router={router} theme_css={itemThemeCss} />
+              </ItemWrapper>
+            })}
+          </Slider>
+        </>
+        :
+        <>
+          <ItemsContainer theme_css={itemThemeCss}>
+            {items && items.map((item, idx) => {
+              return <ItemWrapper theme_css={itemThemeCss}>
+                <Item item={item} router={router} theme_css={itemThemeCss} />
+              </ItemWrapper>
+            })}
+          </ItemsContainer>
+        </>}
     </>
   )
 }

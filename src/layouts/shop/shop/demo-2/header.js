@@ -23,7 +23,7 @@ display: flex;
 flex-direction: column;
 z-index: 10;
 border-bottom:1px solid ${themeObj.grey[300]};
-padding-bottom: 1rem;
+padding-bottom: 0.5rem;
 @media (max-width:1000px) {
   border-bottom:none;
   padding-bottom: 0;
@@ -95,7 +95,7 @@ align-items:center;
 }
 `
 const PaddingTop = styled.div`
-margin-top:193px;
+margin-top:186px;
 @media (max-width:1000px) {
   margin-top:96px;
 }
@@ -608,14 +608,18 @@ const Header = () => {
       onClose={()=>{
         setDialogMenuOpen(false);
       }}
+      BackdropProps={{
+        style:{
+          background:`${theme.palette.primary.main}99`
+        }
+      }}
       PaperProps={{
-        style: {
-          backgroundColor: 'transparent',
-          boxShadow: 'none',
-        },
+        style:{
+          background:'transparent'
+        }
       }}
       >
-
+        asd
       </Dialog>
       <Drawer
         anchor={'left'}
@@ -729,7 +733,6 @@ const returnSidebarMenu = (item, num, func) => {
     </>
   )
 }
-
 const ColumnMenuContainer = styled.div`
         width: 400px;
         padding:0 2rem 4rem 2rem;
@@ -741,7 +744,7 @@ const ColumnMenuContainer = styled.div`
           width: 70vw;
         padding:0 5vw 4rem 5vw;
 }
-        `
+`
 const ColumnMenuTitle = styled.div`
         margin: 2rem 0 0.5rem 0;
         font-weight: bold;
@@ -751,7 +754,7 @@ const ColumnMenuContent = styled.div`
         align-items:center;
         padding:0.25rem 0;
         cursor:pointer;
-        `
+`
 const iconButtonStyle = {
   padding: '0.1rem',
   marginLeft: '0.2rem'

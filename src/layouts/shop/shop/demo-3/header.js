@@ -253,25 +253,10 @@ const Header = () => {
               <NoneShowMobile style={{ width: '100%' }}>
                 {categories.map((item1, idx1) => (
                   <>
-                    <CategoryMenuContainer
-                      theme={theme}
-                      className={`menu-${item1?.id}`}
-                      style={{
-                        borderTopRightRadius: '8px',
-                        borderTopLeftRadius: '8px',
-                        borderBottomRightRadius: `${item1?.children.length == 0 && '8px'}`,
-                        borderBottomLeftRadius: `${item1?.children.length == 0 && '8px'}`,
-                      }}
-                    >
+                    <CategoryMenuContainer theme={theme}>
                       <CategoryMenu
                         theme={theme}
                         is_page_category={isPageCategory(item1?.id) ? 1 : 0}
-                        style={{
-                          borderTopRightRadius: '8px',
-                          borderTopLeftRadius: '8px',
-                          borderBottomRightRadius: `${item1?.children.length == 0 && '8px'}`,
-                          borderBottomLeftRadius: `${item1?.children.length == 0 && '8px'}`,
-                        }}
                         onClick={() => {
                           router.push(`/shop/items/${item1?.id}?depth=0`)
                         }}>
@@ -341,7 +326,7 @@ const Header = () => {
             </OneMenuName>
           </OneMenuContainer>
           <OneMenuContainer
-            onClick={() => { }}
+            onClick={() => { router.push('/shop/auth/my-page') }}
           >
             <Icon icon={'carbon:user'} fontSize={'1.5rem'} style={{ marginTop: 'auto' }} />
             <OneMenuName>
@@ -349,7 +334,7 @@ const Header = () => {
             </OneMenuName>
           </OneMenuContainer>
           <OneMenuContainer
-            onClick={() => { }}
+            onClick={() => { router.push('/shop/auth/cart') }}
           >
             <Icon icon={'ion:cart-outline'} fontSize={'1.5rem'} style={{ marginTop: 'auto' }} />
             <OneMenuName>
@@ -371,7 +356,6 @@ const Header = () => {
           },
         }}
       >
-
       </Dialog>
     </>
   )

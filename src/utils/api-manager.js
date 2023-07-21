@@ -21,7 +21,7 @@ const post = async (url, obj) => {
 const deleteItem = async (url, obj) => {
   try {
     const response = await axiosIns().delete(url, obj);
-    return response?.data;
+    return response;
   } catch (err) {
     return false;
   }
@@ -46,7 +46,6 @@ const put = async (url, obj) => {
 }
 const get = async (url, params) => {
   try {
-
     let query = new URLSearchParams(params).toString()
     const response = await axiosIns().get(`${url}?${query}`);
     return response?.data;
@@ -60,18 +59,18 @@ export const getCategoriesByManager = (params) => {
   let query = {
     page, page_size, s_dt, e_dt, search
   }
-  if(!query['s_dt']) delete query['s_dt'];
-  if(!query['e_dt']) delete query['e_dt'];
-  if(!query['search']) delete query['search'];
+  if (!query['s_dt']) delete query['s_dt'];
+  if (!query['e_dt']) delete query['e_dt'];
+  if (!query['search']) delete query['search'];
 
   return get(`/api/v1/manager/product-categories`, query);
 }
 export const addCategoryByManager = (params) => {
-  const { parent_id, category_type, category_name, category_description, category_file='' } = params;
+  const { parent_id, category_type, category_name, category_description, category_file = '' } = params;
   let obj = {
     parent_id, category_type, category_name, category_description, category_file
   }
-  if(!parent_id){
+  if (!parent_id) {
     delete obj['parent_id'];
   }
   return post(`/api/v1/manager/product-categories`, obj);
@@ -91,33 +90,132 @@ export const getCategoryByManager = (params) => {
 export const deleteCategoryByManager = (params) => {
   const { id } = params;
   return deleteItem(`/api/v1/manager/product-categories/${id}`);
-  console.log(response.data);
 }
 export const getProductsByManager = (params) => {
   const { page, page_size, s_dt, e_dt, search, category_id } = params;
   let query = {
     page, page_size, s_dt, e_dt, search, category_id
   }
-  if(!query['s_dt']) delete query['s_dt'];
-  if(!query['e_dt']) delete query['e_dt'];
-  if(!query['search']) delete query['search'];
-  if(!query['category_id']) delete query['category_id'];
+  if (!query['s_dt']) delete query['s_dt'];
+  if (!query['e_dt']) delete query['e_dt'];
+  if (!query['search']) delete query['search'];
+  if (!query['category_id']) delete query['category_id'];
 
   return get(`/api/v1/manager/products`, query);
 }
 export const addProductByManager = (params) => {
-  const { } = params;
-  const response = axiosIns().get(`/api/v1/manager`);
-  console.log(response.data);
+  const { category_id, product_name = '', product_comment = '', product_price = 0, product_sale_price = 0, brand_name = '', origin_name = '', mfg_name = '', model_name = '', product_description = '', product_file, product_sub_file } = params;
+  let obj = {
+    category_id, product_name, product_comment, product_price, product_sale_price, brand_name, origin_name, mfg_name, model_name, product_description, product_file, product_sub_file
+  }
+  return post(`/api/v1/manager/products`, obj);
 }
 export const updateProductByManager = (params) => {
-  const { } = params;
+  const { id, category_id, product_name = '', product_comment = '', product_price = 0, product_sale_price = 0, brand_name = '', origin_name = '', mfg_name = '', model_name = '', product_description = '', product_file, product_sub_file } = params;
+  let obj = {
+    category_id, product_name, product_comment, product_price, product_sale_price, brand_name, origin_name, mfg_name, model_name, product_description, product_file, product_sub_file
+  }
+  return put(`/api/v1/manager/products/${id}`, obj);
 }
 export const getProductByManager = (params) => {
-  const { } = params;
-
+  const { id } = params;
+  return get(`/api/v1/manager/products/${id}`);
 }
 export const deleteProductByManager = (params) => {
-  const { } = params;
+  const { id } = params;
+  return deleteItem(`/api/v1/manager/products/${id}`);
+}
+export const getUsersByManager = (params) => {
+  const { page, page_size, s_dt, e_dt, search } = params;
+  let query = {
+    page, page_size, s_dt, e_dt, search
+  }
+  if (!query['s_dt']) delete query['s_dt'];
+  if (!query['e_dt']) delete query['e_dt'];
+  if (!query['search']) delete query['search'];
 
+  return get(`/api/v1/manager/users`, query);
+}
+export const addUserByManager = (params) => {
+  const {  } = params;
+  let obj = {
+
+  }
+  return post(`/api/v1/manager/users`, obj);
+}
+export const updateUserByManager = (params) => {
+  const {  } = params;
+  let obj = {
+  }
+  return put(`/api/v1/manager/users/${id}`, obj);
+}
+export const getUserByManager = (params) => {
+  const { id } = params;
+  return get(`/api/v1/manager/users/${id}`);
+}
+export const deleteUserByManager = (params) => {
+  const { id } = params;
+  return deleteItem(`/api/v1/manager/users/${id}`);
+}
+export const getSellersByManager = (params) => {
+  const { page, page_size, s_dt, e_dt, search } = params;
+  let query = {
+    page, page_size, s_dt, e_dt, search
+  }
+  if (!query['s_dt']) delete query['s_dt'];
+  if (!query['e_dt']) delete query['e_dt'];
+  if (!query['search']) delete query['search'];
+
+  return get(`/api/v1/manager/merchandises`, query);
+}
+export const addSellerByManager = (params) => {
+  const {  } = params;
+  let obj = {
+  }
+  return post(`/api/v1/manager/merchandises`, obj);
+}
+export const updateSellerByManager = (params) => {
+  const {  } = params;
+  let obj = {
+  }
+  return put(`/api/v1/manager/merchandises/${id}`, obj);
+}
+export const getSellerByManager = (params) => {
+  const { id } = params;
+  return get(`/api/v1/manager/merchandises/${id}`);
+}
+export const deleteSellerByManager = (params) => {
+  const { id } = params;
+  return deleteItem(`/api/v1/manager/merchandises/${id}`);
+}
+export const getPostCategoriesByManager = (params) => {
+  const { page, page_size, s_dt, e_dt, search } = params;
+  let query = {
+    page, page_size, s_dt, e_dt, search
+  }
+  if (!query['s_dt']) delete query['s_dt'];
+  if (!query['e_dt']) delete query['e_dt'];
+  if (!query['search']) delete query['search'];
+
+  return get(`/api/v1/manager/post-categories`, query);
+}
+export const addPostCategoryByManager = (params) => {
+  const {  } = params;
+  let obj = {
+  }
+  return post(`/api/v1/manager/post-categories`, obj);
+}
+export const updatePostCategoryByManager = (params) => {
+  const {  } = params;
+  let obj = {
+  }
+  return put(`/api/v1/manager/post-categories/${id}`, obj);
+}
+export const getPostCategoryByManager = (params) => {
+  const { id } = params;
+  return get(`/api/v1/manager/post-categories/${id}`);
+}
+export const deletePostCategoryByManager = (params) => {
+  const { id } = params;
+  return deleteItem(`/api/v1/manager/post-categories/${id}`);
 }

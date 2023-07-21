@@ -1,93 +1,39 @@
-import { Card, Container, IconButton, Stack } from "@mui/material";
+import { Avatar, Card, Container, Divider, IconButton, Stack } from "@mui/material";
 import { useEffect, useState } from "react";
 import ManagerLayout from "src/layouts/manager/ManagerLayout";
 import ManagerTable from "src/views/manager/mui/table/ManagerTable";
 import { Icon } from "@iconify/react";
 import { useRouter } from "next/router";
 import { Row } from "src/components/elements/styled-components";
-import { getProductsByManager } from "src/utils/api-manager";
-const test_data = [
-  {
-    id: 1,
-    user_name: 'test1',
-    phone_num: '01000000000',
-  },
-  {
-    id: 2,
-    user_name: 'test2',
-    phone_num: '01000000000',
-  }
-]
+import { deleteUserByManager, getUsersByManager } from "src/utils/api-manager";
 const UserList = () => {
   const defaultColumns = [
     {
-      id: 'id',
-      label: 'No.',
+      id: 'profile_img',
+      label: '유저프로필',
       action: (row) => {
-        return row['id']
+        return <Avatar src={row['profile_img'] ?? "---"} />
       }
     },
     {
-      id: 'product_img',
-      label: '상품이미지',
+      id: 'nick_name',
+      label: '닉네임',
       action: (row) => {
-        return row['product_img'] ?? "---"
+        return row['nick_name'] ?? "---"
       }
     },
     {
-      id: 'product_name',
-      label: '상품명',
+      id: 'phone_num',
+      label: '휴대폰번호',
       action: (row) => {
-        return row['user_name'] ?? "---"
-      }
-    },
-    {
-      id: 'category',
-      label: '카테고리',
-      action: (row) => {
-        return row['name'] ?? "---"
-      }
-    },
-    {
-      id: 'mkt_pr',
-      label: '시장가',
-      action: (row) => {
-        return row['name'] ?? "---"
-      }
-    },
-    {
-      id: 'item_pr',
-      label: '판매가',
-      action: (row) => {
-        return row['name'] ?? "---"
-      }
-    },
-    {
-      id: 'inventory',
-      label: '재고',
-      action: (row) => {
-        return row['name'] ?? "---"
-      }
-    },
-    {
-      id: 'status',
-      label: '상태',
-      action: (row) => {
-        return row['name'] ?? "---"
+        return row['phone_num'] ?? "---"
       }
     },
     {
       id: 'created_at',
-      label: '생성시간',
+      label: '가입일',
       action: (row) => {
-        return row['name'] ?? "---"
-      }
-    },
-    {
-      id: 'updated_at',
-      label: '최종수정시간',
-      action: (row) => {
-        return row['name'] ?? "---"
+        return row['created_at'] ?? "---"
       }
     },
     {
@@ -101,7 +47,7 @@ const UserList = () => {
                 router.push(`edit/${row?.id}`)
               }} />
             </IconButton>
-            <IconButton>
+            <IconButton onClick={() => deleteUser(row?.id)}>
               <Icon icon='material-symbols:delete-outline' />
             </IconButton>
           </>
@@ -129,11 +75,17 @@ const UserList = () => {
     onChangePage(searchObj);
   }
   const onChangePage = async (obj) => {
-    let data_ = await getProductsByManager(obj);
+    let data_ = await getUsersByManager(obj);
     if(data_){
       setData(data_);
     }
     setSearchObj(obj);
+  }
+  const deleteUser = async (id) => {
+    let result = await deleteUserByManager({ id: id });
+    if (result) {
+      onChangePage(searchObj);
+    }
   }
   return (
     <>
@@ -144,7 +96,7 @@ const UserList = () => {
             columns={columns}
             searchObj={searchObj}
             onChangePage={onChangePage}
-            add_button_text={'상품 추가'}
+            add_button_text={'유저 추가'}
           />
         </Card>
       </Stack>

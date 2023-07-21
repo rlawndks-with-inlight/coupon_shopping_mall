@@ -40,6 +40,7 @@ export const PATH_MANAGER = {
   },
   articles: {
     root: path(ROOTS_MANAGER, '/articles'),
+    categories: path(ROOTS_MANAGER, '/articles/categories'),
     notices: path(ROOTS_MANAGER, '/articles/notices'),
     faqs: path(ROOTS_MANAGER, '/articles/faqs'),
     oneToOne: path(ROOTS_MANAGER, '/articles/one-to-one'),

@@ -1,5 +1,5 @@
 // @mui
-import { Table, TableRow, TableBody, TableCell, TableContainer, Pagination, Divider, Box, TextField, Button, FormControl, InputLabel, OutlinedInput, InputAdornment, IconButton, CircularProgress } from '@mui/material';
+import { Table, TableRow, TableBody, TableCell, TableContainer, Pagination, Divider, Box, TextField, Button, FormControl, InputLabel, OutlinedInput, InputAdornment, IconButton, CircularProgress, Tooltip } from '@mui/material';
 import { TableHeadCustom, TableNoData } from '../../../../components/table';
 import {
   DatePicker,
@@ -54,7 +54,6 @@ export default function ManagerTable(props) {
       return parseInt(total / page_size) + 1;
     }
   }
-  console.log(theme)
   return (
     <>
       <TableContainer sx={{ overflow: 'unset' }}>
@@ -67,8 +66,8 @@ export default function ManagerTable(props) {
                   value={sDt}
                   format='yyyy-MM-dd'
                   onChange={(newValue) => {
-                    console.log(newValue)
                     setSDt(newValue);
+                    onChangePage({ ...searchObj, s_dt: returnMoment(false,new Date(newValue)).substring(0, 10) })
                   }}
                   renderInput={(params) => <TextField fullWidth {...params} margin="normal" />}
                   sx={{ marginRight: '0.75rem', width: '180px', height: '32px' }}
@@ -80,6 +79,7 @@ export default function ManagerTable(props) {
                   format='yyyy-MM-dd'
                   onChange={(newValue) => {
                     setEDt(newValue);
+                    onChangePage({ ...searchObj, e_dt: returnMoment(false,new Date(newValue)).substring(0, 10) })
                   }}
                   renderInput={(params) => <TextField fullWidth {...params} margin="normal" />}
                   sx={{ width: '180px' }}
@@ -119,16 +119,19 @@ export default function ManagerTable(props) {
                 label=''
                 value={keyword}
                 endAdornment={<>
-                  <IconButton position="end" sx={{ transform: 'translateX(14px)' }}>
+                <Tooltip title='해당 텍스트로 검색하시려면 엔터 또는 돋보기 버튼을 클릭해주세요.'>
+                <IconButton position="end" sx={{ transform: 'translateX(14px)' }} onClick={() => onChangePage({ ...searchObj, search: keyword })}>
                     <Icon icon='material-symbols:search' />
                   </IconButton>
+                </Tooltip>
+
                 </>}
                 onChange={(e) => {
                   setKeyWord(e.target.value)
                 }}
                 onKeyPress={(e) => {
                   if (e.key == 'Enter') {
-
+                    onChangePage({ ...searchObj, search: keyword })
                   }
                 }}
               />

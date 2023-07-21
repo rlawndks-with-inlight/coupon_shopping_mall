@@ -1,12 +1,15 @@
-import { Card, Container, IconButton, Stack } from "@mui/material";
+import { Card, Container, Divider, IconButton, Stack } from "@mui/material";
 import { useEffect, useState } from "react";
 import ManagerLayout from "src/layouts/manager/ManagerLayout";
 import ManagerTable from "src/views/manager/mui/table/ManagerTable";
 import { Icon } from "@iconify/react";
 import { useRouter } from "next/router";
 import { Row } from "src/components/elements/styled-components";
-import { getProductsByManager } from "src/utils/api-manager";
-import { commarNumber } from "src/utils/function";
+import { deleteProductByManager, getCategoriesByManager, getProductsByManager } from "src/utils/api-manager";
+import { commarNumber, getAllIdsWithParents } from "src/utils/function";
+import { LazyLoadImage } from "react-lazy-load-image-component";
+import { SelectCategoryComponent } from "./[edit_category]/[id]";
+import $ from 'jquery';
 const test_data = [
   {
     id: 1,
@@ -25,7 +28,7 @@ const ProductList = () => {
       id: 'product_img',
       label: '상품이미지',
       action: (row) => {
-        return <img src={row['product_img'] ?? "---"} style={{ height: '84px', width: 'auto' }} />
+        return <LazyLoadImage src={row['product_img'] ?? "---"} style={{ height: '84px', width: 'auto' }} />
       }
     },
     {
@@ -88,7 +91,7 @@ const ProductList = () => {
                 router.push(`edit/${row?.id}`)
               }} />
             </IconButton>
-            <IconButton>
+            <IconButton onClick={() => deleteProduct(row?.id)}>
               <Icon icon='material-symbols:delete-outline' />
             </IconButton>
           </>
@@ -107,10 +110,16 @@ const ProductList = () => {
     search: '',
     category_id: null
   })
+  const [categories, setCategories] = useState([]);
+  const [curCategories, setCurCategories] = useState([]);
+  const [categoryChildrenList, setCategoryChildrenList] = useState([]);
   useEffect(() => {
     pageSetting();
   }, [])
-  const pageSetting = () => {
+  const pageSetting = async () => {
+    let category_list = await getCategoriesByManager({ page: 1, page_size: 100000 });
+    category_list = category_list?.content;
+    setCategories(category_list);
     let cols = defaultColumns;
     setColumns(cols)
     onChangePage(searchObj);
@@ -126,10 +135,47 @@ const ProductList = () => {
     }
     setSearchObj(obj);
   }
+  const deleteProduct = async (id) => {
+    let result = await deleteProductByManager({ id: id });
+    if (result) {
+      onChangePage(searchObj);
+    }
+  }
+  const onClickCategory = (category, depth) => {
+    onChangePage({ ...searchObj, category_id: category?.id })
+    let parent_list = getAllIdsWithParents(categories);
+    let use_list = [];
+    for (var i = 0; i < parent_list.length; i++) {
+      if (parent_list[i][depth]?.id == category?.id) {
+        use_list = parent_list[i];
+        break;
+      }
+    }
+    setCurCategories(use_list);
+    let children_list = [];
+    for (var i = 0; i < use_list.length; i++) {
+      children_list.push(use_list[i]?.children);
+    }
+    setCategoryChildrenList(children_list);
+    $('.category-container').scrollLeft(100000);
+  }
   return (
     <>
       <Stack spacing={3}>
         <Card>
+          <div style={{
+            width: '100%',
+            padding: '0.75rem',
+          }}>
+            <SelectCategoryComponent
+              curCategories={curCategories}
+              categories={categories}
+              categoryChildrenList={categoryChildrenList}
+              onClickCategory={onClickCategory}
+            />
+          </div>
+
+          <Divider />
           <ManagerTable
             data={data}
             columns={columns}

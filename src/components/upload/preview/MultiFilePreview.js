@@ -23,7 +23,6 @@ export default function MultiFilePreview({ thumbnail, files, onRemove, sx, image
   if (!files?.length) {
     return null;
   }
-
   return (
     <AnimatePresence initial={false}>
       {files.map((file) => {
@@ -57,7 +56,6 @@ export default function MultiFilePreview({ thumbnail, files, onRemove, sx, image
                 sx={{ position: 'absolute' }}
                 imgSx={{ position: 'absolute' }}
               />
-
               {onRemove && (
                 <IconButton
                   size="small"

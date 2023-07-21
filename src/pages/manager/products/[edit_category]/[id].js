@@ -14,13 +14,14 @@ import $ from 'jquery';
 import dynamic from "next/dynamic";
 import { react_quill_data } from "src/data/manager-data";
 import { axiosIns } from "src/utils/axios";
-import { getCategoriesByManager } from "src/utils/api-manager";
+import { addProductByManager, getCategoriesByManager, getProductByManager, updateProductByManager } from "src/utils/api-manager";
+import { toast } from "react-hot-toast";
+import { useTheme } from "@emotion/react";
 const ReactQuill = dynamic(() => import('react-quill'), {
   ssr: false,
   loading: () => <p>Loading ...</p>,
 })
 const CategoryWrappers = styled.div`
-border:1px solid ${themeObj.grey[300]};
 display:flex;
 flex-direction:column;
 border-radius: 8px;
@@ -32,7 +33,6 @@ width:200px;
 `
 const CategoryHeader = styled.div`
 background:${themeObj.grey[200]};
-border-bottom:1px solid ${themeObj.grey[300]};
 padding:0.5rem 1rem;
 border-top-right-radius: 8px;
 border-top-left-radius: 8px;
@@ -43,12 +43,91 @@ display:flex;
 justify-content:space-between;
 cursor:pointer;
 &:hover{
-  background:${themeObj.grey[200]};
+  background:${props => props.hoverColor};
 }
 `
+export const SelectCategoryComponent = (props) => {
+  const {
+    curCategories,
+    categories,
+    categoryChildrenList,
+    onClickCategory,
+  } = props;
+  const theme = useTheme();
+  return (
+    <>
+      <CategoryWrappers style={{ border: `1px solid ${theme.palette.mode == 'dark' ? themeObj.grey[700] : themeObj.grey[300]}` }}>
+        <CategoryHeader style={{
+          background: `${theme.palette.mode == 'dark' ? '#919eab29' : ''}`,
+          borderBottom: `1px solid ${theme.palette.mode == 'dark' ? themeObj.grey[700] : themeObj.grey[300]}`
+        }}>
+          {curCategories.length > 0 ?
+            <>
+              <Row>
+                {curCategories.map((item, idx) => (
+                  <>
+                    <div style={{ marginRight: '0.25rem' }}>
+                      {item.category_name}
+                    </div>
+                    {idx != curCategories.length - 1 &&
+                      <>
+                        <div style={{ marginRight: '0.25rem' }}>
+                          {'>'}
+                        </div>
+                      </>}
+                  </>
+                ))}
+              </Row>
+            </>
+            :
+            <>
+              상품분류를 선택 후 상품분류 적용 버튼을 눌러주세요
+            </>}
+        </CategoryHeader>
+        <div style={{ overflowX: 'auto', width: '100%', display: '-webkit-box' }} className="category-container">
+          <CategoryContainer>
+            {categories.map((category, idx) => (
+              <>
+                <Category hoverColor={theme.palette?.mode == 'dark' ? themeObj.grey[700] : themeObj.grey[200]} style={{
+                  color: `${curCategories.map(item => { return item?.id }).includes(category?.id) ? '' : themeObj.grey[500]}`,
+                  fontWeight: `${curCategories.map(item => { return item?.id }).includes(category?.id) ? 'bold' : ''}`,
+                }} onClick={() => {
+                  onClickCategory(category, 0)
+                }}>
+                  <div>{category.category_name}</div>
+                  <div>{category?.children && category?.children.length > 0 ? '>' : ''}</div>
+                </Category>
+              </>
+            ))}
+          </CategoryContainer>
+          {categoryChildrenList.map((category_list, index) => (
+            <>
+              {category_list.length > 0 &&
+                <>
+                  <CategoryContainer>
+                    {category_list.map((category, idx) => (
+                      <>
+                        <Category style={{
+                          color: `${curCategories.map(item => { return item?.id }).includes(category?.id) ? '' : themeObj.grey[500]}`,
+                          fontWeight: `${curCategories.map(item => { return item?.id }).includes(category?.id) ? 'bold' : ''}`,
+                        }}
+                          onClick={() => {
+                            onClickCategory(category, index + 1)
+                          }}><div>{category.category_name}</div>
+                          <div>{category?.children && category?.children.length > 0 ? '>' : ''}</div>
+                        </Category>
+                      </>
+                    ))}
+                  </CategoryContainer>
+                </>}
+            </>
+          ))}
+        </div>
+      </CategoryWrappers>
+    </>
+  )
+}
 const ProductEdit = () => {
-
-  const { themeMode } = useSettingsContext();
 
   const router = useRouter();
 
@@ -59,6 +138,7 @@ const ProductEdit = () => {
   const [item, setItem] = useState({
     category_id: undefined,
     product_name: '',
+    product_comment: '',
     product_price: 0,
     product_sale_price: 0,
     brand_name: '',
@@ -66,8 +146,9 @@ const ProductEdit = () => {
     mfg_name: '',
     model_name: '',
     product_description: '',
-    category_file: undefined,
-    options:[]
+    product_file: undefined,
+    sub_images: [],
+    groups: []
   })
   useEffect(() => {
     settingPage();
@@ -76,11 +157,24 @@ const ProductEdit = () => {
     let category_list = await getCategoriesByManager({ page: 1, page_size: 100000 });
     category_list = category_list?.content;
     setCategories(category_list);
+
     if (router.query?.edit_category == 'edit') {
+      let product = await getProductByManager({
+        id: router.query.id
+      })
+      product = Object.assign(item, product)
+      product = { ...product, product_file: product.product_img, product_sub_file: product.sub_images }
+      product.sub_images = product.sub_images.map(img => {
+        return {
+          ...img,
+          preview: img.product_sub_img
+        }
+      })
+      setItem(product)
       let parent_list = getAllIdsWithParents(category_list);
       let use_list = [];
       for (var i = 0; i < parent_list.length; i++) {
-        if (parent_list[i][parent_list[i].length - 1]?.id == 112) {
+        if (parent_list[i][parent_list[i].length - 1]?.id == product?.category_id) {
           use_list = parent_list[i];
           break;
         }
@@ -95,24 +189,24 @@ const ProductEdit = () => {
     setLoading(false);
   }
   const handleDropMultiFile = (acceptedFiles) => {
-    let images = [...item.images];
+    let sub_images = [...item.sub_images];
     for (var i = 0; i < acceptedFiles.length; i++) {
-      images.push({ ...acceptedFiles[i], preview: URL.createObjectURL(acceptedFiles[i]) })
+      sub_images.push({ ...acceptedFiles[i], preview: URL.createObjectURL(acceptedFiles[i]) })
     }
-    setItem({ ...item, ['images']: images })
+    setItem({ ...item, ['sub_images']: sub_images })
   };
 
   const handleRemoveFile = (inputFile) => {
-    let images = [...item.images];
-    const filesFiltered = images.filter((fileFiltered) => fileFiltered !== inputFile);
-    images = filesFiltered;
-    setItem({ ...item, ['images']: images })
+    let sub_images = [...item.sub_images];
+    const filesFiltered = sub_images.filter((fileFiltered) => fileFiltered !== inputFile);
+    sub_images = filesFiltered;
+    setItem({ ...item, ['sub_images']: sub_images })
   };
 
   const handleRemoveAllFiles = () => {
-    let images = [...item.images];
-    images = [];
-    setItem({ ...item, ['images']: images })
+    let sub_images = [...item.sub_images];
+    sub_images = [];
+    setItem({ ...item, ['sub_images']: sub_images })
   };
   const onClickCategory = (category, depth) => {
     setItem(
@@ -135,8 +229,19 @@ const ProductEdit = () => {
       children_list.push(use_list[i]?.children);
     }
     setCategoryChildrenList(children_list);
-
     $('.category-container').scrollLeft(100000);
+  }
+  const onSave = async () => {
+    let result = undefined
+    if (item?.id) {//수정
+      result = await updateProductByManager({ ...item, id: item?.id })
+    } else {//추가
+      result = await addProductByManager({ ...item })
+    }
+    if (result) {
+      toast.success("성공적으로 저장 되었습니다.");
+      router.push('/manager/products/list');
+    }
   }
   return (
     <>
@@ -150,13 +255,13 @@ const ProductEdit = () => {
                     <Typography variant="subtitle2" sx={{ color: 'text.secondary' }}>
                       대표이미지등록
                     </Typography>
-                    <Upload file={item.category_file} onDrop={(acceptedFiles) => {
+                    <Upload file={item.product_file} onDrop={(acceptedFiles) => {
                       const newFile = acceptedFiles[0];
                       if (newFile) {
                         setItem(
                           {
                             ...item,
-                            ['category_file']: Object.assign(newFile, {
+                            ['product_file']: Object.assign(newFile, {
                               preview: URL.createObjectURL(newFile),
                             })
                           }
@@ -167,7 +272,7 @@ const ProductEdit = () => {
                         setItem(
                           {
                             ...item,
-                            ['category_file']: ''
+                            ['product_file']: ''
                           }
                         )
                       }}
@@ -183,7 +288,7 @@ const ProductEdit = () => {
                     <Upload
                       multiple
                       thumbnail={true}
-                      files={item.images}
+                      files={item.sub_images}
                       onDrop={(acceptedFiles) => {
                         handleDropMultiFile(acceptedFiles)
                       }}
@@ -212,71 +317,12 @@ const ProductEdit = () => {
                     <Typography variant="subtitle2" sx={{ color: 'text.secondary' }}>
                       카테고리
                     </Typography>
-                    <CategoryWrappers>
-                      <CategoryHeader>
-                        {curCategories.length > 0 ?
-                          <>
-                            <Row>
-                              {curCategories.map((item, idx) => (
-                                <>
-                                  <div style={{ marginRight: '0.25rem' }}>
-                                    {item.category_name}
-                                  </div>
-                                  {idx != curCategories.length - 1 &&
-                                    <>
-                                      <div style={{ marginRight: '0.25rem' }}>
-                                        {'>'}
-                                      </div>
-                                    </>}
-                                </>
-                              ))}
-                            </Row>
-                          </>
-                          :
-                          <>
-                            상품분류를 선택 후 상품분류 적용 버튼을 눌러주세요
-                          </>}
-                      </CategoryHeader>
-                      <div style={{ overflowX: 'auto', width: '100%', display: '-webkit-box' }} className="category-container">
-                        <CategoryContainer>
-                          {categories.map((category, idx) => (
-                            <>
-                              <Category style={{
-                                color: `${curCategories.map(item => { return item?.id }).includes(category?.id) ? '' : themeObj.grey[500]}`,
-                                fontWeight: `${curCategories.map(item => { return item?.id }).includes(category?.id) ? 'bold' : ''}`,
-                              }} onClick={() => {
-                                onClickCategory(category, 0)
-                              }}>
-                                <div>{category.category_name}</div>
-                                <div>{category?.children && category?.children.length > 0 ? '>' : ''}</div>
-                              </Category>
-                            </>
-                          ))}
-                        </CategoryContainer>
-                        {categoryChildrenList.map((category_list, index) => (
-                          <>
-                            {category_list.length > 0 &&
-                              <>
-                                <CategoryContainer>
-                                  {category_list.map((category, idx) => (
-                                    <>
-                                      <Category style={{
-                                        color: `${curCategories.map(item => { return item?.id }).includes(category?.id) ? '' : themeObj.grey[500]}`,
-                                        fontWeight: `${curCategories.map(item => { return item?.id }).includes(category?.id) ? 'bold' : ''}`,
-                                      }}
-                                        onClick={() => {
-                                          onClickCategory(category, index + 1)
-                                        }}><div>{category.category_name}</div>
-                                        <div>{category?.children && category?.children.length > 0 ? '>' : ''}</div>
-                                      </Category>
-                                    </>
-                                  ))}
-                                </CategoryContainer>
-                              </>}
-                          </>
-                        ))}
-                      </div>
-                    </CategoryWrappers>
+                    <SelectCategoryComponent
+                      curCategories={curCategories}
+                      categories={categories}
+                      categoryChildrenList={categoryChildrenList}
+                      onClickCategory={onClickCategory}
+                    />
                     {item?.category_id ?
                       <>
 
@@ -299,13 +345,13 @@ const ProductEdit = () => {
                     }} />
                   <TextField
                     label='상품 간단한 설명'
-                    value={item.product_name}
+                    value={item.product_comment}
                     placeholder="예시) 주문폭주!! 다양한 디자인으로 어떠한 룩도 소화!"
                     onChange={(e) => {
                       setItem(
                         {
                           ...item,
-                          ['product_name']: e.target.value
+                          ['product_comment']: e.target.value
                         }
                       )
                     }} />
@@ -342,6 +388,54 @@ const ProductEdit = () => {
                         )
                       }} />
                   </FormControl>
+                  <TextField
+                    label='브랜드명'
+                    value={item.brand_name}
+                    placeholder="예시) 주문폭주!! 다양한 디자인으로 어떠한 룩도 소화!"
+                    onChange={(e) => {
+                      setItem(
+                        {
+                          ...item,
+                          ['brand_name']: e.target.value
+                        }
+                      )
+                    }} />
+                  <TextField
+                    label='원산지명'
+                    value={item.origin_name}
+                    placeholder="예시) 주문폭주!! 다양한 디자인으로 어떠한 룩도 소화!"
+                    onChange={(e) => {
+                      setItem(
+                        {
+                          ...item,
+                          ['origin_name']: e.target.value
+                        }
+                      )
+                    }} />
+                  <TextField
+                    label='제조사명'
+                    value={item.mfg_name}
+                    placeholder="예시) 주문폭주!! 다양한 디자인으로 어떠한 룩도 소화!"
+                    onChange={(e) => {
+                      setItem(
+                        {
+                          ...item,
+                          ['mfg_name']: e.target.value
+                        }
+                      )
+                    }} />
+                  <TextField
+                    label='모델명'
+                    value={item.model_name}
+                    placeholder="예시) 주문폭주!! 다양한 디자인으로 어떠한 룩도 소화!"
+                    onChange={(e) => {
+                      setItem(
+                        {
+                          ...item,
+                          ['model_name']: e.target.value
+                        }
+                      )
+                    }} />
                   <Stack spacing={1}>
                     <Typography variant="subtitle2" sx={{ color: 'text.secondary' }}>
                       상품설명
@@ -386,7 +480,7 @@ const ProductEdit = () => {
                     <Typography variant="subtitle2" sx={{ color: 'text.secondary' }}>
                       상품옵션
                     </Typography>
-                    {item.options.map((group, index) => (
+                    {item.groups.map((group, index) => (
                       <>
                         <FormControl variant="outlined">
                           <InputLabel>옵션그룹명</InputLabel>
@@ -398,7 +492,7 @@ const ProductEdit = () => {
                               <Button style={{ width: '94px', height: '56px', transform: 'translateX(14px)' }}
                                 variant="contained"
                                 onClick={() => {
-                                  let option_list = item?.options;
+                                  let option_list = item?.groups;
                                   option_list[index].list.push({
                                     option_name: '',
                                     var_price: 0,
@@ -406,19 +500,19 @@ const ProductEdit = () => {
                                   setItem(
                                     {
                                       ...item,
-                                      ['options']: option_list
+                                      ['groups']: option_list
                                     }
                                   )
                                 }}
                               >옵션추가</Button>
                             </>}
                             onChange={(e) => {
-                              let option_list = item?.options;
+                              let option_list = item?.groups;
                               option_list[index].group_name = e.target.value;
                               setItem(
                                 {
                                   ...item,
-                                  ['options']: option_list
+                                  ['groups']: option_list
                                 }
                               )
                             }} />
@@ -432,12 +526,12 @@ const ProductEdit = () => {
                                 placeholder="예시) 블랙"
                                 value={option.option_name}
                                 onChange={(e) => {
-                                  let option_list = item?.options;
+                                  let option_list = item?.groups;
                                   option_list[index].list[idx].option_name = e.target.value;
                                   setItem(
                                     {
                                       ...item,
-                                      ['options']: option_list
+                                      ['groups']: option_list
                                     }
                                   )
                                 }} />
@@ -449,12 +543,12 @@ const ProductEdit = () => {
                                   value={option.var_price}
                                   endAdornment={<InputAdornment position="end">원</InputAdornment>}
                                   onChange={(e) => {
-                                    let option_list = item?.options;
+                                    let option_list = item?.groups;
                                     option_list[index].list[idx].var_price = e.target.value;
                                     setItem(
                                       {
                                         ...item,
-                                        ['options']: option_list
+                                        ['groups']: option_list
                                       }
                                     )
                                   }} />
@@ -466,14 +560,14 @@ const ProductEdit = () => {
                       </>
                     ))}
                     <Button variant="outlined" sx={{ height: '48px' }} onClick={() => {
-                      let option_list = [...item.options];
+                      let option_list = [...item.groups];
                       option_list.push({
                         group_name: '',
                         list: []
                       })
                       setItem({
                         ...item,
-                        ['options']: option_list
+                        ['groups']: option_list
                       })
                     }}>옵션그룹 추가</Button>
                   </Stack>
@@ -485,8 +579,7 @@ const ProductEdit = () => {
                 <Stack spacing={1} style={{ display: 'flex' }}>
                   <Button variant="contained" style={{
                     height: '48px', width: '120px', marginLeft: 'auto'
-                  }} onClick={() => {
-                  }}>
+                  }} onClick={onSave}>
                     저장
                   </Button>
                 </Stack>

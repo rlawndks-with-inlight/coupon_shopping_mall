@@ -5,20 +5,9 @@ import ManagerTable from "src/views/manager/mui/table/ManagerTable";
 import { Icon } from "@iconify/react";
 import { useRouter } from "next/router";
 import { Row } from "src/components/elements/styled-components";
-import { getProductsByManager, getSellersByManager } from "src/utils/api-manager";
-const test_data = [
-  {
-    id: 1,
-    user_name: 'test1',
-    phone_num: '01000000000',
-  },
-  {
-    id: 2,
-    user_name: 'test2',
-    phone_num: '01000000000',
-  }
-]
-const SellerList = () => {
+import { getPostCategoriesByManager, getProductsByManager, getSellersByManager } from "src/utils/api-manager";
+
+const ArticleCategoryList = () => {
   const defaultColumns = [
     {
       id: 'id',
@@ -129,7 +118,7 @@ const SellerList = () => {
     onChangePage(searchObj);
   }
   const onChangePage = async (obj) => {
-    let data_ = await getSellersByManager(obj);
+    let data_ = await getPostCategoriesByManager(obj);
     if(data_){
       setData(data_);
     }
@@ -144,12 +133,12 @@ const SellerList = () => {
             columns={columns}
             searchObj={searchObj}
             onChangePage={onChangePage}
-            add_button_text={'셀러 추가'}
+            add_button_text={'카테고리 추가'}
           />
         </Card>
       </Stack>
     </>
   )
 }
-SellerList.getLayout = (page) => <ManagerLayout>{page}</ManagerLayout>;
-export default SellerList
+ArticleCategoryList.getLayout = (page) => <ManagerLayout>{page}</ManagerLayout>;
+export default ArticleCategoryList

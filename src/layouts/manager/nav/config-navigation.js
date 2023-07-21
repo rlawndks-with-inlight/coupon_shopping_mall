@@ -107,6 +107,7 @@ export const navConfig = () => {
           path: PATH_MANAGER.articles.root,
           icon: ICONS.calendar,
           children: [
+            { title: '게시판 카테고리 관리', path: PATH_MANAGER.articles.categories },
             { title: '공지사항', path: PATH_MANAGER.articles.notices },
             { title: '자주묻는질문', path: PATH_MANAGER.articles.faqs },
             { title: '1:1문의', path: PATH_MANAGER.articles.oneToOne },

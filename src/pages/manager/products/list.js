@@ -5,7 +5,8 @@ import ManagerTable from "src/views/manager/mui/table/ManagerTable";
 import { Icon } from "@iconify/react";
 import { useRouter } from "next/router";
 import { Row } from "src/components/elements/styled-components";
-//매출 리스트
+import { getProductsByManager } from "src/utils/api-manager";
+import { commarNumber } from "src/utils/function";
 const test_data = [
   {
     id: 1,
@@ -21,73 +22,59 @@ const test_data = [
 const ProductList = () => {
   const defaultColumns = [
     {
-      id: 'id',
-      label: 'No.',
-      action: (row) => {
-        return row['id']
-      }
-    },
-    {
       id: 'product_img',
       label: '상품이미지',
       action: (row) => {
-        return row['product_img'] ?? "---"
+        return <img src={row['product_img'] ?? "---"} style={{ height: '84px', width: 'auto' }} />
       }
     },
     {
       id: 'product_name',
       label: '상품명',
       action: (row) => {
-        return row['user_name'] ?? "---"
+        return row['product_name'] ?? "---"
       }
     },
     {
-      id: 'category',
+      id: 'category_name',
       label: '카테고리',
       action: (row) => {
-        return row['name'] ?? "---"
+        return row['category_name'] ?? "---"
       }
     },
     {
-      id: 'mkt_pr',
-      label: '시장가',
+      id: 'product_price',
+      label: '상품가',
       action: (row) => {
-        return row['name'] ?? "---"
+        return commarNumber(row['product_price'])
       }
     },
     {
-      id: 'item_pr',
-      label: '판매가',
+      id: 'product_sale_price',
+      label: '상품 할인가',
       action: (row) => {
-        return row['name'] ?? "---"
-      }
-    },
-    {
-      id: 'inventory',
-      label: '재고',
-      action: (row) => {
-        return row['name'] ?? "---"
+        return commarNumber(row['product_sale_price'])
       }
     },
     {
       id: 'status',
       label: '상태',
       action: (row) => {
-        return row['name'] ?? "---"
+        return row['status'] ?? "---"
       }
     },
     {
       id: 'created_at',
       label: '생성시간',
       action: (row) => {
-        return row['name'] ?? "---"
+        return row['created_at'] ?? "---"
       }
     },
     {
       id: 'updated_at',
       label: '최종수정시간',
       action: (row) => {
-        return row['name'] ?? "---"
+        return row['updated_at'] ?? "---"
       }
     },
     {
@@ -96,7 +83,7 @@ const ProductList = () => {
       action: (row) => {
         return (
           <>
-          <IconButton>
+            <IconButton>
               <Icon icon='material-symbols:edit-outline' onClick={() => {
                 router.push(`edit/${row?.id}`)
               }} />
@@ -111,21 +98,33 @@ const ProductList = () => {
   ]
   const router = useRouter();
   const [columns, setColumns] = useState([]);
-  const [data, setData] = useState([]);
-  const [page, setPage] = useState(1);
-  const [maxPage, setMaxPage] = useState(10);
+  const [data, setData] = useState({});
+  const [searchObj, setSearchObj] = useState({
+    page: 1,
+    page_size: 10,
+    s_dt: '',
+    e_dt: '',
+    search: '',
+    category_id: null
+  })
   useEffect(() => {
     pageSetting();
   }, [])
   const pageSetting = () => {
     let cols = defaultColumns;
     setColumns(cols)
-    onChangePage(1);
+    onChangePage(searchObj);
   }
-  const onChangePage = (num) => {
-    setPage(num);
-    setData(test_data)
-
+  const onChangePage = async (obj) => {
+    setData({
+      ...data,
+      content: undefined
+    })
+    let data_ = await getProductsByManager(obj);
+    if (data_) {
+      setData(data_);
+    }
+    setSearchObj(obj);
   }
   return (
     <>
@@ -134,8 +133,7 @@ const ProductList = () => {
           <ManagerTable
             data={data}
             columns={columns}
-            page={page}
-            maxPage={maxPage}
+            searchObj={searchObj}
             onChangePage={onChangePage}
             add_button_text={'상품 추가'}
           />

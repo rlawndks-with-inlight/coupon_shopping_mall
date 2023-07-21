@@ -109,7 +109,6 @@ export function AuthProvider({ children }) {
   useEffect(() => {
     initialize();
   }, [initialize]);
-
   // LOGIN
   const login = useCallback(async (user_name, user_pw) => {
     try {

@@ -610,7 +610,7 @@ const Header = () => {
       }}
       BackdropProps={{
         style:{
-          background:`${theme.palette.primary.main}99`
+          background:`${theme.palette.primary.main}dd`
         }
       }}
       PaperProps={{
@@ -619,7 +619,6 @@ const Header = () => {
         }
       }}
       >
-        asd
       </Dialog>
       <Drawer
         anchor={'left'}

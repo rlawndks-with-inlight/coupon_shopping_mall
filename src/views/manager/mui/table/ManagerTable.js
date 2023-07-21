@@ -1,5 +1,5 @@
 // @mui
-import { Table, TableRow, TableBody, TableCell, TableContainer, Pagination, Divider, Box, TextField, Button, FormControl, InputLabel, OutlinedInput, InputAdornment, IconButton } from '@mui/material';
+import { Table, TableRow, TableBody, TableCell, TableContainer, Pagination, Divider, Box, TextField, Button, FormControl, InputLabel, OutlinedInput, InputAdornment, IconButton, CircularProgress } from '@mui/material';
 import { TableHeadCustom, TableNoData } from '../../../../components/table';
 import {
   DatePicker,
@@ -15,6 +15,8 @@ import { useRouter } from 'next/router';
 import { Icon } from '@iconify/react';
 import { styled as muiStyled } from '@mui/material';
 import { useTheme } from '@emotion/react';
+import { returnMoment } from 'src/utils/function';
+import { Spinner } from 'evergreen-ui';
 // ----------------------------------------------------------------------
 const TableHeaderContainer = styled.div`
 padding: 0.75rem;
@@ -33,7 +35,8 @@ const CustomTableRow = muiStyled(TableRow)(({ theme }) => ({
 }));
 
 export default function ManagerTable(props) {
-  const { columns, data, page, add_button_text, maxPage, onChangePage, } = props;
+  const { columns, data, add_button_text, onChangePage, searchObj } = props;
+  const { page, page_size } = props?.searchObj;
 
   const theme = useTheme();
   const router = useRouter();
@@ -41,6 +44,17 @@ export default function ManagerTable(props) {
   const [eDt, setEDt] = useState(undefined);
   const [keyword, setKeyWord] = useState("");
 
+  const getMaxPage = (total, page_size) => {
+    if (total == 0) {
+      return 1;
+    }
+    if (total % page_size == 0) {
+      return parseInt(total / page_size);
+    } else {
+      return parseInt(total / page_size) + 1;
+    }
+  }
+  console.log(theme)
   return (
     <>
       <TableContainer sx={{ overflow: 'unset' }}>
@@ -53,6 +67,7 @@ export default function ManagerTable(props) {
                   value={sDt}
                   format='yyyy-MM-dd'
                   onChange={(newValue) => {
+                    console.log(newValue)
                     setSDt(newValue);
                   }}
                   renderInput={(params) => <TextField fullWidth {...params} margin="normal" />}
@@ -135,35 +150,49 @@ export default function ManagerTable(props) {
               </>}
           </Row>
         </TableHeaderContainer>
-        <Scrollbar sx={{ maxHeight: 400 }}>
-          <Table sx={{ minWidth: 800, overflowX: 'auto' }}>
-            <TableHeadCustom headLabel={columns} />
-            <TableBody>
-              {data.map((row, index) => (
-                <CustomTableRow key={index}>
-                  {columns && columns.map((col, idx) => (
-                    <>
-                      <TableCell align="left" sx={{...col.sx}} >{col.action(row)}</TableCell>
-                    </>
+        <div style={{ width: '100%', overflow: 'auto' }}>
+          {!data.content ?
+            <>
+              <Row style={{ height: '400px' }}>
+                <CircularProgress sx={{ margin: 'auto' }} />
+              </Row>
+            </>
+            :
+            <>
+              <Table sx={{ minWidth: 800, overflowX: 'auto' }}>
+                <TableHeadCustom headLabel={columns} />
+                <TableBody>
+                  {data.content && data.content.map((row, index) => (
+                    <CustomTableRow key={index}>
+                      {columns && columns.map((col, idx) => (
+                        <>
+                          <TableCell align="left" sx={{ ...col.sx }}>{col.action(row)}</TableCell>
+                        </>
+                      ))}
+                    </CustomTableRow>
                   ))}
-                </CustomTableRow>
-              ))}
-            </TableBody>
-            <TableNoData isNotFound={data.length == 0} />
-          </Table>
-        </Scrollbar>
-
+                </TableBody>
+                {data.content && data.content.length == 0 &&
+                  <>
+                    <TableNoData isNotFound={true} />
+                  </>}
+              </Table>
+            </>}
+        </div>
         <Divider />
         <Box sx={{ padding: '0.75rem', display: 'flex' }}>
           <Pagination
             sx={{ marginLeft: 'auto' }}
             size={'medium'}
-            count={maxPage}
+            count={getMaxPage(data?.total, data?.page_size)}
             page={page}
             variant='outlined' shape='rounded'
             color='primary'
             onChange={(_, num) => {
-              onChangePage(num)
+              onChangePage({
+                ...searchObj,
+                page: num
+              })
             }} />
         </Box>
       </TableContainer>

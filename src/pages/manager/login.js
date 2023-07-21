@@ -68,8 +68,6 @@ const Login = () => {
   };
   return (
     <>
-      {!loading &&
-        <>
           <StyledSection>
             <Typography variant="h3" sx={{ mb: 10, maxWidth: 520, textAlign: 'center' }}>
               컴어게인 쇼핑몰에 오신것을 환영합니다!
@@ -164,7 +162,6 @@ const Login = () => {
             isOpen={tourOpen}
             disableInteraction={false}
             onRequestClose={closeTour} />
-        </>}
     </>
   );
 }

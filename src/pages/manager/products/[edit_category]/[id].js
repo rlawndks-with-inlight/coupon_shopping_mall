@@ -14,6 +14,7 @@ import $ from 'jquery';
 import dynamic from "next/dynamic";
 import { react_quill_data } from "src/data/manager-data";
 import { axiosIns } from "src/utils/axios";
+import { getCategoriesByManager } from "src/utils/api-manager";
 const ReactQuill = dynamic(() => import('react-quill'), {
   ssr: false,
   loading: () => <p>Loading ...</p>,
@@ -56,16 +57,24 @@ const ProductEdit = () => {
   const [curCategories, setCurCategories] = useState([]);
   const [categoryChildrenList, setCategoryChildrenList] = useState([]);
   const [item, setItem] = useState({
-    product_img: '',
-    images: [],
-    product_name: '',
     category_id: undefined,
-    content: '',
-    options: []
+    product_name: '',
+    product_price: 0,
+    product_sale_price: 0,
+    brand_name: '',
+    origin_name: '',
+    mfg_name: '',
+    model_name: '',
+    product_description: '',
+    category_file: undefined,
+    options:[]
   })
-
   useEffect(() => {
-    let category_list = test_categories
+    settingPage();
+  }, [])
+  const settingPage = async () => {
+    let category_list = await getCategoriesByManager({ page: 1, page_size: 100000 });
+    category_list = category_list?.content;
     setCategories(category_list);
     if (router.query?.edit_category == 'edit') {
       let parent_list = getAllIdsWithParents(category_list);
@@ -84,7 +93,7 @@ const ProductEdit = () => {
       setCategoryChildrenList(children_list);
     }
     setLoading(false);
-  }, [])
+  }
   const handleDropMultiFile = (acceptedFiles) => {
     let images = [...item.images];
     for (var i = 0; i < acceptedFiles.length; i++) {
@@ -141,30 +150,30 @@ const ProductEdit = () => {
                     <Typography variant="subtitle2" sx={{ color: 'text.secondary' }}>
                       대표이미지등록
                     </Typography>
-                    <Upload file={item.product_img} onDrop={(acceptedFiles) => {
+                    <Upload file={item.category_file} onDrop={(acceptedFiles) => {
                       const newFile = acceptedFiles[0];
                       if (newFile) {
                         setItem(
                           {
                             ...item,
-                            ['product_img']: Object.assign(newFile, {
+                            ['category_file']: Object.assign(newFile, {
                               preview: URL.createObjectURL(newFile),
                             })
                           }
                         );
                       }
                     }}
-                    onDelete={() => {
-                      setItem(
-                        {
-                          ...item,
-                          ['product_img']: ''
-                        }
-                      )
-                    }}
-                    fileExplain={{
-                      width: '(512x512 추천)'//파일 사이즈 설명
-                    }}
+                      onDelete={() => {
+                        setItem(
+                          {
+                            ...item,
+                            ['category_file']: ''
+                          }
+                        )
+                      }}
+                      fileExplain={{
+                        width: '(512x512 추천)'//파일 사이즈 설명
+                      }}
                     />
                   </Stack>
                   <Stack spacing={1}>
@@ -301,39 +310,38 @@ const ProductEdit = () => {
                       )
                     }} />
                   <FormControl variant="outlined">
-                    <InputLabel>시장가</InputLabel>
+                    <InputLabel>상품가</InputLabel>
                     <OutlinedInput
-                      label='시장가'
+                      label='상품가'
                       type="number"
-                      value={item.product_name}
+                      value={item.product_price}
                       endAdornment={<InputAdornment position="end">원</InputAdornment>}
                       onChange={(e) => {
                         setItem(
                           {
                             ...item,
-                            ['product_name']: e.target.value
+                            ['product_price']: e.target.value
                           }
                         )
                       }} />
                   </FormControl>
 
                   <FormControl variant="outlined">
-                    <InputLabel>판매가</InputLabel>
+                    <InputLabel>상품 할인가</InputLabel>
                     <OutlinedInput
-                      label='판매가'
+                      label='상품 할인가'
                       type="number"
-                      value={item.product_name}
+                      value={item.product_sale_price}
                       endAdornment={<InputAdornment position="end">원</InputAdornment>}
                       onChange={(e) => {
                         setItem(
                           {
                             ...item,
-                            ['product_name']: e.target.value
+                            ['product_sale_price']: e.target.value
                           }
                         )
                       }} />
                   </FormControl>
-
                   <Stack spacing={1}>
                     <Typography variant="subtitle2" sx={{ color: 'text.secondary' }}>
                       상품설명
@@ -343,7 +351,7 @@ const ProductEdit = () => {
                       theme={'snow'}
                       id={'content'}
                       placeholder={''}
-                      value={item.content}
+                      value={item.product_description}
                       modules={react_quill_data.modules}
                       formats={react_quill_data.formats}
                       onChange={async (e) => {
@@ -370,7 +378,7 @@ const ProductEdit = () => {
                         }
                         setItem({
                           ...item,
-                          ['content']: note
+                          ['product_description']: note
                         });
                       }} />
                   </Stack>

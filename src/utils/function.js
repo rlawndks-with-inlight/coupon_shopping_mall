@@ -95,24 +95,11 @@ export const getDomain = () => {
   return domain();
 }
 
-
 export const getUserLevelByNumber = (num) => {
   if (num == 0)
     return '일반유저'
   else if (num == 10)
-    return '가맹점'
-  else if (num == 15)
-    return '대리점'
-  else if (num == 20)
-    return '지사'
-  else if (num == 30)
-    return '총판'
-  else if (num == 35)
-    return '직원'
-  else if (num == 40)
-    return '본사'
-  else if (num == 45)
-    return '협력사'
+    return '셀러'
   else if (num == 50)
     return '개발사'
   else

@@ -1,12 +1,11 @@
-import { Card, Container, Grid, IconButton, Stack } from "@mui/material";
+import { Card, Container, IconButton, Stack } from "@mui/material";
 import { useEffect, useState } from "react";
 import ManagerLayout from "src/layouts/manager/ManagerLayout";
 import ManagerTable from "src/views/manager/mui/table/ManagerTable";
 import { Icon } from "@iconify/react";
 import { useRouter } from "next/router";
-import { AppWidgetSummary } from "src/views/@dashboard/general/app";
-import { useTheme } from "@emotion/react";
-//매출 리스트
+import { Row } from "src/components/elements/styled-components";
+import { getProductsByManager } from "src/utils/api-manager";
 const test_data = [
   {
     id: 1,
@@ -29,37 +28,66 @@ const UserList = () => {
       }
     },
     {
-      id: 'user_name',
-      label: '회원아이디',
+      id: 'product_img',
+      label: '상품이미지',
+      action: (row) => {
+        return row['product_img'] ?? "---"
+      }
+    },
+    {
+      id: 'product_name',
+      label: '상품명',
       action: (row) => {
         return row['user_name'] ?? "---"
       }
     },
     {
-      id: 'name',
-      label: '이름',
+      id: 'category',
+      label: '카테고리',
       action: (row) => {
         return row['name'] ?? "---"
       }
     },
     {
-      id: 'phone_num',
-      label: '전화번호',
+      id: 'mkt_pr',
+      label: '시장가',
       action: (row) => {
-        return row['phone_num'] ?? "---"
+        return row['name'] ?? "---"
       }
     },
     {
-      id: 'order',
-      label: '주문내역',
+      id: 'item_pr',
+      label: '판매가',
       action: (row) => {
-        return (
-          <>
-            <IconButton>
-              <Icon icon='material-symbols:history' />
-            </IconButton>
-          </>
-        )
+        return row['name'] ?? "---"
+      }
+    },
+    {
+      id: 'inventory',
+      label: '재고',
+      action: (row) => {
+        return row['name'] ?? "---"
+      }
+    },
+    {
+      id: 'status',
+      label: '상태',
+      action: (row) => {
+        return row['name'] ?? "---"
+      }
+    },
+    {
+      id: 'created_at',
+      label: '생성시간',
+      action: (row) => {
+        return row['name'] ?? "---"
+      }
+    },
+    {
+      id: 'updated_at',
+      label: '최종수정시간',
+      action: (row) => {
+        return row['name'] ?? "---"
       }
     },
     {
@@ -70,7 +98,7 @@ const UserList = () => {
           <>
             <IconButton>
               <Icon icon='material-symbols:edit-outline' onClick={() => {
-                router.push(`/manager/users/edit/${row?.id}`)
+                router.push(`edit/${row?.id}`)
               }} />
             </IconButton>
             <IconButton>
@@ -81,83 +109,42 @@ const UserList = () => {
       }
     },
   ]
-  const theme = useTheme();
   const router = useRouter();
   const [columns, setColumns] = useState([]);
-  const [data, setData] = useState([]);
-  const [page, setPage] = useState(1);
-  const [maxPage, setMaxPage] = useState(10);
+  const [data, setData] = useState({});
+  const [searchObj, setSearchObj] = useState({
+    page: 1,
+    page_size: 10,
+    s_dt: '',
+    e_dt: '',
+    search: '',
+    category_id: null
+  })
   useEffect(() => {
     pageSetting();
   }, [])
   const pageSetting = () => {
     let cols = defaultColumns;
     setColumns(cols)
-    onChangePage(1);
+    onChangePage(searchObj);
   }
-  const onChangePage = (num) => {
-    setPage(num);
-    setData(test_data)
-
+  const onChangePage = async (obj) => {
+    let data_ = await getProductsByManager(obj);
+    if(data_){
+      setData(data_);
+    }
+    setSearchObj(obj);
   }
   return (
     <>
       <Stack spacing={3}>
-        <Grid container spacing={3}>
-
-          <Grid item xs={12} md={3}>
-            <AppWidgetSummary
-              title="신규회원"
-              percent={2.6}
-              total={18765}
-              chart={{
-                colors: [theme.palette.info.main],
-                series: [50, 180, 120, 510, 680, 110, 390, 370, 270, 200],
-              }}
-            />
-          </Grid>
-          <Grid item xs={12} md={3}>
-            <AppWidgetSummary
-              title="방문회원"
-              percent={0.2}
-              total={4876}
-              chart={{
-                colors: [theme.palette.primary.main],
-                series: [20, 41, 63, 33, 28, 35, 50, 46, 11, 26],
-              }}
-            />
-          </Grid>
-          <Grid item xs={12} md={3}>
-            <AppWidgetSummary
-              title="탈퇴회원"
-              percent={-0.1}
-              total={678}
-              chart={{
-                colors: [theme.palette.error.main],
-                series: [80, 9, 31, 8, 16, 37, 8, 33, 46, 31],
-              }}
-            />
-          </Grid>
-          <Grid item xs={12} md={3}>
-            <AppWidgetSummary
-              title="유저수"
-              percent={-0.1}
-              total={678}
-              chart={{
-                colors: [theme.palette.warning.main],
-                series: [8, 9, 31, 8, 16, 37, 8, 33, 46, 31],
-              }}
-            />
-          </Grid>
-        </Grid>
         <Card>
           <ManagerTable
             data={data}
             columns={columns}
-            page={page}
-            maxPage={maxPage}
+            searchObj={searchObj}
             onChangePage={onChangePage}
-            add_button_text={'회원 추가'}
+            add_button_text={'상품 추가'}
           />
         </Card>
       </Stack>

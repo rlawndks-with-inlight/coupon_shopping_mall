@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react';
-import { test_items } from 'src/data/test-data';
 import styled from 'styled-components'
 import { useTheme } from "@emotion/react";
 import { useRouter } from "next/router";
@@ -11,6 +10,7 @@ import { Item, Items } from 'src/components/elements/shop/common';
 import _ from 'lodash';
 import { Breadcrumbs, Button, Divider } from '@mui/material';
 import { Icon } from '@iconify/react';
+import { getProductsByUser } from 'src/utils/api-shop';
 const ContentWrapper = styled.div`
 max-width:1200px;
 width:90%;
@@ -30,11 +30,15 @@ const Demo1 = (props) => {
       router
     },
   } = props;
-  const { themeCategoryList, themeMode } = useSettingsContext();
+  const { themeCategoryList, themeMode, themeDnsData } = useSettingsContext();
 
   const [parentList, setParentList] = useState([]);
   const [curCategories, setCurCategories] = useState([]);
+  const [products, setProducts] = useState([]);
   useEffect(() => {
+    settingPage();
+  }, [themeCategoryList, router.query])
+  const settingPage = async () => {
     if (themeCategoryList.length > 0) {
       let parent_list = []
       if (parentList.length > 0) {
@@ -52,8 +56,12 @@ const Demo1 = (props) => {
       }
       setCurCategories(use_list);
     }
-  }, [themeCategoryList, router.query])
-
+    let product_list = await getProductsByUser({
+      brand_id: themeDnsData?.id,
+      category_id: router.query?.category_id
+    })
+    setProducts(product_list);
+  }
   return (
     <>
       <ContentWrapper>
@@ -108,9 +116,9 @@ const Demo1 = (props) => {
         <div style={{
           marginTop: '1rem'
         }} />
-        {test_items.length > 0 ?
+        {products.length > 0 ?
           <>
-            <Items items={test_items} router={router} />
+            <Items items={products} router={router} />
           </>
           :
           <>

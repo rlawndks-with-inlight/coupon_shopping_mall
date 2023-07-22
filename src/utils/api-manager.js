@@ -1,6 +1,6 @@
 import { axiosIns } from "./axios";
 
-const post = async (url, obj) => {
+export const post = async (url, obj) => {
   try {
     let formData = new FormData();
     let keys = Object.keys(obj);
@@ -18,7 +18,7 @@ const post = async (url, obj) => {
     return false;
   }
 }
-const deleteItem = async (url, obj) => {
+export const deleteItem = async (url, obj) => {
   try {
     const response = await axiosIns().delete(url, obj);
     return response;
@@ -26,7 +26,7 @@ const deleteItem = async (url, obj) => {
     return false;
   }
 }
-const put = async (url, obj) => {
+export const put = async (url, obj) => {
   try {
     let formData = new FormData();
     let keys = Object.keys(obj);
@@ -44,7 +44,7 @@ const put = async (url, obj) => {
     return false;
   }
 }
-const get = async (url, params) => {
+export const get = async (url, params) => {
   try {
     let query = new URLSearchParams(params).toString()
     const response = await axiosIns().get(`${url}?${query}`);
@@ -196,7 +196,6 @@ export const getPostCategoriesByManager = (params) => {
   if (!query['s_dt']) delete query['s_dt'];
   if (!query['e_dt']) delete query['e_dt'];
   if (!query['search']) delete query['search'];
-
   return get(`/api/v1/manager/post-categories`, query);
 }
 export const addPostCategoryByManager = (params) => {

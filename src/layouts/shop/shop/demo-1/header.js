@@ -13,6 +13,7 @@ import { getAllIdsWithParents } from "src/utils/function"
 import DialogSearch from "src/components/dialog/DialogSearch"
 import { useAuthContext } from "src/layouts/manager/auth/useAuthContext"
 import { logoSrc } from "src/data/data"
+import { getCategoriesByUser } from "src/utils/api-shop"
 
 const Wrappers = styled.header`
 width: 100%;
@@ -186,7 +187,7 @@ const Header = () => {
 
   const router = useRouter();
   const theme = useTheme();
-  const { themeMode, onToggleMode, onChangeCategoryList } = useSettingsContext();
+  const { themeMode, onToggleMode, onChangeCategoryList, themeDnsData } = useSettingsContext();
   const { user, logout } = useAuthContext();
   const [keyword, setKeyword] = useState("");
   const onSearch = () => {
@@ -202,8 +203,14 @@ const Header = () => {
   useEffect(() => {
   }, [user])
   useEffect(() => {
+    settingHeader();
+  }, [])
+  const settingHeader = async () => {
     setLoading(true);
-    let data = [...test_categories];
+    let data = await getCategoriesByUser({
+      brand_id: themeDnsData?.id
+    });
+    data = data?.content ?? [];
     onChangeCategoryList(data);
     setCategories(data);
     let hover_list = getAllIdsWithParents(data);
@@ -215,8 +222,7 @@ const Header = () => {
     hover_items['service'] = false;
     setHoverItems(hover_items);
     setLoading(false);
-  }, [])
-
+  }
   const onHoverCategory = (category_name) => {
     let hover_items = hoverItems;
     for (let key in hover_items) {
@@ -289,9 +295,9 @@ const Header = () => {
     }
     setDialogOpenObj(obj);
   }
-  const onLogout = async () =>{
+  const onLogout = async () => {
     let result = await logout();
-    if(result){
+    if (result) {
       router.push('/shop/auth/login');
     }
   }
@@ -538,7 +544,7 @@ const Header = () => {
                     </div>
                   </>
                 ))}
-                <div style={{ position: 'relative' }} className={`menu-service`}>
+                <div style={{ position: 'relative', marginLeft: 'auto' }} className={`menu-service`}>
                   <CategoryMenu borderColor={themeMode == 'dark' ? '#fff' : '#000'} >
                     <div>고객센터</div>
                   </CategoryMenu>

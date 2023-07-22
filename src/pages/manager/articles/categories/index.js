@@ -7,55 +7,29 @@ import { useRouter } from "next/router";
 import { Row } from "src/components/elements/styled-components";
 import { getPostCategoriesByManager, getProductsByManager, getSellersByManager } from "src/utils/api-manager";
 
+const test_items = [
+  {
+    id: 1,
+    post_category_title: '공지사항',
+    status: 0,
+    created_at: '0000-00-00 00:00:00',
+    updated_at: '0000-00-00 00:00:00',
+  },
+  {
+    id: 1,
+    post_category_title: '자주묻는질문',
+    status: 0,
+    created_at: '0000-00-00 00:00:00',
+    updated_at: '0000-00-00 00:00:00',
+  },
+]
 const ArticleCategoryList = () => {
   const defaultColumns = [
     {
-      id: 'id',
-      label: 'No.',
+      id: 'post_category_title',
+      label: '카테고리명',
       action: (row) => {
-        return row['id']
-      }
-    },
-    {
-      id: 'product_img',
-      label: '상품이미지',
-      action: (row) => {
-        return row['product_img'] ?? "---"
-      }
-    },
-    {
-      id: 'product_name',
-      label: '상품명',
-      action: (row) => {
-        return row['user_name'] ?? "---"
-      }
-    },
-    {
-      id: 'category',
-      label: '카테고리',
-      action: (row) => {
-        return row['name'] ?? "---"
-      }
-    },
-    {
-      id: 'mkt_pr',
-      label: '시장가',
-      action: (row) => {
-        return row['name'] ?? "---"
-      }
-    },
-    {
-      id: 'item_pr',
-      label: '판매가',
-      action: (row) => {
-        return row['name'] ?? "---"
-      }
-    },
-    {
-      id: 'inventory',
-      label: '재고',
-      action: (row) => {
-        return row['name'] ?? "---"
+        return row['post_category_title'] ?? "---"
       }
     },
     {
@@ -69,14 +43,14 @@ const ArticleCategoryList = () => {
       id: 'created_at',
       label: '생성시간',
       action: (row) => {
-        return row['name'] ?? "---"
+        return row['created_at'] ?? "---"
       }
     },
     {
       id: 'updated_at',
       label: '최종수정시간',
       action: (row) => {
-        return row['name'] ?? "---"
+        return row['updated_at'] ?? "---"
       }
     },
     {
@@ -87,7 +61,7 @@ const ArticleCategoryList = () => {
           <>
             <IconButton>
               <Icon icon='material-symbols:edit-outline' onClick={() => {
-                router.push(`edit/${row?.id}`)
+                router.push(`categories/edit/${row?.id}`)
               }} />
             </IconButton>
             <IconButton>
@@ -119,8 +93,15 @@ const ArticleCategoryList = () => {
   }
   const onChangePage = async (obj) => {
     let data_ = await getPostCategoriesByManager(obj);
-    if(data_){
+    if (data_) {
       setData(data_);
+    } else {
+      setData({
+        page: obj?.page,
+        page_size: obj?.page_size,
+        total: 102,
+        content: [...test_items]
+      })
     }
     setSearchObj(obj);
   }

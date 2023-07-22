@@ -6,6 +6,7 @@ import { useSettingsContext } from 'src/components/settings';
 import { ProductDetailsCarousel, ProductDetailsReview, ProductDetailsSummary } from 'src/views/e-commerce/details';
 import { useEffect, useState } from 'react';
 import { SkeletonProductDetails } from 'src/components/skeleton';
+import { getProductByUser } from 'src/utils/api-shop';
 const ReactQuill = dynamic(() => import('react-quill'), {
   ssr: false,
   loading: () => <p>Loading ...</p>,
@@ -40,8 +41,10 @@ const Demo1 = (props) => {
     getItemInfo(1);
   }, [])
 
-  const getItemInfo = (review_page) => {
-    let data = test_item;
+  const getItemInfo = async (review_page) => {
+    let data = await getProductByUser({
+      product_id: router.query?.id
+    });
     if(data?.product_img){
       data['images'].unshift(data?.product_img)
     }

@@ -21,6 +21,16 @@ const ReactQuill = dynamic(() => import('react-quill'), {
   ssr: false,
   loading: () => <p>Loading ...</p>,
 })
+const tab_list = [
+  {
+    value: 0,
+    label: '상품정보'
+  },
+  {
+    value: 1,
+    label: '삼품리뷰 관리'
+  }
+]
 const CategoryWrappers = styled.div`
 display:flex;
 flex-direction:column;
@@ -133,6 +143,7 @@ const ProductEdit = () => {
   const router = useRouter();
 
   const [loading, setLoading] = useState(true);
+  const [currentTab, setCurrentTab] = useState(0);
   const [categories, setCategories] = useState([]);
   const [curCategories, setCurCategories] = useState([]);
   const [categoryChildrenList, setCategoryChildrenList] = useState([]);
@@ -160,6 +171,7 @@ const ProductEdit = () => {
     setCategories(category_list);
 
     if (router.query?.edit_category == 'edit') {
+      setCurrentTab(router.query?.type ?? 0)
       let product = await getProductByManager({
         id: router.query.id
       })
@@ -247,286 +259,283 @@ const ProductEdit = () => {
     <>
       {!loading &&
         <>
-          <Grid container spacing={3}>
-            <Grid item xs={12} md={6}>
-              <Card sx={{ p: 2, height: '100%' }}>
-                <Stack spacing={3}>
-                  <Stack spacing={1}>
-                    <Typography variant="subtitle2" sx={{ color: 'text.secondary' }}>
-                      대표이미지등록
-                    </Typography>
-                    <Upload file={item.product_file || item.product_img} onDrop={(acceptedFiles) => {
-                      const newFile = acceptedFiles[0];
-                      if (newFile) {
-                        setItem(
-                          {
-                            ...item,
-                            ['product_file']: Object.assign(newFile, {
-                              preview: URL.createObjectURL(newFile),
-                            })
-                          }
-                        );
-                      }
+          {router.query?.edit_category == 'edit' &&
+            <>
+              <Row style={{ margin: '0 0 1rem 0', columnGap: '0.5rem' }}>
+                {tab_list.map((tab) => (
+                  <Button
+                    variant={tab.value == currentTab ? 'contained' : 'outlined'}
+                    onClick={() => {
+                      setCurrentTab(tab.value)
                     }}
-                      onDelete={() => {
-                        setItem(
-                          {
-                            ...item,
-                            ['product_file']: undefined,
-                            ['product_img']: '',
-                          }
-                        )
-                      }}
-                      fileExplain={{
-                        width: '(512x512 추천)'//파일 사이즈 설명
-                      }}
-                    />
-                  </Stack>
-                  <Stack spacing={1}>
-                    <Typography variant="subtitle2" sx={{ color: 'text.secondary' }}>
-                      개별이미지등록 (여러장 업로드)
-                    </Typography>
-                    <Upload
-                      multiple
-                      thumbnail={true}
-                      files={item.sub_images}
-                      onDrop={(acceptedFiles) => {
-                        handleDropMultiFile(acceptedFiles)
-                      }}
-                      onRemove={(inputFile) => {
-                        handleRemoveFile(inputFile)
-                      }}
-                      onRemoveAll={() => {
-                        handleRemoveAllFiles();
-                      }}
-                      fileExplain={{
-                        width: '(512x512 추천)'//파일 사이즈 설명
-                      }}
-                      imageSize={{ //썸네일 사이즈
-                        width: 200,
-                        height: 200
-                      }}
-                    />
-                  </Stack>
-                </Stack>
-              </Card>
-            </Grid>
-            <Grid item xs={12} md={6}>
-              <Card sx={{ p: 2, height: '100%' }}>
-                <Stack spacing={3}>
-                  <Stack spacing={1}>
-                    <Typography variant="subtitle2" sx={{ color: 'text.secondary' }}>
-                      카테고리
-                    </Typography>
-                    <SelectCategoryComponent
-                      curCategories={curCategories}
-                      categories={categories}
-                      categoryChildrenList={categoryChildrenList}
-                      onClickCategory={onClickCategory}
-                      noneSelectText={'상품분류를 선택 후 상품분류 적용 버튼을 눌러주세요'}
-                    />
-                    {item?.category_id ?
-                      <>
+                  >{tab.label}</Button>
+                ))}
+              </Row>
+            </>}
 
-                      </>
-                      :
-                      <>
-                      </>}
-                  </Stack>
-                  <TextField
-                    label='상품명'
-                    value={item.product_name}
-                    placeholder="예시) 블랙 럭셔리 팔찌, 팔찌 1위 상품"
-                    onChange={(e) => {
-                      setItem(
-                        {
-                          ...item,
-                          ['product_name']: e.target.value
-                        }
-                      )
-                    }} />
-                  <TextField
-                    label='상품 간단한 설명'
-                    value={item.product_comment}
-                    placeholder="예시) 주문폭주!! 다양한 디자인으로 어떠한 룩도 소화!"
-                    onChange={(e) => {
-                      setItem(
-                        {
-                          ...item,
-                          ['product_comment']: e.target.value
-                        }
-                      )
-                    }} />
-                  <FormControl variant="outlined">
-                    <InputLabel>상품가</InputLabel>
-                    <OutlinedInput
-                      label='상품가'
-                      type="number"
-                      value={item.product_price}
-                      endAdornment={<InputAdornment position="end">원</InputAdornment>}
-                      onChange={(e) => {
-                        setItem(
-                          {
-                            ...item,
-                            ['product_price']: e.target.value
+          <Grid container spacing={3}>
+            {(router.query?.edit_category == 'add' || (router.query?.edit_category == 'edit' && currentTab == 0)) &&
+              <>
+                <Grid item xs={12} md={6}>
+                  <Card sx={{ p: 2, height: '100%' }}>
+                    <Stack spacing={3}>
+                      <Stack spacing={1}>
+                        <Typography variant="subtitle2" sx={{ color: 'text.secondary' }}>
+                          대표이미지등록
+                        </Typography>
+                        <Upload file={item.product_file || item.product_img} onDrop={(acceptedFiles) => {
+                          const newFile = acceptedFiles[0];
+                          if (newFile) {
+                            setItem(
+                              {
+                                ...item,
+                                ['product_file']: Object.assign(newFile, {
+                                  preview: URL.createObjectURL(newFile),
+                                })
+                              }
+                            );
                           }
-                        )
-                      }} />
-                  </FormControl>
-
-                  <FormControl variant="outlined">
-                    <InputLabel>상품 할인가</InputLabel>
-                    <OutlinedInput
-                      label='상품 할인가'
-                      type="number"
-                      value={item.product_sale_price}
-                      endAdornment={<InputAdornment position="end">원</InputAdornment>}
-                      onChange={(e) => {
-                        setItem(
-                          {
-                            ...item,
-                            ['product_sale_price']: e.target.value
-                          }
-                        )
-                      }} />
-                  </FormControl>
-                  <TextField
-                    label='브랜드명'
-                    value={item.brand_name}
-                    placeholder="예시) 주문폭주!! 다양한 디자인으로 어떠한 룩도 소화!"
-                    onChange={(e) => {
-                      setItem(
-                        {
-                          ...item,
-                          ['brand_name']: e.target.value
-                        }
-                      )
-                    }} />
-                  <TextField
-                    label='원산지명'
-                    value={item.origin_name}
-                    placeholder="예시) 주문폭주!! 다양한 디자인으로 어떠한 룩도 소화!"
-                    onChange={(e) => {
-                      setItem(
-                        {
-                          ...item,
-                          ['origin_name']: e.target.value
-                        }
-                      )
-                    }} />
-                  <TextField
-                    label='제조사명'
-                    value={item.mfg_name}
-                    placeholder="예시) 주문폭주!! 다양한 디자인으로 어떠한 룩도 소화!"
-                    onChange={(e) => {
-                      setItem(
-                        {
-                          ...item,
-                          ['mfg_name']: e.target.value
-                        }
-                      )
-                    }} />
-                  <TextField
-                    label='모델명'
-                    value={item.model_name}
-                    placeholder="예시) 주문폭주!! 다양한 디자인으로 어떠한 룩도 소화!"
-                    onChange={(e) => {
-                      setItem(
-                        {
-                          ...item,
-                          ['model_name']: e.target.value
-                        }
-                      )
-                    }} />
-                  <Stack spacing={1}>
-                    <Typography variant="subtitle2" sx={{ color: 'text.secondary' }}>
-                      상품설명
-                    </Typography>
-                    <ReactQuill
-                      className="max-height-editor"
-                      theme={'snow'}
-                      id={'content'}
-                      placeholder={''}
-                      value={item.product_description}
-                      modules={react_quill_data.modules}
-                      formats={react_quill_data.formats}
-                      onChange={async (e) => {
-                        let note = e;
-                        if (e.includes('<img src="') && e.includes('base64,')) {
-                          let base64_list = e.split('<img src="');
-                          for (var i = 0; i < base64_list.length; i++) {
-                            if (base64_list[i].includes('base64,')) {
-                              let img_src = base64_list[i];
-                              img_src = await img_src.split(`"></p>`);
-                              let base64 = img_src[0];
-                              img_src = await base64toFile(img_src[0], 'note.png');
-                              let formData = new FormData();
-                              formData.append('file', img_src);
-                              const response = await uploadFileByManager({
-                                formData
-                              });
-                              note = await note.replace(base64, response?.data?.url)
-                            }
-                          }
-                        }
-                        setItem({
-                          ...item,
-                          ['product_description']: note
-                        });
-                      }} />
-                  </Stack>
-                  <Stack spacing={1}>
-                    <Typography variant="subtitle2" sx={{ color: 'text.secondary' }}>
-                      상품옵션
-                    </Typography>
-                    {item.groups.map((group, index) => (
-                      <>
-                        <FormControl variant="outlined">
-                          <InputLabel>옵션그룹명</InputLabel>
-                          <OutlinedInput
-                            label='옵션그룹명'
-                            placeholder="예시) 색상"
-                            value={group.group_name}
-                            endAdornment={<>
-                              <Button style={{ width: '94px', height: '56px', transform: 'translateX(14px)' }}
-                                variant="contained"
-                                onClick={() => {
-                                  let option_list = item?.groups;
-                                  option_list[index].list.push({
-                                    option_name: '',
-                                    var_price: 0,
-                                  })
-                                  setItem(
-                                    {
-                                      ...item,
-                                      ['groups']: option_list
-                                    }
-                                  )
-                                }}
-                              >옵션추가</Button>
-                            </>}
-                            onChange={(e) => {
-                              let option_list = item?.groups;
-                              option_list[index].group_name = e.target.value;
-                              setItem(
-                                {
-                                  ...item,
-                                  ['groups']: option_list
-                                }
-                              )
-                            }} />
-                        </FormControl>
-                        {group?.list && group?.list.map((option, idx) => (
+                        }}
+                          onDelete={() => {
+                            setItem(
+                              {
+                                ...item,
+                                ['product_file']: undefined,
+                                ['product_img']: '',
+                              }
+                            )
+                          }}
+                          fileExplain={{
+                            width: '(512x512 추천)'//파일 사이즈 설명
+                          }}
+                        />
+                      </Stack>
+                      <Stack spacing={1}>
+                        <Typography variant="subtitle2" sx={{ color: 'text.secondary' }}>
+                          개별이미지등록 (여러장 업로드)
+                        </Typography>
+                        <Upload
+                          multiple
+                          thumbnail={true}
+                          files={item.sub_images}
+                          onDrop={(acceptedFiles) => {
+                            handleDropMultiFile(acceptedFiles)
+                          }}
+                          onRemove={(inputFile) => {
+                            handleRemoveFile(inputFile)
+                          }}
+                          onRemoveAll={() => {
+                            handleRemoveAllFiles();
+                          }}
+                          fileExplain={{
+                            width: '(512x512 추천)'//파일 사이즈 설명
+                          }}
+                          imageSize={{ //썸네일 사이즈
+                            width: 200,
+                            height: 200
+                          }}
+                        />
+                      </Stack>
+                    </Stack>
+                  </Card>
+                </Grid>
+                <Grid item xs={12} md={6}>
+                  <Card sx={{ p: 2, height: '100%' }}>
+                    <Stack spacing={3}>
+                      <Stack spacing={1}>
+                        <Typography variant="subtitle2" sx={{ color: 'text.secondary' }}>
+                          카테고리
+                        </Typography>
+                        <SelectCategoryComponent
+                          curCategories={curCategories}
+                          categories={categories}
+                          categoryChildrenList={categoryChildrenList}
+                          onClickCategory={onClickCategory}
+                          noneSelectText={'상품분류를 선택 후 상품분류 적용 버튼을 눌러주세요'}
+                        />
+                        {item?.category_id ?
                           <>
-                            <Row style={{ columnGap: '0.5rem' }}>
-                              <TextField
-                                sx={{ flexGrow: 1 }}
-                                label='옵션명'
-                                placeholder="예시) 블랙"
-                                value={option.option_name}
+
+                          </>
+                          :
+                          <>
+                          </>}
+                      </Stack>
+                      <TextField
+                        label='상품명'
+                        value={item.product_name}
+                        placeholder="예시) 블랙 럭셔리 팔찌, 팔찌 1위 상품"
+                        onChange={(e) => {
+                          setItem(
+                            {
+                              ...item,
+                              ['product_name']: e.target.value
+                            }
+                          )
+                        }} />
+                      <TextField
+                        label='상품 간단한 설명'
+                        value={item.product_comment}
+                        placeholder="예시) 주문폭주!! 다양한 디자인으로 어떠한 룩도 소화!"
+                        onChange={(e) => {
+                          setItem(
+                            {
+                              ...item,
+                              ['product_comment']: e.target.value
+                            }
+                          )
+                        }} />
+                      <FormControl variant="outlined">
+                        <InputLabel>상품가</InputLabel>
+                        <OutlinedInput
+                          label='상품가'
+                          type="number"
+                          value={item.product_price}
+                          endAdornment={<InputAdornment position="end">원</InputAdornment>}
+                          onChange={(e) => {
+                            setItem(
+                              {
+                                ...item,
+                                ['product_price']: e.target.value
+                              }
+                            )
+                          }} />
+                      </FormControl>
+
+                      <FormControl variant="outlined">
+                        <InputLabel>상품 할인가</InputLabel>
+                        <OutlinedInput
+                          label='상품 할인가'
+                          type="number"
+                          value={item.product_sale_price}
+                          endAdornment={<InputAdornment position="end">원</InputAdornment>}
+                          onChange={(e) => {
+                            setItem(
+                              {
+                                ...item,
+                                ['product_sale_price']: e.target.value
+                              }
+                            )
+                          }} />
+                      </FormControl>
+                      <TextField
+                        label='브랜드명'
+                        value={item.brand_name}
+                        placeholder="예시) 주문폭주!! 다양한 디자인으로 어떠한 룩도 소화!"
+                        onChange={(e) => {
+                          setItem(
+                            {
+                              ...item,
+                              ['brand_name']: e.target.value
+                            }
+                          )
+                        }} />
+                      <TextField
+                        label='원산지명'
+                        value={item.origin_name}
+                        placeholder="예시) 주문폭주!! 다양한 디자인으로 어떠한 룩도 소화!"
+                        onChange={(e) => {
+                          setItem(
+                            {
+                              ...item,
+                              ['origin_name']: e.target.value
+                            }
+                          )
+                        }} />
+                      <TextField
+                        label='제조사명'
+                        value={item.mfg_name}
+                        placeholder="예시) 주문폭주!! 다양한 디자인으로 어떠한 룩도 소화!"
+                        onChange={(e) => {
+                          setItem(
+                            {
+                              ...item,
+                              ['mfg_name']: e.target.value
+                            }
+                          )
+                        }} />
+                      <TextField
+                        label='모델명'
+                        value={item.model_name}
+                        placeholder="예시) 주문폭주!! 다양한 디자인으로 어떠한 룩도 소화!"
+                        onChange={(e) => {
+                          setItem(
+                            {
+                              ...item,
+                              ['model_name']: e.target.value
+                            }
+                          )
+                        }} />
+                      <Stack spacing={1}>
+                        <Typography variant="subtitle2" sx={{ color: 'text.secondary' }}>
+                          상품설명
+                        </Typography>
+                        <ReactQuill
+                          className="max-height-editor"
+                          theme={'snow'}
+                          id={'content'}
+                          placeholder={''}
+                          value={item.product_description}
+                          modules={react_quill_data.modules}
+                          formats={react_quill_data.formats}
+                          onChange={async (e) => {
+                            let note = e;
+                            if (e.includes('<img src="') && e.includes('base64,')) {
+                              let base64_list = e.split('<img src="');
+                              for (var i = 0; i < base64_list.length; i++) {
+                                if (base64_list[i].includes('base64,')) {
+                                  let img_src = base64_list[i];
+                                  img_src = await img_src.split(`"></p>`);
+                                  let base64 = img_src[0];
+                                  img_src = await base64toFile(img_src[0], 'note.png');
+                                  let formData = new FormData();
+                                  formData.append('file', img_src);
+                                  const response = await uploadFileByManager({
+                                    formData
+                                  });
+                                  note = await note.replace(base64, response?.data?.url)
+                                }
+                              }
+                            }
+                            setItem({
+                              ...item,
+                              ['product_description']: note
+                            });
+                          }} />
+                      </Stack>
+                      <Stack spacing={1}>
+                        <Typography variant="subtitle2" sx={{ color: 'text.secondary' }}>
+                          상품옵션
+                        </Typography>
+                        {item.groups.map((group, index) => (
+                          <>
+                            <FormControl variant="outlined">
+                              <InputLabel>옵션그룹명</InputLabel>
+                              <OutlinedInput
+                                label='옵션그룹명'
+                                placeholder="예시) 색상"
+                                value={group.group_name}
+                                endAdornment={<>
+                                  <Button style={{ width: '94px', height: '56px', transform: 'translateX(14px)' }}
+                                    variant="contained"
+                                    onClick={() => {
+                                      let option_list = item?.groups;
+                                      option_list[index].list.push({
+                                        option_name: '',
+                                        var_price: 0,
+                                      })
+                                      setItem(
+                                        {
+                                          ...item,
+                                          ['groups']: option_list
+                                        }
+                                      )
+                                    }}
+                                  >옵션추가</Button>
+                                </>}
                                 onChange={(e) => {
                                   let option_list = item?.groups;
-                                  option_list[index].list[idx].option_name = e.target.value;
+                                  option_list[index].group_name = e.target.value;
                                   setItem(
                                     {
                                       ...item,
@@ -534,45 +543,74 @@ const ProductEdit = () => {
                                     }
                                   )
                                 }} />
-                              <FormControl variant="outlined" sx={{ flexGrow: 1 }}>
-                                <InputLabel>변동가</InputLabel>
-                                <OutlinedInput
-                                  label='변동가'
-                                  type="number"
-                                  value={option.var_price}
-                                  endAdornment={<InputAdornment position="end">원</InputAdornment>}
-                                  onChange={(e) => {
-                                    let option_list = item?.groups;
-                                    option_list[index].list[idx].var_price = e.target.value;
-                                    setItem(
-                                      {
-                                        ...item,
-                                        ['groups']: option_list
-                                      }
-                                    )
-                                  }} />
-                              </FormControl>
-                            </Row>
+                            </FormControl>
+                            {group?.list && group?.list.map((option, idx) => (
+                              <>
+                                <Row style={{ columnGap: '0.5rem' }}>
+                                  <TextField
+                                    sx={{ flexGrow: 1 }}
+                                    label='옵션명'
+                                    placeholder="예시) 블랙"
+                                    value={option.option_name}
+                                    onChange={(e) => {
+                                      let option_list = item?.groups;
+                                      option_list[index].list[idx].option_name = e.target.value;
+                                      setItem(
+                                        {
+                                          ...item,
+                                          ['groups']: option_list
+                                        }
+                                      )
+                                    }} />
+                                  <FormControl variant="outlined" sx={{ flexGrow: 1 }}>
+                                    <InputLabel>변동가</InputLabel>
+                                    <OutlinedInput
+                                      label='변동가'
+                                      type="number"
+                                      value={option.var_price}
+                                      endAdornment={<InputAdornment position="end">원</InputAdornment>}
+                                      onChange={(e) => {
+                                        let option_list = item?.groups;
+                                        option_list[index].list[idx].var_price = e.target.value;
+                                        setItem(
+                                          {
+                                            ...item,
+                                            ['groups']: option_list
+                                          }
+                                        )
+                                      }} />
+                                  </FormControl>
+                                </Row>
 
+                              </>
+                            ))}
                           </>
                         ))}
-                      </>
-                    ))}
-                    <Button variant="outlined" sx={{ height: '48px' }} onClick={() => {
-                      let option_list = [...item.groups];
-                      option_list.push({
-                        group_name: '',
-                        list: []
-                      })
-                      setItem({
-                        ...item,
-                        ['groups']: option_list
-                      })
-                    }}>옵션그룹 추가</Button>
-                  </Stack>
-                </Stack>
-              </Card>
-            </Grid>
+                        <Button variant="outlined" sx={{ height: '48px' }} onClick={() => {
+                          let option_list = [...item.groups];
+                          option_list.push({
+                            group_name: '',
+                            list: []
+                          })
+                          setItem({
+                            ...item,
+                            ['groups']: option_list
+                          })
+                        }}>옵션그룹 추가</Button>
+                      </Stack>
+                    </Stack>
+                  </Card>
+                </Grid>
+              </>}
+            {currentTab == 1 &&
+              <>
+                <Grid item xs={12} md={6}>
+                  <Card sx={{ p: 2, height: '100%' }}>
+                    <Stack spacing={3}></Stack>
+                  </Card>
+                </Grid>
+
+              </>}
             <Grid item xs={12} md={12}>
               <Card sx={{ p: 3 }}>
                 <Stack spacing={1} style={{ display: 'flex' }}>

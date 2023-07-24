@@ -100,6 +100,21 @@ const ProductList = () => {
     },
     {
       id: 'edit',
+      label: '리뷰 확인하기',
+      action: (row) => {
+        return (
+          <>
+            <IconButton onClick={() => {
+               router.push(`edit/${row?.id}?type=1`)
+            }}>
+              <Icon icon='ic:outline-rate-review' />
+            </IconButton>
+          </>
+        )
+      }
+    },
+    {
+      id: 'edit',
       label: '수정/삭제',
       action: (row) => {
         return (

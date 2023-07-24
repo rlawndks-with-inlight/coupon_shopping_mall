@@ -370,6 +370,43 @@ export const deleteBrandByManager = (params) => { //관리자 브랜드 삭제
   const { id } = params;
   return deleteItem(`/api/v1/manager/brands/${id}`);
 }
+export const getProductReviewsByManager = (params) => { //관리자 상품리뷰 목록 출력
+  const { page, page_size, s_dt, e_dt, search, category_id } = params;
+  let query = {
+    page, page_size, s_dt, e_dt, search, category_id
+  }
+  if (!query['s_dt']) delete query['s_dt'];
+  if (!query['e_dt']) delete query['e_dt'];
+  if (!query['search']) delete query['search'];
+  return get(`/api/v1/manager/product-reviews`, query);
+}
+export const addProductReviewByManager = (params) => { //관리자 상품리뷰 추가
+  const { category_id, parent_id, post_title, post_content, is_reply } = params;
+  let obj = {
+    category_id, parent_id, post_title, post_content, is_reply
+  }
+  if (!parent_id) {
+    delete obj['parent_id'];
+  }
+  return post(`/api/v1/manager/product-reviews`, obj);
+}
+export const updateProductReviewByManager = (params) => { //관리자 상품리뷰 수정
+  const { category_id, parent_id, post_title, post_content, is_reply, id } = params;
+  let obj = {
+    category_id, parent_id, post_title, post_content, is_reply
+  }
+  return put(`/api/v1/manager/product-reviews/${id}`, obj);
+}
+export const getProductReviewByManager = (params) => { //관리자 상품리뷰 단일 출력
+  const { id } = params;
+  return get(`/api/v1/manager/product-reviews/${id}`);
+}
+export const deleteProductReviewByManager = (params) => { //관리자 상품리뷰 삭제
+  const { id } = params;
+  return deleteItem(`/api/v1/manager/product-reviews/${id}`);
+}
+
+
 export const uploadFileByManager = (params) => {// 관리자 파일 업로드
   const { formData } = params;
   let config = {

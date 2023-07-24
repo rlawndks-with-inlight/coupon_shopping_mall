@@ -121,7 +121,6 @@ export default function Upload({
           </>
         }
       </StyledDropZone>
-
       {helperText && helperText}
 
       <RejectionFiles fileRejections={fileRejections} />

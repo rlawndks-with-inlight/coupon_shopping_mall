@@ -1,11 +1,11 @@
-import { Card, Container, IconButton, Stack } from "@mui/material";
+import { Avatar, Card, Container, IconButton, Stack } from "@mui/material";
 import { useEffect, useState } from "react";
 import ManagerLayout from "src/layouts/manager/ManagerLayout";
 import ManagerTable from "src/views/manager/mui/table/ManagerTable";
 import { Icon } from "@iconify/react";
 import { useRouter } from "next/router";
 import { Row } from "src/components/elements/styled-components";
-import { getProductsByManager, getSellersByManager } from "src/utils/api-manager";
+import { deleteSellerByManager, getProductsByManager, getSellersByManager } from "src/utils/api-manager";
 const test_data = [
   {
     id: 1,
@@ -21,73 +21,38 @@ const test_data = [
 const SellerList = () => {
   const defaultColumns = [
     {
-      id: 'id',
-      label: 'No.',
+      id: 'profile_img',
+      label: '유저프로필',
       action: (row) => {
-        return row['id']
+        return <Avatar src={row['profile_img'] ?? "---"} />
       }
     },
     {
-      id: 'product_img',
-      label: '상품이미지',
-      action: (row) => {
-        return row['product_img'] ?? "---"
-      }
-    },
-    {
-      id: 'product_name',
-      label: '상품명',
+      id: 'user_name',
+      label: '유저아이디',
       action: (row) => {
         return row['user_name'] ?? "---"
       }
     },
     {
-      id: 'category',
-      label: '카테고리',
+      id: 'nick_name',
+      label: '닉네임',
       action: (row) => {
-        return row['name'] ?? "---"
+        return row['nick_name'] ?? "---"
       }
     },
     {
-      id: 'product_price',
-      label: '시장가',
+      id: 'phone_num',
+      label: '휴대폰번호',
       action: (row) => {
-        return row['name'] ?? "---"
-      }
-    },
-    {
-      id: 'product_sale_price',
-      label: '판매가',
-      action: (row) => {
-        return row['name'] ?? "---"
-      }
-    },
-    {
-      id: 'inventory',
-      label: '재고',
-      action: (row) => {
-        return row['name'] ?? "---"
-      }
-    },
-    {
-      id: 'status',
-      label: '상태',
-      action: (row) => {
-        return row['name'] ?? "---"
+        return row['phone_num'] ?? "---"
       }
     },
     {
       id: 'created_at',
-      label: '생성시간',
+      label: '가입일',
       action: (row) => {
-        return row['name'] ?? "---"
-      }
-    },
-    {
-      id: 'updated_at',
-      label: '최종수정시간',
-      action: (row) => {
-        return row['name'] ?? "---"
+        return row['created_at'] ?? "---"
       }
     },
     {
@@ -98,10 +63,10 @@ const SellerList = () => {
           <>
             <IconButton>
               <Icon icon='material-symbols:edit-outline' onClick={() => {
-                router.push(`edit/${row?.id}`)
+                router.push(`sellers/edit/${row?.id}`)
               }} />
             </IconButton>
-            <IconButton>
+            <IconButton onClick={() => deleteSellerByManager({id: row?.id})}>
               <Icon icon='material-symbols:delete-outline' />
             </IconButton>
           </>
@@ -129,8 +94,12 @@ const SellerList = () => {
     onChangePage(searchObj);
   }
   const onChangePage = async (obj) => {
+    setData({
+      ...data,
+      content: undefined
+    })
     let data_ = await getSellersByManager(obj);
-    if(data_){
+    if (data_) {
       setData(data_);
     }
     setSearchObj(obj);

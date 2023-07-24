@@ -46,7 +46,6 @@ const Demo1 = (props) => {
       } else {
         parent_list = getAllIdsWithParents(themeCategoryList);
       }
-      console.log(parent_list)
       setParentList(parent_list);
       let use_list = [];
       for (var i = 0; i < parent_list.length; i++) {
@@ -55,7 +54,6 @@ const Demo1 = (props) => {
           break;
         }
       }
-      console.log(use_list)
       setCurCategories(use_list);
     }
     let product_list = await getProductsByUser({

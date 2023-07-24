@@ -14,7 +14,7 @@ import $ from 'jquery';
 import dynamic from "next/dynamic";
 import { react_quill_data } from "src/data/manager-data";
 import { axiosIns } from "src/utils/axios";
-import { addProductByManager, getCategoriesByManager, getProductByManager, updateProductByManager } from "src/utils/api-manager";
+import { addProductByManager, getCategoriesByManager, getProductByManager, updateProductByManager, uploadFileByManager } from "src/utils/api-manager";
 import { toast } from "react-hot-toast";
 import { useTheme } from "@emotion/react";
 const ReactQuill = dynamic(() => import('react-quill'), {
@@ -462,13 +462,10 @@ const ProductEdit = () => {
                               img_src = await base64toFile(img_src[0], 'note.png');
                               let formData = new FormData();
                               formData.append('file', img_src);
-                              let config = {
-                                headers: {
-                                  'Content-Type': "multipart/form-data",
-                                }
-                              };
-                              const response = await axiosIns().post('/api/v1/manager/posts/upload', formData, config);
-                              note = await note.replace(base64, response?.data?.file)
+                              const response = await uploadFileByManager({
+                                formData
+                              });
+                              note = await note.replace(base64, response?.data?.url)
                             }
                           }
                         }

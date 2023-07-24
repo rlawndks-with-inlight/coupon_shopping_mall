@@ -11,7 +11,7 @@ import styled from "styled-components";
 import dynamic from "next/dynamic";
 import { react_quill_data } from "src/data/manager-data";
 import { axiosIns } from "src/utils/axios";
-import { getBrandByManager } from "src/utils/api-manager";
+import { addBrandByManager, getBrandByManager, updateBrandByManager, uploadFileByManager } from "src/utils/api-manager";
 const ReactQuill = dynamic(() => import('react-quill'), {
   ssr: false,
   loading: () => <p>Loading ...</p>,
@@ -67,14 +67,20 @@ const DefaultSetting = () => {
     name: '',
     dns: '',
     og_description: '',
+    company_name: '',
+    pvcy_rep_name: '',
+    ceo_name: '',
+    addr: '',
+    addr_detail: '',
+    resident_num: '',
+    business_num: '',
+    phone_num: '',
+    fax_num: '',
     note: '',
-    logo_img: undefined,
-    dark_logo_img: undefined,
-    favicon_img: undefined,
-    passbook_img: undefined,
-    contract_img: undefined,
-    id_img: undefined,
-    og_img: undefined,
+    logo_file: undefined,
+    dark_logo_file: undefined,
+    favicon_file: undefined,
+    og_file: undefined,
   })
 
   useEffect(() => {
@@ -84,8 +90,20 @@ const DefaultSetting = () => {
     let brand_data = await getBrandByManager({
       id: router.query.brand_id | themeDnsData?.id
     })
-    console.log(brand_data)
+    setItem(Object.assign(item, brand_data));
     setLoading(false);
+  }
+  const onSave = async () => {
+    let result = undefined
+    if (item?.id) {//수정
+      result = await updateBrandByManager({ ...item, id: item?.id })
+    } else {//추가
+      result = await addBrandByManager({ ...item })
+    }
+    if (result) {
+      toast.success("성공적으로 저장 되었습니다.");
+      router.push('/manager/settings/brands');
+    }
   }
   return (
     <>
@@ -112,13 +130,13 @@ const DefaultSetting = () => {
                         <Typography variant="subtitle2" sx={{ color: 'text.secondary' }}>
                           브랜드로고
                         </Typography>
-                        <Upload file={item.logo_img} onDrop={(acceptedFiles) => {
+                        <Upload file={item.logo_file || item.logo_img} onDrop={(acceptedFiles) => {
                           const newFile = acceptedFiles[0];
                           if (newFile) {
                             setItem(
                               {
                                 ...item,
-                                ['logo_img']: Object.assign(newFile, {
+                                ['logo_file']: Object.assign(newFile, {
                                   preview: URL.createObjectURL(newFile),
                                 })
                               }
@@ -128,7 +146,33 @@ const DefaultSetting = () => {
                           setItem(
                             {
                               ...item,
-                              ['logo_img']: ''
+                              ['logo_img']: '',
+                              ['logo_file']: undefined,
+                            }
+                          )
+                        }}
+                        />
+                         <Typography variant="subtitle2" sx={{ color: 'text.secondary' }}>
+                          브랜드 다크모드 로고
+                        </Typography>
+                        <Upload file={item.dark_logo_file || item.dark_logo_img} onDrop={(acceptedFiles) => {
+                          const newFile = acceptedFiles[0];
+                          if (newFile) {
+                            setItem(
+                              {
+                                ...item,
+                                ['dark_logo_file']: Object.assign(newFile, {
+                                  preview: URL.createObjectURL(newFile),
+                                })
+                              }
+                            );
+                          }
+                        }} onDelete={() => {
+                          setItem(
+                            {
+                              ...item,
+                              ['dark_logo_img']: '',
+                              ['dark_logo_file']: undefined,
                             }
                           )
                         }}
@@ -136,13 +180,13 @@ const DefaultSetting = () => {
                         <Typography variant="subtitle2" sx={{ color: 'text.secondary' }}>
                           브랜드 파비콘
                         </Typography>
-                        <Upload file={item.favicon_img} onDrop={(acceptedFiles) => {
+                        <Upload file={item.favicon_file || item.favicon_img} onDrop={(acceptedFiles) => {
                           const newFile = acceptedFiles[0];
                           if (newFile) {
                             setItem(
                               {
                                 ...item,
-                                ['favicon_img']: Object.assign(newFile, {
+                                ['favicon_file']: Object.assign(newFile, {
                                   preview: URL.createObjectURL(newFile),
                                 })
                               }
@@ -152,7 +196,8 @@ const DefaultSetting = () => {
                           setItem(
                             {
                               ...item,
-                              ['favicon_img']: ''
+                              ['favicon_img']: '',
+                              ['favicon_file']: undefined,
                             }
                           )
                         }}
@@ -210,13 +255,10 @@ const DefaultSetting = () => {
                                   img_src = await base64toFile(img_src[0], 'note.png');
                                   let formData = new FormData();
                                   formData.append('file', img_src);
-                                  let config = {
-                                    headers: {
-                                      'Content-Type': "multipart/form-data",
-                                    }
-                                  };
-                                  const response = await axiosIns().post('/api/v1/manager/posts/upload', formData, config);
-                                  note = await note.replace(base64, response?.data?.file)
+                                  const response = await uploadFileByManager({
+                                    formData
+                                  });
+                                  note = await note.replace(base64, response?.data?.url)
                                 }
                               }
                             }
@@ -323,8 +365,7 @@ const DefaultSetting = () => {
                 <Stack spacing={1} style={{ display: 'flex' }}>
                   <Button variant="contained" style={{
                     height: '48px', width: '120px', marginLeft: 'auto'
-                  }} onClick={() => {
-                  }}>
+                  }} onClick={onSave}>
                     저장
                   </Button>
                 </Stack>

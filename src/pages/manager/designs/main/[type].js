@@ -13,6 +13,7 @@ import _ from 'lodash'
 import { useSettingsContext } from "src/components/settings";
 import { useRouter } from "next/router";
 import CustomBreadcrumbs from "src/components/custom-breadcrumbs/CustomBreadcrumbs";
+import { uploadFileByManager } from "src/utils/api-manager";
 const ReactQuill = dynamic(() => import('react-quill'), {
   ssr: false,
   loading: () => <p>Loading ...</p>,
@@ -259,13 +260,10 @@ const Main = () => {
                                 img_src = await base64toFile(img_src[0], 'note.png');
                                 let formData = new FormData();
                                 formData.append('file', img_src);
-                                let config = {
-                                  headers: {
-                                    'Content-Type': "multipart/form-data",
-                                  }
-                                };
-                                const response = await axiosIns().post('/api/v1/manager/posts/upload', formData, config);
-                                note = await note.replace(base64, response?.data?.file)
+                                const response = await uploadFileByManager({
+                                  formData
+                                });
+                                note = await note.replace(base64, response?.data?.url)
                               }
                             }
                           }

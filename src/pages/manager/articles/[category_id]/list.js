@@ -5,19 +5,7 @@ import ManagerTable from "src/views/manager/mui/table/ManagerTable";
 import { Icon } from "@iconify/react";
 import { useRouter } from "next/router";
 import { Row } from "src/components/elements/styled-components";
-import { getProductsByManager } from "src/utils/api-manager";
-const test_data = [
-  {
-    id: 1,
-    user_name: 'test1',
-    phone_num: '01000000000',
-  },
-  {
-    id: 2,
-    user_name: 'test2',
-    phone_num: '01000000000',
-  }
-]
+import { getPostsByManager, getProductsByManager } from "src/utils/api-manager";
 const ArticleList = () => {
   const defaultColumns = [
     {
@@ -29,7 +17,7 @@ const ArticleList = () => {
     },
     {
       id: 'product_img',
-      label: '상품이미지',
+      label: '제목',
       action: (row) => {
         return row['product_img'] ?? "---"
       }
@@ -118,18 +106,22 @@ const ArticleList = () => {
     s_dt: '',
     e_dt: '',
     search: '',
-    category_id: null
+    category_id: null,
   })
   useEffect(() => {
     pageSetting();
-  }, [])
+  }, [router.query])
   const pageSetting = () => {
     let cols = defaultColumns;
     setColumns(cols)
-    onChangePage(searchObj);
+    onChangePage({...searchObj, category_id: router.query?.category_id});
   }
   const onChangePage = async (obj) => {
-    let data_ = await getProductsByManager(obj);
+    setData({
+      ...data,
+      content: undefined
+    })
+    let data_ = await getPostsByManager(obj);
     if(data_){
       setData(data_);
     }
@@ -144,7 +136,7 @@ const ArticleList = () => {
             columns={columns}
             searchObj={searchObj}
             onChangePage={onChangePage}
-            add_button_text={'상품 추가'}
+            add_button_text={'게시물 추가'}
           />
         </Card>
       </Stack>

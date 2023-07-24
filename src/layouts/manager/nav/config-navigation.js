@@ -5,6 +5,8 @@ import { PATH_MANAGER } from '../../../data/manager-data';
 import SvgColor from 'src/components/svg-color';
 import { useSettingsContext } from 'src/components/settings';
 import { useAuthContext } from '../auth/useAuthContext';
+import { useEffect, useState } from 'react';
+import { getPostCategoriesByManager } from 'src/utils/api-manager';
 
 // ----------------------------------------------------------------------
 
@@ -41,8 +43,26 @@ const ICONS = {
 export const navConfig = () => {
   const { user } = useAuthContext();
   const dns_data = getCookie('themeDnsData');
+
+  const [postCategoryList, setPostCategoryList] = useState([]);
+
+  const [isSettingComplete, setIsSettingComplete] = useState(false);
   //dns_data와 user를 통해 계산하기
 
+  useEffect(() => {
+    getSidebarSetting();
+  }, [])
+  const getSidebarSetting = async () => {
+    let category_list = await getPostCategoriesByManager({ page: 1, page_size: 100000 });
+    category_list = category_list.content ?? [];
+    for (var i = 0; i < category_list.length; i++) {
+      category_list[i]['title'] = category_list[i]['post_category_title'];
+      category_list[i]['path'] = `/manager/articles/${category_list[i]?.id}`;
+      delete category_list[i]?.children;
+    }
+    setPostCategoryList(category_list);
+    setIsSettingComplete(true);
+  }
   return [
     {
       items: [
@@ -108,9 +128,7 @@ export const navConfig = () => {
           icon: ICONS.calendar,
           children: [
             { title: '게시판 카테고리 관리', path: PATH_MANAGER.articles.categories },
-            { title: '공지사항', path: PATH_MANAGER.articles.notices },
-            { title: '자주묻는질문', path: PATH_MANAGER.articles.faqs },
-            { title: '1:1문의', path: PATH_MANAGER.articles.oneToOne },
+            ...postCategoryList
           ],
         },
       ],

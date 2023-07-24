@@ -1,7 +1,7 @@
 import Logo from "src/components/logo/Logo"
 import styled from "styled-components"
 import { IconButton, TextField, InputAdornment, Drawer } from "@mui/material"
-import { forwardRef, useEffect, useState } from "react"
+import { forwardRef, useEffect, useRef, useState } from "react"
 import { Icon } from "@iconify/react"
 import { Row } from 'src/components/elements/styled-components'
 import { useTheme } from '@mui/material/styles';
@@ -88,7 +88,7 @@ align-items:center;
 }
 `
 const PaddingTop = styled.div`
-margin-top:190px;
+margin-top:${props=>props.pcHeight}px;
 @media (max-width:1000px) {
   margin-top:99px;
 }
@@ -190,6 +190,10 @@ const Header = () => {
   const theme = useTheme();
   const { themeMode, onToggleMode, onChangeCategoryList, themeDnsData } = useSettingsContext();
   const { user, logout } = useAuthContext();
+
+  const headerWrappersRef = useRef();
+
+  const [headerHeight, setHeaderHeight] = useState(130);
   const [keyword, setKeyword] = useState("");
   const onSearch = () => {
     router.push(`/shop/search?keyword=${keyword}`)
@@ -203,6 +207,9 @@ const Header = () => {
   const [loading, setLoading] = useState(true);
   useEffect(() => {
   }, [user])
+  useEffect(()=>{
+    setHeaderHeight(headerWrappersRef.current?.clientHeight??130);
+  },[headerWrappersRef.current, categories])
   useEffect(() => {
     settingHeader();
   }, [])
@@ -317,6 +324,7 @@ const Header = () => {
           <Wrappers style={{
             background: `${themeMode == 'dark' ? '#000' : '#fff'}`
           }}
+          ref={headerWrappersRef}
           >
             <TopMenuContainer>
               <img src={logoSrc} style={{ height: '40px', width: 'auto', cursor: 'pointer' }}
@@ -551,7 +559,7 @@ const Header = () => {
                     </div>
                   </>
                 ))}
-                <div style={{ position: 'relative', marginLeft: 'auto' }} className={`menu-service`}>
+                <div style={{ position: 'relative' }} className={`menu-service`}>
                   <CategoryMenu borderColor={themeMode == 'dark' ? '#fff' : '#000'} >
                     <div>고객센터</div>
                   </CategoryMenu>
@@ -609,7 +617,9 @@ const Header = () => {
                     </CategoryMenu>
                   </>
                 ))}
-                <CategoryMenu borderColor={themeMode == 'dark' ? '#fff' : '#000'}>고객센터</CategoryMenu>
+                <CategoryMenu borderColor={themeMode == 'dark' ? '#fff' : '#000'} onClick={()=>{
+
+                }}>고객센터</CategoryMenu>
               </ShowMobile>
               <NoneShowMobile style={{
                 marginLeft: 'auto'
@@ -619,7 +629,7 @@ const Header = () => {
             <div style={{ borderBottom: `1px solid ${theme.palette.grey[300]}` }} />
           </Wrappers>
         </>}
-      <PaddingTop  pcHeight={72+$('.pc-menu-content').innerHeight}/>
+      <PaddingTop pcHeight={headerHeight}/>
       <Drawer
         anchor={'left'}
         open={sideMenuOpen}
@@ -650,7 +660,6 @@ const Header = () => {
               </>
             ))}
           </TreeView>
-
           <ColumnMenuTitle>고객센터</ColumnMenuTitle>
           {[
             {

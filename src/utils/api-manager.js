@@ -55,6 +55,17 @@ export const get = async (url, params) => {
     return false;
   }
 }
+const settingImageObj = (images, obj_) => {//이미지 존재여부에따라 img 또는 file로 리턴함
+  let obj = obj_;
+  for (var i = 0; i < images.length; i++) {
+    if (!obj[`${images[i]}_file`]) {
+      delete obj[`${images[i]}_file`];
+    } else {
+      delete obj[`${images[i]}_img`];
+    }
+  }
+  return obj;
+}
 export const getCategoriesByManager = (params) => { //관리자 상품 카테고리 목록출력
   const { page, page_size, s_dt, e_dt, search } = params;
   let query = {
@@ -81,11 +92,10 @@ export const updateCategoryByManager = (params) => { //관리자 상품 카테�
   let obj = {
     parent_id, category_type, category_name, category_description, category_file, category_img
   }
-  if(!category_file){
-    delete obj['category_file'];
-  }else{
-    delete obj['category_img'];
-  }
+  let images = [
+    'category'
+  ]
+  obj = settingImageObj(images, obj);
   return put(`/api/v1/manager/product-categories/${id}`, obj);
 }
 export const getCategoryByManager = (params) => { //관리자 상품 카테고리 단일 출력
@@ -121,11 +131,10 @@ export const updateProductByManager = (params) => { //관리자 상품 수정
   let obj = {
     category_id, product_name, product_comment, product_price, product_sale_price, brand_name, origin_name, mfg_name, model_name, product_description, product_file, product_img, product_sub_file
   }
-  if(!product_file){
-    delete obj['product_file'];
-  }else{
-    delete obj['product_img'];
-  }
+  let images = [
+    'product'
+  ]
+  obj = settingImageObj(images, obj);
   return put(`/api/v1/manager/products/${id}`, obj);
 }
 export const getProductByManager = (params) => { //관리자 상품 단일 출력
@@ -180,15 +189,49 @@ export const getSellersByManager = (params) => { //관리자 셀러 목록 출�
   return get(`/api/v1/manager/merchandises`, query);
 }
 export const addSellerByManager = (params) => { //관리자 셀러 추가
-  const { } = params;
+  const { user_name, nick_name, mcht_name, addr, resident_num, business_num, acct_bank_name, acct_bank_code, acct_num, acct_name, phone_num, note, user_pw,
+    passbook_file,
+    contract_file,
+    bsin_lic_file,
+    id_file,
+    profile_file,
+  } = params;
   let obj = {
+    user_name, nick_name, mcht_name, addr, resident_num, business_num, acct_bank_name, acct_bank_code, acct_num, acct_name, phone_num, note, user_pw,
+    passbook_file,
+    contract_file,
+    bsin_lic_file,
+    id_file,
+    profile_file,
   }
   return post(`/api/v1/manager/merchandises`, obj);
 }
+
 export const updateSellerByManager = (params) => { //관리자 셀러 수정
-  const { } = params;
+  const { user_name, nick_name, mcht_name, addr, resident_num, business_num, acct_bank_name, acct_bank_code, acct_num, acct_name, phone_num, note, user_pw,
+    passbook_file, passbook_img,
+    contract_file, contract_img,
+    bsin_lic_file, bsin_lic_img,
+    id_file, id_img,
+    profile_file, profile_img,
+    id
+  } = params;
   let obj = {
+    user_name, nick_name, mcht_name, addr, resident_num, business_num, acct_bank_name, acct_bank_code, acct_num, acct_name, phone_num, note, user_pw,
+    passbook_file, passbook_img,
+    contract_file, contract_img,
+    bsin_lic_file, bsin_lic_img,
+    id_file, id_img,
+    profile_file, profile_img,
   }
+  let images = [
+    'passbook',
+    'contract',
+    'bsin_lic',
+    'id',
+    'profile',
+  ]
+  obj = settingImageObj(images, obj);
   return put(`/api/v1/manager/merchandises/${id}`, obj);
 }
 export const getSellerByManager = (params) => { //관리자 셀러 단일 출력
@@ -210,14 +253,19 @@ export const getPostCategoriesByManager = (params) => { //관리자 게시글 �
   return get(`/api/v1/manager/post-categories`, query);
 }
 export const addPostCategoryByManager = (params) => { //관리자 게시글 카테고리 추가
-  const { } = params;
+  const { parent_id, post_category_title } = params;
   let obj = {
+    parent_id, post_category_title
+  }
+  if (!parent_id) {
+    delete obj['parent_id'];
   }
   return post(`/api/v1/manager/post-categories`, obj);
 }
 export const updatePostCategoryByManager = (params) => { //관리자 게시글 카테고리 수정
-  const { } = params;
+  const { parent_id, post_category_title, id } = params;
   let obj = {
+    parent_id, post_category_title
   }
   return put(`/api/v1/manager/post-categories/${id}`, obj);
 }
@@ -229,7 +277,42 @@ export const deletePostCategoryByManager = (params) => { //관리자 게시글 �
   const { id } = params;
   return deleteItem(`/api/v1/manager/post-categories/${id}`);
 }
-export const getBrandsByManager = (params) => { //관리자 게시글 카테고리 목록 출력
+export const getPostsByManager = (params) => { //관리자 게시글 목록 출력
+  const { page, page_size, s_dt, e_dt, search, category_id } = params;
+  let query = {
+    page, page_size, s_dt, e_dt, search, category_id
+  }
+  if (!query['s_dt']) delete query['s_dt'];
+  if (!query['e_dt']) delete query['e_dt'];
+  if (!query['search']) delete query['search'];
+  return get(`/api/v1/manager/posts`, query);
+}
+export const addPostByManager = (params) => { //관리자 게시글 추가
+  const { category_id, parent_id, post_title, post_content, is_reply } = params;
+  let obj = {
+    category_id, parent_id, post_title, post_content, is_reply
+  }
+  if (!parent_id) {
+    delete obj['parent_id'];
+  }
+  return post(`/api/v1/manager/posts`, obj);
+}
+export const updatePostByManager = (params) => { //관리자 게시글 수정
+  const { category_id, parent_id, post_title, post_content, is_reply, id } = params;
+  let obj = {
+    category_id, parent_id, post_title, post_content, is_reply
+  }
+  return put(`/api/v1/manager/posts/${id}`, obj);
+}
+export const getPostByManager = (params) => { //관리자 게시글 단일 출력
+  const { id } = params;
+  return get(`/api/v1/manager/posts/${id}`);
+}
+export const deletePostByManager = (params) => { //관리자 게시글 삭제
+  const { id } = params;
+  return deleteItem(`/api/v1/manager/posts/${id}`);
+}
+export const getBrandsByManager = (params) => { //관리자 브랜드 목록 출력
   const { page, page_size, s_dt, e_dt, search } = params;
   let query = {
     page, page_size, s_dt, e_dt, search
@@ -239,23 +322,60 @@ export const getBrandsByManager = (params) => { //관리자 게시글 카테고�
   if (!query['search']) delete query['search'];
   return get(`/api/v1/manager/brands`, query);
 }
-export const addBrandByManager = (params) => { //관리자 게시글 카테고리 추가
-  const { } = params;
+export const addBrandByManager = (params) => { //관리자 브랜드 추가
+  const { name, dns, og_description, company_name, pvcy_rep_name, ceo_name, addr, resident_num, business_num, phone_num, fax_num, note, setting_obj,
+    logo_file,
+    dark_logo_file,
+    favicon_file,
+    og_file,
+  } = params;
   let obj = {
+    name, dns, og_description, company_name, pvcy_rep_name, ceo_name, addr, resident_num, business_num, phone_num, fax_num, note, setting_obj,
+    logo_file,
+    dark_logo_file,
+    favicon_file,
+    og_file,
   }
   return post(`/api/v1/manager/brands`, obj);
 }
-export const updateBrandByManager = (params) => { //관리자 게시글 카테고리 수정
-  const { } = params;
+export const updateBrandByManager = (params) => { //관리자 브랜드수정
+  const { name, dns, og_description, company_name, pvcy_rep_name, ceo_name, addr, resident_num, business_num, phone_num, fax_num, note, setting_obj,
+    logo_file, logo_img,
+    dark_logo_file, dark_logo_img,
+    favicon_file, favicon_img,
+    og_file, og_img,
+    id
+  } = params;
   let obj = {
+    name, dns, og_description, company_name, pvcy_rep_name, ceo_name, addr, resident_num, business_num, phone_num, fax_num, note, setting_obj,
+    logo_file, logo_img,
+    dark_logo_file, dark_logo_img,
+    favicon_file, favicon_img,
+    og_file, og_img,
   }
+  let images = [
+    'logo',
+    'dark_logo',
+    'favicon',
+    'og',
+  ]
+  obj = settingImageObj(images, obj);
   return put(`/api/v1/manager/brands/${id}`, obj);
 }
-export const getBrandByManager = (params) => { //관리자 게시글 카테고리 단일 출력
+export const getBrandByManager = (params) => { //관리자 브랜드 단일 출력
   const { id } = params;
   return get(`/api/v1/manager/brands/${id}`);
 }
-export const deleteBrandByManager = (params) => { //관리자 게시글 카테고리 삭제
+export const deleteBrandByManager = (params) => { //관리자 브랜드 삭제
   const { id } = params;
   return deleteItem(`/api/v1/manager/brands/${id}`);
+}
+export const uploadFileByManager = (params) => {// 관리자 파일 업로드
+  const { formData } = params;
+  let config = {
+    headers: {
+      'Content-Type': "multipart/form-data",
+    }
+  };
+  return axiosIns().post('/api/v1/manager/posts/upload', formData, config);
 }

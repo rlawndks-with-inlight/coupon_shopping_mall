@@ -14,9 +14,10 @@ import $ from 'jquery';
 import dynamic from "next/dynamic";
 import { react_quill_data } from "src/data/manager-data";
 import { axiosIns } from "src/utils/axios";
-import { addProductByManager, getCategoriesByManager, getProductByManager, updateProductByManager, uploadFileByManager } from "src/utils/api-manager";
+import { addProductByManager, getCategoriesByManager, getProductByManager, getProductReviewsByManager, updateProductByManager, uploadFileByManager } from "src/utils/api-manager";
 import { toast } from "react-hot-toast";
 import { useTheme } from "@emotion/react";
+import ManagerTable from "src/views/manager/mui/table/ManagerTable";
 const ReactQuill = dynamic(() => import('react-quill'), {
   ssr: false,
   loading: () => <p>Loading ...</p>,
@@ -57,6 +58,7 @@ cursor:pointer;
 }
 `
 export const SelectCategoryComponent = (props) => {
+
   const {
     curCategories,
     categories,
@@ -139,7 +141,57 @@ export const SelectCategoryComponent = (props) => {
   )
 }
 const ProductEdit = () => {
+  const defaultReviewColumns = [
+    {
+      id: 'product_name',
+      label: '작성자',
+      action: (row) => {
+        return row['product_name'] ?? "---"
+      }
+    },
 
+    {
+      id: 'product_price',
+      label: '코멘트',
+      action: (row) => {
+        return commarNumber(row['product_price'])
+      }
+    },
+    {
+      id: 'status',
+      label: '상태',
+      action: (row) => {
+        return row['status'] ?? "---"
+      }
+    },
+    {
+      id: 'created_at',
+      label: '생성시간',
+      action: (row) => {
+        return row['created_at'] ?? "---"
+      }
+    },
+    {
+      id: 'updated_at',
+      label: '최종수정시간',
+      action: (row) => {
+        return row['updated_at'] ?? "---"
+      }
+    },
+    {
+      id: 'edit',
+      label: '삭제',
+      action: (row) => {
+        return (
+          <>
+            <IconButton onClick={() => deleteProduct(row?.id)}>
+              <Icon icon='material-symbols:delete-outline' />
+            </IconButton>
+          </>
+        )
+      }
+    },
+  ]
   const router = useRouter();
 
   const [loading, setLoading] = useState(true);
@@ -162,14 +214,41 @@ const ProductEdit = () => {
     sub_images: [],
     groups: []
   })
+  const [reviewData, setReviewData] = useState({});
+  const [reviewSearchObj, setReviewSearchObj] = useState({
+    page: 1,
+    page_size: 10,
+    s_dt: '',
+    e_dt: '',
+    search: '',
+  })
+  const [reviewColumns, setReviewColumns] = useState([]);
+  useEffect(() => {
+    if (currentTab == 1) {
+      onChangeReviewsPage({...reviewSearchObj});
+    }
+  }, [currentTab])
+  const onChangeReviewsPage = async (obj) => {
+    setReviewData({
+      ...reviewData,
+      content: undefined
+    })
+    let data_ = await getProductReviewsByManager(obj);
+    if (data_) {
+      setReviewData(data_);
+    }
+    setReviewSearchObj(obj);
+  }
   useEffect(() => {
     settingPage();
   }, [])
+
   const settingPage = async () => {
+    let cols = defaultReviewColumns;
+    setReviewColumns(cols)
     let category_list = await getCategoriesByManager({ page: 1, page_size: 100000 });
     category_list = category_list?.content;
     setCategories(category_list);
-
     if (router.query?.edit_category == 'edit') {
       setCurrentTab(router.query?.type ?? 0)
       let product = await getProductByManager({
@@ -606,10 +685,15 @@ const ProductEdit = () => {
               <>
                 <Grid item xs={12} md={6}>
                   <Card sx={{ p: 2, height: '100%' }}>
-                    <Stack spacing={3}></Stack>
+                    <ManagerTable
+                      data={reviewData}
+                      columns={reviewColumns}
+                      searchObj={reviewSearchObj}
+                      onChangePage={onChangeReviewsPage}
+                      add_button_text={''}
+                    />
                   </Card>
                 </Grid>
-
               </>}
             <Grid item xs={12} md={12}>
               <Card sx={{ p: 3 }}>

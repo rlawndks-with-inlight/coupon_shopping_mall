@@ -139,9 +139,9 @@ const Demo1 = (props) => {
                                                 <img src={item.product.product_img} width='48px' height='48px' style={{ margin: '0 1rem 0 0' }} />
                                                 <div style={{ display: 'flex', flexDirection: 'column' }}>
                                                     <div>{item.product.name}</div>
-                                                    <div>{commarNumber(item.product.item_pr + item.option.price)}원</div>
+                                                    <div>{commarNumber(item.product.product_sale_price + item.option.price)}원</div>
                                                     <div>옵션 : {item.option.name} / {item.quantity}개</div>
-                                                    <div style={{ marginTop: '0.5rem' }}>{commarNumber((item.product.item_pr + item.option.price) * item.quantity)}원</div>
+                                                    <div style={{ marginTop: '0.5rem' }}>{commarNumber((item.product.product_sale_price + item.option.price) * item.quantity)}원</div>
                                                 </div>
                                             </div>
                                             <AddressButton>

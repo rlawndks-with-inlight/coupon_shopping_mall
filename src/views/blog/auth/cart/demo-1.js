@@ -154,7 +154,7 @@ const Demo1 = (props) => {
                                     textColor: 'inherit',
                                     fontSize: '1rem',
                                     fontWeight: 'bold',
-                                }} 
+                                }}
                                 style={{
                                     marginRight: '1rem'
                                 }}
@@ -171,7 +171,7 @@ const Demo1 = (props) => {
                                 for (var i = 0; i < cartList.length; i++) {
                                     if (cartList[i].seller_id == sellerId) {
                                         want_buy_list.push(cartList[i])
-                                        price_sum += ((cartList[i].product.item_pr + cartList[i].option.price) * cartList[i].quantity)
+                                        price_sum += ((cartList[i].product.product_sale_price + cartList[i].option.price) * cartList[i].quantity)
                                         item_quantity += cartList[i].quantity
                                     }
                                 }
@@ -207,21 +207,21 @@ const Demo1 = (props) => {
                                                     <img src={item.product.product_img} width='48px' height='48px' style={{ margin: '0 1rem 0 0.5rem' }} />
                                                     <div style={{ display: 'flex', flexDirection: 'column' }}>
                                                         <div>{item.product.name}</div>
-                                                        <div>{commarNumber(item.product.item_pr + item.option.price)}원</div>
+                                                        <div>{commarNumber(item.product.product_sale_price + item.option.price)}원</div>
                                                         <div>옵션 : {item.option.name} / {item.quantity}개</div>
-                                                        <div style={{ marginTop: '0.5rem' }}>{commarNumber((item.product.item_pr + item.option.price) * item.quantity)}원</div>
+                                                        <div style={{ marginTop: '0.5rem' }}>{commarNumber((item.product.product_sale_price + item.option.price) * item.quantity)}원</div>
                                                     </div>
                                                 </Typography>} control={<Checkbox checked={_.find(wantBuyList, { option_id: item.option_id, product_id: item.product_id }) ? true : false} onChange={(e) => {
                                                     let want_buy_list = [...wantBuyList];
                                                     if (e.target.checked) {
                                                         want_buy_list.push(item)
-                                                        setPriceSum(price => price + ((item.product.item_pr + item.option.price) * item.quantity))
+                                                        setPriceSum(price => price + ((item.product.product_sale_price + item.option.price) * item.quantity))
                                                         setItemQuantity(quantity => quantity + item.quantity)
                                                     } else {
                                                         _.remove(want_buy_list, function (itm) {
                                                             return itm.option_id == item.option_id && itm.product_id == item.product_id
                                                         })
-                                                        setPriceSum(price => price - ((item.product.item_pr + item.option.price) * item.quantity))
+                                                        setPriceSum(price => price - ((item.product.product_sale_price + item.option.price) * item.quantity))
                                                         setItemQuantity(quantity => quantity - item.quantity)
                                                     }
                                                     want_buy_list = _.uniq(want_buy_list);

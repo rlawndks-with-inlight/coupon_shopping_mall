@@ -79,8 +79,8 @@ width:100%;
 const test_item = {
   product_name: '[국내제작/고퀄/보풀X]플레인 나시 - t',
   product_img: 'https://d32rratnkhh4zp.cloudfront.net/media/images/2023/6/29/thumb@1080_1687996041-a03a48a3-6c08-4856-9aa9-15d05fa9c444.jpeg',
-  mkt_pr: 20000,
-  item_pr: 18000,
+  product_price: 20000,
+  product_sale_price: 18000,
   content: "<p><img src=\"https://purplevery6.cafe24.com:8443/image/note/1688543362484-note.png\"><img src=\"https://purplevery6.cafe24.com:8443/image/note/1688543365336-note.png\"><img src=\"https://purplevery6.cafe24.com:8443/image/note/1688543369919-note.png\"><img src=\"https://purplevery6.cafe24.com:8443/image/note/1688543372457-note.png\"><img src=\"https://purplevery6.cafe24.com:8443/image/note/1688543375175-note.png\"><img src=\"https://purplevery6.cafe24.com:8443/image/note/1688543377838-note.png\"><img src=\"https://purplevery6.cafe24.com:8443/image/note/1688543380642-note.png\"><img src=\"https://purplevery6.cafe24.com:8443/image/note/1688543383596-note.png\"></p><p><br></p><p><span class=\"ql-size-small\">#2차전지 #전기차 #리튬 #미국 #중국 #패권다툼 #반도체 규제 #주요 광물 #수출 #규제 #갈륨 #게르마늄 #아연 #희토류 #클라우딩 컴퓨터 서비스 #중국 #제재 #아마존 #마이크로소프트 #인공지능 반도체 #삼성전자 #최첨단 반도체 #AI 반도체 #삼성 파운드리 포럼 2023 #SAFE 포럼 2023 #2나노 #3나노 #공정설계키트 #팹리스 #파운드리 #생태계 강화 #자동차 #현대차 #기아 #친환경차 #전기차 #수소차 #미국 인플레이션감축법 #IRA #의료AI #캔서문샷 #사우디아라비아 #비전2030 #SEHA 가상병원 #프로젝트 참여</span></p><p><br></p><p><span class=\"ql-size-small\">#리튬 관련주 #STX #금양 #코스모화학 #강원에너지 #이브이첨단소재 #코스모신소재</span></p><p><span class=\"ql-size-small\">#희토류 관련주 #유니온 #삼화전자 #대원화성 #유니온머티리얼 #티플랙스 #동국알앤에스</span></p><p><span class=\"ql-size-small\">#클라우드 관련주 #솔트웨어 #데이타솔루션 #덕산하이메탈 #오픈베이스 #케이아이엔엑스 #파이오링크</span></p><p><span class=\"ql-size-small\">#반도체 관련주 #가온칩스 #동운아나텍 #마이크로투나노 #유니퀘스트 #코아시아 #에이디테크놀로지</span></p><p><span class=\"ql-size-small\">#자동차 관련주 #서연이화 #KG모빌리티 #트루윈 #한주라이트메탈 #아진산업 #화신</span></p><p><span class=\"ql-size-small\">#의료AI 관련주 #루닛 #비올 #제이엘케이 #뷰노 #딥노이드 #신한제7호스팩</span></p>",
   images: [
     'https://d32rratnkhh4zp.cloudfront.net/media/images/2023/7/2/thumb@1080_1688299885-c8ca43a2-dca0-4428-8d39-25831173de5d.jpeg',
@@ -151,7 +151,7 @@ const Demo1 = (props) => {
     let total_price = 0;
     for (var i = 0; i < selectOptions.length; i++) {
       let find_item = _.find(test_color_list, { id: selectOptions[i]?.id });
-      total_price += (test_item.item_pr + find_item?.price) * selectOptions[i]?.count;
+      total_price += (test_item.product_sale_price + find_item?.price) * selectOptions[i]?.count;
     }
     return total_price
   }
@@ -195,16 +195,16 @@ const Demo1 = (props) => {
           <ItemName>{item.product_name}</ItemName>
           <Divider />
           <PriceContainer>
-            {item.item_pr < item.mkt_pr &&
+            {item.product_sale_price < item.product_price &&
               <>
                 <Row style={{ alignItems: 'flex-end' }}>
-                  <div style={{ fontSize: themeObj.font_size.size8, fontWeight: 'bold' }}>{parseInt((item.mkt_pr - item.item_pr) / item.mkt_pr * 100)}%</div>
-                  <div style={{ marginLeft: '0.5rem', fontSize: themeObj.font_size.size9, textDecoration: 'line-through', color: themeObj.grey[500] }}>{commarNumber(item.mkt_pr)}원</div>
+                  <div style={{ fontSize: themeObj.font_size.size8, fontWeight: 'bold' }}>{parseInt((item.product_price - item.product_sale_price) / item.product_price * 100)}%</div>
+                  <div style={{ marginLeft: '0.5rem', fontSize: themeObj.font_size.size9, textDecoration: 'line-through', color: themeObj.grey[500] }}>{commarNumber(item.product_price)}원</div>
                 </Row>
 
               </>}
             <Row style={{ alignItems: 'flex-end', fontWeight: 'bold' }}>
-              <div style={{ fontSize: themeObj.font_size.size6, color: theme.palette.error.main }}>{commarNumber(item.item_pr)}</div>
+              <div style={{ fontSize: themeObj.font_size.size6, color: theme.palette.error.main }}>{commarNumber(item.product_sale_price)}</div>
               <div style={{ fontSize: themeObj.font_size.size8, marginLeft: '0.25rem' }}>원</div>
             </Row>
           </PriceContainer>
@@ -328,7 +328,7 @@ const Demo1 = (props) => {
                         setSelectOptions(select_options)
                       }} />
                   </Row>
-                  <div>{commarNumber((test_item.item_pr + _.find(test_color_list, { id: item?.id }).price) * (item.count))}원</div>
+                  <div>{commarNumber((test_item.product_sale_price + _.find(test_color_list, { id: item?.id }).price) * (item.count))}원</div>
 
                 </Row>
               </DrawerBox>

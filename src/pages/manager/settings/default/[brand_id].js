@@ -11,6 +11,7 @@ import styled from "styled-components";
 import dynamic from "next/dynamic";
 import { react_quill_data } from "src/data/manager-data";
 import { axiosIns } from "src/utils/axios";
+import { getBrandByManager } from "src/utils/api-manager";
 const ReactQuill = dynamic(() => import('react-quill'), {
   ssr: false,
   loading: () => <p>Loading ...</p>,
@@ -56,7 +57,7 @@ padding:0.5rem;
 `
 const DefaultSetting = () => {
 
-  const { themeMode } = useSettingsContext();
+  const { themeMode, themeDnsData } = useSettingsContext();
 
   const router = useRouter();
 
@@ -77,9 +78,15 @@ const DefaultSetting = () => {
   })
 
   useEffect(() => {
-
-    setLoading(false);
+    settingPage();
   }, [])
+  const settingPage = async () => {
+    let brand_data = await getBrandByManager({
+      id: router.query.brand_id | themeDnsData?.id
+    })
+    console.log(brand_data)
+    setLoading(false);
+  }
   return (
     <>
       {!loading &&
@@ -300,7 +307,7 @@ const DefaultSetting = () => {
                                 </>}
                               <OgDescription>
                                 <div>{item?.name ? item?.name : '미리보기가 없습니다.'}</div>
-                                <div style={{ fontSize: themeObj.font_size.size8, color: themeObj.grey[700],wordBreak:'break-all'}}>{item?.og_description ? item?.og_description : '여기를 눌러 링크를 확인하세요.'}</div>
+                                <div style={{ fontSize: themeObj.font_size.size8, color: themeObj.grey[700], wordBreak: 'break-all' }}>{item?.og_description ? item?.og_description : '여기를 눌러 링크를 확인하세요.'}</div>
                                 <div style={{ fontSize: themeObj.font_size.size9, color: themeObj.grey[500], marginTop: '0.5rem' }}>{window.location.origin}</div>
                               </OgDescription>
                             </OgWrappers>

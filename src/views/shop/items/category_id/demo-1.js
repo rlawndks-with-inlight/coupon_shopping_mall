@@ -46,6 +46,7 @@ const Demo1 = (props) => {
       } else {
         parent_list = getAllIdsWithParents(themeCategoryList);
       }
+      console.log(parent_list)
       setParentList(parent_list);
       let use_list = [];
       for (var i = 0; i < parent_list.length; i++) {
@@ -54,13 +55,14 @@ const Demo1 = (props) => {
           break;
         }
       }
+      console.log(use_list)
       setCurCategories(use_list);
     }
     let product_list = await getProductsByUser({
       brand_id: themeDnsData?.id,
       category_id: router.query?.category_id
     })
-    setProducts(product_list);
+    setProducts(product_list.content);
   }
   return (
     <>

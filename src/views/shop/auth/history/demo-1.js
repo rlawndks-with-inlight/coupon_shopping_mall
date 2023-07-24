@@ -70,21 +70,21 @@ const Demo1 = (props) => {
                         </Typography>
                       </TableCell>
                       <TableCell>
-                        {row.mkt_pr > row.item_pr && (
+                        {row.product_price > row.product_sale_price && (
                           <Box
                             component="span"
                             sx={{ color: 'text.disabled', textDecoration: 'line-through', mr: 0.5 }}
                           >
-                            {fCurrency(row.mkt_pr)}
+                            {fCurrency(row.product_price)}
                           </Box>
                         )}
-                        {fCurrency(row.item_pr)}원
+                        {fCurrency(row.product_sale_price)}원
                       </TableCell>
                       <TableCell>
                         {16}개
                       </TableCell>
                       <TableCell>
-                        {fCurrency(row.item_pr * 16)}원
+                        {fCurrency(row.product_sale_price * 16)}원
                       </TableCell>
                       <TableCell>
                         <Box

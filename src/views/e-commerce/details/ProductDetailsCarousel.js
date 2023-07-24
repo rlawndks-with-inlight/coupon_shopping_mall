@@ -160,7 +160,6 @@ export default function ProductDetailsCarousel({ product }) {
       />
     </Box>
   );
-
   const renderThumbnails = (
     <StyledThumbnailsContainer length={product.images.length} themeMode={themeMode}>
       <Carousel {...carouselSettings2} asNavFor={nav1} ref={carousel2}>

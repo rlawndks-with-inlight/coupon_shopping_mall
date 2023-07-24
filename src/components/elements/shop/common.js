@@ -90,17 +90,17 @@ export const Item = (props) => {
           <ItemPrice style={{
             marginTop: 'auto'
           }}>
-            {item.item_pr < item.mkt_pr &&
+            {item.product_sale_price < item.product_price &&
               <>
                 <div style={{ color: 'red', marginRight: '0.25rem' }}>
-                  {commarNumber((item.mkt_pr - item.item_pr) * 100 / item.mkt_pr) + '%'}
+                  {commarNumber((item.product_price - item.product_sale_price) * 100 / item.product_price) + '%'}
                 </div>
               </>}
-            <div>{commarNumber(item.item_pr)} 원</div>
-            {item.item_pr < item.mkt_pr &&
+            <div>{commarNumber(item.product_sale_price)} 원</div>
+            {item.product_sale_price < item.product_price &&
               <>
                 <div style={{ textDecoration: 'line-through', marginLeft: '0.25rem', fontSize: themeObj.font_size.size7, color: themeObj.grey[500] }}>
-                  {item.item_pr < item.mkt_pr ? commarNumber(item.mkt_pr) : ''}
+                  {item.product_sale_price < item.product_price ? commarNumber(item.product_price) : ''}
                 </div>
               </>}
           </ItemPrice>

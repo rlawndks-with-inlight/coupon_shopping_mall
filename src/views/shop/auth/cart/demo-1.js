@@ -224,9 +224,9 @@ const Demo1 = (props) => {
           <Grid item xs={12} md={4}>
             <CheckoutSummary
               enableDiscount
-              total={_.sum(_.map(products, (item) => { return item.quantity * item.item_pr }))}
-              discount={_.sum(_.map(products, (item) => { return item.quantity * (item.mkt_pr - item.item_pr) }))}
-              subtotal={_.sum(_.map(products, (item) => { return item.quantity * item.mkt_pr }))}
+              total={_.sum(_.map(products, (item) => { return item.quantity * item.product_sale_price }))}
+              discount={_.sum(_.map(products, (item) => { return item.quantity * (item.product_price - item.product_sale_price) }))}
+              subtotal={_.sum(_.map(products, (item) => { return item.quantity * item.product_price }))}
             />
             {activeStep == 0 &&
               <>
@@ -235,7 +235,7 @@ const Demo1 = (props) => {
                   size="large"
                   type="submit"
                   variant="contained"
-                  disabled={_.sum(_.map(products, (item) => { return item.quantity * item.item_pr })) <= 0}
+                  disabled={_.sum(_.map(products, (item) => { return item.quantity * item.product_sale_price })) <= 0}
                   onClick={onClickNextStep}
                 >
                   {'배송지 선택하기'}

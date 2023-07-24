@@ -52,6 +52,7 @@ export const SelectCategoryComponent = (props) => {
     categories,
     categoryChildrenList,
     onClickCategory,
+    noneSelectText
   } = props;
   const theme = useTheme();
   return (
@@ -81,7 +82,7 @@ export const SelectCategoryComponent = (props) => {
             </>
             :
             <>
-              상품분류를 선택 후 상품분류 적용 버튼을 눌러주세요
+              {noneSelectText}
             </>}
         </CategoryHeader>
         <div style={{ overflowX: 'auto', width: '100%', display: '-webkit-box' }} className="category-container">
@@ -163,7 +164,6 @@ const ProductEdit = () => {
         id: router.query.id
       })
       product = Object.assign(item, product)
-      product = { ...product, product_file: product.product_img, product_sub_file: product.sub_images }
       product.sub_images = product.sub_images.map(img => {
         return {
           ...img,
@@ -255,7 +255,7 @@ const ProductEdit = () => {
                     <Typography variant="subtitle2" sx={{ color: 'text.secondary' }}>
                       대표이미지등록
                     </Typography>
-                    <Upload file={item.product_file} onDrop={(acceptedFiles) => {
+                    <Upload file={item.product_file || item.product_img} onDrop={(acceptedFiles) => {
                       const newFile = acceptedFiles[0];
                       if (newFile) {
                         setItem(
@@ -272,7 +272,8 @@ const ProductEdit = () => {
                         setItem(
                           {
                             ...item,
-                            ['product_file']: ''
+                            ['product_file']: undefined,
+                            ['product_img']: '',
                           }
                         )
                       }}
@@ -322,6 +323,7 @@ const ProductEdit = () => {
                       categories={categories}
                       categoryChildrenList={categoryChildrenList}
                       onClickCategory={onClickCategory}
+                      noneSelectText={'상품분류를 선택 후 상품분류 적용 버튼을 눌러주세요'}
                     />
                     {item?.category_id ?
                       <>

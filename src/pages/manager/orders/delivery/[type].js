@@ -49,14 +49,14 @@ const DeliveryList = () => {
       }
     },
     {
-      id: 'mkt_pr',
+      id: 'product_price',
       label: '시장가',
       action: (row) => {
         return row['name'] ?? "---"
       }
     },
     {
-      id: 'item_pr',
+      id: 'product_sale_price',
       label: '판매가',
       action: (row) => {
         return row['name'] ?? "---"

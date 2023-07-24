@@ -4,90 +4,72 @@ import ManagerLayout from "src/layouts/manager/ManagerLayout";
 import ManagerTable from "src/views/manager/mui/table/ManagerTable";
 import { Icon } from "@iconify/react";
 import { useRouter } from "next/router";
-import { Row } from "src/components/elements/styled-components";
-import { getProductsByManager, getSellersByManager } from "src/utils/api-manager";
-const test_data = [
-  {
-    id: 1,
-    user_name: 'test1',
-    phone_num: '01000000000',
-  },
-  {
-    id: 2,
-    user_name: 'test2',
-    phone_num: '01000000000',
-  }
-]
-const SellerList = () => {
+import { getBrandsByManager, getProductsByManager } from "src/utils/api-manager";
+import { LazyLoadImage } from "react-lazy-load-image-component";
+
+const BrandList = () => {
   const defaultColumns = [
     {
-      id: 'id',
-      label: 'No.',
-      action: (row) => {
-        return row['id']
-      }
-    },
-    {
-      id: 'product_img',
-      label: '상품이미지',
-      action: (row) => {
-        return row['product_img'] ?? "---"
-      }
-    },
-    {
-      id: 'product_name',
-      label: '상품명',
-      action: (row) => {
-        return row['user_name'] ?? "---"
-      }
-    },
-    {
-      id: 'category',
-      label: '카테고리',
+      id: 'name',
+      label: '쇼핑몰명',
       action: (row) => {
         return row['name'] ?? "---"
       }
     },
     {
-      id: 'product_price',
-      label: '시장가',
+      id: 'dns',
+      label: 'DNS',
       action: (row) => {
-        return row['name'] ?? "---"
+        return row['dns'] ?? "---"
       }
     },
     {
-      id: 'product_sale_price',
-      label: '판매가',
+      id: 'logo_img',
+      label: 'LOGO',
       action: (row) => {
-        return row['name'] ?? "---"
+        return <LazyLoadImage src={row['logo_img']} style={{ height: '56px' }} />
       }
     },
     {
-      id: 'inventory',
-      label: '재고',
+      id: 'favicon_img',
+      label: 'FAVICON',
       action: (row) => {
-        return row['name'] ?? "---"
+        return <LazyLoadImage src={row['favicon_img']} style={{ height: '56px' }} />
       }
     },
     {
-      id: 'status',
-      label: '상태',
+      id: 'company_name',
+      label: '법인상호',
       action: (row) => {
-        return row['name'] ?? "---"
+        return row['company_name'] ?? "---"
+      }
+    },
+    {
+      id: 'ceo_name',
+      label: '대표자명',
+      action: (row) => {
+        return row['ceo_name'] ?? "---"
+      }
+    },
+    {
+      id: 'business_num',
+      label: '사업자번호',
+      action: (row) => {
+        return row['business_num'] ?? "---"
       }
     },
     {
       id: 'created_at',
       label: '생성시간',
       action: (row) => {
-        return row['name'] ?? "---"
+        return row['created_at'] ?? "---"
       }
     },
     {
       id: 'updated_at',
       label: '최종수정시간',
       action: (row) => {
-        return row['name'] ?? "---"
+        return row['updated_at'] ?? "---"
       }
     },
     {
@@ -98,7 +80,7 @@ const SellerList = () => {
           <>
             <IconButton>
               <Icon icon='material-symbols:edit-outline' onClick={() => {
-                router.push(`edit/${row?.id}`)
+                router.push(`default/${row?.id}`)
               }} />
             </IconButton>
             <IconButton>
@@ -129,8 +111,12 @@ const SellerList = () => {
     onChangePage(searchObj);
   }
   const onChangePage = async (obj) => {
-    let data_ = await getSellersByManager(obj);
-    if(data_){
+    setData({
+      ...data,
+      content: undefined
+    })
+    let data_ = await getBrandsByManager(obj);
+    if (data_) {
       setData(data_);
     }
     setSearchObj(obj);
@@ -144,12 +130,12 @@ const SellerList = () => {
             columns={columns}
             searchObj={searchObj}
             onChangePage={onChangePage}
-            add_button_text={'셀러 추가'}
+            add_button_text={''}
           />
         </Card>
       </Stack>
     </>
   )
 }
-SellerList.getLayout = (page) => <ManagerLayout>{page}</ManagerLayout>;
-export default SellerList
+BrandList.getLayout = (page) => <ManagerLayout>{page}</ManagerLayout>;
+export default BrandList

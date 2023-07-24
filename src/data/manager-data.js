@@ -57,6 +57,7 @@ export const PATH_MANAGER = {
     root: path(ROOTS_MANAGER, '/settings'),
     default: path(ROOTS_MANAGER, '/settings/default'),
     parcelOut: path(ROOTS_MANAGER, '/settings/parcel-out'),
+    brands: path(ROOTS_MANAGER, '/settings/brands'),
   },
   pays: {
     root: path(ROOTS_MANAGER, '/pays'),

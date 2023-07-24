@@ -122,7 +122,7 @@ const CustomContent = forwardRef(function CustomContent(props, ref) {
           <Icon icon='uiw:plus' fontSize={14} />
         </IconButton>
       </Tooltip>
-      <Tooltip title="하위 카테고리를 삭제하시려면 클릭해 주세요.">
+      <Tooltip title="해당 카테고리 및 하위 카테고리를 삭제하시려면 클릭해 주세요.">
         <IconButton onClick={() => {
           onClickCategoryDelete(category)
         }}>
@@ -142,16 +142,17 @@ display:flex;
 `
 const CategoryList = () => {
 
+  const defaultSetting = {
+    category_file: '',
+    category_name: '',
+    category_description: '',
+    category_type: 0
+  }
   const theme = useTheme();
   const [loading, setLoading] = useState(true);
   const [categories, setCategories] = useState([]); // 전체카테고리가 저장될 변수
   const [curCategories, setCurCategories] = useState([]); // 카테고리 깊이를 보여주기 용
-  const [category, setCategory] = useState({ // 수정하거나 추가할때 사용될 디비 커넥트용 변수
-    category_img: '',
-    category_name: '',
-    category_description: '',
-    category_type: 0
-  })
+  const [category, setCategory] = useState(defaultSetting); // 수정하거나 추가할때 사용될 디비 커넥트용 변수
   const [isAction, setIsAction] = useState(false);
   useEffect(() => {
     getCategories();
@@ -207,15 +208,11 @@ const CategoryList = () => {
     }
     setCurCategories(use_list);
     setCategory({
-      category_img: '',
-      category_name: '',
+      ...defaultSetting,
       parent_id: category?.id,
       parent: category,
-      category_type: 0,
-      category_description: '',
     })
   }
-
   const onClickCategoryLabel = (category, depth) => { // 해당 카테고리 수정
     setIsAction(true);
     let parent_list = getAllIdsWithParents(categories);
@@ -227,13 +224,7 @@ const CategoryList = () => {
       }
     }
     setCurCategories(use_list);
-    setCategory({
-      id: category?.id,
-      category_name: category?.category_name,
-      category_img: category?.category_img,
-      category_description: category?.category_description,
-      category_type: category?.category_type,
-    })
+    setCategory(category)
   }
   const onClickCategoryDelete = async (category) => { // 해당 카테고리 수정
     setIsAction(false);
@@ -243,9 +234,9 @@ const CategoryList = () => {
   }
   const onSave = async () => {
     if (category?.id) {//수정
-      let result = await updateCategoryByManager({ ...category, category_file: category.category_img })
+      let result = await updateCategoryByManager({ ...category,  })
     } else {//추가
-      let result = await addCategoryByManager({ ...category, category_file: category.category_img })
+      let result = await addCategoryByManager({ ...category })
     }
     setIsAction(false);
     getCategories();
@@ -272,12 +263,7 @@ const CategoryList = () => {
                       <Tooltip title="새로운 대분류 카테고리를 추가하시려면 클릭해주세요." sx={{ margin: 'auto' }} >
                         <Button variant="outlined" sx={{ width: '316px', marginTop: '0.5rem' }} onClick={() => {
                           setIsAction(true);
-                          setCategory({
-                            category_img: '',
-                            category_name: '',
-                            category_description: '',
-                            category_type: 0
-                          })
+                          setCategory(defaultSetting)
                           setCurCategories([]);
                         }}>
                           대분류 카테고리 추가
@@ -296,12 +282,7 @@ const CategoryList = () => {
                         <Tooltip title="새로운 대분류 카테고리를 추가하시려면 클릭해주세요." sx={{ margin: 'auto' }} >
                           <Button variant="outlined" sx={{ width: '316px', margin: '0 auto auto auto' }} onClick={() => {
                             setIsAction(true);
-                            setCategory({
-                              category_img: '',
-                              category_name: '',
-                              category_description: '',
-                              category_type: 0
-                            })
+                            setCategory(defaultSetting)
                             setCurCategories([]);
                           }}>
                             대분류 카테고리 추가
@@ -351,13 +332,13 @@ const CategoryList = () => {
                                 </>}
                             </Row>
                           </>}
-                        <Upload file={category.category_img} onDrop={(acceptedFiles) => {
+                        <Upload file={category.category_file || category.category_img} onDrop={(acceptedFiles) => {
                           const newFile = acceptedFiles[0];
                           if (newFile) {
                             setCategory(
                               {
                                 ...category,
-                                ['category_img']: Object.assign(newFile, {
+                                ['category_file']: Object.assign(newFile, {
                                   preview: URL.createObjectURL(newFile),
                                 })
                               }
@@ -367,7 +348,8 @@ const CategoryList = () => {
                           setCategory(
                             {
                               ...category,
-                              ['category_img']: ''
+                              ['category_file']: undefined,
+                              ['category_img']: '',
                             }
                           )
                         }} />

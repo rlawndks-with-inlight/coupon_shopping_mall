@@ -20,7 +20,7 @@ CheckoutCartProduct.propTypes = {
 };
 
 export default function CheckoutCartProduct({ row, onDelete, onDecrease, onIncrease }) {
-  const { name, size, price, colors, cover, quantity, available, item_pr, mkt_pr, product_img } = row;
+  const { name, size, price, colors, cover, quantity, available, product_sale_price, product_price, product_img } = row;
 
   return (
     <TableRow>
@@ -47,15 +47,15 @@ export default function CheckoutCartProduct({ row, onDelete, onDecrease, onIncre
       </TableCell>
 
       <TableCell>
-        {mkt_pr > item_pr && (
+        {product_price > product_sale_price && (
           <Box
             component="span"
             sx={{ color: 'text.disabled', textDecoration: 'line-through', mr: 0.5 }}
           >
-            {fCurrency(mkt_pr)}
+            {fCurrency(product_price)}
           </Box>
         )}
-        {fCurrency(item_pr)}원
+        {fCurrency(product_sale_price)}원
       </TableCell>
 
       <TableCell>
@@ -70,7 +70,7 @@ export default function CheckoutCartProduct({ row, onDelete, onDecrease, onIncre
         </Box>
       </TableCell>
 
-      <TableCell align="right">{fCurrency(item_pr * quantity)}원</TableCell>
+      <TableCell align="right">{fCurrency(product_sale_price * quantity)}원</TableCell>
 
       <TableCell align="right">
         <IconButton onClick={onDelete}>

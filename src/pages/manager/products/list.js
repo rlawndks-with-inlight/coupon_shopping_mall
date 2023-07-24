@@ -10,25 +10,18 @@ import { commarNumber, getAllIdsWithParents } from "src/utils/function";
 import { LazyLoadImage } from "react-lazy-load-image-component";
 import { SelectCategoryComponent } from "./[edit_category]/[id]";
 import $ from 'jquery';
-const test_data = [
-  {
-    id: 1,
-    user_name: 'test1',
-    phone_num: '01000000000',
-  },
-  {
-    id: 2,
-    user_name: 'test2',
-    phone_num: '01000000000',
-  }
-]
+
 const ProductList = () => {
   const defaultColumns = [
     {
       id: 'product_img',
       label: '상품이미지',
       action: (row) => {
-        return <LazyLoadImage src={row['product_img'] ?? "---"} style={{ height: '84px', width: 'auto' }} />
+        if (row['product_img']) {
+          return <LazyLoadImage src={row['product_img'] ?? "---"} style={{ height: '84px', width: 'auto' }} />
+        } else {
+          return "---";
+        }
       }
     },
     {
@@ -42,7 +35,32 @@ const ProductList = () => {
       id: 'category_name',
       label: '카테고리',
       action: (row) => {
-        return row['category_name'] ?? "---"
+        return (
+          <>
+            {row?.category_root.length > 0 ?
+              <>
+                <Row>
+                  {row?.category_root.map((item, idx) => (
+                    <>
+                      <div style={{ marginRight: '0.25rem' }}>
+                        {item.category_name}
+                      </div>
+                      {idx != row?.category_root.length - 1 &&
+                        <>
+                          <div style={{ marginRight: '0.25rem' }}>
+                            {'>'}
+                          </div>
+                        </>}
+                    </>
+                  ))}
+                </Row>
+              </>
+              :
+              <>
+                {row['category_name'] ?? '---'}
+              </>}
+          </>
+        )
       }
     },
     {
@@ -119,10 +137,11 @@ const ProductList = () => {
   const pageSetting = async () => {
     let category_list = await getCategoriesByManager({ page: 1, page_size: 100000 });
     category_list = category_list?.content;
+    category_list = [{ id: null, category_name: '전체', children: [] }, ...category_list]
     setCategories(category_list);
     let cols = defaultColumns;
     setColumns(cols)
-    onChangePage(searchObj);
+    onChangePage({ ...searchObj, category_list: category_list });
   }
   const onChangePage = async (obj) => {
     setData({
@@ -131,6 +150,17 @@ const ProductList = () => {
     })
     let data_ = await getProductsByManager(obj);
     if (data_) {
+      let category_list = [];
+      if(obj?.category_list){
+        category_list = obj?.category_list
+      }else{
+        category_list = categories
+      }
+
+      let parent_list = await getAllIdsWithParents(category_list)
+      for (var i = 0; i < data_.content.length; i++) {
+        data_.content[i]['category_root'] = await returnCurCategories(data_.content[i]?.category_id, parent_list);
+      }
       setData(data_);
     }
     setSearchObj(obj);
@@ -141,8 +171,18 @@ const ProductList = () => {
       onChangePage(searchObj);
     }
   }
+  const returnCurCategories = async (category_id, parent_list) => {
+    let use_list = [];
+    for (var i = 0; i < parent_list.length; i++) {
+      if (parent_list[i][parent_list[i].length - 1]?.id == category_id) {
+        use_list = parent_list[i];
+        break;
+      }
+    }
+    return use_list
+  }
   const onClickCategory = (category, depth) => {
-    onChangePage({ ...searchObj, category_id: category?.id })
+    onChangePage({ ...searchObj, category_id: category?.id, page: 1 })
     let parent_list = getAllIdsWithParents(categories);
     let use_list = [];
     for (var i = 0; i < parent_list.length; i++) {
@@ -172,9 +212,9 @@ const ProductList = () => {
               categories={categories}
               categoryChildrenList={categoryChildrenList}
               onClickCategory={onClickCategory}
+              noneSelectText={'전체'}
             />
           </div>
-
           <Divider />
           <ManagerTable
             data={data}

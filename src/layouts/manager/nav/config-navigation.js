@@ -145,6 +145,7 @@ export const navConfig = () => {
           icon: ICONS.setting,
           children: [
             { title: '기본설정', path: PATH_MANAGER.settings.default },
+            { title: '브랜드설정', path: PATH_MANAGER.settings.brands },
             { title: '분양관리', path: PATH_MANAGER.settings.parcelOut },
           ],
         },

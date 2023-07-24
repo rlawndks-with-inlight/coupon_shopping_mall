@@ -62,8 +62,8 @@ const ItemCard = () => {
   const [testText, setTestText] = useState({
     name: 'LED 레몬트리 스탠드',
     sub_name: '유연함으로 흠징방지 및 보호에 도움',
-    mkt_pr: 10000,
-    item_pr: 8000
+    product_price: 10000,
+    product_sale_price: 8000
   })
 
   return (
@@ -258,11 +258,11 @@ const ItemCard = () => {
               <Typography variant="subtitle2" sx={{ color: 'text.secondary' }}>
                 테스트 상품시장가
               </Typography>
-              <TextField value={testText.mkt_pr} onChange={(e) => { setTestText({ ...testText, ['mkt_pr']: e.target.value }) }} type="number" />
+              <TextField value={testText.product_price} onChange={(e) => { setTestText({ ...testText, ['product_price']: e.target.value }) }} type="number" />
               <Typography variant="subtitle2" sx={{ color: 'text.secondary' }}>
                 테스트 상품판매가
               </Typography>
-              <TextField value={testText.item_pr} onChange={(e) => { setTestText({ ...testText, ['item_pr']: e.target.value }) }} type="number" />
+              <TextField value={testText.product_sale_price} onChange={(e) => { setTestText({ ...testText, ['product_sale_price']: e.target.value }) }} type="number" />
             </Stack>
           </Card>
         </Grid>
@@ -281,8 +281,8 @@ const ItemCard = () => {
               product_img: '/images/test/testitem9.jpg',
               name: testText.name,
               sub_name: testText.sub_name,
-              item_pr: testText.item_pr,
-              mkt_pr: testText.mkt_pr,
+              product_sale_price: testText.product_sale_price,
+              product_price: testText.product_price,
             }}
               theme_css={itemThemeCss}
             />

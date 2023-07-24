@@ -47,8 +47,8 @@ export default function ProductDetailsSummary({ product, onAddCart, onGotoStep, 
     id,
     name,
     sub_name,
-    item_pr = 0,
-    mkt_pr = 0,
+    product_sale_price = 0,
+    product_price = 0,
     sizes = [],
     price,
     cover,
@@ -59,7 +59,9 @@ export default function ProductDetailsSummary({ product, onAddCart, onGotoStep, 
     rating,
     totalReview,
     inventoryType,
-    inventory
+    inventory,
+    product_name,
+    product_comment
   } = product;
   const alreadyProduct = cart.map((item) => item.id).includes(id);
 
@@ -76,7 +78,6 @@ export default function ProductDetailsSummary({ product, onAddCart, onGotoStep, 
     size: sizes[4],
     quantity: available < 1 ? 0 : 1,
   };
-
   const methods = useForm({
     defaultValues,
   });
@@ -141,8 +142,8 @@ export default function ProductDetailsSummary({ product, onAddCart, onGotoStep, 
             {status}
           </Typography>
 
-          <Typography variant="h5">{name}</Typography>
-          <Typography variant="h7" color={themeObj.grey[500]}>{sub_name}</Typography>
+          <Typography variant="h5">{product_name}</Typography>
+          <Typography variant="h7" color={themeObj.grey[500]}>{product_comment}</Typography>
 
           <Stack direction="row" alignItems="center" spacing={1}>
             <Rating value={rating} precision={0.1} readOnly />
@@ -153,16 +154,16 @@ export default function ProductDetailsSummary({ product, onAddCart, onGotoStep, 
           </Stack>
 
           <Typography variant="h4">
-            {mkt_pr > item_pr && (
+            {product_price > product_sale_price && (
               <Box
                 component="span"
                 sx={{ color: 'text.disabled', textDecoration: 'line-through', mr: 0.5 }}
               >
-                {fCurrency(mkt_pr)}
+                {fCurrency(product_price)}
               </Box>
             )}
 
-            {commarNumber(item_pr)} 원
+            {commarNumber(product_sale_price)} 원
           </Typography>
         </Stack>
 

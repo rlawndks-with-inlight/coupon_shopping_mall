@@ -46,10 +46,10 @@ const Demo1 = (props) => {
       product_id: router.query?.id
     });
     if(data?.product_img){
-      data['images'].unshift(data?.product_img)
+      data['product_sub_imgs'].unshift(data?.product_img)
     }
+    data['images'] = data['product_sub_imgs'];
     setProduct(data);
-
     setLoading(false);
   }
   const TABS = [

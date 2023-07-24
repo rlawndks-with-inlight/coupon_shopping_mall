@@ -14,6 +14,7 @@ import DialogSearch from "src/components/dialog/DialogSearch"
 import { useAuthContext } from "src/layouts/manager/auth/useAuthContext"
 import { logoSrc } from "src/data/data"
 import { getCategoriesByUser } from "src/utils/api-shop"
+import $ from 'jquery'
 
 const Wrappers = styled.header`
 width: 100%;
@@ -87,7 +88,7 @@ align-items:center;
 }
 `
 const PaddingTop = styled.div`
-margin-top:131px;
+margin-top:190px;
 @media (max-width:1000px) {
   margin-top:99px;
 }
@@ -500,7 +501,13 @@ const Header = () => {
                   <Icon icon={'basil:menu-solid'} fontSize={'2rem'} color={themeMode == 'dark' ? '#fff' : '#000'} />
                 </IconButton>
               </NoneShowMobile>
-              <NoneShowMobile style={{ justifyContent: 'space-between', width: '100%' }}>
+              <NoneShowMobile
+                style={{
+                  width: '100%',
+                  flexWrap:'wrap'
+                }}
+                className="none-scroll pc-menu-content"
+              >
                 {categories.map((item1, idx1) => (
                   <>
                     <div style={{ position: 'relative' }} className={`menu-${item1?.id}`}>
@@ -612,7 +619,7 @@ const Header = () => {
             <div style={{ borderBottom: `1px solid ${theme.palette.grey[300]}` }} />
           </Wrappers>
         </>}
-      <PaddingTop />
+      <PaddingTop  pcHeight={72+$('.pc-menu-content').innerHeight}/>
       <Drawer
         anchor={'left'}
         open={sideMenuOpen}

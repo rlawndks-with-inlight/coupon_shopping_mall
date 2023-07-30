@@ -85,8 +85,8 @@ export const Item = (props) => {
               router.push(`/shop/item/${item?.id}`)
             }
           }}>
-          <ItemName>{item.name}</ItemName>
-          <ItemSubName>{item.sub_name}</ItemSubName>
+          <ItemName>{item.product_name}</ItemName>
+          <ItemSubName>{item.product_comment}</ItemSubName>
           <ItemPrice style={{
             marginTop: 'auto'
           }}>

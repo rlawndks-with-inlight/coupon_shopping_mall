@@ -60,8 +60,8 @@ const ItemCard = () => {
 
   const [itemThemeCss, setItemThemeCss] = useState(itemThemeCssDefaultSetting);
   const [testText, setTestText] = useState({
-    name: 'LED 레몬트리 스탠드',
-    sub_name: '유연함으로 흠징방지 및 보호에 도움',
+    product_name: 'LED 레몬트리 스탠드',
+    product_comment: '유연함으로 흠징방지 및 보호에 도움',
     product_price: 10000,
     product_sale_price: 8000
   })
@@ -250,11 +250,11 @@ const ItemCard = () => {
               <Typography variant="subtitle2" sx={{ color: 'text.secondary' }}>
                 테스트 상품명
               </Typography>
-              <TextField value={testText.name} onChange={(e) => { setTestText({ ...testText, ['name']: e.target.value }) }} />
+              <TextField value={testText.product_name} onChange={(e) => { setTestText({ ...testText, ['product_name']: e.target.value }) }} />
               <Typography variant="subtitle2" sx={{ color: 'text.secondary' }}>
                 테스트 상품서브명
               </Typography>
-              <TextField value={testText.sub_name} onChange={(e) => { setTestText({ ...testText, ['sub_name']: e.target.value }) }} />
+              <TextField value={testText.product_comment} onChange={(e) => { setTestText({ ...testText, ['product_comment']: e.target.value }) }} />
               <Typography variant="subtitle2" sx={{ color: 'text.secondary' }}>
                 테스트 상품시장가
               </Typography>
@@ -279,8 +279,8 @@ const ItemCard = () => {
             </Typography>
             <Item item={{
               product_img: '/images/test/testitem9.jpg',
-              name: testText.name,
-              sub_name: testText.sub_name,
+              product_name: testText.product_name,
+              product_comment: testText.product_comment,
               product_sale_price: testText.product_sale_price,
               product_price: testText.product_price,
             }}

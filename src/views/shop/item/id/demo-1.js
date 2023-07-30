@@ -45,10 +45,14 @@ const Demo1 = (props) => {
     let data = await getProductByUser({
       product_id: router.query?.id
     });
+    data['sub_images'] = data['sub_images'].map((img)=>{
+      return img?.product_sub_img
+    })
     if(data?.product_img){
       data['sub_images'].unshift(data?.product_img)
     }
     data['images'] = data['sub_images'];
+    console.log(data)
     setProduct(data);
     setLoading(false);
   }

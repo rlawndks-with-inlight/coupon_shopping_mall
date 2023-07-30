@@ -8,7 +8,7 @@ import { test_articles } from 'src/data/test-data';
 import styled from 'styled-components'
 import _ from 'lodash'
 import { getPostsByUser } from 'src/utils/api-shop';
-import { IconButton } from '@mui/material';
+import { Button, IconButton } from '@mui/material';
 import { Icon } from '@iconify/react';
 const Wrappers = styled.div`
 max-width:1500px;
@@ -47,43 +47,33 @@ font-weight:${props => props.isSelect ? 'bold' : ''};
 const Demo1 = (props) => {
   const defaultColumns = [
     {
-      id: 'product_name',
-      label: '상품명',
+      id: 'post_title',
+      label: '제목',
       action: (row) => {
-        return row['product_name'] ?? "---"
-      }
-    },
-    {
-      id: 'status',
-      label: '상태',
-      action: (row) => {
-        return row['status'] ?? "---"
+        return row['post_title'] ?? "---"
       }
     },
     {
       id: 'created_at',
       label: '생성시간',
       action: (row) => {
-        return row['created_at'] ?? "---"
-      }
-    },
-    {
-      id: 'updated_at',
-      label: '최종수정시간',
-      action: (row) => {
-        return row['updated_at'] ?? "---"
+        return <>
+          <div style={{ color: themeObj.grey[500] }}>
+            {row['created_at'] ?? "---"}
+          </div>
+        </>
       }
     },
     {
       id: 'edit',
-      label: '리뷰 확인하기',
+      label: '자세히보기',
       action: (row) => {
         return (
           <>
             <IconButton onClick={() => {
-               router.push(`edit/${row?.id}?type=1`)
+              router.push(`/shop/service/${router.query?.article_category}/${row?.id}`)
             }}>
-              <Icon icon='ic:outline-rate-review' />
+              <Icon icon='bx:detail' />
             </IconButton>
           </>
         )
@@ -102,6 +92,7 @@ const Demo1 = (props) => {
   const theme = useTheme();
   const [page, setPage] = useState(1);
   const [maxPage, setMaxPage] = useState(20);
+  const [curCategories, setCurCategories] = useState([]);
   const [postCategory, setPostCategory] = useState({});
   const [data, setData] = useState({
 
@@ -112,20 +103,20 @@ const Demo1 = (props) => {
     page_size: 10,
     category_id: null
   })
-  useEffect(()=>{
-    setColumns(defaultColumns)
-  },[])
   useEffect(() => {
-    setPostCategory(_.find(themePostCategoryList, {id: parseInt(router.query?.article_category)}))
+    setColumns(defaultColumns)
+  }, [])
+  useEffect(() => {
+    setPostCategory(_.find(themePostCategoryList, { id: parseInt(router.query?.article_category) }))
   }, [router.query?.article_category, themePostCategoryList])
-  useEffect(()=>{
-    if(router.query?.article_category){
+  useEffect(() => {
+    if (router.query?.article_category) {
       onChangePage({
         ...searchObj,
         category_id: router.query?.article_category
       });
     }
-  },[router.query?.article_category])
+  }, [router.query?.article_category])
   const onChangePage = async (obj) => {
     setData({
       ...data,
@@ -141,6 +132,34 @@ const Demo1 = (props) => {
         <Title style={{
           marginBottom: '2rem'
         }}>{postCategory?.post_category_title}</Title>
+        <Row style={{ margin: '1rem auto', overflowX: 'auto', whiteSpace: 'nowrap', columnGap:'0.25rem' }} className='none-scroll'>
+          {postCategory?.children && postCategory?.children.length > 0 &&
+            <>
+              <Button onClick={() => {
+                onChangePage({
+                  ...searchObj,
+                  category_id: router.query?.article_category
+                })
+              }}
+              variant={searchObj.category_id == router.query?.article_category?'contained':'outlined'}
+              >
+                전체
+              </Button>
+            </>}
+          {postCategory?.children && postCategory?.children.map((category) => (
+            <>
+              <Button onClick={() => {
+                onChangePage({
+                  ...searchObj,
+                  category_id: category?.id
+                })
+              }}
+              variant={searchObj.category_id == category?.id?'contained':'outlined'}>
+                {category?.post_category_title}
+              </Button>
+            </>
+          ))}
+        </Row>
         <RowMobileColumn>
           <ColumnMenu>
             {themePostCategoryList.map((item, idx) => (
@@ -157,6 +176,7 @@ const Demo1 = (props) => {
               </>
             ))}
           </ColumnMenu>
+
           {router.query?.article_category &&
             <>
               <ContentTable
@@ -167,7 +187,7 @@ const Demo1 = (props) => {
               />
             </>}
         </RowMobileColumn>
-      </Wrappers >
+      </Wrappers>
     </>
   )
 }

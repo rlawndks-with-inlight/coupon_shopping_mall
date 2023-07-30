@@ -28,7 +28,6 @@ const Demo1 = (props) => {
   const [userObj, setUserObj] = useState({})
   useEffect(()=>{
     if(user){
-      console.log(user)
       setUserObj(user);
     }
   },[user])

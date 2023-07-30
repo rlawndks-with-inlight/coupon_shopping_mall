@@ -242,9 +242,6 @@ const Header = () => {
     setHoverItems(hover_items);
     setLoading(false);
   }, [])
-  useEffect(() => {
-    console.log(router.query)
-  }, [router.query])
   const onHoverCategory = (category_name) => {
     let hover_items = hoverItems;
     for (let key in hover_items) {

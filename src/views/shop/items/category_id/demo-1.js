@@ -60,7 +60,7 @@ const Demo1 = (props) => {
       brand_id: themeDnsData?.id,
       category_id: router.query?.category_id
     })
-    setProducts(product_list.content);
+    setProducts(product_list.content??[]);
   }
   return (
     <>

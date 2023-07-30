@@ -140,7 +140,7 @@ export const navConfig = () => {
           path: PATH_MANAGER.designs.root,
           icon: ICONS.label,
           children: [
-            { title: '기본설정', path: PATH_MANAGER.designs.settings },
+            // { title: '기본설정', path: PATH_MANAGER.designs.settings },
             {
               title: '메인페이지관리', path: PATH_MANAGER.designs.main, children: [
                 { title: '전체', path: PATH_MANAGER.designs.main + '/all' },
@@ -164,7 +164,7 @@ export const navConfig = () => {
           children: [
             { title: '기본설정', path: PATH_MANAGER.settings.default },
             { title: '브랜드설정', path: PATH_MANAGER.settings.brands },
-            { title: '분양관리', path: PATH_MANAGER.settings.parcelOut },
+            // { title: '분양관리', path: PATH_MANAGER.settings.parcelOut },
           ],
         },
       ],

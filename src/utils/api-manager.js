@@ -1,12 +1,13 @@
 import { axiosIns } from "./axios";
+import { serialize } from 'object-to-formdata';
 
 export const post = async (url, obj) => {
   try {
     let formData = new FormData();
-    let keys = Object.keys(obj);
-    for (var i = 0; i < keys.length; i++) {
-      formData.append(keys[i], obj[keys[i]]);
+    let form_data_options = {
+      indices: true,
     }
+    formData = serialize(obj, form_data_options);
     let config = {
       headers: {
         'Content-Type': "multipart/form-data",
@@ -29,10 +30,10 @@ export const deleteItem = async (url, obj) => {
 export const put = async (url, obj) => {
   try {
     let formData = new FormData();
-    let keys = Object.keys(obj);
-    for (var i = 0; i < keys.length; i++) {
-      formData.append(keys[i], obj[keys[i]]);
+    let form_data_options = {
+      indices: true,
     }
+    formData = serialize(obj, form_data_options);
     formData.append('_method', 'PUT')
     let config = {
       headers: {
@@ -101,7 +102,6 @@ export const updateCategoryByManager = (params) => { //관리자 상품 카테�
 export const getCategoryByManager = (params) => { //관리자 상품 카테고리 단일 출력
   const { id } = params;
   const response = axiosIns().get(`/api/v1/manager/product-categories/${id}`);
-  console.log(response.data);
 }
 export const deleteCategoryByManager = (params) => { //관리자 상품 카테고리 삭제
   const { id } = params;
@@ -120,21 +120,51 @@ export const getProductsByManager = (params) => { //관리자 상품목록 출�
   return get(`/api/v1/manager/products`, query);
 }
 export const addProductByManager = (params) => { //관리자 상품 추가
-  const { category_id, product_name = '', product_comment = '', product_price = 0, product_sale_price = 0, brand_name = '', origin_name = '', mfg_name = '', model_name = '', product_description = '', product_file, product_sub_file } = params;
+  const { category_id, product_name = '', product_comment = '', product_price = 0, product_sale_price = 0, brand_name = '', origin_name = '', mfg_name = '', model_name = '', product_description = '',
+    product_file,
+    sub_images = [],
+    groups = []
+  } = params;
   let obj = {
-    category_id, product_name, product_comment, product_price, product_sale_price, brand_name, origin_name, mfg_name, model_name, product_description, product_file, product_sub_file
+    category_id, product_name, product_comment, product_price, product_sale_price, brand_name, origin_name, mfg_name, model_name, product_description,
+    product_file,
+    sub_images,
+    groups,
   }
   return post(`/api/v1/manager/products`, obj);
 }
 export const updateProductByManager = (params) => { //관리자 상품 수정
-  const { id, category_id, product_name = '', product_comment = '', product_price = 0, product_sale_price = 0, brand_name = '', origin_name = '', mfg_name = '', model_name = '', product_description = '', product_file, product_img, product_sub_file } = params;
+  const { id, category_id, product_name = '', product_comment = '', product_price = 0, product_sale_price = 0, brand_name = '', origin_name = '', mfg_name = '', model_name = '', product_description = '',
+    product_file, product_img,
+    sub_images = [],
+    groups = []
+  } = params;
   let obj = {
-    category_id, product_name, product_comment, product_price, product_sale_price, brand_name, origin_name, mfg_name, model_name, product_description, product_file, product_img, product_sub_file
+    category_id, product_name, product_comment, product_price, product_sale_price, brand_name, origin_name, mfg_name, model_name, product_description,
+    product_file, product_img,
+    sub_images,
+    groups,
   }
   let images = [
     'product'
   ]
   obj = settingImageObj(images, obj);
+  for (var i = 0; i < sub_images.length; i++) {
+    obj.sub_images[i] = settingImageObj([
+      'product_sub'
+    ], obj.sub_images[i]);
+  }
+  for (var i = 0; i < groups.length; i++) {
+    obj.groups[i] = settingImageObj([
+      'group'
+    ], obj.groups[i]);
+    let options = obj.groups[i]?.options ?? [];
+    for (var j = 0; j < options.length; j++) {
+      obj.groups[i].options[j] = settingImageObj([
+        'option'
+      ], obj.groups[i].options[j]);
+    }
+  }
   return put(`/api/v1/manager/products/${id}`, obj);
 }
 export const getProductByManager = (params) => { //관리자 상품 단일 출력
@@ -157,17 +187,39 @@ export const getUsersByManager = (params) => { //관리자 유저목록 출력
   return get(`/api/v1/manager/users`, query);
 }
 export const addUserByManager = (params) => { //관리자 유저 추가
-  const { } = params;
+  const {
+    user_name, phone_num, nick_name, user_pw, note,
+    profile_file,
+  } = params;
   let obj = {
-
+    user_name, phone_num, nick_name, user_pw, note,
+    profile_file,
   }
   return post(`/api/v1/manager/users`, obj);
 }
 export const updateUserByManager = (params) => { //관리자 유저 수정
-  const { } = params;
+  const {
+    id, user_name, phone_num, nick_name, note,
+    profile_file, profile_img
+  } = params;
   let obj = {
+    user_name, phone_num, nick_name, note,
+    profile_file, profile_img
   }
+  let images = [
+    'profile'
+  ]
+  obj = settingImageObj(images, obj);
   return put(`/api/v1/manager/users/${id}`, obj);
+}
+export const changePasswordUserByManager = (params) => { //관리자 유저 비밀번호 변경
+  const {
+    id, user_pw
+  } = params;
+  let obj = {
+    id, user_pw
+  }
+  return post(`/api/v1/manager/users/password-change`, obj);
 }
 export const getUserByManager = (params) => { //관리자 유저 단일 출력
   const { id } = params;
@@ -323,14 +375,20 @@ export const getBrandsByManager = (params) => { //관리자 브랜드 목록 출
   return get(`/api/v1/manager/brands`, query);
 }
 export const addBrandByManager = (params) => { //관리자 브랜드 추가
-  const { name, dns, og_description, company_name, pvcy_rep_name, ceo_name, addr, resident_num, business_num, phone_num, fax_num, note, setting_obj,
+  const { name, dns, og_description, company_name, pvcy_rep_name, ceo_name, addr, resident_num, business_num, phone_num, fax_num, note,
+    theme_css = {},
+    main_obj = [],
+    setting_obj = {},
     logo_file,
     dark_logo_file,
     favicon_file,
     og_file,
   } = params;
   let obj = {
-    name, dns, og_description, company_name, pvcy_rep_name, ceo_name, addr, resident_num, business_num, phone_num, fax_num, note, setting_obj,
+    name, dns, og_description, company_name, pvcy_rep_name, ceo_name, addr, resident_num, business_num, phone_num, fax_num, note,
+    theme_css,
+    main_obj,
+    setting_obj,
     logo_file,
     dark_logo_file,
     favicon_file,
@@ -339,7 +397,10 @@ export const addBrandByManager = (params) => { //관리자 브랜드 추가
   return post(`/api/v1/manager/brands`, obj);
 }
 export const updateBrandByManager = (params) => { //관리자 브랜드수정
-  const { name, dns, og_description, company_name, pvcy_rep_name, ceo_name, addr, resident_num, business_num, phone_num, fax_num, note, setting_obj,
+  const { name, dns, og_description, company_name, pvcy_rep_name, ceo_name, addr, resident_num, business_num, phone_num, fax_num, note,
+    theme_css = {},
+    main_obj = [],
+    setting_obj = {},
     logo_file, logo_img,
     dark_logo_file, dark_logo_img,
     favicon_file, favicon_img,
@@ -347,7 +408,10 @@ export const updateBrandByManager = (params) => { //관리자 브랜드수정
     id
   } = params;
   let obj = {
-    name, dns, og_description, company_name, pvcy_rep_name, ceo_name, addr, resident_num, business_num, phone_num, fax_num, note, setting_obj,
+    name, dns, og_description, company_name, pvcy_rep_name, ceo_name, addr, resident_num, business_num, phone_num, fax_num, note,
+    theme_css,
+    main_obj,
+    setting_obj,
     logo_file, logo_img,
     dark_logo_file, dark_logo_img,
     favicon_file, favicon_img,
@@ -371,9 +435,9 @@ export const deleteBrandByManager = (params) => { //관리자 브랜드 삭제
   return deleteItem(`/api/v1/manager/brands/${id}`);
 }
 export const getProductReviewsByManager = (params) => { //관리자 상품리뷰 목록 출력
-  const { page, page_size, s_dt, e_dt, search, category_id } = params;
+  const { page, page_size, s_dt, e_dt, search, product_id } = params;
   let query = {
-    page, page_size, s_dt, e_dt, search, category_id
+    page, page_size, s_dt, e_dt, search, product_id
   }
   if (!query['s_dt']) delete query['s_dt'];
   if (!query['e_dt']) delete query['e_dt'];
@@ -407,7 +471,7 @@ export const deleteProductReviewByManager = (params) => { //관리자 상품리�
 }
 
 
-export const uploadFileByManager = (params) => {// 관리자 파일 업로드
+export const uploadFileByManager = (params) => {// 관리자 파일 단일 업로드
   const { formData } = params;
   let config = {
     headers: {
@@ -415,4 +479,16 @@ export const uploadFileByManager = (params) => {// 관리자 파일 업로드
     }
   };
   return axiosIns().post('/api/v1/manager/posts/upload', formData, config);
+}
+export const uploadsFileByManager = (params) => {// 관리자 파일 여러개 업로드
+  const { images } = params;
+  let obj = {
+    images
+  }
+  let config = {
+    headers: {
+      'Content-Type': "multipart/form-data",
+    }
+  };
+  return axiosIns().post('/api/v1/manager/posts/bulk-upload', obj, config);
 }

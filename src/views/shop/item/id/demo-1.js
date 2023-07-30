@@ -46,9 +46,9 @@ const Demo1 = (props) => {
       product_id: router.query?.id
     });
     if(data?.product_img){
-      data['product_sub_imgs'].unshift(data?.product_img)
+      data['sub_images'].unshift(data?.product_img)
     }
-    data['images'] = data['product_sub_imgs'];
+    data['images'] = data['sub_images'];
     setProduct(data);
     setLoading(false);
   }

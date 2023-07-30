@@ -1,8 +1,8 @@
 
-import {  Button, Card, Grid,  Stack, TextField, Typography } from "@mui/material";
+import { Button, Card, Grid, Stack, TextField, Typography } from "@mui/material";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
-import {themeObj } from "src/components/elements/styled-components";
+import { themeObj } from "src/components/elements/styled-components";
 import { useSettingsContext } from "src/components/settings";
 import { Upload } from "src/components/upload";
 import ManagerLayout from "src/layouts/manager/ManagerLayout";
@@ -11,7 +11,8 @@ import styled from "styled-components";
 import dynamic from "next/dynamic";
 import { react_quill_data } from "src/data/manager-data";
 import { axiosIns } from "src/utils/axios";
-import { uploadFileByManager } from "src/utils/api-manager";
+import { addUserByManager, getUserByManager, updateUserByManager, uploadFileByManager } from "src/utils/api-manager";
+import { toast } from "react-hot-toast";
 const ReactQuill = dynamic(() => import('react-quill'), {
   ssr: false,
   loading: () => <p>Loading ...</p>,
@@ -25,18 +26,38 @@ const UserEdit = () => {
 
   const [loading, setLoading] = useState(true);
   const [item, setItem] = useState({
-    profile_img: '',
+    profile_file: undefined,
     user_name: '',
-    password: '',
-    name: '',
-    nickname: '',
     phone_num: '',
+    nick_name: '',
+    user_pw: '',
     note: '',
   })
 
   useEffect(() => {
-    setLoading(false);
+    settingPage();
   }, [])
+  const settingPage = async () => {
+    if (router.query?.edit_category == 'edit') {
+      let user = await getUserByManager({
+        id: router.query.id
+      })
+      setItem(user);
+    }
+    setLoading(false);
+  }
+  const onSave = async () => {
+    let result = undefined
+    if (item?.id) {//수정
+      result = await updateUserByManager({ ...item, id: item?.id })
+    } else {//추가
+      result = await addUserByManager({ ...item })
+    }
+    if (result) {
+      toast.success("성공적으로 저장 되었습니다.");
+      router.push('/manager/users/list');
+    }
+  }
   return (
     <>
       {!loading &&
@@ -49,13 +70,13 @@ const UserEdit = () => {
                     <Typography variant="subtitle2" sx={{ color: 'text.secondary' }}>
                       프로필사진
                     </Typography>
-                    <Upload file={item.profile_img} onDrop={(acceptedFiles) => {
+                    <Upload file={item.profile_file || item.profile_img} onDrop={(acceptedFiles) => {
                       const newFile = acceptedFiles[0];
                       if (newFile) {
                         setItem(
                           {
                             ...item,
-                            ['profile_img']: Object.assign(newFile, {
+                            ['profile_file']: Object.assign(newFile, {
                               preview: URL.createObjectURL(newFile),
                             })
                           }
@@ -65,11 +86,11 @@ const UserEdit = () => {
                       setItem(
                         {
                           ...item,
-                          ['profile_img']: ''
+                          ['profile_img']: '',
+                          ['profile_file']: undefined,
                         }
                       )
                     }}
-
                     />
                   </Stack>
                 </Stack>
@@ -89,41 +110,34 @@ const UserEdit = () => {
                         }
                       )
                     }} />
-                    <TextField
-                    label='패스워드'
-                    value={item.password}
-                    type='password'
-                    onChange={(e) => {
-                      setItem(
-                        {
-                          ...item,
-                          ['password']: e.target.value
-                        }
-                      )
-                    }} />
-                    <TextField
-                    label='이름'
-                    value={item.name}
-                    onChange={(e) => {
-                      setItem(
-                        {
-                          ...item,
-                          ['name']: e.target.value
-                        }
-                      )
-                    }} />
-                    <TextField
-                    label='닉네임'
-                    value={item.nickname}
-                    onChange={(e) => {
-                      setItem(
-                        {
-                          ...item,
-                          ['nickname']: e.target.value
-                        }
-                      )
-                    }} />
+                  {router.query?.edit_category == 'add' &&
+                    <>
                       <TextField
+                        label='패스워드'
+                        value={item.user_pw}
+
+                        type='password'
+                        onChange={(e) => {
+                          setItem(
+                            {
+                              ...item,
+                              ['user_pw']: e.target.value
+                            }
+                          )
+                        }} />
+                    </>}
+                  <TextField
+                    label='닉네임'
+                    value={item.nick_name}
+                    onChange={(e) => {
+                      setItem(
+                        {
+                          ...item,
+                          ['nick_name']: e.target.value
+                        }
+                      )
+                    }} />
+                  <TextField
                     label='전화번호'
                     value={item.phone_num}
                     placeholder="하이픈(-) 제외 입력"
@@ -137,41 +151,19 @@ const UserEdit = () => {
                       )
                     }} />
                   <Stack spacing={1}>
-                    <Typography variant="subtitle2" sx={{ color: 'text.secondary' }}>
-                      고객메모 (고객에게 노출되지 않습니다.)
-                    </Typography>
-                    <ReactQuill
-                      className="max-height-editor"
-                      theme={'snow'}
-                      id={'content'}
-                      placeholder={''}
-                      value={item.note}
-                      modules={react_quill_data.modules}
-                      formats={react_quill_data.formats}
-                      onChange={async (e) => {
-                        let note = e;
-                        if (e.includes('<img src="') && e.includes('base64,')) {
-                          let base64_list = e.split('<img src="');
-                          for (var i = 0; i < base64_list.length; i++) {
-                            if (base64_list[i].includes('base64,')) {
-                              let img_src = base64_list[i];
-                              img_src = await img_src.split(`"></p>`);
-                              let base64 = img_src[0];
-                              img_src = await base64toFile(img_src[0], 'note.png');
-                              let formData = new FormData();
-                              formData.append('file', img_src);
-                              const response = await uploadFileByManager({
-                                formData
-                              });
-                              note = await note.replace(base64, response?.data?.url)
-                            }
-                          }
-                        }
-                        setItem({
-                          ...item,
-                          ['note']: note
-                        });
-                      }} />
+                  <TextField
+                        fullWidth
+                        label="고객메모"
+                        multiline
+                        rows={4}
+                        value={item.note}
+                        onChange={(e) => {
+                          setItem({
+                            ...item,
+                            ['note']: e.target.value
+                          })
+                        }}
+                      />
                   </Stack>
                 </Stack>
               </Card>
@@ -181,8 +173,7 @@ const UserEdit = () => {
                 <Stack spacing={1} style={{ display: 'flex' }}>
                   <Button variant="contained" style={{
                     height: '48px', width: '120px', marginLeft: 'auto'
-                  }} onClick={() => {
-                  }}>
+                  }} onClick={onSave}>
                     저장
                   </Button>
                 </Stack>

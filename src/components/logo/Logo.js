@@ -22,9 +22,6 @@ const Logo = forwardRef(({ disabledLink = false, sx, ...other }, ref) => {
   //     sx={{ width: 40, height: 40, cursor: 'pointer', ...sx }}
   //   />
   // );
-  useEffect(() => {
-    console.log(themeLayout)
-  }, [themeLayout])
   const returnLogoImg = () => {
     if (themeLayout == 'mini') {
       return themeDnsData.favicon_img

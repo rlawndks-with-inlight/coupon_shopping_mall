@@ -63,8 +63,6 @@ const ShopLayout = ({ children, scrollToTop }) => {
   useEffect(() => {
     if (router.asPath.split('/')[1] == 'shop' || router.asPath.split('/')[1] == 'blog') {
       setCategory(router.asPath.split('/')[1])
-    } else if (router.asPath == '/') {
-      console.log(1)
     }
   }, [router.asPath])
   useEffect(() => {

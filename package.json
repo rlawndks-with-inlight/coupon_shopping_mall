@@ -72,6 +72,7 @@
     "notistack": "^3.0.1",
     "nprogress": "0.2.0",
     "numeral": "^2.0.6",
+    "object-to-formdata": "^4.5.1",
     "payment": "2.4.6",
     "prismjs": "1.29.0",
     "qrcode.react": "^3.1.0",

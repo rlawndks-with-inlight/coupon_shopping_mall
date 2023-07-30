@@ -2,13 +2,14 @@ import PropTypes from 'prop-types';
 import { m, AnimatePresence } from 'framer-motion';
 // @mui
 import { alpha } from '@mui/material/styles';
-import { IconButton, Stack, Typography } from '@mui/material';
+import { IconButton, Stack, TextField, Typography } from '@mui/material';
 // utils
 import { fData } from '../../../utils/formatNumber';
 //
 import Iconify from '../../iconify';
 import { varFade } from '../../animate';
 import FileThumbnail, { fileData } from '../../file-thumbnail';
+import { Row } from 'src/components/elements/styled-components';
 
 // ----------------------------------------------------------------------
 
@@ -19,63 +20,65 @@ MultiFilePreview.propTypes = {
   thumbnail: PropTypes.bool,
 };
 
-export default function MultiFilePreview({ thumbnail, files, onRemove, sx, imageSize }) {
+export default function MultiFilePreview({ thumbnail, files, onRemove, sx, imageSize, onChangeLink }) {
   if (!files?.length) {
     return null;
   }
   return (
     <AnimatePresence initial={false}>
-      {files.map((file) => {
+      {files.map((file, idx) => {
         const { key, name = '', size = 0 } = fileData(file);
 
         const isNotFormatFile = typeof file === 'string';
 
         if (thumbnail) {
           return (
-            <Stack
-              key={key}
-              component={m.div}
-              alignItems="center"
-              display="inline-flex"
-              justifyContent="center"
-              sx={{
-                m: 0.5,
-                width: imageSize?.width ?? 80,
-                height: imageSize?.height ?? 80,
-                borderRadius: 1.25,
-                overflow: 'hidden',
-                position: 'relative',
-                border: (theme) => `solid 1px ${theme.palette.divider}`,
-                ...sx,
-              }}
-            >
-              <FileThumbnail
-                tooltip
-                imageView
-                file={file}
-                sx={{ position: 'absolute' }}
-                imgSx={{ position: 'absolute' }}
-              />
-              {onRemove && (
-                <IconButton
-                  size="small"
-                  onClick={() => onRemove(file)}
-                  sx={{
-                    top: 4,
-                    right: 4,
-                    p: '1px',
-                    position: 'absolute',
-                    color: (theme) => alpha(theme.palette.common.white, 0.72),
-                    bgcolor: (theme) => alpha(theme.palette.grey[900], 0.48),
-                    '&:hover': {
-                      bgcolor: (theme) => alpha(theme.palette.grey[900], 0.72),
-                    },
-                  }}
-                >
-                  <Iconify icon="eva:close-fill" width={16} />
-                </IconButton>
-              )}
-            </Stack>
+            <>
+              <Stack
+                key={key}
+                component={m.div}
+                alignItems="center"
+                display="inline-flex"
+                justifyContent="center"
+                sx={{
+                  m: 0.5,
+                  width: imageSize?.width ?? 80,
+                  height: imageSize?.height ?? 80,
+                  borderRadius: 1.25,
+                  overflow: 'hidden',
+                  position: 'relative',
+                  border: (theme) => `solid 1px ${theme.palette.divider}`,
+                  ...sx,
+                }}
+              >
+                <FileThumbnail
+                  tooltip
+                  imageView
+                  file={file}
+                  sx={{ position: 'absolute' }}
+                  imgSx={{ position: 'absolute' }}
+                />
+                {onRemove && (
+                  <IconButton
+                    size="small"
+                    onClick={() => onRemove(file)}
+                    sx={{
+                      top: 4,
+                      right: 4,
+                      p: '1px',
+                      position: 'absolute',
+                      color: (theme) => alpha(theme.palette.common.white, 0.72),
+                      bgcolor: (theme) => alpha(theme.palette.grey[900], 0.48),
+                      '&:hover': {
+                        bgcolor: (theme) => alpha(theme.palette.grey[900], 0.72),
+                      },
+                    }}
+                  >
+                    <Iconify icon="eva:close-fill" width={16} />
+                  </IconButton>
+                )}
+              </Stack>
+            </>
           );
         }
 
@@ -107,7 +110,6 @@ export default function MultiFilePreview({ thumbnail, files, onRemove, sx, image
                 {isNotFormatFile ? '' : fData(size)}
               </Typography>
             </Stack>
-
             {onRemove && (
               <IconButton edge="end" size="small" onClick={() => onRemove(file)}>
                 <Iconify icon="eva:close-fill" />

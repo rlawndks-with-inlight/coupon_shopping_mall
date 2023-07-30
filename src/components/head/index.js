@@ -1,6 +1,5 @@
 import Head from "next/head";
 const HeadContent = ({ dns_data }) => {
-  console.log(dns_data)
   return (
     <>
       <Head>

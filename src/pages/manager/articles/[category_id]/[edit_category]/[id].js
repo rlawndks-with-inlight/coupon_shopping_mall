@@ -11,7 +11,8 @@ import styled from "styled-components";
 import dynamic from "next/dynamic";
 import { react_quill_data } from "src/data/manager-data";
 import { axiosIns } from "src/utils/axios";
-import { addPostByManager, updatePostByManager, uploadFileByManager } from "src/utils/api-manager";
+import { addPostByManager, getPostByManager, updatePostByManager, uploadFileByManager } from "src/utils/api-manager";
+import { toast } from "react-hot-toast";
 const ReactQuill = dynamic(() => import('react-quill'), {
   ssr: false,
   loading: () => <p>Loading ...</p>,
@@ -33,9 +34,17 @@ const ArticleEdit = () => {
   })
 
   useEffect(() => {
-    setLoading(false);
+    settingPage();
   }, [])
-
+  const settingPage = async () => {
+    if (router.query?.edit_category == 'edit') {
+      let item = await getPostByManager({
+        id: router.query.id
+      })
+      setItem(item);
+    }
+    setLoading(false);
+  }
   const onSave = async () => {
     let result = undefined;
     if (router.query?.edit_category == 'edit') {

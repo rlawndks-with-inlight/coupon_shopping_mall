@@ -13,7 +13,7 @@ import { getAllIdsWithParents } from "src/utils/function"
 import DialogSearch from "src/components/dialog/DialogSearch"
 import { useAuthContext } from "src/layouts/manager/auth/useAuthContext"
 import { logoSrc } from "src/data/data"
-import { getCategoriesByUser } from "src/utils/api-shop"
+import { getShopCategoriesByUser } from "src/utils/api-shop"
 import $ from 'jquery'
 
 const Wrappers = styled.header`
@@ -188,7 +188,7 @@ const Header = () => {
 
   const router = useRouter();
   const theme = useTheme();
-  const { themeMode, onToggleMode, onChangeCategoryList, themeDnsData } = useSettingsContext();
+  const { themeMode, onToggleMode, onChangeCategoryList, themeDnsData, onChangePopupList, onChangePostCategoryList } = useSettingsContext();
   const { user, logout } = useAuthContext();
 
   const headerWrappersRef = useRef();
@@ -203,7 +203,9 @@ const Header = () => {
 
   })
   const [sideMenuOpen, setSideMenuOpen] = useState(false);
-  const [categories, setCategories] = useState([])
+  const [categories, setCategories] = useState([]);
+  const [popups, setPopups] = useState([]);
+  const [postCategories, setPostCategories] = useState([]);
   const [loading, setLoading] = useState(true);
   useEffect(() => {
   }, [user])
@@ -215,13 +217,16 @@ const Header = () => {
   }, [])
   const settingHeader = async () => {
     setLoading(true);
-    let data = await getCategoriesByUser({
-      brand_id: themeDnsData?.id
+    let data = await getShopCategoriesByUser({
+      brand_id: themeDnsData?.id,
+      root_id: themeDnsData?.root_id
     });
-    data = data?.content ?? [];
-    onChangeCategoryList(data);
-    setCategories(data);
-    let hover_list = getAllIdsWithParents(data);
+    onChangeCategoryList(data?.product_categories??[]);
+    onChangePopupList(data?.popups??[]);
+    onChangePostCategoryList(data?.post_categories??[]);
+    setPostCategories(data?.post_categories??[]);
+    setCategories(data?.product_categories??[]);
+    let hover_list = getAllIdsWithParents(data?.product_categories);
     let hover_items = {};
     for (var i = 0; i < hover_list.length; i++) {
       hover_list[i] = hover_list[i].join('_');
@@ -575,22 +580,13 @@ const Header = () => {
                       flexDirection: 'column',
                       width: '154px'
                     }}>
-                      {[
-                        {
-                          name: '공지사항',
-                          link_key: 'notice'
-                        },
-                        {
-                          name: 'FAQ',
-                          link_key: 'faq'
-                        },
-                      ].map((item, idx) => (
+                      {postCategories.map((item, idx) => (
                         <>
                           <DropDownMenu theme={theme}
                             onClick={() => {
-                              router.push(`/shop/service/${item.link_key}`)
+                              router.push(`/shop/service/${item.id}`)
                             }}>
-                            <div>{item.name}</div>
+                            <div>{item.post_category_title}</div>
                           </DropDownMenu>
                         </>
                       ))}
@@ -661,21 +657,12 @@ const Header = () => {
             ))}
           </TreeView>
           <ColumnMenuTitle>고객센터</ColumnMenuTitle>
-          {[
-            {
-              name: '공지사항',
-              link_key: 'notice'
-            },
-            {
-              name: 'FAQ',
-              link_key: 'faq'
-            },
-          ].map((item, idx) => (
+          {postCategories && postCategories.map((item, idx) => (
             <>
               <ColumnMenuContent onClick={() => {
-                router.push(`/shop/service/${item.link_key}`);
+                router.push(`/shop/service/${item.id}`);
                 setSideMenuOpen(false);
-              }} style={{ paddingLeft: '1rem' }}>{item.name}</ColumnMenuContent>
+              }} style={{ paddingLeft: '1rem' }}>{item.post_category_title}</ColumnMenuContent>
             </>
           ))}
           <ColumnMenuTitle>마이페이지</ColumnMenuTitle>

@@ -4,6 +4,7 @@ import { useMemo, useState, useEffect, useContext, useCallback, createContext } 
 import { defaultSettings } from './config-setting';
 import { defaultPreset, getPresets, presetsOption } from './presets';
 import { useTheme } from '@emotion/react';
+import { setLocalStorage } from 'src/utils/local-storage';
 // ----------------------------------------------------------------------
 
 const initialState = {
@@ -39,6 +40,8 @@ const initialState = {
   onChangeAuth: () => { },
   //category-list
   onChangeCategoryList: () => { },
+  onChangePostCategoryList: () => { },
+  onChangePopupList: () => { },
 };
 
 // ----------------------------------------------------------------------
@@ -71,6 +74,8 @@ export function SettingsProvider({ children }) {
   const [themeCurrentPageObj, setThemeCurrentPageObj] = useState(defaultSettings.themeCurrentPageObj);
   const [themeAuth, setThemeAuth] = useState(defaultSettings.themeAuth);
   const [themeCategoryList, setThemeCategoryList] = useState(defaultSettings.themeCategoryList);
+  const [themePopupList, setThemePopupList] = useState(defaultSettings.themePopupList);
+  const [themePostCategoryList, setThemePostCategoryList] = useState(defaultSettings.themePostCategoryList);
   const isArabic = false;
   const theme = useTheme();
   useEffect(() => {
@@ -121,6 +126,7 @@ export function SettingsProvider({ children }) {
       let root_id = await res2.json();
       root_id = root_id?.root_id;
       dns_data['root_id'] = root_id;
+      setLocalStorage('dns_data',JSON.stringify(dns_data));
       onChangeDnsData(dns_data);
     } catch (err) {
       console.log(err)
@@ -222,6 +228,16 @@ export function SettingsProvider({ children }) {
     setThemeCategoryList(data);
     setCookie('themeCategoryList', JSON.stringify(data));
   }, [])
+  // popupList
+  const onChangePopupList = useCallback((data) => {
+    setThemePopupList(data);
+    setCookie('themePopupList', JSON.stringify(data));
+  }, [])
+  // postcategoryList
+  const onChangePostCategoryList = useCallback((data) => {
+    setThemePostCategoryList(data);
+    setCookie('themePostCategoryList', JSON.stringify(data));
+  }, [])
   // Reset
   const onResetSetting = useCallback(() => {
     setThemeMode(defaultSettings.themeMode);
@@ -235,6 +251,8 @@ export function SettingsProvider({ children }) {
     setThemeCurrentPageObj(defaultSettings.themeCurrentPageObj);
     setThemeAuth(defaultSettings.themeAuth);
     setThemeCategoryList(defaultSettings.themeCategoryList);
+    setThemePopupList(defaultSettings.themePopupList);
+    setThemePostCategoryList(defaultSettings.themePostCategoryList);
     removeCookie('themeMode');
     removeCookie('themeLayout');
     removeCookie('themeStretch');
@@ -246,6 +264,8 @@ export function SettingsProvider({ children }) {
     removeCookie('themeCurrentPageObj');
     removeCookie('themeAuth');
     removeCookie('themeCategoryList');
+    removeCookie('themePopupList');
+    removeCookie('themePostCategoryList');
   }, []);
 
   const memoizedValue = useMemo(
@@ -290,6 +310,10 @@ export function SettingsProvider({ children }) {
       onChangeAuth,
       themeCategoryList,
       onChangeCategoryList,
+      themePopupList,
+      onChangePopupList,
+      themePostCategoryList,
+      onChangePostCategoryList,
     }),
     [
       // Mode
@@ -330,6 +354,10 @@ export function SettingsProvider({ children }) {
       onChangeAuth,
       themeCategoryList,
       onChangeCategoryList,
+      themePopupList,
+      onChangePopupList,
+      themePostCategoryList,
+      onChangePostCategoryList,
     ]
   );
 

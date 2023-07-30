@@ -6,7 +6,10 @@ import { useSettingsContext } from 'src/components/settings';
 import { returnArticleCategory } from 'src/data/data';
 import { test_articles } from 'src/data/test-data';
 import styled from 'styled-components'
-
+import _ from 'lodash'
+import { getPostsByUser } from 'src/utils/api-shop';
+import { IconButton } from '@mui/material';
+import { Icon } from '@iconify/react';
 const Wrappers = styled.div`
 max-width:1500px;
 display:flex;
@@ -42,6 +45,51 @@ font-weight:${props => props.isSelect ? 'bold' : ''};
 }
 `
 const Demo1 = (props) => {
+  const defaultColumns = [
+    {
+      id: 'product_name',
+      label: '상품명',
+      action: (row) => {
+        return row['product_name'] ?? "---"
+      }
+    },
+    {
+      id: 'status',
+      label: '상태',
+      action: (row) => {
+        return row['status'] ?? "---"
+      }
+    },
+    {
+      id: 'created_at',
+      label: '생성시간',
+      action: (row) => {
+        return row['created_at'] ?? "---"
+      }
+    },
+    {
+      id: 'updated_at',
+      label: '최종수정시간',
+      action: (row) => {
+        return row['updated_at'] ?? "---"
+      }
+    },
+    {
+      id: 'edit',
+      label: '리뷰 확인하기',
+      action: (row) => {
+        return (
+          <>
+            <IconButton onClick={() => {
+               router.push(`edit/${row?.id}?type=1`)
+            }}>
+              <Icon icon='ic:outline-rate-review' />
+            </IconButton>
+          </>
+        )
+      }
+    },
+  ]
   const {
     data: {
 
@@ -50,35 +98,61 @@ const Demo1 = (props) => {
       router
     },
   } = props;
-
-  const { themeMode } = useSettingsContext();
+  const { themeMode, themePostCategoryList } = useSettingsContext();
   const theme = useTheme();
   const [page, setPage] = useState(1);
-  const [maxPage, setMaxPage] = useState(20)
-  useEffect(() => {
-  }, [router.query?.article_category])
+  const [maxPage, setMaxPage] = useState(20);
+  const [postCategory, setPostCategory] = useState({});
+  const [data, setData] = useState({
 
-  const onChangePage = (num) => {
-    setPage(num);
+  })
+  const [columns, setColumns] = useState([]);
+  const [searchObj, setSearchObj] = useState({
+    page: 1,
+    page_size: 10,
+    category_id: null
+  })
+  useEffect(()=>{
+    setColumns(defaultColumns)
+  },[])
+  useEffect(() => {
+    setPostCategory(_.find(themePostCategoryList, {id: parseInt(router.query?.article_category)}))
+  }, [router.query?.article_category, themePostCategoryList])
+  useEffect(()=>{
+    if(router.query?.article_category){
+      onChangePage({
+        ...searchObj,
+        category_id: router.query?.article_category
+      });
+    }
+  },[router.query?.article_category])
+  const onChangePage = async (obj) => {
+    setData({
+      ...data,
+      content: undefined
+    })
+    let data_ = await getPostsByUser(obj);
+    setData(data_);
+    setSearchObj(obj);
   }
   return (
     <>
       <Wrappers>
         <Title style={{
           marginBottom: '2rem'
-        }}>{returnArticleCategory[`${router.query?.article_category}`]?.title}</Title>
+        }}>{postCategory?.post_category_title}</Title>
         <RowMobileColumn>
           <ColumnMenu>
-            {Object.keys(returnArticleCategory).map((item, idx) => (
+            {themePostCategoryList.map((item, idx) => (
               <>
                 <ArticleCategory theme={theme}
-                  isSelect={item == router.query?.article_category}
+                  isSelect={item?.id == router.query?.article_category}
                   selectColor={themeMode == 'dark' ? '#fff' : '#000'}
                   onClick={() => {
-                    router.push(`/shop/service/${item}`)
+                    router.push(`/shop/service/${item?.id}`)
                   }}
                 >
-                  {returnArticleCategory[item].title}
+                  {item.post_category_title}
                 </ArticleCategory >
               </>
             ))}
@@ -86,11 +160,10 @@ const Demo1 = (props) => {
           {router.query?.article_category &&
             <>
               <ContentTable
-                data={test_articles}
-                schema={router.query?.article_category}
+                data={data}
                 onChangePage={onChangePage}
-                page={page}
-                maxPage={maxPage}
+                searchObj={searchObj}
+                columns={columns}
               />
             </>}
         </RowMobileColumn>

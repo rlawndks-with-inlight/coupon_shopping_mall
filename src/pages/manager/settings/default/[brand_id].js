@@ -9,9 +9,10 @@ import ManagerLayout from "src/layouts/manager/ManagerLayout";
 import { base64toFile, getAllIdsWithParents } from "src/utils/function";
 import styled from "styled-components";
 import dynamic from "next/dynamic";
-import { react_quill_data } from "src/data/manager-data";
+import { defaultManagerObj, react_quill_data } from "src/data/manager-data";
 import { axiosIns } from "src/utils/axios";
 import { addBrandByManager, getBrandByManager, updateBrandByManager, uploadFileByManager } from "src/utils/api-manager";
+import { toast } from "react-hot-toast";
 const ReactQuill = dynamic(() => import('react-quill'), {
   ssr: false,
   loading: () => <p>Loading ...</p>,
@@ -25,6 +26,10 @@ const tab_list = [
   {
     value: 1,
     label: '카카오톡 설정'
+  },
+  {
+    value: 2,
+    label: '회사정보'
   }
 ]
 const KakaoWrappers = styled.div`
@@ -63,34 +68,26 @@ const DefaultSetting = () => {
 
   const [loading, setLoading] = useState(true);
   const [currentTab, setCurrentTab] = useState(0);
-  const [item, setItem] = useState({
-    name: '',
-    dns: '',
-    og_description: '',
-    company_name: '',
-    pvcy_rep_name: '',
-    ceo_name: '',
-    addr: '',
-    addr_detail: '',
-    resident_num: '',
-    business_num: '',
-    phone_num: '',
-    fax_num: '',
-    note: '',
-    logo_file: undefined,
-    dark_logo_file: undefined,
-    favicon_file: undefined,
-    og_file: undefined,
-  })
-
+  const [item, setItem] = useState(defaultManagerObj.brands)
   useEffect(() => {
     settingPage();
   }, [])
+  const settingBrandObj = (item, brand_data) => {
+    let obj = item;
+    let brand_data_keys = Object.keys(brand_data);
+    for (var i = 0; i < brand_data_keys.length; i++) {
+      if (brand_data[brand_data_keys[i]]) {
+        obj[brand_data_keys[i]] = brand_data[brand_data_keys[i]];
+      }
+    }
+    return obj;
+  }
   const settingPage = async () => {
     let brand_data = await getBrandByManager({
       id: router.query.brand_id | themeDnsData?.id
     })
-    setItem(Object.assign(item, brand_data));
+    brand_data = settingBrandObj(item, brand_data);
+    setItem(brand_data);
     setLoading(false);
   }
   const onSave = async () => {
@@ -102,7 +99,7 @@ const DefaultSetting = () => {
     }
     if (result) {
       toast.success("성공적으로 저장 되었습니다.");
-      router.push('/manager/settings/brands');
+      window.location.href = '/manager/settings/brands';
     }
   }
   return (
@@ -152,7 +149,7 @@ const DefaultSetting = () => {
                           )
                         }}
                         />
-                         <Typography variant="subtitle2" sx={{ color: 'text.secondary' }}>
+                        <Typography variant="subtitle2" sx={{ color: 'text.secondary' }}>
                           브랜드 다크모드 로고
                         </Typography>
                         <Upload file={item.dark_logo_file || item.dark_logo_img} onDrop={(acceptedFiles) => {
@@ -231,6 +228,24 @@ const DefaultSetting = () => {
                             }
                           )
                         }} />
+                      <TextField
+                        label='메인색상'
+                        value={item.theme_css.main_color}
+                        type="color"
+                        style={{
+                          border: 'none'
+                        }}
+                        onChange={(e) => {
+                          setItem(
+                            {
+                              ...item,
+                              ['theme_css']: {
+                                ...item.theme_css,
+                                main_color: e.target.value
+                              }
+                            }
+                          )
+                        }} />
                       <Stack spacing={1}>
                         <Typography variant="subtitle2" sx={{ color: 'text.secondary' }}>
                           비고
@@ -297,13 +312,13 @@ const DefaultSetting = () => {
                         <Typography variant="subtitle2" sx={{ color: 'text.secondary' }}>
                           미리보기 이미지
                         </Typography>
-                        <Upload file={item.og_img} onDrop={(acceptedFiles) => {
+                        <Upload file={item.og_file || item.og_img} onDrop={(acceptedFiles) => {
                           const newFile = acceptedFiles[0];
                           if (newFile) {
                             setItem(
                               {
                                 ...item,
-                                ['og_img']: Object.assign(newFile, {
+                                ['og_file']: Object.assign(newFile, {
                                   preview: URL.createObjectURL(newFile),
                                 })
                               }
@@ -313,7 +328,8 @@ const DefaultSetting = () => {
                           setItem(
                             {
                               ...item,
-                              ['og_img']: ''
+                              ['og_img']: '',
+                              ['og_file']: undefined
                             }
                           )
                         }}
@@ -335,10 +351,10 @@ const DefaultSetting = () => {
                               {window.location.origin}
                             </div>
                             <OgWrappers>
-                              {item.og_img ?
+                              {(item?.og_img || item?.og_file) ?
                                 <>
                                   <OgImg style={{
-                                    backgroundImage: `url(${typeof item?.og_img == 'string' ? item?.og_img : URL.createObjectURL(item?.og_img)})`,
+                                    backgroundImage: `url(${item?.og_file ? URL.createObjectURL(item?.og_file) : item?.og_img})`,
                                     backgroundSize: 'cover',
                                     backgroundRepeat: 'no-repeat',
                                     backgroundPosition: 'center'
@@ -356,6 +372,109 @@ const DefaultSetting = () => {
                           </Row>
                         </KakaoWrappers>
                       </Stack>
+                    </Stack>
+                  </Card>
+                </Grid>
+              </>}
+            {currentTab == 2 &&
+              <>
+                <Grid item xs={12} md={6}>
+                  <Card sx={{ p: 2, height: '100%' }}>
+                    <Stack spacing={3}>
+                      <TextField
+                        label='회사명'
+                        value={item.company_name}
+                        onChange={(e) => {
+                          setItem(
+                            {
+                              ...item,
+                              ['company_name']: e.target.value
+                            }
+                          )
+                        }} />
+                      <TextField
+                        label='사업자번호'
+                        value={item.business_num}
+                        onChange={(e) => {
+                          setItem(
+                            {
+                              ...item,
+                              ['business_num']: e.target.value
+                            }
+                          )
+                        }} />
+                      <TextField
+                        label='주민등록번호'
+                        value={item.resident_num}
+                        onChange={(e) => {
+                          setItem(
+                            {
+                              ...item,
+                              ['resident_num']: e.target.value
+                            }
+                          )
+                        }} />
+                      <TextField
+                        label='대표자명'
+                        value={item.ceo_name}
+                        onChange={(e) => {
+                          setItem(
+                            {
+                              ...item,
+                              ['ceo_name']: e.target.value
+                            }
+                          )
+                        }} />
+                      <TextField
+                        label='개인정보 책임자명'
+                        value={item.pvcy_rep_name}
+                        onChange={(e) => {
+                          setItem(
+                            {
+                              ...item,
+                              ['pvcy_rep_name']: e.target.value
+                            }
+                          )
+                        }} />
+                    </Stack>
+                  </Card>
+                </Grid>
+                <Grid item xs={12} md={6}>
+                  <Card sx={{ p: 2, height: '100%' }}>
+                    <Stack spacing={3}>
+                      <TextField
+                        label='주소'
+                        value={item.addr}
+                        onChange={(e) => {
+                          setItem(
+                            {
+                              ...item,
+                              ['addr']: e.target.value
+                            }
+                          )
+                        }} />
+                      <TextField
+                        label='휴대폰번호'
+                        value={item.phone_num}
+                        onChange={(e) => {
+                          setItem(
+                            {
+                              ...item,
+                              ['phone_num']: e.target.value
+                            }
+                          )
+                        }} />
+                      <TextField
+                        label='팩스번호'
+                        value={item.fax_num}
+                        onChange={(e) => {
+                          setItem(
+                            {
+                              ...item,
+                              ['fax_num']: e.target.value
+                            }
+                          )
+                        }} />
                     </Stack>
                   </Card>
                 </Grid>

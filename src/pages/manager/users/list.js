@@ -1,11 +1,12 @@
-import { Avatar, Card, Container, Divider, IconButton, Stack } from "@mui/material";
+import { Avatar, Button, Card, Container, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Divider, IconButton, Stack, TextField } from "@mui/material";
 import { useEffect, useState } from "react";
 import ManagerLayout from "src/layouts/manager/ManagerLayout";
 import ManagerTable from "src/views/manager/mui/table/ManagerTable";
 import { Icon } from "@iconify/react";
 import { useRouter } from "next/router";
 import { Row } from "src/components/elements/styled-components";
-import { deleteUserByManager, getUsersByManager } from "src/utils/api-manager";
+import { changePasswordUserByManager, deleteUserByManager, getUsersByManager } from "src/utils/api-manager";
+import { toast } from "react-hot-toast";
 const UserList = () => {
   const defaultColumns = [
     {
@@ -34,6 +35,25 @@ const UserList = () => {
       label: '가입일',
       action: (row) => {
         return row['created_at'] ?? "---"
+      }
+    },
+    {
+      id: 'edit_password',
+      label: '비밀번호 변경',
+      action: (row) => {
+        return (
+          <>
+            <IconButton onClick={() => {
+              setDialogObj({ ...dialogObj, changePassword: true })
+              setChangePasswordObj({
+                user_pw: '',
+                id: row?.id
+              })
+            }}>
+              <Icon icon='material-symbols:lock-outline' />
+            </IconButton>
+          </>
+        )
       }
     },
     {
@@ -66,6 +86,13 @@ const UserList = () => {
     search: '',
     category_id: null
   })
+  const [dialogObj, setDialogObj] = useState({
+    changePassword: false,
+  })
+  const [changePasswordObj, setChangePasswordObj] = useState({
+    id: '',
+    user_pw: ''
+  })
   useEffect(() => {
     pageSetting();
   }, [])
@@ -76,7 +103,7 @@ const UserList = () => {
   }
   const onChangePage = async (obj) => {
     let data_ = await getUsersByManager(obj);
-    if(data_){
+    if (data_) {
       setData(data_);
     }
     setSearchObj(obj);
@@ -87,8 +114,56 @@ const UserList = () => {
       onChangePage(searchObj);
     }
   }
+  const onChangeUserPassword = async () => {
+    let result = await changePasswordUserByManager(changePasswordObj);
+    if(result){
+      setDialogObj({
+        ...dialogObj,
+        changePassword:false
+      })
+      toast.success("성공적으로 변경 되었습니다.");
+    }
+  }
   return (
     <>
+      <Dialog
+        open={dialogObj.changePassword}
+      >
+        <DialogTitle>{`비밀번호 변경`}</DialogTitle>
+
+        <DialogContent>
+          <DialogContentText>
+            새 비밀번호를 입력 후 확인을 눌러주세요.
+          </DialogContentText>
+          <TextField
+            autoFocus
+            fullWidth
+            value={changePasswordObj.user_pw}
+            type="password"
+            margin="dense"
+            label="새 비밀번호"
+            onChange={(e) => {
+              setChangePasswordObj({
+                ...changePasswordObj,
+                user_pw: e.target.value
+              })
+            }}
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button variant="contained" onClick={onChangeUserPassword}>
+            변경
+          </Button>
+          <Button color="inherit" onClick={()=>{
+            setDialogObj({
+              ...dialogObj,
+              changePassword:false
+            })
+          }}>
+            취소
+          </Button>
+        </DialogActions>
+      </Dialog>
       <Stack spacing={3}>
         <Card>
           <ManagerTable

@@ -169,9 +169,6 @@ const CategoryList = () => {
     setLoading(false);
   }
 
-  useEffect(() => {
-    console.log(category)
-  }, [category])
   const returnTree = (category, num) => {
     return (
       <>

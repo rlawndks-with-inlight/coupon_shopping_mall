@@ -4,10 +4,10 @@ import { commarNumber } from 'src/utils/function';
 import { useEffect, useState } from "react";
 import styled from "styled-components";
 
-import { Button, IconButton, Pagination } from "@mui/material";
+import { Button, CircularProgress, IconButton, Pagination } from "@mui/material";
 import { Icon } from "@iconify/react";
 import { motion } from "framer-motion";
-import { themeObj } from './styled-components';
+import { Row, themeObj } from './styled-components';
 import { returnArticleCategory } from 'src/data/data';
 import { useRouter } from 'next/router';
 import { useSettingsContext } from '../settings';
@@ -28,94 +28,47 @@ padding:1rem 0;
 white-space:pre;
 `
 const ContentTable = (props) => {
-  const { data, schema, table, isPointer, maxPage, page, onChangePage } = props;
+  const { data, onChangePage, searchObj, columns, } = props;
+  const { page, page_size } = props?.searchObj;
   const router = useRouter();
   const { themeMode } = useSettingsContext();
-  const [columns, setColumns] = useState([]);
   const [loading, setLoading] = useState(false);
-
-  useEffect(() => {
-    setLoading(true);
-    setColumns(returnArticleCategory[schema]?.columns);
-  }, [])
-  useEffect(() => {
-    if (columns && columns.length > 0) {
-      setLoading(false);
+  const getMaxPage = (total, page_size) => {
+    if (total == 0) {
+      return 1;
     }
-  }, [columns])
-
-
-  const goToLink = (data) => {
-    if (table == 'request')
-      router.push(`/request/${data?.pk}`);
-    if (table == 'notice')
-      router.push(`/post/notice/${data?.pk}`);
-    if (table == 'faq')
-      router.push(`/post/faq/${data?.pk}`);
-
+    if (total % page_size == 0) {
+      return parseInt(total / page_size);
+    } else {
+      return parseInt(total / page_size) + 1;
+    }
   }
-
   return (
     <>
-      {loading ?
-        <>
-        </>
-        :
-        <>
-          <div style={{ width: '100%', display: 'flex', flexDirection: 'column' }}>
+
+      <div style={{ width: '100%', display: 'flex', flexDirection: 'column' }}>
+        {!data.content ?
+          <>
+            <Row style={{ height: '400px' }}>
+              <CircularProgress sx={{ margin: 'auto' }} />
+            </Row>
+          </>
+          :
+          <>
             <div className='subtype-container' style={{ overflowX: 'auto', display: 'flex', width: '100%', margin: '0 auto', flexDirection: 'column' }} >
               <Table>
                 <Tr style={{ fontWeight: `bold`, background: `${themeMode == 'dark' ? themeObj.grey[700] : themeObj.grey[200]}`, borderBottom: 'none' }}>
-                  {columns && columns.map((item, idx) => (
+                  {columns && columns.map((col, idx) => (
                     <>
-                      <Td style={{ width: item.width, borderBottom: 'none' }}>{item.name}</Td>
+                      <Td align="left" sx={{ ...col.sx }}>{col.label}</Td>
                     </>
                   ))}
                 </Tr>
-                {data && data.map((item, index) => (
+                {data?.content && data?.content.map((row, index) => (
                   <Tr style={{ color: `${themeMode == 'dark' ? '#fff' : themeObj.grey[700]}` }}>
-                    {columns && columns.map((column, idx) => (
+                    {columns && columns.map((col, idx) => (
                       <>
-                        <Td style={{ width: column.width, color: `${column.color ? column.color : ''}`, cursor: `${isPointer ? 'pointer' : ''}`, fontWeight: `${column.bold ? 'bold' : ''}` }}>
-                          {column.type == 'img' &&
-                            <>
-                              {<img src={item[column.column]} alt="#" style={{ height: '36px' }} /> ?? "---"}
-                            </>}
-                          {column.type == 'title' &&
-                            <>
-                              <div style={{ textAlign: 'left', marginLeft: '0.25rem', cursor: 'pointer' }}
-                                onClick={() => {
-                                  router.push(`${schema}/${item?.id}`)
-                                }}>
-                                {item[column.column] ?? "---"}
-                              </div>
-                            </>}
-                          {column.type == 'text' &&
-                            <>
-                              {item[column.column] ?? "---"}
-                            </>}
-                          {column.type == 'left_text' &&
-                            <>
-                              <div style={{ textAlign: 'left', marginLeft: '0.25rem' }}>
-                                {item[column.column] ?? "---"}
-                              </div>
-                            </>}
-                          {column.type == 'link' &&
-                            <IconButton onClick={() => {
-                              goToLink(item)
-                            }}>
-                              <Icon icon="ph:eye" />
-                            </IconButton>
-                          }
-                          {column.type == 'date' &&
-                            <>
-                              {item[column.column].substring(0, 10)}
-                            </>}
-                          {column.type == 'number' &&
-                            <>
-                              {commarNumber(item[column.column]) ?? "---"}
-                            </>}
-                        </Td>
+                        <Td align="left" sx={{ ...col.sx }}>{col.action(row)}</Td>
                       </>
                     ))}
                   </Tr>
@@ -143,17 +96,20 @@ const ContentTable = (props) => {
                 }}>
                   <Pagination
                     size={window.innerWidth > 700 ? 'medium' : 'small'}
-                    count={maxPage}
+                    count={getMaxPage(data?.total, data?.page_size)}
                     page={page}
                     variant='outlined' shape='rounded'
                     color='primary'
                     onChange={(_, num) => {
-                      onChangePage(num)
+                      onChangePage({
+                        ...searchObj,
+                        page: num
+                      })
                     }} />
                 </div>
               </>}
-          </div>
-        </>}
+          </>}
+      </div>
     </>
   )
 }

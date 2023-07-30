@@ -1,5 +1,5 @@
 
-import { Avatar, Box, Breadcrumbs, Button, Card, CardHeader, Chip, FormControl, Grid, Icon, InputAdornment, InputLabel, Menu, MenuItem, OutlinedInput, Select, Stack, TextField, Typography } from "@mui/material";
+import { Avatar, Box, Breadcrumbs, Button, Card, CardHeader, Chip, FormControl, Grid, IconButton, InputAdornment, InputLabel, Menu, MenuItem, OutlinedInput, Select, Stack, TextField, Typography } from "@mui/material";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { Row, themeObj } from "src/components/elements/styled-components";
@@ -8,7 +8,8 @@ import { useSettingsContext } from "src/components/settings";
 import { Upload } from "src/components/upload";
 import { test_categories } from "src/data/test-data";
 import ManagerLayout from "src/layouts/manager/ManagerLayout";
-import { base64toFile, getAllIdsWithParents } from "src/utils/function";
+import { Icon } from "@iconify/react";
+import { base64toFile, commarNumber, getAllIdsWithParents } from "src/utils/function";
 import styled from "styled-components";
 import $ from 'jquery';
 import dynamic from "next/dynamic";
@@ -18,6 +19,7 @@ import { addProductByManager, getCategoriesByManager, getProductByManager, getPr
 import { toast } from "react-hot-toast";
 import { useTheme } from "@emotion/react";
 import ManagerTable from "src/views/manager/mui/table/ManagerTable";
+import _ from "lodash";
 const ReactQuill = dynamic(() => import('react-quill'), {
   ssr: false,
   loading: () => <p>Loading ...</p>,
@@ -29,7 +31,7 @@ const tab_list = [
   },
   {
     value: 1,
-    label: '삼품리뷰 관리'
+    label: '상품리뷰 관리'
   }
 ]
 const CategoryWrappers = styled.div`
@@ -221,11 +223,12 @@ const ProductEdit = () => {
     s_dt: '',
     e_dt: '',
     search: '',
+    product_id: ''
   })
   const [reviewColumns, setReviewColumns] = useState([]);
   useEffect(() => {
     if (currentTab == 1) {
-      onChangeReviewsPage({...reviewSearchObj});
+      onChangeReviewsPage({ ...reviewSearchObj, product_id: router.query.id });
     }
   }, [currentTab])
   const onChangeReviewsPage = async (obj) => {
@@ -255,12 +258,6 @@ const ProductEdit = () => {
         id: router.query.id
       })
       product = Object.assign(item, product)
-      product.sub_images = product.sub_images.map(img => {
-        return {
-          ...img,
-          preview: img.product_sub_img
-        }
-      })
       setItem(product)
       let parent_list = getAllIdsWithParents(category_list);
       let use_list = [];
@@ -282,16 +279,37 @@ const ProductEdit = () => {
   const handleDropMultiFile = (acceptedFiles) => {
     let sub_images = [...item.sub_images];
     for (var i = 0; i < acceptedFiles.length; i++) {
-      sub_images.push({ ...acceptedFiles[i], preview: URL.createObjectURL(acceptedFiles[i]) })
+      sub_images.push({
+        product_sub_file: Object.assign(acceptedFiles[i], {
+          preview: URL.createObjectURL(acceptedFiles[i])
+        }),
+      })
     }
     setItem({ ...item, ['sub_images']: sub_images })
   };
 
   const handleRemoveFile = (inputFile) => {
     let sub_images = [...item.sub_images];
-    const filesFiltered = sub_images.filter((fileFiltered) => fileFiltered !== inputFile);
-    sub_images = filesFiltered;
-    setItem({ ...item, ['sub_images']: sub_images })
+    let find_index = _.findIndex(sub_images.map(img => { return img.product_sub_file }), {
+      path: inputFile.path,
+      preview: inputFile.preview
+    });
+
+    if (find_index < 0) {
+      for (var i = 0; i < sub_images.length; i++) {
+        if (sub_images[i]?.product_sub_img == inputFile) {
+          find_index = i;
+        }
+      }
+    }
+    if (find_index >= 0) {
+      if (sub_images[find_index]?.id) {
+        sub_images[find_index].is_delete = 1;
+      } else {
+        sub_images.splice(find_index, 1);
+      }
+      setItem({ ...item, ['sub_images']: sub_images })
+    }
   };
 
   const handleRemoveAllFiles = () => {
@@ -325,6 +343,7 @@ const ProductEdit = () => {
   const onSave = async () => {
     let result = undefined
     if (item?.id) {//수정
+
       result = await updateProductByManager({ ...item, id: item?.id })
     } else {//추가
       result = await addProductByManager({ ...item })
@@ -396,7 +415,16 @@ const ProductEdit = () => {
                         <Upload
                           multiple
                           thumbnail={true}
-                          files={item.sub_images}
+                          files={item.sub_images.map(img => {
+                            if (img.is_delete == 1) {
+                              return undefined;
+                            }
+                            if (img.product_sub_img) {
+                              return img.product_sub_img
+                            } else {
+                              return img.product_sub_file
+                            }
+                          }).filter(e => e)}
                           onDrop={(acceptedFiles) => {
                             handleDropMultiFile(acceptedFiles)
                           }}
@@ -588,69 +616,38 @@ const ProductEdit = () => {
                         </Typography>
                         {item.groups.map((group, index) => (
                           <>
-                            <FormControl variant="outlined">
-                              <InputLabel>옵션그룹명</InputLabel>
-                              <OutlinedInput
-                                label='옵션그룹명'
-                                placeholder="예시) 색상"
-                                value={group.group_name}
-                                endAdornment={<>
-                                  <Button style={{ width: '94px', height: '56px', transform: 'translateX(14px)' }}
-                                    variant="contained"
-                                    onClick={() => {
-                                      let option_list = item?.groups;
-                                      option_list[index].list.push({
-                                        option_name: '',
-                                        var_price: 0,
-                                      })
-                                      setItem(
-                                        {
-                                          ...item,
-                                          ['groups']: option_list
-                                        }
-                                      )
-                                    }}
-                                  >옵션추가</Button>
-                                </>}
-                                onChange={(e) => {
-                                  let option_list = item?.groups;
-                                  option_list[index].group_name = e.target.value;
-                                  setItem(
-                                    {
-                                      ...item,
-                                      ['groups']: option_list
-                                    }
-                                  )
-                                }} />
-                            </FormControl>
-                            {group?.list && group?.list.map((option, idx) => (
+                            {group?.is_delete != 1 &&
                               <>
-                                <Row style={{ columnGap: '0.5rem' }}>
-                                  <TextField
-                                    sx={{ flexGrow: 1 }}
-                                    label='옵션명'
-                                    placeholder="예시) 블랙"
-                                    value={option.option_name}
-                                    onChange={(e) => {
-                                      let option_list = item?.groups;
-                                      option_list[index].list[idx].option_name = e.target.value;
-                                      setItem(
-                                        {
-                                          ...item,
-                                          ['groups']: option_list
-                                        }
-                                      )
-                                    }} />
-                                  <FormControl variant="outlined" sx={{ flexGrow: 1 }}>
-                                    <InputLabel>변동가</InputLabel>
+                                <Row style={{ columnGap: '0.5rem', width: '100%' }}>
+                                  <FormControl variant="outlined" style={{ width: '100%' }}>
+                                    <InputLabel>옵션그룹명</InputLabel>
                                     <OutlinedInput
-                                      label='변동가'
-                                      type="number"
-                                      value={option.var_price}
-                                      endAdornment={<InputAdornment position="end">원</InputAdornment>}
+                                      label='옵션그룹명'
+                                      placeholder="예시) 색상"
+                                      value={group.group_name}
+                                      endAdornment={<>
+                                        <Button style={{ width: '94px', height: '56px', transform: 'translateX(14px)' }}
+                                          variant="contained"
+                                          onClick={() => {
+                                            let option_list = item?.groups;
+                                            option_list[index].options.push({
+                                              option_name: '',
+                                              option_price: 0,
+                                              option_description: '',
+                                              option_file: undefined,
+                                            })
+                                            setItem(
+                                              {
+                                                ...item,
+                                                ['groups']: option_list
+                                              }
+                                            )
+                                          }}
+                                        >옵션추가</Button>
+                                      </>}
                                       onChange={(e) => {
                                         let option_list = item?.groups;
-                                        option_list[index].list[idx].var_price = e.target.value;
+                                        option_list[index].group_name = e.target.value;
                                         setItem(
                                           {
                                             ...item,
@@ -659,17 +656,92 @@ const ProductEdit = () => {
                                         )
                                       }} />
                                   </FormControl>
+                                  <IconButton onClick={() => {
+                                    let option_list = item?.groups;
+                                    if (option_list[index]?.id) {
+                                      option_list[index].is_delete = 1;
+                                    } else {
+                                      option_list.splice(index, 1);
+                                    }
+                                    setItem(
+                                      {
+                                        ...item,
+                                        ['groups']: option_list
+                                      }
+                                    )
+                                  }}>
+                                    <Icon icon='material-symbols:delete-outline' />
+                                  </IconButton>
                                 </Row>
+                                {group?.options && group?.options.map((option, idx) => (
+                                  <>
+                                    {option?.is_delete != 1 &&
+                                      <>
+                                        <Row style={{ columnGap: '0.5rem' }}>
+                                          <TextField
+                                            sx={{ flexGrow: 1 }}
+                                            label='옵션명'
+                                            placeholder="예시) 블랙"
+                                            value={option.option_name}
+                                            onChange={(e) => {
+                                              let option_list = item?.groups;
+                                              option_list[index].options[idx].option_name = e.target.value;
+                                              setItem(
+                                                {
+                                                  ...item,
+                                                  ['groups']: option_list
+                                                }
+                                              )
+                                            }} />
+                                          <FormControl variant="outlined" sx={{ flexGrow: 1 }}>
+                                            <InputLabel>변동가</InputLabel>
+                                            <OutlinedInput
+                                              label='변동가'
+                                              type="number"
+                                              value={option.option_price}
+                                              endAdornment={<InputAdornment position="end">원</InputAdornment>}
+                                              onChange={(e) => {
+                                                let option_list = item?.groups;
+                                                option_list[index].options[idx].option_price = e.target.value;
+                                                setItem(
+                                                  {
+                                                    ...item,
+                                                    ['groups']: option_list
+                                                  }
+                                                )
+                                              }} />
+                                          </FormControl>
+                                          <IconButton onClick={() => {
+                                            let option_list = item?.groups;
+                                            if (option_list[index].options[idx]?.id) {
+                                              option_list[index].options[idx].is_delete = 1;
+                                            } else {
+                                              option_list[index].splice(idx, 1);
+                                            }
+                                            setItem(
+                                              {
+                                                ...item,
+                                                ['groups']: option_list
+                                              }
+                                            )
+                                          }}>
+                                            <Icon icon='material-symbols:delete-outline' />
+                                          </IconButton>
+                                        </Row>
+                                      </>}
+                                  </>
+                                ))}
+                              </>}
 
-                              </>
-                            ))}
                           </>
                         ))}
                         <Button variant="outlined" sx={{ height: '48px' }} onClick={() => {
                           let option_list = [...item.groups];
                           option_list.push({
                             group_name: '',
-                            list: []
+                            group_description: '',
+                            group_file: undefined,
+                            options: []
                           })
                           setItem({
                             ...item,

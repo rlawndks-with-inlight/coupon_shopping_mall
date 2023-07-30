@@ -5,77 +5,35 @@ import ManagerTable from "src/views/manager/mui/table/ManagerTable";
 import { Icon } from "@iconify/react";
 import { useRouter } from "next/router";
 import { Row } from "src/components/elements/styled-components";
-import { getPostsByManager, getProductsByManager } from "src/utils/api-manager";
+import { deletePostByManager, getPostsByManager, getProductsByManager } from "src/utils/api-manager";
 const ArticleList = () => {
   const defaultColumns = [
     {
-      id: 'id',
-      label: 'No.',
-      action: (row) => {
-        return row['id']
-      }
-    },
-    {
-      id: 'product_img',
+      id: 'post_title',
       label: '제목',
       action: (row) => {
-        return row['product_img'] ?? "---"
+        return row['post_title'] ?? "---"
       }
     },
     {
-      id: 'product_name',
-      label: '상품명',
+      id: 'post_writer',
+      label: '작성자',
       action: (row) => {
-        return row['user_name'] ?? "---"
-      }
-    },
-    {
-      id: 'category',
-      label: '카테고리',
-      action: (row) => {
-        return row['name'] ?? "---"
-      }
-    },
-    {
-      id: 'product_price',
-      label: '시장가',
-      action: (row) => {
-        return row['name'] ?? "---"
-      }
-    },
-    {
-      id: 'product_sale_price',
-      label: '판매가',
-      action: (row) => {
-        return row['name'] ?? "---"
-      }
-    },
-    {
-      id: 'inventory',
-      label: '재고',
-      action: (row) => {
-        return row['name'] ?? "---"
-      }
-    },
-    {
-      id: 'status',
-      label: '상태',
-      action: (row) => {
-        return row['name'] ?? "---"
+        return row['post_writer'] ?? "---"
       }
     },
     {
       id: 'created_at',
       label: '생성시간',
       action: (row) => {
-        return row['name'] ?? "---"
+        return row['created_at'] ?? "---"
       }
     },
     {
       id: 'updated_at',
       label: '최종수정시간',
       action: (row) => {
-        return row['name'] ?? "---"
+        return row['updated_at'] ?? "---"
       }
     },
     {
@@ -86,10 +44,10 @@ const ArticleList = () => {
           <>
             <IconButton>
               <Icon icon='material-symbols:edit-outline' onClick={() => {
-                router.push(`edit/${row?.id}`)
+                router.push(`/manager/articles/${router.query.category_id}/edit/${row?.id}`)
               }} />
             </IconButton>
-            <IconButton>
+            <IconButton onClick={() => deletePost(row?.id)}>
               <Icon icon='material-symbols:delete-outline' />
             </IconButton>
           </>
@@ -126,6 +84,12 @@ const ArticleList = () => {
       setData(data_);
     }
     setSearchObj(obj);
+  }
+  const deletePost =async (id) =>{
+    let result = await deletePostByManager({ id: id });
+    if (result) {
+      onChangePage({...searchObj, category_id: router.query?.category_id});
+    }
   }
   return (
     <>

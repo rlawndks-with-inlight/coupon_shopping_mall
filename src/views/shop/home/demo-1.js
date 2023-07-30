@@ -7,6 +7,10 @@ import dynamic from 'next/dynamic'
 import { Row, themeObj } from 'src/components/elements/styled-components'
 import { Item } from 'src/components/elements/shop/common'
 import { Skeleton, Stack } from '@mui/material'
+import { useSettingsContext } from 'src/components/settings'
+import { getProductsByUser } from 'src/utils/api-shop'
+import _ from 'lodash'
+import { getLocalStorage } from 'src/utils/local-storage'
 const ReactQuill = dynamic(() => import('react-quill'), {
   ssr: false,
   loading: () => <p>Loading ...</p>,
@@ -94,26 +98,30 @@ const returnHomeContent = (column, data, func) => {
       );
     };
     let slide_setting = {
-      1: {
-        centerMode: true,
-        centerPadding: (windowWidth > 1200 ? '10%' : 0), // 이미지 간격을 조절할 수 있는 값입니다.
-        infinite: true,
-        speed: 500,
-        autoplay: true,
-        autoplaySpeed: 2500,
-        slidesToShow: 1,
-        slidesToScroll: 1,
-        dots: true,
-        nextArrow: <NextArrow onClick />,
-        prevArrow: <PrevArrow onClick />,
-      }
+      centerMode: true,
+      centerPadding: (img_list.length >= 3 ? (windowWidth > 1200 ? '10%' : 0) : 0), // 이미지 간격을 조절할 수 있는 값입니다.
+      infinite: true,
+      speed: 500,
+      autoplay: true,
+      autoplaySpeed: 2500,
+      slidesToShow: 1,
+      slidesToScroll: 1,
+      dots: true,
+      nextArrow: <NextArrow onClick />,
+      prevArrow: <PrevArrow onClick />,
     }
     content = <>
       <FullWrappers>
-        <Slider {...slide_setting[column?.item_type]}>
+        <Slider {...slide_setting}>
           {img_list.map((item, idx) => (
             <>
-              <BannerImg src={item?.src} />
+              <BannerImg src={item?.src} onClick={() => {
+                if (item?.link) {
+                  window.location.href = `${item?.link}`
+                }
+              }} style={{
+                width: `${img_list.length >= 3 ? '' : '100vw'}`
+              }} />
             </>
           ))}
         </Slider>
@@ -138,15 +146,13 @@ const returnHomeContent = (column, data, func) => {
   }
   if (type == 'items') {
     let slide_setting = {
-      1: {
-        infinite: true,
-        speed: 500,
-        autoplay: true,
-        autoplaySpeed: 2500,
-        slidesToShow: (windowWidth > 1350 ? 4 : windowWidth > 1000 ? 3 : windowWidth > 650 ? 2 : 1),
-        slidesToScroll: 1,
-        dots: false,
-      }
+      infinite: true,
+      speed: 500,
+      autoplay: true,
+      autoplaySpeed: 2500,
+      slidesToShow: (windowWidth > 1350 ? 4 : windowWidth > 1000 ? 3 : windowWidth > 650 ? 2 : 1),
+      slidesToScroll: 1,
+      dots: false,
     }
     content = <>
       <Wrappers style={{
@@ -164,7 +170,7 @@ const returnHomeContent = (column, data, func) => {
               </>}
           </>}
         <div style={{ marginTop: '1rem' }} />
-        <Slider {...slide_setting[column?.item_type]} className='margin-slide'>
+        <Slider {...slide_setting} className='margin-slide'>
           {column?.list && column?.list.map((item, idx) => (
             <>
               <Item item={item} router={router} />
@@ -185,69 +191,42 @@ const Demo1 = (props) => {
       router
     },
   } = props;
+  const { themeDnsData } = useSettingsContext();
   const [loading, setLoading] = useState(true);
   const [windowWidth, setWindowWidth] = useState(0);
+  const [contentList, setContentList] = useState([]);
   useEffect(() => {
     pageSetting();
   }, [])
-
-  const pageSetting = () => {
-    setWindowWidth(window.innerWidth)
-    setTimeout(() => {
+  useEffect(() => {
+    if (contentList.length > 0) {
       setLoading(false);
-    }, 500)
-  }
-  const home_content_list = [
-    {
-      type: 'banner',
-      list: [
-        {
-          src: '/images/test/1.jpg',
-          link: ''
-        },
-        {
-          src: '/images/test/2.jpg',
-          link: ''
-        },
-        {
-          src: '/images/test/3.jpg',
-          link: ''
-        },
-        {
-          src: '/images/test/4.jpg',
-          link: ''
-        },
-      ],
-      item_type: 1,
-    },
-    {
-      type: 'editor',
-      content: `<h2><span class="ql-size-huge">What is a Good Interior?</span></h2><h2><span class="ql-size-huge">The Daily Guide to Architecture</span></h2><p><img style="width: 100%;" src="/images/test/3.jpg"></p><h2><span class="ql-size-huge">COMPANY INTRODUCTION</span></h2><p><span class="ql-size-large">원하는 디자인으로 쇼핑몰을 개발해 보세요 !</span></p>`,
-    },
-    {
-      type: 'items',
-      list: test_items,
-      title: '핫한상품',
-      sub_title: '가장 인기있는 상품을 만나 보세요 !',
-      sort_type: '',
-      side_img: '',
-      item_slide_auto: true,
-      item_type: 1
-    },
-    {
-      type: 'items',
-      list: test_items,
-      title: '멋진상품',
-      sub_title: '가장 멋있는 상품을 만나 보세요 !',
-      sort_type: '',
-      side_img: '',
-      item_slide_auto: true,
-      item_type: 1
-    },
-    {
-      type: 'reviews'
     }
-  ];
+  }, [contentList])
+  const pageSetting = async () => {
+    let dns_data = getLocalStorage('dns_data') || themeDnsData;
+    if (typeof dns_data == 'string') {
+      dns_data = JSON.parse(dns_data);
+    }
+    let content_list = (dns_data?.main_obj) ?? [];
+    let products = await getProductsByUser({
+      page: 1,
+      page_size: 100000,
+    })
+    products = products?.content ?? [];
+    for (var i = 0; i < content_list.length; i++) {
+      if (content_list[i]?.type == 'items') {
+        let item_list = content_list[i]?.list ?? [];
+        item_list = item_list.map(item_id => {
+          return { ..._.find(products, { id: parseInt(item_id) }) }
+        })
+        content_list[i].list = item_list
+      }
+    }
+    setWindowWidth(window.innerWidth)
+    setContentList(content_list)
+  }
+
   const returnHomeContentByColumn = (column) => {
     return returnHomeContent(
       column,
@@ -277,7 +256,7 @@ const Demo1 = (props) => {
         </>
         :
         <>
-          {home_content_list.map((column, idx) => (
+          {contentList.map((column, idx) => (
             <>
               {returnHomeContentByColumn(column)}
             </>

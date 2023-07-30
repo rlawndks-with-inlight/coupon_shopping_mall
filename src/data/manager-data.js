@@ -103,3 +103,50 @@ export const react_quill_data = {
     'color'
   ]
 }
+
+export const defaultManagerObj = {
+  brands: {
+    name: '',
+    dns: '',
+    og_description: '',
+    company_name: '',
+    pvcy_rep_name: '',
+    ceo_name: '',
+    addr: '',
+    addr_detail: '',
+    resident_num: '',
+    business_num: '',
+    phone_num: '',
+    fax_num: '',
+    note: '',
+    logo_file: undefined,
+    dark_logo_file: undefined,
+    favicon_file: undefined,
+    og_file: undefined,
+    setting_obj: {
+      tutorial_num: 0,
+
+    },
+    theme_css: {
+      main_color: '#00ab55'
+    },
+    main_obj: [
+      {
+        type: 'banner',
+        list: [
+          {
+            src: '/images/test/1.jpg',
+            link: ''
+          },
+        ]
+      }
+    ]
+  },
+  articles: {
+    category_id: null,
+    parent_id: null,
+    post_title: '',
+    post_content: '',
+    is_reply: true,
+  },
+}

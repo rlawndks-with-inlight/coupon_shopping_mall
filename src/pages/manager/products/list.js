@@ -14,6 +14,13 @@ import $ from 'jquery';
 const ProductList = () => {
   const defaultColumns = [
     {
+      id: 'id',
+      label: 'No.',
+      action: (row) => {
+        return commarNumber(row['id'] ?? "---")
+      }
+    },
+    {
       id: 'product_img',
       label: '상품이미지',
       action: (row) => {

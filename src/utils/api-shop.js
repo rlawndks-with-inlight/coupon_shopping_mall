@@ -64,9 +64,9 @@ export const checkPhoneVerifyCodeByUser = (params) => { // 유저 휴대폰 인�
   return post(`/api/v1/shop/auth/verify`, obj);
 }
 export const signUpByUser = (params) => { // 유저 회원가입
-  const { user_name, phone_num, nick_name, user_pw } = params;
+  const { user_name, phone_num, nick_name, user_pw, brand_id } = params;
   let obj = {
-    user_name, phone_num, nick_name, user_pw
+    user_name, phone_num, nick_name, user_pw, brand_id
   }
   return post(`/api/v1/shop/auth/sign-up`, obj);
 }

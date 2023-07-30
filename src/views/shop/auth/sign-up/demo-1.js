@@ -166,6 +166,9 @@ const Demo1 = (props) => {
       }
       let result = await signUpByUser({ ...user, brand_id: themeDnsData?.id });
       console.log(result)
+      if(!result){
+
+      }
     }
     if (activeStep == 2) {
       router.push('/shop');

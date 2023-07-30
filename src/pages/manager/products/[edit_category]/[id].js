@@ -20,6 +20,7 @@ import { toast } from "react-hot-toast";
 import { useTheme } from "@emotion/react";
 import ManagerTable from "src/views/manager/mui/table/ManagerTable";
 import _ from "lodash";
+import { useModal } from "src/components/dialog/ModalProvider";
 const ReactQuill = dynamic(() => import('react-quill'), {
   ssr: false,
   loading: () => <p>Loading ...</p>,
@@ -143,6 +144,7 @@ export const SelectCategoryComponent = (props) => {
   )
 }
 const ProductEdit = () => {
+  const { setModal } = useModal()
   const defaultReviewColumns = [
     {
       id: 'product_name',
@@ -772,7 +774,13 @@ const ProductEdit = () => {
                 <Stack spacing={1} style={{ display: 'flex' }}>
                   <Button variant="contained" style={{
                     height: '48px', width: '120px', marginLeft: 'auto'
-                  }} onClick={onSave}>
+                  }} onClick={()=>{
+                    setModal({
+                      func: () => { onSave() },
+                      icon: 'material-symbols:edit-outline',
+                      title: '저장 하시겠습니까?'
+                    })
+                  }}>
                     저장
                   </Button>
                 </Stack>

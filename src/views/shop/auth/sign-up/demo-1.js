@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types';
-import { Button, Checkbox, Divider, FormControlLabel, InputAdornment, Step, StepConnector, StepLabel, Stepper, TextField, Typography, stepConnectorClasses } from '@mui/material';
+import { Button, Checkbox, Divider, FormControl, FormControlLabel, InputAdornment, InputLabel, OutlinedInput, Step, StepConnector, StepLabel, Stepper, TextField, Typography, stepConnectorClasses } from '@mui/material';
 import { useState } from 'react';
 import { Col, Row, Title, themeObj } from 'src/components/elements/styled-components';
 import styled from 'styled-components'
@@ -10,6 +10,8 @@ import { useTheme } from '@emotion/react';
 import Policy from 'src/pages/shop/auth/policy';
 import { toast } from 'react-hot-toast';
 import { Icon } from '@iconify/react';
+import { sendPhoneVerifyCodeByUser, signUpByUser } from 'src/utils/api-shop';
+import { useSettingsContext } from 'src/components/settings';
 
 const Wrappers = styled.div`
 max-width:700px;
@@ -107,6 +109,7 @@ const Demo1 = (props) => {
       router
     },
   } = props;
+  const { themeDnsData } = useSettingsContext();
   const theme = useTheme();
   const [activeStep, setActiveStep] = useState(0);
   const [checkboxObj, setCheckboxObj] = useState({
@@ -118,14 +121,19 @@ const Demo1 = (props) => {
     check_5: false,
   })
   const [user, setUser] = useState({
-    username: '',
-    password: '',
+    user_name: '',
+    user_pw: '',
     passwordCheck: '',
-    name: '',
+    nick_name: '',
     phone_num: '',
-    email: '',
+    phoneCheck: '',
   })
+  const [phoneCheckStep, setPhoneCheckStep] = useState(0);
   const onClickPrevButton = () => {
+    if (activeStep == 0) {
+      router.back();
+      return;
+    }
     if (activeStep == 1) {
 
     }
@@ -135,7 +143,7 @@ const Demo1 = (props) => {
     setActiveStep(activeStep - 1);
     window.scrollTo(0, 0)
   }
-  const onClickNextButton = () => {
+  const onClickNextButton = async () => {
     if (activeStep == 0) {
       if (
         !checkboxObj.check_1 ||
@@ -147,22 +155,32 @@ const Demo1 = (props) => {
     }
     if (activeStep == 1) {
       if (
-        !user.username ||
-        !user.password ||
+        !user.user_name ||
+        !user.user_pw ||
         !user.passwordCheck ||
-        !user.name ||
-        !user.phone_num ||
-        !user.email
+        !user.nick_name ||
+        !user.phone_num
       ) {
         toast.error("필수 항목을 입력해 주세요.");
         return;
       }
+      let result = await signUpByUser({ ...user, brand_id: themeDnsData?.id });
+      console.log(result)
     }
     if (activeStep == 2) {
       router.push('/shop');
+      return;
     }
     setActiveStep(activeStep + 1);
     window.scrollTo(0, 0)
+  }
+  const onClickSendPhoneVerifyCode = async () => {
+    setPhoneCheckStep(1);
+    let result = await sendPhoneVerifyCodeByUser({
+      phone_num: user.phone_num
+    })
+
+    console.log(result);
   }
   return (
     <>
@@ -249,9 +267,9 @@ const Demo1 = (props) => {
             <TextField
               label='아이디'
               onChange={(e) => {
-                setUser({ ...user, ['username']: e.target.value })
+                setUser({ ...user, ['user_name']: e.target.value })
               }}
-              value={user.username}
+              value={user.user_name}
               style={inputStyle}
               autoComplete='new-password'
               onKeyPress={(e) => {
@@ -269,10 +287,10 @@ const Demo1 = (props) => {
             <TextField
               label='비밀번호'
               onChange={(e) => {
-                setUser({ ...user, ['password']: e.target.value })
+                setUser({ ...user, ['user_pw']: e.target.value })
               }}
               type='password'
-              value={user.password}
+              value={user.user_pw}
               style={inputStyle}
               autoComplete='new-password'
               onKeyPress={(e) => {
@@ -297,9 +315,9 @@ const Demo1 = (props) => {
             <TextField
               label='이름'
               onChange={(e) => {
-                setUser({ ...user, ['name']: e.target.value })
+                setUser({ ...user, ['nick_name']: e.target.value })
               }}
-              value={user.name}
+              value={user.nick_name}
               style={inputStyle}
               autoComplete='new-password'
               onKeyPress={(e) => {
@@ -307,32 +325,45 @@ const Demo1 = (props) => {
                 }
               }}
             />
-            <TextField
-              label='휴대전화'
-              onChange={(e) => {
-                setUser({ ...user, ['phone_num']: e.target.value })
-              }}
-              value={user.phone_num}
-              style={inputStyle}
-              autoComplete='new-password'
-              onKeyPress={(e) => {
-                if (e.key == 'Enter') {
-                }
-              }}
-            />
-            <TextField
-              label='이메일'
-              onChange={(e) => {
-                setUser({ ...user, ['email']: e.target.value })
-              }}
-              value={user.email}
-              style={inputStyle}
-              autoComplete='new-password'
-              onKeyPress={(e) => {
-                if (e.key == 'Enter') {
-                }
-              }}
-            />
+            <FormControl variant="outlined" style={{ width: '100%', marginTop: '1rem' }}>
+              <InputLabel>휴대폰번호</InputLabel>
+              <OutlinedInput
+                label='휴대폰번호'
+                placeholder="하이픈(-) 제외 입력"
+                onChange={(e) => {
+                  setUser({ ...user, ['phone_num']: e.target.value })
+                }}
+                value={user.phone_num}
+                endAdornment={<>
+                  <Button style={{ width: '124px', height: '56px', transform: 'translateX(14px)' }}
+                    variant="contained"
+                    onClick={() => {
+                      if (phoneCheckStep == 0) {
+                        onClickSendPhoneVerifyCode();
+                      }
+                    }}
+                  >인증번호발송</Button>
+                </>}
+              />
+            </FormControl>
+            <FormControl variant="outlined" style={{ width: '100%', marginTop: '1rem' }}>
+              <InputLabel>휴대폰번호</InputLabel>
+              <OutlinedInput
+                label='휴대폰번호'
+                placeholder="하이픈(-) 제외 입력"
+                onChange={(e) => {
+                  setUser({ ...user, ['phoneCheck']: e.target.value })
+                }}
+                value={user.phoneCheck}
+                endAdornment={<>
+                  <Button style={{ width: '124px', height: '56px', transform: 'translateX(14px)' }}
+                    variant="contained"
+                    onClick={() => {
+                    }}
+                  >인증번호확인</Button>
+                </>}
+              />
+            </FormControl>
           </>}
         {activeStep == 2 &&
           <>

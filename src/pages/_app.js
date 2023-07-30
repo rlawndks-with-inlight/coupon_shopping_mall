@@ -27,6 +27,7 @@ import NextNProgress from 'nextjs-progressbar';
 import { useEffect } from 'react';
 import ThemeContrast from 'src/components/settings/ThemeContrast';
 import { MotionLazyContainer } from 'src/components/animate';
+import { ModalProvider } from 'src/components/dialog/ModalProvider';
 
 const App = (props) => {
   const { Component, pageProps } = props;
@@ -45,7 +46,9 @@ const App = (props) => {
                 <SettingsProvider>
                 <MotionLazyContainer>
                   <ThemeProvider>
-                    {getLayout(<Component {...pageProps} />)}
+                    <ModalProvider>
+                     {getLayout(<Component {...pageProps} />)}
+                    </ModalProvider>
                     <Toaster position={'right-top'} toastOptions={{ className: 'react-hot-toast' }} />
                   </ThemeProvider>
                   </MotionLazyContainer>

@@ -7,7 +7,9 @@ import { useRouter } from "next/router";
 import { Row } from "src/components/elements/styled-components";
 import { changePasswordUserByManager, deleteUserByManager, getUsersByManager } from "src/utils/api-manager";
 import { toast } from "react-hot-toast";
+import { useModal } from "src/components/dialog/ModalProvider";
 const UserList = () => {
+  const { setModal } = useModal()
   const defaultColumns = [
     {
       id: 'profile_img',
@@ -67,7 +69,13 @@ const UserList = () => {
                 router.push(`edit/${row?.id}`)
               }} />
             </IconButton>
-            <IconButton onClick={() => deleteUser(row?.id)}>
+            <IconButton onClick={() => {
+              setModal({
+                func: () => { deleteUser(row?.id) },
+                icon: 'material-symbols:delete-outline',
+                title: '정말 삭제하시겠습니까?'
+              })
+            }}>
               <Icon icon='material-symbols:delete-outline' />
             </IconButton>
           </>
@@ -102,6 +110,10 @@ const UserList = () => {
     onChangePage(searchObj);
   }
   const onChangePage = async (obj) => {
+    setData({
+      ...data,
+      content: undefined
+    })
     let data_ = await getUsersByManager(obj);
     if (data_) {
       setData(data_);
@@ -116,10 +128,10 @@ const UserList = () => {
   }
   const onChangeUserPassword = async () => {
     let result = await changePasswordUserByManager(changePasswordObj);
-    if(result){
+    if (result) {
       setDialogObj({
         ...dialogObj,
-        changePassword:false
+        changePassword: false
       })
       toast.success("성공적으로 변경 되었습니다.");
     }
@@ -154,10 +166,10 @@ const UserList = () => {
           <Button variant="contained" onClick={onChangeUserPassword}>
             변경
           </Button>
-          <Button color="inherit" onClick={()=>{
+          <Button color="inherit" onClick={() => {
             setDialogObj({
               ...dialogObj,
-              changePassword:false
+              changePassword: false
             })
           }}>
             취소

@@ -13,13 +13,14 @@ import { react_quill_data } from "src/data/manager-data";
 import { axiosIns } from "src/utils/axios";
 import { addUserByManager, getUserByManager, updateUserByManager, uploadFileByManager } from "src/utils/api-manager";
 import { toast } from "react-hot-toast";
+import { useModal } from "src/components/dialog/ModalProvider";
 const ReactQuill = dynamic(() => import('react-quill'), {
   ssr: false,
   loading: () => <p>Loading ...</p>,
 })
 
 const UserEdit = () => {
-
+  const { setModal } = useModal()
   const { themeMode } = useSettingsContext();
 
   const router = useRouter();
@@ -173,7 +174,13 @@ const UserEdit = () => {
                 <Stack spacing={1} style={{ display: 'flex' }}>
                   <Button variant="contained" style={{
                     height: '48px', width: '120px', marginLeft: 'auto'
-                  }} onClick={onSave}>
+                  }} onClick={()=>{
+                    setModal({
+                      func: () => { onSave() },
+                      icon: 'material-symbols:edit-outline',
+                      title: '저장 하시겠습니까?'
+                    })
+                  }}>
                     저장
                   </Button>
                 </Stack>

@@ -6,6 +6,7 @@ import { Icon } from "@iconify/react";
 import { useRouter } from "next/router";
 import { Row } from "src/components/elements/styled-components";
 import { deleteSellerByManager, getProductsByManager, getSellersByManager } from "src/utils/api-manager";
+import { useModal } from "src/components/dialog/ModalProvider";
 const test_data = [
   {
     id: 1,
@@ -19,6 +20,7 @@ const test_data = [
   }
 ]
 const SellerList = () => {
+  const { setModal } = useModal()
   const defaultColumns = [
     {
       id: 'profile_img',
@@ -66,7 +68,13 @@ const SellerList = () => {
                 router.push(`sellers/edit/${row?.id}`)
               }} />
             </IconButton>
-            <IconButton onClick={() => deleteSellerByManager({id: row?.id})}>
+            <IconButton onClick={() => {
+               setModal({
+                func: () => { deleteSeller(row?.id) },
+                icon: 'material-symbols:delete-outline',
+                title: '정말 삭제하시겠습니까?'
+              })
+            }}>
               <Icon icon='material-symbols:delete-outline' />
             </IconButton>
           </>
@@ -103,6 +111,12 @@ const SellerList = () => {
       setData(data_);
     }
     setSearchObj(obj);
+  }
+  const deleteSeller = async (id) => {
+    let result = await deleteSellerByManager({ id: id });
+    if (result) {
+      onChangePage(searchObj);
+    }
   }
   return (
     <>

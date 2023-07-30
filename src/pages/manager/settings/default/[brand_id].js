@@ -13,6 +13,7 @@ import { defaultManagerObj, react_quill_data } from "src/data/manager-data";
 import { axiosIns } from "src/utils/axios";
 import { addBrandByManager, getBrandByManager, updateBrandByManager, uploadFileByManager } from "src/utils/api-manager";
 import { toast } from "react-hot-toast";
+import { useModal } from "src/components/dialog/ModalProvider";
 const ReactQuill = dynamic(() => import('react-quill'), {
   ssr: false,
   loading: () => <p>Loading ...</p>,
@@ -61,7 +62,7 @@ flex-direction:column;
 padding:0.5rem;
 `
 const DefaultSetting = () => {
-
+  const { setModal } = useModal()
   const { themeMode, themeDnsData } = useSettingsContext();
 
   const router = useRouter();
@@ -207,7 +208,7 @@ const DefaultSetting = () => {
                   <Card sx={{ p: 2, height: '100%' }}>
                     <Stack spacing={3}>
                       <TextField
-                        label='브랜드명'
+                        label='쇼핑몰명'
                         value={item.name}
                         onChange={(e) => {
                           setItem(
@@ -484,7 +485,13 @@ const DefaultSetting = () => {
                 <Stack spacing={1} style={{ display: 'flex' }}>
                   <Button variant="contained" style={{
                     height: '48px', width: '120px', marginLeft: 'auto'
-                  }} onClick={onSave}>
+                  }} onClick={()=>{
+                    setModal({
+                      func: () => { onSave() },
+                      icon: 'material-symbols:edit-outline',
+                      title: '저장 하시겠습니까?'
+                    })
+                  }}>
                     저장
                   </Button>
                 </Stack>

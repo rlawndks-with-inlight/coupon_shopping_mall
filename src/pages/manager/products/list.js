@@ -10,8 +10,10 @@ import { commarNumber, getAllIdsWithParents } from "src/utils/function";
 import { LazyLoadImage } from "react-lazy-load-image-component";
 import { SelectCategoryComponent } from "./[edit_category]/[id]";
 import $ from 'jquery';
+import { useModal } from "src/components/dialog/ModalProvider";
 
 const ProductList = () => {
+  const { setModal } = useModal()
   const defaultColumns = [
     {
       id: 'id',
@@ -112,7 +114,7 @@ const ProductList = () => {
         return (
           <>
             <IconButton onClick={() => {
-               router.push(`edit/${row?.id}?type=1`)
+              router.push(`edit/${row?.id}?type=1`)
             }}>
               <Icon icon='ic:outline-rate-review' />
             </IconButton>
@@ -131,7 +133,13 @@ const ProductList = () => {
                 router.push(`edit/${row?.id}`)
               }} />
             </IconButton>
-            <IconButton onClick={() => deleteProduct(row?.id)}>
+            <IconButton onClick={() => {
+              setModal({
+                func: () => { deleteProduct(row?.id) },
+                icon: 'material-symbols:delete-outline',
+                title: '정말 삭제하시겠습니까?'
+              })
+            }}>
               <Icon icon='material-symbols:delete-outline' />
             </IconButton>
           </>
@@ -173,9 +181,9 @@ const ProductList = () => {
     let data_ = await getProductsByManager(obj);
     if (data_) {
       let category_list = [];
-      if(obj?.category_list){
+      if (obj?.category_list) {
         category_list = obj?.category_list
-      }else{
+      } else {
         category_list = categories
       }
 

@@ -4,10 +4,11 @@ import ManagerLayout from "src/layouts/manager/ManagerLayout";
 import ManagerTable from "src/views/manager/mui/table/ManagerTable";
 import { Icon } from "@iconify/react";
 import { useRouter } from "next/router";
-import { getBrandsByManager, getProductsByManager } from "src/utils/api-manager";
+import { deleteBrandByManager, getBrandsByManager, getProductsByManager } from "src/utils/api-manager";
 import { LazyLoadImage } from "react-lazy-load-image-component";
-
+import { useModal } from "src/components/dialog/ModalProvider";
 const BrandList = () => {
+  const { setModal } = useModal()
   const defaultColumns = [
     {
       id: 'name',
@@ -83,7 +84,13 @@ const BrandList = () => {
                 router.push(`default/${row?.id}`)
               }} />
             </IconButton>
-            <IconButton>
+            <IconButton onClick={()=>{
+               setModal({
+                func: () => { deleteBrand(row?.id) },
+                icon: 'material-symbols:delete-outline',
+                title: '정말 삭제하시겠습니까?'
+              })
+            }}>
               <Icon icon='material-symbols:delete-outline' />
             </IconButton>
           </>
@@ -120,6 +127,12 @@ const BrandList = () => {
       setData(data_);
     }
     setSearchObj(obj);
+  }
+  const deleteBrand = async (id) => {
+    let result = await deleteBrandByManager({ id: id });
+    if (result) {
+      onChangePage(searchObj);
+    }
   }
   return (
     <>

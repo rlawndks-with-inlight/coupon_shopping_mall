@@ -1,5 +1,5 @@
 
-import { Button, Card, Grid, Stack, TextField, Typography } from "@mui/material";
+import { Button, Card, Grid, MenuItem, Select, Stack, TextField, Typography } from "@mui/material";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { themeObj } from "src/components/elements/styled-components";
@@ -11,32 +11,37 @@ import styled from "styled-components";
 import dynamic from "next/dynamic";
 import { react_quill_data } from "src/data/manager-data";
 import { axiosIns } from "src/utils/axios";
-import { addPostByManager, getPostByManager, updatePostByManager, uploadFileByManager } from "src/utils/api-manager";
+import { addPostByManager, getPostByManager, getPostCategoryByManager, updatePostByManager, uploadFileByManager } from "src/utils/api-manager";
 import { toast } from "react-hot-toast";
 const ReactQuill = dynamic(() => import('react-quill'), {
   ssr: false,
   loading: () => <p>Loading ...</p>,
 })
-
+import { useModal } from "src/components/dialog/ModalProvider";
 const ArticleEdit = () => {
-
+  const { setModal } = useModal()
   const { themeMode } = useSettingsContext();
 
   const router = useRouter();
 
   const [loading, setLoading] = useState(true);
+  const [category, setCategory] = useState({})
   const [item, setItem] = useState({
-    category_id: null,
+    category_id: router.query?.category_id,
     parent_id: null,
     post_title: '',
     post_content: '',
-    is_reply: true,
+    is_reply: false,
   })
 
   useEffect(() => {
     settingPage();
   }, [])
   const settingPage = async () => {
+    let category = await getPostCategoryByManager({
+      id: router.query?.category_id
+    })
+    setCategory(category)
     if (router.query?.edit_category == 'edit') {
       let item = await getPostByManager({
         id: router.query.id
@@ -48,9 +53,9 @@ const ArticleEdit = () => {
   const onSave = async () => {
     let result = undefined;
     if (router.query?.edit_category == 'edit') {
-      result = await updatePostByManager({ ...item, category_id: router.query?.category_id, id: router.query?.id });
+      result = await updatePostByManager({ ...item, id: router.query?.id });
     } else {
-      result = await addPostByManager({ ...item, category_id: router.query?.category_id });
+      result = await addPostByManager({ ...item });
     }
     if (result) {
       toast.success("성공적으로 저장 되었습니다.");
@@ -65,6 +70,20 @@ const ArticleEdit = () => {
             <Grid item xs={12} md={6}>
               <Card sx={{ p: 2, height: '100%' }}>
                 <Stack spacing={3}>
+                  {category?.children.length > 0 &&
+                    <>
+                      <Select value={item.category_id} onChange={(e) => {
+                        setItem({
+                          ...item,
+                          category_id: e.target.value
+                        })
+                      }}>
+                        <MenuItem value={category?.id}>{`${category.post_category_title} 카테고리 전체`}</MenuItem>
+                        {category?.children.map((cate, idx) => {
+                          return <MenuItem value={cate?.id}>{cate?.post_category_title}</MenuItem>
+                        })}
+                      </Select>
+                    </>}
                   <TextField
                     label='제목'
                     value={item.post_title}
@@ -127,7 +146,13 @@ const ArticleEdit = () => {
                 <Stack spacing={1} style={{ display: 'flex' }}>
                   <Button variant="contained" style={{
                     height: '48px', width: '120px', marginLeft: 'auto'
-                  }} onClick={onSave}>
+                  }} onClick={() => {
+                    setModal({
+                      func: () => { onSave() },
+                      icon: 'material-symbols:edit-outline',
+                      title: '저장 하시겠습니까?'
+                    })
+                  }}>
                     저장
                   </Button>
                 </Stack>

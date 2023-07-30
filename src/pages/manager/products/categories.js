@@ -13,6 +13,7 @@ import { Icon } from "@iconify/react";
 import { useTheme } from "@emotion/react";
 import { getAllIdsWithParents } from "src/utils/function";
 import { addCategoryByManager, deleteCategoryByManager, getCategoriesByManager, updateCategoryByManager } from "src/utils/api-manager";
+import { useModal } from "src/components/dialog/ModalProvider";
 // ----------------------------------------------------------------------
 
 const StyledTreeView = muiStyled(TreeView)({
@@ -22,6 +23,7 @@ const StyledTreeView = muiStyled(TreeView)({
 });
 
 const StyledTreeItem = muiStyled((props) => <TreeItem {...props} />)(({ theme }) => ({
+
   [`& .${treeItemClasses.iconContainer}`]: {
     '& .close': {
       opacity: 0.3,
@@ -35,6 +37,7 @@ const StyledTreeItem = muiStyled((props) => <TreeItem {...props} />)(({ theme })
   },
 }));
 const CustomContent = forwardRef(function CustomContent(props, ref) {
+
   const {
     classes,
     className,
@@ -47,7 +50,8 @@ const CustomContent = forwardRef(function CustomContent(props, ref) {
     category,
     onClickCategoryLabel,
     onClickAddIcon,
-    onClickCategoryDelete
+    onClickCategoryDelete,
+    setModal
   } = props;
   const {
     disabled,
@@ -124,7 +128,11 @@ const CustomContent = forwardRef(function CustomContent(props, ref) {
       </Tooltip>
       <Tooltip title="해당 카테고리 및 하위 카테고리를 삭제하시려면 클릭해 주세요.">
         <IconButton onClick={() => {
-          onClickCategoryDelete(category)
+          setModal({
+            func: () => { onClickCategoryDelete(category) },
+            icon: 'material-symbols:delete-outline',
+            title: '정말 삭제하시겠습니까?'
+          })
         }}>
           <Icon icon='material-symbols:delete-outline' fontSize={16} />
         </IconButton>
@@ -141,7 +149,7 @@ width:100%;
 display:flex;
 `
 const CategoryList = () => {
-
+  const { setModal } = useModal()
   const defaultSetting = {
     category_file: '',
     category_name: '',
@@ -180,6 +188,7 @@ const CategoryList = () => {
           depth={num}
           category={category}
           onClickCategoryDelete={onClickCategoryDelete}
+          setModal={setModal}
         >
           {category?.children && category?.children.length > 0 &&
             <>
@@ -223,7 +232,7 @@ const CategoryList = () => {
     setCurCategories(use_list);
     setCategory(category)
   }
-  const onClickCategoryDelete = async (category) => { // 해당 카테고리 수정
+  const onClickCategoryDelete = async (category) => { // 해당 카테고리 삭제
     setIsAction(false);
     await deleteCategoryByManager(category);
     setIsAction(false);
@@ -231,7 +240,7 @@ const CategoryList = () => {
   }
   const onSave = async () => {
     if (category?.id) {//수정
-      let result = await updateCategoryByManager({ ...category,  })
+      let result = await updateCategoryByManager({ ...category, })
     } else {//추가
       let result = await addCategoryByManager({ ...category })
     }
@@ -369,7 +378,13 @@ const CategoryList = () => {
                             })
                           }}
                         />
-                        <Button variant="contained" style={{ marginTop: 'auto', height: '56px' }} onClick={onSave}>{category?.id > 0 ? '수정' : '추가'}</Button>
+                        <Button variant="contained" style={{ marginTop: 'auto', height: '56px' }} onClick={() => {
+                          setModal({
+                            func: () => { onSave() },
+                            icon: 'material-symbols:edit-outline',
+                            title: '저장 하시겠습니까?'
+                          })
+                        }}>{category?.id > 0 ? '수정' : '추가'}</Button>
                       </>
                       :
                       <>

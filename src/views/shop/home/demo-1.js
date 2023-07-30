@@ -75,7 +75,7 @@ height: 34vw;
 }
 `
 const returnHomeContent = (column, data, func) => {
-  let { windowWidth } = data;
+  let { windowWidth, themeDnsData } = data;
   const { router } = func;
   let type = column?.type;
   let content = undefined;
@@ -145,12 +145,33 @@ const returnHomeContent = (column, data, func) => {
     </>
   }
   if (type == 'items') {
+    const getSlideToShow = () =>{
+      if(window.innerWidth > 1350){
+        if(themeDnsData?.theme_css?.shop_item_card_css?.container?.is_vertical == 1){
+          return 3
+        }else{
+          return 4
+        }
+      }
+      if(window.innerWidth > 1000){
+        if(themeDnsData?.theme_css?.shop_item_card_css?.container?.is_vertical == 1){
+          return 2
+        }else{
+          return 3
+        }
+      }
+      if(themeDnsData?.theme_css?.shop_item_card_css?.container?.is_vertical == 1){
+        return 1
+      }else{
+        return 2
+      }
+    }
     let slide_setting = {
       infinite: true,
       speed: 500,
       autoplay: true,
       autoplaySpeed: 2500,
-      slidesToShow: (windowWidth > 1350 ? 4 : windowWidth > 1000 ? 3 : windowWidth > 650 ? 2 : 1),
+      slidesToShow: getSlideToShow(),
       slidesToScroll: 1,
       dots: false,
     }
@@ -173,7 +194,7 @@ const returnHomeContent = (column, data, func) => {
         <Slider {...slide_setting} className='margin-slide'>
           {column?.list && column?.list.map((item, idx) => (
             <>
-              <Item item={item} router={router} />
+              <Item item={item} router={router} theme_css={themeDnsData?.theme_css?.shop_item_card_css}  />
             </>
           ))}
         </Slider>
@@ -231,7 +252,8 @@ const Demo1 = (props) => {
     return returnHomeContent(
       column,
       {
-        windowWidth: window.innerWidth
+        windowWidth: window.innerWidth,
+        themeDnsData:themeDnsData
       },
       {
         router

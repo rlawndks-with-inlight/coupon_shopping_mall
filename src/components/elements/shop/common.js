@@ -7,6 +7,7 @@ import { useEffect, useState } from "react";
 import { IconButton } from "@mui/material";
 import { Icon } from "@iconify/react";
 import Slider from "react-slick";
+import { useSettingsContext } from "src/components/settings";
 
 const ItemName = styled.div`
 font-weight: bold;
@@ -45,7 +46,7 @@ flex-direction: column;
 
 export const Item = (props) => {
 
-  const { item, router, style, theme_css } = props;
+  const { item, router, theme_css } = props;
   const [itemThemeCss, setItemThemeCss] = useState(itemThemeCssDefaultSetting);
   useEffect(() => {
     if (theme_css) {
@@ -55,22 +56,21 @@ export const Item = (props) => {
   return (
     <>
       <ItemContainer style={{
-        padding: `${itemThemeCss.container.padding}%`,
+        padding: `${itemThemeCss?.container?.padding}%`,
         columnGap: `0.5rem`,
         rowGap: `0.5rem`,
-        flexDirection: `${itemThemeCss.container.is_vertical == 1 ? 'row' : 'column'}`,
+        flexDirection: `${itemThemeCss.container.is_vertical == 0 ? 'column' : 'row'}`,
         border: `${itemThemeCss.container.border_width}px solid ${itemThemeCss.container.border_color}`,
         borderRadius: `${itemThemeCss.container.border_radius}px`,
         boxShadow: `${itemThemeCss.shadow.x}px ${itemThemeCss.shadow.y * (-1)}px ${itemThemeCss.shadow.width}px ${itemThemeCss.shadow.color}${itemThemeCss.shadow.darkness > 9 ? '' : '0'}${itemThemeCss.shadow.darkness}`
       }}
-
       >
         <IconButton sx={{ position: 'absolute', right: '2px', top: '2px' }}>
           <Icon icon={'basil:heart-outline'} fontSize={'2rem'} />
         </IconButton>
         <ItemImg src={item.product_img} style={{
-          width: `${itemThemeCss.container.is_vertical == 1 ? '50%' : '100%'}`,
-          height: `${itemThemeCss.container.is_vertical == 1 ? `50%` : `100%`}`,
+          width: `${itemThemeCss.container.is_vertical == 0 ? '100%' : '50%'}`,
+          height: `auto`,
           borderRadius: `${itemThemeCss.image.border_radius}px`,
         }}
           onClick={() => {
@@ -133,19 +133,42 @@ width:${props => props.theme_css?.container?.is_vertical == 1 ? '32%' : '23.5%'}
 }
 `
 export const Items = (props) => {
+  const {themeDnsData} = useSettingsContext();
   const { items, router, theme_css, is_slide } = props;
   const [itemThemeCss, setItemThemeCss] = useState(itemThemeCssDefaultSetting);
   useEffect(() => {
-    if (theme_css) {
-      setItemThemeCss(Object.assign(itemThemeCss, theme_css));
+    if (themeDnsData) {
+      setItemThemeCss(Object.assign(itemThemeCss, themeDnsData?.theme_css?.shop_item_card_css));
     }
-  }, [theme_css])
+  }, [themeDnsData])
+  const getSlideToShow = () =>{
+    console.log(itemThemeCss)
+    if(window.innerWidth > 1350){
+      if(itemThemeCss?.container?.is_vertical == 1){
+        return 3
+      }else{
+        return 4
+      }
+    }
+    if(window.innerWidth > 1000){
+      if(itemThemeCss?.container?.is_vertical == 1){
+        return 2
+      }else{
+        return 3
+      }
+    }
+    if(itemThemeCss?.container?.is_vertical == 1){
+      return 1
+    }else{
+      return 2
+    }
+  }
   const items_setting = {
     infinite: true,
     speed: 500,
     autoplay: true,
     autoplaySpeed: 2500,
-    slidesToShow: (window.innerWidth > 1350 ? 4 : window.innerWidth > 1000 ? 3 : theme_css?.container?.is_vertical == 1 ? 1 : 2),
+    slidesToShow: getSlideToShow(),
     slidesToScroll: 1,
     dots: false,
   }

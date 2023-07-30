@@ -6,7 +6,9 @@ import { Icon } from "@iconify/react";
 import { useRouter } from "next/router";
 import { Row } from "src/components/elements/styled-components";
 import { deletePostByManager, getPostsByManager, getProductsByManager } from "src/utils/api-manager";
+import { useModal } from "src/components/dialog/ModalProvider";
 const ArticleList = () => {
+  const { setModal } = useModal()
   const defaultColumns = [
     {
       id: 'post_title',
@@ -47,7 +49,13 @@ const ArticleList = () => {
                 router.push(`/manager/articles/${router.query.category_id}/edit/${row?.id}`)
               }} />
             </IconButton>
-            <IconButton onClick={() => deletePost(row?.id)}>
+            <IconButton onClick={() => {
+              setModal({
+                func: () => { deletePost(row?.id) },
+                icon: 'material-symbols:delete-outline',
+                title: '정말 삭제하시겠습니까?'
+              })
+            }}>
               <Icon icon='material-symbols:delete-outline' />
             </IconButton>
           </>

@@ -15,6 +15,7 @@ import { useRouter } from "next/router";
 import CustomBreadcrumbs from "src/components/custom-breadcrumbs/CustomBreadcrumbs";
 import { getBrandByManager, getProductsByManager, updateBrandByManager, uploadFileByManager, uploadsFileByManager } from "src/utils/api-manager";
 import { toast } from "react-hot-toast";
+import { useModal } from "src/components/dialog/ModalProvider";
 const ReactQuill = dynamic(() => import('react-quill'), {
   ssr: false,
   loading: () => <p>Loading ...</p>,
@@ -57,7 +58,7 @@ const curTypeNum = (list, type_name, idx) => {
 }
 
 const Main = () => {
-
+  const { setModal } = useModal()
   const { themeMode, themeDnsData } = useSettingsContext();
 
   const router = useRouter();
@@ -395,7 +396,13 @@ const Main = () => {
                 <Stack spacing={1}>
                   <Button variant="contained" style={{
                     height: '48px', width: '120px', marginLeft: 'auto'
-                  }} onClick={onSave}>
+                  }} onClick={()=>{
+                    setModal({
+                      func: () => { onSave() },
+                      icon: 'material-symbols:edit-outline',
+                      title: '저장 하시겠습니까?'
+                    })
+                  }}>
                     저장
                   </Button>
                 </Stack>

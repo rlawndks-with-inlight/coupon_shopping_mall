@@ -100,7 +100,7 @@ export function AuthProvider({ children }) {
           user: null,
         },
       });
-      if(router.asPath.split('/')[1] == 'manager'){
+      if (router.asPath.split('/')[1] == 'manager') {
         router.push(PATH_AUTH.login);
       }
     }
@@ -113,7 +113,7 @@ export function AuthProvider({ children }) {
   const login = useCallback(async (user_name, user_pw) => {
     try {
       let dns_data = getCookie('themeDnsData')
-      const response = await axiosIns().post('/api/v1/auth/sign-in', {
+      const response = await axiosIns().post(`/api/v1${router.asPath.split('/')[1] == 'manager' ? '' : '/shop'}/auth/sign-in`, {
         brand_id: dns_data.id,
         user_name: user_name,
         user_pw: user_pw,

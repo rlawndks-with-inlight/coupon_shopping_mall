@@ -13,7 +13,7 @@ export const getProductsByUser = (params) => { // 유저 카테고리 기반 상
   let query = {
     category_id, page, page_size
   }
-  if(!category_id){
+  if (!category_id) {
     delete query['category_id'];
   }
   return get(`/api/v1/shop/shop/product-categories`, query);
@@ -23,7 +23,7 @@ export const getPostsByUser = (params) => { // 유저 카테고리 기반 게시
   let query = {
     category_id, page, page_size
   }
-  if(!category_id){
+  if (!category_id) {
     delete query['category_id'];
   }
   return get(`/api/v1/shop/shop/post-categories`, query);
@@ -48,4 +48,25 @@ export const getPostByUser = (params) => { // 유저 게시글 단일 출력
     post_id
   }
   return get(`/api/v1/shop/shop/posts/${post_id}`, {});
+}
+export const sendPhoneVerifyCodeByUser = (params) => { // 유저 휴대폰 인증번호 전송
+  const { dns = window.location.host.split(':')[0], phone_num } = params;
+  let obj = {
+    dns, phone_num
+  }
+  return post(`/api/v1/shop/auth/verify/code`, obj);
+}
+export const checkPhoneVerifyCodeByUser = (params) => { // 유저 휴대폰 인증번호 확인
+  const { phone_num, rand_num } = params;
+  let obj = {
+    phone_num, rand_num
+  }
+  return post(`/api/v1/shop/auth/verify`, obj);
+}
+export const signUpByUser = (params) => { // 유저 회원가입
+  const { user_name, phone_num, nick_name, user_pw } = params;
+  let obj = {
+    user_name, phone_num, nick_name, user_pw
+  }
+  return post(`/api/v1/shop/auth/sign-up`, obj);
 }

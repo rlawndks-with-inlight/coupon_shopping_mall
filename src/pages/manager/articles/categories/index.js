@@ -5,25 +5,11 @@ import ManagerTable from "src/views/manager/mui/table/ManagerTable";
 import { Icon } from "@iconify/react";
 import { useRouter } from "next/router";
 import { Row } from "src/components/elements/styled-components";
-import { getPostCategoriesByManager, getProductsByManager, getSellersByManager } from "src/utils/api-manager";
+import { deletePostCategoryByManager, getPostCategoriesByManager, getProductsByManager, getSellersByManager } from "src/utils/api-manager";
+import { useModal } from "src/components/dialog/ModalProvider";
 
-const test_items = [
-  {
-    id: 1,
-    post_category_title: '공지사항',
-    status: 0,
-    created_at: '0000-00-00 00:00:00',
-    updated_at: '0000-00-00 00:00:00',
-  },
-  {
-    id: 1,
-    post_category_title: '자주묻는질문',
-    status: 0,
-    created_at: '0000-00-00 00:00:00',
-    updated_at: '0000-00-00 00:00:00',
-  },
-]
 const ArticleCategoryList = () => {
+  const { setModal } = useModal()
   const defaultColumns = [
     {
       id: 'post_category_title',
@@ -64,7 +50,13 @@ const ArticleCategoryList = () => {
                 router.push(`categories/edit/${row?.id}`)
               }} />
             </IconButton>
-            <IconButton>
+            <IconButton onClick={() => {
+              setModal({
+                func: () => { deletePostCategory(row?.id) },
+                icon: 'material-symbols:delete-outline',
+                title: '정말 삭제하시겠습니까?'
+              })
+            }}>
               <Icon icon='material-symbols:delete-outline' />
             </IconButton>
           </>
@@ -92,18 +84,21 @@ const ArticleCategoryList = () => {
     onChangePage(searchObj);
   }
   const onChangePage = async (obj) => {
+    setData({
+      ...data,
+      content: undefined
+    })
     let data_ = await getPostCategoriesByManager(obj);
     if (data_) {
       setData(data_);
-    } else {
-      setData({
-        page: obj?.page,
-        page_size: obj?.page_size,
-        total: 102,
-        content: [...test_items]
-      })
     }
     setSearchObj(obj);
+  }
+  const deletePostCategory = async (id) => {
+    let result = await deletePostCategoryByManager({ id: id });
+    if (result) {
+      onChangePage(searchObj);
+    }
   }
   return (
     <>

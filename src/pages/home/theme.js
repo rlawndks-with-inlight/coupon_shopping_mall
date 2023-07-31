@@ -23,6 +23,7 @@ display:flex;
 width:100%;
 column-gap:2%;
 margin:2rem auto;
+
 flex-wrap:wrap;
 `
 const TemplateContainer = styled.div`

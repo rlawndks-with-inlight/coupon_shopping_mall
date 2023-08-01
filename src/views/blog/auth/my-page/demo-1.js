@@ -242,7 +242,7 @@ const Demo1 = (props) => {
                     }}
                 >
                     <DrawerTitle>
-                        <img src={logoSrc} style={{ height: '56px', width: 'auto' }} />
+                        <img src={logoSrc()} style={{ height: '56px', width: 'auto' }} />
                         <IconButton
                             sx={{}}
                             onClick={() => {
@@ -275,7 +275,7 @@ const Demo1 = (props) => {
                         padding: '0 0 1.5rem 1.5rem'
                     }}
                 >
-                    <img src={logoSrc} style={{ height: '56px', width: 'auto' }} />
+                    <img src={logoSrc()} style={{ height: '56px', width: 'auto' }} />
                     <IconButton
                         onClick={() => {
                             setDialogOpen(false)

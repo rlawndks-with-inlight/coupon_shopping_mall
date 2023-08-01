@@ -376,6 +376,7 @@ export const getBrandsByManager = (params) => { //관리자 브랜드 목록 출
 }
 export const addBrandByManager = (params) => { //관리자 브랜드 추가
   const { name, dns, og_description, company_name, pvcy_rep_name, ceo_name, addr, resident_num, business_num, phone_num, fax_num, note,
+    user_name, user_pw,
     theme_css = {},
     main_obj = [],
     setting_obj = {},
@@ -386,6 +387,7 @@ export const addBrandByManager = (params) => { //관리자 브랜드 추가
   } = params;
   let obj = {
     name, dns, og_description, company_name, pvcy_rep_name, ceo_name, addr, resident_num, business_num, phone_num, fax_num, note,
+    user_name, user_pw,
     theme_css,
     main_obj,
     setting_obj,

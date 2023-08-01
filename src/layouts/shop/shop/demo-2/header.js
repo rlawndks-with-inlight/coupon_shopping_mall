@@ -391,7 +391,7 @@ const Header = () => {
                   <Icon icon={'iconamoon:search-thin'} fontSize={'1.7rem'} color={themeMode == 'dark' ? '#fff' : '#000'} />
                 </IconButton>
               </ShowMobile>
-              <LogoImg src={logoSrc}
+              <LogoImg src={logoSrc()}
                 onClick={() => {
                   router.push('/shop')
                 }}

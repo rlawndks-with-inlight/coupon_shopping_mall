@@ -85,7 +85,7 @@ const DefaultSetting = () => {
   }
   const settingPage = async () => {
     console.log(router.query?.brand_id)
-    if(router.query?.brand_id != 'add'){
+    if (router.query?.brand_id != 'add') {
       let brand_data = await getBrandByManager({
         id: router.query.brand_id | themeDnsData?.id
       })
@@ -99,6 +99,18 @@ const DefaultSetting = () => {
     if (item?.id) {//수정
       result = await updateBrandByManager({ ...item, id: item?.id })
     } else {//추가
+      if(
+        !item?.user_name ||
+        !item?.user_pw ||
+        !item?.user_pw_check
+      ){
+        toast.error("본사 계정정보를 입력해 주세요.");
+        return;
+      }
+      if(item?.user_pw != item?.user_pw_check){
+        toast.error("본사 비밀번호가 일치하지 않습니다.");
+        return;
+      }
       result = await addBrandByManager({ ...item })
     }
     if (result) {
@@ -119,6 +131,13 @@ const DefaultSetting = () => {
                 }}
               >{tab.label}</Button>
             ))}
+            <Button
+              sx={{ display: `${router.query?.brand_id == 'add' ? '' : 'none'}` }}
+              variant={3 == currentTab ? 'contained' : 'outlined'}
+              onClick={() => {
+                setCurrentTab(3)
+              }}
+            >{'사용할 본사 계정'}</Button>
           </Row>
           <Grid container spacing={3}>
             {currentTab == 0 &&
@@ -483,12 +502,62 @@ const DefaultSetting = () => {
                   </Card>
                 </Grid>
               </>}
+            {currentTab == 3 &&
+              <>
+                <Grid item xs={12} md={6}>
+                  <Card sx={{ p: 2, height: '100%' }}>
+                    <Stack spacing={3}>
+                      <TextField
+                        label='본사아이디'
+                        value={item?.user_name}
+                        onChange={(e) => {
+                          setItem(
+                            {
+                              ...item,
+                              ['user_name']: e.target.value
+                            }
+                          )
+                        }} />
+                    </Stack>
+                  </Card>
+                </Grid>
+                <Grid item xs={12} md={6}>
+                  <Card sx={{ p: 2, height: '100%' }}>
+                    <Stack spacing={3}>
+                    <TextField
+                        label='본사 비밀번호'
+                        value={item?.user_pw}
+                        type='password'
+                        onChange={(e) => {
+                          setItem(
+                            {
+                              ...item,
+                              ['user_pw']: e.target.value
+                            }
+                          )
+                        }} />
+                        <TextField
+                        label='본사 비밀번호 확인'
+                        value={item?.user_pw_check}
+                        type='password'
+                        onChange={(e) => {
+                          setItem(
+                            {
+                              ...item,
+                              ['user_pw_check']: e.target.value
+                            }
+                          )
+                        }} />
+                    </Stack>
+                  </Card>
+                </Grid>
+              </>}
             <Grid item xs={12} md={12}>
               <Card sx={{ p: 3 }}>
                 <Stack spacing={1} style={{ display: 'flex' }}>
                   <Button variant="contained" style={{
                     height: '48px', width: '120px', marginLeft: 'auto'
-                  }} onClick={()=>{
+                  }} onClick={() => {
                     setModal({
                       func: () => { onSave() },
                       icon: 'material-symbols:edit-outline',

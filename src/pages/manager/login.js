@@ -84,7 +84,7 @@ const Login = () => {
           <StyledContent style={{ minHeight: '90vh' }}>
             <Stack sx={{ width: 1 }}>
 
-              <img src={logoSrc} style={{ maxWidth: '200px', margin: '1rem auto' }} />
+              <img src={logoSrc()} style={{ maxWidth: '200px', margin: '1rem auto' }} />
               <Stack spacing={3}>
                 <TextField
                   name="username"

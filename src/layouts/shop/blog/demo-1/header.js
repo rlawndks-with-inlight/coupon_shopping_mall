@@ -162,7 +162,7 @@ const Header = (props) => {
                 </>
                 :
                 <>
-                  <img src={logoSrc} style={{ height: '40px', width: 'auto', cursor: 'pointer' }} onClick={() => { router.push('/blog') }} />
+                  <img src={logoSrc()} style={{ height: '40px', width: 'auto', cursor: 'pointer' }} onClick={() => { router.push('/blog') }} />
                 </>}
               <IconButton
                 sx={{ ...iconButtonStyle, marginLeft: 'auto' }}

@@ -1,7 +1,14 @@
 import { Icon } from '@iconify/react';
+import { useState } from 'react';
+import { useSettingsContext } from 'src/components/settings';
 
 export const backUrl = process.env.BACK_URL;
-export const logoSrc = 'https://backend.comagain.kr/storage/images/logos/IFFUcyTPtgF887r0RPOGXZyLLPvp016Je17MENFT.svg';
+export const logoSrc = () => {
+  const { themeDnsData, themeMode } = useSettingsContext();
+  let default_img = 'https://backend.comagain.kr/storage/images/logos/IFFUcyTPtgF887r0RPOGXZyLLPvp016Je17MENFT.svg';
+
+  return themeDnsData[`${themeMode=='dark'?'dark_':''}logo_img`]
+};
 export const KAKAO_OBJ = {
   BACKGROUND: '#F9E000',
   FONT_COLOR: '#371C1D'

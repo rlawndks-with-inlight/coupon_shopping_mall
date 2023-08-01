@@ -250,7 +250,7 @@ const Demo1 = (props) => {
                 }}
               >
                 <DrawerTitle>
-                        <img src={logoSrc} style={{ height: '56px', width: 'auto' }} />
+                        <img src={logoSrc()} style={{ height: '56px', width: 'auto' }} />
                         <IconButton
                             sx={{}}
                             onClick={() => {

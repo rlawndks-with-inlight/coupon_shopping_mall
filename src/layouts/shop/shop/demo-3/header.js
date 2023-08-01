@@ -233,7 +233,7 @@ const Header = () => {
               </TopMenuContainer>
             </NoneShowMobile>
             <TopMenuContainer>
-              <LogoImg src={logoSrc}
+              <LogoImg src={logoSrc()}
                 onClick={() => {
                   router.push('/shop')
                 }}

@@ -48,7 +48,7 @@ export default function LoginLayout({ children }) {
               fontWeight:'bold',
               columnGap:'0.5rem'
             }}>
-              <TopLogoImg src={logoSrc} onClick={() => { router.push('/manager/login') }} />
+              <TopLogoImg src={logoSrc()} onClick={() => { router.push('/manager/login') }} />
               <div>판매자 센터</div>
             </Row>
             <Row style={{minHeight:'90vh'}}>

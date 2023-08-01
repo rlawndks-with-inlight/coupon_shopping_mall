@@ -143,7 +143,7 @@ const Login = () => {
           >
             로그인
           </LoadingButton>
-          {window.location.host.split(':')[0] != process.env.MAIN_FRONT_URL &&
+          {window.location.host.split(':')[0] == process.env.MAIN_FRONT_URL &&
             <>
               <Stack alignItems="flex-end" sx={{ my: 2 }}>
                 <Link

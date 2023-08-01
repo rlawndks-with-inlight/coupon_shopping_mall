@@ -78,7 +78,7 @@ const BrandList = () => {
     },
     {
       id: 'edit',
-      label: '수정/삭제',
+      label: `수정${user?.level >= 50 ? '/삭제' : ''}`,
       action: (row) => {
         return (
           <>

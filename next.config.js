@@ -21,7 +21,11 @@ module.exports = {
       {
         source: "/api/v2/comagain/:path*",
         destination: `${process.env.NOTI_URL}/api/v2/comagain/:path*`,
-      }
+      },
+      {
+        source: "/api/setting-ssl/:path*",
+        destination: `${process.env.SETTING_SSL_URL}/api/setting-ssl/:path*`,
+      },
     ]
   },
   transpilePackages: [
@@ -46,6 +50,7 @@ module.exports = {
   env: {
     BACK_URL: process.env.BACK_URL,
     NOTI_URL: process.env.NOTI_URL,
+    SETTING_SSL_URL: process.env.SETTING_SSL_URL,
     IS_TEST: process.env.IS_TEST,
     TEST_SHOP_DEMO: process.env.TEST_SHOP_DEMO,
     TEST_BLOG_DEMO: process.env.TEST_BLOG_DEMO,

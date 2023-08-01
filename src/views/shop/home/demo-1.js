@@ -10,11 +10,23 @@ import { useSettingsContext } from 'src/components/settings'
 import { getProductsByUser } from 'src/utils/api-shop'
 import _ from 'lodash'
 import { getLocalStorage } from 'src/utils/local-storage'
-import dynamic from 'next/dynamic'
-const ReactQuill = dynamic(() => import('react-quill'), {
-  ssr: false,
-  loading: () => <p>Loading ...</p>,
-})
+import dynamic from 'next/dynamic';
+
+const ReactQuillFallback = () => <p>Loading ...</p>;
+const ReactQuillError = () => <p>Error: Failed to load ReactQuill</p>;
+
+let ReactQuill;
+
+try {
+  // 'react-quill' 라이브러리를 동적으로 로드합니다.
+  ReactQuill = dynamic(() => import('react-quill'), {
+    ssr: false,
+    loading: ReactQuillFallback,
+  });
+} catch (error) {
+  // 라이브러리 로딩 중 오류가 발생한 경우 대체 컴포넌트로 렌더링합니다.
+  ReactQuill = ReactQuillError;
+}
 const Wrappers = styled.div`
 width:90%;
 max-width:1200px;

@@ -148,6 +148,7 @@ const BrandList = () => {
             searchObj={searchObj}
             onChangePage={onChangePage}
             add_button_text={user?.level >= 50 ? '브랜드 추가' : ''}
+            add_link={'/manager/settings/default/add'}
           />
         </Card>
       </Stack>

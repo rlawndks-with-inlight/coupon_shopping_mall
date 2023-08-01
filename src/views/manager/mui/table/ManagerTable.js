@@ -35,7 +35,7 @@ const CustomTableRow = muiStyled(TableRow)(({ theme }) => ({
 }));
 
 export default function ManagerTable(props) {
-  const { columns, data, add_button_text, onChangePage, searchObj } = props;
+  const { columns, data, add_button_text, add_link, onChangePage, searchObj } = props;
   const { page, page_size } = props?.searchObj;
 
   const theme = useTheme();
@@ -143,7 +143,7 @@ export default function ManagerTable(props) {
                   if (router.asPath.includes('list')) {
                     path = path.replace('list', '');
                   }
-                  router.push(`${path}add`)
+                  router.push(add_link || `${path}add`)
                 }}>
                   + {add_button_text}
                 </Button>

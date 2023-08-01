@@ -84,11 +84,14 @@ const DefaultSetting = () => {
     return obj;
   }
   const settingPage = async () => {
-    let brand_data = await getBrandByManager({
-      id: router.query.brand_id | themeDnsData?.id
-    })
-    brand_data = settingBrandObj(item, brand_data);
-    setItem(brand_data);
+    console.log(router.query?.brand_id)
+    if(router.query?.brand_id != 'add'){
+      let brand_data = await getBrandByManager({
+        id: router.query.brand_id | themeDnsData?.id
+      })
+      brand_data = settingBrandObj(item, brand_data);
+      setItem(brand_data);
+    }
     setLoading(false);
   }
   const onSave = async () => {

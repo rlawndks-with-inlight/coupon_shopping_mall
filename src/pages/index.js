@@ -31,11 +31,6 @@ const HomePage = ({
   const theme = useTheme();
 
   const { scrollYProgress } = useScroll();
-  useEffect(() => {
-    if (window.location.host.split(':')[0] != process.env.MAIN_FRONT_URL) {
-      router.push('/shop')
-    }
-  }, [])
 
   const scaleX = useSpring(scrollYProgress, {
     stiffness: 100,

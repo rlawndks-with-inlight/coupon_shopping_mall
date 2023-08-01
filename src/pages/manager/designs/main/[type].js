@@ -67,6 +67,7 @@ const Main = () => {
   const [contentList, setContentList] = useState([]);
   const [sectionType, setSectionType] = useState('banner');
   const [productList, setProductList] = useState([]);
+  const [productContent, setProductContent] = useState({});
   const [loading, setLoading] = useState(true);
   const homeSectionDefaultSetting = {
     banner: {
@@ -110,15 +111,12 @@ const Main = () => {
       page: 1,
       page_size: 100000
     })
-    if (product_list?.total == 0) {
-      return;
-    }
-    setProductList(product_list?.content ?? []);
+    setProductContent(product_list);
     let brand_data = await getBrandByManager({
       id: router.query.brand_id | themeDnsData?.id
     })
     brand_data = settingBrandObj(item, brand_data);
-    let content_list = brand_data?.main_obj??[];
+    let content_list = brand_data?.main_obj ?? [];
     setItem(brand_data);
     setContentList(content_list);
     setLoading(false);
@@ -310,8 +308,8 @@ const Main = () => {
                           <Autocomplete
                             multiple
                             fullWidth
-                            options={productList.map(item=>{return item?.id})}
-                            getOptionLabel={(item_id) => _.find(productList, {id: parseInt(item_id)})?.product_name}
+                            options={productContent?.content && (productContent?.content ?? []).map(item => { return item?.id })}
+                            getOptionLabel={(item_id) => _.find((productContent?.content ?? []), { id: parseInt(item_id) })?.product_name}
                             defaultValue={item.list}
                             value={item.list}
                             onChange={(e, value) => {
@@ -370,6 +368,18 @@ const Main = () => {
             <Grid item xs={12} md={4}>
               <Card sx={{ p: 3 }}>
                 <Stack spacing={1}>
+                  <div>
+                    1. 아래 추가할 섹션을 선택합니다.
+                  </div>
+                  <div>
+                    2. 아래 '추가' 버튼을 클릭하여 섹션을 추가합니다.
+                  </div>
+                  <div>
+                    3. 왼쪽의 섹션을 이용하여 메인페이지를 꾸밉니다.
+                  </div>
+                  <div>
+                    4. 아래 '저장' 버튼을 클릭하여 저장합니다.
+                  </div>
                   <Typography variant="subtitle2" sx={{ color: 'text.secondary' }}>
                     추가할 섹션
                   </Typography>
@@ -377,7 +387,7 @@ const Main = () => {
                     setSectionType(e.target.value)
                   }}>
                     <MenuItem value={'banner'}>배너슬라이드 ({hasTypeCount(contentList, 'banner')})</MenuItem>
-                    <MenuItem value={'items'}>상품슬라이드 ({hasTypeCount(contentList, 'items')})</MenuItem>
+                    <MenuItem value={'items'} disabled={!productContent?.total > 0}>상품슬라이드 ({hasTypeCount(contentList, 'items')}) {(!productContent?.total > 0) ? ' (상품 생성 후 가능합니다.)' : ''}</MenuItem>
                     <MenuItem value={'editor'}>에디터 ({hasTypeCount(contentList, 'editor')})</MenuItem>
                   </Select>
                   <Button variant="contained"
@@ -396,7 +406,7 @@ const Main = () => {
                 <Stack spacing={1}>
                   <Button variant="contained" style={{
                     height: '48px', width: '120px', marginLeft: 'auto'
-                  }} onClick={()=>{
+                  }} onClick={() => {
                     setModal({
                       func: () => { onSave() },
                       icon: 'material-symbols:edit-outline',

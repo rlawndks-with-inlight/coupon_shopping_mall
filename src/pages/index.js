@@ -20,13 +20,22 @@ import {
   HomeHugePackElements,
 } from 'src/views/home';
 import HeadContent from 'src/components/head';
+import { useEffect } from 'react';
+import { useRouter } from 'next/router';
 
 const HomePage = ({
   //dns_data
 }) => {
+
+  const router = useRouter();
   const theme = useTheme();
 
   const { scrollYProgress } = useScroll();
+  useEffect(() => {
+    if (window.location.host.split(':')[0] != process.env.MAIN_FRONT_URL) {
+      router.push('/shop')
+    }
+  }, [])
 
   const scaleX = useSpring(scrollYProgress, {
     stiffness: 100,
@@ -49,7 +58,13 @@ const HomePage = ({
       }}
     />
   );
-
+  if (window.location.host.split(':')[0] != process.env.MAIN_FRONT_URL) {
+    return (
+      <>
+      
+      </>
+    )
+  }
   return (
     <>
       {/* <HeadContent dns_data={dns_data} /> */}

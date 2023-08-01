@@ -49,5 +49,6 @@ module.exports = {
     IS_TEST: process.env.IS_TEST,
     TEST_SHOP_DEMO: process.env.TEST_SHOP_DEMO,
     TEST_BLOG_DEMO: process.env.TEST_BLOG_DEMO,
+    MAIN_FRONT_URL: process.env.MAIN_FRONT_URL,
   }
 }

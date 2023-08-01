@@ -7,8 +7,11 @@ import { useRouter } from "next/router";
 import { deleteBrandByManager, getBrandsByManager, getProductsByManager } from "src/utils/api-manager";
 import { LazyLoadImage } from "react-lazy-load-image-component";
 import { useModal } from "src/components/dialog/ModalProvider";
+import { useSettingsContext } from "src/components/settings";
+import { useAuthContext } from "src/layouts/manager/auth/useAuthContext";
 const BrandList = () => {
   const { setModal } = useModal()
+  const { user } = useAuthContext();
   const defaultColumns = [
     {
       id: 'name',
@@ -84,8 +87,8 @@ const BrandList = () => {
                 router.push(`default/${row?.id}`)
               }} />
             </IconButton>
-            <IconButton onClick={()=>{
-               setModal({
+            <IconButton onClick={() => {
+              setModal({
                 func: () => { deleteBrand(row?.id) },
                 icon: 'material-symbols:delete-outline',
                 title: '정말 삭제하시겠습니까?'
@@ -134,6 +137,7 @@ const BrandList = () => {
       onChangePage(searchObj);
     }
   }
+  console.log(user)
   return (
     <>
       <Stack spacing={3}>
@@ -143,7 +147,7 @@ const BrandList = () => {
             columns={columns}
             searchObj={searchObj}
             onChangePage={onChangePage}
-            add_button_text={''}
+            add_button_text={user?.level >= 50 ? '브랜드 추가' : ''}
           />
         </Card>
       </Stack>

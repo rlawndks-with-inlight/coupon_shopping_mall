@@ -100,7 +100,6 @@ const ItemCard = () => {
   }
 
   const onSave = async () => {
-    console.log(itemThemeCss)
     let brand_data = item;
     brand_data['theme_css']['shop_item_card_css'] = itemThemeCss;
     let result = await updateBrandByManager({ ...brand_data, id: themeDnsData?.id })

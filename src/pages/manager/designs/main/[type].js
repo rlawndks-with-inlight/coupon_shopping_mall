@@ -16,6 +16,7 @@ import CustomBreadcrumbs from "src/components/custom-breadcrumbs/CustomBreadcrum
 import { getBrandByManager, getProductsByManager, updateBrandByManager, uploadFileByManager, uploadsFileByManager } from "src/utils/api-manager";
 import { toast } from "react-hot-toast";
 import { useModal } from "src/components/dialog/ModalProvider";
+import { useAuthContext } from "src/layouts/manager/auth/useAuthContext";
 const ReactQuill = dynamic(() => import('react-quill'), {
   ssr: false,
   loading: () => <p>Loading ...</p>,
@@ -60,6 +61,7 @@ const curTypeNum = (list, type_name, idx) => {
 const Main = () => {
   const { setModal } = useModal()
   const { themeMode, themeDnsData } = useSettingsContext();
+  const { user } = useAuthContext();
 
   const router = useRouter();
 
@@ -232,7 +234,7 @@ const Main = () => {
       {!loading &&
         <>
           <Grid container spacing={3}>
-            <Grid item xs={12} md={window.location.host.split(':')[0] == process.env.MAIN_FRONT_URL ? 8 : 12}>
+            <Grid item xs={12} md={(window.location.host.split(':')[0] == process.env.MAIN_FRONT_URL || user?.level >= 50) ? 8 : 12}>
               <Card sx={{ p: 3, minHeight: '100%' }}>
                 <Stack spacing={1}>
                   {contentList.length == 0 &&
@@ -365,7 +367,7 @@ const Main = () => {
                 </Stack>
               </Card>
             </Grid>
-            {window.location.host.split(':')[0] == process.env.MAIN_FRONT_URL &&
+            {(window.location.host.split(':')[0] == process.env.MAIN_FRONT_URL || user?.level >= 50) &&
               <>
                 <Grid item xs={12} md={4}>
                   <Card sx={{ p: 3 }}>

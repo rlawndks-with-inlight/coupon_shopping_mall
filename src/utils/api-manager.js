@@ -509,6 +509,38 @@ export const deleteProductReviewByManager = (params) => { //관리자 상품리�
   return deleteItem(`/api/v1/manager/product-reviews/${id}`);
 }
 
+export const getPopupsByManager = (params) => { //관리자 팝업 목록 출력
+  const { page, page_size, s_dt, e_dt, search, product_id } = params;
+  let query = {
+    page, page_size, s_dt, e_dt, search, product_id
+  }
+  if (!query['s_dt']) delete query['s_dt'];
+  if (!query['e_dt']) delete query['e_dt'];
+  if (!query['search']) delete query['search'];
+  return get(`/api/v1/manager/popups`, query);
+}
+export const addPopupByManager = (params) => { //관리자 팝업 추가
+  const { popup_title, popup_content, open_s_dt, open_e_dt } = params;
+  let obj = {
+    popup_title, popup_content, open_s_dt, open_e_dt
+  }
+  return post(`/api/v1/manager/popups`, obj);
+}
+export const updatePopupByManager = (params) => { //관리자 팝업 수정
+  const { popup_title, popup_content, open_s_dt, open_e_dt, id } = params;
+  let obj = {
+    popup_title, popup_content, open_s_dt, open_e_dt
+  }
+  return put(`/api/v1/manager/popups/${id}`, obj);
+}
+export const getPopupByManager = (params) => { //관리자 팝업 단일 출력
+  const { id } = params;
+  return get(`/api/v1/manager/popups/${id}`);
+}
+export const deletePopupByManager = (params) => { //관리자 팝업 삭제
+  const { id } = params;
+  return deleteItem(`/api/v1/manager/popups/${id}`);
+}
 
 export const uploadFileByManager = (params) => {// 관리자 파일 단일 업로드
   const { formData } = params;

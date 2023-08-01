@@ -64,24 +64,24 @@ export const navConfig = () => {
     setIsSettingComplete(true);
   }
   const isUsePostCategory = () => {
-    if (window.location.host.split(':')[0] == process.env.MAIN_FRONT_URL) {
+    if (window.location.host.split(':')[0] == process.env.MAIN_FRONT_URL || user?.level >= 50) {
       return true;
     }
     return false
   }
   const isUseMainCustom = () => {
-    if (window.location.host.split(':')[0] == process.env.MAIN_FRONT_URL) {
+    if (window.location.host.split(':')[0] == process.env.MAIN_FRONT_URL || user?.level >= 50) {
       return true;
     }
     return false
   }
   const isUseItemCardCustom = () => {
-    if (window.location.host.split(':')[0] == process.env.MAIN_FRONT_URL) {
+    if (window.location.host.split(':')[0] == process.env.MAIN_FRONT_URL || user?.level >= 50) {
       return true;
     }
     return false
   }
-  if(!isSettingComplete){
+  if (!isSettingComplete) {
     return []
   }
   return [

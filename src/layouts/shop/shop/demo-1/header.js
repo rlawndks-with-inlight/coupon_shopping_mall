@@ -3,7 +3,7 @@ import styled from "styled-components"
 import { IconButton, TextField, InputAdornment, Drawer } from "@mui/material"
 import { forwardRef, useEffect, useRef, useState } from "react"
 import { Icon } from "@iconify/react"
-import { Row } from 'src/components/elements/styled-components'
+import { Row, themeObj } from 'src/components/elements/styled-components'
 import { useTheme } from '@mui/material/styles';
 import { useSettingsContext } from "src/components/settings"
 import { test_categories } from "src/data/test-data"
@@ -15,7 +15,11 @@ import { useAuthContext } from "src/layouts/manager/auth/useAuthContext"
 import { logoSrc } from "src/data/data"
 import { getShopCategoriesByUser } from "src/utils/api-shop"
 import $ from 'jquery'
-
+import dynamic from 'next/dynamic';
+const ReactQuill = dynamic(() => import('react-quill'), {
+  ssr: false,
+  loading: () => <p>Loading ...</p>,
+})
 const Wrappers = styled.header`
 width: 100%;
 position: fixed;
@@ -88,7 +92,7 @@ align-items:center;
 }
 `
 const PaddingTop = styled.div`
-margin-top:${props=>props.pcHeight}px;
+margin-top:${props => props.pcHeight}px;
 @media (max-width:1000px) {
   margin-top:99px;
 }
@@ -152,6 +156,29 @@ flex-direction:column;
   display: flex;
 }
 `
+const PopupContainer = styled.div`
+position:fixed;
+top:16px;
+left:0px;
+display:flex;
+flex-wrap:wrap;
+`
+const PopupContent = styled.div`
+background:#fff;
+margin-right:16px;
+margin-bottom:16px;
+padding:24px 24px 48px 24px;
+box-shadow:0px 4px 4px #00000029;
+border-radius:8px;
+width:300px;
+min-height:200px;
+position:relative;
+opacity:0.95;
+z-index:10;
+@media screen and (max-width:400px) { 
+width:78vw;
+}
+`
 const authList = [
   {
     name: '장바구니',
@@ -188,7 +215,7 @@ const Header = () => {
 
   const router = useRouter();
   const theme = useTheme();
-  const { themeMode, onToggleMode, onChangeCategoryList, themeDnsData, onChangePopupList, onChangePostCategoryList } = useSettingsContext();
+  const { themeMode, onToggleMode, onChangeCategoryList, themeDnsData, themePopupList, onChangePopupList, onChangePostCategoryList } = useSettingsContext();
   const { user, logout } = useAuthContext();
 
   const headerWrappersRef = useRef();
@@ -209,9 +236,9 @@ const Header = () => {
   const [loading, setLoading] = useState(true);
   useEffect(() => {
   }, [user])
-  useEffect(()=>{
-    setHeaderHeight(headerWrappersRef.current?.clientHeight??130);
-  },[headerWrappersRef.current, categories])
+  useEffect(() => {
+    setHeaderHeight(headerWrappersRef.current?.clientHeight ?? 130);
+  }, [headerWrappersRef.current, categories])
   useEffect(() => {
     settingHeader();
   }, [])
@@ -221,11 +248,12 @@ const Header = () => {
       brand_id: themeDnsData?.id,
       root_id: themeDnsData?.root_id
     });
-    onChangeCategoryList(data?.product_categories??[]);
-    onChangePopupList(data?.popups??[]);
-    onChangePostCategoryList(data?.post_categories??[]);
-    setPostCategories(data?.post_categories??[]);
-    setCategories(data?.product_categories??[]);
+    onChangeCategoryList(data?.product_categories ?? []);
+    console.log(data?.popups ?? [])
+    onChangePopupList(data?.popups ?? []);
+    onChangePostCategoryList(data?.post_categories ?? []);
+    setPostCategories(data?.post_categories ?? []);
+    setCategories(data?.product_categories ?? []);
     let hover_list = getAllIdsWithParents(data?.product_categories);
     let hover_items = {};
     for (var i = 0; i < hover_list.length; i++) {
@@ -316,6 +344,7 @@ const Header = () => {
   }
   return (
     <>
+     
       <DialogSearch
         open={dialogOpenObj.search}
         handleClose={handleDialogClose}
@@ -326,10 +355,38 @@ const Header = () => {
         </>
         :
         <>
+         {themePopupList.length > 0 ?
+        <>
+          <PopupContainer>
+            {themePopupList && themePopupList.map((item, idx) => (
+              <>
+                <PopupContent>
+                  <Icon icon='ion:close' style={{ color: `${themeMode == 'dark' ? '#222222' : '#fff'}`, position: 'absolute', right: '8px', top: '8px', fontSize: themeObj.font_size.size8, cursor: 'pointer' }} onClick={() => { }} />
+                  <ReactQuill
+                    className='none-padding'
+                    value={item?.popup_content ?? `<body></body>`}
+                    readOnly={true}
+                    theme={"bubble"}
+                    bounds={'.app'}
+                  />
+                  <div style={{ display: 'flex', alignItems: 'center', position: 'absolute', left: '8px', bottom: '8px' }}>
+                    <Icon icon='ion:close' style={{ color: `${themeMode == 'dark' ? '#222222' : '#fff'}`, fontSize: themeObj.font_size.size8, marginRight: '4px', cursor: 'pointer' }} onClick={() => { }} />
+                    <div style={{ fontSize: themeObj.font_size.size8, }}>오늘 하루 보지않기</div>
+                  </div>
+                </PopupContent>
+
+              </>
+            ))}
+          </PopupContainer>
+
+        </>
+        :
+        <>
+        </>}
           <Wrappers style={{
             background: `${themeMode == 'dark' ? '#000' : '#fff'}`
           }}
-          ref={headerWrappersRef}
+            ref={headerWrappersRef}
           >
             <TopMenuContainer>
               <img src={logoSrc()} style={{ height: '40px', width: 'auto', cursor: 'pointer' }}
@@ -517,7 +574,7 @@ const Header = () => {
               <NoneShowMobile
                 style={{
                   width: '100%',
-                  flexWrap:'wrap'
+                  flexWrap: 'wrap'
                 }}
                 className="none-scroll pc-menu-content"
               >
@@ -564,7 +621,7 @@ const Header = () => {
                     </div>
                   </>
                 ))}
-                <div style={{ position: 'relative' }} className={`menu-service`}>
+                <div style={{ position: 'relative', marginLeft: 'auto' }} className={`menu-service`}>
                   <CategoryMenu borderColor={themeMode == 'dark' ? '#fff' : '#000'} >
                     <div>고객센터</div>
                   </CategoryMenu>
@@ -613,7 +670,7 @@ const Header = () => {
                     </CategoryMenu>
                   </>
                 ))}
-                <CategoryMenu borderColor={themeMode == 'dark' ? '#fff' : '#000'} onClick={()=>{
+                <CategoryMenu borderColor={themeMode == 'dark' ? '#fff' : '#000'} onClick={() => {
 
                 }}>고객센터</CategoryMenu>
               </ShowMobile>
@@ -625,7 +682,7 @@ const Header = () => {
             <div style={{ borderBottom: `1px solid ${theme.palette.grey[300]}` }} />
           </Wrappers>
         </>}
-      <PaddingTop pcHeight={headerHeight}/>
+      <PaddingTop pcHeight={headerHeight} />
       <Drawer
         anchor={'left'}
         open={sideMenuOpen}

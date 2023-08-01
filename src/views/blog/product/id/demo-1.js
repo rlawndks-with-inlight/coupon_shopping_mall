@@ -9,9 +9,8 @@ import _ from 'lodash'
 import { commarNumber } from 'src/utils/function';
 import Slider from 'react-slick';
 import { useTheme } from '@emotion/react';
-import dynamic from 'next/dynamic';
 import { logoSrc } from 'src/data/data';
-
+import dynamic from 'next/dynamic';
 const ReactQuill = dynamic(() => import('react-quill'), {
   ssr: false,
   loading: () => <p>Loading ...</p>,

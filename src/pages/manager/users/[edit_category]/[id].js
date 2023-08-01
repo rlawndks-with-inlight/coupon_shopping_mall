@@ -8,12 +8,12 @@ import { Upload } from "src/components/upload";
 import ManagerLayout from "src/layouts/manager/ManagerLayout";
 import { base64toFile, getAllIdsWithParents } from "src/utils/function";
 import styled from "styled-components";
-import dynamic from "next/dynamic";
 import { react_quill_data } from "src/data/manager-data";
 import { axiosIns } from "src/utils/axios";
 import { addUserByManager, getUserByManager, updateUserByManager, uploadFileByManager } from "src/utils/api-manager";
 import { toast } from "react-hot-toast";
 import { useModal } from "src/components/dialog/ModalProvider";
+import dynamic from "next/dynamic";
 const ReactQuill = dynamic(() => import('react-quill'), {
   ssr: false,
   loading: () => <p>Loading ...</p>,

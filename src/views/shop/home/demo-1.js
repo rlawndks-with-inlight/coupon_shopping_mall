@@ -3,7 +3,6 @@ import { useEffect, useState } from 'react'
 import Slider from 'react-slick'
 import { test_items } from 'src/data/test-data'
 import styled from 'styled-components'
-import dynamic from 'next/dynamic'
 import { Row, themeObj } from 'src/components/elements/styled-components'
 import { Item } from 'src/components/elements/shop/common'
 import { Skeleton, Stack } from '@mui/material'
@@ -11,6 +10,7 @@ import { useSettingsContext } from 'src/components/settings'
 import { getProductsByUser } from 'src/utils/api-shop'
 import _ from 'lodash'
 import { getLocalStorage } from 'src/utils/local-storage'
+import dynamic from 'next/dynamic'
 const ReactQuill = dynamic(() => import('react-quill'), {
   ssr: false,
   loading: () => <p>Loading ...</p>,
@@ -145,24 +145,24 @@ const returnHomeContent = (column, data, func) => {
     </>
   }
   if (type == 'items') {
-    const getSlideToShow = () =>{
-      if(window.innerWidth > 1350){
-        if(themeDnsData?.theme_css?.shop_item_card_css?.container?.is_vertical == 1){
+    const getSlideToShow = () => {
+      if (window.innerWidth > 1350) {
+        if (themeDnsData?.theme_css?.shop_item_card_css?.container?.is_vertical == 1) {
           return 3
-        }else{
+        } else {
           return 4
         }
       }
-      if(window.innerWidth > 1000){
-        if(themeDnsData?.theme_css?.shop_item_card_css?.container?.is_vertical == 1){
+      if (window.innerWidth > 1000) {
+        if (themeDnsData?.theme_css?.shop_item_card_css?.container?.is_vertical == 1) {
           return 2
-        }else{
+        } else {
           return 3
         }
       }
-      if(themeDnsData?.theme_css?.shop_item_card_css?.container?.is_vertical == 1){
+      if (themeDnsData?.theme_css?.shop_item_card_css?.container?.is_vertical == 1) {
         return 1
-      }else{
+      } else {
         return 2
       }
     }
@@ -194,7 +194,7 @@ const returnHomeContent = (column, data, func) => {
         <Slider {...slide_setting} className='margin-slide'>
           {column?.list && column?.list.map((item, idx) => (
             <>
-              <Item item={item} router={router} theme_css={themeDnsData?.theme_css?.shop_item_card_css}  />
+              <Item item={item} router={router} theme_css={themeDnsData?.theme_css?.shop_item_card_css} />
             </>
           ))}
         </Slider>
@@ -253,7 +253,7 @@ const Demo1 = (props) => {
       column,
       {
         windowWidth: window.innerWidth,
-        themeDnsData:themeDnsData
+        themeDnsData: themeDnsData
       },
       {
         router

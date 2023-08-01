@@ -3,11 +3,11 @@ import { useEffect, useState } from 'react'
 import Slider from 'react-slick'
 import { test_items } from 'src/data/test-data'
 import styled from 'styled-components'
-import dynamic from 'next/dynamic'
 import { Row, themeObj } from 'src/components/elements/styled-components'
 import { Item, Items } from 'src/components/elements/shop/common'
 import { Skeleton, Stack } from '@mui/material'
 import { SubTitle, Title } from 'src/components/elements/shop/demo-3'
+import dynamic from 'next/dynamic'
 const ReactQuill = dynamic(() => import('react-quill'), {
   ssr: false,
   loading: () => <p>Loading ...</p>,

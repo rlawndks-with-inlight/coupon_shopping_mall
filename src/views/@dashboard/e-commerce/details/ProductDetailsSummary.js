@@ -36,7 +36,7 @@ ProductDetailsSummary.propTypes = {
   cart: PropTypes.array,
   onAddCart: PropTypes.func,
   product: PropTypes.object,
-  onGotoStep: PropTypes.func,
+  onGotoStep: PropTypes.func, 
 };
 
 export default function ProductDetailsSummary({ cart, product, onAddCart, onGotoStep, ...other }) {

@@ -108,7 +108,6 @@ const Theme = () => { //디자인 미리보기
             value={selectTemplateType}
             onChange={(e) => setSelectTemplateType(e.target.value)}
             sx={{ minWidth: '130px', marginLeft: 'auto' }}
-
           >
             <MenuItem value={0}>전체</MenuItem>
             <MenuItem value={1}>일반쇼핑몰</MenuItem>

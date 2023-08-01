@@ -10,6 +10,7 @@ export const defaultSettings = {
   themeStretch: true,
   themeDnsData: {},// dns정보
   themeCartData: [],// 장바구니
+  themeWishData: [],// 찜목록
   themeCurrentPageObj: {}, // 현재페이지 불러올 내용
   themeAuth: {},
   themeCategoryList: [], // 상품 카테고리

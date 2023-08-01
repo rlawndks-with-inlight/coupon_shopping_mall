@@ -8,6 +8,7 @@ import { IconButton } from "@mui/material";
 import { Icon } from "@iconify/react";
 import Slider from "react-slick";
 import { useSettingsContext } from "src/components/settings";
+import _ from "lodash";
 
 const ItemName = styled.div`
 font-weight: bold;
@@ -46,6 +47,7 @@ flex-direction: column;
 
 export const Item = (props) => {
 
+  const { themeWishData, onChangeWishData } = useSettingsContext();
   const { item, router, theme_css } = props;
   const [itemThemeCss, setItemThemeCss] = useState(itemThemeCssDefaultSetting);
   useEffect(() => {
@@ -53,6 +55,16 @@ export const Item = (props) => {
       setItemThemeCss(theme_css)
     }
   }, [theme_css])
+  const onClickHeart = () => {
+    let wish_data = [...themeWishData];
+    let find_index = _.indexOf(wish_data, item?.id);
+    if (find_index >= 0) {
+      wish_data.splice(find_index, 1);
+    }else {
+      wish_data.push(item?.id);
+    }
+    onChangeWishData(wish_data)
+  }
   return (
     <>
       <ItemContainer style={{
@@ -65,8 +77,10 @@ export const Item = (props) => {
         boxShadow: `${itemThemeCss.shadow.x}px ${itemThemeCss.shadow.y * (-1)}px ${itemThemeCss.shadow.width}px ${itemThemeCss.shadow.color}${itemThemeCss.shadow.darkness > 9 ? '' : '0'}${itemThemeCss.shadow.darkness}`
       }}
       >
-        <IconButton sx={{ position: 'absolute', right: '2px', top: '2px' }}>
-          <Icon icon={'basil:heart-outline'} fontSize={'2rem'} />
+        <IconButton sx={{ position: 'absolute', right: '2px', top: '2px' }} onClick={onClickHeart}>
+          <Icon icon={themeWishData.includes(item?.id) ? 'mdi:heart' : 'mdi:heart-outline'} fontSize={'2rem'} style={{
+            color: `${themeWishData.includes(item?.id) ? 'red' : ''}`
+          }} />
         </IconButton>
         <ItemImg src={item.product_img} style={{
           width: `${itemThemeCss.container.is_vertical == 0 ? '100%' : '50%'}`,
@@ -133,7 +147,7 @@ width:${props => props.theme_css?.container?.is_vertical == 1 ? '32%' : '23.5%'}
 }
 `
 export const Items = (props) => {
-  const {themeDnsData} = useSettingsContext();
+  const { themeDnsData } = useSettingsContext();
   const { items, router, theme_css, is_slide } = props;
   const [itemThemeCss, setItemThemeCss] = useState(itemThemeCssDefaultSetting);
   useEffect(() => {
@@ -141,25 +155,24 @@ export const Items = (props) => {
       setItemThemeCss(Object.assign(itemThemeCss, themeDnsData?.theme_css?.shop_item_card_css));
     }
   }, [themeDnsData])
-  const getSlideToShow = () =>{
-    console.log(itemThemeCss)
-    if(window.innerWidth > 1350){
-      if(itemThemeCss?.container?.is_vertical == 1){
+  const getSlideToShow = () => {
+    if (window.innerWidth > 1350) {
+      if (itemThemeCss?.container?.is_vertical == 1) {
         return 3
-      }else{
+      } else {
         return 4
       }
     }
-    if(window.innerWidth > 1000){
-      if(itemThemeCss?.container?.is_vertical == 1){
+    if (window.innerWidth > 1000) {
+      if (itemThemeCss?.container?.is_vertical == 1) {
         return 2
-      }else{
+      } else {
         return 3
       }
     }
-    if(itemThemeCss?.container?.is_vertical == 1){
+    if (itemThemeCss?.container?.is_vertical == 1) {
       return 1
-    }else{
+    } else {
       return 2
     }
   }

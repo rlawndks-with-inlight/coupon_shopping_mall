@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { sentenceCase } from 'change-case';
 // next
 import { useRouter } from 'next/router';
@@ -17,6 +17,8 @@ import {
   Typography,
   IconButton,
   Select,
+  FormControl,
+  InputLabel,
 } from '@mui/material';
 // routes
 // utils
@@ -29,6 +31,8 @@ import { IncrementerButton } from 'src/components/custom-input';
 import { ColorSinglePicker } from 'src/components/color-utils';
 import { commarNumber } from 'src/utils/function';
 import { themeObj } from 'src/components/elements/styled-components';
+import { useSettingsContext } from 'src/components/settings';
+import _ from 'lodash';
 
 // ----------------------------------------------------------------------
 
@@ -40,8 +44,9 @@ ProductDetailsSummary.propTypes = {
 };
 
 export default function ProductDetailsSummary({ product, onAddCart, onGotoStep, ...other }) {
+  const {themeCartData, onChangeCartData} = useSettingsContext();
+  const [selectProduct, setSelectProduct] = useState({id:product?.id, count: 1, select_option_obj:{}});
   const cart = []
-  const { push } = useRouter();
 
   const {
     id,
@@ -61,65 +66,33 @@ export default function ProductDetailsSummary({ product, onAddCart, onGotoStep, 
     inventoryType,
     inventory,
     product_name,
-    product_comment
+    product_comment,
+    groups = []
   } = product;
-  const alreadyProduct = cart.map((item) => item.id).includes(id);
 
   const isMaxQuantity =
     cart.filter((item) => item.id === id).map((item) => item.quantity)[0] >= available;
 
-  const defaultValues = {
-    id,
-    name,
-    cover,
-    available,
-    price,
-    colors: colors[0],
-    size: sizes[4],
-    quantity: available < 1 ? 0 : 1,
-  };
-  const methods = useForm({
-    defaultValues,
-  });
-
-  const { reset, watch, control, setValue, handleSubmit } = methods;
-
-  const values = watch();
-
-  useEffect(() => {
-    if (product) {
-      reset(defaultValues);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [product]);
-
-  const onSubmit = async (data) => {
-    try {
-      if (!alreadyProduct) {
-        onAddCart({
-          ...data,
-          colors: [values.colors],
-          subtotal: data.price * data.quantity,
-        });
-      }
-      onGotoStep(0);
-    } catch (error) {
-      console.error(error);
-    }
-  };
-
   const handleAddCart = async () => {
-    try {
-      onAddCart({
-        ...values,
-        colors: [values.colors],
-        subtotal: values.price * values.quantity,
-      });
-    } catch (error) {
-      console.error(error);
-    }
+      let cart_data = themeCartData;
+      console.log(cart_data)
+      let find_index = _.findIndex(cart_data, {id:selectProduct.id, select_option_obj:selectProduct.select_option_obj});
+      if(find_index >= 0){
+        cart_data[find_index].count = cart_data[find_index].count + selectProduct.count
+      }else{
+        cart_data.push(selectProduct);
+      }
+      onChangeCartData(cart_data);
   };
-
+  const onSelectOption = (group_id, option_id) => {
+    setSelectProduct({
+      ...selectProduct,
+      ['select_option_obj']:{
+        ...selectProduct.select_option_obj,
+        [`${group_id}`]: option_id
+      }
+    })
+  }
   return (
     <form>
       <Stack
@@ -162,41 +135,42 @@ export default function ProductDetailsSummary({ product, onAddCart, onGotoStep, 
                 {fCurrency(product_price)}
               </Box>
             )}
-
             {commarNumber(product_sale_price)} 원
           </Typography>
         </Stack>
 
         <Divider sx={{ borderStyle: 'dashed' }} />
+        {groups.map((group) => (
+          <>
+            <Stack direction="row" justifyContent="space-between">
+              <Typography variant="subtitle2" sx={{ height: 40, lineHeight: '40px', flexGrow: 1 }}>
+                {group?.group_name}
+              </Typography>
+                <Select
+                  name="size"
+                  size="small"
+                  sx={{
+                    minWidth: 96,
+                    '& .MuiFormHelperText-root': {
+                      mx: 0,
+                      mt: 1,
+                      textAlign: 'right',
+                    },
+                  }}
+                  onChange={(e)=>{
+                    onSelectOption(group?.id, e.target.value)
+                  }}
+                >
+                  {group?.options && group?.options.map((option) => (
+                    <MenuItem key={option?.option_name} value={option?.id}>
+                      {option?.option_name}
+                    </MenuItem>
+                  ))}
+                </Select>
+            </Stack>
+          </>
+        ))}
 
-        <Stack direction="row" justifyContent="space-between">
-          <Typography variant="subtitle2" sx={{ height: 40, lineHeight: '40px', flexGrow: 1 }}>
-            사이즈
-          </Typography>
-          <Select
-            name="size"
-            size="small"
-            helperText={
-              <Link underline="always" color="inherit">
-                Size Chart
-              </Link>
-            }
-            sx={{
-              maxWidth: 96,
-              '& .MuiFormHelperText-root': {
-                mx: 0,
-                mt: 1,
-                textAlign: 'right',
-              },
-            }}
-          >
-            {['라지', '스몰'].map((size) => (
-              <MenuItem key={size} value={size}>
-                {size}
-              </MenuItem>
-            ))}
-          </Select>
-        </Stack>
 
         <Stack direction="row" justifyContent="space-between">
           <Typography variant="subtitle2" sx={{ height: 36, lineHeight: '36px' }}>
@@ -206,11 +180,21 @@ export default function ProductDetailsSummary({ product, onAddCart, onGotoStep, 
           <Stack spacing={1}>
             <IncrementerButton
               name="quantity"
-              quantity={values.quantity}
-              disabledDecrease={values.quantity <= 1}
-              disabledIncrease={values.quantity >= available}
-              onIncrease={() => setValue('quantity', values.quantity + 1)}
-              onDecrease={() => setValue('quantity', values.quantity - 1)}
+              quantity={selectProduct.count}
+              disabledDecrease={selectProduct.count <= 1}
+              disabledIncrease={selectProduct.count >= available}
+              onIncrease={() =>  {
+                setSelectProduct({
+                  ...selectProduct,
+                  count: selectProduct.count + 1
+                })
+              }}
+              onDecrease={() =>  {
+                setSelectProduct({
+                  ...selectProduct,
+                  count: selectProduct.count - 1
+                })
+              }}
             />
 
             <Typography
@@ -239,7 +223,7 @@ export default function ProductDetailsSummary({ product, onAddCart, onGotoStep, 
             장바구니
           </Button>
 
-          <Button fullWidth size="large" type="submit" variant="contained">
+          <Button fullWidth size="large" variant="contained">
             바로구매
           </Button>
         </Stack>

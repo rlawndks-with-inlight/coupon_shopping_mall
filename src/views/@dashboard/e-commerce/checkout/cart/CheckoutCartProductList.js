@@ -12,6 +12,7 @@ import CheckoutCartProduct from './CheckoutCartProduct';
 const TABLE_HEAD = [
   { id: 'product', label: '상품' },
   { id: 'price', label: '가격' },
+  { id: 'option', label: '옵션' },
   { id: 'quantity', label: '수량' },
   { id: 'totalPrice', label: '총액', align: 'right' },
   { id: '' },

@@ -98,7 +98,6 @@ const PopupEdit = () => {
                       value={item.open_s_dt}
                       format='yyyy-MM-dd'
                       onChange={(newValue) => {
-                        console.log(typeof newValue)
                         setItem(
                           {
                             ...item,

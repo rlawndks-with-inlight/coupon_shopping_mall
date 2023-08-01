@@ -34,6 +34,8 @@ const initialState = {
   onChangeDnsData: () => { },
   // cart data
   onChangeCartData: () => { },
+  // wish data
+  onChangeWishData: () => { },
   // current page
   onChangeCurrentPageObj: () => { },
   //auth
@@ -71,6 +73,7 @@ export function SettingsProvider({ children }) {
   const [themeColorPresets, setThemeColorPresets] = useState(defaultSettings.themeColorPresets);
   const [themeDnsData, setThemeDnsData] = useState(defaultSettings.themeDnsData);
   const [themeCartData, setThemeCartData] = useState(defaultSettings.themeCartData);
+  const [themeWishData, setThemeWishData] = useState(defaultSettings.themeWishData);
   const [themeCurrentPageObj, setThemeCurrentPageObj] = useState(defaultSettings.themeCurrentPageObj);
   const [themeAuth, setThemeAuth] = useState(defaultSettings.themeAuth);
   const [themeCategoryList, setThemeCategoryList] = useState(defaultSettings.themeCategoryList);
@@ -95,6 +98,7 @@ export function SettingsProvider({ children }) {
       const colorPresets = getCookie('themeColorPresets') || defaultSettings.themeColorPresets;
       const currentPageObj = getCookie('themeCurrentPageObj') || defaultSettings.themeCurrentPageObj;
       const cartData = getCookie('themeCartData') || defaultSettings.themeCartData;
+      const wishData = getCookie('themeWishData') || defaultSettings.themeWishData;
       //const auth = getCookie('themeAuth') || defaultSettings.themeAuth;
       //const categoryList = getCookie('themeCategoryList') || defaultSettings.themeCategoryList;
       setThemeMode(mode);
@@ -105,6 +109,7 @@ export function SettingsProvider({ children }) {
       setThemeColorPresets(colorPresets);
       setThemeCurrentPageObj(currentPageObj);
       setThemeCartData(cartData);
+      setThemeWishData(wishData);
       getDnsData();
     }
   }, []);
@@ -213,6 +218,11 @@ export function SettingsProvider({ children }) {
     setThemeCartData(cart_data);
     setCookie('themeCartData', JSON.stringify(cart_data));
   }, [])
+   // wish data
+   const onChangeWishData = useCallback((wish_data) => {
+    setThemeWishData(wish_data);
+    setCookie('themeWishData', JSON.stringify(wish_data));
+  }, [])
   // current page
   const onChangeCurrentPageObj = useCallback((data) => {
     setThemeCurrentPageObj(data);
@@ -248,6 +258,7 @@ export function SettingsProvider({ children }) {
     setThemeColorPresets(defaultSettings.themeColorPresets);
     setThemeDnsData(defaultSettings.themeDnsData);
     setThemeCartData(defaultSettings.themeCartData);
+    setThemeWishData(defaultSettings.themeWishData);
     setThemeCurrentPageObj(defaultSettings.themeCurrentPageObj);
     setThemeAuth(defaultSettings.themeAuth);
     setThemeCategoryList(defaultSettings.themeCategoryList);
@@ -261,6 +272,7 @@ export function SettingsProvider({ children }) {
     removeCookie('themeColorPresets');
     removeCookie('themeDnsData');
     removeCookie('themeCartData');
+    removeCookie('themeWishData');
     removeCookie('themeCurrentPageObj');
     removeCookie('themeAuth');
     removeCookie('themeCategoryList');
@@ -303,6 +315,9 @@ export function SettingsProvider({ children }) {
       // cart data
       themeCartData,
       onChangeCartData,
+      // cart data
+      themeWishData,
+      onChangeWishData,
       //current page
       themeCurrentPageObj,
       onChangeCurrentPageObj,
@@ -347,6 +362,9 @@ export function SettingsProvider({ children }) {
       // cart data
       themeCartData,
       onChangeCartData,
+      // wish data
+      themeWishData,
+      onChangeWishData,
       //current page
       themeCurrentPageObj,
       onChangeCurrentPageObj,

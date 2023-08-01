@@ -84,7 +84,6 @@ const DefaultSetting = () => {
     return obj;
   }
   const settingPage = async () => {
-    console.log(router.query?.brand_id)
     if (router.query?.brand_id != 'add') {
       let brand_data = await getBrandByManager({
         id: router.query.brand_id | themeDnsData?.id

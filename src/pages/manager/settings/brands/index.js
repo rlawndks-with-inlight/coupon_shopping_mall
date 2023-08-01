@@ -141,7 +141,6 @@ const BrandList = () => {
       onChangePage(searchObj);
     }
   }
-  console.log(user)
   return (
     <>
       <Stack spacing={3}>

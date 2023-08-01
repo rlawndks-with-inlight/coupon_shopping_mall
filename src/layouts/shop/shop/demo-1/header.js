@@ -162,6 +162,7 @@ top:16px;
 left:0px;
 display:flex;
 flex-wrap:wrap;
+z-index:9999;
 `
 const PopupContent = styled.div`
 background:#fff;
@@ -217,9 +218,7 @@ const Header = () => {
   const theme = useTheme();
   const { themeMode, onToggleMode, onChangeCategoryList, themeDnsData, themePopupList, onChangePopupList, onChangePostCategoryList } = useSettingsContext();
   const { user, logout } = useAuthContext();
-
   const headerWrappersRef = useRef();
-
   const [headerHeight, setHeaderHeight] = useState(130);
   const [keyword, setKeyword] = useState("");
   const onSearch = () => {
@@ -234,6 +233,7 @@ const Header = () => {
   const [popups, setPopups] = useState([]);
   const [postCategories, setPostCategories] = useState([]);
   const [loading, setLoading] = useState(true);
+
   useEffect(() => {
   }, [user])
   useEffect(() => {
@@ -249,8 +249,8 @@ const Header = () => {
       root_id: themeDnsData?.root_id
     });
     onChangeCategoryList(data?.product_categories ?? []);
-    console.log(data?.popups ?? [])
     onChangePopupList(data?.popups ?? []);
+    setPopups(data?.popups ?? [])
     onChangePostCategoryList(data?.post_categories ?? []);
     setPostCategories(data?.post_categories ?? []);
     setCategories(data?.product_categories ?? []);
@@ -355,13 +355,18 @@ const Header = () => {
         </>
         :
         <>
-         {themePopupList.length > 0 ?
+         {popups.length > 0 && router.asPath=='/shop/' ?
         <>
           <PopupContainer>
-            {themePopupList && themePopupList.map((item, idx) => (
+            {popups && popups.map((item, idx) => (
               <>
+              {}
                 <PopupContent>
-                  <Icon icon='ion:close' style={{ color: `${themeMode == 'dark' ? '#222222' : '#fff'}`, position: 'absolute', right: '8px', top: '8px', fontSize: themeObj.font_size.size8, cursor: 'pointer' }} onClick={() => { }} />
+                  <Icon icon='ion:close' style={{ color: `${themeMode == 'dark' ? '#fff' : '#222'}`, position: 'absolute', right: '8px', top: '8px', fontSize: themeObj.font_size.size8, cursor: 'pointer' }} onClick={() => {
+                    let popup_list = [...popups];
+                    popup_list.splice(idx, 1);
+                    setPopups(popup_list);
+                  }} />
                   <ReactQuill
                     className='none-padding'
                     value={item?.popup_content ?? `<body></body>`}
@@ -370,7 +375,7 @@ const Header = () => {
                     bounds={'.app'}
                   />
                   <div style={{ display: 'flex', alignItems: 'center', position: 'absolute', left: '8px', bottom: '8px' }}>
-                    <Icon icon='ion:close' style={{ color: `${themeMode == 'dark' ? '#222222' : '#fff'}`, fontSize: themeObj.font_size.size8, marginRight: '4px', cursor: 'pointer' }} onClick={() => { }} />
+                    <Icon icon='ion:close' style={{ color: `${themeMode == 'dark' ? '#fff' : '#222'}`, fontSize: themeObj.font_size.size8, marginRight: '4px', cursor: 'pointer' }} onClick={() => { }} />
                     <div style={{ fontSize: themeObj.font_size.size8, }}>오늘 하루 보지않기</div>
                   </div>
                 </PopupContent>

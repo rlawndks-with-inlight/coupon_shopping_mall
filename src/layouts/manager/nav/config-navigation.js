@@ -63,6 +63,27 @@ export const navConfig = () => {
     setPostCategoryList(category_list);
     setIsSettingComplete(true);
   }
+  const isUsePostCategory = () => {
+    if (window.location.host.split(':')[0] == process.env.MAIN_FRONT_URL) {
+      return true;
+    }
+    return false
+  }
+  const isUseMainCustom = () => {
+    if (window.location.host.split(':')[0] == process.env.MAIN_FRONT_URL) {
+      return true;
+    }
+    return false
+  }
+  const isUseItemCardCustom = () => {
+    if (window.location.host.split(':')[0] == process.env.MAIN_FRONT_URL) {
+      return true;
+    }
+    return false
+  }
+  if(!isSettingComplete){
+    return []
+  }
   return [
     {
       items: [
@@ -127,7 +148,7 @@ export const navConfig = () => {
           path: PATH_MANAGER.articles.root,
           icon: ICONS.calendar,
           children: [
-            { title: '게시판 카테고리 관리', path: PATH_MANAGER.articles.categories },
+            ...(isUsePostCategory() ? [{ title: '게시판 카테고리 관리', path: PATH_MANAGER.articles.categories }] : []),
             ...postCategoryList
           ],
         },
@@ -149,7 +170,7 @@ export const navConfig = () => {
                 { title: '에디터', path: PATH_MANAGER.designs.main + '/editor' },
               ],
             },
-            { title: '상품카드관리', path: PATH_MANAGER.designs.itemCard },
+            ...(isUsePostCategory() ? [{ title: '상품카드관리', path: PATH_MANAGER.designs.itemCard }] : []),
             { title: '팝업관리', path: PATH_MANAGER.designs.popup },
           ],
         },

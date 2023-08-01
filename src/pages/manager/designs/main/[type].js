@@ -232,7 +232,7 @@ const Main = () => {
       {!loading &&
         <>
           <Grid container spacing={3}>
-            <Grid item xs={12} md={8}>
+            <Grid item xs={12} md={window.location.host.split(':')[0] == process.env.MAIN_FRONT_URL ? 8 : 12}>
               <Card sx={{ p: 3, minHeight: '100%' }}>
                 <Stack spacing={1}>
                   {contentList.length == 0 &&
@@ -365,42 +365,46 @@ const Main = () => {
                 </Stack>
               </Card>
             </Grid>
-            <Grid item xs={12} md={4}>
-              <Card sx={{ p: 3 }}>
-                <Stack spacing={1}>
-                  <div>
-                    1. 아래 추가할 섹션을 선택합니다.
-                  </div>
-                  <div>
-                    2. 아래 '추가' 버튼을 클릭하여 섹션을 추가합니다.
-                  </div>
-                  <div>
-                    3. 왼쪽의 섹션을 이용하여 메인페이지를 꾸밉니다.
-                  </div>
-                  <div>
-                    4. 아래 '저장' 버튼을 클릭하여 저장합니다.
-                  </div>
-                  <Typography variant="subtitle2" sx={{ color: 'text.secondary' }}>
-                    추가할 섹션
-                  </Typography>
-                  <Select sx={{ width: '100%' }} value={sectionType} onChange={(e) => {
-                    setSectionType(e.target.value)
-                  }}>
-                    <MenuItem value={'banner'}>배너슬라이드 ({hasTypeCount(contentList, 'banner')})</MenuItem>
-                    <MenuItem value={'items'} disabled={!productContent?.total > 0}>상품슬라이드 ({hasTypeCount(contentList, 'items')}) {(!productContent?.total > 0) ? ' (상품 생성 후 가능합니다.)' : ''}</MenuItem>
-                    <MenuItem value={'editor'}>에디터 ({hasTypeCount(contentList, 'editor')})</MenuItem>
-                  </Select>
-                  <Button variant="contained"
-                    className="content-add"
-                    onClick={addSection}
-                    style={{
-                      height: '48px'
-                    }}>
-                    추가
-                  </Button>
-                </Stack>
-              </Card>
-            </Grid>
+            {window.location.host.split(':')[0] == process.env.MAIN_FRONT_URL &&
+              <>
+                <Grid item xs={12} md={4}>
+                  <Card sx={{ p: 3 }}>
+                    <Stack spacing={1}>
+                      <div>
+                        1. 아래 추가할 섹션을 선택합니다.
+                      </div>
+                      <div>
+                        2. 아래 '추가' 버튼을 클릭하여 섹션을 추가합니다.
+                      </div>
+                      <div>
+                        3. 왼쪽의 섹션을 이용하여 메인페이지를 꾸밉니다.
+                      </div>
+                      <div>
+                        4. 아래 '저장' 버튼을 클릭하여 저장합니다.
+                      </div>
+                      <Typography variant="subtitle2" sx={{ color: 'text.secondary' }}>
+                        추가할 섹션
+                      </Typography>
+                      <Select sx={{ width: '100%' }} value={sectionType} onChange={(e) => {
+                        setSectionType(e.target.value)
+                      }}>
+                        <MenuItem value={'banner'}>배너슬라이드 ({hasTypeCount(contentList, 'banner')})</MenuItem>
+                        <MenuItem value={'items'} disabled={!productContent?.total > 0}>상품슬라이드 ({hasTypeCount(contentList, 'items')}) {(!productContent?.total > 0) ? ' (상품 생성 후 가능합니다.)' : ''}</MenuItem>
+                        <MenuItem value={'editor'}>에디터 ({hasTypeCount(contentList, 'editor')})</MenuItem>
+                      </Select>
+                      <Button variant="contained"
+                        className="content-add"
+                        onClick={addSection}
+                        style={{
+                          height: '48px'
+                        }}>
+                        추가
+                      </Button>
+                    </Stack>
+                  </Card>
+                </Grid>
+              </>}
+
             <Grid item xs={12} md={12}>
               <Card sx={{ p: 3 }}>
                 <Stack spacing={1}>

@@ -67,6 +67,15 @@ const settingImageObj = (images, obj_) => {//이미지 존재여부에따라 img
   }
   return obj;
 }
+const settingdeleteImageObj = (images, obj_) => {//이미지 존재안할시 삭제함
+  let obj = obj_;
+  for(var i = 0;i<images.length;i++){
+    if(!obj[`${images[i]}_file`]){
+      delete obj[`${images[i]}_file`];
+    }
+  }
+  return obj;
+}
 export const getCategoriesByManager = (params) => { //관리자 상품 카테고리 목록출력
   const { page, page_size, s_dt, e_dt, search } = params;
   let query = {
@@ -86,6 +95,10 @@ export const addCategoryByManager = (params) => { //관리자 상품 카테고�
   if (!parent_id) {
     delete obj['parent_id'];
   }
+  let images = [
+    'category'
+  ]
+  obj = settingdeleteImageObj(images, obj);
   return post(`/api/v1/manager/product-categories`, obj);
 }
 export const updateCategoryByManager = (params) => { //관리자 상품 카테고리 수정
@@ -131,6 +144,10 @@ export const addProductByManager = (params) => { //관리자 상품 추가
     sub_images,
     groups,
   }
+  let images = [
+    'product'
+  ]
+  obj = settingdeleteImageObj(images, obj);
   return post(`/api/v1/manager/products`, obj);
 }
 export const updateProductByManager = (params) => { //관리자 상품 수정
@@ -195,6 +212,10 @@ export const addUserByManager = (params) => { //관리자 유저 추가
     user_name, phone_num, nick_name, user_pw, note,
     profile_file,
   }
+  let images = [
+    'profile'
+  ]
+  obj = settingdeleteImageObj(images, obj);
   return post(`/api/v1/manager/users`, obj);
 }
 export const updateUserByManager = (params) => { //관리자 유저 수정
@@ -256,6 +277,14 @@ export const addSellerByManager = (params) => { //관리자 셀러 추가
     id_file,
     profile_file,
   }
+  let images = [
+    'passbook',
+    'contract',
+    'bsin_lic',
+    'id',
+    'profile',
+  ]
+  obj = settingdeleteImageObj(images, obj);
   return post(`/api/v1/manager/merchandises`, obj);
 }
 
@@ -396,6 +425,14 @@ export const addBrandByManager = (params) => { //관리자 브랜드 추가
     favicon_file,
     og_file,
   }
+  let images = [
+    'logo',
+    'dark_logo',
+    'favicon',
+    'og',
+  ]
+  obj = settingdeleteImageObj(images, obj);
+ 
   return post(`/api/v1/manager/brands`, obj);
 }
 export const updateBrandByManager = (params) => { //관리자 브랜드수정

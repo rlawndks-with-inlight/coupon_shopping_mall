@@ -44,8 +44,8 @@ ProductDetailsSummary.propTypes = {
 };
 
 export default function ProductDetailsSummary({ product, onAddCart, onGotoStep, ...other }) {
-  const {themeCartData, onChangeCartData} = useSettingsContext();
-  const [selectProduct, setSelectProduct] = useState({id:product?.id, count: 1, select_option_obj:{}});
+  const { themeCartData, onChangeCartData } = useSettingsContext();
+  const [selectProduct, setSelectProduct] = useState({ id: product?.id, count: 1, select_option_obj: {} });
   const cart = []
 
   const {
@@ -74,20 +74,20 @@ export default function ProductDetailsSummary({ product, onAddCart, onGotoStep, 
     cart.filter((item) => item.id === id).map((item) => item.quantity)[0] >= available;
 
   const handleAddCart = async () => {
-      let cart_data = themeCartData;
-      console.log(cart_data)
-      let find_index = _.findIndex(cart_data, {id:selectProduct.id, select_option_obj:selectProduct.select_option_obj});
-      if(find_index >= 0){
-        cart_data[find_index].count = cart_data[find_index].count + selectProduct.count
-      }else{
-        cart_data.push(selectProduct);
-      }
-      onChangeCartData(cart_data);
+    let cart_data = themeCartData;
+    console.log(cart_data)
+    let find_index = _.findIndex(cart_data, { id: selectProduct.id, select_option_obj: selectProduct.select_option_obj });
+    if (find_index >= 0) {
+      cart_data[find_index].count = cart_data[find_index].count + selectProduct.count
+    } else {
+      cart_data.push(selectProduct);
+    }
+    onChangeCartData(cart_data);
   };
   const onSelectOption = (group_id, option_id) => {
     setSelectProduct({
       ...selectProduct,
-      ['select_option_obj']:{
+      ['select_option_obj']: {
         ...selectProduct.select_option_obj,
         [`${group_id}`]: option_id
       }
@@ -146,27 +146,27 @@ export default function ProductDetailsSummary({ product, onAddCart, onGotoStep, 
               <Typography variant="subtitle2" sx={{ height: 40, lineHeight: '40px', flexGrow: 1 }}>
                 {group?.group_name}
               </Typography>
-                <Select
-                  name="size"
-                  size="small"
-                  sx={{
-                    minWidth: 96,
-                    '& .MuiFormHelperText-root': {
-                      mx: 0,
-                      mt: 1,
-                      textAlign: 'right',
-                    },
-                  }}
-                  onChange={(e)=>{
-                    onSelectOption(group?.id, e.target.value)
-                  }}
-                >
-                  {group?.options && group?.options.map((option) => (
-                    <MenuItem key={option?.option_name} value={option?.id}>
-                      {option?.option_name}
-                    </MenuItem>
-                  ))}
-                </Select>
+              <Select
+                name="size"
+                size="small"
+                sx={{
+                  minWidth: 96,
+                  '& .MuiFormHelperText-root': {
+                    mx: 0,
+                    mt: 1,
+                    textAlign: 'right',
+                  },
+                }}
+                onChange={(e) => {
+                  onSelectOption(group?.id, e.target.value)
+                }}
+              >
+                {group?.options && group?.options.map((option) => (
+                  <MenuItem key={option?.option_name} value={option?.id}>
+                    {option?.option_name}
+                  </MenuItem>
+                ))}
+              </Select>
             </Stack>
           </>
         ))}
@@ -183,13 +183,13 @@ export default function ProductDetailsSummary({ product, onAddCart, onGotoStep, 
               quantity={selectProduct.count}
               disabledDecrease={selectProduct.count <= 1}
               disabledIncrease={selectProduct.count >= available}
-              onIncrease={() =>  {
+              onIncrease={() => {
                 setSelectProduct({
                   ...selectProduct,
                   count: selectProduct.count + 1
                 })
               }}
-              onDecrease={() =>  {
+              onDecrease={() => {
                 setSelectProduct({
                   ...selectProduct,
                   count: selectProduct.count - 1

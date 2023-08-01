@@ -87,15 +87,19 @@ const BrandList = () => {
                 router.push(`default/${row?.id}`)
               }} />
             </IconButton>
-            <IconButton onClick={() => {
-              setModal({
-                func: () => { deleteBrand(row?.id) },
-                icon: 'material-symbols:delete-outline',
-                title: '정말 삭제하시겠습니까?'
-              })
-            }}>
-              <Icon icon='material-symbols:delete-outline' />
-            </IconButton>
+            {user?.level >= 50 &&
+              <>
+                <IconButton onClick={() => {
+                  setModal({
+                    func: () => { deleteBrand(row?.id) },
+                    icon: 'material-symbols:delete-outline',
+                    title: '정말 삭제하시겠습니까?'
+                  })
+                }}>
+                  <Icon icon='material-symbols:delete-outline' />
+                </IconButton>
+              </>}
+
           </>
         )
       }

@@ -9,7 +9,7 @@ import { test_items } from "src/data/test-data";
 import ManagerLayout from "src/layouts/manager/ManagerLayout";
 import { axiosIns } from "src/utils/axios";
 import { base64toFile } from "src/utils/function";
-import _ from 'lodash'
+import _, { constant } from 'lodash'
 import { useSettingsContext } from "src/components/settings";
 import { useRouter } from "next/router";
 import CustomBreadcrumbs from "src/components/custom-breadcrumbs/CustomBreadcrumbs";
@@ -227,6 +227,9 @@ const Main = () => {
         images
       });
       file_result = file_result?.data ?? [];
+      if (!file_result.length > 0) {
+        return;
+      }
       for (var i = 0; i < file_index_list.length; i++) {
         content_list[file_index_list[i]['i']].list[file_index_list[i]['j']] = {
           src: file_result[i]?.url ?? "",
@@ -238,6 +241,7 @@ const Main = () => {
     let brand_data = { ...item, main_obj: content_list };
 
     let result = await updateBrandByManager({ ...brand_data, id: themeDnsData?.id })
+    console.log(result)
     if (result) {
       toast.success("성공적으로 저장 되었습니다.");
       window.location.reload();
@@ -605,7 +609,7 @@ const Main = () => {
                         <MenuItem value={'items-with-categories'} disabled={!productContent?.total > 0}>카테고리탭별 상품리스트 ({hasTypeCount(contentList, 'items-with-categories')}) {(!productContent?.total > 0) ? ' (상품 생성 후 가능합니다.)' : ''}</MenuItem>
                         <MenuItem value={'editor'}>에디터 ({hasTypeCount(contentList, 'editor')})</MenuItem>
                         <MenuItem value={'video-slide'}>동영상 슬라이드 ({hasTypeCount(contentList, 'video-slide')})</MenuItem>
-                       {/* <MenuItem value={'post'}>게시판 ({hasTypeCount(contentList, 'post')})</MenuItem>
+                        {/* <MenuItem value={'post'}>게시판 ({hasTypeCount(contentList, 'post')})</MenuItem>
                         <MenuItem value={'product-review'}>상품후기 ({hasTypeCount(contentList, 'product-review')})</MenuItem> */}
                       </Select>
                       <Button variant="contained"

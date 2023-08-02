@@ -549,7 +549,7 @@ export const uploadFileByManager = (params) => {// 관리자 파일 단일 업�
       'Content-Type': "multipart/form-data",
     }
   };
-  return axiosIns().post('/api/v1/manager/posts/upload', formData, config);
+  return post('/api/v1/manager/posts/upload', formData, config);
 }
 export const uploadsFileByManager = (params) => {// 관리자 파일 여러개 업로드
   const { images } = params;
@@ -561,5 +561,5 @@ export const uploadsFileByManager = (params) => {// 관리자 파일 여러개 �
       'Content-Type': "multipart/form-data",
     }
   };
-  return axiosIns().post('/api/v1/manager/posts/bulk-upload', obj, config);
+  return post('/api/v1/manager/posts/bulk-upload', obj, config);
 }

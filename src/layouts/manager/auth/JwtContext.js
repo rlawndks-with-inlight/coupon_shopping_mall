@@ -10,6 +10,7 @@ import { useSettingsContext } from 'src/components/settings';
 import { toast } from 'react-hot-toast';
 import { useRouter } from 'next/router';
 import { PATH_AUTH } from 'src/data/manager-data';
+import { getLocalStorage } from 'src/utils/local-storage';
 
 // ----------------------------------------------------------------------
 
@@ -112,7 +113,8 @@ export function AuthProvider({ children }) {
   // LOGIN
   const login = useCallback(async (user_name, user_pw) => {
     try {
-      let dns_data = getCookie('themeDnsData')
+      let dns_data = getLocalStorage('themeDnsData');
+      dns_data = JSON.parse(dns_data);
       const response = await axiosIns().post(`/api/v1${router.asPath.split('/')[1] == 'manager' ? '' : '/shop'}/auth/sign-in`, {
         brand_id: dns_data.id,
         user_name: user_name,

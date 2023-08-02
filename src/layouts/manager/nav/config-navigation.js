@@ -42,7 +42,6 @@ const ICONS = {
 
 export const navConfig = () => {
   const { user } = useAuthContext();
-  const dns_data = getCookie('themeDnsData');
 
   const [postCategoryList, setPostCategoryList] = useState([]);
 

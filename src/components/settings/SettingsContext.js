@@ -210,7 +210,6 @@ export function SettingsProvider({ children }) {
   // dns data
   const onChangeDnsData = useCallback((dns_data) => {
     setThemeDnsData(dns_data);
-    setCookie('themeDnsData', JSON.stringify({...dns_data, main_obj:{}}));
     setLocalStorage('themeDnsData', JSON.stringify(dns_data));
   }, [])
   // cart data
@@ -272,7 +271,6 @@ export function SettingsProvider({ children }) {
     removeCookie('themeColorPresets');
     removeCookie('themeCurrentPageObj');
     removeCookie('themeAuth');
-    removeCookie('themeDnsData')
     deleteLocalStorage('themeDnsData')
     deleteLocalStorage('themeCartData')
     deleteLocalStorage('themeWishData')

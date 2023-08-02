@@ -22,6 +22,9 @@ margin:0 auto;
 `
 const FullWrappers = styled.div`
 width:100%;
+
+
+
 `
 const returnTypeObj = {
 

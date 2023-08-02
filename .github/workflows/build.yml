@@ -19,9 +19,9 @@ jobs:
           node-version: '16'
       - name: Set Environment Variables
         run: |
-          echo "NEXT_PUBLIC_BACK_URL=${{ secrets.BACK_URL }}" >> .env
-          echo "NEXT_PUBLIC_NOTI_URL=${{ secrets.NOTI_URL }}" >> .env
-          echo "NEXT_PUBLIC_SETTING_SSL_URL=${{ secrets.SETTING_SSL_URL }}" >> .env
+          echo "BACK_URL=${{ secrets.BACK_URL }}" >> .env
+          echo "NOTI_URL=${{ secrets.NOTI_URL }}" >> .env
+          echo "SETTING_SSL_URL=${{ secrets.SETTING_SSL_URL }}" >> .env
       - name: Install Dependencies
         run: npm install
 

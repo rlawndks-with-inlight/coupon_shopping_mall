@@ -4,7 +4,7 @@ import { useMemo, useState, useEffect, useContext, useCallback, createContext } 
 import { defaultSettings } from './config-setting';
 import { defaultPreset, getPresets, presetsOption } from './presets';
 import { useTheme } from '@emotion/react';
-import { setLocalStorage } from 'src/utils/local-storage';
+import { deleteLocalStorage, getLocalStorage, setLocalStorage } from 'src/utils/local-storage';
 // ----------------------------------------------------------------------
 
 const initialState = {
@@ -97,8 +97,8 @@ export function SettingsProvider({ children }) {
       const direction = getCookie('themeDirection') || defaultSettings.themeDirection;
       const colorPresets = getCookie('themeColorPresets') || defaultSettings.themeColorPresets;
       const currentPageObj = getCookie('themeCurrentPageObj') || defaultSettings.themeCurrentPageObj;
-      const cartData = getCookie('themeCartData') || defaultSettings.themeCartData;
-      const wishData = getCookie('themeWishData') || defaultSettings.themeWishData;
+      const cartData = getLocalStorage('themeCartData') || defaultSettings.themeCartData;
+      const wishData = getLocalStorage('themeWishData') || defaultSettings.themeWishData;
       //const auth = getCookie('themeAuth') || defaultSettings.themeAuth;
       //const categoryList = getCookie('themeCategoryList') || defaultSettings.themeCategoryList;
       setThemeMode(mode);
@@ -131,7 +131,6 @@ export function SettingsProvider({ children }) {
       let root_id = await res2.json();
       root_id = root_id?.root_id;
       dns_data['root_id'] = root_id;
-      setLocalStorage('dns_data',JSON.stringify(dns_data));
       onChangeDnsData(dns_data);
     } catch (err) {
       console.log(err)
@@ -211,17 +210,18 @@ export function SettingsProvider({ children }) {
   // dns data
   const onChangeDnsData = useCallback((dns_data) => {
     setThemeDnsData(dns_data);
-    setCookie('themeDnsData', JSON.stringify(dns_data));
+    setCookie('themeDnsData', JSON.stringify({...dns_data, main_obj:{}}));
+    setLocalStorage('themeDnsData', JSON.stringify(dns_data));
   }, [])
   // cart data
   const onChangeCartData = useCallback((cart_data) => {
     setThemeCartData(cart_data);
-    setCookie('themeCartData', JSON.stringify(cart_data));
+    setLocalStorage('themeCartData', JSON.stringify(cart_data));
   }, [])
-   // wish data
-   const onChangeWishData = useCallback((wish_data) => {
+  // wish data
+  const onChangeWishData = useCallback((wish_data) => {
     setThemeWishData(wish_data);
-    setCookie('themeWishData', JSON.stringify(wish_data));
+    setLocalStorage('themeWishData', JSON.stringify(wish_data));
   }, [])
   // current page
   const onChangeCurrentPageObj = useCallback((data) => {
@@ -236,17 +236,17 @@ export function SettingsProvider({ children }) {
   // categoryList
   const onChangeCategoryList = useCallback((data) => {
     setThemeCategoryList(data);
-    setCookie('themeCategoryList', JSON.stringify(data));
+    setLocalStorage('themeCategoryList', JSON.stringify(data));
   }, [])
   // popupList
   const onChangePopupList = useCallback((data) => {
     setThemePopupList(data);
-    setCookie('themePopupList', JSON.stringify(data));
+    setLocalStorage('themePopupList', JSON.stringify(data));
   }, [])
   // postcategoryList
   const onChangePostCategoryList = useCallback((data) => {
     setThemePostCategoryList(data);
-    setCookie('themePostCategoryList', JSON.stringify(data));
+    setLocalStorage('themePostCategoryList', JSON.stringify(data));
   }, [])
   // Reset
   const onResetSetting = useCallback(() => {
@@ -270,14 +270,15 @@ export function SettingsProvider({ children }) {
     removeCookie('themeContrast');
     removeCookie('themeDirection');
     removeCookie('themeColorPresets');
-    removeCookie('themeDnsData');
-    removeCookie('themeCartData');
-    removeCookie('themeWishData');
     removeCookie('themeCurrentPageObj');
     removeCookie('themeAuth');
-    removeCookie('themeCategoryList');
-    removeCookie('themePopupList');
-    removeCookie('themePostCategoryList');
+    removeCookie('themeDnsData')
+    deleteLocalStorage('themeDnsData')
+    deleteLocalStorage('themeCartData')
+    deleteLocalStorage('themeWishData')
+    deleteLocalStorage('themeCategoryList')
+    deleteLocalStorage('themePopupList')
+    deleteLocalStorage('themePostCategoryList')
   }, []);
 
   const memoizedValue = useMemo(

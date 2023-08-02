@@ -60,9 +60,8 @@ const curTypeNum = (list, type_name, idx) => {
 
 const Main = () => {
   const { setModal } = useModal()
-  const { themeMode, themeDnsData } = useSettingsContext();
+  const { themeMode, themeDnsData, themeCartData } = useSettingsContext();
   const { user } = useAuthContext();
-
   const router = useRouter();
 
   const [item, setItem] = useState(defaultManagerObj.brands);
@@ -439,7 +438,6 @@ const Main = () => {
                               <Row style={{ columnGap: '0.5rem', width: '100%' }}>
                                 <TextField label='카테고리명' value={itm?.category_name} style={{ width: '100%' }} onChange={(e) => {
                                   let content_list = [...contentList];
-                                  console.log(content_list)
                                   content_list[idx].list[index]['category_name'] = e.target.value;
                                   setContentList(content_list)
                                 }} />
@@ -595,7 +593,7 @@ const Main = () => {
                         3. 왼쪽의 섹션을 이용하여 메인페이지를 꾸밉니다.
                       </div>
                       <div>
-                        4. 아래 '저장' 버튼을 클릭하여 저장합니다.
+                        4. 맨 아래 '저장' 버튼을 클릭하여 저장합니다.
                       </div>
                       <Typography variant="subtitle2" sx={{ color: 'text.secondary' }}>
                         추가할 섹션

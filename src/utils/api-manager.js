@@ -114,7 +114,7 @@ export const updateCategoryByManager = (params) => { //관리자 상품 카테�
 }
 export const getCategoryByManager = (params) => { //관리자 상품 카테고리 단일 출력
   const { id } = params;
-  const response = axiosIns().get(`/api/v1/manager/product-categories/${id}`);
+  return get(`/api/v1/manager/product-categories/${id}`);
 }
 export const deleteCategoryByManager = (params) => { //관리자 상품 카테고리 삭제
   const { id } = params;

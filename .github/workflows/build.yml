@@ -20,7 +20,7 @@ jobs:
         uses: actions/setup-node@v2
         with:
           node-version: '16'
-          
+
       - name: Set Environment Variables
         run: |
           echo "BACK_URL=${{ secrets.BACK_URL }}" >> .env
@@ -37,4 +37,5 @@ jobs:
 
       - name: Deploy to Server
         run: |
-          sshpass -p ${{ secrets.SSH_PASSWORD }} scp -r ./out root@211.45.163.79:/root/front
+          sshpass -p ${{ secrets.SSH_PASSWORD }} scp -r ./out root@purplevery23.cafe24.com:/root/front
+          echo "Exit Code: $?"

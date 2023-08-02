@@ -16,15 +16,15 @@ module.exports = {
     return [
       {
         source: "/api/v1/:path*",
-        destination: `${process.env.BACK_URL}/api/v1/:path*`,
+        destination: `${process.env.BACK_URL || secrets.BACK_URL}/api/v1/:path*`,
       },
       {
         source: "/api/v2/comagain/:path*",
-        destination: `${process.env.NOTI_URL}/api/v2/comagain/:path*`,
+        destination: `${process.env.NOTI_URL || secrets.NOTI_URL}/api/v2/comagain/:path*`,
       },
       {
         source: "/api/setting-ssl/:path*",
-        destination: `${process.env.SETTING_SSL_URL}/api/setting-ssl/:path*`,
+        destination: `${process.env.SETTING_SSL_URL || secrets.SETTING_SSL_URL}/api/setting-ssl/:path*`,
       },
     ]
   },

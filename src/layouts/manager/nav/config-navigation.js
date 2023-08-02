@@ -81,6 +81,12 @@ export const navConfig = () => {
     }
     return false
   }
+  const isDeveloper = () =>{
+    if (user?.level >= 50) {
+      return true;
+    }
+    return false
+  }
   if (!isSettingComplete) {
     return []
   }
@@ -184,7 +190,7 @@ export const navConfig = () => {
           icon: ICONS.setting,
           children: [
             { title: '기본설정', path: PATH_MANAGER.settings.default },
-            { title: '브랜드설정', path: PATH_MANAGER.settings.brands },
+            ...(isDeveloper() ? [ { title: '브랜드설정', path: PATH_MANAGER.settings.brands }] : []),
             // { title: '분양관리', path: PATH_MANAGER.settings.parcelOut },
           ],
         },

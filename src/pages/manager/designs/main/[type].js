@@ -76,8 +76,18 @@ const Main = () => {
       type: 'banner',
       list: [],
     },
+    'button-banner': {
+      type: 'button-banner',
+      list: [],
+    },
     items: {
       type: 'items',
+      title: '',
+      sub_title: '',
+      list: []
+    },
+    'items-with-categories': {
+      type: 'items-with-categories',
       title: '',
       sub_title: '',
       list: []
@@ -85,6 +95,21 @@ const Main = () => {
     editor: {
       type: 'editor',
       content: ''
+    },
+    'video-slide': {
+      type: 'video-slide',
+      title: '',
+      sub_title: '',
+      list: []
+    },
+    post: {
+      type: 'post',
+      category_id: 0,
+      list: []
+    },
+    'product-review': {
+      type: 'product-review',
+      list: []
     }
   }
   const returnKoNameBySectionType = {
@@ -109,11 +134,13 @@ const Main = () => {
     return obj;
   }
   const settingPage = async () => {
-    let product_list = await getProductsByManager({
+    let product_content = await getProductsByManager({
       page: 1,
       page_size: 100000
     })
-    setProductContent(product_list);
+    setProductContent(product_content);
+
+
     let brand_data = await getBrandByManager({
       id: router.query.brand_id | themeDnsData?.id
     })
@@ -173,9 +200,10 @@ const Main = () => {
   const onSave = async () => {
     let content_list = [...contentList];
     let images = [];
+
     let file_index_list = [];
     for (var i = 0; i < content_list.length; i++) {
-      if (content_list[i]?.type == 'banner') {
+      if (['banner', 'button-banner'].includes(content_list[i]?.type)) {
         for (var j = 0; j < content_list[i].list.length; j++) {
           if (!content_list[i].list[j]?.src) {
             file_index_list.push({
@@ -206,11 +234,13 @@ const Main = () => {
         }
       }
     }
+    console.log(content_list)
     let brand_data = { ...item, main_obj: content_list };
+
     let result = await updateBrandByManager({ ...brand_data, id: themeDnsData?.id })
     if (result) {
       toast.success("성공적으로 저장 되었습니다.");
-      window.location.href = '/manager/settings/brands';
+      window.location.reload();
     }
   }
   const [tourOpen, setTourOpen] = useState(false);
@@ -229,6 +259,9 @@ const Main = () => {
     setTourOpen(false);
     setTourSteps([]);
   };
+  const conditionOfSection = (type, item) => {
+    return (item.type == type && (router.query.type == type || router.query.type == 'all' || !router.query.type))
+  }
   return (
     <>
       {!loading &&
@@ -245,7 +278,7 @@ const Main = () => {
                     </>}
                   {contentList && contentList.map((item, idx) => (
                     <>
-                      {item.type == 'banner' && (router.query.type == 'banner' || router.query.type == 'all' || !router.query.type) &&
+                      {conditionOfSection('banner', item) &&
                         <>
                           <Row style={{ alignItems: 'end' }}>
                             <CardHeader title={`배너슬라이드 ${curTypeNum(contentList, 'banner', idx)}`} sx={{ paddingLeft: '0' }} />
@@ -256,9 +289,6 @@ const Main = () => {
                           <Upload
                             multiple
                             thumbnail={true}
-                            onChangeLink={(e) => {
-
-                            }}
                             files={contentList[idx].list.map(img => {
                               return img?.src || img
                             })}
@@ -289,7 +319,56 @@ const Main = () => {
                             </>
                           ))}
                         </>}
-                      {item.type == 'items' && (router.query.type == 'items' || router.query.type == 'all' || !router.query.type) &&
+                      {conditionOfSection('button-banner', item) &&
+                        <>
+                          <Row style={{ alignItems: 'end' }}>
+                            <CardHeader title={`버튼형 배너슬라이드 ${curTypeNum(contentList, 'button-banner', idx)}`} sx={{ paddingLeft: '0' }} />
+                            <IconButton sx={{ padding: '0.25rem', marginLeft: 'auto' }} onClick={() => { deleteSection(idx) }}>
+                              <Icon icon={'ph:x-bold'} />
+                            </IconButton>
+                          </Row>
+                          <Upload
+                            multiple
+                            thumbnail={true}
+                            files={contentList[idx].list.map(img => {
+                              return img?.src || img
+                            })}
+                            onDrop={(acceptedFiles) => {
+                              handleDropMultiFile(acceptedFiles, idx)
+                            }}
+                            onRemove={(inputFile) => {
+                              handleRemoveFile(inputFile, idx)
+                            }}
+                            onRemoveAll={() => {
+                              handleRemoveAllFiles(idx);
+                            }}
+                            fileExplain={{
+                              width: '(850x850 추천)'//파일 사이즈 설명
+                            }}
+                            imageSize={{ //썸네일 사이즈
+                              width: 85,
+                              height: 85
+                            }}
+                          />
+                          {contentList[idx].list && contentList[idx].list.map((item, index) => (
+                            <>
+                              <Row style={{ width: '100%', columnGap: '1rem' }}>
+                                <TextField sx={{ width: '50%' }} size='small' label={`${index + 1}번째 이미지 제목 (제목 없을 시 빈칸으로 유지)`} value={contentList[idx].list[index].title ?? ""} onChange={(e) => {
+                                  let content_list = [...contentList];
+                                  content_list[idx].list[index].title = e.target.value;
+                                  setContentList(content_list);
+                                }} />
+                                <TextField sx={{ width: '50%' }} size='small' label={`${index + 1}번째 이미지 링크 (링크 없을 시 빈칸으로 유지)`} value={contentList[idx].list[index].link ?? ""} onChange={(e) => {
+                                  let content_list = [...contentList];
+                                  content_list[idx].list[index].link = e.target.value;
+                                  setContentList(content_list);
+                                }} />
+                              </Row>
+
+                            </>
+                          ))}
+                        </>}
+                      {conditionOfSection('items', item) &&
                         <>
                           <Row style={{ alignItems: 'end' }}>
                             <CardHeader title={`상품슬라이드 ${curTypeNum(contentList, 'items', idx)}`} sx={{ paddingLeft: '0' }} />
@@ -323,7 +402,73 @@ const Main = () => {
                           />
 
                         </>}
-                      {item.type == 'editor' && (router.query.type == 'editor' || router.query.type == 'all' || !router.query.type) &&
+                      {conditionOfSection('items-with-categories', item) &&
+                        <>
+                          <Row style={{ alignItems: 'end', alignContent: 'center' }}>
+                            <CardHeader title={`카테고리탭별 상품리스트 ${curTypeNum(contentList, 'items-with-categories', idx)}`} sx={{ paddingLeft: '0' }} />
+                            <Button variant="outlined" sx={{ height: '28px' }} onClick={() => {
+                              let content_list = [...contentList];
+                              content_list[idx].list.push({
+                                category_name: '',
+                                list: []
+                              })
+                              setContentList(content_list);
+                            }}>
+                              + 카테고리 추가
+                            </Button>
+                            <IconButton sx={{ padding: '0.25rem', marginLeft: 'auto' }} onClick={() => { deleteSection(idx) }}>
+                              <Icon icon={'ph:x-bold'} />
+                            </IconButton>
+                          </Row>
+                          <TextField label='제목' value={item.title} onChange={(e) => {
+                            let content_list = [...contentList];
+                            content_list[idx]['title'] = e.target.value;
+                            setContentList(content_list)
+                          }} />
+                          <TextField label='부제목' value={item.sub_title} onChange={(e) => {
+                            let content_list = [...contentList];
+                            content_list[idx]['sub_title'] = e.target.value;
+                            setContentList(content_list)
+                          }} />
+                          {item?.list && item?.list.map((itm, index) => (
+                            <>
+                              <Row style={{ columnGap: '0.5rem', width: '100%' }}>
+                                <TextField label='카테고리명' value={itm?.category_name} style={{ width: '100%' }} onChange={(e) => {
+                                  let content_list = [...contentList];
+                                  console.log(content_list)
+                                  content_list[idx].list[index]['category_name'] = e.target.value;
+                                  setContentList(content_list)
+                                }} />
+                                <IconButton onClick={() => {
+                                  let content_list = [...contentList];
+                                  content_list[idx].list.splice(index, 1);
+                                  setContentList(content_list);
+                                }}>
+                                  <Icon icon='material-symbols:delete-outline' />
+                                </IconButton>
+                              </Row>
+                              <Autocomplete
+                                multiple
+                                fullWidth
+                                options={productContent?.content && (productContent?.content ?? []).map(itm => { return itm?.id })}
+                                getOptionLabel={(item_id) => _.find((productContent?.content ?? []), { id: parseInt(item_id) })?.product_name}
+                                defaultValue={itm.list}
+                                value={itm.list}
+                                onChange={(e, value) => {
+                                  let content_list = [...contentList];
+                                  let list = [...value];
+                                  content_list[idx].list[index]['list'] = list;
+                                  setContentList(content_list)
+                                }}
+                                renderInput={(params) => (
+                                  <TextField {...params} label="선택할 상품" placeholder="상품선택" />
+                                )}
+                              />
+                            </>
+                          ))}
+
+                        </>}
+                      {conditionOfSection('editor', item) &&
                         <>
                           <Row style={{ alignItems: 'end' }}>
                             <CardHeader title={`에디터 ${curTypeNum(contentList, 'editor', idx)}`} sx={{ paddingLeft: '0' }} />
@@ -362,6 +507,70 @@ const Main = () => {
                               setContentList(content_list);
                             }} />
                         </>}
+                      {conditionOfSection('video-slide', item) &&
+                        <>
+                          <Row style={{ alignItems: 'end', alignContent: 'center' }}>
+                            <CardHeader title={`동영상 슬라이드 ${curTypeNum(contentList, 'video-slide', idx)}`} sx={{ paddingLeft: '0' }} />
+                            <Button variant="outlined" sx={{ height: '28px' }} onClick={() => {
+                              let content_list = [...contentList];
+                              content_list[idx].list.push({
+                                link: '',
+                              })
+                              setContentList(content_list);
+                            }}>
+                              + 동영상 링크 추가
+                            </Button>
+                            <IconButton sx={{ padding: '0.25rem', marginLeft: 'auto' }} onClick={() => { deleteSection(idx) }}>
+                              <Icon icon={'ph:x-bold'} />
+                            </IconButton>
+                          </Row>
+                          <TextField label='제목' value={item.title} onChange={(e) => {
+                            let content_list = [...contentList];
+                            content_list[idx]['title'] = e.target.value;
+                            setContentList(content_list)
+                          }} />
+                          <TextField label='부제목' value={item.sub_title} onChange={(e) => {
+                            let content_list = [...contentList];
+                            content_list[idx]['sub_title'] = e.target.value;
+                            setContentList(content_list)
+                          }} />
+                          {item?.list && item?.list.map((itm, index) => (
+                            <>
+                              <Row style={{ columnGap: '0.5rem', width: '100%' }}>
+                                <TextField label='링크주소' value={itm?.list} style={{ width: '100%' }} onChange={(e) => {
+                                  let content_list = [...contentList];
+                                  content_list[idx].list[index]['list'] = e.target.value;
+                                  setContentList(content_list)
+                                }} />
+                                <IconButton onClick={() => {
+                                  let content_list = [...contentList];
+                                  content_list[idx].list.splice(index, 1);
+                                  setContentList(content_list);
+                                }}>
+                                  <Icon icon='material-symbols:delete-outline' />
+                                </IconButton>
+                              </Row>
+                            </>)
+                          )}
+                        </>}
+                      {conditionOfSection('post', item) &&
+                        <>
+                          <Row style={{ alignItems: 'end' }}>
+                            <CardHeader title={`게시판 ${curTypeNum(contentList, 'post', idx)}`} sx={{ paddingLeft: '0' }} />
+                            <IconButton sx={{ padding: '0.25rem', marginLeft: 'auto' }} onClick={() => { deleteSection(idx) }}>
+                              <Icon icon={'ph:x-bold'} />
+                            </IconButton>
+                          </Row>
+                        </>}
+                      {conditionOfSection('product-review', item) &&
+                        <>
+                          <Row style={{ alignItems: 'end' }}>
+                            <CardHeader title={`상품후기 ${curTypeNum(contentList, 'product-review', idx)}`} sx={{ paddingLeft: '0' }} />
+                            <IconButton sx={{ padding: '0.25rem', marginLeft: 'auto' }} onClick={() => { deleteSection(idx) }}>
+                              <Icon icon={'ph:x-bold'} />
+                            </IconButton>
+                          </Row>
+                        </>}
                     </>
                   ))}
                 </Stack>
@@ -391,8 +600,13 @@ const Main = () => {
                         setSectionType(e.target.value)
                       }}>
                         <MenuItem value={'banner'}>배너슬라이드 ({hasTypeCount(contentList, 'banner')})</MenuItem>
+                        <MenuItem value={'button-banner'}>버튼형 배너슬라이드 ({hasTypeCount(contentList, 'button-banner')})</MenuItem>
                         <MenuItem value={'items'} disabled={!productContent?.total > 0}>상품슬라이드 ({hasTypeCount(contentList, 'items')}) {(!productContent?.total > 0) ? ' (상품 생성 후 가능합니다.)' : ''}</MenuItem>
+                        <MenuItem value={'items-with-categories'} disabled={!productContent?.total > 0}>카테고리탭별 상품리스트 ({hasTypeCount(contentList, 'items-with-categories')}) {(!productContent?.total > 0) ? ' (상품 생성 후 가능합니다.)' : ''}</MenuItem>
                         <MenuItem value={'editor'}>에디터 ({hasTypeCount(contentList, 'editor')})</MenuItem>
+                        <MenuItem value={'video-slide'}>동영상 슬라이드 ({hasTypeCount(contentList, 'video-slide')})</MenuItem>
+                       {/* <MenuItem value={'post'}>게시판 ({hasTypeCount(contentList, 'post')})</MenuItem>
+                        <MenuItem value={'product-review'}>상품후기 ({hasTypeCount(contentList, 'product-review')})</MenuItem> */}
                       </Select>
                       <Button variant="contained"
                         className="content-add"
@@ -406,7 +620,6 @@ const Main = () => {
                   </Card>
                 </Grid>
               </>}
-
             <Grid item xs={12} md={12}>
               <Card sx={{ p: 3 }}>
                 <Stack spacing={1}>

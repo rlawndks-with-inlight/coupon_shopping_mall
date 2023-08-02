@@ -6,7 +6,7 @@ export const axiosIns = (host, protocol) => {
     // You can add your headers here
     // ================================
     baseURL: (protocol || window.location.protocol) + "//" + (host || window.location.host),
-    timeout: 10000,
+    timeout: 30000,
     headers: {
       "Authorization": `Bearer ${getCookie('o')}`,
       'Accept': 'application/json',
@@ -25,7 +25,7 @@ export const notiAxiosIns = (host, protocol) => {
     // You can add your headers here
     // ================================
     baseURL: (protocol || window.location.protocol) + "//" + (host || window.location.host),
-    timeout: 10000,
+    timeout: 30000,
     headers: {
       "Authorization": `Bearer ${getCookie('o')}`,
       'Accept': 'application/json',

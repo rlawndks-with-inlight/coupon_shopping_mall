@@ -61,7 +61,6 @@ export default function Upload({
   onRemove,
   onRemoveAll,
   sx,
-  onChangeLink,
   ...other
 }) {
   const { getRootProps, getInputProps, isDragActive, isDragReject, fileRejections } = useDropzone({
@@ -149,7 +148,7 @@ export default function Upload({
       {hasFiles && (
         <>
           <Box sx={{ my: 3 }}>
-            <MultiFilePreview files={files} thumbnail={thumbnail} onRemove={onRemove} {...other} onChangeLink={onChangeLink} />
+            <MultiFilePreview files={files} thumbnail={thumbnail} onRemove={onRemove} {...other} />
           </Box>
 
           <Stack direction="row" justifyContent="flex-end" spacing={1.5}>

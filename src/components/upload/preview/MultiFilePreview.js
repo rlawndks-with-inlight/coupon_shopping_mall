@@ -20,7 +20,7 @@ MultiFilePreview.propTypes = {
   thumbnail: PropTypes.bool,
 };
 
-export default function MultiFilePreview({ thumbnail, files, onRemove, sx, imageSize, onChangeLink }) {
+export default function MultiFilePreview({ thumbnail, files, onRemove, sx, imageSize }) {
   if (!files?.length) {
     return null;
   }

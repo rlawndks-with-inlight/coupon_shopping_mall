@@ -172,8 +172,13 @@ export const navConfig = () => {
               title: '메인페이지관리', path: PATH_MANAGER.designs.main, children: [
                 { title: '전체', path: PATH_MANAGER.designs.main + '/all' },
                 { title: '배너슬라이드', path: PATH_MANAGER.designs.main + '/banner' },
+                { title: '버튼형 배너슬라이드', path: PATH_MANAGER.designs.main + '/button-banner' },//
                 { title: '상품슬라이드', path: PATH_MANAGER.designs.main + '/items' },
+                { title: '카테고리탭별 상품리스트', path: PATH_MANAGER.designs.main + '/items-with-categories' },//
                 { title: '에디터', path: PATH_MANAGER.designs.main + '/editor' },
+                { title: '동영상 슬라이드', path: PATH_MANAGER.designs.main + '/video-slide' },//
+               // { title: '게시판', path: PATH_MANAGER.designs.main + '/post' },//
+               // { title: '상품후기', path: PATH_MANAGER.designs.main + '/product-review' },//
               ],
             },
             ...(isUsePostCategory() ? [{ title: '상품카드관리', path: PATH_MANAGER.designs.itemCard }] : []),

@@ -1,0 +1,32 @@
+name: Build and Deploy
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v2
+
+      - name: Install Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '16'
+
+      - name: Install Dependencies
+        run: npm install
+
+      - name: Build Next.js App
+        run: npm run build
+
+      - name: Export Next.js App
+        run: npm run export
+
+      - name: Deploy to Server
+        run: |
+          sshpass -p ${{ secrets.SSH_PASSWORD }} scp -r ./out root@211.45.163.79:/root/front

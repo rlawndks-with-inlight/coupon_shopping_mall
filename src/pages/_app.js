@@ -23,7 +23,6 @@ import 'slick-carousel/slick/slick-theme.css';
 import 'react-lazy-load-image-component/src/effects/blur.css';
 import { Toaster } from 'react-hot-toast';
 import { AuthProvider } from 'src/layouts/manager/auth/JwtContext';
-import NextNProgress from 'nextjs-progressbar';
 import { useEffect } from 'react';
 import ThemeContrast from 'src/components/settings/ThemeContrast';
 import { MotionLazyContainer } from 'src/components/animate';
@@ -85,10 +84,10 @@ const App = (props) => {
   );
 }
 App.getInitialProps = async (context) => {
-  const { req, query, res, asPath, router, ctx } = context;
+  const { ctx } = context;
   try {
     let head_data = {}
-    const host = req?.headers?.host ? req.headers.host.split(':')[0] : '';
+    const host = ctx?.req?.headers?.host ? ctx?.req?.headers.host.split(':')[0] : '';
     const url = `${process.env.BACK_URL}/api/v1/auth/domain?dns=${host}`;
     const res = await fetch(url);
     head_data = await res.json();

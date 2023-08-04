@@ -33,7 +33,7 @@ jobs:
         run: npm run build
 
       - name: Export Next.js App
-        run: npm run export
+        run: npm run deploy
 
       - name: Deploy to Server
         run: |

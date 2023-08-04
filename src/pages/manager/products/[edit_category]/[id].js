@@ -229,6 +229,10 @@ const ProductEdit = () => {
   })
   const [reviewColumns, setReviewColumns] = useState([]);
   useEffect(() => {
+    settingPage();
+  }, [])
+  
+  useEffect(() => {
     if (currentTab == 1) {
       onChangeReviewsPage({ ...reviewSearchObj, product_id: router.query.id });
     }
@@ -244,15 +248,16 @@ const ProductEdit = () => {
     }
     setReviewSearchObj(obj);
   }
-  useEffect(() => {
-    settingPage();
-  }, [])
+
 
   const settingPage = async () => {
     let cols = defaultReviewColumns;
     setReviewColumns(cols)
     let category_list = await getCategoriesByManager({ page: 1, page_size: 100000 });
     category_list = category_list?.content;
+    if(!category_list.length > 0){
+      toast.error("카테고리 생성 후 상품 등록 가능합니다.");
+    }
     setCategories(category_list);
     if (router.query?.edit_category == 'edit') {
       setCurrentTab(router.query?.type ?? 0)

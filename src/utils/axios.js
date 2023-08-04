@@ -14,7 +14,6 @@ export const axiosIns = (host, protocol) => {
     },
     withCredentials: true
   }
-
   const axiosIns = axios.create(dns_info)
 
   return axiosIns;

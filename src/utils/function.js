@@ -198,23 +198,7 @@ export const handleLogout = async (router, link_) => {
     }
   }
 }
-export const getDnsData = async () => {
-  try {
-    let dns_data = await getLocalStorage(LOCALSTORAGE.DNS_DATA);
-    dns_data = JSON.parse(dns_data);
-    if (!dns_data?.name) {
-      const response = await axiosIns().get(`/api/v1/auth/domain?dns=${process.env.IS_TEST ? 'localhost' : location.hostname}`);
-      return response?.data;
-    } else {
-      return dns_data;
-    }
-  } catch (err) {
-    console.log(err);
-    return {
 
-    }
-  }
-}
 export function getLocation() {
   if (navigator.geolocation) {
     // GPS를 지원하면

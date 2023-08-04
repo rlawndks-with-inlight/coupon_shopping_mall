@@ -30,13 +30,13 @@ import { MotionLazyContainer } from 'src/components/animate';
 import { ModalProvider } from 'src/components/dialog/ModalProvider';
 
 const App = (props) => {
-  const { Component, pageProps, head_data, host, ctx } = props;
+  const { Component, pageProps, head_data, host, host_data } = props;
   const getLayout = Component.getLayout ?? ((page) => page);
 
   useEffect(() => {
     console.log(head_data)
     console.log(host)
-    console.log(ctx)
+    console.log(host_data)
   }, [])
   return (
     <>
@@ -89,12 +89,14 @@ App.getInitialProps = async ({ ctx }) => {
   try {
     let head_data = {}
     const host = ctx.req ? ctx.req.headers.host.split(':')[0] : '';
+    console.log(ctx.req.headers)
     const url = `${process.env.BACK_URL}/api/v1/auth/domain?dns=${host}`;
     const res = await fetch(url);
     head_data = await res.json();
     return {
       head_data: head_data,
       host,
+      host_data:ctx.req.headers
     }
   } catch (err) {
     console.log(err)

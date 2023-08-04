@@ -27,7 +27,7 @@ const Page404 = () => {
   return (
     <>
       <Head>
-        <title> 404 Page Not Found | Minimal UI</title>
+        <title> 404 Page </title>
       </Head>
       {!loading &&
         <>

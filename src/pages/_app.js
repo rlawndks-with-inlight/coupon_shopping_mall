@@ -35,9 +35,6 @@ const App = (props) => {
   const getLayout = Component.getLayout ?? ((page) => page);
   const [headData, setHeadData] = useState({});
   useEffect(() => {
-    console.log(head_data)
-    console.log(host)
-    console.log(host_data)
     setHeadData(head_data)
   }, [])
   return (
@@ -91,7 +88,7 @@ App.getInitialProps = async (context) => {
   const { req, query, res, asPath, router, ctx } = context;
   try {
     let head_data = {}
-    const host = ctx.req ? ctx.req.headers.host.split(':')[0] : '';
+    const host = ctx.req?.headers?.host ? ctx.req.headers.host.split(':')[0] : '';
     const url = `${process.env.BACK_URL}/api/v1/auth/domain?dns=${host}`;
     const res = await fetch(url);
     head_data = await res.json();

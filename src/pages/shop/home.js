@@ -16,6 +16,7 @@ const getDemo = (num, common) => {
     return <Demo3 {...common} />
 }
 const Home = () => {
+ 
   const router = useRouter();
   const { themeDnsData } = useSettingsContext();
   return (
@@ -31,4 +32,5 @@ const Home = () => {
   )
 }
 Home.getLayout = (page) => <ShopLayout>{page}</ShopLayout>;
+
 export default Home;

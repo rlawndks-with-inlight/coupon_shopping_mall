@@ -35,6 +35,9 @@ const App = (props) => {
   const getLayout = Component.getLayout ?? ((page) => page);
   const [headData, setHeadData] = useState({});
   useEffect(() => {
+    console.log(head_data)
+    console.log(host)
+    console.log(host_data)
     setHeadData(head_data)
   }, [])
   return (
@@ -86,7 +89,6 @@ const App = (props) => {
 }
 App.getInitialProps = async (context) => {
   const { req, query, res, asPath, router, ctx } = context;
-  console.log(router);
   try {
     let head_data = {}
     const host = ctx.req ? ctx.req.headers.host.split(':')[0] : '';

@@ -355,7 +355,7 @@ const Header = () => {
         </>
         :
         <>
-         {popups.length > 0 && router.asPath=='/shop/' ?
+         {popups.length > 0 && router.asPath=='/shop' ?
         <>
           <PopupContainer>
             {popups && popups.map((item, idx) => (

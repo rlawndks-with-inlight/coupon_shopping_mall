@@ -561,6 +561,7 @@ export const uploadsFileByManager = (params) => {// 관리자 파일 여러개 �
   }
   let config = {
     headers: {
+      "Accept": "application/json",
       'Content-Type': "multipart/form-data",
     }
   };

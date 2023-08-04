@@ -225,7 +225,6 @@ const Main = () => {
       let file_result = await uploadsFileByManager({
         images
       });
-      file_result = file_result?.data ?? [];
       if (!file_result.length > 0) {
         return;
       }
@@ -236,9 +235,8 @@ const Main = () => {
         }
       }
     }
-    console.log(content_list)
     let brand_data = { ...item, main_obj: content_list };
-
+    console.log(brand_data)
     let result = await updateBrandByManager({ ...brand_data, id: themeDnsData?.id })
     console.log(result)
     if (result) {

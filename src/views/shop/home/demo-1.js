@@ -4,13 +4,14 @@ import Slider from 'react-slick'
 import { test_items } from 'src/data/test-data'
 import styled from 'styled-components'
 import { Row, themeObj } from 'src/components/elements/styled-components'
-import { Item } from 'src/components/elements/shop/common'
-import { Skeleton, Stack } from '@mui/material'
+import { Item, Items } from 'src/components/elements/shop/common'
+import { Button, Skeleton, Stack } from '@mui/material'
 import { useSettingsContext } from 'src/components/settings'
 import { getProductsByUser } from 'src/utils/api-shop'
 import _ from 'lodash'
 import { getLocalStorage } from 'src/utils/local-storage'
 import dynamic from 'next/dynamic'
+import { LazyLoadImage } from 'react-lazy-load-image-component'
 const ReactQuill = dynamic(() => import('react-quill'), {
   ssr: false,
   loading: () => <p>Loading ...</p>,
@@ -78,8 +79,8 @@ height: 34vw;
 }
 `
 const returnHomeContent = (column, data, func) => {
-  let { windowWidth, themeDnsData } = data;
-  const { router } = func;
+  let { windowWidth, themeDnsData, idx, itemsCategory } = data;
+  const { router, onClickItemsCategory } = func;
   let type = column?.type;
   let content = undefined;
 
@@ -185,7 +186,7 @@ const returnHomeContent = (column, data, func) => {
         display: 'flex',
         flexDirection: `${column?.title ? 'column' : 'row'}`,
       }}>
-        {column?.title &&
+          {column?.title &&
           <>
             <div style={{ fontSize: themeObj.font_size.size3, fontWeight: 'bold' }}>{column?.title}</div>
             {column?.sub_title &&
@@ -204,6 +205,96 @@ const returnHomeContent = (column, data, func) => {
       </Wrappers>
     </>
   }
+  if (type == 'button-banner') {
+    const getSlideToShow = () => {
+      if (window.innerWidth > 1350) {
+        return 7
+      }
+      if (window.innerWidth > 1000) {
+        return 5
+      }
+      return 3
+    }
+    let slide_setting = {
+      infinite: true,
+      speed: 500,
+      autoplay: true,
+      autoplaySpeed: 2500,
+      slidesToShow: getSlideToShow(),
+      slidesToScroll: 1,
+      dots: false,
+    }
+    content = <>
+      <Wrappers style={{
+        marginTop: '1rem',
+        marginBottom: '1rem',
+      }}>
+        <Slider {...slide_setting} className='margin-slide'>
+          {column?.list && column?.list.map((item, idx) => (
+            <>
+              <Row style={{flexDirection:'column', width:`${getSlideToShow()==7?`${parseInt(1350/7)-8}px`:`${parseInt(window.innerWidth/getSlideToShow())-8}px`}`, }}>
+                <LazyLoadImage src={item?.src} style={{
+                  width:`${getSlideToShow()==7?`${parseInt(1350/7)-48}px`:`${parseInt(window.innerWidth/getSlideToShow())-48}px`}`,
+                  height:`${getSlideToShow()==7?`${parseInt(1350/7)-48}px`:`${parseInt(window.innerWidth/getSlideToShow())-48}px`}`,
+                  borderRadius:'50%',
+                  margin:'0 auto'
+                }} />
+                <div style={{margin:'1rem auto'}}>{item.title}</div>
+              </Row>
+            </>
+          ))}
+        </Slider>
+      </Wrappers>
+    </>
+  }
+  if (type == 'items-with-categories') {
+    content = <>
+      <Wrappers style={{
+        marginTop: '1rem',
+        marginBottom: '1rem',
+        display: 'flex',
+        flexDirection: `${column?.title ? 'column' : 'row'}`,
+      }}>
+        <Row style={{alignItems:'center'}}>
+          <Row style={{flexDirection:'column'}}>
+          {column?.title &&
+          <>
+            <div style={{ fontSize: themeObj.font_size.size3, fontWeight: 'bold' }}>{column?.title}</div>
+            {column?.sub_title &&
+              <>
+                <div style={{ fontSize: themeObj.font_size.size5, color: themeObj.grey[500] }}>{column?.sub_title}</div>
+              </>}
+          </>}
+          </Row>
+          <Row style={{marginLeft:'auto', columnGap:'0.5rem'}}>
+          {column?.list && column?.list.map((item, index) => (
+            <>
+              <Button variant={itemsCategory[idx] == index?`contained`:`outlined`} sx={{height:'36px'}} onClick={()=>{
+                onClickItemsCategory(idx, index);
+              }}>
+                {item?.category_name}
+              </Button>
+            </>
+          ))}
+          </Row>
+        </Row>
+        <div style={{ marginTop: '1rem' }} />
+          {column?.list && column?.list.map((item, index) => (
+            <>
+            {itemsCategory[idx] == index &&
+            <>
+              <Items items={item?.list} router={router} />
+            </>}
+            </>
+          ))}
+      </Wrappers>
+    </>
+  }
+  if (type == 'video-slide') {
+    content = <>
+
+    </>
+  }
   return content
 }
 const Demo1 = (props) => {
@@ -219,6 +310,9 @@ const Demo1 = (props) => {
   const [loading, setLoading] = useState(true);
   const [windowWidth, setWindowWidth] = useState(0);
   const [contentList, setContentList] = useState([]);
+  const [itemsCategory, setItemsCategory] = useState({
+
+  })
   useEffect(() => {
     pageSetting();
   }, [])
@@ -233,6 +327,7 @@ const Demo1 = (props) => {
       dns_data = JSON.parse(dns_data);
     }
     let content_list = (dns_data?.main_obj) ?? [];
+    let items_category = {};
     let products = await getProductsByUser({
       page: 1,
       page_size: 100000,
@@ -246,21 +341,45 @@ const Demo1 = (props) => {
         })
         content_list[i].list = item_list
       }
+      if (content_list[i]?.type == 'items-with-categories') {
+        for(var j = 0;j<content_list[i]?.list.length;j++){
+          let item_list = content_list[i]?.list[j]?.list;
+          item_list = item_list.map(item_id => {
+            return { ..._.find(products, { id: parseInt(item_id) }) }
+          })
+          content_list[i].list[j].list = item_list;
+        }
+        items_category = ({
+            ...items_category,
+            [`${i}`]:0          
+        })
+      }
     }
+    console.log(content_list)
+    setItemsCategory(items_category)
     setWindowWidth(window.innerWidth)
     setContentList(content_list)
   }
 
-  const returnHomeContentByColumn = (column) => {
+  const returnHomeContentByColumn = (column, idx) => {
     return returnHomeContent(
       column,
       {
         windowWidth: window.innerWidth,
-        themeDnsData: themeDnsData
+        themeDnsData: themeDnsData,
+        idx,
+        itemsCategory
       },
       {
-        router
+        router,
+        onClickItemsCategory
       })
+  }
+  const onClickItemsCategory = (i, j) =>{
+    setItemsCategory({
+      ...itemsCategory,
+      [`${i}`]:j
+    })
   }
   return (
     <>
@@ -281,9 +400,9 @@ const Demo1 = (props) => {
         </>
         :
         <>
-          {contentList.map((column, idx) => (
+          {contentList && contentList.map((column, idx) => (
             <>
-              {returnHomeContentByColumn(column)}
+              {returnHomeContentByColumn(column, idx)}
             </>
           ))}
           <div style={{

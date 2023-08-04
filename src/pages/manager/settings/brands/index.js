@@ -76,6 +76,21 @@ const BrandList = () => {
         return row['updated_at'] ?? "---"
       }
     },
+    ...(user?.level >=50 ? [{
+      id: 'main_edit',
+      label: `메인페이지 수정`,
+      action: (row) => {
+        return (
+          <>
+            <IconButton>
+              <Icon icon='material-symbols:edit-outline' onClick={() => {
+                router.push(`/manager/designs/main/${row?.id}`)
+              }} />
+            </IconButton>
+          </>
+        )
+      }
+    },]:[]),
     {
       id: 'edit',
       label: `수정${user?.level >= 50 ? '/삭제' : ''}`,

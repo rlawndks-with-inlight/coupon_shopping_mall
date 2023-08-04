@@ -141,7 +141,7 @@ const Main = () => {
 
 
     let brand_data = await getBrandByManager({
-      id: router.query.brand_id | themeDnsData?.id
+      id: (!isNaN(parseInt(router.query.type)) ? router.query.type : '') | themeDnsData?.id
     })
     brand_data = settingBrandObj(item, brand_data);
     let content_list = brand_data?.main_obj ?? [];
@@ -230,8 +230,9 @@ const Main = () => {
       }
       for (var i = 0; i < file_index_list.length; i++) {
         content_list[file_index_list[i]['i']].list[file_index_list[i]['j']] = {
+          title: content_list[file_index_list[i]['i']].list[file_index_list[i]['j']]?.title ?? "",
+          link: content_list[file_index_list[i]['i']].list[file_index_list[i]['j']]?.link ?? "",
           src: file_result[i]?.url ?? "",
-          link: content_list[file_index_list[i]['i']].list[file_index_list[i]['j']].link
         }
       }
     }
@@ -261,7 +262,7 @@ const Main = () => {
     setTourSteps([]);
   };
   const conditionOfSection = (type, item) => {
-    return (item.type == type && (router.query.type == type || router.query.type == 'all' || !router.query.type))
+    return (item.type == type && (router.query.type == type || router.query.type == 'all' || !router.query.type || !isNaN(parseInt(router.query.type))))
   }
   return (
     <>
@@ -357,6 +358,7 @@ const Main = () => {
                                 <TextField sx={{ width: '50%' }} size='small' label={`${index + 1}번째 이미지 제목 (제목 없을 시 빈칸으로 유지)`} value={contentList[idx]?.list[index].title ?? ""} onChange={(e) => {
                                   let content_list = [...contentList];
                                   content_list[idx].list[index].title = e.target.value;
+                                  console.log(content_list)
                                   setContentList(content_list);
                                 }} />
                                 <TextField sx={{ width: '50%' }} size='small' label={`${index + 1}번째 이미지 링크 (링크 없을 시 빈칸으로 유지)`} value={contentList[idx]?.list[index].link ?? ""} onChange={(e) => {

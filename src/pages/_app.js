@@ -95,7 +95,6 @@ App.getInitialProps = async ({ ctx }) => {
     return {
       head_data: head_data,
       host,
-      ctx
     }
   } catch (err) {
     console.log(err)

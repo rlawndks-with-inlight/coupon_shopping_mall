@@ -14,6 +14,7 @@ import { addBrandByManager, getBrandByManager, updateBrandByManager, uploadFileB
 import { toast } from "react-hot-toast";
 import { useModal } from "src/components/dialog/ModalProvider";
 import dynamic from "next/dynamic";
+import axios from "axios";
 const ReactQuill = dynamic(() => import('react-quill'), {
   ssr: false,
   loading: () => <p>Loading ...</p>,
@@ -78,7 +79,11 @@ const DefaultSetting = () => {
     let brand_data_keys = Object.keys(brand_data);
     for (var i = 0; i < brand_data_keys.length; i++) {
       if (brand_data[brand_data_keys[i]]) {
-        obj[brand_data_keys[i]] = brand_data[brand_data_keys[i]];
+        if(typeof obj[brand_data_keys[i]] == 'object'){
+          obj[brand_data_keys[i]] = Object.assign(obj[brand_data_keys[i]], brand_data[brand_data_keys[i]]);
+        }else{
+          obj[brand_data_keys[i]] = brand_data[brand_data_keys[i]];
+        }
       }
     }
     return obj;

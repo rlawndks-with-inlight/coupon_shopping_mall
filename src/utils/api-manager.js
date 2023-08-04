@@ -1,3 +1,4 @@
+import { toast } from "react-hot-toast";
 import { axiosIns } from "./axios";
 import { serialize } from 'object-to-formdata';
 
@@ -16,6 +17,8 @@ export const post = async (url, obj) => {
     const response = await axiosIns().post(url, formData, config);
     return response?.data;
   } catch (err) {
+    console.log(err)
+    toast.error('');
     return false;
   }
 }

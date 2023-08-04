@@ -125,7 +125,8 @@ export const defaultManagerObj = {
     og_file: undefined,
     setting_obj: {
       tutorial_num: 0,
-
+      shop_demo_num:0,
+      blog_demo_num:0,
     },
     theme_css: {
       main_color: '#00ab55'

@@ -53,6 +53,7 @@ export const get = async (url, params) => {
   try {
     let query = new URLSearchParams(params).toString()
     const response = await axiosIns().get(`${url}?${query}`);
+    console.log(response)
     return response?.data;
   } catch (err) {
     console.log(err)

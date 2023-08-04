@@ -18,7 +18,7 @@ export const post = async (url, obj) => {
     return response?.data;
   } catch (err) {
     console.log(err)
-    toast.error('');
+    toast.error(err?.response?.data?.message);
     return false;
   }
 }

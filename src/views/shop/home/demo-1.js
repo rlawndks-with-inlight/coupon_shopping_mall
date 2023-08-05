@@ -412,7 +412,6 @@ const Demo1 = (props) => {
         })
       }
     }
-    console.log(content_list)
     setItemsCategory(items_category)
     setWindowWidth(window.innerWidth)
     setContentList(content_list)

@@ -602,12 +602,10 @@ const ProductEdit = () => {
                                   img_src = await img_src.split(`"></p>`);
                                   let base64 = img_src[0];
                                   img_src = await base64toFile(img_src[0], 'note.png');
-                                  let formData = new FormData();
-                                  formData.append('file', img_src);
                                   const response = await uploadFileByManager({
-                                    formData
+                                    file: img_src
                                   });
-                                  note = await note.replace(base64, response?.data?.url)
+                                  note = await note.replace(base64, response?.url)
                                 }
                               }
                             }

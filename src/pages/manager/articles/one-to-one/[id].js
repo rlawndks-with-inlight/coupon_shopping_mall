@@ -1,8 +1,8 @@
 
-import {  Button, Card, Grid,  Stack, TextField, Typography } from "@mui/material";
+import { Button, Card, Grid, Stack, TextField, Typography } from "@mui/material";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
-import {themeObj } from "src/components/elements/styled-components";
+import { themeObj } from "src/components/elements/styled-components";
 import { useSettingsContext } from "src/components/settings";
 import { Upload } from "src/components/upload";
 import ManagerLayout from "src/layouts/manager/ManagerLayout";
@@ -112,12 +112,10 @@ const OneToOneManager = () => {
                               img_src = await img_src.split(`"></p>`);
                               let base64 = img_src[0];
                               img_src = await base64toFile(img_src[0], 'note.png');
-                              let formData = new FormData();
-                              formData.append('file', img_src);
                               const response = await uploadFileByManager({
-                                formData
+                                file: img_src
                               });
-                              note = await note.replace(base64, response?.data?.url)
+                              note = await note.replace(base64, response?.url)
                             }
                           }
                         }

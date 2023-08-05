@@ -10,7 +10,7 @@ import { base64toFile, getAllIdsWithParents } from "src/utils/function";
 import styled from "styled-components";
 import { react_quill_data } from "src/data/manager-data";
 import { axiosIns } from "src/utils/axios";
-import { addUserByManager, getUserByManager, updateUserByManager, uploadFileByManager } from "src/utils/api-manager";
+import { addUserByManager, getUserByManager, updateUserByManager } from "src/utils/api-manager";
 import { toast } from "react-hot-toast";
 import { useModal } from "src/components/dialog/ModalProvider";
 import dynamic from "next/dynamic";

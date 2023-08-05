@@ -546,13 +546,16 @@ export const deletePopupByManager = (params) => { //관리자 팝업 삭제
 }
 
 export const uploadFileByManager = (params) => {// 관리자 파일 단일 업로드
-  const { formData } = params;
+  const { file } = params;
+  let obj = {
+    file
+  }
   let config = {
     headers: {
       'Content-Type': "multipart/form-data",
     }
   };
-  return post('/api/v1/manager/posts/upload', formData, config);
+  return post('/api/v1/manager/posts/upload', obj, config);
 }
 export const uploadsFileByManager = (params) => {// 관리자 파일 여러개 업로드
   const { images } = params;

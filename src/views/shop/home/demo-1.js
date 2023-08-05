@@ -23,9 +23,6 @@ margin:0 auto;
 `
 const FullWrappers = styled.div`
 width:100%;
-
-
-
 `
 const returnTypeObj = {
 
@@ -78,29 +75,39 @@ height: 34vw;
     height: 42.5vw;
 }
 `
+const Iframe = styled.iframe`
+width:1016px;
+height:542px;
+margin: 1rem auto;
+@media (max-width:1200px) {
+  width: 85vw;
+  height: 45.3vw;
+}
+`
 const returnHomeContent = (column, data, func) => {
   let { windowWidth, themeDnsData, idx, itemsCategory } = data;
   const { router, onClickItemsCategory } = func;
   let type = column?.type;
   let content = undefined;
+  const NextArrow = ({ onClick, sx }) => {
+    return (
+      <NextArrowStyle onClick={onClick} style={{...sx}}>
+        <Icon style={{ color: '#fff', margin: 'auto' }} icon={'ooui:previous-rtl'} />
+      </NextArrowStyle>
+    );
+  };
+
+  const PrevArrow = ({ onClick, sx }) => {
+    return (
+      <PrevArrowStyle onClick={onClick} style={{...sx}}>
+        <Icon style={{ color: '#fff', margin: 'auto' }} icon={'ooui:previous-ltr'} />
+      </PrevArrowStyle>
+    );
+  };
 
   if (type == 'banner') {
     let img_list = [...column?.list];
-    const NextArrow = ({ onClick }) => {
-      return (
-        <NextArrowStyle className="nextArrow" onClick={onClick}>
-          <Icon style={{ color: '#fff', margin: 'auto' }} icon={'ooui:previous-rtl'} />
-        </NextArrowStyle>
-      );
-    };
 
-    const PrevArrow = ({ onClick }) => {
-      return (
-        <PrevArrowStyle className="prevArrow" onClick={onClick}>
-          <Icon style={{ color: '#fff', margin: 'auto' }} icon={'ooui:previous-ltr'} />
-        </PrevArrowStyle>
-      );
-    };
     let slide_setting = {
       centerMode: true,
       centerPadding: (img_list.length >= 3 ? (windowWidth > 1200 ? '10%' : 0) : 0), // 이미지 간격을 조절할 수 있는 값입니다.
@@ -186,7 +193,7 @@ const returnHomeContent = (column, data, func) => {
         display: 'flex',
         flexDirection: `${column?.title ? 'column' : 'row'}`,
       }}>
-          {column?.title &&
+        {column?.title &&
           <>
             <div style={{ fontSize: themeObj.font_size.size3, fontWeight: 'bold' }}>{column?.title}</div>
             {column?.sub_title &&
@@ -232,14 +239,21 @@ const returnHomeContent = (column, data, func) => {
         <Slider {...slide_setting} className='margin-slide'>
           {column?.list && column?.list.map((item, idx) => (
             <>
-              <Row style={{flexDirection:'column', width:`${getSlideToShow()==7?`${parseInt(1350/7)-8}px`:`${parseInt(window.innerWidth/getSlideToShow())-8}px`}`, }}>
+              <Row style={{ flexDirection: 'column', width: `${getSlideToShow() == 7 ? `${parseInt(1350 / 7) - 8}px` : `${parseInt(window.innerWidth / getSlideToShow()) - 8}px`}`, }}>
                 <LazyLoadImage src={item?.src} style={{
-                  width:`${getSlideToShow()==7?`${parseInt(1350/7)-48}px`:`${parseInt(window.innerWidth/getSlideToShow())-48}px`}`,
-                  height:`${getSlideToShow()==7?`${parseInt(1350/7)-48}px`:`${parseInt(window.innerWidth/getSlideToShow())-48}px`}`,
-                  borderRadius:'50%',
-                  margin:'0 auto'
-                }} />
-                <div style={{margin:'1rem auto'}}>{item.title}</div>
+                  width: `${getSlideToShow() == 7 ? `${parseInt(1350 / 7) - 48}px` : `${parseInt(window.innerWidth / getSlideToShow()) - 48}px`}`,
+                  height: `${getSlideToShow() == 7 ? `${parseInt(1350 / 7) - 48}px` : `${parseInt(window.innerWidth / getSlideToShow()) - 48}px`}`,
+                  borderRadius: '50%',
+                  margin: '0 auto',
+                  cursor: 'pointer'
+                }}
+                  onClick={() => {
+                    if (item?.link) {
+                      window.location.href = item?.link;
+                    }
+                  }}
+                />
+                <div style={{ margin: '1rem auto' }}>{item.title}</div>
               </Row>
             </>
           ))}
@@ -255,44 +269,87 @@ const returnHomeContent = (column, data, func) => {
         display: 'flex',
         flexDirection: `${column?.title ? 'column' : 'row'}`,
       }}>
-        <Row style={{alignItems:'center'}}>
-          <Row style={{flexDirection:'column'}}>
-          {column?.title &&
-          <>
-            <div style={{ fontSize: themeObj.font_size.size3, fontWeight: 'bold' }}>{column?.title}</div>
-            {column?.sub_title &&
+        <Row style={{ alignItems: 'center' }}>
+          <Row style={{ flexDirection: 'column' }}>
+            {column?.title &&
               <>
-                <div style={{ fontSize: themeObj.font_size.size5, color: themeObj.grey[500] }}>{column?.sub_title}</div>
+                <div style={{ fontSize: themeObj.font_size.size3, fontWeight: 'bold' }}>{column?.title}</div>
+                {column?.sub_title &&
+                  <>
+                    <div style={{ fontSize: themeObj.font_size.size5, color: themeObj.grey[500] }}>{column?.sub_title}</div>
+                  </>}
               </>}
-          </>}
           </Row>
-          <Row style={{marginLeft:'auto', columnGap:'0.5rem'}}>
-          {column?.list && column?.list.map((item, index) => (
-            <>
-              <Button variant={itemsCategory[idx] == index?`contained`:`outlined`} sx={{height:'36px'}} onClick={()=>{
-                onClickItemsCategory(idx, index);
-              }}>
-                {item?.category_name}
-              </Button>
-            </>
-          ))}
+          <Row style={{ marginLeft: 'auto', columnGap: '0.5rem' }}>
+            {column?.list && column?.list.map((item, index) => (
+              <>
+                <Button variant={itemsCategory[idx] == index ? `contained` : `outlined`} sx={{ height: '36px' }} onClick={() => {
+                  onClickItemsCategory(idx, index);
+                }}>
+                  {item?.category_name}
+                </Button>
+              </>
+            ))}
           </Row>
         </Row>
         <div style={{ marginTop: '1rem' }} />
-          {column?.list && column?.list.map((item, index) => (
-            <>
+        {column?.list && column?.list.map((item, index) => (
+          <>
             {itemsCategory[idx] == index &&
-            <>
-              <Items items={item?.list} router={router} />
-            </>}
-            </>
-          ))}
+              <>
+                <Items items={item?.list} router={router} />
+              </>}
+          </>
+        ))}
       </Wrappers>
     </>
   }
   if (type == 'video-slide') {
+    let slide_setting = {
+      infinite: true,
+      speed: 500,
+      autoplay: true,
+      autoplaySpeed: 2500,
+      slidesToShow: 1,
+      slidesToScroll: 1,
+      dots: false,
+      nextArrow: <NextArrow onClick sx={{top: window.innerWidth > 1200 ? '200px' : '15vw'}}/>,
+      prevArrow: <PrevArrow onClick sx={{top: window.innerWidth > 1200 ? '200px' : '15vw'}}/>,
+    }
     content = <>
-
+      <FullWrappers style={{
+        height: window.innerWidth > 1200 ? '600px' : '50vw',
+        backgroundImage: `url(${column?.src})`,
+        backgroundSize: 'cover',
+        backgroundRepeat: 'no-repeat',
+        backgroundPosition: 'fixed',
+        display: 'flex',
+        flexDirection: 'column',
+      }}>
+        <Row style={{ flexDirection: 'column', margin: '1rem auto 0 auto', alignItems: 'center' }}>
+          {column?.title &&
+            <>
+              <div style={{ fontSize: themeObj.font_size.size3, fontWeight: 'bold' }}>{column?.title}</div>
+              {column?.sub_title &&
+                <>
+                  <div style={{ fontSize: themeObj.font_size.size5, color: themeObj.grey[500] }}>{column?.sub_title}</div>
+                </>}
+            </>}
+        </Row>
+        <Slider {...slide_setting}>
+          {column?.list && column?.list.map((item, idx) => {
+            let link = item?.link;
+            link = link.split('?')[1];
+            link = link.split('=')[1];
+            return <>
+              <Row style={{ flexDirection: 'column', }}>
+                <Iframe src={`https://www.youtube.com/embed/${link}`} title="YouTube video player" frameBorder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowFullScreen>
+                </Iframe>
+              </Row>
+            </>
+          })}
+        </Slider>
+      </FullWrappers>
     </>
   }
   return content
@@ -334,15 +391,15 @@ const Demo1 = (props) => {
     })
     products = products?.content ?? [];
     for (var i = 0; i < content_list.length; i++) {
-      if (content_list[i]?.type == 'items') {
+      if (content_list[i]?.type == 'items' && products.length > 0) {
         let item_list = content_list[i]?.list ?? [];
         item_list = item_list.map(item_id => {
           return { ..._.find(products, { id: parseInt(item_id) }) }
         })
         content_list[i].list = item_list
       }
-      if (content_list[i]?.type == 'items-with-categories') {
-        for(var j = 0;j<content_list[i]?.list.length;j++){
+      if (content_list[i]?.type == 'items-with-categories' && products.length > 0) {
+        for (var j = 0; j < content_list[i]?.list.length; j++) {
           let item_list = content_list[i]?.list[j]?.list;
           item_list = item_list.map(item_id => {
             return { ..._.find(products, { id: parseInt(item_id) }) }
@@ -350,8 +407,8 @@ const Demo1 = (props) => {
           content_list[i].list[j].list = item_list;
         }
         items_category = ({
-            ...items_category,
-            [`${i}`]:0          
+          ...items_category,
+          [`${i}`]: 0
         })
       }
     }
@@ -375,10 +432,10 @@ const Demo1 = (props) => {
         onClickItemsCategory
       })
   }
-  const onClickItemsCategory = (i, j) =>{
+  const onClickItemsCategory = (i, j) => {
     setItemsCategory({
       ...itemsCategory,
-      [`${i}`]:j
+      [`${i}`]: j
     })
   }
   return (

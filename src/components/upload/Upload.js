@@ -68,7 +68,6 @@ export default function Upload({
     disabled,
     ...other,
   });
-
   const hasFile = !!file && !multiple;
 
   const hasFiles = files && multiple && files.length > 0;
@@ -200,11 +199,11 @@ function Placeholder({ sx, ...other }) {
 
       <div>
         <Typography gutterBottom variant="h5">
-          파일을 업로드 해주세요.
+          {other?.title || '파일을 업로드 해주세요.'}
         </Typography>
 
         <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-          파일을 드롭다운 하거나 업로드 해주세요.
+          {other?.sub_title || '파일을 드롭다운 하거나 업로드 해주세요.'}
         </Typography>
         <Typography variant="body2" sx={{ color: 'text.secondary' }}>
           {other.fileExplain?.width}

@@ -214,11 +214,16 @@ const Main = () => {
             })
           }
         }
-
-      } else if (content_list[i]?.type == 'items') {
-
-      } else if (content_list[i]?.type == 'editor') {
-
+      } 
+      if(content_list[i]?.type == 'video-slide'){
+        if(content_list[i]?.file){
+          file_index_list.push({
+            i: i,
+          });
+          images.push({
+            image: content_list[i].file
+          })
+        }
       }
     }
     if (file_index_list.length > 0) {
@@ -229,17 +234,23 @@ const Main = () => {
         return;
       }
       for (var i = 0; i < file_index_list.length; i++) {
-        content_list[file_index_list[i]['i']].list[file_index_list[i]['j']] = {
-          title: content_list[file_index_list[i]['i']].list[file_index_list[i]['j']]?.title ?? "",
-          link: content_list[file_index_list[i]['i']].list[file_index_list[i]['j']]?.link ?? "",
-          src: file_result[i]?.url ?? "",
+        if(file_index_list[i]['i'] >=0 && file_index_list[i]['j']>=0){
+          content_list[file_index_list[i]['i']].list[file_index_list[i]['j']] = {
+            title: content_list[file_index_list[i]['i']].list[file_index_list[i]['j']]?.title ?? "",
+            link: content_list[file_index_list[i]['i']].list[file_index_list[i]['j']]?.link ?? "",
+            src: file_result[i]?.url ?? "",
+          }
+          continue;
+        }
+        if(file_index_list[i]['i'] >=0){
+          content_list[file_index_list[i]['i']].src = file_result[i]?.url;
+          delete content_list[file_index_list[i]['i']].file;
+          continue;
         }
       }
     }
     let brand_data = { ...item, main_obj: content_list };
-    console.log(brand_data)
     let result = await updateBrandByManager({ ...brand_data, id: themeDnsData?.id })
-    console.log(result)
     if (result) {
       toast.success("성공적으로 저장 되었습니다.");
       window.location.reload();
@@ -513,8 +524,10 @@ const Main = () => {
                         <>
                           <Row style={{ alignItems: 'end', alignContent: 'center' }}>
                             <CardHeader title={`동영상 슬라이드 ${curTypeNum(contentList, 'video-slide', idx)}`} sx={{ paddingLeft: '0' }} />
+                           
                             <Button variant="outlined" sx={{ height: '28px' }} onClick={() => {
                               let content_list = [...contentList];
+                              content_list[idx].list = content_list[idx]?.list??[];
                               content_list[idx].list.push({
                                 link: '',
                               })
@@ -526,6 +539,26 @@ const Main = () => {
                               <Icon icon={'ph:x-bold'} />
                             </IconButton>
                           </Row>
+                          <Upload file={item.file || item.src} title='배경에 사용될 이미지를 업로드 해주세요.' onDrop={(acceptedFiles) => {
+                              const newFile = acceptedFiles[0];
+                              if (newFile) {
+                                let content_list = [...contentList];
+                                content_list[idx]['file'] =  Object.assign(newFile, {
+                                  preview: URL.createObjectURL(newFile),
+                                });
+                                setContentList(content_list)
+                              }
+                            }}
+                              onDelete={() => {
+                                let content_list = [...contentList];
+                                content_list[idx]['file'] = undefined;
+                                content_list[idx]['src'] = '';
+                                setContentList(content_list)
+                              }}
+                              fileExplain={{
+                                width: '(512x512 추천)'//파일 사이즈 설명
+                              }}
+                            />
                           <TextField label='제목' value={item.title} onChange={(e) => {
                             let content_list = [...contentList];
                             content_list[idx]['title'] = e.target.value;
@@ -539,9 +572,9 @@ const Main = () => {
                           {item?.list && item?.list.map((itm, index) => (
                             <>
                               <Row style={{ columnGap: '0.5rem', width: '100%' }}>
-                                <TextField label='링크주소' value={itm?.list} style={{ width: '100%' }} onChange={(e) => {
+                                <TextField label='링크주소' value={itm?.link} style={{ width: '100%' }} onChange={(e) => {
                                   let content_list = [...contentList];
-                                  content_list[idx].list[index]['list'] = e.target.value;
+                                  content_list[idx].list[index]['link'] = e.target.value;
                                   setContentList(content_list)
                                 }} />
                                 <IconButton onClick={() => {

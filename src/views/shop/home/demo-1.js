@@ -91,7 +91,7 @@ const returnHomeContent = (column, data, func) => {
   let content = undefined;
   const NextArrow = ({ onClick, sx }) => {
     return (
-      <NextArrowStyle onClick={onClick} style={{...sx}}>
+      <NextArrowStyle onClick={onClick} style={{ ...sx }}>
         <Icon style={{ color: '#fff', margin: 'auto' }} icon={'ooui:previous-rtl'} />
       </NextArrowStyle>
     );
@@ -99,7 +99,7 @@ const returnHomeContent = (column, data, func) => {
 
   const PrevArrow = ({ onClick, sx }) => {
     return (
-      <PrevArrowStyle onClick={onClick} style={{...sx}}>
+      <PrevArrowStyle onClick={onClick} style={{ ...sx }}>
         <Icon style={{ color: '#fff', margin: 'auto' }} icon={'ooui:previous-ltr'} />
       </PrevArrowStyle>
     );
@@ -253,7 +253,7 @@ const returnHomeContent = (column, data, func) => {
                     }
                   }}
                 />
-                <div style={{ margin: '1rem auto' }}>{item.title}</div>
+                <div style={{ margin: '1rem auto', fontWeight: 'bold' }}>{item.title}</div>
               </Row>
             </>
           ))}
@@ -313,8 +313,8 @@ const returnHomeContent = (column, data, func) => {
       slidesToShow: 1,
       slidesToScroll: 1,
       dots: false,
-      nextArrow: <NextArrow onClick sx={{top: window.innerWidth > 1200 ? '200px' : '15vw'}}/>,
-      prevArrow: <PrevArrow onClick sx={{top: window.innerWidth > 1200 ? '200px' : '15vw'}}/>,
+      nextArrow: <NextArrow onClick sx={{ top: window.innerWidth > 1200 ? '200px' : '15vw' }} />,
+      prevArrow: <PrevArrow onClick sx={{ top: window.innerWidth > 1200 ? '200px' : '15vw' }} />,
     }
     content = <>
       <FullWrappers style={{
@@ -326,7 +326,7 @@ const returnHomeContent = (column, data, func) => {
         display: 'flex',
         flexDirection: 'column',
       }}>
-        
+
         <Row style={{ flexDirection: 'column', margin: '1rem auto 0 auto', alignItems: 'center' }}>
           {column?.title &&
             <>

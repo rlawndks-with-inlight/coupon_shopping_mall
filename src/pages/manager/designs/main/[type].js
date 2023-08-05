@@ -509,7 +509,6 @@ const Main = () => {
                                     const response = await uploadFileByManager({
                                       file: img_src
                                     });
-                                    console.log(response?.url)
                                     note = await note.replace(base64, response?.url)
                                   }
                                 }

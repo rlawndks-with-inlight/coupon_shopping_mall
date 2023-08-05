@@ -326,6 +326,7 @@ const returnHomeContent = (column, data, func) => {
         display: 'flex',
         flexDirection: 'column',
       }}>
+        
         <Row style={{ flexDirection: 'column', margin: '1rem auto 0 auto', alignItems: 'center' }}>
           {column?.title &&
             <>

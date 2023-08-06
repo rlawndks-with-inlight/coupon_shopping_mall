@@ -69,7 +69,6 @@ const HomePost = (props) => {
   const { themeDnsData } = data;
   const { router } = func;
   const [categoryId, setCategoryId] = useState(column?.categories[0]?.id);
-  console.log(column)
   return (
     <>
       <FullWrappers style={{

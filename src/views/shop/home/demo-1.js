@@ -123,8 +123,10 @@ const Demo1 = (props) => {
   const [posts, setPosts] = useState({});
 
   useEffect(() => {
-    pageSetting();
-  }, [])
+    if(themePostCategoryList.length > 0){
+      pageSetting();
+    }
+  }, [themePostCategoryList])
   useEffect(() => {
     if (contentList.length > 0) {
       setLoading(false);

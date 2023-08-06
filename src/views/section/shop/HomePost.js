@@ -3,96 +3,116 @@ import Slider from 'react-slick'
 import styled from 'styled-components'
 import { Row, themeObj } from 'src/components/elements/styled-components'
 import _ from 'lodash'
+import { useState } from 'react'
+import { IconButton } from '@mui/material'
 
 const FullWrappers = styled.div`
   width:100%;
-  `
-
-const NextArrowStyle = styled.div`
-  position: absolute;
-    top: 15vw;
-    right: 12px;
-    z-index: 2;
-    width: 3rem;
-    height: 3rem;
-    cursor: pointer;
-    font-size: 28px;
-    border-radius: 50%;
-    background: #aaaaaa55;
-    color: #fff !important;
-    display: flex;
-    @media (max-width:1200px) {
-      top: 18vw;
-      font-size: 1rem;
-      width: 1.5rem;
-      height: 1.5rem;
-    }
-  `
-const PrevArrowStyle = styled.div`
-  position: absolute;
-  top: 15vw;
-  left: 12px;
-  z-index: 2;
-  cursor: pointer;
-  font-size: 28px;
-  width: 3rem;
-  height: 3rem;
-  border-radius: 50%;
-  background: #aaaaaa55;
-  color: #fff !important;
-  display: flex;
-  @media (max-width:1200px) {
-    top: 18vw;
-    font-size: 1rem;
-    width: 1.5rem;
-    height: 1.5rem;
+  display:flex;
+  min-height: 600px;
+  background-image: url('/images/test/notice-banner.jpg');
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: fixed;
+  margin: 4rem auto;
+  background-attachment: fixed;
+  @media (max-width:1200px){
+    flex-direction:column;
+    min-height: 800px;
   }
-  `
+`
+const ContentWrappers = styled.div`
+width:50%;
+display:flex;
+flex-direction:column;
+align-items:center;
+@media (max-width:1200px){
+  width:100%;
+  margin:auto;
+}
 
-const Iframe = styled.iframe`
-  width:1016px;
-  height:542px;
-  margin: 1rem auto;
-  @media (max-width:1200px) {
-    width: 85vw;
-    height: 45.3vw;
-  }
-  `
-const NextArrow = ({ onClick, sx }) => {
-    return (
-        <NextArrowStyle onClick={onClick} style={{ ...sx }}>
-            <Icon style={{ color: '#fff', margin: 'auto' }} icon={'ooui:previous-rtl'} />
-        </NextArrowStyle>
-    );
-};
+`
+const Content = styled.div`
+margin: auto;
+display:flex;
+flex-direction:column;
+align-items:center;
+`
+const PostBox = styled.div`
+padding:1rem;
+display:flex;
+flex-direction:column;
+border:1px solid #fff;
+width:600px;
+background:#00000099;
+`
+const PostCategoryTab = styled.div`
+padding:0.5rem;
+cursor:pointer;
+`
+const PostCategoryTitle = styled.div`
+width:100%;
+font-size:${themeObj.font_size.size3};
+font-weight:bold;
+padding:0 0 0.5rem 0;
+border-bottom:1px solid #fff;
+justify-content:space-between;
+display:flex;
 
-const PrevArrow = ({ onClick, sx }) => {
-    return (
-        <PrevArrowStyle onClick={onClick} style={{ ...sx }}>
-            <Icon style={{ color: '#fff', margin: 'auto' }} icon={'ooui:previous-ltr'} />
-        </PrevArrowStyle>
-    );
-};
+`
+const PostTitle = styled.div`
+margin: 0.2rem 0;
+`
 const HomePost = (props) => {
-    const { column, data, func } = props;
+  const { column, data, func } = props;
+  const { themeDnsData } = data;
+  const { router } = func;
+  const [categoryId, setCategoryId] = useState(column?.categories[0]?.id);
+  console.log(column)
+  return (
+    <>
+      <FullWrappers style={{
 
-    return (
-        <>
-            <FullWrappers style={{
-                height: window.innerWidth > 1200 ? '600px' : '50vw',
-                backgroundImage: `url('/images/test/notice-banner.jpg')`,
-                backgroundSize: 'cover',
-                backgroundRepeat: 'no-repeat',
-                backgroundPosition: 'fixed',
-                display: 'flex',
-                flexDirection: 'column',
-                margin: '4rem auto',
-                backgroundAttachment: 'fixed'
-            }}>
-
-
-            </FullWrappers>
-        </>
-    )
+      }}>
+        <ContentWrappers>
+          <Content style={{ color: '#fff' }}>
+            <div style={{ fontSize: themeObj.font_size.size5 }}>CALL CENTER</div>
+            <div style={{ fontSize: themeObj.font_size.size3 }}>PHONE: {themeDnsData?.phone_num}</div>
+            <div style={{ fontSize: themeObj.font_size.size3 }}>FAX: {themeDnsData?.fax_num}</div>
+          </Content>
+        </ContentWrappers>
+        <ContentWrappers>
+          <Content style={{ color: '#fff' }}>
+            <Row style={{ marginLeft: 'auto' }}>
+              {column?.categories && column?.categories.map((cate, idx) => (
+                <>
+                  <PostCategoryTab
+                    style={{ fontWeight: `${cate?.id == categoryId ? 'bold' : ''}` }}
+                    onClick={() => {
+                      setCategoryId(cate?.id)
+                    }}>{cate?.post_category_title}</PostCategoryTab>
+                </>
+              ))}
+            </Row>
+            <PostBox>
+              <PostCategoryTitle>
+                <div>
+                  {_.find(column?.categories, { id: categoryId })?.post_category_title}
+                </div>
+                <IconButton onClick={() => router.push(`/shop/service/${categoryId}`)}>
+                  <Icon icon={'ic:baseline-plus'} style={{ color: '#fff' }} />
+                </IconButton>
+              </PostCategoryTitle>
+              {column?.posts[categoryId] && column?.posts[categoryId].map((item, idx) => (
+                <>
+                  <PostTitle>{item?.post_title}</PostTitle>
+                </>
+              ))}
+            </PostBox>
+          </Content>
+        </ContentWrappers>
+      </FullWrappers>
+    </>
+  )
 }
 export default HomePost;

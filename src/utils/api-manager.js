@@ -27,6 +27,7 @@ export const deleteItem = async (url, obj) => {
     const response = await axiosIns().delete(url, obj);
     return response;
   } catch (err) {
+    toast.error(err?.response?.data?.message);
     return false;
   }
 }
@@ -46,6 +47,7 @@ export const put = async (url, obj) => {
     const response = await axiosIns().post(url, formData, config);
     return response?.data;
   } catch (err) {
+    toast.error(err?.response?.data?.message);
     return false;
   }
 }

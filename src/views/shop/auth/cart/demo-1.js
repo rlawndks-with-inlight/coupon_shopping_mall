@@ -102,7 +102,7 @@ const Demo1 = (props) => {
       router
     },
   } = props;
-  const { themeCartData } = useSettingsContext();
+  const { themeCartData, onChangeCartData } = useSettingsContext();
   const [products, setProducts] = useState([]);
   const [activeStep, setActiveStep] = useState(0);
   const [addressList, setAddressList] = useState([]);
@@ -136,7 +136,8 @@ const Demo1 = (props) => {
   const onDelete = (idx) => {
     let product_list = [...products];
     product_list.splice(idx, 1);
-    setProducts(product_list)
+    onChangeCartData(product_list);
+    setProducts(product_list);
   }
   const onDecreaseQuantity = (idx) => {
     let product_list = [...products];
@@ -273,7 +274,7 @@ const Demo1 = (props) => {
         </Grid>
         {activeStep > 0 &&
           <>
-            <Row style={{ width: '100%', justifyContent: 'space-between', maxWidth: '792px' }}>
+            <Row style={{ width: '100%', justifyContent: 'space-between', maxWidth: '989px' }}>
               <Button startIcon={<Iconify icon="grommet-icons:form-previous" />} onClick={onClickPrevStep} variant="soft" size="small">
                 이전 단계 돌아가기
               </Button>

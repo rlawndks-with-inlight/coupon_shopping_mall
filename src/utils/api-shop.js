@@ -70,3 +70,10 @@ export const signUpByUser = (params) => { // 유저 회원가입
   }
   return post(`/api/v1/shop/auth/sign-up`, obj);
 }
+export const onPayItemByCard = (params) => { //카드결제
+  const { product_id, brand_id, user_id, amount, item_name, buyer_name, installment, buyer_phone, card_num, yymm, auth_num, card_pw, addr, detail_addr, temp, password } = params;
+  let obj = {
+    brand_id, user_id, amount, item_name, buyer_name, installment, buyer_phone, card_num, yymm, auth_num, card_pw, addr, detail_addr, temp, password
+  }
+  return post(`/api/v1/shop/shop/products/${product_id}/hand`, obj);
+}

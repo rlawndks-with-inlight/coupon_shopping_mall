@@ -128,7 +128,6 @@ const Demo1 = (props) => {
           }
         }
       }
-      console.log(data)
       setProducts(data);
     }
     let address_data = test_address_list;
@@ -146,8 +145,6 @@ const Demo1 = (props) => {
   }
   const onIncreaseQuantity = (idx) => {
     let product_list = [...products];
-    console.log(product_list[idx])
-    console.log(idx)
     product_list[idx].count++;
     setProducts(product_list)
   }

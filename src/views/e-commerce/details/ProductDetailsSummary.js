@@ -33,6 +33,7 @@ import { commarNumber } from 'src/utils/function';
 import { themeObj } from 'src/components/elements/styled-components';
 import { useSettingsContext } from 'src/components/settings';
 import _ from 'lodash';
+import { toast } from 'react-hot-toast';
 
 // ----------------------------------------------------------------------
 
@@ -74,24 +75,52 @@ export default function ProductDetailsSummary({ product, onAddCart, onGotoStep, 
     cart.filter((item) => item.id === id).map((item) => item.quantity)[0] >= available;
 
   const handleAddCart = async () => {
-    let cart_data = themeCartData;
-    console.log(cart_data)
-    let find_index = _.findIndex(cart_data, { id: selectProduct.id, select_option_obj: selectProduct.select_option_obj });
-    if (find_index >= 0) {
-      cart_data[find_index].count = cart_data[find_index].count + selectProduct.count
-    } else {
-      cart_data.push(selectProduct);
+    let cart_data = [...themeCartData];
+    let select_product = { ...selectProduct };
+    for (var i = 0; i < product?.groups.length; i++) {
+      let group = product?.groups[i];
+      if (!select_product.select_option_obj[group?.id]) {
+        toast.error(`${group?.group_name}을(를) 선택해 주세요.`);
+        return;
+      }
     }
+    let option_key_list = Object.keys(select_product.select_option_obj ?? {});
+    let insert_item = true;
+    let find_index = -1;
+    for (var i = 0; i < cart_data.length; i++) {
+      if (cart_data[i]?.id == select_product.id) {
+        for (var j = 0; j < option_key_list.length; j++) {
+          if (select_product.select_option_obj[option_key_list[j]]?.option_id != cart_data[i].select_option_obj[option_key_list[j]]?.option_id) {
+            break;
+          }
+        }
+        if (j == option_key_list.length) {
+          insert_item = false;
+          find_index = i;
+          break;
+        }
+      }
+    }
+    if (insert_item) {
+      cart_data.push(select_product);
+    } else {
+      cart_data[find_index].count = cart_data[find_index].count + select_product.count;
+    }
+    console.log(cart_data)
     onChangeCartData(cart_data);
+    toast.success("장바구니에 성공적으로 추가되었습니다.")
   };
-  const onSelectOption = (group_id, option_id) => {
+  const onSelectOption = (group, option) => {
     setSelectProduct({
       ...selectProduct,
-      ['select_option_obj']: {
+      select_option_obj: {
         ...selectProduct.select_option_obj,
-        [`${group_id}`]: option_id
+        [`${group?.id}`]: {
+          option_id: option?.id,
+          ...group
+        }
       }
-    })
+    });
   }
   return (
     <form>
@@ -120,12 +149,10 @@ export default function ProductDetailsSummary({ product, onAddCart, onGotoStep, 
 
           <Stack direction="row" alignItems="center" spacing={1}>
             <Rating value={rating} precision={0.1} readOnly />
-
             <Typography variant="body2" sx={{ color: 'text.secondary' }}>
               ({commarNumber(rating)})
             </Typography>
           </Stack>
-
           <Typography variant="h4">
             {product_price > product_sale_price && (
               <Box
@@ -138,7 +165,6 @@ export default function ProductDetailsSummary({ product, onAddCart, onGotoStep, 
             {commarNumber(product_sale_price)} 원
           </Typography>
         </Stack>
-
         <Divider sx={{ borderStyle: 'dashed' }} />
         {groups.map((group) => (
           <>
@@ -158,11 +184,11 @@ export default function ProductDetailsSummary({ product, onAddCart, onGotoStep, 
                   },
                 }}
                 onChange={(e) => {
-                  onSelectOption(group?.id, e.target.value)
+                  onSelectOption(group, e.target.value)
                 }}
               >
                 {group?.options && group?.options.map((option) => (
-                  <MenuItem key={option?.option_name} value={option?.id}>
+                  <MenuItem key={option?.option_name} value={option}>
                     {option?.option_name}
                   </MenuItem>
                 ))}
@@ -170,8 +196,6 @@ export default function ProductDetailsSummary({ product, onAddCart, onGotoStep, 
             </Stack>
           </>
         ))}
-
-
         <Stack direction="row" justifyContent="space-between">
           <Typography variant="subtitle2" sx={{ height: 36, lineHeight: '36px' }}>
             수량
@@ -197,13 +221,13 @@ export default function ProductDetailsSummary({ product, onAddCart, onGotoStep, 
               }}
             />
 
-            <Typography
+            {/* <Typography
               variant="caption"
               component="div"
               sx={{ textAlign: 'right', color: 'text.secondary' }}
             >
-              재고: ({commarNumber(inventory)})
-            </Typography>
+              재고: ss ({commarNumber(inventory)})
+            </Typography> */}
           </Stack>
         </Stack>
 

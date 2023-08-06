@@ -8,8 +8,10 @@ import _ from 'lodash'
 import Label from 'src/components/label/Label';
 import EmptyContent from 'src/components/empty-content/EmptyContent';
 import Iconify from 'src/components/iconify/Iconify';
+import { useSettingsContext } from 'src/components/settings';
+import { getProductsByUser } from 'src/utils/api-shop';
 const Wrappers = styled.div`
-max-width:1200px;
+max-width:1500px;
 display:flex;
 flex-direction:column;
 margin: 0 auto;
@@ -17,6 +19,22 @@ width: 90%;
 min-height:90vh;
 margin-bottom:10vh;
 `
+const calculatorPrice = (item) => {
+  let { product_sale_price, product_price, select_option_obj, count } = item;
+  let product_origin_price = 0;
+  let product_option_price = 0;
+  let item_options_key_list = Object.keys(select_option_obj ?? {});
+  for (var i = 0; i < item_options_key_list.length; i++) {
+    let key = item_options_key_list[i];
+    let option = _.find(select_option_obj[key]?.options, { id: select_option_obj[key]?.option_id });
+    product_option_price += option?.option_price ?? 0;
+  }
+  return {
+    subtotal: (product_price + product_option_price) * count,
+    total: (product_sale_price + product_option_price) * count,
+    discount: (product_price - product_sale_price) * count
+  }
+}
 const STEPS = ['장바구니 확인', '배송지 확인', '결제하기'];
 function AddressItem({ item, onCreateBilling }) {
   const { receiver, address, address_type, phone, is_default } = item;
@@ -84,7 +102,7 @@ const Demo1 = (props) => {
       router
     },
   } = props;
-
+  const { themeCartData } = useSettingsContext();
   const [products, setProducts] = useState([]);
   const [activeStep, setActiveStep] = useState(0);
   const [addressList, setAddressList] = useState([]);
@@ -93,32 +111,44 @@ const Demo1 = (props) => {
   useEffect(() => {
     getCart();
   }, [])
-  const getCart = () => {
-    let data = test_items;
-    for (var i = 0; i < data.length; i++) {
-      data[i].quantity = 1;
+  const getCart = async () => {
+    let data = themeCartData;
+    if (data.length > 0) {
+      let products = await getProductsByUser({
+        page: 1,
+        page_size: 100000,
+      })
+      products = products?.content ?? [];
+      for (var i = 0; i < data.length; i++) {
+        let find_item = _.find(products, { id: data[i]?.id })
+        if (find_item) {
+          data[i] = {
+            ...data[i],
+            ...find_item,
+          }
+        }
+      }
+      console.log(data)
+      setProducts(data);
     }
-    setProducts(data);
-
     let address_data = test_address_list;
     setAddressList(address_data)
   }
-  const onDelete = (id) => {
-    let find_index = _.findIndex(products, { id: id });
+  const onDelete = (idx) => {
     let product_list = [...products];
-    product_list.splice(find_index, 1);
+    product_list.splice(idx, 1);
     setProducts(product_list)
   }
-  const onDecreaseQuantity = (id) => {
-    let find_index = _.findIndex(products, { id: id });
+  const onDecreaseQuantity = (idx) => {
     let product_list = [...products];
-    product_list[find_index].quantity--;
+    product_list[idx].count--;
     setProducts(product_list)
   }
-  const onIncreaseQuantity = (id) => {
-    let find_index = _.findIndex(products, { id: id });
+  const onIncreaseQuantity = (idx) => {
     let product_list = [...products];
-    product_list[find_index].quantity++;
+    console.log(product_list[idx])
+    console.log(idx)
+    product_list[idx].count++;
     setProducts(product_list)
   }
   const onClickNextStep = () => {
@@ -156,6 +186,7 @@ const Demo1 = (props) => {
                         onDelete={onDelete}
                         onDecreaseQuantity={onDecreaseQuantity}
                         onIncreaseQuantity={onIncreaseQuantity}
+                        calculatorPrice={calculatorPrice}
                       />
                     </>
                     :
@@ -224,9 +255,9 @@ const Demo1 = (props) => {
           <Grid item xs={12} md={4}>
             <CheckoutSummary
               enableDiscount
-              total={_.sum(_.map(products, (item) => { return item.quantity * item.product_sale_price }))}
-              discount={_.sum(_.map(products, (item) => { return item.quantity * (item.product_price - item.product_sale_price) }))}
-              subtotal={_.sum(_.map(products, (item) => { return item.quantity * item.product_price }))}
+              total={_.sum(_.map(products, (item) => { return calculatorPrice(item).total}))}
+              discount={_.sum(_.map(products, (item) => { return calculatorPrice(item).discount}))}
+              subtotal={_.sum(_.map(products, (item) => { return calculatorPrice(item).subtotal}))}
             />
             {activeStep == 0 &&
               <>

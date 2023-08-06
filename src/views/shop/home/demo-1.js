@@ -355,6 +355,7 @@ const Demo1 = (props) => {
       page: 1,
       page_size: 100000,
     })
+
     products = products?.content ?? [];
     for (var i = 0; i < content_list.length; i++) {
       if (content_list[i]?.type == 'items' && products.length > 0) {
@@ -378,7 +379,6 @@ const Demo1 = (props) => {
         })
       }
     }
-    console.log(content_list)
     setItemsCategory(items_category)
     setWindowWidth(window.innerWidth)
     setContentList(content_list)

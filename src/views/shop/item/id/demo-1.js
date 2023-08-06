@@ -45,6 +45,7 @@ const Demo1 = (props) => {
     let data = await getProductByUser({
       product_id: router.query?.id
     });
+    console.log(data)
     data['sub_images'] = data['sub_images'].map((img)=>{
       return img?.product_sub_img
     })

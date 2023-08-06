@@ -45,7 +45,8 @@ const Demo1 = (props) => {
               <Avatar
                 sx={{
                   width: '84px',
-                  height: '84px'
+                  height: '84px',
+                  marginBottom:'1rem'
                 }}
               />
               <div>{userObj.nick_name}</div>
@@ -65,9 +66,9 @@ const Demo1 = (props) => {
               >
                 <TextField name="displayName" label="아이디" defaultValue={userObj?.user_name}  value={userObj?.user_name} disabled={true} />
 
-                <TextField name="email" label="이름" />
+                <TextField name="email" label="이름" defaultValue={userObj?.nick_name} value={userObj?.nick_name} disabled={true}/>
 
-                <TextField name="phone_num" label="닉네임" />
+                <TextField name="phone_num" label="전화번호" defaultValue={userObj?.phone_num} value={userObj?.phone_num} disabled={true}/>
 
                 <TextField name="address" label="이메일" />
               </Box>

@@ -11,9 +11,9 @@ import CheckoutCartProduct from './CheckoutCartProduct';
 
 const TABLE_HEAD = [
   { id: 'product', label: '상품' },
-  { id: 'price', label: '가격' },
   { id: 'option', label: '옵션' },
-  { id: 'quantity', label: '수량' },
+  { id: 'price', label: '가격' },
+  { id: 'count', label: '수량' },
   { id: 'totalPrice', label: '총액', align: 'right' },
   { id: '' },
 ];
@@ -23,19 +23,21 @@ export default function CheckoutCartProductList({
   onDelete,
   onIncreaseQuantity,
   onDecreaseQuantity,
+  calculatorPrice
 }) {
   return (
     <TableContainer>
         <Table sx={{ minWidth: 720, overflowX: 'auto' }}>
           <TableHeadCustom headLabel={TABLE_HEAD} />
           <TableBody>
-            {products.map((row) => (
+            {products.map((row, idx) => (
               <CheckoutCartProduct
                 key={row.id}
                 row={row}
-                onDelete={() => onDelete(row.id)}
-                onDecrease={() => onDecreaseQuantity(row.id)}
-                onIncrease={() => onIncreaseQuantity(row.id)}
+                onDelete={() => onDelete(idx)}
+                onDecrease={() => onDecreaseQuantity(idx)}
+                onIncrease={() => onIncreaseQuantity(idx)}
+                calculatorPrice={calculatorPrice}
               />
             ))}
           </TableBody>

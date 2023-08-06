@@ -9,6 +9,8 @@ import Label from '../../../../../components/label';
 import Iconify from '../../../../../components/iconify';
 import { ColorPreview } from '../../../../../components/color-utils';
 import { IncrementerButton } from '../../../../../components/custom-input';
+import _ from 'lodash';
+import { commarNumber } from 'src/utils/function';
 
 // ----------------------------------------------------------------------
 
@@ -18,10 +20,8 @@ CheckoutCartProduct.propTypes = {
   onDecrease: PropTypes.func,
   onIncrease: PropTypes.func,
 };
-
-export default function CheckoutCartProduct({ row, onDelete, onDecrease, onIncrease }) {
-  const { name, size, price, colors, cover, quantity, available, product_sale_price, product_price, product_img } = row;
-
+export default function CheckoutCartProduct({ row, onDelete, onDecrease, onIncrease, calculatorPrice }) {
+  const { product_name, product_comment, select_option_obj, size, price, colors, cover, count, available, product_sale_price, product_price, product_img } = row;
   return (
     <TableRow>
       <TableCell sx={{ display: 'flex', alignItems: 'center' }}>
@@ -33,19 +33,42 @@ export default function CheckoutCartProduct({ row, onDelete, onDecrease, onIncre
 
         <Stack spacing={0.5}>
           <Typography noWrap variant="subtitle2" sx={{ maxWidth: 240 }}>
-            {name}
+            {product_name}
           </Typography>
-
           <Stack
             direction="row"
             alignItems="center"
             sx={{ typography: 'body2', color: 'text.secondary' }}
           >
-            {/* 옵션 */}
+            {product_comment}
           </Stack>
         </Stack>
       </TableCell>
-
+      <TableCell>
+        <Stack spacing={0.5}>
+          {Object.keys(select_option_obj).length > 0 ?
+            <>
+              {Object.keys(select_option_obj).map((key, idx) => {
+                let option = _.find(select_option_obj[key]?.options, { id: select_option_obj[key]?.option_id })
+                return <>
+                  <Stack
+                    direction="row"
+                    alignItems="center"
+                    sx={{ typography: 'body2', color: 'text.secondary' }}
+                  >
+                    <div style={{ display: 'flex' }}>
+                      {select_option_obj[key]?.group_name}: {option?.option_name} {option?.option_price > 0 ? '+' : ''}{commarNumber(option?.option_price)}
+                    </div>
+                  </Stack>
+                </>
+              })}
+            </>
+            :
+            <>
+              ---
+            </>}
+        </Stack>
+      </TableCell>
       <TableCell>
         {product_price > product_sale_price && (
           <Box
@@ -57,20 +80,19 @@ export default function CheckoutCartProduct({ row, onDelete, onDecrease, onIncre
         )}
         {fCurrency(product_sale_price)}원
       </TableCell>
-
       <TableCell>
         <Box sx={{ width: 96, textAlign: 'right' }}>
           <IncrementerButton
-            quantity={quantity}
+            quantity={count}
             onDecrease={onDecrease}
             onIncrease={onIncrease}
-            disabledDecrease={quantity <= 1}
-            disabledIncrease={quantity >= available}
+            disabledDecrease={count <= 1}
+            disabledIncrease={count >= available}
           />
         </Box>
       </TableCell>
 
-      <TableCell align="right">{fCurrency(product_sale_price * quantity)}원</TableCell>
+      <TableCell align="right">{fCurrency(calculatorPrice(row)?.total ?? 0)}원</TableCell>
 
       <TableCell align="right">
         <IconButton onClick={onDelete}>

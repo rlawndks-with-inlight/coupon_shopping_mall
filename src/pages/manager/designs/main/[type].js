@@ -60,7 +60,7 @@ const curTypeNum = (list, type_name, idx) => {
 
 const Main = () => {
   const { setModal } = useModal()
-  const { themeMode, themeDnsData, themeCartData } = useSettingsContext();
+  const { themeDnsData } = useSettingsContext();
   const { user } = useAuthContext();
   const router = useRouter();
 

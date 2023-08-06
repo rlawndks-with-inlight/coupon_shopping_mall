@@ -369,7 +369,6 @@ const Main = () => {
                                 <TextField sx={{ width: '50%' }} size='small' label={`${index + 1}번째 이미지 제목 (제목 없을 시 빈칸으로 유지)`} value={contentList[idx]?.list[index].title ?? ""} onChange={(e) => {
                                   let content_list = [...contentList];
                                   content_list[idx].list[index].title = e.target.value;
-                                  console.log(content_list)
                                   setContentList(content_list);
                                 }} />
                                 <TextField sx={{ width: '50%' }} size='small' label={`${index + 1}번째 이미지 링크 (링크 없을 시 빈칸으로 유지)`} value={contentList[idx]?.list[index].link ?? ""} onChange={(e) => {

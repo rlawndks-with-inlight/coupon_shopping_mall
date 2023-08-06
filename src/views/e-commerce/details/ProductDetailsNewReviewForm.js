@@ -71,11 +71,11 @@ export default function ProductDetailsNewReviewForm({ onClose, ...other }) {
   return (
     <Dialog onClose={onClose} {...other}>
       <form>
-        <DialogTitle> Add Review </DialogTitle>
+        <DialogTitle>리뷰 작성하기</DialogTitle>
 
         <DialogContent>
           <Stack direction="row" flexWrap="wrap" alignItems="center" spacing={1.5}>
-            <Typography variant="body2">Your review about this product:</Typography>
+            <Typography variant="body2">별점을 체크해 주세요:</Typography>
 
             <Controller
               name="rating"
@@ -86,11 +86,7 @@ export default function ProductDetailsNewReviewForm({ onClose, ...other }) {
 
           {!!errors.rating && <FormHelperText error> {errors.rating?.message}</FormHelperText>}
 
-          <TextField name="review" label="Review *" multiline rows={3} sx={{ mt: 3 }} />
-
-          <TextField name="name" label="Name *" sx={{ mt: 3 }} />
-
-          <TextField name="email" label="Email *" sx={{ mt: 3 }} />
+          <TextField name="review" label="Review *" multiline rows={6} sx={{ mt: 3 }} />
         </DialogContent>
 
         <DialogActions>

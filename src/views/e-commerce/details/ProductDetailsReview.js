@@ -17,8 +17,8 @@ ProductDetailsReview.propTypes = {
   product: PropTypes.object,
 };
 
-export default function ProductDetailsReview({ product }) {
-  const { rating, totalReview, ratings=[] } = product;
+export default function ProductDetailsReview({ product, reviewContent, onChangePage }) {
+  const { rating, totalReview, ratings = [], product_average_scope } = product;
 
   const [openReview, setOpenReview] = useState(false);
 
@@ -46,20 +46,19 @@ export default function ProductDetailsReview({ product }) {
           justifyContent="center"
           spacing={1}
           sx={{
-            pt: { xs: 5, md: 0 },
-            pb: { xs: 3, md: 0 },
+            pt: 2,
+            pb: 2,
+
           }}
         >
           <Typography variant="subtitle1" sx={{ color: 'text.secondary' }}>
             평점
           </Typography>
 
-          <Typography variant="h2">{rating}/5</Typography>
-
-          <Rating readOnly value={rating} precision={0.1} />
-
+          <Typography variant="h2">{product_average_scope / 2}/5</Typography>
+          <Rating readOnly value={product_average_scope / 2} precision={0.1} />
           <Typography variant="caption" sx={{ color: 'text.secondary' }}>
-            ({fShortenNumber(totalReview)} reviews)
+            ({fShortenNumber(reviewContent?.total)} 리뷰)
           </Typography>
         </Stack>
 
@@ -72,12 +71,6 @@ export default function ProductDetailsReview({ product }) {
             borderRight: (theme) => ({ md: `dashed 1px ${theme.palette.divider}` }),
           }}
         >
-          {ratings
-            .slice(0)
-            .reverse()
-            .map((rating) => (
-              <ProgressItem key={rating.name} star={rating} total={total} />
-            ))}
         </Stack>
 
         <Stack
@@ -102,7 +95,7 @@ export default function ProductDetailsReview({ product }) {
 
       <Divider />
 
-      <ProductDetailsReviewList reviews={product.reviews} />
+      <ProductDetailsReviewList reviews={product.reviews} reviewContent={reviewContent} onChangePage={onChangePage} />
 
       <ProductDetailsReviewNewDialog open={openReview} onClose={handleCloseReview} />
     </>

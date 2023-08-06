@@ -38,7 +38,6 @@ const calculatorPrice = (item) => {
 const STEPS = ['장바구니 확인', '배송지 확인', '결제하기'];
 function AddressItem({ item, onCreateBilling }) {
   const { receiver, address, address_type, phone, is_default } = item;
-
   return (
     <Card
       sx={{
@@ -64,21 +63,17 @@ function AddressItem({ item, onCreateBilling }) {
                 ({address_type})
               </Box>
             </Typography>
-
             {is_default && (
               <Label color="info" sx={{ ml: 1 }}>
                 기본주소
               </Label>
             )}
           </Stack>
-
           <Typography variant="body2">{address}</Typography>
-
           <Typography variant="body2" sx={{ color: 'text.secondary' }}>
             {phone}
           </Typography>
         </Stack>
-
         <Stack flexDirection="row" flexWrap="wrap" flexShrink={0}>
           {!is_default && (
             <Button variant="outlined" size="small" color="inherit" sx={{ mr: 1 }}>
@@ -107,7 +102,6 @@ const Demo1 = (props) => {
   const [activeStep, setActiveStep] = useState(0);
   const [addressList, setAddressList] = useState([]);
   const [selectAddress, setSelectAddress] = useState(undefined);
-  const [selectPayMethod, setSelectPayMethod] = useState(undefined)
   useEffect(() => {
     getCart();
   }, [])

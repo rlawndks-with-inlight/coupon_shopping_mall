@@ -94,7 +94,6 @@ margin: 1rem auto;
 `
 const returnHomeContent = (column, data, func) => {
   let type = column?.type;
-  console.log(type)
   if (type == 'banner') return <HomeBanner column={column} data={data} func={func} />
   if (type == 'editor') return <HomeEditor column={column} data={data} func={func} />
   if (type == 'items') return <HomeItems column={column} data={data} func={func} />
@@ -163,7 +162,6 @@ const Demo1 = (props) => {
       page_size: 100000,
     })
     products = products?.content ?? [];
-    console.log(products)
     for (var i = 0; i < content_list.length; i++) {
       if (content_list[i]?.type == 'items' && products.length > 0) {
         let item_list = content_list[i]?.list ?? [];
@@ -200,7 +198,6 @@ const Demo1 = (props) => {
       posts:post_obj,
       categories: themePostCategoryList,
     })
-    console.log(content_list)
     setItemsCategory(items_category)
     setWindowWidth(window.innerWidth)
     setContentList(content_list)

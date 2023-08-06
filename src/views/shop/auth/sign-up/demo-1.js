@@ -165,7 +165,6 @@ const Demo1 = (props) => {
         return;
       }
       let result = await signUpByUser({ ...user, brand_id: themeDnsData?.id });
-      console.log(result)
       if(!result){
 
       }
@@ -183,7 +182,6 @@ const Demo1 = (props) => {
       phone_num: user.phone_num
     })
 
-    console.log(result);
   }
   return (
     <>

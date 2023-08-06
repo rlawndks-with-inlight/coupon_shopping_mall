@@ -15,7 +15,6 @@ ProductDetailsReviewList.propTypes = {
 };
 
 export default function ProductDetailsReviewList({ reviews = [], reviewContent, onChangePage }) {
-  console.log(reviewContent)
   const getMaxPage = (total, page_size) => {
     if (total == 0) {
       return 1;

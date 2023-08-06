@@ -38,7 +38,6 @@ const Demo1 = (props) => {
     })
     products = products?.content ?? [];
     let wish_list = [];
-    console.log(themeWishData)
     for (var i = 0; i < products.length; i++) {
       let find_index = _.indexOf(themeWishData, products[i]?.id);
       if(find_index>=0){

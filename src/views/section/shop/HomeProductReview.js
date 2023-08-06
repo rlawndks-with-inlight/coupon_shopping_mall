@@ -58,24 +58,11 @@ const Iframe = styled.iframe`
     height: 45.3vw;
   }
   `
-const NextArrow = ({ onClick, sx }) => {
-    return (
-        <NextArrowStyle onClick={onClick} style={{ ...sx }}>
-            <Icon style={{ color: '#fff', margin: 'auto' }} icon={'ooui:previous-rtl'} />
-        </NextArrowStyle>
-    );
-};
+const Review = (props) => {
 
-const PrevArrow = ({ onClick, sx }) => {
-    return (
-        <PrevArrowStyle onClick={onClick} style={{ ...sx }}>
-            <Icon style={{ color: '#fff', margin: 'auto' }} icon={'ooui:previous-ltr'} />
-        </PrevArrowStyle>
-    );
-};
+}
 const HomeProductReview = (props) => {
     const { column, data, func } = props;
-    console.log(column)
     return (
         <>
           

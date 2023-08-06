@@ -114,7 +114,6 @@ export default function ProductDetailsSummary({ product, onAddCart, onGotoStep, 
     } else {
       cart_data[find_index].count = cart_data[find_index].count + select_product.count;
     }
-    console.log(cart_data)
     onChangeCartData(cart_data);
     toast.success("장바구니에 성공적으로 추가되었습니다.")
   };

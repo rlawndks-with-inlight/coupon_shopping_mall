@@ -116,11 +116,8 @@ const Demo1 = (props) => {
             }
         })
         setCartList(cart_data);
-        console.log(cart_data)
     }
-    useEffect(() => {
-        console.log(wantBuyList)
-    }, [wantBuyList])
+    
     return (
         <>
             <Wrappers>

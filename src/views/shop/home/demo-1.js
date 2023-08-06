@@ -123,7 +123,7 @@ const Demo1 = (props) => {
   const [posts, setPosts] = useState({});
 
   useEffect(() => {
-    if(themePostCategoryList.length > 0){
+    if (themePostCategoryList.length > 0) {
       pageSetting();
     }
   }, [themePostCategoryList])
@@ -133,7 +133,7 @@ const Demo1 = (props) => {
     }
   }, [contentList])
   const pageSetting = async () => {
-    if(contentList.length > 0){
+    if (contentList.length > 0) {
       return;
     }
     let dns_data = getLocalStorage('dns_data') || themeDnsData;
@@ -184,17 +184,20 @@ const Demo1 = (props) => {
         })
       }
     }
-    // 상품리뷰 불러오기
-    content_list.push({
-      type:'post',
-      posts:post_obj,
-      categories: themePostCategoryList,
-    })
-    content_list.push({
-      type:'product-review',
-      posts:post_obj,
-      categories: themePostCategoryList,
-    })
+    if (!content_list.map(item => { return item?.type }).includes('post')) {
+      // 상품리뷰 불러오기
+      content_list.push({
+        type: 'post',
+        posts: post_obj,
+        categories: themePostCategoryList,
+      })
+      content_list.push({
+        type: 'product-review',
+        posts: post_obj,
+        categories: themePostCategoryList,
+      })
+    }
+
     setItemsCategory(items_category)
     setWindowWidth(window.innerWidth)
     setContentList(content_list)

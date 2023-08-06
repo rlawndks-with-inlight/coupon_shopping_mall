@@ -124,7 +124,6 @@ export function SettingsProvider({ children }) {
       if (typeof dns_data?.options == 'string' || !dns_data?.options) {
         dns_data['options'] = JSON.parse(dns_data?.options ?? "{}");
       }
-      console.log(dns_data)
       dns_data['blog_demo_num'] = dns_data?.setting_obj?.blog_demo_num || process.env.TEST_BLOG_DEMO || 0;
       dns_data['shop_demo_num'] = dns_data?.setting_obj?.shop_demo_num || process.env.TEST_SHOP_DEMO || 0;
       const get_root_id_url = `${process.env.BACK_URL}/api/v1/shop/root?brand_id=${dns_data?.id}`;

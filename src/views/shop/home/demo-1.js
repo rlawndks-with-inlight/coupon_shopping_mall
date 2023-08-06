@@ -233,7 +233,7 @@ const returnHomeContent = (column, data, func) => {
         display: 'flex',
         flexDirection: `${column?.title ? 'column' : 'row'}`,
       }}>
-        <Row style={{ alignItems: 'center' }}>
+        <Row style={{ alignItems: 'center', flexWrap:'wrap' }}>
           <Row style={{ flexDirection: 'column' }}>
             {column?.title &&
               <>
@@ -244,7 +244,7 @@ const returnHomeContent = (column, data, func) => {
                   </>}
               </>}
           </Row>
-          <Row style={{ marginLeft: 'auto', columnGap: '0.5rem' }}>
+          <Row style={{ marginLeft: 'auto', columnGap: '0.5rem',overflowX:'auto', whiteSpace:'nowrap' }}>
             {column?.list && column?.list.map((item, index) => (
               <>
                 <Button variant={itemsCategory[idx] == index ? `contained` : `outlined`} sx={{ height: '36px' }} onClick={() => {
@@ -289,6 +289,7 @@ const returnHomeContent = (column, data, func) => {
         backgroundPosition: 'fixed',
         display: 'flex',
         flexDirection: 'column',
+        margin:'4rem auto'
       }}>
 
         <Row style={{ flexDirection: 'column', margin: '1rem auto 0 auto', alignItems: 'center' }}>

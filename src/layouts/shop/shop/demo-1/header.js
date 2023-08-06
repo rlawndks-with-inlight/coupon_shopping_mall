@@ -1,6 +1,6 @@
 import Logo from "src/components/logo/Logo"
 import styled from "styled-components"
-import { IconButton, TextField, InputAdornment, Drawer } from "@mui/material"
+import { IconButton, TextField, InputAdornment, Drawer, Badge } from "@mui/material"
 import { forwardRef, useEffect, useRef, useState } from "react"
 import { Icon } from "@iconify/react"
 import { Row, themeObj } from 'src/components/elements/styled-components'
@@ -216,7 +216,7 @@ const Header = () => {
 
   const router = useRouter();
   const theme = useTheme();
-  const { themeMode, onToggleMode, onChangeCategoryList, themeDnsData, themePopupList, onChangePopupList, onChangePostCategoryList } = useSettingsContext();
+  const { themeMode, onToggleMode, onChangeCategoryList, themeDnsData, themePopupList, onChangePopupList, onChangePostCategoryList, themeWishData, themeCartData } = useSettingsContext();
   const { user, logout } = useAuthContext();
   const headerWrappersRef = useRef();
   const [headerHeight, setHeaderHeight] = useState(130);
@@ -450,8 +450,11 @@ const Header = () => {
                     }
                   }}
                 >
+                <Badge badgeContent={themeWishData.length} color="error">
                   <Icon icon={'basil:heart-outline'} fontSize={'2rem'} color={themeMode == 'dark' ? '#fff' : '#000'} />
+                </Badge>
                 </IconButton>
+
                 <IconButton
                   sx={iconButtonStyle}
                   onClick={() => {
@@ -462,7 +465,9 @@ const Header = () => {
                     }
                   }}
                 >
-                  <Icon icon={'basil:shopping-bag-outline'} fontSize={'1.8rem'} color={themeMode == 'dark' ? '#fff' : '#000'} />
+                   <Badge badgeContent={themeCartData.length} color="error">
+                   <Icon icon={'basil:shopping-bag-outline'} fontSize={'1.8rem'} color={themeMode == 'dark' ? '#fff' : '#000'} />
+                   </Badge>
                 </IconButton>
                 <IconButton
                   sx={iconButtonStyle}
@@ -555,7 +560,9 @@ const Header = () => {
                     }
                   }}
                 >
+                  <Badge badgeContent={themeCartData.length} color="error">
                   <Icon icon={'basil:shopping-bag-outline'} fontSize={'1.8rem'} color={themeMode == 'dark' ? '#fff' : '#000'} />
+                  </Badge>
                 </IconButton>
                 <IconButton
                   sx={iconButtonStyle}

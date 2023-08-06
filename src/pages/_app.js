@@ -34,7 +34,9 @@ const App = (props) => {
   const getLayout = Component.getLayout ?? ((page) => page);
   const [headData, setHeadData] = useState({});
   useEffect(() => {
-    setHeadData(head_data)
+    if (Object.keys(head_data).length > 0) {
+      setHeadData(head_data)
+    }
   }, [])
   return (
     <>
@@ -88,14 +90,14 @@ App.getInitialProps = async (context) => {
   try {
     let head_data = {}
     const host = ctx?.req?.headers?.host ? ctx?.req?.headers.host.split(':')[0] : '';
-    if(host){
+    if (host) {
       const url = `${process.env.BACK_URL}/api/v1/auth/domain?dns=${host}`;
       const res = await fetch(url);
       head_data = await res.json();
       return {
         head_data: head_data,
       }
-    }else{
+    } else {
       return {
         head_data: {},
       }

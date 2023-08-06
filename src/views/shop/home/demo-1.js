@@ -172,7 +172,7 @@ const returnHomeContent = (column, data, func) => {
               </>}
           </>}
         <div style={{ marginTop: '1rem' }} />
-        <Items items={column?.list} router={router} is_slide={true} />
+        <Items items={column?.list} router={router} is_slide={column?.list.length >= 4 ? true : false} />
       </Wrappers>
     </>
   }
@@ -233,7 +233,7 @@ const returnHomeContent = (column, data, func) => {
         display: 'flex',
         flexDirection: `${column?.title ? 'column' : 'row'}`,
       }}>
-        <Row style={{ alignItems: 'center', flexWrap:'wrap' }}>
+        <Row style={{ alignItems: 'center', flexWrap: 'wrap' }}>
           <Row style={{ flexDirection: 'column' }}>
             {column?.title &&
               <>
@@ -244,7 +244,7 @@ const returnHomeContent = (column, data, func) => {
                   </>}
               </>}
           </Row>
-          <Row style={{ marginLeft: 'auto', columnGap: '0.5rem',overflowX:'auto', whiteSpace:'nowrap' }}>
+          <Row style={{ marginLeft: 'auto', columnGap: '0.5rem', overflowX: 'auto', whiteSpace: 'nowrap' }}>
             {column?.list && column?.list.map((item, index) => (
               <>
                 <Button variant={itemsCategory[idx] == index ? `contained` : `outlined`} sx={{ height: '36px' }} onClick={() => {
@@ -289,13 +289,13 @@ const returnHomeContent = (column, data, func) => {
         backgroundPosition: 'fixed',
         display: 'flex',
         flexDirection: 'column',
-        margin:'4rem auto'
+        margin: '4rem auto'
       }}>
 
         <Row style={{ flexDirection: 'column', margin: '1rem auto 0 auto', alignItems: 'center' }}>
           {column?.title &&
             <>
-              <div style={{ fontSize: themeObj.font_size.size3, fontWeight: 'bold',color:'#fff' }}>{column?.title}</div>
+              <div style={{ fontSize: themeObj.font_size.size3, fontWeight: 'bold', color: '#fff' }}>{column?.title}</div>
               {column?.sub_title &&
                 <>
                   <div style={{ fontSize: themeObj.font_size.size5, color: themeObj.grey[300] }}>{column?.sub_title}</div>
@@ -378,6 +378,7 @@ const Demo1 = (props) => {
         })
       }
     }
+    console.log(content_list)
     setItemsCategory(items_category)
     setWindowWidth(window.innerWidth)
     setContentList(content_list)

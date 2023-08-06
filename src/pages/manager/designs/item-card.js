@@ -105,7 +105,7 @@ const ItemCard = () => {
     let result = await updateBrandByManager({ ...brand_data, id: themeDnsData?.id })
     if (result) {
       toast.success("성공적으로 저장 되었습니다.");
-      window.location.href = '/manager/settings/brands';
+      window.location.reload();
     }
   }
   return (

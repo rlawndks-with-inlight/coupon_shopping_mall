@@ -156,36 +156,6 @@ const returnHomeContent = (column, data, func) => {
     </>
   }
   if (type == 'items') {
-    const getSlideToShow = () => {
-      if (window.innerWidth > 1350) {
-        if (themeDnsData?.theme_css?.shop_item_card_css?.container?.is_vertical == 1) {
-          return 3
-        } else {
-          return 4
-        }
-      }
-      if (window.innerWidth > 1000) {
-        if (themeDnsData?.theme_css?.shop_item_card_css?.container?.is_vertical == 1) {
-          return 2
-        } else {
-          return 3
-        }
-      }
-      if (themeDnsData?.theme_css?.shop_item_card_css?.container?.is_vertical == 1) {
-        return 1
-      } else {
-        return 2
-      }
-    }
-    let slide_setting = {
-      infinite: true,
-      speed: 500,
-      autoplay: true,
-      autoplaySpeed: 2500,
-      slidesToShow: getSlideToShow(),
-      slidesToScroll: 1,
-      dots: false,
-    }
     content = <>
       <Wrappers style={{
         marginTop: '1rem',
@@ -202,13 +172,7 @@ const returnHomeContent = (column, data, func) => {
               </>}
           </>}
         <div style={{ marginTop: '1rem' }} />
-        <Slider {...slide_setting} className='margin-slide'>
-          {column?.list && column?.list.map((item, idx) => (
-            <>
-              <Item item={item} router={router} theme_css={themeDnsData?.theme_css?.shop_item_card_css} />
-            </>
-          ))}
-        </Slider>
+        <Items items={column?.list} router={router} is_slide={true} />
       </Wrappers>
     </>
   }
@@ -395,7 +359,7 @@ const Demo1 = (props) => {
       if (content_list[i]?.type == 'items' && products.length > 0) {
         let item_list = content_list[i]?.list ?? [];
         item_list = item_list.map(item_id => {
-          return { ..._.find(products, { id: parseInt(item_id) }) }
+          return { ...item_id, ..._.find(products, { id: parseInt(item_id) }) }
         })
         content_list[i].list = item_list
       }
@@ -403,7 +367,7 @@ const Demo1 = (props) => {
         for (var j = 0; j < content_list[i]?.list.length; j++) {
           let item_list = content_list[i]?.list[j]?.list;
           item_list = item_list.map(item_id => {
-            return { ..._.find(products, { id: parseInt(item_id) }) }
+            return { ...item_id, ..._.find(products, { id: parseInt(item_id) }) }
           })
           content_list[i].list[j].list = item_list;
         }

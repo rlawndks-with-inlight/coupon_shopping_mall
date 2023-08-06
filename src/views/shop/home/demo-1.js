@@ -295,10 +295,10 @@ const returnHomeContent = (column, data, func) => {
         <Row style={{ flexDirection: 'column', margin: '1rem auto 0 auto', alignItems: 'center' }}>
           {column?.title &&
             <>
-              <div style={{ fontSize: themeObj.font_size.size3, fontWeight: 'bold' }}>{column?.title}</div>
+              <div style={{ fontSize: themeObj.font_size.size3, fontWeight: 'bold',color:'#fff' }}>{column?.title}</div>
               {column?.sub_title &&
                 <>
-                  <div style={{ fontSize: themeObj.font_size.size5, color: themeObj.grey[500] }}>{column?.sub_title}</div>
+                  <div style={{ fontSize: themeObj.font_size.size5, color: themeObj.grey[300] }}>{column?.sub_title}</div>
                 </>}
             </>}
         </Row>

@@ -97,8 +97,8 @@ export function SettingsProvider({ children }) {
       const direction = getCookie('themeDirection') || defaultSettings.themeDirection;
       const colorPresets = getCookie('themeColorPresets') || defaultSettings.themeColorPresets;
       const currentPageObj = getCookie('themeCurrentPageObj') || defaultSettings.themeCurrentPageObj;
-      const cartData = getLocalStorage('themeCartData') || defaultSettings.themeCartData;
-      const wishData = getLocalStorage('themeWishData') || defaultSettings.themeWishData;
+      const cartData = JSON.parse(getLocalStorage('themeCartData') ?? '[]') || defaultSettings.themeCartData;
+      const wishData = JSON.parse(getLocalStorage('themeWishData') ?? '[]') || defaultSettings.themeWishData;
       //const auth = getCookie('themeAuth') || defaultSettings.themeAuth;
       //const categoryList = getCookie('themeCategoryList') || defaultSettings.themeCategoryList;
       setThemeMode(mode);

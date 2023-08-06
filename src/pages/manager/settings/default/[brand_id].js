@@ -1,5 +1,5 @@
 
-import { Avatar, Button, Card, CardHeader, Grid, Stack, Tab, Tabs, TextField, TextareaAutosize, Typography } from "@mui/material";
+import { Avatar, Button, Card, CardHeader, FormControl, FormControlLabel, Grid, InputLabel, MenuItem, Select, Stack, Tab, Tabs, TextField, TextareaAutosize, Typography } from "@mui/material";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { Row, themeObj } from "src/components/elements/styled-components";
@@ -15,25 +15,13 @@ import { toast } from "react-hot-toast";
 import { useModal } from "src/components/dialog/ModalProvider";
 import dynamic from "next/dynamic";
 import axios from "axios";
+import { useAuthContext } from "src/layouts/manager/auth/useAuthContext";
 const ReactQuill = dynamic(() => import('react-quill'), {
   ssr: false,
   loading: () => <p>Loading ...</p>,
 })
 
-const tab_list = [
-  {
-    value: 0,
-    label: '기본정보'
-  },
-  {
-    value: 1,
-    label: '카카오톡 설정'
-  },
-  {
-    value: 2,
-    label: '회사정보'
-  }
-]
+
 const KakaoWrappers = styled.div`
 width:100%;
 background:#b3c9db;
@@ -65,12 +53,35 @@ padding:0.5rem;
 const DefaultSetting = () => {
   const { setModal } = useModal()
   const { themeMode, themeDnsData } = useSettingsContext();
-
+  const { user } = useAuthContext();
   const router = useRouter();
 
   const [loading, setLoading] = useState(true);
   const [currentTab, setCurrentTab] = useState(0);
   const [item, setItem] = useState(defaultManagerObj.brands)
+  const tab_list = [
+    {
+      value: 0,
+      label: '기본정보'
+    },
+    {
+      value: 1,
+      label: '카카오톡 설정'
+    },
+    {
+      value: 2,
+      label: '회사정보'
+    },
+    ...(router.query?.brand_id == 'add' ? [{
+      value: 3,
+      label: '사용할 본사 계정'
+    }] : []),
+    ...(user?.level >= 50 ? [{
+      value: 4,
+      label: '데모설정'
+    }] : [])
+  ]
+
   useEffect(() => {
     settingPage();
   }, [])
@@ -79,9 +90,9 @@ const DefaultSetting = () => {
     let brand_data_keys = Object.keys(brand_data);
     for (var i = 0; i < brand_data_keys.length; i++) {
       if (brand_data[brand_data_keys[i]]) {
-        if(typeof obj[brand_data_keys[i]] == 'object'){
+        if (typeof obj[brand_data_keys[i]] == 'object') {
           obj[brand_data_keys[i]] = Object.assign(obj[brand_data_keys[i]], brand_data[brand_data_keys[i]]);
-        }else{
+        } else {
           obj[brand_data_keys[i]] = brand_data[brand_data_keys[i]];
         }
       }
@@ -103,15 +114,15 @@ const DefaultSetting = () => {
     if (item?.id) {//수정
       result = await updateBrandByManager({ ...item, id: item?.id })
     } else {//추가
-      if(
+      if (
         !item?.user_name ||
         !item?.user_pw ||
         !item?.user_pw_check
-      ){
+      ) {
         toast.error("본사 계정정보를 입력해 주세요.");
         return;
       }
-      if(item?.user_pw != item?.user_pw_check){
+      if (item?.user_pw != item?.user_pw_check) {
         toast.error("본사 비밀번호가 일치하지 않습니다.");
         return;
       }
@@ -135,13 +146,6 @@ const DefaultSetting = () => {
                 }}
               >{tab.label}</Button>
             ))}
-            <Button
-              sx={{ display: `${router.query?.brand_id == 'add' ? '' : 'none'}` }}
-              variant={3 == currentTab ? 'contained' : 'outlined'}
-              onClick={() => {
-                setCurrentTab(3)
-              }}
-            >{'사용할 본사 계정'}</Button>
           </Row>
           <Grid container spacing={3}>
             {currentTab == 0 &&
@@ -504,6 +508,59 @@ const DefaultSetting = () => {
                   </Card>
                 </Grid>
               </>}
+            {currentTab == 4 &&
+              <>
+                <Grid item xs={12} md={6}>
+                  <Card sx={{ p: 2, height: '100%' }}>
+                    <Stack spacing={3}>
+                      <FormControl>
+                        <InputLabel>쇼핑몰 데모넘버</InputLabel>
+                        <Select label='쇼핑몰 데모넘버' value={item.setting_obj?.shop_demo_num} onChange={(e) => {
+                          setItem(
+                            {
+                              ...item,
+                              ['setting_obj']: {
+                                ...item.setting_obj,
+                                shop_demo_num: e.target.value
+                              }
+                            }
+                          )
+                        }}>
+                          <MenuItem value={0}>사용안함</MenuItem>
+                          {[1, 2, 3].map((num, idx) => {
+                            return <MenuItem value={num}>데모 {num}</MenuItem>
+                          })}
+                        </Select>
+                      </FormControl>
+                    </Stack>
+                  </Card>
+                </Grid>
+                <Grid item xs={12} md={6}>
+                  <Card sx={{ p: 2, height: '100%' }}>
+                    <Stack spacing={3}>
+                      <FormControl>
+                        <InputLabel>블로그 데모넘버</InputLabel>
+                        <Select label='블로그 데모넘버' value={item.setting_obj?.blog_demo_num} onChange={(e) => {
+                          setItem(
+                            {
+                              ...item,
+                              ['setting_obj']: {
+                                ...item.setting_obj,
+                                blog_demo_num: e.target.value
+                              }
+                            }
+                          )
+                        }}>
+                          <MenuItem value={0}>사용안함</MenuItem>
+                          {[1, 2, 3].map((num, idx) => {
+                            return <MenuItem value={num}>데모 {num}</MenuItem>
+                          })}
+                        </Select>
+                      </FormControl>
+                    </Stack>
+                  </Card>
+                </Grid>
+              </>}
             {currentTab == 3 &&
               <>
                 <Grid item xs={12} md={6}>
@@ -526,7 +583,7 @@ const DefaultSetting = () => {
                 <Grid item xs={12} md={6}>
                   <Card sx={{ p: 2, height: '100%' }}>
                     <Stack spacing={3}>
-                    <TextField
+                      <TextField
                         label='본사 비밀번호'
                         value={item?.user_pw}
                         type='password'
@@ -538,7 +595,7 @@ const DefaultSetting = () => {
                             }
                           )
                         }} />
-                        <TextField
+                      <TextField
                         label='본사 비밀번호 확인'
                         value={item?.user_pw_check}
                         type='password'

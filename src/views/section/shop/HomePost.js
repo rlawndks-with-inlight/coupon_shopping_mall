@@ -28,7 +28,7 @@ flex-direction:column;
 align-items:center;
 @media (max-width:1200px){
   width:100%;
-  margin:auto;
+  margin:4rem auto 0 auto;
 }
 
 `
@@ -49,6 +49,7 @@ background:#00000099;
 const PostCategoryTab = styled.div`
 padding:0.5rem;
 cursor:pointer;
+font-size:${themeObj.font_size.size5};
 `
 const PostCategoryTitle = styled.div`
 width:100%;
@@ -82,7 +83,7 @@ const HomePost = (props) => {
           </Content>
         </ContentWrappers>
         <ContentWrappers>
-          <Content style={{ color: '#fff' }}>
+          <Content style={{ color: '#fff', margin:'4rem auto' }}>
             <Row style={{ marginLeft: 'auto' }}>
               {column?.categories && column?.categories.map((cate, idx) => (
                 <>

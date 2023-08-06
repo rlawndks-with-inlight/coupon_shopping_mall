@@ -117,7 +117,6 @@ const Demo1 = (props) => {
         })
         setCartList(cart_data);
     }
-    
     return (
         <>
             <Wrappers>

@@ -123,10 +123,8 @@ const Demo1 = (props) => {
   const [posts, setPosts] = useState({});
 
   useEffect(() => {
-    if(themeDnsData?.id > 0){
-      pageSetting();
-    }
-  }, [themeDnsData, themePostCategoryList])
+    pageSetting();
+  }, [])
   useEffect(() => {
     if (contentList.length > 0) {
       setLoading(false);
@@ -185,9 +183,6 @@ const Demo1 = (props) => {
       }
     }
     // 상품리뷰 불러오기
-    let reviews = await getProductReviewsByUser({
-
-    })
     content_list.push({
       type:'post',
       posts:post_obj,

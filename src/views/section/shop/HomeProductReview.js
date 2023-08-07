@@ -53,7 +53,7 @@ const Review = (props) => {
         <LazyLoadImage src={item?.review_img} style={{ width: '100%', height: 'auto' }} />
         <Row style={{ flexDirection: 'column', padding: '0.5rem', rowGap: '0.25rem' }}>
           <div style={{ color: themeObj.grey[500] }}>{item?.nick_name}</div>
-          <Rating value={item?.scope / 2} />
+          <Rating value={item?.scope / 2} disabled={true}/>
           <div style={{ fontSize: themeObj.font_size.size8 }}>
             {item?.content}
           </div>

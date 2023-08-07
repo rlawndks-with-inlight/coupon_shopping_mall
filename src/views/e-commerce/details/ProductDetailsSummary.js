@@ -25,6 +25,8 @@ import {
   DialogContentText,
   TextField,
   DialogActions,
+  RadioGroup,
+  Paper,
 } from '@mui/material';
 // routes
 // utils
@@ -41,6 +43,9 @@ import { useSettingsContext } from 'src/components/settings';
 import _ from 'lodash';
 import { toast } from 'react-hot-toast';
 import { CheckoutBillingAddress, CheckoutCartProductList, CheckoutSteps, CheckoutSummary } from 'src/views/@dashboard/e-commerce/checkout';
+import { test_address_list, test_pay_list } from 'src/data/test-data';
+import { AddressItem } from 'src/views/shop/auth/cart/demo-1';
+import EmptyContent from 'src/components/empty-content/EmptyContent';
 
 // ----------------------------------------------------------------------
 
@@ -50,9 +55,12 @@ ProductDetailsSummary.propTypes = {
   product: PropTypes.object,
   onGotoStep: PropTypes.func,
 };
-const STEPS = ['상품확인', '배송지 확인', '결제하기'];
+const STEPS = ['배송지 확인', '결제하기'];
 export default function ProductDetailsSummary({ product, onAddCart, onGotoStep, ...other }) {
   const { themeCartData, onChangeCartData } = useSettingsContext();
+  const [addressList, setAddressList] = useState([]);
+  const [selectAddress, setSelectAddress] = useState({});
+  const [payList, setPayList] = useState([]);
   const [selectProduct, setSelectProduct] = useState({ id: product?.id, count: 1, select_option_obj: {} });
   const cart = []
 
@@ -78,7 +86,12 @@ export default function ProductDetailsSummary({ product, onAddCart, onGotoStep, 
     product_comment,
     groups = []
   } = product;
-
+  useEffect(() => {
+    let address_list = test_address_list;
+    setAddressList(address_list);
+    let pay_list = test_pay_list;
+    setPayList(pay_list)
+  }, [])
   const isMaxQuantity =
     cart.filter((item) => item.id === id).map((item) => item.quantity)[0] >= available;
 
@@ -138,6 +151,10 @@ export default function ProductDetailsSummary({ product, onAddCart, onGotoStep, 
     setBuyOpen(false);
     setBuyStep(0);
   }
+  const onCreateBilling = (item) => {
+    setSelectAddress(item);
+    setBuyStep(1);
+  }
   return (
     <>
       <Dialog
@@ -149,28 +166,51 @@ export default function ProductDetailsSummary({ product, onAddCart, onGotoStep, 
         <DialogTitle>바로구매</DialogTitle>
         <DialogContent>
           <CheckoutSteps activeStep={buyStep} steps={STEPS} />
+
           {buyStep == 0 &&
             <>
-              <DialogContentText>
-                To subscribe to this website, please enter your email address here. We will send updates
-                occasionally.
-              </DialogContentText>
-              <TextField
-                autoFocus
-                fullWidth
-                type="email"
-                margin="dense"
-                variant="outlined"
-                label="Email Address"
-              />
+              {addressList.length > 0 ?
+                <>
+                  {addressList.map((item, idx) => (
+                    <>
+                      <AddressItem
+                        key={idx}
+                        item={item}
+                        onCreateBilling={() => onCreateBilling(item)}
+                      />
+                    </>
+                  ))}
+                </>
+                :
+                <>
+                  <EmptyContent
+                    title="배송지가 없습니다."
+                    description="배송지를 추가해 주세요."
+                    img=""
+                  />
+                </>}
             </>}
           {buyStep == 1 &&
             <>
-
-            </>}
-          {buyStep == 2 &&
-            <>
-
+              <RadioGroup row>
+                <Stack spacing={3} sx={{ width: 1 }}>
+                  {payList.map((item, idx) => (
+                    <>
+                      <Paper
+                        variant="outlined"
+                        sx={{ padding: '1rem', cursor: 'pointer' }}
+                      >
+                        <Box sx={{ ml: 1 }}>
+                          <Typography variant="subtitle2">{item.title}</Typography>
+                          <Typography variant="body2" sx={{ color: 'text.secondary' }}>
+                            {item.description}
+                          </Typography>
+                        </Box>
+                      </Paper>
+                    </>
+                  ))}
+                </Stack>
+              </RadioGroup>
             </>}
         </DialogContent>
         <DialogActions>
@@ -303,7 +343,17 @@ export default function ProductDetailsSummary({ product, onAddCart, onGotoStep, 
               장바구니
             </Button>
 
-            <Button fullWidth size="large" variant="contained" onClick={() => setBuyOpen(true)}>
+            <Button fullWidth size="large" variant="contained" onClick={() => {
+              let select_product = { ...selectProduct };
+              for (var i = 0; i < product?.groups.length; i++) {
+                let group = product?.groups[i];
+                if (!select_product.select_option_obj[group?.id]) {
+                  toast.error(`${group?.group_name}을(를) 선택해 주세요.`);
+                  return;
+                }
+              }
+              setBuyOpen(true);
+            }}>
               바로구매
             </Button>
           </Stack>

@@ -5,7 +5,7 @@ import _ from 'lodash'
 
 const Wrappers = styled.div`
   width:90%;
-  max-width:1200px;
+  max-width:1600px;
   margin:0 auto;
   `
 

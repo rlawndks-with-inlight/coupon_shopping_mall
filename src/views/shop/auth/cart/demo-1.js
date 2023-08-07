@@ -1,7 +1,7 @@
 import { Box, Button, Card, CardContent, CardHeader, FormControlLabel, Grid, Paper, Radio, RadioGroup, Stack, Typography } from '@mui/material';
 import { useEffect, useState } from 'react';
 import { Row, Title } from 'src/components/elements/styled-components';
-import { pay_list, test_address_list, test_item, test_items } from 'src/data/test-data';
+import { test_pay_list, test_address_list, test_item, test_items } from 'src/data/test-data';
 import { CheckoutBillingAddress, CheckoutCartProductList, CheckoutSteps, CheckoutSummary } from 'src/views/@dashboard/e-commerce/checkout';
 import styled from 'styled-components'
 import _ from 'lodash'
@@ -36,7 +36,7 @@ const calculatorPrice = (item) => {
   }
 }
 const STEPS = ['장바구니 확인', '배송지 확인', '결제하기'];
-function AddressItem({ item, onCreateBilling }) {
+export function AddressItem({ item, onCreateBilling }) {
   const { receiver, address, address_type, phone, is_default } = item;
   return (
     <Card
@@ -223,7 +223,7 @@ const Demo1 = (props) => {
                   <CardContent>
                     <RadioGroup row>
                       <Stack spacing={3} sx={{ width: 1 }}>
-                        {pay_list.map((item, idx) => (
+                        {test_pay_list.map((item, idx) => (
                           <>
                             <Paper
                               variant="outlined"

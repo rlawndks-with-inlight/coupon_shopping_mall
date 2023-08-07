@@ -63,6 +63,7 @@ display:flex;
 `
 const PostTitle = styled.div`
 margin: 0.2rem 0;
+cursor:pointer;
 `
 const HomePost = (props) => {
   const { column, data, func } = props;
@@ -82,7 +83,7 @@ const HomePost = (props) => {
           </Content>
         </ContentWrappers>
         <ContentWrappers>
-          <Content style={{ color: '#fff', margin:'4rem auto' }}>
+          <Content style={{ color: '#fff', margin: '4rem auto' }}>
             <Row style={{ marginLeft: 'auto' }}>
               {column?.categories && column?.categories.map((cate, idx) => (
                 <>
@@ -105,7 +106,7 @@ const HomePost = (props) => {
               </PostCategoryTitle>
               {column?.posts[categoryId] && column?.posts[categoryId].map((item, idx) => (
                 <>
-                  <PostTitle>{item?.post_title}</PostTitle>
+                  <PostTitle onClick={() => router.push(`/shop/service/${categoryId}/${item?.id}/`)}>{item?.post_title}</PostTitle>
                 </>
               ))}
             </PostBox>

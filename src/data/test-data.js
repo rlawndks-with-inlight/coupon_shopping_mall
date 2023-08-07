@@ -697,7 +697,7 @@ export const test_address_list = [
     is_default: false,
   },
 ]
-export const pay_list = [
+export const test_pay_list = [
   {
     title: '카드결제',
     description: 'Mastercard, Visa 등을 지원합니다.'

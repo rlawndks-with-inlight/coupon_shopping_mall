@@ -11,7 +11,7 @@ import { getPostsByUser } from 'src/utils/api-shop';
 import { Button, IconButton } from '@mui/material';
 import { Icon } from '@iconify/react';
 const Wrappers = styled.div`
-max-width:1500px;
+max-width:1600px;
 display:flex;
 flex-direction:column;
 margin: 0 auto;

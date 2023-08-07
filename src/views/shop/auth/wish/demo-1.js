@@ -8,7 +8,7 @@ import { test_items } from 'src/data/test-data';
 import { getProductsByUser } from 'src/utils/api-shop';
 import styled from 'styled-components'
 const Wrappers = styled.div`
-max-width:1200px;
+max-width:1600px;
 display:flex;
 flex-direction:column;
 margin: 0 auto;

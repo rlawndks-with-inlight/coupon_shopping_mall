@@ -12,7 +12,7 @@ import { test_items } from 'src/data/test-data';
 import Image from 'src/components/image/Image';
 import { fCurrency } from 'src/utils/formatNumber';
 const Wrappers = styled.div`
-max-width:1200px;
+max-width:1600px;
 display:flex;
 flex-direction:column;
 margin: 0 auto;

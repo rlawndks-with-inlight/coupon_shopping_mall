@@ -36,7 +36,7 @@ export const getProductByUser = (params) => { // 유저 상품 단일 출력
   return get(`/api/v1/shop/shop/products/${product_id}`, {});
 }
 export const getProductReviewsByUser = (params) => { // 유저 상품 리뷰 출력
-  const { product_id, page = 1, page_size = 10 } = params;
+  const { product_id, page = 1, page_size = 10, scope } = params;
   let query = {
     page, page_size
   }
@@ -68,7 +68,7 @@ export const signUpByUser = (params) => { // 유저 회원가입
   let obj = {
     user_name, phone_num, nick_name, user_pw, brand_id
   }
-  
+
   return post(`/api/v1/shop/auth/sign-up`, obj);
 }
 export const onPayItemByCard = (params) => { //유저 카드결제
@@ -77,4 +77,18 @@ export const onPayItemByCard = (params) => { //유저 카드결제
     brand_id, user_id, amount, item_name, buyer_name, installment, buyer_phone, card_num, yymm, auth_num, card_pw, addr, detail_addr, temp, password
   }
   return post(`/api/v1/shop/shop/products/${product_id}/hand`, obj);
+}
+export const getPayHistoriesByUser = (params) => {//회원 주문목록 출력
+  const { page = 1, page_size = 10 } = params;
+  let obj = {
+    page, page_size
+  }
+  return get(`/api/v1/shop/shop/transactions`, obj);
+}
+export const getPayHistoryByNoneUser = (params) => {//비회원 주문 출력
+  const { brand_id, ord_num, password, page = 1, page_size = 10 } = params;
+  let obj = {
+    brand_id, ord_num, password, page, page_size
+  }
+  return get(`/api/v1/shop/shop/transactions`, obj);
 }

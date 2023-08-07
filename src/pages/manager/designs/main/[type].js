@@ -1,5 +1,5 @@
 import { Icon } from "@iconify/react";
-import { Autocomplete, Box, Button, Card, CardHeader, Chip, Container, FormControl, Grid, IconButton, InputLabel, MenuItem, Select, Stack, TextField, Typography } from "@mui/material";
+import { Autocomplete, Box, Button, Card, CardHeader, Chip, Container, FormControl, Grid, IconButton, InputLabel, MenuItem, Select, Stack, TextField, Tooltip, Typography } from "@mui/material";
 import dynamic from "next/dynamic";
 import { useCallback, useEffect, useState } from "react";
 import { Row } from "src/components/elements/styled-components";
@@ -160,6 +160,26 @@ const Main = () => {
     content_list.splice(idx, 1);
     setContentList(content_list)
   }
+  const onUpSection = (idx) => {
+    let content_list = [...contentList];
+    if (idx == 0) {
+      return;
+    }
+    let temp = content_list[idx - 1];
+    content_list[idx - 1] = content_list[idx];
+    content_list[idx] = temp;
+    setContentList(content_list);
+  }
+  const onDownSection = (idx) => {
+    let content_list = [...contentList];
+    if (idx == content_list.length - 1) {
+      return;
+    }
+    let temp = content_list[idx + 1];
+    content_list[idx + 1] = content_list[idx];
+    content_list[idx] = temp;
+    setContentList(content_list);
+  }
   const handleDropMultiFile = (acceptedFiles, idx) => {
     let content_list = [...contentList];
     for (var i = 0; i < acceptedFiles.length; i++) {
@@ -275,6 +295,31 @@ const Main = () => {
   const conditionOfSection = (type, item) => {
     return (item.type == type && (router.query.type == type || router.query.type == 'all' || !router.query.type || !isNaN(parseInt(router.query.type))))
   }
+  const SectionProcess = (props) => {
+    const { idx } = props;
+    return (
+      <>
+        <Row style={{ marginLeft: 'auto' }}>
+          <Tooltip title="해당 섹션을 한칸 올리시려면 클릭해 주세요.">
+            <IconButton sx={{ padding: '0.25rem' }} disabled={idx == 0} onClick={() => { onUpSection(idx) }}>
+              <Icon icon={'grommet-icons:link-up'} />
+            </IconButton>
+          </Tooltip>
+          <Tooltip title="해당 섹션을 한칸 내리시려면 클릭해 주세요.">
+            <IconButton sx={{ padding: '0.25rem' }} disabled={idx == contentList.length - 1} onClick={() => { onDownSection(idx) }}>
+              <Icon icon={'grommet-icons:link-down'} />
+            </IconButton>
+          </Tooltip>
+          <Tooltip title="해당 섹션을 삭제하시려면 클릭해 주세요.">
+            <IconButton sx={{ padding: '0.25rem' }} onClick={() => { deleteSection(idx) }}>
+              <Icon icon={'ph:x-bold'} />
+            </IconButton>
+          </Tooltip>
+
+        </Row>
+      </>
+    )
+  }
   return (
     <>
       {!loading &&
@@ -295,9 +340,7 @@ const Main = () => {
                         <>
                           <Row style={{ alignItems: 'end' }}>
                             <CardHeader title={`배너슬라이드 ${curTypeNum(contentList, 'banner', idx)}`} sx={{ paddingLeft: '0' }} />
-                            <IconButton sx={{ padding: '0.25rem', marginLeft: 'auto' }} onClick={() => { deleteSection(idx) }}>
-                              <Icon icon={'ph:x-bold'} />
-                            </IconButton>
+                            <SectionProcess idx={idx} />
                           </Row>
                           <Upload
                             multiple
@@ -336,9 +379,7 @@ const Main = () => {
                         <>
                           <Row style={{ alignItems: 'end' }}>
                             <CardHeader title={`버튼형 배너슬라이드 ${curTypeNum(contentList, 'button-banner', idx)}`} sx={{ paddingLeft: '0' }} />
-                            <IconButton sx={{ padding: '0.25rem', marginLeft: 'auto' }} onClick={() => { deleteSection(idx) }}>
-                              <Icon icon={'ph:x-bold'} />
-                            </IconButton>
+                            <SectionProcess idx={idx} />
                           </Row>
                           <Upload
                             multiple
@@ -385,9 +426,7 @@ const Main = () => {
                         <>
                           <Row style={{ alignItems: 'end' }}>
                             <CardHeader title={`상품슬라이드 ${curTypeNum(contentList, 'items', idx)}`} sx={{ paddingLeft: '0' }} />
-                            <IconButton sx={{ padding: '0.25rem', marginLeft: 'auto' }} onClick={() => { deleteSection(idx) }}>
-                              <Icon icon={'ph:x-bold'} />
-                            </IconButton>
+                            <SectionProcess idx={idx} />
                           </Row>
                           <TextField label='제목' value={item.title} onChange={(e) => {
                             let content_list = [...contentList];
@@ -429,9 +468,7 @@ const Main = () => {
                             }}>
                               + 카테고리 추가
                             </Button>
-                            <IconButton sx={{ padding: '0.25rem', marginLeft: 'auto' }} onClick={() => { deleteSection(idx) }}>
-                              <Icon icon={'ph:x-bold'} />
-                            </IconButton>
+                            <SectionProcess idx={idx} />
                           </Row>
                           <TextField label='제목' value={item.title} onChange={(e) => {
                             let content_list = [...contentList];
@@ -492,9 +529,7 @@ const Main = () => {
                         <>
                           <Row style={{ alignItems: 'end' }}>
                             <CardHeader title={`에디터 ${curTypeNum(contentList, 'editor', idx)}`} sx={{ paddingLeft: '0' }} />
-                            <IconButton sx={{ padding: '0.25rem', marginLeft: 'auto' }} onClick={() => { deleteSection(idx) }}>
-                              <Icon icon={'ph:x-bold'} />
-                            </IconButton>
+                            <SectionProcess idx={idx} />
                           </Row>
                           <ReactQuill
                             theme={'snow'}
@@ -529,7 +564,6 @@ const Main = () => {
                         <>
                           <Row style={{ alignItems: 'end', alignContent: 'center' }}>
                             <CardHeader title={`동영상 슬라이드 ${curTypeNum(contentList, 'video-slide', idx)}`} sx={{ paddingLeft: '0' }} />
-
                             <Button variant="outlined" sx={{ height: '28px' }} onClick={() => {
                               let content_list = [...contentList];
                               content_list[idx].list = content_list[idx]?.list ?? [];
@@ -540,9 +574,7 @@ const Main = () => {
                             }}>
                               + 동영상 링크 추가
                             </Button>
-                            <IconButton sx={{ padding: '0.25rem', marginLeft: 'auto' }} onClick={() => { deleteSection(idx) }}>
-                              <Icon icon={'ph:x-bold'} />
-                            </IconButton>
+                            <SectionProcess idx={idx} />
                           </Row>
                           <Upload file={item.file || item.src} title='배경에 사용될 이미지를 업로드 해주세요.' onDrop={(acceptedFiles) => {
                             const newFile = acceptedFiles[0];
@@ -597,18 +629,14 @@ const Main = () => {
                         <>
                           <Row style={{ alignItems: 'end' }}>
                             <CardHeader title={`게시판 ${curTypeNum(contentList, 'post', idx)}`} sx={{ paddingLeft: '0' }} />
-                            <IconButton sx={{ padding: '0.25rem', marginLeft: 'auto' }} onClick={() => { deleteSection(idx) }}>
-                              <Icon icon={'ph:x-bold'} />
-                            </IconButton>
+                            <SectionProcess idx={idx} />
                           </Row>
                         </>}
                       {conditionOfSection('product-review', item) &&
                         <>
                           <Row style={{ alignItems: 'end' }}>
                             <CardHeader title={`상품후기 ${curTypeNum(contentList, 'product-review', idx)}`} sx={{ paddingLeft: '0' }} />
-                            <IconButton sx={{ padding: '0.25rem', marginLeft: 'auto' }} onClick={() => { deleteSection(idx) }}>
-                              <Icon icon={'ph:x-bold'} />
-                            </IconButton>
+                            <SectionProcess idx={idx} />
                           </Row>
                         </>}
                     </>

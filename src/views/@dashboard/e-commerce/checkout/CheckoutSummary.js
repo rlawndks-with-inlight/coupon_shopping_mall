@@ -59,14 +59,14 @@ export default function CheckoutSummary({
             <Typography variant="body2" sx={{ color: 'text.secondary' }}>
               총액
             </Typography>
-            <Typography variant="subtitle2">{fCurrency(subtotal??0)}원</Typography>
+            <Typography variant="subtitle2">{fCurrency(subtotal ?? 0)}원</Typography>
           </Stack>
 
           <Stack direction="row" justifyContent="space-between">
             <Typography variant="body2" sx={{ color: 'text.secondary' }}>
               할인
             </Typography>
-            <Typography variant="subtitle2">{discount ? fCurrency(-discount) : '-'}원</Typography>
+            <Typography variant="subtitle2">{discount ? fCurrency(-discount) : '0'}원</Typography>
           </Stack>
 
           <Divider />
@@ -75,7 +75,7 @@ export default function CheckoutSummary({
             <Typography variant="subtitle1">총 결제 금액</Typography>
             <Box sx={{ textAlign: 'right' }}>
               <Typography variant="subtitle1" sx={{ color: 'error.main' }}>
-                {fCurrency(total??0)}원
+                {fCurrency(total ?? 0)}원
               </Typography>
               {/* <Typography variant="caption" sx={{ fontStyle: 'italic' }}>
                 (VAT included if applicable)

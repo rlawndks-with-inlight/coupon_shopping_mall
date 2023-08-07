@@ -46,7 +46,12 @@ import { CheckoutBillingAddress, CheckoutCartProductList, CheckoutSteps, Checkou
 import { test_address_list, test_pay_list } from 'src/data/test-data';
 import { AddressItem } from 'src/views/shop/auth/cart/demo-1';
 import EmptyContent from 'src/components/empty-content/EmptyContent';
-
+import Payment from 'payment'
+import Cards from 'react-credit-cards'
+import { useAuthContext } from 'src/layouts/manager/auth/useAuthContext';
+import { formatCreditCardNumber, formatExpirationDate } from 'src/utils/formatCard';
+import { useModal } from "src/components/dialog/ModalProvider";
+import { onPayItemByCard } from 'src/utils/api-shop';
 // ----------------------------------------------------------------------
 
 ProductDetailsSummary.propTypes = {
@@ -57,11 +62,30 @@ ProductDetailsSummary.propTypes = {
 };
 const STEPS = ['배송지 확인', '결제하기'];
 export default function ProductDetailsSummary({ product, onAddCart, onGotoStep, ...other }) {
-  const { themeCartData, onChangeCartData } = useSettingsContext();
+  const { setModal } = useModal()
+  const { themeCartData, onChangeCartData, themeDnsData } = useSettingsContext();
+  const { user } = useAuthContext();
   const [addressList, setAddressList] = useState([]);
   const [selectAddress, setSelectAddress] = useState({});
   const [payList, setPayList] = useState([]);
   const [selectProduct, setSelectProduct] = useState({ id: product?.id, count: 1, select_option_obj: {} });
+  const [payData, setPayData] = useState({
+    brand_id: themeDnsData?.id,
+    user_id: user?.id ?? undefined,
+    amount: 0,
+    item_name: product?.product_name,
+    buyer_name: user?.nick_name ?? "",
+    installment: 0,
+    buyer_phone: '',
+    card_num: '',
+    yymm: '',
+    auth_num: '',
+    card_pw: '',
+    addr: "",
+    detail_addr: '',
+    temp: [],
+  })
+  const [cardFucus, setCardFocus] = useState()
   const cart = []
 
   const {
@@ -94,7 +118,6 @@ export default function ProductDetailsSummary({ product, onAddCart, onGotoStep, 
   }, [])
   const isMaxQuantity =
     cart.filter((item) => item.id === id).map((item) => item.quantity)[0] >= available;
-
   const handleAddCart = async () => {
     let cart_data = [...themeCartData];
     let select_product = { ...selectProduct };
@@ -144,8 +167,10 @@ export default function ProductDetailsSummary({ product, onAddCart, onGotoStep, 
   }
   const [buyStep, setBuyStep] = useState(0);
   const [buyOpen, setBuyOpen] = useState(false);
-  const onBuyNow = () => {
-
+  const onBuyNow = async () => {
+    console.log(payData);
+    let result = await onPayItemByCard(payData);
+    console.log(result)
   }
   const onBuyDialogClose = () => {
     setBuyOpen(false);
@@ -153,6 +178,10 @@ export default function ProductDetailsSummary({ product, onAddCart, onGotoStep, 
   }
   const onCreateBilling = (item) => {
     setSelectAddress(item);
+    setPayData({
+      ...payData,
+      ['addr']: item?.address
+    })
     setBuyStep(1);
   }
   return (
@@ -166,7 +195,6 @@ export default function ProductDetailsSummary({ product, onAddCart, onGotoStep, 
         <DialogTitle>바로구매</DialogTitle>
         <DialogContent>
           <CheckoutSteps activeStep={buyStep} steps={STEPS} />
-
           {buyStep == 0 &&
             <>
               {addressList.length > 0 ?
@@ -199,6 +227,11 @@ export default function ProductDetailsSummary({ product, onAddCart, onGotoStep, 
                       <Paper
                         variant="outlined"
                         sx={{ padding: '1rem', cursor: 'pointer' }}
+                        onClick={() => {
+                          if (idx == 0) {
+                            setBuyStep(2);
+                          }
+                        }}
                       >
                         <Box sx={{ ml: 1 }}>
                           <Typography variant="subtitle2">{item.title}</Typography>
@@ -211,6 +244,99 @@ export default function ProductDetailsSummary({ product, onAddCart, onGotoStep, 
                   ))}
                 </Stack>
               </RadioGroup>
+            </>}
+          {buyStep == 2 &&
+            <>
+              <Stack spacing={2}>
+                <Cards cvc={''} focused={cardFucus} expiry={payData.yymm} name={payData.buyer_name} number={payData.card_num} />
+                <Stack>
+                  <TextField
+                    size='small'
+                    label='카드 번호'
+                    value={payData.card_num}
+                    placeholder='0000 0000 0000 0000'
+                    onChange={(e) => {
+                      let value = e.target.value;
+                      value = formatCreditCardNumber(value, Payment)
+                      setPayData({
+                        ...payData,
+                        ['card_num']: value
+                      })
+                    }}
+                  />
+                </Stack>
+                <Stack>
+                  <TextField
+                    size='small'
+                    label='카드 사용자명'
+                    value={payData.buyer_name}
+                    onChange={(e) => {
+                      let value = e.target.value;
+                      setPayData({
+                        ...payData,
+                        ['buyer_name']: value
+                      })
+                    }}
+                  />
+                </Stack>
+                <Stack>
+                  <TextField
+                    size='small'
+                    label='만료일'
+                    value={payData.yymm}
+                    inputProps={{ maxLength: '5' }}
+                    onChange={(e) => {
+                      let value = e.target.value;
+                      value = formatExpirationDate(value, Payment)
+                      setPayData({
+                        ...payData,
+                        ['yymm']: value
+                      })
+                    }}
+                  />
+                </Stack>
+                <Stack>
+                  <TextField
+                    size='small'
+                    label='카드비밀번호 앞 두자리'
+                    value={payData.card_pw}
+                    type='password'
+                    inputProps={{ maxLength: '2' }}
+                    onChange={(e) => {
+                      let value = e.target.value;
+                      setPayData({
+                        ...payData,
+                        ['card_pw']: value
+                      })
+                    }}
+                  />
+                </Stack>
+                <Stack>
+                  <TextField
+                    size='small'
+                    label='구매자 휴대폰번호'
+                    value={payData.buyer_phone}
+                    onChange={(e) => {
+                      let value = e.target.value;
+                      setPayData({
+                        ...payData,
+                        ['buyer_phone']: value
+                      })
+                    }}
+                  />
+                </Stack>
+                <Stack>
+                  <Button variant='contained' onClick={() => {
+                    setModal({
+                      func: () => { onBuyNow() },
+                      icon: 'ion:card-outline',
+                      title: '정말로 결제 하시겠습니까?'
+                    })
+                  }}>
+                    결제하기
+                  </Button>
+                </Stack>
+              </Stack>
             </>}
         </DialogContent>
         <DialogActions>
@@ -316,7 +442,6 @@ export default function ProductDetailsSummary({ product, onAddCart, onGotoStep, 
                   })
                 }}
               />
-
               {/* <Typography
               variant="caption"
               component="div"
@@ -326,9 +451,7 @@ export default function ProductDetailsSummary({ product, onAddCart, onGotoStep, 
             </Typography> */}
             </Stack>
           </Stack>
-
           <Divider sx={{ borderStyle: 'dashed' }} />
-
           <Stack direction="row" spacing={2}>
             <Button
               fullWidth
@@ -342,7 +465,6 @@ export default function ProductDetailsSummary({ product, onAddCart, onGotoStep, 
             >
               장바구니
             </Button>
-
             <Button fullWidth size="large" variant="contained" onClick={() => {
               let select_product = { ...selectProduct };
               for (var i = 0; i < product?.groups.length; i++) {
@@ -357,7 +479,6 @@ export default function ProductDetailsSummary({ product, onAddCart, onGotoStep, 
               바로구매
             </Button>
           </Stack>
-
           <Stack direction="row" alignItems="center" justifyContent="center">
             {[].map((social) => (
               <IconButton key={social.name}>

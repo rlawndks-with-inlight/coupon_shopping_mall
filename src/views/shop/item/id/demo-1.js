@@ -44,15 +44,15 @@ const Demo1 = (props) => {
   }, [])
 
   const getItemInfo = async (review_page) => {
-    let data = {...product};
-    if(Object.keys(data).length == 0){
+    let data = { ...product };
+    if (Object.keys(data).length == 0) {
       data = await getProductByUser({
         product_id: router.query?.id
       });
-      data['sub_images'] = data['sub_images'].map((img)=>{
+      data['sub_images'] = data['sub_images'].map((img) => {
         return img?.product_sub_img
       })
-      if(data?.product_img){
+      if (data?.product_img) {
         data['sub_images'].unshift(data?.product_img)
       }
       data['images'] = data['sub_images'];
@@ -70,13 +70,13 @@ const Demo1 = (props) => {
       value: 'description',
       label: '상품설명',
       component: product?.product_description ?
-      <ReactQuill
-      className='none-padding'
-      value={product?.product_description ?? `<body></body>`}
-      readOnly={true}
-      theme={"bubble"}
-      bounds={'.app'}
-    /> : null,
+        <ReactQuill
+          className='none-padding'
+          value={product?.product_description ?? `<body></body>`}
+          readOnly={true}
+          theme={"bubble"}
+          bounds={'.app'}
+        /> : null,
     },
     {
       value: 'reviews',

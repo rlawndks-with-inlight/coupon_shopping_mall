@@ -58,14 +58,19 @@ height: 33.15vw;
 background-size: 100%;
 background-repeat: no-repeat;
 background-position: center;
-transition: background-size .3s ease;
--moz-transition: background-size .3s ease;
--web-kit-transition: background-size .3s ease;
 border-radius:1rem;
-&:hover {
-
-    background-size: ${props => props.iscurrentSlideIndex ? '105%' : ''};
-}
+animation: ${props => props.iscurrentSlideIndex?'zoom-in-out':''} 10s ease-in-out infinite;
+@keyframes zoom-in-out {
+    0% {
+        background-size: 100%;
+    }
+    50% {
+        background-size: 105%;
+    }
+    100% {
+        background-size: 100%;
+    }
+  }
 @media (max-width:1200px) {
     width: 100vw;
     height: 42.5vw;
@@ -132,10 +137,7 @@ const HomeBanner = (props) => {
     let img_list = [...column?.list];
     const [currentSlideIndex, setCurrentSlideIndex] = useState(0);
     const afterChangeHandler = (currentSlide) => {
-        console.log(currentSlide)
         setCurrentSlideIndex(currentSlide);
-        // 이제 currentSlide 변수에 현재 슬라이드의 인덱스가 들어 있습니다.
-        // 원하는 로직을 여기에 추가하면 됩니다.
     };
 
     let slide_setting = {

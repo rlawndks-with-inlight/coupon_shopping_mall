@@ -31,7 +31,7 @@ z-index: 10;
 const TopMenuContainer = styled.div`
 display:flex;
 padding: 1rem 0;
-max-width: 1200px;
+max-width: 1600px;
 width:90%;
 margin: 0 auto;
 align-items:center;
@@ -41,7 +41,7 @@ position:relative;
 }
 `
 const CategoryContainer = styled.div`
-max-width: 1222px;
+max-width: 1622px;
 width:100%;
 margin: 0 auto;
 display:flex;

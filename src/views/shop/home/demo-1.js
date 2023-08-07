@@ -1,7 +1,7 @@
 import { Icon } from '@iconify/react'
 import { useEffect, useState } from 'react'
 import Slider from 'react-slick'
-import { test_items } from 'src/data/test-data'
+import { test_items, test_product_reviews } from 'src/data/test-data'
 import styled from 'styled-components'
 import { Row, themeObj } from 'src/components/elements/styled-components'
 import { Item, Items } from 'src/components/elements/shop/common'
@@ -191,10 +191,15 @@ const Demo1 = (props) => {
         posts: post_obj,
         categories: themePostCategoryList,
       })
+      let review_list = [...test_product_reviews];
+      for (var i = 0; i < review_list.length; i++) {
+        review_list[i].product = _.find(products, { id: review_list[i]?.product_id });
+      }
       content_list.push({
         type: 'product-review',
-        posts: post_obj,
-        categories: themePostCategoryList,
+        title: '상품후기',
+        sub_title: 'REVIEW',
+        list: review_list,
       })
     }
 

@@ -67,7 +67,6 @@ const HomeItemsWithCategories = (props) => {
     const { column, data, func } = props;
     let { idx, itemsCategory } = data;
     const { router, onClickItemsCategory } = func;
-    console.log(column)
     return (
         <>
             <Wrappers style={{

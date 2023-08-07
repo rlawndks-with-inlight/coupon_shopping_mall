@@ -29,7 +29,7 @@ const Login = () => {
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   useEffect(() => {
-    if (user) {
+    if (user?.level >= 10) {
       router.push(`/manager/dashboards`);
     }
     setLoading(false);

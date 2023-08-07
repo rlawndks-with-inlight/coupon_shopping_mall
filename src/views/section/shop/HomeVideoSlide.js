@@ -96,7 +96,7 @@ const HomeVideoSlide = (props) => {
                 backgroundPosition: 'fixed',
                 display: 'flex',
                 flexDirection: 'column',
-                margin: '4rem auto',
+                margin: '1rem auto 4rem auto',
                 backgroundAttachment: 'fixed'
             }}>
 

@@ -80,7 +80,7 @@ const Demo1 = (props) => {
     },
     {
       value: 'reviews',
-      label: `상품후기 (100)`,
+      label: `상품후기 (${reviewContent?.total})`,
       component: product ? <ProductDetailsReview product={product} reviewContent={reviewContent} onChangePage={getItemInfo} /> : null,
     },
   ];

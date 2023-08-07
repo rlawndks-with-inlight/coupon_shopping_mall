@@ -27,6 +27,7 @@ export const deleteItem = async (url, obj) => {
     const response = await axiosIns().delete(url, obj);
     return response;
   } catch (err) {
+    console.log(err)
     toast.error(err?.response?.data?.message);
     return false;
   }
@@ -47,6 +48,7 @@ export const put = async (url, obj) => {
     const response = await axiosIns().post(url, formData, config);
     return response?.data;
   } catch (err) {
+    console.log(err)
     toast.error(err?.response?.data?.message);
     return false;
   }
@@ -58,6 +60,11 @@ export const get = async (url, params) => {
     return response?.data;
   } catch (err) {
     console.log(err)
+    if (err?.response?.status == 401) {
+      if (window.location.pathname.split('/')[1] == 'manager') {
+        window.location.href = `/manager/login`;
+      }
+    }
     return false;
   }
 }
@@ -74,8 +81,8 @@ const settingImageObj = (images, obj_) => {//이미지 존재여부에따라 img
 }
 const settingdeleteImageObj = (images, obj_) => {//이미지 존재안할시 삭제함
   let obj = obj_;
-  for(var i = 0;i<images.length;i++){
-    if(!obj[`${images[i]}_file`]){
+  for (var i = 0; i < images.length; i++) {
+    if (!obj[`${images[i]}_file`]) {
       delete obj[`${images[i]}_file`];
     }
   }
@@ -437,7 +444,7 @@ export const addBrandByManager = (params) => { //관리자 브랜드 추가
     'og',
   ]
   obj = settingdeleteImageObj(images, obj);
- 
+
   return post(`/api/v1/manager/brands`, obj);
 }
 export const updateBrandByManager = (params) => { //관리자 브랜드수정

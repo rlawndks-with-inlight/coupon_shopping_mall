@@ -38,7 +38,7 @@ export const getProductByUser = (params) => { // 유저 상품 단일 출력
 export const getProductReviewsByUser = (params) => { // 유저 상품 리뷰 출력
   const { product_id, page = 1, page_size = 10, scope } = params;
   let query = {
-    page, page_size
+    page, page_size, product_id
   }
   return get(`/api/v1/shop/shop/products/${product_id}/reviews`, query);
 }

@@ -37,6 +37,8 @@ margin: auto;
 display:flex;
 flex-direction:column;
 align-items:center;
+width:100%;
+
 `
 const PostBox = styled.div`
 padding:1rem;
@@ -45,6 +47,19 @@ flex-direction:column;
 border:1px solid #fff;
 width:600px;
 background:#00000099;
+@media (max-width:1200px){
+  width:80%;
+}
+`
+const PostCategoryTabContainer = styled.div`
+display:flex;
+overflow-x: auto;
+white-space: nowrap;
+margin: 0 auto;
+width:600px;
+@media (max-width:1200px){
+  width:80%;
+}
 `
 const PostCategoryTab = styled.div`
 padding:0.5rem;
@@ -72,9 +87,7 @@ const HomePost = (props) => {
   const [categoryId, setCategoryId] = useState(column?.categories[0]?.id);
   return (
     <>
-      <FullWrappers style={{
-
-      }}>
+      <FullWrappers>
         <ContentWrappers>
           <Content style={{ color: '#fff' }}>
             <div style={{ fontSize: themeObj.font_size.size5 }}>CALL CENTER</div>
@@ -84,7 +97,7 @@ const HomePost = (props) => {
         </ContentWrappers>
         <ContentWrappers>
           <Content style={{ color: '#fff', margin: '4rem auto' }}>
-            <Row style={{ marginLeft: 'auto' }}>
+            <PostCategoryTabContainer>
               {column?.categories && column?.categories.map((cate, idx) => (
                 <>
                   <PostCategoryTab
@@ -94,7 +107,7 @@ const HomePost = (props) => {
                     }}>{cate?.post_category_title}</PostCategoryTab>
                 </>
               ))}
-            </Row>
+            </PostCategoryTabContainer>
             <PostBox>
               <PostCategoryTitle>
                 <div>

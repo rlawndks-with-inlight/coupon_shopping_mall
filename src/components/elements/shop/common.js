@@ -135,7 +135,7 @@ width:100%;
 }
 `
 const ItemWrapper = styled.div`
-width:${props => props.theme_css?.container?.is_vertical == 1 ? '32%' : '23.5%'};
+width:${props => props.theme_css?.container?.is_vertical == 1 ? '32%' : '18.4%'};
 @media (max-width: 1150px) {
   width:${props => props.theme_css?.container?.is_vertical == 1 ? '49%' : '32%'};
 }
@@ -160,7 +160,7 @@ export const Items = (props) => {
       if (itemThemeCss?.container?.is_vertical == 1) {
         return 3
       } else {
-        return 4
+        return 5
       }
     }
     if (window.innerWidth > 1000) {

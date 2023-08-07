@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import { useEffect, useState } from 'react';
 // @mui
-import { Box } from '@mui/material';
+import { Box, Fab } from '@mui/material';
 // hooks
 import useResponsive from '../../hooks/useResponsive';
 // auth
@@ -16,6 +16,8 @@ import NavHorizontal from './nav/NavHorizontal';
 import { useAuthContext } from './auth/useAuthContext';
 import NextNProgress from 'nextjs-progressbar';
 import { useRouter } from 'next/router';
+import ScrollToTop from 'src/components/scroll-to-top';
+import { Icon } from '@iconify/react';
 // ----------------------------------------------------------------------
 
 ManagerLayout.propTypes = {
@@ -96,9 +98,14 @@ export default function ManagerLayout({ children }) {
 
   return <>
     <NextNProgress color={themeDnsData?.theme_css?.main_color ?? "#000"} />
-    {themeDnsData?.id > 0 && user && themeDnsData ?
+    {themeDnsData?.id > 0 && user?.level >= 10 && themeDnsData ?
       <>
-      {renderContent()}
+        {renderContent()}
+        <ScrollToTop className='mui-fixed'>
+          <Fab size='small' aria-label='scroll back to top'>
+            <Icon icon='tabler:arrow-up' />
+          </Fab>
+        </ScrollToTop>
       </>
       :
       <>

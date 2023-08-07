@@ -166,7 +166,7 @@ const Demo1 = (props) => {
       }
       let result = await signUpByUser({ ...user, brand_id: themeDnsData?.id });
       if(!result){
-
+        return;
       }
     }
     if (activeStep == 2) {

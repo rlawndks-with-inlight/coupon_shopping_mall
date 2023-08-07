@@ -10,7 +10,7 @@ const ContentWrapper = styled.div`
 display:flex;
 flex-direction:column;
 width:90%;
-max-width:1200px;
+max-width:1600px;
 margin: 0 auto;
 `
 const Row = styled.div`

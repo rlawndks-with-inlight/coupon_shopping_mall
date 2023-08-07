@@ -2,6 +2,11 @@ import { Icon } from '@iconify/react'
 import Slider from 'react-slick'
 import styled from 'styled-components'
 import _ from 'lodash'
+import { Row, themeObj } from 'src/components/elements/styled-components'
+import { useState } from 'react'
+import { m } from 'framer-motion'
+import { Button } from '@mui/material'
+import { varFade } from 'src/components/animate'
 const FullWrappers = styled.div`
   width:100%;
   `
@@ -46,14 +51,52 @@ const PrevArrowStyle = styled.div`
   }
   `
 const BannerImg = styled.img`
-  width: 80vw;
-  height: 34vw;
+  width: 78vw;
+  height: 33.15vw;
+  border-radius:1rem;
   @media (max-width:1200px) {
       width: 100vw;
       height: 42.5vw;
-  }
-  `
+      border-radius:0;
 
+  }
+`
+const TextContainer = styled.div`
+display:flex;
+flex-direction:column;
+position:absolute;
+right:8rem;
+top:12vw;
+z-index:10;
+align-items:end;
+row-gap:1rem;
+@media (max-width:1200px) {
+    right:4rem;
+    top:10vw;
+    row-gap:0rem;
+}
+`
+const SlideTitle = styled.div`
+font-size:${themeObj.font_size.size1};
+font-weight:bold;
+color:#fff;
+@media (max-width:1200px) {
+font-size:${themeObj.font_size.size2};
+}
+@media (max-width:600px) {
+font-size:${themeObj.font_size.size3};
+}
+`
+const SlideSubTitle = styled.div`
+font-size:${themeObj.font_size.size2};
+color:#fff;
+@media (max-width:1200px) {
+font-size:${themeObj.font_size.size3};
+}
+@media (max-width:600px) {
+    font-size:${themeObj.font_size.size4};
+}
+`
 const NextArrow = ({ onClick, sx }) => {
     return (
         <NextArrowStyle onClick={onClick} style={{ ...sx }}>
@@ -74,32 +117,87 @@ const HomeBanner = (props) => {
     const { column, data, func } = props;
     let { windowWidth } = data;
     let img_list = [...column?.list];
+    const [currentSlideIndex, setCurrentSlideIndex] = useState(0);
+    const afterChangeHandler = (currentSlide) => {
+        console.log(currentSlide)
+        setCurrentSlideIndex(currentSlide);
+        // 이제 currentSlide 변수에 현재 슬라이드의 인덱스가 들어 있습니다.
+        // 원하는 로직을 여기에 추가하면 됩니다.
+    };
+
     let slide_setting = {
         centerMode: true,
         centerPadding: (img_list.length >= 3 ? (windowWidth > 1200 ? '10%' : 0) : 0), // 이미지 간격을 조절할 수 있는 값입니다.
         infinite: true,
         speed: 500,
-        autoplay: true,
+        autoplay: false,
         autoplaySpeed: 2500,
         slidesToShow: 1,
         slidesToScroll: 1,
         dots: true,
         nextArrow: <NextArrow onClick />,
         prevArrow: <PrevArrow onClick />,
+        afterChange: afterChangeHandler,
     }
+    const fadeInUpVariants = {
+        hidden: { opacity: 0, y: 20 },
+        visible: { opacity: 1, y: 0 },
+    };
+
     return (
         <>
             <FullWrappers>
                 <Slider {...slide_setting}>
                     {img_list.map((item, idx) => (
                         <>
-                            <BannerImg src={item?.src} onClick={() => {
-                                if (item?.link) {
-                                    window.location.href = `${item?.link}`
-                                }
-                            }} style={{
-                                width: `${img_list.length >= 3 ? '' : '100vw'}`
-                            }} />
+                            <Row style={{ position: 'relative' }}>
+                                <BannerImg src={item?.src} onClick={() => {
+                                    if (item?.link) {
+                                        window.location.href = `${item?.link}`
+                                    }
+                                }} style={{
+                                    width: `${img_list.length >= 3 ? '' : '100vw'}`
+                                }} />
+                                {currentSlideIndex == idx &&
+                                    <>
+                                        <TextContainer>
+                                            {item?.title &&
+
+                                                <m.div
+                                                    initial="hidden"
+                                                    animate="visible"
+                                                    variants={fadeInUpVariants}
+                                                >
+                                                    <SlideTitle>
+                                                        {item?.title}
+                                                    </SlideTitle>
+                                                </m.div>
+                                            }
+                                            {item?.sub_title &&
+                                                <SlideSubTitle>
+                                                    <m.div
+                                                        initial="hidden"
+                                                        animate="visible"
+                                                        variants={fadeInUpVariants}>
+                                                        {item?.sub_title}
+                                                    </m.div>
+                                                </SlideSubTitle>
+                                            }
+                                            {item?.link &&
+                                                <m.div
+                                                    initial="hidden"
+                                                    animate="visible"
+                                                    variants={fadeInUpVariants}>
+                                                    <Button variant='outlined' onClick={() => {
+                                                        window.location.href = item?.link;
+                                                    }}>
+                                                        VIEW MORE
+                                                    </Button>
+                                                </m.div>}
+                                        </TextContainer>
+                                    </>}
+                            </Row>
+
                         </>
                     ))}
                 </Slider>

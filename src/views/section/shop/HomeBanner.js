@@ -63,7 +63,8 @@ transition: background-size .3s ease;
 -web-kit-transition: background-size .3s ease;
 border-radius:1rem;
 &:hover {
-    background-size: 105%;
+
+    background-size: ${props => props.iscurrentSlideIndex ? '105%' : ''};
 }
 @media (max-width:1200px) {
     width: 100vw;
@@ -163,10 +164,10 @@ const HomeBanner = (props) => {
                     {img_list.map((item, idx) => (
                         <>
                             <BannerImgContent
+                                iscurrentSlideIndex={currentSlideIndex == idx}
                                 style={{
                                     width: `${img_list.length >= 3 ? '' : '100vw'}`,
                                     backgroundImage: `url(${item.src})`,
-                                    
                                 }}
                             >
                                 {currentSlideIndex == idx &&

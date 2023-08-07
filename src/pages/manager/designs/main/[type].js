@@ -184,6 +184,8 @@ const Main = () => {
     for (var i = 0; i < acceptedFiles.length; i++) {
       content_list[idx]['list'].push(Object.assign(acceptedFiles[i], {
         preview: URL.createObjectURL(acceptedFiles[i]),
+        title: "",
+        sub_title: "",
         link: "",
       }))
     }
@@ -257,6 +259,7 @@ const Main = () => {
         if (file_index_list[i]['i'] >= 0 && file_index_list[i]['j'] >= 0) {
           content_list[file_index_list[i]['i']].list[file_index_list[i]['j']] = {
             title: content_list[file_index_list[i]['i']].list[file_index_list[i]['j']]?.title ?? "",
+            sub_title: content_list[file_index_list[i]['i']].list[file_index_list[i]['j']]?.sub_title ?? "",
             link: content_list[file_index_list[i]['i']].list[file_index_list[i]['j']]?.link ?? "",
             src: file_result[i]?.url ?? "",
           }
@@ -366,11 +369,24 @@ const Main = () => {
                           />
                           {contentList[idx]?.list && contentList[idx].list.map((item, index) => (
                             <>
-                              <TextField size='small' label={`${index + 1}번째 이미지 링크 (링크 없을 시 빈칸으로 유지)`} value={contentList[idx]?.list[index].link ?? ""} onChange={(e) => {
+                            <Row style={{ width: '100%', columnGap: '1rem' }}>
+                            <TextField size='small' sx={{ width: '50%' }} label={`${index + 1}번째 제목 (제목 없을 시 빈칸으로 유지)`} value={contentList[idx]?.list[index].title ?? ""} onChange={(e) => {
+                                let content_list = [...contentList];
+                                content_list[idx].list[index].title = e.target.value;
+                                setContentList(content_list);
+                              }} />
+                              <TextField size='small' sx={{ width: '50%' }} label={`${index + 1}번째 부제목 (부제목 없을 시 빈칸으로 유지)`} value={contentList[idx]?.list[index].sub_title ?? ""} onChange={(e) => {
+                                let content_list = [...contentList];
+                                content_list[idx].list[index].sub_title = e.target.value;
+                                setContentList(content_list);
+                              }} />
+                              <TextField size='small' sx={{ width: '50%' }} label={`${index + 1}번째 이미지 링크 (링크 없을 시 빈칸으로 유지)`} value={contentList[idx]?.list[index].link ?? ""} onChange={(e) => {
                                 let content_list = [...contentList];
                                 content_list[idx].list[index].link = e.target.value;
                                 setContentList(content_list);
                               }} />
+                            </Row>
+                              
                             </>
                           ))}
                         </>}

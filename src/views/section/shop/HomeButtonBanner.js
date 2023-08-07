@@ -42,7 +42,7 @@ const HomeButtonBanner = (props) => {
                             <Row style={{ flexDirection: 'column', width: `${getSlideToShow() == 7 ? `${parseInt(1350 / 7) - 8}px` : `${parseInt(window.innerWidth / getSlideToShow()) - 8}px`}`, }}>
                                 <LazyLoadImage src={item?.src} style={{
                                     width: `${getSlideToShow() == 7 ? `${parseInt(1350 / 7) - 48}px` : `${parseInt(window.innerWidth / getSlideToShow()) - 48}px`}`,
-                                    height: `${getSlideToShow() == 7 ? `${parseInt(1350 / 7) - 48}px` : `${parseInt(window.innerWidth / getSlideToShow()) - 48}px`}`,
+                                    height: `auto`,
                                     borderRadius: '50%',
                                     margin: '0 auto',
                                     cursor: 'pointer'

@@ -140,7 +140,6 @@ const Main = () => {
     })
     setProductContent(product_content);
 
-
     let brand_data = await getBrandByManager({
       id: (!isNaN(parseInt(router.query.type)) ? router.query.type : '') | themeDnsData?.id
     })

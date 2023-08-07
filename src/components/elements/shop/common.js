@@ -9,7 +9,19 @@ import { Icon } from "@iconify/react";
 import Slider from "react-slick";
 import { useSettingsContext } from "src/components/settings";
 import _ from "lodash";
-
+import { Title } from 'src/components/elements/styled-components';
+import PropTypes from 'prop-types';
+// @mui
+import { Box, Card, Pagination, Table, TableBody, TableCell, TableContainer, TableRow, Typography } from '@mui/material';
+// components
+import { TableHeadCustom } from 'src/components/table';
+//
+import { CheckoutCartProduct } from 'src/views/@dashboard/e-commerce/checkout';
+import { test_items } from 'src/data/test-data';
+import Image from 'src/components/image/Image';
+import { fCurrency } from 'src/utils/formatNumber';
+import { getPayHistoriesByUser } from 'src/utils/api-shop';
+import { getTrxStatusByNumber, makeMaxPage } from 'src/utils/function';
 const ItemName = styled.div`
 font-weight: bold;
 font-size:${themeObj.font_size.size7};
@@ -207,6 +219,53 @@ export const Items = (props) => {
             })}
           </ItemsContainer>
         </>}
+    </>
+  )
+}
+
+export const HistoryTable = (props) => {
+  const { historyContent, headLabel } = props;
+  return (
+    <>
+      <TableContainer>
+        <Table sx={{ minWidth: 720, overflowX: 'auto' }}>
+          <TableHeadCustom headLabel={headLabel} />
+          <TableBody>
+            {historyContent?.content && historyContent?.content.map((row) => (
+              <>
+                <TableRow>
+                  <TableCell sx={{ display: 'flex', alignItems: 'center' }}>
+                    <Image
+                      alt="product image"
+                      src={row.product_img}
+                      sx={{ width: 64, height: 64, borderRadius: 1.5, mr: 2 }}
+                    />
+                    <Typography noWrap variant="subtitle2" sx={{ maxWidth: 240 }}>
+                      {row.product_name}
+                    </Typography>
+                  </TableCell>
+                  <TableCell>
+                    {fCurrency(row.amount)}원
+                  </TableCell>
+                  <TableCell>
+                    {row?.buyer_name}
+                  </TableCell>
+                  <TableCell>
+                    {getTrxStatusByNumber(row?.trx_status)}
+                  </TableCell>
+                  <TableCell>
+                    <Box
+                      sx={{ textAlign: 'right', color: 'text.secondary', }}
+                    >
+                      {row?.updated_at}
+                    </Box>
+                  </TableCell>
+                </TableRow>
+              </>
+            ))}
+          </TableBody>
+        </Table>
+      </TableContainer>
     </>
   )
 }

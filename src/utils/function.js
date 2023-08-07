@@ -17,11 +17,11 @@ export const objToQuery = (obj_) => {
   return query;
 }
 
-export const makeMaxPage = (num, page_cut) => {
-  if (num % page_cut == 0) {
-    return num / page_cut;
+export const makeMaxPage = (total, page_cut) => {
+  if (total % page_cut == 0) {
+    return total / page_cut;
   } else {
-    return parseInt(num / page_cut) + 1;
+    return parseInt(total / page_cut) + 1;
   }
 }
 
@@ -104,6 +104,20 @@ export const getUserLevelByNumber = (num) => {
     return '개발사'
   else
     return '잘못된레벨'
+}
+export const getTrxStatusByNumber = (num) => {
+  if (num == 0)
+    return '결제완료'
+  else if (num == 5)
+    return '입고'
+  else if (num == 10)
+    return '출고'
+  else if (num == 15)
+    return '배송중'
+  else if (num == 20)
+    return '배송완료'
+  else
+    return '---'
 }
 export const getMyPageParamByNumber = (num) => {
   if (num == 0)

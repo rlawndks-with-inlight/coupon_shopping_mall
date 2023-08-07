@@ -97,10 +97,10 @@ export const getPayHistoriesByUser = (params) => {//회원 주문목록 출력
   }
   return get(`/api/v1/shop/shop/transactions`, obj);
 }
-export const getPayHistoryByNoneUser = (params) => {//비회원 주문 출력
-  const { brand_id, ord_num, password, page = 1, page_size = 10 } = params;
+export const getPayHistoryByNoneUser = (params) => {// 비회원 주문 출력
+  const { brand_id, ord_num, password } = params;
   let obj = {
-    brand_id, ord_num, password, page, page_size
+    brand_id, ord_num, password
   }
-  return get(`/api/v1/shop/shop/transactions`, obj);
+  return get(`/api/v1/shop/shop/non-member-transactions`, obj);
 }

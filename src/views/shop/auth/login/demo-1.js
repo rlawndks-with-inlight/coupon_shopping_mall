@@ -1,10 +1,13 @@
 import { useTheme } from '@emotion/react';
-import { Box, Button, TextField } from '@mui/material';
+import { Box, Button, Card, TextField } from '@mui/material';
 import { useEffect, useState } from 'react';
 import { Col, Row, Title, themeObj } from 'src/components/elements/styled-components';
 import { useSettingsContext } from 'src/components/settings';
 import { useAuthContext } from 'src/layouts/manager/auth/useAuthContext';
+import { getPayHistoryByNoneUser } from 'src/utils/api-shop';
 import styled from 'styled-components'
+import { useModal } from "src/components/dialog/ModalProvider";
+import { HistoryTable } from 'src/components/elements/shop/common';
 
 const Wrappers = styled.div`
 max-width:500px;
@@ -23,9 +26,18 @@ cursor:pointer;
   color:${props => props.presetsColor?.main};
 }
 `
+const TABLE_HEAD = [
+  { id: 'product', label: '상품' },
+  { id: 'amount', label: '총액' },
+  { id: 'buyer_name', label: '구매자명' },
+  { id: 'trx_status', label: '배송상태' },
+  { id: 'date', label: '업데이트일', align: 'right' },
+  { id: '' },
+];
 const Demo1 = (props) => {
+  const { setModal } = useModal()
   const { user, login } = useAuthContext();
-  const { presetsColor } = useSettingsContext();
+  const { presetsColor, themeDnsData } = useSettingsContext();
   const {
     data: {
 
@@ -40,10 +52,12 @@ const Demo1 = (props) => {
   const [password, setPassword] = useState("");
 
   const [noneUserObj, setNoneUserObj] = useState({
-    name: '',
-    orderNum: '',
+    brand_id: themeDnsData?.id,
+    ord_num: '',
     password: ''
   })
+  const [noneUserTrxObj, setNoneUserTrxObj] = useState({});
+
   useEffect(() => {
     if (router.query?.scroll_to) {
       window.scrollTo(0, router.query?.scroll_to);
@@ -56,9 +70,15 @@ const Demo1 = (props) => {
       router.push('/shop/auth/my-page')
     }
   }
+  const onCheckNoneUserPay = async () => {
+    let data = await getPayHistoryByNoneUser(noneUserObj);
+    if (data) {
+      setNoneUserTrxObj(data);
+    }
+  }
   return (
     <>
-      <Wrappers>
+      <Wrappers style={{ marginBottom: '0' }}>
         <Title>로그인</Title>
         <TextField
           label='아이디'
@@ -118,24 +138,11 @@ const Demo1 = (props) => {
           <div style={{ color: themeObj.grey[500] }}>비회원의 경우, 주문시의 주문번호로 주문조회가 가능합니다.</div>
         </Col>
         <TextField
-          label='주문자명'
-          onChange={(e) => {
-            setNoneUserObj({ ...noneUserObj, ['name']: e.target.value })
-          }}
-          value={noneUserObj.name}
-          style={inputStyle}
-          autoComplete='new-password'
-          onKeyPress={(e) => {
-            if (e.key == 'Enter') {
-            }
-          }}
-        />
-        <TextField
           label='주문번호(하이픈(-) 포함)'
           onChange={(e) => {
-            setNoneUserObj({ ...noneUserObj, ['orderNum']: e.target.value })
+            setNoneUserObj({ ...noneUserObj, ['ord_num']: e.target.value })
           }}
-          value={noneUserObj.orderNum}
+          value={noneUserObj.ord_num}
           style={inputStyle}
           autoComplete='new-password'
           onKeyPress={(e) => {
@@ -160,7 +167,24 @@ const Demo1 = (props) => {
         <Button variant="contained" style={{
           height: '56px',
           marginTop: '1rem',
-        }}>조회</Button>
+        }}
+          onClick={() => {
+            // setModal({
+            //   func: () => { onCheckNoneUserPay(row?.id) },
+            //   icon: 'material-symbols:delete-outline',
+            //   title: '정말로 조회하시겠습니까'
+            // })
+            onCheckNoneUserPay();
+          }}
+        >조회</Button>
+      </Wrappers>
+      <Wrappers style={{ maxWidth: '1600px' }}>
+        {Object.keys(noneUserTrxObj).length > 0 &&
+          <>
+            <Card>
+              <HistoryTable historyContent={noneUserTrxObj} headLabel={TABLE_HEAD} />
+            </Card>
+          </>}
       </Wrappers>
     </>
   )

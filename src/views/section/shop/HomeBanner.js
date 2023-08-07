@@ -50,17 +50,29 @@ const PrevArrowStyle = styled.div`
     height: 1.5rem;
   }
   `
-const BannerImg = styled.img`
-  width: 78vw;
-  height: 33.15vw;
-  border-radius:1rem;
-  @media (max-width:1200px) {
-      width: 100vw;
-      height: 42.5vw;
-      border-radius:0;
-
-  }
+const BannerImgContent = styled.div`
+display:flex;
+position: relative;
+width: 78vw;
+height: 33.15vw;
+background-size: 100%;
+background-repeat: no-repeat;
+background-position: center;
+transition: background-size .3s ease;
+-moz-transition: background-size .3s ease;
+-web-kit-transition: background-size .3s ease;
+border-radius:1rem;
+&:hover {
+    background-size: 105%;
+}
+@media (max-width:1200px) {
+    width: 100vw;
+    height: 42.5vw;
+    border-radius:0;
+}
+}
 `
+
 const TextContainer = styled.div`
 display:flex;
 flex-direction:column;
@@ -150,14 +162,13 @@ const HomeBanner = (props) => {
                 <Slider {...slide_setting}>
                     {img_list.map((item, idx) => (
                         <>
-                            <Row style={{ position: 'relative' }}>
-                                <BannerImg src={item?.src} onClick={() => {
-                                    if (item?.link) {
-                                        window.location.href = `${item?.link}`
-                                    }
-                                }} style={{
-                                    width: `${img_list.length >= 3 ? '' : '100vw'}`
-                                }} />
+                            <BannerImgContent
+                                style={{
+                                    width: `${img_list.length >= 3 ? '' : '100vw'}`,
+                                    backgroundImage: `url(${item.src})`,
+                                    
+                                }}
+                            >
                                 {currentSlideIndex == idx &&
                                     <>
                                         <TextContainer>
@@ -196,8 +207,7 @@ const HomeBanner = (props) => {
                                                 </m.div>}
                                         </TextContainer>
                                     </>}
-                            </Row>
-
+                            </BannerImgContent>
                         </>
                     ))}
                 </Slider>

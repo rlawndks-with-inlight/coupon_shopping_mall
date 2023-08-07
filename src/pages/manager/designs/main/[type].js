@@ -370,17 +370,17 @@ const Main = () => {
                           {contentList[idx]?.list && contentList[idx].list.map((item, index) => (
                             <>
                             <Row style={{ width: '100%', columnGap: '1rem' }}>
-                            <TextField size='small' sx={{ width: '50%' }} label={`${index + 1}번째 제목 (제목 없을 시 빈칸으로 유지)`} value={contentList[idx]?.list[index].title ?? ""} onChange={(e) => {
+                            <TextField size='small' sx={{ width: '50%' }} label={`${index + 1}번째 제목 (제목 없을 시 빈칸으로 유지)`} value={contentList[idx]?.list[index]?.title ?? ""} onChange={(e) => {
                                 let content_list = [...contentList];
                                 content_list[idx].list[index].title = e.target.value;
                                 setContentList(content_list);
                               }} />
-                              <TextField size='small' sx={{ width: '50%' }} label={`${index + 1}번째 부제목 (부제목 없을 시 빈칸으로 유지)`} value={contentList[idx]?.list[index].sub_title ?? ""} onChange={(e) => {
+                              <TextField size='small' sx={{ width: '50%' }} label={`${index + 1}번째 부제목 (부제목 없을 시 빈칸으로 유지)`} value={contentList[idx]?.list[index]?.sub_title ?? ""} onChange={(e) => {
                                 let content_list = [...contentList];
                                 content_list[idx].list[index].sub_title = e.target.value;
                                 setContentList(content_list);
                               }} />
-                              <TextField size='small' sx={{ width: '50%' }} label={`${index + 1}번째 이미지 링크 (링크 없을 시 빈칸으로 유지)`} value={contentList[idx]?.list[index].link ?? ""} onChange={(e) => {
+                              <TextField size='small' sx={{ width: '50%' }} label={`${index + 1}번째 이미지 링크 (링크 없을 시 빈칸으로 유지)`} value={contentList[idx]?.list[index]?.link ?? ""} onChange={(e) => {
                                 let content_list = [...contentList];
                                 content_list[idx].list[index].link = e.target.value;
                                 setContentList(content_list);

@@ -27,6 +27,7 @@ min-width: ${props => props.is_vertical == 1 ? '250px' : ''};
 const TabContainer = styled.div`
 display:flex;
 margin-left: ${props => props.is_vertical == 1 ? '0' : 'auto'};
+margin-top: ${props => props.is_vertical == 1 ? '1rem' : '0'};
 column-gap: 0.5rem;
 row-gap: 0.5rem;
 overflow-x: auto;

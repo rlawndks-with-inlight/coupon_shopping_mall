@@ -12,7 +12,7 @@ import { Breadcrumbs, Button, Divider } from '@mui/material';
 import { Icon } from '@iconify/react';
 import { getProductsByUser } from 'src/utils/api-shop';
 const ContentWrapper = styled.div`
-max-width:1200px;
+max-width:1600px;
 width:90%;
 margin: 0 auto 5rem auto;
 display:flex;

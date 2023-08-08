@@ -58,8 +58,8 @@ height: 33.15vw;
 background-size: 100%;
 background-repeat: no-repeat;
 background-position: center;
-border-radius:1rem;
-animation: ${props => props.iscurrentSlideIndex?'zoom-in-out':''} 10s ease-in-out infinite;
+border-radius:${props => props.img_list_length >= 3 ? '1rem' : '0'};
+animation: ${props => props.iscurrentSlideIndex ? 'zoom-in-out' : ''} 10s ease-in-out infinite;
 @keyframes zoom-in-out {
     0% {
         background-size: 100%;
@@ -166,6 +166,7 @@ const HomeBanner = (props) => {
                     {img_list.map((item, idx) => (
                         <>
                             <BannerImgContent
+                                img_list_length={img_list.length}
                                 iscurrentSlideIndex={currentSlideIndex == idx}
                                 style={{
                                     width: `${img_list.length >= 3 ? '' : '100vw'}`,
@@ -203,7 +204,7 @@ const HomeBanner = (props) => {
                                                     animate="visible"
                                                     variants={fadeInUpVariants}>
                                                     <Button variant='outlined' onClick={() => {
-                                                        if(!is_manager){
+                                                        if (!is_manager) {
                                                             window.location.href = item?.link;
                                                         }
                                                     }}>

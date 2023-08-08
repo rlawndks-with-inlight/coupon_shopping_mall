@@ -11,15 +11,11 @@ import { useSettingsContext } from "src/components/settings";
 import ShopLayout3 from "./shop/demo-3/ShopLayout3";
 import ShopLayout4 from "./shop/demo-4/ShopLayout4";
 import ShopLayout5 from "./shop/demo-5/ShopLayout5";
+import styled from "styled-components";
 
-const test_data = {
-  categories: [
+const Wrappers = styled.div`
 
-  ],
-  company_info: {
-
-  }
-}
+`
 const getDemo = (num, common) => {
   const {
     data: {
@@ -88,21 +84,23 @@ const ShopLayout = ({ children, scrollToTop }) => {
     <>
       {!loading &&
         <>
-          {getDemo(getDemoNum(), {
-            data: {
-              category: router.asPath.split('/')[1]
-            },
-            func: {
-              router
-            },
-            children,
-            scrollToTop
-          })}
-          <ScrollToTop className='mui-fixed'>
-            <Fab size='small' aria-label='scroll back to top'>
-              <Icon icon='tabler:arrow-up' />
-            </Fab>
-          </ScrollToTop>
+          <Wrappers>
+            {getDemo(getDemoNum(), {
+              data: {
+                category: router.asPath.split('/')[1]
+              },
+              func: {
+                router
+              },
+              children,
+              scrollToTop
+            })}
+            <ScrollToTop className='mui-fixed'>
+              <Fab size='small' aria-label='scroll back to top'>
+                <Icon icon='tabler:arrow-up' />
+              </Fab>
+            </ScrollToTop>
+          </Wrappers>
         </>}
 
     </>

@@ -302,6 +302,11 @@ const Main = () => {
     return (
       <>
         <Row style={{ marginLeft: 'auto' }}>
+          <Tooltip title="미리 보시려면 클릭해 주세요.">
+            <IconButton sx={{ padding: '0.25rem' }} onClick={() => { onClickPreview(idx) }}>
+              <Icon icon={'icon-park-outline:preview-open'} />
+            </IconButton>
+          </Tooltip>
           <Tooltip title="해당 섹션을 한칸 올리시려면 클릭해 주세요.">
             <IconButton sx={{ padding: '0.25rem' }} disabled={idx == 0} onClick={() => { onUpSection(idx) }}>
               <Icon icon={'grommet-icons:link-up'} />
@@ -312,18 +317,24 @@ const Main = () => {
               <Icon icon={'grommet-icons:link-down'} />
             </IconButton>
           </Tooltip>
-          <Tooltip title="해당 섹션을 삭제하시려면 클릭해 주세요.">
-            <IconButton sx={{ padding: '0.25rem' }} onClick={() => { deleteSection(idx) }}>
-              <Icon icon={'ph:x-bold'} />
-            </IconButton>
-          </Tooltip>
-
+          {user?.level >= 50 &&
+            <>
+              <Tooltip title="해당 섹션을 삭제하시려면 클릭해 주세요.">
+                <IconButton sx={{ padding: '0.25rem' }} onClick={() => { deleteSection(idx) }}>
+                  <Icon icon={'ph:x-bold'} />
+                </IconButton>
+              </Tooltip>
+            </>}
         </Row>
       </>
     )
   }
+  const onClickPreview = (idx) => {
+
+  }
   return (
     <>
+
       {!loading &&
         <>
           <Grid container spacing={3}>

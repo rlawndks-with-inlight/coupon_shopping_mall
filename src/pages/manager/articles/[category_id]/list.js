@@ -80,7 +80,7 @@ const ArticleList = () => {
   const pageSetting = () => {
     let cols = defaultColumns;
     setColumns(cols)
-    onChangePage({...searchObj, category_id: router.query?.category_id});
+    onChangePage({ ...searchObj, category_id: router.query?.category_id, page: 1, });
   }
   const onChangePage = async (obj) => {
     setData({
@@ -88,15 +88,15 @@ const ArticleList = () => {
       content: undefined
     })
     let data_ = await getPostsByManager(obj);
-    if(data_){
+    if (data_) {
       setData(data_);
     }
     setSearchObj(obj);
   }
-  const deletePost =async (id) =>{
+  const deletePost = async (id) => {
     let result = await deletePostByManager({ id: id });
     if (result) {
-      onChangePage({...searchObj, category_id: router.query?.category_id});
+      onChangePage({ ...searchObj, category_id: router.query?.category_id });
     }
   }
   return (

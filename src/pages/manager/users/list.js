@@ -107,7 +107,7 @@ const UserList = () => {
   const pageSetting = () => {
     let cols = defaultColumns;
     setColumns(cols)
-    onChangePage(searchObj);
+    onChangePage({...searchObj, page: 1,});
   }
   const onChangePage = async (obj) => {
     setData({

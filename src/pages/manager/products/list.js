@@ -171,7 +171,7 @@ const ProductList = () => {
     setCategories(category_list);
     let cols = defaultColumns;
     setColumns(cols)
-    onChangePage({ ...searchObj, category_list: category_list });
+    onChangePage({ ...searchObj, category_list: category_list, page: 1, });
   }
   const onChangePage = async (obj) => {
     setData({

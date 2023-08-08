@@ -130,7 +130,7 @@ const DefaultSetting = () => {
     }
     if (result) {
       toast.success("성공적으로 저장 되었습니다.");
-      window.location.href = '/manager/settings/brands';
+      window.location.reload();
     }
   }
   return (

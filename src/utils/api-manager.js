@@ -553,6 +553,39 @@ export const deletePopupByManager = (params) => { //관리자 팝업 삭제
   const { id } = params;
   return deleteItem(`/api/v1/manager/popups/${id}`);
 }
+export const getTrxsByManager = (params) => { //관리자 결제내역 목록 출력
+  const { page, page_size, s_dt, e_dt, search, trx_status } = params;
+  let query = {
+    page, page_size, s_dt, e_dt, search, trx_status
+  }
+  if (!query['s_dt']) delete query['s_dt'];
+  if (!query['e_dt']) delete query['e_dt'];
+  if (!query['search']) delete query['search'];
+  if (!query['trx_status']) delete query['trx_status'];
+  return get(`/api/v1/manager/transactions`, query);
+}
+export const addTrxByManager = (params) => { //관리자 결제내역 추가
+  const { user_id, brand_id, product_id, trx_dt, trx_tm, cxl_dt, cxl_tm, amount, ord_num, trx_id, card_num, installment, issuer, acquirer, appr_num, password, buyer_name, buyer_phone, item_name, user_pw, } = params;
+  let obj = {
+    user_id, brand_id, product_id, trx_dt, trx_tm, cxl_dt, cxl_tm, amount, ord_num, trx_id, card_num, installment, issuer, acquirer, appr_num, password, buyer_name, buyer_phone, item_name, user_pw,
+  }
+  return post(`/api/v1/manager/transactions`, obj);
+}
+export const updateTrxByManager = (params) => { //관리자 결제내역 수정
+  const { user_id, brand_id, product_id, trx_dt, trx_tm, cxl_dt, cxl_tm, amount, ord_num, trx_id, card_num, installment, issuer, acquirer, appr_num, password, buyer_name, buyer_phone, item_name, id } = params;
+  let obj = {
+    user_id, brand_id, product_id, trx_dt, trx_tm, cxl_dt, cxl_tm, amount, ord_num, trx_id, card_num, installment, issuer, acquirer, appr_num, password, buyer_name, buyer_phone, item_name,
+  }
+  return put(`/api/v1/manager/transactions/${id}`, obj);
+}
+export const getTrxByManager = (params) => { //관리자 결제내역 단일 출력
+  const { id } = params;
+  return get(`/api/v1/manager/transactions/${id}`);
+}
+export const deleteTrxByManager = (params) => { //관리자 결제내역 삭제
+  const { id } = params;
+  return deleteItem(`/api/v1/manager/transactions/${id}`);
+}
 
 export const uploadFileByManager = (params) => {// 관리자 파일 단일 업로드
   const { file } = params;

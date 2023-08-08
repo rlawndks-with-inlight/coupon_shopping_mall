@@ -42,7 +42,7 @@ const ICONS = {
 
 export const navConfig = () => {
   const { user } = useAuthContext();
-
+  const { themeDnsData } = useSettingsContext();
   const [postCategoryList, setPostCategoryList] = useState([]);
 
   const [isSettingComplete, setIsSettingComplete] = useState(false);
@@ -80,7 +80,7 @@ export const navConfig = () => {
     }
     return false
   }
-  const isDeveloper = () =>{
+  const isDeveloper = () => {
     if (user?.level >= 50) {
       return true;
     }
@@ -103,18 +103,16 @@ export const navConfig = () => {
           icon: ICONS.ecommerce,
           children: [
             {
-              title: '배송관리', path: PATH_MANAGER.orders.delivery,
+              title: '주문관리', path: PATH_MANAGER.orders.trx,
               children: [
-                { title: '전체', path: PATH_MANAGER.orders.list },
-                { title: '배송준비중관리', path: PATH_MANAGER.orders.ready },
-                { title: '배송대기관리', path: PATH_MANAGER.orders.wait },
-                { title: '배송중관리', path: PATH_MANAGER.orders.deliveryIng },
-                { title: '배송완료관리', path: PATH_MANAGER.orders.complete },
-                { title: '취소관리', path: PATH_MANAGER.orders.cancel },
+                { title: '전체', path: PATH_MANAGER.orders.trx + '/all' },
+                { title: '결제완료', path: PATH_MANAGER.orders.trx + '/0' },
+                { title: '입고완료', path: PATH_MANAGER.orders.trx + '/5' },
+                { title: '출고완료', path: PATH_MANAGER.orders.trx + '/10' },
+                { title: '배송중', path: PATH_MANAGER.orders.trx + '/15' },
+                { title: '배송완료', path: PATH_MANAGER.orders.trx + '/20' },
               ],
             },
-            { title: '송장관리', path: PATH_MANAGER.orders.invoice },
-            { title: '현금영수증관리', path: PATH_MANAGER.orders.cashBill },
           ],
         },
       ],
@@ -140,7 +138,7 @@ export const navConfig = () => {
           icon: ICONS.user,
           children: [
             { title: '회원관리', path: PATH_MANAGER.users.list },
-            { title: '셀러관리', path: PATH_MANAGER.users.sellers },
+            ...(themeDnsData?.blog_demo_num > 0 ? [{ title: '셀러관리', path: PATH_MANAGER.users.sellers }] : []),
             { title: '매출관리', path: PATH_MANAGER.users.sales },
           ],
         },
@@ -176,8 +174,8 @@ export const navConfig = () => {
                 { title: '카테고리탭별 상품리스트', path: PATH_MANAGER.designs.main + '/items-with-categories' },//
                 { title: '에디터', path: PATH_MANAGER.designs.main + '/editor' },
                 { title: '동영상 슬라이드', path: PATH_MANAGER.designs.main + '/video-slide' },//
-               // { title: '게시판', path: PATH_MANAGER.designs.main + '/post' },//
-               // { title: '상품후기', path: PATH_MANAGER.designs.main + '/product-review' },//
+                // { title: '게시판', path: PATH_MANAGER.designs.main + '/post' },//
+                // { title: '상품후기', path: PATH_MANAGER.designs.main + '/product-review' },//
               ],
             },
             ...(isUsePostCategory() ? [{ title: '상품카드관리', path: PATH_MANAGER.designs.itemCard }] : []),
@@ -194,7 +192,7 @@ export const navConfig = () => {
           icon: ICONS.setting,
           children: [
             { title: '기본설정', path: PATH_MANAGER.settings.default },
-            ...(isDeveloper() ? [ { title: '브랜드설정', path: PATH_MANAGER.settings.brands }] : []),
+            ...(isDeveloper() ? [{ title: '브랜드설정', path: PATH_MANAGER.settings.brands }] : []),
             // { title: '분양관리', path: PATH_MANAGER.settings.parcelOut },
           ],
         },

@@ -27,7 +27,6 @@ const HomePage = ({
   //dns_data
 }) => {
 
-  const router = useRouter();
   const theme = useTheme();
 
   const { scrollYProgress } = useScroll();

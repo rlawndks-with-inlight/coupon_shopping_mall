@@ -1,5 +1,5 @@
 import { Icon } from "@iconify/react";
-import { Autocomplete, Box, Button, Card, CardHeader, Chip, Container, FormControl, Grid, IconButton, InputLabel, MenuItem, Select, Stack, TextField, Tooltip, Typography } from "@mui/material";
+import { Autocomplete, Box, Button, Card, CardHeader, Chip, Container, Dialog, DialogContent, FormControl, Grid, IconButton, InputLabel, MenuItem, Select, Stack, TextField, Tooltip, Typography } from "@mui/material";
 import dynamic from "next/dynamic";
 import { useCallback, useEffect, useState } from "react";
 import { Row } from "src/components/elements/styled-components";
@@ -17,6 +17,15 @@ import { getBrandByManager, getProductsByManager, updateBrandByManager, uploadFi
 import { toast } from "react-hot-toast";
 import { useModal } from "src/components/dialog/ModalProvider";
 import { useAuthContext } from "src/layouts/manager/auth/useAuthContext";
+import HomeBanner from "src/views/section/shop/HomeBanner";
+import HomeEditor from "src/views/section/shop/HomeEditor";
+import HomeItems from "src/views/section/shop/HomeItems";
+import HomeButtonBanner from "src/views/section/shop/HomeButtonBanner";
+import HomeItemsWithCategories from "src/views/section/shop/HomeItemsWithCategories";
+import HomeVideoSlide from "src/views/section/shop/HomeVideoSlide";
+import HomePost from "src/views/section/shop/HomePost";
+import HomeProductReview from "src/views/section/shop/HomeProductReview";
+import { homeItemsSetting, homeItemsWithCategoriesSetting } from "src/views/section/shop/utils";
 const ReactQuill = dynamic(() => import('react-quill'), {
   ssr: false,
   loading: () => <p>Loading ...</p>,
@@ -67,7 +76,6 @@ const Main = () => {
   const [item, setItem] = useState(defaultManagerObj.brands);
   const [contentList, setContentList] = useState([]);
   const [sectionType, setSectionType] = useState('banner');
-  const [productList, setProductList] = useState([]);
   const [productContent, setProductContent] = useState({});
   const [loading, setLoading] = useState(true);
   const homeSectionDefaultSetting = {
@@ -139,7 +147,6 @@ const Main = () => {
       page_size: 100000
     })
     setProductContent(product_content);
-
     let brand_data = await getBrandByManager({
       id: (!isNaN(parseInt(router.query.type)) ? router.query.type : '') | themeDnsData?.id
     })
@@ -302,11 +309,11 @@ const Main = () => {
     return (
       <>
         <Row style={{ marginLeft: 'auto' }}>
-          <Tooltip title="미리 보시려면 클릭해 주세요.">
+          {/* <Tooltip title="미리 보시려면 클릭해 주세요.">
             <IconButton sx={{ padding: '0.25rem' }} onClick={() => { onClickPreview(idx) }}>
               <Icon icon={'icon-park-outline:preview-open'} />
             </IconButton>
-          </Tooltip>
+          </Tooltip> */}
           <Tooltip title="해당 섹션을 한칸 올리시려면 클릭해 주세요.">
             <IconButton sx={{ padding: '0.25rem' }} disabled={idx == 0} onClick={() => { onUpSection(idx) }}>
               <Icon icon={'grommet-icons:link-up'} />
@@ -329,12 +336,46 @@ const Main = () => {
       </>
     )
   }
+  const [previewSection, setPreviewSection] = useState(undefined);
   const onClickPreview = (idx) => {
+    let column = contentList[idx];
+    let type = contentList[idx]?.type;
+    column.src = column?.file?.preview || column?.src;
 
+    const data = {
+
+    }
+    const func = {
+
+    }
+    if (type == 'banner') setPreviewSection(<HomeBanner column={column} data={data} func={func} is_manager={true} />)
+    if (type == 'editor') setPreviewSection(<HomeEditor column={column} data={data} func={func} is_manager={true} />)
+    if (type == 'items') {
+      column = homeItemsSetting(column, productContent?.content ?? [])
+      setPreviewSection(<HomeItems column={column} data={data} func={func} is_manager={true} />)
+    }
+    if (type == 'button-banner') setPreviewSection(<HomeButtonBanner column={column} data={data} func={func} is_manager={true} />)
+    if (type == 'items-with-categories') {
+      column = homeItemsWithCategoriesSetting(column, productContent?.content ?? [])
+      setPreviewSection(<HomeItemsWithCategories column={column} data={data} func={func} is_manager={true} />)
+    }
+    if (type == 'video-slide') setPreviewSection(<HomeVideoSlide column={column} data={data} func={func} is_manager={true} />)
+    if (type == 'post') setPreviewSection(<HomePost column={column} data={data} func={func} is_manager={true} />)
+    if (type == 'product-review') setPreviewSection(<HomeProductReview column={column} data={data} func={func} is_manager={true} />)
+    return;
   }
   return (
     <>
-
+      <Dialog open={previewSection} onClose={() => { setPreviewSection(undefined) }} fullScreen>
+        <Row>
+          <IconButton sx={{ marginLeft: 'auto' }} onClick={() => { setPreviewSection(undefined) }}>
+            <Icon icon={'ph:x-bold'} />
+          </IconButton>
+        </Row>
+        <DialogContent>
+          {previewSection}
+        </DialogContent>
+      </Dialog>
       {!loading &&
         <>
           <Grid container spacing={3}>

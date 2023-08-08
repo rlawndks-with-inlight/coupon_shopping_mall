@@ -11,7 +11,7 @@ const Wrappers = styled.div`
   `
 
 const HomeButtonBanner = (props) => {
-    const { column, data, func } = props;
+    const { column, data, func, is_manager } = props;
     const getSlideToShow = () => {
         if (window.innerWidth > 1350) {
             return 7
@@ -48,7 +48,7 @@ const HomeButtonBanner = (props) => {
                                     cursor: 'pointer'
                                 }}
                                     onClick={() => {
-                                        if (item?.link) {
+                                        if (item?.link && !is_manager) {
                                             window.location.href = item?.link;
                                         }
                                     }}

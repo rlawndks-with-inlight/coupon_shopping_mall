@@ -10,7 +10,7 @@ const Wrappers = styled.div`
   `
 
 const HomeItems = (props) => {
-    const { column, data, func } = props;
+    const { column, data, func, is_manager } = props;
     const { router } = func;
 
     return (

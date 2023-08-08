@@ -20,6 +20,7 @@ import HomeItemsWithCategories from 'src/views/section/shop/HomeItemsWithCategor
 import HomeVideoSlide from 'src/views/section/shop/HomeVideoSlide'
 import HomePost from 'src/views/section/shop/HomePost'
 import HomeProductReview from 'src/views/section/shop/HomeProductReview'
+import { homeItemsSetting, homeItemsWithCategoriesSetting } from 'src/views/section/shop/utils'
 const ReactQuill = dynamic(() => import('react-quill'), {
   ssr: false,
   loading: () => <p>Loading ...</p>,
@@ -104,6 +105,7 @@ const returnHomeContent = (column, data, func) => {
   if (type == 'product-review') return <HomeProductReview column={column} data={data} func={func} />
   return '';
 }
+
 const Demo1 = (props) => {
   const {
     data: {
@@ -117,9 +119,7 @@ const Demo1 = (props) => {
   const [loading, setLoading] = useState(true);
   const [windowWidth, setWindowWidth] = useState(0);
   const [contentList, setContentList] = useState([]);
-  const [itemsCategory, setItemsCategory] = useState({
 
-  })
   const [posts, setPosts] = useState({});
 
   useEffect(() => {
@@ -156,7 +156,6 @@ const Demo1 = (props) => {
     }
     setPosts(post_obj);
     // 상품 불러오기
-    let items_category = {};
     let products = await getProductsByUser({
       page: 1,
       page_size: 100000,
@@ -164,24 +163,10 @@ const Demo1 = (props) => {
     products = products?.content ?? [];
     for (var i = 0; i < content_list.length; i++) {
       if (content_list[i]?.type == 'items' && products.length > 0) {
-        let item_list = content_list[i]?.list ?? [];
-        item_list = item_list.map(item_id => {
-          return { ...item_id, ..._.find(products, { id: parseInt(item_id) }) }
-        })
-        content_list[i].list = item_list
+        content_list[i] = homeItemsSetting(content_list[i], products);
       }
       if (content_list[i]?.type == 'items-with-categories' && products.length > 0) {
-        for (var j = 0; j < content_list[i]?.list.length; j++) {
-          let item_list = content_list[i]?.list[j]?.list;
-          item_list = item_list.map(item_id => {
-            return { ...item_id, ..._.find(products, { id: parseInt(item_id) }) }
-          })
-          content_list[i].list[j].list = item_list;
-        }
-        items_category = ({
-          ...items_category,
-          [`${i}`]: 0
-        })
+        content_list[i] = homeItemsWithCategoriesSetting(content_list[i], products);
       }
     }
     if (!content_list.map(item => { return item?.type }).includes('post')) {
@@ -203,7 +188,6 @@ const Demo1 = (props) => {
       })
     }
 
-    setItemsCategory(items_category)
     setWindowWidth(window.innerWidth)
     setContentList(content_list)
   }
@@ -215,19 +199,12 @@ const Demo1 = (props) => {
         windowWidth: window.innerWidth,
         themeDnsData: themeDnsData,
         idx,
-        itemsCategory
       },
       {
         router,
-        onClickItemsCategory
       })
   }
-  const onClickItemsCategory = (i, j) => {
-    setItemsCategory({
-      ...itemsCategory,
-      [`${i}`]: j
-    })
-  }
+ 
   return (
     <>
       {loading ?

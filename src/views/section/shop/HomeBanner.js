@@ -132,7 +132,7 @@ const PrevArrow = ({ onClick, sx }) => {
 };
 
 const HomeBanner = (props) => {
-    const { column, data, func } = props;
+    const { column, data, func, is_manager } = props;
     let { windowWidth } = data;
     let img_list = [...column?.list];
     const [currentSlideIndex, setCurrentSlideIndex] = useState(0);
@@ -203,7 +203,9 @@ const HomeBanner = (props) => {
                                                     animate="visible"
                                                     variants={fadeInUpVariants}>
                                                     <Button variant='outlined' onClick={() => {
-                                                        window.location.href = item?.link;
+                                                        if(!is_manager){
+                                                            window.location.href = item?.link;
+                                                        }
                                                     }}>
                                                         VIEW MORE
                                                     </Button>

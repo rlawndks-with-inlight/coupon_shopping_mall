@@ -4,6 +4,7 @@ import { Items } from 'src/components/elements/shop/common'
 import { Button, Tab } from '@mui/material'
 import _ from 'lodash'
 import { styled as muiStyled } from '@mui/material/styles';
+import { useState } from 'react'
 const Wrappers = styled.div`
   width:90%;
   max-width:1600px;
@@ -44,8 +45,8 @@ const NoneShowMobile = styled.div`
 const CategoryTabs = (props) => {
     const {
         column,
-        itemsCategory,
-        onClickItemsCategory,
+        itemCategory,
+        onClickItemCategory,
         idx
     } = props;
     return (
@@ -53,8 +54,8 @@ const CategoryTabs = (props) => {
             <TabContainer is_vertical={column?.is_vertical}>
                 {column?.list && column?.list.map((item, index) => (
                     <>
-                        <Button variant={itemsCategory[idx] == index ? `contained` : `outlined`} sx={{ height: '36px', minWidth: `${(column?.is_vertical == 1 && window.innerWidth > 1000 ? '220px' : '')}` }} onClick={() => {
-                            onClickItemsCategory(idx, index);
+                        <Button variant={itemCategory == index ? `contained` : `outlined`} sx={{ height: '36px', minWidth: `${(column?.is_vertical == 1 && window.innerWidth > 1000 ? '220px' : '')}` }} onClick={() => {
+                            onClickItemCategory(index);
                         }}>
                             {item?.category_name}
                         </Button>
@@ -65,9 +66,13 @@ const CategoryTabs = (props) => {
     )
 }
 const HomeItemsWithCategories = (props) => {
-    const { column, data, func } = props;
-    let { idx, itemsCategory } = data;
-    const { router, onClickItemsCategory } = func;
+    const { column, data, func, is_manager } = props;
+    let { idx } = data;
+    const { router } = func;
+    const [itemCategory, setItemCategory] = useState(0);
+    const onClickItemCategory = (index) => {
+        setItemCategory(index)
+    }
     return (
         <>
             <Wrappers style={{
@@ -88,13 +93,13 @@ const HomeItemsWithCategories = (props) => {
                                     </>}
                             </>}
                     </Row>
-                    <CategoryTabs onClickItemsCategory={onClickItemsCategory} column={column} itemsCategory={itemsCategory} idx={idx} />
+                    <CategoryTabs onClickItemCategory={onClickItemCategory} column={column} itemCategory={itemCategory} idx={idx} />
                 </HeaderContainer>
                 <div style={{ marginTop: '1rem' }} />
                 <Row>
                     {column?.list && column?.list.map((item, index) => (
                         <>
-                            {itemsCategory[idx] == index &&
+                            {itemCategory == index &&
                                 <>
                                     <Items items={item?.list} router={router} />
                                 </>}

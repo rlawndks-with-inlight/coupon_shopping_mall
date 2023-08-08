@@ -12,7 +12,7 @@ const Wrappers = styled.div`
   `
 
 const HomeEditor = (props) => {
-    const { column, data, func } = props;
+    const { column, data, func, is_manager } = props;
 
     return (
         <>

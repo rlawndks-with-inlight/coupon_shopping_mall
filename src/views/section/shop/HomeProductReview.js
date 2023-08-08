@@ -70,7 +70,7 @@ const Review = (props) => {
   )
 }
 const HomeProductReview = (props) => {
-  const { column, data, func } = props;
+  const { column, data, func, is_manager } = props;
   return (
     <>
       <Wrappers>

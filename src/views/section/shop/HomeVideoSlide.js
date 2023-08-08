@@ -74,7 +74,7 @@ const PrevArrow = ({ onClick, sx }) => {
     );
 };
 const HomeVideoSlide = (props) => {
-    const { column, data, func } = props;
+    const { column, data, func, is_manager } = props;
     let slide_setting = {
         infinite: true,
         speed: 500,

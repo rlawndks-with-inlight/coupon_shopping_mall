@@ -484,16 +484,18 @@ const Main = () => {
                         <>
                           <Row style={{ alignItems: 'end', alignContent: 'center' }}>
                             <CardHeader title={`카테고리탭별 상품리스트 ${curTypeNum(contentList, 'items-with-categories', idx)}`} sx={{ paddingLeft: '0' }} />
-                            <Button variant="outlined" sx={{ height: '28px' }} onClick={() => {
-                              let content_list = [...contentList];
-                              content_list[idx].list.push({
-                                category_name: '',
-                                list: []
-                              })
-                              setContentList(content_list);
-                            }}>
-                              + 카테고리 추가
-                            </Button>
+                            <Tooltip title='새로운 카테고리 탭을 추가 하시려면 클릭해 주세요.'>
+                              <Button variant="outlined" sx={{ height: '28px' }} onClick={() => {
+                                let content_list = [...contentList];
+                                content_list[idx].list.push({
+                                  category_name: '',
+                                  list: []
+                                })
+                                setContentList(content_list);
+                              }}>
+                                + 카테고리 추가
+                              </Button>
+                            </Tooltip>
                             <SectionProcess idx={idx} />
                           </Row>
                           <TextField label='제목' value={item.title} onChange={(e) => {
@@ -522,13 +524,15 @@ const Main = () => {
                                   content_list[idx].list[index]['category_name'] = e.target.value;
                                   setContentList(content_list)
                                 }} />
-                                <IconButton onClick={() => {
-                                  let content_list = [...contentList];
-                                  content_list[idx].list.splice(index, 1);
-                                  setContentList(content_list);
-                                }}>
-                                  <Icon icon='material-symbols:delete-outline' />
-                                </IconButton>
+                                <Tooltip title='해당 카테고리를 삭제하시려면 클릭해 주세요.'>
+                                  <IconButton onClick={() => {
+                                    let content_list = [...contentList];
+                                    content_list[idx].list.splice(index, 1);
+                                    setContentList(content_list);
+                                  }}>
+                                    <Icon icon='material-symbols:delete-outline' />
+                                  </IconButton>
+                                </Tooltip>
                               </Row>
                               <Autocomplete
                                 multiple

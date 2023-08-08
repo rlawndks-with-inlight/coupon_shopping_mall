@@ -67,7 +67,11 @@ const ShopLayout = ({ children, scrollToTop }) => {
   }, [router.asPath])
   useEffect(() => {
     if (themeDnsData?.id > 0) {
-      setLoading(false);
+      if (themeDnsData?.shop_demo_num > 0 || themeDnsData?.blog_demo_num > 0) {
+        setLoading(false);
+      } else {
+        router.push('/404')
+      }
     }
   }, [themeDnsData])
   const getDemoNum = () => {

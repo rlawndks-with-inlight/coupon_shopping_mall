@@ -178,7 +178,7 @@ const Demo1 = (props) => {
           }}
         >조회</Button>
       </Wrappers>
-      <Wrappers style={{ maxWidth: '1600px' }}>
+      <Wrappers style={{ maxWidth: '1600px', minHeight: '0' }}>
         {Object.keys(noneUserTrxObj).length > 0 &&
           <>
             <Card>

@@ -97,7 +97,7 @@ export default function ProductDetailsReview({ product, reviewContent, onChangeP
 
       <ProductDetailsReviewList reviews={product.reviews} reviewContent={reviewContent} onChangePage={onChangePage} />
 
-      <ProductDetailsReviewNewDialog open={openReview} onClose={handleCloseReview} />
+      <ProductDetailsReviewNewDialog open={openReview} onClose={handleCloseReview} onChangePage={onChangePage} />
     </>
   );
 }

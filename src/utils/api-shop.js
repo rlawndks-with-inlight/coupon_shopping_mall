@@ -35,12 +35,36 @@ export const getProductByUser = (params) => { // 유저 상품 단일 출력
   }
   return get(`/api/v1/shop/shop/products/${product_id}`, {});
 }
-export const getProductReviewsByUser = (params) => { // 유저 상품 리뷰 출력
+export const getProductReviewsByUser = (params) => { // 유저 상품 리뷰 목록 출력
   const { product_id, page = 1, page_size = 10, scope } = params;
   let query = {
     page, page_size, product_id
   }
   return get(`/api/v1/shop/shop/products/${product_id}/reviews`, query);
+}
+export const addProductReviewByUser = (params) => { // 유저 상품 리뷰 추가
+  const { product_id, trans_id, brand_id, scope, nick_name, profile_img, content, password } = params;
+  let query = {
+    trans_id, brand_id, scope, nick_name, profile_img, content, password
+  }
+  return post(`/api/v1/shop/shop/products/${product_id}/reviews`, query);
+}
+export const getProductReviewByUser = (params) => { // 유저 상품 리뷰 단일 출력
+  const { product_id, id } = params;
+
+  return get(`/api/v1/shop/shop/products/${product_id}/reviews/${id}`);
+}
+export const updateProductReviewByUser = (params) => { // 유저 상품 리뷰 업데이트
+  const { product_id, id, trans_id, brand_id, scope, nick_name, profile_img, content, password } = params;
+  let query = {
+    trans_id, brand_id, scope, nick_name, profile_img, content, password
+  }
+  return put(`/api/v1/shop/shop/products/${product_id}/reviews/${id}`, query);
+}
+export const deleteProductReviewByUser = (params) => { // 유저 상품 리뷰 삭제
+  const { product_id, id } = params;
+
+  return deleteItem(`/api/v1/shop/shop/products/${product_id}/reviews/${id}`);
 }
 export const getPostByUser = (params) => { // 유저 게시글 단일 출력
   const { post_id } = params;
@@ -76,16 +100,16 @@ export const onPayItemByCard = (params) => { //유저 바로구매 카드결제
   let obj = {
     brand_id, user_id, amount, item_name, buyer_name, installment, buyer_phone, card_num, yymm, auth_num, card_pw, addr, detail_addr, temp, password
   }
-  if(!user_id){
+  if (!user_id) {
     delete obj['user_id'];
   }
-  if(!auth_num){
+  if (!auth_num) {
     delete obj['auth_num'];
   }
-  if(!card_pw){
+  if (!card_pw) {
     delete obj['card_pw'];
   }
-  if(!detail_addr){
+  if (!detail_addr) {
     delete obj['detail_addr'];
   }
   return post(`/api/v1/shop/shop/products/${product_id}/hand`, obj);

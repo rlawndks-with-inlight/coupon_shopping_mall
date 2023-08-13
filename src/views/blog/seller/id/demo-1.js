@@ -160,13 +160,14 @@ const Demo1 = (props) => {
                     <Icon icon='fe:instagram' style={{
                         margin: '1rem',
                         fontSize: themeObj.font_size.size4,
-                        color: '#fff'
+                        color: '#fff',
+                        cursor: 'pointer'
                     }} />
                     <Row style={{
                         marginBottom: 'auto',
                     }}>
-                        <SubTitle style={{ borderRight: '1px solid #fff', width: '65px' }}>공지사항</SubTitle>
-                        <SubTitle style={{ width: '64px' }}>1:1문의</SubTitle>
+                        <SubTitle style={{ borderRight: '1px solid #fff', width: '65px', cursor: 'pointer' }}>공지사항</SubTitle>
+                        <SubTitle style={{ width: '64px', cursor: 'pointer' }}>1:1문의</SubTitle>
                     </Row>
                 </BannerImg>
                 <CategoryWrapper style={{
@@ -187,6 +188,7 @@ const Demo1 = (props) => {
                                 fontWeight: `${categoryId == 0 ? 'bold' : ''}`,
                                 color: `${categoryId == 0 ? '' : themeObj.grey[500]}`,
                                 borderBottom: `2px solid ${categoryId == 0 ? `${themeMode == 'dark' ? '#fff' : '#000'}` : 'transparent'}`,
+                                cursor: 'pointer'
                             }}
                         >All</Category>
                         {sellerData?.categories && sellerData?.categories.map((item, idx) => (
@@ -197,6 +199,7 @@ const Demo1 = (props) => {
                                         fontWeight: `${categoryId == item?.id ? 'bold' : ''}`,
                                         color: `${categoryId == item?.id ? '' : themeObj.grey[500]}`,
                                         borderBottom: `2px solid ${categoryId == item?.id ? `${themeMode == 'dark' ? '#fff' : '#000'}` : 'transparent'}`,
+                                        cursor: 'pointer'
                                     }}
                                 >{item.category_name}</Category>
                             </>

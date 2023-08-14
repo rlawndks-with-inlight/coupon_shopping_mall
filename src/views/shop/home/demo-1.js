@@ -171,13 +171,16 @@ const Demo1 = (props) => {
         content_list[i] = homeItemsWithCategoriesSetting(content_list[i], products);
       }
     }
-    if (!content_list.map(item => { return item?.type }).includes('post')) {
+    if (!content_list.map(item => { return item?.type }).includes('post') && themePostCategoryList.length > 0) {
       // 상품리뷰 불러오기
       content_list.push({
         type: 'post',
         posts: post_obj,
         categories: themePostCategoryList,
       })
+
+    }
+    if (!content_list.map(item => { return item?.type }).includes('product-review')) {
       let review_list = [...test_product_reviews];
       for (var i = 0; i < review_list.length; i++) {
         review_list[i].product = _.find(products, { id: review_list[i]?.product_id });
@@ -189,7 +192,6 @@ const Demo1 = (props) => {
         list: review_list,
       })
     }
-
     setWindowWidth(window.innerWidth)
     setContentList(content_list)
   }
@@ -206,7 +208,7 @@ const Demo1 = (props) => {
         router,
       })
   }
- 
+
   return (
     <>
       {loading ?

@@ -1,3 +1,6 @@
+import { useEffect } from 'react';
+import { useSettingsContext } from 'src/components/settings';
+import { getPostByUser } from 'src/utils/api-shop';
 import styled from 'styled-components'
 
 const Wrappers = styled.div`
@@ -17,11 +20,20 @@ const Demo1 = (props) => {
             router
         },
     } = props;
+    const { themePostCategoryList } = useSettingsContext();
+    useEffect(() => {
+        pageSetting();
+    }, [])
+    const pageSetting = async () => {
+        let data = await getPostByUser({
+            post_id: router.query?.id
+        })
+    }
     return (
         <>
-        <Wrappers>
+            <Wrappers>
 
-        </Wrappers>
+            </Wrappers>
         </>
     )
 }

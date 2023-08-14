@@ -68,9 +68,7 @@ export const deleteProductReviewByUser = (params) => { // 유저 상품 리뷰 �
 }
 export const getPostByUser = (params) => { // 유저 게시글 단일 출력
   const { post_id } = params;
-  let query = {
-    post_id
-  }
+ 
   return get(`/api/v1/shop/shop/posts/${post_id}`, {});
 }
 export const sendPhoneVerifyCodeByUser = (params) => { // 유저 휴대폰 인증번호 전송

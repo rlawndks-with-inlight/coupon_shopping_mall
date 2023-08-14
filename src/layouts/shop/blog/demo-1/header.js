@@ -10,6 +10,7 @@ import { test_categories } from "src/data/test-data"
 import { useRouter } from "next/router"
 import DialogSearch from "src/components/dialog/DialogSearch"
 import { logoSrc } from "src/data/data"
+import { getShopCategoriesByUser } from "src/utils/api-shop"
 
 const Wrappers = styled.header`
 width: 100%;
@@ -36,7 +37,7 @@ const Header = (props) => {
   const theme = useTheme();
   const router = useRouter();
 
-  const { themeMode, onToggleMode } = useSettingsContext();
+  const { themeMode, onToggleMode, themeDnsData, onChangeCategoryList, onChangePostCategoryList } = useSettingsContext();
   const [keyword, setKeyword] = useState("");
   const [isSellerPage, setIsSellerPage] = useState(false);
   const [isProductPage, setIsProductPage] = useState(false);
@@ -62,9 +63,22 @@ const Header = (props) => {
     }
     hover_items['service'] = false;
     setHoverItems(hover_items);
+    settingHeader();
     setLoading(false);
-  }, [])
 
+  }, [])
+  const settingHeader = async () => {
+    setLoading(true);
+    let data = await getShopCategoriesByUser({
+      brand_id: themeDnsData?.id,
+      root_id: themeDnsData?.root_id
+    });
+    onChangeCategoryList(data?.product_categories ?? []);
+    onChangePostCategoryList(data?.post_categories ?? []);
+    setCategories(data?.product_categories ?? []);
+    
+    setLoading(false);
+  }
   useEffect(() => {
     if (router.asPath.split('/')[2] == 'seller') {
       setIsSellerPage(true)

@@ -97,7 +97,7 @@ const Demo1 = (props) => {
         },
     } = props;
 
-    const { themeDnsData, themeMode } = useSettingsContext();
+    const { themeDnsData, themeMode, themePostCategoryList } = useSettingsContext();
     const { user } = useAuthContext();
     const [openPolicy, setOpenPolicy] = useState(false)
     const [policyType, setPolicyType] = useState("")
@@ -106,6 +106,7 @@ const Demo1 = (props) => {
     const [dialogType, setDialogType] = useState("");
 
     useEffect(() => {
+        console.log(themePostCategoryList)
     }, [])
 
     return (

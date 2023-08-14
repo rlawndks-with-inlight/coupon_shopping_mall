@@ -52,7 +52,7 @@ import { useAuthContext } from 'src/layouts/manager/auth/useAuthContext';
 import { formatCreditCardNumber, formatExpirationDate } from 'src/utils/formatCard';
 import { useModal } from "src/components/dialog/ModalProvider";
 import { onPayItemByCard } from 'src/utils/api-shop';
-import { insertCartDataUtil } from 'src/utils/shop-util';
+import { insertCartDataUtil, selectItemOptionUtil } from 'src/utils/shop-util';
 // ----------------------------------------------------------------------
 
 ProductDetailsSummary.propTypes = {
@@ -123,22 +123,13 @@ export default function ProductDetailsSummary({ product, onAddCart, onGotoStep, 
     cart.filter((item) => item.id === id).map((item) => item.quantity)[0] >= available;
   const handleAddCart = async () => {
     let result = insertCartDataUtil(product, selectProduct, themeCartData, onChangeCartData);
-    if(result){
+    if (result) {
       toast.success("장바구니에 성공적으로 추가되었습니다.")
     }
   };
   const onSelectOption = (group, option) => {
-    setSelectProduct({
-      ...selectProduct,
-      select_option_obj: {
-        ...selectProduct.select_option_obj,
-        [`${group?.id}`]: {
-          option_id: option?.id,
-          ...group
-        }
-      }
-    });
-
+    let select_product = selectItemOptionUtil(group, option, selectProduct);
+    setSelectProduct(select_product);
   }
   const [buyStep, setBuyStep] = useState(0);
   const [buyOpen, setBuyOpen] = useState(false);

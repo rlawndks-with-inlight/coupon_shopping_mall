@@ -52,6 +52,7 @@ import { useAuthContext } from 'src/layouts/manager/auth/useAuthContext';
 import { formatCreditCardNumber, formatExpirationDate } from 'src/utils/formatCard';
 import { useModal } from "src/components/dialog/ModalProvider";
 import { onPayItemByCard } from 'src/utils/api-shop';
+import { insertCartDataUtil } from 'src/utils/shop-util';
 // ----------------------------------------------------------------------
 
 ProductDetailsSummary.propTypes = {
@@ -121,39 +122,10 @@ export default function ProductDetailsSummary({ product, onAddCart, onGotoStep, 
   const isMaxQuantity =
     cart.filter((item) => item.id === id).map((item) => item.quantity)[0] >= available;
   const handleAddCart = async () => {
-    let cart_data = [...themeCartData];
-    let select_product = { ...selectProduct };
-    for (var i = 0; i < product?.groups.length; i++) {
-      let group = product?.groups[i];
-      if (!select_product.select_option_obj[group?.id]) {
-        toast.error(`${group?.group_name}을(를) 선택해 주세요.`);
-        return;
-      }
+    let result = insertCartDataUtil(product, selectProduct, themeCartData, onChangeCartData);
+    if(result){
+      toast.success("장바구니에 성공적으로 추가되었습니다.")
     }
-    let option_key_list = Object.keys(select_product.select_option_obj ?? {});
-    let insert_item = true;
-    let find_index = -1;
-    for (var i = 0; i < cart_data.length; i++) {
-      if (cart_data[i]?.id == select_product.id) {
-        for (var j = 0; j < option_key_list.length; j++) {
-          if (select_product.select_option_obj[option_key_list[j]]?.option_id != cart_data[i].select_option_obj[option_key_list[j]]?.option_id) {
-            break;
-          }
-        }
-        if (j == option_key_list.length) {
-          insert_item = false;
-          find_index = i;
-          break;
-        }
-      }
-    }
-    if (insert_item) {
-      cart_data.push(select_product);
-    } else {
-      cart_data[find_index].count = cart_data[find_index].count + select_product.count;
-    }
-    onChangeCartData(cart_data);
-    toast.success("장바구니에 성공적으로 추가되었습니다.")
   };
   const onSelectOption = (group, option) => {
     setSelectProduct({

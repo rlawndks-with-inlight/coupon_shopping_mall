@@ -22,6 +22,7 @@ import Image from 'src/components/image/Image';
 import { fCurrency } from 'src/utils/formatNumber';
 import { getPayHistoriesByUser } from 'src/utils/api-shop';
 import { getTrxStatusByNumber, makeMaxPage } from 'src/utils/function';
+import { insertWishDataUtil } from "src/utils/shop-util";
 const ItemName = styled.div`
 font-weight: bold;
 font-size:${themeObj.font_size.size7};
@@ -68,14 +69,7 @@ export const Item = (props) => {
     }
   }, [theme_css])
   const onClickHeart = () => {
-    let wish_data = [...themeWishData];
-    let find_index = _.indexOf(wish_data, item?.id);
-    if (find_index >= 0) {
-      wish_data.splice(find_index, 1);
-    }else {
-      wish_data.push(item?.id);
-    }
-    onChangeWishData(wish_data)
+    insertWishDataUtil(item, themeWishData, onChangeWishData);
   }
   return (
     <>

@@ -14,7 +14,7 @@ import { sendPhoneVerifyCodeByUser, signUpByUser } from 'src/utils/api-shop';
 import { useSettingsContext } from 'src/components/settings';
 
 const Wrappers = styled.div`
-max-width:700px;
+max-width:1000px;
 display:flex;
 flex-direction:column;
 margin: 0 auto 5rem auto;
@@ -336,7 +336,7 @@ const Demo1 = (props) => {
                 }}
                 value={user.phone_num}
                 endAdornment={<>
-                  <Button style={{ width: '124px', height: '56px', transform: 'translateX(14px)' }}
+                  <Button style={{ width: '144px', height: '56px', transform: 'translateX(14px)' }}
                     variant="contained"
                     onClick={() => {
                       if (phoneCheckStep == 0) {
@@ -357,7 +357,7 @@ const Demo1 = (props) => {
                 }}
                 value={user.phoneCheck}
                 endAdornment={<>
-                  <Button style={{ width: '124px', height: '56px', transform: 'translateX(14px)' }}
+                  <Button style={{ width: '144px', height: '56px', transform: 'translateX(14px)' }}
                     variant="contained"
                     onClick={() => {
                     }}

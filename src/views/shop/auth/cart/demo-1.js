@@ -10,6 +10,7 @@ import EmptyContent from 'src/components/empty-content/EmptyContent';
 import Iconify from 'src/components/iconify/Iconify';
 import { useSettingsContext } from 'src/components/settings';
 import { getProductsByUser } from 'src/utils/api-shop';
+import { getCartDataUtil } from 'src/utils/shop-util';
 const Wrappers = styled.div`
 max-width:1500px;
 display:flex;
@@ -106,24 +107,9 @@ const Demo1 = (props) => {
     getCart();
   }, [])
   const getCart = async () => {
-    let data = themeCartData;
-    if (data.length > 0) {
-      let products = await getProductsByUser({
-        page: 1,
-        page_size: 100000,
-      })
-      products = products?.content ?? [];
-      for (var i = 0; i < data.length; i++) {
-        let find_item = _.find(products, { id: data[i]?.id })
-        if (find_item) {
-          data[i] = {
-            ...data[i],
-            ...find_item,
-          }
-        }
-      }
-      setProducts(data);
-    }
+    let data = await getCartDataUtil(themeCartData);
+    setProducts(data);
+    
     let address_data = test_address_list;
     setAddressList(address_data)
   }

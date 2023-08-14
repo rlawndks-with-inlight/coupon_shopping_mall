@@ -6,6 +6,7 @@ import { Col, Title, themeObj } from 'src/components/elements/styled-components'
 import { useSettingsContext } from 'src/components/settings';
 import { test_items } from 'src/data/test-data';
 import { getProductsByUser } from 'src/utils/api-shop';
+import { getWishDataUtil } from 'src/utils/shop-util';
 import styled from 'styled-components'
 const Wrappers = styled.div`
 max-width:1600px;
@@ -32,18 +33,7 @@ const Demo1 = (props) => {
   }, [themeWishData])
 
   const pageSetting = async () => {
-    let products = await getProductsByUser({
-      page: 1,
-      page_size: 100000,
-    })
-    products = products?.content ?? [];
-    let wish_list = [];
-    for (var i = 0; i < products.length; i++) {
-      let find_index = _.indexOf(themeWishData, products[i]?.id);
-      if(find_index>=0){
-        wish_list.push(products[i]);
-      }
-    }
+    let wish_list = await getWishDataUtil(themeWishData);
     setWishList(wish_list);
   }
   return (

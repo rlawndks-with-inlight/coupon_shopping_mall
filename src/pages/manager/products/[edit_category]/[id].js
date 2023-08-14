@@ -631,7 +631,7 @@ const ProductEdit = () => {
                                       placeholder="예시) 색상"
                                       value={group.group_name}
                                       endAdornment={<>
-                                        <Button style={{ width: '94px', height: '56px', transform: 'translateX(14px)' }}
+                                        <Button style={{ width: '114px', height: '56px', transform: 'translateX(14px)' }}
                                           variant="contained"
                                           onClick={() => {
                                             let option_list = item?.groups;

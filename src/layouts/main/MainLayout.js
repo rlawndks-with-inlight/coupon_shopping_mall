@@ -25,12 +25,12 @@ export default function MainLayout({ children }) {
   const isHome = pathname === '/';
   const [loading, setLoading] = useState(true);
   useEffect(() => {
-
     if (themeDnsData?.id > 0) {
       console.log(themeDnsData)
       if (window.location.host.split(':')[0] == process.env.MAIN_FRONT_URL) {
         setLoading(false);
       } else {
+        console.log(themeDnsData)
         if (themeDnsData?.shop_demo_num > 0) {
           push('/shop')
           return;

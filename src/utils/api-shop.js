@@ -96,10 +96,14 @@ export const signUpByUser = (params) => { // 유저 회원가입
   return post(`/api/v1/shop/auth/sign-up`, obj);
 }
 export const onPayItemByCard = (params) => { //유저 바로구매 카드결제
-  const { product_id, brand_id, user_id, amount, item_name, buyer_name, installment, buyer_phone, card_num, yymm, auth_num, card_pw, addr, detail_addr, temp, password } = params;
+  const { product_id, brand_id, user_id, amount=100, item_name, buyer_name, installment, buyer_phone, card_num, yymm, auth_num, card_pw, addr, detail_addr, temp, password } = params;
   let obj = {
-    brand_id, user_id, amount, item_name, buyer_name, installment, buyer_phone, card_num, yymm, auth_num, card_pw, addr, detail_addr, temp, password
+    brand_id, user_id, amount, item_name, buyer_name, installment, buyer_phone, card_num, yymm, 
+    // auth_num, card_pw, 
+    addr, detail_addr, temp, password
   }
+  obj['card_num'] = obj['card_num'].replaceAll(' ','')
+  obj['yymm'] = obj['yymm'].split('/')[1]+obj['yymm'].split('/')[0]
   if (!user_id) {
     delete obj['user_id'];
   }
@@ -111,6 +115,9 @@ export const onPayItemByCard = (params) => { //유저 바로구매 카드결제
   }
   if (!detail_addr) {
     delete obj['detail_addr'];
+  }
+  if (!password) {
+    delete obj['password'];
   }
   return post(`/api/v1/shop/shop/products/${product_id}/hand`, obj);
 }

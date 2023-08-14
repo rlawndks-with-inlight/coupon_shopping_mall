@@ -69,7 +69,7 @@ const curTypeNum = (list, type_name, idx) => {
 const TextFieldSection = (props) => {
 
 }
-const Main = () => {
+const BlogMain = () => {
   const { setModal } = useModal()
   const { themeDnsData } = useSettingsContext();
   const { user } = useAuthContext();
@@ -789,5 +789,5 @@ const Main = () => {
     </>
   )
 }
-Main.getLayout = (page) => <ManagerLayout>{page}</ManagerLayout>;
-export default Main;
+BlogMain.getLayout = (page) => <ManagerLayout>{page}</ManagerLayout>;
+export default BlogMain;

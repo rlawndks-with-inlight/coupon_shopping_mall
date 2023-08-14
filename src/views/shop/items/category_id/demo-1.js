@@ -58,7 +58,8 @@ const Demo1 = (props) => {
     }
     let product_list = await getProductsByUser({
       brand_id: themeDnsData?.id,
-      category_id: router.query?.category_id
+      category_id: router.query?.category_id,
+      page_size: 100000,
     })
     setProducts(product_list.content??[]);
   }

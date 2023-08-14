@@ -72,7 +72,8 @@ export default function ProductDetailsSummary({ product, onAddCart, onGotoStep, 
   const [payData, setPayData] = useState({
     brand_id: themeDnsData?.id,
     user_id: user?.id ?? undefined,
-    amount: 0,
+    product_id: product?.id,
+    amount: product?.product_sale_price ?? 0,
     item_name: product?.product_name,
     buyer_name: user?.nick_name ?? "",
     installment: 0,
@@ -84,6 +85,7 @@ export default function ProductDetailsSummary({ product, onAddCart, onGotoStep, 
     addr: "",
     detail_addr: '',
     temp: [],
+    password: ""
   })
   const [cardFucus, setCardFocus] = useState()
   const cart = []
@@ -164,6 +166,7 @@ export default function ProductDetailsSummary({ product, onAddCart, onGotoStep, 
         }
       }
     });
+
   }
   const [buyStep, setBuyStep] = useState(0);
   const [buyOpen, setBuyOpen] = useState(false);
@@ -325,6 +328,38 @@ export default function ProductDetailsSummary({ product, onAddCart, onGotoStep, 
                     }}
                   />
                 </Stack>
+                <Stack>
+                  <TextField
+                    size='small'
+                    label='주민번호 또는 사업자등록번호'
+                    value={payData.auth_num}
+                    onChange={(e) => {
+                      let value = e.target.value;
+                      setPayData({
+                        ...payData,
+                        ['auth_num']: value
+                      })
+                    }}
+                  />
+                </Stack>
+                {!user &&
+                  <>
+                    <Stack>
+                      <TextField
+                        size='small'
+                        label='비회원주문 비밀번호'
+                        type='password'
+                        value={payData.password}
+                        onChange={(e) => {
+                          let value = e.target.value;
+                          setPayData({
+                            ...payData,
+                            ['password']: value
+                          })
+                        }}
+                      />
+                    </Stack>
+                  </>}
                 <Stack>
                   <Button variant='contained' onClick={() => {
                     setModal({

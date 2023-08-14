@@ -140,7 +140,7 @@ const Demo1 = (props) => {
     if (typeof dns_data == 'string') {
       dns_data = JSON.parse(dns_data);
     }
-    let content_list = (dns_data?.main_obj) ?? [];
+    let content_list = (dns_data?.shop_obj) ?? [];
     // 게시글 불러오기
     let post_list = await getPostsByUser({
       page: 1,
@@ -161,6 +161,7 @@ const Demo1 = (props) => {
       page_size: 100000,
     })
     products = products?.content ?? [];
+    console.log(content_list)
     for (var i = 0; i < content_list.length; i++) {
       if (content_list[i]?.type == 'items' && products.length > 0) {
         content_list[i] = homeItemsSetting(content_list[i], products);

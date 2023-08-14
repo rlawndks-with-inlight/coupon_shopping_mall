@@ -49,6 +49,7 @@ export const navConfig = () => {
   //dns_data와 user를 통해 계산하기
 
   useEffect(() => {
+    console.log(themeDnsData)
     getSidebarSetting();
   }, [])
   const getSidebarSetting = async () => {
@@ -165,8 +166,8 @@ export const navConfig = () => {
           icon: ICONS.label,
           children: [
             // { title: '기본설정', path: PATH_MANAGER.designs.settings },
-            {
-              title: '메인페이지관리', path: PATH_MANAGER.designs.main, children: [
+            ...(themeDnsData?.shop_demo_num > 0 ? [{
+              title: `${themeDnsData?.shop_demo_num > 0 && themeDnsData?.blog_demo_num > 0 ? '쇼핑몰 ' : ''}메인페이지관리`, path: PATH_MANAGER.designs.main, children: [
                 { title: '전체', path: PATH_MANAGER.designs.main + '/all' },
                 { title: '배너슬라이드', path: PATH_MANAGER.designs.main + '/banner' },
                 { title: '버튼형 배너슬라이드', path: PATH_MANAGER.designs.main + '/button-banner' },//
@@ -177,8 +178,22 @@ export const navConfig = () => {
                 // { title: '게시판', path: PATH_MANAGER.designs.main + '/post' },//
                 // { title: '상품후기', path: PATH_MANAGER.designs.main + '/product-review' },//
               ],
-            },
-            ...(isUsePostCategory() ? [{ title: '상품카드관리', path: PATH_MANAGER.designs.itemCard }] : []),
+            }] : []),
+            ...(themeDnsData?.blog_demo_num > 0 ? [{
+              title: `${themeDnsData?.shop_demo_num > 0 && themeDnsData?.blog_demo_num > 0 ? '블로그 ' : ''}메인페이지관리`, path: PATH_MANAGER.designs.blogMain, children: [
+                { title: '전체', path: PATH_MANAGER.designs.blogMain + '/all' },
+                { title: '배너슬라이드', path: PATH_MANAGER.designs.blogMain + '/banner' },
+                { title: '버튼형 배너슬라이드', path: PATH_MANAGER.designs.blogMain + '/button-banner' },//
+                { title: '상품슬라이드', path: PATH_MANAGER.designs.blogMain + '/items' },
+                { title: '카테고리탭별 상품리스트', path: PATH_MANAGER.designs.blogMain + '/items-with-categories' },//
+                { title: '에디터', path: PATH_MANAGER.designs.blogMain + '/editor' },
+                { title: '동영상 슬라이드', path: PATH_MANAGER.designs.blogMain + '/video-slide' },//
+                // { title: '게시판', path: PATH_MANAGER.designs.main + '/post' },//
+                // { title: '상품후기', path: PATH_MANAGER.designs.main + '/product-review' },//
+              ],
+            }] : []),
+            ...(isDeveloper() && themeDnsData?.shop_demo_num > 0 ? [{ title: `${themeDnsData?.shop_demo_num > 0 && themeDnsData?.blog_demo_num > 0 ? '쇼핑몰 ' : ''}상품카드관리`, path: PATH_MANAGER.designs.itemCard }] : []),
+            ...(isDeveloper() && themeDnsData?.blog_demo_num > 0 ? [{ title: `${themeDnsData?.shop_demo_num > 0 && themeDnsData?.blog_demo_num > 0 ? '블로그 ' : ''}상품카드관리`, path: PATH_MANAGER.designs.blogItemCard }] : []),
             { title: '팝업관리', path: PATH_MANAGER.designs.popup },
           ],
         },

@@ -43,8 +43,10 @@ export const PATH_MANAGER = {
   designs: {
     root: path(ROOTS_MANAGER, '/designs'),
     main: path(ROOTS_MANAGER, '/designs/main'),
+    blogMain: path(ROOTS_MANAGER, '/designs/blog-main'),
     popup: path(ROOTS_MANAGER, '/designs/popup'),
     itemCard: path(ROOTS_MANAGER, '/designs/item-card'),
+    blogItemCard: path(ROOTS_MANAGER, '/designs/blog-item-card'),
     settings: path(ROOTS_MANAGER, '/designs/settings'),
   },
   settings: {
@@ -125,7 +127,18 @@ export const defaultManagerObj = {
     theme_css: {
       main_color: '#00ab55'
     },
-    main_obj: [
+    shop_obj: [
+      {
+        type: 'banner',
+        list: [
+          {
+            src: '/images/test/1.jpg',
+            link: ''
+          },
+        ]
+      }
+    ],
+    blog_obj: [
       {
         type: 'banner',
         list: [

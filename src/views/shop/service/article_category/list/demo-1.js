@@ -113,7 +113,8 @@ const Demo1 = (props) => {
     if (router.query?.article_category) {
       onChangePage({
         ...searchObj,
-        category_id: router.query?.article_category
+        category_id: router.query?.article_category,
+        page: 1
       });
     }
   }, [router.query?.article_category])
@@ -132,16 +133,17 @@ const Demo1 = (props) => {
         <Title style={{
           marginBottom: '2rem'
         }}>{postCategory?.post_category_title}</Title>
-        <Row style={{ margin: '1rem auto', overflowX: 'auto', whiteSpace: 'nowrap', columnGap:'0.25rem' }} className='none-scroll'>
+        <Row style={{ margin: '1rem auto', overflowX: 'auto', whiteSpace: 'nowrap', columnGap: '0.25rem' }} className='none-scroll'>
           {postCategory?.children && postCategory?.children.length > 0 &&
             <>
               <Button onClick={() => {
                 onChangePage({
                   ...searchObj,
-                  category_id: router.query?.article_category
+                  category_id: router.query?.article_category,
+                  page: 1,
                 })
               }}
-              variant={searchObj.category_id == router.query?.article_category?'contained':'outlined'}
+                variant={searchObj.category_id == router.query?.article_category ? 'contained' : 'outlined'}
               >
                 전체
               </Button>
@@ -151,10 +153,11 @@ const Demo1 = (props) => {
               <Button onClick={() => {
                 onChangePage({
                   ...searchObj,
-                  category_id: category?.id
+                  category_id: category?.id,
+                  page: 1,
                 })
               }}
-              variant={searchObj.category_id == category?.id?'contained':'outlined'}>
+                variant={searchObj.category_id == category?.id ? 'contained' : 'outlined'}>
                 {category?.post_category_title}
               </Button>
             </>

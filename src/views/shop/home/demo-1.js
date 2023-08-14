@@ -123,7 +123,7 @@ const Demo1 = (props) => {
   const [posts, setPosts] = useState({});
 
   useEffect(() => {
-    if (themePostCategoryList.length > 0) {
+    if (themeDnsData?.id > 0) {
       pageSetting();
     }
   }, [themePostCategoryList])
@@ -136,11 +136,13 @@ const Demo1 = (props) => {
     if (contentList.length > 0) {
       return;
     }
+
     let dns_data = getLocalStorage('dns_data') || themeDnsData;
     if (typeof dns_data == 'string') {
       dns_data = JSON.parse(dns_data);
     }
     let content_list = (dns_data?.shop_obj) ?? [];
+
     // 게시글 불러오기
     let post_list = await getPostsByUser({
       page: 1,
@@ -161,7 +163,6 @@ const Demo1 = (props) => {
       page_size: 100000,
     })
     products = products?.content ?? [];
-    console.log(content_list)
     for (var i = 0; i < content_list.length; i++) {
       if (content_list[i]?.type == 'items' && products.length > 0) {
         content_list[i] = homeItemsSetting(content_list[i], products);

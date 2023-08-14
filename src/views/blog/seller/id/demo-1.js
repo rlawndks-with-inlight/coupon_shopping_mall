@@ -9,6 +9,7 @@ import styled from 'styled-components'
 import _ from 'lodash'
 import { commarNumber } from 'src/utils/function';
 import { logoSrc } from 'src/data/data';
+import { getProductsByUser } from 'src/utils/api-shop';
 
 const Wrappers = styled.div`
 max-width: 840px;
@@ -92,7 +93,8 @@ const test_color_list = [
     { id: 2, name: "베이지", price: 500 },
     { id: 3, name: "크림", price: 1500 },
 ]
-const test_product_sale_priceice = 20000;
+const test_product_sale_price = 20000;
+
 // 셀러별 메인페이지 김인욱
 const Demo1 = (props) => {
     const {
@@ -118,7 +120,20 @@ const Demo1 = (props) => {
     const [selectOptions, setSelectOptions] = useState([]);
     const [dialogOpen, setDialogOpen] = useState(false);
     const [dialogType, setDialogType] = useState("");
+    const [products, setProducts] = useState([])
 
+    useEffect(() => {
+        pageSetting();
+    }, [])
+
+    const pageSetting = async () => {
+        let products = await getProductsByUser({
+            page: 1,
+            page_size: 100000,
+        })
+        console.log(products)
+        setProducts(products?.content)
+    }
 
     useEffect(() => {
         setSellerData(test_seller_data);
@@ -142,7 +157,7 @@ const Demo1 = (props) => {
         let total_price = 0;
         for (var i = 0; i < selectOptions.length; i++) {
             let find_item = _.find(test_color_list, { id: selectOptions[i]?.id });
-            total_price += (test_product_sale_priceice + find_item?.price) * selectOptions[i]?.count;
+            total_price += (test_product_sale_price + find_item?.price) * selectOptions[i]?.count;
         }
         return total_price
     }
@@ -207,7 +222,7 @@ const Demo1 = (props) => {
                     </CategoryContainer>
                 </CategoryWrapper>
                 <ItemContainer>
-                    {test_items.map((item, idx) => (
+                    {products.map((item, idx) => (
                         <>
                             <SellerItem router={router} item={item} onClickCartButton={onClickCartButton} />
                         </>
@@ -317,7 +332,7 @@ const Demo1 = (props) => {
                                                 setSelectOptions(select_options)
                                             }} />
                                     </Row>
-                                    <div>{commarNumber((test_product_sale_priceice + _.find(test_color_list, { id: item?.id }).price) * (item.count))}원</div>
+                                    <div>{commarNumber((test_product_sale_price + _.find(test_color_list, { id: item?.id }).price) * (item.count))}원</div>
 
                                 </Row>
                             </DrawerBox>

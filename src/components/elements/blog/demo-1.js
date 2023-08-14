@@ -3,6 +3,7 @@ import styled from "styled-components"
 import { themeObj } from "../styled-components"
 import { IconButton } from "@mui/material"
 import { Icon } from "@iconify/react"
+
 //김인욱 컴포넌트
 const ItemContent = styled.div`
 display:flex;
@@ -61,16 +62,17 @@ export const SellerItem = (props) => {
           <IconButton sx={{ position: 'absolute', right: '0', bottom: '0' }}
             onClick={() => {
               onClickCartButton(item)
-            }}>
+            }}> 
             <Icon icon='iconamoon:shopping-bag' />
           </IconButton>
         </div>
-        <ItemText style={{ fontWeight: 'bold' }} onClick={() => {
+        <ItemText style={{ fontWeight: 'bold' }} onClick={() => 
+        {
           router.push(`/blog/product/${item.id}`)
-        }}>{item?.name}</ItemText>
+        }}>{item?.product_name}</ItemText>
         <ItemText style={{ color: themeObj.grey[500] }} onClick={() => {
           router.push(`/blog/product/${item.id}`)
-        }}>{item?.sub_name}</ItemText>
+        }}>{item?.product_comment}</ItemText>
 
       </SellerItemContent>
     </>

@@ -11,6 +11,9 @@ import Slider from 'react-slick';
 import { useTheme } from '@emotion/react';
 import { logoSrc } from 'src/data/data';
 import dynamic from 'next/dynamic';
+import { getProductByUser } from 'src/utils/api-shop';
+
+
 const ReactQuill = dynamic(() => import('react-quill'), {
   ssr: false,
   loading: () => <p>Loading ...</p>,
@@ -120,12 +123,36 @@ const Demo1 = (props) => {
   const [selectOptions, setSelectOptions] = useState([]);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [dialogType, setDialogType] = useState("");
+  const [product, setProduct] = useState();
+
+  const product_id = parseInt(document.location.href.split('/').reverse()[1])
 
   useEffect(() => {
+    pageSetting();
+  }, [])
+
+  const pageSetting = async () => {
+    console.log(router)
+
+    let product = await getProductByUser({
+      product_id: router.query?.id
+    })
+    console.log(product)
+    if (product) {
+      product['images'] = [...[product?.product_img], ...product?.sub_images.map(item => { return item.product_sub_img })];
+
+      setItem(product)
+
+    }
+  }
+
+  /*useEffect(() => {
     let data = test_item
     data['images'].unshift(data?.product_img);
     setItem(data)
   }, [])
+*/
+
   useEffect(() => {
     const handleScroll = () => {
       const currentScrollHeight = window.scrollY;
@@ -173,7 +200,7 @@ const Demo1 = (props) => {
         </Slider>
         <ContentWrappers style={{
           background: `${themeMode == 'dark' ? '#000' : '#fff'}`,
-          position:'absolute'
+          position: 'absolute'
         }}>
           <Row style={{ justifyContent: 'space-between' }}>
             <Row style={{ alignItems: 'center', cursor: 'pointer' }} onClick={() => { router.push(`/blog/seller/${item.seller?.id}`) }}>
@@ -216,7 +243,7 @@ const Demo1 = (props) => {
             <div style={{ padding: '0 0 1rem 0', fontSize: themeObj.font_size.size8, fontWeight: 'bold' }}>상품정보</div>
             <ReactQuill
               className='none-padding'
-              value={item?.content ?? `<body></body>`}
+              value={item?.product_description ?? `<body></body>`}
               readOnly={true}
               theme={"bubble"}
               bounds={'.app'}
@@ -395,7 +422,7 @@ const Demo1 = (props) => {
               sx={{
                 display: 'flex',
                 justifyContent: 'space-between',
-                padding:'0 0 1.5rem 1.5rem'
+                padding: '0 0 1.5rem 1.5rem'
               }}
             >
               <img src={logoSrc()} style={{ height: '56px', width: 'auto' }} />
@@ -432,7 +459,7 @@ const Demo1 = (props) => {
               sx={{
                 display: 'flex',
                 justifyContent: 'space-between',
-                padding:'0 0 1.5rem 1.5rem'
+                padding: '0 0 1.5rem 1.5rem'
               }}
             >
               <img src={logoSrc()} style={{ height: '56px', width: 'auto' }} />

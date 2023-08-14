@@ -83,8 +83,11 @@ const DefaultSetting = () => {
   ]
 
   useEffect(() => {
-    settingPage();
-  }, [])
+    setLoading(true);
+    if (Object.keys(router.query).length > 0) {
+      settingPage();
+    }
+  }, [router.query])
   const settingBrandObj = (item, brand_data) => {
     let obj = item;
     let brand_data_keys = Object.keys(brand_data);
@@ -102,7 +105,7 @@ const DefaultSetting = () => {
   const settingPage = async () => {
     if (router.query?.brand_id != 'add') {
       let brand_data = await getBrandByManager({
-        id: router.query.brand_id | themeDnsData?.id
+        id: router.query.brand_id || themeDnsData?.id
       })
       brand_data = settingBrandObj(item, brand_data);
       setItem(brand_data);

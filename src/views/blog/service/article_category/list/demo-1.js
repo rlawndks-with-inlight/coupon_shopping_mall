@@ -43,7 +43,6 @@ const Demo1 = (props) => {
     }, [])
 
     const pageSetting = async () => {
-
         let category = _.find(themePostCategoryList, { id: parseInt(router.query?.article_category) });
         category.children = [
             ...[{

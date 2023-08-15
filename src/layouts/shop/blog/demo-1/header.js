@@ -10,7 +10,6 @@ import { test_categories } from "src/data/test-data"
 import { useRouter } from "next/router"
 import DialogSearch from "src/components/dialog/DialogSearch"
 import { logoSrc } from "src/data/data"
-import { getShopCategoriesByUser } from "src/utils/api-shop"
 
 const Wrappers = styled.header`
 width: 100%;

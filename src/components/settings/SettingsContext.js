@@ -115,6 +115,7 @@ export function SettingsProvider({ children }) {
   }, []);
   const getDnsData = async () => {
     try {
+
       const url = `${process.env.BACK_URL}/api/v1/auth/domain?dns=${process.env.IS_TEST == 1 ? 'localhost' : window.location.host.split(':')[0]}`;
       const res = await fetch(url);
       let dns_data = await res.json();
@@ -131,6 +132,13 @@ export function SettingsProvider({ children }) {
       let root_id = await res2.json();
       root_id = root_id?.root_id;
       dns_data['root_id'] = root_id;
+      let data = await getShopCategoriesByUser({
+        brand_id: dns_data?.id,
+        root_id: dns_data?.root_id
+      });
+      onChangeCategoryList(data?.product_categories ?? []);
+      onChangePopupList(data?.popups ?? []);
+      onChangePostCategoryList(data?.post_categories ?? []);
       onChangeDnsData(dns_data);
     } catch (err) {
       console.log(err)

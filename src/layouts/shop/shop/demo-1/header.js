@@ -13,7 +13,6 @@ import { getAllIdsWithParents } from "src/utils/function"
 import DialogSearch from "src/components/dialog/DialogSearch"
 import { useAuthContext } from "src/layouts/manager/auth/useAuthContext"
 import { logoSrc } from "src/data/data"
-import { getShopCategoriesByUser } from "src/utils/api-shop"
 import $ from 'jquery'
 import dynamic from 'next/dynamic';
 const ReactQuill = dynamic(() => import('react-quill'), {
@@ -216,7 +215,7 @@ const Header = () => {
 
   const router = useRouter();
   const theme = useTheme();
-  const { themeMode, onToggleMode, onChangeCategoryList, themeDnsData, themePopupList, onChangePopupList, onChangePostCategoryList, themeWishData, themeCartData } = useSettingsContext();
+  const { themeMode, onToggleMode, onChangeCategoryList, themeCategoryList, themeDnsData, themePopupList,themePostCategoryList, onChangePopupList, onChangePostCategoryList, themeWishData, themeCartData } = useSettingsContext();
   const { user, logout } = useAuthContext();
   const headerWrappersRef = useRef();
   const [headerHeight, setHeaderHeight] = useState(130);
@@ -244,17 +243,10 @@ const Header = () => {
   }, [])
   const settingHeader = async () => {
     setLoading(true);
-    let data = await getShopCategoriesByUser({
-      brand_id: themeDnsData?.id,
-      root_id: themeDnsData?.root_id
-    });
-    onChangeCategoryList(data?.product_categories ?? []);
-    onChangePopupList(data?.popups ?? []);
-    setPopups(data?.popups ?? [])
-    onChangePostCategoryList(data?.post_categories ?? []);
-    setPostCategories(data?.post_categories ?? []);
-    setCategories(data?.product_categories ?? []);
-    let hover_list = getAllIdsWithParents(data?.product_categories);
+    setPopups(themePopupList)
+    setPostCategories(themePostCategoryList);
+    setCategories(themeCategoryList);
+    let hover_list = getAllIdsWithParents(themeCategoryList);
     let hover_items = {};
     for (var i = 0; i < hover_list.length; i++) {
       hover_list[i] = hover_list[i].join('_');

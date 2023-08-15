@@ -8,7 +8,6 @@ import { useAuthContext } from 'src/layouts/manager/auth/useAuthContext';
 import { useEffect } from 'react';
 import { Title } from 'src/components/elements/blog/demo-1';
 import { logoSrc } from 'src/data/data';
-import { getShopCategoriesByUser } from 'src/utils/api-shop';
 
 const Wrappers = styled.div`
 max-width:798px;

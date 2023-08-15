@@ -37,7 +37,7 @@ const Header = (props) => {
   const theme = useTheme();
   const router = useRouter();
 
-  const { themeMode, onToggleMode, themeDnsData, onChangeCategoryList, onChangePostCategoryList } = useSettingsContext();
+  const { themeMode, onToggleMode, themeDnsData, themeCategoryList, onChangeCategoryList, onChangePostCategoryList } = useSettingsContext();
   const [keyword, setKeyword] = useState("");
   const [isSellerPage, setIsSellerPage] = useState(false);
   const [isProductPage, setIsProductPage] = useState(false);
@@ -69,13 +69,8 @@ const Header = (props) => {
   }, [])
   const settingHeader = async () => {
     setLoading(true);
-    let data = await getShopCategoriesByUser({
-      brand_id: themeDnsData?.id,
-      root_id: themeDnsData?.root_id
-    });
-    onChangeCategoryList(data?.product_categories ?? []);
-    onChangePostCategoryList(data?.post_categories ?? []);
-    setCategories(data?.product_categories ?? []);
+    
+    setCategories(themeCategoryList);
     
     setLoading(false);
   }

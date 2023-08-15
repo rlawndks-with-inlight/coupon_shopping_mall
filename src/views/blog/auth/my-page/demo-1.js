@@ -117,7 +117,10 @@ const Demo1 = (props) => {
                     <Title>마이페이지</Title>
                     {user ?
                         <>
-                            <MenuButton themeMode={themeMode} onClick={() => { router.push('/blog/auth/my-page/user-info') }}>
+                            <MenuButton themeMode={themeMode} onClick={() => { router.
+                                
+                                
+                                push('/blog/auth/my-page/user-info') }}>
                                 <MenuText>{user.nick_name}</MenuText>
                                 <IconButton style={{ width: '24px', height: '56px', padding: '0', marginRight: '18px' }}>
                                     <Icon icon='ep:arrow-right' color='black' />
@@ -200,7 +203,7 @@ const Demo1 = (props) => {
                         안내
                         {themePostCategoryList.map(item => (
                             <>
-                                <MenuButton themeMode={themeMode} onClick={() => { router.push(`/blog/service/${item?.id}`) }}>
+                                <MenuButton themeMode={themeMode} onClick={() => { router.push(`/blog/service/${item?.id}`) }} style={{marginBottom:'0'}}>
                                     <MenuText>{item.post_category_title}</MenuText>
                                     <IconButton style={{ width: '24px', height: '56px', padding: '0', marginRight: '18px' }}>
                                         <Icon icon='ep:arrow-right' color='black' />

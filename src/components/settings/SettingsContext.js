@@ -5,6 +5,7 @@ import { defaultSettings } from './config-setting';
 import { defaultPreset, getPresets, presetsOption } from './presets';
 import { useTheme } from '@emotion/react';
 import { deleteLocalStorage, getLocalStorage, setLocalStorage } from 'src/utils/local-storage';
+import { getShopCategoriesByUser } from 'src/utils/api-shop';
 // ----------------------------------------------------------------------
 
 const initialState = {
@@ -115,7 +116,6 @@ export function SettingsProvider({ children }) {
   }, []);
   const getDnsData = async () => {
     try {
-
       const url = `${process.env.BACK_URL}/api/v1/auth/domain?dns=${process.env.IS_TEST == 1 ? 'localhost' : window.location.host.split(':')[0]}`;
       const res = await fetch(url);
       let dns_data = await res.json();

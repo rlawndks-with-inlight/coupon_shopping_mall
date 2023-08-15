@@ -39,7 +39,7 @@ const Demo1 = (props) => {
     const { themeMode, themePostCategoryList } = useSettingsContext();
     const [category, setCaetgory] = useState({});
     useEffect(() => {
-            pageSetting();
+        pageSetting();
     }, [])
 
     const pageSetting = async () => {
@@ -47,16 +47,16 @@ const Demo1 = (props) => {
         let category = _.find(themePostCategoryList, { id: parseInt(router.query?.article_category) });
         category.children = [
             ...[{
-                id:router.query?.article_category,
-                post_category_title:'전체'
+                id: router.query?.article_category,
+                post_category_title: '전체'
             }],
             ...category.children
         ]
         setCaetgory(category);
         setInquiryType(router.query?.article_category)
-        getArticleList(1,  router.query?.article_category)
+        getArticleList(1, router.query?.article_category)
     }
-    const getArticleList = async (page, category_id) =>{
+    const getArticleList = async (page, category_id) => {
         let inquiry_data = await getPostsByUser({
             page: page,
             page_size: 100000,
@@ -94,7 +94,7 @@ const Demo1 = (props) => {
                         getArticleList(1, newValue)
                     }}
                 >
-                    {category?.children &&  category?.children.map((item,) => (
+                    {category?.children && category?.children.map((item,) => (
                         <Tab key={item?.post_category_title} value={item?.id} label={item?.post_category_title} style={{
                             borderBottom: '1px solid',
                             borderColor: 'inherit',
@@ -108,52 +108,25 @@ const Demo1 = (props) => {
                 <AccordionContainer themeMode={themeMode}>
                     {inquiryList.map((item, idx) => (
                         <>
-                            {inquiryType == router.query?.article_category &&
-                                <>
-                                    <Accordion
-                                        key={idx}
-                                        expanded={controlled === item.id}
-                                        onChange={() => {
-                                            if (item.id == controlled) {
-                                                setControlled(undefined);
-                                            } else {
-                                                setControlled(item.id)
-                                            }
-                                        }}
-                                        disabled={item.answer ? false : true}
-                                    >
-                                        <AccordionSummary expandIcon={<Iconify icon="eva:arrow-ios-downward-fill" />}>
-                                            <Typography variant="subtitle1">[{item.post_writer}] {item.post_title}</Typography>
-                                        </AccordionSummary>
-                                        <AccordionDetails>
-                                            <Typography>{item.answer}</Typography>
-                                        </AccordionDetails>
-                                    </Accordion>
-                                </>
-                            }
-                            {item.inquiry_type == inquiryType &&
-                                <>
-                                    <Accordion
-                                        key={idx}
-                                        expanded={controlled === item.id}
-                                        onChange={() => {
-                                            if (item.id == controlled) {
-                                                setControlled(undefined);
-                                            } else {
-                                                setControlled(item.id)
-                                            }
-                                        }}
-                                        disabled={item.answer ? false : true}
-                                    >
-                                        <AccordionSummary expandIcon={<Iconify icon="eva:arrow-ios-downward-fill" />}>
-                                            <Typography variant="subtitle1">[{item.inquiry_title}] {item.inquiry_detail}</Typography>
-                                        </AccordionSummary>
-                                        <AccordionDetails>
-                                            <Typography>{item.answer}</Typography>
-                                        </AccordionDetails>
-                                    </Accordion>
-                                </>
-                            }
+                            <Accordion
+                                key={idx}
+                                expanded={controlled === item.id}
+                                onChange={() => {
+                                    if (item.id == controlled) {
+                                        setControlled(undefined);
+                                    } else {
+                                        setControlled(item.id)
+                                    }
+                                }}
+                                disabled={item.answer ? false : true}
+                            >
+                                <AccordionSummary expandIcon={<Iconify icon="eva:arrow-ios-downward-fill" />}>
+                                    <Typography variant="subtitle1">[{item.post_writer}] {item.post_title}</Typography>
+                                </AccordionSummary>
+                                <AccordionDetails>
+                                    <Typography>{item.answer}</Typography>
+                                </AccordionDetails>
+                            </Accordion>
                         </>
                     ))}
                 </AccordionContainer>

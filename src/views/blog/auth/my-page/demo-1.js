@@ -8,6 +8,7 @@ import { useAuthContext } from 'src/layouts/manager/auth/useAuthContext';
 import { useEffect } from 'react';
 import { Title } from 'src/components/elements/blog/demo-1';
 import { logoSrc } from 'src/data/data';
+import { getShopCategoriesByUser } from 'src/utils/api-shop';
 
 const Wrappers = styled.div`
 max-width:798px;
@@ -198,12 +199,16 @@ const Demo1 = (props) => {
                     </MenuBox>
                     <MenuBox>
                         안내
-                        <MenuButton themeMode={themeMode} onClick={() => { router.push('/blog/service/faq') }}>
-                            <MenuText>자주 묻는 질문</MenuText>
-                            <IconButton style={{ width: '24px', height: '56px', padding: '0', marginRight: '18px' }}>
-                                <Icon icon='ep:arrow-right' color='black' />
-                            </IconButton>
-                        </MenuButton>
+                        {themePostCategoryList.map(item => (
+                            <>
+                                <MenuButton themeMode={themeMode} onClick={() => { router.push(`/blog/service/${item?.id}`) }}>
+                                    <MenuText>{item.post_category_title}</MenuText>
+                                    <IconButton style={{ width: '24px', height: '56px', padding: '0', marginRight: '18px' }}>
+                                        <Icon icon='ep:arrow-right' color='black' />
+                                    </IconButton>
+                                </MenuButton>
+                            </>
+                        ))}
                     </MenuBox>
                     <PolicyBox>
                         <div

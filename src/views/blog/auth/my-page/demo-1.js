@@ -97,7 +97,7 @@ const Demo1 = (props) => {
         },
     } = props;
 
-    const { themeDnsData, themeMode } = useSettingsContext();
+    const { themeDnsData, themeMode, themePostCategoryList } = useSettingsContext();
     const { user } = useAuthContext();
     const [openPolicy, setOpenPolicy] = useState(false)
     const [policyType, setPolicyType] = useState("")
@@ -106,6 +106,7 @@ const Demo1 = (props) => {
     const [dialogType, setDialogType] = useState("");
 
     useEffect(() => {
+        console.log(themePostCategoryList)
     }, [])
 
     return (
@@ -116,7 +117,10 @@ const Demo1 = (props) => {
                     <Title>마이페이지</Title>
                     {user ?
                         <>
-                            <MenuButton themeMode={themeMode} onClick={() => { router.push('/blog/auth/my-page/user-info') }}>
+                            <MenuButton themeMode={themeMode} onClick={() => { router.
+                                
+                                
+                                push('/blog/auth/my-page/user-info') }}>
                                 <MenuText>{user.nick_name}</MenuText>
                                 <IconButton style={{ width: '24px', height: '56px', padding: '0', marginRight: '18px' }}>
                                     <Icon icon='ep:arrow-right' color='black' />
@@ -197,12 +201,16 @@ const Demo1 = (props) => {
                     </MenuBox>
                     <MenuBox>
                         안내
-                        <MenuButton themeMode={themeMode} onClick={() => { router.push('/blog/service/faq') }}>
-                            <MenuText>자주 묻는 질문</MenuText>
-                            <IconButton style={{ width: '24px', height: '56px', padding: '0', marginRight: '18px' }}>
-                                <Icon icon='ep:arrow-right' color='black' />
-                            </IconButton>
-                        </MenuButton>
+                        {themePostCategoryList.map(item => (
+                            <>
+                                <MenuButton themeMode={themeMode} onClick={() => { router.push(`/blog/service/${item?.id}`) }} style={{marginBottom:'0'}}>
+                                    <MenuText>{item.post_category_title}</MenuText>
+                                    <IconButton style={{ width: '24px', height: '56px', padding: '0', marginRight: '18px' }}>
+                                        <Icon icon='ep:arrow-right' color='black' />
+                                    </IconButton>
+                                </MenuButton>
+                            </>
+                        ))}
                     </MenuBox>
                     <PolicyBox>
                         <div

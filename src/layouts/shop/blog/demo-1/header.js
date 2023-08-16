@@ -36,7 +36,7 @@ const Header = (props) => {
   const theme = useTheme();
   const router = useRouter();
 
-  const { themeMode, onToggleMode } = useSettingsContext();
+  const { themeMode, onToggleMode, themeDnsData, themeCategoryList, onChangeCategoryList, onChangePostCategoryList } = useSettingsContext();
   const [keyword, setKeyword] = useState("");
   const [isSellerPage, setIsSellerPage] = useState(false);
   const [isProductPage, setIsProductPage] = useState(false);
@@ -62,9 +62,17 @@ const Header = (props) => {
     }
     hover_items['service'] = false;
     setHoverItems(hover_items);
+    settingHeader();
     setLoading(false);
-  }, [])
 
+  }, [])
+  const settingHeader = async () => {
+    setLoading(true);
+    
+    setCategories(themeCategoryList);
+    
+    setLoading(false);
+  }
   useEffect(() => {
     if (router.asPath.split('/')[2] == 'seller') {
       setIsSellerPage(true)

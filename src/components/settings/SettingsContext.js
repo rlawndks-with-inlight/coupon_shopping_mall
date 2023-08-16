@@ -5,6 +5,7 @@ import { defaultSettings } from './config-setting';
 import { defaultPreset, getPresets, presetsOption } from './presets';
 import { useTheme } from '@emotion/react';
 import { deleteLocalStorage, getLocalStorage, setLocalStorage } from 'src/utils/local-storage';
+import { getShopCategoriesByUser } from 'src/utils/api-shop';
 // ----------------------------------------------------------------------
 
 const initialState = {
@@ -131,6 +132,13 @@ export function SettingsProvider({ children }) {
       let root_id = await res2.json();
       root_id = root_id?.root_id;
       dns_data['root_id'] = root_id;
+      let data = await getShopCategoriesByUser({
+        brand_id: dns_data?.id,
+        root_id: dns_data?.root_id
+      });
+      onChangeCategoryList(data?.product_categories ?? []);
+      onChangePopupList(data?.popups ?? []);
+      onChangePostCategoryList(data?.post_categories ?? []);
       onChangeDnsData(dns_data);
     } catch (err) {
       console.log(err)

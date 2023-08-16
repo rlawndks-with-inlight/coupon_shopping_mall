@@ -9,7 +9,7 @@ export const getShopCategoriesByUser = (params) => { // 유저 연결되어있�
   return get(`/api/v1/shop/shop`, query);
 }
 export const getProductsByUser = (params) => { // 유저 카테고리 기반 상품 목록 출력
-  const { category_id, page = 1, page_size = 100000 } = params;
+  const { category_id, page = 1, page_size = 10 } = params;
   let query = {
     category_id, page, page_size
   }
@@ -68,7 +68,9 @@ export const deleteProductReviewByUser = (params) => { // 유저 상품 리뷰 �
 }
 export const getPostByUser = (params) => { // 유저 게시글 단일 출력
   const { post_id } = params;
- 
+  let query = {
+    post_id
+  }
   return get(`/api/v1/shop/shop/posts/${post_id}`, {});
 }
 export const sendPhoneVerifyCodeByUser = (params) => { // 유저 휴대폰 인증번호 전송

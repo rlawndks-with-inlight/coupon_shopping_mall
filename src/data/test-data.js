@@ -553,8 +553,8 @@ export const test_items = [
   {
     id: 66,
     cate_id: 15,
-    name: "몰타 2등 펜던트",
-    sub_name: "헬로키티 프렌즈",
+    name: "몰타 2등 펜던트", //product_name으로 바꿔야 상품명이 나옴
+    sub_name: "헬로키티 프렌즈", //product-comment로 바꿔야 설명으로 나옴
     rating: 3.5,
     product_price: 20000,
     product_sale_price: 18000,

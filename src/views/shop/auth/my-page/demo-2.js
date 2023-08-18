@@ -1,4 +1,4 @@
-import { Box, TextField, Avatar, Box, Button, Card, Grid, Stack } from "@mui/material";
+import { Box, TextField, Avatar, Button, Card, Grid, Stack } from "@mui/material";
 import { useEffect, useState } from "react";
 import { Title } from 'src/components/elements/styled-components';
 import { useAuthContext } from "src/layouts/manager/auth/useAuthContext";

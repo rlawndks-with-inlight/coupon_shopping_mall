@@ -6,7 +6,7 @@ import { Box, Drawer, IconButton } from '@mui/material';
 // hooks
 import useResponsive from '../../../../hooks/useResponsive';
 // components
-import Iconify from '../../../../components/iconify';
+import Iconify from 'src/components/iconify/Iconify';
 //
 import ChatRoomAttachments from './ChatRoomAttachments';
 import ChatRoomSingle from './ChatRoomSingle';

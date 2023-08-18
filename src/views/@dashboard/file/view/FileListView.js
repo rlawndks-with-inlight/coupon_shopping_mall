@@ -2,7 +2,7 @@ import PropTypes from 'prop-types';
 // @mui
 import { Table, Tooltip, TableBody, IconButton, TableContainer, Box } from '@mui/material';
 // components
-import Iconify from '../../../../components/iconify';
+import Iconify from 'src/components/iconify/Iconify';
 import {
   emptyRows,
   TableNoData,

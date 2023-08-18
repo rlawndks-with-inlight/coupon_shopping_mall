@@ -3,7 +3,7 @@ import { useState, useRef } from 'react';
 // @mui
 import { Collapse, Box, Divider, Button } from '@mui/material';
 // components
-import Iconify from '../../../../components/iconify';
+import Iconify from 'src/components/iconify/Iconify';
 //
 import FilePanel from '../FilePanel';
 import FileCard from '../item/FileCard';

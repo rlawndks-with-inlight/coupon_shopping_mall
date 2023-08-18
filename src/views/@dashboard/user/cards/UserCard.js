@@ -8,7 +8,7 @@ import { fShortenNumber } from '../../../../utils/formatNumber';
 import { _socials } from '../../../../_mock/arrays';
 // components
 import Image from '../../../../components/image';
-import Iconify from '../../../../components/iconify';
+import Iconify from 'src/components/iconify/Iconify';
 import SvgColor from '../../../../components/svg-color';
 
 // ----------------------------------------------------------------------

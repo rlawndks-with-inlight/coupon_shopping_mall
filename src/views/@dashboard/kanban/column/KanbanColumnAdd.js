@@ -5,7 +5,7 @@ import { Paper, Button, ClickAwayListener, TextField } from '@mui/material';
 import { useDispatch } from '../../../../redux/store';
 import { createColumn } from '../../../../redux/slices/kanban';
 // components
-import Iconify from '../../../../components/iconify';
+import Iconify from 'src/components/iconify/Iconify';
 
 // ----------------------------------------------------------------------
 

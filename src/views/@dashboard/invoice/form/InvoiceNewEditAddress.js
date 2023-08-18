@@ -9,7 +9,7 @@ import useResponsive from '../../../../hooks/useResponsive';
 // _mock
 import { _invoiceAddressFrom, _invoiceAddressTo } from '../../../../_mock/arrays';
 // components
-import Iconify from '../../../../components/iconify';
+import Iconify from 'src/components/iconify/Iconify';
 //
 import InvoiceAddressListDialog from './InvoiceAddressListDialog';
 

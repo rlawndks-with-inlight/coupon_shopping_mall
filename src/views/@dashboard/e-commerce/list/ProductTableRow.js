@@ -18,7 +18,7 @@ import { fCurrency } from '../../../../utils/formatNumber';
 // components
 import Label from '../../../../components/label';
 import Image from '../../../../components/image';
-import Iconify from '../../../../components/iconify';
+import Iconify from 'src/components/iconify/Iconify';
 import MenuPopover from '../../../../components/menu-popover';
 import ConfirmDialog from '../../../../components/confirm-dialog';
 

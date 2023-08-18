@@ -19,7 +19,7 @@ import {
 import { fData } from '../../../../utils/formatNumber';
 import { fDateTime } from '../../../../utils/formatTime';
 // components
-import Iconify from '../../../../components/iconify';
+import Iconify from 'src/components/iconify/Iconify';
 import Scrollbar from '../../../../components/scrollbar';
 import FileThumbnail, { fileFormat } from '../../../../components/file-thumbnail';
 //

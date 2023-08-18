@@ -16,7 +16,7 @@ import {
 // utils
 import { bgGradient } from '../../../../utils/cssStyles';
 // components
-import Iconify from '../../../../components/iconify';
+import Iconify from 'src/components/iconify/Iconify';
 
 // ----------------------------------------------------------------------
 

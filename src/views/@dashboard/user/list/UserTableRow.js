@@ -14,7 +14,7 @@ import {
 } from '@mui/material';
 // components
 import Label from '../../../../components/label';
-import Iconify from '../../../../components/iconify';
+import Iconify from 'src/components/iconify/Iconify';
 import MenuPopover from '../../../../components/menu-popover';
 import ConfirmDialog from '../../../../components/confirm-dialog';
 

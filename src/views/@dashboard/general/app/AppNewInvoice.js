@@ -20,7 +20,7 @@ import {
 import { fCurrency } from '../../../../utils/formatNumber';
 // components
 import Label from '../../../../components/label';
-import Iconify from '../../../../components/iconify';
+import Iconify from 'src/components/iconify/Iconify';
 import Scrollbar from '../../../../components/scrollbar';
 import MenuPopover from '../../../../components/menu-popover';
 import { TableHeadCustom } from '../../../../components/table';

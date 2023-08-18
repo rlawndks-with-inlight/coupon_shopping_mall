@@ -5,7 +5,7 @@ import { Stack, Link, Button, Typography } from '@mui/material';
 import { fDate } from '../../../../../utils/formatTime';
 import { fCurrency } from '../../../../../utils/formatNumber';
 // components
-import Iconify from '../../../../../components/iconify';
+import Iconify from 'src/components/iconify/Iconify';
 
 // ----------------------------------------------------------------------
 

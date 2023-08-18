@@ -3,7 +3,7 @@ import { Stack, Paper, Button, Tooltip, IconButton, InputBase } from '@mui/mater
 // auth
 import { useAuthContext } from '../../../../auth/useAuthContext';
 // components
-import Iconify from '../../../../components/iconify';
+import Iconify from 'src/components/iconify/Iconify';
 import { CustomAvatar } from '../../../../components/custom-avatar';
 
 // ----------------------------------------------------------------------

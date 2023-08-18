@@ -19,7 +19,7 @@ import useCopyToClipboard from '../../../../hooks/useCopyToClipboard';
 import { fData } from '../../../../utils/formatNumber';
 import { fDateTime } from '../../../../utils/formatTime';
 // components
-import Iconify from '../../../../components/iconify';
+import Iconify from 'src/components/iconify/Iconify';
 import { useSnackbar } from '../../../../components/snackbar';
 import MenuPopover from '../../../../components/menu-popover';
 import FileThumbnail from '../../../../components/file-thumbnail';

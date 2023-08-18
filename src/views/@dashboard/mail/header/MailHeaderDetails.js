@@ -11,7 +11,7 @@ import useResponsive from '../../../../hooks/useResponsive';
 import { fDateTime } from '../../../../utils/formatTime';
 // components
 import { CustomAvatar } from '../../../../components/custom-avatar';
-import Iconify from '../../../../components/iconify';
+import Iconify from 'src/components/iconify/Iconify';
 
 // ----------------------------------------------------------------------
 

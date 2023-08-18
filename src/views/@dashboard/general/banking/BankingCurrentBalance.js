@@ -8,7 +8,7 @@ import { bgGradient } from '../../../../utils/cssStyles';
 import { fCurrency } from '../../../../utils/formatNumber';
 // components
 import Image from '../../../../components/image';
-import Iconify from '../../../../components/iconify';
+import Iconify from 'src/components/iconify/Iconify';
 import MenuPopover from '../../../../components/menu-popover';
 import Carousel, { CarouselDots } from '../../../../components/carousel';
 

@@ -25,7 +25,7 @@ import { fShortenNumber, fCurrency } from '../../../../utils/formatNumber';
 import { _socials } from '../../../../_mock/arrays';
 // components
 import Label from '../../../../components/label';
-import Iconify from '../../../../components/iconify';
+import Iconify from 'src/components/iconify/Iconify';
 import { IncrementerButton } from '../../../../components/custom-input';
 import { ColorSinglePicker } from '../../../../components/color-utils';
 import FormProvider, { RHFSelect } from '../../../../components/hook-form';

@@ -21,7 +21,7 @@ import {
 // config
 import { NAV } from '../../../../config-global';
 // components
-import Iconify from '../../../../components/iconify';
+import Iconify from 'src/components/iconify/Iconify';
 import Scrollbar from '../../../../components/scrollbar';
 import { ColorMultiPicker } from '../../../../components/color-utils';
 import { RHFMultiCheckbox, RHFRadioGroup, RHFSlider } from '../../../../components/hook-form';

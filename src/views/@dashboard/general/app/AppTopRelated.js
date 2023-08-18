@@ -5,7 +5,7 @@ import { Box, Card, Rating, CardHeader, Typography, Stack } from '@mui/material'
 import { fCurrency, fShortenNumber } from '../../../../utils/formatNumber';
 // components
 import Label from '../../../../components/label';
-import Iconify from '../../../../components/iconify';
+import Iconify from 'src/components/iconify/Iconify';
 import Scrollbar from '../../../../components/scrollbar';
 
 // ----------------------------------------------------------------------

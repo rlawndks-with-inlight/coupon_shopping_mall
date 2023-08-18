@@ -5,7 +5,7 @@ import { Stack, InputBase, IconButton, InputAdornment } from '@mui/material';
 // utils
 import uuidv4 from '../../../../utils/uuidv4';
 // components
-import Iconify from '../../../../components/iconify';
+import Iconify from 'src/components/iconify/Iconify';
 
 // ----------------------------------------------------------------------
 

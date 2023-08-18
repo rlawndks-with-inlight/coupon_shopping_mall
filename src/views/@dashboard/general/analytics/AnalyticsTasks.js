@@ -12,7 +12,7 @@ import {
 } from '@mui/material';
 // components
 import { useState } from 'react';
-import Iconify from '../../../../components/iconify';
+import Iconify from 'src/components/iconify/Iconify';
 import MenuPopover from '../../../../components/menu-popover';
 
 // ----------------------------------------------------------------------

@@ -8,7 +8,7 @@ import { fDateTime } from '../../../../utils/formatTime';
 // components
 import Label from '../../../../components/label';
 import Image from '../../../../components/image';
-import Iconify from '../../../../components/iconify';
+import Iconify from 'src/components/iconify/Iconify';
 import Carousel, { CarouselArrows } from '../../../../components/carousel';
 
 // ----------------------------------------------------------------------

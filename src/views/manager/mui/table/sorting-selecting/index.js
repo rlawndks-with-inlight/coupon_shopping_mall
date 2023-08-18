@@ -11,7 +11,7 @@ import {
   TableContainer,
 } from '@mui/material';
 // components
-import Iconify from '../../../../../components/iconify';
+import Iconify from 'src/components/iconify/Iconify';
 import Scrollbar from '../../../../../components/scrollbar';
 import {
   useTable,

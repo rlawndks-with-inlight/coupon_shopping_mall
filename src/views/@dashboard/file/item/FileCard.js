@@ -8,7 +8,7 @@ import useCopyToClipboard from '../../../../hooks/useCopyToClipboard';
 import { fDateTime } from '../../../../utils/formatTime';
 import { fData } from '../../../../utils/formatNumber';
 // components
-import Iconify from '../../../../components/iconify';
+import Iconify from 'src/components/iconify/Iconify';
 import MenuPopover from '../../../../components/menu-popover';
 import { useSnackbar } from '../../../../components/snackbar';
 import TextMaxLine from '../../../../components/text-max-line';

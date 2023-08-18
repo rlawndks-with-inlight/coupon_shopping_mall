@@ -15,7 +15,7 @@ import {
 // utils
 import { fCurrency } from '../../../../utils/formatNumber';
 // components
-import Iconify from '../../../../components/iconify';
+import Iconify from 'src/components/iconify/Iconify';
 
 // ----------------------------------------------------------------------
 

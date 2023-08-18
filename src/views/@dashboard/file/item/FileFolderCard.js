@@ -7,7 +7,7 @@ import useCopyToClipboard from '../../../../hooks/useCopyToClipboard';
 // utils
 import { fData } from '../../../../utils/formatNumber';
 // components
-import Iconify from '../../../../components/iconify';
+import Iconify from 'src/components/iconify/Iconify';
 import MenuPopover from '../../../../components/menu-popover';
 import TextMaxLine from '../../../../components/text-max-line';
 import { useSnackbar } from '../../../../components/snackbar';

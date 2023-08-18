@@ -6,7 +6,7 @@ import { Stack, Button, Rating, Avatar, Pagination, Typography } from '@mui/mate
 import { fDate } from '../../../../utils/formatTime';
 import { fShortenNumber } from '../../../../utils/formatNumber';
 // components
-import Iconify from '../../../../components/iconify';
+import Iconify from 'src/components/iconify/Iconify';
 
 // ----------------------------------------------------------------------
 

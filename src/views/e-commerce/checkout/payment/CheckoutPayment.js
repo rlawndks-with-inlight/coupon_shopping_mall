@@ -7,7 +7,7 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { Grid, Button } from '@mui/material';
 import { LoadingButton } from '@mui/lab';
 // components
-import Iconify from '../../../../../components/iconify';
+import Iconify from 'src/components/iconify/Iconify';
 import FormProvider from '../../../../../components/hook-form';
 //
 import CheckoutSummary from '../CheckoutSummary';

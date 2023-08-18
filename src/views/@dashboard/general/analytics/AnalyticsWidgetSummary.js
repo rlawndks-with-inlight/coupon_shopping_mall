@@ -6,7 +6,7 @@ import { Card, Typography } from '@mui/material';
 import { bgGradient } from '../../../../utils/cssStyles';
 import { fShortenNumber } from '../../../../utils/formatNumber';
 // components
-import Iconify from '../../../../components/iconify';
+import Iconify from 'src/components/iconify/Iconify';
 import { commarNumber } from 'src/utils/function';
 
 // ----------------------------------------------------------------------

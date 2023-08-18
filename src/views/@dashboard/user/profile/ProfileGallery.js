@@ -8,7 +8,7 @@ import { fDate } from '../../../../utils/formatTime';
 import { bgBlur } from '../../../../utils/cssStyles';
 // components
 import Image from '../../../../components/image';
-import Iconify from '../../../../components/iconify';
+import Iconify from 'src/components/iconify/Iconify';
 import Lightbox from '../../../../components/lightbox';
 
 // ----------------------------------------------------------------------

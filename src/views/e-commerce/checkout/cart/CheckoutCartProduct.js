@@ -6,7 +6,7 @@ import { fCurrency } from '../../../../../utils/formatNumber';
 // components
 import Image from '../../../../../components/image';
 import Label from '../../../../../components/label';
-import Iconify from '../../../../../components/iconify';
+import Iconify from 'src/components/iconify/Iconify';
 import { ColorPreview } from '../../../../../components/color-utils';
 import { IncrementerButton } from '../../../../../components/custom-input';
 

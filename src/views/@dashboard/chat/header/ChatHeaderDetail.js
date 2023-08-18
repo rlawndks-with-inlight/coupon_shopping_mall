@@ -4,7 +4,7 @@ import { Stack, Box, Link, Typography, IconButton } from '@mui/material';
 // utils
 import { fToNow } from '../../../../utils/formatTime';
 // components
-import Iconify from '../../../../components/iconify';
+import Iconify from 'src/components/iconify/Iconify';
 import BadgeStatus from '../../../../components/badge-status';
 import { CustomAvatar, CustomAvatarGroup } from '../../../../components/custom-avatar';
 

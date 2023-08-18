@@ -3,7 +3,7 @@ import { useRef, useState, useEffect } from 'react';
 // @mui
 import { Stack, MenuItem, IconButton, Button, Box } from '@mui/material';
 // components
-import Iconify from '../../../../components/iconify';
+import Iconify from 'src/components/iconify/Iconify';
 import MenuPopover from '../../../../components/menu-popover';
 import ConfirmDialog from '../../../../components/confirm-dialog';
 //

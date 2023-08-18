@@ -6,7 +6,7 @@ import NextLink from 'next/link';
 import { Grid, Card, Button, CardHeader, Typography } from '@mui/material';
 // routes
 // components
-import Iconify from '../../../../../components/iconify';
+import Iconify from 'src/components/iconify/Iconify';
 import EmptyContent from '../../../../../components/empty-content';
 //
 import CheckoutSummary from '../CheckoutSummary';

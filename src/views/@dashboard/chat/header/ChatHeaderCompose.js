@@ -6,7 +6,7 @@ import match from 'autosuggest-highlight/match';
 import { alpha } from '@mui/material/styles';
 import { Box, Chip, Stack, Avatar, TextField, Typography, Autocomplete } from '@mui/material';
 // components
-import Iconify from '../../../../components/iconify';
+import Iconify from 'src/components/iconify/Iconify';
 import SearchNotFound from '../../../../components/search-not-found';
 
 // ----------------------------------------------------------------------

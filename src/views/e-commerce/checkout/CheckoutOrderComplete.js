@@ -2,7 +2,7 @@ import PropTypes from 'prop-types';
 // @mui
 import { Link, Button, Divider, Typography, Stack } from '@mui/material';
 // components
-import Iconify from '../../../../components/iconify';
+import Iconify from 'src/components/iconify/Iconify';
 import { DialogAnimate } from '../../../../components/animate';
 // assets
 import { OrderCompleteIllustration } from '../../../../assets/illustrations';

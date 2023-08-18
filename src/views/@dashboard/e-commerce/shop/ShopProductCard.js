@@ -12,7 +12,7 @@ import { fCurrency } from '../../../../utils/formatNumber';
 import { useDispatch } from '../../../../redux/store';
 import { addToCart } from '../../../../redux/slices/product';
 // components
-import Iconify from '../../../../components/iconify';
+import Iconify from 'src/components/iconify/Iconify';
 import Label from '../../../../components/label';
 import Image from '../../../../components/image';
 import { ColorPreview } from '../../../../components/color-utils';

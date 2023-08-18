@@ -6,7 +6,7 @@ import { Divider, Typography, Rating, Button, LinearProgress, Stack, Box } from 
 // utils
 import { fShortenNumber } from '../../../../utils/formatNumber';
 // components
-import Iconify from '../../../../components/iconify';
+import Iconify from 'src/components/iconify/Iconify';
 //
 import ProductDetailsReviewList from './ProductDetailsReviewList';
 import ProductDetailsReviewNewDialog from './ProductDetailsNewReviewForm';

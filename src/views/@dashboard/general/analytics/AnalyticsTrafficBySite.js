@@ -4,7 +4,7 @@ import { Box, Card, Paper, Typography, CardHeader, CardContent } from '@mui/mate
 // utils
 import { fShortenNumber } from '../../../../utils/formatNumber';
 // components
-import Iconify from '../../../../components/iconify';
+import Iconify from 'src/components/iconify/Iconify';
 
 // ----------------------------------------------------------------------
 

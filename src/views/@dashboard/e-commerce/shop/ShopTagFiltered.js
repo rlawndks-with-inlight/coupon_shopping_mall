@@ -6,7 +6,7 @@ import { useFormContext } from 'react-hook-form';
 import { useTheme } from '@mui/material/styles';
 import { Chip, Stack, Button, Box } from '@mui/material';
 // components
-import Iconify from '../../../../components/iconify';
+import Iconify from 'src/components/iconify/Iconify';
 
 // ----------------------------------------------------------------------
 

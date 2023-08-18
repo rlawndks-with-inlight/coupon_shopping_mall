@@ -4,7 +4,7 @@ import { useState, useRef } from 'react';
 import { styled, alpha } from '@mui/material/styles';
 import { Stack, Drawer, Avatar, Tooltip, Divider, TextField, Box, IconButton } from '@mui/material';
 // components
-import Iconify from '../../../../components/iconify';
+import Iconify from 'src/components/iconify/Iconify';
 import Scrollbar from '../../../../components/scrollbar';
 import DateRangePicker, { useDateRangePicker } from '../../../../components/date-range-picker';
 //

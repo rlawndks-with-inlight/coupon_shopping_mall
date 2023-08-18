@@ -13,7 +13,7 @@ import axios from '../../../../utils/axios';
 // routes
 import { PATH_DASHBOARD } from '../../../../routes/paths';
 // components
-import Iconify from '../../../../components/iconify';
+import Iconify from 'src/components/iconify/Iconify';
 import Scrollbar from '../../../../components/scrollbar';
 //
 import ChatNavList from './ChatNavList';

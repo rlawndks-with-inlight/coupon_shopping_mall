@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { Card, Stack, Paper, Button, Typography, IconButton } from '@mui/material';
 // components
 import Image from '../../../../../components/image';
-import Iconify from '../../../../../components/iconify';
+import Iconify from 'src/components/iconify/Iconify';
 // section
 import { PaymentNewCardDialog } from '../../../../payment';
 

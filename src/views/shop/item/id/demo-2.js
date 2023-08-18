@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { SkeletonProductDetails } from "src/components/skeleton";
 import { test_item } from "src/data/test-data";
 import dynamic from "next/dynamic";
+
 import { ProductDetailsCarousel, ProductDetailsReview, ProductDetailsSummary } from "src/views/e-commerce/details";
 import styled from "styled-components";
 const ReactQuill = dynamic(() => import('react-quill'), {

@@ -69,18 +69,7 @@ export const Item = (props) => {
     }
   }, [theme_css])
   const onClickHeart = () => {
-<<<<<<< Updated upstream
     insertWishDataUtil(item, themeWishData, onChangeWishData);
-=======
-    let wish_data = [...themeWishData];
-    let find_index = _.indexOf(wish_data, item?.id);
-    if (find_index >= 0) {
-      wish_data.splice(find_index, 1);
-    } else {
-      wish_data.push(item?.id);
-    }
-    onChangeWishData(wish_data)
->>>>>>> Stashed changes
   }
   return (
     <>

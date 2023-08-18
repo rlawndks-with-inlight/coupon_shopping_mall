@@ -13,7 +13,7 @@ margin-bottom: 10vh;
 `
 
 // 박이규
-const Demo2 = (props) => {
+export const Demo2 = (props) => {
     const {
         data: {
 
@@ -28,4 +28,11 @@ const Demo2 = (props) => {
         </>
     )
 }
-export default Demo2
+export const Item = (props) =>{
+
+    return (
+        <>
+        
+        </>
+    )
+}

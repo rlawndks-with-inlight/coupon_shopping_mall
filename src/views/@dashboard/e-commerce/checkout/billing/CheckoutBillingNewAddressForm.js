@@ -15,7 +15,7 @@ import {
 } from '@mui/material';
 import { LoadingButton } from '@mui/lab';
 // assets
-import { countries } from '../../../../../assets/data';
+import { countries } from 'src/assets/data';
 import FormProvider, {
   RHFCheckbox,
   RHFSelect,

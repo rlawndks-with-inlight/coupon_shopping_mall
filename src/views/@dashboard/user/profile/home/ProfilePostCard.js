@@ -17,10 +17,10 @@ import {
   FormControlLabel,
 } from '@mui/material';
 // auth
-import { useAuthContext } from '../../../../../auth/useAuthContext';
+import { useAuthContext } from 'src/auth/useAuthContext';
 // utils
-import { fDate } from '../../../../../utils/formatTime';
-import { fShortenNumber } from '../../../../../utils/formatNumber';
+import { fDate } from 'src/utils/formatTime';
+import { fShortenNumber } from 'src/utils/formatNumber';
 // components
 import Image from 'src/components/image';
 import Iconify from 'src/components/iconify/Iconify';

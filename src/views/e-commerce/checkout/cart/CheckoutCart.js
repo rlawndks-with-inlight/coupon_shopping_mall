@@ -5,7 +5,7 @@ import NextLink from 'next/link';
 // @mui
 import { Grid, Card, Button, CardHeader, Typography } from '@mui/material';
 // routes
-import { PATH_MANAGER } from '../../../../../data/manager-data';
+import { PATH_MANAGER } from 'src/data/manager-data';
 // components
 import Iconify from 'src/components/iconify/Iconify';
 import EmptyContent from 'src/components/empty-content';

@@ -3,7 +3,7 @@ import { useState } from 'react';
 // @mui
 import { Grid, Card, Button, Typography, Stack, Box } from '@mui/material';
 // _mock
-import { _addressBooks } from '../../../../../_mock/arrays';
+import { _addressBooks } from 'src/_mock/arrays';
 // components
 import Label from 'src/components/label';
 import Iconify from 'src/components/iconify/Iconify';

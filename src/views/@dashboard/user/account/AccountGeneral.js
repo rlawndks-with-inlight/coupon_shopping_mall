@@ -11,7 +11,7 @@ import { useAuthContext } from '../../../../auth/useAuthContext';
 // utils
 import { fData } from '../../../../utils/formatNumber';
 // assets
-import { countries } from '../../../../assets/data';
+import { countries } from 'src/assets/data';
 // components
 import { useSnackbar } from 'src/components/snackbar';
 import FormProvider, {

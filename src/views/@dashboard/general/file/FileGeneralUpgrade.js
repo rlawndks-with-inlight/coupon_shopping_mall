@@ -2,7 +2,7 @@ import PropTypes from 'prop-types';
 // @mui
 import { Typography, Stack, Button } from '@mui/material';
 // assets
-import { UpgradeStorageIllustration } from '../../../../assets/illustrations';
+import { UpgradeStorageIllustration } from 'src/assets/illustrations';
 
 // ----------------------------------------------------------------------
 

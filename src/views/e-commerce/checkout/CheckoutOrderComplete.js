@@ -5,7 +5,7 @@ import { Link, Button, Divider, Typography, Stack } from '@mui/material';
 import Iconify from 'src/components/iconify/Iconify';
 import { DialogAnimate } from 'src/components/animate';
 // assets
-import { OrderCompleteIllustration } from '../../../../assets/illustrations';
+import { OrderCompleteIllustration } from 'src/assets/illustrations';
 
 // ----------------------------------------------------------------------
 

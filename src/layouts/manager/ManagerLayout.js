@@ -12,7 +12,6 @@ import Main from './Main';
 import Header from './header';
 import NavMini from './nav/NavMini';
 import NavVertical from './nav/NavVertical';
-import NavHorizontal from './nav/NavHorizontal';
 import { useAuthContext } from './auth/useAuthContext';
 import NextNProgress from 'nextjs-progressbar';
 import { useRouter } from 'next/router';
@@ -49,17 +48,7 @@ export default function ManagerLayout({ children }) {
   const renderNavVertical = <NavVertical openNav={open} onCloseNav={handleClose} />;
 
   const renderContent = () => {
-    if (isNavHorizontal) {
-      return (
-        <>
-          <Header onOpenNav={handleOpen} />
-
-          {isDesktop ? <NavHorizontal /> : renderNavVertical}
-
-          <Main>{children}</Main>
-        </>
-      );
-    }
+    
 
     if (isNavMini) {
       return (

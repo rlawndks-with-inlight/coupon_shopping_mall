@@ -5,9 +5,9 @@ import { useState, useRef } from 'react';
 import { alpha, useTheme, styled } from '@mui/material/styles';
 import { Stack, Card, Typography, Link } from '@mui/material';
 // components
-import Image from '../../../../components/image';
-import { MotionContainer, varFade } from '../../../../components/animate';
-import Carousel, { CarouselDots, CarouselArrows } from '../../../../components/carousel';
+import Image from 'src/components/image';
+import { MotionContainer, varFade } from 'src/components/animate';
+import Carousel, { CarouselDots, CarouselArrows } from 'src/components/carousel';
 
 // ----------------------------------------------------------------------
 

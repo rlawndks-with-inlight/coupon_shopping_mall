@@ -4,9 +4,9 @@ import { Box, Stack, Link, Card, Button, Divider, Typography, CardHeader } from 
 // utils
 import { fToNow } from '../../../../utils/formatTime';
 // components
-import Image from '../../../../components/image';
+import Image from 'src/components/image';
 import Iconify from 'src/components/iconify/Iconify';
-import Scrollbar from '../../../../components/scrollbar';
+import Scrollbar from 'src/components/scrollbar';
 
 // ----------------------------------------------------------------------
 

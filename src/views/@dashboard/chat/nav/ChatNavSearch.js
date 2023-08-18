@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { InputAdornment, ClickAwayListener } from '@mui/material';
 // components
 import Iconify from 'src/components/iconify/Iconify';
-import { CustomTextField } from '../../../../components/custom-input';
+import { CustomTextField } from 'src/components/custom-input';
 
 // ----------------------------------------------------------------------
 

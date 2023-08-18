@@ -6,7 +6,7 @@ import { Typography, Box, Stack } from '@mui/material';
 import { fNumber } from '../../../../utils/formatNumber';
 // components
 import Iconify from 'src/components/iconify/Iconify';
-import Chart, { useChart } from '../../../../components/chart';
+import Chart, { useChart } from 'src/components/chart';
 
 // ----------------------------------------------------------------------
 

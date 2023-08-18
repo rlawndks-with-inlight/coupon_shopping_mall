@@ -4,10 +4,10 @@ import { useState } from 'react';
 import { alpha } from '@mui/material/styles';
 import { Box, Stack, Button, Typography, CardActionArea } from '@mui/material';
 // components
-import Label from '../../../../components/label';
+import Label from 'src/components/label';
 import Iconify from 'src/components/iconify/Iconify';
-import MenuPopover from '../../../../components/menu-popover';
-import FileThumbnail from '../../../../components/file-thumbnail';
+import MenuPopover from 'src/components/menu-popover';
+import FileThumbnail from 'src/components/file-thumbnail';
 //
 import FileFilterButton from './FileFilterButton';
 

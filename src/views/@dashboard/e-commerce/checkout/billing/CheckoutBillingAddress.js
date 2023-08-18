@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { Grid, Card, Button, Typography, Stack, Box } from '@mui/material';
 // _mock
 // components
-import Label from '../../../../../components/label';
+import Label from 'src/components/label';
 import Iconify from 'src/components/iconify/Iconify';
 //
 import CheckoutSummary from '../CheckoutSummary';

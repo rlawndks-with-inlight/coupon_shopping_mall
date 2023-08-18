@@ -4,11 +4,11 @@ import { Box, Stack, Divider, TableRow, TableCell, Typography, IconButton } from
 // utils
 import { fCurrency } from '../../../../../utils/formatNumber';
 // components
-import Image from '../../../../../components/image';
-import Label from '../../../../../components/label';
+import Image from 'src/components/image';
+import Label from 'src/components/label';
 import Iconify from 'src/components/iconify/Iconify';
-import { ColorPreview } from '../../../../../components/color-utils';
-import { IncrementerButton } from '../../../../../components/custom-input';
+import { ColorPreview } from 'src/components/color-utils';
+import { IncrementerButton } from 'src/components/custom-input';
 
 // ----------------------------------------------------------------------
 

@@ -8,7 +8,7 @@ import { Grid, Button } from '@mui/material';
 import { LoadingButton } from '@mui/lab';
 // components
 import Iconify from 'src/components/iconify/Iconify';
-import FormProvider from '../../../../../components/hook-form';
+import FormProvider from 'src/components/hook-form';
 //
 import CheckoutSummary from '../CheckoutSummary';
 import CheckoutDelivery from './CheckoutDelivery';

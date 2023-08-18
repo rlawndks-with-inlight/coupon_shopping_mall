@@ -12,7 +12,7 @@ import {
 } from '@mui/material';
 // components
 import Iconify from 'src/components/iconify/Iconify';
-import Scrollbar from '../../../../../components/scrollbar';
+import Scrollbar from 'src/components/scrollbar';
 import {
   useTable,
   emptyRows,
@@ -21,7 +21,7 @@ import {
   TableHeadCustom,
   TableSelectedAction,
   TablePaginationCustom,
-} from '../../../../../components/table';
+} from 'src/components/table';
 //
 import SortingSelectingToolbar from './SortingSelectingToolbar';
 

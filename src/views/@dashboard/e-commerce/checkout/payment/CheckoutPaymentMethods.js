@@ -19,7 +19,7 @@ import {
   FormControlLabel,
 } from '@mui/material';
 // components
-import Image from '../../../../../components/image';
+import Image from 'src/components/image';
 import Iconify from 'src/components/iconify/Iconify';
 // section
 import { PaymentNewCardDialog } from '../../../../payment';

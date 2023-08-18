@@ -12,7 +12,7 @@ import {
 } from '@mui/material';
 // components
 import Iconify from 'src/components/iconify/Iconify';
-import SearchNotFound from '../../../../components/search-not-found';
+import SearchNotFound from 'src/components/search-not-found';
 
 // ----------------------------------------------------------------------
 

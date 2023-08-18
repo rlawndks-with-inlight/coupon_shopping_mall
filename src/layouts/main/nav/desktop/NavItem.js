@@ -6,8 +6,8 @@ import NextLink from 'next/link';
 // @mui
 import { Link, CardActionArea } from '@mui/material';
 // components
-import Image from '../../../../components/image';
-import Iconify from '../../../../components/iconify';
+import Image from 'src/components/image';
+import Iconify from 'src/components/iconify/Iconify';
 //
 import { ListItem } from './styles';
 

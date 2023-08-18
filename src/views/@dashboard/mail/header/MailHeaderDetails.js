@@ -10,7 +10,7 @@ import useResponsive from '../../../../hooks/useResponsive';
 // utils
 import { fDateTime } from '../../../../utils/formatTime';
 // components
-import { CustomAvatar } from '../../../../components/custom-avatar';
+import { CustomAvatar } from 'src/components/custom-avatar';
 import Iconify from 'src/components/iconify/Iconify';
 
 // ----------------------------------------------------------------------

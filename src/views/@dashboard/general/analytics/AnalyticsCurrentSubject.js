@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { styled, useTheme } from '@mui/material/styles';
 import { Card, CardHeader } from '@mui/material';
 // components
-import Chart, { useChart } from '../../../../components/chart';
+import Chart, { useChart } from 'src/components/chart';
 
 // ----------------------------------------------------------------------
 

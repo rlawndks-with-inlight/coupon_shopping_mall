@@ -6,8 +6,8 @@ import { Stack, Card, InputAdornment } from '@mui/material';
 import { LoadingButton } from '@mui/lab';
 // components
 import Iconify from 'src/components/iconify/Iconify';
-import { useSnackbar } from '../../../../components/snackbar';
-import FormProvider, { RHFTextField } from '../../../../components/hook-form';
+import { useSnackbar } from 'src/components/snackbar';
+import FormProvider, { RHFTextField } from 'src/components/hook-form';
 
 // ----------------------------------------------------------------------
 

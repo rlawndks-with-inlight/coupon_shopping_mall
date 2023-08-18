@@ -7,7 +7,7 @@ import { Collapse } from '@mui/material';
 // hooks
 import useActiveLink from '../../../../hooks/useActiveLink';
 // components
-import { NavSectionVertical } from '../../../../components/nav-section';
+import { NavSectionVertical } from 'src/components/nav-section';
 //
 import NavItem from './NavItem';
 

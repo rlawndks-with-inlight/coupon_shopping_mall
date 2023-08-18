@@ -16,11 +16,11 @@ import {
 import { fDate } from '../../../../utils/formatTime';
 import { fCurrency } from '../../../../utils/formatNumber';
 // components
-import Label from '../../../../components/label';
-import Image from '../../../../components/image';
+import Label from 'src/components/label';
+import Image from 'src/components/image';
 import Iconify from 'src/components/iconify/Iconify';
-import MenuPopover from '../../../../components/menu-popover';
-import ConfirmDialog from '../../../../components/confirm-dialog';
+import MenuPopover from 'src/components/menu-popover';
+import ConfirmDialog from 'src/components/confirm-dialog';
 
 // ----------------------------------------------------------------------
 

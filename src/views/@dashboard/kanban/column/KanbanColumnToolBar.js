@@ -4,8 +4,8 @@ import { useRef, useState, useEffect } from 'react';
 import { Stack, MenuItem, IconButton, Button, Box } from '@mui/material';
 // components
 import Iconify from 'src/components/iconify/Iconify';
-import MenuPopover from '../../../../components/menu-popover';
-import ConfirmDialog from '../../../../components/confirm-dialog';
+import MenuPopover from 'src/components/menu-popover';
+import ConfirmDialog from 'src/components/confirm-dialog';
 //
 import KanbanInputName from '../KanbanInputName';
 

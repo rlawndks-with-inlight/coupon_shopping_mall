@@ -7,9 +7,9 @@ import { Box, Card, IconButton, Typography, Stack } from '@mui/material';
 import { fDate } from '../../../../utils/formatTime';
 import { bgBlur } from '../../../../utils/cssStyles';
 // components
-import Image from '../../../../components/image';
+import Image from 'src/components/image';
 import Iconify from 'src/components/iconify/Iconify';
-import Lightbox from '../../../../components/lightbox';
+import Lightbox from 'src/components/lightbox';
 
 // ----------------------------------------------------------------------
 

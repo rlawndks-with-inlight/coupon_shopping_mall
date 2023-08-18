@@ -22,9 +22,9 @@ import { useAuthContext } from '../../../../../auth/useAuthContext';
 import { fDate } from '../../../../../utils/formatTime';
 import { fShortenNumber } from '../../../../../utils/formatNumber';
 // components
-import Image from '../../../../../components/image';
+import Image from 'src/components/image';
 import Iconify from 'src/components/iconify/Iconify';
-import { CustomAvatar, CustomAvatarGroup } from '../../../../../components/custom-avatar';
+import { CustomAvatar, CustomAvatarGroup } from 'src/components/custom-avatar';
 
 // ----------------------------------------------------------------------
 

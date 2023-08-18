@@ -6,7 +6,7 @@ import { Box, Card, Typography, Stack } from '@mui/material';
 import { fNumber, fPercent } from '../../../../utils/formatNumber';
 // components
 import Iconify from 'src/components/iconify/Iconify';
-import Chart from '../../../../components/chart';
+import Chart from 'src/components/chart';
 
 // ----------------------------------------------------------------------
 

@@ -3,7 +3,7 @@ import { useState } from 'react';
 // @mui
 import { Card, Stack, Paper, Button, Typography, IconButton } from '@mui/material';
 // components
-import Image from '../../../../../components/image';
+import Image from 'src/components/image';
 import Iconify from 'src/components/iconify/Iconify';
 // section
 import { PaymentNewCardDialog } from '../../../../payment';

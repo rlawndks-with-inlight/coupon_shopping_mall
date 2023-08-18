@@ -20,8 +20,8 @@ import { fData } from '../../../../utils/formatNumber';
 import { fDateTime } from '../../../../utils/formatTime';
 // components
 import Iconify from 'src/components/iconify/Iconify';
-import Scrollbar from '../../../../components/scrollbar';
-import FileThumbnail, { fileFormat } from '../../../../components/file-thumbnail';
+import Scrollbar from 'src/components/scrollbar';
+import FileThumbnail, { fileFormat } from 'src/components/file-thumbnail';
 //
 import FileShareDialog from './FileShareDialog';
 import FileInvitedItem from '../FileInvitedItem';

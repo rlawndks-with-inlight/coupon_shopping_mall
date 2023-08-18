@@ -2,8 +2,8 @@ import PropTypes from 'prop-types';
 // @mui
 import { Box, Stack } from '@mui/material';
 // components
-import Scrollbar from '../../../../components/scrollbar';
-import FileThumbnail from '../../../../components/file-thumbnail';
+import Scrollbar from 'src/components/scrollbar';
+import FileThumbnail from 'src/components/file-thumbnail';
 
 // ----------------------------------------------------------------------
 

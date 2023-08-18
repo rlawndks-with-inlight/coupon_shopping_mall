@@ -7,9 +7,9 @@ import { List, Drawer, IconButton } from '@mui/material';
 // config
 import { NAV } from '../../../../config-global';
 // components
-import Logo from '../../../../components/logo';
+import Logo from 'src/components/logo';
 import Iconify from 'src/components/iconify/Iconify';
-import Scrollbar from '../../../../components/scrollbar';
+import Scrollbar from 'src/components/scrollbar';
 //
 import NavList from './NavList';
 

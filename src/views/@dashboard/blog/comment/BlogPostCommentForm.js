@@ -6,7 +6,7 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { Stack } from '@mui/material';
 import { LoadingButton } from '@mui/lab';
 // components
-import FormProvider, { RHFTextField } from '../../../../components/hook-form';
+import FormProvider, { RHFTextField } from 'src/components/hook-form';
 
 // ----------------------------------------------------------------------
 

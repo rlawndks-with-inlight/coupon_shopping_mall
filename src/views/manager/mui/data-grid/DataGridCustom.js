@@ -7,9 +7,9 @@ import { DataGrid, GridToolbar, getGridNumericOperators } from '@mui/x-data-grid
 // utils
 import { fPercent } from '../../../../utils/formatNumber';
 // components
-import Label from '../../../../components/label';
+import Label from 'src/components/label';
 import Iconify from 'src/components/iconify/Iconify';
-import { CustomAvatar } from '../../../../components/custom-avatar';
+import { CustomAvatar } from 'src/components/custom-avatar';
 
 // ----------------------------------------------------------------------
 

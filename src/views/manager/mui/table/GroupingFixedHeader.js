@@ -2,8 +2,8 @@ import { useState, useEffect } from 'react';
 // @mui
 import { Table, TableRow, TableHead, TableBody, TableCell, TableContainer } from '@mui/material';
 // components
-import Scrollbar from '../../../../components/scrollbar';
-import { useTable, TablePaginationCustom } from '../../../../components/table';
+import Scrollbar from 'src/components/scrollbar';
+import { useTable, TablePaginationCustom } from 'src/components/table';
 
 // ----------------------------------------------------------------------
 

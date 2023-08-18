@@ -3,8 +3,8 @@ import { useState } from 'react';
 // @mui
 import { Card, CardHeader, Box } from '@mui/material';
 // components
-import { CustomSmallSelect } from '../../../../components/custom-input';
-import Chart, { useChart } from '../../../../components/chart';
+import { CustomSmallSelect } from 'src/components/custom-input';
+import Chart, { useChart } from 'src/components/chart';
 
 // ----------------------------------------------------------------------
 

@@ -6,8 +6,8 @@ import { Box, Typography, Stack } from '@mui/material';
 // utils
 import { fDateTime } from '../../../../utils/formatTime';
 // components
-import Scrollbar from '../../../../components/scrollbar';
-import FileThumbnail from '../../../../components/file-thumbnail';
+import Scrollbar from 'src/components/scrollbar';
+import FileThumbnail from 'src/components/file-thumbnail';
 //
 import ChatRoomCollapseButton from './ChatRoomCollapseButton';
 

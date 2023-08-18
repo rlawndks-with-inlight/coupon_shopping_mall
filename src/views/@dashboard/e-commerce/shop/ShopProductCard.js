@@ -13,9 +13,9 @@ import { useDispatch } from '../../../../redux/store';
 import { addToCart } from '../../../../redux/slices/product';
 // components
 import Iconify from 'src/components/iconify/Iconify';
-import Label from '../../../../components/label';
-import Image from '../../../../components/image';
-import { ColorPreview } from '../../../../components/color-utils';
+import Label from 'src/components/label';
+import Image from 'src/components/image';
+import { ColorPreview } from 'src/components/color-utils';
 
 // ----------------------------------------------------------------------
 

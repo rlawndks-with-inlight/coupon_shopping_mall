@@ -3,7 +3,7 @@ import { formatDistanceToNowStrict } from 'date-fns';
 // @mui
 import { Avatar, Typography, Stack } from '@mui/material';
 // components
-import Image from '../../../../components/image';
+import Image from 'src/components/image';
 
 // ----------------------------------------------------------------------
 

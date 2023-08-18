@@ -7,7 +7,7 @@ import { Grid, Card, Button, CardHeader, Typography } from '@mui/material';
 // routes
 // components
 import Iconify from 'src/components/iconify/Iconify';
-import EmptyContent from '../../../../../components/empty-content';
+import EmptyContent from 'src/components/empty-content';
 //
 import CheckoutSummary from '../CheckoutSummary';
 import CheckoutCartProductList from './CheckoutCartProductList';

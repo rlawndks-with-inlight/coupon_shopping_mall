@@ -14,9 +14,9 @@ import {
 import { useAuthContext } from '../../../../auth/useAuthContext';
 // components
 import Iconify from 'src/components/iconify/Iconify';
-import { CustomAvatar } from '../../../../components/custom-avatar';
-import MenuPopover from '../../../../components/menu-popover';
-import BadgeStatus from '../../../../components/badge-status';
+import { CustomAvatar } from 'src/components/custom-avatar';
+import MenuPopover from 'src/components/menu-popover';
+import BadgeStatus from 'src/components/badge-status';
 
 // ----------------------------------------------------------------------
 

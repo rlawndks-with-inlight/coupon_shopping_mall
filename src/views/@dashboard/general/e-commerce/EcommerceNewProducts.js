@@ -5,8 +5,8 @@ import { Box, Card, Button, CardContent, Typography } from '@mui/material';
 // utils
 import { bgGradient } from '../../../../utils/cssStyles';
 // components
-import Image from '../../../../components/image';
-import Carousel, { CarouselDots } from '../../../../components/carousel';
+import Image from 'src/components/image';
+import Carousel, { CarouselDots } from 'src/components/carousel';
 
 // ----------------------------------------------------------------------
 

@@ -14,7 +14,7 @@ import axios from '../../../../utils/axios';
 import { PATH_DASHBOARD } from '../../../../routes/paths';
 // components
 import Iconify from 'src/components/iconify/Iconify';
-import Scrollbar from '../../../../components/scrollbar';
+import Scrollbar from 'src/components/scrollbar';
 //
 import ChatNavList from './ChatNavList';
 import ChatNavSearch from './ChatNavSearch';

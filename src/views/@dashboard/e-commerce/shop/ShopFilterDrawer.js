@@ -22,9 +22,9 @@ import {
 import { NAV } from '../../../../config-global';
 // components
 import Iconify from 'src/components/iconify/Iconify';
-import Scrollbar from '../../../../components/scrollbar';
-import { ColorMultiPicker } from '../../../../components/color-utils';
-import { RHFMultiCheckbox, RHFRadioGroup, RHFSlider } from '../../../../components/hook-form';
+import Scrollbar from 'src/components/scrollbar';
+import { ColorMultiPicker } from 'src/components/color-utils';
+import { RHFMultiCheckbox, RHFRadioGroup, RHFSlider } from 'src/components/hook-form';
 
 // ----------------------------------------------------------------------
 

@@ -10,7 +10,7 @@ import {
   TableHeadCustom,
   TableSelectedAction,
   TablePaginationCustom,
-} from '../../../../components/table';
+} from 'src/components/table';
 //
 import FileTableRow from '../item/FileTableRow';
 

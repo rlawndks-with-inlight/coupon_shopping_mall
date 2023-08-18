@@ -12,7 +12,7 @@ import {
 } from '@mui/material';
 // components
 import Iconify from 'src/components/iconify/Iconify';
-import { Upload } from '../../../../components/upload';
+import { Upload } from 'src/components/upload';
 
 // ----------------------------------------------------------------------
 

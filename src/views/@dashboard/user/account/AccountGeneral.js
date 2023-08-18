@@ -13,13 +13,13 @@ import { fData } from '../../../../utils/formatNumber';
 // assets
 import { countries } from '../../../../assets/data';
 // components
-import { useSnackbar } from '../../../../components/snackbar';
+import { useSnackbar } from 'src/components/snackbar';
 import FormProvider, {
   RHFSwitch,
   RHFSelect,
   RHFTextField,
   RHFUploadAvatar,
-} from '../../../../components/hook-form';
+} from 'src/components/hook-form';
 
 // ----------------------------------------------------------------------
 

@@ -11,10 +11,10 @@ import axios from '../../../../utils/axios';
 // routes
 import { PATH_DASHBOARD } from '../../../../routes/paths';
 // components
-import Image from '../../../../components/image';
+import Image from 'src/components/image';
 import Iconify from 'src/components/iconify/Iconify';
-import { CustomTextField } from '../../../../components/custom-input';
-import SearchNotFound from '../../../../components/search-not-found';
+import { CustomTextField } from 'src/components/custom-input';
+import SearchNotFound from 'src/components/search-not-found';
 
 // ----------------------------------------------------------------------
 

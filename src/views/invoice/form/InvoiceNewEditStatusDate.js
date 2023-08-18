@@ -4,7 +4,7 @@ import { useFormContext, Controller } from 'react-hook-form';
 import { DatePicker } from '@mui/x-date-pickers';
 import { Stack, TextField, MenuItem } from '@mui/material';
 // components
-import { RHFSelect, RHFTextField } from '../../../../components/hook-form';
+import { RHFSelect, RHFTextField } from 'src/components/hook-form';
 
 // ----------------------------------------------------------------------
 

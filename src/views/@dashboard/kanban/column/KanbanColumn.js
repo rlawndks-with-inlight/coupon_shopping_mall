@@ -8,7 +8,7 @@ import { useDispatch } from '../../../../redux/store';
 import { deleteColumn, updateColumn, addTask, deleteTask } from '../../../../redux/slices/kanban';
 // components
 import Iconify from 'src/components/iconify/Iconify';
-import { useSnackbar } from '../../../../components/snackbar';
+import { useSnackbar } from 'src/components/snackbar';
 //
 import KanbanTaskAdd from '../KanbanTaskAdd';
 import KanbanTaskCard from '../KanbanTaskCard';

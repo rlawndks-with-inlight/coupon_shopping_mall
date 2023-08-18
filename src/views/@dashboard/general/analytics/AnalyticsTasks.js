@@ -13,7 +13,7 @@ import {
 // components
 import { useState } from 'react';
 import Iconify from 'src/components/iconify/Iconify';
-import MenuPopover from '../../../../components/menu-popover';
+import MenuPopover from 'src/components/menu-popover';
 
 // ----------------------------------------------------------------------
 

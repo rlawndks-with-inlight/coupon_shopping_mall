@@ -5,8 +5,8 @@ import { Stack, LinearProgress } from '@mui/material';
 // utils
 import { bgBlur } from '../../../../utils/cssStyles';
 // components
-import Scrollbar from '../../../../components/scrollbar';
-import EmptyContent from '../../../../components/empty-content';
+import Scrollbar from 'src/components/scrollbar';
+import EmptyContent from 'src/components/empty-content';
 //
 import MailItem from './MailItem';
 

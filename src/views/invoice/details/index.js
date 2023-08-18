@@ -18,9 +18,9 @@ import {
 import { fDate } from '../../../../utils/formatTime';
 import { fCurrency } from '../../../../utils/formatNumber';
 // components
-import Label from '../../../../components/label';
-import Image from '../../../../components/image';
-import Scrollbar from '../../../../components/scrollbar';
+import Label from 'src/components/label';
+import Image from 'src/components/image';
+import Scrollbar from 'src/components/scrollbar';
 //
 import InvoiceToolbar from './InvoiceToolbar';
 

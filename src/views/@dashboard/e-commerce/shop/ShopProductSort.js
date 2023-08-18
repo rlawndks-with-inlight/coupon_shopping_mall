@@ -5,7 +5,7 @@ import { Controller, useFormContext } from 'react-hook-form';
 import { Button, MenuItem, Box } from '@mui/material';
 // components
 import Iconify from 'src/components/iconify/Iconify';
-import MenuPopover from '../../../../components/menu-popover';
+import MenuPopover from 'src/components/menu-popover';
 
 // ----------------------------------------------------------------------
 

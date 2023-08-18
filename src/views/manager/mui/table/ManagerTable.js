@@ -1,6 +1,6 @@
 // @mui
 import { Table, TableRow, TableBody, TableCell, TableContainer, Pagination, Divider, Box, TextField, Button, FormControl, InputLabel, OutlinedInput, InputAdornment, IconButton, CircularProgress, Tooltip } from '@mui/material';
-import { TableHeadCustom, TableNoData } from '../../../../components/table';
+import { TableHeadCustom, TableNoData } from 'src/components/table';
 import {
   DatePicker,
   StaticDatePicker,

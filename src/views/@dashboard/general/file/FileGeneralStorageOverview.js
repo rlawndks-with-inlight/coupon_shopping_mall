@@ -5,7 +5,7 @@ import { Card, Typography, Stack, Avatar } from '@mui/material';
 // utils
 import { fData } from '../../../../utils/formatNumber';
 // components
-import Chart, { useChart } from '../../../../components/chart';
+import Chart, { useChart } from 'src/components/chart';
 
 // ----------------------------------------------------------------------
 

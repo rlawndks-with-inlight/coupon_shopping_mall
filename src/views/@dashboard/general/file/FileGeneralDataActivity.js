@@ -5,8 +5,8 @@ import { Card, CardHeader, Box } from '@mui/material';
 // utils
 import { fData } from '../../../../utils/formatNumber';
 // components
-import { CustomSmallSelect } from '../../../../components/custom-input';
-import Chart, { useChart } from '../../../../components/chart';
+import { CustomSmallSelect } from 'src/components/custom-input';
+import Chart, { useChart } from 'src/components/chart';
 
 // ----------------------------------------------------------------------
 

@@ -16,10 +16,10 @@ import {
 // utils
 import { fCurrency } from '../../../../utils/formatNumber';
 // components
-import Label from '../../../../components/label';
-import Image from '../../../../components/image';
-import Scrollbar from '../../../../components/scrollbar';
-import { TableHeadCustom } from '../../../../components/table';
+import Label from 'src/components/label';
+import Image from 'src/components/image';
+import Scrollbar from 'src/components/scrollbar';
+import { TableHeadCustom } from 'src/components/table';
 
 // ----------------------------------------------------------------------
 

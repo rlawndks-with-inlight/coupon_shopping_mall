@@ -11,8 +11,8 @@ import { fDate } from '../../../../utils/formatTime';
 // routes
 import { PATH_DASHBOARD } from '../../../../routes/paths';
 // components
-import Label from '../../../../components/label';
-import { CustomAvatar } from '../../../../components/custom-avatar';
+import Label from 'src/components/label';
+import { CustomAvatar } from 'src/components/custom-avatar';
 import Iconify from 'src/components/iconify/Iconify';
 //
 import MailItemAction from './MailItemAction';

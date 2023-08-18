@@ -7,7 +7,7 @@ import { alpha } from '@mui/material/styles';
 import { Box, Chip, Stack, Avatar, TextField, Typography, Autocomplete } from '@mui/material';
 // components
 import Iconify from 'src/components/iconify/Iconify';
-import SearchNotFound from '../../../../components/search-not-found';
+import SearchNotFound from 'src/components/search-not-found';
 
 // ----------------------------------------------------------------------
 

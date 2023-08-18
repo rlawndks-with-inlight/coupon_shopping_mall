@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { alpha, useTheme } from '@mui/material/styles';
 import { Box, Stack, Typography, Button, InputBase } from '@mui/material';
 // components
-import Image from '../../../../components/image';
+import Image from 'src/components/image';
 // utils
 import { bgGradient } from '../../../../utils/cssStyles';
 

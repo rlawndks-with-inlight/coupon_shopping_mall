@@ -20,9 +20,9 @@ import { fData } from '../../../../utils/formatNumber';
 import { fDateTime } from '../../../../utils/formatTime';
 // components
 import Iconify from 'src/components/iconify/Iconify';
-import { useSnackbar } from '../../../../components/snackbar';
-import MenuPopover from '../../../../components/menu-popover';
-import FileThumbnail from '../../../../components/file-thumbnail';
+import { useSnackbar } from 'src/components/snackbar';
+import MenuPopover from 'src/components/menu-popover';
+import FileThumbnail from 'src/components/file-thumbnail';
 //
 import { FileShareDialog, FileDetailsDrawer } from '../../file';
 

@@ -5,8 +5,8 @@ import { Stack, Avatar, Typography } from '@mui/material';
 // utils
 import { fToNow } from '../../../../utils/formatTime';
 // components
-import Image from '../../../../components/image';
-import Lightbox from '../../../../components/lightbox';
+import Image from 'src/components/image';
+import Lightbox from 'src/components/lightbox';
 
 // ----------------------------------------------------------------------
 

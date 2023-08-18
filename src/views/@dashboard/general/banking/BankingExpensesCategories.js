@@ -5,7 +5,7 @@ import { Box, Card, Stack, Divider, CardHeader, Typography } from '@mui/material
 // hooks
 import useResponsive from '../../../../hooks/useResponsive';
 // components
-import Chart, { useChart } from '../../../../components/chart';
+import Chart, { useChart } from 'src/components/chart';
 
 // ----------------------------------------------------------------------
 

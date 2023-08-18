@@ -2,7 +2,7 @@ import PropTypes from 'prop-types';
 // @mui
 import { Typography, Dialog, DialogContent, Stack, IconButton } from '@mui/material';
 // components
-import { CustomAvatar } from '../../../../components/custom-avatar';
+import { CustomAvatar } from 'src/components/custom-avatar';
 import Iconify from 'src/components/iconify/Iconify';
 
 // ----------------------------------------------------------------------

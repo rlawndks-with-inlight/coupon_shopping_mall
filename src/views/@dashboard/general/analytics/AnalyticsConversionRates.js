@@ -4,7 +4,7 @@ import { Box, Card, CardHeader } from '@mui/material';
 // utils
 import { fNumber } from '../../../../utils/formatNumber';
 // components
-import Chart, { useChart } from '../../../../components/chart';
+import Chart, { useChart } from 'src/components/chart';
 
 // ----------------------------------------------------------------------
 

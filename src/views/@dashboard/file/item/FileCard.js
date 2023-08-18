@@ -9,11 +9,11 @@ import { fDateTime } from '../../../../utils/formatTime';
 import { fData } from '../../../../utils/formatNumber';
 // components
 import Iconify from 'src/components/iconify/Iconify';
-import MenuPopover from '../../../../components/menu-popover';
-import { useSnackbar } from '../../../../components/snackbar';
-import TextMaxLine from '../../../../components/text-max-line';
-import FileThumbnail from '../../../../components/file-thumbnail';
-import ConfirmDialog from '../../../../components/confirm-dialog';
+import MenuPopover from 'src/components/menu-popover';
+import { useSnackbar } from 'src/components/snackbar';
+import TextMaxLine from 'src/components/text-max-line';
+import FileThumbnail from 'src/components/file-thumbnail';
+import ConfirmDialog from 'src/components/confirm-dialog';
 //
 import FileShareDialog from '../portal/FileShareDialog';
 import FileDetailsDrawer from '../portal/FileDetailsDrawer';

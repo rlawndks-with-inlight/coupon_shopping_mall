@@ -8,7 +8,7 @@ import { Box, Stack, Button, Divider, Typography, InputAdornment, MenuItem } fro
 import { fCurrency } from '../../../../utils/formatNumber';
 // components
 import Iconify from 'src/components/iconify/Iconify';
-import { RHFSelect, RHFTextField } from '../../../../components/hook-form';
+import { RHFSelect, RHFTextField } from 'src/components/hook-form';
 
 // ----------------------------------------------------------------------
 

@@ -7,8 +7,8 @@ import { bgBlur } from '../../../../utils/cssStyles';
 // auth
 import { useAuthContext } from '../../../../auth/useAuthContext';
 // components
-import Image from '../../../../components/image';
-import { CustomAvatar } from '../../../../components/custom-avatar';
+import Image from 'src/components/image';
+import { CustomAvatar } from 'src/components/custom-avatar';
 
 // ----------------------------------------------------------------------
 

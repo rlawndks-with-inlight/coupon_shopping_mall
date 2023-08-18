@@ -2,7 +2,7 @@ import { Box, Button, Card, CardContent, CardHeader, FormControlLabel, Grid, Pap
 import { useEffect, useState } from 'react';
 import { Row, Title } from 'src/components/elements/styled-components';
 import { test_pay_list, test_address_list, test_item, test_items } from 'src/data/test-data';
-import { CheckoutBillingAddress, CheckoutCartProductList, CheckoutSteps, CheckoutSummary } from 'src/views/@dashboard/e-commerce/checkout';
+import {  CheckoutCartProductList, CheckoutSteps, CheckoutSummary } from 'src/views/@dashboard/e-commerce/checkout';
 import styled from 'styled-components'
 import _ from 'lodash'
 import Label from 'src/components/label/Label';

@@ -16,7 +16,6 @@ import { Box, Card, Pagination, Table, TableBody, TableCell, TableContainer, Tab
 // components
 import { TableHeadCustom } from 'src/components/table';
 //
-import { CheckoutCartProduct } from 'src/views/@dashboard/e-commerce/checkout';
 import { test_items } from 'src/data/test-data';
 import Image from 'src/components/image/Image';
 import { fCurrency } from 'src/utils/formatNumber';

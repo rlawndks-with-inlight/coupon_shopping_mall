@@ -8,7 +8,7 @@ import { HEADER } from '../../../config-global';
 // utils
 import { bgBlur } from '../../../utils/cssStyles';
 // components
-import { NavSectionHorizontal } from '../../../components/nav-section';
+import NavSectionHorizontal from 'src/components/nav-section/horizontal/NavSectionHorizontal';
 //
 import { navConfig } from './config-navigation';
 // ----------------------------------------------------------------------

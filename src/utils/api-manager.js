@@ -352,6 +352,13 @@ export const mappingSellerWithProducts = (params) => { //관리자 셀러 상품
   }
   return post(`/api/v1/manager/merchandises/${id}/mapping-products`,obj);
 }
+export const getMappingSellerWithProducts = (params) => { //관리자 셀러 상품 매핑 출력
+  const { id } = params;
+  let query = {
+    id
+  }
+  return get(`/api/v1/manager/merchandises/${id}/mapping-products`, query);
+}
 export const getPostCategoriesByManager = (params) => { //관리자 게시글 카테고리 목록 출력
   const { page, page_size, s_dt, e_dt, search } = params;
   let query = {

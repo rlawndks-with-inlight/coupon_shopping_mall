@@ -12,7 +12,7 @@ import { react_quill_data } from "src/data/manager-data";
 import { axiosIns } from "src/utils/axios";
 import $ from 'jquery';
 import Iconify from "src/components/iconify/Iconify";
-import { addSellerByManager, getProductsByManager, getSellerByManager, mappingSellerWithProducts, updateSellerByManager } from "src/utils/api-manager";
+import { addSellerByManager, getMappingSellerWithProducts, getProductsByManager, getSellerByManager, mappingSellerWithProducts, updateSellerByManager } from "src/utils/api-manager";
 import dynamic from "next/dynamic";
 import { useAuthContext } from "src/layouts/manager/auth/useAuthContext";
 import { toast } from "react-hot-toast";
@@ -87,8 +87,13 @@ const SellerEdit = () => {
       page: 1,
       page_size: 100000
     })
+    
     setProductContent(product_content);
     if (router.query?.edit_category == 'edit') {
+      let product_ids = await getMappingSellerWithProducts({
+        id: router.query?.id
+      })
+      setProductIds(product_ids.map((item=>{return item?.id})))
       let data = await getSellerByManager({ id: router.query?.id });
       if (data) {
         setItem(data);

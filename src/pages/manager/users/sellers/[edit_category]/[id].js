@@ -1,5 +1,5 @@
 
-import { Avatar, Button, Card, Grid, IconButton, Stack, TextField, Tooltip, Typography, alpha } from "@mui/material";
+import { Autocomplete, Avatar, Button, Card, Grid, IconButton, Stack, TextField, Tooltip, Typography, alpha } from "@mui/material";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { Row, themeObj } from "src/components/elements/styled-components";
@@ -12,42 +12,43 @@ import { react_quill_data } from "src/data/manager-data";
 import { axiosIns } from "src/utils/axios";
 import $ from 'jquery';
 import Iconify from "src/components/iconify/Iconify";
-import { addSellerByManager, getSellerByManager, updateSellerByManager } from "src/utils/api-manager";
+import { addSellerByManager, getProductsByManager, getSellerByManager, mappingSellerWithProducts, updateSellerByManager } from "src/utils/api-manager";
 import dynamic from "next/dynamic";
+import { useAuthContext } from "src/layouts/manager/auth/useAuthContext";
+import { toast } from "react-hot-toast";
+import { useModal } from "src/components/dialog/ModalProvider";
+import _ from "lodash";
 const ReactQuill = dynamic(() => import('react-quill'), {
   ssr: false,
   loading: () => <p>Loading ...</p>,
 })
-const tab_list = [
-  {
-    value: 0,
-    label: '기본정보'
-  },
-  {
-    value: 1,
-    label: '파일 설정'
-  }
-]
-const SellerEdit = () => {
 
+const SellerEdit = () => {
+  const { setModal } = useModal()
+  const { user } = useAuthContext();
   const { themeMode } = useSettingsContext();
 
   const router = useRouter();
 
   const [loading, setLoading] = useState(true);
+  const [productContent, setProductContent] = useState({});
   const [item, setItem] = useState({
     user_name: '',//
-    user_pw: '',//
     nick_name: '',//
-    mcht_name: 'asd',
     addr: '',
-    resident_num: '',
-    business_num: '',
     acct_bank_name: '',
     acct_num: '',
     acct_name: '',
     phone_num: '',//
     note: '',
+    mcht_name: 'asd',
+    mcht_trx_fee: 0,
+    sns_obj: {
+      youtube_channel: '',
+      instagram_id: ''
+    },
+    background_file: undefined,
+    background_img: '',
     passbook_file: undefined,
     passbook_img: '',
     contract_file: undefined,
@@ -58,12 +59,35 @@ const SellerEdit = () => {
     id_img: '',
     profile_file: undefined,
     profile_img: '',
+    user_pw: '',//
   })
+  const [productIds, setProductIds] = useState([]);
   const [currentTab, setCurrentTab] = useState(0);
+  const tab_list = [
+    {
+      value: 0,
+      label: '기본정보'
+    },
+    {
+      value: 1,
+      label: '파일 설정'
+    },
+    ...(user?.level >= 40 ? [
+      {
+        value: 2,
+        label: '수수료 설정 및 분양할 상품'
+      },
+    ] : [])
+  ]
   useEffect(() => {
     settingPage();
   }, [])
   const settingPage = async () => {
+    let product_content = await getProductsByManager({
+      page: 1,
+      page_size: 100000
+    })
+    setProductContent(product_content);
     if (router.query?.edit_category == 'edit') {
       let data = await getSellerByManager({ id: router.query?.id });
       if (data) {
@@ -90,10 +114,25 @@ const SellerEdit = () => {
     } else {
       result = await addSellerByManager(item);
     }
+   
     if (result) {
-      toast.success("성공적으로 저장 되었습니다.");
-      router.push('/manager/users/sellers');
+      if(productIds.length > 0){
+        let result_mapping = await mappingSellerWithProducts({
+          id: router.query?.id || result?.id,
+          product_ids:productIds
+        })
+        if(!result_mapping){
+          toast.error('가맹점 상품 매칭중 에러');
+          return;
+        }
+      }
+    }else{
+      toast.error('가맹점 저장 중 에러');
+      return;
     }
+    toast.success("성공적으로 저장 되었습니다.");
+    router.push('/manager/users/sellers');
+
   }
   return (
     <>
@@ -119,13 +158,13 @@ const SellerEdit = () => {
                         <Typography variant="subtitle2" sx={{ color: 'text.secondary' }}>
                           프로필사진 및 배경사진
                         </Typography>
-                        <Upload file={item.background_img} onDrop={(acceptedFiles) => {
+                        <Upload file={item.background_file || item.background_img} onDrop={(acceptedFiles) => {
                           const newFile = acceptedFiles[0];
                           if (newFile) {
                             setItem(
                               {
                                 ...item,
-                                ['background_img']: Object.assign(newFile, {
+                                ['background_file']: Object.assign(newFile, {
                                   preview: URL.createObjectURL(newFile),
                                 })
                               }
@@ -135,7 +174,8 @@ const SellerEdit = () => {
                           setItem(
                             {
                               ...item,
-                              ['background_img']: ''
+                              ['background_img']: '',
+                              ['background_file']: undefined
                             }
                           )
                         }}
@@ -190,12 +230,15 @@ const SellerEdit = () => {
                       <Stack spacing={1}>
                         <TextField
                           label='인스타그램 아이디'
-                          value={item.instagram_id}
+                          value={item.sns_obj.instagram_id}
                           onChange={(e) => {
                             setItem(
                               {
                                 ...item,
-                                ['instagram_id']: e.target.value
+                                ['sns_obj']: {
+                                  ...item.sns_obj,
+                                  instagram_id: e.target.value
+                                }
                               }
                             )
                           }} />
@@ -203,12 +246,15 @@ const SellerEdit = () => {
                       <Stack spacing={1}>
                         <TextField
                           label='유튜브 채널'
-                          value={item.youtube_channel}
+                          value={item.sns_obj.youtube_channel}
                           onChange={(e) => {
                             setItem(
                               {
                                 ...item,
-                                ['youtube_channel']: e.target.value
+                                ['sns_obj']: {
+                                  ...item.sns_obj,
+                                  youtube_channel: e.target.value
+                                }
                               }
                             )
                           }} />
@@ -230,18 +276,22 @@ const SellerEdit = () => {
                             }
                           )
                         }} />
-                      <TextField
-                        label='패스워드'
-                        value={item.user_pw}
-                        type='password'
-                        onChange={(e) => {
-                          setItem(
-                            {
-                              ...item,
-                              ['user_pw']: e.target.value
-                            }
-                          )
-                        }} />
+                      {router.query?.edit_category == 'add' &&
+                        <>
+                          <TextField
+                            label='패스워드'
+                            value={item.user_pw}
+
+                            type='password'
+                            onChange={(e) => {
+                              setItem(
+                                {
+                                  ...item,
+                                  ['user_pw']: e.target.value
+                                }
+                              )
+                            }} />
+                        </>}
                       <TextField
                         label='닉네임'
                         value={item.nick_name}
@@ -257,7 +307,6 @@ const SellerEdit = () => {
                         label='전화번호'
                         value={item.phone_num}
                         placeholder="하이픈(-) 제외 입력"
-                        type='number'
                         onChange={(e) => {
                           setItem(
                             {
@@ -274,39 +323,6 @@ const SellerEdit = () => {
                             {
                               ...item,
                               ['addr']: e.target.value
-                            }
-                          )
-                        }} />
-                      <TextField
-                        label='상세주소'
-                        value={item.addr_detail}
-                        onChange={(e) => {
-                          setItem(
-                            {
-                              ...item,
-                              ['addr_detail']: e.target.value
-                            }
-                          )
-                        }} />
-                      <TextField
-                        label='사업자 번호'
-                        value={item.business_num}
-                        onChange={(e) => {
-                          setItem(
-                            {
-                              ...item,
-                              ['business_num']: e.target.value
-                            }
-                          )
-                        }} />
-                      <TextField
-                        label='주민등록번호'
-                        value={item.resident_num}
-                        onChange={(e) => {
-                          setItem(
-                            {
-                              ...item,
-                              ['resident_num']: e.target.value
                             }
                           )
                         }} />
@@ -367,7 +383,7 @@ const SellerEdit = () => {
                         <Typography variant="subtitle2" sx={{ color: 'text.secondary' }}>
                           통장사본 이미지
                         </Typography>
-                        <Upload file={item.passbook_file} onDrop={(acceptedFiles) => {
+                        <Upload file={item.passbook_file || item.passbook_img} onDrop={(acceptedFiles) => {
                           const newFile = acceptedFiles[0];
                           if (newFile) {
                             setItem(
@@ -402,7 +418,7 @@ const SellerEdit = () => {
                         <Typography variant="subtitle2" sx={{ color: 'text.secondary' }}>
                           계약서 이미지
                         </Typography>
-                        <Upload file={item.contract_file} onDrop={(acceptedFiles) => {
+                        <Upload file={item.contract_file || item.contract_img} onDrop={(acceptedFiles) => {
                           const newFile = acceptedFiles[0];
                           if (newFile) {
                             setItem(
@@ -443,7 +459,7 @@ const SellerEdit = () => {
                         <Typography variant="subtitle2" sx={{ color: 'text.secondary' }}>
                           사업자등록증 이미지
                         </Typography>
-                        <Upload file={item.bsin_lic_file} onDrop={(acceptedFiles) => {
+                        <Upload file={item.bsin_lic_file || item.bsin_lic_img} onDrop={(acceptedFiles) => {
                           const newFile = acceptedFiles[0];
                           if (newFile) {
                             setItem(
@@ -478,7 +494,7 @@ const SellerEdit = () => {
                         <Typography variant="subtitle2" sx={{ color: 'text.secondary' }}>
                           신분증 사본 이미지
                         </Typography>
-                        <Upload file={item.id_file} onDrop={(acceptedFiles) => {
+                        <Upload file={item.id_file || item.id_img} onDrop={(acceptedFiles) => {
                           const newFile = acceptedFiles[0];
                           if (newFile) {
                             setItem(
@@ -513,12 +529,59 @@ const SellerEdit = () => {
                   </Card>
                 </Grid>
               </>}
+            {currentTab == 2 &&
+              <>
+                <Grid item xs={12} md={6}>
+                  <Card sx={{ p: 2, height: '100%' }}>
+                    <Stack spacing={3}>
+                      <TextField
+                        label='수수료률'
+                        value={item.mcht_trx_fee}
+                        type="number"
+                        onChange={(e) => {
+                          setItem(
+                            {
+                              ...item,
+                              ['mcht_trx_fee']: e.target.value
+                            }
+                          )
+                        }} />
+                    </Stack>
+                  </Card>
+                </Grid>
+                <Grid item xs={12} md={6}>
+                  <Card sx={{ p: 2, height: '100%' }}>
+                    <Stack spacing={3}>
+                    <Autocomplete
+                            multiple
+                            fullWidth
+                            options={productContent?.content && (productContent?.content ?? []).map(item => { return item?.id })}
+                            getOptionLabel={(item_id) => _.find((productContent?.content ?? []), { id: parseInt(item_id) })?.product_name}
+                            defaultValue={productIds}
+                            value={productIds}
+                            onChange={(e, value) => {
+                              setProductIds(value);
+                            }}
+                            renderInput={(params) => (
+                              <TextField {...params} label="선택할 상품" placeholder="상품선택" />
+                            )}
+                          />
+                    </Stack>
+                  </Card>
+                </Grid>
+              </>}
             <Grid item xs={12} md={12}>
               <Card sx={{ p: 3 }}>
                 <Stack spacing={1} style={{ display: 'flex' }}>
                   <Button variant="contained" style={{
                     height: '48px', width: '120px', marginLeft: 'auto'
-                  }} onClick={onSave}>
+                  }} onClick={() => {
+                    setModal({
+                      func: () => { onSave() },
+                      icon: 'material-symbols:edit-outline',
+                      title: '저장 하시겠습니까?'
+                    })
+                  }}>
                     저장
                   </Button>
                 </Stack>

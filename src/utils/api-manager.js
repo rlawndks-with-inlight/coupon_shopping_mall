@@ -274,20 +274,24 @@ export const getSellersByManager = (params) => { //관리자 셀러 목록 출�
   return get(`/api/v1/manager/merchandises`, query);
 }
 export const addSellerByManager = (params) => { //관리자 셀러 추가
-  const { user_name, nick_name, mcht_name, addr, resident_num, business_num, acct_bank_name, acct_bank_code, acct_num, acct_name, phone_num, note, user_pw,
+  const { user_name, nick_name, mcht_name, addr, resident_num, business_num, acct_bank_name, acct_bank_code, acct_num, acct_name, phone_num, note, user_pw, mcht_trx_fee,
+    sns_obj,
     passbook_file,
     contract_file,
     bsin_lic_file,
     id_file,
     profile_file,
+    background_file,
   } = params;
   let obj = {
-    user_name, nick_name, mcht_name, addr, resident_num, business_num, acct_bank_name, acct_bank_code, acct_num, acct_name, phone_num, note, user_pw,
+    user_name, nick_name, mcht_name, addr, resident_num, business_num, acct_bank_name, acct_bank_code, acct_num, acct_name, phone_num, note, user_pw, mcht_trx_fee,
+    sns_obj,
     passbook_file,
     contract_file,
     bsin_lic_file,
     id_file,
     profile_file,
+    background_file,
   }
   let images = [
     'passbook',
@@ -295,27 +299,32 @@ export const addSellerByManager = (params) => { //관리자 셀러 추가
     'bsin_lic',
     'id',
     'profile',
+    'background',
   ]
   obj = settingdeleteImageObj(images, obj);
   return post(`/api/v1/manager/merchandises`, obj);
 }
 
 export const updateSellerByManager = (params) => { //관리자 셀러 수정
-  const { user_name, nick_name, mcht_name, addr, resident_num, business_num, acct_bank_name, acct_bank_code, acct_num, acct_name, phone_num, note, user_pw,
+  const { user_name, nick_name, mcht_name, addr, resident_num, business_num, acct_bank_name, acct_bank_code, acct_num, acct_name, phone_num, note, user_pw, mcht_trx_fee,
+    sns_obj,
     passbook_file, passbook_img,
     contract_file, contract_img,
     bsin_lic_file, bsin_lic_img,
     id_file, id_img,
     profile_file, profile_img,
+    background_file, background_img,
     id
   } = params;
   let obj = {
-    user_name, nick_name, mcht_name, addr, resident_num, business_num, acct_bank_name, acct_bank_code, acct_num, acct_name, phone_num, note, user_pw,
+    user_name, nick_name, mcht_name, addr, resident_num, business_num, acct_bank_name, acct_bank_code, acct_num, acct_name, phone_num, note, user_pw, mcht_trx_fee,
+    sns_obj,
     passbook_file, passbook_img,
     contract_file, contract_img,
     bsin_lic_file, bsin_lic_img,
     id_file, id_img,
     profile_file, profile_img,
+    background_file, background_img,
   }
   let images = [
     'passbook',
@@ -323,6 +332,7 @@ export const updateSellerByManager = (params) => { //관리자 셀러 수정
     'bsin_lic',
     'id',
     'profile',
+    'background',
   ]
   obj = settingImageObj(images, obj);
   return put(`/api/v1/manager/merchandises/${id}`, obj);
@@ -334,6 +344,13 @@ export const getSellerByManager = (params) => { //관리자 셀러 단일 출력
 export const deleteSellerByManager = (params) => { //관리자 셀러 삭제
   const { id } = params;
   return deleteItem(`/api/v1/manager/merchandises/${id}`);
+}
+export const mappingSellerWithProducts = (params) => { //관리자 셀러 상품 매핑
+  const { id, product_ids } = params;
+  let obj = {
+    product_ids
+  }
+  return post(`/api/v1/manager/merchandises/${id}/mapping-products`,obj);
 }
 export const getPostCategoriesByManager = (params) => { //관리자 게시글 카테고리 목록 출력
   const { page, page_size, s_dt, e_dt, search } = params;

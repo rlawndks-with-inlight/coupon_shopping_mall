@@ -40,6 +40,7 @@ const App = (props) => {
       setHeadData(head_data)
     }
   }, [])
+  
   return (
     <>
       <Head>
@@ -96,8 +97,9 @@ App.getInitialProps = async (context) => {
       const url = `${process.env.BACK_URL}/api/v1/auth/domain?dns=${host}`;
       const res = await fetch(url);
       head_data = await res.json();
+      let dns_data = head_data?.brand;
       return {
-        head_data: head_data,
+        head_data: dns_data,
       }
     } else {
       return {

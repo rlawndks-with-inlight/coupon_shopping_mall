@@ -132,7 +132,6 @@ const Demo1 = (props) => {
             mcht_id: router.query?.id
         })
         setSellerData(seller_info)
-
         let products = await getProductsByUser({
             page: 1,
             page_size: 100000,
@@ -152,9 +151,6 @@ const Demo1 = (props) => {
         setProducts(products?.content)
     }
 
-    useEffect(() => {
-        setSellerData(test_seller_data);
-    }, [])
     useEffect(() => {
         const handleScroll = () => {
             const currentScrollHeight = window.scrollY;
@@ -182,7 +178,7 @@ const Demo1 = (props) => {
         <>
             <Wrappers>
                 <BannerImg style={{
-                    backgroundImage: `url(${test_seller_data?.banner})`,
+                    backgroundImage: `url(${sellerData?.background_img})`,
                     backgroundSize: 'cover',
                     backgroundRepeat: 'no-repeat',
                     backgroundPosition: 'center'

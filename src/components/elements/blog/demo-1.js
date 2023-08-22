@@ -3,6 +3,7 @@ import styled from "styled-components"
 import { themeObj } from "../styled-components"
 import { IconButton } from "@mui/material"
 import { Icon } from "@iconify/react"
+import { LazyLoadImage } from "react-lazy-load-image-component"
 
 //김인욱 컴포넌트
 const ItemContent = styled.div`
@@ -22,9 +23,7 @@ width:48%;
 cursor:pointer;
 position:relative;
 `
-const ItemImg = styled.img`
-width:100%;
-`
+
 const SellerImg = styled.div`
 width:100%;
 height:199px;
@@ -43,7 +42,7 @@ export const Item = (props) => {
       <ItemContent onClick={() => {
         router.push(`/blog/product/${item.id}`)
       }}>
-        <ItemImg src={item?.product_img} />
+        <LazyLoadImage style={{width:'100%'}} src={item?.product_img} />
         <ItemText style={{ fontWeight: 'bold' }}>{item?.name}</ItemText>
         <ItemText style={{ color: themeObj.grey[500] }}>{item?.sub_name}</ItemText>
       </ItemContent>
@@ -56,7 +55,7 @@ export const SellerItem = (props) => {
     <>
       <SellerItemContent>
         <div style={{ width: '100%', position: 'relative' }}>
-          <ItemImg src={item?.product_img} onClick={() => {
+          <LazyLoadImage style={{width:'100%'}} src={item?.product_img} onClick={() => {
             router.push(`/blog/product/${item.id}`)
           }} />
           <IconButton sx={{ position: 'absolute', right: '0', bottom: '0' }}

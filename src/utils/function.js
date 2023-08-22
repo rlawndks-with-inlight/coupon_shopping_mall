@@ -316,6 +316,20 @@ export function getAllIdsWithParents(categories) {
   }
   return result;
 }
+export const getDownToTopChildren = (children_id, themeCategoryList) => {
+  let top_down_ids = getAllIdsWithParents(themeCategoryList);
+  let result = [];
+  for (var i = 0; i < top_down_ids.length; i++) {
+    if (top_down_ids[i][top_down_ids[i].length - 1]?.id == children_id) {
+      result = top_down_ids[i];
+      break;
+    }
+  }
+  result = result.map(item => {
+    return item?.id;
+  })
+  return result;
+}
 export function hexToRgb(hex) {
   // hex 값의 # 기호를 제거합니다.
   hex = hex.replace("#", "");

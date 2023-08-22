@@ -1,8 +1,18 @@
 import { toast } from "react-hot-toast";
 import { axiosIns } from "./axios";
 import { serialize } from 'object-to-formdata';
+import { getLocalStorage } from "./local-storage";
 
-export const post = async (url, obj) => {
+export const post = async (url, obj_) => {
+  let dns_data = getLocalStorage('themeDnsData');
+  dns_data = JSON.parse(dns_data);
+  let obj = obj_??{};
+  if (!(obj?.brand_id > 0)) {
+    obj['brand_id'] = dns_data?.id;
+  }
+  if (!(obj?.root_id > 0)) {
+    obj['root_id'] = dns_data?.root_id;
+  }
   try {
     let formData = new FormData();
     let form_data_options = {
@@ -22,7 +32,16 @@ export const post = async (url, obj) => {
     return false;
   }
 }
-export const deleteItem = async (url, obj) => {
+export const deleteItem = async (url, obj_) => {
+  let dns_data = getLocalStorage('themeDnsData');
+  dns_data = JSON.parse(dns_data);
+  let obj = obj_??{};
+  if (!(obj?.brand_id > 0)) {
+    obj['brand_id'] = dns_data?.id;
+  }
+  if (!(obj?.root_id > 0)) {
+    obj['root_id'] = dns_data?.root_id;
+  }
   try {
     const response = await axiosIns().delete(url, obj);
     return response;
@@ -32,14 +51,23 @@ export const deleteItem = async (url, obj) => {
     return false;
   }
 }
-export const put = async (url, obj) => {
+export const put = async (url, obj_) => {
+  let dns_data = getLocalStorage('themeDnsData');
+  dns_data = JSON.parse(dns_data);
+  let obj = obj_??{};
+  if (!(obj?.brand_id > 0)) {
+    obj['brand_id'] = dns_data?.id;
+  }
+  if (!(obj?.root_id > 0)) {
+    obj['root_id'] = dns_data?.root_id;
+  }
   try {
     let formData = new FormData();
     let form_data_options = {
       indices: true,
     }
     formData = serialize(obj, form_data_options);
-    formData.append('_method', 'PUT')
+    formData.append('_method', 'PUT');
     let config = {
       headers: {
         'Content-Type': "multipart/form-data",
@@ -53,8 +81,17 @@ export const put = async (url, obj) => {
     return false;
   }
 }
-export const get = async (url, params) => {
+export const get = async (url, params_) => {
   try {
+    let dns_data = getLocalStorage('themeDnsData');
+    dns_data = JSON.parse(dns_data);
+    let params = params_??{};
+    if (!(params?.brand_id > 0)) {
+      params['brand_id'] = dns_data?.id;
+    }
+    if (!(params?.root_id > 0)) {
+      params['root_id'] = dns_data?.root_id;
+    }
     let query = new URLSearchParams(params).toString()
     const response = await axiosIns().get(`${url}?${query}`);
     return response?.data;
@@ -68,6 +105,7 @@ export const get = async (url, params) => {
     return false;
   }
 }
+
 const settingImageObj = (images, obj_) => {//이미지 존재여부에따라 img 또는 file로 리턴함
   let obj = obj_;
   for (var i = 0; i < images.length; i++) {
@@ -350,7 +388,7 @@ export const mappingSellerWithProducts = (params) => { //관리자 셀러 상품
   let obj = {
     product_ids
   }
-  return post(`/api/v1/manager/merchandises/${id}/mapping-products`,obj);
+  return post(`/api/v1/manager/merchandises/${id}/mapping-products`, obj);
 }
 export const getMappingSellerWithProducts = (params) => { //관리자 셀러 상품 매핑 출력
   const { id } = params;

@@ -87,13 +87,13 @@ const SellerEdit = () => {
       page: 1,
       page_size: 100000
     })
-    
+
     setProductContent(product_content);
     if (router.query?.edit_category == 'edit') {
       let product_ids = await getMappingSellerWithProducts({
         id: router.query?.id
       })
-      setProductIds(product_ids.map((item=>{return item?.id})))
+      setProductIds(product_ids.map((item => { return item?.id })))
       let data = await getSellerByManager({ id: router.query?.id });
       if (data) {
         setItem(data);
@@ -119,19 +119,19 @@ const SellerEdit = () => {
     } else {
       result = await addSellerByManager(item);
     }
-   
+
     if (result) {
-      if(productIds.length > 0){
+      if (productIds.length > 0) {
         let result_mapping = await mappingSellerWithProducts({
           id: router.query?.id || result?.id,
-          product_ids:productIds
+          product_ids: productIds
         })
-        if(!result_mapping){
+        if (!result_mapping) {
           toast.error('가맹점 상품 매칭중 에러');
           return;
         }
       }
-    }else{
+    } else {
       toast.error('가맹점 저장 중 에러');
       return;
     }
@@ -557,20 +557,20 @@ const SellerEdit = () => {
                 <Grid item xs={12} md={6}>
                   <Card sx={{ p: 2, height: '100%' }}>
                     <Stack spacing={3}>
-                    <Autocomplete
-                            multiple
-                            fullWidth
-                            options={productContent?.content && (productContent?.content ?? []).map(item => { return item?.id })}
-                            getOptionLabel={(item_id) => _.find((productContent?.content ?? []), { id: parseInt(item_id) })?.product_name}
-                            defaultValue={productIds}
-                            value={productIds}
-                            onChange={(e, value) => {
-                              setProductIds(value);
-                            }}
-                            renderInput={(params) => (
-                              <TextField {...params} label="선택할 상품" placeholder="상품선택" />
-                            )}
-                          />
+                      <Autocomplete
+                        multiple
+                        fullWidth
+                        options={productContent?.content && (productContent?.content ?? []).map(item => { return item?.id })}
+                        getOptionLabel={(item_id) => _.find((productContent?.content ?? []), { id: parseInt(item_id) })?.product_name}
+                        defaultValue={productIds}
+                        value={productIds}
+                        onChange={(e, value) => {
+                          setProductIds(value);
+                        }}
+                        renderInput={(params) => (
+                          <TextField {...params} label="분양할 상품" placeholder="상품선택" />
+                        )}
+                      />
                     </Stack>
                   </Card>
                 </Grid>

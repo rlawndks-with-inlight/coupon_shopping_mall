@@ -7,9 +7,9 @@ import { useSettingsContext } from 'src/components/settings';
 import { test_categories, test_items, test_seller } from 'src/data/test-data';
 import styled from 'styled-components'
 import _ from 'lodash'
-import { commarNumber } from 'src/utils/function';
+import { commarNumber, getAllIdsWithParents, getDownToTopChildren } from 'src/utils/function';
 import { logoSrc } from 'src/data/data';
-import { getProductsByUser } from 'src/utils/api-shop';
+import { getProductsByUser, getSellerCategoriesByUser, getSellerInfoByUser } from 'src/utils/api-shop';
 
 const Wrappers = styled.div`
 max-width: 840px;
@@ -105,7 +105,7 @@ const Demo1 = (props) => {
             router
         },
     } = props;
-    const { themeMode } = useSettingsContext();
+    const { themeMode, themeCategoryList, themePostCategoryList } = useSettingsContext();
     const test_seller_data = {
         seller: test_seller[0],
         banner: 'https://d32rratnkhh4zp.cloudfront.net/media/images/2022/1/11/thumb@1080_1641873353-1ecca7c0-00a5-42fe-9d2a-8e79c7b29f75.jpeg',
@@ -113,6 +113,7 @@ const Demo1 = (props) => {
     }
 
     const [sellerData, setSellerData] = useState({});
+    const [sellerCategories, setSellerCategories] = useState([]);
     const [categoryId, setCategoryId] = useState(0);
     const [scrollY, setScrollY] = useState(0);
     const [cartOpen, setCartOpen] = useState(false);
@@ -127,11 +128,27 @@ const Demo1 = (props) => {
     }, [])
 
     const pageSetting = async () => {
+        let seller_info = await getSellerInfoByUser({
+            mcht_id: router.query?.id
+        })
+        setSellerData(seller_info)
+
         let products = await getProductsByUser({
             page: 1,
             page_size: 100000,
+            mcht_id: router.query?.id
         })
-        console.log(products)
+        let category_list = [];
+        for (var i = 0; i < products?.content.length; i++) {
+            let top_category_id = getDownToTopChildren(products?.content[i]?.category_id, themeCategoryList);
+            if (!category_list.includes(top_category_id)) {
+                category_list.push(top_category_id);
+            }
+        }
+        category_list = category_list.map((item => {
+            return _.find(themeCategoryList, { id: parseInt(item) })
+        }))
+        setSellerCategories(category_list);
         setProducts(products?.content)
     }
 
@@ -170,8 +187,8 @@ const Demo1 = (props) => {
                     backgroundRepeat: 'no-repeat',
                     backgroundPosition: 'center'
                 }}>
-                    <Title>{sellerData?.seller?.title}</Title>
-                    <SubTitle>{sellerData?.seller?.sub_title}</SubTitle>
+                    <Title>{sellerData?.nick_name}</Title>
+                    <SubTitle>{sellerData?.nick_name}</SubTitle>
                     <Icon icon='fe:instagram' style={{
                         margin: '1rem',
                         fontSize: themeObj.font_size.size4,
@@ -181,8 +198,11 @@ const Demo1 = (props) => {
                     <Row style={{
                         marginBottom: 'auto',
                     }}>
-                        <SubTitle style={{ borderRight: '1px solid #fff', width: '65px', cursor: 'pointer' }}>공지사항</SubTitle>
-                        <SubTitle style={{ width: '64px', cursor: 'pointer' }}>1:1문의</SubTitle>
+                        {themePostCategoryList && themePostCategoryList.map((item, idx) => (
+                            <>
+                                <SubTitle style={{ borderRight: `${idx == themePostCategoryList.length - 1 ? 'none' : '1px solid #fff'}`, width: '65px', cursor: 'pointer' }}>{item?.post_category_title}</SubTitle>
+                            </>
+                        ))}
                     </Row>
                 </BannerImg>
                 <CategoryWrapper style={{
@@ -206,7 +226,7 @@ const Demo1 = (props) => {
                                 cursor: 'pointer'
                             }}
                         >All</Category>
-                        {sellerData?.categories && sellerData?.categories.map((item, idx) => (
+                        {sellerCategories && sellerCategories.map((item, idx) => (
                             <>
                                 <Category
                                     onClick={() => { setCategoryId(item?.id) }}
@@ -224,7 +244,10 @@ const Demo1 = (props) => {
                 <ItemContainer>
                     {products.map((item, idx) => (
                         <>
-                            <SellerItem router={router} item={item} onClickCartButton={onClickCartButton} />
+                            {(categoryId == 0 || getDownToTopChildren(item?.category_id, themeCategoryList).includes(categoryId)) &&
+                                <>
+                                    <SellerItem router={router} item={item} onClickCartButton={onClickCartButton} />
+                                </>}
                         </>
                     ))}
                 </ItemContainer>
@@ -390,7 +413,7 @@ const Demo1 = (props) => {
                 PaperProps={{
                     sx: {
                         maxWidth: '540px',
-                        width:'90vw'
+                        width: '90vw'
                     }
                 }}
             >
@@ -400,7 +423,7 @@ const Demo1 = (props) => {
                             sx={{
                                 display: 'flex',
                                 justifyContent: 'space-between',
-                                padding:'0 0 1.5rem 1.5rem'
+                                padding: '0 0 1.5rem 1.5rem'
                             }}
                         >
                             <img src={logoSrc()} style={{ height: '56px', width: 'auto' }} />
@@ -436,7 +459,7 @@ const Demo1 = (props) => {
                             sx={{
                                 display: 'flex',
                                 justifyContent: 'space-between',
-                                padding:'0 0 1.5rem 1.5rem'
+                                padding: '0 0 1.5rem 1.5rem'
                             }}
                         >
                             <img src={logoSrc()} style={{ height: '56px', width: 'auto' }} />

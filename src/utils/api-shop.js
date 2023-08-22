@@ -1,20 +1,38 @@
 import { get, post, put, deleteItem } from './api-manager';
 
 export const getShopCategoriesByUser = (params) => { // 유저 연결되어있는 하위 카테고리가 모두 출력됩니다. (게시글 카테고리, 상품 카테고리) 팝업 정보가 출력됩니다.
-  const { brand_id, root_id } = params;
+  const { } = params;
   let query = {
-    brand_id,
-    root_id
+
+  }
+  return get(`/api/v1/shop/shop`, query);
+}
+export const getSellerInfoByUser = async (params) => { // 셀러 정보가 출력됩니다. (게시글 카테고리, 상품 카테고리) 팝업 정보가 출력됩니다.
+  const { mcht_id } = params;
+  let query = {
+    mcht_id,
+    dns: window.location.host.split(':')[0]
+  }
+  let data = await get(`/api/v1/auth/domain`, query);
+  return data?.mcht;
+}
+export const getSellerCategoriesByUser = async (params) => { // 셀러 연결되어있는 하위 카테고리가 모두 출력됩니다. (게시글 카테고리, 상품 카테고리) 팝업 정보가 출력됩니다.
+  const { mcht_id } = params;
+  let query = {
+    mcht_id
   }
   return get(`/api/v1/shop/shop`, query);
 }
 export const getProductsByUser = (params) => { // 유저 카테고리 기반 상품 목록 출력
-  const { category_id, page = 1, page_size = 10 } = params;
+  const { category_id, page = 1, page_size = 10, mcht_id } = params;
   let query = {
-    category_id, page, page_size
+    category_id, page, page_size, mcht_id
   }
   if (!category_id) {
     delete query['category_id'];
+  }
+  if (!mcht_id) {
+    delete query['mcht_id'];
   }
   return get(`/api/v1/shop/shop/product-categories`, query);
 }
@@ -43,9 +61,9 @@ export const getProductReviewsByUser = (params) => { // 유저 상품 리뷰 목
   return get(`/api/v1/shop/shop/products/${product_id}/reviews`, query);
 }
 export const addProductReviewByUser = (params) => { // 유저 상품 리뷰 추가
-  const { product_id, trans_id, brand_id, scope, nick_name, profile_img, content, password } = params;
+  const { product_id, trans_id, scope, nick_name, profile_img, content, password } = params;
   let query = {
-    trans_id, brand_id, scope, nick_name, profile_img, content, password
+    trans_id, scope, nick_name, profile_img, content, password
   }
   return post(`/api/v1/shop/shop/products/${product_id}/reviews`, query);
 }
@@ -55,9 +73,9 @@ export const getProductReviewByUser = (params) => { // 유저 상품 리뷰 단�
   return get(`/api/v1/shop/shop/products/${product_id}/reviews/${id}`);
 }
 export const updateProductReviewByUser = (params) => { // 유저 상품 리뷰 업데이트
-  const { product_id, id, trans_id, brand_id, scope, nick_name, profile_img, content, password } = params;
+  const { product_id, id, trans_id, scope, nick_name, profile_img, content, password } = params;
   let query = {
-    trans_id, brand_id, scope, nick_name, profile_img, content, password
+    trans_id, scope, nick_name, profile_img, content, password
   }
   return put(`/api/v1/shop/shop/products/${product_id}/reviews/${id}`, query);
 }
@@ -96,14 +114,14 @@ export const signUpByUser = (params) => { // 유저 회원가입
   return post(`/api/v1/shop/auth/sign-up`, obj);
 }
 export const onPayItemByCard = (params) => { //유저 바로구매 카드결제
-  const { product_id, brand_id, user_id, amount=100, item_name, buyer_name, installment, buyer_phone, card_num, yymm, auth_num, card_pw, addr, detail_addr, temp, password } = params;
+  const { product_id, user_id, amount = 100, item_name, buyer_name, installment, buyer_phone, card_num, yymm, auth_num, card_pw, addr, detail_addr, temp, password } = params;
   let obj = {
-    brand_id, user_id, amount, item_name, buyer_name, installment, buyer_phone, card_num, yymm, 
+    user_id, amount, item_name, buyer_name, installment, buyer_phone, card_num, yymm,
     // auth_num, card_pw, 
     addr, detail_addr, temp, password
   }
-  obj['card_num'] = obj['card_num'].replaceAll(' ','')
-  obj['yymm'] = obj['yymm'].split('/')[1]+obj['yymm'].split('/')[0]
+  obj['card_num'] = obj['card_num'].replaceAll(' ', '')
+  obj['yymm'] = obj['yymm'].split('/')[1] + obj['yymm'].split('/')[0]
   if (!user_id) {
     delete obj['user_id'];
   }
@@ -129,9 +147,9 @@ export const getPayHistoriesByUser = (params) => {//회원 주문목록 출력
   return get(`/api/v1/shop/shop/transactions`, obj);
 }
 export const getPayHistoryByNoneUser = (params) => {// 비회원 주문 출력
-  const { brand_id, ord_num, password } = params;
+  const { ord_num, password } = params;
   let obj = {
-    brand_id, ord_num, password
+    ord_num, password
   }
   return get(`/api/v1/shop/shop/non-member-transactions`, obj);
 }

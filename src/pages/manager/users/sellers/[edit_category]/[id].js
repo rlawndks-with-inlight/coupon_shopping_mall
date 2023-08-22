@@ -35,13 +35,13 @@ const SellerEdit = () => {
   const [item, setItem] = useState({
     user_name: '',//
     nick_name: '',//
+    mcht_name: '',//
     addr: '',
     acct_bank_name: '',
     acct_num: '',
     acct_name: '',
     phone_num: '',//
     note: '',
-    mcht_name: 'asd',
     mcht_trx_fee: 0,
     sns_obj: {
       youtube_channel: '',
@@ -252,6 +252,7 @@ const SellerEdit = () => {
                         <TextField
                           label='유튜브 채널'
                           value={item.sns_obj.youtube_channel}
+                          placeholder="https://www.youtube.com/user_name"
                           onChange={(e) => {
                             setItem(
                               {
@@ -273,6 +274,7 @@ const SellerEdit = () => {
                       <TextField
                         label='아이디'
                         value={item.user_name}
+                        disabled={router.query?.edit_category == 'edit'}
                         onChange={(e) => {
                           setItem(
                             {
@@ -305,6 +307,17 @@ const SellerEdit = () => {
                             {
                               ...item,
                               ['nick_name']: e.target.value
+                            }
+                          )
+                        }} />
+                         <TextField
+                        label='가맹점명'
+                        value={item.mcht_name}
+                        onChange={(e) => {
+                          setItem(
+                            {
+                              ...item,
+                              ['mcht_name']: e.target.value
                             }
                           )
                         }} />

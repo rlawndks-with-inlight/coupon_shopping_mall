@@ -140,8 +140,8 @@ const Demo1 = (props) => {
         let category_list = [];
         for (var i = 0; i < products?.content.length; i++) {
             let top_category_id = getDownToTopChildren(products?.content[i]?.category_id, themeCategoryList);
-            if (!category_list.includes(top_category_id)) {
-                category_list.push(top_category_id);
+            if (!category_list.includes(top_category_id[0])) {
+                category_list.push(top_category_id[0]);
             }
         }
         category_list = category_list.map((item => {
@@ -185,12 +185,36 @@ const Demo1 = (props) => {
                 }}>
                     <Title>{sellerData?.nick_name}</Title>
                     <SubTitle>{sellerData?.nick_name}</SubTitle>
-                    <Icon icon='fe:instagram' style={{
-                        margin: '1rem',
-                        fontSize: themeObj.font_size.size4,
-                        color: '#fff',
-                        cursor: 'pointer'
-                    }} />
+                    <Row style={{ margin: '1rem' }}>
+                        {sellerData?.sns_obj?.instagram_id &&
+                            <>
+                                <Icon
+                                    onClick={() => {
+                                        window.location.href = `https://www.instagram.com/${sellerData?.sns_obj?.instagram_id}`
+                                    }}
+                                    icon='fe:instagram' style={{
+                                        margin: '0.5rem',
+                                        fontSize: themeObj.font_size.size4,
+                                        color: '#fff',
+                                        cursor: 'pointer'
+                                    }} />
+                            </>}
+                        {sellerData?.sns_obj?.youtube_channel &&
+                            <>
+                                <Icon
+                                    onClick={() => {
+                                        window.location.href = `${sellerData?.sns_obj?.youtube_channel}`
+                                    }}
+                                    icon='fe:youtube'
+                                    style={{
+                                        margin: '0.5rem',
+                                        fontSize: themeObj.font_size.size4,
+                                        color: '#fff',
+                                        cursor: 'pointer'
+                                    }} />
+                            </>}
+                    </Row>
+
                     <Row style={{
                         marginBottom: 'auto',
                     }}>

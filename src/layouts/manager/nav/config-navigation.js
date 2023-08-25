@@ -49,7 +49,6 @@ export const navConfig = () => {
   //dns_data와 user를 통해 계산하기
 
   useEffect(() => {
-    console.log(themeDnsData)
     getSidebarSetting();
   }, [])
   const getSidebarSetting = async () => {

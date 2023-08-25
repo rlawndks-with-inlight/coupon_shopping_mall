@@ -143,7 +143,6 @@ export function SettingsProvider({ children }) {
       onChangePopupList(data?.popups ?? []);
       onChangePostCategoryList(data?.post_categories ?? []);
       onChangeSellerList(data?.merchandises?.content ?? []);
-      console.log(data?.merchandises)
       onChangeDnsData(dns_data);
     } catch (err) {
       console.log(err)

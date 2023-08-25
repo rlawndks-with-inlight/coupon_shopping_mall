@@ -56,7 +56,6 @@ const Demo2 = (props) => {
       phone_num: user.phone_num
     })
 
-    console.log(result);
   }
   const onClickSendPasswordPhoneVerifyCode = async () => {
     setPhoneCheckStep(1);
@@ -64,7 +63,6 @@ const Demo2 = (props) => {
       phone_num: user.phone_num
     })
 
-    console.log(result);
   }
   useEffect(() => {
     if (router.query?.type >= 0) {

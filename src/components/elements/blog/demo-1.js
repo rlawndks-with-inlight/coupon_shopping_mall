@@ -85,13 +85,13 @@ export const Seller = (props) => {
         router.push(`/blog/seller/${item.id}`)
       }}>
         <SellerImg style={{
-          backgroundImage: `url(${item?.main_img})`,
+          backgroundImage: `url(${item?.profile_img})`,
           backgroundSize: 'cover',
           backgroundRepeat: 'no-repeat',
           backgroundPosition: 'center'
         }} />
-        <ItemText style={{ fontWeight: 'bold' }}>{item?.title}</ItemText>
-        <ItemText style={{ color: themeObj.grey[500] }}>{item?.sub_title}</ItemText>
+        <ItemText style={{ fontWeight: 'bold' }}>{item?.nick_name}</ItemText>
+        <ItemText style={{ color: themeObj.grey[500] }}>{item?.mcht_name}</ItemText>
       </ItemContent>
     </>
   )

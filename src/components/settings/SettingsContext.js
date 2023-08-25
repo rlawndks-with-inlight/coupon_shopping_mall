@@ -44,6 +44,7 @@ const initialState = {
   //category-list
   onChangeCategoryList: () => { },
   onChangePostCategoryList: () => { },
+  onChangeSellerList: () => { },
   onChangePopupList: () => { },
 };
 
@@ -80,6 +81,7 @@ export function SettingsProvider({ children }) {
   const [themeCategoryList, setThemeCategoryList] = useState(defaultSettings.themeCategoryList);
   const [themePopupList, setThemePopupList] = useState(defaultSettings.themePopupList);
   const [themePostCategoryList, setThemePostCategoryList] = useState(defaultSettings.themePostCategoryList);
+  const [themeSellerList, setThemeSellerList] = useState(defaultSettings.themeSellerList);
   const isArabic = false;
   const theme = useTheme();
   useEffect(() => {
@@ -140,6 +142,8 @@ export function SettingsProvider({ children }) {
       onChangeCategoryList(data?.product_categories ?? []);
       onChangePopupList(data?.popups ?? []);
       onChangePostCategoryList(data?.post_categories ?? []);
+      onChangeSellerList(data?.merchandises?.content ?? []);
+      console.log(data?.merchandises)
       onChangeDnsData(dns_data);
     } catch (err) {
       console.log(err)
@@ -256,6 +260,11 @@ export function SettingsProvider({ children }) {
     setThemePostCategoryList(data);
     setLocalStorage('themePostCategoryList', JSON.stringify(data));
   }, [])
+  // sellerList
+  const onChangeSellerList = useCallback((data) => {
+    setThemeSellerList(data);
+    setLocalStorage('themeSellerList', JSON.stringify(data));
+  }, [])
   // Reset
   const onResetSetting = useCallback(() => {
     setThemeMode(defaultSettings.themeMode);
@@ -272,6 +281,7 @@ export function SettingsProvider({ children }) {
     setThemeCategoryList(defaultSettings.themeCategoryList);
     setThemePopupList(defaultSettings.themePopupList);
     setThemePostCategoryList(defaultSettings.themePostCategoryList);
+    setThemeSellerList(defaultSettings.themeSellerList);
     removeCookie('themeMode');
     removeCookie('themeLayout');
     removeCookie('themeStretch');
@@ -286,6 +296,7 @@ export function SettingsProvider({ children }) {
     deleteLocalStorage('themeCategoryList')
     deleteLocalStorage('themePopupList')
     deleteLocalStorage('themePostCategoryList')
+    deleteLocalStorage('themeSellerList')
   }, []);
 
   const memoizedValue = useMemo(
@@ -337,6 +348,8 @@ export function SettingsProvider({ children }) {
       onChangePopupList,
       themePostCategoryList,
       onChangePostCategoryList,
+      themeSellerList,
+      onChangeSellerList,
     }),
     [
       // Mode
@@ -384,6 +397,8 @@ export function SettingsProvider({ children }) {
       onChangePopupList,
       themePostCategoryList,
       onChangePostCategoryList,
+      themeSellerList,
+      onChangeSellerList,
     ]
   );
 

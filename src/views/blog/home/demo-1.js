@@ -46,11 +46,6 @@ height:424px;
 `
 const test_home_data = [
     {
-        title: '마켓 오픈했어요 ✨',
-        list: test_seller,
-        type: 'seller'
-    },
-    {
         title: '인기있는 상품 🔥',
         list: test_items,
         type: 'items'
@@ -161,7 +156,6 @@ const ItemSectionContent = (props) => {
                     ))}
                 </Slider>
             </SlideContainer>
-
         </>
     )
 }
@@ -175,12 +169,23 @@ const Demo1 = (props) => {
             router
         },
     } = props;
-    const { themeDnsData } = useSettingsContext();
+    const { themeDnsData, themeSellerList } = useSettingsContext();
     const { user } = useAuthContext();
     const [homeContent, setHomeContent] = useState({});
+    const [data, setData] = useState([]);
     useEffect(() => {
+        pageSetting();
     }, [themeDnsData])
-
+    const pageSetting = async () => {
+        setData([
+            ...[{
+                title: '마켓 오픈했어요 ✨',
+                list: themeSellerList,
+                type: 'seller'
+            },],
+            ...test_home_data
+        ])
+    }
     return (
         <>
             <Wrappers>
@@ -195,7 +200,8 @@ const Demo1 = (props) => {
                         src={'https://www.inpock.co.kr/_next/image?url=https%3A%2F%2Fstorage.googleapis.com%2Finpock-store-asset-prod%2Fclient%2Fimg%2Finpock-image-thumbnail-store.60df99b.png&w=3840&q=75'} />
                 </BannerContainer>
                 <ItemWrapper>
-                    {test_home_data.map((data, idx) => (
+
+                    {data.map((data, idx) => (
                         <>
                             <ItemSectionContent data={data} router={router} />
                         </>

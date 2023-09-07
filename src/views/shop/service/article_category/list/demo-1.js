@@ -52,6 +52,8 @@ font-weight:${props => props.isSelect ? 'bold' : ''};
 `
 const Demo1 = (props) => {
   const { user } = useAuthContext();
+  const [postCategory, setPostCategory] = useState({});
+
   const defaultColumns = [
     {
       id: 'post_title',
@@ -71,6 +73,15 @@ const Demo1 = (props) => {
         </>
       }
     },
+    ...(postCategory?.is_able_user_add == 1 ? [
+      {
+        id: 'replies',
+        label: '답변여부',
+        action: (row) => {
+          return row?.replies.length > 0 ? '답변완료' : '답변안함'
+        }
+      }
+    ] : []),
     {
       id: 'edit',
       label: '자세히보기',
@@ -97,7 +108,6 @@ const Demo1 = (props) => {
   } = props;
   const { themeMode, themePostCategoryList } = useSettingsContext();
   const theme = useTheme();
-  const [postCategory, setPostCategory] = useState({});
   const [data, setData] = useState({
 
   })
@@ -109,7 +119,7 @@ const Demo1 = (props) => {
   })
   useEffect(() => {
     setColumns(defaultColumns)
-  }, [])
+  }, [postCategory])
   useEffect(() => {
     setPostCategory(_.find(themePostCategoryList, { id: parseInt(router.query?.article_category) }))
     console.log(_.find(themePostCategoryList, { id: parseInt(router.query?.article_category) }))

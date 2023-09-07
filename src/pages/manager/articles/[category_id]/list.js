@@ -5,10 +5,11 @@ import ManagerTable from "src/views/manager/mui/table/ManagerTable";
 import { Icon } from "@iconify/react";
 import { useRouter } from "next/router";
 import { Row } from "src/components/elements/styled-components";
-import { deletePostByManager, getPostsByManager, getProductsByManager } from "src/utils/api-manager";
+import { deletePostByManager, getPostCategoryByManager, getPostsByManager, getProductsByManager } from "src/utils/api-manager";
 import { useModal } from "src/components/dialog/ModalProvider";
 const ArticleList = () => {
   const { setModal } = useModal()
+  const [category, setCategory] = useState({});
   const defaultColumns = [
     {
       id: 'post_title',
@@ -31,6 +32,15 @@ const ArticleList = () => {
         return row['created_at'] ?? "---"
       }
     },
+    ...(category?.is_able_user_add == 1 ? [
+      {
+        id: 'replies',
+        label: '답변여부',
+        action: (row) => {
+          return row?.replies.length > 0 ? '답변완료' : '답변안함'
+        }
+      }
+    ] : []),
     {
       id: 'updated_at',
       label: '최종수정시간',
@@ -77,9 +87,16 @@ const ArticleList = () => {
   useEffect(() => {
     pageSetting();
   }, [router.query])
-  const pageSetting = () => {
+  useEffect(()=>{
     let cols = defaultColumns;
     setColumns(cols)
+  },[category])
+  const pageSetting = async () => {
+    let category = await getPostCategoryByManager({
+      id: router.query?.category_id
+    })
+    setCategory(category)
+    
     onChangePage({ ...searchObj, category_id: router.query?.category_id, page: 1, });
   }
   const onChangePage = async (obj) => {
@@ -99,6 +116,7 @@ const ArticleList = () => {
       onChangePage({ ...searchObj, category_id: router.query?.category_id });
     }
   }
+
   return (
     <>
       <Stack spacing={3}>

@@ -32,8 +32,13 @@ const ArticleEdit = () => {
     post_title: '',
     post_content: '',
     is_reply: false,
+    reply: ''
   })
-
+  const [reply, setReply] = useState({
+    post_title: '',
+    post_content: '',
+    is_reply: 1,
+  })
   useEffect(() => {
     settingPage();
   }, [])
@@ -43,21 +48,33 @@ const ArticleEdit = () => {
     })
     setCategory(category)
     if (router.query?.edit_category == 'edit') {
-      let item = await getPostByManager({
+      let data = await getPostByManager({
         id: router.query.id
       })
-      setItem(item);
+      setItem(data);
+      setReply(data?.replies[0])
     }
     setLoading(false);
   }
   const onSave = async () => {
     let result = undefined;
+    let result2 = undefined;
     if (router.query?.edit_category == 'edit') {
       result = await updatePostByManager({ ...item, id: router.query?.id });
+      if (category?.is_able_user_add == 1 && result) {
+        if(reply?.id > 0){
+          result2 = await updatePostByManager({ ...reply, category_id: category?.id, parent_id: router.query?.id });
+        }else{
+          result2 = await addPostByManager({ ...reply, category_id: category?.id, parent_id: router.query?.id });
+        }
+      } else {
+        result2 = true;
+      }
     } else {
       result = await addPostByManager({ ...item });
+      result2 = true;
     }
-    if (result) {
+    if (result && result2) {
       toast.success("성공적으로 저장 되었습니다.");
       router.push(`/manager/articles/${router.query?.category_id}`);
     }
@@ -139,6 +156,62 @@ const ArticleEdit = () => {
                 </Stack>
               </Card>
             </Grid>
+            {category?.is_able_user_add == 1 &&
+              <>
+                <Grid item xs={12} md={12}>
+                  <Card sx={{ p: 2, height: '100%' }}>
+                    <Stack spacing={3}>
+                      <TextField
+                        label='답변제목'
+                        value={reply.post_title}
+                        onChange={(e) => {
+                          setReply(
+                            {
+                              ...reply,
+                              ['post_title']: e.target.value
+                            }
+                          )
+                        }} />
+                      <Stack spacing={1}>
+
+                        <Typography variant="subtitle2" sx={{ color: 'text.secondary' }}>
+                          답변내용
+                        </Typography>
+                        <ReactQuill
+                          className="max-height-editor"
+                          theme={'snow'}
+                          id={'content'}
+                          placeholder={''}
+                          value={reply.post_content}
+                          modules={react_quill_data.modules}
+                          formats={react_quill_data.formats}
+                          onChange={async (e) => {
+                            let note = e;
+                            if (e.includes('<img src="') && e.includes('base64,')) {
+                              let base64_list = e.split('<img src="');
+                              for (var i = 0; i < base64_list.length; i++) {
+                                if (base64_list[i].includes('base64,')) {
+                                  let img_src = base64_list[i];
+                                  img_src = await img_src.split(`"></p>`);
+                                  let base64 = img_src[0];
+                                  img_src = await base64toFile(img_src[0], 'note.png');
+                                  const response = await uploadFileByManager({
+                                    file: img_src
+                                  });
+                                  note = await note.replace(base64, response?.url)
+                                }
+                              }
+                            }
+                            setReply({
+                              ...reply,
+                              ['post_content']: note
+                            });
+                          }} />
+                      </Stack>
+                    </Stack>
+                  </Card>
+                </Grid>
+              </>}
             <Grid item xs={12} md={12}>
               <Card sx={{ p: 3 }}>
                 <Stack spacing={1} style={{ display: 'flex' }}>

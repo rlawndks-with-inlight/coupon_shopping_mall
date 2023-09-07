@@ -94,7 +94,6 @@ export default function ProductDetailsNewReviewForm({ onClose, onChangePage, ...
             name="rating"
             control={control}
             render={({ field }) => <Rating {...field} value={reviewData.scope / 2} onChange={(e) => {
-              console.log(e.target.value)
               setReviewData({
                 ...reviewData,
                 scope: e.target.value * 2

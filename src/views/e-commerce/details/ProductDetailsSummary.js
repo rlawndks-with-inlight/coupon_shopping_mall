@@ -134,7 +134,6 @@ export default function ProductDetailsSummary({ product, onAddCart, onGotoStep, 
   const [buyStep, setBuyStep] = useState(0);
   const [buyOpen, setBuyOpen] = useState(false);
   const onBuyNow = async () => {
-    console.log(payData);
     let result = await onPayItemByCard(payData);
     console.log(result)
   }

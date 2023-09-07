@@ -34,7 +34,7 @@ export const getProductsByUser = (params) => { // 유저 카테고리 기반 상
   if (!mcht_id) {
     delete query['mcht_id'];
   }
-  return get(`/api/v1/shop/shop/product-categories`, query);
+  return get(`/api/v1/shop/product-categories`, query);
 }
 export const getPostsByUser = (params) => { // 유저 카테고리 기반 게시글 목록 출력
   const { category_id, page = 1, page_size = 10 } = params;
@@ -44,52 +44,59 @@ export const getPostsByUser = (params) => { // 유저 카테고리 기반 게시
   if (!category_id) {
     delete query['category_id'];
   }
-  return get(`/api/v1/shop/shop/post-categories`, query);
+  return get(`/api/v1/shop/post-categories`, query);
 }
 export const getProductByUser = (params) => { // 유저 상품 단일 출력
   const { product_id } = params;
   let query = {
     product_id
   }
-  return get(`/api/v1/shop/shop/products/${product_id}`, {});
+  return get(`/api/v1/shop/products/${product_id}`, {});
 }
 export const getProductReviewsByUser = (params) => { // 유저 상품 리뷰 목록 출력
   const { product_id, page = 1, page_size = 10, scope } = params;
   let query = {
     page, page_size, product_id
   }
-  return get(`/api/v1/shop/shop/products/${product_id}/reviews`, query);
+  return get(`/api/v1/shop/products/${product_id}/reviews`, query);
 }
 export const addProductReviewByUser = (params) => { // 유저 상품 리뷰 추가
   const { product_id, trans_id, scope, nick_name, profile_img, content, password } = params;
   let query = {
     trans_id, scope, nick_name, profile_img, content, password
   }
-  return post(`/api/v1/shop/shop/products/${product_id}/reviews`, query);
+  return post(`/api/v1/shop/products/${product_id}/reviews`, query);
 }
 export const getProductReviewByUser = (params) => { // 유저 상품 리뷰 단일 출력
   const { product_id, id } = params;
 
-  return get(`/api/v1/shop/shop/products/${product_id}/reviews/${id}`);
+  return get(`/api/v1/shop/products/${product_id}/reviews/${id}`);
 }
 export const updateProductReviewByUser = (params) => { // 유저 상품 리뷰 업데이트
   const { product_id, id, trans_id, scope, nick_name, profile_img, content, password } = params;
   let query = {
     trans_id, scope, nick_name, profile_img, content, password
   }
-  return put(`/api/v1/shop/shop/products/${product_id}/reviews/${id}`, query);
+  return put(`/api/v1/shop/products/${product_id}/reviews/${id}`, query);
 }
 export const deleteProductReviewByUser = (params) => { // 유저 상품 리뷰 삭제
   const { product_id, id } = params;
 
-  return deleteItem(`/api/v1/shop/shop/products/${product_id}/reviews/${id}`);
+  return deleteItem(`/api/v1/shop/products/${product_id}/reviews/${id}`);
 }
 export const getPostByUser = (params) => { // 유저 게시글 단일 출력
   const { post_id } = params;
   let query = {
     post_id
   }
-  return get(`/api/v1/shop/shop/posts/${post_id}`, {});
+  return get(`/api/v1/shop/posts/${post_id}`, {});
+}
+export const addPostByUser = (params) => { // 유저 게시글 추가
+  const { category_id, post_title, post_content, is_reply } = params;
+  let query = {
+    category_id, post_title, post_content, is_reply
+  }
+  return post(`/api/v1/shop/posts`, query);
 }
 export const sendPhoneVerifyCodeByUser = (params) => { // 유저 휴대폰 인증번호 전송
   const { dns = window.location.host.split(':')[0], phone_num } = params;
@@ -137,19 +144,19 @@ export const onPayItemByCard = (params) => { //유저 바로구매 카드결제
   if (!password) {
     delete obj['password'];
   }
-  return post(`/api/v1/shop/shop/products/${product_id}/hand`, obj);
+  return post(`/api/v1/shop/products/${product_id}/hand`, obj);
 }
 export const getPayHistoriesByUser = (params) => {//회원 주문목록 출력
   const { page = 1, page_size = 10 } = params;
   let obj = {
     page, page_size
   }
-  return get(`/api/v1/shop/shop/transactions`, obj);
+  return get(`/api/v1/shop/transactions`, obj);
 }
 export const getPayHistoryByNoneUser = (params) => {// 비회원 주문 출력
   const { ord_num, password } = params;
   let obj = {
     ord_num, password
   }
-  return get(`/api/v1/shop/shop/non-member-transactions`, obj);
+  return get(`/api/v1/shop/non-member-transactions`, obj);
 }

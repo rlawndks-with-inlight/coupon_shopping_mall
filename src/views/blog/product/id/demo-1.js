@@ -132,12 +132,10 @@ const Demo1 = (props) => {
   }, [])
 
   const pageSetting = async () => {
-    console.log(router)
 
     let product = await getProductByUser({
       product_id: router.query?.id
     })
-    console.log(product)
     if (product) {
       product['images'] = [...[product?.product_img], ...product?.sub_images.map(item => { return item.product_sub_img })];
 

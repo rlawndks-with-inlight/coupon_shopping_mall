@@ -54,7 +54,6 @@ const ArticleCategoryEdit = () => {
   }
   const onSave = async () => {
     let result = undefined;
-    console.log(item)
     if (router.query?.edit_category == 'edit') {
       for (var i = 0; i < item?.children.length; i++) {
         if (!item?.children[i]?.id) {

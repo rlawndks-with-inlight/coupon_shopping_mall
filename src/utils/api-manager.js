@@ -408,9 +408,9 @@ export const getPostCategoriesByManager = (params) => { //관리자 게시글 �
   return get(`/api/v1/manager/post-categories`, query);
 }
 export const addPostCategoryByManager = (params) => { //관리자 게시글 카테고리 추가
-  const { parent_id, post_category_title } = params;
+  const { parent_id, post_category_title, is_able_user_add } = params;
   let obj = {
-    parent_id, post_category_title
+    parent_id, post_category_title, is_able_user_add
   }
   if (!parent_id) {
     delete obj['parent_id'];
@@ -418,9 +418,9 @@ export const addPostCategoryByManager = (params) => { //관리자 게시글 카�
   return post(`/api/v1/manager/post-categories`, obj);
 }
 export const updatePostCategoryByManager = (params) => { //관리자 게시글 카테고리 수정
-  const { parent_id, post_category_title, id } = params;
+  const { parent_id, post_category_title, id, is_able_user_add } = params;
   let obj = {
-    parent_id, post_category_title
+    parent_id, post_category_title, is_able_user_add
   }
   return put(`/api/v1/manager/post-categories/${id}`, obj);
 }

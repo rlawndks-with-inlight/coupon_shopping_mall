@@ -1,7 +1,7 @@
 import { useTheme } from '@emotion/react';
 import { useEffect, useState } from 'react';
 import ContentTable from 'src/components/elements/content-table';
-import { Row, RowMobileColumn, Title, themeObj } from 'src/components/elements/styled-components';
+import { Col, Row, RowMobileColumn, Title, themeObj } from 'src/components/elements/styled-components';
 import { useSettingsContext } from 'src/components/settings';
 import { returnArticleCategory } from 'src/data/data';
 import { test_articles } from 'src/data/test-data';
@@ -10,6 +10,8 @@ import _ from 'lodash'
 import { getPostsByUser } from 'src/utils/api-shop';
 import { Button, IconButton } from '@mui/material';
 import { Icon } from '@iconify/react';
+import { useAuthContext } from 'src/layouts/manager/auth/useAuthContext';
+import { toast } from 'react-hot-toast';
 const Wrappers = styled.div`
 max-width:1600px;
 display:flex;
@@ -22,8 +24,12 @@ const ColumnMenu = styled.div`
 display:flex;
 flex-direction: column;
 width:200px;
+white-space:pre-wrap;
 margin-right:1rem;
 @media (max-width:1000px){
+  display:-webkit-box;
+  overflow:auto;
+  width:100%;
   flex-direction: row;
   margin-bottom:1rem;
 }
@@ -45,6 +51,7 @@ font-weight:${props => props.isSelect ? 'bold' : ''};
 }
 `
 const Demo1 = (props) => {
+  const { user } = useAuthContext();
   const defaultColumns = [
     {
       id: 'post_title',
@@ -90,9 +97,6 @@ const Demo1 = (props) => {
   } = props;
   const { themeMode, themePostCategoryList } = useSettingsContext();
   const theme = useTheme();
-  const [page, setPage] = useState(1);
-  const [maxPage, setMaxPage] = useState(20);
-  const [curCategories, setCurCategories] = useState([]);
   const [postCategory, setPostCategory] = useState({});
   const [data, setData] = useState({
 
@@ -108,6 +112,7 @@ const Demo1 = (props) => {
   }, [])
   useEffect(() => {
     setPostCategory(_.find(themePostCategoryList, { id: parseInt(router.query?.article_category) }))
+    console.log(_.find(themePostCategoryList, { id: parseInt(router.query?.article_category) }))
   }, [router.query?.article_category, themePostCategoryList])
   useEffect(() => {
     if (router.query?.article_category) {
@@ -179,16 +184,31 @@ const Demo1 = (props) => {
               </>
             ))}
           </ColumnMenu>
-
-          {router.query?.article_category &&
-            <>
-              <ContentTable
-                data={data}
-                onChangePage={onChangePage}
-                searchObj={searchObj}
-                columns={columns}
-              />
-            </>}
+          <Col style={{ width: '100%' }}>
+            {router.query?.article_category &&
+              <>
+                <ContentTable
+                  data={data}
+                  onChangePage={onChangePage}
+                  searchObj={searchObj}
+                  columns={columns}
+                />
+              </>}
+            {postCategory?.is_able_user_add == 1 &&
+              <>
+                <Button variant="contained" style={{
+                  height: '48px', width: '120px', marginLeft: 'auto'
+                }} onClick={() => {
+                  if (user?.id) {
+                    router.push(`/shop/service/${router.query?.article_category}/add`)
+                  } else {
+                    toast.error("로그인을 해주세요.")
+                  }
+                }}>
+                  작성
+                </Button>
+              </>}
+          </Col>
         </RowMobileColumn>
       </Wrappers>
     </>

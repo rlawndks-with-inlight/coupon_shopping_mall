@@ -7,9 +7,11 @@ import { useRouter } from "next/router";
 import { Row } from "src/components/elements/styled-components";
 import { deletePostCategoryByManager, getPostCategoriesByManager, getProductsByManager, getSellersByManager } from "src/utils/api-manager";
 import { useModal } from "src/components/dialog/ModalProvider";
+import { useAuthContext } from "src/layouts/manager/auth/useAuthContext";
 
 const ArticleCategoryList = () => {
   const { setModal } = useModal()
+  const { user } = useAuthContext();
   const defaultColumns = [
     {
       id: 'post_category_title',
@@ -25,6 +27,13 @@ const ArticleCategoryList = () => {
         return row['name'] ?? "---"
       }
     },
+    ...(user?.level >= 50 ? [{
+      id: 'is_able_user_add',
+      label: '유저추가가능여부',
+      action: (row) => {
+        return row['is_able_user_add'] == 1 ? '가능 O' : '가능 X'
+      }
+    },] : []),
     {
       id: 'created_at',
       label: '생성시간',
@@ -32,6 +41,7 @@ const ArticleCategoryList = () => {
         return row['created_at'] ?? "---"
       }
     },
+
     {
       id: 'updated_at',
       label: '최종수정시간',
@@ -81,7 +91,7 @@ const ArticleCategoryList = () => {
   const pageSetting = () => {
     let cols = defaultColumns;
     setColumns(cols)
-    onChangePage({...searchObj, page: 1,});
+    onChangePage({ ...searchObj, page: 1, });
   }
   const onChangePage = async (obj) => {
     setData({

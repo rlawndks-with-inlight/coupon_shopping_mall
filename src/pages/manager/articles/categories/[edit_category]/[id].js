@@ -1,5 +1,5 @@
 
-import { Avatar, Button, Card, CardHeader, Grid, IconButton, Stack, TextField, Tooltip, Typography, alpha } from "@mui/material";
+import { Avatar, Button, Card, CardHeader, FormControl, Grid, IconButton, InputLabel, MenuItem, Select, Stack, TextField, Tooltip, Typography, alpha } from "@mui/material";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { Row, themeObj } from "src/components/elements/styled-components";
@@ -16,6 +16,7 @@ import Iconify from "src/components/iconify/Iconify";
 import { addPostCategoryByManager, getPostCategoriesByManager, getPostCategoryByManager, updatePostCategoryByManager } from "src/utils/api-manager";
 import { toast } from "react-hot-toast";
 import { useModal } from "src/components/dialog/ModalProvider";
+import { useAuthContext } from "src/layouts/manager/auth/useAuthContext";
 const ReactQuill = dynamic(() => import('react-quill'), {
   ssr: false,
   loading: () => <p>Loading ...</p>,
@@ -27,13 +28,14 @@ const Tour = dynamic(
 const ArticleCategoryEdit = () => {
   const { setModal } = useModal()
   const { themeMode } = useSettingsContext();
-
+  const { user } = useAuthContext();
   const router = useRouter();
 
   const [loading, setLoading] = useState(true);
   const [item, setItem] = useState({
     post_category_title: '',
-    parent_id: router.query?.parent_id
+    parent_id: router.query?.parent_id,
+    is_able_user_add: 0,
   })
   useEffect(() => {
     settingPage();
@@ -42,7 +44,7 @@ const ArticleCategoryEdit = () => {
     if (router.query?.edit_category == 'edit') {
       let data = await getPostCategoryByManager({ id: router.query?.id });
       if (data) {
-        if(!data?.children.length > 0){
+        if (!data?.children.length > 0) {
           openTour('add-children', "하위 카테고리가 필요하면 '추가' 버튼을 클릭하여 하위 카테고리를 추가해 주세요.")
         }
         setItem(data);
@@ -52,13 +54,14 @@ const ArticleCategoryEdit = () => {
   }
   const onSave = async () => {
     let result = undefined;
+    console.log(item)
     if (router.query?.edit_category == 'edit') {
-      for(var i= 0;i<item?.children.length;i++){
-        if(!item?.children[i]?.id){
+      for (var i = 0; i < item?.children.length; i++) {
+        if (!item?.children[i]?.id) {
           let children_result = await addPostCategoryByManager(item?.children[i]);
-        }else{
-          if(item?.children[i]?.is_edit){
-            let children_result = await updatePostCategoryByManager({...item?.children[i]});
+        } else {
+          if (item?.children[i]?.is_edit) {
+            let children_result = await updatePostCategoryByManager({ ...item?.children[i] });
           }
         }
       }
@@ -89,7 +92,7 @@ const ArticleCategoryEdit = () => {
   };
   return (
     <>
-    <Tour
+      <Tour
         steps={tourSteps}
         isOpen={tourOpen}
         disableInteraction={false}
@@ -113,6 +116,24 @@ const ArticleCategoryEdit = () => {
                         }
                       )
                     }} />
+                  {user?.level >= 50 &&
+                    <>
+                      <FormControl>
+                        <InputLabel>유저 추가 가능여부</InputLabel>
+                        <Select label='유저 추가 가능여부' value={item.is_able_user_add} onChange={(e) => {
+                          setItem(
+                            {
+                              ...item,
+                              ['is_able_user_add']: e.target.value
+                            }
+                          )
+                        }}>
+                          <MenuItem value={0}>가능 X</MenuItem>
+                          <MenuItem value={1}>가능 O</MenuItem>
+                        </Select>
+                      </FormControl>
+                    </>}
+
                 </Stack>
               </Card>
             </Grid>

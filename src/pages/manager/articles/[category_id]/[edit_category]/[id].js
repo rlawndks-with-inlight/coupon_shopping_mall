@@ -53,7 +53,7 @@ const ArticleEdit = () => {
         id: router.query.id
       })
       setItem(data);
-      setReply(data?.replies[0])
+      setReply({...reply,...data?.replies[0]})
     }
     setLoading(false);
   }
@@ -195,7 +195,7 @@ const ArticleEdit = () => {
                     <Stack spacing={3}>
                       <TextField
                         label='답변제목'
-                        value={reply.post_title}
+                        value={reply?.post_title}
                         onChange={(e) => {
                           setReply(
                             {
@@ -214,7 +214,7 @@ const ArticleEdit = () => {
                           theme={'snow'}
                           id={'content'}
                           placeholder={''}
-                          value={reply.post_content}
+                          value={reply?.post_content}
                           modules={react_quill_data.modules}
                           formats={react_quill_data.formats}
                           onChange={async (e) => {

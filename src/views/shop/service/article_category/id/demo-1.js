@@ -140,6 +140,7 @@ const Demo1 = (props) => {
                                         <div>제목: </div>
                                         <h1 style={{ fontSize: '1rem' }}>{item?.post_title}</h1>
                                     </Row>
+                                    <img src={item?.post_title_img} style={{width:'100%'}} />
                                     <ReactQuill
                                         className='none-padding'
                                         value={item?.post_content ?? `<body></body>`}

@@ -32,7 +32,8 @@ const ArticleEdit = () => {
     post_title: '',
     post_content: '',
     is_reply: false,
-    reply: ''
+    reply: '',
+    post_title_file: undefined,
   })
   const [reply, setReply] = useState({
     post_title: '',
@@ -62,9 +63,9 @@ const ArticleEdit = () => {
     if (router.query?.edit_category == 'edit') {
       result = await updatePostByManager({ ...item, id: router.query?.id });
       if (category?.is_able_user_add == 1 && result) {
-        if(reply?.id > 0){
+        if (reply?.id > 0) {
           result2 = await updatePostByManager({ ...reply, category_id: category?.id, parent_id: router.query?.id });
-        }else{
+        } else {
           result2 = await addPostByManager({ ...reply, category_id: category?.id, parent_id: router.query?.id });
         }
       } else {
@@ -101,6 +102,37 @@ const ArticleEdit = () => {
                         })}
                       </Select>
                     </>}
+                  <Stack spacing={1}>
+                    <Typography variant="subtitle2" sx={{ color: 'text.secondary' }}>
+                      대표이미지등록
+                    </Typography>
+                    <Upload file={item.post_title_file || item.post_title_img} onDrop={(acceptedFiles) => {
+                      const newFile = acceptedFiles[0];
+                      if (newFile) {
+                        setItem(
+                          {
+                            ...item,
+                            ['post_title_file']: Object.assign(newFile, {
+                              preview: URL.createObjectURL(newFile),
+                            })
+                          }
+                        );
+                      }
+                    }}
+                      onDelete={() => {
+                        setItem(
+                          {
+                            ...item,
+                            ['post_title_file']: undefined,
+                            ['post_title_img']: '',
+                          }
+                        )
+                      }}
+                      fileExplain={{
+                        width: '(512x512 추천)'//파일 사이즈 설명
+                      }}
+                    />
+                  </Stack>
                   <TextField
                     label='제목'
                     value={item.post_title}

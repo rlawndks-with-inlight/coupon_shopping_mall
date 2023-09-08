@@ -7,10 +7,20 @@ import { useRouter } from "next/router";
 import { Row } from "src/components/elements/styled-components";
 import { deletePostByManager, getPostCategoryByManager, getPostsByManager, getProductsByManager } from "src/utils/api-manager";
 import { useModal } from "src/components/dialog/ModalProvider";
+import { LazyLoadImage } from "react-lazy-load-image-component";
 const ArticleList = () => {
   const { setModal } = useModal()
   const [category, setCategory] = useState({});
   const defaultColumns = [
+    ...(category?.post_category_type == 1 ? [
+      {
+        id: 'post_title_img',
+        label: '대표이미지',
+        action: (row) => {
+          return <LazyLoadImage src={row['post_title_img']} style={{ height: '56px' }} />
+        }
+      },
+    ] : []),
     {
       id: 'post_title',
       label: '제목',

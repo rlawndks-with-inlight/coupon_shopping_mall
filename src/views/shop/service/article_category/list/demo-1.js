@@ -194,6 +194,7 @@ const Demo1 = (props) => {
               </>
             ))}
           </ColumnMenu>
+
           <Col style={{ width: '100%' }}>
             {router.query?.article_category &&
               <>
@@ -202,6 +203,7 @@ const Demo1 = (props) => {
                   onChangePage={onChangePage}
                   searchObj={searchObj}
                   columns={columns}
+                  postCategory={postCategory}
                 />
               </>}
             {postCategory?.is_able_user_add == 1 &&

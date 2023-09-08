@@ -36,6 +36,7 @@ const ArticleCategoryEdit = () => {
     post_category_title: '',
     parent_id: router.query?.parent_id,
     is_able_user_add: 0,
+    post_category_type: 0,
   })
   useEffect(() => {
     settingPage();
@@ -132,7 +133,23 @@ const ArticleCategoryEdit = () => {
                         </Select>
                       </FormControl>
                     </>}
-
+                    {user?.level >= 50 &&
+                    <>
+                      <FormControl>
+                        <InputLabel>게시물 카테고리 타입</InputLabel>
+                        <Select label='게시물 카테고리 타입' value={item.post_category_type} onChange={(e) => {
+                          setItem(
+                            {
+                              ...item,
+                              ['post_category_type']: e.target.value
+                            }
+                          )
+                        }}>
+                          <MenuItem value={0}>일반형</MenuItem>
+                          <MenuItem value={1}>갤러리형</MenuItem>
+                        </Select>
+                      </FormControl>
+                    </>}
                 </Stack>
               </Card>
             </Grid>

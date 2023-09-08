@@ -408,9 +408,9 @@ export const getPostCategoriesByManager = (params) => { //관리자 게시글 �
   return get(`/api/v1/manager/post-categories`, query);
 }
 export const addPostCategoryByManager = (params) => { //관리자 게시글 카테고리 추가
-  const { parent_id, post_category_title, is_able_user_add } = params;
+  const { parent_id, post_category_title, is_able_user_add, post_category_type } = params;
   let obj = {
-    parent_id, post_category_title, is_able_user_add
+    parent_id, post_category_title, is_able_user_add, post_category_type
   }
   if (!parent_id) {
     delete obj['parent_id'];
@@ -418,9 +418,9 @@ export const addPostCategoryByManager = (params) => { //관리자 게시글 카�
   return post(`/api/v1/manager/post-categories`, obj);
 }
 export const updatePostCategoryByManager = (params) => { //관리자 게시글 카테고리 수정
-  const { parent_id, post_category_title, id, is_able_user_add } = params;
+  const { parent_id, post_category_title, id, is_able_user_add, post_category_type } = params;
   let obj = {
-    parent_id, post_category_title, is_able_user_add
+    parent_id, post_category_title, is_able_user_add, post_category_type
   }
   return put(`/api/v1/manager/post-categories/${id}`, obj);
 }
@@ -443,20 +443,37 @@ export const getPostsByManager = (params) => { //관리자 게시글 목록 출�
   return get(`/api/v1/manager/posts`, query);
 }
 export const addPostByManager = (params) => { //관리자 게시글 추가
-  const { category_id, parent_id, post_title, post_content, is_reply } = params;
+  const { 
+    category_id, parent_id, post_title, post_content, is_reply,
+    post_title_file 
+  } = params;
   let obj = {
-    category_id, parent_id, post_title, post_content, is_reply
+    category_id, parent_id, post_title, post_content, is_reply,
+    post_title_file
   }
   if (!parent_id) {
     delete obj['parent_id'];
   }
+  let images = [
+    'post_title'
+  ]
+  obj = settingImageObj(images, obj);
   return post(`/api/v1/manager/posts`, obj);
 }
 export const updatePostByManager = (params) => { //관리자 게시글 수정
-  const { category_id, parent_id, post_title, post_content, is_reply, id } = params;
+  const { 
+    category_id, parent_id, post_title, post_content, is_reply,
+    post_title_file, post_title_img ,
+     id 
+  } = params;
   let obj = {
-    category_id, parent_id, post_title, post_content, is_reply
+    category_id, parent_id, post_title, post_content, is_reply,
+    post_title_file, post_title_img ,
   }
+  let images = [
+    'post_title'
+  ]
+  obj = settingImageObj(images, obj);
   return put(`/api/v1/manager/posts/${id}`, obj);
 }
 export const getPostByManager = (params) => { //관리자 게시글 단일 출력

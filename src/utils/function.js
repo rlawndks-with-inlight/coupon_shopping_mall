@@ -141,6 +141,14 @@ export const getMyPageParamByNumber = (num) => {
   else
     return '잘못된레벨'
 }
+export const getPostCategoryTypeByNumber = (num) => {
+  if (num == 0)
+    return '일반형'
+  else if (num == 1)
+    return '갤러리형'
+  else
+    return '잘못된타입'
+}
 export const useEditPageImg = (img_) => {
   try {
     let img = img_ ? img_[0] : '';

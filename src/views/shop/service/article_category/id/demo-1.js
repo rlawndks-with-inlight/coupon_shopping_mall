@@ -55,8 +55,8 @@ const Demo1 = (props) => {
                 post_id: router.query?.id
             })
             setItem(data);
-            setLoading(false);
         }
+        setLoading(false);
     }
     const onSave = async () => {
         let result = undefined;

@@ -27,6 +27,7 @@ export const post = async (url, obj_) => {
         'Access-Control-Allow-Headers': 'origin,X-Requested-With,content-type,accept',
         'Access-Control-Allow-Credentials': 'true' 
       },
+      withCredentials :true,
     };
     const response = await axiosIns().post(url, formData, config);
     return response?.data;

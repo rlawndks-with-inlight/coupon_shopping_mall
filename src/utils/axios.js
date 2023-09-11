@@ -18,7 +18,6 @@ export const axiosIns = (host, protocol) => {
 
   return axiosIns;
 }
-
 export const notiAxiosIns = (host, protocol) => {
   let dns_info = {
     // You can add your headers here

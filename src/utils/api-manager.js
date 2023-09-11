@@ -21,13 +21,8 @@ export const post = async (url, obj_) => {
     formData = serialize(obj, form_data_options);
     let config = {
       headers: {
-        'Content-Type': undefined,
-        'Accept': '*/*',
-        'Access-Control-Allow-Methods': 'GET, POST, OPTIONS, PUT, PATCH, DELETE',
-        'Access-Control-Allow-Headers': 'origin,X-Requested-With,content-type,accept',
-        'Access-Control-Allow-Credentials': 'true' 
-      },
-      withCredentials :true,
+        'Content-Type': "multipart/form-data",
+      }
     };
     const response = await axiosIns().post(url, formData, config);
     return response?.data;
@@ -687,7 +682,6 @@ export const uploadFileByManager = (params) => {// 관리자 파일 단일 업�
   };
   return post('/api/v1/manager/posts/upload', obj, config);
 }
-
 export const uploadsFileByManager = (params) => {// 관리자 파일 여러개 업로드
   const { images } = params;
   let obj = {

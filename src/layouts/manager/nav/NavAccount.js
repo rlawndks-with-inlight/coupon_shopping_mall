@@ -29,7 +29,7 @@ export default function NavAccount() {
   return (
     <Link underline="none" color="inherit">
       <StyledRoot>
-        <CustomAvatar src={user?.profile_img} alt={user?.name} name={user?.name} />
+        <CustomAvatar src={user?.profile_img} alt={user?.user_name} name={user?.user_name} />
 
         <Box sx={{ ml: 2, minWidth: 0 }}>
           <Typography variant="subtitle2" noWrap>

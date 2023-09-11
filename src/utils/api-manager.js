@@ -21,6 +21,7 @@ export const post = async (url, obj_) => {
     formData = serialize(obj, form_data_options);
     let config = {
       headers: {
+        'Accept':'*/*',
         'Content-Type': "multipart/form-data",
       }
     };
@@ -70,6 +71,7 @@ export const put = async (url, obj_) => {
     formData.append('_method', 'PUT');
     let config = {
       headers: {
+        'Accept':'*/*',
         'Content-Type': "multipart/form-data",
       }
     };

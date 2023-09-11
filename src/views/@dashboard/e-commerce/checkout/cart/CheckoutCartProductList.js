@@ -6,6 +6,7 @@ import Scrollbar from 'src/components/scrollbar';
 import { TableHeadCustom } from 'src/components/table';
 //
 import CheckoutCartProduct from './CheckoutCartProduct';
+import { calculatorPrice } from 'src/utils/shop-util';
 
 // ----------------------------------------------------------------------
 
@@ -23,7 +24,6 @@ export default function CheckoutCartProductList({
   onDelete,
   onIncreaseQuantity,
   onDecreaseQuantity,
-  calculatorPrice
 }) {
   return (
     <TableContainer>

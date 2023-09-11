@@ -1,10 +1,10 @@
-import { Card, Container, IconButton, Stack } from "@mui/material";
+import { Accordion, AccordionDetails, AccordionSummary, Card, Container, IconButton, Stack, Typography } from "@mui/material";
 import { useEffect, useState } from "react";
 import ManagerLayout from "src/layouts/manager/ManagerLayout";
 import ManagerTable from "src/views/manager/mui/table/ManagerTable";
 import { Icon } from "@iconify/react";
 import { useRouter } from "next/router";
-import { Row } from "src/components/elements/styled-components";
+import { Col, Row } from "src/components/elements/styled-components";
 import { deleteTrxByManager, getTrxsByManager } from "src/utils/api-manager";
 import { useModal } from "src/components/dialog/ModalProvider";
 import { LazyLoadImage } from "react-lazy-load-image-component";
@@ -14,42 +14,6 @@ import { commarNumber } from "src/utils/function";
 const TrxList = () => {
   const { setModal } = useModal()
   const defaultColumns = [
-    {
-      id: 'product_img',
-      label: '상품이미지',
-      action: (row) => {
-        return <LazyLoadImage src={row['product_img']} style={{ height: '56px' }} />
-      },
-      sx: (row) => {
-        return {
-          color: `${row?.is_cancel == 1 ? 'red' : ''}`
-        }
-      },
-    },
-    {
-      id: 'item_name',
-      label: '상품명',
-      action: (row) => {
-        return row['item_name'] ?? "---"
-      },
-      sx: (row) => {
-        return {
-          color: `${row?.is_cancel == 1 ? 'red' : ''}`
-        }
-      },
-    },
-    {
-      id: 'amount',
-      label: '구매금액',
-      action: (row) => {
-        return commarNumber(row['amount'])
-      },
-      sx: (row) => {
-        return {
-          color: `${row?.is_cancel == 1 ? 'red' : ''}`
-        }
-      },
-    },
     {
       id: 'appr_num',
       label: '승인번호',
@@ -91,6 +55,64 @@ const TrxList = () => {
       label: '구매자휴대폰번호',
       action: (row) => {
         return row['buyer_phone'] ?? "---"
+      },
+      sx: (row) => {
+        return {
+          color: `${row?.is_cancel == 1 ? 'red' : ''}`
+        }
+      },
+    },
+    {
+      id: 'orders',
+      label: '구매금액',
+      action: (row) => {
+        return <Accordion key={row?.id} style={{ boxShadow: "none", background: 'transparent' }} disabled={!(row?.orders?.length > 0)}>
+          <AccordionSummary expandIcon={<Icon icon="eva:arrow-ios-downward-fill" />}>
+            <Typography variant="subtitle1">{commarNumber(row['amount'])}원</Typography>
+          </AccordionSummary>
+          <AccordionDetails>
+            <Col>
+              {row?.orders && row?.orders.map((order, index) => (
+                <>
+                  <Col>
+                    <Row>
+                      <div style={{ minWidth: '62px', fontWeight: 'bold' }}>No.{index + 1}</div>
+                    </Row>
+                    <Row style={{ flexWrap: 'wrap' }}>
+                      <div style={{ minWidth: '62px' }}>주문명: </div>
+                      <div style={{ wordBreak: 'break-all' }}>{order?.order_name}</div>
+                    </Row>
+                    {order?.groups.length > 0 &&
+                      <>
+                        <Row>
+                          <div style={{ minWidth: '62px' }}>옵션정보: </div>
+                          <Col>
+                            {order?.groups && order?.groups.map((group, idx) => (
+                              <>
+                                <Row>
+                                  <div style={{ minWidth: '62px', marginRight: '0.25rem' }}>{group?.group_name}: </div>
+                                  {group?.options && group?.options.map((option, idx2) => (
+                                    <>
+                                      <div>{option?.option_name} ({option?.option_price > 0 ? '+' : ''}{option?.option_price})</div>{idx2 == group?.options.length - 1 ? '' : <>&nbsp;/&nbsp;</>}
+                                    </>
+                                  ))}
+                                </Row>
+                              </>
+                            ))}
+                          </Col>
+                        </Row>
+                      </>}
+                    <Row>
+                      <div style={{ minWidth: '62px' }}>가격: </div>
+                      <div>{commarNumber(order?.order_amount)}</div>
+                    </Row>
+                  </Col>
+                  <br />
+                </>
+              ))}
+            </Col>
+          </AccordionDetails>
+        </Accordion>
       },
       sx: (row) => {
         return {

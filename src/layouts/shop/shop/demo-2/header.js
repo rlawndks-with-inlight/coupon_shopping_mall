@@ -440,11 +440,7 @@ const Header = () => {
                 <IconButton
                   sx={{ ...iconButtonStyle, marginRight: '0.5rem' }}
                   onClick={() => {
-                    if (user) {
-                      router.push(`/shop/auth/cart`)
-                    } else {
-                      router.push(`/shop/auth/login`)
-                    }
+                    router.push(`/shop/auth/cart`)
                   }}
                 >
                   <Icon icon={'ph:shopping-bag-open-thin'} fontSize={'2.8rem'} color={themeMode == 'dark' ? '#fff' : '#000'} />
@@ -486,11 +482,7 @@ const Header = () => {
                 <IconButton
                   sx={iconButtonStyle}
                   onClick={() => {
-                    if (user) {
-                      router.push(`/shop/auth/cart`)
-                    } else {
-                      router.push(`/shop/auth/login`)
-                    }
+                    router.push(`/shop/auth/cart`)
                   }}
                 >
                   <Icon icon={'ph:shopping-bag-open-thin'} fontSize={'1.8rem'} color={themeMode == 'dark' ? '#fff' : '#000'} />

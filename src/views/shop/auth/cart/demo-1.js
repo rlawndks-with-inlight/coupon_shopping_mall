@@ -1,8 +1,8 @@
-import { Box, Button, Card, CardContent, CardHeader, FormControlLabel, Grid, Paper, Radio, RadioGroup, Stack, Typography } from '@mui/material';
+import { Box, Button, Card, CardContent, CardHeader, FormControlLabel, Grid, Paper, Radio, RadioGroup, Stack, TextField, Typography } from '@mui/material';
 import { useEffect, useState } from 'react';
 import { Row, Title } from 'src/components/elements/styled-components';
 import { test_pay_list, test_address_list, test_item, test_items } from 'src/data/test-data';
-import {  CheckoutCartProductList, CheckoutSteps, CheckoutSummary } from 'src/views/@dashboard/e-commerce/checkout';
+import { CheckoutCartProductList, CheckoutSteps, CheckoutSummary } from 'src/views/@dashboard/e-commerce/checkout';
 import styled from 'styled-components'
 import _ from 'lodash'
 import Label from 'src/components/label/Label';
@@ -10,7 +10,14 @@ import EmptyContent from 'src/components/empty-content/EmptyContent';
 import Iconify from 'src/components/iconify/Iconify';
 import { useSettingsContext } from 'src/components/settings';
 import { getProductsByUser } from 'src/utils/api-shop';
-import { getCartDataUtil } from 'src/utils/shop-util';
+import { calculatorPrice, getCartDataUtil, onPayProductsByHand } from 'src/utils/shop-util';
+import { useAuthContext } from 'src/layouts/manager/auth/useAuthContext';
+import Payment from 'payment'
+import Cards from 'react-credit-cards'
+import { formatCreditCardNumber, formatExpirationDate } from 'src/utils/formatCard';
+import { useModal } from 'src/components/dialog/ModalProvider';
+import toast from 'react-hot-toast';
+
 const Wrappers = styled.div`
 max-width:1500px;
 display:flex;
@@ -20,25 +27,10 @@ width: 90%;
 min-height:90vh;
 margin-bottom:10vh;
 `
-const calculatorPrice = (item) => {
-  let { product_sale_price, product_price, select_option_obj, count } = item;
-  let product_origin_price = 0;
-  let product_option_price = 0;
-  let item_options_key_list = Object.keys(select_option_obj ?? {});
-  for (var i = 0; i < item_options_key_list.length; i++) {
-    let key = item_options_key_list[i];
-    let option = _.find(select_option_obj[key]?.options, { id: select_option_obj[key]?.option_id });
-    product_option_price += option?.option_price ?? 0;
-  }
-  return {
-    subtotal: (product_price + product_option_price) * count,
-    total: (product_sale_price + product_option_price) * count,
-    discount: (product_price - product_sale_price) * count
-  }
-}
+
 const STEPS = ['장바구니 확인', '배송지 확인', '결제하기'];
 export function AddressItem({ item, onCreateBilling }) {
-  const { receiver, address, address_type, phone, is_default } = item;
+  const { receiver, addr, address_type, phone, is_default } = item;
   return (
     <Card
       sx={{
@@ -70,7 +62,7 @@ export function AddressItem({ item, onCreateBilling }) {
               </Label>
             )}
           </Stack>
-          <Typography variant="body2">{address}</Typography>
+          <Typography variant="body2">{addr}</Typography>
           <Typography variant="body2" sx={{ color: 'text.secondary' }}>
             {phone}
           </Typography>
@@ -98,18 +90,35 @@ const Demo1 = (props) => {
       router
     },
   } = props;
-  const { themeCartData, onChangeCartData } = useSettingsContext();
+  const { setModal } = useModal()
+  const { user } = useAuthContext();
+  const { themeCartData, onChangeCartData, themeDnsData } = useSettingsContext();
   const [products, setProducts] = useState([]);
   const [activeStep, setActiveStep] = useState(0);
   const [addressList, setAddressList] = useState([]);
-  const [selectAddress, setSelectAddress] = useState(undefined);
+  const [buyType, setBuyType] = useState(undefined);
+  const [cardFucus, setCardFocus] = useState()
+  const [payData, setPayData] = useState({
+    brand_id: themeDnsData?.id,
+    user_id: user?.id ?? undefined,
+    //total_amount
+    buyer_name: user?.nick_name ?? "",
+    installment: 0,
+    buyer_phone: '',
+    card_num: '',
+    yymm: '',
+    auth_num: '',
+    card_pw: '',
+    addr: "",
+    detail_addr: '',
+    password: "",
+  })
   useEffect(() => {
     getCart();
   }, [])
   const getCart = async () => {
     let data = await getCartDataUtil(themeCartData);
     setProducts(data);
-    
     let address_data = test_address_list;
     setAddressList(address_data)
   }
@@ -144,8 +153,29 @@ const Demo1 = (props) => {
     scrollTo(0, 0)
   }
   const onCreateBilling = (item) => {
-    setSelectAddress(item);
+    setPayData({
+      ...payData,
+      ...item,
+    })
     onClickNextStep();
+  }
+  const selectPayType = async (item) => {
+    if (item?.type == 'card') {//카드결제
+      setBuyType('card');
+    } else if (item?.type == 'certification') {
+
+    }
+  }
+  const onPay = async () => {
+    if (buyType == 'card') {//카드결제
+      let result = await onPayProductsByHand(products, payData);
+      console.log(result)
+      if(result){
+        await onChangeCartData([]);
+        toast.success('성공적으로 구매에 성공하였습니다.');
+        router.push('/shop/auth/history');
+      }
+    }
   }
   return (
     <>
@@ -164,7 +194,6 @@ const Demo1 = (props) => {
                         onDelete={onDelete}
                         onDecreaseQuantity={onDecreaseQuantity}
                         onIncreaseQuantity={onIncreaseQuantity}
-                        calculatorPrice={calculatorPrice}
                       />
                     </>
                     :
@@ -205,37 +234,172 @@ const Demo1 = (props) => {
             {activeStep == 2 &&
               <>
                 <Card sx={{ marginBottom: '1.5rem' }}>
-                  <CardHeader title="결제 수단 선택" />
-                  <CardContent>
-                    <RadioGroup row>
-                      <Stack spacing={3} sx={{ width: 1 }}>
-                        {test_pay_list.map((item, idx) => (
-                          <>
-                            <Paper
-                              variant="outlined"
-                              sx={{ padding: '1rem', cursor: 'pointer' }}
-                            >
-                              <Box sx={{ ml: 1 }}>
-                                <Typography variant="subtitle2">{item.title}</Typography>
-                                <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-                                  {item.description}
-                                </Typography>
-                              </Box>
-                            </Paper>
-                          </>
-                        ))}
-                      </Stack>
-                    </RadioGroup>
-                  </CardContent>
+                  {!buyType &&
+                    <>
+                      <CardHeader title="결제 수단 선택" />
+                      <CardContent>
+                        <RadioGroup row>
+                          <Stack spacing={3} sx={{ width: 1 }}>
+                            {test_pay_list.map((item, idx) => (
+                              <>
+                                <Paper
+                                  variant="outlined"
+                                  sx={{ padding: '1rem', cursor: 'pointer' }}
+                                  onClick={() => {
+                                    selectPayType(item)
+                                  }}
+                                >
+                                  <Box sx={{ ml: 1 }}>
+                                    <Typography variant="subtitle2">{item.title}</Typography>
+                                    <Typography variant="body2" sx={{ color: 'text.secondary' }}>
+                                      {item.description}
+                                    </Typography>
+                                  </Box>
+                                </Paper>
+                              </>
+                            ))}
+                          </Stack>
+                        </RadioGroup>
+                      </CardContent>
+                    </>}
+                  {buyType == 'card' &&
+                    <>
+                      <CardHeader title="카드정보입력" />
+                      <CardContent>
+                        <Stack spacing={2}>
+                          <Cards cvc={''} focused={cardFucus} expiry={payData.yymm} name={payData.buyer_name} number={payData.card_num} />
+                          <Stack>
+                            <TextField
+                              size='small'
+                              label='카드 번호'
+                              value={payData.card_num}
+                              placeholder='0000 0000 0000 0000'
+                              onChange={(e) => {
+                                let value = e.target.value;
+                                value = formatCreditCardNumber(value, Payment)
+                                setPayData({
+                                  ...payData,
+                                  ['card_num']: value
+                                })
+                              }}
+                            />
+                          </Stack>
+                          <Stack>
+                            <TextField
+                              size='small'
+                              label='카드 사용자명'
+                              value={payData.buyer_name}
+                              onChange={(e) => {
+                                let value = e.target.value;
+                                setPayData({
+                                  ...payData,
+                                  ['buyer_name']: value
+                                })
+                              }}
+                            />
+                          </Stack>
+                          <Stack>
+                            <TextField
+                              size='small'
+                              label='만료일'
+                              value={payData.yymm}
+                              inputProps={{ maxLength: '5' }}
+                              onChange={(e) => {
+                                let value = e.target.value;
+                                value = formatExpirationDate(value, Payment)
+                                setPayData({
+                                  ...payData,
+                                  ['yymm']: value
+                                })
+                              }}
+                            />
+                          </Stack>
+                          <Stack>
+                            <TextField
+                              size='small'
+                              label='카드비밀번호 앞 두자리'
+                              value={payData.card_pw}
+                              type='password'
+                              inputProps={{ maxLength: '2' }}
+                              onChange={(e) => {
+                                let value = e.target.value;
+                                setPayData({
+                                  ...payData,
+                                  ['card_pw']: value
+                                })
+                              }}
+                            />
+                          </Stack>
+                          <Stack>
+                            <TextField
+                              size='small'
+                              label='구매자 휴대폰번호'
+                              value={payData.buyer_phone}
+                              onChange={(e) => {
+                                let value = e.target.value;
+                                setPayData({
+                                  ...payData,
+                                  ['buyer_phone']: value
+                                })
+                              }}
+                            />
+                          </Stack>
+                          <Stack>
+                            <TextField
+                              size='small'
+                              label='주민번호 또는 사업자등록번호'
+                              value={payData.auth_num}
+                              onChange={(e) => {
+                                let value = e.target.value;
+                                setPayData({
+                                  ...payData,
+                                  ['auth_num']: value
+                                })
+                              }}
+                            />
+                          </Stack>
+                          {!user &&
+                            <>
+                              <Stack>
+                                <TextField
+                                  size='small'
+                                  label='비회원주문 비밀번호'
+                                  type='password'
+                                  value={payData.password}
+                                  inputProps={{ maxLength: '6' }}
+                                  onChange={(e) => {
+                                    let value = e.target.value;
+                                    setPayData({
+                                      ...payData,
+                                      ['password']: value
+                                    })
+                                  }}
+                                />
+                              </Stack>
+                            </>}
+                          <Stack>
+                            <Button variant='contained' onClick={() => {
+                              setModal({
+                                func: () => { onPay() },
+                                icon: 'ion:card-outline',
+                                title: '정말로 결제 하시겠습니까?'
+                              })
+                            }}>
+                              결제하기
+                            </Button>
+                          </Stack>
+                        </Stack>
+                      </CardContent>
+                    </>}
                 </Card>
               </>}
           </Grid>
           <Grid item xs={12} md={4}>
             <CheckoutSummary
               enableDiscount
-              total={_.sum(_.map(products, (item) => { return calculatorPrice(item).total}))}
-              discount={_.sum(_.map(products, (item) => { return calculatorPrice(item).discount}))}
-              subtotal={_.sum(_.map(products, (item) => { return calculatorPrice(item).subtotal}))}
+              total={_.sum(_.map(products, (item) => { return calculatorPrice(item).total }))}
+              discount={_.sum(_.map(products, (item) => { return calculatorPrice(item).discount }))}
+              subtotal={_.sum(_.map(products, (item) => { return calculatorPrice(item).subtotal }))}
             />
             {activeStep == 0 &&
               <>

@@ -32,7 +32,7 @@ import { ModalProvider } from 'src/components/dialog/ModalProvider';
 import { useState } from 'react';
 
 const App = (props) => {
-  const { Component, pageProps, head_data, host, host_data } = props;
+  const { Component, pageProps, head_data={}, host, host_data } = props;
   const getLayout = Component.getLayout ?? ((page) => page);
   const [headData, setHeadData] = useState({});
   useEffect(() => {

@@ -450,11 +450,7 @@ const Header = () => {
                 <IconButton
                   sx={iconButtonStyle}
                   onClick={() => {
-                    if (user) {
-                      router.push(`/shop/auth/cart`)
-                    } else {
-                      router.push(`/shop/auth/login`)
-                    }
+                    router.push(`/shop/auth/cart`)
                   }}
                 >
                    <Badge badgeContent={themeCartData.length} color="error">
@@ -545,11 +541,7 @@ const Header = () => {
                 <IconButton
                   sx={iconButtonStyle}
                   onClick={() => {
-                    if (user) {
-                      router.push(`/shop/auth/cart`)
-                    } else {
-                      router.push(`/shop/auth/login`)
-                    }
+                    router.push(`/shop/auth/cart`)
                   }}
                 >
                   <Badge badgeContent={themeCartData.length} color="error">

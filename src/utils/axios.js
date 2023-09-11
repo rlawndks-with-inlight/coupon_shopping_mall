@@ -12,7 +12,7 @@ export const axiosIns = (host, protocol) => {
       'Accept': 'application/json',
       "Content-Type": "application/json",
     },
-    withCredentials: true
+    withCredentials: true,
   }
   const axiosIns = axios.create(dns_info)
 

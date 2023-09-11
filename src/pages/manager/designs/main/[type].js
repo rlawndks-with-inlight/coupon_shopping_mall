@@ -191,6 +191,7 @@ const Main = () => {
   const handleDropMultiFile = (acceptedFiles, idx) => {
     let content_list = [...contentList];
     for (var i = 0; i < acceptedFiles.length; i++) {
+      content_list[idx]['list'] = content_list[idx]['list']??[];
       content_list[idx]['list'].push(Object.assign(acceptedFiles[i], {
         preview: URL.createObjectURL(acceptedFiles[i]),
         title: "",

@@ -183,7 +183,7 @@ const HomeBanner = (props) => {
                                                     animate="visible"
                                                     variants={fadeInUpVariants}
                                                 >
-                                                    <SlideTitle>
+                                                    <SlideTitle style={{ color: `${item?.title_color ?? ""}` }}>
                                                         {item?.title}
                                                     </SlideTitle>
                                                 </m.div>
@@ -193,7 +193,7 @@ const HomeBanner = (props) => {
                                                     initial="hidden"
                                                     animate="visible"
                                                     variants={fadeInUpVariants}>
-                                                    <SlideSubTitle>
+                                                    <SlideSubTitle style={{ color: `${item?.sub_title_color ?? ""}` }}>
                                                         {item?.sub_title}
                                                     </SlideSubTitle>
                                                 </m.div>

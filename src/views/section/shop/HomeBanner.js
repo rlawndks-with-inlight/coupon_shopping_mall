@@ -95,24 +95,24 @@ row-gap:1rem;
 }
 `
 const SlideTitle = styled.div`
-font-size:${themeObj.font_size.size1};
+font-size:${themeObj.font_size.size2};
 font-weight:bold;
 color:#fff;
 @media (max-width:1200px) {
-font-size:${themeObj.font_size.size2};
+font-size:${themeObj.font_size.size3};
 }
 @media (max-width:600px) {
-font-size:${themeObj.font_size.size3};
+font-size:${themeObj.font_size.size5};
 }
 `
 const SlideSubTitle = styled.div`
-font-size:${themeObj.font_size.size2};
+font-size:${themeObj.font_size.size3};
 color:#fff;
 @media (max-width:1200px) {
-font-size:${themeObj.font_size.size3};
+font-size:${themeObj.font_size.size4};
 }
 @media (max-width:600px) {
-    font-size:${themeObj.font_size.size4};
+    font-size:${themeObj.font_size6};
 }
 `
 const NextArrow = ({ onClick, sx }) => {

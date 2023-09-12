@@ -30,6 +30,7 @@ import ThemeContrast from 'src/components/settings/ThemeContrast';
 import { MotionLazyContainer } from 'src/components/animate';
 import { ModalProvider } from 'src/components/dialog/ModalProvider';
 import { useState } from 'react';
+import {Cloudinary} from "@cloudinary/url-gen";
 
 const App = (props) => {
   const { Component, pageProps, head_data={}, host, host_data } = props;

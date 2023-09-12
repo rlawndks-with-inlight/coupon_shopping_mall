@@ -169,7 +169,6 @@ const Demo1 = (props) => {
   const onPay = async () => {
     if (buyType == 'card') {//카드결제
       let result = await onPayProductsByHand(products, payData);
-      console.log(result)
       if(result){
         await onChangeCartData([]);
         toast.success('성공적으로 구매에 성공하였습니다.');

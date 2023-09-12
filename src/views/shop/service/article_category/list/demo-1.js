@@ -122,7 +122,6 @@ const Demo1 = (props) => {
   }, [postCategory])
   useEffect(() => {
     setPostCategory(_.find(themePostCategoryList, { id: parseInt(router.query?.article_category) }))
-    console.log(_.find(themePostCategoryList, { id: parseInt(router.query?.article_category) }))
   }, [router.query?.article_category, themePostCategoryList])
   useEffect(() => {
     if (router.query?.article_category) {

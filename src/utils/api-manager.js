@@ -2,11 +2,12 @@ import { toast } from "react-hot-toast";
 import { axiosIns } from "./axios";
 import { serialize } from 'object-to-formdata';
 import { getLocalStorage } from "./local-storage";
-
+import axios from "axios";
+import { when } from "jquery";
 export const post = async (url, obj_) => {
   let dns_data = getLocalStorage('themeDnsData');
   dns_data = JSON.parse(dns_data);
-  let obj = obj_??{};
+  let obj = obj_ ?? {};
   if (!(obj?.brand_id > 0)) {
     obj['brand_id'] = dns_data?.id;
   }
@@ -21,7 +22,7 @@ export const post = async (url, obj_) => {
     formData = serialize(obj, form_data_options);
     let config = {
       headers: {
-        'Accept':'*/*',
+        'Accept': '*/*',
         'Content-Type': "multipart/form-data",
       }
     };
@@ -36,7 +37,7 @@ export const post = async (url, obj_) => {
 export const deleteItem = async (url, obj_) => {
   let dns_data = getLocalStorage('themeDnsData');
   dns_data = JSON.parse(dns_data);
-  let obj = obj_??{};
+  let obj = obj_ ?? {};
   if (!(obj?.brand_id > 0)) {
     obj['brand_id'] = dns_data?.id;
   }
@@ -55,7 +56,7 @@ export const deleteItem = async (url, obj_) => {
 export const put = async (url, obj_) => {
   let dns_data = getLocalStorage('themeDnsData');
   dns_data = JSON.parse(dns_data);
-  let obj = obj_??{};
+  let obj = obj_ ?? {};
   if (!(obj?.brand_id > 0)) {
     obj['brand_id'] = dns_data?.id;
   }
@@ -71,7 +72,7 @@ export const put = async (url, obj_) => {
     formData.append('_method', 'PUT');
     let config = {
       headers: {
-        'Accept':'*/*',
+        'Accept': '*/*',
         'Content-Type': "multipart/form-data",
       }
     };
@@ -87,7 +88,7 @@ export const get = async (url, params_) => {
   try {
     let dns_data = getLocalStorage('themeDnsData');
     dns_data = JSON.parse(dns_data);
-    let params = params_??{};
+    let params = params_ ?? {};
     if (!(params?.brand_id > 0)) {
       params['brand_id'] = dns_data?.id;
     }
@@ -107,23 +108,74 @@ export const get = async (url, params_) => {
     return false;
   }
 }
-
-const settingImageObj = (images, obj_) => {//이미지 존재여부에따라 img 또는 file로 리턴함
+const uploadFileByCloudinary = async (file) => {
+  try {
+    let formData = new FormData();
+    formData.append("file", file);
+    formData.append('upload_preset', process.env.CLOUDINARY_PRESET); // Cloudinary 대시보드에서 설정
+    let result = await axios.post(`${process.env.CLOUDINARY_URL}/${process.env.CLOUDINARY_NAME}/image/upload`, formData);
+    result.data.url = result.data.url.replaceAll('http://','https://')
+    return result?.data;
+  } catch (err) {
+    console.log(err);
+    return false;
+  }
+}
+const multipleFileUploadByCloudinary = async (files) => {
+  let result = undefined;
+  if (typeof files.length == 'number') {
+    let result_list = [];
+    for (var i = 0; i < files.length; i++) {
+      result_list.push(uploadFileByCloudinary(files[i]));
+    }
+    for (var i = 0; i < result_list.length; i++) {
+      await result_list[i];
+    }
+    result = (await when(result_list));
+    let list = [];
+    for (var i = 0; i < (await result).length; i++) {
+      list.push(await result[i]);
+    }
+    return list;
+  } else {
+    result = await uploadFileByCloudinary(files);
+    return result;
+  }
+}
+const settingImageObj = async (images, obj_) => {//이미지 존재여부에따라 img 또는 file로 리턴함
   let obj = obj_;
+  let files = [];
+  let files_keys = [];
   for (var i = 0; i < images.length; i++) {
-    if (!obj[`${images[i]}_file`]) {
-      delete obj[`${images[i]}_file`];
-    } else {
-      delete obj[`${images[i]}_img`];
+    if (obj[`${images[i]}_file`]) {
+      files_keys.push(`${images[i]}_img`);
+      files.push(obj[`${images[i]}_file`]);
+    } 
+    delete obj[`${images[i]}_file`];
+  }
+  if(files.length > 0){
+    let files_result = await multipleFileUploadByCloudinary(files);
+    for(var i = 0;i<files_result.length;i++){
+      obj[files_keys[i]] = files_result[i]?.url
     }
   }
   return obj;
 }
-const settingdeleteImageObj = (images, obj_) => {//이미지 존재안할시 삭제함
+const settingdeleteImageObj = async (images, obj_) => {//이미지 존재안할시 삭제함
   let obj = obj_;
+  let files = [];
+  let files_keys = [];
   for (var i = 0; i < images.length; i++) {
-    if (!obj[`${images[i]}_file`]) {
-      delete obj[`${images[i]}_file`];
+    if (obj[`${images[i]}_file`]) {
+      files_keys.push(`${images[i]}_img`);
+      files.push(obj[`${images[i]}_file`]);
+    } 
+    delete obj[`${images[i]}_file`];
+  }
+  if(files.length > 0){
+    let files_result = await multipleFileUploadByCloudinary(files);
+    for(var i = 0;i<files_result.length;i++){
+      obj[files_keys[i]] = files_result[i]?.url
     }
   }
   return obj;
@@ -139,7 +191,7 @@ export const getCategoriesByManager = (params) => { //관리자 상품 카테고
 
   return get(`/api/v1/manager/product-categories`, query);
 }
-export const addCategoryByManager = (params) => { //관리자 상품 카테고리 추가
+export const addCategoryByManager = async (params) => { //관리자 상품 카테고리 추가
   const { parent_id, category_type, category_name, category_description, category_file = '' } = params;
   let obj = {
     parent_id, category_type, category_name, category_description, category_file
@@ -150,10 +202,10 @@ export const addCategoryByManager = (params) => { //관리자 상품 카테고�
   let images = [
     'category'
   ]
-  obj = settingdeleteImageObj(images, obj);
+  obj = await settingdeleteImageObj(images, obj);
   return post(`/api/v1/manager/product-categories`, obj);
 }
-export const updateCategoryByManager = (params) => { //관리자 상품 카테고리 수정
+export const updateCategoryByManager = async (params) => { //관리자 상품 카테고리 수정
   const { id, parent_id, category_type, category_name, category_description, category_file, category_img } = params;
   let obj = {
     parent_id, category_type, category_name, category_description, category_file, category_img
@@ -161,7 +213,7 @@ export const updateCategoryByManager = (params) => { //관리자 상품 카테�
   let images = [
     'category'
   ]
-  obj = settingImageObj(images, obj);
+  obj = await settingImageObj(images, obj);
   return put(`/api/v1/manager/product-categories/${id}`, obj);
 }
 export const getCategoryByManager = (params) => { //관리자 상품 카테고리 단일 출력
@@ -184,7 +236,7 @@ export const getProductsByManager = (params) => { //관리자 상품목록 출�
 
   return get(`/api/v1/manager/products`, query);
 }
-export const addProductByManager = (params) => { //관리자 상품 추가
+export const addProductByManager =async (params) => { //관리자 상품 추가
   const { category_id, product_name = '', product_comment = '', product_price = 0, product_sale_price = 0, brand_name = '', origin_name = '', mfg_name = '', model_name = '', product_description = '',
     product_file,
     sub_images = [],
@@ -199,10 +251,10 @@ export const addProductByManager = (params) => { //관리자 상품 추가
   let images = [
     'product'
   ]
-  obj = settingdeleteImageObj(images, obj);
+  obj = await settingdeleteImageObj(images, obj);
   return post(`/api/v1/manager/products`, obj);
 }
-export const updateProductByManager = (params) => { //관리자 상품 수정
+export const updateProductByManager = async (params) => { //관리자 상품 수정
   const { id, category_id, product_name = '', product_comment = '', product_price = 0, product_sale_price = 0, brand_name = '', origin_name = '', mfg_name = '', model_name = '', product_description = '',
     product_file, product_img,
     sub_images = [],
@@ -217,19 +269,20 @@ export const updateProductByManager = (params) => { //관리자 상품 수정
   let images = [
     'product'
   ]
-  obj = settingImageObj(images, obj);
+
+  obj = await settingImageObj(images, obj);
   for (var i = 0; i < sub_images.length; i++) {
-    obj.sub_images[i] = settingImageObj([
+    obj.sub_images[i] = await settingImageObj([
       'product_sub'
     ], obj.sub_images[i]);
   }
   for (var i = 0; i < groups.length; i++) {
-    obj.groups[i] = settingImageObj([
+    obj.groups[i] = await settingImageObj([
       'group'
     ], obj.groups[i]);
     let options = obj.groups[i]?.options ?? [];
     for (var j = 0; j < options.length; j++) {
-      obj.groups[i].options[j] = settingImageObj([
+      obj.groups[i].options[j] = await settingImageObj([
         'option'
       ], obj.groups[i].options[j]);
     }
@@ -255,7 +308,7 @@ export const getUsersByManager = (params) => { //관리자 유저목록 출력
 
   return get(`/api/v1/manager/users`, query);
 }
-export const addUserByManager = (params) => { //관리자 유저 추가
+export const addUserByManager = async(params) => { //관리자 유저 추가
   const {
     user_name, phone_num, nick_name, user_pw, note,
     profile_file,
@@ -267,10 +320,10 @@ export const addUserByManager = (params) => { //관리자 유저 추가
   let images = [
     'profile'
   ]
-  obj = settingdeleteImageObj(images, obj);
+  obj = await settingdeleteImageObj(images, obj);
   return post(`/api/v1/manager/users`, obj);
 }
-export const updateUserByManager = (params) => { //관리자 유저 수정
+export const updateUserByManager = async (params) => { //관리자 유저 수정
   const {
     id, user_name, phone_num, nick_name, note,
     profile_file, profile_img
@@ -282,7 +335,7 @@ export const updateUserByManager = (params) => { //관리자 유저 수정
   let images = [
     'profile'
   ]
-  obj = settingImageObj(images, obj);
+  obj = await settingImageObj(images, obj);
   return put(`/api/v1/manager/users/${id}`, obj);
 }
 export const changePasswordUserByManager = (params) => { //관리자 유저 비밀번호 변경
@@ -313,7 +366,7 @@ export const getSellersByManager = (params) => { //관리자 셀러 목록 출�
 
   return get(`/api/v1/manager/merchandises`, query);
 }
-export const addSellerByManager = (params) => { //관리자 셀러 추가
+export const addSellerByManager =async (params) => { //관리자 셀러 추가
   const { user_name, nick_name, mcht_name, addr, resident_num, business_num, acct_bank_name, acct_bank_code, acct_num, acct_name, phone_num, note, user_pw, mcht_trx_fee,
     sns_obj,
     passbook_file,
@@ -341,11 +394,11 @@ export const addSellerByManager = (params) => { //관리자 셀러 추가
     'profile',
     'background',
   ]
-  obj = settingdeleteImageObj(images, obj);
+  obj = await settingdeleteImageObj(images, obj);
   return post(`/api/v1/manager/merchandises`, obj);
 }
 
-export const updateSellerByManager = (params) => { //관리자 셀러 수정
+export const updateSellerByManager = async (params) => { //관리자 셀러 수정
   const { user_name, nick_name, mcht_name, addr, resident_num, business_num, acct_bank_name, acct_bank_code, acct_num, acct_name, phone_num, note, user_pw, mcht_trx_fee,
     sns_obj,
     passbook_file, passbook_img,
@@ -374,7 +427,7 @@ export const updateSellerByManager = (params) => { //관리자 셀러 수정
     'profile',
     'background',
   ]
-  obj = settingImageObj(images, obj);
+  obj = await settingImageObj(images, obj);
   return put(`/api/v1/manager/merchandises/${id}`, obj);
 }
 export const getSellerByManager = (params) => { //관리자 셀러 단일 출력
@@ -444,10 +497,10 @@ export const getPostsByManager = (params) => { //관리자 게시글 목록 출�
   if (!query['search']) delete query['search'];
   return get(`/api/v1/manager/posts`, query);
 }
-export const addPostByManager = (params) => { //관리자 게시글 추가
-  const { 
+export const addPostByManager = async (params) => { //관리자 게시글 추가
+  const {
     category_id, parent_id, post_title, post_content, is_reply,
-    post_title_file 
+    post_title_file
   } = params;
   let obj = {
     category_id, parent_id, post_title, post_content, is_reply,
@@ -459,23 +512,23 @@ export const addPostByManager = (params) => { //관리자 게시글 추가
   let images = [
     'post_title'
   ]
-  obj = settingImageObj(images, obj);
+  obj = await settingImageObj(images, obj);
   return post(`/api/v1/manager/posts`, obj);
 }
-export const updatePostByManager = (params) => { //관리자 게시글 수정
-  const { 
+export const updatePostByManager = async (params) => { //관리자 게시글 수정
+  const {
     category_id, parent_id, post_title, post_content, is_reply,
-    post_title_file, post_title_img ,
-     id 
+    post_title_file, post_title_img,
+    id
   } = params;
   let obj = {
     category_id, parent_id, post_title, post_content, is_reply,
-    post_title_file, post_title_img ,
+    post_title_file, post_title_img,
   }
   let images = [
     'post_title'
   ]
-  obj = settingImageObj(images, obj);
+  obj = await settingImageObj(images, obj);
   return put(`/api/v1/manager/posts/${id}`, obj);
 }
 export const getPostByManager = (params) => { //관리자 게시글 단일 출력
@@ -496,7 +549,7 @@ export const getBrandsByManager = (params) => { //관리자 브랜드 목록 출
   if (!query['search']) delete query['search'];
   return get(`/api/v1/manager/brands`, query);
 }
-export const addBrandByManager = (params) => { //관리자 브랜드 추가
+export const addBrandByManager = async(params) => { //관리자 브랜드 추가
   const { name, dns, og_description, company_name, pvcy_rep_name, ceo_name, addr, resident_num, business_num, phone_num, fax_num, note,
     user_name, user_pw,
     theme_css = {},
@@ -526,11 +579,11 @@ export const addBrandByManager = (params) => { //관리자 브랜드 추가
     'favicon',
     'og',
   ]
-  obj = settingdeleteImageObj(images, obj);
+  obj = await settingdeleteImageObj(images, obj);
 
   return post(`/api/v1/manager/brands`, obj);
 }
-export const updateBrandByManager = (params) => { //관리자 브랜드수정
+export const updateBrandByManager = async (params) => { //관리자 브랜드수정
   const { name, dns, og_description, company_name, pvcy_rep_name, ceo_name, addr, resident_num, business_num, phone_num, fax_num, note,
     theme_css = {},
     shop_obj = [],
@@ -559,7 +612,7 @@ export const updateBrandByManager = (params) => { //관리자 브랜드수정
     'favicon',
     'og',
   ]
-  obj = settingImageObj(images, obj);
+  obj = await settingImageObj(images, obj);
   return put(`/api/v1/manager/brands/${id}`, obj);
 }
 export const getBrandByManager = (params) => { //관리자 브랜드 단일 출력
@@ -672,28 +725,15 @@ export const deleteTrxByManager = (params) => { //관리자 결제내역 삭제
   return deleteItem(`/api/v1/manager/transactions/${id}`);
 }
 
-export const uploadFileByManager = (params) => {// 관리자 파일 단일 업로드
+export const uploadFileByManager = async (params) => {// 관리자 파일 단일 업로드
   const { file } = params;
-  let obj = {
-    file
-  }
-  let config = {
-    headers: {
-      'Content-Type': "multipart/form-data",
-    }
-  };
-  return post('/api/v1/manager/posts/upload', obj, config);
+  let result = await multipleFileUploadByCloudinary(file);
+
+  return result;
 }
-export const uploadsFileByManager = (params) => {// 관리자 파일 여러개 업로드
-  const { images } = params;
-  let obj = {
-    images
-  }
-  let config = {
-    headers: {
-      "Accept": "application/json",
-      'Content-Type': "multipart/form-data",
-    }
-  };
-  return post('/api/v1/manager/posts/bulk-upload', obj, config);
+export const uploadsFileByManager = async (params) => {// 관리자 파일 여러개 업로드
+  let { images } = params;
+  images = images.map((item) => { return item?.image })
+  let result = await multipleFileUploadByCloudinary(images);
+  return result;
 }

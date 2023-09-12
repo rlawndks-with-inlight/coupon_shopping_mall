@@ -10,7 +10,7 @@ module.exports = {
   reactStrictMode: true,
   async redirects() {
     return [
-    
+
     ]
   },
   async rewrites() {
@@ -56,5 +56,10 @@ module.exports = {
     TEST_SHOP_DEMO: process.env.TEST_SHOP_DEMO,
     TEST_BLOG_DEMO: process.env.TEST_BLOG_DEMO,
     MAIN_FRONT_URL: process.env.MAIN_FRONT_URL,
+    CLOUDINARY_NAME: process.env.CLOUDINARY_NAME,
+    CLOUDINARY_KEY: process.env.CLOUDINARY_KEY,
+    CLOUDINARY_SECRET: process.env.CLOUDINARY_SECRET,
+    CLOUDINARY_URL: process.env.CLOUDINARY_URL,
+    CLOUDINARY_PRESET: process.env.CLOUDINARY_PRESET,
   }
 }

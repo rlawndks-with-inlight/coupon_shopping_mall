@@ -112,7 +112,7 @@ color:#fff;
 font-size:${themeObj.font_size.size4};
 }
 @media (max-width:600px) {
-    font-size:${themeObj.font_size6};
+    font-size:${themeObj.font_size.size6};
 }
 `
 const NextArrow = ({ onClick, sx }) => {

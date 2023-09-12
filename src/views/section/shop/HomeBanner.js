@@ -189,14 +189,14 @@ const HomeBanner = (props) => {
                                                 </m.div>
                                             }
                                             {item?.sub_title &&
-                                                <SlideSubTitle>
-                                                    <m.div
-                                                        initial="hidden"
-                                                        animate="visible"
-                                                        variants={fadeInUpVariants}>
+                                                <m.div
+                                                    initial="hidden"
+                                                    animate="visible"
+                                                    variants={fadeInUpVariants}>
+                                                    <SlideSubTitle>
                                                         {item?.sub_title}
-                                                    </m.div>
-                                                </SlideSubTitle>
+                                                    </SlideSubTitle>
+                                                </m.div>
                                             }
                                             {item?.link &&
                                                 <m.div

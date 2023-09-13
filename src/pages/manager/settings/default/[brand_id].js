@@ -120,6 +120,7 @@ const DefaultSetting = () => {
       if (
         !item?.user_name ||
         !item?.user_pw ||
+        !item?.mcht_name ||
         !item?.user_pw_check
       ) {
         toast.error("본사 계정정보를 입력해 주세요.");
@@ -577,6 +578,17 @@ const DefaultSetting = () => {
                             {
                               ...item,
                               ['user_name']: e.target.value
+                            }
+                          )
+                        }} />
+                         <TextField
+                        label='본사가맹점명'
+                        value={item?.mcht_name}
+                        onChange={(e) => {
+                          setItem(
+                            {
+                              ...item,
+                              ['mcht_name']: e.target.value
                             }
                           )
                         }} />

@@ -159,10 +159,9 @@ const HomeBanner = (props) => {
         hidden: { opacity: 0, y: 20 },
         visible: { opacity: 1, y: 0 },
     };
-    console.log(column)
     return (
         <>
-            <FullWrappers style={{ marginTop: `${style?.margin_top ?? 200}px` }}>
+            <FullWrappers style={{ marginTop: `${style?.margin_top}px` }}>
                 <Slider {...slide_setting}>
                     {img_list.map((item, idx) => (
                         <>

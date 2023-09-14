@@ -126,7 +126,7 @@ const Demo1 = (props) => {
     if (themeDnsData?.id > 0) {
       pageSetting();
     }
-  }, [themePostCategoryList])
+  }, [])
   useEffect(() => {
     if (contentList.length > 0) {
       setLoading(false);
@@ -142,6 +142,7 @@ const Demo1 = (props) => {
       dns_data = JSON.parse(dns_data);
     }
     let content_list = (dns_data?.shop_obj) ?? [];
+    console.log(content_list)
 
     // 게시글 불러오기
     let post_list = await getPostsByUser({
@@ -162,6 +163,7 @@ const Demo1 = (props) => {
       page: 1,
       page_size: 100000,
     })
+
     products = products?.content ?? [];
     for (var i = 0; i < content_list.length; i++) {
       if (content_list[i]?.type == 'items' && products.length > 0) {
@@ -179,18 +181,18 @@ const Demo1 = (props) => {
       }
       if (content_list[i]?.type == 'item-reviews') {
         let review_list = [...test_product_reviews];
-        for (var i = 0; i < review_list.length; i++) {
-          review_list[i].product = _.find(products, { id: review_list[i]?.product_id });
+        for (var j = 0; j < review_list.length; j++) {
+          review_list[j].product = _.find(products, { id: review_list[j]?.product_id });
         }
         content_list[i] = {
           ...content_list[i],
           title: '상품후기',
           sub_title: 'REVIEW',
-          list: review_list,
+          list: [...review_list],
         }
       }
     }
-   
+    console.log(content_list)
     setWindowWidth(window.innerWidth)
     setContentList(content_list)
   }

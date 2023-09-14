@@ -172,7 +172,7 @@ const Demo1 = (props) => {
       }
       if (content_list[i]?.type == 'post') {
         content_list[i] = {
-          type: 'post',
+          ...content_list[i],
           posts: post_obj,
           categories: themePostCategoryList,
         };
@@ -183,7 +183,7 @@ const Demo1 = (props) => {
           review_list[i].product = _.find(products, { id: review_list[i]?.product_id });
         }
         content_list[i] = {
-          type: 'item-reviews',
+          ...content_list[i],
           title: '상품후기',
           sub_title: 'REVIEW',
           list: review_list,

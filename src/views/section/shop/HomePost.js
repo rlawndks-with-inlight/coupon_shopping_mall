@@ -85,9 +85,10 @@ const HomePost = (props) => {
   const { router } = func;
   const { style } = column;
   const [categoryId, setCategoryId] = useState(column?.categories[0]?.id);
+  console.log(column)
   return (
     <>
-      <FullWrappers style={{ marginTop: `${style?.margin_top}px` }}>
+      <FullWrappers style={{ marginTop: `${style?.margin_top}px`, backgroundImage:`${column?.src?`url(${column?.src})`:''}` }}>
         <ContentWrappers>
           <Content style={{ color: '#fff' }}>
             <div style={{ fontSize: themeObj.font_size.size5 }}>CALL CENTER</div>

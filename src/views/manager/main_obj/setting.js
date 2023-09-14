@@ -5,9 +5,6 @@ import { useCallback, useEffect, useState } from "react";
 import { Row } from "src/components/elements/styled-components";
 import { Upload } from "src/components/upload";
 import { PATH_MANAGER, defaultManagerObj, react_quill_data } from "src/data/manager-data";
-import { test_items } from "src/data/test-data";
-import ManagerLayout from "src/layouts/manager/ManagerLayout";
-import { axiosIns } from "src/utils/axios";
 import { base64toFile } from "src/utils/function";
 import _, { constant } from 'lodash'
 import { useSettingsContext } from "src/components/settings";
@@ -85,7 +82,9 @@ const MainObjSetting = (props) => {
         banner: {
             type: 'banner',
             list: [],
-            style: {},
+            style: {
+                min_height: 200,
+            },
         },
         'button-banner': {
             type: 'button-banner',
@@ -256,7 +255,7 @@ const MainObjSetting = (props) => {
                     }
                 }
             }
-            if (content_list[i]?.type == 'video-slide') {
+            if (content_list[i]?.type == 'video-slide' || content_list[i]?.type == 'post') {
                 if (content_list[i]?.file) {
                     file_index_list.push({
                         i: i,
@@ -398,6 +397,16 @@ const MainObjSetting = (props) => {
         if (type == 'video-slide') setPreviewSection(<HomeVideoSlide column={column} data={data} func={func} is_manager={true} />)
         return;
     }
+    const onChangeItem = (data) => {
+        let {
+            idx,
+            value,
+            key
+        } = data;
+        let content_list = [...contentList];
+        content_list[idx][key] = value;
+        setContentList(content_list)
+    }
     return (
         <>
             <Dialog open={previewSection} onClose={() => { setPreviewSection(undefined) }} fullScreen>
@@ -430,6 +439,24 @@ const MainObjSetting = (props) => {
                                                         <CardHeader title={`배너슬라이드 ${curTypeNum(contentList, 'banner', idx)}`} sx={{ paddingLeft: '0' }} />
                                                         <SectionProcess idx={idx} item={item} />
                                                     </Row>
+                                                    <TextField label='이미지 최소높이'
+                                                        value={item?.style?.min_height ?? 200}
+                                                        type="number"
+                                                        InputProps={{
+                                                            endAdornment: (
+                                                                <>
+                                                                    px
+                                                                </>
+                                                            ),
+                                                        }}
+                                                        onChange={(e) => {
+                                                            let content_list = [...contentList];
+                                                            if (!content_list[idx]?.style) {
+                                                                content_list[idx]['style'] = {};
+                                                            }
+                                                            content_list[idx].style['min_height'] = e.target.value;
+                                                            setContentList(content_list)
+                                                        }} />
                                                     <Upload
                                                         multiple
                                                         thumbnail={true}
@@ -453,6 +480,7 @@ const MainObjSetting = (props) => {
                                                             height: 85
                                                         }}
                                                     />
+
                                                     {item?.list && item.list.map((itm, index) => (
                                                         <>
                                                             <Row style={{ width: '100%', columnGap: '1rem' }}>
@@ -746,6 +774,26 @@ const MainObjSetting = (props) => {
                                                         <CardHeader title={`게시판 ${curTypeNum(contentList, 'post', idx)}`} sx={{ paddingLeft: '0' }} />
                                                         <SectionProcess idx={idx} item={item} />
                                                     </Row>
+                                                    <Upload file={item.file || item.src} title='배경에 사용될 이미지를 업로드 해주세요.' onDrop={(acceptedFiles) => {
+                                                        const newFile = acceptedFiles[0];
+                                                        if (newFile) {
+                                                            let content_list = [...contentList];
+                                                            content_list[idx]['file'] = Object.assign(newFile, {
+                                                                preview: URL.createObjectURL(newFile),
+                                                            });
+                                                            setContentList(content_list)
+                                                        }
+                                                    }}
+                                                        onDelete={() => {
+                                                            let content_list = [...contentList];
+                                                            content_list[idx]['file'] = undefined;
+                                                            content_list[idx]['src'] = '';
+                                                            setContentList(content_list)
+                                                        }}
+                                                        fileExplain={{
+                                                            width: ''//파일 사이즈 설명
+                                                        }}
+                                                    />
                                                 </>}
                                             {conditionOfSection('item-reviews', item) &&
                                                 <>

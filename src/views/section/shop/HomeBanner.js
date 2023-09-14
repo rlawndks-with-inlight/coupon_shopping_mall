@@ -143,7 +143,7 @@ const HomeBanner = (props) => {
 
     let slide_setting = {
         centerMode: true,
-        centerPadding: (img_list.length >= 3 ? (windowWidth > 1200 ? '10%' : 0) : 0), // 이미지 간격을 조절할 수 있는 값입니다.
+        centerPadding: (img_list.length >= 2 ? (windowWidth > 1200 ? '10%' : 0) : 0), // 이미지 간격을 조절할 수 있는 값입니다.
         infinite: true,
         speed: 500,
         autoplay: false,
@@ -172,6 +172,7 @@ const HomeBanner = (props) => {
                                 style={{
                                     width: `${img_list.length >= 3 ? '' : '100vw'}`,
                                     backgroundImage: `url(${item.src})`,
+                                    minHeight:`${style?.min_height}px`
                                 }}
                             >
                                 {currentSlideIndex == idx &&

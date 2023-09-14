@@ -1,4 +1,5 @@
 import { useTheme } from "@emotion/react"
+import { useSettingsContext } from "src/components/settings"
 import styled from "styled-components"
 
 const Wrapper = styled.footer`
@@ -32,7 +33,17 @@ const Footer = (props) => {
     },
   } = props;
   const theme = useTheme();
-
+  const {themeDnsData} = useSettingsContext();
+  console.log(themeDnsData)
+  const  {
+    company_name,
+    addr,
+    business_num,
+    ceo_name,
+    phone_num,
+    fax_num,
+    pvcy_rep_name,
+  } = themeDnsData;
   return (
     <>
       <Wrapper style={{ background: `${theme.palette.mode == 'dark' ? '' : theme.palette.grey[200]}` }}>
@@ -44,23 +55,23 @@ const Footer = (props) => {
           </Row>
           <Row>
             <Bold>회사명</Bold>
-            <MarginRight></MarginRight>
+            <MarginRight>{company_name}</MarginRight>
             <Bold>주소</Bold>
-            <MarginRight></MarginRight>
+            <MarginRight>{addr}</MarginRight>
           </Row>
           <Row>
             <Bold>사업자 등록번호</Bold>
-            <MarginRight></MarginRight>
+            <MarginRight>{business_num}</MarginRight>
             <Bold>대표</Bold>
-            <MarginRight></MarginRight>
+            <MarginRight>{ceo_name}</MarginRight>
             <Bold>전화</Bold>
-            <MarginRight></MarginRight>
+            <MarginRight>{phone_num}</MarginRight>
             <Bold>팩스</Bold>
-            <MarginRight></MarginRight>
+            <MarginRight>{fax_num}</MarginRight>
           </Row>
           <Row>
             <Bold>개인정보 보호책임자</Bold>
-            <MarginRight></MarginRight>
+            <MarginRight>{pvcy_rep_name}</MarginRight>
           </Row>
           <Row>
             <MarginRight></MarginRight>

@@ -317,7 +317,7 @@ const MainObjSetting = (props) => {
         return (item.type == type && (router.query.type == type || router.query.type == 'all' || !router.query.type || !isNaN(parseInt(router.query.type))))
     }
     const SectionProcess = (props) => {
-        const { idx } = props;
+        const { idx, item } = props;
         return (
             <>
                 <Row style={{ marginLeft: 'auto', columnGap: '0.25rem' }}>
@@ -332,7 +332,8 @@ const MainObjSetting = (props) => {
                         label='윗마진'
                         placeholder="px(픽셀) 단위"
                         type="number"
-                        value={contentList[idx]?.style?.margin_top ?? 0}
+                        value={item?.style?.margin_top ?? 0}
+                        defaultValue={item?.style?.margin_top ?? 0}
                         onChange={(e) => {
                             let content_list = [...contentList];
                             if (!content_list[idx]?.style) {
@@ -427,7 +428,7 @@ const MainObjSetting = (props) => {
                                                 <>
                                                     <Row style={{ alignItems: 'end' }}>
                                                         <CardHeader title={`배너슬라이드 ${curTypeNum(contentList, 'banner', idx)}`} sx={{ paddingLeft: '0' }} />
-                                                        <SectionProcess idx={idx} />
+                                                        <SectionProcess idx={idx} item={item} />
                                                     </Row>
                                                     <Upload
                                                         multiple
@@ -489,7 +490,7 @@ const MainObjSetting = (props) => {
                                                 <>
                                                     <Row style={{ alignItems: 'end' }}>
                                                         <CardHeader title={`버튼형 배너슬라이드 ${curTypeNum(contentList, 'button-banner', idx)}`} sx={{ paddingLeft: '0' }} />
-                                                        <SectionProcess idx={idx} />
+                                                        <SectionProcess idx={idx} item={item} />
                                                     </Row>
                                                     <Upload
                                                         multiple
@@ -536,7 +537,7 @@ const MainObjSetting = (props) => {
                                                 <>
                                                     <Row style={{ alignItems: 'end' }}>
                                                         <CardHeader title={`상품슬라이드 ${curTypeNum(contentList, 'items', idx)}`} sx={{ paddingLeft: '0' }} />
-                                                        <SectionProcess idx={idx} />
+                                                        <SectionProcess idx={idx} item={item} />
                                                     </Row>
                                                     <TextField label='제목' value={item.title} onChange={(e) => {
                                                         let content_list = [...contentList];
@@ -580,7 +581,7 @@ const MainObjSetting = (props) => {
                                                                 + 카테고리 추가
                                                             </Button>
                                                         </Tooltip>
-                                                        <SectionProcess idx={idx} />
+                                                        <SectionProcess idx={idx} item={item} />
                                                     </Row>
                                                     <TextField label='제목' value={item.title} onChange={(e) => {
                                                         let content_list = [...contentList];
@@ -643,7 +644,7 @@ const MainObjSetting = (props) => {
                                                 <>
                                                     <Row style={{ alignItems: 'end' }}>
                                                         <CardHeader title={`에디터 ${curTypeNum(contentList, 'editor', idx)}`} sx={{ paddingLeft: '0' }} />
-                                                        <SectionProcess idx={idx} />
+                                                        <SectionProcess idx={idx} item={item} />
                                                     </Row>
                                                     <ReactQuill
                                                         theme={'snow'}
@@ -688,7 +689,7 @@ const MainObjSetting = (props) => {
                                                         }}>
                                                             + 동영상 링크 추가
                                                         </Button>
-                                                        <SectionProcess idx={idx} />
+                                                        <SectionProcess idx={idx} item={item} />
                                                     </Row>
                                                     <Upload file={item.file || item.src} title='배경에 사용될 이미지를 업로드 해주세요.' onDrop={(acceptedFiles) => {
                                                         const newFile = acceptedFiles[0];
@@ -743,14 +744,14 @@ const MainObjSetting = (props) => {
                                                 <>
                                                     <Row style={{ alignItems: 'end' }}>
                                                         <CardHeader title={`게시판 ${curTypeNum(contentList, 'post', idx)}`} sx={{ paddingLeft: '0' }} />
-                                                        <SectionProcess idx={idx} />
+                                                        <SectionProcess idx={idx} item={item} />
                                                     </Row>
                                                 </>}
                                             {conditionOfSection('item-reviews', item) &&
                                                 <>
                                                     <Row style={{ alignItems: 'end' }}>
                                                         <CardHeader title={`상품후기 ${curTypeNum(contentList, 'item-reviews', idx)}`} sx={{ paddingLeft: '0' }} />
-                                                        <SectionProcess idx={idx} />
+                                                        <SectionProcess idx={idx} item={item} />
                                                     </Row>
                                                 </>}
                                         </>

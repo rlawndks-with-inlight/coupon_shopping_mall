@@ -162,7 +162,7 @@ const HomeBanner = (props) => {
     console.log(column)
     return (
         <>
-            <FullWrappers style={{ marginTop: `${style?.margin_top}px` }}>
+            <FullWrappers style={{ marginTop: `${style?.margin_top ?? 200}px` }}>
                 <Slider {...slide_setting}>
                     {img_list.map((item, idx) => (
                         <>
@@ -172,7 +172,7 @@ const HomeBanner = (props) => {
                                 style={{
                                     width: `${img_list.length >= 3 ? '' : '100vw'}`,
                                     backgroundImage: `url(${item.src})`,
-                                    minHeight:`${style?.min_height}px`
+                                    minHeight: `${style?.min_height}px`
                                 }}
                             >
                                 {currentSlideIndex == idx &&

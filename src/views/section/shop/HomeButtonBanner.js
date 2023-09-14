@@ -12,6 +12,7 @@ const Wrappers = styled.div`
 
 const HomeButtonBanner = (props) => {
     const { column, data, func, is_manager } = props;
+    const { style } = column;
     const getSlideToShow = () => {
         if (window.innerWidth > 1350) {
             return 7
@@ -32,10 +33,7 @@ const HomeButtonBanner = (props) => {
     }
     return (
         <>
-            <Wrappers style={{
-                marginTop: '1rem',
-                marginBottom: '1rem',
-            }}>
+            <Wrappers style={{ marginTop: `${style?.margin_top}px` }}>
                 <Slider {...slide_setting} className='margin-slide'>
                     {column?.list && column?.list.map((item, idx) => (
                         <>

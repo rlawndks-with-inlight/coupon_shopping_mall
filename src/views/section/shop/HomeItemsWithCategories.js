@@ -19,6 +19,9 @@ display:flex;
 align-items: ${props => props.is_vertical == 1 ? 'flex-start' : 'center'};
 flex-direction: ${props => props.is_vertical == 1 ? 'column' : 'row'};
 min-width: ${props => props.is_vertical == 1 ? '250px' : ''};
+flex-wrap:wrap;
+column-gap:0.5rem;
+row-gap:0.5rem;
 @media (max-width:1000px) {
     align-items: center;
     flex-direction:row;
@@ -69,6 +72,7 @@ const HomeItemsWithCategories = (props) => {
     const { column, data, func, is_manager } = props;
     let { idx } = data;
     const { router } = func;
+    const { style } = column;
     const [itemCategory, setItemCategory] = useState(0);
     const onClickItemCategory = (index) => {
         setItemCategory(index)
@@ -76,14 +80,13 @@ const HomeItemsWithCategories = (props) => {
     return (
         <>
             <Wrappers style={{
-                marginTop: '1rem',
-                marginBottom: '1rem',
+                marginTop: `${style?.margin_top}px`,
                 display: 'flex',
             }}
                 is_vertical={column?.is_vertical}
             >
                 <HeaderContainer is_vertical={column?.is_vertical}>
-                    <Row style={{ flexDirection: 'column' }}>
+                    <Row style={{ flexDirection: 'column', }}>
                         {column?.title &&
                             <>
                                 <div style={{ fontSize: themeObj.font_size.size3, fontWeight: 'bold' }}>{column?.title}</div>

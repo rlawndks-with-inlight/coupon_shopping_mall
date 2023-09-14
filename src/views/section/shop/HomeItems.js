@@ -12,12 +12,12 @@ const Wrappers = styled.div`
 const HomeItems = (props) => {
     const { column, data, func, is_manager } = props;
     const { router } = func;
+    const { style } = column;
 
     return (
         <>
             <Wrappers style={{
-                marginTop: '1rem',
-                marginBottom: '1rem',
+                marginTop: `${style?.margin_top}px`,
                 display: 'flex',
                 flexDirection: `${column?.title ? 'column' : 'row'}`,
             }}>

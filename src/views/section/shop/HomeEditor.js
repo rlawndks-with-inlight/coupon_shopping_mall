@@ -13,12 +13,11 @@ const Wrappers = styled.div`
 
 const HomeEditor = (props) => {
     const { column, data, func, is_manager } = props;
-
+    const { style } = column;
     return (
         <>
             <Wrappers style={{
-                marginTop: '1rem',
-                marginBottom: '1rem',
+                marginTop: `${style?.margin_top}px`,
             }}>
                 <ReactQuill
                     className='none-padding'

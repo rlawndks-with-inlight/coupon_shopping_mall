@@ -102,7 +102,7 @@ const returnHomeContent = (column, data, func) => {
   if (type == 'items-with-categories') return <HomeItemsWithCategories column={column} data={data} func={func} />
   if (type == 'video-slide') return <HomeVideoSlide column={column} data={data} func={func} />
   if (type == 'post') return <HomePost column={column} data={data} func={func} />
-  if (type == 'product-review') return <HomeProductReview column={column} data={data} func={func} />
+  if (type == 'item-reviews') return <HomeProductReview column={column} data={data} func={func} />
   return '';
 }
 
@@ -170,28 +170,27 @@ const Demo1 = (props) => {
       if (content_list[i]?.type == 'items-with-categories' && products.length > 0) {
         content_list[i] = homeItemsWithCategoriesSetting(content_list[i], products);
       }
-    }
-    if (!content_list.map(item => { return item?.type }).includes('post') && themePostCategoryList.length > 0) {
-      // 상품리뷰 불러오기
-      content_list.push({
-        type: 'post',
-        posts: post_obj,
-        categories: themePostCategoryList,
-      })
-
-    }
-    if (!content_list.map(item => { return item?.type }).includes('product-review')) {
-      let review_list = [...test_product_reviews];
-      for (var i = 0; i < review_list.length; i++) {
-        review_list[i].product = _.find(products, { id: review_list[i]?.product_id });
+      if (content_list[i]?.type == 'post') {
+        content_list[i] = {
+          type: 'post',
+          posts: post_obj,
+          categories: themePostCategoryList,
+        };
       }
-      content_list.push({
-        type: 'product-review',
-        title: '상품후기',
-        sub_title: 'REVIEW',
-        list: review_list,
-      })
+      if (content_list[i]?.type == 'item-reviews') {
+        let review_list = [...test_product_reviews];
+        for (var i = 0; i < review_list.length; i++) {
+          review_list[i].product = _.find(products, { id: review_list[i]?.product_id });
+        }
+        content_list[i] = {
+          type: 'item-reviews',
+          title: '상품후기',
+          sub_title: 'REVIEW',
+          list: review_list,
+        }
+      }
     }
+   
     setWindowWidth(window.innerWidth)
     setContentList(content_list)
   }

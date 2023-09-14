@@ -14,7 +14,7 @@ const FullWrappers = styled.div`
   background-size: cover;
   background-repeat: no-repeat;
   background-position: fixed;
-  margin: 4rem auto;
+  margin: 0 auto;
   background-attachment: fixed;
   @media (max-width:1200px){
     flex-direction:column;
@@ -30,7 +30,6 @@ align-items:center;
   width:100%;
   margin:4rem auto 0 auto;
 }
-
 `
 const Content = styled.div`
 margin: auto;
@@ -84,10 +83,11 @@ const HomePost = (props) => {
   const { column, data, func, is_manager } = props;
   const { themeDnsData } = data;
   const { router } = func;
+  const { style } = column;
   const [categoryId, setCategoryId] = useState(column?.categories[0]?.id);
   return (
     <>
-      <FullWrappers>
+      <FullWrappers style={{ marginTop: `${style?.margin_top}px` }}>
         <ContentWrappers>
           <Content style={{ color: '#fff' }}>
             <div style={{ fontSize: themeObj.font_size.size5 }}>CALL CENTER</div>

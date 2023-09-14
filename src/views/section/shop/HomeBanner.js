@@ -9,7 +9,7 @@ import { Button } from '@mui/material'
 import { varFade } from 'src/components/animate'
 const FullWrappers = styled.div`
   width:100%;
-  `
+`
 const NextArrowStyle = styled.div`
   position: absolute;
     top: 15vw;
@@ -95,7 +95,7 @@ row-gap:1rem;
 }
 `
 const SlideTitle = styled.div`
-font-size:${themeObj.font_size.size2};
+font-size:${themeObj.font_size.size1};
 font-weight:bold;
 color:#fff;
 @media (max-width:1200px) {
@@ -134,6 +134,7 @@ const PrevArrow = ({ onClick, sx }) => {
 const HomeBanner = (props) => {
     const { column, data, func, is_manager } = props;
     let { windowWidth } = data;
+    const { style } = column;
     let img_list = [...column?.list];
     const [currentSlideIndex, setCurrentSlideIndex] = useState(0);
     const afterChangeHandler = (currentSlide) => {
@@ -158,10 +159,10 @@ const HomeBanner = (props) => {
         hidden: { opacity: 0, y: 20 },
         visible: { opacity: 1, y: 0 },
     };
-
+    console.log(column)
     return (
         <>
-            <FullWrappers>
+            <FullWrappers style={{ marginTop: `${style?.margin_top}px` }}>
                 <Slider {...slide_setting}>
                     {img_list.map((item, idx) => (
                         <>

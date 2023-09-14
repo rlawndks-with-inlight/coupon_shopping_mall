@@ -70,7 +70,7 @@ const TextFieldSection = (props) => {
 
 }
 const MainObjSetting = (props) => {
-    const {MAIN_OBJ_TYPE} = props;
+    const { MAIN_OBJ_TYPE } = props;
     const { setModal } = useModal()
     const { themeDnsData } = useSettingsContext();
     const { user } = useAuthContext();
@@ -85,23 +85,27 @@ const MainObjSetting = (props) => {
         banner: {
             type: 'banner',
             list: [],
+            style: {},
         },
         'button-banner': {
             type: 'button-banner',
             list: [],
+            style: {},
         },
         items: {
             type: 'items',
             title: '',
             sub_title: '',
-            list: []
+            list: [],
+            style: {},
         },
         'items-with-categories': {
             type: 'items-with-categories',
             title: '',
             sub_title: '',
             is_vertical: 0,
-            list: []
+            list: [],
+            style: {},
         },
         editor: {
             type: 'editor',
@@ -111,17 +115,19 @@ const MainObjSetting = (props) => {
             type: 'video-slide',
             title: '',
             sub_title: '',
-            list: []
+            list: [],
+            style: {},
         },
         post: {
             type: 'post',
-            category_id: 0,
-            list: []
+            list: [],
+            style: {},
         },
-        'product-review': {
-            type: 'product-review',
-            list: []
-        }
+        'item-reviews': {
+            type: 'item-reviews',
+            list: [],
+            style: {},
+        },
     }
     const returnKoNameBySectionType = {
         banner: '배너슬라이드',
@@ -314,12 +320,35 @@ const MainObjSetting = (props) => {
         const { idx } = props;
         return (
             <>
-                <Row style={{ marginLeft: 'auto' }}>
+                <Row style={{ marginLeft: 'auto', columnGap: '0.25rem' }}>
                     {/* <Tooltip title="미리 보시려면 클릭해 주세요.">
             <IconButton sx={{ padding: '0.25rem' }} onClick={() => { onClickPreview(idx) }}>
               <Icon icon={'icon-park-outline:preview-open'} />
             </IconButton>
           </Tooltip> */}
+                    <TextField
+                        size="small"
+                        sx={{ maxWidth: '150px' }}
+                        label='윗마진'
+                        placeholder="px(픽셀) 단위"
+                        type="number"
+                        value={contentList[idx]?.style?.margin_top ?? 0}
+                        onChange={(e) => {
+                            let content_list = [...contentList];
+                            if (!content_list[idx]?.style) {
+                                content_list[idx]['style'] = {};
+                            }
+                            content_list[idx]['style']['margin_top'] = e.target.value;
+                            setContentList(content_list)
+                        }}
+                        InputProps={{
+                            endAdornment: (
+                                <>
+                                    px
+                                </>
+                            ),
+                        }}
+                    />
                     <Tooltip title="해당 섹션을 한칸 올리시려면 클릭해 주세요.">
                         <IconButton sx={{ padding: '0.25rem' }} disabled={idx == 0} onClick={() => { onUpSection(idx) }}>
                             <Icon icon={'grommet-icons:link-up'} />
@@ -366,8 +395,6 @@ const MainObjSetting = (props) => {
             setPreviewSection(<HomeItemsWithCategories column={column} data={data} func={func} is_manager={true} />)
         }
         if (type == 'video-slide') setPreviewSection(<HomeVideoSlide column={column} data={data} func={func} is_manager={true} />)
-        if (type == 'post') setPreviewSection(<HomePost column={column} data={data} func={func} is_manager={true} />)
-        if (type == 'product-review') setPreviewSection(<HomeProductReview column={column} data={data} func={func} is_manager={true} />)
         return;
     }
     return (
@@ -719,10 +746,10 @@ const MainObjSetting = (props) => {
                                                         <SectionProcess idx={idx} />
                                                     </Row>
                                                 </>}
-                                            {conditionOfSection('product-review', item) &&
+                                            {conditionOfSection('item-reviews', item) &&
                                                 <>
                                                     <Row style={{ alignItems: 'end' }}>
-                                                        <CardHeader title={`상품후기 ${curTypeNum(contentList, 'product-review', idx)}`} sx={{ paddingLeft: '0' }} />
+                                                        <CardHeader title={`상품후기 ${curTypeNum(contentList, 'item-reviews', idx)}`} sx={{ paddingLeft: '0' }} />
                                                         <SectionProcess idx={idx} />
                                                     </Row>
                                                 </>}
@@ -760,6 +787,8 @@ const MainObjSetting = (props) => {
                                                 <MenuItem value={'items-with-categories'} disabled={!productContent?.total > 0}>카테고리탭별 상품리스트 ({hasTypeCount(contentList, 'items-with-categories')}) {(!productContent?.total > 0) ? ' (상품 생성 후 가능합니다.)' : ''}</MenuItem>
                                                 <MenuItem value={'editor'}>에디터 ({hasTypeCount(contentList, 'editor')})</MenuItem>
                                                 <MenuItem value={'video-slide'}>동영상 슬라이드 ({hasTypeCount(contentList, 'video-slide')})</MenuItem>
+                                                <MenuItem value={'post'}>게시판 ({hasTypeCount(contentList, 'post')})</MenuItem>
+                                                <MenuItem value={'item-reviews'}>상품후기 ({hasTypeCount(contentList, 'item-reviews')})</MenuItem>
                                                 {/* <MenuItem value={'post'}>게시판 ({hasTypeCount(contentList, 'post')})</MenuItem>
                         <MenuItem value={'product-review'}>상품후기 ({hasTypeCount(contentList, 'product-review')})</MenuItem> */}
                                             </Select>

@@ -75,6 +75,8 @@ const PrevArrow = ({ onClick, sx }) => {
 };
 const HomeVideoSlide = (props) => {
     const { column, data, func, is_manager } = props;
+    const { style } = column;
+
     let slide_setting = {
         infinite: true,
         speed: 500,
@@ -96,8 +98,9 @@ const HomeVideoSlide = (props) => {
                 backgroundPosition: 'fixed',
                 display: 'flex',
                 flexDirection: 'column',
-                margin: '1rem auto 4rem auto',
-                backgroundAttachment: 'fixed'
+                margin: `0 auto`,
+                backgroundAttachment: 'fixed',
+                marginTop:`${style?.margin_top}px`
             }}>
 
                 <Row style={{ flexDirection: 'column', margin: '1rem auto 0 auto', alignItems: 'center' }}>

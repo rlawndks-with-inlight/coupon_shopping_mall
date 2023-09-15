@@ -58,7 +58,7 @@ height: 33.15vw;
 background-size: 100%;
 background-repeat: no-repeat;
 background-position: center;
-border-radius:${props => props.img_list_length >= 3 ? '1rem' : '0'};
+border-radius:${props => props.img_list_length >= 2 ? '1rem' : '0'};
 animation: ${props => props.iscurrentSlideIndex ? 'zoom-in-out' : ''} 10s ease-in-out infinite;
 @keyframes zoom-in-out {
     0% {
@@ -169,7 +169,7 @@ const HomeBanner = (props) => {
                                 img_list_length={img_list.length}
                                 iscurrentSlideIndex={currentSlideIndex == idx}
                                 style={{
-                                    width: `${img_list.length >= 3 ? '' : '100vw'}`,
+                                    width: `${img_list.length >= 2 ? '' : '100vw'}`,
                                     backgroundImage: `url(${item.src})`,
                                     minHeight: `${style?.min_height}px`
                                 }}

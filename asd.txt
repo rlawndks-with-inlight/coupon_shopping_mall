@@ -1,0 +1,32 @@
+server {
+listen 80;
+server_name asapmall.kr
+root html;
+
+
+location / {
+        return 301 https://asapmall.kr$request_uri;
+    }
+}
+
+server {
+
+    listen       443 ssl;
+    server_name  asapmall.kr;
+    
+    client_max_body_size 256M;
+    
+    ssl_certificate     /etc/letsencrypt/live/asapmall.kr/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/asapmall.kr/privkey.pem;
+
+    location / {
+       proxy_pass http://asapmall.kr:3000;
+
+    }
+ 
+    location = /50x.html {
+        root   /usr/share/nginx/html;
+    }
+}
+
+//  sudo certbot --nginx -d asapmall.kr

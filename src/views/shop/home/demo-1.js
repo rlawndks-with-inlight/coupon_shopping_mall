@@ -126,7 +126,7 @@ const Demo1 = (props) => {
     if (themeDnsData?.id > 0) {
       pageSetting();
     }
-  }, [])
+  }, [themeDnsData])
   useEffect(() => {
     if (contentList.length > 0) {
       setLoading(false);

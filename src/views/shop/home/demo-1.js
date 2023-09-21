@@ -21,78 +21,8 @@ import HomeVideoSlide from 'src/views/section/shop/HomeVideoSlide'
 import HomePost from 'src/views/section/shop/HomePost'
 import HomeProductReview from 'src/views/section/shop/HomeProductReview'
 import { homeItemsSetting, homeItemsWithCategoriesSetting } from 'src/views/section/shop/utils'
-const ReactQuill = dynamic(() => import('react-quill'), {
-  ssr: false,
-  loading: () => <p>Loading ...</p>,
-})
-const Wrappers = styled.div`
-width:90%;
-max-width:1200px;
-margin:0 auto;
-`
-const FullWrappers = styled.div`
-width:100%;
-`
-const returnTypeObj = {
 
-}
-const NextArrowStyle = styled.div`
-position: absolute;
-  top: 15vw;
-  right: 12px;
-  z-index: 2;
-  width: 3rem;
-  height: 3rem;
-  cursor: pointer;
-  font-size: 28px;
-  border-radius: 50%;
-  background: #aaaaaa55;
-  color: #fff !important;
-  display: flex;
-  @media (max-width:1200px) {
-    top: 18vw;
-    font-size: 1rem;
-    width: 1.5rem;
-    height: 1.5rem;
-  }
-`
-const PrevArrowStyle = styled.div`
-position: absolute;
-top: 15vw;
-left: 12px;
-z-index: 2;
-cursor: pointer;
-font-size: 28px;
-width: 3rem;
-height: 3rem;
-border-radius: 50%;
-background: #aaaaaa55;
-color: #fff !important;
-display: flex;
-@media (max-width:1200px) {
-  top: 18vw;
-  font-size: 1rem;
-  width: 1.5rem;
-  height: 1.5rem;
-}
-`
-const BannerImg = styled.img`
-width: 80vw;
-height: 34vw;
-@media (max-width:1200px) {
-    width: 100vw;
-    height: 42.5vw;
-}
-`
-const Iframe = styled.iframe`
-width:1016px;
-height:542px;
-margin: 1rem auto;
-@media (max-width:1200px) {
-  width: 85vw;
-  height: 45.3vw;
-}
-`
+
 const returnHomeContent = (column, data, func) => {
   let type = column?.type;
   if (type == 'banner') return <HomeBanner column={column} data={data} func={func} />

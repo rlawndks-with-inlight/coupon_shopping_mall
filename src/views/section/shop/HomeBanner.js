@@ -3,7 +3,7 @@ import Slider from 'react-slick'
 import styled from 'styled-components'
 import _ from 'lodash'
 import { Row, themeObj } from 'src/components/elements/styled-components'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { m } from 'framer-motion'
 import { Button } from '@mui/material'
 import { varFade } from 'src/components/animate'
@@ -57,18 +57,18 @@ width: 78vw;
 height: 33.15vw;
 background-size: 100%;
 background-repeat: no-repeat;
-background-position: center;
+background-position: center center;
 border-radius:${props => props.img_list_length >= 2 ? '1rem' : '0'};
 animation: ${props => props.iscurrentSlideIndex ? 'zoom-in-out' : ''} 10s ease-in-out infinite;
 @keyframes zoom-in-out {
     0% {
-        background-size: 100%;
+        background-size: 100;
     }
     50% {
         background-size: 105%;
     }
     100% {
-        background-size: 100%;
+        background-size: 100;
     }
   }
 @media (max-width:1200px) {
@@ -140,7 +140,7 @@ const HomeBanner = (props) => {
     const afterChangeHandler = (currentSlide) => {
         setCurrentSlideIndex(currentSlide);
     };
-
+ 
     let slide_setting = {
         centerMode: true,
         centerPadding: (img_list.length >= 2 ? (windowWidth > 1200 ? '10%' : 0) : 0), // 이미지 간격을 조절할 수 있는 값입니다.

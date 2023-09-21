@@ -1,26 +1,26 @@
 server {
 listen 80;
-server_name asapmall.kr
+server_name hit365.kr
 root html;
 
 
 location / {
-        return 301 https://asapmall.kr$request_uri;
+        return 301 https://hit365.kr$request_uri;
     }
 }
 
 server {
 
     listen       443 ssl;
-    server_name  asapmall.kr;
+    server_name  hit365.kr;
     
     client_max_body_size 256M;
     
-    ssl_certificate     /etc/letsencrypt/live/asapmall.kr/fullchain.pem;
-    ssl_certificate_key /etc/letsencrypt/live/asapmall.kr/privkey.pem;
+    ssl_certificate     /etc/letsencrypt/live/hit365.kr/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/hit365.kr/privkey.pem;
 
     location / {
-       proxy_pass http://asapmall.kr:3000;
+       proxy_pass http://hit365.kr:3000;
 
     }
  
@@ -29,4 +29,4 @@ server {
     }
 }
 
-//  sudo certbot --nginx -d asapmall.kr
+//  sudo certbot --nginx -d hit365.kr

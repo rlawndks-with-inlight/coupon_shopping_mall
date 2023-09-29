@@ -2,7 +2,7 @@ import styled from 'styled-components'
 import { Box, Tab, Tabs, Card, Grid, Divider, } from '@mui/material';
 import { test_item } from 'src/data/test-data';
 import { useSettingsContext } from 'src/components/settings';
-import { ProductDetailsCarousel, ProductDetailsReview, ProductDetailsSummary } from 'src/views/e-commerce/details';
+import { ProductDetailsCarousel, ProductDetailsReview, ProductDetailsSummary } from 'src/views/@dashboard/e-commerce/details';
 import { useEffect, useState } from 'react';
 import { SkeletonProductDetails } from 'src/components/skeleton';
 import { getProductByUser, getProductReviewsByUser } from 'src/utils/api-shop';

@@ -9,7 +9,6 @@ import Card from "src/theme/overrides/Card";
 import Paper from "src/theme/overrides/Paper";
 import Typography from "src/theme/overrides/Typography";
 import { getProductByUser } from "src/utils/api-shop";
-import { CheckoutCartProductList, CheckoutSteps, CheckoutSummary  } from "src/views/@dashboard/e-commerce/checkout";
 import styled from "styled-components";
 import { useState } from "react";
 import { Title } from "src/components/elements/styled-components";

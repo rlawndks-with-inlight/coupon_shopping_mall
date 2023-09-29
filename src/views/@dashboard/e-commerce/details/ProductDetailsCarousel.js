@@ -4,19 +4,19 @@ import { useState, useRef, useEffect } from 'react';
 import { alpha, useTheme, styled } from '@mui/material/styles';
 import { Box } from '@mui/material';
 // utils
-import { bgGradient } from '../../../../utils/cssStyles';
+import { bgGradient } from 'src/utils/cssStyles';
 // components
-import Image from 'src/components/image';
-import Lightbox from 'src/components/lightbox';
+import Image from 'src/components/image/Image';
+import Lightbox from 'src/components/lightbox/Lightbox';
 import Carousel, { CarouselArrowIndex } from 'src/components/carousel';
-
+import { useSettingsContext } from 'src/components/settings';
 // ----------------------------------------------------------------------
 
 const THUMB_SIZE = 64;
 
 const StyledThumbnailsContainer = styled('div', {
   shouldForwardProp: (prop) => prop !== 'length',
-})(({ length, theme }) => ({
+})(({ length, theme, themeMode }) => ({
   margin: theme.spacing(0, 'auto'),
   position: 'relative',
 
@@ -47,7 +47,7 @@ const StyledThumbnailsContainer = styled('div', {
       ...bgGradient({
         direction: 'to left',
         startColor: `${alpha(theme.palette.background.default, 0)} 0%`,
-        endColor: `${theme.palette.background.default} 100%`,
+        endColor: `${themeMode == 'dark' ? '#000' : theme.palette.background.default} 10%`,
       }),
       top: 0,
       zIndex: 9,
@@ -70,6 +70,8 @@ ProductDetailsCarousel.propTypes = {
 };
 
 export default function ProductDetailsCarousel({ product }) {
+
+  const { themeMode } = useSettingsContext();
   const theme = useTheme();
 
   const carousel1 = useRef(null);
@@ -85,7 +87,6 @@ export default function ProductDetailsCarousel({ product }) {
   const [selectedImage, setSelectedImage] = useState(-1);
 
   const imagesLightbox = product.images.map((img) => ({ src: img }));
-
   const handleOpenLightbox = (imageUrl) => {
     const imageIndex = imagesLightbox.findIndex((image) => image.src === imageUrl);
     setSelectedImage(imageIndex);
@@ -126,7 +127,7 @@ export default function ProductDetailsCarousel({ product }) {
   }, []);
 
   useEffect(() => {
-    carousel1.current?.slickGoTo(currentIndex);
+    carousel1.current?.slickGoTo(currentIndex?.index);
   }, [currentIndex]);
 
   const handlePrev = () => {
@@ -138,7 +139,7 @@ export default function ProductDetailsCarousel({ product }) {
   };
 
   const renderLargeImg = (
-    <Box sx={{ mb: 3, borderRadius: 2, overflow: 'hidden', position: 'relative' }} >
+    <Box sx={{ mb: 3, borderRadius: 2, overflow: 'hidden', position: 'relative' }}>
       <Carousel {...carouselSettings1} asNavFor={nav2} ref={carousel1}>
         {product.images.map((img) => (
           <Image
@@ -151,7 +152,6 @@ export default function ProductDetailsCarousel({ product }) {
           />
         ))}
       </Carousel>
-
       <CarouselArrowIndex
         index={currentIndex}
         total={product.images.length}
@@ -160,9 +160,8 @@ export default function ProductDetailsCarousel({ product }) {
       />
     </Box>
   );
-
   const renderThumbnails = (
-    <StyledThumbnailsContainer length={product.images.length} >
+    <StyledThumbnailsContainer length={product.images.length} themeMode={themeMode}>
       <Carousel {...carouselSettings2} asNavFor={nav1} ref={carousel2}>
         {product.images.map((img, index) => (
           <Image
@@ -195,7 +194,6 @@ export default function ProductDetailsCarousel({ product }) {
         }}
       >
         {renderLargeImg}
-
         {renderThumbnails}
       </Box>
 
@@ -204,7 +202,9 @@ export default function ProductDetailsCarousel({ product }) {
         slides={imagesLightbox}
         open={selectedImage >= 0}
         close={handleCloseLightbox}
-        onGetCurrentIndex={(index) => setCurrentIndex(index)}
+        onGetCurrentIndex={(index) => {
+          setSelectedImage(index?.index)
+        }}
       />
     </>
   );

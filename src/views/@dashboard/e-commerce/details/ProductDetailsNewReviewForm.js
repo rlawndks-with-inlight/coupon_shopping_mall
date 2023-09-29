@@ -14,10 +14,16 @@ import {
   DialogActions,
   DialogContent,
   FormHelperText,
+  TextField,
 } from '@mui/material';
 import { LoadingButton } from '@mui/lab';
+import { useState } from 'react';
+import { useRouter } from 'next/router';
+import { useSettingsContext } from 'src/components/settings';
+import { addProductReviewByUser } from 'src/utils/api-shop';
+import { useAuthContext } from 'src/layouts/manager/auth/useAuthContext';
+import { toast } from 'react-hot-toast';
 // components
-import FormProvider, { RHFTextField } from 'src/components/hook-form';
 
 // ----------------------------------------------------------------------
 
@@ -25,14 +31,26 @@ ProductDetailsNewReviewForm.propTypes = {
   onClose: PropTypes.func,
 };
 
-export default function ProductDetailsNewReviewForm({ onClose, ...other }) {
+export default function ProductDetailsNewReviewForm({ onClose, onChangePage, ...other }) {
+  const router = useRouter();
+  const { themeDnsData } = useSettingsContext();
+  const { user } = useAuthContext();
   const ReviewSchema = Yup.object().shape({
     rating: Yup.mixed().required('Rating is required'),
     review: Yup.string().required('Review is required'),
     name: Yup.string().required('Name is required'),
     email: Yup.string().required('Email is required').email('Email must be a valid email address'),
   });
-
+  const [reviewData, setReviewData] = useState({
+    product_id: router.query?.id,
+    trans_id: '1',
+    brand_id: themeDnsData?.id,
+    scope: 0,
+    nick_name: user?.nick_name || `구매자${router.query?.id}${new Date().getTime()}`,
+    profile_img: user?.profile_img ?? "",
+    content: '',
+    password: '1234'
+  })
   const defaultValues = {
     rating: null,
     review: '',
@@ -52,57 +70,57 @@ export default function ProductDetailsNewReviewForm({ onClose, ...other }) {
     formState: { errors, isSubmitting },
   } = methods;
 
-  const onSubmit = async (data) => {
-    try {
-      await new Promise((resolve) => setTimeout(resolve, 500));
-      reset();
-      onClose();
-      console.log('DATA', data);
-    } catch (error) {
-      console.error(error);
-    }
-  };
-
   const onCancel = () => {
     onClose();
     reset();
   };
-
+  const onSubmit = async () => {
+    let result = await addProductReviewByUser(reviewData);
+    if(result){
+      toast.success("성공적으로 리뷰를 작성하였습니다.");
+      onClose();
+      onChangePage(1);
+    }
+  }
   return (
     <Dialog onClose={onClose} {...other}>
-      <FormProvider methods={methods} onSubmit={handleSubmit(onSubmit)}>
-        <DialogTitle> Add Review </DialogTitle>
+      <DialogTitle>리뷰 작성하기</DialogTitle>
 
-        <DialogContent>
-          <Stack direction="row" flexWrap="wrap" alignItems="center" spacing={1.5}>
-            <Typography variant="body2">Your review about this product:</Typography>
+      <DialogContent>
+        <Stack direction="row" flexWrap="wrap" alignItems="center" spacing={1.5}>
+          <Typography variant="body2">별점을 체크해 주세요:</Typography>
 
-            <Controller
-              name="rating"
-              control={control}
-              render={({ field }) => <Rating {...field} value={Number(field.value)} />}
-            />
-          </Stack>
+          <Controller
+            name="rating"
+            control={control}
+            render={({ field }) => <Rating {...field} value={reviewData.scope / 2} onChange={(e) => {
+              setReviewData({
+                ...reviewData,
+                scope: e.target.value * 2
+              })
+            }} />}
+          />
+        </Stack>
 
-          {!!errors.rating && <FormHelperText error> {errors.rating?.message}</FormHelperText>}
+        {!!errors.rating && <FormHelperText error> {errors.rating?.message}</FormHelperText>}
 
-          <RHFTextField name="review" label="Review *" multiline rows={3} sx={{ mt: 3 }} />
+        <TextField name="review" label="리뷰를 작성해 주세요." multiline rows={6} sx={{ mt: 3, width: '100%' }} onChange={(e) => {
+          setReviewData({
+            ...reviewData,
+            content: e.target.value
+          })
+        }} />
+      </DialogContent>
 
-          <RHFTextField name="name" label="Name *" sx={{ mt: 3 }} />
+      <DialogActions>
+        <Button color="inherit" variant="outlined" onClick={onCancel}>
+          취소
+        </Button>
 
-          <RHFTextField name="email" label="Email *" sx={{ mt: 3 }} />
-        </DialogContent>
-
-        <DialogActions>
-          <Button color="inherit" variant="outlined" onClick={onCancel}>
-            Cancel
-          </Button>
-
-          <LoadingButton type="submit" variant="contained" loading={isSubmitting}>
-            Post review
-          </LoadingButton>
-        </DialogActions>
-      </FormProvider>
+        <Button type="submit" variant="contained" onClick={onSubmit}>
+          리뷰 추가하기
+        </Button>
+      </DialogActions>
     </Dialog>
   );
 }

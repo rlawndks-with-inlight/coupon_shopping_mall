@@ -746,6 +746,7 @@ const ProductEdit = () => {
                             group_name: '',
                             group_description: '',
                             group_file: undefined,
+                            is_able_duplicate_select: 0,
                             options: []
                           })
                           setItem({

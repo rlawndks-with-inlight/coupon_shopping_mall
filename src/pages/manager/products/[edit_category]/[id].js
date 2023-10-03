@@ -721,7 +721,7 @@ const ProductEdit = () => {
                                             if (option_list[index].options[idx]?.id) {
                                               option_list[index].options[idx].is_delete = 1;
                                             } else {
-                                              option_list[index].splice(idx, 1);
+                                              option_list[index].options.splice(idx, 1);
                                             }
                                             setItem(
                                               {

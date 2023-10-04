@@ -22,10 +22,10 @@ export const getMainObjIdList = (main_obj, type, id_list_, is_children) => {// ê
     if (main_obj[i]?.type == type) {
       if (is_children) {
         for (var j = 0; j < main_obj[i]?.list.length; j++) {
-          id_list = [...id_list, ...main_obj[i]?.list[j]?.list];
+          id_list = [...id_list, ...main_obj[i]?.list[j]?.list??[]];
         }
       } else {
-        id_list = [...id_list, ...main_obj[i]?.list];
+        id_list = [...id_list, ...main_obj[i]?.list??[]];
       }
     }
   }

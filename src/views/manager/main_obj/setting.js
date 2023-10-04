@@ -10,7 +10,7 @@ import _, { constant } from 'lodash'
 import { useSettingsContext } from "src/components/settings";
 import { useRouter } from "next/router";
 import CustomBreadcrumbs from "src/components/custom-breadcrumbs/CustomBreadcrumbs";
-import { getBrandByManager, getProductsByManager, updateBrandByManager, uploadFileByManager, uploadsFileByManager } from "src/utils/api-manager";
+import { getBrandByManager, getProductReviewsByManager, getProductsByManager, updateBrandByManager, uploadFileByManager, uploadsFileByManager } from "src/utils/api-manager";
 import { toast } from "react-hot-toast";
 import { useModal } from "src/components/dialog/ModalProvider";
 import { useAuthContext } from "src/layouts/manager/auth/useAuthContext";
@@ -77,6 +77,7 @@ const MainObjSetting = (props) => {
     const [contentList, setContentList] = useState([]);
     const [sectionType, setSectionType] = useState('banner');
     const [productContent, setProductContent] = useState({});
+    const [productReviewContent, setProductReviewContent] = useState({});
     const [loading, setLoading] = useState(true);
     const homeSectionDefaultSetting = {
         banner: {
@@ -127,6 +128,13 @@ const MainObjSetting = (props) => {
             list: [],
             style: {},
         },
+        'item-reviews-select': {
+            type: 'item-reviews-select',
+            title: '',
+            sub_title: '',
+            list: [],
+            style: {},
+        },
     }
     const returnKoNameBySectionType = {
         banner: '배너슬라이드',
@@ -154,13 +162,17 @@ const MainObjSetting = (props) => {
             page: 1,
             page_size: 100000
         })
+        let product_review_content = await getProductReviewsByManager({
+            page: 1,
+            page_size: 100000
+        })
         setProductContent(product_content);
+        setProductReviewContent(product_review_content);
         let brand_data = await getBrandByManager({
             id: (!isNaN(parseInt(router.query.type)) ? router.query.type : '') || themeDnsData?.id
         })
         brand_data = settingBrandObj(item, brand_data);
         let content_list = brand_data[`${MAIN_OBJ_TYPE}`] ?? [];
-        console.log(content_list)
         setItem(brand_data);
         setContentList(content_list);
         setLoading(false);
@@ -802,6 +814,51 @@ const MainObjSetting = (props) => {
                                                         <CardHeader title={`상품후기 ${curTypeNum(contentList, 'item-reviews', idx)}`} sx={{ paddingLeft: '0' }} />
                                                         <SectionProcess idx={idx} item={item} />
                                                     </Row>
+                                                    <TextField label='제목' value={item.title} onChange={(e) => {
+                                                        let content_list = [...contentList];
+                                                        content_list[idx]['title'] = e.target.value;
+                                                        setContentList(content_list)
+                                                    }} />
+                                                    <TextField label='부제목' value={item.sub_title} onChange={(e) => {
+                                                        let content_list = [...contentList];
+                                                        content_list[idx]['sub_title'] = e.target.value;
+                                                        setContentList(content_list)
+                                                    }} />
+                                                </>}
+                                                {conditionOfSection('item-reviews-select', item) &&
+                                                <>
+                                                    <Row style={{ alignItems: 'end' }}>
+                                                        <CardHeader title={`선택형 상품후기 ${curTypeNum(contentList, 'item-reviews-select', idx)}`} sx={{ paddingLeft: '0' }} />
+                                                        <SectionProcess idx={idx} item={item} />
+                                                    </Row>
+                                                    <TextField label='제목' value={item.title} onChange={(e) => {
+                                                        let content_list = [...contentList];
+                                                        content_list[idx]['title'] = e.target.value;
+                                                        setContentList(content_list)
+                                                    }} />
+                                                    <TextField label='부제목' value={item.sub_title} onChange={(e) => {
+                                                        let content_list = [...contentList];
+                                                        content_list[idx]['sub_title'] = e.target.value;
+                                                        setContentList(content_list)
+                                                    }} />
+                                                    <Autocomplete
+                                                        multiple
+                                                        fullWidth
+                                                        options={productReviewContent?.content && (productReviewContent?.content ?? []).map(item => { return item?.id })}
+                                                        getOptionLabel={(item_id) => {
+                                                           let review =  _.find((productReviewContent?.content ?? []), { id: parseInt(item_id) });
+                                                            return `${review?.product_name} (${review?.nick_name}) : ${review?.content} `
+                                                        }}
+                                                        defaultValue={item.list}
+                                                        value={item.list}
+                                                        onChange={(e, value) => {
+                                                            handleChangeItemMultiSelect(value, idx)
+                                                        }}
+                                                        renderInput={(params) => (
+                                                            <TextField {...params} label="선택할 리뷰" placeholder="상품선택" />
+                                                        )}
+                                                    />
+
                                                 </>}
                                         </>
                                     ))}
@@ -839,8 +896,9 @@ const MainObjSetting = (props) => {
                                                 <MenuItem value={'video-slide'}>동영상 슬라이드 ({hasTypeCount(contentList, 'video-slide')})</MenuItem>
                                                 <MenuItem value={'post'}>게시판 ({hasTypeCount(contentList, 'post')})</MenuItem>
                                                 <MenuItem value={'item-reviews'}>상품후기 ({hasTypeCount(contentList, 'item-reviews')})</MenuItem>
+                                                <MenuItem value={'item-reviews-select'}>선택형 상품후기 ({hasTypeCount(contentList, 'item-reviews-select')})</MenuItem>
                                                 {/* <MenuItem value={'post'}>게시판 ({hasTypeCount(contentList, 'post')})</MenuItem>
-                        <MenuItem value={'product-review'}>상품후기 ({hasTypeCount(contentList, 'product-review')})</MenuItem> */}
+                                                <MenuItem value={'product-review'}>상품후기 ({hasTypeCount(contentList, 'product-review')})</MenuItem> */}
                                             </Select>
                                             <Button variant="contained"
                                                 className="content-add"

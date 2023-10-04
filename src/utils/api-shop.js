@@ -1,10 +1,13 @@
 import { get, post, put, deleteItem } from './api-manager';
 
 export const getShopCategoriesByUser = (params) => { // 유저 연결되어있는 하위 카테고리가 모두 출력됩니다. (게시글 카테고리, 상품 카테고리) 팝업 정보가 출력됩니다.
-  const { } = params;
+  const { product_review_ids = [], product_ids = [] } = params;
   let query = {
-
+    product_review_ids,
+    product_ids
   }
+  query.product_review_ids = JSON.stringify(query.product_review_ids);
+  query.product_ids = JSON.stringify(query.product_ids);
   return get(`/api/v1/shop/shop`, query);
 }
 export const getSellerInfoByUser = async (params) => { // 셀러 정보가 출력됩니다. (게시글 카테고리, 상품 카테고리) 팝업 정보가 출력됩니다.

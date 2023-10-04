@@ -35,7 +35,6 @@ const Footer = (props) => {
   } = props;
   const theme = useTheme();
   const { themeDnsData } = useSettingsContext();
-  console.log(themeDnsData)
   const {
     company_name,
     addr,

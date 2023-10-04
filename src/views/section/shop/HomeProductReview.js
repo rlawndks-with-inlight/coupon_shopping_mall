@@ -50,7 +50,7 @@ const Review = (props) => {
   return (
     <>
       <ReviewContainer>
-        <LazyLoadImage src={item?.review_img} style={{ width: '100%', height: 'auto' }} />
+        <LazyLoadImage src={item?.product_img} style={{ width: '100%', height: 'auto' }} />
         <Row style={{ flexDirection: 'column', padding: '0.5rem', rowGap: '0.25rem' }}>
           <div style={{ color: themeObj.grey[500] }}>{item?.nick_name}</div>
           <Rating value={item?.scope / 2} readOnly={true} />
@@ -61,7 +61,7 @@ const Review = (props) => {
         {item?.product &&
           <>
             <Row style={{ borderTop: `1px dashed ${themeObj.grey[300]}`, padding: '0.5rem', alignItems: 'center', columnGap: '0.25rem' }}>
-              <LazyLoadImage src={item?.product?.product_img} style={{ width: '48px' }} />
+              <LazyLoadImage src={item?.product_img} style={{ width: '48px' }} />
               <div style={{ fontSize: themeObj.font_size.size8 }}>{item?.product?.product_name}</div>
             </Row>
           </>}

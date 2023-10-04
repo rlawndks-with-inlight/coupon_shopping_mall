@@ -6,6 +6,7 @@ import { defaultPreset, getPresets, presetsOption } from './presets';
 import { useTheme } from '@emotion/react';
 import { deleteLocalStorage, getLocalStorage, setLocalStorage } from 'src/utils/local-storage';
 import { getShopCategoriesByUser } from 'src/utils/api-shop';
+import { getMainObjContentByIdList, getMainObjIdList, makeObjByList } from 'src/utils/function';
 // ----------------------------------------------------------------------
 
 const initialState = {
@@ -135,14 +136,35 @@ export function SettingsProvider({ children }) {
       let root_id = await res2.json();
       root_id = root_id?.root_id;
       dns_data['root_id'] = root_id;
+      let product_review_ids = []; 
+
+      product_review_ids = getMainObjIdList(dns_data?.shop_obj, 'item-reviews-select', product_review_ids);
+      product_review_ids = getMainObjIdList(dns_data?.blog_obj, 'item-reviews-select', product_review_ids);
+      let product_ids = [];
+      product_ids = getMainObjIdList(dns_data?.shop_obj, 'items', product_ids);
+      product_ids = getMainObjIdList(dns_data?.blog_obj, 'items', product_ids);
+      product_ids = getMainObjIdList(dns_data?.shop_obj, 'items-with-categories', product_ids, true);
+      product_ids = getMainObjIdList(dns_data?.blog_obj, 'items-with-categories', product_ids, true);
+
       let data = await getShopCategoriesByUser({
         brand_id: dns_data?.id,
-        root_id: dns_data?.root_id
+        root_id: dns_data?.root_id,
+        product_review_ids: product_review_ids,
+        product_ids: product_ids,
       });
+      dns_data['shop_obj'] = getMainObjContentByIdList(dns_data?.shop_obj, 'item-reviews-select', data?.product_reviews);
+      dns_data['blog_obj'] = getMainObjContentByIdList(dns_data?.blog_obj, 'item-reviews-select', data?.product_reviews);
+      dns_data['shop_obj'] = getMainObjContentByIdList(dns_data?.shop_obj, 'item-reviews', data?.product_reviews, false, true);
+      dns_data['shop_obj'] = getMainObjContentByIdList(dns_data?.shop_obj, 'items', data?.products);
+      dns_data['blog_obj'] = getMainObjContentByIdList(dns_data?.blog_obj, 'items', data?.products);
+      dns_data['shop_obj'] = getMainObjContentByIdList(dns_data?.shop_obj, 'items-with-categories', data?.products, true);
+      dns_data['blog_obj'] = getMainObjContentByIdList(dns_data?.blog_obj, 'items-with-categories', data?.products, true);
+
       onChangeCategoryList(data?.product_categories ?? []);
       onChangePopupList(data?.popups ?? []);
       onChangePostCategoryList(data?.post_categories ?? []);
       onChangeSellerList(data?.merchandises?.content ?? []);
+
       onChangeDnsData(dns_data);
     } catch (err) {
       console.log(err)

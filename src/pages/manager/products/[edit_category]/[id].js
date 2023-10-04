@@ -25,6 +25,7 @@ const ReactQuill = dynamic(() => import('react-quill'), {
   ssr: false,
   loading: () => <p>Loading ...</p>,
 })
+
 const tab_list = [
   {
     value: 0,
@@ -216,7 +217,8 @@ const ProductEdit = () => {
     product_description: '',
     product_file: undefined,
     sub_images: [],
-    groups: []
+    groups: [],
+    characters: [],
   })
   const [reviewData, setReviewData] = useState({});
   const [reviewSearchObj, setReviewSearchObj] = useState({
@@ -231,7 +233,7 @@ const ProductEdit = () => {
   useEffect(() => {
     settingPage();
   }, [])
-  
+
   useEffect(() => {
     if (currentTab == 1) {
       onChangeReviewsPage({ ...reviewSearchObj, product_id: router.query.id });
@@ -255,7 +257,7 @@ const ProductEdit = () => {
     setReviewColumns(cols)
     let category_list = await getCategoriesByManager({ page: 1, page_size: 100000 });
     category_list = category_list?.content;
-    if(!category_list.length > 0){
+    if (!category_list.length > 0) {
       toast.error("카테고리 생성 후 상품 등록 가능합니다.");
     }
     setCategories(category_list);
@@ -532,54 +534,7 @@ const ProductEdit = () => {
                             )
                           }} />
                       </FormControl>
-                      <TextField
-                        label='브랜드명'
-                        value={item.brand_name}
-                        placeholder="예시) 주문폭주!! 다양한 디자인으로 어떠한 룩도 소화!"
-                        onChange={(e) => {
-                          setItem(
-                            {
-                              ...item,
-                              ['brand_name']: e.target.value
-                            }
-                          )
-                        }} />
-                      <TextField
-                        label='원산지명'
-                        value={item.origin_name}
-                        placeholder="예시) 주문폭주!! 다양한 디자인으로 어떠한 룩도 소화!"
-                        onChange={(e) => {
-                          setItem(
-                            {
-                              ...item,
-                              ['origin_name']: e.target.value
-                            }
-                          )
-                        }} />
-                      <TextField
-                        label='제조사명'
-                        value={item.mfg_name}
-                        placeholder="예시) 주문폭주!! 다양한 디자인으로 어떠한 룩도 소화!"
-                        onChange={(e) => {
-                          setItem(
-                            {
-                              ...item,
-                              ['mfg_name']: e.target.value
-                            }
-                          )
-                        }} />
-                      <TextField
-                        label='모델명'
-                        value={item.model_name}
-                        placeholder="예시) 주문폭주!! 다양한 디자인으로 어떠한 룩도 소화!"
-                        onChange={(e) => {
-                          setItem(
-                            {
-                              ...item,
-                              ['model_name']: e.target.value
-                            }
-                          )
-                        }} />
+
                       <Stack spacing={1}>
                         <Typography variant="subtitle2" sx={{ color: 'text.secondary' }}>
                           상품설명
@@ -614,6 +569,76 @@ const ProductEdit = () => {
                               ['product_description']: note
                             });
                           }} />
+                      </Stack>
+                      <Stack spacing={1}>
+                        <Typography variant="subtitle2" sx={{ color: 'text.secondary' }}>
+                          상품특성
+                        </Typography>
+                        {item.characters.map((character, index) => (
+                          <>
+                            <Row style={{ columnGap: '0.5rem' }}>
+                              <TextField
+                                sx={{ flexGrow: 1 }}
+                                label='옵션명'
+                                placeholder="예시) 원산지"
+                                value={character.character_name}
+                                onChange={(e) => {
+                                  let character_list = item?.characters;
+                                  character_list[index].character_name = e.target.value;
+                                  setItem(
+                                    {
+                                      ...item,
+                                      ['characters']: character_list
+                                    }
+                                  )
+                                }} />
+                              <FormControl variant="outlined" sx={{ flexGrow: 1 }}>
+                                <InputLabel>변동가</InputLabel>
+                                <OutlinedInput
+                                  label='변동가'
+                                  placeholder="예시) 국내산"
+                                  value={character.character_value}
+                                  onChange={(e) => {
+                                    let character_list = item?.characters;
+                                    character_list[index].character_value = e.target.value;
+                                    setItem(
+                                      {
+                                        ...item,
+                                        ['characters']: character_list
+                                      }
+                                    )
+                                  }} />
+                              </FormControl>
+                              <IconButton onClick={() => {
+                                let character_list = item?.characters;
+                                if (character_list[index]?.id) {
+                                  character_list[index].is_delete = 1;
+                                } else {
+                                  character_list.splice(index, 1);
+                                }
+                                setItem(
+                                  {
+                                    ...item,
+                                    ['characters']: character_list
+                                  }
+                                )
+                              }}>
+                                <Icon icon='material-symbols:delete-outline' />
+                              </IconButton>
+                            </Row>
+                          </>
+                        ))}
+                        <Button variant="outlined" sx={{ height: '48px' }} onClick={() => {
+                          let character_list = [...item.characters];
+                          character_list.push({
+                            character_name: '',
+                            character_value: '',
+                          })
+                          setItem({
+                            ...item,
+                            ['characters']: character_list
+                          })
+                        }}>새 특성 추가</Button>
                       </Stack>
                       <Stack spacing={1}>
                         <Typography variant="subtitle2" sx={{ color: 'text.secondary' }}>
@@ -778,7 +803,7 @@ const ProductEdit = () => {
                 <Stack spacing={1} style={{ display: 'flex' }}>
                   <Button variant="contained" style={{
                     height: '48px', width: '120px', marginLeft: 'auto'
-                  }} onClick={()=>{
+                  }} onClick={() => {
                     setModal({
                       func: () => { onSave() },
                       icon: 'material-symbols:edit-outline',

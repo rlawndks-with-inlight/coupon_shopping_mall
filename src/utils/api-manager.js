@@ -240,13 +240,15 @@ export const addProductByManager =async (params) => { //관리자 상품 추가
   const { category_id, product_name = '', product_comment = '', product_price = 0, product_sale_price = 0, brand_name = '', origin_name = '', mfg_name = '', model_name = '', product_description = '',
     product_file,
     sub_images = [],
-    groups = []
+    groups = [],
+    characters = [],
   } = params;
   let obj = {
     category_id, product_name, product_comment, product_price, product_sale_price, brand_name, origin_name, mfg_name, model_name, product_description,
     product_file,
     sub_images,
     groups,
+    characters,
   }
   let images = [
     'product'
@@ -258,13 +260,15 @@ export const updateProductByManager = async (params) => { //관리자 상품 수
   const { id, category_id, product_name = '', product_comment = '', product_price = 0, product_sale_price = 0, brand_name = '', origin_name = '', mfg_name = '', model_name = '', product_description = '',
     product_file, product_img,
     sub_images = [],
-    groups = []
+    groups = [],
+    characters = [],
   } = params;
   let obj = {
     category_id, product_name, product_comment, product_price, product_sale_price, brand_name, origin_name, mfg_name, model_name, product_description,
     product_file, product_img,
     sub_images,
     groups,
+    characters,
   }
   let images = [
     'product'
@@ -624,13 +628,16 @@ export const deleteBrandByManager = (params) => { //관리자 브랜드 삭제
   return deleteItem(`/api/v1/manager/brands/${id}`);
 }
 export const getProductReviewsByManager = (params) => { //관리자 상품리뷰 목록 출력
-  const { page, page_size, s_dt, e_dt, search, product_id } = params;
+  const { page, page_size, s_dt, e_dt, search, product_id, scope } = params;
   let query = {
-    page, page_size, s_dt, e_dt, search, product_id
+    page, page_size, s_dt, e_dt, search, product_id, scope
   }
   if (!query['s_dt']) delete query['s_dt'];
   if (!query['e_dt']) delete query['e_dt'];
   if (!query['search']) delete query['search'];
+  if (!query['product_id']) delete query['product_id'];
+  if (!query['scope']) delete query['scope'];
+
   return get(`/api/v1/manager/product-reviews`, query);
 }
 export const addProductReviewByManager = (params) => { //관리자 상품리뷰 추가

@@ -16,7 +16,7 @@ export const objToQuery = (obj_) => {
 
   return query;
 }
-export const getMainObjIdList = (main_obj, type, id_list_, is_children) => {// 같은 타입에서 WHERE IN 문에 사용될 ids를 세팅한다.
+export const getMainObjIdList = (main_obj = [], type, id_list_=[], is_children) => {// 같은 타입에서 WHERE IN 문에 사용될 ids를 세팅한다.
   let id_list = id_list_;
   for (var i = 0; i < main_obj.length; i++) {
     if (main_obj[i]?.type == type) {

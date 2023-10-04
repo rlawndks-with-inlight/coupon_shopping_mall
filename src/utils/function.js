@@ -16,16 +16,16 @@ export const objToQuery = (obj_) => {
 
   return query;
 }
-export const getMainObjIdList = (main_obj = [], type, id_list_=[], is_children) => {// 같은 타입에서 WHERE IN 문에 사용될 ids를 세팅한다.
+export const getMainObjIdList = (main_obj = [], type, id_list_ = [], is_children) => {// 같은 타입에서 WHERE IN 문에 사용될 ids를 세팅한다.
   let id_list = id_list_;
   for (var i = 0; i < main_obj.length; i++) {
     if (main_obj[i]?.type == type) {
       if (is_children) {
         for (var j = 0; j < main_obj[i]?.list.length; j++) {
-          id_list = [...id_list, ...main_obj[i]?.list[j]?.list??[]];
+          id_list = [...id_list, ...main_obj[i]?.list[j]?.list ?? []];
         }
       } else {
-        id_list = [...id_list, ...main_obj[i]?.list??[]];
+        id_list = [...id_list, ...main_obj[i]?.list ?? []];
       }
     }
   }
@@ -39,9 +39,9 @@ export const getMainObjContentByIdList = (main_obj_ = [], type, content_list = [
   main_obj = main_obj.map(section => {
     if (section?.type == type) {
       if (is_new) {
-        let new_list = content_list.sort((a,b) => {
-          if(a.id < b.id) return 1;
-          if(a.id > b.id) return -1;
+        let new_list = content_list.sort((a, b) => {
+          if (a.id < b.id) return 1;
+          if (a.id > b.id) return -1;
           return 0;
         });
         return {
@@ -49,8 +49,8 @@ export const getMainObjContentByIdList = (main_obj_ = [], type, content_list = [
           list: new_list.splice(0, 10)
         }
       } else if (is_children) {
-        section.list = section?.list.map(children => {
-          children.list = children?.list.map(id => {
+        section.list = (section?.list ?? []).map(children => {
+          children.list = (children?.list ?? []).map(id => {
             if (content_obj[id]) {
               return {
                 ...content_obj[id][0],
@@ -65,7 +65,7 @@ export const getMainObjContentByIdList = (main_obj_ = [], type, content_list = [
         })
         return { ...section };
       } else {
-        let section_list = section?.list.map(id => {
+        let section_list = (section?.list ?? []).map(id => {
           if (content_obj[id]) {
             return {
               ...content_obj[id][0],

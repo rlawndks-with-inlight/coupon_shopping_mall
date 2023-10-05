@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import styled from 'styled-components'
 import { useTheme } from "@emotion/react";
 import { useRouter } from "next/router";
@@ -11,6 +11,9 @@ import _ from 'lodash';
 import { Breadcrumbs, Button, Divider } from '@mui/material';
 import { Icon } from '@iconify/react';
 import { getProductsByUser } from 'src/utils/api-shop';
+import { Spinner } from 'evergreen-ui';
+import $ from 'jquery';
+
 const ContentWrapper = styled.div`
 max-width:1600px;
 width:90%;
@@ -35,10 +38,36 @@ const Demo1 = (props) => {
   const [parentList, setParentList] = useState([]);
   const [curCategories, setCurCategories] = useState([]);
   const [products, setProducts] = useState([]);
+  const [searchObj, setSearchObj] = useState({
+    page: 1,
+    page_size: 15,
+  })
   useEffect(() => {
-    settingPage();
+    settingPage({
+      page: 1,
+      page_size: 15,
+    });
   }, [themeCategoryList, router.query])
-  const settingPage = async () => {
+  const [moreLoading, setMoreLoading] = useState(false);
+  const scrollRef = useRef(null);
+  const handleScroll = () => {
+    if (!scrollRef.current) {
+      return;
+    }
+    const { top, bottom } = scrollRef.current.getBoundingClientRect();
+    const windowHeight = window.innerHeight;
+    if (top < windowHeight && bottom >= 0 && !moreLoading) {
+      setMoreLoading(true);
+      $('.more-page').trigger("click");
+    }
+  };
+  useEffect(() => {
+    window.addEventListener('scroll', handleScroll);
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+    };
+  }, []);
+  const settingPage = async (search_obj) => {
     if (themeCategoryList.length > 0) {
       let parent_list = []
       if (parentList.length > 0) {
@@ -57,12 +86,18 @@ const Demo1 = (props) => {
       setCurCategories(use_list);
     }
     let product_list = await getProductsByUser({
+      ...search_obj,
       brand_id: themeDnsData?.id,
       category_id: router.query?.category_id,
-      page_size: 100000,
     })
-    setProducts(product_list.content??[]);
+    setSearchObj(search_obj);
+    setProducts([...products, ...product_list.content ?? []]);
   }
+  useEffect(() => {
+    if (products.length > 0) {
+      setMoreLoading(false);
+    }
+  }, [products])
   return (
     <>
       <ContentWrapper>
@@ -120,6 +155,20 @@ const Demo1 = (props) => {
         {products.length > 0 ?
           <>
             <Items items={products} router={router} />
+            {moreLoading ?
+              <>
+                <Spinner sx={{ height: '72px' }} />
+              </>
+              :
+              <>
+                <Button className='more-page' onClick={() => {
+                  settingPage({
+                    ...searchObj,
+                    page: searchObj?.page + 1
+                  })
+                }} ref={scrollRef} />
+              </>}
+
           </>
           :
           <>

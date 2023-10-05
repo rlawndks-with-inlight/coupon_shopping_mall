@@ -53,6 +53,7 @@ const PrevArrowStyle = styled.div`
 const BannerImgContainer = styled.div`
 width: 78vw;
 height: 33.15vw;
+margin: 0 auto;
 border-radius:${props => props.img_list_length >= 2 ? '1rem' : '0'};
 overflow: hidden;
 @media (max-width:1200px) {

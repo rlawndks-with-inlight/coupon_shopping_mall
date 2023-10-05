@@ -103,6 +103,13 @@ const MainObjSetting = (props) => {
             list: [],
             style: {},
         },
+        'items-ids': {
+            type: 'items-ids',
+            title: '',
+            sub_title: '',
+            list: [],
+            style: {},
+        },
         'items-with-categories': {
             type: 'items-with-categories',
             title: '',
@@ -280,6 +287,9 @@ const MainObjSetting = (props) => {
                         image: content_list[i].file
                     })
                 }
+            }
+            if (content_list[i]?.type == 'items-ids') {
+                content_list[i].list = content_list[i]?.list?.split(',');
             }
         }
         if (file_index_list.length > 0) {
@@ -631,6 +641,29 @@ const MainObjSetting = (props) => {
                                                     />
 
                                                 </>}
+                                                {conditionOfSection('items-ids', item) &&
+                                                <>
+                                                    <Row style={{ alignItems: 'end' }}>
+                                                        <CardHeader title={`ID 선택형 상품슬라이드 ${curTypeNum(contentList, 'items-ids', idx)}`} sx={{ paddingLeft: '0' }} />
+                                                        <SectionProcess idx={idx} item={item} />
+                                                    </Row>
+                                                    <TextField label='제목' value={item.title} onChange={(e) => {
+                                                        let content_list = [...contentList];
+                                                        content_list[idx]['title'] = e.target.value;
+                                                        setContentList(content_list)
+                                                    }} />
+                                                    <TextField label='부제목' value={item.sub_title} onChange={(e) => {
+                                                        let content_list = [...contentList];
+                                                        content_list[idx]['sub_title'] = e.target.value;
+                                                        setContentList(content_list)
+                                                    }} />
+                                                    <TextField label='상품 id 모음' placeholder=", 를 기준으로 id를 입력해주세요." value={item?.list} onChange={(e) => {
+                                                        let content_list = [...contentList];
+                                                        content_list[idx]['list'] = e.target.value;
+                                                        setContentList(content_list)
+                                                    }} />
+
+                                                </>}
                                             {conditionOfSection('items-with-categories', item) &&
                                                 <>
                                                     <Row style={{ alignItems: 'end', alignContent: 'center' }}>
@@ -916,6 +949,7 @@ const MainObjSetting = (props) => {
                                                 <MenuItem value={'banner'}>배너슬라이드 ({hasTypeCount(contentList, 'banner')})</MenuItem>
                                                 <MenuItem value={'button-banner'}>버튼형 배너슬라이드 ({hasTypeCount(contentList, 'button-banner')})</MenuItem>
                                                 <MenuItem value={'items'} disabled={!productContent?.total > 0}>상품슬라이드 ({hasTypeCount(contentList, 'items')}) {(!productContent?.total > 0) ? ' (상품 생성 후 가능합니다.)' : ''}</MenuItem>
+                                                <MenuItem value={'items-ids'} disabled={!productContent?.total > 0}>ID 선택형 상품슬라이드 ({hasTypeCount(contentList, 'items-ids')}) {(!productContent?.total > 0) ? ' (상품 생성 후 가능합니다.)' : ''}</MenuItem>
                                                 <MenuItem value={'items-with-categories'} disabled={!productContent?.total > 0}>카테고리탭별 상품리스트 ({hasTypeCount(contentList, 'items-with-categories')}) {(!productContent?.total > 0) ? ' (상품 생성 후 가능합니다.)' : ''}</MenuItem>
                                                 <MenuItem value={'editor'}>에디터 ({hasTypeCount(contentList, 'editor')})</MenuItem>
                                                 <MenuItem value={'video-slide'}>동영상 슬라이드 ({hasTypeCount(contentList, 'video-slide')})</MenuItem>

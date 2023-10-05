@@ -142,7 +142,9 @@ export function SettingsProvider({ children }) {
       product_review_ids = getMainObjIdList(dns_data?.blog_obj, 'item-reviews-select', product_review_ids);
       let product_ids = [];
       product_ids = getMainObjIdList(dns_data?.shop_obj, 'items', product_ids);
+      product_ids = getMainObjIdList(dns_data?.shop_obj, 'items-ids', product_ids);
       product_ids = getMainObjIdList(dns_data?.blog_obj, 'items', product_ids);
+      product_ids = getMainObjIdList(dns_data?.blog_obj, 'items-ids', product_ids);
       product_ids = getMainObjIdList(dns_data?.shop_obj, 'items-with-categories', product_ids, true);
       product_ids = getMainObjIdList(dns_data?.blog_obj, 'items-with-categories', product_ids, true);
 
@@ -156,7 +158,9 @@ export function SettingsProvider({ children }) {
       dns_data['blog_obj'] = getMainObjContentByIdList(dns_data?.blog_obj, 'item-reviews-select', data?.product_reviews);
       dns_data['shop_obj'] = getMainObjContentByIdList(dns_data?.shop_obj, 'item-reviews', data?.product_reviews, false, true);
       dns_data['shop_obj'] = getMainObjContentByIdList(dns_data?.shop_obj, 'items', data?.products);
+      dns_data['shop_obj'] = getMainObjContentByIdList(dns_data?.shop_obj, 'items-ids', data?.products);
       dns_data['blog_obj'] = getMainObjContentByIdList(dns_data?.blog_obj, 'items', data?.products);
+      dns_data['blog_obj'] = getMainObjContentByIdList(dns_data?.blog_obj, 'items-ids', data?.products);
       dns_data['shop_obj'] = getMainObjContentByIdList(dns_data?.shop_obj, 'items-with-categories', data?.products, true);
       dns_data['blog_obj'] = getMainObjContentByIdList(dns_data?.blog_obj, 'items-with-categories', data?.products, true);
       dns_data['products'] = data?.products;

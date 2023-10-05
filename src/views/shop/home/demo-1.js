@@ -26,7 +26,9 @@ const returnHomeContent = (column, data, func) => {
   let type = column?.type;
   if (type == 'banner') return <HomeBanner column={column} data={data} func={func} />
   if (type == 'editor') return <HomeEditor column={column} data={data} func={func} />
-  if (type == 'items') return <HomeItems column={column} data={data} func={func} />
+  if (type == 'items' || type == 'items-ids') {
+    return <HomeItems column={column} data={data} func={func} />
+  }
   if (type == 'button-banner') return <HomeButtonBanner column={column} data={data} func={func} />
   if (type == 'items-with-categories') return <HomeItemsWithCategories column={column} data={data} func={func} />
   if (type == 'video-slide') return <HomeVideoSlide column={column} data={data} func={func} />

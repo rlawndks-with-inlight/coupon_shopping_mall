@@ -239,8 +239,10 @@ const Header = () => {
     setHeaderHeight(headerWrappersRef.current?.clientHeight ?? 130);
   }, [headerWrappersRef.current, categories])
   useEffect(() => {
-    settingHeader();
-  }, [])
+    if(themeCategoryList){
+      settingHeader();
+    }
+  }, [themeCategoryList])
   const settingHeader = async () => {
     setLoading(true);
     setPopups(themePopupList)

@@ -13,7 +13,7 @@ export const defaultSettings = {
   themeWishData: [],// 찜목록
   themeCurrentPageObj: {}, // 현재페이지 불러올 내용
   themeAuth: {},
-  themeCategoryList: [], // 상품 카테고리
+  themeCategoryList: undefined, // 상품 카테고리
   themePopupList: [], // 팝업
   themePostCategoryList: [], // 게시물 카테고리
   themeSellerList: [], // 셀러리스트

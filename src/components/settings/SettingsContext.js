@@ -159,7 +159,7 @@ export function SettingsProvider({ children }) {
       dns_data['blog_obj'] = getMainObjContentByIdList(dns_data?.blog_obj, 'items', data?.products);
       dns_data['shop_obj'] = getMainObjContentByIdList(dns_data?.shop_obj, 'items-with-categories', data?.products, true);
       dns_data['blog_obj'] = getMainObjContentByIdList(dns_data?.blog_obj, 'items-with-categories', data?.products, true);
-
+      console.log(data)
       onChangeCategoryList(data?.product_categories ?? []);
       onChangePopupList(data?.popups ?? []);
       onChangePostCategoryList(data?.post_categories ?? []);

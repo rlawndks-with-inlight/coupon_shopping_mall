@@ -25,16 +25,16 @@ import HomeProductReview from 'src/views/section/shop/HomeProductReview'
 const returnHomeContent = (column, data, func) => {
   let type = column?.type;
   if (type == 'banner') return <HomeBanner column={column} data={data} func={func} />
-  if (type == 'editor') return <HomeEditor column={column} data={data} func={func} />
-  if (type == 'items' || type == 'items-ids') {
+  else if (type == 'editor') return <HomeEditor column={column} data={data} func={func} />
+  else if (type == 'items' || type == 'items-ids') {
     return <HomeItems column={column} data={data} func={func} />
   }
-  if (type == 'button-banner') return <HomeButtonBanner column={column} data={data} func={func} />
-  if (type == 'items-with-categories') return <HomeItemsWithCategories column={column} data={data} func={func} />
-  if (type == 'video-slide') return <HomeVideoSlide column={column} data={data} func={func} />
+  else if (type == 'button-banner') return <HomeButtonBanner column={column} data={data} func={func} />
+  else if (type == 'items-with-categories') return <HomeItemsWithCategories column={column} data={data} func={func} />
+  else if (type == 'video-slide') return <HomeVideoSlide column={column} data={data} func={func} />
   //if (type == 'post') return <HomePost column={column} data={data} func={func} />
-  if (type == 'item-reviews') return <HomeProductReview column={column} data={data} func={func} />
-  if (type == 'item-reviews-select') return <HomeProductReview column={column} data={data} func={func} />
+  else if (type == 'item-reviews') return <HomeProductReview column={column} data={data} func={func} />
+  else if (type == 'item-reviews-select') return <HomeProductReview column={column} data={data} func={func} />
   return '';
 }
 
@@ -70,9 +70,7 @@ const Demo1 = (props) => {
     }
 
     let dns_data = themeDnsData;
-    if (typeof dns_data == 'string') {
-      dns_data = JSON.parse(dns_data);
-    }
+    console.log(dns_data)
     let content_list = (dns_data?.shop_obj) ?? [];
     setWindowWidth(window.innerWidth)
     setContentList(content_list)

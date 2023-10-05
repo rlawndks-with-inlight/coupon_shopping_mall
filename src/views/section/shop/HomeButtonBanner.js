@@ -14,15 +14,35 @@ const HomeButtonBanner = (props) => {
     const { column, data, func, is_manager } = props;
     const { style } = column;
     const getSlideToShow = () => {
+        let list_length = column?.list?.length;
         if (window.innerWidth > 1350) {
-            return 7
+            if(list_length >= 7){
+                return 7
+            }else{
+                return list_length
+            }
         }
         if (window.innerWidth > 1000) {
-            return 5
+            if(list_length >= 5){
+                return 5
+            }else{
+                return list_length
+            }
+            
         }
-        return 3
+        if(list_length >= 3){
+            return 3
+        }else{
+            return list_length
+        }
     }
-    let slide_setting = {
+    const getBannerWidth = () =>{
+        if (window.innerWidth > 1350) {
+            return parseInt(1350 / getSlideToShow()) - 48
+        }
+        return parseInt(window.innerWidth / getSlideToShow()) - 48
+    }
+     let slide_setting = {
         infinite: true,
         speed: 500,
         autoplay: true,
@@ -39,7 +59,7 @@ const HomeButtonBanner = (props) => {
                         <>
                             <Row style={{ flexDirection: 'column', width: `${getSlideToShow() == 7 ? `${parseInt(1350 / 7) - 8}px` : `${parseInt(window.innerWidth / getSlideToShow()) - 8}px`}`, }}>
                                 <LazyLoadImage src={item?.src} style={{
-                                    width: `${getSlideToShow() == 7 ? `${parseInt(1350 / 7) - 48}px` : `${parseInt(window.innerWidth / getSlideToShow()) - 48}px`}`,
+                                    width: `${getBannerWidth()}px`,
                                     height: `auto`,
                                     borderRadius: '50%',
                                     margin: '0 auto',

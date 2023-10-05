@@ -166,7 +166,7 @@ const ProductList = () => {
   }, [])
   const pageSetting = async () => {
     let category_list = await getCategoriesByManager({ page: 1, page_size: 100000 });
-    category_list = category_list?.content??[];
+    category_list = category_list?.content ?? [];
     category_list = [{ id: null, category_name: '전체', children: [] }, ...category_list]
     setCategories(category_list);
     let cols = defaultColumns;
@@ -248,10 +248,12 @@ const ProductList = () => {
           <Divider />
           <ManagerTable
             data={data}
+            setData={setData}
             columns={columns}
             searchObj={searchObj}
             onChangePage={onChangePage}
             add_button_text={'상품 추가'}
+            want_move_card={true}
           />
         </Card>
       </Stack>

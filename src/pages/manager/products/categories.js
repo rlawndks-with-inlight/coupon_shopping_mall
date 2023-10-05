@@ -12,8 +12,9 @@ import clsx from "clsx";
 import { Icon } from "@iconify/react";
 import { useTheme } from "@emotion/react";
 import { getAllIdsWithParents } from "src/utils/function";
-import { addCategoryByManager, deleteCategoryByManager, getCategoriesByManager, updateCategoryByManager } from "src/utils/api-manager";
+import { addCategoryByManager, deleteCategoryByManager, getCategoriesByManager, sortCategoryByManager, updateCategoryByManager } from "src/utils/api-manager";
 import { useModal } from "src/components/dialog/ModalProvider";
+
 // ----------------------------------------------------------------------
 
 const StyledTreeView = muiStyled(TreeView)({
@@ -51,7 +52,10 @@ const CustomContent = forwardRef(function CustomContent(props, ref) {
     onClickCategoryLabel,
     onClickAddIcon,
     onClickCategoryDelete,
-    setModal
+    setModal,
+    index,
+    category_length,
+    onChangeSequence,
   } = props;
   const {
     disabled,
@@ -126,6 +130,16 @@ const CustomContent = forwardRef(function CustomContent(props, ref) {
           <Icon icon='uiw:plus' fontSize={14} />
         </IconButton>
       </Tooltip>
+      <Tooltip title="해당 카테고리를 한칸 올리시려면 클릭해 주세요.">
+        <IconButton sx={{ padding: '0.25rem' }} disabled={index == 0} onClick={() => { onChangeSequence(true, category, depth, index) }}>
+          <Icon icon={'grommet-icons:link-up'} fontSize={14} />
+        </IconButton>
+      </Tooltip>
+      <Tooltip title="해당 카테고리를 한칸 내리시려면 클릭해 주세요.">
+        <IconButton sx={{ padding: '0.25rem' }} disabled={index == category_length - 1} onClick={() => { onChangeSequence(false, category, depth, index) }}>
+          <Icon icon={'grommet-icons:link-down'} fontSize={14} />
+        </IconButton>
+      </Tooltip>
       <Tooltip title="해당 카테고리 및 하위 카테고리를 삭제하시려면 클릭해 주세요.">
         <IconButton onClick={() => {
           setModal({
@@ -148,6 +162,7 @@ const Wrappers = styled.div`
 width:100%;
 display:flex;
 `
+const ItemTypes = { CARD: 'card' }
 const CategoryList = () => {
   const { setModal } = useModal()
   const defaultSetting = {
@@ -166,6 +181,7 @@ const CategoryList = () => {
     getCategories();
   }, [])
 
+
   const getCategories = async () => {
     let category_list = await getCategoriesByManager({
       page: 1,
@@ -176,8 +192,7 @@ const CategoryList = () => {
     }
     setLoading(false);
   }
-
-  const returnTree = (category, num) => {
+  const returnTree = (category, num, index, category_length) => {
     return (
       <>
         <CustomTreeItem
@@ -189,18 +204,52 @@ const CategoryList = () => {
           category={category}
           onClickCategoryDelete={onClickCategoryDelete}
           setModal={setModal}
+          index={index}
+          category_length={category_length}
+          onChangeSequence={onChangeSequence}
         >
           {category?.children && category?.children.length > 0 &&
             <>
               {category?.children.map((item, idx) => (
                 <>
-                  {returnTree(item, num + 1)}
+                  {returnTree(item, num + 1, idx, category?.children.length)}
                 </>
               ))}
             </>}
         </CustomTreeItem>
       </>
     )
+  }
+  const onChangeSequence = async (is_up, category, depth, index) => {//카테고리 위 또는 아래로 내리기
+    let parent_list = getAllIdsWithParents(categories);
+    let use_list = [];
+    for (var i = 0; i < parent_list.length; i++) {
+      if (parent_list[i][depth]?.id == category?.id) {
+        use_list = parent_list[i];
+        break;
+      }
+    }
+    let obj = {
+      upper_id: -1,
+      upper_sort_idx: -1,
+      lower_id: -1,
+      lower_sort_idx: -1,
+    }
+    let my_type = is_up ? 'lower' : 'upper';
+    let other_type = is_up ? 'upper' : 'lower';
+    obj[`${my_type}_id`] = category?.id;
+    obj[`${my_type}_sort_idx`] = category?.sort_idx
+    if (use_list.length > 1) {
+      obj[`${other_type}_id`] = use_list[depth - 1]?.children[index + (is_up ? (-1) : 1)]?.id;
+      obj[`${other_type}_sort_idx`] = use_list[depth - 1]?.children[index + (is_up ? (-1) : 1)]?.sort_idx;
+    } else {
+      obj[`${other_type}_id`] = categories[index + (is_up ? (-1) : 1)]?.id;
+      obj[`${other_type}_sort_idx`] = categories[index + (is_up ? (-1) : 1)]?.sort_idx;
+    }
+    let result = await sortCategoryByManager(obj);
+    if (result) {
+      getCategories();
+    }
   }
   const onClickAddIcon = (category, depth) => { // 하위 카테고리 추가
     setIsAction(true);
@@ -260,9 +309,9 @@ const CategoryList = () => {
                       <StyledTreeView defaultExpanded={['1']} style={{
                         height: 'auto'
                       }}>
-                        {categories.map((category, idx) => (
+                        {categories.map((category, index) => (
                           <>
-                            {returnTree(category, 0)}
+                            {returnTree(category, 0, index, categories.length)}
                           </>
                         ))}
                       </StyledTreeView>

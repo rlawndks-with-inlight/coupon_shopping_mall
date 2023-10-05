@@ -180,6 +180,13 @@ const settingdeleteImageObj = async (images, obj_) => {//이미지 존재안할�
   }
   return obj;
 }
+export const sortCategoryByManager = (params) => { //관리자 상품 카테고리 목록출력
+  const { upper_id, upper_sort_idx, lower_id, lower_sort_idx } = params;
+  let obj = {
+    upper_id, upper_sort_idx, lower_id, lower_sort_idx
+  }
+  return post(`/api/v1/manager/product-categories/sort`, obj);
+}
 export const getCategoriesByManager = (params) => { //관리자 상품 카테고리 목록출력
   const { page, page_size, s_dt, e_dt, search } = params;
   let query = {

@@ -17,6 +17,10 @@ import { styled as muiStyled } from '@mui/material';
 import { useTheme } from '@emotion/react';
 import { returnMoment } from 'src/utils/function';
 import { Spinner } from 'evergreen-ui';
+import ManagerTr from './ManagerTr';
+import { useCallback } from 'react';
+import { HTML5Backend } from 'react-dnd-html5-backend';
+import { DndProvider } from 'react-dnd';
 // ----------------------------------------------------------------------
 const TableHeaderContainer = styled.div`
 padding: 0.75rem;
@@ -35,7 +39,7 @@ const CustomTableRow = muiStyled(TableRow)(({ theme }) => ({
 }));
 
 export default function ManagerTable(props) {
-  const { columns, data, add_button_text, add_link, onChangePage, searchObj } = props;
+  const { columns, data, setData, add_button_text, add_link, onChangePage, searchObj, want_move_card } = props;
   const { page, page_size } = props?.searchObj;
 
   const theme = useTheme();
@@ -54,6 +58,19 @@ export default function ManagerTable(props) {
       return parseInt(total / page_size) + 1;
     }
   }
+
+  const moveCard = useCallback((dragIndex, hoverIndex, itemPk) => {
+    return;
+    setPosts((prevCards) =>
+      update(prevCards, {
+        $splice: [
+          [dragIndex, 1],
+          [hoverIndex, 0, prevCards[dragIndex]],
+        ],
+      }),
+    )
+  }, [])
+ 
   return (
     <>
       <TableContainer sx={{ overflow: 'unset' }}>
@@ -164,17 +181,20 @@ export default function ManagerTable(props) {
             <>
               <Table sx={{ minWidth: 800, overflowX: 'auto' }}>
                 <TableHeadCustom headLabel={columns} />
-                <TableBody>
-                  {data.content && data.content.map((row, index) => (
-                    <CustomTableRow key={index}>
-                      {columns && columns.map((col, idx) => (
-                        <>
-                          <TableCell align="left" sx={{ ...(col?.sx ? col.sx(row) : {}) }}>{col.action(row)}</TableCell>
-                        </>
-                      ))}
-                    </CustomTableRow>
-                  ))}
-                </TableBody>
+                <DndProvider backend={HTML5Backend}>
+                  <TableBody>
+                    {(data?.content ?? []).map((row, index) => (
+                      <ManagerTr
+                        key={row.id}
+                        index={index}
+                        columns={columns}
+                        row={row}
+                        moveCard={moveCard}
+                        want_move_card={want_move_card}
+                      />
+                    ))}
+                  </TableBody>
+                </DndProvider>
                 {data.content && data.content.length == 0 &&
                   <>
                     <TableNoData isNotFound={true} />
@@ -200,6 +220,5 @@ export default function ManagerTable(props) {
         </Box>
       </TableContainer>
     </>
-
   );
 }

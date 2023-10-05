@@ -81,6 +81,7 @@ const MainObjSetting = (props) => {
         content: []
     });
     const [productReviewContent, setProductReviewContent] = useState({});
+    const [searchTextList, setSearchTextList] = useState([]);
     const [loading, setLoading] = useState(true);
     const homeSectionDefaultSetting = {
         banner: {
@@ -424,7 +425,10 @@ const MainObjSetting = (props) => {
     }
     const onSearchProducts = async (e) => {
         let value = e.target.value;
-        if (value.length >= 3) {
+        if (value.length >= 3 && !searchTextList.includes(value)) {
+            let search_text_list = searchTextList;
+            search_text_list.push(value);
+            setSearchTextList(search_text_list);
             let product_content = await getProductsByManager({
                 page: 1,
                 page_size: 100000,

@@ -76,7 +76,10 @@ const MainObjSetting = (props) => {
     const [item, setItem] = useState(defaultManagerObj.brands);
     const [contentList, setContentList] = useState([]);
     const [sectionType, setSectionType] = useState('banner');
-    const [productContent, setProductContent] = useState({});
+    const [productContent, setProductContent] = useState({
+        total:100,
+        content:[]
+    });
     const [productReviewContent, setProductReviewContent] = useState({});
     const [loading, setLoading] = useState(true);
     const homeSectionDefaultSetting = {
@@ -158,15 +161,10 @@ const MainObjSetting = (props) => {
         return obj;
     }
     const settingPage = async () => {
-        let product_content = await getProductsByManager({
-            page: 1,
-            page_size: 100000
-        })
         let product_review_content = await getProductReviewsByManager({
             page: 1,
             page_size: 100000
         })
-        setProductContent(product_content);
         setProductReviewContent(product_review_content);
         let brand_data = await getBrandByManager({
             id: (!isNaN(parseInt(router.query.type)) ? router.query.type : '') || themeDnsData?.id
@@ -420,6 +418,18 @@ const MainObjSetting = (props) => {
         content_list[idx][key] = value;
         setContentList(content_list)
     }
+    const onSearchProducts = async (e) => {
+        console.log(e.target.value);
+        let value = e.target.value;
+        if(value.length >=3){
+            let product_content = await getProductsByManager({
+                page:1,
+                page_size:100000,
+                search:value,
+            });
+            setProductContent(product_content)
+        }
+    }
     return (
         <>
             <Dialog open={previewSection} onClose={() => { setPreviewSection(undefined) }} fullScreen>
@@ -601,7 +611,9 @@ const MainObjSetting = (props) => {
                                                             handleChangeItemMultiSelect(value, idx)
                                                         }}
                                                         renderInput={(params) => (
-                                                            <TextField {...params} label="선택할 상품" placeholder="상품선택" />
+                                                            <TextField {...params} label="선택할 상품" placeholder="3글자 이상 입력해 주세요." onChange={(e)=>{
+                                                                onSearchProducts(e);
+                                                            }} />
                                                         )}
                                                     />
 
@@ -674,7 +686,7 @@ const MainObjSetting = (props) => {
                                                                     setContentList(content_list)
                                                                 }}
                                                                 renderInput={(params) => (
-                                                                    <TextField {...params} label="선택할 상품" placeholder="상품선택" />
+                                                                    <TextField {...params} label="선택할 상품" placeholder="3글자 이상 입력해 주세요." />
                                                                 )}
                                                             />
                                                         </>
@@ -855,7 +867,7 @@ const MainObjSetting = (props) => {
                                                             handleChangeItemMultiSelect(value, idx)
                                                         }}
                                                         renderInput={(params) => (
-                                                            <TextField {...params} label="선택할 리뷰" placeholder="상품선택" />
+                                                            <TextField {...params} label="선택할 리뷰" placeholder="3글자 이상 입력해 주세요." />
                                                         )}
                                                     />
 

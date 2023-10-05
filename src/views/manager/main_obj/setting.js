@@ -289,7 +289,9 @@ const MainObjSetting = (props) => {
                 }
             }
             if (content_list[i]?.type == 'items-ids') {
-                content_list[i].list = content_list[i]?.list?.split(',');
+                if(typeof content_list[i]?.list == 'string'){
+                    content_list[i].list = content_list[i]?.list?.split(',');
+                }
             }
         }
         if (file_index_list.length > 0) {

@@ -156,7 +156,7 @@ const Demo1 = (props) => {
               <Button variant="outlined" style={{
                 height: '36px',
                 width: 'auto',
-                marginRight:'0.25rem',
+                marginRight: '0.25rem',
               }}
                 onClick={() => {
                   router.push(`/shop/items/${item?.id}?depth=${parseInt(router.query?.depth) + 1}`)
@@ -177,16 +177,20 @@ const Demo1 = (props) => {
             <Items items={products} router={router} />
             {moreLoading ?
               <>
-                <Spinner sx={{ height: '72px' }} />
+                <Row style={{ width: '100%' }}>
+                  <div style={{ margin: '0 auto' }}>
+                    <Spinner sx={{ height: '72px', color: 'green' }} color={'red'} />
+                  </div>
+                </Row>
               </>
               :
               <>
-                <Button className='more-page' onClick={() => {
+                {/* <Button className='more-page' onClick={() => {
                   settingPage({
                     ...searchObj,
                     page: searchObj?.page + 1
                   })
-                }} ref={scrollRef} />
+                }} ref={scrollRef} /> */}
               </>}
 
           </>

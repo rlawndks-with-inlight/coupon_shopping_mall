@@ -423,7 +423,6 @@ const MainObjSetting = (props) => {
         setContentList(content_list)
     }
     const onSearchProducts = async (e) => {
-        console.log(e.target.value);
         let value = e.target.value;
         if (value.length >= 3) {
             let product_content = await getProductsByManager({

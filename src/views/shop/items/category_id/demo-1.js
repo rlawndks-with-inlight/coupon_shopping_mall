@@ -21,8 +21,18 @@ margin: 0 auto 5rem auto;
 display:flex;
 flex-direction:column;
 `
-const CategoryContainer = styled.div`
-
+const ChildrenCategoryContainer = styled.div`
+overflow-x: auto;
+width: 100%;
+display:flex;
+flex-wrap:wrap;
+row-gap:0.5rem;
+column-gap:0.5rem;
+@media (max-width:1000px){
+white-space: nowrap;
+flex-wrap:inherit;
+display:block;
+}
 `
 const Demo1 = (props) => {
   const {
@@ -97,9 +107,9 @@ const Demo1 = (props) => {
       category_id: router.query?.category_id,
     })
     setSearchObj(search_obj);
-    if(is_first){
+    if (is_first) {
       setProducts(product_list.content ?? []);
-    }else{
+    } else {
       setProducts([...products, ...product_list.content ?? []]);
     }
   }
@@ -140,13 +150,13 @@ const Demo1 = (props) => {
         <Title style={{ marginTop: '38px' }}>
           {curCategories[curCategories.length - 1]?.category_name}
         </Title>
-        <Row style={{ margin: '0 auto', overflowX: 'auto', width: '100%', whiteSpace: 'nowrap' }} className='none-scroll'>
+        <ChildrenCategoryContainer className='none-scroll'>
           {curCategories[curCategories.length - 1]?.children && curCategories[curCategories.length - 1]?.children.map((item, idx) => (
             <>
               <Button variant="outlined" style={{
                 height: '36px',
-                marginRight: `${idx == curCategories[curCategories.length - 1]?.children.length - 1 ? 'auto' : '0.25rem'}`,
-                marginLeft: `${idx == 0 ? 'auto' : '0'}`
+                width: 'auto',
+                marginRight:'0.25rem',
               }}
                 onClick={() => {
                   router.push(`/shop/items/${item?.id}?depth=${parseInt(router.query?.depth) + 1}`)
@@ -154,7 +164,7 @@ const Demo1 = (props) => {
               >{item.category_name}</Button>
             </>
           ))}
-        </Row>
+        </ChildrenCategoryContainer>
         <div style={{
           marginTop: '1rem'
         }} />

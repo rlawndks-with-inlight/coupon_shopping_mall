@@ -50,32 +50,41 @@ const PrevArrowStyle = styled.div`
     height: 1.5rem;
   }
   `
-const BannerImgContent = styled.div`
-display:flex;
-position: relative;
+const BannerImgContainer = styled.div`
 width: 78vw;
 height: 33.15vw;
-background-size: 100%;
-background-repeat: no-repeat;
-background-position: center center;
 border-radius:${props => props.img_list_length >= 2 ? '1rem' : '0'};
-animation: ${props => props.iscurrentSlideIndex ? 'zoom-in-out' : ''} 10s ease-in-out infinite;
-@keyframes zoom-in-out {
-    0% {
-        background-size: 100;
-    }
-    50% {
-        background-size: 105%;
-    }
-    100% {
-        background-size: 100;
-    }
-  }
+overflow: hidden;
 @media (max-width:1200px) {
     width: 100vw;
     height: 42.5vw;
     border-radius:0;
 }
+`
+const BannerImgContent = styled.div`
+width: 100%;
+height: 100%;
+position: absolute;
+top: 0;
+left: 0;
+display:flex;
+position: relative;
+background-size: cover;
+background-repeat: no-repeat;
+background-position: center center;
+animation: ${props => props.iscurrentSlideIndex ? 'zoom-in-out' : ''} 10s ease-in-out infinite;
+@keyframes zoom-in-out {
+    0% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.02);
+    }
+    100% {
+        transform: scale(1);
+    }
+  }
+
 }
 `
 
@@ -165,8 +174,11 @@ const HomeBanner = (props) => {
                 <Slider {...slide_setting}>
                     {img_list.map((item, idx) => (
                         <>
-                            <BannerImgContent
+                        <BannerImgContainer
                                 img_list_length={img_list.length}
+                        >
+
+                            <BannerImgContent
                                 iscurrentSlideIndex={currentSlideIndex == idx}
                                 style={{
                                     width: `${img_list.length >= 2 ? '' : '100vw'}`,
@@ -215,6 +227,8 @@ const HomeBanner = (props) => {
                                         </TextContainer>
                                     </>}
                             </BannerImgContent>
+                        </BannerImgContainer>
+
                         </>
                     ))}
                 </Slider>

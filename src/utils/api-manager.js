@@ -89,10 +89,10 @@ export const get = async (url, params_) => {
     let dns_data = getLocalStorage('themeDnsData');
     dns_data = JSON.parse(dns_data);
     let params = params_ ?? {};
-    if (!(params?.brand_id > 0)) {
+    if (!params?.brand_id) {
       params['brand_id'] = dns_data?.id;
     }
-    if (!(params?.root_id > 0)) {
+    if (!params?.root_id) {
       params['root_id'] = dns_data?.root_id;
     }
     let query = new URLSearchParams(params).toString()

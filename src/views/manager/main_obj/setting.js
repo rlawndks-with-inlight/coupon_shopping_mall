@@ -427,7 +427,13 @@ const MainObjSetting = (props) => {
                 page_size:100000,
                 search:value,
             });
-            setProductContent(product_content)
+            setProductContent({
+                ...product_content,
+                content:[
+                    ...productContent?.content,
+                    ...product_content?.content,
+                ]
+            })
         }
     }
     return (

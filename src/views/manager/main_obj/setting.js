@@ -77,8 +77,8 @@ const MainObjSetting = (props) => {
     const [contentList, setContentList] = useState([]);
     const [sectionType, setSectionType] = useState('banner');
     const [productContent, setProductContent] = useState({
-        total:100,
-        content:[]
+        total: 100,
+        content: []
     });
     const [productReviewContent, setProductReviewContent] = useState({});
     const [loading, setLoading] = useState(true);
@@ -161,6 +161,10 @@ const MainObjSetting = (props) => {
         return obj;
     }
     const settingPage = async () => {
+        setProductContent({
+            ...productContent,
+            content: themeDnsData?.products ?? []
+        })
         let product_review_content = await getProductReviewsByManager({
             page: 1,
             page_size: 100000
@@ -421,15 +425,15 @@ const MainObjSetting = (props) => {
     const onSearchProducts = async (e) => {
         console.log(e.target.value);
         let value = e.target.value;
-        if(value.length >=3){
+        if (value.length >= 3) {
             let product_content = await getProductsByManager({
-                page:1,
-                page_size:100000,
-                search:value,
+                page: 1,
+                page_size: 100000,
+                search: value,
             });
             setProductContent({
                 ...product_content,
-                content:[
+                content: [
                     ...productContent?.content,
                     ...product_content?.content,
                 ]
@@ -617,7 +621,7 @@ const MainObjSetting = (props) => {
                                                             handleChangeItemMultiSelect(value, idx)
                                                         }}
                                                         renderInput={(params) => (
-                                                            <TextField {...params} label="선택할 상품" placeholder="3글자 이상 입력해 주세요." onChange={(e)=>{
+                                                            <TextField {...params} label="선택할 상품" placeholder="3글자 이상 입력해 주세요." onChange={(e) => {
                                                                 onSearchProducts(e);
                                                             }} />
                                                         )}
@@ -843,7 +847,7 @@ const MainObjSetting = (props) => {
                                                         setContentList(content_list)
                                                     }} />
                                                 </>}
-                                                {conditionOfSection('item-reviews-select', item) &&
+                                            {conditionOfSection('item-reviews-select', item) &&
                                                 <>
                                                     <Row style={{ alignItems: 'end' }}>
                                                         <CardHeader title={`선택형 상품후기 ${curTypeNum(contentList, 'item-reviews-select', idx)}`} sx={{ paddingLeft: '0' }} />
@@ -864,7 +868,7 @@ const MainObjSetting = (props) => {
                                                         fullWidth
                                                         options={productReviewContent?.content && (productReviewContent?.content ?? []).map(item => { return item?.id })}
                                                         getOptionLabel={(item_id) => {
-                                                           let review =  _.find((productReviewContent?.content ?? []), { id: parseInt(item_id) });
+                                                            let review = _.find((productReviewContent?.content ?? []), { id: parseInt(item_id) });
                                                             return `${review?.product_name} (${review?.nick_name}) : ${review?.content} `
                                                         }}
                                                         defaultValue={item.list}

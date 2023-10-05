@@ -17,4 +17,5 @@ export const defaultSettings = {
   themePopupList: [], // 팝업
   themePostCategoryList: [], // 게시물 카테고리
   themeSellerList: [], // 셀러리스트
+  themeProductList: [], // 메인페이지에 사용할 상품 리스트
 };

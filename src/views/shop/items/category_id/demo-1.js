@@ -47,7 +47,13 @@ const Demo1 = (props) => {
       page: 1,
       page_size: 15,
     });
-  }, [themeCategoryList, router.query])
+  }, [themeCategoryList])
+  useEffect(() => {
+    settingPage({
+      page: 1,
+      page_size: 15,
+    }, true);
+  }, [router.query])
   const [moreLoading, setMoreLoading] = useState(false);
   const scrollRef = useRef(null);
   const handleScroll = () => {
@@ -67,7 +73,7 @@ const Demo1 = (props) => {
       window.removeEventListener('scroll', handleScroll);
     };
   }, []);
-  const settingPage = async (search_obj) => {
+  const settingPage = async (search_obj, is_first) => {
     if (themeCategoryList.length > 0) {
       let parent_list = []
       if (parentList.length > 0) {
@@ -91,7 +97,11 @@ const Demo1 = (props) => {
       category_id: router.query?.category_id,
     })
     setSearchObj(search_obj);
-    setProducts([...products, ...product_list.content ?? []]);
+    if(is_first){
+      setProducts(product_list.content ?? []);
+    }else{
+      setProducts([...products, ...product_list.content ?? []]);
+    }
   }
   useEffect(() => {
     if (products.length > 0) {

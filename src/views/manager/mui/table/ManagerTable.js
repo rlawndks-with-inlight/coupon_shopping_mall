@@ -21,6 +21,8 @@ import ManagerTr from './ManagerTr';
 import { useCallback } from 'react';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 import { DndProvider } from 'react-dnd';
+import update from 'immutability-helper'
+import _ from 'lodash';
 // ----------------------------------------------------------------------
 const TableHeaderContainer = styled.div`
 padding: 0.75rem;
@@ -39,7 +41,7 @@ const CustomTableRow = muiStyled(TableRow)(({ theme }) => ({
 }));
 
 export default function ManagerTable(props) {
-  const { columns, data, setData, add_button_text, add_link, onChangePage, searchObj, want_move_card } = props;
+  const { columns, data, add_button_text, add_link, onChangePage, searchObj, want_move_card } = props;
   const { page, page_size } = props?.searchObj;
 
   const theme = useTheme();
@@ -47,7 +49,10 @@ export default function ManagerTable(props) {
   const [sDt, setSDt] = useState(undefined);
   const [eDt, setEDt] = useState(undefined);
   const [keyword, setKeyWord] = useState("");
-
+  const [contentList, setContentList] = useState(undefined);
+  useEffect(() => {
+    setContentList(data?.content ?? []);
+  }, [data])
   const getMaxPage = (total, page_size) => {
     if (total == 0) {
       return 1;
@@ -60,8 +65,7 @@ export default function ManagerTable(props) {
   }
 
   const moveCard = useCallback((dragIndex, hoverIndex, itemPk) => {
-    return;
-    setPosts((prevCards) =>
+    setContentList((prevCards) =>
       update(prevCards, {
         $splice: [
           [dragIndex, 1],
@@ -70,7 +74,50 @@ export default function ManagerTable(props) {
       }),
     )
   }, [])
- 
+  const onChangeSequence = async (drag_id, hover_idx) => {
+    let drag_item = _.find(data?.content, { id: parseInt(drag_id) });
+    let drag_idx = _.findIndex(data?.content, { id: parseInt(drag_id) });
+    console.log(drag_idx)
+    console.log(hover_idx)
+    let hover_item = data?.content[hover_idx];
+    let upper_id = 0;
+    let upper_sort_idx = 0;
+    let lower_id = 0;
+    let lower_sort_idx = 0;
+    if (drag_idx == hover_idx) {
+      return;
+    } else if (drag_idx > hover_idx) {
+      upper_id = hover_item?.id;
+      upper_sort_idx = hover_item?.sort_idx;
+      lower_id = drag_item?.id;
+      lower_sort_idx = drag_item?.sort_idx;
+    } else if (drag_idx < hover_idx) {
+      upper_id = drag_item?.id;
+      upper_sort_idx = drag_item?.sort_idx;
+      lower_id = hover_item?.id;
+      lower_sort_idx = hover_item?.sort_idx;
+    }
+    let obj = {
+      upper_id,
+      upper_sort_idx,
+      lower_id,
+      lower_sort_idx,
+    }
+    console.log(obj);
+  }
+  const renderCard = useCallback((row, index, column, list) => {
+    return <ManagerTr
+      key={row?.id}
+      index={index}
+      columns={columns}
+      row={row}
+      moveCard={moveCard}
+      onChangeSequence={onChangeSequence}
+      want_move_card={want_move_card}
+    />
+
+  }, [])
+  
   return (
     <>
       <TableContainer sx={{ overflow: 'unset' }}>
@@ -183,16 +230,9 @@ export default function ManagerTable(props) {
                 <TableHeadCustom headLabel={columns} />
                 <DndProvider backend={HTML5Backend}>
                   <TableBody>
-                    {(data?.content ?? []).map((row, index) => (
-                      <ManagerTr
-                        key={row.id}
-                        index={index}
-                        columns={columns}
-                        row={row}
-                        moveCard={moveCard}
-                        want_move_card={want_move_card}
-                      />
-                    ))}
+                    {contentList && contentList.map((row, index) => {
+                      return renderCard(row, index)
+                    })}
                   </TableBody>
                 </DndProvider>
                 {data.content && data.content.length == 0 &&

@@ -11,19 +11,24 @@ const CustomTableRow = muiStyled(TableRow)(({ theme }) => ({
 }));
 
 const ItemTypes = { CARD: 'card' }
-const ManagerTr = (props) => {
-    const {
-        index,
-        columns,
-        row,
-        want_move_card,
-        moveCard,
-    } = props;
+const ManagerTr = ({
+    index,
+    columns,
+    row,
+    want_move_card,
+    moveCard,
+    onChangeSequence,
+}) => {
+
     const moveRef = useRef(null)
     const [{ handlerId }, drop] = useDrop({
         accept: ItemTypes.CARD,
         drop(item) {
             console.log(item)
+            let hover_idx = item?.index;
+            let drag_id = item?.id;
+            console.log(123)
+            onChangeSequence(drag_id, hover_idx);
         },
         collect(monitor) {
             return {
@@ -72,9 +77,8 @@ const ManagerTr = (props) => {
     const [{ isDragging }, drag] = useDrag({
         type: ItemTypes.CARD,
         item: () => {
-            console.log(row)
-            return { 
-                id:row?.id,
+            return {
+                id: row?.id,
                 index,
                 sort: row?.sort_idx
             }
@@ -85,10 +89,9 @@ const ManagerTr = (props) => {
     })
     const opacity = isDragging ? 0 : 1
     drag(drop(moveRef))
-
     return (
         <>
-            <CustomTableRow key={index} ref={want_move_card ? moveRef : null} data-handler-id={handlerId}>
+            <CustomTableRow ref={want_move_card ? moveRef : null} data-handler-id={handlerId}>
                 {columns && columns.map((col, idx) => {
                     return <ManagerTd
                         col={col}

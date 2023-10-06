@@ -243,6 +243,13 @@ export const getProductsByManager = (params) => { //관리자 상품목록 출�
 
   return get(`/api/v1/manager/products`, query);
 }
+export const sortProductByManager = (params) => { //
+  const { upper_id, upper_sort_idx, lower_id, lower_sort_idx } = params;
+  let obj = {
+    upper_id, upper_sort_idx, lower_id, lower_sort_idx
+  }
+  return post(`/api/v1/manager/products/sort`, obj);
+}
 export const addProductByManager =async (params) => { //관리자 상품 추가
   const { category_id, product_name = '', product_comment = '', product_price = 0, product_sale_price = 0, brand_name = '', origin_name = '', mfg_name = '', model_name = '', product_description = '',
     product_file,

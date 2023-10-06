@@ -185,12 +185,12 @@ const Demo1 = (props) => {
               </>
               :
               <>
-                {/* <Button className='more-page' onClick={() => {
+                <Button className='more-page' onClick={() => {
                   settingPage({
                     ...searchObj,
                     page: searchObj?.page + 1
                   })
-                }} ref={scrollRef} /> */}
+                }} ref={scrollRef} />
               </>}
 
           </>

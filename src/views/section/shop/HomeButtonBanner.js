@@ -1,6 +1,6 @@
 import Slider from 'react-slick'
 import styled from 'styled-components'
-import { Row } from 'src/components/elements/styled-components'
+import { Col, Row } from 'src/components/elements/styled-components'
 import _ from 'lodash'
 import { LazyLoadImage } from 'react-lazy-load-image-component'
 
@@ -16,33 +16,33 @@ const HomeButtonBanner = (props) => {
     const getSlideToShow = () => {
         let list_length = column?.list?.length;
         if (window.innerWidth > 1350) {
-            if(list_length >= 7){
+            if (list_length >= 7) {
                 return 7
-            }else{
+            } else {
                 return list_length
             }
         }
         if (window.innerWidth > 1000) {
-            if(list_length >= 5){
+            if (list_length >= 5) {
                 return 5
-            }else{
+            } else {
                 return list_length
             }
-            
+
         }
-        if(list_length >= 3){
+        if (list_length >= 3) {
             return 3
-        }else{
+        } else {
             return list_length
         }
     }
-    const getBannerWidth = () =>{
+    const getBannerWidth = () => {
         if (window.innerWidth > 1350) {
             return parseInt(1350 / getSlideToShow()) - 48
         }
         return parseInt(window.innerWidth / getSlideToShow()) - 48
     }
-     let slide_setting = {
+    let slide_setting = {
         infinite: true,
         speed: 500,
         autoplay: true,
@@ -58,20 +58,22 @@ const HomeButtonBanner = (props) => {
                     {column?.list && column?.list.map((item, idx) => (
                         <>
                             <Row style={{ flexDirection: 'column', width: `${getSlideToShow() == 7 ? `${parseInt(1350 / 7) - 8}px` : `${parseInt(window.innerWidth / getSlideToShow()) - 8}px`}`, }}>
-                                <LazyLoadImage src={item?.src} style={{
-                                    width: `${getBannerWidth()}px`,
-                                    height: `auto`,
-                                    borderRadius: '50%',
-                                    margin: '0 auto 0 0.25rem',
-                                    cursor: 'pointer'
-                                }}
-                                    onClick={() => {
-                                        if (item?.link && !is_manager) {
-                                            window.location.href = item?.link;
-                                        }
+                                <Col style={{alignItems:'center'}}>
+                                    <LazyLoadImage src={item?.src} style={{
+                                        width: `${getBannerWidth()}px`,
+                                        height: `auto`,
+                                        borderRadius: '50%',
+                                        cursor: 'pointer'
                                     }}
-                                />
-                                <div style={{ margin: '1rem auto 1rem 0.25rem', fontWeight: 'bold' }}>{item.title}</div>
+                                        onClick={() => {
+                                            if (item?.link && !is_manager) {
+                                                window.location.href = item?.link;
+                                            }
+                                        }}
+                                    />
+                                    <div style={{ fontWeight: 'bold' }}>{item.title}</div>
+                                </Col>
+
                             </Row>
                         </>
                     ))}

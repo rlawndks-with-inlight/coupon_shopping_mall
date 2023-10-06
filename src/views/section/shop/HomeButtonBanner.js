@@ -57,7 +57,7 @@ const HomeButtonBanner = (props) => {
                 <Slider {...slide_setting} className='margin-slide'>
                     {column?.list && column?.list.map((item, idx) => (
                         <>
-                            <Row style={{ flexDirection: 'column', width: `${getSlideToShow() == 7 ? `${parseInt(1350 / 7) - 8}px` : `${parseInt(window.innerWidth / getSlideToShow()) - 8}px`}`, }}>
+                            <Row style={{ flexDirection: 'column' }}>
                                 <Col style={{alignItems:'center'}}>
                                     <LazyLoadImage src={item?.src} style={{
                                         width: `${getBannerWidth()}px`,

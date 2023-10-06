@@ -109,7 +109,7 @@ const DropDownMenuContainer = styled.div`
 position: absolute;
 top:58px;
 z-index:10;
-left: -22px;
+left: -8px;
 display: none;
 text-align:left;
 padding:0.5rem;
@@ -588,7 +588,7 @@ const Header = () => {
                         <>
                           <DropDownMenuContainer parentId={item1?.id} style={{
                             border: `1px solid ${theme.palette.grey[300]}`,
-                            width: `${item1.category_img ? '430px' : '144px'}`,
+                            width: `${item1.category_img ? '430px' : '154px'}`,
                             fontSize: '12px',
                             fontWeight: 'normal',
                             background: `${themeMode == 'dark' ? '#000' : '#fff'}`

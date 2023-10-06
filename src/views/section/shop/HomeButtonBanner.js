@@ -71,7 +71,7 @@ const HomeButtonBanner = (props) => {
                                         }
                                     }}
                                 />
-                                <div style={{ margin: '1rem auto', fontWeight: 'bold' }}>{item.title}</div>
+                                <div style={{ margin: '1rem auto 1rem 0.25rem', fontWeight: 'bold' }}>{item.title}</div>
                             </Row>
                         </>
                     ))}

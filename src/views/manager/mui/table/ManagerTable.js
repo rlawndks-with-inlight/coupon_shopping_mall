@@ -23,6 +23,7 @@ import { HTML5Backend } from 'react-dnd-html5-backend';
 import { DndProvider } from 'react-dnd';
 import update from 'immutability-helper'
 import _ from 'lodash';
+import { sortProductByManager } from 'src/utils/api-manager';
 // ----------------------------------------------------------------------
 const TableHeaderContainer = styled.div`
 padding: 0.75rem;
@@ -41,7 +42,7 @@ const CustomTableRow = muiStyled(TableRow)(({ theme }) => ({
 }));
 
 export default function ManagerTable(props) {
-  const { columns, data, add_button_text, add_link, onChangePage, searchObj, want_move_card } = props;
+  const { columns, data, add_button_text, add_link, onChangePage, searchObj, want_move_card, table } = props;
   const { page, page_size } = props?.searchObj;
 
   const theme = useTheme();
@@ -51,8 +52,9 @@ export default function ManagerTable(props) {
   const [keyword, setKeyWord] = useState("");
   const [contentList, setContentList] = useState(undefined);
   useEffect(() => {
-    setContentList(data?.content ?? []);
-  }, [data])
+    setContentList(data?.content);
+  }, [data?.content])
+
   const getMaxPage = (total, page_size) => {
     if (total == 0) {
       return 1;
@@ -77,8 +79,6 @@ export default function ManagerTable(props) {
   const onChangeSequence = async (drag_id, hover_idx) => {
     let drag_item = _.find(data?.content, { id: parseInt(drag_id) });
     let drag_idx = _.findIndex(data?.content, { id: parseInt(drag_id) });
-    console.log(drag_idx)
-    console.log(hover_idx)
     let hover_item = data?.content[hover_idx];
     let upper_id = 0;
     let upper_sort_idx = 0;
@@ -103,7 +103,10 @@ export default function ManagerTable(props) {
       lower_id,
       lower_sort_idx,
     }
-    console.log(obj);
+    let result = await sortProductByManager(obj);
+    if (result) {
+      onChangePage(searchObj);
+    }
   }
   const renderCard = useCallback((row, index, column, list) => {
     return <ManagerTr
@@ -115,9 +118,8 @@ export default function ManagerTable(props) {
       onChangeSequence={onChangeSequence}
       want_move_card={want_move_card}
     />
+  }, [contentList])
 
-  }, [])
-  
   return (
     <>
       <TableContainer sx={{ overflow: 'unset' }}>

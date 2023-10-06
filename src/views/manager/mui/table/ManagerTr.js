@@ -24,10 +24,8 @@ const ManagerTr = ({
     const [{ handlerId }, drop] = useDrop({
         accept: ItemTypes.CARD,
         drop(item) {
-            console.log(item)
             let hover_idx = item?.index;
             let drag_id = item?.id;
-            console.log(123)
             onChangeSequence(drag_id, hover_idx);
         },
         collect(monitor) {

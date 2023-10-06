@@ -62,7 +62,7 @@ const HomeButtonBanner = (props) => {
                                     width: `${getBannerWidth()}px`,
                                     height: `auto`,
                                     borderRadius: '50%',
-                                    margin: '0 auto',
+                                    margin: '0 auto 0 0.25rem',
                                     cursor: 'pointer'
                                 }}
                                     onClick={() => {

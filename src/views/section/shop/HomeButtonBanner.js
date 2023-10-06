@@ -58,7 +58,7 @@ const HomeButtonBanner = (props) => {
                     {column?.list && column?.list.map((item, idx) => (
                         <>
                             <Row style={{ flexDirection: 'column' }}>
-                                <Col style={{alignItems:'center'}}>
+                                <Col style={{ alignItems: 'center' }}>
                                     <LazyLoadImage src={item?.src} style={{
                                         width: `${getBannerWidth()}px`,
                                         height: `auto`,
@@ -71,7 +71,7 @@ const HomeButtonBanner = (props) => {
                                             }
                                         }}
                                     />
-                                    <div style={{ fontWeight: 'bold' }}>{item.title}</div>
+                                    <div style={{ fontWeight: 'bold', marginTop: '1rem' }}>{item.title}</div>
                                 </Col>
 
                             </Row>

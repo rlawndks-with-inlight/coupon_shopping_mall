@@ -73,7 +73,7 @@ export const react_quill_data = {
         { indent: '+1' },
       ],
       ['link', 'image', 'video'],
-      [{ align: ["left", "center", "right", "justify"] }],
+      [{ align: '' }, { align: 'center' }, { align: 'right' }, { align: 'justify' }],
       ['clean'],
     ],
     clipboard: {
@@ -96,7 +96,8 @@ export const react_quill_data = {
     'link',
     'image',
     'video',
-    'color'
+    'color',
+    'align',
   ]
 }
 

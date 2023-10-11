@@ -42,7 +42,7 @@ const ArticleList = () => {
         return row['created_at'] ?? "---"
       }
     },
-    ...(category?.is_able_user_add == 1 ? [
+    ...((category?.is_able_user_add == 1 && category?.post_category_read_type == 1) ? [
       {
         id: 'replies',
         label: '답변여부',
@@ -60,7 +60,7 @@ const ArticleList = () => {
     },
     {
       id: 'edit',
-      label: '수정/삭제',
+      label: `${(category?.is_able_user_add == 1 && category?.post_category_read_type == 1) ? '답변' : '수정'}/삭제`,
       action: (row) => {
         return (
           <>
@@ -97,16 +97,16 @@ const ArticleList = () => {
   useEffect(() => {
     pageSetting();
   }, [router.query])
-  useEffect(()=>{
+  useEffect(() => {
     let cols = defaultColumns;
     setColumns(cols)
-  },[category])
+  }, [category])
   const pageSetting = async () => {
     let category = await getPostCategoryByManager({
       id: router.query?.category_id
     })
     setCategory(category)
-    
+
     onChangePage({ ...searchObj, category_id: router.query?.category_id, page: 1, });
   }
   const onChangePage = async (obj) => {

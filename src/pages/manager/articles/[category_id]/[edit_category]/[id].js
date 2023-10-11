@@ -188,7 +188,7 @@ const ArticleEdit = () => {
                 </Stack>
               </Card>
             </Grid>
-            {category?.is_able_user_add == 1 &&
+            {(category?.is_able_user_add == 1 && category?.post_category_read_type == 1) &&
               <>
                 <Grid item xs={12} md={12}>
                   <Card sx={{ p: 2, height: '100%' }}>

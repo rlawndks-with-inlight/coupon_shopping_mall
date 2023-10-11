@@ -8,7 +8,7 @@ import { Row } from "src/components/elements/styled-components";
 import { deletePostCategoryByManager, getPostCategoriesByManager, getProductsByManager, getSellersByManager } from "src/utils/api-manager";
 import { useModal } from "src/components/dialog/ModalProvider";
 import { useAuthContext } from "src/layouts/manager/auth/useAuthContext";
-import { getPostCategoryTypeByNumber } from "src/utils/function";
+import { getPostCategoryReadTypeByNumber, getPostCategoryTypeByNumber } from "src/utils/function";
 
 const ArticleCategoryList = () => {
   const { setModal } = useModal()
@@ -40,6 +40,13 @@ const ArticleCategoryList = () => {
       label: '카테고리타입',
       action: (row) => {
         return getPostCategoryTypeByNumber(row['post_category_type'])
+      }
+    },] : []),
+    ...(user?.level >= 50 ? [{
+      id: 'post_category_read_type',
+      label: '볼수있는대상',
+      action: (row) => {
+        return getPostCategoryReadTypeByNumber(row['post_category_read_type'])
       }
     },] : []),
     {

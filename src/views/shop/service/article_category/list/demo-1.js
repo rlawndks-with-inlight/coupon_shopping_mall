@@ -62,6 +62,15 @@ const Demo1 = (props) => {
         return row['post_title'] ?? "---"
       }
     },
+    ...((postCategory?.is_able_user_add == 1 && postCategory?.post_category_read_type == 0) ? [
+      {
+        id: 'post_writer',
+        label: '작성자',
+        action: (row) => {
+          return row['post_writer'] ?? "---"
+        }
+      }
+    ] : []),
     {
       id: 'created_at',
       label: '생성시간',
@@ -73,7 +82,7 @@ const Demo1 = (props) => {
         </>
       }
     },
-    ...(postCategory?.is_able_user_add == 1 ? [
+    ...((postCategory?.is_able_user_add == 1 && postCategory?.post_category_read_type == 1) ? [
       {
         id: 'replies',
         label: '답변여부',

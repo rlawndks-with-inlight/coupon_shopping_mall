@@ -228,6 +228,14 @@ export const getPostCategoryTypeByNumber = (num) => {
   else
     return '잘못된타입'
 }
+export const getPostCategoryReadTypeByNumber = (num) => {
+  if (num == 0)
+    return '모두'
+  else if (num == 1)
+    return '자신 및 관리자만'
+  else
+    return '잘못된타입'
+}
 export const useEditPageImg = (img_) => {
   try {
     let img = img_ ? img_[0] : '';

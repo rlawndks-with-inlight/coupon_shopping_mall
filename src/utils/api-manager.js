@@ -143,7 +143,7 @@ const multipleFileUploadByCloudinary = async (files) => {
   }
 }
 const settingImageObj = async (images, obj_) => {//이미지 존재여부에따라 img 또는 file로 리턴함
-  let obj = obj_;
+  let obj = {...obj_};
   let files = [];
   let files_keys = [];
   for (var i = 0; i < images.length; i++) {
@@ -547,6 +547,7 @@ export const updatePostByManager = async (params) => { //관리자 게시글 수
     'post_title'
   ]
   obj = await settingImageObj(images, obj);
+
   return put(`/api/v1/manager/posts/${id}`, obj);
 }
 export const getPostByManager = (params) => { //관리자 게시글 단일 출력

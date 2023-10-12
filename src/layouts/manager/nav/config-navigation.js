@@ -124,6 +124,7 @@ export const navConfig = () => {
           path: PATH_MANAGER.products.root,
           icon: ICONS.cart,
           children: [
+            ...(themeDnsData?.setting_obj?.is_use_product_sub_category == 1 ? [{ title: `${themeDnsData?.setting_obj?.product_sub_category_name}관리`, path: PATH_MANAGER.products.subCategories }] : []),
             { title: '카테고리관리', path: PATH_MANAGER.products.categories },
             { title: '상품관리', path: PATH_MANAGER.products.list },
           ],

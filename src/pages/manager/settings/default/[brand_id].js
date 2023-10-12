@@ -79,7 +79,11 @@ const DefaultSetting = () => {
     ...(user?.level >= 50 ? [{
       value: 4,
       label: '데모설정'
-    }] : [])
+    }] : []),
+    ...(user?.level >= 50 ? [{
+      value: 5,
+      label: '서브카테고리 설정'
+    }] : []),
   ]
 
   useEffect(() => {
@@ -581,7 +585,7 @@ const DefaultSetting = () => {
                             }
                           )
                         }} />
-                         <TextField
+                      <TextField
                         label='본사가맹점명'
                         value={item?.mcht_name}
                         onChange={(e) => {
@@ -619,6 +623,52 @@ const DefaultSetting = () => {
                             {
                               ...item,
                               ['user_pw_check']: e.target.value
+                            }
+                          )
+                        }} />
+                    </Stack>
+                  </Card>
+                </Grid>
+              </>}
+            {currentTab == 5 &&
+              <>
+                <Grid item xs={12} md={6}>
+                  <Card sx={{ p: 2, height: '100%' }}>
+                    <Stack spacing={3}>
+                      <FormControl>
+                        <InputLabel>서브카테고리사용여부</InputLabel>
+                        <Select label='서브카테고리사용여부' value={item.setting_obj?.is_use_product_sub_category} onChange={(e) => {
+                          setItem(
+                            {
+                              ...item,
+                              ['setting_obj']: {
+                                ...item.setting_obj,
+                                is_use_product_sub_category: e.target.value
+                              }
+                            }
+                          )
+                        }}>
+                          <MenuItem value={0}>사용안함</MenuItem>
+                          <MenuItem value={1}>사용</MenuItem>
+                        </Select>
+                      </FormControl>
+                    </Stack>
+                  </Card>
+                </Grid>
+                <Grid item xs={12} md={6}>
+                  <Card sx={{ p: 2, height: '100%' }}>
+                    <Stack spacing={3}>
+                      <TextField
+                        label='서브카테고리명칭'
+                        value={item?.setting_obj?.product_sub_category_name}
+                        onChange={(e) => {
+                          setItem(
+                            {
+                              ...item,
+                              ['setting_obj']: {
+                                ...item?.setting_obj,
+                                ['product_sub_category_name']: e.target.value
+                              }
                             }
                           )
                         }} />

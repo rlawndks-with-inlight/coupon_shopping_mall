@@ -31,6 +31,7 @@ export const PATH_MANAGER = {
     root: path(ROOTS_MANAGER, '/products'),
     list: path(ROOTS_MANAGER, '/products/list'),
     categories: path(ROOTS_MANAGER, '/products/categories'),
+    subCategories: path(ROOTS_MANAGER, '/products/sub-categories'),
   },
   articles: {
     root: path(ROOTS_MANAGER, '/articles'),
@@ -122,8 +123,11 @@ export const defaultManagerObj = {
     og_file: undefined,
     setting_obj: {
       tutorial_num: 0,
-      shop_demo_num:0,
-      blog_demo_num:0,
+      shop_demo_num: 0,
+      blog_demo_num: 0,
+      is_use_seller: 0,//셀러 사용여부
+      is_use_product_sub_category: 0,//서브 카테고리 사용여부,
+      product_sub_category_name: '',
     },
     theme_css: {
       main_color: '#00ab55'

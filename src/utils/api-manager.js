@@ -187,6 +187,39 @@ export const sortCategoryByManager = (params) => { //관리자 상품 카테고�
   }
   return post(`/api/v1/manager/product-categories/sort`, obj);
 }
+export const getSubCategoriesByManager = (params) => { //관리자 상품 카테고리 목록출력
+  const { page, page_size, s_dt, e_dt, search } = params;
+  let query = {
+    page, page_size, s_dt, e_dt, search
+  }
+  if (!query['s_dt']) delete query['s_dt'];
+  if (!query['e_dt']) delete query['e_dt'];
+  if (!query['search']) delete query['search'];
+
+  return get(`/api/v1/manager/product-sub-categories`, query);
+}
+export const addSubCategoryByManager = async (params) => { //관리자 상품 카테고리 추가
+  const { sub_category_name } = params;
+  let obj = {
+    sub_category_name
+  }
+  return post(`/api/v1/manager/product-sub-categories`, obj);
+}
+export const updateSubCategoryByManager = async (params) => { //관리자 상품 카테고리 수정
+  const { id, sub_category_name } = params;
+  let obj = {
+    sub_category_name
+  }
+  return put(`/api/v1/manager/product-sub-categories/${id}`, obj);
+}
+export const getSubCategoryByManager = (params) => { //관리자 상품 카테고리 단일 출력
+  const { id } = params;
+  return get(`/api/v1/manager/product-sub-categories/${id}`);
+}
+export const deleteSubCategoryByManager = (params) => { //관리자 상품 카테고리 삭제
+  const { id } = params;
+  return deleteItem(`/api/v1/manager/product-sub-categories/${id}`);
+}
 export const getCategoriesByManager = (params) => { //관리자 상품 카테고리 목록출력
   const { page, page_size, s_dt, e_dt, search } = params;
   let query = {

@@ -139,7 +139,7 @@ export const navConfig = () => {
           icon: ICONS.user,
           children: [
             { title: '회원관리', path: PATH_MANAGER.users.list },
-            ...(themeDnsData?.blog_demo_num > 0 ? [{ title: '셀러관리', path: PATH_MANAGER.users.sellers }] : []),
+            ...(themeDnsData?.is_use_seller > 0 ? [{ title: '셀러관리', path: PATH_MANAGER.users.sellers }] : []),
             // { title: '매출관리', path: PATH_MANAGER.users.sales },
           ],
         },

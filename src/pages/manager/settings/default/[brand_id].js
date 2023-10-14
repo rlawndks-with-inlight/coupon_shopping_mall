@@ -540,12 +540,6 @@ const DefaultSetting = () => {
                           })}
                         </Select>
                       </FormControl>
-                    </Stack>
-                  </Card>
-                </Grid>
-                <Grid item xs={12} md={6}>
-                  <Card sx={{ p: 2, height: '100%' }}>
-                    <Stack spacing={3}>
                       <FormControl>
                         <InputLabel>블로그 데모넘버</InputLabel>
                         <Select label='블로그 데모넘버' value={item.setting_obj?.blog_demo_num} onChange={(e) => {
@@ -563,6 +557,29 @@ const DefaultSetting = () => {
                           {[1, 2, 3].map((num, idx) => {
                             return <MenuItem value={num}>데모 {num}</MenuItem>
                           })}
+                        </Select>
+                      </FormControl>
+                    </Stack>
+                  </Card>
+                </Grid>
+                <Grid item xs={12} md={6}>
+                  <Card sx={{ p: 2, height: '100%' }}>
+                    <Stack spacing={3}>
+                      <FormControl>
+                        <InputLabel>셀러 사용여부</InputLabel>
+                        <Select label='셀러 사용여부' value={item.setting_obj?.is_use_seller} onChange={(e) => {
+                          setItem(
+                            {
+                              ...item,
+                              ['setting_obj']: {
+                                ...item.setting_obj,
+                                is_use_seller: e.target.value
+                              }
+                            }
+                          )
+                        }}>
+                          <MenuItem value={0}>사용안함</MenuItem>
+                          <MenuItem value={1}>사용</MenuItem>
                         </Select>
                       </FormControl>
                     </Stack>

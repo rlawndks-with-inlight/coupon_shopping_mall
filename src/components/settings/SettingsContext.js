@@ -131,6 +131,7 @@ export function SettingsProvider({ children }) {
       }
       dns_data['blog_demo_num'] = dns_data?.setting_obj?.blog_demo_num || process.env.TEST_BLOG_DEMO || 0;
       dns_data['shop_demo_num'] = dns_data?.setting_obj?.shop_demo_num || process.env.TEST_SHOP_DEMO || 0;
+      dns_data['is_use_seller'] = dns_data?.setting_obj?.is_use_seller || process.env?.IS_USE_SELLER || 0;
       const get_root_id_url = `${process.env.BACK_URL}/api/v1/shop/root?brand_id=${dns_data?.id}`;
       const res2 = await fetch(get_root_id_url);
       let root_id = await res2.json();

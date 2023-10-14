@@ -299,11 +299,11 @@ const Header = () => {
       }}>
         <MenuContainer>
           <OneMenuContainer
-            onClick={() => router.push('/shop')}
+            onClick={() => { }}
           >
-            <Icon icon={'solar:home-2-linear'} fontSize={'1.3rem'} style={{ marginTop: 'auto' }} />
+            <Icon icon={'carbon:search'} fontSize={'1.5rem'} style={{ marginTop: 'auto' }} />
             <OneMenuName>
-              {'홈'}
+              {'검색'}
             </OneMenuName>
           </OneMenuContainer>
           <OneMenuContainer
@@ -315,19 +315,11 @@ const Header = () => {
             </OneMenuName>
           </OneMenuContainer>
           <OneMenuContainer
-            onClick={() => { }}
+            onClick={() => router.push('/shop')}
           >
-            <Icon icon={'carbon:search'} fontSize={'1.5rem'} style={{ marginTop: 'auto' }} />
+            <Icon icon={'solar:home-2-linear'} fontSize={'1.3rem'} style={{ marginTop: 'auto' }} />
             <OneMenuName>
-              {'검색'}
-            </OneMenuName>
-          </OneMenuContainer>
-          <OneMenuContainer
-            onClick={() => { router.push('/shop/auth/my-page') }}
-          >
-            <Icon icon={'carbon:user'} fontSize={'1.5rem'} style={{ marginTop: 'auto' }} />
-            <OneMenuName>
-              {'마이페이지'}
+              {'홈'}
             </OneMenuName>
           </OneMenuContainer>
           <OneMenuContainer
@@ -336,6 +328,14 @@ const Header = () => {
             <Icon icon={'ion:cart-outline'} fontSize={'1.5rem'} style={{ marginTop: 'auto' }} />
             <OneMenuName>
               {'장바구니'}
+            </OneMenuName>
+          </OneMenuContainer>
+          <OneMenuContainer
+            onClick={() => { router.push('/shop/auth/my-page') }}
+          >
+            <Icon icon={'carbon:user'} fontSize={'1.5rem'} style={{ marginTop: 'auto' }} />
+            <OneMenuName>
+              {'마이페이지'}
             </OneMenuName>
           </OneMenuContainer>
         </MenuContainer>

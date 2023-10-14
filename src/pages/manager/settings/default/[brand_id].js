@@ -259,6 +259,7 @@ const DefaultSetting = () => {
                       <TextField
                         label='도메인'
                         value={item.dns}
+                        disabled={user?.level < 50}
                         onChange={(e) => {
                           setItem(
                             {
@@ -535,7 +536,11 @@ const DefaultSetting = () => {
                           )
                         }}>
                           <MenuItem value={0}>사용안함</MenuItem>
-                          {[1, 2, 3].map((num, idx) => {
+                          {[
+                            1,// 일반 쇼핑몰 및 더미쇼핑몰에 특화
+                            2,//   
+                            3,// 여행사 솔루션에 특화
+                          ].map((num, idx) => {
                             return <MenuItem value={num}>데모 {num}</MenuItem>
                           })}
                         </Select>
@@ -554,7 +559,11 @@ const DefaultSetting = () => {
                           )
                         }}>
                           <MenuItem value={0}>사용안함</MenuItem>
-                          {[1, 2, 3].map((num, idx) => {
+                          {[
+                            1,
+                            2,
+                            3,
+                          ].map((num, idx) => {
                             return <MenuItem value={num}>데모 {num}</MenuItem>
                           })}
                         </Select>

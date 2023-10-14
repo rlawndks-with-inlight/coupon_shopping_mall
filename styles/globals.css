@@ -1,7 +1,12 @@
 body {
   margin: 0 !important;
 }
-
+input[type='color']::-moz-color-swatch {
+  border: none;
+}
+input[type="color"]::-webkit-color-swatch {
+  border: none;
+}
 .none-scroll {
   -ms-overflow-style: none;
   /* IE and Edge */

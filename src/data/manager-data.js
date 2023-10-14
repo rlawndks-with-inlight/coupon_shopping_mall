@@ -60,7 +60,6 @@ export const PATH_MANAGER = {
     list: path(ROOTS_MANAGER, '/pays/list'),
   },
 };
-
 export const react_quill_data = {
   modules: {
     toolbar: [

@@ -24,7 +24,7 @@ import { DndProvider } from 'react-dnd';
 import update from 'immutability-helper'
 import _ from 'lodash';
 import { sortProductByManager } from 'src/utils/api-manager';
-// ----------------------------------------------------------------------
+
 const TableHeaderContainer = styled.div`
 padding: 0.75rem;
 display: flex;
@@ -35,11 +35,6 @@ justify-content:space-between;
   row-gap:0.75rem;
 }
 `
-const CustomTableRow = muiStyled(TableRow)(({ theme }) => ({
-  '&:hover': {
-    background: `${theme.palette.mode == 'dark' ? '' : theme.palette.grey[100]}`,
-  },
-}));
 
 export default function ManagerTable(props) {
   const { columns, data, add_button_text, add_link, onChangePage, searchObj, want_move_card, table } = props;

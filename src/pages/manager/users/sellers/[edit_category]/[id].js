@@ -31,7 +31,9 @@ const SellerEdit = () => {
   const router = useRouter();
 
   const [loading, setLoading] = useState(true);
-  const [productContent, setProductContent] = useState({});
+  const [productContent, setProductContent] = useState({
+    content:[],
+  });
   const [item, setItem] = useState({
     user_name: '',//
     nick_name: '',//
@@ -83,12 +85,12 @@ const SellerEdit = () => {
     settingPage();
   }, [])
   const settingPage = async () => {
-    let product_content = await getProductsByManager({
-      page: 1,
-      page_size: 100000
-    })
+    // let product_content = await getProductsByManager({
+    //   page: 1,
+    //   page_size: 100000
+    // })
 
-    setProductContent(product_content);
+    // setProductContent(product_content);
     if (router.query?.edit_category == 'edit') {
       let product_ids = await getMappingSellerWithProducts({
         id: router.query?.id

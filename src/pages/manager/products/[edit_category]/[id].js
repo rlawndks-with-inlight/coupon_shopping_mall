@@ -13,18 +13,15 @@ import { base64toFile, commarNumber, getAllIdsWithParents } from "src/utils/func
 import styled from "styled-components";
 import $ from 'jquery';
 import dynamic from "next/dynamic";
-import { react_quill_data } from "src/data/manager-data";
-import { axiosIns } from "src/utils/axios";
+
 import { addProductByManager, getCategoriesByManager, getProductByManager, getProductReviewsByManager, updateProductByManager, uploadFileByManager } from "src/utils/api-manager";
 import { toast } from "react-hot-toast";
 import { useTheme } from "@emotion/react";
 import ManagerTable from "src/views/manager/mui/table/ManagerTable";
 import _ from "lodash";
 import { useModal } from "src/components/dialog/ModalProvider";
-const ReactQuill = dynamic(() => import('react-quill'), {
-  ssr: false,
-  loading: () => <p>Loading ...</p>,
-})
+import ReactQuillComponent from "src/views/manager/react-quill";
+
 
 const tab_list = [
   {
@@ -539,36 +536,15 @@ const ProductEdit = () => {
                         <Typography variant="subtitle2" sx={{ color: 'text.secondary' }}>
                           상품설명
                         </Typography>
-                        <ReactQuill
-                          className="max-height-editor"
-                          theme={'snow'}
-                          id={'content'}
-                          placeholder={''}
+                        <ReactQuillComponent
                           value={item.product_description}
-                          modules={react_quill_data.modules}
-                          formats={react_quill_data.formats}
-                          onChange={async (e) => {
-                            let note = e;
-                            if (e.includes('<img src="') && e.includes('base64,')) {
-                              let base64_list = e.split('<img src="');
-                              for (var i = 0; i < base64_list.length; i++) {
-                                if (base64_list[i].includes('base64,')) {
-                                  let img_src = base64_list[i];
-                                  img_src = await img_src.split(`"></p>`);
-                                  let base64 = img_src[0];
-                                  img_src = await base64toFile(img_src[0], 'note.png');
-                                  const response = await uploadFileByManager({
-                                    file: img_src
-                                  });
-                                  note = await note.replace(base64, response?.url)
-                                }
-                              }
-                            }
+                          setValue={(value) => {
                             setItem({
                               ...item,
-                              ['product_description']: note
-                            });
-                          }} />
+                              product_description: value,
+                            })
+                          }}
+                        />
                       </Stack>
                       <Stack spacing={1}>
                         <Typography variant="subtitle2" sx={{ color: 'text.secondary' }}>

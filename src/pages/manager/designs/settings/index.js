@@ -6,15 +6,7 @@ import { Row, themeObj } from "src/components/elements/styled-components";
 import { useSettingsContext } from "src/components/settings";
 import { Upload } from "src/components/upload";
 import ManagerLayout from "src/layouts/manager/ManagerLayout";
-import { base64toFile, getAllIdsWithParents } from "src/utils/function";
-import styled from "styled-components";
-import dynamic from "next/dynamic";
-import { react_quill_data } from "src/data/manager-data";
-import { axiosIns } from "src/utils/axios";
-const ReactQuill = dynamic(() => import('react-quill'), {
-  ssr: false,
-  loading: () => <p>Loading ...</p>,
-})
+
 
 const tab_list = [
   {

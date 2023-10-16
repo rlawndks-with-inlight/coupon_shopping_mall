@@ -128,7 +128,7 @@ font-weight: 400;
 font-size:${themeObj.font_size.size8};
 margin-bottom:auto;
   @media screen and (max-width:330px) {
-    font-size:0.7rem;
+    font-size:${themeObj.font_size.size10};
   }
 `
 const Header = () => {

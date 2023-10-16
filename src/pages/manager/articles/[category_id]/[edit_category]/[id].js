@@ -6,11 +6,7 @@ import { themeObj } from "src/components/elements/styled-components";
 import { useSettingsContext } from "src/components/settings";
 import { Upload } from "src/components/upload";
 import ManagerLayout from "src/layouts/manager/ManagerLayout";
-import { base64toFile, getAllIdsWithParents } from "src/utils/function";
-import styled from "styled-components";
 import dynamic from "next/dynamic";
-import { react_quill_data } from "src/data/manager-data";
-import { axiosIns } from "src/utils/axios";
 import { addPostByManager, getPostByManager, getPostCategoryByManager, updatePostByManager, uploadFileByManager } from "src/utils/api-manager";
 import { toast } from "react-hot-toast";
 const ReactQuill = dynamic(() => import('react-quill'), {
@@ -18,6 +14,7 @@ const ReactQuill = dynamic(() => import('react-quill'), {
   loading: () => <p>Loading ...</p>,
 })
 import { useModal } from "src/components/dialog/ModalProvider";
+import ReactQuillComponent from "src/views/manager/react-quill";
 const ArticleEdit = () => {
   const { setModal } = useModal()
   const { themeMode } = useSettingsContext();
@@ -53,7 +50,7 @@ const ArticleEdit = () => {
         id: router.query.id
       })
       setItem(data);
-      setReply({...reply,...data?.replies[0]})
+      setReply({ ...reply, ...data?.replies[0] })
     }
     setLoading(false);
   }
@@ -154,36 +151,15 @@ const ArticleEdit = () => {
                     <Typography variant="subtitle2" sx={{ color: 'text.secondary' }}>
                       상세설명
                     </Typography>
-                    <ReactQuill
-                      className="max-height-editor"
-                      theme={'snow'}
-                      id={'content'}
-                      placeholder={''}
+                    <ReactQuillComponent
                       value={item.post_content}
-                      modules={react_quill_data.modules}
-                      formats={react_quill_data.formats}
-                      onChange={async (e) => {
-                        let note = e;
-                        if (e.includes('<img src="') && e.includes('base64,')) {
-                          let base64_list = e.split('<img src="');
-                          for (var i = 0; i < base64_list.length; i++) {
-                            if (base64_list[i].includes('base64,')) {
-                              let img_src = base64_list[i];
-                              img_src = await img_src.split(`"></p>`);
-                              let base64 = img_src[0];
-                              img_src = await base64toFile(img_src[0], 'note.png');
-                              const response = await uploadFileByManager({
-                                file: img_src
-                              });
-                              note = await note.replace(base64, response?.url)
-                            }
-                          }
-                        }
+                      setValue={(value) => {
                         setItem({
                           ...item,
-                          ['post_content']: note
+                          ['post_content']: value
                         });
-                      }} />
+                      }}
+                    />
                   </Stack>
                 </Stack>
               </Card>
@@ -209,36 +185,15 @@ const ArticleEdit = () => {
                         <Typography variant="subtitle2" sx={{ color: 'text.secondary' }}>
                           답변내용
                         </Typography>
-                        <ReactQuill
-                          className="max-height-editor"
-                          theme={'snow'}
-                          id={'content'}
-                          placeholder={''}
+                        <ReactQuillComponent
                           value={reply?.post_content}
-                          modules={react_quill_data.modules}
-                          formats={react_quill_data.formats}
-                          onChange={async (e) => {
-                            let note = e;
-                            if (e.includes('<img src="') && e.includes('base64,')) {
-                              let base64_list = e.split('<img src="');
-                              for (var i = 0; i < base64_list.length; i++) {
-                                if (base64_list[i].includes('base64,')) {
-                                  let img_src = base64_list[i];
-                                  img_src = await img_src.split(`"></p>`);
-                                  let base64 = img_src[0];
-                                  img_src = await base64toFile(img_src[0], 'note.png');
-                                  const response = await uploadFileByManager({
-                                    file: img_src
-                                  });
-                                  note = await note.replace(base64, response?.url)
-                                }
-                              }
-                            }
+                          setValue={(value) => {
                             setReply({
                               ...reply,
-                              ['post_content']: note
+                              ['post_content']: value
                             });
-                          }} />
+                          }}
+                        />
                       </Stack>
                     </Stack>
                   </Card>

@@ -4,7 +4,7 @@ import dynamic from "next/dynamic";
 import { useCallback, useEffect, useState } from "react";
 import { Row } from "src/components/elements/styled-components";
 import { Upload } from "src/components/upload";
-import { PATH_MANAGER, defaultManagerObj, react_quill_data } from "src/data/manager-data";
+import { defaultManagerObj } from "src/data/manager-data";
 import { base64toFile } from "src/utils/function";
 import _, { constant } from 'lodash'
 import { useSettingsContext } from "src/components/settings";
@@ -23,10 +23,8 @@ import HomeVideoSlide from "src/views/section/shop/HomeVideoSlide";
 import HomePost from "src/views/section/shop/HomePost";
 import HomeProductReview from "src/views/section/shop/HomeProductReview";
 import { homeItemsSetting, homeItemsWithCategoriesSetting } from "src/views/section/shop/utils";
-const ReactQuill = dynamic(() => import('react-quill'), {
-    ssr: false,
-    loading: () => <p>Loading ...</p>,
-})
+import ReactQuillComponent from "../react-quill";
+
 const Tour = dynamic(
     () => import('reactour'),
     { ssr: false },
@@ -289,7 +287,7 @@ const MainObjSetting = (props) => {
                 }
             }
             if (content_list[i]?.type == 'items-ids') {
-                if(typeof content_list[i]?.list == 'string'){
+                if (typeof content_list[i]?.list == 'string') {
                     content_list[i].list = content_list[i]?.list?.split(',');
                 }
             }
@@ -643,7 +641,7 @@ const MainObjSetting = (props) => {
                                                     />
 
                                                 </>}
-                                                {conditionOfSection('items-ids', item) &&
+                                            {conditionOfSection('items-ids', item) &&
                                                 <>
                                                     <Row style={{ alignItems: 'end' }}>
                                                         <CardHeader title={`ID 선택형 상품슬라이드 ${curTypeNum(contentList, 'items-ids', idx)}`} sx={{ paddingLeft: '0' }} />
@@ -747,34 +745,14 @@ const MainObjSetting = (props) => {
                                                         <CardHeader title={`에디터 ${curTypeNum(contentList, 'editor', idx)}`} sx={{ paddingLeft: '0' }} />
                                                         <SectionProcess idx={idx} item={item} />
                                                     </Row>
-                                                    <ReactQuill
-                                                        theme={'snow'}
-                                                        id={'content'}
-                                                        placeholder={''}
+                                                    <ReactQuillComponent
                                                         value={item.content}
-                                                        modules={react_quill_data.modules}
-                                                        formats={react_quill_data.formats}
-                                                        onChange={async (e) => {
-                                                            let note = e;
-                                                            if (e.includes('<img src="') && e.includes('base64,')) {
-                                                                let base64_list = e.split('<img src="');
-                                                                for (var i = 0; i < base64_list.length; i++) {
-                                                                    if (base64_list[i].includes('base64,')) {
-                                                                        let img_src = base64_list[i];
-                                                                        img_src = await img_src.split(`"></p>`);
-                                                                        let base64 = img_src[0];
-                                                                        img_src = await base64toFile(img_src[0], 'note.png');
-                                                                        const response = await uploadFileByManager({
-                                                                            file: img_src
-                                                                        });
-                                                                        note = await note.replace(base64, response?.url)
-                                                                    }
-                                                                }
-                                                            }
+                                                        setValue={(value) => {
                                                             let content_list = [...contentList];
-                                                            content_list[idx]['content'] = note;
+                                                            content_list[idx]['content'] = value;
                                                             setContentList(content_list);
-                                                        }} />
+                                                        }}
+                                                    />
                                                 </>}
                                             {conditionOfSection('video-slide', item) &&
                                                 <>

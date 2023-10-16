@@ -8,9 +8,9 @@ import { toast } from "react-hot-toast";
 import { useModal } from "src/components/dialog/ModalProvider";
 import { Col, Row, Title } from "src/components/elements/styled-components";
 import { useSettingsContext } from "src/components/settings";
-import { react_quill_data } from "src/data/manager-data";
-import { uploadFileByManager } from "src/utils/api-manager";
+
 import { addPostByUser, getPostByUser } from "src/utils/api-shop";
+import ReactQuillComponent from "src/views/manager/react-quill";
 import styled from "styled-components";
 const ReactQuill = dynamic(() => import('react-quill'), {
     ssr: false,
@@ -92,36 +92,16 @@ const Demo1 = (props) => {
                                                 }
                                             )
                                         }} />
-                                    <ReactQuill
-                                        className="max-height-editor"
-                                        theme={'snow'}
-                                        id={'content'}
-                                        placeholder={''}
+                                    <ReactQuillComponent
                                         value={item.post_content}
-                                        modules={react_quill_data.modules}
-                                        formats={react_quill_data.formats}
-                                        onChange={async (e) => {
-                                            let note = e;
-                                            if (e.includes('<img src="') && e.includes('base64,')) {
-                                                let base64_list = e.split('<img src="');
-                                                for (var i = 0; i < base64_list.length; i++) {
-                                                    if (base64_list[i].includes('base64,')) {
-                                                        let img_src = base64_list[i];
-                                                        img_src = await img_src.split(`"></p>`);
-                                                        let base64 = img_src[0];
-                                                        img_src = await base64toFile(img_src[0], 'note.png');
-                                                        const response = await uploadFileByManager({
-                                                            file: img_src
-                                                        });
-                                                        note = await note.replace(base64, response?.url)
-                                                    }
-                                                }
-                                            }
+                                        setValue={(value) => {
                                             setItem({
                                                 ...item,
-                                                ['post_content']: note
+                                                ['post_content']: value
                                             });
-                                        }} />
+                                        }}
+                                    />
+
                                     <Button variant="contained" style={{
                                         height: '48px', width: '120px', margin: '1rem 0 1rem auto'
                                     }} onClick={() => {
@@ -140,7 +120,7 @@ const Demo1 = (props) => {
                                         <div>제목: </div>
                                         <h1 style={{ fontSize: '1rem' }}>{item?.post_title}</h1>
                                     </Row>
-                                    <img src={item?.post_title_img} style={{width:'100%'}} />
+                                    <img src={item?.post_title_img} style={{ width: '100%' }} />
                                     <ReactQuill
                                         className='none-padding'
                                         value={item?.post_content ?? `<body></body>`}

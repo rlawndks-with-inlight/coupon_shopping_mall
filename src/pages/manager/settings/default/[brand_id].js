@@ -8,7 +8,7 @@ import { Upload } from "src/components/upload";
 import ManagerLayout from "src/layouts/manager/ManagerLayout";
 import { base64toFile, getAllIdsWithParents } from "src/utils/function";
 import styled from "styled-components";
-import { defaultManagerObj, react_quill_data } from "src/data/manager-data";
+import { defaultManagerObj } from "src/data/manager-data";
 import { axiosIns } from "src/utils/axios";
 import { addBrandByManager, getBrandByManager, updateBrandByManager, uploadFileByManager } from "src/utils/api-manager";
 import { toast } from "react-hot-toast";
@@ -16,11 +16,7 @@ import { useModal } from "src/components/dialog/ModalProvider";
 import dynamic from "next/dynamic";
 import axios from "axios";
 import { useAuthContext } from "src/layouts/manager/auth/useAuthContext";
-const ReactQuill = dynamic(() => import('react-quill'), {
-  ssr: false,
-  loading: () => <p>Loading ...</p>,
-})
-
+import ReactQuillComponent from "src/views/manager/react-quill";
 
 const KakaoWrappers = styled.div`
 width:100%;
@@ -290,36 +286,16 @@ const DefaultSetting = () => {
                         <Typography variant="subtitle2" sx={{ color: 'text.secondary' }}>
                           비고
                         </Typography>
-                        <ReactQuill
-                          className="max-height-editor"
-                          theme={'snow'}
-                          id={'note'}
-                          placeholder={''}
+                        <ReactQuillComponent
                           value={item.note}
-                          modules={react_quill_data.modules}
-                          formats={react_quill_data.formats}
-                          onChange={async (e) => {
-                            let note = e;
-                            if (e.includes('<img src="') && e.includes('base64,')) {
-                              let base64_list = e.split('<img src="');
-                              for (var i = 0; i < base64_list.length; i++) {
-                                if (base64_list[i].includes('base64,')) {
-                                  let img_src = base64_list[i];
-                                  img_src = await img_src.split(`"></p>`);
-                                  let base64 = img_src[0];
-                                  img_src = await base64toFile(img_src[0], 'note.png');
-                                  const response = await uploadFileByManager({
-                                    file: img_src
-                                  });
-                                  note = await note.replace(base64, response?.url)
-                                }
-                              }
-                            }
+                          setValue={(value) => {
                             setItem({
                               ...item,
-                              ['note']: note
+                              ['note']: value
                             });
-                          }} />
+                          }}
+                        />
+
                       </Stack>
                     </Stack>
                   </Card>

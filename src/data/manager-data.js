@@ -60,46 +60,6 @@ export const PATH_MANAGER = {
     list: path(ROOTS_MANAGER, '/pays/list'),
   },
 };
-export const react_quill_data = {
-  modules: {
-    toolbar: [
-      [{ header: '1' }, { header: '2' }, { font: [] }],
-      [{ size: [] }],
-      ['bold', 'italic', 'underline', 'strike', 'blockquote'],
-      [
-        { list: 'ordered' },
-        { list: 'bullet' },
-        { indent: '-1' },
-        { indent: '+1' },
-      ],
-      ['link', 'image', 'video'],
-      [{ align: '' }, { align: 'center' }, { align: 'right' }, { align: 'justify' }],
-      ['clean'],
-    ],
-    clipboard: {
-      // toggle to add extra line breaks when pasting HTML:
-      matchVisual: false,
-    },
-  },
-  formats: [
-    'header',
-    'font',
-    'size',
-    'bold',
-    'italic',
-    'underline',
-    'strike',
-    'blockquote',
-    'list',
-    'bullet',
-    'indent',
-    'link',
-    'image',
-    'video',
-    'color',
-    'align',
-  ]
-}
 
 export const defaultManagerObj = {
   brands: {

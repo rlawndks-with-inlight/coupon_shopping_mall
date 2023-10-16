@@ -6,10 +6,6 @@ import { Row, themeObj } from "src/components/elements/styled-components";
 import { useSettingsContext } from "src/components/settings";
 import { Upload } from "src/components/upload";
 import ManagerLayout from "src/layouts/manager/ManagerLayout";
-import { base64toFile, getAllIdsWithParents } from "src/utils/function";
-import styled from "styled-components";
-import { react_quill_data } from "src/data/manager-data";
-import { axiosIns } from "src/utils/axios";
 import $ from 'jquery';
 import Iconify from "src/components/iconify/Iconify";
 import { addSellerByManager, getMappingSellerWithProducts, getProductsByManager, getSellerByManager, mappingSellerWithProducts, updateSellerByManager } from "src/utils/api-manager";
@@ -18,10 +14,7 @@ import { useAuthContext } from "src/layouts/manager/auth/useAuthContext";
 import { toast } from "react-hot-toast";
 import { useModal } from "src/components/dialog/ModalProvider";
 import _ from "lodash";
-const ReactQuill = dynamic(() => import('react-quill'), {
-  ssr: false,
-  loading: () => <p>Loading ...</p>,
-})
+
 
 const SellerEdit = () => {
   const { setModal } = useModal()

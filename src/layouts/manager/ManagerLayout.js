@@ -44,7 +44,7 @@ export default function ManagerLayout({ children }) {
   const handleClose = () => {
     setOpen(false);
   };
-
+  console.log(user)
   const renderNavVertical = <NavVertical openNav={open} onCloseNav={handleClose} />;
 
   const renderContent = () => {
@@ -61,7 +61,6 @@ export default function ManagerLayout({ children }) {
             }}
           >
             {isDesktop ? <NavMini /> : renderNavVertical}
-
             <Main>{children}</Main>
           </Box>
         </>
@@ -70,7 +69,6 @@ export default function ManagerLayout({ children }) {
 
     return (
       <>
-
         <Header onOpenNav={handleOpen} />
         <Box
           sx={{

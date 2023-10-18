@@ -75,28 +75,18 @@ export default function ManagerTable(props) {
     let drag_item = _.find(data?.content, { id: parseInt(drag_id) });
     let drag_idx = _.findIndex(data?.content, { id: parseInt(drag_id) });
     let hover_item = data?.content[hover_idx];
-    let upper_id = 0;
-    let upper_sort_idx = 0;
-    let lower_id = 0;
-    let lower_sort_idx = 0;
+    let source_id = drag_item?.id;
+    let source_sort_idx = drag_item?.sort_idx;
+    let dest_id = hover_item?.id;
+    let dest_sort_idx = hover_item?.sort_idx;
     if (drag_idx == hover_idx) {
       return;
-    } else if (drag_idx > hover_idx) {
-      upper_id = hover_item?.id;
-      upper_sort_idx = hover_item?.sort_idx;
-      lower_id = drag_item?.id;
-      lower_sort_idx = drag_item?.sort_idx;
-    } else if (drag_idx < hover_idx) {
-      upper_id = drag_item?.id;
-      upper_sort_idx = drag_item?.sort_idx;
-      lower_id = hover_item?.id;
-      lower_sort_idx = hover_item?.sort_idx;
     }
     let obj = {
-      upper_id,
-      upper_sort_idx,
-      lower_id,
-      lower_sort_idx,
+      source_id,
+      source_sort_idx,
+      dest_id,
+      dest_sort_idx,
     }
     let result = await sortProductByManager(obj);
     if (result) {

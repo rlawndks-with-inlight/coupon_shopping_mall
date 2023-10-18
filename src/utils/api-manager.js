@@ -114,7 +114,7 @@ const uploadFileByCloudinary = async (file) => {
     formData.append("file", file);
     formData.append('upload_preset', process.env.CLOUDINARY_PRESET); // Cloudinary 대시보드에서 설정
     let result = await axios.post(`${process.env.CLOUDINARY_URL}/${process.env.CLOUDINARY_NAME}/image/upload`, formData);
-    result.data.url = result.data.url.replaceAll('http://','https://')
+    result.data.url = result.data.url.replaceAll('http://', 'https://')
     return result?.data;
   } catch (err) {
     console.log(err);
@@ -143,19 +143,19 @@ const multipleFileUploadByCloudinary = async (files) => {
   }
 }
 const settingImageObj = async (images, obj_) => {//이미지 존재여부에따라 img 또는 file로 리턴함
-  let obj = {...obj_};
+  let obj = { ...obj_ };
   let files = [];
   let files_keys = [];
   for (var i = 0; i < images.length; i++) {
     if (obj[`${images[i]}_file`]) {
       files_keys.push(`${images[i]}_img`);
       files.push(obj[`${images[i]}_file`]);
-    } 
+    }
     delete obj[`${images[i]}_file`];
   }
-  if(files.length > 0){
+  if (files.length > 0) {
     let files_result = await multipleFileUploadByCloudinary(files);
-    for(var i = 0;i<files_result.length;i++){
+    for (var i = 0; i < files_result.length; i++) {
       obj[files_keys[i]] = files_result[i]?.url
     }
   }
@@ -169,12 +169,12 @@ const settingdeleteImageObj = async (images, obj_) => {//이미지 존재안할�
     if (obj[`${images[i]}_file`]) {
       files_keys.push(`${images[i]}_img`);
       files.push(obj[`${images[i]}_file`]);
-    } 
+    }
     delete obj[`${images[i]}_file`];
   }
-  if(files.length > 0){
+  if (files.length > 0) {
     let files_result = await multipleFileUploadByCloudinary(files);
-    for(var i = 0;i<files_result.length;i++){
+    for (var i = 0; i < files_result.length; i++) {
       obj[files_keys[i]] = files_result[i]?.url
     }
   }
@@ -183,7 +183,10 @@ const settingdeleteImageObj = async (images, obj_) => {//이미지 존재안할�
 export const sortCategoryByManager = (params) => { //관리자 상품 카테고리 목록출력
   const { upper_id, upper_sort_idx, lower_id, lower_sort_idx } = params;
   let obj = {
-    upper_id, upper_sort_idx, lower_id, lower_sort_idx
+    dest_id: upper_id,
+    dest_sort_idx: upper_sort_idx,
+    source_id: lower_id,
+    source_sort_idx: lower_sort_idx
   }
   return post(`/api/v1/manager/product-categories/sort`, obj);
 }
@@ -277,13 +280,13 @@ export const getProductsByManager = (params) => { //관리자 상품목록 출�
   return get(`/api/v1/manager/products`, query);
 }
 export const sortProductByManager = (params) => { //
-  const { upper_id, upper_sort_idx, lower_id, lower_sort_idx } = params;
+  const { source_id, source_sort_idx, dest_id, dest_sort_idx } = params;
   let obj = {
-    upper_id, upper_sort_idx, lower_id, lower_sort_idx
+    source_id, source_sort_idx, dest_id, dest_sort_idx
   }
   return post(`/api/v1/manager/products/sort`, obj);
 }
-export const addProductByManager =async (params) => { //관리자 상품 추가
+export const addProductByManager = async (params) => { //관리자 상품 추가
   const { category_id, product_name = '', product_comment = '', product_price = 0, product_sale_price = 0, brand_name = '', origin_name = '', mfg_name = '', model_name = '', product_description = '',
     product_file,
     sub_images = [],
@@ -359,7 +362,7 @@ export const getUsersByManager = (params) => { //관리자 유저목록 출력
 
   return get(`/api/v1/manager/users`, query);
 }
-export const addUserByManager = async(params) => { //관리자 유저 추가
+export const addUserByManager = async (params) => { //관리자 유저 추가
   const {
     user_name, phone_num, nick_name, user_pw, note,
     profile_file,
@@ -417,7 +420,7 @@ export const getSellersByManager = (params) => { //관리자 셀러 목록 출�
 
   return get(`/api/v1/manager/merchandises`, query);
 }
-export const addSellerByManager =async (params) => { //관리자 셀러 추가
+export const addSellerByManager = async (params) => { //관리자 셀러 추가
   const { user_name, nick_name, mcht_name, addr, resident_num, business_num, acct_bank_name, acct_bank_code, acct_num, acct_name, phone_num, note, user_pw, mcht_trx_fee,
     sns_obj,
     passbook_file,
@@ -601,7 +604,7 @@ export const getBrandsByManager = (params) => { //관리자 브랜드 목록 출
   if (!query['search']) delete query['search'];
   return get(`/api/v1/manager/brands`, query);
 }
-export const addBrandByManager = async(params) => { //관리자 브랜드 추가
+export const addBrandByManager = async (params) => { //관리자 브랜드 추가
   const { name, dns, og_description, company_name, pvcy_rep_name, ceo_name, addr, resident_num, business_num, phone_num, fax_num, note,
     user_name, user_pw, mcht_name,
     theme_css = {},

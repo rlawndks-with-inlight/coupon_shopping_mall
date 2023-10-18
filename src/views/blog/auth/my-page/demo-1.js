@@ -105,10 +105,6 @@ const Demo1 = (props) => {
     const [dialogOpen, setDialogOpen] = useState(false)
     const [dialogType, setDialogType] = useState("");
 
-    useEffect(() => {
-        console.log(themePostCategoryList)
-    }, [])
-
     return (
         <>
             <Wrappers>

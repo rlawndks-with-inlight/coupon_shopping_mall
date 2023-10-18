@@ -182,7 +182,6 @@ const CategoryList = () => {
       page: 1,
       page_size: 100000,
     })
-    console.log(sub_category_list)
     let category_list = await getCategoriesByManager({
       page: 1,
       page_size: 100000,

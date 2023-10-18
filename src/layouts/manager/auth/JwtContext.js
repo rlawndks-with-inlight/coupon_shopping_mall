@@ -121,6 +121,7 @@ export function AuthProvider({ children }) {
         user_pw: user_pw,
         login_type: 0,
       });
+      console.log(response?.data?.user)
       await setCookie('o', response?.data?.access_token, {
         path: "/",
         secure: process.env.COOKIE_SECURE,

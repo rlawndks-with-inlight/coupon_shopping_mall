@@ -44,7 +44,6 @@ export default function ManagerLayout({ children }) {
   const handleClose = () => {
     setOpen(false);
   };
-  console.log(user)
   const renderNavVertical = <NavVertical openNav={open} onCloseNav={handleClose} />;
 
   const renderContent = () => {

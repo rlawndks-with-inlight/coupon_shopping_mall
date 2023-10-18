@@ -70,7 +70,6 @@ const Demo1 = (props) => {
     }
 
     let dns_data = themeDnsData;
-    console.log(dns_data)
     let content_list = (dns_data?.shop_obj) ?? [];
     setWindowWidth(window.innerWidth)
     setContentList(content_list)

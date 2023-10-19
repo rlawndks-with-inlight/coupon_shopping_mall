@@ -77,8 +77,10 @@ export const onPayProductsByAuth = async (products_, payData_) => { // 인증결
         success_url:return_url+'?type=0',
         fail_url:return_url+'?type=1',
     }
+    payData.products = JSON.stringify(payData.products);
     try {
         let query = Object.entries(payData).map(e => e.join('=')).join('&');
+
         window.location.href = `${process.env.BACK_URL}/pay/auth?${query}`;
 
     } catch (err) {

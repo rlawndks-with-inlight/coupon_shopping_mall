@@ -12,14 +12,6 @@ import { useRouter } from 'next/router';
 import { PATH_AUTH } from 'src/data/manager-data';
 import { getLocalStorage } from 'src/utils/local-storage';
 
-// ----------------------------------------------------------------------
-
-// NOTE:
-// We only build demo at basic level.
-// Customer will need to do some extra handling yourself if you want to extend the logic and other features...
-
-// ----------------------------------------------------------------------
-
 const initialState = {
   isInitialized: false,
   isAuthenticated: false,
@@ -59,11 +51,7 @@ const reducer = (state, action) => {
   return state;
 };
 
-// ----------------------------------------------------------------------
-
 export const AuthContext = createContext(null);
-
-// ----------------------------------------------------------------------
 
 AuthProvider.propTypes = {
   children: PropTypes.node,

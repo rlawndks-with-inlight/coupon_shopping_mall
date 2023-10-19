@@ -42,7 +42,7 @@ import { themeObj } from 'src/components/elements/styled-components';
 import { useSettingsContext } from 'src/components/settings';
 import _ from 'lodash';
 import { toast } from 'react-hot-toast';
-import {  CheckoutSteps } from 'src/views/@dashboard/e-commerce/checkout';
+import { CheckoutSteps } from 'src/views/@dashboard/e-commerce/checkout';
 import { test_address_list, test_pay_list } from 'src/data/test-data';
 import { AddressItem } from 'src/views/shop/auth/cart/demo-1';
 import EmptyContent from 'src/components/empty-content/EmptyContent';
@@ -69,7 +69,10 @@ export default function ProductDetailsSummary({ product, onAddCart, onGotoStep, 
   const [addressList, setAddressList] = useState([]);
   const [selectAddress, setSelectAddress] = useState({});
   const [payList, setPayList] = useState([]);
-  const [selectProduct, setSelectProduct] = useState({ id: product?.id, count: 1, select_option_obj: {} });
+  const [selectProductGroups, setSelectProductGroups] = useState({
+    count: 1,
+    groups: [],
+  });
   const [payData, setPayData] = useState({
     brand_id: themeDnsData?.id,
     user_id: user?.id ?? undefined,
@@ -111,7 +114,7 @@ export default function ProductDetailsSummary({ product, onAddCart, onGotoStep, 
     inventory,
     product_name,
     product_comment,
-    groups = []
+    groups = [],
   } = product;
   useEffect(() => {
     let address_list = test_address_list;
@@ -122,14 +125,14 @@ export default function ProductDetailsSummary({ product, onAddCart, onGotoStep, 
   const isMaxQuantity =
     cart.filter((item) => item.id === id).map((item) => item.quantity)[0] >= available;
   const handleAddCart = async () => {
-    let result = insertCartDataUtil(product, selectProduct, themeCartData, onChangeCartData);
+    let result = insertCartDataUtil(product, selectProductGroups, themeCartData, onChangeCartData);
     if (result) {
       toast.success("장바구니에 성공적으로 추가되었습니다.")
     }
   };
-  const onSelectOption = (group, option) => {
-    let select_product = selectItemOptionUtil(group, option, selectProduct);
-    setSelectProduct(select_product);
+  const onSelectOption = (group, option, is_option_multiple) => {
+    let select_product_groups = selectItemOptionUtil(group, option, selectProductGroups, is_option_multiple);
+    setSelectProductGroups(select_product_groups);
   }
   const [buyStep, setBuyStep] = useState(0);
   const [buyOpen, setBuyOpen] = useState(false);
@@ -423,19 +426,19 @@ export default function ProductDetailsSummary({ product, onAddCart, onGotoStep, 
             <Stack spacing={1}>
               <IncrementerButton
                 name="quantity"
-                quantity={selectProduct.count}
-                disabledDecrease={selectProduct.count <= 1}
-                disabledIncrease={selectProduct.count >= available}
+                quantity={selectProductGroups.count}
+                disabledDecrease={selectProductGroups.count <= 1}
+                disabledIncrease={selectProductGroups.count >= available}
                 onIncrease={() => {
-                  setSelectProduct({
-                    ...selectProduct,
-                    count: selectProduct.count + 1
+                  setSelectProductGroups({
+                    ...selectProductGroups,
+                    count: selectProductGroups.count + 1
                   })
                 }}
                 onDecrease={() => {
-                  setSelectProduct({
-                    ...selectProduct,
-                    count: selectProduct.count - 1
+                  setSelectProductGroups({
+                    ...selectProductGroups,
+                    count: selectProductGroups.count - 1
                   })
                 }}
               />
@@ -463,14 +466,7 @@ export default function ProductDetailsSummary({ product, onAddCart, onGotoStep, 
               장바구니
             </Button>
             <Button fullWidth size="large" variant="contained" onClick={() => {
-              let select_product = { ...selectProduct };
-              for (var i = 0; i < product?.groups.length; i++) {
-                let group = product?.groups[i];
-                if (!select_product.select_option_obj[group?.id]) {
-                  toast.error(`${group?.group_name}을(를) 선택해 주세요.`);
-                  return;
-                }
-              }
+
               setBuyOpen(true);
             }}>
               바로구매

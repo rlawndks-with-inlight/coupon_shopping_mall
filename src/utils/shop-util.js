@@ -10,55 +10,37 @@ export const calculatorPrice = (item) => {// 상품별로 가격
     if (!item) {
         return 0;
     }
-    let { product_sale_price, product_price, select_option_obj, count } = item;
-    let product_origin_price = 0;
+    let { product_sale_price, product_price, groups, order_count } = item;
+
     let product_option_price = 0;
-    let item_options_key_list = Object.keys(select_option_obj ?? {});
-    for (var i = 0; i < item_options_key_list.length; i++) {
-        let key = item_options_key_list[i];
-        let option = _.find(select_option_obj[key]?.options, { id: select_option_obj[key]?.option_id });
-        product_option_price += option?.option_price ?? 0;
+
+    for (var i = 0; i < groups.length; i++) {
+        for (var j = 0; j < groups[i]?.options.length; j++) {
+            product_option_price += groups[i]?.options[j]?.option_price ?? 0;
+        }
     }
     return {
-        subtotal: (product_price + product_option_price) * count,//할인가적용된가격
-        total: (product_sale_price + product_option_price) * count,//총액
-        discount: (product_price - product_sale_price) * count//할인가
+        subtotal: (product_price + product_option_price) * order_count,//할인가적용된가격
+        total: (product_sale_price + product_option_price) * order_count,//총액
+        discount: (product_price - product_sale_price) * order_count//할인가
     }
 }
-export const makePayData = (products_, payData_) => {
-    let products = [...products_];
-    let total_amount = _.sum(_.map(products, (item) => { return calculatorPrice(item).subtotal }));
+export const makePayData = async (products_, payData_) => {
+    let products = products_;
+    let total_amount = 0;
     let payData = { ...payData_ };
-
+    
     for (var i = 0; i < products.length; i++) {
-        let groups = [];
-        let order_name = products[i]?.product_name;
-        let select_option_obj = products[i]?.select_option_obj ?? {};
-        let select_option_obj_keys = Object.keys(select_option_obj);
-        for (var j = 0; j < select_option_obj_keys.length; j++) {
-            let key = select_option_obj_keys[j];
-            let options = [];
-            let option = _.find(select_option_obj[key]?.options, { id: parseInt(select_option_obj[key]?.option_id) });
-            options.push({
-                id: option?.id,
-                option_name: option?.option_name,
-                option_price: option?.option_price,
-            })
-            groups.push({
-                id: key,
-                group_name: select_option_obj[key]?.group_name,
-                options: options
-            })
-        }
+        products[i].order_name = products[i]?.product_name;
+        let groups = products[i].groups;
         for (var j = 0; j < groups.length; j++) {
-            order_name += ` ${groups[j]?.group_name}: ${groups[j].options.map(option => { return option?.option_name }).join()} ${j == groups.length - 1 ? '' : '/ '}`;
+            let options = groups[j]?.options;
+            for (var k = 0; k < options.length; k++) {
+                products[i].order_name += ' ' + options[k]?.option_name
+            }
         }
-        products[i] = {
-            id: products[i]?.id,
-            order_name: order_name,
-            order_amount: calculatorPrice(products[i])?.total,
-            groups: groups,
-        }
+        products[i].order_amount = await calculatorPrice(products[i])?.total;
+        total_amount += products[i].order_amount;
     }
     payData = {
         ...payData,
@@ -69,6 +51,7 @@ export const makePayData = (products_, payData_) => {
 }
 export const onPayProductsByHand = async (products_, payData_) => { // 수기결제
     let payData = makePayData(products_, payData_);
+
     let ord_num = `${payData?.user_id || payData?.password}${new Date().getTime().toString().substring(0, 11)}`
     payData = {
         ...payData,
@@ -82,61 +65,44 @@ export const onPayProductsByHand = async (products_, payData_) => { // 수기결
         return false;
     }
 }
+export const onPayProductsByAuth = async (products_, payData_) => { // 인증결제
+    let products = products_;
+    let pay_data = payData_;
+    let payData = await makePayData(products, pay_data);
+    let ord_num = `${payData?.user_id || payData?.password}${new Date().getTime().toString().substring(0, 11)}`
+    let return_url = `${window.location.protocol}//${window.location.host}/shop/auth/pay-result`
+    payData = {
+        ...payData,
+        ord_num: ord_num,
+        success_url:return_url+'?type=0',
+        fail_url:return_url+'?type=1',
+    }
+    try {
+        let query = Object.entries(payData).map(e => e.join('=')).join('&');
+        window.location.href = `${process.env.BACK_URL}/pay/auth?${query}`;
+
+    } catch (err) {
+        console.log(err);
+        return false;
+    }
+}
 
 export const getCartDataUtil = async (themeCartData) => {//장바구니 페이지에서 상품 불러오기
     let data = themeCartData ?? [];
-    if (data.length > 0) {
-        let products = await getProductsByUser({
-            page: 1,
-            page_size: 100000,
-        })
-        products = products?.content ?? [];
-        for (var i = 0; i < data.length; i++) {
-            let find_item = _.find(products, { id: data[i]?.id })
-            if (find_item) {
-                data[i] = {
-                    ...data[i],
-                    ...find_item,
-                }
-            }
-        }
-    }
     return data;
 }
-export const insertCartDataUtil = (product, selectProduct, themeCartData, onChangeCartData) => { //장바구니 버튼 클릭해서 넣기
+export const insertCartDataUtil = (product_, selectProductGroups_, themeCartData, onChangeCartData) => { //장바구니 버튼 클릭해서 넣기
 
     try {
         let cart_data = [...themeCartData];
-        let select_product = { ...selectProduct };
-        for (var i = 0; i < product?.groups.length; i++) {
-            let group = product?.groups[i];
-            if (!select_product.select_option_obj[group?.id]) {
-                toast.error(`${group?.group_name}을(를) 선택해 주세요.`);
-                return false;
-            }
-        }
-        let option_key_list = Object.keys(select_product.select_option_obj ?? {});
-        let insert_item = true;
-        let find_index = -1;
-        for (var i = 0; i < cart_data.length; i++) {
-            if (cart_data[i]?.id == select_product.id) {
-                for (var j = 0; j < option_key_list.length; j++) {
-                    if (select_product.select_option_obj[option_key_list[j]]?.option_id != cart_data[i].select_option_obj[option_key_list[j]]?.option_id) {
-                        break;
-                    }
-                }
-                if (j == option_key_list.length) {
-                    insert_item = false;
-                    find_index = i;
-                    break;
-                }
-            }
-        }
-        if (insert_item) {
-            cart_data.push(select_product);
-        } else {
-            cart_data[find_index].count = cart_data[find_index].count + select_product.count;
-        }
+        let product = product_;
+        let selectProductGroups = selectProductGroups_;
+        product.order_count = selectProductGroups?.count;
+        selectProductGroups = selectProductGroups?.groups;
+        cart_data.push({
+            ...product,
+            groups: selectProductGroups,
+        })
         onChangeCartData(cart_data);
         return true;
     } catch (err) {
@@ -144,42 +110,49 @@ export const insertCartDataUtil = (product, selectProduct, themeCartData, onChan
         return false;
     }
 }
-export const selectItemOptionUtil = (group, option, selectProduct) => {//아이템 옵션 선택하기
-    let select_product = {
-        ...selectProduct,
-        select_option_obj: {
-            ...selectProduct.select_option_obj,
-            [`${group?.id}`]: {
-                option_id: option?.id,
-                ...group
+export const selectItemOptionUtil = (group, option, selectProductGroups, is_option_multiple) => {//아이템 옵션 선택하기
+    let select_product_groups = selectProductGroups;
+    let find_group_idx = _.findIndex(select_product_groups?.groups, { id: parseInt(group?.id) });
+    if (find_group_idx >= 0) {
+        let find_option_idx = _.findIndex(select_product_groups?.groups[find_group_idx]?.options, { id: parseInt(option?.id) });
+
+        if (is_option_multiple) {
+            if (find_option_idx >= 0) {
+                //
+            } else {
+                select_product_groups.groups[find_group_idx]?.options.push({
+                    ...option
+                })
             }
+        } else {
+            select_product_groups.groups[find_group_idx].options = [{
+                ...option
+            }]
         }
-    };
-    return select_product;
+    } else {
+        select_product_groups.groups.push({
+            ...group,
+            options: [
+                {
+                    ...option,
+                }
+            ]
+        })
+    }
+    return select_product_groups;
 }
 export const getWishDataUtil = async (themeWishData) => {//아이템찜 불러오기
-    let products = await getProductsByUser({
-        page: 1,
-        page_size: 100000,
-    })
-    products = products?.content ?? [];
-    let wish_list = [];
-    for (var i = 0; i < products.length; i++) {
-        let find_index = _.indexOf(themeWishData, products[i]?.id);
-        if (find_index >= 0) {
-            wish_list.push(products[i]);
-        }
-    }
+    let wish_list = themeWishData
     return wish_list;
 }
 export const insertWishDataUtil = (item, themeWishData, onChangeWishData) => {//아이템 찜 클릭하기
     try {
         let wish_data = [...themeWishData];
-        let find_index = _.indexOf(wish_data, item?.id);
+        let find_index = _.findIndex(wish_data, { id: parseInt(item?.id) });
         if (find_index >= 0) {
             wish_data.splice(find_index, 1);
         } else {
-            wish_data.push(item?.id);
+            wish_data.push(item);
         }
         onChangeWishData(wish_data);
         return true;

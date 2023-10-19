@@ -10,7 +10,7 @@ import EmptyContent from 'src/components/empty-content/EmptyContent';
 import Iconify from 'src/components/iconify/Iconify';
 import { useSettingsContext } from 'src/components/settings';
 import { getProductsByUser } from 'src/utils/api-shop';
-import { calculatorPrice, getCartDataUtil, onPayProductsByHand } from 'src/utils/shop-util';
+import { calculatorPrice, getCartDataUtil, onPayProductsByAuth, onPayProductsByHand } from 'src/utils/shop-util';
 import { useAuthContext } from 'src/layouts/manager/auth/useAuthContext';
 import Payment from 'payment'
 import Cards from 'react-credit-cards'
@@ -119,6 +119,7 @@ const Demo1 = (props) => {
   const getCart = async () => {
     let data = await getCartDataUtil(themeCartData);
     setProducts(data);
+    console.log(data)
     let address_data = test_address_list;
     setAddressList(address_data)
   }
@@ -130,12 +131,12 @@ const Demo1 = (props) => {
   }
   const onDecreaseQuantity = (idx) => {
     let product_list = [...products];
-    product_list[idx].count--;
+    product_list[idx].order_count--;
     setProducts(product_list)
   }
   const onIncreaseQuantity = (idx) => {
     let product_list = [...products];
-    product_list[idx].count++;
+    product_list[idx].order_count++;
     setProducts(product_list)
   }
   const onClickNextStep = () => {
@@ -163,13 +164,13 @@ const Demo1 = (props) => {
     if (item?.type == 'card') {//카드결제
       setBuyType('card');
     } else if (item?.type == 'certification') {
-
+      let result = await onPayProductsByAuth(products, payData);
     }
   }
-  const onPay = async () => {
+  const onPayByHand = async () => {
     if (buyType == 'card') {//카드결제
       let result = await onPayProductsByHand(products, payData);
-      if(result){
+      if (result) {
         await onChangeCartData([]);
         toast.success('성공적으로 구매에 성공하였습니다.');
         router.push('/shop/auth/history');
@@ -379,7 +380,7 @@ const Demo1 = (props) => {
                           <Stack>
                             <Button variant='contained' onClick={() => {
                               setModal({
-                                func: () => { onPay() },
+                                func: () => { onPayByHand() },
                                 icon: 'ion:card-outline',
                                 title: '정말로 결제 하시겠습니까?'
                               })

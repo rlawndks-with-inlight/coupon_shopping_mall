@@ -698,11 +698,11 @@ export const test_address_list = [
   },
 ]
 export const test_pay_list = [
-  {
-    title: '카드결제',
-    description: 'Mastercard, Visa 등을 지원합니다.',
-    type:'card',
-  },
+  // {
+  //   title: '카드결제',
+  //   description: 'Mastercard, Visa 등을 지원합니다.',
+  //   type:'card',
+  // },
   {
     title: '인증결제',
     description: '구매를 안전하게 완료하기 위해 인증결제 웹사이트로 리디렉션됩니다.',

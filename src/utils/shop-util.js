@@ -1,7 +1,3 @@
-import { useEffect } from "react";
-import { useSettingsContext } from "src/components/settings"
-import { getProductsByUser } from "./api-shop";
-import { toast } from "react-hot-toast";
 import _ from "lodash";
 import { axiosIns } from "./axios";
 import { post } from "./api-manager";

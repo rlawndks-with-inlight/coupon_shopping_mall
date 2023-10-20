@@ -164,3 +164,10 @@ export const getPayHistoryByNoneUser = (params) => {// 비회원 주문 출력
   }
   return get(`/api/v1/shop/non-member-transactions`, obj);
 }
+export const getAddressesByUser = (params) => {//회원 주소 리스트 불러오기
+  const { page = 1, page_size = 10 } = params;
+  let obj = {
+    page, page_size
+  }
+  return get(`/api/v1/shop/users/addresses`, obj);
+}

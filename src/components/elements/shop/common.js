@@ -262,3 +262,49 @@ export const HistoryTable = (props) => {
     </>
   )
 }
+export const AddressTable = (props) => {
+  const { addressContent, headLabel } = props;
+  return (
+    <>
+      <TableContainer>
+        <Table sx={{ minWidth: 720, overflowX: 'auto' }}>
+          <TableHeadCustom headLabel={headLabel} />
+          <TableBody>
+            {addressContent?.content && addressContent?.content.map((row) => (
+              <>
+                <TableRow>
+                  <TableCell sx={{ display: 'flex', alignItems: 'center' }}>
+                    <Image
+                      alt="product image"
+                      src={row.product_img}
+                      sx={{ width: 64, height: 64, borderRadius: 1.5, mr: 2 }}
+                    />
+                    <Typography noWrap variant="subtitle2" sx={{ maxWidth: 240 }}>
+                      {row.product_name}
+                    </Typography>
+                  </TableCell>
+                  <TableCell>
+                    {fCurrency(row.amount)}원
+                  </TableCell>
+                  <TableCell>
+                    {row?.buyer_name}
+                  </TableCell>
+                  <TableCell>
+                    {getTrxStatusByNumber(row?.trx_status)}
+                  </TableCell>
+                  <TableCell>
+                    <Box
+                      sx={{ textAlign: 'right', color: 'text.secondary', }}
+                    >
+                      {row?.updated_at}
+                    </Box>
+                  </TableCell>
+                </TableRow>
+              </>
+            ))}
+          </TableBody>
+        </Table>
+      </TableContainer>
+    </>
+  )
+}

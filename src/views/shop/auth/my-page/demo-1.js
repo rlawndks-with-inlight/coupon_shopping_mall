@@ -1,8 +1,11 @@
-import { Avatar, Box, Button, Card, Grid, Select, Stack, Switch, Tab, Tabs, TextField, Typography } from '@mui/material';
+import { Avatar, Box, Button, Card, Grid, Pagination, Select, Stack, Switch, Tab, Tabs, TextField, Typography } from '@mui/material';
 import { useEffect, useState } from 'react';
-import { Title } from 'src/components/elements/styled-components';
+import { AddressTable } from 'src/components/elements/shop/common';
+import { Col, Row, Title } from 'src/components/elements/styled-components';
 import { useAuthContext } from 'src/layouts/manager/auth/useAuthContext';
+import { getAddressesByUser } from 'src/utils/api-shop';
 import { fData } from 'src/utils/formatNumber';
+import { makeMaxPage } from 'src/utils/function';
 import styled from 'styled-components'
 const Wrappers = styled.div`
 max-width:1600px;
@@ -27,6 +30,12 @@ const returnMyPageType = {
     }
   }
 }
+const TABLE_HEAD = [
+  { id: 'No.', label: 'No.' },
+  { id: 'addr', label: '주소' },
+  { id: 'addr', label: '상세주소' },
+  { id: '' },
+];
 const Demo1 = (props) => {
   const {
     data: {
@@ -41,6 +50,16 @@ const Demo1 = (props) => {
   const [myPageType, setMyPageType] = useState(undefined);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [userObj, setUserObj] = useState({})
+  const [addressContent, setAddressContent] = useState({});
+  const [searchObj, setSearchObj] = useState({
+    page: 1,
+    page_size: 10,
+    search: '',
+  })
+  const [isSeePostCode, setIsSeePostCode] = useState(false);
+  useEffect(() => {
+    onChangePage(searchObj)
+  }, [])
   useEffect(() => {
     if (user) {
       setUserObj(user);
@@ -52,14 +71,21 @@ const Demo1 = (props) => {
       router.push(`/shop/auth/my-page?type=0`)
     }
   }, [router.query])
-
-  useEffect(() => {
-    console.log(myPageType)
-  }, [myPageType])
+  const onChangePage = async (search_obj) => {
+    setAddressContent({
+      ...addressContent,
+      content: undefined,
+    })
+    let data = await getAddressesByUser(search_obj);
+    setSearchObj(search_obj);
+    if (data) {
+      setAddressContent(data);
+    }
+  }
   return (
     <>
       <Wrappers>
-        <Title style={{ width: '100%', marginBottom: '2rem' }}>
+        <Title style={{ width: '100%', marginBottom: '4rem' }}>
           <Tabs
             value={myPageType}
             onChange={(event, newValue) => router.push(`/shop/auth/my-page?type=${newValue}`)}
@@ -114,7 +140,30 @@ const Demo1 = (props) => {
                 </Card>
               </Grid>
             </>}
+          {myPageType == 1 &&
+            <>
+              <Col style={{ width: '100%' }}>
+                <Card sx={{ marginBottom: '2rem' }}>
+                  <AddressTable addressContent={addressContent} headLabel={TABLE_HEAD} />
+                </Card>
+                <Pagination
+                  sx={{ margin: 'auto' }}
+                  size={window.innerWidth > 700 ? 'medium' : 'small'}
+                  count={makeMaxPage(addressContent?.total, addressContent?.page_size)}
+                  page={addressContent?.page}
+                  variant='outlined' shape='rounded'
+                  color='primary'
+                  onChange={(_, num) => {
+                    onChangePage({ ...searchObj, page: num })
+                  }} />
+                <Row>
+                  <Button variant="contained" style={{ marginLeft: 'auto' }}>
+                    주소지 추가
+                  </Button>
+                </Row>
+              </Col>
 
+            </>}
         </Grid>
       </Wrappers>
     </>

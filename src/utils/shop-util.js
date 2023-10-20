@@ -29,7 +29,7 @@ export const makePayData = async (products_, payData_) => {
     let products = products_;
     let total_amount = 0;
     let payData = { ...payData_ };
-    
+
     for (var i = 0; i < products.length; i++) {
         products[i].order_name = products[i]?.product_name;
         let groups = products[i].groups;
@@ -37,10 +37,26 @@ export const makePayData = async (products_, payData_) => {
             let options = groups[j]?.options;
             for (var k = 0; k < options.length; k++) {
                 products[i].order_name += ' ' + options[k]?.option_name
+                products[i].groups[j].options[k] = {
+                    id: products[i].groups[j]?.options[k]?.id,
+                    option_name: products[i].groups[j]?.options[k]?.option_name,
+                    option_price: products[i].groups[j]?.options[k]?.option_price,
+                }
+            }
+            products[i].groups[j] = {
+                id: products[i].groups[j]?.id,
+                options: products[i].groups[j]?.options,
             }
         }
         products[i].order_amount = await calculatorPrice(products[i])?.total;
         total_amount += products[i].order_amount;
+        products[i] = {
+            id: products[i]?.id,
+            order_name: products[i]?.order_name,
+            order_amount: products[i]?.order_amount,
+            order_count: products[i]?.order_count,
+            groups: products[i]?.groups,
+        }
     }
     payData = {
         ...payData,
@@ -74,14 +90,14 @@ export const onPayProductsByAuth = async (products_, payData_) => { // 인증결
     payData = {
         ...payData,
         ord_num: ord_num,
-        success_url:return_url+'?type=0',
-        fail_url:return_url+'?type=1',
+        success_url: return_url + '?type=0',
+        fail_url: return_url + '?type=1',
     }
     payData.products = JSON.stringify(payData.products);
     try {
         let query = Object.entries(payData).map(e => e.join('=')).join('&');
-
-        window.location.href = `${process.env.BACK_URL}/pay/auth?${query}`;
+        console.log(payData);
+        window.location.href = (`${process.env.BACK_URL}/pay/auth?${query}`);
 
     } catch (err) {
         console.log(err);

@@ -1,12 +1,14 @@
-import { Avatar, Box, Button, Card, Grid, Pagination, Select, Stack, Switch, Tab, Tabs, TextField, Typography } from '@mui/material';
+import { Avatar, Box, Button, Card, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Grid, Pagination, Select, Stack, Switch, Tab, Tabs, TextField, Typography } from '@mui/material';
 import { useEffect, useState } from 'react';
 import { AddressTable } from 'src/components/elements/shop/common';
-import { Col, Row, Title } from 'src/components/elements/styled-components';
+import { Col, Row, Title, postCodeStyle } from 'src/components/elements/styled-components';
 import { useAuthContext } from 'src/layouts/manager/auth/useAuthContext';
-import { getAddressesByUser } from 'src/utils/api-shop';
+import { addAddressByUser, deleteAddressByUser, getAddressesByUser } from 'src/utils/api-shop';
 import { fData } from 'src/utils/formatNumber';
 import { makeMaxPage } from 'src/utils/function';
 import styled from 'styled-components'
+import DaumPostcode from 'react-daum-postcode';
+
 const Wrappers = styled.div`
 max-width:1600px;
 display:flex;
@@ -51,10 +53,17 @@ const Demo1 = (props) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [userObj, setUserObj] = useState({})
   const [addressContent, setAddressContent] = useState({});
+  const [addAddressOpen, setAddAddressOpen] = useState(false);
+  const [addAddressObj, setAddAddressObj] = useState({
+    addr: '',
+    detail_addr: '',
+    is_open_daum_post: false,
+  })
   const [searchObj, setSearchObj] = useState({
     page: 1,
     page_size: 10,
     search: '',
+    user_id: user?.id,
   })
   const [isSeePostCode, setIsSeePostCode] = useState(false);
   useEffect(() => {
@@ -82,8 +91,114 @@ const Demo1 = (props) => {
       setAddressContent(data);
     }
   }
+  const onSelectAddress = (data) => {
+    setAddAddressObj({
+      ...addAddressObj,
+      addr: data?.address,
+      detail_addr: '',
+      is_open_daum_post: false,
+    })
+  }
+  const onAddAddress = async () => {
+    let result = await addAddressByUser({
+      ...addAddressObj,
+      user_id: user?.id,
+    })
+    if (result) {
+      setAddAddressObj({
+        addr: '',
+        detail_addr: '',
+        is_open_daum_post: false,
+      })
+      setAddAddressOpen(false);
+      onChangePage(searchObj);
+    }
+  }
+  const onDeleteAddress = async (id) => {
+    let result = await deleteAddressByUser({
+      id: id
+    })
+    if (result) {
+      onChangePage(searchObj);
+    }
+  }
   return (
     <>
+      <Dialog
+        open={addAddressOpen}
+        onClose={() => {
+          setAddAddressObj({
+            addr: '',
+            detail_addr: '',
+            is_open_daum_post: false,
+          })
+          setAddAddressOpen(false);
+        }}
+        PaperProps={{
+          style: {
+            width: `${window.innerWidth >= 700 ? '500px' : '90vw'}`,
+          }
+        }}
+      >
+        {addAddressObj.is_open_daum_post ?
+          <>
+            <Row>
+              <DaumPostcode style={postCodeStyle} onComplete={onSelectAddress} />
+            </Row>
+          </>
+          :
+          <>
+            <DialogTitle>{`주소지 추가`}</DialogTitle>
+            <DialogContent>
+              <DialogContentText>
+                새 주소를 입력후 저장을 눌러주세요.
+              </DialogContentText>
+              <TextField
+                autoFocus
+                fullWidth
+                value={addAddressObj.addr}
+                margin="dense"
+                label="주소"
+                aria-readonly='true'
+                onClick={() => {
+                  setAddAddressObj({
+                    ...addAddressObj,
+                    is_open_daum_post: true,
+                  })
+                }}
+              />
+              <TextField
+                autoFocus
+                fullWidth
+                value={addAddressObj.detail_addr}
+                margin="dense"
+                label="상세주소"
+                onChange={(e) => {
+                  setAddAddressObj({
+                    ...addAddressObj,
+                    detail_addr: e.target.value
+                  })
+                }}
+              />
+            </DialogContent>
+            <DialogActions>
+              <Button variant="contained" onClick={onAddAddress}>
+                저장
+              </Button>
+              <Button color="inherit" onClick={() => {
+                setAddAddressObj({
+                  addr: '',
+                  detail_addr: '',
+                  is_open_daum_post: false,
+                })
+                setAddAddressOpen(false);
+              }}>
+                취소
+              </Button>
+            </DialogActions>
+          </>}
+
+      </Dialog>
       <Wrappers>
         <Title style={{ width: '100%', marginBottom: '4rem' }}>
           <Tabs
@@ -96,7 +211,6 @@ const Demo1 = (props) => {
             })}
           </Tabs>
         </Title>
-
         <Grid container spacing={3}>
           {myPageType == 0 &&
             <>
@@ -144,7 +258,11 @@ const Demo1 = (props) => {
             <>
               <Col style={{ width: '100%' }}>
                 <Card sx={{ marginBottom: '2rem' }}>
-                  <AddressTable addressContent={addressContent} headLabel={TABLE_HEAD} />
+                  <AddressTable
+                    addressContent={addressContent}
+                    headLabel={TABLE_HEAD}
+                    onDelete={onDeleteAddress}
+                  />
                 </Card>
                 <Pagination
                   sx={{ margin: 'auto' }}
@@ -157,7 +275,7 @@ const Demo1 = (props) => {
                     onChangePage({ ...searchObj, page: num })
                   }} />
                 <Row>
-                  <Button variant="contained" style={{ marginLeft: 'auto' }}>
+                  <Button variant="contained" style={{ marginLeft: 'auto' }} onClick={() => setAddAddressOpen(true)}>
                     주소지 추가
                   </Button>
                 </Row>

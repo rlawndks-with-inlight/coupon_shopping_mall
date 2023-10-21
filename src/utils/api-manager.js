@@ -786,7 +786,6 @@ export const deleteTrxByManager = (params) => { //관리자 결제내역 삭제
 export const uploadFileByManager = async (params) => {// 관리자 파일 단일 업로드
   const { file } = params;
   let result = await multipleFileUploadByCloudinary(file);
-
   return result;
 }
 export const uploadsFileByManager = async (params) => {// 관리자 파일 여러개 업로드

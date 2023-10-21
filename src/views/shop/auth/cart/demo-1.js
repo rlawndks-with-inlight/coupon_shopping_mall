@@ -9,7 +9,7 @@ import Label from 'src/components/label/Label';
 import EmptyContent from 'src/components/empty-content/EmptyContent';
 import Iconify from 'src/components/iconify/Iconify';
 import { useSettingsContext } from 'src/components/settings';
-import { getProductsByUser } from 'src/utils/api-shop';
+import { getAddressesByUser, getProductsByUser } from 'src/utils/api-shop';
 import { calculatorPrice, getCartDataUtil, onPayProductsByAuth, onPayProductsByHand } from 'src/utils/shop-util';
 import { useAuthContext } from 'src/layouts/manager/auth/useAuthContext';
 import Payment from 'payment'
@@ -30,7 +30,7 @@ margin-bottom:10vh;
 
 const STEPS = ['장바구니 확인', '배송지 확인', '결제하기'];
 export function AddressItem({ item, onCreateBilling }) {
-  const { receiver, addr, address_type, phone, is_default } = item;
+  const { receiver, addr, address_type, phone, is_default, detail_addr } = item;
   return (
     <Card
       sx={{
@@ -51,10 +51,10 @@ export function AddressItem({ item, onCreateBilling }) {
         <Stack flexGrow={1} spacing={1}>
           <Stack direction="row" alignItems="center">
             <Typography variant="subtitle1">
-              {receiver}
-              <Box component="span" sx={{ ml: 0.5, typography: 'body2', color: 'text.secondary' }}>
-                ({address_type})
-              </Box>
+              {addr}
+              {/* <Box component="span" sx={{ ml: 0.5, typography: 'body2', color: 'text.secondary' }}>
+                (123)
+              </Box> */}
             </Typography>
             {is_default && (
               <Label color="info" sx={{ ml: 1 }}>
@@ -62,17 +62,12 @@ export function AddressItem({ item, onCreateBilling }) {
               </Label>
             )}
           </Stack>
-          <Typography variant="body2">{addr}</Typography>
+          {/* <Typography variant="body2">{addr}</Typography> */}
           <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-            {phone}
+            {detail_addr}
           </Typography>
         </Stack>
         <Stack flexDirection="row" flexWrap="wrap" flexShrink={0}>
-          {!is_default && (
-            <Button variant="outlined" size="small" color="inherit" sx={{ mr: 1 }}>
-              삭제
-            </Button>
-          )}
           <Button variant="outlined" size="small" onClick={onCreateBilling}>
             해당 주소로 배송하기
           </Button>
@@ -119,9 +114,14 @@ const Demo1 = (props) => {
   const getCart = async () => {
     let data = await getCartDataUtil(themeCartData);
     setProducts(data);
-    console.log(data)
-    let address_data = test_address_list;
-    setAddressList(address_data)
+
+    let address_data = await getAddressesByUser({
+      page: 1,
+      page_size: 100000,
+      user_id: user?.id,
+    });
+    console.log(address_data)
+    setAddressList(address_data?.content ?? [])
   }
   const onDelete = (idx) => {
     let product_list = [...products];
@@ -156,7 +156,8 @@ const Demo1 = (props) => {
   const onCreateBilling = (item) => {
     setPayData({
       ...payData,
-      ...item,
+      addr: item?.addr,
+      detail_addr: item?.detail_addr,
     })
     onClickNextStep();
   }

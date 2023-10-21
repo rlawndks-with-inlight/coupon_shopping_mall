@@ -51,3 +51,9 @@ margin: 1rem auto 1rem 0;
 font-size:${themeObj.font_size.size3};
 font-weight:bold;
 `
+export const postCodeStyle = {
+  display: 'block',
+  position: 'relative',
+  width: '90%',
+  margin: '16px auto',
+};

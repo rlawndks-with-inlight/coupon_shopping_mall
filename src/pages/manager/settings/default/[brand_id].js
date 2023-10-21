@@ -80,6 +80,10 @@ const DefaultSetting = () => {
       value: 5,
       label: '서브카테고리 설정'
     }] : []),
+    ...(user?.level >= 50 ? [{
+      value: 6,
+      label: '결제모듈관리'
+    }] : []),
   ]
 
   useEffect(() => {

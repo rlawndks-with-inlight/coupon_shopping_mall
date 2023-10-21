@@ -165,9 +165,21 @@ export const getPayHistoryByNoneUser = (params) => {// 비회원 주문 출력
   return get(`/api/v1/shop/non-member-transactions`, obj);
 }
 export const getAddressesByUser = (params) => {//회원 주소 리스트 불러오기
-  const { page = 1, page_size = 10 } = params;
+  const { page = 1, page_size = 10, user_id } = params;
   let obj = {
-    page, page_size
+    page, page_size, user_id
   }
   return get(`/api/v1/shop/users/addresses`, obj);
+}
+export const addAddressByUser = (params) => {//회원 주소 리스트 불러오기
+  const { user_id, addr, detail_addr } = params;
+  let obj = {
+    user_id, addr, detail_addr
+  }
+  return post(`/api/v1/shop/users/addresses`, obj);
+}
+export const deleteAddressByUser = (params) => {//회원 주소 삭제
+  const { id } = params;
+
+  return deleteItem(`/api/v1/shop/users/addresses/${id}`);
 }

@@ -120,7 +120,6 @@ const Demo1 = (props) => {
       page_size: 100000,
       user_id: user?.id,
     });
-    console.log(address_data)
     setAddressList(address_data?.content ?? [])
   }
   const onDelete = (idx) => {

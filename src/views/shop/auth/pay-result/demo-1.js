@@ -27,9 +27,6 @@ const Demo1 = (props) => {
     },
   } = props;
   const { themeDnsData } = useSettingsContext();
-  useEffect(() => {
-    console.log(router.query)
-  }, [])
 
   const getResultContent = (type) => {
     if (type == 0) {

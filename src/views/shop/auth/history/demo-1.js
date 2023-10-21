@@ -50,7 +50,6 @@ const Demo1 = (props) => {
       page: num
     })
     if (data) {
-      console.log(data)
       setHistoryContent(data);
     }
   }

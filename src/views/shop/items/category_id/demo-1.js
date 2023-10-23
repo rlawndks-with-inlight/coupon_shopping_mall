@@ -84,6 +84,9 @@ const Demo1 = (props) => {
     };
   }, []);
   const settingPage = async (search_obj, is_first) => {
+    if (is_first) {
+      setProducts([]);
+    }
     if ((themeCategoryList[0]?.product_categories??[]).length > 0) {
       let parent_list = []
       if (parentList.length > 0) {
@@ -94,11 +97,12 @@ const Demo1 = (props) => {
       setParentList(parent_list);
       let use_list = [];
       for (var i = 0; i < parent_list.length; i++) {
-        if (parent_list[i][router.query?.depth]?.id == router.query?.category_id) {
+        if (parent_list[i][router.query?.depth]?.id == router.query?.category_id0) {
           use_list = parent_list[i];
           break;
         }
       }
+      console.log(use_list)
       setCurCategories(use_list);
     }
     let product_list = await getProductsByUser({

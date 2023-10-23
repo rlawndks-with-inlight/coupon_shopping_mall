@@ -6,7 +6,7 @@ import SvgColor from 'src/components/svg-color';
 import { useSettingsContext } from 'src/components/settings';
 import { useAuthContext } from '../auth/useAuthContext';
 import { useEffect, useState } from 'react';
-import { getPostCategoriesByManager } from 'src/utils/api-manager';
+import { getCategoryGroupsByManager, getPostCategoriesByManager } from 'src/utils/api-manager';
 
 // ----------------------------------------------------------------------
 
@@ -44,6 +44,7 @@ export const navConfig = () => {
   const { user } = useAuthContext();
   const { themeDnsData } = useSettingsContext();
   const [postCategoryList, setPostCategoryList] = useState([]);
+  const [categoryGroupList, setCategoryGroupList] = useState([]);
 
   const [isSettingComplete, setIsSettingComplete] = useState(false);
   //dns_data와 user를 통해 계산하기
@@ -52,15 +53,29 @@ export const navConfig = () => {
     getSidebarSetting();
   }, [])
   const getSidebarSetting = async () => {
-    let category_list = await getPostCategoriesByManager({ page: 1, page_size: 100000 });
-    category_list = category_list.content ?? [];
-    for (var i = 0; i < category_list.length; i++) {
-      category_list[i]['title'] = category_list[i]['post_category_title'];
-      category_list[i]['path'] = `/manager/articles/${category_list[i]?.id}`;
-      delete category_list[i]?.children;
+    let post_category_list = await getPostCategoriesByManager({ page: 1, page_size: 100000 });
+    post_category_list = post_category_list.content ?? [];
+    for (var i = 0; i < post_category_list.length; i++) {
+      post_category_list[i]['title'] = post_category_list[i]['post_category_title'];
+      post_category_list[i]['path'] = `/manager/articles/${post_category_list[i]?.id}`;
+      delete post_category_list[i]?.children;
     }
-    setPostCategoryList(category_list);
+    let category_group_list = await getCategoryGroupsByManager({ page: 1, page_size: 100000 });
+    category_group_list = category_group_list.content ?? [];
+    for (var i = 0; i < category_group_list.length; i++) {
+      category_group_list[i]['title'] = category_group_list[i]['category_group_name'] + ' 관리';
+      category_group_list[i]['path'] = `/manager/products/categories/${category_group_list[i]?.id}`;
+      delete category_group_list[i]?.children;
+    }
+    setPostCategoryList(post_category_list);
+    setCategoryGroupList(category_group_list);
     setIsSettingComplete(true);
+  }
+  const isUseProductCategoryGroup = () => {
+    if (window.location.host.split(':')[0] == process.env.MAIN_FRONT_URL || user?.level >= 50) {
+      return true;
+    }
+    return false
   }
   const isUsePostCategory = () => {
     if (window.location.host.split(':')[0] == process.env.MAIN_FRONT_URL || user?.level >= 50) {
@@ -124,8 +139,8 @@ export const navConfig = () => {
           path: PATH_MANAGER.products.root,
           icon: ICONS.cart,
           children: [
-            ...(themeDnsData?.setting_obj?.is_use_product_sub_category == 1 ? [{ title: `${themeDnsData?.setting_obj?.product_sub_category_name}관리`, path: PATH_MANAGER.products.subCategories }] : []),
-            { title: '카테고리관리', path: PATH_MANAGER.products.categories },
+            ...(isUseProductCategoryGroup() ? [{ title: '카테고리 그룹 관리', path: PATH_MANAGER.products.categoryGroups }] : []),
+            ...categoryGroupList,
             { title: '상품관리', path: PATH_MANAGER.products.list },
           ],
         },

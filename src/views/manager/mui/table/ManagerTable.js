@@ -23,7 +23,7 @@ import { HTML5Backend } from 'react-dnd-html5-backend';
 import { DndProvider } from 'react-dnd';
 import update from 'immutability-helper'
 import _ from 'lodash';
-import { sortProductByManager } from 'src/utils/api-manager';
+import { sortDataByManager, sortProductByManager } from 'src/utils/api-manager';
 
 const TableHeaderContainer = styled.div`
 padding: 0.75rem;
@@ -46,6 +46,7 @@ export default function ManagerTable(props) {
   const [eDt, setEDt] = useState(undefined);
   const [keyword, setKeyWord] = useState("");
   const [contentList, setContentList] = useState(undefined);
+
   useEffect(() => {
     setContentList(data?.content);
   }, [data?.content])
@@ -88,7 +89,7 @@ export default function ManagerTable(props) {
       dest_id,
       dest_sort_idx,
     }
-    let result = await sortProductByManager(obj);
+    let result = await sortDataByManager(obj, table );
     if (result) {
       onChangePage(searchObj);
     }

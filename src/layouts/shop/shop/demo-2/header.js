@@ -257,7 +257,7 @@ const Header = () => {
         <div style={{ position: 'relative' }} className={`menu-${item?.id}`}>
           <DropDownMenu theme={theme}
             onClick={() => {
-              router.push(`/shop/items/${item?.id}?depth=${num}`)
+              router.push(`/shop/items?category_id0=${item?.id}&depth=${num}`)
             }}>
             <div>{item.category_name}</div>
             <div>{item.children.length > 0 ? '>' : ''}</div>
@@ -528,7 +528,7 @@ const Header = () => {
                           borderBottomLeftRadius: `${item1?.children.length == 0 && '8px'}`,
                         }}
                         onClick={() => {
-                          router.push(`/shop/items/${item1?.id}?depth=0`)
+                          router.push(`/shop/items?category_id0=${item1?.id}&depth=0`)
                         }}>
                         <div>{item1.category_name}</div>
                       </CategoryMenu>
@@ -575,7 +575,7 @@ const Header = () => {
                       onHoverCategory(`hover_${item1?.id}`)
                     }}
                       onClick={() => {
-                        router.push(`/shop/items/${item1?.id}?depth=0`)
+                        router.push(`/shop/items?category_id0=${item1?.id}&depth=0`)
                       }}
                     >
                       <div>{item1.category_name}</div>
@@ -703,7 +703,7 @@ const returnSidebarMenu = (item, num, func) => {
           marginLeft: '0.25rem'
         }}
         onClick={() => {
-          router.push(`/shop/items/${item?.id}/?depth=${num}`);
+          router.push(`/shop/items?category_id0=${item?.id}&depth=${num}`);
           setSideMenuOpen(false);
         }}>{item.category_name}</div>}
         nodeId={item.id}

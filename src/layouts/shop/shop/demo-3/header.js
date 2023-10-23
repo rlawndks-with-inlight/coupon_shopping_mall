@@ -255,7 +255,7 @@ const Header = () => {
                         theme={theme}
                         is_page_category={isPageCategory(item1?.id) ? 1 : 0}
                         onClick={() => {
-                          router.push(`/shop/items/${item1?.id}?depth=0`)
+                          router.push(`/shop/items?category_id0=${item1?.id}&depth=0`)
                         }}>
                         <div>{item1.category_name}</div>
                       </CategoryMenu>

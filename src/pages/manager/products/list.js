@@ -11,9 +11,11 @@ import { LazyLoadImage } from "react-lazy-load-image-component";
 import { SelectCategoryComponent } from "./[edit_category]/[id]";
 import $ from 'jquery';
 import { useModal } from "src/components/dialog/ModalProvider";
+import { useSettingsContext } from "src/components/settings";
 
 const ProductList = () => {
   const { setModal } = useModal()
+  const { themeCategoryList } = useSettingsContext();
   const defaultColumns = [
     {
       id: 'id',
@@ -40,38 +42,40 @@ const ProductList = () => {
         return row['product_name'] ?? "---"
       }
     },
-    {
-      id: 'category_name',
-      label: '카테고리',
-      action: (row) => {
-        return (
-          <>
-            {row?.category_root.length > 0 ?
-              <>
-                <Row>
-                  {row?.category_root.map((item, idx) => (
-                    <>
-                      <div style={{ marginRight: '0.25rem' }}>
-                        {item.category_name}
-                      </div>
-                      {idx != row?.category_root.length - 1 &&
-                        <>
-                          <div style={{ marginRight: '0.25rem' }}>
-                            {'>'}
-                          </div>
-                        </>}
-                    </>
-                  ))}
-                </Row>
-              </>
-              :
-              <>
-                {row['category_name'] ?? '---'}
-              </>}
-          </>
-        )
+    ...themeCategoryList.map((group, index) => {
+      return {
+        id: `category_group_${group?.id}`,
+        label: `${group?.category_group_name}`,
+        action: (row) => {
+          return (
+            <>
+              {row[`category_root_${index}`] && row[`category_root_${index}`].length > 0 ?
+                <>
+                  <Row>
+                    {row[`category_root_${index}`].map((item, idx) => (
+                      <>
+                        <div style={{ marginRight: '0.25rem' }}>
+                          {item.category_name}
+                        </div>
+                        {idx != row[`category_root_${index}`].length - 1 &&
+                          <>
+                            <div style={{ marginRight: '0.25rem' }}>
+                              {'>'}
+                            </div>
+                          </>}
+                      </>
+                    ))}
+                  </Row>
+                </>
+                :
+                <>
+                  {'---'}
+                </>}
+            </>
+          )
+        }
       }
-    },
+    }),
     {
       id: 'product_price',
       label: '상품가',
@@ -159,19 +163,16 @@ const ProductList = () => {
     category_id: null
   })
   const [categories, setCategories] = useState([]);
-  const [curCategories, setCurCategories] = useState([]);
-  const [categoryChildrenList, setCategoryChildrenList] = useState([]);
+  const [curCategories, setCurCategories] = useState({});
+  const [categoryChildrenList, setCategoryChildrenList] = useState({});
   useEffect(() => {
     pageSetting();
   }, [])
   const pageSetting = async () => {
-    let category_list = await getCategoriesByManager({ page: 1, page_size: 100000 });
-    category_list = category_list?.content ?? [];
-    category_list = [{ id: null, category_name: '전체', children: [] }, ...category_list]
-    setCategories(category_list);
+
     let cols = defaultColumns;
     setColumns(cols)
-    onChangePage({ ...searchObj, category_list: category_list, page: 1, });
+    onChangePage({ ...searchObj, page: 1, });
   }
   const onChangePage = async (obj) => {
     setData({
@@ -180,16 +181,15 @@ const ProductList = () => {
     })
     let data_ = await getProductsByManager(obj);
     if (data_) {
-      let category_list = [];
-      if (obj?.category_list) {
-        category_list = obj?.category_list
-      } else {
-        category_list = categories
-      }
-
-      let parent_list = await getAllIdsWithParents(category_list)
-      for (var i = 0; i < data_.content.length; i++) {
-        data_.content[i]['category_root'] = await returnCurCategories(data_.content[i]?.category_id, parent_list);
+      for (var i = 0; i < themeCategoryList.length; i++) {
+        let parent_list = await getAllIdsWithParents(themeCategoryList[i]?.product_categories);
+        for (var j = 0; j < data_.content.length; j++) {
+          let data_item = data_.content[j];
+          let category_root = await returnCurCategories(data_item[`category_id${i}`] ?? 0, parent_list);
+          if (category_root?.length > 0) {
+            data_.content[j][`category_root_${i}`] = category_root ?? [];
+          }
+        }
       }
       setData(data_);
     }
@@ -211,9 +211,9 @@ const ProductList = () => {
     }
     return use_list
   }
-  const onClickCategory = (category, depth) => {
-    onChangePage({ ...searchObj, category_id: category?.id, page: 1 })
-    let parent_list = getAllIdsWithParents(categories);
+  const onClickCategory = (category, depth, idx) => {
+
+    let parent_list = getAllIdsWithParents(themeCategoryList[idx]?.product_categories);
     let use_list = [];
     for (var i = 0; i < parent_list.length; i++) {
       if (parent_list[i][depth]?.id == category?.id) {
@@ -221,30 +221,51 @@ const ProductList = () => {
         break;
       }
     }
-    setCurCategories(use_list);
+    let category_ids = {};
+    let cur_categories = {
+      ...curCategories,
+      [idx]: use_list
+    };
+    for (var i = 0; i < themeCategoryList.length; i++) {
+      console.log(cur_categories[i])
+      if (cur_categories[i]) {
+        category_ids[`category_id${i}`] = cur_categories[i][cur_categories[i].length - 1]?.id;
+      }
+    }
+    console.log(category_ids)
+    onChangePage({ ...searchObj, ...category_ids, page: 1 })
+    setCurCategories(cur_categories);
     let children_list = [];
     for (var i = 0; i < use_list.length; i++) {
       children_list.push(use_list[i]?.children);
     }
-    setCategoryChildrenList(children_list);
-    $('.category-container').scrollLeft(100000);
+    setCategoryChildrenList({
+      ...categoryChildrenList,
+      [idx]: children_list
+    });
+    $(`.category-container-${idx}`).scrollLeft(100000);
   }
   return (
     <>
       <Stack spacing={3}>
         <Card>
-          <div style={{
-            width: '100%',
-            padding: '0.75rem',
-          }}>
-            <SelectCategoryComponent
-              curCategories={curCategories}
-              categories={categories}
-              categoryChildrenList={categoryChildrenList}
-              onClickCategory={onClickCategory}
-              noneSelectText={'전체'}
-            />
-          </div>
+          {themeCategoryList.map((group, idx) => (
+            <>
+              <div style={{
+                width: '100%',
+                padding: '0.75rem',
+              }}>
+                <SelectCategoryComponent
+                  curCategories={curCategories[idx] ?? []}
+                  categories={group?.product_categories}
+                  categoryChildrenList={categoryChildrenList[idx] ?? []}
+                  onClickCategory={onClickCategory}
+                  noneSelectText={`${group?.category_group_name} 전체`}
+                  sort_idx={idx}
+                />
+              </div>
+            </>
+          ))}
           <Divider />
           <ManagerTable
             data={data}
@@ -254,6 +275,7 @@ const ProductList = () => {
             onChangePage={onChangePage}
             add_button_text={'상품 추가'}
             want_move_card={true}
+            table={'products'}
           />
         </Card>
       </Stack>

@@ -30,8 +30,8 @@ export const PATH_MANAGER = {
   products: {
     root: path(ROOTS_MANAGER, '/products'),
     list: path(ROOTS_MANAGER, '/products/list'),
+    categoryGroups: path(ROOTS_MANAGER, '/products/category-groups'),
     categories: path(ROOTS_MANAGER, '/products/categories'),
-    subCategories: path(ROOTS_MANAGER, '/products/sub-categories'),
   },
   articles: {
     root: path(ROOTS_MANAGER, '/articles'),

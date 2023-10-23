@@ -215,7 +215,7 @@ const Header = () => {
 
   const router = useRouter();
   const theme = useTheme();
-  const { themeMode, onToggleMode, onChangeCategoryList, themeCategoryList, themeDnsData, themePopupList,themePostCategoryList, onChangePopupList, onChangePostCategoryList, themeWishData, themeCartData } = useSettingsContext();
+  const { themeMode, onToggleMode, onChangeCategoryList, themeCategoryList, themeDnsData, themePopupList, themePostCategoryList, onChangePopupList, onChangePostCategoryList, themeWishData, themeCartData } = useSettingsContext();
   const { user, logout } = useAuthContext();
   const headerWrappersRef = useRef();
   const [headerHeight, setHeaderHeight] = useState(130);
@@ -229,6 +229,7 @@ const Header = () => {
   })
   const [sideMenuOpen, setSideMenuOpen] = useState(false);
   const [categories, setCategories] = useState([]);
+  const [categories2, setCategories2] = useState([]);
   const [popups, setPopups] = useState([]);
   const [postCategories, setPostCategories] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -239,7 +240,7 @@ const Header = () => {
     setHeaderHeight(headerWrappersRef.current?.clientHeight ?? 130);
   }, [headerWrappersRef.current, categories])
   useEffect(() => {
-    if(themeCategoryList){
+    if (themeCategoryList) {
       settingHeader();
     }
   }, [themeCategoryList])
@@ -247,8 +248,9 @@ const Header = () => {
     setLoading(true);
     setPopups(themePopupList)
     setPostCategories(themePostCategoryList);
-    setCategories(themeCategoryList);
-    let hover_list = getAllIdsWithParents(themeCategoryList);
+    setCategories(themeCategoryList[0]?.product_categories ?? []);
+    setCategories2(themeCategoryList[1]?.product_categories ?? []);
+    let hover_list = getAllIdsWithParents(themeCategoryList[0]?.product_categories ?? []);
     let hover_items = {};
     for (var i = 0; i < hover_list.length; i++) {
       hover_list[i] = hover_list[i].join('_');
@@ -273,7 +275,7 @@ const Header = () => {
         <div style={{ position: 'relative' }} className={`menu-${item?.id}`}>
           <DropDownMenu theme={theme}
             onClick={() => {
-              router.push(`/shop/items/${item?.id}?depth=${num}`)
+              router.push(`/shop/items?category_id0=${item?.id}&depth=${num}`)
             }}>
             <div>{item.category_name}</div>
             <div>{item.children.length > 0 ? '>' : ''}</div>
@@ -444,9 +446,9 @@ const Header = () => {
                     }
                   }}
                 >
-                <Badge badgeContent={themeWishData.length} color="error">
-                  <Icon icon={'basil:heart-outline'} fontSize={'2rem'} color={themeMode == 'dark' ? '#fff' : '#000'} />
-                </Badge>
+                  <Badge badgeContent={themeWishData.length} color="error">
+                    <Icon icon={'basil:heart-outline'} fontSize={'2rem'} color={themeMode == 'dark' ? '#fff' : '#000'} />
+                  </Badge>
                 </IconButton>
 
                 <IconButton
@@ -455,9 +457,9 @@ const Header = () => {
                     router.push(`/shop/auth/cart`)
                   }}
                 >
-                   <Badge badgeContent={themeCartData.length} color="error">
-                   <Icon icon={'basil:shopping-bag-outline'} fontSize={'1.8rem'} color={themeMode == 'dark' ? '#fff' : '#000'} />
-                   </Badge>
+                  <Badge badgeContent={themeCartData.length} color="error">
+                    <Icon icon={'basil:shopping-bag-outline'} fontSize={'1.8rem'} color={themeMode == 'dark' ? '#fff' : '#000'} />
+                  </Badge>
                 </IconButton>
                 <IconButton
                   sx={iconButtonStyle}
@@ -547,7 +549,7 @@ const Header = () => {
                   }}
                 >
                   <Badge badgeContent={themeCartData.length} color="error">
-                  <Icon icon={'basil:shopping-bag-outline'} fontSize={'1.8rem'} color={themeMode == 'dark' ? '#fff' : '#000'} />
+                    <Icon icon={'basil:shopping-bag-outline'} fontSize={'1.8rem'} color={themeMode == 'dark' ? '#fff' : '#000'} />
                   </Badge>
                 </IconButton>
                 <IconButton
@@ -580,7 +582,7 @@ const Header = () => {
                   <>
                     <div style={{ position: 'relative' }} className={`menu-${item1?.id}`}>
                       <CategoryMenu borderColor={themeMode == 'dark' ? '#fff' : '#000'} onClick={() => {
-                        router.push(`/shop/items/${item1?.id}?depth=0`)
+                        router.push(`/shop/items?category_id0=${item1?.id}&depth=0`)
                       }}>
                         <div>{item1.category_name}</div>
                       </CategoryMenu>
@@ -591,7 +593,7 @@ const Header = () => {
                             width: `${item1.category_img ? '430px' : '154px'}`,
                             fontSize: '12px',
                             fontWeight: 'normal',
-                            background: `${themeMode == 'dark' ? '#000' : '#fff'}`
+                            background: `${themeMode == 'dark' ? '#000' : '#fff'}`,
                           }}>
                             <div style={{
                               display: 'flex',
@@ -661,7 +663,7 @@ const Header = () => {
                       onHoverCategory(`hover_${item1?.id}`)
                     }}
                       onClick={() => {
-                        router.push(`/shop/items/${item1?.id}?depth=0`)
+                        router.push(`/shop/items?category_id0=${item1?.id}&depth=0`)
                       }}
                     >
                       <div>{item1.category_name}</div>
@@ -765,7 +767,7 @@ const returnSidebarMenu = (item, num, func) => {
           marginLeft: '0.25rem'
         }}
         onClick={() => {
-          router.push(`/shop/items/${item?.id}/?depth=${num}`);
+          router.push(`/shop/items?category_id0=${item?.id}&depth=${num}`);
           setSideMenuOpen(false);
         }}>{item.category_name}</div>}
         nodeId={item.id}

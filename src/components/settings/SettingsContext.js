@@ -155,6 +155,7 @@ export function SettingsProvider({ children }) {
         product_review_ids: product_review_ids,
         product_ids: product_ids,
       });
+      console.log(data)
       dns_data['shop_obj'] = getMainObjContentByIdList(dns_data?.shop_obj, 'item-reviews-select', data?.product_reviews);
       dns_data['blog_obj'] = getMainObjContentByIdList(dns_data?.blog_obj, 'item-reviews-select', data?.product_reviews);
       dns_data['shop_obj'] = getMainObjContentByIdList(dns_data?.shop_obj, 'item-reviews', data?.product_reviews, false, true);
@@ -165,7 +166,7 @@ export function SettingsProvider({ children }) {
       dns_data['shop_obj'] = getMainObjContentByIdList(dns_data?.shop_obj, 'items-with-categories', data?.products, true);
       dns_data['blog_obj'] = getMainObjContentByIdList(dns_data?.blog_obj, 'items-with-categories', data?.products, true);
       dns_data['products'] = data?.products;
-      onChangeCategoryList(data?.product_categories ?? []);
+      onChangeCategoryList(data?.product_category_groups ?? []);
       onChangePopupList(data?.popups ?? []);
       onChangePostCategoryList(data?.post_categories ?? []);
       onChangeSellerList(data?.merchandises?.content ?? []);

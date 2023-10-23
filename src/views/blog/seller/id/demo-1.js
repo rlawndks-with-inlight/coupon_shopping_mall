@@ -139,7 +139,7 @@ const Demo1 = (props) => {
         })
         let category_list = [];
         for (var i = 0; i < products?.content.length; i++) {
-            let top_category_id = getDownToTopChildren(products?.content[i]?.category_id, themeCategoryList);
+            let top_category_id = getDownToTopChildren(products?.content[i]?.category_id, themeCategoryList[0]?.product_categories??[]);
             if (!category_list.includes(top_category_id[0])) {
                 category_list.push(top_category_id[0]);
             }
@@ -264,7 +264,7 @@ const Demo1 = (props) => {
                 <ItemContainer>
                     {products.map((item, idx) => (
                         <>
-                            {(categoryId == 0 || getDownToTopChildren(item?.category_id, themeCategoryList).includes(categoryId)) &&
+                            {(categoryId == 0 || getDownToTopChildren(item?.category_id, themeCategoryList[0]?.product_categories??[]).includes(categoryId)) &&
                                 <>
                                     <SellerItem router={router} item={item} onClickCartButton={onClickCartButton} />
                                 </>}

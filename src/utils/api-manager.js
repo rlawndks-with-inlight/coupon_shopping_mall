@@ -4,6 +4,8 @@ import { serialize } from 'object-to-formdata';
 import { getLocalStorage } from "./local-storage";
 import axios from "axios";
 import { when } from "jquery";
+
+export const category_id_depth = 10;
 export const post = async (url, obj_) => {
   let dns_data = getLocalStorage('themeDnsData');
   dns_data = JSON.parse(dns_data);
@@ -190,43 +192,10 @@ export const sortCategoryByManager = (params) => { //관리자 상품 카테고�
   }
   return post(`/api/v1/manager/product-categories/sort`, obj);
 }
-export const getSubCategoriesByManager = (params) => { //관리자 상품 카테고리 목록출력
-  const { page, page_size, s_dt, e_dt, search } = params;
-  let query = {
-    page, page_size, s_dt, e_dt, search
-  }
-  if (!query['s_dt']) delete query['s_dt'];
-  if (!query['e_dt']) delete query['e_dt'];
-  if (!query['search']) delete query['search'];
-
-  return get(`/api/v1/manager/product-sub-categories`, query);
-}
-export const addSubCategoryByManager = async (params) => { //관리자 상품 카테고리 추가
-  const { sub_category_name } = params;
-  let obj = {
-    sub_category_name
-  }
-  return post(`/api/v1/manager/product-sub-categories`, obj);
-}
-export const updateSubCategoryByManager = async (params) => { //관리자 상품 카테고리 수정
-  const { id, sub_category_name } = params;
-  let obj = {
-    sub_category_name
-  }
-  return put(`/api/v1/manager/product-sub-categories/${id}`, obj);
-}
-export const getSubCategoryByManager = (params) => { //관리자 상품 카테고리 단일 출력
-  const { id } = params;
-  return get(`/api/v1/manager/product-sub-categories/${id}`);
-}
-export const deleteSubCategoryByManager = (params) => { //관리자 상품 카테고리 삭제
-  const { id } = params;
-  return deleteItem(`/api/v1/manager/product-sub-categories/${id}`);
-}
 export const getCategoriesByManager = (params) => { //관리자 상품 카테고리 목록출력
-  const { page, page_size, s_dt, e_dt, search } = params;
+  const { page, page_size, s_dt, e_dt, search, product_category_group_id } = params;
   let query = {
-    page, page_size, s_dt, e_dt, search
+    page, page_size, s_dt, e_dt, search, product_category_group_id
   }
   if (!query['s_dt']) delete query['s_dt'];
   if (!query['e_dt']) delete query['e_dt'];
@@ -235,9 +204,9 @@ export const getCategoriesByManager = (params) => { //관리자 상품 카테고
   return get(`/api/v1/manager/product-categories`, query);
 }
 export const addCategoryByManager = async (params) => { //관리자 상품 카테고리 추가
-  const { parent_id, category_type, category_name, category_description, category_file = '' } = params;
+  const { parent_id, category_type, category_name, category_description, category_file = '', product_category_group_id } = params;
   let obj = {
-    parent_id, category_type, category_name, category_description, category_file
+    parent_id, category_type, category_name, category_description, category_file, product_category_group_id
   }
   if (!parent_id) {
     delete obj['parent_id'];
@@ -249,9 +218,9 @@ export const addCategoryByManager = async (params) => { //관리자 상품 카�
   return post(`/api/v1/manager/product-categories`, obj);
 }
 export const updateCategoryByManager = async (params) => { //관리자 상품 카테고리 수정
-  const { id, parent_id, category_type, category_name, category_description, category_file, category_img } = params;
+  const { id, parent_id, category_type, category_name, category_description, category_file, category_img, product_category_group_id } = params;
   let obj = {
-    parent_id, category_type, category_name, category_description, category_file, category_img
+    parent_id, category_type, category_name, category_description, category_file, category_img, product_category_group_id
   }
   let images = [
     'category'
@@ -267,16 +236,59 @@ export const deleteCategoryByManager = (params) => { //관리자 상품 카테�
   const { id } = params;
   return deleteItem(`/api/v1/manager/product-categories/${id}`);
 }
-export const getProductsByManager = (params) => { //관리자 상품목록 출력
-  const { page, page_size, s_dt, e_dt, search, category_id } = params;
+
+//
+export const getCategoryGroupsByManager = (params) => { //관리자 상품 카테고리 그룹 목록출력
+  const { page, page_size, s_dt, e_dt, search } = params;
   let query = {
-    page, page_size, s_dt, e_dt, search, category_id
+    page, page_size, s_dt, e_dt, search
+  }
+  if (!query['s_dt']) delete query['s_dt'];
+  if (!query['e_dt']) delete query['e_dt'];
+  if (!query['search']) delete query['search'];
+
+  return get(`/api/v1/manager/product-category-groups`, query);
+}
+export const addCategoryGroupByManager = async (params) => { //관리자 상품 카테고리 그룹 추가
+  const { category_group_name } = params;
+  let obj = {
+    category_group_name
+  }
+  return post(`/api/v1/manager/product-category-groups`, obj);
+}
+export const updateCategoryGroupByManager = async (params) => { //관리자 상품 카테고리 그룹 수정
+  const { category_group_name, id } = params;
+  let obj = {
+    category_group_name
+  }
+
+  return put(`/api/v1/manager/product-category-groups/${id}`, obj);
+}
+export const getCategoryGroupByManager = (params) => { //관리자 상품 카테고리 그룹 단일 출력
+  const { id } = params;
+  return get(`/api/v1/manager/product-category-groups/${id}`);
+}
+export const deleteCategoryGroupByManager = (params) => { //관리자 상품 카테고리 그룹 삭제
+  const { id } = params;
+  return deleteItem(`/api/v1/manager/product-category-groups/${id}`);
+}
+
+export const getProductsByManager = (params) => { //관리자 상품목록 출력
+  const { page, page_size, s_dt, e_dt, search, } = params;
+  let query = {
+    page, page_size, s_dt, e_dt, search
   }
   if (!query['s_dt']) delete query['s_dt'];
   if (!query['e_dt']) delete query['e_dt'];
   if (!query['search']) delete query['search'];
   if (!query['category_id']) delete query['category_id'];
 
+  for(var i = 0;i<category_id_depth;i++){
+    if(params[`category_id${i}`] > 0){
+      query[`category_id${i}`] = params[`category_id${i}`];
+    }
+  }
+  
   return get(`/api/v1/manager/products`, query);
 }
 export const sortProductByManager = (params) => { //
@@ -286,19 +298,31 @@ export const sortProductByManager = (params) => { //
   }
   return post(`/api/v1/manager/products/sort`, obj);
 }
+export const sortDataByManager = (params, table) => { //
+  const { source_id, source_sort_idx, dest_id, dest_sort_idx } = params;
+  let obj = {
+    source_id, source_sort_idx, dest_id, dest_sort_idx
+  }
+  return post(`/api/v1/manager/${table}/sort`, obj);
+}
 export const addProductByManager = async (params) => { //관리자 상품 추가
-  const { category_id, product_name = '', product_comment = '', product_price = 0, product_sale_price = 0, brand_name = '', origin_name = '', mfg_name = '', model_name = '', product_description = '',
+  const { category_id, product_name = '', product_comment = '', product_price = 0, product_sale_price = 0, product_description = '',
     product_file,
     sub_images = [],
     groups = [],
     characters = [],
   } = params;
   let obj = {
-    category_id, product_name, product_comment, product_price, product_sale_price, brand_name, origin_name, mfg_name, model_name, product_description,
+    category_id, product_name, product_comment, product_price, product_sale_price, product_description,
     product_file,
     sub_images,
     groups,
     characters,
+  }
+  for(var i = 0;i<category_id_depth;i++){
+    if(params[`category_id${i}`] > 0){
+      obj[`category_id${i}`] = params[`category_id${i}`];
+    }
   }
   let images = [
     'product'
@@ -307,18 +331,23 @@ export const addProductByManager = async (params) => { //관리자 상품 추가
   return post(`/api/v1/manager/products`, obj);
 }
 export const updateProductByManager = async (params) => { //관리자 상품 수정
-  const { id, category_id, product_name = '', product_comment = '', product_price = 0, product_sale_price = 0, brand_name = '', origin_name = '', mfg_name = '', model_name = '', product_description = '',
+  const { id, product_name = '', product_comment = '', product_price = 0, product_sale_price = 0,product_description = '',
     product_file, product_img,
     sub_images = [],
     groups = [],
     characters = [],
   } = params;
   let obj = {
-    category_id, product_name, product_comment, product_price, product_sale_price, brand_name, origin_name, mfg_name, model_name, product_description,
+    product_name, product_comment, product_price, product_sale_price, product_description,
     product_file, product_img,
     sub_images,
     groups,
     characters,
+  }
+  for(var i = 0;i<category_id_depth;i++){
+    if(params[`category_id${i}`] > 0){
+      obj[`category_id${i}`] = params[`category_id${i}`];
+    }
   }
   let images = [
     'product'

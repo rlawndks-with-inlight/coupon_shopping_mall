@@ -9,7 +9,7 @@ import Label from 'src/components/label/Label';
 import EmptyContent from 'src/components/empty-content/EmptyContent';
 import Iconify from 'src/components/iconify/Iconify';
 import { useSettingsContext } from 'src/components/settings';
-import { getAddressesByUser, getProductsByUser } from 'src/utils/api-shop';
+import { getAddressesByUser } from 'src/utils/api-shop';
 import { calculatorPrice, getCartDataUtil, onPayProductsByAuth, onPayProductsByHand } from 'src/utils/shop-util';
 import { useAuthContext } from 'src/layouts/manager/auth/useAuthContext';
 import Payment from 'payment'

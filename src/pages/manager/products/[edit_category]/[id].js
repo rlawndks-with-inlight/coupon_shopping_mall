@@ -9,11 +9,9 @@ import { Upload } from "src/components/upload";
 import { test_categories } from "src/data/test-data";
 import ManagerLayout from "src/layouts/manager/ManagerLayout";
 import { Icon } from "@iconify/react";
-import { base64toFile, commarNumber, getAllIdsWithParents } from "src/utils/function";
+import { commarNumber, getAllIdsWithParents } from "src/utils/function";
 import styled from "styled-components";
 import $ from 'jquery';
-import dynamic from "next/dynamic";
-
 import { addProductByManager, getCategoriesByManager, getProductByManager, getProductReviewsByManager, updateProductByManager, uploadFileByManager } from "src/utils/api-manager";
 import { toast } from "react-hot-toast";
 import { useTheme } from "@emotion/react";
@@ -21,7 +19,6 @@ import ManagerTable from "src/views/manager/mui/table/ManagerTable";
 import _ from "lodash";
 import { useModal } from "src/components/dialog/ModalProvider";
 import ReactQuillComponent from "src/views/manager/react-quill";
-
 
 const tab_list = [
   {
@@ -65,7 +62,8 @@ export const SelectCategoryComponent = (props) => {
     categories,
     categoryChildrenList,
     onClickCategory,
-    noneSelectText
+    noneSelectText,
+    sort_idx,
   } = props;
   const theme = useTheme();
   return (
@@ -98,7 +96,7 @@ export const SelectCategoryComponent = (props) => {
               {noneSelectText}
             </>}
         </CategoryHeader>
-        <div style={{ overflowX: 'auto', width: '100%', display: '-webkit-box' }} className="category-container">
+        <div style={{ overflowX: 'auto', width: '100%', display: '-webkit-box' }} className={`category-container-${sort_idx}`}>
           <CategoryContainer>
             {categories.map((category, idx) => (
               <>
@@ -106,7 +104,7 @@ export const SelectCategoryComponent = (props) => {
                   color: `${curCategories.map(item => { return item?.id }).includes(category?.id) ? '' : themeObj.grey[500]}`,
                   fontWeight: `${curCategories.map(item => { return item?.id }).includes(category?.id) ? 'bold' : ''}`,
                 }} onClick={() => {
-                  onClickCategory(category, 0)
+                  onClickCategory(category, 0, sort_idx)
                 }}>
                   <div>{category.category_name}</div>
                   <div>{category?.children && category?.children.length > 0 ? '>' : ''}</div>
@@ -126,7 +124,7 @@ export const SelectCategoryComponent = (props) => {
                           fontWeight: `${curCategories.map(item => { return item?.id }).includes(category?.id) ? 'bold' : ''}`,
                         }}
                           onClick={() => {
-                            onClickCategory(category, index + 1)
+                            onClickCategory(category, index + 1, sort_idx)
                           }}><div>{category.category_name}</div>
                           <div>{category?.children && category?.children.length > 0 ? '>' : ''}</div>
                         </Category>
@@ -143,6 +141,7 @@ export const SelectCategoryComponent = (props) => {
 }
 const ProductEdit = () => {
   const { setModal } = useModal()
+  const { themeCategoryList } = useSettingsContext();
   const defaultReviewColumns = [
     {
       id: 'product_name',
@@ -199,18 +198,15 @@ const ProductEdit = () => {
   const [loading, setLoading] = useState(true);
   const [currentTab, setCurrentTab] = useState(0);
   const [categories, setCategories] = useState([]);
-  const [curCategories, setCurCategories] = useState([]);
-  const [categoryChildrenList, setCategoryChildrenList] = useState([]);
+  const [curCategories, setCurCategories] = useState({});
+  const [categoryChildrenList, setCategoryChildrenList] = useState({});
   const [item, setItem] = useState({
     category_id: undefined,
+    category_ids: [],
     product_name: '',
     product_comment: '',
     product_price: 0,
     product_sale_price: 0,
-    brand_name: '',
-    origin_name: '',
-    mfg_name: '',
-    model_name: '',
     product_description: '',
     product_file: undefined,
     sub_images: [],
@@ -254,7 +250,7 @@ const ProductEdit = () => {
     setReviewColumns(cols)
     let category_list = await getCategoriesByManager({ page: 1, page_size: 100000 });
     category_list = category_list?.content;
-    if (!category_list.length > 0) {
+    if (!(themeCategoryList.length > 0)) {
       toast.error("카테고리 생성 후 상품 등록 가능합니다.");
     }
     setCategories(category_list);
@@ -300,7 +296,6 @@ const ProductEdit = () => {
       path: inputFile.path,
       preview: inputFile.preview
     });
-
     if (find_index < 0) {
       for (var i = 0; i < sub_images.length; i++) {
         if (sub_images[i]?.product_sub_img == inputFile) {
@@ -323,14 +318,8 @@ const ProductEdit = () => {
     sub_images = [];
     setItem({ ...item, ['sub_images']: sub_images })
   };
-  const onClickCategory = (category, depth) => {
-    setItem(
-      {
-        ...item,
-        ['category_id']: category?.id
-      }
-    )
-    let parent_list = getAllIdsWithParents(categories);
+  const onClickCategory = (category, depth, idx) => {
+    let parent_list = getAllIdsWithParents(themeCategoryList[idx]?.product_categories);
     let use_list = [];
     for (var i = 0; i < parent_list.length; i++) {
       if (parent_list[i][depth]?.id == category?.id) {
@@ -338,21 +327,35 @@ const ProductEdit = () => {
         break;
       }
     }
-    setCurCategories(use_list);
+    setCurCategories({
+      ...curCategories,
+      [idx]: use_list
+    });
     let children_list = [];
     for (var i = 0; i < use_list.length; i++) {
       children_list.push(use_list[i]?.children);
     }
-    setCategoryChildrenList(children_list);
-    $('.category-container').scrollLeft(100000);
+    setCategoryChildrenList({
+      ...categoryChildrenList,
+      [idx]: children_list
+    });
+    $(`.category-container-${idx}`).scrollLeft(100000);
   }
   const onSave = async () => {
     let result = undefined
+    let category_ids = {};
+    for(var i = 0;i<themeCategoryList.length;i++){
+      if(!curCategories[i]){
+        toast.error(`${themeCategoryList[i]?.category_group_name}를 선택해 주세요.`);
+        return;
+      } else {
+        category_ids[`category_id${i}`] = curCategories[i][curCategories[i].length-1]?.id;
+      }
+    }
     if (item?.id) {//수정
-
-      result = await updateProductByManager({ ...item, id: item?.id })
+      result = await updateProductByManager({ ...item, id: item?.id, ...category_ids })
     } else {//추가
-      result = await addProductByManager({ ...item })
+      result = await addProductByManager({ ...item, ...category_ids })
     }
     if (result) {
       toast.success("성공적으로 저장 되었습니다.");
@@ -455,25 +458,23 @@ const ProductEdit = () => {
                 <Grid item xs={12} md={6}>
                   <Card sx={{ p: 2, height: '100%' }}>
                     <Stack spacing={3}>
-                      <Stack spacing={1}>
-                        <Typography variant="subtitle2" sx={{ color: 'text.secondary' }}>
-                          카테고리
-                        </Typography>
-                        <SelectCategoryComponent
-                          curCategories={curCategories}
-                          categories={categories}
-                          categoryChildrenList={categoryChildrenList}
-                          onClickCategory={onClickCategory}
-                          noneSelectText={'상품분류를 선택 후 상품분류 적용 버튼을 눌러주세요'}
-                        />
-                        {item?.category_id ?
-                          <>
-
-                          </>
-                          :
-                          <>
-                          </>}
-                      </Stack>
+                      {themeCategoryList.map((group, idx) => (
+                        <>
+                          <Stack spacing={1}>
+                            <Typography variant="subtitle2" sx={{ color: 'text.secondary' }}>
+                              {group?.category_group_name}
+                            </Typography>
+                            <SelectCategoryComponent
+                              curCategories={curCategories[idx] ?? []}
+                              categories={group?.product_categories}
+                              categoryChildrenList={categoryChildrenList[idx] ?? []}
+                              onClickCategory={onClickCategory}
+                              noneSelectText={`${group?.category_group_name}를 선택해 주세요`}
+                              sort_idx={idx}
+                            />
+                          </Stack>
+                        </>
+                      ))}
                       <TextField
                         label='상품명'
                         value={item.product_name}

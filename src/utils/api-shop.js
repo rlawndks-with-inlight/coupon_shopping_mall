@@ -1,4 +1,4 @@
-import { get, post, put, deleteItem } from './api-manager';
+import { get, post, put, deleteItem, category_id_depth } from './api-manager';
 
 export const getShopCategoriesByUser = (params) => { // 유저 연결되어있는 하위 카테고리가 모두 출력됩니다. (게시글 카테고리, 상품 카테고리) 팝업 정보가 출력됩니다.
   const { product_review_ids = [], product_ids = [], brand_id, root_id } = params;
@@ -28,12 +28,14 @@ export const getSellerCategoriesByUser = async (params) => { // 셀러 연결되
   return get(`/api/v1/shop/shop`, query);
 }
 export const getProductsByUser = (params) => { // 유저 카테고리 기반 상품 목록 출력
-  const { category_id, page = 1, page_size = 10, mcht_id } = params;
+  const { page = 1, page_size = 10, mcht_id } = params;
   let query = {
-    category_id, page, page_size, mcht_id
+    page, page_size, mcht_id
   }
-  if (!category_id) {
-    delete query['category_id'];
+  for (var i = 0; i < category_id_depth; i++) {
+    if (params[`category_id${i}`] > 0) {
+      query[`category_id${i}`] = params[`category_id${i}`];
+    }
   }
   if (!mcht_id) {
     delete query['mcht_id'];

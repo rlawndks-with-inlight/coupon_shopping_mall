@@ -28,12 +28,12 @@ const Demo2 = props => {
   const [parentList, setParentList] = useState([]);//질문 부모 리스트 카테고리는-> tv-> 대형tv 말하는 건가?
   const [curCategories, setCurCategories] = useState([]);//현재 품목 카테고리와 변경할 품목 카테고리
   useEffect(() => {
-    if (themeCategoryList.length > 0) {//카테고리에서 골랐다면
+    if ((themeCategoryList[0]?.product_categories ?? []).length > 0) {//카테고리에서 골랐다면
       let parent_list = []
       if (parentList.length > 0) {
         parent_list = parentList; //질문 선택한 부모 리스트를 출력시키려고 현재 부모 리스트에 넣는거?
       } else {
-        parent_list = getAllIdsWithParents(themeCategoryList);//
+        parent_list = getAllIdsWithParents(themeCategoryList[0]?.product_categories ?? []);//
       }
       setParentList(parent_list);//질문 선택한 부모 카테고리를 넣은건가?
       let use_list = [];
@@ -88,7 +88,7 @@ const Demo2 = props => {
                 marginLeft: `${idx == 0 ? 'auto' : '0'}`//왼쪽에서의 버튼 간격
               }}
                 onClick={() => {
-                  router.push(`/shop/items/${item?.id}?depth=${parseInt(router.query?.depth) + 1}`)
+                  router.push(`/shop/items?category_id0=${item?.id}&depth=${parseInt(router.query?.depth) + 1}`)
                 }}
               >{item.category_name}</Button>
             </>//위의 버튼이 가구/소품 누르면 아래에 버튼으로 쇼핑몰별/학생가구/주방가구 나오게 하는것 같음

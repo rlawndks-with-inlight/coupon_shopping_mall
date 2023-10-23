@@ -84,12 +84,12 @@ const Demo1 = (props) => {
     };
   }, []);
   const settingPage = async (search_obj, is_first) => {
-    if (themeCategoryList.length > 0) {
+    if ((themeCategoryList[0]?.product_categories??[]).length > 0) {
       let parent_list = []
       if (parentList.length > 0) {
         parent_list = parentList;
       } else {
-        parent_list = getAllIdsWithParents(themeCategoryList);
+        parent_list = getAllIdsWithParents(themeCategoryList[0]?.product_categories??[]);
       }
       setParentList(parent_list);
       let use_list = [];
@@ -104,8 +104,9 @@ const Demo1 = (props) => {
     let product_list = await getProductsByUser({
       ...search_obj,
       brand_id: themeDnsData?.id,
-      category_id: router.query?.category_id,
+      ...router.query
     })
+    console.log(product_list)
     setSearchObj(search_obj);
     if (is_first) {
       setProducts(product_list.content ?? []);
@@ -136,7 +137,7 @@ const Demo1 = (props) => {
                     cursor: 'pointer'
                   }}
                     onClick={() => {
-                      router.push(`/shop/items/${item?.id}?depth=${idx}`)
+                      router.push(`/shop/items?category_id0=${item?.id}&depth=${idx}`)
                     }}
                   >{item.category_name}</div>
                 </>
@@ -159,7 +160,7 @@ const Demo1 = (props) => {
                 marginRight: '0.25rem',
               }}
                 onClick={() => {
-                  router.push(`/shop/items/${item?.id}?depth=${parseInt(router.query?.depth) + 1}`)
+                  router.push(`/shop/items?category_id0=${item?.id}&depth=${parseInt(router.query?.depth) + 1}`)
                 }}
               >{item.category_name}</Button>
             </>

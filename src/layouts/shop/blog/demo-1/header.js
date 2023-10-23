@@ -69,7 +69,7 @@ const Header = (props) => {
   const settingHeader = async () => {
     setLoading(true);
     
-    setCategories(themeCategoryList);
+    setCategories(themeCategoryList[0]?.product_categories??[]);
     
     setLoading(false);
   }

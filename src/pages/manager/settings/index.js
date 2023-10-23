@@ -1,3 +1,3 @@
-import ParcelOutList from "./parcel-out";
+import PaymentModuleList from "./payment-modules";
 
-export default ParcelOutList
+export default PaymentModuleList

@@ -778,6 +778,39 @@ export const deletePopupByManager = (params) => { //관리자 팝업 삭제
   const { id } = params;
   return deleteItem(`/api/v1/manager/popups/${id}`);
 }
+export const getPaymentModulesByManager = (params) => { //관리자 팝업 목록 출력
+  const { page, page_size, s_dt, e_dt, search } = params;
+  let query = {
+    page, page_size, s_dt, e_dt, search
+  }
+  if (!query['s_dt']) delete query['s_dt'];
+  if (!query['e_dt']) delete query['e_dt'];
+  if (!query['search']) delete query['search'];
+  return get(`/api/v1/manager/payment-modules`, query);
+}
+
+export const addPaymentModuleByManager = (params) => { //관리자 팝업 추가
+  const { pay_key, trx_type, is_old_auth } = params;
+  let obj = {
+    pay_key, trx_type, is_old_auth 
+  }
+  return post(`/api/v1/manager/payment-modules`, obj);
+}
+export const updatePaymentModuleByManager = (params) => { //관리자 팝업 수정
+  const {  pay_key, trx_type, is_old_auth, id } = params;
+  let obj = {
+    pay_key, trx_type, is_old_auth 
+  }
+  return put(`/api/v1/manager/payment-modules/${id}`, obj);
+}
+export const getPaymentModuleByManager = (params) => { //관리자 팝업 단일 출력
+  const { id } = params;
+  return get(`/api/v1/manager/payment-modules/${id}`);
+}
+export const deletePaymentModuleByManager = (params) => { //관리자 팝업 삭제
+  const { id } = params;
+  return deleteItem(`/api/v1/manager/payment-modules/${id}`);
+}
 export const getTrxsByManager = (params) => { //관리자 결제내역 목록 출력
   const { page, page_size, s_dt, e_dt, search, trx_status } = params;
   let query = {

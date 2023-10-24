@@ -155,7 +155,7 @@ export function SettingsProvider({ children }) {
         product_review_ids: product_review_ids,
         product_ids: product_ids,
       });
-      console.log(data)
+      let post_category_data = await getPostCate
       dns_data['shop_obj'] = getMainObjContentByIdList(dns_data?.shop_obj, 'item-reviews-select', data?.product_reviews);
       dns_data['blog_obj'] = getMainObjContentByIdList(dns_data?.blog_obj, 'item-reviews-select', data?.product_reviews);
       dns_data['shop_obj'] = getMainObjContentByIdList(dns_data?.shop_obj, 'item-reviews', data?.product_reviews, false, true);

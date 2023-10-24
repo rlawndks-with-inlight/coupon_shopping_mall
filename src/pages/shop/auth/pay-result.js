@@ -17,7 +17,7 @@ const getDemo = (num, common) => {
 const PayResult = () => {
   const router = useRouter();
   const { themeDnsData } = useSettingsContext();
-
+    
   return (
     <>
       {getDemo(themeDnsData?.shop_demo_num, {

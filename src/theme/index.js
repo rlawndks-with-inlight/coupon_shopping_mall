@@ -34,6 +34,7 @@ export default function ThemeProvider({ children }) {
       palette_obj['primary']['darker'] = themeDnsData?.theme_css?.main_color;
       palette_obj['primary']['light'] = themeDnsData?.theme_css?.main_color + '';
       palette_obj['primary']['lighter'] = themeDnsData?.theme_css?.main_color + '29';
+      palette_obj.is_dns_data = true;
       setPaletteObj(palette_obj);
     }
   }, [themeDnsData])
@@ -58,7 +59,10 @@ export default function ThemeProvider({ children }) {
       <MUIThemeProvider theme={theme}>
         <CssBaseline />
         <GlobalStyles />
-        {children}
+        {paletteObj?.is_dns_data &&
+          <>
+            {children}
+          </>}
       </MUIThemeProvider>
     </StyledEngineProvider>
   );

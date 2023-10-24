@@ -629,8 +629,11 @@ export default function ProductDetailsSummary({ product, onAddCart, onGotoStep, 
               장바구니
             </Button>
             <Button fullWidth size="large" variant="contained" onClick={() => {
-
-              setBuyOpen(true);
+              if(user){
+                setBuyOpen(true);
+              } else{
+                window.location.href = '/shop/auth/login'
+              }
             }}>
               바로구매
             </Button>

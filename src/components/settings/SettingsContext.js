@@ -170,7 +170,7 @@ export function SettingsProvider({ children }) {
       onChangePopupList(data?.popups ?? []);
       onChangePostCategoryList(data?.post_categories ?? []);
       onChangeSellerList(data?.merchandises?.content ?? []);
-
+      console.log(dns_data)
       onChangeDnsData(dns_data);
     } catch (err) {
       console.log(err)

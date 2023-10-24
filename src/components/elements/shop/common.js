@@ -22,6 +22,7 @@ import { fCurrency } from 'src/utils/formatNumber';
 import { getPayHistoriesByUser } from 'src/utils/api-shop';
 import { getTrxStatusByNumber, makeMaxPage } from 'src/utils/function';
 import { insertWishDataUtil } from "src/utils/shop-util";
+import toast from "react-hot-toast";
 const ItemName = styled.div`
 font-weight: bold;
 font-size:${themeObj.font_size.size7};
@@ -59,6 +60,7 @@ flex-direction: column;
 
 export const Item = (props) => {
 
+  const {user} = useSettingsContext();
   const { themeWishData, onChangeWishData } = useSettingsContext();
   const { item, router, theme_css } = props;
   const [itemThemeCss, setItemThemeCss] = useState(itemThemeCssDefaultSetting);
@@ -68,7 +70,11 @@ export const Item = (props) => {
     }
   }, [theme_css])
   const onClickHeart = () => {
-    insertWishDataUtil(item, themeWishData, onChangeWishData);
+    if(user){
+      insertWishDataUtil(item, themeWishData, onChangeWishData);
+    } else {
+      toast.error('로그인을 해주세요.')
+    }
   }
   return (
     <>

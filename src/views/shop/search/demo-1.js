@@ -4,8 +4,13 @@ import styled from 'styled-components'
 import { Col, Row, Title, themeObj } from 'src/components/elements/styled-components';
 import { Item, Items } from 'src/components/elements/shop/common';
 import _ from 'lodash';
-import { Divider, IconButton, InputAdornment, TextField } from '@mui/material';
+import { Button, Divider, IconButton, InputAdornment, TextField } from '@mui/material';
 import { Icon } from '@iconify/react';
+import { useSettingsContext } from 'src/components/settings';
+import { useRef } from 'react';
+import { getProductsByUser } from 'src/utils/api-shop';
+import { Spinner } from 'evergreen-ui';
+import $ from 'jquery';
 
 const Wrappers = styled.div`
 max-width:1200px;
@@ -25,13 +30,68 @@ const Demo1 = (props) => {
       router
     },
   } = props;
+
+  const {themeDnsData} = useSettingsContext();
   const [keyword, setKeyword] = useState("")
+  const [products, setProducts] = useState([]);
+  const [moreLoading, setMoreLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const scrollRef = useRef(null);
+  const [searchObj, setSearchObj] = useState({
+    page: 1,
+    page_size: 15,
+    search:"",
+  })
+  const handleScroll = () => {
+    if (!scrollRef.current) {
+      return;
+    }
+    const { top, bottom } = scrollRef.current.getBoundingClientRect();
+    const windowHeight = window.innerHeight;
+    if (top < windowHeight && bottom >= 0 && !moreLoading) {
+      setMoreLoading(true);
+      $('.more-page').trigger("click");
+    }
+  };
+  useEffect(() => {
+    window.addEventListener('scroll', handleScroll);
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+    };
+  }, []);
   useEffect(() => {
     if (router.query?.keyword) {
-      setKeyword(router.query?.keyword)
+      setKeyword(router.query?.keyword);
+      settingPage({
+        page: 1,
+        page_size: 15,
+        search: router.query?.keyword,
+      }, true);
     }
   }, [router.query])
+ const settingPage = async (search_obj, is_first) => {
+    if (is_first) {
+      setLoading(true);
+      setProducts([]);
+    }
+    let product_list = await getProductsByUser({
+      ...search_obj,
+      brand_id: themeDnsData?.id,
+    })
+    setSearchObj(search_obj);
+    if (is_first) {
+      setProducts(product_list.content ?? []);
+      setLoading(false);
+    } else {
+      setProducts([...products, ...product_list.content ?? []]);
+    }
 
+  }
+  useEffect(() => {
+    if (products.length > 0) {
+      setMoreLoading(false);
+    }
+  }, [products])
   return (
     <>
       <Wrappers>
@@ -82,16 +142,50 @@ const Demo1 = (props) => {
         <div style={{
           marginTop: '1rem'
         }} />
-        {test_items.length > 0 ?
+       {products ?
           <>
-            <Items items={test_items} router={router} />
+            {loading ?
+              <>
+                <Row style={{ width: '100%', height: '300px' }}>
+                  <div style={{ margin: 'auto' }}>
+                    <Spinner sx={{ height: '72px', color: 'green' }} color={'red'} />
+                  </div>
+                </Row>
+              </>
+              :
+              <>
+                {products.length > 0 ?
+                  <>
+                    <Items items={products} router={router} />
+                  </>
+                  :
+                  <>
+                    <Col>
+                      <Icon icon={'basil:cancel-outline'} style={{ margin: '8rem auto 1rem auto', fontSize: themeObj.font_size.size1, color: themeObj.grey[300] }} />
+                      <div style={{ margin: 'auto auto 8rem auto' }}>검색결과가 없습니다.</div>
+                    </Col>
+                  </>}
+              </>}
+            {moreLoading ?
+              <>
+                <Row style={{ width: '100%' }}>
+                  <div style={{ margin: '0 auto' }}>
+                    <Spinner sx={{ height: '72px', color: 'green' }} color={'red'} />
+                  </div>
+                </Row>
+              </>
+              :
+              <>
+                <Button className='more-page' onClick={() => {
+                  settingPage({
+                    ...searchObj,
+                    page: searchObj?.page + 1
+                  })
+                }} ref={scrollRef} />
+              </>}
           </>
           :
           <>
-          <Col>
-              <Icon icon={'basil:cancel-outline'} style={{ margin: '8rem auto 1rem auto', fontSize: themeObj.font_size.size1, color: themeObj.grey[300] }} />
-              <div style={{ margin: 'auto auto 8rem auto' }}>검색결과가 없습니다.</div>
-            </Col>
           </>}
       </Wrappers>
     </>

@@ -140,10 +140,15 @@ export default function ProductDetailsSummary({ product, onAddCart, onGotoStep, 
   const isMaxQuantity =
     cart.filter((item) => item.id === id).map((item) => item.quantity)[0] >= available;
   const handleAddCart = async () => {
-    let result = insertCartDataUtil(product, selectProductGroups, themeCartData, onChangeCartData);
-    if (result) {
-      toast.success("장바구니에 성공적으로 추가되었습니다.")
+    if (user) {
+      let result = insertCartDataUtil(product, selectProductGroups, themeCartData, onChangeCartData);
+      if (result) {
+        toast.success("장바구니에 성공적으로 추가되었습니다.")
+      }
+    } else {
+      toast.error('로그인을 해주세요.');
     }
+
   };
   const onSelectOption = (group, option, is_option_multiple) => {
     let select_product_groups = selectItemOptionUtil(group, option, selectProductGroups, is_option_multiple);
@@ -557,27 +562,32 @@ export default function ProductDetailsSummary({ product, onAddCart, onGotoStep, 
                 <Typography variant="subtitle2" sx={{ height: 40, lineHeight: '40px', flexGrow: 1 }}>
                   {group?.group_name}
                 </Typography>
-                <Select
-                  name="size"
-                  size="small"
-                  sx={{
-                    minWidth: 96,
-                    '& .MuiFormHelperText-root': {
-                      mx: 0,
-                      mt: 1,
-                      textAlign: 'right',
-                    },
-                  }}
-                  onChange={(e) => {
-                    onSelectOption(group, e.target.value)
-                  }}
-                >
-                  {group?.options && group?.options.map((option) => (
-                    <MenuItem key={option?.option_name} value={option}>
-                      {option?.option_name}
-                    </MenuItem>
-                  ))}
-                </Select>
+                <FormControl size='small'>
+                  <InputLabel id="demo-simple-select-label">선택</InputLabel>
+                  <Select
+                    name="size"
+                    size="small"
+                    sx={{
+                      minWidth: 96,
+                      '& .MuiFormHelperText-root': {
+                        mx: 0,
+                        mt: 1,
+                        textAlign: 'right',
+                      },
+                    }}
+                    label="선택"
+                    onChange={(e) => {
+                      onSelectOption(group, e.target.value)
+                    }}
+                  >
+                    {group?.options && group?.options.map((option) => (
+                      <MenuItem key={option?.option_name} value={option}>
+                        {option?.option_name}
+                        {(option?.option_price > 0 || option?.option_price < 0) ? ` (${option?.option_price > 0 ? '+' : ''}${commarNumber(option?.option_price)})` : ''}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
               </Stack>
             </>
           ))}
@@ -629,9 +639,9 @@ export default function ProductDetailsSummary({ product, onAddCart, onGotoStep, 
               장바구니
             </Button>
             <Button fullWidth size="large" variant="contained" onClick={() => {
-              if(user){
+              if (user) {
                 setBuyOpen(true);
-              } else{
+              } else {
                 window.location.href = '/shop/auth/login'
               }
             }}>

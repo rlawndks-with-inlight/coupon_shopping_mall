@@ -80,6 +80,7 @@ margin: 0.2rem 0;
 cursor:pointer;
 `
 const HomePost = (props) => {
+  console.log(props)
   const { column, data, func, is_manager } = props;
   const { themeDnsData } = data;
   const { router } = func;
@@ -87,7 +88,7 @@ const HomePost = (props) => {
   const [categoryId, setCategoryId] = useState(column?.categories[0]?.id);
   return (
     <>
-      <FullWrappers style={{ marginTop: `${style?.margin_top}px`, backgroundImage:`${column?.src?`url(${column?.src})`:''}` }}>
+      <FullWrappers style={{ marginTop: `${style?.margin_top}px`, backgroundImage: `${column?.src ? `url(${column?.src})` : ''}` }}>
         <ContentWrappers>
           <Content style={{ color: '#fff' }}>
             <div style={{ fontSize: themeObj.font_size.size5 }}>CALL CENTER</div>

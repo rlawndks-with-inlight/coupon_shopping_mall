@@ -5,10 +5,12 @@ export const getShopCategoriesByUser = (params) => { // 유저 연결되어있�
   let query = {
     product_review_ids,
     product_ids,
-    brand_id, root_id
+    brand_id, 
+    root_id,
   }
   query.product_review_ids = JSON.stringify(query.product_review_ids);
   query.product_ids = JSON.stringify(query.product_ids);
+  
   return get(`/api/v1/shop/shop`, query);
 }
 export const getSellerInfoByUser = async (params) => { // 셀러 정보가 출력됩니다. (게시글 카테고리, 상품 카테고리) 팝업 정보가 출력됩니다.
@@ -28,9 +30,10 @@ export const getSellerCategoriesByUser = async (params) => { // 셀러 연결되
   return get(`/api/v1/shop/shop`, query);
 }
 export const getProductsByUser = (params) => { // 유저 카테고리 기반 상품 목록 출력
-  const { page = 1, page_size = 10, mcht_id } = params;
+  const { page = 1, page_size = 10, mcht_id, search } = params;
   let query = {
-    page, page_size, mcht_id
+    page, page_size, mcht_id,
+    search,
   }
   for (var i = 0; i < category_id_depth; i++) {
     if (params[`category_id${i}`] > 0) {
@@ -39,6 +42,9 @@ export const getProductsByUser = (params) => { // 유저 카테고리 기반 상
   }
   if (!mcht_id) {
     delete query['mcht_id'];
+  }
+  if(!search){
+    delete query['search'];
   }
   return get(`/api/v1/shop/product-categories`, query);
 }

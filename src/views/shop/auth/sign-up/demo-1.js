@@ -165,7 +165,7 @@ const Demo1 = (props) => {
         return;
       }
       let result = await signUpByUser({ ...user, brand_id: themeDnsData?.id });
-      if(!result){
+      if (!result) {
         return;
       }
     }
@@ -238,7 +238,8 @@ const Demo1 = (props) => {
             </div>
             <div style={{ marginTop: '1rem' }} />
             <FormControlLabel label={<Typography style={{ fontSize: themeObj.font_size.size6 }}>쇼핑정보 수신 동의 (선택)</Typography>} control={<Checkbox checked={checkboxObj.check_3} onChange={(e) => {
-              setCheckboxObj({ ...checkboxObj, ['check_3']: e.target.checked })
+
+              setCheckboxObj({ ...checkboxObj, ['check_3']: e.target.checked, ['check_4']: e.target.checked, ['check_5']: e.target.checked, })
             }} />} />
             <div style={{ marginTop: '1rem' }} />
             <Divider />

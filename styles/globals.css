@@ -1,6 +1,14 @@
 body {
   margin: 0 !important;
 }
+.ql-align-right img {
+  float: right;
+}
+
+.ql-align-center img {
+  margin: 0 auto;
+  display: block;
+}
 input[type='color']::-moz-color-swatch {
   border: none;
 }

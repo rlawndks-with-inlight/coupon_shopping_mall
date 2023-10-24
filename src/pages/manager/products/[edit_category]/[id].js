@@ -344,12 +344,12 @@ const ProductEdit = () => {
   const onSave = async () => {
     let result = undefined
     let category_ids = {};
-    for(var i = 0;i<themeCategoryList.length;i++){
-      if(!curCategories[i]){
+    for (var i = 0; i < themeCategoryList.length; i++) {
+      if (!curCategories[i]) {
         toast.error(`${themeCategoryList[i]?.category_group_name}를 선택해 주세요.`);
         return;
       } else {
-        category_ids[`category_id${i}`] = curCategories[i][curCategories[i].length-1]?.id;
+        category_ids[`category_id${i}`] = curCategories[i][curCategories[i].length - 1]?.id;
       }
     }
     if (item?.id) {//수정
@@ -537,6 +537,7 @@ const ProductEdit = () => {
                         <Typography variant="subtitle2" sx={{ color: 'text.secondary' }}>
                           상품설명
                         </Typography>
+                       
                         <ReactQuillComponent
                           value={item.product_description}
                           setValue={(value) => {

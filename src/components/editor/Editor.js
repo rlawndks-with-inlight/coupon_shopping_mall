@@ -1,4 +1,5 @@
 import PropTypes from 'prop-types';
+import '../../utils/highlight';
 // next
 import dynamic from 'next/dynamic';
 // @mui

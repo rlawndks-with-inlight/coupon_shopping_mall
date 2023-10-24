@@ -27,7 +27,7 @@ export default function ThemeProvider({ children }) {
   const { themeMode, themeDirection, themeDnsData } = useSettingsContext();
   const [paletteObj, setPaletteObj] = useState(palette(themeMode))
   useEffect(() => {
-    if (themeDnsData?.theme_css?.main_color) {
+    if (themeDnsData?.id) {
       let palette_obj = { ...paletteObj };
       palette_obj['primary']['main'] = themeDnsData?.theme_css?.main_color;
       palette_obj['primary']['dark'] = themeDnsData?.theme_css?.main_color;

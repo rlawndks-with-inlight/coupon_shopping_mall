@@ -4,21 +4,10 @@ import ManagerLayout from "src/layouts/manager/ManagerLayout";
 import ManagerTable from "src/views/manager/mui/table/ManagerTable";
 import { Icon } from "@iconify/react";
 import { useRouter } from "next/router";
-import { Row } from "src/components/elements/styled-components";
 import { getPaymentModulesByManager, getProductsByManager } from "src/utils/api-manager";
-const test_data = [
-  {
-    id: 1,
-    user_name: 'test1',
-    phone_num: '01000000000',
-  },
-  {
-    id: 2,
-    user_name: 'test2',
-    phone_num: '01000000000',
-  }
-]
+
 const PaymentModuleList = () => {
+
   const defaultColumns = [
     {
       id: 'id',

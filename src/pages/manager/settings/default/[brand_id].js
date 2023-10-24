@@ -1,20 +1,16 @@
 
-import { Avatar, Button, Card, CardHeader, FormControl, FormControlLabel, Grid, InputLabel, MenuItem, Select, Stack, Tab, Tabs, TextField, TextareaAutosize, Typography } from "@mui/material";
+import { Avatar, Button, Card, CardHeader, FormControl, Grid, InputLabel, MenuItem, Select, Stack, TextField, TextareaAutosize, Typography } from "@mui/material";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { Row, themeObj } from "src/components/elements/styled-components";
 import { useSettingsContext } from "src/components/settings";
 import { Upload } from "src/components/upload";
 import ManagerLayout from "src/layouts/manager/ManagerLayout";
-import { base64toFile, getAllIdsWithParents } from "src/utils/function";
 import styled from "styled-components";
 import { defaultManagerObj } from "src/data/manager-data";
-import { axiosIns } from "src/utils/axios";
 import { addBrandByManager, getBrandByManager, updateBrandByManager, uploadFileByManager } from "src/utils/api-manager";
 import { toast } from "react-hot-toast";
 import { useModal } from "src/components/dialog/ModalProvider";
-import dynamic from "next/dynamic";
-import axios from "axios";
 import { useAuthContext } from "src/layouts/manager/auth/useAuthContext";
 import ReactQuillComponent from "src/views/manager/react-quill";
 

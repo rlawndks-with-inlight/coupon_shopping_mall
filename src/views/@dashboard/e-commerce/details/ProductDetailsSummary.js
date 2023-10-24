@@ -1,10 +1,5 @@
 import PropTypes from 'prop-types';
 import { useEffect, useState } from 'react';
-import { sentenceCase } from 'change-case';
-// next
-import { useRouter } from 'next/router';
-// form
-import { Controller, useForm } from 'react-hook-form';
 // @mui
 import {
   Box,
@@ -31,10 +26,8 @@ import {
 } from '@mui/material';
 // routes
 // utils
-import { fShortenNumber, fCurrency } from 'src/utils/formatNumber';
+import { fCurrency } from 'src/utils/formatNumber';
 // _mock
-// components
-import Label from 'src/components/label/Label';
 import Iconify from 'src/components/iconify/Iconify';
 import { IncrementerButton } from 'src/components/custom-input';
 import { ColorSinglePicker } from 'src/components/color-utils';
@@ -163,6 +156,16 @@ export default function ProductDetailsSummary({ product, onAddCart, onGotoStep, 
   const onBuyDialogClose = () => {
     setBuyOpen(false);
     setBuyStep(0);
+    setAddAddressObj({
+      addr: '',
+      detail_addr: '',
+      is_open_daum_post: false,
+    })
+    setPayData({
+      ...payData,
+      addr: '',
+      detail_addr: ''
+    })
   }
   const onCreateBilling = (item) => {
     setSelectAddress(item);
@@ -193,18 +196,27 @@ export default function ProductDetailsSummary({ product, onAddCart, onGotoStep, 
     }
   }
   const onAddAddress = async () => {
-    let result = await addAddressByUser({
-      ...addAddressObj,
-      user_id: user?.id,
-    })
-    if (result) {
-      setAddAddressObj({
-        addr: '',
-        detail_addr: '',
-        is_open_daum_post: false,
+    if (user) {
+      let result = await addAddressByUser({
+        ...addAddressObj,
+        user_id: user?.id,
+      })
+      if (result) {
+        setAddAddressObj({
+          addr: '',
+          detail_addr: '',
+          is_open_daum_post: false,
+        })
+        setAddAddressOpen(false);
+        onChangeAddressPage(addressSearchObj);
+      }
+    } else {
+      setPayData({
+        ...payData,
+        addr: addAddressObj.addr,
+        detail_addr: addAddressObj.detail_addr,
       })
       setAddAddressOpen(false);
-      onChangeAddressPage(addressSearchObj);
     }
   }
   const onSelectAddress = (data) => {
@@ -317,43 +329,98 @@ export default function ProductDetailsSummary({ product, onAddCart, onGotoStep, 
           <CheckoutSteps activeStep={buyStep} steps={STEPS} />
           {buyStep == 0 &&
             <>
-              {addressContent?.content &&
+              {user ?
                 <>
-                  {addressContent?.content?.length > 0 ?
+                  {addressContent?.content &&
                     <>
-                      {addressContent?.content && addressContent?.content.map((item, idx) => (
+                      {addressContent?.content?.length > 0 ?
                         <>
-                          <AddressItem
-                            key={idx}
-                            item={item}
-                            onCreateBilling={() => onCreateBilling(item)}
-                            onDeleteAddress={onDeleteAddress}
-                          />
+                          {addressContent?.content && addressContent?.content.map((item, idx) => (
+                            <>
+                              <AddressItem
+                                key={idx}
+                                item={item}
+                                onCreateBilling={() => onCreateBilling(item)}
+                                onDeleteAddress={onDeleteAddress}
+                              />
+                            </>
+                          ))}
                         </>
-                      ))}
+                        :
+                        <>
+                          <Card sx={{ marginBottom: '1.5rem' }}>
+                            <EmptyContent
+                              title="배송지가 없습니다."
+                              description="배송지를 추가해 주세요."
+                              img=""
+                            />
+                          </Card>
+                        </>}
+                    </>}
+                  <Row>
+                    <Button
+                      size="small"
+                      variant="soft"
+                      style={{ marginLeft: 'auto' }}
+                      onClick={() => setAddAddressOpen(true)}
+                      startIcon={<Iconify icon="eva:plus-fill" />}
+                    >
+                      배송지 추가하기
+                    </Button>
+                  </Row>
+                </>
+                :
+                <>
+                  {payData.addr ?
+                    <>
+                      <DialogTitle>{payData?.addr}</DialogTitle>
+                      <DialogContent>
+                        <DialogContentText>
+                          {payData.detail_addr}
+                        </DialogContentText>
+                        <TextField
+                          autoFocus
+                          fullWidth
+                          value={payData.password}
+                          margin="dense"
+                          label="비회원비밀번호"
+                          type='password'
+                          onChange={(e) => {
+                            setPayData({
+                              ...payData,
+                              password: e.target.value
+                            })
+                          }}
+                        />
+                      </DialogContent>
+                      <Row style={{ marginTop: '2rem' }}>
+                        <Button variant="contained" onClick={() => {
+                          if (!payData.password) {
+                            toast.error('비회원 비밀번호를 입력해 주세요.');
+                          } else {
+                            setBuyStep(1);
+                          }
+                        }} style={{ marginLeft: 'auto' }}>
+                          다음단계로
+                        </Button>
+                      </Row>
                     </>
                     :
                     <>
-                      <Card sx={{ marginBottom: '1.5rem' }}>
-                        <EmptyContent
-                          title="배송지가 없습니다."
-                          description="배송지를 추가해 주세요."
-                          img=""
-                        />
-                      </Card>
+                      <DialogTitle>{`주소지 선택`}</DialogTitle>
+                      <DialogContent>
+                        <DialogContentText>
+                          새 주소를 입력후 저장을 눌러주세요.
+                        </DialogContentText>
+                      </DialogContent>
+                      <Row style={{ marginTop: '2rem' }}>
+                        <Button variant="contained" onClick={() => setAddAddressOpen(true)} style={{ marginLeft: 'auto' }}>
+                          주소지찾기
+                        </Button>
+                      </Row>
                     </>}
                 </>}
-              <Row>
-                <Button
-                  size="small"
-                  variant="soft"
-                  style={{ marginLeft: 'auto' }}
-                  onClick={() => setAddAddressOpen(true)}
-                  startIcon={<Iconify icon="eva:plus-fill" />}
-                >
-                  배송지 추가하기
-                </Button>
-              </Row>
+
 
             </>}
           {buyStep == 1 &&
@@ -639,11 +706,7 @@ export default function ProductDetailsSummary({ product, onAddCart, onGotoStep, 
               장바구니
             </Button>
             <Button fullWidth size="large" variant="contained" onClick={() => {
-              if (user) {
-                setBuyOpen(true);
-              } else {
-                window.location.href = '/shop/auth/login'
-              }
+              setBuyOpen(true);
             }}>
               바로구매
             </Button>

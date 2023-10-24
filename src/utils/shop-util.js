@@ -1,6 +1,5 @@
 import _ from "lodash";
 import { axiosIns } from "./axios";
-import { post } from "./api-manager";
 
 export const calculatorPrice = (item) => {// 상품별로 가격
     if (!item) {
@@ -23,7 +22,7 @@ export const calculatorPrice = (item) => {// 상품별로 가격
 }
 export const makePayData = async (products_, payData_) => {
     let products = products_;
-    let total_amount = 0;
+    let amount = 0;
     let payData = { ...payData_ };
 
     for (var i = 0; i < products.length; i++) {
@@ -45,7 +44,7 @@ export const makePayData = async (products_, payData_) => {
             }
         }
         products[i].order_amount = await calculatorPrice(products[i])?.total;
-        total_amount += products[i].order_amount;
+        amount += products[i].order_amount;
         products[i] = {
             id: products[i]?.id,
             order_name: products[i]?.order_name,
@@ -56,14 +55,13 @@ export const makePayData = async (products_, payData_) => {
     }
     payData = {
         ...payData,
-        total_amount: total_amount,
+        amount: amount,
         products: products,
     }
     return payData;
 }
 export const onPayProductsByHand = async (products_, payData_) => { // 수기결제
     let payData = makePayData(products_, payData_);
-
     let ord_num = `${payData?.user_id || payData?.password}${new Date().getTime().toString().substring(0, 11)}`
     payData = {
         ...payData,
@@ -89,10 +87,21 @@ export const onPayProductsByAuth = async (products_, payData_) => { // 인증결
         success_url: return_url + '?type=0',
         fail_url: return_url + '?type=1',
     }
-    payData.products = JSON.stringify(payData.products);
+    payData.temp = {
+        products: payData.products,
+        user_id: payData.user_id,
+        password: payData.password,
+    };
+    payData.temp = JSON.stringify(payData.temp);
+    payData.temp = Buffer.from(payData.temp).toString('base64');
+    payData.amount = 100;
+    payData.pay_key = '51714wdraUTO6Uj6jHooVh00W6dtJkL84QkYKXotBtMmgdvY96QiLDk0wKQKeCzE';
+    delete payData.products;
+    delete payData.user_id;
+    delete payData.password;
     try {
         let query = Object.entries(payData).map(e => e.join('=')).join('&');
-        window.location.href = (`${process.env.BACK_URL}/pay/auth?${query}`);
+        window.location.href = (`${process.env.NOTI_URL}/v2/pay/auth?${query}`);
 
     } catch (err) {
         console.log(err);

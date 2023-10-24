@@ -283,12 +283,12 @@ export const getProductsByManager = (params) => { //관리자 상품목록 출�
   if (!query['search']) delete query['search'];
   if (!query['category_id']) delete query['category_id'];
 
-  for(var i = 0;i<category_id_depth;i++){
-    if(params[`category_id${i}`] > 0){
+  for (var i = 0; i < category_id_depth; i++) {
+    if (params[`category_id${i}`] > 0) {
       query[`category_id${i}`] = params[`category_id${i}`];
     }
   }
-  
+
   return get(`/api/v1/manager/products`, query);
 }
 export const sortProductByManager = (params) => { //
@@ -319,8 +319,8 @@ export const addProductByManager = async (params) => { //관리자 상품 추가
     groups,
     characters,
   }
-  for(var i = 0;i<category_id_depth;i++){
-    if(params[`category_id${i}`] > 0){
+  for (var i = 0; i < category_id_depth; i++) {
+    if (params[`category_id${i}`] > 0) {
       obj[`category_id${i}`] = params[`category_id${i}`];
     }
   }
@@ -331,7 +331,7 @@ export const addProductByManager = async (params) => { //관리자 상품 추가
   return post(`/api/v1/manager/products`, obj);
 }
 export const updateProductByManager = async (params) => { //관리자 상품 수정
-  const { id, product_name = '', product_comment = '', product_price = 0, product_sale_price = 0,product_description = '',
+  const { id, product_name = '', product_comment = '', product_price = 0, product_sale_price = 0, product_description = '',
     product_file, product_img,
     sub_images = [],
     groups = [],
@@ -344,8 +344,8 @@ export const updateProductByManager = async (params) => { //관리자 상품 수
     groups,
     characters,
   }
-  for(var i = 0;i<category_id_depth;i++){
-    if(params[`category_id${i}`] > 0){
+  for (var i = 0; i < category_id_depth; i++) {
+    if (params[`category_id${i}`] > 0) {
       obj[`category_id${i}`] = params[`category_id${i}`];
     }
   }
@@ -792,14 +792,14 @@ export const getPaymentModulesByManager = (params) => { //관리자 팝업 목�
 export const addPaymentModuleByManager = (params) => { //관리자 팝업 추가
   const { pay_key, trx_type, is_old_auth } = params;
   let obj = {
-    pay_key, trx_type, is_old_auth 
+    pay_key, trx_type, is_old_auth
   }
   return post(`/api/v1/manager/payment-modules`, obj);
 }
 export const updatePaymentModuleByManager = (params) => { //관리자 팝업 수정
-  const {  pay_key, trx_type, is_old_auth, id } = params;
+  const { pay_key, trx_type, is_old_auth, id } = params;
   let obj = {
-    pay_key, trx_type, is_old_auth 
+    pay_key, trx_type, is_old_auth
   }
   return put(`/api/v1/manager/payment-modules/${id}`, obj);
 }

@@ -4,65 +4,41 @@ import ManagerLayout from "src/layouts/manager/ManagerLayout";
 import ManagerTable from "src/views/manager/mui/table/ManagerTable";
 import { Icon } from "@iconify/react";
 import { useRouter } from "next/router";
-import { getPaymentModulesByManager, getProductsByManager } from "src/utils/api-manager";
+import { deletePaymentModuleByManager, getPaymentModulesByManager, getProductsByManager } from "src/utils/api-manager";
+import { useModal } from "src/components/dialog/ModalProvider";
 
 const PaymentModuleList = () => {
-
+  const { setModal } = useModal()
   const defaultColumns = [
     {
-      id: 'id',
-      label: 'No.',
+      id: 'pay_key',
+      label: '결제키',
       action: (row) => {
-        return row['id']
+        return row['pay_key'] ?? "---"
       }
     },
     {
-      id: 'product_img',
-      label: '상품이미지',
+      id: 'trx_type',
+      label: '결제타입',
       action: (row) => {
-        return row['product_img'] ?? "---"
+        if (row['trx_type'] == 1) {
+          return '수기결제'
+        } else if (row['trx_type'] == 2) {
+          return '인증결제'
+        }
+        return "---"
       }
     },
     {
-      id: 'product_name',
-      label: '상품명',
+      id: 'is_old_auth',
+      label: '비/구인증',
       action: (row) => {
-        return row['user_name'] ?? "---"
-      }
-    },
-    {
-      id: 'category',
-      label: '카테고리',
-      action: (row) => {
-        return row['name'] ?? "---"
-      }
-    },
-    {
-      id: 'product_price',
-      label: '시장가',
-      action: (row) => {
-        return row['name'] ?? "---"
-      }
-    },
-    {
-      id: 'product_sale_price',
-      label: '판매가',
-      action: (row) => {
-        return row['name'] ?? "---"
-      }
-    },
-    {
-      id: 'inventory',
-      label: '재고',
-      action: (row) => {
-        return row['name'] ?? "---"
-      }
-    },
-    {
-      id: 'status',
-      label: '상태',
-      action: (row) => {
-        return row['name'] ?? "---"
+        if (row['is_old_auth'] == 0) {
+          return '비인증'
+        } else if (row['is_old_auth'] == 1) {
+          return '구인증'
+        }
+        return "---"
       }
     },
     {
@@ -87,10 +63,16 @@ const PaymentModuleList = () => {
           <>
             <IconButton>
               <Icon icon='material-symbols:edit-outline' onClick={() => {
-                router.push(`edit/${row?.id}`)
+                router.push(`/manager/settings/payment-modules/edit/${row?.id}`)
               }} />
             </IconButton>
-            <IconButton>
+            <IconButton onClick={() => {
+              setModal({
+                func: () => { deletePaymentModule(row?.id) },
+                icon: 'material-symbols:delete-outline',
+                title: '정말 삭제하시겠습니까?'
+              })
+            }}>
               <Icon icon='material-symbols:delete-outline' />
             </IconButton>
           </>
@@ -114,14 +96,20 @@ const PaymentModuleList = () => {
   const pageSetting = () => {
     let cols = defaultColumns;
     setColumns(cols)
-    onChangePage({...searchObj, page: 1,});
+    onChangePage({ ...searchObj, page: 1, });
   }
   const onChangePage = async (obj) => {
     let data_ = await getPaymentModulesByManager(obj);
-    if(data_){
+    if (data_) {
       setData(data_);
     }
     setSearchObj(obj);
+  }
+  const deletePaymentModule = async (id) => {
+    let result = await deletePaymentModuleByManager({ id: id });
+    if (result) {
+      onChangePage(searchObj);
+    }
   }
   return (
     <>

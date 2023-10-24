@@ -211,7 +211,7 @@ const Header = () => {
 
   const router = useRouter();
   const theme = useTheme();
-  const { themeMode, onToggleMode, onChangeCategoryList } = useSettingsContext();
+  const { themeMode, onToggleMode, onChangeCategoryList, onChangeCartData, onChangeWishData  } = useSettingsContext();
   const { user, logout } = useAuthContext();
   const [keyword, setKeyword] = useState("");
   const onSearch = () => {
@@ -359,6 +359,8 @@ const Header = () => {
                       <Button sx={{ height: '24px' }} onClick={() => router.push('/shop/service/history')}>주문내역</Button>
                       <Button variant="outlined" sx={{ height: '24px' }} onClick={() => {
                         logout();
+                        onChangeCartData([]);
+                        onChangeWishData([]);
                         router.push('/shop/auth/login')
                       }}>로그아웃</Button>
                     </>

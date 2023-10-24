@@ -59,6 +59,7 @@ AuthProvider.propTypes = {
 
 export function AuthProvider({ children }) {
 
+  const {onChangeCartData, onChangeWishData} = useSettingsContext();
   const router = useRouter();
   const [state, dispatch] = useReducer(reducer, initialState);
   const storageAvailable = localStorageAvailable();

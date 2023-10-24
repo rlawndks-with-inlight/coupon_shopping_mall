@@ -215,7 +215,7 @@ const Header = () => {
 
   const router = useRouter();
   const theme = useTheme();
-  const { themeMode, onToggleMode, onChangeCategoryList, themeCategoryList, themeDnsData, themePopupList, themePostCategoryList, onChangePopupList, onChangePostCategoryList, themeWishData, themeCartData } = useSettingsContext();
+  const { themeMode, onToggleMode, onChangeCategoryList, themeCategoryList, themeDnsData, themePopupList, themePostCategoryList, onChangePopupList, onChangePostCategoryList, themeWishData, themeCartData, onChangeCartData, onChangeWishData } = useSettingsContext();
   const { user, logout } = useAuthContext();
   const headerWrappersRef = useRef();
   const [headerHeight, setHeaderHeight] = useState(130);
@@ -334,6 +334,8 @@ const Header = () => {
   }
   const onLogout = async () => {
     let result = await logout();
+    onChangeCartData([]);
+    onChangeWishData([]);
     if (result) {
       router.push('/shop/auth/login');
     }

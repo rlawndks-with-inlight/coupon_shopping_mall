@@ -790,16 +790,16 @@ export const getPaymentModulesByManager = (params) => { //관리자 팝업 목�
 }
 
 export const addPaymentModuleByManager = (params) => { //관리자 팝업 추가
-  const { pay_key, trx_type, is_old_auth } = params;
+  const { pay_key, trx_type, is_old_auth, mid, tid } = params;
   let obj = {
-    pay_key, trx_type, is_old_auth
+    pay_key, trx_type, is_old_auth, mid, tid
   }
   return post(`/api/v1/manager/payment-modules`, obj);
 }
 export const updatePaymentModuleByManager = (params) => { //관리자 팝업 수정
-  const { pay_key, trx_type, is_old_auth, id } = params;
+  const { pay_key, trx_type, is_old_auth, mid, tid, id } = params;
   let obj = {
-    pay_key, trx_type, is_old_auth
+    pay_key, trx_type, is_old_auth, mid, tid
   }
   return put(`/api/v1/manager/payment-modules/${id}`, obj);
 }

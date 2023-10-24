@@ -18,6 +18,20 @@ const PaymentModuleList = () => {
       }
     },
     {
+      id: 'mid',
+      label: 'MID',
+      action: (row) => {
+        return row['mid'] ?? "---"
+      }
+    },
+    {
+      id: 'tid',
+      label: 'TID',
+      action: (row) => {
+        return row['tid'] ?? "---"
+      }
+    },
+    {
       id: 'trx_type',
       label: '결제타입',
       action: (row) => {

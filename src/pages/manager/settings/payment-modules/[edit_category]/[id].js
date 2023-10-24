@@ -25,6 +25,8 @@ const PaymentModuleEdit = () => {
   const [loading, setLoading] = useState(true);
   const [item, setItem] = useState({
     pay_key: '',
+    mid: '',
+    tid: '',
     trx_type: 0,
     is_old_auth: 0,
   })
@@ -69,6 +71,28 @@ const PaymentModuleEdit = () => {
                         {
                           ...item,
                           ['pay_key']: e.target.value
+                        }
+                      )
+                    }} />
+                  <TextField
+                    label='MID'
+                    value={item.mid}
+                    onChange={(e) => {
+                      setItem(
+                        {
+                          ...item,
+                          ['mid']: e.target.value
+                        }
+                      )
+                    }} />
+                  <TextField
+                    label='TID'
+                    value={item.tid}
+                    onChange={(e) => {
+                      setItem(
+                        {
+                          ...item,
+                          ['tid']: e.target.value
                         }
                       )
                     }} />

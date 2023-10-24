@@ -1,6 +1,6 @@
-import { Box, Button, Card, CardContent, CardHeader, FormControlLabel, Grid, Paper, Radio, RadioGroup, Stack, TextField, Typography } from '@mui/material';
+import { Box, Button, Card, CardContent, CardHeader, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, FormControlLabel, Grid, Paper, Radio, RadioGroup, Stack, TextField, Typography } from '@mui/material';
 import { useEffect, useState } from 'react';
-import { Row, Title } from 'src/components/elements/styled-components';
+import { Row, Title, postCodeStyle } from 'src/components/elements/styled-components';
 import { test_pay_list, test_address_list, test_item, test_items } from 'src/data/test-data';
 import { CheckoutCartProductList, CheckoutSteps, CheckoutSummary } from 'src/views/@dashboard/e-commerce/checkout';
 import styled from 'styled-components'
@@ -9,7 +9,7 @@ import Label from 'src/components/label/Label';
 import EmptyContent from 'src/components/empty-content/EmptyContent';
 import Iconify from 'src/components/iconify/Iconify';
 import { useSettingsContext } from 'src/components/settings';
-import { getAddressesByUser } from 'src/utils/api-shop';
+import { addAddressByUser, deleteAddressByUser, getAddressesByUser } from 'src/utils/api-shop';
 import { calculatorPrice, getCartDataUtil, onPayProductsByAuth, onPayProductsByHand } from 'src/utils/shop-util';
 import { useAuthContext } from 'src/layouts/manager/auth/useAuthContext';
 import Payment from 'payment'
@@ -17,6 +17,7 @@ import Cards from 'react-credit-cards'
 import { formatCreditCardNumber, formatExpirationDate } from 'src/utils/formatCard';
 import { useModal } from 'src/components/dialog/ModalProvider';
 import toast from 'react-hot-toast';
+import DaumPostcode from 'react-daum-postcode';
 
 const Wrappers = styled.div`
 max-width:1500px;
@@ -29,8 +30,8 @@ margin-bottom:10vh;
 `
 
 const STEPS = ['장바구니 확인', '배송지 확인', '결제하기'];
-export function AddressItem({ item, onCreateBilling }) {
-  const { receiver, addr, address_type, phone, is_default, detail_addr } = item;
+export function AddressItem({ item, onCreateBilling, onDeleteAddress }) {
+  const { receiver, addr, address_type, phone, is_default, detail_addr, id } = item;
   return (
     <Card
       sx={{
@@ -68,6 +69,9 @@ export function AddressItem({ item, onCreateBilling }) {
           </Typography>
         </Stack>
         <Stack flexDirection="row" flexWrap="wrap" flexShrink={0}>
+          <Button variant="outlined" size="small" color="inherit" sx={{ mr: 1 }} onClick={() => { onDeleteAddress(id) }}>
+            삭제
+          </Button>
           <Button variant="outlined" size="small" onClick={onCreateBilling}>
             해당 주소로 배송하기
           </Button>
@@ -90,9 +94,21 @@ const Demo1 = (props) => {
   const { themeCartData, onChangeCartData, themeDnsData } = useSettingsContext();
   const [products, setProducts] = useState([]);
   const [activeStep, setActiveStep] = useState(0);
-  const [addressList, setAddressList] = useState([]);
   const [buyType, setBuyType] = useState(undefined);
-  const [cardFucus, setCardFocus] = useState()
+  const [cardFucus, setCardFocus] = useState();
+  const [addressContent, setAddressContent] = useState({});
+  const [addressSearchObj, setAddressSearchObj] = useState({
+    page: 1,
+    page_size: 10,
+    search: '',
+    user_id: user?.id,
+  });
+  const [addAddressOpen, setAddAddressOpen] = useState(false);
+  const [addAddressObj, setAddAddressObj] = useState({
+    addr: '',
+    detail_addr: '',
+    is_open_daum_post: false,
+  })
   const [payData, setPayData] = useState({
     brand_id: themeDnsData?.id,
     user_id: user?.id ?? undefined,
@@ -114,13 +130,7 @@ const Demo1 = (props) => {
   const getCart = async () => {
     let data = await getCartDataUtil(themeCartData);
     setProducts(data);
-
-    let address_data = await getAddressesByUser({
-      page: 1,
-      page_size: 100000,
-      user_id: user?.id,
-    });
-    setAddressList(address_data?.content ?? [])
+    onChangeAddressPage(addressSearchObj);
   }
   const onDelete = (idx) => {
     let product_list = [...products];
@@ -177,8 +187,124 @@ const Demo1 = (props) => {
       }
     }
   }
+  const onAddAddress = async () => {
+    let result = await addAddressByUser({
+      ...addAddressObj,
+      user_id: user?.id,
+    })
+    if (result) {
+      setAddAddressObj({
+        addr: '',
+        detail_addr: '',
+        is_open_daum_post: false,
+      })
+      setAddAddressOpen(false);
+      onChangeAddressPage(addressSearchObj);
+    }
+  }
+  const onDeleteAddress = async (id) => {
+    let result = await deleteAddressByUser({
+      id: id
+    })
+    if (result) {
+      onChangeAddressPage(addressSearchObj);
+    }
+  }
+  const onChangeAddressPage = async (search_obj) => {
+    setAddressContent({
+      ...addressContent,
+      content: undefined,
+    })
+    let data = await getAddressesByUser(search_obj);
+    setAddressSearchObj(search_obj);
+    if (data) {
+      setAddressContent(data);
+    }
+  }
+  const onSelectAddress = (data) => {
+    setAddAddressObj({
+      ...addAddressObj,
+      addr: data?.address,
+      detail_addr: '',
+      is_open_daum_post: false,
+    })
+  }
   return (
     <>
+      <Dialog
+        open={addAddressOpen}
+        onClose={() => {
+          setAddAddressObj({
+            addr: '',
+            detail_addr: '',
+            is_open_daum_post: false,
+          })
+          setAddAddressOpen(false);
+        }}
+        PaperProps={{
+          style: {
+            width: `${window.innerWidth >= 700 ? '500px' : '90vw'}`,
+          }
+        }}
+      >
+        {addAddressObj.is_open_daum_post ?
+          <>
+            <Row>
+              <DaumPostcode style={postCodeStyle} onComplete={onSelectAddress} />
+            </Row>
+          </>
+          :
+          <>
+            <DialogTitle>{`주소지 추가`}</DialogTitle>
+            <DialogContent>
+              <DialogContentText>
+                새 주소를 입력후 저장을 눌러주세요.
+              </DialogContentText>
+              <TextField
+                autoFocus
+                fullWidth
+                value={addAddressObj.addr}
+                margin="dense"
+                label="주소"
+                aria-readonly='true'
+                onClick={() => {
+                  setAddAddressObj({
+                    ...addAddressObj,
+                    is_open_daum_post: true,
+                  })
+                }}
+              />
+              <TextField
+                autoFocus
+                fullWidth
+                value={addAddressObj.detail_addr}
+                margin="dense"
+                label="상세주소"
+                onChange={(e) => {
+                  setAddAddressObj({
+                    ...addAddressObj,
+                    detail_addr: e.target.value
+                  })
+                }}
+              />
+            </DialogContent>
+            <DialogActions>
+              <Button variant="contained" onClick={onAddAddress}>
+                저장
+              </Button>
+              <Button color="inherit" onClick={() => {
+                setAddAddressObj({
+                  addr: '',
+                  detail_addr: '',
+                  is_open_daum_post: false,
+                })
+                setAddAddressOpen(false);
+              }}>
+                취소
+              </Button>
+            </DialogActions>
+          </>}
+      </Dialog>
       <Wrappers>
         <Title>장바구니</Title>
         <CheckoutSteps activeStep={activeStep} steps={STEPS} />
@@ -208,28 +334,33 @@ const Demo1 = (props) => {
               </>}
             {activeStep == 1 &&
               <>
-                {addressList.length > 0 ?
+                {addressContent?.content &&
                   <>
-                    {addressList.map((item, idx) => (
+                    {addressContent?.content?.length > 0 ?
                       <>
-                        <AddressItem
-                          key={idx}
-                          item={item}
-                          onCreateBilling={() => onCreateBilling(item)}
-                        />
+                        {addressContent?.content && addressContent?.content.map((item, idx) => (
+                          <>
+                            <AddressItem
+                              key={idx}
+                              item={item}
+                              onCreateBilling={() => onCreateBilling(item)}
+                              onDeleteAddress={onDeleteAddress}
+                            />
+                          </>
+                        ))}
                       </>
-                    ))}
-                  </>
-                  :
-                  <>
-                    <Card sx={{ marginBottom: '1.5rem' }}>
-                      <EmptyContent
-                        title="배송지가 없습니다."
-                        description="배송지를 추가해 주세요."
-                        img=""
-                      />
-                    </Card>
+                      :
+                      <>
+                        <Card sx={{ marginBottom: '1.5rem' }}>
+                          <EmptyContent
+                            title="배송지가 없습니다."
+                            description="배송지를 추가해 주세요."
+                            img=""
+                          />
+                        </Card>
+                      </>}
                   </>}
+
               </>}
             {activeStep == 2 &&
               <>
@@ -427,7 +558,7 @@ const Demo1 = (props) => {
                   <Button
                     size="small"
                     variant="soft"
-                    onClick={() => { }}
+                    onClick={() => setAddAddressOpen(true)}
                     startIcon={<Iconify icon="eva:plus-fill" />}
                   >
                     배송지 추가하기

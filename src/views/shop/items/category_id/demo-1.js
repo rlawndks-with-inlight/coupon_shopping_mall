@@ -65,6 +65,7 @@ const Demo1 = (props) => {
     }, true);
   }, [router.query])
   const [moreLoading, setMoreLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const scrollRef = useRef(null);
   const handleScroll = () => {
     if (!scrollRef.current) {
@@ -85,14 +86,15 @@ const Demo1 = (props) => {
   }, []);
   const settingPage = async (search_obj, is_first) => {
     if (is_first) {
+      setLoading(true);
       setProducts([]);
     }
-    if ((themeCategoryList[0]?.product_categories??[]).length > 0) {
+    if ((themeCategoryList[0]?.product_categories ?? []).length > 0) {
       let parent_list = []
       if (parentList.length > 0) {
         parent_list = parentList;
       } else {
-        parent_list = getAllIdsWithParents(themeCategoryList[0]?.product_categories??[]);
+        parent_list = getAllIdsWithParents(themeCategoryList[0]?.product_categories ?? []);
       }
       setParentList(parent_list);
       let use_list = [];
@@ -110,13 +112,14 @@ const Demo1 = (props) => {
       brand_id: themeDnsData?.id,
       ...router.query
     })
-    console.log(product_list)
     setSearchObj(search_obj);
     if (is_first) {
       setProducts(product_list.content ?? []);
+      setLoading(false);
     } else {
       setProducts([...products, ...product_list.content ?? []]);
     }
+
   }
   useEffect(() => {
     if (products.length > 0) {
@@ -177,9 +180,30 @@ const Demo1 = (props) => {
         <div style={{
           marginTop: '1rem'
         }} />
-        {products.length > 0 ?
+        {products ?
           <>
-            <Items items={products} router={router} />
+            {loading ?
+              <>
+                <Row style={{ width: '100%', height: '300px' }}>
+                  <div style={{ margin: 'auto' }}>
+                    <Spinner sx={{ height: '72px', color: 'green' }} color={'red'} />
+                  </div>
+                </Row>
+              </>
+              :
+              <>
+                {products.length > 0 ?
+                  <>
+                    <Items items={products} router={router} />
+                  </>
+                  :
+                  <>
+                    <Col>
+                      <Icon icon={'basil:cancel-outline'} style={{ margin: '8rem auto 1rem auto', fontSize: themeObj.font_size.size1, color: themeObj.grey[300] }} />
+                      <div style={{ margin: 'auto auto 8rem auto' }}>검색결과가 없습니다.</div>
+                    </Col>
+                  </>}
+              </>}
             {moreLoading ?
               <>
                 <Row style={{ width: '100%' }}>
@@ -197,14 +221,9 @@ const Demo1 = (props) => {
                   })
                 }} ref={scrollRef} />
               </>}
-
           </>
           :
           <>
-            <Col>
-              <Icon icon={'basil:cancel-outline'} style={{ margin: '8rem auto 1rem auto', fontSize: themeObj.font_size.size1, color: themeObj.grey[300] }} />
-              <div style={{ margin: 'auto auto 8rem auto' }}>검색결과가 없습니다.</div>
-            </Col>
           </>}
       </ContentWrapper>
     </>

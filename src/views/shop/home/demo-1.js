@@ -31,7 +31,7 @@ const returnHomeContent = (column, data, func) => {
   else if (type == 'button-banner') return <HomeButtonBanner column={column} data={data} func={func} />
   else if (type == 'items-with-categories') return <HomeItemsWithCategories column={column} data={data} func={func} />
   else if (type == 'video-slide') return <HomeVideoSlide column={column} data={data} func={func} />
-  //else if (type == 'post') return <HomePost column={column} data={data} func={func} />
+  else if (type == 'post') return <HomePost column={column} data={data} func={func} />
   else if (type == 'item-reviews') return <HomeProductReview column={column} data={data} func={func} />
   else if (type == 'item-reviews-select') return <HomeProductReview column={column} data={data} func={func} />
   return '';

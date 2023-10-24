@@ -165,11 +165,20 @@ export function SettingsProvider({ children }) {
       dns_data['shop_obj'] = getMainObjContentByIdList(dns_data?.shop_obj, 'items-with-categories', data?.products, true);
       dns_data['blog_obj'] = getMainObjContentByIdList(dns_data?.blog_obj, 'items-with-categories', data?.products, true);
       dns_data['products'] = data?.products;
+      for(var i = 0;i<dns_data['shop_obj'].length;i++){
+        if(dns_data['shop_obj'][i]?.type == 'post'){
+          dns_data['shop_obj'][i].list = data?.post_categories??[];
+        }
+      }
+      for(var i = 0;i<dns_data['blog_obj'].length;i++){
+        if(dns_data['blog_obj'][i]?.type == 'post'){
+          dns_data['blog_obj'][i].list = data?.post_categories??[];
+        }
+      }
       onChangeCategoryList(data?.product_category_groups ?? []);
       onChangePopupList(data?.popups ?? []);
       onChangePostCategoryList(data?.post_categories ?? []);
       onChangeSellerList(data?.merchandises?.content ?? []);
-      console.log(dns_data)
       onChangeDnsData(dns_data);
     } catch (err) {
       console.log(err)

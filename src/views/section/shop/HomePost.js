@@ -80,12 +80,12 @@ margin: 0.2rem 0;
 cursor:pointer;
 `
 const HomePost = (props) => {
-  console.log(props)
+  console.log(props);
   const { column, data, func, is_manager } = props;
   const { themeDnsData } = data;
   const { router } = func;
   const { style } = column;
-  const [categoryId, setCategoryId] = useState(column?.categories[0]?.id);
+  const [categoryId, setCategoryId] = useState(0);
   return (
     <>
       <FullWrappers style={{ marginTop: `${style?.margin_top}px`, backgroundImage: `${column?.src ? `url(${column?.src})` : ''}` }}>
@@ -99,12 +99,12 @@ const HomePost = (props) => {
         <ContentWrappers>
           <Content style={{ color: '#fff', margin: '4rem auto' }}>
             <PostCategoryTabContainer>
-              {column?.categories && column?.categories.map((cate, idx) => (
+              {column?.list && column?.list.map((cate, idx) => (
                 <>
                   <PostCategoryTab
-                    style={{ fontWeight: `${cate?.id == categoryId ? 'bold' : ''}` }}
+                    style={{ fontWeight: `${idx == categoryId ? 'bold' : ''}` }}
                     onClick={() => {
-                      setCategoryId(cate?.id)
+                      setCategoryId(idx)
                     }}>{cate?.post_category_title}</PostCategoryTab>
                 </>
               ))}
@@ -112,15 +112,16 @@ const HomePost = (props) => {
             <PostBox>
               <PostCategoryTitle>
                 <div>
-                  {_.find(column?.categories, { id: categoryId })?.post_category_title}
+                  {column?.list[categoryId]?.post_category_title}
                 </div>
-                <IconButton onClick={() => router.push(`/shop/service/${categoryId}`)}>
+                <IconButton onClick={() => router.push(`/shop/service/${column?.list[categoryId]?.id}`)}>
                   <Icon icon={'ic:baseline-plus'} style={{ color: '#fff' }} />
                 </IconButton>
               </PostCategoryTitle>
-              {column?.posts[categoryId] && column?.posts[categoryId].map((item, idx) => (
+              
+              {column?.list[categoryId]?.recent_posts && column?.list[categoryId]?.recent_posts.map((item, idx) => (
                 <>
-                  <PostTitle onClick={() => router.push(`/shop/service/${categoryId}/${item?.id}/`)}>{item?.post_title}</PostTitle>
+                  <PostTitle onClick={() => router.push(`/shop/service/${column?.list[categoryId]?.id}/${item?.id}/`)}>{item?.post_title}</PostTitle>
                 </>
               ))}
             </PostBox>

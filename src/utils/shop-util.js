@@ -87,15 +87,15 @@ export const onPayProductsByAuth = async (products_, payData_) => { // 인증결
         success_url: return_url + '?type=0',
         fail_url: return_url + '?type=1',
     }
-    if(payData?.products?.length > 1){
-        payData.item_name = `${payData?.products[0]?.order_name} 외 ${payData?.products?.length-1}`;
+    if (payData?.products?.length > 1 || !payData?.item_name) {
+        payData.item_name = `${payData?.products[0]?.order_name} 외 ${payData?.products?.length - 1}`;
     }
     payData.temp = {
         products: payData.products,
         user_id: payData.user_id,
         password: payData.password,
     };
-    
+
     payData.temp = JSON.stringify(payData.temp);
     payData.temp = Buffer.from(payData.temp).toString('base64');
     payData.amount = 100;

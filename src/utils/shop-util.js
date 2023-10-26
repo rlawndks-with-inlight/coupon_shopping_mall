@@ -98,7 +98,6 @@ export const onPayProductsByAuth = async (products_, payData_) => { // 인증결
 
     payData.temp = JSON.stringify(payData.temp);
     payData.temp = Buffer.from(payData.temp).toString('base64');
-    payData.amount = 100;
     payData.pay_key = '51714wdraUTO6Uj6jHooVh00W6dtJkL84QkYKXotBtMmgdvY96QiLDk0wKQKeCzE';
     delete payData.products;
     delete payData.user_id;

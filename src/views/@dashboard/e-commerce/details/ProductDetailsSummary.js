@@ -130,8 +130,8 @@ export default function ProductDetailsSummary({ product, onAddCart, onGotoStep, 
     let pay_list = test_pay_list;
     setPayList(pay_list)
   }, [])
-  const isMaxQuantity =
-    cart.filter((item) => item.id === id).map((item) => item.quantity)[0] >= available;
+  const isMaxQuantity = cart.filter((item) => item.id === id).map((item) => item.quantity)[0] >= available;
+
   const handleAddCart = async () => {
     if (user) {
       let result = insertCartDataUtil(product, selectProductGroups, themeCartData, onChangeCartData);

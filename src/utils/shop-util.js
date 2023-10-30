@@ -1,6 +1,7 @@
 import _ from "lodash";
 import { axiosIns } from "./axios";
 
+export const PAY_KEY = '51714wdraUTO6Uj6jHooVh00W6dtJkL84QkYKXotBtMmgdvY96QiLDk0wKQKeCzE'
 export const calculatorPrice = (item) => {// 상품별로 가격
     if (!item) {
         return 0;
@@ -98,7 +99,7 @@ export const onPayProductsByAuth = async (products_, payData_) => { // 인증결
 
     payData.temp = JSON.stringify(payData.temp);
     payData.temp = Buffer.from(payData.temp).toString('base64');
-    payData.pay_key = '51714wdraUTO6Uj6jHooVh00W6dtJkL84QkYKXotBtMmgdvY96QiLDk0wKQKeCzE';
+    payData.pay_key = PAY_KEY;
     delete payData.products;
     delete payData.user_id;
     delete payData.password;

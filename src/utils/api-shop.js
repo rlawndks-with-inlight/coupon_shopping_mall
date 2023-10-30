@@ -5,12 +5,12 @@ export const getShopCategoriesByUser = (params) => { // 유저 연결되어있�
   let query = {
     product_review_ids,
     product_ids,
-    brand_id, 
+    brand_id,
     root_id,
   }
   query.product_review_ids = JSON.stringify(query.product_review_ids);
   query.product_ids = JSON.stringify(query.product_ids);
-  
+
   return get(`/api/v1/shop/shop`, query);
 }
 export const getSellerInfoByUser = async (params) => { // 셀러 정보가 출력됩니다. (게시글 카테고리, 상품 카테고리) 팝업 정보가 출력됩니다.
@@ -43,7 +43,7 @@ export const getProductsByUser = (params) => { // 유저 카테고리 기반 상
   if (!mcht_id) {
     delete query['mcht_id'];
   }
-  if(!search){
+  if (!search) {
     delete query['search'];
   }
   return get(`/api/v1/shop/product-categories`, query);
@@ -190,4 +190,12 @@ export const deleteAddressByUser = (params) => {//회원 주소 삭제
   const { id } = params;
 
   return deleteItem(`/api/v1/shop/users/addresses/${id}`);
+}
+export const cancelPayByUser = (params) => {//회원 주소 삭제
+  const { amount, trx_id, pay_key, password, user_id } = params;
+
+  let obj = {
+    user_id, addr, detail_addr
+  }
+  return post(`/api/v1/shop/pay/cancel`, obj);
 }

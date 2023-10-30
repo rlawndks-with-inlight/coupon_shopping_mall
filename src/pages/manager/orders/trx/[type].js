@@ -9,6 +9,9 @@ import { deleteTrxByManager, getTrxsByManager } from "src/utils/api-manager";
 import { useModal } from "src/components/dialog/ModalProvider";
 import { LazyLoadImage } from "react-lazy-load-image-component";
 import { commarNumber } from "src/utils/function";
+import { cancelPayByUser } from "src/utils/api-shop";
+import { PAY_KEY } from "src/utils/shop-util";
+import toast from "react-hot-toast";
 
 
 const TrxList = () => {
@@ -145,6 +148,34 @@ const TrxList = () => {
       },
     },
     {
+      id: 'created_at',
+      label: '결제취소',
+      action: (row) => {
+        return <>
+          {row?.is_cancel == 1 ?
+            '---'
+            :
+            <>
+              <IconButton>
+                <Icon icon='material-symbols:cancel-outline' onClick={() => {
+                  setModal({
+                    func: () => { onPayCancel(row) },
+                    icon: 'material-symbols:cancel-outline',
+                    title: '결제취소 하시겠습니까?'
+                  })
+                  onPayCancel(`default/${row?.id}`)
+                }} />
+              </IconButton>
+            </>}
+        </>
+      },
+      sx: (row) => {
+        return {
+          color: `${row?.is_cancel == 1 ? 'red' : ''}`
+        }
+      },
+    },
+    {
       id: 'edit',
       label: `수정/삭제`,
       action: (row) => {
@@ -202,6 +233,23 @@ const TrxList = () => {
   const deleteTrx = async (id) => {
     let result = await deleteTrxByManager({ id: id });
     if (result) {
+      onChangePage(searchObj);
+    }
+  }
+  const onPayCancel =async (item) => {
+    let obj = {
+      trx_id:item?.trx_id,
+      pay_key:PAY_KEY,
+      amount:item?.amount,
+    }
+    if(item?.user_id){
+      obj['user_id'] = item?.user_id;
+    } else {
+      obj['password'] = item?.password;
+    }
+    let result = await cancelPayByUser(obj);
+    if(result){
+      toast.success("성공적으로 취소 되었습니다.");
       onChangePage(searchObj);
     }
   }

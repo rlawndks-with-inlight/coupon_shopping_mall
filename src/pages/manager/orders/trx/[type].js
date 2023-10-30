@@ -1,4 +1,4 @@
-import { Accordion, AccordionDetails, AccordionSummary, Card, Container, IconButton, Stack, Typography } from "@mui/material";
+import { Accordion, AccordionDetails, AccordionSummary, Button, Card, Container, IconButton, MenuItem, Select, Stack, TextField, Typography } from "@mui/material";
 import { useEffect, useState } from "react";
 import ManagerLayout from "src/layouts/manager/ManagerLayout";
 import ManagerTable from "src/views/manager/mui/table/ManagerTable";
@@ -148,6 +148,59 @@ const TrxList = () => {
       },
     },
     {
+      id: 'addr',
+      label: '주소',
+      action: (row) => {
+        return row['addr'] ?? "---"
+      },
+      sx: (row) => {
+        return {
+          color: `${row?.is_cancel == 1 ? 'red' : ''}`
+        }
+      },
+    },
+    {
+      id: 'invoice_num',
+      label: '송장번호',
+      action: (row) => {
+        return <Col style={{ rowGap: '0.5rem' }}>
+          <TextField
+            size={'small'}
+          />
+          <Button variant="contained">저장</Button>
+        </Col>
+      },
+      sx: (row) => {
+        return {
+          color: `${row?.is_cancel == 1 ? 'red' : ''}`
+        }
+      },
+    },
+    {
+      id: 'trx_status',
+      label: '상태',
+      action: (row) => {
+        return <Select
+          size="small"
+          defaultValue={row?.trx_status}
+          onChange={(e) => {
+            onChangeStatus(e);
+          }}
+        >
+          <MenuItem value={0}>{'결제완료'}</MenuItem>
+          <MenuItem value={5}>{'입고완료'}</MenuItem>
+          <MenuItem value={10}>{'출고완료'}</MenuItem>
+          <MenuItem value={15}>{'배송중'}</MenuItem>
+          <MenuItem value={20}>{'배송완료'}</MenuItem>
+        </Select>
+      },
+      sx: (row) => {
+        return {
+          color: `${row?.is_cancel == 1 ? 'red' : ''}`
+        }
+      },
+    },
+    {
       id: 'created_at',
       label: '결제취소',
       action: (row) => {
@@ -235,22 +288,28 @@ const TrxList = () => {
       onChangePage(searchObj);
     }
   }
-  const onPayCancel =async (item) => {
+  const onPayCancel = async (item) => {
     let obj = {
-      trx_id:item?.trx_id,
-      pay_key:PAY_KEY,
-      amount:item?.amount,
+      trx_id: item?.trx_id,
+      pay_key: PAY_KEY,
+      amount: item?.amount,
     }
-    if(item?.user_id){
+    if (item?.user_id) {
       obj['user_id'] = item?.user_id;
     } else {
       obj['password'] = item?.password;
     }
     let result = await cancelPayByUser(obj);
-    if(result){
+    if (result) {
       toast.success("성공적으로 취소 되었습니다.");
       onChangePage(searchObj);
     }
+  }
+  const onChangeStatus = (e) => {
+
+  }
+  const onChangeInvoice = () => {
+
   }
   return (
     <>

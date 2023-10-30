@@ -92,9 +92,11 @@ export const onPayProductsByAuth = async (products_, payData_) => { // 인증결
         payData.item_name = `${payData?.products[0]?.order_name} 외 ${payData?.products?.length - 1}`;
     }
     payData.temp = {
-        products: payData.products,
-        user_id: payData.user_id,
-        password: payData.password,
+        products: payData?.products,
+        user_id: payData?.user_id,
+        password: payData?.password,
+        addr: payData?.addr??"",
+        detail_addr: payData?.detail_addr??"",
     };
 
     payData.temp = JSON.stringify(payData.temp);

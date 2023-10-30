@@ -163,7 +163,6 @@ const TrxList = () => {
                     icon: 'material-symbols:cancel-outline',
                     title: '결제취소 하시겠습니까?'
                   })
-                  onPayCancel(`default/${row?.id}`)
                 }} />
               </IconButton>
             </>}

@@ -195,7 +195,7 @@ export const cancelPayByUser = (params) => {//회원 주소 삭제
   const { amount, trx_id, pay_key, password, user_id } = params;
 
   let obj = {
-    user_id, addr, detail_addr
+    amount, trx_id, pay_key, password, user_id
   }
   return post(`/api/v1/shop/pay/cancel`, obj);
 }

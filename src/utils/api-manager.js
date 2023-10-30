@@ -840,6 +840,20 @@ export const getTrxByManager = (params) => { //관리자 결제내역 단일 출
   const { id } = params;
   return get(`/api/v1/manager/transactions/${id}`);
 }
+export const updateTrxInvoiceByManager = (params) => { //관리자 결제내역 송장 업데이트
+  const { id, invoice_num } = params;
+  let obj = {
+    invoice_num
+  }
+  return post(`/api/v1/manager/transactions/${id}/invoice`,obj);
+}
+export const updateTrxStatusByManager = (params) => { //관리자 결제내역 결제상태 업데이트
+  const { id, trx_status } = params;
+  let obj = {
+    trx_status
+  }
+  return post(`/api/v1/manager/transactions/${id}/trx-status`,obj);
+}
 export const deleteTrxByManager = (params) => { //관리자 결제내역 삭제
   const { id } = params;
   return deleteItem(`/api/v1/manager/transactions/${id}`);

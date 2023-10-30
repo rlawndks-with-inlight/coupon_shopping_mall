@@ -5,14 +5,14 @@ import ManagerTable from "src/views/manager/mui/table/ManagerTable";
 import { Icon } from "@iconify/react";
 import { useRouter } from "next/router";
 import { Col, Row } from "src/components/elements/styled-components";
-import { deleteTrxByManager, getTrxsByManager } from "src/utils/api-manager";
+import { deleteTrxByManager, getTrxsByManager, updateTrxInvoiceByManager, updateTrxStatusByManager } from "src/utils/api-manager";
 import { useModal } from "src/components/dialog/ModalProvider";
 import { LazyLoadImage } from "react-lazy-load-image-component";
 import { commarNumber } from "src/utils/function";
 import { cancelPayByUser } from "src/utils/api-shop";
 import { PAY_KEY } from "src/utils/shop-util";
 import toast from "react-hot-toast";
-
+import $ from 'jquery'
 
 const TrxList = () => {
   const { setModal } = useModal()
@@ -163,11 +163,25 @@ const TrxList = () => {
       id: 'invoice_num',
       label: '송장번호',
       action: (row) => {
+        const [invoice, setInvoice] = useState(row?.invoice_num);
         return <Col style={{ rowGap: '0.5rem' }}>
           <TextField
             size={'small'}
+            className={`invoice-${row?.id}`}
+            value={invoice}
+            onChange={(e) => {
+              setInvoice(e.target.value);
+            }}
           />
-          <Button variant="contained">저장</Button>
+          <Button variant="contained" onClick={async () => {
+            let result = await updateTrxInvoiceByManager({
+              id: row?.id,
+              invoice_num: invoice
+            })
+            if (result) {
+              toast.success('성공적으로 저장 되었습니다.')
+            }
+          }}>저장</Button>
         </Col>
       },
       sx: (row) => {
@@ -184,7 +198,7 @@ const TrxList = () => {
           size="small"
           defaultValue={row?.trx_status}
           onChange={(e) => {
-            onChangeStatus(e);
+            onChangeStatus(row?.id, e.target.value);
           }}
         >
           <MenuItem value={0}>{'결제완료'}</MenuItem>
@@ -305,8 +319,11 @@ const TrxList = () => {
       onChangePage(searchObj);
     }
   }
-  const onChangeStatus = (e) => {
-
+  const onChangeStatus = async (id, value) => {
+    let result = await updateTrxStatusByManager({
+      id: id,
+      trx_status: value,
+    })
   }
   const onChangeInvoice = () => {
 

@@ -30,12 +30,7 @@ margin-left:0.5rem;
 font-weight:bold;
 `
 const testSearchList = [
-  { title: '블랙시크릿콤보' },
-  { title: '방콕점보윙' },
-  { title: '레블' },
-  { title: '반반오리지날' },
-  { title: '국물역떡' },
-  { title: '오리지날' },
+
 ]
 const DialogSearch = (props) => {
   // ** State
@@ -92,7 +87,7 @@ const DialogSearch = (props) => {
       </DialogTitle>
       <div style={{ borderTop: `1px solid ${themeObj.grey[300]}` }} />
       <DialogContent style={{ maxWidth: '750px', margin: '1rem auto', width: '80%' }}>
-        <Title>인기 검색어</Title>
+        {/* <Title>인기 검색어</Title>
         {testSearchList.map((item, idx) => (
           <>
             <Content>
@@ -100,7 +95,7 @@ const DialogSearch = (props) => {
               <div>{item.title}</div>
             </Content>
           </>
-        ))}
+        ))} */}
       </DialogContent>
     </Dialog>
   )

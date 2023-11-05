@@ -126,6 +126,7 @@ export default function ProductDetailsSummary({ product, onAddCart, onGotoStep, 
     product_name,
     product_comment,
     groups = [],
+    delivery_fee,
   } = product;
   console.log(product)
   useEffect(() => {
@@ -637,6 +638,7 @@ export default function ProductDetailsSummary({ product, onAddCart, onGotoStep, 
               )}
               {commarNumber(product_sale_price)} 원
             </Typography>
+            <Typography variant="h7" color={themeObj.grey[500]}>배송비: {commarNumber(delivery_fee)}원</Typography>
           </Stack>
           <Divider sx={{ borderStyle: 'dashed' }} />
           {groups.map((group) => (

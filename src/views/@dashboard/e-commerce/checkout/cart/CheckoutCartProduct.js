@@ -21,7 +21,7 @@ CheckoutCartProduct.propTypes = {
   onIncrease: PropTypes.func,
 };
 export default function CheckoutCartProduct({ row, onDelete, onDecrease, onIncrease, calculatorPrice }) {
-  const { product_name, product_comment, size, price, colors, cover, available, product_sale_price, groups, order_count, product_price, product_img } = row;
+  const { product_name, product_comment, size, price, colors, cover, available, delivery_fee, product_sale_price, groups, order_count, product_price, product_img } = row;
 
   return (
     <TableRow>
@@ -72,6 +72,9 @@ export default function CheckoutCartProduct({ row, onDelete, onDecrease, onIncre
               ---
             </>}
         </Stack>
+      </TableCell>
+      <TableCell>
+        {fCurrency(delivery_fee)}원
       </TableCell>
       <TableCell>
         {product_price > product_sale_price && (

@@ -435,7 +435,7 @@ const MainObjSetting = (props) => {
     }
     const onSearchProducts = async (e) => {
         let value = e.target.value;
-        if (value.length >= 3 && !searchTextList.includes(value)) {
+        if (value.length == 3 && !searchTextList.includes(value)) {
             let search_text_list = searchTextList;
             search_text_list.push(value);
             setSearchTextList(search_text_list);

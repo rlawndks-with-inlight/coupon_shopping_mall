@@ -74,7 +74,7 @@ export default function CheckoutCartProduct({ row, onDelete, onDecrease, onIncre
         </Stack>
       </TableCell>
       <TableCell>
-        {fCurrency(delivery_fee)}원
+        {commarNumber(delivery_fee)}원
       </TableCell>
       <TableCell>
         {product_price > product_sale_price && (
@@ -82,10 +82,10 @@ export default function CheckoutCartProduct({ row, onDelete, onDecrease, onIncre
             component="span"
             sx={{ color: 'text.disabled', textDecoration: 'line-through', mr: 0.5 }}
           >
-            {fCurrency(product_price)}
+            {commarNumber(product_price)}
           </Box>
         )}
-        {fCurrency(product_sale_price)}원
+        {commarNumber(product_sale_price)}원
       </TableCell>
       <TableCell>
         <Box sx={{ width: 96, textAlign: 'right' }}>

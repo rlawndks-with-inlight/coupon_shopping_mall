@@ -1,4 +1,4 @@
-import { Card, Container, Divider, IconButton, Stack } from "@mui/material";
+import { Card, Container, Divider, IconButton, MenuItem, Select, Stack } from "@mui/material";
 import { useEffect, useState } from "react";
 import ManagerLayout from "src/layouts/manager/ManagerLayout";
 import ManagerTable from "src/views/manager/mui/table/ManagerTable";
@@ -11,7 +11,7 @@ import { SelectCategoryComponent } from "./[edit_category]/[id]";
 import $ from 'jquery';
 import { useModal } from "src/components/dialog/ModalProvider";
 import { useSettingsContext } from "src/components/settings";
-import { apiManager } from "src/utils/api";
+import { apiManager, apiUtil } from "src/utils/api";
 import { useAuthContext } from "src/layouts/manager/auth/useAuthContext";
 
 const ProductList = () => {
@@ -111,8 +111,24 @@ const ProductList = () => {
       id: 'status',
       label: '상태',
       action: (row) => {
-        return row['status'] ?? "---"
-      }
+        return <Select
+          size="small"
+          defaultValue={row?.status}
+          onChange={(e) => {
+            console.log(row?.id, e.target.value)
+            onChangeStatus(row?.id, e.target.value);
+          }}
+        >
+          <MenuItem value={0}>{'판매중'}</MenuItem>
+          <MenuItem value={1}>{'중단됨'}</MenuItem>
+          <MenuItem value={2}>{'품절'}</MenuItem>
+        </Select>
+      },
+      sx: (row) => {
+        return {
+          color: `${row?.is_cancel == 1 ? 'red' : ''}`
+        }
+      },
     },
     {
       id: 'created_at',
@@ -262,6 +278,14 @@ const ProductList = () => {
       [idx]: children_list
     });
     $(`.category-container-${idx}`).scrollLeft(100000);
+  }
+  const onChangeStatus = async (id, value) => {
+    console.log(id)
+    console.log(value)
+    let result = await apiUtil(`products/status`, 'update', {
+      id,
+      value,
+    })
   }
   return (
     <>

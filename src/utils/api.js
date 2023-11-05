@@ -130,8 +130,8 @@ export const apiShop = async (table, type, params) => {
         return post(`${base_url}/${table}`, obj);
     }
 }
-export const apiUtil = (table, type, params) => {
-    let obj = settingParams(table, type, params);
+export const apiUtil = async (table, type, params) => {
+    let obj = await settingParams(table, type, params);
     if (!(obj?.brand_id > 0)) {
         let dns_data = getLocalStorage('themeDnsData');
         dns_data = JSON.parse(dns_data);

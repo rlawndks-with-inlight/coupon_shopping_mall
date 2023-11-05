@@ -90,7 +90,7 @@ export const onPayProductsByAuth = async (products_, payData_) => { // 인증결
         ord_num: ord_num,
         success_url: return_url + '?type=0',
         fail_url: return_url + '?type=1',
-        pay_key:payData?.payment_modules?.pay_key
+        pay_key: payData?.payment_modules?.pay_key
     }
     if (payData?.products?.length > 1 || !payData?.item_name) {
         payData.item_name = `${payData?.products[0]?.order_name} 외 ${payData?.products?.length - 1}`;
@@ -102,7 +102,6 @@ export const onPayProductsByAuth = async (products_, payData_) => { // 인증결
         delete payData.products;
         delete payData.payment_modules;
 
-        console.log(payData)
         let query = Object.entries(payData).map(e => e.join('=')).join('&');
         window.location.href = (`${process.env.NOTI_URL}/v2/pay/auth?${query}`);
 

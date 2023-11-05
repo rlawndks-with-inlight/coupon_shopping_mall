@@ -24,6 +24,7 @@ import {
   Paper,
   Card,
   CircularProgress,
+  Chip,
 } from '@mui/material';
 // routes
 // utils
@@ -32,7 +33,7 @@ import { fCurrency } from 'src/utils/formatNumber';
 import Iconify from 'src/components/iconify/Iconify';
 import { IncrementerButton } from 'src/components/custom-input';
 import { ColorSinglePicker } from 'src/components/color-utils';
-import { commarNumber } from 'src/utils/function';
+import { commarNumber, getProductStatus } from 'src/utils/function';
 import { Row, postCodeStyle, themeObj } from 'src/components/elements/styled-components';
 import { useSettingsContext } from 'src/components/settings';
 import _ from 'lodash';
@@ -131,8 +132,7 @@ export default function ProductDetailsSummary({ product, onAddCart, onGotoStep, 
     if (user) {
       onChangeAddressPage(addressSearchObj)
     }
-    let pay_list = themeDnsData?.payment_modules;
-    setPayList(pay_list)
+    setPayList(themeDnsData?.payment_modules)
   }, [])
   const isMaxQuantity = cart.filter((item) => item.id === id).map((item) => item.quantity)[0] >= available;
 
@@ -243,8 +243,7 @@ export default function ProductDetailsSummary({ product, onAddCart, onGotoStep, 
       let result = await onPayProductsByAuth([{
         ...product_item,
         groups: select_product_groups,
-        payment_modules: item,
-      }], payData);
+      }], { ...payData, payment_modules: item });
     }
   }
 
@@ -615,13 +614,9 @@ export default function ProductDetailsSummary({ product, onAddCart, onGotoStep, 
             <Typography
               variant="overline"
               component="div"
-              sx={{
-                color: status === 'sale' ? 'error.main' : 'info.main',
-              }}
             >
-              {status}
+              <Chip label={getProductStatus(status).text} variant="soft" color={getProductStatus(status).color} />
             </Typography>
-
             <Typography variant="h5">{product_name}</Typography>
             <Typography variant="h7" color={themeObj.grey[500]}>{product_comment}</Typography>
 

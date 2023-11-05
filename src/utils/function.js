@@ -16,6 +16,27 @@ export const objToQuery = (obj_) => {
 
   return query;
 }
+export const getProductStatus = (num) =>{
+  if(num==0){
+    return {
+      text:'판매중',
+      color:'info',
+    }
+  }else if(num==1){
+    return {
+      text:'중단됨',
+      color:'warning',
+    }
+  }else if(num==2){
+    return {
+      text:'품절',
+      color:'error',
+    }
+  }
+  return {
+
+  }
+}
 export const getMainObjIdList = (main_obj = [], type, id_list_ = [], is_children) => {// 같은 타입에서 WHERE IN 문에 사용될 ids를 세팅한다.
   let id_list = id_list_;
   for (var i = 0; i < main_obj.length; i++) {

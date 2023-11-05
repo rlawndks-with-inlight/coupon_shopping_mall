@@ -46,7 +46,6 @@ import Cards from 'react-credit-cards'
 import { useAuthContext } from 'src/layouts/manager/auth/useAuthContext';
 import { formatCreditCardNumber, formatExpirationDate } from 'src/utils/formatCard';
 import { useModal } from "src/components/dialog/ModalProvider";
-import { onPayItemByCard } from 'src/utils/api-shop';
 import { insertCartDataUtil, onPayProductsByAuth, selectItemOptionUtil } from 'src/utils/shop-util';
 import DaumPostcode from 'react-daum-postcode';
 import { apiManager } from 'src/utils/api';
@@ -155,7 +154,7 @@ export default function ProductDetailsSummary({ product, onAddCart, onGotoStep, 
   const [buyStep, setBuyStep] = useState(0);
   const [buyOpen, setBuyOpen] = useState(false);
   const onBuyNow = async () => {
-    let result = await onPayItemByCard(payData);
+    let result = await apiManager('pays/hand', 'create', payData);
   }
   const [payLoading, setPayLoading] = useState(false);
   const onBuyDialogClose = () => {

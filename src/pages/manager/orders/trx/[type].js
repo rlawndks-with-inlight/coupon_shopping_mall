@@ -7,7 +7,6 @@ import { useRouter } from "next/router";
 import { Col, Row } from "src/components/elements/styled-components";
 import { useModal } from "src/components/dialog/ModalProvider";
 import { commarNumber } from "src/utils/function";
-import { cancelPayByUser } from "src/utils/api-shop";
 import toast from "react-hot-toast";
 import { apiManager, apiUtil } from "src/utils/api";
 import { useSettingsContext } from "src/components/settings";
@@ -313,7 +312,7 @@ const TrxList = () => {
     } else {
       obj['password'] = item?.password;
     }
-    let result = await cancelPayByUser(obj);
+    let result = await apiManager('pays/cancel', 'create', obj);
     if (result) {
       toast.success("성공적으로 취소 되었습니다.");
       onChangePage(searchObj);

@@ -224,6 +224,7 @@ export const Items = (props) => {
 
 export const HistoryTable = (props) => {
   const { historyContent, headLabel } = props;
+  console.log(historyContent)
   return (
     <>
       <TableContainer>
@@ -236,11 +237,11 @@ export const HistoryTable = (props) => {
                   <TableCell sx={{ display: 'flex', alignItems: 'center' }}>
                     <Image
                       alt="product image"
-                      src={row.product_img}
+                      src={row?.orders.length > 0 && row?.orders[0]?.product_img}
                       sx={{ width: 64, height: 64, borderRadius: 1.5, mr: 2 }}
                     />
                     <Typography noWrap variant="subtitle2" sx={{ maxWidth: 240 }}>
-                      {row.product_name}
+                      {row.item_name}
                     </Typography>
                   </TableCell>
                   <TableCell>

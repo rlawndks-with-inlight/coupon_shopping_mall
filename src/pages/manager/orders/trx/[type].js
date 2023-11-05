@@ -200,6 +200,7 @@ const TrxList = () => {
           }}
         >
           <MenuItem value={0}>{'결제대기'}</MenuItem>
+          <MenuItem value={1}>{'취소요청'}</MenuItem>
           <MenuItem value={5}>{'결제완료'}</MenuItem>
           <MenuItem value={10}>{'입고완료'}</MenuItem>
           <MenuItem value={15}>{'출고완료'}</MenuItem>

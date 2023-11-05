@@ -1,32 +1,22 @@
 import { Avatar, Button, Card, Container, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Divider, IconButton, Stack, TextField } from "@mui/material";
 import { useEffect, useState } from "react";
-import ManagerLayout from "src/layouts/manager/ManagerLayout";
-import ManagerTable from "src/views/manager/mui/table/ManagerTable";
 import { Icon } from "@iconify/react";
 import { useRouter } from "next/router";
+import { Row } from "src/components/elements/styled-components";
+import { toast } from "react-hot-toast";
 import { useModal } from "src/components/dialog/ModalProvider";
+import ManagerLayout from "src/layouts/manager/ManagerLayout";
+import { commarNumber, getPointType } from "src/utils/function";
+import ManagerTable from "src/views/manager/mui/table/ManagerTable";
 import { apiManager } from "src/utils/api";
-import toast from "react-hot-toast";
-const test_data = [
-  {
-    id: 1,
-    user_name: 'test1',
-    phone_num: '01000000000',
-  },
-  {
-    id: 2,
-    user_name: 'test2',
-    phone_num: '01000000000',
-  }
-]
-const SellerList = () => {
+const PointList = () => {
   const { setModal } = useModal()
   const defaultColumns = [
     {
-      id: 'profile_img',
-      label: '유저프로필',
+      id: 'sender_name',
+      label: '지급자아이디',
       action: (row) => {
-        return <Avatar src={row['profile_img'] ?? "---"} />
+        return row['sender_name'] ?? "---"
       }
     },
     {
@@ -37,43 +27,24 @@ const SellerList = () => {
       }
     },
     {
-      id: 'nickname',
-      label: '닉네임',
+      id: 'price',
+      label: '포인트',
       action: (row) => {
-        return row['nickname'] ?? "---"
+        return `${row['point'] > 0 ? '+' : ''}` + commarNumber(row['point'])
       }
     },
     {
-      id: 'phone_num',
-      label: '휴대폰번호',
+      id: 'type',
+      label: '타입',
       action: (row) => {
-        return row['phone_num'] ?? "---"
+        return getPointType(row)
       }
     },
     {
       id: 'created_at',
-      label: '가입일',
+      label: '생성일',
       action: (row) => {
         return row['created_at'] ?? "---"
-      }
-    },
-    {
-      id: 'edit_password',
-      label: '비밀번호 변경',
-      action: (row) => {
-        return (
-          <>
-            <IconButton onClick={() => {
-              setDialogObj({ ...dialogObj, changePassword: true })
-              setChangePasswordObj({
-                user_pw: '',
-                id: row?.id
-              })
-            }}>
-              <Icon icon='material-symbols:lock-outline' />
-            </IconButton>
-          </>
-        )
       }
     },
     {
@@ -84,12 +55,12 @@ const SellerList = () => {
           <>
             <IconButton>
               <Icon icon='material-symbols:edit-outline' onClick={() => {
-                router.push(`sellers/edit/${row?.id}`)
+                router.push(`points/edit/${row?.id}`)
               }} />
             </IconButton>
             <IconButton onClick={() => {
               setModal({
-                func: () => { deleteSeller(row?.id) },
+                func: () => { deleteItem(row?.id) },
                 icon: 'material-symbols:delete-outline',
                 title: '정말 삭제하시겠습니까?'
               })
@@ -110,8 +81,6 @@ const SellerList = () => {
     s_dt: '',
     e_dt: '',
     search: '',
-    category_id: null,
-    is_seller: 1,
   })
   const [dialogObj, setDialogObj] = useState({
     changePassword: false,
@@ -133,20 +102,20 @@ const SellerList = () => {
       ...data,
       content: undefined
     })
-    let data_ = await apiManager('sellers', 'list', obj);
+    let data_ = await apiManager('points', 'list', obj);
     if (data_) {
       setData(data_);
     }
     setSearchObj(obj);
   }
-  const deleteSeller = async (id) => {
-    let result = await apiManager('sellers', 'delete', { id });
-    if (result) {
+  const deleteItem = async (id) => {
+    let data = await apiManager('points', 'delete', { id });
+    if (data) {
       onChangePage(searchObj);
     }
   }
   const onChangeUserPassword = async () => {
-    let result = await apiManager(`sellers/change-pw`, 'update', changePasswordObj);
+    let result = await changePasswordUserByManager(changePasswordObj);
     if (result) {
       setDialogObj({
         ...dialogObj,
@@ -161,7 +130,6 @@ const SellerList = () => {
         open={dialogObj.changePassword}
       >
         <DialogTitle>{`비밀번호 변경`}</DialogTitle>
-
         <DialogContent>
           <DialogContentText>
             새 비밀번호를 입력 후 확인을 눌러주세요.
@@ -202,12 +170,12 @@ const SellerList = () => {
             columns={columns}
             searchObj={searchObj}
             onChangePage={onChangePage}
-            add_button_text={'셀러 추가'}
+            add_button_text={'포인트 추가'}
           />
         </Card>
       </Stack>
     </>
   )
 }
-SellerList.getLayout = (page) => <ManagerLayout>{page}</ManagerLayout>;
-export default SellerList
+PointList.getLayout = (page) => <ManagerLayout>{page}</ManagerLayout>;
+export default PointList

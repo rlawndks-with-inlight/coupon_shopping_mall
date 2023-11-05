@@ -1,5 +1,5 @@
 
-import { Avatar, Button, Card, CardHeader, FormControl, Grid, InputLabel, MenuItem, Select, Stack, TextField, TextareaAutosize, Typography } from "@mui/material";
+import { Avatar, Button, Card, CardHeader, FormControl, Grid, InputAdornment, InputLabel, MenuItem, OutlinedInput, Select, Stack, TextField, TextareaAutosize, Typography } from "@mui/material";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { Row, themeObj } from "src/components/elements/styled-components";
@@ -72,6 +72,10 @@ const DefaultSetting = () => {
       value: 4,
       label: '데모설정'
     }] : []),
+    ...(user?.level >= 40 ? [{
+      value: 5,
+      label: '포인트설정'
+    }] : []),
   ]
 
   useEffect(() => {
@@ -108,7 +112,7 @@ const DefaultSetting = () => {
     let result = undefined
     let obj = item;
     if (obj?.id) {//수정
-      result = await apiManager('brands', 'update',{ ...obj, id: obj?.id })
+      result = await apiManager('brands', 'update', { ...obj, id: obj?.id })
     } else {//추가
       if (
         !obj?.user_name ||
@@ -123,7 +127,7 @@ const DefaultSetting = () => {
         toast.error("본사 비밀번호가 일치하지 않습니다.");
         return;
       }
-      result  = await apiManager('brands', 'create',{ ...obj })
+      result = await apiManager('brands', 'create', { ...obj })
     }
     if (result) {
       toast.success("성공적으로 저장 되었습니다.");
@@ -630,22 +634,23 @@ const DefaultSetting = () => {
                 <Grid item xs={12} md={6}>
                   <Card sx={{ p: 2, height: '100%' }}>
                     <Stack spacing={3}>
-                      <FormControl>
-                        <InputLabel>서브카테고리사용여부</InputLabel>
-                        <Select label='서브카테고리사용여부' value={item.setting_obj?.is_use_product_sub_category} onChange={(e) => {
-                          setItem(
-                            {
-                              ...item,
-                              ['setting_obj']: {
-                                ...item.setting_obj,
-                                is_use_product_sub_category: e.target.value
+                      <FormControl variant="outlined">
+                        <InputLabel>최대포인트 사용금액</InputLabel>
+                        <OutlinedInput
+                          label='최대포인트 사용금액'
+                          value={item?.setting_obj?.max_use_point ?? 0}
+                          endAdornment={<InputAdornment position="end">원</InputAdornment>}
+                          onChange={(e) => {
+                            setItem(
+                              {
+                                ...item,
+                                ['setting_obj']: {
+                                  ...item?.setting_obj,
+                                  ['max_use_point']: e.target.value
+                                }
                               }
-                            }
-                          )
-                        }}>
-                          <MenuItem value={0}>사용안함</MenuItem>
-                          <MenuItem value={1}>사용</MenuItem>
-                        </Select>
+                            )
+                          }} />
                       </FormControl>
                     </Stack>
                   </Card>
@@ -653,20 +658,24 @@ const DefaultSetting = () => {
                 <Grid item xs={12} md={6}>
                   <Card sx={{ p: 2, height: '100%' }}>
                     <Stack spacing={3}>
-                      <TextField
-                        label='서브카테고리명칭'
-                        value={item?.setting_obj?.product_sub_category_name}
-                        onChange={(e) => {
-                          setItem(
-                            {
-                              ...item,
-                              ['setting_obj']: {
-                                ...item?.setting_obj,
-                                ['product_sub_category_name']: e.target.value
+                      <FormControl variant="outlined">
+                        <InputLabel>포인트 적립비율</InputLabel>
+                        <OutlinedInput
+                          label='포인트 적립비율'
+                          value={item?.setting_obj?.point_rate ?? 0}
+                          endAdornment={<InputAdornment position="end">%</InputAdornment>}
+                          onChange={(e) => {
+                            setItem(
+                              {
+                                ...item,
+                                ['setting_obj']: {
+                                  ...item?.setting_obj,
+                                  ['point_rate']: e.target.value
+                                }
                               }
-                            }
-                          )
-                        }} />
+                            )
+                          }} />
+                      </FormControl>
                     </Stack>
                   </Card>
                 </Grid>

@@ -19,6 +19,7 @@ export const PATH_MANAGER = {
     root: path(ROOTS_MANAGER, '/users'),
     list: path(ROOTS_MANAGER, '/users/list'),
     sellers: path(ROOTS_MANAGER, '/users/sellers'),
+    points: path(ROOTS_MANAGER, '/users/points'),
     sales: path(ROOTS_MANAGER, '/users/sales'),
   },
   orders: {
@@ -100,6 +101,8 @@ export const defaultManagerObj = {
     favicon_file: undefined,
     og_file: undefined,
     setting_obj: {
+      max_use_point: 0,
+      point_rate: 0,
       tutorial_num: 0,
       shop_demo_num: 0,
       blog_demo_num: 0,

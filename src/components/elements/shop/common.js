@@ -23,6 +23,8 @@ import { getTrxStatusByNumber, makeMaxPage } from 'src/utils/function';
 import { insertWishDataUtil } from "src/utils/shop-util";
 import toast from "react-hot-toast";
 import { useAuthContext } from "src/layouts/manager/auth/useAuthContext";
+import { apiManager } from "src/utils/api";
+import { useModal } from "src/components/dialog/ModalProvider";
 const ItemName = styled.div`
 font-weight: bold;
 font-size:${themeObj.font_size.size7};
@@ -223,8 +225,15 @@ export const Items = (props) => {
 }
 
 export const HistoryTable = (props) => {
-  const { historyContent, headLabel } = props;
-  console.log(historyContent)
+  const { historyContent, headLabel, onChangePage, searchObj } = props;
+  const { setModal } = useModal();
+  const onPayCancelRequest = async (row) => {
+    let result = await apiManager(`transactions/${row?.id}/cancel-request`, 'create');
+    if (result) {
+      toast.success('취소요청이 완료되었습니다.');
+      onChangePage(searchObj);
+    }
+  }
   return (
     <>
       <TableContainer>
@@ -258,6 +267,29 @@ export const HistoryTable = (props) => {
                       sx={{ textAlign: 'right', color: 'text.secondary', }}
                     >
                       {row?.updated_at}
+                    </Box>
+                  </TableCell>
+                  <TableCell>
+                    <Box
+                      sx={{ textAlign: 'right', color: 'text.secondary', }}
+                    >
+                      {row?.is_cancel == 1 || row?.trx_status == 1 ?
+                        <>
+                          ---
+                        </>
+                        :
+                        <>
+                          <IconButton>
+                            <Icon icon='material-symbols:cancel-outline' onClick={() => {
+                              setModal({
+                                func: () => { onPayCancelRequest(row) },
+                                icon: 'material-symbols:cancel-outline',
+                                title: '결제취소요청 하시겠습니까?'
+                              })
+                            }} />
+                          </IconButton>
+                        </>}
+
                     </Box>
                   </TableCell>
                 </TableRow>

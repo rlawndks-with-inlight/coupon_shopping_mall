@@ -22,6 +22,7 @@ const TABLE_HEAD = [
   { id: 'buyer_name', label: '구매자명' },
   { id: 'trx_status', label: '배송상태' },
   { id: 'date', label: '업데이트일', align: 'right' },
+  { id: 'cancel', label: '결제취소요청', align: 'right' },
   { id: '' },
 ];
 const Demo1 = (props) => {
@@ -58,7 +59,7 @@ const Demo1 = (props) => {
       <Wrappers>
         <Title>주문조회</Title>
         <Card sx={{ marginBottom: '2rem' }}>
-          <HistoryTable historyContent={historyContent} headLabel={TABLE_HEAD} />
+          <HistoryTable historyContent={historyContent} headLabel={TABLE_HEAD} onChangePage={onChangePage} searchObj={searchObj}/>
         </Card>
         <Pagination
           sx={{ margin: 'auto' }}

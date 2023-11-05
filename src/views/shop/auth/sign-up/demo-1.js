@@ -350,19 +350,19 @@ const Demo1 = (props) => {
                   setUser({ ...user, ['phone_num']: e.target.value })
                 }}
                 value={user.phone_num}
-                endAdornment={<>
-                  <Button style={{ width: '144px', height: '56px', transform: 'translateX(14px)' }}
-                    variant="contained"
-                    onClick={() => {
-                      if (phoneCheckStep == 0) {
-                        onClickSendPhoneVerifyCode();
-                      }
-                    }}
-                  >인증번호발송</Button>
-                </>}
+                // endAdornment={<>
+                //   <Button style={{ width: '144px', height: '56px', transform: 'translateX(14px)' }}
+                //     variant="contained"
+                //     onClick={() => {
+                //       if (phoneCheckStep == 0) {
+                //         onClickSendPhoneVerifyCode();
+                //       }
+                //     }}
+                //   >인증번호발송</Button>
+                // </>}
               />
             </FormControl>
-            <FormControl variant="outlined" style={{ width: '100%', marginTop: '1rem' }}>
+            {/* <FormControl variant="outlined" style={{ width: '100%', marginTop: '1rem' }}>
               <InputLabel>휴대폰번호</InputLabel>
               <OutlinedInput
                 label='휴대폰번호'
@@ -379,7 +379,7 @@ const Demo1 = (props) => {
                   >인증번호확인</Button>
                 </>}
               />
-            </FormControl>
+            </FormControl> */}
           </>}
         {activeStep == 2 &&
           <>

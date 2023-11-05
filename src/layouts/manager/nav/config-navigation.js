@@ -168,6 +168,7 @@ export const navConfig = () => {
           icon: ICONS.user,
           children: [
             { title: '회원관리', path: PATH_MANAGER.users.list },
+            { title: '포인트관리', path: PATH_MANAGER.users.points },
             ...(themeDnsData?.is_use_seller > 0 ? [{ title: '셀러관리', path: PATH_MANAGER.users.sellers }] : []),
             // { title: '매출관리', path: PATH_MANAGER.users.sales },
           ],

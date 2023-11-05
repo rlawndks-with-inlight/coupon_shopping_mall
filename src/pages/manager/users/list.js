@@ -7,6 +7,7 @@ import { useRouter } from "next/router";
 import { toast } from "react-hot-toast";
 import { useModal } from "src/components/dialog/ModalProvider";
 import { apiManager } from "src/utils/api";
+import { commarNumber } from "src/utils/function";
 const UserList = () => {
   const { setModal } = useModal()
   const defaultColumns = [
@@ -36,6 +37,13 @@ const UserList = () => {
       label: '휴대폰번호',
       action: (row) => {
         return row['phone_num'] ?? "---"
+      }
+    },
+    {
+      id: 'point',
+      label: '보유포인트',
+      action: (row) => {
+        return commarNumber(row['point'])
       }
     },
     {

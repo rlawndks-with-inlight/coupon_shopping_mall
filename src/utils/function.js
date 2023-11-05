@@ -16,25 +16,40 @@ export const objToQuery = (obj_) => {
 
   return query;
 }
-export const getProductStatus = (num) =>{
-  if(num==0){
+export const getProductStatus = (num) => {
+  if (num == 0) {
     return {
-      text:'판매중',
-      color:'info',
+      text: '판매중',
+      color: 'info',
     }
-  }else if(num==1){
+  } else if (num == 1) {
     return {
-      text:'중단됨',
-      color:'warning',
+      text: '중단됨',
+      color: 'warning',
     }
-  }else if(num==2){
+  } else if (num == 2) {
     return {
-      text:'품절',
-      color:'error',
+      text: '품절',
+      color: 'error',
     }
   }
   return {
 
+  }
+}
+export const getPointType = (row) =>{
+  if(row?.type == 0){
+    return '결제완료건에 의한 포인트';
+  }else if(row?.type == 5){
+    return '결제취소건에 의한 포인트';
+  }else if(row?.type == 10){
+    return '구매에 사용한 포인트 감소건';
+  }else if(row?.type == 15){
+    return '관리자가 추가';
+  }else if(row?.type == 20){
+    return '과니자가 감소';
+  } else{
+    return '잘못된 타입';
   }
 }
 export const getMainObjIdList = (main_obj = [], type, id_list_ = [], is_children) => {// 같은 타입에서 WHERE IN 문에 사용될 ids를 세팅한다.
@@ -210,6 +225,8 @@ export const getUserLevelByNumber = (num) => {
 export const getTrxStatusByNumber = (num) => {
   if (num == 0)
     return '결제대기'
+  else if (num == 1)
+    return '취소요청'
   else if (num == 5)
     return '결제완료'
   else if (num == 10)
@@ -465,15 +482,15 @@ export function hexToRgb(hex) {
 export function findChildIds(data, id) {
   const children = data.filter(item => item.parent_id == id).map(item => item.id);
   children.forEach(child => {
-      children.push(...findChildIds(data, child));
+    children.push(...findChildIds(data, child));
   });
   return children;
 }
 export function findParent(data, item) {
-  if(!(item.parent_id > 0)){
-      return item;
+  if (!(item.parent_id > 0)) {
+    return item;
   } else {
-      let result = data.filter(itm=>itm.id == item.parent_id);
-      return findParent(data, result[0]);
+    let result = data.filter(itm => itm.id == item.parent_id);
+    return findParent(data, result[0]);
   }
 }

@@ -306,6 +306,9 @@ const TrxList = () => {
       trx_id: item?.trx_id,
       pay_key: item?.pay_key,
       amount: item?.amount,
+      mid: item?.mid,
+      tid: item?.tid,
+      id: item?.id
     }
     if (item?.user_id) {
       obj['user_id'] = item?.user_id;

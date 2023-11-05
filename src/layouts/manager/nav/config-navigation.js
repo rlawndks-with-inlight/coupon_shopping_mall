@@ -136,15 +136,10 @@ export const navConfig = () => {
               ],
             },
             {
-              title: '주문취소관리', path: PATH_MANAGER.orders.trx,
+              title: '주문취소관리', path: PATH_MANAGER.orders.trxCancel,
               children: [
-                { title: '전체', path: PATH_MANAGER.orders.trx + '/all' },
-                { title: '결제대기', path: PATH_MANAGER.orders.trx + '/0' },
-                { title: '결제완료', path: PATH_MANAGER.orders.trx + '/5' },
-                { title: '입고완료', path: PATH_MANAGER.orders.trx + '/10' },
-                { title: '출고완료', path: PATH_MANAGER.orders.trx + '/15' },
-                { title: '배송중', path: PATH_MANAGER.orders.trx + '/20' },
-                { title: '배송완료', path: PATH_MANAGER.orders.trx + '/25' },
+                { title: '취소요청', path: PATH_MANAGER.orders.trxCancel + '/1' },
+                { title: '취소완료', path: PATH_MANAGER.orders.trxCancel + '/5' },
               ],
             },
           ],

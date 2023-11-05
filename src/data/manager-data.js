@@ -24,6 +24,7 @@ export const PATH_MANAGER = {
   orders: {
     root: path(ROOTS_MANAGER, '/orders'),
     trx: path(ROOTS_MANAGER, '/orders/trx'),
+    trxCancel: path(ROOTS_MANAGER, '/orders/trx-cancel'),
     invoice: path(ROOTS_MANAGER, '/orders/invoice'),
     cashBill: path(ROOTS_MANAGER, '/orders/cash-bill'),
   },

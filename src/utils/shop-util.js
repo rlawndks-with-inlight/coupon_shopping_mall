@@ -18,8 +18,8 @@ export const calculatorPrice = (item) => {// 상품별로 가격
         }
     }
     return {
-        subtotal: (product_price + product_option_price + delivery_fee) * order_count,//할인전가격
-        total: (product_sale_price + product_option_price + delivery_fee) * order_count,//결과
+        subtotal: (product_price + product_option_price) * order_count + delivery_fee,//할인전가격
+        total: (product_sale_price + product_option_price) * order_count + delivery_fee,//결과
         discount: (product_price - product_sale_price) * order_count//할인가
     }
 }
@@ -96,6 +96,7 @@ export const onPayProductsByAuth = async (products_, payData_) => { // 인증결
         payData.item_name = `${payData?.products[0]?.order_name} 외 ${payData?.products?.length - 1}`;
     }
     try {
+        
         let insert_pay_ready = await apiManager('pays/auth', 'create', payData)
         payData.temp = insert_pay_ready?.id
 

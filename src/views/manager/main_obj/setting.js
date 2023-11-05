@@ -444,12 +444,18 @@ const MainObjSetting = (props) => {
                 page_size: 100000,
                 search: value,
             });
+            let product_content_list = [
+                ...productContent?.content,
+                ...product_content?.content,
+            ]
+            product_content_list= product_content_list.reduce((acc, curr) => {
+                const idx = acc.findIndex((obj) => obj['id'] === curr['id']);
+                if (idx === -1) acc.push(curr);
+                  return acc;
+            }, []);
             setProductContent({
                 ...product_content,
-                content: [
-                    ...productContent?.content,
-                    ...product_content?.content,
-                ]
+                content: product_content_list
             })
         }
     }

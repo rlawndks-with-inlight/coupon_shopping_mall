@@ -3,7 +3,6 @@ import { axiosIns } from "./axios";
 import { apiManager } from "./api";
 import axios from "axios";
 
-export const PAY_KEY = '51714wdraUTO6Uj6jHooVh00W6dtJkL84QkYKXotBtMmgdvY96QiLDk0wKQKeCzE'
 export const calculatorPrice = (item) => {// 상품별로 가격
     if (!item) {
         return 0;
@@ -90,7 +89,9 @@ export const onPayProductsByAuth = async (products_, payData_) => { // 인증결
         ord_num: ord_num,
         success_url: return_url + '?type=0',
         fail_url: return_url + '?type=1',
-        pay_key: payData?.payment_modules?.pay_key
+        pay_key: payData?.payment_modules?.pay_key,
+        mid:payData?.payment_modules?.mid,
+        tid:payData?.payment_modules?.tid
     }
     if (payData?.products?.length > 1 || !payData?.item_name) {
         payData.item_name = `${payData?.products[0]?.order_name} 외 ${payData?.products?.length - 1}`;

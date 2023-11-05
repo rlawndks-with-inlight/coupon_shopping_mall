@@ -8,12 +8,13 @@ import { Col, Row } from "src/components/elements/styled-components";
 import { useModal } from "src/components/dialog/ModalProvider";
 import { commarNumber } from "src/utils/function";
 import { cancelPayByUser } from "src/utils/api-shop";
-import { PAY_KEY } from "src/utils/shop-util";
 import toast from "react-hot-toast";
 import { apiManager, apiUtil } from "src/utils/api";
+import { useSettingsContext } from "src/components/settings";
 
 const TrxList = () => {
   const { setModal } = useModal()
+  const {themeDnsData} = useSettingsContext();
   const defaultColumns = [
     {
       id: 'appr_num',
@@ -304,7 +305,7 @@ const TrxList = () => {
   const onPayCancel = async (item) => {
     let obj = {
       trx_id: item?.trx_id,
-      pay_key: PAY_KEY,
+      pay_key: item?.pay_key,
       amount: item?.amount,
     }
     if (item?.user_id) {

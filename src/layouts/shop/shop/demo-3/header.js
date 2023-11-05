@@ -325,7 +325,13 @@ const Header = () => {
             </OneMenuName>
           </OneMenuContainer>
           <OneMenuContainer
-            onClick={() => { router.push('/shop/auth/cart') }}
+            onClick={() => { 
+              if (user) {
+                router.push(`/shop/auth/cart`)
+              } else {
+                router.push(`/shop/auth/login`)
+              }
+             }}
           >
             <Icon icon={'ion:cart-outline'} fontSize={'1.5rem'} style={{ marginTop: 'auto' }} />
             <OneMenuName>

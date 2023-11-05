@@ -199,11 +199,12 @@ const TrxList = () => {
             onChangeStatus(row?.id, e.target.value);
           }}
         >
-          <MenuItem value={0}>{'결제완료'}</MenuItem>
-          <MenuItem value={5}>{'입고완료'}</MenuItem>
-          <MenuItem value={10}>{'출고완료'}</MenuItem>
-          <MenuItem value={15}>{'배송중'}</MenuItem>
-          <MenuItem value={20}>{'배송완료'}</MenuItem>
+          <MenuItem value={0}>{'결제대기'}</MenuItem>
+          <MenuItem value={5}>{'결제완료'}</MenuItem>
+          <MenuItem value={10}>{'입고완료'}</MenuItem>
+          <MenuItem value={15}>{'출고완료'}</MenuItem>
+          <MenuItem value={20}>{'배송중'}</MenuItem>
+          <MenuItem value={25}>{'배송완료'}</MenuItem>
         </Select>
       },
       sx: (row) => {

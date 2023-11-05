@@ -6,6 +6,7 @@ import { useAuthContext } from 'src/layouts/manager/auth/useAuthContext';
 import styled from 'styled-components'
 import { Icon } from '@iconify/react';
 import { Title } from 'src/components/elements/blog/demo-1';
+import { apiManager } from 'src/utils/api';
 
 const Wrappers = styled.div`
 max-width:798px;
@@ -53,7 +54,7 @@ row-gap:1rem;
 
 // 로그인 김인욱
 const Demo1 = (props) => {
-  const { presetsColor } = useSettingsContext();
+  const { presetsColor, onChangeWishData } = useSettingsContext();
   const { user, login } = useAuthContext();
   const {
     data: {
@@ -77,6 +78,7 @@ const Demo1 = (props) => {
   const onLogin = async () => {
     let user = await login(username, password);
     if (user) {
+      onChangeWishData(user?.wish_data ?? []);
       router.push('/blog/auth/my-page');
     }
   }

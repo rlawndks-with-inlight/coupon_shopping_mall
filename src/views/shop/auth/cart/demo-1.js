@@ -1,4 +1,4 @@
-import { Box, Button, Card, CardContent, CardHeader, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, FormControlLabel, Grid, Paper, Radio, RadioGroup, Stack, TextField, Typography } from '@mui/material';
+import { Box, Button, Card, CardContent, CardHeader, CircularProgress, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, FormControlLabel, Grid, Paper, Radio, RadioGroup, Stack, TextField, Typography } from '@mui/material';
 import { useEffect, useState } from 'react';
 import { Row, Title, postCodeStyle } from 'src/components/elements/styled-components';
 import { CheckoutCartProductList, CheckoutSteps, CheckoutSummary } from 'src/views/@dashboard/e-commerce/checkout';
@@ -123,6 +123,7 @@ const Demo1 = (props) => {
     detail_addr: '',
     password: "",
   })
+  const [payLoading, setPayLoading] = useState(false);
   useEffect(() => {
     getCart();
   }, [])
@@ -173,7 +174,8 @@ const Demo1 = (props) => {
     if (item?.type == 'card') {//카드결제
       setBuyType('card');
     } else if (item?.type == 'certification') {
-      let result = await onPayProductsByAuth(products, payData);
+      setPayLoading(true);
+      let result = await onPayProductsByAuth(products, { ...payData, payment_modules: item, });
     }
   }
   const onPayByHand = async () => {
@@ -187,7 +189,7 @@ const Demo1 = (props) => {
     }
   }
   const onAddAddress = async () => {
-    let result = await apiManager('user-addresses', 'create',{
+    let result = await apiManager('user-addresses', 'create', {
       ...addAddressObj,
       user_id: user?.id,
     })
@@ -202,7 +204,7 @@ const Demo1 = (props) => {
     }
   }
   const onDeleteAddress = async (id) => {
-    let result = await apiManager('user-addresses', 'delete',{
+    let result = await apiManager('user-addresses', 'delete', {
       id: id
     })
     if (result) {
@@ -214,7 +216,7 @@ const Demo1 = (props) => {
       ...addressContent,
       content: undefined,
     })
-    let data = await apiManager('user-addresses', 'list',search_obj);
+    let data = await apiManager('user-addresses', 'list', search_obj);
     setAddressSearchObj(search_obj);
     if (data) {
       setAddressContent(data);
@@ -230,6 +232,19 @@ const Demo1 = (props) => {
   }
   return (
     <>
+      <Dialog open={payLoading}
+        onClose={() => {
+          setPayLoading(false);
+        }}
+        PaperProps={{
+          style: {
+            background: 'transparent',
+            overflow: 'hidden'
+          }
+        }}
+      >
+        <CircularProgress />
+      </Dialog>
       <Dialog
         open={addAddressOpen}
         onClose={() => {

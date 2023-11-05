@@ -336,9 +336,7 @@ const Header = () => {
     let result = await logout();
     onChangeCartData([]);
     onChangeWishData([]);
-    if (result) {
-      router.push('/shop/auth/login');
-    }
+    router.push('/shop/auth/login');
   }
   return (
     <>
@@ -456,7 +454,11 @@ const Header = () => {
                 <IconButton
                   sx={iconButtonStyle}
                   onClick={() => {
-                    router.push(`/shop/auth/cart`)
+                    if (user) {
+                      router.push(`/shop/auth/cart`)
+                    } else {
+                      router.push(`/shop/auth/login`)
+                    }
                   }}
                 >
                   <Badge badgeContent={themeCartData.length} color="error">
@@ -547,7 +549,11 @@ const Header = () => {
                 <IconButton
                   sx={iconButtonStyle}
                   onClick={() => {
-                    router.push(`/shop/auth/cart`)
+                    if (user) {
+                      router.push(`/shop/auth/cart`)
+                    } else {
+                      router.push(`/shop/auth/login`)
+                    }
                   }}
                 >
                   <Badge badgeContent={themeCartData.length} color="error">

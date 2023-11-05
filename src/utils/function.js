@@ -188,14 +188,16 @@ export const getUserLevelByNumber = (num) => {
 }
 export const getTrxStatusByNumber = (num) => {
   if (num == 0)
-    return '결제완료'
+    return '결제대기'
   else if (num == 5)
-    return '입고'
+    return '결제완료'
   else if (num == 10)
-    return '출고'
+    return '입고'
   else if (num == 15)
-    return '배송중'
+    return '출고'
   else if (num == 20)
+    return '배송중'
+  else if (num == 25)
     return '배송완료'
   else
     return '---'

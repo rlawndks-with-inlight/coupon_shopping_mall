@@ -89,8 +89,8 @@ export const Item = (props) => {
       }}
       >
         <IconButton sx={{ position: 'absolute', right: '2px', top: '2px' }} onClick={onClickHeart}>
-          <Icon icon={themeWishData.map(itm => { return itm?.id }).includes(item?.id) ? 'mdi:heart' : 'mdi:heart-outline'} fontSize={'2rem'} style={{
-            color: `${themeWishData.map(itm => { return itm?.id }).includes(item?.id) ? 'red' : ''}`
+          <Icon icon={themeWishData.map(itm => { return itm?.product_id }).includes(item?.id) ? 'mdi:heart' : 'mdi:heart-outline'} fontSize={'2rem'} style={{
+            color: `${themeWishData.map(itm => { return itm?.product_id }).includes(item?.id) ? 'red' : ''}`
           }} />
         </IconButton>
         <ItemImg src={item.product_img} style={{

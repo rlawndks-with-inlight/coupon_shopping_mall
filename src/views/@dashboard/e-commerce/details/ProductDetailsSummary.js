@@ -23,6 +23,7 @@ import {
   RadioGroup,
   Paper,
   Card,
+  CircularProgress,
 } from '@mui/material';
 // routes
 // utils
@@ -137,7 +138,7 @@ export default function ProductDetailsSummary({ product, onAddCart, onGotoStep, 
 
   const handleAddCart = async () => {
     if (user) {
-      let result = insertCartDataUtil(product, selectProductGroups, themeCartData, onChangeCartData);
+      let result = await insertCartDataUtil(product, selectProductGroups, themeCartData, onChangeCartData);
       if (result) {
         toast.success("장바구니에 성공적으로 추가되었습니다.")
       }
@@ -155,6 +156,7 @@ export default function ProductDetailsSummary({ product, onAddCart, onGotoStep, 
   const onBuyNow = async () => {
     let result = await onPayItemByCard(payData);
   }
+  const [payLoading, setPayLoading] = useState(false);
   const onBuyDialogClose = () => {
     setBuyOpen(false);
     setBuyStep(0);
@@ -190,7 +192,7 @@ export default function ProductDetailsSummary({ product, onAddCart, onGotoStep, 
     }
   }
   const onDeleteAddress = async (id) => {
-    let result = await apiManager('user-addresses', 'delete',{
+    let result = await apiManager('user-addresses', 'delete', {
       id: id
     })
     if (result) {
@@ -199,7 +201,7 @@ export default function ProductDetailsSummary({ product, onAddCart, onGotoStep, 
   }
   const onAddAddress = async () => {
     if (user) {
-      let result = await apiManager('user-addresses', 'create',{
+      let result = await apiManager('user-addresses', 'create', {
         ...addAddressObj,
         user_id: user?.id,
       })
@@ -237,15 +239,32 @@ export default function ProductDetailsSummary({ product, onAddCart, onGotoStep, 
       let select_product_groups = selectProductGroups;
       product_item.order_count = selectProductGroups?.count;
       select_product_groups = selectProductGroups?.groups;
+      setPayLoading(true);
       let result = await onPayProductsByAuth([{
         ...product_item,
-        groups: select_product_groups
-
+        groups: select_product_groups,
+        payment_modules: item,
       }], payData);
     }
   }
+
+
   return (
     <>
+      <Dialog
+        open={payLoading}
+        onClose={() => {
+          setPayLoading(false);
+        }}
+        PaperProps={{
+          style: {
+            background: 'transparent',
+            overflow: 'hidden'
+          }
+        }}
+      >
+        <CircularProgress />
+      </Dialog>
       <Dialog
         open={addAddressOpen}
         onClose={() => {

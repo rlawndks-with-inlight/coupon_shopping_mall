@@ -5,6 +5,7 @@ import { useSettingsContext } from "src/components/settings";
 import { useAuthContext } from "src/layouts/manager/auth/useAuthContext";
 import styled from "styled-components";
 import { useTheme } from '@emotion/react';
+import { apiManager } from "src/utils/api";
 
 const Wrappers = styled.div`
 max-width: 500px;
@@ -26,7 +27,7 @@ cursor: pointer;
 //로그인 박이규
 const Demo2 = (props) => {
   const { user, login } = useAuthContext();
-  const { presetsColor } = useSettingsContext();
+  const { presetsColor, onChangeWishData } = useSettingsContext();
   const {
     data: {
 
@@ -54,6 +55,7 @@ const Demo2 = (props) => {
   const onLogin = async () => {
     let user = await login(username, password)
     if (user) {
+      onChangeWishData(user?.wish_data ?? []);
       router.push('/shop/auth/my-page')
     }
   }

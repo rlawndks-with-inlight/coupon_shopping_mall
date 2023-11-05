@@ -111,7 +111,6 @@ const Demo1 = (props) => {
       brand_id: themeDnsData?.id,
       ...router.query
     })
-    console.log(product_list)
     setSearchObj(search_obj);
     if (is_first) {
       setProducts(product_list.content ?? []);

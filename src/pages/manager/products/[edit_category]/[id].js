@@ -605,7 +605,22 @@ const ProductEdit = () => {
                             )
                           }} />
                       </FormControl>
-
+                      <FormControl variant="outlined">
+                        <InputLabel>배송비</InputLabel>
+                        <OutlinedInput
+                          label='배송비'
+                          type="number"
+                          value={item.delivery_fee}
+                          endAdornment={<InputAdornment position="end">원</InputAdornment>}
+                          onChange={(e) => {
+                            setItem(
+                              {
+                                ...item,
+                                ['delivery_fee']: e.target.value
+                              }
+                            )
+                          }} />
+                      </FormControl>
                       <Stack spacing={1}>
                         <Typography variant="subtitle2" sx={{ color: 'text.secondary' }}>
                           상품설명

@@ -211,7 +211,7 @@ const Header = () => {
 
   const router = useRouter();
   const theme = useTheme();
-  const { themeMode, onToggleMode, onChangeCategoryList, onChangeCartData, onChangeWishData  } = useSettingsContext();
+  const { themeMode, onToggleMode, onChangeCategoryList } = useSettingsContext();
   const { user, logout } = useAuthContext();
   const [keyword, setKeyword] = useState("");
   const onSearch = () => {
@@ -358,10 +358,7 @@ const Header = () => {
                       <Button sx={{ height: '24px' }} onClick={() => router.push('/shop/auth/my-page')}>마이페이지</Button>
                       <Button sx={{ height: '24px' }} onClick={() => router.push('/shop/service/history')}>주문내역</Button>
                       <Button variant="outlined" sx={{ height: '24px' }} onClick={() => {
-                        logout();
-                        onChangeCartData([]);
-                        onChangeWishData([]);
-                        router.push('/shop/auth/login')
+                        onLogout();
                       }}>로그아웃</Button>
                     </>
                     :
@@ -442,7 +439,11 @@ const Header = () => {
                 <IconButton
                   sx={{ ...iconButtonStyle, marginRight: '0.5rem' }}
                   onClick={() => {
-                    router.push(`/shop/auth/cart`)
+                    if (user) {
+                      router.push(`/shop/auth/cart`)
+                    } else {
+                      router.push(`/shop/auth/login`)
+                    }
                   }}
                 >
                   <Icon icon={'ph:shopping-bag-open-thin'} fontSize={'2.8rem'} color={themeMode == 'dark' ? '#fff' : '#000'} />
@@ -484,7 +485,11 @@ const Header = () => {
                 <IconButton
                   sx={iconButtonStyle}
                   onClick={() => {
-                    router.push(`/shop/auth/cart`)
+                    if (user) {
+                      router.push(`/shop/auth/cart`)
+                    } else {
+                      router.push(`/shop/auth/login`)
+                    }
                   }}
                 >
                   <Icon icon={'ph:shopping-bag-open-thin'} fontSize={'1.8rem'} color={themeMode == 'dark' ? '#fff' : '#000'} />
@@ -595,20 +600,20 @@ const Header = () => {
       <PaddingTop />
 
       <Dialog
-      open={dialogMenuOpen}
-      onClose={()=>{
-        setDialogMenuOpen(false);
-      }}
-      BackdropProps={{
-        style:{
-          background:`${theme.palette.primary.main}dd`
-        }
-      }}
-      PaperProps={{
-        style:{
-          background:'transparent'
-        }
-      }}
+        open={dialogMenuOpen}
+        onClose={() => {
+          setDialogMenuOpen(false);
+        }}
+        BackdropProps={{
+          style: {
+            background: `${theme.palette.primary.main}dd`
+          }
+        }}
+        PaperProps={{
+          style: {
+            background: 'transparent'
+          }
+        }}
       >
       </Dialog>
       <Drawer
@@ -674,6 +679,7 @@ const Header = () => {
               <ColumnMenuContent onClick={() => {
                 onLogout();
                 setSideMenuOpen(false);
+                console.log(1)
               }} style={{ paddingLeft: '1rem' }}>로그아웃</ColumnMenuContent>
             </>
             :

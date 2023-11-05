@@ -1,5 +1,7 @@
 import _ from "lodash";
 import { axiosIns } from "./axios";
+import { apiManager } from "./api";
+import axios from "axios";
 
 export const PAY_KEY = '51714wdraUTO6Uj6jHooVh00W6dtJkL84QkYKXotBtMmgdvY96QiLDk0wKQKeCzE'
 export const calculatorPrice = (item) => {// 상품별로 가격
@@ -49,6 +51,7 @@ export const makePayData = async (products_, payData_) => {
         products[i] = {
             id: products[i]?.id,
             order_name: products[i]?.order_name,
+            delivery_fee: products[i]?.delivery_fee ?? 0,
             order_amount: products[i]?.order_amount,
             order_count: products[i]?.order_count,
             groups: products[i]?.groups,
@@ -87,25 +90,19 @@ export const onPayProductsByAuth = async (products_, payData_) => { // 인증결
         ord_num: ord_num,
         success_url: return_url + '?type=0',
         fail_url: return_url + '?type=1',
+        pay_key:payData?.payment_modules?.pay_key
     }
     if (payData?.products?.length > 1 || !payData?.item_name) {
         payData.item_name = `${payData?.products[0]?.order_name} 외 ${payData?.products?.length - 1}`;
     }
-    payData.temp = {
-        products: payData?.products,
-        user_id: payData?.user_id,
-        password: payData?.password,
-        addr: payData?.addr ?? "",
-        detail_addr: payData?.detail_addr ?? "",
-    };
-
-    payData.temp = JSON.stringify(payData.temp);
-    payData.temp = Buffer.from(payData.temp).toString('base64');
-    payData.pay_key = PAY_KEY;
-    delete payData.products;
-    delete payData.user_id;
-    delete payData.password;
     try {
+        let insert_pay_ready = await apiManager('pays/auth', 'create', payData)
+        payData.temp = insert_pay_ready?.id
+        
+        delete payData.products;
+        delete payData.payment_modules;
+
+        console.log(payData)
         let query = Object.entries(payData).map(e => e.join('=')).join('&');
         window.location.href = (`${process.env.NOTI_URL}/v2/pay/auth?${query}`);
 
@@ -120,7 +117,6 @@ export const getCartDataUtil = async (themeCartData) => {//장바구니 페이�
     return data;
 }
 export const insertCartDataUtil = (product_, selectProductGroups_, themeCartData, onChangeCartData) => { //장바구니 버튼 클릭해서 넣기
-
     try {
         let cart_data = [...themeCartData];
         let product = product_;
@@ -170,19 +166,27 @@ export const selectItemOptionUtil = (group, option, selectProductGroups, is_opti
     return select_product_groups;
 }
 export const getWishDataUtil = async (themeWishData) => {//아이템찜 불러오기
-    let wish_list = themeWishData
-    return wish_list;
+    let wish_list = themeWishData;
+    let result = await apiManager('user-wishs/items', 'list');
+    return result;
 }
 export const insertWishDataUtil = async (item, themeWishData, onChangeWishData) => {//아이템 찜 클릭하기
     try {
         let wish_data = [...themeWishData];
-        let find_index = _.findIndex(wish_data, { id: parseInt(item?.id) });
+        let find_index = _.findIndex(wish_data, { product_id: parseInt(item?.id) });
         if (find_index >= 0) {
+            let result = await apiManager('user-wishs', 'delete', {
+                id: wish_data[find_index]?.id,
+            })
             wish_data.splice(find_index, 1);
         } else {
-            wish_data.push(item);
+            let result = await apiManager('user-wishs', 'create', {
+                product_id: item?.id,
+            })
         }
-        onChangeWishData(wish_data);
+        let wish_result = await apiManager('user-wishs', 'list');
+        wish_result = wish_result?.content ?? 0;
+        onChangeWishData(wish_result);
         return true;
     } catch (err) {
         console.log(err);

@@ -38,7 +38,7 @@ const TABLE_HEAD = [
 const Demo1 = (props) => {
   const { setModal } = useModal()
   const { user, login } = useAuthContext();
-  const { presetsColor, themeDnsData } = useSettingsContext();
+  const { presetsColor, themeDnsData, onChangeWishData } = useSettingsContext();
   const {
     data: {
 
@@ -67,8 +67,8 @@ const Demo1 = (props) => {
 
   const onLogin = async () => {
     let user = await login(username, password)
-    console.log(user)
     if (user) {
+      onChangeWishData(user?.wish_data ?? []);
       router.push('/shop/auth/my-page')
     }
   }

@@ -412,7 +412,7 @@ const ProductEdit = () => {
     }
     if (result) {
       toast.success("성공적으로 저장 되었습니다.");
-      router.push('/manager/products/list');
+      window.location.href = '/manager/products/list';
     }
   }
   const onSaveReview = async () => {

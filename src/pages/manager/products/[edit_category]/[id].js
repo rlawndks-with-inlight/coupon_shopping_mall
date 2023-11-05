@@ -1,24 +1,24 @@
 
-import { Avatar, Box, Breadcrumbs, Button, Card, CardHeader, Chip, FormControl, Grid, IconButton, InputAdornment, InputLabel, Menu, MenuItem, OutlinedInput, Select, Stack, TextField, Typography } from "@mui/material";
+import { Button, Card, FormControl, Grid, IconButton, InputAdornment, InputLabel, Menu, MenuItem, OutlinedInput, Rating, Select, Stack, TextField, Typography } from "@mui/material";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
-import { Row, themeObj } from "src/components/elements/styled-components";
+import { Col, Row, themeObj } from "src/components/elements/styled-components";
 import Iconify from "src/components/iconify/Iconify";
 import { useSettingsContext } from "src/components/settings";
 import { Upload } from "src/components/upload";
-import { test_categories } from "src/data/test-data";
 import ManagerLayout from "src/layouts/manager/ManagerLayout";
 import { Icon } from "@iconify/react";
 import { commarNumber, getAllIdsWithParents } from "src/utils/function";
 import styled from "styled-components";
 import $ from 'jquery';
-import { addProductByManager, getCategoriesByManager, getProductByManager, getProductReviewsByManager, updateProductByManager, uploadFileByManager } from "src/utils/api-manager";
 import { toast } from "react-hot-toast";
 import { useTheme } from "@emotion/react";
 import ManagerTable from "src/views/manager/mui/table/ManagerTable";
 import _ from "lodash";
 import { useModal } from "src/components/dialog/ModalProvider";
 import ReactQuillComponent from "src/views/manager/react-quill";
+import { apiManager, uploadFilesByManager } from "src/utils/api";
+import { useAuthContext } from "src/layouts/manager/auth/useAuthContext";
 
 const tab_list = [
   {
@@ -140,22 +140,29 @@ export const SelectCategoryComponent = (props) => {
   )
 }
 const ProductEdit = () => {
+  const { user } = useAuthContext();
   const { setModal } = useModal()
   const { themeCategoryList } = useSettingsContext();
   const defaultReviewColumns = [
     {
-      id: 'product_name',
-      label: '작성자',
+      id: 'user_name',
+      label: '작성자아이디',
       action: (row) => {
-        return row['product_name'] ?? "---"
+        return row['user_name'] ?? "---"
       }
     },
-
     {
-      id: 'product_price',
-      label: '코멘트',
+      id: 'nickname',
+      label: '작성자닉네임',
       action: (row) => {
-        return commarNumber(row['product_price'])
+        return row['nickname'] ?? "---"
+      }
+    },
+    {
+      id: 'title',
+      label: '제목',
+      action: (row) => {
+        return commarNumber(row['title'])
       }
     },
     {
@@ -181,11 +188,30 @@ const ProductEdit = () => {
     },
     {
       id: 'edit',
-      label: '삭제',
+      label: '수정/삭제',
       action: (row) => {
         return (
           <>
-            <IconButton onClick={() => deleteProduct(row?.id)}>
+            <IconButton>
+              <Icon icon='material-symbols:edit-outline' onClick={() => {
+                setReview(row);
+                setReviewAction(true);
+              }} />
+            </IconButton>
+            <IconButton onClick={() => {
+              setModal({
+                func: async () => {
+                  let result = await apiManager('product-reviews', 'delete', { id: row?.id });
+                  if (result) {
+                    setReviewAction(false);
+                    setReview({});
+                    onChangeReviewsPage(reviewSearchObj);
+                  }
+                },
+                icon: 'material-symbols:delete-outline',
+                title: '정말 삭제하시겠습니까?'
+              })
+            }}>
               <Icon icon='material-symbols:delete-outline' />
             </IconButton>
           </>
@@ -201,7 +227,6 @@ const ProductEdit = () => {
   const [curCategories, setCurCategories] = useState({});
   const [categoryChildrenList, setCategoryChildrenList] = useState({});
   const [item, setItem] = useState({
-    category_id: undefined,
     category_ids: [],
     product_name: '',
     product_comment: '',
@@ -214,13 +239,15 @@ const ProductEdit = () => {
     characters: [],
   })
   const [reviewData, setReviewData] = useState({});
+  const [review, setReview] = useState({});
+  const [reviewAction, setReviewAction] = useState(false);
   const [reviewSearchObj, setReviewSearchObj] = useState({
     page: 1,
     page_size: 10,
     s_dt: '',
     e_dt: '',
     search: '',
-    product_id: ''
+    product_id: '',
   })
   const [reviewColumns, setReviewColumns] = useState([]);
   useEffect(() => {
@@ -237,7 +264,7 @@ const ProductEdit = () => {
       ...reviewData,
       content: undefined
     })
-    let data_ = await getProductReviewsByManager(obj);
+    let data_ = await apiManager('product-reviews', 'list', obj);
     if (data_) {
       setReviewData(data_);
     }
@@ -248,33 +275,35 @@ const ProductEdit = () => {
   const settingPage = async () => {
     let cols = defaultReviewColumns;
     setReviewColumns(cols)
-    let category_list = await getCategoriesByManager({ page: 1, page_size: 100000 });
-    category_list = category_list?.content;
-    if (!(themeCategoryList.length > 0)) {
-      toast.error("카테고리 생성 후 상품 등록 가능합니다.");
-    }
-    setCategories(category_list);
+
+    setCategories(themeCategoryList);
     if (router.query?.edit_category == 'edit') {
       setCurrentTab(router.query?.type ?? 0)
-      let product = await getProductByManager({
+      let product = await apiManager('products', 'get', {
         id: router.query.id
       })
       product = Object.assign(item, product)
       setItem(product)
-      let parent_list = getAllIdsWithParents(category_list);
-      let use_list = [];
-      for (var i = 0; i < parent_list.length; i++) {
-        if (parent_list[i][parent_list[i].length - 1]?.id == product?.category_id) {
-          use_list = parent_list[i];
-          break;
+      let cur_categories = {};
+      let category_children_list = {};
+      for (var i = 0; i < themeCategoryList.length; i++) {
+        let parent_list = getAllIdsWithParents(themeCategoryList[i]?.product_categories);
+        let use_list = [];
+        for (var j = 0; j < parent_list.length; j++) {
+          if (parent_list[j][parent_list[j].length - 1]?.id == product[`category_id${i}`]) {
+            use_list = parent_list[j];
+            break;
+          }
         }
+        cur_categories[i] = use_list;
+        let children_list = [];
+        for (var j = 0; j < use_list.length; j++) {
+          children_list.push(use_list[j]?.children);
+        }
+        category_children_list[i] = children_list;
       }
-      setCurCategories(use_list);
-      let children_list = [];
-      for (var i = 0; i < use_list.length; i++) {
-        children_list.push(use_list[i]?.children);
-      }
-      setCategoryChildrenList(children_list);
+      setCurCategories(cur_categories);
+      setCategoryChildrenList(category_children_list);
     }
     setLoading(false);
   }
@@ -352,14 +381,58 @@ const ProductEdit = () => {
         category_ids[`category_id${i}`] = curCategories[i][curCategories[i].length - 1]?.id;
       }
     }
-    if (item?.id) {//수정
-      result = await updateProductByManager({ ...item, id: item?.id, ...category_ids })
+    let obj = item;
+    let sub_images = [];
+    let upload_files = [];
+    for (var i = 0; i < item.sub_images.length; i++) {
+      if (item.sub_images[i]?.product_sub_file) {
+        upload_files.push({
+          image: item.sub_images[i]?.product_sub_file,
+        })
+      }
+    }
+    upload_files = await uploadFilesByManager({
+      images: upload_files,
+    })
+    let upload_idx = 0;
+    for (var i = 0; i < obj.sub_images.length; i++) {
+      if (obj.sub_images[i]?.product_sub_file) {
+        sub_images.push({
+          product_sub_img: upload_files[upload_idx]?.url,
+        });
+        upload_idx++;
+      } else {
+        sub_images.push(obj.sub_images[i]);
+      }
+    }
+    if (obj?.id) {//수정
+      result = await apiManager('products', 'update', { ...obj, id: obj?.id, ...category_ids, sub_images })
     } else {//추가
-      result = await addProductByManager({ ...item, ...category_ids })
+      result = await apiManager('products', 'create', { ...obj, ...category_ids, sub_images, user_id: user?.id })
     }
     if (result) {
       toast.success("성공적으로 저장 되었습니다.");
       router.push('/manager/products/list');
+    }
+  }
+  const onSaveReview = async () => {
+    let result = undefined;
+    let obj = review;
+    obj['product_id'] = router.query?.id;
+    obj['user_id'] = user?.id;
+    if (obj?.id) {
+      result = await apiManager('product-reviews', 'update', { ...obj })
+    } else {
+      result = await apiManager('product-reviews', 'create', { ...obj })
+    }
+    if (result) {
+      toast.success("성공적으로 저장 되었습니다.");
+      setReview({});
+      setReviewAction(false);
+      onChangeReviewsPage({
+        ...reviewSearchObj,
+        page: 1,
+      })
     }
   }
   return (
@@ -537,7 +610,7 @@ const ProductEdit = () => {
                         <Typography variant="subtitle2" sx={{ color: 'text.secondary' }}>
                           상품설명
                         </Typography>
-                       
+
                         <ReactQuillComponent
                           value={item.product_description}
                           setValue={(value) => {
@@ -554,56 +627,61 @@ const ProductEdit = () => {
                         </Typography>
                         {item.characters.map((character, index) => (
                           <>
-                            <Row style={{ columnGap: '0.5rem' }}>
-                              <TextField
-                                sx={{ flexGrow: 1 }}
-                                label='옵션명'
-                                placeholder="예시) 원산지"
-                                value={character.character_name}
-                                onChange={(e) => {
-                                  let character_list = item?.characters;
-                                  character_list[index].character_name = e.target.value;
-                                  setItem(
-                                    {
-                                      ...item,
-                                      ['characters']: character_list
-                                    }
-                                  )
-                                }} />
-                              <FormControl variant="outlined" sx={{ flexGrow: 1 }}>
-                                <InputLabel>변동가</InputLabel>
-                                <OutlinedInput
-                                  label='변동가'
-                                  placeholder="예시) 국내산"
-                                  value={character.character_value}
-                                  onChange={(e) => {
+                            {character?.is_delete != 1 &&
+                              <>
+                                <Row style={{ columnGap: '0.5rem' }}>
+                                  <TextField
+                                    sx={{ flexGrow: 1 }}
+                                    label='특성키명'
+                                    placeholder="예시) 원산지"
+                                    value={character.character_name}
+                                    onChange={(e) => {
+                                      let character_list = item?.characters;
+                                      character_list[index].character_name = e.target.value;
+                                      setItem(
+                                        {
+                                          ...item,
+                                          ['characters']: character_list
+                                        }
+                                      )
+                                    }} />
+                                  <FormControl variant="outlined" sx={{ flexGrow: 1 }}>
+                                    <InputLabel>특성값</InputLabel>
+                                    <OutlinedInput
+                                      label='특성값'
+                                      placeholder="예시) 국내산"
+                                      value={character.character_value}
+                                      onChange={(e) => {
+                                        let character_list = item?.characters;
+                                        character_list[index].character_value = e.target.value;
+                                        setItem(
+                                          {
+                                            ...item,
+                                            ['characters']: character_list
+                                          }
+                                        )
+                                      }} />
+                                  </FormControl>
+                                  <IconButton onClick={() => {
                                     let character_list = item?.characters;
-                                    character_list[index].character_value = e.target.value;
+                                    if (character_list[index]?.id) {
+                                      character_list[index].is_delete = 1;
+                                    } else {
+                                      character_list.splice(index, 1);
+                                    }
                                     setItem(
                                       {
                                         ...item,
                                         ['characters']: character_list
                                       }
                                     )
-                                  }} />
-                              </FormControl>
-                              <IconButton onClick={() => {
-                                let character_list = item?.characters;
-                                if (character_list[index]?.id) {
-                                  character_list[index].is_delete = 1;
-                                } else {
-                                  character_list.splice(index, 1);
-                                }
-                                setItem(
-                                  {
-                                    ...item,
-                                    ['characters']: character_list
-                                  }
-                                )
-                              }}>
-                                <Icon icon='material-symbols:delete-outline' />
-                              </IconButton>
-                            </Row>
+                                  }}>
+                                    <Icon icon='material-symbols:delete-outline' />
+                                  </IconButton>
+                                </Row>
+                              </>}
+
+
                           </>
                         ))}
                         <Button variant="outlined" sx={{ height: '48px' }} onClick={() => {
@@ -766,6 +844,17 @@ const ProductEdit = () => {
               <>
                 <Grid item xs={12} md={6}>
                   <Card sx={{ p: 2, height: '100%' }}>
+                    <div style={{ padding: '0 0.75rem' }}>
+                      <Button style={{ width: '100%', }} variant="outlined" onClick={() => {
+                        setReview({
+                          title: '',
+                          content: '',
+                        });
+                        setReviewAction(true);
+                      }}>
+                        + 리뷰 추가하기
+                      </Button>
+                    </div>
                     <ManagerTable
                       data={reviewData}
                       columns={reviewColumns}
@@ -773,6 +862,102 @@ const ProductEdit = () => {
                       onChangePage={onChangeReviewsPage}
                       add_button_text={''}
                     />
+                  </Card>
+                </Grid>
+                <Grid item xs={12} md={6}>
+                  <Card sx={{ p: 2, height: '100%' }}>
+                    <Stack spacing={3}>
+                      {reviewAction ?
+                        <>
+                          <Stack spacing={1}>
+                            <Typography variant="subtitle2" sx={{ color: 'text.secondary' }}>
+                              대표이미지등록
+                            </Typography>
+                            <Upload file={review.profile_file || review.profile_img} onDrop={(acceptedFiles) => {
+                              const newFile = acceptedFiles[0];
+                              if (newFile) {
+                                setReview(
+                                  {
+                                    ...review,
+                                    ['profile_file']: Object.assign(newFile, {
+                                      preview: URL.createObjectURL(newFile),
+                                    })
+                                  }
+                                );
+                              }
+                            }}
+                              onDelete={() => {
+                                setReview(
+                                  {
+                                    ...review,
+                                    ['profile_file']: undefined,
+                                    ['profile_img']: '',
+                                  }
+                                )
+                              }}
+                              fileExplain={{
+                                width: '(512x512 추천)'//파일 사이즈 설명
+                              }}
+                            />
+                          </Stack>
+                          <Stack spacing={1}>
+                            <TextField
+                              label='제목'
+                              value={review.title}
+                              onChange={(e) => {
+                                setReview(
+                                  {
+                                    ...review,
+                                    ['title']: e.target.value
+                                  }
+                                )
+                              }} />
+                          </Stack>
+                          <Stack spacing={1}>
+                            <Typography variant="subtitle2" sx={{ color: 'text.secondary' }}>
+                              별점
+                            </Typography>
+                            <Rating value={review?.scope / 2} precision={0.5} style={{ marginTop: '0' }} onChange={(e) => {
+                              setReview(
+                                {
+                                  ...review,
+                                  ['scope']: e.target.value * 2
+                                }
+                              )
+                            }} />
+                          </Stack>
+                          <Stack spacing={1}>
+                            <TextField
+                              fullWidth
+                              label="내용"
+                              multiline
+                              rows={4}
+                              value={review.content}
+                              onChange={(e) => {
+                                setReview({
+                                  ...review,
+                                  ['content']: e.target.value
+                                })
+                              }}
+                            />
+                          </Stack>
+                          <Stack spacing={1}>
+                            <Button variant="contained" style={{ marginTop: 'auto', height: '56px' }} onClick={() => {
+                              setModal({
+                                func: () => { onSaveReview() },
+                                icon: 'material-symbols:edit-outline',
+                                title: '저장 하시겠습니까?'
+                              })
+                            }}>{review?.id > 0 ? '수정' : '추가'}</Button>
+                          </Stack>
+
+                        </>
+                        :
+                        <>
+
+                        </>}
+
+                    </Stack>
                   </Card>
                 </Grid>
               </>}

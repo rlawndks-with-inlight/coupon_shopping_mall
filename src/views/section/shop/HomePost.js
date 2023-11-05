@@ -80,7 +80,6 @@ margin: 0.2rem 0;
 cursor:pointer;
 `
 const HomePost = (props) => {
-  console.log(props);
   const { column, data, func, is_manager } = props;
   const { themeDnsData } = data;
   const { router } = func;

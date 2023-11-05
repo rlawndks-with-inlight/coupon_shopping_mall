@@ -23,7 +23,7 @@ import { HTML5Backend } from 'react-dnd-html5-backend';
 import { DndProvider } from 'react-dnd';
 import update from 'immutability-helper'
 import _ from 'lodash';
-import { sortDataByManager, sortProductByManager } from 'src/utils/api-manager';
+import { apiUtil } from 'src/utils/api';
 
 const TableHeaderContainer = styled.div`
 padding: 0.75rem;
@@ -89,7 +89,7 @@ export default function ManagerTable(props) {
       dest_id,
       dest_sort_idx,
     }
-    let result = await sortDataByManager(obj, table );
+    let result = await apiUtil(`${table}/sort`, 'update', obj);
     if (result) {
       onChangePage(searchObj);
     }
@@ -110,7 +110,7 @@ export default function ManagerTable(props) {
     <>
       <TableContainer sx={{ overflow: 'unset' }}>
         <TableHeaderContainer>
-          <Row>
+          <Row style={{ rowGap: '1rem', flexWrap: 'wrap' }}>
             {window.innerWidth > 1000 ?
               <>
                 <DesktopDatePicker

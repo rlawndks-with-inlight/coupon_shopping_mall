@@ -4,10 +4,9 @@ import ManagerLayout from "src/layouts/manager/ManagerLayout";
 import ManagerTable from "src/views/manager/mui/table/ManagerTable";
 import { Icon } from "@iconify/react";
 import { useRouter } from "next/router";
-import { Row } from "src/components/elements/styled-components";
-import { deletePostByManager, getPostCategoryByManager, getPostsByManager, getProductsByManager } from "src/utils/api-manager";
 import { useModal } from "src/components/dialog/ModalProvider";
 import { LazyLoadImage } from "react-lazy-load-image-component";
+import { apiManager } from "src/utils/api";
 const ArticleList = () => {
   const { setModal } = useModal()
   const [category, setCategory] = useState({});
@@ -29,10 +28,25 @@ const ArticleList = () => {
       }
     },
     {
-      id: 'post_writer',
-      label: '작성자',
+      id: 'post_category_title',
+      label: '서브카테고리',
       action: (row) => {
-        return row['post_writer'] ?? "---"
+        console.log(row)
+        return category?.id == row?.category_id ? "---" : row['post_category_title']
+      }
+    },
+    {
+      id: 'writer_user_name',
+      label: '작성자 유저아이디',
+      action: (row) => {
+        return row['writer_user_name'] ?? "---"
+      }
+    },
+    {
+      id: 'writer_nickname',
+      label: '작성자 닉네임',
+      action: (row) => {
+        return row['writer_nickname'] ?? "---"
       }
     },
     {
@@ -102,11 +116,11 @@ const ArticleList = () => {
     setColumns(cols)
   }, [category])
   const pageSetting = async () => {
-    let category = await getPostCategoryByManager({
-      id: router.query?.category_id
+
+    let category = await apiManager('post-categories', 'get', {
+      id: router.query.category_id
     })
     setCategory(category)
-
     onChangePage({ ...searchObj, category_id: router.query?.category_id, page: 1, });
   }
   const onChangePage = async (obj) => {
@@ -114,14 +128,14 @@ const ArticleList = () => {
       ...data,
       content: undefined
     })
-    let data_ = await getPostsByManager(obj);
+    let data_ = await apiManager('posts', 'list', obj);
     if (data_) {
       setData(data_);
     }
     setSearchObj(obj);
   }
   const deletePost = async (id) => {
-    let result = await deletePostByManager({ id: id });
+    let result = await apiManager('posts', 'delete', { id });
     if (result) {
       onChangePage({ ...searchObj, category_id: router.query?.category_id });
     }

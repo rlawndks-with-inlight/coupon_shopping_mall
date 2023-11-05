@@ -1,7 +1,7 @@
 import dynamic from "next/dynamic";
 import { useMemo } from "react";
 import { useRef } from "react";
-import { uploadFileByManager } from "src/utils/api-manager";
+import { uploadFileByManager } from "src/utils/api";
 import { base64toFile } from "src/utils/function";
 const ReactQuill = dynamic(() => import('react-quill'), {
     ssr: false,

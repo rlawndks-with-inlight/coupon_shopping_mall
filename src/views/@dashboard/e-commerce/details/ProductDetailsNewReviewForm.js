@@ -16,13 +16,14 @@ import {
   FormHelperText,
   TextField,
 } from '@mui/material';
-import { LoadingButton } from '@mui/lab';
 import { useState } from 'react';
 import { useRouter } from 'next/router';
 import { useSettingsContext } from 'src/components/settings';
-import { addProductReviewByUser } from 'src/utils/api-shop';
 import { useAuthContext } from 'src/layouts/manager/auth/useAuthContext';
 import { toast } from 'react-hot-toast';
+import { Upload } from "src/components/upload";
+import { apiManager } from 'src/utils/api';
+import { useEffect } from 'react';
 // components
 
 // ----------------------------------------------------------------------
@@ -31,7 +32,7 @@ ProductDetailsNewReviewForm.propTypes = {
   onClose: PropTypes.func,
 };
 
-export default function ProductDetailsNewReviewForm({ onClose, onChangePage, ...other }) {
+export default function ProductDetailsNewReviewForm({ onClose, onChangePage, open, ...other }) {
   const router = useRouter();
   const { themeDnsData } = useSettingsContext();
   const { user } = useAuthContext();
@@ -43,13 +44,13 @@ export default function ProductDetailsNewReviewForm({ onClose, onChangePage, ...
   });
   const [reviewData, setReviewData] = useState({
     product_id: router.query?.id,
-    trans_id: '1',
+    trans_id: 0,
     brand_id: themeDnsData?.id,
     scope: 0,
-    nick_name: user?.nick_name || `구매자${router.query?.id}${new Date().getTime()}`,
+    user_id: user?.id, 
+    profile_file: undefined,
     profile_img: user?.profile_img ?? "",
     content: '',
-    password: '1234'
   })
   const defaultValues = {
     rating: null,
@@ -58,6 +59,20 @@ export default function ProductDetailsNewReviewForm({ onClose, onChangePage, ...
     email: '',
   };
 
+  useEffect(()=>{
+    if(!open){
+      setReviewData({
+        product_id: router.query?.id,
+        trans_id: 0,
+        brand_id: themeDnsData?.id,
+        scope: 0,
+        user_id: user?.id, 
+        profile_file: undefined,
+        profile_img: user?.profile_img ?? "",
+        content: '',
+      });
+    }
+  },[open])
   const methods = useForm({
     resolver: yupResolver(ReviewSchema),
     defaultValues,
@@ -75,15 +90,15 @@ export default function ProductDetailsNewReviewForm({ onClose, onChangePage, ...
     reset();
   };
   const onSubmit = async () => {
-    let result = await addProductReviewByUser(reviewData);
-    if(result){
+    let result = await apiManager('product-reviews', 'create', reviewData);
+    if (result) {
       toast.success("성공적으로 리뷰를 작성하였습니다.");
       onClose();
       onChangePage(1);
     }
   }
   return (
-    <Dialog onClose={onClose} {...other}>
+    <Dialog onClose={onClose} {...other} open={open}>
       <DialogTitle>리뷰 작성하기</DialogTitle>
 
       <DialogContent>
@@ -93,7 +108,7 @@ export default function ProductDetailsNewReviewForm({ onClose, onChangePage, ...
           <Controller
             name="rating"
             control={control}
-            render={({ field }) => <Rating {...field} value={reviewData.scope / 2} onChange={(e) => {
+            render={({ field }) => <Rating {...field} value={reviewData.scope / 2} precision={0.5} onChange={(e) => {
               setReviewData({
                 ...reviewData,
                 scope: e.target.value * 2
@@ -103,7 +118,50 @@ export default function ProductDetailsNewReviewForm({ onClose, onChangePage, ...
         </Stack>
 
         {!!errors.rating && <FormHelperText error> {errors.rating?.message}</FormHelperText>}
-
+        <div style={{marginTop:'1rem'}} />
+        <Stack spacing={1}>
+          <Typography variant="subtitle2" sx={{ color: 'text.secondary' }}>
+            대표이미지등록
+          </Typography>
+          <Upload file={reviewData.profile_file || reviewData.profile_img} onDrop={(acceptedFiles) => {
+            const newFile = acceptedFiles[0];
+            if (newFile) {
+              setReviewData(
+                {
+                  ...reviewData,
+                  ['profile_file']: Object.assign(newFile, {
+                    preview: URL.createObjectURL(newFile),
+                  })
+                }
+              );
+            }
+          }}
+            onDelete={() => {
+              setReviewData(
+                {
+                  ...reviewData,
+                  ['profile_file']: undefined,
+                  ['profile_img']: '',
+                }
+              )
+            }}
+            fileExplain={{
+              width: ''//파일 사이즈 설명
+            }}
+          />
+        </Stack>
+        <TextField
+          label='제목'
+          value={reviewData.title}
+          sx={{ mt: 3, width: '100%' }}
+          onChange={(e) => {
+            setReviewData(
+              {
+                ...reviewData,
+                ['title']: e.target.value
+              }
+            )
+          }} />
         <TextField name="review" label="리뷰를 작성해 주세요." multiline rows={6} sx={{ mt: 3, width: '100%' }} onChange={(e) => {
           setReviewData({
             ...reviewData,

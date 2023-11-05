@@ -1,13 +1,14 @@
 import { useTheme } from '@emotion/react';
-import { Box, Button, Card, TextField } from '@mui/material';
+import { Box, Button, Card, TextField, Typography } from '@mui/material';
 import { useEffect, useState } from 'react';
 import { Col, Row, Title, themeObj } from 'src/components/elements/styled-components';
 import { useSettingsContext } from 'src/components/settings';
 import { useAuthContext } from 'src/layouts/manager/auth/useAuthContext';
-import { getPayHistoryByNoneUser } from 'src/utils/api-shop';
 import styled from 'styled-components'
 import { useModal } from "src/components/dialog/ModalProvider";
 import { HistoryTable } from 'src/components/elements/shop/common';
+import { apiManager } from 'src/utils/api';
+import { commarNumber, getTrxStatusByNumber } from 'src/utils/function';
 
 const Wrappers = styled.div`
 max-width:500px;
@@ -66,16 +67,19 @@ const Demo1 = (props) => {
 
   const onLogin = async () => {
     let user = await login(username, password)
+    console.log(user)
     if (user) {
       router.push('/shop/auth/my-page')
     }
   }
   const onCheckNoneUserPay = async () => {
-    let data = await getPayHistoryByNoneUser(noneUserObj);
+    let data = await apiManager(`transactions/0`, 'get', noneUserObj);
     if (data) {
+      console.log(data)
       setNoneUserTrxObj(data);
     }
   }
+
   return (
     <>
       <Wrappers style={{ marginBottom: '0' }}>
@@ -178,11 +182,75 @@ const Demo1 = (props) => {
           }}
         >조회</Button>
       </Wrappers>
-      <Wrappers style={{ maxWidth: '1600px', minHeight: '0' }}>
+      <Wrappers style={{ maxWidth: '800px', minHeight: '0', marginTop: '2rem' }}>
         {Object.keys(noneUserTrxObj).length > 0 &&
           <>
-            <Card>
-              <HistoryTable historyContent={noneUserTrxObj} headLabel={TABLE_HEAD} />
+            <Card style={{ margin: 'auto', width: '100%', display: 'flex', flexDirection: 'column', rowGap: '1rem', padding: '1rem 0' }}>
+              <Col style={{ margin: 'auto', width: '100%', maxWidth: '500px' }}>
+                <Typography variant='subtitle1'>승인번호</Typography>
+                <Typography variant='body2'>{noneUserTrxObj?.appr_num}</Typography>
+              </Col>
+              <Col style={{ margin: 'auto', width: '100%', maxWidth: '500px' }}>
+                <Typography variant='subtitle1'>구매자명</Typography>
+                <Typography variant='body2'>{noneUserTrxObj?.buyer_name}</Typography>
+              </Col>
+              <Col style={{ margin: 'auto', width: '100%', maxWidth: '500px' }}>
+                <Typography variant='subtitle1'>구매자휴대폰번호</Typography>
+                <Typography variant='body2'>{noneUserTrxObj?.buyer_phone}</Typography>
+              </Col>
+              <Col style={{ margin: 'auto', width: '100%', maxWidth: '500px' }}>
+                <Typography variant='subtitle1'>주문현황</Typography>
+                <Typography variant='body2'>{getTrxStatusByNumber(noneUserTrxObj?.trx_status)}</Typography>
+              </Col>
+              <Col style={{ margin: 'auto', width: '100%', maxWidth: '500px' }}>
+                <Typography variant='subtitle1'>송장번호</Typography>
+                <Typography variant='body2'>{noneUserTrxObj?.invoice_num}</Typography>
+              </Col>
+              <Col style={{ margin: 'auto', width: '100%', maxWidth: '500px' }}>
+                <Typography variant='subtitle1'>주문상세</Typography>
+                <Typography variant='body2'>
+                  <Col>
+                    {noneUserTrxObj?.orders && noneUserTrxObj?.orders.map((order, index) => (
+                      <>
+                        <Col>
+                          <Row>
+                            <div style={{ minWidth: '62px', fontWeight: 'bold' }}>No.{index + 1}</div>
+                          </Row>
+                          <Row style={{ flexWrap: 'wrap' }}>
+                            <div style={{ minWidth: '62px' }}>주문명: </div>
+                            <div style={{ wordBreak: 'break-all' }}>{order?.order_name}</div>
+                          </Row>
+                          {order?.groups.length > 0 &&
+                            <>
+                              <Row>
+                                <div style={{ minWidth: '62px' }}>옵션정보: </div>
+                                <Col>
+                                  {order?.groups && order?.groups.map((group, idx) => (
+                                    <>
+                                      <Row>
+                                        <div style={{ minWidth: '62px', marginRight: '0.25rem' }}>{group?.group_name}: </div>
+                                        {group?.options && group?.options.map((option, idx2) => (
+                                          <>
+                                            <div>{option?.option_name} ({option?.option_price > 0 ? '+' : ''}{option?.option_price})</div>{idx2 == group?.options.length - 1 ? '' : <>&nbsp;/&nbsp;</>}
+                                          </>
+                                        ))}
+                                      </Row>
+                                    </>
+                                  ))}
+                                </Col>
+                              </Row>
+                            </>}
+                          <Row>
+                            <div style={{ minWidth: '62px' }}>가격: </div>
+                            <div>{commarNumber(order?.order_amount)}</div>
+                          </Row>
+                        </Col>
+                        <br />
+                      </>
+                    ))}
+                  </Col>
+                </Typography>
+              </Col>
             </Card>
           </>}
       </Wrappers>

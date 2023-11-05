@@ -4,8 +4,8 @@ import { Tabs, Tab, Accordion, AccordionSummary, AccordionDetails, Typography } 
 import { useState, useEffect } from 'react';
 import Iconify from 'src/components/iconify/Iconify';
 import { useSettingsContext } from 'src/components/settings';
-import { getPostsByUser } from 'src/utils/api-shop';
 import _ from 'lodash';
+import { apiShop } from 'src/utils/api';
 
 const ServiceFaq = styled.div`
 display:flex;
@@ -56,7 +56,7 @@ const Demo1 = (props) => {
         getArticleList(1, router.query?.article_category)
     }
     const getArticleList = async (page, category_id) => {
-        let inquiry_data = await getPostsByUser({
+        let inquiry_data = await apiShop('post', 'list',{
             page: page,
             page_size: 100000,
             category_id: category_id

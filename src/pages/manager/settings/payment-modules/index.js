@@ -4,8 +4,8 @@ import ManagerLayout from "src/layouts/manager/ManagerLayout";
 import ManagerTable from "src/views/manager/mui/table/ManagerTable";
 import { Icon } from "@iconify/react";
 import { useRouter } from "next/router";
-import { deletePaymentModuleByManager, getPaymentModulesByManager, getProductsByManager } from "src/utils/api-manager";
 import { useModal } from "src/components/dialog/ModalProvider";
+import { apiManager } from "src/utils/api";
 
 const PaymentModuleList = () => {
   const { setModal } = useModal()
@@ -59,14 +59,14 @@ const PaymentModuleList = () => {
       id: 'created_at',
       label: '생성시간',
       action: (row) => {
-        return row['name'] ?? "---"
+        return row['created_at'] ?? "---"
       }
     },
     {
       id: 'updated_at',
       label: '최종수정시간',
       action: (row) => {
-        return row['name'] ?? "---"
+        return row['updated_at'] ?? "---"
       }
     },
     {
@@ -113,14 +113,14 @@ const PaymentModuleList = () => {
     onChangePage({ ...searchObj, page: 1, });
   }
   const onChangePage = async (obj) => {
-    let data_ = await getPaymentModulesByManager(obj);
+    let data_ = await apiManager('payment-modules', 'list',obj);
     if (data_) {
       setData(data_);
     }
     setSearchObj(obj);
   }
   const deletePaymentModule = async (id) => {
-    let result = await deletePaymentModuleByManager({ id: id });
+    let result = await apiManager('payment-modules', 'delete',{ id: id });
     if (result) {
       onChangePage(searchObj);
     }

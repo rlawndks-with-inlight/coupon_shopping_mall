@@ -3,15 +3,13 @@ import { useEffect, useState } from 'react';
 import ContentTable from 'src/components/elements/content-table';
 import { Col, Row, RowMobileColumn, Title, themeObj } from 'src/components/elements/styled-components';
 import { useSettingsContext } from 'src/components/settings';
-import { returnArticleCategory } from 'src/data/data';
-import { test_articles } from 'src/data/test-data';
 import styled from 'styled-components'
 import _ from 'lodash'
-import { getPostsByUser } from 'src/utils/api-shop';
 import { Button, IconButton } from '@mui/material';
 import { Icon } from '@iconify/react';
 import { useAuthContext } from 'src/layouts/manager/auth/useAuthContext';
 import { toast } from 'react-hot-toast';
+import { apiShop } from 'src/utils/api';
 const Wrappers = styled.div`
 max-width:1600px;
 display:flex;
@@ -146,7 +144,7 @@ const Demo1 = (props) => {
       ...data,
       content: undefined
     })
-    let data_ = await getPostsByUser(obj);
+    let data_ = await apiShop('post', 'list',obj);
     setData(data_);
     setSearchObj(obj);
   }

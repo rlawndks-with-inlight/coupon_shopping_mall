@@ -11,7 +11,7 @@ import Slider from 'react-slick';
 import { useTheme } from '@emotion/react';
 import { logoSrc } from 'src/data/data';
 import dynamic from 'next/dynamic';
-import { getProductByUser } from 'src/utils/api-shop';
+import { apiShop } from 'src/utils/api';
 
 
 const ReactQuill = dynamic(() => import('react-quill'), {
@@ -133,8 +133,8 @@ const Demo1 = (props) => {
 
   const pageSetting = async () => {
 
-    let product = await getProductByUser({
-      product_id: router.query?.id
+    let product = await apiShop('product','get',{
+      id: router.query?.id
     })
     if (product) {
       product['images'] = [...[product?.product_img], ...product?.sub_images.map(item => { return item.product_sub_img })];

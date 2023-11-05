@@ -8,8 +8,7 @@ import { toast } from "react-hot-toast";
 import { useModal } from "src/components/dialog/ModalProvider";
 import { Col, Row, Title } from "src/components/elements/styled-components";
 import { useSettingsContext } from "src/components/settings";
-
-import { addPostByUser, getPostByUser } from "src/utils/api-shop";
+import { apiShop } from "src/utils/api";
 import ReactQuillComponent from "src/views/manager/react-quill";
 import styled from "styled-components";
 const ReactQuill = dynamic(() => import('react-quill'), {
@@ -40,7 +39,7 @@ const Demo1 = (props) => {
     const [postCategory, setPostCategory] = useState({});
     const [loading, setLoading] = useState(true);
     const [item, setItem] = useState({
-        parent_id: null,
+        parent_id: -1,
         post_title: '',
         post_content: '',
         is_reply: false,
@@ -51,8 +50,8 @@ const Demo1 = (props) => {
     const settingPage = async () => {
         setPostCategory(_.find(themePostCategoryList, { id: parseInt(router.query?.article_category) }))
         if (router.query?.id > 0) {
-            let data = await getPostByUser({
-                post_id: router.query?.id
+            let data = await apiShop('post','get',{
+                id: router.query?.id
             })
             setItem(data);
         }
@@ -61,9 +60,9 @@ const Demo1 = (props) => {
     const onSave = async () => {
         let result = undefined;
         if (router.query?.id == 'add') {
-            result = await addPostByUser({ ...item, category_id: router.query?.article_category });
+            result = await apiShop('post','create', { ...item, category_id: router.query?.article_category });
         } else {
-            result = await updatePostByManager({ ...item, id: router.query?.id, category_id: router.query?.article_category });
+            //result = await updatePostByManager({ ...item, id: router.query?.id, category_id: router.query?.article_category });
         }
         if (result) {
             toast.success("성공적으로 저장 되었습니다.");

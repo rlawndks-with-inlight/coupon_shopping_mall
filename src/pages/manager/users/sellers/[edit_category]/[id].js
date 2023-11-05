@@ -8,12 +8,11 @@ import { Upload } from "src/components/upload";
 import ManagerLayout from "src/layouts/manager/ManagerLayout";
 import $ from 'jquery';
 import Iconify from "src/components/iconify/Iconify";
-import { addSellerByManager, getMappingSellerWithProducts, getProductsByManager, getSellerByManager, mappingSellerWithProducts, updateSellerByManager } from "src/utils/api-manager";
-import dynamic from "next/dynamic";
 import { useAuthContext } from "src/layouts/manager/auth/useAuthContext";
 import { toast } from "react-hot-toast";
 import { useModal } from "src/components/dialog/ModalProvider";
 import _ from "lodash";
+import { apiManager, uploadFileByManager } from "src/utils/api";
 
 
 const SellerEdit = () => {
@@ -25,19 +24,20 @@ const SellerEdit = () => {
 
   const [loading, setLoading] = useState(true);
   const [productContent, setProductContent] = useState({
-    content:[],
+    content: [],
   });
   const [item, setItem] = useState({
     user_name: '',//
-    nick_name: '',//
-    mcht_name: '',//
+    nickname: '',//
+    name: '',//
+    seller_name: '',//
     addr: '',
     acct_bank_name: '',
     acct_num: '',
     acct_name: '',
     phone_num: '',//
     note: '',
-    mcht_trx_fee: 0,
+    seller_trx_fee: 0,
     sns_obj: {
       youtube_channel: '',
       instagram_id: ''
@@ -85,11 +85,11 @@ const SellerEdit = () => {
 
     // setProductContent(product_content);
     if (router.query?.edit_category == 'edit') {
-      let product_ids = await getMappingSellerWithProducts({
-        id: router.query?.id
-      })
-      setProductIds(product_ids.map((item => { return item?.id })))
-      let data = await getSellerByManager({ id: router.query?.id });
+      // let product_ids = await getMappingSellerWithProducts({
+      //   id: router.query?.id
+      // })
+      //setProductIds(product_ids.map((item => { return item?.id })))
+      let data = await apiManager('sellers', 'get', { id: router.query?.id });
       if (data) {
         setItem(data);
       }
@@ -109,30 +109,16 @@ const SellerEdit = () => {
   }
   const onSave = async () => {
     let result = undefined;
+    let obj = item;
     if (router.query?.edit_category == 'edit') {
-      result = await updateSellerByManager({ ...item, id: router.query?.id });
+      result = await apiManager('sellers', 'update', { ...obj, id: router.query?.id });
     } else {
-      result = await addSellerByManager(item);
+      result = await apiManager('sellers', 'create', obj);
     }
-
-    if (result) {
-      if (productIds.length > 0) {
-        let result_mapping = await mappingSellerWithProducts({
-          id: router.query?.id || result?.id,
-          product_ids: productIds
-        })
-        if (!result_mapping) {
-          toast.error('가맹점 상품 매칭중 에러');
-          return;
-        }
-      }
-    } else {
-      toast.error('가맹점 저장 중 에러');
-      return;
+    if(result){
+      toast.success("성공적으로 저장 되었습니다.");
+      router.push('/manager/users/sellers');
     }
-    toast.success("성공적으로 저장 되었습니다.");
-    router.push('/manager/users/sellers');
-
   }
   return (
     <>
@@ -295,24 +281,35 @@ const SellerEdit = () => {
                             }} />
                         </>}
                       <TextField
-                        label='닉네임'
-                        value={item.nick_name}
+                        label='이름'
+                        value={item.name}
                         onChange={(e) => {
                           setItem(
                             {
                               ...item,
-                              ['nick_name']: e.target.value
+                              ['name']: e.target.value
                             }
                           )
                         }} />
-                         <TextField
-                        label='가맹점명'
-                        value={item.mcht_name}
+                      <TextField
+                        label='닉네임'
+                        value={item.nickname}
                         onChange={(e) => {
                           setItem(
                             {
                               ...item,
-                              ['mcht_name']: e.target.value
+                              ['nickname']: e.target.value
+                            }
+                          )
+                        }} />
+                      <TextField
+                        label='셀러명'
+                        value={item.seller_name}
+                        onChange={(e) => {
+                          setItem(
+                            {
+                              ...item,
+                              ['seller_name']: e.target.value
                             }
                           )
                         }} />
@@ -549,13 +546,13 @@ const SellerEdit = () => {
                     <Stack spacing={3}>
                       <TextField
                         label='수수료률'
-                        value={item.mcht_trx_fee}
+                        value={item.seller_trx_fee}
                         type="number"
                         onChange={(e) => {
                           setItem(
                             {
                               ...item,
-                              ['mcht_trx_fee']: e.target.value
+                              ['seller_trx_fee']: e.target.value
                             }
                           )
                         }} />

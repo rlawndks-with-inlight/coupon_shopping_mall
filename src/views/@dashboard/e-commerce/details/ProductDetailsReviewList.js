@@ -3,10 +3,8 @@ import { useState } from 'react';
 // @mui
 import { Stack, Button, Rating, Avatar, Pagination, Typography } from '@mui/material';
 // utils
-import { fDate } from 'src/utils/formatTime';
 // components
 import Iconify from 'src/components/iconify/Iconify';
-import { commarNumber } from 'src/utils/function';
 
 // ----------------------------------------------------------------------
 
@@ -75,7 +73,7 @@ ReviewItem.propTypes = {
 };
 
 function ReviewItem({ review }) {
-  const { name, nick_name, rating, scope, content, comment, helpful, postedAt, avatarUrl, isPurchased, created_at } = review;
+  const { nickname, scope, content, avatarUrl, isPurchased, created_at, title, profile_img } = review;
 
   return (
     <Stack
@@ -110,7 +108,7 @@ function ReviewItem({ review }) {
 
         <Stack spacing={{ md: 0.5 }}>
           <Typography variant="subtitle2" noWrap>
-            {nick_name}
+            {nickname}
           </Typography>
 
           <Typography variant="caption" sx={{ color: 'text.secondary' }} noWrap>
@@ -123,6 +121,7 @@ function ReviewItem({ review }) {
         maxWidth: '920px'
       }}>
         <Rating size="small" value={scope / 2} precision={0.1} readOnly />
+        <img style={{ width: '200px', height: 'auto' }} src={profile_img} />
         {isPurchased && (
           <Typography
             variant="caption"
@@ -137,6 +136,7 @@ function ReviewItem({ review }) {
           </Typography>
         )}
 
+        <Typography variant="subtitle2">{title}</Typography>
         <Typography variant="body2">{content}</Typography>
       </Stack>
     </Stack>

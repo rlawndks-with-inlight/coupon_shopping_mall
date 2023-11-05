@@ -37,7 +37,6 @@ import { useSettingsContext } from 'src/components/settings';
 import _ from 'lodash';
 import { toast } from 'react-hot-toast';
 import { CheckoutSteps } from 'src/views/@dashboard/e-commerce/checkout';
-import { test_address_list, test_pay_list } from 'src/data/test-data';
 import { AddressItem } from 'src/views/shop/auth/cart/demo-1';
 import EmptyContent from 'src/components/empty-content/EmptyContent';
 import Payment from 'payment'
@@ -45,9 +44,10 @@ import Cards from 'react-credit-cards'
 import { useAuthContext } from 'src/layouts/manager/auth/useAuthContext';
 import { formatCreditCardNumber, formatExpirationDate } from 'src/utils/formatCard';
 import { useModal } from "src/components/dialog/ModalProvider";
-import { addAddressByUser, deleteAddressByUser, getAddressesByUser, onPayItemByCard } from 'src/utils/api-shop';
+import { onPayItemByCard } from 'src/utils/api-shop';
 import { insertCartDataUtil, onPayProductsByAuth, selectItemOptionUtil } from 'src/utils/shop-util';
 import DaumPostcode from 'react-daum-postcode';
+import { apiManager } from 'src/utils/api';
 // ----------------------------------------------------------------------
 
 ProductDetailsSummary.propTypes = {
@@ -77,7 +77,7 @@ export default function ProductDetailsSummary({ product, onAddCart, onGotoStep, 
   })
   const [addressSearchObj, setAddressSearchObj] = useState({
     page: 1,
-    page_size: 10,
+    page_size: 10000,
     search: '',
     user_id: user?.id,
   })
@@ -88,7 +88,7 @@ export default function ProductDetailsSummary({ product, onAddCart, onGotoStep, 
     product_id: product?.id,
     amount: product?.product_sale_price ?? 0,
     item_name: product?.product_name,
-    buyer_name: user?.nick_name ?? "",
+    buyer_name: user?.nickname ?? "",
     installment: 0,
     buyer_phone: '',
     card_num: '',
@@ -125,9 +125,12 @@ export default function ProductDetailsSummary({ product, onAddCart, onGotoStep, 
     product_comment,
     groups = [],
   } = product;
+  console.log(product)
   useEffect(() => {
-    onChangeAddressPage(addressSearchObj)
-    let pay_list = test_pay_list;
+    if (user) {
+      onChangeAddressPage(addressSearchObj)
+    }
+    let pay_list = themeDnsData?.payment_modules;
     setPayList(pay_list)
   }, [])
   const isMaxQuantity = cart.filter((item) => item.id === id).map((item) => item.quantity)[0] >= available;
@@ -151,7 +154,6 @@ export default function ProductDetailsSummary({ product, onAddCart, onGotoStep, 
   const [buyOpen, setBuyOpen] = useState(false);
   const onBuyNow = async () => {
     let result = await onPayItemByCard(payData);
-    console.log(result)
   }
   const onBuyDialogClose = () => {
     setBuyOpen(false);
@@ -181,14 +183,14 @@ export default function ProductDetailsSummary({ product, onAddCart, onGotoStep, 
       ...addressContent,
       content: undefined,
     })
-    let data = await getAddressesByUser(search_obj);
+    let data = await apiManager('user-addresses', 'list', search_obj);
     setAddressSearchObj(search_obj);
     if (data) {
       setAddressContent(data);
     }
   }
   const onDeleteAddress = async (id) => {
-    let result = await deleteAddressByUser({
+    let result = await apiManager('user-addresses', 'delete',{
       id: id
     })
     if (result) {
@@ -197,7 +199,7 @@ export default function ProductDetailsSummary({ product, onAddCart, onGotoStep, 
   }
   const onAddAddress = async () => {
     if (user) {
-      let result = await addAddressByUser({
+      let result = await apiManager('user-addresses', 'create',{
         ...addAddressObj,
         user_id: user?.id,
       })
@@ -605,9 +607,9 @@ export default function ProductDetailsSummary({ product, onAddCart, onGotoStep, 
             <Typography variant="h7" color={themeObj.grey[500]}>{product_comment}</Typography>
 
             <Stack direction="row" alignItems="center" spacing={1}>
-              <Rating value={product_average_scope / 2} precision={0.1} readOnly />
+              <Rating value={product_average_scope} precision={0.1} readOnly />
               <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-                ({commarNumber(product_average_scope / 2)})
+                ({commarNumber(product_average_scope)})
               </Typography>
             </Stack>
             <Typography variant="h4">

@@ -179,6 +179,8 @@ export const getUserLevelByNumber = (num) => {
     return '일반유저'
   else if (num == 10)
     return '셀러'
+  else if (num == 40)
+    return '관리자'
   else if (num == 50)
     return '개발사'
   else
@@ -202,7 +204,7 @@ export const getMyPageParamByNumber = (num) => {
   if (num == 0)
     return 'users'
   else if (num == 10)
-    return 'merchandises'
+    return 'sellers'
   else if (num == 15)
     return 'users'
   else if (num == 20)
@@ -436,4 +438,19 @@ export function hexToRgb(hex) {
 
   // RGB 값을 객체로 반환합니다.
   return { r, g, b };
+}
+export function findChildIds(data, id) {
+  const children = data.filter(item => item.parent_id == id).map(item => item.id);
+  children.forEach(child => {
+      children.push(...findChildIds(data, child));
+  });
+  return children;
+}
+export function findParent(data, item) {
+  if(!(item.parent_id > 0)){
+      return item;
+  } else {
+      let result = data.filter(itm=>itm.id == item.parent_id);
+      return findParent(data, result[0]);
+  }
 }

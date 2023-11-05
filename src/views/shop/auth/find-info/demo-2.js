@@ -1,7 +1,7 @@
 import { TextField, Tab, Tabs, Button, FormControl, InputLabel, OutlinedInput } from "@mui/material";
 import { useEffect, useState } from "react";
 import { Title } from 'src/components/elements/styled-components';
-import { sendPhoneVerifyCodeByUser, checkPhoneVerifyCodeByUser } from 'src/utils/api-shop';
+import { apiManager } from "src/utils/api";
 import styled from "styled-components";
 
 const Wrappers = styled.div`
@@ -52,14 +52,14 @@ const Demo2 = (props) => {
   const [phoneCheckStep, setPhoneCheckStep] = useState(0);
   const onClickSendUsernamePhoneVerifyCode = async () => {
     setPhoneCheckStep(1);
-    let result = await sendPhoneVerifyCodeByUser({
+    let result = await apiManager('auth/code', 'create',{
       phone_num: user.phone_num
     })
 
   }
   const onClickSendPasswordPhoneVerifyCode = async () => {
     setPhoneCheckStep(1);
-    let result = await sendPhoneVerifyCodeByUser({
+    let result = await apiManager('auth/code', 'create',{
       phone_num: user.phone_num
     })
 

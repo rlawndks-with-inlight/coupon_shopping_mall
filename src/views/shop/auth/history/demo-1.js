@@ -3,9 +3,9 @@ import styled from 'styled-components'
 // @mui
 import { Card, Pagination } from '@mui/material';
 import { useEffect, useState } from 'react';
-import { getPayHistoriesByUser } from 'src/utils/api-shop';
 import { makeMaxPage } from 'src/utils/function';
 import { HistoryTable } from 'src/components/elements/shop/common';
+import { apiManager } from 'src/utils/api';
 const Wrappers = styled.div`
 max-width:1600px;
 display:flex;
@@ -34,21 +34,21 @@ const Demo1 = (props) => {
     },
   } = props;
   const [historyContent, setHistoryContent] = useState({});
-  const [page, setPage] = useState(1);
-  const [maxPage, setMaxPage] = useState(10);
+  const [searchObj, setSearchObj] = useState({
+    page: 1,
+    page_size: 10,
+  })
   useEffect(() => {
-    onChangePage(1);
+    onChangePage(searchObj);
   }, [])
 
-  const onChangePage = async (num) => {
-    setPage(num);
+  const onChangePage = async (search_obj) => {
+    setSearchObj(search_obj);
     setHistoryContent({
       ...historyContent,
       content: undefined,
     })
-    let data = await getPayHistoriesByUser({
-      page: num
-    })
+    let data = await apiManager('transactions', 'list', search_obj);
     if (data) {
       setHistoryContent(data);
     }

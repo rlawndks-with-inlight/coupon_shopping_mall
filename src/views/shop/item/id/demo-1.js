@@ -5,8 +5,8 @@ import { useSettingsContext } from 'src/components/settings';
 import { ProductDetailsCarousel, ProductDetailsReview, ProductDetailsSummary } from 'src/views/@dashboard/e-commerce/details';
 import { useEffect, useState } from 'react';
 import { SkeletonProductDetails } from 'src/components/skeleton';
-import { getProductByUser, getProductReviewsByUser } from 'src/utils/api-shop';
 import dynamic from 'next/dynamic'
+import { apiManager, apiShop } from 'src/utils/api';
 const ReactQuill = dynamic(() => import('react-quill'), {
   ssr: false,
   loading: () => <p>Loading ...</p>,
@@ -45,22 +45,21 @@ const Demo1 = (props) => {
 
   const getItemInfo = async (review_page) => {
     let data = { ...product };
-    if (Object.keys(data).length == 0) {
-      data = await getProductByUser({
-        product_id: router.query?.id
-      });
-      console.log(data)
-      data['sub_images'] = data['sub_images'].map((img) => {
-        return img?.product_sub_img
-      })
-      if (data?.product_img) {
-        data['sub_images'].unshift(data?.product_img)
-      }
-      data['images'] = data['sub_images'];
+    data = await apiShop('product', 'get', {
+      id: router.query?.id
+    });
+    console.log(data)
+    data['sub_images'] = data['sub_images'].map((img) => {
+      return img?.product_sub_img
+    })
+    if (data?.product_img) {
+      data['sub_images'].unshift(data?.product_img)
     }
-    let review_data = await getProductReviewsByUser({
+    data['images'] = data['sub_images'];
+    let review_data = await apiManager('product-reviews', 'list', {
       page: review_page,
-      product_id: router.query?.id
+      product_id: router.query?.id,
+      page_size: 10,
     })
     setReviewContent(review_data)
     setProduct(data);

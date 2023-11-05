@@ -12,10 +12,10 @@ import clsx from "clsx";
 import { Icon } from "@iconify/react";
 import { useTheme } from "@emotion/react";
 import { getAllIdsWithParents } from "src/utils/function";
-import { addCategoryByManager, deleteCategoryByManager, getCategoriesByManager, getCategoryGroupsByManager, sortCategoryByManager, updateCategoryByManager } from "src/utils/api-manager";
 import { useModal } from "src/components/dialog/ModalProvider";
 import { useRouter } from "next/router";
 import _ from "lodash";
+import { apiManager } from "src/utils/api";
 
 // ----------------------------------------------------------------------
 
@@ -70,7 +70,7 @@ const CustomContent = forwardRef(function CustomContent(props, ref) {
         preventSelection,
     } = useTreeItem(nodeId);
     const [isExpansion, setIsExpansion] = useState(false);
-    const icon = expansionIcon || iconProp;
+    const icon = (expansionIcon || iconProp) && (categoryGroup?.max_depth == -1 || categoryGroup?.max_depth > depth + 1);
     const handleMouseDown = (event) => {
         preventSelection(event);
     };
@@ -79,7 +79,6 @@ const CustomContent = forwardRef(function CustomContent(props, ref) {
         setIsExpansion(!isExpansion)
         handleExpansion(event);
     };
-
     return (
         // eslint-disable-next-line jsx-a11y/no-static-element-interactions
         <div
@@ -109,7 +108,7 @@ const CustomContent = forwardRef(function CustomContent(props, ref) {
                     </>
                     :
                     <>
-                        <div style={{ width: '20px' }} />
+                        <div style={{ width: `${depth > 0 ? '20px' : ''}` }} />
                     </>}
             </div>
             <Typography
@@ -126,13 +125,17 @@ const CustomContent = forwardRef(function CustomContent(props, ref) {
                     <Icon icon='tabler:edit' fontSize={16} />
                 </IconButton>
             </Tooltip>
-            <Tooltip title={`하위 ${categoryGroup?.category_group_name}를 추가하시려면 클릭해 주세요.`}>
-                <IconButton onClick={() => {
-                    onClickAddIcon(category, depth)
-                }}>
-                    <Icon icon='uiw:plus' fontSize={14} />
-                </IconButton>
-            </Tooltip>
+            {(categoryGroup?.max_depth == -1 || categoryGroup?.max_depth > depth + 1) &&
+                <>
+                    <Tooltip title={`하위 ${categoryGroup?.category_group_name}를 추가하시려면 클릭해 주세요.`}>
+                        <IconButton onClick={() => {
+                            onClickAddIcon(category, depth)
+                        }}>
+                            <Icon icon='uiw:plus' fontSize={14} />
+                        </IconButton>
+                    </Tooltip>
+                </>}
+
             <Tooltip title={`해당 ${categoryGroup?.category_group_name}를 한칸 올리시려면 클릭해 주세요.`}>
                 <IconButton sx={{ padding: '0.25rem' }} disabled={index == 0} onClick={() => { onChangeSequence(true, category, depth, index) }}>
                     <Icon icon={'grommet-icons:link-up'} fontSize={14} />
@@ -188,7 +191,7 @@ const CategoryList = () => {
         getCategories();
     }, [router.query?.id])
     const getCategoryGroups = async () => {
-        let category_group_list = await getCategoryGroupsByManager({
+        let category_group_list = await apiManager('product-category-groups', 'list', {
             page: 1,
             page_size: 100000,
         });
@@ -201,7 +204,7 @@ const CategoryList = () => {
     const getCategories = async () => {
         setIsAction(false);
         setCategory(defaultSetting);
-        let category_list = await getCategoriesByManager({
+        let category_list = await apiManager('product-categories', 'list', {
             page: 1,
             page_size: 100000,
             product_category_group_id: router.query?.id
@@ -250,13 +253,13 @@ const CategoryList = () => {
             }
         }
         let obj = {
-            upper_id: -1,
-            upper_sort_idx: -1,
-            lower_id: -1,
-            lower_sort_idx: -1,
+            source_id: -1,
+            source_sort_idx: -1,
+            dest_id: -1,
+            dest_sort_idx: -1,
         }
-        let my_type = is_up ? 'lower' : 'upper';
-        let other_type = is_up ? 'upper' : 'lower';
+        let my_type = is_up ? 'dest' : 'source';
+        let other_type = is_up ? 'source' : 'dest';
         obj[`${my_type}_id`] = category?.id;
         obj[`${my_type}_sort_idx`] = category?.sort_idx
         if (use_list.length > 1) {
@@ -266,7 +269,7 @@ const CategoryList = () => {
             obj[`${other_type}_id`] = categories[index + (is_up ? (-1) : 1)]?.id;
             obj[`${other_type}_sort_idx`] = categories[index + (is_up ? (-1) : 1)]?.sort_idx;
         }
-        let result = await sortCategoryByManager(obj);
+        let result = await apiManager(`util/product_categories/sort`, 'create', obj);
         if (result) {
             getCategories();
         }
@@ -303,15 +306,15 @@ const CategoryList = () => {
     }
     const onClickCategoryDelete = async (category) => { // 해당 카테고리 삭제
         setIsAction(false);
-        await deleteCategoryByManager(category);
+        await apiManager('product-categories', 'delete', category);
         setIsAction(false);
         getCategories();
     }
     const onSave = async () => {
         if (category?.id) {//수정
-            let result = await updateCategoryByManager({ ...category, product_category_group_id: router.query?.id })
+            let result = await apiManager('product-categories', 'update', { ...category, product_category_group_id: router.query?.id })
         } else {//추가
-            let result = await addCategoryByManager({ ...category, product_category_group_id: router.query?.id })
+            let result = await apiManager('product-categories', 'create', { ...category, product_category_group_id: router.query?.id })
         }
         setIsAction(false);
         getCategories();

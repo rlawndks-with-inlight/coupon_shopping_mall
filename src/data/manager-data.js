@@ -56,10 +56,6 @@ export const PATH_MANAGER = {
     paymentModules: path(ROOTS_MANAGER, '/settings/payment-modules'),
     brands: path(ROOTS_MANAGER, '/settings/brands'),
   },
-  pays: {
-    root: path(ROOTS_MANAGER, '/pays'),
-    list: path(ROOTS_MANAGER, '/pays/list'),
-  },
 };
 export const pg_companies = [
   { id: 1, name: '페이투스', rep_name: '서동균', company_name: '(주)페이투스', business_num: '810-81-00347', phone_num: '02-465-8800', addr: '서울특별시 금천구 가산디지털1로 168, C동 7층 701B호(가산동, 우림라이온스밸리)' },

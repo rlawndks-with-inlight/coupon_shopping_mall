@@ -6,9 +6,9 @@ import { themeObj } from "src/components/elements/styled-components";
 import { useSettingsContext } from "src/components/settings";
 import { Upload } from "src/components/upload";
 import ManagerLayout from "src/layouts/manager/ManagerLayout";
-import { addUserByManager, getUserByManager, updateUserByManager } from "src/utils/api-manager";
 import { toast } from "react-hot-toast";
 import { useModal } from "src/components/dialog/ModalProvider";
+import { apiManager } from "src/utils/api";
 
 const UserEdit = () => {
   const { setModal } = useModal()
@@ -21,9 +21,11 @@ const UserEdit = () => {
     profile_file: undefined,
     user_name: '',
     phone_num: '',
-    nick_name: '',
+    nickname: '',
+    name: '',
     user_pw: '',
     note: '',
+    level: 0,
   })
 
   useEffect(() => {
@@ -31,7 +33,7 @@ const UserEdit = () => {
   }, [])
   const settingPage = async () => {
     if (router.query?.edit_category == 'edit') {
-      let user = await getUserByManager({
+      let user = await apiManager('users', 'get', {
         id: router.query.id
       })
       setItem(user);
@@ -41,9 +43,9 @@ const UserEdit = () => {
   const onSave = async () => {
     let result = undefined
     if (item?.id) {//수정
-      result = await updateUserByManager({ ...item, id: item?.id })
+      result = await apiManager('users', 'update', item);
     } else {//추가
-      result = await addUserByManager({ ...item })
+      result = await apiManager('users', 'create', item);
     }
     if (result) {
       toast.success("성공적으로 저장 되었습니다.");
@@ -120,12 +122,24 @@ const UserEdit = () => {
                     </>}
                   <TextField
                     label='닉네임'
-                    value={item.nick_name}
+                    value={item.nickname}
                     onChange={(e) => {
                       setItem(
                         {
                           ...item,
-                          ['nick_name']: e.target.value
+                          ['nickname']: e.target.value
+                        }
+                      )
+                    }} />
+                  <TextField
+                    label='이름'
+                    value={item.name}
+                    placeholder=""
+                    onChange={(e) => {
+                      setItem(
+                        {
+                          ...item,
+                          ['name']: e.target.value
                         }
                       )
                     }} />
@@ -133,7 +147,6 @@ const UserEdit = () => {
                     label='전화번호'
                     value={item.phone_num}
                     placeholder="하이픈(-) 제외 입력"
-                    type='number'
                     onChange={(e) => {
                       setItem(
                         {
@@ -143,19 +156,19 @@ const UserEdit = () => {
                       )
                     }} />
                   <Stack spacing={1}>
-                  <TextField
-                        fullWidth
-                        label="고객메모"
-                        multiline
-                        rows={4}
-                        value={item.note}
-                        onChange={(e) => {
-                          setItem({
-                            ...item,
-                            ['note']: e.target.value
-                          })
-                        }}
-                      />
+                    <TextField
+                      fullWidth
+                      label="고객메모"
+                      multiline
+                      rows={4}
+                      value={item.note}
+                      onChange={(e) => {
+                        setItem({
+                          ...item,
+                          ['note']: e.target.value
+                        })
+                      }}
+                    />
                   </Stack>
                 </Stack>
               </Card>
@@ -165,7 +178,7 @@ const UserEdit = () => {
                 <Stack spacing={1} style={{ display: 'flex' }}>
                   <Button variant="contained" style={{
                     height: '48px', width: '120px', marginLeft: 'auto'
-                  }} onClick={()=>{
+                  }} onClick={() => {
                     setModal({
                       func: () => { onSave() },
                       icon: 'material-symbols:edit-outline',

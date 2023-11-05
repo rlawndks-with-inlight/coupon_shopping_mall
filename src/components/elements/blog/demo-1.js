@@ -90,8 +90,8 @@ export const Seller = (props) => {
           backgroundRepeat: 'no-repeat',
           backgroundPosition: 'center'
         }} />
-        <ItemText style={{ fontWeight: 'bold' }}>{item?.nick_name}</ItemText>
-        <ItemText style={{ color: themeObj.grey[500] }}>{item?.mcht_name}</ItemText>
+        <ItemText style={{ fontWeight: 'bold' }}>{item?.nickname}</ItemText>
+        <ItemText style={{ color: themeObj.grey[500] }}>{item?.seller_name}</ItemText>
       </ItemContent>
     </>
   )

@@ -36,3 +36,8 @@ yarn-error.log*
 /.env
 .env
 ./.env
+
+/asd.txt
+asd.txt
+./asd.txt
+

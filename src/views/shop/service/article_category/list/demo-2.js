@@ -3,10 +3,10 @@ import { useTheme } from '@emotion/react';
 import ContentTable from 'src/components/elements/content-table';
 import { RowMobileColumn, Row, Title, themeObj } from "src/components/elements/styled-components";
 import { useSettingsContext } from "src/components/settings";
-import { getPostsByUser } from 'src/utils/api-shop';
 import styled from "styled-components";
 import { IconButton, Button } from '@mui/material';
 import { Icon } from '@iconify/react';
+import { apiShop } from "src/utils/api";
 const Wrappers = styled.div`
 max-width: 1600px;
 display: flex;
@@ -117,7 +117,7 @@ const Demo2 = (props) => {
       ...data,
       content: undefined
     })
-    let data_ = await getPostsByUser(obj);
+    let data_ = await apiShop('post', 'list',obj);
     setData(data_);
     setSearchObj(obj);
   }

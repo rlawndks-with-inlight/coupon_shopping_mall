@@ -8,10 +8,10 @@ import { Upload } from "src/components/upload";
 import ManagerLayout from "src/layouts/manager/ManagerLayout";
 import dynamic from "next/dynamic";
 
-import { addPostCategoryByManager, getPostCategoriesByManager, getPostCategoryByManager, updatePostCategoryByManager } from "src/utils/api-manager";
 import { toast } from "react-hot-toast";
 import { useModal } from "src/components/dialog/ModalProvider";
 import { useAuthContext } from "src/layouts/manager/auth/useAuthContext";
+import { apiManager } from "src/utils/api";
 const Tour = dynamic(
   () => import('reactour'),
   { ssr: false },
@@ -35,7 +35,9 @@ const ArticleCategoryEdit = () => {
   }, [])
   const settingPage = async () => {
     if (router.query?.edit_category == 'edit') {
-      let data = await getPostCategoryByManager({ id: router.query?.id });
+      let data = await apiManager('post-categories', 'get', {
+        id: router.query.id
+      })
       if (data) {
         if (!data?.children.length > 0) {
           openTour('add-children', "하위 카테고리가 필요하면 '추가' 버튼을 클릭하여 하위 카테고리를 추가해 주세요.")
@@ -50,16 +52,16 @@ const ArticleCategoryEdit = () => {
     if (router.query?.edit_category == 'edit') {
       for (var i = 0; i < item?.children.length; i++) {
         if (!item?.children[i]?.id) {
-          let children_result = await addPostCategoryByManager(item?.children[i]);
+          let children_result = await apiManager('post-categories', 'create',item?.children[i]);
         } else {
           if (item?.children[i]?.is_edit) {
-            let children_result = await updatePostCategoryByManager({ ...item?.children[i] });
+            let children_result = await apiManager('post-categories', 'update', { ...item?.children[i] });
           }
         }
       }
-      result = await updatePostCategoryByManager({ ...item, id: router.query?.id });
+      result = await apiManager('post-categories', 'update', item);
     } else {
-      result = await addPostCategoryByManager(item);
+      result = await apiManager('post-categories', 'create', item);
     }
     if (result) {
       toast.success("성공적으로 저장 되었습니다.");

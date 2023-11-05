@@ -3,12 +3,7 @@ import { Stack } from "evergreen-ui";
 import { useEffect } from "react";
 import EmptyContent from "src/components/empty-content/EmptyContent";
 import { useSettingsContext } from "src/components/settings";
-import { test_address_list, test_pay_list } from "src/data/test-data";
-import Iconify from 'src/components/iconify/Iconify';
-import Card from "src/theme/overrides/Card";
-import Paper from "src/theme/overrides/Paper";
-import Typography from "src/theme/overrides/Typography";
-import { getProductByUser } from "src/utils/api-shop";
+
 import styled from "styled-components";
 import { useState } from "react";
 import { Title } from "src/components/elements/styled-components";

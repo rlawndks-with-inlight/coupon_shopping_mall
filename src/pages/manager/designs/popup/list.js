@@ -4,9 +4,8 @@ import ManagerLayout from "src/layouts/manager/ManagerLayout";
 import ManagerTable from "src/views/manager/mui/table/ManagerTable";
 import { Icon } from "@iconify/react";
 import { useRouter } from "next/router";
-import { Row } from "src/components/elements/styled-components";
-import { deletePopupByManager, getPopupsByManager, getProductsByManager } from "src/utils/api-manager";
 import { useModal } from "src/components/dialog/ModalProvider";
+import { apiManager } from "src/utils/api";
 
 const PopupList = () => {
   const { setModal } = useModal()
@@ -88,14 +87,14 @@ const PopupList = () => {
       ...data,
       content: undefined
     });
-    let data_ = await getPopupsByManager(obj);
+    let data_ = await apiManager('popups', 'list',obj);
     if (data_) {
       setData(data_);
     }
     setSearchObj(obj);
   }
   const deletePopup = async (id) => {
-    let result = await deletePopupByManager({ id: id });
+    let result = await apiManager('popups', 'delete',{ id: id });
     if (result) {
       onChangePage(searchObj);
     }

@@ -8,11 +8,11 @@ import { Upload } from "src/components/upload";
 import ManagerLayout from "src/layouts/manager/ManagerLayout";
 import styled from "styled-components";
 import { defaultManagerObj } from "src/data/manager-data";
-import { addBrandByManager, getBrandByManager, updateBrandByManager, uploadFileByManager } from "src/utils/api-manager";
 import { toast } from "react-hot-toast";
 import { useModal } from "src/components/dialog/ModalProvider";
 import { useAuthContext } from "src/layouts/manager/auth/useAuthContext";
 import ReactQuillComponent from "src/views/manager/react-quill";
+import { apiManager } from "src/utils/api";
 
 const KakaoWrappers = styled.div`
 width:100%;
@@ -72,14 +72,6 @@ const DefaultSetting = () => {
       value: 4,
       label: '데모설정'
     }] : []),
-    ...(user?.level >= 50 ? [{
-      value: 5,
-      label: '서브카테고리 설정'
-    }] : []),
-    ...(user?.level >= 50 ? [{
-      value: 6,
-      label: '결제모듈관리'
-    }] : []),
   ]
 
   useEffect(() => {
@@ -104,7 +96,7 @@ const DefaultSetting = () => {
   }
   const settingPage = async () => {
     if (router.query?.brand_id != 'add') {
-      let brand_data = await getBrandByManager({
+      let brand_data = await apiManager('brands', 'get', {
         id: router.query.brand_id || themeDnsData?.id
       })
       brand_data = settingBrandObj(item, brand_data);
@@ -114,23 +106,24 @@ const DefaultSetting = () => {
   }
   const onSave = async () => {
     let result = undefined
-    if (item?.id) {//수정
-      result = await updateBrandByManager({ ...item, id: item?.id })
+    let obj = item;
+    if (obj?.id) {//수정
+      result = await apiManager('brands', 'update',{ ...obj, id: obj?.id })
     } else {//추가
       if (
-        !item?.user_name ||
-        !item?.user_pw ||
-        !item?.mcht_name ||
-        !item?.user_pw_check
+        !obj?.user_name ||
+        !obj?.user_pw ||
+        !obj?.seller_name ||
+        !obj?.user_pw_check
       ) {
         toast.error("본사 계정정보를 입력해 주세요.");
         return;
       }
-      if (item?.user_pw != item?.user_pw_check) {
+      if (obj?.user_pw != obj?.user_pw_check) {
         toast.error("본사 비밀번호가 일치하지 않습니다.");
         return;
       }
-      result = await addBrandByManager({ ...item })
+      result  = await apiManager('brands', 'create',{ ...obj })
     }
     if (result) {
       toast.success("성공적으로 저장 되었습니다.");
@@ -588,13 +581,13 @@ const DefaultSetting = () => {
                           )
                         }} />
                       <TextField
-                        label='본사가맹점명'
-                        value={item?.mcht_name}
+                        label='본사명'
+                        value={item?.seller_name}
                         onChange={(e) => {
                           setItem(
                             {
                               ...item,
-                              ['mcht_name']: e.target.value
+                              ['seller_name']: e.target.value
                             }
                           )
                         }} />

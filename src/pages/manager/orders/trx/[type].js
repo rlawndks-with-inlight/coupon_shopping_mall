@@ -5,14 +5,12 @@ import ManagerTable from "src/views/manager/mui/table/ManagerTable";
 import { Icon } from "@iconify/react";
 import { useRouter } from "next/router";
 import { Col, Row } from "src/components/elements/styled-components";
-import { deleteTrxByManager, getTrxsByManager, updateTrxInvoiceByManager, updateTrxStatusByManager } from "src/utils/api-manager";
 import { useModal } from "src/components/dialog/ModalProvider";
-import { LazyLoadImage } from "react-lazy-load-image-component";
 import { commarNumber } from "src/utils/function";
 import { cancelPayByUser } from "src/utils/api-shop";
 import { PAY_KEY } from "src/utils/shop-util";
 import toast from "react-hot-toast";
-import $ from 'jquery'
+import { apiManager, apiUtil } from "src/utils/api";
 
 const TrxList = () => {
   const { setModal } = useModal()
@@ -174,7 +172,7 @@ const TrxList = () => {
             }}
           />
           <Button variant="contained" onClick={async () => {
-            let result = await updateTrxInvoiceByManager({
+            let result = await apiManager(`transactions/${row?.id}/invoice`, 'create', {
               id: row?.id,
               invoice_num: invoice
             })
@@ -290,14 +288,14 @@ const TrxList = () => {
       ...data,
       content: undefined
     });
-    let data_ = await getTrxsByManager(obj);
+    let data_ = await apiManager('transactions', 'list', obj);
     if (data_) {
       setData(data_);
     }
     setSearchObj(obj);
   }
   const deleteTrx = async (id) => {
-    let result = await deleteTrxByManager({ id: id });
+    let result = await apiManager('transactions', 'delete', { id: id });
     if (result) {
       onChangePage(searchObj);
     }
@@ -320,9 +318,9 @@ const TrxList = () => {
     }
   }
   const onChangeStatus = async (id, value) => {
-    let result = await updateTrxStatusByManager({
-      id: id,
-      trx_status: value,
+    let result = await apiUtil(`transactions/trx_status`, 'update', {
+      id,
+      value,
     })
   }
   const onChangeInvoice = () => {

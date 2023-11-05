@@ -10,6 +10,9 @@ import Iconify from 'src/components/iconify/Iconify';
 import ProductDetailsReviewList from './ProductDetailsReviewList';
 import ProductDetailsReviewNewDialog from './ProductDetailsNewReviewForm';
 import { fShortenNumber } from 'src/utils/formatNumber';
+import { useAuthContext } from 'src/layouts/manager/auth/useAuthContext';
+import toast from 'react-hot-toast';
+import { commarNumber } from 'src/utils/function';
 
 // ----------------------------------------------------------------------
 
@@ -18,15 +21,22 @@ ProductDetailsReview.propTypes = {
 };
 
 export default function ProductDetailsReview({ product, reviewContent, onChangePage }) {
+
+  const {user} = useAuthContext();
   const { rating, totalReview, ratings = [], product_average_scope } = product;
 
   const [openReview, setOpenReview] = useState(false);
 
   const handleOpenReview = () => {
+    if(!user){
+      toast.error('로그인을 해주세요.')
+      return;
+    }
     setOpenReview(true);
   };
 
   const handleCloseReview = () => {
+    
     setOpenReview(false);
   };
 
@@ -55,8 +65,8 @@ export default function ProductDetailsReview({ product, reviewContent, onChangeP
             평점
           </Typography>
 
-          <Typography variant="h2">{product_average_scope / 2}/5</Typography>
-          <Rating readOnly value={product_average_scope / 2} precision={0.1} />
+          <Typography variant="h2">{commarNumber(product_average_scope ?? 0)}/5</Typography>
+          <Rating readOnly value={product_average_scope ?? 0} precision={0.1} />
           <Typography variant="caption" sx={{ color: 'text.secondary' }}>
             ({fShortenNumber(reviewContent?.total)} 리뷰)
           </Typography>

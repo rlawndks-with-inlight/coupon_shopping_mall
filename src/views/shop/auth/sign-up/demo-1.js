@@ -10,8 +10,8 @@ import { useTheme } from '@emotion/react';
 import Policy from 'src/pages/shop/auth/policy';
 import { toast } from 'react-hot-toast';
 import { Icon } from '@iconify/react';
-import { sendPhoneVerifyCodeByUser, signUpByUser } from 'src/utils/api-shop';
 import { useSettingsContext } from 'src/components/settings';
+import { apiManager } from 'src/utils/api';
 
 const Wrappers = styled.div`
 max-width:1000px;
@@ -124,7 +124,8 @@ const Demo1 = (props) => {
     user_name: '',
     user_pw: '',
     passwordCheck: '',
-    nick_name: '',
+    name: '',
+    nickname: '',
     phone_num: '',
     phoneCheck: '',
   })
@@ -158,13 +159,13 @@ const Demo1 = (props) => {
         !user.user_name ||
         !user.user_pw ||
         !user.passwordCheck ||
-        !user.nick_name ||
+        !user.nickname ||
         !user.phone_num
       ) {
         toast.error("필수 항목을 입력해 주세요.");
         return;
       }
-      let result = await signUpByUser({ ...user, brand_id: themeDnsData?.id });
+      let result = await apiManager('auth/sign-up', 'create', { ...user, brand_id: themeDnsData?.id });
       if (!result) {
         return;
       }
@@ -178,7 +179,7 @@ const Demo1 = (props) => {
   }
   const onClickSendPhoneVerifyCode = async () => {
     setPhoneCheckStep(1);
-    let result = await sendPhoneVerifyCodeByUser({
+    let result = await apiManager('auth/code', 'create', {
       phone_num: user.phone_num
     })
 
@@ -317,9 +318,22 @@ const Demo1 = (props) => {
             <TextField
               label='이름'
               onChange={(e) => {
-                setUser({ ...user, ['nick_name']: e.target.value })
+                setUser({ ...user, ['name']: e.target.value })
               }}
-              value={user.nick_name}
+              value={user.name}
+              style={inputStyle}
+              autoComplete='new-password'
+              onKeyPress={(e) => {
+                if (e.key == 'Enter') {
+                }
+              }}
+            />
+            <TextField
+              label='닉네임'
+              onChange={(e) => {
+                setUser({ ...user, ['nickname']: e.target.value })
+              }}
+              value={user.nickname}
               style={inputStyle}
               autoComplete='new-password'
               onKeyPress={(e) => {

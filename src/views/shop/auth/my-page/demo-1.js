@@ -3,11 +3,11 @@ import { useEffect, useState } from 'react';
 import { AddressTable } from 'src/components/elements/shop/common';
 import { Col, Row, Title, postCodeStyle } from 'src/components/elements/styled-components';
 import { useAuthContext } from 'src/layouts/manager/auth/useAuthContext';
-import { addAddressByUser, deleteAddressByUser, getAddressesByUser } from 'src/utils/api-shop';
 import { fData } from 'src/utils/formatNumber';
 import { makeMaxPage } from 'src/utils/function';
 import styled from 'styled-components'
 import DaumPostcode from 'react-daum-postcode';
+import { apiManager } from 'src/utils/api';
 
 const Wrappers = styled.div`
 max-width:1600px;
@@ -85,7 +85,7 @@ const Demo1 = (props) => {
       ...addressContent,
       content: undefined,
     })
-    let data = await getAddressesByUser(search_obj);
+    let data = await apiManager('user-addresses', 'list', search_obj);
     setSearchObj(search_obj);
     if (data) {
       setAddressContent(data);
@@ -100,7 +100,7 @@ const Demo1 = (props) => {
     })
   }
   const onAddAddress = async () => {
-    let result = await addAddressByUser({
+    let result = await apiManager('user-addresses', 'create', {
       ...addAddressObj,
       user_id: user?.id,
     })
@@ -115,7 +115,7 @@ const Demo1 = (props) => {
     }
   }
   const onDeleteAddress = async (id) => {
-    let result = await deleteAddressByUser({
+    let result = await apiManager('user-addresses', 'delete', {
       id: id
     })
     if (result) {
@@ -223,7 +223,7 @@ const Demo1 = (props) => {
                       marginBottom: '1rem'
                     }}
                   />
-                  <div>{userObj.nick_name}</div>
+                  <div>{userObj.nickname}</div>
                 </Card>
               </Grid>
               <Grid item xs={12} md={8}>
@@ -239,7 +239,7 @@ const Demo1 = (props) => {
                   >
                     <TextField name="displayName" label="아이디" defaultValue={userObj?.user_name} value={userObj?.user_name} disabled={true} />
 
-                    <TextField name="email" label="이름" defaultValue={userObj?.nick_name} value={userObj?.nick_name} disabled={true} />
+                    <TextField name="email" label="이름" defaultValue={userObj?.nickname} value={userObj?.nickname} disabled={true} />
 
                     <TextField name="phone_num" label="전화번호" defaultValue={userObj?.phone_num} value={userObj?.phone_num} disabled={true} />
 

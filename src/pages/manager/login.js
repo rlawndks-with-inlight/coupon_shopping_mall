@@ -45,9 +45,9 @@ const Login = () => {
   });
 
   const onSubmit = async () => {
-    let user = await login(username, password);
+    let user = await login(username, password, true);
     if (user) {
-      router.push('/manager/dashboards')
+      window.location.href = '/manager/dashboards';
     }
   };
   const [tourOpen, setTourOpen] = useState(false);

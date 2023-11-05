@@ -2,7 +2,7 @@ import styled from "styled-components";
 import { Row, themeObj } from "../styled-components";
 import { LazyLoadImage } from "react-lazy-load-image-component";
 import { commarNumber } from "src/utils/function";
-import { itemThemeCssDefaultSetting } from "src/pages/manager/designs/item-card";
+import { itemThemeCssDefaultSetting } from "src/views/manager/item-card/setting";
 import { useEffect, useState } from "react";
 import { IconButton } from "@mui/material";
 import { Icon } from "@iconify/react";
@@ -19,7 +19,6 @@ import { TableHeadCustom } from 'src/components/table';
 import { test_items } from 'src/data/test-data';
 import Image from 'src/components/image/Image';
 import { fCurrency } from 'src/utils/formatNumber';
-import { getPayHistoriesByUser } from 'src/utils/api-shop';
 import { getTrxStatusByNumber, makeMaxPage } from 'src/utils/function';
 import { insertWishDataUtil } from "src/utils/shop-util";
 import toast from "react-hot-toast";
@@ -83,10 +82,10 @@ export const Item = (props) => {
         padding: `${itemThemeCss?.container?.padding}%`,
         columnGap: `0.5rem`,
         rowGap: `0.5rem`,
-        flexDirection: `${itemThemeCss.container.is_vertical == 0 ? 'column' : 'row'}`,
-        border: `${itemThemeCss.container.border_width}px solid ${itemThemeCss.container.border_color}`,
-        borderRadius: `${itemThemeCss.container.border_radius}px`,
-        boxShadow: `${itemThemeCss.shadow.x}px ${itemThemeCss.shadow.y * (-1)}px ${itemThemeCss.shadow.width}px ${itemThemeCss.shadow.color}${itemThemeCss.shadow.darkness > 9 ? '' : '0'}${itemThemeCss.shadow.darkness}`
+        flexDirection: `${itemThemeCss?.container.is_vertical == 0 ? 'column' : 'row'}`,
+        border: `${itemThemeCss?.container.border_width}px solid ${itemThemeCss?.container.border_color}`,
+        borderRadius: `${itemThemeCss?.container.border_radius}px`,
+        boxShadow: `${itemThemeCss?.shadow.x}px ${itemThemeCss?.shadow.y * (-1)}px ${itemThemeCss?.shadow.width}px ${itemThemeCss?.shadow.color}${itemThemeCss?.shadow.darkness > 9 ? '' : '0'}${itemThemeCss?.shadow.darkness}`
       }}
       >
         <IconButton sx={{ position: 'absolute', right: '2px', top: '2px' }} onClick={onClickHeart}>
@@ -95,9 +94,9 @@ export const Item = (props) => {
           }} />
         </IconButton>
         <ItemImg src={item.product_img} style={{
-          width: `${itemThemeCss.container.is_vertical == 0 ? '100%' : '50%'}`,
+          width: `${itemThemeCss?.container.is_vertical == 0 ? '100%' : '50%'}`,
           height: `auto`,
-          borderRadius: `${itemThemeCss.image.border_radius}px`,
+          borderRadius: `${itemThemeCss?.image.border_radius}px`,
         }}
           onClick={() => {
             if (item?.id) {

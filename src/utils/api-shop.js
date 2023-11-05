@@ -14,25 +14,25 @@ export const getShopCategoriesByUser = (params) => { // 유저 연결되어있�
   return get(`/api/v1/shop/shop`, query);
 }
 export const getSellerInfoByUser = async (params) => { // 셀러 정보가 출력됩니다. (게시글 카테고리, 상품 카테고리) 팝업 정보가 출력됩니다.
-  const { mcht_id } = params;
+  const { seller_id } = params;
   let query = {
-    mcht_id,
+    seller_id,
     dns: window.location.host.split(':')[0]
   }
   let data = await get(`/api/v1/auth/domain`, query);
-  return data?.mcht;
+  return data?.seller;
 }
 export const getSellerCategoriesByUser = async (params) => { // 셀러 연결되어있는 하위 카테고리가 모두 출력됩니다. (게시글 카테고리, 상품 카테고리) 팝업 정보가 출력됩니다.
-  const { mcht_id } = params;
+  const { seller_id } = params;
   let query = {
-    mcht_id
+    seller_id
   }
   return get(`/api/v1/shop/shop`, query);
 }
 export const getProductsByUser = (params) => { // 유저 카테고리 기반 상품 목록 출력
-  const { page = 1, page_size = 10, mcht_id, search } = params;
+  const { page = 1, page_size = 10, seller_id, search } = params;
   let query = {
-    page, page_size, mcht_id,
+    page, page_size, seller_id,
     search,
   }
   for (var i = 0; i < category_id_depth; i++) {
@@ -40,8 +40,8 @@ export const getProductsByUser = (params) => { // 유저 카테고리 기반 상
       query[`category_id${i}`] = params[`category_id${i}`];
     }
   }
-  if (!mcht_id) {
-    delete query['mcht_id'];
+  if (!seller_id) {
+    delete query['seller_id'];
   }
   if (!search) {
     delete query['search'];
@@ -73,9 +73,9 @@ export const getProductReviewsByUser = (params) => { // 유저 상품 리뷰 목
   return get(`/api/v1/shop/products/${product_id}/reviews`, query);
 }
 export const addProductReviewByUser = (params) => { // 유저 상품 리뷰 추가
-  const { product_id, trans_id, scope, nick_name, profile_img, content, password } = params;
+  const { product_id, trans_id, scope, nickname, profile_img, content, password } = params;
   let query = {
-    trans_id, scope, nick_name, profile_img, content, password
+    trans_id, scope, nickname, profile_img, content, password
   }
   return post(`/api/v1/shop/products/${product_id}/reviews`, query);
 }
@@ -85,9 +85,9 @@ export const getProductReviewByUser = (params) => { // 유저 상품 리뷰 단�
   return get(`/api/v1/shop/products/${product_id}/reviews/${id}`);
 }
 export const updateProductReviewByUser = (params) => { // 유저 상품 리뷰 업데이트
-  const { product_id, id, trans_id, scope, nick_name, profile_img, content, password } = params;
+  const { product_id, id, trans_id, scope, nickname, profile_img, content, password } = params;
   let query = {
-    trans_id, scope, nick_name, profile_img, content, password
+    trans_id, scope, nickname, profile_img, content, password
   }
   return put(`/api/v1/shop/products/${product_id}/reviews/${id}`, query);
 }
@@ -125,9 +125,9 @@ export const checkPhoneVerifyCodeByUser = (params) => { // 유저 휴대폰 인�
   return post(`/api/v1/shop/auth/verify`, obj);
 }
 export const signUpByUser = (params) => { // 유저 회원가입
-  const { user_name, phone_num, nick_name, user_pw, brand_id } = params;
+  const { user_name, phone_num, nickname, user_pw, brand_id } = params;
   let obj = {
-    user_name, phone_num, nick_name, user_pw, brand_id
+    user_name, phone_num, nickname, user_pw, brand_id
   }
 
   return post(`/api/v1/shop/auth/sign-up`, obj);
@@ -188,7 +188,6 @@ export const addAddressByUser = (params) => {//회원 주소 리스트 불러오
 }
 export const deleteAddressByUser = (params) => {//회원 주소 삭제
   const { id } = params;
-
   return deleteItem(`/api/v1/shop/users/addresses/${id}`);
 }
 export const cancelPayByUser = (params) => {//회원 주소 삭제

@@ -393,11 +393,11 @@ export const getUsersByManager = (params) => { //관리자 유저목록 출력
 }
 export const addUserByManager = async (params) => { //관리자 유저 추가
   const {
-    user_name, phone_num, nick_name, user_pw, note,
+    user_name, phone_num, nickname, user_pw, note,
     profile_file,
   } = params;
   let obj = {
-    user_name, phone_num, nick_name, user_pw, note,
+    user_name, phone_num, nickname, user_pw, note,
     profile_file,
   }
   let images = [
@@ -408,11 +408,11 @@ export const addUserByManager = async (params) => { //관리자 유저 추가
 }
 export const updateUserByManager = async (params) => { //관리자 유저 수정
   const {
-    id, user_name, phone_num, nick_name, note,
+    id, user_name, phone_num, nickname, note,
     profile_file, profile_img
   } = params;
   let obj = {
-    user_name, phone_num, nick_name, note,
+    user_name, phone_num, nickname, note,
     profile_file, profile_img
   }
   let images = [
@@ -447,10 +447,10 @@ export const getSellersByManager = (params) => { //관리자 셀러 목록 출�
   if (!query['e_dt']) delete query['e_dt'];
   if (!query['search']) delete query['search'];
 
-  return get(`/api/v1/manager/merchandises`, query);
+  return get(`/api/v1/manager/sellers`, query);
 }
 export const addSellerByManager = async (params) => { //관리자 셀러 추가
-  const { user_name, nick_name, mcht_name, addr, resident_num, business_num, acct_bank_name, acct_bank_code, acct_num, acct_name, phone_num, note, user_pw, mcht_trx_fee,
+  const { user_name, nickname, seller_name, addr, resident_num, business_num, acct_bank_name, acct_bank_code, acct_num, acct_name, phone_num, note, user_pw, seller_trx_fee,
     sns_obj,
     passbook_file,
     contract_file,
@@ -460,7 +460,7 @@ export const addSellerByManager = async (params) => { //관리자 셀러 추가
     background_file,
   } = params;
   let obj = {
-    user_name, nick_name, mcht_name, addr, resident_num, business_num, acct_bank_name, acct_bank_code, acct_num, acct_name, phone_num, note, user_pw, mcht_trx_fee,
+    user_name, nickname, seller_name, addr, resident_num, business_num, acct_bank_name, acct_bank_code, acct_num, acct_name, phone_num, note, user_pw, seller_trx_fee,
     sns_obj,
     passbook_file,
     contract_file,
@@ -478,11 +478,11 @@ export const addSellerByManager = async (params) => { //관리자 셀러 추가
     'background',
   ]
   obj = await settingdeleteImageObj(images, obj);
-  return post(`/api/v1/manager/merchandises`, obj);
+  return post(`/api/v1/manager/sellers`, obj);
 }
 
 export const updateSellerByManager = async (params) => { //관리자 셀러 수정
-  const { user_name, nick_name, mcht_name, addr, resident_num, business_num, acct_bank_name, acct_bank_code, acct_num, acct_name, phone_num, note, user_pw, mcht_trx_fee,
+  const { user_name, nickname, seller_name, addr, resident_num, business_num, acct_bank_name, acct_bank_code, acct_num, acct_name, phone_num, note, user_pw, seller_trx_fee,
     sns_obj,
     passbook_file, passbook_img,
     contract_file, contract_img,
@@ -493,7 +493,7 @@ export const updateSellerByManager = async (params) => { //관리자 셀러 수�
     id
   } = params;
   let obj = {
-    user_name, nick_name, mcht_name, addr, resident_num, business_num, acct_bank_name, acct_bank_code, acct_num, acct_name, phone_num, note, user_pw, mcht_trx_fee,
+    user_name, nickname, seller_name, addr, resident_num, business_num, acct_bank_name, acct_bank_code, acct_num, acct_name, phone_num, note, user_pw, seller_trx_fee,
     sns_obj,
     passbook_file, passbook_img,
     contract_file, contract_img,
@@ -511,29 +511,29 @@ export const updateSellerByManager = async (params) => { //관리자 셀러 수�
     'background',
   ]
   obj = await settingImageObj(images, obj);
-  return put(`/api/v1/manager/merchandises/${id}`, obj);
+  return put(`/api/v1/manager/sellers/${id}`, obj);
 }
 export const getSellerByManager = (params) => { //관리자 셀러 단일 출력
   const { id } = params;
-  return get(`/api/v1/manager/merchandises/${id}`);
+  return get(`/api/v1/manager/sellers/${id}`);
 }
 export const deleteSellerByManager = (params) => { //관리자 셀러 삭제
   const { id } = params;
-  return deleteItem(`/api/v1/manager/merchandises/${id}`);
+  return deleteItem(`/api/v1/manager/sellers/${id}`);
 }
 export const mappingSellerWithProducts = (params) => { //관리자 셀러 상품 매핑
   const { id, product_ids } = params;
   let obj = {
     product_ids
   }
-  return post(`/api/v1/manager/merchandises/${id}/mapping-products`, obj);
+  return post(`/api/v1/manager/sellers/${id}/mapping-products`, obj);
 }
 export const getMappingSellerWithProducts = (params) => { //관리자 셀러 상품 매핑 출력
   const { id } = params;
   let query = {
     id
   }
-  return get(`/api/v1/manager/merchandises/${id}/mapping-products`, query);
+  return get(`/api/v1/manager/sellers/${id}/mapping-products`, query);
 }
 export const getPostCategoriesByManager = (params) => { //관리자 게시글 카테고리 목록 출력
   const { page, page_size, s_dt, e_dt, search } = params;
@@ -635,7 +635,7 @@ export const getBrandsByManager = (params) => { //관리자 브랜드 목록 출
 }
 export const addBrandByManager = async (params) => { //관리자 브랜드 추가
   const { name, dns, og_description, company_name, pvcy_rep_name, ceo_name, addr, resident_num, business_num, phone_num, fax_num, note,
-    user_name, user_pw, mcht_name,
+    user_name, user_pw, seller_name,
     theme_css = {},
     shop_obj = [],
     blog_obj = [],
@@ -647,7 +647,7 @@ export const addBrandByManager = async (params) => { //관리자 브랜드 추�
   } = params;
   let obj = {
     name, dns, og_description, company_name, pvcy_rep_name, ceo_name, addr, resident_num, business_num, phone_num, fax_num, note,
-    user_name, user_pw, mcht_name,
+    user_name, user_pw, seller_name,
     theme_css,
     shop_obj,
     blog_obj,

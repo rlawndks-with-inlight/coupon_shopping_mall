@@ -10,9 +10,9 @@ import { Item, Items } from 'src/components/elements/shop/common';
 import _ from 'lodash';
 import { Breadcrumbs, Button, Divider } from '@mui/material';
 import { Icon } from '@iconify/react';
-import { getProductsByUser } from 'src/utils/api-shop';
 import { Spinner } from 'evergreen-ui';
 import $ from 'jquery';
+import { apiShop } from 'src/utils/api';
 
 const ContentWrapper = styled.div`
 max-width:1600px;
@@ -104,14 +104,14 @@ const Demo1 = (props) => {
           break;
         }
       }
-      console.log(use_list)
       setCurCategories(use_list);
     }
-    let product_list = await getProductsByUser({
+    let product_list = await apiShop('product','list',{
       ...search_obj,
       brand_id: themeDnsData?.id,
       ...router.query
     })
+    console.log(product_list)
     setSearchObj(search_obj);
     if (is_first) {
       setProducts(product_list.content ?? []);

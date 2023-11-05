@@ -1,16 +1,20 @@
 import PropTypes from 'prop-types';
 import { createContext, useEffect, useReducer, useCallback, useMemo } from 'react';
 // utils
-import { axiosIns } from 'src/utils/axios'
+import axios from 'src/utils/axios';
 import localStorageAvailable from 'src/utils/localStorageAvailable';
 //
-import { isValidToken, setSession } from './utils';
-import { deleteCookie, getCookie, setCookie } from 'src/utils/react-cookie';
-import { useSettingsContext } from 'src/components/settings';
-import { toast } from 'react-hot-toast';
 import { useRouter } from 'next/router';
-import { PATH_AUTH } from 'src/data/manager-data';
-import { getLocalStorage } from 'src/utils/local-storage';
+import { isManagerRouter } from 'src/utils/function';
+import { toast } from 'react-hot-toast';
+
+// ----------------------------------------------------------------------
+
+// NOTE:
+// We only build demo at basic level.
+// Customer will need to do some extra handling yourself if you want to extend the logic and other features...
+
+// ----------------------------------------------------------------------
 
 const initialState = {
   isInitialized: false,
@@ -51,38 +55,50 @@ const reducer = (state, action) => {
   return state;
 };
 
+// ----------------------------------------------------------------------
+
 export const AuthContext = createContext(null);
+
+// ----------------------------------------------------------------------
 
 AuthProvider.propTypes = {
   children: PropTypes.node,
 };
 
 export function AuthProvider({ children }) {
-
-  const {onChangeCartData, onChangeWishData} = useSettingsContext();
   const router = useRouter();
   const [state, dispatch] = useReducer(reducer, initialState);
+
   const storageAvailable = localStorageAvailable();
 
   const initialize = useCallback(async () => {
+    let user = undefined;
     try {
-      const response = await axiosIns().post('/api/v1/auth/ok', {}, {
-        headers: {
-          "Authorization": `Bearer ${getCookie('o')}`,
-          "Accept": "application/json",
-          "Content-Type": "application/json",
+      const { data: response } = await axios.get(`/api/auth`);
+      
+      if (response?.data?.id > 0) {
+
+        user = response?.data;
+        dispatch({
+          type: 'INITIAL',
+          payload: {
+            isAuthenticated: true,
+            user,
+          },
+        });
+      } else {
+        if (isManagerRouter(router)) {
+          router.push('/manager/login');
         }
-      });
-      const user = response.data;
-      dispatch({
-        type: 'INITIAL',
-        payload: {
-          isAuthenticated: true,
-          user,
-        },
-      });
+        dispatch({
+          type: 'INITIAL',
+          payload: {
+            isAuthenticated: false,
+            user: null,
+          },
+        });
+      }
     } catch (error) {
-      deleteCookie('o');
       dispatch({
         type: 'INITIAL',
         payload: {
@@ -90,51 +106,51 @@ export function AuthProvider({ children }) {
           user: null,
         },
       });
-      if (router.asPath.split('/')[1] == 'manager') {
-        router.push(PATH_AUTH.login);
-      }
     }
-  }, [storageAvailable]);
+    return user;
+  }, []);
 
   useEffect(() => {
     initialize();
   }, [initialize]);
+
   // LOGIN
-  const login = useCallback(async (user_name, user_pw) => {
-    try {
-      let dns_data = getLocalStorage('themeDnsData');
-      dns_data = JSON.parse(dns_data);
-      const response = await axiosIns().post(`/api/v1${router.asPath.split('/')[1] == 'manager' ? '' : '/shop'}/auth/sign-in`, {
-        brand_id: dns_data.id,
-        user_name: user_name,
-        user_pw: user_pw,
-        login_type: 0,
-      });
-      await setCookie('o', response?.data?.access_token, {
-        path: "/",
-        secure: process.env.COOKIE_SECURE,
-        sameSite: process.env.COOKIE_SAME_SITE,
-      });
-      dispatch({
-        type: 'LOGIN',
-        payload: {
-          user: response?.data?.user,
-        },
-      });
-      return response?.data?.user;
-    } catch (error) {
-      console.log(error);
-      toast.error(error?.response?.data?.message);
+  const login = useCallback(async (user_name, user_pw, is_manager) => {
+    if (!user_name || !user_pw) {
+      toast.error('필수값을 입력해 주세요.');
       return false;
     }
+    const { data: response } = await axios.post(`/api/auth/sign-in`, {
+      user_name,
+      user_pw,
+      is_manager
+    });
+    if (response?.result < 0) {
+      toast.error(response?.message)
+      return false;
+    }
+    const user = response.data;
+    dispatch({
+      type: 'LOGIN',
+      payload: {
+        user,
+      },
+    });
+    return true;
   }, []);
 
   // REGISTER
   const register = useCallback(async (email, password, firstName, lastName) => {
-
+    const response = await axios.post('/api/account/register', {
+      email,
+      password,
+      firstName,
+      lastName,
+    });
     const { accessToken, user } = response.data;
 
     localStorage.setItem('accessToken', accessToken);
+
     dispatch({
       type: 'REGISTER',
       payload: {
@@ -142,26 +158,12 @@ export function AuthProvider({ children }) {
       },
     });
   }, []);
-
   // LOGOUT
   const logout = useCallback(async () => {
-    try {
-      const response = await axiosIns().post('/api/v1/auth/sign-out', {
-        headers: {
-          "Authorization": `Bearer ${getCookie('o')}`,
-          "Accept": "application/json",
-          "Content-Type": "application/json",
-        }
-      });
-      dispatch({
-        type: 'LOGOUT',
-      });
-    } catch (error) {
-      dispatch({
-        type: 'LOGOUT',
-      });
-    }
-    return true;
+    const response = await axios.post('/api/auth/sign-out');
+    dispatch({
+      type: 'LOGOUT',
+    });
   }, []);
 
   const memoizedValue = useMemo(
@@ -173,8 +175,9 @@ export function AuthProvider({ children }) {
       login,
       register,
       logout,
+      initialize,
     }),
-    [state.isAuthenticated, state.isInitialized, state.user, login, logout, register]
+    [state.isAuthenticated, state.isInitialized, state.user, login, logout, register, initialize]
   );
 
   return <AuthContext.Provider value={memoizedValue}>{children}</AuthContext.Provider>;

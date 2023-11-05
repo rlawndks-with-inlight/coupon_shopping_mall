@@ -8,9 +8,9 @@ import { Button, Divider, IconButton, InputAdornment, TextField } from '@mui/mat
 import { Icon } from '@iconify/react';
 import { useSettingsContext } from 'src/components/settings';
 import { useRef } from 'react';
-import { getProductsByUser } from 'src/utils/api-shop';
 import { Spinner } from 'evergreen-ui';
 import $ from 'jquery';
+import { apiShop } from 'src/utils/api';
 
 const Wrappers = styled.div`
 max-width:1200px;
@@ -74,7 +74,7 @@ const Demo1 = (props) => {
       setLoading(true);
       setProducts([]);
     }
-    let product_list = await getProductsByUser({
+    let product_list = await apiShop('product', 'list',{
       ...search_obj,
       brand_id: themeDnsData?.id,
     })

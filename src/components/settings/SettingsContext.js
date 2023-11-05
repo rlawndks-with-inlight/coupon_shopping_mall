@@ -5,8 +5,8 @@ import { defaultSettings } from './config-setting';
 import { defaultPreset, getPresets, presetsOption } from './presets';
 import { useTheme } from '@emotion/react';
 import { deleteLocalStorage, getLocalStorage, setLocalStorage } from 'src/utils/local-storage';
-import { getShopCategoriesByUser } from 'src/utils/api-shop';
-import { getMainObjContentByIdList, getMainObjIdList, makeObjByList } from 'src/utils/function';
+import { apiShop } from 'src/utils/api';
+import axios from 'axios';
 // ----------------------------------------------------------------------
 
 const initialState = {
@@ -119,66 +119,22 @@ export function SettingsProvider({ children }) {
   }, []);
   const getDnsData = async () => {
     try {
-      const url = `${process.env.BACK_URL}/api/v1/auth/domain?dns=${process.env.IS_TEST == 1 ? 'localhost' : window.location.host.split(':')[0]}`;
-      const res = await fetch(url);
-      let dns_data = await res.json();
-      dns_data = dns_data?.brand;
-      if (typeof dns_data?.theme_css == 'string' || !dns_data?.theme_css) {
-        dns_data['theme_css'] = JSON.parse(dns_data?.theme_css ?? "{}");
-      }
-      if (typeof dns_data?.options == 'string' || !dns_data?.options) {
-        dns_data['options'] = JSON.parse(dns_data?.options ?? "{}");
-      }
+      const { data: response } = await axios.get(`/api/domain?dns=${process.env.IS_TEST == 1 ? 'localhost' : window.location.host.split(':')[0]}`);
+      let dns_data = response?.data;
       dns_data['blog_demo_num'] = dns_data?.setting_obj?.blog_demo_num || process.env.TEST_BLOG_DEMO || 0;
       dns_data['shop_demo_num'] = dns_data?.setting_obj?.shop_demo_num || process.env.TEST_SHOP_DEMO || 0;
       dns_data['is_use_seller'] = dns_data?.setting_obj?.is_use_seller || process.env?.IS_USE_SELLER || 0;
-      const get_root_id_url = `${process.env.BACK_URL}/api/v1/shop/root?brand_id=${dns_data?.id}`;
-      const res2 = await fetch(get_root_id_url);
-      let root_id = await res2.json();
-      root_id = root_id?.root_id;
+      let root_id = 1;
       dns_data['root_id'] = root_id;
-      let product_review_ids = []; 
+      let data = await apiShop('','get');
 
-      product_review_ids = getMainObjIdList(dns_data?.shop_obj, 'item-reviews-select', product_review_ids);
-      product_review_ids = getMainObjIdList(dns_data?.blog_obj, 'item-reviews-select', product_review_ids);
-      let product_ids = [];
-      product_ids = getMainObjIdList(dns_data?.shop_obj, 'items', product_ids);
-      product_ids = getMainObjIdList(dns_data?.shop_obj, 'items-ids', product_ids);
-      product_ids = getMainObjIdList(dns_data?.blog_obj, 'items', product_ids);
-      product_ids = getMainObjIdList(dns_data?.blog_obj, 'items-ids', product_ids);
-      product_ids = getMainObjIdList(dns_data?.shop_obj, 'items-with-categories', product_ids, true);
-      product_ids = getMainObjIdList(dns_data?.blog_obj, 'items-with-categories', product_ids, true);
-
-      let data = await getShopCategoriesByUser({
-        brand_id: dns_data?.id,
-        root_id: dns_data?.root_id,
-        product_review_ids: product_review_ids,
-        product_ids: product_ids,
-      });
-      dns_data['shop_obj'] = getMainObjContentByIdList(dns_data?.shop_obj, 'item-reviews-select', data?.product_reviews);
-      dns_data['blog_obj'] = getMainObjContentByIdList(dns_data?.blog_obj, 'item-reviews-select', data?.product_reviews);
-      dns_data['shop_obj'] = getMainObjContentByIdList(dns_data?.shop_obj, 'item-reviews', data?.product_reviews, false, true);
-      dns_data['shop_obj'] = getMainObjContentByIdList(dns_data?.shop_obj, 'items', data?.products);
-      dns_data['shop_obj'] = getMainObjContentByIdList(dns_data?.shop_obj, 'items-ids', data?.products);
-      dns_data['blog_obj'] = getMainObjContentByIdList(dns_data?.blog_obj, 'items', data?.products);
-      dns_data['blog_obj'] = getMainObjContentByIdList(dns_data?.blog_obj, 'items-ids', data?.products);
-      dns_data['shop_obj'] = getMainObjContentByIdList(dns_data?.shop_obj, 'items-with-categories', data?.products, true);
-      dns_data['blog_obj'] = getMainObjContentByIdList(dns_data?.blog_obj, 'items-with-categories', data?.products, true);
-      dns_data['products'] = data?.products;
-      for(var i = 0;i<dns_data['shop_obj'].length;i++){
-        if(dns_data['shop_obj'][i]?.type == 'post'){
-          dns_data['shop_obj'][i].list = data?.post_categories??[];
-        }
-      }
-      for(var i = 0;i<dns_data['blog_obj'].length;i++){
-        if(dns_data['blog_obj'][i]?.type == 'post'){
-          dns_data['blog_obj'][i].list = data?.post_categories??[];
-        }
-      }
+      dns_data['shop_obj'] = data?.shop_obj??[];
+      dns_data['blog_obj'] = data?.blog_obj??[];
+      dns_data['payment_modules'] = data?.payment_modules??[];
       onChangeCategoryList(data?.product_category_groups ?? []);
       onChangePopupList(data?.popups ?? []);
       onChangePostCategoryList(data?.post_categories ?? []);
-      onChangeSellerList(data?.merchandises?.content ?? []);
+      onChangeSellerList(data?.sellers ?? []);
       onChangeDnsData(dns_data);
     } catch (err) {
       console.log(err)
@@ -266,8 +222,10 @@ export function SettingsProvider({ children }) {
     setLocalStorage('themeCartData', JSON.stringify(cart_data));
   }, [])
   // wish data
-  const onChangeWishData = useCallback((wish_data) => {
+  const onChangeWishData = useCallback( async (wish_data) => {
+
     setThemeWishData(wish_data);
+    
     setLocalStorage('themeWishData', JSON.stringify(wish_data));
   }, [])
   // current page

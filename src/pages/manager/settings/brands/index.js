@@ -4,11 +4,10 @@ import ManagerLayout from "src/layouts/manager/ManagerLayout";
 import ManagerTable from "src/views/manager/mui/table/ManagerTable";
 import { Icon } from "@iconify/react";
 import { useRouter } from "next/router";
-import { deleteBrandByManager, getBrandsByManager, getProductsByManager } from "src/utils/api-manager";
 import { LazyLoadImage } from "react-lazy-load-image-component";
 import { useModal } from "src/components/dialog/ModalProvider";
-import { useSettingsContext } from "src/components/settings";
 import { useAuthContext } from "src/layouts/manager/auth/useAuthContext";
+import { apiManager } from "src/utils/api";
 const BrandList = () => {
   const { setModal } = useModal()
   const { user } = useAuthContext();
@@ -76,7 +75,7 @@ const BrandList = () => {
         return row['updated_at'] ?? "---"
       }
     },
-    ...(user?.level >=50 ? [{
+    ...(user?.level >= 50 ? [{
       id: 'main_edit',
       label: `메인페이지 수정`,
       action: (row) => {
@@ -90,7 +89,7 @@ const BrandList = () => {
           </>
         )
       }
-    },]:[]),
+    },] : []),
     {
       id: 'edit',
       label: `수정${user?.level >= 50 ? '/삭제' : ''}`,
@@ -137,21 +136,21 @@ const BrandList = () => {
   const pageSetting = () => {
     let cols = defaultColumns;
     setColumns(cols)
-    onChangePage({...searchObj, page: 1,});
+    onChangePage({ ...searchObj, page: 1, });
   }
   const onChangePage = async (obj) => {
     setData({
       ...data,
       content: undefined
     })
-    let data_ = await getBrandsByManager(obj);
+    let data_ = await apiManager('brands', 'list', obj);
     if (data_) {
       setData(data_);
     }
     setSearchObj(obj);
   }
   const deleteBrand = async (id) => {
-    let result = await deleteBrandByManager({ id: id });
+    let result = await apiManager('brands', 'delete',{ id: id });
     if (result) {
       onChangePage(searchObj);
     }

@@ -2,16 +2,13 @@
 import { Avatar, Button, Card, CardHeader, FormControl, Grid, InputLabel, MenuItem, Select, Stack, TextField, } from "@mui/material";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
-import { Row, themeObj } from "src/components/elements/styled-components";
 import { useSettingsContext } from "src/components/settings";
-import { Upload } from "src/components/upload";
 import ManagerLayout from "src/layouts/manager/ManagerLayout";
 import dynamic from "next/dynamic";
-
-import { addPaymentModuleByManager, addPostCategoryByManager, getPaymentModuleByManager, getPostCategoriesByManager, getPostCategoryByManager, updatePaymentModuleByManager, updatePostCategoryByManager } from "src/utils/api-manager";
 import { toast } from "react-hot-toast";
 import { useModal } from "src/components/dialog/ModalProvider";
 import { useAuthContext } from "src/layouts/manager/auth/useAuthContext";
+import { apiManager } from "src/utils/api";
 const Tour = dynamic(
   () => import('reactour'),
   { ssr: false },
@@ -35,7 +32,7 @@ const PaymentModuleEdit = () => {
   }, [])
   const settingPage = async () => {
     if (router.query?.edit_category == 'edit') {
-      let data = await getPaymentModuleByManager({ id: router.query?.id });
+      let data = await apiManager('payment-modules', 'get', { id: router.query?.id });
       if (data) {
         setItem(data);
       }
@@ -45,9 +42,9 @@ const PaymentModuleEdit = () => {
   const onSave = async () => {
     let result = undefined;
     if (router.query?.edit_category == 'edit') {
-      result = await updatePaymentModuleByManager({ ...item, id: router.query?.id });
+      result = await apiManager('payment-modules', 'update',{ ...item, id: router.query?.id });
     } else {
-      result = await addPaymentModuleByManager(item);
+      result  = await apiManager('payment-modules', 'create',item);
     }
     if (result) {
       toast.success("성공적으로 저장 되었습니다.");

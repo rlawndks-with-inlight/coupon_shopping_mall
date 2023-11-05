@@ -5,10 +5,10 @@ import ManagerTable from "src/views/manager/mui/table/ManagerTable";
 import { Icon } from "@iconify/react";
 import { useRouter } from "next/router";
 import { Row } from "src/components/elements/styled-components";
-import { deletePostCategoryByManager, getPostCategoriesByManager, getProductsByManager, getSellersByManager } from "src/utils/api-manager";
 import { useModal } from "src/components/dialog/ModalProvider";
 import { useAuthContext } from "src/layouts/manager/auth/useAuthContext";
 import { getPostCategoryReadTypeByNumber, getPostCategoryTypeByNumber } from "src/utils/function";
+import { apiManager } from "src/utils/api";
 
 const ArticleCategoryList = () => {
   const { setModal } = useModal()
@@ -113,14 +113,14 @@ const ArticleCategoryList = () => {
       ...data,
       content: undefined
     })
-    let data_ = await getPostCategoriesByManager(obj);
+    let data_ = await apiManager('post-categories', 'list', obj);
     if (data_) {
       setData(data_);
     }
     setSearchObj(obj);
   }
   const deletePostCategory = async (id) => {
-    let result = await deletePostCategoryByManager({ id: id });
+    let result = await apiManager('post-categories', 'delete', { id });
     if (result) {
       onChangePage(searchObj);
     }
@@ -135,6 +135,8 @@ const ArticleCategoryList = () => {
             searchObj={searchObj}
             onChangePage={onChangePage}
             add_button_text={'카테고리 추가'}
+            want_move_card={true}
+            table={'post_categories'}
           />
         </Card>
       </Stack>

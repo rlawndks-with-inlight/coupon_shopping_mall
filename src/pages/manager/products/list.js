@@ -5,15 +5,18 @@ import ManagerTable from "src/views/manager/mui/table/ManagerTable";
 import { Icon } from "@iconify/react";
 import { useRouter } from "next/router";
 import { Row } from "src/components/elements/styled-components";
-import { deleteProductByManager, getCategoriesByManager, getProductsByManager } from "src/utils/api-manager";
 import { commarNumber, getAllIdsWithParents } from "src/utils/function";
 import { LazyLoadImage } from "react-lazy-load-image-component";
 import { SelectCategoryComponent } from "./[edit_category]/[id]";
 import $ from 'jquery';
 import { useModal } from "src/components/dialog/ModalProvider";
 import { useSettingsContext } from "src/components/settings";
+import { apiManager } from "src/utils/api";
+import { useAuthContext } from "src/layouts/manager/auth/useAuthContext";
 
 const ProductList = () => {
+
+  const { user } = useAuthContext();
   const { setModal } = useModal()
   const { themeCategoryList } = useSettingsContext();
   const defaultColumns = [
@@ -91,6 +94,20 @@ const ProductList = () => {
       }
     },
     {
+      id: 'user_name',
+      label: '생성한유저아이디',
+      action: (row) => {
+        return row['user_name'] ?? "---"
+      }
+    },
+    {
+      id: 'seller_name',
+      label: '생성한유저셀러명',
+      action: (row) => {
+        return row['seller_name'] ?? "---"
+      }
+    },
+    {
       id: 'status',
       label: '상태',
       action: (row) => {
@@ -160,7 +177,8 @@ const ProductList = () => {
     s_dt: '',
     e_dt: '',
     search: '',
-    category_id: null
+    category_id: null,
+    seller_id: (user?.level == 10 ? user?.id : -1)
   })
   const [categories, setCategories] = useState([]);
   const [curCategories, setCurCategories] = useState({});
@@ -172,14 +190,14 @@ const ProductList = () => {
 
     let cols = defaultColumns;
     setColumns(cols)
-    onChangePage({ ...searchObj, page: 1, });
+    onChangePage({ ...searchObj, page: 1 });
   }
   const onChangePage = async (obj) => {
     setData({
       ...data,
       content: undefined
     })
-    let data_ = await getProductsByManager(obj);
+    let data_ = await apiManager('products', 'list', obj);
     if (data_) {
       for (var i = 0; i < themeCategoryList.length; i++) {
         let parent_list = await getAllIdsWithParents(themeCategoryList[i]?.product_categories);
@@ -196,7 +214,7 @@ const ProductList = () => {
     setSearchObj(obj);
   }
   const deleteProduct = async (id) => {
-    let result = await deleteProductByManager({ id: id });
+    let result = await apiManager('products', 'delete', { id: id });
     if (result) {
       onChangePage(searchObj);
     }

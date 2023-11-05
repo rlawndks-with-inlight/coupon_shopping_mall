@@ -117,7 +117,7 @@ const Demo1 = (props) => {
                                 
                                 
                                 push('/blog/auth/my-page/user-info') }}>
-                                <MenuText>{user.nick_name}</MenuText>
+                                <MenuText>{user.nickname}</MenuText>
                                 <IconButton style={{ width: '24px', height: '56px', padding: '0', marginRight: '18px' }}>
                                     <Icon icon='ep:arrow-right' color='black' />
                                 </IconButton>

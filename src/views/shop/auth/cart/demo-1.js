@@ -1,7 +1,6 @@
 import { Box, Button, Card, CardContent, CardHeader, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, FormControlLabel, Grid, Paper, Radio, RadioGroup, Stack, TextField, Typography } from '@mui/material';
 import { useEffect, useState } from 'react';
 import { Row, Title, postCodeStyle } from 'src/components/elements/styled-components';
-import { test_pay_list, test_address_list, test_item, test_items } from 'src/data/test-data';
 import { CheckoutCartProductList, CheckoutSteps, CheckoutSummary } from 'src/views/@dashboard/e-commerce/checkout';
 import styled from 'styled-components'
 import _ from 'lodash'
@@ -9,7 +8,6 @@ import Label from 'src/components/label/Label';
 import EmptyContent from 'src/components/empty-content/EmptyContent';
 import Iconify from 'src/components/iconify/Iconify';
 import { useSettingsContext } from 'src/components/settings';
-import { addAddressByUser, deleteAddressByUser, getAddressesByUser } from 'src/utils/api-shop';
 import { calculatorPrice, getCartDataUtil, onPayProductsByAuth, onPayProductsByHand } from 'src/utils/shop-util';
 import { useAuthContext } from 'src/layouts/manager/auth/useAuthContext';
 import Payment from 'payment'
@@ -18,6 +16,7 @@ import { formatCreditCardNumber, formatExpirationDate } from 'src/utils/formatCa
 import { useModal } from 'src/components/dialog/ModalProvider';
 import toast from 'react-hot-toast';
 import DaumPostcode from 'react-daum-postcode';
+import { apiManager } from 'src/utils/api';
 
 const Wrappers = styled.div`
 max-width:1500px;
@@ -113,7 +112,7 @@ const Demo1 = (props) => {
     brand_id: themeDnsData?.id,
     user_id: user?.id ?? undefined,
     //total_amount
-    buyer_name: user?.nick_name ?? "",
+    buyer_name: user?.nickname ?? "",
     installment: 0,
     buyer_phone: '',
     card_num: '',
@@ -188,7 +187,7 @@ const Demo1 = (props) => {
     }
   }
   const onAddAddress = async () => {
-    let result = await addAddressByUser({
+    let result = await apiManager('user-addresses', 'create',{
       ...addAddressObj,
       user_id: user?.id,
     })
@@ -203,7 +202,7 @@ const Demo1 = (props) => {
     }
   }
   const onDeleteAddress = async (id) => {
-    let result = await deleteAddressByUser({
+    let result = await apiManager('user-addresses', 'delete',{
       id: id
     })
     if (result) {
@@ -215,7 +214,7 @@ const Demo1 = (props) => {
       ...addressContent,
       content: undefined,
     })
-    let data = await getAddressesByUser(search_obj);
+    let data = await apiManager('user-addresses', 'list',search_obj);
     setAddressSearchObj(search_obj);
     if (data) {
       setAddressContent(data);
@@ -371,7 +370,7 @@ const Demo1 = (props) => {
                       <CardContent>
                         <RadioGroup row>
                           <Stack spacing={3} sx={{ width: 1 }}>
-                            {test_pay_list.map((item, idx) => (
+                            {themeDnsData?.payment_modules.map((item, idx) => (
                               <>
                                 <Paper
                                   variant="outlined"

@@ -57,7 +57,7 @@ const Demo1 = (props) => {
           <TextField
             disabled
             name='username'
-            placeholder='홍길동'//{user.nick_name}
+            placeholder='홍길동'//{user.nickname}
             sx={{
               marginBottom: '1%',
               backgroundColor: '#F6F6F6'

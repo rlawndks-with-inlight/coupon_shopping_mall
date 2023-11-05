@@ -4,13 +4,9 @@ import ManagerLayout from "src/layouts/manager/ManagerLayout";
 import ManagerTable from "src/views/manager/mui/table/ManagerTable";
 import { Icon } from "@iconify/react";
 import { useRouter } from "next/router";
-import { Row } from "src/components/elements/styled-components";
-import { deleteCategoryGroupByManager, deleteProductByManager, getCategoriesByManager, getCategoryGroupsByManager, getProductsByManager } from "src/utils/api-manager";
-import { commarNumber, getAllIdsWithParents } from "src/utils/function";
-import { LazyLoadImage } from "react-lazy-load-image-component";
-import { SelectCategoryComponent } from "./[edit_category]/[id]";
-import $ from 'jquery';
 import { useModal } from "src/components/dialog/ModalProvider";
+import { apiManager } from "src/utils/api";
+import { commarNumber } from "src/utils/function";
 
 const ProductCategoryGroupList = () => {
   const { setModal } = useModal()
@@ -20,6 +16,13 @@ const ProductCategoryGroupList = () => {
       label: '카테고리그룹명',
       action: (row) => {
         return row['category_group_name'] ?? "---"
+      }
+    },
+    {
+      id: 'max_depth',
+      label: '최대깊이',
+      action: (row) => {
+        return row['max_depth'] == -1 ? '무한' : commarNumber(row['max_depth'] ?? 0)
       }
     },
     {
@@ -93,14 +96,14 @@ const ProductCategoryGroupList = () => {
       ...data,
       content: undefined
     })
-    let data_ = await getCategoryGroupsByManager(obj);
+    let data_ = await apiManager('product-category-groups', 'list', obj);
     if (data_) {
       setData(data_);
     }
     setSearchObj(obj);
   }
   const deleteProductCategoryGroup = async (id) => {
-    let result = await deleteCategoryGroupByManager({ id: id });
+    let result = await apiManager('product-category-groups', 'delete', { id });
     if (result) {
       onChangePage(searchObj);
     }
@@ -118,7 +121,7 @@ const ProductCategoryGroupList = () => {
             onChangePage={onChangePage}
             add_button_text={'상품카테고리 그룹 추가'}
             want_move_card={true}
-            table={'product-category-groups'}
+            table={'product_category_groups'}
           />
         </Card>
       </Stack>

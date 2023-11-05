@@ -4,10 +4,9 @@ import ManagerLayout from "src/layouts/manager/ManagerLayout";
 import ManagerTable from "src/views/manager/mui/table/ManagerTable";
 import { Icon } from "@iconify/react";
 import { useRouter } from "next/router";
-import { Row } from "src/components/elements/styled-components";
-import { changePasswordUserByManager, deleteUserByManager, getUsersByManager } from "src/utils/api-manager";
 import { toast } from "react-hot-toast";
 import { useModal } from "src/components/dialog/ModalProvider";
+import { apiManager } from "src/utils/api";
 const UserList = () => {
   const { setModal } = useModal()
   const defaultColumns = [
@@ -19,10 +18,17 @@ const UserList = () => {
       }
     },
     {
-      id: 'nick_name',
+      id: 'user_name',
+      label: '유저아이디',
+      action: (row) => {
+        return row['user_name'] ?? "---"
+      }
+    },
+    {
+      id: 'nickname',
       label: '닉네임',
       action: (row) => {
-        return row['nick_name'] ?? "---"
+        return row['nickname'] ?? "---"
       }
     },
     {
@@ -92,7 +98,7 @@ const UserList = () => {
     s_dt: '',
     e_dt: '',
     search: '',
-    category_id: null
+    is_user: 1,
   })
   const [dialogObj, setDialogObj] = useState({
     changePassword: false,
@@ -107,27 +113,27 @@ const UserList = () => {
   const pageSetting = () => {
     let cols = defaultColumns;
     setColumns(cols)
-    onChangePage({...searchObj, page: 1,});
+    onChangePage({ ...searchObj, page: 1, });
   }
   const onChangePage = async (obj) => {
     setData({
       ...data,
       content: undefined
     })
-    let data_ = await getUsersByManager(obj);
+    let data_ = await apiManager('users', 'list', obj);
     if (data_) {
       setData(data_);
     }
     setSearchObj(obj);
   }
   const deleteUser = async (id) => {
-    let result = await deleteUserByManager({ id: id });
+    let result = await apiManager('users', 'delete', { id });
     if (result) {
       onChangePage(searchObj);
     }
   }
   const onChangeUserPassword = async () => {
-    let result = await changePasswordUserByManager(changePasswordObj);
+    let result = await apiManager(`users/change-pw`, 'update', changePasswordObj);
     if (result) {
       setDialogObj({
         ...dialogObj,

@@ -25,7 +25,7 @@ ManagerLayout.propTypes = {
 
 export default function ManagerLayout({ children }) {
   const { themeLayout, themeMode, themeDnsData } = useSettingsContext();
-  const { user } = useAuthContext();
+  const { user, initialize } = useAuthContext();
 
   const router = useRouter();
 
@@ -37,6 +37,17 @@ export default function ManagerLayout({ children }) {
 
   const isNavMini = themeLayout === 'mini';
 
+  useEffect(()=>{
+    checkAuth();
+  },[router.asPath])
+
+  const checkAuth = async () =>{
+    let result = await initialize();
+   
+    if(result?.level < 10 || !result){
+      router.push('/manager')
+    }
+  }
   const handleOpen = () => {
     setOpen(true);
   };

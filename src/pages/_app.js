@@ -33,7 +33,7 @@ import { useState } from 'react';
 import {Cloudinary} from "@cloudinary/url-gen";
 
 const App = (props) => {
-  const { Component, pageProps, head_data={}, host, host_data } = props;
+  const { Component, pageProps, head_data={} } = props;
   const getLayout = Component.getLayout ?? ((page) => page);
   const [headData, setHeadData] = useState({});
   useEffect(() => {
@@ -95,10 +95,10 @@ App.getInitialProps = async (context) => {
     let head_data = {}
     const host = ctx?.req?.headers?.host ? ctx?.req?.headers.host.split(':')[0] : '';
     if (host) {
-      const url = `${process.env.BACK_URL}/api/v1/auth/domain?dns=${host}`;
+      const url = `${process.env.BACK_URL}/api/domain?dns=${host}`;
       const res = await fetch(url);
       head_data = await res.json();
-      let dns_data = head_data?.brand;
+      let dns_data = head_data?.data;
       return {
         head_data: dns_data,
       }

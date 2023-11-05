@@ -95,8 +95,8 @@ export const onPayProductsByAuth = async (products_, payData_) => { // 인증결
         products: payData?.products,
         user_id: payData?.user_id,
         password: payData?.password,
-        addr: payData?.addr??"",
-        detail_addr: payData?.detail_addr??"",
+        addr: payData?.addr ?? "",
+        detail_addr: payData?.detail_addr ?? "",
     };
 
     payData.temp = JSON.stringify(payData.temp);
@@ -173,7 +173,7 @@ export const getWishDataUtil = async (themeWishData) => {//아이템찜 불러�
     let wish_list = themeWishData
     return wish_list;
 }
-export const insertWishDataUtil = (item, themeWishData, onChangeWishData) => {//아이템 찜 클릭하기
+export const insertWishDataUtil = async (item, themeWishData, onChangeWishData) => {//아이템 찜 클릭하기
     try {
         let wish_data = [...themeWishData];
         let find_index = _.findIndex(wish_data, { id: parseInt(item?.id) });

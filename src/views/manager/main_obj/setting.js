@@ -10,7 +10,6 @@ import _, { constant } from 'lodash'
 import { useSettingsContext } from "src/components/settings";
 import { useRouter } from "next/router";
 import CustomBreadcrumbs from "src/components/custom-breadcrumbs/CustomBreadcrumbs";
-import { getBrandByManager, getProductReviewsByManager, getProductsByManager, updateBrandByManager, uploadFileByManager, uploadsFileByManager } from "src/utils/api-manager";
 import { toast } from "react-hot-toast";
 import { useModal } from "src/components/dialog/ModalProvider";
 import { useAuthContext } from "src/layouts/manager/auth/useAuthContext";
@@ -24,6 +23,7 @@ import HomePost from "src/views/section/shop/HomePost";
 import HomeProductReview from "src/views/section/shop/HomeProductReview";
 import { homeItemsSetting, homeItemsWithCategoriesSetting } from "src/views/section/shop/utils";
 import ReactQuillComponent from "../react-quill";
+import { apiManager, uploadMultipleFiles } from "src/utils/api";
 
 const Tour = dynamic(
     () => import('reactour'),
@@ -171,12 +171,12 @@ const MainObjSetting = (props) => {
             ...productContent,
             content: themeDnsData?.products ?? []
         })
-        let product_review_content = await getProductReviewsByManager({
-            page: 1,
-            page_size: 100000
-        })
-        setProductReviewContent(product_review_content);
-        let brand_data = await getBrandByManager({
+        // let product_review_content = await getProductReviewsByManager({
+        //     page: 1,
+        //     page_size: 100000
+        // })
+        // setProductReviewContent(product_review_content);
+        let brand_data = await apiManager('brands', 'get',{
             id: (!isNaN(parseInt(router.query.type)) ? router.query.type : '') || themeDnsData?.id
         })
         brand_data = settingBrandObj(item, brand_data);
@@ -293,9 +293,9 @@ const MainObjSetting = (props) => {
             }
         }
         if (file_index_list.length > 0) {
-            let file_result = await uploadsFileByManager({
+            let file_result = await uploadMultipleFiles(
                 images
-            });
+            );
             if (!file_result.length > 0) {
                 return;
             }
@@ -317,7 +317,7 @@ const MainObjSetting = (props) => {
             }
         }
         let brand_data = { ...item, [`${MAIN_OBJ_TYPE}`]: content_list };
-        let result = await updateBrandByManager({ ...brand_data, id: themeDnsData?.id })
+        let result = await apiManager('brands', 'update',{ ...brand_data, id: themeDnsData?.id })
         if (result) {
             toast.success("성공적으로 저장 되었습니다.");
             window.location.reload();
@@ -439,7 +439,7 @@ const MainObjSetting = (props) => {
             let search_text_list = searchTextList;
             search_text_list.push(value);
             setSearchTextList(search_text_list);
-            let product_content = await getProductsByManager({
+            let product_content = await apiManager('products', 'list',{
                 page: 1,
                 page_size: 100000,
                 search: value,
@@ -885,7 +885,7 @@ const MainObjSetting = (props) => {
                                                         options={productReviewContent?.content && (productReviewContent?.content ?? []).map(item => { return item?.id })}
                                                         getOptionLabel={(item_id) => {
                                                             let review = _.find((productReviewContent?.content ?? []), { id: parseInt(item_id) });
-                                                            return `${review?.product_name} (${review?.nick_name}) : ${review?.content} `
+                                                            return `${review?.product_name} (${review?.nickname}) : ${review?.content} `
                                                         }}
                                                         defaultValue={item.list}
                                                         value={item.list}

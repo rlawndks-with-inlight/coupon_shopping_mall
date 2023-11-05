@@ -7,7 +7,6 @@ import { useSettingsContext } from "src/components/settings";
 import { Upload } from "src/components/upload";
 import ManagerLayout from "src/layouts/manager/ManagerLayout";
 import dynamic from "next/dynamic";
-import { addPostByManager, getPostByManager, getPostCategoryByManager, updatePostByManager, uploadFileByManager } from "src/utils/api-manager";
 import { toast } from "react-hot-toast";
 const ReactQuill = dynamic(() => import('react-quill'), {
   ssr: false,
@@ -15,6 +14,7 @@ const ReactQuill = dynamic(() => import('react-quill'), {
 })
 import { useModal } from "src/components/dialog/ModalProvider";
 import ReactQuillComponent from "src/views/manager/react-quill";
+import { apiManager } from "src/utils/api";
 const ArticleEdit = () => {
   const { setModal } = useModal()
   const { themeMode } = useSettingsContext();
@@ -25,7 +25,7 @@ const ArticleEdit = () => {
   const [category, setCategory] = useState({})
   const [item, setItem] = useState({
     category_id: router.query?.category_id,
-    parent_id: null,
+    parent_id: -1,
     post_title: '',
     post_content: '',
     is_reply: false,
@@ -41,12 +41,12 @@ const ArticleEdit = () => {
     settingPage();
   }, [])
   const settingPage = async () => {
-    let category = await getPostCategoryByManager({
-      id: router.query?.category_id
+    let category = await apiManager('post-categories', 'get', {
+      id: router.query.category_id
     })
     setCategory(category)
     if (router.query?.edit_category == 'edit') {
-      let data = await getPostByManager({
+      let data = await apiManager('posts', 'get', {
         id: router.query.id
       })
       setItem(data);
@@ -58,18 +58,18 @@ const ArticleEdit = () => {
     let result = undefined;
     let result2 = undefined;
     if (router.query?.edit_category == 'edit') {
-      result = await updatePostByManager({ ...item, id: router.query?.id });
+      result = await apiManager('posts', 'update', { ...item, id: router.query?.id });
       if (category?.is_able_user_add == 1 && result) {
         if (reply?.id > 0) {
-          result2 = await updatePostByManager({ ...reply, category_id: category?.id, parent_id: router.query?.id });
+          result2 = await apiManager('posts', 'update', { ...reply, category_id: category?.id, parent_id: router.query?.id ?? -1 });
         } else {
-          result2 = await addPostByManager({ ...reply, category_id: category?.id, parent_id: router.query?.id });
+          result2 = await apiManager('posts', 'create', { ...reply, category_id: category?.id, parent_id: router.query?.id ?? -1 });
         }
       } else {
         result2 = true;
       }
     } else {
-      result = await addPostByManager({ ...item });
+      result = await apiManager('posts', 'create', { ...item });
       result2 = true;
     }
     if (result && result2) {

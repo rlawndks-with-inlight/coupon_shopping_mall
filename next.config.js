@@ -8,24 +8,15 @@ const path = require('path')
 module.exports = {
   trailingSlash: true,
   reactStrictMode: true,
-  async redirects() {
-    return [
-
-    ]
+  env: {
+    // HOST
+    HOST_API_KEY: `${process.env.BACK_URL}`,
   },
   async rewrites() {
     return [
       {
-        source: "/api/v1/:path*",
-        destination: `${process.env.BACK_URL}/api/v1/:path*`,
-      },
-      {
-        source: "/api/v2/comagain/:path*",
-        destination: `${process.env.NOTI_URL}/api/v2/comagain/:path*`,
-      },
-      {
-        source: "/api/setting-ssl/:path*",
-        destination: `${process.env.SETTING_SSL_URL}/api/setting-ssl/:path*`,
+        source: "/api/:path*",
+        destination: `${process.env.BACK_URL}/api/:path*`,
       },
     ]
   },

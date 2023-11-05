@@ -9,7 +9,6 @@ import ManagerLayout from "src/layouts/manager/ManagerLayout";
 import { base64toFile, returnMoment } from "src/utils/function";
 import styled from "styled-components";
 import dynamic from "next/dynamic";
-import { addPopupByManager, getPopupByManager, updatePopupByManager, uploadFileByManager } from "src/utils/api-manager";
 import { toast } from "react-hot-toast";
 import {
   DatePicker,
@@ -20,6 +19,7 @@ import {
 
 import { useModal } from "src/components/dialog/ModalProvider";
 import ReactQuillComponent from "src/views/manager/react-quill";
+import { apiManager } from "src/utils/api";
 const PopupEdit = () => {
   const { setModal } = useModal()
   const { themeMode } = useSettingsContext();
@@ -41,7 +41,7 @@ const PopupEdit = () => {
   const settingPage = async () => {
 
     if (router.query?.edit_category == 'edit') {
-      let item = await getPopupByManager({
+      let item = await apiManager('popups', 'get',{
         id: router.query.id
       })
       item['open_s_dt'] = new Date(item?.open_s_dt ?? "");
@@ -60,9 +60,9 @@ const PopupEdit = () => {
       item_result.open_e_dt = returnMoment(false, item_result.open_e_dt).substring(0, 10);
     }
     if (router.query?.edit_category == 'edit') {
-      result = await updatePopupByManager({ ...item_result, id: router.query?.id });
+      result = await apiManager('popups', 'update', { ...item_result, id: router.query?.id });
     } else {
-      result = await addPopupByManager({ ...item_result });
+      result = await apiManager('popups', 'create', { ...item_result });
     }
     if (result) {
       toast.success("성공적으로 저장 되었습니다.");
@@ -134,7 +134,7 @@ const PopupEdit = () => {
                     <ReactQuillComponent
                       value={item.popup_content}
                       setValue={(value) => {
-                        setReply({
+                        setItem({
                           ...item,
                           ['popup_content']: value
                         });

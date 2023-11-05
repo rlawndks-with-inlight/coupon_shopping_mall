@@ -10,8 +10,8 @@ import { bgGradient } from 'src/utils/cssStyles';
 import { useTheme } from '@emotion/react';
 import Policy from 'src/pages/shop/auth/policy';
 import { Icon } from '@iconify/react';
-import { sendPhoneVerifyCodeByUser, signUpByUser } from 'src/utils/api-shop';
 import { useSettingsContext } from 'src/components/settings';
+import { apiManager } from "src/utils/api";
 
 
 const Wrappers = styled.div`
@@ -126,7 +126,7 @@ const Demo2 = (props) => {
     user_name: '',
     user_pw: '',
     passwordCheck: '',
-    nick_name: '',
+    nickname: '',
     phone_num: '',
     phoneCheck: '',
   })
@@ -160,13 +160,13 @@ const Demo2 = (props) => {
         !user.user_name ||
         !user.user_pw ||
         !user.passwordCheck ||
-        !user.nick_name ||
+        !user.nickname ||
         !user.phone_num
       ) {
         toast.error("필수 항목을 입력해 주세요.");
         return;
       }
-      let result = await signUpByUser({ ...user, brand_id: themeDnsData?.id });
+      let result = await apiManager('auth/sign-up', 'create',{ ...user, brand_id: themeDnsData?.id });
       if (!result) {
 
       }
@@ -180,7 +180,7 @@ const Demo2 = (props) => {
   }
   const onClickSendPhoneVerifyCode = async () => {
     setPhoneCheckStep(1);
-    let result = await sendPhoneVerifyCodeByUser({
+    let result = await apiManager('auth/code', 'create',{
       phone_num: user.phone_num
     })
   }
@@ -317,9 +317,9 @@ const Demo2 = (props) => {
             <TextField
               label='이름'
               onChange={(e) => {
-                setUser({ ...user, ['nick_name']: e.target.value })
+                setUser({ ...user, ['nickname']: e.target.value })
               }}
-              value={user.nick_name}
+              value={user.nickname}
               style={inputStyle}
               autoComplete='new-password'
               onKeyPress={(e) => {

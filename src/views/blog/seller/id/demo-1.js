@@ -9,7 +9,7 @@ import styled from 'styled-components'
 import _ from 'lodash'
 import { commarNumber, getAllIdsWithParents, getDownToTopChildren } from 'src/utils/function';
 import { logoSrc } from 'src/data/data';
-import { getProductsByUser, getSellerCategoriesByUser, getSellerInfoByUser } from 'src/utils/api-shop';
+import { apiManager, apiShop } from 'src/utils/api';
 
 const Wrappers = styled.div`
 max-width: 840px;
@@ -128,14 +128,14 @@ const Demo1 = (props) => {
     }, [])
 
     const pageSetting = async () => {
-        let seller_info = await getSellerInfoByUser({
-            mcht_id: router.query?.id
+        let seller_info = await apiManager('sellers','get',{
+            id: router.query?.id
         })
         setSellerData(seller_info)
-        let products = await getProductsByUser({
+        let products = await apiShop('product', 'list',{
             page: 1,
             page_size: 100000,
-            mcht_id: router.query?.id
+            seller_id: router.query?.id
         })
         let category_list = [];
         for (var i = 0; i < products?.content.length; i++) {
@@ -183,8 +183,8 @@ const Demo1 = (props) => {
                     backgroundRepeat: 'no-repeat',
                     backgroundPosition: 'center'
                 }}>
-                    <Title>{sellerData?.nick_name}</Title>
-                    <SubTitle>{sellerData?.nick_name}</SubTitle>
+                    <Title>{sellerData?.nickname}</Title>
+                    <SubTitle>{sellerData?.nickname}</SubTitle>
                     <Row style={{ margin: '1rem' }}>
                         {sellerData?.sns_obj?.instagram_id &&
                             <>

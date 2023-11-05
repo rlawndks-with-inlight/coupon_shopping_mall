@@ -49,7 +49,7 @@ const Demo2 = (props) => {
                   height: '84px'
                 }}
               />
-              <div>{userObj.nick_name}</div>
+              <div>{userObj.nickname}</div>
             </Card>
           </Grid>
 

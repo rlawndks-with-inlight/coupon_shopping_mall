@@ -187,6 +187,10 @@ const Demo1 = (props) => {
           <>
             <Card style={{ margin: 'auto', width: '100%', display: 'flex', flexDirection: 'column', rowGap: '1rem', padding: '1rem 0' }}>
               <Col style={{ margin: 'auto', width: '100%', maxWidth: '500px' }}>
+                <Typography variant='subtitle1'>주문번호</Typography>
+                <Typography variant='body2'>{noneUserTrxObj?.ord_num}</Typography>
+              </Col>
+              <Col style={{ margin: 'auto', width: '100%', maxWidth: '500px' }}>
                 <Typography variant='subtitle1'>승인번호</Typography>
                 <Typography variant='body2'>{noneUserTrxObj?.appr_num}</Typography>
               </Col>

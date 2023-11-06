@@ -18,6 +18,7 @@ margin-bottom:10vh;
 
 const TABLE_HEAD = [
   { id: 'product', label: '상품' },
+  { id: 'ord_num', label: '주문번호' },
   { id: 'amount', label: '총액' },
   { id: 'buyer_name', label: '구매자명' },
   { id: 'trx_status', label: '배송상태' },

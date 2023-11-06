@@ -254,6 +254,9 @@ export const HistoryTable = (props) => {
                     </Typography>
                   </TableCell>
                   <TableCell>
+                    {row.ord_num}
+                  </TableCell>
+                  <TableCell>
                     {fCurrency(row.amount)}원
                   </TableCell>
                   <TableCell>

@@ -55,6 +55,7 @@ export const makePayData = async (products_, payData_) => {
             order_amount: products[i]?.order_amount,
             order_count: products[i]?.order_count,
             groups: products[i]?.groups,
+            seller_id: products[i]?.seller_id ?? 0,
         }
     }
     payData = {

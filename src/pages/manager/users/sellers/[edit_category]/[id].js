@@ -58,6 +58,7 @@ const SellerEdit = () => {
   })
   const [productIds, setProductIds] = useState([]);
   const [currentTab, setCurrentTab] = useState(0);
+  const [searchTextList, setSearchTextList] = useState([]);
   const tab_list = [
     {
       value: 0,
@@ -91,6 +92,9 @@ const SellerEdit = () => {
       //setProductIds(product_ids.map((item => { return item?.id })))
       let data = await apiManager('sellers', 'get', { id: router.query?.id });
       if (data) {
+        console.log(data);
+        setProductIds((data?.products ?? []).map(item => { return item?.id }))
+        setProductContent({ content: data?.products ?? [] })
         setItem(data);
       }
     }
@@ -111,13 +115,39 @@ const SellerEdit = () => {
     let result = undefined;
     let obj = item;
     if (router.query?.edit_category == 'edit') {
-      result = await apiManager('sellers', 'update', { ...obj, id: router.query?.id });
+      result = await apiManager('sellers', 'update', { ...obj, id: router.query?.id, product_ids: productIds });
     } else {
-      result = await apiManager('sellers', 'create', obj);
+      result = await apiManager('sellers', 'create', { ...obj, product_ids: productIds });
     }
-    if(result){
+    if (result) {
       toast.success("성공적으로 저장 되었습니다.");
       router.push('/manager/users/sellers');
+    }
+  }
+  const onSearchProducts = async (e) => {
+    let value = e.target.value;
+    if (value.length == 3 && !searchTextList.includes(value)) {
+      let search_text_list = searchTextList;
+      search_text_list.push(value);
+      setSearchTextList(search_text_list);
+      let product_content = await apiManager('products', 'list', {
+        page: 1,
+        page_size: 100000,
+        search: value,
+      });
+      let product_content_list = [
+        ...productContent?.content,
+        ...product_content?.content,
+      ]
+      product_content_list = product_content_list.reduce((acc, curr) => {
+        const idx = acc.findIndex((obj) => obj['id'] === curr['id']);
+        if (idx === -1) acc.push(curr);
+        return acc;
+      }, []);
+      setProductContent({
+        ...product_content,
+        content: product_content_list
+      })
     }
   }
   return (
@@ -573,7 +603,9 @@ const SellerEdit = () => {
                           setProductIds(value);
                         }}
                         renderInput={(params) => (
-                          <TextField {...params} label="분양할 상품" placeholder="상품선택" />
+                          <TextField {...params} label="분양할 상품" placeholder="상품선택" onChange={(e) => {
+                            onSearchProducts(e);
+                          }} />
                         )}
                       />
                     </Stack>

@@ -64,7 +64,7 @@ export const Item = (props) => {
 
   const { user } = useAuthContext();
   const { themeWishData, onChangeWishData } = useSettingsContext();
-  const { item, router, theme_css } = props;
+  const { item, router, theme_css, seller } = props;
   const [itemThemeCss, setItemThemeCss] = useState(itemThemeCssDefaultSetting);
   useEffect(() => {
     if (theme_css) {
@@ -102,14 +102,14 @@ export const Item = (props) => {
         }}
           onClick={() => {
             if (item?.id) {
-              router.push(`/shop/item/${item?.id}`)
+              router.push(`/shop/item/${item?.id}${seller ? `?seller_id=${seller?.id}` : ''}`)
             }
           }} >
         </ItemImg>
         <ItemTextContainer
           onClick={() => {
             if (item?.id) {
-              router.push(`/shop/item/${item?.id}`)
+              router.push(`/shop/item/${item?.id}${seller ? `?seller_id=${seller?.id}` : ''}`)
             }
           }}>
           <ItemName>{item.product_name}</ItemName>
@@ -161,7 +161,7 @@ width:${props => props.theme_css?.container?.is_vertical == 1 ? '32%' : '18.4%'}
 `
 export const Items = (props) => {
   const { themeDnsData } = useSettingsContext();
-  const { items, router, theme_css, is_slide } = props;
+  const { items, router, theme_css, is_slide, seller } = props;
   const [itemThemeCss, setItemThemeCss] = useState(itemThemeCssDefaultSetting);
   useEffect(() => {
     if (themeDnsData) {
@@ -205,7 +205,7 @@ export const Items = (props) => {
           <Slider {...items_setting} className='margin-slide'>
             {items && items.map((item, idx) => {
               return <ItemWrapper theme_css={itemThemeCss}>
-                <Item item={item} router={router} theme_css={itemThemeCss} />
+                <Item item={item} router={router} theme_css={itemThemeCss} seller={seller} />
               </ItemWrapper>
             })}
           </Slider>
@@ -215,7 +215,7 @@ export const Items = (props) => {
           <ItemsContainer theme_css={itemThemeCss}>
             {items && items.map((item, idx) => {
               return <ItemWrapper theme_css={itemThemeCss}>
-                <Item item={item} router={router} theme_css={itemThemeCss} />
+                <Item item={item} router={router} theme_css={itemThemeCss} seller={seller} />
               </ItemWrapper>
             })}
           </ItemsContainer>

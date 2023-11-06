@@ -7,6 +7,7 @@ import { useRouter } from "next/router";
 import { useModal } from "src/components/dialog/ModalProvider";
 import { apiManager } from "src/utils/api";
 import toast from "react-hot-toast";
+import { useAuthContext } from "src/layouts/manager/auth/useAuthContext";
 const test_data = [
   {
     id: 1,
@@ -20,6 +21,7 @@ const test_data = [
   }
 ]
 const SellerList = () => {
+  const { user } = useAuthContext();
   const { setModal } = useModal()
   const defaultColumns = [
     {
@@ -202,7 +204,7 @@ const SellerList = () => {
             columns={columns}
             searchObj={searchObj}
             onChangePage={onChangePage}
-            add_button_text={'셀러 추가'}
+            add_button_text={user?.level >= 40 ? '셀러 추가' : ''}
           />
         </Card>
       </Stack>

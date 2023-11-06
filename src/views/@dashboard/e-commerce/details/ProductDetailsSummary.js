@@ -139,7 +139,7 @@ export default function ProductDetailsSummary({ product, onAddCart, onGotoStep, 
 
   const handleAddCart = async () => {
     if (user) {
-      let result = await insertCartDataUtil(product, selectProductGroups, themeCartData, onChangeCartData);
+      let result = await insertCartDataUtil({ ...product, seller_id: router.query?.seller_id ?? 0 }, selectProductGroups, themeCartData, onChangeCartData);
       if (result) {
         toast.success("장바구니에 성공적으로 추가되었습니다.")
       }
@@ -156,18 +156,18 @@ export default function ProductDetailsSummary({ product, onAddCart, onGotoStep, 
   const [buyOpen, setBuyOpen] = useState(false);
   const onBuyNow = async () => {
     let product_item = product;
-      let select_product_groups = selectProductGroups;
-      product_item.order_count = selectProductGroups?.count;
-      select_product_groups = selectProductGroups?.groups;
+    let select_product_groups = selectProductGroups;
+    product_item.order_count = selectProductGroups?.count;
+    select_product_groups = selectProductGroups?.groups;
     let result = await onPayProductsByHand([{
       ...product_item,
       groups: select_product_groups,
-      seller_id:router.query?.seller_id??0
+      seller_id: router.query?.seller_id ?? 0
     }], { ...payData });
-    if(result){
+    if (result) {
       await onChangeCartData([]);
       toast.success('성공적으로 구매에 성공하였습니다.');
-      if(payData?.user_id){
+      if (payData?.user_id) {
         router.push('/shop/auth/history');
       } else {
         router.push(`/shop/auth/pay-result?type=0&ord_num=${result?.ord_num}`);
@@ -266,7 +266,8 @@ export default function ProductDetailsSummary({ product, onAddCart, onGotoStep, 
       let result = await onPayProductsByAuth([{
         ...product_item,
         groups: select_product_groups,
-      }], { ...payData, payment_modules: item, seller_id:router.query?.seller_id??0 });
+        seller_id: router.query?.seller_id ?? 0,
+      }], { ...payData, payment_modules: item });
     }
   }
 
@@ -463,8 +464,6 @@ export default function ProductDetailsSummary({ product, onAddCart, onGotoStep, 
                       </Row>
                     </>}
                 </>}
-
-
             </>}
           {buyStep == 1 &&
             <>

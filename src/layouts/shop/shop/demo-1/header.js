@@ -218,8 +218,8 @@ const noneAuthList = [
 const Header = () => {
 
   const router = useRouter();
-  const theme = useTheme();
-  const { themeMode, onToggleMode, onChangeCategoryList, themeCategoryList, themeDnsData, themePopupList, themePostCategoryList, onChangePopupList, onChangePostCategoryList, themeWishData, themeCartData, onChangeCartData, onChangeWishData } = useSettingsContext();
+  const theme = useTheme()
+  const { themeMode, onToggleMode, themeCategoryList, themeDnsData, themePopupList, themePostCategoryList, onChangePopupList, themeWishData, themeCartData, onChangeCartData, onChangeWishData, themeSellerList } = useSettingsContext();
   const { user, logout } = useAuthContext();
   const headerWrappersRef = useRef();
   const [headerHeight, setHeaderHeight] = useState(130);
@@ -704,27 +704,45 @@ const Header = () => {
         style={{
         }}
       >
+        {console.log(themeCategoryList)}
         <ColumnMenuContainer style={{
           background: (themeMode == 'dark' ? '#222' : '#fff'),
           color: (themeMode == 'dark' ? '#fff' : '#000'),
         }}
           className="none-scroll"
         >
-          <ColumnMenuTitle>쇼핑 카테고리</ColumnMenuTitle>
-          <TreeView
-            defaultCollapseIcon={<Icon icon={'ic:baseline-minus'} />}
-            defaultExpandIcon={<Icon icon={'ic:baseline-plus'} />}
-            defaultEndIcon={<Icon icon={'mdi:dot'} />}
-          >
-            {categories.map((item1, idx) => (
-              <>
-                {returnSidebarMenu(item1, 0, {
-                  router,
-                  setSideMenuOpen
-                })}
-              </>
-            ))}
-          </TreeView>
+          {themeDnsData?.setting_obj?.is_use_seller &&
+            <>
+              <ColumnMenuTitle>셀러</ColumnMenuTitle>
+              {themeSellerList.map((seller) => (
+                <>
+                  <ColumnMenuContent onClick={() => {
+                    router.push(`/shop/seller/${seller?.id}`);
+                    setSideMenuOpen(false);
+                  }} style={{ paddingLeft: '1rem' }}>{seller.seller_name}</ColumnMenuContent>
+                </>
+              ))}
+            </>}
+          {themeCategoryList && themeCategoryList.map((group, index) => (
+            <>
+              <ColumnMenuTitle>{group?.category_group_name}</ColumnMenuTitle>
+              <TreeView
+                defaultCollapseIcon={<Icon icon={'ic:baseline-minus'} />}
+                defaultExpandIcon={<Icon icon={'ic:baseline-plus'} />}
+                defaultEndIcon={<Icon icon={'mdi:dot'} />}
+              >
+                {group?.product_categories && group?.product_categories.map((item1, idx) => (
+                  <>
+                    {returnSidebarMenu(item1, 0, {
+                      router,
+                      setSideMenuOpen
+                    }, index)}
+                  </>
+                ))}
+              </TreeView>
+            </>
+          ))}
+
           <ColumnMenuTitle>고객센터</ColumnMenuTitle>
           {postCategories && postCategories.map((item, idx) => (
             <>
@@ -767,7 +785,7 @@ const Header = () => {
     </>
   )
 }
-const returnSidebarMenu = (item, num, func) => {
+const returnSidebarMenu = (item, num, func, index) => {
   const {
     router,
     setSideMenuOpen
@@ -779,7 +797,7 @@ const returnSidebarMenu = (item, num, func) => {
           marginLeft: '0.25rem'
         }}
         onClick={() => {
-          router.push(`/shop/items?category_id0=${item?.id}&depth=${num}`);
+          router.push(`/shop/items?category_id${index}=${item?.id}&depth=${num}`);
           setSideMenuOpen(false);
         }}>{item.category_name}</div>}
         nodeId={item.id}
@@ -789,7 +807,7 @@ const returnSidebarMenu = (item, num, func) => {
           <>
             {item.children.map((item2, idx) => (
               <>
-                {returnSidebarMenu(item2, num + 1, func)}
+                {returnSidebarMenu(item2, num + 1, func, index)}
               </>
             ))}
           </>}

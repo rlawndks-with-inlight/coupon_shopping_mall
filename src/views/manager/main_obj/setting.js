@@ -132,6 +132,11 @@ const MainObjSetting = (props) => {
             list: [],
             style: {},
         },
+        sellers: {
+            type: 'sellers',
+            list: [],
+            style: {},
+        },
         'item-reviews': {
             type: 'item-reviews',
             list: [],

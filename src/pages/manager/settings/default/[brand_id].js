@@ -637,6 +637,7 @@ const DefaultSetting = () => {
                         <InputLabel>최대포인트 사용금액</InputLabel>
                         <OutlinedInput
                           label='최대포인트 사용금액'
+                          type="number"
                           value={item?.setting_obj?.max_use_point ?? 0}
                           endAdornment={<InputAdornment position="end">원</InputAdornment>}
                           onChange={(e) => {
@@ -654,6 +655,7 @@ const DefaultSetting = () => {
                       <FormControl variant="outlined">
                         <InputLabel>포인트 사용가능 최소 주문금액 (배송비제외)</InputLabel>
                         <OutlinedInput
+                        type="number"
                           label='포인트 사용가능 최소 주문금액 (배송비제외)'
                           value={item?.setting_obj?.use_point_min_price ?? 0}
                           endAdornment={<InputAdornment position="end">원</InputAdornment>}
@@ -679,6 +681,7 @@ const DefaultSetting = () => {
                         <InputLabel>포인트 적립비율</InputLabel>
                         <OutlinedInput
                           label='포인트 적립비율'
+                          type="number"
                           value={item?.setting_obj?.point_rate ?? 0}
                           endAdornment={<InputAdornment position="end">%</InputAdornment>}
                           onChange={(e) => {

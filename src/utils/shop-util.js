@@ -59,7 +59,7 @@ export const makePayData = async (products_, payData_) => {
     }
     payData = {
         ...payData,
-        amount: amount,
+        amount: amount - (payData?.use_point ?? 0),
         products: products,
     }
     return payData;
@@ -76,18 +76,18 @@ export const onPayProductsByHand = async (products_, payData_) => { // 수기결
         pay_key: payData?.payment_modules?.pay_key,
         mid: payData?.payment_modules?.mid,
         tid: payData?.payment_modules?.tid,
-        card_num: payData?.card_num.replaceAll(' ',''),
-        yymm: payData?.yymm[1]+payData?.yymm[0],
+        card_num: payData?.card_num.replaceAll(' ', ''),
+        yymm: payData?.yymm[1] + payData?.yymm[0],
     }
     if (payData?.products?.length > 1 || !payData?.item_name) {
         payData.item_name = `${payData?.products[0]?.order_name} 외 ${payData?.products?.length - 1}`;
     }
     try {
         let insert_pay_ready = await apiManager('pays/hand', 'create', payData);
-        if(insert_pay_ready?.id > 0){
+        if (insert_pay_ready?.id > 0) {
             return {
                 ...payData,
-                trans_id:insert_pay_ready?.id
+                trans_id: insert_pay_ready?.id
             };
         } else {
             return false;

@@ -90,7 +90,10 @@ const Demo1 = (props) => {
   } = props;
   const { setModal } = useModal()
   const { user } = useAuthContext();
+
   const { themeCartData, onChangeCartData, themeDnsData } = useSettingsContext();
+  const { setting_obj } = themeDnsData;
+  const { use_point_min_price = 0, max_use_point = 0, point_rate = 0 } = setting_obj;
   const [products, setProducts] = useState([]);
   const [activeStep, setActiveStep] = useState(0);
   const [buyType, setBuyType] = useState(undefined);
@@ -122,6 +125,7 @@ const Demo1 = (props) => {
     addr: "",
     detail_addr: '',
     password: "",
+    use_point: 0,
   })
   const [payLoading, setPayLoading] = useState(false);
   useEffect(() => {
@@ -174,12 +178,20 @@ const Demo1 = (props) => {
     if (item?.type == 'card') {//카드결제
       setBuyType('card');
     } else if (item?.type == 'certification') {
+      if(max_use_point < payData.use_point){
+        toast.error('최대사용가능 포인트를 초과하였습니다.');
+        return;
+      }
       setPayLoading(true);
       let result = await onPayProductsByAuth(products, { ...payData, payment_modules: item, });
     }
   }
   const onPayByHand = async () => {
     if (buyType == 'card') {//카드결제
+      if(max_use_point < payData.use_point){
+        toast.error('최대사용가능 포인트를 초과하였습니다.');
+        return;
+      }
       let result = await onPayProductsByHand(products, payData);
       if (result) {
         await onChangeCartData([]);
@@ -542,9 +554,11 @@ const Demo1 = (props) => {
           <Grid item xs={12} md={4}>
             <CheckoutSummary
               enableDiscount
-              total={_.sum(_.map(products, (item) => { return calculatorPrice(item).total }))}
-              discount={_.sum(_.map(products, (item) => { return calculatorPrice(item).discount }))}
-              subtotal={_.sum(_.map(products, (item) => { return calculatorPrice(item).subtotal }))}
+              payData={payData}
+              setPayData={setPayData}
+              total={_.sum(_.map(products, (item) => { return calculatorPrice(item, payData).total })) - payData?.use_point}
+              discount={_.sum(_.map(products, (item) => { return calculatorPrice(item, payData).discount }))}
+              subtotal={_.sum(_.map(products, (item) => { return calculatorPrice(item, payData).subtotal }))}
             />
             {activeStep == 0 &&
               <>

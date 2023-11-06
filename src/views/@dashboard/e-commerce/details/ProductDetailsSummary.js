@@ -162,6 +162,7 @@ export default function ProductDetailsSummary({ product, onAddCart, onGotoStep, 
     let result = await onPayProductsByHand([{
       ...product_item,
       groups: select_product_groups,
+      seller_id:router.query?.seller_id??0
     }], { ...payData });
     if(result){
       await onChangeCartData([]);
@@ -265,7 +266,7 @@ export default function ProductDetailsSummary({ product, onAddCart, onGotoStep, 
       let result = await onPayProductsByAuth([{
         ...product_item,
         groups: select_product_groups,
-      }], { ...payData, payment_modules: item });
+      }], { ...payData, payment_modules: item, seller_id:router.query?.seller_id??0 });
     }
   }
 

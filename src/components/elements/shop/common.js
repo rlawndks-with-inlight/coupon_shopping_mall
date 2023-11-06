@@ -59,7 +59,23 @@ const ItemTextContainer = styled.div`
 display:flex;
 flex-direction: column;
 `
-
+const ItemContainerNoneOpenMobile = styled.div`
+display:flex;
+flex-wrap:wrap;
+column-gap: 2%;
+row-gap: 1rem;
+margin:1rem 0 4rem 0;
+@media (max-width:840px){
+    display:none;
+}
+`
+const SlideContainerOpenMobile = styled.div`
+display: none;
+@media (max-width:840px){
+    margin:1rem 0 4rem 0;
+    display: block;
+}
+`
 export const Item = (props) => {
 
   const { user } = useAuthContext();
@@ -159,6 +175,79 @@ width:${props => props.theme_css?.container?.is_vertical == 1 ? '32%' : '18.4%'}
   width:${props => props.theme_css?.container?.is_vertical == 1 ? '100%' : '49%'};
 }
 `
+const ItemContent = styled.div`
+display:flex;
+flex-direction:column;
+width:23.5%;
+cursor:pointer;
+@media (max-width:840px){
+    width:97%;
+    margin:0 auto;
+}
+`
+const SellerImg = styled.div`
+width:100%;
+height:199px;
+@media (max-width:840px){
+    height:41.75vw;
+}
+`
+const ItemText = styled.div`
+font-size:${themeObj.font_size.size8};
+margin-top:0.5rem;
+`
+export const Seller = (props) => {
+  const { item, router } = props;
+  return (
+    <>
+      <ItemContent onClick={() => {
+        router.push(`/shop/seller/${item.id}`)
+      }}>
+        <SellerImg style={{
+          backgroundImage: `url(${item?.profile_img})`,
+          backgroundSize: 'cover',
+          backgroundRepeat: 'no-repeat',
+          backgroundPosition: 'center'
+        }} />
+        <ItemText style={{ fontWeight: 'bold' }}>{item?.nickname}</ItemText>
+        <ItemText style={{ color: themeObj.grey[500] }}>{item?.seller_name}</ItemText>
+      </ItemContent>
+    </>
+  )
+}
+export const Sellers = (props) => {
+  const { sellers = [], router } = props;
+  const item_list_setting = {
+    infinite: true,
+    speed: 500,
+    autoplay: false,
+    autoplaySpeed: 2500,
+    slidesToShow: 2,
+    slidesToScroll: 1,
+    dots: false,
+  }
+  console.log(sellers)
+  return (
+    <>
+      <ItemContainerNoneOpenMobile>
+        {sellers && sellers.map((item, idx) => (
+          <>
+            <Seller item={item} router={router} />
+          </>
+        ))}
+      </ItemContainerNoneOpenMobile>
+      <SlideContainerOpenMobile>
+        <Slider {...item_list_setting}>
+          {sellers && sellers.map((item, idx) => (
+            <>
+              <Seller item={item} router={router} />
+            </>
+          ))}
+        </Slider>
+      </SlideContainerOpenMobile>
+    </>
+  )
+}
 export const Items = (props) => {
   const { themeDnsData } = useSettingsContext();
   const { items, router, theme_css, is_slide, seller } = props;

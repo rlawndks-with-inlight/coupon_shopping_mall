@@ -704,7 +704,6 @@ const Header = () => {
         style={{
         }}
       >
-        {console.log(themeCategoryList)}
         <ColumnMenuContainer style={{
           background: (themeMode == 'dark' ? '#222' : '#fff'),
           color: (themeMode == 'dark' ? '#fff' : '#000'),

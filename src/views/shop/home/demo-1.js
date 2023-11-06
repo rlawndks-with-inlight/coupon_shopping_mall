@@ -11,6 +11,7 @@ import HomeItemsWithCategories from 'src/views/section/shop/HomeItemsWithCategor
 import HomeVideoSlide from 'src/views/section/shop/HomeVideoSlide'
 import HomePost from 'src/views/section/shop/HomePost'
 import HomeProductReview from 'src/views/section/shop/HomeProductReview'
+import HomeSellers from 'src/views/section/shop/HomeSellers'
 
 
 const returnHomeContent = (column, data, func) => {
@@ -24,6 +25,7 @@ const returnHomeContent = (column, data, func) => {
   else if (type == 'items-with-categories') return <HomeItemsWithCategories column={column} data={data} func={func} />
   else if (type == 'video-slide') return <HomeVideoSlide column={column} data={data} func={func} />
   else if (type == 'post') return <HomePost column={column} data={data} func={func} />
+  else if (type == 'sellers') return <HomeSellers column={column} data={data} func={func} />
   else if (type == 'item-reviews') return <HomeProductReview column={column} data={data} func={func} />
   else if (type == 'item-reviews-select') return <HomeProductReview column={column} data={data} func={func} />
   return '';

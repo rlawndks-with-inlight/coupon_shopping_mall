@@ -863,6 +863,23 @@ const MainObjSetting = (props) => {
                                                         }}
                                                     />
                                                 </>}
+                                                {conditionOfSection('sellers', item) &&
+                                                <>
+                                                    <Row style={{ alignItems: 'end' }}>
+                                                        <CardHeader title={`셀러섹션 ${curTypeNum(contentList, 'sellers', idx)}`} sx={{ paddingLeft: '0' }} />
+                                                        <SectionProcess idx={idx} item={item} />
+                                                    </Row>
+                                                    <TextField label='제목' value={item.title} onChange={(e) => {
+                                                        let content_list = [...contentList];
+                                                        content_list[idx]['title'] = e.target.value;
+                                                        setContentList(content_list)
+                                                    }} />
+                                                    <TextField label='부제목' value={item.sub_title} onChange={(e) => {
+                                                        let content_list = [...contentList];
+                                                        content_list[idx]['sub_title'] = e.target.value;
+                                                        setContentList(content_list)
+                                                    }} />
+                                                </>}
                                             {conditionOfSection('item-reviews', item) &&
                                                 <>
                                                     <Row style={{ alignItems: 'end' }}>
@@ -951,6 +968,7 @@ const MainObjSetting = (props) => {
                                                 <MenuItem value={'editor'}>에디터 ({hasTypeCount(contentList, 'editor')})</MenuItem>
                                                 <MenuItem value={'video-slide'}>동영상 슬라이드 ({hasTypeCount(contentList, 'video-slide')})</MenuItem>
                                                 <MenuItem value={'post'}>게시판 ({hasTypeCount(contentList, 'post')})</MenuItem>
+                                                <MenuItem value={'sellers'}>셀러섹션 ({hasTypeCount(contentList, 'sellers')})</MenuItem>
                                                 <MenuItem value={'item-reviews'}>상품후기 ({hasTypeCount(contentList, 'item-reviews')})</MenuItem>
                                                 <MenuItem value={'item-reviews-select'}>선택형 상품후기 ({hasTypeCount(contentList, 'item-reviews-select')})</MenuItem>
                                                 {/* <MenuItem value={'post'}>게시판 ({hasTypeCount(contentList, 'post')})</MenuItem>

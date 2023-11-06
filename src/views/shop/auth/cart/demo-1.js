@@ -178,8 +178,12 @@ const Demo1 = (props) => {
     if (item?.type == 'card') {//카드결제
       setBuyType('card');
     } else if (item?.type == 'certification') {
-      if(max_use_point < payData.use_point){
+      if(parseFloat(max_use_point) < parseFloat(payData.use_point)){
         toast.error('최대사용가능 포인트를 초과하였습니다.');
+        return;
+      }
+      if(parseFloat(user?.point??0) < parseFloat(payData.use_point)){
+        toast.error('보유포인트가 부족합니다.');
         return;
       }
       setPayLoading(true);
@@ -188,8 +192,12 @@ const Demo1 = (props) => {
   }
   const onPayByHand = async () => {
     if (buyType == 'card') {//카드결제
-      if(max_use_point < payData.use_point){
+      if(parseFloat(max_use_point) < parseFloat(payData.use_point)){
         toast.error('최대사용가능 포인트를 초과하였습니다.');
+        return;
+      }
+      if(parseFloat(user?.point??0) < parseFloat(payData.use_point)){
+        toast.error('보유포인트가 부족합니다.');
         return;
       }
       let result = await onPayProductsByHand(products, payData);

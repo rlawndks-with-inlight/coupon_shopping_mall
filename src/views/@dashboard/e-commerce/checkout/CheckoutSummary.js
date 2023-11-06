@@ -54,14 +54,6 @@ export default function CheckoutSummary({
   const { user } = useAuthContext();
   const { setting_obj } = themeDnsData;
   const { use_point_min_price = 0, max_use_point = 0, point_rate = 0 } = setting_obj;
-
-  const [isNotUsePoint, setIsNotUsePoint] = useState(true);
-
-  useEffect(()=>{
-
-    console.log(payData?.use_point > user?.point)
-    console.log(payData?.use_point > max_use_point)
-  },[payData])
   return (
     <Card sx={{ mb: 3 }}>
       <CardHeader
@@ -96,8 +88,8 @@ export default function CheckoutSummary({
             <Col>
               <FormControl variant="outlined" size='small' sx={{ maxWidth: '170px', paddingRight: '0' }}>
                 <OutlinedInput
-                  disabled={use_point_min_price > subtotal - discount}
-                  error={payData?.use_point > user?.point || payData?.use_point > max_use_point}
+                  disabled={parseFloat(use_point_min_price) > subtotal - discount}
+                  error={parseFloat(payData?.use_point) > parseFloat(user?.point) || parseFloat(payData?.use_point) > parseFloat(max_use_point)}
                   value={payData?.use_point ?? 0}
                   type='number'
                   sx={{ paddingRight: '8px' }}

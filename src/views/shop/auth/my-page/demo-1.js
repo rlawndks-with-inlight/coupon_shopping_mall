@@ -4,7 +4,7 @@ import { AddressTable } from 'src/components/elements/shop/common';
 import { Col, Row, Title, postCodeStyle } from 'src/components/elements/styled-components';
 import { useAuthContext } from 'src/layouts/manager/auth/useAuthContext';
 import { fData } from 'src/utils/formatNumber';
-import { makeMaxPage } from 'src/utils/function';
+import { commarNumber, makeMaxPage } from 'src/utils/function';
 import styled from 'styled-components'
 import DaumPostcode from 'react-daum-postcode';
 import { apiManager } from 'src/utils/api';
@@ -223,7 +223,8 @@ const Demo1 = (props) => {
                       marginBottom: '1rem'
                     }}
                   />
-                  <div>{userObj.nickname}</div>
+                  <Typography variant='subtitle1'>{userObj.nickname}</Typography>
+                  <Typography variant='body2'>{commarNumber(userObj.point)} P</Typography>
                 </Card>
               </Grid>
               <Grid item xs={12} md={8}>

@@ -1,7 +1,7 @@
 import styled from "styled-components";
 import { Row, themeObj } from "../styled-components";
 import { LazyLoadImage } from "react-lazy-load-image-component";
-import { commarNumber } from "src/utils/function";
+import { commarNumber, getPointType } from "src/utils/function";
 import { itemThemeCssDefaultSetting } from "src/views/manager/item-card/setting";
 import { useEffect, useState } from "react";
 import { IconButton } from "@mui/material";
@@ -294,6 +294,43 @@ export const HistoryTable = (props) => {
                         </>}
 
                     </Box>
+                  </TableCell>
+                </TableRow>
+              </>
+            ))}
+          </TableBody>
+        </Table>
+      </TableContainer>
+    </>
+  )
+}
+export const PointTable = (props) => {
+  const { historyContent, headLabel, onChangePage, searchObj } = props;
+  const { setModal } = useModal();
+  const onPayCancelRequest = async (row) => {
+    let result = await apiManager(`transactions/${row?.id}/cancel-request`, 'create');
+    if (result) {
+      toast.success('취소요청이 완료되었습니다.');
+      onChangePage(searchObj);
+    }
+  }
+  return (
+    <>
+      <TableContainer>
+        <Table sx={{ minWidth: 720, overflowX: 'auto' }}>
+          <TableHeadCustom headLabel={headLabel} />
+          <TableBody>
+            {historyContent?.content && historyContent?.content.map((row) => (
+              <>
+                <TableRow>
+                  <TableCell>
+                    {`${row['point'] > 0 ? '+' : ''}` + commarNumber(row['point'])}
+                  </TableCell>
+                  <TableCell>
+                    {row?.created_at}
+                  </TableCell>
+                  <TableCell>
+                    {getPointType(row)}
                   </TableCell>
                 </TableRow>
               </>

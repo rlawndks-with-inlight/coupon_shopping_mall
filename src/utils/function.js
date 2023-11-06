@@ -45,9 +45,9 @@ export const getPointType = (row) =>{
   }else if(row?.type == 10){
     return '구매에 사용한 포인트 감소건';
   }else if(row?.type == 15){
-    return '관리자가 추가';
+    return '관리자에 의해 추가';
   }else if(row?.type == 20){
-    return '과니자가 감소';
+    return '관리자에 의한 감소';
   } else{
     return '잘못된 타입';
   }

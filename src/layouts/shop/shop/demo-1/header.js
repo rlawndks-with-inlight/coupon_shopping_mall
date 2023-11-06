@@ -189,6 +189,10 @@ const authList = [
     link_key: 'wish'
   },
   {
+    name: '포인트내역',
+    link_key: 'point'
+  },
+  {
     name: '주문조회',
     link_key: 'history'
   },

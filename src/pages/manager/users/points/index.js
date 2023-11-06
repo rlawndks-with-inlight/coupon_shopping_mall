@@ -27,7 +27,7 @@ const PointList = () => {
       }
     },
     {
-      id: 'price',
+      id: 'point',
       label: '포인트',
       action: (row) => {
         return `${row['point'] > 0 ? '+' : ''}` + commarNumber(row['point'])

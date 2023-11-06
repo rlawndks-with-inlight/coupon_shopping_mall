@@ -47,7 +47,6 @@ const DefaultSetting = () => {
   const { themeMode, themeDnsData } = useSettingsContext();
   const { user } = useAuthContext();
   const router = useRouter();
-
   const [loading, setLoading] = useState(true);
   const [currentTab, setCurrentTab] = useState(0);
   const [item, setItem] = useState(defaultManagerObj.brands)
@@ -647,6 +646,24 @@ const DefaultSetting = () => {
                                 ['setting_obj']: {
                                   ...item?.setting_obj,
                                   ['max_use_point']: e.target.value
+                                }
+                              }
+                            )
+                          }} />
+                      </FormControl>
+                      <FormControl variant="outlined">
+                        <InputLabel>포인트 사용가능 최소 주문금액 (배송비제외)</InputLabel>
+                        <OutlinedInput
+                          label='포인트 사용가능 최소 주문금액 (배송비제외)'
+                          value={item?.setting_obj?.use_point_min_price ?? 0}
+                          endAdornment={<InputAdornment position="end">원</InputAdornment>}
+                          onChange={(e) => {
+                            setItem(
+                              {
+                                ...item,
+                                ['setting_obj']: {
+                                  ...item?.setting_obj,
+                                  ['use_point_min_price']: e.target.value
                                 }
                               }
                             )

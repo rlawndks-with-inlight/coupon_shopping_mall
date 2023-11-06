@@ -46,9 +46,10 @@ import Cards from 'react-credit-cards'
 import { useAuthContext } from 'src/layouts/manager/auth/useAuthContext';
 import { formatCreditCardNumber, formatExpirationDate } from 'src/utils/formatCard';
 import { useModal } from "src/components/dialog/ModalProvider";
-import { insertCartDataUtil, onPayProductsByAuth, selectItemOptionUtil } from 'src/utils/shop-util';
+import { insertCartDataUtil, onPayProductsByAuth, onPayProductsByHand, selectItemOptionUtil } from 'src/utils/shop-util';
 import DaumPostcode from 'react-daum-postcode';
 import { apiManager } from 'src/utils/api';
+import { useRouter } from 'next/router';
 // ----------------------------------------------------------------------
 
 ProductDetailsSummary.propTypes = {
@@ -60,6 +61,7 @@ ProductDetailsSummary.propTypes = {
 const STEPS = ['배송지 확인', '결제하기'];
 export default function ProductDetailsSummary({ product, onAddCart, onGotoStep, ...other }) {
   const { setModal } = useModal()
+  const router = useRouter();
   const { themeCartData, onChangeCartData, themeDnsData } = useSettingsContext();
   const { user } = useAuthContext();
   const [addressList, setAddressList] = useState([]);
@@ -127,7 +129,6 @@ export default function ProductDetailsSummary({ product, onAddCart, onGotoStep, 
     groups = [],
     delivery_fee,
   } = product;
-  console.log(product)
   useEffect(() => {
     if (user) {
       onChangeAddressPage(addressSearchObj)
@@ -154,7 +155,23 @@ export default function ProductDetailsSummary({ product, onAddCart, onGotoStep, 
   const [buyStep, setBuyStep] = useState(0);
   const [buyOpen, setBuyOpen] = useState(false);
   const onBuyNow = async () => {
-    let result = await apiManager('pays/hand', 'create', payData);
+    let product_item = product;
+      let select_product_groups = selectProductGroups;
+      product_item.order_count = selectProductGroups?.count;
+      select_product_groups = selectProductGroups?.groups;
+    let result = await onPayProductsByHand([{
+      ...product_item,
+      groups: select_product_groups,
+    }], { ...payData });
+    if(result){
+      await onChangeCartData([]);
+      toast.success('성공적으로 구매에 성공하였습니다.');
+      if(payData?.user_id){
+        router.push('/shop/auth/history');
+      } else {
+        router.push(`/shop/auth/pay-result?type=0&ord_num=${result?.ord_num}`);
+      }
+    }
   }
   const [payLoading, setPayLoading] = useState(false);
   const onBuyDialogClose = () => {
@@ -234,6 +251,11 @@ export default function ProductDetailsSummary({ product, onAddCart, onGotoStep, 
   const selectPayType = async (item) => {
     if (item?.type == 'card') {//카드결제
       setBuyType('card');
+      setBuyStep(2);
+      setPayData({
+        ...payData,
+        payment_modules: item,
+      })
     } else if (item?.type == 'certification') {
       let product_item = product;
       let select_product_groups = selectProductGroups;

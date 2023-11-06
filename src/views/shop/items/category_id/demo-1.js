@@ -48,6 +48,7 @@ const Demo1 = (props) => {
   const [parentList, setParentList] = useState([]);
   const [curCategories, setCurCategories] = useState([]);
   const [products, setProducts] = useState([]);
+  const [productContent, setProductContent] = useState({});
   const [searchObj, setSearchObj] = useState({
     page: 1,
     page_size: 15,
@@ -118,7 +119,7 @@ const Demo1 = (props) => {
     } else {
       setProducts([...products, ...product_list.content ?? []]);
     }
-
+    setProductContent(product_list);
   }
   useEffect(() => {
     if (products.length > 0) {
@@ -214,10 +215,12 @@ const Demo1 = (props) => {
               :
               <>
                 <Button className='more-page' onClick={() => {
-                  settingPage({
-                    ...searchObj,
-                    page: searchObj?.page + 1
-                  })
+                  if(products.length < productContent?.total){
+                    settingPage({
+                      ...searchObj,
+                      page: searchObj?.page + 1
+                    })
+                  }
                 }} ref={scrollRef} />
               </>}
           </>

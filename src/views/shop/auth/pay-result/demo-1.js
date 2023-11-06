@@ -1,7 +1,7 @@
 import { Icon } from "@iconify/react";
 import { Card, Grid } from "@mui/material";
 import { useEffect } from "react";
-import { Col, Title } from "src/components/elements/styled-components";
+import { Col, Row, Title } from "src/components/elements/styled-components";
 import { useSettingsContext } from "src/components/settings";
 import styled from "styled-components";
 
@@ -52,7 +52,13 @@ const Demo1 = (props) => {
           <Grid item xs={12} md={12}>
             <Card>
               <Col style={{ minHeight: '18rem' }}>
-                {getResultContent(router.query?.type).icon}
+                <div style={{ margin: 'auto' }}>
+                  {getResultContent(router.query?.type).icon}
+                </div>
+                <Row style={{ margin: '1rem auto auto auto', columnGap: '1rem' }}>
+                  <div>주문번호:</div>
+                  <div>{router.query?.ord_num}</div>
+                </Row>
               </Col>
             </Card>
           </Grid>

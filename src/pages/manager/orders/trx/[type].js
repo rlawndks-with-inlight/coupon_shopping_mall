@@ -158,6 +158,18 @@ const TrxList = () => {
       },
     },
     {
+      id: 'trx_method',
+      label: '결제타입',
+      action: (row) => {
+        if (row['trx_method'] == 1) {
+          return '수기결제'
+        } else if (row['trx_method'] == 2) {
+          return '인증결제'
+        }
+        return "---"
+      }
+    },
+    {
       id: 'invoice_num',
       label: '송장번호',
       action: (row) => {

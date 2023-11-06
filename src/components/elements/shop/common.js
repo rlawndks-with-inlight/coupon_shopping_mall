@@ -284,7 +284,7 @@ export const HistoryTable = (props) => {
                               setModal({
                                 func: () => { onPayCancelRequest(row) },
                                 icon: 'material-symbols:cancel-outline',
-                                title: '결제취소요청 하시겠습니까?'
+                                title: '주문취소요청 하시겠습니까?'
                               })
                             }} />
                           </IconButton>

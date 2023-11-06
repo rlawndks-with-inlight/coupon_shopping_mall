@@ -101,14 +101,13 @@ export const defaultManagerObj = {
     favicon_file: undefined,
     og_file: undefined,
     setting_obj: {
-      max_use_point: 0,
-      point_rate: 0,
-      tutorial_num: 0,
-      shop_demo_num: 0,
-      blog_demo_num: 0,
+      max_use_point: 0,//주문시 최대포인트 사용금액
+      point_rate: 0,//주문시 구매액 대비 포인트적립 비율
+      use_point_min_price: 0,//포인트 한번에 사용할 수 있는 최대 금액
+      tutorial_num: 0,//튜토리얼 진행시 순서
+      shop_demo_num: 0,//쇼핑몰 데모넘버
+      blog_demo_num: 0,//블로그쇼핑몰 데모넘버
       is_use_seller: 0,//셀러 사용여부
-      is_use_product_sub_category: 0,//서브 카테고리 사용여부,
-      product_sub_category_name: '',
     },
     theme_css: {
       main_color: '#00ab55'

@@ -82,8 +82,6 @@ export const onPayProductsByHand = async (products_, payData_) => { // 수기결
     if (payData?.products?.length > 1 || !payData?.item_name) {
         payData.item_name = `${payData?.products[0]?.order_name} 외 ${payData?.products?.length - 1}`;
     }
-    console.log(payData)
-    return;
     try {
         let insert_pay_ready = await apiManager('pays/hand', 'create', payData);
         if(insert_pay_ready?.id > 0){

@@ -136,10 +136,10 @@ export const defaultManagerObj = {
     ]
   },
   articles: {
-    category_id: null,
-    parent_id: null,
+    category_id: 0,
+    parent_id: -1,
     post_title: '',
     post_content: '',
-    is_reply: true,
+    is_reply: 0,
   },
 }

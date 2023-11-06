@@ -28,7 +28,7 @@ const ArticleEdit = () => {
     parent_id: -1,
     post_title: '',
     post_content: '',
-    is_reply: false,
+    is_reply: 0,
     reply: '',
     post_title_file: undefined,
   })

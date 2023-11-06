@@ -42,7 +42,7 @@ const Demo1 = (props) => {
         parent_id: -1,
         post_title: '',
         post_content: '',
-        is_reply: false,
+        is_reply: 0,
     })
     useEffect(() => {
         settingPage();

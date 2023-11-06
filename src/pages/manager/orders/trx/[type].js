@@ -107,6 +107,10 @@ const TrxList = () => {
                       <div style={{ minWidth: '62px' }}>가격: </div>
                       <div>{commarNumber(order?.order_amount)}</div>
                     </Row>
+                    <Row>
+                      <div style={{ minWidth: '62px' }}>배송비: </div>
+                      <div>{commarNumber(order?.delivery_fee)}</div>
+                    </Row>
                     {order?.seller_id > 0 &&
                       <>
                         <Row>

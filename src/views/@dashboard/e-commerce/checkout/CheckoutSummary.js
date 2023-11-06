@@ -49,9 +49,9 @@ export default function CheckoutSummary({
   enableDiscount = false,
   payData,
   setPayData,
+  themeDnsData
 }) {
   const { user } = useAuthContext();
-  const { themeDnsData } = useSettingsContext();
   const { setting_obj } = themeDnsData;
   const { use_point_min_price = 0, max_use_point = 0, point_rate = 0 } = setting_obj;
 

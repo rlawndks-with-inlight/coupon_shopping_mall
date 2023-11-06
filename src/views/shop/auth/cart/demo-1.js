@@ -554,6 +554,7 @@ const Demo1 = (props) => {
           <Grid item xs={12} md={4}>
             <CheckoutSummary
               enableDiscount
+              themeDnsData={themeDnsData}
               payData={payData}
               setPayData={setPayData}
               total={_.sum(_.map(products, (item) => { return calculatorPrice(item, payData).total })) - payData?.use_point}

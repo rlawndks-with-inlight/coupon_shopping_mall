@@ -23,7 +23,7 @@ import HomePost from "src/views/section/shop/HomePost";
 import HomeProductReview from "src/views/section/shop/HomeProductReview";
 import { homeItemsSetting, homeItemsWithCategoriesSetting } from "src/views/section/shop/utils";
 import ReactQuillComponent from "../react-quill";
-import { apiManager, uploadMultipleFiles } from "src/utils/api";
+import { apiManager,  uploadFilesByManager } from "src/utils/api";
 
 const Tour = dynamic(
     () => import('reactour'),
@@ -293,9 +293,11 @@ const MainObjSetting = (props) => {
             }
         }
         if (file_index_list.length > 0) {
-            let file_result = await uploadMultipleFiles(
+            console.log(images)
+            let file_result = await uploadFilesByManager({
                 images
-            );
+            });
+
             if (!file_result.length > 0) {
                 return;
             }

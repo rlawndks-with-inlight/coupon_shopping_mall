@@ -150,6 +150,7 @@ export const uploadMultipleFiles = async (files = []) => {
     try {
         let result = undefined;
         let result_list = [];
+        console.log(files)
         for (var i = 0; i < files.length; i++) {
             result_list.push(apiManager('upload/single', 'create', {
                 post_file: files[i]?.image,
@@ -197,6 +198,7 @@ const uploadFileByCloudinary = async (file) => {
 }
 const multipleFileUploadByCloudinary = async (files) => {
     let result = undefined;
+    console.log(files)
     if (typeof files.length == 'number') {
         let result_list = [];
         for (var i = 0; i < files.length; i++) {

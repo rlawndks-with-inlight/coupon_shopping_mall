@@ -226,7 +226,6 @@ export const Sellers = (props) => {
     slidesToScroll: 1,
     dots: false,
   }
-  console.log(sellers)
   return (
     <>
       <ItemContainerNoneOpenMobile>

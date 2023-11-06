@@ -75,7 +75,6 @@ const Demo1 = (props) => {
   const onCheckNoneUserPay = async () => {
     let data = await apiManager(`transactions/0`, 'get', noneUserObj);
     if (data) {
-      console.log(data)
       setNoneUserTrxObj(data);
     }
   }

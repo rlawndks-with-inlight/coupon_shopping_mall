@@ -115,7 +115,6 @@ const ProductList = () => {
           size="small"
           defaultValue={row?.status}
           onChange={(e) => {
-            console.log(row?.id, e.target.value)
             onChangeStatus(row?.id, e.target.value);
           }}
         >
@@ -261,12 +260,10 @@ const ProductList = () => {
       [idx]: use_list
     };
     for (var i = 0; i < themeCategoryList.length; i++) {
-      console.log(cur_categories[i])
       if (cur_categories[i]) {
         category_ids[`category_id${i}`] = cur_categories[i][cur_categories[i].length - 1]?.id;
       }
     }
-    console.log(category_ids)
     onChangePage({ ...searchObj, ...category_ids, page: 1 })
     setCurCategories(cur_categories);
     let children_list = [];
@@ -280,8 +277,6 @@ const ProductList = () => {
     $(`.category-container-${idx}`).scrollLeft(100000);
   }
   const onChangeStatus = async (id, value) => {
-    console.log(id)
-    console.log(value)
     let result = await apiUtil(`products/status`, 'update', {
       id,
       value,

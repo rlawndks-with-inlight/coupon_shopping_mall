@@ -17,7 +17,6 @@ export const post = async (url, obj) => {
             }
         };
         const { data: response } = await axios.post(url, formData, config);
-        console.log(response)
         if (response?.result > 0) {
             return response?.data;
         } else {
@@ -173,7 +172,6 @@ export const uploadMultipleFiles = async (files = []) => {
 export const uploadFileByManager = async (params) => {// 관리자 파일 단일 업로드
     const { file } = params;
     let result = await multipleFileUploadByCloudinary(file);
-    console.log(result)
     return result;
 }
 export const uploadFilesByManager = async (params) => {// 관리자 파일 여러개 업로드

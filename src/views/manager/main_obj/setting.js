@@ -298,7 +298,6 @@ const MainObjSetting = (props) => {
             }
         }
         if (file_index_list.length > 0) {
-            console.log(images)
             let file_result = await uploadFilesByManager({
                 images
             });

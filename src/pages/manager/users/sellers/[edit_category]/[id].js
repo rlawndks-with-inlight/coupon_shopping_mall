@@ -92,7 +92,6 @@ const SellerEdit = () => {
       //setProductIds(product_ids.map((item => { return item?.id })))
       let data = await apiManager('sellers', 'get', { id: router.query?.id });
       if (data) {
-        console.log(data);
         setProductIds((data?.products ?? []).map(item => { return item?.id }))
         setProductContent({ content: data?.products ?? [] })
         setItem(data);

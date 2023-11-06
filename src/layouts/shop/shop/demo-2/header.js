@@ -679,7 +679,6 @@ const Header = () => {
               <ColumnMenuContent onClick={() => {
                 onLogout();
                 setSideMenuOpen(false);
-                console.log(1)
               }} style={{ paddingLeft: '1rem' }}>로그아웃</ColumnMenuContent>
             </>
             :

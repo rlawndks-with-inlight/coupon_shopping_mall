@@ -31,7 +31,6 @@ const ArticleList = () => {
       id: 'post_category_title',
       label: '서브카테고리',
       action: (row) => {
-        console.log(row)
         return category?.id == row?.category_id ? "---" : row['post_category_title']
       }
     },

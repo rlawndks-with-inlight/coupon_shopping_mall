@@ -150,7 +150,6 @@ export const uploadMultipleFiles = async (files = []) => {
     try {
         let result = undefined;
         let result_list = [];
-        console.log(files)
         for (var i = 0; i < files.length; i++) {
             result_list.push(apiManager('upload/single', 'create', {
                 post_file: files[i]?.image,
@@ -172,13 +171,12 @@ export const uploadMultipleFiles = async (files = []) => {
 }
 export const uploadFileByManager = async (params) => {// 관리자 파일 단일 업로드
     const { file } = params;
-    console.log(file)
     let result = await multipleFileUploadByCloudinary(file);
     console.log(result)
     return result;
 }
 export const uploadFilesByManager = async (params) => {// 관리자 파일 여러개 업로드
-    let { images } = params;
+    let { images=[] } = params;
     images = images.map((item) => { return item?.image })
     let result = await multipleFileUploadByCloudinary(images);
     return result;
@@ -198,7 +196,6 @@ const uploadFileByCloudinary = async (file) => {
 }
 const multipleFileUploadByCloudinary = async (files) => {
     let result = undefined;
-    console.log(files)
     if (typeof files.length == 'number') {
         let result_list = [];
         for (var i = 0; i < files.length; i++) {

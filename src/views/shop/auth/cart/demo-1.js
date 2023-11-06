@@ -177,6 +177,10 @@ const Demo1 = (props) => {
   const selectPayType = async (item) => {
     if (item?.type == 'card') {//카드결제
       setBuyType('card');
+      setPayData({
+        ...payData,
+        payment_modules: item,
+      })
     } else if (item?.type == 'certification') {
       if(parseFloat(max_use_point) < parseFloat(payData.use_point)){
         toast.error('최대사용가능 포인트를 초과하였습니다.');
@@ -200,6 +204,7 @@ const Demo1 = (props) => {
         toast.error('보유포인트가 부족합니다.');
         return;
       }
+      setPayLoading(true);
       let result = await onPayProductsByHand(products, payData);
       if (result) {
         await onChangeCartData([]);

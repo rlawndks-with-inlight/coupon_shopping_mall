@@ -115,7 +115,7 @@ const TrxList = () => {
                       <>
                         <Row>
                           <div style={{ minWidth: '62px' }}>셀러아이디: </div>
-                          <div>{commarNumber(order?.seller_user_name)}</div>
+                          <div>{order?.seller_user_name}</div>
                         </Row>
                       </>}
                   </Col>

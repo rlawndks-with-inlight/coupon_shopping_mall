@@ -52,30 +52,6 @@ const TrxCancelList = () => {
       },
     },
     {
-      id: 'seller_user_name',
-      label: '셀러아이디',
-      action: (row) => {
-        return row['seller_user_name'] ?? "---"
-      },
-      sx: (row) => {
-        return {
-          color: `${row?.is_cancel == 1 ? 'red' : ''}`
-        }
-      },
-    },
-    {
-      id: 'seller_trx_fee',
-      label: '셀러수수료율',
-      action: (row) => {
-        return commarNumber(row['seller_trx_fee'])
-      },
-      sx: (row) => {
-        return {
-          color: `${row?.is_cancel == 1 ? 'red' : ''}`
-        }
-      },
-    },
-    {
       id: 'buyer_phone',
       label: '구매자휴대폰번호',
       action: (row) => {

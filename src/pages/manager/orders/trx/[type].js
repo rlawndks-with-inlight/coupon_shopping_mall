@@ -13,7 +13,7 @@ import { useSettingsContext } from "src/components/settings";
 
 const TrxList = () => {
   const { setModal } = useModal()
-  const {themeDnsData} = useSettingsContext();
+  const { themeDnsData } = useSettingsContext();
   const defaultColumns = [
     {
       id: 'appr_num',
@@ -44,30 +44,6 @@ const TrxList = () => {
       label: '구매자명',
       action: (row) => {
         return row['buyer_name'] ?? "---"
-      },
-      sx: (row) => {
-        return {
-          color: `${row?.is_cancel == 1 ? 'red' : ''}`
-        }
-      },
-    },
-    {
-      id: 'seller_user_name',
-      label: '셀러아이디',
-      action: (row) => {
-        return row['seller_user_name'] ?? "---"
-      },
-      sx: (row) => {
-        return {
-          color: `${row?.is_cancel == 1 ? 'red' : ''}`
-        }
-      },
-    },
-    {
-      id: 'seller_trx_fee',
-      label: '셀러수수료율',
-      action: (row) => {
-        return commarNumber(row['seller_trx_fee'])
       },
       sx: (row) => {
         return {
@@ -131,6 +107,13 @@ const TrxList = () => {
                       <div style={{ minWidth: '62px' }}>가격: </div>
                       <div>{commarNumber(order?.order_amount)}</div>
                     </Row>
+                    {order?.seller_id > 0 &&
+                      <>
+                        <Row>
+                          <div style={{ minWidth: '62px' }}>셀러아이디: </div>
+                          <div>{commarNumber(order?.seller_user_name)}</div>
+                        </Row>
+                      </>}
                   </Col>
                   <br />
                 </>

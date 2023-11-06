@@ -59,7 +59,9 @@ export default function CheckoutSummary({
 
   useEffect(()=>{
 
-  },[])
+    console.log(payData?.use_point > user?.point)
+    console.log(payData?.use_point > max_use_point)
+  },[payData])
   return (
     <Card sx={{ mb: 3 }}>
       <CardHeader

@@ -4,7 +4,8 @@ import styled from 'styled-components'
 import { Row, themeObj } from 'src/components/elements/styled-components'
 import _ from 'lodash'
 import { LazyLoadImage } from 'react-lazy-load-image-component'
-import { Rating } from '@mui/material'
+import { Rating, Typography } from '@mui/material'
+import { useRouter } from 'next/router'
 
 const Wrappers = styled.div`
   width:90%;
@@ -46,25 +47,24 @@ box-shadow: 0 4px 4px #00000029;
 `
 
 const Review = (props) => {
+  const router = useRouter();
   const { item } = props;
   return (
     <>
-      <ReviewContainer>
-        <LazyLoadImage src={item?.product_img} style={{ width: '100%', height: 'auto' }} />
+      <ReviewContainer onClick={() => {
+        router.push(`/shop/item/${item?.product_id}`)
+      }}>
+        <LazyLoadImage src={item?.profile_img} style={{ width: '100%', height: 'auto' }} />
         <Row style={{ flexDirection: 'column', padding: '0.5rem', rowGap: '0.25rem' }}>
           <div style={{ color: themeObj.grey[500] }}>{item?.nickname}</div>
-          <Rating value={item?.scope / 2} readOnly={true} />
-          <div style={{ fontSize: themeObj.font_size.size8 }}>
+          <Rating value={item?.scope / 2} readOnly={true} precision={0.5} />
+          <Typography variant='subtitle2'>
+            {item?.title}
+          </Typography>
+          <Typography variant='body2'>
             {item?.content}
-          </div>
+          </Typography>
         </Row>
-        {item?.product &&
-          <>
-            <Row style={{ borderTop: `1px dashed ${themeObj.grey[300]}`, padding: '0.5rem', alignItems: 'center', columnGap: '0.25rem' }}>
-              <LazyLoadImage src={item?.product_img} style={{ width: '48px' }} />
-              <div style={{ fontSize: themeObj.font_size.size8 }}>{item?.product?.product_name}</div>
-            </Row>
-          </>}
       </ReviewContainer>
     </>
   )

@@ -8,6 +8,7 @@ import { toast } from "react-hot-toast";
 import { useModal } from "src/components/dialog/ModalProvider";
 import { Col, Row, Title } from "src/components/elements/styled-components";
 import { useSettingsContext } from "src/components/settings";
+import { useAuthContext } from "src/layouts/manager/auth/useAuthContext";
 import { apiShop } from "src/utils/api";
 import ReactQuillComponent from "src/views/manager/react-quill";
 import styled from "styled-components";
@@ -25,6 +26,7 @@ min-height:90vh;
 `
 
 const Demo1 = (props) => {
+    const { user } = useAuthContext();
     const { setModal } = useModal()
     const {
         data: {
@@ -50,7 +52,7 @@ const Demo1 = (props) => {
     const settingPage = async () => {
         setPostCategory(_.find(themePostCategoryList, { id: parseInt(router.query?.article_category) }))
         if (router.query?.id > 0) {
-            let data = await apiShop('post','get',{
+            let data = await apiShop('post', 'get', {
                 id: router.query?.id
             })
             setItem(data);
@@ -60,9 +62,9 @@ const Demo1 = (props) => {
     const onSave = async () => {
         let result = undefined;
         if (router.query?.id == 'add') {
-            result = await apiShop('post','create', { ...item, category_id: router.query?.article_category });
+            result = await apiShop('post', 'create', { ...item, category_id: router.query?.article_category });
         } else {
-            //result = await updatePostByManager({ ...item, id: router.query?.id, category_id: router.query?.article_category });
+            result = await apiShop('post', 'update', { ...item });
         }
         if (result) {
             toast.success("성공적으로 저장 되었습니다.");
@@ -78,7 +80,7 @@ const Demo1 = (props) => {
                 {!loading &&
                     <>
                         <Stack spacing={3}>
-                            {router.query?.id == 'add' ?
+                            {(router.query?.id == 'add' || item?.user_id == user?.id) ?
                                 <>
                                     <TextField
                                         label='제목'

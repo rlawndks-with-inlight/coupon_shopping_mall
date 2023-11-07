@@ -734,7 +734,7 @@ export default function ProductDetailsSummary({ product, onAddCart, onGotoStep, 
           <Stack direction="row" spacing={2}>
             <Button
               fullWidth
-              disabled={isMaxQuantity}
+              disabled={status != 0}
               size="large"
               color="warning"
               variant="contained"
@@ -744,7 +744,7 @@ export default function ProductDetailsSummary({ product, onAddCart, onGotoStep, 
             >
               장바구니
             </Button>
-            <Button fullWidth size="large" variant="contained" onClick={() => {
+            <Button fullWidth disabled={status != 0} size="large" variant="contained" onClick={() => {
               setBuyOpen(true);
             }}>
               바로구매

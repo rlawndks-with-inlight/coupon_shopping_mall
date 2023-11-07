@@ -32,7 +32,7 @@ ProductDetailsNewReviewForm.propTypes = {
   onClose: PropTypes.func,
 };
 
-export default function ProductDetailsNewReviewForm({ onClose, onChangePage, open, ...other }) {
+export default function ProductDetailsNewReviewForm({ onClose, onChangePage, open, reviewData, setReviewData, onSubmit, ...other }) {
   const router = useRouter();
   const { themeDnsData } = useSettingsContext();
   const { user } = useAuthContext();
@@ -42,16 +42,6 @@ export default function ProductDetailsNewReviewForm({ onClose, onChangePage, ope
     name: Yup.string().required('Name is required'),
     email: Yup.string().required('Email is required').email('Email must be a valid email address'),
   });
-  const [reviewData, setReviewData] = useState({
-    product_id: router.query?.id,
-    trans_id: 0,
-    brand_id: themeDnsData?.id,
-    scope: 0,
-    user_id: user?.id, 
-    profile_file: undefined,
-    profile_img: user?.profile_img ?? "",
-    content: '',
-  })
   const defaultValues = {
     rating: null,
     review: '',
@@ -59,20 +49,20 @@ export default function ProductDetailsNewReviewForm({ onClose, onChangePage, ope
     email: '',
   };
 
-  useEffect(()=>{
-    if(!open){
+  useEffect(() => {
+    if (!open) {
       setReviewData({
         product_id: router.query?.id,
         trans_id: 0,
         brand_id: themeDnsData?.id,
         scope: 0,
-        user_id: user?.id, 
+        user_id: user?.id,
         profile_file: undefined,
         profile_img: user?.profile_img ?? "",
         content: '',
       });
     }
-  },[open])
+  }, [open])
   const methods = useForm({
     resolver: yupResolver(ReviewSchema),
     defaultValues,
@@ -89,17 +79,9 @@ export default function ProductDetailsNewReviewForm({ onClose, onChangePage, ope
     onClose();
     reset();
   };
-  const onSubmit = async () => {
-    let result = await apiManager('product-reviews', 'create', reviewData);
-    if (result) {
-      toast.success("성공적으로 리뷰를 작성하였습니다.");
-      onClose();
-      onChangePage(1);
-    }
-  }
   return (
     <Dialog onClose={onClose} {...other} open={open}>
-      <DialogTitle>리뷰 작성하기</DialogTitle>
+      <DialogTitle>리뷰 {reviewData?.id ? '수정' : '작성'}하기</DialogTitle>
 
       <DialogContent>
         <Stack direction="row" flexWrap="wrap" alignItems="center" spacing={1.5}>
@@ -118,7 +100,7 @@ export default function ProductDetailsNewReviewForm({ onClose, onChangePage, ope
         </Stack>
 
         {!!errors.rating && <FormHelperText error> {errors.rating?.message}</FormHelperText>}
-        <div style={{marginTop:'1rem'}} />
+        <div style={{ marginTop: '1rem' }} />
         <Stack spacing={1}>
           <Typography variant="subtitle2" sx={{ color: 'text.secondary' }}>
             대표이미지등록
@@ -162,7 +144,7 @@ export default function ProductDetailsNewReviewForm({ onClose, onChangePage, ope
               }
             )
           }} />
-        <TextField name="review" label="리뷰를 작성해 주세요." multiline rows={6} sx={{ mt: 3, width: '100%' }} onChange={(e) => {
+        <TextField name="review" value={reviewData.content} label="리뷰를 작성해 주세요." multiline rows={6} sx={{ mt: 3, width: '100%' }} onChange={(e) => {
           setReviewData({
             ...reviewData,
             content: e.target.value
@@ -176,7 +158,7 @@ export default function ProductDetailsNewReviewForm({ onClose, onChangePage, ope
         </Button>
 
         <Button type="submit" variant="contained" onClick={onSubmit}>
-          리뷰 추가하기
+          리뷰 {reviewData?.id ? '수정' : '작성'}하기
         </Button>
       </DialogActions>
     </Dialog>

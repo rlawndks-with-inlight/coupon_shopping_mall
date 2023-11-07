@@ -129,6 +129,12 @@ export const apiShop = async (table, type, params) => {
     if (type == 'create') {
         return post(`${base_url}/${table}`, obj);
     }
+    if (type == 'update') {
+        return put(`${base_url}/${table}/${params?.id ?? ""}`, obj);
+    }
+    if (type == 'delete') {
+        return deleteItem(`${base_url}/${table}/${params?.id}`);
+    }
 }
 export const apiUtil = async (table, type, params) => {
     let obj = await settingParams(table, type, params);

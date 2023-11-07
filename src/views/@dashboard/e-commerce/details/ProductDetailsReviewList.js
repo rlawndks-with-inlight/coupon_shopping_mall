@@ -1,10 +1,14 @@
 import PropTypes from 'prop-types';
 import { useState } from 'react';
 // @mui
-import { Stack, Button, Rating, Avatar, Pagination, Typography } from '@mui/material';
+import { Stack, Button, Rating, Avatar, Pagination, Typography, IconButton } from '@mui/material';
 // utils
 // components
 import Iconify from 'src/components/iconify/Iconify';
+import { Row } from 'src/components/elements/styled-components';
+import { useAuthContext } from 'src/layouts/manager/auth/useAuthContext';
+import { Icon } from '@iconify/react';
+import { useModal } from 'src/components/dialog/ModalProvider';
 
 // ----------------------------------------------------------------------
 
@@ -12,7 +16,7 @@ ProductDetailsReviewList.propTypes = {
   reviews: PropTypes.array,
 };
 
-export default function ProductDetailsReviewList({ reviews = [], reviewContent, onChangePage }) {
+export default function ProductDetailsReviewList({ reviews = [], handleOpenReview, reviewContent, onChangePage, reviewData, setReviewData, deleteReview }) {
   const getMaxPage = (total, page_size) => {
     if (total == 0) {
       return 1;
@@ -40,7 +44,7 @@ export default function ProductDetailsReviewList({ reviews = [], reviewContent, 
         }}
       >
         {reviewContent?.content && reviewContent?.content.map((review) => (
-          <ReviewItem key={review.id} review={review} />
+          <ReviewItem key={review.id} handleOpenReview={handleOpenReview} review={review} onChangePage={onChangePage} reviewData={reviewData} setReviewData={setReviewData} deleteReview={deleteReview} />
         ))}
       </Stack>
 
@@ -72,8 +76,10 @@ ReviewItem.propTypes = {
   review: PropTypes.object,
 };
 
-function ReviewItem({ review }) {
-  const { nickname, scope, content, avatarUrl, isPurchased, created_at, title, profile_img } = review;
+function ReviewItem({ review, onChangePage, reviewData, setReviewData, deleteReview, handleOpenReview }) {
+  const { setModal } = useModal()
+  const { user } = useAuthContext();
+  const { nickname, scope, content, avatarUrl, isPurchased, created_at, title, profile_img, user_id, id } = review;
 
   return (
     <Stack
@@ -139,6 +145,30 @@ function ReviewItem({ review }) {
         <Typography variant="subtitle2">{title}</Typography>
         <Typography variant="body2">{content}</Typography>
       </Stack>
+      {user_id == user?.id &&
+        <>
+          <Stack spacing={1} style={{
+            marginLeft: 'auto',
+          }}>
+            <Row>
+              <IconButton onClick={() => {
+                setReviewData(review)
+                handleOpenReview();
+              }}>
+                <Icon icon={'material-symbols:edit-outline'} />
+              </IconButton>
+              <IconButton onClick={() => {
+                setModal({
+                  func: () => { deleteReview(id) },
+                  icon: 'material-symbols:delete-outline',
+                  title: '정말 삭제하시겠습니까?'
+                })
+              }}>
+                <Icon icon='material-symbols:delete-outline' />
+              </IconButton>
+            </Row>
+          </Stack>
+        </>}
     </Stack>
   );
 }

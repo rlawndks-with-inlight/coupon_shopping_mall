@@ -10,6 +10,7 @@ import { Icon } from '@iconify/react';
 import { useAuthContext } from 'src/layouts/manager/auth/useAuthContext';
 import { toast } from 'react-hot-toast';
 import { apiShop } from 'src/utils/api';
+import { useModal } from 'src/components/dialog/ModalProvider';
 const Wrappers = styled.div`
 max-width:1600px;
 display:flex;
@@ -50,6 +51,7 @@ font-weight:${props => props.isSelect ? 'bold' : ''};
 `
 const Demo1 = (props) => {
   const { user } = useAuthContext();
+  const { setModal } = useModal()
   const [postCategory, setPostCategory] = useState({});
 
   const defaultColumns = [
@@ -62,10 +64,10 @@ const Demo1 = (props) => {
     },
     ...((postCategory?.is_able_user_add == 1 && postCategory?.post_category_read_type == 0) ? [
       {
-        id: 'post_writer',
+        id: 'writer_nickname',
         label: '작성자',
         action: (row) => {
-          return row['post_writer'] ?? "---"
+          return row['writer_nickname'] ?? "---"
         }
       }
     ] : []),
@@ -98,8 +100,20 @@ const Demo1 = (props) => {
             <IconButton onClick={() => {
               router.push(`/shop/service/${router.query?.article_category}/${row?.id}`)
             }}>
-              <Icon icon='bx:detail' />
+              <Icon icon={row?.user_id == user?.id ? 'material-symbols:edit-outline' : 'bx:detail'} />
             </IconButton>
+            {row?.user_id == user?.id &&
+              <>
+                <IconButton onClick={() => {
+                  setModal({
+                    func: () => { deletePost(row?.id) },
+                    icon: 'material-symbols:delete-outline',
+                    title: '정말 삭제하시겠습니까?'
+                  })
+                }}>
+                  <Icon icon='material-symbols:delete-outline' />
+                </IconButton>
+              </>}
           </>
         )
       }
@@ -144,9 +158,15 @@ const Demo1 = (props) => {
       ...data,
       content: undefined
     })
-    let data_ = await apiShop('post', 'list',obj);
+    let data_ = await apiShop('post', 'list', obj);
     setData(data_);
     setSearchObj(obj);
+  }
+  const deletePost = async (id) => {
+    let result = await apiShop('post', 'delete', { id });
+    if (result) {
+      onChangePage({ ...searchObj });
+    }
   }
   return (
     <>

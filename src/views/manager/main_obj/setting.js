@@ -1,8 +1,8 @@
 import { Icon } from "@iconify/react";
-import { Autocomplete, Box, Button, Card, CardHeader, Chip, Container, Dialog, DialogContent, FormControl, Grid, IconButton, InputLabel, MenuItem, Select, Stack, TextField, Tooltip, Typography } from "@mui/material";
+import { Autocomplete, Box, Button, Card, CardHeader, Checkbox, Chip, Container, Dialog, DialogContent, FormControl, FormControlLabel, Grid, IconButton, InputLabel, MenuItem, Select, Stack, TextField, Tooltip, Typography } from "@mui/material";
 import dynamic from "next/dynamic";
 import { useCallback, useEffect, useState } from "react";
-import { Row } from "src/components/elements/styled-components";
+import { Row, themeObj } from "src/components/elements/styled-components";
 import { Upload } from "src/components/upload";
 import { defaultManagerObj } from "src/data/manager-data";
 import { base64toFile } from "src/utils/function";
@@ -23,7 +23,7 @@ import HomePost from "src/views/section/shop/HomePost";
 import HomeProductReview from "src/views/section/shop/HomeProductReview";
 import { homeItemsSetting, homeItemsWithCategoriesSetting } from "src/views/section/shop/utils";
 import ReactQuillComponent from "../react-quill";
-import { apiManager,  uploadFilesByManager } from "src/utils/api";
+import { apiManager, uploadFilesByManager } from "src/utils/api";
 
 const Tour = dynamic(
     () => import('reactour'),
@@ -67,7 +67,7 @@ const TextFieldSection = (props) => {
 const MainObjSetting = (props) => {
     const { MAIN_OBJ_TYPE } = props;
     const { setModal } = useModal()
-    const { themeDnsData } = useSettingsContext();
+    const { themeDnsData, themePostCategoryList } = useSettingsContext();
     const { user } = useAuthContext();
     const router = useRouter();
 
@@ -150,12 +150,6 @@ const MainObjSetting = (props) => {
             style: {},
         },
     }
-    const returnKoNameBySectionType = {
-        banner: '배너슬라이드',
-        items: '상품슬라이드',
-        editor: '에디터',
-        all: '전체',
-    }
     useEffect(() => {
         settingPage();
         //settingPage();
@@ -181,7 +175,7 @@ const MainObjSetting = (props) => {
         //     page_size: 100000
         // })
         // setProductReviewContent(product_review_content);
-        let brand_data = await apiManager('brands', 'get',{
+        let brand_data = await apiManager('brands', 'get', {
             id: (!isNaN(parseInt(router.query.type)) ? router.query.type : '') || themeDnsData?.id
         })
         brand_data = settingBrandObj(item, brand_data);
@@ -323,7 +317,7 @@ const MainObjSetting = (props) => {
             }
         }
         let brand_data = { ...item, [`${MAIN_OBJ_TYPE}`]: content_list };
-        let result = await apiManager('brands', 'update',{ ...brand_data, id: themeDnsData?.id })
+        let result = await apiManager('brands', 'update', { ...brand_data, id: themeDnsData?.id })
         if (result) {
             toast.success("성공적으로 저장 되었습니다.");
             window.location.reload();
@@ -445,7 +439,7 @@ const MainObjSetting = (props) => {
             let search_text_list = searchTextList;
             search_text_list.push(value);
             setSearchTextList(search_text_list);
-            let product_content = await apiManager('products', 'list',{
+            let product_content = await apiManager('products', 'list', {
                 page: 1,
                 page_size: 100000,
                 search: value,
@@ -454,10 +448,10 @@ const MainObjSetting = (props) => {
                 ...productContent?.content,
                 ...product_content?.content,
             ]
-            product_content_list= product_content_list.reduce((acc, curr) => {
+            product_content_list = product_content_list.reduce((acc, curr) => {
                 const idx = acc.findIndex((obj) => obj['id'] === curr['id']);
                 if (idx === -1) acc.push(curr);
-                  return acc;
+                return acc;
             }, []);
             setProductContent({
                 ...product_content,
@@ -744,10 +738,10 @@ const MainObjSetting = (props) => {
                                                                     setContentList(content_list)
                                                                 }}
                                                                 renderInput={(params) => (
-                                                                    <TextField {...params} label="선택할 상품" placeholder="3글자 이상 입력해 주세요." 
-                                                                    onChange={(e) => {
-                                                                        onSearchProducts(e);
-                                                                    }}
+                                                                    <TextField {...params} label="선택할 상품" placeholder="3글자 이상 입력해 주세요."
+                                                                        onChange={(e) => {
+                                                                            onSearchProducts(e);
+                                                                        }}
                                                                     />
                                                                 )}
                                                             />
@@ -861,8 +855,40 @@ const MainObjSetting = (props) => {
                                                             width: ''//파일 사이즈 설명
                                                         }}
                                                     />
+                                                    <Row>
+                                                        {themePostCategoryList.map((post_category, idx_) => (
+                                                            <>
+                                                                <Row>
+                                                                    <FormControlLabel label={<Typography style={{ fontSize: themeObj.font_size.size6 }}>{post_category?.post_category_title}</Typography>} control={<Checkbox checked={(contentList[idx]?.list ?? []).map(id => { return parseInt(id) }).includes(post_category?.id)} onChange={(e) => {
+                                                                        let content_list = [...contentList];
+                                                                        let post_category_list = content_list[idx]?.list ?? [];
+                                                                        if (e.target.checked) {
+                                                                            post_category_list.push(post_category?.id);
+                                                                            post_category_list = post_category_list.map(id => {
+                                                                                return _.find(themePostCategoryList, { id: parseInt(id) });
+                                                                            })
+                                                                            post_category_list = post_category_list.sort((a, b) => {
+                                                                                if (a.sort_idx < b.sort_idx) return 1;
+                                                                                if (a.sort_idx > b.sort_idx) return -1;
+                                                                                return 0;
+                                                                            });
+                                                                            post_category_list = post_category_list.map(item => {
+                                                                                return item?.id
+                                                                            })
+                                                                        } else {
+                                                                            let find_index = post_category_list.indexOf(post_category?.id);
+                                                                            post_category_list.splice(find_index, 1);
+                                                                        }
+                                                                        content_list[idx].list = post_category_list;
+                                                                        setContentList(content_list);
+                                                                    }} />} />
+
+                                                                </Row>
+                                                            </>
+                                                        ))}
+                                                    </Row>
                                                 </>}
-                                                {conditionOfSection('sellers', item) &&
+                                            {conditionOfSection('sellers', item) &&
                                                 <>
                                                     <Row style={{ alignItems: 'end' }}>
                                                         <CardHeader title={`셀러섹션 ${curTypeNum(contentList, 'sellers', idx)}`} sx={{ paddingLeft: '0' }} />

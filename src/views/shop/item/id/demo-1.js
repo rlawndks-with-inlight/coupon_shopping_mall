@@ -55,6 +55,7 @@ const Demo1 = (props) => {
       data['sub_images'].unshift(data?.product_img)
     }
     data['images'] = data['sub_images'];
+    setReviewPage(review_page);
     let review_data = await apiManager('product-reviews', 'list', {
       page: review_page,
       product_id: router.query?.id,
@@ -80,7 +81,7 @@ const Demo1 = (props) => {
     {
       value: 'reviews',
       label: `상품후기 (${reviewContent?.total})`,
-      component: product ? <ProductDetailsReview product={product} reviewContent={reviewContent} onChangePage={getItemInfo} /> : null,
+      component: product ? <ProductDetailsReview product={product} reviewContent={reviewContent} onChangePage={getItemInfo} reviewPage={reviewPage} /> : null,
     },
   ];
 

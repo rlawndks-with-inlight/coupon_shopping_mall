@@ -1,4 +1,4 @@
-import { Card, Container, IconButton, Stack } from "@mui/material";
+import { Button, Card, Checkbox, CircularProgress, Container, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, FormControlLabel, IconButton, Stack, TextField, Typography } from "@mui/material";
 import { useEffect, useState } from "react";
 import ManagerLayout from "src/layouts/manager/ManagerLayout";
 import ManagerTable from "src/views/manager/mui/table/ManagerTable";
@@ -7,7 +7,9 @@ import { useRouter } from "next/router";
 import { LazyLoadImage } from "react-lazy-load-image-component";
 import { useModal } from "src/components/dialog/ModalProvider";
 import { useAuthContext } from "src/layouts/manager/auth/useAuthContext";
-import { apiManager } from "src/utils/api";
+import { apiManager, apiUtil } from "src/utils/api";
+import { Col, Row, themeObj } from "src/components/elements/styled-components";
+import toast from "react-hot-toast";
 const BrandList = () => {
   const { setModal } = useModal()
   const { user } = useAuthContext();
@@ -76,6 +78,25 @@ const BrandList = () => {
       }
     },
     ...(user?.level >= 50 ? [{
+      id: 'cody_brand',
+      label: `브랜드카피`,
+      action: (row) => {
+        return (
+          <>
+            <IconButton>
+              <Icon icon='bi:copy' onClick={() => {
+                setCopyObj({
+                  sender_brand_id: row?.id,
+                  sender_brand: row,
+                })
+                setCopyOpen(true);
+              }} />
+            </IconButton>
+          </>
+        )
+      }
+    },] : []),
+    ...(user?.level >= 50 ? [{
       id: 'main_edit',
       label: `메인페이지 수정`,
       action: (row) => {
@@ -122,6 +143,7 @@ const BrandList = () => {
   const router = useRouter();
   const [columns, setColumns] = useState([]);
   const [data, setData] = useState({});
+  const [copyLoading, setCopyLoading] = useState(false);
   const [searchObj, setSearchObj] = useState({
     page: 1,
     page_size: 10,
@@ -150,13 +172,137 @@ const BrandList = () => {
     setSearchObj(obj);
   }
   const deleteBrand = async (id) => {
-    let result = await apiManager('brands', 'delete',{ id: id });
+    let result = await apiManager('brands', 'delete', { id: id });
     if (result) {
       onChangePage(searchObj);
     }
   }
+  const [copyOpen, setCopyOpen] = useState(false);
+  const [copyObj, setCopyObj] = useState({
+    sender_brand_id: 0,//카피할 브랜드
+    dns: '',//카피한 데이터를 받을 도메인
+    is_copy_brand_setting: 0,
+    is_copy_product: 0,
+    is_copy_post: 0,
+  })
+  const onCopyBrand = async () => {
+    setCopyLoading(true);
+    let result = await apiUtil('copy', 'update', copyObj);
+    if (result) {
+      toast.success('성공적으로 저장 되었습니다.');
+      window.location.reload();
+    }
+  }
   return (
     <>
+      <Dialog open={copyLoading}
+        onClose={() => {
+          setCopyLoading(false);
+        }}
+        PaperProps={{
+          style: {
+            background: 'transparent',
+            overflow: 'hidden'
+          }
+        }}
+      >
+        <CircularProgress />
+      </Dialog>
+      <Dialog
+        open={copyOpen}
+        onClose={() => {
+          setCopyOpen(false);
+          setCopyObj({});
+        }}
+      >
+        <DialogTitle>{`${copyObj?.sender_brand?.name} 브랜드 카피 (${copyObj?.sender_brand?.dns})`}</DialogTitle>
+
+        <DialogContent>
+          <DialogContentText>
+            카피한 데이터를 받을 브랜드 도메인을 입력해 주세요.
+          </DialogContentText>
+          <TextField
+            autoFocus
+            fullWidth
+            value={copyObj.dns}
+            margin="dense"
+            label="도메인"
+            onChange={(e) => {
+              setCopyObj({
+                ...copyObj,
+                dns: e.target.value
+              })
+            }}
+          />
+          <Col>
+            <FormControlLabel
+              label={<Typography style={{ fontSize: themeObj.font_size.size6 }}>도메인기본세팅 카피</Typography>}
+              control={<Checkbox checked={copyObj.is_copy_brand_setting == 1}
+                onChange={(e) => {
+                  if (e.target.checked) {
+                    setCopyObj({
+                      ...copyObj,
+                      is_copy_brand_setting: 1,
+                    })
+                  } else {
+                    setCopyObj({
+                      ...copyObj,
+                      is_copy_brand_setting: 0,
+                    })
+                  }
+                }} />} />
+            <FormControlLabel
+              label={<Typography style={{ fontSize: themeObj.font_size.size6 }}>상품정보 카피</Typography>}
+              control={<Checkbox checked={copyObj.is_copy_product == 1}
+                onChange={(e) => {
+                  if (e.target.checked) {
+                    setCopyObj({
+                      ...copyObj,
+                      is_copy_product: 1,
+                    })
+                  } else {
+                    setCopyObj({
+                      ...copyObj,
+                      is_copy_product: 0,
+                    })
+                  }
+                }} />} />
+            <FormControlLabel
+              label={<Typography style={{ fontSize: themeObj.font_size.size6 }}>게시글 카피</Typography>}
+              control={<Checkbox checked={copyObj.is_copy_post == 1}
+                onChange={(e) => {
+                  if (e.target.checked) {
+                    setCopyObj({
+                      ...copyObj,
+                      is_copy_post: 1,
+                    })
+                  } else {
+                    setCopyObj({
+                      ...copyObj,
+                      is_copy_post: 0,
+                    })
+                  }
+                }} />} />
+          </Col>
+        </DialogContent>
+        <DialogActions>
+          <Button variant="contained" onClick={() => {
+            setModal({
+              func: () => { onCopyBrand() },
+              icon: 'material-symbols:edit-outline',
+              title: '저장 하시겠습니까?'
+            })
+          }}>
+            저장
+          </Button>
+          <Button color="inherit" onClick={() => {
+            setCopyOpen(false);
+            setCopyObj({});
+          }}>
+            취소
+          </Button>
+        </DialogActions>
+      </Dialog>
       <Stack spacing={3}>
         <Card>
           <ManagerTable

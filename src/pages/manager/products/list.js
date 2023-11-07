@@ -130,6 +130,20 @@ const ProductList = () => {
       },
     },
     {
+      id: 'order_count',
+      label: '주문',
+      action: (row) => {
+        return commarNumber(row['order_count'])
+      }
+    },
+    {
+      id: 'review_count',
+      label: '리뷰',
+      action: (row) => {
+        return commarNumber(row['review_count'])
+      }
+    },
+    {
       id: 'created_at',
       label: '생성시간',
       action: (row) => {

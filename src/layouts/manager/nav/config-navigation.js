@@ -167,27 +167,31 @@ export const navConfig = () => {
           path: PATH_MANAGER.users.root,
           icon: ICONS.user,
           children: [
-            { title: '회원관리', path: PATH_MANAGER.users.list },
-            { title: '포인트관리', path: PATH_MANAGER.users.points },
+            ...(isManager() ? [
+              { title: '회원관리', path: PATH_MANAGER.users.list },
+              { title: '포인트관리', path: PATH_MANAGER.users.points },
+            ] : []),
             ...(themeDnsData?.is_use_seller > 0 ? [{ title: '셀러관리', path: PATH_MANAGER.users.sellers }] : []),
             // { title: '매출관리', path: PATH_MANAGER.users.sales },
           ],
         },
       ],
     },
-    {
-      items: [
-        {
-          title: '게시판관리',
-          path: PATH_MANAGER.articles.root,
-          icon: ICONS.calendar,
-          children: [
-            ...(isUsePostCategory() ? [{ title: '게시판 카테고리 관리', path: PATH_MANAGER.articles.categories }] : []),
-            ...postCategoryList
-          ],
-        },
-      ],
-    },
+    ...(isManager() ? [
+      {
+        items: [
+          {
+            title: '게시판관리',
+            path: PATH_MANAGER.articles.root,
+            icon: ICONS.calendar,
+            children: [
+              ...(isUsePostCategory() ? [{ title: '게시판 카테고리 관리', path: PATH_MANAGER.articles.categories }] : []),
+              ...postCategoryList
+            ],
+          },
+        ],
+      },
+    ] : []),
     ...(isManager() ? [
       {
         items: [

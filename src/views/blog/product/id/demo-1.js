@@ -138,7 +138,6 @@ const Demo1 = (props) => {
     })
     if (product) {
       product['images'] = [...[product?.product_img], ...product?.sub_images.map(item => { return item.product_sub_img })];
-
       setItem(product)
 
     }

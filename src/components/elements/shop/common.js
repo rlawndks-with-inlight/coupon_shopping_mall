@@ -25,40 +25,8 @@ import toast from "react-hot-toast";
 import { useAuthContext } from "src/layouts/manager/auth/useAuthContext";
 import { apiManager } from "src/utils/api";
 import { useModal } from "src/components/dialog/ModalProvider";
-const ItemName = styled.div`
-font-weight: bold;
-font-size:${themeObj.font_size.size7};
-word-break: break-all;
-`
-const ItemSubName = styled.div`
-margin-top:0.25rem;
-color:${themeObj.grey[500]};
-font-size:${themeObj.font_size.size8};
-word-break: break-all;
-`
-const ItemPrice = styled.div`
-margin-top:0.5rem;
-font-size:${themeObj.font_size.size7};
-display:flex;
-align-items:end;
-flex-wrap:wrap;
-`
-const ItemContainer = styled.div`
-width:100%;
-display:flex;
-cursor:pointer;
-transition: 0.5s;
-position: relative;
-&:hover{
-  transform: translateY(-8px);
-}
-`
-const ItemImg = styled.img`
-`
-const ItemTextContainer = styled.div`
-display:flex;
-flex-direction: column;
-`
+import { Item1, Seller1 } from "./demo-1";
+import { Item2, Seller2 } from "./demo-2";
 const ItemContainerNoneOpenMobile = styled.div`
 display:flex;
 flex-wrap:wrap;
@@ -76,83 +44,6 @@ display: none;
     display: block;
 }
 `
-export const Item = (props) => {
-
-  const { user } = useAuthContext();
-  const { themeWishData, onChangeWishData } = useSettingsContext();
-  const { item, router, theme_css, seller } = props;
-  const [itemThemeCss, setItemThemeCss] = useState(itemThemeCssDefaultSetting);
-  useEffect(() => {
-    if (theme_css) {
-      setItemThemeCss(theme_css)
-    }
-  }, [theme_css])
-  const onClickHeart = () => {
-    if (user) {
-      insertWishDataUtil(item, themeWishData, onChangeWishData);
-    } else {
-      toast.error('로그인을 해주세요.')
-    }
-  }
-  return (
-    <>
-      <ItemContainer style={{
-        padding: `${itemThemeCss?.container?.padding}%`,
-        columnGap: `0.5rem`,
-        rowGap: `0.5rem`,
-        flexDirection: `${itemThemeCss?.container.is_vertical == 0 ? 'column' : 'row'}`,
-        border: `${itemThemeCss?.container.border_width}px solid ${itemThemeCss?.container.border_color}`,
-        borderRadius: `${itemThemeCss?.container.border_radius}px`,
-        boxShadow: `${itemThemeCss?.shadow.x}px ${itemThemeCss?.shadow.y * (-1)}px ${itemThemeCss?.shadow.width}px ${itemThemeCss?.shadow.color}${itemThemeCss?.shadow.darkness > 9 ? '' : '0'}${itemThemeCss?.shadow.darkness}`
-      }}
-      >
-        <IconButton sx={{ position: 'absolute', right: '2px', top: '2px' }} onClick={onClickHeart}>
-          <Icon icon={themeWishData.map(itm => { return itm?.product_id }).includes(item?.id) ? 'mdi:heart' : 'mdi:heart-outline'} fontSize={'2rem'} style={{
-            color: `${themeWishData.map(itm => { return itm?.product_id }).includes(item?.id) ? 'red' : ''}`
-          }} />
-        </IconButton>
-        <ItemImg src={item.product_img} style={{
-          width: `${itemThemeCss?.container.is_vertical == 0 ? '100%' : '50%'}`,
-          height: `auto`,
-          borderRadius: `${itemThemeCss?.image.border_radius}px`,
-        }}
-          onClick={() => {
-            if (item?.id) {
-              router.push(`/shop/item/${item?.id}${seller ? `?seller_id=${seller?.id}` : ''}`)
-            }
-          }} >
-        </ItemImg>
-        <ItemTextContainer
-          onClick={() => {
-            if (item?.id) {
-              router.push(`/shop/item/${item?.id}${seller ? `?seller_id=${seller?.id}` : ''}`)
-            }
-          }}>
-          <ItemName>{item.product_name}</ItemName>
-          <ItemSubName>{item.product_comment}</ItemSubName>
-          <ItemPrice style={{
-            marginTop: 'auto'
-          }}>
-            {item.product_sale_price < item.product_price &&
-              <>
-                <div style={{ color: 'red', marginRight: '0.25rem' }}>
-                  {commarNumber((item.product_price - item.product_sale_price) * 100 / item.product_price) + '%'}
-                </div>
-              </>}
-            <div>{commarNumber(item.product_sale_price)} 원</div>
-            {item.product_sale_price < item.product_price &&
-              <>
-                <div style={{ textDecoration: 'line-through', marginLeft: '0.25rem', fontSize: themeObj.font_size.size7, color: themeObj.grey[500] }}>
-                  {item.product_sale_price < item.product_price ? commarNumber(item.product_price) : ''}
-                </div>
-              </>}
-          </ItemPrice>
-        </ItemTextContainer>
-      </ItemContainer>
-    </>
-  )
-}
-
 const ItemsContainer = styled.div`
 display:flex;
 flex-wrap:wrap;
@@ -175,43 +66,18 @@ width:${props => props.theme_css?.container?.is_vertical == 1 ? '32%' : '18.4%'}
   width:${props => props.theme_css?.container?.is_vertical == 1 ? '100%' : '49%'};
 }
 `
-const ItemContent = styled.div`
-display:flex;
-flex-direction:column;
-width:23.5%;
-cursor:pointer;
-@media (max-width:840px){
-    width:97%;
-    margin:0 auto;
-}
-`
-const SellerImg = styled.div`
-width:100%;
-height:199px;
-@media (max-width:840px){
-    height:41.75vw;
-}
-`
-const ItemText = styled.div`
-font-size:${themeObj.font_size.size8};
-margin-top:0.5rem;
-`
 export const Seller = (props) => {
-  const { item, router } = props;
+  const { themeDnsData } = useSettingsContext();
+  const { shop_demo_num = 0 } = themeDnsData;
+  const returnSellerCard = () => {
+    if (shop_demo_num == 1)
+      return <Seller1 {...props} />
+    else if (shop_demo_num == 2)
+      return <Seller2 {...props} />
+  }
   return (
     <>
-      <ItemContent onClick={() => {
-        router.push(`/shop/seller/${item.id}`)
-      }}>
-        <SellerImg style={{
-          backgroundImage: `url(${item?.profile_img})`,
-          backgroundSize: 'cover',
-          backgroundRepeat: 'no-repeat',
-          backgroundPosition: 'center'
-        }} />
-        <ItemText style={{ fontWeight: 'bold' }}>{item?.nickname}</ItemText>
-        <ItemText style={{ color: themeObj.grey[500] }}>{item?.seller_name}</ItemText>
-      </ItemContent>
+      {returnSellerCard()}
     </>
   )
 }
@@ -244,6 +110,21 @@ export const Sellers = (props) => {
           ))}
         </Slider>
       </SlideContainerOpenMobile>
+    </>
+  )
+}
+export const Item = (props) => {
+  const { themeDnsData } = useSettingsContext();
+  const { shop_demo_num = 0 } = themeDnsData;
+  const returnSellerCard = () => {
+    if (shop_demo_num == 1)
+      return <Item1 {...props} />
+    else if (shop_demo_num == 2)
+      return <Item2 {...props} />
+  }
+  return (
+    <>
+      {returnSellerCard()}
     </>
   )
 }

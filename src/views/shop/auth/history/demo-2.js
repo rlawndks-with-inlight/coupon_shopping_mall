@@ -1,3 +1,18 @@
-import Demo1 from "./demo-1";
+import styled from "styled-components";
 
-export default Demo1;
+const Demo2 = (props) => {
+  const {
+    data: {
+
+    },
+    func: {
+      router
+    },
+  } = props;
+  return (
+    <>
+
+    </>
+  )
+}
+export default Demo2

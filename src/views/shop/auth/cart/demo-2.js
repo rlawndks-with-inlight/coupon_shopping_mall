@@ -33,7 +33,7 @@ const Demo2 = (props) => {
     <>
       <Wrappers>
        
-      </Wrappers >
+      </Wrappers>
     </>
   )
 }

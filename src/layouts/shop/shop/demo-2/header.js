@@ -32,17 +32,17 @@ padding-bottom: 0.5rem;
 const TopMenuContainer = styled.div`
 display:flex;
 padding: 1rem 0;
-max-width: 1100px;
+max-width: 1600px;
 width:90%;
 margin: 0 auto;
 align-items:center;
 position:relative;
-@media (max-width:1000px) {
+@media (max-width:1600px) {
   padding: 0.5rem 0;
 }
 `
 const CategoryContainer = styled.div`
-max-width: 1122px;
+max-width: 1600px;
 width:100%;
 margin: 0 auto;
 display:flex;

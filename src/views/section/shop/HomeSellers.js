@@ -29,7 +29,7 @@ const HomeSellers = (props) => {
                             </>}
                     </>}
                 <div style={{ marginTop: '1rem' }} />
-                <Sellers sellers={column?.list ?? []} router={router} />
+                <Sellers sellers={[...column?.list ?? [],...column?.list ?? [],...column?.list ?? []]} router={router} />
             </Wrappers>
         </>
     )

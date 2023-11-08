@@ -13,6 +13,7 @@ import { useModal } from "src/components/dialog/ModalProvider";
 import { useAuthContext } from "src/layouts/manager/auth/useAuthContext";
 import ReactQuillComponent from "src/views/manager/react-quill";
 import { apiManager } from "src/utils/api";
+import { BLOG_DEMO_DATA, DEMO_DATA, SHOP_DEMO_DATA } from "src/data/data";
 
 const KakaoWrappers = styled.div`
 width:100%;
@@ -508,12 +509,8 @@ const DefaultSetting = () => {
                           )
                         }}>
                           <MenuItem value={0}>사용안함</MenuItem>
-                          {[
-                            1,// 일반 쇼핑몰 및 더미쇼핑몰에 특화
-                            2,//   
-                            3,// 여행사 솔루션에 특화
-                          ].map((num, idx) => {
-                            return <MenuItem value={num}>데모 {num}</MenuItem>
+                          {SHOP_DEMO_DATA.map((item, idx) => {
+                            return <MenuItem value={item.value}>{item.title}</MenuItem>
                           })}
                         </Select>
                       </FormControl>
@@ -531,12 +528,8 @@ const DefaultSetting = () => {
                           )
                         }}>
                           <MenuItem value={0}>사용안함</MenuItem>
-                          {[
-                            1,
-                            2,
-                            3,
-                          ].map((num, idx) => {
-                            return <MenuItem value={num}>데모 {num}</MenuItem>
+                          {BLOG_DEMO_DATA.map((item, idx) => {
+                            return <MenuItem value={item.value}>{item.title}</MenuItem>
                           })}
                         </Select>
                       </FormControl>

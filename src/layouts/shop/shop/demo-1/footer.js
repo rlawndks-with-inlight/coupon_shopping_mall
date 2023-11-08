@@ -5,7 +5,7 @@ import styled from "styled-components"
 const Wrapper = styled.footer`
 width:100%;
 padding: 3rem 0 3rem 0;
-margin-top:auto;
+margin-top: auto;
 `
 const ContentWrapper = styled.div`
 display:flex;
@@ -46,6 +46,7 @@ const Footer = (props) => {
   } = themeDnsData;
   return (
     <>
+      <div style={{marginTop:'2rem'}}/>
       <Wrapper style={{ background: `${theme.palette.mode == 'dark' ? '' : theme.palette.grey[200]}` }}>
         <ContentWrapper>
           <Row style={{ flexWrap: 'wrap' }}>

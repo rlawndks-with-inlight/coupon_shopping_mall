@@ -1,26 +1,26 @@
 server {
 listen 80;
-server_name www.purplevery.co.kr
+server_name xn--om2b15wpog.com
 root html;
 
 
 location / {
-        return 301 https://www.purplevery.co.kr$request_uri;
+        return 301 https://xn--om2b15wpog.com$request_uri;
     }
 }
 
 server {
 
     listen       443 ssl;
-    server_name  www.purplevery.co.kr;
+    server_name  xn--om2b15wpog.com;
     
     client_max_body_size 256M;
     
-    ssl_certificate     /etc/letsencrypt/live/www.purplevery.co.kr/fullchain.pem;
-    ssl_certificate_key /etc/letsencrypt/live/www.purplevery.co.kr/privkey.pem;
+    ssl_certificate     /etc/letsencrypt/live/xn--om2b15wpog.com/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/xn--om2b15wpog.com/privkey.pem;
 
     location / {
-       proxy_pass http://www.purplevery.co.kr:3000;
+       proxy_pass http://xn--om2b15wpog.com:3000;
 
     }
  
@@ -29,7 +29,7 @@ server {
     }
 }
 
-//  sudo certbot --nginx -d www.purplevery.co.kr
+//  sudo certbot --nginx -d xn--om2b15wpog.com
 
 //purplevery23.cafe24.com 프론트서버
 //purplevery22.cafe24.com 백엔드서버

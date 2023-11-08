@@ -32,7 +32,9 @@ const ProductList = () => {
       label: '상품이미지',
       action: (row) => {
         if (row['product_img']) {
-          return <LazyLoadImage src={row['product_img'] ?? "---"} style={{ height: '84px', width: 'auto' }} />
+          return <div style={{ minWidth: '100px' }}>
+            <LazyLoadImage src={row['product_img'] ?? "---"} style={{ height: '84px', width: 'auto' }} />
+          </div>
         } else {
           return "---";
         }

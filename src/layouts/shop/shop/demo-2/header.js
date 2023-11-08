@@ -1,12 +1,11 @@
-import Logo from "src/components/logo/Logo"
+
 import styled from "styled-components"
 import { IconButton, TextField, InputAdornment, Drawer, Button, Chip, Dialog } from "@mui/material"
 import { forwardRef, useEffect, useState } from "react"
 import { Icon } from "@iconify/react"
-import { Row, themeObj } from 'src/components/elements/styled-components'
+import { Col, Row, Title, themeObj } from 'src/components/elements/styled-components'
 import { useTheme } from '@mui/material/styles';
 import { useSettingsContext } from "src/components/settings"
-import { test_categories } from "src/data/test-data"
 import { useRouter } from "next/router"
 import { TreeItem, TreeView } from "@mui/lab"
 import { getAllIdsWithParents } from "src/utils/function"
@@ -14,6 +13,7 @@ import DialogSearch from "src/components/dialog/DialogSearch"
 import { useAuthContext } from "src/layouts/manager/auth/useAuthContext"
 import { logoSrc } from "src/data/data"
 import Slider from "react-slick"
+import { useRef } from "react"
 
 const Wrappers = styled.header`
 width: 100%;
@@ -42,8 +42,8 @@ position:relative;
 }
 `
 const CategoryContainer = styled.div`
-max-width: 1600px;
-width:100%;
+max-width: 1500px;
+width:90%;
 margin: 0 auto;
 display:flex;
 align-items:center;
@@ -51,17 +51,19 @@ position:relative;
 `
 const CategoryMenuContainer = styled.div`
 position:relative;
+transition: 0.5s;
+
 &:hover{
   color:#fff;
   background: ${props => props.theme?.palette?.primary?.main};
 }
 `
 const CategoryMenu = styled.div`
-padding:1rem 1.5rem;
+padding:0.25rem;
 text-align: center;
 display:inline-block;
 text-transform:uppercase;
-margin:0;
+margin:0 0.25rem;
 cursor:pointer;
 font-weight:bold;
 position:relative;
@@ -69,10 +71,9 @@ font-size:${themeObj.font_size.size7};
 color:${props => props.is_page_category == 1 ? (props => props.theme?.palette?.primary?.main) : ''};
 &:hover{
   color:#fff;
-  background: ${props => props.theme?.palette?.primary?.main};
 }
 @media (max-width:1000px) {
-  padding:0.5rem 1.5rem;
+  padding:0.5rem;
   &:hover{
     color:${props => props.theme?.palette?.primary?.main};
     background: ${props => props.themeMode == 'dark' ? '#000' : '#fff'};
@@ -95,7 +96,7 @@ align-items:center;
 }
 `
 const PaddingTop = styled.div`
-margin-top:186px;
+margin-top:${props => props.pcHeight}px;
 @media (max-width:1000px) {
   margin-top:96px;
 }
@@ -103,21 +104,23 @@ margin-top:186px;
 
 const DropDownMenuContainer = styled.div`
 position: absolute;
-top:56px;
+top:32px;
 z-index:10;
 left: 0px;
-display: none;
+visibility: hidden;
+opacity: 0;
 text-align:left;
 padding:0.5rem;
 background: ${props => props.theme.palette.primary.main};
+transition: 0.5s;
 .menu-${props => props.parentId}:hover & {
-  display: flex;
+  visibility: visible;
+  opacity: 1;
 }
 `
 const DropDownMenu = styled.div`
 width:136px;
 padding:0.25rem;
-transition-duration:0.5s;
 display:flex;
 justify-content:space-between;
 position: relative;
@@ -170,6 +173,20 @@ cursor: pointer;
   height:auto;
 }
 `
+const DialogMenuTitle = styled.div`
+color:#fff;
+border-bottom: 1px solid #fff;
+padding: 0.5rem;
+font-size: 2rem;
+font-weight: bold;
+`
+const DialogMenuContent = styled.div`
+color:#fff;
+cursor: pointer;
+width: 15%;
+font-weight: bold;
+padding: 1rem;
+`
 const ranking_text_list = [
   '티셔츠',
   '바지',
@@ -183,6 +200,10 @@ const authList = [
   {
     name: '찜목록',
     link_key: 'wish'
+  },
+  {
+    name: '포인트내역',
+    link_key: 'point'
   },
   {
     name: '주문내역',
@@ -211,13 +232,15 @@ const Header = () => {
 
   const router = useRouter();
   const theme = useTheme();
-  const { themeMode, onToggleMode, onChangeCategoryList } = useSettingsContext();
+  const { themeMode, onToggleMode, onChangeCartData, onChangeWishData, themePostCategoryList, themeCategoryList } = useSettingsContext();
   const { user, logout } = useAuthContext();
   const [keyword, setKeyword] = useState("");
   const onSearch = () => {
     router.push(`/shop/search?keyword=${keyword}`)
   }
-  const [isAuthMenuOver, setIsAuthMenuOver] = useState(false)
+  const menuButtonRef = useRef();
+  const headerWrappersRef = useRef();
+  const [headerHeight, setHeaderHeight] = useState(130);
   const [hoverItems, setHoverItems] = useState({
 
   })
@@ -225,14 +248,23 @@ const Header = () => {
   const [sideMenuOpen, setSideMenuOpen] = useState(false);
   const [categories, setCategories] = useState([])
   const [loading, setLoading] = useState(true);
+  const [menuButtonLocation, setMenuButtonLocation] = useState({
+    top: 0,
+    left: 0
+  })
   useEffect(() => {
-  }, [user])
+    setHeaderHeight(headerWrappersRef.current?.clientHeight ?? 130);
+    console.log(menuButtonRef.current?.getBoundingClientRect())
+    let getBoundingClientRect = menuButtonRef.current?.getBoundingClientRect();
+    setMenuButtonLocation({
+      top: getBoundingClientRect?.top ?? 0,
+      left: getBoundingClientRect?.left ?? 0,
+    });
+  }, [headerWrappersRef.current, categories, menuButtonRef.current])
   useEffect(() => {
     setLoading(true);
-    let data = [...test_categories];
-    onChangeCategoryList(data);
-    setCategories(data);
-    let hover_list = getAllIdsWithParents(data);
+    setCategories(themeCategoryList[0]?.product_categories ?? []);
+    let hover_list = getAllIdsWithParents(themeCategoryList[0]?.product_categories ?? []);
     let hover_items = {};
     for (var i = 0; i < hover_list.length; i++) {
       hover_list[i] = hover_list[i].join('_');
@@ -310,6 +342,8 @@ const Header = () => {
   }
   const onLogout = async () => {
     let result = await logout();
+    onChangeCartData([]);
+    onChangeWishData([]);
     if (result) {
       router.push('/shop/auth/login');
     }
@@ -349,6 +383,7 @@ const Header = () => {
           <Wrappers style={{
             background: `${themeMode == 'dark' ? '#000' : '#fff'}`
           }}
+            ref={headerWrappersRef}
           >
             <NoneShowMobile style={{ borderBottom: `1px solid ${theme.palette.grey[300]}` }}>
               <TopMenuContainer style={{ padding: '0.5rem 0' }}>
@@ -364,7 +399,7 @@ const Header = () => {
                     :
                     <>
                       <Button sx={{ height: '24px' }} onClick={() => router.push('/shop/auth/sign-up')}>회원가입</Button>
-                      <Button sx={{ height: '24px' }} onClick={() => router.push('/shop/service/notice')}>고객센터</Button>
+                      <Button sx={{ height: '24px' }} onClick={() => router.push(`/shop/service/${themePostCategoryList[0]?.id}`)}>고객센터</Button>
                       <Button variant="outlined" sx={{ height: '24px' }} onClick={() => router.push('/shop/auth/login')}>로그인</Button>
                     </>}
                 </Row>
@@ -377,6 +412,7 @@ const Header = () => {
                   onClick={() => setSideMenuOpen(true)}
                 >
                   <Icon icon={'iconamoon:menu-burger-horizontal-thin'} fontSize={'1.9rem'} color={themeMode == 'dark' ? '#fff' : '#000'} />
+
                 </IconButton>
                 <IconButton
                   sx={iconButtonStyle}
@@ -506,38 +542,27 @@ const Header = () => {
             <CategoryContainer>
               <NoneShowMobile>
                 <IconButton
+                  ref={menuButtonRef}
                   onClick={() => setDialogMenuOpen(true)}
                   sx={{ marginRight: '1rem' }}
                 >
                   <Icon icon={'oi:menu'} fontSize={'2rem'} color={themeMode == 'dark' ? '#fff' : '#000'} />
                 </IconButton>
               </NoneShowMobile>
-              <NoneShowMobile style={{ justifyContent: 'space-between', width: '100%' }}>
-                {categories.map((item1, idx1) => (
+              <NoneShowMobile style={{ width: '100%', flexWrap: 'wrap' }}>
+                {categories && categories.map((item1, idx1) => (
                   <>
                     <CategoryMenuContainer
                       theme={theme}
                       className={`menu-${item1?.id}`}
-                      style={{
-                        borderTopRightRadius: '8px',
-                        borderTopLeftRadius: '8px',
-                        borderBottomRightRadius: `${item1?.children.length == 0 && '8px'}`,
-                        borderBottomLeftRadius: `${item1?.children.length == 0 && '8px'}`,
-                      }}
                     >
                       <CategoryMenu
                         theme={theme}
                         is_page_category={isPageCategory(item1?.id) ? 1 : 0}
-                        style={{
-                          borderTopRightRadius: '8px',
-                          borderTopLeftRadius: '8px',
-                          borderBottomRightRadius: `${item1?.children.length == 0 && '8px'}`,
-                          borderBottomLeftRadius: `${item1?.children.length == 0 && '8px'}`,
-                        }}
                         onClick={() => {
                           router.push(`/shop/items?category_id0=${item1?.id}&depth=0`)
                         }}>
-                        <div>{item1.category_name}</div>
+                        {item1.category_name}
                       </CategoryMenu>
                       {item1?.children.length > 0 &&
                         <>
@@ -597,7 +622,7 @@ const Header = () => {
             </CategoryContainer>
           </Wrappers>
         </>}
-      <PaddingTop />
+      <PaddingTop pcHeight={headerHeight} />
 
       <Dialog
         open={dialogMenuOpen}
@@ -606,15 +631,83 @@ const Header = () => {
         }}
         BackdropProps={{
           style: {
-            background: `${theme.palette.primary.main}dd`
+            background: `${theme.palette.primary.main}dd`,
+
           }
         }}
         PaperProps={{
           style: {
-            background: 'transparent'
+            background: 'transparent',
+            maxWidth: '1150px',
+            overflow: 'hidden',
+            boxShadow: 'none',
+            borderRadius: 'none',
           }
         }}
       >
+        <div style={{ ...menuButtonLocation, position: 'fixed', cursor: 'pointer' }} onClick={() => {
+          setDialogMenuOpen(false);
+        }}>
+          <Icon icon={'mdi:close-box'} style={{ fontSize: '50px', color: '#fff' }} />
+        </div>
+        <Col style={{ width: '90vw', background: 'transparent', maxHeight: '55vh', overflowY: 'auto' }} className="none-scroll">
+          {themeCategoryList.map((group, index) => (
+            <>
+              <DialogMenuTitle>{group?.category_group_name}</DialogMenuTitle>
+              <Row style={{ flexWrap: 'wrap', padding: '0.5rem', columnGap: '1rem', rowGap: '1rem' }}>
+                {group?.product_categories && group?.product_categories.map((category) => (
+                  <>
+                    <DialogMenuContent onClick={() => {
+                      router.push(`/shop/items?category_id${index}=${category?.id}&depth=0`);
+                      setDialogMenuOpen(false);
+                    }}>{category?.category_name}</DialogMenuContent>
+                  </>
+                ))}
+              </Row>
+            </>
+          ))}
+          <DialogMenuTitle style={{ marginTop: '1rem' }}>고객센터</DialogMenuTitle>
+          <Row style={{ flexWrap: 'wrap', padding: '0.5rem', columnGap: '1rem', rowGap: '1rem' }}>
+            {themePostCategoryList.map((item, idx) => (
+              <>
+                <DialogMenuContent onClick={() => {
+                  router.push(`/shop/service/${item.id}`);
+                  setDialogMenuOpen(false);
+                }}>{item?.post_category_title}</DialogMenuContent>
+              </>
+            ))}
+          </Row>
+          <DialogMenuTitle style={{ marginTop: '1rem' }}>마이페이지</DialogMenuTitle>
+          <Row style={{ flexWrap: 'wrap', padding: '0.5rem', columnGap: '1rem', rowGap: '1rem' }}>
+            {user ?
+              <>
+                {authList.map((item, idx) => (
+                  <>
+                    <DialogMenuContent onClick={() => {
+                      router.push(`/shop/auth/${item.link_key}`);
+                      setDialogMenuOpen(false);
+                    }}>{item.name}</DialogMenuContent>
+                  </>
+                ))}
+                <DialogMenuContent onClick={() => {
+                  onLogout();
+                  setDialogMenuOpen(false);
+                }} >로그아웃</DialogMenuContent>
+              </>
+              :
+              <>
+                {noneAuthList.map((item, idx) => (
+                  <>
+                    <DialogMenuContent onClick={() => {
+                      router.push(`/shop/auth/${item.link_key}`);
+                      setDialogMenuOpen(false);
+                    }}>{item?.name}</DialogMenuContent>
+                  </>
+                ))}
+              </>}
+
+          </Row>
+        </Col>
       </Dialog>
       <Drawer
         anchor={'left'}
@@ -646,23 +739,14 @@ const Header = () => {
               </>
             ))}
           </TreeView>
-
+          {console.log(themePostCategoryList)}
           <ColumnMenuTitle>고객센터</ColumnMenuTitle>
-          {[
-            {
-              name: '공지사항',
-              link_key: 'notice'
-            },
-            {
-              name: 'FAQ',
-              link_key: 'faq'
-            },
-          ].map((item, idx) => (
+          {themePostCategoryList.map((item, idx) => (
             <>
               <ColumnMenuContent onClick={() => {
-                router.push(`/shop/service/${item.link_key}`);
+                router.push(`/shop/service/${item.id}`);
                 setSideMenuOpen(false);
-              }} style={{ paddingLeft: '1rem' }}>{item.name}</ColumnMenuContent>
+              }} style={{ paddingLeft: '1rem' }}>{item.post_category_title}</ColumnMenuContent>
             </>
           ))}
           <ColumnMenuTitle>마이페이지</ColumnMenuTitle>

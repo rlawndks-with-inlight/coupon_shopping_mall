@@ -3,6 +3,7 @@ import { Checkbox, TextField, Button, FormControl, InputLabel, Select, FormContr
 import { useAuthContext } from 'src/layouts/manager/auth/useAuthContext';
 import { useState } from 'react';
 import styled from 'styled-components'
+import { useSettingsContext } from 'src/components/settings';
 
 // 공지사항, faq 등 상세페이지 김인욱
 const Wrappers = styled.div`
@@ -34,6 +35,7 @@ const Demo1 = (props) => {
     },
   } = props;
 
+  const { onChangeCartData, onChangeWishData } = useSettingsContext();
   const { user, logout } = useAuthContext();
   const [buttonText, setButtonText] = useState("변경")
   const [checkboxObj, setCheckboxObj] = useState({
@@ -43,6 +45,8 @@ const Demo1 = (props) => {
 
   const onLogout = async () => {
     let user = await logout();
+    onChangeCartData([]);
+    onChangeWishData([]);
     if (user) {
       router.push('/blog/auth/my-page');
     }
@@ -130,16 +134,16 @@ const Demo1 = (props) => {
             >
             </Select>
           </FormControl>
-          <div style={{display:'flex', justifyContent:'flex-end'}}>
-          <Button
-            variant='contained'
-            style={{
-              marginTop: '1rem',
-              height: '56px',
-              width: '19%',
-              whiteSpace:'nowrap'
-            }}
-          >배송지<br />추가</Button>
+          <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+            <Button
+              variant='contained'
+              style={{
+                marginTop: '1rem',
+                height: '56px',
+                width: '19%',
+                whiteSpace: 'nowrap'
+              }}
+            >배송지<br />추가</Button>
           </div>
           <TextFieldTitle>마케팅 수신 동의</TextFieldTitle>
           <div style={{ display: 'flex' }}>

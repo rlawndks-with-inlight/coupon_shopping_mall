@@ -14,6 +14,7 @@ import { useSnackbar } from '../../../components/snackbar';
 import MenuPopover from '../../../components/menu-popover';
 import { IconButtonAnimate } from '../../../components/animate';
 import { getUserLevelByNumber } from 'src/utils/function';
+import { useSettingsContext } from 'src/components/settings';
 
 // ----------------------------------------------------------------------
 
@@ -34,7 +35,7 @@ export default function AccountPopover() {
   const { replace, push } = useRouter();
 
   const { user, logout } = useAuthContext();
-
+  const {onChangeCartData, onChangeWishData} = useSettingsContext();
   const { enqueueSnackbar } = useSnackbar();
 
   const [openPopover, setOpenPopover] = useState(null);
@@ -50,6 +51,8 @@ export default function AccountPopover() {
   const handleLogout = async () => {
     try {
       let result = await logout();
+      onChangeCartData([]);
+      onChangeWishData([]);
       replace('/manager/login');
       handleClosePopover();
     } catch (error) {

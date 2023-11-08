@@ -1,15 +1,16 @@
-import { useEffect } from "react";
-import { useState } from "react";
 import { useSettingsContext } from "src/components/settings";
 import { useAuthContext } from "src/layouts/manager/auth/useAuthContext";
 import { itemThemeCssDefaultSetting } from "src/views/manager/item-card/setting";
 import styled from "styled-components";
 import { themeObj } from "../styled-components";
-import { commarNumber } from "src/utils/function";
+import { useState } from "react";
+import { useEffect } from "react";
 import { IconButton } from "@mui/material";
 import { Icon } from "@iconify/react";
+import { commarNumber } from "src/utils/function";
 import { insertWishDataUtil } from "src/utils/shop-util";
 import toast from "react-hot-toast";
+import Slider from "react-slick";
 
 const ItemName = styled.div`
 font-weight: bold;
@@ -39,15 +40,37 @@ position: relative;
   transform: translateY(-8px);
 }
 `
-const ItemImg = styled.img`
+const ItemImgContainer = styled.div`
+position: relative;
+height: 300px;
+@media screen and (max-width: 1800px) {
+    height: 15vw;
+}
+@media screen and (max-width: 1150px) {
+    height: 25vw;
+}
+@media screen and (max-width: 850px) {
+    height: 42vw;
+}
+`
+const ItemImg = styled.div`
+height: 300px;
+@media screen and (max-width: 1800px) {
+    height: 15vw;
+}
+@media screen and (max-width: 1150px) {
+    height: 25vw;
+}
+@media screen and (max-width: 850px) {
+    height: 42vw;
+}
 `
 const ItemTextContainer = styled.div`
 display:flex;
 flex-direction: column;
 `
 
-export const Item1 = (props) => {//상품카드
-
+export const Item1 = (props) => {
     const { user } = useAuthContext();
     const { themeWishData, onChangeWishData } = useSettingsContext();
     const { item, router, theme_css, seller } = props;
@@ -76,22 +99,26 @@ export const Item1 = (props) => {//상품카드
                 boxShadow: `${itemThemeCss?.shadow.x}px ${itemThemeCss?.shadow.y * (-1)}px ${itemThemeCss?.shadow.width}px ${itemThemeCss?.shadow.color}${itemThemeCss?.shadow.darkness > 9 ? '' : '0'}${itemThemeCss?.shadow.darkness}`
             }}
             >
-                <IconButton sx={{ position: 'absolute', right: '2px', top: '2px' }} onClick={onClickHeart}>
-                    <Icon icon={themeWishData.map(itm => { return itm?.product_id }).includes(item?.id) ? 'mdi:heart' : 'mdi:heart-outline'} fontSize={'2rem'} style={{
-                        color: `${themeWishData.map(itm => { return itm?.product_id }).includes(item?.id) ? 'red' : ''}`
-                    }} />
-                </IconButton>
-                <ItemImg src={item.product_img} style={{
-                    width: `${itemThemeCss?.container.is_vertical == 0 ? '100%' : '50%'}`,
-                    height: `auto`,
-                    borderRadius: `${itemThemeCss?.image.border_radius}px`,
-                }}
-                    onClick={() => {
-                        if (item?.id) {
-                            router.push(`/shop/item/${item?.id}${seller ? `?seller_id=${seller?.id}` : ''}`)
-                        }
-                    }} >
-                </ItemImg>
+                <ItemImgContainer>
+                    <ItemImg style={{
+                        backgroundImage: `url(${item.product_img})`,
+                        backgroundSize: 'cover',
+                        backgroundPosition: 'center',
+                        width: `${itemThemeCss?.container.is_vertical == 0 ? '100%' : '50%'}`,
+                        borderRadius: `${itemThemeCss?.image.border_radius}px`,
+                    }}
+                        onClick={() => {
+                            if (item?.id) {
+                                router.push(`/shop/item/${item?.id}${seller ? `?seller_id=${seller?.id}` : ''}`)
+                            }
+                        }} >
+                    </ItemImg>
+                    <IconButton sx={{ position: 'absolute', right: '2px', top: '2px' }} onClick={onClickHeart}>
+                        <Icon icon={themeWishData.map(itm => { return itm?.product_id }).includes(item?.id) ? 'mdi:heart' : 'mdi:heart-outline'} fontSize={'2rem'} style={{
+                            color: `${themeWishData.map(itm => { return itm?.product_id }).includes(item?.id) ? 'red' : ''}`
+                        }} />
+                    </IconButton>
+                </ItemImgContainer>
                 <ItemTextContainer
                     onClick={() => {
                         if (item?.id) {
@@ -122,28 +149,15 @@ export const Item1 = (props) => {//상품카드
         </>
     )
 }
-const ItemContent = styled.div`
-display:flex;
-flex-direction:column;
-width:23.5%;
-cursor:pointer;
-@media (max-width:1500px){
-    width:47%;
-    margin:0 auto;
-}
-@media (max-width:840px){
-    width:96%;
-    margin:0 auto;
-}
-`
-const SellerImg = styled.div`
+const SellerContainer = styled.div`
 width:100%;
-height:320px;
-@media (max-width:1500px){
-    height:36vw;
-}
-@media (max-width:840px){
-    height:40vw;
+display:flex;
+cursor:pointer;
+transition: 0.5s;
+position: relative;
+flex-direction: column;
+&:hover{
+  transform: translateY(-8px);
 }
 `
 const ItemText = styled.div`
@@ -152,20 +166,22 @@ margin-top:0.5rem;
 `
 export const Seller1 = (props) => {//셀러카드
     const { item, router } = props;
+
     return (
         <>
-            <ItemContent onClick={() => {
+            <SellerContainer onClick={() => {
                 router.push(`/shop/seller/${item.id}`)
             }}>
-                <SellerImg style={{
+                <ItemImg style={{
                     backgroundImage: `url(${item?.profile_img})`,
                     backgroundSize: 'cover',
                     backgroundRepeat: 'no-repeat',
-                    backgroundPosition: 'center'
+                    backgroundPosition: 'center',
+                    width: '100%'
                 }} />
                 <ItemText style={{ fontWeight: 'bold' }}>{item?.nickname}</ItemText>
                 <ItemText style={{ color: themeObj.grey[500] }}>{item?.seller_name}</ItemText>
-            </ItemContent>
+            </SellerContainer>
         </>
     )
 }

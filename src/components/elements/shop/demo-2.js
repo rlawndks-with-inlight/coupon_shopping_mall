@@ -10,6 +10,8 @@ import { Icon } from "@iconify/react";
 import { commarNumber } from "src/utils/function";
 import { insertWishDataUtil } from "src/utils/shop-util";
 import toast from "react-hot-toast";
+import Slider from "react-slick";
+import { Seller1 } from "./demo-1";
 
 const ItemName = styled.div`
 font-weight: bold;
@@ -39,8 +41,20 @@ position: relative;
   transform: translateY(-8px);
 }
 `
-const ItemImg = styled.div`
+const ItemImgContainer = styled.div`
 position: relative;
+height: 300px;
+@media screen and (max-width: 1800px) {
+    height: 15vw;
+}
+@media screen and (max-width: 1150px) {
+    height: 25vw;
+}
+@media screen and (max-width: 850px) {
+    height: 42vw;
+}
+`
+const ItemImg = styled.div`
 height: 300px;
 @media screen and (max-width: 1800px) {
     height: 15vw;
@@ -62,6 +76,7 @@ export const Item2 = (props) => {
     const { themeWishData, onChangeWishData } = useSettingsContext();
     const { item, router, theme_css, seller } = props;
     const [itemThemeCss, setItemThemeCss] = useState(itemThemeCssDefaultSetting);
+    const images = [...[item?.product_img], ...(item?.sub_images ?? []).map(itm => { return itm.product_sub_img })]
     useEffect(() => {
         if (theme_css) {
             setItemThemeCss(theme_css)
@@ -73,6 +88,14 @@ export const Item2 = (props) => {
         } else {
             toast.error('로그인을 해주세요.')
         }
+    }
+    const item_img_setting = {
+        infinite: true,
+        speed: 500,
+        autoplay: true,
+        autoplaySpeed: 2500,
+        slidesToScroll: 1,
+        dots: false,
     }
     return (
         <>
@@ -86,25 +109,35 @@ export const Item2 = (props) => {
                 boxShadow: `${itemThemeCss?.shadow.x}px ${itemThemeCss?.shadow.y * (-1)}px ${itemThemeCss?.shadow.width}px ${itemThemeCss?.shadow.color}${itemThemeCss?.shadow.darkness > 9 ? '' : '0'}${itemThemeCss?.shadow.darkness}`
             }}
             >
+                <ItemImgContainer>
+                    <Slider {...item_img_setting}>
+                        {images.map(url => (
+                            <>
+                                <ItemImg style={{
+                                    backgroundImage: `url(${url})`,
+                                    backgroundSize: 'cover',
+                                    backgroundPosition: 'center',
+                                    width: `${itemThemeCss?.container.is_vertical == 0 ? '100%' : '50%'}`,
+                                    borderRadius: `${itemThemeCss?.image.border_radius}px`,
+                                }}
+                                    onClick={() => {
+                                        if (item?.id) {
+                                            router.push(`/shop/item/${item?.id}${seller ? `?seller_id=${seller?.id}` : ''}`)
+                                        }
+                                    }} >
+                                </ItemImg>
+                            </>
+                        ))}
 
-                <ItemImg style={{
-                    backgroundImage: `url(${item.product_img})`,
-                    backgroundSize:'cover',
-                    backgroundPosition:'center',
-                    width: `${itemThemeCss?.container.is_vertical == 0 ? '100%' : '50%'}`,
-                    borderRadius: `${itemThemeCss?.image.border_radius}px`,
-                }}
-                    onClick={() => {
-                        if (item?.id) {
-                            router.push(`/shop/item/${item?.id}${seller ? `?seller_id=${seller?.id}` : ''}`)
-                        }
-                    }} >
+
+                    </Slider>
+
                     <IconButton sx={{ position: 'absolute', right: '2px', bottom: '2px' }} onClick={onClickHeart}>
                         <Icon icon={themeWishData.map(itm => { return itm?.product_id }).includes(item?.id) ? 'mdi:heart' : 'mdi:heart-outline'} fontSize={'2rem'} style={{
                             color: `${themeWishData.map(itm => { return itm?.product_id }).includes(item?.id) ? 'red' : ''}`
                         }} />
                     </IconButton>
-                </ItemImg>
+                </ItemImgContainer>
                 <ItemTextContainer
                     onClick={() => {
                         if (item?.id) {
@@ -135,50 +168,12 @@ export const Item2 = (props) => {
         </>
     )
 }
-const ItemContent = styled.div`
-display:flex;
-flex-direction:column;
-width:23.5%;
-cursor:pointer;
-@media (max-width:1500px){
-    width:47%;
-    margin:0 auto;
-}
-@media (max-width:840px){
-    width:96%;
-    margin:0 auto;
-}
-`
-const SellerImg = styled.div`
-width:100%;
-height:320px;
-@media (max-width:1500px){
-    height:36vw;
-}
-@media (max-width:840px){
-    height:40vw;
-}
-`
-const ItemText = styled.div`
-font-size:${themeObj.font_size.size8};
-margin-top:0.5rem;
-`
+
 export const Seller2 = (props) => {//셀러카드
-    const { item, router } = props;
+
     return (
         <>
-            <ItemContent onClick={() => {
-                router.push(`/shop/seller/${item.id}`)
-            }}>
-                <SellerImg style={{
-                    backgroundImage: `url(${item?.profile_img})`,
-                    backgroundSize: 'cover',
-                    backgroundRepeat: 'no-repeat',
-                    backgroundPosition: 'center'
-                }} />
-                <ItemText style={{ fontWeight: 'bold' }}>{item?.nickname}</ItemText>
-                <ItemText style={{ color: themeObj.grey[500] }}>{item?.seller_name}</ItemText>
-            </ItemContent>
+           <Seller1 {...props}/>
         </>
     )
 }

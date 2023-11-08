@@ -1,6 +1,4 @@
 import styled from "styled-components";
-import { Row, themeObj } from "../styled-components";
-import { LazyLoadImage } from "react-lazy-load-image-component";
 import { commarNumber, getPointType } from "src/utils/function";
 import { itemThemeCssDefaultSetting } from "src/views/manager/item-card/setting";
 import { useEffect, useState } from "react";
@@ -16,7 +14,6 @@ import { Box, Card, Pagination, Table, TableBody, TableCell, TableContainer, Tab
 // components
 import { TableHeadCustom } from 'src/components/table';
 //
-import { test_items } from 'src/data/test-data';
 import Image from 'src/components/image/Image';
 import { fCurrency } from 'src/utils/formatNumber';
 import { getTrxStatusByNumber, makeMaxPage } from 'src/utils/function';
@@ -66,6 +63,16 @@ width:${props => props.theme_css?.container?.is_vertical == 1 ? '32%' : '18.4%'}
   width:${props => props.theme_css?.container?.is_vertical == 1 ? '100%' : '49%'};
 }
 `
+const SellerWrapper = styled.div`
+width:${props => props.theme_css?.container?.is_vertical == 1 ? '32%' : '18.4%'};
+@media (max-width: 1150px) {
+  width:${props => props.theme_css?.container?.is_vertical == 1 ? '49%' : '32%'};
+}
+@media (max-width: 850px) {
+  width:40%;
+}
+
+`
 export const Seller = (props) => {
   const { themeDnsData } = useSettingsContext();
   const { shop_demo_num = 0 } = themeDnsData;
@@ -94,22 +101,13 @@ export const Sellers = (props) => {
   }
   return (
     <>
-      <ItemContainerNoneOpenMobile>
-        {sellers && sellers.map((item, idx) => (
-          <>
-            <Seller item={item} router={router} />
-          </>
-        ))}
-      </ItemContainerNoneOpenMobile>
-      <SlideContainerOpenMobile>
-        <Slider {...item_list_setting}>
-          {sellers && sellers.map((item, idx) => (
-            <>
-              <Seller item={item} router={router} />
-            </>
-          ))}
-        </Slider>
-      </SlideContainerOpenMobile>
+    <ItemsContainer>
+            {sellers && sellers.map((item, idx) => {
+              return <ItemWrapper>
+                <Seller item={item} router={router} />
+              </ItemWrapper>
+            })}
+          </ItemsContainer>
     </>
   )
 }
@@ -138,14 +136,14 @@ export const Items = (props) => {
     }
   }, [themeDnsData])
   const getSlideToShow = () => {
-    if (window.innerWidth > 1350) {
+    if (window.innerWidth > 1150) {
       if (itemThemeCss?.container?.is_vertical == 1) {
         return 3
       } else {
         return 5
       }
     }
-    if (window.innerWidth > 1000) {
+    if (window.innerWidth > 850) {
       if (itemThemeCss?.container?.is_vertical == 1) {
         return 2
       } else {

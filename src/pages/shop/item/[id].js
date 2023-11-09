@@ -5,6 +5,10 @@ import { useSettingsContext } from "src/components/settings";
 import Demo1 from "src/views/shop/item/id/demo-1";
 import Demo2 from "src/views/shop/item/id/demo-2";
 import Demo3 from "src/views/shop/item/id/demo-3";
+import Demo4 from "src/views/shop/item/id/demo-4";
+import Demo5 from "src/views/shop/item/id/demo-5";
+import Demo6 from "src/views/shop/item/id/demo-6";
+import Demo7 from "src/views/shop/item/id/demo-7";
 
 const getDemo = (num, common) => {
 
@@ -14,6 +18,14 @@ const getDemo = (num, common) => {
     return <Demo2 {...common} />
   else if (num == 3)
     return <Demo3 {...common} />
+  else if (num == 4)
+    return <Demo4 {...common} />
+  else if (num == 5)
+    return <Demo5 {...common} />
+  else if (num == 6)
+    return <Demo6 {...common} />
+  else if (num == 7)
+    return <Demo7 {...common} />
 }
 const Item = () => {
   const router = useRouter();

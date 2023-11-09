@@ -1,8 +1,3 @@
-import { deleteLocalStorage, getLocalStorage } from "./local-storage";
-import { LOCALSTORAGE } from "src/data/data";
-import { t } from "i18next";
-import { toast } from "react-hot-toast";
-import { deleteCookie, getCookie } from "./react-cookie";
 
 export const objToQuery = (obj_) => {
   let obj = { ...obj_ };
@@ -292,18 +287,7 @@ export const useEditPageImg = (img_) => {
     return '';
   }
 }
-export const processCatch = async (err) => {
-  toast.error(err?.response?.data?.message || err?.message);
-  let push_link = '';
-  if (err?.response?.status == 401) {
-    await deleteLocalStorage(LOCALSTORAGE.USER_DATA);
-    push_link = `/${window.location.pathname.split('/')[1]}/login`;
-  }
-  if (err?.response?.status == 403) {
-    push_link = `/${window.location.pathname.split('/')[1]}/login`;
-  }
-  return push_link
-}
+
 
 export function base64toFile(base_data, filename) {
   var arr = base_data.split(','),
@@ -325,30 +309,7 @@ export const getBackgroundColor = (theme) => {
     return '#fff';
   }
 }
-export const handleLogout = async (router, link_) => {
-  let link = link_ ?? '/';
-  try {
-    const response = await axiosIns().post('/api/v1/auth/sign-out', {
-      headers: {
-        "Authorization": `Bearer ${getCookie('o')}`,
-        "Accept": "application/json",
-        "Content-Type": "application/json",
-      }
-    });
-    if (response?.status == 200) {
-      await deleteCookie('o');
-      await deleteLocalStorage(LOCALSTORAGE.USER_DATA);
-      router.push(link);
-    }
-  } catch (err) {
-    //toast.error(err?.response?.data?.message || err?.message);
-    if ([401, 403, 409].includes(err?.response?.status)) {
-      await deleteCookie('o');
-      await deleteLocalStorage(LOCALSTORAGE.USER_DATA);
-      router.push(link);
-    }
-  }
-}
+
 
 export function getLocation() {
   if (navigator.geolocation) {

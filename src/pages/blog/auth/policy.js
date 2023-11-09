@@ -3,9 +3,8 @@ import { useEffect } from "react";
 import styled from "styled-components";
 import { useRouter } from "next/router";
 import { themeObj } from "src/components/elements/styled-components";
-import { getLocalStorage } from "src/utils/local-storage";
-import { LOCALSTORAGE } from "src/data/data";
 import ShopLayout from "src/layouts/shop/ShopLayout";
+import { useSettingsContext } from "src/components/settings";
 const Wrappers = styled.div`
 display:flex;
 flex-direction:column;
@@ -20,7 +19,7 @@ margin: 1rem auto;
 `
 const Title = styled.div`
 font-weight:bold;
-font-size:${themeObj.font_size.size7};
+font-size:${themeObj.font_size.size4};
 margin-bottom:2rem;
 `
 const SubTitle = styled.div`
@@ -35,14 +34,12 @@ line-height:20px;
 `
 const Policy = (props) => {
   const { type } = props;
+  const {themeDnsData} = useSettingsContext();
   const router = useRouter();
   const [title, setTitle] = useState("");
-  const [dnsData, setDnsData] = useState({});
   useEffect(() => {
     try{
-      let dns_data = getLocalStorage(LOCALSTORAGE.DNS_DATA);
-      dns_data = JSON.parse(dns_data);
-      setDnsData(dns_data)
+     
       if (router.query?.type == 0) {
         setTitle("이용약관");
       } else if (router.query?.type == 1) {
@@ -68,7 +65,7 @@ const Policy = (props) => {
 
               <SubTitle>제 1 조 (목적)</SubTitle>
               <Text>
-                이 약관은 “{dnsData?.company_nm}“ (이하 회사라 칭함)가 제공하는 모든 서비스(이하 서비스라 칭함)의 이용조건 및 절차, 기타 필요한 사항을 규정함을 목적으로 합니다.
+                이 약관은 “{themeDnsData?.company_name}“ (이하 회사라 칭함)가 제공하는 모든 서비스(이하 서비스라 칭함)의 이용조건 및 절차, 기타 필요한 사항을 규정함을 목적으로 합니다.
               </Text>
 
               <SubTitle>제 2 조 (정의)</SubTitle>
@@ -233,7 +230,7 @@ const Policy = (props) => {
             <>
               <SubTitle></SubTitle>
               <Text>
-                {dnsData?.company_nm}(이하 ‘회사’라 한다)는 개인정보 보호법 제30조에 따라 정보 주체의 개인정보를 보호하고 이와 관련한 고충을 신속하고 원활하게 처리할 수 있도록 하기 위하여 다음과 같이 개인정보 처리지침을 수립, 공개합니다.
+                {themeDnsData?.company_name}(이하 ‘회사’라 한다)는 개인정보 보호법 제30조에 따라 정보 주체의 개인정보를 보호하고 이와 관련한 고충을 신속하고 원활하게 처리할 수 있도록 하기 위하여 다음과 같이 개인정보 처리지침을 수립, 공개합니다.
               </Text>
               <SubTitle>제1조 (개인정보의 처리목적)</SubTitle>
               <Text>
@@ -348,20 +345,20 @@ const Policy = (props) => {
               <Text>
                 저작권 정책<br />
 
-                {dnsData?.name}에서 발행되는 모든 콘텐츠는 저작권법에 의하여 보호받는 저작물로서 저작권은 {dnsData?.company_nm}에 있습니다.<br /><br />
+                {themeDnsData?.name}에서 발행되는 모든 콘텐츠는 저작권법에 의하여 보호받는 저작물로서 저작권은 {themeDnsData?.company_name}에 있습니다.<br /><br />
 
-                {dnsData?.name}({dnsData?.company_nm})의 허락 없이 콘텐츠에 대한 무단 복제 및 배포 등 저작권을 침해하는 행위를 금합니다.<br /><br />
+                {themeDnsData?.name}({themeDnsData?.company_name})의 허락 없이 콘텐츠에 대한 무단 복제 및 배포 등 저작권을 침해하는 행위를 금합니다.<br /><br />
 
-                {dnsData?.name}({dnsData?.company_nm})에서 발행하는 모든 콘텐츠를 무단으로 상업적으로 이용하거나 기타 영리 목적으로 이용할 경우 민법상 부당이득, 불법행위 등을 이유로 손해배상 책임을 질 수 있습니다.<br />
-                상업적 또는 기타 영리 목적 등으로 이용을 원할 경우 사전에 {dnsData?.name}({dnsData?.company_nm})와 별도 협의를 하거나 허락을 얻어야 하며, 협의 또는 허락을 얻어 자료의 내용을 게재하는 경우에도 출처가 {dnsData?.name}({dnsData?.company_nm})임을 반드시 밝혀야 합니다.<br /><br />
+                {themeDnsData?.name}({themeDnsData?.company_name})에서 발행하는 모든 콘텐츠를 무단으로 상업적으로 이용하거나 기타 영리 목적으로 이용할 경우 민법상 부당이득, 불법행위 등을 이유로 손해배상 책임을 질 수 있습니다.<br />
+                상업적 또는 기타 영리 목적 등으로 이용을 원할 경우 사전에 {themeDnsData?.name}({themeDnsData?.company_name})와 별도 협의를 하거나 허락을 얻어야 하며, 협의 또는 허락을 얻어 자료의 내용을 게재하는 경우에도 출처가 {themeDnsData?.name}({themeDnsData?.company_name})임을 반드시 밝혀야 합니다.<br /><br />
 
-                {dnsData?.name}({dnsData?.company_nm})에서 발행하는 모든 콘텐츠를 블로그, SNS, 개인용, 비상업용 등 공익, 비영리 목적에 이용할 경우에도 출처를 {dnsData?.name}({dnsData?.company_nm})로 명시하여야 합니다.<br /><br />
+                {themeDnsData?.name}({themeDnsData?.company_name})에서 발행하는 모든 콘텐츠를 블로그, SNS, 개인용, 비상업용 등 공익, 비영리 목적에 이용할 경우에도 출처를 {themeDnsData?.name}({themeDnsData?.company_name})로 명시하여야 합니다.<br /><br />
 
-                {dnsData?.name}({dnsData?.company_nm})의 콘텐츠를 적법한 절차에 따라 다른 인터넷 사이트에 게재하는 경우에도 내용의 무단 변경을 금지하며, 이를 위반할 때에는 형사처벌을 받을 수 있습니다.<br /><br />
+                {themeDnsData?.name}({themeDnsData?.company_name})의 콘텐츠를 적법한 절차에 따라 다른 인터넷 사이트에 게재하는 경우에도 내용의 무단 변경을 금지하며, 이를 위반할 때에는 형사처벌을 받을 수 있습니다.<br /><br />
 
                 위 내용은 저작권법 제123조(침해정지), 저작권법 제125조(손해배상청구)에 근거합니다.<br /><br />
 
-                저작권 관련 문의사항은 {dnsData?.phone_num}로 문의 바랍니다.<br />
+                저작권 관련 문의사항은 {themeDnsData?.phone_num}로 문의 바랍니다.<br />
               </Text>
             </>
             :

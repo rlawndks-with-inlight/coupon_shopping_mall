@@ -3,8 +3,6 @@ import { useEffect } from "react";
 import styled from "styled-components";
 import { useRouter } from "next/router";
 import { themeObj } from "src/components/elements/styled-components";
-import { getLocalStorage } from "src/utils/local-storage";
-import { LOCALSTORAGE } from "src/data/data";
 import ShopLayout from "src/layouts/shop/ShopLayout";
 import { useSettingsContext } from "src/components/settings";
 const Wrappers = styled.div`

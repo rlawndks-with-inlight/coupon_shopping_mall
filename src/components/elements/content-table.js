@@ -8,7 +8,6 @@ import { Button, CircularProgress, IconButton, Pagination } from "@mui/material"
 import { Icon } from "@iconify/react";
 import { motion } from "framer-motion";
 import { Col, Row, themeObj } from './styled-components';
-import { returnArticleCategory } from 'src/data/data';
 import { useRouter } from 'next/router';
 import { useSettingsContext } from '../settings';
 import { LazyLoadComponent, LazyLoadImage } from 'react-lazy-load-image-component';

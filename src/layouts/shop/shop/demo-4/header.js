@@ -1,6 +1,6 @@
 import Logo from "src/components/logo/Logo"
 import styled from "styled-components"
-import { IconButton, TextField, InputAdornment, Drawer, Badge } from "@mui/material"
+import { IconButton, TextField, InputAdornment, Drawer, Badge, Button } from "@mui/material"
 import { forwardRef, useEffect, useRef, useState } from "react"
 import { Icon } from "@iconify/react"
 import { Row, themeObj } from 'src/components/elements/styled-components'
@@ -428,6 +428,20 @@ const Header = () => {
                                         )
                                     }}
                                 />
+                                <Button variant="outlined"
+                                    sx={{marginRight:'0.5rem'}}
+                                    startIcon={<>
+                                        <Icon icon={'mdi:cart'} />
+                                    </>}
+                                >
+                                    매입센터
+                                </Button>
+                                <Button variant="outlined"
+                                    startIcon={<>
+                                        <Icon icon={'heroicons:paper-clip'} />
+                                    </>}>
+                                    위탁센터
+                                </Button>
                                 <IconButton
                                     sx={iconButtonStyle}
                                     onClick={() => {
@@ -589,7 +603,7 @@ const Header = () => {
                                         </>
                                         :
                                         <>
-                                        <div style={{width:'48px'}} />
+                                            <div style={{ width: '48px' }} />
                                         </>}
                                     <NoneShowMobile
                                         style={{
@@ -602,15 +616,15 @@ const Header = () => {
                                     >
                                         <IconButton style={{ position: 'absolute', left: '2.5rem' }} onClick={() => {
                                             $(`.pc-menu-content${index}`).animate({
-                                                scrollLeft:$(`.pc-menu-content${index}`).scrollLeft() - 500
-                                            },500)
+                                                scrollLeft: $(`.pc-menu-content${index}`).scrollLeft() - 800
+                                            }, 300)
                                         }}>
                                             <Icon icon='mingcute:left-line' color={themeMode == 'dark' ? '#fff' : '#000'} />
                                         </IconButton>
                                         <IconButton style={{ position: 'absolute', right: '2.5rem' }} onClick={() => {
-                                              $(`.pc-menu-content${index}`).animate({
-                                                scrollLeft:$(`.pc-menu-content${index}`).scrollLeft() + 500
-                                            },500)
+                                            $(`.pc-menu-content${index}`).animate({
+                                                scrollLeft: $(`.pc-menu-content${index}`).scrollLeft() + 800
+                                            }, 300)
                                         }}>
                                             <Icon icon='mingcute:right-line' color={themeMode == 'dark' ? '#fff' : '#000'} />
                                         </IconButton>
@@ -676,7 +690,6 @@ const Header = () => {
                                             </>
                                         ))}
                                         <CategoryMenu borderColor={themeMode == 'dark' ? '#fff' : '#000'} onClick={() => {
-
                                         }}>고객센터</CategoryMenu>
                                     </ShowMobile>
                                     <NoneShowMobile style={{
@@ -684,7 +697,6 @@ const Header = () => {
                                     }}>
                                     </NoneShowMobile>
                                 </CategoryContainer>
-
                             </>
                         ))}
                         <div style={{ borderBottom: `1px solid ${theme.palette.grey[300]}` }} />

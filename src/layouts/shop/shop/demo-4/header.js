@@ -92,9 +92,6 @@ align-items:center;
 `
 const PaddingTop = styled.div`
 margin-top:${props => props.pcHeight}px;
-@media (max-width:1000px) {
-  margin-top:99px;
-}
 `
 const AuthMenu = styled.div`
 padding:0 0.5rem;

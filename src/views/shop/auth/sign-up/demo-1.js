@@ -171,7 +171,7 @@ const Demo1 = (props) => {
       }
     }
     if (activeStep == 2) {
-      router.push('/shop');
+      router.push('/auth/login');
       return;
     }
     setActiveStep(activeStep + 1);

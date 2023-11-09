@@ -23,8 +23,9 @@ const HoverText = styled.div`
 padding:0 1rem;
 color:${themeObj.grey[500]};
 cursor:pointer;
+transition: 0.3s;
 &:hover{
-  color:${props => props.presetsColor?.main};
+  color:${props => props.themeDnsData?.theme_css?.main_color};
 }
 `
 const TABLE_HEAD = [
@@ -118,8 +119,8 @@ const Demo1 = (props) => {
           onClick={onLogin}
         >로그인</Button>
         <Row style={{ margin: '2rem auto' }}>
-          <HoverText style={{ borderRight: `1px solid ${themeObj.grey[300]}` }} presetsColor={presetsColor} onClick={() => { router.push(`/shop/auth/find-info?type=0`) }}>아이디 찾기</HoverText>
-          <HoverText presetsColor={presetsColor} onClick={() => { router.push(`/shop/auth/find-info?type=1`) }}>비밀번호 찾기</HoverText>
+          <HoverText style={{ borderRight: `1px solid ${themeObj.grey[300]}` }} themeDnsData={themeDnsData} onClick={() => { router.push(`/shop/auth/find-info?type=0`) }}>아이디 찾기</HoverText>
+          <HoverText themeDnsData={themeDnsData} onClick={() => { router.push(`/shop/auth/find-info?type=1`) }}>비밀번호 찾기</HoverText>
         </Row>
         <Col style={{ alignItems: 'center', margin: '2rem auto' }}>
           <div style={{ fontSize: themeObj.font_size.size4, marginBottom: '1rem' }}>아직 회원이 아니신가요?</div>

@@ -50,7 +50,6 @@ const Footer = (props) => {
       <Wrapper style={{ background: `${theme.palette.mode == 'dark' ? '' : theme.palette.grey[200]}` }}>
         <ContentWrapper>
           <Row style={{ flexWrap: 'wrap' }}>
-            <Bold style={{ marginRight: '1rem', cursor: 'pointer' }}>회사소개</Bold>
             <Bold style={{ marginRight: '1rem', cursor: 'pointer' }} onClick={() => { router.push('/shop/auth/policy?type=0') }}>서비스이용약관</Bold>
             <Bold style={{ cursor: 'pointer' }} onClick={() => { router.push('/shop/auth/policy?type=1') }}>개인정보처리방침</Bold>
           </Row>

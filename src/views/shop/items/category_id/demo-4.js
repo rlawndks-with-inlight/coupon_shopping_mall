@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Items } from "src/components/elements/shop/common";
 import { useSettingsContext } from "src/components/settings";
 import styled from "styled-components";
 
@@ -19,10 +20,6 @@ const Demo4 = (props) => {
       router
     },
   } = props;
-  const {
-    keyword,
-    
-  } = router.query;
   const { themeCategoryList, themeMode, themeDnsData } = useSettingsContext();
   const [products, setProducts] = useState([]);
   const [productContent, setProductContent] = useState({});
@@ -30,10 +27,12 @@ const Demo4 = (props) => {
     page: 1,
     page_size: 15,
   })
+
+
   return (
     <>
       <ContentWrapper>
-
+        <Items items={products} router={router} />
       </ContentWrapper>
     </>
   )

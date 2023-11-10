@@ -4,7 +4,7 @@ import styled from 'styled-components'
 import { Col, Row, Title, themeObj } from 'src/components/elements/styled-components';
 import { Item, Items } from 'src/components/elements/shop/common';
 import _ from 'lodash';
-import { Button, Divider, IconButton, InputAdornment, TextField } from '@mui/material';
+import { Button, CircularProgress, Divider, IconButton, InputAdornment, TextField } from '@mui/material';
 import { Icon } from '@iconify/react';
 import { useSettingsContext } from 'src/components/settings';
 import { useRef } from 'react';
@@ -31,16 +31,17 @@ const Demo1 = (props) => {
     },
   } = props;
 
-  const {themeDnsData} = useSettingsContext();
+  const { themeDnsData } = useSettingsContext();
   const [keyword, setKeyword] = useState("")
   const [products, setProducts] = useState([]);
+  const [productContent, setProductContent] = useState({});
   const [moreLoading, setMoreLoading] = useState(false);
   const [loading, setLoading] = useState(true);
   const scrollRef = useRef(null);
   const [searchObj, setSearchObj] = useState({
     page: 1,
     page_size: 15,
-    search:"",
+    search: "",
   })
   const handleScroll = () => {
     if (!scrollRef.current) {
@@ -69,12 +70,12 @@ const Demo1 = (props) => {
       }, true);
     }
   }, [router.query])
- const settingPage = async (search_obj, is_first) => {
+  const settingPage = async (search_obj, is_first) => {
     if (is_first) {
       setLoading(true);
       setProducts([]);
     }
-    let product_list = await apiShop('product', 'list',{
+    let product_list = await apiShop('product', 'list', {
       ...search_obj,
       brand_id: themeDnsData?.id,
     })
@@ -85,7 +86,7 @@ const Demo1 = (props) => {
     } else {
       setProducts([...products, ...product_list.content ?? []]);
     }
-
+    setProductContent(product_list);
   }
   useEffect(() => {
     if (products.length > 0) {
@@ -142,13 +143,13 @@ const Demo1 = (props) => {
         <div style={{
           marginTop: '1rem'
         }} />
-       {products ?
+        {products ?
           <>
             {loading ?
               <>
                 <Row style={{ width: '100%', height: '300px' }}>
                   <div style={{ margin: 'auto' }}>
-                    <Spinner sx={{ height: '72px', color: 'green' }} color={'red'} />
+                    <CircularProgress />
                   </div>
                 </Row>
               </>
@@ -168,11 +169,14 @@ const Demo1 = (props) => {
               </>}
             {moreLoading ?
               <>
-                <Row style={{ width: '100%' }}>
-                  <div style={{ margin: '0 auto' }}>
-                    <Spinner sx={{ height: '72px', color: 'green' }} color={'red'} />
-                  </div>
-                </Row>
+                {productContent?.total > products.length &&
+                  <>
+                    <Row style={{ width: '100%' }}>
+                      <div style={{ margin: '0 auto' }}>
+                        <CircularProgress />
+                      </div>
+                    </Row>
+                  </>}
               </>
               :
               <>

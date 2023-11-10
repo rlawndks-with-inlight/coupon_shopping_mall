@@ -17,30 +17,14 @@ import { TableHeadCustom } from 'src/components/table';
 import Image from 'src/components/image/Image';
 import { fCurrency } from 'src/utils/formatNumber';
 import { getTrxStatusByNumber, makeMaxPage } from 'src/utils/function';
-import { insertWishDataUtil } from "src/utils/shop-util";
 import toast from "react-hot-toast";
-import { useAuthContext } from "src/layouts/manager/auth/useAuthContext";
 import { apiManager } from "src/utils/api";
 import { useModal } from "src/components/dialog/ModalProvider";
 import { Item1, Seller1 } from "./demo-1";
 import { Item2, Seller2 } from "./demo-2";
-const ItemContainerNoneOpenMobile = styled.div`
-display:flex;
-flex-wrap:wrap;
-column-gap: 2%;
-row-gap: 1rem;
-margin:1rem 0 4rem 0;
-@media (max-width:840px){
-    display:none;
-}
-`
-const SlideContainerOpenMobile = styled.div`
-display: none;
-@media (max-width:840px){
-    margin:1rem 0 4rem 0;
-    display: block;
-}
-`
+import { Item3, Seller3 } from "./demo-3";
+import { Item4, Seller4 } from "./demo-4";
+
 const ItemsContainer = styled.div`
 display:flex;
 flex-wrap:wrap;
@@ -81,6 +65,10 @@ export const Seller = (props) => {
       return <Seller1 {...props} />
     else if (shop_demo_num == 2)
       return <Seller2 {...props} />
+    else if (shop_demo_num == 3)
+      return <Seller3 {...props} />
+    else if (shop_demo_num == 4)
+      return <Seller4 {...props} />
   }
   return (
     <>
@@ -101,13 +89,13 @@ export const Sellers = (props) => {
   }
   return (
     <>
-    <ItemsContainer>
-            {sellers && sellers.map((item, idx) => {
-              return <ItemWrapper>
-                <Seller item={item} router={router} />
-              </ItemWrapper>
-            })}
-          </ItemsContainer>
+      <ItemsContainer>
+        {sellers && sellers.map((item, idx) => {
+          return <ItemWrapper>
+            <Seller item={item} router={router} />
+          </ItemWrapper>
+        })}
+      </ItemsContainer>
     </>
   )
 }
@@ -119,6 +107,10 @@ export const Item = (props) => {
       return <Item1 {...props} />
     else if (shop_demo_num == 2)
       return <Item2 {...props} />
+    else if (shop_demo_num == 3)
+      return <Item3 {...props} />
+    else if (shop_demo_num == 4)
+      return <Item4 {...props} />
   }
   return (
     <>

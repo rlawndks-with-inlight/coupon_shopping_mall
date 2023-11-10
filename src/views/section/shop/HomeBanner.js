@@ -191,9 +191,15 @@ const HomeBanner = (props) => {
 
                                 <BannerImgContent
                                     iscurrentSlideIndex={currentSlideIndex == idx}
+                                    onClick={() => {
+                                        if (!is_manager && item?.link) {
+                                            window.location.href = item?.link;
+                                        }
+                                    }}
                                     style={{
                                         width: `${img_list.length >= 2 ? '' : '100vw'}`,
                                         backgroundImage: `url(${item.src})`,
+                                        cursor: `${item?.link ? 'pointer' : ''}`
                                     }}
                                 >
                                     {currentSlideIndex == idx &&
@@ -221,19 +227,6 @@ const HomeBanner = (props) => {
                                                         </SlideSubTitle>
                                                     </m.div>
                                                 }
-                                                {item?.link &&
-                                                    <m.div
-                                                        initial="hidden"
-                                                        animate="visible"
-                                                        variants={fadeInUpVariants}>
-                                                        <Button variant='outlined' onClick={() => {
-                                                            if (!is_manager) {
-                                                                window.location.href = item?.link;
-                                                            }
-                                                        }}>
-                                                            VIEW MORE
-                                                        </Button>
-                                                    </m.div>}
                                             </TextContainer>
                                         </>}
                                 </BannerImgContent>

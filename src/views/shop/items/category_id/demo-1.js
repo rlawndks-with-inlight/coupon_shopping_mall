@@ -8,7 +8,7 @@ import { Col, Row, RowMobileColumn, Title, themeObj } from 'src/components/eleme
 import { useSettingsContext } from 'src/components/settings';
 import { Item, Items } from 'src/components/elements/shop/common';
 import _ from 'lodash';
-import { Breadcrumbs, Button, Divider } from '@mui/material';
+import { Breadcrumbs, Button, CircularProgress, Divider } from '@mui/material';
 import { Icon } from '@iconify/react';
 import { Spinner } from 'evergreen-ui';
 import $ from 'jquery';
@@ -107,7 +107,7 @@ const Demo1 = (props) => {
       }
       setCurCategories(use_list);
     }
-    let product_list = await apiShop('product','list',{
+    let product_list = await apiShop('product', 'list', {
       ...search_obj,
       brand_id: themeDnsData?.id,
       ...router.query
@@ -186,7 +186,7 @@ const Demo1 = (props) => {
               <>
                 <Row style={{ width: '100%', height: '300px' }}>
                   <div style={{ margin: 'auto' }}>
-                    <Spinner sx={{ height: '72px', color: 'green' }} color={'red'} />
+                    <CircularProgress />
                   </div>
                 </Row>
               </>
@@ -206,16 +206,20 @@ const Demo1 = (props) => {
               </>}
             {moreLoading ?
               <>
-                <Row style={{ width: '100%' }}>
-                  <div style={{ margin: '0 auto' }}>
-                    <Spinner sx={{ height: '72px', color: 'green' }} color={'red'} />
-                  </div>
-                </Row>
+                {productContent?.total > products.length &&
+                  <>
+                    <Row style={{ width: '100%' }}>
+                      <div style={{ margin: '0 auto' }}>
+                        <CircularProgress />
+                      </div>
+                    </Row>
+                  </>}
+
               </>
               :
               <>
                 <Button className='more-page' onClick={() => {
-                  if(products.length < productContent?.total){
+                  if (products.length < productContent?.total) {
                     settingPage({
                       ...searchObj,
                       page: searchObj?.page + 1

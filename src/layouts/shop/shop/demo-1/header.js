@@ -9,7 +9,7 @@ import { useSettingsContext } from "src/components/settings"
 import { test_categories } from "src/data/test-data"
 import { useRouter } from "next/router"
 import { TreeItem, TreeView } from "@mui/lab"
-import { getAllIdsWithParents } from "src/utils/function"
+import { getAllIdsWithParents, returnMoment } from "src/utils/function"
 import DialogSearch from "src/components/dialog/DialogSearch"
 import { useAuthContext } from "src/layouts/manager/auth/useAuthContext"
 import { logoSrc } from "src/data/data"
@@ -17,7 +17,7 @@ import $ from 'jquery'
 import dynamic from 'next/dynamic';
 const ReactQuill = dynamic(() => import('react-quill'), {
   ssr: false,
-  loading: () => <p>Loading ...</p>,
+  loading: () => <p></p>,
 })
 const Wrappers = styled.header`
 width: 100%;
@@ -158,7 +158,7 @@ top:16px;
 left:0px;
 display:flex;
 flex-wrap:wrap;
-z-index:9999;
+z-index:20;
 `
 const PopupContent = styled.div`
 background:#fff;
@@ -216,7 +216,7 @@ const Header = () => {
 
   const router = useRouter();
   const theme = useTheme()
-  const { themeMode, onToggleMode, themeCategoryList, themeDnsData, themePopupList, themePostCategoryList, onChangePopupList, themeWishData, themeCartData, onChangeCartData, onChangeWishData, themeSellerList } = useSettingsContext();
+  const { themeMode, onToggleMode, themeCategoryList, themeDnsData, themePopupList, themeNoneTodayPopupList, onChangeNoneTodayPopupList, themePostCategoryList, onChangePopupList, themeWishData, themeCartData, onChangeCartData, onChangeWishData, themeSellerList } = useSettingsContext();
   const { user, logout } = useAuthContext();
   const headerWrappersRef = useRef();
   const [headerHeight, setHeaderHeight] = useState(130);
@@ -339,6 +339,9 @@ const Header = () => {
     onChangeWishData([]);
     router.push('/shop/auth/login');
   }
+  useEffect(() => {
+    console.log(themeNoneTodayPopupList)
+  }, [themeNoneTodayPopupList])
   return (
     <>
 
@@ -352,31 +355,42 @@ const Header = () => {
         </>
         :
         <>
-          {popups.length > 0 && router.asPath == '/shop' ?
+          {popups.length > 0 && router.asPath == '/shop/' ?
             <>
               <PopupContainer>
                 {popups && popups.map((item, idx) => (
                   <>
-                    { }
-                    <PopupContent>
-                      <Icon icon='ion:close' style={{ color: `${themeMode == 'dark' ? '#fff' : '#222'}`, position: 'absolute', right: '8px', top: '8px', fontSize: themeObj.font_size.size8, cursor: 'pointer' }} onClick={() => {
-                        let popup_list = [...popups];
-                        popup_list.splice(idx, 1);
-                        setPopups(popup_list);
-                      }} />
-                      <ReactQuill
-                        className='none-padding'
-                        value={item?.popup_content ?? `<body></body>`}
-                        readOnly={true}
-                        theme={"bubble"}
-                        bounds={'.app'}
-                      />
-                      <div style={{ display: 'flex', alignItems: 'center', position: 'absolute', left: '8px', bottom: '8px' }}>
-                        <Icon icon='ion:close' style={{ color: `${themeMode == 'dark' ? '#fff' : '#222'}`, fontSize: themeObj.font_size.size8, marginRight: '4px', cursor: 'pointer' }} onClick={() => { }} />
-                        <div style={{ fontSize: themeObj.font_size.size8, }}>오늘 하루 보지않기</div>
-                      </div>
-                    </PopupContent>
-
+                    {!(themeNoneTodayPopupList[`${returnMoment().substring(0, 10)}`] ?? []).includes(item?.id) &&
+                      <>
+                        <PopupContent>
+                          <Icon icon='ion:close' style={{ color: `${themeMode == 'dark' ? '#fff' : '#222'}`, position: 'absolute', right: '8px', top: '8px', fontSize: themeObj.font_size.size8, cursor: 'pointer' }} onClick={() => {
+                            let popup_list = [...popups];
+                            popup_list.splice(idx, 1);
+                            setPopups(popup_list);
+                          }} />
+                          <ReactQuill
+                            className='none-padding'
+                            value={item?.popup_content ?? `<body></body>`}
+                            readOnly={true}
+                            theme={"bubble"}
+                            bounds={'.app'}
+                          />
+                          <Row style={{ alignItems: 'center', position: 'absolute', left: '8px', bottom: '8px', cursor: 'pointer' }}
+                            onClick={() => {
+                              let none_today_popup_list = { ...themeNoneTodayPopupList };
+                              if (!none_today_popup_list[`${returnMoment().substring(0, 10)}`]) {
+                                none_today_popup_list[`${returnMoment().substring(0, 10)}`] = [];
+                              }
+                              none_today_popup_list[`${returnMoment().substring(0, 10)}`].push(item?.id);
+                              console.log(none_today_popup_list)
+                              onChangeNoneTodayPopupList(none_today_popup_list);
+                            }}
+                          >
+                            <Icon icon='ion:close' style={{ color: `${themeMode == 'dark' ? '#fff' : '#222'}`, fontSize: themeObj.font_size.size8, marginRight: '4px' }} onClick={() => { }} />
+                            <div style={{ fontSize: themeObj.font_size.size8, }}>오늘 하루 보지않기</div>
+                          </Row>
+                        </PopupContent>
+                      </>}
                   </>
                 ))}
               </PopupContainer>

@@ -47,6 +47,7 @@ const initialState = {
   onChangePostCategoryList: () => { },
   onChangeSellerList: () => { },
   onChangePopupList: () => { },
+  onChangeNoneTodayPopupList: () => { },
 };
 
 // ----------------------------------------------------------------------
@@ -81,6 +82,7 @@ export function SettingsProvider({ children }) {
   const [themeAuth, setThemeAuth] = useState(defaultSettings.themeAuth);
   const [themeCategoryList, setThemeCategoryList] = useState(defaultSettings.themeCategoryList);
   const [themePopupList, setThemePopupList] = useState(defaultSettings.themePopupList);
+  const [themeNoneTodayPopupList, setThemeNoneTodayPopupList] = useState(defaultSettings.themeNoneTodayPopupList);
   const [themePostCategoryList, setThemePostCategoryList] = useState(defaultSettings.themePostCategoryList);
   const [themeSellerList, setThemeSellerList] = useState(defaultSettings.themeSellerList);
   const isArabic = false;
@@ -103,6 +105,7 @@ export function SettingsProvider({ children }) {
       const currentPageObj = getCookie('themeCurrentPageObj') || defaultSettings.themeCurrentPageObj;
       const cartData = JSON.parse(getLocalStorage('themeCartData') ?? '[]') || defaultSettings.themeCartData;
       const wishData = JSON.parse(getLocalStorage('themeWishData') ?? '[]') || defaultSettings.themeWishData;
+      const noneTodayPopupData = JSON.parse(getLocalStorage('themeNoneTodayPopupList') ?? '{}') || defaultSettings.themeNoneTodayPopupList;
       //const auth = getCookie('themeAuth') || defaultSettings.themeAuth;
       //const categoryList = getCookie('themeCategoryList') || defaultSettings.themeCategoryList;
       setThemeMode(mode);
@@ -114,6 +117,7 @@ export function SettingsProvider({ children }) {
       setThemeCurrentPageObj(currentPageObj);
       setThemeCartData(cartData);
       setThemeWishData(wishData);
+      setThemeNoneTodayPopupList(noneTodayPopupData);
       getDnsData();
     }
   }, []);
@@ -126,13 +130,12 @@ export function SettingsProvider({ children }) {
       dns_data['is_use_seller'] = dns_data?.setting_obj?.is_use_seller || process.env?.IS_USE_SELLER || 0;
       let root_id = 1;
       dns_data['root_id'] = root_id;
-      let data = await apiShop('','get');
+      let data = await apiShop('', 'get');
 
-      dns_data['shop_obj'] = data?.shop_obj??[];
-      dns_data['blog_obj'] = data?.blog_obj??[];
+      dns_data['shop_obj'] = data?.shop_obj ?? [];
+      dns_data['blog_obj'] = data?.blog_obj ?? [];
       dns_data['payment_modules'] = data?.payment_modules ?? [];
       dns_data['products'] = data?.products ?? [];
-      
       onChangeWishData(data?.user_wishs ?? []);
       onChangeCategoryList(data?.product_category_groups ?? []);
       onChangePopupList(data?.popups ?? []);
@@ -225,10 +228,10 @@ export function SettingsProvider({ children }) {
     setLocalStorage('themeCartData', JSON.stringify(cart_data));
   }, [])
   // wish data
-  const onChangeWishData = useCallback( async (wish_data) => {
+  const onChangeWishData = useCallback(async (wish_data) => {
 
     setThemeWishData(wish_data);
-    
+
     setLocalStorage('themeWishData', JSON.stringify(wish_data));
   }, [])
   // current page
@@ -250,6 +253,11 @@ export function SettingsProvider({ children }) {
   const onChangePopupList = useCallback((data) => {
     setThemePopupList(data);
     setLocalStorage('themePopupList', JSON.stringify(data));
+  }, [])
+  // themeNoneTodayPopupList
+  const onChangeNoneTodayPopupList = useCallback((data) => {
+    setThemeNoneTodayPopupList(data);
+    setLocalStorage('themeNoneTodayPopupList', JSON.stringify(data));
   }, [])
   // postcategoryList
   const onChangePostCategoryList = useCallback((data) => {
@@ -276,6 +284,7 @@ export function SettingsProvider({ children }) {
     setThemeAuth(defaultSettings.themeAuth);
     setThemeCategoryList(defaultSettings.themeCategoryList);
     setThemePopupList(defaultSettings.themePopupList);
+    setThemeNoneTodayPopupList(defaultSettings.themeNoneTodayPopupList);
     setThemePostCategoryList(defaultSettings.themePostCategoryList);
     setThemeSellerList(defaultSettings.themeSellerList);
     removeCookie('themeMode');
@@ -291,6 +300,7 @@ export function SettingsProvider({ children }) {
     deleteLocalStorage('themeWishData')
     deleteLocalStorage('themeCategoryList')
     deleteLocalStorage('themePopupList')
+    deleteLocalStorage('themeNoneTodayPopupList')
     deleteLocalStorage('themePostCategoryList')
     deleteLocalStorage('themeSellerList')
   }, []);
@@ -342,6 +352,8 @@ export function SettingsProvider({ children }) {
       onChangeCategoryList,
       themePopupList,
       onChangePopupList,
+      themeNoneTodayPopupList,
+      onChangeNoneTodayPopupList,
       themePostCategoryList,
       onChangePostCategoryList,
       themeSellerList,
@@ -391,6 +403,8 @@ export function SettingsProvider({ children }) {
       onChangeCategoryList,
       themePopupList,
       onChangePopupList,
+      themeNoneTodayPopupList,
+      onChangeNoneTodayPopupList,
       themePostCategoryList,
       onChangePostCategoryList,
       themeSellerList,

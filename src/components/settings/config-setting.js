@@ -15,6 +15,7 @@ export const defaultSettings = {
   themeAuth: {},
   themeCategoryList: undefined, // 상품 카테고리
   themePopupList: [], // 팝업
+  themeNoneTodayPopupList: {}, // 팝업오늘안볼리스트
   themePostCategoryList: [], // 게시물 카테고리
   themeSellerList: [], // 셀러리스트
   themeProductList: [], // 메인페이지에 사용할 상품 리스트

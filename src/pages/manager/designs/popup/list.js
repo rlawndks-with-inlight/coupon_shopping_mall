@@ -17,12 +17,26 @@ const PopupList = () => {
         return row['popup_title'] ?? "---"
       }
     },
-   
+
     {
       id: 'status',
       label: '상태',
       action: (row) => {
         return row['status'] ?? "---"
+      }
+    },
+    {
+      id: 'open_s_dt',
+      label: '시작일',
+      action: (row) => {
+        return row['open_s_dt'] ?? "---"
+      }
+    },
+    {
+      id: 'open_e_dt',
+      label: '종료일',
+      action: (row) => {
+        return row['open_e_dt'] ?? "---"
       }
     },
     {
@@ -80,21 +94,21 @@ const PopupList = () => {
   const pageSetting = () => {
     let cols = defaultColumns;
     setColumns(cols)
-    onChangePage({...searchObj, page: 1,});
+    onChangePage({ ...searchObj, page: 1, });
   }
   const onChangePage = async (obj) => {
     setData({
       ...data,
       content: undefined
     });
-    let data_ = await apiManager('popups', 'list',obj);
+    let data_ = await apiManager('popups', 'list', obj);
     if (data_) {
       setData(data_);
     }
     setSearchObj(obj);
   }
   const deletePopup = async (id) => {
-    let result = await apiManager('popups', 'delete',{ id: id });
+    let result = await apiManager('popups', 'delete', { id: id });
     if (result) {
       onChangePage(searchObj);
     }

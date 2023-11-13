@@ -93,13 +93,12 @@ const TextContainer = styled.div`
 display:flex;
 flex-direction:column;
 position:absolute;
-right:8rem;
+${props => props.textStyle?.pc_style};
 top:12vw;
 z-index:10;
-align-items:end;
 row-gap:1rem;
 @media (max-width:1200px) {
-    right:4rem;
+    ${props => props.textStyle?.mobile_style};
     top:10vw;
     row-gap:0rem;
 }
@@ -176,6 +175,47 @@ const HomeBanner = (props) => {
             setArrowHeight(`${imageContainerRef.current?.clientHeight / 2 - 16}px`)
         }
     }, [imageContainerRef.current])
+
+    const getTextAlign = (item) => {
+        let pc_style = `
+        left: 8rem;
+        align-items:flex-start;
+        `;
+        let mobile_style = `
+        left: 4rem;
+        align-items:flex-start;
+        transform: translate(0, 0) !important;
+        `;
+        if (item?.pc_text_align == 'right') {
+            pc_style = `
+            right: 8rem;
+            align-items:end;
+            `
+        } else if (item?.pc_text_align == 'center') {
+            pc_style = `
+            left: 50%;
+            transform: translate(-50%, 0);
+            align-items:center;
+            `
+        }
+        if (item?.mobile_text_align == 'right') {
+            mobile_style = `
+            right: 4rem !important;
+            align-items:end;
+            transform: translate(0, 0) !important;
+            `
+        } else if (item?.mobile_text_align == 'center') {
+            mobile_style = `
+            left: 50% !important;
+            transform: translate(-50%, 0);
+            align-items:center;
+            `
+        }
+        return {
+            pc_style,
+            mobile_style,
+        }
+    }
     return (
         <>
             <FullWrappers style={{ marginTop: `${style?.margin_top}px` }}
@@ -204,7 +244,9 @@ const HomeBanner = (props) => {
                                 >
                                     {currentSlideIndex == idx &&
                                         <>
-                                            <TextContainer>
+                                            <TextContainer
+                                                textStyle={getTextAlign(item)}
+                                            >
                                                 {item?.title &&
 
                                                     <m.div

@@ -1,149 +1,195 @@
-import { Button, Card, Checkbox, CircularProgress, Container, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, FormControlLabel, IconButton, Stack, TextField, Typography } from "@mui/material";
-import { useEffect, useState } from "react";
-import ManagerLayout from "src/layouts/manager/ManagerLayout";
-import ManagerTable from "src/views/manager/mui/table/ManagerTable";
-import { Icon } from "@iconify/react";
-import { useRouter } from "next/router";
-import { LazyLoadImage } from "react-lazy-load-image-component";
-import { useModal } from "src/components/dialog/ModalProvider";
-import { useAuthContext } from "src/layouts/manager/auth/useAuthContext";
-import { apiManager, apiUtil } from "src/utils/api";
-import { Col, Row, themeObj } from "src/components/elements/styled-components";
-import toast from "react-hot-toast";
+import {
+  Button,
+  Card,
+  Checkbox,
+  CircularProgress,
+  Container,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
+  FormControlLabel,
+  IconButton,
+  Stack,
+  TextField,
+  Typography
+} from '@mui/material'
+import { useEffect, useState } from 'react'
+import ManagerLayout from 'src/layouts/manager/ManagerLayout'
+import ManagerTable from 'src/views/manager/mui/table/ManagerTable'
+import { Icon } from '@iconify/react'
+import { useRouter } from 'next/router'
+import { LazyLoadImage } from 'react-lazy-load-image-component'
+import { useModal } from 'src/components/dialog/ModalProvider'
+import { useAuthContext } from 'src/layouts/manager/auth/useAuthContext'
+import { apiManager, apiUtil } from 'src/utils/api'
+import { Col, Row, themeObj } from 'src/components/elements/styled-components'
+import toast from 'react-hot-toast'
 const BrandList = () => {
   const { setModal } = useModal()
-  const { user } = useAuthContext();
+  const { user } = useAuthContext()
   const defaultColumns = [
     {
       id: 'name',
       label: '쇼핑몰명',
-      action: (row) => {
-        return row['name'] ?? "---"
+      action: row => {
+        return row['name'] ?? '---'
       }
     },
     {
       id: 'dns',
       label: 'DNS',
-      action: (row) => {
-        return row['dns'] ?? "---"
+      action: row => {
+        return (
+          <div
+            style={{ cursor: 'pointer', color: 'blue' }}
+            onClick={() => {
+              window.open('https://' + row['dns'] ?? '---')
+            }}
+          >
+            {row['dns'] ?? '---'}
+          </div>
+        )
       }
     },
     {
       id: 'logo_img',
       label: 'LOGO',
-      action: (row) => {
+      action: row => {
         return <LazyLoadImage src={row['logo_img']} style={{ height: '56px' }} />
       }
     },
     {
       id: 'favicon_img',
       label: 'FAVICON',
-      action: (row) => {
+      action: row => {
         return <LazyLoadImage src={row['favicon_img']} style={{ height: '56px' }} />
       }
     },
     {
       id: 'company_name',
       label: '법인상호',
-      action: (row) => {
-        return row['company_name'] ?? "---"
+      action: row => {
+        return row['company_name'] ?? '---'
       }
     },
     {
       id: 'ceo_name',
       label: '대표자명',
-      action: (row) => {
-        return row['ceo_name'] ?? "---"
+      action: row => {
+        return row['ceo_name'] ?? '---'
       }
     },
     {
       id: 'business_num',
       label: '사업자번호',
-      action: (row) => {
-        return row['business_num'] ?? "---"
+      action: row => {
+        return row['business_num'] ?? '---'
       }
     },
     {
       id: 'created_at',
       label: '생성시간',
-      action: (row) => {
-        return row['created_at'] ?? "---"
+      action: row => {
+        return row['created_at'] ?? '---'
       }
     },
     {
       id: 'updated_at',
       label: '최종수정시간',
-      action: (row) => {
-        return row['updated_at'] ?? "---"
+      action: row => {
+        return row['updated_at'] ?? '---'
       }
     },
-    ...(user?.level >= 50 ? [{
-      id: 'cody_brand',
-      label: `브랜드카피`,
-      action: (row) => {
-        return (
-          <>
-            <IconButton>
-              <Icon icon='bi:copy' onClick={() => {
-                setCopyObj({
-                  sender_brand_id: row?.id,
-                  sender_brand: row,
-                })
-                setCopyOpen(true);
-              }} />
-            </IconButton>
-          </>
-        )
-      }
-    },] : []),
-    ...(user?.level >= 50 ? [{
-      id: 'main_edit',
-      label: `메인페이지 수정`,
-      action: (row) => {
-        return (
-          <>
-            <IconButton>
-              <Icon icon='material-symbols:edit-outline' onClick={() => {
-                router.push(`/manager/designs/main/${row?.id}`)
-              }} />
-            </IconButton>
-          </>
-        )
-      }
-    },] : []),
+    ...(user?.level >= 50
+      ? [
+          {
+            id: 'cody_brand',
+            label: `브랜드카피`,
+            action: row => {
+              return (
+                <>
+                  <IconButton>
+                    <Icon
+                      icon='bi:copy'
+                      onClick={() => {
+                        setCopyObj({
+                          sender_brand_id: row?.id,
+                          sender_brand: row
+                        })
+                        setCopyOpen(true)
+                      }}
+                    />
+                  </IconButton>
+                </>
+              )
+            }
+          }
+        ]
+      : []),
+    ...(user?.level >= 50
+      ? [
+          {
+            id: 'main_edit',
+            label: `메인페이지 수정`,
+            action: row => {
+              return (
+                <>
+                  <IconButton>
+                    <Icon
+                      icon='material-symbols:edit-outline'
+                      onClick={() => {
+                        router.push(`/manager/designs/main/${row?.id}`)
+                      }}
+                    />
+                  </IconButton>
+                </>
+              )
+            }
+          }
+        ]
+      : []),
     {
       id: 'edit',
       label: `수정${user?.level >= 50 ? '/삭제' : ''}`,
-      action: (row) => {
+      action: row => {
         return (
           <>
             <IconButton>
-              <Icon icon='material-symbols:edit-outline' onClick={() => {
-                router.push(`default/${row?.id}`)
-              }} />
+              <Icon
+                icon='material-symbols:edit-outline'
+                onClick={() => {
+                  router.push(`default/${row?.id}`)
+                }}
+              />
             </IconButton>
-            {user?.level >= 50 &&
+            {user?.level >= 50 && (
               <>
-                <IconButton onClick={() => {
-                  setModal({
-                    func: () => { deleteBrand(row?.id) },
-                    icon: 'material-symbols:delete-outline',
-                    title: '정말 삭제하시겠습니까?'
-                  })
-                }}>
+                <IconButton
+                  onClick={() => {
+                    setModal({
+                      func: () => {
+                        deleteBrand(row?.id)
+                      },
+                      icon: 'material-symbols:delete-outline',
+                      title: '정말 삭제하시겠습니까?'
+                    })
+                  }}
+                >
                   <Icon icon='material-symbols:delete-outline' />
                 </IconButton>
-              </>}
-
+              </>
+            )}
           </>
         )
       }
-    },
+    }
   ]
-  const router = useRouter();
-  const [columns, setColumns] = useState([]);
-  const [data, setData] = useState({});
-  const [copyLoading, setCopyLoading] = useState(false);
+  const router = useRouter()
+  const [columns, setColumns] = useState([])
+  const [data, setData] = useState({})
+  const [copyLoading, setCopyLoading] = useState(false)
   const [searchObj, setSearchObj] = useState({
     page: 1,
     page_size: 10,
@@ -153,51 +199,52 @@ const BrandList = () => {
     category_id: null
   })
   useEffect(() => {
-    pageSetting();
+    pageSetting()
   }, [])
   const pageSetting = () => {
-    let cols = defaultColumns;
+    let cols = defaultColumns
     setColumns(cols)
-    onChangePage({ ...searchObj, page: 1, });
+    onChangePage({ ...searchObj, page: 1 })
   }
-  const onChangePage = async (obj) => {
+  const onChangePage = async obj => {
     setData({
       ...data,
       content: undefined
     })
-    let data_ = await apiManager('brands', 'list', obj);
+    let data_ = await apiManager('brands', 'list', obj)
     if (data_) {
-      setData(data_);
+      setData(data_)
     }
-    setSearchObj(obj);
+    setSearchObj(obj)
   }
-  const deleteBrand = async (id) => {
-    let result = await apiManager('brands', 'delete', { id: id });
+  const deleteBrand = async id => {
+    let result = await apiManager('brands', 'delete', { id: id })
     if (result) {
-      onChangePage(searchObj);
+      onChangePage(searchObj)
     }
   }
-  const [copyOpen, setCopyOpen] = useState(false);
+  const [copyOpen, setCopyOpen] = useState(false)
   const [copyObj, setCopyObj] = useState({
-    sender_brand_id: 0,//카피할 브랜드
-    dns: '',//카피한 데이터를 받을 도메인
+    sender_brand_id: 0, //카피할 브랜드
+    dns: '', //카피한 데이터를 받을 도메인
     is_copy_brand_setting: 0,
     is_copy_product: 0,
-    is_copy_post: 0,
+    is_copy_post: 0
   })
   const onCopyBrand = async () => {
-    setCopyLoading(true);
-    let result = await apiUtil('copy', 'update', copyObj);
+    setCopyLoading(true)
+    let result = await apiUtil('copy', 'update', copyObj)
     if (result) {
-      toast.success('성공적으로 저장 되었습니다.');
-      window.location.reload();
+      toast.success('성공적으로 저장 되었습니다.')
+      window.location.reload()
     }
   }
   return (
     <>
-      <Dialog open={copyLoading}
+      <Dialog
+        open={copyLoading}
         onClose={() => {
-          setCopyLoading(false);
+          setCopyLoading(false)
         }}
         PaperProps={{
           style: {
@@ -211,23 +258,21 @@ const BrandList = () => {
       <Dialog
         open={copyOpen}
         onClose={() => {
-          setCopyOpen(false);
-          setCopyObj({});
+          setCopyOpen(false)
+          setCopyObj({})
         }}
       >
         <DialogTitle>{`${copyObj?.sender_brand?.name} 브랜드 카피 (${copyObj?.sender_brand?.dns})`}</DialogTitle>
 
         <DialogContent>
-          <DialogContentText>
-            카피한 데이터를 받을 브랜드 도메인을 입력해 주세요.
-          </DialogContentText>
+          <DialogContentText>카피한 데이터를 받을 브랜드 도메인을 입력해 주세요.</DialogContentText>
           <TextField
             autoFocus
             fullWidth
             value={copyObj.dns}
-            margin="dense"
-            label="도메인"
-            onChange={(e) => {
+            margin='dense'
+            label='도메인'
+            onChange={e => {
               setCopyObj({
                 ...copyObj,
                 dns: e.target.value
@@ -237,68 +282,91 @@ const BrandList = () => {
           <Col>
             <FormControlLabel
               label={<Typography style={{ fontSize: themeObj.font_size.size6 }}>도메인기본세팅 카피</Typography>}
-              control={<Checkbox checked={copyObj.is_copy_brand_setting == 1}
-                onChange={(e) => {
-                  if (e.target.checked) {
-                    setCopyObj({
-                      ...copyObj,
-                      is_copy_brand_setting: 1,
-                    })
-                  } else {
-                    setCopyObj({
-                      ...copyObj,
-                      is_copy_brand_setting: 0,
-                    })
-                  }
-                }} />} />
+              control={
+                <Checkbox
+                  checked={copyObj.is_copy_brand_setting == 1}
+                  onChange={e => {
+                    if (e.target.checked) {
+                      setCopyObj({
+                        ...copyObj,
+                        is_copy_brand_setting: 1
+                      })
+                    } else {
+                      setCopyObj({
+                        ...copyObj,
+                        is_copy_brand_setting: 0
+                      })
+                    }
+                  }}
+                />
+              }
+            />
             <FormControlLabel
               label={<Typography style={{ fontSize: themeObj.font_size.size6 }}>상품정보 카피</Typography>}
-              control={<Checkbox checked={copyObj.is_copy_product == 1}
-                onChange={(e) => {
-                  if (e.target.checked) {
-                    setCopyObj({
-                      ...copyObj,
-                      is_copy_product: 1,
-                    })
-                  } else {
-                    setCopyObj({
-                      ...copyObj,
-                      is_copy_product: 0,
-                    })
-                  }
-                }} />} />
+              control={
+                <Checkbox
+                  checked={copyObj.is_copy_product == 1}
+                  onChange={e => {
+                    if (e.target.checked) {
+                      setCopyObj({
+                        ...copyObj,
+                        is_copy_product: 1
+                      })
+                    } else {
+                      setCopyObj({
+                        ...copyObj,
+                        is_copy_product: 0
+                      })
+                    }
+                  }}
+                />
+              }
+            />
             <FormControlLabel
               label={<Typography style={{ fontSize: themeObj.font_size.size6 }}>게시글 카피</Typography>}
-              control={<Checkbox checked={copyObj.is_copy_post == 1}
-                onChange={(e) => {
-                  if (e.target.checked) {
-                    setCopyObj({
-                      ...copyObj,
-                      is_copy_post: 1,
-                    })
-                  } else {
-                    setCopyObj({
-                      ...copyObj,
-                      is_copy_post: 0,
-                    })
-                  }
-                }} />} />
+              control={
+                <Checkbox
+                  checked={copyObj.is_copy_post == 1}
+                  onChange={e => {
+                    if (e.target.checked) {
+                      setCopyObj({
+                        ...copyObj,
+                        is_copy_post: 1
+                      })
+                    } else {
+                      setCopyObj({
+                        ...copyObj,
+                        is_copy_post: 0
+                      })
+                    }
+                  }}
+                />
+              }
+            />
           </Col>
         </DialogContent>
         <DialogActions>
-          <Button variant="contained" onClick={() => {
-            setModal({
-              func: () => { onCopyBrand() },
-              icon: 'material-symbols:edit-outline',
-              title: '저장 하시겠습니까?'
-            })
-          }}>
+          <Button
+            variant='contained'
+            onClick={() => {
+              setModal({
+                func: () => {
+                  onCopyBrand()
+                },
+                icon: 'material-symbols:edit-outline',
+                title: '저장 하시겠습니까?'
+              })
+            }}
+          >
             저장
           </Button>
-          <Button color="inherit" onClick={() => {
-            setCopyOpen(false);
-            setCopyObj({});
-          }}>
+          <Button
+            color='inherit'
+            onClick={() => {
+              setCopyOpen(false)
+              setCopyObj({})
+            }}
+          >
             취소
           </Button>
         </DialogActions>
@@ -318,5 +386,5 @@ const BrandList = () => {
     </>
   )
 }
-BrandList.getLayout = (page) => <ManagerLayout>{page}</ManagerLayout>;
+BrandList.getLayout = page => <ManagerLayout>{page}</ManagerLayout>
 export default BrandList

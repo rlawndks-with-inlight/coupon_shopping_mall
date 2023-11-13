@@ -1,1 +1,1 @@
-export { default } from './BlogLayout2';
+export { default } from './ShopLayout4'

@@ -61,9 +61,6 @@ const curTypeNum = (list, type_name, idx) => {
     }
     return count;
 }
-const TextFieldSection = (props) => {
-
-}
 const MainObjSetting = (props) => {
     const { MAIN_OBJ_TYPE } = props;
     const { setModal } = useModal()
@@ -544,6 +541,14 @@ const MainObjSetting = (props) => {
                                                                 <TextField size='small' sx={{ width: '30%' }} label={`${index + 1}번째 제목 색상`} value={itm?.title_color ?? "#ffffff"} inputProps={{ style: { borderColor: 'transparent' } }} type="color" onChange={(e) => {
                                                                     let content_list = [...contentList];
                                                                     content_list[idx].list[index].title_color = e.target.value;
+                                                                    setContentList(content_list);
+                                                                }} />
+                                                                <Select>
+
+                                                                </Select>
+                                                                <TextField size='small' sx={{ width: '30%' }} label={`${index + 1}번째 제목 글자배치`} value={itm?.title_color ?? "#ffffff"} inputProps={{ style: { borderColor: 'transparent' } }} type="color" onChange={(e) => {
+                                                                    let content_list = [...contentList];
+                                                                    content_list[idx].list[index].text_align = e.target.value;
                                                                     setContentList(content_list);
                                                                 }} />
                                                                 <TextField size='small' sx={{ width: '50%' }} label={`${index + 1}번째 부제목 (부제목 없을 시 빈칸)`} value={itm?.sub_title ?? ""} onChange={(e) => {

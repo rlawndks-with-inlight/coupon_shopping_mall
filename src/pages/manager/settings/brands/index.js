@@ -273,8 +273,10 @@ const BrandList = () => {
       const { data: response } = await axios.post(`${process.env.SETTING_SITEMAP_URL}/api/setting-linux`, {
         brand_id: item?.id,
       })
+      console.log(response)
     } catch (err) {
-
+      console.log(err)
+      toast.error(err?.message);
     }
   }
   return (

@@ -62,9 +62,9 @@ export default function Header({ onOpenNav }) {
         <IconButton
           onClick={() => onToggleMode()}
         >
-      <SvgColor
-              src={`/assets/icons/setting/${themeMode === 'light' ? 'ic_sun' : 'ic_moon'}.svg`}
-            />
+          <SvgColor
+            src={`/assets/icons/setting/${themeMode === 'light' ? 'ic_sun' : 'ic_moon'}.svg`}
+          />
         </IconButton>
         <NotificationsPopover />
 

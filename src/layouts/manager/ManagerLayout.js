@@ -12,6 +12,7 @@ import Main from './Main';
 import Header from './header';
 import NavMini from './nav/NavMini';
 import NavVertical from './nav/NavVertical';
+import NavHorizontal from './nav/NavHorizontal';
 import { useAuthContext } from './auth/useAuthContext';
 import NextNProgress from 'nextjs-progressbar';
 import { useRouter } from 'next/router';
@@ -37,14 +38,14 @@ export default function ManagerLayout({ children }) {
 
   const isNavMini = themeLayout === 'mini';
 
-  useEffect(()=>{
+  useEffect(() => {
     checkAuth();
-  },[router.asPath])
+  }, [router.asPath])
 
-  const checkAuth = async () =>{
+  const checkAuth = async () => {
     let result = await initialize();
-   
-    if(result?.level < 10 || !result){
+
+    if (result?.level < 10 || !result) {
       router.push('/manager')
     }
   }
@@ -58,8 +59,18 @@ export default function ManagerLayout({ children }) {
   const renderNavVertical = <NavVertical openNav={open} onCloseNav={handleClose} />;
 
   const renderContent = () => {
-    
 
+    if (isNavHorizontal) {
+      return (
+        <>
+          <Header onOpenNav={handleOpen} />
+
+          {isDesktop ? <NavHorizontal /> : renderNavVertical}
+
+          <Main>{children}</Main>
+        </>
+      );
+    }
     if (isNavMini) {
       return (
         <>

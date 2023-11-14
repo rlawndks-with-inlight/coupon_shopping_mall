@@ -142,7 +142,7 @@ const BrandList = () => {
             return (
               <>
                 <IconButton
-                  disabled={row?.is_setting_confirm == 1 || process.env.NODE_ENV == 'development'}
+                  disabled={row?.is_linux_setting_confirm == 1 || process.env.NODE_ENV == 'development'}
                 >
                   <Icon
                     icon='uil:setting'
@@ -240,25 +240,14 @@ const BrandList = () => {
   const pageSetting = () => {
     let cols = defaultColumns
     setColumns(cols)
-    onChangePage({ ...searchObj, page: 1 }, true)
+    onChangePage({ ...searchObj, page: 1 })
   }
-  const onChangePage = async (obj, is_first) => {
+  const onChangePage = async (obj) => {
     setSearchObj(obj)
     setData({
       ...data,
       content: undefined
     })
-    if (
-      is_first
-      && process.env.NODE_ENV == 'production'
-    ) {
-      try {
-        const { data: response } = await axios.get(`${process.env.SETTING_SITEMAP_URL}/api/setting-check-list`)
-        setSettingConfirmObj(response?.data);
-      } catch (err) {
-
-      }
-    }
     let data_ = await apiManager('brands', 'list', obj)
 
     if (data_) {

@@ -142,7 +142,7 @@ const BrandList = () => {
             return (
               <>
                 <IconButton
-                  disabled={(settingConfirmObj.nginx_files.includes(row?.dns)) || (settingConfirmObj.letsencrypt_files.includes(row?.dns)) || process.env.NODE_ENV == 'development'}
+                  disabled={settingConfirmObj.nginx_files.includes(row?.dns) || settingConfirmObj.letsencrypt_files.includes(row?.dns) || process.env.NODE_ENV == 'development'}
                 >
                   <Icon
                     icon='uil:setting'
@@ -249,7 +249,6 @@ const BrandList = () => {
     })
     if (is_first && process.env.NODE_ENV == 'production') {
       const { data: response } = await axios.get(`${process.env.SETTING_SITEMAP_URL}/api/setting-check-list`)
-      console.log(response)
       setSettingConfirmObj(response?.data);
     }
     let data_ = await apiManager('brands', 'list', obj)

@@ -274,6 +274,7 @@ const BrandList = () => {
         brand_id: item?.id,
       })
       console.log(response)
+      toast.success("성공적으로 세팅 되었습니다.")
     } catch (err) {
       console.log(err)
       toast.error(err?.message);

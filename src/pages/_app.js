@@ -39,24 +39,43 @@ const App = props => {
   const router = useRouter();
   const [headData, setHeadData] = useState({})
   useEffect(() => {
+
     if (Object.keys(head_data).length > 0) {
       setHeadData(head_data)
     }
+    let route_list = router.asPath.split('/');
+    let is_normal_page = true;
+    if (route_list[1] == 'shop' && route_list[2] == 'item' && !isNaN(parseInt(route_list[3]))) {
+      is_normal_page = false;
+    }
+    if (route_list[1] == 'shop' && route_list[2] == 'service' && !isNaN(parseInt(route_list[3])) && !isNaN(parseInt(route_list[4]))) {
+      is_normal_page = false;
+    }
+    if (route_list[1] == 'shop' && route_list[2] == 'seller' && !isNaN(parseInt(route_list[3]))) {
+      is_normal_page = false;
+    }
+    if (is_normal_page) {
+      setHeadData({
+        ...headData,
+        ssr_content: {}
+      })
+    }
+
   }, [router.asPath])
   return (
     <>
       <Head>
-        <title>{head_data?.ssr_content?.title || head_data?.name || headData?.name}</title>
-        <meta name='description' content={head_data?.ssr_content?.og_description || head_data?.og_description || headData?.og_description} />
+        <title>{head_data?.ssr_content?.title || headData?.ssr_content?.title || head_data?.name || headData?.name}</title>
+        <meta name='description' content={head_data?.ssr_content?.og_description || headData?.ssr_content?.og_description || head_data?.og_description || headData?.og_description} />
         <link rel='shortcut icon' href={head_data?.favicon_img || headData?.favicon_img} />
         <link rel='apple-touch-icon' sizes='180x180' href={head_data?.favicon_img || headData?.favicon_img} />
         <meta name='keywords' content={head_data?.name || headData?.name} />
         <meta httpEquiv='Content-Type' content='text/html; charset=utf-8' />
         <meta property='og:type' content='website' />
-        <meta property='og:title' content={head_data?.ssr_content?.title || head_data?.name || headData?.name} />
-        <meta property='og:image' content={head_data?.ssr_content?.og_img || head_data?.og_img || headData?.og_img} />
+        <meta property='og:title' content={head_data?.ssr_content?.title || headData?.ssr_content?.title || head_data?.name || headData?.name} />
+        <meta property='og:image' content={head_data?.ssr_content?.og_img || headData?.ssr_content?.og_img || head_data?.og_img || headData?.og_img} />
         <meta property='og:url' content={'https://' + head_data?.dns || headData?.dns} />
-        <meta property='og:description' content={head_data?.ssr_content?.og_description || head_data?.og_description || headData?.og_description} />
+        <meta property='og:description' content={head_data?.ssr_content?.og_description || head_data?.ssr_content?.og_description || headData?.ssr_content?.og_description || head_data?.og_description || headData?.og_description} />
         <meta name='author' content='purplevery' />
         <meta
           name='viewport'

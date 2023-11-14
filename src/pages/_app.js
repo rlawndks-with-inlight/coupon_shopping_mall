@@ -40,10 +40,11 @@ const App = props => {
   const router = useRouter();
   const [headData, setHeadData] = useState({})
   useEffect(() => {
-
     if (Object.keys(head_data).length > 0) {
       setHeadData(head_data)
     }
+  }, [])
+  useEffect(() => {
     let route_list = router.asPath.split('/');
     let is_normal_page = true;
     if (route_list[1] == 'shop' && route_list[2] == 'item' && !isNaN(parseInt(route_list[3]))) {

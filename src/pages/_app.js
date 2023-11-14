@@ -29,31 +29,50 @@ import { MotionLazyContainer } from 'src/components/animate'
 import { ModalProvider } from 'src/components/dialog/ModalProvider'
 import { useState } from 'react'
 import { Cloudinary } from '@cloudinary/url-gen'
+import { apiShop } from 'src/utils/api'
+import { useRouter } from 'next/router'
 
 const App = props => {
   const { Component, pageProps, head_data = {} } = props
   const getLayout = Component.getLayout ?? (page => page)
+
+  const router = useRouter();
   const [headData, setHeadData] = useState({})
   useEffect(() => {
     if (Object.keys(head_data).length > 0) {
       setHeadData(head_data)
     }
-  }, [])
+  }, [router.asPath])
 
+  const gettitleText = () => {
+    let text = head_data?.name || headData?.name;
+
+    return text;
+  }
+  const getOgImg = () => {
+    let src = head_data?.og_img || headData?.og_img;
+
+    return src;
+  }
+  const getDescriptionText = () => {
+    let text = head_data?.og_description || headData?.og_description;
+
+    return text;
+  }
   return (
     <>
       <Head>
-        <title>{head_data?.name || headData?.name}</title>
-        <meta name='description' content={head_data?.og_description || headData?.og_description} />
+        <title>{gettitleText()}</title>
+        <meta name='description' content={getDescriptionText()} />
         <link rel='shortcut icon' href={head_data?.favicon_img || headData?.favicon_img} />
         <link rel='apple-touch-icon' sizes='180x180' href={head_data?.favicon_img || headData?.favicon_img} />
         <meta name='keywords' content={head_data?.name || headData?.name} />
         <meta httpEquiv='Content-Type' content='text/html; charset=utf-8' />
         <meta property='og:type' content='website' />
         <meta property='og:title' content={head_data?.name || headData?.name} />
-        <meta property='og:image' content={head_data?.og_img || headData?.og_img} />
+        <meta property='og:image' content={getOgImg()} />
         <meta property='og:url' content={'https://' + head_data?.dns || headData?.dns} />
-        <meta property='og:description' content={head_data?.og_description || headData?.og_description} />
+        <meta property='og:description' content={getDescriptionText()} />
         <meta name='author' content='purplevery' />
         <meta
           name='viewport'
@@ -105,12 +124,27 @@ App.getInitialProps = async context => {
   const { ctx } = context
   try {
     let head_data = {}
-    const host = ctx?.req?.headers?.host ? ctx?.req?.headers.host.split(':')[0] : ''
+    const host = ctx?.req?.headers?.host ? ctx?.req?.headers.host.split(':')[0] : '';
+
     if (host) {
       const url = `${process.env.BACK_URL}/api/domain?dns=${host}`
       const res = await fetch(url)
       head_data = await res.json()
       let dns_data = head_data?.data
+
+      let uri = ctx?.req?.headers['x-invoke-path'] ?? "";
+      let route_list = uri.split('/');
+      console.log(route_list)
+      if (route_list[1] == 'shop' && route_list[2] == 'item' && route_list[3]) {
+        let product = await fetch(`${process.env.BACK_URL}/api/shop/product/${route_list[3]}?brand_id=${dns_data?.id}`);
+        product = await product.json();
+        product = product?.data;
+        dns_data.product = product;
+      }
+      if (route_list[1] == 'shop' && route_list[2] == 'service' && route_list[3] && route_list[4]) {
+
+      }
+      console.log(dns_data)
       return {
         head_data: dns_data
       }

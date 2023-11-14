@@ -7,6 +7,7 @@ import { useEffect, useState } from 'react';
 import { SkeletonProductDetails } from 'src/components/skeleton';
 import dynamic from 'next/dynamic'
 import { apiManager, apiShop } from 'src/utils/api';
+import Head from 'next/head';
 const ReactQuill = dynamic(() => import('react-quill'), {
   ssr: false,
   loading: () => <p>Loading ...</p>,
@@ -30,12 +31,11 @@ const Demo1 = (props) => {
       router
     },
   } = props;
-  const { themeStretch } = useSettingsContext();
+  const { themeStretch, themeDnsData } = useSettingsContext();
 
   const [loading, setLoading] = useState(true);
 
   const [currentTab, setCurrentTab] = useState('description');
-  const [item, setItem] = useState({});
   const [product, setProduct] = useState({});
   const [reviewPage, setReviewPage] = useState(1);
   const [reviewContent, setReviewContent] = useState({});
@@ -87,6 +87,9 @@ const Demo1 = (props) => {
 
   return (
     <>
+      <Head>
+        <title>{themeDnsData?.name} - {product?.product_name}</title>
+      </Head>
       <Wrapper>
         <ContentWrapper>
           {loading ?

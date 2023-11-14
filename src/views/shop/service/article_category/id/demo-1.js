@@ -2,6 +2,7 @@ import { useTheme } from "@emotion/react";
 import { Button, Stack, TextField } from "@mui/material";
 import _ from "lodash";
 import dynamic from "next/dynamic";
+import Head from "next/head";
 import { useEffect } from "react";
 import { useState } from "react";
 import { toast } from "react-hot-toast";
@@ -36,7 +37,7 @@ const Demo1 = (props) => {
             router
         },
     } = props;
-    const { themeMode, themePostCategoryList } = useSettingsContext();
+    const { themeMode, themePostCategoryList, themeDnsData } = useSettingsContext();
     const theme = useTheme();
     const [postCategory, setPostCategory] = useState({});
     const [loading, setLoading] = useState(true);
@@ -73,6 +74,9 @@ const Demo1 = (props) => {
     }
     return (
         <>
+            <Head>
+                <title>{themeDnsData?.name} {item?.post_title ? ` - ${item?.post_title}` : ''}</title>
+            </Head>
             <Wrappers>
                 <Title style={{
                     marginBottom: '2rem'

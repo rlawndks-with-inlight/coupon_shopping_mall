@@ -60,7 +60,6 @@ const App = props => {
         ssr_content: {}
       })
     }
-
   }, [router.asPath])
   return (
     <>

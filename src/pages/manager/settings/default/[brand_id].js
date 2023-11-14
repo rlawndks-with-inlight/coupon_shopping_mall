@@ -78,35 +78,43 @@ const DefaultSetting = () => {
     },
     ...(router.query?.brand_id == 'add'
       ? [
-          {
-            value: 3,
-            label: '사용할 본사 계정'
-          }
-        ]
+        {
+          value: 3,
+          label: '사용할 본사 계정'
+        }
+      ]
       : []),
     ...(user?.level >= 50
       ? [
-          {
-            value: 4,
-            label: '데모설정'
-          }
-        ]
+        {
+          value: 4,
+          label: '데모설정'
+        }
+      ]
       : []),
     ...(user?.level >= 40
       ? [
-          {
-            value: 5,
-            label: '포인트설정'
-          }
-        ]
+        {
+          value: 5,
+          label: '포인트설정'
+        }
+      ]
       : []),
     ...(user?.level >= 50
       ? [
-          {
-            value: 6,
-            label: 'SEO설정'
-          }
-        ]
+        {
+          value: 6,
+          label: 'SEO설정'
+        }
+      ]
+      : []),
+    ...(user?.level >= 50
+      ? [
+        {
+          value: 7,
+          label: '발송번호설정'
+        }
+      ]
       : [])
   ]
 
@@ -400,9 +408,8 @@ const DefaultSetting = () => {
                                 <>
                                   <OgImg
                                     style={{
-                                      backgroundImage: `url(${
-                                        item?.og_file ? URL.createObjectURL(item?.og_file) : item?.og_img
-                                      })`,
+                                      backgroundImage: `url(${item?.og_file ? URL.createObjectURL(item?.og_file) : item?.og_img
+                                        })`,
                                       backgroundSize: 'cover',
                                       backgroundRepeat: 'no-repeat',
                                       backgroundPosition: 'center'

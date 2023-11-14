@@ -31,6 +31,7 @@ import { useState } from 'react'
 import { Cloudinary } from '@cloudinary/url-gen'
 import { apiShop } from 'src/utils/api'
 import { useRouter } from 'next/router'
+import { getLocalStorage } from 'src/utils/local-storage'
 
 const App = props => {
   const { Component, pageProps, head_data = {} } = props
@@ -55,26 +56,25 @@ const App = props => {
       is_normal_page = false;
     }
     if (is_normal_page) {
-      setHeadData({
-        ...headData,
-        ssr_content: {}
-      })
+      let brand_data = getLocalStorage('themeDnsData');
+      brand_data = JSON.parse(brand_data ?? '{}');
+      setHeadData(brand_data);
     }
   }, [router.asPath])
   return (
     <>
       <Head>
-        <title>{head_data?.ssr_content?.title || headData?.ssr_content?.title || head_data?.name || headData?.name}</title>
-        <meta name='description' content={head_data?.ssr_content?.og_description || headData?.ssr_content?.og_description || head_data?.og_description || headData?.og_description} />
+        <title>{head_data?.name || headData?.name}</title>
+        <meta name='description' content={head_data?.og_description || headData?.og_description} />
         <link rel='shortcut icon' href={head_data?.favicon_img || headData?.favicon_img} />
         <link rel='apple-touch-icon' sizes='180x180' href={head_data?.favicon_img || headData?.favicon_img} />
         <meta name='keywords' content={head_data?.name || headData?.name} />
         <meta httpEquiv='Content-Type' content='text/html; charset=utf-8' />
         <meta property='og:type' content='website' />
-        <meta property='og:title' content={head_data?.ssr_content?.title || headData?.ssr_content?.title || head_data?.name || headData?.name} />
-        <meta property='og:image' content={head_data?.ssr_content?.og_img || headData?.ssr_content?.og_img || head_data?.og_img || headData?.og_img} />
+        <meta property='og:title' content={head_data?.name || headData?.name} />
+        <meta property='og:image' content={head_data?.og_img || headData?.og_img} />
         <meta property='og:url' content={'https://' + head_data?.dns || headData?.dns} />
-        <meta property='og:description' content={head_data?.ssr_content?.og_description || head_data?.ssr_content?.og_description || headData?.ssr_content?.og_description || head_data?.og_description || headData?.og_description} />
+        <meta property='og:description' content={head_data?.og_description || headData?.og_description} />
         <meta name='author' content='purplevery' />
         <meta
           name='viewport'

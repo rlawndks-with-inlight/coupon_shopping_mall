@@ -30,6 +30,10 @@ import axios from 'axios'
 const BrandList = () => {
   const { setModal } = useModal()
   const { user } = useAuthContext()
+  const [settingConfirmObj, setSettingConfirmObj] = useState({
+    letsencrypt_files: [],
+    nginx_files: [],
+  })
   const defaultColumns = [
     {
       id: 'name',
@@ -221,10 +225,7 @@ const BrandList = () => {
   const [columns, setColumns] = useState([])
   const [data, setData] = useState({})
   const [copyLoading, setCopyLoading] = useState(false)
-  const [settingConfirmObj, setSettingConfirmObj] = useState({
-    letsencrypt_files: [],
-    nginx_files: [],
-  })
+
   const [searchObj, setSearchObj] = useState({
     page: 1,
     page_size: 10,

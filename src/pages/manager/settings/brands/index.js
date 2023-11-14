@@ -137,7 +137,9 @@ const BrandList = () => {
           action: row => {
             return (
               <>
-                <IconButton>
+                <IconButton
+                  disabled={(!settingConfirmObj.nginx_files.includes(row?.dns)) || (!settingConfirmObj.letsencrypt_files.includes(row?.dns))}
+                >
                   <Icon
                     icon='uil:setting'
                     onClick={() => {
@@ -219,6 +221,10 @@ const BrandList = () => {
   const [columns, setColumns] = useState([])
   const [data, setData] = useState({})
   const [copyLoading, setCopyLoading] = useState(false)
+  const [settingConfirmObj, setSettingConfirmObj] = useState({
+    letsencrypt_files: [],
+    nginx_files: [],
+  })
   const [searchObj, setSearchObj] = useState({
     page: 1,
     page_size: 10,
@@ -243,6 +249,7 @@ const BrandList = () => {
     if (is_first && process.env.NODE_ENV == 'production') {
       const { data: response } = await axios.get(`${process.env.SETTING_SITEMAP_URL}/api/setting-check-list`)
       console.log(response)
+      setSettingConfirmObj(response?.data);
     }
     let data_ = await apiManager('brands', 'list', obj)
     if (data_) {

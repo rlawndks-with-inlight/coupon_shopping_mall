@@ -240,7 +240,7 @@ const BrandList = () => {
       ...data,
       content: undefined
     })
-    if (is_first) {
+    if (is_first && process.env.NODE_ENV == 'production') {
       const { data: response } = await axios.get(`${process.env.SETTING_SITEMAP_URL}/api/setting-check-list`)
       console.log(response)
     }

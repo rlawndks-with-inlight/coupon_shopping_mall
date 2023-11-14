@@ -52,5 +52,6 @@ module.exports = {
     CLOUDINARY_SECRET: process.env.CLOUDINARY_SECRET,
     CLOUDINARY_URL: process.env.CLOUDINARY_URL,
     CLOUDINARY_PRESET: process.env.CLOUDINARY_PRESET,
+    NODE_ENV: process.env.NODE_ENV,
   }
 }

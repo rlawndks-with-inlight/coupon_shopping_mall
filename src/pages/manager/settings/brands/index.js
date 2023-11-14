@@ -138,7 +138,7 @@ const BrandList = () => {
             return (
               <>
                 <IconButton
-                  disabled={(!settingConfirmObj.nginx_files.includes(row?.dns)) || (!settingConfirmObj.letsencrypt_files.includes(row?.dns))}
+                  disabled={(settingConfirmObj.nginx_files.includes(row?.dns)) || (settingConfirmObj.letsencrypt_files.includes(row?.dns)) || process.env.NODE_ENV == 'development'}
                 >
                   <Icon
                     icon='uil:setting'

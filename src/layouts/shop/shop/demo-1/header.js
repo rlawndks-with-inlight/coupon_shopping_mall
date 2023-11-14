@@ -339,9 +339,7 @@ const Header = () => {
     onChangeWishData([]);
     router.push('/shop/auth/login');
   }
-  useEffect(() => {
-    console.log(themeNoneTodayPopupList)
-  }, [themeNoneTodayPopupList])
+
   return (
     <>
 
@@ -382,7 +380,6 @@ const Header = () => {
                                 none_today_popup_list[`${returnMoment().substring(0, 10)}`] = [];
                               }
                               none_today_popup_list[`${returnMoment().substring(0, 10)}`].push(item?.id);
-                              console.log(none_today_popup_list)
                               onChangeNoneTodayPopupList(none_today_popup_list);
                             }}
                           >

@@ -254,7 +254,6 @@ const Header = () => {
   })
   useEffect(() => {
     setHeaderHeight(headerWrappersRef.current?.clientHeight ?? 130);
-    console.log(menuButtonRef.current?.getBoundingClientRect())
     let getBoundingClientRect = menuButtonRef.current?.getBoundingClientRect();
     setMenuButtonLocation({
       top: getBoundingClientRect?.top ?? 0,
@@ -739,7 +738,6 @@ const Header = () => {
               </>
             ))}
           </TreeView>
-          {console.log(themePostCategoryList)}
           <ColumnMenuTitle>고객센터</ColumnMenuTitle>
           {themePostCategoryList.map((item, idx) => (
             <>

@@ -133,7 +133,6 @@ const BrandList = () => {
         }
       ]
       : []),
-
     ...(user?.level >= 50
       ? [
         {
@@ -263,7 +262,6 @@ const BrandList = () => {
       } catch (err) {
 
       }
-
     }
     let data_ = await apiManager('brands', 'list', obj)
     if (data_) {

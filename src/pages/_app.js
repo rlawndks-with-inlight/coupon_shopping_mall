@@ -46,17 +46,23 @@ const App = props => {
 
   const gettitleText = () => {
     let text = head_data?.name || headData?.name;
-
+    if (head_data?.product) {
+      text += ` - ${head_data?.product?.product_name}`;
+    }
     return text;
   }
   const getOgImg = () => {
     let src = head_data?.og_img || headData?.og_img;
-
+    if (head_data?.product) {
+      src = `${head_data?.product?.product_img}`;
+    }
     return src;
   }
   const getDescriptionText = () => {
     let text = head_data?.og_description || headData?.og_description;
-
+    if (head_data?.product) {
+      text += ` - ${head_data?.product?.product_comment}`;
+    }
     return text;
   }
   return (

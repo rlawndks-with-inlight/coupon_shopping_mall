@@ -133,20 +133,26 @@ const BrandList = () => {
         }
       ]
       : []),
+
     ...(user?.level >= 50
       ? [
         {
           id: 'setting_ssl',
           label: `리눅스 세팅`,
-          action: row => {
+          action: (row) => {
             return (
               <>
                 <IconButton
-                  disabled={settingConfirmObj.nginx_files.includes(row?.dns) || settingConfirmObj.letsencrypt_files.includes(row?.dns) || process.env.NODE_ENV == 'development'}
+                  disabled={
+                    (settingConfirmObj.nginx_files.indexOf(row?.dns) >= 0 &&
+                      settingConfirmObj.letsencrypt_files.indexOf(row?.dns) >= 0)
+                    || process.env.NODE_ENV == 'development'
+                  }
                 >
                   <Icon
                     icon='uil:setting'
                     onClick={() => {
+                      console.log(settingConfirmObj.nginx_files)
                       setModal({
                         func: () => {
                           settingSslBrand(row)
@@ -156,7 +162,7 @@ const BrandList = () => {
                       })
                     }}
                   />
-                </IconButton>
+                </IconButton >
               </>
             )
           }
@@ -247,9 +253,17 @@ const BrandList = () => {
       ...data,
       content: undefined
     })
-    if (is_first && process.env.NODE_ENV == 'production') {
-      const { data: response } = await axios.get(`${process.env.SETTING_SITEMAP_URL}/api/setting-check-list`)
-      setSettingConfirmObj(response?.data);
+    if (
+      is_first
+      && process.env.NODE_ENV == 'production'
+    ) {
+      try {
+        const { data: response } = await axios.get(`${process.env.SETTING_SITEMAP_URL}/api/setting-check-list`)
+        setSettingConfirmObj(response?.data);
+      } catch (err) {
+
+      }
+
     }
     let data_ = await apiManager('brands', 'list', obj)
     if (data_) {

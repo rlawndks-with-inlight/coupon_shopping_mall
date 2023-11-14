@@ -85,7 +85,6 @@ animation: ${props => props.iscurrentSlideIndex ? 'zoom-in-out' : ''} 10s ease-i
         transform: scale(1);
     }
   }
-
 }
 `
 
@@ -246,6 +245,7 @@ const HomeBanner = (props) => {
                                         <>
                                             <TextContainer
                                                 textStyle={getTextAlign(item)}
+                                                style={{ top: `${imageContainerRef.current?.clientHeight / 2 - 28}px` }}
                                             >
                                                 {item?.title &&
 

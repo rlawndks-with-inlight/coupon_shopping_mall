@@ -87,7 +87,9 @@ const Demo1 = (props) => {
 
   return (
     <>
-
+      <Head>
+        <title>{themeDnsData?.name} - {product?.product_name}</title>
+      </Head>
       <Wrapper>
         <ContentWrapper>
           {loading ?

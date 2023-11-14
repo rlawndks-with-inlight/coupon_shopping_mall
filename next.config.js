@@ -11,6 +11,7 @@ module.exports = {
   env: {
     // HOST
     HOST_API_KEY: `${process.env.BACK_URL}`,
+    NODE_ENV: process.env.NODE_ENV,
   },
   async rewrites() {
     return [
@@ -52,6 +53,5 @@ module.exports = {
     CLOUDINARY_SECRET: process.env.CLOUDINARY_SECRET,
     CLOUDINARY_URL: process.env.CLOUDINARY_URL,
     CLOUDINARY_PRESET: process.env.CLOUDINARY_PRESET,
-    NODE_ENV: process.env.NODE_ENV
   }
 }

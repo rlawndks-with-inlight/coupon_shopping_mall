@@ -114,13 +114,15 @@ App.getInitialProps = async context => {
     let seller_id = -1;
     let uri = ctx?.req?.headers['x-invoke-path'] ?? "";
     let route_list = uri.split('/');
-    if (route_list[1] == 'shop' && route_list[2] == 'item' && route_list[3]) {
+    if (route_list[1] == 'shop' && route_list[2] == 'item' && !isNaN(parseInt(route_list[3]))) {
       product_id = parseInt(route_list[3]);
     }
-    if (route_list[1] == 'shop' && route_list[2] == 'service' && route_list[3] && route_list[4]) {
+    if (route_list[1] == 'shop' && route_list[2] == 'service' && !isNaN(parseInt(route_list[3])) && !isNaN(parseInt(route_list[4]))) {
       post_id = parseInt(route_list[4]);
     }
-
+    if (route_list[1] == 'shop' && route_list[2] == 'seller' && !isNaN(parseInt(route_list[3]))) {
+      seller_id = parseInt(route_list[3]);
+    }
     if (host) {
       const url = `${process.env.BACK_URL}/api/domain?dns=${host}&product_id=${product_id}&post_id=${post_id}&seller_id=${seller_id}`;
       const res = await fetch(url)

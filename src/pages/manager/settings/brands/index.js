@@ -142,16 +142,11 @@ const BrandList = () => {
             return (
               <>
                 <IconButton
-                  disabled={
-                    (settingConfirmObj.nginx_files.indexOf(row?.dns) >= 0 &&
-                      settingConfirmObj.letsencrypt_files.indexOf(row?.dns) >= 0)
-                    || process.env.NODE_ENV == 'development'
-                  }
+                  disabled={row?.is_setting_confirm == 1 || process.env.NODE_ENV == 'development'}
                 >
                   <Icon
                     icon='uil:setting'
                     onClick={() => {
-                      console.log(settingConfirmObj.nginx_files)
                       setModal({
                         func: () => {
                           settingSslBrand(row)
@@ -248,6 +243,7 @@ const BrandList = () => {
     onChangePage({ ...searchObj, page: 1 }, true)
   }
   const onChangePage = async (obj, is_first) => {
+    setSearchObj(obj)
     setData({
       ...data,
       content: undefined
@@ -264,10 +260,10 @@ const BrandList = () => {
       }
     }
     let data_ = await apiManager('brands', 'list', obj)
+
     if (data_) {
       setData(data_)
     }
-    setSearchObj(obj)
   }
   const deleteBrand = async id => {
     let result = await apiManager('brands', 'delete', { id: id })

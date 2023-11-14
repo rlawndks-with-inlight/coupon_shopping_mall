@@ -75,7 +75,7 @@ const App = props => {
         <meta name='keywords' content={head_data?.name || headData?.name} />
         <meta httpEquiv='Content-Type' content='text/html; charset=utf-8' />
         <meta property='og:type' content='website' />
-        <meta property='og:title' content={head_data?.name || headData?.name} />
+        <meta property='og:title' content={gettitleText()} />
         <meta property='og:image' content={getOgImg()} />
         <meta property='og:url' content={'https://' + head_data?.dns || headData?.dns} />
         <meta property='og:description' content={getDescriptionText()} />
@@ -140,7 +140,6 @@ App.getInitialProps = async context => {
 
       let uri = ctx?.req?.headers['x-invoke-path'] ?? "";
       let route_list = uri.split('/');
-      console.log(route_list)
       if (route_list[1] == 'shop' && route_list[2] == 'item' && route_list[3]) {
         let product = await fetch(`${process.env.BACK_URL}/api/shop/product/${route_list[3]}?brand_id=${dns_data?.id}`);
         product = await product.json();
@@ -150,7 +149,6 @@ App.getInitialProps = async context => {
       if (route_list[1] == 'shop' && route_list[2] == 'service' && route_list[3] && route_list[4]) {
 
       }
-      console.log(dns_data)
       return {
         head_data: dns_data
       }

@@ -233,13 +233,17 @@ const BrandList = () => {
   const pageSetting = () => {
     let cols = defaultColumns
     setColumns(cols)
-    onChangePage({ ...searchObj, page: 1 })
+    onChangePage({ ...searchObj, page: 1 }, true)
   }
-  const onChangePage = async obj => {
+  const onChangePage = async (obj, is_first) => {
     setData({
       ...data,
       content: undefined
     })
+    if (is_first) {
+      const { data: response } = await axios.get(`${process.env.SETTING_SITEMAP_URL}/api/setting-check-list`)
+      console.log(response)
+    }
     let data_ = await apiManager('brands', 'list', obj)
     if (data_) {
       setData(data_)
@@ -273,7 +277,6 @@ const BrandList = () => {
       const { data: response } = await axios.post(`${process.env.SETTING_SITEMAP_URL}/api/setting-linux`, {
         brand_id: item?.id,
       })
-      console.log(response)
       toast.success("성공적으로 세팅 되었습니다.")
     } catch (err) {
       console.log(err)

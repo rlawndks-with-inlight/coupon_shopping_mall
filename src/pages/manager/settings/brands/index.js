@@ -26,6 +26,7 @@ import { useAuthContext } from 'src/layouts/manager/auth/useAuthContext'
 import { apiManager, apiUtil } from 'src/utils/api'
 import { Col, Row, themeObj } from 'src/components/elements/styled-components'
 import toast from 'react-hot-toast'
+import axios from 'axios'
 const BrandList = () => {
   const { setModal } = useModal()
   const { user } = useAuthContext()
@@ -104,51 +105,79 @@ const BrandList = () => {
     },
     ...(user?.level >= 50
       ? [
-          {
-            id: 'cody_brand',
-            label: `브랜드카피`,
-            action: row => {
-              return (
-                <>
-                  <IconButton>
-                    <Icon
-                      icon='bi:copy'
-                      onClick={() => {
-                        setCopyObj({
-                          sender_brand_id: row?.id,
-                          sender_brand: row
-                        })
-                        setCopyOpen(true)
-                      }}
-                    />
-                  </IconButton>
-                </>
-              )
-            }
+        {
+          id: 'cody_brand',
+          label: `브랜드카피`,
+          action: row => {
+            return (
+              <>
+                <IconButton>
+                  <Icon
+                    icon='bi:copy'
+                    onClick={() => {
+                      setCopyObj({
+                        sender_brand_id: row?.id,
+                        sender_brand: row
+                      })
+                      setCopyOpen(true)
+                    }}
+                  />
+                </IconButton>
+              </>
+            )
           }
-        ]
+        }
+      ]
       : []),
     ...(user?.level >= 50
       ? [
-          {
-            id: 'main_edit',
-            label: `메인페이지 수정`,
-            action: row => {
-              return (
-                <>
-                  <IconButton>
-                    <Icon
-                      icon='material-symbols:edit-outline'
-                      onClick={() => {
-                        router.push(`/manager/designs/main/${row?.id}`)
-                      }}
-                    />
-                  </IconButton>
-                </>
-              )
-            }
+        {
+          id: 'setting_ssl',
+          label: `리눅스 세팅`,
+          action: row => {
+            return (
+              <>
+                <IconButton>
+                  <Icon
+                    icon='uil:setting'
+                    onClick={() => {
+                      setModal({
+                        func: () => {
+                          settingSslBrand(row)
+                        },
+                        icon: 'uil:setting',
+                        title: '리눅스 세팅 하시겠습니까?'
+                      })
+                    }}
+                  />
+                </IconButton>
+              </>
+            )
           }
-        ]
+        }
+      ]
+      : []),
+    ...(user?.level >= 50
+      ? [
+        {
+          id: 'main_edit',
+          label: `메인페이지 수정`,
+          action: row => {
+            return (
+              <>
+                <IconButton>
+                  <Icon
+                    icon='material-symbols:edit-outline'
+                    onClick={() => {
+                      router.push(`/manager/designs/main/${row?.id}`)
+                    }}
+                  />
+                </IconButton>
+              </>
+            )
+          }
+        }
+      ]
       : []),
     {
       id: 'edit',
@@ -237,6 +266,15 @@ const BrandList = () => {
     if (result) {
       toast.success('성공적으로 저장 되었습니다.')
       window.location.reload()
+    }
+  }
+  const settingSslBrand = async (item) => {
+    try {
+      const { data: response } = await axios.post(`${process.env.SETTING_SITEMAP_URL}/api/setting-linux`, {
+        brand_id: item?.id,
+      })
+    } catch (err) {
+
     }
   }
   return (

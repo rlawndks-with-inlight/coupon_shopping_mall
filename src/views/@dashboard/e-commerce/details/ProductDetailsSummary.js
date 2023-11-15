@@ -39,7 +39,7 @@ import { useSettingsContext } from 'src/components/settings';
 import _ from 'lodash';
 import { toast } from 'react-hot-toast';
 import { CheckoutSteps } from 'src/views/@dashboard/e-commerce/checkout';
-import { AddressItem } from 'src/views/shop/auth/cart/demo-1';
+import { AddressItem } from 'src/views/shop/demo-1/auth/cart';
 import EmptyContent from 'src/components/empty-content/EmptyContent';
 import Payment from 'payment'
 import Cards from 'react-credit-cards'

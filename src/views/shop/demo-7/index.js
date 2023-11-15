@@ -1,0 +1,16 @@
+export { default as CartDemo7 } from './auth/cart';
+export { default as FindInfoDemo7 } from './auth/find-info';
+export { default as HistoryDemo7 } from './auth/history';
+export { default as LoginDemo7 } from './auth/login';
+export { default as MyPageDemo7 } from './auth/my-page';
+export { default as PayResultDemo7 } from './auth/pay-result';
+export { default as PointDemo7 } from './auth/point';
+export { default as SignUpDemo7 } from './auth/sign-up';
+export { default as WishDemo7 } from './auth/wish';
+export { default as ItemDemo7 } from './item/[id]';
+export { default as ItemsDemo7 } from './items/index';
+export { default as SellerDemo7 } from './seller/[id]';
+export { default as ArticleDemo7 } from './service/[article_category]/[id]';
+export { default as ArticlesDemo7 } from './service/[article_category]';
+export { default as HomeDemo7 } from './home';
+export { default as SearchDemo7 } from './search';

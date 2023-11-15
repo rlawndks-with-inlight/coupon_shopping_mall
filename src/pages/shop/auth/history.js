@@ -4,30 +4,30 @@ import { useState } from "react";
 import ShopLayout from "src/layouts/shop/ShopLayout";
 import { useSettingsContext } from "src/components/settings";
 
-import Demo1 from "src/views/shop/auth/history/demo-1";
-import Demo2 from "src/views/shop/auth/history/demo-2";
-import Demo3 from "src/views/shop/auth/history/demo-3";
-import Demo4 from "src/views/shop/auth/history/demo-4";
-import Demo5 from "src/views/shop/auth/history/demo-5";
-import Demo6 from "src/views/shop/auth/history/demo-6";
-import Demo7 from "src/views/shop/auth/history/demo-7";
+import { HistoryDemo1 } from "src/views/shop/demo-1";
+import { HistoryDemo2 } from "src/views/shop/demo-2";
+import { HistoryDemo3 } from "src/views/shop/demo-3";
+import { HistoryDemo4 } from "src/views/shop/demo-4";
+import { HistoryDemo5 } from "src/views/shop/demo-5";
+import { HistoryDemo6 } from "src/views/shop/demo-6";
+import { HistoryDemo7 } from "src/views/shop/demo-7";
 
 const getDemo = (num, common) => {
 
   if (num == 1)
-    return <Demo1 {...common} />
+    return <HistoryDemo1 {...common} />
   else if (num == 2)
-    return <Demo2 {...common} />
+    return <HistoryDemo2 {...common} />
   else if (num == 3)
-    return <Demo3 {...common} />
+    return <HistoryDemo3 {...common} />
   else if (num == 4)
-    return <Demo4 {...common} />
+    return <HistoryDemo4 {...common} />
   else if (num == 5)
-    return <Demo5 {...common} />
+    return <HistoryDemo5 {...common} />
   else if (num == 6)
-    return <Demo6 {...common} />
+    return <HistoryDemo6 {...common} />
   else if (num == 7)
-    return <Demo7 {...common} />
+    return <HistoryDemo7 {...common} />
 }
 const History = () => {
   const router = useRouter();

@@ -2,30 +2,30 @@ import { useRouter } from "next/router";
 import { useState } from "react";
 import ShopLayout from "src/layouts/shop/ShopLayout";
 import { useSettingsContext } from "src/components/settings";
+import { FindInfoDemo1 } from "src/views/shop/demo-1";
+import { FindInfoDemo2 } from "src/views/shop/demo-2";
+import { FindInfoDemo3 } from "src/views/shop/demo-3";
+import { FindInfoDemo4 } from "src/views/shop/demo-4";
+import { FindInfoDemo5 } from "src/views/shop/demo-5";
+import { FindInfoDemo6 } from "src/views/shop/demo-6";
+import { FindInfoDemo7 } from "src/views/shop/demo-7";
 
-import Demo1 from "src/views/shop/auth/find-info/demo-1";
-import Demo2 from "src/views/shop/auth/find-info/demo-2";
-import Demo3 from "src/views/shop/auth/find-info/demo-3";
-import Demo4 from "src/views/shop/auth/find-info/demo-4";
-import Demo5 from "src/views/shop/auth/find-info/demo-5";
-import Demo6 from "src/views/shop/auth/find-info/demo-6";
-import Demo7 from "src/views/shop/auth/find-info/demo-7";
 const getDemo = (num, common) => {
 
   if (num == 1)
-    return <Demo1 {...common} />
+    return <FindInfoDemo1 {...common} />
   else if (num == 2)
-    return <Demo2 {...common} />
+    return <FindInfoDemo2 {...common} />
   else if (num == 3)
-    return <Demo3 {...common} />
+    return <FindInfoDemo3 {...common} />
   else if (num == 4)
-    return <Demo4 {...common} />
+    return <FindInfoDemo4 {...common} />
   else if (num == 5)
-    return <Demo5 {...common} />
+    return <FindInfoDemo5 {...common} />
   else if (num == 6)
-    return <Demo6 {...common} />
+    return <FindInfoDemo6 {...common} />
   else if (num == 7)
-    return <Demo7 {...common} />
+    return <FindInfoDemo7 {...common} />
 }
 const FindInfo = () => {
   const router = useRouter();

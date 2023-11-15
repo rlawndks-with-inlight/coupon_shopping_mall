@@ -2,29 +2,29 @@ import { useRouter } from "next/router";
 import { useState } from "react";
 import ShopLayout from "src/layouts/shop/ShopLayout";
 import { useSettingsContext } from "src/components/settings";
-import Demo1 from "src/views/shop/auth/my-page/demo-1";
-import Demo2 from "src/views/shop/auth/my-page/demo-2";
-import Demo3 from "src/views/shop/auth/my-page/demo-3";
-import Demo4 from "src/views/shop/auth/my-page/demo-4";
-import Demo5 from "src/views/shop/auth/my-page/demo-5";
-import Demo6 from "src/views/shop/auth/my-page/demo-6";
-import Demo7 from "src/views/shop/auth/my-page/demo-7";
+import { MyPageDemo1 } from "src/views/shop/demo-1";
+import { MyPageDemo2 } from "src/views/shop/demo-2";
+import { MyPageDemo3 } from "src/views/shop/demo-3";
+import { MyPageDemo4 } from "src/views/shop/demo-4";
+import { MyPageDemo5 } from "src/views/shop/demo-5";
+import { MyPageDemo6 } from "src/views/shop/demo-6";
+import { MyPageDemo7 } from "src/views/shop/demo-7";
 
 const getDemo = (num, common) => {
   if (num == 1)
-    return <Demo1 {...common} />
+    return <MyPageDemo1 {...common} />
   else if (num == 2)
-    return <Demo2 {...common} />
+    return <MyPageDemo2 {...common} />
   else if (num == 3)
-    return <Demo3 {...common} />
+    return <MyPageDemo3 {...common} />
   else if (num == 4)
-    return <Demo4 {...common} />
+    return <MyPageDemo4 {...common} />
   else if (num == 5)
-    return <Demo5 {...common} />
+    return <MyPageDemo5 {...common} />
   else if (num == 6)
-    return <Demo6 {...common} />
+    return <MyPageDemo6 {...common} />
   else if (num == 7)
-    return <Demo7 {...common} />
+    return <MyPageDemo7 {...common} />
 }
 const MyPage = () => {
   const router = useRouter();

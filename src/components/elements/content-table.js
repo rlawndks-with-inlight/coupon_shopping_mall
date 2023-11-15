@@ -4,13 +4,16 @@ import { commarNumber } from 'src/utils/function';
 import { useEffect, useState } from "react";
 import styled from "styled-components";
 
-import { Button, CircularProgress, IconButton, Pagination } from "@mui/material";
+import { Button, CircularProgress, IconButton, Pagination, Typography } from "@mui/material";
 import { Icon } from "@iconify/react";
 import { motion } from "framer-motion";
 import { Col, Row, themeObj } from './styled-components';
 import { useRouter } from 'next/router';
 import { useSettingsContext } from '../settings';
 import { LazyLoadComponent, LazyLoadImage } from 'react-lazy-load-image-component';
+import { useAuthContext } from 'src/layouts/manager/auth/useAuthContext';
+import { useModal } from '../dialog/ModalProvider';
+import { apiShop } from 'src/utils/api';
 const Table = styled.table`
 font-size:${themeObj.font_size.size8};
 width:100%;
@@ -43,11 +46,13 @@ cursor:pointer;
 }
 `
 const ContentTable = (props) => {
+  const { setModal } = useModal()
   const { data, onChangePage, searchObj, columns, postCategory } = props;
   const { post_category_type } = postCategory;
   const { page, page_size } = props?.searchObj;
   const router = useRouter();
   const { themeMode } = useSettingsContext();
+  const { user } = useAuthContext();
   const [loading, setLoading] = useState(false);
   const getMaxPage = (total, page_size) => {
     if (total == 0) {
@@ -57,6 +62,12 @@ const ContentTable = (props) => {
       return parseInt(total / page_size);
     } else {
       return parseInt(total / page_size) + 1;
+    }
+  }
+  const deletePost = async (id) => {
+    let result = await apiShop('post', 'delete', { id });
+    if (result) {
+      onChangePage({ ...searchObj });
     }
   }
   return (
@@ -98,11 +109,33 @@ const ContentTable = (props) => {
               <>
                 <Row style={{ flexWrap: 'wrap', columnGap: '2%' }}>
                   {data?.content && data?.content.map((row, index) => (
-                    <GalleryCol onClick={()=>{
-                      router.push(`/shop/service/${postCategory?.id}/${row?.id}/`)
-                    }}>
-                      <LazyLoadImage style={{ width: '100%', height: 'auto' }} src={row?.post_title_img} />
-                      <div style={{ fontSize: themeObj.font_size.size9, fontWeight: 'bold' }}>{row?.post_title}</div>
+                    <GalleryCol>
+                      <LazyLoadImage style={{ width: '100%', height: 'auto' }} src={row?.post_title_img} onClick={() => {
+                        router.push(`/shop/service/${postCategory?.id}/${row?.id}/`)
+                      }} />
+                      <Typography variant='subtitle2' onClick={() => {
+                        router.push(`/shop/service/${postCategory?.id}/${row?.id}/`)
+                      }}>{row?.post_title}</Typography>
+                      <Typography variant='body2' color={themeObj.grey[500]}>{row?.created_at}</Typography>
+                      <Row>
+                        {row?.user_id == user?.id &&
+                          <>
+                            <IconButton onClick={() => {
+                              router.push(`/shop/service/${postCategory?.id}/${row?.id}/`)
+                            }}>
+                              <Icon icon='material-symbols:edit-outline' />
+                            </IconButton>
+                            <IconButton onClick={() => {
+                              setModal({
+                                func: () => { deletePost(row?.id) },
+                                icon: 'material-symbols:delete-outline',
+                                title: '정말 삭제하시겠습니까?'
+                              })
+                            }}>
+                              <Icon icon='material-symbols:delete-outline' />
+                            </IconButton>
+                          </>}
+                      </Row>
                     </GalleryCol>
                   ))}
                 </Row>

@@ -166,6 +166,29 @@ const BrandList = () => {
     ...(user?.level >= 50
       ? [
         {
+          id: 'sitemap',
+          label: `사이트맵 링크이동`,
+          action: (row) => {
+            return (
+              <>
+                <IconButton
+                >
+                  <Icon
+                    icon='cil:sitemap'
+                    onClick={() => {
+                      window.open(`https://${row?.dns}/sitemap-${row?.id}.xml`)
+                    }}
+                  />
+                </IconButton >
+              </>
+            )
+          }
+        }
+      ]
+      : []),
+    ...(user?.level >= 50
+      ? [
+        {
           id: 'main_edit',
           label: `메인페이지 수정`,
           action: row => {

@@ -93,12 +93,12 @@ display:flex;
 flex-direction:column;
 position:absolute;
 ${props => props.textStyle?.pc_style};
-top:12vw;
+top:${props => props.clientHeight / 2 - 58}px;
 z-index:10;
 row-gap:1rem;
 @media (max-width:1200px) {
+    top:${props => props.clientHeight / 2 - 28}px;
     ${props => props.textStyle?.mobile_style};
-    top:10vw;
     row-gap:0rem;
 }
 `
@@ -245,7 +245,7 @@ const HomeBanner = (props) => {
                                         <>
                                             <TextContainer
                                                 textStyle={getTextAlign(item)}
-                                                style={{ top: `${imageContainerRef.current?.clientHeight / 2 - 28}px` }}
+                                                clientHeight={imageContainerRef.current?.clientHeight ?? 0}
                                             >
                                                 {item?.title &&
 

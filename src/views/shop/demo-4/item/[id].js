@@ -104,7 +104,6 @@ const ItemDemo = (props) => {
       component: product ? <ProductDetailsReview product={product} reviewContent={reviewContent} onChangePage={getItemInfo} reviewPage={reviewPage} /> : null,
     },
   ];
-  console.log(product)
   return (
     <>
       <Wrapper>

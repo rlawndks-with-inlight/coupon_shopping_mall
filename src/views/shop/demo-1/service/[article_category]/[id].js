@@ -96,7 +96,6 @@ const ArticleDemo = (props) => {
                       </Typography>
                       <Upload file={item.post_title_file || item.post_title_img} onDrop={(acceptedFiles) => {
                         const newFile = acceptedFiles[0];
-                        console.log(newFile)
                         if (!newFile.type.includes('image')) {
                           toast.error('이미지 형식만 가능합니다.');
                           return;

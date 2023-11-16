@@ -72,7 +72,7 @@ const ItemsDemo = (props) => {
       setLoading(false);
     } else {
       setProductContent({
-        ...productContent,
+        ...product_list,
         content: [...productContent?.content, ...product_list.content ?? []]
       });
     }

@@ -27,10 +27,14 @@ margin: 0 auto;
 text-align: center;
 `
 const ItemImgContainer = styled.div`
-width: 195px;
-height: 195px;
+width: 280px;
+height: 280px;
 margin: 0 auto;
 display: flex;
+@media screen and (max-width:1700px){
+  width:16vw; 
+  height:16vw; 
+}
 @media screen and (max-width:1150px){
   width:28vw; 
   height:28vw; 

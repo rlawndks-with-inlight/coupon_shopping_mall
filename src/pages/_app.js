@@ -90,16 +90,8 @@ const App = props => {
           content={head_data?.seo_obj?.naver_token || headData?.seo_obj?.naver_token}
         />
         <meta
-          name='naver-site-verification'
-          content={head_data?.seo_obj?.asap_naver_token || headData?.seo_obj?.asap_naver_token}
-        />
-        <meta
           name='google-site-verification'
           content={head_data?.seo_obj?.google_token || headData?.seo_obj?.google_token}
-        />
-        <meta
-          name='google-site-verification'
-          content={head_data?.seo_obj?.asap_google_token || headData?.seo_obj?.asap_google_token}
         />
       </Head>
       <AuthProvider>

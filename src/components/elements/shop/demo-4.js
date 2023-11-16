@@ -120,7 +120,6 @@ export const AuthMenuSideComponent = (props) => {
       ]
     },
   ]
-  console.log(router)
   return (
     <>
       <MenuContainer>

@@ -617,6 +617,25 @@ const DefaultSetting = () => {
                           <MenuItem value={1}>사용</MenuItem>
                         </Select>
                       </FormControl>
+                      <FormControl>
+                        <InputLabel>위탁 사용여부</InputLabel>
+                        <Select
+                          label='위탁 사용여부'
+                          value={item.setting_obj?.is_use_consignment}
+                          onChange={e => {
+                            setItem({
+                              ...item,
+                              ['setting_obj']: {
+                                ...item.setting_obj,
+                                is_use_consignment: e.target.value
+                              }
+                            })
+                          }}
+                        >
+                          <MenuItem value={0}>사용안함</MenuItem>
+                          <MenuItem value={1}>사용</MenuItem>
+                        </Select>
+                      </FormControl>
                     </Stack>
                   </Card>
                 </Grid>

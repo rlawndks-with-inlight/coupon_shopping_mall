@@ -267,7 +267,9 @@ export const defaultManagerObj = {
       tutorial_num: 0, //튜토리얼 진행시 순서
       shop_demo_num: 0, //쇼핑몰 데모넘버
       blog_demo_num: 0, //블로그쇼핑몰 데모넘버
-      is_use_seller: 0 //셀러 사용여부
+      is_use_seller: 0, //셀러 사용여부
+      is_use_consignment: 0, //위탁 사용여부
+
     },
     seo_obj: {
       naver_token: '',

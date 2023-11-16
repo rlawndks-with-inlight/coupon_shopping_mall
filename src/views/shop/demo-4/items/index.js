@@ -67,6 +67,12 @@ const ItemsDemo = (props) => {
       brand_id: themeDnsData?.id,
       ...query
     })
+    if (product_list.content.length == 0) {
+      setProductContent({
+        ...productContent,
+        total: -1,
+      })
+    }
     if (is_first) {
       setProductContent(product_list);
       setLoading(false);
@@ -141,6 +147,7 @@ const ItemsDemo = (props) => {
               :
               <>
                 <Button className='more-page' onClick={() => {
+
                   if (productContent?.content.length < productContent?.total) {
                     getItemList(
                       categoryIds,

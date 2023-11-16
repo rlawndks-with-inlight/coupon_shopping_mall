@@ -135,16 +135,28 @@ const ItemDemo = (props) => {
                       <ItemCharacter key_name={'정상가'} value={<div style={{ textDecoration: 'line-through' }}>{commarNumber(product?.product_price)}원</div>} />
                       <ItemCharacter key_name={'할인가'} value={<div>{commarNumber(product?.product_sale_price)}원</div>} />
                       <div style={{ borderBottom: '1px solid #ccc', width: '100%', marginTop: '1rem' }} />
-                      <Button sx={{ width: '100%', marginTop: '1rem', height: '48px' }} variant='contained' startIcon={<>
-                        <Icon icon={'mdi:check-bold'} />
-                      </>}>바로구매</Button>
+                      <Button
+                        disabled={!(product?.status == 0 || product?.status == 3)}
+                        sx={{ width: '100%', marginTop: '1rem', height: '48px' }}
+                        variant='contained'
+                        startIcon={<>
+                          <Icon icon={'mdi:check-bold'} />
+                        </>}>바로구매</Button>
                       <Row style={{ columnGap: '0.5rem', marginTop: '0.5rem' }}>
-                        <Button sx={{ width: '50%', height: '48px' }} variant='outlined' startIcon={<>
-                          <Icon icon={'mdi:cart'} />
-                        </>}>장바구니</Button>
-                        <Button sx={{ width: '50%', height: '48px' }} variant='outlined' startIcon={<>
-                          <Icon icon={'mdi:heart'} />
-                        </>}>위시리스트</Button>
+                        <Button
+                          disabled={!(product?.status == 0 || product?.status == 3)}
+                          sx={{ width: '50%', height: '48px' }}
+                          variant='outlined'
+                          startIcon={<>
+                            <Icon icon={'mdi:cart'} />
+                          </>}>장바구니</Button>
+                        <Button
+                          disabled={!(product?.status == 0 || product?.status == 3)}
+                          sx={{ width: '50%', height: '48px' }}
+                          variant='outlined'
+                          startIcon={<>
+                            <Icon icon={'mdi:heart'} />
+                          </>}>위시리스트</Button>
                       </Row>
                     </Grid>
                   </Grid>

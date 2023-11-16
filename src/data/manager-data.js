@@ -271,9 +271,7 @@ export const defaultManagerObj = {
     },
     seo_obj: {
       naver_token: '',
-      asap_naver_token: '',
       google_token: '',
-      asap_google_token: ''
     },
     theme_css: {
       main_color: '#00ab55'

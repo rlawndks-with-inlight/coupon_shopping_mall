@@ -756,9 +756,9 @@ const DefaultSetting = () => {
                   <Card sx={{ p: 2, height: '100%' }}>
                     <Stack spacing={3}>
                       <FormControl variant='outlined'>
-                        <InputLabel>고객이 등록한 네이버토큰</InputLabel>
+                        <InputLabel>네이버토큰</InputLabel>
                         <OutlinedInput
-                          label='고객이 등록한 네이버토큰'
+                          label='네이버토큰'
                           value={item?.seo_obj?.naver_token ?? 0}
                           onChange={e => {
                             setItem({
@@ -771,22 +771,6 @@ const DefaultSetting = () => {
                           }}
                         />
                       </FormControl>
-                      <FormControl variant='outlined'>
-                        <InputLabel>asapmall 측에서 등록한 네이버토큰</InputLabel>
-                        <OutlinedInput
-                          label='asapmall 측에서 등록한 네이버토큰'
-                          value={item?.seo_obj?.asap_naver_token ?? 0}
-                          onChange={e => {
-                            setItem({
-                              ...item,
-                              ['seo_obj']: {
-                                ...item?.seo_obj,
-                                ['asap_naver_token']: e.target.value
-                              }
-                            })
-                          }}
-                        />
-                      </FormControl>
                     </Stack>
                   </Card>
                 </Grid>
@@ -794,9 +778,9 @@ const DefaultSetting = () => {
                   <Card sx={{ p: 2, height: '100%' }}>
                     <Stack spacing={3}>
                       <FormControl variant='outlined'>
-                        <InputLabel>고객이 등록한 구글토큰</InputLabel>
+                        <InputLabel>구글토큰</InputLabel>
                         <OutlinedInput
-                          label='고객이 등록한 구글토큰'
+                          label='구글토큰'
                           value={item?.seo_obj?.google_token ?? 0}
                           onChange={e => {
                             setItem({
@@ -804,22 +788,6 @@ const DefaultSetting = () => {
                               ['seo_obj']: {
                                 ...item?.seo_obj,
                                 ['google_token']: e.target.value
-                              }
-                            })
-                          }}
-                        />
-                      </FormControl>
-                      <FormControl variant='outlined'>
-                        <InputLabel>asapmall 측에서 등록한 구글토큰</InputLabel>
-                        <OutlinedInput
-                          label='asapmall 측에서 등록한 구글토큰'
-                          value={item?.seo_obj?.asap_google_token ?? 0}
-                          onChange={e => {
-                            setItem({
-                              ...item,
-                              ['seo_obj']: {
-                                ...item?.seo_obj,
-                                ['asap_google_token']: e.target.value
                               }
                             })
                           }}

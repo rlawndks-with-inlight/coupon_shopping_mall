@@ -45,8 +45,7 @@ display: flex;
 }
 `
 const ItemImg = styled(LazyLoadImage)`
-height: 100%;
-width: auto;
+object-fit: contain;
 margin: auto;
 `
 export const Item4 = (props) => {

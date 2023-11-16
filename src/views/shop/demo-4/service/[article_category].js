@@ -1,7 +1,7 @@
 import _ from "lodash";
 import { useRouter } from "next/router";
-import { AuthMenuSideComponent } from "src/components/elements/shop/demo-4";
-import { Col, RowMobileColumn, Title } from "src/components/elements/styled-components";
+import { AuthMenuSideComponent, ContentWrappers, TitleComponent } from "src/components/elements/shop/demo-4";
+import { Col, RowMobileColumn, RowMobileReverceColumn, Title } from "src/components/elements/styled-components";
 import { useSettingsContext } from "src/components/settings";
 import { useAuthContext } from "src/layouts/manager/auth/useAuthContext";
 import styled from "styled-components";
@@ -24,12 +24,12 @@ const ArticlesDemo = (props) => {
   return (
     <>
       <Wrappers>
-        <RowMobileColumn>
+        <RowMobileReverceColumn>
           <AuthMenuSideComponent />
-          <Col style={{ width: '100%' }}>
-            <Title style={{ margin: '1rem auto' }}>{_.find(themePostCategoryList, { id: parseInt(router.query?.article_category) })?.post_category_title}</Title>
-          </Col>
-        </RowMobileColumn>
+          <ContentWrappers>
+            <TitleComponent>{_.find(themePostCategoryList, { id: parseInt(router.query?.article_category) })?.post_category_title}</TitleComponent>
+          </ContentWrappers>
+        </RowMobileReverceColumn>
       </Wrappers>
     </>
   )

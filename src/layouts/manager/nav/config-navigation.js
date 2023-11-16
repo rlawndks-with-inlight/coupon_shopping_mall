@@ -227,8 +227,8 @@ export const navConfig = () => {
                   // { title: '상품후기', path: PATH_MANAGER.designs.main + '/product-review' },//
                 ],
               }] : []),
-              ...(isDeveloper() && themeDnsData?.shop_demo_num > 0 ? [{ title: `${themeDnsData?.shop_demo_num > 0 && themeDnsData?.blog_demo_num > 0 ? '쇼핑몰 ' : ''}상품카드관리`, path: PATH_MANAGER.designs.itemCard }] : []),
-              ...(isDeveloper() && themeDnsData?.blog_demo_num > 0 ? [{ title: `${themeDnsData?.shop_demo_num > 0 && themeDnsData?.blog_demo_num > 0 ? '블로그 ' : ''}상품카드관리`, path: PATH_MANAGER.designs.blogItemCard }] : []),
+              ...((isDeveloper() && themeDnsData?.shop_demo_num > 0 && themeDnsData?.setting_obj?.is_use_item_card_style == 1) ? [{ title: `${themeDnsData?.shop_demo_num > 0 && themeDnsData?.blog_demo_num > 0 ? '쇼핑몰 ' : ''}상품카드관리`, path: PATH_MANAGER.designs.itemCard }] : []),
+              ...((isDeveloper() && themeDnsData?.blog_demo_num > 0 && themeDnsData?.setting_obj?.is_use_item_card_style == 1) ? [{ title: `${themeDnsData?.shop_demo_num > 0 && themeDnsData?.blog_demo_num > 0 ? '블로그 ' : ''}상품카드관리`, path: PATH_MANAGER.designs.blogItemCard }] : []),
               { title: '팝업관리', path: PATH_MANAGER.designs.popup },
             ],
           },

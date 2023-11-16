@@ -123,6 +123,7 @@ const ProductList = () => {
           <MenuItem value={0}>{'판매중'}</MenuItem>
           <MenuItem value={1}>{'중단됨'}</MenuItem>
           <MenuItem value={2}>{'품절'}</MenuItem>
+          <MenuItem value={3}>{'새상품'}</MenuItem>
         </Select>
       },
       sx: (row) => {

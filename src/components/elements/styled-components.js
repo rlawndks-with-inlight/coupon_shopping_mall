@@ -41,6 +41,12 @@ display: flex;
     flex-direction:column;
 }
 `
+export const RowMobileReverceColumn = styled.div`
+display: flex;
+@media (max-width:1000px) {
+    flex-direction:column-reverse;
+}
+`
 export const Title = styled.div`
 margin: 5rem auto 1rem auto;
 font-size:${themeObj.font_size.size3};

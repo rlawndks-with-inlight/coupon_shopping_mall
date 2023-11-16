@@ -269,7 +269,7 @@ export const defaultManagerObj = {
       blog_demo_num: 0, //블로그쇼핑몰 데모넘버
       is_use_seller: 0, //셀러 사용여부
       is_use_consignment: 0, //위탁 사용여부
-
+      is_use_item_card_style: 0,//상품카드 스타일 사용여부
     },
     seo_obj: {
       naver_token: '',

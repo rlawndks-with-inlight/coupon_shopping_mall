@@ -1,20 +1,152 @@
-import { Typography } from "@mui/material"
+import { Chip, Typography } from "@mui/material"
 import { useSettingsContext } from "src/components/settings"
 import { useAuthContext } from "src/layouts/manager/auth/useAuthContext"
 import styled from "styled-components"
 import { styled as muiStyle } from '@mui/material'
 import { Col, themeObj } from "../styled-components"
 import { useRouter } from "next/router"
-export const Item4 = props => {
-  return <></>
+import { LazyLoadImage } from "react-lazy-load-image-component"
+import { itemThemeCssDefaultSetting } from "src/views/manager/item-card/setting"
+import { useState } from "react"
+import { commarNumber } from "src/utils/function"
+const ItemWrapper = styled.a`
+display: flex;
+flex-direction: column;
+row-gap: 0.5rem;
+text-decoration: none;
+color: ${props => props.themeMode == 'dark' ? '#fff' : '#000'};
+transition: 0.3s;
+&:hover{
+  transform: translateY(-8px);
+  color: ${props => props.themeDnsData?.theme_css?.main_color};
+}
+`
+const ItemName = muiStyle(Typography)`
+width:70%;
+margin: 0 auto;
+text-align: center;
+`
+const ItemImgContainer = styled.div`
+width: 195px;
+height: 195px;
+margin: 0 auto;
+display: flex;
+@media screen and (max-width:1150px){
+  width:28vw; 
+  height:28vw; 
+}
+@media screen and (max-width:850px){
+  width:40vw; 
+  height:40vw; 
+}
+`
+const ItemImg = styled(LazyLoadImage)`
+height: 100%;
+width: auto;
+margin: auto;
+`
+export const Item4 = (props) => {
+  const { user } = useAuthContext();
+  const { themeWishData, onChangeWishData, themeMode, themeDnsData } = useSettingsContext();
+  const { item, router, theme_css, seller } = props;
+  const [itemThemeCss, setItemThemeCss] = useState(itemThemeCssDefaultSetting);
+
+  const itemStatusList = [
+    { label: 'USED', color: 'info' },
+    { label: 'STOPPED', color: 'warning' },
+    { label: 'SOLD-OUT', color: 'error' },
+    { label: 'NEW', color: 'success' },
+  ]
+  return <>
+    <ItemWrapper
+      href={`/shop/item/${item?.id}`}
+      themeMode={themeMode}
+      themeDnsData={themeDnsData}
+    >
+      <ItemImgContainer>
+        <ItemImg src={item?.product_img} />
+      </ItemImgContainer>
+      <Chip
+        size="small"
+        variant="outlined"
+        color={itemStatusList[item?.status ?? 0].color}
+        label={itemStatusList[item?.status ?? 0].label}
+        style={{
+          margin: '0 auto',
+        }} />
+      <ItemName variant="body2">{item?.product_name}</ItemName>
+      <ItemName variant="subtitle2">{commarNumber(item?.product_sale_price)}원</ItemName>
+    </ItemWrapper>
+  </>
 }
 
 export const Seller4 = props => {
   return <></>
 }
+export const ContentWrappers = styled.div`
+width: 1360px;
+display: flex;
+flex-direction: column;
+margin: 0 auto 1rem 1rem;
+@media screen and (max-width:1650px){
+    width: 100%;
+}
+@media screen and (max-width:1000px){
+    margin: 0 auto;
+}
+`
+const SubTitle = styled.h3`
+margin: 1rem auto 0.25rem auto;
+width: 100%;
+font-size: ${themeObj.font_size.size6};
+display: flex;
+justify-content: space-between;
+align-items: center;
+`
+export const SubTitleComponent = (props) => {
+  const { children, endComponent } = props;
+  const { themeDnsData } = useSettingsContext();
+
+  return (
+    <>
+      <SubTitle
+      >
+        {children}
+        {endComponent}
+      </SubTitle>
+    </>
+  )
+}
+export const ContentBorderContainer = styled.div`
+border: 1px solid #ccc;
+min-height: 100px;
+margin-bottom: 1rem;
+padding:1rem;
+`
+const Title = styled.h1`
+margin: 0 auto 1rem auto;
+width: 100%;
+font-size: ${themeObj.font_size.size2};
+`
+export const TitleComponent = (props) => {
+  const { children } = props;
+  const { themeDnsData } = useSettingsContext();
+  return (
+    <>
+      <Title
+        style={{ borderBottom: `3px solid ${themeDnsData?.theme_css?.main_color}` }}
+      >{children}</Title>
+    </>
+  )
+}
 
 const MenuContainer = styled.div`
-width:180px;
+width:220px;
+display: flex;
+flex-direction: column;
+@media screen and (max-width:1000px){
+    width: 100%;
+}
 `
 const TitleLabel = muiStyle(Typography)`
 border-bottom:3px solid #ccc;
@@ -35,6 +167,11 @@ font-size: ${themeObj.font_size.size8};
 margin:0.5rem;
 cursor: pointer;
 text-decoration: none;
+color: ${props => props.themeMode == 'dark' ? '#fff' : '#000'};
+transition: 0.3s;
+&:hover{
+  color: ${props => props.themeDnsData?.theme_css?.main_color};
+}
 `
 export const AuthMenuSideComponent = (props) => {
 
@@ -46,6 +183,15 @@ export const AuthMenuSideComponent = (props) => {
   const authLabel = 'My 그랑';
   const noneAuthLabel = '고객센터';
   const authList = [
+    {
+      label: '회원정보',
+      children: [
+        {
+          label: '마이페이지',
+          link: '/shop/auth/my-page/',
+        },
+      ]
+    },
     {
       label: '쇼핑정보',
       children: [
@@ -135,8 +281,11 @@ export const AuthMenuSideComponent = (props) => {
                 <>
                   <SubMenuLabel href={itm.link} style={{
                     fontWeight: `${router.asPath == itm.link ? 'bold' : ''}`,
-                    color: `${themeMode == 'dark' ? '#fff' : '#000'}`
-                  }}>- {itm.label}</SubMenuLabel>
+
+                  }}
+                    themeDnsData={themeDnsData}
+                    themeMode={themeMode}
+                  >- {itm.label}</SubMenuLabel>
                 </>
               ))}
             </SubMenuLabelContainer>

@@ -22,6 +22,9 @@ import { Item1, Seller1 } from './demo-1'
 import { Item2, Seller2 } from './demo-2'
 import { Item3, Seller3 } from './demo-3'
 import { Item4, Seller4 } from './demo-4'
+import { Item5, Seller5 } from './demo-5'
+import { Item6, Seller6 } from './demo-6'
+import { Item7, Seller7 } from './demo-7'
 
 const ItemsContainer = styled.div`
   display: flex;
@@ -45,15 +48,7 @@ const ItemWrapper = styled.div`
     width: ${props => (props.theme_css?.container?.is_vertical == 1 ? '100%' : '49%')};
   }
 `
-const SellerWrapper = styled.div`
-  width: ${props => (props.theme_css?.container?.is_vertical == 1 ? '32%' : '18.4%')};
-  @media (max-width: 1150px) {
-    width: ${props => (props.theme_css?.container?.is_vertical == 1 ? '49%' : '32%')};
-  }
-  @media (max-width: 850px) {
-    width: 40%;
-  }
-`
+
 export const Seller = props => {
   const { themeDnsData } = useSettingsContext()
   const { shop_demo_num = 0 } = themeDnsData
@@ -62,6 +57,9 @@ export const Seller = props => {
     else if (shop_demo_num == 2) return <Seller2 {...props} />
     else if (shop_demo_num == 3) return <Seller3 {...props} />
     else if (shop_demo_num == 4) return <Seller4 {...props} />
+    else if (shop_demo_num == 5) return <Seller5 {...props} />
+    else if (shop_demo_num == 6) return <Seller6 {...props} />
+    else if (shop_demo_num == 7) return <Seller7 {...props} />
   }
   return <>{returnSellerCard()}</>
 }
@@ -101,12 +99,15 @@ export const Item = props => {
     else if (shop_demo_num == 2) return <Item2 {...props} />
     else if (shop_demo_num == 3) return <Item3 {...props} />
     else if (shop_demo_num == 4) return <Item4 {...props} />
+    else if (shop_demo_num == 5) return <Item5 {...props} />
+    else if (shop_demo_num == 6) return <Item6 {...props} />
+    else if (shop_demo_num == 7) return <Item7 {...props} />
   }
   return <>{returnSellerCard()}</>
 }
 export const Items = props => {
   const { themeDnsData } = useSettingsContext()
-  const { items, router, theme_css, is_slide, seller } = props
+  const { items, router, is_slide, seller } = props
   const [itemThemeCss, setItemThemeCss] = useState(itemThemeCssDefaultSetting)
   useEffect(() => {
     if (themeDnsData) {

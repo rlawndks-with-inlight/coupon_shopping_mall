@@ -111,7 +111,7 @@ export const apiManager = async (table, type, params) => {
         return deleteItem(`${base_url}/${table}/${params?.id}`);
     }
 }
-export const apiShop = async (table, type, params) => {
+export const apiShop = async (table, type = 'get', params) => {
     let obj = await settingParams(table, type, params);
     if (!(obj?.brand_id > 0)) {
         let dns_data = getLocalStorage('themeDnsData');
@@ -181,7 +181,7 @@ export const uploadFileByManager = async (params) => {// 관리자 파일 단일
     return result;
 }
 export const uploadFilesByManager = async (params) => {// 관리자 파일 여러개 업로드
-    let { images=[] } = params;
+    let { images = [] } = params;
     images = images.map((item) => { return item?.image })
     let result = await multipleFileUploadByCloudinary(images);
     return result;
@@ -249,7 +249,7 @@ const settingdeleteImageObj = async (obj_) => {//이미지 존재안할시 삭�
     }
     return obj;
 }
-const settingParams =async (table, type, params) => {
+const settingParams = async (table, type, params) => {
     let obj = { ...params };
     let keys = Object.keys(obj);
     if (type == 'create') {

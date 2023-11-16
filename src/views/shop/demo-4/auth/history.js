@@ -1,6 +1,6 @@
 import { useRouter } from "next/router";
-import { AuthMenuSideComponent } from "src/components/elements/shop/demo-4";
-import { Col, RowMobileColumn, Title } from "src/components/elements/styled-components";
+import { AuthMenuSideComponent, ContentWrappers, TitleComponent } from "src/components/elements/shop/demo-4";
+import { Col, RowMobileColumn, RowMobileReverceColumn, Title } from "src/components/elements/styled-components";
 import { useSettingsContext } from "src/components/settings";
 import { useAuthContext } from "src/layouts/manager/auth/useAuthContext";
 import styled from "styled-components";
@@ -24,12 +24,12 @@ const HistoryDemo = (props) => {
   return (
     <>
       <Wrappers>
-        <RowMobileColumn>
+        <RowMobileReverceColumn>
           <AuthMenuSideComponent />
-          <Col style={{ width: '100%' }}>
-            <Title style={{ margin: '1rem auto' }}>{router.query?.is_cancel == 1 ? '반품/환불조회' : '주문/배송조회'}</Title>
-          </Col>
-        </RowMobileColumn>
+          <ContentWrappers>
+            <TitleComponent>{router.query?.is_cancel == 1 ? '반품/환불조회' : '주문/배송조회'}</TitleComponent>
+          </ContentWrappers>
+        </RowMobileReverceColumn>
       </Wrappers>
     </>
   )

@@ -1,5 +1,5 @@
 
-import { Button, Card, Grid, Stack, TextField } from "@mui/material";
+import { Button, Card, FormControl, Grid, InputLabel, MenuItem, Select, Stack, TextField } from "@mui/material";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import ManagerLayout from "src/layouts/manager/ManagerLayout";
@@ -7,6 +7,7 @@ import { toast } from "react-hot-toast";
 import _ from "lodash";
 import { useModal } from "src/components/dialog/ModalProvider";
 import { apiManager } from "src/utils/api";
+import { productSortTypeList } from "src/utils/format";
 
 const ProductCategoryGroupEdit = () => {
   const { setModal } = useModal()
@@ -78,6 +79,21 @@ const ProductCategoryGroupEdit = () => {
                         }
                       )
                     }} />
+                  <FormControl>
+                    <InputLabel>정렬기준</InputLabel>
+                    <Select label='정렬기준' value={item.sort_type} onChange={(e) => {
+                      setItem(
+                        {
+                          ...item,
+                          ['sort_type']: e.target.value
+                        }
+                      )
+                    }}>
+                      {productSortTypeList.map(itm => {
+                        return <MenuItem value={itm.value}>{itm.label}</MenuItem>
+                      })}
+                    </Select>
+                  </FormControl>
                 </Stack>
               </Card>
             </Grid>

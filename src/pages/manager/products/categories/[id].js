@@ -135,7 +135,6 @@ const CustomContent = forwardRef(function CustomContent(props, ref) {
                         </IconButton>
                     </Tooltip>
                 </>}
-
             <Tooltip title={`해당 ${categoryGroup?.category_group_name}를 한칸 올리시려면 클릭해 주세요.`}>
                 <IconButton sx={{ padding: '0.25rem' }} disabled={index == 0} onClick={() => { onChangeSequence(true, category, depth, index) }}>
                     <Icon icon={'grommet-icons:link-up'} fontSize={14} />

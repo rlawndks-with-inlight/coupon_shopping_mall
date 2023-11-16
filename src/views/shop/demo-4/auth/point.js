@@ -1,6 +1,6 @@
 import { useRouter } from "next/router";
-import { AuthMenuSideComponent } from "src/components/elements/shop/demo-4";
-import { Col, RowMobileColumn, Title } from "src/components/elements/styled-components";
+import { AuthMenuSideComponent, ContentWrappers, TitleComponent } from "src/components/elements/shop/demo-4";
+import { Col, RowMobileColumn, RowMobileReverceColumn, Title } from "src/components/elements/styled-components";
 import { useSettingsContext } from "src/components/settings";
 import { useAuthContext } from "src/layouts/manager/auth/useAuthContext";
 import styled from "styled-components";
@@ -24,12 +24,12 @@ const PointDemo = (props) => {
   return (
     <>
       <Wrappers>
-        <RowMobileColumn>
+        <RowMobileReverceColumn>
           <AuthMenuSideComponent />
-          <Col style={{ width: '100%' }}>
-            <Title style={{ margin: '1rem auto' }}>{'마일리지'}</Title>
-          </Col>
-        </RowMobileColumn>
+          <ContentWrappers>
+            <TitleComponent>{'마일리지'}</TitleComponent>
+          </ContentWrappers>
+        </RowMobileReverceColumn>
       </Wrappers>
     </>
   )

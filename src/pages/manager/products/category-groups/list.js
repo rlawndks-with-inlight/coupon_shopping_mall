@@ -7,6 +7,7 @@ import { useRouter } from "next/router";
 import { useModal } from "src/components/dialog/ModalProvider";
 import { apiManager } from "src/utils/api";
 import { commarNumber } from "src/utils/function";
+import { productSortTypeList } from "src/utils/format";
 
 const ProductCategoryGroupList = () => {
   const { setModal } = useModal()
@@ -30,6 +31,13 @@ const ProductCategoryGroupList = () => {
       label: '상태',
       action: (row) => {
         return row['status'] ?? "---"
+      }
+    },
+    {
+      id: 'sort_type',
+      label: '정렬타입',
+      action: (row) => {
+        return productSortTypeList[row['sort_type'] ?? 0].label
       }
     },
     {

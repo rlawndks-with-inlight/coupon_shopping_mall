@@ -26,6 +26,11 @@ export const getProductStatus = num => {
       text: '품절',
       color: 'error'
     }
+  } else if (num == 3) {
+    return {
+      text: '새상품',
+      color: 'info'
+    }
   }
   return {}
 }

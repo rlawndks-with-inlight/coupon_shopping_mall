@@ -211,7 +211,7 @@ const ItemsDemo = (props) => {
             )
           }}
         />
-        <Row style={{ columnGap: '0.5rem' }}>
+        <Row style={{ columnGap: '0.5rem', marginBottom: '1rem' }}>
           {sortList.map((item) => (
             <>
               <Button variant={`${(searchObj?.order ?? "sort_idx") == item.order && (searchObj?.is_asc ?? 0) == item.is_asc ? 'contained' : 'outlined'}`} onClick={() => {

@@ -275,6 +275,11 @@ export const defaultManagerObj = {
       naver_token: '',
       google_token: '',
     },
+    bonaeja_obj: {
+      api_key: '',
+      user_id: '',
+      sender: '',
+    },
     theme_css: {
       main_color: '#00ab55'
     },

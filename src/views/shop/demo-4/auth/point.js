@@ -27,7 +27,7 @@ const PointDemo = (props) => {
         <RowMobileReverceColumn>
           <AuthMenuSideComponent />
           <ContentWrappers>
-            <TitleComponent>{'마일리지'}</TitleComponent>
+            <TitleComponent>{'포인트'}</TitleComponent>
           </ContentWrappers>
         </RowMobileReverceColumn>
       </Wrappers>

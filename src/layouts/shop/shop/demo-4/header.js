@@ -230,7 +230,6 @@ const Header = () => {
     })
     const [sideMenuOpen, setSideMenuOpen] = useState(false);
     const [categories, setCategories] = useState([]);
-    const [categories2, setCategories2] = useState([]);
     const [popups, setPopups] = useState([]);
     const [postCategories, setPostCategories] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -250,7 +249,6 @@ const Header = () => {
         setPopups(themePopupList)
         setPostCategories(themePostCategoryList);
         setCategories(themeCategoryList[0]?.product_categories ?? []);
-        setCategories2(themeCategoryList[1]?.product_categories ?? []);
         let hover_list = getAllIdsWithParents(themeCategoryList[0]?.product_categories ?? []);
         let hover_items = {};
         for (var i = 0; i < hover_list.length; i++) {
@@ -426,7 +424,7 @@ const Header = () => {
                                     }}
                                 />
                                 <Button variant="outlined"
-                                    sx={{marginRight:'0.5rem'}}
+                                    sx={{ marginRight: '0.5rem' }}
                                     startIcon={<>
                                         <Icon icon={'mdi:cart'} />
                                     </>}
@@ -585,115 +583,116 @@ const Header = () => {
                         </TopMenuContainer>
                         {themeCategoryList.map((group, index) => (
                             <>
-                                <div style={{ borderBottom: `1px solid ${theme.palette.grey[300]}` }} />
-                                <CategoryContainer>
-                                    {index == 0 ?
-                                        <>
-                                            <NoneShowMobile>
-                                                <IconButton
-                                                    onClick={() => setSideMenuOpen(true)}
-                                                    sx={{ marginRight: '1rem' }}
-                                                >
-                                                    <Icon icon={'basil:menu-solid'} fontSize={'2rem'} color={themeMode == 'dark' ? '#fff' : '#000'} />
-                                                </IconButton>
-                                            </NoneShowMobile>
-                                        </>
-                                        :
-                                        <>
-                                            <div style={{ width: '48px' }} />
-                                        </>}
-                                    <NoneShowMobile
-                                        style={{
-                                            width: '85%',
-                                            whiteSpace: 'nowrap',
-                                            overflowX: 'auto',
-                                            margin: '0 auto'
-                                        }}
-                                        className={`none-scroll pc-menu-content${index}`}
-                                    >
-                                        <IconButton style={{ position: 'absolute', left: '2.5rem' }} onClick={() => {
-                                            $(`.pc-menu-content${index}`).animate({
-                                                scrollLeft: $(`.pc-menu-content${index}`).scrollLeft() - 800
-                                            }, 300)
-                                        }}>
-                                            <Icon icon='mingcute:left-line' color={themeMode == 'dark' ? '#fff' : '#000'} />
-                                        </IconButton>
-                                        <IconButton style={{ position: 'absolute', right: '2.5rem' }} onClick={() => {
-                                            $(`.pc-menu-content${index}`).animate({
-                                                scrollLeft: $(`.pc-menu-content${index}`).scrollLeft() + 800
-                                            }, 300)
-                                        }}>
-                                            <Icon icon='mingcute:right-line' color={themeMode == 'dark' ? '#fff' : '#000'} />
-                                        </IconButton>
-                                        {group?.product_categories && group?.product_categories.map((item1, idx1) => {
-                                            return <div style={{ position: 'relative' }} className={`menu-${item1?.id}`}>
-                                                <CategoryMenu borderColor={themeMode == 'dark' ? '#fff' : '#000'} onClick={() => {
-                                                    router.push(`/shop/items?category_id${index}=${item1?.id}&depth=0`)
-                                                }}>
-                                                    <div>{item1.category_name}</div>
-                                                </CategoryMenu>
-                                                {item1?.children.length > 0 ?
-                                                    <>
-                                                        <DropDownMenuContainer parentId={item1?.id} style={{
-                                                            border: `1px solid ${theme.palette.grey[300]}`,
-                                                            width: `${item1.category_img ? '430px' : '154px'}`,
-                                                            fontSize: '12px',
-                                                            fontWeight: 'normal',
-                                                            background: `${themeMode == 'dark' ? '#000' : '#fff'}`,
-                                                        }}>
-                                                            <div style={{
-                                                                display: 'flex',
-                                                                flexDirection: 'column',
-                                                                width: '154px'
-                                                            }}>
-                                                                {item1?.children.map((item2, idx2) => (
-                                                                    <>
-                                                                        {returnDropdownMenu(item2, 1)}
-                                                                    </>
-                                                                ))}
-                                                            </div>
-                                                            {item1.category_img ?
-                                                                <>
-                                                                    <img src={item1.category_img} style={{ height: 'auto', width: '270px' }} />
-                                                                </>
-                                                                :
-                                                                <>
-                                                                </>}
-                                                        </DropDownMenuContainer>
-                                                    </>
-                                                    :
-                                                    <>
-                                                    </>}
-                                            </div>
-                                        })}
-                                    </NoneShowMobile>
-                                    <ShowMobile style={{
-                                        whiteSpace: 'nowrap',
-                                        overflowX: 'auto'
-                                    }}
-                                        className="none-scroll"
-                                    >
-                                        {group?.product_categories && group?.product_categories.map((item1, idx1) => (
-                                            <>
-                                                <CategoryMenu borderColor={themeMode == 'dark' ? '#fff' : '#000'} onMouseOver={() => {
-                                                    onHoverCategory(`hover_${item1?.id}`)
+                                {group?.is_show_header_menu == 1 &&
+                                    <>
+                                        <div style={{ borderBottom: `1px solid ${theme.palette.grey[300]}` }} />
+                                        <CategoryContainer>
+                                            {index == 0 ?
+                                                <>
+                                                    <NoneShowMobile>
+                                                        <IconButton
+                                                            onClick={() => setSideMenuOpen(true)}
+                                                            sx={{ marginRight: '1rem' }}
+                                                        >
+                                                            <Icon icon={'basil:menu-solid'} fontSize={'2rem'} color={themeMode == 'dark' ? '#fff' : '#000'} />
+                                                        </IconButton>
+                                                    </NoneShowMobile>
+                                                </>
+                                                :
+                                                <>
+                                                    <div style={{ width: '48px' }} />
+                                                </>}
+                                            <NoneShowMobile
+                                                style={{
+                                                    width: '85%',
+                                                    whiteSpace: 'nowrap',
+                                                    overflowX: 'auto',
+                                                    margin: '0 auto'
                                                 }}
-                                                    onClick={() => {
-                                                        router.push(`/shop/items?category_id${index}=${item1?.id}&depth=0`)
-                                                    }}
-                                                >
-                                                    <div>{item1.category_name}</div>
-                                                </CategoryMenu>
-                                            </>
-                                        ))}
-                                        <CategoryMenu borderColor={themeMode == 'dark' ? '#fff' : '#000'} onClick={() => {
-                                        }}>고객센터</CategoryMenu>
-                                    </ShowMobile>
-                                    <NoneShowMobile style={{
-                                        marginLeft: 'auto'
-                                    }}>
-                                    </NoneShowMobile>
-                                </CategoryContainer>
+                                                className={`none-scroll pc-menu-content${index}`}
+                                            >
+                                                <IconButton style={{ position: 'absolute', left: '2.5rem' }} onClick={() => {
+                                                    $(`.pc-menu-content${index}`).animate({
+                                                        scrollLeft: $(`.pc-menu-content${index}`).scrollLeft() - 800
+                                                    }, 300)
+                                                }}>
+                                                    <Icon icon='mingcute:left-line' color={themeMode == 'dark' ? '#fff' : '#000'} />
+                                                </IconButton>
+                                                <IconButton style={{ position: 'absolute', right: '2.5rem' }} onClick={() => {
+                                                    $(`.pc-menu-content${index}`).animate({
+                                                        scrollLeft: $(`.pc-menu-content${index}`).scrollLeft() + 800
+                                                    }, 300)
+                                                }}>
+                                                    <Icon icon='mingcute:right-line' color={themeMode == 'dark' ? '#fff' : '#000'} />
+                                                </IconButton>
+                                                {group?.product_categories && group?.product_categories.map((item1, idx1) => {
+                                                    return <div style={{ position: 'relative' }} className={`menu-${item1?.id}`}>
+                                                        <CategoryMenu borderColor={themeMode == 'dark' ? '#fff' : '#000'} onClick={() => {
+                                                            router.push(`/shop/items?category_id${index}=${item1?.id}&depth=0`)
+                                                        }}>
+                                                            <div>{item1.category_name}</div>
+                                                        </CategoryMenu>
+                                                        {item1?.children.length > 0 ?
+                                                            <>
+                                                                <DropDownMenuContainer parentId={item1?.id} style={{
+                                                                    border: `1px solid ${theme.palette.grey[300]}`,
+                                                                    width: `${item1.category_img ? '430px' : '154px'}`,
+                                                                    fontSize: '12px',
+                                                                    fontWeight: 'normal',
+                                                                    background: `${themeMode == 'dark' ? '#000' : '#fff'}`,
+                                                                }}>
+                                                                    <div style={{
+                                                                        display: 'flex',
+                                                                        flexDirection: 'column',
+                                                                        width: '154px'
+                                                                    }}>
+                                                                        {item1?.children.map((item2, idx2) => (
+                                                                            <>
+                                                                                {returnDropdownMenu(item2, 1)}
+                                                                            </>
+                                                                        ))}
+                                                                    </div>
+                                                                    {item1.category_img ?
+                                                                        <>
+                                                                            <img src={item1.category_img} style={{ height: 'auto', width: '270px' }} />
+                                                                        </>
+                                                                        :
+                                                                        <>
+                                                                        </>}
+                                                                </DropDownMenuContainer>
+                                                            </>
+                                                            :
+                                                            <>
+                                                            </>}
+                                                    </div>
+                                                })}
+                                            </NoneShowMobile>
+                                            <ShowMobile style={{
+                                                whiteSpace: 'nowrap',
+                                                overflowX: 'auto'
+                                            }}
+                                                className="none-scroll"
+                                            >
+                                                {group?.product_categories && group?.product_categories.map((item1, idx1) => (
+                                                    <>
+                                                        <CategoryMenu borderColor={themeMode == 'dark' ? '#fff' : '#000'} onMouseOver={() => {
+                                                            onHoverCategory(`hover_${item1?.id}`)
+                                                        }}
+                                                            onClick={() => {
+                                                                router.push(`/shop/items?category_id${index}=${item1?.id}&depth=0`)
+                                                            }}
+                                                        >
+                                                            <div>{item1.category_name}</div>
+                                                        </CategoryMenu>
+                                                    </>
+                                                ))}
+                                            </ShowMobile>
+                                            <NoneShowMobile style={{
+                                                marginLeft: 'auto'
+                                            }}>
+                                            </NoneShowMobile>
+                                        </CategoryContainer>
+                                    </>}
                             </>
                         ))}
                         <div style={{ borderBottom: `1px solid ${theme.palette.grey[300]}` }} />
@@ -727,24 +726,26 @@ const Header = () => {
                         </>}
                     {themeCategoryList && themeCategoryList.map((group, index) => (
                         <>
-                            <ColumnMenuTitle>{group?.category_group_name}</ColumnMenuTitle>
-                            <TreeView
-                                defaultCollapseIcon={<Icon icon={'ic:baseline-minus'} />}
-                                defaultExpandIcon={<Icon icon={'ic:baseline-plus'} />}
-                                defaultEndIcon={<Icon icon={'mdi:dot'} />}
-                            >
-                                {group?.product_categories && group?.product_categories.map((item1, idx) => (
-                                    <>
-                                        {returnSidebarMenu(item1, 0, {
-                                            router,
-                                            setSideMenuOpen
-                                        }, index)}
-                                    </>
-                                ))}
-                            </TreeView>
+                            {group?.is_show_header_menu == 1 &&
+                                <>
+                                    <ColumnMenuTitle>{group?.category_group_name}</ColumnMenuTitle>
+                                    <TreeView
+                                        defaultCollapseIcon={<Icon icon={'ic:baseline-minus'} />}
+                                        defaultExpandIcon={<Icon icon={'ic:baseline-plus'} />}
+                                        defaultEndIcon={<Icon icon={'mdi:dot'} />}
+                                    >
+                                        {group?.product_categories && group?.product_categories.map((item1, idx) => (
+                                            <>
+                                                {returnSidebarMenu(item1, 0, {
+                                                    router,
+                                                    setSideMenuOpen
+                                                }, index)}
+                                            </>
+                                        ))}
+                                    </TreeView>
+                                </>}
                         </>
                     ))}
-
                     <ColumnMenuTitle>고객센터</ColumnMenuTitle>
                     {postCategories && postCategories.map((item, idx) => (
                         <>

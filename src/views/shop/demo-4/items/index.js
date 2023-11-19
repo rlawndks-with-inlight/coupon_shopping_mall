@@ -1,5 +1,5 @@
 import { Icon } from "@iconify/react";
-import { Button, CircularProgress } from "@mui/material";
+import { Button, Chip, CircularProgress, IconButton, InputAdornment, TextField } from "@mui/material";
 import _ from "lodash";
 import { useRouter } from "next/router";
 import { useRef } from "react";
@@ -30,10 +30,36 @@ const ItemsDemo = (props) => {
     page: 1,
     page_size: 15,
   })
+  const [curCategory, setCurCategory] = useState({
+
+  })
   const [productContent, setProductContent] = useState({});
   const [moreLoading, setMoreLoading] = useState(false);
   const [loading, setLoading] = useState(true);
   const scrollRef = useRef(null);
+
+  const sortList = [
+    {
+      label: '그랑파리랭킹순',
+      order: 'sort_idx',
+      is_asc: 0,
+    },
+    {
+      label: '최근등록순',
+      order: 'id',
+      is_asc: 0,
+    },
+    {
+      label: '높은가격순',
+      order: 'product_sale_price',
+      is_asc: 0,
+    },
+    {
+      label: '낮은가격순',
+      order: 'product_sale_price',
+      is_asc: 1,
+    },
+  ]
   useEffect(() => {
     getItemList(router.query, { ...searchObj, page: 1 }, true)
   }, [router.query])
@@ -61,7 +87,7 @@ const ItemsDemo = (props) => {
       setProductContent({});
     }
     setCategoryIds(query);
-    setSearchObj(search_obj);
+    setSearchObj({ ...search_obj, search: query?.search ?? "" });
     let product_list = await apiShop('product', 'list', {
       ...search_obj,
       brand_id: themeDnsData?.id,
@@ -91,24 +117,109 @@ const ItemsDemo = (props) => {
   return (
     <>
       <ContentWrapper>
-        {themeCategoryList.slice(0).reverse().map((group, index) => {
+        {themeCategoryList.map((group, index) => {
           return <>
             <SubTitleComponent>{group?.category_group_name}</SubTitleComponent>
-            <ContentBorderContainer style={{ maxHeight: '150px', overflowX: 'auto', minHeight: '50px' }}>
-              {group?.product_categories && group?.product_categories.map(category => {
-                return <Button
-                  size="small"
-                  variant={`${categoryIds[`category_id${themeCategoryList.length - index - 1}`] == category?.id ? 'contained' : 'text'}`}
-                  onClick={() => {
-                    let query = { ...categoryIds };
-                    query[`category_id${themeCategoryList.length - index - 1}`] = category?.id
-                    query = new URLSearchParams(query).toString();
-                    router.push(`/shop/items?${query}`);
-                  }}>{category?.category_name}</Button>
+            <ContentBorderContainer style={{ maxHeight: '150px', overflowX: 'auto', minHeight: '50px', }}>
+              <Button
+                size="small"
+                variant={`${!categoryIds[`category_id${index}`] ? 'contained' : 'text'}`}
+                onClick={() => {
+                  let query = { ...categoryIds };
+                  delete query[`category_id${index}`];
+                  query = new URLSearchParams(query).toString();
+                  router.push(`/shop/items?${query}`);
+                }}>전체</Button>
+              {group?.product_categories && group?.product_categories.map((category, idx) => {
+                let is_alphabet = false;
+                let alphabet = "";
+                if (group?.sort_type == 1) {
+                  for (var i = 65; i < 90; i++) {
+                    if (category?.category_name[0].toUpperCase() == String.fromCharCode(i) && (group?.product_categories[idx - 1]?.category_name[0] ?? "").toUpperCase() != String.fromCharCode(i)) {
+                      is_alphabet = true;
+                      alphabet = String.fromCharCode(i);
+                      break;
+                    }
+                  }
+                }
+                return <>
+                  {is_alphabet &&
+                    <>
+                      <Chip label={`[${alphabet}]`} color="error" variant="soft" sx={{ cursor: 'pointer', fontWeight: 'bold' }} />
+                    </>}
+                  <Button
+                    size="small"
+                    variant={`${categoryIds[`category_id${index}`] == category?.id ? 'contained' : 'text'}`}
+                    onClick={() => {
+                      let query = { ...categoryIds };
+                      query[`category_id${index}`] = category?.id;
+
+                      query = new URLSearchParams(query).toString();
+                      router.push(`/shop/items?${query}`);
+                    }}>{category?.category_name}</Button>
+                </>
               })}
+
             </ContentBorderContainer>
           </>
         })}
+        <TextField
+          label=''
+          variant="standard"
+          onChange={(e) => {
+            setSearchObj({
+              ...searchObj,
+              search: e.target.value
+            })
+          }}
+          value={searchObj?.search}
+          style={{ width: '50%', margin: '0 auto 1rem auto' }}
+          autoComplete='new-password'
+          placeholder="키워드를 검색해주세요."
+          onKeyPress={(e) => {
+            if (e.key == 'Enter') {
+              let query = { ...categoryIds };
+              query[`search`] = searchObj?.search;
+
+              query = new URLSearchParams(query).toString();
+              router.push(`/shop/items?${query}`);
+            }
+          }}
+          InputProps={{
+            sx: {
+              padding: '0.5rem 0'
+            },
+            endAdornment: (
+              <InputAdornment position='end'>
+                <IconButton
+                  edge='end'
+                  onClick={() => {
+                    let query = { ...categoryIds };
+                    query[`search`] = searchObj?.search;
+
+                    query = new URLSearchParams(query).toString();
+                    router.push(`/shop/items?${query}`);
+                  }}
+                  aria-label='toggle password visibility'
+                  style={{
+                    padding: '0.5rem'
+                  }}
+                >
+                  <Icon icon={'tabler:search'} />
+                </IconButton>
+              </InputAdornment>
+            )
+          }}
+        />
+        <Row style={{ columnGap: '0.5rem' }}>
+          {sortList.map((item) => (
+            <>
+              <Button variant={`${(searchObj?.order ?? "sort_idx") == item.order && (searchObj?.is_asc ?? 0) == item.is_asc ? 'contained' : 'outlined'}`} onClick={() => {
+                getItemList(router.query, { ...searchObj, page: 1, order: item.order, is_asc: item.is_asc }, true)
+              }}>{item.label}</Button>
+            </>
+          ))}
+        </Row>
         {productContent?.content ?
           <>
             {loading ?

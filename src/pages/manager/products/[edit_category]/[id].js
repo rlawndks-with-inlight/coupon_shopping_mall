@@ -405,10 +405,10 @@ const ProductEdit = () => {
         sub_images.push(obj.sub_images[i]);
       }
     }
-    for(var i = 0; i<item.groups.length;i++){
-      if(item.groups[i].is_delete != 1){
-        let is_exist_null_value = (item.groups[i]?.options??[]).filter(item => isNaN(parseInt(item?.option_price)));
-        if(is_exist_null_value.length > 0){
+    for (var i = 0; i < item.groups.length; i++) {
+      if (item.groups[i].is_delete != 1) {
+        let is_exist_null_value = (item.groups[i]?.options ?? []).filter(item => isNaN(parseInt(item?.option_price)));
+        if (is_exist_null_value.length > 0) {
           toast.error('옵션 변동가는 필수 입니다.');
           return;
         }
@@ -429,7 +429,7 @@ const ProductEdit = () => {
     let obj = review;
     obj['product_id'] = router.query?.id;
     obj['user_id'] = user?.id;
-    
+
     if (obj?.id) {
       result = await apiManager('product-reviews', 'update', { ...obj })
     } else {
@@ -705,8 +705,6 @@ const ProductEdit = () => {
                                   </IconButton>
                                 </Row>
                               </>}
-
-
                           </>
                         ))}
                         <Button variant="outlined" sx={{ height: '48px' }} onClick={() => {

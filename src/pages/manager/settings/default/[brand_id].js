@@ -836,6 +836,70 @@ const DefaultSetting = () => {
                 </Grid>
               </>
             )}
+            {currentTab == 7 && (
+              <>
+                <Grid item xs={12} md={6}>
+                  <Card sx={{ p: 2, height: '100%' }}>
+                    <Stack spacing={3}>
+                      <FormControl variant='outlined'>
+                        <InputLabel>APIKEY</InputLabel>
+                        <OutlinedInput
+                          label='APIKEY'
+                          value={item?.bonaeja_obj?.api_key ?? 0}
+                          onChange={e => {
+                            setItem({
+                              ...item,
+                              ['bonaeja_obj']: {
+                                ...item?.bonaeja_obj,
+                                ['api_key']: e.target.value
+                              }
+                            })
+                          }}
+                        />
+                      </FormControl>
+                      <FormControl variant='outlined'>
+                        <InputLabel>사용자id</InputLabel>
+                        <OutlinedInput
+                          label='사용자id'
+                          value={item?.bonaeja_obj?.user_id ?? 0}
+                          onChange={e => {
+                            setItem({
+                              ...item,
+                              ['bonaeja_obj']: {
+                                ...item?.bonaeja_obj,
+                                ['user_id']: e.target.value
+                              }
+                            })
+                          }}
+                        />
+                      </FormControl>
+                    </Stack>
+                  </Card>
+                </Grid>
+                <Grid item xs={12} md={6}>
+                  <Card sx={{ p: 2, height: '100%' }}>
+                    <Stack spacing={3}>
+                      <FormControl variant='outlined'>
+                        <InputLabel>발신자 전화번호</InputLabel>
+                        <OutlinedInput
+                          label='발신자 전화번호'
+                          value={item?.bonaeja_obj?.sender ?? 0}
+                          onChange={e => {
+                            setItem({
+                              ...item,
+                              ['bonaeja_obj']: {
+                                ...item?.bonaeja_obj,
+                                ['sender']: e.target.value
+                              }
+                            })
+                          }}
+                        />
+                      </FormControl>
+                    </Stack>
+                  </Card>
+                </Grid>
+              </>
+            )}
             <Grid item xs={12} md={12}>
               <Card sx={{ p: 3 }}>
                 <Stack spacing={1} style={{ display: 'flex' }}>

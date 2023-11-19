@@ -222,7 +222,7 @@ export const AuthMenuSideComponent = (props) => {
       children: [
 
         {
-          label: '마일리지',
+          label: '포인트',
           link: '/shop/auth/point/',
         },
       ]

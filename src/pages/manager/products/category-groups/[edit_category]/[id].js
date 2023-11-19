@@ -1,4 +1,4 @@
-
+3
 import { Button, Card, FormControl, Grid, InputLabel, MenuItem, Select, Stack, TextField } from "@mui/material";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
@@ -18,6 +18,8 @@ const ProductCategoryGroupEdit = () => {
   const [item, setItem] = useState({
     category_group_name: '',
     max_depth: 10,
+    sort_type: 0,
+    is_show_header_menu: 1,
   })
   const [reviewData, setReviewData] = useState({});
 
@@ -92,6 +94,20 @@ const ProductCategoryGroupEdit = () => {
                       {productSortTypeList.map(itm => {
                         return <MenuItem value={itm.value}>{itm.label}</MenuItem>
                       })}
+                    </Select>
+                  </FormControl>
+                  <FormControl>
+                    <InputLabel>헤더메뉴 노출여부</InputLabel>
+                    <Select label='헤더메뉴 노출여부' value={item.is_show_header_menu} onChange={(e) => {
+                      setItem(
+                        {
+                          ...item,
+                          ['is_show_header_menu']: e.target.value
+                        }
+                      )
+                    }}>
+                      <MenuItem value={1}>노출</MenuItem>
+                      <MenuItem value={0}>노출안함</MenuItem>
                     </Select>
                   </FormControl>
                 </Stack>

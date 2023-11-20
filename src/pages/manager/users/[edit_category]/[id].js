@@ -1,5 +1,5 @@
 
-import { Button, Card, Grid, Stack, TextField, Typography } from "@mui/material";
+import { Button, Card, FormControl, Grid, InputLabel, MenuItem, Select, Stack, TextField, Typography } from "@mui/material";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { themeObj } from "src/components/elements/styled-components";
@@ -9,11 +9,14 @@ import ManagerLayout from "src/layouts/manager/ManagerLayout";
 import { toast } from "react-hot-toast";
 import { useModal } from "src/components/dialog/ModalProvider";
 import { apiManager } from "src/utils/api";
+import { useAuthContext } from "src/layouts/manager/auth/useAuthContext";
+import { userLevelList } from "src/utils/format";
 
 const UserEdit = () => {
   const { setModal } = useModal()
   const { themeMode } = useSettingsContext();
 
+  const { user } = useAuthContext();
   const router = useRouter();
 
   const [loading, setLoading] = useState(true);
@@ -119,6 +122,24 @@ const UserEdit = () => {
                             }
                           )
                         }} />
+                    </>}
+                  {user?.level >= 50 &&
+                    <>
+                      <FormControl>
+                        <InputLabel>볼수 있는 대상</InputLabel>
+                        <Select label='볼수 있는 대상' value={item.level} onChange={(e) => {
+                          setItem(
+                            {
+                              ...item,
+                              ['level']: e.target.value
+                            }
+                          )
+                        }}>
+                          {userLevelList.map((itm) => {
+                            return <MenuItem value={itm.value}>{itm.label}</MenuItem>
+                          })}
+                        </Select>
+                      </FormControl>
                     </>}
                   <TextField
                     label='닉네임'

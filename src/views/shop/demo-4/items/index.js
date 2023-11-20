@@ -117,6 +117,54 @@ const ItemsDemo = (props) => {
   return (
     <>
       <ContentWrapper>
+        <TextField
+          label=''
+          variant="standard"
+          onChange={(e) => {
+            setSearchObj({
+              ...searchObj,
+              search: e.target.value
+            })
+          }}
+          value={searchObj?.search}
+          style={{ width: '50%', margin: '1rem auto 1rem auto' }}
+          autoComplete='new-password'
+          placeholder="키워드를 검색해주세요."
+          onKeyPress={(e) => {
+            if (e.key == 'Enter') {
+              let query = { ...categoryIds };
+              query[`search`] = searchObj?.search;
+
+              query = new URLSearchParams(query).toString();
+              router.push(`/shop/items?${query}`);
+            }
+          }}
+          InputProps={{
+            sx: {
+              padding: '0.5rem 0'
+            },
+            endAdornment: (
+              <InputAdornment position='end'>
+                <IconButton
+                  edge='end'
+                  onClick={() => {
+                    let query = { ...categoryIds };
+                    query[`search`] = searchObj?.search;
+
+                    query = new URLSearchParams(query).toString();
+                    router.push(`/shop/items?${query}`);
+                  }}
+                  aria-label='toggle password visibility'
+                  style={{
+                    padding: '0.5rem'
+                  }}
+                >
+                  <Icon icon={'tabler:search'} />
+                </IconButton>
+              </InputAdornment>
+            )
+          }}
+        />
         {themeCategoryList.map((group, index) => {
           return <>
             <SubTitleComponent>{group?.category_group_name}</SubTitleComponent>
@@ -163,54 +211,7 @@ const ItemsDemo = (props) => {
             </ContentBorderContainer>
           </>
         })}
-        <TextField
-          label=''
-          variant="standard"
-          onChange={(e) => {
-            setSearchObj({
-              ...searchObj,
-              search: e.target.value
-            })
-          }}
-          value={searchObj?.search}
-          style={{ width: '50%', margin: '0 auto 1rem auto' }}
-          autoComplete='new-password'
-          placeholder="키워드를 검색해주세요."
-          onKeyPress={(e) => {
-            if (e.key == 'Enter') {
-              let query = { ...categoryIds };
-              query[`search`] = searchObj?.search;
 
-              query = new URLSearchParams(query).toString();
-              router.push(`/shop/items?${query}`);
-            }
-          }}
-          InputProps={{
-            sx: {
-              padding: '0.5rem 0'
-            },
-            endAdornment: (
-              <InputAdornment position='end'>
-                <IconButton
-                  edge='end'
-                  onClick={() => {
-                    let query = { ...categoryIds };
-                    query[`search`] = searchObj?.search;
-
-                    query = new URLSearchParams(query).toString();
-                    router.push(`/shop/items?${query}`);
-                  }}
-                  aria-label='toggle password visibility'
-                  style={{
-                    padding: '0.5rem'
-                  }}
-                >
-                  <Icon icon={'tabler:search'} />
-                </IconButton>
-              </InputAdornment>
-            )
-          }}
-        />
         <Row style={{ columnGap: '0.5rem', marginBottom: '1rem' }}>
           {sortList.map((item) => (
             <>
@@ -220,6 +221,7 @@ const ItemsDemo = (props) => {
             </>
           ))}
         </Row>
+
         {productContent?.content ?
           <>
             {loading ?

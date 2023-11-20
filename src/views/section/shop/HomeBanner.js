@@ -224,7 +224,7 @@ const HomeBanner = (props) => {
                     {img_list.map((item, idx) => (
                         <>
                             <BannerImgContainer
-                                style={{ minHeight: `${style?.min_height}px` }}
+                                style={{ minHeight: `${style?.min_height ?? 200}px`, maxHeight: `${style?.max_height ?? 750}px` }}
                                 img_list_length={img_list.length}
                             >
 

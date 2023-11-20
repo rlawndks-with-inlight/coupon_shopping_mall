@@ -559,6 +559,22 @@ const MainObjSetting = props => {
                                 setContentList(content_list)
                               }}
                             />
+                            <TextField
+                              label='이미지 최대높이'
+                              value={item?.style?.max_height ?? 750}
+                              type='number'
+                              InputProps={{
+                                endAdornment: <>px</>
+                              }}
+                              onChange={e => {
+                                let content_list = [...contentList]
+                                if (!content_list[idx]?.style) {
+                                  content_list[idx]['style'] = {}
+                                }
+                                content_list[idx].style['max_height'] = e.target.value
+                                setContentList(content_list)
+                              }}
+                            />
                             <Upload
                               multiple
                               thumbnail={true}

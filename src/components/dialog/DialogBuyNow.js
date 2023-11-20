@@ -9,7 +9,7 @@ import DialogTitle from '@mui/material/DialogTitle'
 import DialogContent from '@mui/material/DialogContent'
 import DialogActions from '@mui/material/DialogActions'
 
-import { Box, CircularProgress, DialogContentText, Paper, RadioGroup, Stack, TextField } from '@mui/material'
+import { Box, Card, CircularProgress, DialogContentText, Paper, RadioGroup, Stack, TextField } from '@mui/material'
 import styled from 'styled-components'
 import { Row, postCodeStyle, themeObj } from '../elements/styled-components'
 import { useRouter } from 'next/router'
@@ -27,6 +27,7 @@ import { onPayProductsByAuth, onPayProductsByHand } from 'src/utils/shop-util'
 import { formatCreditCardNumber, formatExpirationDate } from 'src/utils/formatCard'
 import { useModal } from './ModalProvider'
 import toast from 'react-hot-toast'
+import EmptyContent from '../empty-content/EmptyContent'
 
 
 const STEPS = ['배송지 확인', '결제하기'];

@@ -220,7 +220,12 @@ const ItemsDemo = (props) => {
                 return <>
                   {is_alphabet &&
                     <>
-                      <Chip label={`[${alphabet}]`} color="error" variant="soft" sx={{ cursor: 'pointer', fontWeight: 'bold' }} />
+                      <Chip label={`[${alphabet}]`} variant="soft" sx={{
+                        cursor: 'pointer', fontWeight: 'bold', background: `${themeDnsData?.theme_css?.main_color}29`, color: `${themeDnsData?.theme_css?.main_color}`, '&:hover': {
+                          color: '#fff',
+                          background: `${themeDnsData?.theme_css?.main_color}`
+                        }
+                      }} />
                     </>}
                   <Button
                     size="small"

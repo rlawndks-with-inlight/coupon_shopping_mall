@@ -431,3 +431,25 @@ export function findParent(data, item) {
     return findParent(data, result[0])
   }
 }
+export const findChildIdsByTree = (tree, targetId) => {
+  if (tree.id === targetId) {
+    // 해당 노드를 찾았을 때
+    return getAllChildrenIds(tree);
+  } else {
+    // 재귀적으로 자식 노드를 탐색
+    for (const child of tree.children ?? []) {
+      let result = findChildIdsByTree(child, targetId);
+      if (result) {
+        return result;
+      }
+    }
+  }
+}
+function getAllChildrenIds(tree) {
+  let result = [];
+  for (const child of tree.children ?? []) {
+    result.push(child.id);
+    result.push(...getAllChildrenIds(child));
+  }
+  return result;
+}

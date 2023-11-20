@@ -54,7 +54,7 @@ const DialogSearch = (props) => {
               sx={{ width: '80%', margin: '0 auto', maxWidth: '700px' }}
               onKeyPress={(e) => {
                 if (e.key == 'Enter') {
-                  router.push(`/${root_path}/search?keyword=${keyword}`)
+                  router.push(`/${root_path}${keyword}`)
                   handleClose();
                 }
               }}
@@ -64,7 +64,7 @@ const DialogSearch = (props) => {
                     <IconButton
                       edge='end'
                       onClick={() => {
-                        router.push(`/${root_path}/search?keyword=${keyword}`)
+                        router.push(`/${root_path}${keyword}`)
                         handleClose();
                       }}
                       aria-label='toggle password visibility'

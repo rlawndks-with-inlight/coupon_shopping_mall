@@ -1,5 +1,5 @@
 import { Icon } from "@iconify/react";
-import { Button, Chip, CircularProgress, IconButton, InputAdornment, TextField } from "@mui/material";
+import { Button, Chip, CircularProgress, IconButton, InputAdornment, TextField, Typography } from "@mui/material";
 import _ from "lodash";
 import { useRouter } from "next/router";
 import { useRef } from "react";
@@ -13,6 +13,7 @@ import { useAuthContext } from "src/layouts/manager/auth/useAuthContext";
 import { apiShop } from "src/utils/api";
 import styled from "styled-components";
 import $ from 'jquery';
+import { findChildIdsByTree } from "src/utils/function";
 const ContentWrapper = styled.div`
 max-width:1600px;
 width:90%;
@@ -28,7 +29,7 @@ const ItemsDemo = (props) => {
   const [categoryIds, setCategoryIds] = useState({});
   const [searchObj, setSearchObj] = useState({
     page: 1,
-    page_size: 15,
+    page_size: 20,
   })
   const [curCategory, setCurCategory] = useState({
 
@@ -37,6 +38,7 @@ const ItemsDemo = (props) => {
   const [moreLoading, setMoreLoading] = useState(false);
   const [loading, setLoading] = useState(true);
   const scrollRef = useRef(null);
+  const [categoryChildren, setCategoryChildren] = useState({});
 
   const sortList = [
     {
@@ -87,6 +89,32 @@ const ItemsDemo = (props) => {
       setProductContent({});
     }
     setCategoryIds(query);
+    let category_children = {};
+    for (var i = 0; i < themeCategoryList.length; i++) {
+      let find_category = undefined;
+      for (var j = 0; j < themeCategoryList[i]?.product_categories.length; j++) {
+        let category = themeCategoryList[i]?.product_categories[j];
+        let children = (category?.children ?? []).map(item => { return item?.id });
+        if (category?.category_name == 'WALLET') {
+          console.log(category)
+          console.log(children)
+        }
+        if (query[`category_id${i}`] == category?.id || children?.includes(parseInt(query[`category_id${i}`]))) {
+          find_category = category;
+          break;
+        }
+      }
+      if (find_category && find_category?.children.length > 0) {
+        category_children = {
+          ...category_children,
+          [`category_id${i}`]: {
+            parent_id: find_category?.id,
+            children: find_category?.children
+          }
+        }
+      }
+    }
+    setCategoryChildren(category_children)
     setSearchObj({ ...search_obj, search: query?.search ?? "" });
     let product_list = await apiShop('product', 'list', {
       ...search_obj,
@@ -127,7 +155,7 @@ const ItemsDemo = (props) => {
             })
           }}
           value={searchObj?.search}
-          style={{ width: '50%', margin: '1rem auto 1rem auto' }}
+          style={{ width: '100%', margin: '2rem auto 0 auto', maxWidth: '700px' }}
           autoComplete='new-password'
           placeholder="키워드를 검색해주세요."
           onKeyPress={(e) => {
@@ -150,7 +178,6 @@ const ItemsDemo = (props) => {
                   onClick={() => {
                     let query = { ...categoryIds };
                     query[`search`] = searchObj?.search;
-
                     query = new URLSearchParams(query).toString();
                     router.push(`/shop/items?${query}`);
                   }}
@@ -197,7 +224,7 @@ const ItemsDemo = (props) => {
                     </>}
                   <Button
                     size="small"
-                    variant={`${categoryIds[`category_id${index}`] == category?.id ? 'contained' : 'text'}`}
+                    variant={`${(categoryIds[`category_id${index}`] == category?.id || categoryChildren[`category_id${index}`]?.parent_id == category?.id) ? 'contained' : 'text'}`}
                     onClick={() => {
                       let query = { ...categoryIds };
                       query[`category_id${index}`] = category?.id;
@@ -209,10 +236,29 @@ const ItemsDemo = (props) => {
               })}
 
             </ContentBorderContainer>
+            {categoryChildren[`category_id${index}`] &&
+              <>
+                <Typography variant="subtitle2" style={{ color: themeObj.grey[600], marginBottom: '0.25rem' }}>{group?.category_group_name} - 중분류</Typography>
+                <ContentBorderContainer style={{ maxHeight: '150px', overflowX: 'auto', minHeight: '50px', }}>
+                  {categoryChildren[`category_id${index}`]?.children.map((category, idx) => (
+                    <>
+                      <Button
+                        size="small"
+                        variant={`${categoryIds[`category_id${index}`] == category?.id ? 'contained' : 'text'}`}
+                        onClick={() => {
+                          let query = { ...categoryIds };
+                          query[`category_id${index}`] = category?.id;
+                          query = new URLSearchParams(query).toString();
+                          router.push(`/shop/items?${query}`);
+                        }}>{category?.category_name}</Button>
+                    </>
+                  ))}
+                </ContentBorderContainer>
+              </>}
           </>
         })}
 
-        <Row style={{ columnGap: '0.5rem', marginBottom: '1rem' }}>
+        <Row style={{ columnGap: '0.5rem', marginBottom: '1rem', overflowX: 'auto', whiteSpace: 'nowrap' }} className={`none-scroll`}>
           {sortList.map((item) => (
             <>
               <Button variant={`${(searchObj?.order ?? "sort_idx") == item.order && (searchObj?.is_asc ?? 0) == item.is_asc ? 'contained' : 'outlined'}`} onClick={() => {

@@ -68,9 +68,9 @@ const Header = (props) => {
   }, [])
   const settingHeader = async () => {
     setLoading(true);
-    
-    setCategories(themeCategoryList[0]?.product_categories??[]);
-    
+
+    setCategories(themeCategoryList[0]?.product_categories ?? []);
+
     setLoading(false);
   }
   useEffect(() => {
@@ -128,10 +128,10 @@ const Header = (props) => {
     setDialogOpenObj(obj);
   }
   const isBackArrowShow = () => {
-    if(isProductPage){
+    if (isProductPage) {
       return true;
     }
-    if(router.asPath.includes('/my-page')){
+    if (router.asPath.includes('/my-page')) {
       return true;
     }
     return false;
@@ -146,7 +146,7 @@ const Header = (props) => {
           <DialogSearch
             open={dialogOpenObj.search}
             handleClose={handleDialogClose}
-            root_path={'blog'}
+            root_path={'blog/search?keyword='}
           />
           <Wrappers style={{
             background: `${(isSellerPage || isProductPage) && scrollY < 350 ? 'transparent' : (themeMode == 'dark' ? '#000' : '#fff')}`

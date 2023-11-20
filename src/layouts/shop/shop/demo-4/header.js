@@ -222,7 +222,7 @@ const Header = () => {
     const [headerHeight, setHeaderHeight] = useState(130);
     const [keyword, setKeyword] = useState("");
     const onSearch = () => {
-        router.push(`/shop/search?keyword=${keyword}`)
+        router.push(`/shop/items?search=${keyword}`)
     }
     const [isAuthMenuOver, setIsAuthMenuOver] = useState(false)
     const [hoverItems, setHoverItems] = useState({
@@ -343,7 +343,7 @@ const Header = () => {
             <DialogSearch
                 open={dialogOpenObj.search}
                 handleClose={handleDialogClose}
-                root_path={'shop'}
+                root_path={'shop/items?search='}
             />
             {loading ?
                 <>

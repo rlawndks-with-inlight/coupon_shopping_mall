@@ -135,7 +135,7 @@ const Header = () => {
 
   const router = useRouter();
   const theme = useTheme();
-  const { themeMode, onToggleMode, onChangeCategoryList, onChangeCartData, onChangeWishData  } = useSettingsContext();
+  const { themeMode, onToggleMode, onChangeCategoryList, onChangeCartData, onChangeWishData } = useSettingsContext();
   const { user, logout } = useAuthContext();
   const [keyword, setKeyword] = useState("");
   const onSearch = () => {
@@ -200,7 +200,7 @@ const Header = () => {
       <DialogSearch
         open={dialogOpenObj.search}
         handleClose={handleDialogClose}
-        root_path={'shop'}
+        root_path={'shop/search?keyword='}
       />
       {loading ?
         <>
@@ -325,13 +325,13 @@ const Header = () => {
             </OneMenuName>
           </OneMenuContainer>
           <OneMenuContainer
-            onClick={() => { 
+            onClick={() => {
               if (user) {
                 router.push(`/shop/auth/cart`)
               } else {
                 router.push(`/shop/auth/login`)
               }
-             }}
+            }}
           >
             <Icon icon={'ion:cart-outline'} fontSize={'1.5rem'} style={{ marginTop: 'auto' }} />
             <OneMenuName>

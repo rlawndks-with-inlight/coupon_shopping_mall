@@ -10,8 +10,9 @@ import { apiManager, apiShop } from 'src/utils/api';
 import { styled as muiStyle } from '@mui/material'
 import Head from 'next/head';
 import { Row } from 'src/components/elements/styled-components';
-import { commarNumber } from 'src/utils/function';
+import { commarNumber, getProductStatus } from 'src/utils/function';
 import { Icon } from '@iconify/react';
+import { insertWishDataUtil } from 'src/utils/shop-util';
 const ReactQuill = dynamic(() => import('react-quill'), {
   ssr: false,
   loading: () => <p>Loading ...</p>,
@@ -51,7 +52,7 @@ const ItemDemo = (props) => {
       router
     },
   } = props;
-  const { themeStretch, themeDnsData } = useSettingsContext();
+  const { themeStretch, themeDnsData, themeWishData, onChangeWishData } = useSettingsContext();
 
   const [loading, setLoading] = useState(true);
 
@@ -136,7 +137,7 @@ const ItemDemo = (props) => {
                       <ItemCharacter key_name={'할인가'} value={<div>{commarNumber(product?.product_sale_price)}원</div>} />
                       <div style={{ borderBottom: '1px solid #ccc', width: '100%', marginTop: '1rem' }} />
                       <Button
-                        disabled={!(product?.status == 0 || product?.status == 3)}
+                        disabled={getProductStatus(product?.status).color != 'info' || !(product?.product_sale_price > 0)}
                         sx={{ width: '100%', marginTop: '1rem', height: '48px' }}
                         variant='contained'
                         startIcon={<>
@@ -144,19 +145,22 @@ const ItemDemo = (props) => {
                         </>}>바로구매</Button>
                       <Row style={{ columnGap: '0.5rem', marginTop: '0.5rem' }}>
                         <Button
-                          disabled={!(product?.status == 0 || product?.status == 3)}
+                          disabled={getProductStatus(product?.status).color != 'info' || !(product?.product_sale_price > 0)}
                           sx={{ width: '50%', height: '48px' }}
                           variant='outlined'
                           startIcon={<>
                             <Icon icon={'mdi:cart'} />
                           </>}>장바구니</Button>
                         <Button
-                          disabled={!(product?.status == 0 || product?.status == 3)}
                           sx={{ width: '50%', height: '48px' }}
                           variant='outlined'
                           startIcon={<>
                             <Icon icon={'mdi:heart'} />
-                          </>}>위시리스트</Button>
+                          </>}
+                          onClick={() => {
+                            insertWishDataUtil(product, themeWishData, onChangeWishData)
+                          }}
+                        >위시리스트</Button>
                       </Row>
                     </Grid>
                   </Grid>

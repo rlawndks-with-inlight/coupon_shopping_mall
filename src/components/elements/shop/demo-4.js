@@ -209,7 +209,7 @@ export const AuthMenuSideComponent = (props) => {
         },
         {
           label: '위탁상품관리',
-          link: '#',
+          link: '/shop/auth/consignment/',
         },
         {
           label: '위시리스트',
@@ -243,15 +243,15 @@ export const AuthMenuSideComponent = (props) => {
       children: [
         {
           label: '배송지 관리',
-          link: '#',
+          link: '/shop/auth/delivery-address/',
         },
         {
           label: '회원정보 변경',
-          link: '#',
+          link: '/shop/auth/change-info/',
         },
         {
           label: '회원탈퇴',
-          link: '#',
+          link: '/shop/auth/resign/',
         },
       ]
     },

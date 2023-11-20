@@ -1,6 +1,10 @@
 export { default as CartDemo4 } from './auth/cart';
 export { default as FindInfoDemo4 } from './auth/find-info';
 export { default as HistoryDemo4 } from './auth/history';
+export { default as ConsignmentDemo4 } from './auth/consignment';
+export { default as DeliveryAddressDemo4 } from './auth/delivery-address';
+export { default as ResignDemo4 } from './auth/resign';
+export { default as ChangeInfoDemo4 } from './auth/change-info';
 export { default as LoginDemo4 } from './auth/login';
 export { default as MyPageDemo4 } from './auth/my-page';
 export { default as PayResultDemo4 } from './auth/pay-result';

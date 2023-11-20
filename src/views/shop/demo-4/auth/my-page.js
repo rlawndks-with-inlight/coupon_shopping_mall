@@ -50,7 +50,10 @@ const MyPageDemo = (props) => {
 
             </ContentBorderContainer>
             <SubTitleComponent
-              endComponent={<MoreText themeDnsData={themeDnsData}>
+              endComponent={<MoreText themeDnsData={themeDnsData}
+                onClick={() => {
+                  window.location.href = `/shop/auth/consignment`
+                }}>
                 더보기
               </MoreText>}
             >위탁상품관리</SubTitleComponent>

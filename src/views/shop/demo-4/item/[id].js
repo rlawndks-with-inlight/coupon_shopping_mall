@@ -15,6 +15,7 @@ import { Icon } from '@iconify/react';
 import { insertCartDataUtil, insertWishDataUtil, selectItemOptionUtil } from 'src/utils/shop-util';
 import toast from 'react-hot-toast';
 import DialogBuyNow from 'src/components/dialog/DialogBuyNow';
+import { useAuthContext } from 'src/layouts/manager/auth/useAuthContext';
 const ReactQuill = dynamic(() => import('react-quill'), {
   ssr: false,
   loading: () => <p>Loading ...</p>,
@@ -54,8 +55,8 @@ const ItemDemo = (props) => {
       router
     },
   } = props;
-  const { themeStretch, themeDnsData, themeWishData, onChangeWishData } = useSettingsContext();
-
+  const { themeStretch, themeDnsData, themeWishData, onChangeWishData, themeCartData, onChangeCartData } = useSettingsContext();
+  const { user } = useAuthContext();
   const [loading, setLoading] = useState(true);
 
   const [currentTab, setCurrentTab] = useState('description');
@@ -182,7 +183,11 @@ const ItemDemo = (props) => {
                           variant='outlined'
                           startIcon={<>
                             <Icon icon={'mdi:cart'} />
-                          </>}>장바구니</Button>
+                          </>}
+                          onClick={() => {
+                            handleAddCart()
+                          }}
+                        >장바구니</Button>
                         <Button
                           sx={{ width: '50%', height: '48px' }}
                           variant={themeWishData.map(wish => { return wish?.id }).includes(product?.id) ? 'contained' : 'outlined'}

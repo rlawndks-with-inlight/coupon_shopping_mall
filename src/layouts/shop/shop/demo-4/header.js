@@ -182,7 +182,7 @@ const authList = [
         link_key: 'cart'
     },
     {
-        name: '찜목록',
+        name: '위시리스트',
         link_key: 'wish'
     },
     {
@@ -190,11 +190,11 @@ const authList = [
         link_key: 'point'
     },
     {
-        name: '주문조회',
+        name: '주문/배송조회',
         link_key: 'history'
     },
     {
-        name: '마이페이지',
+        name: 'My그랑',
         link_key: 'my-page'
     },
 ]

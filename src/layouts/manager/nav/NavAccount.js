@@ -6,7 +6,6 @@ import { useAuthContext } from '../auth/useAuthContext';
 // components
 import { CustomAvatar } from '../../../components/custom-avatar';
 import { useEffect } from 'react';
-import { getUserLevelByNumber } from 'src/utils/function';
 import { userLevelList } from 'src/utils/format';
 import _ from 'lodash';
 
@@ -39,7 +38,7 @@ export default function NavAccount() {
           </Typography>
 
           <Typography variant="body2" noWrap sx={{ color: 'text.secondary' }}>
-            {_.find(userLevelList, { value: user?.level }).label}
+            {_.find(userLevelList, { value: user?.level })?.label ?? "잘못된레벨"}
           </Typography>
         </Box>
       </StyledRoot>

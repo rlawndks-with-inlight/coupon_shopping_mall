@@ -97,7 +97,7 @@ export default function AccountPopover() {
           </Typography>
 
           <Typography variant="body2" sx={{ color: 'text.secondary' }} noWrap>
-            {_.find(userLevelList, { value: user?.level }).label}
+            {_.find(userLevelList, { value: user?.level })?.label ?? "잘못된레벨"}
           </Typography>
         </Box>
 

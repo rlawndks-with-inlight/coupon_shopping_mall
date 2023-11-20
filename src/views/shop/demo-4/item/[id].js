@@ -12,7 +12,9 @@ import Head from 'next/head';
 import { Row } from 'src/components/elements/styled-components';
 import { commarNumber, getProductStatus } from 'src/utils/function';
 import { Icon } from '@iconify/react';
-import { insertWishDataUtil } from 'src/utils/shop-util';
+import { insertCartDataUtil, insertWishDataUtil, selectItemOptionUtil } from 'src/utils/shop-util';
+import toast from 'react-hot-toast';
+import DialogBuyNow from 'src/components/dialog/DialogBuyNow';
 const ReactQuill = dynamic(() => import('react-quill'), {
   ssr: false,
   loading: () => <p>Loading ...</p>,
@@ -59,7 +61,12 @@ const ItemDemo = (props) => {
   const [currentTab, setCurrentTab] = useState('description');
   const [product, setProduct] = useState({});
   const [reviewPage, setReviewPage] = useState(1);
+  const [buyOpen, setBuyOpen] = useState(false);
   const [reviewContent, setReviewContent] = useState({});
+  const [selectProductGroups, setSelectProductGroups] = useState({
+    count: 1,
+    groups: [],
+  });
   useEffect(() => {
     getItemInfo(1);
   }, [])
@@ -105,8 +112,29 @@ const ItemDemo = (props) => {
       component: product ? <ProductDetailsReview product={product} reviewContent={reviewContent} onChangePage={getItemInfo} reviewPage={reviewPage} /> : null,
     },
   ];
+  const handleAddCart = async () => {
+    if (user) {
+      let result = await insertCartDataUtil({ ...product, seller_id: router.query?.seller_id ?? 0 }, selectProductGroups, themeCartData, onChangeCartData);
+      if (result) {
+        toast.success("장바구니에 성공적으로 추가되었습니다.")
+      }
+    } else {
+      toast.error('로그인을 해주세요.');
+    }
+
+  };
+  const onSelectOption = (group, option, is_option_multiple) => {
+    let select_product_groups = selectItemOptionUtil(group, option, selectProductGroups, is_option_multiple);
+    setSelectProductGroups(select_product_groups);
+  }
   return (
     <>
+      <DialogBuyNow
+        buyOpen={buyOpen}
+        setBuyOpen={setBuyOpen}
+        product={product}
+        selectProductGroups={selectProductGroups}
+      />
       <Wrapper>
         <ContentWrapper>
           {loading ?
@@ -142,7 +170,11 @@ const ItemDemo = (props) => {
                         variant='contained'
                         startIcon={<>
                           <Icon icon={'mdi:check-bold'} />
-                        </>}>바로구매</Button>
+                        </>}
+                        onClick={() => {
+                          setBuyOpen(true)
+                        }}
+                      >바로구매</Button>
                       <Row style={{ columnGap: '0.5rem', marginTop: '0.5rem' }}>
                         <Button
                           disabled={getProductStatus(product?.status).color != 'info' || !(product?.product_sale_price > 0)}
@@ -153,12 +185,15 @@ const ItemDemo = (props) => {
                           </>}>장바구니</Button>
                         <Button
                           sx={{ width: '50%', height: '48px' }}
-                          variant='outlined'
+                          variant={themeWishData.map(wish => { return wish?.id }).includes(product?.id) ? 'contained' : 'outlined'}
                           startIcon={<>
                             <Icon icon={'mdi:heart'} />
                           </>}
-                          onClick={() => {
-                            insertWishDataUtil(product, themeWishData, onChangeWishData)
+                          onClick={async () => {
+                            let result = await insertWishDataUtil(product, themeWishData, onChangeWishData);
+                            if (result?.is_add) {
+                              console.log(123)
+                            }
                           }}
                         >위시리스트</Button>
                       </Row>

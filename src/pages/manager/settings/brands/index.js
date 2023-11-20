@@ -218,7 +218,7 @@ const BrandList = () => {
               <Icon
                 icon='material-symbols:edit-outline'
                 onClick={() => {
-                  router.push(`default/${row?.id}`)
+                  window.location.href = `/manager/settings/default/${row?.id}`;
                 }}
               />
             </IconButton>

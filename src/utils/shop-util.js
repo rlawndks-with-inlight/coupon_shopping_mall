@@ -196,11 +196,13 @@ export const insertWishDataUtil = async (item, themeWishData, onChangeWishData) 
     try {
         let wish_data = [...themeWishData];
         let find_index = _.findIndex(wish_data, { product_id: parseInt(item?.id) });
+        let is_add = true;
         if (find_index >= 0) {
             let result = await apiManager('user-wishs', 'delete', {
                 id: wish_data[find_index]?.id,
             })
             wish_data.splice(find_index, 1);
+            is_add = false;
         } else {
             let result = await apiManager('user-wishs', 'create', {
                 product_id: item?.id,
@@ -209,7 +211,9 @@ export const insertWishDataUtil = async (item, themeWishData, onChangeWishData) 
         let wish_result = await apiManager('user-wishs', 'list');
         wish_result = wish_result?.content ?? 0;
         onChangeWishData(wish_result);
-        return true;
+        return {
+            is_add
+        };
     } catch (err) {
         console.log(err);
         return false;

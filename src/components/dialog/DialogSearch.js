@@ -65,6 +65,7 @@ const DialogSearch = (props) => {
                       edge='end'
                       onClick={() => {
                         router.push(`/${root_path}${keyword}`)
+                        setKeyword('')
                         handleClose();
                       }}
                       aria-label='toggle password visibility'

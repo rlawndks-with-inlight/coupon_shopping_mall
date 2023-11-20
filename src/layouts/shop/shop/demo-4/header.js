@@ -222,6 +222,7 @@ const Header = () => {
     const [headerHeight, setHeaderHeight] = useState(130);
     const [keyword, setKeyword] = useState("");
     const onSearch = () => {
+        setKeyword("");
         router.push(`/shop/items?search=${keyword}`)
     }
     const [isAuthMenuOver, setIsAuthMenuOver] = useState(false)

@@ -7,6 +7,8 @@ import { useAuthContext } from '../auth/useAuthContext';
 import { CustomAvatar } from '../../../components/custom-avatar';
 import { useEffect } from 'react';
 import { getUserLevelByNumber } from 'src/utils/function';
+import { userLevelList } from 'src/utils/format';
+import _ from 'lodash';
 
 // ----------------------------------------------------------------------
 
@@ -37,7 +39,7 @@ export default function NavAccount() {
           </Typography>
 
           <Typography variant="body2" noWrap sx={{ color: 'text.secondary' }}>
-            {getUserLevelByNumber(user?.level)}
+            {_.find(userLevelList, { value: user?.level }).label}
           </Typography>
         </Box>
       </StyledRoot>

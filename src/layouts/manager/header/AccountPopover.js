@@ -13,8 +13,10 @@ import { CustomAvatar } from '../../../components/custom-avatar';
 import { useSnackbar } from '../../../components/snackbar';
 import MenuPopover from '../../../components/menu-popover';
 import { IconButtonAnimate } from '../../../components/animate';
-import { getUserLevelByNumber } from 'src/utils/function';
+
 import { useSettingsContext } from 'src/components/settings';
+import _ from 'lodash';
+import { userLevelList } from 'src/utils/format';
 
 // ----------------------------------------------------------------------
 
@@ -35,7 +37,7 @@ export default function AccountPopover() {
   const { replace, push } = useRouter();
 
   const { user, logout } = useAuthContext();
-  const {onChangeCartData, onChangeWishData} = useSettingsContext();
+  const { onChangeCartData, onChangeWishData } = useSettingsContext();
   const { enqueueSnackbar } = useSnackbar();
 
   const [openPopover, setOpenPopover] = useState(null);
@@ -95,7 +97,7 @@ export default function AccountPopover() {
           </Typography>
 
           <Typography variant="body2" sx={{ color: 'text.secondary' }} noWrap>
-            {getUserLevelByNumber(user?.level)}
+            {_.find(userLevelList, { value: user?.level }).label}
           </Typography>
         </Box>
 

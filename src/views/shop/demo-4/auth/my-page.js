@@ -1,5 +1,5 @@
 import { Icon } from "@iconify/react";
-import { IconButton } from "@mui/material";
+import { IconButton, Typography } from "@mui/material";
 import { useRouter } from "next/router";
 import { useState } from "react";
 import { useRef } from "react";
@@ -81,7 +81,7 @@ const MyPageDemo = (props) => {
 
             </ContentBorderContainer>
             <SubTitleComponent
-              endComponent={<Row>
+              endComponent={<Row style={{ alignItems: 'center' }}>
                 <IconButton onClick={() => {
                   slideRef.current.slickPrev();
                 }}>
@@ -101,6 +101,7 @@ const MyPageDemo = (props) => {
                 is_slide={(userInfo?.product_views && userInfo?.product_views.length >= 5) ? true : false}
                 slide_setting={{
                   autoplay: false,
+                  infinite: false,
                 }}
                 slide_ref={slideRef}
               />

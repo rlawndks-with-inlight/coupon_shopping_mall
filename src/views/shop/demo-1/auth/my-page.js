@@ -8,6 +8,7 @@ import { commarNumber, makeMaxPage } from 'src/utils/function';
 import styled from 'styled-components'
 import DaumPostcode from 'react-daum-postcode';
 import { apiManager } from 'src/utils/api';
+import DialogAddAddress from 'src/components/dialog/DialogAddAddress';
 
 const Wrappers = styled.div`
 max-width:1600px;
@@ -35,7 +36,7 @@ const returnMyPageType = {
 const TABLE_HEAD = [
   { id: 'No.', label: 'No.' },
   { id: 'addr', label: '주소' },
-  { id: 'addr', label: '상세주소' },
+  { id: 'addr_detail', label: '상세주소' },
   { id: '' },
 ];
 const MyPageDemo = (props) => {
@@ -54,18 +55,12 @@ const MyPageDemo = (props) => {
   const [userObj, setUserObj] = useState({})
   const [addressContent, setAddressContent] = useState({});
   const [addAddressOpen, setAddAddressOpen] = useState(false);
-  const [addAddressObj, setAddAddressObj] = useState({
-    addr: '',
-    detail_addr: '',
-    is_open_daum_post: false,
-  })
   const [searchObj, setSearchObj] = useState({
     page: 1,
     page_size: 10,
     search: '',
     user_id: user?.id,
   })
-  const [isSeePostCode, setIsSeePostCode] = useState(false);
   useEffect(() => {
     onChangePage(searchObj)
   }, [])
@@ -91,26 +86,12 @@ const MyPageDemo = (props) => {
       setAddressContent(data);
     }
   }
-  const onSelectAddress = (data) => {
-    setAddAddressObj({
-      ...addAddressObj,
-      addr: data?.address,
-      detail_addr: '',
-      is_open_daum_post: false,
-    })
-  }
-  const onAddAddress = async () => {
+  const onAddAddress = async (address_obj) => {
     let result = await apiManager('user-addresses', 'create', {
-      ...addAddressObj,
+      ...address_obj,
       user_id: user?.id,
     })
     if (result) {
-      setAddAddressObj({
-        addr: '',
-        detail_addr: '',
-        is_open_daum_post: false,
-      })
-      setAddAddressOpen(false);
       onChangePage(searchObj);
     }
   }
@@ -124,81 +105,11 @@ const MyPageDemo = (props) => {
   }
   return (
     <>
-      <Dialog
-        open={addAddressOpen}
-        onClose={() => {
-          setAddAddressObj({
-            addr: '',
-            detail_addr: '',
-            is_open_daum_post: false,
-          })
-          setAddAddressOpen(false);
-        }}
-        PaperProps={{
-          style: {
-            width: `${window.innerWidth >= 700 ? '500px' : '90vw'}`,
-          }
-        }}
-      >
-        {addAddressObj.is_open_daum_post ?
-          <>
-            <Row>
-              <DaumPostcode style={postCodeStyle} onComplete={onSelectAddress} />
-            </Row>
-          </>
-          :
-          <>
-            <DialogTitle>{`주소지 추가`}</DialogTitle>
-            <DialogContent>
-              <DialogContentText>
-                새 주소를 입력후 저장을 눌러주세요.
-              </DialogContentText>
-              <TextField
-                autoFocus
-                fullWidth
-                value={addAddressObj.addr}
-                margin="dense"
-                label="주소"
-                aria-readonly='true'
-                onClick={() => {
-                  setAddAddressObj({
-                    ...addAddressObj,
-                    is_open_daum_post: true,
-                  })
-                }}
-              />
-              <TextField
-                autoFocus
-                fullWidth
-                value={addAddressObj.detail_addr}
-                margin="dense"
-                label="상세주소"
-                onChange={(e) => {
-                  setAddAddressObj({
-                    ...addAddressObj,
-                    detail_addr: e.target.value
-                  })
-                }}
-              />
-            </DialogContent>
-            <DialogActions>
-              <Button variant="contained" onClick={onAddAddress}>
-                저장
-              </Button>
-              <Button color="inherit" onClick={() => {
-                setAddAddressObj({
-                  addr: '',
-                  detail_addr: '',
-                  is_open_daum_post: false,
-                })
-                setAddAddressOpen(false);
-              }}>
-                취소
-              </Button>
-            </DialogActions>
-          </>}
-
-      </Dialog>
+      <DialogAddAddress
+        addAddressOpen={addAddressOpen}
+        setAddAddressOpen={setAddAddressOpen}
+        onAddAddress={onAddAddress}
+      />
       <Wrappers>
         <Title style={{ width: '100%', marginBottom: '4rem' }}>
           <Tabs

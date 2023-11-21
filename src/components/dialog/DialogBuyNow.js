@@ -28,6 +28,7 @@ import { formatCreditCardNumber, formatExpirationDate } from 'src/utils/formatCa
 import { useModal } from './ModalProvider'
 import toast from 'react-hot-toast'
 import EmptyContent from '../empty-content/EmptyContent'
+import DialogAddAddress from './DialogAddAddress'
 
 
 const STEPS = ['배송지 확인', '결제하기'];
@@ -46,11 +47,6 @@ const DialogBuyNow = (props) => {
   const [payList, setPayList] = useState([]);
   const [cardFucus, setCardFocus] = useState()
   const [selectAddress, setSelectAddress] = useState({});
-  const [addAddressObj, setAddAddressObj] = useState({
-    addr: '',
-    detail_addr: '',
-    is_open_daum_post: false,
-  })
   const [addressSearchObj, setAddressSearchObj] = useState({
     page: 1,
     page_size: 10000,
@@ -97,39 +93,29 @@ const DialogBuyNow = (props) => {
   const onBuyDialogClose = () => {
     setBuyOpen(false);
     setBuyStep(0);
-    setAddAddressObj({
-      addr: '',
-      detail_addr: '',
-      is_open_daum_post: false,
-    })
+
     setPayData({
       ...payData,
       addr: '',
       detail_addr: ''
     })
   }
-  const onAddAddress = async () => {
+
+  const onAddAddress = async (address_obj) => {
     if (user) {
       let result = await apiManager('user-addresses', 'create', {
-        ...addAddressObj,
+        ...address_obj,
         user_id: user?.id,
       })
       if (result) {
-        setAddAddressObj({
-          addr: '',
-          detail_addr: '',
-          is_open_daum_post: false,
-        })
-        setAddAddressOpen(false);
         onChangeAddressPage(addressSearchObj);
       }
     } else {
       setPayData({
         ...payData,
-        addr: addAddressObj.addr,
-        detail_addr: addAddressObj.detail_addr,
+        addr: address_obj.addr,
+        detail_addr: address_obj.detail_addr,
       })
-      setAddAddressOpen(false);
     }
   }
   const onDeleteAddress = async (id) => {
@@ -139,14 +125,6 @@ const DialogBuyNow = (props) => {
     if (result) {
       onChangeAddressPage(addressSearchObj);
     }
-  }
-  const onSelectAddress = (data) => {
-    setAddAddressObj({
-      ...addAddressObj,
-      addr: data?.address,
-      detail_addr: '',
-      is_open_daum_post: false,
-    })
   }
   const onCreateBilling = (item) => {
     setSelectAddress(item);
@@ -474,80 +452,11 @@ const DialogBuyNow = (props) => {
       >
         <CircularProgress />
       </Dialog>
-      <Dialog
-        open={addAddressOpen}
-        onClose={() => {
-          setAddAddressObj({
-            addr: '',
-            detail_addr: '',
-            is_open_daum_post: false,
-          })
-          setAddAddressOpen(false);
-        }}
-        PaperProps={{
-          style: {
-            width: `${window.innerWidth >= 700 ? '500px' : '90vw'}`,
-          }
-        }}
-      >
-        {addAddressObj.is_open_daum_post ?
-          <>
-            <Row>
-              <DaumPostcode style={postCodeStyle} onComplete={onSelectAddress} />
-            </Row>
-          </>
-          :
-          <>
-            <DialogTitle>{`주소지 추가`}</DialogTitle>
-            <DialogContent>
-              <DialogContentText>
-                새 주소를 입력후 저장을 눌러주세요.
-              </DialogContentText>
-              <TextField
-                autoFocus
-                fullWidth
-                value={addAddressObj.addr}
-                margin="dense"
-                label="주소"
-                aria-readonly='true'
-                onClick={() => {
-                  setAddAddressObj({
-                    ...addAddressObj,
-                    is_open_daum_post: true,
-                  })
-                }}
-              />
-              <TextField
-                autoFocus
-                fullWidth
-                value={addAddressObj.detail_addr}
-                margin="dense"
-                label="상세주소"
-                onChange={(e) => {
-                  setAddAddressObj({
-                    ...addAddressObj,
-                    detail_addr: e.target.value
-                  })
-                }}
-              />
-            </DialogContent>
-            <DialogActions>
-              <Button variant="contained" onClick={onAddAddress}>
-                저장
-              </Button>
-              <Button color="inherit" onClick={() => {
-                setAddAddressObj({
-                  addr: '',
-                  detail_addr: '',
-                  is_open_daum_post: false,
-                })
-                setAddAddressOpen(false);
-              }}>
-                취소
-              </Button>
-            </DialogActions>
-          </>}
-      </Dialog>
+      <DialogAddAddress
+        addAddressOpen={addAddressOpen}
+        setAddAddressOpen={setAddAddressOpen}
+        onAddAddress={onAddAddress}
+      />
     </>
   )
 }

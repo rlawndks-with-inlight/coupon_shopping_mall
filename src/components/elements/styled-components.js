@@ -43,6 +43,7 @@ display: flex;
 `
 export const RowMobileReverceColumn = styled.div`
 display: flex;
+align-items: flex-start;
 @media (max-width:1000px) {
     flex-direction:column-reverse;
 }

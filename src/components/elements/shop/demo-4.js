@@ -93,7 +93,8 @@ margin: 0 auto 1rem 1rem;
     margin-left: auto;
 }
 @media screen and (max-width:1000px){
-    margin: 0 auto;
+  width: 100%;
+  margin: 0 auto;
 }
 `
 const SubTitle = styled.h3`

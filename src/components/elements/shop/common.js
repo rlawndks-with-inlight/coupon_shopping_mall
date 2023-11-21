@@ -107,8 +107,9 @@ export const Item = props => {
 }
 export const Items = props => {
   const { themeDnsData } = useSettingsContext()
-  const { items, router, is_slide, seller } = props
+  const { items, router, is_slide, slide_setting = {}, slide_ref, seller } = props;
   const [itemThemeCss, setItemThemeCss] = useState(itemThemeCssDefaultSetting)
+
   useEffect(() => {
     if (themeDnsData) {
       setItemThemeCss(Object.assign(itemThemeCss, themeDnsData?.theme_css?.shop_item_card_css))
@@ -142,13 +143,14 @@ export const Items = props => {
     autoplaySpeed: 2500,
     slidesToShow: getSlideToShow(),
     slidesToScroll: 1,
-    dots: false
+    dots: false,
+    ...slide_setting
   }
   return (
     <>
       {is_slide ? (
         <>
-          <Slider {...items_setting} className='margin-slide'>
+          <Slider {...items_setting} className='margin-slide' ref={slide_ref}>
             {items &&
               items.map((item, idx) => {
                 return (

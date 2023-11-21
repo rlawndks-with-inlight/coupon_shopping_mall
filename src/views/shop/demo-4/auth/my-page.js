@@ -1,5 +1,8 @@
+import { Icon } from "@iconify/react";
+import { IconButton } from "@mui/material";
 import { useRouter } from "next/router";
 import { useState } from "react";
+import { useRef } from "react";
 import { useEffect } from "react";
 import { Items } from "src/components/elements/shop/common";
 import { AuthMenuSideComponent, ContentBorderContainer, ContentWrappers, SubTitleComponent, Title, TitleComponent } from "src/components/elements/shop/demo-4";
@@ -33,6 +36,7 @@ const MyPageDemo = (props) => {
   const { themeDnsData } = useSettingsContext();
   const router = useRouter();
   const [userInfo, setUserInfo] = useState({});
+  const slideRef = useRef();
 
   useEffect(() => {
     getUserInfo();
@@ -76,9 +80,30 @@ const MyPageDemo = (props) => {
             <ContentBorderContainer>
 
             </ContentBorderContainer>
-            <SubTitleComponent>최근 본 상품</SubTitleComponent>
+            <SubTitleComponent
+              endComponent={<Row>
+                <IconButton onClick={() => {
+                  slideRef.current.slickPrev();
+                }}>
+                  <Icon icon='carbon:previous-filled' style={{ color: themeDnsData?.theme_css?.main_color }} />
+                </IconButton>
+                <IconButton onClick={() => {
+                  slideRef.current.slickNext();
+                }}>
+                  <Icon icon='carbon:next-filled' style={{ color: themeDnsData?.theme_css?.main_color }} />
+                </IconButton>
+              </Row>}
+            >최근 본 상품</SubTitleComponent>
             <ContentBorderContainer>
-              <Items items={userInfo?.product_views ?? []} router={router} is_slide={(userInfo?.product_views && userInfo?.product_views.length >= 5) ? true : false} />
+              <Items
+                items={userInfo?.product_views ?? []}
+                router={router}
+                is_slide={(userInfo?.product_views && userInfo?.product_views.length >= 5) ? true : false}
+                slide_setting={{
+                  autoplay: false,
+                }}
+                slide_ref={slideRef}
+              />
             </ContentBorderContainer>
           </ContentWrappers>
         </RowMobileReverceColumn>

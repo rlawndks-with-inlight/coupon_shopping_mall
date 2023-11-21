@@ -281,8 +281,6 @@ const FindInfoDemo = (props) => {
                 </>}
             </>}
         </Stack>
-        {/* 미완 */}
-
       </Wrappers>
     </>
   )

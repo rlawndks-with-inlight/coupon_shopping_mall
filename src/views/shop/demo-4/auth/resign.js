@@ -20,7 +20,12 @@ const ResignDemo = (props) => {
   const { user } = useAuthContext();
   const { themeDnsData } = useSettingsContext();
   const router = useRouter();
-
+  useEffect(() => {
+    if (user) {
+    } else {
+      router.push(`/shop/auth/login`);
+    }
+  }, [])
   return (
     <>
       <Wrappers>

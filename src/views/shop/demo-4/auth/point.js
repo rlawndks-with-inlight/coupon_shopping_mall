@@ -29,10 +29,14 @@ const PointDemo = (props) => {
     page: 1,
     page_size: 10,
   })
-  useEffect(() => {
-    onChangePage(searchObj);
-  }, [])
 
+  useEffect(() => {
+    if (user) {
+      onChangePage(searchObj);
+    } else {
+      router.push(`/shop/auth/login`);
+    }
+  }, [])
   const onChangePage = async (search_obj) => {
     setSearchObj(search_obj);
     setHistoryContent({

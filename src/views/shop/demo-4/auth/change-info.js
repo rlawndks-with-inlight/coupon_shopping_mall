@@ -1,4 +1,5 @@
 import { useRouter } from "next/router";
+import { useEffect } from "react";
 import { AuthMenuSideComponent, ContentWrappers, TitleComponent } from "src/components/elements/shop/demo-4";
 import { Col, RowMobileColumn, RowMobileReverceColumn, Title } from "src/components/elements/styled-components";
 import { useSettingsContext } from "src/components/settings";
@@ -20,7 +21,13 @@ const ChangeInfoDemo = (props) => {
   const { user } = useAuthContext();
   const { themeDnsData } = useSettingsContext();
   const router = useRouter();
+  useEffect(() => {
+    if (user) {
 
+    } else {
+      router.push(`/shop/auth/login`);
+    }
+  }, [])
   return (
     <>
       <Wrappers>

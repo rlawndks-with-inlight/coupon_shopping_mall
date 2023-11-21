@@ -33,9 +33,12 @@ const WishDemo = (props) => {
   } = props;
   const [wishList, setWishList] = useState([]);
   useEffect(() => {
-    pageSetting();
-  }, [themeWishData])
-
+    if (user) {
+      pageSetting();
+    } else {
+      router.push(`/shop/auth/login`);
+    }
+  }, [])
   const pageSetting = async () => {
     let wish_list = await getWishDataUtil(themeWishData);
     setWishList(wish_list);

@@ -37,10 +37,14 @@ const MyPageDemo = (props) => {
   const router = useRouter();
   const [userInfo, setUserInfo] = useState({});
   const slideRef = useRef();
-
   useEffect(() => {
-    getUserInfo();
+    if (user) {
+      getUserInfo();
+    } else {
+      router.push(`/shop/auth/login`);
+    }
   }, [])
+
   const getUserInfo = async () => {
     const response = await apiShop('user-info');
     console.log(response)

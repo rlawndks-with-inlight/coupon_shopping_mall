@@ -1,8 +1,13 @@
+import { Card } from "@mui/material";
 import { useRouter } from "next/router";
+import { useEffect } from "react";
+import { useState } from "react";
+import { WishTable } from "src/components/elements/shop/common";
 import { AuthMenuSideComponent, ContentWrappers, TitleComponent } from "src/components/elements/shop/demo-4";
 import { Col, RowMobileColumn, RowMobileReverceColumn, Title } from "src/components/elements/styled-components";
 import { useSettingsContext } from "src/components/settings";
 import { useAuthContext } from "src/layouts/manager/auth/useAuthContext";
+import { getWishDataUtil } from "src/utils/shop-util";
 import styled from "styled-components";
 
 const Wrappers = styled.div`
@@ -17,10 +22,24 @@ margin-top: 2rem;
 
 const WishDemo = (props) => {
 
-  const { user } = useAuthContext();
-  const { themeDnsData } = useSettingsContext();
-  const router = useRouter();
+  const { themeWishData } = useSettingsContext();
+  const {
+    data: {
 
+    },
+    func: {
+      router
+    },
+  } = props;
+  const [wishList, setWishList] = useState([]);
+  useEffect(() => {
+    pageSetting();
+  }, [themeWishData])
+
+  const pageSetting = async () => {
+    let wish_list = await getWishDataUtil(themeWishData);
+    setWishList(wish_list);
+  }
   return (
     <>
       <Wrappers>
@@ -28,6 +47,9 @@ const WishDemo = (props) => {
           <AuthMenuSideComponent />
           <ContentWrappers>
             <TitleComponent>{'위시리스트'}</TitleComponent>
+            <Card sx={{ marginBottom: '2rem' }}>
+              <WishTable wishContent={wishList} />
+            </Card>
           </ContentWrappers>
         </RowMobileReverceColumn>
       </Wrappers>

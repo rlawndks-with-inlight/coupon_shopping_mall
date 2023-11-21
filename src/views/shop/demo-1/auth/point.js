@@ -16,13 +16,6 @@ width: 90%;
 min-height:90vh;
 margin-bottom:10vh;
 `
-
-const TABLE_HEAD = [
-  { id: 'point', label: '포인트' },
-  { id: 'created_at', label: '발생일' },
-  { id: 'type', label: '비고' },
-  { id: '' },
-];
 const PointDemo = (props) => {
   const {
     data: {
@@ -59,7 +52,7 @@ const PointDemo = (props) => {
         <Title>포인트내역</Title>
         <Row>보유 포인트: {commarNumber(user?.point)}P</Row>
         <Card sx={{ marginBottom: '2rem' }}>
-          <PointTable historyContent={historyContent} headLabel={TABLE_HEAD} onChangePage={onChangePage} searchObj={searchObj} />
+          <PointTable historyContent={historyContent} onChangePage={onChangePage} searchObj={searchObj} />
         </Card>
         <Pagination
           sx={{ margin: 'auto' }}

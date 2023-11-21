@@ -20,16 +20,7 @@ width: 90%;
 min-height:90vh;
 margin-top: 2rem;
 `
-const TABLE_HEAD = [
-  { id: 'product', label: '상품' },
-  { id: 'ord_num', label: '주문번호' },
-  { id: 'amount', label: '총액' },
-  { id: 'buyer_name', label: '구매자명' },
-  { id: 'trx_status', label: '배송상태' },
-  { id: 'date', label: '업데이트일', align: 'right' },
-  { id: 'cancel', label: '주문취소요청', align: 'right' },
-  { id: '' },
-];
+
 const HistoryDemo = (props) => {
 
   const { user } = useAuthContext();
@@ -44,7 +35,11 @@ const HistoryDemo = (props) => {
     onChangePage(searchObj);
   }, [])
 
-  const onChangePage = async (search_obj) => {
+  const onChangePage = async (search_obj_) => {
+    let search_obj = search_obj_;
+    if (router.query?.is_cancel == 1) {
+      search_obj['cancel_status'] = 5;
+    }
     setSearchObj(search_obj);
     setHistoryContent({
       ...historyContent,
@@ -63,7 +58,7 @@ const HistoryDemo = (props) => {
           <ContentWrappers>
             <TitleComponent>{router.query?.is_cancel == 1 ? '반품/환불조회' : '주문/배송조회'}</TitleComponent>
             <Card sx={{ marginBottom: '2rem' }}>
-              <HistoryTable historyContent={historyContent} headLabel={TABLE_HEAD} onChangePage={onChangePage} searchObj={searchObj} />
+              <HistoryTable historyContent={historyContent} onChangePage={onChangePage} searchObj={searchObj} />
             </Card>
             <Pagination
               sx={{ margin: 'auto' }}

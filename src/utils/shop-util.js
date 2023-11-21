@@ -138,7 +138,15 @@ export const getCartDataUtil = async (themeCartData) => {//장바구니 페이�
     let data = themeCartData ?? [];
     return data;
 }
-export const insertCartDataUtil = (product_, selectProductGroups_, themeCartData, onChangeCartData) => { //장바구니 버튼 클릭해서 넣기
+export const insertCartDataUtil = (
+    product_,
+    selectProductGroups_ = {
+        count: 1,
+        groups: [],
+    },
+    themeCartData,
+    onChangeCartData
+) => { //장바구니 버튼 클릭해서 넣기
     try {
         let cart_data = [...themeCartData];
         let product = product_;

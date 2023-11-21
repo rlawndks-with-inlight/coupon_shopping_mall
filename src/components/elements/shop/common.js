@@ -2,7 +2,7 @@ import styled from 'styled-components'
 import { commarNumber, getPointType } from 'src/utils/function'
 import { itemThemeCssDefaultSetting } from 'src/views/manager/item-card/setting'
 import { useEffect, useState } from 'react'
-import { IconButton } from '@mui/material'
+import { Button, IconButton } from '@mui/material'
 import { Icon } from '@iconify/react'
 import Slider from 'react-slick'
 import { useSettingsContext } from 'src/components/settings'
@@ -27,6 +27,7 @@ import { Item6, Seller6 } from './demo-6'
 import { Item7, Seller7 } from './demo-7'
 import EmptyContent from 'src/components/empty-content/EmptyContent'
 import { Col, themeObj } from '../styled-components'
+import { insertCartDataUtil, insertWishDataUtil } from 'src/utils/shop-util'
 
 const ItemsContainer = styled.div`
   display: flex;
@@ -182,7 +183,17 @@ export const Items = props => {
 }
 
 export const HistoryTable = props => {
-  const { historyContent, headLabel, onChangePage, searchObj } = props
+  const { historyContent, onChangePage, searchObj } = props
+  const TABLE_HEAD = [
+    { id: 'product', label: '상품' },
+    { id: 'ord_num', label: '주문번호' },
+    { id: 'amount', label: '총액' },
+    { id: 'buyer_name', label: '구매자명' },
+    { id: 'trx_status', label: '배송상태' },
+    { id: 'date', label: '업데이트일', align: 'right' },
+    { id: 'cancel', label: '주문취소요청', align: 'right' },
+    { id: '' },
+  ];
   const { setModal } = useModal()
   const onPayCancelRequest = async row => {
     let result = await apiManager(`transactions/${row?.id}/cancel-request`, 'create')
@@ -195,7 +206,7 @@ export const HistoryTable = props => {
     <>
       <TableContainer>
         <Table sx={{ minWidth: 720, overflowX: 'auto' }}>
-          <TableHeadCustom headLabel={headLabel} />
+          <TableHeadCustom headLabel={TABLE_HEAD} />
           <TableBody>
             {historyContent?.content &&
               historyContent?.content.map(row => (
@@ -259,14 +270,20 @@ export const HistoryTable = props => {
   )
 }
 export const PointTable = props => {
-  const { historyContent, headLabel, onChangePage, searchObj } = props
+  const { historyContent } = props
+  const TABLE_HEAD = [
+    { id: 'point', label: '포인트' },
+    { id: 'created_at', label: '발생일' },
+    { id: 'type', label: '비고' },
+    { id: '' },
+  ];
   const { setModal } = useModal()
 
   return (
     <>
       <TableContainer>
         <Table sx={{ minWidth: 720, overflowX: 'auto' }}>
-          <TableHeadCustom headLabel={headLabel} />
+          <TableHeadCustom headLabel={TABLE_HEAD} />
           <TableBody>
             {historyContent?.content &&
               historyContent?.content.map(row => (
@@ -293,12 +310,18 @@ export const PointTable = props => {
 }
 
 export const AddressTable = props => {
-  const { addressContent, headLabel, onDelete } = props
+  const { addressContent, onDelete } = props
+  const TABLE_HEAD = [
+    { id: 'No.', label: 'No.' },
+    { id: 'addr', label: '주소' },
+    { id: 'addr_detail', label: '상세주소' },
+    { id: '' },
+  ];
   return (
     <>
       <TableContainer>
         <Table sx={{ minWidth: 720, overflowX: 'auto' }}>
-          <TableHeadCustom headLabel={headLabel} />
+          <TableHeadCustom headLabel={TABLE_HEAD} />
           <TableBody>
             {addressContent?.content &&
               addressContent?.content.map((row, idx) => (
@@ -323,6 +346,75 @@ export const AddressTable = props => {
             <Col>
               <Icon icon={'basil:cancel-outline'} style={{ margin: '8rem auto 1rem auto', fontSize: themeObj.font_size.size1, color: themeObj.grey[300] }} />
               <div style={{ margin: 'auto auto 8rem auto' }}>배송지가 없습니다.</div>
+            </Col>
+          </>}
+      </TableContainer>
+    </>
+  )
+}
+export const WishTable = props => {
+  const { wishContent, onDelete } = props
+
+  const { themeWishData, onChangeWishData, themeCartData, onChangeCartData } = useSettingsContext();
+  const TABLE_HEAD = [
+    { id: 'product_img', label: '상품' },
+    { id: 'product_name', label: '상품명' },
+    { id: 'product_sale_price', label: '상품금액' },
+    { id: 'cart', label: '장바구니' },
+    { id: 'delete', label: '' },
+  ];
+  return (
+    <>
+      <TableContainer>
+        <Table sx={{ minWidth: 720, overflowX: 'auto' }}>
+          <TableHeadCustom headLabel={TABLE_HEAD} />
+          <TableBody>
+            {wishContent &&
+              wishContent.map((row, idx) => (
+                <>
+                  <TableRow>
+                    <TableCell>
+                      <Image
+                        alt="product image"
+                        src={row?.product_img}
+                        sx={{ width: 64, height: 64, borderRadius: 1.5, mr: 2 }}
+                      />
+                    </TableCell>
+                    <TableCell>{row?.product_name}</TableCell>
+                    <TableCell>
+                      {row?.product_price > row?.product_sale_price && (
+                        <Box
+                          component="span"
+                          sx={{ color: 'text.disabled', textDecoration: 'line-through', mr: 0.5 }}
+                        >
+                          {commarNumber(row?.product_price)}
+                        </Box>
+                      )}
+                      {commarNumber(row?.product_sale_price)}원
+                    </TableCell>
+                    <TableCell>
+                      <Button variant='outlined' onClick={() => {
+                        insertCartDataUtil(row, false, themeCartData, onChangeCartData)
+                      }}>
+                        장바구니담기
+                      </Button>
+                    </TableCell>
+                    <TableCell align='right'>
+                      <IconButton onClick={() => insertWishDataUtil(row, themeWishData, onChangeWishData)}>
+                        <Icon icon='eva:trash-2-outline' />
+                      </IconButton>
+                    </TableCell>
+                  </TableRow>
+                </>
+              ))}
+
+          </TableBody>
+        </Table>
+        {wishContent && wishContent.length == 0 &&
+          <>
+            <Col>
+              <Icon icon={'basil:cancel-outline'} style={{ margin: '8rem auto 1rem auto', fontSize: themeObj.font_size.size1, color: themeObj.grey[300] }} />
+              <div style={{ margin: 'auto auto 8rem auto' }}>위시상품이 없습니다.</div>
             </Col>
           </>}
       </TableContainer>

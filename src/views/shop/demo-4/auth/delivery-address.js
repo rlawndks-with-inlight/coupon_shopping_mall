@@ -21,12 +21,7 @@ width: 90%;
 min-height:90vh;
 margin-top: 2rem;
 `
-const TABLE_HEAD = [
-    { id: 'No.', label: 'No.' },
-    { id: 'addr', label: '주소' },
-    { id: 'addr_detail', label: '상세주소' },
-    { id: '' },
-];
+
 const DeliveryAddressDemo = (props) => {
 
     const { user } = useAuthContext();
@@ -87,7 +82,6 @@ const DeliveryAddressDemo = (props) => {
                         <Card sx={{ marginBottom: '2rem' }}>
                             <AddressTable
                                 addressContent={addressContent}
-                                headLabel={TABLE_HEAD}
                                 onDelete={onDeleteAddress}
                             />
                         </Card>

@@ -28,14 +28,6 @@ transition: 0.3s;
   color:${props => props.themeDnsData?.theme_css?.main_color};
 }
 `
-const TABLE_HEAD = [
-  { id: 'product', label: '상품' },
-  { id: 'amount', label: '총액' },
-  { id: 'buyer_name', label: '구매자명' },
-  { id: 'trx_status', label: '배송상태' },
-  { id: 'date', label: '업데이트일', align: 'right' },
-  { id: '' },
-];
 const LoginDemo = (props) => {
   const { setModal } = useModal()
   const { user, login } = useAuthContext();

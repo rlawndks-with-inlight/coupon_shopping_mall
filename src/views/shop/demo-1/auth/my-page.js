@@ -33,12 +33,7 @@ const returnMyPageType = {
     }
   }
 }
-const TABLE_HEAD = [
-  { id: 'No.', label: 'No.' },
-  { id: 'addr', label: '주소' },
-  { id: 'addr_detail', label: '상세주소' },
-  { id: '' },
-];
+
 const MyPageDemo = (props) => {
   const {
     data: {
@@ -172,7 +167,6 @@ const MyPageDemo = (props) => {
                 <Card sx={{ marginBottom: '2rem' }}>
                   <AddressTable
                     addressContent={addressContent}
-                    headLabel={TABLE_HEAD}
                     onDelete={onDeleteAddress}
                   />
                 </Card>

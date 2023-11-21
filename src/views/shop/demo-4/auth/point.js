@@ -20,12 +20,7 @@ width: 90%;
 min-height:90vh;
 margin-top: 2rem;
 `
-const TABLE_HEAD = [
-  { id: 'point', label: '포인트' },
-  { id: 'created_at', label: '발생일' },
-  { id: 'type', label: '비고' },
-  { id: '' },
-];
+
 const PointDemo = (props) => {
   const router = useRouter();
   const { user } = useAuthContext();
@@ -58,7 +53,7 @@ const PointDemo = (props) => {
           <ContentWrappers>
             <TitleComponent>{'포인트'}</TitleComponent>
             <Card sx={{ marginBottom: '2rem' }}>
-              <PointTable historyContent={historyContent} headLabel={TABLE_HEAD} onChangePage={onChangePage} searchObj={searchObj} />
+              <PointTable historyContent={historyContent} onChangePage={onChangePage} searchObj={searchObj} />
             </Card>
             <Pagination
               sx={{ margin: 'auto' }}

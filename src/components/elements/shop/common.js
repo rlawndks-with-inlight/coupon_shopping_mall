@@ -10,7 +10,7 @@ import _ from 'lodash'
 // @mui
 import { Box, Card, Pagination, Table, TableBody, TableCell, TableContainer, TableRow, Typography } from '@mui/material'
 // components
-import { TableHeadCustom } from 'src/components/table'
+import { TableHeadCustom, TableNoData } from 'src/components/table'
 //
 import Image from 'src/components/image/Image'
 import { fCurrency } from 'src/utils/formatNumber'
@@ -25,6 +25,8 @@ import { Item4, Seller4 } from './demo-4'
 import { Item5, Seller5 } from './demo-5'
 import { Item6, Seller6 } from './demo-6'
 import { Item7, Seller7 } from './demo-7'
+import EmptyContent from 'src/components/empty-content/EmptyContent'
+import { Col, themeObj } from '../styled-components'
 
 const ItemsContainer = styled.div`
   display: flex;
@@ -245,6 +247,13 @@ export const HistoryTable = props => {
               ))}
           </TableBody>
         </Table>
+        {historyContent?.content && historyContent?.content.length == 0 &&
+          <>
+            <Col>
+              <Icon icon={'basil:cancel-outline'} style={{ margin: '8rem auto 1rem auto', fontSize: themeObj.font_size.size1, color: themeObj.grey[300] }} />
+              <div style={{ margin: 'auto auto 8rem auto' }}>주문내역이 없습니다.</div>
+            </Col>
+          </>}
       </TableContainer>
     </>
   )
@@ -271,10 +280,18 @@ export const PointTable = props => {
               ))}
           </TableBody>
         </Table>
+        {historyContent?.content && historyContent?.content.length == 0 &&
+          <>
+            <Col>
+              <Icon icon={'basil:cancel-outline'} style={{ margin: '8rem auto 1rem auto', fontSize: themeObj.font_size.size1, color: themeObj.grey[300] }} />
+              <div style={{ margin: 'auto auto 8rem auto' }}>포인트내역이 없습니다.</div>
+            </Col>
+          </>}
       </TableContainer>
     </>
   )
 }
+
 export const AddressTable = props => {
   const { addressContent, headLabel, onDelete } = props
   return (
@@ -298,8 +315,16 @@ export const AddressTable = props => {
                   </TableRow>
                 </>
               ))}
+
           </TableBody>
         </Table>
+        {addressContent?.content && addressContent?.content.length == 0 &&
+          <>
+            <Col>
+              <Icon icon={'basil:cancel-outline'} style={{ margin: '8rem auto 1rem auto', fontSize: themeObj.font_size.size1, color: themeObj.grey[300] }} />
+              <div style={{ margin: 'auto auto 8rem auto' }}>배송지가 없습니다.</div>
+            </Col>
+          </>}
       </TableContainer>
     </>
   )

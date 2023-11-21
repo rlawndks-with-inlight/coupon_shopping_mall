@@ -1,5 +1,6 @@
 import { Button, Card, Pagination } from "@mui/material";
 import { useRouter } from "next/router";
+import { useEffect } from "react";
 import { useState } from "react";
 import DialogAddAddress from "src/components/dialog/DialogAddAddress";
 import { AddressTable } from "src/components/elements/shop/common";
@@ -39,6 +40,9 @@ const DeliveryAddressDemo = (props) => {
         search: '',
         user_id: user?.id,
     })
+    useEffect(() => {
+        onChangePage(searchObj)
+    }, [])
     const onChangePage = async (search_obj) => {
         setAddressContent({
             ...addressContent,

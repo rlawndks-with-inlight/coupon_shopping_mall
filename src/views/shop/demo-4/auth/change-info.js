@@ -28,6 +28,7 @@ const ChangeInfoDemo = (props) => {
           <AuthMenuSideComponent />
           <ContentWrappers>
             <TitleComponent>{'회원정보변경'}</TitleComponent>
+            {/* 미완 */}
           </ContentWrappers>
         </RowMobileReverceColumn>
       </Wrappers>

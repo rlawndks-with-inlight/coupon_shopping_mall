@@ -11,7 +11,7 @@ const PayResultDemo = (props) => {
 
   return (
     <>
-
+      {/* 미완 */}
     </>
   )
 }

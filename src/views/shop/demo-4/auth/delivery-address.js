@@ -41,7 +41,7 @@ const DeliveryAddressDemo = (props) => {
         user_id: user?.id,
     })
     useEffect(() => {
-        onChangePage(searchObj)
+        onChangePage(searchObj);
     }, [])
     const onChangePage = async (search_obj) => {
         setAddressContent({

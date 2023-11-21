@@ -28,6 +28,7 @@ const ConsignmentDemo = (props) => {
           <AuthMenuSideComponent />
           <ContentWrappers>
             <TitleComponent>{'위탁상품관리'}</TitleComponent>
+            {/* 미완 */}
           </ContentWrappers>
         </RowMobileReverceColumn>
       </Wrappers>

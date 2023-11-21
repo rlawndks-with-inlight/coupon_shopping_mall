@@ -28,6 +28,7 @@ const ResignDemo = (props) => {
           <AuthMenuSideComponent />
           <ContentWrappers>
             <TitleComponent>{'회원탈퇴'}</TitleComponent>
+            {/* 미완 */}
           </ContentWrappers>
         </RowMobileReverceColumn>
       </Wrappers>

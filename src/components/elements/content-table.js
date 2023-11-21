@@ -140,19 +140,12 @@ const ContentTable = (props) => {
                   ))}
                 </Row>
               </>}
-            {data.length == 0 ?
+            {data.content.length == 0 ?
               <>
-                <motion.div
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  style={{ width: '100%', display: 'flex', flexDirection: 'column', minHeight: '250px', alignItems: 'center' }}
-                >
-                  <div style={{ margin: 'auto auto 8px auto' }}>
-                  </div>
-                  <div style={{ margin: '8px auto auto auto' }}>
-                    데이터가 없습니다.
-                  </div>
-                </motion.div>
+                <Col>
+                  <Icon icon={'basil:cancel-outline'} style={{ margin: '8rem auto 1rem auto', fontSize: themeObj.font_size.size1, color: themeObj.grey[300] }} />
+                  <div style={{ margin: 'auto auto 8rem auto' }}> 데이터가 없습니다.</div>
+                </Col>
               </>
               :
               <>

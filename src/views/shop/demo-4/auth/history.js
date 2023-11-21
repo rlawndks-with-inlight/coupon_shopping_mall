@@ -35,7 +35,7 @@ const HistoryDemo = (props) => {
     if (user) {
       onChangePage(searchObj);
     } else {
-      router.push(`/shop/auth/login`)
+      router.push(`/shop/auth/login`);
     }
   }, [])
 

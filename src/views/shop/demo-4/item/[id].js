@@ -16,6 +16,7 @@ import { insertCartDataUtil, insertWishDataUtil, selectItemOptionUtil } from 'sr
 import toast from 'react-hot-toast';
 import DialogBuyNow from 'src/components/dialog/DialogBuyNow';
 import { useAuthContext } from 'src/layouts/manager/auth/useAuthContext';
+import { useModal } from 'src/components/dialog/ModalProvider';
 const ReactQuill = dynamic(() => import('react-quill'), {
   ssr: false,
   loading: () => <p>Loading ...</p>,
@@ -55,6 +56,8 @@ const ItemDemo = (props) => {
       router
     },
   } = props;
+
+  const { setModal } = useModal();
   const { themeStretch, themeDnsData, themeWishData, onChangeWishData, themeCartData, onChangeCartData } = useSettingsContext();
   const { user } = useAuthContext();
   const [loading, setLoading] = useState(true);
@@ -145,11 +148,11 @@ const ItemDemo = (props) => {
               {product && (
                 <>
                   <Grid container spacing={3}>
-                    <Grid item xs={12} md={6} lg={7}>
+                    <Grid item xs={12} md={6} lg={6}>
                       <ProductDetailsCarousel product={product} />
                     </Grid>
 
-                    <Grid item xs={12} md={6} lg={5}>
+                    <Grid item xs={12} md={6} lg={6}>
                       <ItemName variant='h4'>{product?.product_name}</ItemName>
                       {product?.characters && product?.characters.map((character) => (
                         <>
@@ -190,15 +193,26 @@ const ItemDemo = (props) => {
                         >장바구니</Button>
                         <Button
                           sx={{ width: '50%', height: '48px' }}
-                          variant={themeWishData.map(wish => { return wish?.id }).includes(product?.id) ? 'contained' : 'outlined'}
+                          variant={themeWishData.map(wish => { return wish?.product_id }).includes(product?.id) ? 'contained' : 'outlined'}
                           startIcon={<>
                             <Icon icon={'mdi:heart'} />
                           </>}
                           onClick={async () => {
-                            let result = await insertWishDataUtil(product, themeWishData, onChangeWishData);
-                            if (result?.is_add) {
-                              console.log(123)
+                            if (user) {
+                              let result = await insertWishDataUtil(product, themeWishData, onChangeWishData);
+                              if (result?.is_add) {
+                                setModal({
+                                  func: () => {
+                                    router.push(`/shop/auth/wish`)
+                                  },
+                                  icon: 'mdi:heart',
+                                  title: '상품이 위시리스트에 담겼습니다\n바로 확인 하시겠습니까?'
+                                })
+                              }
+                            } else {
+                              toast.error('로그인을 해주세요.')
                             }
+
                           }}
                         >위시리스트</Button>
                       </Row>

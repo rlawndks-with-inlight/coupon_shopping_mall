@@ -1,11 +1,13 @@
 import { useRouter } from "next/router";
 import { useState } from "react";
 import { useEffect } from "react";
+import { Items } from "src/components/elements/shop/common";
 import { AuthMenuSideComponent, ContentBorderContainer, ContentWrappers, SubTitleComponent, Title, TitleComponent } from "src/components/elements/shop/demo-4";
-import { Col, RowMobileColumn, RowMobileReverceColumn, themeObj } from "src/components/elements/styled-components";
+import { Col, Row, RowMobileColumn, RowMobileReverceColumn, themeObj } from "src/components/elements/styled-components";
 import { useSettingsContext } from "src/components/settings";
 import { useAuthContext } from "src/layouts/manager/auth/useAuthContext";
 import { apiShop } from "src/utils/api";
+import { commarNumber } from "src/utils/function";
 import styled from "styled-components";
 
 const Wrappers = styled.div`
@@ -38,6 +40,7 @@ const MyPageDemo = (props) => {
   const getUserInfo = async () => {
     const response = await apiShop('user-info');
     console.log(response)
+    setUserInfo(response);
   }
   return (
     <>
@@ -46,8 +49,14 @@ const MyPageDemo = (props) => {
           <AuthMenuSideComponent />
           <ContentWrappers>
             <TitleComponent>{'My 그랑'}</TitleComponent>
-            <ContentBorderContainer>
-
+            <ContentBorderContainer style={{ display: 'flex' }}>
+              <Row style={{ columnGap: '0.5rem', fontWeight: 'bold', margin: 'auto' }}>
+                <div>고객님의 포인트는</div>
+                <div style={{ color: themeDnsData?.theme_css?.main_color }}>
+                  {commarNumber(user?.point)}
+                </div>
+                <div>입니다.</div>
+              </Row>
             </ContentBorderContainer>
             <SubTitleComponent
               endComponent={<MoreText themeDnsData={themeDnsData}
@@ -58,7 +67,6 @@ const MyPageDemo = (props) => {
               </MoreText>}
             >위탁상품관리</SubTitleComponent>
             <ContentBorderContainer>
-
             </ContentBorderContainer>
             <SubTitleComponent
               endComponent={<MoreText themeDnsData={themeDnsData}>
@@ -70,7 +78,7 @@ const MyPageDemo = (props) => {
             </ContentBorderContainer>
             <SubTitleComponent>최근 본 상품</SubTitleComponent>
             <ContentBorderContainer>
-
+              <Items items={userInfo?.product_views ?? []} router={router} is_slide={(userInfo?.product_views && userInfo?.product_views.length >= 5) ? true : false} />
             </ContentBorderContainer>
           </ContentWrappers>
         </RowMobileReverceColumn>

@@ -95,10 +95,6 @@ const ItemsDemo = (props) => {
       for (var j = 0; j < themeCategoryList[i]?.product_categories.length; j++) {
         let category = themeCategoryList[i]?.product_categories[j];
         let children = (category?.children ?? []).map(item => { return item?.id });
-        if (category?.category_name == 'WALLET') {
-          console.log(category)
-          console.log(children)
-        }
         if (query[`category_id${i}`] == category?.id || children?.includes(parseInt(query[`category_id${i}`]))) {
           find_category = category;
           break;

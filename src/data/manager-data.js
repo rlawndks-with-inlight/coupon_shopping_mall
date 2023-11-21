@@ -20,14 +20,15 @@ export const PATH_MANAGER = {
     list: path(ROOTS_MANAGER, '/users/list'),
     sellers: path(ROOTS_MANAGER, '/users/sellers'),
     points: path(ROOTS_MANAGER, '/users/points'),
-    sales: path(ROOTS_MANAGER, '/users/sales')
+    sales: path(ROOTS_MANAGER, '/users/sales'),
+    wishs: path(ROOTS_MANAGER, '/users/wishs'),
   },
   orders: {
     root: path(ROOTS_MANAGER, '/orders'),
     trx: path(ROOTS_MANAGER, '/orders/trx'),
     trxCancel: path(ROOTS_MANAGER, '/orders/trx-cancel'),
     invoice: path(ROOTS_MANAGER, '/orders/invoice'),
-    cashBill: path(ROOTS_MANAGER, '/orders/cash-bill')
+    cashBill: path(ROOTS_MANAGER, '/orders/cash-bill'),
   },
   products: {
     root: path(ROOTS_MANAGER, '/products'),

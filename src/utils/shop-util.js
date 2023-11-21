@@ -187,8 +187,7 @@ export const selectItemOptionUtil = (group, option, selectProductGroups, is_opti
     }
     return select_product_groups;
 }
-export const getWishDataUtil = async (themeWishData) => {//아이템찜 불러오기
-    let wish_list = themeWishData;
+export const getWishDataUtil = async () => {//아이템찜 불러오기
     let result = await apiManager('user-wishs/items', 'list');
     return result;
 }

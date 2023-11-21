@@ -170,6 +170,7 @@ export const navConfig = () => {
             ...(isManager() ? [
               { title: '회원관리', path: PATH_MANAGER.users.list },
               { title: '포인트관리', path: PATH_MANAGER.users.points },
+              { title: '찜관리', path: PATH_MANAGER.users.wishs },
             ] : []),
             ...(themeDnsData?.is_use_seller > 0 ? [{ title: '셀러관리', path: PATH_MANAGER.users.sellers }] : []),
             // { title: '매출관리', path: PATH_MANAGER.users.sales },

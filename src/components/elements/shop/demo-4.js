@@ -27,20 +27,17 @@ margin: 0 auto;
 text-align: center;
 `
 const ItemImgContainer = styled.div`
-width: 280px;
+width: 100%;
 height: 280px;
 margin: 0 auto;
 display: flex;
 @media screen and (max-width:1700px){
-  width:16vw; 
   height:16vw; 
 }
 @media screen and (max-width:1150px){
-  width:28vw; 
   height:28vw; 
 }
 @media screen and (max-width:850px){
-  width:40vw; 
   height:40vw; 
 }
 `
@@ -91,8 +88,9 @@ width: 1360px;
 display: flex;
 flex-direction: column;
 margin: 0 auto 1rem 1rem;
-@media screen and (max-width:1650px){
-    width: 100%;
+@media screen and (max-width:1750px){
+    width: 80%;
+    margin-left: auto;
 }
 @media screen and (max-width:1000px){
     margin: 0 auto;

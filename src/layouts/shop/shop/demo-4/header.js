@@ -1,6 +1,6 @@
 import Logo from "src/components/logo/Logo"
 import styled from "styled-components"
-import { IconButton, TextField, InputAdornment, Drawer, Badge, Button } from "@mui/material"
+import { IconButton, TextField, InputAdornment, Drawer, Badge, Button, Typography } from "@mui/material"
 import { forwardRef, useEffect, useRef, useState } from "react"
 import { Icon } from "@iconify/react"
 import { Row, themeObj } from 'src/components/elements/styled-components'
@@ -178,38 +178,46 @@ width:78vw;
 `
 const authList = [
     {
+        name: 'My그랑',
+        link_key: 'my-page',
+        icon: 'material-symbols:person',
+    },
+    {
         name: '장바구니',
-        link_key: 'cart'
+        link_key: 'cart',
+        icon: 'mdi:cart',
     },
     {
         name: '위시리스트',
-        link_key: 'wish'
+        link_key: 'wish',
+        icon: 'mdi:heart',
     },
     {
         name: '포인트내역',
-        link_key: 'point'
+        link_key: 'point',
+        icon: 'icon-park-solid:powerpoint',
     },
     {
         name: '주문/배송조회',
-        link_key: 'history'
-    },
-    {
-        name: 'My그랑',
-        link_key: 'my-page'
+        link_key: 'history',
+        icon: 'iconoir:book-solid',
     },
 ]
 const noneAuthList = [
     {
         name: '로그인',
-        link_key: 'login'
+        link_key: 'login',
+        icon: 'material-symbols:lock',
     },
     {
         name: '회원가입',
-        link_key: 'sign-up'
+        link_key: 'sign-up',
+        icon: 'ic:sharp-person-add',
     },
     {
         name: '비회원 주문조회',
-        link_key: 'login?scroll_to=100000'
+        link_key: 'login?scroll_to=100000',
+        icon: 'lets-icons:order',
     },
 ]
 const Header = () => {
@@ -713,19 +721,65 @@ const Header = () => {
                 }}
                     className="none-scroll"
                 >
+                    {user ?
+                        <>
+                            <ColumnMenuTitle style={{ borderBottom: '1px solid #ccc', paddingBlock: '1rem' }}>{user?.nickname}님, 환영합니다.</ColumnMenuTitle>
+                        </>
+                        :
+                        <>
+                            <ColumnMenuTitle style={{ borderBottom: '1px solid #ccc', paddingBlock: '1rem' }}>로그인을 해주세요.</ColumnMenuTitle>
+                        </>}
+                    <ColumnMenuTitle style={{ marginTop: '1rem' }}>마이페이지</ColumnMenuTitle>
+                    {user ?
+                        <>
+                            {authList.map((item, idx) => (
+                                <>
+                                    <Row style={{ alignItems: 'center' }} onClick={() => {
+                                        window.location.href = (`/shop/auth/${item.link_key}`);
+                                        setSideMenuOpen(false);
+                                    }}>
+                                        <Icon icon={item.icon} style={{ color: themeDnsData?.theme_css?.main_color }} />
+                                        <Typography style={{ padding: '0.3rem', }} variant="subtitle2">{item.name}</Typography>
+                                    </Row>
+
+                                </>
+                            ))}
+                            <Row style={{ alignItems: 'center' }} onClick={() => {
+                                onLogout();
+                                setSideMenuOpen(false);
+                            }}>
+                                <Icon icon={'ri:logout-circle-r-line'} style={{ color: themeDnsData?.theme_css?.main_color }} />
+                                <Typography style={{ padding: '0.3rem', }} variant="subtitle2">로그아웃</Typography>
+                            </Row>
+                        </>
+                        :
+                        <>
+                            {noneAuthList.map((item, idx) => (
+                                <>
+                                    <Row style={{ alignItems: 'center' }} onClick={() => {
+                                        window.location.href = (`/shop/auth/${item.link_key}`);
+                                        setSideMenuOpen(false);
+                                    }}>
+                                        <Icon icon={item.icon} style={{ color: themeDnsData?.theme_css?.main_color }} />
+                                        <Typography style={{ padding: '0.3rem', }} variant="subtitle2">{item.name}</Typography>
+                                    </Row>
+                                </>
+                            ))}
+                        </>}
+
                     {themeDnsData?.setting_obj?.is_use_seller &&
                         <>
                             <ColumnMenuTitle>셀러</ColumnMenuTitle>
                             {themeSellerList.map((seller) => (
                                 <>
-                                    <ColumnMenuContent onClick={() => {
-                                        router.push(`/shop/seller/${seller?.id}`);
+                                    <Typography onClick={() => {
+                                        window.location.href = (`/shop/seller/${seller?.id}`);
                                         setSideMenuOpen(false);
-                                    }} style={{ paddingLeft: '1rem' }}>{seller.seller_name}</ColumnMenuContent>
+                                    }} style={{ padding: '0.3rem', }} variant="subtitle2">{seller.seller_name}</Typography>
                                 </>
                             ))}
                         </>}
-                    {themeCategoryList && themeCategoryList.map((group, index) => (
+                    {/* {themeCategoryList && themeCategoryList.map((group, index) => (
                         <>
                             {group?.is_show_header_menu == 1 &&
                                 <>
@@ -746,43 +800,16 @@ const Header = () => {
                                     </TreeView>
                                 </>}
                         </>
-                    ))}
+                    ))} */}
                     <ColumnMenuTitle>고객센터</ColumnMenuTitle>
                     {postCategories && postCategories.map((item, idx) => (
                         <>
-                            <ColumnMenuContent onClick={() => {
-                                router.push(`/shop/service/${item.id}`);
+                            <Typography onClick={() => {
+                                window.location.href = (`/shop/service/${item.id}`);
                                 setSideMenuOpen(false);
-                            }} style={{ paddingLeft: '1rem' }}>{item.post_category_title}</ColumnMenuContent>
+                            }} style={{ padding: '0.3rem', }} variant="subtitle2">{item.post_category_title}</Typography>
                         </>
                     ))}
-                    <ColumnMenuTitle>마이페이지</ColumnMenuTitle>
-                    {user ?
-                        <>
-                            {authList.map((item, idx) => (
-                                <>
-                                    <ColumnMenuContent onClick={() => {
-                                        router.push(`/shop/auth/${item.link_key}`);
-                                        setSideMenuOpen(false);
-                                    }} style={{ paddingLeft: '1rem' }}>{item.name}</ColumnMenuContent>
-                                </>
-                            ))}
-                            <ColumnMenuContent onClick={() => {
-                                onLogout();
-                                setSideMenuOpen(false);
-                            }} style={{ paddingLeft: '1rem' }}>로그아웃</ColumnMenuContent>
-                        </>
-                        :
-                        <>
-                            {noneAuthList.map((item, idx) => (
-                                <>
-                                    <ColumnMenuContent onClick={() => {
-                                        router.push(`/shop/auth/${item.link_key}`);
-                                        setSideMenuOpen(false);
-                                    }} style={{ paddingLeft: '1rem' }}>{item.name}</ColumnMenuContent>
-                                </>
-                            ))}
-                        </>}
 
                 </ColumnMenuContainer>
             </Drawer>

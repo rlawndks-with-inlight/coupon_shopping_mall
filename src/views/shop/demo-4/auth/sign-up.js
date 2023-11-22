@@ -345,6 +345,7 @@ const SignUpDemo = (props) => {
               <InputLabel>휴대폰번호</InputLabel>
               <OutlinedInput
                 label='휴대폰번호'
+                type='number'
                 placeholder="하이픈(-) 제외 입력"
                 onChange={(e) => {
                   setUser({ ...user, ['phone_num']: e.target.value })

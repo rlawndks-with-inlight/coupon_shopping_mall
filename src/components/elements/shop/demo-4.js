@@ -92,6 +92,10 @@ margin: 0 auto 1rem 1rem;
     width: 80%;
     margin-left: auto;
 }
+@media screen and (max-width:1550px){
+    width: 70%;
+    margin-left: auto;
+}
 @media screen and (max-width:1000px){
   width: 100%;
   margin: 0 auto;

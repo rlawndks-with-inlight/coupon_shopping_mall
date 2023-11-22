@@ -112,7 +112,7 @@ const FindInfoDemo = (props) => {
     if (findUserObj.password != findUserObj.passwordCheck) {
       return toast.error('비밀번호가 일치하지 않습니다.');
     }
-    let result = await apiManager('auth/change-password', 'create', {
+    let result = await apiManager('auth/change-password', 'update', {
       token: findUserObj.phoneToken,
       password: findUserObj.password,
       phone_num: findUserObj.phone_num,

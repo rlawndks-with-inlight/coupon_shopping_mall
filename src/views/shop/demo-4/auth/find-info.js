@@ -72,14 +72,14 @@ const FindInfoDemo = (props) => {
       toast.success('성공적으로 발송되었습니다.');
       setFindUserObj({
         ...findUserObj,
-        phoneToken: result?.token,
+        phoneToken: result?.phone_token,
         is_send_phone_check_num: true,
       })
     }
   }
   const onCheckPhoneVerifyCode = async () => {
     let obj = {
-      token: findUserObj.phoneToken,
+      phone_token: findUserObj.phoneToken,
       rand_num: findUserObj.phoneCheck,
     }
     if (findType == 0) {
@@ -112,9 +112,9 @@ const FindInfoDemo = (props) => {
     if (findUserObj.password != findUserObj.passwordCheck) {
       return toast.error('비밀번호가 일치하지 않습니다.');
     }
-    let result = await apiManager('auth/change-password', 'create', {
-      token: findUserObj.phoneToken,
-      password: findUserObj.password,
+    let result = await apiManager('auth/change-password', 'update', {
+      phone_token: findUserObj.phoneToken,
+      new_password: findUserObj.password,
       phone_num: findUserObj.phone_num,
       user_name: findUserObj.user_name,
     })

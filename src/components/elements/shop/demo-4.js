@@ -164,7 +164,7 @@ const SubMenuLabelContainer = styled.div`
 display: flex;
 flex-direction: column;
 `
-const SubMenuLabel = styled.a`
+const SubMenuLabel = styled.div`
 font-size: ${themeObj.font_size.size8};
 margin:0.5rem;
 cursor: pointer;
@@ -281,10 +281,14 @@ export const AuthMenuSideComponent = (props) => {
             <SubMenuLabelContainer>
               {item.children.map(itm => (
                 <>
-                  <SubMenuLabel href={itm.link} style={{
-                    fontWeight: `${router.asPath == itm.link ? 'bold' : ''}`,
+                  <SubMenuLabel
+                    onClick={() => {
+                      router.push(itm.link);
+                    }}
+                    style={{
+                      fontWeight: `${router.asPath == itm.link ? 'bold' : ''}`,
 
-                  }}
+                    }}
                     themeDnsData={themeDnsData}
                     themeMode={themeMode}
                   >- {itm.label}</SubMenuLabel>

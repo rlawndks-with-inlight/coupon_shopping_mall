@@ -33,16 +33,18 @@ const HistoryDemo = (props) => {
   })
   useEffect(() => {
     if (user) {
-      onChangePage(searchObj);
+      onChangePage({ ...searchObj, page: 1 });
     } else {
       router.push(`/shop/auth/login`);
     }
-  }, [])
+  }, [router.query])
 
   const onChangePage = async (search_obj_) => {
     let search_obj = search_obj_;
     if (router.query?.is_cancel == 1) {
       search_obj['cancel_status'] = 5;
+    } else {
+      delete search_obj['cancel_status'];
     }
     setSearchObj(search_obj);
     setHistoryContent({

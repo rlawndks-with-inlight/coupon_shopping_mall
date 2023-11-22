@@ -23,6 +23,7 @@ margin-top: 2rem;
 const WishDemo = (props) => {
 
   const { themeWishData } = useSettingsContext();
+  const { user } = useAuthContext();
   const {
     data: {
 

@@ -28,6 +28,7 @@ import { Item7, Seller7 } from './demo-7'
 import EmptyContent from 'src/components/empty-content/EmptyContent'
 import { Col, themeObj } from '../styled-components'
 import { insertCartDataUtil, insertWishDataUtil } from 'src/utils/shop-util'
+import { useRouter } from 'next/router'
 
 const ItemsContainer = styled.div`
   display: flex;

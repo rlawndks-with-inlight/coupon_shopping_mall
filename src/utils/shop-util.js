@@ -8,7 +8,7 @@ export const calculatorPrice = (item) => {// 상품별로 가격
     if (!item) {
         return 0;
     }
-    let { product_sale_price, product_price, groups, order_count, delivery_fee } = item;
+    let { product_sale_price, product_price, groups = [], order_count, delivery_fee } = item;
 
     let product_option_price = 0;
 
@@ -151,8 +151,8 @@ export const insertCartDataUtil = (
         let cart_data = [...themeCartData];
         let product = product_;
         let selectProductGroups = selectProductGroups_;
-        product.order_count = selectProductGroups?.count;
-        selectProductGroups = selectProductGroups?.groups;
+        product.order_count = selectProductGroups?.count ?? 1;
+        selectProductGroups = selectProductGroups?.groups ?? [];
         cart_data.push({
             ...product,
             groups: selectProductGroups,

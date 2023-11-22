@@ -43,8 +43,11 @@ const HistoryDemo = (props) => {
     let search_obj = search_obj_;
     if (router.query?.is_cancel == 1) {
       search_obj['cancel_status'] = 5;
+      delete search_obj['is_confirm'];
     } else {
+      search_obj['is_confirm'] = 1;
       delete search_obj['cancel_status'];
+
     }
     setSearchObj(search_obj);
     setHistoryContent({

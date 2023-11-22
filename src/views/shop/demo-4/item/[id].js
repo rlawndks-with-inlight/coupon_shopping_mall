@@ -80,7 +80,7 @@ const ItemDemo = (props) => {
     data = await apiShop('product', 'get', {
       id: router.query?.id
     });
-    data['sub_images'] = (data['sub_images'] ?? []).map((img) => {
+    data['sub_images'] = (data?.sub_images ?? []).map((img) => {
       return img?.product_sub_img
     })
     if (data?.product_img) {

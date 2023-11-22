@@ -82,7 +82,6 @@ const MyPageDemo = (props) => {
               </MoreText>}
             >최근 주문목록</SubTitleComponent>
             <ContentBorderContainer>
-
             </ContentBorderContainer>
             <SubTitleComponent
               endComponent={<Row style={{ alignItems: 'center' }}>
@@ -100,7 +99,12 @@ const MyPageDemo = (props) => {
             >최근 본 상품</SubTitleComponent>
             <ContentBorderContainer>
               <Items
-                items={userInfo?.product_views ?? []}
+                items={(userInfo?.product_views ?? []).map(item => {
+                  return {
+                    ...item,
+                    id: item?.product_id
+                  }
+                })}
                 router={router}
                 is_slide={(userInfo?.product_views && userInfo?.product_views.length >= 5) ? true : false}
                 slide_setting={{

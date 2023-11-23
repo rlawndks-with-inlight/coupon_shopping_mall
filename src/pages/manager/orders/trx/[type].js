@@ -270,15 +270,15 @@ const TrxList = () => {
     },
     {
       id: 'edit',
-      label: `수정/삭제`,
+      label: `삭제`,
       action: (row) => {
         return (
           <>
-            <IconButton>
+            {/* <IconButton>
               <Icon icon='material-symbols:edit-outline' onClick={() => {
                 router.push(`default/${row?.id}`)
               }} />
-            </IconButton>
+            </IconButton> */}
             <IconButton onClick={() => {
               setModal({
                 func: () => { deleteTrx(row?.id) },

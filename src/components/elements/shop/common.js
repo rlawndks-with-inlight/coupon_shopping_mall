@@ -8,13 +8,13 @@ import Slider from 'react-slick'
 import { useSettingsContext } from 'src/components/settings'
 import _ from 'lodash'
 // @mui
-import { Box, Card, Pagination, Table, TableBody, TableCell, TableContainer, TableRow, Typography } from '@mui/material'
+import { Box, Table, TableBody, TableCell, TableContainer, TableRow, Typography } from '@mui/material'
 // components
-import { TableHeadCustom, TableNoData } from 'src/components/table'
+import { TableHeadCustom } from 'src/components/table'
 //
 import Image from 'src/components/image/Image'
 import { fCurrency } from 'src/utils/formatNumber'
-import { getTrxStatusByNumber, makeMaxPage } from 'src/utils/function'
+import { getTrxStatusByNumber } from 'src/utils/function'
 import toast from 'react-hot-toast'
 import { apiManager } from 'src/utils/api'
 import { useModal } from 'src/components/dialog/ModalProvider'
@@ -25,10 +25,8 @@ import { Item4, Seller4 } from './demo-4'
 import { Item5, Seller5 } from './demo-5'
 import { Item6, Seller6 } from './demo-6'
 import { Item7, Seller7 } from './demo-7'
-import EmptyContent from 'src/components/empty-content/EmptyContent'
 import { Col, themeObj } from '../styled-components'
 import { insertCartDataUtil, insertWishDataUtil } from 'src/utils/shop-util'
-import { useRouter } from 'next/router'
 
 const ItemsContainer = styled.div`
   display: flex;

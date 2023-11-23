@@ -1,5 +1,5 @@
 
-import { Button, Card, FormControl, Grid, IconButton, InputAdornment, InputLabel, Menu, MenuItem, OutlinedInput, Rating, Select, Stack, TextField, Typography } from "@mui/material";
+import { Button, Card, Checkbox, FormControl, FormControlLabel, Grid, IconButton, InputAdornment, InputLabel, Menu, MenuItem, OutlinedInput, Rating, Select, Stack, TextField, Typography } from "@mui/material";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { Col, Row, themeObj } from "src/components/elements/styled-components";
@@ -20,16 +20,7 @@ import ReactQuillComponent from "src/views/manager/react-quill";
 import { apiManager, uploadFilesByManager } from "src/utils/api";
 import { useAuthContext } from "src/layouts/manager/auth/useAuthContext";
 
-const tab_list = [
-  {
-    value: 0,
-    label: '상품정보'
-  },
-  {
-    value: 1,
-    label: '상품리뷰 관리'
-  }
-]
+
 const CategoryWrappers = styled.div`
 display:flex;
 flex-direction:column;
@@ -142,7 +133,7 @@ export const SelectCategoryComponent = (props) => {
 const ProductEdit = () => {
   const { user } = useAuthContext();
   const { setModal } = useModal()
-  const { themeCategoryList } = useSettingsContext();
+  const { themeCategoryList, themeDnsData } = useSettingsContext();
   const defaultReviewColumns = [
     {
       id: 'user_name',
@@ -229,10 +220,17 @@ const ProductEdit = () => {
   const [item, setItem] = useState({
     category_ids: [],
     product_name: '',
+    product_code: '',
     product_comment: '',
     product_price: 0,
     product_sale_price: 0,
+    product_type: 0,
     product_description: '',
+    consignment_user_name: '',
+    consignment_none_user_name: '',
+    consignment_none_user_phone_num: '',
+    consignment_fee: 0,
+    consignment_fee_type: 0,
     product_file: undefined,
     sub_images: [],
     groups: [],
@@ -256,7 +254,7 @@ const ProductEdit = () => {
 
   useEffect(() => {
     if (currentTab == 1) {
-      onChangeReviewsPage({ ...reviewSearchObj, product_id: router.query.id });
+      onChangeReviewsPage({ ...reviewSearchObj, product_id: item?.id });
     }
   }, [currentTab])
   const onChangeReviewsPage = async (obj) => {
@@ -427,7 +425,7 @@ const ProductEdit = () => {
   const onSaveReview = async () => {
     let result = undefined;
     let obj = review;
-    obj['product_id'] = router.query?.id;
+    obj['product_id'] = item?.id;
     obj['user_id'] = user?.id;
 
     if (obj?.id) {
@@ -445,26 +443,41 @@ const ProductEdit = () => {
       })
     }
   }
+  const tab_list = [
+    {
+      value: 0,
+      label: '상품정보'
+    },
+    ...(themeDnsData?.setting_obj?.is_use_consignment == 1 ? [
+      {
+        value: 1,
+        label: '위탁정보'
+      }
+    ] : []),
+    ...(router.query?.edit_category == 'edit' ? [
+      {
+        value: 2,
+        label: '상품리뷰 관리'
+      }
+    ] : []),
+  ]
   return (
     <>
       {!loading &&
         <>
-          {router.query?.edit_category == 'edit' &&
-            <>
-              <Row style={{ margin: '0 0 1rem 0', columnGap: '0.5rem' }}>
-                {tab_list.map((tab) => (
-                  <Button
-                    variant={tab.value == currentTab ? 'contained' : 'outlined'}
-                    onClick={() => {
-                      setCurrentTab(tab.value)
-                    }}
-                  >{tab.label}</Button>
-                ))}
-              </Row>
-            </>}
 
+          <Row style={{ margin: '0 0 1rem 0', columnGap: '0.5rem' }}>
+            {tab_list.map((tab) => (
+              <Button
+                variant={tab.value == currentTab ? 'contained' : 'outlined'}
+                onClick={() => {
+                  setCurrentTab(tab.value)
+                }}
+              >{tab.label}</Button>
+            ))}
+          </Row>
           <Grid container spacing={3}>
-            {(router.query?.edit_category == 'add' || (router.query?.edit_category == 'edit' && currentTab == 0)) &&
+            {currentTab == 0 &&
               <>
                 <Grid item xs={12} md={6}>
                   <Card sx={{ p: 2, height: '100%' }}>
@@ -559,6 +572,18 @@ const ProductEdit = () => {
                         </>
                       ))}
                       <TextField
+                        label='상품코드'
+                        value={item.product_code}
+                        placeholder="선택"
+                        onChange={(e) => {
+                          setItem(
+                            {
+                              ...item,
+                              ['product_code']: e.target.value
+                            }
+                          )
+                        }} />
+                      <TextField
                         label='상품명'
                         value={item.product_name}
                         placeholder="예시) 블랙 럭셔리 팔찌, 팔찌 1위 상품"
@@ -570,6 +595,7 @@ const ProductEdit = () => {
                             }
                           )
                         }} />
+
                       <TextField
                         label='상품 간단한 설명'
                         value={item.product_comment}
@@ -598,7 +624,6 @@ const ProductEdit = () => {
                             )
                           }} />
                       </FormControl>
-
                       <FormControl variant="outlined">
                         <InputLabel>상품 할인가</InputLabel>
                         <OutlinedInput
@@ -864,6 +889,132 @@ const ProductEdit = () => {
                 </Grid>
               </>}
             {currentTab == 1 &&
+              <>
+                <Grid item xs={12} md={6}>
+                  <Card sx={{ p: 2, height: '100%' }}>
+                    <Typography variant="subtitle2" sx={{ color: 'text.secondary' }}>
+                      판매자
+                    </Typography>
+                    <FormControlLabel label={<Typography style={{ fontWeight: 'bold', fontSize: themeObj.font_size.size5 }}>{themeDnsData?.name}</Typography>} control={<Checkbox checked={item?.product_type == 0}
+                      onChange={(e) => {
+                        setItem({
+                          ...item,
+                          product_type: 0,
+                          consignment_user_name: '',
+                          consignment_none_user_name: '',
+                          consignment_none_user_phone_num: '',
+                          consignment_fee: 0,
+                          consignment_fee_type: 0,
+                        })
+
+                      }} />} />
+                    <FormControlLabel label={<Typography style={{ fontWeight: 'bold', fontSize: themeObj.font_size.size5 }}>회원</Typography>} control={<Checkbox checked={item?.product_type == 1} />}
+                      onChange={(e) => {
+                        setItem({
+                          ...item,
+                          product_type: 1,
+                          consignment_user_name: '',
+                          consignment_none_user_name: '',
+                          consignment_none_user_phone_num: '',
+                        })
+                      }} />
+                    <FormControlLabel label={<Typography style={{ fontWeight: 'bold', fontSize: themeObj.font_size.size5 }}>비회원</Typography>} control={<Checkbox checked={item?.product_type == 2} />}
+                      onChange={(e) => {
+                        setItem({
+                          ...item,
+                          product_type: 2,
+                          consignment_user_name: '',
+                          consignment_none_user_name: '',
+                          consignment_none_user_phone_num: '',
+                        })
+                      }} />
+                    <Stack spacing={3} style={{ marginTop: '1rem' }}>
+                      {item?.product_type == 1 &&
+                        <>
+                          <TextField
+                            label='유저아이디'
+                            value={item.consignment_user_name}
+                            placeholder="유저아이디"
+                            onChange={(e) => {
+                              setItem(
+                                {
+                                  ...item,
+                                  ['consignment_user_name']: e.target.value
+                                }
+                              )
+                            }} />
+                        </>}
+                      {item?.product_type == 2 &&
+                        <>
+                          <TextField
+                            label='판매자이름'
+                            value={item.consignment_none_user_name}
+                            placeholder="판매자이름"
+                            onChange={(e) => {
+                              setItem(
+                                {
+                                  ...item,
+                                  ['consignment_none_user_name']: e.target.value
+                                }
+                              )
+                            }} />
+                          <TextField
+                            label='판매자연락처'
+                            value={item.consignment_none_user_phone_num}
+                            placeholder="판매자연락처"
+                            onChange={(e) => {
+                              setItem(
+                                {
+                                  ...item,
+                                  ['consignment_none_user_phone_num']: e.target.value
+                                }
+                              )
+                            }} />
+                        </>}
+                    </Stack>
+                  </Card>
+                </Grid>
+                <Grid item xs={12} md={6}>
+                  <Card sx={{ p: 2, height: '100%' }}>
+                    <Stack spacing={3}>
+                      <FormControl>
+                        <InputLabel>수수료타입</InputLabel>
+                        <Select label='수수료타입' value={item.consignment_fee_type}
+                          disabled={item?.product_type == 0}
+                          onChange={(e) => {
+                            setItem(
+                              {
+                                ...item,
+                                ['consignment_fee_type']: e.target.value
+                              }
+                            )
+                          }}>
+                          <MenuItem value={0}>{'금액단위'}</MenuItem>
+                          <MenuItem value={1}>{'퍼센트단위'}</MenuItem>
+                        </Select>
+                      </FormControl>
+                      <FormControl variant="outlined" sx={{ flexGrow: 1 }}>
+                        <InputLabel>수수료</InputLabel>
+                        <OutlinedInput
+                          disabled={item?.product_type == 0}
+                          label='수수료'
+                          type="number"
+                          value={item.consignment_fee}
+                          endAdornment={<InputAdornment position="end">{item.consignment_fee_type == 0 ? "원" : '%'}</InputAdornment>}
+                          onChange={(e) => {
+                            setItem(
+                              {
+                                ...item,
+                                ['consignment_fee']: e.target.value
+                              }
+                            )
+                          }} />
+                      </FormControl>
+                    </Stack>
+                  </Card>
+                </Grid>
+              </>}
+            {currentTab == 2 &&
               <>
                 <Grid item xs={12} md={6}>
                   <Card sx={{ p: 2, height: '100%' }}>

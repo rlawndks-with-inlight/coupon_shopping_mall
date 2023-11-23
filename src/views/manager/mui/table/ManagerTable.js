@@ -1,5 +1,5 @@
 // @mui
-import { Table, TableRow, TableBody, TableCell, TableContainer, Pagination, Divider, Box, TextField, Button, FormControl, InputLabel, OutlinedInput, InputAdornment, IconButton, CircularProgress, Tooltip } from '@mui/material';
+import { Table, TableRow, TableBody, TableCell, TableContainer, Pagination, Divider, Box, TextField, Button, FormControl, InputLabel, OutlinedInput, InputAdornment, IconButton, CircularProgress, Tooltip, Select, MenuItem } from '@mui/material';
 import { TableHeadCustom, TableNoData } from 'src/components/table';
 import {
   DatePicker,
@@ -37,7 +37,7 @@ justify-content:space-between;
 `
 
 export default function ManagerTable(props) {
-  const { columns, data, add_button_text, add_link, onChangePage, searchObj, want_move_card, table } = props;
+  const { columns, data, add_button_text, add_link, onChangePage, searchObj, want_move_card, table, detail_search } = props;
   const { page, page_size } = props?.searchObj;
 
   const theme = useTheme();
@@ -164,8 +164,21 @@ export default function ManagerTable(props) {
                 />
               </>}
           </Row>
-          <Row>
-            <FormControl variant="outlined">
+          <Row style={{ columnGap: '0.75rem', flexWrap: 'wrap', rowGap: '0.75rem' }}>
+            <FormControl variant='outlined' size='small' sx={{ width: '100px', flexGrow: 1 }}>
+              <InputLabel>페이지사이즈</InputLabel>
+              <Select label='페이지사이즈' value={page_size}
+                onChange={(e) => {
+                  onChangePage({ ...searchObj, page_size: e.target.value })
+                }}>
+                <MenuItem value={10}>10</MenuItem>
+                <MenuItem value={20}>20</MenuItem>
+                <MenuItem value={30}>30</MenuItem>
+                <MenuItem value={50}>50</MenuItem>
+                <MenuItem value={100}>100</MenuItem>
+              </Select>
+            </FormControl>
+            <FormControl variant="outlined" sx={{ flexGrow: 1 }}>
               <OutlinedInput
                 size='small'
                 label=''
@@ -188,9 +201,13 @@ export default function ManagerTable(props) {
                 }}
               />
             </FormControl>
+            {detail_search &&
+              <>
+                {detail_search}
+              </>}
             {add_button_text ?
               <>
-                <Button variant='contained' sx={{ marginLeft: '0.75rem' }} onClick={() => {
+                <Button variant='contained' sx={{ flexGrow: 1 }} onClick={() => {
                   let path = router.asPath;
                   if (router.asPath.includes('list')) {
                     path = path.replace('list', '');

@@ -1,10 +1,10 @@
-import { Card, Container, Divider, IconButton, MenuItem, Select, Stack } from "@mui/material";
+import { Button, Card, Container, Divider, IconButton, MenuItem, Select, Stack, Typography } from "@mui/material";
 import { useEffect, useState } from "react";
 import ManagerLayout from "src/layouts/manager/ManagerLayout";
 import ManagerTable from "src/views/manager/mui/table/ManagerTable";
 import { Icon } from "@iconify/react";
 import { useRouter } from "next/router";
-import { Row } from "src/components/elements/styled-components";
+import { Col, Row } from "src/components/elements/styled-components";
 import { commarNumber, getAllIdsWithParents } from "src/utils/function";
 import { LazyLoadImage } from "react-lazy-load-image-component";
 import { SelectCategoryComponent } from "./[edit_category]/[id]";
@@ -18,7 +18,7 @@ const ProductList = () => {
 
   const { user } = useAuthContext();
   const { setModal } = useModal()
-  const { themeCategoryList } = useSettingsContext();
+  const { themeCategoryList, themeDnsData } = useSettingsContext();
   const defaultColumns = [
     {
       id: 'id',
@@ -38,6 +38,13 @@ const ProductList = () => {
         } else {
           return "---";
         }
+      }
+    },
+    {
+      id: 'product_code',
+      label: '상품코드',
+      action: (row) => {
+        return row['product_code'] ?? "---"
       }
     },
     {
@@ -109,6 +116,35 @@ const ProductList = () => {
         return row['seller_name'] ?? "---"
       }
     },
+    ...(themeDnsData?.setting_obj?.is_use_consignment == 1 ? [
+      {
+        id: 'consignment',
+        label: '위탁자정보',
+        action: (row) => {
+          return <Col>
+            {row?.product_type == 0 &&
+              <>
+                ---
+              </>}
+            {row?.product_type == 1 &&
+              <>
+                <Typography variant="subtitle2">유저아이디</Typography>
+                <Typography variant="body2">{row?.consignment_user_name}</Typography>
+                <Typography variant="subtitle2">유저휴대폰번호</Typography>
+                <Typography variant="body2">{row?.consignment_user_phone_num}</Typography>
+              </>}
+            {row?.product_type == 2 &&
+              <>
+                <Typography variant="subtitle2">비회원판매자명</Typography>
+                <Typography variant="body2">{row?.consignment_none_user_name}</Typography>
+                <Typography variant="subtitle2">비회원판매자연락처</Typography>
+                <Typography variant="body2">{row?.consignment_none_user_phone_num}</Typography>
+              </>}
+
+          </Col>
+        }
+      },
+    ] : []),
     {
       id: 'status',
       label: '상태',
@@ -183,7 +219,7 @@ const ProductList = () => {
           <>
             <IconButton>
               <Icon icon='material-symbols:edit-outline' onClick={() => {
-                router.push(`edit/${row?.id}`)
+                router.push(`edit/${row?.product_code || row?.id}`)
               }} />
             </IconButton>
             <IconButton onClick={() => {
@@ -330,6 +366,9 @@ const ProductList = () => {
             add_button_text={'상품 추가'}
             want_move_card={true}
             table={'products'}
+          // detail_search={<Button variant="outlined">
+          //   상세검색
+          // </Button>}
           />
         </Card>
       </Stack>

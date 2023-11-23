@@ -154,6 +154,10 @@ const ItemDemo = (props) => {
 
                     <Grid item xs={12} md={6} lg={6}>
                       <ItemName variant='h4'>{product?.product_name}</ItemName>
+                      {product?.product_code &&
+                        <>
+                          <ItemCharacter key_name={'상품코드'} value={product?.product_code} />
+                        </>}
                       {product?.characters && product?.characters.map((character) => (
                         <>
                           <ItemCharacter key_name={character?.character_name} value={character?.character_value} />

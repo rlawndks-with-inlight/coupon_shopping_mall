@@ -251,7 +251,6 @@ export const defaultManagerObj = {
     pvcy_rep_name: '',
     ceo_name: '',
     addr: '',
-    addr_detail: '',
     resident_num: '',
     business_num: '',
     phone_num: '',

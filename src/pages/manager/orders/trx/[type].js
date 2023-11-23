@@ -160,7 +160,11 @@ const TrxList = () => {
       id: 'addr',
       label: '주소',
       action: (row) => {
-        return row['addr'] ?? "---"
+        return <Col>
+
+          <div>{row['addr'] ?? "---"}</div>
+          <div>{row['detail_addr'] ?? ""}</div>
+        </Col>
       },
       sx: (row) => {
         return {

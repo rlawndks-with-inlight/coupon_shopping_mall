@@ -315,7 +315,7 @@ export const AddressTable = props => {
   const TABLE_HEAD = [
     { id: 'No.', label: 'No.' },
     { id: 'addr', label: '주소' },
-    { id: 'addr_detail', label: '상세주소' },
+    { id: 'detail_addr', label: '상세주소' },
     { id: '' },
   ];
   return (

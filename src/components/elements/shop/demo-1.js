@@ -96,7 +96,11 @@ export const Item1 = (props) => {
             }}
             >
                 <ItemImgContainer>
-                    <ItemImg src={item?.product_img} />
+                    <ItemImg src={item?.product_img} onClick={() => {
+                        if (item?.id) {
+                            router.push(`/shop/item/${item?.id}${seller ? `?seller_id=${seller?.id}` : ''}`)
+                        }
+                    }} />
                     <IconButton sx={{ position: 'absolute', right: '2px', top: '2px' }} onClick={onClickHeart}>
                         <Icon icon={themeWishData.map(itm => { return itm?.product_id }).includes(item?.id) ? 'mdi:heart' : 'mdi:heart-outline'} fontSize={'2rem'} style={{
                             color: `${themeWishData.map(itm => { return itm?.product_id }).includes(item?.id) ? 'red' : ''}`

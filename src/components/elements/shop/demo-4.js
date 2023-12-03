@@ -64,7 +64,11 @@ export const Item4 = (props) => {
       themeDnsData={themeDnsData}
     >
       <ItemImgContainer>
-        <ItemImg src={item?.product_img} />
+        <ItemImg src={item?.product_img} onClick={() => {
+          if (item?.id) {
+            router.push(`/shop/item/${item?.id}${seller ? `?seller_id=${seller?.id}` : ''}`)
+          }
+        }} />
       </ItemImgContainer>
       <Chip
         size="small"

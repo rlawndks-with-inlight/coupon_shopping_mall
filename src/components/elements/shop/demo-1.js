@@ -11,6 +11,7 @@ import { commarNumber } from "src/utils/function";
 import { insertWishDataUtil } from "src/utils/shop-util";
 import toast from "react-hot-toast";
 import Slider from "react-slick";
+import { LazyLoadImage } from "react-lazy-load-image-component";
 
 const ItemName = styled.div`
 font-weight: bold;
@@ -41,35 +42,30 @@ position: relative;
 }
 `
 const ItemImgContainer = styled.div`
-position: relative;
+width: 100%;
 height: 300px;
-@media screen and (max-width: 1800px) {
-    height: 15vw;
+margin: 0 auto;
+display: flex;
+@media screen and (max-width:1700px){
+  height:16vw; 
 }
-@media screen and (max-width: 1150px) {
-    height: 25vw;
+@media screen and (max-width:1150px){
+  height:28vw; 
 }
-@media screen and (max-width: 850px) {
-    height: 42vw;
+@media screen and (max-width:850px){
+  height:40vw; 
 }
 `
-const ItemImg = styled.div`
-height: 300px;
-@media screen and (max-width: 1800px) {
-    height: 15vw;
-}
-@media screen and (max-width: 1150px) {
-    height: 25vw;
-}
-@media screen and (max-width: 850px) {
-    height: 42vw;
-}
-`
+
 const ItemTextContainer = styled.div`
 display:flex;
 flex-direction: column;
 `
-
+const ItemImg = styled(LazyLoadImage)`
+width: 100%;
+object-fit: contain;
+margin: auto;
+`
 export const Item1 = (props) => {
     const { user } = useAuthContext();
     const { themeWishData, onChangeWishData } = useSettingsContext();
@@ -100,19 +96,7 @@ export const Item1 = (props) => {
             }}
             >
                 <ItemImgContainer>
-                    <ItemImg style={{
-                        backgroundImage: `url(${item.product_img})`,
-                        backgroundSize: 'cover',
-                        backgroundPosition: 'center',
-                        width: `${itemThemeCss?.container.is_vertical == 0 ? '100%' : '50%'}`,
-                        borderRadius: `${itemThemeCss?.image.border_radius}px`,
-                    }}
-                        onClick={() => {
-                            if (item?.id) {
-                                router.push(`/shop/item/${item?.id}${seller ? `?seller_id=${seller?.id}` : ''}`)
-                            }
-                        }} >
-                    </ItemImg>
+                    <ItemImg src={item?.product_img} />
                     <IconButton sx={{ position: 'absolute', right: '2px', top: '2px' }} onClick={onClickHeart}>
                         <Icon icon={themeWishData.map(itm => { return itm?.product_id }).includes(item?.id) ? 'mdi:heart' : 'mdi:heart-outline'} fontSize={'2rem'} style={{
                             color: `${themeWishData.map(itm => { return itm?.product_id }).includes(item?.id) ? 'red' : ''}`

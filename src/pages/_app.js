@@ -1,3 +1,4 @@
+import '../locales/i18n';
 import Head from 'next/head'
 import '../../styles/globals.css'
 import { SettingsProvider, useSettingsContext } from 'src/components/settings'
@@ -28,10 +29,9 @@ import ThemeContrast from 'src/components/settings/ThemeContrast'
 import { MotionLazyContainer } from 'src/components/animate'
 import { ModalProvider } from 'src/components/dialog/ModalProvider'
 import { useState } from 'react'
-import { Cloudinary } from '@cloudinary/url-gen'
-import { apiShop } from 'src/utils/api'
 import { useRouter } from 'next/router'
 import { getLocalStorage } from 'src/utils/local-storage'
+import ThemeLocalization from 'src/locales/ThemeLocalization'
 
 const App = props => {
   const { Component, pageProps, head_data = {} } = props
@@ -81,6 +81,7 @@ const App = props => {
           name='viewport'
           content='width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=5.0, user-scalable=0'
         />
+        <meta name="referrer" content="no-referrer" />
         <meta name='apple-mobile-web-app-capable' content='yes' />
         <meta name='apple-mobile-web-app-status-bar-style' content='black-translucent' />
         <meta name='apple-mobile-web-app-title' content={head_data?.name || headData?.name} />
@@ -102,8 +103,12 @@ const App = props => {
                 <SettingsProvider>
                   <MotionLazyContainer>
                     <ThemeProvider>
-                      <ModalProvider>{getLayout(<Component {...pageProps} />)}</ModalProvider>
-                      <Toaster position={'right-top'} toastOptions={{ className: 'react-hot-toast' }} />
+                      <ThemeLocalization>
+                        <ModalProvider>
+                          {getLayout(<Component {...pageProps} />)}
+                          <Toaster position={'right-top'} toastOptions={{ className: 'react-hot-toast' }} />
+                        </ModalProvider>
+                      </ThemeLocalization>
                     </ThemeProvider>
                   </MotionLazyContainer>
                 </SettingsProvider>

@@ -7,6 +7,7 @@ import { useTheme } from '@emotion/react';
 import { deleteLocalStorage, getLocalStorage, setLocalStorage } from 'src/utils/local-storage';
 import { apiShop } from 'src/utils/api';
 import axios from 'axios';
+import localStorageAvailable from 'src/utils/localStorageAvailable';
 // ----------------------------------------------------------------------
 
 const initialState = {
@@ -85,8 +86,13 @@ export function SettingsProvider({ children }) {
   const [themeNoneTodayPopupList, setThemeNoneTodayPopupList] = useState(defaultSettings.themeNoneTodayPopupList);
   const [themePostCategoryList, setThemePostCategoryList] = useState(defaultSettings.themePostCategoryList);
   const [themeSellerList, setThemeSellerList] = useState(defaultSettings.themeSellerList);
-  const isArabic = false;
-  const theme = useTheme();
+
+  const storageAvailable = localStorageAvailable();
+
+  const langStorage = storageAvailable ? localStorage.getItem('i18nextLng') : '';
+
+  const isArabic = langStorage === 'ar';
+
   useEffect(() => {
     if (isArabic) {
       onChangeDirectionByLang('ar');

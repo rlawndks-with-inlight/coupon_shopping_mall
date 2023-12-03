@@ -20,6 +20,7 @@ import ContactsPopover from './ContactsPopover';
 import NotificationsPopover from './NotificationsPopover';
 import { Icon } from '@iconify/react';
 import SvgColor from 'src/components/svg-color/SvgColor';
+import LanguagePopover from './LanguagePopover';
 
 // ----------------------------------------------------------------------
 
@@ -66,6 +67,7 @@ export default function Header({ onOpenNav }) {
             src={`/assets/icons/setting/${themeMode === 'light' ? 'ic_sun' : 'ic_moon'}.svg`}
           />
         </IconButton>
+
         <NotificationsPopover />
 
         {/* <ContactsPopover /> */}

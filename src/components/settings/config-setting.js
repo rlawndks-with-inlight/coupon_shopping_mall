@@ -14,6 +14,7 @@ export const defaultSettings = {
   themeCurrentPageObj: {}, // 현재페이지 불러올 내용
   themeAuth: {},
   themeCategoryList: undefined, // 상품 카테고리
+  themePropertyList: undefined, // 상품 특성
   themePopupList: [], // 팝업
   themeNoneTodayPopupList: {}, // 팝업오늘안볼리스트
   themePostCategoryList: [], // 게시물 카테고리

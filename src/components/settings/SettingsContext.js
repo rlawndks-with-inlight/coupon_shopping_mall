@@ -45,6 +45,7 @@ const initialState = {
   onChangeAuth: () => { },
   //category-list
   onChangeCategoryList: () => { },
+  onChangePropertyList: () => { },
   onChangePostCategoryList: () => { },
   onChangeSellerList: () => { },
   onChangePopupList: () => { },
@@ -82,6 +83,7 @@ export function SettingsProvider({ children }) {
   const [themeCurrentPageObj, setThemeCurrentPageObj] = useState(defaultSettings.themeCurrentPageObj);
   const [themeAuth, setThemeAuth] = useState(defaultSettings.themeAuth);
   const [themeCategoryList, setThemeCategoryList] = useState(defaultSettings.themeCategoryList);
+  const [themePropertyList, setThemePropertyList] = useState(defaultSettings.themePropertyList);
   const [themePopupList, setThemePopupList] = useState(defaultSettings.themePopupList);
   const [themeNoneTodayPopupList, setThemeNoneTodayPopupList] = useState(defaultSettings.themeNoneTodayPopupList);
   const [themePostCategoryList, setThemePostCategoryList] = useState(defaultSettings.themePostCategoryList);
@@ -144,6 +146,7 @@ export function SettingsProvider({ children }) {
       dns_data['products'] = data?.products ?? [];
       onChangeWishData(data?.user_wishs ?? []);
       onChangeCategoryList(data?.product_category_groups ?? []);
+      onChangePropertyList(data?.product_property_groups ?? []);
       onChangePopupList(data?.popups ?? []);
       onChangePostCategoryList(data?.post_categories ?? []);
       onChangeSellerList(data?.sellers ?? []);
@@ -255,6 +258,11 @@ export function SettingsProvider({ children }) {
     setThemeCategoryList(data);
     setLocalStorage('themeCategoryList', JSON.stringify(data));
   }, [])
+  // propertyList
+  const onChangePropertyList = useCallback((data) => {
+    setThemePropertyList(data);
+    setLocalStorage('themePropertyList', JSON.stringify(data));
+  }, [])
   // popupList
   const onChangePopupList = useCallback((data) => {
     setThemePopupList(data);
@@ -289,6 +297,7 @@ export function SettingsProvider({ children }) {
     setThemeCurrentPageObj(defaultSettings.themeCurrentPageObj);
     setThemeAuth(defaultSettings.themeAuth);
     setThemeCategoryList(defaultSettings.themeCategoryList);
+    setThemePropertyList(defaultSettings.themePropertyList);
     setThemePopupList(defaultSettings.themePopupList);
     setThemeNoneTodayPopupList(defaultSettings.themeNoneTodayPopupList);
     setThemePostCategoryList(defaultSettings.themePostCategoryList);
@@ -305,6 +314,7 @@ export function SettingsProvider({ children }) {
     deleteLocalStorage('themeCartData')
     deleteLocalStorage('themeWishData')
     deleteLocalStorage('themeCategoryList')
+    deleteLocalStorage('themePropertyList')
     deleteLocalStorage('themePopupList')
     deleteLocalStorage('themeNoneTodayPopupList')
     deleteLocalStorage('themePostCategoryList')
@@ -356,6 +366,8 @@ export function SettingsProvider({ children }) {
       onChangeAuth,
       themeCategoryList,
       onChangeCategoryList,
+      themePropertyList,
+      onChangePropertyList,
       themePopupList,
       onChangePopupList,
       themeNoneTodayPopupList,
@@ -407,6 +419,8 @@ export function SettingsProvider({ children }) {
       onChangeAuth,
       themeCategoryList,
       onChangeCategoryList,
+      themePropertyList,
+      onChangePropertyList,
       themePopupList,
       onChangePopupList,
       themeNoneTodayPopupList,

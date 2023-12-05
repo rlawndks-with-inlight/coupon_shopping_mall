@@ -20,7 +20,6 @@ import ReactQuillComponent from "src/views/manager/react-quill";
 import { apiManager, uploadFilesByManager } from "src/utils/api";
 import { useAuthContext } from "src/layouts/manager/auth/useAuthContext";
 
-
 const CategoryWrappers = styled.div`
 display:flex;
 flex-direction:column;
@@ -133,7 +132,7 @@ export const SelectCategoryComponent = (props) => {
 const ProductEdit = () => {
   const { user } = useAuthContext();
   const { setModal } = useModal()
-  const { themeCategoryList, themeDnsData } = useSettingsContext();
+  const { themeCategoryList, themeDnsData, themePropertyList } = useSettingsContext();
   const defaultReviewColumns = [
     {
       id: 'user_name',
@@ -214,7 +213,6 @@ const ProductEdit = () => {
 
   const [loading, setLoading] = useState(true);
   const [currentTab, setCurrentTab] = useState(0);
-  const [categories, setCategories] = useState([]);
   const [curCategories, setCurCategories] = useState({});
   const [categoryChildrenList, setCategoryChildrenList] = useState({});
   const [item, setItem] = useState({
@@ -253,7 +251,7 @@ const ProductEdit = () => {
   }, [])
 
   useEffect(() => {
-    if (currentTab == 1) {
+    if (currentTab == 2) {
       onChangeReviewsPage({ ...reviewSearchObj, product_id: item?.id });
     }
   }, [currentTab])
@@ -274,7 +272,6 @@ const ProductEdit = () => {
     let cols = defaultReviewColumns;
     setReviewColumns(cols)
 
-    setCategories(themeCategoryList);
     if (router.query?.edit_category == 'edit') {
       setCurrentTab(router.query?.type ?? 0)
       let product = await apiManager('products', 'get', {
@@ -554,20 +551,36 @@ const ProductEdit = () => {
                 <Grid item xs={12} md={6}>
                   <Card sx={{ p: 2, height: '100%' }}>
                     <Stack spacing={3}>
-                      {themeCategoryList.map((group, idx) => (
+                      {themeCategoryList.map((group, index) => (
                         <>
                           <Stack spacing={1}>
                             <Typography variant="subtitle2" sx={{ color: 'text.secondary' }}>
                               {group?.category_group_name}
                             </Typography>
                             <SelectCategoryComponent
-                              curCategories={curCategories[idx] ?? []}
+                              curCategories={curCategories[index] ?? []}
                               categories={group?.product_categories}
-                              categoryChildrenList={categoryChildrenList[idx] ?? []}
+                              categoryChildrenList={categoryChildrenList[index] ?? []}
                               onClickCategory={onClickCategory}
                               noneSelectText={`${group?.category_group_name}를 선택해 주세요`}
-                              sort_idx={idx}
+                              sort_idx={index}
                             />
+                          </Stack>
+                        </>
+                      ))}
+                      {themePropertyList.map((group, index) => (
+                        <>
+                          <Stack spacing={1}>
+                            <Typography variant="subtitle2" sx={{ color: 'text.secondary' }}>
+                              {group?.property_group_name}
+                            </Typography>
+                            <Row style={{ flexWrap: 'wrap' }}>
+                              {group?.product_properties && group?.product_properties.map((property, idx) => (
+                                <>
+                                  <FormControlLabel label={<Typography style={{ fontSize: themeObj.font_size.size6 }}>{property?.property_name}</Typography>} control={<Checkbox checked={false} />} />
+                                </>
+                              ))}
+                            </Row>
                           </Stack>
                         </>
                       ))}

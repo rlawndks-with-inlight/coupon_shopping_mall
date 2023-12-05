@@ -383,11 +383,9 @@ const Header = () => {
                                                 <div style={{ fontSize: themeObj.font_size.size8, }}>오늘 하루 보지않기</div>
                                             </div>
                                         </PopupContent>
-
                                     </>
                                 ))}
                             </PopupContainer>
-
                         </>
                         :
                         <>
@@ -734,7 +732,7 @@ const Header = () => {
                         <>
                             {authList.map((item, idx) => (
                                 <>
-                                    <Row style={{ alignItems: 'center' }} onClick={() => {
+                                    <Row style={{ alignItems: 'center', cursor: 'pointer' }} onClick={() => {
                                         window.location.href = (`/shop/auth/${item.link_key}`);
                                         setSideMenuOpen(false);
                                     }}>
@@ -744,7 +742,7 @@ const Header = () => {
 
                                 </>
                             ))}
-                            <Row style={{ alignItems: 'center' }} onClick={() => {
+                            <Row style={{ alignItems: 'center', cursor: 'pointer' }} onClick={() => {
                                 onLogout();
                                 setSideMenuOpen(false);
                             }}>
@@ -756,7 +754,7 @@ const Header = () => {
                         <>
                             {noneAuthList.map((item, idx) => (
                                 <>
-                                    <Row style={{ alignItems: 'center' }} onClick={() => {
+                                    <Row style={{ alignItems: 'center', cursor: 'pointer' }} onClick={() => {
                                         window.location.href = (`/shop/auth/${item.link_key}`);
                                         setSideMenuOpen(false);
                                     }}>
@@ -767,7 +765,7 @@ const Header = () => {
                             ))}
                         </>}
 
-                    {themeDnsData?.setting_obj?.is_use_seller &&
+                    {themeDnsData?.setting_obj?.is_use_seller == 1 &&
                         <>
                             <ColumnMenuTitle>셀러</ColumnMenuTitle>
                             {themeSellerList.map((seller) => (
@@ -775,7 +773,7 @@ const Header = () => {
                                     <Typography onClick={() => {
                                         window.location.href = (`/shop/seller/${seller?.id}`);
                                         setSideMenuOpen(false);
-                                    }} style={{ padding: '0.3rem', }} variant="subtitle2">{seller.seller_name}</Typography>
+                                    }} style={{ padding: '0.3rem', cursor: 'pointer' }} variant="subtitle2">{seller.seller_name}</Typography>
                                 </>
                             ))}
                         </>}
@@ -807,7 +805,7 @@ const Header = () => {
                             <Typography onClick={() => {
                                 window.location.href = (`/shop/service/${item.id}`);
                                 setSideMenuOpen(false);
-                            }} style={{ padding: '0.3rem', }} variant="subtitle2">{item.post_category_title}</Typography>
+                            }} style={{ padding: '0.3rem', cursor: 'pointer' }} variant="subtitle2">{item.post_category_title}</Typography>
                         </>
                     ))}
 

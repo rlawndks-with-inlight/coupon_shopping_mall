@@ -718,7 +718,7 @@ const Header = () => {
         }}
           className="none-scroll"
         >
-          {themeDnsData?.setting_obj?.is_use_seller &&
+          {themeDnsData?.setting_obj?.is_use_seller == 1 &&
             <>
               <ColumnMenuTitle>셀러</ColumnMenuTitle>
               {themeSellerList.map((seller) => (

@@ -9,3 +9,7 @@ export const userLevelList = [
     { label: '관리자', value: 40 },
     { label: '개발사', value: 50 },
 ]
+export const productPropertyCanSelectMultipleList = [
+    { label: '불가능(단일)', value: 0 },
+    { label: '가능(여러개)', value: 1 },
+]

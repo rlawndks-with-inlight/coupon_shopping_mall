@@ -45,6 +45,7 @@ export const navConfig = () => {
   const { themeDnsData } = useSettingsContext();
   const [postCategoryList, setPostCategoryList] = useState([]);
   const [categoryGroupList, setCategoryGroupList] = useState([]);
+  const [propertyGroupList, setPropertyGroupList] = useState([]);
 
   const [isSettingComplete, setIsSettingComplete] = useState(false);
   //dns_data와 user를 통해 계산하기
@@ -67,11 +68,25 @@ export const navConfig = () => {
       category_group_list[i]['path'] = `/manager/products/categories/${category_group_list[i]?.id}`;
       delete category_group_list[i]?.children;
     }
+    let property_group_list = await apiManager('product-property-groups', 'list', { page: 1, page_size: 100000 });
+    property_group_list = property_group_list.content ?? [];
+    for (var i = 0; i < property_group_list.length; i++) {
+      property_group_list[i]['title'] = property_group_list[i]['property_group_name'] + ' 관리';
+      property_group_list[i]['path'] = `/manager/products/properties/${property_group_list[i]?.id}`;
+      delete property_group_list[i]?.children;
+    }
     setPostCategoryList(post_category_list);
     setCategoryGroupList(category_group_list);
+    setPropertyGroupList(property_group_list);
     setIsSettingComplete(true);
   }
   const isUseProductCategoryGroup = () => {
+    if (window.location.host.split(':')[0] == process.env.MAIN_FRONT_URL || user?.level >= 50) {
+      return true;
+    }
+    return false
+  }
+  const isUseProductPropertyGroup = () => {
     if (window.location.host.split(':')[0] == process.env.MAIN_FRONT_URL || user?.level >= 50) {
       return true;
     }
@@ -155,6 +170,8 @@ export const navConfig = () => {
           children: [
             ...(isUseProductCategoryGroup() ? [{ title: '카테고리 그룹 관리', path: PATH_MANAGER.products.categoryGroups }] : []),
             ...(isManager() ? [...categoryGroupList] : []),
+            ...(isUseProductPropertyGroup() ? [{ title: '특성 그룹 관리', path: PATH_MANAGER.products.propertyGroups }] : []),
+            ...(isManager() ? [...propertyGroupList] : []),
             { title: '상품관리', path: PATH_MANAGER.products.list },
           ],
         },

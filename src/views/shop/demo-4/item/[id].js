@@ -58,7 +58,7 @@ const ItemDemo = (props) => {
   } = props;
 
   const { setModal } = useModal();
-  const { themeStretch, themeDnsData, themeWishData, onChangeWishData, themeCartData, onChangeCartData } = useSettingsContext();
+  const { themeStretch, themeDnsData, themeWishData, onChangeWishData, themeCartData, onChangeCartData, themePropertyList } = useSettingsContext();
   const { user } = useAuthContext();
   const [loading, setLoading] = useState(true);
 
@@ -158,6 +158,13 @@ const ItemDemo = (props) => {
                         <>
                           <ItemCharacter key_name={'상품코드'} value={product?.product_code} />
                         </>}
+                      {themePropertyList.map((group, index) => {
+                        let property_list = (product?.properties ?? []).filter(el => el?.property_group_id == group?.id);
+                        property_list = property_list.map(property => {
+                          return property?.property_name
+                        })
+                        return <ItemCharacter key_name={group?.property_group_name} value={`${property_list.join(', ')}`} />
+                      })}
                       {product?.characters && product?.characters.map((character) => (
                         <>
                           <ItemCharacter key_name={character?.character_name} value={character?.character_value} />

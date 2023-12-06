@@ -229,8 +229,6 @@ const Header = () => {
 
   })
   const [sideMenuOpen, setSideMenuOpen] = useState(false);
-  const [categories, setCategories] = useState([]);
-  const [categories2, setCategories2] = useState([]);
   const [popups, setPopups] = useState([]);
   const [postCategories, setPostCategories] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -239,7 +237,7 @@ const Header = () => {
   }, [user])
   useEffect(() => {
     setHeaderHeight(headerWrappersRef.current?.clientHeight ?? 130);
-  }, [headerWrappersRef.current, categories])
+  }, [headerWrappersRef.current])
   useEffect(() => {
     if (themeCategoryList) {
       settingHeader();
@@ -249,8 +247,6 @@ const Header = () => {
     setLoading(true);
     setPopups(themePopupList)
     setPostCategories(themePostCategoryList);
-    setCategories(themeCategoryList[0]?.product_categories ?? []);
-    setCategories2(themeCategoryList[1]?.product_categories ?? []);
     let hover_list = getAllIdsWithParents(themeCategoryList[0]?.product_categories ?? []);
     let hover_items = {};
     for (var i = 0; i < hover_list.length; i++) {
@@ -598,47 +594,51 @@ const Header = () => {
                 }}
                 className="none-scroll pc-menu-content"
               >
-                {categories.map((item1, idx1) => (
+                {themeCategoryList[0]?.product_categories && themeCategoryList[0]?.product_categories.map((item1, idx1) => (
                   <>
-                    <div style={{ position: 'relative' }} className={`menu-${item1?.id}`}>
-                      <CategoryMenu borderColor={themeMode == 'dark' ? '#fff' : '#000'} onClick={() => {
-                        router.push(`/shop/items?category_id0=${item1?.id}&depth=0`)
-                      }}>
-                        <div>{item1.category_name}</div>
-                      </CategoryMenu>
-                      {item1?.children.length > 0 ?
-                        <>
-                          <DropDownMenuContainer parentId={item1?.id} style={{
-                            border: `1px solid ${theme.palette.grey[300]}`,
-                            width: `${item1.category_img ? '430px' : '154px'}`,
-                            fontSize: '12px',
-                            fontWeight: 'normal',
-                            background: `${themeMode == 'dark' ? '#000' : '#fff'}`,
+                    {item1?.is_show_header_menu == 1 &&
+                      <>
+                        <div style={{ position: 'relative' }} className={`menu-${item1?.id}`}>
+                          <CategoryMenu borderColor={themeMode == 'dark' ? '#fff' : '#000'} onClick={() => {
+                            router.push(`/shop/items?category_id0=${item1?.id}&depth=0`)
                           }}>
-                            <div style={{
-                              display: 'flex',
-                              flexDirection: 'column',
-                              width: '154px'
-                            }}>
-                              {item1?.children.map((item2, idx2) => (
-                                <>
-                                  {returnDropdownMenu(item2, 1)}
-                                </>
-                              ))}
-                            </div>
-                            {item1.category_img ?
-                              <>
-                                <img src={item1.category_img} style={{ height: 'auto', width: '270px' }} />
-                              </>
-                              :
-                              <>
-                              </>}
-                          </DropDownMenuContainer>
-                        </>
-                        :
-                        <>
-                        </>}
-                    </div>
+                            <div>{item1.category_name}</div>
+                          </CategoryMenu>
+                          {item1?.children.length > 0 ?
+                            <>
+                              <DropDownMenuContainer parentId={item1?.id} style={{
+                                border: `1px solid ${theme.palette.grey[300]}`,
+                                width: `${item1.category_img ? '430px' : '154px'}`,
+                                fontSize: '12px',
+                                fontWeight: 'normal',
+                                background: `${themeMode == 'dark' ? '#000' : '#fff'}`,
+                              }}>
+                                <div style={{
+                                  display: 'flex',
+                                  flexDirection: 'column',
+                                  width: '154px'
+                                }}>
+                                  {item1?.children.map((item2, idx2) => (
+                                    <>
+                                      {returnDropdownMenu(item2, 1)}
+                                    </>
+                                  ))}
+                                </div>
+                                {item1.category_img ?
+                                  <>
+                                    <img src={item1.category_img} style={{ height: 'auto', width: '270px' }} />
+                                  </>
+                                  :
+                                  <>
+                                  </>}
+                              </DropDownMenuContainer>
+                            </>
+                            :
+                            <>
+                            </>}
+                        </div>
+                      </>}
+
                   </>
                 ))}
                 <div style={{ position: 'relative', marginLeft: 'auto' }} className={`menu-service`}>
@@ -677,17 +677,20 @@ const Header = () => {
               }}
                 className="none-scroll"
               >
-                {categories.map((item1, idx1) => (
+                {themeCategoryList[0]?.product_categories && themeCategoryList[0]?.product_categories.map((item1, idx1) => (
                   <>
-                    <CategoryMenu borderColor={themeMode == 'dark' ? '#fff' : '#000'} onMouseOver={() => {
-                      onHoverCategory(`hover_${item1?.id}`)
-                    }}
-                      onClick={() => {
-                        router.push(`/shop/items?category_id0=${item1?.id}&depth=0`)
-                      }}
-                    >
-                      <div>{item1.category_name}</div>
-                    </CategoryMenu>
+                    {item1?.is_show_header_menu == 1 &&
+                      <>
+                        <CategoryMenu borderColor={themeMode == 'dark' ? '#fff' : '#000'} onMouseOver={() => {
+                          onHoverCategory(`hover_${item1?.id}`)
+                        }}
+                          onClick={() => {
+                            router.push(`/shop/items?category_id0=${item1?.id}&depth=0`)
+                          }}
+                        >
+                          <div>{item1.category_name}</div>
+                        </CategoryMenu>
+                      </>}
                   </>
                 ))}
                 <CategoryMenu borderColor={themeMode == 'dark' ? '#fff' : '#000'} onClick={() => {

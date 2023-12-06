@@ -8,10 +8,12 @@ import { deleteLocalStorage, getLocalStorage, setLocalStorage } from 'src/utils/
 import { apiShop } from 'src/utils/api';
 import axios from 'axios';
 import localStorageAvailable from 'src/utils/localStorageAvailable';
+import { useRouter } from 'next/router';
 // ----------------------------------------------------------------------
 
 const initialState = {
   ...defaultSettings,
+  settingPlatform: () => { },
   // Mode
   onToggleMode: () => { },
   onChangeMode: () => { },
@@ -71,6 +73,9 @@ SettingsProvider.propTypes = {
 };
 
 export function SettingsProvider({ children }) {
+
+  const router = useRouter();
+
   const [themeMode, setThemeMode] = useState(defaultSettings.themeMode);
   const [themeLayout, setThemeLayout] = useState(defaultSettings.themeLayout);
   const [themeStretch, setThemeStretch] = useState(defaultSettings.themeStretch);
@@ -126,10 +131,10 @@ export function SettingsProvider({ children }) {
       setThemeCartData(cartData);
       setThemeWishData(wishData);
       setThemeNoneTodayPopupList(noneTodayPopupData);
-      getDnsData();
+      settingPlatform();
     }
   }, []);
-  const getDnsData = async () => {
+  const settingPlatform = async () => {
     try {
       const { data: response } = await axios.get(`/api/domain?dns=${process.env.IS_TEST == 1 ? 'localhost' : window.location.host.split(':')[0]}`);
       let dns_data = response?.data;
@@ -138,7 +143,10 @@ export function SettingsProvider({ children }) {
       dns_data['is_use_seller'] = dns_data?.setting_obj?.is_use_seller || process.env?.IS_USE_SELLER || 0;
       let root_id = 1;
       dns_data['root_id'] = root_id;
-      let data = await apiShop('', 'get');
+      let path_split_list = router.asPath.split('/');
+      let data = await apiShop('', 'get', {
+        is_manager: (path_split_list[1] == 'manager' ? 1 : 0)
+      });
 
       dns_data['shop_obj'] = data?.shop_obj ?? [];
       dns_data['blog_obj'] = data?.blog_obj ?? [];
@@ -323,6 +331,7 @@ export function SettingsProvider({ children }) {
 
   const memoizedValue = useMemo(
     () => ({
+      settingPlatform,
       // Mode
       themeMode,
       onToggleMode,
@@ -378,6 +387,7 @@ export function SettingsProvider({ children }) {
       onChangeSellerList,
     }),
     [
+      settingPlatform,
       // Mode
       themeMode,
       onChangeMode,

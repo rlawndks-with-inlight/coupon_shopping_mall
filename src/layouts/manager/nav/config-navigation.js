@@ -42,7 +42,7 @@ const ICONS = {
 
 export const navConfig = () => {
   const { user } = useAuthContext();
-  const { themeDnsData } = useSettingsContext();
+  const { themeDnsData, themePropertyList, themeCategoryList, themePostCategoryList } = useSettingsContext();
   const [postCategoryList, setPostCategoryList] = useState([]);
   const [categoryGroupList, setCategoryGroupList] = useState([]);
   const [propertyGroupList, setPropertyGroupList] = useState([]);
@@ -51,25 +51,24 @@ export const navConfig = () => {
   //dns_data와 user를 통해 계산하기
 
   useEffect(() => {
-    getSidebarSetting();
-  }, [])
+    if (themeDnsData?.id > 0) {
+      getSidebarSetting();
+    }
+  }, [themeDnsData])
   const getSidebarSetting = async () => {
-    let post_category_list = await apiManager('post-categories', 'list', { page: 1, page_size: 100000 });
-    post_category_list = post_category_list.content ?? [];
+    let post_category_list = themePostCategoryList;
     for (var i = 0; i < post_category_list.length; i++) {
       post_category_list[i]['title'] = post_category_list[i]['post_category_title'];
       post_category_list[i]['path'] = `/manager/articles/${post_category_list[i]?.id}`;
       delete post_category_list[i]?.children;
     }
-    let category_group_list = await apiManager('product-category-groups', 'list', { page: 1, page_size: 100000 });
-    category_group_list = category_group_list.content ?? [];
+    let category_group_list = themeCategoryList;
     for (var i = 0; i < category_group_list.length; i++) {
       category_group_list[i]['title'] = category_group_list[i]['category_group_name'] + ' 관리';
       category_group_list[i]['path'] = `/manager/products/categories/${category_group_list[i]?.id}`;
       delete category_group_list[i]?.children;
     }
-    let property_group_list = await apiManager('product-property-groups', 'list', { page: 1, page_size: 100000 });
-    property_group_list = property_group_list.content ?? [];
+    let property_group_list = themePropertyList;
     for (var i = 0; i < property_group_list.length; i++) {
       property_group_list[i]['title'] = property_group_list[i]['property_group_name'] + ' 관리';
       property_group_list[i]['path'] = `/manager/products/properties/${property_group_list[i]?.id}`;

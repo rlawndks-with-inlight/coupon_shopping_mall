@@ -135,7 +135,7 @@ const Header = () => {
 
   const router = useRouter();
   const theme = useTheme();
-  const { themeMode, onToggleMode, onChangeCategoryList, onChangeCartData, onChangeWishData } = useSettingsContext();
+  const { themeMode, onToggleMode, onChangeCategoryList, onChangeCartData, onChangeWishData, themeCategoryList } = useSettingsContext();
   const { user, logout } = useAuthContext();
   const [keyword, setKeyword] = useState("");
   const onSearch = () => {
@@ -146,8 +146,6 @@ const Header = () => {
 
   })
   const [dialogMenuOpen, setDialogMenuOpen] = useState(false);
-  const [sideMenuOpen, setSideMenuOpen] = useState(false);
-  const [categories, setCategories] = useState([])
   const [loading, setLoading] = useState(true);
   useEffect(() => {
   }, [user])
@@ -155,7 +153,6 @@ const Header = () => {
     setLoading(true);
     let data = [...test_categories];
     onChangeCategoryList(data);
-    setCategories(data);
     let hover_list = getAllIdsWithParents(data);
     let hover_items = {};
     for (var i = 0; i < hover_list.length; i++) {
@@ -186,7 +183,7 @@ const Header = () => {
     setDialogOpenObj(obj);
   }
   const isPageCategory = (id) => {
-    let parent_list = getAllIdsWithParents(categories);
+    let parent_list = getAllIdsWithParents(themeCategoryList[0]?.product_categories);
     for (var i = 0; i < parent_list.length; i++) {
       if (parent_list[i][parent_list[i].length - 1]?.id == router.query?.category_id && parent_list[i][0]?.id == id) {
         return true;
@@ -250,18 +247,21 @@ const Header = () => {
                 </IconButton>
               </NoneShowMobile>
               <NoneShowMobile style={{ width: '100%' }}>
-                {categories.map((item1, idx1) => (
+                {themeCategoryList[0]?.product_categories && themeCategoryList[0]?.product_categories.map((item1, idx1) => (
                   <>
-                    <CategoryMenuContainer theme={theme}>
-                      <CategoryMenu
-                        theme={theme}
-                        is_page_category={isPageCategory(item1?.id) ? 1 : 0}
-                        onClick={() => {
-                          router.push(`/shop/items?category_id0=${item1?.id}&depth=0`)
-                        }}>
-                        <div>{item1.category_name}</div>
-                      </CategoryMenu>
-                    </CategoryMenuContainer>
+                    {item1?.is_show_header_menu == 1 &&
+                      <>
+                        <CategoryMenuContainer theme={theme}>
+                          <CategoryMenu
+                            theme={theme}
+                            is_page_category={isPageCategory(item1?.id) ? 1 : 0}
+                            onClick={() => {
+                              router.push(`/shop/items?category_id0=${item1?.id}&depth=0`)
+                            }}>
+                            <div>{item1.category_name}</div>
+                          </CategoryMenu>
+                        </CategoryMenuContainer>
+                      </>}
                   </>
                 ))}
                 <TextField

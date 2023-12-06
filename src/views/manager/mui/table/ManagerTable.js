@@ -24,6 +24,7 @@ import { DndProvider } from 'react-dnd';
 import update from 'immutability-helper'
 import _ from 'lodash';
 import { apiUtil } from 'src/utils/api';
+import { useSettingsContext } from 'src/components/settings';
 
 const TableHeaderContainer = styled.div`
 padding: 0.75rem;
@@ -40,8 +41,9 @@ export default function ManagerTable(props) {
   const { columns, data, add_button_text, add_link, onChangePage, searchObj, want_move_card, table, detail_search } = props;
   const { page, page_size } = props?.searchObj;
 
-  const theme = useTheme();
   const router = useRouter();
+
+  const { settingPlatform } = useSettingsContext();
   const [sDt, setSDt] = useState(undefined);
   const [eDt, setEDt] = useState(undefined);
   const [keyword, setKeyWord] = useState("");
@@ -92,6 +94,7 @@ export default function ManagerTable(props) {
     let result = await apiUtil(`${table}/sort`, 'update', obj);
     if (result) {
       onChangePage(searchObj);
+      settingPlatform();
     }
   }
   const renderCard = useCallback((row, index, column, list) => {

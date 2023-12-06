@@ -20,6 +20,7 @@ const ProductCategoryGroupEdit = () => {
     max_depth: 10,
     sort_type: 0,
     is_show_header_menu: 1,
+    is_use_en_name: 0,
   })
   const [reviewData, setReviewData] = useState({});
 
@@ -108,6 +109,20 @@ const ProductCategoryGroupEdit = () => {
                     }}>
                       <MenuItem value={1}>노출</MenuItem>
                       <MenuItem value={0}>노출안함</MenuItem>
+                    </Select>
+                  </FormControl>
+                  <FormControl>
+                    <InputLabel>영문이름 사용여부</InputLabel>
+                    <Select label='영문이름 사용여부' value={item.is_use_en_name} onChange={(e) => {
+                      setItem(
+                        {
+                          ...item,
+                          ['is_use_en_name']: e.target.value
+                        }
+                      )
+                    }}>
+                      <MenuItem value={1}>사용</MenuItem>
+                      <MenuItem value={0}>사용안함</MenuItem>
                     </Select>
                   </FormControl>
                 </Stack>

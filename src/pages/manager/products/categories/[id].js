@@ -52,6 +52,7 @@ const CustomContent = forwardRef(function CustomContent(props, ref) {
         depth,
         category,
         onClickCategoryLabel,
+        onChangeStatus,
         onClickAddIcon,
         onClickCategoryDelete,
         setModal,
@@ -120,9 +121,22 @@ const CustomContent = forwardRef(function CustomContent(props, ref) {
             >
                 {label}
             </Typography>
-            <Tooltip title={`해당 ${categoryGroup?.category_group_name}를 수정하시려면 클릭해주세요.`}>
+            {categoryGroup?.is_show_header_menu == 1 &&
+                <>
+                    <Tooltip title={`해당 ${categoryGroup?.category_group_name}을(를) 헤더메뉴에 노출 ${category?.is_show_header_menu == 0 ? '안' : ''} 하시려면 클릭해주세요.`}>
+                        <IconButton onClick={() => onChangeStatus('is_show_header_menu', category?.id, (category?.is_show_header_menu == 0 ? 1 : 0))}>
+                            <Icon icon={'iconoir:star-solid'} fontSize={18} style={{ color: `${category?.is_show_header_menu == 1 ? 'rgb(250, 175, 0)' : 'rgba(145, 158, 171, 0.48)'}` }} />
+                        </IconButton>
+                    </Tooltip>
+                </>}
+            <Tooltip title={`해당 ${categoryGroup?.category_group_name}을(를) 수정하시려면 클릭해주세요.`}>
                 <IconButton onClick={() => onClickCategoryLabel(category, depth)}>
                     <Icon icon='tabler:edit' fontSize={16} />
+                </IconButton>
+            </Tooltip>
+            <Tooltip title={`해당 ${categoryGroup?.category_group_name}을(를) 노출 ${category?.status == 0 ? '안' : ''} 하시려면 클릭해주세요.`}>
+                <IconButton onClick={() => onChangeStatus('status', category?.id, (category?.status == 0 ? 1 : 0))}>
+                    <Icon icon={category?.status == 0 ? 'mdi:eye-outline' : 'mdi:eye-off-outline'} fontSize={18} />
                 </IconButton>
             </Tooltip>
             {(categoryGroup?.max_depth == -1 || categoryGroup?.max_depth > depth + 1) &&
@@ -135,17 +149,17 @@ const CustomContent = forwardRef(function CustomContent(props, ref) {
                         </IconButton>
                     </Tooltip>
                 </>}
-            <Tooltip title={`해당 ${categoryGroup?.category_group_name}를 한칸 올리시려면 클릭해 주세요.`}>
+            <Tooltip title={`해당 ${categoryGroup?.category_group_name}을(를) 한칸 올리시려면 클릭해 주세요.`}>
                 <IconButton sx={{ padding: '0.25rem' }} disabled={index == 0} onClick={() => { onChangeSequence(true, category, depth, index) }}>
                     <Icon icon={'grommet-icons:link-up'} fontSize={14} />
                 </IconButton>
             </Tooltip>
-            <Tooltip title={`해당 ${categoryGroup?.category_group_name}를 한칸 내리시려면 클릭해 주세요.`}>
+            <Tooltip title={`해당 ${categoryGroup?.category_group_name}을(를) 한칸 내리시려면 클릭해 주세요.`}>
                 <IconButton sx={{ padding: '0.25rem' }} disabled={index == category_length - 1} onClick={() => { onChangeSequence(false, category, depth, index) }}>
                     <Icon icon={'grommet-icons:link-down'} fontSize={14} />
                 </IconButton>
             </Tooltip>
-            <Tooltip title={`해당 ${categoryGroup?.category_group_name} 및 하위 ${categoryGroup?.category_group_name}를 삭제하시려면 클릭해 주세요.`}>
+            <Tooltip title={`해당 ${categoryGroup?.category_group_name} 및 하위 ${categoryGroup?.category_group_name}을(를) 삭제하시려면 클릭해 주세요.`}>
                 <IconButton onClick={() => {
                     setModal({
                         func: () => { onClickCategoryDelete(category) },
@@ -173,8 +187,10 @@ const CategoryList = () => {
     const defaultSetting = {
         category_file: '',
         category_name: '',
+        category_en_name: '',
         category_description: '',
-        category_type: 0
+        category_type: 0,
+        status: 0,
     }
     const theme = useTheme();
     const router = useRouter();
@@ -220,6 +236,7 @@ const CategoryList = () => {
                     nodeId={category?.id}
                     label={category?.category_name}
                     onClickCategoryLabel={onClickCategoryLabel}
+                    onChangeStatus={onChangeStatus}
                     onClickAddIcon={onClickAddIcon}
                     depth={num}
                     category={category}
@@ -290,6 +307,13 @@ const CategoryList = () => {
             parent: category,
         })
     }
+    const onChangeStatus = async (column_name, id, value) => {
+        const result = await apiManager(`util/product_categories/${column_name}`, 'create', {
+            id: id,
+            value: value,
+        });
+        getCategories();
+    }
     const onClickCategoryLabel = (category, depth) => { // 해당 카테고리 수정
         setIsAction(true);
         let parent_list = getAllIdsWithParents(categories);
@@ -303,6 +327,7 @@ const CategoryList = () => {
         setCurCategories(use_list);
         setCategory(category)
     }
+
     const onClickCategoryDelete = async (category) => { // 해당 카테고리 삭제
         setIsAction(false);
         await apiManager('product-categories', 'delete', category);
@@ -436,6 +461,15 @@ const CategoryList = () => {
                                                         ['category_name']: e.target.value
                                                     })
                                                 }} />
+                                                {categoryGroup?.is_use_en_name == 1 &&
+                                                    <>
+                                                        <TextField label={`${categoryGroup?.category_group_name} 영문명`} value={category.category_en_name} onChange={(e) => {
+                                                            setCategory({
+                                                                ...category,
+                                                                ['category_en_name']: e.target.value
+                                                            })
+                                                        }} />
+                                                    </>}
                                                 <TextField
                                                     fullWidth
                                                     label={`${categoryGroup?.category_group_name} 설명`}

@@ -1,9 +1,7 @@
-
 import { Button, Card, Checkbox, FormControl, FormControlLabel, Grid, IconButton, InputAdornment, InputLabel, Menu, MenuItem, OutlinedInput, Rating, Select, Stack, TextField, Typography } from "@mui/material";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { Col, Row, themeObj } from "src/components/elements/styled-components";
-import Iconify from "src/components/iconify/Iconify";
 import { useSettingsContext } from "src/components/settings";
 import { Upload } from "src/components/upload";
 import ManagerLayout from "src/layouts/manager/ManagerLayout";
@@ -233,6 +231,7 @@ const ProductEdit = () => {
     sub_images: [],
     groups: [],
     characters: [],
+    properties: {},
   })
   const [reviewData, setReviewData] = useState({});
   const [review, setReview] = useState({});
@@ -278,6 +277,14 @@ const ProductEdit = () => {
         id: router.query.id
       })
       product = Object.assign(item, product)
+      let property_obj = {};
+      for (var i = 0; i < product?.properties?.length; i++) {
+        if (!property_obj[product.properties[i]?.property_group_id]) {
+          property_obj[product.properties[i].property_group_id] = [];
+        }
+        property_obj[product.properties[i].property_group_id].push(product.properties[i].property_id)
+      }
+      product.properties = property_obj;
       setItem(product)
       let cur_categories = {};
       let category_children_list = {};
@@ -376,6 +383,12 @@ const ProductEdit = () => {
         category_ids[`category_id${i}`] = curCategories[i][curCategories[i].length - 1]?.id;
       }
     }
+    for (var i = 0; i < themePropertyList.length; i++) {
+      if (!((item.properties[themePropertyList[i]?.id] ?? [])?.length > 0)) {
+        toast.error(`${themePropertyList[i]?.property_group_name}를 선택해 주세요.`);
+        return;
+      }
+    }
     let obj = item;
     let sub_images = [];
     let upload_files = [];
@@ -410,9 +423,9 @@ const ProductEdit = () => {
       }
     }
     if (obj?.id) {//수정
-      result = await apiManager('products', 'update', { ...obj, id: obj?.id, ...category_ids, sub_images })
+      result = await apiManager('products', 'update', { ...obj, id: obj?.id, ...category_ids, sub_images, properties: JSON.stringify(item.properties) })
     } else {//추가
-      result = await apiManager('products', 'create', { ...obj, ...category_ids, sub_images, user_id: user?.id })
+      result = await apiManager('products', 'create', { ...obj, ...category_ids, sub_images, user_id: user?.id, properties: JSON.stringify(item.properties) })
     }
     if (result) {
       toast.success("성공적으로 저장 되었습니다.");
@@ -577,7 +590,30 @@ const ProductEdit = () => {
                             <Row style={{ flexWrap: 'wrap' }}>
                               {group?.product_properties && group?.product_properties.map((property, idx) => (
                                 <>
-                                  <FormControlLabel label={<Typography style={{ fontSize: themeObj.font_size.size6 }}>{property?.property_name}</Typography>} control={<Checkbox checked={false} />} />
+                                  <FormControlLabel
+                                    label={<Typography style={{ fontSize: themeObj.font_size.size6 }}>{property?.property_name}</Typography>}
+                                    control={<Checkbox checked={item.properties[`${group?.id}`] && (item.properties[`${group?.id}`] ?? [])?.includes(property?.id)} />}
+                                    onChange={(e) => {
+                                      let property_obj = { ...item.properties };
+                                      if (!property_obj[`${group?.id}`] || group?.is_can_select_multiple == 0) {
+                                        property_obj[`${group?.id}`] = [];
+                                      }
+                                      if (e.target.checked) {
+                                        property_obj[`${group?.id}`].push(property?.id);
+                                      } else {
+                                        console.log(property_obj[`${group?.id}`])
+                                        let find_idx = property_obj[`${group?.id}`].indexOf(property?.id);
+                                        if (find_idx >= 0) {
+                                          property_obj[`${group?.id}`].splice(find_idx, 1);
+                                        }
+                                      }
+                                      console.log(property_obj)
+                                      setItem({
+                                        ...item,
+                                        properties: property_obj,
+                                      })
+                                    }}
+                                  />
                                 </>
                               ))}
                             </Row>

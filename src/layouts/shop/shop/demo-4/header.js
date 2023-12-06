@@ -633,45 +633,47 @@ const Header = () => {
                                                     <Icon icon='mingcute:right-line' color={themeMode == 'dark' ? '#fff' : '#000'} />
                                                 </IconButton>
                                                 {group?.product_categories && group?.product_categories.map((item1, idx1) => {
-                                                    return <div style={{ position: 'relative' }} className={`menu-${item1?.id}`}>
-                                                        <CategoryMenu borderColor={themeMode == 'dark' ? '#fff' : '#000'} onClick={() => {
-                                                            router.push(`/shop/items?category_id${index}=${item1?.id}&depth=0`)
-                                                        }}>
-                                                            <div>{item1.category_name}</div>
-                                                        </CategoryMenu>
-                                                        {item1?.children.length > 0 ?
-                                                            <>
-                                                                <DropDownMenuContainer parentId={item1?.id} style={{
-                                                                    border: `1px solid ${theme.palette.grey[300]}`,
-                                                                    width: `${item1.category_img ? '430px' : '154px'}`,
-                                                                    fontSize: '12px',
-                                                                    fontWeight: 'normal',
-                                                                    background: `${themeMode == 'dark' ? '#000' : '#fff'}`,
-                                                                }}>
-                                                                    <div style={{
-                                                                        display: 'flex',
-                                                                        flexDirection: 'column',
-                                                                        width: '154px'
+                                                    if (item1?.is_show_header_menu == 1) {
+                                                        return <div style={{ position: 'relative' }} className={`menu-${item1?.id}`}>
+                                                            <CategoryMenu borderColor={themeMode == 'dark' ? '#fff' : '#000'} onClick={() => {
+                                                                router.push(`/shop/items?category_id${index}=${item1?.id}&depth=0`)
+                                                            }}>
+                                                                <div>{item1.category_name}</div>
+                                                            </CategoryMenu>
+                                                            {item1?.children.length > 0 ?
+                                                                <>
+                                                                    <DropDownMenuContainer parentId={item1?.id} style={{
+                                                                        border: `1px solid ${theme.palette.grey[300]}`,
+                                                                        width: `${item1.category_img ? '430px' : '154px'}`,
+                                                                        fontSize: '12px',
+                                                                        fontWeight: 'normal',
+                                                                        background: `${themeMode == 'dark' ? '#000' : '#fff'}`,
                                                                     }}>
-                                                                        {item1?.children.map((item2, idx2) => (
+                                                                        <div style={{
+                                                                            display: 'flex',
+                                                                            flexDirection: 'column',
+                                                                            width: '154px'
+                                                                        }}>
+                                                                            {item1?.children.map((item2, idx2) => (
+                                                                                <>
+                                                                                    {returnDropdownMenu(item2, 1)}
+                                                                                </>
+                                                                            ))}
+                                                                        </div>
+                                                                        {item1.category_img ?
                                                                             <>
-                                                                                {returnDropdownMenu(item2, 1)}
+                                                                                <img src={item1.category_img} style={{ height: 'auto', width: '270px' }} />
                                                                             </>
-                                                                        ))}
-                                                                    </div>
-                                                                    {item1.category_img ?
-                                                                        <>
-                                                                            <img src={item1.category_img} style={{ height: 'auto', width: '270px' }} />
-                                                                        </>
-                                                                        :
-                                                                        <>
-                                                                        </>}
-                                                                </DropDownMenuContainer>
-                                                            </>
-                                                            :
-                                                            <>
-                                                            </>}
-                                                    </div>
+                                                                            :
+                                                                            <>
+                                                                            </>}
+                                                                    </DropDownMenuContainer>
+                                                                </>
+                                                                :
+                                                                <>
+                                                                </>}
+                                                        </div>
+                                                    }
                                                 })}
                                             </NoneShowMobile>
                                             <ShowMobile style={{
@@ -682,15 +684,18 @@ const Header = () => {
                                             >
                                                 {group?.product_categories && group?.product_categories.map((item1, idx1) => (
                                                     <>
-                                                        <CategoryMenu borderColor={themeMode == 'dark' ? '#fff' : '#000'} onMouseOver={() => {
-                                                            onHoverCategory(`hover_${item1?.id}`)
-                                                        }}
-                                                            onClick={() => {
-                                                                router.push(`/shop/items?category_id${index}=${item1?.id}&depth=0`)
-                                                            }}
-                                                        >
-                                                            <div>{item1.category_name}</div>
-                                                        </CategoryMenu>
+                                                        {item1?.is_show_header_menu == 1 &&
+                                                            <>
+                                                                <CategoryMenu borderColor={themeMode == 'dark' ? '#fff' : '#000'} onMouseOver={() => {
+                                                                    onHoverCategory(`hover_${item1?.id}`)
+                                                                }}
+                                                                    onClick={() => {
+                                                                        router.push(`/shop/items?category_id${index}=${item1?.id}&depth=0`)
+                                                                    }}
+                                                                >
+                                                                    <div>{item1.category_name}</div>
+                                                                </CategoryMenu>
+                                                            </>}
                                                     </>
                                                 ))}
                                             </ShowMobile>

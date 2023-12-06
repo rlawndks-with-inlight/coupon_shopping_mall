@@ -51,6 +51,7 @@ const CustomContent = forwardRef(function CustomContent(props, ref) {
         depth,
         property,
         onClickPropertyLabel,
+        onChangeStatus,
         onClickAddIcon,
         onClickPropertyDelete,
         setModal,
@@ -101,23 +102,27 @@ const CustomContent = forwardRef(function CustomContent(props, ref) {
             >
                 {label}
             </Typography>
-            <Tooltip title={`해당 ${propertyGroup?.property_group_name}를 수정하시려면 클릭해주세요.`}>
+            <Tooltip title={`해당 ${propertyGroup?.property_group_name}을(를) 수정하시려면 클릭해주세요.`}>
                 <IconButton onClick={() => onClickPropertyLabel(property, depth)}>
                     <Icon icon='tabler:edit' fontSize={16} />
                 </IconButton>
             </Tooltip>
-
-            <Tooltip title={`해당 ${propertyGroup?.property_group_name}를 한칸 올리시려면 클릭해 주세요.`}>
+            <Tooltip title={`해당 ${propertyGroup?.property_group_name}을(를) 노출 ${property?.status == 0 ? '안' : ''} 하시려면 클릭해주세요.`}>
+                <IconButton onClick={() => onChangeStatus('status', property?.id, (property?.status == 0 ? 1 : 0))}>
+                    <Icon icon={property?.status == 0 ? 'mdi:eye-outline' : 'mdi:eye-off-outline'} fontSize={18} />
+                </IconButton>
+            </Tooltip>
+            <Tooltip title={`해당 ${propertyGroup?.property_group_name}을(를) 한칸 올리시려면 클릭해 주세요.`}>
                 <IconButton sx={{ padding: '0.25rem' }} disabled={index == 0} onClick={() => { onChangeSequence(true, property, depth, index) }}>
                     <Icon icon={'grommet-icons:link-up'} fontSize={14} />
                 </IconButton>
             </Tooltip>
-            <Tooltip title={`해당 ${propertyGroup?.property_group_name}를 한칸 내리시려면 클릭해 주세요.`}>
+            <Tooltip title={`해당 ${propertyGroup?.property_group_name}을(를) 한칸 내리시려면 클릭해 주세요.`}>
                 <IconButton sx={{ padding: '0.25rem' }} disabled={index == property_length - 1} onClick={() => { onChangeSequence(false, property, depth, index) }}>
                     <Icon icon={'grommet-icons:link-down'} fontSize={14} />
                 </IconButton>
             </Tooltip>
-            <Tooltip title={`해당 ${propertyGroup?.property_group_name}을 삭제하시려면 클릭해 주세요.`}>
+            <Tooltip title={`해당 ${propertyGroup?.property_group_name}을(를) 삭제하시려면 클릭해 주세요.`}>
                 <IconButton onClick={() => {
                     setModal({
                         func: () => { onClickPropertyDelete(property) },
@@ -139,7 +144,6 @@ const Wrappers = styled.div`
 width:100%;
 display:flex;
 `
-const ItemTypes = { CARD: 'card' }
 const PropertyList = () => {
     const { setModal } = useModal()
     const defaultSetting = {
@@ -192,6 +196,7 @@ const PropertyList = () => {
                     nodeId={property?.id}
                     label={property?.property_name}
                     onClickPropertyLabel={onClickPropertyLabel}
+                    onChangeStatus={onChangeStatus}
                     onClickAddIcon={onClickAddIcon}
                     depth={num}
                     property={property}
@@ -261,6 +266,13 @@ const PropertyList = () => {
             parent_id: property?.id,
             parent: property,
         })
+    }
+    const onChangeStatus = async (column_name, id, value) => {
+        const result = await apiManager(`util/product_properties/${column_name}`, 'create', {
+            id: id,
+            value: value,
+        });
+        getProperties();
     }
     const onClickPropertyLabel = (property, depth) => { // 해당 특성 수정
         setIsAction(true);

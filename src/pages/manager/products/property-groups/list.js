@@ -8,9 +8,11 @@ import { useModal } from "src/components/dialog/ModalProvider";
 import { apiManager } from "src/utils/api";
 import { commarNumber } from "src/utils/function";
 import { productPropertyCanSelectMultipleList } from "src/utils/format";
+import { useSettingsContext } from "src/components/settings";
 
 const ProductPropertyGroupList = () => {
   const { setModal } = useModal()
+  const { settingPlatform } = useSettingsContext();
   const defaultColumns = [
     {
       id: 'property_group_name',
@@ -27,8 +29,8 @@ const ProductPropertyGroupList = () => {
       }
     },
     {
-      id: 'sort_type',
-      label: '정렬타입',
+      id: 'is_can_select_multiple',
+      label: '다중선택가능여부',
       action: (row) => {
         return productPropertyCanSelectMultipleList[row['is_can_select_multiple'] ?? 0].label
       }

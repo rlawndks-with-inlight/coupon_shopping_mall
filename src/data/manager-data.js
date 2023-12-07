@@ -58,7 +58,8 @@ export const PATH_MANAGER = {
     default: path(ROOTS_MANAGER, '/settings/default'),
     parcelOut: path(ROOTS_MANAGER, '/settings/parcel-out'),
     paymentModules: path(ROOTS_MANAGER, '/settings/payment-modules'),
-    brands: path(ROOTS_MANAGER, '/settings/brands')
+    brands: path(ROOTS_MANAGER, '/settings/brands'),
+    columns: path(ROOTS_MANAGER, '/settings/columns'),
   }
 }
 export const pg_companies = [

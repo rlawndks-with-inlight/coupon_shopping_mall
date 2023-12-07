@@ -644,19 +644,22 @@ const ProductEdit = () => {
                             }
                           )
                         }} />
+                      {!themeDnsData?.none_use_column_obj['products']?.includes('product_comment') &&
+                        <>
+                          <TextField
+                            label='상품 간단한 설명'
+                            value={item.product_comment}
+                            placeholder="예시) 주문폭주!! 다양한 디자인으로 어떠한 룩도 소화!"
+                            onChange={(e) => {
+                              setItem(
+                                {
+                                  ...item,
+                                  ['product_comment']: e.target.value
+                                }
+                              )
+                            }} />
+                        </>}
 
-                      <TextField
-                        label='상품 간단한 설명'
-                        value={item.product_comment}
-                        placeholder="예시) 주문폭주!! 다양한 디자인으로 어떠한 룩도 소화!"
-                        onChange={(e) => {
-                          setItem(
-                            {
-                              ...item,
-                              ['product_comment']: e.target.value
-                            }
-                          )
-                        }} />
                       <FormControl variant="outlined">
                         <InputLabel>상품가</InputLabel>
                         <OutlinedInput
@@ -720,219 +723,225 @@ const ProductEdit = () => {
                           }}
                         />
                       </Stack>
-                      <Stack spacing={1}>
-                        <Typography variant="subtitle2" sx={{ color: 'text.secondary' }}>
-                          상품특성
-                        </Typography>
-                        {item.characters.map((character, index) => (
-                          <>
-                            {character?.is_delete != 1 &&
+                      {!themeDnsData?.none_use_column_obj['products']?.includes('characters') &&
+                        <>
+                          <Stack spacing={1}>
+                            <Typography variant="subtitle2" sx={{ color: 'text.secondary' }}>
+                              상품특성
+                            </Typography>
+                            {item.characters.map((character, index) => (
                               <>
-                                <Row style={{ columnGap: '0.5rem' }}>
-                                  <TextField
-                                    sx={{ flexGrow: 1 }}
-                                    label='특성키명'
-                                    placeholder="예시) 원산지"
-                                    value={character.character_name}
-                                    onChange={(e) => {
-                                      let character_list = item?.characters;
-                                      character_list[index].character_name = e.target.value;
-                                      setItem(
-                                        {
-                                          ...item,
-                                          ['characters']: character_list
-                                        }
-                                      )
-                                    }} />
-                                  <FormControl variant="outlined" sx={{ flexGrow: 1 }}>
-                                    <InputLabel>특성값</InputLabel>
-                                    <OutlinedInput
-                                      label='특성값'
-                                      placeholder="예시) 국내산"
-                                      value={character.character_value}
-                                      onChange={(e) => {
+                                {character?.is_delete != 1 &&
+                                  <>
+                                    <Row style={{ columnGap: '0.5rem' }}>
+                                      <TextField
+                                        sx={{ flexGrow: 1 }}
+                                        label='특성키명'
+                                        placeholder="예시) 원산지"
+                                        value={character.character_name}
+                                        onChange={(e) => {
+                                          let character_list = item?.characters;
+                                          character_list[index].character_name = e.target.value;
+                                          setItem(
+                                            {
+                                              ...item,
+                                              ['characters']: character_list
+                                            }
+                                          )
+                                        }} />
+                                      <FormControl variant="outlined" sx={{ flexGrow: 1 }}>
+                                        <InputLabel>특성값</InputLabel>
+                                        <OutlinedInput
+                                          label='특성값'
+                                          placeholder="예시) 국내산"
+                                          value={character.character_value}
+                                          onChange={(e) => {
+                                            let character_list = item?.characters;
+                                            character_list[index].character_value = e.target.value;
+                                            setItem(
+                                              {
+                                                ...item,
+                                                ['characters']: character_list
+                                              }
+                                            )
+                                          }} />
+                                      </FormControl>
+                                      <IconButton onClick={() => {
                                         let character_list = item?.characters;
-                                        character_list[index].character_value = e.target.value;
+                                        if (character_list[index]?.id) {
+                                          character_list[index].is_delete = 1;
+                                        } else {
+                                          character_list.splice(index, 1);
+                                        }
                                         setItem(
                                           {
                                             ...item,
                                             ['characters']: character_list
                                           }
                                         )
-                                      }} />
-                                  </FormControl>
-                                  <IconButton onClick={() => {
-                                    let character_list = item?.characters;
-                                    if (character_list[index]?.id) {
-                                      character_list[index].is_delete = 1;
-                                    } else {
-                                      character_list.splice(index, 1);
-                                    }
-                                    setItem(
-                                      {
-                                        ...item,
-                                        ['characters']: character_list
-                                      }
-                                    )
-                                  }}>
-                                    <Icon icon='material-symbols:delete-outline' />
-                                  </IconButton>
-                                </Row>
-                              </>}
-                          </>
-                        ))}
-                        <Button variant="outlined" sx={{ height: '48px' }} onClick={() => {
-                          let character_list = [...item.characters];
-                          character_list.push({
-                            character_name: '',
-                            character_value: '',
-                          })
-                          setItem({
-                            ...item,
-                            ['characters']: character_list
-                          })
-                        }}>새 특성 추가</Button>
-                      </Stack>
-                      <Stack spacing={1}>
-                        <Typography variant="subtitle2" sx={{ color: 'text.secondary' }}>
-                          상품옵션
-                        </Typography>
-                        {item.groups.map((group, index) => (
-                          <>
-                            {group?.is_delete != 1 &&
+                                      }}>
+                                        <Icon icon='material-symbols:delete-outline' />
+                                      </IconButton>
+                                    </Row>
+                                  </>}
+                              </>
+                            ))}
+                            <Button variant="outlined" sx={{ height: '48px' }} onClick={() => {
+                              let character_list = [...item.characters];
+                              character_list.push({
+                                character_name: '',
+                                character_value: '',
+                              })
+                              setItem({
+                                ...item,
+                                ['characters']: character_list
+                              })
+                            }}>새 특성 추가</Button>
+                          </Stack>
+                        </>}
+                      {!themeDnsData?.none_use_column_obj['products']?.includes('options') &&
+                        <>
+                          <Stack spacing={1}>
+                            <Typography variant="subtitle2" sx={{ color: 'text.secondary' }}>
+                              상품옵션
+                            </Typography>
+                            {item.groups.map((group, index) => (
                               <>
-                                <Row style={{ columnGap: '0.5rem', width: '100%' }}>
-                                  <FormControl variant="outlined" style={{ width: '100%' }}>
-                                    <InputLabel>옵션그룹명</InputLabel>
-                                    <OutlinedInput
-                                      label='옵션그룹명'
-                                      placeholder="예시) 색상"
-                                      value={group.group_name}
-                                      endAdornment={<>
-                                        <Button style={{ width: '114px', height: '56px', transform: 'translateX(14px)' }}
-                                          variant="contained"
-                                          onClick={() => {
-                                            let option_list = item?.groups;
-                                            option_list[index].options.push({
-                                              option_name: '',
-                                              option_price: 0,
-                                              option_description: '',
-                                              option_file: undefined,
-                                            })
-                                            setItem(
-                                              {
-                                                ...item,
-                                                ['groups']: option_list
-                                              }
-                                            )
-                                          }}
-                                        >옵션추가</Button>
-                                      </>}
-                                      onChange={(e) => {
-                                        let option_list = item?.groups;
-                                        option_list[index].group_name = e.target.value;
-                                        setItem(
-                                          {
-                                            ...item,
-                                            ['groups']: option_list
-                                          }
-                                        )
-                                      }} />
-                                  </FormControl>
-                                  <IconButton onClick={() => {
-                                    let option_list = item?.groups;
-                                    if (option_list[index]?.id) {
-                                      option_list[index].is_delete = 1;
-                                    } else {
-                                      option_list.splice(index, 1);
-                                    }
-                                    setItem(
-                                      {
-                                        ...item,
-                                        ['groups']: option_list
-                                      }
-                                    )
-                                  }}>
-                                    <Icon icon='material-symbols:delete-outline' />
-                                  </IconButton>
-                                </Row>
-                                {group?.options && group?.options.map((option, idx) => (
+                                {group?.is_delete != 1 &&
                                   <>
-                                    {option?.is_delete != 1 &&
-                                      <>
-                                        <Row style={{ columnGap: '0.5rem' }}>
-                                          <TextField
-                                            sx={{ flexGrow: 1 }}
-                                            label='옵션명'
-                                            placeholder="예시) 블랙"
-                                            value={option.option_name}
-                                            onChange={(e) => {
-                                              let option_list = item?.groups;
-                                              option_list[index].options[idx].option_name = e.target.value;
-                                              setItem(
-                                                {
-                                                  ...item,
-                                                  ['groups']: option_list
-                                                }
-                                              )
-                                            }} />
-                                          <FormControl variant="outlined" sx={{ flexGrow: 1 }}>
-                                            <InputLabel>변동가</InputLabel>
-                                            <OutlinedInput
-                                              label='변동가'
-                                              type="number"
-                                              value={option.option_price}
-                                              endAdornment={<InputAdornment position="end">원</InputAdornment>}
-                                              onChange={(e) => {
+                                    <Row style={{ columnGap: '0.5rem', width: '100%' }}>
+                                      <FormControl variant="outlined" style={{ width: '100%' }}>
+                                        <InputLabel>옵션그룹명</InputLabel>
+                                        <OutlinedInput
+                                          label='옵션그룹명'
+                                          placeholder="예시) 색상"
+                                          value={group.group_name}
+                                          endAdornment={<>
+                                            <Button style={{ width: '114px', height: '56px', transform: 'translateX(14px)' }}
+                                              variant="contained"
+                                              onClick={() => {
                                                 let option_list = item?.groups;
-                                                option_list[index].options[idx].option_price = e.target.value;
+                                                option_list[index].options.push({
+                                                  option_name: '',
+                                                  option_price: 0,
+                                                  option_description: '',
+                                                  option_file: undefined,
+                                                })
                                                 setItem(
                                                   {
                                                     ...item,
                                                     ['groups']: option_list
                                                   }
                                                 )
-                                              }} />
-                                          </FormControl>
-                                          <IconButton onClick={() => {
+                                              }}
+                                            >옵션추가</Button>
+                                          </>}
+                                          onChange={(e) => {
                                             let option_list = item?.groups;
-                                            if (option_list[index].options[idx]?.id) {
-                                              option_list[index].options[idx].is_delete = 1;
-                                            } else {
-                                              option_list[index].options.splice(idx, 1);
-                                            }
+                                            option_list[index].group_name = e.target.value;
                                             setItem(
                                               {
                                                 ...item,
                                                 ['groups']: option_list
                                               }
                                             )
-                                          }}>
-                                            <Icon icon='material-symbols:delete-outline' />
-                                          </IconButton>
-                                        </Row>
-                                      </>}
-                                  </>
-                                ))}
-                              </>}
+                                          }} />
+                                      </FormControl>
+                                      <IconButton onClick={() => {
+                                        let option_list = item?.groups;
+                                        if (option_list[index]?.id) {
+                                          option_list[index].is_delete = 1;
+                                        } else {
+                                          option_list.splice(index, 1);
+                                        }
+                                        setItem(
+                                          {
+                                            ...item,
+                                            ['groups']: option_list
+                                          }
+                                        )
+                                      }}>
+                                        <Icon icon='material-symbols:delete-outline' />
+                                      </IconButton>
+                                    </Row>
+                                    {group?.options && group?.options.map((option, idx) => (
+                                      <>
+                                        {option?.is_delete != 1 &&
+                                          <>
+                                            <Row style={{ columnGap: '0.5rem' }}>
+                                              <TextField
+                                                sx={{ flexGrow: 1 }}
+                                                label='옵션명'
+                                                placeholder="예시) 블랙"
+                                                value={option.option_name}
+                                                onChange={(e) => {
+                                                  let option_list = item?.groups;
+                                                  option_list[index].options[idx].option_name = e.target.value;
+                                                  setItem(
+                                                    {
+                                                      ...item,
+                                                      ['groups']: option_list
+                                                    }
+                                                  )
+                                                }} />
+                                              <FormControl variant="outlined" sx={{ flexGrow: 1 }}>
+                                                <InputLabel>변동가</InputLabel>
+                                                <OutlinedInput
+                                                  label='변동가'
+                                                  type="number"
+                                                  value={option.option_price}
+                                                  endAdornment={<InputAdornment position="end">원</InputAdornment>}
+                                                  onChange={(e) => {
+                                                    let option_list = item?.groups;
+                                                    option_list[index].options[idx].option_price = e.target.value;
+                                                    setItem(
+                                                      {
+                                                        ...item,
+                                                        ['groups']: option_list
+                                                      }
+                                                    )
+                                                  }} />
+                                              </FormControl>
+                                              <IconButton onClick={() => {
+                                                let option_list = item?.groups;
+                                                if (option_list[index].options[idx]?.id) {
+                                                  option_list[index].options[idx].is_delete = 1;
+                                                } else {
+                                                  option_list[index].options.splice(idx, 1);
+                                                }
+                                                setItem(
+                                                  {
+                                                    ...item,
+                                                    ['groups']: option_list
+                                                  }
+                                                )
+                                              }}>
+                                                <Icon icon='material-symbols:delete-outline' />
+                                              </IconButton>
+                                            </Row>
+                                          </>}
+                                      </>
+                                    ))}
+                                  </>}
 
-                          </>
-                        ))}
-                        <Button variant="outlined" sx={{ height: '48px' }} onClick={() => {
-                          let option_list = [...item.groups];
-                          option_list.push({
-                            group_name: '',
-                            group_description: '',
-                            group_file: undefined,
-                            is_able_duplicate_select: 0,
-                            options: []
-                          })
-                          setItem({
-                            ...item,
-                            ['groups']: option_list
-                          })
-                        }}>옵션그룹 추가</Button>
-                      </Stack>
+                              </>
+                            ))}
+                            <Button variant="outlined" sx={{ height: '48px' }} onClick={() => {
+                              let option_list = [...item.groups];
+                              option_list.push({
+                                group_name: '',
+                                group_description: '',
+                                group_file: undefined,
+                                is_able_duplicate_select: 0,
+                                options: []
+                              })
+                              setItem({
+                                ...item,
+                                ['groups']: option_list
+                              })
+                            }}>옵션그룹 추가</Button>
+                          </Stack>
+                        </>}
                     </Stack>
                   </Card>
                 </Grid>

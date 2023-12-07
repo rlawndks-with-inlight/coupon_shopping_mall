@@ -262,6 +262,7 @@ export const navConfig = () => {
             children: [
               { title: '기본설정', path: PATH_MANAGER.settings.default + `/${themeDnsData?.id}` },
               ...(isDeveloper() ? [{ title: '브랜드설정', path: PATH_MANAGER.settings.brands }] : []),
+              ...(isDeveloper() ? [{ title: '컬럼관리', path: PATH_MANAGER.settings.columns }] : []),
               ...(isDeveloper() ? [{ title: '결제모듈관리', path: PATH_MANAGER.settings.paymentModules }] : []),
               // { title: '분양관리', path: PATH_MANAGER.settings.parcelOut },
             ],

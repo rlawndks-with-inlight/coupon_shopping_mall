@@ -62,7 +62,7 @@ const HomeButtonBanner = (props) => {
                                     <LazyLoadImage src={item?.src} style={{
                                         width: `${getBannerWidth()}px`,
                                         height: `auto`,
-                                        cursor: 'pointer'
+                                        cursor: 'pointer',
                                     }}
                                         onClick={() => {
                                             if (item?.link && !is_manager) {
@@ -70,7 +70,7 @@ const HomeButtonBanner = (props) => {
                                             }
                                         }}
                                     />
-                                    <div style={{ fontWeight: 'bold', marginTop: '1rem' }}>{item.title}</div>
+                                    <div style={{ fontWeight: 'bold', marginTop: '1rem', alignItems: 'center' }}>{item.title}</div>
                                 </Col>
 
                             </Row>

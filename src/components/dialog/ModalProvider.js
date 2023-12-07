@@ -28,8 +28,8 @@ const Modal = ({ modal, unSetModal }) => {
       sx={{
       }}
       PaperProps={{
-        sx:{
-          minWidth:'300px'
+        sx: {
+          minWidth: '300px'
         }
       }}
     >
@@ -42,13 +42,13 @@ const Modal = ({ modal, unSetModal }) => {
             }} />
           </Row>
         </>}
-      <DialogTitle sx={{margin:'0 auto'}}>{modal?.title}</DialogTitle>
+      <DialogTitle sx={{ margin: '0 auto' }}>{modal?.title}</DialogTitle>
       <DialogContent>
         <DialogContentText id="alert-dialog-description">
         </DialogContentText>
       </DialogContent>
-      <DialogActions sx={{margin:'0 auto'}}>
-        <Button variant='contained' onClick={() => {
+      <DialogActions sx={{ margin: '0 auto' }}>
+        <Button focusVisible variant='contained' onClick={() => {
           modal?.func()
           unSetModal()
         }}>확인</Button>

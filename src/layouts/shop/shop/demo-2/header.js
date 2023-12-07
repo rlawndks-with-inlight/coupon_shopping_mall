@@ -258,7 +258,7 @@ const Header = () => {
       top: getBoundingClientRect?.top ?? 0,
       left: getBoundingClientRect?.left ?? 0,
     });
-  }, [headerWrappersRef.current, menuButtonRef.current])
+  }, [headerWrappersRef.current, menuButtonRef.current, , themeCategoryList])
   useEffect(() => {
     setLoading(true);
     let hover_list = getAllIdsWithParents(themeCategoryList[0]?.product_categories ?? []);

@@ -237,7 +237,7 @@ const Header = () => {
   }, [user])
   useEffect(() => {
     setHeaderHeight(headerWrappersRef.current?.clientHeight ?? 130);
-  }, [headerWrappersRef.current])
+  }, [headerWrappersRef.current, themeCategoryList])
   useEffect(() => {
     if (themeCategoryList) {
       settingHeader();

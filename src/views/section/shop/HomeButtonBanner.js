@@ -62,7 +62,6 @@ const HomeButtonBanner = (props) => {
                                     <LazyLoadImage src={item?.src} style={{
                                         width: `${getBannerWidth()}px`,
                                         height: `auto`,
-                                        borderRadius: '50%',
                                         cursor: 'pointer'
                                     }}
                                         onClick={() => {

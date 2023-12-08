@@ -166,7 +166,6 @@ export const onPayProductsByVirtualAccount = async (products_, payData_) => { //
             amount: payData.amount,
             realCompId: `BR23117252`,
         })
-        console.log(response)
 
         let insert_pay_ready = await apiManager('pays/virtual', 'create', {
             ...payData,

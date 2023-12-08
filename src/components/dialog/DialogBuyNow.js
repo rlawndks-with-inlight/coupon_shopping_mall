@@ -58,7 +58,6 @@ const DialogBuyNow = (props) => {
     user_id: user?.id,
   })
   const [addressContent, setAddressContent] = useState({});
-  console.log(user)
   const payDataInitialSetting = {
     brand_id: themeDnsData?.id,
     user_id: user?.id ?? undefined,
@@ -149,7 +148,6 @@ const DialogBuyNow = (props) => {
     setBuyStep(1);
   }
   const selectPayType = async (item) => {
-    console.log(item)
     if (item?.type == 'card') {//카드결제
       setBuyType('card');
       setBuyStep(2);
@@ -298,7 +296,6 @@ const DialogBuyNow = (props) => {
         agree3: 'Y',
         agree4: 'Y',
       })
-      console.log(response)
       if (response?.code == '0000') {
         toast.success('성공적으로 발송 되었습니다.');
         setPayData({
@@ -344,7 +341,6 @@ const DialogBuyNow = (props) => {
         groups: select_product_groups,
         seller_id: router.query?.seller_id ?? 0
       }], { ...payData });
-      console.log(result)
       setPayData(result)
     } catch (err) {
       console.log(err);

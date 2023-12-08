@@ -358,7 +358,6 @@ const CartDemo = (props) => {
         agree3: 'Y',
         agree4: 'Y',
       })
-      console.log(response)
       if (response?.code == '0000') {
         toast.success('성공적으로 발송 되었습니다.');
         setPayData({
@@ -396,7 +395,6 @@ const CartDemo = (props) => {
   const requestVirtualAccount = async () => {
     try {
       let result = await onPayProductsByVirtualAccount(products, payData);
-      console.log(result)
       setPayData(result)
     } catch (err) {
       console.log(err);

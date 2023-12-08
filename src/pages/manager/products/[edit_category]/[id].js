@@ -601,13 +601,11 @@ const ProductEdit = () => {
                                       if (e.target.checked) {
                                         property_obj[`${group?.id}`].push(property?.id);
                                       } else {
-                                        console.log(property_obj[`${group?.id}`])
                                         let find_idx = property_obj[`${group?.id}`].indexOf(property?.id);
                                         if (find_idx >= 0) {
                                           property_obj[`${group?.id}`].splice(find_idx, 1);
                                         }
                                       }
-                                      console.log(property_obj)
                                       setItem({
                                         ...item,
                                         properties: property_obj,

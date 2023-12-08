@@ -89,7 +89,6 @@ const ChangeInfoDemo = (props) => {
       const profile_result = await uploadFileByManager({
         file: userObj?.profile_file
       });
-      console.log(profile_result);
       profile_img = profile_result?.url;
     }
     let result = await apiManager('auth/change-info', 'update', {

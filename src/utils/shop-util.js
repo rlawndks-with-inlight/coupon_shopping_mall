@@ -3,6 +3,7 @@ import { axiosIns } from "./axios";
 import { apiManager } from "./api";
 import axios from "axios";
 import toast from "react-hot-toast";
+import { returnMoment } from "./function";
 
 export const calculatorPrice = (item) => {// 상품별로 가격
     if (!item) {
@@ -133,7 +134,74 @@ export const onPayProductsByAuth = async (products_, payData_) => { // 인증결
         return false;
     }
 }
+export const onPayProductsByVirtualAccount = async (products_, payData_) => { // 수기결제
+    let products = products_;
+    let pay_data = payData_;
+    let payData = await makePayData(products, pay_data);
+    let ord_num = `${payData?.user_id || payData?.password}${new Date().getTime().toString().substring(0, 11)}`
+    payData.yymm = payData?.yymm?.split('/');
+    payData = {
+        ...payData,
+        ord_num: ord_num,
+        pay_key: payData?.payment_modules?.pay_key,
+        mid: payData?.payment_modules?.mid,
+        tid: payData?.payment_modules?.tid,
+        card_num: payData?.card_num.replaceAll(' ', ''),
+        yymm: payData?.yymm[1] + payData?.yymm[0],
+    }
+    if (payData?.products?.length > 1 || !payData?.item_name) {
+        payData.item_name = `${payData?.products[0]?.order_name} 외 ${payData?.products?.length - 1}`;
+    }
+    try {
+        const { data: response } = await axios.post(`https://api.cashes.co.kr/api/v1/viss/request`, {
+            compUuid: 'HSTUWO',
+            custNm: payData.buyer_name,
+            custTermDttm: returnMoment().replaceAll('-', '').replaceAll(':', '').replaceAll(' ', ''),
+            custBankCode: payData.bank_code,
+            custBankAcct: payData.acct_num,
+            custBirth: payData.auth_num,
+            custPhoneNo: payData.buyer_phone,
+            orderId: payData.ord_num,
+            orderItemNm: payData.item_name,
+            amount: payData.amount,
+            realCompId: `BR23117252`,
+        })
+        console.log(response)
 
+        let insert_pay_ready = await apiManager('pays/virtual', 'create', {
+            ...payData,
+            virtual_bank_code: response?.response?.bankCode,
+            virtual_acct_num: response?.response?.bankAcctNo,
+            virtual_acct_issued_seq: response?.response?.acctIssuedSeq,
+            bank_code: payData?.bank_code,
+            acct_num: payData?.acct_num,
+        });
+        if (insert_pay_ready?.id > 0) {
+            if (response?.code == '0000') {
+
+                toast.success('성공적으로 발급 되었습니다.');
+                return {
+                    ...payData,
+                    trans_id: insert_pay_ready?.id,
+                    virtual_account_info: {
+                        virtual_bank_code: response?.response?.bankCode,
+                        virtual_acct_num: response?.response?.bankAcctNo,
+                        virtual_acct_issued_seq: response?.response?.acctIssuedSeq,
+                    }
+                };
+            } else {
+                toast.error(response?.message);
+                return false;
+            }
+        } else {
+            return false;
+        }
+
+    } catch (err) {
+        console.log(err);
+        return false;
+    }
+}
 export const getCartDataUtil = async (themeCartData) => {//장바구니 페이지에서 상품 불러오기
     let data = themeCartData ?? [];
     return data;

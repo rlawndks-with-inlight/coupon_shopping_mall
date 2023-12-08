@@ -190,6 +190,13 @@ const CartDemo = (props) => {
       if (parseFloat(user?.point ?? 0) < parseFloat(payData.use_point)) {
         toast.error('보유포인트가 부족합니다.');
         return;
+      } else if (item?.type == 'virtual_account') {
+        setBuyType('virtual_account');
+        setPayData({
+          ...payData,
+          payment_modules: item,
+        })
+        return;
       }
       setPayLoading(true);
       let result = await onPayProductsByAuth(products, { ...payData, payment_modules: item, });
@@ -480,6 +487,10 @@ const CartDemo = (props) => {
                           </Stack>
                         </Stack>
                       </CardContent>
+                    </>}
+                  {buyType == 'virtual_account' &&
+                    <>
+
                     </>}
                 </Card>
               </>}

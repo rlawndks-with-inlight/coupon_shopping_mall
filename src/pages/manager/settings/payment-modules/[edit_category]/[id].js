@@ -9,6 +9,7 @@ import { toast } from "react-hot-toast";
 import { useModal } from "src/components/dialog/ModalProvider";
 import { useAuthContext } from "src/layouts/manager/auth/useAuthContext";
 import { apiManager } from "src/utils/api";
+import { paymentModuleTypeList } from "src/utils/format";
 const Tour = dynamic(
   () => import('reactour'),
   { ssr: false },
@@ -24,7 +25,7 @@ const PaymentModuleEdit = () => {
     pay_key: '',
     mid: '',
     tid: '',
-    trx_type: 0,
+    trx_type: 1,
     is_old_auth: 0,
   })
   useEffect(() => {
@@ -42,9 +43,9 @@ const PaymentModuleEdit = () => {
   const onSave = async () => {
     let result = undefined;
     if (router.query?.edit_category == 'edit') {
-      result = await apiManager('payment-modules', 'update',{ ...item, id: router.query?.id });
+      result = await apiManager('payment-modules', 'update', { ...item, id: router.query?.id });
     } else {
-      result  = await apiManager('payment-modules', 'create',item);
+      result = await apiManager('payment-modules', 'create', item);
     }
     if (result) {
       toast.success("성공적으로 저장 되었습니다.");
@@ -103,8 +104,9 @@ const PaymentModuleEdit = () => {
                         }
                       )
                     }}>
-                      <MenuItem value={1}>수기결제</MenuItem>
-                      <MenuItem value={2}>인증결제</MenuItem>
+                      {paymentModuleTypeList.map((itm) => {
+                        return <MenuItem value={itm.value}>{itm.label}</MenuItem>
+                      })}
                     </Select>
                   </FormControl>
                   <FormControl>

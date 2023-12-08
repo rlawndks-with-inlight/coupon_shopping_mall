@@ -6,6 +6,7 @@ import { Icon } from "@iconify/react";
 import { useRouter } from "next/router";
 import { useModal } from "src/components/dialog/ModalProvider";
 import { apiManager } from "src/utils/api";
+import { paymentModuleTypeList } from "src/utils/format";
 
 const PaymentModuleList = () => {
   const { setModal } = useModal()
@@ -35,12 +36,7 @@ const PaymentModuleList = () => {
       id: 'trx_type',
       label: '결제타입',
       action: (row) => {
-        if (row['trx_type'] == 1) {
-          return '수기결제'
-        } else if (row['trx_type'] == 2) {
-          return '인증결제'
-        }
-        return "---"
+        return _.find(paymentModuleTypeList, { value: row?.trx_type })?.label ?? "---"
       }
     },
     {
@@ -113,14 +109,14 @@ const PaymentModuleList = () => {
     onChangePage({ ...searchObj, page: 1, });
   }
   const onChangePage = async (obj) => {
-    let data_ = await apiManager('payment-modules', 'list',obj);
+    let data_ = await apiManager('payment-modules', 'list', obj);
     if (data_) {
       setData(data_);
     }
     setSearchObj(obj);
   }
   const deletePaymentModule = async (id) => {
-    let result = await apiManager('payment-modules', 'delete',{ id: id });
+    let result = await apiManager('payment-modules', 'delete', { id: id });
     if (result) {
       onChangePage(searchObj);
     }
@@ -135,6 +131,8 @@ const PaymentModuleList = () => {
             searchObj={searchObj}
             onChangePage={onChangePage}
             add_button_text={'결제모듈 추가'}
+            want_move_card={true}
+            table={'payment_modules'}
           />
         </Card>
       </Stack>

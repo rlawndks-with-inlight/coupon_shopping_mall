@@ -1,26 +1,26 @@
 server {
 listen 80;
-server_name mk9mall.com
+server_name now-mall.com
 root html;
 
 
 location / {
-        return 301 https://mk9mall.com$request_uri;
+        return 301 https://now-mall.com$request_uri;
     }
 }
 
 server {
 
     listen       443 ssl;
-    server_name  mk9mall.com;
+    server_name  now-mall.com;
     
     client_max_body_size 256M;
     
-    ssl_certificate     /etc/letsencrypt/live/mk9mall.com/fullchain.pem;
-    ssl_certificate_key /etc/letsencrypt/live/mk9mall.com/privkey.pem;
+    ssl_certificate     /etc/letsencrypt/live/now-mall.com/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/now-mall.com/privkey.pem;
 
     location / {
-       proxy_pass http://mk9mall.com:3000;
+       proxy_pass http://now-mall.com:3000;
 
     }
  
@@ -29,10 +29,11 @@ server {
     }
 }
 
-//  sudo certbot --nginx -d mk9mall.com
+//  sudo certbot --nginx -d now-mall.com
 
 //purplevery23.cafe24.com 프론트서버
 //purplevery22.cafe24.com 백엔드서버
 //purplevery28.cafe24.com 디비서버
 	
-mk9mall.com
+now-mall.com
+

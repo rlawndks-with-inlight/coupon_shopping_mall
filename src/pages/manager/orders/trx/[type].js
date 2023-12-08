@@ -10,6 +10,7 @@ import { commarNumber } from "src/utils/function";
 import toast from "react-hot-toast";
 import { apiManager, apiUtil } from "src/utils/api";
 import { useSettingsContext } from "src/components/settings";
+import { paymentModuleTypeList } from "src/utils/format";
 
 const TrxList = () => {
   const { setModal } = useModal()
@@ -176,12 +177,7 @@ const TrxList = () => {
       id: 'trx_method',
       label: '결제타입',
       action: (row) => {
-        if (row['trx_method'] == 1) {
-          return '수기결제'
-        } else if (row['trx_method'] == 2) {
-          return '인증결제'
-        }
-        return "---"
+        return _.find(paymentModuleTypeList, { value: row?.trx_method })?.label ?? "---"
       }
     },
     {

@@ -177,7 +177,6 @@ export const onPayProductsByVirtualAccount = async (products_, payData_) => { //
         });
         if (insert_pay_ready?.id > 0) {
             if (response?.code == '0000') {
-
                 toast.success('성공적으로 발급 되었습니다.');
                 return {
                     ...payData,

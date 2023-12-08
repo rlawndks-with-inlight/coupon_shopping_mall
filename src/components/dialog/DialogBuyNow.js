@@ -631,7 +631,7 @@ const DialogBuyNow = (props) => {
                     </Row>
                     <Row style={{ columnGap: '0.5rem' }}>
                       <Typography variant='subtitle2'>입금예정금액</Typography>
-                      <Typography variant='body2' sx={{ color: themeObj.grey[600] }}>{commarNumber(payData?.account)}원</Typography>
+                      <Typography variant='body2' sx={{ color: themeObj.grey[600] }}>{commarNumber(payData?.amount)}원</Typography>
                     </Row>
                   </>
                   :

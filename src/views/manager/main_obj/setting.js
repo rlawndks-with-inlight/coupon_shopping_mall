@@ -44,20 +44,12 @@ import HomeVideoSlide from 'src/views/section/shop/HomeVideoSlide'
 import { homeItemsSetting, homeItemsWithCategoriesSetting } from 'src/views/section/shop/utils'
 import ReactQuillComponent from '../react-quill'
 import { apiManager, uploadFilesByManager } from 'src/utils/api'
-import { mainObjSchemaList } from 'src/utils/format'
 
 const Tour = dynamic(() => import('reactour'), { ssr: false })
 //메인화면
 const ITEM_HEIGHT = 48
 const ITEM_PADDING_TOP = 8
-const MenuProps = {
-  PaperProps: {
-    style: {
-      width: 250,
-      maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP
-    }
-  }
-}
+
 const hasTypeCount = (list, type_name) => {
   let count = 0
   for (var i = 0; i < list.length; i++) {
@@ -80,6 +72,119 @@ const curTypeNum = (list, type_name, idx) => {
   return count
 }
 const MainObjSetting = props => {
+  const mainObjSchemaList = [
+    {
+      label: '배너슬라이드',
+      type: 'banner',
+      default_value: {
+        type: 'banner',
+        list: [],
+        style: {
+          min_height: 200
+        }
+      },
+    },
+    {
+      label: '버튼형 배너슬라이드',
+      type: 'button-banner',
+      default_value: {
+        type: 'button-banner',
+        list: [],
+        style: {}
+      },
+    },
+    {
+      label: '상품슬라이드',
+      type: 'items',
+      default_value: {
+        type: 'items',
+        title: '',
+        sub_title: '',
+        list: [],
+        style: {}
+      },
+    },
+    {
+      label: 'ID 선택형 상품슬라이드',
+      type: 'items-ids',
+      default_value: {
+        type: 'items-ids',
+        title: '',
+        sub_title: '',
+        list: [],
+        style: {}
+      },
+    },
+    {
+      label: '카테고리탭별 상품리스트',
+      type: 'items-with-categories',
+      default_value: {
+        type: 'items-with-categories',
+        title: '',
+        sub_title: '',
+        is_vertical: 0,
+        list: [],
+        style: {}
+      },
+    },
+    {
+      label: '에디터',
+      type: 'editor',
+      default_value: {
+        type: 'editor',
+        content: ''
+      },
+    },
+    {
+      label: '동영상 슬라이드',
+      type: 'video-slide',
+      default_value: {
+        type: 'video-slide',
+        title: '',
+        sub_title: '',
+        list: [],
+        style: {}
+      },
+    },
+    {
+      label: '게시판',
+      type: 'post',
+      default_value: {
+        type: 'post',
+        list: [],
+        style: {}
+      },
+    },
+    {
+      label: '셀러섹션',
+      type: 'sellers',
+      default_value: {
+        type: 'sellers',
+        list: [],
+        style: {}
+      },
+    },
+    {
+      label: '상품후기',
+      type: 'item-reviews',
+      default_value: {
+        type: 'item-reviews',
+        list: [],
+        style: {}
+      },
+    },
+    {
+      label: '선택형 상품후기',
+      type: 'item-reviews-select',
+      default_value: {
+        type: 'item-reviews-select',
+        title: '',
+        sub_title: '',
+        list: [],
+        style: {}
+      }
+    },
+  ]
   const { MAIN_OBJ_TYPE } = props
   const { setModal } = useModal()
   const { themeDnsData, themePostCategoryList, themePropertyList } = useSettingsContext()

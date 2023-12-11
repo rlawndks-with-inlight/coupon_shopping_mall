@@ -147,7 +147,6 @@ export function SettingsProvider({ children }) {
       let data = await apiShop('', 'get', {
         is_manager: (path_split_list[1] == 'manager' ? 1 : 0)
       });
-
       dns_data['shop_obj'] = data?.shop_obj ?? [];
       dns_data['blog_obj'] = data?.blog_obj ?? [];
       dns_data['payment_modules'] = data?.payment_modules ?? [];

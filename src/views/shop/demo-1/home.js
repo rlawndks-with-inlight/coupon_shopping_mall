@@ -65,11 +65,12 @@ const HomeDemo = (props) => {
     if (contentList.length > 0) {
       return;
     }
-
+    console.log(123)
     let dns_data = themeDnsData;
     let content_list = (dns_data?.shop_obj) ?? [];
     setWindowWidth(window.innerWidth)
     setContentList(content_list)
+    setLoading(false);
   }
 
   const returnHomeContentByColumn = (column, idx) => {

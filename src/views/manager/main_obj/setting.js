@@ -1162,7 +1162,7 @@ const MainObjSetting = props => {
                           <>
                             <Row style={{ alignItems: 'end' }}>
                               <CardHeader
-                                title={`${_.find(getSettingPropertyList(themePropertyList), { type: item?.type })?.label.split('-')[1]} ${curTypeNum(contentList, item?.type, idx)}`}
+                                title={`${_.find(getSettingPropertyList(themePropertyList), { type: item?.type })?.label.split(' - ')[1]} ${curTypeNum(contentList, item?.type, idx)}`}
                                 sx={{ paddingLeft: '0' }}
                               />
                               <SectionProcess idx={idx} item={item} />

@@ -62,9 +62,9 @@ display:flex;
 flex-direction: column;
 `
 const ItemImg = styled(LazyLoadImage)`
-width: 100%;
 object-fit: contain;
 margin: auto;
+height: 100%;
 `
 export const Item1 = (props) => {
     const { user } = useAuthContext();

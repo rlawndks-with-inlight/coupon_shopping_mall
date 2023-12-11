@@ -44,6 +44,7 @@ display: flex;
 const ItemImg = styled(LazyLoadImage)`
 object-fit: contain;
 margin: auto;
+height: 100%;
 `
 export const Item4 = (props) => {
   const { user } = useAuthContext();

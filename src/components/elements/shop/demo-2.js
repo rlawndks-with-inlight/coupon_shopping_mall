@@ -173,7 +173,7 @@ export const Seller2 = (props) => {//셀러카드
 
     return (
         <>
-           <Seller1 {...props}/>
+            <Seller1 {...props} />
         </>
     )
 }

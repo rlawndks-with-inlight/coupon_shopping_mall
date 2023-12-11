@@ -7,7 +7,7 @@ import { useEffect } from "react";
 import { useState } from "react";
 import { Items } from "src/components/elements/shop/common";
 import { ContentBorderContainer, SubTitleComponent } from "src/components/elements/shop/demo-4";
-import { Col, Row, themeObj } from "src/components/elements/styled-components";
+import { Col, Row, Title, themeObj } from "src/components/elements/styled-components";
 import { useSettingsContext } from "src/components/settings";
 import { useAuthContext } from "src/layouts/manager/auth/useAuthContext";
 import { apiShop } from "src/utils/api";
@@ -25,7 +25,7 @@ const ItemsDemo = (props) => {
 
   const router = useRouter();
   const { user } = useAuthContext();
-  const { themeDnsData, themeCategoryList } = useSettingsContext();
+  const { themeDnsData, themeCategoryList, themePropertyList } = useSettingsContext();
   const [categoryIds, setCategoryIds] = useState({});
   const [searchObj, setSearchObj] = useState({
     page: 1,
@@ -141,123 +141,143 @@ const ItemsDemo = (props) => {
   return (
     <>
       <ContentWrapper>
-        <TextField
-          label=''
-          variant="standard"
-          onChange={(e) => {
-            setSearchObj({
-              ...searchObj,
-              search: e.target.value
-            })
-          }}
-          value={searchObj?.search}
-          style={{ width: '100%', margin: '2rem auto 0 auto', maxWidth: '700px' }}
-          autoComplete='new-password'
-          placeholder="키워드를 검색해주세요."
-          onKeyPress={(e) => {
-            if (e.key == 'Enter') {
-              let query = { ...categoryIds };
-              query[`search`] = searchObj?.search;
-
-              query = new URLSearchParams(query).toString();
-              router.push(`/shop/items?${query}`);
-            }
-          }}
-          InputProps={{
-            sx: {
-              padding: '0.5rem 0'
-            },
-            endAdornment: (
-              <InputAdornment position='end'>
-                <IconButton
-                  edge='end'
-                  onClick={() => {
-                    let query = { ...categoryIds };
-                    query[`search`] = searchObj?.search;
-                    query = new URLSearchParams(query).toString();
-                    router.push(`/shop/items?${query}`);
-                  }}
-                  aria-label='toggle password visibility'
-                  style={{
-                    padding: '0.5rem'
-                  }}
-                >
-                  <Icon icon={'tabler:search'} />
-                </IconButton>
-              </InputAdornment>
-            )
-          }}
-        />
-        {themeCategoryList.map((group, index) => {
-          return <>
-            <SubTitleComponent>{group?.category_group_name}</SubTitleComponent>
-            <ContentBorderContainer style={{ maxHeight: '150px', overflowX: 'auto', minHeight: '50px', }}>
-              <Button
-                size="small"
-                variant={`${!categoryIds[`category_id${index}`] ? 'contained' : 'text'}`}
-                onClick={() => {
+        {router.query?.not_show_select_menu == 1 ?
+          <>
+            {router.query?.property_id &&
+              <>
+                <Title style={{ marginTop: '38px' }}>
+                  {themePropertyList.map((group) => {
+                    let properties = group?.product_properties;
+                    if (_.find(properties, { id: parseInt(router.query?.property_id) })) {
+                      return _.find(properties, { id: parseInt(router.query?.property_id) })?.property_name
+                    } else {
+                      return ""
+                    }
+                  })}
+                </Title>
+              </>}
+          </>
+          :
+          <>
+            <TextField
+              label=''
+              variant="standard"
+              onChange={(e) => {
+                setSearchObj({
+                  ...searchObj,
+                  search: e.target.value
+                })
+              }}
+              value={searchObj?.search}
+              style={{ width: '100%', margin: '2rem auto 0 auto', maxWidth: '700px' }}
+              autoComplete='new-password'
+              placeholder="키워드를 검색해주세요."
+              onKeyPress={(e) => {
+                if (e.key == 'Enter') {
                   let query = { ...categoryIds };
-                  delete query[`category_id${index}`];
+                  query[`search`] = searchObj?.search;
+
                   query = new URLSearchParams(query).toString();
                   router.push(`/shop/items?${query}`);
-                }}>전체</Button>
-              {group?.product_categories && group?.product_categories.map((category, idx) => {
-                let is_alphabet = false;
-                let alphabet = "";
-                if (group?.sort_type == 1) {
-                  for (var i = 65; i < 90; i++) {
-                    if (category?.category_name[0].toUpperCase() == String.fromCharCode(i) && (group?.product_categories[idx - 1]?.category_name[0] ?? "").toUpperCase() != String.fromCharCode(i)) {
-                      is_alphabet = true;
-                      alphabet = String.fromCharCode(i);
-                      break;
-                    }
-                  }
                 }
-                return <>
-                  {is_alphabet &&
-                    <>
-                      <Chip label={`[${alphabet}]`} variant="soft" sx={{
-                        cursor: 'pointer', fontWeight: 'bold', background: `${themeDnsData?.theme_css?.main_color}29`, color: `${themeDnsData?.theme_css?.main_color}`, '&:hover': {
-                          color: '#fff',
-                          background: `${themeDnsData?.theme_css?.main_color}`
-                        }
-                      }} />
-                    </>}
+              }}
+              InputProps={{
+                sx: {
+                  padding: '0.5rem 0'
+                },
+                endAdornment: (
+                  <InputAdornment position='end'>
+                    <IconButton
+                      edge='end'
+                      onClick={() => {
+                        let query = { ...categoryIds };
+                        query[`search`] = searchObj?.search;
+                        query = new URLSearchParams(query).toString();
+                        router.push(`/shop/items?${query}`);
+                      }}
+                      aria-label='toggle password visibility'
+                      style={{
+                        padding: '0.5rem'
+                      }}
+                    >
+                      <Icon icon={'tabler:search'} />
+                    </IconButton>
+                  </InputAdornment>
+                )
+              }}
+            />
+            {themeCategoryList.map((group, index) => {
+              return <>
+                <SubTitleComponent>{group?.category_group_name}</SubTitleComponent>
+                <ContentBorderContainer style={{ maxHeight: '150px', overflowX: 'auto', minHeight: '50px', }}>
                   <Button
                     size="small"
-                    variant={`${(categoryIds[`category_id${index}`] == category?.id || categoryChildren[`category_id${index}`]?.parent_id == category?.id) ? 'contained' : 'text'}`}
+                    variant={`${!categoryIds[`category_id${index}`] ? 'contained' : 'text'}`}
                     onClick={() => {
                       let query = { ...categoryIds };
-                      query[`category_id${index}`] = category?.id;
-
+                      delete query[`category_id${index}`];
                       query = new URLSearchParams(query).toString();
                       router.push(`/shop/items?${query}`);
-                    }}>{category?.category_name}</Button>
-                </>
-              })}
-
-            </ContentBorderContainer>
-            {categoryChildren[`category_id${index}`] &&
-              <>
-                <Typography variant="subtitle2" style={{ color: themeObj.grey[600], marginBottom: '0.25rem' }}>{group?.category_group_name} - 중분류</Typography>
-                <ContentBorderContainer style={{ maxHeight: '150px', overflowX: 'auto', minHeight: '50px', }}>
-                  {categoryChildren[`category_id${index}`]?.children.map((category, idx) => (
-                    <>
+                    }}>전체</Button>
+                  {group?.product_categories && group?.product_categories.map((category, idx) => {
+                    let is_alphabet = false;
+                    let alphabet = "";
+                    if (group?.sort_type == 1) {
+                      for (var i = 65; i < 90; i++) {
+                        if (category?.category_name[0].toUpperCase() == String.fromCharCode(i) && (group?.product_categories[idx - 1]?.category_name[0] ?? "").toUpperCase() != String.fromCharCode(i)) {
+                          is_alphabet = true;
+                          alphabet = String.fromCharCode(i);
+                          break;
+                        }
+                      }
+                    }
+                    return <>
+                      {is_alphabet &&
+                        <>
+                          <Chip label={`[${alphabet}]`} variant="soft" sx={{
+                            cursor: 'pointer', fontWeight: 'bold', background: `${themeDnsData?.theme_css?.main_color}29`, color: `${themeDnsData?.theme_css?.main_color}`, '&:hover': {
+                              color: '#fff',
+                              background: `${themeDnsData?.theme_css?.main_color}`
+                            }
+                          }} />
+                        </>}
                       <Button
                         size="small"
-                        variant={`${categoryIds[`category_id${index}`] == category?.id ? 'contained' : 'text'}`}
+                        variant={`${(categoryIds[`category_id${index}`] == category?.id || categoryChildren[`category_id${index}`]?.parent_id == category?.id) ? 'contained' : 'text'}`}
                         onClick={() => {
                           let query = { ...categoryIds };
                           query[`category_id${index}`] = category?.id;
+
                           query = new URLSearchParams(query).toString();
                           router.push(`/shop/items?${query}`);
                         }}>{category?.category_name}</Button>
                     </>
-                  ))}
+                  })}
+
                 </ContentBorderContainer>
-              </>}
-          </>
-        })}
+                {categoryChildren[`category_id${index}`] &&
+                  <>
+                    <Typography variant="subtitle2" style={{ color: themeObj.grey[600], marginBottom: '0.25rem' }}>{group?.category_group_name} - 중분류</Typography>
+                    <ContentBorderContainer style={{ maxHeight: '150px', overflowX: 'auto', minHeight: '50px', }}>
+                      {categoryChildren[`category_id${index}`]?.children.map((category, idx) => (
+                        <>
+                          <Button
+                            size="small"
+                            variant={`${categoryIds[`category_id${index}`] == category?.id ? 'contained' : 'text'}`}
+                            onClick={() => {
+                              let query = { ...categoryIds };
+                              query[`category_id${index}`] = category?.id;
+                              query = new URLSearchParams(query).toString();
+                              router.push(`/shop/items?${query}`);
+                            }}>{category?.category_name}</Button>
+                        </>
+                      ))}
+                    </ContentBorderContainer>
+                  </>}
+              </>
+            })}
+          </>}
+
 
         <Row style={{ columnGap: '0.5rem', marginBottom: '1rem', overflowX: 'auto', whiteSpace: 'nowrap' }} className={`none-scroll`}>
           {sortList.map((item) => (

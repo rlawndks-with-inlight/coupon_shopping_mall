@@ -7,6 +7,7 @@ import { useSettingsContext } from 'src/components/settings';
 import { useAuthContext } from '../auth/useAuthContext';
 import { useEffect, useState } from 'react';
 import { apiManager } from 'src/utils/api';
+import { mainObjSchemaList } from 'src/utils/format';
 
 // ----------------------------------------------------------------------
 
@@ -221,27 +222,23 @@ export const navConfig = () => {
               ...(themeDnsData?.shop_demo_num > 0 ? [{
                 title: `${themeDnsData?.shop_demo_num > 0 && themeDnsData?.blog_demo_num > 0 ? '쇼핑몰 ' : ''}메인페이지관리`, path: PATH_MANAGER.designs.main, children: [
                   { title: '전체', path: PATH_MANAGER.designs.main + '/all' },
-                  { title: '배너슬라이드', path: PATH_MANAGER.designs.main + '/banner' },
-                  { title: '버튼형 배너슬라이드', path: PATH_MANAGER.designs.main + '/button-banner' },//
-                  { title: '상품슬라이드', path: PATH_MANAGER.designs.main + '/items' },
-                  { title: '카테고리탭별 상품리스트', path: PATH_MANAGER.designs.main + '/items-with-categories' },//
-                  { title: '에디터', path: PATH_MANAGER.designs.main + '/editor' },
-                  { title: '동영상 슬라이드', path: PATH_MANAGER.designs.main + '/video-slide' },//
-                  // { title: '게시판', path: PATH_MANAGER.designs.main + '/post' },//
-                  // { title: '상품후기', path: PATH_MANAGER.designs.main + '/product-review' },//
+                  ...mainObjSchemaList.filter(el => themeDnsData?.shop_obj?.map(itm => { return itm?.type })?.indexOf(el.type) >= 0).map((itm => {
+                    return {
+                      title: itm.label,
+                      path: `${PATH_MANAGER.designs.main}/${itm.type}`
+                    }
+                  }))
                 ],
               }] : []),
               ...(themeDnsData?.blog_demo_num > 0 ? [{
                 title: `${themeDnsData?.shop_demo_num > 0 && themeDnsData?.blog_demo_num > 0 ? '블로그 ' : ''}메인페이지관리`, path: PATH_MANAGER.designs.blogMain, children: [
                   { title: '전체', path: PATH_MANAGER.designs.blogMain + '/all' },
-                  { title: '배너슬라이드', path: PATH_MANAGER.designs.blogMain + '/banner' },
-                  { title: '버튼형 배너슬라이드', path: PATH_MANAGER.designs.blogMain + '/button-banner' },//
-                  { title: '상품슬라이드', path: PATH_MANAGER.designs.blogMain + '/items' },
-                  { title: '카테고리탭별 상품리스트', path: PATH_MANAGER.designs.blogMain + '/items-with-categories' },//
-                  { title: '에디터', path: PATH_MANAGER.designs.blogMain + '/editor' },
-                  { title: '동영상 슬라이드', path: PATH_MANAGER.designs.blogMain + '/video-slide' },//
-                  // { title: '게시판', path: PATH_MANAGER.designs.main + '/post' },//
-                  // { title: '상품후기', path: PATH_MANAGER.designs.main + '/product-review' },//
+                  ...mainObjSchemaList.filter(el => themeDnsData?.blog_obj?.map(itm => { return itm?.type })?.indexOf(el.type) >= 0).map((itm => {
+                    return {
+                      title: itm.label,
+                      path: `${PATH_MANAGER.designs.blogMain}/${itm.type}`
+                    }
+                  }))
                 ],
               }] : []),
               ...((isDeveloper() && themeDnsData?.shop_demo_num > 0 && themeDnsData?.setting_obj?.is_use_item_card_style == 1) ? [{ title: `${themeDnsData?.shop_demo_num > 0 && themeDnsData?.blog_demo_num > 0 ? '쇼핑몰 ' : ''}상품카드관리`, path: PATH_MANAGER.designs.itemCard }] : []),

@@ -12,15 +12,19 @@ import HomeVideoSlide from 'src/views/section/shop/HomeVideoSlide'
 import HomePost from 'src/views/section/shop/HomePost'
 import HomeProductReview from 'src/views/section/shop/HomeProductReview'
 import HomeSellers from 'src/views/section/shop/HomeSellers'
+import { getMainObjType } from 'src/utils/function'
+import HomeItemsPropertyGroups from 'src/views/section/shop/HomeItemsPropertyGroups'
 
 
 const returnHomeContent = (column, data, func) => {
-  let type = column?.type;
+  let type = getMainObjType(column?.type);
+
   if (type == 'banner') return <HomeBanner column={column} data={data} func={func} />
   else if (type == 'editor') return <HomeEditor column={column} data={data} func={func} />
   else if (type == 'items' || type == 'items-ids') {
     return <HomeItems column={column} data={data} func={func} />
   }
+  else if (type == 'items-property-group-:num') return <HomeItemsPropertyGroups column={column} data={data} func={func} />
   else if (type == 'button-banner') return <HomeButtonBanner column={column} data={data} func={func} />
   else if (type == 'items-with-categories') return <HomeItemsWithCategories column={column} data={data} func={func} />
   else if (type == 'video-slide') return <HomeVideoSlide column={column} data={data} func={func} />

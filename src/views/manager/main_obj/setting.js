@@ -27,7 +27,7 @@ import { useCallback, useEffect, useState } from 'react'
 import { Row, themeObj } from 'src/components/elements/styled-components'
 import { Upload } from 'src/components/upload'
 import { defaultManagerObj } from 'src/data/manager-data'
-import { base64toFile } from 'src/utils/function'
+import { base64toFile, getMainObjType } from 'src/utils/function'
 import _, { constant } from 'lodash'
 import { useSettingsContext } from 'src/components/settings'
 import { useRouter } from 'next/router'
@@ -46,6 +46,7 @@ import HomeProductReview from 'src/views/section/shop/HomeProductReview'
 import { homeItemsSetting, homeItemsWithCategoriesSetting } from 'src/views/section/shop/utils'
 import ReactQuillComponent from '../react-quill'
 import { apiManager, uploadFilesByManager } from 'src/utils/api'
+import { mainObjSchemaList } from 'src/utils/format'
 
 const Tour = dynamic(() => import('reactour'), { ssr: false })
 //메인화면
@@ -83,7 +84,7 @@ const curTypeNum = (list, type_name, idx) => {
 const MainObjSetting = props => {
   const { MAIN_OBJ_TYPE } = props
   const { setModal } = useModal()
-  const { themeDnsData, themePostCategoryList } = useSettingsContext()
+  const { themeDnsData, themePostCategoryList, themePropertyList } = useSettingsContext()
   const { user } = useAuthContext()
   const router = useRouter()
 
@@ -97,79 +98,10 @@ const MainObjSetting = props => {
   const [productReviewContent, setProductReviewContent] = useState({})
   const [searchTextList, setSearchTextList] = useState([])
   const [loading, setLoading] = useState(true)
-  const homeSectionDefaultSetting = {
-    banner: {
-      type: 'banner',
-      list: [],
-      style: {
-        min_height: 200
-      }
-    },
-    'button-banner': {
-      type: 'button-banner',
-      list: [],
-      style: {}
-    },
-    items: {
-      type: 'items',
-      title: '',
-      sub_title: '',
-      list: [],
-      style: {}
-    },
-    'items-ids': {
-      type: 'items-ids',
-      title: '',
-      sub_title: '',
-      list: [],
-      style: {}
-    },
-    'items-with-categories': {
-      type: 'items-with-categories',
-      title: '',
-      sub_title: '',
-      is_vertical: 0,
-      list: [],
-      style: {}
-    },
-    editor: {
-      type: 'editor',
-      content: ''
-    },
-    'video-slide': {
-      type: 'video-slide',
-      title: '',
-      sub_title: '',
-      list: [],
-      style: {}
-    },
-    post: {
-      type: 'post',
-      list: [],
-      style: {}
-    },
-    sellers: {
-      type: 'sellers',
-      list: [],
-      style: {}
-    },
-    'item-reviews': {
-      type: 'item-reviews',
-      list: [],
-      style: {}
-    },
-    'item-reviews-select': {
-      type: 'item-reviews-select',
-      title: '',
-      sub_title: '',
-      list: [],
-      style: {}
-    }
-  }
+
+
   useEffect(() => {
     settingPage()
-    //settingPage();
-    // openTour('content-add', "'추가' 버튼을 클릭하여 메인페이지 섹션을 추가해 주세요.")
   }, [])
   const settingBrandObj = (item, brand_data) => {
     let obj = item
@@ -186,11 +118,6 @@ const MainObjSetting = props => {
       ...productContent,
       content: themeDnsData?.products ?? []
     })
-    // let product_review_content = await getProductReviewsByManager({
-    //     page: 1,
-    //     page_size: 100000
-    // })
-    // setProductReviewContent(product_review_content);
     let brand_data = await apiManager('brands', 'get', {
       id: (!isNaN(parseInt(router.query.type)) ? router.query.type : '') || themeDnsData?.id
     })
@@ -201,9 +128,30 @@ const MainObjSetting = props => {
     setLoading(false)
   }
 
+  const getSettingPropertyList = (themePropertyList = []) => {
+    let property_groups = themePropertyList;
+    let result = [];
+    for (var i = 0; i < property_groups.length; i++) {
+      let property_group = property_groups[i];
+      for (var j = 0; j < property_group?.product_properties?.length; j++) {
+        let property = property_group?.product_properties[j];
+        result.push({
+          label: `${property_group?.property_group_name} - ${property?.property_name}`,
+          type: `items-property-group-${property?.id}`,
+          default_value: {
+            type: `items-property-group-${property?.id}`,
+            list: [],
+            style: {},
+            title: `${property?.property_name}`
+          },
+        },)
+      }
+    }
+    return result;
+  }
   const addSection = () => {
     closeTour()
-    setContentList([...contentList, homeSectionDefaultSetting[sectionType]])
+    setContentList([...contentList, (_.find([...mainObjSchemaList, ...getSettingPropertyList(themePropertyList)], { type: sectionType }).default_value ?? {})])
   }
   const deleteSection = idx => {
     let content_list = [...contentList]
@@ -361,9 +309,11 @@ const MainObjSetting = props => {
     setTourOpen(false)
     setTourSteps([])
   }
-  const conditionOfSection = (type, item) => {
+
+  const conditionOfSection = (type_ = "", item) => {
+    let type = getMainObjType(type_);
     return (
-      item.type == type &&
+      getMainObjType(item.type) == type &&
       (router.query.type == type ||
         router.query.type == 'all' ||
         !router.query.type ||
@@ -1208,6 +1158,35 @@ const MainObjSetting = props => {
                             />
                           </>
                         )}
+                        {conditionOfSection('items-property-group-:num', item) && (
+                          <>
+                            <Row style={{ alignItems: 'end' }}>
+                              <CardHeader
+                                title={`${_.find(getSettingPropertyList(themePropertyList), { type: item?.type })?.label.split('-')[1]} ${curTypeNum(contentList, item?.type, idx)}`}
+                                sx={{ paddingLeft: '0' }}
+                              />
+                              <SectionProcess idx={idx} item={item} />
+                            </Row>
+                            <TextField
+                              label='제목'
+                              value={item.title}
+                              onChange={e => {
+                                let content_list = [...contentList]
+                                content_list[idx]['title'] = e.target.value
+                                setContentList(content_list)
+                              }}
+                            />
+                            <TextField
+                              label='부제목'
+                              value={item.sub_title}
+                              onChange={e => {
+                                let content_list = [...contentList]
+                                content_list[idx]['sub_title'] = e.target.value
+                                setContentList(content_list)
+                              }}
+                            />
+                          </>
+                        )}
                         {conditionOfSection('item-reviews', item) && (
                           <>
                             <Row style={{ alignItems: 'end' }}>
@@ -1312,36 +1291,9 @@ const MainObjSetting = props => {
                           setSectionType(e.target.value)
                         }}
                       >
-                        <MenuItem value={'banner'}>배너슬라이드 ({hasTypeCount(contentList, 'banner')})</MenuItem>
-                        <MenuItem value={'button-banner'}>
-                          버튼형 배너슬라이드 ({hasTypeCount(contentList, 'button-banner')})
-                        </MenuItem>
-                        <MenuItem value={'items'} disabled={!productContent?.total > 0}>
-                          상품슬라이드 ({hasTypeCount(contentList, 'items')}){' '}
-                          {!productContent?.total > 0 ? ' (상품 생성 후 가능합니다.)' : ''}
-                        </MenuItem>
-                        <MenuItem value={'items-ids'} disabled={!productContent?.total > 0}>
-                          ID 선택형 상품슬라이드 ({hasTypeCount(contentList, 'items-ids')}){' '}
-                          {!productContent?.total > 0 ? ' (상품 생성 후 가능합니다.)' : ''}
-                        </MenuItem>
-                        <MenuItem value={'items-with-categories'} disabled={!productContent?.total > 0}>
-                          카테고리탭별 상품리스트 ({hasTypeCount(contentList, 'items-with-categories')}){' '}
-                          {!productContent?.total > 0 ? ' (상품 생성 후 가능합니다.)' : ''}
-                        </MenuItem>
-                        <MenuItem value={'editor'}>에디터 ({hasTypeCount(contentList, 'editor')})</MenuItem>
-                        <MenuItem value={'video-slide'}>
-                          동영상 슬라이드 ({hasTypeCount(contentList, 'video-slide')})
-                        </MenuItem>
-                        <MenuItem value={'post'}>게시판 ({hasTypeCount(contentList, 'post')})</MenuItem>
-                        <MenuItem value={'sellers'}>셀러섹션 ({hasTypeCount(contentList, 'sellers')})</MenuItem>
-                        <MenuItem value={'item-reviews'}>
-                          상품후기 ({hasTypeCount(contentList, 'item-reviews')})
-                        </MenuItem>
-                        <MenuItem value={'item-reviews-select'}>
-                          선택형 상품후기 ({hasTypeCount(contentList, 'item-reviews-select')})
-                        </MenuItem>
-                        {/* <MenuItem value={'post'}>게시판 ({hasTypeCount(contentList, 'post')})</MenuItem>
-                                                <MenuItem value={'product-review'}>상품후기 ({hasTypeCount(contentList, 'product-review')})</MenuItem> */}
+                        {[...mainObjSchemaList, ...getSettingPropertyList(themePropertyList)].map((itm) => {
+                          return <MenuItem value={itm.type}>{itm.label} ({hasTypeCount(contentList, itm.type)})</MenuItem>
+                        })}
                       </Select>
                       <Button
                         variant='contained'

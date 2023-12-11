@@ -1,3 +1,4 @@
+
 export const productSortTypeList = [
     { label: '일반형', value: 0 },
     { label: '가나다 또는 abc 형', value: 1 },
@@ -63,4 +64,118 @@ export const telComList = [
     { label: '알뜰폰SKT', value: '04' },
     { label: '알뜰폰KT', value: '05' },
     { label: '알뜰폰LGU', value: '06' },
+]
+
+export const mainObjSchemaList = [
+    {
+        label: '배너슬라이드',
+        type: 'banner',
+        default_value: {
+            type: 'banner',
+            list: [],
+            style: {
+                min_height: 200
+            }
+        },
+    },
+    {
+        label: '버튼형 배너슬라이드',
+        type: 'button-banner',
+        default_value: {
+            type: 'button-banner',
+            list: [],
+            style: {}
+        },
+    },
+    {
+        label: '상품슬라이드',
+        type: 'items',
+        default_value: {
+            type: 'items',
+            title: '',
+            sub_title: '',
+            list: [],
+            style: {}
+        },
+    },
+    {
+        label: 'ID 선택형 상품슬라이드',
+        type: 'items-ids',
+        default_value: {
+            type: 'items-ids',
+            title: '',
+            sub_title: '',
+            list: [],
+            style: {}
+        },
+    },
+    {
+        label: '카테고리탭별 상품리스트',
+        type: 'items-with-categories',
+        default_value: {
+            type: 'items-with-categories',
+            title: '',
+            sub_title: '',
+            is_vertical: 0,
+            list: [],
+            style: {}
+        },
+    },
+    {
+        label: '에디터',
+        type: 'editor',
+        default_value: {
+            type: 'editor',
+            content: ''
+        },
+    },
+    {
+        label: '동영상 슬라이드',
+        type: 'video-slide',
+        default_value: {
+            type: 'video-slide',
+            title: '',
+            sub_title: '',
+            list: [],
+            style: {}
+        },
+    },
+    {
+        label: '게시판',
+        type: 'post',
+        default_value: {
+            type: 'post',
+            list: [],
+            style: {}
+        },
+    },
+    {
+        label: '셀러섹션',
+        type: 'sellers',
+        default_value: {
+            type: 'sellers',
+            list: [],
+            style: {}
+        },
+    },
+    {
+        label: '상품후기',
+        type: 'item-reviews',
+        default_value: {
+            type: 'item-reviews',
+            list: [],
+            style: {}
+        },
+    },
+    {
+        label: '선택형 상품후기',
+        type: 'item-reviews-select',
+        default_value: {
+            type: 'item-reviews-select',
+            title: '',
+            sub_title: '',
+            list: [],
+            style: {}
+        }
+    },
 ]

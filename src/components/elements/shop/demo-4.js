@@ -28,7 +28,7 @@ text-align: center;
 `
 const ItemImgContainer = styled.div`
 width: 100%;
-height: 280px;
+height: 300px;
 margin: 0 auto;
 display: flex;
 @media screen and (max-width:1700px){

@@ -2,7 +2,7 @@ import styled from 'styled-components'
 import { commarNumber, getPointType } from 'src/utils/function'
 import { itemThemeCssDefaultSetting } from 'src/views/manager/item-card/setting'
 import { useEffect, useState } from 'react'
-import { Button, IconButton } from '@mui/material'
+import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, IconButton, TextField } from '@mui/material'
 import { Icon } from '@iconify/react'
 import Slider from 'react-slick'
 import { useSettingsContext } from 'src/components/settings'
@@ -410,6 +410,136 @@ export const WishTable = props => {
           </TableBody>
         </Table>
         {wishContent && wishContent.length == 0 &&
+          <>
+            <Col>
+              <Icon icon={'basil:cancel-outline'} style={{ margin: '8rem auto 1rem auto', fontSize: themeObj.font_size.size1, color: themeObj.grey[300] }} />
+              <div style={{ margin: 'auto auto 8rem auto' }}>위시상품이 없습니다.</div>
+            </Col>
+          </>}
+      </TableContainer>
+    </>
+  )
+}
+export const ConsignmentTable = props => {
+  const { consignmentContent, onChangePage, searchObj } = props
+
+  const TABLE_HEAD = [
+    { id: 'product_img', label: '상품' },
+    { id: 'product_name', label: '상품명' },
+    { id: 'product_sale_price', label: '상품금액' },
+    { id: 'change', label: '변경요청' },
+    { id: 'collection', label: '수거요청' },
+  ];
+
+  const [changeObj, setChangeObj] = useState({
+
+  });
+
+  const onRequestChange = async () => {
+    const response = await apiManager(`consignments`, 'create', { ...changeObj, type: 0 });
+    if (response) {
+      toast.success('성공적으로 판매가 변경 요청하였습니다.');
+      setChangeObj({});
+      onChangePage(searchObj);
+    }
+  }
+  const onRequestCollection = async (product_id) => {
+    const response = await apiManager(`consignments`, 'create', { product_id: product_id, type: 5 });
+    if (response) {
+      toast.success('성공적으로 수거 요청하였습니다.');
+      onChangePage(searchObj);
+    }
+  }
+  return (
+    <>
+      <Dialog
+        open={changeObj.open}
+        onClose={() => {
+          setChangeObj({})
+        }}
+      >
+        <DialogTitle>{`판매가 변경 요청`}</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            변경할 판매가를 입력후 확인을 눌러주세요.
+          </DialogContentText>
+          <TextField
+            autoFocus
+            fullWidth
+            value={changeObj.request_price}
+            margin="dense"
+            label="판매가"
+            type='number'
+            onChange={(e) => {
+              setChangeObj({
+                ...changeObj,
+                request_price: e.target.value
+              })
+            }}
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button variant="contained" onClick={onRequestChange}>
+            변경
+          </Button>
+          <Button color="inherit" onClick={() => {
+            setChangeObj({})
+          }}>
+            취소
+          </Button>
+        </DialogActions>
+      </Dialog>
+      <TableContainer>
+        <Table sx={{ minWidth: 720, overflowX: 'auto' }}>
+          <TableHeadCustom headLabel={TABLE_HEAD} />
+          <TableBody>
+            {consignmentContent &&
+              consignmentContent.map((row, idx) => (
+                <>
+                  <TableRow>
+                    <TableCell>
+                      <Image
+                        alt="product image"
+                        src={row?.product_img}
+                        sx={{ width: 64, height: 64, borderRadius: 1.5, mr: 2 }}
+                      />
+                    </TableCell>
+                    <TableCell>{row?.product_name}</TableCell>
+                    <TableCell>
+                      {row?.product_price > row?.product_sale_price && (
+                        <Box
+                          component="span"
+                          sx={{ color: 'text.disabled', textDecoration: 'line-through', mr: 0.5 }}
+                        >
+                          {commarNumber(row?.product_price)}
+                        </Box>
+                      )}
+                      {commarNumber(row?.product_sale_price)}원
+                    </TableCell>
+                    <TableCell>
+                      <Button variant='outlined' onClick={() => {
+                        setChangeObj({
+                          open: true,
+                          product_id: row?.id
+                        })
+                      }}>
+                        변경요청
+                      </Button>
+                    </TableCell>
+                    <TableCell>
+                      <Button variant='outlined' onClick={() => {
+                        onRequestCollection(row?.id)
+                      }}>
+                        수거요청
+                      </Button>
+                    </TableCell>
+                  </TableRow>
+                </>
+              ))}
+
+          </TableBody>
+        </Table>
+        {consignmentContent && consignmentContent.length == 0 &&
           <>
             <Col>
               <Icon icon={'basil:cancel-outline'} style={{ margin: '8rem auto 1rem auto', fontSize: themeObj.font_size.size1, color: themeObj.grey[300] }} />

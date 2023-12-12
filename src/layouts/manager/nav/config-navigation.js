@@ -173,6 +173,10 @@ export const navConfig = () => {
             ...(isUseProductPropertyGroup() ? [{ title: '특성 그룹 관리', path: PATH_MANAGER.products.propertyGroups }] : []),
             ...(isManager() ? [...propertyGroupList] : []),
             { title: '상품관리', path: PATH_MANAGER.products.list },
+            ...(themeDnsData?.setting_obj?.is_use_consignment == 1 ? [
+              { title: '위탁 변경 요청', path: PATH_MANAGER.products.consignments + '/list/0' },
+              { title: '위탁 수거 요청', path: PATH_MANAGER.products.consignments + '/list/5' },
+            ] : []),
           ],
         },
       ],

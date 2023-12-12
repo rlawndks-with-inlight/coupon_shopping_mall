@@ -149,22 +149,25 @@ const ContentTable = (props) => {
               </>
               :
               <>
-                <div style={{
-                  margin: '1rem auto'
-                }}>
-                  <Pagination
-                    size={window.innerWidth > 700 ? 'medium' : 'small'}
-                    count={getMaxPage(data?.total, data?.page_size)}
-                    page={page}
-                    variant='outlined' shape='rounded'
-                    color='primary'
-                    onChange={(_, num) => {
-                      onChangePage({
-                        ...searchObj,
-                        page: num
-                      })
-                    }} />
-                </div>
+                {onChangePage &&
+                  <>
+                    <div style={{
+                      margin: '1rem auto'
+                    }}>
+                      <Pagination
+                        size={window.innerWidth > 700 ? 'medium' : 'small'}
+                        count={getMaxPage(data?.total, data?.page_size)}
+                        page={page}
+                        variant='outlined' shape='rounded'
+                        color='primary'
+                        onChange={(_, num) => {
+                          onChangePage({
+                            ...searchObj,
+                            page: num
+                          })
+                        }} />
+                    </div>
+                  </>}
               </>}
           </>}
       </div>

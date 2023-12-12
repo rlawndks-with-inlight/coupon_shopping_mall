@@ -35,7 +35,8 @@ export const PATH_MANAGER = {
     list: path(ROOTS_MANAGER, '/products/list'),
     categoryGroups: path(ROOTS_MANAGER, '/products/category-groups'),
     propertyGroups: path(ROOTS_MANAGER, '/products/property-groups'),
-    categories: path(ROOTS_MANAGER, '/products/categories')
+    categories: path(ROOTS_MANAGER, '/products/categories'),
+    consignments: path(ROOTS_MANAGER, '/products/consignments'),
   },
   articles: {
     root: path(ROOTS_MANAGER, '/articles'),

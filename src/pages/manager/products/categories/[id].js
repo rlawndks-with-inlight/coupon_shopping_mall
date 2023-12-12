@@ -149,16 +149,19 @@ const CustomContent = forwardRef(function CustomContent(props, ref) {
                         </IconButton>
                     </Tooltip>
                 </>}
-            <Tooltip title={`해당 ${categoryGroup?.category_group_name}을(를) 한칸 올리시려면 클릭해 주세요.`}>
-                <IconButton sx={{ padding: '0.25rem' }} disabled={index == 0} onClick={() => { onChangeSequence(true, category, depth, index) }}>
-                    <Icon icon={'grommet-icons:link-up'} fontSize={14} />
-                </IconButton>
-            </Tooltip>
-            <Tooltip title={`해당 ${categoryGroup?.category_group_name}을(를) 한칸 내리시려면 클릭해 주세요.`}>
-                <IconButton sx={{ padding: '0.25rem' }} disabled={index == category_length - 1} onClick={() => { onChangeSequence(false, category, depth, index) }}>
-                    <Icon icon={'grommet-icons:link-down'} fontSize={14} />
-                </IconButton>
-            </Tooltip>
+            {categoryGroup?.sort_type == 0 &&
+                <>
+                    <Tooltip title={`해당 ${categoryGroup?.category_group_name}을(를) 한칸 올리시려면 클릭해 주세요.`}>
+                        <IconButton sx={{ padding: '0.25rem' }} disabled={index == 0} onClick={() => { onChangeSequence(true, category, depth, index) }}>
+                            <Icon icon={'grommet-icons:link-up'} fontSize={14} />
+                        </IconButton>
+                    </Tooltip>
+                    <Tooltip title={`해당 ${categoryGroup?.category_group_name}을(를) 한칸 내리시려면 클릭해 주세요.`}>
+                        <IconButton sx={{ padding: '0.25rem' }} disabled={index == category_length - 1} onClick={() => { onChangeSequence(false, category, depth, index) }}>
+                            <Icon icon={'grommet-icons:link-down'} fontSize={14} />
+                        </IconButton>
+                    </Tooltip>
+                </>}
             <Tooltip title={`해당 ${categoryGroup?.category_group_name} 및 하위 ${categoryGroup?.category_group_name}을(를) 삭제하시려면 클릭해 주세요.`}>
                 <IconButton onClick={() => {
                     setModal({
@@ -175,7 +178,7 @@ const CustomContent = forwardRef(function CustomContent(props, ref) {
 });
 
 function CustomTreeItem(props) {
-    return <StyledTreeItem ContentComponent={CustomContent} {...props} ContentProps={...props} />;
+    return <StyledTreeItem ContentComponent={CustomContent} {...props} ContentProps={...props} />
 }
 const Wrappers = styled.div`
 width:100%;
@@ -351,6 +354,7 @@ const CategoryList = () => {
                         <Grid container spacing={3}>
                             <Grid item xs={12} md={6}>
                                 <Card sx={{ p: 2, height: '100%' }}>
+
                                     {categories.length > 0 ?
                                         <>
                                             <StyledTreeView defaultExpanded={['1']} style={{

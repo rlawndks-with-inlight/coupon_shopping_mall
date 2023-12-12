@@ -47,7 +47,6 @@ const HistoryDemo = (props) => {
     } else {
       search_obj['is_confirm'] = 1;
       delete search_obj['cancel_status'];
-
     }
     setSearchObj(search_obj);
     setHistoryContent({

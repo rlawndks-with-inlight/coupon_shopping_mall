@@ -115,7 +115,15 @@ const DefaultSetting = () => {
           label: '발송번호설정'
         }
       ]
-      : [])
+      : []),
+    ...(user?.level >= 50
+      ? [
+        {
+          value: 8,
+          label: '배송비설정'
+        }
+      ]
+      : []),
   ]
 
   useEffect(() => {

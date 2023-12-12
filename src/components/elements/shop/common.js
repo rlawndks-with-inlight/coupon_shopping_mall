@@ -543,7 +543,7 @@ export const ConsignmentTable = props => {
           <>
             <Col>
               <Icon icon={'basil:cancel-outline'} style={{ margin: '8rem auto 1rem auto', fontSize: themeObj.font_size.size1, color: themeObj.grey[300] }} />
-              <div style={{ margin: 'auto auto 8rem auto' }}>위시상품이 없습니다.</div>
+              <div style={{ margin: 'auto auto 8rem auto' }}>위탁상품이 없습니다.</div>
             </Col>
           </>}
       </TableContainer>

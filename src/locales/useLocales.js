@@ -18,6 +18,7 @@ export default function useLocales() {
   const langStorage = storageAvailable ? localStorage.getItem('i18nextLng') : themeDnsData?.setting_obj?.default_lang;
 
   const currentLang = allLangs.find((_lang) => _lang.value === langStorage) || themeDnsData?.setting_obj?.default_lang;
+
   const handleChangeLanguage = (newlang) => {
     i18n.changeLanguage(newlang);
     onChangeDirectionByLang(newlang);

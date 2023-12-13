@@ -428,7 +428,7 @@ const CartDemo = (props) => {
         onAddAddress={onAddAddress}
       />
       <Wrappers>
-        <Title>{translate('장바구니')}=</Title>
+        <Title>{translate('장바구니')}</Title>
         <CheckoutSteps activeStep={activeStep} steps={STEPS} />
         <Grid container spacing={3}>
           <Grid item xs={12} md={8}>

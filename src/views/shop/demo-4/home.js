@@ -11,7 +11,6 @@ const HomeDemo = (props) => {
   const { themeDnsData } = useSettingsContext();
   const [loading, setLoading] = useState(true);
   useEffect(() => {
-    console.log(themeDnsData)
     if (themeDnsData?.id > 0) {
       setLoading(false);
     }

@@ -64,7 +64,6 @@ const MyPageDemo = (props) => {
 
   const getUserInfo = async () => {
     const response = await apiShop('user-info');
-    console.log(response)
     setUserInfo(response);
   }
   const consignmentColumns = [

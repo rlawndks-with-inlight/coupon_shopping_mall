@@ -48,9 +48,9 @@ const App = props => {
   const [headData, setHeadData] = useState({})
   useEffect(() => {
     if (Object.keys(head_data).length > 0) {
-      if (!allLangs.map(itm => {
+      if ((!allLangs.map(itm => {
         return itm.value
-      }).includes(localStorage.getItem('i18nextLng')) && head_data?.setting_obj?.is_use_lang == 1) {
+      }).includes(localStorage.getItem('i18nextLng'))) && head_data?.setting_obj?.is_use_lang == 1) {
         localStorage.setItem(`i18nextLng`, head_data?.setting_obj?.default_lang || 'ko')
         window.location.reload();
       }

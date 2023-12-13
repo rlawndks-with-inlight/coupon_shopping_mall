@@ -4,6 +4,7 @@ import {
   Card,
   CardHeader,
   FormControl,
+  FormControlLabel,
   Grid,
   InputAdornment,
   InputLabel,
@@ -11,6 +12,7 @@ import {
   OutlinedInput,
   Select,
   Stack,
+  Switch,
   TextField,
   TextareaAutosize,
   Typography
@@ -579,6 +581,7 @@ const DefaultSetting = () => {
                           })}
                         </Select>
                       </FormControl>
+
                       <FormControl>
                         <InputLabel>블로그 데모넘버</InputLabel>
                         <Select
@@ -606,63 +609,45 @@ const DefaultSetting = () => {
                 <Grid item xs={12} md={6}>
                   <Card sx={{ p: 2, height: '100%' }}>
                     <Stack spacing={3}>
-                      <FormControl>
-                        <InputLabel>셀러 사용여부</InputLabel>
-                        <Select
-                          label='셀러 사용여부'
-                          value={item.setting_obj?.is_use_seller}
-                          onChange={e => {
+                      <Stack>
+                        <FormControlLabel control={<Switch checked={item.setting_obj?.is_use_seller == 1} />} label="셀러 사용여부"
+                          onChange={(e) => {
                             setItem({
                               ...item,
                               ['setting_obj']: {
                                 ...item.setting_obj,
-                                is_use_seller: e.target.value
+                                is_use_seller: e.target.checked ? 1 : 0
                               }
                             })
                           }}
-                        >
-                          <MenuItem value={0}>사용안함</MenuItem>
-                          <MenuItem value={1}>사용</MenuItem>
-                        </Select>
-                      </FormControl>
-                      <FormControl>
-                        <InputLabel>위탁 사용여부</InputLabel>
-                        <Select
-                          label='위탁 사용여부'
-                          value={item.setting_obj?.is_use_consignment}
-                          onChange={e => {
+                        />
+                      </Stack>
+                      <Stack>
+                        <FormControlLabel control={<Switch checked={item.setting_obj?.is_use_consignment == 1} />} label="위탁 사용여부"
+                          onChange={(e) => {
                             setItem({
                               ...item,
                               ['setting_obj']: {
                                 ...item.setting_obj,
-                                is_use_consignment: e.target.value
+                                is_use_consignment: e.target.checked ? 1 : 0
                               }
                             })
                           }}
-                        >
-                          <MenuItem value={0}>사용안함</MenuItem>
-                          <MenuItem value={1}>사용</MenuItem>
-                        </Select>
-                      </FormControl>
-                      <FormControl>
-                        <InputLabel>상품카드스타일 사용여부</InputLabel>
-                        <Select
-                          label='상품카드스타일 사용여부'
-                          value={item.setting_obj?.is_use_item_card_style}
-                          onChange={e => {
+                        />
+                      </Stack>
+                      <Stack>
+                        <FormControlLabel control={<Switch checked={item.setting_obj?.is_use_item_card_style == 1} />} label="상품카드스타일 사용여부"
+                          onChange={(e) => {
                             setItem({
                               ...item,
                               ['setting_obj']: {
                                 ...item.setting_obj,
-                                is_use_item_card_style: e.target.value
+                                is_use_item_card_style: e.target.checked ? 1 : 0
                               }
                             })
                           }}
-                        >
-                          <MenuItem value={0}>사용안함</MenuItem>
-                          <MenuItem value={1}>사용</MenuItem>
-                        </Select>
-                      </FormControl>
+                        />
+                      </Stack>
                     </Stack>
                   </Card>
                 </Grid>

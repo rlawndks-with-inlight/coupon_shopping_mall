@@ -648,6 +648,19 @@ const DefaultSetting = () => {
                           }}
                         />
                       </Stack>
+                      <Stack>
+                        <FormControlLabel control={<Switch checked={item.setting_obj?.is_use_language == 1} />} label="언어팩 사용여부"
+                          onChange={(e) => {
+                            setItem({
+                              ...item,
+                              ['setting_obj']: {
+                                ...item.setting_obj,
+                                is_use_language: e.target.checked ? 1 : 0
+                              }
+                            })
+                          }}
+                        />
+                      </Stack>
                     </Stack>
                   </Card>
                 </Grid>

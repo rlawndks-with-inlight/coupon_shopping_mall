@@ -23,7 +23,7 @@ const storageAvailable = localStorageAvailable();
 if (storageAvailable) {
   lng = localStorage.getItem('i18nextLng') || JSON.parse(localStorage.getItem('themeDnsData'))?.setting_obj?.default_lang;
 }
-
+console.log(lng)
 i18n
   .use(LanguageDetector)
   .use(initReactI18next)

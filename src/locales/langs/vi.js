@@ -162,7 +162,7 @@ const vi = {
   "로그아웃": "Ghi tên ra",
   "고객센터": "Dịch vụ khách hàng",
   "셀러": "người bán",
-  "상세주소": "상세주소",
+  "상세주소": "địa chỉ chi tiết",
   "상품": "hàng hóa",
   "총액": "tổng số tiền",
   "배송상태": "tình trạng vận chuyển",

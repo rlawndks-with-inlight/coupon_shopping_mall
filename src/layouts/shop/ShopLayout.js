@@ -12,6 +12,8 @@ import ShopLayout3 from "./shop/demo-3/ShopLayout3";
 import ShopLayout4 from "./shop/demo-4/ShopLayout4";
 import ShopLayout5 from "./shop/demo-5/ShopLayout5";
 import styled from "styled-components";
+import { useLocales } from "src/locales";
+import $ from 'jquery';
 
 const Wrappers = styled.div`
 
@@ -55,6 +57,9 @@ const ShopLayout = ({ children, scrollToTop }) => {
   const [category, setCategory] = useState("");
   const [loading, setLoading] = useState(true);
   const { themeDnsData, themeCategoryList } = useSettingsContext();
+
+  const { currentLang } = useLocales();
+
   useEffect(() => {
     if (router.asPath.split('/')[1] == 'shop' || router.asPath.split('/')[1] == 'blog') {
       setCategory(router.asPath.split('/')[1])

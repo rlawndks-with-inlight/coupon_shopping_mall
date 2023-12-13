@@ -3,6 +3,7 @@ import {
   Button,
   Card,
   CardHeader,
+  Checkbox,
   FormControl,
   FormControlLabel,
   Grid,
@@ -10,6 +11,8 @@ import {
   InputLabel,
   MenuItem,
   OutlinedInput,
+  Radio,
+  RadioGroup,
   Select,
   Stack,
   Switch,
@@ -31,6 +34,7 @@ import { useAuthContext } from 'src/layouts/manager/auth/useAuthContext'
 import ReactQuillComponent from 'src/views/manager/react-quill'
 import { apiManager } from 'src/utils/api'
 import { BLOG_DEMO_DATA, DEMO_DATA, SHOP_DEMO_DATA } from 'src/data/data'
+import { allLangs } from 'src/locales'
 
 const KakaoWrappers = styled.div`
   width: 100%;
@@ -649,18 +653,78 @@ const DefaultSetting = () => {
                         />
                       </Stack>
                       <Stack>
-                        <FormControlLabel control={<Switch checked={item.setting_obj?.is_use_language == 1} />} label="언어팩 사용여부"
+                        <FormControlLabel control={<Switch checked={item.setting_obj?.is_use_lang == 1} />} label="언어팩 사용여부"
                           onChange={(e) => {
-                            setItem({
+                            let obj = {
                               ...item,
                               ['setting_obj']: {
                                 ...item.setting_obj,
-                                is_use_language: e.target.checked ? 1 : 0
+                                is_use_lang: e.target.checked ? 1 : 0,
                               }
-                            })
+                            }
+                            if (e.target.checked) {
+
+                            } else {
+                              obj.setting_obj.lang_list = [];
+                              obj.setting_obj.default_lang = '';
+                            }
+                            setItem(obj)
                           }}
                         />
+                        {item.setting_obj?.is_use_lang == 1 &&
+                          <>
+                            <Typography variant='subtitle2' sx={{ color: 'text.secondary' }}>
+                              사용할 언어
+                            </Typography>
+                            <Row style={{ flexWrap: 'wrap' }}>
+                              {allLangs.map((itm) => (
+                                <>
+                                  <FormControlLabel
+                                    label={<Typography style={{ fontSize: themeObj.font_size.size6 }}>{itm.label}</Typography>}
+                                    control={<Checkbox checked={(item.setting_obj?.lang_list ?? []).includes(itm.value)} />}
+                                    onChange={(e) => {
+                                      let obj = { ...item };
+                                      if (!obj.setting_obj?.lang_list) {
+                                        obj.setting_obj.lang_list = [];
+                                      }
+                                      if (e.target.checked == 1) {
+                                        obj.setting_obj.lang_list.push(itm.value)
+                                      } else {
+                                        let find_idx = obj.setting_obj.lang_list.indexOf(itm.value);
+                                        obj.setting_obj.lang_list.splice(find_idx, 1);
+                                      }
+                                      setItem({ ...obj });
+                                    }}
+                                  />
+                                </>
+                              ))}
+                            </Row>
+                            <Typography variant='subtitle2' sx={{ color: 'text.secondary' }}>
+                              기본 언어
+                            </Typography>
+                            <RadioGroup>
+                              <Row style={{ flexWrap: 'wrap' }}>
+                                {allLangs.map((itm) => (
+                                  <>
+                                    <FormControlLabel
+                                      label={<Typography style={{ fontSize: themeObj.font_size.size6 }}>{itm.label}</Typography>}
+                                      control={<Radio checked={item.setting_obj?.default_lang == itm.value} />}
+                                      onChange={(e) => {
+                                        let obj = { ...item };
+                                        if (e.target.checked == 1) {
+                                          obj.setting_obj.default_lang = itm.value;
+                                        }
+                                        setItem({ ...obj });
+                                      }}
+                                    />
+                                  </>
+                                ))}
+                              </Row>
+                            </RadioGroup>
+                          </>}
                       </Stack>
+
+
                     </Stack>
                   </Card>
                 </Grid>

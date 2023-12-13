@@ -6,6 +6,7 @@ import { useEffect, useState } from 'react';
 import { makeMaxPage } from 'src/utils/function';
 import { HistoryTable } from 'src/components/elements/shop/common';
 import { apiManager } from 'src/utils/api';
+import { useLocales } from 'src/locales';
 const Wrappers = styled.div`
 max-width:1600px;
 display:flex;
@@ -24,6 +25,7 @@ const HistoryDemo = (props) => {
       router
     },
   } = props;
+  const { translate } = useLocales();
   const [historyContent, setHistoryContent] = useState({});
   const [searchObj, setSearchObj] = useState({
     page: 1,
@@ -47,7 +49,7 @@ const HistoryDemo = (props) => {
   return (
     <>
       <Wrappers>
-        <Title>주문조회</Title>
+        <Title>{translate('주문조회')}</Title>
         <Card sx={{ marginBottom: '2rem' }}>
           <HistoryTable historyContent={historyContent} onChangePage={onChangePage} searchObj={searchObj} />
         </Card>

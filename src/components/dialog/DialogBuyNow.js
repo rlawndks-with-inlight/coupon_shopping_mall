@@ -35,10 +35,11 @@ import $ from 'jquery';
 import _ from 'lodash'
 import { commarNumber, returnMoment } from 'src/utils/function'
 
-const STEPS = ['배송지 확인', '결제하기'];
 const DialogBuyNow = (props) => {
 
   const { setModal } = useModal()
+  const STEPS = ['배송지 확인', '결제하기'];
+
   // ** State
   const { buyOpen, setBuyOpen, product, selectProductGroups } = props;
   const { user } = useAuthContext();

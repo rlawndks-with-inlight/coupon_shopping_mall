@@ -9,6 +9,7 @@ import styled from 'styled-components'
 import DaumPostcode from 'react-daum-postcode';
 import { apiManager } from 'src/utils/api';
 import DialogAddAddress from 'src/components/dialog/DialogAddAddress';
+import { useLocales } from 'src/locales';
 
 const Wrappers = styled.div`
 max-width:1600px;
@@ -19,20 +20,7 @@ width: 90%;
 min-height:90vh;
 margin-bottom:10vh;
 `
-const returnMyPageType = {
-  0: {
-    title: '마이페이지',
-    defaultObj: {
 
-    }
-  },
-  1: {
-    title: '주소지설정',
-    defaultObj: {
-
-    }
-  }
-}
 
 const MyPageDemo = (props) => {
   const {
@@ -43,7 +31,21 @@ const MyPageDemo = (props) => {
       router
     },
   } = props;
+  const { translate } = useLocales();
+  const returnMyPageType = {
+    0: {
+      title: translate('마이페이지'),
+      defaultObj: {
 
+      }
+    },
+    1: {
+      title: translate('주소지설정'),
+      defaultObj: {
+
+      }
+    }
+  }
   const { user } = useAuthContext();
   const [myPageType, setMyPageType] = useState(undefined);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -144,18 +146,18 @@ const MyPageDemo = (props) => {
                       sm: 'repeat(2, 1fr)',
                     }}
                   >
-                    <TextField name="displayName" label="아이디" defaultValue={userObj?.user_name} value={userObj?.user_name} disabled={true} />
+                    <TextField name="displayName" label={translate("아이디")} defaultValue={userObj?.user_name} value={userObj?.user_name} disabled={true} />
 
-                    <TextField name="email" label="이름" defaultValue={userObj?.nickname} value={userObj?.nickname} disabled={true} />
+                    <TextField name="email" label={translate("이름")} defaultValue={userObj?.nickname} value={userObj?.nickname} disabled={true} />
 
-                    <TextField name="phone_num" label="전화번호" defaultValue={userObj?.phone_num} value={userObj?.phone_num} disabled={true} />
+                    <TextField name="phone_num" label={translate("전화번호")} defaultValue={userObj?.phone_num} value={userObj?.phone_num} disabled={true} />
 
-                    <TextField name="address" label="이메일" />
+                    <TextField name="address" label={translate("이메일")} />
                   </Box>
                   <Stack spacing={3} alignItems="flex-end" sx={{ mt: 3 }}>
 
                     <Button type="submit" variant="contained" loading={isSubmitting}>
-                      변경사항 저장
+                      {translate('변경사항 저장')}
                     </Button>
                   </Stack>
                 </Card>
@@ -182,7 +184,7 @@ const MyPageDemo = (props) => {
                   }} />
                 <Row>
                   <Button variant="contained" style={{ marginLeft: 'auto' }} onClick={() => setAddAddressOpen(true)}>
-                    주소지 추가
+                    {translate('주소지 추가')}
                   </Button>
                 </Row>
               </Col>

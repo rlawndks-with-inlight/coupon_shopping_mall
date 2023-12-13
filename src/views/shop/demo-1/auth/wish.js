@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { Items } from 'src/components/elements/shop/common';
 import { Col, Title, themeObj } from 'src/components/elements/styled-components';
 import { useSettingsContext } from 'src/components/settings';
+import { useLocales } from 'src/locales';
 import { getWishDataUtil } from 'src/utils/shop-util';
 import styled from 'styled-components'
 const Wrappers = styled.div`
@@ -25,6 +26,7 @@ const WishDemo = (props) => {
       router
     },
   } = props;
+  const { translate } = useLocales();
   const [wishList, setWishList] = useState([]);
   useEffect(() => {
     pageSetting();
@@ -37,7 +39,7 @@ const WishDemo = (props) => {
   return (
     <>
       <Wrappers>
-        <Title>찜목록</Title>
+        <Title>{translate('찜목록')}</Title>
         {wishList.length > 0 ?
           <>
             <Items items={wishList} router={router} />
@@ -46,7 +48,7 @@ const WishDemo = (props) => {
           <>
             <Col>
               <Icon icon={'basil:cancel-outline'} style={{ margin: '8rem auto 1rem auto', fontSize: themeObj.font_size.size1, color: themeObj.grey[300] }} />
-              <div style={{ margin: 'auto auto 8rem auto' }}>찜한 상품이 없습니다.</div>
+              <div style={{ margin: 'auto auto 8rem auto' }}>{translate('찜한 상품이 없습니다.')}</div>
             </Col>
           </>}
       </Wrappers>

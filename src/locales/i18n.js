@@ -11,6 +11,8 @@ import frLocales from './langs/fr';
 import viLocales from './langs/vi';
 import cnLocales from './langs/cn';
 import arLocales from './langs/ar';
+import koLocales from './langs/ko';
+import jaLocales from './langs/ja';
 
 // ----------------------------------------------------------------------
 
@@ -19,7 +21,7 @@ let lng = defaultLang.value;
 const storageAvailable = localStorageAvailable();
 
 if (storageAvailable) {
-  lng = localStorage.getItem('i18nextLng') || defaultLang.value;
+  lng = localStorage.getItem('i18nextLng') || JSON.parse(localStorage.getItem('themeDnsData'))?.setting_obj?.default_lang;
 }
 
 i18n
@@ -32,9 +34,11 @@ i18n
       vi: { translations: viLocales },
       cn: { translations: cnLocales },
       ar: { translations: arLocales },
+      ko: { translations: koLocales },
+      ja: { translations: jaLocales },
     },
     lng,
-    fallbackLng: defaultLang.value,
+    fallbackLng: lng,
     debug: false,
     ns: ['translations'],
     defaultNS: 'translations',

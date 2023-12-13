@@ -27,6 +27,7 @@ import { Item6, Seller6 } from './demo-6'
 import { Item7, Seller7 } from './demo-7'
 import { Col, themeObj } from '../styled-components'
 import { insertCartDataUtil, insertWishDataUtil } from 'src/utils/shop-util'
+import { useLocales } from 'src/locales'
 
 const ItemsContainer = styled.div`
   display: flex;
@@ -52,6 +53,7 @@ const ItemWrapper = styled.div`
 `
 
 export const Seller = props => {
+  const { translate } = useLocales();
   const { themeDnsData } = useSettingsContext()
   const { shop_demo_num = 0 } = themeDnsData
   const returnSellerCard = () => {
@@ -95,6 +97,7 @@ export const Sellers = props => {
 
 export const Item = props => {
   const { themeDnsData } = useSettingsContext()
+  const { translate } = useLocales();
   const { shop_demo_num = 0 } = themeDnsData
   const returnSellerCard = () => {
     if (shop_demo_num == 1) return <Item1 {...props} />
@@ -183,21 +186,22 @@ export const Items = props => {
 
 export const HistoryTable = props => {
   const { historyContent, onChangePage, searchObj } = props
+  const { translate } = useLocales();
   const TABLE_HEAD = [
-    { id: 'product', label: '상품' },
-    { id: 'ord_num', label: '주문번호' },
-    { id: 'amount', label: '총액' },
-    { id: 'buyer_name', label: '구매자명' },
-    { id: 'trx_status', label: '배송상태' },
-    { id: 'date', label: '업데이트일', align: 'right' },
-    { id: 'cancel', label: '주문취소요청', align: 'right' },
+    { id: 'product', label: translate('상품') },
+    { id: 'ord_num', label: translate('주문번호') },
+    { id: 'amount', label: translate('총액') },
+    { id: 'buyer_name', label: translate('구매자명') },
+    { id: 'trx_status', label: translate('배송상태') },
+    { id: 'date', label: translate('업데이트일'), align: 'right' },
+    { id: 'cancel', label: translate('주문취소요청'), align: 'right' },
     { id: '' },
   ];
   const { setModal } = useModal()
   const onPayCancelRequest = async row => {
     let result = await apiManager(`transactions/${row?.id}/cancel-request`, 'create')
     if (result) {
-      toast.success('취소요청이 완료되었습니다.')
+      toast.success(translate('취소요청이 완료되었습니다.'))
       onChangePage(searchObj)
     }
   }
@@ -243,7 +247,7 @@ export const HistoryTable = props => {
                                       onPayCancelRequest(row)
                                     },
                                     icon: 'material-symbols:cancel-outline',
-                                    title: '주문취소요청 하시겠습니까?'
+                                    title: translate('주문취소요청 하시겠습니까?')
                                   })
                                 }}
                               />
@@ -261,7 +265,7 @@ export const HistoryTable = props => {
           <>
             <Col>
               <Icon icon={'basil:cancel-outline'} style={{ margin: '8rem auto 1rem auto', fontSize: themeObj.font_size.size1, color: themeObj.grey[300] }} />
-              <div style={{ margin: 'auto auto 8rem auto' }}>주문내역이 없습니다.</div>
+              <div style={{ margin: 'auto auto 8rem auto' }}>{translate('주문내역이 없습니다.')}</div>
             </Col>
           </>}
       </TableContainer>
@@ -270,10 +274,11 @@ export const HistoryTable = props => {
 }
 export const PointTable = props => {
   const { historyContent } = props
+  const { translate } = useLocales();
   const TABLE_HEAD = [
-    { id: 'point', label: '포인트' },
-    { id: 'created_at', label: '발생일' },
-    { id: 'type', label: '비고' },
+    { id: 'point', label: translate('포인트') },
+    { id: 'created_at', label: translate('발생일') },
+    { id: 'type', label: translate('비고') },
     { id: '' },
   ];
   const { setModal } = useModal()
@@ -300,7 +305,7 @@ export const PointTable = props => {
           <>
             <Col>
               <Icon icon={'basil:cancel-outline'} style={{ margin: '8rem auto 1rem auto', fontSize: themeObj.font_size.size1, color: themeObj.grey[300] }} />
-              <div style={{ margin: 'auto auto 8rem auto' }}>포인트내역이 없습니다.</div>
+              <div style={{ margin: 'auto auto 8rem auto' }}>{translate('포인트내역이 없습니다.')}</div>
             </Col>
           </>}
       </TableContainer>
@@ -309,11 +314,13 @@ export const PointTable = props => {
 }
 
 export const AddressTable = props => {
+  const { translate } = useLocales();
   const { addressContent, onDelete } = props
+
   const TABLE_HEAD = [
     { id: 'No.', label: 'No.' },
-    { id: 'addr', label: '주소' },
-    { id: 'detail_addr', label: '상세주소' },
+    { id: 'addr', label: translate('주소') },
+    { id: 'detail_addr', label: translate('상세주소') },
     { id: '' },
   ];
   return (
@@ -344,7 +351,7 @@ export const AddressTable = props => {
           <>
             <Col>
               <Icon icon={'basil:cancel-outline'} style={{ margin: '8rem auto 1rem auto', fontSize: themeObj.font_size.size1, color: themeObj.grey[300] }} />
-              <div style={{ margin: 'auto auto 8rem auto' }}>배송지가 없습니다.</div>
+              <div style={{ margin: 'auto auto 8rem auto' }}>{translate('배송지가 없습니다.')}</div>
             </Col>
           </>}
       </TableContainer>
@@ -353,13 +360,13 @@ export const AddressTable = props => {
 }
 export const WishTable = props => {
   const { wishContent, onDelete } = props
-
+  const { translate } = useLocales();
   const { themeWishData, onChangeWishData, themeCartData, onChangeCartData } = useSettingsContext();
   const TABLE_HEAD = [
-    { id: 'product_img', label: '상품' },
-    { id: 'product_name', label: '상품명' },
-    { id: 'product_sale_price', label: '상품금액' },
-    { id: 'cart', label: '장바구니' },
+    { id: 'product_img', label: translate('상품') },
+    { id: 'product_name', label: translate('상품명') },
+    { id: 'product_sale_price', label: translate('상품금액') },
+    { id: 'cart', label: translate('장바구니') },
     { id: 'delete', label: '' },
   ];
   return (
@@ -395,7 +402,7 @@ export const WishTable = props => {
                       <Button variant='outlined' onClick={() => {
                         insertCartDataUtil(row, false, themeCartData, onChangeCartData)
                       }}>
-                        장바구니담기
+                        {translate('장바구니담기')}
                       </Button>
                     </TableCell>
                     <TableCell align='right'>
@@ -413,7 +420,7 @@ export const WishTable = props => {
           <>
             <Col>
               <Icon icon={'basil:cancel-outline'} style={{ margin: '8rem auto 1rem auto', fontSize: themeObj.font_size.size1, color: themeObj.grey[300] }} />
-              <div style={{ margin: 'auto auto 8rem auto' }}>위시상품이 없습니다.</div>
+              <div style={{ margin: 'auto auto 8rem auto' }}>{translate('위시상품이 없습니다.')}</div>
             </Col>
           </>}
       </TableContainer>
@@ -422,13 +429,13 @@ export const WishTable = props => {
 }
 export const ConsignmentTable = props => {
   const { consignmentContent, onChangePage, searchObj } = props
-
+  const { translate } = useLocales();
   const TABLE_HEAD = [
-    { id: 'product_img', label: '상품' },
-    { id: 'product_name', label: '상품명' },
-    { id: 'product_sale_price', label: '상품금액' },
-    { id: 'change', label: '변경요청' },
-    { id: 'collection', label: '수거요청' },
+    { id: 'product_img', label: translate('상품') },
+    { id: 'product_name', label: translate('상품명') },
+    { id: 'product_sale_price', label: translate('상품금액') },
+    { id: 'change', label: translate('변경요청') },
+    { id: 'collection', label: translate('수거요청') },
   ];
 
   const [changeObj, setChangeObj] = useState({
@@ -438,7 +445,7 @@ export const ConsignmentTable = props => {
   const onRequestChange = async () => {
     const response = await apiManager(`consignments`, 'create', { ...changeObj, type: 0 });
     if (response) {
-      toast.success('성공적으로 판매가 변경 요청하였습니다.');
+      toast.success(translate('성공적으로 판매가 변경 요청하였습니다.'));
       setChangeObj({});
       onChangePage(searchObj);
     }
@@ -446,7 +453,7 @@ export const ConsignmentTable = props => {
   const onRequestCollection = async (product_id) => {
     const response = await apiManager(`consignments`, 'create', { product_id: product_id, type: 5 });
     if (response) {
-      toast.success('성공적으로 수거 요청하였습니다.');
+      toast.success(translate('성공적으로 수거 요청하였습니다.'));
       onChangePage(searchObj);
     }
   }
@@ -461,7 +468,7 @@ export const ConsignmentTable = props => {
         <DialogTitle>{`판매가 변경 요청`}</DialogTitle>
         <DialogContent>
           <DialogContentText>
-            변경할 판매가를 입력후 확인을 눌러주세요.
+            {translate('변경할 판매가를 입력후 확인을 눌러주세요.')}
           </DialogContentText>
           <TextField
             autoFocus
@@ -480,12 +487,12 @@ export const ConsignmentTable = props => {
         </DialogContent>
         <DialogActions>
           <Button variant="contained" onClick={onRequestChange}>
-            변경
+            {translate('변경')}
           </Button>
           <Button color="inherit" onClick={() => {
             setChangeObj({})
           }}>
-            취소
+            {translate('취소')}
           </Button>
         </DialogActions>
       </Dialog>
@@ -523,14 +530,14 @@ export const ConsignmentTable = props => {
                           product_id: row?.id
                         })
                       }}>
-                        변경요청
+                        {translate('변경요청')}
                       </Button>
                     </TableCell>
                     <TableCell>
                       <Button variant='outlined' onClick={() => {
                         onRequestCollection(row?.id)
                       }}>
-                        수거요청
+                        {translate('수거요청')}
                       </Button>
                     </TableCell>
                   </TableRow>
@@ -543,7 +550,7 @@ export const ConsignmentTable = props => {
           <>
             <Col>
               <Icon icon={'basil:cancel-outline'} style={{ margin: '8rem auto 1rem auto', fontSize: themeObj.font_size.size1, color: themeObj.grey[300] }} />
-              <div style={{ margin: 'auto auto 8rem auto' }}>위탁상품이 없습니다.</div>
+              <div style={{ margin: 'auto auto 8rem auto' }}>{translate('위탁상품이 없습니다.')}</div>
             </Col>
           </>}
       </TableContainer>

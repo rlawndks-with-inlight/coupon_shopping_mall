@@ -20,7 +20,6 @@ import ContactsPopover from './ContactsPopover';
 import NotificationsPopover from './NotificationsPopover';
 import { Icon } from '@iconify/react';
 import SvgColor from 'src/components/svg-color/SvgColor';
-import LanguagePopover from './LanguagePopover';
 
 // ----------------------------------------------------------------------
 
@@ -31,7 +30,7 @@ Header.propTypes = {
 export default function Header({ onOpenNav }) {
   const theme = useTheme();
 
-  const { themeLayout, themeMode, onToggleMode } = useSettingsContext();
+  const { themeLayout, themeMode, onToggleMode, themeDnsData } = useSettingsContext();
 
   const isNavHorizontal = themeLayout === 'horizontal';
 
@@ -67,7 +66,6 @@ export default function Header({ onOpenNav }) {
             src={`/assets/icons/setting/${themeMode === 'light' ? 'ic_sun' : 'ic_moon'}.svg`}
           />
         </IconButton>
-
         <NotificationsPopover />
 
         {/* <ContactsPopover /> */}

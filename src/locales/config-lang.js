@@ -1,5 +1,7 @@
 // @mui
-import { enUS, frFR, zhCN, viVN, arSA } from '@mui/material/locale';
+import { enUS, frFR, zhCN, viVN, arSA, koKR, jaJP } from '@mui/material/locale';
+import { useSettingsContext } from 'src/components/settings';
+import { getLocalStorage } from 'src/utils/local-storage';
 
 // PLEASE REMOVE `LOCAL STORAGE` WHEN YOU CHANGE SETTINGS.
 // ----------------------------------------------------------------------
@@ -9,7 +11,19 @@ export const allLangs = [
     label: 'English',
     value: 'en',
     systemValue: enUS,
-    icon: '/assets/icons/flags/ic_flag_en.svg',
+    icon: '/assets/icons/flags/ic_flag_us.svg',
+  },
+  {
+    label: 'Korean',
+    value: 'ko',
+    systemValue: koKR,
+    icon: '/assets/icons/flags/ic_flag_kr.svg',
+  },
+  {
+    label: 'Japanese',
+    value: 'ja',
+    systemValue: jaJP,
+    icon: '/assets/icons/flags/ic_flag_jp.svg',
   },
   {
     label: 'French',
@@ -35,6 +49,6 @@ export const allLangs = [
     systemValue: arSA,
     icon: '/assets/icons/flags/ic_flag_sa.svg',
   },
-];
+]
 
-export const defaultLang = allLangs[0]; // English
+export const defaultLang = allLangs[0];

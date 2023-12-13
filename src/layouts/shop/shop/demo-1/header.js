@@ -15,6 +15,8 @@ import { useAuthContext } from "src/layouts/manager/auth/useAuthContext"
 import { logoSrc } from "src/data/data"
 import $ from 'jquery'
 import dynamic from 'next/dynamic';
+import LanguagePopover from "src/layouts/manager/header/LanguagePopover"
+import { useLocales } from "src/locales"
 const ReactQuill = dynamic(() => import('react-quill'), {
   ssr: false,
   loading: () => <p></p>,
@@ -79,6 +81,7 @@ position:relative;
 const NoneShowMobile = styled.div`
 display: flex;
 align-items:center;
+
 @media (max-width:1000px) {
   display: none;
 }
@@ -176,46 +179,12 @@ z-index:10;
 width:78vw;
 }
 `
-const authList = [
-  {
-    name: '장바구니',
-    link_key: 'cart'
-  },
-  {
-    name: '찜목록',
-    link_key: 'wish'
-  },
-  {
-    name: '포인트내역',
-    link_key: 'point'
-  },
-  {
-    name: '주문조회',
-    link_key: 'history'
-  },
-  {
-    name: '마이페이지',
-    link_key: 'my-page'
-  },
-]
-const noneAuthList = [
-  {
-    name: '로그인',
-    link_key: 'login'
-  },
-  {
-    name: '회원가입',
-    link_key: 'sign-up'
-  },
-  {
-    name: '비회원 주문조회',
-    link_key: 'login?scroll_to=100000'
-  },
-]
+
 const Header = () => {
 
   const router = useRouter();
-  const theme = useTheme()
+  const theme = useTheme();
+  const { translate } = useLocales();
   const { themeMode, onToggleMode, themeCategoryList, themeDnsData, themePopupList, themeNoneTodayPopupList, onChangeNoneTodayPopupList, themePostCategoryList, onChangePopupList, themeWishData, themeCartData, onChangeCartData, onChangeWishData, themeSellerList } = useSettingsContext();
   const { user, logout } = useAuthContext();
   const headerWrappersRef = useRef();
@@ -232,7 +201,42 @@ const Header = () => {
   const [popups, setPopups] = useState([]);
   const [postCategories, setPostCategories] = useState([]);
   const [loading, setLoading] = useState(true);
-
+  const authList = [
+    {
+      name: translate('장바구니'),
+      link_key: 'cart'
+    },
+    {
+      name: translate('찜목록'),
+      link_key: 'wish'
+    },
+    {
+      name: translate('포인트내역'),
+      link_key: 'point'
+    },
+    {
+      name: translate('주문조회'),
+      link_key: 'history'
+    },
+    {
+      name: translate('마이페이지'),
+      link_key: 'my-page'
+    },
+  ]
+  const noneAuthList = [
+    {
+      name: translate('로그인'),
+      link_key: 'login'
+    },
+    {
+      name: translate('회원가입'),
+      link_key: 'sign-up'
+    },
+    {
+      name: translate('비회원 주문조회'),
+      link_key: 'login?scroll_to=100000'
+    },
+  ]
   useEffect(() => {
   }, [user])
   useEffect(() => {
@@ -380,7 +384,7 @@ const Header = () => {
                             }}
                           >
                             <Icon icon='ion:close' style={{ color: `${themeMode == 'dark' ? '#fff' : '#222'}`, fontSize: themeObj.font_size.size8, marginRight: '4px' }} onClick={() => { }} />
-                            <div style={{ fontSize: themeObj.font_size.size8, }}>오늘 하루 보지않기</div>
+                            <div style={{ fontSize: themeObj.font_size.size8, }}>{translate('오늘 하루 보지않기')}</div>
                           </Row>
                         </PopupContent>
                       </>}
@@ -403,9 +407,9 @@ const Header = () => {
                   router.push('/shop')
                 }}
               />
-              <NoneShowMobile>
+              <NoneShowMobile style={{ columnGap: '0.5rem' }}>
                 <TextField
-                  label='통합검색'
+                  label={translate('통합검색')}
                   id='size-small'
                   size='small'
                   onChange={(e) => {
@@ -479,6 +483,10 @@ const Header = () => {
                 >
                   <Icon icon={themeMode === 'dark' ? 'tabler:sun' : 'tabler:moon-stars'} fontSize={'1.5rem'} color={themeMode == 'dark' ? '#fff' : '#000'} />
                 </IconButton>
+                {themeDnsData?.setting_obj?.is_use_lang == 1 &&
+                  <>
+                    <LanguagePopover />
+                  </>}
               </NoneShowMobile>
               <NoneShowMobile style={{ marginLeft: 'auto', cursor: 'pointer', fontSize: '14px' }} onMouseOver={() => {
                 setIsAuthMenuOver(true)
@@ -504,7 +512,7 @@ const Header = () => {
                         hoverColor={themeMode == 'dark' ? '#fff' : '#000'}
                         onClick={onLogout}
                         style={{ borderRight: `none` }}
-                      >{'로그아웃'}</AuthMenu>
+                      >{translate('로그아웃')}</AuthMenu>
                     </>
                     :
                     <>
@@ -525,18 +533,18 @@ const Header = () => {
                 <div className="fade-in-text" style={{ display: `${isAuthMenuOver ? 'none' : 'flex'}`, alignItems: 'center' }}>
                   {user ?
                     <>
-                      <AuthMenu theme={theme} style={{ borderRight: 'none' }}>마이페이지</AuthMenu>
+                      <AuthMenu theme={theme} style={{ borderRight: 'none' }}>{translate('마이페이지')}</AuthMenu>
                     </>
                     :
                     <>
-                      <AuthMenu theme={theme}>회원가입</AuthMenu>
-                      <AuthMenu theme={theme} style={{ borderRight: 'none' }}>로그인</AuthMenu>
+                      <AuthMenu theme={theme}>{translate('회원가입')}</AuthMenu>
+                      <AuthMenu theme={theme} style={{ borderRight: 'none' }}>{translate('로그인')}</AuthMenu>
                     </>}
 
                   <Icon icon={'ic:baseline-plus'} color={themeMode == 'dark' ? '#fff' : '#000'} />
                 </div>
               </NoneShowMobile>
-              <ShowMobile style={{ marginLeft: 'auto' }}>
+              <ShowMobile style={{ marginLeft: 'auto', columnGap: '0.5rem' }}>
                 <IconButton
                   sx={iconButtonStyle}
                   onClick={() => setSideMenuOpen(true)}
@@ -574,6 +582,10 @@ const Header = () => {
                 >
                   <Icon icon={themeMode === 'dark' ? 'tabler:sun' : 'tabler:moon-stars'} fontSize={'1.5rem'} color={themeMode == 'dark' ? '#fff' : '#000'} />
                 </IconButton>
+                {themeDnsData?.setting_obj?.is_use_lang == 1 &&
+                  <>
+                    <LanguagePopover />
+                  </>}
               </ShowMobile>
             </TopMenuContainer>
             <div style={{ borderBottom: `1px solid ${theme.palette.grey[300]}` }} />
@@ -643,7 +655,7 @@ const Header = () => {
                 ))}
                 <div style={{ position: 'relative', marginLeft: 'auto' }} className={`menu-service`}>
                   <CategoryMenu borderColor={themeMode == 'dark' ? '#fff' : '#000'} >
-                    <div>고객센터</div>
+                    <div>{translate('고객센터')}</div>
                   </CategoryMenu>
                   <DropDownMenuContainer parentId={'service'} style={{
                     border: `1px solid ${theme.palette.grey[300]}`,
@@ -695,7 +707,7 @@ const Header = () => {
                 ))}
                 <CategoryMenu borderColor={themeMode == 'dark' ? '#fff' : '#000'} onClick={() => {
 
-                }}>고객센터</CategoryMenu>
+                }}>{translate('고객센터')}</CategoryMenu>
               </ShowMobile>
               <NoneShowMobile style={{
                 marginLeft: 'auto'
@@ -723,7 +735,7 @@ const Header = () => {
         >
           {themeDnsData?.setting_obj?.is_use_seller == 1 &&
             <>
-              <ColumnMenuTitle>셀러</ColumnMenuTitle>
+              <ColumnMenuTitle>{translate('셀러')}</ColumnMenuTitle>
               {themeSellerList.map((seller) => (
                 <>
                   <ColumnMenuContent onClick={() => {
@@ -753,7 +765,7 @@ const Header = () => {
             </>
           ))}
 
-          <ColumnMenuTitle>고객센터</ColumnMenuTitle>
+          <ColumnMenuTitle>{translate('고객센터')}</ColumnMenuTitle>
           {postCategories && postCategories.map((item, idx) => (
             <>
               <ColumnMenuContent onClick={() => {
@@ -762,7 +774,7 @@ const Header = () => {
               }} style={{ paddingLeft: '1rem' }}>{item.post_category_title}</ColumnMenuContent>
             </>
           ))}
-          <ColumnMenuTitle>마이페이지</ColumnMenuTitle>
+          <ColumnMenuTitle>{translate('마이페이지')}</ColumnMenuTitle>
           {user ?
             <>
               {authList.map((item, idx) => (
@@ -776,7 +788,7 @@ const Header = () => {
               <ColumnMenuContent onClick={() => {
                 onLogout();
                 setSideMenuOpen(false);
-              }} style={{ paddingLeft: '1rem' }}>로그아웃</ColumnMenuContent>
+              }} style={{ paddingLeft: '1rem' }}>{translate('로그아웃')}</ColumnMenuContent>
             </>
             :
             <>
@@ -850,6 +862,5 @@ const ColumnMenuContent = styled.div`
         `
 const iconButtonStyle = {
   padding: '0.1rem',
-  marginLeft: '0.5rem'
 }
 export default Header

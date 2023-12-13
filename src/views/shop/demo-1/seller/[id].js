@@ -13,6 +13,7 @@ import { Icon } from '@iconify/react';
 import { Spinner } from 'evergreen-ui';
 import $ from 'jquery';
 import { apiManager, apiShop } from 'src/utils/api';
+import { useLocales } from 'src/locales';
 
 const ContentWrapper = styled.div`
 max-width:1600px;
@@ -56,6 +57,7 @@ const SellerDemo = (props) => {
       router
     },
   } = props;
+  const { translate } = useLocales();
   const { themeCategoryList, themeMode, themeDnsData } = useSettingsContext();
 
   const [parentList, setParentList] = useState([]);
@@ -170,7 +172,7 @@ const SellerDemo = (props) => {
                   <>
                     <Col>
                       <Icon icon={'basil:cancel-outline'} style={{ margin: '8rem auto 1rem auto', fontSize: themeObj.font_size.size1, color: themeObj.grey[300] }} />
-                      <div style={{ margin: 'auto auto 8rem auto' }}>검색결과가 없습니다.</div>
+                      <div style={{ margin: 'auto auto 8rem auto' }}>{translate('검색결과가 없습니다.')}</div>
                     </Col>
                   </>}
               </>}

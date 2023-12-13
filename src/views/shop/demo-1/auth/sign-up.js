@@ -12,6 +12,7 @@ import { toast } from 'react-hot-toast';
 import { Icon } from '@iconify/react';
 import { useSettingsContext } from 'src/components/settings';
 import { apiManager } from 'src/utils/api';
+import { useLocales } from 'src/locales';
 
 const Wrappers = styled.div`
 max-width:1000px;
@@ -22,7 +23,6 @@ width: 90%;
 min-height:90vh;
 `
 
-const STEPS = ['약관동의', '정보입력', '가입완료'];
 const ColorlibConnector = muiStyled(StepConnector)(({ theme }) => ({
   [`&.${stepConnectorClasses.alternativeLabel}`]: {
     top: 22,
@@ -109,6 +109,8 @@ const SignUpDemo = (props) => {
       router
     },
   } = props;
+  const { translate } = useLocales();
+  const STEPS = [translate('약관동의'), translate('정보입력'), translate('가입완료')];
   const { themeDnsData } = useSettingsContext();
   const theme = useTheme();
   const [activeStep, setActiveStep] = useState(0);
@@ -150,7 +152,7 @@ const SignUpDemo = (props) => {
         !checkboxObj.check_1 ||
         !checkboxObj.check_2
       ) {
-        toast.error("필수 항목에 체크해 주세요.");
+        toast.error(translate("필수 항목에 체크해 주세요."));
         return;
       }
     }
@@ -162,7 +164,7 @@ const SignUpDemo = (props) => {
         !user.nickname ||
         !user.phone_num
       ) {
-        toast.error("필수 항목을 입력해 주세요.");
+        toast.error(translate("필수 항목을 입력해 주세요."));
         return;
       }
       let result = await apiManager('auth/sign-up', 'create', { ...user, brand_id: themeDnsData?.id });
@@ -187,7 +189,7 @@ const SignUpDemo = (props) => {
   return (
     <>
       <Wrappers>
-        <Title>회원가입</Title>
+        <Title>{translate('회원가입')}</Title>
         <Stepper alternativeLabel activeStep={activeStep} connector={<ColorlibConnector />}>
           {STEPS.map((label) => (
             <Step key={label}>
@@ -198,7 +200,7 @@ const SignUpDemo = (props) => {
         <div style={{ marginTop: '2rem' }} />
         {activeStep == 0 &&
           <>
-            <FormControlLabel label={<Typography style={{ fontWeight: 'bold', fontSize: themeObj.font_size.size5 }}> 이용약관 및 개인정보수집 및 이용, 쇼핑정보 수신(선택)에 모두 동의합니다.</Typography>} control={<Checkbox checked={checkboxObj.check_0} />} onChange={(e) => {
+            <FormControlLabel label={<Typography style={{ fontWeight: 'bold', fontSize: themeObj.font_size.size5 }}> {translate('이용약관 및 개인정보수집 및 이용, 쇼핑정보 수신(선택)에 모두 동의합니다.')}</Typography>} control={<Checkbox checked={checkboxObj.check_0} />} onChange={(e) => {
               let check_obj = {}
               if (e.target.checked) {
                 for (let key in checkboxObj) {
@@ -214,7 +216,7 @@ const SignUpDemo = (props) => {
             <div style={{ marginTop: '1rem' }} />
             <Divider />
             <div style={{ marginTop: '1rem' }} />
-            <FormControlLabel label={<Typography style={{ fontSize: themeObj.font_size.size6 }}>이용약관 동의 (필수)</Typography>} control={<Checkbox checked={checkboxObj.check_1} onChange={(e) => {
+            <FormControlLabel label={<Typography style={{ fontSize: themeObj.font_size.size6 }}>{translate('이용약관 동의 (필수)')}</Typography>} control={<Checkbox checked={checkboxObj.check_1} onChange={(e) => {
               setCheckboxObj({ ...checkboxObj, ['check_1']: e.target.checked })
             }} />} />
             <div style={{ marginTop: '0.5rem' }} />
@@ -226,7 +228,7 @@ const SignUpDemo = (props) => {
               <Policy type={0} />
             </div>
             <div style={{ marginTop: '1rem' }} />
-            <FormControlLabel label={<Typography style={{ fontSize: themeObj.font_size.size6 }}>개인정보 수집 및 이용 동의 (필수)</Typography>} control={<Checkbox checked={checkboxObj.check_2} onChange={(e) => {
+            <FormControlLabel label={<Typography style={{ fontSize: themeObj.font_size.size6 }}>{translate('개인정보 수집 및 이용 동의 (필수)')}</Typography>} control={<Checkbox checked={checkboxObj.check_2} onChange={(e) => {
               setCheckboxObj({ ...checkboxObj, ['check_2']: e.target.checked })
             }} />} />
             <div style={{ marginTop: '0.5rem' }} />
@@ -238,7 +240,7 @@ const SignUpDemo = (props) => {
               <Policy type={1} />
             </div>
             <div style={{ marginTop: '1rem' }} />
-            <FormControlLabel label={<Typography style={{ fontSize: themeObj.font_size.size6 }}>쇼핑정보 수신 동의 (선택)</Typography>} control={<Checkbox checked={checkboxObj.check_3} onChange={(e) => {
+            <FormControlLabel label={<Typography style={{ fontSize: themeObj.font_size.size6 }}>{translate('쇼핑정보 수신 동의 (선택)')}</Typography>} control={<Checkbox checked={checkboxObj.check_3} onChange={(e) => {
 
               setCheckboxObj({ ...checkboxObj, ['check_3']: e.target.checked, ['check_4']: e.target.checked, ['check_5']: e.target.checked, })
             }} />} />
@@ -246,10 +248,10 @@ const SignUpDemo = (props) => {
             <Divider />
             <div style={{ marginTop: '1rem' }} />
             <Row>
-              <FormControlLabel label={<Typography style={{ fontSize: themeObj.font_size.size7 }}>SMS 수신 동의 (선택)</Typography>} control={<Checkbox checked={checkboxObj.check_4} onChange={(e) => {
+              <FormControlLabel label={<Typography style={{ fontSize: themeObj.font_size.size7 }}>{translate('SMS 수신 동의 (선택)')}</Typography>} control={<Checkbox checked={checkboxObj.check_4} onChange={(e) => {
                 setCheckboxObj({ ...checkboxObj, ['check_4']: e.target.checked })
               }} />} />
-              <FormControlLabel label={<Typography style={{ fontSize: themeObj.font_size.size7 }}>이메일 수신 동의 (선택)</Typography>} control={<Checkbox checked={checkboxObj.check_5} onChange={(e) => {
+              <FormControlLabel label={<Typography style={{ fontSize: themeObj.font_size.size7 }}>{translate('이메일 수신 동의 (선택)')}</Typography>} control={<Checkbox checked={checkboxObj.check_5} onChange={(e) => {
                 setCheckboxObj({ ...checkboxObj, ['check_5']: e.target.checked })
               }} />} />
             </Row>
@@ -261,14 +263,13 @@ const SignUpDemo = (props) => {
               padding: '2rem',
               fontSize: themeObj.font_size.size7
             }}>
-              할인쿠폰 및 혜택, 이벤트, 신상품 소식 등 쇼핑몰에서 제공하는 유익한 쇼핑정보를 SMS나 이메일로 받아보실 수 있습니다. 단, 주문/거래 정보 및 주요 정책과 관련된 내용은 수신동의 여부와 관계없이 발송됩니다.
-              선택 약관에 동의하지 않으셔도 회원가입은 가능하며, 회원가입 후 회원정보수정 페이지에서 언제든지 수신여부를 변경하실 수 있습니다.
+              {translate('할인쿠폰 및 혜택, 이벤트, 신상품 소식 등 쇼핑몰에서 제공하는 유익한 쇼핑정보를 SMS나 이메일로 받아보실 수 있습니다. 단, 주문/거래 정보 및 주요 정책과 관련된 내용은 수신동의 여부와 관계없이 발송됩니다. 선택 약관에 동의하지 않으셔도 회원가입은 가능하며, 회원가입 후 회원정보수정 페이지에서 언제든지 수신여부를 변경하실 수 있습니다.')}
             </div>
           </>}
         {activeStep == 1 &&
           <>
             <TextField
-              label='아이디'
+              label={translate('아이디')}
               onChange={(e) => {
                 setUser({ ...user, ['user_name']: e.target.value })
               }}
@@ -288,7 +289,7 @@ const SignUpDemo = (props) => {
               }}
             />
             <TextField
-              label='비밀번호'
+              label={translate('비밀번호')}
               onChange={(e) => {
                 setUser({ ...user, ['user_pw']: e.target.value })
               }}
@@ -302,7 +303,7 @@ const SignUpDemo = (props) => {
               }}
             />
             <TextField
-              label='비밀번호 확인'
+              label={translate('비밀번호확인')}
               onChange={(e) => {
                 setUser({ ...user, ['passwordCheck']: e.target.value })
               }}
@@ -316,7 +317,7 @@ const SignUpDemo = (props) => {
               }}
             />
             <TextField
-              label='이름'
+              label={translate('이름')}
               onChange={(e) => {
                 setUser({ ...user, ['name']: e.target.value })
               }}
@@ -329,7 +330,7 @@ const SignUpDemo = (props) => {
               }}
             />
             <TextField
-              label='닉네임'
+              label={translate('닉네임')}
               onChange={(e) => {
                 setUser({ ...user, ['nickname']: e.target.value })
               }}
@@ -342,10 +343,10 @@ const SignUpDemo = (props) => {
               }}
             />
             <FormControl variant="outlined" style={{ width: '100%', marginTop: '1rem' }}>
-              <InputLabel>휴대폰번호</InputLabel>
+              <InputLabel>{translate('휴대폰번호')}</InputLabel>
               <OutlinedInput
-                label='휴대폰번호'
-                placeholder="하이픈(-) 제외 입력"
+                label={translate('휴대폰번호')}
+                placeholder={translate("하이픈(-) 제외 입력")}
                 onChange={(e) => {
                   setUser({ ...user, ['phone_num']: e.target.value })
                 }}
@@ -385,7 +386,7 @@ const SignUpDemo = (props) => {
           <>
             <Col>
               <Icon icon={'fluent-mdl2:completed'} style={{ margin: '8rem auto 1rem auto', fontSize: themeObj.font_size.size1, color: theme.palette.primary.main }} />
-              <div style={{ margin: 'auto auto 8rem auto' }}>회원가입이 완료되었습니다.</div>
+              <div style={{ margin: 'auto auto 8rem auto' }}>{translate('회원가입이 완료되었습니다.')}</div>
             </Col>
           </>}
         <Row style={{ width: '100%', justifyContent: 'space-between' }}>
@@ -395,14 +396,14 @@ const SignUpDemo = (props) => {
             width: '49%'
           }}
             onClick={onClickPrevButton}
-          >이전</Button>
+          >{translate('이전')}</Button>
           <Button variant="contained" style={{
             height: '56px',
             marginTop: '1rem',
             width: '49%'
           }}
             onClick={onClickNextButton}
-          >{activeStep == 2 ? '완료' : '다음'}</Button>
+          >{activeStep == 2 ? translate('완료') : translate('다음')}</Button>
         </Row>
       </Wrappers>
     </>

@@ -11,6 +11,7 @@ import Iconify from '../iconify';
 import RejectionFiles from './errors/RejectionFiles';
 import MultiFilePreview from './preview/MultiFilePreview';
 import SingleFilePreview from './preview/SingleFilePreview';
+import { useLocales } from 'src/locales';
 
 // ----------------------------------------------------------------------
 
@@ -176,6 +177,7 @@ Placeholder.propTypes = {
 };
 
 function Placeholder({ sx, ...other }) {
+  const { translate } = useLocales();
   return (
     <Stack
       spacing={5}
@@ -199,11 +201,11 @@ function Placeholder({ sx, ...other }) {
 
       <div>
         <Typography gutterBottom variant="h5">
-          {other?.title || '파일을 업로드 해주세요.'}
+          {other?.title || translate('파일을 업로드 해주세요.')}
         </Typography>
 
         <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-          {other?.sub_title || '파일을 드롭다운 하거나 업로드 해주세요.'}
+          {other?.sub_title || translate('파일을 드롭다운 하거나 업로드 해주세요.')}
         </Typography>
         <Typography variant="body2" sx={{ color: 'text.secondary' }}>
           {other.fileExplain?.width}

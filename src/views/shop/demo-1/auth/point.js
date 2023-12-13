@@ -7,6 +7,7 @@ import { commarNumber, makeMaxPage } from 'src/utils/function';
 import { PointTable } from 'src/components/elements/shop/common';
 import { apiManager } from 'src/utils/api';
 import { useAuthContext } from 'src/layouts/manager/auth/useAuthContext';
+import { useLocales } from 'src/locales';
 const Wrappers = styled.div`
 max-width:1600px;
 display:flex;
@@ -25,6 +26,7 @@ const PointDemo = (props) => {
       router
     },
   } = props;
+  const { translate } = useLocales();
   const { user } = useAuthContext();
   const [historyContent, setHistoryContent] = useState({});
   const [searchObj, setSearchObj] = useState({
@@ -49,8 +51,8 @@ const PointDemo = (props) => {
   return (
     <>
       <Wrappers>
-        <Title>포인트내역</Title>
-        <Row>보유 포인트: {commarNumber(user?.point)}P</Row>
+        <Title>{translate('포인트내역')}</Title>
+        <Row>{translate('보유 포인트')}: {commarNumber(user?.point)}P</Row>
         <Card sx={{ marginBottom: '2rem' }}>
           <PointTable historyContent={historyContent} onChangePage={onChangePage} searchObj={searchObj} />
         </Card>

@@ -19,6 +19,7 @@ import { bankCodeList, ntvFrnrList, genderList, telComList } from 'src/utils/for
 import { apiManager } from 'src/utils/api';
 import DialogAddAddress from 'src/components/dialog/DialogAddAddress';
 import axios from 'axios';
+import { useLocales } from 'src/locales';
 
 const Wrappers = styled.div`
 max-width:1500px;
@@ -30,8 +31,9 @@ min-height:90vh;
 margin-bottom:10vh;
 `
 
-const STEPS = ['장바구니 확인', '배송지 확인', '결제하기'];
 export function AddressItem({ item, onCreateBilling, onDeleteAddress }) {
+
+  const { translate } = useLocales();
   const { receiver, addr, address_type, phone, is_default, detail_addr, id } = item;
   return (
     <Card
@@ -60,7 +62,7 @@ export function AddressItem({ item, onCreateBilling, onDeleteAddress }) {
             </Typography>
             {is_default && (
               <Label color="info" sx={{ ml: 1 }}>
-                기본주소
+                {translate('기본주소')}
               </Label>
             )}
           </Stack>
@@ -71,10 +73,10 @@ export function AddressItem({ item, onCreateBilling, onDeleteAddress }) {
         </Stack>
         <Stack flexDirection="row" flexWrap="wrap" flexShrink={0}>
           <Button variant="outlined" size="small" color="inherit" sx={{ mr: 1 }} onClick={() => { onDeleteAddress(id) }}>
-            삭제
+            {translate('삭제')}
           </Button>
           <Button variant="outlined" size="small" onClick={onCreateBilling}>
-            해당 주소로 배송하기
+            {translate('해당 주소로 배송하기')}
           </Button>
         </Stack>
       </Stack>
@@ -92,6 +94,7 @@ const CartDemo = (props) => {
   } = props;
   const { setModal } = useModal()
   const { user } = useAuthContext();
+  const { translate } = useLocales();
 
   const { themeCartData, onChangeCartData, themeDnsData } = useSettingsContext();
   const { setting_obj } = themeDnsData;
@@ -137,6 +140,10 @@ const CartDemo = (props) => {
     check_virtual_auth_code: '',
   })
   const [payLoading, setPayLoading] = useState(false);
+
+  const STEPS = [translate('장바구니 확인'), translate('배송지 확인'), translate('결제하기'),];
+
+
   useEffect(() => {
     getCart();
   }, [])
@@ -192,11 +199,11 @@ const CartDemo = (props) => {
       })
     } else if (item?.type == 'certification') {
       if (parseFloat(max_use_point) < parseFloat(payData.use_point)) {
-        toast.error('최대사용가능 포인트를 초과하였습니다.');
+        toast.error(translate('최대사용가능 포인트를 초과하였습니다.'));
         return;
       }
       if (parseFloat(user?.point ?? 0) < parseFloat(payData.use_point)) {
-        toast.error('보유포인트가 부족합니다.');
+        toast.error(translate('보유포인트가 부족합니다.'));
         return;
       }
       setPayLoading(true);
@@ -214,18 +221,18 @@ const CartDemo = (props) => {
   const onPayByHand = async () => {
     if (buyType == 'card') {//카드결제
       if (parseFloat(max_use_point) < parseFloat(payData.use_point)) {
-        toast.error('최대사용가능 포인트를 초과하였습니다.');
+        toast.error(translate('최대사용가능 포인트를 초과하였습니다.'));
         return;
       }
       if (parseFloat(user?.point ?? 0) < parseFloat(payData.use_point)) {
-        toast.error('보유포인트가 부족합니다.');
+        toast.error(translate('보유포인트가 부족합니다.'));
         return;
       }
       setPayLoading(true);
       let result = await onPayProductsByHand(products, payData);
       if (result) {
         await onChangeCartData([]);
-        toast.success('성공적으로 구매에 성공하였습니다.');
+        toast.success(translate('성공적으로 구매에 성공하였습니다.'));
         router.push('/shop/auth/history');
       }
     }
@@ -261,13 +268,13 @@ const CartDemo = (props) => {
   }
   const sendOneWonCheckAccrount = async () => {//1원인증
     if (!payData.bank_code) {
-      return toast.error('은행을 선택해 주세요.');
+      return toast.error(translate('은행을 선택해 주세요.'));
     }
     if (!payData.acct_num) {
-      return toast.error('계좌번호를 입력해 주세요.');
+      return toast.error(translate('계좌번호를 입력해 주세요.'));
     }
     if (!payData.buyer_name) {
-      return toast.error('예금주를 입력해 주세요.');
+      return toast.error(translate('예금주를 입력해 주세요.'));
     }
     try {
       const { data: response } = await axios.post(`https://api.cashes.co.kr/api/v1/viss/acct`, {
@@ -277,7 +284,7 @@ const CartDemo = (props) => {
         custNm: payData.buyer_name,
       })
       if (response?.code == '0000') {
-        toast.success('성공적으로 발송 되었습니다.');
+        toast.success(translate('성공적으로 발송 되었습니다.'));
         setPayData({
           ...payData,
           check_virtual_auth_step: 1,
@@ -294,7 +301,7 @@ const CartDemo = (props) => {
   }
   const checkOneWonCheckAccrount = async () => {//1원인증확인
     if (!payData.check_virtual_auth_code) {
-      return toast.error('인증코드를 입력해 주세요.');
+      return toast.error(translate('인증코드를 입력해 주세요.'));
     }
     try {
       const { data: response } = await axios.post(`https://api.cashes.co.kr/api/v1/viss/confirm`, {
@@ -304,7 +311,7 @@ const CartDemo = (props) => {
         verifyVal: payData.check_virtual_auth_code,
       })
       if (response?.code == '0000') {
-        toast.success('성공적으로 인증 되었습니다.');
+        toast.success(translate('성공적으로 인증 되었습니다.'));
         setPayData({
           ...payData,
           check_virtual_auth_step: 2,
@@ -319,7 +326,7 @@ const CartDemo = (props) => {
   }
   const checkRealNameVirtualAccount = async () => {
     if (!payData.auth_num) {
-      return toast.error('생년월일을 입력해 주세요.');
+      return toast.error(translate('생년월일을 입력해 주세요.'));
     }
     try {
       const { data: response } = await axios.post(`https://api.cashes.co.kr/api/v1/viss/realDepositor`, {
@@ -330,7 +337,7 @@ const CartDemo = (props) => {
         regNo: payData.auth_num.substring(2, payData.auth_num.length),
       })
       if (response?.code == '0000') {
-        toast.success('성공적으로 인증 되었습니다.');
+        toast.success(translate('성공적으로 인증 되었습니다.'));
         setPayData({
           ...payData,
           check_virtual_auth_step: 3,
@@ -359,7 +366,7 @@ const CartDemo = (props) => {
         agree4: 'Y',
       })
       if (response?.code == '0000') {
-        toast.success('성공적으로 발송 되었습니다.');
+        toast.success(translate('성공적으로 발송 되었습니다.'));
         setPayData({
           ...payData,
           txSeqNo: response?.response?.txSeqNo
@@ -380,7 +387,7 @@ const CartDemo = (props) => {
         otpNo: payData.buyer_phone_check,
       })
       if (response?.code == '0000') {
-        toast.success('성공적으로 인증 되었습니다.');
+        toast.success(translate('성공적으로 인증 되었습니다.'));
         setPayData({
           ...payData,
           check_virtual_auth_step: 4,
@@ -421,7 +428,7 @@ const CartDemo = (props) => {
         onAddAddress={onAddAddress}
       />
       <Wrappers>
-        <Title>장바구니</Title>
+        <Title>{translate('장바구니')}=</Title>
         <CheckoutSteps activeStep={activeStep} steps={STEPS} />
         <Grid container spacing={3}>
           <Grid item xs={12} md={8}>
@@ -440,8 +447,8 @@ const CartDemo = (props) => {
                     :
                     <>
                       <EmptyContent
-                        title="장바구니가 비어 있습니다."
-                        description="장바구니에 상품을 채워 주세요."
+                        title={translate("장바구니가 비어 있습니다.")}
+                        description={translate("장바구니에 상품을 채워 주세요.")}
                         img="/assets/illustrations/illustration_empty_cart.svg"
                       />
                     </>}
@@ -468,8 +475,8 @@ const CartDemo = (props) => {
                       <>
                         <Card sx={{ marginBottom: '1.5rem' }}>
                           <EmptyContent
-                            title="배송지가 없습니다."
-                            description="배송지를 추가해 주세요."
+                            title={translate("배송지가 없습니다.")}
+                            description={translate("배송지를 추가해 주세요.")}
                             img=""
                           />
                         </Card>
@@ -482,7 +489,7 @@ const CartDemo = (props) => {
                 <Card sx={{ marginBottom: '1.5rem' }}>
                   {!buyType &&
                     <>
-                      <CardHeader title="결제 수단 선택" />
+                      <CardHeader title={translate("결제 수단 선택")} />
                       <CardContent>
                         <RadioGroup row>
                           <Stack spacing={3} sx={{ width: 1 }}>
@@ -510,14 +517,14 @@ const CartDemo = (props) => {
                     </>}
                   {buyType == 'card' &&
                     <>
-                      <CardHeader title="카드정보입력" />
+                      <CardHeader title={translate("카드정보입력")} />
                       <CardContent>
                         <Stack spacing={2}>
                           <Cards cvc={''} focused={cardFucus} expiry={payData.yymm} name={payData.buyer_name} number={payData.card_num} />
                           <Stack>
                             <TextField
                               size='small'
-                              label='카드 번호'
+                              label={translate('카드 번호')}
                               value={payData.card_num}
                               placeholder='0000 0000 0000 0000'
                               onChange={(e) => {
@@ -533,7 +540,7 @@ const CartDemo = (props) => {
                           <Stack>
                             <TextField
                               size='small'
-                              label='카드 사용자명'
+                              label={translate('카드 사용자명')}
                               value={payData.buyer_name}
                               onChange={(e) => {
                                 let value = e.target.value;
@@ -547,7 +554,7 @@ const CartDemo = (props) => {
                           <Stack>
                             <TextField
                               size='small'
-                              label='만료일'
+                              label={translate('만료일')}
                               value={payData.yymm}
                               inputProps={{ maxLength: '5' }}
                               onChange={(e) => {
@@ -563,7 +570,7 @@ const CartDemo = (props) => {
                           <Stack>
                             <TextField
                               size='small'
-                              label='카드비밀번호 앞 두자리'
+                              label={translate('카드비밀번호 앞 두자리')}
                               value={payData.card_pw}
                               type='password'
                               inputProps={{ maxLength: '2' }}
@@ -579,7 +586,7 @@ const CartDemo = (props) => {
                           <Stack>
                             <TextField
                               size='small'
-                              label='구매자 휴대폰번호'
+                              label={translate('구매자 휴대폰번호')}
                               value={payData.buyer_phone}
                               onChange={(e) => {
                                 let value = e.target.value;
@@ -593,7 +600,7 @@ const CartDemo = (props) => {
                           <Stack>
                             <TextField
                               size='small'
-                              label='주민번호 또는 사업자등록번호'
+                              label={translate('주민번호 또는 사업자등록번호')}
                               value={payData.auth_num}
                               onChange={(e) => {
                                 let value = e.target.value;
@@ -609,7 +616,7 @@ const CartDemo = (props) => {
                               <Stack>
                                 <TextField
                                   size='small'
-                                  label='비회원주문 비밀번호'
+                                  label={translate('비회원주문 비밀번호')}
                                   type='password'
                                   value={payData.password}
                                   inputProps={{ maxLength: '6' }}
@@ -628,10 +635,10 @@ const CartDemo = (props) => {
                               setModal({
                                 func: () => { onPayByHand() },
                                 icon: 'ion:card-outline',
-                                title: '정말로 결제 하시겠습니까?'
+                                title: translate('정말로 결제 하시겠습니까?')
                               })
                             }}>
-                              결제하기
+                              {translate('결제하기')}
                             </Button>
                           </Stack>
                         </Stack>
@@ -645,23 +652,23 @@ const CartDemo = (props) => {
                           {payData?.virtual_account_info ?
                             <>
                               <Row style={{ columnGap: '0.5rem' }}>
-                                <Typography variant='subtitle2'>발급 번호</Typography>
+                                <Typography variant='subtitle2'>{translate("발급 번호")}</Typography>
                                 <Typography variant='body2' sx={{ color: themeObj.grey[600] }}>{payData?.virtual_account_info?.virtual_acct_issued_seq}</Typography>
                               </Row>
                               <Row style={{ columnGap: '0.5rem' }}>
-                                <Typography variant='subtitle2'>발급 은행</Typography>
+                                <Typography variant='subtitle2'>{translate('발급 은행')}</Typography>
                                 <Typography variant='body2' sx={{ color: themeObj.grey[600] }}>{_.find(bankCodeList, { value: payData?.virtual_account_info?.virtual_bank_code })?.label}</Typography>
                               </Row>
                               <Row style={{ columnGap: '0.5rem' }}>
-                                <Typography variant='subtitle2'>계좌번호</Typography>
+                                <Typography variant='subtitle2'>{translate('계좌번호')}</Typography>
                                 <Typography variant='body2' sx={{ color: themeObj.grey[600] }}>{payData?.virtual_account_info?.virtual_acct_num}</Typography>
                               </Row>
                               <Row style={{ columnGap: '0.5rem' }}>
-                                <Typography variant='subtitle2'>예금주명</Typography>
+                                <Typography variant='subtitle2'>{translate('예금주명')}</Typography>
                                 <Typography variant='body2' sx={{ color: themeObj.grey[600] }}>{payData?.buyer_name}</Typography>
                               </Row>
                               <Row style={{ columnGap: '0.5rem' }}>
-                                <Typography variant='subtitle2'>입금예정금액</Typography>
+                                <Typography variant='subtitle2'>{translate('입금예정금액')}</Typography>
                                 <Typography variant='body2' sx={{ color: themeObj.grey[600] }}>{commarNumber(payData?.amount)}원</Typography>
                               </Row>
                             </>
@@ -669,13 +676,13 @@ const CartDemo = (props) => {
                             <>
                               <Stack>
                                 <Typography variant="subtitle2">
-                                  본인확인
+                                  {translate('본인확인')}
                                 </Typography>
                               </Stack>
                               <Stack>
                                 <FormControl size='small' disabled={payData.check_virtual_auth_step >= 2}>
-                                  <InputLabel>은행</InputLabel>
-                                  <Select label='은행' value={payData?.bank_code} onChange={(e) => {
+                                  <InputLabel>{translate('은행')}</InputLabel>
+                                  <Select label={translate('은행')} value={payData?.bank_code} onChange={(e) => {
                                     setPayData(
                                       {
                                         ...payData,
@@ -693,7 +700,7 @@ const CartDemo = (props) => {
                                 <TextField
                                   disabled={payData.check_virtual_auth_step >= 2}
                                   size='small'
-                                  label='계좌번호'
+                                  label={translate('계좌번호')}
                                   value={payData.acct_num}
                                   onChange={(e) => {
                                     let value = e.target.value;
@@ -708,7 +715,7 @@ const CartDemo = (props) => {
                                 <TextField
                                   disabled={payData.check_virtual_auth_step >= 2}
                                   size='small'
-                                  label='예금주'
+                                  label={translate('예금주')}
                                   value={payData.buyer_name}
                                   onChange={(e) => {
                                     let value = e.target.value;
@@ -725,7 +732,7 @@ const CartDemo = (props) => {
                                     <TextField
                                       disabled={payData.check_virtual_auth_step >= 2}
                                       size='small'
-                                      label='인증코드'
+                                      label={translate('인증코드')}
                                       value={payData.check_virtual_auth_code}
                                       onChange={(e) => {
                                         let value = e.target.value;
@@ -748,7 +755,7 @@ const CartDemo = (props) => {
                                       checkOneWonCheckAccrount();
                                     }
                                   }}>
-                                  {payData.check_virtual_auth_step == 0 ? '1원인증' : (payData.check_virtual_auth_step >= 2 ? '확인완료' : '확인')}
+                                  {payData.check_virtual_auth_step == 0 ? translate('1원인증') : (payData.check_virtual_auth_step >= 2 ? translate('확인완료') : translate('확인'))}
                                 </Button>
                               </Stack>
                               {payData.check_virtual_auth_step >= 2 &&
@@ -757,7 +764,7 @@ const CartDemo = (props) => {
                                     <TextField
                                       disabled={payData.check_virtual_auth_step >= 3}
                                       size='small'
-                                      label='생년월일'
+                                      label={translate('생년월일')}
                                       placeholder='19991010'
                                       value={payData.auth_num}
                                       onChange={(e) => {
@@ -774,7 +781,7 @@ const CartDemo = (props) => {
                                       variant='contained'
                                       disabled={payData.check_virtual_auth_step >= 3}
                                       onClick={checkRealNameVirtualAccount}>
-                                      {(payData.check_virtual_auth_step == 2 ? '실명조회' : '확인완료')}
+                                      {(payData.check_virtual_auth_step == 2 ? translate('실명조회') : translate('확인완료'))}
                                     </Button>
                                   </Stack>
                                 </>}
@@ -782,8 +789,8 @@ const CartDemo = (props) => {
                                 <>
                                   <Stack>
                                     <FormControl size='small'>
-                                      <InputLabel>성별</InputLabel>
-                                      <Select label='성별' value={payData?.gender}
+                                      <InputLabel>{translate('성별')}</InputLabel>
+                                      <Select label={translate('성별')} value={payData?.gender}
                                         disabled={payData.check_virtual_auth_step >= 4}
                                         onChange={(e) => {
                                           setPayData(
@@ -801,8 +808,8 @@ const CartDemo = (props) => {
                                   </Stack>
                                   <Stack>
                                     <FormControl size='small' >
-                                      <InputLabel>내외국인</InputLabel>
-                                      <Select label='내외국인' value={payData?.ntv_frnr}
+                                      <InputLabel>{translate('내외국인')}</InputLabel>
+                                      <Select label={translate('내외국인')} value={payData?.ntv_frnr}
                                         disabled={payData.check_virtual_auth_step >= 4}
                                         onChange={(e) => {
                                           setPayData(
@@ -820,8 +827,8 @@ const CartDemo = (props) => {
                                   </Stack>
                                   <Stack>
                                     <FormControl size='small' >
-                                      <InputLabel>통신사</InputLabel>
-                                      <Select label='통신사' value={payData?.tel_com}
+                                      <InputLabel>{translate('통신사')}</InputLabel>
+                                      <Select label={translate('통신사')} value={payData?.tel_com}
                                         disabled={payData.check_virtual_auth_step >= 4}
                                         onChange={(e) => {
                                           setPayData(
@@ -841,7 +848,7 @@ const CartDemo = (props) => {
                                     <TextField
                                       disabled={payData.check_virtual_auth_step >= 4}
                                       size='small'
-                                      label='전화번호'
+                                      label={translate('전화번호')}
                                       value={payData.buyer_phone}
                                       onChange={(e) => {
                                         let value = e.target.value;
@@ -853,7 +860,7 @@ const CartDemo = (props) => {
                                       InputProps={{
                                         endAdornment: <Button variant='contained' size='small' sx={{ width: '160px', marginRight: '-0.5rem' }}
                                           disabled={payData.check_virtual_auth_step >= 4}
-                                          onClick={sendSmsPushVirtualAccount}>{payData.check_virtual_auth_step >= 4 ? '확인완료' : '인증번호 발송'}</Button>
+                                          onClick={sendSmsPushVirtualAccount}>{payData.check_virtual_auth_step >= 4 ? translate('확인완료') : translate('인증번호 발송')}</Button>
                                       }}
                                     />
                                   </Stack>
@@ -873,7 +880,7 @@ const CartDemo = (props) => {
                                       InputProps={{
                                         endAdornment: <Button variant='contained' size='small' sx={{ width: '160px', marginRight: '-0.5rem' }}
                                           disabled={payData.check_virtual_auth_step >= 4}
-                                          onClick={checkSmsVerityCodeVirtualAccount}>{payData.check_virtual_auth_step >= 4 ? '확인완료' : '인증번호 확인'}</Button>
+                                          onClick={checkSmsVerityCodeVirtualAccount}>{payData.check_virtual_auth_step >= 4 ? translate('확인완료') : translate('인증번호 확인')}</Button>
                                       }}
                                     />
                                   </Stack>
@@ -884,7 +891,7 @@ const CartDemo = (props) => {
                                     <Button
                                       variant='contained'
                                       onClick={requestVirtualAccount}>
-                                      발급신청
+                                      {translate('발급신청')}
                                     </Button>
                                   </Stack>
                                 </>}
@@ -915,7 +922,7 @@ const CartDemo = (props) => {
                   disabled={_.sum(_.map(products, (item) => { return item.quantity * item.product_sale_price })) <= 0}
                   onClick={onClickNextStep}
                 >
-                  {'배송지 선택하기'}
+                  {translate('배송지 선택하기')}
                 </Button>
               </>}
           </Grid>
@@ -924,7 +931,7 @@ const CartDemo = (props) => {
           <>
             <Row style={{ width: '100%', justifyContent: 'space-between', maxWidth: '989px' }}>
               <Button startIcon={<Iconify icon="grommet-icons:form-previous" />} onClick={onClickPrevStep} variant="soft" size="small">
-                이전 단계 돌아가기
+                {translate('이전 단계 돌아가기')}
               </Button>
               {activeStep == 1 &&
                 <>
@@ -934,7 +941,7 @@ const CartDemo = (props) => {
                     onClick={() => setAddAddressOpen(true)}
                     startIcon={<Iconify icon="eva:plus-fill" />}
                   >
-                    배송지 추가하기
+                    {translate('배송지 추가하기')}
                   </Button>
                 </>}
             </Row>

@@ -8,6 +8,7 @@ import { SkeletonProductDetails } from 'src/components/skeleton';
 import dynamic from 'next/dynamic'
 import { apiManager, apiShop } from 'src/utils/api';
 import Head from 'next/head';
+import { useLocales } from 'src/locales';
 const ReactQuill = dynamic(() => import('react-quill'), {
   ssr: false,
   loading: () => <p>Loading ...</p>,
@@ -31,6 +32,7 @@ const ItemDemo = (props) => {
       router
     },
   } = props;
+  const { translate } = useLocales();
   const { themeStretch, themeDnsData } = useSettingsContext();
 
   const [loading, setLoading] = useState(true);
@@ -68,7 +70,7 @@ const ItemDemo = (props) => {
   const TABS = [
     {
       value: 'description',
-      label: '상품설명',
+      label: translate('상품설명'),
       component: product?.product_description ?
         <ReactQuill
           className='none-padding'
@@ -80,7 +82,7 @@ const ItemDemo = (props) => {
     },
     {
       value: 'reviews',
-      label: `상품후기 (${reviewContent?.total})`,
+      label: `${translate('상품후기')} (${reviewContent?.total})`,
       component: product ? <ProductDetailsReview product={product} reviewContent={reviewContent} onChangePage={getItemInfo} reviewPage={reviewPage} /> : null,
     },
   ];

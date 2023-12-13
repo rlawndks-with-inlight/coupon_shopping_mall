@@ -14,6 +14,7 @@ import { LazyLoadComponent, LazyLoadImage } from 'react-lazy-load-image-componen
 import { useAuthContext } from 'src/layouts/manager/auth/useAuthContext';
 import { useModal } from '../dialog/ModalProvider';
 import { apiShop } from 'src/utils/api';
+import { useLocales } from 'src/locales';
 const Table = styled.table`
 font-size:${themeObj.font_size.size8};
 width:100%;
@@ -47,6 +48,7 @@ cursor:pointer;
 `
 const ContentTable = (props) => {
   const { setModal } = useModal()
+  const { translate } = useLocales();
   const { data, onChangePage, searchObj, columns, postCategory } = props;
   const { post_category_type } = postCategory;
   const { page, page_size } = props?.searchObj;
@@ -129,7 +131,7 @@ const ContentTable = (props) => {
                               setModal({
                                 func: () => { deletePost(row?.id) },
                                 icon: 'material-symbols:delete-outline',
-                                title: '정말 삭제하시겠습니까?'
+                                title: translate('정말 삭제하시겠습니까?')
                               })
                             }}>
                               <Icon icon='material-symbols:delete-outline' />
@@ -144,7 +146,7 @@ const ContentTable = (props) => {
               <>
                 <Col>
                   <Icon icon={'basil:cancel-outline'} style={{ margin: '8rem auto 1rem auto', fontSize: themeObj.font_size.size1, color: themeObj.grey[300] }} />
-                  <div style={{ margin: 'auto auto 8rem auto' }}> 데이터가 없습니다.</div>
+                  <div style={{ margin: 'auto auto 8rem auto' }}> {translate('데이터가 없습니다.')}</div>
                 </Col>
               </>
               :

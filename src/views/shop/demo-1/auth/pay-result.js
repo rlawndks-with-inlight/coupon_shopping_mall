@@ -3,6 +3,7 @@ import { Card, Grid } from "@mui/material";
 import { useEffect } from "react";
 import { Col, Row, Title } from "src/components/elements/styled-components";
 import { useSettingsContext } from "src/components/settings";
+import { useLocales } from "src/locales";
 import styled from "styled-components";
 
 
@@ -26,19 +27,20 @@ const PayResultDemo = (props) => {
       router
     },
   } = props;
+  const { translate } = useLocales();
   const { themeDnsData } = useSettingsContext();
 
   const getResultContent = (type) => {
     if (type == 0) {
       return {
         icon: <Icon icon={'mdi:success-circle-outline'} style={{ margin: 'auto', fontSize: '8rem', color: themeDnsData?.theme_css?.main_color }} />,
-        title: '결제에 성공하였습니다.',
+        title: translate('결제에 성공하였습니다.'),
         content: '',
       }
     } else if (type == 1) {
       return {
         icon: <Icon icon={'material-symbols:cancel-outline'} style={{ margin: 'auto', fontSize: '8rem', color: themeDnsData?.theme_css?.main_color }} />,
-        title: '결제에 실패하였습니다.',
+        title: translate('결제에 실패하였습니다.'),
         content: '',
       }
     }
@@ -56,7 +58,7 @@ const PayResultDemo = (props) => {
                   {getResultContent(router.query?.type).icon}
                 </div>
                 <Row style={{ margin: '1rem auto auto auto', columnGap: '1rem' }}>
-                  <div>주문번호:</div>
+                  <div>{translate('주문번호')}:</div>
                   <div>{router.query?.ord_num}</div>
                 </Row>
               </Col>

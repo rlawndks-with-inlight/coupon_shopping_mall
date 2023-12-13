@@ -11,6 +11,7 @@ import { useAuthContext } from 'src/layouts/manager/auth/useAuthContext';
 import { toast } from 'react-hot-toast';
 import { apiShop } from 'src/utils/api';
 import { useModal } from 'src/components/dialog/ModalProvider';
+import { useLocales } from 'src/locales';
 const Wrappers = styled.div`
 max-width:1600px;
 display:flex;
@@ -50,6 +51,7 @@ font-weight:${props => props.isSelect ? 'bold' : ''};
 }
 `
 const ArticlesDemo = (props) => {
+  const { translate } = useLocales();
   const { user } = useAuthContext();
   const { setModal } = useModal()
   const [postCategory, setPostCategory] = useState({});
@@ -57,7 +59,7 @@ const ArticlesDemo = (props) => {
   const defaultColumns = [
     {
       id: 'post_title',
-      label: '제목',
+      label: translate('제목'),
       action: (row) => {
         return row['post_title'] ?? "---"
       }
@@ -65,7 +67,7 @@ const ArticlesDemo = (props) => {
     ...((postCategory?.is_able_user_add == 1 && postCategory?.post_category_read_type == 0) ? [
       {
         id: 'writer_nickname',
-        label: '작성자',
+        label: translate('작성자'),
         action: (row) => {
           return row['writer_nickname'] ?? "---"
         }
@@ -73,7 +75,7 @@ const ArticlesDemo = (props) => {
     ] : []),
     {
       id: 'created_at',
-      label: '생성시간',
+      label: translate('생성시간'),
       action: (row) => {
         return <>
           <div style={{ color: themeObj.grey[500] }}>
@@ -85,15 +87,15 @@ const ArticlesDemo = (props) => {
     ...((postCategory?.is_able_user_add == 1 && postCategory?.post_category_read_type == 1) ? [
       {
         id: 'replies',
-        label: '답변여부',
+        label: translate('답변여부'),
         action: (row) => {
-          return row?.replies.length > 0 ? '답변완료' : '답변안함'
+          return row?.replies.length > 0 ? translate('답변완료') : translate('답변안함')
         }
       }
     ] : []),
     {
       id: 'edit',
-      label: '자세히보기',
+      label: translate('자세히보기'),
       action: (row) => {
         return (
           <>
@@ -108,7 +110,7 @@ const ArticlesDemo = (props) => {
                   setModal({
                     func: () => { deletePost(row?.id) },
                     icon: 'material-symbols:delete-outline',
-                    title: '정말 삭제하시겠습니까?'
+                    title: translate('정말 삭제하시겠습니까?')
                   })
                 }}>
                   <Icon icon='material-symbols:delete-outline' />
@@ -186,7 +188,7 @@ const ArticlesDemo = (props) => {
               }}
                 variant={searchObj.category_id == router.query?.article_category ? 'contained' : 'outlined'}
               >
-                전체
+                {translate('전체')}
               </Button>
             </>}
           {postCategory?.children && postCategory?.children.map((category) => (
@@ -240,10 +242,10 @@ const ArticlesDemo = (props) => {
                   if (user?.id) {
                     router.push(`/shop/service/${router.query?.article_category}/add`)
                   } else {
-                    toast.error("로그인을 해주세요.")
+                    toast.error(translate("로그인을 해주세요."))
                   }
                 }}>
-                  작성
+                  {translate('작성')}
                 </Button>
               </>}
           </Col>

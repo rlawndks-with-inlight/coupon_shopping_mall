@@ -154,7 +154,7 @@ const Demo1 = (props) => {
                                 style={{
                                     marginRight: '1rem'
                                 }}
-                                />
+                            />
                         })}
                     </Tabs>
                     <ChooseBox>
@@ -248,7 +248,7 @@ const Demo1 = (props) => {
                             <div>{deliveryFee}원</div>
                         </Row>
                         <Row style={{ margin: '1rem 0 2rem 0', justifyContent: 'space-between', fontWeight: 'bold', color: themeDnsData.theme_css?.main_color }}>
-                            <div>총 결제 금액</div>
+                            <div>총 결제금액</div>
                             <div>{commarNumber(priceSum + deliveryFee)}원</div>
                         </Row>
                         <Button variant='contained' style={{ height: '56px', fontSize: 'large' }}>

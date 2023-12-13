@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
 import { TitleComponent } from 'src/components/elements/shop/demo-4';
 import { Col, Title } from 'src/components/elements/styled-components';
+import { useLocales } from 'src/locales';
 import { apiManager } from 'src/utils/api';
 import styled from 'styled-components'
 
@@ -17,20 +18,7 @@ width: 90%;
 min-height:90vh;
 `
 
-const returnFindType = {
-  0: {
-    title: '아이디 찾기',
-    defaultObj: {
 
-    }
-  },
-  1: {
-    title: '비밀번호 찾기',
-    defaultObj: {
-
-    }
-  }
-}
 const FindInfoDemo = (props) => {
   const {
     data: {
@@ -40,7 +28,21 @@ const FindInfoDemo = (props) => {
       router
     },
   } = props;
+  const { translate } = useLocales();
+  const returnFindType = {
+    0: {
+      title: translate('아이디 찾기'),
+      defaultObj: {
 
+      }
+    },
+    1: {
+      title: translate('비밀번호 찾기'),
+      defaultObj: {
+
+      }
+    }
+  }
   const [findType, setFindType] = useState(undefined);
   const [phoneNum, setPhoneNum] = useState("");
   const [findUserObj, setFindUserObj] = useState({})
@@ -63,13 +65,13 @@ const FindInfoDemo = (props) => {
 
   const onSendPhoneVerifyCode = async () => {
     if (!findUserObj.phone_num) {
-      return toast.error('휴대폰 번호를 입력해주세요.');
+      return toast.error(translate('휴대폰 번호를 입력해주세요.'));
     }
     let result = await apiManager('auth/code', 'create', {
       phone_num: findUserObj.phone_num
     })
     if (result) {
-      toast.success('성공적으로 발송되었습니다.');
+      toast.success(translate('성공적으로 발송 되었습니다.'));
       setFindUserObj({
         ...findUserObj,
         phoneToken: result?.token,
@@ -86,31 +88,31 @@ const FindInfoDemo = (props) => {
       obj['find_user_name'] = 1;
     } else if (findType == 1) {
       if (!findUserObj?.user_name) {
-        return toast.error('유저아이디를 입력해주세요.');
+        return toast.error(translate('유저아이디를 입력해주세요.'));
       }
       obj['find_password'] = 1;
       obj['user_name'] = findUserObj?.user_name
     }
     let result = await apiManager('auth/code/check', 'create', obj);
     if (result) {
-      toast.success('성공적으로 인증되었습니다.');
+      toast.success(translate('성공적으로 인증 되었습니다.'));
       if (result?.users.length > 0) {
         setFindUserObj({
           ...findUserObj,
           find_user_list: result?.users,
         })
       } else {
-        toast.error('유저를 찾을 수 없습니다.');
+        toast.error(translate('유저를 찾을 수 없습니다.'));
       }
 
     }
   }
   const onChangePassword = async () => {
     if (!findUserObj.password) {
-      return toast.error('비밀번호를 입력해주세요.');
+      return toast.error(translate('비밀번호를 입력해주세요.'));
     }
     if (findUserObj.password != findUserObj.passwordCheck) {
-      return toast.error('비밀번호가 일치하지 않습니다.');
+      return toast.error(translate('비밀번호가 일치하지 않습니다.'));
     }
     let result = await apiManager('auth/change-password', 'update', {
       token: findUserObj.phoneToken,
@@ -119,7 +121,7 @@ const FindInfoDemo = (props) => {
       user_name: findUserObj.user_name,
     })
     if (result) {
-      toast.success('성공적으로 비밀번호가 변경되었습니다.');
+      toast.success(translate('성공적으로 비밀번호가 변경되었습니다.'));
       router.push(`/shop/auth/login`)
     }
   }
@@ -143,7 +145,7 @@ const FindInfoDemo = (props) => {
             <>
               {findUserObj?.find_user_list?.length > 0 ?
                 <>
-                  <Title style={{ marginTop: '0' }}>찾은 유저아이디</Title>
+                  <Title style={{ marginTop: '0' }}>{translate('찾은 유저아이디')}</Title>
                   <Col>
                     {findUserObj?.find_user_list && findUserObj?.find_user_list.map(item => (
                       <>
@@ -160,14 +162,14 @@ const FindInfoDemo = (props) => {
                     onClick={() => {
                       router.push(`/shop/auth/login`)
                     }}
-                  >로그인하기</Button>
+                  >{translate('로그인하기')}</Button>
                 </>
                 :
                 <>
                   <FormControl variant="outlined" >
-                    <InputLabel>휴대폰번호</InputLabel>
+                    <InputLabel>{translate('휴대폰번호')}</InputLabel>
                     <OutlinedInput
-                      label='휴대폰번호'
+                      label={translate('휴대폰번호')}
                       type="number"
                       autoComplete='new-password'
                       value={findUserObj.phone_num}
@@ -175,15 +177,15 @@ const FindInfoDemo = (props) => {
                         variant='outlined'
                         style={{ width: '150px', height: '48px', marginRight: '-0.5rem' }}
                         onClick={onSendPhoneVerifyCode}
-                      >인증번호 발송</Button>}
+                      >{translate('인증번호 발송')}</Button>}
                       onChange={(e) => {
                         setFindUserObj({ ...findUserObj, ['phone_num']: e.target.value })
                       }} />
                   </FormControl>
                   <FormControl variant="outlined" >
-                    <InputLabel>인증번호</InputLabel>
+                    <InputLabel>{translate('인증번호')}</InputLabel>
                     <OutlinedInput
-                      label='인증번호'
+                      label={translate('인증번호')}
                       type="number"
                       autoComplete='new-password'
                       value={findUserObj.phoneCheck}
@@ -192,7 +194,7 @@ const FindInfoDemo = (props) => {
                         style={{ width: '150px', height: '48px', marginRight: '-0.5rem' }}
                         disabled={!findUserObj.is_send_phone_check_num}
                         onClick={onCheckPhoneVerifyCode}
-                      >{findUserObj.find_user_list.length > 0 ? '확인완료' : '인증번호 확인'}</Button>}
+                      >{findUserObj.find_user_list.length > 0 ? translate('확인완료') : translate('인증번호 확인')}</Button>}
                       onChange={(e) => {
                         setFindUserObj({ ...findUserObj, ['phoneCheck']: e.target.value })
                       }} />
@@ -204,9 +206,9 @@ const FindInfoDemo = (props) => {
               {findUserObj.find_user_list?.length > 0 ?
                 <>
                   <FormControl variant="outlined" >
-                    <InputLabel>새비밀번호</InputLabel>
+                    <InputLabel>{translate('새비밀번호')}</InputLabel>
                     <OutlinedInput
-                      label='새비밀번호'
+                      label={translate('새비밀번호')}
                       autoComplete='new-password'
                       type='password'
                       value={findUserObj.password}
@@ -215,9 +217,9 @@ const FindInfoDemo = (props) => {
                       }} />
                   </FormControl>
                   <FormControl variant="outlined" >
-                    <InputLabel>새비밀번호확인</InputLabel>
+                    <InputLabel>{translate('새비밀번호확인')}</InputLabel>
                     <OutlinedInput
-                      label='새비밀번호확인'
+                      label={translate('새비밀번호확인')}
                       autoComplete='new-password'
                       type='password'
                       value={findUserObj.passwordCheck}
@@ -230,14 +232,14 @@ const FindInfoDemo = (props) => {
                     style={{ height: '48px' }}
                     startIcon={<Icon icon='material-symbols:lock' style={{ marginBottom: '0.2rem' }} />}
                     onClick={onChangePassword}
-                  >비밀번호 변경하기</Button>
+                  >{translate('비밀번호 변경하기')}</Button>
                 </>
                 :
                 <>
                   <FormControl variant="outlined" >
-                    <InputLabel>유저아이디</InputLabel>
+                    <InputLabel>{translate('유저아이디')}</InputLabel>
                     <OutlinedInput
-                      label='유저아이디'
+                      label={translate('유저아이디')}
                       autoComplete='new-password'
                       value={findUserObj.user_name}
                       onChange={(e) => {
@@ -245,9 +247,9 @@ const FindInfoDemo = (props) => {
                       }} />
                   </FormControl>
                   <FormControl variant="outlined" >
-                    <InputLabel>휴대폰번호</InputLabel>
+                    <InputLabel>{translate('휴대폰번호')}</InputLabel>
                     <OutlinedInput
-                      label='휴대폰번호'
+                      label={translate('휴대폰번호')}
                       type="number"
                       autoComplete='new-password'
                       value={findUserObj.phone_num}
@@ -255,15 +257,15 @@ const FindInfoDemo = (props) => {
                         variant='outlined'
                         style={{ width: '150px', height: '48px', marginRight: '-0.5rem' }}
                         onClick={onSendPhoneVerifyCode}
-                      >인증번호 발송</Button>}
+                      >{translate('인증번호 발송')}</Button>}
                       onChange={(e) => {
                         setFindUserObj({ ...findUserObj, ['phone_num']: e.target.value })
                       }} />
                   </FormControl>
                   <FormControl variant="outlined" >
-                    <InputLabel>인증번호</InputLabel>
+                    <InputLabel>{translate('인증번호')}</InputLabel>
                     <OutlinedInput
-                      label='인증번호'
+                      label={translate('인증번호')}
                       type="number"
                       autoComplete='new-password'
                       value={findUserObj.phoneCheck}
@@ -272,7 +274,7 @@ const FindInfoDemo = (props) => {
                         style={{ width: '150px', height: '48px', marginRight: '-0.5rem' }}
                         disabled={!findUserObj.is_send_phone_check_num}
                         onClick={onCheckPhoneVerifyCode}
-                      >{findUserObj.find_user_list.length > 0 ? '확인완료' : '인증번호 확인'}</Button>}
+                      >{findUserObj.find_user_list.length > 0 ? translate('확인완료') : translate('인증번호 확인')}</Button>}
                       onChange={(e) => {
                         setFindUserObj({ ...findUserObj, ['phoneCheck']: e.target.value })
                       }} />

@@ -51,6 +51,7 @@ import DaumPostcode from 'react-daum-postcode';
 import { apiManager } from 'src/utils/api';
 import { useRouter } from 'next/router';
 import DialogBuyNow from 'src/components/dialog/DialogBuyNow';
+import { useLocales } from 'src/locales';
 // ----------------------------------------------------------------------
 
 ProductDetailsSummary.propTypes = {
@@ -62,6 +63,7 @@ ProductDetailsSummary.propTypes = {
 const STEPS = ['배송지 확인', '결제하기'];
 export default function ProductDetailsSummary({ product, onAddCart, onGotoStep, ...other }) {
   const router = useRouter();
+  const { translate } = useLocales();
   const { themeCartData, onChangeCartData } = useSettingsContext();
   const { user } = useAuthContext();
   const [selectProductGroups, setSelectProductGroups] = useState({
@@ -100,10 +102,10 @@ export default function ProductDetailsSummary({ product, onAddCart, onGotoStep, 
     if (user) {
       let result = await insertCartDataUtil({ ...product, seller_id: router.query?.seller_id ?? 0 }, selectProductGroups, themeCartData, onChangeCartData);
       if (result) {
-        toast.success("장바구니에 성공적으로 추가되었습니다.")
+        toast.success(translate("장바구니에 성공적으로 추가되었습니다."))
       }
     } else {
-      toast.error('로그인을 해주세요.');
+      toast.error(translate('로그인을 해주세요.'));
     }
 
   };
@@ -158,7 +160,7 @@ export default function ProductDetailsSummary({ product, onAddCart, onGotoStep, 
               )}
               {commarNumber(product_sale_price)} 원
             </Typography>
-            <Typography variant="h7" color={themeObj.grey[500]}>배송비: {commarNumber(delivery_fee)}원</Typography>
+            <Typography variant="h7" color={themeObj.grey[500]}>{translate('배송비')}: {commarNumber(delivery_fee)}원</Typography>
           </Stack>
           <Divider sx={{ borderStyle: 'dashed' }} />
           {groups.map((group) => (
@@ -168,7 +170,7 @@ export default function ProductDetailsSummary({ product, onAddCart, onGotoStep, 
                   {group?.group_name}
                 </Typography>
                 <FormControl size='small'>
-                  <InputLabel id="demo-simple-select-label">선택</InputLabel>
+                  <InputLabel id="demo-simple-select-label">{translate('선택')}</InputLabel>
                   <Select
                     name="size"
                     size="small"
@@ -180,7 +182,7 @@ export default function ProductDetailsSummary({ product, onAddCart, onGotoStep, 
                         textAlign: 'right',
                       },
                     }}
-                    label="선택"
+                    label={translate("선택")}
                     onChange={(e) => {
                       onSelectOption(group, e.target.value)
                     }}
@@ -198,7 +200,7 @@ export default function ProductDetailsSummary({ product, onAddCart, onGotoStep, 
           ))}
           <Stack direction="row" justifyContent="space-between">
             <Typography variant="subtitle2" sx={{ height: 36, lineHeight: '36px' }}>
-              수량
+              {translate('수량')}
             </Typography>
 
             <Stack spacing={1}>
@@ -241,12 +243,12 @@ export default function ProductDetailsSummary({ product, onAddCart, onGotoStep, 
               onClick={handleAddCart}
               sx={{ whiteSpace: 'nowrap' }}
             >
-              장바구니
+              {translate('장바구니')}
             </Button>
             <Button fullWidth disabled={getProductStatus(status).color != 'info' || !(product_sale_price > 0)} size="large" variant="contained" onClick={() => {
               setBuyOpen(true);
             }}>
-              바로구매
+              {translate('바로구매')}
             </Button>
           </Stack>
           <Stack direction="row" alignItems="center" justifyContent="center">

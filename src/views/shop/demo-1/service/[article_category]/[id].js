@@ -11,6 +11,7 @@ import { Col, Row, Title } from "src/components/elements/styled-components";
 import { useSettingsContext } from "src/components/settings";
 import { Upload } from "src/components/upload";
 import { useAuthContext } from "src/layouts/manager/auth/useAuthContext";
+import { useLocales } from "src/locales";
 import { apiShop } from "src/utils/api";
 import ReactQuillComponent from "src/views/manager/react-quill";
 import styled from "styled-components";
@@ -38,6 +39,7 @@ const ArticleDemo = (props) => {
       router
     },
   } = props;
+  const { translate } = useLocales();
   const { themeMode, themePostCategoryList, themeDnsData } = useSettingsContext();
   const theme = useTheme();
   const [postCategory, setPostCategory] = useState({});
@@ -70,7 +72,7 @@ const ArticleDemo = (props) => {
       result = await apiShop('post', 'update', { ...item });
     }
     if (result) {
-      toast.success("성공적으로 저장 되었습니다.");
+      toast.success(translate("성공적으로 저장 되었습니다."));
       router.push(`/shop/service/${router.query?.article_category}`);
     }
   }
@@ -92,7 +94,7 @@ const ArticleDemo = (props) => {
                   {postCategory.post_category_type == 1 &&
                     <>
                       <Typography variant="subtitle2" sx={{ color: 'text.secondary' }}>
-                        대표이미지등록
+                        {translate('대표이미지등록')}
                       </Typography>
                       <Upload file={item.post_title_file || item.post_title_img} onDrop={(acceptedFiles) => {
                         const newFile = acceptedFiles[0];
@@ -125,12 +127,12 @@ const ArticleDemo = (props) => {
                           )
                         }}
                         fileExplain={{
-                          width: '(512x512 추천)'//파일 사이즈 설명
+                          width: translate('(512x512 추천)')//파일 사이즈 설명
                         }}
                       />
                     </>}
                   <TextField
-                    label='제목'
+                    label={translate('제목')}
                     value={item.post_title}
                     onChange={(e) => {
                       setItem(
@@ -156,16 +158,16 @@ const ArticleDemo = (props) => {
                     setModal({
                       func: () => { onSave() },
                       icon: 'material-symbols:edit-outline',
-                      title: '저장 하시겠습니까?'
+                      title: translate('저장 하시겠습니까?')
                     })
                   }}>
-                    저장
+                    {translate('저장')}
                   </Button>
                 </>
                 :
                 <>
                   <Row style={{ columnGap: '0.5rem', fontSize: '1rem', alignItems: 'center' }}>
-                    <div>제목: </div>
+                    <div>{translate('제목')}: </div>
                     <h1 style={{ fontSize: '1rem' }}>{item?.post_title}</h1>
                   </Row>
                   <img src={item?.post_title_img} style={{ width: '100%' }} />
@@ -179,7 +181,7 @@ const ArticleDemo = (props) => {
                   {item?.replies && item?.replies.map((reply, idx) => (
                     <>
                       <Row style={{ columnGap: '0.5rem', fontSize: '1rem', alignItems: 'center' }}>
-                        <div>답변제목: </div>
+                        <div>{translate('답변제목')}: </div>
                         <h1 style={{ fontSize: '1rem' }}>{reply?.post_title}</h1>
                       </Row>
                       <ReactQuill

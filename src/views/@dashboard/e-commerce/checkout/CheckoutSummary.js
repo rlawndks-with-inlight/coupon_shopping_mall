@@ -25,6 +25,7 @@ import { useSettingsContext } from 'src/components/settings';
 import { commarNumber } from 'src/utils/function';
 import { useState } from 'react';
 import { useEffect } from 'react';
+import { useLocales } from 'src/locales';
 
 // ----------------------------------------------------------------------
 
@@ -52,12 +53,13 @@ export default function CheckoutSummary({
   themeDnsData
 }) {
   const { user } = useAuthContext();
+  const { translate } = useLocales();
   const { setting_obj } = themeDnsData;
   const { use_point_min_price = 0, max_use_point = 0, point_rate = 0 } = setting_obj;
   return (
     <Card sx={{ mb: 3 }}>
       <CardHeader
-        title="주문 요약정보"
+        title={translate('주문 요약정보')}
         action={
           enableEdit && (
             <Button size="small" onClick={onEdit} startIcon={<Iconify icon="eva:edit-fill" />}>
@@ -70,20 +72,20 @@ export default function CheckoutSummary({
         <Stack spacing={2}>
           <Stack direction="row" justifyContent="space-between">
             <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-              총액
+              {translate('총액')}
             </Typography>
             <Typography variant="subtitle2">{subtotal ? fCurrency(subtotal ?? 0) : '0'}원</Typography>
           </Stack>
 
           <Stack direction="row" justifyContent="space-between">
             <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-              할인
+              {translate('할인')}
             </Typography>
             <Typography variant="subtitle2">{discount ? fCurrency(-discount) : '0'}원</Typography>
           </Stack>
           <Stack direction="row" justifyContent="space-between">
             <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-              사용할 포인트
+              {translate('사용할 포인트')}
             </Typography>
             <Col>
               <FormControl variant="outlined" size='small' sx={{ maxWidth: '170px', paddingRight: '0' }}>
@@ -96,7 +98,7 @@ export default function CheckoutSummary({
                   endAdornment={<>
                     <InputAdornment position="end">P</InputAdornment>
                     <Button size='small'>
-                      전체사용
+                      {translate('전체사용')}
                     </Button>
                   </>}
                   onChange={(e) => {
@@ -107,17 +109,17 @@ export default function CheckoutSummary({
                   }} />
               </FormControl>
               <Typography variant="body2" sx={{ color: 'text.secondary', fontSize: '12px' }}>
-                잔여 포인트 ({commarNumber(user?.point)}P)
+                {translate('잔여 포인트')} ({commarNumber(user?.point)}P)
               </Typography>
               <Typography variant="body2" sx={{ color: 'text.secondary', fontSize: '12px' }}>
-                최대사용가능 포인트 ({commarNumber(max_use_point)}P)
+                {translate('최대사용가능 포인트')} ({commarNumber(max_use_point)}P)
               </Typography>
             </Col>
           </Stack>
           <Divider />
 
           <Stack direction="row" justifyContent="space-between">
-            <Typography variant="subtitle1">총 결제 금액</Typography>
+            <Typography variant="subtitle1">{translate('총 결제금액')}</Typography>
             <Box sx={{ textAlign: 'right' }}>
               <Typography variant="subtitle1" sx={{ color: 'error.main' }}>
                 {total ? fCurrency(total ?? 0) : '0'}원

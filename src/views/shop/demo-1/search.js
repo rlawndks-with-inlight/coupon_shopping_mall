@@ -11,6 +11,7 @@ import { useRef } from 'react';
 import { Spinner } from 'evergreen-ui';
 import $ from 'jquery';
 import { apiShop } from 'src/utils/api';
+import { useLocales } from 'src/locales';
 
 const Wrappers = styled.div`
 max-width:1200px;
@@ -30,7 +31,7 @@ const SearchDemo = (props) => {
       router
     },
   } = props;
-
+  const { translate } = useLocales();
   const { themeDnsData } = useSettingsContext();
   const [keyword, setKeyword] = useState("")
   const [products, setProducts] = useState([]);
@@ -97,7 +98,7 @@ const SearchDemo = (props) => {
     <>
       <Wrappers>
         <Title>
-          상품검색
+          {translate('상품검색')}
         </Title>
         <TextField
           label=''

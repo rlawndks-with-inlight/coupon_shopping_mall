@@ -677,7 +677,7 @@ const Header = () => {
                                                 </CategoryMenu>
                                                 {openAllCategory == group?.id &&
                                                     <>
-                                                        <PopoverContainer style={{ background: `${themeMode == 'dark' ? '#222' : '#fff'}` }}>
+                                                        <PopoverContainer style={{ background: `${themeMode == 'dark' ? '#222' : '#fff'}`, maxHeight: `${window.innerHeight - headerHeight}px`, overflowY: 'auto' }}>
                                                             {group?.sort_type == 0 &&
                                                                 <>
                                                                     <Row style={{ columnGap: '1rem', flexWrap: 'wrap', rowGap: '2rem' }}>

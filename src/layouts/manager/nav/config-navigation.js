@@ -234,7 +234,7 @@ export const navConfig = () => {
                   }))
                 ],
               }] : []),
-              ...(themeDnsData?.blog_demo_num > 0 ? [{
+              ...((themeDnsData?.blog_demo_num > 0 && themeDnsData?.setting_obj?.is_use_blog_obj_style == 1) ? [{
                 title: `${themeDnsData?.shop_demo_num > 0 && themeDnsData?.blog_demo_num > 0 ? '블로그 ' : ''}메인페이지관리`, path: PATH_MANAGER.designs.blogMain, children: [
                   { title: '전체', path: PATH_MANAGER.designs.blogMain + '/all' },
                   ...mainObjSchemaList.filter(el => themeDnsData?.blog_obj?.map(itm => { return itm?.type })?.indexOf(el.type) >= 0).map((itm => {

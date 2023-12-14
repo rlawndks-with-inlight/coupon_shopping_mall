@@ -653,6 +653,32 @@ const DefaultSetting = () => {
                         />
                       </Stack>
                       <Stack>
+                        <FormControlLabel control={<Switch checked={item.setting_obj?.is_use_shop_obj_style == 1} />} label="메인페이지 스타일 사용여부"
+                          onChange={(e) => {
+                            setItem({
+                              ...item,
+                              ['setting_obj']: {
+                                ...item.setting_obj,
+                                is_use_shop_obj_style: e.target.checked ? 1 : 0
+                              }
+                            })
+                          }}
+                        />
+                      </Stack>
+                      <Stack>
+                        <FormControlLabel control={<Switch checked={item.setting_obj?.is_use_blog_obj_style == 1} />} label="블로그 메인페이지 스타일 사용여부"
+                          onChange={(e) => {
+                            setItem({
+                              ...item,
+                              ['setting_obj']: {
+                                ...item.setting_obj,
+                                is_use_blog_obj_style: e.target.checked ? 1 : 0
+                              }
+                            })
+                          }}
+                        />
+                      </Stack>
+                      <Stack>
                         <FormControlLabel control={<Switch checked={item.setting_obj?.is_use_lang == 1} />} label="언어팩 사용여부"
                           onChange={(e) => {
                             let obj = {

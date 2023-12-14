@@ -140,12 +140,12 @@ width: 100%;
 font-size: ${themeObj.font_size.size2};
 `
 export const TitleComponent = (props) => {
-  const { children } = props;
+  const { children, style } = props;
   const { themeDnsData } = useSettingsContext();
   return (
     <>
       <Title
-        style={{ borderBottom: `3px solid ${themeDnsData?.theme_css?.main_color}` }}
+        style={{ borderBottom: `3px solid ${themeDnsData?.theme_css?.main_color}`, ...style }}
       >{children}</Title>
     </>
   )

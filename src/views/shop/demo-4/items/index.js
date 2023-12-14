@@ -13,7 +13,7 @@ import { useAuthContext } from "src/layouts/manager/auth/useAuthContext";
 import { apiShop } from "src/utils/api";
 import styled from "styled-components";
 import $ from 'jquery';
-import { findChildIdsByTree } from "src/utils/function";
+
 const ContentWrapper = styled.div`
 max-width:1600px;
 width:90%;

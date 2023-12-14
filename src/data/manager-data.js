@@ -274,6 +274,8 @@ export const defaultManagerObj = {
       is_use_consignment: 0, //위탁 사용여부
       is_use_item_card_style: 0,//상품카드 스타일 사용여부
       is_use_lang: 0,//언어팩 사용여부
+      is_use_shop_obj_style: 0,//메인페이지 스타일 사용여부
+      is_use_blog_obj_style: 0,//블로그 메인페이지 스타일 사용여부
     },
     seo_obj: {
       naver_token: '',

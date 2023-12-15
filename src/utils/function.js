@@ -11,6 +11,7 @@ export const objToQuery = obj_ => {
   return query
 }
 export const getProductStatus = num => {
+
   if (num == 0) {
     return {
       text: '판매중',

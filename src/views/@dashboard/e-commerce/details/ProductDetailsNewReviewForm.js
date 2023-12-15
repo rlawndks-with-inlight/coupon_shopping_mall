@@ -24,6 +24,7 @@ import { toast } from 'react-hot-toast';
 import { Upload } from "src/components/upload";
 import { apiManager } from 'src/utils/api';
 import { useEffect } from 'react';
+import { useLocales } from 'src/locales';
 // components
 
 // ----------------------------------------------------------------------
@@ -34,6 +35,7 @@ ProductDetailsNewReviewForm.propTypes = {
 
 export default function ProductDetailsNewReviewForm({ onClose, onChangePage, open, reviewData, setReviewData, onSubmit, ...other }) {
   const router = useRouter();
+  const { translate } = useLocales();
   const { themeDnsData } = useSettingsContext();
   const { user } = useAuthContext();
   const ReviewSchema = Yup.object().shape({
@@ -81,11 +83,11 @@ export default function ProductDetailsNewReviewForm({ onClose, onChangePage, ope
   };
   return (
     <Dialog onClose={onClose} {...other} open={open}>
-      <DialogTitle>리뷰 {reviewData?.id ? '수정' : '작성'}하기</DialogTitle>
+      <DialogTitle>{translate(`리뷰 ${reviewData?.id ? '수정' : '작성'}하기`)}</DialogTitle>
 
       <DialogContent>
         <Stack direction="row" flexWrap="wrap" alignItems="center" spacing={1.5}>
-          <Typography variant="body2">별점을 체크해 주세요:</Typography>
+          <Typography variant="body2">{translate('별점을 체크해 주세요.')}:</Typography>
 
           <Controller
             name="rating"
@@ -103,7 +105,7 @@ export default function ProductDetailsNewReviewForm({ onClose, onChangePage, ope
         <div style={{ marginTop: '1rem' }} />
         <Stack spacing={1}>
           <Typography variant="subtitle2" sx={{ color: 'text.secondary' }}>
-            대표이미지등록
+            {translate('대표이미지등록')}
           </Typography>
           <Upload file={reviewData.profile_file || reviewData.profile_img} onDrop={(acceptedFiles) => {
             const newFile = acceptedFiles[0];
@@ -133,7 +135,7 @@ export default function ProductDetailsNewReviewForm({ onClose, onChangePage, ope
           />
         </Stack>
         <TextField
-          label='제목'
+          label={translate('제목')}
           value={reviewData.title}
           sx={{ mt: 3, width: '100%' }}
           onChange={(e) => {
@@ -144,7 +146,7 @@ export default function ProductDetailsNewReviewForm({ onClose, onChangePage, ope
               }
             )
           }} />
-        <TextField name="review" value={reviewData.content} label="리뷰를 작성해 주세요." multiline rows={6} sx={{ mt: 3, width: '100%' }} onChange={(e) => {
+        <TextField name="review" value={reviewData.content} label={translate("리뷰를 작성해 주세요.")} multiline rows={6} sx={{ mt: 3, width: '100%' }} onChange={(e) => {
           setReviewData({
             ...reviewData,
             content: e.target.value
@@ -154,11 +156,11 @@ export default function ProductDetailsNewReviewForm({ onClose, onChangePage, ope
 
       <DialogActions>
         <Button color="inherit" variant="outlined" onClick={onCancel}>
-          취소
+          {translate('취소')}
         </Button>
 
         <Button type="submit" variant="contained" onClick={onSubmit}>
-          리뷰 {reviewData?.id ? '수정' : '작성'}하기
+          {translate(`리뷰 ${reviewData?.id ? '수정' : '작성'}하기`)}
         </Button>
       </DialogActions>
     </Dialog>

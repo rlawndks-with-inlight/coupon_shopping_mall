@@ -45,8 +45,7 @@ const ItemsDemo = (props) => {
     },
   } = props;
   const { translate } = useLocales();
-  const { themeCategoryList, themeMode, themeDnsData } = useSettingsContext();
-
+  const { themeCategoryList, themeMode, themeDnsData, themeDirection } = useSettingsContext();
   const [parentList, setParentList] = useState([]);
   const [curCategories, setCurCategories] = useState([]);
   const [products, setProducts] = useState([]);

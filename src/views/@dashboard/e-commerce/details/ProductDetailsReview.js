@@ -17,6 +17,7 @@ import { useRouter } from 'next/router';
 import { useSettingsContext } from 'src/components/settings';
 import { apiManager } from 'src/utils/api';
 import { useEffect } from 'react';
+import { useLocales } from 'src/locales';
 
 // ----------------------------------------------------------------------
 
@@ -26,6 +27,7 @@ ProductDetailsReview.propTypes = {
 
 export default function ProductDetailsReview({ product, reviewContent, onChangePage, reviewPage }) {
 
+  const { translate } = useLocales();
   const { themeDnsData } = useSettingsContext();
   const { user } = useAuthContext();
   const { rating, totalReview, ratings = [], product_average_scope } = product;
@@ -46,7 +48,7 @@ export default function ProductDetailsReview({ product, reviewContent, onChangeP
   })
   const handleOpenReview = (data) => {
     if (!user) {
-      toast.error('로그인을 해주세요.')
+      toast.error(translate('로그인을 해주세요.'))
       return;
     }
     setOpenReview(true);
@@ -64,7 +66,7 @@ export default function ProductDetailsReview({ product, reviewContent, onChangeP
       result = await apiManager('product-reviews', 'create', reviewData);
     }
     if (result) {
-      toast.success(`성공적으로 리뷰를 ${reviewData?.id ? '수정' : '작성'}하였습니다.`);
+      toast.success(translate(`성공적으로 리뷰를 ${reviewData?.id ? '수정' : '작성'}하였습니다.`));
       handleCloseReview();
       setEditLoading(false);
 
@@ -111,13 +113,13 @@ export default function ProductDetailsReview({ product, reviewContent, onChangeP
           }}
         >
           <Typography variant="subtitle1" sx={{ color: 'text.secondary' }}>
-            평점
+            {translate('평점')}
           </Typography>
 
           <Typography variant="h2">{commarNumber(product_average_scope ?? 0)}/5</Typography>
           <Rating readOnly value={product_average_scope ?? 0} precision={0.1} />
           <Typography variant="caption" sx={{ color: 'text.secondary' }}>
-            ({fShortenNumber(reviewContent?.total)} 리뷰)
+            ({fShortenNumber(reviewContent?.total)} {translate('리뷰')})
           </Typography>
         </Stack>
 
@@ -147,7 +149,7 @@ export default function ProductDetailsReview({ product, reviewContent, onChangeP
             variant="outlined"
             startIcon={<Iconify icon="eva:edit-fill" />}
           >
-            리뷰 작성하기
+            {translate('리뷰 작성하기')}
           </Button>
         </Stack>
       </Box>

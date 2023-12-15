@@ -203,6 +203,15 @@ const vi = {
   "잔여 포인트": "điểm còn sót lại",
   "최대사용가능 포인트": "điểm có thể sử dụng tối đa",
   "총 결제금액": "tổng số tiền thanh toán",
+  "주문 요약정보": "Thông tin tóm tắt đơn đặt hàng",
+  "평점": "điểm đánh giá",
+  "리뷰": "sự đánh giá",
+  "리뷰 작성하기": "Viết review",
+  "리뷰 수정하기": "Chỉnh sửa review",
+  "별점을 체크해 주세요.": "Hãy kiểm tra điểm sao giúp tôi.",
+  "리뷰를 작성해 주세요.": "Hãy viết review giúp tôi.",
+  "성공적으로 리뷰를 작성하였습니다.": "Tôi đã viết review thành công.",
+  "성공적으로 리뷰를 수정하였습니다.": "Tôi đã sửa bản đánh giá thành công.",
 };
 
 export default vi;

@@ -2,6 +2,8 @@ import styled from 'styled-components'
 import { themeObj } from 'src/components/elements/styled-components'
 import { Items } from 'src/components/elements/shop/common'
 import _ from 'lodash'
+import { formatLang } from 'src/utils/format'
+import { useLocales } from 'src/locales'
 
 const Wrappers = styled.div`
   width:90%;
@@ -10,6 +12,7 @@ const Wrappers = styled.div`
   `
 
 const HomeItems = (props) => {
+    const { currentLang } = useLocales();
     const { column, data, func, is_manager } = props;
     const { router } = func;
     const { style } = column;
@@ -23,7 +26,7 @@ const HomeItems = (props) => {
             }}>
                 {column?.title &&
                     <>
-                        <div style={{ fontSize: themeObj.font_size.size3, fontWeight: 'bold' }}>{column?.title}</div>
+                        <div style={{ fontSize: themeObj.font_size.size3, fontWeight: 'bold' }}>{formatLang(column, 'title', currentLang)}</div>
                         {column?.sub_title &&
                             <>
                                 <div style={{ fontSize: themeObj.font_size.size5, color: themeObj.grey[500] }}>{column?.sub_title}</div>

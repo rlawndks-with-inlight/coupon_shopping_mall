@@ -5,6 +5,8 @@ import { Button, Tab } from '@mui/material'
 import _ from 'lodash'
 import { styled as muiStyled } from '@mui/material/styles';
 import { useState } from 'react'
+import { useLocales } from 'src/locales'
+import { formatLang } from 'src/utils/format'
 const Wrappers = styled.div`
   width:90%;
   max-width:1600px;
@@ -46,6 +48,7 @@ const NoneShowMobile = styled.div`
 
 `
 const CategoryTabs = (props) => {
+    const { currentLang } = useLocales();
     const {
         column,
         itemCategory,
@@ -60,7 +63,7 @@ const CategoryTabs = (props) => {
                         <Button variant={itemCategory == index ? `contained` : `outlined`} sx={{ height: '36px', minWidth: `${(column?.is_vertical == 1 && window.innerWidth > 1000 ? '220px' : '')}` }} onClick={() => {
                             onClickItemCategory(index);
                         }}>
-                            {item?.category_name}
+                            {formatLang(item, 'category_name', currentLang)}
                         </Button>
                     </>
                 ))}

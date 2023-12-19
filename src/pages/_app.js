@@ -48,6 +48,7 @@ const App = props => {
   const [headData, setHeadData] = useState({})
   useEffect(() => {
     if (Object.keys(head_data).length > 0) {
+
       if (!allLangs.map(itm => {
         return itm.value
       }).includes(localStorage.getItem('i18nextLng'))) {

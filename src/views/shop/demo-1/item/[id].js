@@ -9,6 +9,7 @@ import dynamic from 'next/dynamic'
 import { apiManager, apiShop } from 'src/utils/api';
 import Head from 'next/head';
 import { useLocales } from 'src/locales';
+import { formatLang } from 'src/utils/format';
 const ReactQuill = dynamic(() => import('react-quill'), {
   ssr: false,
   loading: () => <p>Loading ...</p>,
@@ -32,7 +33,7 @@ const ItemDemo = (props) => {
       router
     },
   } = props;
-  const { translate } = useLocales();
+  const { translate, currentLang } = useLocales();
   const { themeStretch, themeDnsData } = useSettingsContext();
 
   const [loading, setLoading] = useState(true);
@@ -74,7 +75,7 @@ const ItemDemo = (props) => {
       component: product?.product_description ?
         <ReactQuill
           className='none-padding'
-          value={product?.product_description ?? `<body></body>`}
+          value={formatLang(product, 'product_description', currentLang) || `<body></body>`}
           readOnly={true}
           theme={"bubble"}
           bounds={'.app'}
@@ -90,7 +91,7 @@ const ItemDemo = (props) => {
   return (
     <>
       <Head>
-        <title>{themeDnsData?.name} - {product?.product_name}</title>
+        <title>{themeDnsData?.name} - {formatLang(product, 'product_name', currentLang)}</title>
       </Head>
       <Wrapper>
         <ContentWrapper>

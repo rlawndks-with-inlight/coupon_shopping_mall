@@ -179,3 +179,8 @@ export const mainObjSchemaList = [
         }
     },
 ]
+
+export const formatLang = (obj = {}, column, lang = 'ko') => {
+    console.log(obj)
+    return (obj?.lang_obj && obj?.lang_obj[column] && obj?.lang_obj[column][lang?.value]) || obj[column];
+}

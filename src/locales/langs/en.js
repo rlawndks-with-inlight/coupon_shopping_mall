@@ -211,6 +211,10 @@ const en = {
   "리뷰를 작성해 주세요.": "Please write a review.",
   "성공적으로 리뷰를 작성하였습니다.": "We have successfully written a review.",
   "성공적으로 리뷰를 수정하였습니다.": "We have successfully revised our review.",
+  "판매중": "on sale",
+  "중단됨": "Interrupted",
+  "품절": "Out of stock",
+  "새상품": "a new product",
 };
 
 export default en;

@@ -17,6 +17,7 @@ import $ from 'jquery'
 import dynamic from 'next/dynamic';
 import LanguagePopover from "src/layouts/manager/header/LanguagePopover"
 import { useLocales } from "src/locales"
+import { formatLang } from "src/utils/format"
 const ReactQuill = dynamic(() => import('react-quill'), {
   ssr: false,
   loading: () => <p></p>,
@@ -184,7 +185,7 @@ const Header = () => {
 
   const router = useRouter();
   const theme = useTheme();
-  const { translate } = useLocales();
+  const { translate, currentLang } = useLocales();
   const { themeMode, onToggleMode, themeCategoryList, themeDnsData, themePopupList, themeNoneTodayPopupList, onChangeNoneTodayPopupList, themePostCategoryList, onChangePopupList, themeWishData, themeCartData, onChangeCartData, onChangeWishData, themeSellerList } = useSettingsContext();
   const { user, logout } = useAuthContext();
   const headerWrappersRef = useRef();
@@ -278,7 +279,7 @@ const Header = () => {
             onClick={() => {
               router.push(`/shop/items?category_id0=${item?.id}&depth=${num}`)
             }}>
-            <div>{item.category_name}</div>
+            <div>{formatLang(item, 'category_name', currentLang)}</div>
             <div>{item.children.length > 0 ? '>' : ''}</div>
           </DropDownMenu>
           {item.children.length > 0 ?
@@ -320,6 +321,36 @@ const Header = () => {
             <>
             </>}
         </div>
+      </>
+    )
+  }
+  const returnSidebarMenu = (item, num, func, index) => {
+    const {
+      router,
+      setSideMenuOpen
+    } = func;
+    return (
+      <>
+        <TreeItem label={<div
+          style={{
+            marginLeft: '0.25rem'
+          }}
+          onClick={() => {
+            router.push(`/shop/items?category_id${index}=${item?.id}&depth=${num}`);
+            setSideMenuOpen(false);
+          }}>{formatLang(item, 'category_name', currentLang)}</div>}
+          nodeId={item.id}
+          style={{ margin: '0.25rem 0' }}
+        >
+          {item.children.length > 0 &&
+            <>
+              {item.children.map((item2, idx) => (
+                <>
+                  {returnSidebarMenu(item2, num + 1, func, index)}
+                </>
+              ))}
+            </>}
+        </TreeItem>
       </>
     )
   }
@@ -614,7 +645,7 @@ const Header = () => {
                           <CategoryMenu borderColor={themeMode == 'dark' ? '#fff' : '#000'} onClick={() => {
                             router.push(`/shop/items?category_id0=${item1?.id}&depth=0`)
                           }}>
-                            <div>{item1.category_name}</div>
+                            <div>{formatLang(item1, 'category_name', currentLang)}</div>
                           </CategoryMenu>
                           {item1?.children.length > 0 ?
                             <>
@@ -674,7 +705,7 @@ const Header = () => {
                             onClick={() => {
                               router.push(`/shop/service/${item.id}`)
                             }}>
-                            <div>{item.post_category_title}</div>
+                            <div>{formatLang(item, 'post_category_title', currentLang)}</div>
                           </DropDownMenu>
                         </>
                       ))}
@@ -699,7 +730,7 @@ const Header = () => {
                             router.push(`/shop/items?category_id0=${item1?.id}&depth=0`)
                           }}
                         >
-                          <div>{item1.category_name}</div>
+                          <div>{formatLang(item1, 'category_name', currentLang)}</div>
                         </CategoryMenu>
                       </>}
                   </>
@@ -746,7 +777,7 @@ const Header = () => {
             </>}
           {themeCategoryList && themeCategoryList.map((group, index) => (
             <>
-              <ColumnMenuTitle>{group?.category_group_name}</ColumnMenuTitle>
+              <ColumnMenuTitle>{formatLang(group, 'category_group_name', currentLang)}</ColumnMenuTitle>
               <TreeView
                 defaultCollapseIcon={<Icon icon={'ic:baseline-minus'} />}
                 defaultExpandIcon={<Icon icon={'ic:baseline-plus'} />}
@@ -770,7 +801,7 @@ const Header = () => {
               <ColumnMenuContent onClick={() => {
                 router.push(`/shop/service/${item.id}`);
                 setSideMenuOpen(false);
-              }} style={{ paddingLeft: '1rem' }}>{item.post_category_title}</ColumnMenuContent>
+              }} style={{ paddingLeft: '1rem' }}>{formatLang(item, 'post_category_title', currentLang)}</ColumnMenuContent>
             </>
           ))}
           <ColumnMenuTitle>{translate('마이페이지')}</ColumnMenuTitle>
@@ -806,36 +837,7 @@ const Header = () => {
     </>
   )
 }
-const returnSidebarMenu = (item, num, func, index) => {
-  const {
-    router,
-    setSideMenuOpen
-  } = func;
-  return (
-    <>
-      <TreeItem label={<div
-        style={{
-          marginLeft: '0.25rem'
-        }}
-        onClick={() => {
-          router.push(`/shop/items?category_id${index}=${item?.id}&depth=${num}`);
-          setSideMenuOpen(false);
-        }}>{item.category_name}</div>}
-        nodeId={item.id}
-        style={{ margin: '0.25rem 0' }}
-      >
-        {item.children.length > 0 &&
-          <>
-            {item.children.map((item2, idx) => (
-              <>
-                {returnSidebarMenu(item2, num + 1, func, index)}
-              </>
-            ))}
-          </>}
-      </TreeItem>
-    </>
-  )
-}
+
 
 const ColumnMenuContainer = styled.div`
         width: 400px;

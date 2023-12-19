@@ -12,6 +12,8 @@ import { insertWishDataUtil } from "src/utils/shop-util";
 import toast from "react-hot-toast";
 import Slider from "react-slick";
 import { LazyLoadImage } from "react-lazy-load-image-component";
+import { useLocales } from "src/locales";
+import { formatLang } from "src/utils/format";
 
 const ItemName = styled.div`
 font-weight: bold;
@@ -67,6 +69,8 @@ margin: auto;
 height: 100%;
 `
 export const Item1 = (props) => {
+
+    const { currentLang, translate } = useLocales();
     const { user } = useAuthContext();
     const { themeWishData, onChangeWishData } = useSettingsContext();
     const { item, router, theme_css, seller } = props;
@@ -80,7 +84,7 @@ export const Item1 = (props) => {
         if (user) {
             insertWishDataUtil(item, themeWishData, onChangeWishData);
         } else {
-            toast.error('로그인을 해주세요.')
+            toast.error(translate('로그인을 해주세요.'))
         }
     }
     return (
@@ -113,8 +117,8 @@ export const Item1 = (props) => {
                             router.push(`/shop/item/${item?.id}${seller ? `?seller_id=${seller?.id}` : ''}`)
                         }
                     }}>
-                    <ItemName>{item.product_name}</ItemName>
-                    <ItemSubName>{item.product_comment}</ItemSubName>
+                    <ItemName>{formatLang(item, 'product_name', currentLang)}</ItemName>
+                    <ItemSubName>{formatLang(item, 'product_comment', currentLang)}</ItemSubName>
                     <ItemPrice style={{
                         marginTop: 'auto'
                     }}>

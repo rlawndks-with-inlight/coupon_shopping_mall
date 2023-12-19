@@ -12,6 +12,7 @@ import { toast } from 'react-hot-toast';
 import { apiShop } from 'src/utils/api';
 import { useModal } from 'src/components/dialog/ModalProvider';
 import { useLocales } from 'src/locales';
+import { formatLang } from 'src/utils/format';
 const Wrappers = styled.div`
 max-width:1600px;
 display:flex;
@@ -51,7 +52,7 @@ font-weight:${props => props.isSelect ? 'bold' : ''};
 }
 `
 const ArticlesDemo = (props) => {
-  const { translate } = useLocales();
+  const { translate, currentLang } = useLocales();
   const { user } = useAuthContext();
   const { setModal } = useModal()
   const [postCategory, setPostCategory] = useState({});
@@ -61,7 +62,7 @@ const ArticlesDemo = (props) => {
       id: 'post_title',
       label: translate('제목'),
       action: (row) => {
-        return row['post_title'] ?? "---"
+        return formatLang(row, 'post_title', currentLang) ?? "---"
       }
     },
     ...((postCategory?.is_able_user_add == 1 && postCategory?.post_category_read_type == 0) ? [
@@ -175,7 +176,7 @@ const ArticlesDemo = (props) => {
       <Wrappers>
         <Title style={{
           marginBottom: '2rem'
-        }}>{postCategory?.post_category_title}</Title>
+        }}>{formatLang(postCategory, 'post_category_title', currentLang)}</Title>
         <Row style={{ margin: '1rem auto', overflowX: 'auto', whiteSpace: 'nowrap', columnGap: '0.25rem' }} className='none-scroll'>
           {postCategory?.children && postCategory?.children.length > 0 &&
             <>
@@ -201,7 +202,7 @@ const ArticlesDemo = (props) => {
                 })
               }}
                 variant={searchObj.category_id == category?.id ? 'contained' : 'outlined'}>
-                {category?.post_category_title}
+                {formatLang(category, 'post_category_title', currentLang)}
               </Button>
             </>
           ))}
@@ -217,7 +218,7 @@ const ArticlesDemo = (props) => {
                     router.push(`/shop/service/${item?.id}`)
                   }}
                 >
-                  {item.post_category_title}
+                  {formatLang(item, 'post_category_title', currentLang)}
                 </ArticleCategory >
               </>
             ))}

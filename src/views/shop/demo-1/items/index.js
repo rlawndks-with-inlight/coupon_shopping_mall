@@ -14,6 +14,7 @@ import { Spinner } from 'evergreen-ui';
 import $ from 'jquery';
 import { apiShop } from 'src/utils/api';
 import { useLocales } from 'src/locales';
+import { formatLang } from 'src/utils/format';
 
 const ContentWrapper = styled.div`
 max-width:1600px;
@@ -44,7 +45,7 @@ const ItemsDemo = (props) => {
       router
     },
   } = props;
-  const { translate } = useLocales();
+  const { translate, currentLang } = useLocales();
   const { themeCategoryList, themeMode, themeDnsData, themeDirection } = useSettingsContext();
   const [parentList, setParentList] = useState([]);
   const [curCategories, setCurCategories] = useState([]);
@@ -147,7 +148,7 @@ const ItemsDemo = (props) => {
                     onClick={() => {
                       router.push(`/shop/items?category_id0=${item?.id}&depth=${idx}`)
                     }}
-                  >{item.category_name}</div>
+                  >{formatLang(item, 'category_name', currentLang)}</div>
                 </>
               ))}
             </Breadcrumbs>
@@ -157,7 +158,7 @@ const ItemsDemo = (props) => {
             <div style={{ marginTop: '42px' }} />
           </>}
         <Title style={{ marginTop: '38px' }}>
-          {curCategories[curCategories.length - 1]?.category_name}
+          {formatLang(curCategories[curCategories.length - 1], 'category_name', currentLang)}
         </Title>
         <ChildrenCategoryContainer className='none-scroll'>
           {curCategories[curCategories.length - 1]?.children && curCategories[curCategories.length - 1]?.children.map((item, idx) => (
@@ -170,7 +171,7 @@ const ItemsDemo = (props) => {
                 onClick={() => {
                   router.push(`/shop/items?category_id0=${item?.id}&depth=${parseInt(router.query?.depth) + 1}`)
                 }}
-              >{item.category_name}</Button>
+              >{formatLang(item, 'category_name', currentLang)}</Button>
             </>
           ))}
         </ChildrenCategoryContainer>

@@ -13,6 +13,7 @@ import { Upload } from "src/components/upload";
 import { useAuthContext } from "src/layouts/manager/auth/useAuthContext";
 import { useLocales } from "src/locales";
 import { apiShop } from "src/utils/api";
+import { formatLang } from "src/utils/format";
 import ReactQuillComponent from "src/views/manager/react-quill";
 import styled from "styled-components";
 const ReactQuill = dynamic(() => import('react-quill'), {
@@ -29,6 +30,7 @@ min-height:90vh;
 `
 
 const ArticleDemo = (props) => {
+
   const { user } = useAuthContext();
   const { setModal } = useModal()
   const {
@@ -39,7 +41,7 @@ const ArticleDemo = (props) => {
       router
     },
   } = props;
-  const { translate } = useLocales();
+  const { translate, currentLang } = useLocales();
   const { themeMode, themePostCategoryList, themeDnsData } = useSettingsContext();
   const theme = useTheme();
   const [postCategory, setPostCategory] = useState({});
@@ -79,13 +81,13 @@ const ArticleDemo = (props) => {
   return (
     <>
       <Head>
-        <title>{themeDnsData?.name} {item?.post_title ? ` - ${item?.post_title}` : ''}</title>
+        <title>{themeDnsData?.name} {item?.post_title ? ` - ${formatLang(item, 'post_title', currentLang)}` : ''}</title>
       </Head>
       <Wrappers>
 
         <Title style={{
           marginBottom: '2rem'
-        }}>{postCategory?.post_category_title} {router.query?.id == 'add' ? '작성' : ''}</Title>
+        }}>{formatLang(postCategory, 'post_category_title', currentLang)} {router.query?.id == 'add' ? '작성' : ''}</Title>
         {!loading &&
           <>
             <Stack spacing={3}>
@@ -168,12 +170,12 @@ const ArticleDemo = (props) => {
                 <>
                   <Row style={{ columnGap: '0.5rem', fontSize: '1rem', alignItems: 'center' }}>
                     <div>{translate('제목')}: </div>
-                    <h1 style={{ fontSize: '1rem' }}>{item?.post_title}</h1>
+                    <h1 style={{ fontSize: '1rem' }}>{formatLang(item, 'post_title', currentLang)}</h1>
                   </Row>
                   <img src={item?.post_title_img} style={{ width: '100%' }} />
                   <ReactQuill
                     className='none-padding'
-                    value={item?.post_content ?? `<body></body>`}
+                    value={formatLang(item, 'post_content', currentLang) ?? `<body></body>`}
                     readOnly={true}
                     theme={"bubble"}
                     bounds={'.app'}
@@ -182,11 +184,11 @@ const ArticleDemo = (props) => {
                     <>
                       <Row style={{ columnGap: '0.5rem', fontSize: '1rem', alignItems: 'center' }}>
                         <div>{translate('답변제목')}: </div>
-                        <h1 style={{ fontSize: '1rem' }}>{reply?.post_title}</h1>
+                        <h1 style={{ fontSize: '1rem' }}>{formatLang(reply, 'post_title', currentLang)}</h1>
                       </Row>
                       <ReactQuill
                         className='none-padding'
-                        value={reply?.post_content ?? `<body></body>`}
+                        value={formatLang(reply, 'post_content', currentLang) ?? `<body></body>`}
                         readOnly={true}
                         theme={"bubble"}
                         bounds={'.app'}

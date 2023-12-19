@@ -212,6 +212,10 @@ const vi = {
   "리뷰를 작성해 주세요.": "Hãy viết review giúp tôi.",
   "성공적으로 리뷰를 작성하였습니다.": "Tôi đã viết review thành công.",
   "성공적으로 리뷰를 수정하였습니다.": "Tôi đã sửa bản đánh giá thành công.",
+  "판매중": "Đang bán",
+  "중단됨": "Bị gián đoạn",
+  "품절": "hết hàng",
+  "새상품": "sản phẩm mới",
 };
 
 export default vi;

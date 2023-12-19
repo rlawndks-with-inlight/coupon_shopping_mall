@@ -65,7 +65,6 @@ const HomeDemo = (props) => {
     if (contentList.length > 0) {
       return;
     }
-
     let dns_data = themeDnsData;
     let content_list = (dns_data?.shop_obj) ?? [];
     setWindowWidth(window.innerWidth)

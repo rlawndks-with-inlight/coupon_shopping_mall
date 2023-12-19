@@ -52,6 +52,7 @@ import { apiManager } from 'src/utils/api';
 import { useRouter } from 'next/router';
 import DialogBuyNow from 'src/components/dialog/DialogBuyNow';
 import { useLocales } from 'src/locales';
+import { formatLang } from 'src/utils/format';
 // ----------------------------------------------------------------------
 
 ProductDetailsSummary.propTypes = {
@@ -60,11 +61,12 @@ ProductDetailsSummary.propTypes = {
   product: PropTypes.object,
   onGotoStep: PropTypes.func,
 };
-const STEPS = ['배송지 확인', '결제하기'];
+
 export default function ProductDetailsSummary({ product, onAddCart, onGotoStep, ...other }) {
   const router = useRouter();
-  const { translate } = useLocales();
-  const { themeCartData, onChangeCartData } = useSettingsContext();
+  const { translate, currentLang } = useLocales();
+  const { themeCartData, onChangeCartData, themeDirection } = useSettingsContext();
+
   const { user } = useAuthContext();
   const [selectProductGroups, setSelectProductGroups] = useState({
     count: 1,
@@ -94,6 +96,7 @@ export default function ProductDetailsSummary({ product, onAddCart, onGotoStep, 
     product_comment,
     groups = [],
     delivery_fee,
+    lang_obj
   } = product;
 
   const isMaxQuantity = cart.filter((item) => item.id === id).map((item) => item.quantity)[0] >= available;
@@ -138,10 +141,10 @@ export default function ProductDetailsSummary({ product, onAddCart, onGotoStep, 
               variant="overline"
               component="div"
             >
-              <Chip label={getProductStatus(status).text} variant="soft" color={getProductStatus(status).color} />
+              <Chip label={translate(getProductStatus(status).text)} variant="soft" color={getProductStatus(status).color} />
             </Typography>
-            <Typography variant="h5">{product_name}</Typography>
-            <Typography variant="h7" color={themeObj.grey[500]}>{product_comment}</Typography>
+            <Typography variant="h5">{formatLang(product, 'product_name', currentLang)}</Typography>
+            <Typography variant="h7" color={themeObj.grey[500]}>{formatLang(product, 'product_comment', currentLang)}</Typography>
 
             <Stack direction="row" alignItems="center" spacing={1}>
               <Rating value={product_average_scope} precision={0.1} readOnly />

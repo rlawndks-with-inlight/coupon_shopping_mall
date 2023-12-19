@@ -4,6 +4,8 @@ import {
   Card,
   CardHeader,
   Checkbox,
+  CircularProgress,
+  Dialog,
   FormControl,
   FormControlLabel,
   Grid,
@@ -69,6 +71,7 @@ const DefaultSetting = () => {
   const [loading, setLoading] = useState(true)
   const [currentTab, setCurrentTab] = useState(0)
   const [item, setItem] = useState(defaultManagerObj.brands)
+  const [saveLoading, setSaveLoading] = useState(false)
   const tab_list = [
     {
       value: 0,
@@ -163,10 +166,12 @@ const DefaultSetting = () => {
     setLoading(false)
   }
   const onSave = async () => {
+
     let result = undefined
     let obj = item
     if (obj?.id) {
       //수정
+      setSaveLoading(true);
       result = await apiManager('brands', 'update', { ...obj, id: obj?.id })
     } else {
       //추가
@@ -178,6 +183,7 @@ const DefaultSetting = () => {
         toast.error('본사 비밀번호가 일치하지 않습니다.')
         return
       }
+      setSaveLoading(true);
       result = await apiManager('brands', 'create', { ...obj })
     }
     if (result) {
@@ -187,6 +193,20 @@ const DefaultSetting = () => {
   }
   return (
     <>
+      <Dialog
+        open={saveLoading}
+        onClose={() => {
+          setSaveLoading(false)
+        }}
+        PaperProps={{
+          style: {
+            background: 'transparent',
+            overflow: 'hidden'
+          }
+        }}
+      >
+        <CircularProgress />
+      </Dialog>
       {!loading && (
         <>
           <Row style={{ margin: '0 0 1rem 0', columnGap: '0.5rem' }}>

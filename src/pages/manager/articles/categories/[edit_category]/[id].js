@@ -52,7 +52,7 @@ const ArticleCategoryEdit = () => {
     if (router.query?.edit_category == 'edit') {
       for (var i = 0; i < item?.children.length; i++) {
         if (!item?.children[i]?.id) {
-          let children_result = await apiManager('post-categories', 'create',item?.children[i]);
+          let children_result = await apiManager('post-categories', 'create', item?.children[i]);
         } else {
           if (item?.children[i]?.is_edit) {
             let children_result = await apiManager('post-categories', 'update', { ...item?.children[i] });
@@ -127,7 +127,7 @@ const ArticleCategoryEdit = () => {
                         </Select>
                       </FormControl>
                     </>}
-                    {user?.level >= 50 &&
+                  {user?.level >= 50 &&
                     <>
                       <FormControl>
                         <InputLabel>볼수 있는 대상</InputLabel>
@@ -144,7 +144,7 @@ const ArticleCategoryEdit = () => {
                         </Select>
                       </FormControl>
                     </>}
-                    {user?.level >= 50 &&
+                  {user?.level >= 50 &&
                     <>
                       <FormControl>
                         <InputLabel>게시물 카테고리 타입</InputLabel>
@@ -192,6 +192,8 @@ const ArticleCategoryEdit = () => {
                       <Button variant="contained" style={{ height: '56px' }} className="add-children" onClick={() => {
                         let children_list = [...item?.children];
                         children_list.push({
+                          ...item,
+                          id: undefined,
                           post_category_title: '',
                           parent_id: router.query?.id
                         })

@@ -444,3 +444,9 @@ export const getMainObjType = (type_ = "") => {
   type = type_split_list.join('-');
   return type;
 }
+export const getNumberByPercent = (num = 0, percent = 0) => {
+  return Math.round(num * (percent).toFixed(0) / 100);
+}
+export const getPercentByNumber = (num = 1, sub_num = 0) => {
+  return Math.round(sub_num / num * 100);
+}

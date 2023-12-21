@@ -36,7 +36,6 @@ export const DashboardDemo4 = () => {
         setSearchObj(search_obj);
         let result = await apiManager(`dashboards`, 'list', search_obj);
         setData(result);
-        console.log(result);
     }
     const onClickDateButton = (num) => {
         setSDt(new Date(returnMoment(-num)));

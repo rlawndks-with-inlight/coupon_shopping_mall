@@ -1,5 +1,5 @@
 
-import { Autocomplete, Avatar, Button, Card, Grid, IconButton, Stack, TextField, Tooltip, Typography, alpha } from "@mui/material";
+import { Autocomplete, Avatar, Button, Card, FormControl, Grid, IconButton, InputLabel, MenuItem, Select, Stack, TextField, Tooltip, Typography, alpha } from "@mui/material";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { Row, themeObj } from "src/components/elements/styled-components";
@@ -13,6 +13,7 @@ import { toast } from "react-hot-toast";
 import { useModal } from "src/components/dialog/ModalProvider";
 import _ from "lodash";
 import { apiManager, uploadFileByManager } from "src/utils/api";
+import { bankCodeList } from "src/utils/format";
 
 
 const SellerEdit = () => {
@@ -376,17 +377,25 @@ const SellerEdit = () => {
                             }
                           )
                         }} />
-                      <TextField
-                        label='은행코드'
-                        value={item.acct_bank_code}
-                        onChange={(e) => {
-                          setItem(
-                            {
-                              ...item,
-                              ['acct_bank_code']: e.target.value
-                            }
-                          )
-                        }} />
+                      <Stack spacing={1}>
+                        <FormControl>
+                          <InputLabel>은행선택</InputLabel>
+                          <Select
+                            label='은행선택'
+                            value={item.acct_bank_code}
+                            onChange={e => {
+                              setItem({
+                                ...item,
+                                ['acct_bank_code']: e.target.value
+                              })
+                            }}
+                          >
+                            {bankCodeList.map((itm, idx) => {
+                              return <MenuItem value={itm.value}>{itm.label}</MenuItem>
+                            })}
+                          </Select>
+                        </FormControl>
+                      </Stack>
                       <TextField
                         label='계좌번호'
                         value={item.acct_num}

@@ -190,50 +190,7 @@ border: 1px solid #ccc;
 width:90vw;
 }
 `
-const authList = [
-    {
-        name: 'My그랑',
-        link_key: 'my-page',
-        icon: 'material-symbols:person',
-    },
-    {
-        name: '장바구니',
-        link_key: 'cart',
-        icon: 'mdi:cart',
-    },
-    {
-        name: '위시리스트',
-        link_key: 'wish',
-        icon: 'mdi:heart',
-    },
-    {
-        name: '포인트내역',
-        link_key: 'point',
-        icon: 'icon-park-solid:powerpoint',
-    },
-    {
-        name: '주문/배송조회',
-        link_key: 'history',
-        icon: 'iconoir:book-solid',
-    },
-]
-const noneAuthList = [
-    {
-        name: '로그인',
-        link_key: 'login',
-        icon: 'material-symbols:lock',
-    },
-    {
-        name: '회원가입',
-        link_key: 'sign-up',
-        icon: 'ic:sharp-person-add',
-    },
-    {
-        name: '비회원 주문조회',
-        link_key: 'login?scroll_to=100000',
-        icon: 'lets-icons:order',
-    },
-]
+
 const Header = () => {
 
     const router = useRouter();
@@ -258,6 +215,57 @@ const Header = () => {
     const [loading, setLoading] = useState(true);
     const [openAllCategory, setOpenAllCategory] = useState("")
     const allCategoryRef = useRef([]);
+    const authList = [
+        {
+            name: 'My그랑',
+            link_key: '/shop/auth/my-page',
+            icon: 'material-symbols:person',
+        },
+        {
+            name: '장바구니',
+            link_key: '/shop/auth/cart',
+            icon: 'mdi:cart',
+        },
+        {
+            name: '위시리스트',
+            link_key: '/shop/auth/wish',
+            icon: 'mdi:heart',
+        },
+        {
+            name: '포인트내역',
+            link_key: '/shop/auth/point',
+            icon: 'icon-park-solid:powerpoint',
+        },
+        {
+            name: '주문/배송조회',
+            link_key: '/shop/auth/history',
+            icon: 'iconoir:book-solid',
+        },
+        ...(user?.level >= 10 ? [
+            {
+                name: '판매자센터',
+                link_key: '/manager',
+                icon: 'iconoir:book-solid',
+            },
+        ] : []),
+    ]
+    const noneAuthList = [
+        {
+            name: '로그인',
+            link_key: '/shop/auth/login',
+            icon: 'material-symbols:lock',
+        },
+        {
+            name: '회원가입',
+            link_key: '/shop/auth/sign-up',
+            icon: 'ic:sharp-person-add',
+        },
+        {
+            name: '비회원 주문조회',
+            link_key: '/shop/auth/login?scroll_to=100000',
+            icon: 'lets-icons:order',
+        },
+    ]
     useEffect(() => {
     }, [user])
     useEffect(() => {
@@ -543,7 +551,7 @@ const Header = () => {
                                                     <AuthMenu
                                                         theme={theme}
                                                         hoverColor={themeMode == 'dark' ? '#fff' : '#000'}
-                                                        onClick={() => { router.push(`/shop/auth/${item.link_key}`) }}
+                                                        onClick={() => { router.push(`${item.link_key}`) }}
                                                     >{item.name}</AuthMenu>
                                                 </>
                                             ))}
@@ -561,7 +569,7 @@ const Header = () => {
                                                     <AuthMenu
                                                         theme={theme}
                                                         hoverColor={themeMode == 'dark' ? '#fff' : '#000'}
-                                                        onClick={() => { router.push(`/shop/auth/${item.link_key}`) }}
+                                                        onClick={() => { router.push(`${item.link_key}`) }}
                                                         style={{ borderRight: `${idx == noneAuthList.length - 1 ? 'none' : ''}` }}
                                                     >{item.name}</AuthMenu>
                                                 </>
@@ -846,7 +854,7 @@ const Header = () => {
                             {authList.map((item, idx) => (
                                 <>
                                     <Row style={{ alignItems: 'center', cursor: 'pointer' }} onClick={() => {
-                                        window.location.href = (`/shop/auth/${item.link_key}`);
+                                        window.location.href = (`${item.link_key}`);
                                         setSideMenuOpen(false);
                                     }}>
                                         <Icon icon={item.icon} style={{ color: themeDnsData?.theme_css?.main_color }} />
@@ -868,7 +876,7 @@ const Header = () => {
                             {noneAuthList.map((item, idx) => (
                                 <>
                                     <Row style={{ alignItems: 'center', cursor: 'pointer' }} onClick={() => {
-                                        window.location.href = (`/shop/auth/${item.link_key}`);
+                                        window.location.href = (`${item.link_key}`);
                                         setSideMenuOpen(false);
                                     }}>
                                         <Icon icon={item.icon} style={{ color: themeDnsData?.theme_css?.main_color }} />

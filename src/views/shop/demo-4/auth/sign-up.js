@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types';
-import { Button, Checkbox, Divider, FormControl, FormControlLabel, InputAdornment, InputLabel, OutlinedInput, Step, StepConnector, StepLabel, Stepper, TextField, Typography, stepConnectorClasses } from '@mui/material';
-import { useState } from 'react';
+import { Button, Card, Checkbox, Divider, FormControl, FormControlLabel, Grid, InputAdornment, InputLabel, MenuItem, OutlinedInput, Select, Stack, Step, StepConnector, StepLabel, Stepper, TextField, Typography, stepConnectorClasses } from '@mui/material';
+import { useEffect, useState } from 'react';
 import { Col, Row, Title, themeObj } from 'src/components/elements/styled-components';
 import styled from 'styled-components'
 import { styled as muiStyled } from '@mui/material/styles';
@@ -12,6 +12,7 @@ import { toast } from 'react-hot-toast';
 import { Icon } from '@iconify/react';
 import { useSettingsContext } from 'src/components/settings';
 import { apiManager } from 'src/utils/api';
+import { bankCodeList } from 'src/utils/format';
 
 const Wrappers = styled.div`
 max-width:1000px;
@@ -129,6 +130,7 @@ const SignUpDemo = (props) => {
     phone_num: '',
     phoneCheck: '',
   })
+  const [loading, setLoading] = useState(true);
   const [phoneCheckStep, setPhoneCheckStep] = useState(0);
   const onClickPrevButton = () => {
     if (activeStep == 0) {
@@ -144,6 +146,15 @@ const SignUpDemo = (props) => {
     setActiveStep(activeStep - 1);
     window.scrollTo(0, 0)
   }
+  useEffect(() => {
+    if (themeDnsData?.setting_obj?.is_use_seller != 1) {
+      setUser({
+        ...user,
+        level: 0,
+      })
+    }
+    setLoading(false);
+  }, [])
   const onClickNextButton = async () => {
     if (activeStep == 0) {
       if (
@@ -182,7 +193,48 @@ const SignUpDemo = (props) => {
     let result = await apiManager('auth/code', 'create', {
       phone_num: user.phone_num
     })
+  }
+  if (loading) {
+    return <>
 
+    </>
+  }
+  if (!(user?.level >= 0)) {
+    return <>
+      <Wrappers>
+        <Title>회원가입</Title>
+        <Grid container spacing={3}>
+          <Grid item xs={12} md={6}>
+            <Card sx={{ p: 2, height: '100%', height: '300px', display: 'flex', cursor: 'pointer' }}
+              onClick={() => {
+                setUser({
+                  ...user,
+                  level: 0
+                })
+              }}>
+              <Col style={{ alignItems: 'center', margin: 'auto', rowGap: '0.5rem' }}>
+                <Icon icon={'material-symbols:person-outline'} style={{ fontSize: '4rem' }} />
+                <Typography variant='subtitle1'>일반회원</Typography>
+              </Col>
+            </Card>
+          </Grid>
+          <Grid item xs={12} md={6}>
+            <Card sx={{ p: 2, height: '100%', height: '300px', display: 'flex', cursor: 'pointer' }}
+              onClick={() => {
+                setUser({
+                  ...user,
+                  level: 10
+                })
+              }}>
+              <Col style={{ alignItems: 'center', margin: 'auto', rowGap: '0.5rem' }}>
+                <Icon icon={'icon-park-outline:shop'} style={{ fontSize: '4rem' }} />
+                <Typography variant='subtitle1'>판매자회원</Typography>
+              </Col>
+            </Card>
+          </Grid>
+        </Grid>
+      </Wrappers>
+    </>
   }
   return (
     <>
@@ -381,6 +433,53 @@ const SignUpDemo = (props) => {
                 </>}
               />
             </FormControl> */}
+            {user?.level == 10 &&
+              <>
+                <Stack spacing={1}>
+                  <FormControl variant="outlined" style={{ width: '100%', marginTop: '1rem' }}>
+                    <InputLabel>은행선택</InputLabel>
+                    <Select
+                      label='은행선택'
+                      value={user.acct_bank_code}
+                      onChange={e => {
+                        setUser({
+                          ...user,
+                          ['acct_bank_code']: e.target.value
+                        })
+                      }}
+                    >
+                      {bankCodeList.map((itm, idx) => {
+                        return <MenuItem value={itm.value}>{itm.label}</MenuItem>
+                      })}
+                    </Select>
+                  </FormControl>
+                </Stack>
+
+                <TextField
+                  style={{ marginTop: '1rem' }}
+                  label='계좌번호'
+                  value={user.acct_num}
+                  onChange={(e) => {
+                    setUser(
+                      {
+                        ...user,
+                        ['acct_num']: e.target.value
+                      }
+                    )
+                  }} />
+                <TextField
+                  style={{ marginTop: '1rem' }}
+                  label='예금주명'
+                  value={user.acct_name}
+                  onChange={(e) => {
+                    setUser(
+                      {
+                        ...user,
+                        ['acct_name']: e.target.value
+                      }
+                    )
+                  }} />
+              </>}
           </>}
         {activeStep == 2 &&
           <>

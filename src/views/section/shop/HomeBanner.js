@@ -143,7 +143,7 @@ const HomeBanner = (props) => {
     const { column, data, func, is_manager } = props;
     let { windowWidth } = data;
     const { style } = column;
-    let img_list = [...column?.list];
+    let img_list = [...(column?.list ?? [])];
     const [arrowHeight, setArrowHeight] = useState('15vw')
     const imageContainerRef = useRef();
     const [currentSlideIndex, setCurrentSlideIndex] = useState(0);

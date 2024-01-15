@@ -366,9 +366,9 @@ const ProductList = () => {
             add_button_text={'상품 추가'}
             want_move_card={true}
             table={'products'}
-          // detail_search={<Button variant="outlined">
-          //   상세검색
-          // </Button>}
+            detail_search={<Button variant="outlined">
+              상세검색
+            </Button>}
           />
         </Card>
       </Stack>

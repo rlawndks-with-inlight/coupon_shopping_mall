@@ -51,7 +51,7 @@ margin: 1rem 0;
 `
 
 const ContainerTitle = styled.div`
-fontWeight:bold;
+font-weight:bold;
 `
 
 const test_cart = [

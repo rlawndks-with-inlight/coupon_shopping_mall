@@ -337,7 +337,7 @@ const MainObjSetting = props => {
     let file_index_list = []
     for (var i = 0; i < content_list.length; i++) {
       if (['banner', 'button-banner'].includes(content_list[i]?.type)) {
-        for (var j = 0; j < content_list[i].list.length; j++) {
+        for (var j = 0; j < content_list[i]?.list?.length; j++) {
           if (!content_list[i].list[j]?.src) {
             file_index_list.push({
               i: i,

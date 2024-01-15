@@ -1,0 +1,1 @@
+(self.webpackChunk_N_E=self.webpackChunk_N_E||[]).push([[7592],{67397:function(n,_,u){(window.__NEXT_P=window.__NEXT_P||[]).push(["/manager/designs/popup/[edit_category]/[id]",function(){return u(60804)}])}},function(n){n.O(0,[3662,3548,8203,9421,5422,153,135,6886,1664,7273,8422,7422,2961,7720,8873,9456,1466,804,9774,2888,179],function(){return n(n.s=67397)}),_N_E=n.O()}]);

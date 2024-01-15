@@ -422,8 +422,12 @@ const Header = () => {
                                                 theme={"bubble"}
                                                 bounds={'.app'}
                                             />
-                                            <div style={{ display: 'flex', alignItems: 'center', position: 'absolute', left: '8px', bottom: '8px' }}>
-                                                <Icon icon='ion:close' style={{ color: `${themeMode == 'dark' ? '#fff' : '#222'}`, fontSize: themeObj.font_size.size8, marginRight: '4px', cursor: 'pointer' }} onClick={() => { }} />
+                                            <div style={{ display: 'flex', alignItems: 'center', position: 'absolute', left: '8px', bottom: '8px', cursor: 'pointer' }} onClick={() => {
+                                                let popup_list = [...popups];
+                                                popup_list.splice(idx, 1);
+                                                setPopups(popup_list);
+                                            }}>
+                                                <Icon icon='ion:close' style={{ color: `${themeMode == 'dark' ? '#fff' : '#222'}`, fontSize: themeObj.font_size.size8, marginRight: '4px', }} onClick={() => { }} />
                                                 <div style={{ fontSize: themeObj.font_size.size8, }}>오늘 하루 보지않기</div>
                                             </div>
                                         </PopupContent>

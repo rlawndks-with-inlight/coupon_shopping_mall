@@ -403,7 +403,7 @@ const Header = () => {
                 </>
                 :
                 <>
-                    {popups.length > 0 && router.query == '/shop' ?
+                    {popups.length > 0 ?
                         <>
                             <PopupContainer>
                                 {popups && popups.map((item, idx) => (

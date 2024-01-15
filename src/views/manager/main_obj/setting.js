@@ -396,6 +396,9 @@ const MainObjSetting = props => {
       toast.success('성공적으로 저장 되었습니다.')
       window.location.reload()
     }
+    else {
+      console.log(result)
+    }
   }
   const [tourOpen, setTourOpen] = useState(false)
   const [tourSteps, setTourSteps] = useState([])

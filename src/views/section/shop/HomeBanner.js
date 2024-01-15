@@ -84,7 +84,6 @@ animation: ${props => props.iscurrentSlideIndex ? 'zoom-in-out' : ''} 10s ease-i
     100% {
         transform: scale(1);
     }
-  }
 }
 `
 

@@ -162,7 +162,7 @@ const ItemsDemo = (props) => {
             <TextField
               label=''
               variant="standard"
-              color="red"
+              
               onChange={(e) => {
                 setSearchObj({
                   ...searchObj,

@@ -162,6 +162,7 @@ const ItemsDemo = (props) => {
             <TextField
               label=''
               variant="standard"
+              focused
               onChange={(e) => {
                 setSearchObj({
                   ...searchObj,

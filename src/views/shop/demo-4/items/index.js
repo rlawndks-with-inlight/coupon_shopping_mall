@@ -163,6 +163,7 @@ const ItemsDemo = (props) => {
               label=''
               variant="standard"
               focused
+              color='primary'
               onChange={(e) => {
                 setSearchObj({
                   ...searchObj,

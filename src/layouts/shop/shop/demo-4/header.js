@@ -403,7 +403,7 @@ const Header = () => {
                 </>
                 :
                 <>
-                    {popups.length > 0 ?
+                    {popups.length > 0 ? //&& router.asPath == '/shop' 이 조건 넣으니까 팝업이 안 뜸
                         <>
                             <PopupContainer>
                                 {popups && popups.map((item, idx) => (

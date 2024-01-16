@@ -160,7 +160,7 @@ const ItemsDemo = (props) => {
           :
           <>
             <TextField
-              label=''
+              label='red'
               variant="standard"
               onChange={(e) => {
                 setSearchObj({
@@ -198,7 +198,6 @@ const ItemsDemo = (props) => {
                       aria-label='toggle password visibility'
                       style={{
                         padding: '0.5rem',
-                        color:'red'
                       }}
                     >
                       <Icon icon={'tabler:search'} />

@@ -160,8 +160,8 @@ const ItemsDemo = (props) => {
           :
           <>
             <TextField
-              label='red'
-              variant="standard"
+              label=''
+              
               onChange={(e) => {
                 setSearchObj({
                   ...searchObj,

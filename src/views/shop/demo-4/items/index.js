@@ -170,7 +170,6 @@ const ItemsDemo = (props) => {
               }}
               value={searchObj?.search}
               style={{ width: '100%', margin: '2rem auto 0 auto', maxWidth: '700px', }}
-              sx={{input: {color:'red'}}}
               autoComplete='new-password'
               placeholder="키워드를 검색해주세요."
               onKeyPress={(e) => {
@@ -198,7 +197,8 @@ const ItemsDemo = (props) => {
                       }}
                       aria-label='toggle password visibility'
                       style={{
-                        padding: '0.5rem'
+                        padding: '0.5rem',
+                        color:'red'
                       }}
                     >
                       <Icon icon={'tabler:search'} />

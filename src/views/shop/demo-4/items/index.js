@@ -162,6 +162,7 @@ const ItemsDemo = (props) => {
             <TextField
               label=''
               variant="standard"
+              color="red"
               onChange={(e) => {
                 setSearchObj({
                   ...searchObj,
@@ -169,7 +170,7 @@ const ItemsDemo = (props) => {
                 })
               }}
               value={searchObj?.search}
-              style={{ width: '100%', margin: '2rem auto 0 auto', maxWidth: '700px', borderColor:"red" }}
+              style={{ width: '100%', margin: '2rem auto 0 auto', maxWidth: '700px', }}
               autoComplete='new-password'
               placeholder="키워드를 검색해주세요."
               onKeyPress={(e) => {

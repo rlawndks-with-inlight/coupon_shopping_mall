@@ -715,6 +715,14 @@ const Header = () => {
                                                                     <Col style={{ minWidth: '100px', flexWrap: 'wrap', alignItems: 'flex-start', maxHeight: '700px', rowGap: '0.2rem' }}>
                                                                         {group?.product_categories && group?.product_categories.map((category, idx) => {
                                                                             let is_alphabet = false;
+                                                                            <Row>
+                                                                                <Button>
+                                                                                    알파벳순
+                                                                                </Button>
+                                                                                <Button>
+                                                                                    가나다순
+                                                                                </Button>
+                                                                            </Row>
                                                                             let alphabet = "";
                                                                             if (group?.sort_type == 1) {
                                                                                 for (var i = 65; i < 90; i++) {

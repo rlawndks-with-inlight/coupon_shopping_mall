@@ -214,6 +214,8 @@ const Header = () => {
     const [postCategories, setPostCategories] = useState([]);
     const [loading, setLoading] = useState(true);
     const [openAllCategory, setOpenAllCategory] = useState("")
+    const [langChipSelected, setLangChipSelected] = useState(0)
+
     const allCategoryRef = useRef([]);
     const authList = [
         {
@@ -713,44 +715,96 @@ const Header = () => {
                                                             {group?.sort_type == 1 &&
                                                                 <>
                                                                     <Col style={{ minWidth: '100px', flexWrap: 'wrap', alignItems: 'flex-start', maxHeight: '700px', rowGap: '0.2rem' }}>
-                                                                        {group?.product_categories && group?.product_categories.map((category, idx) => {
-                                                                            let is_alphabet = false;
-                                                                            <Row>
-                                                                                <Button>
-                                                                                    알파벳순
-                                                                                </Button>
-                                                                                <Button>
-                                                                                    가나다순
-                                                                                </Button>
-                                                                            </Row>
-                                                                            let alphabet = "";
-                                                                            if (group?.sort_type == 1) {
-                                                                                for (var i = 65; i < 90; i++) {
-                                                                                    if (category?.category_name[0].toUpperCase() == String.fromCharCode(i) && (group?.product_categories[idx - 1]?.category_name[0] ?? "").toUpperCase() != String.fromCharCode(i)) {
-                                                                                        is_alphabet = true;
-                                                                                        alphabet = String.fromCharCode(i);
-                                                                                        break;
+                                                                        <Row>
+                                                                            <Chip label={`알파벳순`} variant="soft" sx={{
+                                                                                margin: '0.5rem 0.5rem 0.5rem 0',
+                                                                                fontWeight: 'bold',
+                                                                                cursor: 'pointer',
+                                                                                color: `${langChipSelected == 0 ? 'white' : ''}`,
+                                                                                background: `${langChipSelected == 0 ? 'black' : ''}`,
+                                                                                '&:hover': {
+                                                                                    color: `${langChipSelected == 0 ? 'white' : ''}`,
+                                                                                    background: `${langChipSelected == 0 ? 'black' : ''}`,
+                                                                                }
+                                                                            }}
+                                                                                onClick={() => { setLangChipSelected(0) }}
+                                                                            />
+                                                                            <Chip label={`가나다순`} variant="soft" sx={{
+                                                                                margin: '0.5rem 0.5rem 0.5rem 0',
+                                                                                fontWeight: 'bold',
+                                                                                cursor: 'pointer',
+                                                                                color: `${langChipSelected == 1 ? 'white' : ''}`,
+                                                                                background: `${langChipSelected == 1 ? 'black' : ''}`,
+                                                                                '&:hover': {
+                                                                                    color: `${langChipSelected == 1 ? 'white' : ''}`,
+                                                                                    background: `${langChipSelected == 1 ? 'black' : ''}`,
+                                                                                }
+                                                                            }}
+                                                                                onClick={() => { setLangChipSelected(1) }}
+                                                                            />
+                                                                        </Row>
+                                                                        {langChipSelected == 0 ?
+                                                                            group?.product_categories && group?.product_categories.map((category, idx) => {
+                                                                                let is_alphabet = false;
+                                                                                let alphabet = "";
+                                                                                if (group?.sort_type == 1) {
+                                                                                    for (var i = 65; i < 90; i++) {
+                                                                                        if (category?.category_name[0].toUpperCase() == String.fromCharCode(i) && (group?.product_categories[idx - 1]?.category_name[0] ?? "").toUpperCase() != String.fromCharCode(i)) {
+                                                                                            is_alphabet = true;
+                                                                                            alphabet = String.fromCharCode(i);
+                                                                                            break;
+                                                                                        }
                                                                                     }
                                                                                 }
-                                                                            }
-                                                                            return <>
-                                                                                {is_alphabet &&
-                                                                                    <>
-                                                                                        <Chip label={`[${alphabet}]`} variant="soft" sx={{
-                                                                                            marginTop: '0.5rem',
-                                                                                            cursor: 'pointer', fontWeight: 'bold', background: `${themeDnsData?.theme_css?.main_color}29`, color: `${themeDnsData?.theme_css?.main_color}`, '&:hover': {
-                                                                                                color: '#fff',
-                                                                                                background: `${themeDnsData?.theme_css?.main_color}`,
-                                                                                            }
-                                                                                        }} />
-                                                                                        <div style={{ borderBottom: `3px solid ${themeDnsData?.theme_css?.main_color}`, width: '150px', marginBottom: '0.5rem' }} />
-                                                                                    </>}
-                                                                                <Typography variant="body2" style={{ cursor: 'pointer' }} onClick={() => {
-                                                                                    router.push(`/shop/items?category_id${index}=${category?.id}&depth=0`)
-                                                                                    setOpenAllCategory("")
-                                                                                }}>{category?.category_name}</Typography>
-                                                                            </>
-                                                                        })}
+                                                                                return <>
+                                                                                    {is_alphabet &&
+                                                                                        <>
+                                                                                            <Chip label={`[${alphabet}]`} variant="soft" sx={{
+                                                                                                marginTop: '0.5rem',
+                                                                                                cursor: 'pointer', fontWeight: 'bold', background: `${themeDnsData?.theme_css?.main_color}29`, color: `${themeDnsData?.theme_css?.main_color}`, '&:hover': {
+                                                                                                    color: '#fff',
+                                                                                                    background: `${themeDnsData?.theme_css?.main_color}`,
+                                                                                                }
+                                                                                            }} />
+                                                                                            <div style={{ borderBottom: `3px solid ${themeDnsData?.theme_css?.main_color}`, width: '150px', marginBottom: '0.5rem' }} />
+                                                                                        </>}
+                                                                                    <Typography variant="body2" style={{ cursor: 'pointer' }} onClick={() => {
+                                                                                        router.push(`/shop/items?category_id${index}=${category?.id}&depth=0`)
+                                                                                        setOpenAllCategory("")
+                                                                                    }}>{category?.category_name}</Typography>
+                                                                                </>
+                                                                            })
+                                                                            : //추후 가나다순 정렬 기능 만들 때 수정할 코드
+                                                                            group?.product_categories && group?.product_categories.map((category, idx) => {
+                                                                                let is_alphabet = false;
+                                                                                let alphabet = "";
+                                                                                if (group?.sort_type == 1) {
+                                                                                    for (var i = 65; i < 90; i++) {
+                                                                                        if (category?.category_name[0].toUpperCase() == String.fromCharCode(i) && (group?.product_categories[idx - 1]?.category_name[0] ?? "").toUpperCase() != String.fromCharCode(i)) {
+                                                                                            is_alphabet = true;
+                                                                                            alphabet = String.fromCharCode(i);
+                                                                                            break;
+                                                                                        }
+                                                                                    }
+                                                                                }
+                                                                                return <>
+                                                                                    {is_alphabet &&
+                                                                                        <>
+                                                                                            <Chip label={`[${alphabet}]`} variant="soft" sx={{
+                                                                                                marginTop: '0.5rem',
+                                                                                                cursor: 'pointer', fontWeight: 'bold', background: `${themeDnsData?.theme_css?.main_color}29`, color: `${themeDnsData?.theme_css?.main_color}`, '&:hover': {
+                                                                                                    color: '#fff',
+                                                                                                    background: `${themeDnsData?.theme_css?.main_color}`,
+                                                                                                }
+                                                                                            }} />
+                                                                                            <div style={{ borderBottom: `3px solid ${themeDnsData?.theme_css?.main_color}`, width: '150px', marginBottom: '0.5rem' }} />
+                                                                                        </>}
+                                                                                    <Typography variant="body2" style={{ cursor: 'pointer' }} onClick={() => {
+                                                                                        router.push(`/shop/items?category_id${index}=${category?.id}&depth=0`)
+                                                                                        setOpenAllCategory("")
+                                                                                    }}>{category?.category_name}</Typography>
+                                                                                </>
+                                                                            })}
                                                                     </Col>
 
                                                                 </>}

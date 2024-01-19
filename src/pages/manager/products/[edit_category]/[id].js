@@ -372,7 +372,7 @@ const ProductEdit = () => {
     });
     $(`.category-container-${idx}`).scrollLeft(100000);
   }
-  const onSave = async () => {
+  const onSave = async (type) => {
     let result = undefined
     let category_ids = {};
     for (var i = 0; i < themeCategoryList.length; i++) {
@@ -422,10 +422,14 @@ const ProductEdit = () => {
         }
       }
     }
-    if (obj?.id) {//수정
-      result = await apiManager('products', 'update', { ...obj, id: obj?.id, ...category_ids, sub_images, properties: JSON.stringify(item.properties) })
-    } else {//추가
-      result = await apiManager('products', 'create', { ...obj, ...category_ids, sub_images, user_id: user?.id, properties: JSON.stringify(item.properties) })
+    {
+      type == 'edit' ?
+        obj?.id ? //수정
+          result = await apiManager('products', 'update', { ...obj, id: obj?.id, ...category_ids, sub_images, properties: JSON.stringify(item.properties) })
+          : //추가
+          result = await apiManager('products', 'create', { ...obj, ...category_ids, sub_images, user_id: user?.id, properties: JSON.stringify(item.properties) })
+        :
+        result = await apiManager('products', 'create', { ...obj, ...category_ids, sub_images, user_id: user?.id, properties: JSON.stringify(item.properties) })
     }
     if (result) {
       toast.success("성공적으로 저장 되었습니다.");
@@ -1193,18 +1197,47 @@ const ProductEdit = () => {
               </>}
             <Grid item xs={12} md={12}>
               <Card sx={{ p: 3 }}>
-                <Stack spacing={1} style={{ display: 'flex' }}>
-                  <Button variant="contained" style={{
-                    height: '48px', width: '120px', marginLeft: 'auto'
-                  }} onClick={() => {
-                    setModal({
-                      func: () => { onSave() },
-                      icon: 'material-symbols:edit-outline',
-                      title: '저장 하시겠습니까?'
-                    })
-                  }}>
-                    저장
-                  </Button>
+                <Stack spacing={0} style={{ display: 'flex', flexDirection: 'row' }}>
+                  {router.query?.edit_category == 'edit' ?
+                    <>
+                      <Button variant="contained" style={{
+                        height: '48px', width: '180px', marginLeft: 'auto',
+                      }} onClick={() => {
+                        setModal({
+                          func: () => { onSave('edit') },
+                          icon: 'material-symbols:edit-outline',
+                          title: '변경 사항을 저장 하시겠습니까?'
+                        })
+                      }}>
+                        기존 상품에 저장
+                      </Button>
+                      <Button variant="outlined" style={{
+                        height: '48px', width: '180px', marginLeft: '1rem'
+                      }} onClick={() => {
+                        setModal({
+                          func: () => { onSave('copy') },
+                          icon: 'material-symbols:edit-outline',
+                          title: '신규 상품으로 등록 하시겠습니까?'
+                        })
+                      }}>
+                        신규 상품으로 등록
+                      </Button>
+                    </>
+                    :
+                    <>
+                      <Button variant="contained" style={{
+                        height: '48px', width: '120px', marginLeft: 'auto'
+                      }} onClick={() => {
+                        setModal({
+                          func: () => { onSave() },
+                          icon: 'material-symbols:edit-outline',
+                          title: '저장 하시겠습니까?'
+                        })
+                      }}>
+                        저장
+                      </Button>
+                    </>
+                  }
                 </Stack>
               </Card>
             </Grid>

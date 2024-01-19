@@ -213,7 +213,7 @@ const ProductList = () => {
     },
     {
       id: 'edit',
-      label: '수정/삭제',
+      label: '수정(복사)/삭제', //수정/복사/삭제
       action: (row) => {
         return (
           <>
@@ -222,6 +222,11 @@ const ProductList = () => {
                 router.push(`edit/${row?.product_code || row?.id}`)
               }} />
             </IconButton>
+            {/*<IconButton>
+              <Icon icon='material-symbols:content-copy-outline' onClick={() => {
+                router.push(`edit/${row?.product_code || row?.id}`)
+              }} />
+            </IconButton> */}
             <IconButton onClick={() => {
               setModal({
                 func: () => { deleteProduct(row?.id) },

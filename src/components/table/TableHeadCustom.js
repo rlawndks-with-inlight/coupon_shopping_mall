@@ -1,6 +1,7 @@
 import PropTypes from 'prop-types';
 // @mui
-import { Box, Checkbox, TableRow, TableCell, TableHead, TableSortLabel } from '@mui/material';
+import { Box, Checkbox, TableRow, TableCell, TableHead, TableSortLabel, Button } from '@mui/material';
+import { useState } from 'react';
 
 // ----------------------------------------------------------------------
 
@@ -29,6 +30,7 @@ TableHeadCustom.propTypes = {
   order: PropTypes.oneOf(['asc', 'desc']),
 };
 
+
 export default function TableHeadCustom({
   order,
   orderBy,
@@ -39,6 +41,10 @@ export default function TableHeadCustom({
   onSelectAllRows,
   sx,
 }) {
+  const createSortHandler = (prop) => (e) => {
+    onSort(e, prop);
+  }
+
   return (
     <TableHead sx={sx}>
       <TableRow>
@@ -61,14 +67,13 @@ export default function TableHeadCustom({
           >
             {onSort ? (
               <TableSortLabel
-                hideSortIcon
+                //hideSortIcon
                 active={orderBy === headCell.id}
                 direction={orderBy === headCell.id ? order : 'asc'}
-                onClick={() => onSort(headCell.id)}
+                onClick={createSortHandler(headCell.id)}
                 sx={{ textTransform: 'capitalize' }}
               >
                 {headCell.label}
-
                 {orderBy === headCell.id ? (
                   <Box sx={{ ...visuallyHidden }}>
                     {order === 'desc' ? 'sorted descending' : 'sorted ascending'}

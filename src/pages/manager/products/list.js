@@ -256,6 +256,7 @@ const ProductList = () => {
   const [categories, setCategories] = useState([]);
   const [curCategories, setCurCategories] = useState({});
   const [categoryChildrenList, setCategoryChildrenList] = useState({});
+  const [detailSearchOpen, setDetailSearchOpen] = useState(false)
   useEffect(() => {
     pageSetting();
   }, [])
@@ -344,7 +345,8 @@ const ProductList = () => {
     <>
       <Stack spacing={3}>
         <Card>
-          {themeCategoryList.map((group, idx) => (
+          <div style={{ display:'flex' }}>
+          {detailSearchOpen && themeCategoryList.map((group, idx) => (
             <>
               <div style={{
                 width: '100%',
@@ -355,12 +357,13 @@ const ProductList = () => {
                   categories={group?.product_categories}
                   categoryChildrenList={categoryChildrenList[idx] ?? []}
                   onClickCategory={onClickCategory}
-                  noneSelectText={`${group?.category_group_name} 전체`}
+                  noneSelectText={`${group?.category_group_name} 선택`}
                   sort_idx={idx}
                 />
               </div>
             </>
           ))}
+          </div>
           <Divider />
           <ManagerTable
             data={data}
@@ -371,9 +374,8 @@ const ProductList = () => {
             add_button_text={'상품 추가'}
             want_move_card={true}
             table={'products'}
-            detail_search={<Button variant="outlined">
-              상세검색
-            </Button>}
+            detail_search={'상세검색'}
+            onToggle={() => setDetailSearchOpen(!detailSearchOpen)}
           />
         </Card>
       </Stack>

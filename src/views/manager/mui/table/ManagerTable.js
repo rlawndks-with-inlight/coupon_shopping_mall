@@ -25,6 +25,7 @@ import update from 'immutability-helper'
 import _ from 'lodash';
 import { apiUtil } from 'src/utils/api';
 import { useSettingsContext } from 'src/components/settings';
+import useTable from 'src/components/table';
 
 const TableHeaderContainer = styled.div`
 padding: 0.75rem;
@@ -38,7 +39,7 @@ justify-content:space-between;
 `
 
 export default function ManagerTable(props) {
-  const { columns, data, add_button_text, add_link, onChangePage, searchObj, want_move_card, table, detail_search } = props;
+  const { columns, data, add_button_text, add_link, onChangePage, searchObj, want_move_card, table, detail_search, onToggle } = props;
   const { page, page_size } = props?.searchObj;
 
   const router = useRouter();
@@ -48,6 +49,30 @@ export default function ManagerTable(props) {
   const [eDt, setEDt] = useState(undefined);
   const [keyword, setKeyWord] = useState("");
   const [contentList, setContentList] = useState(undefined);
+/*
+  const [
+    dense,
+    order,
+    //page,
+    orderBy,
+    rowsPerPage,
+    //
+    selected,
+    onSelectRow,
+    onSelectAllRows,
+    //
+    onSort,
+    //onChangePage,
+    onChangeDense,
+    onChangeRowsPerPage,
+    //
+    setPage,
+    setDense,
+    setOrder,
+    setOrderBy,
+    setSelected,
+    setRowsPerPage,
+  ] = useTable()*/
 
   useEffect(() => {
     setContentList(data?.content);
@@ -113,7 +138,40 @@ export default function ManagerTable(props) {
     <>
       <TableContainer sx={{ overflow: 'unset' }}>
         <TableHeaderContainer>
-          <Row style={{ rowGap: '1rem', flexWrap: 'wrap' }}>
+          <Row style={{ flexGrow: 1, rowGap: '0.75rem', flexWrap: 'wrap', margin: '0.35rem 0' }} >
+            <FormControl variant="outlined" sx={{ flexGrow: 1, minWidth: '500px', marginRight: '0.75rem' }}>
+              <OutlinedInput
+                size='small'
+                label=''
+                autoFocus
+                placeholder='키워드 입력'
+                value={keyword}
+                endAdornment={<>
+                  <Tooltip title='해당 텍스트로 검색하시려면 엔터 또는 돋보기 버튼을 클릭해주세요.'>
+                    <IconButton position="end" sx={{ transform: 'translateX(14px)' }} onClick={() => onChangePage({ ...searchObj, search: keyword })}>
+                      <Icon icon='material-symbols:search' />
+                    </IconButton>
+                  </Tooltip>
+
+                </>}
+                onChange={(e) => {
+                  setKeyWord(e.target.value)
+                }}
+                onKeyPress={(e) => {
+                  if (e.key == 'Enter') {
+                    onChangePage({ ...searchObj, search: keyword })
+                  }
+                }}
+              />
+            </FormControl>
+            {detail_search &&
+              <>
+                <Button variant='outlined' sx={{ marginRight: '0.75rem' }} onClick={onToggle}>
+                  {detail_search}
+                </Button>
+              </>}
+          </Row>
+          <Row style={{ rowGap: '1rem', flexWrap: 'wrap', margin: '0.35rem 0' }}>
             {window.innerWidth > 1000 ?
               <>
                 <DesktopDatePicker
@@ -137,7 +195,7 @@ export default function ManagerTable(props) {
                     onChangePage({ ...searchObj, e_dt: returnMoment(false, new Date(newValue)).substring(0, 10) })
                   }}
                   renderInput={(params) => <TextField fullWidth {...params} margin="normal" />}
-                  sx={{ width: '180px' }}
+                  sx={{ width: '180px', marginRight: '0.75rem' }}
                   slotProps={{ textField: { size: 'small' } }}
                 />
               </>
@@ -162,13 +220,13 @@ export default function ManagerTable(props) {
                     setEDt(newValue);
                   }}
                   renderInput={(params) => <TextField fullWidth {...params} margin="normal" />}
-                  sx={{ flexGrow: 1 }}
+                  sx={{ flexGrow: 1, marginRight: '0.75rem' }}
                   slotProps={{ textField: { size: 'small' } }}
                 />
               </>}
           </Row>
-          <Row style={{ columnGap: '0.75rem', flexWrap: 'wrap', rowGap: '0.75rem' }}>
-            <FormControl variant='outlined' size='small' sx={{ width: '100px', flexGrow: 1 }}>
+          <Row style={{ columnGap: '0.75rem', flexWrap: 'wrap', rowGap: '0.75rem', margin: '0.35rem 0' }}>
+            <FormControl variant='outlined' size='small' sx={{ width: '100px', flexGrow: 1, }}>
               <InputLabel>페이지사이즈</InputLabel>
               <Select label='페이지사이즈' value={page_size}
                 onChange={(e) => {
@@ -181,36 +239,9 @@ export default function ManagerTable(props) {
                 <MenuItem value={100}>100</MenuItem>
               </Select>
             </FormControl>
-            <FormControl variant="outlined" sx={{ flexGrow: 1 }}>
-              <OutlinedInput
-                size='small'
-                label=''
-                value={keyword}
-                endAdornment={<>
-                  <Tooltip title='해당 텍스트로 검색하시려면 엔터 또는 돋보기 버튼을 클릭해주세요.'>
-                    <IconButton position="end" sx={{ transform: 'translateX(14px)' }} onClick={() => onChangePage({ ...searchObj, search: keyword })}>
-                      <Icon icon='material-symbols:search' />
-                    </IconButton>
-                  </Tooltip>
-
-                </>}
-                onChange={(e) => {
-                  setKeyWord(e.target.value)
-                }}
-                onKeyPress={(e) => {
-                  if (e.key == 'Enter') {
-                    onChangePage({ ...searchObj, search: keyword })
-                  }
-                }}
-              />
-            </FormControl>
-            {detail_search &&
-              <>
-                {detail_search}
-              </>}
             {add_button_text ?
               <>
-                <Button variant='contained' sx={{ flexGrow: 1 }} onClick={() => {
+                <Button variant='contained' sx={{ flexGrow: 1, minWidth: '200px' }} onClick={() => {
                   let path = router.asPath;
                   if (router.asPath.includes('list')) {
                     path = path.replace('list', '');
@@ -235,9 +266,13 @@ export default function ManagerTable(props) {
             :
             <>
               <Table sx={{ minWidth: 800, overflowX: 'auto' }}>
-                <TableHeadCustom headLabel={columns} />
+                <TableHeadCustom
+                  headLabel={columns}
+
+                  sx={{ whiteSpace: 'nowrap' }}
+                />
                 <DndProvider backend={HTML5Backend}>
-                  <TableBody>
+                  <TableBody sx={{ wordBreak: 'keep-all' }}>
                     {contentList && contentList.map((row, index) => {
                       return renderCard(row, index)
                     })}

@@ -252,7 +252,7 @@ const ItemsDemo = (props) => {
 
                           query = new URLSearchParams(query).toString();
                           router.push(`/shop/items?${query}`);
-                        }}>{category?.category_name}</Button>
+                        }}>{category?.category_en_name}</Button>
                     </>
                   })}
 
@@ -271,7 +271,7 @@ const ItemsDemo = (props) => {
                               query[`category_id${index}`] = category?.id;
                               query = new URLSearchParams(query).toString();
                               router.push(`/shop/items?${query}`);
-                            }}>{category?.category_name}</Button>
+                            }}>{category?.category_en_name}</Button>
                         </>
                       ))}
                     </ContentBorderContainer>

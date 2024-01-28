@@ -226,7 +226,7 @@ const ItemsDemo = (props) => {
                     let alphabet = "";
                     if (group?.sort_type == 1) {
                       for (var i = 65; i < 90; i++) {
-                        if (category?.category_name[0].toUpperCase() == String.fromCharCode(i) && (group?.product_categories[idx - 1]?.category_name[0] ?? "").toUpperCase() != String.fromCharCode(i)) {
+                        if (category?.category_en_name?.[0].toUpperCase() == String.fromCharCode(i) && (group?.product_categories[idx - 1]?.category_name[0] ?? "").toUpperCase() != String.fromCharCode(i)) {
                           is_alphabet = true;
                           alphabet = String.fromCharCode(i);
                           break;

@@ -790,7 +790,7 @@ const Header = () => {
                                                         <CategoryMenu borderColor={themeMode == 'dark' ? '#fff' : '#000'} onClick={() => {
                                                             router.push(`/shop/items?category_id${index}=${item1?.id}&depth=0`)
                                                         }}>
-                                                            <div>{item1.category_name}</div>
+                                                            <div>{item1.category_en_name}</div>
                                                         </CategoryMenu>
                                                         {item1?.children.length > 0 ?
                                                             <>
@@ -987,7 +987,7 @@ const returnSidebarMenu = (item, num, func, index) => {
                 onClick={() => {
                     router.push(`/shop/items?category_id${index}=${item?.id}&depth=${num}`);
                     setSideMenuOpen(false);
-                }}>{item.category_name}</div>}
+                }}>{item.category_en_name}</div>}
                 nodeId={item.id}
                 style={{ margin: '0.25rem 0' }}
             >

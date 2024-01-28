@@ -4,6 +4,7 @@ import { IconButton, TextField, InputAdornment, Drawer, Badge, Button, Typograph
 import { forwardRef, useEffect, useRef, useState } from "react"
 import { Icon } from "@iconify/react"
 import { Col, Row, themeObj } from 'src/components/elements/styled-components'
+import { CategorySorter, LANGCODE } from "src/views/shop/demo-4/header"
 import { useTheme } from '@mui/material/styles';
 import { useSettingsContext } from "src/components/settings"
 import { test_categories } from "src/data/test-data"
@@ -192,7 +193,6 @@ width:90vw;
 `
 
 const Header = () => {
-
     const router = useRouter();
     const theme = useTheme()
     const { themeMode, onToggleMode, themeCategoryList, themeDnsData, themePopupList, themePostCategoryList, onChangePopupList, themeWishData, themeCartData, onChangeCartData, onChangeWishData, themeSellerList } = useSettingsContext();
@@ -215,6 +215,7 @@ const Header = () => {
     const [loading, setLoading] = useState(true);
     const [openAllCategory, setOpenAllCategory] = useState("")
     const [langChipSelected, setLangChipSelected] = useState(0)
+    const { sort, categoryGroup } = CategorySorter(themeCategoryList)
 
     const allCategoryRef = useRef([]);
     const authList = [
@@ -393,20 +394,9 @@ const Header = () => {
         router.push('/shop/auth/login');
     }
 
-    /*const copyThemeCategoryList = []
-    copyThemeCategoryList.push(themeCategoryList)
-
-    const categorySorted = copyThemeCategoryList.map((group, idx) => {
-        let arr = []
-        arr = group.product_categories
-        arr.sort((a, b) => {
-            if (a.category_en_name > b.category_en_name) return 1;
-            if (a.category_en_name < b.category_en_name) return -1;
-            return 0;
-        })
-        return arr
-    })*/
-
+    useEffect(() => {
+        sort(LANGCODE.ENG)
+    }, [])
 
     return (
         <>
@@ -501,13 +491,20 @@ const Header = () => {
                                     startIcon={<>
                                         <Icon icon={'mdi:cart'} />
                                     </>}
+                                    onClick={() => {
+                                        router.push('/shop/guide/purchase-guide')
+                                    }}
                                 >
                                     매입센터
                                 </Button>
                                 <Button variant="outlined"
                                     startIcon={<>
                                         <Icon icon={'heroicons:paper-clip'} />
-                                    </>}>
+                                    </>}
+                                    onClick={() => {
+                                        router.push('/shop/guide/consignment-guide')
+                                    }}
+                                >
                                     위탁센터
                                 </Button>
                                 <IconButton
@@ -743,7 +740,7 @@ const Header = () => {
                                                                                     background: `${langChipSelected == 0 ? 'black' : ''}`,
                                                                                 }
                                                                             }}
-                                                                                onClick={() => { setLangChipSelected(0) }}
+                                                                                onClick={() => { setLangChipSelected(0); sort(LANGCODE.ENG) }}
                                                                             />
                                                                             <Chip label={`가나다순`} variant="soft" sx={{
                                                                                 margin: '0.5rem 0.5rem 0.5rem 0',
@@ -756,112 +753,30 @@ const Header = () => {
                                                                                     background: `${langChipSelected == 1 ? 'black' : ''}`,
                                                                                 }
                                                                             }}
-                                                                                onClick={() => { setLangChipSelected(1) }}
+                                                                                onClick={() => { setLangChipSelected(1); sort(LANGCODE.KOR) }}
                                                                             />
                                                                         </Row>
-                                                                        {langChipSelected == 0 ?
-                                                                            group?.product_categories && group?.product_categories.map((category, idx) => {
-                                                                                let is_alphabet = false;
-                                                                                let alphabet = "";
-                                                                                if (group?.sort_type == 1) {
-                                                                                    for (var i = 65; i < 90; i++) {
-                                                                                        if (category?.category_name[0].toUpperCase() == String.fromCharCode(i) && (group?.product_categories[idx - 1]?.category_name[0] ?? "").toUpperCase() != String.fromCharCode(i)) {
-                                                                                            is_alphabet = true;
-                                                                                            alphabet = String.fromCharCode(i);
-                                                                                            break;
-                                                                                        } else if (!isNaN(category?.category_name[0])) {
-                                                                                            is_alphabet = true;
-                                                                                            alphabet = '#'
+                                                                        {categoryGroup.map((group) => {
+                                                                            return <>
+                                                                                    <Chip label={`[${group.label}]`} variant="soft" sx={{
+                                                                                        marginTop: '0.5rem',
+                                                                                        cursor: 'pointer', fontWeight: 'bold', background: `${themeDnsData?.theme_css?.main_color}29`, color: `${themeDnsData?.theme_css?.main_color}`, '&:hover': {
+                                                                                            color: '#fff',
+                                                                                            background: `${themeDnsData?.theme_css?.main_color}`,
                                                                                         }
-                                                                                    }
-                                                                                }
-                                                                                return <>
-                                                                                    {is_alphabet &&
-                                                                                        <>
-                                                                                            <Chip label={`[${alphabet}]`} variant="soft" sx={{
-                                                                                                marginTop: '0.5rem',
-                                                                                                cursor: 'pointer', fontWeight: 'bold', background: `${themeDnsData?.theme_css?.main_color}29`, color: `${themeDnsData?.theme_css?.main_color}`, '&:hover': {
-                                                                                                    color: '#fff',
-                                                                                                    background: `${themeDnsData?.theme_css?.main_color}`,
-                                                                                                }
-                                                                                            }} />
-                                                                                            <div style={{ borderBottom: `3px solid ${themeDnsData?.theme_css?.main_color}`, width: '150px', marginBottom: '0.5rem' }} />
-                                                                                        </>}
-                                                                                    <Typography variant="body2" style={{ cursor: 'pointer' }} onClick={() => {
-                                                                                        router.push(`/shop/items?category_id${index}=${category?.id}&depth=0`)
-                                                                                        setOpenAllCategory("")
-                                                                                    }}>{category?.category_name}</Typography>
-                                                                                </>
-                                                                            })
-                                                                            : // 가나다순 정렬 기능 만들 때 수정할 코드
-                                                                            {/*
-                                                                        categorySorted && categorySorted.map((group, idx) => (
-                                                                                group?.map((val, idx) => {
-                                                                                    let is_hangeul = false;
-                                                                                    let hangeul = "";
-                                                                                    if (val.category_en_name && val[idx-1]?.category_en_name ) {
-                                                                                        for (var i = 44032; i < 55204; i++) {
-                                                                                            if (val?.category_en_name[0] == String.fromCharCode(i) && (val[idx - 1]?.category_en_name[0] ?? "") != String.fromCharCode(i)) {
-                                                                                                if(i > 44031 && i < 45208){
-                                                                                                    is_hangeul = true;
-                                                                                                    hangeul = '가'
-                                                                                                } else if (i < 45796) {
-                                                                                                    hangeul = '나'
-                                                                                                } else if (i < 46972) {
-                                                                                                    hangeul = '다'
-                                                                                                } else if (i < 47560) {
-                                                                                                    hangeul = '라'
-                                                                                                } else if (i < 48148) {
-                                                                                                    hangeul = '마'
-                                                                                                } else if (i < 49324) {
-                                                                                                    hangeul = '바'
-                                                                                                } else if (i < 50500) {
-                                                                                                    hangeul = '사'
-                                                                                                } else if (i < 51088) {
-                                                                                                    hangeul = '아'
-                                                                                                } else if (i < 52264) {
-                                                                                                    hangeul = '자'
-                                                                                                } else if (i < 52852) {
-                                                                                                    hangeul = '차'
-                                                                                                } else if (i < 53440) {
-                                                                                                    hangeul = '카'
-                                                                                                } else if (i < 54028) {
-                                                                                                    hangeul = '타'
-                                                                                                } else if (i < 54616) {
-                                                                                                    hangeul = '파'
-                                                                                                } else if (i < 55204) {
-                                                                                                    hangeul = '하'
-                                                                                                } else {
-                                                                                                    hangeul == '#'
-                                                                                                }
-                                                                                                
-                                                                                                
-                                                                                            }
-                                                                                        }
-                                                                                    }
-                                                                                    return <>
-                                                                                        {val.category_en_name != null &&
-                                                                                            <>
-                                                                                                <Chip label={`[${hangeul}]`} variant="soft" sx={{
-                                                                                                    marginTop: '0.5rem',
-                                                                                                    cursor: 'pointer', fontWeight: 'bold', background: `${themeDnsData?.theme_css?.main_color}29`, color: `${themeDnsData?.theme_css?.main_color}`, '&:hover': {
-                                                                                                        color: '#fff',
-                                                                                                        background: `${themeDnsData?.theme_css?.main_color}`,
-                                                                                                    }
-                                                                                                }} />
-                                                                                                <div style={{ borderBottom: `3px solid ${themeDnsData?.theme_css?.main_color}`, width: '150px', marginBottom: '0.5rem' }} />
-                                                                                                <Typography variant="body2" style={{ cursor: 'pointer' }} onClick={() => {
-                                                                                                    router.push(`/shop/items?category_id${index}=${val?.id}&depth=0`)
-                                                                                                    setOpenAllCategory("")
-                                                                                                }}>{val?.category_en_name}</Typography>
-                                                                                            </>
-                                                                                        }
-                                                                                    </>
-                                                                                })
-                                                                            ))
+                                                                                    }} />
+                                                                                    <div style={{ borderBottom: `3px solid ${themeDnsData?.theme_css?.main_color}`, width: '150px', marginBottom: '0.5rem' }} />                                                                                   
+                                                                                    {
+                                                                                        group.childs.map((child) => {
+                                                                                            return <Typography variant="body2" style={{ cursor: 'pointer' }} onClick={() => {
+                                                                                                router.push(`/shop/items?category_id${index}=${child?.id}&depth=0`)
+                                                                                                setOpenAllCategory("")
+                                                                                            }}>{langChipSelected == 0 ? child?.category_en_name : child?.category_name}</Typography>
+                                                                                        })
 
-                                                                        */}
-                                                                        }
+                                                                                    }
+                                                                            </>
+                                                                        })}
                                                                     </Col>
 
                                                                 </>}

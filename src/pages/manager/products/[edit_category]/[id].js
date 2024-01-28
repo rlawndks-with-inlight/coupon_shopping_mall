@@ -127,6 +127,21 @@ export const SelectCategoryComponent = (props) => {
     </>
   )
 }
+
+
+export const SelectPropertyComponent = (props) => {
+  const {a} = props;
+  const theme = useTheme();
+
+  return (
+    <>
+    
+    </>
+  )
+}
+
+
+
 const ProductEdit = () => {
   const { user } = useAuthContext();
   const { setModal } = useModal()
@@ -1209,7 +1224,7 @@ const ProductEdit = () => {
                           title: '변경 사항을 저장 하시겠습니까?'
                         })
                       }}>
-                        기존 상품에 저장
+                        저장
                       </Button>
                       <Button variant="outlined" style={{
                         height: '48px', width: '180px', marginLeft: '1rem'

@@ -1,10 +1,10 @@
-import { Button, Card, Container, Divider, IconButton, MenuItem, Select, Stack, Typography } from "@mui/material";
+import { Button, Card, Container, Divider, IconButton, MenuItem, Select, Stack, Typography, FormControlLabel, Checkbox } from "@mui/material";
 import { useEffect, useState } from "react";
 import ManagerLayout from "src/layouts/manager/ManagerLayout";
 import ManagerTable from "src/views/manager/mui/table/ManagerTable";
 import { Icon } from "@iconify/react";
 import { useRouter } from "next/router";
-import { Col, Row } from "src/components/elements/styled-components";
+import { Col, Row, themeObj } from "src/components/elements/styled-components";
 import { commarNumber, getAllIdsWithParents } from "src/utils/function";
 import { LazyLoadImage } from "react-lazy-load-image-component";
 import { SelectCategoryComponent } from "./[edit_category]/[id]";
@@ -18,15 +18,15 @@ const ProductList = () => {
 
   const { user } = useAuthContext();
   const { setModal } = useModal()
-  const { themeCategoryList, themeDnsData } = useSettingsContext();
+  const { themeCategoryList, themeDnsData, themePropertyList } = useSettingsContext();
   const defaultColumns = [
-    {
+    /*{
       id: 'id',
       label: 'No.',
       action: (row) => {
         return commarNumber(row['id'] ?? "---")
       }
-    },
+    },*/
     {
       id: 'product_img',
       label: '상품이미지',
@@ -90,34 +90,51 @@ const ProductList = () => {
     }),
     {
       id: 'product_price',
-      label: '상품가',
+      label: '상품가 / 상품 할인가',
       action: (row) => {
-        return commarNumber(row['product_price'])
+        return (
+          <>
+            <div>
+              {commarNumber(row['product_price'])}
+            </div>
+            <div style={{ marginTop: '1rem' }}>
+              {commarNumber(row['product_sale_price'])}
+            </div>
+          </>)
       }
     },
-    {
+    /*{
       id: 'product_sale_price',
       label: '상품 할인가',
       action: (row) => {
         return commarNumber(row['product_sale_price'])
       }
-    },
+    },*/
     {
       id: 'user_name',
-      label: '생성한유저아이디',
+      label: '생성한유저 아이디 / 셀러명',
       action: (row) => {
-        return row['user_name'] ?? "---"
+        return (
+          <>
+            <div>
+              {row['user_name'] ?? "---"}
+            </div>
+            <div style={{ marginTop: '1rem' }}>
+              {row['seller_name'] ?? "---"}
+            </div>
+          </>
+        )
       }
     },
-    {
+    /*{
       id: 'seller_name',
       label: '생성한유저셀러명',
       action: (row) => {
         return row['seller_name'] ?? "---"
       }
-    },
+    },*/
     ...(themeDnsData?.setting_obj?.is_use_consignment == 1 ? [
-      {
+      /*{
         id: 'consignment',
         label: '위탁자정보',
         action: (row) => {
@@ -143,7 +160,7 @@ const ProductList = () => {
 
           </Col>
         }
-      },
+      },*/
     ] : []),
     {
       id: 'status',
@@ -155,6 +172,7 @@ const ProductList = () => {
           onChange={(e) => {
             onChangeStatus(row?.id, e.target.value);
           }}
+          sx={{ '@media screen and (max-width: 2500px)': { size: 'smaller' } }}
         >
           <MenuItem value={0}>{'판매중'}</MenuItem>
           <MenuItem value={1}>{'중단됨'}</MenuItem>
@@ -170,35 +188,50 @@ const ProductList = () => {
     },
     {
       id: 'order_count',
-      label: '주문',
+      label: '주문 / 리뷰',
       action: (row) => {
-        return commarNumber(row['order_count'])
+        return (
+          <>
+            <div style={{ minWidth: '3rem' }}>
+              {commarNumber(row['order_count'])} / {commarNumber(row['review_count'])}
+            </div>
+          </>
+        )
       }
     },
-    {
+    /*{
       id: 'review_count',
       label: '리뷰',
       action: (row) => {
         return commarNumber(row['review_count'])
       }
-    },
+    },*/
     {
       id: 'created_at',
-      label: '생성시간',
+      label: '생성시간 / 최종수정시간',
       action: (row) => {
-        return row['created_at'] ?? "---"
+        return (
+          <>
+            <div>
+              {row['created_at'] ?? "---"}
+            </div>
+            <div style={{ marginTop: '1rem' }}>
+              {row['updated_at'] ?? "---"}
+            </div>
+          </>
+        )
       }
     },
-    {
+    /*{
       id: 'updated_at',
-      label: '최종수정시간',
+      label: '최종 수정시간',
       action: (row) => {
         return row['updated_at'] ?? "---"
       }
-    },
+    },*/
     {
       id: 'edit',
-      label: '리뷰 확인하기',
+      label: '리뷰 확인',
       action: (row) => {
         return (
           <>
@@ -213,7 +246,7 @@ const ProductList = () => {
     },
     {
       id: 'edit',
-      label: '수정(복사)/삭제', //수정/복사/삭제
+      label: '수정(복사) / 삭제', //수정/복사/삭제
       action: (row) => {
         return (
           <>
@@ -335,35 +368,80 @@ const ProductList = () => {
     });
     $(`.category-container-${idx}`).scrollLeft(100000);
   }
+
+  const onClickProperty = (property, depth, idx) => {
+    
+  }
+
   const onChangeStatus = async (id, value) => {
     let result = await apiUtil(`products/status`, 'update', {
       id,
       value,
     })
   }
+
+
   return (
     <>
       <Stack spacing={3}>
         <Card>
-          <div style={{ display:'flex' }}>
-          {detailSearchOpen && themeCategoryList.map((group, idx) => (
+          <div style={{ display: 'flex' }}>
+            {detailSearchOpen && themeCategoryList.map((group, idx) => (
+              <>
+                <div style={{
+                  width: '100%',
+                  padding: '0.75rem',
+                }}>
+                  <SelectCategoryComponent
+                    curCategories={curCategories[idx] ?? []}
+                    categories={group?.product_categories}
+                    categoryChildrenList={categoryChildrenList[idx] ?? []}
+                    onClickCategory={onClickCategory}
+                    noneSelectText={`${group?.category_group_name} 선택`}
+                    sort_idx={idx}
+                  />
+                </div>
+              </>
+            ))}
+          </div>
+          {detailSearchOpen && themePropertyList.map((group, idx) => (
             <>
-              <div style={{
-                width: '100%',
-                padding: '0.75rem',
-              }}>
-                <SelectCategoryComponent
-                  curCategories={curCategories[idx] ?? []}
-                  categories={group?.product_categories}
-                  categoryChildrenList={categoryChildrenList[idx] ?? []}
-                  onClickCategory={onClickCategory}
-                  noneSelectText={`${group?.category_group_name} 선택`}
-                  sort_idx={idx}
-                />
+              <div style={{marginLeft:'1rem', marginBottom:'0.25rem', marginTop:'0.25rem'}}>
+                <Typography variant="subtitle2" sx={{ color: 'text.secondary' }}>
+                  {group?.property_group_name}
+                </Typography>
+                <Row style={{ flexWrap: 'wrap' }}>
+                  {group?.product_properties && group?.product_properties.map((property, idx) => (
+                    <>
+
+                      <FormControlLabel
+                        label={<Typography style={{ fontSize: themeObj.font_size.size6 }}>{property?.property_name}</Typography>}
+                        control={<Checkbox />}
+                        onChange={(e) => {
+                          let property_obj = { ...item.properties };
+                          if (!property_obj[`${group?.id}`] || group?.is_can_select_multiple == 0) {
+                            property_obj[`${group?.id}`] = [];
+                          }
+                          if (e.target.checked) {
+                            property_obj[`${group?.id}`].push(property?.id);
+                          } else {
+                            let find_idx = property_obj[`${group?.id}`].indexOf(property?.id);
+                            if (find_idx >= 0) {
+                              property_obj[`${group?.id}`].splice(find_idx, 1);
+                            }
+                          }
+                          setItem({
+                            ...item,
+                            properties: property_obj,
+                          })
+                        }}
+                      />
+                    </>
+                  ))}
+                </Row>
               </div>
             </>
           ))}
-          </div>
           <Divider />
           <ManagerTable
             data={data}

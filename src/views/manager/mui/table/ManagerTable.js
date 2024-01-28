@@ -1,5 +1,5 @@
 // @mui
-import { Table, TableRow, TableBody, TableCell, TableContainer, Pagination, Divider, Box, TextField, Button, FormControl, InputLabel, OutlinedInput, InputAdornment, IconButton, CircularProgress, Tooltip, Select, MenuItem } from '@mui/material';
+import { Table, TableRow, TableBody, TableCell, TableContainer, Pagination, Divider, Box, TextField, Button, FormControl, InputLabel, OutlinedInput, InputAdornment, IconButton, CircularProgress, Tooltip, Select, MenuItem, Menu, FormControlLabel, Switch } from '@mui/material';
 import { TableHeadCustom, TableNoData } from 'src/components/table';
 import {
   DatePicker,
@@ -49,30 +49,47 @@ export default function ManagerTable(props) {
   const [eDt, setEDt] = useState(undefined);
   const [keyword, setKeyWord] = useState("");
   const [contentList, setContentList] = useState(undefined);
-/*
-  const [
-    dense,
-    order,
-    //page,
-    orderBy,
-    rowsPerPage,
-    //
-    selected,
-    onSelectRow,
-    onSelectAllRows,
-    //
-    onSort,
-    //onChangePage,
-    onChangeDense,
-    onChangeRowsPerPage,
-    //
-    setPage,
-    setDense,
-    setOrder,
-    setOrderBy,
-    setSelected,
-    setRowsPerPage,
-  ] = useTable()*/
+  const [anchor, setAnchor] = useState(null)
+  const [checked, setChecked] = useState(true)
+
+  const handleClick = (e) => {
+    setAnchor(e.currentTarget)
+  }
+
+  const handleClose = () => {
+    setAnchor(null)
+  }
+
+  const handleChange = (e) => {
+    setChecked(e.target.checked)
+  }
+
+  const tableOption = Boolean(anchor)
+
+  /*
+    const [
+      dense,
+      order,
+      //page,
+      orderBy,
+      rowsPerPage,
+      //
+      selected,
+      onSelectRow,
+      onSelectAllRows,
+      //
+      onSort,
+      //onChangePage,
+      onChangeDense,
+      onChangeRowsPerPage,
+      //
+      setPage,
+      setDense,
+      setOrder,
+      setOrderBy,
+      setSelected,
+      setRowsPerPage,
+    ] = useTable()*/
 
   useEffect(() => {
     setContentList(data?.content);
@@ -139,7 +156,7 @@ export default function ManagerTable(props) {
       <TableContainer sx={{ overflow: 'unset' }}>
         <TableHeaderContainer>
           <Row style={{ flexGrow: 1, rowGap: '0.75rem', flexWrap: 'wrap', margin: '0.35rem 0' }} >
-            <FormControl variant="outlined" sx={{ flexGrow: 1, minWidth: '500px', marginRight: '0.75rem' }}>
+            <FormControl variant="outlined" sx={{ flexGrow: 1, minWidth: '100px', marginRight: '0.75rem' }}>
               <OutlinedInput
                 size='small'
                 label=''
@@ -226,6 +243,18 @@ export default function ManagerTable(props) {
               </>}
           </Row>
           <Row style={{ columnGap: '0.75rem', flexWrap: 'wrap', rowGap: '0.75rem', margin: '0.35rem 0' }}>
+            {/*
+            <Button variant='outlined' onClick={handleClick}>
+              테이블 설정
+            </Button>
+                */}
+            <Menu open={tableOption} onClose={handleClose} anchorEl={anchor}>
+
+                <MenuItem>
+                <FormControlLabel control={<Switch />} label='h' />
+                </MenuItem>
+
+            </Menu>
             <FormControl variant='outlined' size='small' sx={{ width: '100px', flexGrow: 1, }}>
               <InputLabel>페이지사이즈</InputLabel>
               <Select label='페이지사이즈' value={page_size}
@@ -268,8 +297,7 @@ export default function ManagerTable(props) {
               <Table sx={{ minWidth: 800, overflowX: 'auto' }}>
                 <TableHeadCustom
                   headLabel={columns}
-
-                  sx={{ whiteSpace: 'nowrap' }}
+                  sx={{ wordBreak: 'keep-all' }}
                 />
                 <DndProvider backend={HTML5Backend}>
                   <TableBody sx={{ wordBreak: 'keep-all' }}>

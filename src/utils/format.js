@@ -55,7 +55,6 @@ export const genderList = [
 export const ntvFrnrList = [
     { label: '내국인', value: 'L' },
     { label: '외국인', value: 'F' },
-
 ]
 export const telComList = [
     { label: 'SKT', value: '01' },

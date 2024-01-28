@@ -18,3 +18,5 @@ export { default as ArticleDemo4 } from './service/[article_category]/[id]';
 export { default as ArticlesDemo4 } from './service/[article_category]';
 export { default as HomeDemo4 } from './home';
 export { default as SearchDemo4 } from './search';
+export { default as PurchaseGuideDemo4 } from './guide/purchase-guide'
+export { default as ConsignmentGuideDemo4 } from './guide/consignment-guide'

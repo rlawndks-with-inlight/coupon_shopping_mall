@@ -91,7 +91,7 @@ const EngSorter = (categories) => {
         const { unKnownCategory, bigCategoryGroup } = SortGroupBase()
         categories.forEach(category => {
             for (var i = 65; i < 91; i++) {
-                if(category.category_en_name[0].toUpperCase() == String.fromCharCode(i)) {
+                if(category.category_en_name?.[0].toUpperCase() == String.fromCharCode(i)) {
                     let bigCateIdx = bigCategoryGroup.findIndex(obj => obj.label === String.fromCharCode(i))
                     if(bigCateIdx === -1) {
                         // 대분류 카테고리에 없는 경우

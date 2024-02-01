@@ -489,6 +489,17 @@ const Header = () => {
                                 <Button variant="outlined"
                                     sx={{ marginRight: '0.5rem' }}
                                     startIcon={<>
+                                        <Icon icon={'bx:store'} />
+                                    </>}
+                                    onClick={() => {
+                                        router.push('/shop/guide/company-guide')
+                                    }}
+                                >
+                                    매장안내
+                                </Button>
+                                <Button variant="outlined"
+                                    sx={{ marginRight: '0.5rem' }}
+                                    startIcon={<>
                                         <Icon icon={'mdi:cart'} />
                                     </>}
                                     onClick={() => {
@@ -727,7 +738,7 @@ const Header = () => {
                                                                 </>}
                                                             {group?.sort_type == 1 &&
                                                                 <>
-                                                                    <Col style={{ minWidth: '100px', flexWrap: 'wrap', alignItems: 'flex-start', maxHeight: '700px', rowGap: '0.2rem' }}>
+                                                                    <Col style={{ minWidth: '100px', flexWrap: 'wrap', alignItems: 'flex-start', maxHeight: '750px', rowGap: '0.2rem' }}>
                                                                         <Row>
                                                                             <Chip label={`알파벳순`} variant="soft" sx={{
                                                                                 margin: '0.5rem 0.5rem 0.5rem 0',
@@ -758,7 +769,7 @@ const Header = () => {
                                                                         </Row>
                                                                         {categoryGroup.map((group) => {
                                                                             return <>
-                                                                                    <Chip label={`[${group.label}]`} variant="soft" sx={{
+                                                                                    <Chip label={`[${group.label ? group.label : "#"}]`} variant="soft" sx={{
                                                                                         marginTop: '0.5rem',
                                                                                         cursor: 'pointer', fontWeight: 'bold', background: `${themeDnsData?.theme_css?.main_color}29`, color: `${themeDnsData?.theme_css?.main_color}`, '&:hover': {
                                                                                             color: '#fff',

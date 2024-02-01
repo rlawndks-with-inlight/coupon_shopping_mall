@@ -89,9 +89,9 @@ const EngSorter = (categories) => {
     const SortedENG = () => {
         // 카테고리 그룹 중 추가가 안된 카테고리 검색
         const { unKnownCategory, bigCategoryGroup } = SortGroupBase()
-        categories.forEach(category => {
+        categories?.forEach(category => {
             for (var i = 65; i < 91; i++) {
-                if(category.category_en_name?.[0].toUpperCase() == String.fromCharCode(i)) {
+                if(category.category_en_name?.[0]?.toUpperCase() == String.fromCharCode(i)) {
                     let bigCateIdx = bigCategoryGroup.findIndex(obj => obj.label === String.fromCharCode(i))
                     if(bigCateIdx === -1) {
                         // 대분류 카테고리에 없는 경우
@@ -110,7 +110,7 @@ const EngSorter = (categories) => {
             }
         })
         // unKnownCategory 추가
-        categories.forEach(category => {
+        categories?.forEach(category => {
             if(isAddCategory(category, bigCategoryGroup) === false)
                 unKnownCategory.childs.push(category)
         })
@@ -138,7 +138,7 @@ export const LANGCODE = {
 
 export const CategorySorter = (themeCategoryList) => {
     const initailize = () => {
-        return themeCategoryList[1].product_categories?.sort((a, b) => {
+        return themeCategoryList?.[1]?.product_categories?.sort((a, b) => {
             if (a.category_en_name > b.category_en_name) return 1;
             if (a.category_en_name < b.category_en_name) return -1;
             return 0;

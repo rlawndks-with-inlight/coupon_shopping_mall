@@ -28,3 +28,4 @@ export default class MyDocument extends Document {
     }
   }
 }
+//styled component 적용을 위한 코드

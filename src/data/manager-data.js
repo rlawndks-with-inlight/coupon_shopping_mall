@@ -258,6 +258,7 @@ export const defaultManagerObj = {
     business_num: '',
     phone_num: '',
     fax_num: '',
+    mail_order_num: '',
     note: '',
     logo_file: undefined,
     dark_logo_file: undefined,

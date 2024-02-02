@@ -30,14 +30,29 @@ display: flex;
 flex-direction: column;
 z-index: 10;
 `
+const HighestContainer = styled.div`
+display:flex;
+padding: 0;
+max-width: 1600px;
+width:90%;
+margin: 0 auto;
+position:relative;
+height:50px;
+text-align: right;
+@media (max-width:1000px) {
+  padding: 0.5rem 0;
+}
+`
 const TopMenuContainer = styled.div`
 display:flex;
-padding: 1rem 0;
+padding: 0;
+padding-top: 0;
 max-width: 1600px;
 width:90%;
 margin: 0 auto;
 align-items:center;
 position:relative;
+height:100px;
 @media (max-width:1000px) {
   padding: 0.5rem 0;
 }
@@ -451,8 +466,75 @@ const Header = () => {
                     }}
                         ref={headerWrappersRef}
                     >
+                        <HighestContainer>
+                        <NoneShowMobile style={{ marginLeft: 'auto', cursor: 'pointer', fontSize: '14px' }} onMouseOver={() => {
+                                setIsAuthMenuOver(true)
+                            }}
+                                onMouseLeave={() => {
+                                    setIsAuthMenuOver(false)
+                                }}
+                            >
+                                <div className="fade-in-text" style={{ display: `${isAuthMenuOver ? 'flex' : 'none'}`, alignItems: 'center' }}>
+                                    {user ?
+                                        <>
+                                            {authList.map((item, idx) => (
+                                                <>
+                                                    <AuthMenu
+                                                        theme={theme}
+                                                        hoverColor={themeMode == 'dark' ? '#fff' : '#000'}
+                                                        onClick={() => { router.push(`${item.link_key}`) }}
+                                                    >{item.name}</AuthMenu>
+                                                </>
+                                            ))}
+                                            <AuthMenu
+                                                theme={theme}
+                                                hoverColor={themeMode == 'dark' ? '#fff' : '#000'}
+                                                onClick={onLogout}
+                                                style={{ borderRight: `none` }}
+                                            >{'로그아웃'}</AuthMenu>
+                                        </>
+                                        :
+                                        <>
+                                            {noneAuthList.map((item, idx) => (
+                                                <>
+                                                    <AuthMenu
+                                                        theme={theme}
+                                                        hoverColor={themeMode == 'dark' ? '#fff' : '#000'}
+                                                        onClick={() => { router.push(`${item.link_key}`) }}
+                                                        style={{ borderRight: `${idx == noneAuthList.length - 1 ? 'none' : ''}` }}
+                                                    >{item.name}</AuthMenu>
+                                                </>
+                                            ))}
+
+                                        </>}
+
+                                </div>
+                                <div className="fade-in-text" style={{ display: `${isAuthMenuOver ? 'none' : 'flex'}`, alignItems: 'center' }}>
+                                    {user ?
+                                        <>
+                                            <AuthMenu theme={theme} style={{ borderRight: 'none' }}>마이페이지</AuthMenu>
+                                        </>
+                                        :
+                                        <>
+                                            <AuthMenu theme={theme}>회원가입</AuthMenu>
+                                            <AuthMenu theme={theme} style={{ borderRight: 'none' }}>로그인</AuthMenu>
+                                        </>}
+
+                                    <Icon icon={'ic:baseline-plus'} color={themeMode == 'dark' ? '#fff' : '#000'} />
+                                </div>
+                            </NoneShowMobile>
+                            <ShowMobile style={{marginLeft:'auto'}}>
+                            <div>
+                        <img src={'/grandparis/new_logo.png'} style={{ height: '80px', width: 'auto', cursor: 'pointer' }}
+                                onClick={() => {
+                                    router.push('/shop')
+                                }}
+                            />
+                        </div>
+                            </ShowMobile>
+                        </HighestContainer>
                         <TopMenuContainer>
-                            <img src={logoSrc()} style={{ height: '40px', width: 'auto', cursor: 'pointer' }}
+                            <img src={logoSrc()} style={{ height: '88px', width: 'auto', cursor: 'pointer', marginBottom:'12px' }}
                                 onClick={() => {
                                     router.push('/shop')
                                 }}
@@ -573,54 +655,13 @@ const Header = () => {
                                     setIsAuthMenuOver(false)
                                 }}
                             >
-                                <div className="fade-in-text" style={{ display: `${isAuthMenuOver ? 'flex' : 'none'}`, alignItems: 'center' }}>
-                                    {user ?
-                                        <>
-                                            {authList.map((item, idx) => (
-                                                <>
-                                                    <AuthMenu
-                                                        theme={theme}
-                                                        hoverColor={themeMode == 'dark' ? '#fff' : '#000'}
-                                                        onClick={() => { router.push(`${item.link_key}`) }}
-                                                    >{item.name}</AuthMenu>
-                                                </>
-                                            ))}
-                                            <AuthMenu
-                                                theme={theme}
-                                                hoverColor={themeMode == 'dark' ? '#fff' : '#000'}
-                                                onClick={onLogout}
-                                                style={{ borderRight: `none` }}
-                                            >{'로그아웃'}</AuthMenu>
-                                        </>
-                                        :
-                                        <>
-                                            {noneAuthList.map((item, idx) => (
-                                                <>
-                                                    <AuthMenu
-                                                        theme={theme}
-                                                        hoverColor={themeMode == 'dark' ? '#fff' : '#000'}
-                                                        onClick={() => { router.push(`${item.link_key}`) }}
-                                                        style={{ borderRight: `${idx == noneAuthList.length - 1 ? 'none' : ''}` }}
-                                                    >{item.name}</AuthMenu>
-                                                </>
-                                            ))}
-
-                                        </>}
-
-                                </div>
-                                <div className="fade-in-text" style={{ display: `${isAuthMenuOver ? 'none' : 'flex'}`, alignItems: 'center' }}>
-                                    {user ?
-                                        <>
-                                            <AuthMenu theme={theme} style={{ borderRight: 'none' }}>마이페이지</AuthMenu>
-                                        </>
-                                        :
-                                        <>
-                                            <AuthMenu theme={theme}>회원가입</AuthMenu>
-                                            <AuthMenu theme={theme} style={{ borderRight: 'none' }}>로그인</AuthMenu>
-                                        </>}
-
-                                    <Icon icon={'ic:baseline-plus'} color={themeMode == 'dark' ? '#fff' : '#000'} />
-                                </div>
+                                <div style={{marginLeft:'auto'}}>
+                        <img src={'/grandparis/new_logo.png'} style={{ height: '80px', width: 'auto', cursor: 'pointer' }}
+                                onClick={() => {
+                                    router.push('/shop')
+                                }}
+                            />
+                        </div>
                             </NoneShowMobile>
                             <ShowMobile style={{ marginLeft: 'auto' }}>
                                 <IconButton

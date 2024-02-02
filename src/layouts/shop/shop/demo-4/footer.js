@@ -45,6 +45,7 @@ const Footer = (props) => {
         ceo_name,
         phone_num,
         fax_num,
+        mail_order_num,
         pvcy_rep_name,
     } = themeDnsData;
     return (
@@ -92,10 +93,16 @@ const Footer = (props) => {
                         <Bold>{translate('개인정보 보호책임자')}</Bold>
                         <MarginRight>{pvcy_rep_name}</MarginRight>
                     </Row>
-                    <Row>
-                        <MarginRight></MarginRight>
-                    </Row>
-                    <Row style={{ flexWrap: 'wrap' }}>
+
+              {mail_order_num != null &&
+              <>
+              <Row>
+                <Bold>{translate('통신판매번호')}</Bold>
+                <MarginRight>{mail_order_num}</MarginRight>
+              </Row>
+              </>
+              }
+    <Row style={{ flexWrap: 'wrap' }}>
                         <Bold style={{ marginRight: '1rem', cursor: 'pointer' }} onClick={() => { router.push('/shop/auth/policy?type=0') }}>{translate('서비스이용약관')}</Bold>
                         <Bold style={{ cursor: 'pointer' }} onClick={() => { router.push('/shop/auth/policy?type=1') }}>{translate('개인정보처리방침')}</Bold>
                     </Row>

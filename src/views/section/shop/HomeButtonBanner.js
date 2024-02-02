@@ -58,8 +58,19 @@ const HomeButtonBanner = (props) => {
                     {column?.list && column?.list.map((item, idx) => (
                         <>
                             <Row style={{ flexDirection: 'column' }}>
-                                <Col style={{ alignItems: 'center' }}>
+                                <Col style={{ alignItems: 'center', }}>
                                     <LazyLoadImage src={item?.src} style={{
+                                        width: '100%',
+                                        
+                                        cursor: 'pointer',
+                                    }}
+                                        onClick={() => {
+                                            if (item?.link && !is_manager) {
+                                                window.location.href = item?.link;
+                                            }
+                                        }}
+                                    />
+                                    {/*<LazyLoadImage src={item?.src} style={{
                                         width: `${getBannerWidth()}px`,
                                         height: `auto`,
                                         cursor: 'pointer',
@@ -69,7 +80,7 @@ const HomeButtonBanner = (props) => {
                                                 window.location.href = item?.link;
                                             }
                                         }}
-                                    />
+                                    />*/}
                                     <div style={{ fontWeight: 'bold', marginTop: '1rem', alignItems: 'center' }}>{item.title}</div>
                                 </Col>
 

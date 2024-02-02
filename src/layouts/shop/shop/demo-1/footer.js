@@ -45,50 +45,55 @@ const Footer = (props) => {
     phone_num,
     fax_num,
     pvcy_rep_name,
+    mail_order_num
   } = themeDnsData;
   return (
     <>
       <div style={{ marginTop: '2rem' }} />
       <Wrapper style={{ background: `${theme.palette.mode == 'dark' ? '' : theme.palette.grey[200]}` }}>
         <ContentWrapper>
-          <Row style={{ flexWrap: 'wrap' }}>
-            <Bold style={{ marginRight: '1rem', cursor: 'pointer' }} onClick={() => { router.push('/shop/auth/policy?type=0') }}>{translate('서비스이용약관')}</Bold>
-            <Bold style={{ cursor: 'pointer' }} onClick={() => { router.push('/shop/auth/policy?type=1') }}>{translate('개인정보처리방침')}</Bold>
+
+          <Row>
+            <Bold>{translate('회사명')}</Bold>
+            <MarginRight>{company_name}</MarginRight>
           </Row>
-          <Row style={{ flexWrap: 'wrap' }}>
-            <Row>
-              <Bold>{translate('회사명')}</Bold>
-              <MarginRight>{company_name}</MarginRight>
-            </Row>
-            <Row>
-              <Bold>{translate('주소')}</Bold>
-              <MarginRight>{addr}</MarginRight>
-            </Row>
+          <Row>
+            <Bold>{translate('주소')}</Bold>
+            <MarginRight>{addr}</MarginRight>
           </Row>
-          <Row style={{ flexWrap: 'wrap' }}>
-            <Row>
-              <Bold>{translate('사업자등록번호')}</Bold>
-              <MarginRight>{business_num}</MarginRight>
-            </Row>
-            <Row>
-              <Bold>{translate('대표')}</Bold>
-              <MarginRight>{ceo_name}</MarginRight>
-            </Row>
-            <Row>
-              <Bold>{translate('전화')}</Bold>
-              <MarginRight>{phone_num}</MarginRight>
-            </Row>
-            <Row>
-              <Bold>{translate('팩스')}</Bold>
-              <MarginRight>{fax_num}</MarginRight>
-            </Row>
+          <Row>
+            <Bold>{translate('사업자등록번호')}</Bold>
+            <MarginRight>{business_num}</MarginRight>
           </Row>
+          <Row>
+            <Bold>{translate('대표')}</Bold>
+            <MarginRight>{ceo_name}</MarginRight>
+          </Row>
+          <Row>
+            <Bold>{translate('전화')}</Bold>
+            <MarginRight>{phone_num}</MarginRight>
+          </Row>
+          <Row>
+            <Bold>{translate('팩스')}</Bold>
+            <MarginRight>{fax_num}</MarginRight>
+          </Row>
+
           <Row>
             <Bold>{translate('개인정보 보호책임자')}</Bold>
             <MarginRight>{pvcy_rep_name}</MarginRight>
           </Row>
-          <Row>
-            <MarginRight></MarginRight>
+          {
+            mail_order_num != null &&
+            <>
+              <Row>
+                <Bold>{translate('통신판매번호')}</Bold>
+                <MarginRight>{mail_order_num}</MarginRight>
+              </Row>
+            </>
+          }
+          <Row style={{ flexWrap: 'wrap' }}>
+            <Bold style={{ marginRight: '1rem', cursor: 'pointer' }} onClick={() => { router.push('/shop/auth/policy?type=0') }}>{translate('서비스이용약관')}</Bold>
+            <Bold style={{ cursor: 'pointer' }} onClick={() => { router.push('/shop/auth/policy?type=1') }}>{translate('개인정보처리방침')}</Bold>
           </Row>
         </ContentWrapper>
       </Wrapper>

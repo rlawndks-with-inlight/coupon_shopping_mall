@@ -19,7 +19,7 @@ const ReactQuill = dynamic(() => import('react-quill'), {
   loading: () => <p>Loading ...</p>,
 })
 const Wrappers = styled.div`
-max-width:1400px;
+max-width:1250px;
 display:flex;
 flex-direction:column;
 margin: 0 auto;

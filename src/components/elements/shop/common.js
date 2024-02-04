@@ -125,7 +125,7 @@ export const Items = props => {
       if (itemThemeCss?.container?.is_vertical == 1) {
         return 3
       } else {
-        return 5
+        return 4
       }
     }
     if (window.innerWidth > 850) {
@@ -145,9 +145,10 @@ export const Items = props => {
     infinite: true,
     speed: 500,
     autoplay: true,
-    autoplaySpeed: 2500,
+    autoplaySpeed: 5000,
     slidesToShow: getSlideToShow(),
     slidesToScroll: 1,
+    rows:2,
     dots: false,
     ...slide_setting
   }

@@ -91,7 +91,7 @@ const Footer = (props) => {
               </Row>
             </>
           }
-          <Row style={{ flexWrap: 'wrap' }}>
+          <Row style={{ flexWrap: 'wrap', textDecoration:'underline' }}>
             <Bold style={{ marginRight: '1rem', cursor: 'pointer' }} onClick={() => { router.push('/shop/auth/policy?type=0') }}>{translate('서비스이용약관')}</Bold>
             <Bold style={{ cursor: 'pointer' }} onClick={() => { router.push('/shop/auth/policy?type=1') }}>{translate('개인정보처리방침')}</Bold>
           </Row>

@@ -1,5 +1,5 @@
 import { Icon } from "@iconify/react";
-import { Button, Chip, CircularProgress, IconButton, InputAdornment, TextField, Typography } from "@mui/material";
+import { Button, Chip, CircularProgress, IconButton, InputAdornment, TextField, Typography, Stack, Skeleton } from "@mui/material";
 import _ from "lodash";
 import { useRouter } from "next/router";
 import { useRef } from "react";
@@ -15,7 +15,7 @@ import styled from "styled-components";
 import $ from 'jquery';
 
 const ContentWrapper = styled.div`
-max-width:1400px;
+max-width:1250px;
 width:90%;
 margin: 0 auto 5rem auto;
 display:flex;
@@ -72,7 +72,7 @@ const ItemsDemo = (props) => {
     }
     const { top, bottom } = scrollRef.current.getBoundingClientRect();
     const windowHeight = window.innerHeight;
-    if (top < windowHeight && bottom >= 0 && !moreLoading) {
+    if (top < windowHeight && bottom >= 1000 && !moreLoading) {
       setMoreLoading(true);
       $('.more-page').trigger("click");
     }
@@ -226,7 +226,7 @@ const ItemsDemo = (props) => {
                     let alphabet = "";
                     if (group?.sort_type == 1) {
                       for (var i = 65; i < 90; i++) {
-                        if (category?.category_en_name?.[0].toUpperCase() == String.fromCharCode(i) && (group?.product_categories[idx - 1]?.category_en_name?.[0] ?? "").toUpperCase() != String.fromCharCode(i)) {
+                        if (category?.category_en_name?.[0]?.toUpperCase() == String.fromCharCode(i) && (group?.product_categories[idx - 1]?.category_en_name?.[0] ?? "").toUpperCase() != String.fromCharCode(i)) {
                           is_alphabet = true;
                           alphabet = String.fromCharCode(i);
                           break;
@@ -319,11 +319,96 @@ const ItemsDemo = (props) => {
               <>
                 {productContent?.total > productContent?.content.length &&
                   <>
-                    <Row style={{ width: '100%' }}>
-                      <div style={{ margin: '0 auto' }}>
-                        <CircularProgress />
-                      </div>
-                    </Row>
+                    <Stack spacing={'1rem'} >
+            {/*
+            <Skeleton variant='rectangular' style={{
+              height: '40vw'
+            }} />
+          */}
+          <div style={{ display:'flex',  }}>
+          <Skeleton variant='rounded' style={{
+              height: '34vw',
+              maxWidth: '300px',
+              width: '90%',
+              maxHeight: '300px',
+              margin: '10rem 1rem 10rem auto'
+            }} />
+            <Skeleton variant='rounded' style={{
+              height: '34vw',
+              maxWidth: '300px',
+              width: '90%',
+              maxHeight: '300px',
+              margin: '10rem 1rem'
+            }} />
+            <Skeleton variant='rounded' style={{
+              height: '34vw',
+              maxWidth: '300px',
+              width: '90%',
+              maxHeight: '300px',
+              margin: '10rem 1rem'
+            }} />
+            <Skeleton variant='rounded' style={{
+              height: '34vw',
+              maxWidth: '300px',
+              width: '90%',
+              maxHeight: '300px',
+              margin: '10rem 1rem'
+            }} />
+            <Skeleton variant='rounded' style={{
+              height: '34vw',
+              maxWidth: '300px',
+              width: '90%',
+              maxHeight: '300px',
+              margin: '10rem auto 10rem 1rem'
+            }} />
+          </div>
+          <div style={{ display:'flex',  }}>
+          <Skeleton variant='rounded' style={{
+              height: '34vw',
+              maxWidth: '300px',
+              width: '90%',
+              maxHeight: '300px',
+              margin: '10rem 1rem 10rem auto'
+            }} />
+            <Skeleton variant='rounded' style={{
+              height: '34vw',
+              maxWidth: '300px',
+              width: '90%',
+              maxHeight: '300px',
+              margin: '10rem 1rem'
+            }} />
+            <Skeleton variant='rounded' style={{
+              height: '34vw',
+              maxWidth: '300px',
+              width: '90%',
+              maxHeight: '300px',
+              margin: '10rem 1rem'
+            }} />
+            <Skeleton variant='rounded' style={{
+              height: '34vw',
+              maxWidth: '300px',
+              width: '90%',
+              maxHeight: '300px',
+              margin: '10rem 1rem'
+            }} />
+            <Skeleton variant='rounded' style={{
+              height: '34vw',
+              maxWidth: '300px',
+              width: '90%',
+              maxHeight: '300px',
+              margin: '10rem auto 10rem 1rem'
+            }} />
+          </div>
+            {/*
+            <Skeleton variant='rounded' style={{
+              height: '34vw',
+              maxWidth: '1200px',
+              width: '90%',
+              height: '70vh',
+              margin: '1rem auto'
+            }} />
+            */}
+          </Stack>
                   </>}
               </>
               :

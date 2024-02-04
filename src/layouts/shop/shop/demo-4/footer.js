@@ -6,14 +6,14 @@ import { logoSrc } from "src/data/data"
 
 const Wrapper = styled.footer`
 width:100%;
-padding: 3rem 0 3rem 0;
+padding: 1rem 0 1.5rem 0;
 margin-top: auto;
 `
 const ContentWrapper = styled.div`
 display:flex;
 flex-direction:column;
 width:90%;
-max-width:1400px;
+max-width:1250px;
 margin: 0 auto;
 row-gap: 0.25rem;
 `
@@ -66,7 +66,7 @@ const Footer = (props) => {
                         <MarginRight>{ceo_name}</MarginRight>
                     </Row>
                     <Row>
-                        <Bold>{translate('주소')}</Bold>
+                        <Bold style={{whiteSpace:'nowrap'}}>{translate('주소')}</Bold>
                         <div style={{ display: 'flex', flexDirection: 'column' }}>
                             <MarginRight>{addr}</MarginRight>
                             <MarginRight>인스파이어점 : 인천시 중구 공항문화로 127 (중구 용유로 542) 3층</MarginRight>
@@ -79,7 +79,7 @@ const Footer = (props) => {
                     </Row>
                     <Row>
                         <Bold>{translate('전화')}</Bold>
-                        <div style={{ display: 'flex', flexDirection: 'column' }}>
+                        <div style={{ display: 'flex' }}>
                             <MarginRight>{phone_num}</MarginRight>
                             <MarginRight>02-517-8950</MarginRight>
                         </div>
@@ -102,7 +102,7 @@ const Footer = (props) => {
               </Row>
               </>
               }
-    <Row style={{ flexWrap: 'wrap' }}>
+    <Row style={{ flexWrap: 'wrap', textDecoration:'underline' }}>
                         <Bold style={{ marginRight: '1rem', cursor: 'pointer' }} onClick={() => { router.push('/shop/auth/policy?type=0') }}>{translate('서비스이용약관')}</Bold>
                         <Bold style={{ cursor: 'pointer' }} onClick={() => { router.push('/shop/auth/policy?type=1') }}>{translate('개인정보처리방침')}</Bold>
                     </Row>

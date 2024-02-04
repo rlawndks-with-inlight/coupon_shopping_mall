@@ -121,13 +121,6 @@ const HomeDemo = (props) => {
               maxWidth: '300px',
               width: '90%',
               maxHeight: '300px',
-              margin: '10rem 1rem'
-            }} />
-            <Skeleton variant='rounded' style={{
-              height: '34vw',
-              maxWidth: '300px',
-              width: '90%',
-              maxHeight: '300px',
               margin: '10rem auto 10rem 1rem'
             }} />
           </div>
@@ -138,13 +131,6 @@ const HomeDemo = (props) => {
               width: '90%',
               maxHeight: '300px',
               margin: '10rem 1rem 10rem auto'
-            }} />
-            <Skeleton variant='rounded' style={{
-              height: '34vw',
-              maxWidth: '300px',
-              width: '90%',
-              maxHeight: '300px',
-              margin: '10rem 1rem'
             }} />
             <Skeleton variant='rounded' style={{
               height: '34vw',

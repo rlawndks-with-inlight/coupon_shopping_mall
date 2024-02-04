@@ -70,7 +70,7 @@ const Login = () => {
     <>
       <StyledSection>
         <Typography variant="h3" sx={{ mb: 10, maxWidth: 520, textAlign: 'center', whiteSpace:'nowrap' }}>
-          {themeDnsData?.name} 쇼핑몰에 오신것을 환영합니다!
+          {themeDnsData?.name}<br />쇼핑몰에 오신것을 환영합니다!
         </Typography>
         <Image
           disabledEffect

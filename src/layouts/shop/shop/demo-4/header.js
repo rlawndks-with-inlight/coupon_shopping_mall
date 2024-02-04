@@ -33,7 +33,7 @@ z-index: 10;
 const HighestContainer = styled.div`
 display:flex;
 padding: 0;
-max-width: 1600px;
+max-width: 1400px;
 width:90%;
 margin: 0 auto;
 position:relative;
@@ -47,7 +47,7 @@ const TopMenuContainer = styled.div`
 display:flex;
 padding: 0;
 padding-top: 0;
-max-width: 1600px;
+max-width: 1400px;
 width:90%;
 margin: 0 auto;
 align-items:center;
@@ -58,7 +58,7 @@ height:100px;
 }
 `
 const CategoryContainer = styled.div`
-max-width: 1622px;
+max-width: 1500px;
 width:100%;
 margin: 0 auto;
 display:flex;
@@ -199,10 +199,10 @@ position: fixed;
 left: 50%;
 z-index: 9;
 transform: translate(-50%, 0);
-width:1600px;
+width:1400px;
 padding: 1rem;
 border: 1px solid #ccc;
-@media screen and (max-width:1600px) { 
+@media screen and (max-width:1400px) { 
 width:90vw;
 }
 `
@@ -467,7 +467,7 @@ const Header = () => {
                         ref={headerWrappersRef}
                     >
                         <HighestContainer>
-                        <NoneShowMobile style={{ marginLeft: 'auto', cursor: 'pointer', fontSize: '14px' }} onMouseOver={() => {
+                            <NoneShowMobile style={{ marginLeft: 'auto', cursor: 'pointer', fontSize: '14px' }} onMouseOver={() => {
                                 setIsAuthMenuOver(true)
                             }}
                                 onMouseLeave={() => {
@@ -523,18 +523,18 @@ const Header = () => {
                                     <Icon icon={'ic:baseline-plus'} color={themeMode == 'dark' ? '#fff' : '#000'} />
                                 </div>
                             </NoneShowMobile>
-                            <ShowMobile style={{marginLeft:'auto'}}>
-                            <div>
-                        <img src={'/grandparis/new_logo.png'} style={{ height: '80px', width: 'auto', cursor: 'pointer' }}
-                                onClick={() => {
-                                    router.push('/shop')
-                                }}
-                            />
-                        </div>
+                            <ShowMobile style={{ marginLeft: 'auto' }}>
+                                <div>
+                                    <img src={'/grandparis/new_logo_removebg.png'} style={{ height: '80px', width: 'auto', cursor: 'pointer' }}
+                                        onClick={() => {
+                                            router.push('/shop')
+                                        }}
+                                    />
+                                </div>
                             </ShowMobile>
                         </HighestContainer>
                         <TopMenuContainer>
-                            <img src={logoSrc()} style={{ height: '88px', width: 'auto', cursor: 'pointer', marginBottom:'12px' }}
+                            <img src={logoSrc()} style={{ height: '88px', width: 'auto', cursor: 'pointer', marginBottom: '12px' }}
                                 onClick={() => {
                                     router.push('/shop')
                                 }}
@@ -655,13 +655,13 @@ const Header = () => {
                                     setIsAuthMenuOver(false)
                                 }}
                             >
-                                <div style={{marginLeft:'auto'}}>
-                        <img src={'/grandparis/new_logo.png'} style={{ height: '80px', width: 'auto', cursor: 'pointer' }}
-                                onClick={() => {
-                                    router.push('/shop')
-                                }}
-                            />
-                        </div>
+                                <div style={{ marginLeft: 'auto' }}>
+                                    <img src={'/grandparis/new_logo_removebg.png'} style={{ height: '80px', width: 'auto', cursor: 'pointer' }}
+                                        onClick={() => {
+                                            router.push('/shop')
+                                        }}
+                                    />
+                                </div>
                             </NoneShowMobile>
                             <ShowMobile style={{ marginLeft: 'auto' }}>
                                 <IconButton
@@ -779,7 +779,7 @@ const Header = () => {
                                                                 </>}
                                                             {group?.sort_type == 1 &&
                                                                 <>
-                                                                    <Col style={{ minWidth: '100px', flexWrap: 'wrap', alignItems: 'flex-start', maxHeight: '750px', rowGap: '0.2rem' }}>
+                                                                    <Col style={{ minWidth: '100px', flexWrap: 'wrap', alignItems: 'flex-start', maxHeight: '700px', rowGap: '0.2rem' }}>
                                                                         <Row>
                                                                             <Chip label={`알파벳순`} variant="soft" sx={{
                                                                                 margin: '0.5rem 0.5rem 0.5rem 0',
@@ -810,23 +810,23 @@ const Header = () => {
                                                                         </Row>
                                                                         {categoryGroup.map((group) => {
                                                                             return <>
-                                                                                    <Chip label={`[${group.label ? group.label : "#"}]`} variant="soft" sx={{
-                                                                                        marginTop: '0.5rem',
-                                                                                        cursor: 'pointer', fontWeight: 'bold', background: `${themeDnsData?.theme_css?.main_color}29`, color: `${themeDnsData?.theme_css?.main_color}`, '&:hover': {
-                                                                                            color: '#fff',
-                                                                                            background: `${themeDnsData?.theme_css?.main_color}`,
-                                                                                        }
-                                                                                    }} />
-                                                                                    <div style={{ borderBottom: `3px solid ${themeDnsData?.theme_css?.main_color}`, width: '150px', marginBottom: '0.5rem' }} />                                                                                   
-                                                                                    {
-                                                                                        group.childs.map((child) => {
-                                                                                            return <Typography variant="body2" style={{ cursor: 'pointer' }} onClick={() => {
-                                                                                                router.push(`/shop/items?category_id${index}=${child?.id}&depth=0`)
-                                                                                                setOpenAllCategory("")
-                                                                                            }}>{langChipSelected == 0 ? child?.category_en_name : child?.category_name}</Typography>
-                                                                                        })
-
+                                                                                <Chip label={`[${group.label ? group.label : "#"}]`} variant="soft" sx={{
+                                                                                    marginTop: '0.5rem',
+                                                                                    cursor: 'pointer', fontWeight: 'bold', background: `${themeDnsData?.theme_css?.main_color}29`, color: `${themeDnsData?.theme_css?.main_color}`, '&:hover': {
+                                                                                        color: '#fff',
+                                                                                        background: `${themeDnsData?.theme_css?.main_color}`,
                                                                                     }
+                                                                                }} />
+                                                                                <div style={{ borderBottom: `3px solid ${themeDnsData?.theme_css?.main_color}`, width: '150px', marginBottom: '0.5rem' }} />
+                                                                                {
+                                                                                    group.childs.map((child) => {
+                                                                                        return <Typography variant="body2" style={{ cursor: 'pointer' }} onClick={() => {
+                                                                                            router.push(`/shop/items?category_id${index}=${child?.id}&depth=0`)
+                                                                                            setOpenAllCategory("")
+                                                                                        }}>{langChipSelected == 0 ? child?.category_en_name : child?.category_name}</Typography>
+                                                                                    })
+
+                                                                                }
                                                                             </>
                                                                         })}
                                                                     </Col>

@@ -52,6 +52,7 @@ padding:0;
 text-align: center;
 font-weight: 800;
 font-size: 1rem;
+border-left: ${(props) => props.themeMode == 'dark' ? '1px solid red' : ""};
 @media screen and (max-width:1000px) {
     font-size: 0.8rem;
 }
@@ -83,7 +84,7 @@ padding-top:5%;
 
 const ConsignmentGuide = () => {
     const router = useRouter()
-    const { themeCategoryList, themeDnsData } = useSettingsContext()
+    const { themeCategoryList, themeDnsData, themeMode } = useSettingsContext()
     const { sort, categoryGroup } = CategorySorter(themeCategoryList)
     const nullBrandList = []
     const pushBrands = (category) => {
@@ -123,133 +124,157 @@ const ConsignmentGuide = () => {
                     합리적인 수준의 수수료 안내
                 </GuideSubText>
                 <GuideVariable
-                    style={{ backgroundImage: `url('/grandparis/cons_info_3.png')`, width: '1029px', aspectRatio: '1029/367' }}
+                    style={{ backgroundImage: `${themeMode == 'dark' ? "" : `url('/grandparis/cons_info_3.png')`}`, width: '1029px', aspectRatio: '1029/367' }}
                 >
                     <TableContainer>
                         <Table sx={{ width: '1029px', aspectRatio: '1029/367', maxWidth: '100%' }}>
-                            <TableRow sx={{ height: '13%' }}>
+                            <TableRow sx={{ height: '13%', borderBottom: `${themeMode == 'dark' ? '1px solid red' : ""}` }}>
                                 <TableCell sx={{ padding: '0', width: '18%', }} />
                                 <ChargeTable
+                                themeMode={themeMode}
                                     sx={{
                                         width: '13%',
                                         color: 'white'
                                     }}>20만원 이하</ChargeTable>
                                 <ChargeTable
+                                themeMode={themeMode}
                                     sx={{
                                         width: '13%',
                                         color: 'white'
                                     }}>20~300만원</ChargeTable>
                                 <ChargeTable
+                                themeMode={themeMode}
                                     sx={{
                                         width: '15%',
                                         color: 'white'
                                     }}>300~500만원</ChargeTable>
                                 <ChargeTable
+                                themeMode={themeMode}
                                     sx={{
                                         width: '13.5%',
                                         color: 'white'
                                     }}>500~700만원</ChargeTable>
                                 <ChargeTable
+                                themeMode={themeMode}
                                     sx={{
                                         width: '13.5%',
                                         color: 'white'
                                     }}>700~1000만원</ChargeTable>
                                 <ChargeTable
+                                themeMode={themeMode}
                                     sx={{
                                         width: '14%',
                                         color: 'white'
                                     }}>1000~4000만원</ChargeTable>
                             </TableRow>
-                            <TableRow sx={{ height: '32.5%' }}>
+                            <TableRow sx={{ height: '32.5%', borderBottom: `${themeMode == 'dark' ? '1px solid red' : ""}` }}>
                                 <ChargeTable
                                     sx={{
                                         width: '18%',
                                     }}>시계/주얼리<br />가방/기타</ChargeTable>
                                 <ChargeTable
+                                 themeMode={themeMode}
                                     sx={{
                                         width: '13%',
                                     }}>4만원</ChargeTable>
                                 <ChargeTable
+                                 themeMode={themeMode}
                                     sx={{
                                         width: '13%',
                                     }}>18%</ChargeTable>
                                 <ChargeTable
+                                 themeMode={themeMode}
                                     sx={{
                                         width: '15%',
                                     }}>15%</ChargeTable>
                                 <ChargeTable
+                                 themeMode={themeMode}
                                     sx={{
                                         width: '13.5%',
                                     }}>13%</ChargeTable>
                                 <ChargeTable
+                                 themeMode={themeMode}
                                     sx={{
                                         width: '13.5%',
                                     }}>10%</ChargeTable>
                                 <ChargeTable
+                                 themeMode={themeMode}
                                     sx={{
                                         width: '14%',
                                     }}>8%</ChargeTable>
                             </TableRow>
                             <TableRow sx={{ height: '9%' }} />
-                            <TableRow sx={{ height: '13%' }}>
+                            <TableRow sx={{ height: '13%', borderBottom: `${themeMode == 'dark' ? '1px solid red' : ""}` }}>
                                 <TableCell sx={{ padding: '0', width: '18%', }} />
                                 <ChargeTable
+                                 themeMode={themeMode}
                                     sx={{
                                         width: '13%',
                                         color: 'white'
                                     }}>15만원 이하</ChargeTable>
                                 <ChargeTable
+                                 themeMode={themeMode}
                                     sx={{
                                         width: '13%',
                                         color: 'white'
                                     }}>15~200만원</ChargeTable>
                                 <ChargeTable
+                                 themeMode={themeMode}
                                     sx={{
                                         width: '15%',
                                         color: 'white'
                                     }}>200~400만원</ChargeTable>
                                 <ChargeTable
+                                 themeMode={themeMode}
                                     sx={{
                                         width: '13.5%',
                                         color: 'white'
                                     }}>400~600만원</ChargeTable>
                                 <ChargeTable
+                                 themeMode={themeMode}
                                     sx={{
                                         width: '13.5%',
                                         color: 'white'
                                     }}>600~800만원</ChargeTable>
                                 <ChargeTable
+                                 themeMode={themeMode}
                                     sx={{
                                         width: '14%',
                                         color: 'white'
                                     }}>800만원 이상</ChargeTable>
                             </TableRow>
-                            <TableRow sx={{ height: '32.5%' }}>
+                            <TableRow sx={{ height: '32.5%', borderBottom: `${themeMode == 'dark' ? '1px solid red' : ""}` }}>
                                 <ChargeTable
                                     sx={{
                                         width: '18%',
                                     }}>의류/신발</ChargeTable>
                                 <ChargeTable
+                                themeMode={themeMode}
                                     sx={{
                                         width: '13%',
                                     }}>4만원</ChargeTable>
                                 <ChargeTable
+                                themeMode={themeMode}
                                     sx={{
                                         width: '13%',
                                     }}>20%</ChargeTable>
                                 <ChargeTable
+                                themeMode={themeMode}
                                     sx={{
                                         width: '15%',
                                     }}>18%</ChargeTable>
                                 <ChargeTable
+                                themeMode={themeMode}
                                     sx={{
                                         width: '13.5%',
                                     }}>15%</ChargeTable>
                                 <ChargeTable
+                                themeMode={themeMode}
                                     sx={{
                                         width: '13.5%',
                                     }}>13%</ChargeTable>
                                 <ChargeTable
+                                themeMode={themeMode}
                                     sx={{
                                         width: '14%',
                                     }}>10%</ChargeTable>
@@ -294,7 +319,7 @@ const ConsignmentGuide = () => {
                 >
                     <TableContainer>
                         <Table sx={{ width: '951px', aspectRatio: '951/161', maxWidth: '100%' }}>
-                            <TableRow>
+                            <TableRow sx={{color:`${themeMode == 'dark' ? 'black' : ""}`}}>
                                 <MethodTable>
                                     위탁 후<br />최소 3개월 이상
                                 </MethodTable>
@@ -326,12 +351,12 @@ const ConsignmentGuide = () => {
                 <GuideSubText>
                     위탁 가능 브랜드 안내
                 </GuideSubText>
-                <div style={{ backgroundColor: '#FAFAFA', padding: '1rem' }}>
+                <div style={{ backgroundColor: `${themeMode == 'dark' ? '#222' : '#FAFAFA'}`, padding: '1rem' }}>
                     <Col style={{
                         minWidth: '100px',
                         flexWrap: 'wrap',
                         alignItems: 'flex-start',
-                        maxHeight: '750px',
+                        maxHeight: '700px',
                         rowGap: '0.2rem',
                     }}>
                         <Row>

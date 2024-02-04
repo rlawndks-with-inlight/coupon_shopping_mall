@@ -7,7 +7,7 @@ import { useEffect, useState } from 'react'
 
 const Wrappers = styled.div`
   width:90%;
-  max-width:1600px;
+  max-width:1400px;
   margin:0 auto;
   `
 

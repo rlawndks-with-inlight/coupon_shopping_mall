@@ -3,6 +3,7 @@ import styled from 'styled-components'
 import { Col, Row } from 'src/components/elements/styled-components'
 import _ from 'lodash'
 import { LazyLoadImage } from 'react-lazy-load-image-component'
+import { useRouter } from 'next/router'
 
 const Wrappers = styled.div`
   width:90%;
@@ -13,6 +14,7 @@ const Wrappers = styled.div`
 const HomeButtonBanner = (props) => {
     const { column, data, func, is_manager } = props;
     const { style } = column;
+    const router = useRouter()
     const getSlideToShow = () => {
         let list_length = column?.list?.length;
         if (window.innerWidth > 1350) {
@@ -53,7 +55,7 @@ const HomeButtonBanner = (props) => {
     }
     return (
         <>
-            <Wrappers style={{ marginTop: `${style?.margin_top}px` }}>
+            <Wrappers style={{ marginTop: `${style?.margin_top}px`, maxWidth: `${router}` }}>
                 <Slider {...slide_setting} className='margin-slide'>
                     {column?.list && column?.list.map((item, idx) => (
                         <>
@@ -61,7 +63,7 @@ const HomeButtonBanner = (props) => {
                                 <Col style={{ alignItems: 'center', }}>
                                     <LazyLoadImage src={item?.src} style={{
                                         width: '100%',
-                                        
+                                        height:`auto`,
                                         cursor: 'pointer',
                                     }}
                                         onClick={() => {

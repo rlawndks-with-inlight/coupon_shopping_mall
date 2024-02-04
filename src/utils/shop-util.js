@@ -109,8 +109,9 @@ export const onPayProductsByAuth = async (products_, payData_) => { // 인증결
     payData = {
         ...payData,
         ord_num: ord_num,
-        success_url: return_url + '?type=0',
-        fail_url: return_url + '?type=1',
+        return_url: return_url,
+        success_url: return_url + '?result_cd=0000',
+        fail_url: return_url + '?result_cd=9999',
         pay_key: payData?.payment_modules?.pay_key,
         mid: payData?.payment_modules?.mid,
         tid: payData?.payment_modules?.tid,

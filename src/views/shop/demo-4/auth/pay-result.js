@@ -30,13 +30,13 @@ const PayResultDemo = (props) => {
   const { themeDnsData } = useSettingsContext();
 
   const getResultContent = (type) => {
-    if (type == 0) {
+    if (type === '0000') {
       return {
         icon: <Icon icon={'mdi:success-circle-outline'} style={{ margin: 'auto', fontSize: '8rem', color: themeDnsData?.theme_css?.main_color }} />,
         title: '결제에 성공하였습니다.',
         content: '',
       }
-    } else if (type == 1) {
+    } else {
       return {
         icon: <Icon icon={'material-symbols:cancel-outline'} style={{ margin: 'auto', fontSize: '8rem', color: themeDnsData?.theme_css?.main_color }} />,
         title: '결제에 실패하였습니다.',
@@ -48,14 +48,14 @@ const PayResultDemo = (props) => {
   return (
     <>
       <Wrappers>
-        <Title>{getResultContent(router.query?.type).title}</Title>
+        <Title>{getResultContent(router.query?.result_cd).title}</Title>
         <Grid container spacing={3}>
           <Grid item xs={12} md={12}>
             <Card>
               <Col style={{ minHeight: '18rem' }}>
                 <Logo />
                 <div style={{ margin: 'auto' }}>
-                  {getResultContent(router.query?.type).icon}
+                  {getResultContent(router.query?.result_cd).icon}
                 </div>
                 <Row style={{ margin: '1rem auto auto auto', columnGap: '1rem' }}>
                   <div>주문번호:</div>

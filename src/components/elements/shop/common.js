@@ -145,10 +145,10 @@ export const Items = props => {
     infinite: true,
     speed: 500,
     autoplay: true,
-    autoplaySpeed: 5000,
+    autoplaySpeed: 2500,
     slidesToShow: getSlideToShow(),
     slidesToScroll: 1,
-    rows:2,
+    
     dots: false,
     ...slide_setting
   }

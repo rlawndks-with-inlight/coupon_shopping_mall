@@ -14,7 +14,7 @@ const HomeButtonBanner = (props) => {
     const { column, data, func, is_manager } = props;
     const { style } = column;
     const getSlideToShow = () => {
-        let list_length = column?.list?.length;
+        let list_length = (column?.list ?? [])?.length;
         if (window.innerWidth > 1350) {
             if (list_length >= 7) {
                 return 7
@@ -55,7 +55,7 @@ const HomeButtonBanner = (props) => {
         <>
             <Wrappers style={{ marginTop: `${style?.margin_top}px` }}>
                 <Slider {...slide_setting} className='margin-slide'>
-                    {column?.list && column?.list.map((item, idx) => (
+                    {column?.list && (column?.list ?? []).map((item, idx) => (
                         <>
                             <Row style={{ flexDirection: 'column' }}>
                                 <Col style={{ alignItems: 'center' }}>

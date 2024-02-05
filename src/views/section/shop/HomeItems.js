@@ -33,7 +33,7 @@ const HomeItems = (props) => {
                             </>}
                     </>}
                 <div style={{ marginTop: '1rem' }} />
-                <Items items={column?.list} router={router} is_slide={column?.list.length >= 5 ? true : false} />
+                <Items items={(column?.list ?? [])} router={router} is_slide={column?.list.length >= 5 ? true : false} />
             </Wrappers>
         </>
     )

@@ -64,7 +64,10 @@ export const telComList = [
     { label: '알뜰폰KT', value: '05' },
     { label: '알뜰폰LGU', value: '06' },
 ]
-
+export const cancelTypeList = [
+    { label: '주문취소', value: 0 },
+    { label: '환불', value: 1 },
+]
 export const mainObjSchemaList = [
     {
         label: '배너슬라이드',

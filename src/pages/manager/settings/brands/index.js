@@ -358,17 +358,10 @@ const BrandList = () => {
                 <Checkbox
                   checked={copyObj.is_copy_brand_setting == 1}
                   onChange={e => {
-                    if (e.target.checked) {
-                      setCopyObj({
-                        ...copyObj,
-                        is_copy_brand_setting: 1
-                      })
-                    } else {
-                      setCopyObj({
-                        ...copyObj,
-                        is_copy_brand_setting: 0
-                      })
-                    }
+                    setCopyObj({
+                      ...copyObj,
+                      is_copy_brand_setting: e.target.checked ? 1 : 0
+                    })
                   }}
                 />
               }
@@ -379,17 +372,10 @@ const BrandList = () => {
                 <Checkbox
                   checked={copyObj.is_copy_product == 1}
                   onChange={e => {
-                    if (e.target.checked) {
-                      setCopyObj({
-                        ...copyObj,
-                        is_copy_product: 1
-                      })
-                    } else {
-                      setCopyObj({
-                        ...copyObj,
-                        is_copy_product: 0
-                      })
-                    }
+                    setCopyObj({
+                      ...copyObj,
+                      is_copy_product: e.target.checked ? 1 : 0
+                    })
                   }}
                 />
               }
@@ -400,17 +386,24 @@ const BrandList = () => {
                 <Checkbox
                   checked={copyObj.is_copy_post == 1}
                   onChange={e => {
-                    if (e.target.checked) {
-                      setCopyObj({
-                        ...copyObj,
-                        is_copy_post: 1
-                      })
-                    } else {
-                      setCopyObj({
-                        ...copyObj,
-                        is_copy_post: 0
-                      })
-                    }
+                    setCopyObj({
+                      ...copyObj,
+                      is_copy_post: e.target.checked ? 1 : 0
+                    })
+                  }}
+                />
+              }
+            />
+            <FormControlLabel
+              label={<Typography style={{ fontSize: themeObj.font_size.size6 }}>티키타카 가상계좌 전용 세팅</Typography>}
+              control={
+                <Checkbox
+                  checked={copyObj.is_use_tikitaka == 1}
+                  onChange={e => {
+                    setCopyObj({
+                      ...copyObj,
+                      is_use_tikitaka: e.target.checked ? 1 : 0
+                    })
                   }}
                 />
               }

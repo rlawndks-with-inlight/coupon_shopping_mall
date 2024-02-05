@@ -1,4 +1,4 @@
-import { Accordion, AccordionDetails, AccordionSummary, Button, Card, Container, IconButton, MenuItem, Select, Stack, TextField, Typography } from "@mui/material";
+import { Accordion, AccordionDetails, AccordionSummary, Button, Card, Container, FormControl, IconButton, InputLabel, MenuItem, Select, Stack, TextField, Typography } from "@mui/material";
 import { useEffect, useState } from "react";
 import ManagerLayout from "src/layouts/manager/ManagerLayout";
 import ManagerTable from "src/views/manager/mui/table/ManagerTable";
@@ -10,7 +10,7 @@ import { commarNumber } from "src/utils/function";
 import toast from "react-hot-toast";
 import { apiManager, apiUtil } from "src/utils/api";
 import { useSettingsContext } from "src/components/settings";
-import { paymentModuleTypeList } from "src/utils/format";
+import { cancelTypeList, paymentModuleTypeList } from "src/utils/format";
 
 const TrxCancelList = () => {
   const { setModal } = useModal()
@@ -317,6 +317,20 @@ const TrxCancelList = () => {
     <>
       <Stack spacing={3}>
         <Card>
+          <Row style={{ padding: '12px', columnGap: '0.5rem', flexWrap: 'wrap', rowGap: '0.5rem' }}>
+            <FormControl variant='outlined' size='small' sx={{ minWidth: '150px' }}>
+              <InputLabel>취소형식</InputLabel>
+              <Select label='취소형식' value={searchObj[`cancel_type`]}
+                onChange={(e) => {
+                  onChangePage({ ...searchObj, [`cancel_type`]: e.target.value })
+                }}>
+                <MenuItem value={null}>형식 전체</MenuItem>
+                {cancelTypeList.map(status => {
+                  return <MenuItem value={status.value}>{`${status.label}`}</MenuItem>
+                })}
+              </Select>
+            </FormControl>
+          </Row>
           <ManagerTable
             data={data}
             columns={columns}

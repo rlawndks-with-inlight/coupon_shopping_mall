@@ -298,7 +298,8 @@ const TrxList = () => {
     s_dt: '',
     e_dt: '',
     search: '',
-    trx_status: ''
+    trx_status: '',
+    cancel_status: 0,
   })
   useEffect(() => {
     pageSetting();

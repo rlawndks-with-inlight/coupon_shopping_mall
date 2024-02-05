@@ -288,11 +288,19 @@ const ProductList = () => {
   })
   const [categories, setCategories] = useState([]);
   const [curCategories, setCurCategories] = useState({});
+  const [curProperties, setCurProperties] = useState({})
   const [categoryChildrenList, setCategoryChildrenList] = useState({});
   const [detailSearchOpen, setDetailSearchOpen] = useState(false)
   useEffect(() => {
     pageSetting();
   }, [])
+
+  /*useEffect(() => {
+    if (!detailSearchOpen) {
+      onChangePage({...searchObj, page: 1})
+    }
+  }, [detailSearchOpen])*/
+
   const pageSetting = async () => {
 
     let cols = defaultColumns;
@@ -320,6 +328,28 @@ const ProductList = () => {
     }
     setSearchObj(obj);
   }
+  const onChangePageByProperties = async (obj) => {
+    setData({
+      ...data,
+      content: undefined
+    })
+    let data_ = await apiManager('products', 'list', obj);
+    if (data_) {
+      for (var i = 0; i < themePropertyList.length; i++) {
+        let parent_list = await getAllIdsWithParents(themePropertyList[i]?.product_properties);
+        for (var j = 0; j < data_.content.length; j++) {
+          let data_item = data_.content[j];
+          let property_root = await returnCurCategories(data_item[`property_id${i}`] ?? 0, parent_list);
+          if (property_root?.length > 0) {
+            data_.content[j][`property_root_${i}`] = property_root ?? [];
+          }
+        }
+      }
+      setData(data_);
+    }
+    setSearchObj(obj);
+  }
+
   const deleteProduct = async (id) => {
     let result = await apiManager('products', 'delete', { id: id });
     if (result) {
@@ -370,7 +400,35 @@ const ProductList = () => {
   }
 
   const onClickProperty = (property, depth, idx) => {
-    
+    let parent_list = getAllIdsWithParents(themePropertyList[idx]?.product_properties);
+    let use_list = [];
+    for (var i = 0; i < parent_list.length; i++) {
+      if (parent_list[i][depth]?.id == property?.id) {
+        use_list = parent_list[i];
+        break;
+      }
+    }
+    let property_ids = {};
+    let cur_properties = {
+      ...curProperties,
+      [idx]: use_list
+    };
+    for (var i = 0; i < themePropertyList.length; i++) {
+      if (cur_properties[i]) {
+        property_ids[`property_id${i}`] = cur_properties[i][cur_properties[i].length - 1]?.id;
+      }
+    }
+    onChangePageByProperties({ ...searchObj, ...property_ids, page: 1 })
+    setCurProperties(cur_properties);
+    let children_list = [];
+    for (var i = 0; i < use_list.length; i++) {
+      children_list.push(use_list[i]?.children);
+    }
+    setCategoryChildrenList({
+      ...categoryChildrenList,
+      [idx]: children_list
+    });
+    $(`.category-container-${idx}`).scrollLeft(100000);
   }
 
   const onChangeStatus = async (id, value) => {
@@ -418,22 +476,7 @@ const ProductList = () => {
                         label={<Typography style={{ fontSize: themeObj.font_size.size6 }}>{property?.property_name}</Typography>}
                         control={<Checkbox />}
                         onChange={(e) => {
-                          let property_obj = { ...item.properties };
-                          if (!property_obj[`${group?.id}`] || group?.is_can_select_multiple == 0) {
-                            property_obj[`${group?.id}`] = [];
-                          }
-                          if (e.target.checked) {
-                            property_obj[`${group?.id}`].push(property?.id);
-                          } else {
-                            let find_idx = property_obj[`${group?.id}`].indexOf(property?.id);
-                            if (find_idx >= 0) {
-                              property_obj[`${group?.id}`].splice(find_idx, 1);
-                            }
-                          }
-                          setItem({
-                            ...item,
-                            properties: property_obj,
-                          })
+                          onClickProperty(property, 0, idx)
                         }}
                       />
                     </>

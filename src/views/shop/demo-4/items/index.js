@@ -72,7 +72,9 @@ const ItemsDemo = (props) => {
     }
     const { top, bottom } = scrollRef.current.getBoundingClientRect();
     const windowHeight = window.innerHeight;
-    if (top < windowHeight && bottom >= 1000 && !moreLoading) {
+    if (top > windowHeight && bottom >= windowHeight/3 && !moreLoading) {
+      console.log(top)
+      console.log(bottom)
       setMoreLoading(true);
       $('.more-page').trigger("click");
     }

@@ -46,7 +46,7 @@ const HomeItemsPropertyGroups = (props) => {
                             </>}
                     </>}
                 <div style={{ marginTop: '1rem', height:'0.25rem', borderTop:`1px solid ${themeDnsData?.theme_css?.main_color} `, borderBottom:`1px solid ${themeDnsData?.theme_css?.main_color} `,}} />
-                <Items items={column?.list} router={router} is_slide={column?.list.length >= 5 ? true : true} rows={5} />
+                <Items items={column?.list} router={router} is_slide={column?.list.length >= 5 ? true : true} rows={2} autoplaySpeed={5000} />
                 <div style={{ marginTop: '1rem', height:'0.25rem', borderTop:`1px solid gray `,}} />
                 <Row>
                     <Button sx={{ margin: '1rem auto' }} variant='outlined' onClick={() => {

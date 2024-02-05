@@ -112,7 +112,7 @@ export const Item = props => {
 }
 export const Items = props => {
   const { themeDnsData } = useSettingsContext()
-  const { items, router, is_slide, slide_setting = {}, slide_ref, seller, rows = 1, } = props;
+  const { items, router, is_slide, slide_setting = {}, slide_ref, seller, rows = 1, autoplaySpeed = 2500 } = props;
   const [itemThemeCss, setItemThemeCss] = useState(itemThemeCssDefaultSetting)
 
   useEffect(() => {
@@ -125,7 +125,7 @@ export const Items = props => {
       if (itemThemeCss?.container?.is_vertical == 1) {
         return 3
       } else {
-        return 4
+        return 5
       }
     }
     if (window.innerWidth > 850) {
@@ -145,11 +145,11 @@ export const Items = props => {
     infinite: true,
     speed: 500,
     autoplay: true,
-    autoplaySpeed: 2500,
+    autoplaySpeed: autoplaySpeed,
     slidesToShow: getSlideToShow(),
     slidesToScroll: 1,
-    
     dots: false,
+    rows: rows,
     ...slide_setting
   }
   return (

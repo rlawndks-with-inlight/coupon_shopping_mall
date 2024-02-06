@@ -5,10 +5,11 @@ import _ from 'lodash'
 import { Button } from '@mui/material'
 import { useEffect, useState } from 'react'
 import { useSettingsContext } from 'src/components/settings'
+import { defaultManagerObj } from 'src/data/manager-data'
 
 const Wrappers = styled.div`
   width:90%;
-  max-width:1250px;
+  max-width:1100px;
   margin:0 auto;
   `
 
@@ -17,6 +18,7 @@ const HomeItemsPropertyGroups = (props) => {
     const { router } = func;
     const { style } = column;
     const { themeDnsData } = useSettingsContext()
+    const [sliderSetting, setSliderSetting] = useState(defaultManagerObj.brands.slider_css)
 
     return (
         <>
@@ -46,7 +48,7 @@ const HomeItemsPropertyGroups = (props) => {
                             </>}
                     </>}
                 <div style={{ marginTop: '1rem', height:'0.25rem', borderTop:`1px solid ${themeDnsData?.theme_css?.main_color} `, borderBottom:`1px solid ${themeDnsData?.theme_css?.main_color} `,}} />
-                <Items items={column?.list} router={router} is_slide={column?.list.length >= 5 ? true : true} rows={2} autoplaySpeed={5000} />
+                <Items items={column?.list} router={router} is_slide={column?.list.length >= 5 ? true : true} rows={themeDnsData?.slider_css?.rows} autoplaySpeed={themeDnsData?.slider_css?.rows*1000} />
                 <div style={{ marginTop: '1rem', height:'0.25rem', borderTop:`1px solid gray `,}} />
                 <Row>
                     <Button sx={{ margin: '1rem auto' }} variant='outlined' onClick={() => {

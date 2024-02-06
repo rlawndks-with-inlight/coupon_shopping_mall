@@ -33,7 +33,7 @@ z-index: 10;
 const HighestContainer = styled.div`
 display:flex;
 padding: 0;
-max-width: 1250px;
+max-width: 1100px;
 width:90%;
 margin: 0 auto;
 position:relative;
@@ -47,7 +47,7 @@ const TopMenuContainer = styled.div`
 display:flex;
 padding: 0;
 padding-top: 0;
-max-width: 1250px;
+max-width: 1100px;
 width:90%;
 margin: 0 auto;
 align-items:center;
@@ -58,7 +58,7 @@ height:100px;
 }
 `
 const CategoryContainer = styled.div`
-max-width: 1300px;
+max-width: 1200px;
 width:100%;
 margin: 0 auto;
 display:flex;
@@ -199,10 +199,10 @@ position: fixed;
 left: 50%;
 z-index: 9;
 transform: translate(-50%, 0);
-width:1250px;
+width:1100px;
 padding: 1rem;
 border: 1px solid #ccc;
-@media screen and (max-width:1250px) { 
+@media screen and (max-width:1100px) { 
 width:90vw;
 }
 `
@@ -523,7 +523,7 @@ const Header = () => {
                                     <Icon icon={'ic:baseline-plus'} color={themeMode == 'dark' ? '#fff' : '#000'} />
                                 </div>
                                 <div style={{ marginLeft: 'auto' }}>
-                                    <img src={'/grandparis/new_logo_removebg.png'} style={{ maxWidth:'200px',aspectRatio:'189/80', cursor: 'pointer' }}
+                                    <img src={'/grandparis/new_logo_removebg.png'} style={{ maxWidth: '200px', aspectRatio: '189/80', cursor: 'pointer' }}
                                         onClick={() => {
                                             router.push('/shop')
                                         }}
@@ -541,7 +541,7 @@ const Header = () => {
                             </ShowMobile>
                         </HighestContainer>
                         <TopMenuContainer>
-                            <img src={logoSrc()} style={{ aspectRatio:'250/88', cursor: 'pointer', marginBottom: '12px', minWidth:'100px' }}
+                            <img src={logoSrc()} style={{ aspectRatio: '250/88', cursor: 'pointer', marginBottom: '12px', minWidth: '100px' }}
                                 onClick={() => {
                                     router.push('/shop')
                                 }}
@@ -576,7 +576,7 @@ const Header = () => {
                                     }}
                                 />
                                 <Button variant="outlined"
-                                    sx={{ marginRight: '0.5rem', minWidth:'112px' }}
+                                    sx={{ marginRight: '0.5rem', minWidth: '112px' }}
                                     startIcon={<>
                                         <Icon icon={'bx:store'} />
                                     </>}
@@ -587,7 +587,7 @@ const Header = () => {
                                     매장안내
                                 </Button>
                                 <Button variant="outlined"
-                                    sx={{ marginRight: '0.5rem' }}
+                                    sx={{ marginRight: '0.5rem', minWidth: '112px' }}
                                     startIcon={<>
                                         <Icon icon={'mdi:cart'} />
                                     </>}
@@ -598,6 +598,7 @@ const Header = () => {
                                     매입센터
                                 </Button>
                                 <Button variant="outlined"
+                                    sx={{ minWidth: '112px' }}
                                     startIcon={<>
                                         <Icon icon={'heroicons:paper-clip'} />
                                     </>}
@@ -662,7 +663,7 @@ const Header = () => {
                                     setIsAuthMenuOver(false)
                                 }}
                             >
-                                
+
                             </NoneShowMobile>
                             <ShowMobile style={{ marginLeft: 'auto' }}>
                                 <IconButton
@@ -707,8 +708,8 @@ const Header = () => {
                         {themeCategoryList.map((group, index) => {
                             if (group?.is_show_header_menu == 1) {
                                 return <>
-                                    
-                                    <CategoryContainer style={{borderTop:`1px solid ${theme.palette.grey[300]}`, borderBottom:`1px solid ${theme.palette.grey[300]}`}}>
+
+                                    <CategoryContainer style={{ borderTop: `1px solid ${theme.palette.grey[300]}`, borderBottom: `1px solid ${theme.palette.grey[300]}` }}>
                                         {index == 0 ?
                                             <>
                                                 <NoneShowMobile>

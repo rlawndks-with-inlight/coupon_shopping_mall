@@ -13,6 +13,7 @@ import { useModal } from "src/components/dialog/ModalProvider";
 import { useSettingsContext } from "src/components/settings";
 import { apiManager, apiUtil } from "src/utils/api";
 import { useAuthContext } from "src/layouts/manager/auth/useAuthContext";
+import _ from "lodash";
 
 const ProductList = () => {
 
@@ -462,21 +463,30 @@ const ProductList = () => {
               </>
             ))}
           </div>
-          {detailSearchOpen && themePropertyList.map((group, idx) => (
+          {detailSearchOpen && themePropertyList.map((group, index) => (
             <>
-              <div style={{marginLeft:'1rem', marginBottom:'0.25rem', marginTop:'0.25rem'}}>
+              <div style={{ marginLeft: '1rem', marginBottom: '0.25rem', marginTop: '0.25rem' }}>
                 <Typography variant="subtitle2" sx={{ color: 'text.secondary' }}>
                   {group?.property_group_name}
                 </Typography>
                 <Row style={{ flexWrap: 'wrap' }}>
                   {group?.product_properties && group?.product_properties.map((property, idx) => (
                     <>
-
                       <FormControlLabel
                         label={<Typography style={{ fontSize: themeObj.font_size.size6 }}>{property?.property_name}</Typography>}
                         control={<Checkbox />}
                         onChange={(e) => {
-                          onClickProperty(property, 0, idx)
+                          let property_ids = searchObj[`property_ids${index}`] ?? [];
+                          if (e.target.checked) {
+                            property_ids.push(parseInt(property?.id));
+                          } else {
+                            let find_idx = _.findIndex(property_ids, parseInt(property?.id));
+                            property_ids.splice(find_idx, 1);
+                          }
+                          onChangePage({
+                            ...searchObj,
+                            [`property_ids${index}`]: property_ids,
+                          })
                         }}
                       />
                     </>

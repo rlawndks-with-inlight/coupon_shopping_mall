@@ -27,12 +27,14 @@ const HomeItemsPropertyGroups = (props) => {
                 display: 'flex',
                 flexDirection: `${column?.title ? 'column' : 'row'}`,
             }}>
+                <Row style={{display:'flex', position:'relative'}}>
                 {column?.title &&
                     <>
                         <div style={{
                             fontSize: themeObj.font_size.size3,
                             fontWeight: 'bold',
                             textAlign: 'center',
+                            margin:'0 auto'
                         }}>
                             {column?.title}
                         </div>
@@ -46,15 +48,19 @@ const HomeItemsPropertyGroups = (props) => {
                                     {column?.sub_title}
                                 </div>
                             </>}
+                            <Button sx={{ position:'absolute', right: '0'}} variant='outlined' onClick={() => {
+                        router.push(`/shop/items?not_show_select_menu=1&property_id=${parseInt(column?.type.split('items-property-group-')[1])}`)
+                    }}>View More Products</Button>
                     </>}
+                    </Row>
                 <div style={{ marginTop: '1rem', height:'0.25rem', borderTop:`1px solid ${themeDnsData?.theme_css?.main_color} `, borderBottom:`1px solid ${themeDnsData?.theme_css?.main_color} `,}} />
                 <Items items={column?.list} router={router} is_slide={column?.list.length >= 5 ? true : true} rows={themeDnsData?.slider_css?.rows} autoplaySpeed={themeDnsData?.slider_css?.rows*1000} />
                 <div style={{ marginTop: '1rem', height:'0.25rem', borderTop:`1px solid gray `,}} />
-                <Row>
+                {/*<Row>
                     <Button sx={{ margin: '1rem auto' }} variant='outlined' onClick={() => {
                         router.push(`/shop/items?not_show_select_menu=1&property_id=${parseInt(column?.type.split('items-property-group-')[1])}`)
                     }}>View More</Button>
-                </Row>
+                </Row>*/}
             </Wrappers>
         </>
     )

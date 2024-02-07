@@ -78,11 +78,8 @@ const TrxList = () => {
                 <>
                   <Col>
                     <Row>
-                      <div style={{ minWidth: '62px', fontWeight: 'bold' }}>No.{index + 1}</div>
-                    </Row>
-                    <Row style={{ flexWrap: 'wrap' }}>
-                      <div style={{ minWidth: '62px' }}>주문명: </div>
-                      <div style={{ wordBreak: 'break-all' }}>{order?.order_name}</div>
+                      <div style={{ minWidth: '62px', fontWeight: 'bold' }}>{index + 1}.</div>
+                      <div style={{ whiteSpace: 'nowrap' }}>{order?.order_name}</div>
                     </Row>
                     {order?.groups.length > 0 &&
                       <>

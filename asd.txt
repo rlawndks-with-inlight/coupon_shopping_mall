@@ -1,26 +1,26 @@
 server {
 listen 80;
-server_name dozn.tikitaka.kr
+server_name hb-pay.com
 root html;
 
 
 location / {
-        return 301 https://dozn.tikitaka.kr$request_uri;
+        return 301 https://hb-pay.com$request_uri;
     }
 }
 
 server {
 
     listen       443 ssl;
-    server_name  dozn.tikitaka.kr;
+    server_name  hb-pay.com;
 
     client_max_body_size 256M;
 
-    ssl_certificate     /etc/letsencrypt/live/dozn.tikitaka.kr/fullchain.pem;
-    ssl_certificate_key /etc/letsencrypt/live/dozn.tikitaka.kr/privkey.pem;
+    ssl_certificate     /etc/letsencrypt/live/hb-pay.com/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/hb-pay.com/privkey.pem;
 
     location / {
-       proxy_pass http://dozn.tikitaka.kr:3000;
+       proxy_pass http://hb-pay.com:3000;
        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
        proxy_set_header X-Forwarded-Proto $scheme;
     }
@@ -30,8 +30,8 @@ server {
     }
 }
 
-dozn.tikitaka.kr
-//  sudo certbot --nginx -d dozn.tikitaka.kr
+hb-pay.com
+//  sudo certbot --nginx -d hb-pay.com
 
 //purplevery23.cafe24.com 프론트서버
 //purplevery22.cafe24.com 백엔드서버

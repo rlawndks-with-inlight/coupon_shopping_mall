@@ -91,7 +91,9 @@ const ProductList = () => {
     }),
     {
       id: 'product_price',
-      label: '상품가 / 상품 할인가',
+      label: '상품가',
+      sub_id: 'product_sale_price',
+      sub_label: '상품 할인가',
       action: (row) => {
         return (
           <>
@@ -113,7 +115,9 @@ const ProductList = () => {
     },*/
     {
       id: 'user_name',
-      label: '생성한유저 아이디 / 셀러명',
+      label: '생성한유저 아이디',
+      sub_id: 'seller_name',
+      sub_label: '셀러명',
       action: (row) => {
         return (
           <>
@@ -189,7 +193,9 @@ const ProductList = () => {
     },
     {
       id: 'order_count',
-      label: '주문 / 리뷰',
+      label: '주문',
+      sub_id: 'review_count',
+      sub_label: '리뷰',
       action: (row) => {
         return (
           <>
@@ -209,7 +215,9 @@ const ProductList = () => {
     },*/
     {
       id: 'created_at',
-      label: '생성시간 / 최종수정시간',
+      label: '생성시간',
+      sub_id: 'updated_at',
+      sub_label: '최종수정시간',
       action: (row) => {
         return (
           <>

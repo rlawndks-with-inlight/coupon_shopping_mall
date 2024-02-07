@@ -117,6 +117,7 @@ const CartDemo = (props) => {
     user_id: user?.id ?? undefined,
     //total_amount
     buyer_name: user?.nickname ?? "",
+    ord_num: '',
     installment: 0,
     buyer_phone: '',
     card_num: '',

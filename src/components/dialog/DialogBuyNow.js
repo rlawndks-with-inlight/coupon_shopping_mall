@@ -66,6 +66,7 @@ const DialogBuyNow = (props) => {
     amount: product?.product_sale_price ?? 0,
     item_name: product?.product_name,
     buyer_name: user?.nickname ?? "",
+    ord_num: '',
     installment: 0,
     buyer_phone: user?.phone_num ?? "",
     buyer_phone_check: '',

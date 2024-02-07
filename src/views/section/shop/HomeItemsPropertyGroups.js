@@ -13,6 +13,19 @@ const Wrappers = styled.div`
   margin:0 auto;
   `
 
+const CategoryTitle = styled.div`
+font-size: ${themeObj.font_size.size3};
+font-weight: bold;
+text-align: center;
+margin: 0 auto;
+@media (max-width:800px){
+    margin-left:0;
+}
+@media (max-width:500px){
+    font-size: 1.2rem;
+}
+`
+
 const HomeItemsPropertyGroups = (props) => {
     const { column, data, func, is_manager } = props;
     const { router } = func;
@@ -30,14 +43,9 @@ const HomeItemsPropertyGroups = (props) => {
                 <Row style={{display:'flex', position:'relative'}}>
                 {column?.title &&
                     <>
-                        <div style={{
-                            fontSize: themeObj.font_size.size3,
-                            fontWeight: 'bold',
-                            textAlign: 'center',
-                            margin:'0 auto'
-                        }}>
+                        <CategoryTitle>
                             {column?.title}
-                        </div>
+                        </CategoryTitle>
                         {column?.sub_title &&
                             <>
                                 <div style={{
@@ -50,7 +58,7 @@ const HomeItemsPropertyGroups = (props) => {
                             </>}
                             <Button sx={{ position:'absolute', right: '0'}} variant='outlined' onClick={() => {
                         router.push(`/shop/items?not_show_select_menu=1&property_id=${parseInt(column?.type.split('items-property-group-')[1])}`)
-                    }}>View More Products</Button>
+                    }}>View More</Button>
                     </>}
                     </Row>
                 <div style={{ marginTop: '1rem', height:'0.25rem', borderTop:`1px solid ${themeDnsData?.theme_css?.main_color} `, borderBottom:`1px solid ${themeDnsData?.theme_css?.main_color} `,}} />

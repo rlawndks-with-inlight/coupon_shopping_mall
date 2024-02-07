@@ -8,7 +8,7 @@ import { CategorySorter, LANGCODE } from "src/views/shop/demo-4/header"
 import { useEffect, useState } from "react";
 
 const Wrappers = styled.div`
-max-width:1100px;
+max-width:1300px;
 display:flex;
 flex-direction:column;
 margin: 0 auto;

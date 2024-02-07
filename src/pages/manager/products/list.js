@@ -329,27 +329,6 @@ const ProductList = () => {
     }
     setSearchObj(obj);
   }
-  const onChangePageByProperties = async (obj) => {
-    setData({
-      ...data,
-      content: undefined
-    })
-    let data_ = await apiManager('products', 'list', obj);
-    if (data_) {
-      for (var i = 0; i < themePropertyList.length; i++) {
-        let parent_list = await getAllIdsWithParents(themePropertyList[i]?.product_properties);
-        for (var j = 0; j < data_.content.length; j++) {
-          let data_item = data_.content[j];
-          let property_root = await returnCurCategories(data_item[`property_id${i}`] ?? 0, parent_list);
-          if (property_root?.length > 0) {
-            data_.content[j][`property_root_${i}`] = property_root ?? [];
-          }
-        }
-      }
-      setData(data_);
-    }
-    setSearchObj(obj);
-  }
 
   const deleteProduct = async (id) => {
     let result = await apiManager('products', 'delete', { id: id });
@@ -389,38 +368,6 @@ const ProductList = () => {
     }
     onChangePage({ ...searchObj, ...category_ids, page: 1 })
     setCurCategories(cur_categories);
-    let children_list = [];
-    for (var i = 0; i < use_list.length; i++) {
-      children_list.push(use_list[i]?.children);
-    }
-    setCategoryChildrenList({
-      ...categoryChildrenList,
-      [idx]: children_list
-    });
-    $(`.category-container-${idx}`).scrollLeft(100000);
-  }
-
-  const onClickProperty = (property, depth, idx) => {
-    let parent_list = getAllIdsWithParents(themePropertyList[idx]?.product_properties);
-    let use_list = [];
-    for (var i = 0; i < parent_list.length; i++) {
-      if (parent_list[i][depth]?.id == property?.id) {
-        use_list = parent_list[i];
-        break;
-      }
-    }
-    let property_ids = {};
-    let cur_properties = {
-      ...curProperties,
-      [idx]: use_list
-    };
-    for (var i = 0; i < themePropertyList.length; i++) {
-      if (cur_properties[i]) {
-        property_ids[`property_id${i}`] = cur_properties[i][cur_properties[i].length - 1]?.id;
-      }
-    }
-    onChangePageByProperties({ ...searchObj, ...property_ids, page: 1 })
-    setCurProperties(cur_properties);
     let children_list = [];
     for (var i = 0; i < use_list.length; i++) {
       children_list.push(use_list[i]?.children);

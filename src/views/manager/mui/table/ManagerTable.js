@@ -50,18 +50,11 @@ export default function ManagerTable(props) {
   const [keyword, setKeyWord] = useState("");
   const [contentList, setContentList] = useState(undefined);
   const [anchor, setAnchor] = useState(null)
-  const [checked, setChecked] = useState(true)
-
-  const handleClick = (e) => {
-    setAnchor(e.currentTarget)
-  }
+  const [checked, setChecked] = useState('id')
+  const [order, setOrder] = useState('desc')
 
   const handleClose = () => {
     setAnchor(null)
-  }
-
-  const handleChange = (e) => {
-    setChecked(e.target.checked)
   }
 
   const tableOption = Boolean(anchor)
@@ -150,6 +143,12 @@ export default function ManagerTable(props) {
       want_move_card={want_move_card}
     />
   }, [contentList])
+
+  const onSort = (e, prop) => {
+    const isDesc = checked === prop && order === 'desc';
+    setOrder(isDesc ? 'asc' : 'desc')
+    setChecked(prop)
+  }
 
   return (
     <>
@@ -298,6 +297,11 @@ export default function ManagerTable(props) {
                 <TableHeadCustom
                   headLabel={columns}
                   sx={{ wordBreak: 'keep-all' }}
+                  onChangePage={onChangePage}
+                  searchObj={searchObj}
+                  onSort={onSort}
+                  orderBy={checked}
+                  order={order}
                 />
                 <DndProvider backend={HTML5Backend}>
                   <TableBody sx={{ wordBreak: 'keep-all' }}>

@@ -9,7 +9,7 @@ import { defaultManagerObj } from 'src/data/manager-data'
 
 const Wrappers = styled.div`
   width:90%;
-  max-width:1100px;
+  max-width:1300px;
   margin:0 auto;
   `
 
@@ -63,7 +63,7 @@ const HomeItemsPropertyGroups = (props) => {
                     </Row>
                 <div style={{ marginTop: '1rem', height:'0.25rem', borderTop:`1px solid ${themeDnsData?.theme_css?.main_color} `, borderBottom:`1px solid ${themeDnsData?.theme_css?.main_color} `,}} />
                 <Items items={column?.list} router={router} is_slide={column?.list.length >= 5 ? true : true} rows={themeDnsData?.slider_css?.rows} autoplaySpeed={themeDnsData?.slider_css?.rows*1000} />
-                <div style={{ marginTop: '1rem', height:'0.25rem', borderTop:`1px solid gray `,}} />
+                <div style={{ marginTop: '1rem', height:'0.25rem', borderTop:`1px solid ${themeObj.grey[300]} `,}} />
                 {/*<Row>
                     <Button sx={{ margin: '1rem auto' }} variant='outlined' onClick={() => {
                         router.push(`/shop/items?not_show_select_menu=1&property_id=${parseInt(column?.type.split('items-property-group-')[1])}`)

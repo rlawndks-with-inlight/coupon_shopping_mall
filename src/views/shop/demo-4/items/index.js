@@ -15,7 +15,7 @@ import styled from "styled-components";
 import $ from 'jquery';
 
 const ContentWrapper = styled.div`
-max-width:1100px;
+max-width:1300px;
 width:90%;
 margin: 0 auto 5rem auto;
 display:flex;

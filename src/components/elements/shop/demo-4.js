@@ -89,7 +89,7 @@ export const Seller4 = props => {
   return <></>
 }
 export const ContentWrappers = styled.div`
-width: 900px;
+width: 1100px;
 display: flex;
 flex-direction: column;
 margin: 0 auto 1rem 1rem;

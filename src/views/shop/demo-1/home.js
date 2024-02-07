@@ -94,7 +94,7 @@ const HomeDemo = (props) => {
               height: '40vw'
             }} />
           */}
-          <div style={{ display:'flex', marginTop:'200px' }}>
+          <div style={{ display:'flex', marginTop:'100px' }}>
           <Skeleton variant='rounded' style={{
               height: '34vw',
               maxWidth: '200px',

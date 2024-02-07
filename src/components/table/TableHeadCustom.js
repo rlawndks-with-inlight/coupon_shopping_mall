@@ -40,9 +40,13 @@ export default function TableHeadCustom({
   onSort,
   onSelectAllRows,
   sx,
+  onChangePage,
+  searchObj
 }) {
   const createSortHandler = (prop) => (e) => {
-    onSort(e, prop);
+    onSort(e, prop)
+    const orderVal = order == 'asc' ? 0 : 1
+    onChangePage({...searchObj, is_asc:orderVal, order:orderBy})
   }
 
   return (
@@ -63,7 +67,7 @@ export default function TableHeadCustom({
             key={headCell.id}
             align={headCell.align || 'left'}
             sortDirection={orderBy === headCell.id ? order : false}
-            sx={{ width: headCell.width, minWidth: headCell.minWidth, }}//'@media screen and (max-width: 2500px)': {fontSize:'0.5rem'}
+            sx={{ width: headCell.width, minWidth: headCell.minWidth }}//'@media screen and (max-width: 2500px)': {fontSize:'0.5rem'}
           >
             {onSort ? (
               <TableSortLabel

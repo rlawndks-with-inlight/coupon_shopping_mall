@@ -33,7 +33,7 @@ z-index: 10;
 const HighestContainer = styled.div`
 display:flex;
 padding: 0;
-max-width: 1100px;
+max-width: 1300px;
 width:90%;
 margin: 0 auto;
 position:relative;
@@ -47,7 +47,7 @@ const TopMenuContainer = styled.div`
 display:flex;
 padding: 0;
 padding-top: 0;
-max-width: 1100px;
+max-width: 1300px;
 width:90%;
 margin: 0 auto;
 align-items:center;
@@ -58,7 +58,7 @@ height:100px;
 }
 `
 const CategoryContainer = styled.div`
-max-width: 1200px;
+max-width: 1400px;
 width:100%;
 margin: 0 auto;
 display:flex;
@@ -199,10 +199,10 @@ position: fixed;
 left: 50%;
 z-index: 9;
 transform: translate(-50%, 0);
-width:1100px;
+width:1300px;
 padding: 1rem;
 border: 1px solid #ccc;
-@media screen and (max-width:1100px) { 
+@media screen and (max-width:1300px) { 
 width:90vw;
 }
 `

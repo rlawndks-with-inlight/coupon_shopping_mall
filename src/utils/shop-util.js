@@ -139,7 +139,7 @@ export const onPayProductsByAuth = async (products_, payData_) => { // 인증결
         return false;
     }
 }
-export const onPayProductsByVirtualAccount = async (products_, payData_) => { // 수기결제
+export const onPayProductsByVirtualAccount = async (products_, payData_) => { // 수기결제가 아니라 가상계좌 아님?
     let products = products_;
     let pay_data = payData_;
     let payData = await makePayData(products, pay_data);

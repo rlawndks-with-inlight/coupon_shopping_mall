@@ -7,7 +7,8 @@ const path = require('path')
 
 module.exports = {
   trailingSlash: true,
-  reactStrictMode: true,
+  reactStrictMode: false,  
+  //페이지 두번 렌더링 막기 위해 reactStrictMode 해제
   env: {
     // HOST
     HOST_API_KEY: `${process.env.BACK_URL}`,

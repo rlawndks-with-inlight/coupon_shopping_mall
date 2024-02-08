@@ -91,9 +91,9 @@ const ProductList = () => {
     }),
     {
       id: 'product_price',
-      label: '상품가',
+      label: '정상가',
       sub_id: 'product_sale_price',
-      sub_label: '상품 할인가',
+      sub_label: '판매가',
       action: (row) => {
         return (
           <>

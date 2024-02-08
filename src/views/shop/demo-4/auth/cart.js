@@ -8,7 +8,7 @@ import Label from 'src/components/label/Label';
 import EmptyContent from 'src/components/empty-content/EmptyContent';
 import Iconify from 'src/components/iconify/Iconify';
 import { useSettingsContext } from 'src/components/settings';
-import { calculatorPrice, getCartDataUtil, onPayProductsByAuth, onPayProductsByHand } from 'src/utils/shop-util';
+import { calculatorPrice, getCartDataUtil, makePayData, onPayProductsByAuth, onPayProductsByHand } from 'src/utils/shop-util';
 import { useAuthContext } from 'src/layouts/manager/auth/useAuthContext';
 import Payment from 'payment'
 import Cards from 'react-credit-cards'
@@ -28,7 +28,10 @@ width: 90%;
 min-height:90vh;
 margin-bottom:10vh;
 `
-
+const Iframe = styled.iframe`
+border: none;
+width: 100%;
+`
 const STEPS = ['장바구니 확인', '배송지 확인', '결제하기'];
 export function AddressItem({ item, onCreateBilling, onDeleteAddress }) {
   const { receiver, addr, address_type, phone, is_default, detail_addr, id } = item;
@@ -190,16 +193,19 @@ const CartDemo = (props) => {
       if (parseFloat(user?.point ?? 0) < parseFloat(payData.use_point)) {
         toast.error('보유포인트가 부족합니다.');
         return;
-      } else if (item?.type == 'virtual_account') {
-        setBuyType('virtual_account');
-        setPayData({
-          ...payData,
-          payment_modules: item,
-        })
-        return;
       }
       setPayLoading(true);
       let result = await onPayProductsByAuth(products, { ...payData, payment_modules: item, });
+    } else if (item?.type == 'virtual_account') {
+      setBuyType('virtual_account');
+      let pay_data = await makePayData(products, payData);
+      delete pay_data.payment_modules;
+      let ord_num = `${pay_data?.user_id || pay_data?.password}${new Date().getTime().toString().substring(0, 11)}`;
+      pay_data.ord_num = ord_num
+      pay_data.item_name = `${pay_data?.products[0]?.order_name} 외 ${pay_data?.products?.length - 1}`;
+      let insert_pay_ready = await apiManager('pays/virtual', 'create', pay_data)
+      setPayData(pay_data)
+      return;
     }
   }
   const onPayByHand = async () => {
@@ -490,7 +496,7 @@ const CartDemo = (props) => {
                     </>}
                   {buyType == 'virtual_account' &&
                     <>
-
+                      <Iframe src={_.find(themeDnsData?.payment_modules, { type: buyType })?.virtual_acct_url + `?amount=${payData?.amount}`} />
                     </>}
                 </Card>
               </>}

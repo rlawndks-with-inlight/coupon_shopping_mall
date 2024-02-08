@@ -33,6 +33,13 @@ const PaymentModuleList = () => {
       }
     },
     {
+      id: 'virtual_acct_url',
+      label: '가상계좌 발급 url',
+      action: (row) => {
+        return row['virtual_acct_url'] ?? "---"
+      }
+    },
+    {
       id: 'trx_type',
       label: '결제타입',
       action: (row) => {

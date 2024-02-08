@@ -35,6 +35,10 @@ import $ from 'jquery';
 import _ from 'lodash'
 import { commarNumber, returnMoment } from 'src/utils/function'
 
+const Iframe = styled.iframe`
+border: none;
+width: 100%;
+`
 const DialogBuyNow = (props) => {
 
   const { setModal } = useModal()
@@ -94,7 +98,9 @@ const DialogBuyNow = (props) => {
     }
     setPayList(themeDnsData?.payment_modules)
   }, [])
-
+  useEffect(() => {
+    console.log(payData)
+  }, [payData])
   const onChangeAddressPage = async (search_obj) => {
     setAddressContent({
       ...addressContent,
@@ -150,6 +156,11 @@ const DialogBuyNow = (props) => {
     setBuyStep(1);
   }
   const selectPayType = async (item) => {
+    let product_item = product;
+    let select_product_groups = selectProductGroups;
+    product_item.order_count = selectProductGroups?.count;
+    select_product_groups = selectProductGroups?.groups;
+
     if (item?.type == 'card') {//카드결제
       setBuyType('card');
       setBuyStep(2);
@@ -159,10 +170,7 @@ const DialogBuyNow = (props) => {
       })
     } else if (item?.type == 'certification') {
       setBuyType('certification');
-      let product_item = product;
-      let select_product_groups = selectProductGroups;
-      product_item.order_count = selectProductGroups?.count;
-      select_product_groups = selectProductGroups?.groups;
+
       setPayLoading(true);
       let result = await onPayProductsByAuth([{
         ...product_item,
@@ -171,12 +179,18 @@ const DialogBuyNow = (props) => {
       }], { ...payData, payment_modules: item });
     } else if (item?.type == 'virtual_account') {
       setBuyType('virtual_account');
+      let pay_data = await makePayData([{
+        ...product_item,
+        groups: select_product_groups,
+        seller_id: router.query?.seller_id ?? 0,
+      }], payData);
+      delete pay_data.payment_modules;
+      let ord_num = `${pay_data?.user_id || pay_data?.password}${new Date().getTime().toString().substring(0, 11)}`;
+      pay_data.ord_num = ord_num
+      pay_data.item_name = `${pay_data?.products[0]?.order_name} 외 ${pay_data?.products?.length - 1}`;
+      let insert_pay_ready = await apiManager('pays/virtual', 'create', pay_data)
       setBuyStep(2);
-      setPayData({
-        ...payData,
-        payment_modules: item,
-        buyer_name: '',
-      })
+      setPayData(pay_data)
     }
   }
   const onBuyNow = async () => {
@@ -611,257 +625,7 @@ const DialogBuyNow = (props) => {
             </>}
           {(buyStep == 2 && buyType == 'virtual_account') &&
             <>
-              <Typography variant='subtitle1' sx={{ borderBottom: `1px solid #000`, paddingBottom: '0.5rem', marginBottom: '0.5rem' }}>{_.find(payList, { type: buyType })?.title}</Typography>
-              <Stack spacing={2}>
-                {payData?.virtual_account_info ?
-                  <>
-                    <Row style={{ columnGap: '0.5rem' }}>
-                      <Typography variant='subtitle2'>발급 번호</Typography>
-                      <Typography variant='body2' sx={{ color: themeObj.grey[600] }}>{payData?.virtual_account_info?.virtual_acct_issued_seq}</Typography>
-                    </Row>
-                    <Row style={{ columnGap: '0.5rem' }}>
-                      <Typography variant='subtitle2'>발급 은행</Typography>
-                      <Typography variant='body2' sx={{ color: themeObj.grey[600] }}>{_.find(bankCodeList, { value: payData?.virtual_account_info?.virtual_bank_code })?.label}</Typography>
-                    </Row>
-                    <Row style={{ columnGap: '0.5rem' }}>
-                      <Typography variant='subtitle2'>계좌번호</Typography>
-                      <Typography variant='body2' sx={{ color: themeObj.grey[600] }}>{payData?.virtual_account_info?.virtual_acct_num}</Typography>
-                    </Row>
-                    <Row style={{ columnGap: '0.5rem' }}>
-                      <Typography variant='subtitle2'>예금주명</Typography>
-                      <Typography variant='body2' sx={{ color: themeObj.grey[600] }}>{payData?.buyer_name}</Typography>
-                    </Row>
-                    <Row style={{ columnGap: '0.5rem' }}>
-                      <Typography variant='subtitle2'>입금예정금액</Typography>
-                      <Typography variant='body2' sx={{ color: themeObj.grey[600] }}>{commarNumber(payData?.amount)}원</Typography>
-                    </Row>
-                  </>
-                  :
-                  <>
-                    <Stack>
-                      <Typography variant="subtitle2">
-                        본인확인
-                      </Typography>
-                    </Stack>
-                    <Stack>
-                      <FormControl size='small' disabled={payData.check_virtual_auth_step >= 2}>
-                        <InputLabel>은행</InputLabel>
-                        <Select label='은행' value={payData?.bank_code} onChange={(e) => {
-                          setPayData(
-                            {
-                              ...payData,
-                              ['bank_code']: e.target.value,
-                            }
-                          )
-                        }}>
-                          {bankCodeList.map((itm) => {
-                            return <MenuItem value={itm.value}>{itm.label}</MenuItem>
-                          })}
-                        </Select>
-                      </FormControl>
-                    </Stack>
-                    <Stack>
-                      <TextField
-                        disabled={payData.check_virtual_auth_step >= 2}
-                        size='small'
-                        label='계좌번호'
-                        value={payData.acct_num}
-                        onChange={(e) => {
-                          let value = e.target.value;
-                          setPayData({
-                            ...payData,
-                            ['acct_num']: value
-                          })
-                        }}
-                      />
-                    </Stack>
-                    <Stack>
-                      <TextField
-                        disabled={payData.check_virtual_auth_step >= 2}
-                        size='small'
-                        label='예금주'
-                        value={payData.buyer_name}
-                        onChange={(e) => {
-                          let value = e.target.value;
-                          setPayData({
-                            ...payData,
-                            ['buyer_name']: value
-                          })
-                        }}
-                      />
-                    </Stack>
-                    {payData.check_virtual_auth_step >= 1 &&
-                      <>
-                        <Stack>
-                          <TextField
-                            disabled={payData.check_virtual_auth_step >= 2}
-                            size='small'
-                            label='인증코드'
-                            value={payData.check_virtual_auth_code}
-                            onChange={(e) => {
-                              let value = e.target.value;
-                              setPayData({
-                                ...payData,
-                                ['check_virtual_auth_code']: value
-                              })
-                            }}
-                          />
-                        </Stack>
-                      </>}
-                    <Stack>
-                      <Button
-                        variant='contained'
-                        disabled={payData.check_virtual_auth_step >= 2}
-                        onClick={() => {
-                          if (payData.check_virtual_auth_step == 0) {
-                            sendOneWonCheckAccrount();
-                          } else {
-                            checkOneWonCheckAccrount();
-                          }
-                        }}>
-                        {payData.check_virtual_auth_step == 0 ? '1원인증' : (payData.check_virtual_auth_step >= 2 ? '확인완료' : '확인')}
-                      </Button>
-                    </Stack>
-                    {payData.check_virtual_auth_step >= 2 &&
-                      <>
-                        <Stack>
-                          <TextField
-                            disabled={payData.check_virtual_auth_step >= 3}
-                            size='small'
-                            label='생년월일'
-                            placeholder='19991010'
-                            value={payData.auth_num}
-                            onChange={(e) => {
-                              let value = e.target.value;
-                              setPayData({
-                                ...payData,
-                                ['auth_num']: value
-                              })
-                            }}
-                          />
-                        </Stack>
-                        <Stack>
-                          <Button
-                            variant='contained'
-                            disabled={payData.check_virtual_auth_step >= 3}
-                            onClick={checkRealNameVirtualAccount}>
-                            {(payData.check_virtual_auth_step == 2 ? '실명조회' : '확인완료')}
-                          </Button>
-                        </Stack>
-                      </>}
-                    {payData.check_virtual_auth_step >= 3 &&
-                      <>
-                        <Stack>
-                          <FormControl size='small'>
-                            <InputLabel>성별</InputLabel>
-                            <Select label='성별' value={payData?.gender}
-                              disabled={payData.check_virtual_auth_step >= 4}
-                              onChange={(e) => {
-                                setPayData(
-                                  {
-                                    ...payData,
-                                    ['gender']: e.target.value,
-                                  }
-                                )
-                              }}>
-                              {genderList.map((itm) => {
-                                return <MenuItem value={itm.value}>{itm.label}</MenuItem>
-                              })}
-                            </Select>
-                          </FormControl>
-                        </Stack>
-                        <Stack>
-                          <FormControl size='small' >
-                            <InputLabel>내외국인</InputLabel>
-                            <Select label='내외국인' value={payData?.ntv_frnr}
-                              disabled={payData.check_virtual_auth_step >= 4}
-                              onChange={(e) => {
-                                setPayData(
-                                  {
-                                    ...payData,
-                                    ['ntv_frnr']: e.target.value,
-                                  }
-                                )
-                              }}>
-                              {ntvFrnrList.map((itm) => {
-                                return <MenuItem value={itm.value}>{itm.label}</MenuItem>
-                              })}
-                            </Select>
-                          </FormControl>
-                        </Stack>
-                        <Stack>
-                          <FormControl size='small' >
-                            <InputLabel>통신사</InputLabel>
-                            <Select label='통신사' value={payData?.tel_com}
-                              disabled={payData.check_virtual_auth_step >= 4}
-                              onChange={(e) => {
-                                setPayData(
-                                  {
-                                    ...payData,
-                                    ['tel_com']: e.target.value,
-                                  }
-                                )
-                              }}>
-                              {telComList.map((itm) => {
-                                return <MenuItem value={itm.value}>{itm.label}</MenuItem>
-                              })}
-                            </Select>
-                          </FormControl>
-                        </Stack>
-                        <Stack>
-                          <TextField
-                            disabled={payData.check_virtual_auth_step >= 4}
-                            size='small'
-                            label='전화번호'
-                            value={payData.buyer_phone}
-                            onChange={(e) => {
-                              let value = e.target.value;
-                              setPayData({
-                                ...payData,
-                                ['buyer_phone']: value
-                              })
-                            }}
-                            InputProps={{
-                              endAdornment: <Button variant='contained' size='small' sx={{ width: '160px', marginRight: '-0.5rem' }}
-                                disabled={payData.check_virtual_auth_step >= 4}
-                                onClick={sendSmsPushVirtualAccount}>{payData.check_virtual_auth_step >= 4 ? '확인완료' : '인증번호 발송'}</Button>
-                            }}
-                          />
-                        </Stack>
-                        <Stack>
-                          <TextField
-                            disabled={payData.check_virtual_auth_step >= 4}
-                            size='small'
-                            label='인증번호'
-                            value={payData.buyer_phone_check}
-                            onChange={(e) => {
-                              let value = e.target.value;
-                              setPayData({
-                                ...payData,
-                                ['buyer_phone_check']: value
-                              })
-                            }}
-                            InputProps={{
-                              endAdornment: <Button variant='contained' size='small' sx={{ width: '160px', marginRight: '-0.5rem' }}
-                                disabled={payData.check_virtual_auth_step >= 4}
-                                onClick={checkSmsVerityCodeVirtualAccount}>{payData.check_virtual_auth_step >= 4 ? '확인완료' : '인증번호 확인'}</Button>
-                            }}
-                          />
-                        </Stack>
-                      </>}
-                    {payData.check_virtual_auth_step >= 4 &&
-                      <>
-                        <Stack>
-                          <Button
-                            variant='contained'
-                            onClick={requestVirtualAccount}>
-                            발급신청
-                          </Button>
-                        </Stack>
-                      </>}
-                  </>}
-              </Stack>
-
+              <Iframe src={_.find(themeDnsData?.payment_modules, { type: buyType })?.virtual_acct_url + `?amount=${payData?.amount}`} />
             </>}
         </DialogContent>
         <DialogActions>

@@ -109,6 +109,20 @@ const PaymentModuleEdit = () => {
                       })}
                     </Select>
                   </FormControl>
+                  {item?.trx_type == 10 &&
+                    <>
+                      <TextField
+                        label='가상계좌 발급 url'
+                        value={item.virtual_acct_url}
+                        onChange={(e) => {
+                          setItem(
+                            {
+                              ...item,
+                              ['virtual_acct_url']: e.target.value
+                            }
+                          )
+                        }} />
+                    </>}
                   <FormControl>
                     <InputLabel>비/구인증</InputLabel>
                     <Select label='비/구인증' value={item.is_old_auth} onChange={(e) => {

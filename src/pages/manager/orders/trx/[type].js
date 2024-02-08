@@ -117,7 +117,6 @@ const TrxList = () => {
                         </Row>
                       </>}
                   </Col>
-                  <br />
                 </>
               ))}
             </Col>

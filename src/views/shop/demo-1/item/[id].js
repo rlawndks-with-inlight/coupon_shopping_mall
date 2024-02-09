@@ -10,6 +10,7 @@ import { apiManager, apiShop } from 'src/utils/api';
 import Head from 'next/head';
 import { useLocales } from 'src/locales';
 import { formatLang } from 'src/utils/format';
+import { BasicInfo } from 'src/components/elements/shop/demo-4';
 const ReactQuill = dynamic(() => import('react-quill'), {
   ssr: false,
   loading: () => <p>Loading ...</p>,
@@ -80,6 +81,12 @@ const ItemDemo = (props) => {
           theme={"bubble"}
           bounds={'.app'}
         /> : null,
+    },
+    {
+      value: 'basic_info',
+      label: '기본정보',
+      component: product ?
+        <BasicInfo /> : null,
     },
     {
       value: 'reviews',

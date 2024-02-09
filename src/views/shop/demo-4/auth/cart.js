@@ -20,7 +20,7 @@ import { apiManager } from 'src/utils/api';
 import DialogAddAddress from 'src/components/dialog/DialogAddAddress';
 
 const Wrappers = styled.div`
-max-width:1250px;
+max-width:1300px;
 display:flex;
 flex-direction:column;
 margin: 0 auto;
@@ -120,6 +120,7 @@ const CartDemo = (props) => {
     user_id: user?.id ?? undefined,
     //total_amount
     buyer_name: user?.nickname ?? "",
+    ord_num: '',
     installment: 0,
     buyer_phone: '',
     card_num: '',

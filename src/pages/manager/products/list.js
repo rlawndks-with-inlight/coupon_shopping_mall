@@ -91,7 +91,9 @@ const ProductList = () => {
     }),
     {
       id: 'product_price',
-      label: '상품가 / 상품 할인가',
+      label: '정상가',
+      sub_id: 'product_sale_price',
+      sub_label: '판매가',
       action: (row) => {
         return (
           <>
@@ -113,7 +115,9 @@ const ProductList = () => {
     },*/
     {
       id: 'user_name',
-      label: '생성한유저 아이디 / 셀러명',
+      label: '생성한유저 아이디',
+      sub_id: 'seller_name',
+      sub_label: '셀러명',
       action: (row) => {
         return (
           <>
@@ -189,7 +193,9 @@ const ProductList = () => {
     },
     {
       id: 'order_count',
-      label: '주문 / 리뷰',
+      label: '주문',
+      sub_id: 'review_count',
+      sub_label: '리뷰',
       action: (row) => {
         return (
           <>
@@ -209,7 +215,9 @@ const ProductList = () => {
     },*/
     {
       id: 'created_at',
-      label: '생성시간 / 최종수정시간',
+      label: '생성시간',
+      sub_id: 'updated_at',
+      sub_label: '최종수정시간',
       action: (row) => {
         return (
           <>
@@ -329,27 +337,6 @@ const ProductList = () => {
     }
     setSearchObj(obj);
   }
-  const onChangePageByProperties = async (obj) => {
-    setData({
-      ...data,
-      content: undefined
-    })
-    let data_ = await apiManager('products', 'list', obj);
-    if (data_) {
-      for (var i = 0; i < themePropertyList.length; i++) {
-        let parent_list = await getAllIdsWithParents(themePropertyList[i]?.product_properties);
-        for (var j = 0; j < data_.content.length; j++) {
-          let data_item = data_.content[j];
-          let property_root = await returnCurCategories(data_item[`property_id${i}`] ?? 0, parent_list);
-          if (property_root?.length > 0) {
-            data_.content[j][`property_root_${i}`] = property_root ?? [];
-          }
-        }
-      }
-      setData(data_);
-    }
-    setSearchObj(obj);
-  }
 
   const deleteProduct = async (id) => {
     let result = await apiManager('products', 'delete', { id: id });
@@ -389,38 +376,6 @@ const ProductList = () => {
     }
     onChangePage({ ...searchObj, ...category_ids, page: 1 })
     setCurCategories(cur_categories);
-    let children_list = [];
-    for (var i = 0; i < use_list.length; i++) {
-      children_list.push(use_list[i]?.children);
-    }
-    setCategoryChildrenList({
-      ...categoryChildrenList,
-      [idx]: children_list
-    });
-    $(`.category-container-${idx}`).scrollLeft(100000);
-  }
-
-  const onClickProperty = (property, depth, idx) => {
-    let parent_list = getAllIdsWithParents(themePropertyList[idx]?.product_properties);
-    let use_list = [];
-    for (var i = 0; i < parent_list.length; i++) {
-      if (parent_list[i][depth]?.id == property?.id) {
-        use_list = parent_list[i];
-        break;
-      }
-    }
-    let property_ids = {};
-    let cur_properties = {
-      ...curProperties,
-      [idx]: use_list
-    };
-    for (var i = 0; i < themePropertyList.length; i++) {
-      if (cur_properties[i]) {
-        property_ids[`property_id${i}`] = cur_properties[i][cur_properties[i].length - 1]?.id;
-      }
-    }
-    onChangePageByProperties({ ...searchObj, ...property_ids, page: 1 })
-    setCurProperties(cur_properties);
     let children_list = [];
     for (var i = 0; i < use_list.length; i++) {
       children_list.push(use_list[i]?.children);

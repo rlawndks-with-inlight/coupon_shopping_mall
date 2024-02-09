@@ -251,9 +251,14 @@ export const DashboardDemo4 = () => {
                                 <>
                                     <Grid item xs={12} md={12}>
                                         <Row style={{ alignItems: 'center', width: '100%', justifyContent: 'space-between', maxWidth: `300px` }}>
-                                            <div>{category?.post_category_title}</div>
+                                            <Button variant="outlined" style={{cursor:'pointer'}} onClick={() => {router.push(`/manager/articles/${category?.id}`, console.log(data))}}>
+                                                {category?.post_category_title}
+                                                </Button>
                                             <Row style={{ fontWeight: 'bold' }}>
-                                                <div style={{ color: themeDnsData?.theme_css?.main_color }}>{commarNumber(data[`request_${category?.id}`])}</div>
+                                                <div style={{marginRight:'1rem'}}>답변대기 : </div>
+                                                <div 
+                                                style={{ color: themeDnsData?.theme_css?.main_color}}
+                                                >{commarNumber(data[`request_${category?.id}`])}</div>
                                                 <div>건</div>
                                             </Row>
                                         </Row>

@@ -1,4 +1,4 @@
-import { Button, Stack, TextField } from "@mui/material";
+import { Button, Stack, TextField, Typography } from "@mui/material";
 import _ from "lodash";
 import { useRouter } from "next/router";
 import { useEffect } from "react";
@@ -19,7 +19,7 @@ const ReactQuill = dynamic(() => import('react-quill'), {
   loading: () => <p>Loading ...</p>,
 })
 const Wrappers = styled.div`
-max-width:1250px;
+max-width:1300px;
 display:flex;
 flex-direction:column;
 margin: 0 auto;
@@ -76,7 +76,7 @@ const ArticleDemo = (props) => {
             {!loading &&
               <>
                 <Stack spacing={3}>
-                  {(router.query?.id == 'add' || item?.user_id == user?.id) ?
+                  {(router.query?.id == 'add' || item?.user_id != user?.id) ? //item?.user_id == user?.id에서 바꿈
                     <>
                       {postCategory.post_category_type == 1 &&
                         <>

@@ -14,7 +14,7 @@ import { apiShop } from "src/utils/api";
 import styled from "styled-components";
 
 const Wrappers = styled.div`
-max-width:1250px;
+max-width:1300px;
 display:flex;
 flex-direction:column;
 margin: 0 auto;
@@ -74,6 +74,17 @@ const ArticlesDemo = (props) => {
       action: (row) => {
         return (
           <>
+          {
+            row?.replies.length > 0 ? 
+            <>
+            <IconButton onClick={() => {
+              router.push(`/shop/service/${router.query?.article_category}/${row?.id}`)
+            }}>
+              <Icon icon={row?.user_id == user?.id ? 'bx:detail' : 'bx:detail'} />
+            </IconButton>
+            </>
+            :
+            <>
             <IconButton onClick={() => {
               router.push(`/shop/service/${router.query?.article_category}/${row?.id}`)
             }}>
@@ -91,6 +102,8 @@ const ArticlesDemo = (props) => {
                   <Icon icon='material-symbols:delete-outline' />
                 </IconButton>
               </>}
+            </>
+          }           
           </>
         )
       }

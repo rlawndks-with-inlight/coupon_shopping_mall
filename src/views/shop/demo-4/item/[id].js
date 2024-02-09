@@ -17,6 +17,7 @@ import toast from 'react-hot-toast';
 import DialogBuyNow from 'src/components/dialog/DialogBuyNow';
 import { useAuthContext } from 'src/layouts/manager/auth/useAuthContext';
 import { useModal } from 'src/components/dialog/ModalProvider';
+import { BasicInfo } from 'src/components/elements/shop/demo-4';
 const ReactQuill = dynamic(() => import('react-quill'), {
   ssr: false,
   loading: () => <p>Loading ...</p>,
@@ -83,9 +84,9 @@ const ItemDemo = (props) => {
     data['sub_images'] = (data?.sub_images ?? []).map((img) => {
       return img?.product_sub_img
     })
-    if (data?.product_img) {
+    /*if (data?.product_img) {  //메인이미지를 상세이미지에 추가하는 코드
       data['sub_images'].unshift(data?.product_img)
-    }
+    }*/
     data['images'] = data['sub_images'];
     setReviewPage(review_page);
     let review_data = await apiManager('product-reviews', 'list', {
@@ -100,7 +101,7 @@ const ItemDemo = (props) => {
   const TABS = [
     {
       value: 'description',
-      label: '상품설명',
+      label: '상품정보',
       component: product?.product_description ?
         <ReactQuill
           className='none-padding'
@@ -109,6 +110,12 @@ const ItemDemo = (props) => {
           theme={"bubble"}
           bounds={'.app'}
         /> : null,
+    },
+    {
+      value: 'basic_info',
+      label: '기본정보',
+      component: product ?
+        <BasicInfo /> : null,
     },
     {
       value: 'reviews',

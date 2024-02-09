@@ -94,63 +94,77 @@ const HomeDemo = (props) => {
               height: '40vw'
             }} />
           */}
-          <div style={{ display:'flex',  }}>
+          <div style={{ display:'flex', marginTop:'100px' }}>
           <Skeleton variant='rounded' style={{
               height: '34vw',
-              maxWidth: '300px',
+              maxWidth: '200px',
               width: '90%',
-              maxHeight: '300px',
+              maxHeight: '200px',
               margin: '10rem 1rem 10rem auto'
             }} />
             <Skeleton variant='rounded' style={{
               height: '34vw',
-              maxWidth: '300px',
+              maxWidth: '200px',
               width: '90%',
-              maxHeight: '300px',
+              maxHeight: '200px',
               margin: '10rem 1rem'
             }} />
             <Skeleton variant='rounded' style={{
               height: '34vw',
-              maxWidth: '300px',
+              maxWidth: '200px',
               width: '90%',
-              maxHeight: '300px',
+              maxHeight: '200px',
               margin: '10rem 1rem'
             }} />
             <Skeleton variant='rounded' style={{
               height: '34vw',
-              maxWidth: '300px',
+              maxWidth: '200px',
               width: '90%',
-              maxHeight: '300px',
+              maxHeight: '200px',
+              margin: '10rem 1rem'
+            }} />
+            <Skeleton variant='rounded' style={{
+              height: '34vw',
+              maxWidth: '200px',
+              width: '90%',
+              maxHeight: '200px',
               margin: '10rem auto 10rem 1rem'
             }} />
           </div>
           <div style={{ display:'flex',  }}>
           <Skeleton variant='rounded' style={{
               height: '34vw',
-              maxWidth: '300px',
+              maxWidth: '200px',
               width: '90%',
-              maxHeight: '300px',
+              maxHeight: '200px',
               margin: '10rem 1rem 10rem auto'
             }} />
             <Skeleton variant='rounded' style={{
               height: '34vw',
-              maxWidth: '300px',
+              maxWidth: '200px',
               width: '90%',
-              maxHeight: '300px',
+              maxHeight: '200px',
               margin: '10rem 1rem'
             }} />
             <Skeleton variant='rounded' style={{
               height: '34vw',
-              maxWidth: '300px',
+              maxWidth: '200px',
               width: '90%',
-              maxHeight: '300px',
+              maxHeight: '200px',
               margin: '10rem 1rem'
             }} />
             <Skeleton variant='rounded' style={{
               height: '34vw',
-              maxWidth: '300px',
+              maxWidth: '200px',
               width: '90%',
-              maxHeight: '300px',
+              maxHeight: '200px',
+              margin: '10rem 1rem'
+            }} />
+            <Skeleton variant='rounded' style={{
+              height: '34vw',
+              maxWidth: '200px',
+              width: '90%',
+              maxHeight: '200px',
               margin: '10rem auto 10rem 1rem'
             }} />
           </div>

@@ -40,9 +40,13 @@ export default function TableHeadCustom({
   onSort,
   onSelectAllRows,
   sx,
+  onChangePage,
+  searchObj
 }) {
   const createSortHandler = (prop) => (e) => {
-    onSort(e, prop);
+    onSort(e, prop)
+    const orderVal = order == 'asc' ? 0 : 1
+    onChangePage({ ...searchObj, is_asc: orderVal, order: orderBy })
   }
 
   return (
@@ -63,23 +67,49 @@ export default function TableHeadCustom({
             key={headCell.id}
             align={headCell.align || 'left'}
             sortDirection={orderBy === headCell.id ? order : false}
-            sx={{ width: headCell.width, minWidth: headCell.minWidth, }}//'@media screen and (max-width: 2500px)': {fontSize:'0.5rem'}
+            sx={{ width: headCell.width, minWidth: headCell.minWidth }}//'@media screen and (max-width: 2500px)': {fontSize:'0.5rem'}
           >
-            {onSort ? (
-              <TableSortLabel
-                //hideSortIcon
-                active={orderBy === headCell.id}
-                direction={orderBy === headCell.id ? order : 'asc'}
-                onClick={createSortHandler(headCell.id)}
-                sx={{ textTransform: 'capitalize' }}
-              >
-                {headCell.label}
-                {orderBy === headCell.id ? (
-                  <Box sx={{ ...visuallyHidden }}>
-                    {order === 'desc' ? 'sorted descending' : 'sorted ascending'}
-                  </Box>
-                ) : null}
-              </TableSortLabel>
+            {onSort &&
+              headCell.id == 'product_code' ||
+              headCell.id == 'product_price' ||
+              headCell.id == 'product_sale_price' ||
+              headCell.id == 'order_count' ||
+              headCell.id == 'review_count' ||
+              headCell.id == 'created_at' ||
+              headCell.id == 'updated_at' ? (
+              <>
+                <div style={{ display: 'flex', flexDirection:'column'}}>
+                  <TableSortLabel
+                    //hideSortIcon
+                    active={orderBy === headCell.id}
+                    direction={orderBy === headCell.id ? order : 'asc'}
+                    onClick={createSortHandler(headCell.id)}
+                    sx={{ textTransform: 'capitalize', flexDirection:'row' }}
+                  >
+                    {headCell.label}
+                    {orderBy === headCell.id ? (
+                      <Box sx={{ ...visuallyHidden }}>
+                        {order === 'desc' ? 'sorted descending' : 'sorted ascending'}
+                      </Box>
+                    ) : null}
+                  </TableSortLabel>
+                  {headCell.sub_id && 
+                  <TableSortLabel
+                    //hideSortIcon
+                    active={orderBy === headCell.sub_id}
+                    direction={orderBy === headCell.sub_id ? order : 'asc'}
+                    onClick={createSortHandler(headCell.sub_id)}
+                    sx={{ textTransform: 'capitalize', flexDirection:'row' }}
+                  >
+                    {headCell.sub_label}
+                    {orderBy === headCell.sub_id ? (
+                      <Box sx={{ ...visuallyHidden }}>
+                        {order === 'desc' ? 'sorted descending' : 'sorted ascending'}
+                      </Box>
+                    ) : null}
+                  </TableSortLabel>}
+                </div>
+              </>
             ) : (
               headCell.label
             )}

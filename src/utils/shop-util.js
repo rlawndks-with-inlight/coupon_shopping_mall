@@ -71,10 +71,14 @@ export const onPayProductsByHand = async (products_, payData_) => { // 수기결
     let pay_data = payData_;
     let payData = await makePayData(products, pay_data);
     let ord_num = `${payData?.user_id || payData?.password}${new Date().getTime().toString().substring(0, 11)}`
+    let return_url = `${window.location.protocol}//${window.location.host}/shop/auth/pay-result`
     payData.yymm = payData?.yymm?.split('/');
     payData = {
         ...payData,
         ord_num: ord_num,
+        return_url: return_url,
+        success_url: return_url + '?result_cd=0000',
+        fail_url: return_url + '?result_cd=9999',
         pay_key: payData?.payment_modules?.pay_key,
         mid: payData?.payment_modules?.mid,
         tid: payData?.payment_modules?.tid,
@@ -135,7 +139,7 @@ export const onPayProductsByAuth = async (products_, payData_) => { // 인증결
         return false;
     }
 }
-export const onPayProductsByVirtualAccount = async (products_, payData_) => { // 수기결제
+export const onPayProductsByVirtualAccount = async (products_, payData_) => { // 수기결제가 아니라 가상계좌 아님?
     let products = products_;
     let pay_data = payData_;
     let payData = await makePayData(products, pay_data);

@@ -81,6 +81,7 @@ export const Item4 = (props) => {
           router.push(`/shop/item/${item?.id}${seller ? `?seller_id=${seller?.id}` : ''}`)
         }
       }}
+      style={{cursor:'pointer'}}
     >
       <ItemImgContainer>
         <ItemImg src={item?.product_img} />

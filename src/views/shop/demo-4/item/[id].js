@@ -84,9 +84,9 @@ const ItemDemo = (props) => {
     data['sub_images'] = (data?.sub_images ?? []).map((img) => {
       return img?.product_sub_img
     })
-    if (data?.product_img) {
+    /*if (data?.product_img) {  //메인이미지를 상세이미지에 추가하는 코드
       data['sub_images'].unshift(data?.product_img)
-    }
+    }*/
     data['images'] = data['sub_images'];
     setReviewPage(review_page);
     let review_data = await apiManager('product-reviews', 'list', {

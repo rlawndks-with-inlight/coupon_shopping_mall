@@ -249,7 +249,11 @@ export default function ProductDetailsSummary({ product, onAddCart, onGotoStep, 
               {translate('장바구니')}
             </Button>
             <Button fullWidth disabled={getProductStatus(status).color != 'info' || !(product_sale_price > 0)} size="large" variant="contained" onClick={() => {
-              setBuyOpen(true);
+              if (user) {
+                setBuyOpen(true);
+              } else {
+                toast.error('로그인을 해주세요.')
+              }
             }}>
               {translate('바로구매')}
             </Button>

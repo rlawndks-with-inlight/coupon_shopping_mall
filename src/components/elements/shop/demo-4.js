@@ -370,7 +370,7 @@ export const BasicInfo = () => {
           반품 및 환불제도
         </InfoTitle>
         <InfoDetail>
-          1) 반품접수 : ① {themeDnsData?.name}(02-517-2950/02-517-8950)로 전화 ② 주문/배송 페이지에서 반품 신청<br />
+          1) 반품접수 : ① {themeDnsData?.name}({themeDnsData?.phone_num})로 전화 ② 주문/배송 페이지에서 반품 신청<br />
           2) 요청기간 : 상품 수령 후 24시간 이내 (상품수령 확인은 대한통운 택배사의 배송 추적을 이용)<br />
           3) 반품기간 : 반품요청 후 반품요청일(공휴일 제외)을 포함하여 4일 이내에 반드시 {themeDnsData?.name}로 도착해야 합니다.<br />
           - 반품요청 없이 반품한 상품은 반품기간이 경과되어 반품이 취소 될 수도 있습니다.<br />

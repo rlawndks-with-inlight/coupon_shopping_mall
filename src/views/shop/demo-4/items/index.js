@@ -72,9 +72,9 @@ const ItemsDemo = (props) => {
     }
     const { top, bottom } = scrollRef.current.getBoundingClientRect();
     const windowHeight = window.innerHeight;
-    if (top > windowHeight && bottom >= windowHeight/3 && !moreLoading) {
-      console.log(top)
-      console.log(bottom)
+    if (top < windowHeight && bottom >= 0 && !moreLoading) {
+      //console.log(top)
+      //console.log(bottom)
       setMoreLoading(true);
       $('.more-page').trigger("click");
     }
@@ -321,13 +321,20 @@ const ItemsDemo = (props) => {
               <>
                 {productContent?.total > productContent?.content.length &&
                   <>
+                  
+                    {/*<Row style={{ width: '100%', height:'100%' }}>
+                      <div style={{ margin: '0 auto' }}>
+                        <CircularProgress />
+                      </div>
+                </Row>*/}
+                  
                     <Stack spacing={'1rem'} >
             
-            <Skeleton variant='rectangular' style={{
+            {/*<Skeleton variant='rectangular' style={{
               height: '40vw'
-            }} />
+            }} />*/}
           
-          {/*<div style={{ display:'flex',  }}>
+          <div style={{ display:'flex',  }}>
           <Skeleton variant='rounded' style={{
               height: '34vw',
               maxWidth: '200px',
@@ -400,16 +407,16 @@ const ItemsDemo = (props) => {
               maxHeight: '200px',
               margin: '10rem auto 10rem 1rem'
             }} />
-          </div>*/}
-            {/*
-            <Skeleton variant='rounded' style={{
+          </div>
+            
+            {/*<Skeleton variant='rounded' style={{
               height: '34vw',
               maxWidth: '1200px',
               width: '90%',
               height: '70vh',
               margin: '1rem auto'
-            }} />
-            */}
+            }} />*/}
+            
           </Stack>
                   </>}
               </>

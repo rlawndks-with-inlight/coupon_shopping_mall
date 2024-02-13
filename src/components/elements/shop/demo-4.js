@@ -333,6 +333,7 @@ export const BasicInfo = () => {
     <>
       <div 
       style={{ padding: '24px' }}
+      onClick={() => {console.log(themeDnsData)}}
       dangerouslySetInnerHTML={{__html: basic_info}}
       />
 

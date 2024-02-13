@@ -151,6 +151,7 @@ export function SettingsProvider({ children }) {
       dns_data['blog_obj'] = data?.blog_obj ?? [];
       dns_data['payment_modules'] = data?.payment_modules ?? [];
       dns_data['products'] = data?.products ?? [];
+      dns_data['basic_info'] = data?.products ?? [];
       onChangeWishData(data?.user_wishs ?? []);
       onChangeCategoryList(data?.product_category_groups ?? []);
       onChangePropertyList(data?.product_property_groups ?? []);

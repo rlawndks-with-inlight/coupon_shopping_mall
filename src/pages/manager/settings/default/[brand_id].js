@@ -72,6 +72,7 @@ const DefaultSetting = () => {
   const [currentTab, setCurrentTab] = useState(0)
   const [item, setItem] = useState(defaultManagerObj.brands)
   const [saveLoading, setSaveLoading] = useState(false)
+  //const [useBasicInfo, setUseBasicInfo] = useState(true)
   const tab_list = [
     {
       value: 0,
@@ -395,20 +396,32 @@ const DefaultSetting = () => {
                         }}
                       />
                       </Row>
-                      <Stack spacing={1}>
-                        <Typography variant='subtitle2' sx={{ color: 'text.secondary' }}>
-                          쇼핑몰기본정보
+                      {/*<div>
+                      <Typography variant='subtitle2' sx={{ color: 'text.secondary' }}>
+                          상품 탭에 기본정보 사용
                         </Typography>
-                        <ReactQuillComponent
-                          value={item.basic_info}
-                          setValue={value => {
-                            setItem({
-                              ...item,
-                              ['basic_info']: value
-                            })
-                          }}
-                        />
-                      </Stack>
+                        <Switch 
+                        sx={{marginLeft:'-10px'}}
+                        value={useBasicInfo}
+                        onChange={() => {setUseBasicInfo(!useBasicInfo)}}
+                         />
+                      </div>*/}
+                      
+                      <Stack spacing={1}>
+                      <Typography variant='subtitle2' sx={{ color: 'text.secondary' }}>
+                        기본정보
+                      </Typography>
+                      <ReactQuillComponent
+                        value={item.basic_info}
+                        setValue={value => {
+                          setItem({
+                            ...item,
+                            ['basic_info']: value
+                          })
+                        }}
+                      />
+                    </Stack>
+                      
                       <Stack spacing={1}>
                         <Typography variant='subtitle2' sx={{ color: 'text.secondary' }}>
                           비고

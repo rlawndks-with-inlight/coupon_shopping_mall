@@ -251,9 +251,19 @@ const ItemDemo = (props) => {
                       onChange={(event, newValue) => setCurrentTab(newValue)}
                       sx={{ px: 3, bgcolor: 'background.neutral' }}
                     >
-                      {TABS.map((tab) => (
-                        <Tab key={tab.value} value={tab.value} label={tab.label} />
-                      ))}
+                      {themeDnsData?.show_basic_info ?
+                        TABS.map((tab, index) => (
+                          <Tab key={tab.value} value={tab.value} label={tab.label} />
+                        ))
+                        :
+                        TABS.map((tab, index) => {
+                          if (index !== 1) {
+                            return (
+                              <Tab key={tab.value} value={tab.value} label={tab.label} />
+                            )
+                          }
+                        })
+                      }
                     </Tabs>
                     <Divider />
                     {TABS.map(

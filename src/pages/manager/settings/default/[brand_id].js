@@ -72,7 +72,8 @@ const DefaultSetting = () => {
   const [currentTab, setCurrentTab] = useState(0)
   const [item, setItem] = useState(defaultManagerObj.brands)
   const [saveLoading, setSaveLoading] = useState(false)
-  //const [useBasicInfo, setUseBasicInfo] = useState(true)
+  const [useBasicInfo, setUseBasicInfo] = useState(false)
+
   const tab_list = [
     {
       value: 0,
@@ -134,14 +135,14 @@ const DefaultSetting = () => {
         }
       ]
       : []),
-      /*...(user?.level >= 40
-        ? [
-          {
-            value: 9,
-            label: '기본정보설정'
-          }
-        ]
-        : []),*/
+    /*...(user?.level >= 40
+      ? [
+        {
+          value: 9,
+          label: '기본정보설정'
+        }
+      ]
+      : []),*/
   ]
 
   useEffect(() => {
@@ -356,72 +357,82 @@ const DefaultSetting = () => {
                         }}
                       />
                       <Row>
-                      <TextField
-                        size='medium'
-                        sx={{ maxWidth: '200px', marginRight:'2rem' }}
-                        label='메인상품 출력 행 갯수'
-                        type='number'
-                        value={item?.slider_css?.rows ?? 0}
-                        onChange={e => {
-                          setItem({
-                            ...item,
-                            ['slider_css']: {
-                              ...item?.slider_css,
-                              ['rows']: e.target.value
-                            }
-                          })
-                        }}
-                        InputProps={{
-                          endAdornment: <>개</>
-                        }}
-                      />
-                      <TextField
-                        size='medium'
-                        sx={{ maxWidth: '200px' }}
-                        label='메인슬라이더 이동 주기'
-                        type='number'
-                        value={item?.slider_css?.autoplay_speed ?? 0}
-                        //defaultValue={item?.style?.margin_top ?? 10}
-                        onChange={e => {
-                          setItem({
-                            ...item,
-                            ['slider_css']: {
-                              ...item?.slider_css,
-                              ['autoplay_speed']: e.target.value
-                            }
-                          })
-                        }}
-                        InputProps={{
-                          endAdornment: <>초</>
-                        }}
-                      />
+                        <TextField
+                          size='medium'
+                          sx={{ maxWidth: '200px', marginRight: '2rem' }}
+                          label='메인상품 출력 행 갯수'
+                          type='number'
+                          value={item?.slider_css?.rows ?? 0}
+                          onChange={e => {
+                            setItem({
+                              ...item,
+                              ['slider_css']: {
+                                ...item?.slider_css,
+                                ['rows']: e.target.value
+                              }
+                            })
+                          }}
+                          InputProps={{
+                            endAdornment: <>개</>
+                          }}
+                        />
+                        <TextField
+                          size='medium'
+                          sx={{ maxWidth: '200px' }}
+                          label='메인슬라이더 이동 주기'
+                          type='number'
+                          value={item?.slider_css?.autoplay_speed ?? 0}
+                          //defaultValue={item?.style?.margin_top ?? 10}
+                          onChange={e => {
+                            setItem({
+                              ...item,
+                              ['slider_css']: {
+                                ...item?.slider_css,
+                                ['autoplay_speed']: e.target.value
+                              }
+                            })
+                          }}
+                          InputProps={{
+                            endAdornment: <>초</>
+                          }}
+                        />
                       </Row>
-                      {/*<div>
-                      <Typography variant='subtitle2' sx={{ color: 'text.secondary' }}>
+                      <div>
+                        <Typography variant='subtitle2' sx={{ color: 'text.secondary' }}>
                           상품 탭에 기본정보 사용
                         </Typography>
-                        <Switch 
-                        sx={{marginLeft:'-10px'}}
-                        value={useBasicInfo}
-                        onChange={() => {setUseBasicInfo(!useBasicInfo)}}
-                         />
-                      </div>*/}
-                      
+                        <Switch
+                          sx={{ marginLeft: '-10px' }}
+                          defaultChecked={item?.show_basic_info ? true : false}
+                          onChange={() => {
+                            setItem({
+                              ...item,
+                              ['show_basic_info']: item?.show_basic_info ? 0 : 1
+                            })
+                          }
+                        }
+                        />
+                      </div>
+                      {item?.show_basic_info ?
+                      <>
                       <Stack spacing={1}>
-                      <Typography variant='subtitle2' sx={{ color: 'text.secondary' }}>
-                        기본정보
-                      </Typography>
-                      <ReactQuillComponent
-                        value={item.basic_info}
-                        setValue={value => {
-                          setItem({
-                            ...item,
-                            ['basic_info']: value
-                          })
-                        }}
-                      />
-                    </Stack>
-                      
+                        <Typography variant='subtitle2' sx={{ color: 'text.secondary' }}>
+                          기본정보
+                        </Typography>
+                        <ReactQuillComponent
+                          value={item.basic_info}
+                          setValue={value => {
+                            setItem({
+                              ...item,
+                              ['basic_info']: value
+                            })
+                          }}
+                        />
+                      </Stack>
+                      </>
+                      :
+                      ""
+                      }
                       <Stack spacing={1}>
                         <Typography variant='subtitle2' sx={{ color: 'text.secondary' }}>
                           비고
@@ -1092,7 +1103,7 @@ const DefaultSetting = () => {
                 </Grid>
               </>
             )}
-            
+
             <Grid item xs={12} md={12}>
               <Card sx={{ p: 3 }}>
                 <Stack spacing={1} style={{ display: 'flex' }}>

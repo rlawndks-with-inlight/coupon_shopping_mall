@@ -37,6 +37,7 @@ export const PATH_MANAGER = {
     propertyGroups: path(ROOTS_MANAGER, '/products/property-groups'),
     categories: path(ROOTS_MANAGER, '/products/categories'),
     consignments: path(ROOTS_MANAGER, '/products/consignments'),
+    faq: path(ROOTS_MANAGER, '/products/faq'),
   },
   articles: {
     root: path(ROOTS_MANAGER, '/articles'),
@@ -260,6 +261,7 @@ export const defaultManagerObj = {
     fax_num: '',
     mail_order_num: '',
     note: '',
+    basic_info: '',
     logo_file: undefined,
     dark_logo_file: undefined,
     favicon_file: undefined,

@@ -133,6 +133,14 @@ const DefaultSetting = () => {
         }
       ]
       : []),
+      /*...(user?.level >= 40
+        ? [
+          {
+            value: 9,
+            label: '기본정보설정'
+          }
+        ]
+        : []),*/
   ]
 
   useEffect(() => {
@@ -387,6 +395,20 @@ const DefaultSetting = () => {
                         }}
                       />
                       </Row>
+                      <Stack spacing={1}>
+                        <Typography variant='subtitle2' sx={{ color: 'text.secondary' }}>
+                          쇼핑몰기본정보
+                        </Typography>
+                        <ReactQuillComponent
+                          value={item.basic_info}
+                          setValue={value => {
+                            setItem({
+                              ...item,
+                              ['basic_info']: value
+                            })
+                          }}
+                        />
+                      </Stack>
                       <Stack spacing={1}>
                         <Typography variant='subtitle2' sx={{ color: 'text.secondary' }}>
                           비고
@@ -1057,6 +1079,7 @@ const DefaultSetting = () => {
                 </Grid>
               </>
             )}
+            
             <Grid item xs={12} md={12}>
               <Card sx={{ p: 3 }}>
                 <Stack spacing={1} style={{ display: 'flex' }}>

@@ -18,6 +18,7 @@ import DialogBuyNow from 'src/components/dialog/DialogBuyNow';
 import { useAuthContext } from 'src/layouts/manager/auth/useAuthContext';
 import { useModal } from 'src/components/dialog/ModalProvider';
 import { BasicInfo } from 'src/components/elements/shop/demo-4';
+import ArticleDemo from '../service/[article_category]/[id]';
 const ReactQuill = dynamic(() => import('react-quill'), {
   ssr: false,
   loading: () => <p>Loading ...</p>,
@@ -116,6 +117,12 @@ const ItemDemo = (props) => {
       label: '기본정보',
       component: product ?
         <BasicInfo /> : null,
+    },
+    {
+      value: 'item_faq',
+      label: '상품문의',
+      component: product ? <></> : null,
+      //<ArticleDemo /> : null,
     },
     {
       value: 'reviews',

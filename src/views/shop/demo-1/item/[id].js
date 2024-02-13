@@ -82,12 +82,12 @@ const ItemDemo = (props) => {
           bounds={'.app'}
         /> : null,
     },
-    {
+    /*{ 그랑파리 정보에만 해당되는 내용이 많아 주석 처리해둠
       value: 'basic_info',
       label: '기본정보',
       component: product ?
         <BasicInfo /> : null,
-    },
+    },*/
     {
       value: 'reviews',
       label: `${translate('상품후기')} (${reviewContent?.total})`,

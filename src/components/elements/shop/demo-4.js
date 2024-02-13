@@ -328,70 +328,14 @@ export const AuthMenuSideComponent = (props) => {
 
 export const BasicInfo = () => {
   const { themeDnsData } = useSettingsContext()
+  const { basic_info } = themeDnsData;
   return (
     <>
-      <div style={{ padding: '24px' }}>
-        <InfoTitle themeDnsData={themeDnsData}>
-          배송안내
-        </InfoTitle>
-        <InfoDetail>
-          평일 4시, 토요일 12시까지 주문 및 입금 확인된 건에 한하여 당일 발송 실시.<br />
-          마감 시간 후 입금 확인 건은 익일(다음날) 발송 됩니다.
-        </InfoDetail>
-        <InfoTitle themeDnsData={themeDnsData}>
-          배송방법
-        </InfoTitle>
-        <InfoDetail>
-          택배를 기본으로 하며, 서울/수도권 지역은 구매자 부담으로 퀵서비스도 가능합니다.<br />
-          대한통운(http://www.doortodoor.co.kr)
-        </InfoDetail>
-        <InfoTitle themeDnsData={themeDnsData}>
-          배송비
-        </InfoTitle>
-        <InfoDetail>
-          구매자가 부담(4,000원), 2건 이상 구매시 한번의 배송비(4,000원)만 부담으로 합배송 가능합니다.<br />
-          택배회사에서 지정하는 도서 산간 지역은 배송비 추가 발생합니다. (자동 적용)
-        </InfoDetail>
-        <InfoTitle themeDnsData={themeDnsData}>
-          배송기간
-        </InfoTitle>
-        <InfoDetail>
-          - 기본적으로 익일(발송 다음 날) 받으십니다.<br />
-          - 명절이나 연휴, 택배 물량 증가, 교통 체증 등의 이유로 2~3일 지연 될 수 있습니다.(자동 적용)
-        </InfoDetail>
-        <InfoTitle themeDnsData={themeDnsData}>
-          주문취소
-        </InfoTitle>
-        <InfoDetail>
-          1) 상품 대금을 결제하기 전에는 언제든지 주문 취소 가능<br />
-          2) 무통장 입금 시 48시간 이내에 미입금 되면 자동 주문 취소(자동 적용)
-        </InfoDetail>
-        <InfoTitle themeDnsData={themeDnsData}>
-          반품 및 환불제도
-        </InfoTitle>
-        <InfoDetail>
-          1) 반품접수 : ① {themeDnsData?.name}({themeDnsData?.phone_num})로 전화 ② 주문/배송 페이지에서 반품 신청<br />
-          2) 요청기간 : 상품 수령 후 24시간 이내 (상품수령 확인은 대한통운 택배사의 배송 추적을 이용)<br />
-          3) 반품기간 : 반품요청 후 반품요청일(공휴일 제외)을 포함하여 4일 이내에 반드시 {themeDnsData?.name}로 도착해야 합니다.<br />
-          - 반품요청 없이 반품한 상품은 반품기간이 경과되어 반품이 취소 될 수도 있습니다.<br />
-          4) 반품방법 : ① 가까운 우체국이나 택배사, 편의점 등에서 선불 발송 ② {themeDnsData?.name} 매장으로 방문 반품<br />
-          5) 반품 배송비 : 왕복 배송비는 고객 부담을 기본으로 합니다.<br />
-          카드 결제 건은 4,000원을 동봉해서 선불 발송으로 보내 주셔야합니다.<br />
-          반품 후 카드 취소 시에 배송비도 일괄적으로 취소되기 때문입니다.<br />
-          6) 환불기간 : 반품 도착 후 2일(공휴일 제외)이내<br />
-          - 카드 취소시 해당 카드사에는 5일(공휴일제외)이후 확인가능<br />
-          카드 취소에 대해 더 자세한 내용은 {themeDnsData?.name}로 전화 문의주세요.
-        </InfoDetail>
-        <InfoTitle themeDnsData={themeDnsData}>
-          반품 불가 사유
-        </InfoTitle>
-        <InfoDetail>
-          1) 구매자의 부주의로 인한 상품 훼손 시 <br />
-          2) 상품 상세 설명에 이미 공지된 내용의 주지 부주의로 인한 반품 요구 시<br />
-          3) 상품 수령 후 반품 요청 기간 및 반품 기간 경과 시<br />
-          4) 상품에 붙어 있는 {themeDnsData?.name} 택(tag)이 떨어졌을 경우 사용하신 것으로 간주<br />
-        </InfoDetail>
-      </div>
+      <div 
+      style={{ padding: '24px' }}
+      dangerouslySetInnerHTML={{__html: basic_info}}
+      />
+
     </>
   )
 }

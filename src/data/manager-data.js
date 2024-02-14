@@ -262,7 +262,6 @@ export const defaultManagerObj = {
     mail_order_num: '',
     note: '',
     basic_info: '',
-    show_basic_info: '',
     logo_file: undefined,
     dark_logo_file: undefined,
     favicon_file: undefined,

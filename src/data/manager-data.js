@@ -262,6 +262,7 @@ export const defaultManagerObj = {
     mail_order_num: '',
     note: '',
     basic_info: '',
+    show_basic_info: 0, //이거 ''로 두면 put 오류 생김
     logo_file: undefined,
     dark_logo_file: undefined,
     favicon_file: undefined,

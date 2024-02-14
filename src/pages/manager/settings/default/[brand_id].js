@@ -661,6 +661,16 @@ const DefaultSetting = () => {
                           })
                         }}
                       />
+                       <TextField
+                        label='통신판매번호'
+                        value={item.mail_order_num}
+                        onChange={e => {
+                          setItem({
+                            ...item,
+                            ['mail_order_num']: e.target.value
+                          })
+                        }}
+                      />
                     </Stack>
                   </Card>
                 </Grid>

@@ -3,6 +3,8 @@ import { useSettingsContext } from "src/components/settings";
 import { AppWidget, AppWidgetSummary } from "src/views/@dashboard/general/app";
 import { useTheme } from '@mui/material/styles';
 import { Row } from "src/components/elements/styled-components";
+import { LineChart } from "@mui/x-charts";
+
 import {
     DatePicker,
     StaticDatePicker,
@@ -26,6 +28,7 @@ export const DashboardBlog4 = () => {
     })
     const [sDt, setSDt] = useState(new Date());
     const [eDt, setEDt] = useState(new Date());
+    const [dateData, setDateData] = useState([new Date()]);
     const [data, setData] = useState({});
 
     useEffect(() => {
@@ -38,8 +41,15 @@ export const DashboardBlog4 = () => {
         setData(result);
     }
     const onClickDateButton = (num) => {
+        const date_data = [];
+
         setSDt(new Date(returnMoment(-num)));
         setEDt(new Date(returnMoment()));
+        for (let i = 0; i<=num; i++) {
+            let date = new Date(returnMoment(-num+i))
+            date_data.push(date)
+        }
+        setDateData(date_data)
         onChangePage({
             ...searchObj,
             s_dt: returnMoment(-num).substring(0, 10),
@@ -120,6 +130,27 @@ export const DashboardBlog4 = () => {
 
                     </Grid>
                     <Grid item xs={12} md={12}>
+                        <Typography variant="subtitle1">매출현황</Typography>
+                    </Grid>
+                    <Grid item xs={12} md={3}>
+                        <LineChart
+                            xAxis={[{
+                                data: dateData,
+                                scaleType:'time',
+                            }]}
+                            yAxis={[{
+                                data: [0]
+                            }]}
+                            series={[
+                                {
+                                    data: [10, ],
+                                },
+                            ]}
+                            
+                            height={300}
+                        />
+                    </Grid>
+                    <Grid item xs={12} md={12}>
                         <Typography variant="subtitle1" >주문관리</Typography>
                     </Grid>
                     <Grid item xs={12} md={3}>
@@ -179,6 +210,7 @@ export const DashboardBlog4 = () => {
                             }}
                             onClick={() => {
                                 router.push(`/manager/orders/trx/15`)
+                                console.log(data)
                             }}
                         />
                     </Grid>
@@ -251,13 +283,13 @@ export const DashboardBlog4 = () => {
                                 <>
                                     <Grid item xs={12} md={12}>
                                         <Row style={{ alignItems: 'center', width: '100%', justifyContent: 'space-between', maxWidth: `300px` }}>
-                                            <Button variant="outlined" style={{cursor:'pointer'}} onClick={() => {router.push(`/manager/articles/${category?.id}`, console.log(data))}}>
+                                            <Button variant="outlined" style={{ cursor: 'pointer' }} onClick={() => { router.push(`/manager/articles/${category?.id}`, console.log(data)) }}>
                                                 {category?.post_category_title}
-                                                </Button>
+                                            </Button>
                                             <Row style={{ fontWeight: 'bold' }}>
-                                                <div style={{marginRight:'1rem'}}>답변대기 : </div>
-                                                <div 
-                                                style={{ color: themeDnsData?.theme_css?.main_color}}
+                                                <div style={{ marginRight: '1rem' }}>답변대기 : </div>
+                                                <div
+                                                    style={{ color: themeDnsData?.theme_css?.main_color }}
                                                 >{commarNumber(data[`request_${category?.id}`])}</div>
                                                 <div>건</div>
                                             </Row>

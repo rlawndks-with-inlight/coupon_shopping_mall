@@ -3,6 +3,7 @@ import { useSettingsContext } from "src/components/settings";
 
 import ManagerLayout from "src/layouts/manager/ManagerLayout";
 import DashboardDemo4 from "src/views/manager/dashboards/demo-4";
+import DashboardBlog4 from "src/views/manager/dashboards/blog-1";
 
 const getDemo = (num, common) => {
   if (num == 1)
@@ -19,6 +20,8 @@ const getDemo = (num, common) => {
     return
   else if (num == 7)
     return
+  else
+    return <DashboardBlog4 {...common} />
 }
 const Dashboards = () => {
 

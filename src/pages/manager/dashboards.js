@@ -21,7 +21,7 @@ const getDemo = (num, common) => {
   else if (num == 7)
     return
   else
-    return <DashboardBlog4 {...common} />
+    return <DashboardDemo4 {...common} />
 }
 const Dashboards = () => {
 

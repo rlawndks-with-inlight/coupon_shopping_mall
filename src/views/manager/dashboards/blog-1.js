@@ -3,7 +3,7 @@ import { useSettingsContext } from "src/components/settings";
 import { AppWidget, AppWidgetSummary } from "src/views/@dashboard/general/app";
 import { useTheme } from '@mui/material/styles';
 import { Row } from "src/components/elements/styled-components";
-import { LineChart } from "@mui/x-charts";
+//import { LineChart } from "@mui/x-charts";
 
 import {
     DatePicker,
@@ -135,7 +135,7 @@ export const DashboardBlog4 = () => {
                     <Grid item xs={12} md={12}>
                         <Typography variant="subtitle1">매출현황</Typography>
                     </Grid>
-                    <Grid item xs={12} md={3}>
+                    {/*<Grid item xs={12} md={3}>
                         <LineChart
                             xAxis={[{
                                 data: [sDt, eDt],
@@ -152,7 +152,7 @@ export const DashboardBlog4 = () => {
                             
                             height={300}
                         />
-                    </Grid>
+                        </Grid>*/}
                     <Grid item xs={12} md={12}>
                         <Typography variant="subtitle1" >주문관리</Typography>
                     </Grid>

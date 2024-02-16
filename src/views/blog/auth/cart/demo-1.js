@@ -85,7 +85,7 @@ const Demo1 = (props) => {
             router
         },
     } = props;
-    const { themeMode, themeDnsData } = useSettingsContext();
+    const { themeMode, themeDnsData, themeCartData, onChangeCartData } = useSettingsContext();
     const [sellerId, setSellerId] = useState(test_cart[0].seller_id)
     const [wantBuyList, setWantBuyList] = useState([]);
     const [cartList, setCartList] = useState([]);

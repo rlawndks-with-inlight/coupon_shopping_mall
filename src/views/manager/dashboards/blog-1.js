@@ -29,7 +29,8 @@ export const DashboardBlog4 = () => {
     const [sDt, setSDt] = useState(new Date());
     const [eDt, setEDt] = useState(new Date());
     const [dateData, setDateData] = useState([new Date()]);
-    const [data, setData] = useState({});
+    const [data, setData] = useState([]);
+    const [amount, setAmount] = useState([]);
 
     useEffect(() => {
         onChangePage(searchObj)
@@ -42,14 +43,16 @@ export const DashboardBlog4 = () => {
     }
     const onClickDateButton = (num) => {
         const date_data = [];
+        const amount_data = [];
 
         setSDt(new Date(returnMoment(-num)));
         setEDt(new Date(returnMoment()));
-        for (let i = 0; i<=num; i++) {
-            let date = new Date(returnMoment(-num+i))
-            date_data.push(date)
-        }
+        data?.trx_amounts_sum?.map((row) => {
+            date_data.push(row.date)
+            amount_data.push(row.total_amount)
+        })
         setDateData(date_data)
+        setAmount(amount_data)
         onChangePage({
             ...searchObj,
             s_dt: returnMoment(-num).substring(0, 10),
@@ -135,15 +138,15 @@ export const DashboardBlog4 = () => {
                     <Grid item xs={12} md={3}>
                         <LineChart
                             xAxis={[{
-                                data: dateData,
-                                scaleType:'time',
+                                data: [sDt, eDt],
+                                
                             }]}
                             yAxis={[{
                                 data: [0]
                             }]}
                             series={[
                                 {
-                                    data: [10, ],
+                                    data: amount,
                                 },
                             ]}
                             
@@ -180,6 +183,7 @@ export const DashboardBlog4 = () => {
                             }}
                             onClick={() => {
                                 router.push(`/manager/orders/trx/5`)
+                                console.log(data)
                             }}
                         />
                     </Grid>
@@ -210,7 +214,6 @@ export const DashboardBlog4 = () => {
                             }}
                             onClick={() => {
                                 router.push(`/manager/orders/trx/15`)
-                                console.log(data)
                             }}
                         />
                     </Grid>

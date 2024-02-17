@@ -92,9 +92,9 @@ const ItemsDemo = (props) => {
     }
     setCategoryIds(query);
     let category_children = {};
-    for (var i = 0; i < themeCategoryList.length; i++) {
+    for (var i = 0; i < themeCategoryList?.length; i++) {
       let find_category = undefined;
-      for (var j = 0; j < themeCategoryList[i]?.product_categories.length; j++) {
+      for (var j = 0; j < themeCategoryList[i]?.product_categories?.length; j++) {
         let category = themeCategoryList[i]?.product_categories[j];
         let children = (category?.children ?? []).map(item => { return item?.id });
         if (query[`category_id${i}`] == category?.id || children?.includes(parseInt(query[`category_id${i}`]))) {
@@ -102,7 +102,7 @@ const ItemsDemo = (props) => {
           break;
         }
       }
-      if (find_category && find_category?.children.length > 0) {
+      if (find_category && find_category?.children?.length > 0) {
         category_children = {
           ...category_children,
           [`category_id${i}`]: {
@@ -119,7 +119,7 @@ const ItemsDemo = (props) => {
       brand_id: themeDnsData?.id,
       ...query
     })
-    if (product_list.content.length == 0) {
+    if (product_list?.content?.length == 0) {
       setProductContent({
         ...productContent,
         total: -1,
@@ -305,7 +305,7 @@ const ItemsDemo = (props) => {
               </>
               :
               <>
-                {productContent?.content.length > 0 ?
+                {productContent?.content?.length > 0 ?
                   <>
                     <Items items={productContent?.content ?? []} router={router} />
                   </>
@@ -319,7 +319,7 @@ const ItemsDemo = (props) => {
               </>}
             {moreLoading ?
               <>
-                {productContent?.total > productContent?.content.length &&
+                {productContent?.total > productContent?.content?.length &&
                   <>
                   
                     {/*<Row style={{ width: '100%', height:'100%' }}>
@@ -424,7 +424,7 @@ const ItemsDemo = (props) => {
               <>
                 <Button className='more-page' onClick={() => {
 
-                  if (productContent?.content.length < productContent?.total) {
+                  if (productContent?.content?.length < productContent?.total) {
                     getItemList(
                       categoryIds,
                       {

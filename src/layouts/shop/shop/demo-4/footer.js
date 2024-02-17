@@ -61,7 +61,7 @@ const Footer = (props) => {
               <MarginRight>{company_name}</MarginRight>
             </Row>
   */}
-                    {ceo_name.length > 1 &&
+                    {ceo_name?.length > 1 &&
                         <>
                             <Row>
                                 <Bold>{translate('대표')}</Bold>
@@ -69,7 +69,7 @@ const Footer = (props) => {
                             </Row>
                         </>
                     }
-                    {addr.length > 1 &&
+                    {addr?.length > 1 &&
                         <>
                             <Row>
                                 <Bold style={{ whiteSpace: 'nowrap' }}>{translate('주소')}</Bold>
@@ -80,7 +80,7 @@ const Footer = (props) => {
                             </Row>
                         </>
                     }
-                    {business_num.length > 1 &&
+                    {business_num?.length > 1 &&
                         <>
                             <Row>
                                 <Bold>{translate('사업자등록번호')}</Bold>
@@ -88,7 +88,7 @@ const Footer = (props) => {
                             </Row>
                         </>
                     }
-                    {phone_num.length > 1 &&
+                    {phone_num?.length > 1 &&
                         <>
                             <Row>
                                 <Bold>{translate('전화')}</Bold>
@@ -99,7 +99,7 @@ const Footer = (props) => {
                             </Row>
                         </>
                     }
-                    {fax_num.length > 1 &&
+                    {fax_num?.length > 1 &&
                         <>
                             <Row>
                                 <Bold>{translate('팩스')}</Bold>
@@ -107,7 +107,7 @@ const Footer = (props) => {
                             </Row>
                         </>
                     }
-                    {pvcy_rep_name.length > 1 &&
+                    {pvcy_rep_name?.length > 1 &&
                         <>
                             <Row>
                                 <Bold>{translate('개인정보 보호책임자')}</Bold>
@@ -116,7 +116,7 @@ const Footer = (props) => {
                         </>
                     }
 
-                    {mail_order_num.length > 1 &&
+                    {mail_order_num?.length > 1 &&
                         <>
                             <Row>
                                 <Bold>{translate('통신판매번호')}</Bold>

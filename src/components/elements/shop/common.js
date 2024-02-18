@@ -64,6 +64,7 @@ export const Seller = props => {
     else if (shop_demo_num == 5) return <Seller5 {...props} />
     else if (shop_demo_num == 6) return <Seller6 {...props} />
     else if (shop_demo_num == 7) return <Seller7 {...props} />
+    else return <Seller1 {...props} />
   }
   return <>{returnSellerCard()}</>
 }

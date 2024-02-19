@@ -1,4 +1,4 @@
-import { Chip, Typography } from "@mui/material"
+import { Chip, Typography, TextField, Button } from "@mui/material"
 import { useSettingsContext } from "src/components/settings"
 import { useAuthContext } from "src/layouts/manager/auth/useAuthContext"
 import styled from "styled-components"
@@ -9,6 +9,13 @@ import { LazyLoadImage } from "react-lazy-load-image-component"
 import { itemThemeCssDefaultSetting } from "src/views/manager/item-card/setting"
 import { useState } from "react"
 import { commarNumber } from "src/utils/function"
+import { Upload } from "src/components/upload";
+import ReactQuillComponent from "src/views/manager/react-quill";
+import { useModal } from "src/components/dialog/ModalProvider"
+import { apiManager } from "src/utils/api"
+import { apiShop } from "src/utils/api"
+import toast from "react-hot-toast"
+
 const ItemWrapper = styled.a`
 display: flex;
 flex-direction: column;
@@ -331,12 +338,109 @@ export const BasicInfo = () => {
   const { basic_info } = themeDnsData;
   return (
     <>
-      <div 
-      style={{ padding: '24px' }}
-      onClick={() => {console.log(themeDnsData)}}
-      dangerouslySetInnerHTML={{__html: basic_info}}
+      <div
+        style={{ padding: '24px' }}
+        //onClick={() => { console.log(themeDnsData) }}
+        
       />
 
+    </>
+  )
+}
+
+export const ProductFaq = () => {
+  const { user } = useAuthContext();
+  const [item, setItem] = useState({
+    title: '',
+    content: '',
+    is_reply: 0,
+    reply: '',
+    product_id:'',
+    user_id:'',
+  })
+  const [reply, setReply] = useState({
+    post_title: '',
+    post_content: '',
+    is_reply: 1,
+  })
+  const { setModal } = useModal()
+  const router = useRouter()
+  const onSave = async () => {
+    let result = undefined;
+    let result2 = undefined;
+    if (router.query?.edit_category == 'edit') {
+      result = await apiManager('product-faq', 'update', { ...item, id: router.query?.id });
+      if (category?.is_able_user_add == 1 && result) {
+        if (reply?.id > 0) {
+          result2 = await apiManager('product-faq', 'update', { ...reply, });
+        } else {
+          result2 = await apiManager('product-faq', 'create', { ...reply, });
+        }
+      } else {
+        result2 = true;
+      }
+    } else {
+      result = await apiManager('product-faq', 'create', { ...item, product_id: router.query?.id, user_id:user.id });
+      result2 = true;
+    }
+    if (result && result2) {
+      toast.success("성공적으로 저장 되었습니다.");
+      //router.push(`/manager/articles/${router.query?.category_id}`);
+    }
+  }
+
+  return (
+    <>
+
+      {user ?
+      <>
+      <TextField
+        label='제목'
+        value={item.title}
+        onChange={(e) => {
+          setItem(
+            {
+              ...item,
+              ['title']: e.target.value
+            }
+          )
+        }} />
+      <ReactQuillComponent
+        value={item.content}
+        setValue={(value) => {
+          setItem({
+            ...item,
+            ['content']: value
+          });
+        }}
+      />
+
+      <Button variant="contained" style={{
+        height: '48px', width: '120px', margin: '1rem 0 1rem auto'
+      }} onClick={() => {
+        setModal({
+          func: () => { onSave() },
+          icon: 'material-symbols:edit-outline',
+          title: '저장 하시겠습니까?'
+        })
+      }}>
+        저장
+      </Button>
+      </>
+      :
+      <>
+      <div style={{padding:'24px'}}>
+      로그인이 필요합니다.<br />
+      <Button variant="contained" style={{
+        height: '48px', width: '150px', margin: '1rem 0 1rem auto'
+      }} onClick={() => {
+        router.push('/shop/auth/login')
+      }}>
+        로그인하러 가기
+        </Button>
+        </div>
+      </>
+      }
     </>
   )
 }

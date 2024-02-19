@@ -25,7 +25,7 @@ margin: 0 auto;
     font-size: 1.2rem;
 }
 `
-
+//이 소스에서 themeDnsData 불러올 때 잘못하면 메인페이지 렌더링 오류 생기는 듯
 
 const HomeItemsPropertyGroups = (props) => {
     const { column, data, func, is_manager } = props;

@@ -17,8 +17,8 @@ import toast from 'react-hot-toast';
 import DialogBuyNow from 'src/components/dialog/DialogBuyNow';
 import { useAuthContext } from 'src/layouts/manager/auth/useAuthContext';
 import { useModal } from 'src/components/dialog/ModalProvider';
-import { BasicInfo } from 'src/components/elements/shop/demo-4';
-import ArticleDemo from '../service/[article_category]/[id]';
+import { BasicInfo, ProductFaq } from 'src/components/elements/shop/demo-4';
+
 const ReactQuill = dynamic(() => import('react-quill'), {
   ssr: false,
   loading: () => <p>Loading ...</p>,
@@ -68,7 +68,8 @@ const ItemDemo = (props) => {
   const [product, setProduct] = useState({});
   const [reviewPage, setReviewPage] = useState(1);
   const [buyOpen, setBuyOpen] = useState(false);
-  const [reviewContent, setReviewContent] = useState({});
+  //const [reviewContent, setReviewContent] = useState({});
+  const [basicInfo, setBasicInfo] = useState({});
   const [selectProductGroups, setSelectProductGroups] = useState({
     count: 1,
     groups: [],
@@ -82,20 +83,24 @@ const ItemDemo = (props) => {
     data = await apiShop('product', 'get', {
       id: router.query?.id
     });
-    data['sub_images'] = (data?.sub_images ?? []).map((img) => {
+    data['sub_images'] = (data?.sub_images ?? []).map((img) => { //cannot create property on false? 오류 간헐적 발생
       return img?.product_sub_img
     })
     /*if (data?.product_img) {  //메인이미지를 상세이미지에 추가하는 코드
       data['sub_images'].unshift(data?.product_img)
     }*/
     data['images'] = data['sub_images'];
-    setReviewPage(review_page);
+    /*setReviewPage(review_page);
     let review_data = await apiManager('product-reviews', 'list', {
       page: review_page,
       product_id: router.query?.id,
       page_size: 10,
     })
-    setReviewContent(review_data)
+    setReviewContent(review_data)*/
+    let brand_info = await apiManager('brands', 'get', {
+      id: themeDnsData?.id
+    })
+    setBasicInfo(brand_info?.basic_info)
     setProduct(data);
     setLoading(false);
   }
@@ -106,29 +111,32 @@ const ItemDemo = (props) => {
       component: product?.product_description ?
         <ReactQuill
           className='none-padding'
-          value={product?.product_description ?? `<body></body>`}
+          value={`
+    ${product?.product_description ?? ''}
+    ${basicInfo}
+  `}
           readOnly={true}
           theme={"bubble"}
           bounds={'.app'}
         /> : null,
     },
-    {
+    /*{
       value: 'basic_info',
       label: '기본정보',
       component: product ?
         <BasicInfo /> : null,
-    },
+    },*/
     {
       value: 'item_faq',
       label: '상품문의',
-      component: product ? <></> : null,
-      //<ArticleDemo /> : null,
+      component: product ? //<></> : null,
+      <ProductFaq /> : null,
     },
-    {
+    /*{
       value: 'reviews',
       label: `상품후기 (${reviewContent?.total})`,
       component: product ? <ProductDetailsReview product={product} reviewContent={reviewContent} onChangePage={getItemInfo} reviewPage={reviewPage} /> : null,
-    },
+    },*/
   ];
   const handleAddCart = async () => {
     if (user) {
@@ -191,7 +199,7 @@ const ItemDemo = (props) => {
                         onGotoStep={() => { }}
                       /> */}
                       <ItemCharacter key_name={'정상가'} value={<div style={{ textDecoration: 'line-through' }}>{commarNumber(product?.product_price)}원</div>} />
-                      <ItemCharacter key_name={'할인가'} value={<div>{commarNumber(product?.product_sale_price)}원</div>} />
+                      <ItemCharacter key_name={'판매가'} value={<div>{commarNumber(product?.product_sale_price)}원</div>} />
                       <div style={{ borderBottom: '1px solid #ccc', width: '100%', marginTop: '1rem' }} />
                       <Button
                         disabled={getProductStatus(product?.status).color != 'info' || !(product?.product_sale_price > 0)}

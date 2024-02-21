@@ -69,7 +69,6 @@ const ItemDemo = (props) => {
   const [reviewPage, setReviewPage] = useState(1);
   const [buyOpen, setBuyOpen] = useState(false);
   //const [reviewContent, setReviewContent] = useState({});
-  const [basicInfo, setBasicInfo] = useState({});
   const [selectProductGroups, setSelectProductGroups] = useState({
     count: 1,
     groups: [],
@@ -97,10 +96,6 @@ const ItemDemo = (props) => {
       page_size: 10,
     })
     setReviewContent(review_data)*/
-    let brand_info = await apiManager('brands', 'get', {
-      id: themeDnsData?.id
-    })
-    setBasicInfo(brand_info?.basic_info)
     setProduct(data);
     setLoading(false);
   }
@@ -113,7 +108,7 @@ const ItemDemo = (props) => {
           className='none-padding'
           value={`
     ${product?.product_description ?? ''}
-    ${basicInfo}
+    ${themeDnsData?.basic_info}
   `}
           readOnly={true}
           theme={"bubble"}

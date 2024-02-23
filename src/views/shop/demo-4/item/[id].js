@@ -1,5 +1,5 @@
 import styled from 'styled-components'
-import { Box, Tab, Tabs, Card, Grid, Divider, Typography, Button, } from '@mui/material';
+import { Box, Tab, Tabs, Card, Grid, Divider, Typography, Button, Radio, FormControlLabel } from '@mui/material';
 import { test_item } from 'src/data/test-data';
 import { useSettingsContext } from 'src/components/settings';
 import { ProductDetailsCarousel, ProductDetailsReview, ProductDetailsSummary } from 'src/views/@dashboard/e-commerce/details';
@@ -39,15 +39,29 @@ text-align: center;
 padding: 1rem 0;
 `
 const ItemCharacter = (props) => {
-  const { key_name, value } = props;
-  return (
-    <>
-      <Row style={{ columnGap: '0.25rem', marginTop: '1rem' }}>
-        <Typography variant='body2' style={{ width: '100px' }}>{key_name}:</Typography>
-        <Typography variant='subtitle2'>{value}</Typography>
-      </Row>
-    </>
-  )
+  const { key_name, value, type = 0 } = props;
+  if (type == 0) {
+    return (
+      <>
+        <Row style={{ columnGap: '0.25rem', marginTop: '1rem' }}>
+          <Typography variant='body2' style={{ width: '100px' }}>{key_name}:</Typography>
+          <Typography variant='subtitle2'>{value}</Typography>
+        </Row>
+      </>
+    )
+  } else if (type == 1) {
+    return (
+      <>
+        <Row style={{ columnGap: '0.25rem', marginTop: '1rem' }}>
+          <Typography variant='body2' style={{ width: '100px' }}>{key_name}:</Typography>
+          <div>
+            <FormControlLabel value='' control={<Radio disabled />} label='압구정 그랑파리' />
+            <FormControlLabel value='' control={<Radio disabled />} label='인스파이어 럭셔리에디션' />
+          </div>
+        </Row>
+      </>
+    )
+  }
 }
 const ItemDemo = (props) => {
   const {
@@ -125,7 +139,7 @@ const ItemDemo = (props) => {
       value: 'item_faq',
       label: '상품문의',
       component: product ? //<></> : null,
-      <ProductFaq /> : null,
+        <ProductFaq /> : null,
     },
     /*{
       value: 'reviews',
@@ -171,6 +185,11 @@ const ItemDemo = (props) => {
 
                     <Grid item xs={12} md={6} lg={6}>
                       <ItemName variant='h4'>{product?.product_name}</ItemName>
+                      {product?.category_id2 &&
+                      <>
+                      <ItemCharacter key_name={'브랜드'} value={product?.category_id2} />
+                      </>
+                      }
                       {product?.product_code &&
                         <>
                           <ItemCharacter key_name={'상품코드'} value={product?.product_code} />
@@ -180,7 +199,13 @@ const ItemDemo = (props) => {
                         property_list = property_list.map(property => {
                           return property?.property_name
                         })
-                        return <ItemCharacter key_name={group?.property_group_name} value={`${property_list.join(', ')}`} />
+                        if (group?.property_group_name == '등급') {
+                          return <ItemCharacter key_name={group?.property_group_name} value={`${property_list.join(', ')}`} />
+                        }
+                        if (group?.property_group_name == '매장') {
+                          return <ItemCharacter key_name={group?.property_group_name} value={`${property_list.join(', ')}`} type='1' />
+                        }
+
                       })}
                       {product?.characters && product?.characters.map((character) => (
                         <>
@@ -193,8 +218,16 @@ const ItemDemo = (props) => {
                         onAddCart={() => { }}
                         onGotoStep={() => { }}
                       /> */}
-                      <ItemCharacter key_name={'정상가'} value={<div style={{ textDecoration: 'line-through' }}>{commarNumber(product?.product_price)}원</div>} />
-                      <ItemCharacter key_name={'판매가'} value={<div>{commarNumber(product?.product_sale_price)}원</div>} />
+                      {commarNumber(product?.product_price) != commarNumber(product?.product_sale_price) ?
+                        <>
+                          <ItemCharacter key_name={'정상가'} value={<div style={{ textDecoration: 'line-through' }}>{commarNumber(product?.product_price)}원</div>} />
+                          <ItemCharacter key_name={'할인가'} value={<div>{commarNumber(product?.product_sale_price)}원</div>} />
+                        </>
+                        :
+                        <>
+                          <ItemCharacter key_name={'판매가'} value={<div>{commarNumber(product?.product_sale_price)}원</div>} />
+                        </>
+                      }
                       <div style={{ borderBottom: '1px solid #ccc', width: '100%', marginTop: '1rem' }} />
                       <Button
                         disabled={getProductStatus(product?.status).color != 'info' || !(product?.product_sale_price > 0)}

@@ -73,10 +73,10 @@ export const Item4 = (props) => {
   const [itemThemeCss, setItemThemeCss] = useState(itemThemeCssDefaultSetting);
 
   const itemStatusList = [
-    { label: 'USED', color: 'info' },
+    { label: 'NEW', color: 'primary' },  //빨강
+    { label: 'USED', color: 'default' },  //검정
     { label: 'STOPPED', color: 'warning' },
     { label: 'SOLD-OUT', color: 'error' },
-    { label: 'NEW', color: 'success' },
   ]
   return <>
     <ItemWrapper
@@ -96,12 +96,12 @@ export const Item4 = (props) => {
       <Chip
         size="small"
         variant="outlined"
-        color={itemStatusList[item?.status ?? 0].color}
+        color={itemStatusList[item?.status ?? 0].color}  //N 및 N-S 등급은 NEW, 그 외는 USED
         label={itemStatusList[item?.status ?? 0].label}
         style={{
           margin: '0 auto',
         }} />
-      <ItemName variant="body2">{item?.product_name}</ItemName>
+      <ItemName variant="body2" style={{height:'60px', width:'90%', wordBreak:'keep-all'}}>{item?.product_name}</ItemName>
       <ItemName variant="subtitle2">{commarNumber(item?.product_sale_price)}원</ItemName>
     </ItemWrapper>
   </>

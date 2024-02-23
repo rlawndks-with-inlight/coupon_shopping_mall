@@ -413,6 +413,11 @@ const Header = () => {
         sort(LANGCODE.ENG)
     }, [])
 
+    const toLuxuryEdition = () => {
+        const luxuryEditionUrl = 'https://luxuryedition.co.kr';
+        window.location.href = luxuryEditionUrl;
+    }
+
     return (
         <>
 
@@ -426,7 +431,7 @@ const Header = () => {
                 </>
                 :
                 <>
-                    {popups.length > 0 ? //&& router.asPath == '/shop' 이 조건 넣으니까 팝업이 안 뜸
+                    {popups.length > 0 && router.pathname === '/shop' ?  //&& router.asPath == '/shop' 이 조건 넣으니까 팝업이 안 뜸
                         <>
                             <PopupContainer>
                                 {popups && popups.map((item, idx) => (
@@ -525,7 +530,7 @@ const Header = () => {
                                 <div style={{ marginLeft: 'auto' }}>
                                     <img src={'/grandparis/new_logo_removebg.png'} style={{ maxWidth: '200px', aspectRatio: '189/80', cursor: 'pointer' }}
                                         onClick={() => {
-                                            router.push('/shop')
+                                            toLuxuryEdition()
                                         }}
                                     />
                                 </div>
@@ -534,7 +539,7 @@ const Header = () => {
                                 <div>
                                     <img src={'/grandparis/new_logo_removebg.png'} style={{ height: '80px', width: 'auto', cursor: 'pointer' }}
                                         onClick={() => {
-                                            router.push('/shop')
+                                            toLuxuryEdition()
                                         }}
                                     />
                                 </div>
@@ -543,7 +548,11 @@ const Header = () => {
                         <TopMenuContainer>
                             <img src={logoSrc()} style={{ aspectRatio: '250/88', cursor: 'pointer', marginBottom: '12px', minWidth: '100px' }}
                                 onClick={() => {
-                                    router.push('/shop')
+                                    if (router.pathname === '/shop') {
+                                        router.reload()
+                                    } else {
+                                        router.push('/shop')
+                                    }
                                 }}
                             />
                             <NoneShowMobile>
@@ -761,23 +770,55 @@ const Header = () => {
                                                         <PopoverContainer style={{ background: `${themeMode == 'dark' ? '#222' : '#fff'}`, maxHeight: `${window.innerHeight - headerHeight}px`, overflowY: 'auto' }}>
                                                             {group?.sort_type == 0 &&
                                                                 <>
-                                                                    <Row style={{ columnGap: '1rem', flexWrap: 'wrap', rowGap: '2rem' }}>
+                                                                    <Row style={{ columnGap: '1rem', flexWrap: 'wrap', rowGap: '2rem', marginBottom: '10px' }}>
                                                                         {group?.product_categories && group?.product_categories.map((category, idx) => (
                                                                             <>
-                                                                                <Col style={{ minWidth: '100px' }}>
-                                                                                    <ColumnMenuTitle style={{ margin: '0' }}>{category?.category_name}</ColumnMenuTitle>
-                                                                                    {category?.children && category?.children.map(children => (
-                                                                                        <>
-                                                                                            <Typography variant="body2" style={{ cursor: 'pointer' }} onClick={() => {
-                                                                                                router.push(`/shop/items?category_id${index}=${children?.id}&depth=0`)
-                                                                                                setOpenAllCategory("")
-                                                                                            }}>{children?.category_name}</Typography>
-                                                                                        </>
-                                                                                    ))}
-                                                                                </Col>
+                                                                                {category.category_name != 'WATCH' && (
+                                                                                    <Col style={{ minWidth: '100px' }}>
+                                                                                        <ColumnMenuTitle style={{ margin: '0', cursor: 'pointer' }} onClick={() => {
+                                                                                            router.push(`/shop/items?category_id${index}=${category?.id}&depth=0`)
+                                                                                        }}>
+                                                                                            {category?.category_name}
+                                                                                        </ColumnMenuTitle>
+                                                                                        {category?.children && category?.children.map(children => (
+                                                                                            <>
+                                                                                                <Typography variant="body2" style={{ cursor: 'pointer', marginBottom:'0.2rem' }} onClick={() => {
+                                                                                                    router.push(`/shop/items?category_id${index}=${children?.id}&depth=0`)
+                                                                                                    setOpenAllCategory("")
+                                                                                                }}>{children?.category_name}</Typography>
+                                                                                            </>
+                                                                                        ))}
+                                                                                    </Col>
+                                                                                )}
                                                                             </>
                                                                         ))}
                                                                     </Row>
+                                                                    <div style={{ border: '2px solid red', padding: '0' }} />
+                                                                    <Col style={{ columnGap: '1rem', flexWrap: 'wrap', alignItems: 'flex-start', rowGap: '2rem', maxHeight: '200px', marginTop: '10px', marginBottom:'10px' }}>
+                                                                        {group?.product_categories && group?.product_categories.map((category, idx) => {
+                                                                            return <>
+                                                                                {category.category_name == 'WATCH' && (
+                                                                                    <div style={{ minWidth: '100px', display: 'flex' }}>
+                                                                                        <ColumnMenuTitle style={{ margin: '0', cursor: 'pointer', marginRight:'2rem' }} onClick={() => {
+                                                                                            router.push(`/shop/items?category_id${index}=${category?.id}&depth=0`)
+                                                                                        }}>
+                                                                                            {category?.category_name}
+                                                                                        </ColumnMenuTitle>
+                                                                                        <Col style={{ columnGap: '3rem', flexWrap: 'wrap', alignItems: 'flex-start', rowGap: '1rem', maxHeight: '200px' }}>
+                                                                                            {category?.children && category?.children.map((children) => {
+                                                                                                return <>
+                                                                                                    <Typography variant="body2" style={{ cursor: 'pointer' }} onClick={() => {
+                                                                                                        router.push(`/shop/items?category_id${index}=${children?.id}&depth=0`)
+                                                                                                        setOpenAllCategory("")
+                                                                                                    }}>{children?.category_name}</Typography>
+                                                                                                </>
+                                                                                            })}</Col>
+                                                                                    </div>
+                                                                                )}
+                                                                            </>
+                                                                        })}
+                                                                    </Col>
+                                                                    <div style={{ border: '2px solid red', padding: '0' }} />
                                                                 </>}
                                                             {group?.sort_type == 1 &&
                                                                 <>

@@ -6,9 +6,9 @@ import { Badge, Avatar } from '@mui/material';
 
 // ----------------------------------------------------------------------
 
-const getCharAtName = (name) => name && name.charAt(0).toUpperCase();
+const getCharAtName = (name) => name && name.charAt(0).toUpperCase();   
 
-const getColorByName = (name) => {
+const getColorByName = (name) => {   //뭔 코드임?
   if (['A', 'N', 'H', 'L', 'Q'].includes(getCharAtName(name))) return 'primary';
   if (['F', 'G', 'T', 'I', 'J'].includes(getCharAtName(name))) return 'info';
   if (['K', 'D', 'Y', 'B', 'O'].includes(getCharAtName(name))) return 'success';

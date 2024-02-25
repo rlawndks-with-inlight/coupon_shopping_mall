@@ -224,9 +224,11 @@ const MainObjSetting = props => {
     let brand_data = await apiManager('brands', 'get', {
       id: (!isNaN(parseInt(router.query.type)) ? router.query.type : '') || themeDnsData?.id
     })
+
     brand_data = settingBrandObj(item, brand_data)
     let content_list = brand_data[`${MAIN_OBJ_TYPE}`] ?? []
     setItem(brand_data)
+    console.log(content_list)
     setContentList(content_list)
     setLoading(false)
   }

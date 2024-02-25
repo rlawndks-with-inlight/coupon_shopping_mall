@@ -356,47 +356,6 @@ const DefaultSetting = () => {
                           })
                         }}
                       />
-                      <Row>
-                        <TextField
-                          size='medium'
-                          sx={{ maxWidth: '200px', marginRight: '2rem' }}
-                          label='메인상품 출력 행 갯수'
-                          type='number'
-                          value={item?.slider_css?.rows ?? 0}
-                          onChange={e => {
-                            setItem({
-                              ...item,
-                              ['slider_css']: {
-                                ...item?.slider_css,
-                                ['rows']: e.target.value
-                              }
-                            })
-                          }}
-                          InputProps={{
-                            endAdornment: <>개</>
-                          }}
-                        />
-                        <TextField
-                          size='medium'
-                          sx={{ maxWidth: '200px' }}
-                          label='메인슬라이더 이동 주기'
-                          type='number'
-                          value={item?.slider_css?.autoplay_speed ?? 0}
-                          //defaultValue={item?.style?.margin_top ?? 10}
-                          onChange={e => {
-                            setItem({
-                              ...item,
-                              ['slider_css']: {
-                                ...item?.slider_css,
-                                ['autoplay_speed']: e.target.value
-                              }
-                            })
-                          }}
-                          InputProps={{
-                            endAdornment: <>초</>
-                          }}
-                        />
-                      </Row>
                       <div>
                         <Typography variant='subtitle2' sx={{ color: 'text.secondary' }}>
                           상품 탭에 기본정보 사용

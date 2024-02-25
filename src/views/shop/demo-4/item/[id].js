@@ -113,6 +113,7 @@ const ItemDemo = (props) => {
     setProduct(data);
     setLoading(false);
   }
+
   const TABS = [
     {
       value: 'description',
@@ -184,10 +185,10 @@ const ItemDemo = (props) => {
                     </Grid>
 
                     <Grid item xs={12} md={6} lg={6}>
-                      <ItemName variant='h4'>{product?.product_name}</ItemName>
-                      {product?.category_id2 &&
+                      <ItemName variant='h4' style={{whiteSpace:'wrap'}}>{product?.product_name}</ItemName>
+                      {product?.brand_name &&
                       <>
-                      <ItemCharacter key_name={'브랜드'} value={product?.category_id2} />
+                      <ItemCharacter key_name={'브랜드'} value={product?.brand_name[0].category_en_name} />
                       </>
                       }
                       {product?.product_code &&

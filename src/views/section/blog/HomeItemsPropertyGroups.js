@@ -25,7 +25,7 @@ const HomeItemsPropertyGroups = (props) => {
     const { router } = func;
     const { style } = column;
     const { themeDnsData } = useSettingsContext()
-    const [sliderSetting, setSliderSetting] = useState(defaultManagerObj.brands.slider_css)
+    //const [sliderSetting, setSliderSetting] = useState(defaultManagerObj.brands.slider_css)
 
     return (
         <>
@@ -56,7 +56,7 @@ const HomeItemsPropertyGroups = (props) => {
                     </>}
                     </Row>
                 <div style={{ marginTop: '1rem', height:'0.25rem', borderTop:`1px solid ${themeDnsData?.theme_css?.main_color} `, borderBottom:`1px solid ${themeDnsData?.theme_css?.main_color} `,}} />
-                <Items items={column?.list} router={router} is_slide={column?.list.length >= 5 ? true : true} rows={themeDnsData?.slider_css?.rows} autoplaySpeed={themeDnsData?.slider_css?.rows*1000} />
+                <Items items={column?.list} router={router} is_slide={column?.list.length >= 5 ? true : true} />
                 <div style={{ marginTop: '1rem', height:'0.25rem', borderTop:`1px solid ${themeObj.grey[300]} `,}} />
                 {/*<Row>
                     <Button sx={{ margin: '1rem auto' }} variant='outlined' onClick={() => {

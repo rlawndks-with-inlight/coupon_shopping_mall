@@ -293,10 +293,10 @@ export const defaultManagerObj = {
     theme_css: {
       main_color: '#00ab55'
     },
-    slider_css: { 
+    /*slider_css: { 
       rows: '',
       autoplay_speed: '',
-    },
+    },*/
     shop_obj: [
       {
         type: 'banner',

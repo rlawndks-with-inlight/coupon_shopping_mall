@@ -235,7 +235,7 @@ const Header = () => {
     const allCategoryRef = useRef([]);
     const authList = [
         {
-            name: 'My그랑',
+            name: 'My그랑파리',
             link_key: '/shop/auth/my-page',
             icon: 'material-symbols:person',
         },

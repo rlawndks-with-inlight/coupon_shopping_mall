@@ -7,7 +7,7 @@ import { Col, themeObj } from "../styled-components"
 import { useRouter } from "next/router"
 import { LazyLoadImage } from "react-lazy-load-image-component"
 import { itemThemeCssDefaultSetting } from "src/views/manager/item-card/setting"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { commarNumber } from "src/utils/function"
 import { Upload } from "src/components/upload";
 import ReactQuillComponent from "src/views/manager/react-quill";
@@ -72,6 +72,10 @@ export const Item4 = (props) => {
   const { item, router, theme_css, seller } = props;
   const [itemThemeCss, setItemThemeCss] = useState(itemThemeCssDefaultSetting);
 
+  useEffect(() => {
+    //console.log(item)
+  }, [])
+
   const itemStatusList = [
     { label: 'NEW', color: 'primary' },  //빨강
     { label: 'USED', color: 'default' },  //검정
@@ -96,7 +100,7 @@ export const Item4 = (props) => {
       <Chip
         size="small"
         variant="outlined"
-        color={itemStatusList[item?.status ?? 0].color}  //N 및 N-S 등급은 NEW, 그 외는 USED
+        color={itemStatusList[item?.properties?.property_id ?? 0].color}  //N 및 N-S 등급은 NEW, 그 외는 USED
         label={itemStatusList[item?.status ?? 0].label}
         style={{
           margin: '0 auto',
@@ -213,7 +217,7 @@ export const AuthMenuSideComponent = (props) => {
 
   const router = useRouter();
 
-  const authLabel = 'My 그랑';
+  const authLabel = 'My 그랑파리';
   const noneAuthLabel = '고객센터';
   const authList = [
     {

@@ -41,13 +41,13 @@ const ItemsDemo = (props) => {
   const [categoryChildren, setCategoryChildren] = useState({});
 
   const sortList = [
-    {
+    /*{
       label: '그랑파리랭킹순',
       order: 'sort_idx',
       is_asc: 0,
-    },
+    },*/
     {
-      label: '최근등록순',
+      label: '새상품보기',
       order: 'id',
       is_asc: 0,
     },

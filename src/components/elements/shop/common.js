@@ -143,7 +143,6 @@ export const Items = props => {
       return 2
     }
   }
-  console.log(slide_setting)
   const items_setting = {
     infinite: true,
     speed: 500,

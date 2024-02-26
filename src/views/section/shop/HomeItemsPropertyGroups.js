@@ -70,7 +70,7 @@ const HomeItemsPropertyGroups = (props) => {
                 <div style={{ marginTop: '1rem', height: '0.25rem', borderTop: `1px solid ${themeDnsData?.theme_css?.main_color} `, borderBottom: `1px solid ${themeDnsData?.theme_css?.main_color} `, }} />
                 <Items items={column?.list} router={router} is_slide={column?.list.length >= 5 ? true : false} rows={rows} slide_setting={{
                     autoplay: style?.slider_speed > 0 ? true : false,
-                    autoplaySpeed: parseInt(style?.slider_speed ?? 0) * 1000
+                    autoplaySpeed: parseInt(style?.slider_speed ?? 0) * 1000 //parseInt 안에 default값을 안 넣으면 0이 들어왔을 때 NaN으로 처리되어 오류 발생
                 }} />
                 <div style={{ marginTop: '1rem', height: '0.25rem', borderTop: `1px solid ${themeObj.grey[300]} `, }} />
                 {/*<Row>

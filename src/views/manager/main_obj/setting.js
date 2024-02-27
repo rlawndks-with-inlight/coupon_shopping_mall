@@ -471,8 +471,8 @@ const MainObjSetting = props => {
             sx={{ maxWidth: '150px' }}
             label='컨텐츠 개수'
             type='number'
-            value={item?.style?.rows ?? 0}
-            defaultValue={item?.style?.rows ?? 0}
+            value={item?.style?.rows ?? 1}
+            defaultValue={item?.style?.rows ?? 1}
             onChange={e => {
               let content_list = [...contentList]
               if (!content_list[idx]?.style) {

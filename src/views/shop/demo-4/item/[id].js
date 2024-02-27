@@ -52,7 +52,7 @@ const ItemCharacter = (props) => {
   } else if (type == 1) {
     return (
       <>
-        <Row style={{ columnGap: '0.25rem', marginTop: '1rem' }}>
+        <Row style={{ columnGap: '0.25rem', marginTop: '1rem', alignItems:'center' }}>
           <Typography variant='body2' style={{ width: '100px' }}>{key_name}:</Typography>
           <div>
             <FormControlLabel value='' control={<Radio disabled />} label='압구정 그랑파리' />

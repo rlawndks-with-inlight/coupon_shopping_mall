@@ -52,7 +52,14 @@ const ProductList = () => {
       id: 'product_name',
       label: '상품명',
       action: (row) => {
-        return row['product_name'] ?? "---"
+        return <div 
+        style={{textDecoration:'underline', cursor:'pointer'}}
+        onClick={() => {
+          router.push(`edit/${row?.product_code || row?.id}`)
+        }}
+        >
+          {row['product_name']}
+          </div> ?? "---"
       }
     },
     ...themeCategoryList.map((group, index) => {

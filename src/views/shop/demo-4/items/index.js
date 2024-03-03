@@ -1,5 +1,5 @@
 import { Icon } from "@iconify/react";
-import { Button, Chip, CircularProgress, IconButton, InputAdornment, TextField, Typography, Stack, Skeleton } from "@mui/material";
+import { Button, Chip, CircularProgress, IconButton, InputAdornment, TextField, Typography, Stack, Skeleton, FormControl, InputLabel, Select, MenuItem, Box, Pagination, Divider } from "@mui/material";
 import _ from "lodash";
 import { useRouter } from "next/router";
 import { useRef } from "react";
@@ -47,8 +47,8 @@ const ItemsDemo = (props) => {
       is_asc: 0,
     },*/
     {
-      label: '새상품보기',
-      order: 'id',
+      label: '최근등록순',
+      order: 'created_at',
       is_asc: 0,
     },
     {
@@ -63,33 +63,27 @@ const ItemsDemo = (props) => {
     },
   ]
   useEffect(() => {
-    getItemList(router.query, { ...searchObj, page: 1 }, true)
-  }, [router.query])
+    getItemList(router.query, searchObj, false)
+  }, [])
 
-  const handleScroll = () => {
+  /*const handleScroll = () => {
     if (!scrollRef.current) {
       return;
     }
     const { top, bottom } = scrollRef.current.getBoundingClientRect();
     const windowHeight = window.innerHeight;
     if (top < windowHeight && bottom >= 0 && !moreLoading) {
-      //console.log(top)
-      //console.log(bottom)
+      
       setMoreLoading(true);
       $('.more-page').trigger("click");
     }
-  };
-  useEffect(() => {
-    window.addEventListener('scroll', handleScroll);
-    return () => {
-      window.removeEventListener('scroll', handleScroll);
-    };
-  }, []);
-  const getItemList = async (query, search_obj, is_first) => {
-    if (is_first) {
-      setLoading(true);
-      setProductContent({});
-    }
+  };*/
+
+  const getItemList = async (query_ = {}, search_obj) => {
+    let query = query_;
+    console.log(query)
+    console.log(search_obj)
+    setLoading(true);
     setCategoryIds(query);
     let category_children = {};
     for (var i = 0; i < themeCategoryList.length; i++) {
@@ -112,11 +106,13 @@ const ItemsDemo = (props) => {
         }
       }
     }
+    let query_str = new URLSearchParams(query).toString();
+    router.push(`/shop/items?${query_str}`);
+
     setCategoryChildren(category_children)
-    setSearchObj({ ...search_obj, search: query?.search ?? "" });
+    setSearchObj({ ...search_obj, ...query });
     let product_list = await apiShop('product', 'list', {
       ...search_obj,
-      brand_id: themeDnsData?.id,
       ...query
     })
     if (product_list.content.length == 0) {
@@ -125,21 +121,36 @@ const ItemsDemo = (props) => {
         total: -1,
       })
     }
-    if (is_first) {
-      setProductContent(product_list);
-      setLoading(false);
-    } else {
-      setProductContent({
-        ...product_list,
-        content: [...productContent?.content, ...product_list.content ?? []]
-      });
-    }
+    setProductContent(product_list);
+    setLoading(false);
+    // if (is_first) {
+    //   setProductContent(product_list);
+    //   setLoading(false);
+    // } else {
+    //   setProductContent({
+    //     ...product_list,
+    //     content: [...product_list.content ?? []]
+    //   });
+    // }
   }
   useEffect(() => {
     if ((productContent?.content ?? []).length > 0) {
       setMoreLoading(false);
     }
   }, [productContent?.content])
+
+  const getMaxPage = (total, page_size) => {
+    if (total == 0) {
+      return 1;
+    }
+    if (total % page_size == 0) {
+      return parseInt(total / page_size);
+    } else {
+      return parseInt(total / page_size) + 1;
+    }
+  }
+
+
   return (
     <>
       <ContentWrapper>
@@ -291,6 +302,20 @@ const ItemsDemo = (props) => {
               }}>{item.label}</Button>
             </>
           ))}
+          <FormControl variant='outlined' size='small' sx={{ width: '200px', marginLeft: 'auto' }}>
+
+            <Select value={searchObj.page_size}
+              onChange={(e) => {
+                getItemList(router.query, { ...searchObj, page_size: e.target.value }, true);
+                console.log(productContent)
+              }}>
+              <MenuItem value={10}>10개씩 보기</MenuItem>
+              <MenuItem value={20}>20개씩 보기</MenuItem>
+              <MenuItem value={30}>30개씩 보기</MenuItem>
+              <MenuItem value={50}>50개씩 보기</MenuItem>
+              <MenuItem value={100}>100개씩 보기</MenuItem>
+            </Select>
+          </FormControl>
         </Row>
 
         {productContent?.content ?
@@ -308,6 +333,19 @@ const ItemsDemo = (props) => {
                 {productContent?.content.length > 0 ?
                   <>
                     <Items items={productContent?.content ?? []} router={router} />
+                    <Divider sx={{ marginTop: '1rem' }} />
+                    <Box sx={{ padding: '0.75rem', display: 'flex' }}>
+                      <Pagination
+                        sx={{ marginLeft: 'auto' }}
+                        size={'medium'}
+                        count={getMaxPage(productContent?.total, productContent?.page_size)}
+                        page={parseInt(searchObj.page)}
+                        variant='outlined' shape='rounded'
+                        color='primary'
+                        onChange={(_, num) => {
+                          getItemList({ ...router.query, page: num }, searchObj, false)
+                        }} />
+                    </Box>
                   </>
                   :
                   <>
@@ -317,22 +355,13 @@ const ItemsDemo = (props) => {
                     </Col>
                   </>}
               </>}
-            {moreLoading ?
+            {/* {moreLoading ?
               <>
                 {productContent?.total > productContent?.content.length &&
                   <>
                   
-                    {/*<Row style={{ width: '100%', height:'100%' }}>
-                      <div style={{ margin: '0 auto' }}>
-                        <CircularProgress />
-                      </div>
-                </Row>*/}
                   
                     <Stack spacing={'1rem'} >
-            
-            {/*<Skeleton variant='rectangular' style={{
-              height: '40vw'
-            }} />*/}
           
           <div style={{ display:'flex',  }}>
           <Skeleton variant='rounded' style={{
@@ -409,14 +438,6 @@ const ItemsDemo = (props) => {
             }} />
           </div>
             
-            {/*<Skeleton variant='rounded' style={{
-              height: '34vw',
-              maxWidth: '1200px',
-              width: '90%',
-              height: '70vh',
-              margin: '1rem auto'
-            }} />*/}
-            
           </Stack>
                   </>}
               </>
@@ -433,7 +454,7 @@ const ItemsDemo = (props) => {
                       })
                   }
                 }} ref={scrollRef} />
-              </>}
+              </>} */}
           </>
           :
           <>

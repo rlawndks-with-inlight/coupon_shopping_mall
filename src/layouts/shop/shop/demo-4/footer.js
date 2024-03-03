@@ -74,14 +74,6 @@ const Footer = (props) => {
 <MarginRight>{company_name}</MarginRight>
 </Row>
 */}
-                        {ceo_name?.length > 1 &&
-                            <>
-                                <Row>
-                                    <Bold>{translate('대표')}</Bold>
-                                    <MarginRight>{ceo_name}</MarginRight>
-                                </Row>
-                            </>
-                        }
                         {addr?.length > 1 &&
                             <>
                                 <Row>
@@ -89,14 +81,6 @@ const Footer = (props) => {
                                     <div style={{ display: 'flex', flexDirection: 'column' }}>
                                         <MarginRight>{addr}</MarginRight>
                                     </div>
-                                </Row>
-                            </>
-                        }
-                        {business_num?.length > 1 &&
-                            <>
-                                <Row>
-                                    <Bold>{translate('사업자등록번호')}</Bold>
-                                    <MarginRight>{business_num}</MarginRight>
                                 </Row>
                             </>
                         }
@@ -108,6 +92,22 @@ const Footer = (props) => {
                                         <MarginRight>{phone_num}</MarginRight>
                                         <MarginRight>02-517-8950</MarginRight>
                                     </div>
+                                </Row>
+                            </>
+                        }
+                        {ceo_name?.length > 1 &&
+                            <>
+                                <Row>
+                                    <Bold>{translate('대표')}</Bold>
+                                    <MarginRight>{ceo_name}</MarginRight>
+                                </Row>
+                            </>
+                        }
+                        {business_num?.length > 1 &&
+                            <>
+                                <Row>
+                                    <Bold>{translate('사업자등록번호')}</Bold>
+                                    <MarginRight>{business_num}</MarginRight>
                                 </Row>
                             </>
                         }
@@ -143,7 +143,7 @@ const Footer = (props) => {
                     </MainContent>
 
                     <SubContent>
-                        <img src={'/grandparis/new_logo_removebg2.png'} style={{ width:'200px', aspectRatio:'200/70' }} />
+                        <img src={'/grandparis/new_logo_removebg2.png'} style={{ width: '200px', aspectRatio: '200/70' }} />
 
                         {/*
 <Row>

@@ -303,6 +303,7 @@ const ItemDemo = (props) => {
                       }
                     </Tabs>
                     <Divider />
+                    
                     {TABS.map(
                       (tab) =>
                         tab.value === currentTab && (
@@ -314,6 +315,16 @@ const ItemDemo = (props) => {
                               }),
                             }}
                           >
+                            {commarNumber(product?.product_price) != commarNumber(product?.product_sale_price) && currentTab === 'description' ?
+                        <>
+                        <div style={{color:`${themeDnsData?.theme_css?.main_color}`, fontWeight:'bold'}}>
+                          {commarNumber(product?.product_price)} 원에서 {commarNumber(product?.product_sale_price)} 원으로 가격인하를 하였습니다.
+                          </div>
+                        </>
+                        :
+                        <>
+                        </>
+                      }
                             {tab.component}
                           </Box>
                         )

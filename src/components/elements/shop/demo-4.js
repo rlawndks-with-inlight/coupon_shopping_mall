@@ -100,7 +100,7 @@ export const Item4 = (props) => {
       <Chip
         size="small"
         variant="outlined"
-        color={itemStatusList[item?.properties?.property_id ?? 0].color}  //N 및 N-S 등급은 NEW, 그 외는 USED
+        color={itemStatusList[item?.status ?? 0].color}  //N 및 N-S 등급은 NEW, 그 외는 USED
         label={itemStatusList[item?.status ?? 0].label}
         style={{
           margin: '0 auto',

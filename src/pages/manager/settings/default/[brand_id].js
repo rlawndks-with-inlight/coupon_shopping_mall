@@ -356,42 +356,52 @@ const DefaultSetting = () => {
                           })
                         }}
                       />
-                      <div>
-                        <Typography variant='subtitle2' sx={{ color: 'text.secondary' }}>
-                          상품 탭에 기본정보 사용
-                        </Typography>
-                        <Switch
-                          sx={{ marginLeft: '-10px' }}
-                          defaultChecked={item?.show_basic_info ? true : false}
-                          onChange={() => {
-                            setItem({
-                              ...item,
-                              ['show_basic_info']: item?.show_basic_info ? 0 : 1
-                            })
+                      {item.id == 5 &&
+                        <>
+                          <div>
+                            <Typography variant='subtitle2' sx={{ color: 'text.secondary' }}>
+                              상품 탭에 기본정보 사용
+                            </Typography>
+                            <Switch
+                              sx={{ marginLeft: '-10px' }}
+                              defaultChecked={item?.show_basic_info ? true : false}
+                              onChange={() => {
+                                setItem({
+                                  ...item,
+                                  ['show_basic_info']: item?.show_basic_info ? 0 : 1
+                                })
+                              }
+                              }
+                            />
+                          </div>
+                          {item?.show_basic_info ?
+                            <>
+                              <Stack spacing={1}>
+                                <Typography variant='subtitle2' sx={{ color: 'text.secondary' }}>
+                                  기본정보
+                                </Typography>
+                                <ReactQuillComponent
+                                  value={item.basic_info}
+                                  setValue={value => {
+                                    setItem({
+                                      ...item,
+                                      ['basic_info']: value
+                                    })
+                                  }}
+                                />
+                              </Stack>
+                            </>
+                            :
+                            ""
                           }
-                        }
-                        />
-                      </div>
-                      {item?.show_basic_info ?
-                      <>
-                      <Stack spacing={1}>
-                        <Typography variant='subtitle2' sx={{ color: 'text.secondary' }}>
-                          기본정보
-                        </Typography>
-                        <ReactQuillComponent
-                          value={item.basic_info}
-                          setValue={value => {
-                            setItem({
-                              ...item,
-                              ['basic_info']: value
-                            })
-                          }}
-                        />
-                      </Stack>
-                      </>
-                      :
-                      ""
-                      }
+                          <div>
+                          <Typography variant='subtitle2' sx={{ color: 'text.secondary' }}>
+                              위탁 수수료 설정
+                            </Typography>
+                            
+                          </div>
+                        </>}
+
                       <Stack spacing={1}>
                         <Typography variant='subtitle2' sx={{ color: 'text.secondary' }}>
                           비고
@@ -620,7 +630,7 @@ const DefaultSetting = () => {
                           })
                         }}
                       />
-                       <TextField
+                      <TextField
                         label='통신판매번호'
                         value={item.mail_order_num}
                         onChange={e => {

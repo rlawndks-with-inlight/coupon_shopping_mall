@@ -63,8 +63,8 @@ const ItemsDemo = (props) => {
     },
   ]
   useEffect(() => {
-    getItemList(router.query, searchObj, false)
-  }, [])
+    getItemList({...router.query}, searchObj)
+  }, [router.query.category_id0, router.query.category_id1])
 
   /*const handleScroll = () => {
     if (!scrollRef.current) {
@@ -298,7 +298,7 @@ const ItemsDemo = (props) => {
           {sortList.map((item) => (
             <>
               <Button variant={`${(searchObj?.order ?? "sort_idx") == item.order && (searchObj?.is_asc ?? 0) == item.is_asc ? 'contained' : 'outlined'}`} onClick={() => {
-                getItemList(router.query, { ...searchObj, page: 1, order: item.order, is_asc: item.is_asc }, true)
+                getItemList(router.query, { ...searchObj, page: 1, order: item.order, is_asc: item.is_asc })
               }}>{item.label}</Button>
             </>
           ))}
@@ -306,7 +306,7 @@ const ItemsDemo = (props) => {
 
             <Select value={searchObj.page_size}
               onChange={(e) => {
-                getItemList(router.query, { ...searchObj, page_size: e.target.value }, true);
+                getItemList(router.query, { ...searchObj, page_size: e.target.value });
                 console.log(productContent)
               }}>
               <MenuItem value={10}>10개씩 보기</MenuItem>
@@ -343,7 +343,7 @@ const ItemsDemo = (props) => {
                         variant='outlined' shape='rounded'
                         color='primary'
                         onChange={(_, num) => {
-                          getItemList({ ...router.query, page: num }, searchObj, false)
+                          getItemList({ ...router.query, page: num }, {...searchObj})
                         }} />
                     </Box>
                   </>

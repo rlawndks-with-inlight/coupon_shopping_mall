@@ -39,6 +39,7 @@ const ItemsDemo = (props) => {
   const [loading, setLoading] = useState(true);
   const scrollRef = useRef(null);
   const [categoryChildren, setCategoryChildren] = useState({});
+  const [textChipSelected, setTextChipSelected] = useState('')
 
   const sortList = [
     /*{
@@ -63,8 +64,8 @@ const ItemsDemo = (props) => {
     },
   ]
   useEffect(() => {
-    getItemList({...router.query}, searchObj)
-  }, [router.query.category_id0, router.query.category_id1])
+    getItemList({ ...router.query }, searchObj)
+  }, [router.query.category_id0, router.query.category_id1, router.query.category_id2])
 
   /*const handleScroll = () => {
     if (!scrollRef.current) {
@@ -150,6 +151,14 @@ const ItemsDemo = (props) => {
     }
   }
 
+  const alphabetList = [
+    'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N',
+    'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', '#'
+  ]
+
+  const hangeulList = [
+    '가', '나', '다', '라', '마', '바', '사', '아', '자', '차', '카', '타', '파', '하', '#'
+  ]
 
   return (
     <>
@@ -229,8 +238,10 @@ const ItemsDemo = (props) => {
                     size="small"
                     variant={`${!categoryIds[`category_id${index}`] ? 'contained' : 'text'}`}
                     onClick={() => {
-                      let query = { ...categoryIds };
-                      delete query[`category_id${index}`];
+                      let { [`category_id${index}`]: _, ...rest } = categoryIds;
+                      let query = rest;
+                      console.log([`category_id${index}`])
+                      console.log(rest)
                       query = new URLSearchParams(query).toString();
                       router.push(`/shop/items?${query}`);
                     }}>전체</Button>
@@ -265,7 +276,7 @@ const ItemsDemo = (props) => {
 
                           query = new URLSearchParams(query).toString();
                           router.push(`/shop/items?${query}`);
-                        }}>{category?.category_en_name}</Button>
+                        }}>{category?.category_en_name ?? category?.category_name}</Button>
                     </>
                   })}
 
@@ -284,7 +295,7 @@ const ItemsDemo = (props) => {
                               query[`category_id${index}`] = category?.id;
                               query = new URLSearchParams(query).toString();
                               router.push(`/shop/items?${query}`);
-                            }}>{category?.category_en_name}</Button>
+                            }}>{category?.category_en_name ?? category?.category_name}</Button>
                         </>
                       ))}
                     </ContentBorderContainer>
@@ -298,7 +309,7 @@ const ItemsDemo = (props) => {
           {sortList.map((item) => (
             <>
               <Button variant={`${(searchObj?.order ?? "sort_idx") == item.order && (searchObj?.is_asc ?? 0) == item.is_asc ? 'contained' : 'outlined'}`} onClick={() => {
-                getItemList(router.query, { ...searchObj, page: 1, order: item.order, is_asc: item.is_asc })
+                getItemList({ ...router.query, page: 1 }, { ...searchObj, page: 1, order: item.order, is_asc: item.is_asc })
               }}>{item.label}</Button>
             </>
           ))}
@@ -306,8 +317,9 @@ const ItemsDemo = (props) => {
 
             <Select value={searchObj.page_size}
               onChange={(e) => {
-                getItemList(router.query, { ...searchObj, page_size: e.target.value });
-                console.log(productContent)
+                getItemList({ ...router.query, page: 1, page_size: e.target.value }, { ...searchObj, page_size: e.target.value });
+                //console.log(productContent)
+                console.log(searchObj.page_size)
               }}>
               <MenuItem value={10}>10개씩 보기</MenuItem>
               <MenuItem value={20}>20개씩 보기</MenuItem>
@@ -343,7 +355,7 @@ const ItemsDemo = (props) => {
                         variant='outlined' shape='rounded'
                         color='primary'
                         onChange={(_, num) => {
-                          getItemList({ ...router.query, page: num }, {...searchObj})
+                          getItemList({ ...router.query, page: num, page_size: searchObj.page_size }, { ...searchObj })
                         }} />
                     </Box>
                   </>

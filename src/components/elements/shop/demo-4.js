@@ -77,8 +77,8 @@ export const Item4 = (props) => {
   }, [])
 
   const itemStatusList = [
-    { label: 'NEW', color: 'primary' },  //빨강
     { label: 'USED', color: 'default' },  //검정
+    { label: 'NEW', color: 'primary' },  //빨강
     { label: 'STOPPED', color: 'warning' },
     { label: 'SOLD-OUT', color: 'error' },
   ]
@@ -100,13 +100,19 @@ export const Item4 = (props) => {
       <Chip
         size="small"
         variant="outlined"
-        color={itemStatusList[item?.status ?? 0].color}  //N 및 N-S 등급은 NEW, 그 외는 USED
-        label={itemStatusList[item?.status ?? 0].label}
+        color={item?.status == 0 && item?.show_status == 1 ? itemStatusList[0].color : itemStatusList[parseInt(item?.status)+1 ?? 0].color}  //N 및 N-S 등급은 NEW, 그 외는 USED
+        label={item?.status == 0 && item?.show_status == 1 ? itemStatusList[0].label : itemStatusList[parseInt(item?.status)+1 ?? 0].label}
         style={{
           margin: '0 auto',
         }} />
       <ItemName variant="body2" style={{height:'60px', width:'90%', wordBreak:'keep-all'}}>{item?.product_name}</ItemName>
-      <ItemName variant="subtitle2">{commarNumber(item?.product_sale_price)}원</ItemName>
+      <ItemName variant="subtitle2">
+        {item?.status == 1 ? '거래 진행중' 
+        : 
+        item?.status == 2 ? '품절' 
+        :
+        `${commarNumber(item?.product_sale_price)}원`}
+        </ItemName>
     </ItemWrapper>
   </>
 }

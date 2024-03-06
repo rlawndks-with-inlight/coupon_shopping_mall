@@ -109,7 +109,7 @@ export const Item4 = (props) => {
       <ItemName variant="subtitle2">
         {item?.status == 1 ? '거래 진행중' 
         : 
-        item?.status == 2 ? '품절' 
+        item?.status == 2 ? 'SOLD OUT' 
         :
         `${commarNumber(item?.product_sale_price)}원`}
         </ItemName>

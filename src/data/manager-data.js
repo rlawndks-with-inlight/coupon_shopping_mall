@@ -37,6 +37,7 @@ export const PATH_MANAGER = {
     propertyGroups: path(ROOTS_MANAGER, '/products/property-groups'),
     categories: path(ROOTS_MANAGER, '/products/categories'),
     consignments: path(ROOTS_MANAGER, '/products/consignments'),
+    faq: path(ROOTS_MANAGER, '/products/faq'),
   },
   articles: {
     root: path(ROOTS_MANAGER, '/articles'),
@@ -260,6 +261,8 @@ export const defaultManagerObj = {
     fax_num: '',
     mail_order_num: '',
     note: '',
+    basic_info: '',
+    show_basic_info: 0, //이거 ''로 두면 put 오류 생김
     logo_file: undefined,
     dark_logo_file: undefined,
     favicon_file: undefined,
@@ -290,10 +293,10 @@ export const defaultManagerObj = {
     theme_css: {
       main_color: '#00ab55'
     },
-    slider_css: { 
+    /*slider_css: { 
       rows: '',
       autoplay_speed: '',
-    },
+    },*/
     shop_obj: [
       {
         type: 'banner',

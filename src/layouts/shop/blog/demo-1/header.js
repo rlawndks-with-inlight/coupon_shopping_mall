@@ -131,7 +131,7 @@ const Header = (props) => {
     if (isProductPage) {
       return true;
     }
-    if (router.asPath.includes('/my-page')) {
+    if (router.asPath.includes('/my-page') || router.asPath.includes('/cart')) {
       return true;
     }
     return false;

@@ -224,9 +224,11 @@ const MainObjSetting = props => {
     let brand_data = await apiManager('brands', 'get', {
       id: (!isNaN(parseInt(router.query.type)) ? router.query.type : '') || themeDnsData?.id
     })
+
     brand_data = settingBrandObj(item, brand_data)
     let content_list = brand_data[`${MAIN_OBJ_TYPE}`] ?? []
     setItem(brand_data)
+    console.log(content_list)
     setContentList(content_list)
     setLoading(false)
   }
@@ -245,7 +247,7 @@ const MainObjSetting = props => {
             type: `items-property-group-${property?.id}`,
             list: [],
             style: {},
-            title: `${property?.property_name}`
+            title: `${property?.property_name}`,
           },
         },)
       }
@@ -426,8 +428,14 @@ const MainObjSetting = props => {
         !isNaN(parseInt(router.query.type)))
     )
   }
+
+  const [sliderOpen, setSliderOpen] = useState(true)
+  const handleSlider = (e) => {
+    setSliderOpen(e.target.checked)
+  }
+
   const SectionProcess = props => {
-    const { idx, item } = props
+    const { idx, item, isProductList = 0 } = props
     return (
       <>
         <Row style={{ marginLeft: 'auto', columnGap: '0.25rem' }}>
@@ -436,6 +444,68 @@ const MainObjSetting = props => {
               <Icon icon={'icon-park-outline:preview-open'} />
             </IconButton>
           </Tooltip> */}
+          {isProductList == 1 && 
+          <>
+          <TextField
+            size='small'
+            sx={{ maxWidth: '150px' }}
+            label='슬라이더 속도'
+            type='number'
+            value={item?.style?.slider_speed ?? 0}
+            defaultValue={item?.style?.slider_speed ?? 0}
+            onChange={e => {
+              let content_list = [...contentList]
+              if (!content_list[idx]?.style) {
+                content_list[idx]['style'] = {}
+              }
+              content_list[idx]['style']['slider_speed'] = e.target.value
+              setContentList(content_list)
+              console.log(item)
+            }}
+            InputProps={{
+              endAdornment: <>초</>
+            }}
+          />
+          <TextField
+            size='small'
+            sx={{ maxWidth: '150px' }}
+            label='컨텐츠 개수'
+            type='number'
+            value={item?.style?.rows ?? 1}
+            defaultValue={item?.style?.rows ?? 1}
+            onChange={e => {
+              let content_list = [...contentList]
+              if (!content_list[idx]?.style) {
+                content_list[idx]['style'] = {}
+              }
+              content_list[idx]['style']['rows'] = e.target.value
+              setContentList(content_list)
+            }}
+            InputProps={{
+              endAdornment: <>행</>
+            }}
+          />
+          </>
+          }
+          {/*<TextField
+            size='small'
+            sx={{ maxWidth: '150px' }}
+            label='상품 개수'
+            type='number'
+            value={item?.style?.columns ?? 0}
+            defaultValue={item?.style?.columns ?? 0}
+            onChange={e => {
+              let content_list = [...contentList]
+              if (!content_list[idx]?.style) {
+                content_list[idx]['style'] = {}
+              }
+              content_list[idx]['style']['columns'] = e.target.value
+              setContentList(content_list)
+            }}
+            InputProps={{
+              endAdornment: <>열</>
+            }}
+          />*/}
           <TextField
             size='small'
             sx={{ maxWidth: '150px' }}
@@ -451,6 +521,7 @@ const MainObjSetting = props => {
               }
               content_list[idx]['style']['margin_top'] = e.target.value
               setContentList(content_list)
+              console.log(item)
             }}
             InputProps={{
               endAdornment: <>px</>
@@ -835,7 +906,7 @@ const MainObjSetting = props => {
                                 title={`상품슬라이드 ${curTypeNum(contentList, 'items', idx)}`}
                                 sx={{ paddingLeft: '0' }}
                               />
-                              <SectionProcess idx={idx} item={item} />
+                              <SectionProcess idx={idx} item={item} isProductList={1} />
                             </Row>
                             <TextField
                               label='제목'
@@ -892,7 +963,7 @@ const MainObjSetting = props => {
                                 title={`ID 선택형 상품슬라이드 ${curTypeNum(contentList, 'items-ids', idx)}`}
                                 sx={{ paddingLeft: '0' }}
                               />
-                              <SectionProcess idx={idx} item={item} />
+                              <SectionProcess idx={idx} item={item} isProductList={1} />
                             </Row>
                             <TextField
                               label='제목'
@@ -1271,7 +1342,7 @@ const MainObjSetting = props => {
                                 title={`${_.find(getSettingPropertyList(themePropertyList), { type: item?.type })?.label.split(' - ')[1]} ${curTypeNum(contentList, item?.type, idx)}`}
                                 sx={{ paddingLeft: '0' }}
                               />
-                              <SectionProcess idx={idx} item={item} />
+                              <SectionProcess idx={idx} item={item} isProductList={1} />
                             </Row>
                             <TextField
                               label='제목'

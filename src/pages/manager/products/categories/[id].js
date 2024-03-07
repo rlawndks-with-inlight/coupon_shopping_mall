@@ -487,7 +487,7 @@ const CategoryList = () => {
                                                         })
                                                     }}
                                                 />
-                                                <Button variant="contained" style={{ marginTop: 'auto', height: '56px' }} onClick={() => {
+                                                <Button variant="contained" style={{ marginTop: '100px', height: '56px' }} onClick={() => {
                                                     setModal({
                                                         func: () => { onSave() },
                                                         icon: 'material-symbols:edit-outline',

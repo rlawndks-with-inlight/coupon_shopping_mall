@@ -64,6 +64,7 @@ export const Seller = props => {
     else if (shop_demo_num == 5) return <Seller5 {...props} />
     else if (shop_demo_num == 6) return <Seller6 {...props} />
     else if (shop_demo_num == 7) return <Seller7 {...props} />
+    else return <Seller1 {...props} />
   }
   return <>{returnSellerCard()}</>
 }
@@ -107,6 +108,7 @@ export const Item = props => {
     else if (shop_demo_num == 5) return <Item5 {...props} />
     else if (shop_demo_num == 6) return <Item6 {...props} />
     else if (shop_demo_num == 7) return <Item7 {...props} />
+    else return <Item5 {...props} />
   }
   return <>{returnSellerCard()}</>
 }
@@ -145,7 +147,7 @@ export const Items = props => {
     infinite: true,
     speed: 500,
     autoplay: true,
-    autoplaySpeed: autoplaySpeed,
+    autoplaySpeed,
     slidesToShow: getSlideToShow(),
     slidesToScroll: 1,
     dots: false,

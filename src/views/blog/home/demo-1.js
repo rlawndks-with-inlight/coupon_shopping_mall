@@ -6,6 +6,18 @@ import { useSettingsContext } from 'src/components/settings';
 import { themeObj } from 'src/components/elements/styled-components';
 import { useAuthContext } from 'src/layouts/manager/auth/useAuthContext';
 import { Item, Seller } from 'src/components/elements/blog/demo-1';
+import HomeBanner from 'src/views/section/blog/HomeBanner'
+import HomeEditor from 'src/views/section/blog/HomeEditor'
+import HomeItems from 'src/views/section/blog/HomeItems'
+import HomeButtonBanner from 'src/views/section/blog/HomeButtonBanner'
+import HomeItemsWithCategories from 'src/views/section/blog/HomeItemsWithCategories'
+import HomeVideoSlide from 'src/views/section/blog/HomeVideoSlide'
+import HomePost from 'src/views/section/blog/HomePost'
+import HomeProductReview from 'src/views/section/blog/HomeProductReview'
+import HomeSellers from 'src/views/section/blog/HomeSellers'
+import { getMainObjType } from 'src/utils/function'
+import HomeItemsPropertyGroups from 'src/views/section/blog/HomeItemsPropertyGroups'
+
 
 const Wrappers = styled.div`
 max-width: 840px;
@@ -85,9 +97,9 @@ const ItemWrapper = styled.div`
 display:flex;
 flex-direction:column;
 width:calc(100% - 32px);
-margin: 300px auto 0 auto;
+margin: 0 auto;
 @media (max-width:840px){
-    margin: 30vw auto 0 auto;
+    margin: 0 auto;
     width:90%;
 }
 `
@@ -111,6 +123,26 @@ display: none;
     display: block;
 }
 `
+const returnHomeContent = (column, data, func) => {
+    let type = getMainObjType(column?.type);
+
+    if (type == 'banner') return <HomeBanner column={column} data={data} func={func} />
+    else if (type == 'editor') return <HomeEditor column={column} data={data} func={func} />
+    else if (type == 'items' || type == 'items-ids') {
+        return <HomeItems column={column} data={data} func={func} />
+    }
+    else if (type == 'items-property-group-:num') return <HomeItemsPropertyGroups column={column} data={data} func={func} />
+    else if (type == 'button-banner') return <HomeButtonBanner column={column} data={data} func={func} />
+    else if (type == 'items-with-categories') return <HomeItemsWithCategories column={column} data={data} func={func} />
+    else if (type == 'video-slide') return <HomeVideoSlide column={column} data={data} func={func} />
+    else if (type == 'post') return <HomePost column={column} data={data} func={func} />
+    else if (type == 'sellers') return <HomeSellers column={column} data={data} func={func} />
+    else if (type == 'item-reviews') return <HomeProductReview column={column} data={data} func={func} />
+    else if (type == 'item-reviews-select') return <HomeProductReview column={column} data={data} func={func} />
+    return '';
+}
+
+
 
 const ItemSectionContent = (props) => {
     const { data, router } = props;
@@ -159,6 +191,8 @@ const ItemSectionContent = (props) => {
         </>
     )
 }
+
+
 // 메인화면 김인욱
 const Demo1 = (props) => {
     const {
@@ -173,23 +207,44 @@ const Demo1 = (props) => {
     const { user } = useAuthContext();
     const [homeContent, setHomeContent] = useState({});
     const [data, setData] = useState([]);
+    const [contentList, setContentList] = useState([]);
     useEffect(() => {
-        pageSetting();
+        if (themeDnsData?.id > 0) {
+            pageSetting();
+        }
     }, [themeDnsData])
     const pageSetting = async () => {
+        
+        let dns_data = themeDnsData;
+        let content_list = (dns_data?.blog_obj) ?? [];
+        setContentList(content_list)
         setData([
             ...[{
                 title: '마켓 오픈했어요 ✨',
                 list: themeSellerList,
                 type: 'seller'
             },],
-            ...test_home_data
+
         ])
     }
+
+    const returnHomeContentByColumn = (column, idx) => {
+        return returnHomeContent(
+            column,
+            {
+                windowWidth: window.innerWidth,
+                themeDnsData: themeDnsData,
+                idx,
+            },
+            {
+                router,
+            })
+    }
+
     return (
         <>
             <Wrappers>
-                <BannerContainer style={{
+                {/*<BannerContainer style={{
                     background: `${themeDnsData?.theme_css?.main_color}`
                 }}>
                     <Title>아직도 일일이</Title>
@@ -198,12 +253,11 @@ const Demo1 = (props) => {
                     <SubTitle>모든 기능이 100% 무료</SubTitle>
                     <CardImg
                         src={'https://www.inpock.co.kr/_next/image?url=https%3A%2F%2Fstorage.googleapis.com%2Finpock-store-asset-prod%2Fclient%2Fimg%2Finpock-image-thumbnail-store.60df99b.png&w=3840&q=75'} />
-                </BannerContainer>
+            </BannerContainer>*/}
                 <ItemWrapper>
-
-                    {data.map((data, idx) => (
+                    {contentList && contentList.map((column, idx) => (
                         <>
-                            <ItemSectionContent data={data} router={router} />
+                            {returnHomeContentByColumn(column, idx)}
                         </>
                     ))}
                 </ItemWrapper>

@@ -1,5 +1,5 @@
 import { Icon } from "@iconify/react";
-import { Button, Chip, CircularProgress, IconButton, InputAdornment, TextField, Typography, Stack, Skeleton } from "@mui/material";
+import { Button, Chip, CircularProgress, IconButton, InputAdornment, TextField, Typography, Stack, Skeleton, FormControl, InputLabel, Select, MenuItem, Box, Pagination, Divider } from "@mui/material";
 import _ from "lodash";
 import { useRouter } from "next/router";
 import { useRef } from "react";
@@ -39,16 +39,17 @@ const ItemsDemo = (props) => {
   const [loading, setLoading] = useState(true);
   const scrollRef = useRef(null);
   const [categoryChildren, setCategoryChildren] = useState({});
+  const [textChipSelected, setTextChipSelected] = useState('')
 
   const sortList = [
-    {
+    /*{
       label: '그랑파리랭킹순',
       order: 'sort_idx',
       is_asc: 0,
-    },
+    },*/
     {
       label: '최근등록순',
-      order: 'id',
+      order: 'created_at',
       is_asc: 0,
     },
     {
@@ -63,33 +64,27 @@ const ItemsDemo = (props) => {
     },
   ]
   useEffect(() => {
-    getItemList(router.query, { ...searchObj, page: 1 }, true)
-  }, [router.query])
+    getItemList({ ...router.query }, searchObj)
+  }, [router.query.category_id0, router.query.category_id1, router.query.category_id2])
 
-  const handleScroll = () => {
+  /*const handleScroll = () => {
     if (!scrollRef.current) {
       return;
     }
     const { top, bottom } = scrollRef.current.getBoundingClientRect();
     const windowHeight = window.innerHeight;
-    if (top > windowHeight && bottom >= windowHeight/3 && !moreLoading) {
-      console.log(top)
-      console.log(bottom)
+    if (top < windowHeight && bottom >= 0 && !moreLoading) {
+      
       setMoreLoading(true);
       $('.more-page').trigger("click");
     }
-  };
-  useEffect(() => {
-    window.addEventListener('scroll', handleScroll);
-    return () => {
-      window.removeEventListener('scroll', handleScroll);
-    };
-  }, []);
-  const getItemList = async (query, search_obj, is_first) => {
-    if (is_first) {
-      setLoading(true);
-      setProductContent({});
-    }
+  };*/
+
+  const getItemList = async (query_ = {}, search_obj) => {
+    let query = query_;
+    console.log(query)
+    console.log(search_obj)
+    setLoading(true);
     setCategoryIds(query);
     let category_children = {};
     for (var i = 0; i < themeCategoryList.length; i++) {
@@ -112,11 +107,13 @@ const ItemsDemo = (props) => {
         }
       }
     }
+    let query_str = new URLSearchParams(query).toString();
+    router.push(`/shop/items?${query_str}`);
+
     setCategoryChildren(category_children)
-    setSearchObj({ ...search_obj, search: query?.search ?? "" });
+    setSearchObj({ ...search_obj, ...query });
     let product_list = await apiShop('product', 'list', {
       ...search_obj,
-      brand_id: themeDnsData?.id,
       ...query
     })
     if (product_list.content.length == 0) {
@@ -125,21 +122,44 @@ const ItemsDemo = (props) => {
         total: -1,
       })
     }
-    if (is_first) {
-      setProductContent(product_list);
-      setLoading(false);
-    } else {
-      setProductContent({
-        ...product_list,
-        content: [...productContent?.content, ...product_list.content ?? []]
-      });
-    }
+    setProductContent(product_list);
+    setLoading(false);
+    // if (is_first) {
+    //   setProductContent(product_list);
+    //   setLoading(false);
+    // } else {
+    //   setProductContent({
+    //     ...product_list,
+    //     content: [...product_list.content ?? []]
+    //   });
+    // }
   }
   useEffect(() => {
     if ((productContent?.content ?? []).length > 0) {
       setMoreLoading(false);
     }
   }, [productContent?.content])
+
+  const getMaxPage = (total, page_size) => {
+    if (total == 0) {
+      return 1;
+    }
+    if (total % page_size == 0) {
+      return parseInt(total / page_size);
+    } else {
+      return parseInt(total / page_size) + 1;
+    }
+  }
+
+  const alphabetList = [
+    'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N',
+    'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', '#'
+  ]
+
+  const hangeulList = [
+    '가', '나', '다', '라', '마', '바', '사', '아', '자', '차', '카', '타', '파', '하', '#'
+  ]
+
   return (
     <>
       <ContentWrapper>
@@ -218,8 +238,10 @@ const ItemsDemo = (props) => {
                     size="small"
                     variant={`${!categoryIds[`category_id${index}`] ? 'contained' : 'text'}`}
                     onClick={() => {
-                      let query = { ...categoryIds };
-                      delete query[`category_id${index}`];
+                      let { [`category_id${index}`]: _, ...rest } = categoryIds;
+                      let query = rest;
+                      console.log([`category_id${index}`])
+                      console.log(rest)
                       query = new URLSearchParams(query).toString();
                       router.push(`/shop/items?${query}`);
                     }}>전체</Button>
@@ -254,7 +276,7 @@ const ItemsDemo = (props) => {
 
                           query = new URLSearchParams(query).toString();
                           router.push(`/shop/items?${query}`);
-                        }}>{category?.category_en_name}</Button>
+                        }}>{category?.category_en_name ?? category?.category_name}</Button>
                     </>
                   })}
 
@@ -273,7 +295,7 @@ const ItemsDemo = (props) => {
                               query[`category_id${index}`] = category?.id;
                               query = new URLSearchParams(query).toString();
                               router.push(`/shop/items?${query}`);
-                            }}>{category?.category_en_name}</Button>
+                            }}>{category?.category_en_name ?? category?.category_name}</Button>
                         </>
                       ))}
                     </ContentBorderContainer>
@@ -287,10 +309,25 @@ const ItemsDemo = (props) => {
           {sortList.map((item) => (
             <>
               <Button variant={`${(searchObj?.order ?? "sort_idx") == item.order && (searchObj?.is_asc ?? 0) == item.is_asc ? 'contained' : 'outlined'}`} onClick={() => {
-                getItemList(router.query, { ...searchObj, page: 1, order: item.order, is_asc: item.is_asc }, true)
+                getItemList({ ...router.query, page: 1 }, { ...searchObj, page: 1, order: item.order, is_asc: item.is_asc })
               }}>{item.label}</Button>
             </>
           ))}
+          <FormControl variant='outlined' size='small' sx={{ width: '200px', marginLeft: 'auto' }}>
+
+            <Select value={searchObj.page_size}
+              onChange={(e) => {
+                getItemList({ ...router.query, page: 1, page_size: e.target.value }, { ...searchObj, page_size: e.target.value });
+                //console.log(productContent)
+                console.log(searchObj.page_size)
+              }}>
+              <MenuItem value={10}>10개씩 보기</MenuItem>
+              <MenuItem value={20}>20개씩 보기</MenuItem>
+              <MenuItem value={30}>30개씩 보기</MenuItem>
+              <MenuItem value={50}>50개씩 보기</MenuItem>
+              <MenuItem value={100}>100개씩 보기</MenuItem>
+            </Select>
+          </FormControl>
         </Row>
 
         {productContent?.content ?
@@ -308,6 +345,19 @@ const ItemsDemo = (props) => {
                 {productContent?.content.length > 0 ?
                   <>
                     <Items items={productContent?.content ?? []} router={router} />
+                    <Divider sx={{ marginTop: '1rem' }} />
+                    <Box sx={{ padding: '0.75rem', display: 'flex' }}>
+                      <Pagination
+                        sx={{ marginLeft: 'auto' }}
+                        size={'medium'}
+                        count={getMaxPage(productContent?.total, productContent?.page_size)}
+                        page={parseInt(searchObj.page)}
+                        variant='outlined' shape='rounded'
+                        color='primary'
+                        onChange={(_, num) => {
+                          getItemList({ ...router.query, page: num, page_size: searchObj.page_size }, { ...searchObj })
+                        }} />
+                    </Box>
                   </>
                   :
                   <>
@@ -317,17 +367,15 @@ const ItemsDemo = (props) => {
                     </Col>
                   </>}
               </>}
-            {moreLoading ?
+            {/* {moreLoading ?
               <>
                 {productContent?.total > productContent?.content.length &&
                   <>
+                  
+                  
                     <Stack spacing={'1rem'} >
-            
-            <Skeleton variant='rectangular' style={{
-              height: '40vw'
-            }} />
           
-          {/*<div style={{ display:'flex',  }}>
+          <div style={{ display:'flex',  }}>
           <Skeleton variant='rounded' style={{
               height: '34vw',
               maxWidth: '200px',
@@ -400,16 +448,8 @@ const ItemsDemo = (props) => {
               maxHeight: '200px',
               margin: '10rem auto 10rem 1rem'
             }} />
-          </div>*/}
-            {/*
-            <Skeleton variant='rounded' style={{
-              height: '34vw',
-              maxWidth: '1200px',
-              width: '90%',
-              height: '70vh',
-              margin: '1rem auto'
-            }} />
-            */}
+          </div>
+            
           </Stack>
                   </>}
               </>
@@ -426,7 +466,7 @@ const ItemsDemo = (props) => {
                       })
                   }
                 }} ref={scrollRef} />
-              </>}
+              </>} */}
           </>
           :
           <>

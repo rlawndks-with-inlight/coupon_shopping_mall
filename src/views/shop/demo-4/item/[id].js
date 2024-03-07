@@ -1,5 +1,5 @@
 import styled from 'styled-components'
-import { Box, Tab, Tabs, Card, Grid, Divider, Typography, Button, } from '@mui/material';
+import { Box, Tab, Tabs, Card, Grid, Divider, Typography, Button, Radio, FormControlLabel } from '@mui/material';
 import { test_item } from 'src/data/test-data';
 import { useSettingsContext } from 'src/components/settings';
 import { ProductDetailsCarousel, ProductDetailsReview, ProductDetailsSummary } from 'src/views/@dashboard/e-commerce/details';
@@ -17,7 +17,8 @@ import toast from 'react-hot-toast';
 import DialogBuyNow from 'src/components/dialog/DialogBuyNow';
 import { useAuthContext } from 'src/layouts/manager/auth/useAuthContext';
 import { useModal } from 'src/components/dialog/ModalProvider';
-import { BasicInfo } from 'src/components/elements/shop/demo-4';
+import { BasicInfo, ProductFaq } from 'src/components/elements/shop/demo-4';
+
 const ReactQuill = dynamic(() => import('react-quill'), {
   ssr: false,
   loading: () => <p>Loading ...</p>,
@@ -38,15 +39,29 @@ text-align: center;
 padding: 1rem 0;
 `
 const ItemCharacter = (props) => {
-  const { key_name, value } = props;
-  return (
-    <>
-      <Row style={{ columnGap: '0.25rem', marginTop: '1rem' }}>
-        <Typography variant='body2' style={{ width: '100px' }}>{key_name}:</Typography>
-        <Typography variant='subtitle2'>{value}</Typography>
-      </Row>
-    </>
-  )
+  const { key_name, value, type = 0 } = props;
+  if (type == 0) {
+    return (
+      <>
+        <Row style={{ columnGap: '0.25rem', marginTop: '1rem' }}>
+          <Typography variant='body2' style={{ width: '100px' }}>{key_name}:</Typography>
+          <Typography variant='subtitle2'>{value}</Typography>
+        </Row>
+      </>
+    )
+  } else if (type == 1) {
+    return (
+      <>
+        <Row style={{ columnGap: '0.25rem', marginTop: '1rem', alignItems:'center' }}>
+          <Typography variant='body2' style={{ width: '100px' }}>{key_name}:</Typography>
+          <div>
+            <FormControlLabel value='' control={<Radio disabled />} label='압구정 그랑파리' />
+            <FormControlLabel value='' control={<Radio disabled />} label='인스파이어 럭셔리에디션' />
+          </div>
+        </Row>
+      </>
+    )
+  }
 }
 const ItemDemo = (props) => {
   const {
@@ -67,7 +82,7 @@ const ItemDemo = (props) => {
   const [product, setProduct] = useState({});
   const [reviewPage, setReviewPage] = useState(1);
   const [buyOpen, setBuyOpen] = useState(false);
-  const [reviewContent, setReviewContent] = useState({});
+  //const [reviewContent, setReviewContent] = useState({});
   const [selectProductGroups, setSelectProductGroups] = useState({
     count: 1,
     groups: [],
@@ -81,23 +96,24 @@ const ItemDemo = (props) => {
     data = await apiShop('product', 'get', {
       id: router.query?.id
     });
-    data['sub_images'] = (data?.sub_images ?? []).map((img) => {
+    data['sub_images'] = (data?.sub_images ?? []).map((img) => { //cannot create property on false? 오류 간헐적 발생
       return img?.product_sub_img
     })
     /*if (data?.product_img) {  //메인이미지를 상세이미지에 추가하는 코드
       data['sub_images'].unshift(data?.product_img)
     }*/
     data['images'] = data['sub_images'];
-    setReviewPage(review_page);
+    /*setReviewPage(review_page);
     let review_data = await apiManager('product-reviews', 'list', {
       page: review_page,
       product_id: router.query?.id,
       page_size: 10,
     })
-    setReviewContent(review_data)
+    setReviewContent(review_data)*/
     setProduct(data);
     setLoading(false);
   }
+
   const TABS = [
     {
       value: 'description',
@@ -105,23 +121,32 @@ const ItemDemo = (props) => {
       component: product?.product_description ?
         <ReactQuill
           className='none-padding'
-          value={product?.product_description ?? `<body></body>`}
+          value={`
+    ${product?.product_description ?? ''}
+    ${themeDnsData?.basic_info}
+  `}
           readOnly={true}
           theme={"bubble"}
           bounds={'.app'}
         /> : null,
     },
-    {
+    /*{
       value: 'basic_info',
       label: '기본정보',
       component: product ?
         <BasicInfo /> : null,
-    },
+    },*/
     {
+      value: 'item_faq',
+      label: '상품문의',
+      component: product ? //<></> : null,
+        <ProductFaq /> : null,
+    },
+    /*{
       value: 'reviews',
       label: `상품후기 (${reviewContent?.total})`,
       component: product ? <ProductDetailsReview product={product} reviewContent={reviewContent} onChangePage={getItemInfo} reviewPage={reviewPage} /> : null,
-    },
+    },*/
   ];
   const handleAddCart = async () => {
     if (user) {
@@ -160,7 +185,12 @@ const ItemDemo = (props) => {
                     </Grid>
 
                     <Grid item xs={12} md={6} lg={6}>
-                      <ItemName variant='h4'>{product?.product_name}</ItemName>
+                      <ItemName variant='h4' style={{whiteSpace:'wrap'}}>{product?.product_name}</ItemName>
+                      {product?.brand_name &&
+                      <>
+                      <ItemCharacter key_name={'브랜드'} value={product?.brand_name[0].category_en_name} />
+                      </>
+                      }
                       {product?.product_code &&
                         <>
                           <ItemCharacter key_name={'상품코드'} value={product?.product_code} />
@@ -170,7 +200,13 @@ const ItemDemo = (props) => {
                         property_list = property_list.map(property => {
                           return property?.property_name
                         })
-                        return <ItemCharacter key_name={group?.property_group_name} value={`${property_list.join(', ')}`} />
+                        if (group?.property_group_name == '등급') {
+                          return <ItemCharacter key_name={group?.property_group_name} value={`${property_list.join(', ')}`} />
+                        }
+                        if (group?.property_group_name == '매장') {
+                          return <ItemCharacter key_name={group?.property_group_name} value={`${property_list.join(', ')}`} type='1' />
+                        }
+
                       })}
                       {product?.characters && product?.characters.map((character) => (
                         <>
@@ -183,8 +219,16 @@ const ItemDemo = (props) => {
                         onAddCart={() => { }}
                         onGotoStep={() => { }}
                       /> */}
-                      <ItemCharacter key_name={'정상가'} value={<div style={{ textDecoration: 'line-through' }}>{commarNumber(product?.product_price)}원</div>} />
-                      <ItemCharacter key_name={'할인가'} value={<div>{commarNumber(product?.product_sale_price)}원</div>} />
+                      {commarNumber(product?.product_price) != commarNumber(product?.product_sale_price) ?
+                        <>
+                          <ItemCharacter key_name={'정상가'} value={<div style={{ textDecoration: 'line-through' }}>{commarNumber(product?.product_price)}원</div>} />
+                          <ItemCharacter key_name={'할인가'} value={<div>{commarNumber(product?.product_sale_price)}원</div>} />
+                        </>
+                        :
+                        <>
+                          <ItemCharacter key_name={'판매가'} value={<div>{commarNumber(product?.product_sale_price)}원</div>} />
+                        </>
+                      }
                       <div style={{ borderBottom: '1px solid #ccc', width: '100%', marginTop: '1rem' }} />
                       <Button
                         disabled={getProductStatus(product?.status).color != 'info' || !(product?.product_sale_price > 0)}
@@ -244,11 +288,22 @@ const ItemDemo = (props) => {
                       onChange={(event, newValue) => setCurrentTab(newValue)}
                       sx={{ px: 3, bgcolor: 'background.neutral' }}
                     >
-                      {TABS.map((tab) => (
-                        <Tab key={tab.value} value={tab.value} label={tab.label} />
-                      ))}
+                      {themeDnsData?.show_basic_info ?
+                        TABS.map((tab, index) => (
+                          <Tab key={tab.value} value={tab.value} label={tab.label} />
+                        ))
+                        :
+                        TABS.map((tab, index) => {
+                          if (index !== 1) {
+                            return (
+                              <Tab key={tab.value} value={tab.value} label={tab.label} />
+                            )
+                          }
+                        })
+                      }
                     </Tabs>
                     <Divider />
+                    
                     {TABS.map(
                       (tab) =>
                         tab.value === currentTab && (
@@ -260,6 +315,16 @@ const ItemDemo = (props) => {
                               }),
                             }}
                           >
+                            {commarNumber(product?.product_price) != commarNumber(product?.product_sale_price) && currentTab === 'description' ?
+                        <>
+                        <div style={{color:`${themeDnsData?.theme_css?.main_color}`, fontWeight:'bold'}}>
+                          {commarNumber(product?.product_price)} 원에서 {commarNumber(product?.product_sale_price)} 원으로 가격인하를 하였습니다.
+                          </div>
+                        </>
+                        :
+                        <>
+                        </>
+                      }
                             {tab.component}
                           </Box>
                         )

@@ -135,11 +135,11 @@ export const navConfig = () => {
       items: [
         {
           title: '주문관리',
-          path: PATH_MANAGER.orders.root,
+          path: PATH_MANAGER.orders.trx + '/all',//PATH_MANAGER.orders.root,
           icon: ICONS.ecommerce,
           children: [
             {
-              title: '주문관리', path: PATH_MANAGER.orders.trx,
+              title: '주문관리', path: PATH_MANAGER.orders.trx + '/all',
               children: [
                 { title: '전체', path: PATH_MANAGER.orders.trx + '/all' },
                 { title: '결제대기', path: PATH_MANAGER.orders.trx + '/0' },
@@ -151,7 +151,7 @@ export const navConfig = () => {
               ],
             },
             {
-              title: '주문취소관리', path: PATH_MANAGER.orders.trxCancel,
+              title: '주문취소관리', path: PATH_MANAGER.orders.trxCancel + '/1',
               children: [
                 { title: '취소요청', path: PATH_MANAGER.orders.trxCancel + '/1' },
                 { title: '취소완료', path: PATH_MANAGER.orders.trxCancel + '/5' },
@@ -174,6 +174,7 @@ export const navConfig = () => {
             ...(isUseProductPropertyGroup() ? [{ title: '특성 그룹 관리', path: PATH_MANAGER.products.propertyGroups }] : []),
             ...(isManager() ? [...propertyGroupList] : []),
             //{ title: '상품관리', path: PATH_MANAGER.products.list },
+            { title: '상품문의', path: PATH_MANAGER.products.faq },
             ...(themeDnsData?.setting_obj?.is_use_consignment == 1 ? [
               { title: '위탁 변경 요청', path: PATH_MANAGER.products.consignments + '/list/0' },
               { title: '위탁 수거 요청', path: PATH_MANAGER.products.consignments + '/list/5' },
@@ -205,7 +206,7 @@ export const navConfig = () => {
         items: [
           {
             title: '게시판관리',
-            path: PATH_MANAGER.articles.root,
+            path: PATH_MANAGER.articles.categories,
             icon: ICONS.calendar,
             children: [
               ...(isUsePostCategory() ? [{ title: '게시판 카테고리 관리', path: PATH_MANAGER.articles.categories }] : []),
@@ -259,7 +260,7 @@ export const navConfig = () => {
         items: [
           {
             title: '설정관리',
-            path: PATH_MANAGER.settings.root,
+            path: PATH_MANAGER.settings.default + `/${themeDnsData?.id}`,
             icon: ICONS.setting,
             children: [
               { title: '기본설정', path: PATH_MANAGER.settings.default + `/${themeDnsData?.id}` },

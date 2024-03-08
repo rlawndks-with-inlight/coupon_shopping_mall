@@ -9,6 +9,7 @@ import { apiShop } from 'src/utils/api';
 import axios from 'axios';
 import localStorageAvailable from 'src/utils/localStorageAvailable';
 import { useRouter } from 'next/router';
+import { apiManager } from 'src/utils/api';
 // ----------------------------------------------------------------------
 
 const initialState = {
@@ -151,6 +152,9 @@ export function SettingsProvider({ children }) {
       dns_data['blog_obj'] = data?.blog_obj ?? [];
       dns_data['payment_modules'] = data?.payment_modules ?? [];
       dns_data['products'] = data?.products ?? [];
+      dns_data['basic_info'] = data?.basic_info ?? "";
+
+      
       onChangeWishData(data?.user_wishs ?? []);
       onChangeCategoryList(data?.product_category_groups ?? []);
       onChangePropertyList(data?.product_property_groups ?? []);

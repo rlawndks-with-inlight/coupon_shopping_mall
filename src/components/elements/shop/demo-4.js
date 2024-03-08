@@ -1,4 +1,4 @@
-import { Chip, Typography } from "@mui/material"
+import { Chip, Typography, TextField, Button } from "@mui/material"
 import { useSettingsContext } from "src/components/settings"
 import { useAuthContext } from "src/layouts/manager/auth/useAuthContext"
 import styled from "styled-components"
@@ -7,8 +7,15 @@ import { Col, themeObj } from "../styled-components"
 import { useRouter } from "next/router"
 import { LazyLoadImage } from "react-lazy-load-image-component"
 import { itemThemeCssDefaultSetting } from "src/views/manager/item-card/setting"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { commarNumber } from "src/utils/function"
+import { Upload } from "src/components/upload";
+import ReactQuillComponent from "src/views/manager/react-quill";
+import { useModal } from "src/components/dialog/ModalProvider"
+import { apiManager } from "src/utils/api"
+import { apiShop } from "src/utils/api"
+import toast from "react-hot-toast"
+
 const ItemWrapper = styled.a`
 display: flex;
 flex-direction: column;
@@ -65,11 +72,15 @@ export const Item4 = (props) => {
   const { item, router, theme_css, seller } = props;
   const [itemThemeCss, setItemThemeCss] = useState(itemThemeCssDefaultSetting);
 
+  useEffect(() => {
+    //console.log(item)
+  }, [])
+
   const itemStatusList = [
-    { label: 'USED', color: 'info' },
+    { label: 'USED', color: 'default' },  //검정
+    { label: 'NEW', color: 'primary' },  //빨강
     { label: 'STOPPED', color: 'warning' },
     { label: 'SOLD-OUT', color: 'error' },
-    { label: 'NEW', color: 'success' },
   ]
   return <>
     <ItemWrapper
@@ -89,13 +100,19 @@ export const Item4 = (props) => {
       <Chip
         size="small"
         variant="outlined"
-        color={itemStatusList[item?.status ?? 0].color}
-        label={itemStatusList[item?.status ?? 0].label}
+        color={item?.status == 0 && item?.show_status == 1 ? itemStatusList[0].color : itemStatusList[parseInt(item?.status)+1 ?? 0].color}  //N 및 N-S 등급은 NEW, 그 외는 USED
+        label={item?.status == 0 && item?.show_status == 1 ? itemStatusList[0].label : itemStatusList[parseInt(item?.status)+1 ?? 0].label}
         style={{
           margin: '0 auto',
         }} />
-      <ItemName variant="body2">{item?.product_name}</ItemName>
-      <ItemName variant="subtitle2">{commarNumber(item?.product_sale_price)}원</ItemName>
+      <ItemName variant="body2" style={{height:'60px', width:'90%', wordBreak:'keep-all'}}>{item?.product_name}</ItemName>
+      <ItemName variant="subtitle2">
+        {item?.status == 1 ? '거래 진행중' 
+        : 
+        item?.status == 2 ? 'SOLD OUT' 
+        :
+        `${commarNumber(item?.product_sale_price)}원`}
+        </ItemName>
     </ItemWrapper>
   </>
 }
@@ -206,7 +223,7 @@ export const AuthMenuSideComponent = (props) => {
 
   const router = useRouter();
 
-  const authLabel = 'My 그랑';
+  const authLabel = 'My 그랑파리';
   const noneAuthLabel = '고객센터';
   const authList = [
     {
@@ -328,70 +345,112 @@ export const AuthMenuSideComponent = (props) => {
 
 export const BasicInfo = () => {
   const { themeDnsData } = useSettingsContext()
+  const { basic_info } = themeDnsData;
   return (
     <>
-      <div style={{ padding: '24px' }}>
-        <InfoTitle themeDnsData={themeDnsData}>
-          배송안내
-        </InfoTitle>
-        <InfoDetail>
-          평일 4시, 토요일 12시까지 주문 및 입금 확인된 건에 한하여 당일 발송 실시.<br />
-          마감 시간 후 입금 확인 건은 익일(다음날) 발송 됩니다.
-        </InfoDetail>
-        <InfoTitle themeDnsData={themeDnsData}>
-          배송방법
-        </InfoTitle>
-        <InfoDetail>
-          택배를 기본으로 하며, 서울/수도권 지역은 구매자 부담으로 퀵서비스도 가능합니다.<br />
-          대한통운(http://www.doortodoor.co.kr)
-        </InfoDetail>
-        <InfoTitle themeDnsData={themeDnsData}>
-          배송비
-        </InfoTitle>
-        <InfoDetail>
-          구매자가 부담(4,000원), 2건 이상 구매시 한번의 배송비(4,000원)만 부담으로 합배송 가능합니다.<br />
-          택배회사에서 지정하는 도서 산간 지역은 배송비 추가 발생합니다. (자동 적용)
-        </InfoDetail>
-        <InfoTitle themeDnsData={themeDnsData}>
-          배송기간
-        </InfoTitle>
-        <InfoDetail>
-          - 기본적으로 익일(발송 다음 날) 받으십니다.<br />
-          - 명절이나 연휴, 택배 물량 증가, 교통 체증 등의 이유로 2~3일 지연 될 수 있습니다.(자동 적용)
-        </InfoDetail>
-        <InfoTitle themeDnsData={themeDnsData}>
-          주문취소
-        </InfoTitle>
-        <InfoDetail>
-          1) 상품 대금을 결제하기 전에는 언제든지 주문 취소 가능<br />
-          2) 무통장 입금 시 48시간 이내에 미입금 되면 자동 주문 취소(자동 적용)
-        </InfoDetail>
-        <InfoTitle themeDnsData={themeDnsData}>
-          반품 및 환불제도
-        </InfoTitle>
-        <InfoDetail>
-          1) 반품접수 : ① {themeDnsData?.name}(02-517-2950/02-517-8950)로 전화 ② 주문/배송 페이지에서 반품 신청<br />
-          2) 요청기간 : 상품 수령 후 24시간 이내 (상품수령 확인은 대한통운 택배사의 배송 추적을 이용)<br />
-          3) 반품기간 : 반품요청 후 반품요청일(공휴일 제외)을 포함하여 4일 이내에 반드시 {themeDnsData?.name}로 도착해야 합니다.<br />
-          - 반품요청 없이 반품한 상품은 반품기간이 경과되어 반품이 취소 될 수도 있습니다.<br />
-          4) 반품방법 : ① 가까운 우체국이나 택배사, 편의점 등에서 선불 발송 ② {themeDnsData?.name} 매장으로 방문 반품<br />
-          5) 반품 배송비 : 왕복 배송비는 고객 부담을 기본으로 합니다.<br />
-          카드 결제 건은 4,000원을 동봉해서 선불 발송으로 보내 주셔야합니다.<br />
-          반품 후 카드 취소 시에 배송비도 일괄적으로 취소되기 때문입니다.<br />
-          6) 환불기간 : 반품 도착 후 2일(공휴일 제외)이내<br />
-          - 카드 취소시 해당 카드사에는 5일(공휴일제외)이후 확인가능<br />
-          카드 취소에 대해 더 자세한 내용은 {themeDnsData?.name}로 전화 문의주세요.
-        </InfoDetail>
-        <InfoTitle themeDnsData={themeDnsData}>
-          반품 불가 사유
-        </InfoTitle>
-        <InfoDetail>
-          1) 구매자의 부주의로 인한 상품 훼손 시 <br />
-          2) 상품 상세 설명에 이미 공지된 내용의 주지 부주의로 인한 반품 요구 시<br />
-          3) 상품 수령 후 반품 요청 기간 및 반품 기간 경과 시<br />
-          4) 상품에 붙어 있는 {themeDnsData?.name} 택(tag)이 떨어졌을 경우 사용하신 것으로 간주<br />
-        </InfoDetail>
-      </div>
+      <div
+        style={{ padding: '24px' }}
+        //onClick={() => { console.log(themeDnsData) }}
+        
+      />
+
+    </>
+  )
+}
+
+export const ProductFaq = () => {
+  const { user } = useAuthContext();
+  const [item, setItem] = useState({
+    title: '',
+    content: '',
+    is_reply: 0,
+    reply: '',
+    product_id:'',
+    user_id:'',
+  })
+  const [reply, setReply] = useState({
+    post_title: '',
+    post_content: '',
+    is_reply: 1,
+  })
+  const { setModal } = useModal()
+  const router = useRouter()
+  const onSave = async () => {
+    let result = undefined;
+    let result2 = undefined;
+    if (router.query?.edit_category == 'edit') {
+      result = await apiManager('product-faq', 'update', { ...item, id: router.query?.id });
+      if (category?.is_able_user_add == 1 && result) {
+        if (reply?.id > 0) {
+          result2 = await apiManager('product-faq', 'update', { ...reply, });
+        } else {
+          result2 = await apiManager('product-faq', 'create', { ...reply, });
+        }
+      } else {
+        result2 = true;
+      }
+    } else {
+      result = await apiManager('product-faq', 'create', { ...item, product_id: router.query?.id, user_id:user.id });
+      result2 = true;
+    }
+    if (result && result2) {
+      toast.success("성공적으로 저장 되었습니다.");
+      //router.push(`/manager/articles/${router.query?.category_id}`);
+    }
+  }
+
+  return (
+    <>
+
+      {user ?
+      <>
+      <TextField
+        label='제목'
+        value={item.title}
+        onChange={(e) => {
+          setItem(
+            {
+              ...item,
+              ['title']: e.target.value
+            }
+          )
+        }} />
+      <ReactQuillComponent
+        value={item.content}
+        setValue={(value) => {
+          setItem({
+            ...item,
+            ['content']: value
+          });
+        }}
+      />
+
+      <Button variant="contained" style={{
+        height: '48px', width: '120px', margin: '1rem 0 1rem auto'
+      }} onClick={() => {
+        setModal({
+          func: () => { onSave() },
+          icon: 'material-symbols:edit-outline',
+          title: '저장 하시겠습니까?'
+        })
+      }}>
+        저장
+      </Button>
+      </>
+      :
+      <>
+      <div style={{padding:'24px'}}>
+      로그인이 필요합니다.<br />
+      <Button variant="contained" style={{
+        height: '48px', width: '150px', margin: '1rem 0 1rem auto'
+      }} onClick={() => {
+        router.push('/shop/auth/login')
+      }}>
+        로그인하러 가기
+        </Button>
+        </div>
+      </>
+      }
     </>
   )
 }

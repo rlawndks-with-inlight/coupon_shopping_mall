@@ -22,7 +22,7 @@ const ReactQuillComponent = (props) => {
                 container: [
                     [{ header: '1' }, { header: '2' }, { font: [] }],
                     [{ size: [] }],
-                    ['bold', 'italic', 'underline', 'strike', 'blockquote'],
+                    [{'color': []}, 'bold', 'italic', 'underline', 'strike', 'blockquote'],
                     [
                         { list: 'ordered' },
                         { list: 'bullet' },

@@ -160,7 +160,7 @@ export default function ManagerTable(props) {
                 size='small'
                 label=''
                 autoFocus
-                placeholder='키워드 입력'
+                placeholder='검색어 입력'
                 value={keyword}
                 endAdornment={<>
                   <Tooltip title='해당 텍스트로 검색하시려면 엔터 또는 돋보기 버튼을 클릭해주세요.'>
@@ -330,7 +330,8 @@ export default function ManagerTable(props) {
               onChangePage({
                 ...searchObj,
                 page: num
-              })
+              });
+              console.log(data)
             }} />
         </Box>
       </TableContainer>

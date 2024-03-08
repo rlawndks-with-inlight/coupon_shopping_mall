@@ -82,7 +82,7 @@ const ItemDemo = (props) => {
           bounds={'.app'}
         /> : null,
     },
-    {
+    { 
       value: 'basic_info',
       label: '기본정보',
       component: product ?

@@ -96,9 +96,21 @@ const ConsignmentGuide = () => {
         return nullBrandList
     }
     const [langChipSelected, setLangChipSelected] = useState(0)
+    const [textChipSelected, setTextChipSelected] = useState('')
+
     useEffect(() => {
         sort(LANGCODE.ENG)
     }, [])
+
+    const alphabetList = [
+        'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N',
+        'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', '#'
+    ]
+
+    const hangeulList = [
+        '가', '나', '다', '라', '마', '바', '사', '아', '자', '차', '카', '타', '파', '하', '#'
+    ]
+
     return (
         <>
             <Wrappers>
@@ -131,37 +143,37 @@ const ConsignmentGuide = () => {
                             <TableRow sx={{ height: '13%', borderBottom: `${themeMode == 'dark' ? '1px solid red' : ""}` }}>
                                 <TableCell sx={{ padding: '0', width: '18%', }} />
                                 <ChargeTable
-                                themeMode={themeMode}
+                                    themeMode={themeMode}
                                     sx={{
                                         width: '13%',
                                         color: 'white'
                                     }}>20만원 이하</ChargeTable>
                                 <ChargeTable
-                                themeMode={themeMode}
+                                    themeMode={themeMode}
                                     sx={{
                                         width: '13%',
                                         color: 'white'
                                     }}>20~300만원</ChargeTable>
                                 <ChargeTable
-                                themeMode={themeMode}
+                                    themeMode={themeMode}
                                     sx={{
                                         width: '15%',
                                         color: 'white'
                                     }}>300~500만원</ChargeTable>
                                 <ChargeTable
-                                themeMode={themeMode}
+                                    themeMode={themeMode}
                                     sx={{
                                         width: '13.5%',
                                         color: 'white'
                                     }}>500~700만원</ChargeTable>
                                 <ChargeTable
-                                themeMode={themeMode}
+                                    themeMode={themeMode}
                                     sx={{
                                         width: '13.5%',
                                         color: 'white'
                                     }}>700~1000만원</ChargeTable>
                                 <ChargeTable
-                                themeMode={themeMode}
+                                    themeMode={themeMode}
                                     sx={{
                                         width: '14%',
                                         color: 'white'
@@ -173,32 +185,32 @@ const ConsignmentGuide = () => {
                                         width: '18%',
                                     }}>시계/주얼리<br />가방/기타</ChargeTable>
                                 <ChargeTable
-                                 themeMode={themeMode}
+                                    themeMode={themeMode}
                                     sx={{
                                         width: '13%',
                                     }}>4만원</ChargeTable>
                                 <ChargeTable
-                                 themeMode={themeMode}
+                                    themeMode={themeMode}
                                     sx={{
                                         width: '13%',
                                     }}>18%</ChargeTable>
                                 <ChargeTable
-                                 themeMode={themeMode}
+                                    themeMode={themeMode}
                                     sx={{
                                         width: '15%',
                                     }}>15%</ChargeTable>
                                 <ChargeTable
-                                 themeMode={themeMode}
+                                    themeMode={themeMode}
                                     sx={{
                                         width: '13.5%',
                                     }}>13%</ChargeTable>
                                 <ChargeTable
-                                 themeMode={themeMode}
+                                    themeMode={themeMode}
                                     sx={{
                                         width: '13.5%',
                                     }}>10%</ChargeTable>
                                 <ChargeTable
-                                 themeMode={themeMode}
+                                    themeMode={themeMode}
                                     sx={{
                                         width: '14%',
                                     }}>8%</ChargeTable>
@@ -207,37 +219,37 @@ const ConsignmentGuide = () => {
                             <TableRow sx={{ height: '13%', borderBottom: `${themeMode == 'dark' ? '1px solid red' : ""}` }}>
                                 <TableCell sx={{ padding: '0', width: '18%', }} />
                                 <ChargeTable
-                                 themeMode={themeMode}
+                                    themeMode={themeMode}
                                     sx={{
                                         width: '13%',
                                         color: 'white'
                                     }}>15만원 이하</ChargeTable>
                                 <ChargeTable
-                                 themeMode={themeMode}
+                                    themeMode={themeMode}
                                     sx={{
                                         width: '13%',
                                         color: 'white'
                                     }}>15~200만원</ChargeTable>
                                 <ChargeTable
-                                 themeMode={themeMode}
+                                    themeMode={themeMode}
                                     sx={{
                                         width: '15%',
                                         color: 'white'
                                     }}>200~400만원</ChargeTable>
                                 <ChargeTable
-                                 themeMode={themeMode}
+                                    themeMode={themeMode}
                                     sx={{
                                         width: '13.5%',
                                         color: 'white'
                                     }}>400~600만원</ChargeTable>
                                 <ChargeTable
-                                 themeMode={themeMode}
+                                    themeMode={themeMode}
                                     sx={{
                                         width: '13.5%',
                                         color: 'white'
                                     }}>600~800만원</ChargeTable>
                                 <ChargeTable
-                                 themeMode={themeMode}
+                                    themeMode={themeMode}
                                     sx={{
                                         width: '14%',
                                         color: 'white'
@@ -249,32 +261,32 @@ const ConsignmentGuide = () => {
                                         width: '18%',
                                     }}>의류/신발</ChargeTable>
                                 <ChargeTable
-                                themeMode={themeMode}
+                                    themeMode={themeMode}
                                     sx={{
                                         width: '13%',
                                     }}>4만원</ChargeTable>
                                 <ChargeTable
-                                themeMode={themeMode}
+                                    themeMode={themeMode}
                                     sx={{
                                         width: '13%',
                                     }}>20%</ChargeTable>
                                 <ChargeTable
-                                themeMode={themeMode}
+                                    themeMode={themeMode}
                                     sx={{
                                         width: '15%',
                                     }}>18%</ChargeTable>
                                 <ChargeTable
-                                themeMode={themeMode}
+                                    themeMode={themeMode}
                                     sx={{
                                         width: '13.5%',
                                     }}>15%</ChargeTable>
                                 <ChargeTable
-                                themeMode={themeMode}
+                                    themeMode={themeMode}
                                     sx={{
                                         width: '13.5%',
                                     }}>13%</ChargeTable>
                                 <ChargeTable
-                                themeMode={themeMode}
+                                    themeMode={themeMode}
                                     sx={{
                                         width: '14%',
                                     }}>10%</ChargeTable>
@@ -319,7 +331,7 @@ const ConsignmentGuide = () => {
                 >
                     <TableContainer>
                         <Table sx={{ width: '951px', aspectRatio: '951/161', maxWidth: '100%' }}>
-                            <TableRow sx={{color:`${themeMode == 'dark' ? 'black' : ""}`}}>
+                            <TableRow sx={{ color: `${themeMode == 'dark' ? 'black' : ""}` }}>
                                 <MethodTable>
                                     위탁 후<br />최소 3개월 이상
                                 </MethodTable>
@@ -351,15 +363,9 @@ const ConsignmentGuide = () => {
                 <GuideSubText>
                     위탁 가능 브랜드 안내
                 </GuideSubText>
-                <div style={{ backgroundColor: `${themeMode == 'dark' ? '#222' : '#FAFAFA'}`, padding: '1rem' }}>
-                    <Col style={{
-                        minWidth: '100px',
-                        flexWrap: 'wrap',
-                        alignItems: 'flex-start',
-                        maxHeight: '700px',
-                        rowGap: '0.2rem',
-                    }}>
-                        <Row>
+                <div style={{ backgroundColor: `${themeMode == 'dark' ? '#222' : '#FAFAFA'}`, padding: '0.5rem' }}>
+                    <Row style={{ marginBottom: '1rem' }}>
+                        <div style={{ borderRight: `2px solid gray`, marginRight: '0.5rem', flexWrap: 'nowrap' }}>
                             <Chip label={`알파벳순`} variant="soft" sx={{
                                 margin: '0.5rem 0.5rem 0.5rem 0',
                                 fontWeight: 'bold',
@@ -371,7 +377,7 @@ const ConsignmentGuide = () => {
                                     background: `${langChipSelected == 0 ? 'black' : ''}`,
                                 }
                             }}
-                                onClick={() => { setLangChipSelected(0); sort(LANGCODE.ENG) }}
+                                onClick={() => { setLangChipSelected(0); sort(LANGCODE.ENG); setTextChipSelected(''); }}
                             />
                             <Chip label={`가나다순`} variant="soft" sx={{
                                 margin: '0.5rem 0.5rem 0.5rem 0',
@@ -384,26 +390,112 @@ const ConsignmentGuide = () => {
                                     background: `${langChipSelected == 1 ? 'black' : ''}`,
                                 }
                             }}
-                                onClick={() => { setLangChipSelected(1); sort(LANGCODE.KOR) }}
+                                onClick={() => { setLangChipSelected(1); sort(LANGCODE.KOR); setTextChipSelected(''); }}
                             />
-                        </Row>
-                        {categoryGroup.map((group) => {
-                            return <>
-                                <Chip label={`[${group.label ? group.label : "#"}]`} variant="soft" sx={{
-                                    marginTop: '0.5rem',
-                                    cursor: 'pointer', fontWeight: 'bold', background: `${themeDnsData?.theme_css?.main_color}29`, color: `${themeDnsData?.theme_css?.main_color}`, '&:hover': {
-                                        color: '#fff',
-                                        background: `${themeDnsData?.theme_css?.main_color}`,
-                                    }
-                                }} />
-                                <div style={{ borderBottom: `3px solid ${themeDnsData?.theme_css?.main_color}`, width: '150px', marginBottom: '0.5rem' }} />
-                                {
-                                    group.childs.map((child) => {
-                                        return <Typography variant="body2">{langChipSelected == 0 ? child?.category_en_name : child?.category_name}</Typography>
-                                    })
+                        </div>
+                        <div style={{ flexWrap: 'wrap' }}>
+                            {langChipSelected == 0 ?
+                                <>
+                                    {alphabetList.map((alphabet) => {
+                                        return <>
+                                            <Chip
+                                                label={alphabet}
+                                                variant="soft"
+                                                sx={{
+                                                    margin: '0.5rem 0.5rem 0.5rem 0',
+                                                    fontWeight: 'bold',
+                                                    fontSize: '0.7rem',
+                                                    cursor: 'pointer',
+                                                    color: `${textChipSelected == alphabet ? 'white' : ''}`,
+                                                    background: `${textChipSelected == alphabet ? 'black' : ''}`,
+                                                    '&:hover': {
+                                                        color: `${textChipSelected == alphabet ? 'white' : ''}`,
+                                                        background: `${textChipSelected == alphabet ? 'black' : ''}`,
+                                                    }
+                                                }}
+                                                onClick={() => { setTextChipSelected(alphabet); }}
+                                            />
+                                        </>
+                                    })}
+                                </>
+                                :
+                                <>
+                                    {hangeulList.map((hangeul) => {
+                                        return <>
+                                            <Chip
+                                                label={hangeul}
+                                                variant="soft"
+                                                sx={{
+                                                    margin: '0.5rem 0.5rem 0.5rem 0',
+                                                    fontWeight: 'bold',
+                                                    cursor: 'pointer',
+                                                    color: `${textChipSelected == hangeul ? 'white' : ''}`,
+                                                    background: `${textChipSelected == hangeul ? 'black' : ''}`,
+                                                    '&:hover': {
+                                                        color: `${textChipSelected == hangeul ? 'white' : ''}`,
+                                                        background: `${textChipSelected == hangeul ? 'black' : ''}`,
+                                                    }
+                                                }}
+                                                onClick={() => { setTextChipSelected(hangeul); }}
+                                            />
+                                        </>
+                                    })}
+                                </>
+                            }
+                        </div>
+                    </Row>
+                    <Col style={{
+                        minWidth: '100px',
+                        flexWrap: 'wrap',
+                        alignItems: 'flex-start',
+                        maxHeight: '700px',
+                        rowGap: '0.2rem',
+                    }}>
 
-                                }
-                            </>
+
+                        {categoryGroup.map((group) => {
+                            if (textChipSelected == '') {
+                                return <>
+                                    <Chip label={`[${group.label ? group.label : "#"}]`} variant="soft" sx={{
+                                        marginTop: '0.5rem',
+                                        cursor: 'pointer', fontWeight: 'bold', background: `${themeDnsData?.theme_css?.main_color}29`, color: `${themeDnsData?.theme_css?.main_color}`, '&:hover': {
+                                            color: '#fff',
+                                            background: `${themeDnsData?.theme_css?.main_color}`,
+                                        }
+                                    }} />
+                                    <div style={{ borderBottom: `3px solid ${themeDnsData?.theme_css?.main_color}`, width: '150px', marginBottom: '0.5rem' }} />
+                                    {
+                                        group.childs.map((child) => {
+                                            return <Typography variant="body2" style={{ cursor: 'pointer' }} onClick={() => {
+                                                router.push(`/shop/items?category_id${index}=${child?.id}&depth=0`)
+                                                setOpenAllCategory("")
+                                            }}>{langChipSelected == 0 ? child?.category_en_name : child?.category_name}</Typography>
+                                        })
+
+                                    }
+                                </>
+                            }
+                            else if (textChipSelected == group?.label) {
+                                return <>
+                                    <Chip label={`[${group.label ? group.label : "#"}]`} variant="soft" sx={{
+                                        marginTop: '0.5rem',
+                                        cursor: 'pointer', fontWeight: 'bold', background: `${themeDnsData?.theme_css?.main_color}29`, color: `${themeDnsData?.theme_css?.main_color}`, '&:hover': {
+                                            color: '#fff',
+                                            background: `${themeDnsData?.theme_css?.main_color}`,
+                                        }
+                                    }} />
+                                    <div style={{ borderBottom: `3px solid ${themeDnsData?.theme_css?.main_color}`, width: '150px', marginBottom: '0.5rem' }} />
+                                    {
+                                        group.childs.map((child) => {
+                                            return <Typography variant="body2" style={{ cursor: 'pointer' }} onClick={() => {
+                                                router.push(`/shop/items?category_id${index}=${child?.id}&depth=0`)
+                                                setOpenAllCategory("")
+                                            }}>{langChipSelected == 0 ? child?.category_en_name : child?.category_name}</Typography>
+                                        })
+
+                                    }
+                                </>
+                            }
                         })}
                     </Col>
                 </div>

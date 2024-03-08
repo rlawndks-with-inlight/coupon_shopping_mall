@@ -98,9 +98,9 @@ const DialogBuyNow = (props) => {
     }
     setPayList(themeDnsData?.payment_modules)
   }, [])
-  useEffect(() => {
+  /*useEffect(() => {
     console.log(payData)
-  }, [payData])
+  }, [payData])*/
   const onChangeAddressPage = async (search_obj) => {
     setAddressContent({
       ...addressContent,

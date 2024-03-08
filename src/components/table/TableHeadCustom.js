@@ -70,7 +70,7 @@ export default function TableHeadCustom({
             sx={{ width: headCell.width, minWidth: headCell.minWidth }}//'@media screen and (max-width: 2500px)': {fontSize:'0.5rem'}
           >
             {onSort &&
-              headCell.id == 'product_code' ||
+              //headCell.id == 'product_code' || 상품코드는 sort 방식 오류로 막아놓음
               headCell.id == 'product_price' ||
               headCell.id == 'product_sale_price' ||
               headCell.id == 'order_count' ||

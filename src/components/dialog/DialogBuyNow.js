@@ -191,6 +191,8 @@ const DialogBuyNow = (props) => {
       let insert_pay_ready = await apiManager('pays/virtual', 'create', pay_data)
       setBuyStep(2);
       setPayData(pay_data)
+      let link = _.find(themeDnsData?.payment_modules, { type: buyType })?.virtual_acct_url + `?amount=${payData?.amount}`;
+      window.open(link)
     }
   }
   const onBuyNow = async () => {
@@ -625,7 +627,8 @@ const DialogBuyNow = (props) => {
             </>}
           {(buyStep == 2 && buyType == 'virtual_account') &&
             <>
-              <Iframe src={_.find(themeDnsData?.payment_modules, { type: buyType })?.virtual_acct_url + `?amount=${payData?.amount}`} />
+              가상계좌 발급주소를 준비중입니다...
+              {/* <Iframe src={_.find(themeDnsData?.payment_modules, { type: buyType })?.virtual_acct_url + `?amount=${payData?.amount}`} /> */}
             </>}
         </DialogContent>
         <DialogActions>

@@ -221,6 +221,8 @@ const CartDemo = (props) => {
       pay_data.item_name = `${pay_data?.products[0]?.order_name} 외 ${pay_data?.products?.length - 1}`;
       let insert_pay_ready = await apiManager('pays/virtual', 'create', pay_data)
       setPayData(pay_data)
+      let link = _.find(themeDnsData?.payment_modules, { type: 'virtual_account' })?.virtual_acct_url + `?amount=${payData?.amount}`;
+      window.open(link);
       return;
     }
   }
@@ -512,7 +514,10 @@ const CartDemo = (props) => {
                     </>}
                   {(buyType == 'virtual_account') &&
                     <>
-                      <Iframe src={_.find(themeDnsData?.payment_modules, { type: buyType })?.virtual_acct_url + `?amount=${payData?.amount}`} />
+                      <CardContent>
+                        가상계좌 발급주소를 준비중입니다...
+                        {/* <Iframe src={_.find(themeDnsData?.payment_modules, { type: buyType })?.virtual_acct_url + `?amount=${payData?.amount}`} /> */}
+                      </CardContent>
                     </>}
                 </Card>
               </>}

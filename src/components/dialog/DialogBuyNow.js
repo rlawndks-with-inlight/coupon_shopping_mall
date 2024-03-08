@@ -191,7 +191,7 @@ const DialogBuyNow = (props) => {
       let insert_pay_ready = await apiManager('pays/virtual', 'create', pay_data)
       setBuyStep(2);
       setPayData(pay_data)
-      let link = _.find(themeDnsData?.payment_modules, { type: 'virtual_account' })?.virtual_acct_url + `?amount=${payData?.amount}`;
+      let link = _.find(themeDnsData?.payment_modules, { type: 'virtual_account' })?.virtual_acct_url + `?amount=${pay_data?.amount}`;
       window.open(link)
     }
   }

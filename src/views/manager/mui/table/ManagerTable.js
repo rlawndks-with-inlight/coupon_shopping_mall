@@ -154,7 +154,7 @@ export default function ManagerTable(props) {
     <>
       <TableContainer sx={{ overflow: 'unset' }}>
         <TableHeaderContainer style={{display:'flex', flexDirection:'column'}}>
-          <div>
+          <div style={{display:'flex'}}>
           <Row style={{ flexGrow: 1, rowGap: '0.75rem', flexWrap: 'wrap', margin: '0.35rem 0' }} >
             <FormControl variant="outlined" sx={{ flexGrow: 1, minWidth: '100px', marginRight: '0.75rem' }}>
               <OutlinedInput

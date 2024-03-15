@@ -153,7 +153,8 @@ export default function ManagerTable(props) {
   return (
     <>
       <TableContainer sx={{ overflow: 'unset' }}>
-        <TableHeaderContainer>
+        <TableHeaderContainer style={{display:'flex', flexDirection:'column'}}>
+          <div>
           <Row style={{ flexGrow: 1, rowGap: '0.75rem', flexWrap: 'wrap', margin: '0.35rem 0' }} >
             <FormControl variant="outlined" sx={{ flexGrow: 1, minWidth: '100px', marginRight: '0.75rem' }}>
               <OutlinedInput
@@ -283,8 +284,9 @@ export default function ManagerTable(props) {
               <>
               </>}
           </Row>
+          </div>
           <Row>
-            검색된 총 상품 수 : {data?.content?.length}
+            검색된 총 상품 수 : {data?.total}
           </Row>
         </TableHeaderContainer>
         <div style={{ width: '100%', overflow: 'auto' }}>

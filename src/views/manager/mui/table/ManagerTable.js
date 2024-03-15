@@ -283,6 +283,9 @@ export default function ManagerTable(props) {
               <>
               </>}
           </Row>
+          <Row>
+            검색된 총 상품 수 : {data?.content?.length}
+          </Row>
         </TableHeaderContainer>
         <div style={{ width: '100%', overflow: 'auto' }}>
           {!data.content ?

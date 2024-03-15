@@ -65,7 +65,7 @@ const ItemsDemo = (props) => {
   ]
   useEffect(() => {
     getItemList({ ...router.query }, searchObj)
-  }, [router.query.category_id0, router.query.category_id1, router.query.category_id2])
+  }, [router.query.category_id0, router.query.category_id1, router.query.category_id2, router.query.search])
 
   /*const handleScroll = () => {
     if (!scrollRef.current) {

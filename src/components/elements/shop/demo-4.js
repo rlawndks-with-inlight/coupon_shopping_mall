@@ -106,12 +106,12 @@ export const Item4 = (props) => {
           margin: '0 auto',
         }} />
       <ItemName variant="body2" style={{ height: '60px', width: '90%', wordBreak: 'keep-all' }}>
-        {item?.product_name.length < 40 ? item.product_name : `${item.product_name.slice(0, 40)}...`}
+        {item?.product_name.length < 50 ? item.product_name : `${item.product_name.slice(0, 50)}...`}
       </ItemName>
       <ItemName variant="subtitle2">
         {item?.status == 1 ? '거래 진행중'
           :
-          item?.status == 2 ? 'SOLD OUT'
+          item?.product_sale_price == 0 ? 'SOLD OUT'
             :
             `${commarNumber(item?.product_sale_price)}원`}
       </ItemName>

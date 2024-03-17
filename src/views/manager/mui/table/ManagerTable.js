@@ -286,7 +286,7 @@ export default function ManagerTable(props) {
           </Row>
           </div>
           <Row>
-            검색된 총 상품 수 : {data?.total}
+            검색된 총 항목 수 : {data?.total}
           </Row>
         </TableHeaderContainer>
         <div style={{ width: '100%', overflow: 'auto' }}>

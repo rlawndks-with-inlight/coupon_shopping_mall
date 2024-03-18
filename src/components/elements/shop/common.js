@@ -161,13 +161,13 @@ export const Items = props => {
           <Slider {...items_setting} className='margin-slide' ref={slide_ref}>
             {items &&
               items.map((item, idx) => {
-                if (item.status != 5) { //item.status가 5일 경우 비공개로 설정
+                console.log(item)
                   return (
                     <ItemWrapper theme_css={itemThemeCss}>
                       <Item item={item} router={router} theme_css={itemThemeCss} seller={seller} />
                     </ItemWrapper>
                   )
-                }
+                
               })}
           </Slider>
         </>
@@ -176,13 +176,13 @@ export const Items = props => {
           <ItemsContainer theme_css={itemThemeCss}>
             {items &&
               items.map((item, idx) => {
-                if (item.status != 5) { //item.status가 5일 경우 비공개로 설정
+                
                   return (
                     <ItemWrapper theme_css={itemThemeCss}>
                       <Item item={item} router={router} theme_css={itemThemeCss} seller={seller} />
                     </ItemWrapper>
                   )
-                }
+                
               })}
           </ItemsContainer>
         </>

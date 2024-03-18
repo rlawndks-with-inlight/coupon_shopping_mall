@@ -44,6 +44,10 @@ const ItemsDemo = (props) => {
   const [textChipSelected, setTextChipSelected] = useState('')
   const { sort, categoryGroup } = CategorySorter(themeCategoryList)
 
+  useEffect(() => {
+    sort(LANGCODE.ENG)
+}, [])
+
   const sortList = [
     /*{
       label: '그랑파리랭킹순',
@@ -68,7 +72,7 @@ const ItemsDemo = (props) => {
   ]
   useEffect(() => {
     getItemList({ ...router.query }, searchObj)
-  }, [router.query.category_id0, router.query.category_id1, router.query.category_id2, router.query.search])
+  }, [router.query.category_id0, router.query.category_id1, router.query.category_id2, router.query.search, router.query.property_id ])
 
   /*const handleScroll = () => {
     if (!scrollRef.current) {
@@ -328,24 +332,20 @@ const ItemsDemo = (props) => {
                       console.log([`category_id${index}`])
                       console.log(rest)
                       query = new URLSearchParams(query).toString();
-                      router.push(`/shop/items?${query}`);
+                      if (query == 'depth=0') {
+                        router.push(`/shop/items/?`)
+                      } else {
+                        router.push(`/shop/items?${query}`);  
+                      }                   
                     }}>전체</Button>
-                  {group?.product_categories && group?.product_categories.map((category, idx) => {
-                    let is_alphabet = false;
-                    let alphabet = "";
-                    if (group?.sort_type == 1) {
-                      for (var i = 65; i < 90; i++) {
-                        if (category?.category_en_name?.[0]?.toUpperCase() == String.fromCharCode(i) && (group?.product_categories[idx - 1]?.category_en_name?.[0] ?? "").toUpperCase() != String.fromCharCode(i)) {
-                          is_alphabet = true;
-                          alphabet = String.fromCharCode(i);
-                          break;
-                        }
-                      }
-                    }
-                    return <>
+                  
+                    
+                    <>
 
                       {group?.sort_type != 1 ?
-                        <Button
+                      <>
+                      {group?.product_categories && group?.product_categories.map((category, idx) => {
+                        return <Button
                           size="small"
                           variant={`${(categoryIds[`category_id${index}`] == category?.id || categoryChildren[`category_id${index}`]?.parent_id == category?.id) ? 'contained' : 'text'}`}
                           onClick={() => {
@@ -355,6 +355,8 @@ const ItemsDemo = (props) => {
                             query = new URLSearchParams(query).toString();
                             router.push(`/shop/items?${query}`);
                           }}>{category?.category_en_name ?? category?.category_name}</Button>
+                        })}
+                        </>
                         :
                         <>
                           {
@@ -372,13 +374,10 @@ const ItemsDemo = (props) => {
                                     group.childs.map((child) => {
                                       return <Button
                                         size='small'
-                                        variant={`${(categoryIds[`category_id${index}`] == category?.id || categoryChildren[`category_id${index}`]?.parent_id == category?.id) ? 'contained' : 'text'}`}
+                                        //variant={`${(categoryIds[`category_id${index}`] == category?.id || categoryChildren[`category_id${index}`]?.parent_id == category?.id) ? 'contained' : 'text'}`}
                                         onClick={() => {
                                           let query = { ...categoryIds };
-                                          query[`category_id${index}`] = category?.id;
-
-                                          query = new URLSearchParams(query).toString();
-                                          router.push(`/shop/items?${query}`);
+                                          router.push(`/shop/items?category_id${index}=${child?.id}&depth=0`)
                                         }}>
                                         {langChipSelected == 0 ? child?.category_en_name : child?.category_name}
                                       </Button>
@@ -400,13 +399,9 @@ const ItemsDemo = (props) => {
                                     group.childs.map((child) => {
                                       return <Button
                                         size='small'
-                                        variant={`${(categoryIds[`category_id${index}`] == category?.id || categoryChildren[`category_id${index}`]?.parent_id == category?.id) ? 'contained' : 'text'}`}
+                                        //variant={`${(categoryIds[`category_id${index}`] == category?.id || categoryChildren[`category_id${index}`]?.parent_id == category?.id) ? 'contained' : 'text'}`}
                                         onClick={() => {
-                                          let query = { ...categoryIds };
-                                          query[`category_id${index}`] = category?.id;
-
-                                          query = new URLSearchParams(query).toString();
-                                          router.push(`/shop/items?${query}`);
+                                          router.push(`/shop/items?category_id${index}=${child?.id}&depth=0`)
                                         }}>
                                         {langChipSelected == 0 ? child?.category_en_name : child?.category_name}
                                       </Button>
@@ -420,7 +415,6 @@ const ItemsDemo = (props) => {
                         </>
                       }
                     </>
-                  })}
 
                 </ContentBorderContainer>
                 {categoryChildren[`category_id${index}`] &&

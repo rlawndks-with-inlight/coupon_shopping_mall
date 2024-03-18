@@ -46,7 +46,7 @@ const ItemsDemo = (props) => {
 
   useEffect(() => {
     sort(LANGCODE.ENG)
-}, [])
+  }, [])
 
   const sortList = [
     /*{
@@ -72,7 +72,7 @@ const ItemsDemo = (props) => {
   ]
   useEffect(() => {
     getItemList({ ...router.query }, searchObj)
-  }, [router.query.category_id0, router.query.category_id1, router.query.category_id2, router.query.search, router.query.property_id ])
+  }, [router.query.category_id0, router.query.category_id1, router.query.category_id2, router.query.search, router.query.property_id])
 
   /*const handleScroll = () => {
     if (!scrollRef.current) {
@@ -243,8 +243,8 @@ const ItemsDemo = (props) => {
                 <ContentBorderContainer style={{ maxHeight: '150px', overflowX: 'auto', minHeight: '50px', }}>
                   {group?.sort_type == 1 &&
                     <>
-                      <Row style={{ marginBottom: '1rem' }}>
-                        <div style={{ borderRight: `2px solid gray`, marginRight: '0.5rem' }}>
+                      <Row style={{ marginBottom: '1rem', display:'flex', flexDirection:'column', margin:'-1rem 0 -0.5rem 0' }}>
+                        <div style={{ borderBottom: `2px solid gray`, marginRight: '0.5rem' }}>
                           <Chip label={`알파벳순`} variant="soft" sx={{
                             margin: '0.5rem 0.5rem 0.5rem 0',
                             fontWeight: 'bold',
@@ -273,7 +273,7 @@ const ItemsDemo = (props) => {
                           />
                         </div>
                         {langChipSelected == 0 ?
-                          <>
+                          <Row>
                             {alphabetList.map((alphabet) => {
                               return <>
                                 <Chip
@@ -295,9 +295,9 @@ const ItemsDemo = (props) => {
                                 />
                               </>
                             })}
-                          </>
+                          </Row>
                           :
-                          <>
+                          <Row>
                             {hangeulList.map((hangeul) => {
                               return <>
                                 <Chip
@@ -318,7 +318,7 @@ const ItemsDemo = (props) => {
                                 />
                               </>
                             })}
-                          </>
+                          </Row>
                         }
                       </Row>
                     </>
@@ -335,86 +335,91 @@ const ItemsDemo = (props) => {
                       if (query == 'depth=0') {
                         router.push(`/shop/items/?`)
                       } else {
-                        router.push(`/shop/items?${query}`);  
-                      }                   
-                    }}>전체</Button>
-                  
-                    
-                    <>
-
-                      {group?.sort_type != 1 ?
-                      <>
-                      {group?.product_categories && group?.product_categories.map((category, idx) => {
-                        return <Button
-                          size="small"
-                          variant={`${(categoryIds[`category_id${index}`] == category?.id || categoryChildren[`category_id${index}`]?.parent_id == category?.id) ? 'contained' : 'text'}`}
-                          onClick={() => {
-                            let query = { ...categoryIds };
-                            query[`category_id${index}`] = category?.id;
-
-                            query = new URLSearchParams(query).toString();
-                            router.push(`/shop/items?${query}`);
-                          }}>{category?.category_en_name ?? category?.category_name}</Button>
-                        })}
-                        </>
-                        :
-                        <>
-                          {
-                            categoryGroup.map((group) => {
-                              if (textChipSelected == '') {
-                                return <>
-                                  <Chip label={`[${group.label ? group.label : "#"}]`} variant="soft" sx={{
-                                    marginTop: '0.5rem',
-                                    cursor: 'pointer', fontWeight: 'bold', background: `${themeDnsData?.theme_css?.main_color}29`, color: `${themeDnsData?.theme_css?.main_color}`, '&:hover': {
-                                      color: '#fff',
-                                      background: `${themeDnsData?.theme_css?.main_color}`,
-                                    }
-                                  }} />
-                                  {
-                                    group.childs.map((child) => {
-                                      return <Button
-                                        size='small'
-                                        //variant={`${(categoryIds[`category_id${index}`] == category?.id || categoryChildren[`category_id${index}`]?.parent_id == category?.id) ? 'contained' : 'text'}`}
-                                        onClick={() => {
-                                          let query = { ...categoryIds };
-                                          router.push(`/shop/items?category_id${index}=${child?.id}&depth=0`)
-                                        }}>
-                                        {langChipSelected == 0 ? child?.category_en_name : child?.category_name}
-                                      </Button>
-                                    })
-
-                                  }
-                                </>
-                              }
-                              else if (textChipSelected == group?.label) {
-                                return <>
-                                  <Chip label={`[${group.label ? group.label : "#"}]`} variant="soft" sx={{
-                                    marginTop: '0.5rem',
-                                    cursor: 'pointer', fontWeight: 'bold', background: `${themeDnsData?.theme_css?.main_color}29`, color: `${themeDnsData?.theme_css?.main_color}`, '&:hover': {
-                                      color: '#fff',
-                                      background: `${themeDnsData?.theme_css?.main_color}`,
-                                    }
-                                  }} />
-                                  {
-                                    group.childs.map((child) => {
-                                      return <Button
-                                        size='small'
-                                        //variant={`${(categoryIds[`category_id${index}`] == category?.id || categoryChildren[`category_id${index}`]?.parent_id == category?.id) ? 'contained' : 'text'}`}
-                                        onClick={() => {
-                                          router.push(`/shop/items?category_id${index}=${child?.id}&depth=0`)
-                                        }}>
-                                        {langChipSelected == 0 ? child?.category_en_name : child?.category_name}
-                                      </Button>
-                                    })
-
-                                  }
-                                </>
-                              }
-                            })
-                          }
-                        </>
+                        router.push(`/shop/items?${query}`);
                       }
-                    </>
+                    }}>전체</Button>
+
+
+                  <>
+
+                    {group?.sort_type != 1 ?
+                      <>
+                        {group?.product_categories && group?.product_categories.map((category, idx) => {
+                          return <Button
+                            size="small"
+                            variant={`${(categoryIds[`category_id${index}`] == category?.id || categoryChildren[`category_id${index}`]?.parent_id == category?.id) ? 'contained' : 'text'}`}
+                            onClick={() => {
+                              let query = { ...categoryIds };
+                              query[`category_id${index}`] = category?.id;
+
+                              query = new URLSearchParams(query).toString();
+                              router.push(`/shop/items?${query}`);
+                            }}>{category?.category_en_name ?? category?.category_name}</Button>
+                        })}
+                      </>
+                      :
+                      <>
+                        {
+                          categoryGroup.map((group) => {
+                            if (textChipSelected == '') {
+                              return <>
+                                <Chip label={`[${group.label ? group.label : "#"}]`} variant="soft" sx={{
+                                  cursor: 'pointer', fontWeight: 'bold', background: `${themeDnsData?.theme_css?.main_color}29`, color: `${themeDnsData?.theme_css?.main_color}`, '&:hover': {
+                                    color: '#fff',
+                                    background: `${themeDnsData?.theme_css?.main_color}`,
+                                  }
+                                }} />
+                                {
+                                  group.childs.map((child) => {
+                                    return <Button
+                                      size='small'
+                                      variant={`${(categoryIds[`category_id${index}`] == child?.id || categoryChildren[`category_id${index}`]?.parent_id == child?.id) ? 'contained' : 'text'}`}
+                                      onClick={() => {
+                                        let query = { ...categoryIds };
+                                        query[`category_id${index}`] = child?.id;
+
+                                        query = new URLSearchParams(query).toString();
+                                        router.push(`/shop/items?${query}`);
+                                      }}>
+                                      {langChipSelected == 0 ? child?.category_en_name : child?.category_name}
+                                    </Button>
+                                  })
+
+                                }
+                              </>
+                            }
+                            else if (textChipSelected == group?.label) {
+                              return <>
+                                <Chip label={`[${group.label ? group.label : "#"}]`} variant="soft" sx={{
+                                  cursor: 'pointer', fontWeight: 'bold', background: `${themeDnsData?.theme_css?.main_color}29`, color: `${themeDnsData?.theme_css?.main_color}`, '&:hover': {
+                                    color: '#fff',
+                                    background: `${themeDnsData?.theme_css?.main_color}`,
+                                  }
+                                }} />
+                                {
+                                  group.childs.map((child) => {
+                                    return <Button
+                                      size='small'
+                                      variant={`${(categoryIds[`category_id${index}`] == child?.id || categoryChildren[`category_id${index}`]?.parent_id == child?.id) ? 'contained' : 'text'}`}
+                                      onClick={() => {
+                                        let query = { ...categoryIds };
+                                        query[`category_id${index}`] = child?.id;
+
+                                        query = new URLSearchParams(query).toString();
+                                        router.push(`/shop/items?${query}`);
+                                      }}>
+                                      {langChipSelected == 0 ? child?.category_en_name : child?.category_name}
+                                    </Button>
+                                  })
+
+                                }
+                              </>
+                            }
+                          })
+                        }
+                      </>
+                    }
+                  </>
 
                 </ContentBorderContainer>
                 {categoryChildren[`category_id${index}`] &&

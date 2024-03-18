@@ -161,7 +161,6 @@ export const Items = props => {
           <Slider {...items_setting} className='margin-slide' ref={slide_ref}>
             {items &&
               items.map((item, idx) => {
-                console.log(item)
                   return (
                     <ItemWrapper theme_css={itemThemeCss}>
                       <Item item={item} router={router} theme_css={itemThemeCss} seller={seller} />

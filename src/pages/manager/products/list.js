@@ -292,7 +292,7 @@ const ProductList = () => {
           <>
             <IconButton>
               <Icon icon='material-symbols:edit-outline' onClick={() => {
-                router.push(`edit/${row?.product_code || row?.id}`)
+                router.push(`edit/${row?.id}`)
               }} />
             </IconButton>
             {/*<IconButton>

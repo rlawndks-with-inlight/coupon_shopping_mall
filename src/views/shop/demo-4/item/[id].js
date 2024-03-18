@@ -226,7 +226,7 @@ const ItemDemo = (props) => {
                         </>
                         :
                         <>
-                          <ItemCharacter key_name={'판매가'} value={<div>{commarNumber(product?.product_sale_price)}원</div>} />
+                          <ItemCharacter key_name={'판매가'} value={product?.product_sale_price != 0 ? <div>{commarNumber(product?.product_sale_price)}원</div> : <div>SOLD OUT</div>} />
                         </>
                       }
                       <div style={{ borderBottom: '1px solid #ccc', width: '100%', marginTop: '1rem' }} />

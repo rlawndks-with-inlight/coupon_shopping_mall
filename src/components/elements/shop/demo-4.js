@@ -100,19 +100,21 @@ export const Item4 = (props) => {
       <Chip
         size="small"
         variant="outlined"
-        color={item?.status == 0 && item?.show_status == 1 ? itemStatusList[0].color : itemStatusList[parseInt(item?.status)+1 ?? 0].color}  //N 및 N-S 등급은 NEW, 그 외는 USED
-        label={item?.status == 0 && item?.show_status == 1 ? itemStatusList[0].label : itemStatusList[parseInt(item?.status)+1 ?? 0].label}
+        color={item?.status == 0 && item?.show_status == 1 ? itemStatusList[0].color : itemStatusList[parseInt(item?.status) + 1 ?? 0].color}  //N 및 N-S 등급은 NEW, 그 외는 USED
+        label={item?.status == 0 && item?.show_status == 1 ? itemStatusList[0].label : itemStatusList[parseInt(item?.status) + 1 ?? 0].label}
         style={{
           margin: '0 auto',
         }} />
-      <ItemName variant="body2" style={{height:'60px', width:'90%', wordBreak:'keep-all'}}>{item?.product_name}</ItemName>
+      <ItemName variant="body2" style={{ height: '60px', width: '90%', wordBreak: 'keep-all' }}>
+        {item?.product_name.length < 50 ? item.product_name : `${item.product_name.slice(0, 50)}...`}
+      </ItemName>
       <ItemName variant="subtitle2">
-        {item?.status == 1 ? '거래 진행중' 
-        : 
-        item?.status == 2 ? 'SOLD OUT' 
-        :
-        `${commarNumber(item?.product_sale_price)}원`}
-        </ItemName>
+        {item?.status == 1 ? '거래 진행중'
+          :
+          item?.product_sale_price == 0 ? 'SOLD OUT'
+            :
+            `${commarNumber(item?.product_sale_price)}원`}
+      </ItemName>
     </ItemWrapper>
   </>
 }
@@ -350,8 +352,8 @@ export const BasicInfo = () => {
     <>
       <div
         style={{ padding: '24px' }}
-        //onClick={() => { console.log(themeDnsData) }}
-        
+      //onClick={() => { console.log(themeDnsData) }}
+
       />
 
     </>
@@ -365,8 +367,8 @@ export const ProductFaq = () => {
     content: '',
     is_reply: 0,
     reply: '',
-    product_id:'',
-    user_id:'',
+    product_id: '',
+    user_id: '',
   })
   const [reply, setReply] = useState({
     post_title: '',
@@ -390,7 +392,7 @@ export const ProductFaq = () => {
         result2 = true;
       }
     } else {
-      result = await apiManager('product-faq', 'create', { ...item, product_id: router.query?.id, user_id:user.id });
+      result = await apiManager('product-faq', 'create', { ...item, product_id: router.query?.id, user_id: user.id });
       result2 = true;
     }
     if (result && result2) {
@@ -403,53 +405,53 @@ export const ProductFaq = () => {
     <>
 
       {user ?
-      <>
-      <TextField
-        label='제목'
-        value={item.title}
-        onChange={(e) => {
-          setItem(
-            {
-              ...item,
-              ['title']: e.target.value
-            }
-          )
-        }} />
-      <ReactQuillComponent
-        value={item.content}
-        setValue={(value) => {
-          setItem({
-            ...item,
-            ['content']: value
-          });
-        }}
-      />
+        <>
+          <TextField
+            label='제목'
+            value={item.title}
+            onChange={(e) => {
+              setItem(
+                {
+                  ...item,
+                  ['title']: e.target.value
+                }
+              )
+            }} />
+          <ReactQuillComponent
+            value={item.content}
+            setValue={(value) => {
+              setItem({
+                ...item,
+                ['content']: value
+              });
+            }}
+          />
 
-      <Button variant="contained" style={{
-        height: '48px', width: '120px', margin: '1rem 0 1rem auto'
-      }} onClick={() => {
-        setModal({
-          func: () => { onSave() },
-          icon: 'material-symbols:edit-outline',
-          title: '저장 하시겠습니까?'
-        })
-      }}>
-        저장
-      </Button>
-      </>
-      :
-      <>
-      <div style={{padding:'24px'}}>
-      로그인이 필요합니다.<br />
-      <Button variant="contained" style={{
-        height: '48px', width: '150px', margin: '1rem 0 1rem auto'
-      }} onClick={() => {
-        router.push('/shop/auth/login')
-      }}>
-        로그인하러 가기
-        </Button>
-        </div>
-      </>
+          <Button variant="contained" style={{
+            height: '48px', width: '120px', margin: '1rem 0 1rem auto'
+          }} onClick={() => {
+            setModal({
+              func: () => { onSave() },
+              icon: 'material-symbols:edit-outline',
+              title: '저장 하시겠습니까?'
+            })
+          }}>
+            저장
+          </Button>
+        </>
+        :
+        <>
+          <div style={{ padding: '24px' }}>
+            로그인이 필요합니다.<br />
+            <Button variant="contained" style={{
+              height: '48px', width: '150px', margin: '1rem 0 1rem auto'
+            }} onClick={() => {
+              router.push('/shop/auth/login')
+            }}>
+              로그인하러 가기
+            </Button>
+          </div>
+        </>
       }
     </>
   )

@@ -99,9 +99,9 @@ export const Item4 = (props) => {
       </ItemImgContainer>
       <Chip
         size="small"
-        variant="outlined"
-        color={item?.status == 0 && item?.show_status == 1 ? itemStatusList[0].color : itemStatusList[parseInt(item?.status) + 1 ?? 0].color}  //N 및 N-S 등급은 NEW, 그 외는 USED
-        label={item?.status == 0 && item?.show_status == 1 ? itemStatusList[0].label : itemStatusList[parseInt(item?.status) + 1 ?? 0].label}
+        variant="outlined"  //그랑파리 상품에서는 item.status가 0이다 = 판매중, 그 중에서 show_status가 0이면 신상품, 1이면 중고품
+        color={item?.status == 0 && item?.show_status == 1 ? itemStatusList[0]?.color : itemStatusList[parseInt(item?.status) + 1 ?? 0]?.color}  //N 및 N-S 등급은 NEW, 그 외는 USED
+        label={item?.status == 0 && item?.show_status == 1 ? itemStatusList[0]?.label : itemStatusList[parseInt(item?.status) + 1 ?? 0]?.label}
         style={{
           margin: '0 auto',
         }} />

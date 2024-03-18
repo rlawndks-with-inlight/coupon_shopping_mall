@@ -82,12 +82,12 @@ const ItemDemo = (props) => {
           bounds={'.app'}
         /> : null,
     },
-    { 
+    /*{ 
       value: 'basic_info',
       label: '기본정보',
       component: product ?
         <BasicInfo /> : null,
-    },
+    },*/
     {
       value: 'reviews',
       label: `${translate('상품후기')} (${reviewContent?.total})`,

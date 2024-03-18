@@ -212,6 +212,7 @@ const ProductList = () => {
           <MenuItem value={2}>{'품절'}</MenuItem>
           <MenuItem value={3}>{'택배수거'}</MenuItem>
           <MenuItem value={4}>{'방문수거'}</MenuItem>
+          <MenuItem value={5}>{'비공개'}</MenuItem>
         </Select>
         }
       },

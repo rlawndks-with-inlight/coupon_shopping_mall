@@ -492,7 +492,6 @@ const ConsignmentGuide = () => {
                                                 setOpenAllCategory("")
                                             }}>{langChipSelected == 0 ? child?.category_en_name : child?.category_name}</Typography>
                                         })
-
                                     }
                                 </>
                             }

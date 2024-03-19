@@ -81,6 +81,8 @@ export const Item4 = (props) => {
     { label: 'NEW', color: 'primary' },  //빨강
     { label: 'STOPPED', color: 'warning' },
     { label: 'SOLD-OUT', color: 'error' },
+
+    { label: '비공개', color: 'error'}
   ]
   return <>
     <ItemWrapper
@@ -100,8 +102,22 @@ export const Item4 = (props) => {
       <Chip
         size="small"
         variant="outlined"  //그랑파리 상품에서는 item.status가 0이다 = 판매중, 그 중에서 show_status가 0이면 신상품, 1이면 중고품
-        color={item?.status == 0 && item?.show_status == 1 ? itemStatusList[0]?.color : itemStatusList[parseInt(item?.status) + 1 ?? 0]?.color}  //N 및 N-S 등급은 NEW, 그 외는 USED
-        label={item?.status == 0 && item?.show_status == 1 ? itemStatusList[0]?.label : itemStatusList[parseInt(item?.status) + 1 ?? 0]?.label}
+        color={
+          item?.status == 0 && item?.show_status == 1 ? 
+          itemStatusList[0]?.color 
+          : 
+          item?.status == 5 ?
+          itemStatusList[4]?.color
+          :
+          itemStatusList[parseInt(item?.status) + 1 ?? 0]?.color}  //N 및 N-S 등급은 NEW, 그 외는 USED
+        label={
+          item?.status == 0 && item?.show_status == 1 ? 
+          itemStatusList[0]?.label 
+          : 
+          item?.status == 5 ?
+          itemStatusList[4]?.label
+          : 
+          itemStatusList[parseInt(item?.status) + 1 ?? 0]?.label}
         style={{
           margin: '0 auto',
         }} />

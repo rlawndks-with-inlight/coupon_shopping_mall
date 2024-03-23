@@ -781,7 +781,7 @@ const Header = () => {
                                                                 borderTop:`2px solid ${themeDnsData?.theme_css?.main_color}`,
                                                                 borderBottom:`2px solid ${themeDnsData?.theme_css?.main_color}`,
                                                                 }}>
-                                                                <Col style={{maxWidth:'1360px', margin:'0 auto'}}>
+                                                                <div style={{maxWidth:'1360px', margin:'0 auto'}}>
                                                                     {group?.sort_type == 0 &&
                                                                         <>
                                                                             <Row style={{ columnGap: '1rem', flexWrap: 'wrap', rowGap: '2rem', marginBottom: '10px' }}>
@@ -922,7 +922,7 @@ const Header = () => {
                                                                                     </>
                                                                                 }
                                                                             </Row>
-                                                                            <Col style={{ minWidth: '100px', flexWrap: 'wrap', alignItems: 'flex-start', maxHeight: '700px', rowGap: '0.2rem', marginBottom:'1rem' }}>
+                                                                            <Col style={{ minWidth: '100px', flexWrap: 'wrap', alignItems: 'flex-start', rowGap: '0.2rem', marginBottom:'1rem' }}>
 
                                                                                 {categoryGroup.map((group) => {
                                                                                     if (textChipSelected == '') {
@@ -982,7 +982,7 @@ const Header = () => {
                                                                             </Col>
 
                                                                         </>}
-                                                                </Col>
+                                                                </div>
                                                             </PopoverContainer>
                                                         </>}
                                                 </div>

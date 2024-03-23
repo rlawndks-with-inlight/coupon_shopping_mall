@@ -781,7 +781,7 @@ const Header = () => {
                                                                 borderTop:`2px solid ${themeDnsData?.theme_css?.main_color}`,
                                                                 borderBottom:`2px solid ${themeDnsData?.theme_css?.main_color}`,
                                                                 }}>
-                                                                <div style={{maxWidth:'1360px', margin:'0 auto'}}>
+                                                                <Row style={{maxWidth:'1360px', margin:'0 auto'}}>
                                                                     {group?.sort_type == 0 &&
                                                                         <>
                                                                             <Row style={{ columnGap: '1rem', flexWrap: 'wrap', rowGap: '2rem', marginBottom: '10px' }}>
@@ -982,7 +982,7 @@ const Header = () => {
                                                                             </Col>
 
                                                                         </>}
-                                                                </div>
+                                                                </Row>
                                                             </PopoverContainer>
                                                         </>}
                                                 </div>

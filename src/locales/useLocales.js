@@ -15,7 +15,7 @@ export default function useLocales() {
 
   const storageAvailable = localStorageAvailable();
 
-  const langStorage = storageAvailable ? localStorage.getItem('i18nextLng') : themeDnsData?.setting_obj?.default_lang;
+  const langStorage = storageAvailable ? localStorage.getItem('i18nextLng') : (themeDnsData?.setting_obj?.default_lang ?? 'ko');
 
   const currentLang = allLangs.find((_lang) => _lang.value === langStorage) || themeDnsData?.setting_obj?.default_lang;
 

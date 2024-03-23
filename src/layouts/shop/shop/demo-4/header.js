@@ -922,7 +922,7 @@ const Header = () => {
                                                                                     </>
                                                                                 }
                                                                             </Row>
-                                                                            <Col style={{ minWidth: '100px', flexWrap: 'wrap', alignItems: 'flex-start', rowGap: '0.2rem', marginBottom:'1rem', overfl }}>
+                                                                            <Col style={{ minWidth: '100px', flexWrap: 'wrap', alignItems: 'flex-start', rowGap: '0.2rem', marginBottom:'1rem' }}>
 
                                                                                 {categoryGroup.map((group) => {
                                                                                     if (textChipSelected == '') {

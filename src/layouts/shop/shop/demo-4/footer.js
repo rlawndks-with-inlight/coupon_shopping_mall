@@ -12,7 +12,7 @@ margin-top: auto;
 const ContentWrapper = styled.div`
 display:flex;
 width:90%;
-max-width:1300px;
+max-width:1360px;
 margin: 0 auto;
 justify-content: space-between;
 `

@@ -776,7 +776,7 @@ const Header = () => {
                                                         <>
                                                             <PopoverContainer style={{ 
                                                                 background: `${themeMode == 'dark' ? '#222' : '#FEF8F4'}`, 
-                                                                maxHeight: `${window.innerHeight - headerHeight}px`, 
+                                                                //maxHeight: `${window.innerHeight - headerHeight}px`, 
                                                                 overflowY: 'auto', 
                                                                 borderTop:`2px solid ${themeDnsData?.theme_css?.main_color}`,
                                                                 borderBottom:`2px solid ${themeDnsData?.theme_css?.main_color}`,

@@ -776,7 +776,7 @@ const Header = () => {
                                                         <>
                                                             <PopoverContainer style={{ 
                                                                 background: `${themeMode == 'dark' ? '#222' : '#FEF8F4'}`, 
-                                                                //maxHeight: `${window.innerHeight - headerHeight}px`, 
+                                                                maxHeight: `${window.innerHeight - headerHeight}px`, 
                                                                 overflowY: 'auto', 
                                                                 borderTop:`2px solid ${themeDnsData?.theme_css?.main_color}`,
                                                                 borderBottom:`2px solid ${themeDnsData?.theme_css?.main_color}`,
@@ -922,7 +922,7 @@ const Header = () => {
                                                                                     </>
                                                                                 }
                                                                             </Row>
-                                                                            <Col style={{ minWidth: '100px', flexWrap: 'wrap', alignItems: 'flex-start', rowGap: '0.2rem', marginBottom:'1rem' }}>
+                                                                            <Col style={{ minWidth: '100px', flexWrap: 'wrap', alignItems: 'flex-start', rowGap: '0.2rem', marginBottom:'1rem', overfl }}>
 
                                                                                 {categoryGroup.map((group) => {
                                                                                     if (textChipSelected == '') {

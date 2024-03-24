@@ -450,3 +450,59 @@ export const getNumberByPercent = (num = 0, percent = 0) => {
 export const getPercentByNumber = (num = 1, sub_num = 0) => {
   return Math.round(sub_num / num * 100);
 }
+
+export const setProductPriceByLang = (price = 0, from_lang_ = 'ko', to_lang_ = 'ko') => {
+  let amount = parseFloat(price);
+  let from_lang = from_lang_;
+  let to_lang = to_lang_;
+  let multiply_obj = {
+    'en': 0.00074,
+    'cn': 0.0054,
+    'vi': 18.42,
+    'ja': 0.11,
+    'ko': 1,
+  }
+  if (!Object.keys(multiply_obj).includes(to_lang)) {
+    to_lang = 'ko';
+  }
+
+  if (from_lang == to_lang) {
+    return amount;
+  }
+  if (from_lang == 'ko') {
+    amount = amount * multiply_obj[to_lang]
+  } else {
+    let decimal_count = countDecimalPlaces(multiply_obj[from_lang]);
+    let ten_zekop = Math.pow(10, decimal_count);
+    let brother = multiply_obj[from_lang] * ten_zekop;
+    amount = (price * ten_zekop) / brother * multiply_obj[to_lang]
+  }
+  if (to_lang == 'ko') {
+    amount = parseInt(amount);
+  }
+  return amount;
+}
+function countDecimalPlaces(number) {
+  const numberString = number.toString();
+  const decimalIndex = numberString.indexOf('.');
+
+  if (decimalIndex === -1) {
+    return 0;
+  }
+
+  return numberString.length - decimalIndex - 1;
+}
+export const getPriceUnitByLang = (lang_ = 'ko') => {
+  let lang = lang_;
+  let unit_obj = {
+    'en': '$',
+    'cn': '¥',
+    'vi': 'VND',
+    'ja': '¥',
+    'ko': '원',
+  }
+  if (!Object.keys(unit_obj).includes(lang)) {
+    lang = 'ko';
+  }
+  return unit_obj[lang]
+}

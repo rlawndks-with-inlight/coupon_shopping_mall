@@ -195,6 +195,7 @@ const en = {
   "데이터가 없습니다.": "The data is not available.",
   "파일을 업로드 해주세요.": "Please upload the file.",
   "파일을 드롭다운 하거나 업로드 해주세요.": "Please drop down or upload the file.",
+  "장바구니에 성공적으로 추가되었습니다.": "It has been successfully added to your shopping cart.",
   "배송비": "Delivery charge",
   "선택": "Choice",
   "수량": "Quantity",

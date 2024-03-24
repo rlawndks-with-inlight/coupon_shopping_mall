@@ -33,7 +33,7 @@ import { fCurrency } from 'src/utils/formatNumber';
 import Iconify from 'src/components/iconify/Iconify';
 import { IncrementerButton } from 'src/components/custom-input';
 import { ColorSinglePicker } from 'src/components/color-utils';
-import { commarNumber, getProductStatus } from 'src/utils/function';
+import { commarNumber, getPriceUnitByLang, getProductStatus } from 'src/utils/function';
 import { Row, postCodeStyle, themeObj } from 'src/components/elements/styled-components';
 import { useSettingsContext } from 'src/components/settings';
 import _ from 'lodash';
@@ -161,9 +161,9 @@ export default function ProductDetailsSummary({ product, onAddCart, onGotoStep, 
                   {fCurrency(product_price)}
                 </Box>
               )}
-              {commarNumber(product_sale_price)} 원
+              {commarNumber(product_sale_price)} {getPriceUnitByLang(currentLang?.value)}
             </Typography>
-            <Typography variant="h7" color={themeObj.grey[500]}>{translate('배송비')}: {commarNumber(delivery_fee)}원</Typography>
+            <Typography variant="h7" color={themeObj.grey[500]}>{translate('배송비')}: {commarNumber(delivery_fee)}{getPriceUnitByLang(currentLang?.value)}</Typography>
           </Stack>
           <Divider sx={{ borderStyle: 'dashed' }} />
           {groups.map((group) => (

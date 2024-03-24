@@ -7,7 +7,7 @@ import { useState } from "react";
 import { useEffect } from "react";
 import { IconButton } from "@mui/material";
 import { Icon } from "@iconify/react";
-import { commarNumber } from "src/utils/function";
+import { commarNumber, getPriceUnitByLang, setProductPriceByLang } from "src/utils/function";
 import { insertWishDataUtil } from "src/utils/shop-util";
 import toast from "react-hot-toast";
 import Slider from "react-slick";
@@ -128,11 +128,11 @@ export const Item1 = (props) => {
                                     {commarNumber((item.product_price - item.product_sale_price) * 100 / item.product_price) + '%'}
                                 </div>
                             </>}
-                        <div>{commarNumber(item.product_sale_price)} 원</div>
+                        <div>{commarNumber(setProductPriceByLang(item.product_sale_price, item?.price_lang, currentLang?.value))} {getPriceUnitByLang(currentLang?.value)}</div>
                         {item.product_sale_price < item.product_price &&
                             <>
                                 <div style={{ textDecoration: 'line-through', marginLeft: '0.25rem', fontSize: themeObj.font_size.size7, color: themeObj.grey[500] }}>
-                                    {item.product_sale_price < item.product_price ? commarNumber(item.product_price) : ''}
+                                    {item.product_sale_price < item.product_price ? commarNumber(setProductPriceByLang(item.product_price, item?.price_lang, currentLang?.value)) : ''}
                                 </div>
                             </>}
                     </ItemPrice>

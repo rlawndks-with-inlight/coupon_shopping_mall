@@ -196,6 +196,7 @@ const vi = {
   "데이터가 없습니다.": "Không có dữ liệu.",
   "파일을 업로드 해주세요.": "Vui lòng upload file.",
   "파일을 드롭다운 하거나 업로드 해주세요.": "Vui lòng drop-down hoặc upload file.",
+  "장바구니에 성공적으로 추가되었습니다.": "Đã thêm vào giỏ hàng thành công.",
   "배송비": "phí vận chuyển",
   "선택": "sự lựa chọn",
   "수량": "số lượng",

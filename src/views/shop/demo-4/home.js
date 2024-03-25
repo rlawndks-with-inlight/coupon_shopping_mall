@@ -5,6 +5,15 @@ import styled from "styled-components";
 import { HomeDemo1 } from "../demo-1";
 import { Dialog } from "@mui/material";
 import { useEffect, useState } from "react";
+import { Row } from "src/components/elements/styled-components";
+
+
+const BottomContent = styled.div`
+max-width: 1400px;
+margin:0 auto;
+margin-top: -3rem;
+`
+
 
 const HomeDemo = (props) => {
 
@@ -21,6 +30,37 @@ const HomeDemo = (props) => {
         <img src={'/images/gifs/grandpris-loading.gif'} style={{ width: '100px', margin: 'auto' }} />
       </Dialog>
       <HomeDemo1 {...props} />
+      <div>
+        <BottomContent>
+          <Row style={{ width: '100%', marginBottom: '60px' }}>
+            <img 
+            src='/grandparis/new-luxury-edition.png' 
+            style={{ margin: '0 auto', cursor:'pointer' }}
+            onClick={() =>{
+              window.open('https://luxuryedition.co.kr')
+            }}
+            />
+          </Row>
+          <Row style={{ marginBottom: '120px', display: 'flex' }}>
+            <img src='/grandparis/luxury-edition-inside.png' />
+            <div style={{marginLeft:'3rem'}}>
+            <img src='/grandparis/luxury-edition-title.png' />
+            <br /><br />
+            <img src='/grandparis/luxury-edition-tmi.png' />
+            <br /><br />
+            <img src='/grandparis/view-more.png' style={{cursor:'pointer'}} />
+            <br /><br /><br /><br />
+            <Row style={{fontSize:'14px', fontWeight:'bold'}}>
+              인스파이어점
+            </Row>
+            <Row style={{fontSize:'12px'}}>
+              인천시 중구 공항문화로 127 (중구 용유로 542) 3층 R03, R04<br />
+              Tel. 032-215-8887 / 032-215-8889
+            </Row>
+            </div>
+          </Row>
+        </BottomContent>
+      </div>
     </>
   )
 }

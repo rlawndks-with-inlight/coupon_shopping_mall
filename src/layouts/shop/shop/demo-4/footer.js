@@ -11,8 +11,7 @@ margin-top: auto;
 `
 const ContentWrapper = styled.div`
 display:flex;
-width:90%;
-max-width:1360px;
+width:100%;
 margin: 0 auto;
 justify-content: space-between;
 `
@@ -24,13 +23,19 @@ font-weight:bold;
 margin-right:0.5rem;
 `
 const MarginRight = styled.div`
-margin-right:0.5rem;
+margin-right:0.2rem;
 `
 
 const MainContent = styled.div`
 display:flex;
 flex-direction: column;
 row-gap: 0.25rem;
+color:#999999;
+font-size: 12px;
+max-width: 1400px;
+margin:0 auto;
+width:90%;
+margin-bottom: 85px;
 `
 
 const SubContent = styled.div`
@@ -63,157 +68,161 @@ const Footer = (props) => {
     return (
         <>
             <div style={{ marginTop: '2rem' }} />
-            <Wrapper style={{ background: `${theme.palette.mode == 'dark' ? '' : theme.palette.grey[200]}` }}>
-                <ContentWrapper>
-                    <MainContent>
-                        <img src={logoSrc()} style={{ width: '200px' }} />
-
-                        {/*
-<Row>
-<Bold>{translate('회사명')}</Bold>
-<MarginRight>{company_name}</MarginRight>
-</Row>
-*/}
+            <Wrapper>
+                <ContentWrapper style={{backgroundColor:'#000000'}}>
+                <MainContent style={{display:'flex', flexDirection:'row', marginTop:'50px', justifyContent:'space-between'}}>
+                        <div>
+                            <Row style={{fontWeight:'bold', fontSize:'16px', color:'#FFFFFF'}}>
+                                OUR SERVICE
+                            </Row>
+                            <br /><br />
+                            <Row style={{marginBottom:'0.7rem', cursor:'pointer'}}>
+                                온라인 판매
+                            </Row>
+                            <Row style={{marginBottom:'0.7rem', cursor:'pointer'}}>
+                                오프라인
+                            </Row>
+                            <Row style={{marginBottom:'0.7rem', cursor:'pointer'}}>
+                                매입센터
+                            </Row>
+                            <Row style={{cursor:'pointer'}}>
+                                위탁센터
+                            </Row>
+                        </div>
+                        <div>
+                            <Row style={{fontWeight:'bold', fontSize:'16px', color:'#FFFFFF'}}>
+                                SELL
+                            </Row>
+                            <br /><br />
+                            <Row style={{marginBottom:'0.7rem', cursor:'pointer'}}>
+                                온라인 판매
+                            </Row>
+                            <Row style={{marginBottom:'0.7rem', cursor:'pointer'}}>
+                                오프라인
+                            </Row>
+                            <Row style={{marginBottom:'0.7rem', cursor:'pointer'}}>
+                                매입센터
+                            </Row>
+                            <Row style={{cursor:'pointer'}}>
+                                위탁센터
+                            </Row>
+                        </div>
+                        <div>
+                            <Row style={{fontWeight:'bold', fontSize:'16px', color:'#FFFFFF'}}>
+                                HELP
+                            </Row>
+                            <br /><br />
+                            <Row style={{marginBottom:'0.7rem', cursor:'pointer'}}>
+                                공지사항
+                            </Row>
+                            <Row style={{marginBottom:'0.7rem', cursor:'pointer'}}>
+                                로그인
+                            </Row>
+                            <Row style={{marginBottom:'0.7rem', cursor:'pointer'}}>
+                                비회원주문조회
+                            </Row>
+                            <Row style={{cursor:'pointer'}}>
+                                1:1문의
+                            </Row>
+                        </div>
+                        <div>
+                            <Row style={{fontWeight:'bold', fontSize:'16px', color:'#FFFFFF'}}>
+                                C.S CENTER
+                            </Row>
+                            <br /><br />
+                            <Row style={{fontWeight:'bold', fontSize:'18px', color:'#FFFFFF'}}>
+                                02-517-2950
+                            </Row>
+                            <Row style={{fontWeight:'bold', fontSize:'18px', color:'#FFFFFF', marginBottom:'0.5rem'}}>
+                                02-517-8950
+                            </Row>
+                            <Row>
+                                월-금 AM 10:30 ~ PM 7:30
+                            </Row> 
+                            <Row>
+                                토요일 AM 10:30 ~ PM 6:00
+                            </Row>
+                            <Row>
+                                일요일, 공휴일 휴무
+                            </Row>
+                        </div>
+                    </MainContent>
+                </ContentWrapper>
+                <ContentWrapper style={{display:'flex', flexDirection:'column'}}>
+                    <MainContent style={{marginTop:'50px'}}>
+                        <Row style={{position:'relative'}}>
+                            <MarginRight style={{fontWeight:'bold', fontSize:'16px'}}>{company_name}</MarginRight>
+                            <Row style={{position:'absolute', right:'0'}}>
+                            <MarginRight style={{ cursor: 'pointer' }} onClick={() => { router.push('/shop/auth/policy?type=0') }}>Terms</MarginRight>
+                            <MarginRight style={{ cursor: 'pointer' }} onClick={() => { router.push('/shop/auth/policy?type=1') }}>| Privacy Policy</MarginRight>
+                            <Row style={{marginLeft:'1rem'}}>
+                                <img 
+                                src='/grandparis/instagram.png'
+                                style={{marginRight:'0.5rem', cursor:'pointer'}}
+                                />
+                                <img 
+                                src='/grandparis/kakaotalk.png'
+                                style={{marginRight:'0.5rem', cursor:'pointer'}}
+                                />
+                                <img 
+                                src='/grandparis/band.png'
+                                style={{marginRight:'0.5rem', cursor:'pointer'}}
+                                />
+                            </Row>
+                            </Row>
+                        </Row>
+                        <Row>
                         {addr?.length > 1 &&
                             <>
-                                <Row>
-                                    <Bold style={{ whiteSpace: 'nowrap' }}>{translate('주소')}</Bold>
                                     <div style={{ display: 'flex', flexDirection: 'column' }}>
                                         <MarginRight>{addr}</MarginRight>
                                     </div>
-                                </Row>
+                                
                             </>
                         }
                         {phone_num?.length > 1 &&
                             <>
-                                <Row>
-                                    <Bold>{translate('전화')}</Bold>
                                     <div style={{ display: 'flex' }}>
-                                        <MarginRight>{phone_num}</MarginRight>
-                                        <MarginRight>02-517-8950</MarginRight>
+                                        <MarginRight>| TEL : {phone_num}</MarginRight>
                                     </div>
-                                </Row>
+                                
                             </>
                         }
                         {ceo_name?.length > 1 &&
                             <>
-                                <Row>
-                                    <Bold>{translate('대표')}</Bold>
-                                    <MarginRight>{ceo_name}</MarginRight>
-                                </Row>
+                                    <MarginRight>| 대표 : {ceo_name}</MarginRight>
+                                
                             </>
                         }
+                        </Row>
+                        <Row>
                         {business_num?.length > 1 &&
                             <>
-                                <Row>
-                                    <Bold>{translate('사업자등록번호')}</Bold>
-                                    <MarginRight>{business_num}</MarginRight>
-                                </Row>
+                                    <MarginRight>사업자등록번호 : {business_num}</MarginRight>
                             </>
                         }
                         {fax_num?.length > 1 &&
                             <>
-                                <Row>
-                                    <Bold>{translate('팩스')}</Bold>
-                                    <MarginRight>{fax_num}</MarginRight>
-                                </Row>
+                                    <MarginRight>| FAX : {fax_num}</MarginRight>
                             </>
                         }
                         {pvcy_rep_name?.length > 1 &&
                             <>
-                                <Row>
-                                    <Bold>{translate('개인정보 보호책임자')}</Bold>
-                                    <MarginRight>{pvcy_rep_name}</MarginRight>
-                                </Row>
+                                    <MarginRight>| 개인정보 보호책임자 : {pvcy_rep_name}</MarginRight>
                             </>
                         }
 
                         {mail_order_num?.length > 1 &&
                             <>
-                                <Row>
-                                    <Bold>{translate('통신판매번호')}</Bold>
-                                    <MarginRight>{mail_order_num}</MarginRight>
-                                </Row>
+                                    <MarginRight>| 통신판매번호 : {mail_order_num}</MarginRight>
                             </>
                         }
-                        <Row style={{ flexWrap: 'wrap', textDecoration: 'underline' }}>
-                            <Bold style={{ marginRight: '1rem', cursor: 'pointer' }} onClick={() => { router.push('/shop/auth/policy?type=0') }}>{translate('서비스이용약관')}</Bold>
-                            <Bold style={{ cursor: 'pointer' }} onClick={() => { router.push('/shop/auth/policy?type=1') }}>{translate('개인정보처리방침')}</Bold>
+                        </Row>
+                        <br />
+                        <Row>
+                        COPYRIGHT © GRANDPARIS ALL RIGHTS RESERVED.
                         </Row>
                     </MainContent>
-
-                    <SubContent>
-                        <img src={'/grandparis/new_logo_removebg2.png'} style={{ width: '200px', aspectRatio: '200/70' }} />
-
-                        {/*
-<Row>
-<Bold>{translate('회사명')}</Bold>
-<MarginRight>{company_name}</MarginRight>
-</Row>
-*/}
-                        {/*ceo_name?.length > 1 &&
-                            <>
-                                <Row>
-                                    <Bold>{translate('대표')}</Bold>
-                                    <MarginRight>{ceo_name}</MarginRight>
-                                </Row>
-                            </>
-*/}
-                        {addr?.length > 1 &&
-                            <>
-                                <Row>
-                                    <Bold style={{ whiteSpace: 'nowrap' }}>{translate('주소')}</Bold>
-                                    <div style={{ display: 'flex', flexDirection: 'column' }}>
-                                        <MarginRight>인스파이어점 : 인천시 중구 공항문화로 127 (중구 용유로 542) 3층 R03, R04</MarginRight>
-                                    </div>
-                                </Row>
-                            </>
-                        }
-                        {/*business_num?.length > 1 &&
-                            <>
-                                <Row>
-                                    <Bold>{translate('사업자등록번호')}</Bold>
-                                    <MarginRight>{business_num}</MarginRight>
-                                </Row>
-                            </>
-                    */}
-                        {phone_num?.length > 1 &&
-                            <>
-                                <Row>
-                                    <Bold>{translate('전화')}</Bold>
-                                    <div style={{ display: 'flex' }}>
-                                        <MarginRight>032-215-8887</MarginRight>
-                                        <MarginRight>/ 032-215-8889</MarginRight>
-                                    </div>
-                                </Row>
-                            </>
-                        }
-                        {/*fax_num?.length > 1 &&
-                            <>
-                                <Row>
-                                    <Bold>{translate('팩스')}</Bold>
-                                    <MarginRight>{fax_num}</MarginRight>
-                                </Row>
-                            </>
-                    */}
-                        {/*pvcy_rep_name?.length > 1 &&
-                            <>
-                                <Row>
-                                    <Bold>{translate('개인정보 보호책임자')}</Bold>
-                                    <MarginRight>{pvcy_rep_name}</MarginRight>
-                                </Row>
-                            </>
-                */}
-
-                        {/*mail_order_num?.length > 1 &&
-                            <>
-                                <Row>
-                                    <Bold>{translate('통신판매번호')}</Bold>
-                                    <MarginRight>{mail_order_num}</MarginRight>
-                                </Row>
-                            </>
-            */}
-                    </SubContent>
                 </ContentWrapper>
             </Wrapper>
         </>

@@ -69,7 +69,7 @@ position:relative;
 }
 `
 const CategoryMenu = styled.div`
-padding:1rem 1.5rem 0 1.5rem;
+padding:1.4rem 1.5rem 0 1.5rem;
 text-align: center;
 display:inline-block;
 //text-transform:uppercase;
@@ -231,7 +231,7 @@ const Header = () => {
     const [openAllCategory, setOpenAllCategory] = useState("")
     const [langChipSelected, setLangChipSelected] = useState(0)
     const { sort, categoryGroup } = CategorySorter(themeCategoryList)
-    const [textChipSelected, setTextChipSelected] = useState('')
+    const [textChipSelected, setTextChipSelected] = useState('A')
 
     const allCategoryRef = useRef([]);
     const authList = [
@@ -767,10 +767,10 @@ const Header = () => {
                                                         setOpenAllCategory(group?.id)
                                                     }}>
                                                         {group?.category_group_name == '카테고리' ?
-                                                            <div>All Category</div>
+                                                            <img src="/grandparis/All Category.png" />
                                                             :
                                                             group?.category_group_name == '브랜드' ?
-                                                                <div style={{ color: `${themeDnsData?.theme_css?.main_color}` }}>Find Brand</div> : ''}
+                                                            <img src="/grandparis/Find Brand.png" /> : ''}
                                                     </CategoryMenu>
                                                     {openAllCategory == group?.id &&
                                                         <>
@@ -851,7 +851,7 @@ const Header = () => {
                                                                                             background:'transparent',
                                                                                         }
                                                                                     }}
-                                                                                        onClick={() => { setLangChipSelected(0); sort(LANGCODE.ENG); setTextChipSelected(''); }}
+                                                                                        onClick={() => { setLangChipSelected(0); sort(LANGCODE.ENG); setTextChipSelected('A'); }}
                                                                                     />
                                                                                     <Chip label={`가나다`} sx={{
                                                                                         margin: '0.5rem 0.5rem 0.5rem 0',
@@ -867,7 +867,7 @@ const Header = () => {
                                                                                             background:'transparent',
                                                                                         }
                                                                                     }}
-                                                                                        onClick={() => { setLangChipSelected(1); sort(LANGCODE.KOR); setTextChipSelected(''); }}
+                                                                                        onClick={() => { setLangChipSelected(1); sort(LANGCODE.KOR); setTextChipSelected('가'); }}
                                                                                     />
                                                                             </Row>
                                                                             <Row>
@@ -991,23 +991,23 @@ const Header = () => {
                                     })}
                                 </div>
 
-                                <CategoryMenu borderColor={themeDnsData?.theme_css?.main_color} onClick={() => {
+                                <CategoryMenu style={{paddingTop:'1rem'}} borderColor={themeDnsData?.theme_css?.main_color} onClick={() => {
                                 //setOpenAllCategory(group?.id)
                                 router.push('shop/items/?not_show_select_menu=1&property_id=22')
                             }}>
-                                <div>Best</div>
+                                <img src="/grandparis/Best.png" />
                             </CategoryMenu>
-                            <CategoryMenu borderColor={themeDnsData?.theme_css?.main_color} onClick={() => {
+                            <CategoryMenu style={{paddingTop:'1rem'}} borderColor={themeDnsData?.theme_css?.main_color} onClick={() => {
                                 //setOpenAllCategory(group?.id)
                                 router.push('shop/items/?not_show_select_menu=1&property_id=21')
                             }}>
-                                <div>New in</div>
+                                <img src="/grandparis/New in.png" />
                             </CategoryMenu>
-                            <CategoryMenu borderColor={themeDnsData?.theme_css?.main_color} onClick={() => {
+                            <CategoryMenu style={{paddingTop:'1rem'}} borderColor={themeDnsData?.theme_css?.main_color} onClick={() => {
                                 //setOpenAllCategory(group?.id)
                                 router.push('shop/items/?not_show_select_menu=1&property_id=20')
                             }}>
-                                <div>Sale</div>
+                                <img src="/grandparis/Sale.png" />
                             </CategoryMenu>
                             <NoneShowMobile>
                                 <div style={{ position: 'absolute', right: '0' }}>

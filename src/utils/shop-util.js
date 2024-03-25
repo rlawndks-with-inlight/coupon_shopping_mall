@@ -3,14 +3,14 @@ import { axiosIns } from "./axios";
 import { apiManager } from "./api";
 import axios from "axios";
 import toast from "react-hot-toast";
-import { returnMoment } from "./function";
+import { getPriceUnitByLang, returnMoment, setProductPriceByLang } from "./function";
+import { getLocalStorage } from "./local-storage";
 
 export const calculatorPrice = (item) => {// 상품별로 가격
     if (!item) {
         return 0;
     }
     let { product_sale_price, product_price, groups = [], order_count, delivery_fee } = item;
-
     let product_option_price = 0;
 
     for (var i = 0; i < groups.length; i++) {
@@ -18,6 +18,7 @@ export const calculatorPrice = (item) => {// 상품별로 가격
             product_option_price += groups[i]?.options[j]?.option_price ?? 0;
         }
     }
+
     return {
         subtotal: (product_price + product_option_price) * order_count + delivery_fee,//할인전가격
         total: (product_sale_price + product_option_price) * order_count + delivery_fee,//결과

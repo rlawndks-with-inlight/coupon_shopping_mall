@@ -993,19 +993,19 @@ const Header = () => {
 
                                 <CategoryMenu style={{ paddingTop: '1rem' }} borderColor={themeDnsData?.theme_css?.main_color} onClick={() => {
                                     //setOpenAllCategory(group?.id)
-                                    router.push('/shop/items/?not_show_select_menu=1&property_ids0=22')
+                                    router.push('shop/items/?not_show_select_menu=1&property_id=22')
                                 }}>
                                     <img src="/grandparis/Best.png" />
                                 </CategoryMenu>
                                 <CategoryMenu style={{ paddingTop: '1rem' }} borderColor={themeDnsData?.theme_css?.main_color} onClick={() => {
                                     //setOpenAllCategory(group?.id)
-                                    router.push('/shop/items/?not_show_select_menu=1&property_ids0=21')
+                                    router.push('shop/items/?not_show_select_menu=1&property_id=21')
                                 }}>
                                     <img src="/grandparis/New in.png" />
                                 </CategoryMenu>
                                 <CategoryMenu style={{ paddingTop: '1rem' }} borderColor={themeDnsData?.theme_css?.main_color} onClick={() => {
                                     //setOpenAllCategory(group?.id)
-                                    router.push('/shop/items/?not_show_select_menu=1&property_ids0=20')
+                                    router.push('shop/items/?not_show_select_menu=1&property_id=20')
                                 }}>
                                     <img src="/grandparis/Sale.png" />
                                 </CategoryMenu>

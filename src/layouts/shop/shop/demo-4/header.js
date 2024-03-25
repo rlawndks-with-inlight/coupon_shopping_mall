@@ -771,22 +771,22 @@ const Header = () => {
                                                         setOpenAllCategory(group?.id)
                                                     }}>
                                                         {group?.category_group_name == '카테고리' ?
-                                                            <div style={{fontFamily:'Playfair Display',}}>All Category</div>
+                                                            <div style={{ fontFamily: 'Playfair Display', }}>All Category</div>
                                                             :
                                                             group?.category_group_name == '브랜드' ?
 
-                                                                <div style={{ color: `${themeDnsData?.theme_css?.main_color}`, fontFamily:'Playfair Display' }}>Find Brand</div> : ''}
+                                                                <div style={{ color: `${themeDnsData?.theme_css?.main_color}`, fontFamily: 'Playfair Display' }}>Find Brand</div> : ''}
                                                     </CategoryMenu>
                                                     {openAllCategory == group?.id &&
                                                         <>
-                                                            <PopoverContainer style={{ 
-                                                                background: `${themeMode == 'dark' ? '#222' : '#FEF8F4'}`, 
-                                                                maxHeight: `${window.innerHeight - headerHeight}px`, 
-                                                                overflowY: 'auto', 
-                                                                borderTop:`2px solid ${themeDnsData?.theme_css?.main_color}`,
-                                                                borderBottom:`2px solid ${themeDnsData?.theme_css?.main_color}`,
-                                                                }}>
-                                                                <div style={{maxWidth:'1400px', margin:'0 auto'}}>
+                                                            <PopoverContainer style={{
+                                                                background: `${themeMode == 'dark' ? '#222' : '#FEF8F4'}`,
+                                                                maxHeight: `${window.innerHeight - headerHeight}px`,
+                                                                overflowY: 'auto',
+                                                                borderTop: `2px solid ${themeDnsData?.theme_css?.main_color}`,
+                                                                borderBottom: `2px solid ${themeDnsData?.theme_css?.main_color}`,
+                                                            }}>
+                                                                <div style={{ maxWidth: '1400px', margin: '0 auto' }}>
 
                                                                     {group?.sort_type == 0 &&
                                                                         <>
@@ -999,61 +999,61 @@ const Header = () => {
 
 
                                 <CategoryMenu borderColor={themeDnsData?.theme_css?.main_color} onClick={() => {
-                                //setOpenAllCategory(group?.id)
-                                router.push('shop/items/?not_show_select_menu=1&property_id=22')
-                            }}>
-                                <div style={{fontFamily:'Playfair Display',}}>Best</div>
-                            </CategoryMenu>
-                            <CategoryMenu borderColor={themeDnsData?.theme_css?.main_color} onClick={() => {
-                                //setOpenAllCategory(group?.id)
-                                router.push('shop/items/?not_show_select_menu=1&property_id=21')
-                            }}>
-                                <div style={{fontFamily:'Playfair Display',}}>New in</div>
-                            </CategoryMenu>
-                            <CategoryMenu borderColor={themeDnsData?.theme_css?.main_color} onClick={() => {
-                                //setOpenAllCategory(group?.id)
-                                router.push('shop/items/?not_show_select_menu=1&property_id=20')
-                            }}>
-                                <div style={{fontFamily:'Playfair Display',}}>Sale</div>
-                            </CategoryMenu>
-                            <NoneShowMobile>
-                                <div style={{ position: 'absolute', right: '0' }}>
-                                    <IconButton
-                                        sx={{ padding: '0', marginRight:'20px' }}
-                                        onClick={() => {
-                                            if (user) {
-                                                router.push(`/shop/auth/my-page`)
-                                            } else {
-                                                router.push(`/shop/auth/login`)
-                                            }
-                                        }}
-                                    >
-                                        <Badge badgeContent={themeCartData.length} color="error">
-                                            <Icon icon={'basil:user-outline'} width={'30px'} color={themeMode == 'dark' ? '#fff' : '#000'} />
-                                        </Badge>
-                                    </IconButton>
-                                    <IconButton
-                                    sx={{ padding: '0', marginRight:'20px' }}
-                                    onClick={() => onToggleMode()}
-                                >
-                                    <Icon icon={themeMode === 'dark' ? 'tabler:sun' : 'tabler:moon-stars'} width={'25px'} color={themeMode == 'dark' ? '#fff' : '#000'} />
-                                </IconButton>
-                                    <IconButton
-                                        sx={{ padding: '0' }}
-                                        onClick={() => {
-                                            if (user) {
-                                                router.push(`/shop/auth/wish`)
-                                            } else {
-                                                router.push(`/shop/auth/login`)
-                                            }
-                                        }}
-                                    >
-                                        <Badge badgeContent={themeCartData.length} color="error">
-                                            <Icon icon={'basil:heart-outline'} width={'30px'} color={themeMode == 'dark' ? '#fff' : '#000'} />
-                                        </Badge>
-                                    </IconButton>
-                                </div>
-                            </NoneShowMobile>
+                                    //setOpenAllCategory(group?.id)
+                                    router.push('shop/items/?not_show_select_menu=1&property_ids0=22')
+                                }}>
+                                    <div style={{ fontFamily: 'Playfair Display', }}>Best</div>
+                                </CategoryMenu>
+                                <CategoryMenu borderColor={themeDnsData?.theme_css?.main_color} onClick={() => {
+                                    //setOpenAllCategory(group?.id)
+                                    router.push('shop/items/?not_show_select_menu=1&property_ids0=21')
+                                }}>
+                                    <div style={{ fontFamily: 'Playfair Display', }}>New in</div>
+                                </CategoryMenu>
+                                <CategoryMenu borderColor={themeDnsData?.theme_css?.main_color} onClick={() => {
+                                    //setOpenAllCategory(group?.id)
+                                    router.push('shop/items/?not_show_select_menu=1&property_ids0=20')
+                                }}>
+                                    <div style={{ fontFamily: 'Playfair Display', }}>Sale</div>
+                                </CategoryMenu>
+                                <NoneShowMobile>
+                                    <div style={{ position: 'absolute', right: '0' }}>
+                                        <IconButton
+                                            sx={{ padding: '0', marginRight: '20px' }}
+                                            onClick={() => {
+                                                if (user) {
+                                                    router.push(`/shop/auth/my-page`)
+                                                } else {
+                                                    router.push(`/shop/auth/login`)
+                                                }
+                                            }}
+                                        >
+                                            <Badge badgeContent={themeCartData.length} color="error">
+                                                <Icon icon={'basil:user-outline'} width={'30px'} color={themeMode == 'dark' ? '#fff' : '#000'} />
+                                            </Badge>
+                                        </IconButton>
+                                        <IconButton
+                                            sx={{ padding: '0', marginRight: '20px' }}
+                                            onClick={() => onToggleMode()}
+                                        >
+                                            <Icon icon={themeMode === 'dark' ? 'tabler:sun' : 'tabler:moon-stars'} width={'25px'} color={themeMode == 'dark' ? '#fff' : '#000'} />
+                                        </IconButton>
+                                        <IconButton
+                                            sx={{ padding: '0' }}
+                                            onClick={() => {
+                                                if (user) {
+                                                    router.push(`/shop/auth/wish`)
+                                                } else {
+                                                    router.push(`/shop/auth/login`)
+                                                }
+                                            }}
+                                        >
+                                            <Badge badgeContent={themeCartData.length} color="error">
+                                                <Icon icon={'basil:heart-outline'} width={'30px'} color={themeMode == 'dark' ? '#fff' : '#000'} />
+                                            </Badge>
+                                        </IconButton>
+                                    </div>
+                                </NoneShowMobile>
 
                             </CategoryContainer>
                         </div>

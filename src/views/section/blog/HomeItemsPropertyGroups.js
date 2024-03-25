@@ -51,7 +51,7 @@ const HomeItemsPropertyGroups = (props) => {
                                     </div>
                                 </>}
                             <Button sx={{ position: 'absolute', right: '0' }} variant='outlined' onClick={() => {
-                                router.push(`/shop/items?not_show_select_menu=1&property_id=${parseInt(column?.type.split('items-property-group-')[1])}`)
+                                router.push(`/shop/items?not_show_select_menu=1&property_ids0=${parseInt(column?.type.split('items-property-group-')[1])}`)
                             }}>View More</Button>
                         </>}
                 </Row>
@@ -60,7 +60,7 @@ const HomeItemsPropertyGroups = (props) => {
                 <div style={{ marginTop: '1rem', height: '0.25rem', borderTop: `1px solid ${themeObj.grey[300]} `, }} />
                 {/*<Row>
                     <Button sx={{ margin: '1rem auto' }} variant='outlined' onClick={() => {
-                        router.push(`/shop/items?not_show_select_menu=1&property_id=${parseInt(column?.type.split('items-property-group-')[1])}`)
+                        router.push(`/shop/items?not_show_select_menu=1&property_ids0=${parseInt(column?.type.split('items-property-group-')[1])}`)
                     }}>View More</Button>
                 </Row>*/}
             </Wrappers>

@@ -148,9 +148,10 @@ export const Items = props => {
     speed: 500,
     autoplay: true,
     autoplaySpeed,
-    slidesToShow: getSlideToShow(),
+    slidesToShow: 1,
     slidesToScroll: 1,
     dots: false,
+    slidesPerRow: getSlideToShow(),
     rows: rows,
     ...slide_setting
   }
@@ -161,12 +162,12 @@ export const Items = props => {
           <Slider {...items_setting} className='margin-slide' ref={slide_ref}>
             {items &&
               items.map((item, idx) => {
-                  return (
-                    <ItemWrapper theme_css={itemThemeCss}>
-                      <Item item={item} router={router} theme_css={itemThemeCss} seller={seller} />
-                    </ItemWrapper>
-                  )
-                
+                return (
+                  <ItemWrapper theme_css={itemThemeCss}>
+                    <Item item={item} router={router} theme_css={itemThemeCss} seller={seller} />
+                  </ItemWrapper>
+                )
+
               })}
           </Slider>
         </>
@@ -175,13 +176,13 @@ export const Items = props => {
           <ItemsContainer theme_css={itemThemeCss}>
             {items &&
               items.map((item, idx) => {
-                
-                  return (
-                    <ItemWrapper theme_css={itemThemeCss}>
-                      <Item item={item} router={router} theme_css={itemThemeCss} seller={seller} />
-                    </ItemWrapper>
-                  )
-                
+
+                return (
+                  <ItemWrapper theme_css={itemThemeCss}>
+                    <Item item={item} router={router} theme_css={itemThemeCss} seller={seller} />
+                  </ItemWrapper>
+                )
+
               })}
           </ItemsContainer>
         </>

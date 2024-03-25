@@ -232,7 +232,7 @@ const Header = () => {
     const [keyword, setKeyword] = useState("");
     const onSearch = () => {
         setKeyword("");
-        router.push(`/shop/items?search=${keyword}`)
+        router.push(`/shop/items?${new URLSearchParams({ ...router.query, search: keyword })}`)
     }
     const [isAuthMenuOver, setIsAuthMenuOver] = useState(false)
     const [hoverItems, setHoverItems] = useState({
@@ -449,7 +449,7 @@ const Header = () => {
             <DialogSearch
                 open={dialogOpenObj.search}
                 handleClose={handleDialogClose}
-                root_path={'shop/items?search='}
+                root_path={'/shop/items?search='}
             />
             {loading ?
                 <>
@@ -1000,19 +1000,19 @@ const Header = () => {
 
                                 <CategoryMenu borderColor={themeDnsData?.theme_css?.main_color} onClick={() => {
                                     //setOpenAllCategory(group?.id)
-                                    router.push('shop/items/?not_show_select_menu=1&property_ids0=22')
+                                    router.push('/shop/items/?not_show_select_menu=1&property_ids0=22')
                                 }}>
                                     <div style={{ fontFamily: 'Playfair Display', }}>Best</div>
                                 </CategoryMenu>
                                 <CategoryMenu borderColor={themeDnsData?.theme_css?.main_color} onClick={() => {
                                     //setOpenAllCategory(group?.id)
-                                    router.push('shop/items/?not_show_select_menu=1&property_ids0=21')
+                                    router.push('/shop/items/?not_show_select_menu=1&property_ids0=21')
                                 }}>
                                     <div style={{ fontFamily: 'Playfair Display', }}>New in</div>
                                 </CategoryMenu>
                                 <CategoryMenu borderColor={themeDnsData?.theme_css?.main_color} onClick={() => {
                                     //setOpenAllCategory(group?.id)
-                                    router.push('shop/items/?not_show_select_menu=1&property_ids0=20')
+                                    router.push('/shop/items/?not_show_select_menu=1&property_ids0=20')
                                 }}>
                                     <div style={{ fontFamily: 'Playfair Display', }}>Sale</div>
                                 </CategoryMenu>

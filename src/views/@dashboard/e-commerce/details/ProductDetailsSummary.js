@@ -33,7 +33,7 @@ import { fCurrency } from 'src/utils/formatNumber';
 import Iconify from 'src/components/iconify/Iconify';
 import { IncrementerButton } from 'src/components/custom-input';
 import { ColorSinglePicker } from 'src/components/color-utils';
-import { commarNumber, getPriceUnitByLang, getProductStatus } from 'src/utils/function';
+import { commarNumber, getPriceUnitByLang, getProductStatus, setProductPriceByLang } from 'src/utils/function';
 import { Row, postCodeStyle, themeObj } from 'src/components/elements/styled-components';
 import { useSettingsContext } from 'src/components/settings';
 import _ from 'lodash';
@@ -96,7 +96,8 @@ export default function ProductDetailsSummary({ product, onAddCart, onGotoStep, 
     product_comment,
     groups = [],
     delivery_fee,
-    lang_obj
+    lang_obj,
+    price_lang = 'ko'
   } = product;
 
   const isMaxQuantity = cart.filter((item) => item.id === id).map((item) => item.quantity)[0] >= available;
@@ -158,12 +159,12 @@ export default function ProductDetailsSummary({ product, onAddCart, onGotoStep, 
                   component="span"
                   sx={{ color: 'text.disabled', textDecoration: 'line-through', mr: 0.5 }}
                 >
-                  {fCurrency(product_price)}
+                  {fCurrency(setProductPriceByLang(product_price, price_lang, currentLang?.value))}
                 </Box>
               )}
-              {commarNumber(product_sale_price)} {getPriceUnitByLang(currentLang?.value)}
+              {commarNumber(setProductPriceByLang(product_sale_price, price_lang, currentLang?.value))} {getPriceUnitByLang(currentLang?.value)}
             </Typography>
-            <Typography variant="h7" color={themeObj.grey[500]}>{translate('배송비')}: {commarNumber(delivery_fee)}{getPriceUnitByLang(currentLang?.value)}</Typography>
+            <Typography variant="h7" color={themeObj.grey[500]}>{translate('배송비')}: {commarNumber(setProductPriceByLang(delivery_fee, price_lang, currentLang?.value))}{getPriceUnitByLang(currentLang?.value)}</Typography>
           </Stack>
           <Divider sx={{ borderStyle: 'dashed' }} />
           {groups.map((group) => (
@@ -193,7 +194,7 @@ export default function ProductDetailsSummary({ product, onAddCart, onGotoStep, 
                     {group?.options && group?.options.map((option) => (
                       <MenuItem key={option?.option_name} value={option}>
                         {option?.option_name}
-                        {(option?.option_price > 0 || option?.option_price < 0) ? ` (${option?.option_price > 0 ? '+' : ''}${commarNumber(option?.option_price)})` : ''}
+                        {(option?.option_price > 0 || option?.option_price < 0) ? ` (${option?.option_price > 0 ? '+' : ''}${commarNumber(setProductPriceByLang(option?.option_price, price_lang, currentLang?.value))})` : ''}
                       </MenuItem>
                     ))}
                   </Select>

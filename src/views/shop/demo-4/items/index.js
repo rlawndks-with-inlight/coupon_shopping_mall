@@ -87,8 +87,10 @@ const ItemsDemo = (props) => {
     }
   };*/
 
-  const getItemList = async (query_ = {}, search_obj) => {
+  const getItemList = async (query_ = {}, search_obj_={}) => {
     let query = query_;
+    let search_obj = search_obj_;
+
     console.log(query)
     console.log(search_obj)
     setLoading(true);
@@ -96,6 +98,7 @@ const ItemsDemo = (props) => {
     let category_children = {};
     for (var i = 0; i < themeCategoryList.length; i++) {
       let find_category = undefined;
+      delete search_obj[`category_id${i}`];
       for (var j = 0; j < themeCategoryList[i]?.product_categories.length; j++) {
         let category = themeCategoryList[i]?.product_categories[j];
         let children = (category?.children ?? []).map(item => { return item?.id });
@@ -185,6 +188,55 @@ const ItemsDemo = (props) => {
                   })}
                 </Title>
               </>}
+              <TextField
+              label=''
+              variant="standard"
+              focused
+              //color='primary'
+              onChange={(e) => {
+                setSearchObj({
+                  ...searchObj,
+                  search: e.target.value
+                })
+              }}
+              value={searchObj?.search}
+              style={{ width: '100%', margin: '2rem auto 0 auto', maxWidth: '700px', }}
+              autoComplete='new-password'
+              placeholder="키워드를 검색해주세요."
+              onKeyPress={(e) => {
+                if (e.key == 'Enter') {
+                  let query = { ...categoryIds };
+                  query[`search`] = searchObj?.search;
+
+                  query = new URLSearchParams(query).toString();
+                  router.push(`/shop/items?${query}`);
+                }
+              }}
+              InputProps={{
+                sx: {
+                  padding: '0.5rem 0'
+                },
+                endAdornment: (
+                  <InputAdornment position='end'>
+                    <IconButton
+                      edge='end'
+                      onClick={() => {
+                        let query = { ...categoryIds };
+                        query[`search`] = searchObj?.search;
+                        query = new URLSearchParams(query).toString();
+                        router.push(`/shop/items?${query}`);
+                      }}
+                      aria-label='toggle password visibility'
+                      style={{
+                        padding: '0.5rem',
+                      }}
+                    >
+                      <Icon icon={'tabler:search'} />
+                    </IconButton>
+                  </InputAdornment>
+                )
+              }}
+            />
           </>
           :
           <>

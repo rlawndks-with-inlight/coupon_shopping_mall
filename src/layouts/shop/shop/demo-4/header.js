@@ -232,7 +232,8 @@ const Header = () => {
     const [keyword, setKeyword] = useState("");
     const onSearch = () => {
         setKeyword("");
-        router.push(`/shop/items?${new URLSearchParams({ ...router.query, search: keyword })}`)
+        //router.push(`/shop/items?${new URLSearchParams({ ...router.query, search: keyword })}`)
+        router.push(`/shop/items?search=${keyword}`)
     }
     const [isAuthMenuOver, setIsAuthMenuOver] = useState(false)
     const [hoverItems, setHoverItems] = useState({

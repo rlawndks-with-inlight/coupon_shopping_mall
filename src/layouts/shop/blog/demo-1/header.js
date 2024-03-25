@@ -146,7 +146,7 @@ const Header = (props) => {
           <DialogSearch
             open={dialogOpenObj.search}
             handleClose={handleDialogClose}
-            root_path={'blog/search?keyword='}
+            root_path={'/blog/search?keyword='}
           />
           <Wrappers style={{
             background: `${(isSellerPage || isProductPage) && scrollY < 350 ? 'transparent' : (themeMode == 'dark' ? '#000' : '#fff')}`

@@ -2,15 +2,15 @@ import { useRouter } from "next/router";
 import { useState } from "react";
 import ShopLayout from "src/layouts/shop/ShopLayout";
 import { useSettingsContext } from "src/components/settings";
-import { CompanyGuideDemo4 } from "src/views/shop/demo-4";
+import { BrandAboutDemo4 } from "src/views/shop/demo-4";
 
 const getDemo = (num, common) => {
 
   if (num == 4)
-    return <CompanyGuideDemo4 {...common} />
+    return <BrandAboutDemo4 {...common} />
 }
 
-const CompanyGuide = () => {
+const BrandAbout = () => {
   const router = useRouter();
   const { themeDnsData } = useSettingsContext();
 
@@ -26,5 +26,5 @@ const CompanyGuide = () => {
     </>
   )
 }
-CompanyGuide.getLayout = (page) => <ShopLayout>{page}</ShopLayout>;
-export default CompanyGuide;
+BrandAbout.getLayout = (page) => <ShopLayout>{page}</ShopLayout>;
+export default BrandAbout;

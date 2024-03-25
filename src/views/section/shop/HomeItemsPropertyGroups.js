@@ -9,7 +9,7 @@ import { defaultManagerObj } from 'src/data/manager-data'
 
 const Wrappers = styled.div`
   width:90%;
-  max-width:1360px;
+  max-width:1400px;
   margin:0 auto;
   `
 

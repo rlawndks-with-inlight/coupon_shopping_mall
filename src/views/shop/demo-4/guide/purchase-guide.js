@@ -3,7 +3,7 @@ import styled from "styled-components";
 import { logoSrc } from "src/data/data";
 
 const Wrappers = styled.div`
-max-width:1360px;
+max-width:1400px;
 display:flex;
 flex-direction:column;
 margin: 0 auto;

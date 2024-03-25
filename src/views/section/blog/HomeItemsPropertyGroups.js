@@ -34,30 +34,30 @@ const HomeItemsPropertyGroups = (props) => {
                 display: 'flex',
                 flexDirection: `${column?.title ? 'column' : 'row'}`,
             }}>
-                <Row style={{display:'flex', position:'relative'}}>
-                {column?.title &&
-                    <>
-                        <CategoryTitle>
-                            {column?.title}
-                        </CategoryTitle>
-                        {column?.sub_title &&
-                            <>
-                                <div style={{
-                                    fontSize: themeObj.font_size.size5,
-                                    color: themeObj.grey[500],
-                                    textAlign: 'center'
-                                }}>
-                                    {column?.sub_title}
-                                </div>
-                            </>}
-                            <Button sx={{ position:'absolute', right: '0'}} variant='outlined' onClick={() => {
-                        router.push(`/shop/items?not_show_select_menu=1&property_id=${parseInt(column?.type.split('items-property-group-')[1])}`)
-                    }}>View More</Button>
-                    </>}
-                    </Row>
-                <div style={{ marginTop: '1rem', height:'0.25rem', borderTop:`1px solid ${themeDnsData?.theme_css?.main_color} `, borderBottom:`1px solid ${themeDnsData?.theme_css?.main_color} `,}} />
+                <Row style={{ display: 'flex', position: 'relative' }}>
+                    {column?.title &&
+                        <>
+                            <CategoryTitle>
+                                {column?.title}
+                            </CategoryTitle>
+                            {column?.sub_title &&
+                                <>
+                                    <div style={{
+                                        fontSize: themeObj.font_size.size5,
+                                        color: themeObj.grey[500],
+                                        textAlign: 'center'
+                                    }}>
+                                        {column?.sub_title}
+                                    </div>
+                                </>}
+                            <Button sx={{ position: 'absolute', right: '0' }} variant='outlined' onClick={() => {
+                                router.push(`/shop/items?not_show_select_menu=1&property_id=${parseInt(column?.type.split('items-property-group-')[1])}`)
+                            }}>View More</Button>
+                        </>}
+                </Row>
+                <div style={{ marginTop: '1rem', height: '0.25rem', borderTop: `1px solid ${themeDnsData?.theme_css?.main_color} `, borderBottom: `1px solid ${themeDnsData?.theme_css?.main_color} `, }} />
                 <Items items={column?.list} router={router} is_slide={column?.list.length >= 5 ? true : true} />
-                <div style={{ marginTop: '1rem', height:'0.25rem', borderTop:`1px solid ${themeObj.grey[300]} `,}} />
+                <div style={{ marginTop: '1rem', height: '0.25rem', borderTop: `1px solid ${themeObj.grey[300]} `, }} />
                 {/*<Row>
                     <Button sx={{ margin: '1rem auto' }} variant='outlined' onClick={() => {
                         router.push(`/shop/items?not_show_select_menu=1&property_id=${parseInt(column?.type.split('items-property-group-')[1])}`)

@@ -3,6 +3,7 @@ import { useSettingsContext } from "src/components/settings"
 import { useLocales } from "src/locales"
 import styled from "styled-components"
 import { logoSrc } from "src/data/data"
+import { useAuthContext } from "src/layouts/manager/auth/useAuthContext"
 
 const Wrapper = styled.footer`
 width:100%;
@@ -65,6 +66,12 @@ const Footer = (props) => {
         mail_order_num,
         pvcy_rep_name,
     } = themeDnsData;
+    const { user, logout } = useAuthContext()
+
+    const onLogout = async () => {
+        let result = await logout();
+        router.reload();
+    }
     return (
         <>
             <div style={{ marginTop: '2rem' }} />
@@ -72,14 +79,19 @@ const Footer = (props) => {
                 <ContentWrapper style={{backgroundColor:'#000000'}}>
                 <MainContent style={{display:'flex', flexDirection:'row', marginTop:'50px', justifyContent:'space-between'}}>
                         <div>
-                            <Row style={{fontWeight:'bold', fontSize:'16px', color:'#FFFFFF'}}>
+                            <Row style={{fontWeight:'bold', fontSize:'16px', color:'#FFFFFF', fontFamily:'Playfair Display',}}>
                                 OUR SERVICE
                             </Row>
                             <br /><br />
                             <Row style={{marginBottom:'0.7rem', cursor:'pointer'}}>
                                 온라인 판매
                             </Row>
-                            <Row style={{marginBottom:'0.7rem', cursor:'pointer'}}>
+                            <Row 
+                            style={{marginBottom:'0.7rem', cursor:'pointer'}}
+                            onClick={() => {
+                                router.push('shop/guide/brand-about')
+                            }}
+                            >
                                 오프라인
                             </Row>
                             <Row style={{marginBottom:'0.7rem', cursor:'pointer'}}>
@@ -90,14 +102,19 @@ const Footer = (props) => {
                             </Row>
                         </div>
                         <div>
-                            <Row style={{fontWeight:'bold', fontSize:'16px', color:'#FFFFFF'}}>
+                            <Row style={{fontWeight:'bold', fontSize:'16px', color:'#FFFFFF', fontFamily:'Playfair Display',}}>
                                 SELL
                             </Row>
                             <br /><br />
                             <Row style={{marginBottom:'0.7rem', cursor:'pointer'}}>
                                 온라인 판매
                             </Row>
-                            <Row style={{marginBottom:'0.7rem', cursor:'pointer'}}>
+                            <Row 
+                            style={{marginBottom:'0.7rem', cursor:'pointer'}}
+                            onClick={() => {
+                                router.push('shop/guide/brand-about')
+                            }}
+                            >
                                 오프라인
                             </Row>
                             <Row style={{marginBottom:'0.7rem', cursor:'pointer'}}>
@@ -108,25 +125,48 @@ const Footer = (props) => {
                             </Row>
                         </div>
                         <div>
-                            <Row style={{fontWeight:'bold', fontSize:'16px', color:'#FFFFFF'}}>
+                            <Row style={{fontWeight:'bold', fontSize:'16px', color:'#FFFFFF', fontFamily:'Playfair Display',}}>
                                 HELP
                             </Row>
                             <br /><br />
-                            <Row style={{marginBottom:'0.7rem', cursor:'pointer'}}>
+                            <Row 
+                            style={{marginBottom:'0.7rem', cursor:'pointer'}}
+                            onClick={() => {
+                                router.push('/shop/service/47')
+                            }}
+                            >
                                 공지사항
                             </Row>
-                            <Row style={{marginBottom:'0.7rem', cursor:'pointer'}}>
-                                로그인
+                            <Row 
+                            style={{marginBottom:'0.7rem', cursor:'pointer'}} 
+                            onClick={() => {
+                                if (user) {
+                                    onLogout()
+                                } else {
+                                    router.push('/shop/auth/login')
+                                }
+                            }}
+                            >
+                                {user ? '로그아웃' : '로그인'}
                             </Row>
-                            <Row style={{marginBottom:'0.7rem', cursor:'pointer'}}>
+                            <Row 
+                            style={{marginBottom:'0.7rem', cursor:'pointer'}}
+                            onClick={() => {
+                                router.push('/shop/auth/login/?scroll_to=700')
+                            }}
+                            >
                                 비회원주문조회
                             </Row>
-                            <Row style={{cursor:'pointer'}}>
+                            <Row style={{cursor:'pointer'}}
+                            onClick={() => {
+                                router.push('/shop/service/46')
+                            }}
+                            >
                                 1:1문의
                             </Row>
                         </div>
                         <div>
-                            <Row style={{fontWeight:'bold', fontSize:'16px', color:'#FFFFFF'}}>
+                            <Row style={{fontWeight:'bold', fontSize:'16px', color:'#FFFFFF', fontFamily:'Playfair Display',}}>
                                 C.S CENTER
                             </Row>
                             <br /><br />

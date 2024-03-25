@@ -16,7 +16,7 @@ import $ from 'jquery';
 import { CategorySorter, LANGCODE } from "src/views/shop/demo-4/header"
 
 const ContentWrapper = styled.div`
-max-width:1360px;
+max-width:1400px;
 width:90%;
 margin: 0 auto 5rem auto;
 display:flex;

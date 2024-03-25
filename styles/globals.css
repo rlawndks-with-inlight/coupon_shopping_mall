@@ -132,3 +132,8 @@ input[type="color"]::-webkit-color-swatch {
     height: 90vw;
   }
 }
+
+@font-face {
+  font-family: 'Playfair Display';
+  src: url('../public/fonts/Playfair_Display/PlayfairDisplay-VariableFont_wght.ttf')
+}

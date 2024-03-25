@@ -20,7 +20,7 @@ import { apiManager } from 'src/utils/api';
 import DialogAddAddress from 'src/components/dialog/DialogAddAddress';
 
 const Wrappers = styled.div`
-max-width:1360px;
+max-width:1400px;
 display:flex;
 flex-direction:column;
 margin: 0 auto;

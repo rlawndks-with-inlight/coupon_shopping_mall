@@ -101,7 +101,7 @@ const Footer = (props) => {
                                 위탁센터
                             </Row>
                         </div>
-                        <div>
+                        {/*<div>
                             <Row style={{fontWeight:'bold', fontSize:'16px', color:'#FFFFFF', fontFamily:'Playfair Display',}}>
                                 SELL
                             </Row>
@@ -123,7 +123,7 @@ const Footer = (props) => {
                             <Row style={{cursor:'pointer'}}>
                                 위탁센터
                             </Row>
-                        </div>
+                        </div>*/}
                         <div>
                             <Row style={{fontWeight:'bold', fontSize:'16px', color:'#FFFFFF', fontFamily:'Playfair Display',}}>
                                 HELP

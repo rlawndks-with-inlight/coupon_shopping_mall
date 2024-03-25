@@ -34,34 +34,32 @@ width:90%;
 margin: 1rem auto;
 `
 const ItemName = muiStyle(Typography)`
-border-bottom: 1px solid #ccc;
-text-align: center;
-padding: 1rem 0;
+font-size:16px;
 `
 const ItemCharacter = (props) => {
   const { key_name, value, type = 0 } = props;
   if (type == 0) {
     return (
       <>
-        <Row style={{ columnGap: '0.25rem', marginTop: '1rem' }}>
-          <Typography variant='body2' style={{ width: '100px' }}>{key_name}:</Typography>
-          <Typography variant='subtitle2'>{value}</Typography>
+        <Row style={{ columnGap: '0.25rem', marginTop: '1rem', fontSize: '14px', color: '#999999' }}>
+          <Typography>{key_name} :</Typography>
+          <Typography>{value}</Typography>
         </Row>
       </>
     )
-  } else if (type == 1) {
+  } /*else if (type == 1) {
     return (
       <>
         <Row style={{ columnGap: '0.25rem', marginTop: '1rem', alignItems:'center' }}>
-          <Typography variant='body2' style={{ width: '100px' }}>{key_name}:</Typography>
+          <Typography>{key_name} :</Typography>
           <div>
-            <FormControlLabel value='' control={<Radio disabled />} label='압구정 그랑파리' />
+            <FormControlLabel value='' control={<Radio />} label='압구정 그랑파리' />
             <FormControlLabel value='' control={<Radio disabled />} label='인스파이어 럭셔리에디션' />
           </div>
         </Row>
       </>
     )
-  }
+  }*/
 }
 const ItemDemo = (props) => {
   const {
@@ -118,7 +116,7 @@ const ItemDemo = (props) => {
   const TABS = [
     {
       value: 'description',
-      label: '상품정보',
+      label: 'Detail',
       component: product?.product_description ?
         <ReactQuill
           className='none-padding'
@@ -139,7 +137,7 @@ const ItemDemo = (props) => {
     },*/
     {
       value: 'item_faq',
-      label: '상품문의',
+      label: 'Q&A',
       component: product ? //<></> : null,
         <ProductFaq /> : null,
     },
@@ -186,12 +184,15 @@ const ItemDemo = (props) => {
                     </Grid>
 
                     <Grid item xs={12} md={6} lg={6}>
-                      <ItemName variant='h4' style={{whiteSpace:'wrap'}}>{product?.product_name}</ItemName>
+
                       {product?.brand_name &&
-                      <>
-                      <ItemCharacter key_name={'브랜드'} value={product?.brand_name[0].category_en_name} />
-                      </>
+                        <>
+                          <div style={{ fontSize: '40px', fontFamily: 'Playfair Display', fontWeight: 'bold', borderTop: '1px solid #ccc', padding: '1rem 0' }}>
+                            {product?.brand_name[0].category_en_name}
+                          </div>
+                        </>
                       }
+                      <ItemName style={{ whiteSpace: 'wrap' }}>{product?.product_name}</ItemName>
                       {product?.product_code &&
                         <>
                           <ItemCharacter key_name={'상품코드'} value={product?.product_code} />
@@ -204,10 +205,9 @@ const ItemDemo = (props) => {
                         if (group?.property_group_name == '등급') {
                           return <ItemCharacter key_name={group?.property_group_name} value={`${property_list.join(', ')}`} />
                         }
-                        if (group?.property_group_name == '매장') {
+                        /*if (group?.property_group_name == '매장') {
                           return <ItemCharacter key_name={group?.property_group_name} value={`${property_list.join(', ')}`} type='1' />
-                        }
-
+                        }*/
                       })}
                       {product?.characters && product?.characters.map((character) => (
                         <>
@@ -220,46 +220,122 @@ const ItemDemo = (props) => {
                         onAddCart={() => { }}
                         onGotoStep={() => { }}
                       /> */}
-                      {commarNumber(product?.product_price) != commarNumber(product?.product_sale_price) ?
-                        <>
-                          <ItemCharacter key_name={'정상가'} value={<div style={{ textDecoration: 'line-through' }}>{commarNumber(product?.product_price)}원</div>} />
-                          <ItemCharacter key_name={'할인가'} value={<div>{commarNumber(product?.product_sale_price)}원</div>} />
-                        </>
-                        :
-                        <>
-                          <ItemCharacter key_name={'판매가'} value={product?.product_sale_price != 0 ? <div>{commarNumber(product?.product_sale_price)}원</div> : <div>SOLD OUT</div>} />
-                        </>
-                      }
+                      <div style={{ marginTop: '5rem' }}>
+                        {commarNumber(product?.product_price) != commarNumber(product?.product_sale_price) ?
+                          <>
+                            <div style={{ fontSize: '14px', textDecoration: 'line-through', color: '#999999' }}>
+                              {commarNumber(product?.product_price)}원
+                            </div>
+                            <div style={{ fontSize: '22px', display: 'flex' }}>
+                              <div style={{ marginRight: '1rem' }}>
+                                {parseFloat((parseInt(product?.product_price - product?.product_sale_price) / parseInt(product?.product_price) * 100).toFixed(2))}%
+                              </div>
+                              {commarNumber(product?.product_sale_price)}원
+                            </div>
+                          </>
+                          :
+                          <>
+                            <div style={{ fontSize: '22px' }}>
+                              {product?.product_sale_price != 0 ? <div>{commarNumber(product?.product_sale_price)}원</div> : <div>SOLD OUT</div>}
+                            </div>
+                          </>
+                        }
+                      </div>
                       <div style={{ borderBottom: '1px solid #ccc', width: '100%', marginTop: '1rem' }} />
+                      {themePropertyList.map((group, index) => {
+                        let property_list = (product?.properties ?? []).filter(el => el?.property_group_id == group?.id);
+                        property_list = property_list.map(property => {
+                          return property?.property_name
+                        })
+                        if (group?.property_group_name == '매장') {
+                          return <>
+                            <div style={{ margin: '1rem 0 3rem 0' }}>
+                              {`${property_list.join(', ')}` == '압구정, 인스파이어' ?
+                                <div style={{ fontSize: '14px' }}>
+                                  <Icon icon={'mdi:location'} style={{ color: '#EC1C24' }} /> 압구정 그랑파리<br />
+                                  <Icon icon={'mdi:location'} style={{ color: '#EC1C24' }} /> 인스파이어 럭셔리에디션
+                                </div>
+                                :
+                                `${property_list.join(', ')}` == '압구정' ?
+                                  <div style={{ fontSize: '14px', color: '#999999' }}>
+                                    <Row style={{ color: 'black' }}><Icon icon={'mdi:location'} style={{ color: '#EC1C24' }} /> &nbsp;압구정 그랑파리</Row>
+                                    <Icon icon={'mdi:location'} /> 인스파이어 럭셔리에디션
+                                  </div>
+                                  :
+                                  `${property_list.join(', ')}` == '인스파이어' ?
+                                    <div style={{ fontSize: '14px', color: '#999999' }}>
+                                      <Icon icon={'mdi:location'} /> 압구정 그랑파리
+                                      <Row style={{ color: 'black' }}><Icon icon={'mdi:location'} style={{ color: '#EC1C24' }} /> &nbsp;인스파이어 럭셔리에디션</Row>
+                                    </div>
+                                    :
+                                    <div style={{ fontSize: '14px', color: '#999999' }}>
+                                      <Icon icon={'mdi:location-on-outline'} /> 압구정 그랑파리<br />
+                                      <Icon icon={'mdi:location-on-outline'} /> 인스파이어 럭셔리에디션
+                                    </div>
+                              }
+                            </div>
+                          </>
+                        }
+                      })}
                       <Button
                         disabled={getProductStatus(product?.status).color != 'info' || !(product?.product_sale_price > 0)}
-                        sx={{ width: '100%', marginTop: '1rem', height: '48px' }}
-                        variant='contained'
-                        startIcon={<>
+                        sx={{
+                          width: '100%',
+                          marginTop: '1rem',
+                          height: '60px',
+                          backgroundColor: 'black',
+                          borderRadius: '0',
+                          fontWeight: 'bold',
+                          fontSize: '18px',
+                          fontFamily: 'Playfair Display',
+                          color: 'white',
+                          border:'1px solid #999999',
+                          '&:hover': {
+                            backgroundColor: 'black',
+                          }
+                        }}
+                        //variant='contained'
+                        /*startIcon={<>
                           <Icon icon={'mdi:check-bold'} />
-                        </>}
+                        </>}*/
                         onClick={() => {
                           setBuyOpen(true)
                         }}
-                      >바로구매</Button>
-                      <Row style={{ columnGap: '0.5rem', marginTop: '0.5rem' }}>
+                      >Buy Now</Button>
+                      <Row style={{ columnGap: '0.5rem', marginTop: '0.5rem', alignItems: 'center' }}>
                         <Button
                           disabled={getProductStatus(product?.status).color != 'info' || !(product?.product_sale_price > 0)}
-                          sx={{ width: '50%', height: '48px' }}
-                          variant='outlined'
-                          startIcon={<>
+                          sx={{
+                            width: '90%',
+                            height: '60px',
+                            //backgroundColor: 'white',
+                            borderRadius: '0',
+                            fontWeight: 'bold',
+                            fontSize: '18px',
+                            fontFamily: 'Playfair Display',
+                            color: '#999999',
+                            border:'1px solid #999999',
+                            '&:hover': {
+                              backgroundColor: 'transparent',
+                            }
+                          }}
+                          //variant='outlined'
+                          /*startIcon={<>
                             <Icon icon={'mdi:cart'} />
-                          </>}
+                          </>}*/
                           onClick={() => {
                             handleAddCart()
                           }}
-                        >장바구니</Button>
-                        <Button
-                          sx={{ width: '50%', height: '48px' }}
-                          variant={themeWishData.map(wish => { return wish?.product_id }).includes(product?.id) ? 'contained' : 'outlined'}
-                          startIcon={<>
-                            <Icon icon={'mdi:heart'} />
-                          </>}
+                        >add to cart</Button>
+                        <Icon
+                          icon={themeWishData.map(wish => { return wish?.product_id }).includes(product?.id) ? 'ph:heart-fill' : 'ph:heart-light'}
+                          style={{
+                            width: '30px',
+                            height: '30px',
+                            color: '#EC1C24',
+                            cursor: 'pointer',
+                            margin: '0 1rem'
+                          }}
                           onClick={async () => {
                             if (user) {
                               let result = await insertWishDataUtil(product, themeWishData, onChangeWishData);
@@ -275,9 +351,8 @@ const ItemDemo = (props) => {
                             } else {
                               toast.error('로그인을 해주세요.')
                             }
-
                           }}
-                        >위시리스트</Button>
+                        />
                       </Row>
                     </Grid>
                   </Grid>
@@ -304,7 +379,7 @@ const ItemDemo = (props) => {
                       }
                     </Tabs>
                     <Divider />
-                    
+
                     {TABS.map(
                       (tab) =>
                         tab.value === currentTab && (
@@ -317,15 +392,15 @@ const ItemDemo = (props) => {
                             }}
                           >
                             {commarNumber(product?.product_price) != commarNumber(product?.product_sale_price) && currentTab === 'description' ?
-                        <>
-                        <div style={{color:`${themeDnsData?.theme_css?.main_color}`, fontWeight:'bold'}}>
-                          {commarNumber(product?.product_price)} 원에서 {commarNumber(product?.product_sale_price)} 원으로 가격인하를 하였습니다.
-                          </div>
-                        </>
-                        :
-                        <>
-                        </>
-                      }
+                              <>
+                                <div style={{ color: `${themeDnsData?.theme_css?.main_color}`, fontWeight: 'bold' }}>
+                                  {commarNumber(product?.product_price)} 원에서 {commarNumber(product?.product_sale_price)} 원으로 가격인하를 하였습니다.
+                                </div>
+                              </>
+                              :
+                              <>
+                              </>
+                            }
                             {tab.component}
                           </Box>
                         )

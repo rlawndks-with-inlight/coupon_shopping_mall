@@ -127,7 +127,7 @@ export const Items = props => {
       if (itemThemeCss?.container?.is_vertical == 1) {
         return 3
       } else {
-        return 5
+        return 4
       }
     }
     if (window.innerWidth > 850) {

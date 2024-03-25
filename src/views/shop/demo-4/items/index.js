@@ -72,7 +72,7 @@ const ItemsDemo = (props) => {
   ]
   useEffect(() => {
     getItemList({ ...router.query }, searchObj)
-  }, [router.query.category_id0, router.query.category_id1, router.query.category_id2, router.query.search, router.query.property_id])
+  }, [router.query.category_id0, router.query.category_id1, router.query.category_id2, router.query.search, router.query.property_ids0])
 
   /*const handleScroll = () => {
     if (!scrollRef.current) {
@@ -243,7 +243,7 @@ const ItemsDemo = (props) => {
                 <ContentBorderContainer style={{ maxHeight: '150px', overflowX: 'auto', minHeight: '50px', }}>
                   {group?.sort_type == 1 &&
                     <>
-                      <Row style={{ marginBottom: '1rem', display:'flex', flexDirection:'column', margin:'-1rem 0 -0.5rem 0' }}>
+                      <Row style={{ marginBottom: '1rem', display: 'flex', flexDirection: 'column', margin: '-1rem 0 -0.5rem 0' }}>
                         <div style={{ borderBottom: `2px solid gray`, marginRight: '0.5rem' }}>
                           <Chip label={`알파벳순`} variant="soft" sx={{
                             margin: '0.5rem 0.5rem 0.5rem 0',

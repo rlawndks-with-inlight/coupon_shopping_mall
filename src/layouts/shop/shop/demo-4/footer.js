@@ -83,22 +83,34 @@ const Footer = (props) => {
                                 OUR SERVICE
                             </Row>
                             <br /><br />
-                            <Row style={{marginBottom:'0.7rem', cursor:'pointer'}}>
+                            <Row 
+                            style={{marginBottom:'0.7rem', cursor:'pointer'}}
+                            >
                                 온라인 판매
                             </Row>
                             <Row 
                             style={{marginBottom:'0.7rem', cursor:'pointer'}}
                             onClick={() => {
-                                router.push('shop/guide/brand-about')
+                                router.push('/shop/guide/brand-about')
                             }}
                             >
                                 오프라인
                             </Row>
-                            <Row style={{marginBottom:'0.7rem', cursor:'pointer'}}>
+                            <Row 
+                            style={{marginBottom:'0.7rem', cursor:'pointer'}}
+                            onClick={() => {
+                                router.push('/shop/guide/purchase-guide')
+                            }}
+                            >
                                 매입센터
                             </Row>
-                            <Row style={{cursor:'pointer'}}>
-                                위탁센터
+                            <Row 
+                            style={{cursor:'pointer'}}
+                            onClick={() => {
+                                router.push('/shop/guide/consignment-guide')
+                            }}
+                            >
+                                위탁판매
                             </Row>
                         </div>
                         {/*<div>

@@ -79,7 +79,13 @@ const HomeItemsPropertyGroups = (props) => {
                                     router.push(`/shop/items?not_show_select_menu=1&property_ids0=${parseInt(column?.type.split('items-property-group-')[1])}`)
                                 }}>View More</Button>
                                 :
-                                <Icon icon={'ph:plus-light'} style={{width:'25px', height:'25px', margin:'auto 0', cursor:'pointer'}} />
+                                <Icon 
+                                icon={'ph:plus-light'} 
+                                style={{width:'25px', height:'25px', margin:'auto 0', cursor:'pointer'}} 
+                                onClick={() => {
+                                    router.push(`/shop/items?not_show_select_menu=1&property_ids0=${parseInt(column?.type.split('items-property-group-')[1])}`)
+                                }}
+                                />
                             }
                         </>}
                 </Row>

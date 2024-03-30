@@ -776,7 +776,7 @@ const Header = () => {
                                                             :
                                                             group?.category_group_name == '브랜드' ?
 
-                                                                <div style={{ color: `${themeDnsData?.theme_css?.main_color}`, fontFamily: 'Playfair Display' }}>Find Brand</div> : ''}
+                                                                <div style={{ fontFamily: 'Playfair Display' }}>Find Brand</div> : ''}
                                                     </CategoryMenu>
                                                     {openAllCategory == group?.id &&
                                                         <>

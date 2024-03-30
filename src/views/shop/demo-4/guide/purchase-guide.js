@@ -46,7 +46,7 @@ const Wrappers = styled.div`
   flex-direction: column;
   margin: 0 auto;
 
-  @media (max-width: 1000px) {
+  @media (max-width: 1400px) {
     width: 100%;
     padding: 0 1rem;
   }
@@ -76,7 +76,7 @@ const ContentRow = styled(Row)`
   margin-top: 3rem;
   justify-content: space-between;
 
-  @media (max-width: 1000px) {
+  @media (max-width: 1400px) {
     flex-direction: column;
     align-items: center;
   }
@@ -85,7 +85,7 @@ const ContentRow = styled(Row)`
 const ContentSection = styled.div`
   margin-right: 1rem;
 
-  @media (max-width: 1000px) {
+  @media (max-width: 1400px) {
     margin-right: 0;
     text-align: center;
   }

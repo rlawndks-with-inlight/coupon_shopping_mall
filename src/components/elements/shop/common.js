@@ -176,7 +176,6 @@ export const Items = props => {
           <ItemsContainer theme_css={itemThemeCss}>
             {items &&
               items.map((item, idx) => {
-
                 return (
                   <ItemWrapper theme_css={itemThemeCss}>
                     <Item item={item} router={router} theme_css={itemThemeCss} seller={seller} />

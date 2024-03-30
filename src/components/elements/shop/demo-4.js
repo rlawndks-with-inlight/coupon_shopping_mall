@@ -23,6 +23,7 @@ row-gap: 0.5rem;
 text-decoration: none;
 color: ${props => props.themeMode == 'dark' ? '#fff' : '#000'};
 transition: 0.3s;
+padding:25px 15px;
 &:hover{
   transform: translateY(-8px);
   color: ${props => props.themeDnsData?.theme_css?.main_color};
@@ -30,8 +31,7 @@ transition: 0.3s;
 `
 const ItemName = muiStyle(Typography)`
 width:70%;
-margin: 0 auto;
-text-align: center;
+//text-align: center;
 `
 const ItemImgContainer = styled.div`
 width: 100%;
@@ -69,7 +69,7 @@ margin-bottom:2rem;
 export const Item4 = (props) => {
   const { user } = useAuthContext();
   const { themeWishData, onChangeWishData, themeMode, themeDnsData } = useSettingsContext();
-  const { item, router, theme_css, seller } = props;
+  const { item, router, theme_css, seller, type = 0 } = props;
   const [itemThemeCss, setItemThemeCss] = useState(itemThemeCssDefaultSetting);
 
   useEffect(() => {
@@ -94,11 +94,24 @@ export const Item4 = (props) => {
           router.push(`/shop/item/${item?.id}${seller ? `?seller_id=${seller?.id}` : ''}`)
         }
       }}
-      style={{ cursor: 'pointer' }}
+      style={{ cursor: 'pointer', textAlign:`${type == 0 ? 'center':'left'}` }}
     >
       <ItemImgContainer>
-        <ItemImg src={item?.product_img} />
+        <ItemImg src={item?.product_img} style={{height:'60%'}} />
       </ItemImgContainer>
+      <div style={{color:'#999999', fontWeight:'bold', fontSize:'11px'}}>
+        {item?.product_name.split(" ")[0]}
+      </div>
+      <ItemName style={{ fontSize:'16px', height: '60px', width: '90%', wordBreak: 'keep-all', margin:`${type == 0 ? '0 auto':''}` }}>
+        {item?.product_name.length < 50 ? item.product_name : `${item.product_name.slice(0, 50)}...`}
+      </ItemName>
+      <ItemName variant="subtitle2" style={{margin:`${type == 0 ? '0 auto':''}`}}>
+        {item?.status == 1 ? '거래 진행중'
+          :
+          item?.product_sale_price == 0 ? 'SOLD OUT'
+            :
+            `${commarNumber(item?.product_sale_price)}원`}
+      </ItemName>
       <Chip
         size="small"
         variant="outlined"  //그랑파리 상품에서는 item.status가 0이다 = 판매중, 그 중에서 show_status가 0이면 신상품, 1이면 중고품
@@ -121,16 +134,6 @@ export const Item4 = (props) => {
         style={{
           margin: '0 auto',
         }} />
-      <ItemName variant="body2" style={{ height: '60px', width: '90%', wordBreak: 'keep-all' }}>
-        {item?.product_name.length < 50 ? item.product_name : `${item.product_name.slice(0, 50)}...`}
-      </ItemName>
-      <ItemName variant="subtitle2">
-        {item?.status == 1 ? '거래 진행중'
-          :
-          item?.product_sale_price == 0 ? 'SOLD OUT'
-            :
-            `${commarNumber(item?.product_sale_price)}원`}
-      </ItemName>
     </ItemWrapper>
   </>
 }

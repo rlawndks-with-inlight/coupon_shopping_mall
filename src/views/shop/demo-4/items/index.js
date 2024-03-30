@@ -200,7 +200,7 @@ const ItemsDemo = (props) => {
                 })
               }}
               value={searchObj?.search}
-              style={{ width: '100%', margin: '2rem auto 0 auto', maxWidth: '700px', }}
+              style={{ width: '100%', margin: '2rem auto', maxWidth: '700px', }}
               autoComplete='new-password'
               placeholder="키워드를 검색해주세요."
               onKeyPress={(e) => {

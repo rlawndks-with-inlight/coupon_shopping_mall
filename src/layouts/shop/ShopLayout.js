@@ -88,7 +88,7 @@ const ShopLayout = ({ children, scrollToTop }) => {
     <>
       {!loading &&
         <>
-          <Wrappers>
+          <Wrappers /*style={{fontFamily:'Noto Sans KR'}}*/>
             {getDemo(getDemoNum(), {
               data: {
                 category: router.asPath.split('/')[1]

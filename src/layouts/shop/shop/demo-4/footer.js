@@ -75,11 +75,11 @@ const Footer = (props) => {
     return (
         <>
             <div style={{ marginTop: '2rem' }} />
-            <Wrapper>
-                <ContentWrapper style={{backgroundColor:'#000000'}}>
+            <Wrapper style={{fontFamily:'Noto Sans KR'}}>
+                <ContentWrapper style={{backgroundColor:'#FEF8F4', }}>
                 <MainContent style={{display:'flex', flexDirection:'row', marginTop:'50px', justifyContent:'space-between'}}>
                         <div>
-                            <Row style={{fontWeight:'bold', fontSize:'16px', color:'#FFFFFF', fontFamily:'Playfair Display',}}>
+                            <Row style={{fontWeight:'bold', fontSize:'16px', color:'#5F5F5F', fontFamily:'Playfair Display',}}>
                                 OUR SERVICE
                             </Row>
                             <br /><br />
@@ -137,7 +137,7 @@ const Footer = (props) => {
                             </Row>
                         </div>*/}
                         <div>
-                            <Row style={{fontWeight:'bold', fontSize:'16px', color:'#FFFFFF', fontFamily:'Playfair Display',}}>
+                            <Row style={{fontWeight:'bold', fontSize:'16px', color:'#5F5F5F', fontFamily:'Playfair Display',}}>
                                 HELP
                             </Row>
                             <br /><br />
@@ -178,14 +178,14 @@ const Footer = (props) => {
                             </Row>
                         </div>
                         <div>
-                            <Row style={{fontWeight:'bold', fontSize:'16px', color:'#FFFFFF', fontFamily:'Playfair Display',}}>
+                            <Row style={{fontWeight:'bold', fontSize:'16px', color:'#5F5F5F', fontFamily:'Playfair Display',}}>
                                 C.S CENTER
                             </Row>
                             <br /><br />
-                            <Row style={{fontWeight:'bold', fontSize:'18px', color:'#FFFFFF'}}>
+                            <Row style={{fontWeight:'bold', fontSize:'18px', color:'#5F5F5F'}}>
                                 02-517-2950
                             </Row>
-                            <Row style={{fontWeight:'bold', fontSize:'18px', color:'#FFFFFF', marginBottom:'0.5rem'}}>
+                            <Row style={{fontWeight:'bold', fontSize:'18px', color:'#5F5F5F', marginBottom:'0.5rem'}}>
                                 02-517-8950
                             </Row>
                             <Row>

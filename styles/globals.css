@@ -1,6 +1,7 @@
 body {
   margin: 0 !important;
 }
+
 .ql-align-right img {
   float: right;
 }
@@ -135,5 +136,10 @@ input[type="color"]::-webkit-color-swatch {
 
 @font-face {
   font-family: 'Playfair Display';
-  src: url('../public/fonts/Playfair_Display/PlayfairDisplay-VariableFont_wght.ttf')
+  src: url('../public/fonts/Playfair_Display/PlayfairDisplay-VariableFont_wght.ttf');
+}
+
+@font-face {
+  font-family: 'Noto Sans KR';
+  src: url('../public/fonts/Noto_Sans_KR/NotoSansKR-VariableFont_wght.ttf');
 }

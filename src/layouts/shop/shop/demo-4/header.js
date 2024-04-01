@@ -52,7 +52,7 @@ width:90%;
 margin: 0 auto;
 align-items:center;
 position:relative;
-height:60px;
+height:100px;
 @media (max-width:1000px) {
   padding: 0.5rem 0;
 }
@@ -214,9 +214,7 @@ position: absolute;
 top: 50%;
 left: 50%;
 transform: translate(-50%, -50%);
-min-width: 100px;
-max-width: 148px;
-max-height: 52px;
+height: 88px;
 @media (max-width:768px) {
     left:20%;
 }

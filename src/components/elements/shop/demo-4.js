@@ -97,7 +97,7 @@ export const Item4 = (props) => {
       style={{ cursor: 'pointer', textAlign: `${text_align}`, backgroundColor: `${'white'}`, margin: '0.25rem' }}
     >
       <ItemImgContainer>
-        <ItemImg src={item?.product_img} style={{ height: '60%' }} />
+        <ItemImg src={item?.product_img} style={{ height: '70%' }} />
       </ItemImgContainer>
       <div style={{ color: '#999999', fontWeight: 'bold', fontSize: '11px', width: '90%', margin: '0 auto' }}>
         {item?.product_name.split(" ")[0]}

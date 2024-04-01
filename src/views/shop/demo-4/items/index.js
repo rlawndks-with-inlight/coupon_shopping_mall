@@ -620,7 +620,7 @@ const ItemsDemo = (props) => {
               <>
                 {productContent?.content.length > 0 ?
                   <>
-                    <Items items={productContent?.content ?? []} router={router} />
+                    <Items items={productContent?.content ?? []} router={router} item_column={4} />
                     <Divider sx={{ marginTop: '1rem' }} />
                     <Box sx={{ padding: '0.75rem', display: 'flex' }}>
                       <Pagination

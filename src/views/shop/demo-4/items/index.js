@@ -352,7 +352,7 @@ const ItemsDemo = (props) => {
               {themeCategoryList.map((group, index) => {
                 return <>
                   {categoryChildren[`category_id${index}`] &&
-                    <div style={{ maxHeight: '150px', overflowX: 'auto', minHeight: '50px', }}>
+                    <div style={{ maxHeight: '150px', overflowX: 'auto', minHeight: '50px', direction:'ltr' }}>
                       {categoryChildren[`category_id${index}`]?.children.map((category, idx) => (
                         <>
                           <Button

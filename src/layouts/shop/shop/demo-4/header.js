@@ -632,7 +632,7 @@ const Header = () => {
                                         marginRight: '10px'
                                     }}
                                         onClick={() => {
-                                            router.push(`/shop/guide/consignment-guide`)
+                                            router.push(`/shop/guide/purchase-guide`)
                                         }}
                                     >
                                         Sell Item
@@ -786,49 +786,70 @@ const Header = () => {
                                                                 overflowY: 'auto',
                                                                 borderTop: `2px solid ${themeDnsData?.theme_css?.main_color}`,
                                                                 borderBottom: `2px solid ${themeDnsData?.theme_css?.main_color}`,
+                                                                fontFamily:'Playfair Display'
                                                             }}>
                                                                 <div style={{ maxWidth: '1400px', margin: '0 auto' }}>
 
                                                                     {group?.sort_type == 0 &&
                                                                         <>
-                                                                            <Row style={{ columnGap: '1rem', flexWrap: 'wrap', rowGap: '2rem', marginBottom: '10px' }}>
+                                                                            <Row style={{ columnGap: '1rem', flexWrap: 'wrap', rowGap: '2rem', margin: '2rem 0', flexDirection:'column' }}>
                                                                                 {group?.product_categories && group?.product_categories.map((category, idx) => (
                                                                                     <>
-                                                                                        {category.category_name != 'WATCH' && (
-                                                                                            <Col style={{ minWidth: '100px' }}>
-                                                                                                <ColumnMenuTitle style={{ margin: '0', cursor: 'pointer' }} onClick={() => {
+                                                                                        {category.category_name != 'WATCH' && category.category_name != 'PRIVATE' && (
+                                                                                            <Row style={{ minWidth: '100px', }}>
+                                                                                                <ColumnMenuTitle style={{ margin: '0', cursor: 'pointer', width:'130px' }} onClick={() => {
                                                                                                     router.push(`/shop/items?category_id${index}=${category?.id}&depth=0`)
+                                                                                                    setOpenAllCategory("")
                                                                                                 }}>
                                                                                                     {category?.category_name}
                                                                                                 </ColumnMenuTitle>
                                                                                                 {category?.children && category?.children.map(children => (
                                                                                                     <>
-                                                                                                        <Typography variant="body2" style={{ cursor: 'pointer', marginBottom: '0.2rem' }} onClick={() => {
+                                                                                                        <Typography variant="body2" style={{ cursor: 'pointer', marginBottom: '0.2rem', marginRight:'2rem', fontFamily:'Playfair Display' }} onClick={() => {
                                                                                                             router.push(`/shop/items?category_id${index}=${children?.id}&depth=0`)
                                                                                                             setOpenAllCategory("")
                                                                                                         }}>{children?.category_name}</Typography>
                                                                                                     </>
                                                                                                 ))}
-                                                                                            </Col>
+                                                                                            </Row>
+                                                                                        )}
+                                                                                        {category.category_name == 'PRIVATE' && user && (
+                                                                                            <Row style={{ minWidth: '100px' }}>
+                                                                                                <ColumnMenuTitle style={{ margin: '0', cursor: 'pointer', width:'130px' }} onClick={() => {
+                                                                                                    router.push(`/shop/items?category_id${index}=${category?.id}&depth=0`)
+                                                                                                    setOpenAllCategory("")
+                                                                                                }}>
+                                                                                                    {category?.category_name}
+                                                                                                </ColumnMenuTitle>
+                                                                                                {category?.children && category?.children.map(children => (
+                                                                                                    <>
+                                                                                                        <Typography variant="body2" style={{ cursor: 'pointer', marginBottom: '0.2rem', marginRight:'2rem', fontFamily:'Playfair Display' }} onClick={() => {
+                                                                                                            router.push(`/shop/items?category_id${index}=${children?.id}&depth=0`)
+                                                                                                            setOpenAllCategory("")
+                                                                                                        }}>{children?.category_name}</Typography>
+                                                                                                    </>
+                                                                                                ))}
+                                                                                            </Row>
                                                                                         )}
                                                                                     </>
                                                                                 ))}
                                                                             </Row>
-                                                                            <div style={{ border: '2px solid red', padding: '0' }} />
-                                                                            <Col style={{ columnGap: '1rem', flexWrap: 'wrap', alignItems: 'flex-start', rowGap: '2rem', maxHeight: '200px', marginTop: '10px', marginBottom: '10px' }}>
+                                                                            {/*<div style={{ border: '2px solid red', padding: '0' }} />*/}
+                                                                            <Col style={{ columnGap: '1rem', flexWrap: 'wrap', alignItems: 'flex-start', rowGap: '2rem', maxHeight: '200px', marginBottom:'2rem' }}>
                                                                                 {group?.product_categories && group?.product_categories.map((category, idx) => {
                                                                                     return <>
                                                                                         {category.category_name == 'WATCH' && (
                                                                                             <div style={{ minWidth: '100px', display: 'flex' }}>
-                                                                                                <ColumnMenuTitle style={{ margin: '0', cursor: 'pointer', marginRight: '2rem' }} onClick={() => {
+                                                                                                <ColumnMenuTitle style={{ margin: '0', cursor: 'pointer', width:'130px' }} onClick={() => {
                                                                                                     router.push(`/shop/items?category_id${index}=${category?.id}&depth=0`)
+                                                                                                    setOpenAllCategory("")
                                                                                                 }}>
                                                                                                     {category?.category_name}
                                                                                                 </ColumnMenuTitle>
                                                                                                 <Col style={{ columnGap: '3rem', flexWrap: 'wrap', alignItems: 'flex-start', rowGap: '1rem', maxHeight: '200px' }}>
                                                                                                     {category?.children && category?.children.map((children) => {
                                                                                                         return <>
-                                                                                                            <Typography variant="body2" style={{ cursor: 'pointer' }} onClick={() => {
+                                                                                                            <Typography variant="body2" style={{ cursor: 'pointer', fontFamily:'Playfair Display' }} onClick={() => {
                                                                                                                 router.push(`/shop/items?category_id${index}=${children?.id}&depth=0`)
                                                                                                                 setOpenAllCategory("")
                                                                                                             }}>{children?.category_name}</Typography>
@@ -839,7 +860,7 @@ const Header = () => {
                                                                                     </>
                                                                                 })}
                                                                             </Col>
-                                                                            <div style={{ border: '2px solid red', padding: '0' }} />
+                                                                            {/*<div style={{ border: '2px solid red', padding: '0' }} />*/}
                                                                         </>}
                                                                     {group?.sort_type == 1 &&
                                                                         <>
@@ -852,6 +873,7 @@ const Header = () => {
                                                                                     height: '40px',
                                                                                     background: 'transparent',
                                                                                     borderRadius: '0',
+                                                                                    fontFamily:'Playfair Display',
                                                                                     color: `${langChipSelected == 0 ? themeMode == 'dark' ? 'white' : 'black' : '#999999'}`,
                                                                                     '&:hover': {
                                                                                         textDecoration: 'underline',
@@ -868,6 +890,7 @@ const Header = () => {
                                                                                     height: '40px',
                                                                                     background: 'transparent',
                                                                                     borderRadius: '0',
+                                                                                    fontFamily:'Playfair Display',
                                                                                     color: `${langChipSelected == 1 ? themeMode == 'dark' ? 'white' : 'black' : '#999999'}`,
                                                                                     '&:hover': {
                                                                                         textDecoration: 'underline',
@@ -890,6 +913,7 @@ const Header = () => {
                                                                                                         cursor: 'pointer',
                                                                                                         color: `${textChipSelected == alphabet ? themeMode == 'dark' ? 'white' : 'black' : '#999999'}`,
                                                                                                         background: 'transparent',
+                                                                                                        fontFamily:'Playfair Display',
                                                                                                         '&:hover': {
                                                                                                             color: `${textChipSelected == alphabet ? 'white' : ''}`,
                                                                                                             //background: `${textChipSelected == alphabet ? 'black' : ''}`,
@@ -915,6 +939,7 @@ const Header = () => {
                                                                                                         cursor: 'pointer',
                                                                                                         color: `${textChipSelected == hangeul ? themeMode == 'dark' ? 'white' : 'black' : '#999999'}`,
                                                                                                         background: 'transparent',
+                                                                                                        fontFamily:'Playfair Display',
                                                                                                         '&:hover': {
                                                                                                             color: `${textChipSelected == hangeul ? 'white' : ''}`,
                                                                                                             //background: `${textChipSelected == hangeul ? 'black' : ''}`,
@@ -944,6 +969,7 @@ const Header = () => {
                                                                                                                 fontSize: '16px',
                                                                                                                 cursor: 'pointer',
                                                                                                                 background: 'transparent',
+                                                                                                                fontFamily:'Playfair Display',
                                                                                                                 '&:hover': {
                                                                                                                     background: `${themeMode == 'dark' ? '#999999' : 'white'}`,
                                                                                                                 },
@@ -970,6 +996,7 @@ const Header = () => {
                                                                                                                 fontSize: '16px',
                                                                                                                 cursor: 'pointer',
                                                                                                                 background: 'transparent',
+                                                                                                                fontFamily:'Playfair Display',
                                                                                                                 '&:hover': {
                                                                                                                     background: `${themeMode == 'dark' ? '#999999' : 'white'}`,
                                                                                                                 },
@@ -1056,6 +1083,85 @@ const Header = () => {
                                     </div>
                                 </NoneShowMobile>
 
+                            </CategoryContainer>
+                        </div>
+                        <div style={{ width: '100%', borderTop: `1px solid ${theme.palette.grey[300]}`, backgroundColor:'#FEF8F4', fontFamily:'Playfair Display' }}>
+                            <CategoryContainer>
+                                <NoneShowMobile>
+                                    <Row style={{margin:'0 1rem'}}>
+                                        Brand Pick |
+                                    </Row>
+                                    <CategoryMenu
+                                    onClick={() => {
+                                        /*const route = themeCategoryList.map((group, index) => {
+                                            let categories = group?.product_categories;
+                                            if (_.find(categories, { category_name: 'HERMES' })) {
+                                              return _.find(categories, { category_name: 'HERMES' })?.id
+                                            }
+                                          })
+                                          console.log(route)*/
+                                        router.push(`/shop/items/?category_id1=501&depth=0`)
+                                    }}
+                                    >
+                                        Hermes
+                                    </CategoryMenu>
+                                    <CategoryMenu
+                                    onClick={() => {
+                                        router.push(`/shop/items/?category_id1=506&depth=0`)
+                                    }}
+                                    >
+                                        Chanel
+                                    </CategoryMenu>
+                                    <CategoryMenu
+                                    onClick={() => {
+                                        router.push(`/shop/items/?category_id1=511&depth=0`)
+                                    }}
+                                    >
+                                        Louis Vuitton
+                                    </CategoryMenu>
+                                    <CategoryMenu
+                                    onClick={() => {
+                                        router.push(`/shop/items/?category_id1=533&depth=0`)
+                                    }}
+                                    >
+                                        Rolex
+                                    </CategoryMenu>
+                                    <CategoryMenu
+                                    onClick={() => {
+                                        router.push(`/shop/items/?category_id1=516&depth=0`)
+                                    }}
+                                    >
+                                        Cartier
+                                    </CategoryMenu>
+                                    <CategoryMenu
+                                    onClick={() => {
+                                        router.push(`/shop/items/?category_id1=522&depth=0`)
+                                    }}
+                                    >
+                                        Van Cleef & Arpels
+                                    </CategoryMenu>
+                                    <CategoryMenu
+                                    onClick={() => {
+                                        router.push(`/shop/items/?category_id1=527&depth=0`)
+                                    }}
+                                    >
+                                        Tiffany & Co.
+                                    </CategoryMenu>
+                                    <CategoryMenu
+                                    onClick={() => {
+                                        router.push(`/shop/items/?category_id1=513&depth=0`)
+                                    }}
+                                    >
+                                        Goyard
+                                    </CategoryMenu>
+                                    <CategoryMenu
+                                    onClick={() => {
+                                        router.push(`/shop/items/?category_id1=512&depth=0`)
+                                    }}
+                                    >
+                                        Christian Dior
+                                    </CategoryMenu>
+                                </NoneShowMobile>
                             </CategoryContainer>
                         </div>
                         {/*<TopMenuContainer>

@@ -22,11 +22,21 @@ margin: 0 auto 5rem auto;
 display:flex;
 flex-direction:column;
 `
+
+const BrandFilter = styled.div`
+font-size:44px;
+width:100%;
+z-index: 9;
+@media (max-width:1000px) {
+  font-size:22px;
+}
+`
+
 const ItemsDemo = (props) => {
 
   const router = useRouter();
   const { user } = useAuthContext();
-  const { themeDnsData, themeCategoryList, themePropertyList } = useSettingsContext();
+  const { themeDnsData, themeCategoryList, themePropertyList, themeMode } = useSettingsContext();
   const [categoryIds, setCategoryIds] = useState({});
   const [searchObj, setSearchObj] = useState({
     page: 1,
@@ -40,9 +50,10 @@ const ItemsDemo = (props) => {
   const [loading, setLoading] = useState(true);
   const scrollRef = useRef(null);
   const [categoryChildren, setCategoryChildren] = useState({});
-  const [langChipSelected, setLangChipSelected] = useState('')
-  const [textChipSelected, setTextChipSelected] = useState('')
+  const [langChipSelected, setLangChipSelected] = useState(0)
+  const [textChipSelected, setTextChipSelected] = useState('A')
   const { sort, categoryGroup } = CategorySorter(themeCategoryList)
+  const [filterOpen, setFilterOpen] = useState(false)
 
   useEffect(() => {
     sort(LANGCODE.ENG)
@@ -72,7 +83,12 @@ const ItemsDemo = (props) => {
   ]
   useEffect(() => {
     getItemList({ ...router.query }, searchObj)
-  }, [router.query.category_id0, router.query.category_id1, router.query.category_id2, router.query.search, router.query.property_ids0])
+  }, [router.query.category_id0, router.query.category_id1, router.query.category_id2, router.query.search, router.query.property_ids0,])
+
+  useEffect(() => {
+    setFilterOpen(false)
+    console.log(themeCategoryList)
+  }, [router.query])
 
   /*const handleScroll = () => {
     if (!scrollRef.current) {
@@ -87,7 +103,7 @@ const ItemsDemo = (props) => {
     }
   };*/
 
-  const getItemList = async (query_ = {}, search_obj_={}) => {
+  const getItemList = async (query_ = {}, search_obj_ = {}) => {
     let query = query_;
     let search_obj = search_obj_;
 
@@ -173,22 +189,53 @@ const ItemsDemo = (props) => {
   return (
     <>
       <ContentWrapper>
+
+        {router.query?.property_ids0 &&
+          <>
+            <Title style={{ marginTop: '100px', fontFamily: 'Playfair Display', color: '#5F5F5F', fontWeight: 'normal', fontSize: '90px', marginLeft: '0' }}>
+              {themePropertyList.map((group) => {
+                let properties = group?.product_properties;
+                if (_.find(properties, { id: parseInt(router.query?.property_ids0) })) {
+                  return _.find(properties, { id: parseInt(router.query?.property_ids0) })?.property_name
+                } else {
+                  return ""
+                }
+              })}
+            </Title>
+          </>}
+        {router.query?.category_id0 ?
+          <>
+            <Title style={{ marginTop: '100px', fontFamily: 'Playfair Display', color: '#5F5F5F', fontWeight: 'normal', fontSize: '90px', marginLeft: '0' }}>
+              {themeCategoryList.map((group, index) => {
+                let categories = group?.product_categories;
+                if (_.find(categories, { id: parseInt(router.query?.category_id0) })) {
+                  return _.find(categories, { id: parseInt(router.query?.category_id0) })?.category_en_name
+                } else {
+                  return ""
+                }
+              })}
+            </Title>
+          </>
+          :
+          router.query?.category_id1 ?
+            <>
+              <Title style={{ marginTop: '100px', fontFamily: 'Playfair Display', color: '#5F5F5F', fontWeight: 'normal', fontSize: '90px', marginLeft: '0' }}>
+                {themeCategoryList.map((group, index) => {
+                  let categories = group?.product_categories;
+                  if (_.find(categories, { id: parseInt(router.query?.category_id1) })) {
+                    return _.find(categories, { id: parseInt(router.query?.category_id1) })?.category_en_name
+                  } else {
+                    return ""
+                  }
+                })}
+              </Title>
+            </>
+            :
+            ''
+        }
         {router.query?.not_show_select_menu == 1 ?
           <>
-            {router.query?.property_id &&
-              <>
-                <Title style={{ marginTop: '38px' }}>
-                  {themePropertyList.map((group) => {
-                    let properties = group?.product_properties;
-                    if (_.find(properties, { id: parseInt(router.query?.property_id) })) {
-                      return _.find(properties, { id: parseInt(router.query?.property_id) })?.property_name
-                    } else {
-                      return ""
-                    }
-                  })}
-                </Title>
-              </>}
-              <TextField
+            <TextField
               label=''
               variant="standard"
               focused
@@ -289,239 +336,274 @@ const ItemsDemo = (props) => {
                 )
               }}
             />
-            {themeCategoryList.map((group, index) => {
-              return <>
-                <SubTitleComponent>{group?.category_group_name}</SubTitleComponent>
-                <ContentBorderContainer style={{ maxHeight: '150px', overflowX: 'auto', minHeight: '50px', }}>
-                  {group?.sort_type == 1 &&
-                    <>
-                      <Row style={{ marginBottom: '1rem', display: 'flex', flexDirection: 'column', margin: '-1rem 0 -0.5rem 0' }}>
-                        <div style={{ borderBottom: `2px solid gray`, marginRight: '0.5rem' }}>
-                          <Chip label={`알파벳순`} variant="soft" sx={{
-                            margin: '0.5rem 0.5rem 0.5rem 0',
-                            fontWeight: 'bold',
-                            cursor: 'pointer',
-                            color: `${langChipSelected == 0 ? 'white' : ''}`,
-                            background: `${langChipSelected == 0 ? 'black' : ''}`,
-                            '&:hover': {
-                              color: `${langChipSelected == 0 ? 'white' : ''}`,
-                              background: `${langChipSelected == 0 ? 'black' : ''}`,
-                            }
-                          }}
-                            onClick={() => { setLangChipSelected(0); sort(LANGCODE.ENG); setTextChipSelected(''); }}
-                          />
-                          <Chip label={`가나다순`} variant="soft" sx={{
-                            margin: '0.5rem 0.5rem 0.5rem 0',
-                            fontWeight: 'bold',
-                            cursor: 'pointer',
-                            color: `${langChipSelected == 1 ? 'white' : ''}`,
-                            background: `${langChipSelected == 1 ? 'black' : ''}`,
-                            '&:hover': {
-                              color: `${langChipSelected == 1 ? 'white' : ''}`,
-                              background: `${langChipSelected == 1 ? 'black' : ''}`,
-                            }
-                          }}
-                            onClick={() => { setLangChipSelected(1); sort(LANGCODE.KOR); setTextChipSelected(''); }}
-                          />
-                        </div>
-                        {langChipSelected == 0 ?
-                          <Row>
-                            {alphabetList.map((alphabet) => {
-                              return <>
-                                <Chip
-                                  label={alphabet}
-                                  variant="soft"
-                                  sx={{
-                                    margin: '0.5rem 0.5rem 0.5rem 0',
-                                    fontWeight: 'bold',
-                                    fontSize: '0.8rem',
-                                    cursor: 'pointer',
-                                    color: `${textChipSelected == alphabet ? 'white' : ''}`,
-                                    background: `${textChipSelected == alphabet ? 'black' : ''}`,
-                                    '&:hover': {
-                                      color: `${textChipSelected == alphabet ? 'white' : ''}`,
-                                      background: `${textChipSelected == alphabet ? 'black' : ''}`,
-                                    }
-                                  }}
-                                  onClick={() => { setTextChipSelected(alphabet); }}
-                                />
-                              </>
-                            })}
-                          </Row>
-                          :
-                          <Row>
-                            {hangeulList.map((hangeul) => {
-                              return <>
-                                <Chip
-                                  label={hangeul}
-                                  variant="soft"
-                                  sx={{
-                                    margin: '0.5rem 0.5rem 0.5rem 0',
-                                    fontWeight: 'bold',
-                                    cursor: 'pointer',
-                                    color: `${textChipSelected == hangeul ? 'white' : ''}`,
-                                    background: `${textChipSelected == hangeul ? 'black' : ''}`,
-                                    '&:hover': {
-                                      color: `${textChipSelected == hangeul ? 'white' : ''}`,
-                                      background: `${textChipSelected == hangeul ? 'black' : ''}`,
-                                    }
-                                  }}
-                                  onClick={() => { setTextChipSelected(hangeul); }}
-                                />
-                              </>
-                            })}
-                          </Row>
-                        }
-                      </Row>
-                    </>
-                  }
-                  <Button
-                    size="small"
-                    variant={`${!categoryIds[`category_id${index}`] ? 'contained' : 'text'}`}
-                    onClick={() => {
-                      let { [`category_id${index}`]: _, ...rest } = categoryIds;
-                      let query = rest;
-                      console.log([`category_id${index}`])
-                      console.log(rest)
-                      query = new URLSearchParams(query).toString();
-                      if (query == 'depth=0') {
-                        router.push(`/shop/items/?`)
-                      } else {
-                        router.push(`/shop/items?${query}`);
-                      }
-                    }}>전체</Button>
-
-
-                  <>
-
-                    {group?.sort_type != 1 ?
-                      <>
-                        {group?.product_categories && group?.product_categories.map((category, idx) => {
-                          return <Button
-                            size="small"
-                            variant={`${(categoryIds[`category_id${index}`] == category?.id || categoryChildren[`category_id${index}`]?.parent_id == category?.id) ? 'contained' : 'text'}`}
+            <Row style={{ justifyContent: 'space-between', minHeight: '50px', direction: 'rtl' }}>
+              <img
+                src={filterOpen ? '/grandparis/dropdown_2.png' : '/grandparis/dropdown_1.png'}
+                style={{
+                  maxHeight: '40px',
+                  margin: 'auto 0',
+                  marginRight: '0',
+                  cursor: 'pointer',
+                }}
+                onClick={() => {
+                  setFilterOpen(!filterOpen)
+                }}
+              />
+              {themeCategoryList.map((group, index) => {
+                return <>
+                  {categoryChildren[`category_id${index}`] &&
+                    <div style={{ maxHeight: '150px', overflowX: 'auto', minHeight: '50px', }}>
+                      {categoryChildren[`category_id${index}`]?.children.map((category, idx) => (
+                        <>
+                          <Button
+                            sx={{
+                              fontWeight: `${categoryIds[`category_id${index}`] == category?.id ? 'bold' : 'normal'}`,
+                              margin: '1rem',
+                              borderBottom: `${categoryIds[`category_id${index}`] == category?.id ? '2px solid black' : ''}`,
+                              cursor: 'pointer',
+                              borderRadius: '0',
+                              color: `${themeMode == 'dark' ? 'white' : 'black'}`,
+                              '&:hover': {
+                                textDecoration: 'underline',
+                                background: 'transparent',
+                              }
+                            }}
                             onClick={() => {
                               let query = { ...categoryIds };
                               query[`category_id${index}`] = category?.id;
-
                               query = new URLSearchParams(query).toString();
                               router.push(`/shop/items?${query}`);
-                            }}>{category?.category_en_name ?? category?.category_name}</Button>
-                        })}
-                      </>
-                      :
+                            }}>
+                            {category?.category_en_name ?? category?.category_name}
+                          </Button >
+                        </>
+                      ))}
+                    </div>
+                  }
+                </>
+              })}
+            </Row>
+          </>
+        }
+        <Row style={{ width: '100%', margin: '0 auto', }}>
+          {filterOpen ?
+            <>
+              {themeCategoryList.map((group, index) => {
+                if (group?.sort_type == 1) {
+                  return <>
+                    <BrandFilter style={{ fontFamily: 'Playfair Display', overflowY: 'auto', background: `${themeMode == 'dark' ? '#222' : '#FEF8F4'}`, }}>
+
                       <>
-                        {
-                          categoryGroup.map((group) => {
+                        <Row>
+                          <Chip label={`ABC`} sx={{
+                            margin: '0.5rem 0.5rem 0.5rem 0',
+                            fontWeight: 'bold',
+                            fontSize: '16px',
+                            cursor: 'pointer',
+                            height: '40px',
+                            background: 'transparent',
+                            borderRadius: '0',
+                            fontFamily: 'Playfair Display',
+                            color: `${langChipSelected == 0 ? themeMode == 'dark' ? 'white' : 'black' : '#999999'}`,
+                            '&:hover': {
+                              textDecoration: 'underline',
+                              background: 'transparent',
+                            }
+                          }}
+                            onClick={() => { setLangChipSelected(0); sort(LANGCODE.ENG); setTextChipSelected('A'); }}
+                          />
+                          <Chip label={`가나다`} sx={{
+                            margin: '0.5rem 0.5rem 0.5rem 0',
+                            fontWeight: 'bold',
+                            fontSize: '16px',
+                            cursor: 'pointer',
+                            height: '40px',
+                            background: 'transparent',
+                            borderRadius: '0',
+                            fontFamily: 'Playfair Display',
+                            color: `${langChipSelected == 1 ? themeMode == 'dark' ? 'white' : 'black' : '#999999'}`,
+                            '&:hover': {
+                              textDecoration: 'underline',
+                              background: 'transparent',
+                            }
+                          }}
+                            onClick={() => { setLangChipSelected(1); sort(LANGCODE.KOR); setTextChipSelected('가'); }}
+                          />
+                        </Row>
+                        <Row style={{ flexWrap: 'wrap' }}>
+                          {langChipSelected == 0 ?
+                            <>
+                              {alphabetList.map((alphabet) => {
+                                return <>
+                                  <Chip
+                                    label={alphabet}
+                                    sx={{
+                                      margin: '0.5rem 0rem 0.5rem 0',
+                                      fontSize: '16px',
+                                      cursor: 'pointer',
+                                      color: `${textChipSelected == alphabet ? themeMode == 'dark' ? 'white' : 'black' : '#999999'}`,
+                                      background: 'transparent',
+                                      fontFamily: 'Playfair Display',
+                                      '&:hover': {
+                                        color: `${textChipSelected == alphabet ? 'white' : ''}`,
+                                        //background: `${textChipSelected == alphabet ? 'black' : ''}`,
+                                      },
+                                      borderRadius: '0',
+                                      borderBottom: `${textChipSelected == alphabet ? '2px solid black' : ''}`
+                                    }}
+                                    onClick={() => { setTextChipSelected(alphabet); }}
+                                  />
+                                </>
+                              })}
+                            </>
+                            :
+                            <>
+                              {hangeulList.map((hangeul) => {
+                                return <>
+                                  <Chip
+                                    label={hangeul}
+                                    variant="soft"
+                                    sx={{
+                                      margin: '0.5rem 0rem 0.5rem 0',
+                                      fontSize: '16px',
+                                      cursor: 'pointer',
+                                      color: `${textChipSelected == hangeul ? themeMode == 'dark' ? 'white' : 'black' : '#999999'}`,
+                                      background: 'transparent',
+                                      fontFamily: 'Playfair Display',
+                                      '&:hover': {
+                                        color: `${textChipSelected == hangeul ? 'white' : ''}`,
+                                        //background: `${textChipSelected == hangeul ? 'black' : ''}`,
+                                      },
+                                      borderRadius: '0',
+                                      borderBottom: `${textChipSelected == hangeul ? '2px solid black' : ''}`
+                                    }}
+                                    onClick={() => { setTextChipSelected(hangeul); }}
+                                  />
+                                </>
+                              })}
+                            </>
+                          }
+                        </Row>
+                        <Col style={{ minWidth: '100px', flexWrap: 'wrap', alignItems: 'flex-start', rowGap: '0.2rem', marginBottom: '1rem' }}>
+
+                          {categoryGroup.map((group) => {
                             if (textChipSelected == '') {
                               return <>
-                                <Chip label={`[${group.label ? group.label : "#"}]`} variant="soft" sx={{
-                                  cursor: 'pointer', fontWeight: 'bold', background: `${themeDnsData?.theme_css?.main_color}29`, color: `${themeDnsData?.theme_css?.main_color}`, '&:hover': {
-                                    color: '#fff',
-                                    background: `${themeDnsData?.theme_css?.main_color}`,
+                                <Row style={{ flexWrap: 'wrap' }}>
+                                  {
+                                    group.childs.map((child) => {
+                                      return <Chip
+                                        label={langChipSelected == 0 ? child?.category_en_name : child?.category_name}
+                                        sx={{
+                                          margin: '0.5rem 0rem 0.5rem 0',
+                                          fontSize: '16px',
+                                          cursor: 'pointer',
+                                          background: 'transparent',
+                                          fontFamily: 'Playfair Display',
+                                          '&:hover': {
+                                            background: `${themeMode == 'dark' ? '#999999' : 'white'}`,
+                                          },
+                                        }}
+                                        onClick={() => {
+                                          router.push(`/shop/items?category_id${index}=${child?.id}&depth=0`)
+                                        }} />
+                                    })
+
                                   }
-                                }} />
-                                {
-                                  group.childs.map((child) => {
-                                    return <Button
-                                      size='small'
-                                      variant={`${(categoryIds[`category_id${index}`] == child?.id || categoryChildren[`category_id${index}`]?.parent_id == child?.id) ? 'contained' : 'text'}`}
-                                      onClick={() => {
-                                        let query = { ...categoryIds };
-                                        query[`category_id${index}`] = child?.id;
-
-                                        query = new URLSearchParams(query).toString();
-                                        router.push(`/shop/items?${query}`);
-                                      }}>
-                                      {langChipSelected == 0 ? child?.category_en_name : child?.category_name}
-                                    </Button>
-                                  })
-
-                                }
+                                </Row>
                               </>
                             }
                             else if (textChipSelected == group?.label) {
                               return <>
-                                <Chip label={`[${group.label ? group.label : "#"}]`} variant="soft" sx={{
-                                  cursor: 'pointer', fontWeight: 'bold', background: `${themeDnsData?.theme_css?.main_color}29`, color: `${themeDnsData?.theme_css?.main_color}`, '&:hover': {
-                                    color: '#fff',
-                                    background: `${themeDnsData?.theme_css?.main_color}`,
+                                <Row style={{ flexWrap: 'wrap' }}>
+                                  {
+                                    group.childs.map((child) => {
+                                      return <Chip
+                                        label={langChipSelected == 0 ? child?.category_en_name : child?.category_name}
+                                        sx={{
+                                          margin: '0.5rem 0rem 0.5rem 0',
+                                          fontSize: '16px',
+                                          cursor: 'pointer',
+                                          background: 'transparent',
+                                          fontFamily: 'Playfair Display',
+                                          '&:hover': {
+                                            background: `${themeMode == 'dark' ? '#999999' : 'white'}`,
+                                          },
+                                        }}
+                                        onClick={() => {
+                                          router.push(`/shop/items?category_id${index}=${child?.id}&depth=0`)
+                                        }} />
+                                    })
+
                                   }
-                                }} />
-                                {
-                                  group.childs.map((child) => {
-                                    return <Button
-                                      size='small'
-                                      variant={`${(categoryIds[`category_id${index}`] == child?.id || categoryChildren[`category_id${index}`]?.parent_id == child?.id) ? 'contained' : 'text'}`}
-                                      onClick={() => {
-                                        let query = { ...categoryIds };
-                                        query[`category_id${index}`] = child?.id;
-
-                                        query = new URLSearchParams(query).toString();
-                                        router.push(`/shop/items?${query}`);
-                                      }}>
-                                      {langChipSelected == 0 ? child?.category_en_name : child?.category_name}
-                                    </Button>
-                                  })
-
-                                }
+                                </Row>
                               </>
                             }
-                          })
-                        }
+                          })}
+
+                        </Col>
                       </>
-                    }
+
+
+                    </BrandFilter>
                   </>
-
-                </ContentBorderContainer>
-                {categoryChildren[`category_id${index}`] &&
-                  <>
-                    <Typography variant="subtitle2" style={{ color: themeObj.grey[600], marginBottom: '0.25rem' }}>{group?.category_group_name} - 중분류</Typography>
-                    <ContentBorderContainer style={{ maxHeight: '150px', overflowX: 'auto', minHeight: '50px', }}>
-                      {categoryChildren[`category_id${index}`]?.children.map((category, idx) => (
-                        <>
-                          <Button
-                            size="small"
-                            variant={`${categoryIds[`category_id${index}`] == category?.id ? 'contained' : 'text'}`}
-                            onClick={() => {
-                              let query = { ...categoryIds };
-                              query[`category_id${index}`] = category?.id;
-                              query = new URLSearchParams(query).toString();
-                              router.push(`/shop/items?${query}`);
-                            }}>{category?.category_en_name ?? category?.category_name}</Button>
-                        </>
-                      ))}
-                    </ContentBorderContainer>
-                  </>}
-              </>
-            })}
-          </>
-        }
-
-
-        <Row style={{ columnGap: '0.5rem', marginBottom: '1rem', overflowX: 'auto', whiteSpace: 'nowrap' }} className={`none-scroll`}>
-          {sortList.map((item) => (
-            <>
-              <Button variant={`${(searchObj?.order ?? "sort_idx") == item.order && (searchObj?.is_asc ?? 0) == item.is_asc ? 'contained' : 'outlined'}`} onClick={() => {
-                getItemList({ ...router.query, page: 1 }, { ...searchObj, page: 1, order: item.order, is_asc: item.is_asc })
-              }}>{item.label}</Button>
+                }
+              }
+              )
+              }
             </>
-          ))}
-          <FormControl variant='outlined' size='small' sx={{ width: '200px', marginLeft: 'auto' }}>
+            :
+            <>
+              <Row
+                style={{
+                  columnGap: '0.5rem',
+                  marginBottom: '1rem',
+                  overflowX: 'auto',
+                  whiteSpace: 'nowrap',
+                  borderTop: '1px solid #CCCCCC',
+                  borderBottom: '1px solid #CCCCCC',
+                  height: '80px',
+                  width: '100%'
+                }}
+                className={`none-scroll`}
+              >
+                <div style={{ margin: 'auto 0 auto auto', display: 'flex' }}>
+                  {sortList.map((item) => (
+                    <>
+                      <div
+                        style={{
+                          cursor: 'pointer',
+                          margin: '0.5rem',
+                          fontWeight: `${(searchObj?.order ?? "sort_idx") == item.order && (searchObj?.is_asc ?? 0) == item.is_asc ? 'bold' : ''}`,
+                          borderBottom: `${(searchObj?.order ?? "sort_idx") == item.order && (searchObj?.is_asc ?? 0) == item.is_asc ? '2px solid black' : ''}`
+                        }}
+                        onClick={() => {
+                          getItemList({ ...router.query, page: 1 }, { ...searchObj, page: 1, order: item.order, is_asc: item.is_asc })
+                        }}>
+                        {item.label}
+                      </div>
+                    </>
+                  ))}
+                </div>
+                <FormControl variant='outlined' size='small' sx={{ width: '200px', margin: 'auto 0' }}>
 
-            <Select value={searchObj.page_size}
-              onChange={(e) => {
-                getItemList({ ...router.query, page: 1, page_size: e.target.value }, { ...searchObj, page_size: e.target.value });
-                //console.log(productContent)
-                console.log(searchObj.page_size)
-              }}>
-              <MenuItem value={10}>10개씩 보기</MenuItem>
-              <MenuItem value={20}>20개씩 보기</MenuItem>
-              <MenuItem value={30}>30개씩 보기</MenuItem>
-              <MenuItem value={50}>50개씩 보기</MenuItem>
-              <MenuItem value={100}>100개씩 보기</MenuItem>
-            </Select>
-          </FormControl>
+                  <Select value={searchObj.page_size}
+                    onChange={(e) => {
+                      getItemList({ ...router.query, page: 1, page_size: e.target.value }, { ...searchObj, page_size: e.target.value });
+                      //console.log(productContent)
+                      console.log(searchObj.page_size)
+                    }}>
+                    <MenuItem value={10}>10개씩 보기</MenuItem>
+                    <MenuItem value={20}>20개씩 보기</MenuItem>
+                    <MenuItem value={30}>30개씩 보기</MenuItem>
+                    <MenuItem value={50}>50개씩 보기</MenuItem>
+                    <MenuItem value={100}>100개씩 보기</MenuItem>
+                  </Select>
+                </FormControl>
+
+              </Row>
+            </>
+          }
         </Row>
 
         {productContent?.content ?
@@ -665,7 +747,7 @@ const ItemsDemo = (props) => {
           :
           <>
           </>}
-      </ContentWrapper>
+      </ContentWrapper >
     </>
   )
 }

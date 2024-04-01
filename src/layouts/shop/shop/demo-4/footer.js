@@ -107,7 +107,7 @@ const Footer = (props) => {
                             <Row 
                             style={{cursor:'pointer'}}
                             onClick={() => {
-                                router.push('/shop/guide/consignment-guide')
+                                router.push('/shop/guide/purchase-guide')
                             }}
                             >
                                 위탁판매

@@ -203,7 +203,7 @@ const MyPageDemo = (props) => {
         <RowMobileReverceColumn>
           <AuthMenuSideComponent />
           <ContentWrappers>
-            <TitleComponent>{'My 그랑파리'}</TitleComponent>
+            <TitleComponent>{'마이페이지'}</TitleComponent>
             <ContentBorderContainer style={{ display: 'flex' }}>
               <Row style={{ columnGap: '0.5rem', fontWeight: 'bold', margin: 'auto' }}>
                 <div>고객님의 포인트는</div>

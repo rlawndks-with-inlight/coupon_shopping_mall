@@ -444,48 +444,80 @@ const MainObjSetting = props => {
               <Icon icon={'icon-park-outline:preview-open'} />
             </IconButton>
           </Tooltip> */}
-          {isProductList == 1 && 
-          <>
-          <TextField
-            size='small'
-            sx={{ maxWidth: '150px' }}
-            label='슬라이더 속도'
-            type='number'
-            value={item?.style?.slider_speed ?? 0}
-            defaultValue={item?.style?.slider_speed ?? 0}
-            onChange={e => {
-              let content_list = [...contentList]
-              if (!content_list[idx]?.style) {
-                content_list[idx]['style'] = {}
-              }
-              content_list[idx]['style']['slider_speed'] = e.target.value
-              setContentList(content_list)
-              console.log(item)
-            }}
-            InputProps={{
-              endAdornment: <>초</>
-            }}
-          />
-          <TextField
-            size='small'
-            sx={{ maxWidth: '150px' }}
-            label='컨텐츠 개수'
-            type='number'
-            value={item?.style?.rows ?? 1}
-            defaultValue={item?.style?.rows ?? 1}
-            onChange={e => {
-              let content_list = [...contentList]
-              if (!content_list[idx]?.style) {
-                content_list[idx]['style'] = {}
-              }
-              content_list[idx]['style']['rows'] = e.target.value
-              setContentList(content_list)
-            }}
-            InputProps={{
-              endAdornment: <>행</>
-            }}
-          />
-          </>
+          {isProductList == 1 &&
+            <>
+              <FormControl variant='outlined' sx={{ width: '30%' }} size='small'>
+                <InputLabel>{`상품 설명 배치`}</InputLabel>
+                <Select
+                  size='small'
+                  label={`상품 설명 배치`}
+                  value={item?.style?.text_align ?? 'center'}
+                  onChange={(e) => {
+                    let content_list = [...contentList]
+                    content_list[idx]['style']['text_align'] = e.target.value
+                    setContentList(content_list)
+                  }}
+                >
+                  <MenuItem value={'left'}>왼쪽</MenuItem>
+                  <MenuItem value={'right'}>오른쪽</MenuItem>
+                  <MenuItem value={'center'}>가운데</MenuItem>
+                </Select>
+              </FormControl>
+              <TextField
+                size='small'
+                label='배경색상'
+                value={item?.style?.back_color ?? '#FFFFFF'}
+                type='color'
+                style={{
+                  border: 'none',
+                  minWidth:'100px'
+                }}
+                onChange={e => {
+                  let content_list = [...contentList]
+                  content_list[idx]['style']['back_color'] = e.target.value
+                  setContentList(content_list)
+                }}
+              />
+              <TextField
+                size='small'
+                sx={{ maxWidth: '150px' }}
+                label='슬라이더 속도'
+                type='number'
+                value={item?.style?.slider_speed ?? 0}
+                defaultValue={item?.style?.slider_speed ?? 0}
+                onChange={e => {
+                  let content_list = [...contentList]
+                  if (!content_list[idx]?.style) {
+                    content_list[idx]['style'] = {}
+                  }
+                  content_list[idx]['style']['slider_speed'] = e.target.value
+                  setContentList(content_list)
+                  //console.log(item)
+                }}
+                InputProps={{
+                  endAdornment: <>초</>
+                }}
+              />
+              <TextField
+                size='small'
+                sx={{ maxWidth: '150px' }}
+                label='컨텐츠 개수'
+                type='number'
+                value={item?.style?.rows ?? 1}
+                defaultValue={item?.style?.rows ?? 1}
+                onChange={e => {
+                  let content_list = [...contentList]
+                  if (!content_list[idx]?.style) {
+                    content_list[idx]['style'] = {}
+                  }
+                  content_list[idx]['style']['rows'] = e.target.value
+                  setContentList(content_list)
+                }}
+                InputProps={{
+                  endAdornment: <>행</>
+                }}
+              />
+            </>
           }
           {/*<TextField
             size='small'

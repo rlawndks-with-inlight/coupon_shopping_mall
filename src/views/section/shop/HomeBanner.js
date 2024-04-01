@@ -74,7 +74,7 @@ position: relative;
 background-size: contain;
 background-repeat: no-repeat;
 background-position: center center;
-max-width: ${props => props.type == 1 ? '1400px' : ''};
+max-width: ${props => props.type == 1 ? '1600px' : ''};
 margin:0 auto;
 animation: ${props => props.type == 1 ? '' : props => props.iscurrentSlideIndex ? 'zoom-in-out' : ''} 10s ease-in-out infinite;
 @keyframes zoom-in-out {

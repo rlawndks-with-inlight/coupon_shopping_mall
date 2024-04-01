@@ -131,7 +131,7 @@ font-weight: bold;
 `
 const BrandContent = styled.div`
 font-size: 44px;
-max-width:1600px;
+width:100%;
 margin:0 auto;
 white-space: wrap;
 @media (max-width:1000px) {
@@ -408,19 +408,23 @@ const PurchaseGuide = () => {
             </Wrappers>
             {tab == 'consignment' ?
                 <>
+                <Row style={{maxWidth:'1400px', margin:'0 auto'}}>
                     <BrandContent>
                         <Row style={{marginBottom:'3rem'}}>
                             <div style={{margin:'0 auto'}}>위탁 가능 브랜드</div>
                         </Row>
                         <Row>
                         <Chip label={`ABC`} sx={{
-                            margin: '0.5rem 0.5rem 0.5rem 0',
+                            margin: '0.5rem auto',
+                            marginRight:'0',
                             fontWeight: 'bold',
                             fontSize: '16px',
                             cursor: 'pointer',
                             height: '40px',
                             background: 'transparent',
                             borderRadius: '0',
+                            fontFamily:'Playfair Display',
+                            width:'100px',
                             color: `${langChipSelected == 0 ? themeMode == 'dark' ? 'white' : 'black' : '#999999'}`,
                             '&:hover': {
                                 textDecoration: 'underline',
@@ -430,13 +434,16 @@ const PurchaseGuide = () => {
                             onClick={() => { setLangChipSelected(0); sort(LANGCODE.ENG); setTextChipSelected('A'); }}
                         />
                         <Chip label={`가나다`} sx={{
-                            margin: '0.5rem 0.5rem 0.5rem 0',
+                            margin: '0.5rem auto',
+                            marginLeft:'0',
                             fontWeight: 'bold',
                             fontSize: '16px',
                             cursor: 'pointer',
                             height: '40px',
                             background: 'transparent',
                             borderRadius: '0',
+                            fontFamily:'Playfair Display',
+                            width:'100px',
                             color: `${langChipSelected == 1 ? themeMode == 'dark' ? 'white' : 'black' : '#999999'}`,
                             '&:hover': {
                                 textDecoration: 'underline',
@@ -446,7 +453,7 @@ const PurchaseGuide = () => {
                             onClick={() => { setLangChipSelected(1); sort(LANGCODE.KOR); setTextChipSelected('가'); }}
                         />
                     </Row>
-                    <Row>
+                    <Row style={{flexWrap:'wrap'}}>
                         {langChipSelected == 0 ?
                             <>
                                 {alphabetList.map((alphabet) => {
@@ -459,6 +466,7 @@ const PurchaseGuide = () => {
                                                 cursor: 'pointer',
                                                 color: `${textChipSelected == alphabet ? themeMode == 'dark' ? 'white' : 'black' : '#999999'}`,
                                                 background: 'transparent',
+                                                fontFamily:'Playfair Display',
                                                 '&:hover': {
                                                     color: `${textChipSelected == alphabet ? 'white' : ''}`,
                                                     //background: `${textChipSelected == alphabet ? 'black' : ''}`,
@@ -484,6 +492,7 @@ const PurchaseGuide = () => {
                                                 cursor: 'pointer',
                                                 color: `${textChipSelected == hangeul ? themeMode == 'dark' ? 'white' : 'black' : '#999999'}`,
                                                 background: 'transparent',
+                                                fontFamily:'Playfair Display',
                                                 '&:hover': {
                                                     color: `${textChipSelected == hangeul ? 'white' : ''}`,
                                                     //background: `${textChipSelected == hangeul ? 'black' : ''}`,
@@ -503,7 +512,7 @@ const PurchaseGuide = () => {
                         {categoryGroup.map((group) => {
                             if (textChipSelected == '') {
                                 return <>
-                                    <Row>
+                                    <Row style={{flexWrap:'wrap'}}>
                                         {
                                             group.childs.map((child) => {
                                                 return <Chip
@@ -511,16 +520,13 @@ const PurchaseGuide = () => {
                                                     sx={{
                                                         margin: '0.5rem 0rem 0.5rem 0',
                                                         fontSize: '16px',
-                                                        cursor: 'pointer',
                                                         background: 'transparent',
+                                                        fontFamily:'Playfair Display',
                                                         '&:hover': {
                                                             background: `${themeMode == 'dark' ? '#999999' : 'white'}`,
                                                         },
                                                     }}
-                                                    onClick={() => {
-                                                        router.push(`/shop/items?category_id${index}=${child?.id}&depth=0`)
-                                                        setOpenAllCategory("")
-                                                    }} />
+                                                    />
                                             })
 
                                         }
@@ -529,7 +535,7 @@ const PurchaseGuide = () => {
                             }
                             else if (textChipSelected == group?.label) {
                                 return <>
-                                    <Row>
+                                    <Row style={{flexWrap:'wrap'}}>
                                         {
                                             group.childs.map((child) => {
                                                 return <Chip
@@ -537,16 +543,12 @@ const PurchaseGuide = () => {
                                                     sx={{
                                                         margin: '0.5rem 0rem 0.5rem 0',
                                                         fontSize: '16px',
-                                                        cursor: 'pointer',
                                                         background: 'transparent',
+                                                        fontFamily:'Playfair Display',
                                                         '&:hover': {
                                                             background: `${themeMode == 'dark' ? '#999999' : 'white'}`,
                                                         },
-                                                    }}
-                                                    onClick={() => {
-                                                        router.push(`/shop/items?category_id${index}=${child?.id}&depth=0`)
-                                                        setOpenAllCategory("")
-                                                    }} />
+                                                    }}/>
                                             })
 
                                         }
@@ -557,6 +559,7 @@ const PurchaseGuide = () => {
 
                     </Col>
                     </BrandContent>
+                    </Row>
                 </>
                 :
                 <>

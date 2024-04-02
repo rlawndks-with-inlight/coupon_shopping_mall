@@ -87,7 +87,8 @@ const ItemDemo = (props) => {
   });
   useEffect(() => {
     getItemInfo(1);
-    console.log(themePropertyList)
+    //console.log(themePropertyList)
+    console.log(product)
   }, [])
 
   const getItemInfo = async (review_page) => {

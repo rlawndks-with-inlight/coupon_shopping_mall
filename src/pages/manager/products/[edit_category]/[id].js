@@ -490,6 +490,10 @@ const ProductEdit = () => {
       }
     ] : []),
   ]
+
+  useEffect(() => {
+    console.log(item)
+  }, [])
   return (
     <>
       {!loading &&
@@ -661,6 +665,30 @@ const ProductEdit = () => {
                             }
                           )
                         }} />
+                        {/*<TextField
+                        label='상품사이즈'
+                        value={item.product_size}
+                        placeholder=""
+                        onChange={(e) => {
+                          setItem(
+                            {
+                              ...item,
+                              ['product_size']: e.target.value
+                            }
+                          )
+                        }} />
+                        <TextField
+                        label='상품컬러'
+                        value={item.product_color}
+                        placeholder=""
+                        onChange={(e) => {
+                          setItem(
+                            {
+                              ...item,
+                              ['product_color']: e.target.value
+                            }
+                          )
+                        }} />*/}
                       {!themeDnsData?.none_use_column_obj['products']?.includes('product_comment') &&
                         <>
                           <TextField

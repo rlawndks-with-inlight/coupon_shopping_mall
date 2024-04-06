@@ -197,7 +197,7 @@ const Header = () => {
       <DialogSearch
         open={dialogOpenObj.search}
         handleClose={handleDialogClose}
-        root_path={'shop/search?keyword='}
+        root_path={'/shop/search?keyword='}
       />
       {loading ?
         <>

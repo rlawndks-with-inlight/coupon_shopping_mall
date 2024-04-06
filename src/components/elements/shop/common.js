@@ -40,7 +40,7 @@ const ItemsContainer = styled.div`
   }
 `
 const ItemWrapper = styled.div`
-  width: ${props => (props.theme_css?.container?.is_vertical == 1 ? '32%' : '18.4%')};
+  width: ${props => (props.theme_css?.container?.is_vertical == 1 ? '32%' : props.item_column == 4 ? '23.4%' : '18.4%')};
   @media (max-width: 1150px) {
     width: ${props => (props.theme_css?.container?.is_vertical == 1 ? '49%' : '32%')};
   }
@@ -114,7 +114,7 @@ export const Item = props => {
 }
 export const Items = props => {
   const { themeDnsData } = useSettingsContext()
-  const { items, router, is_slide, slide_setting = {}, slide_ref, seller, rows = 1, autoplaySpeed = 2500 } = props;
+  const { items, router, is_slide, slide_setting = {}, slide_ref, seller, rows = 1, autoplaySpeed = 2500, text_align, item_column } = props;
   const [itemThemeCss, setItemThemeCss] = useState(itemThemeCssDefaultSetting)
 
   useEffect(() => {
@@ -127,7 +127,7 @@ export const Items = props => {
       if (itemThemeCss?.container?.is_vertical == 1) {
         return 3
       } else {
-        return 5
+        return 4
       }
     }
     if (window.innerWidth > 850) {
@@ -164,7 +164,7 @@ export const Items = props => {
               items.map((item, idx) => {
                 return (
                   <ItemWrapper theme_css={itemThemeCss}>
-                    <Item item={item} router={router} theme_css={itemThemeCss} seller={seller} />
+                    <Item item={item} router={router} theme_css={itemThemeCss} seller={seller} text_align={text_align} />
                   </ItemWrapper>
                 )
 
@@ -176,10 +176,9 @@ export const Items = props => {
           <ItemsContainer theme_css={itemThemeCss}>
             {items &&
               items.map((item, idx) => {
-
                 return (
-                  <ItemWrapper theme_css={itemThemeCss}>
-                    <Item item={item} router={router} theme_css={itemThemeCss} seller={seller} />
+                  <ItemWrapper theme_css={itemThemeCss} item_column={item_column}>
+                    <Item item={item} router={router} theme_css={itemThemeCss} seller={seller} text_align={text_align} />
                   </ItemWrapper>
                 )
 

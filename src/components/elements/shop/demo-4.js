@@ -23,6 +23,7 @@ row-gap: 0.5rem;
 text-decoration: none;
 color: ${props => props.themeMode == 'dark' ? '#fff' : '#000'};
 transition: 0.3s;
+padding:25px 15px;
 &:hover{
   transform: translateY(-8px);
   color: ${props => props.themeDnsData?.theme_css?.main_color};
@@ -30,8 +31,7 @@ transition: 0.3s;
 `
 const ItemName = muiStyle(Typography)`
 width:70%;
-margin: 0 auto;
-text-align: center;
+//text-align: center;
 `
 const ItemImgContainer = styled.div`
 width: 100%;
@@ -69,7 +69,7 @@ margin-bottom:2rem;
 export const Item4 = (props) => {
   const { user } = useAuthContext();
   const { themeWishData, onChangeWishData, themeMode, themeDnsData } = useSettingsContext();
-  const { item, router, theme_css, seller } = props;
+  const { item, router, theme_css, seller, type = 0, text_align = 'center' } = props;
   const [itemThemeCss, setItemThemeCss] = useState(itemThemeCssDefaultSetting);
 
   useEffect(() => {
@@ -82,7 +82,7 @@ export const Item4 = (props) => {
     { label: 'STOPPED', color: 'warning' },
     { label: 'SOLD-OUT', color: 'error' },
 
-    { label: '비공개', color: 'error'}
+    { label: '비공개', color: 'error' }
   ]
   return <>
     <ItemWrapper
@@ -94,43 +94,54 @@ export const Item4 = (props) => {
           router.push(`/shop/item/${item?.id}${seller ? `?seller_id=${seller?.id}` : ''}`)
         }
       }}
-      style={{ cursor: 'pointer' }}
+      style={{ cursor: 'pointer', textAlign: `${text_align}`, backgroundColor: `${'white'}`, margin: '0.25rem' }}
     >
       <ItemImgContainer>
-        <ItemImg src={item?.product_img} />
+        <ItemImg src={item?.product_img} style={{ height: '70%' }} />
       </ItemImgContainer>
-      <Chip
-        size="small"
-        variant="outlined"  //그랑파리 상품에서는 item.status가 0이다 = 판매중, 그 중에서 show_status가 0이면 신상품, 1이면 중고품
-        color={
-          item?.status == 0 && item?.show_status == 1 ? 
-          itemStatusList[0]?.color 
-          : 
-          item?.status == 5 ?
-          itemStatusList[4]?.color
-          :
-          itemStatusList[parseInt(item?.status) + 1 ?? 0]?.color}  //N 및 N-S 등급은 NEW, 그 외는 USED
-        label={
-          item?.status == 0 && item?.show_status == 1 ? 
-          itemStatusList[0]?.label 
-          : 
-          item?.status == 5 ?
-          itemStatusList[4]?.label
-          : 
-          itemStatusList[parseInt(item?.status) + 1 ?? 0]?.label}
-        style={{
-          margin: '0 auto',
-        }} />
-      <ItemName variant="body2" style={{ height: '60px', width: '90%', wordBreak: 'keep-all' }}>
-        {item?.product_name.length < 50 ? item.product_name : `${item.product_name.slice(0, 50)}...`}
+      <div style={{ color: '#999999', fontWeight: 'bold', fontSize: '11px', width: '90%', margin: '0 auto' }}>
+        {item?.product_name.split(" ")[0]}
+      </div>
+      <ItemName style={{ fontSize: '16px', height: '60px', width: '90%', wordBreak: 'keep-all', margin: `${type == 0 ? '0 auto' : ''}` }}>
+        {item?.product_name.length < 30 ? item.product_name : `${item.product_name.slice(0, 30)}...`}
       </ItemName>
-      <ItemName variant="subtitle2">
+      <ItemName variant="subtitle2" style={{ margin: `${type == 0 ? '0 auto' : ''}`, width: '90%' }}>
         {item?.status == 1 ? '거래 진행중'
           :
           item?.product_sale_price == 0 ? 'SOLD OUT'
             :
-            `${commarNumber(item?.product_sale_price)}원`}
+            <>
+              {commarNumber(item?.product_sale_price) + '원'}
+              {item?.product_price != item?.product_sale_price ?
+                <span style={{ color: '#EC1C24', marginLeft: '0.5rem' }}>
+                  {parseInt((item?.product_price - item?.product_sale_price) * 100 / item?.product_price) + '%'}
+                </span>
+                :
+                ''
+              }
+            </>
+        }
       </ItemName>
+      <div style={{ width: '80%', margin: '0 auto' }}>
+        <Chip
+          size="small"
+          variant="outlined"  //그랑파리 상품에서는 item.status가 0이다 = 판매중, 그 중에서 show_status가 0이면 신상품, 1이면 중고품
+          color={
+            item?.show_status == 1 ?
+              itemStatusList[0]?.color
+                :
+                itemStatusList[1]?.color 
+           } //N 및 N-S 등급은 NEW, 그 외는 USED
+          label={
+            item?.show_status == 1 ?
+              itemStatusList[0]?.label
+                :
+                itemStatusList[1].label
+              }
+          style={{
+            margin: '0 auto',
+          }} />
+      </div>
     </ItemWrapper>
   </>
 }
@@ -185,9 +196,10 @@ margin-bottom: 1rem;
 padding:1rem;
 `
 const Title = styled.h1`
-margin: 0 auto 1rem auto;
+margin: 0.8rem auto 1rem auto;
 width: 100%;
 font-size: ${themeObj.font_size.size2};
+color: #5F5F5F;
 `
 export const TitleComponent = (props) => {
   const { children, style } = props;
@@ -195,14 +207,14 @@ export const TitleComponent = (props) => {
   return (
     <>
       <Title
-        style={{ borderBottom: `3px solid ${themeDnsData?.theme_css?.main_color}`, ...style }}
+        style={{ borderBottom: `1px solid #5F5F5F`, ...style }}
       >{children}</Title>
     </>
   )
 }
 
 const MenuContainer = styled.div`
-width:220px;
+width:350px;
 display: flex;
 flex-direction: column;
 @media screen and (max-width:1000px){
@@ -210,12 +222,13 @@ flex-direction: column;
 }
 `
 const TitleLabel = muiStyle(Typography)`
-border-bottom:3px solid #ccc;
+border-bottom:1px solid #000;
 padding:0.25rem 0;
 width:100%;
+font-family: Playfair Display;
+font-size: 36px;
 `
 const ManuLabel = muiStyle(Typography)`
-background:#eee;
 padding: 0.25rem 0.5rem;
 margin-top:1rem;
 `
@@ -225,7 +238,7 @@ flex-direction: column;
 `
 const SubMenuLabel = styled.div`
 font-size: ${themeObj.font_size.size8};
-margin:0.5rem;
+margin:0.3rem 0.5rem;
 cursor: pointer;
 text-decoration: none;
 color: ${props => props.themeMode == 'dark' ? '#fff' : '#000'};
@@ -241,7 +254,7 @@ export const AuthMenuSideComponent = (props) => {
 
   const router = useRouter();
 
-  const authLabel = 'My 그랑파리';
+  const authLabel = 'My GRANDPARIS';
   const noneAuthLabel = '고객센터';
   const authList = [
     {
@@ -330,7 +343,8 @@ export const AuthMenuSideComponent = (props) => {
   return (
     <>
       <MenuContainer>
-        <TitleLabel variant="h5">{user ? authLabel : noneAuthLabel}</TitleLabel>
+        <TitleLabel>{user ? authLabel : noneAuthLabel}</TitleLabel>
+        <div style={{ border: '2px solid black', marginTop: '0.5rem', marginBottom: '1.5rem' }} />
         {(user ? authList : noneAuthList).map((item) => (
           <>
             {item.label &&
@@ -350,7 +364,7 @@ export const AuthMenuSideComponent = (props) => {
                     }}
                     themeDnsData={themeDnsData}
                     themeMode={themeMode}
-                  >- {itm.label}</SubMenuLabel>
+                  >{itm.label}</SubMenuLabel>
                 </>
               ))}
             </SubMenuLabelContainer>

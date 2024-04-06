@@ -96,7 +96,7 @@ const ConsignmentGuide = () => {
         return nullBrandList
     }
     const [langChipSelected, setLangChipSelected] = useState(0)
-    const [textChipSelected, setTextChipSelected] = useState('')
+    const [textChipSelected, setTextChipSelected] = useState('A')
 
     useEffect(() => {
         sort(LANGCODE.ENG)

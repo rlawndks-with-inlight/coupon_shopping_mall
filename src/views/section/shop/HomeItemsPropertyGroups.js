@@ -6,18 +6,28 @@ import { Button } from '@mui/material'
 import { useEffect, useState } from 'react'
 import { useSettingsContext } from 'src/components/settings'
 import { defaultManagerObj } from 'src/data/manager-data'
+import { Icon } from '@iconify/react'
 
 const Wrappers = styled.div`
   width:90%;
-  max-width:1400px;
+  max-width: 1400px;
   margin:0 auto;
   `
 
+const BackWrappers = styled.div`
+max-width: ${props => props.type == 1 ? '1600px' : '1400px'};
+margin:0 auto;
+`
+
 const CategoryTitle = styled.div`
 font-size: ${themeObj.font_size.size3};
-font-weight: bold;
+font-weight: ${props => props.type == 1 ? 'normal' : 'bold'};
 text-align: center;
 margin: 0 auto;
+font-family: ${props => props.type == 1 ? 'Playfair Display' : ''};
+color: ${props => props.type == 1 ? '#5F5F5F' : ''};
+font-size: ${props => props.type == 1 ? '36px' : ''};
+margin-left: ${props => props.type == 1 ? '0' : ''};
 @media (max-width:800px){
     margin-left:0;
 }
@@ -25,10 +35,16 @@ margin: 0 auto;
     font-size: 1.2rem;
 }
 `
+
+const Border = styled.div`
+margin-top: 1rem;
+height: 0.25rem; 
+`
+
 //이 소스에서 themeDnsData 불러올 때 잘못하면 메인페이지 렌더링 오류 생기는 듯
 
 const HomeItemsPropertyGroups = (props) => {
-    const { column, data, func, is_manager } = props;
+    const { column, data, func, is_manager, demoType } = props;
     const { router } = func;
     const { style } = column;
     const rows = parseInt(style?.rows ?? 1);
@@ -41,6 +57,7 @@ const HomeItemsPropertyGroups = (props) => {
 
     return (
         <>
+            <BackWrappers style={{backgroundColor: `${style?.back_color ?? '#FFFFFF'}`}}>
             <Wrappers style={{
                 marginTop: `${style?.margin_top}px`,
                 display: 'flex',
@@ -49,7 +66,7 @@ const HomeItemsPropertyGroups = (props) => {
                 <Row style={{ display: 'flex', position: 'relative' }}>
                     {column?.title &&
                         <>
-                            <CategoryTitle>
+                            <CategoryTitle type={demoType}>
                                 {column?.title}
                             </CategoryTitle>
                             {column?.sub_title &&
@@ -62,23 +79,35 @@ const HomeItemsPropertyGroups = (props) => {
                                         {column?.sub_title}
                                     </div>
                                 </>}
-                            <Button sx={{ position: 'absolute', right: '0' }} variant='outlined' onClick={() => {
-                                router.push(`/shop/items?not_show_select_menu=1&property_ids0=${parseInt(column?.type.split('items-property-group-')[1])}`)
-                            }}>View More</Button>
+                            {
+                                demoType == 0 ?
+                                    <Button sx={{ position: 'absolute', right: '0' }} variant='outlined' onClick={() => {
+                                        router.push(`/shop/items?not_show_select_menu=1&property_ids0=${parseInt(column?.type.split('items-property-group-')[1])}`)
+                                    }}>View More</Button>
+                                    :
+                                    <Icon
+                                        icon={'ph:plus-light'}
+                                        style={{ width: '25px', height: '25px', margin: 'auto 0', cursor: 'pointer' }}
+                                        onClick={() => {
+                                            router.push(`/shop/items?not_show_select_menu=1&property_ids0=${parseInt(column?.type.split('items-property-group-')[1])}`)
+                                        }}
+                                    />
+                            }
                         </>}
                 </Row>
-                <div style={{ marginTop: '1rem', height: '0.25rem', borderTop: `1px solid ${themeDnsData?.theme_css?.main_color} `, borderBottom: `1px solid ${themeDnsData?.theme_css?.main_color} `, }} />
-                <Items items={column?.list} router={router} is_slide={column?.list.length >= 5 ? true : false} rows={rows} slide_setting={{
+                <Border style={{ borderTop: `1px solid ${themeObj.grey[300]} `, }} />
+                <Items items={column?.list} router={router} is_slide={column?.list.length >= 5 ? true : false} rows={rows} text_align={style?.text_align} slide_setting={{
                     autoplay: style?.slider_speed > 0 ? true : false,
                     autoplaySpeed: parseInt(style?.slider_speed ?? 0) * 1000 //parseInt 안에 default값을 안 넣으면 0이 들어왔을 때 NaN으로 처리되어 오류 발생
                 }} />
-                <div style={{ marginTop: '1rem', height: '0.25rem', borderTop: `1px solid ${themeObj.grey[300]} `, }} />
+                <Border style={{ borderTop: `1px solid ${themeObj.grey[300]} `, }} />
                 {/*<Row>
                     <Button sx={{ margin: '1rem auto' }} variant='outlined' onClick={() => {
                         router.push(`/shop/items?not_show_select_menu=1&property_ids0=${parseInt(column?.type.split('items-property-group-')[1])}`)
                     }}>View More</Button>
                 </Row>*/}
             </Wrappers>
+            </BackWrappers>
         </>
     )
 }

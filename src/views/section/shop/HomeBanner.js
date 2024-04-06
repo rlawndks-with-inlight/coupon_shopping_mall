@@ -7,6 +7,7 @@ import { useEffect, useRef, useState } from 'react'
 import { m } from 'framer-motion'
 import { Button } from '@mui/material'
 import { varFade } from 'src/components/animate'
+
 const FullWrappers = styled.div`
   width:100%;
 `
@@ -51,8 +52,8 @@ const PrevArrowStyle = styled.div`
   }
   `
 const BannerImgContainer = styled.div`
-width: 78vw;
-height: 33.15vw;
+width: ${props => props.type == 1 ? '100%' : '78vw'};
+height: ${props => props.type == 1 ? '50vw' : '33.15vw'};
 margin: 0 auto;
 border-radius:${props => props.img_list_length >= 2 ? '1rem' : '0'};
 overflow: hidden;
@@ -70,10 +71,12 @@ top: 0;
 left: 0;
 display:flex;
 position: relative;
-background-size: cover;
+background-size: contain;
 background-repeat: no-repeat;
 background-position: center center;
-animation: ${props => props.iscurrentSlideIndex ? 'zoom-in-out' : ''} 10s ease-in-out infinite;
+max-width: ${props => props.type == 1 ? '1600px' : ''};
+margin:0 auto;
+animation: ${props => props.type == 1 ? '' : props => props.iscurrentSlideIndex ? 'zoom-in-out' : ''} 10s ease-in-out infinite;
 @keyframes zoom-in-out {
     0% {
         transform: scale(1);
@@ -85,6 +88,7 @@ animation: ${props => props.iscurrentSlideIndex ? 'zoom-in-out' : ''} 10s ease-i
         transform: scale(1);
     }
 }
+
 `
 
 const TextContainer = styled.div`
@@ -139,7 +143,7 @@ const PrevArrow = ({ onClick, sx }) => {
 };
 
 const HomeBanner = (props) => {
-    const { column, data, func, is_manager } = props;
+    const { column, data, func, is_manager, demoType } = props;
     let { windowWidth } = data;
     const { style } = column;
     let img_list = [...(column?.list ?? [])];
@@ -225,10 +229,12 @@ const HomeBanner = (props) => {
                             <BannerImgContainer
                                 style={{ minHeight: `${style?.min_height ?? 200}px`, maxHeight: `${style?.max_height ?? 750}px` }}
                                 img_list_length={img_list.length}
+                                type={demoType}
                             >
 
                                 <BannerImgContent
                                     iscurrentSlideIndex={currentSlideIndex == idx}
+                                    type={demoType}
                                     onClick={() => {
                                         if (!is_manager && item?.link) {
                                             window.location.href = item?.link;
@@ -251,7 +257,7 @@ const HomeBanner = (props) => {
                                                     <m.div
                                                         initial="hidden"
                                                         animate="visible"
-                                                        variants={fadeInUpVariants}
+                                                        variants={demoType == 0 ? fadeInUpVariants : ''}
                                                     >
                                                         <SlideTitle style={{ color: `${item?.title_color ?? ""}` }}>
                                                             {item?.title}
@@ -262,7 +268,7 @@ const HomeBanner = (props) => {
                                                     <m.div
                                                         initial="hidden"
                                                         animate="visible"
-                                                        variants={fadeInUpVariants}>
+                                                        variants={demoType == 0 ? fadeInUpVariants : ''}>
                                                         <SlideSubTitle style={{ color: `${item?.sub_title_color ?? ""}` }}>
                                                             {item?.sub_title}
                                                         </SlideSubTitle>

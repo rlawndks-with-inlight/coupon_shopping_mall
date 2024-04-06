@@ -75,33 +75,45 @@ const Footer = (props) => {
     return (
         <>
             <div style={{ marginTop: '2rem' }} />
-            <Wrapper>
-                <ContentWrapper style={{backgroundColor:'#000000'}}>
+            <Wrapper style={{fontFamily:'Noto Sans KR'}}>
+                <ContentWrapper style={{backgroundColor:'#FEF8F4', }}>
                 <MainContent style={{display:'flex', flexDirection:'row', marginTop:'50px', justifyContent:'space-between'}}>
                         <div>
-                            <Row style={{fontWeight:'bold', fontSize:'16px', color:'#FFFFFF', fontFamily:'Playfair Display',}}>
+                            <Row style={{fontWeight:'bold', fontSize:'16px', color:'#5F5F5F', fontFamily:'Playfair Display',}}>
                                 OUR SERVICE
                             </Row>
                             <br /><br />
-                            <Row style={{marginBottom:'0.7rem', cursor:'pointer'}}>
+                            <Row 
+                            style={{marginBottom:'0.7rem', cursor:'pointer'}}
+                            >
                                 온라인 판매
                             </Row>
                             <Row 
                             style={{marginBottom:'0.7rem', cursor:'pointer'}}
                             onClick={() => {
-                                router.push('shop/guide/brand-about')
+                                router.push('/shop/guide/brand-about')
                             }}
                             >
                                 오프라인
                             </Row>
-                            <Row style={{marginBottom:'0.7rem', cursor:'pointer'}}>
+                            <Row 
+                            style={{marginBottom:'0.7rem', cursor:'pointer'}}
+                            onClick={() => {
+                                router.push('/shop/guide/purchase-guide')
+                            }}
+                            >
                                 매입센터
                             </Row>
-                            <Row style={{cursor:'pointer'}}>
-                                위탁센터
+                            <Row 
+                            style={{cursor:'pointer'}}
+                            onClick={() => {
+                                router.push('/shop/guide/purchase-guide')
+                            }}
+                            >
+                                위탁판매
                             </Row>
                         </div>
-                        <div>
+                        {/*<div>
                             <Row style={{fontWeight:'bold', fontSize:'16px', color:'#FFFFFF', fontFamily:'Playfair Display',}}>
                                 SELL
                             </Row>
@@ -123,9 +135,9 @@ const Footer = (props) => {
                             <Row style={{cursor:'pointer'}}>
                                 위탁센터
                             </Row>
-                        </div>
+                        </div>*/}
                         <div>
-                            <Row style={{fontWeight:'bold', fontSize:'16px', color:'#FFFFFF', fontFamily:'Playfair Display',}}>
+                            <Row style={{fontWeight:'bold', fontSize:'16px', color:'#5F5F5F', fontFamily:'Playfair Display',}}>
                                 HELP
                             </Row>
                             <br /><br />
@@ -166,14 +178,14 @@ const Footer = (props) => {
                             </Row>
                         </div>
                         <div>
-                            <Row style={{fontWeight:'bold', fontSize:'16px', color:'#FFFFFF', fontFamily:'Playfair Display',}}>
+                            <Row style={{fontWeight:'bold', fontSize:'16px', color:'#5F5F5F', fontFamily:'Playfair Display',}}>
                                 C.S CENTER
                             </Row>
                             <br /><br />
-                            <Row style={{fontWeight:'bold', fontSize:'18px', color:'#FFFFFF'}}>
+                            <Row style={{fontWeight:'bold', fontSize:'18px', color:'#5F5F5F'}}>
                                 02-517-2950
                             </Row>
-                            <Row style={{fontWeight:'bold', fontSize:'18px', color:'#FFFFFF', marginBottom:'0.5rem'}}>
+                            <Row style={{fontWeight:'bold', fontSize:'18px', color:'#5F5F5F', marginBottom:'0.5rem'}}>
                                 02-517-8950
                             </Row>
                             <Row>

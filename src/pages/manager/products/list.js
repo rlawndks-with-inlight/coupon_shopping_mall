@@ -208,11 +208,12 @@ const ProductList = () => {
           sx={{ '@media screen and (max-width: 2500px)': { size: 'smaller' } }}
         >
           <MenuItem value={0}>{'판매중'}</MenuItem>
+          <MenuItem value={-1}>{'예약중'}</MenuItem>
           <MenuItem value={1}>{'거래진행중'}</MenuItem>
           <MenuItem value={2}>{'품절'}</MenuItem>
           <MenuItem value={3}>{'택배수거'}</MenuItem>
           <MenuItem value={4}>{'방문수거'}</MenuItem>
-          <MenuItem value={5}>{'비공개'}</MenuItem>
+          <MenuItem value={5}>{'비공개'}</MenuItem>    
         </Select>
         }
       },
@@ -473,6 +474,7 @@ const ProductList = () => {
                             ...searchObj,
                             [`property_ids${index}`]: property_ids,
                           })
+                          console.log(searchObj)
                         }}
                       />
                     </>

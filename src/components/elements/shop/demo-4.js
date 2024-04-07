@@ -108,18 +108,20 @@ export const Item4 = (props) => {
       <ItemName variant="subtitle2" style={{ margin: `${type == 0 ? '0 auto' : ''}`, width: '90%' }}>
         {item?.status == 1 ? '거래 진행중'
           :
-          item?.product_sale_price == 0 ? 'SOLD OUT'
+          item?.product_sale_price == 0 || item?.status == 2 || item?.status == 3 || item?.status == 4 ? 'SOLD OUT'
             :
-            <>
-              {commarNumber(item?.product_sale_price) + '원'}
-              {item?.product_price != item?.product_sale_price ?
-                <span style={{ color: '#EC1C24', marginLeft: '0.5rem' }}>
-                  {parseInt((item?.product_price - item?.product_sale_price) * 100 / item?.product_price) + '%'}
-                </span>
-                :
-                ''
-              }
-            </>
+            item?.status == -1 ? '예약중'
+              :
+              <>
+                {commarNumber(item?.product_sale_price) + '원'}
+                {item?.product_price != item?.product_sale_price ?
+                  <span style={{ color: '#EC1C24', marginLeft: '0.5rem' }}>
+                    {parseInt((item?.product_price - item?.product_sale_price) * 100 / item?.product_price) + '%'}
+                  </span>
+                  :
+                  ''
+                }
+              </>
         }
       </ItemName>
       <div style={{ width: '80%', margin: '0 auto' }}>
@@ -129,15 +131,15 @@ export const Item4 = (props) => {
           color={
             item?.show_status == 1 ?
               itemStatusList[0]?.color
-                :
-                itemStatusList[1]?.color 
-           } //N 및 N-S 등급은 NEW, 그 외는 USED
+              :
+              itemStatusList[1]?.color
+          } //N 및 N-S 등급은 NEW, 그 외는 USED
           label={
             item?.show_status == 1 ?
               itemStatusList[0]?.label
-                :
-                itemStatusList[1].label
-              }
+              :
+              itemStatusList[1].label
+          }
           style={{
             margin: '0 auto',
           }} />

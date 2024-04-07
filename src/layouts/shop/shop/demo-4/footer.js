@@ -75,40 +75,40 @@ const Footer = (props) => {
     return (
         <>
             <div style={{ marginTop: '2rem' }} />
-            <Wrapper style={{fontFamily:'Noto Sans KR'}}>
-                <ContentWrapper style={{backgroundColor:'#FEF8F4', }}>
-                <MainContent style={{display:'flex', flexDirection:'row', marginTop:'50px', justifyContent:'space-between'}}>
+            <Wrapper style={{ fontFamily: 'Noto Sans KR' }}>
+                <ContentWrapper style={{ backgroundColor: '#FEF8F4', }}>
+                    <MainContent style={{ display: 'flex', flexDirection: 'row', marginTop: '50px', justifyContent: 'space-between' }}>
                         <div>
-                            <Row style={{fontWeight:'bold', fontSize:'16px', color:'#5F5F5F', fontFamily:'Playfair Display',}}>
+                            <Row style={{ fontWeight: 'bold', fontSize: '16px', color: '#5F5F5F', fontFamily: 'Playfair Display', }}>
                                 OUR SERVICE
                             </Row>
                             <br /><br />
-                            <Row 
-                            style={{marginBottom:'0.7rem', cursor:'pointer'}}
+                            <Row
+                                style={{ marginBottom: '0.7rem', cursor: 'pointer' }}
                             >
                                 온라인 판매
                             </Row>
-                            <Row 
-                            style={{marginBottom:'0.7rem', cursor:'pointer'}}
-                            onClick={() => {
-                                router.push('/shop/guide/brand-about')
-                            }}
+                            <Row
+                                style={{ marginBottom: '0.7rem', cursor: 'pointer' }}
+                                onClick={() => {
+                                    router.push('/shop/guide/brand-about')
+                                }}
                             >
                                 오프라인
                             </Row>
-                            <Row 
-                            style={{marginBottom:'0.7rem', cursor:'pointer'}}
-                            onClick={() => {
-                                router.push('/shop/guide/purchase-guide')
-                            }}
+                            <Row
+                                style={{ marginBottom: '0.7rem', cursor: 'pointer' }}
+                                onClick={() => {
+                                    router.push('/shop/guide/purchase-guide')
+                                }}
                             >
                                 매입센터
                             </Row>
-                            <Row 
-                            style={{cursor:'pointer'}}
-                            onClick={() => {
-                                router.push('/shop/guide/purchase-guide')
-                            }}
+                            <Row
+                                style={{ cursor: 'pointer' }}
+                                onClick={() => {
+                                    router.push('/shop/guide/purchase-guide')
+                                }}
                             >
                                 위탁판매
                             </Row>
@@ -137,60 +137,60 @@ const Footer = (props) => {
                             </Row>
                         </div>*/}
                         <div>
-                            <Row style={{fontWeight:'bold', fontSize:'16px', color:'#5F5F5F', fontFamily:'Playfair Display',}}>
+                            <Row style={{ fontWeight: 'bold', fontSize: '16px', color: '#5F5F5F', fontFamily: 'Playfair Display', }}>
                                 HELP
                             </Row>
                             <br /><br />
-                            <Row 
-                            style={{marginBottom:'0.7rem', cursor:'pointer'}}
-                            onClick={() => {
-                                router.push('/shop/service/47')
-                            }}
+                            <Row
+                                style={{ marginBottom: '0.7rem', cursor: 'pointer' }}
+                                onClick={() => {
+                                    router.push('/shop/service/47')
+                                }}
                             >
                                 공지사항
                             </Row>
-                            <Row 
-                            style={{marginBottom:'0.7rem', cursor:'pointer'}} 
-                            onClick={() => {
-                                if (user) {
-                                    onLogout()
-                                } else {
-                                    router.push('/shop/auth/login')
-                                }
-                            }}
+                            <Row
+                                style={{ marginBottom: '0.7rem', cursor: 'pointer' }}
+                                onClick={() => {
+                                    if (user) {
+                                        onLogout()
+                                    } else {
+                                        router.push('/shop/auth/login')
+                                    }
+                                }}
                             >
                                 {user ? '로그아웃' : '로그인'}
                             </Row>
-                            <Row 
-                            style={{marginBottom:'0.7rem', cursor:'pointer'}}
-                            onClick={() => {
-                                router.push('/shop/auth/login/?scroll_to=700')
-                            }}
+                            <Row
+                                style={{ marginBottom: '0.7rem', cursor: 'pointer' }}
+                                onClick={() => {
+                                    router.push('/shop/auth/login/?scroll_to=700')
+                                }}
                             >
                                 비회원주문조회
                             </Row>
-                            <Row style={{cursor:'pointer'}}
-                            onClick={() => {
-                                router.push('/shop/service/46')
-                            }}
+                            <Row style={{ cursor: 'pointer' }}
+                                onClick={() => {
+                                    router.push('/shop/service/46')
+                                }}
                             >
                                 1:1문의
                             </Row>
                         </div>
                         <div>
-                            <Row style={{fontWeight:'bold', fontSize:'16px', color:'#5F5F5F', fontFamily:'Playfair Display',}}>
+                            <Row style={{ fontWeight: 'bold', fontSize: '16px', color: '#5F5F5F', fontFamily: 'Playfair Display', }}>
                                 C.S CENTER
                             </Row>
                             <br /><br />
-                            <Row style={{fontWeight:'bold', fontSize:'18px', color:'#5F5F5F'}}>
+                            <Row style={{ fontWeight: 'bold', fontSize: '18px', color: '#5F5F5F' }}>
                                 02-517-2950
                             </Row>
-                            <Row style={{fontWeight:'bold', fontSize:'18px', color:'#5F5F5F', marginBottom:'0.5rem'}}>
+                            <Row style={{ fontWeight: 'bold', fontSize: '18px', color: '#5F5F5F', marginBottom: '0.5rem' }}>
                                 02-517-8950
                             </Row>
                             <Row>
                                 월-금 AM 10:30 ~ PM 7:30
-                            </Row> 
+                            </Row>
                             <Row>
                                 토요일 AM 10:30 ~ PM 6:00
                             </Row>
@@ -200,79 +200,96 @@ const Footer = (props) => {
                         </div>
                     </MainContent>
                 </ContentWrapper>
-                <ContentWrapper style={{display:'flex', flexDirection:'column'}}>
-                    <MainContent style={{marginTop:'50px'}}>
-                        <Row style={{position:'relative'}}>
-                            <MarginRight style={{fontWeight:'bold', fontSize:'16px'}}>{company_name}</MarginRight>
-                            <Row style={{position:'absolute', right:'0'}}>
-                            <MarginRight style={{ cursor: 'pointer' }} onClick={() => { router.push('/shop/auth/policy?type=0') }}>Terms</MarginRight>
-                            <MarginRight style={{ cursor: 'pointer' }} onClick={() => { router.push('/shop/auth/policy?type=1') }}>| Privacy Policy</MarginRight>
-                            <Row style={{marginLeft:'1rem'}}>
-                                <img 
-                                src='/grandparis/instagram.png'
-                                style={{marginRight:'0.5rem', cursor:'pointer'}}
-                                />
-                                <img 
-                                src='/grandparis/kakaotalk.png'
-                                style={{marginRight:'0.5rem', cursor:'pointer'}}
-                                />
-                                <img 
-                                src='/grandparis/band.png'
-                                style={{marginRight:'0.5rem', cursor:'pointer'}}
-                                />
-                            </Row>
+                <ContentWrapper style={{ display: 'flex', flexDirection: 'column' }}>
+                    <MainContent style={{ marginTop: '50px' }}>
+                        <Row style={{ position: 'relative' }}>
+                            <MarginRight style={{ fontWeight: 'bold', fontSize: '16px' }}>{company_name}</MarginRight>
+                            <Row style={{ position: 'absolute', right: '0' }}>
+                                <MarginRight style={{ cursor: 'pointer' }} onClick={() => { router.push('/shop/auth/policy?type=0') }}>Terms</MarginRight>
+                                <MarginRight style={{ cursor: 'pointer' }} onClick={() => { router.push('/shop/auth/policy?type=1') }}>| Privacy Policy</MarginRight>
+                                <Row style={{ marginLeft: '1rem' }}>
+                                    <img
+                                        src='/grandparis/instagram.png'
+                                        style={{ marginRight: '0.5rem', cursor: 'pointer' }}
+                                        onClick={() => {
+                                            window.open('https://www.instagram.com/grandparis__/')
+                                        }}
+                                    />
+                                    <img
+                                        src='/grandparis/kakaotalk.png'
+                                        style={{ marginRight: '0.5rem', cursor: 'pointer' }}
+                                    />
+                                    <img
+                                        src='/grandparis/band.png'
+                                        style={{ marginRight: '0.5rem', cursor: 'pointer' }}
+                                        onClick={() => {
+                                            window.open('https://blog.naver.com/grandparis88')
+                                        }}
+                                    />
+                                </Row>
                             </Row>
                         </Row>
                         <Row>
-                        {addr?.length > 1 &&
-                            <>
+                            {addr?.length > 1 &&
+                                <>
                                     <div style={{ display: 'flex', flexDirection: 'column' }}>
                                         <MarginRight>{addr}</MarginRight>
                                     </div>
-                                
-                            </>
-                        }
-                        {phone_num?.length > 1 &&
-                            <>
+
+                                </>
+                            }
+                            {phone_num?.length > 1 &&
+                                <>
                                     <div style={{ display: 'flex' }}>
                                         <MarginRight>| TEL : {phone_num}</MarginRight>
                                     </div>
-                                
-                            </>
-                        }
-                        {ceo_name?.length > 1 &&
-                            <>
-                                    <MarginRight>| 대표 : {ceo_name}</MarginRight>
-                                
-                            </>
-                        }
+
+                                </>
+                            }
                         </Row>
                         <Row>
-                        {business_num?.length > 1 &&
-                            <>
-                                    <MarginRight>사업자등록번호 : {business_num}</MarginRight>
-                            </>
-                        }
-                        {fax_num?.length > 1 &&
-                            <>
-                                    <MarginRight>| FAX : {fax_num}</MarginRight>
-                            </>
-                        }
-                        {pvcy_rep_name?.length > 1 &&
-                            <>
-                                    <MarginRight>| 개인정보 보호책임자 : {pvcy_rep_name}</MarginRight>
-                            </>
-                        }
-
-                        {mail_order_num?.length > 1 &&
-                            <>
-                                    <MarginRight>| 통신판매번호 : {mail_order_num}</MarginRight>
-                            </>
-                        }
+                            <div style={{ display: 'flex', flexDirection: 'column' }}>
+                                <MarginRight>[인스파이어 럭셔리에디션] 인천시 중구 공항문화로 127 (중구 용유로 542) 3층 R03, R04</MarginRight>
+                            </div>
+                            <div style={{ display: 'flex' }}>
+                                <MarginRight>| TEL : 032-215-8887, 032-215-8889</MarginRight>
+                            </div>
                         </Row>
                         <br />
                         <Row>
-                        COPYRIGHT © GRANDPARIS ALL RIGHTS RESERVED.
+                            {ceo_name?.length > 1 &&
+                                <>
+                                    <MarginRight>대표 : {ceo_name}</MarginRight>
+
+                                </>
+                            }
+                            {pvcy_rep_name?.length > 1 &&
+                                <>
+                                    <MarginRight>| 개인정보 보호책임자 : {pvcy_rep_name}</MarginRight>
+                                </>
+                            }
+                        </Row>
+                        <Row>
+                            {business_num?.length > 1 &&
+                                <>
+                                    <MarginRight>사업자등록번호 : {business_num}</MarginRight>
+                                </>
+                            }
+                            {fax_num?.length > 1 &&
+                                <>
+                                    <MarginRight>| FAX : {fax_num}</MarginRight>
+                                </>
+                            }
+
+                            {mail_order_num?.length > 1 &&
+                                <>
+                                    <MarginRight>| 통신판매번호 : {mail_order_num}</MarginRight>
+                                </>
+                            }
+                        </Row>
+                        <br />
+                        <Row>
+                            COPYRIGHT © GRANDPARIS ALL RIGHTS RESERVED.
                         </Row>
                     </MainContent>
                 </ContentWrapper>

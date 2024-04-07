@@ -279,7 +279,7 @@ const ItemDemo = (props) => {
                         }
                       })}
                       <Button
-                        disabled={getProductStatus(product?.status).color != 'info' || !(product?.product_sale_price > 0)}
+                        disabled={product?.status != 0 || !(product?.product_sale_price > 0)}
                         sx={{
                           width: '100%',
                           marginTop: '1rem',
@@ -305,7 +305,7 @@ const ItemDemo = (props) => {
                       >Buy Now</Button>
                       <Row style={{ columnGap: '0.5rem', marginTop: '0.5rem', alignItems: 'center' }}>
                         <Button
-                          disabled={getProductStatus(product?.status).color != 'info' || !(product?.product_sale_price > 0)}
+                          disabled={product?.status != 0 || !(product?.product_sale_price > 0)}
                           sx={{
                             width: '90%',
                             height: '60px',

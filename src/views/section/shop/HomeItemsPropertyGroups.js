@@ -9,14 +9,17 @@ import { defaultManagerObj } from 'src/data/manager-data'
 import { Icon } from '@iconify/react'
 
 const Wrappers = styled.div`
-  width:90%;
   max-width: 1400px;
   margin:0 auto;
+  width:90%;
   `
 
 const BackWrappers = styled.div`
 max-width: ${props => props.type == 1 ? '1600px' : '1400px'};
+display:flex;
 margin:0 auto;
+width:100%;
+
 `
 
 const CategoryTitle = styled.div`

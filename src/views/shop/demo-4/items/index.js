@@ -32,6 +32,14 @@ z-index: 9;
 }
 `
 
+const FilterTab = styled.div`
+display:flex;
+margin:auto 0 auto auto;
+@media screen and (max-width:500px) {
+  font-size:0.75rem;
+}
+`
+
 const ItemsDemo = (props) => {
 
   const router = useRouter();
@@ -420,7 +428,7 @@ const ItemsDemo = (props) => {
                             height: '40px',
                             background: 'transparent',
                             borderRadius: '0',
-                            fontFamily: 'Playfair Display',
+                            fontFamily: 'Noto Sans KR',
                             color: `${langChipSelected == 1 ? themeMode == 'dark' ? 'white' : 'black' : '#999999'}`,
                             '&:hover': {
                               textDecoration: 'underline',
@@ -469,7 +477,7 @@ const ItemsDemo = (props) => {
                                       cursor: 'pointer',
                                       color: `${textChipSelected == hangeul ? themeMode == 'dark' ? 'white' : 'black' : '#999999'}`,
                                       background: 'transparent',
-                                      fontFamily: 'Playfair Display',
+                                      fontFamily: 'Noto Sans KR',
                                       '&:hover': {
                                         color: `${textChipSelected == hangeul ? 'white' : ''}`,
                                         //background: `${textChipSelected == hangeul ? 'black' : ''}`,
@@ -499,7 +507,7 @@ const ItemsDemo = (props) => {
                                           fontSize: '16px',
                                           cursor: 'pointer',
                                           background: 'transparent',
-                                          fontFamily: 'Playfair Display',
+                                          fontFamily: `${langChipSelected == 0 ? 'Playfair Display' : 'Noto Sans KR'}`,
                                           '&:hover': {
                                             background: `${themeMode == 'dark' ? '#999999' : 'white'}`,
                                           },
@@ -525,7 +533,7 @@ const ItemsDemo = (props) => {
                                           fontSize: '16px',
                                           cursor: 'pointer',
                                           background: 'transparent',
-                                          fontFamily: 'Playfair Display',
+                                          fontFamily: `${langChipSelected == 0 ? 'Playfair Display' : 'Noto Sans KR'}`,
                                           '&:hover': {
                                             background: `${themeMode == 'dark' ? '#999999' : 'white'}`,
                                           },
@@ -567,7 +575,7 @@ const ItemsDemo = (props) => {
                 }}
                 className={`none-scroll`}
               >
-                <div style={{ margin: 'auto 0 auto auto', display: 'flex' }}>
+                <FilterTab style={{ margin: 'auto 0 auto auto', display: 'flex' }}>
                   {sortList.map((item) => (
                     <>
                       <div
@@ -584,7 +592,7 @@ const ItemsDemo = (props) => {
                       </div>
                     </>
                   ))}
-                </div>
+                </FilterTab>
                 <FormControl variant='outlined' size='small' sx={{ width: '200px', margin: 'auto 0' }}>
 
                   <Select value={searchObj.page_size}

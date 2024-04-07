@@ -208,7 +208,7 @@ const ProductList = () => {
           sx={{ '@media screen and (max-width: 2500px)': { size: 'smaller' } }}
         >
           <MenuItem value={0}>{'판매중'}</MenuItem>
-          <MenuItem value={-1}>{'예약중'}</MenuItem>
+          <MenuItem value={6}>{'예약중'}</MenuItem>
           <MenuItem value={1}>{'거래진행중'}</MenuItem>
           <MenuItem value={2}>{'품절'}</MenuItem>
           <MenuItem value={3}>{'택배수거'}</MenuItem>
@@ -417,6 +417,7 @@ const ProductList = () => {
       [idx]: children_list
     });
     $(`.category-container-${idx}`).scrollLeft(100000);
+    console.log(searchObj)
   }
 
   const onChangeStatus = async (id, value) => {
@@ -483,6 +484,34 @@ const ProductList = () => {
               </div>
             </>
           ))}
+          {detailSearchOpen && 
+          <>
+          <div style={{ marginLeft: '1rem', marginBottom: '0.25rem', marginTop: '0.25rem' }}>
+                <Typography variant="subtitle2" sx={{ color: 'text.secondary' }}>
+                  상태
+                </Typography>
+                <Row style={{ flexWrap: 'wrap' }}>
+                      <FormControlLabel
+                        label={<Typography style={{ fontSize: themeObj.font_size.size6 }}>판매중</Typography>}
+                        control={<Checkbox />}
+                        onChange={(e) => {
+                          let status = searchObj[`status`] ?? [];
+                          if (e.target.checked) {
+                            status.push(0);
+                          } else {
+                            status.splice(0, 1);
+                          }
+                          onChangePage({
+                            ...searchObj,
+                            [`status`]: status,
+                          })
+                          console.log(searchObj)
+                        }}
+                      />
+                </Row>
+              </div>
+          </>
+          }
           <Divider />
           <ManagerTable
             data={data}

@@ -34,7 +34,7 @@ const HomeItems = (props) => {
                             </>}
                     </>}
                 <div style={{ marginTop: '1rem' }} />
-                <Items items={column?.list} router={router} is_slide={column?.list.length >= 5 ? true : false} rows={rows} text_align={style.text_align} slide_setting={{
+                <Items items={column?.list} router={router} is_slide={column?.list.length >= 5 ? true : false} rows={rows} text_align={style?.text_align} slide_setting={{
                     autoplay: style?.slider_speed > 0 ? true : false,
                     autoplaySpeed: parseInt(style?.slider_speed ?? 0) * 1000 //parseInt 안에 default값을 안 넣으면 0이 들어왔을 때 NaN으로 처리되어 오류 발생
                 }} />

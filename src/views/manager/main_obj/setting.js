@@ -470,7 +470,7 @@ const MainObjSetting = props => {
                 type='color'
                 style={{
                   border: 'none',
-                  minWidth:'100px'
+                  minWidth:'80px'
                 }}
                 onChange={e => {
                   let content_list = [...contentList]

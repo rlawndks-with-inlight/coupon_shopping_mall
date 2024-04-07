@@ -45,7 +45,7 @@ const HomeDemo = (props) => {
               src='/grandparis/new-luxury-edition.png'
               style={{ margin: '0 auto' }}
             />
-  </Row>*/}
+  </Row>
           <RowHome>
             <img src='/grandparis/luxury-edition-inside.png' />
             <div style={{ marginLeft: '3rem' }}>
@@ -82,7 +82,7 @@ const HomeDemo = (props) => {
                 Tel. 032-215-8887 / 032-215-8889
               </Row>
             </div>
-          </RowHome>
+              </RowHome>*/}
         </BottomContent>
       </div>
     </>

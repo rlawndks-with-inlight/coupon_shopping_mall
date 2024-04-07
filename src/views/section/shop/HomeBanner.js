@@ -71,7 +71,7 @@ top: 0;
 left: 0;
 display:flex;
 position: relative;
-background-size: contain;
+background-size: ${props => props.type == 1 ? 'contain' : 'cover'};
 background-repeat: no-repeat;
 background-position: center center;
 max-width: ${props => props.type == 1 ? '1600px' : ''};
@@ -143,7 +143,7 @@ const PrevArrow = ({ onClick, sx }) => {
 };
 
 const HomeBanner = (props) => {
-    const { column, data, func, is_manager, demoType = 0 } = props;
+    const { column, data, func, is_manager, demoType } = props;
     let { windowWidth } = data;
     const { style } = column;
     let img_list = [...(column?.list ?? [])];

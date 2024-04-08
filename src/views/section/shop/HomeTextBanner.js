@@ -13,25 +13,14 @@ const Wrappers = styled.div`
   @media (max-width:1200px) {
     font-size: ${props => props.type == 1 ? '10px' : ''};
   }
-  display: flex;
+  
   `
 
 const TextCover = styled.div`
 display:flex;
-margin:0 6%;
+margin:0 auto;
 align-items: center;
-@media screen and (max-width:1000px) {
-    margin:0 5%;
-}
-@media screen and (max-width:850px) {
-    margin:0 4%;
-}
-@media screen and (max-width:700px) {
-    margin:0 3%;
-}
-@media screen and (max-width:600px) {
-    margin:0 2%;
-}
+
 `
 
 const Texts = styled.div`

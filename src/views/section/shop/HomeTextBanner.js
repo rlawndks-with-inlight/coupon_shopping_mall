@@ -16,16 +16,43 @@ const Wrappers = styled.div`
   display: flex;
   `
 
+const TextCover = styled.div`
+display:flex;
+margin:0 6%;
+align-items: center;
+@media screen and (max-width:1000px) {
+    margin:0 5%;
+}
+@media screen and (max-width:850px) {
+    margin:0 4%;
+}
+@media screen and (max-width:700px) {
+    margin:0 3%;
+}
+@media screen and (max-width:600px) {
+    margin:0 2%;
+}
+`
+
 const Texts = styled.div`
-margin-top: 1rem;
 align-items: center;
 white-space: nowrap;
 width:fit-content;
 cursor:pointer;
 font-size:150%;
-@media screen {
-    
+@media screen and (max-width:650px) {
+    font-size:130%;
 }
+@media screen and (max-width:500px) {
+    font-size:120%;
+}
+@media screen and (max-width:450px) {
+    font-size:100%;
+}
+@media screen and (max-width:450px) {
+    font-size:80%;
+}
+
 `
 
 const HomeTextBanner = (props) => {
@@ -80,7 +107,7 @@ const HomeTextBanner = (props) => {
             <Row>
                     {column?.list && (column?.list ?? []).map((item, idx) => (
                         <>
-                                <Col style={{ alignItems: 'center', margin:'0 2rem'  }}>
+                                <TextCover>
                                     <Texts 
                                     onClick={() => {
                                         if (item?.link && !is_manager) {
@@ -90,7 +117,7 @@ const HomeTextBanner = (props) => {
                                     >
                                         {item.title}
                                         </Texts>
-                                </Col>
+                                </TextCover>
                         </>
                     ))}
                     </Row>

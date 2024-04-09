@@ -124,6 +124,7 @@ const FaqList = () => {
     onChangePage({ ...searchObj, category_id: router.query?.category_id, page: 1, });
   }*/
   const onChangePage = async (obj) => {
+    setSearchObj(obj);
     setData({
       ...data,
       content: undefined
@@ -132,7 +133,6 @@ const FaqList = () => {
     if (data_) {
       setData(data_);
     }
-    setSearchObj(obj);
   }
   const deletePost = async (id) => {
     let result = await apiShop('product-faq', 'delete', { id });

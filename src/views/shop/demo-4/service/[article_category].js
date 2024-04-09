@@ -74,36 +74,36 @@ const ArticlesDemo = (props) => {
       action: (row) => {
         return (
           <>
-          {
-            row?.replies.length > 0 ? 
-            <>
-            <IconButton onClick={() => {
-              router.push(`/shop/service/${router.query?.article_category}/${row?.id}`)
-            }}>
-              <Icon icon={row?.user_id == user?.id ? 'bx:detail' : 'bx:detail'} />
-            </IconButton>
-            </>
-            :
-            <>
-            <IconButton onClick={() => {
-              router.push(`/shop/service/${router.query?.article_category}/${row?.id}`)
-            }}>
-              <Icon icon={row?.user_id == user?.id ? 'material-symbols:edit-outline' : 'bx:detail'} />
-            </IconButton>
-            {row?.user_id == user?.id &&
-              <>
-                <IconButton onClick={() => {
-                  setModal({
-                    func: () => { deletePost(row?.id) },
-                    icon: 'material-symbols:delete-outline',
-                    title: '정말 삭제하시겠습니까?'
-                  })
-                }}>
-                  <Icon icon='material-symbols:delete-outline' />
-                </IconButton>
-              </>}
-            </>
-          }           
+            {
+              row?.replies.length > 0 ?
+                <>
+                  <IconButton onClick={() => {
+                    router.push(`/shop/service/${router.query?.article_category}/${row?.id}`)
+                  }}>
+                    <Icon icon={row?.user_id == user?.id ? 'bx:detail' : 'bx:detail'} />
+                  </IconButton>
+                </>
+                :
+                <>
+                  <IconButton onClick={() => {
+                    router.push(`/shop/service/${router.query?.article_category}/${row?.id}`)
+                  }}>
+                    <Icon icon={row?.user_id == user?.id ? 'material-symbols:edit-outline' : 'bx:detail'} />
+                  </IconButton>
+                  {row?.user_id == user?.id &&
+                    <>
+                      <IconButton onClick={() => {
+                        setModal({
+                          func: () => { deletePost(row?.id) },
+                          icon: 'material-symbols:delete-outline',
+                          title: '정말 삭제하시겠습니까?'
+                        })
+                      }}>
+                        <Icon icon='material-symbols:delete-outline' />
+                      </IconButton>
+                    </>}
+                </>
+            }
           </>
         )
       }
@@ -135,13 +135,13 @@ const ArticlesDemo = (props) => {
     }
   }, [router.query?.article_category])
   const onChangePage = async (obj) => {
+    setSearchObj(obj);
     setData({
       ...data,
       content: undefined
     })
     let data_ = await apiShop('post', 'list', obj);
     setData(data_);
-    setSearchObj(obj);
   }
   const deletePost = async (id) => {
     let result = await apiShop('post', 'delete', { id });

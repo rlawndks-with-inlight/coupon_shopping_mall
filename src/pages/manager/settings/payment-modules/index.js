@@ -116,11 +116,11 @@ const PaymentModuleList = () => {
     onChangePage({ ...searchObj, page: 1, });
   }
   const onChangePage = async (obj) => {
+    setSearchObj(obj);
     let data_ = await apiManager('payment-modules', 'list', obj);
     if (data_) {
       setData(data_);
     }
-    setSearchObj(obj);
   }
   const deletePaymentModule = async (id) => {
     let result = await apiManager('payment-modules', 'delete', { id: id });

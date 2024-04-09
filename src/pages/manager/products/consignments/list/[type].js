@@ -130,6 +130,7 @@ const ConsignmentList = () => {
         onChangePage({ ...searchObj, page: 1, });
     }
     const onChangePage = async (obj) => {
+        setSearchObj(obj);
         setData({
             ...data,
             content: undefined
@@ -138,7 +139,6 @@ const ConsignmentList = () => {
         if (data_) {
             setData(data_);
         }
-        setSearchObj(obj);
     }
 
     const onChangeStatus = async (column_name, id, value) => {

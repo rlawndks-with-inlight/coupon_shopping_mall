@@ -306,6 +306,7 @@ const TrxList = () => {
     onChangePage({ ...searchObj, trx_status: (router.query?.type == 'all' || !router.query?.type) ? '' : router.query?.type, page: 1 });
   }
   const onChangePage = async (obj) => {
+    setSearchObj(obj);
     setData({
       ...data,
       content: undefined
@@ -314,7 +315,6 @@ const TrxList = () => {
     if (data_) {
       setData(data_);
     }
-    setSearchObj(obj);
   }
   const deleteTrx = async (id) => {
     let result = await apiManager('transactions', 'delete', { id: id });

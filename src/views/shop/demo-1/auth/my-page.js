@@ -73,12 +73,12 @@ const MyPageDemo = (props) => {
     }
   }, [router.query])
   const onChangePage = async (search_obj) => {
+    setSearchObj(search_obj);
     setAddressContent({
       ...addressContent,
       content: undefined,
     })
     let data = await apiManager('user-addresses', 'list', search_obj);
-    setSearchObj(search_obj);
     if (data) {
       setAddressContent(data);
     }

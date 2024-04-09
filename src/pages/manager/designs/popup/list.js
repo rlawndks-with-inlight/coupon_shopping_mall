@@ -97,6 +97,7 @@ const PopupList = () => {
     onChangePage({ ...searchObj, page: 1, });
   }
   const onChangePage = async (obj) => {
+    setSearchObj(obj);
     setData({
       ...data,
       content: undefined
@@ -105,7 +106,6 @@ const PopupList = () => {
     if (data_) {
       setData(data_);
     }
-    setSearchObj(obj);
   }
   const deletePopup = async (id) => {
     let result = await apiManager('popups', 'delete', { id: id });

@@ -157,13 +157,13 @@ const ArticlesDemo = (props) => {
     }
   }, [router.query?.article_category])
   const onChangePage = async (obj) => {
+    setSearchObj(obj);
     setData({
       ...data,
       content: undefined
     })
     let data_ = await apiShop('post', 'list', obj);
     setData(data_);
-    setSearchObj(obj);
   }
   const deletePost = async (id) => {
     let result = await apiShop('post', 'delete', { id });

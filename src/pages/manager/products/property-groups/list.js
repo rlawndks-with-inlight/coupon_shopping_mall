@@ -95,6 +95,7 @@ const ProductPropertyGroupList = () => {
     onChangePage({ ...searchObj, page: 1, });
   }
   const onChangePage = async (obj) => {
+    setSearchObj(obj);
     setData({
       ...data,
       content: undefined
@@ -103,7 +104,6 @@ const ProductPropertyGroupList = () => {
     if (data_) {
       setData(data_);
     }
-    setSearchObj(obj);
   }
   const deleteProductCategoryGroup = async (id) => {
     let result = await apiManager('product-property-groups', 'delete', { id });

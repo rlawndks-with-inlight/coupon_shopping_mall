@@ -131,6 +131,7 @@ const SellerList = () => {
     onChangePage({ ...searchObj, page: 1, });
   }
   const onChangePage = async (obj) => {
+    setSearchObj(obj);
     setData({
       ...data,
       content: undefined
@@ -139,7 +140,6 @@ const SellerList = () => {
     if (data_) {
       setData(data_);
     }
-    setSearchObj(obj);
   }
   const deleteSeller = async (id) => {
     let result = await apiManager('sellers', 'delete', { id });

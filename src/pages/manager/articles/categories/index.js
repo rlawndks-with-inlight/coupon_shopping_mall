@@ -109,6 +109,7 @@ const ArticleCategoryList = () => {
     onChangePage({ ...searchObj, page: 1, });
   }
   const onChangePage = async (obj) => {
+    setSearchObj(obj);
     setData({
       ...data,
       content: undefined
@@ -117,7 +118,6 @@ const ArticleCategoryList = () => {
     if (data_) {
       setData(data_);
     }
-    setSearchObj(obj);
   }
   const deletePostCategory = async (id) => {
     let result = await apiManager('post-categories', 'delete', { id });

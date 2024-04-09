@@ -208,7 +208,7 @@ const ProductList = () => {
           sx={{ '@media screen and (max-width: 2500px)': { size: 'smaller' } }}
         >
           <MenuItem value={0}>{'판매중'}</MenuItem>
-          <MenuItem value={-1}>{'예약중'}</MenuItem>
+          <MenuItem value={6}>{'예약중'}</MenuItem>
           <MenuItem value={1}>{'거래진행중'}</MenuItem>
           <MenuItem value={2}>{'품절'}</MenuItem>
           <MenuItem value={3}>{'택배수거'}</MenuItem>
@@ -349,6 +349,7 @@ const ProductList = () => {
     onChangePage({ ...searchObj, page: 1 });
   }
   const onChangePage = async (obj) => {
+    setSearchObj(obj);
     setData({
       ...data,
       content: undefined
@@ -367,7 +368,6 @@ const ProductList = () => {
       }
       setData(data_);
     }
-    setSearchObj(obj);
   }
 
   const deleteProduct = async (id) => {
@@ -468,14 +468,15 @@ const ProductList = () => {
                           if (e.target.checked) {
                             property_ids.push(parseInt(property?.id));
                           } else {
-                            let find_idx = _.findIndex(property_ids, parseInt(property?.id));
+                            let find_idx = property_ids.findIndex(e => e == parseInt(property?.id)) ;
                             property_ids.splice(find_idx, 1);
+                            //console.log(parseInt(property?.id))
                           }
                           onChangePage({
                             ...searchObj,
                             [`property_ids${index}`]: property_ids,
                           })
-                          console.log(searchObj)
+                          //console.log(searchObj)
                         }}
                       />
                     </>
@@ -499,13 +500,115 @@ const ProductList = () => {
                           if (e.target.checked) {
                             status.push(0);
                           } else {
-                            status.splice(0, 1);
+                            let find_idx = status.findIndex(e => e == 0);
+                            status.splice(find_idx, 1);
                           }
                           onChangePage({
                             ...searchObj,
                             [`status`]: status,
                           })
-                          console.log(searchObj)
+                        }}
+                      />
+                      <FormControlLabel
+                        label={<Typography style={{ fontSize: themeObj.font_size.size6 }}>예약중</Typography>}
+                        control={<Checkbox />}
+                        onChange={(e) => {
+                          let status = searchObj[`status`] ?? [];
+                          if (e.target.checked) {
+                            status.push(6);
+                          } else {
+                            let find_idx = status.findIndex(e => e == 6);
+                            status.splice(find_idx, 1);
+                          }
+                          onChangePage({
+                            ...searchObj,
+                            [`status`]: status,
+                          })
+                        }}
+                      />
+                      <FormControlLabel
+                        label={<Typography style={{ fontSize: themeObj.font_size.size6 }}>거래진행중</Typography>}
+                        control={<Checkbox />}
+                        onChange={(e) => {
+                          let status = searchObj[`status`] ?? [];
+                          if (e.target.checked) {
+                            status.push(1);
+                          } else {
+                            let find_idx = status.findIndex(e => e == 1);
+                            status.splice(find_idx, 1);
+                          }
+                          onChangePage({
+                            ...searchObj,
+                            [`status`]: status,
+                          })
+                        }}
+                      />
+                      <FormControlLabel
+                        label={<Typography style={{ fontSize: themeObj.font_size.size6 }}>품절</Typography>}
+                        control={<Checkbox />}
+                        onChange={(e) => {
+                          let status = searchObj[`status`] ?? [];
+                          if (e.target.checked) {
+                            status.push(2);
+                          } else {
+                            let find_idx = status.findIndex(e => e == 2);
+                            status.splice(find_idx, 1);
+                          }
+                          onChangePage({
+                            ...searchObj,
+                            [`status`]: status,
+                          })
+                        }}
+                      />
+                      <FormControlLabel
+                        label={<Typography style={{ fontSize: themeObj.font_size.size6 }}>택배수거</Typography>}
+                        control={<Checkbox />}
+                        onChange={(e) => {
+                          let status = searchObj[`status`] ?? [];
+                          if (e.target.checked) {
+                            status.push(3);
+                          } else {
+                            let find_idx = status.findIndex(e => e == 3);
+                            status.splice(find_idx, 1);
+                          }
+                          onChangePage({
+                            ...searchObj,
+                            [`status`]: status,
+                          })
+                        }}
+                      />
+                      <FormControlLabel
+                        label={<Typography style={{ fontSize: themeObj.font_size.size6 }}>방문수거</Typography>}
+                        control={<Checkbox />}
+                        onChange={(e) => {
+                          let status = searchObj[`status`] ?? [];
+                          if (e.target.checked) {
+                            status.push(4);
+                          } else {
+                            let find_idx = status.findIndex(e => e == 4);
+                            status.splice(find_idx, 1);
+                          }
+                          onChangePage({
+                            ...searchObj,
+                            [`status`]: status,
+                          })
+                        }}
+                      />
+                      <FormControlLabel
+                        label={<Typography style={{ fontSize: themeObj.font_size.size6 }}>비공개</Typography>}
+                        control={<Checkbox />}
+                        onChange={(e) => {
+                          let status = searchObj[`status`] ?? [];
+                          if (e.target.checked) {
+                            status.push(5);
+                          } else {
+                            let find_idx = status.findIndex(e => e == 5);
+                            status.splice(find_idx, 1);
+                          }
+                          onChangePage({
+                            ...searchObj,
+                            [`status`]: status,
+                          })
                         }}
                       />
                 </Row>

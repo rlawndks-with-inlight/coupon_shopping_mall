@@ -1087,7 +1087,7 @@ const Header = () => {
 
                             </CategoryContainer>
                         </div>
-                        <div style={{ width: '100%', borderTop: `1px solid ${theme.palette.grey[300]}`, backgroundColor:'#FEF8F4', fontFamily:'Playfair Display' }}>
+                        <div style={{ width: '100%', borderTop: `1px solid ${theme.palette.grey[300]}`, backgroundColor:`${themeMode != 'dark' ? '#FEF8F4' : ''}`, fontFamily:'Playfair Display' }}>
                             <CategoryContainer>
                                 <NoneShowMobile>
                                     <Row style={{margin:'0 1rem'}}>

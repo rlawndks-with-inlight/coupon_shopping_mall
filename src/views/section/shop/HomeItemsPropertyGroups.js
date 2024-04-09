@@ -51,7 +51,7 @@ const HomeItemsPropertyGroups = (props) => {
     const { router } = func;
     const { style } = column;
     const rows = parseInt(style?.rows ?? 1);
-    const { themeDnsData } = useSettingsContext()
+    const { themeDnsData, themeMode } = useSettingsContext()
     /*const [sliderSetting, setSliderSetting] = useState({})
     useEffect(() => {
         const slider_css = themeDnsData?.slider_css
@@ -60,7 +60,7 @@ const HomeItemsPropertyGroups = (props) => {
 
     return (
         <>
-            <BackWrappers style={{backgroundColor: `${style?.back_color ?? '#FFFFFF'}`}}>
+            <BackWrappers style={{backgroundColor: `${themeMode != 'dark' ? style?.back_color ?? '#FFFFFF' : ''}`}}>
             <Wrappers style={{
                 marginTop: `${style?.margin_top}px`,
                 display: 'flex',

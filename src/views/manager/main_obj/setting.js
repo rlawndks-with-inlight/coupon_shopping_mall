@@ -770,7 +770,33 @@ const MainObjSetting = props => {
                                 height: 85
                               }}
                             />
-
+                            <Upload
+                              multiple
+                              thumbnail={true}
+                              files={
+                                item?.list &&
+                                item?.list.map(img => {
+                                  return img?.src || img
+                                })
+                              }
+                              onDrop={acceptedFiles => {
+                                handleDropMultiFile(acceptedFiles, idx)
+                              }}
+                              onRemove={inputFile => {
+                                handleRemoveFile(inputFile, idx)
+                              }}
+                              onRemoveAll={() => {
+                                handleRemoveAllFiles(idx)
+                              }}
+                              fileExplain={{
+                                width: '(2000x850 추천)' //파일 사이즈 설명
+                              }}
+                              imageSize={{
+                                //썸네일 사이즈
+                                width: 200,
+                                height: 85
+                              }}
+                            />
                             {item?.list &&
                               item.list.map((itm, index) => (
                                 <>

@@ -62,13 +62,14 @@ const Title = styled.div`
   @media (max-width: 1000px) {
     font-size: 48px;
   }
-  @media (max-width: 450px) {
-    font-size: 32px;
+  @media (max-width: 500px) {
+    flex-direction: column;
   }
 `;
 
-const SubTitle = styled.div`
+const SubTitle = styled.span`
   color: #5f5f5f;
+  margin-right: 1.5rem;
 `;
 
 const ContentRow = styled(Row)`
@@ -166,7 +167,7 @@ const PurchaseGuide = () => {
         <>
             <Wrappers>
                 <Title>
-                    <SubTitle>Start selling.</SubTitle>&nbsp;It's easy.
+                    <SubTitle>Start selling.</SubTitle><span>It's easy.</span>
                 </Title>
                 <ContentRow>
                     <ContentSection>

@@ -108,7 +108,7 @@ export const Item4 = (props) => {
           router.push(`/shop/item/${item?.id}${seller ? `?seller_id=${seller?.id}` : ''}`)
         }
       }}
-      style={{ cursor: 'pointer', textAlign: `${text_align}`, backgroundColor: `${'white'}`, margin: '0.25rem' }}
+      style={{ cursor: 'pointer', textAlign: `${text_align}`, backgroundColor: `${themeMode != 'dark' ? 'white' : ''}`, margin: '0.25rem' }}
     >
       <ItemImgContainer>
         <ItemImg src={item?.product_img} style={{ height: '70%' }} />

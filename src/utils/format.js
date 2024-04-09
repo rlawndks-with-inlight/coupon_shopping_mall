@@ -90,6 +90,15 @@ export const mainObjSchemaList = [
         },
     },
     {
+        label: '텍스트형 배너슬라이드',
+        type: 'text-banner',
+        default_value: {
+            type: 'text-banner',
+            list: [],
+            style: {}
+        },
+    },
+    {
         label: '상품슬라이드',
         type: 'items',
         default_value: {

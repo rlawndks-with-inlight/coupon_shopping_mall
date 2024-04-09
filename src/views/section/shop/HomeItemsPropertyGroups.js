@@ -9,14 +9,17 @@ import { defaultManagerObj } from 'src/data/manager-data'
 import { Icon } from '@iconify/react'
 
 const Wrappers = styled.div`
-  width:90%;
   max-width: 1400px;
   margin:0 auto;
+  width:90%;
   `
 
 const BackWrappers = styled.div`
 max-width: ${props => props.type == 1 ? '1600px' : '1400px'};
+display:flex;
 margin:0 auto;
+width:100%;
+
 `
 
 const CategoryTitle = styled.div`
@@ -48,7 +51,7 @@ const HomeItemsPropertyGroups = (props) => {
     const { router } = func;
     const { style } = column;
     const rows = parseInt(style?.rows ?? 1);
-    const { themeDnsData } = useSettingsContext()
+    const { themeDnsData, themeMode } = useSettingsContext()
     /*const [sliderSetting, setSliderSetting] = useState({})
     useEffect(() => {
         const slider_css = themeDnsData?.slider_css
@@ -57,7 +60,7 @@ const HomeItemsPropertyGroups = (props) => {
 
     return (
         <>
-            <BackWrappers style={{backgroundColor: `${style?.back_color ?? '#FFFFFF'}`}}>
+            <BackWrappers style={{backgroundColor: `${themeMode != 'dark' ? style?.back_color ?? '#FFFFFF' : ''}`}}>
             <Wrappers style={{
                 marginTop: `${style?.margin_top}px`,
                 display: 'flex',

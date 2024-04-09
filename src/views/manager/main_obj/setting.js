@@ -94,6 +94,15 @@ const MainObjSetting = props => {
       },
     },
     {
+      label: '텍스트형 배너슬라이드',
+      type: 'text-banner',
+      default_value: {
+        type: 'text-banner',
+        list: [],
+        style: {}
+      },
+    },
+    {
       label: '상품슬라이드',
       type: 'items',
       default_value: {
@@ -952,6 +961,73 @@ const MainObjSetting = props => {
                                         setContentList(content_list)
                                       }}
                                     />
+                                  </Row>
+                                </>
+                              ))}
+                          </>
+                        )}
+                        {conditionOfSection('text-banner', item) && (
+                          <>
+                            <Row style={{ alignItems: 'end' }}>
+                              <CardHeader
+                                title={`텍스트형 배너슬라이드 ${curTypeNum(contentList, 'text-banner', idx)}`}
+                                sx={{ paddingLeft: '0' }}
+                              />
+                              <Tooltip title='새로운 텍스트를 추가 하시려면 클릭해 주세요.'>
+                                <Button
+                                  variant='outlined'
+                                  sx={{ height: '28px' }}
+                                  onClick={() => {
+                                    let content_list = [...contentList]
+                                    content_list[idx].list.push({
+                                      title: '',
+                                      link: ''
+                                    })
+                                    setContentList(content_list)
+                                  }}
+                                >
+                                  + 텍스트 추가
+                                </Button>
+                              </Tooltip>
+                              <SectionProcess idx={idx} item={item} />
+                            </Row>
+                            {item?.list &&
+                              item.list.map((itm, index) => (
+                                <>
+                                  <Row style={{ width: '100%', columnGap: '1rem' }}>
+                                    <TextField
+                                      sx={{ width: '50%' }}
+                                      size='small'
+                                      label={`텍스트`}
+                                      value={itm.title ?? ''}
+                                      onChange={e => {
+                                        let content_list = [...contentList]
+                                        content_list[idx].list[index].title = e.target.value
+                                        setContentList(content_list)
+                                      }}
+                                    />
+                                    <TextField
+                                      sx={{ width: '50%' }}
+                                      size='small'
+                                      label={`링크`}
+                                      value={itm.link ?? ''}
+                                      onChange={e => {
+                                        let content_list = [...contentList]
+                                        content_list[idx].list[index].link = e.target.value
+                                        setContentList(content_list)
+                                      }}
+                                    />
+                                    <Tooltip title='해당 텍스트를 삭제하시려면 클릭해 주세요.'>
+                                      <IconButton
+                                        onClick={() => {
+                                          let content_list = [...contentList]
+                                          content_list[idx].list.splice(index, 1)
+                                          setContentList(content_list)
+                                        }}
+                                      >
+                                        <Icon icon='material-symbols:delete-outline' />
+                                      </IconButton>
+                                    </Tooltip>
                                   </Row>
                                 </>
                               ))}

@@ -14,6 +14,7 @@ import HomeProductReview from 'src/views/section/shop/HomeProductReview'
 import HomeSellers from 'src/views/section/shop/HomeSellers'
 import { getMainObjType } from 'src/utils/function'
 import HomeItemsPropertyGroups from 'src/views/section/shop/HomeItemsPropertyGroups'
+import HomeTextBanner from 'src/views/section/shop/HomeTextBanner'
 
 
 const returnHomeContent = (column, data, func, demoType = 0) => {
@@ -33,6 +34,7 @@ const returnHomeContent = (column, data, func, demoType = 0) => {
   else if (type == 'sellers') return <HomeSellers column={column} data={data} func={func} demoType={demoType} />
   else if (type == 'item-reviews') return <HomeProductReview column={column} data={data} func={func} demoType={demoType} />
   else if (type == 'item-reviews-select') return <HomeProductReview column={column} data={data} func={func} demoType={demoType} />
+  else if (type == 'text-banner') return <HomeTextBanner column={column} data={data} func={func} demoType={demoType} />
   else {
     return '';
   }

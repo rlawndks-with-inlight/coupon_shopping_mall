@@ -115,8 +115,8 @@ const ItemsDemo = (props) => {
     let query = query_;
     let search_obj = search_obj_;
 
-    console.log(query)
-    console.log(search_obj)
+    //console.log(query)
+    //console.log(search_obj)
     setLoading(true);
     setCategoryIds(query);
     let category_children = {};

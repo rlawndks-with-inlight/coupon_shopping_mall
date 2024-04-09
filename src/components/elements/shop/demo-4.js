@@ -29,9 +29,23 @@ padding:25px 15px;
   color: ${props => props.themeDnsData?.theme_css?.main_color};
 }
 `
-const ItemName = muiStyle(Typography)`
+const ItemName = styled(Typography)`
+width:90%;
+word-break: keep-all;
+height: 60px;
+margin: 0 auto;
+font-family: 'Noto Sans KR';
+@media screen and (max-width:500px) {
+  font-size:0.75rem;
+}
+`
+
+const ItemDetail = styled(Typography)`
 width:70%;
-//text-align: center;
+font-family:'Noto Sans KR';
+@media screen and (max-width:500px) {
+  font-size:0.75rem;
+}
 `
 const ItemImgContainer = styled.div`
 width: 100%;
@@ -69,7 +83,7 @@ margin-bottom:2rem;
 export const Item4 = (props) => {
   const { user } = useAuthContext();
   const { themeWishData, onChangeWishData, themeMode, themeDnsData } = useSettingsContext();
-  const { item, router, theme_css, seller, type = 0, text_align = 'center' } = props;
+  const { item, router, theme_css, seller, text_align = 'center' } = props;
   const [itemThemeCss, setItemThemeCss] = useState(itemThemeCssDefaultSetting);
 
   useEffect(() => {
@@ -94,7 +108,7 @@ export const Item4 = (props) => {
           router.push(`/shop/item/${item?.id}${seller ? `?seller_id=${seller?.id}` : ''}`)
         }
       }}
-      style={{ cursor: 'pointer', textAlign: `${text_align}`, backgroundColor: `${'white'}`, margin: '0.25rem' }}
+      style={{ cursor: 'pointer', textAlign: `${text_align}`, backgroundColor: `${themeMode != 'dark' ? 'white' : ''}`, margin: '0.25rem' }}
     >
       <ItemImgContainer>
         <ItemImg src={item?.product_img} style={{ height: '70%' }} />
@@ -102,15 +116,15 @@ export const Item4 = (props) => {
       <div style={{ color: '#999999', fontWeight: 'bold', fontSize: '11px', width: '90%', margin: '0 auto' }}>
         {item?.product_name.split(" ")[0]}
       </div>
-      <ItemName style={{ fontSize: '16px', height: '60px', width: '90%', wordBreak: 'keep-all', margin: `${type == 0 ? '0 auto' : ''}` }}>
+      <ItemName>
         {item?.product_name.length < 30 ? item.product_name : `${item.product_name.slice(0, 30)}...`}
       </ItemName>
-      <ItemName variant="subtitle2" style={{ margin: `${type == 0 ? '0 auto' : ''}`, width: '90%' }}>
+      <ItemDetail variant="subtitle2" style={{margin:'0 auto', width: '90%' }}>
         {item?.status == 1 ? '거래 진행중'
           :
           item?.product_sale_price == 0 || item?.status == 2 || item?.status == 3 || item?.status == 4 ? 'SOLD OUT'
             :
-            item?.status == -1 ? '예약중'
+            item?.status == 6 ? '예약중'
               :
               <>
                 {commarNumber(item?.product_sale_price) + '원'}
@@ -123,7 +137,7 @@ export const Item4 = (props) => {
                 }
               </>
         }
-      </ItemName>
+      </ItemDetail>
       <div style={{ width: '80%', margin: '0 auto' }}>
         <Chip
           size="small"

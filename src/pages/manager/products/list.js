@@ -33,11 +33,11 @@ const ProductList = () => {
       label: '상품이미지',
       action: (row) => {
         if (row['product_img']) {
-          return <div
-            style={{ minWidth: '100px', cursor: 'pointer' }}
-            onClick={() => {
-              router.push(`edit/${row?.product_code || row?.id}`)
-            }}
+          return <div 
+          style={{ minWidth: '100px', cursor:'pointer' }}
+          onClick={() => {
+            router.push(`edit/${row?.product_code || row?.id}`)
+          }}
           >
             <LazyLoadImage src={row['product_img'] ?? "---"} style={{ height: '84px', width: 'auto' }} />
           </div>
@@ -57,14 +57,14 @@ const ProductList = () => {
       id: 'product_name',
       label: '상품명',
       action: (row) => {
-        return <div
-          style={{ textDecoration: 'underline', cursor: 'pointer' }}
-          onClick={() => {
-            router.push(`edit/${row?.product_code || row?.id}`)
-          }}
+        return <div 
+        style={{textDecoration:'underline', cursor:'pointer'}}
+        onClick={() => {
+          router.push(`edit/${row?.product_code || row?.id}`)
+        }}
         >
           {row['product_name']}
-        </div> ?? "---"
+          </div> ?? "---"
       }
     },
     ...themeCategoryList.map((group, index) => {
@@ -183,38 +183,38 @@ const ProductList = () => {
       id: 'status',
       label: '상태',
       action: (row) => {
-        if (themeDnsData?.id != 5) {
+        if ( themeDnsData?.id != 5 ) {
           return <Select
-            size="small"
-            defaultValue={row?.status}
-            onChange={(e) => {
-              onChangeStatus(row?.id, e.target.value);
-            }}
-            sx={{ '@media screen and (max-width: 2500px)': { size: 'smaller' } }}
-          >
-            <MenuItem value={0}>{'판매중'}</MenuItem>
-            <MenuItem value={1}>{'중단됨'}</MenuItem>
-            <MenuItem value={2}>{'품절'}</MenuItem>
-            <MenuItem value={3}>{'새상품'}</MenuItem>
-          </Select>
+          size="small"
+          defaultValue={row?.status}
+          onChange={(e) => {
+            onChangeStatus(row?.id, e.target.value);
+          }}
+          sx={{ '@media screen and (max-width: 2500px)': { size: 'smaller' } }}
+        >
+          <MenuItem value={0}>{'판매중'}</MenuItem>
+          <MenuItem value={1}>{'중단됨'}</MenuItem>
+          <MenuItem value={2}>{'품절'}</MenuItem>
+          <MenuItem value={3}>{'새상품'}</MenuItem>
+        </Select>
         }
         else {
           return <Select
-            size="small"
-            defaultValue={row?.status}
-            onChange={(e) => {
-              onChangeStatus(row?.id, e.target.value);
-            }}
-            sx={{ '@media screen and (max-width: 2500px)': { size: 'smaller' } }}
-          >
-            <MenuItem value={0}>{'판매중'}</MenuItem>
-            <MenuItem value={-1}>{'예약중'}</MenuItem>
-            <MenuItem value={1}>{'거래진행중'}</MenuItem>
-            <MenuItem value={2}>{'품절'}</MenuItem>
-            <MenuItem value={3}>{'택배수거'}</MenuItem>
-            <MenuItem value={4}>{'방문수거'}</MenuItem>
-            <MenuItem value={5}>{'비공개'}</MenuItem>
-          </Select>
+          size="small"
+          defaultValue={row?.status}
+          onChange={(e) => {
+            onChangeStatus(row?.id, e.target.value);
+          }}
+          sx={{ '@media screen and (max-width: 2500px)': { size: 'smaller' } }}
+        >
+          <MenuItem value={0}>{'판매중'}</MenuItem>
+          <MenuItem value={-1}>{'예약중'}</MenuItem>
+          <MenuItem value={1}>{'거래진행중'}</MenuItem>
+          <MenuItem value={2}>{'품절'}</MenuItem>
+          <MenuItem value={3}>{'택배수거'}</MenuItem>
+          <MenuItem value={4}>{'방문수거'}</MenuItem>
+          <MenuItem value={5}>{'비공개'}</MenuItem>    
+        </Select>
         }
       },
       sx: (row) => {
@@ -349,7 +349,6 @@ const ProductList = () => {
     onChangePage({ ...searchObj, page: 1 });
   }
   const onChangePage = async (obj) => {
-    setSearchObj(obj);
     setData({
       ...data,
       content: undefined
@@ -368,6 +367,7 @@ const ProductList = () => {
       }
       setData(data_);
     }
+    setSearchObj(obj);
   }
 
   const deleteProduct = async (id) => {
@@ -417,6 +417,7 @@ const ProductList = () => {
       [idx]: children_list
     });
     $(`.category-container-${idx}`).scrollLeft(100000);
+    console.log(searchObj)
   }
 
   const onChangeStatus = async (id, value) => {
@@ -483,6 +484,34 @@ const ProductList = () => {
               </div>
             </>
           ))}
+          {detailSearchOpen && 
+          <>
+          <div style={{ marginLeft: '1rem', marginBottom: '0.25rem', marginTop: '0.25rem' }}>
+                <Typography variant="subtitle2" sx={{ color: 'text.secondary' }}>
+                  상태
+                </Typography>
+                <Row style={{ flexWrap: 'wrap' }}>
+                      <FormControlLabel
+                        label={<Typography style={{ fontSize: themeObj.font_size.size6 }}>판매중</Typography>}
+                        control={<Checkbox />}
+                        onChange={(e) => {
+                          let status = searchObj[`status`] ?? [];
+                          if (e.target.checked) {
+                            status.push(0);
+                          } else {
+                            status.splice(0, 1);
+                          }
+                          onChangePage({
+                            ...searchObj,
+                            [`status`]: status,
+                          })
+                          console.log(searchObj)
+                        }}
+                      />
+                </Row>
+              </div>
+          </>
+          }
           <Divider />
           <ManagerTable
             data={data}

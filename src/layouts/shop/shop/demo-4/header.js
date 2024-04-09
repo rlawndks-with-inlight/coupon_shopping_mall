@@ -217,6 +217,10 @@ transform: translate(-50%, -50%);
 height: 88px;
 @media (max-width:768px) {
     left:20%;
+    height: 66px;
+}
+@media (max-width:400px) {
+    height: 44px;
 }
 `
 
@@ -803,7 +807,7 @@ const Header = () => {
                                                                                                 </ColumnMenuTitle>
                                                                                                 {category?.children && category?.children.map(children => (
                                                                                                     <>
-                                                                                                        <Typography variant="body2" style={{ cursor: 'pointer', marginBottom: '0.2rem', marginRight:'2rem', fontFamily:'Playfair Display' }} onClick={() => {
+                                                                                                        <Typography variant="body2" style={{ cursor: 'pointer', marginBottom: '0.2rem', marginRight:'2rem', fontFamily:'Noto Sans KR' }} onClick={() => {
                                                                                                             router.push(`/shop/items?category_id${index}=${children?.id}&depth=0`)
                                                                                                             setOpenAllCategory("")
                                                                                                         }}>{children?.category_name}</Typography>
@@ -888,7 +892,7 @@ const Header = () => {
                                                                                     height: '40px',
                                                                                     background: 'transparent',
                                                                                     borderRadius: '0',
-                                                                                    fontFamily:'Playfair Display',
+                                                                                    fontFamily:'Noto Sans KR',
                                                                                     color: `${langChipSelected == 1 ? themeMode == 'dark' ? 'white' : 'black' : '#999999'}`,
                                                                                     '&:hover': {
                                                                                         textDecoration: 'underline',
@@ -937,7 +941,7 @@ const Header = () => {
                                                                                                         cursor: 'pointer',
                                                                                                         color: `${textChipSelected == hangeul ? themeMode == 'dark' ? 'white' : 'black' : '#999999'}`,
                                                                                                         background: 'transparent',
-                                                                                                        fontFamily:'Playfair Display',
+                                                                                                        fontFamily:'Noto Sans KR',
                                                                                                         '&:hover': {
                                                                                                             color: `${textChipSelected == hangeul ? 'white' : ''}`,
                                                                                                             //background: `${textChipSelected == hangeul ? 'black' : ''}`,
@@ -967,7 +971,7 @@ const Header = () => {
                                                                                                                 fontSize: '16px',
                                                                                                                 cursor: 'pointer',
                                                                                                                 background: 'transparent',
-                                                                                                                fontFamily:'Playfair Display',
+                                                                                                                fontFamily: `${langChipSelected == 0 ? 'Playfair Display' : 'Noto Sans KR'}`,
                                                                                                                 '&:hover': {
                                                                                                                     background: `${themeMode == 'dark' ? '#999999' : 'white'}`,
                                                                                                                 },
@@ -994,7 +998,7 @@ const Header = () => {
                                                                                                                 fontSize: '16px',
                                                                                                                 cursor: 'pointer',
                                                                                                                 background: 'transparent',
-                                                                                                                fontFamily:'Playfair Display',
+                                                                                                                fontFamily:`${langChipSelected == 0 ? 'Playfair Display' : 'Noto Sans KR'}`,
                                                                                                                 '&:hover': {
                                                                                                                     background: `${themeMode == 'dark' ? '#999999' : 'white'}`,
                                                                                                                 },
@@ -1083,7 +1087,7 @@ const Header = () => {
 
                             </CategoryContainer>
                         </div>
-                        <div style={{ width: '100%', borderTop: `1px solid ${theme.palette.grey[300]}`, backgroundColor:'#FEF8F4', fontFamily:'Playfair Display' }}>
+                        <div style={{ width: '100%', borderTop: `1px solid ${theme.palette.grey[300]}`, backgroundColor:`${themeMode != 'dark' ? '#FEF8F4' : ''}`, fontFamily:'Playfair Display' }}>
                             <CategoryContainer>
                                 <NoneShowMobile>
                                     <Row style={{margin:'0 1rem'}}>

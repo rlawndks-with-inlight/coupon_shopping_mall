@@ -62,19 +62,20 @@ const Title = styled.div`
   @media (max-width: 1000px) {
     font-size: 48px;
   }
-  @media (max-width: 450px) {
-    font-size: 32px;
+  @media (max-width: 500px) {
+    flex-direction: column;
   }
 `;
 
-const SubTitle = styled.div`
+const SubTitle = styled.span`
   color: #5f5f5f;
+  margin-right: 1.5rem;
 `;
 
 const ContentRow = styled(Row)`
   display: flex;
   margin-top: 3rem;
-  justify-content: space-between;
+  //justify-content: space-between;
 
   @media (max-width: 1400px) {
     flex-direction: column;
@@ -83,10 +84,12 @@ const ContentRow = styled(Row)`
 `;
 
 const ContentSection = styled.div`
-  margin-right: 1rem;
-
+  margin-right: 2rem;
+  margin-left: 2rem;
+  font-family: 'Noto Sans KR';
+  word-break: keep-all;
   @media (max-width: 1400px) {
-    margin-right: 0;
+    margin:2rem 0;
     text-align: center;
   }
 `;
@@ -164,7 +167,7 @@ const PurchaseGuide = () => {
         <>
             <Wrappers>
                 <Title>
-                    <SubTitle>Start selling.</SubTitle>&nbsp;It's easy.
+                    <SubTitle>Start selling.</SubTitle><span>It's easy.</span>
                 </Title>
                 <ContentRow>
                     <ContentSection>
@@ -182,9 +185,9 @@ const PurchaseGuide = () => {
                         <br />
                         <Description>
                             그랑파리는 여러분의 소중한 상품을 귀하게 매입하고 보다 좋은 조건으로 위탁판매 해 드리기
-                            <br />
+                            
                             위해 노력합니다. 이는 그 상품이 여러분들에게 얼마나 소중했던, 설레게 했던 상품인지를 잘
-                            <br />
+                            
                             알기 때문입니다.
                             <br />
                             <br />
@@ -260,7 +263,7 @@ const PurchaseGuide = () => {
                         tab == 'purchase' ?
                             <>
                                 <img src="/grandparis/purchase_banner2.png" />
-                                <ContentSection style={{ marginLeft: '3rem' }}>
+                                <ContentSection>
                                     <SinceText>매입센터</SinceText>
                                     <br />
                                     <LuxuryText>
@@ -321,7 +324,7 @@ const PurchaseGuide = () => {
                             :
                             <>
                                 <img src="/grandparis/purchase_banner3.png" />
-                                <ContentSection style={{ marginLeft: '3rem' }}>
+                                <ContentSection>
                                     <SinceText>위탁판매</SinceText>
                                     <br />
                                     <LuxuryText>
@@ -408,10 +411,20 @@ const PurchaseGuide = () => {
             </Wrappers>
             {tab == 'consignment' ?
                 <>
+                <Col style={{maxWidth:'1600px', margin:'0 auto', marginBottom:'3rem', backgroundColor:'#FEF8F4',  fontFamily:'Noto Sans KR', padding:'3rem'}}>
+                    <Row style={{maxWidth:'1400px', flexDirection:'column'}}>
+                    <Row style={{width:'100%', flexDirection:'column', textAlign:'center', marginBottom:'2rem'}}>
+                        <span>합리적인 수준의 수수료 안내</span>
+                        <br />
+                        <span style={{fontSize:'44px'}}>위탁수수료</span>
+                    </Row>
+                    <img src='/grandparis/consignment_pay.png' />
+                    </Row>
+                </Col>
                 <Row style={{maxWidth:'1400px', margin:'0 auto'}}>
                     <BrandContent>
                         <Row style={{marginBottom:'3rem'}}>
-                            <div style={{margin:'0 auto'}}>위탁 가능 브랜드</div>
+                            <div style={{margin:'0 auto', fontFamily:'Noto Sans KR'}}>위탁 가능 브랜드</div>
                         </Row>
                         <Row>
                         <Chip label={`ABC`} sx={{
@@ -442,7 +455,7 @@ const PurchaseGuide = () => {
                             height: '40px',
                             background: 'transparent',
                             borderRadius: '0',
-                            fontFamily:'Playfair Display',
+                            fontFamily:'Noto Sans KR',
                             width:'100px',
                             color: `${langChipSelected == 1 ? themeMode == 'dark' ? 'white' : 'black' : '#999999'}`,
                             '&:hover': {
@@ -492,7 +505,7 @@ const PurchaseGuide = () => {
                                                 cursor: 'pointer',
                                                 color: `${textChipSelected == hangeul ? themeMode == 'dark' ? 'white' : 'black' : '#999999'}`,
                                                 background: 'transparent',
-                                                fontFamily:'Playfair Display',
+                                                fontFamily:'Noto Sans KR',
                                                 '&:hover': {
                                                     color: `${textChipSelected == hangeul ? 'white' : ''}`,
                                                     //background: `${textChipSelected == hangeul ? 'black' : ''}`,
@@ -521,7 +534,7 @@ const PurchaseGuide = () => {
                                                         margin: '0.5rem 0rem 0.5rem 0',
                                                         fontSize: '16px',
                                                         background: 'transparent',
-                                                        fontFamily:'Playfair Display',
+                                                        fontFamily:`${langChipSelected == 0 ? 'Playfair Display' : 'Noto Sans KR'}`,
                                                         '&:hover': {
                                                             background: `${themeMode == 'dark' ? '#999999' : 'white'}`,
                                                         },
@@ -544,7 +557,7 @@ const PurchaseGuide = () => {
                                                         margin: '0.5rem 0rem 0.5rem 0',
                                                         fontSize: '16px',
                                                         background: 'transparent',
-                                                        fontFamily:'Playfair Display',
+                                                        fontFamily:`${langChipSelected == 0 ? 'Playfair Display' : 'Noto Sans KR'}`,
                                                         '&:hover': {
                                                             background: `${themeMode == 'dark' ? '#999999' : 'white'}`,
                                                         },

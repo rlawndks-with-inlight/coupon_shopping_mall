@@ -55,7 +55,7 @@ const Footer = (props) => {
     } = props;
     const theme = useTheme();
     const { translate } = useLocales();
-    const { themeDnsData } = useSettingsContext();
+    const { themeDnsData, themeMode } = useSettingsContext();
     const {
         company_name,
         addr,
@@ -76,7 +76,7 @@ const Footer = (props) => {
         <>
             <div style={{ marginTop: '2rem' }} />
             <Wrapper style={{ fontFamily: 'Noto Sans KR' }}>
-                <ContentWrapper style={{ backgroundColor: '#FEF8F4', }}>
+                <ContentWrapper style={{ backgroundColor: `${themeMode != 'dark' ? '#FEF8F4' : ''}`, }}>
                     <MainContent style={{ display: 'flex', flexDirection: 'row', marginTop: '50px', justifyContent: 'space-between' }}>
                         <div>
                             <Row style={{ fontWeight: 'bold', fontSize: '16px', color: '#5F5F5F', fontFamily: 'Playfair Display', }}>

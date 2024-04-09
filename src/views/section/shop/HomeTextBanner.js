@@ -2,7 +2,6 @@ import Slider from 'react-slick'
 import styled from 'styled-components'
 import { Col, Row } from 'src/components/elements/styled-components'
 import _ from 'lodash'
-import { LazyLoadImage } from 'react-lazy-load-image-component'
 import { useRouter } from 'next/router'
 
 const Wrappers = styled.div`
@@ -14,9 +13,38 @@ const Wrappers = styled.div`
   @media (max-width:1200px) {
     font-size: ${props => props.type == 1 ? '10px' : ''};
   }
+  
   `
 
-const HomeButtonBanner = (props) => {
+const TextCover = styled.div`
+display:flex;
+margin:0 auto;
+align-items: center;
+
+`
+
+const Texts = styled.div`
+align-items: center;
+white-space: nowrap;
+width:fit-content;
+cursor:pointer;
+font-size:150%;
+@media screen and (max-width:650px) {
+    font-size:130%;
+}
+@media screen and (max-width:500px) {
+    font-size:120%;
+}
+@media screen and (max-width:450px) {
+    font-size:100%;
+}
+@media screen and (max-width:450px) {
+    font-size:80%;
+}
+
+`
+
+const HomeTextBanner = (props) => {
     const { column, data, func, is_manager, demoType } = props;
     const { style } = column;
     const router = useRouter()
@@ -65,42 +93,25 @@ const HomeButtonBanner = (props) => {
     return (
         <>
             <Wrappers style={{ marginTop: `${style?.margin_top}px`, maxWidth: `${router}` }} type={demoType}>
-                <Slider {...slide_setting} className='margin-slide'>
+            <Row>
                     {column?.list && (column?.list ?? []).map((item, idx) => (
                         <>
-                            <Row style={{ flexDirection: 'column',  }}>
-                                <Col style={{ alignItems: 'center',  }}>
-                                    <LazyLoadImage src={item?.src} style={{
-                                        
-                                        height: `20px`,
-                                        cursor: 'pointer',
+                                <TextCover>
+                                    <Texts 
+                                    onClick={() => {
+                                        if (item?.link && !is_manager) {
+                                            window.location.href = item?.link;
+                                        }
                                     }}
-                                        onClick={() => {
-                                            if (item?.link && !is_manager) {
-                                                window.location.href = item?.link;
-                                            }
-                                        }}
-                                    />
-                                    {/*<LazyLoadImage src={item?.src} style={{
-                                        width: `${getBannerWidth()}px`,
-                                        height: `auto`,
-                                        cursor: 'pointer',
-                                    }}
-                                        onClick={() => {
-                                            if (item?.link && !is_manager) {
-                                                window.location.href = item?.link;
-                                            }
-                                        }}
-                                    />*/}
-                                    <div style={{ fontWeight: 'bold', marginTop: '1rem', alignItems: 'center' }}>{item.title}</div>
-                                </Col>
-
-                            </Row>
+                                    >
+                                        {item.title}
+                                        </Texts>
+                                </TextCover>
                         </>
                     ))}
-                </Slider>
+                    </Row>
             </Wrappers>
         </>
     )
 }
-export default HomeButtonBanner;
+export default HomeTextBanner;

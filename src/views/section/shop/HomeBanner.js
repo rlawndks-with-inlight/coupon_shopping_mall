@@ -243,7 +243,7 @@ const HomeBanner = (props) => {
                                     style={{
                                         width: `${img_list.length >= 2 ? '' : '100vw'}`,
                                         backgroundImage: `url(${item.src})`,
-                                        cursor: `${item?.link ? 'pointer' : ''}`
+                                        cursor: `${item?.link ? 'pointer' : ''}`,
                                     }}
                                 >
                                     {currentSlideIndex == idx &&

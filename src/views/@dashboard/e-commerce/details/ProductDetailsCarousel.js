@@ -12,7 +12,7 @@ import Carousel, { CarouselArrowIndex } from 'src/components/carousel';
 import { useSettingsContext } from 'src/components/settings';
 // ----------------------------------------------------------------------
 
-const THUMB_SIZE = 64;
+const THUMB_SIZE = 100;
 
 const StyledThumbnailsContainer = styled('div', {
   shouldForwardProp: (prop) => prop !== 'length',
@@ -21,7 +21,7 @@ const StyledThumbnailsContainer = styled('div', {
   position: 'relative',
 
   '& .slick-slide': {
-    opacity: 0.48,
+    opacity: 1,
     '&.slick-current': {
       opacity: 1,
     },
@@ -54,7 +54,7 @@ const StyledThumbnailsContainer = styled('div', {
       content: "''",
       height: '100%',
       position: 'absolute',
-      width: (THUMB_SIZE * 2) / 3,
+      //width: (THUMB_SIZE * 2) / 3,
     },
     '&:after': {
       right: 0,

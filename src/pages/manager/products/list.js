@@ -209,6 +209,7 @@ const ProductList = () => {
         >
           <MenuItem value={0}>{'판매중'}</MenuItem>
           <MenuItem value={6}>{'예약중'}</MenuItem>
+          <MenuItem value={7}>{'매장문의'}</MenuItem>
           <MenuItem value={1}>{'거래진행중'}</MenuItem>
           <MenuItem value={2}>{'품절'}</MenuItem>
           <MenuItem value={3}>{'택배수거'}</MenuItem>
@@ -518,6 +519,23 @@ const ProductList = () => {
                             status.push(6);
                           } else {
                             let find_idx = status.findIndex(e => e == 6);
+                            status.splice(find_idx, 1);
+                          }
+                          onChangePage({
+                            ...searchObj,
+                            [`status`]: status,
+                          })
+                        }}
+                      />
+                      <FormControlLabel
+                        label={<Typography style={{ fontSize: themeObj.font_size.size6 }}>매장문의</Typography>}
+                        control={<Checkbox />}
+                        onChange={(e) => {
+                          let status = searchObj[`status`] ?? [];
+                          if (e.target.checked) {
+                            status.push(7);
+                          } else {
+                            let find_idx = status.findIndex(e => e == 7);
                             status.splice(find_idx, 1);
                           }
                           onChangePage({

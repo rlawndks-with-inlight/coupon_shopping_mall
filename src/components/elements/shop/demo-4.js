@@ -125,6 +125,7 @@ export const Item4 = (props) => {
           item?.product_sale_price == 0 || item?.status == 2 || item?.status == 3 || item?.status == 4 ? 'SOLD OUT'
             :
             item?.status == 6 ? '예약중'
+             : item?.status == 7 ? '매장문의'
               :
               <>
                 {commarNumber(item?.product_sale_price) + '원'}
@@ -190,6 +191,7 @@ font-size: ${themeObj.font_size.size6};
 display: flex;
 justify-content: space-between;
 align-items: center;
+font-family: 'Noto Sans KR';
 `
 export const SubTitleComponent = (props) => {
   const { children, endComponent } = props;
@@ -206,7 +208,7 @@ export const SubTitleComponent = (props) => {
   )
 }
 export const ContentBorderContainer = styled.div`
-border: 1px solid #ccc;
+border-top: 1px solid #ccc;
 min-height: 100px;
 margin-bottom: 1rem;
 padding:1rem;
@@ -223,7 +225,7 @@ export const TitleComponent = (props) => {
   return (
     <>
       <Title
-        style={{ borderBottom: `1px solid #5F5F5F`, ...style }}
+        style={{ borderBottom: `1px solid #ccc`, ...style }}
       >{children}</Title>
     </>
   )

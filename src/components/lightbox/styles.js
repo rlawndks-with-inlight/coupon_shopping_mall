@@ -45,6 +45,10 @@ export default function StyledLightbox() {
         '.yarl__video_container': {
           backgroundColor: theme.palette.common.black,
         },
+        '.yarl__slide_image': {
+          minWidth:'60%',
+          minHeight:'60%'
+        }
       }}
     />
   );

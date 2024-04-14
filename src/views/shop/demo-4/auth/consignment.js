@@ -57,7 +57,6 @@ const ConsignmentDemo = (props) => {
           <AuthMenuSideComponent />
           <ContentWrappers>
             <TitleComponent>{'위탁상품관리'}</TitleComponent>
-            {/* 미완 */}
             <Card sx={{ marginBottom: '2rem' }}>
               <ConsignmentTable consignmentContent={consignmentContent?.content} onChangePage={onChangePage} searchObj={searchObj} />
             </Card>

@@ -47,6 +47,27 @@ border-bottom:1px solid ${themeObj.grey[300]};
 padding:1rem 0;
 white-space:pre;
 `
+
+const MypageTitle = styled.div`
+display: flex;
+column-gap: 0.5rem;
+font-weight: bold;
+margin: auto;
+font-family:'Noto Sans KR';
+position:relative;
+width:100%;
+justify-content:space-between;
+& span {
+  font-size: 32px;
+}
+@media (max-width:600px) {
+  flex-direction: column;
+  & span {
+    font-size: 16px;
+  }
+}
+`
+
 const MyPageDemo = (props) => {
 
   const { user } = useAuthContext();
@@ -203,25 +224,46 @@ const MyPageDemo = (props) => {
         <RowMobileReverceColumn>
           <AuthMenuSideComponent />
           <ContentWrappers>
-            <TitleComponent>{'마이페이지'}</TitleComponent>
-            <ContentBorderContainer style={{ display: 'flex' }}>
-              <Row style={{ columnGap: '0.5rem', fontWeight: 'bold', margin: 'auto' }}>
-                <div>고객님의 포인트는</div>
-                <div style={{ color: themeDnsData?.theme_css?.main_color }}>
-                  {commarNumber(user?.point)}
+            <TitleComponent style={{marginBottom:'0'}}>{'마이페이지'}</TitleComponent>
+            <ContentBorderContainer style={{ display: 'flex', border:'0' }}>
+              <MypageTitle>
+                <div style={{fontSize:'32px'}}>
+                  {user?.name} 고객님<br />
+                  안녕하세요 :)
+                  </div>
+                  <Row>
+                <div style={{textAlign:'right', marginRight:'2rem', fontSize:'1rem'}}>
+                  포인트<br /><br />
+                <span style={{fontFamily:'Playfair Display', }}>
+                  {commarNumber(user?.point)} P
+                </span>
                 </div>
-                <div>입니다.</div>
-              </Row>
+                <div style={{textAlign:'right', marginRight:'2rem', fontSize:'1rem'}}>
+                  위탁상품관리<br /><br />
+                <span style={{fontFamily:'Playfair Display', }}>
+                  {commarNumber(userInfo?.consignment_products?.length)}개
+                </span>
+                </div>
+                <div style={{textAlign:'right', fontSize:'1rem'}}>
+                  최근주문목록<br /><br />
+                <span style={{fontFamily:'Playfair Display', }}>
+                  {commarNumber(userInfo?.orders?.length)}개
+                </span>
+                </div>
+                </Row>
+              </MypageTitle>
             </ContentBorderContainer>
-            <SubTitleComponent
-              endComponent={<MoreText themeDnsData={themeDnsData}
-                onClick={() => {
-                  router.push(`/shop/auth/consignment`)
-                }}>
-                더보기
-              </MoreText>}
-            >위탁상품관리</SubTitleComponent>
+            
             <ContentBorderContainer>
+            <SubTitleComponent
+              endComponent={<Icon
+                icon={'ph:plus-light'}
+                style={{ width: '25px', height: '25px', margin: 'auto 0', cursor: 'pointer' }}
+                onClick={() => {
+                    router.push(`/shop/auth/consignment`)
+                }}
+            />}
+            >위탁상품관리</SubTitleComponent>
               <Table>
                 {userInfo?.consignment_products && userInfo?.consignment_products.map((product, idx) => (
                   <>
@@ -236,14 +278,17 @@ const MyPageDemo = (props) => {
                 ))}
               </Table>
             </ContentBorderContainer>
-            <SubTitleComponent
-              endComponent={<MoreText themeDnsData={themeDnsData} onClick={() => {
-                router.push(`/shop/auth/history`)
-              }}>
-                더보기
-              </MoreText>}
-            >최근 주문목록</SubTitleComponent>
+
             <ContentBorderContainer>
+            <SubTitleComponent
+              endComponent={<Icon
+                icon={'ph:plus-light'}
+                style={{ width: '25px', height: '25px', margin: 'auto 0', cursor: 'pointer' }}
+                onClick={() => {
+                    router.push(`/shop/auth/history`)
+                }}
+            />}
+            >최근 주문목록</SubTitleComponent>
               <Table>
                 {userInfo?.orders && userInfo?.orders.map((order, idx) => (
                   <>
@@ -258,6 +303,8 @@ const MyPageDemo = (props) => {
                 ))}
               </Table>
             </ContentBorderContainer>
+            
+            <ContentBorderContainer>
             <SubTitleComponent
               endComponent={<Row style={{ alignItems: 'center' }}>
                 <IconButton onClick={() => {
@@ -272,7 +319,6 @@ const MyPageDemo = (props) => {
                 </IconButton>
               </Row>}
             >최근 본 상품</SubTitleComponent>
-            <ContentBorderContainer>
               <Items
                 items={(userInfo?.product_views ?? []).map(item => {
                   return {
@@ -291,7 +337,6 @@ const MyPageDemo = (props) => {
             </ContentBorderContainer>
           </ContentWrappers>
         </RowMobileReverceColumn>
-        {/* 미완 */}
       </Wrappers>
     </>
   )

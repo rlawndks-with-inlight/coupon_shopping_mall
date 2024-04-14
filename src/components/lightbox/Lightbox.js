@@ -52,7 +52,7 @@ export default function Lightbox({
       <ReactLightbox
         slides={slides}
         animation={{ swipe: 240 }}
-        carousel={{ finite: totalItems < 5 }}
+        carousel={{ finite: totalItems < 5, imageFit:'contain',}}
         controller={{ closeOnBackdropClick: true }}
         plugins={getPlugins({
           disabledZoom,

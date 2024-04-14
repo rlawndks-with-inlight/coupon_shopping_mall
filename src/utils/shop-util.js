@@ -3,7 +3,7 @@ import { axiosIns } from "./axios";
 import { apiManager } from "./api";
 import axios from "axios";
 import toast from "react-hot-toast";
-import { getPriceUnitByLang, returnMoment, setProductPriceByLang } from "./function";
+import { returnMoment } from "./function";
 import { getLocalStorage } from "./local-storage";
 
 export const calculatorPrice = (item) => {// 상품별로 가격

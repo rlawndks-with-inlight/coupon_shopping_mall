@@ -451,8 +451,12 @@ export const getPercentByNumber = (num = 1, sub_num = 0) => {
   return Math.round(sub_num / num * 100);
 }
 
-export const setProductPriceByLang = (price = 0, from_lang_ = 'ko', to_lang_ = 'ko') => {
-  let amount = parseFloat(price);
+export const setProductPriceByLang = (product_ = {}, price_column = 'product_sale_price', from_lang_ = 'ko', to_lang_ = 'ko') => {
+  let product = product_;
+  if (typeof product?.price_lang_obj == 'string') {
+    product.price_lang_obj = JSON.parse(product?.price_lang_obj ?? '{}');
+  }
+  let amount = parseFloat(product[price_column] ?? 0);
   let from_lang = from_lang_;
   let to_lang = to_lang_;
   let multiply_obj = {
@@ -462,6 +466,10 @@ export const setProductPriceByLang = (price = 0, from_lang_ = 'ko', to_lang_ = '
     'ja': 0.11,
     'ko': 1,
   }
+  if (product?.price_lang_obj[to_lang]) {
+    return product?.price_lang_obj[to_lang][price_column];
+  }
+
   if (!Object.keys(multiply_obj).includes(to_lang)) {
     to_lang = 'ko';
   }
@@ -475,7 +483,7 @@ export const setProductPriceByLang = (price = 0, from_lang_ = 'ko', to_lang_ = '
     let decimal_count = countDecimalPlaces(multiply_obj[from_lang]);
     let ten_zekop = Math.pow(10, decimal_count);
     let brother = multiply_obj[from_lang] * ten_zekop;
-    amount = (price * ten_zekop) / brother * multiply_obj[to_lang]
+    amount = (amount * ten_zekop) / brother * multiply_obj[to_lang]
   }
   if (to_lang == 'ko') {
     amount = parseInt(amount);

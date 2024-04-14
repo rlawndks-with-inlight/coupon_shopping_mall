@@ -159,12 +159,12 @@ export default function ProductDetailsSummary({ product, onAddCart, onGotoStep, 
                   component="span"
                   sx={{ color: 'text.disabled', textDecoration: 'line-through', mr: 0.5 }}
                 >
-                  {fCurrency(setProductPriceByLang(product_price, price_lang, currentLang?.value))}
+                  {fCurrency(setProductPriceByLang(product, 'product_price', price_lang, currentLang?.value))}
                 </Box>
               )}
-              {commarNumber(setProductPriceByLang(product_sale_price, price_lang, currentLang?.value))} {getPriceUnitByLang(currentLang?.value)}
+              {commarNumber(setProductPriceByLang(product, 'product_sale_price', price_lang, currentLang?.value))} {getPriceUnitByLang(currentLang?.value)}
             </Typography>
-            <Typography variant="h7" color={themeObj.grey[500]}>{translate('배송비')}: {commarNumber(setProductPriceByLang(delivery_fee, price_lang, currentLang?.value))}{getPriceUnitByLang(currentLang?.value)}</Typography>
+            <Typography variant="h7" color={themeObj.grey[500]}>{translate('배송비')}: {commarNumber(setProductPriceByLang(product, 'delivery_fee', price_lang, currentLang?.value))}{getPriceUnitByLang(currentLang?.value)}</Typography>
           </Stack>
           <Divider sx={{ borderStyle: 'dashed' }} />
           {groups.map((group) => (
@@ -194,7 +194,7 @@ export default function ProductDetailsSummary({ product, onAddCart, onGotoStep, 
                     {group?.options && group?.options.map((option) => (
                       <MenuItem key={option?.option_name} value={option}>
                         {option?.option_name}
-                        {(option?.option_price > 0 || option?.option_price < 0) ? ` (${option?.option_price > 0 ? '+' : ''}${commarNumber(setProductPriceByLang(option?.option_price, price_lang, currentLang?.value))})` : ''}
+                        {(option?.option_price > 0 || option?.option_price < 0) ? ` (${option?.option_price > 0 ? '+' : ''}${commarNumber(setProductPriceByLang(option, 'option_price', price_lang, currentLang?.value))})` : ''}
                       </MenuItem>
                     ))}
                   </Select>

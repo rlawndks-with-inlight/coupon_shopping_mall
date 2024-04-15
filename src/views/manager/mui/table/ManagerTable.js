@@ -39,7 +39,7 @@ justify-content:space-between;
 `
 
 export default function ManagerTable(props) {
-  const { columns, data, add_button_text, add_link, onChangePage, searchObj, want_move_card, table, detail_search, onToggle } = props;
+  const { columns, data, add_button_text, add_link, onChangePage, searchObj, want_move_card, table, detail_search, onToggle, minimal = false } = props;
   const { page, page_size } = props?.searchObj;
 
   const router = useRouter();
@@ -188,7 +188,10 @@ export default function ManagerTable(props) {
                 </Button>
               </>}
           </Row>
-          <Row style={{ rowGap: '1rem', flexWrap: 'wrap', margin: '0.35rem 0' }}>
+          {
+            minimal != true &&
+            <>
+            <Row style={{ rowGap: '1rem', flexWrap: 'wrap', margin: '0.35rem 0' }}>
             {window.innerWidth > 1000 ?
               <>
                 <DesktopDatePicker
@@ -242,6 +245,8 @@ export default function ManagerTable(props) {
                 />
               </>}
           </Row>
+            </>
+          }
           <Row style={{ columnGap: '0.75rem', flexWrap: 'wrap', rowGap: '0.75rem', margin: '0.35rem 0' }}>
             {/*
             <Button variant='outlined' onClick={handleClick}>

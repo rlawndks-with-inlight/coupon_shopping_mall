@@ -1,4 +1,4 @@
-import { Button, Card, Checkbox, FormControl, FormControlLabel, Grid, IconButton, InputAdornment, InputLabel, Menu, MenuItem, OutlinedInput, Rating, Select, Stack, TextField, Typography } from "@mui/material";
+import { Button, Card, Checkbox, FormControl, FormControlLabel, Grid, IconButton, InputAdornment, InputLabel, Menu, MenuItem, OutlinedInput, Rating, Select, Stack, TextField, Typography, Dialog, DialogTitle } from "@mui/material";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { Col, Row, themeObj } from "src/components/elements/styled-components";
@@ -130,12 +130,12 @@ export const SelectCategoryComponent = (props) => {
 
 
 export const SelectPropertyComponent = (props) => {
-  const {a} = props;
+  const { a } = props;
   const theme = useTheme();
 
   return (
     <>
-    
+
     </>
   )
 }
@@ -146,6 +146,70 @@ const ProductEdit = () => {
   const { user } = useAuthContext();
   const { setModal } = useModal()
   const { themeCategoryList, themeDnsData, themePropertyList } = useSettingsContext();
+
+  const defaultUserColumns = [
+    {
+      id: 'user_name',
+      label: '유저아이디',
+      action: (row) => {
+        return <div 
+        style={{textDecoration:'underline', cursor:'pointer'}}
+        onClick={() => {
+          setItem({
+            ...item,
+            ['consignment_user_name']: row['user_name'],
+            ['consignment_name']: row['name'],
+            ['consignment_user_phone_num']: row['phone_num']
+          })
+          setDialogOpen(false)
+        }}
+        >
+          {row['user_name']}
+          </div> ?? "---"
+      }
+    },
+    {
+      id: 'name',
+      label: '이름',
+      action: (row) => {
+        return <div 
+        style={{textDecoration:'underline', cursor:'pointer'}}
+        onClick={() => {
+          setItem({
+            ...item,
+            ['consignment_user_name']: row['user_name'],
+            ['consignment_name']: row['name'],
+            ['consignment_user_phone_num']: row['phone_num']
+          })
+          setDialogOpen(false)
+        }}
+        >
+          {row['name']}
+          </div> ?? "---"
+      }
+    },
+    {
+      id: 'phone_num',
+      label: '휴대폰번호',
+      action: (row) => {
+        return <div 
+        style={{textDecoration:'underline', cursor:'pointer'}}
+        onClick={() => {
+          setItem({
+            ...item,
+            ['consignment_user_name']: row['user_name'],
+            ['consignment_name']: row['name'],
+            ['consignment_user_phone_num']: row['phone_num']
+          })
+          setDialogOpen(false)
+        }}
+        >
+          {row['phone_num']}
+          </div> ?? "---"
+      }
+    },
+  ]
+
   const defaultReviewColumns = [
     {
       id: 'user_name',
@@ -248,9 +312,25 @@ const ProductEdit = () => {
     characters: [],
     properties: {},
   })
+
+  const [userColumns, setUserColumns] = useState([]);
+  const [userData, setUserData] = useState({});
+  const [userSearchObj, setUserSearchObj] = useState({
+    page: 1,
+    page_size: 10,
+    s_dt: '',
+    e_dt: '',
+    search: '',
+    is_user: 1,
+  })
+  const [consignmentUser, setConsignmentUser] = useState()
+
   const [reviewData, setReviewData] = useState({});
   const [review, setReview] = useState({});
   const [reviewAction, setReviewAction] = useState(false);
+  const [defaultCorner, setDefaultCorner] = useState(true)
+  const [dialogOpen, setDialogOpen] = useState(false)
+
   const [reviewSearchObj, setReviewSearchObj] = useState({
     page: 1,
     page_size: 10,
@@ -262,6 +342,7 @@ const ProductEdit = () => {
   const [reviewColumns, setReviewColumns] = useState([]);
   useEffect(() => {
     settingPage();
+    //console.log(themeDnsData)
   }, [])
 
   useEffect(() => {
@@ -281,10 +362,29 @@ const ProductEdit = () => {
     setReviewSearchObj(obj);
   }
 
+  useEffect(() => {
+    if (dialogOpen) {
+      onChangeUserPage({...userSearchObj, page: 1})
+    }
+  }, [dialogOpen])
+  const onChangeUserPage = async (obj) => {
+    setUserSearchObj(obj);
+    setUserData({
+      ...userData,
+      content: undefined
+    })
+    let data_ = await apiManager('users', 'list', obj);
+    if (data_) {
+      setUserData(data_);
+    }
+  }
+
 
   const settingPage = async () => {
     let cols = defaultReviewColumns;
     setReviewColumns(cols)
+    let cols2 = defaultUserColumns;
+    setUserColumns(cols2)
 
     if (router.query?.edit_category == 'edit') {
       setCurrentTab(router.query?.type ?? 0)
@@ -477,13 +577,13 @@ const ProductEdit = () => {
       value: 0,
       label: '상품정보'
     },
-    ...(themeDnsData?.setting_obj?.is_use_consignment == 1 ? [
+    ...(themeDnsData?.setting_obj?.is_use_consignment == 1 && themeDnsData.id != 5 ? [
       {
         value: 1,
         label: '위탁정보'
       }
     ] : []),
-    ...(router.query?.edit_category == 'edit' ? [
+    ...(router.query?.edit_category == 'edit' && themeDnsData.id != 5 ? [
       {
         value: 2,
         label: '상품리뷰 관리'
@@ -615,7 +715,15 @@ const ProductEdit = () => {
                                 <>
                                   <FormControlLabel
                                     label={<Typography style={{ fontSize: themeObj.font_size.size6 }}>{property?.property_name}</Typography>}
-                                    control={<Checkbox checked={item.properties[`${group?.id}`] && (item.properties[`${group?.id}`] ?? [])?.includes(property?.id)} />}
+                                    control={
+                                      <Checkbox
+                                        checked={
+                                          group?.brand_id == 5 && property?.property_name == 'NEW UP-DATE' && router.query?.edit_category == 'add'
+                                            ?
+                                            defaultCorner
+                                            :
+                                            item.properties[`${group?.id}`] && (item.properties[`${group?.id}`] ?? [])?.includes(property?.id)}
+                                      />}
                                     onChange={(e) => {
                                       let property_obj = { ...item.properties };
                                       if (!property_obj[`${group?.id}`] || group?.is_can_select_multiple == 0) {
@@ -629,6 +737,9 @@ const ProductEdit = () => {
                                           property_obj[`${group?.id}`].splice(find_idx, 1);
                                         }
                                       }
+                                      if (group?.brand_id == 5 && property?.property_name == 'NEW UP-DATE' && router.query?.edit_category == 'add') {
+                                        setDefaultCorner(!defaultCorner)
+                                      }
                                       setItem({
                                         ...item,
                                         properties: property_obj,
@@ -641,6 +752,156 @@ const ProductEdit = () => {
                           </Stack>
                         </>
                       ))}
+                      {
+                        themeDnsData?.id == 5 &&
+                        <>
+                          <Stack spacing={1}>
+                            <Typography variant="subtitle2" sx={{ color: 'text.secondary' }}>
+                              판매자 구분
+                            </Typography>
+                            <Row style={{ flexWrap: 'wrap' }}>
+                              <FormControlLabel
+                                label={<Typography style={{ fontSize: themeObj.font_size.size6 }}>그랑파리</Typography>}
+                                control={
+                                  <Checkbox
+                                    checked={
+                                      item.product_type == 0 ? true : false
+                                    }
+                                    onChange={(e) => {
+                                      let productType = item.product_type;
+
+                                      if (e.target.checked) {
+                                        productType = 0;
+                                      }
+
+                                      setItem({
+                                        ...item,
+                                        product_type: productType
+                                      })
+                                    }}
+                                  />}
+                              />
+                              <FormControlLabel
+                                label={<Typography style={{ fontSize: themeObj.font_size.size6 }}>위탁(회원)</Typography>}
+                                control={
+                                  <Checkbox
+                                    checked={
+                                      item.product_type == 1 ? true : false
+                                    }
+                                    onChange={(e) => {
+                                      let productType = item.product_type;
+
+                                      if (e.target.checked) {
+                                        productType = 1;
+                                      }
+
+                                      setItem({
+                                        ...item,
+                                        product_type: productType
+                                      })
+                                    }}
+                                  />}
+                              />
+                              <FormControlLabel
+                                label={<Typography style={{ fontSize: themeObj.font_size.size6 }}>위탁(비회원)</Typography>}
+                                control={
+                                  <Checkbox
+                                    checked={
+                                      item.product_type == 2 ? true : false
+                                    }
+                                    onChange={(e) => {
+                                      let productType = item.product_type;
+
+                                      if (e.target.checked) {
+                                        productType = 2;
+                                      }
+
+                                      setItem({
+                                        ...item,
+                                        product_type: productType
+                                      })
+                                    }}
+                                  />}
+                              />
+                            </Row>
+                          </Stack>
+                          {
+                            item?.product_type == 1 &&
+                            <>
+                              <Row>
+                                <Button
+                                  variant="contained"
+                                  size="large"
+                                  style={{ height: '56px', marginRight: '1rem' }}
+                                  onClick={() => {
+                                    setDialogOpen(true)
+                                  }}
+                                >
+                                  회원 검색
+                                </Button>
+                                <TextField
+                                  style={{ flexGrow: 1 }}
+                                  value={`${item?.consignment_name}(${item?.consignment_user_name})`}
+                                  disabled
+                                />
+                              </Row>
+                              <Dialog
+                                onClose={() => { setDialogOpen(false) }}
+                                open={dialogOpen}
+                                sx={{
+                                }}
+                                PaperProps={{
+                                  sx: {
+                                    minWidth: '300px'
+                                  }
+                                }}
+                              >
+                                <DialogTitle>회원 검색</DialogTitle>
+                                <Stack spacing={3}>
+                                  <Card>
+                                    <ManagerTable
+                                      data={userData}
+                                      columns={userColumns}
+                                      searchObj={userSearchObj}
+                                      onChangePage={onChangeUserPage}
+                                      minimal={true}
+                                    />
+                                  </Card>
+                                </Stack>
+                              </Dialog>
+                            </>
+                          }
+                          {
+                            item?.product_type == 2 &&
+                            <>
+                              <TextField
+                                label='판매자 이름'
+                                value={item.consignment_none_user_name}
+                                placeholder=""
+                                onChange={(e) => {
+                                  setItem(
+                                    {
+                                      ...item,
+                                      ['consignment_none_user_name']: e.target.value
+                                    }
+                                  )
+                                }} />
+                              <TextField
+                                label='판매자 연락처'
+                                value={item.consignment_none_user_phone_num}
+                                placeholder=""
+                                onChange={(e) => {
+                                  setItem(
+                                    {
+                                      ...item,
+                                      ['consignment_none_user_phone_num']: e.target.value
+                                    }
+                                  )
+                                }} />
+                            </>
+                          }
+                        </>
+                      }
                       <TextField
                         label='상품코드'
                         value={item.product_code}
@@ -665,7 +926,7 @@ const ProductEdit = () => {
                             }
                           )
                         }} />
-                        {/*<TextField
+                      {/*<TextField
                         label='상품사이즈'
                         value={item.product_size}
                         placeholder=""

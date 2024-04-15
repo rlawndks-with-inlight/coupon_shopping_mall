@@ -8,7 +8,9 @@ import { toast } from "react-hot-toast";
 import { useModal } from "src/components/dialog/ModalProvider";
 import { apiManager } from "src/utils/api";
 import { commarNumber } from "src/utils/function";
+import { useSettingsContext } from "src/components/settings";
 const UserList = () => {
+  const {themeDnsData} = useSettingsContext();
   const { setModal } = useModal()
   const defaultColumns = [
     {
@@ -20,16 +22,16 @@ const UserList = () => {
     },
     {
       id: 'user_name',
-      label: '유저아이디',
+      label: '아이디',
       action: (row) => {
         return row['user_name'] ?? "---"
       }
     },
     {
-      id: 'nickname',
-      label: '닉네임',
+      id: `${themeDnsData.id != 5 ? 'nickname' : 'name'}`,
+      label: `${themeDnsData.id != 5 ? '닉네임' : '이름'}`,
       action: (row) => {
-        return row['nickname'] ?? "---"
+        return row[`${themeDnsData.id != 5 ? 'nickname' : 'name'}`] ?? "---"
       }
     },
     {

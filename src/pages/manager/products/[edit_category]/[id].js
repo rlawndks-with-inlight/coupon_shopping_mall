@@ -592,7 +592,7 @@ const ProductEdit = () => {
   ]
 
   useEffect(() => {
-    console.log(item)
+    //console.log(item)
   }, [])
   return (
     <>

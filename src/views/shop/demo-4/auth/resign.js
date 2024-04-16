@@ -56,8 +56,8 @@ const ResignDemo = (props) => {
               정말 탈퇴하시려면 비밀번호를 입력하고 탈퇴하기 버튼을 눌러주세요.<br />
               <span style={{ fontSize: '32px' }}>;(</span>
             </div>
-            <div style={{borderTop:'1px solid #ccc', width:'100%', display:'flex', marginTop:'1rem', paddingTop:'1rem'}}>
-              <FormControl variant="outlined">
+            <div style={{borderTop:'1px solid #ccc', width:'100%', display:'flex', marginTop:'1rem', paddingTop:'1rem', flexDirection:'column'}}>
+              <FormControl variant="outlined" style={{width:'50%', marginBottom:'1rem'}}>
                 <InputLabel>비밀번호</InputLabel>
                 <OutlinedInput
                 label='비밀번호'

@@ -10,7 +10,7 @@ import { apiManager } from "src/utils/api";
 import { commarNumber } from "src/utils/function";
 import { useSettingsContext } from "src/components/settings";
 const UserList = () => {
-  const {themeDnsData} = useSettingsContext();
+  const { themeDnsData } = useSettingsContext();
   const { setModal } = useModal()
   const defaultColumns = [
     {

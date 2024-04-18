@@ -7,7 +7,7 @@ import { useRouter } from 'next/router'
 
 const Wrappers = styled.div`
   width:90%;
-  max-width: ${props => props.type == 1 ? '1000px' : '1400px'};
+  max-width: ${props => props.type == 1 ? '1000px' : '1600px'};
   margin:0 auto;
   font-family: ${props => props.type == 1 ? 'Playfair Display' : ''};
   font-size: ${props => props.type == 1 ? '14px' : ''};
@@ -69,10 +69,10 @@ const HomeButtonBanner = (props) => {
                     {column?.list && (column?.list ?? []).map((item, idx) => (
                         <>
                             <Row style={{ flexDirection: 'column',  }}>
-                                <Col style={{ alignItems: 'center',  }}>
+                                <div style={{ alignItems: 'center',  }}>
                                     <LazyLoadImage src={item?.src} style={{
-                                        
-                                        height: `20px`,
+                                        width:'100%',
+                                        height:'auto',
                                         cursor: 'pointer',
                                     }}
                                         onClick={() => {
@@ -93,7 +93,7 @@ const HomeButtonBanner = (props) => {
                                         }}
                                     />*/}
                                     <div style={{ fontWeight: 'bold', marginTop: '1rem', alignItems: 'center' }}>{item.title}</div>
-                                </Col>
+                                </div>
 
                             </Row>
                         </>

@@ -114,7 +114,7 @@ export const Item = props => {
 }
 export const Items = props => {
   const { themeDnsData } = useSettingsContext()
-  const { items, router, is_slide, slide_setting = {}, slide_ref, seller, rows = 1, autoplaySpeed = 2500, text_align = 'center', item_column } = props;
+  const { items, router, is_slide, slide_setting = {}, slide_ref, seller, rows = 1, autoplaySpeed = 2500, text_align = 'center', item_column = 0 } = props;
   const [itemThemeCss, setItemThemeCss] = useState(itemThemeCssDefaultSetting)
 
   useEffect(() => {

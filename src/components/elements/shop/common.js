@@ -126,8 +126,6 @@ export const Items = props => {
     if (window.innerWidth > 1150) {
       if (itemThemeCss?.container?.is_vertical == 1) {
         return 3
-      } else if (item_column == 4) {
-        return 4
       } else {
         return 5
       }

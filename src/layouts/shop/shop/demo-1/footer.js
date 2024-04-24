@@ -74,7 +74,7 @@ const Footer = (props) => {
             <MarginRight>{phone_num}</MarginRight>
           </Row>
           <Row>
-            <Bold>{translate('이메일')}</Bold>
+            <Bold>{translate('팩스')}</Bold>
             <MarginRight>{fax_num}</MarginRight>
           </Row>
 

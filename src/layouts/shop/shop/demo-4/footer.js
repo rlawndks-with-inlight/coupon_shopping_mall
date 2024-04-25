@@ -70,7 +70,8 @@ const Footer = (props) => {
 
     const onLogout = async () => {
         let result = await logout();
-        router.reload();
+        //router.reload();
+        window.location.reload();
     }
     return (
         <>

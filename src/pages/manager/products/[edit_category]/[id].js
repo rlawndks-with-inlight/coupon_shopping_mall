@@ -159,7 +159,8 @@ const ProductEdit = () => {
             ...item,
             ['consignment_user_name']: row['user_name'],
             ['consignment_name']: row['name'],
-            ['consignment_user_phone_num']: row['phone_num']
+            ['consignment_user_phone_num']: row['phone_num'],
+            ['product_type']: 1 
           })
           setDialogOpen(false)
         }}
@@ -179,7 +180,8 @@ const ProductEdit = () => {
             ...item,
             ['consignment_user_name']: row['user_name'],
             ['consignment_name']: row['name'],
-            ['consignment_user_phone_num']: row['phone_num']
+            ['consignment_user_phone_num']: row['phone_num'],
+            ['product_type']: 1 
           })
           setDialogOpen(false)
         }}
@@ -199,7 +201,8 @@ const ProductEdit = () => {
             ...item,
             ['consignment_user_name']: row['user_name'],
             ['consignment_name']: row['name'],
-            ['consignment_user_phone_num']: row['phone_num']
+            ['consignment_user_phone_num']: row['phone_num'],
+            ['product_type']: 1 
           })
           setDialogOpen(false)
         }}

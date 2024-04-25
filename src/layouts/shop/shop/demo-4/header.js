@@ -535,7 +535,8 @@ const Header = () => {
                                 src={logoSrc()}
                                 onClick={() => {
                                     if (router.pathname === '/shop') {
-                                        router.reload()
+                                        //router.reload()
+                                        window.location.reload()
                                     } else {
                                         router.push('/shop')
                                     }

@@ -501,12 +501,12 @@ const ProductEdit = () => {
         category_ids[`category_id${i}`] = curCategories[i][curCategories[i].length - 1]?.id;
       }
     }
-    for (var i = 0; i < themePropertyList.length; i++) {
+    /*for (var i = 0; i < themePropertyList.length; i++) {
       if (!((item.properties[themePropertyList[i]?.id] ?? [])?.length > 0)) {
         toast.error(`${themePropertyList[i]?.property_group_name}를 선택해 주세요.`);
         return;
       }
-    }
+    }*/
     let obj = item;
     let sub_images = [];
     let upload_files = [];

@@ -278,7 +278,7 @@ const ProductList = () => {
         return (
           <>
             <IconButton onClick={() => {
-              router.push(`edit/${row?.id}?type=1`)
+              router.push(`edit/${row?.id}?type=2`)
             }}>
               <Icon icon='ic:outline-rate-review' />
             </IconButton>

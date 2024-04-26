@@ -18,7 +18,7 @@ const Title = styled.div`
   margin-top: 5rem;
   font-family: 'Playfair Display';
   font-size: 90px;
-  color: #ec1c24;
+  color: #FF5B0D;
   border-bottom: 1px solid lightgray;
   display:flex;
   @media (max-width: 1000px) {
@@ -75,7 +75,7 @@ const Underline = styled.div`
 const BrandText = styled.div`
   font-size: 40px;
   span {
-    color: #ec1c24;
+    color: #FF5B0D;
   }
 `;
 
@@ -139,12 +139,12 @@ const BrandAbout = () => {
           <img src="/grandparis/about_banner.png" />
         </ContentRow>
         <ContentRow style={{marginTop:'0'}}>
-        <img src="/grandparis/about_banner3.png" />
+        <img src="/grandparis/luxury_edition_2.png" />
           <ContentSection>
             
             <br />
             <img src='/grandparis/new-luxury-edition2.png' style={{maxWidth:'227px', display:'inline-block'}} />
-            <LuxuryText>Luxury edition in <span style={{color:'#EC1C24'}}>inspire</span></LuxuryText>
+            <LuxuryText>Luxury edition in <span style={{color:'#FF5B0D'}}>inspire</span></LuxuryText>
             <Underline />
             <br />
             <br />
@@ -170,7 +170,7 @@ const BrandAbout = () => {
                 style={{ 
                   fontFamily: 'Playfair Display', 
                   fontSize: '16px', 
-                  borderBottom: '1px solid #EC1C24', 
+                  borderBottom: '1px solid #FF5B0D', 
                   width: 'fit-content', 
                   cursor: 'pointer',
                   display:'inline-block'
@@ -215,17 +215,17 @@ const BrandAbout = () => {
             <br />
             <Description style={{ fontSize: '16px' }}>
               <Row style={{ marginBottom: '1rem', textAlign:'left' }}>
-                <Icon icon={'mdi:location'} style={{ color: 'EC1C24', width: '34px', height: '34px', marginRight: '0.5rem' }} />
+                <Icon icon={'mdi:location'} style={{ color: '#FF5B0D', width: '34px', height: '34px', marginRight: '0.5rem' }} />
                 서울특별시 강남구 선릉로 157길 8<br />
                 (강남구 신사동 664-15번지)
               </Row>
               <Row style={{ marginBottom: '1rem', textAlign:'left' }}>
-                <Icon icon={'mingcute:phone-fill'} style={{ color: 'EC1C24', width: '34px', height: '34px', marginRight: '0.5rem' }} />
+                <Icon icon={'mingcute:phone-fill'} style={{ color: '#FF5B0D', width: '34px', height: '34px', marginRight: '0.5rem' }} />
                 02-517-2950<br />
                 02-517-8950
               </Row>
               <Row style={{ marginBottom: '1rem', textAlign:'left' }}>
-                <Icon icon={'mdi:clock'} style={{ color: 'EC1C24', width: '34px', height: '34px', marginRight: '0.5rem' }} />
+                <Icon icon={'mdi:clock'} style={{ color: '#FF5B0D', width: '34px', height: '34px', marginRight: '0.5rem' }} />
                 평일 : 오전 10:00 ~ 오후 07:30<br />
                 토요일 : 오전 10:30 ~ 오후 6:00<br />
                 휴무 : 공휴일
@@ -243,22 +243,26 @@ const BrandAbout = () => {
         <div style={{ display: 'flex' }}>
             <img src="/grandparis/left.png" style={{height:'1200px'}} />
           <FloorGuide>
-            <Row style={{ fontSize: '36px', color: '#EC1C24', fontFamily: 'Playfair Display', marginBottom: '1rem' }}>F3</Row>
+            
             <FloorRow style={{ marginBottom: '2rem' }}>
-              <img src="/grandparis/F3-1.png" style={{ marginRight: '1rem' }} />
-              <img src="/grandparis/F3-2.png" />
+            <img src="/grandparis/F4-2.png" style={{ marginRight: '1rem' }} />
+              <img src="/grandparis/F1-1.png" style={{ marginRight: '1rem' }} />
+              <img src="/grandparis/F1-2.png" />
             </FloorRow>
-            <Row style={{ fontSize: '36px', color: '#EC1C24', fontFamily: 'Playfair Display', marginBottom: '1rem' }}>F2</Row>
+            
             <FloorRow style={{ marginBottom: '2rem' }}>
               <img src="/grandparis/F2-1.png" style={{ marginRight: '1rem' }} />
               <img src="/grandparis/F2-2.png" style={{ marginRight: '1rem' }} />
-              <img src="/grandparis/F2-3.png" />
-            </FloorRow>
-            <Row style={{ fontSize: '36px', color: '#EC1C24', fontFamily: 'Playfair Display', marginBottom: '1rem' }}>F1</Row>
-            <FloorRow style={{ marginBottom: '2rem' }}>
-              <img src="/grandparis/F1-1.png" style={{ marginRight: '1rem' }} />
-              <img src="/grandparis/F1-2.png" style={{ marginRight: '1rem' }} />
               <img src="/grandparis/F1-3.png" />
+            </FloorRow>
+            
+            <FloorRow style={{ marginBottom: '2rem' }}>
+              <img src="/grandparis/F4-1.png" style={{ marginRight: '1rem' }} />
+              <img src="/grandparis/F2-3.png" style={{ marginRight: '1rem' }} />
+              <img src="/grandparis/F3-1.png" />
+            </FloorRow>
+            <FloorRow style={{ marginBottom: '2rem' }}>
+              <img src="/grandparis/F3-2.png" />
             </FloorRow>
           </FloorGuide>
         </div>

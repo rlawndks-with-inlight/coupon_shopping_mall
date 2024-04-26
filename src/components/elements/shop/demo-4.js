@@ -87,7 +87,7 @@ export const Item4 = (props) => {
   const [itemThemeCss, setItemThemeCss] = useState(itemThemeCssDefaultSetting);
 
   useEffect(() => {
-    //console.log(item)
+    console.log(item)
   }, [])
 
   const itemStatusList = [

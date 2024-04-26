@@ -630,7 +630,7 @@ const Header = () => {
                                         fontWeight: 'bold',
                                         fontSize: '12px',
                                         color: `${themeMode == 'dark' ? 'black' : 'white'}`,
-                                        backgroundColor: `${themeMode == 'dark' ? 'white' : 'black'}`,
+                                        backgroundColor: `${themeMode == 'dark' ? 'white' : '#FF5B0D'}`,
                                         borderRadius: '0',
                                         marginRight: '10px'
                                     }}
@@ -784,7 +784,7 @@ const Header = () => {
                                                     {openAllCategory == group?.id &&
                                                         <>
                                                             <PopoverContainer style={{
-                                                                background: `${themeMode == 'dark' ? '#222' : '#FEF8F4'}`,
+                                                                background: `${themeMode == 'dark' ? '#222' : '#FF5B0D'}`,
                                                                 maxHeight: `${window.innerHeight - headerHeight}px`,
                                                                 overflowY: 'auto',
                                                                 borderTop: `2px solid ${themeDnsData?.theme_css?.main_color}`,
@@ -795,7 +795,7 @@ const Header = () => {
 
                                                                     {group?.sort_type == 0 &&
                                                                         <>
-                                                                            <Row style={{ columnGap: '1rem', flexWrap: 'wrap', rowGap: '2rem', margin: '2rem 0', flexDirection:'column' }}>
+                                                                            <Row style={{ columnGap: '1rem', flexWrap: 'wrap', rowGap: '2rem', margin: '2rem 0', flexDirection:'column', color:'white' }}>
                                                                                 {group?.product_categories && group?.product_categories.map((category, idx) => (
                                                                                     <>
                                                                                         {category.category_name != 'WATCH' && category.category_name != 'PRIVATE' && (
@@ -817,7 +817,7 @@ const Header = () => {
                                                                                             </Row>
                                                                                         )}
                                                                                         {category.category_name == 'PRIVATE' && user && (
-                                                                                            <Row style={{ minWidth: '100px' }}>
+                                                                                            <Row style={{ minWidth: '100px', color:'white' }}>
                                                                                                 <ColumnMenuTitle style={{ margin: '0', cursor: 'pointer', width:'130px' }} onClick={() => {
                                                                                                     router.push(`/shop/items?category_id${index}=${category?.id}&depth=0`)
                                                                                                     setOpenAllCategory("")
@@ -838,7 +838,7 @@ const Header = () => {
                                                                                 ))}
                                                                             </Row>
                                                                             {/*<div style={{ border: '2px solid red', padding: '0' }} />*/}
-                                                                            <Col style={{ columnGap: '1rem', flexWrap: 'wrap', alignItems: 'flex-start', rowGap: '2rem', maxHeight: '200px', marginBottom:'2rem' }}>
+                                                                            <Col style={{ columnGap: '1rem', flexWrap: 'wrap', alignItems: 'flex-start', rowGap: '2rem', maxHeight: '200px', marginBottom:'2rem', color: 'white' }}>
                                                                                 {group?.product_categories && group?.product_categories.map((category, idx) => {
                                                                                     return <>
                                                                                         {category.category_name == 'WATCH' && (
@@ -877,7 +877,7 @@ const Header = () => {
                                                                                     background: 'transparent',
                                                                                     borderRadius: '0',
                                                                                     fontFamily:'Playfair Display',
-                                                                                    color: `${langChipSelected == 0 ? themeMode == 'dark' ? 'white' : 'black' : '#999999'}`,
+                                                                                    color: `${langChipSelected == 0 ? 'white' : '#DDDDDD'}`,
                                                                                     '&:hover': {
                                                                                         textDecoration: 'underline',
                                                                                         background: 'transparent',
@@ -894,7 +894,7 @@ const Header = () => {
                                                                                     background: 'transparent',
                                                                                     borderRadius: '0',
                                                                                     fontFamily:'Noto Sans KR',
-                                                                                    color: `${langChipSelected == 1 ? themeMode == 'dark' ? 'white' : 'black' : '#999999'}`,
+                                                                                    color: `${langChipSelected == 1 ? 'white' : '#DDDDDD'}`,
                                                                                     '&:hover': {
                                                                                         textDecoration: 'underline',
                                                                                         background: 'transparent',
@@ -914,7 +914,7 @@ const Header = () => {
                                                                                                         margin: '0.5rem 0rem 0.5rem 0',
                                                                                                         fontSize: '16px',
                                                                                                         cursor: 'pointer',
-                                                                                                        color: `${textChipSelected == alphabet ? themeMode == 'dark' ? 'white' : 'black' : '#999999'}`,
+                                                                                                        color: 'white',
                                                                                                         background: 'transparent',
                                                                                                         fontFamily:'Playfair Display',
                                                                                                         '&:hover': {
@@ -922,7 +922,7 @@ const Header = () => {
                                                                                                             //background: `${textChipSelected == alphabet ? 'black' : ''}`,
                                                                                                         },
                                                                                                         borderRadius: '0',
-                                                                                                        borderBottom: `${textChipSelected == alphabet ? '2px solid black' : ''}`
+                                                                                                        borderBottom: `${textChipSelected == alphabet ? '2px solid white' : ''}`
                                                                                                     }}
                                                                                                     onClick={() => { setTextChipSelected(alphabet); }}
                                                                                                 />
@@ -940,7 +940,7 @@ const Header = () => {
                                                                                                         margin: '0.5rem 0rem 0.5rem 0',
                                                                                                         fontSize: '16px',
                                                                                                         cursor: 'pointer',
-                                                                                                        color: `${textChipSelected == hangeul ? themeMode == 'dark' ? 'white' : 'black' : '#999999'}`,
+                                                                                                        color: 'white',
                                                                                                         background: 'transparent',
                                                                                                         fontFamily:'Noto Sans KR',
                                                                                                         '&:hover': {
@@ -948,7 +948,7 @@ const Header = () => {
                                                                                                             //background: `${textChipSelected == hangeul ? 'black' : ''}`,
                                                                                                         },
                                                                                                         borderRadius: '0',
-                                                                                                        borderBottom: `${textChipSelected == hangeul ? '2px solid black' : ''}`
+                                                                                                        borderBottom: `${textChipSelected == hangeul ? '2px solid white' : ''}`
                                                                                                     }}
                                                                                                     onClick={() => { setTextChipSelected(hangeul); }}
                                                                                                 />
@@ -1088,7 +1088,14 @@ const Header = () => {
 
                             </CategoryContainer>
                         </div>
-                        <div style={{ width: '100%', borderTop: `1px solid ${theme.palette.grey[300]}`, backgroundColor:`${themeMode != 'dark' ? '#FEF8F4' : ''}`, fontFamily:'Playfair Display' }}>
+                        <div 
+                        style={{ 
+                            width: '100%', 
+                            borderTop: `1px solid ${theme.palette.grey[300]}`, 
+                            backgroundColor:`${themeMode != 'dark' ? '#FF5B0D' : ''}`, 
+                            color: 'white', 
+                            fontFamily:'Playfair Display' 
+                            }}>
                             <CategoryContainer>
                                 <NoneShowMobile>
                                     <Row style={{margin:'0 1rem'}}>

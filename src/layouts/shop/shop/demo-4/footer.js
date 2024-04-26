@@ -77,20 +77,20 @@ const Footer = (props) => {
         <>
             <div style={{ marginTop: '2rem' }} />
             <Wrapper style={{ fontFamily: 'Noto Sans KR' }}>
-                <ContentWrapper style={{ backgroundColor: `${themeMode != 'dark' ? '#FEF8F4' : ''}`, }}>
+                <ContentWrapper style={{ backgroundColor: `${themeMode != 'dark' ? '#FF5B0D' : ''}`, }}>
                     <MainContent style={{ display: 'flex', flexDirection: 'row', marginTop: '50px', justifyContent: 'space-between' }}>
                         <div>
-                            <Row style={{ fontWeight: 'bold', fontSize: '16px', color: '#5F5F5F', fontFamily: 'Playfair Display', }}>
+                            <Row style={{ fontWeight: 'bold', fontSize: '16px', color: 'white', fontFamily: 'Playfair Display', }}>
                                 OUR SERVICE
                             </Row>
                             <br /><br />
                             <Row
-                                style={{ marginBottom: '0.7rem', cursor: 'pointer' }}
+                                style={{ marginBottom: '0.7rem', color: 'white', cursor: 'pointer' }}
                             >
                                 온라인 판매
                             </Row>
                             <Row
-                                style={{ marginBottom: '0.7rem', cursor: 'pointer' }}
+                                style={{ marginBottom: '0.7rem', color: 'white', cursor: 'pointer' }}
                                 onClick={() => {
                                     router.push('/shop/guide/brand-about')
                                 }}
@@ -98,7 +98,7 @@ const Footer = (props) => {
                                 오프라인
                             </Row>
                             <Row
-                                style={{ marginBottom: '0.7rem', cursor: 'pointer' }}
+                                style={{ marginBottom: '0.7rem', color: 'white', cursor: 'pointer' }}
                                 onClick={() => {
                                     router.push('/shop/guide/purchase-guide')
                                 }}
@@ -106,7 +106,7 @@ const Footer = (props) => {
                                 매입센터
                             </Row>
                             <Row
-                                style={{ cursor: 'pointer' }}
+                                style={{ color: 'white', cursor: 'pointer' }}
                                 onClick={() => {
                                     router.push('/shop/guide/purchase-guide')
                                 }}
@@ -138,12 +138,12 @@ const Footer = (props) => {
                             </Row>
                         </div>*/}
                         <div>
-                            <Row style={{ fontWeight: 'bold', fontSize: '16px', color: '#5F5F5F', fontFamily: 'Playfair Display', }}>
+                            <Row style={{ fontWeight: 'bold', fontSize: '16px', color: 'white', fontFamily: 'Playfair Display', }}>
                                 HELP
                             </Row>
                             <br /><br />
                             <Row
-                                style={{ marginBottom: '0.7rem', cursor: 'pointer' }}
+                                style={{ marginBottom: '0.7rem', color: 'white', cursor: 'pointer' }}
                                 onClick={() => {
                                     router.push('/shop/service/47')
                                 }}
@@ -151,7 +151,7 @@ const Footer = (props) => {
                                 공지사항
                             </Row>
                             <Row
-                                style={{ marginBottom: '0.7rem', cursor: 'pointer' }}
+                                style={{ marginBottom: '0.7rem', color: 'white', cursor: 'pointer' }}
                                 onClick={() => {
                                     if (user) {
                                         onLogout()
@@ -163,14 +163,14 @@ const Footer = (props) => {
                                 {user ? '로그아웃' : '로그인'}
                             </Row>
                             <Row
-                                style={{ marginBottom: '0.7rem', cursor: 'pointer' }}
+                                style={{ marginBottom: '0.7rem', color: 'white', cursor: 'pointer' }}
                                 onClick={() => {
                                     router.push('/shop/auth/login/?scroll_to=700')
                                 }}
                             >
                                 비회원주문조회
                             </Row>
-                            <Row style={{ cursor: 'pointer' }}
+                            <Row style={{ color: 'white', cursor: 'pointer' }}
                                 onClick={() => {
                                     router.push('/shop/service/46')
                                 }}
@@ -179,23 +179,23 @@ const Footer = (props) => {
                             </Row>
                         </div>
                         <div>
-                            <Row style={{ fontWeight: 'bold', fontSize: '16px', color: '#5F5F5F', fontFamily: 'Playfair Display', }}>
+                            <Row style={{ fontWeight: 'bold', fontSize: '16px', color: 'white', fontFamily: 'Playfair Display', }}>
                                 C.S CENTER
                             </Row>
                             <br /><br />
-                            <Row style={{ fontWeight: 'bold', fontSize: '18px', color: '#5F5F5F' }}>
+                            <Row style={{ fontWeight: 'bold', fontSize: '18px', color: 'white' }}>
                                 02-517-2950
                             </Row>
-                            <Row style={{ fontWeight: 'bold', fontSize: '18px', color: '#5F5F5F', marginBottom: '0.5rem' }}>
+                            <Row style={{ fontWeight: 'bold', fontSize: '18px', color: 'white', marginBottom: '0.5rem' }}>
                                 02-517-8950
                             </Row>
-                            <Row>
+                            <Row style={{color: 'white',}}>
                                 월-금 AM 10:30 ~ PM 7:30
                             </Row>
-                            <Row>
+                            <Row style={{color: 'white',}}>
                                 토요일 AM 10:30 ~ PM 6:00
                             </Row>
-                            <Row>
+                            <Row style={{color: 'white',}}>
                                 일요일, 공휴일 휴무
                             </Row>
                         </div>

@@ -88,7 +88,7 @@ const ItemDemo = (props) => {
   useEffect(() => {
     getItemInfo(1);
     //console.log(themePropertyList)
-    console.log(product)
+    //console.log(product)
   }, [])
 
   const getItemInfo = async (review_page) => {
@@ -253,20 +253,20 @@ const ItemDemo = (props) => {
                             <div style={{ margin: '1rem 0 3rem 0' }}>
                               {`${property_list.join(', ')}` == '압구정, 인스파이어' ?
                                 <div style={{ fontSize: '14px' }}>
-                                  <Icon icon={'mdi:location'} style={{ color: '#EC1C24' }} /> 압구정 그랑파리<br />
-                                  <Icon icon={'mdi:location'} style={{ color: '#EC1C24' }} /> 인스파이어 럭셔리에디션
+                                  <Icon icon={'mdi:location'} style={{ color: '#FF5B0D' }} /> 압구정 그랑파리<br />
+                                  <Icon icon={'mdi:location'} style={{ color: '#FF5B0D' }} /> 인스파이어 럭셔리에디션
                                 </div>
                                 :
                                 `${property_list.join(', ')}` == '압구정' ?
                                   <div style={{ fontSize: '14px', color: '#999999' }}>
-                                    <Row style={{ color: 'black' }}><Icon icon={'mdi:location'} style={{ color: '#EC1C24' }} /> &nbsp;압구정 그랑파리</Row>
+                                    <Row style={{ color: 'black' }}><Icon icon={'mdi:location'} style={{ color: '#FF5B0D' }} /> &nbsp;압구정 그랑파리</Row>
                                     <Icon icon={'mdi:location'} /> 인스파이어 럭셔리에디션
                                   </div>
                                   :
                                   `${property_list.join(', ')}` == '인스파이어' ?
                                     <div style={{ fontSize: '14px', color: '#999999' }}>
                                       <Icon icon={'mdi:location'} /> 압구정 그랑파리
-                                      <Row style={{ color: 'black' }}><Icon icon={'mdi:location'} style={{ color: '#EC1C24' }} /> &nbsp;인스파이어 럭셔리에디션</Row>
+                                      <Row style={{ color: 'black' }}><Icon icon={'mdi:location'} style={{ color: '#FF5B0D' }} /> &nbsp;인스파이어 럭셔리에디션</Row>
                                     </div>
                                     :
                                     <div style={{ fontSize: '14px', color: '#999999' }}>
@@ -333,7 +333,7 @@ const ItemDemo = (props) => {
                           style={{
                             width: '30px',
                             height: '30px',
-                            color: '#EC1C24',
+                            color: '#FF5B0D',
                             cursor: 'pointer',
                             margin: '0 1rem'
                           }}

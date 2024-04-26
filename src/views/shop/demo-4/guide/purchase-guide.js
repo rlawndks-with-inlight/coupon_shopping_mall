@@ -56,7 +56,7 @@ const Title = styled.div`
   margin-top: 5rem;
   font-family: 'Playfair Display';
   font-size: 90px;
-  color: #ec1c24;
+  color: #FF5B0D;
   border-bottom: 1px solid lightgray;
   display:flex;
   @media (max-width: 1000px) {
@@ -114,7 +114,7 @@ const Underline = styled.div`
 const BrandText = styled.div`
   font-size: 40px;
   span {
-    color: #ec1c24;
+    color: #FF5B0D;
   }
 `;
 
@@ -124,7 +124,7 @@ const Description = styled.div`
 
 const RedDesc = styled.div`
 font-size: 22px;
-color:#EC1C24;
+color:#FF5B0D;
 font-weight: bold;
 `
 
@@ -262,7 +262,7 @@ const PurchaseGuide = () => {
                     {
                         tab == 'purchase' ?
                             <>
-                                <img src="/grandparis/purchase_banner2.png" />
+                                <img src="/grandparis/purchase_banner_4.png" />
                                 <ContentSection>
                                     <SinceText>매입센터</SinceText>
                                     <br />
@@ -323,7 +323,7 @@ const PurchaseGuide = () => {
                             </>
                             :
                             <>
-                                <img src="/grandparis/purchase_banner3.png" />
+                                <img src="/grandparis/purchase_banner_5.png" />
                                 <ContentSection>
                                     <SinceText>위탁판매</SinceText>
                                     <br />
@@ -362,7 +362,7 @@ const PurchaseGuide = () => {
                                     </Description>
                                     <br />
                                     <Description>
-                                        <Description style={{ paddingLeft: '25px', color: '#EC1C24', borderLeft: '2px solid #999999' }}>
+                                        <Description style={{ paddingLeft: '25px', color: '#FF5B0D', borderLeft: '2px solid #999999' }}>
                                             그랑파리 기준 B등급 이하의 상태로 오염 및 얼룩이 있거나 수선한 제품은<br />
                                             위탁이 불가하며, 브랜드와 디자인을 선별하여 위탁이 진행됩니다.
                                         </Description>
@@ -405,7 +405,7 @@ const PurchaseGuide = () => {
                 </ContentRow>
                 <ContentRow style={{ margin: '10rem auto' }}>
                     <img
-                        src={tab == 'purchase' ? "/grandparis/infograph.png" : "/grandparis/infograph2.png"}
+                        src={tab == 'purchase' ? "/grandparis/infograph_3.png" : "/grandparis/infograph_4.png"}
                     />
                 </ContentRow>
             </Wrappers>
@@ -418,7 +418,7 @@ const PurchaseGuide = () => {
                         <br />
                         <span style={{fontSize:'44px'}}>위탁수수료</span>
                     </Row>
-                    <img src='/grandparis/consignment_pay.png' />
+                    <img src='/grandparis/consignment_pay_2.png' />
                     </Row>
                 </Col>
                 <Row style={{maxWidth:'1400px', margin:'0 auto'}}>

@@ -28,7 +28,7 @@ align-items: center;
 white-space: nowrap;
 width:fit-content;
 cursor:pointer;
-font-size:150%;
+font-size:170%;
 @media screen and (max-width:650px) {
     font-size:130%;
 }

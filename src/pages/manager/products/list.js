@@ -486,7 +486,7 @@ const ProductList = () => {
               </div>
             </>
           ))}
-          {detailSearchOpen && 
+          {detailSearchOpen && themeDnsData.id == 5 &&
           <>
           <div style={{ marginLeft: '1rem', marginBottom: '0.25rem', marginTop: '0.25rem' }}>
                 <Typography variant="subtitle2" sx={{ color: 'text.secondary' }}>

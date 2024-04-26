@@ -721,10 +721,10 @@ const ProductEdit = () => {
                                     control={
                                       <Checkbox
                                         checked={
-                                          group?.brand_id == 5 && property?.property_name == 'NEW UP-DATE' && router.query?.edit_category == 'add'
+                                          /*group?.brand_id == 5 && property?.property_name == 'NEW UP-DATE' && router.query?.edit_category == 'add'
                                             ?
                                             defaultCorner
-                                            :
+                                            :*/
                                             item.properties[`${group?.id}`] && (item.properties[`${group?.id}`] ?? [])?.includes(property?.id)}
                                       />}
                                     onChange={(e) => {

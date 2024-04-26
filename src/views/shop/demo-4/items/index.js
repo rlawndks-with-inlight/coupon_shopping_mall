@@ -200,7 +200,7 @@ const ItemsDemo = (props) => {
 
         {router.query?.property_ids0 &&
           <>
-            <Title style={{ marginTop: '100px', fontFamily: 'Playfair Display', color: '#5F5F5F', fontWeight: 'normal', fontSize: '90px', marginLeft: '0' }}>
+            <Title style={{ marginTop: '100px', fontFamily: 'Playfair Display', color: '#000', fontWeight: 'normal', fontSize: '90px', marginLeft: '0' }}>
               {themePropertyList.map((group) => {
                 let properties = group?.product_properties;
                 if (_.find(properties, { id: parseInt(router.query?.property_ids0) })) {
@@ -213,7 +213,7 @@ const ItemsDemo = (props) => {
           </>}
         {router.query?.category_id0 ?
           <>
-            <Title style={{ marginTop: '100px', fontFamily: 'Playfair Display', color: '#5F5F5F', fontWeight: 'normal', fontSize: '90px', marginLeft: '0' }}>
+            <Title style={{ marginTop: '100px', fontFamily: 'Playfair Display', color: '#000', fontWeight: 'normal', fontSize: '90px', marginLeft: '0' }}>
               {themeCategoryList.map((group, index) => {
                 let categories = group?.product_categories;
                 if (_.find(categories, { id: parseInt(router.query?.category_id0) })) {
@@ -227,7 +227,7 @@ const ItemsDemo = (props) => {
           :
           router.query?.category_id1 ?
             <>
-              <Title style={{ marginTop: '100px', fontFamily: 'Playfair Display', color: '#5F5F5F', fontWeight: 'normal', fontSize: '90px', marginLeft: '0' }}>
+              <Title style={{ marginTop: '100px', fontFamily: 'Playfair Display', color: '#000', fontWeight: 'normal', fontSize: '90px', marginLeft: '0' }}>
                 {themeCategoryList.map((group, index) => {
                   let categories = group?.product_categories;
                   if (_.find(categories, { id: parseInt(router.query?.category_id1) })) {
@@ -346,7 +346,7 @@ const ItemsDemo = (props) => {
             />
             <Row style={{ justifyContent: 'space-between', minHeight: '50px', direction: 'rtl' }}>
               <img
-                src={filterOpen ? '/grandparis/dropdown_2.png' : '/grandparis/dropdown_1.png'}
+                src={filterOpen ? '/grandparis/dropdown_02.png' : '/grandparis/dropdown_01.png'}
                 style={{
                   maxHeight: '40px',
                   margin: 'auto 0',

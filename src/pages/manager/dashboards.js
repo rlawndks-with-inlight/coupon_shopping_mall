@@ -2,6 +2,7 @@ import { useRouter } from "next/router";
 import { useSettingsContext } from "src/components/settings";
 
 import ManagerLayout from "src/layouts/manager/ManagerLayout";
+import DashboardDemo2 from "src/views/manager/dashboards/demo-2";
 import DashboardDemo4 from "src/views/manager/dashboards/demo-4";
 import DashboardBlog4 from "src/views/manager/dashboards/blog-1";
 
@@ -9,7 +10,7 @@ const getDemo = (num, common) => {
   if (num == 1)
     return
   else if (num == 2)
-    return
+    return <DashboardDemo2 {...common} />
   else if (num == 3)
     return
   else if (num == 4)

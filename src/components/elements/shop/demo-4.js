@@ -87,7 +87,7 @@ export const Item4 = (props) => {
   const [itemThemeCss, setItemThemeCss] = useState(itemThemeCssDefaultSetting);
 
   useEffect(() => {
-    console.log(item)
+    //console.log(item)
   }, [])
 
   const itemStatusList = [
@@ -114,7 +114,7 @@ export const Item4 = (props) => {
         <ItemImg src={item?.product_img} style={{ height: '70%' }} />
       </ItemImgContainer>
       <div style={{ color: '#999999', fontWeight: 'bold', fontSize: '11px', width: '90%', margin: '0 auto' }}>
-        {item?.product_name.split(" ")[0]}
+        {(item?.category_name1??"").toUpperCase()}
       </div>
       <ItemName>
         {item?.product_name.length < 30 ? item.product_name : `${item.product_name.slice(0, 30)}...`}

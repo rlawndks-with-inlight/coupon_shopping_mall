@@ -95,7 +95,7 @@ const ItemsDemo = (props) => {
 
   useEffect(() => {
     setFilterOpen(false)
-    console.log(themeCategoryList)
+    //console.log(themeCategoryList)
   }, [router.query])
 
   /*const handleScroll = () => {

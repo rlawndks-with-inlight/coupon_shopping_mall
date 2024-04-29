@@ -236,7 +236,7 @@ export const HistoryTable = props => {
                     <TableCell>{row.ord_num}</TableCell>
                     <TableCell>{fCurrency(row.amount)}원</TableCell>
                     <TableCell>{row?.buyer_name}</TableCell>
-                    <TableCell>{getTrxStatusByNumber(row?.trx_status)}</TableCell>
+                    <TableCell>{fCurrency(row.amount) < 0 ? '결제취소' : getTrxStatusByNumber(row?.trx_status)}</TableCell>
                     <TableCell>
                       <Box sx={{ textAlign: 'right', color: 'text.secondary' }}>{row?.updated_at}</Box>
                     </TableCell>

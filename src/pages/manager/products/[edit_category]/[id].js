@@ -152,63 +152,63 @@ const ProductEdit = () => {
       id: 'user_name',
       label: '유저아이디',
       action: (row) => {
-        return <div 
-        style={{textDecoration:'underline', cursor:'pointer'}}
-        onClick={() => {
-          setItem({
-            ...item,
-            ['consignment_user_name']: row['user_name'],
-            ['consignment_name']: row['name'],
-            ['consignment_user_phone_num']: row['phone_num'],
-            ['product_type']: 1 
-          })
-          setDialogOpen(false)
-        }}
+        return <div
+          style={{ textDecoration: 'underline', cursor: 'pointer' }}
+          onClick={() => {
+            setItem({
+              ...item,
+              ['consignment_user_name']: row['user_name'],
+              ['consignment_name']: row['name'],
+              ['consignment_user_phone_num']: row['phone_num'],
+              ['product_type']: 1
+            })
+            setDialogOpen(false)
+          }}
         >
           {row['user_name']}
-          </div> ?? "---"
+        </div> ?? "---"
       }
     },
     {
       id: 'name',
       label: '이름',
       action: (row) => {
-        return <div 
-        style={{textDecoration:'underline', cursor:'pointer'}}
-        onClick={() => {
-          setItem({
-            ...item,
-            ['consignment_user_name']: row['user_name'],
-            ['consignment_name']: row['name'],
-            ['consignment_user_phone_num']: row['phone_num'],
-            ['product_type']: 1 
-          })
-          setDialogOpen(false)
-        }}
+        return <div
+          style={{ textDecoration: 'underline', cursor: 'pointer' }}
+          onClick={() => {
+            setItem({
+              ...item,
+              ['consignment_user_name']: row['user_name'],
+              ['consignment_name']: row['name'],
+              ['consignment_user_phone_num']: row['phone_num'],
+              ['product_type']: 1
+            })
+            setDialogOpen(false)
+          }}
         >
           {row['name']}
-          </div> ?? "---"
+        </div> ?? "---"
       }
     },
     {
       id: 'phone_num',
       label: '휴대폰번호',
       action: (row) => {
-        return <div 
-        style={{textDecoration:'underline', cursor:'pointer'}}
-        onClick={() => {
-          setItem({
-            ...item,
-            ['consignment_user_name']: row['user_name'],
-            ['consignment_name']: row['name'],
-            ['consignment_user_phone_num']: row['phone_num'],
-            ['product_type']: 1 
-          })
-          setDialogOpen(false)
-        }}
+        return <div
+          style={{ textDecoration: 'underline', cursor: 'pointer' }}
+          onClick={() => {
+            setItem({
+              ...item,
+              ['consignment_user_name']: row['user_name'],
+              ['consignment_name']: row['name'],
+              ['consignment_user_phone_num']: row['phone_num'],
+              ['product_type']: 1
+            })
+            setDialogOpen(false)
+          }}
         >
           {row['phone_num']}
-          </div> ?? "---"
+        </div> ?? "---"
       }
     },
   ]
@@ -291,6 +291,20 @@ const ProductEdit = () => {
   ]
   const router = useRouter();
 
+  const defaultItemCharacter = [
+    {
+      name: '성별',
+    },
+    {
+      name: '사이즈',
+    },
+    {
+      name: '색상',
+    }
+  ]
+
+  const [price, setPrice] = useState('')
+  const [salePrice, setSalePrice] = useState('')
   const [loading, setLoading] = useState(true);
   const [currentTab, setCurrentTab] = useState(0);
   const [curCategories, setCurCategories] = useState({});
@@ -367,7 +381,7 @@ const ProductEdit = () => {
 
   useEffect(() => {
     if (dialogOpen) {
-      onChangeUserPage({...userSearchObj, page: 1})
+      onChangeUserPage({ ...userSearchObj, page: 1 })
     }
   }, [dialogOpen])
   const onChangeUserPage = async (obj) => {
@@ -404,6 +418,8 @@ const ProductEdit = () => {
       }
       product.properties = property_obj;
       setItem(product)
+      setPrice(product?.product_price.toLocaleString('ko-KR'))
+      setSalePrice(product?.product_sale_price.toLocaleString('ko-KR'))
       let cur_categories = {};
       let category_children_list = {};
       for (var i = 0; i < themeCategoryList.length; i++) {
@@ -707,6 +723,50 @@ const ProductEdit = () => {
                           </Stack>
                         </>
                       ))}
+                      {
+                        themeDnsData.id == 5 &&
+                        <>
+                          <Stack spacing={1}>
+                            <Typography variant="subtitle2" sx={{ color: 'text.secondary' }}>
+                              상품특성
+                            </Typography>
+
+                            {defaultItemCharacter.map((character, index) => (
+                              <>
+                                <Row style={{ columnGap: '0.5rem' }}>
+                                  <FormControl variant="outlined" sx={{ flexGrow: 1 }}>
+                                    <InputLabel>{character.name}</InputLabel>
+                                    <OutlinedInput
+                                      label={character.name}
+                                      value={item?.characters[index]?.character_value ?? ''}
+                                      onChange={(e) => {
+                                        let character_list = [...item.characters];
+                                        if (character_list.length == 0) {
+                                          defaultItemCharacter.map((character) => {
+                                            character_list.push({
+                                              character_name: character.name,
+                                              character_value: '',
+                                            })
+                                          })
+                                        } else {
+                                          let character_list = item?.characters;
+                                          character_list[index].character_value = e.target.value;
+                                        }
+                                        console.log(character_list)
+                                        setItem(
+                                          {
+                                            ...item,
+                                            ['characters']: character_list
+                                          }
+                                        )
+                                      }} />
+                                  </FormControl>
+                                </Row>
+                              </>
+                            ))}
+                          </Stack>
+                        </>
+                      }
                       {themePropertyList.map((group, index) => (
                         <>
                           <Stack spacing={1}>
@@ -725,7 +785,7 @@ const ProductEdit = () => {
                                             ?
                                             defaultCorner
                                             :*/
-                                            item.properties[`${group?.id}`] && (item.properties[`${group?.id}`] ?? [])?.includes(property?.id)}
+                                          item.properties[`${group?.id}`] && (item.properties[`${group?.id}`] ?? [])?.includes(property?.id)}
                                       />}
                                     onChange={(e) => {
                                       let property_obj = { ...item.properties };
@@ -973,32 +1033,38 @@ const ProductEdit = () => {
                         <InputLabel>상품가</InputLabel>
                         <OutlinedInput
                           label='상품가'
-                          type="number"
-                          value={item.product_price}
+                          type="text"
+                          value={price}
                           endAdornment={<InputAdornment position="end">원</InputAdornment>}
                           onChange={(e) => {
+                            let value = parseInt(e.target.value.replace(/,/g, ''))
+                            console.log(value)
                             setItem(
                               {
                                 ...item,
-                                ['product_price']: e.target.value
+                                ['product_price']: value
                               }
                             )
+                            setPrice(value.toLocaleString('ko-KR'))
+                            console.log(price)
                           }} />
                       </FormControl>
                       <FormControl variant="outlined">
                         <InputLabel>상품 할인가</InputLabel>
                         <OutlinedInput
                           label='상품 할인가'
-                          type="number"
-                          value={item.product_sale_price}
+                          type="text"
+                          value={salePrice}
                           endAdornment={<InputAdornment position="end">원</InputAdornment>}
                           onChange={(e) => {
+                            let value = parseInt(e.target.value)
                             setItem(
                               {
                                 ...item,
-                                ['product_sale_price']: e.target.value
+                                ['product_sale_price']: value
                               }
                             )
+                            setSalePrice(value.toLocaleString('ko-KR'))
                           }} />
                       </FormControl>
                       {/*<FormControl variant="outlined">

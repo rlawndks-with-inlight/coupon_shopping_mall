@@ -739,7 +739,7 @@ const ProductEdit = () => {
                                     <OutlinedInput
                                       label={character.name}
                                       value={item?.characters[index]?.character_value ?? ''}
-                                      onChange={(e) => {
+                                      onClick={() => {
                                         let character_list = [...item.characters];
                                         if (character_list.length == 0) {
                                           defaultItemCharacter.map((character) => {
@@ -748,11 +748,17 @@ const ProductEdit = () => {
                                               character_value: '',
                                             })
                                           })
-                                        } else {
-                                          let character_list = item?.characters;
-                                          character_list[index].character_value = e.target.value;
+                                          setItem(
+                                            {
+                                              ...item,
+                                              ['characters']: character_list
+                                            }
+                                          )
                                         }
-                                        console.log(character_list)
+                                      }}
+                                      onChange={(e) => {
+                                        let character_list = item?.characters;
+                                        character_list[index].character_value = e.target.value;
                                         setItem(
                                           {
                                             ...item,

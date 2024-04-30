@@ -19,6 +19,10 @@ justify-content: space-between;
 const Row = styled.div`
 display:flex;
 `
+const Col = styled.div`
+display:flex;
+flex-direction: column;
+`
 const Bold = styled.div`
 font-weight:bold;
 margin-right:0.5rem;
@@ -189,46 +193,22 @@ const Footer = (props) => {
                             <Row style={{ fontWeight: 'bold', fontSize: '18px', color: 'white', marginBottom: '0.5rem' }}>
                                 02-517-8950
                             </Row>
-                            <Row style={{color: 'white',}}>
+                            <Row style={{ color: 'white', }}>
                                 월-금 AM 10:30 ~ PM 7:30
                             </Row>
-                            <Row style={{color: 'white',}}>
+                            <Row style={{ color: 'white', }}>
                                 토요일 AM 10:30 ~ PM 6:00
                             </Row>
-                            <Row style={{color: 'white',}}>
+                            <Row style={{ color: 'white', }}>
                                 일요일, 공휴일 휴무
                             </Row>
                         </div>
                     </MainContent>
                 </ContentWrapper>
-                <ContentWrapper style={{ display: 'flex', flexDirection: 'column' }}>
+                <ContentWrapper style={{ display: 'flex', maxWidth: '1400px' }}>
                     <MainContent style={{ marginTop: '50px' }}>
                         <Row style={{ position: 'relative' }}>
                             <MarginRight style={{ fontWeight: 'bold', fontSize: '16px' }}>{company_name}</MarginRight>
-                            <Row style={{ position: 'absolute', right: '0' }}>
-                                <MarginRight style={{ cursor: 'pointer' }} onClick={() => { router.push('/shop/auth/policy?type=0') }}>Terms</MarginRight>
-                                <MarginRight style={{ cursor: 'pointer' }} onClick={() => { router.push('/shop/auth/policy?type=1') }}>| Privacy Policy</MarginRight>
-                                <Row style={{ marginLeft: '1rem' }}>
-                                    <img
-                                        src='/grandparis/instagram.png'
-                                        style={{ marginRight: '0.5rem', cursor: 'pointer' }}
-                                        onClick={() => {
-                                            window.open('https://www.instagram.com/grandparis__/')
-                                        }}
-                                    />
-                                    <img
-                                        src='/grandparis/kakaotalk.png'
-                                        style={{ marginRight: '0.5rem', cursor: 'pointer' }}
-                                    />
-                                    <img
-                                        src='/grandparis/band.png'
-                                        style={{ marginRight: '0.5rem', cursor: 'pointer' }}
-                                        onClick={() => {
-                                            window.open('https://blog.naver.com/grandparis88')
-                                        }}
-                                    />
-                                </Row>
-                            </Row>
                         </Row>
                         <Row>
                             {addr?.length > 1 &&
@@ -239,34 +219,22 @@ const Footer = (props) => {
 
                                 </>
                             }
+                        </Row>
+                        <Row>
                             {phone_num?.length > 1 &&
                                 <>
                                     <div style={{ display: 'flex' }}>
-                                        <MarginRight>| TEL : {phone_num}</MarginRight>
+                                        <MarginRight>TEL : {phone_num}</MarginRight>
                                     </div>
 
                                 </>
                             }
                         </Row>
                         <Row>
-                            <div style={{ display: 'flex', flexDirection: 'column' }}>
-                                <MarginRight>[인스파이어 럭셔리에디션] 인천시 중구 공항문화로 127 (중구 용유로 542) 3층 R03, R04</MarginRight>
-                            </div>
-                            <div style={{ display: 'flex' }}>
-                                <MarginRight>| TEL : 032-215-8887, 032-215-8889</MarginRight>
-                            </div>
-                        </Row>
-                        <br />
-                        <Row>
                             {ceo_name?.length > 1 &&
                                 <>
                                     <MarginRight>대표 : {ceo_name}</MarginRight>
 
-                                </>
-                            }
-                            {pvcy_rep_name?.length > 1 &&
-                                <>
-                                    <MarginRight>| 개인정보 보호책임자 : {pvcy_rep_name}</MarginRight>
                                 </>
                             }
                         </Row>
@@ -276,15 +244,25 @@ const Footer = (props) => {
                                     <MarginRight>사업자등록번호 : {business_num}</MarginRight>
                                 </>
                             }
-                            {fax_num?.length > 1 &&
+                        </Row>
+                        <Row>
+                            {pvcy_rep_name?.length > 1 &&
                                 <>
-                                    <MarginRight>| FAX : {fax_num}</MarginRight>
+                                    <MarginRight>개인정보 보호책임자 : {pvcy_rep_name}</MarginRight>
                                 </>
                             }
-
+                        </Row>
+                        <Row>
+                            {fax_num?.length > 1 &&
+                                <>
+                                    <MarginRight>FAX : {fax_num}</MarginRight>
+                                </>
+                            }
+                        </Row>
+                        <Row>
                             {mail_order_num?.length > 1 &&
                                 <>
-                                    <MarginRight>| 통신판매번호 : {mail_order_num}</MarginRight>
+                                    <MarginRight>통신판매번호 : {mail_order_num}</MarginRight>
                                 </>
                             }
                         </Row>
@@ -292,6 +270,56 @@ const Footer = (props) => {
                         <Row>
                             COPYRIGHT © GRANDPARIS ALL RIGHTS RESERVED.
                         </Row>
+                        <br />
+                        <Col>
+                            <Row>
+                                <MarginRight style={{ cursor: 'pointer' }} onClick={() => { router.push('/shop/auth/policy?type=0') }}>Terms</MarginRight>
+                                <MarginRight style={{ cursor: 'pointer' }} onClick={() => { router.push('/shop/auth/policy?type=1') }}>| Privacy Policy</MarginRight>
+                            </Row>
+                            <br />
+                            <Row >
+                                <img
+                                    src='/grandparis/instagram.png'
+                                    style={{ marginRight: '0.5rem', cursor: 'pointer' }}
+                                    onClick={() => {
+                                        window.open('https://www.instagram.com/grandparis__/')
+                                    }}
+                                />
+                                <img
+                                    src='/grandparis/kakaotalk.png'
+                                    style={{ marginRight: '0.5rem', cursor: 'pointer' }}
+                                />
+                                <img
+                                    src='/grandparis/band.png'
+                                    style={{ marginRight: '0.5rem', cursor: 'pointer' }}
+                                    onClick={() => {
+                                        window.open('https://blog.naver.com/grandparis88')
+                                    }}
+                                />
+                            </Row>
+                        </Col>
+                    </MainContent>
+                    <MainContent style={{ marginTop: '50px' }}>
+                        <Row style={{ position: 'relative' }}>
+                            <MarginRight style={{ fontWeight: 'bold', fontSize: '16px' }}>(주)럭셔리에디션</MarginRight>
+                        </Row>
+                        <Row>
+                            <div style={{ display: 'flex', flexDirection: 'column' }}>
+                                <MarginRight>인천시 중구 공항문화로 127 (중구 용유로 542) 3층 R03, R04</MarginRight>
+                            </div>
+                        </Row>
+                        <Row>
+                            <div style={{ display: 'flex' }}>
+                                <MarginRight>TEL : 032-215-8887, 032-215-8889</MarginRight>
+                            </div>
+                        </Row>
+                        <Row>
+                            <MarginRight>대표 : 최성일, 최윤영, 이동영</MarginRight>
+                        </Row>
+                        <Row>
+                            <MarginRight>사업자등록번호 : 592-87-02871</MarginRight>
+                        </Row>
+
                     </MainContent>
                 </ContentWrapper>
             </Wrapper>

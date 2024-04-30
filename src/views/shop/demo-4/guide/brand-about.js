@@ -118,29 +118,18 @@ const BrandAbout = () => {
             <br />
             <br />
             <Description>
-              저희 그랑파리는 2007년 이래 클래식한 명품 브랜드와 유행을 선도하는
-              인기 브랜드 아이템을
-              
-              중심으로 고객님들의 안목과 품격을 위해 노력하고 있습니다.
+              2007년부터 대한민국 명품의 중심지 압구정 로데오거리에서 한결같이 자리를 지키는 그랑파리는 에르메스와 샤넬, 루이뷔통 등 클래식한 명품을 전문으로 합니다.
               <br />
+              물론 유행을 선도하는 하이엔드 명품 브랜드에서 제공하는 가방, 시계, 액세서리, 의류, 잡화 및 명품 브랜드에서 제공하는 모든 아이템을 만나실 수 있습니다.
               <br />
-              압구정 로데오 거리를 중심으로 오프라인 매장을 운영하고 있으며
-              고객님들의 편리한 이용과
-              
-              정보 공유를 위해 온라인 쇼핑몰을 운영하고 있습니다.
-              <br />
-              <br />
-              온·오프라인에서 손쉽고 위탁 및 매입 판매 서비스를 기본으로 고객님의
-              기쁨과 행복을 위해,
-              
-              항상 정성과 믿음으로 서비스를 제공하는 그랑파리가 되겠습니다.
+              항상 변하지 않고 신뢰할 수 있는 모습으로 서비스를 제공합니다.
             </Description>
           </ContentSection>
           <img src="/grandparis/about_banner.png" />
         </ContentRow>
         <ContentRow style={{marginTop:'0'}}>
         <img src="/grandparis/luxury_edition_2.png" />
-          <ContentSection>
+          <ContentSection style={{marginRight:'1rem'}}>
             
             <br />
             <img src='/grandparis/new-luxury-edition2.png' style={{maxWidth:'227px', display:'inline-block'}} />
@@ -155,17 +144,19 @@ const BrandAbout = () => {
             <br />
             <br />
             <Description>
-             이제 영종도 인스파이어에서 모든 럭셔리 브랜드를 한 자리에서 만날 수 있습니다.
-              <br />
-              럭셔리 에디션에서 명품 브랜드의 제품 구매|판매|위탁|수리까지
-              <br />
-              non-stop service를 경험하세요.
+             새로운 경험과 감각, 환상적인 재미를 제공하는 인스파이어 리조트에 럭셔리 에디션이 함께합니다.
+             하이엔드 명품 브랜드 제품들을 판매하고 매입하는 럭셔리 에디션은, 에르메스, 샤넬, 파텍 필립, 로렉스, 리차드밀 등 모두가 사랑하는 브랜드를 가방, 시계, 소품들로 선보입니다.
+             인스파이어에서 만나는 다채로운 경험들에 럭셔리 에디션에서 멋진 아이템을 더한다면, 추억의 한 페이지가 완벽해질 것입니다.
+             인천 영종도 인스파이어 럭셔리에디션에서 모든 럭셔리 브랜드를 한 자리에서 만날 수 있습니다.
               <br />
               <br />
               <span style={{color:'#D9D9D9', fontFamily:'Playfair Display'}}>
                 Hermes, CHANEL, Louis Vuitton, Patek Philippe, Rolex, Audemars Piguet, IWC, etc
                 </span>
-                <br /><br /><br /><br /><br /><br />
+                <br /><br />
+                내가 아는 명품의 모든 것을 럭셔리 에디션에서 구매/판매/위탁/수리 non-stop service로 경험하세요.
+                2007년부터 꾸준히 함께해주시는 고객님들의 마음에 최상의 서비스로 보답하겠습니다.
+                <br /><br />
               <div
                 style={{ 
                   fontFamily: 'Playfair Display', 
@@ -259,7 +250,7 @@ const BrandAbout = () => {
             <FloorRow style={{ marginBottom: '2rem' }}>
               <img src="/grandparis/F4-1.png" style={{ marginRight: '1rem' }} />
               <img src="/grandparis/F2-3.png" style={{ marginRight: '1rem' }} />
-              <img src="/grandparis/F3-1.png" />
+              <img src="/grandparis/F4-3.png" />
             </FloorRow>
             <FloorRow style={{ marginBottom: '2rem' }}>
               <img src="/grandparis/F3-2.png" />

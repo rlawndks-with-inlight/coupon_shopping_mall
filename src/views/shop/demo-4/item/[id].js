@@ -36,6 +36,14 @@ margin: 1rem auto;
 const ItemName = muiStyle(Typography)`
 font-size:16px;
 `
+
+const StyledReactQuill = styled(ReactQuill)`
+.ql-editor {
+  font-size: 16px;
+  font-family: 'Noto Sans KR';
+}
+`
+
 const ItemCharacter = (props) => {
   const { key_name, value, type = 0 } = props;
   if (type == 0) {
@@ -119,7 +127,7 @@ const ItemDemo = (props) => {
       value: 'description',
       label: 'Detail',
       component: product?.product_description ?
-        <ReactQuill
+        <StyledReactQuill
           className='none-padding'
           value={`
     ${product?.product_description ?? ''}

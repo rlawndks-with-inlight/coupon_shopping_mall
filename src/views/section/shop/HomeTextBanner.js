@@ -6,7 +6,7 @@ import { useRouter } from 'next/router'
 
 const Wrappers = styled.div`
   width:90%;
-  max-width: ${props => props.type == 1 ? '1000px' : '1400px'};
+  max-width: ${props => props.type == 1 ? '1140px' : '1400px'};
   margin:0 auto;
   font-family: ${props => props.type == 1 ? 'Playfair Display' : ''};
   font-size: ${props => props.type == 1 ? '14px' : ''};

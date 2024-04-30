@@ -128,7 +128,7 @@ const LoginDemo = (props) => {
           height: '60px',
           marginTop: '1rem',
           borderRadius:'0',
-          backgroundColor:'black',
+          backgroundColor:'#FF5B0D',
           fontSize:'18px'
         }}
           onClick={onLogin}
@@ -144,7 +144,7 @@ const LoginDemo = (props) => {
         <Button variant="contained" style={{
           height: '60px',
           borderRadius:'0',
-          backgroundColor:'black',
+          backgroundColor:'#FF5B0D',
           fontSize:'18px'
         }}
           onClick={() => {router.push(`/shop/auth/sign-up`)}}
@@ -195,7 +195,7 @@ const LoginDemo = (props) => {
           marginTop: '1rem',
           width:'100%',
           borderRadius:'0',
-          backgroundColor:'black',
+          backgroundColor:'#FF5B0D',
           fontSize:'18px'
         }}
           onClick={() => {
@@ -214,7 +214,7 @@ const LoginDemo = (props) => {
         <Button variant="contained" style={{
           height: '60px',
           borderRadius:'0',
-          backgroundColor:'black',
+          backgroundColor:'#FF5B0D',
           fontSize:'18px',
           width:'100%'
         }}

@@ -418,7 +418,7 @@ const PurchaseGuide = () => {
                         <br />
                         <span style={{fontSize:'44px'}}>위탁수수료</span>
                     </Row>
-                    <img src='/grandparis/consignment_pay_2.png' />
+                    <img src='/grandparis/consignment_pay_3.png' />
                     </Row>
                 </Col>
                 <Row style={{maxWidth:'1400px', margin:'0 auto'}}>
@@ -580,7 +580,7 @@ const PurchaseGuide = () => {
             }
             <div style={{ marginTop: '3rem' }}>
                 <img
-                    src="/grandparis/about_banner2.png"
+                    src="/grandparis/about_banner4.png"
                     style={{ width: '1600px', margin: '0 auto', cursor: 'pointer' }}
                     onClick={() => {
                         router.push('/shop/guide/brand-about')

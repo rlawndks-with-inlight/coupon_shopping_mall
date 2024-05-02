@@ -723,56 +723,7 @@ const ProductEdit = () => {
                           </Stack>
                         </>
                       ))}
-                      {
-                        themeDnsData.id == 5 &&
-                        <>
-                          <Stack spacing={1}>
-                            <Typography variant="subtitle2" sx={{ color: 'text.secondary' }}>
-                              상품특성
-                            </Typography>
-
-                            {defaultItemCharacter.map((character, index) => (
-                              <>
-                                <Row style={{ columnGap: '0.5rem' }}>
-                                  <FormControl variant="outlined" sx={{ flexGrow: 1 }}>
-                                    <InputLabel>{character.name}</InputLabel>
-                                    <OutlinedInput
-                                      label={character.name}
-                                      value={item?.characters[index]?.character_value ?? ''}
-                                      onClick={() => {
-                                        let character_list = [...item.characters];
-                                        if (character_list.length == 0) {
-                                          defaultItemCharacter.map((character) => {
-                                            character_list.push({
-                                              character_name: character.name,
-                                              character_value: '',
-                                            })
-                                          })
-                                          setItem(
-                                            {
-                                              ...item,
-                                              ['characters']: character_list
-                                            }
-                                          )
-                                        }
-                                      }}
-                                      onChange={(e) => {
-                                        let character_list = item?.characters;
-                                        character_list[index].character_value = e.target.value;
-                                        setItem(
-                                          {
-                                            ...item,
-                                            ['characters']: character_list
-                                          }
-                                        )
-                                      }} />
-                                  </FormControl>
-                                </Row>
-                              </>
-                            ))}
-                          </Stack>
-                        </>
-                      }
+                      
                       {themePropertyList.map((group, index) => (
                         <>
                           <Stack spacing={1}>
@@ -1035,6 +986,56 @@ const ProductEdit = () => {
                             }} />
                         </>}
 
+                        {
+                        themeDnsData.id == 5 &&
+                        <>
+                          <Stack spacing={1}>
+                            <Typography variant="subtitle2" sx={{ color: 'text.secondary' }}>
+                              상품특성
+                            </Typography>
+
+                            {defaultItemCharacter.map((character, index) => (
+                              <>
+                                <Row style={{ columnGap: '0.5rem' }}>
+                                  <FormControl variant="outlined" sx={{ flexGrow: 1 }}>
+                                    <InputLabel>{character.name}</InputLabel>
+                                    <OutlinedInput
+                                      label={character.name}
+                                      value={item?.characters[index]?.character_value ?? ''}
+                                      onClick={() => {
+                                        let character_list = [...item.characters];
+                                        if (character_list.length == 0) {
+                                          defaultItemCharacter.map((character) => {
+                                            character_list.push({
+                                              character_name: character.name,
+                                              character_value: '',
+                                            })
+                                          })
+                                          setItem(
+                                            {
+                                              ...item,
+                                              ['characters']: character_list
+                                            }
+                                          )
+                                        }
+                                      }}
+                                      onChange={(e) => {
+                                        let character_list = item?.characters;
+                                        character_list[index].character_value = e.target.value;
+                                        setItem(
+                                          {
+                                            ...item,
+                                            ['characters']: character_list
+                                          }
+                                        )
+                                      }} />
+                                  </FormControl>
+                                </Row>
+                              </>
+                            ))}
+                          </Stack>
+                        </>
+                      }
                       <FormControl variant="outlined">
                         <InputLabel>상품가</InputLabel>
                         <OutlinedInput

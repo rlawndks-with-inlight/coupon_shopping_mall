@@ -1044,7 +1044,7 @@ const ProductEdit = () => {
                           endAdornment={<InputAdornment position="end">원</InputAdornment>}
                           onChange={(e) => {
                             let value = parseInt(e.target.value.replace(/,/g, ''))
-                            console.log(value)
+                            //console.log(value)
                             setItem(
                               {
                                 ...item,
@@ -1052,7 +1052,7 @@ const ProductEdit = () => {
                               }
                             )
                             setPrice(value.toLocaleString('ko-KR'))
-                            console.log(price)
+                            //console.log(price)
                           }} />
                       </FormControl>
                       <FormControl variant="outlined">
@@ -1063,7 +1063,7 @@ const ProductEdit = () => {
                           value={salePrice}
                           endAdornment={<InputAdornment position="end">원</InputAdornment>}
                           onChange={(e) => {
-                            let value = parseInt(e.target.value)
+                            let value = parseInt(e.target.value.replace(/,/g, ''))
                             setItem(
                               {
                                 ...item,

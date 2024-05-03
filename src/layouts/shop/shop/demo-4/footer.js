@@ -305,7 +305,7 @@ const Footer = (props) => {
                         </Row>
                         <Row>
                             <div style={{ display: 'flex', flexDirection: 'column' }}>
-                                <MarginRight>인천시 중구 공항문화로 127 (중구 용유로 542) 3층 R03, R04</MarginRight>
+                                <MarginRight>인천시 중구 공항문화로 127 (중구 용유로 542) 인스파이어리조트 3층 R03, R04</MarginRight>
                             </div>
                         </Row>
                         <Row>

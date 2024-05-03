@@ -775,11 +775,11 @@ const Header = () => {
                                                         setOpenAllCategory(group?.id)
                                                     }}>
                                                         {group?.category_group_name == '카테고리' ?
-                                                            <div style={{ fontFamily: 'Playfair Display', }}>All Category</div>
+                                                            <div style={{ fontFamily: 'Playfair Display', }}>ALL CATEGORY</div>
                                                             :
                                                             group?.category_group_name == '브랜드' ?
 
-                                                                <div style={{ fontFamily: 'Playfair Display' }}>Find Brand</div> : ''}
+                                                                <div style={{ fontFamily: 'Playfair Display' }}>FIND BRAND</div> : ''}
                                                     </CategoryMenu>
                                                     {openAllCategory == group?.id &&
                                                         <>
@@ -1033,19 +1033,19 @@ const Header = () => {
                                     //setOpenAllCategory(group?.id)
                                     router.push('/shop/items/?not_show_select_menu=1&property_ids0=22')
                                 }}>
-                                    <div style={{ fontFamily: 'Playfair Display', }}>Best</div>
+                                    <div style={{ fontFamily: 'Playfair Display', }}>BEST</div>
                                 </CategoryMenu>
                                 <CategoryMenu borderColor={themeDnsData?.theme_css?.main_color} onClick={() => {
                                     //setOpenAllCategory(group?.id)
                                     router.push('/shop/items/?not_show_select_menu=1&property_ids0=21')
                                 }}>
-                                    <div style={{ fontFamily: 'Playfair Display', }}>New in</div>
+                                    <div style={{ fontFamily: 'Playfair Display', }}>NEW IN</div>
                                 </CategoryMenu>
                                 <CategoryMenu borderColor={themeDnsData?.theme_css?.main_color} onClick={() => {
                                     //setOpenAllCategory(group?.id)
                                     router.push('/shop/items/?not_show_select_menu=1&property_ids0=20')
                                 }}>
-                                    <div style={{ fontFamily: 'Playfair Display', }}>Sale</div>
+                                    <div style={{ fontFamily: 'Playfair Display', }}>SALE</div>
                                 </CategoryMenu>
                                 <NoneShowMobile>
                                     <div style={{ position: 'absolute', right: '0' }}>
@@ -1097,9 +1097,9 @@ const Header = () => {
                             fontFamily:'Playfair Display' 
                             }}>
                             <CategoryContainer>
-                                <NoneShowMobile>
+                                <NoneShowMobile style={{fontSize:'98%'}}>
                                     <Row style={{margin:'0 1rem'}}>
-                                        Brand Pick |
+                                        BRAND PICK |
                                     </Row>
                                     <CategoryMenu
                                     onClick={() => {
@@ -1113,63 +1113,63 @@ const Header = () => {
                                         router.push(`/shop/items/?category_id1=501&depth=0`)
                                     }}
                                     >
-                                        Hermes
+                                        HERMES
                                     </CategoryMenu>
                                     <CategoryMenu
                                     onClick={() => {
                                         router.push(`/shop/items/?category_id1=506&depth=0`)
                                     }}
                                     >
-                                        Chanel
+                                        CHANEL
                                     </CategoryMenu>
                                     <CategoryMenu
                                     onClick={() => {
                                         router.push(`/shop/items/?category_id1=511&depth=0`)
                                     }}
                                     >
-                                        Louis Vuitton
+                                        LOUIS VUITTON
                                     </CategoryMenu>
                                     <CategoryMenu
                                     onClick={() => {
                                         router.push(`/shop/items/?category_id1=533&depth=0`)
                                     }}
                                     >
-                                        Rolex
+                                        ROLEX
                                     </CategoryMenu>
                                     <CategoryMenu
                                     onClick={() => {
                                         router.push(`/shop/items/?category_id1=516&depth=0`)
                                     }}
                                     >
-                                        Cartier
+                                        CARTIER
                                     </CategoryMenu>
                                     <CategoryMenu
                                     onClick={() => {
                                         router.push(`/shop/items/?category_id1=522&depth=0`)
                                     }}
                                     >
-                                        Van Cleef & Arpels
+                                        VAN CLEEF & ARPELS
                                     </CategoryMenu>
                                     <CategoryMenu
                                     onClick={() => {
                                         router.push(`/shop/items/?category_id1=527&depth=0`)
                                     }}
                                     >
-                                        Tiffany & Co.
+                                        TIFFANY & CO.
                                     </CategoryMenu>
                                     <CategoryMenu
                                     onClick={() => {
                                         router.push(`/shop/items/?category_id1=513&depth=0`)
                                     }}
                                     >
-                                        Goyard
+                                        GOYARD
                                     </CategoryMenu>
                                     <CategoryMenu
                                     onClick={() => {
                                         router.push(`/shop/items/?category_id1=512&depth=0`)
                                     }}
                                     >
-                                        Christian Dior
+                                        CHRISTIAN DIOR
                                     </CategoryMenu>
                                 </NoneShowMobile>
                             </CategoryContainer>

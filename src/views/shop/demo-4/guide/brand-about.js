@@ -217,7 +217,7 @@ const BrandAbout = () => {
               </Row>
               <Row style={{ marginBottom: '1rem', textAlign:'left' }}>
                 <Icon icon={'mdi:clock'} style={{ color: '#FF5B0D', width: '34px', height: '34px', marginRight: '0.5rem' }} />
-                평일 : 오전 10:00 ~ 오후 07:30<br />
+                평일 : 오전 10:00 ~ 오후 07:00<br />
                 토요일 : 오전 10:30 ~ 오후 6:00<br />
                 휴무 : 공휴일
               </Row>
@@ -227,11 +227,11 @@ const BrandAbout = () => {
         </ContentRow>
       </Wrappers>
       <Row style={{ backgroundColor: '#EEEEEE', flexDirection: 'column', maxWidth: '1600px', margin: '0 auto' }}>
-        <ContentSection style={{ textAlign: 'center', margin: '0 auto', marginTop: '5rem' }}>
+        {/*<ContentSection style={{ textAlign: 'center', margin: '0 auto', marginTop: '5rem' }}>
           <SinceText>층별안내</SinceText>
           <LuxuryText>Floor guide</LuxuryText>
-        </ContentSection>
-        <div style={{ display: 'flex' }}>
+              </ContentSection>*/}
+        <div style={{ display: 'flex', margin:'5rem 0' }}>
             <img src="/grandparis/left.png" style={{height:'1200px'}} />
           <FloorGuide>
             
@@ -253,7 +253,9 @@ const BrandAbout = () => {
               <img src="/grandparis/F4-3.png" />
             </FloorRow>
             <FloorRow style={{ marginBottom: '2rem' }}>
-              <img src="/grandparis/F3-2.png" />
+              <img src="/grandparis/F5-1.png" style={{ marginRight: '1rem' }} />
+              <img src="/grandparis/F5-2.png" style={{ marginRight: '1rem' }} />
+              <img src="/grandparis/F5-3.png" />
             </FloorRow>
           </FloorGuide>
         </div>

@@ -49,7 +49,7 @@ const ItemCharacter = (props) => {
   if (type == 0) {
     return (
       <>
-        <Row style={{ columnGap: '0.25rem', marginTop: '1rem', fontSize: '14px', color: '#999999' }}>
+        <Row style={{ columnGap: '0.25rem', marginTop: '1rem', fontSize: '14px' }}>
           <Typography>{key_name} :</Typography>
           <Typography>{value}</Typography>
         </Row>

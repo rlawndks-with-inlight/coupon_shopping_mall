@@ -194,7 +194,7 @@ const Footer = (props) => {
                                 02-517-8950
                             </Row>
                             <Row style={{ color: 'white', }}>
-                                월-금 AM 10:30 ~ PM 7:30
+                                월-금 AM 10:30 ~ PM 7:00
                             </Row>
                             <Row style={{ color: 'white', }}>
                                 토요일 AM 10:30 ~ PM 6:00
@@ -313,9 +313,9 @@ const Footer = (props) => {
                                 <MarginRight>TEL : 032-215-8887, 032-215-8889</MarginRight>
                             </div>
                         </Row>
-                        <Row>
+                        {/*<Row>
                             <MarginRight>대표 : 최성일, 최윤영, 이동영</MarginRight>
-                        </Row>
+                                </Row>*/}
                         <Row>
                             <MarginRight>사업자등록번호 : 592-87-02871</MarginRight>
                         </Row>

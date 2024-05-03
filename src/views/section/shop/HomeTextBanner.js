@@ -96,6 +96,7 @@ const HomeTextBanner = (props) => {
             <Row>
                     {column?.list && (column?.list ?? []).map((item, idx) => (
                         <>
+                        {idx != 0 && <div style={{borderRight:'1px solid black',}} />}
                                 <TextCover>
                                     <Texts 
                                     onClick={() => {

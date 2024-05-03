@@ -262,7 +262,7 @@ const PurchaseGuide = () => {
                     {
                         tab == 'purchase' ?
                             <>
-                                <img src="/grandparis/purchase_banner_4.png" />
+                                <img src="/grandparis/purchase_banner5.png" />
                                 <ContentSection>
                                     <SinceText>매입센터</SinceText>
                                     <br />

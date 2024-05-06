@@ -305,6 +305,10 @@ const ProductEdit = () => {
 
   const [price, setPrice] = useState('')
   const [salePrice, setSalePrice] = useState('')
+  const [point, setPoint] = useState('')
+  const [defPoint, setDefPoint] = useState(0)
+  const [showStatus, setShowStatus] = useState()
+
   const [loading, setLoading] = useState(true);
   const [currentTab, setCurrentTab] = useState(0);
   const [curCategories, setCurCategories] = useState({});
@@ -328,6 +332,11 @@ const ProductEdit = () => {
     groups: [],
     characters: [],
     properties: {},
+    point_usable: 1,
+    cash_usable: 1,
+    pg_usable: 1,
+    status: 0,
+    show_status: 0,
   })
 
   const [userColumns, setUserColumns] = useState([]);
@@ -420,6 +429,7 @@ const ProductEdit = () => {
       setItem(product)
       setPrice(product?.product_price.toLocaleString('ko-KR'))
       setSalePrice(product?.product_sale_price.toLocaleString('ko-KR'))
+      setPoint(product?.point_save?.toLocaleString('ko-KR'))
       let cur_categories = {};
       let category_children_list = {};
       for (var i = 0; i < themeCategoryList.length; i++) {
@@ -611,8 +621,26 @@ const ProductEdit = () => {
   ]
 
   useEffect(() => {
-    //console.log(item)
+    console.log(item)
+
   }, [])
+
+  useEffect(() => {
+    let point_ = parseInt(item.product_sale_price * 0.005)
+    if (defPoint == 1) {
+      setPoint(point_.toLocaleString('ko-KR'))
+    }
+  }, [item.product_sale_price, defPoint])
+
+  useEffect(() => {
+    let value = parseInt(point?.replace(/,/g, ''))
+    setItem({
+      ...item,
+      ['point_save']: value
+    })
+    //console.log(item)
+  }, [point])
+
   return (
     <>
       {!loading &&
@@ -723,7 +751,7 @@ const ProductEdit = () => {
                           </Stack>
                         </>
                       ))}
-                      
+
                       {themePropertyList.map((group, index) => (
                         <>
                           <Stack spacing={1}>
@@ -746,6 +774,7 @@ const ProductEdit = () => {
                                       />}
                                     onChange={(e) => {
                                       let property_obj = { ...item.properties };
+                                      let show_status_ = 0
                                       if (!property_obj[`${group?.id}`] || group?.is_can_select_multiple == 0) {
                                         property_obj[`${group?.id}`] = [];
                                       }
@@ -757,13 +786,19 @@ const ProductEdit = () => {
                                           property_obj[`${group?.id}`].splice(find_idx, 1);
                                         }
                                       }
-                                      if (group?.brand_id == 5 && property?.property_name == 'NEW UP-DATE' && router.query?.edit_category == 'add') {
+                                      /*if (group?.brand_id == 5 && property?.property_name == 'NEW UP-DATE' && router.query?.edit_category == 'add') {
                                         setDefaultCorner(!defaultCorner)
+                                      }*/
+                                      let properties_ = Object.values(property_obj).flat();
+                                      if (properties_.includes(12) || properties_.includes(13) || properties_.includes(14) || properties_.includes(15) || properties_.includes(24)) {
+                                        show_status_ = 1
                                       }
                                       setItem({
                                         ...item,
                                         properties: property_obj,
+                                        show_status: show_status_
                                       })
+                                      //console.log(item.properties)
                                     }}
                                   />
                                 </>
@@ -775,6 +810,183 @@ const ProductEdit = () => {
                       {
                         themeDnsData?.id == 5 &&
                         <>
+                          <Stack spacing={1}>
+                            <Typography variant="subtitle2" sx={{ color: 'text.secondary' }}>
+                              상태
+                            </Typography>
+                            <Row style={{ flexWrap: 'wrap' }}>
+                              <FormControlLabel
+                                label={<Typography style={{ fontSize: themeObj.font_size.size6 }}>판매중</Typography>}
+                                control={
+                                  <Checkbox
+                                    checked={
+                                      item.status == 0 ? true : false
+                                    }
+                                    onChange={(e) => {
+                                      let status_ = item.status;
+
+                                      if (e.target.checked) {
+                                        status_ = 0;
+                                      }
+
+                                      setItem({
+                                        ...item,
+                                        status: status_
+                                      })
+                                    }}
+                                  />}
+                              />
+                              <FormControlLabel
+                                label={<Typography style={{ fontSize: themeObj.font_size.size6 }}>예약중</Typography>}
+                                control={
+                                  <Checkbox
+                                    checked={
+                                      item.status == 6 ? true : false
+                                    }
+                                    onChange={(e) => {
+                                      let status_ = item.status;
+
+                                      if (e.target.checked) {
+                                        status_ = 6;
+                                      }
+
+                                      setItem({
+                                        ...item,
+                                        status: status_
+                                      })
+                                    }}
+                                  />}
+                              />
+                              <FormControlLabel
+                                label={<Typography style={{ fontSize: themeObj.font_size.size6 }}>매장문의</Typography>}
+                                control={
+                                  <Checkbox
+                                    checked={
+                                      item.status == 7 ? true : false
+                                    }
+                                    onChange={(e) => {
+                                      let status_ = item.status;
+
+                                      if (e.target.checked) {
+                                        status_ = 7;
+                                      }
+
+                                      setItem({
+                                        ...item,
+                                        status: status_
+                                      })
+                                    }}
+                                  />}
+                              />
+                              <FormControlLabel
+                                label={<Typography style={{ fontSize: themeObj.font_size.size6 }}>거래진행중</Typography>}
+                                control={
+                                  <Checkbox
+                                    checked={
+                                      item.status == 1 ? true : false
+                                    }
+                                    onChange={(e) => {
+                                      let status_ = item.status;
+
+                                      if (e.target.checked) {
+                                        status_ = 1;
+                                      }
+
+                                      setItem({
+                                        ...item,
+                                        status: status_
+                                      })
+                                    }}
+                                  />}
+                              />
+                            </Row>
+                            <Row style={{ flexWrap: 'wrap' }}>
+                              <FormControlLabel
+                                label={<Typography style={{ fontSize: themeObj.font_size.size6 }}>품절</Typography>}
+                                control={
+                                  <Checkbox
+                                    checked={
+                                      item.status == 2 ? true : false
+                                    }
+                                    onChange={(e) => {
+                                      let status_ = item.status;
+
+                                      if (e.target.checked) {
+                                        status_ = 2;
+                                      }
+
+                                      setItem({
+                                        ...item,
+                                        status: status_
+                                      })
+                                    }}
+                                  />}
+                              />
+                              <FormControlLabel
+                                label={<Typography style={{ fontSize: themeObj.font_size.size6 }}>택배수거</Typography>}
+                                control={
+                                  <Checkbox
+                                    checked={
+                                      item.status == 3 ? true : false
+                                    }
+                                    onChange={(e) => {
+                                      let status_ = item.status;
+
+                                      if (e.target.checked) {
+                                        status_ = 3;
+                                      }
+
+                                      setItem({
+                                        ...item,
+                                        status: status_
+                                      })
+                                    }}
+                                  />}
+                              />
+                              <FormControlLabel
+                                label={<Typography style={{ fontSize: themeObj.font_size.size6 }}>방문수거</Typography>}
+                                control={
+                                  <Checkbox
+                                    checked={
+                                      item.status == 4 ? true : false
+                                    }
+                                    onChange={(e) => {
+                                      let status_ = item.status;
+
+                                      if (e.target.checked) {
+                                        status_ = 4;
+                                      }
+
+                                      setItem({
+                                        ...item,
+                                        status: status_
+                                      })
+                                    }}
+                                  />}
+                              />
+                              <FormControlLabel
+                                label={<Typography style={{ fontSize: themeObj.font_size.size6 }}>비공개</Typography>}
+                                control={
+                                  <Checkbox
+                                    checked={
+                                      item.status == 5 ? true : false
+                                    }
+                                    onChange={(e) => {
+                                      let status_ = item.status;
+
+                                      if (e.target.checked) {
+                                        status_ = 5;
+                                      }
+
+                                      setItem({
+                                        ...item,
+                                        status: status_
+                                      })
+                                    }}
+                                  />}
+                              />
+                            </Row>
+                          </Stack>
                           <Stack spacing={1}>
                             <Typography variant="subtitle2" sx={{ color: 'text.secondary' }}>
                               판매자 구분
@@ -986,7 +1198,7 @@ const ProductEdit = () => {
                             }} />
                         </>}
 
-                        {
+                      {
                         themeDnsData.id == 5 &&
                         <>
                           <Stack spacing={1}>
@@ -1090,6 +1302,120 @@ const ProductEdit = () => {
                             )
                           }} />
                       </FormControl>*/}
+                      {
+                        themeDnsData.id == 5 &&
+                        <>
+                          <Row style={{ justifyContent: 'space-between' }}>
+                            <FormControlLabel
+                              label={<div>마일리지 기본적용<br />(판매가의 0.5%)</div>}
+                              control={
+                                <Checkbox
+                                  checked={defPoint}
+                                  onChange={() => {
+                                    setDefPoint(!defPoint)
+                                  }}
+                                />
+                              }
+                            />
+                            <FormControl variant="outlined" style={{ flexGrow: '1' }}>
+                              
+                              <OutlinedInput
+                                
+                                type="text"
+                                disabled={defPoint}
+                                value={point}
+                                endAdornment={<InputAdornment position="end">원</InputAdornment>}
+                                onChange={(e) => {
+                                  let value = parseInt(e.target.value.replace(/,/g, ''))
+                                  setItem(
+                                    {
+                                      ...item,
+                                      ['point_save']: value
+                                    }
+                                  )
+                                  console.log(item.point_save)
+                                  setPoint(value.toLocaleString('ko-KR'))
+                                }} />
+                            </FormControl>
+                          </Row>
+                          <Stack spacing={1}>
+                            <Typography variant="subtitle2" sx={{ color: 'text.secondary' }}>
+                              결제수단
+                            </Typography>
+                            <Row style={{ flexWrap: 'wrap' }}>
+                              <FormControlLabel
+                                label={<Typography style={{ fontSize: themeObj.font_size.size6 }}>마일리지 사용 가능</Typography>}
+                                control={
+                                  <Checkbox
+                                    checked={
+                                      item.point_usable == 1 ? true : false
+                                    }
+                                    onChange={(e) => {
+                                      let pointUsable = item.point_usable;
+
+                                      if (e.target.checked) {
+                                        pointUsable = 1;
+                                      } else {
+                                        pointUsable = 0;
+                                      }
+
+                                      setItem({
+                                        ...item,
+                                        point_usable: pointUsable
+                                      })
+                                    }}
+                                  />}
+                              />
+                              <FormControlLabel
+                                label={<Typography style={{ fontSize: themeObj.font_size.size6 }}>현금 사용 가능</Typography>}
+                                control={
+                                  <Checkbox
+                                    checked={
+                                      item.cash_usable == 1 ? true : false
+                                    }
+                                    onChange={(e) => {
+                                      let cashUsable = item.cash_usable;
+
+                                      if (e.target.checked) {
+                                        cashUsable = 1;
+                                      } else {
+                                        cashUsable = 0;
+                                      }
+
+                                      setItem({
+                                        ...item,
+                                        cash_usable: cashUsable
+                                      })
+                                    }}
+                                  />}
+                              />
+                              <FormControlLabel
+                                label={<Typography style={{ fontSize: themeObj.font_size.size6 }}>PG사 이용 가능</Typography>}
+                                control={
+                                  <Checkbox
+                                    checked={
+                                      item.pg_usable == 1 ? true : false
+                                    }
+                                    onChange={(e) => {
+                                      let pgUsable = item.pg_usable;
+
+                                      if (e.target.checked) {
+                                        pgUsable = 1;
+                                      } else {
+                                        pgUsable = 0;
+                                      }
+
+                                      setItem({
+                                        ...item,
+                                        pg_usable: pgUsable
+                                      })
+                                    }}
+                                  />}
+                              />
+                            </Row>
+                          </Stack>
+                        </>
+                      }
                       <Stack spacing={1}>
                         <Typography variant="subtitle2" sx={{ color: 'text.secondary' }}>
                           상품설명
@@ -1582,6 +1908,21 @@ const ProductEdit = () => {
                     <>
                       <Button variant="contained" style={{
                         height: '48px', width: '180px', marginLeft: 'auto',
+                      }} onClick={() => {
+                        setItem({
+                          ...item,
+                          sort_idx: item?.max_sort_idx + 1
+                        })
+                        setModal({
+                          func: () => { onSave('edit') },
+                          icon: 'material-symbols:edit-outline',
+                          title: '변경 사항을 저장 하시겠습니까?'
+                        })
+                      }}>
+                        저장(최상단 노출)
+                      </Button>
+                      <Button variant="contained" style={{
+                        height: '48px', width: '180px', marginLeft: '1rem',
                       }} onClick={() => {
                         setModal({
                           func: () => { onSave('edit') },

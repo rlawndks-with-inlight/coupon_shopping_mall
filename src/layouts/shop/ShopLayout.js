@@ -86,6 +86,7 @@ const ShopLayout = ({ children, scrollToTop }) => {
   }
   if (themeDnsData?.is_closure == 1 && !user) {
     router.push(`/shop/auth/login`)
+    return <></>
   }
   return (
     <>

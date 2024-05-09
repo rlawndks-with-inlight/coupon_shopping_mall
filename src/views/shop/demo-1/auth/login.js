@@ -10,6 +10,7 @@ import { HistoryTable } from 'src/components/elements/shop/common';
 import { apiManager } from 'src/utils/api';
 import { commarNumber, getTrxStatusByNumber } from 'src/utils/function';
 import { useLocales } from 'src/locales';
+import toast from 'react-hot-toast';
 
 const Wrappers = styled.div`
 max-width:500px;
@@ -45,7 +46,7 @@ const LoginDemo = (props) => {
   const { translate } = useLocales();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-
+  const [otp, setOtp] = useState("");
   const [noneUserObj, setNoneUserObj] = useState({
     brand_id: themeDnsData?.id,
     ord_num: '',
@@ -60,11 +61,17 @@ const LoginDemo = (props) => {
   }, [router.query])
 
   const onLogin = async () => {
-    let user = await login(username, password)
-    if (user) {
-      onChangeWishData(user?.wish_data ?? []);
-      router.push('/shop/auth/my-page')
+    try {
+      let user = await login(username, password, false, otp)
+      if (user) {
+        onChangeWishData(user?.wish_data ?? []);
+        router.push('/shop/auth/my-page')
+      }
+    } catch (err) {
+      toast.error(err?.message)
+      console.log(err)
     }
+
   }
   const onCheckNoneUserPay = async () => {
     let data = await apiManager(`transactions/0`, 'get', noneUserObj);
@@ -105,6 +112,22 @@ const LoginDemo = (props) => {
             }
           }}
         />
+        {themeDnsData?.is_use_otp == 1 &&
+          <>
+            <TextField
+              label={translate('OTP')}
+              onChange={(e) => {
+                setOtp(e.target.value)
+              }}
+              value={otp}
+              style={inputStyle}
+              autoComplete='new-password'
+              onKeyPress={(e) => {
+                if (e.key == 'Enter') {
+                }
+              }}
+            />
+          </>}
         <Button variant="contained" style={{
           height: '56px',
           marginTop: '1rem',

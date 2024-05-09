@@ -785,6 +785,19 @@ const DefaultSetting = () => {
                         />
                       </Stack>
                       <Stack>
+                        <FormControlLabel control={<Switch checked={item?.setting_obj?.is_sign_up_status_1 == 1} />} label="가입시 승인후 정상"
+                          onChange={(e) => {
+                            setItem({
+                              ...item,
+                              ['setting_obj']: {
+                                ...item.setting_obj,
+                                is_sign_up_status_1: e.target.checked ? 1 : 0,
+                              }
+                            })
+                          }}
+                        />
+                      </Stack>
+                      <Stack>
                         <FormControlLabel control={<Switch checked={item.setting_obj?.is_use_lang == 1} />} label="언어팩 사용여부"
                           onChange={(e) => {
                             let obj = {

@@ -514,3 +514,15 @@ export const getPriceUnitByLang = (lang_ = 'ko') => {
   }
   return unit_obj[lang]
 }
+
+export function generateRandomString(length = 1) {
+  const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+  let randomString = '';
+
+  for (let i = 0; i < length; i++) {
+    const randomIndex = Math.floor(Math.random() * characters.length);
+    randomString += characters.charAt(randomIndex);
+  }
+
+  return randomString;
+}

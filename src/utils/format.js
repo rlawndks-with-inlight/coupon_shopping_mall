@@ -3,6 +3,12 @@ export const productSortTypeList = [
     { label: '일반형', value: 0 },
     { label: '가나다 또는 abc 형', value: 1 },
 ]
+export const userStatusList = [
+    { label: '정상', value: 0 },
+    { label: '가입신청대기', value: 1 },
+    { label: '로그인차단', value: 2 },
+    { label: '탈퇴', value: 3 },
+]
 export const userLevelList = [
     { label: '일반유저', value: 0 },
     { label: '셀러', value: 10 },

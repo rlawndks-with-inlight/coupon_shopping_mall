@@ -1,4 +1,4 @@
-import { Avatar, Button, Card, Container, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Divider, IconButton, Stack, TextField } from "@mui/material";
+import { Avatar, Button, Card, Container, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Divider, IconButton, MenuItem, Select, Stack, TextField } from "@mui/material";
 import { useEffect, useState } from "react";
 import ManagerLayout from "src/layouts/manager/ManagerLayout";
 import ManagerTable from "src/views/manager/mui/table/ManagerTable";
@@ -9,9 +9,12 @@ import { useModal } from "src/components/dialog/ModalProvider";
 import { apiManager } from "src/utils/api";
 import { commarNumber } from "src/utils/function";
 import { useSettingsContext } from "src/components/settings";
+import { userStatusList } from "src/utils/format";
+import { useAuthContext } from "src/layouts/manager/auth/useAuthContext";
 const UserList = () => {
   const { themeDnsData } = useSettingsContext();
   const { setModal } = useModal()
+  const { user } = useAuthContext();
   const defaultColumns = [
     {
       id: 'profile_img',
@@ -53,6 +56,33 @@ const UserList = () => {
       label: '가입일',
       action: (row) => {
         return row['created_at'] ?? "---"
+      }
+    },
+    {
+      id: 'status',
+      label: '유저상태',
+      action: (row, is_excel) => {
+        if (is_excel) {
+          return getUserStatusByNum(row?.status)
+        }
+        return <Select
+          size='small'
+          value={row?.status}
+          disabled={!(user?.level >= 40)}
+          onChange={async (e) => {
+            let result = await apiManager(`users/change-status`, 'update', {
+              id: row?.id,
+              status: e.target.value
+            });
+            if (result) {
+              onChangePage(searchObj)
+            }
+          }}
+        >
+          {userStatusList.map((itm) => {
+            return <MenuItem value={itm.value}>{itm.label}</MenuItem>
+          })}
+        </Select>
       }
     },
     {

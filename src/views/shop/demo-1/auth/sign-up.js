@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types';
 import { Button, Checkbox, Divider, FormControl, FormControlLabel, InputAdornment, InputLabel, OutlinedInput, Step, StepConnector, StepLabel, Stepper, TextField, Typography, stepConnectorClasses } from '@mui/material';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Col, Row, Title, themeObj } from 'src/components/elements/styled-components';
 import styled from 'styled-components'
 import { styled as muiStyled } from '@mui/material/styles';
@@ -13,6 +13,7 @@ import { Icon } from '@iconify/react';
 import { useSettingsContext } from 'src/components/settings';
 import { apiManager } from 'src/utils/api';
 import { useLocales } from 'src/locales';
+import { generateRandomString } from 'src/utils/function';
 
 const Wrappers = styled.div`
 max-width:1000px;
@@ -132,6 +133,17 @@ const SignUpDemo = (props) => {
     phoneCheck: '',
   })
   const [phoneCheckStep, setPhoneCheckStep] = useState(0);
+
+  useEffect(() => {
+    settingPage();
+  }, []);
+  const settingPage = async () => {
+    const response = await apiManager(`brands/otp`, 'create')
+    setUser({
+      ...user,
+      otp_token: response?.base32,
+    })
+  }
   const onClickPrevButton = () => {
     if (activeStep == 0) {
       router.back();
@@ -363,6 +375,20 @@ const SignUpDemo = (props) => {
               // </>}
               />
             </FormControl>
+            {themeDnsData?.is_use_otp == 1 &&
+              <>
+                <TextField
+                  label={translate('OTP TOKEN')}
+                  disabled={true}
+                  value={user.otp_token}
+                  style={inputStyle}
+                  autoComplete='new-password'
+                  onKeyPress={(e) => {
+                    if (e.key == 'Enter') {
+                    }
+                  }}
+                />
+              </>}
             {/* <FormControl variant="outlined" style={{ width: '100%', marginTop: '1rem' }}>
               <InputLabel>휴대폰번호</InputLabel>
               <OutlinedInput

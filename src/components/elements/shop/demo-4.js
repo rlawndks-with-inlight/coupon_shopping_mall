@@ -86,10 +86,6 @@ export const Item4 = (props) => {
   const { item, router, theme_css, seller, text_align = 'center' } = props;
   const [itemThemeCss, setItemThemeCss] = useState(itemThemeCssDefaultSetting);
 
-  useEffect(() => {
-    console.log(item)
-  }, [])
-
   const itemStatusList = [
     { label: 'USED', color: 'default' },  //검정
     { label: 'NEW', color: 'primary' },  //빨강
@@ -114,29 +110,29 @@ export const Item4 = (props) => {
         <ItemImg src={item?.product_img} style={{ height: '70%' }} />
       </ItemImgContainer>
       <div style={{ color: '#999999', fontWeight: 'bold', fontSize: '11px', width: '90%', margin: '0 auto' }}>
-        {(item?.category_en_name1??"").toUpperCase()}
+        {(item?.category_en_name1 ?? "").toUpperCase()}
       </div>
       <ItemName>
         {item?.product_name.length < 30 ? item.product_name : `${item.product_name.slice(0, 30)}...`}
       </ItemName>
-      <ItemDetail variant="subtitle2" style={{margin:'0 auto', width: '90%' }}>
+      <ItemDetail variant="subtitle2" style={{ margin: '0 auto', width: '90%' }}>
         {item?.status == 1 ? '거래 진행중'
           :
           item?.product_sale_price == 0 || item?.status == 2 || item?.status == 3 || item?.status == 4 ? 'SOLD OUT'
             :
             item?.status == 6 ? '예약중'
-             : item?.status == 7 ? '매장문의'
-              :
-              <>
-                {commarNumber(item?.product_sale_price) + '원'}
-                {item?.product_price != item?.product_sale_price ?
-                  <span style={{ color: '#EC1C24', marginLeft: '0.5rem' }}>
-                    {parseInt((item?.product_price - item?.product_sale_price) * 100 / item?.product_price) + '%'}
-                  </span>
-                  :
-                  ''
-                }
-              </>
+              : item?.status == 7 ? '매장문의'
+                :
+                <>
+                  {commarNumber(item?.product_sale_price) + '원'}
+                  {item?.product_price != item?.product_sale_price ?
+                    <span style={{ color: '#EC1C24', marginLeft: '0.5rem' }}>
+                      {parseInt((item?.product_price - item?.product_sale_price) * 100 / item?.product_price) + '%'}
+                    </span>
+                    :
+                    ''
+                  }
+                </>
         }
       </ItemDetail>
       <div style={{ width: '80%', margin: '0 auto' }}>

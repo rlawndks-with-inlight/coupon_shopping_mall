@@ -34,15 +34,29 @@ const SignUp = () => {
 
   return (
     <>
-      {getDemo(themeDnsData?.shop_demo_num, {
-        data: {
-        },
-        func: {
-          router
-        },
-      })}
+      {themeDnsData?.is_closure == 1 ?
+        <>
+          {getDemo(themeDnsData?.shop_demo_num, {
+            data: {
+            },
+            func: {
+              router
+            },
+          })}
+        </>
+        :
+        <>
+          <ShopLayout>
+            {getDemo(themeDnsData?.shop_demo_num, {
+              data: {
+              },
+              func: {
+                router
+              },
+            })}
+          </ShopLayout>
+        </>}
     </>
   )
 }
-SignUp.getLayout = (page) => <ShopLayout>{page}</ShopLayout>;
 export default SignUp;

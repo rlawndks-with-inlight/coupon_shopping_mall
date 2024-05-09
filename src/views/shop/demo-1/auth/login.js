@@ -131,50 +131,55 @@ const LoginDemo = (props) => {
             }}
           >{translate('회원가입')}</Button>
         </Col>
-        <Col style={{ alignItems: 'center', margin: '2rem auto 1rem auto', width: '100%' }}>
-          <div style={{ fontSize: themeObj.font_size.size4, marginBottom: '1rem' }}>{translate('비회원 주문조회')}</div>
-          <div style={{ color: themeObj.grey[500] }}>{translate('비회원의 경우, 주문시의 주문번호로 주문조회가 가능합니다.')}</div>
-        </Col>
-        <TextField
-          label={translate('주문번호(하이픈(-) 포함)')}
-          onChange={(e) => {
-            setNoneUserObj({ ...noneUserObj, ['ord_num']: e.target.value })
-          }}
-          value={noneUserObj.ord_num}
-          style={inputStyle}
-          autoComplete='new-password'
-          onKeyPress={(e) => {
-            if (e.key == 'Enter') {
-            }
-          }}
-        />
-        <TextField
-          label={translate('비회원주문 비밀번호')}
-          onChange={(e) => {
-            setNoneUserObj({ ...noneUserObj, ['password']: e.target.value })
-          }}
-          type='password'
-          value={noneUserObj.password}
-          style={inputStyle}
-          autoComplete='new-password'
-          onKeyPress={(e) => {
-            if (e.key == 'Enter') {
-            }
-          }}
-        />
-        <Button variant="contained" style={{
-          height: '56px',
-          marginTop: '1rem',
-        }}
-          onClick={() => {
-            // setModal({
-            //   func: () => { onCheckNoneUserPay(row?.id) },
-            //   icon: 'material-symbols:delete-outline',
-            //   title: '정말로 조회하시겠습니까'
-            // })
-            onCheckNoneUserPay();
-          }}
-        >{translate('조회')}</Button>
+        {themeDnsData?.is_closure != 1 &&
+          <>
+            <Col style={{ alignItems: 'center', margin: '2rem auto 1rem auto', width: '100%' }}>
+              <div style={{ fontSize: themeObj.font_size.size4, marginBottom: '1rem' }}>{translate('비회원 주문조회')}</div>
+              <div style={{ color: themeObj.grey[500] }}>{translate('비회원의 경우, 주문시의 주문번호로 주문조회가 가능합니다.')}</div>
+            </Col>
+            <TextField
+              label={translate('주문번호(하이픈(-) 포함)')}
+              onChange={(e) => {
+                setNoneUserObj({ ...noneUserObj, ['ord_num']: e.target.value })
+              }}
+              value={noneUserObj.ord_num}
+              style={inputStyle}
+              autoComplete='new-password'
+              onKeyPress={(e) => {
+                if (e.key == 'Enter') {
+                }
+              }}
+            />
+            <TextField
+              label={translate('비회원주문 비밀번호')}
+              onChange={(e) => {
+                setNoneUserObj({ ...noneUserObj, ['password']: e.target.value })
+              }}
+              type='password'
+              value={noneUserObj.password}
+              style={inputStyle}
+              autoComplete='new-password'
+              onKeyPress={(e) => {
+                if (e.key == 'Enter') {
+                }
+              }}
+            />
+            <Button variant="contained" style={{
+              height: '56px',
+              marginTop: '1rem',
+            }}
+              onClick={() => {
+                // setModal({
+                //   func: () => { onCheckNoneUserPay(row?.id) },
+                //   icon: 'material-symbols:delete-outline',
+                //   title: '정말로 조회하시겠습니까'
+                // })
+                onCheckNoneUserPay();
+              }}
+            >{translate('조회')}</Button>
+          </>}
+
+
       </Wrappers>
       <Wrappers style={{ maxWidth: '800px', minHeight: '0', marginTop: '2rem' }}>
         {Object.keys(noneUserTrxObj).length > 0 &&

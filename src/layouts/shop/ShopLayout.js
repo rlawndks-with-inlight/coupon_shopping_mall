@@ -14,6 +14,7 @@ import ShopLayout5 from "./shop/demo-5/ShopLayout5";
 import styled from "styled-components";
 import { useLocales } from "src/locales";
 import $ from 'jquery';
+import { useAuthContext } from "../manager/auth/useAuthContext";
 
 const Wrappers = styled.div`
 
@@ -57,7 +58,7 @@ const ShopLayout = ({ children, scrollToTop }) => {
   const [category, setCategory] = useState("");
   const [loading, setLoading] = useState(true);
   const { themeDnsData, themeCategoryList } = useSettingsContext();
-
+  const { user } = useAuthContext();
   const { currentLang } = useLocales();
 
   useEffect(() => {
@@ -67,7 +68,6 @@ const ShopLayout = ({ children, scrollToTop }) => {
   }, [router.asPath])
   useEffect(() => {
     if (themeDnsData?.id > 0 && themeCategoryList) {
-
       if (themeDnsData?.shop_demo_num > 0 && router.asPath.split('/')[1] == 'shop') {
         setLoading(false);
       } else if (themeDnsData?.blog_demo_num > 0 && router.asPath.split('/')[1] == 'blog') {
@@ -83,6 +83,9 @@ const ShopLayout = ({ children, scrollToTop }) => {
     } else if (router.asPath.split('/')[1] == 'blog') {
       return themeDnsData?.blog_demo_num
     }
+  }
+  if (themeDnsData?.is_closure == 1 && !user) {
+    router.push(`/shop/auth/login`)
   }
   return (
     <>

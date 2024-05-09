@@ -395,10 +395,10 @@ const DefaultSetting = () => {
                             ""
                           }
                           <div>
-                          <Typography variant='subtitle2' sx={{ color: 'text.secondary' }}>
+                            <Typography variant='subtitle2' sx={{ color: 'text.secondary' }}>
                               위탁 수수료 설정
                             </Typography>
-                            
+
                           </div>
                         </>}
 
@@ -760,6 +760,26 @@ const DefaultSetting = () => {
                                 ...item.setting_obj,
                                 is_use_blog_obj_style: e.target.checked ? 1 : 0
                               }
+                            })
+                          }}
+                        />
+                      </Stack>
+                      <Stack>
+                        <FormControlLabel control={<Switch checked={item?.is_use_otp == 1} />} label="otp 사용여부"
+                          onChange={(e) => {
+                            setItem({
+                              ...item,
+                              ['is_use_otp']: e.target.checked ? 1 : 0,
+                            })
+                          }}
+                        />
+                      </Stack>
+                      <Stack>
+                        <FormControlLabel control={<Switch checked={item?.is_closure == 1} />} label="폐쇄몰 사용여부"
+                          onChange={(e) => {
+                            setItem({
+                              ...item,
+                              ['is_closure']: e.target.checked ? 1 : 0,
                             })
                           }}
                         />

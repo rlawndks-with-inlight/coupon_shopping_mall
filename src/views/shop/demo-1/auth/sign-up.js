@@ -188,7 +188,7 @@ const SignUpDemo = (props) => {
   }
   return (
     <>
-      <Wrappers>
+      <Wrappers style={{ paddingBottom: '2rem' }}>
         <Title>{translate('회원가입')}</Title>
         <Stepper alternativeLabel activeStep={activeStep} connector={<ColorlibConnector />}>
           {STEPS.map((label) => (

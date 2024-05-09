@@ -85,7 +85,7 @@ const LoginDemo = (props) => {
       <Wrappers style={{ marginBottom: '0' }}>
         <Title>{translate('로그인')}</Title>
         <TextField
-          label={translate('유저아이디')}
+          label={translate('아이디')}
           onChange={(e) => {
             setUsername(e.target.value)
           }}

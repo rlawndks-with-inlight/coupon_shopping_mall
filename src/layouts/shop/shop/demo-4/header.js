@@ -768,14 +768,14 @@ const Header = () => {
                                     {themeCategoryList.map((group, index) => {
                                         if (group?.category_group_name == '카테고리' || group?.category_group_name == '브랜드') {
                                             return <>
-                                                <div style={{ position: 'relative' }} ref={(element) => {
+                                                <div style={{ position: 'relative', fontWeight:'bold' }} ref={(element) => {
                                                     allCategoryRef.current[index] = element;
                                                 }}>
                                                     <CategoryMenu borderColor={themeDnsData?.theme_css?.main_color} onClick={() => {
                                                         setOpenAllCategory(group?.id)
                                                     }}>
                                                         {group?.category_group_name == '카테고리' ?
-                                                            <div style={{ fontFamily: 'Playfair Display', }}>ALL CATEGORY</div>
+                                                            <div style={{ fontFamily: 'Playfair Display'}}>ALL CATEGORY</div>
                                                             :
                                                             group?.category_group_name == '브랜드' ?
 
@@ -1029,19 +1029,19 @@ const Header = () => {
                                 </div>
 
 
-                                <CategoryMenu borderColor={themeDnsData?.theme_css?.main_color} onClick={() => {
+                                <CategoryMenu borderColor={themeDnsData?.theme_css?.main_color} style={{fontWeight:'bold' }} onClick={() => {
                                     //setOpenAllCategory(group?.id)
                                     router.push('/shop/items/?not_show_select_menu=1&property_ids0=22')
                                 }}>
                                     <div style={{ fontFamily: 'Playfair Display', }}>BEST</div>
                                 </CategoryMenu>
-                                <CategoryMenu borderColor={themeDnsData?.theme_css?.main_color} onClick={() => {
+                                <CategoryMenu borderColor={themeDnsData?.theme_css?.main_color} style={{fontWeight:'bold' }} onClick={() => {
                                     //setOpenAllCategory(group?.id)
                                     router.push('/shop/items/?not_show_select_menu=1&property_ids0=21')
                                 }}>
                                     <div style={{ fontFamily: 'Playfair Display', }}>NEW IN</div>
                                 </CategoryMenu>
-                                <CategoryMenu borderColor={themeDnsData?.theme_css?.main_color} onClick={() => {
+                                <CategoryMenu borderColor={themeDnsData?.theme_css?.main_color} style={{fontWeight:'bold' }} onClick={() => {
                                     //setOpenAllCategory(group?.id)
                                     router.push('/shop/items/?not_show_select_menu=1&property_ids0=20')
                                 }}>
@@ -1097,7 +1097,7 @@ const Header = () => {
                             fontFamily:'Playfair Display' 
                             }}>
                             <CategoryContainer>
-                                <NoneShowMobile style={{fontSize:'98%'}}>
+                                <NoneShowMobile style={{fontSize:'90%', fontWeight:'bold'}}>
                                     <Row style={{margin:'0 1rem'}}>
                                         BRAND PICK |
                                     </Row>

@@ -198,7 +198,7 @@ const PurchaseGuide = () => {
                             <br />
                             <Button
                                 style={{
-                                    backgroundColor: 'black',
+                                    backgroundColor: '#FF5B0D',
                                     color: 'white',
                                     width: '100%',
                                     height: '60px',
@@ -214,7 +214,7 @@ const PurchaseGuide = () => {
                             </Button>
                             <Button
                                 style={{
-                                    backgroundColor: 'black',
+                                    backgroundColor: '#FF5B0D',
                                     color: 'white',
                                     width: '100%',
                                     height: '60px',
@@ -229,7 +229,7 @@ const PurchaseGuide = () => {
                             </Button>
                         </Description>
                     </ContentSection>
-                    <img src="/grandparis/purchase_banner.png" />
+                    <img src="/grandparis/purchase_banner_1.png" />
                 </ContentRow>
                 <Row style={{ margin: '0 auto', marginTop: '10rem' }}>
                     <div
@@ -262,7 +262,7 @@ const PurchaseGuide = () => {
                     {
                         tab == 'purchase' ?
                             <>
-                                <img src="/grandparis/purchase_banner5.png" />
+                                <img src="/grandparis/purchase_banner_6.png" />
                                 <ContentSection>
                                     <SinceText>매입센터</SinceText>
                                     <br />
@@ -308,7 +308,7 @@ const PurchaseGuide = () => {
                                         <br />
                                         <Button
                                             style={{
-                                                backgroundColor: 'black',
+                                                backgroundColor: '#FF5B0D',
                                                 color: 'white',
                                                 width: '100%',
                                                 height: '60px',
@@ -370,7 +370,7 @@ const PurchaseGuide = () => {
                                         <Row>
                                             <Button
                                                 style={{
-                                                    backgroundColor: 'black',
+                                                    backgroundColor: '#FF5B0D',
                                                     color: 'white',
                                                     width: '50%',
                                                     height: '60px',
@@ -418,7 +418,7 @@ const PurchaseGuide = () => {
                         <br />
                         <span style={{fontSize:'44px'}}>위탁수수료</span>
                     </Row>
-                    <img src='/grandparis/consignment_pay_3.png' />
+                    <img src='/grandparis/consignment_pay_4.png' />
                     </Row>
                 </Col>
                 <Row style={{maxWidth:'1400px', margin:'0 auto'}}>

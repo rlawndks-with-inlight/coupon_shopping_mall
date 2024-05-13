@@ -4,6 +4,7 @@ import { useLocales } from "src/locales"
 import styled from "styled-components"
 import { logoSrc } from "src/data/data"
 import { useAuthContext } from "src/layouts/manager/auth/useAuthContext"
+import Link from "next/link"
 
 const Wrapper = styled.footer`
 width:100%;
@@ -88,35 +89,24 @@ const Footer = (props) => {
                                 OUR SERVICE
                             </Row>
                             <br /><br />
-                            <Row
-                                style={{ marginBottom: '0.7rem', color: 'white', cursor: 'pointer' }}
-                            >
+                            <Row style={{ marginBottom: '0.7rem', color: 'white', cursor: 'pointer' }}>
                                 온라인 판매
                             </Row>
-                            <Row
-                                style={{ marginBottom: '0.7rem', color: 'white', cursor: 'pointer' }}
-                                onClick={() => {
-                                    router.push('/shop/guide/brand-about')
-                                }}
-                            >
-                                오프라인
-                            </Row>
-                            <Row
-                                style={{ marginBottom: '0.7rem', color: 'white', cursor: 'pointer' }}
-                                onClick={() => {
-                                    router.push('/shop/guide/purchase-guide')
-                                }}
-                            >
-                                매입센터
-                            </Row>
-                            <Row
-                                style={{ color: 'white', cursor: 'pointer' }}
-                                onClick={() => {
-                                    router.push('/shop/guide/purchase-guide')
-                                }}
-                            >
-                                위탁판매
-                            </Row>
+                            <Link href={'/shop/guide/brand-about'} passHref>
+                                <Row style={{ marginBottom: '0.7rem', color: 'white', cursor: 'pointer' }}>
+                                    오프라인
+                                </Row>
+                            </Link>
+                            <Link href={'/shop/guide/purchase-guide'} passHref>
+                                <Row style={{ marginBottom: '0.7rem', color: 'white', cursor: 'pointer' }}>
+                                    매입센터
+                                </Row>
+                            </Link>
+                            <Link href={'/shop/guide/purchase-guide'} passHref>
+                                <Row style={{ color: 'white', cursor: 'pointer' }}>
+                                    위탁판매
+                                </Row>
+                            </Link>
                         </div>
                         {/*<div>
                             <Row style={{fontWeight:'bold', fontSize:'16px', color:'#FFFFFF', fontFamily:'Playfair Display',}}>
@@ -146,14 +136,11 @@ const Footer = (props) => {
                                 HELP
                             </Row>
                             <br /><br />
-                            <Row
-                                style={{ marginBottom: '0.7rem', color: 'white', cursor: 'pointer' }}
-                                onClick={() => {
-                                    router.push('/shop/service/47')
-                                }}
-                            >
-                                공지사항
-                            </Row>
+                            <Link href={'/shop/service/47'} passHref>
+                                <Row style={{ marginBottom: '0.7rem', color: 'white', cursor: 'pointer' }}>
+                                    공지사항
+                                </Row>
+                            </Link>
                             <Row
                                 style={{ marginBottom: '0.7rem', color: 'white', cursor: 'pointer' }}
                                 onClick={() => {
@@ -166,21 +153,16 @@ const Footer = (props) => {
                             >
                                 {user ? '로그아웃' : '로그인'}
                             </Row>
-                            <Row
-                                style={{ marginBottom: '0.7rem', color: 'white', cursor: 'pointer' }}
-                                onClick={() => {
-                                    router.push('/shop/auth/login/?scroll_to=700')
-                                }}
-                            >
-                                비회원주문조회
-                            </Row>
-                            <Row style={{ color: 'white', cursor: 'pointer' }}
-                                onClick={() => {
-                                    router.push('/shop/service/46')
-                                }}
-                            >
-                                1:1문의
-                            </Row>
+                            <Link href={'/shop/auth/login/?scroll_to=700'} passHref>
+                                <Row style={{ marginBottom: '0.7rem', color: 'white', cursor: 'pointer' }}>
+                                    비회원주문조회
+                                </Row>
+                            </Link>
+                            <Link href={'/shop/service/46'} passHref>
+                                <Row style={{ color: 'white', cursor: 'pointer' }}>
+                                    1:1문의
+                                </Row>
+                            </Link>
                         </div>
                         <div>
                             <Row style={{ fontWeight: 'bold', fontSize: '16px', color: 'white', fontFamily: 'Playfair Display', }}>
@@ -273,8 +255,16 @@ const Footer = (props) => {
                         <br />
                         <Col>
                             <Row>
-                                <MarginRight style={{ cursor: 'pointer' }} onClick={() => { router.push('/shop/auth/policy?type=0') }}>Terms</MarginRight>
-                                <MarginRight style={{ cursor: 'pointer' }} onClick={() => { router.push('/shop/auth/policy?type=1') }}>| Privacy Policy</MarginRight>
+                                <Link href={'/shop/auth/policy?type=0'} passHref>
+                                    <MarginRight style={{ cursor: 'pointer' }}>
+                                        Terms
+                                    </MarginRight>
+                                </Link>
+                                <Link href={'/shop/auth/policy?type=1'} passHref>
+                                    <MarginRight style={{ cursor: 'pointer' }}>
+                                        | Privacy Policy
+                                    </MarginRight>
+                                </Link>
                             </Row>
                             <br />
                             <Row >

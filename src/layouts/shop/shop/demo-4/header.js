@@ -18,6 +18,7 @@ import $ from 'jquery'
 import dynamic from 'next/dynamic';
 import MenuPopover from "src/components/menu-popover"
 import { TitleComponent } from "src/components/elements/shop/demo-4"
+import Link from "next/link"
 const ReactQuill = dynamic(() => import('react-quill'), {
     ssr: false,
     loading: () => <p>Loading ...</p>,
@@ -531,17 +532,11 @@ const Header = () => {
                                     }}
                                 />
                             </NoneShowMobile>
-                            <MainLogo
-                                src={logoSrc()}
-                                onClick={() => {
-                                    if (router.pathname === '/shop') {
-                                        //router.reload()
-                                        window.location.reload()
-                                    } else {
-                                        router.push('/shop')
-                                    }
-                                }}
-                            />
+                            <a href={''}>
+                                <MainLogo
+                                    src={logoSrc()}
+                                />
+                            </a>
                             <NoneShowMobile>
                                 {/*<Button variant="outlined"
                                     sx={{ marginRight: '0.5rem', minWidth: '112px' }}
@@ -624,22 +619,21 @@ const Header = () => {
                                     <Icon icon={themeMode === 'dark' ? 'tabler:sun' : 'tabler:moon-stars'} fontSize={'1.5rem'} color={themeMode == 'dark' ? '#fff' : '#000'} />
                                 </IconButton>*/}
                                 <div style={{ position: 'absolute', right: '0' }}>
-                                    <Button style={{
-                                        width: '74px',
-                                        height: '30px',
-                                        fontWeight: 'bold',
-                                        fontSize: '12px',
-                                        color: `${themeMode == 'dark' ? 'black' : 'white'}`,
-                                        backgroundColor: `${themeMode == 'dark' ? 'white' : '#FF5B0D'}`,
-                                        borderRadius: '0',
-                                        marginRight: '10px'
-                                    }}
-                                        onClick={() => {
-                                            router.push(`/shop/guide/purchase-guide`)
+                                    <Link href={'/shop/guide/purchase-guide'} passHref>
+                                        <Button style={{
+                                            width: '74px',
+                                            height: '30px',
+                                            fontWeight: 'bold',
+                                            fontSize: '12px',
+                                            color: `${themeMode == 'dark' ? 'black' : 'white'}`,
+                                            backgroundColor: `${themeMode == 'dark' ? 'white' : '#FF5B0D'}`,
+                                            borderRadius: '0',
+                                            marginRight: '10px'
                                         }}
-                                    >
-                                        Sell Item
-                                    </Button>
+                                        >
+                                            Sell Item
+                                        </Button>
+                                    </Link>
                                     <Button style={{
                                         width: '74px',
                                         height: '30px',
@@ -663,36 +657,30 @@ const Header = () => {
                                         <>
                                         </>
                                         :
-                                        <Button style={{
-                                            width: '74px',
-                                            height: '30px',
-                                            fontWeight: 'bold',
-                                            fontSize: '12px',
-                                            color: `${themeMode == 'dark' ? 'white' : 'black'}`,
-                                            borderRadius: '0',
-                                            marginRight: '8px'
-                                        }}
-                                            onClick={() => {
-                                                router.push(`/shop/auth/sign-up`)
+                                        <Link href={'/shop/auth/sign-up'} passHref>
+                                            <Button style={{
+                                                width: '74px',
+                                                height: '30px',
+                                                fontWeight: 'bold',
+                                                fontSize: '12px',
+                                                color: `${themeMode == 'dark' ? 'white' : 'black'}`,
+                                                borderRadius: '0',
+                                                marginRight: '8px'
                                             }}
-                                        >
-                                            Sign up
-                                        </Button>
+                                            >
+                                                Sign up
+                                            </Button>
+                                        </Link>
                                     }
-                                    <IconButton
-                                        sx={{ padding: '0' }}
-                                        onClick={() => {
-                                            if (user) {
-                                                router.push(`/shop/auth/cart`)
-                                            } else {
-                                                router.push(`/shop/auth/login`)
-                                            }
-                                        }}
-                                    >
-                                        <Badge badgeContent={themeCartData.length} color="error">
-                                            <Icon icon={'basil:shopping-bag-outline'} width={'30px'} color={themeMode == 'dark' ? '#fff' : '#000'} />
-                                        </Badge>
-                                    </IconButton>
+                                    <Link href={user ? '/shop/auth/cart' : '/shop/auth/login'} passHref>
+                                        <IconButton
+                                            sx={{ padding: '0' }}
+                                        >
+                                            <Badge badgeContent={themeCartData.length} color="error">
+                                                <Icon icon={'basil:shopping-bag-outline'} width={'30px'} color={themeMode == 'dark' ? '#fff' : '#000'} />
+                                            </Badge>
+                                        </IconButton>
+                                    </Link>
                                 </div>
                             </NoneShowMobile>
                             <NoneShowMobile style={{ marginLeft: 'auto', cursor: 'pointer', fontSize: '14px' }} onMouseOver={() => {
@@ -768,14 +756,14 @@ const Header = () => {
                                     {themeCategoryList.map((group, index) => {
                                         if (group?.category_group_name == '카테고리' || group?.category_group_name == '브랜드') {
                                             return <>
-                                                <div style={{ position: 'relative', fontWeight:'bold' }} ref={(element) => {
+                                                <div style={{ position: 'relative', fontWeight: 'bold' }} ref={(element) => {
                                                     allCategoryRef.current[index] = element;
                                                 }}>
                                                     <CategoryMenu borderColor={themeDnsData?.theme_css?.main_color} onClick={() => {
                                                         setOpenAllCategory(group?.id)
                                                     }}>
                                                         {group?.category_group_name == '카테고리' ?
-                                                            <div style={{ fontFamily: 'Playfair Display'}}>ALL CATEGORY</div>
+                                                            <div style={{ fontFamily: 'Playfair Display' }}>ALL CATEGORY</div>
                                                             :
                                                             group?.category_group_name == '브랜드' ?
 
@@ -789,47 +777,51 @@ const Header = () => {
                                                                 overflowY: 'auto',
                                                                 borderTop: `2px solid ${themeDnsData?.theme_css?.main_color}`,
                                                                 borderBottom: `2px solid ${themeDnsData?.theme_css?.main_color}`,
-                                                                fontFamily:'Playfair Display'
+                                                                fontFamily: 'Playfair Display'
                                                             }}>
                                                                 <div style={{ maxWidth: '1400px', margin: '0 auto' }}>
 
                                                                     {group?.sort_type == 0 &&
                                                                         <>
-                                                                            <Row style={{ columnGap: '1rem', flexWrap: 'wrap', rowGap: '2rem', margin: '2rem 0', flexDirection:'column', color:'white' }}>
+                                                                            <Row style={{ columnGap: '1rem', flexWrap: 'wrap', rowGap: '2rem', margin: '2rem 0', flexDirection: 'column', color: 'white' }}>
                                                                                 {group?.product_categories && group?.product_categories.map((category, idx) => (
                                                                                     <>
                                                                                         {category.category_name != 'WATCH' && category.category_name != 'PRIVATE' && (
                                                                                             <Row style={{ minWidth: '100px', }}>
-                                                                                                <ColumnMenuTitle style={{ margin: '0', cursor: 'pointer', width:'130px' }} onClick={() => {
-                                                                                                    router.push(`/shop/items?category_id${index}=${category?.id}&depth=0`)
-                                                                                                    setOpenAllCategory("")
-                                                                                                }}>
-                                                                                                    {category?.category_name}
-                                                                                                </ColumnMenuTitle>
+                                                                                                <Link href={`/shop/items?category_id${index}=${category?.id}&depth=0`} passHref>
+                                                                                                    <ColumnMenuTitle style={{ margin: '0', cursor: 'pointer', width: '130px' }} onClick={() => {
+                                                                                                        setOpenAllCategory("")
+                                                                                                    }}>
+                                                                                                        {category?.category_name}
+                                                                                                    </ColumnMenuTitle>
+                                                                                                </Link>
                                                                                                 {category?.children && category?.children.map(children => (
                                                                                                     <>
-                                                                                                        <Typography variant="body2" style={{ cursor: 'pointer', marginBottom: '0.2rem', marginRight:'2rem', fontFamily:'Noto Sans KR' }} onClick={() => {
-                                                                                                            router.push(`/shop/items?category_id${index}=${children?.id}&depth=0`)
-                                                                                                            setOpenAllCategory("")
-                                                                                                        }}>{children?.category_name}</Typography>
+                                                                                                        <Link href={`/shop/items?category_id${index}=${children?.id}&depth=0`} passHref>
+                                                                                                            <Typography variant="body2" style={{ cursor: 'pointer', marginBottom: '0.2rem', marginRight: '2rem', fontFamily: 'Noto Sans KR' }} onClick={() => {
+                                                                                                                setOpenAllCategory("")
+                                                                                                            }}>{children?.category_name}</Typography>
+                                                                                                        </Link>
                                                                                                     </>
                                                                                                 ))}
                                                                                             </Row>
                                                                                         )}
                                                                                         {category.category_name == 'PRIVATE' && user && (
-                                                                                            <Row style={{ minWidth: '100px', color:'white' }}>
-                                                                                                <ColumnMenuTitle style={{ margin: '0', cursor: 'pointer', width:'130px' }} onClick={() => {
-                                                                                                    router.push(`/shop/items?category_id${index}=${category?.id}&depth=0`)
-                                                                                                    setOpenAllCategory("")
-                                                                                                }}>
-                                                                                                    {category?.category_name}
-                                                                                                </ColumnMenuTitle>
+                                                                                            <Row style={{ minWidth: '100px', color: 'white' }}>
+                                                                                                <Link href={`/shop/items?category_id${index}=${category?.id}&depth=0`} passHref>
+                                                                                                    <ColumnMenuTitle style={{ margin: '0', cursor: 'pointer', width: '130px' }} onClick={() => {
+                                                                                                        setOpenAllCategory("")
+                                                                                                    }}>
+                                                                                                        {category?.category_name}
+                                                                                                    </ColumnMenuTitle>
+                                                                                                </Link>
                                                                                                 {category?.children && category?.children.map(children => (
                                                                                                     <>
-                                                                                                        <Typography variant="body2" style={{ cursor: 'pointer', marginBottom: '0.2rem', marginRight:'2rem', fontFamily:'Playfair Display' }} onClick={() => {
-                                                                                                            router.push(`/shop/items?category_id${index}=${children?.id}&depth=0`)
-                                                                                                            setOpenAllCategory("")
-                                                                                                        }}>{children?.category_name}</Typography>
+                                                                                                        <Link href={`/shop/items?category_id${index}=${children?.id}&depth=0`} passHref>
+                                                                                                            <Typography variant="body2" style={{ cursor: 'pointer', marginBottom: '0.2rem', marginRight: '2rem', fontFamily: 'Playfair Display' }} onClick={() => {
+                                                                                                                setOpenAllCategory("")
+                                                                                                            }}>{children?.category_name}</Typography>
+                                                                                                        </Link>
                                                                                                     </>
                                                                                                 ))}
                                                                                             </Row>
@@ -838,24 +830,26 @@ const Header = () => {
                                                                                 ))}
                                                                             </Row>
                                                                             {/*<div style={{ border: '2px solid red', padding: '0' }} />*/}
-                                                                            <Col style={{ columnGap: '1rem', flexWrap: 'wrap', alignItems: 'flex-start', rowGap: '2rem', maxHeight: '200px', marginBottom:'2rem', color: 'white' }}>
+                                                                            <Col style={{ columnGap: '1rem', flexWrap: 'wrap', alignItems: 'flex-start', rowGap: '2rem', maxHeight: '200px', marginBottom: '2rem', color: 'white' }}>
                                                                                 {group?.product_categories && group?.product_categories.map((category, idx) => {
                                                                                     return <>
                                                                                         {category.category_name == 'WATCH' && (
                                                                                             <div style={{ minWidth: '100px', display: 'flex' }}>
-                                                                                                <ColumnMenuTitle style={{ margin: '0', cursor: 'pointer', width:'130px' }} onClick={() => {
-                                                                                                    router.push(`/shop/items?category_id${index}=${category?.id}&depth=0`)
-                                                                                                    setOpenAllCategory("")
-                                                                                                }}>
-                                                                                                    {category?.category_name}
-                                                                                                </ColumnMenuTitle>
+                                                                                                <Link href={`/shop/items?category_id${index}=${category?.id}&depth=0`} passHref>
+                                                                                                    <ColumnMenuTitle style={{ margin: '0', cursor: 'pointer', width: '130px' }} onClick={() => {
+                                                                                                        setOpenAllCategory("")
+                                                                                                    }}>
+                                                                                                        {category?.category_name}
+                                                                                                    </ColumnMenuTitle>
+                                                                                                </Link>
                                                                                                 <Col style={{ columnGap: '3rem', flexWrap: 'wrap', alignItems: 'flex-start', rowGap: '1rem', maxHeight: '200px' }}>
                                                                                                     {category?.children && category?.children.map((children) => {
                                                                                                         return <>
-                                                                                                            <Typography variant="body2" style={{ cursor: 'pointer', fontFamily:'Playfair Display' }} onClick={() => {
-                                                                                                                router.push(`/shop/items?category_id${index}=${children?.id}&depth=0`)
-                                                                                                                setOpenAllCategory("")
-                                                                                                            }}>{children?.category_name}</Typography>
+                                                                                                            <Link href={`/shop/items?category_id${index}=${children?.id}&depth=0`} passHref>
+                                                                                                                <Typography variant="body2" style={{ cursor: 'pointer', fontFamily: 'Playfair Display' }} onClick={() => {
+                                                                                                                    setOpenAllCategory("")
+                                                                                                                }}>{children?.category_name}</Typography>
+                                                                                                            </Link>
                                                                                                         </>
                                                                                                     })}</Col>
                                                                                             </div>
@@ -876,7 +870,7 @@ const Header = () => {
                                                                                     height: '40px',
                                                                                     background: 'transparent',
                                                                                     borderRadius: '0',
-                                                                                    fontFamily:'Playfair Display',
+                                                                                    fontFamily: 'Playfair Display',
                                                                                     color: `${langChipSelected == 0 ? 'white' : '#DDDDDD'}`,
                                                                                     '&:hover': {
                                                                                         textDecoration: 'underline',
@@ -893,7 +887,7 @@ const Header = () => {
                                                                                     height: '40px',
                                                                                     background: 'transparent',
                                                                                     borderRadius: '0',
-                                                                                    fontFamily:'Noto Sans KR',
+                                                                                    fontFamily: 'Noto Sans KR',
                                                                                     color: `${langChipSelected == 1 ? 'white' : '#DDDDDD'}`,
                                                                                     '&:hover': {
                                                                                         textDecoration: 'underline',
@@ -916,7 +910,7 @@ const Header = () => {
                                                                                                         cursor: 'pointer',
                                                                                                         color: 'white',
                                                                                                         background: 'transparent',
-                                                                                                        fontFamily:'Playfair Display',
+                                                                                                        fontFamily: 'Playfair Display',
                                                                                                         '&:hover': {
                                                                                                             color: `${textChipSelected == alphabet ? 'white' : ''}`,
                                                                                                             //background: `${textChipSelected == alphabet ? 'black' : ''}`,
@@ -942,7 +936,7 @@ const Header = () => {
                                                                                                         cursor: 'pointer',
                                                                                                         color: 'white',
                                                                                                         background: 'transparent',
-                                                                                                        fontFamily:'Noto Sans KR',
+                                                                                                        fontFamily: 'Noto Sans KR',
                                                                                                         '&:hover': {
                                                                                                             color: `${textChipSelected == hangeul ? 'white' : ''}`,
                                                                                                             //background: `${textChipSelected == hangeul ? 'black' : ''}`,
@@ -965,24 +959,26 @@ const Header = () => {
                                                                                             <Row>
                                                                                                 {
                                                                                                     group.childs.map((child) => {
-                                                                                                        return <Chip
-                                                                                                            label={langChipSelected == 0 ? child?.category_en_name : child?.category_name}
-                                                                                                            sx={{
-                                                                                                                margin: '0.5rem 0rem 0.5rem 0',
-                                                                                                                fontSize: '16px',
-                                                                                                                cursor: 'pointer',
-                                                                                                                background: 'transparent',
-                                                                                                                fontFamily: `${langChipSelected == 0 ? 'Playfair Display' : 'Noto Sans KR'}`,
-                                                                                                                '&:hover': {
-                                                                                                                    background: `${themeMode == 'dark' ? '#999999' : 'white'}`,
-                                                                                                                },
-                                                                                                            }}
-                                                                                                            onClick={() => {
-                                                                                                                router.push(`/shop/items?category_id${index}=${child?.id}&depth=0`)
-                                                                                                                setOpenAllCategory("")
-                                                                                                            }} />
+                                                                                                        return <>
+                                                                                                            <Link href={`/shop/items?category_id${index}=${child?.id}&depth=0`} passHref>
+                                                                                                                <Chip
+                                                                                                                    label={langChipSelected == 0 ? child?.category_en_name : child?.category_name}
+                                                                                                                    sx={{
+                                                                                                                        margin: '0.5rem 0rem 0.5rem 0',
+                                                                                                                        fontSize: '16px',
+                                                                                                                        cursor: 'pointer',
+                                                                                                                        background: 'transparent',
+                                                                                                                        fontFamily: `${langChipSelected == 0 ? 'Playfair Display' : 'Noto Sans KR'}`,
+                                                                                                                        '&:hover': {
+                                                                                                                            background: `${themeMode == 'dark' ? '#999999' : 'white'}`,
+                                                                                                                        },
+                                                                                                                    }}
+                                                                                                                    onClick={() => {
+                                                                                                                        setOpenAllCategory("")
+                                                                                                                    }} />
+                                                                                                            </Link>
+                                                                                                        </>
                                                                                                     })
-
                                                                                                 }
                                                                                             </Row>
                                                                                         </>
@@ -992,24 +988,26 @@ const Header = () => {
                                                                                             <Row>
                                                                                                 {
                                                                                                     group.childs.map((child) => {
-                                                                                                        return <Chip
-                                                                                                            label={langChipSelected == 0 ? child?.category_en_name : child?.category_name}
-                                                                                                            sx={{
-                                                                                                                margin: '0.5rem 0rem 0.5rem 0',
-                                                                                                                fontSize: '16px',
-                                                                                                                cursor: 'pointer',
-                                                                                                                background: 'transparent',
-                                                                                                                fontFamily:`${langChipSelected == 0 ? 'Playfair Display' : 'Noto Sans KR'}`,
-                                                                                                                '&:hover': {
-                                                                                                                    background: `${themeMode == 'dark' ? '#999999' : 'white'}`,
-                                                                                                                },
-                                                                                                            }}
-                                                                                                            onClick={() => {
-                                                                                                                router.push(`/shop/items?category_id${index}=${child?.id}&depth=0`)
-                                                                                                                setOpenAllCategory("")
-                                                                                                            }} />
+                                                                                                        return <>
+                                                                                                            <Link href={`/shop/items?category_id${index}=${child?.id}&depth=0`} passHref>
+                                                                                                                <Chip
+                                                                                                                    label={langChipSelected == 0 ? child?.category_en_name : child?.category_name}
+                                                                                                                    sx={{
+                                                                                                                        margin: '0.5rem 0rem 0.5rem 0',
+                                                                                                                        fontSize: '16px',
+                                                                                                                        cursor: 'pointer',
+                                                                                                                        background: 'transparent',
+                                                                                                                        fontFamily: `${langChipSelected == 0 ? 'Playfair Display' : 'Noto Sans KR'}`,
+                                                                                                                        '&:hover': {
+                                                                                                                            background: `${themeMode == 'dark' ? '#999999' : 'white'}`,
+                                                                                                                        },
+                                                                                                                    }}
+                                                                                                                    onClick={() => {
+                                                                                                                        setOpenAllCategory("")
+                                                                                                                    }} />
+                                                                                                            </Link>
+                                                                                                        </>
                                                                                                     })
-
                                                                                                 }
                                                                                             </Row>
                                                                                         </>
@@ -1029,148 +1027,126 @@ const Header = () => {
                                 </div>
 
 
-                                <CategoryMenu borderColor={themeDnsData?.theme_css?.main_color} style={{fontWeight:'bold' }} onClick={() => {
-                                    //setOpenAllCategory(group?.id)
-                                    router.push('/shop/items/?not_show_select_menu=1&property_ids0=22')
-                                }}>
-                                    <div style={{ fontFamily: 'Playfair Display', }}>BEST</div>
-                                </CategoryMenu>
-                                <CategoryMenu borderColor={themeDnsData?.theme_css?.main_color} style={{fontWeight:'bold' }} onClick={() => {
-                                    //setOpenAllCategory(group?.id)
-                                    router.push('/shop/items/?not_show_select_menu=1&property_ids0=21')
-                                }}>
-                                    <div style={{ fontFamily: 'Playfair Display', }}>NEW IN</div>
-                                </CategoryMenu>
-                                <CategoryMenu borderColor={themeDnsData?.theme_css?.main_color} style={{fontWeight:'bold' }} onClick={() => {
-                                    //setOpenAllCategory(group?.id)
-                                    router.push('/shop/items/?not_show_select_menu=1&property_ids0=20')
-                                }}>
-                                    <div style={{ fontFamily: 'Playfair Display', }}>SALE</div>
-                                </CategoryMenu>
+                                <Link href={`/shop/items/?not_show_select_menu=1&property_ids0=22`} passHref>
+                                    <CategoryMenu borderColor={themeDnsData?.theme_css?.main_color} style={{ fontWeight: 'bold' }} onClick={() => {
+                                        //setOpenAllCategory(group?.id)
+                                    }}>
+                                        <div style={{ fontFamily: 'Playfair Display', }}>BEST</div>
+                                    </CategoryMenu>
+                                </Link>
+                                <Link href={`/shop/items/?not_show_select_menu=1&property_ids0=21`} passHref>
+                                    <CategoryMenu borderColor={themeDnsData?.theme_css?.main_color} style={{ fontWeight: 'bold' }} onClick={() => {
+                                        //setOpenAllCategory(group?.id)
+                                    }}>
+                                        <div style={{ fontFamily: 'Playfair Display', }}>NEW IN</div>
+                                    </CategoryMenu>
+                                </Link>
+                                <Link href={`/shop/items/?not_show_select_menu=1&property_ids0=20`} passHref>
+                                    <CategoryMenu borderColor={themeDnsData?.theme_css?.main_color} style={{ fontWeight: 'bold' }} onClick={() => {
+                                        //setOpenAllCategory(group?.id)
+                                    }}>
+                                        <div style={{ fontFamily: 'Playfair Display', }}>SALE</div>
+                                    </CategoryMenu>
+                                </Link>
                                 <NoneShowMobile>
                                     <div style={{ position: 'absolute', right: '0' }}>
-                                        <IconButton
-                                            sx={{ padding: '0', marginRight: '20px' }}
-                                            onClick={() => {
-                                                if (user) {
-                                                    router.push(`/shop/auth/my-page`)
-                                                } else {
-                                                    router.push(`/shop/auth/login`)
-                                                }
-                                            }}
-                                        >
-                                            <Badge badgeContent={themeCartData.length} color="error">
-                                                <Icon icon={'basil:user-outline'} width={'30px'} color={themeMode == 'dark' ? '#fff' : '#000'} />
-                                            </Badge>
-                                        </IconButton>
+                                        <Link href={user ? `/shop/auth/my-page` : `/shop/auth/login`} passHref>
+                                            <IconButton
+                                                sx={{ padding: '0', marginRight: '20px' }}
+                                            >
+                                                <Badge badgeContent={themeCartData.length} color="error">
+                                                    <Icon icon={'basil:user-outline'} width={'30px'} color={themeMode == 'dark' ? '#fff' : '#000'} />
+                                                </Badge>
+                                            </IconButton>
+                                        </Link>
                                         <IconButton
                                             sx={{ padding: '0', marginRight: '20px' }}
                                             onClick={() => onToggleMode()}
                                         >
                                             <Icon icon={themeMode === 'dark' ? 'tabler:sun' : 'tabler:moon-stars'} width={'25px'} color={themeMode == 'dark' ? '#fff' : '#000'} />
                                         </IconButton>
-                                        <IconButton
-                                            sx={{ padding: '0' }}
-                                            onClick={() => {
-                                                if (user) {
-                                                    router.push(`/shop/auth/wish`)
-                                                } else {
-                                                    router.push(`/shop/auth/login`)
-                                                }
-                                            }}
-                                        >
-                                            <Badge badgeContent={themeCartData.length} color="error">
-                                                <Icon icon={'basil:heart-outline'} width={'30px'} color={themeMode == 'dark' ? '#fff' : '#000'} />
-                                            </Badge>
-                                        </IconButton>
+                                        <Link href={user ? `/shop/auth/wish` : `/shop/auth/login`} passHref>
+                                            <IconButton
+                                                sx={{ padding: '0' }}
+                                            >
+                                                <Badge badgeContent={themeCartData.length} color="error">
+                                                    <Icon icon={'basil:heart-outline'} width={'30px'} color={themeMode == 'dark' ? '#fff' : '#000'} />
+                                                </Badge>
+                                            </IconButton>
+                                        </Link>
                                     </div>
                                 </NoneShowMobile>
 
                             </CategoryContainer>
                         </div>
-                        <div 
-                        style={{ 
-                            width: '100%', 
-                            borderTop: `1px solid ${theme.palette.grey[300]}`, 
-                            backgroundColor:`${themeMode != 'dark' ? '#FF5B0D' : ''}`, 
-                            color: 'white', 
-                            fontFamily:'Playfair Display' 
+                        <div
+                            style={{
+                                width: '100%',
+                                borderTop: `1px solid ${theme.palette.grey[300]}`,
+                                backgroundColor: `${themeMode != 'dark' ? '#FF5B0D' : ''}`,
+                                color: 'white',
+                                fontFamily: 'Playfair Display'
                             }}>
                             <CategoryContainer>
-                                <NoneShowMobile style={{fontSize:'90%', fontWeight:'bold'}}>
-                                    <Row style={{margin:'0 1rem'}}>
+                                <NoneShowMobile style={{ fontSize: '90%', fontWeight: 'bold' }}>
+                                    <Row style={{ margin: '0 1rem' }}>
                                         BRAND PICK |
                                     </Row>
-                                    <CategoryMenu
-                                    onClick={() => {
-                                        /*const route = themeCategoryList.map((group, index) => {
-                                            let categories = group?.product_categories;
-                                            if (_.find(categories, { category_name: 'HERMES' })) {
-                                              return _.find(categories, { category_name: 'HERMES' })?.id
-                                            }
-                                          })
-                                          console.log(route)*/
-                                        router.push(`/shop/items/?category_id1=501&depth=0`)
-                                    }}
-                                    >
-                                        HERMES
-                                    </CategoryMenu>
-                                    <CategoryMenu
-                                    onClick={() => {
-                                        router.push(`/shop/items/?category_id1=506&depth=0`)
-                                    }}
-                                    >
-                                        CHANEL
-                                    </CategoryMenu>
-                                    <CategoryMenu
-                                    onClick={() => {
-                                        router.push(`/shop/items/?category_id1=511&depth=0`)
-                                    }}
-                                    >
-                                        LOUIS VUITTON
-                                    </CategoryMenu>
-                                    <CategoryMenu
-                                    onClick={() => {
-                                        router.push(`/shop/items/?category_id1=533&depth=0`)
-                                    }}
-                                    >
-                                        ROLEX
-                                    </CategoryMenu>
-                                    <CategoryMenu
-                                    onClick={() => {
-                                        router.push(`/shop/items/?category_id1=516&depth=0`)
-                                    }}
-                                    >
-                                        CARTIER
-                                    </CategoryMenu>
-                                    <CategoryMenu
-                                    onClick={() => {
-                                        router.push(`/shop/items/?category_id1=522&depth=0`)
-                                    }}
-                                    >
-                                        VAN CLEEF & ARPELS
-                                    </CategoryMenu>
-                                    <CategoryMenu
-                                    onClick={() => {
-                                        router.push(`/shop/items/?category_id1=527&depth=0`)
-                                    }}
-                                    >
-                                        TIFFANY & CO.
-                                    </CategoryMenu>
-                                    <CategoryMenu
-                                    onClick={() => {
-                                        router.push(`/shop/items/?category_id1=513&depth=0`)
-                                    }}
-                                    >
-                                        GOYARD
-                                    </CategoryMenu>
-                                    <CategoryMenu
-                                    onClick={() => {
-                                        router.push(`/shop/items/?category_id1=512&depth=0`)
-                                    }}
-                                    >
-                                        CHRISTIAN DIOR
-                                    </CategoryMenu>
+                                    <Link href={`/shop/items/?category_id1=501&depth=0`} passHref>
+                                        <CategoryMenu
+                                            onClick={() => {
+                                                /*const route = themeCategoryList.map((group, index) => {
+                                                    let categories = group?.product_categories;
+                                                    if (_.find(categories, { category_name: 'HERMES' })) {
+                                                      return _.find(categories, { category_name: 'HERMES' })?.id
+                                                    }
+                                                  })
+                                                  console.log(route)*/
+                                            }}
+                                        >
+                                            HERMES
+                                        </CategoryMenu>
+                                    </Link>
+                                    <Link href={`/shop/items/?category_id1=506&depth=0`} passHref>
+                                        <CategoryMenu>
+                                            CHANEL
+                                        </CategoryMenu>
+                                    </Link>
+                                    <Link href={`/shop/items/?category_id1=511&depth=0`} passHref>
+                                        <CategoryMenu>
+                                            LOUIS VUITTON
+                                        </CategoryMenu>
+                                    </Link>
+                                    <Link href={`/shop/items/?category_id1=533&depth=0`} passHref>
+                                        <CategoryMenu>
+                                            ROLEX
+                                        </CategoryMenu>
+                                    </Link>
+                                    <Link href={`/shop/items/?category_id1=516&depth=0`} passHref>
+                                        <CategoryMenu>
+                                            CARTIER
+                                        </CategoryMenu>
+                                    </Link>
+                                    <Link href={`/shop/items/?category_id1=522&depth=0`} passHref>
+                                        <CategoryMenu>
+                                            VAN CLEEF & ARPELS
+                                        </CategoryMenu>
+                                    </Link>
+                                    <Link href={`/shop/items/?category_id1=527&depth=0`} passHref>
+                                        <CategoryMenu>
+                                            TIFFANY & CO.
+                                        </CategoryMenu>
+                                    </Link>
+                                    <Link href={`/shop/items/?category_id1=513&depth=0`} passHref>
+                                        <CategoryMenu>
+                                            GOYARD
+                                        </CategoryMenu>
+                                    </Link>
+                                    <Link href={`/shop/items/?category_id1=512&depth=0`} passHref>
+                                        <CategoryMenu>
+                                            CHRISTIAN DIOR
+                                        </CategoryMenu>
+                                    </Link>
                                 </NoneShowMobile>
                             </CategoryContainer>
                         </div>

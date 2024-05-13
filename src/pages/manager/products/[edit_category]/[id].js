@@ -516,7 +516,7 @@ const ProductEdit = () => {
     });
     $(`.category-container-${idx}`).scrollLeft(100000);
   }
-  const onSave = async (type) => {
+  const onSave = async (type, sort) => {
     let result = undefined
     let category_ids = {};
     for (var i = 0; i < themeCategoryList.length; i++) {
@@ -534,6 +534,9 @@ const ProductEdit = () => {
       }
     }*/
     let obj = item;
+    if (sort) {
+      console.log(sort)
+    }
     let sub_images = [];
     let upload_files = [];
     for (var i = 0; i < item.sub_images.length; i++) {
@@ -569,6 +572,9 @@ const ProductEdit = () => {
     {
       type == 'edit' ?
         obj?.id ? //수정
+        sort ?
+        result = await apiManager('products', 'update', { ...obj, id: obj?.id, ...category_ids, sub_images, properties: JSON.stringify(item.properties), sort_idx: sort })
+        :
           result = await apiManager('products', 'update', { ...obj, id: obj?.id, ...category_ids, sub_images, properties: JSON.stringify(item.properties) })
           : //추가
           result = await apiManager('products', 'create', { ...obj, ...category_ids, sub_images, user_id: user?.id, properties: JSON.stringify(item.properties) })
@@ -766,10 +772,10 @@ const ProductEdit = () => {
                                     control={
                                       <Checkbox
                                         checked={
-                                          /*group?.brand_id == 5 && property?.property_name == 'NEW UP-DATE' && router.query?.edit_category == 'add'
+                                          group?.brand_id == 5 && property?.property_name == '특가(PRICE DOWN)'
                                             ?
-                                            defaultCorner
-                                            :*/
+                                            item?.product_price > item?.product_sale_price
+                                            :
                                           item.properties[`${group?.id}`] && (item.properties[`${group?.id}`] ?? [])?.includes(property?.id)}
                                       />}
                                     onChange={(e) => {
@@ -1909,12 +1915,13 @@ const ProductEdit = () => {
                       <Button variant="contained" style={{
                         height: '48px', width: '180px', marginLeft: 'auto',
                       }} onClick={() => {
-                        setItem({
+                        const updatedItem = {
                           ...item,
                           sort_idx: item?.max_sort_idx + 1
-                        })
+                        }
+                        setItem(updatedItem)
                         setModal({
-                          func: () => { onSave('edit') },
+                          func: () => { onSave('edit', updatedItem.sort_idx) },
                           icon: 'material-symbols:edit-outline',
                           title: '변경 사항을 저장 하시겠습니까?'
                         })

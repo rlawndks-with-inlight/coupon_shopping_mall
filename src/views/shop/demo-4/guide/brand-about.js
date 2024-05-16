@@ -128,7 +128,7 @@ const BrandAbout = () => {
           <img src="/grandparis/about_banner.png" />
         </ContentRow>
         <ContentRow style={{marginTop:'0'}}>
-        <img src="/grandparis/luxury_edition_3.png" />
+        <img src="/grandparis/luxury_edition_4.png" />
           <ContentSection style={{marginRight:'1rem'}}>
             
             <br />

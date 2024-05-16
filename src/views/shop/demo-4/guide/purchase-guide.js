@@ -229,7 +229,7 @@ const PurchaseGuide = () => {
                             </Button>
                         </Description>
                     </ContentSection>
-                    <img src="/grandparis/purchase_banner_1.png" />
+                    <img src="/grandparis/purchase_banner_2.png" />
                 </ContentRow>
                 <Row style={{ margin: '0 auto', marginTop: '10rem' }}>
                     <div

@@ -1032,11 +1032,12 @@ const ProductEdit = () => {
                                       if (e.target.checked) {
                                         productType = 1;
                                       }
-
-                                      setItem({
+                                      const updateItem = {
                                         ...item,
                                         product_type: productType
-                                      })
+                                      }
+                                      console.log(updateItem)
+                                      setItem(updateItem)
                                     }}
                                   />}
                               />

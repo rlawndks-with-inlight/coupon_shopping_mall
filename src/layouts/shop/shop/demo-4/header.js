@@ -532,7 +532,7 @@ const Header = () => {
                                     }}
                                 />
                             </NoneShowMobile>
-                            <a href={''}>
+                            <a href={'/'}>
                                 <MainLogo
                                     src={logoSrc()}
                                 />

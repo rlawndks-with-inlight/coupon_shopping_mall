@@ -174,16 +174,19 @@ const PurchaseGuide = () => {
                         <SinceText>매입/위탁센터</SinceText>
                         <br />
                         <LuxuryText>
-                            Sell what you have — so you<br />
-                            can buy what you want.
+                            Sell what you have — then you<br />
+                            can buy what you want
                         </LuxuryText>
                         <br />
                         <BrandText style={{ color: '#999999' }}>
-                            지금, 오래된 옷장을 비우고<br />
-                            새로움으로 채우세요
+                            내가 가진 클로짓을 더 멋지게<br />
+                            업그레이드해서 채워보세요
                         </BrandText>
                         <br />
                         <Description>
+                            더 즐거운 매일의 코디와 연출을 위한 똑똑한 방법이 그랑파리에!
+                            <br />
+                            <br />
                             그랑파리는 여러분의 소중한 상품을 귀하게 매입하고 보다 좋은 조건으로 위탁판매 해 드리기
                             
                             위해 노력합니다. 이는 그 상품이 여러분들에게 얼마나 소중했던, 설레게 했던 상품인지를 잘

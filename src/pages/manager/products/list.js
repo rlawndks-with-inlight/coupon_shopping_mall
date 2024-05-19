@@ -326,7 +326,8 @@ const ProductList = () => {
     e_dt: '',
     search: '',
     category_id: null,
-    seller_id: (user?.level == 10 ? user?.id : -1)
+    seller_id: (user?.level == 10 ? user?.id : -1),
+    order: 'id'
   })
   const [categories, setCategories] = useState([]);
   const [curCategories, setCurCategories] = useState({});
@@ -641,7 +642,7 @@ const ProductList = () => {
             searchObj={searchObj}
             onChangePage={onChangePage}
             add_button_text={'상품 추가'}
-            want_move_card={true}
+            want_move_card={false}
             table={'products'}
             detail_search={'상세검색'}
             onToggle={() => setDetailSearchOpen(!detailSearchOpen)}

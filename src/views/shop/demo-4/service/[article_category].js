@@ -48,7 +48,7 @@ const ArticlesDemo = (props) => {
         }
       }
     ] : []),
-    {
+    /*{
       id: 'created_at',
       label: '생성시간',
       action: (row) => {
@@ -58,7 +58,7 @@ const ArticlesDemo = (props) => {
           </div>
         </>
       }
-    },
+    },*/
     ...((postCategory?.is_able_user_add == 1 && postCategory?.post_category_read_type == 1) ? [
       {
         id: 'replies',

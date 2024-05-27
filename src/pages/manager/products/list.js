@@ -491,6 +491,64 @@ const ProductList = () => {
           <>
           <div style={{ marginLeft: '1rem', marginBottom: '0.25rem', marginTop: '0.25rem' }}>
                 <Typography variant="subtitle2" sx={{ color: 'text.secondary' }}>
+                  위탁상태
+                </Typography>
+                <Row style={{ flexWrap: 'wrap' }}>
+                      <FormControlLabel
+                        label={<Typography style={{ fontSize: themeObj.font_size.size6 }}>그랑파리</Typography>}
+                        control={<Checkbox />}
+                        onChange={(e) => {
+                          let product_type = searchObj[`product_type`] ?? [];
+                          if (e.target.checked) {
+                            product_type.push(0);
+                          } else {
+                            let find_idx = product_type.findIndex(e => e == 0);
+                            product_type.splice(find_idx, 1);
+                          }
+                          onChangePage({
+                            ...searchObj,
+                            [`product_type`]: product_type,
+                          })
+                        }}
+                      />
+                      <FormControlLabel
+                        label={<Typography style={{ fontSize: themeObj.font_size.size6 }}>위탁(회원)</Typography>}
+                        control={<Checkbox />}
+                        onChange={(e) => {
+                          let product_type = searchObj[`product_type`] ?? [];
+                          if (e.target.checked) {
+                            product_type.push(1);
+                          } else {
+                            let find_idx = product_type.findIndex(e => e == 1);
+                            product_type.splice(find_idx, 1);
+                          }
+                          onChangePage({
+                            ...searchObj,
+                            [`product_type`]: product_type,
+                          })
+                        }}
+                      />
+                      <FormControlLabel
+                        label={<Typography style={{ fontSize: themeObj.font_size.size6 }}>위탁(비회원)</Typography>}
+                        control={<Checkbox />}
+                        onChange={(e) => {
+                          let product_type = searchObj[`product_type`] ?? [];
+                          if (e.target.checked) {
+                            product_type.push(2);
+                          } else {
+                            let find_idx = product_type.findIndex(e => e == 2);
+                            product_type.splice(find_idx, 1);
+                          }
+                          onChangePage({
+                            ...searchObj,
+                            [`product_type`]: product_type,
+                          })
+                        }}
+                      />
+                </Row>
+              </div>
+          <div style={{ marginLeft: '1rem', marginBottom: '0.25rem', marginTop: '0.25rem' }}>
+                <Typography variant="subtitle2" sx={{ color: 'text.secondary' }}>
                   상태
                 </Typography>
                 <Row style={{ flexWrap: 'wrap' }}>

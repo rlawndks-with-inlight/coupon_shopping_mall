@@ -763,11 +763,11 @@ const Header = () => {
                                                         setOpenAllCategory(group?.id)
                                                     }}>
                                                         {group?.category_group_name == '카테고리' ?
-                                                            <div style={{ fontFamily: 'Playfair Display' }}>ALL CATEGORY</div>
+                                                            <div style={{ fontFamily: 'Playfair Display', color:'#FF5B0D' }}>ALL CATEGORY</div>
                                                             :
                                                             group?.category_group_name == '브랜드' ?
 
-                                                                <div style={{ fontFamily: 'Playfair Display' }}>FIND BRAND</div> : ''}
+                                                                <div style={{ fontFamily: 'Playfair Display', color:'#FF5B0D' }}>FIND BRAND</div> : ''}
                                                     </CategoryMenu>
                                                     {openAllCategory == group?.id &&
                                                         <>

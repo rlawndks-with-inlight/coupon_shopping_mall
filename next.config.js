@@ -30,7 +30,8 @@ module.exports = {
     '@fullcalendar/timegrid'
   ],
   experimental: {
-    esmExternals: false
+    esmExternals: false,
+    //scrollRestoration: true
   },
   webpack: config => {
     config.resolve.alias = {

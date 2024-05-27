@@ -239,9 +239,13 @@ const ItemDemo = (props) => {
                           </>
                           :
                           <>
-                            <div style={{ fontSize: '22px' }}>
-                              {product?.product_sale_price != 0 ? <div>{commarNumber(product?.product_sale_price)}원</div> : <div>SOLD OUT</div>}
-                            </div>
+                            <ItemCharacter 
+                            key_name={'판매가'} 
+                            value={<>
+                              {commarNumber(product?.product_sale_price)}원
+                            </>
+                            } 
+                            />
                           </>
                         }
                       {/* <ProductDetailsSummary

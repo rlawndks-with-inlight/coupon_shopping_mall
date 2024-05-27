@@ -11,7 +11,7 @@ import { Col, Row, Title, themeObj } from "src/components/elements/styled-compon
 import { useSettingsContext } from "src/components/settings";
 import { useAuthContext } from "src/layouts/manager/auth/useAuthContext";
 import { apiShop } from "src/utils/api";
-import styled, {css} from "styled-components";
+import styled, { css } from "styled-components";
 import $ from 'jquery';
 import { CategorySorter, LANGCODE } from "src/views/shop/demo-4/header"
 import queryString from 'query-string'
@@ -22,7 +22,7 @@ width:90%;
 margin: 0 auto 5rem auto;
 display:flex;
 flex-direction:column;
-${({width}) => css`
+${({ width }) => css`
 --parentWidth: ${width};
 `}
 `
@@ -67,6 +67,7 @@ const ItemsDemo = (props) => {
   const [textChipSelected, setTextChipSelected] = useState('A')
   const { sort, categoryGroup } = CategorySorter(themeCategoryList)
   const [filterOpen, setFilterOpen] = useState(false)
+  const [detailCategory, setDetailCategory] = useState()
 
   useEffect(() => {
     sort(LANGCODE.ENG)
@@ -100,6 +101,7 @@ const ItemsDemo = (props) => {
 
   useEffect(() => {
     setFilterOpen(false)
+    setDetailCategory()
     //console.log(themeCategoryList)
   }, [router.query])
 
@@ -248,7 +250,7 @@ const ItemsDemo = (props) => {
         }
         {router.query?.not_show_select_menu != 1 &&
           <>
-          <Row style={{ justifyContent: 'space-between', minHeight: '50px', direction: 'rtl' }}>
+            <Row style={{ justifyContent: 'space-between', minHeight: '50px', direction: 'rtl' }}>
               <img
                 src={filterOpen ? '/grandparis/dropdown_02.png' : '/grandparis/dropdown_01.png'}
                 style={{
@@ -265,7 +267,7 @@ const ItemsDemo = (props) => {
               {themeCategoryList.map((group, index) => {
                 return <>
                   {categoryChildren[`category_id${index}`] &&
-                    <div style={{ maxHeight: '150px', overflowX: 'auto', minHeight: '50px', direction:'ltr' }}>
+                    <div style={{ maxHeight: '150px', overflowX: 'auto', minHeight: '50px', direction: 'ltr' }}>
                       {categoryChildren[`category_id${index}`]?.children.map((category, idx) => (
                         <>
                           <Button
@@ -296,317 +298,353 @@ const ItemsDemo = (props) => {
                 </>
               })}
             </Row>
-            </>
-}
-          
-        
-        
-          
-            <>
-              {themeCategoryList.map((group, index) => {
-                
-                  return <Row>
-                    <BrandFilter style={{ fontFamily: 'Playfair Display', overflowY: 'auto', background: `${themeMode == 'dark' ? '#222' : '#FEF8F4'}`, display:`${filterOpen ? '':'none'}`, position:'absolute',  }}>
-
-                      <>
-                      <div style={{margin:'0.5rem', fontSize:'22px', fontWeight:'bold'}}>Brand</div>
-                        <Row>
-                          <Chip label={`ABC`} sx={{
-                            margin: '0.5rem 0.5rem 0.5rem 0',
-                            fontWeight: 'bold',
-                            fontSize: '16px',
-                            cursor: 'pointer',
-                            height: '40px',
-                            background: 'transparent',
-                            borderRadius: '0',
-                            fontFamily: 'Playfair Display',
-                            color: `${langChipSelected == 0 ? themeMode == 'dark' ? 'white' : 'black' : '#999999'}`,
-                            '&:hover': {
-                              textDecoration: 'underline',
-                              background: 'transparent',
-                            }
-                          }}
-                            onClick={() => { setLangChipSelected(0); sort(LANGCODE.ENG); setTextChipSelected('A'); }}
-                          />
-                          <Chip label={`가나다`} sx={{
-                            margin: '0.5rem 0.5rem 0.5rem 0',
-                            fontWeight: 'bold',
-                            fontSize: '16px',
-                            cursor: 'pointer',
-                            height: '40px',
-                            background: 'transparent',
-                            borderRadius: '0',
-                            fontFamily: 'Noto Sans KR',
-                            color: `${langChipSelected == 1 ? themeMode == 'dark' ? 'white' : 'black' : '#999999'}`,
-                            '&:hover': {
-                              textDecoration: 'underline',
-                              background: 'transparent',
-                            }
-                          }}
-                            onClick={() => { setLangChipSelected(1); sort(LANGCODE.KOR); setTextChipSelected('가'); }}
-                          />
-                        </Row>
-                        <Row style={{ flexWrap: 'wrap' }}>
-                          {langChipSelected == 0 ?
-                            <>
-                              {alphabetList.map((alphabet) => {
-                                return <>
-                                  <Chip
-                                    label={alphabet}
-                                    sx={{
-                                      margin: '0.5rem 0rem 0.5rem 0',
-                                      fontSize: '16px',
-                                      cursor: 'pointer',
-                                      color: `${textChipSelected == alphabet ? themeMode == 'dark' ? 'white' : 'black' : '#999999'}`,
-                                      background: 'transparent',
-                                      fontFamily: 'Playfair Display',
-                                      '&:hover': {
-                                        color: `${textChipSelected == alphabet ? 'white' : ''}`,
-                                        //background: `${textChipSelected == alphabet ? 'black' : ''}`,
-                                      },
-                                      borderRadius: '0',
-                                      borderBottom: `${textChipSelected == alphabet ? '2px solid black' : ''}`
-                                    }}
-                                    onClick={() => { setTextChipSelected(alphabet); }}
-                                  />
-                                </>
-                              })}
-                            </>
-                            :
-                            <>
-                              {hangeulList.map((hangeul) => {
-                                return <>
-                                  <Chip
-                                    label={hangeul}
-                                    variant="soft"
-                                    sx={{
-                                      margin: '0.5rem 0rem 0.5rem 0',
-                                      fontSize: '16px',
-                                      cursor: 'pointer',
-                                      color: `${textChipSelected == hangeul ? themeMode == 'dark' ? 'white' : 'black' : '#999999'}`,
-                                      background: 'transparent',
-                                      fontFamily: 'Noto Sans KR',
-                                      '&:hover': {
-                                        color: `${textChipSelected == hangeul ? 'white' : ''}`,
-                                        //background: `${textChipSelected == hangeul ? 'black' : ''}`,
-                                      },
-                                      borderRadius: '0',
-                                      borderBottom: `${textChipSelected == hangeul ? '2px solid black' : ''}`
-                                    }}
-                                    onClick={() => { setTextChipSelected(hangeul); }}
-                                  />
-                                </>
-                              })}
-                            </>
-                          }
-                        </Row>
-                        <Col style={{ minWidth: '100px', flexWrap: 'wrap', alignItems: 'flex-start', rowGap: '0.2rem', marginBottom: '1rem', borderBottom:'1px solid #999999' }}>
-
-                          {categoryGroup.map((group) => {
-                            if (textChipSelected == '') {
-                              return <>
-                                <Row style={{ flexWrap: 'wrap' }}>
-                                  {
-                                    group.childs.map((child) => {
-                                      return <Chip
-                                        label={langChipSelected == 0 ? child?.category_en_name : child?.category_name}
-                                        sx={{
-                                          margin: '0.5rem 0rem 0.5rem 0',
-                                          fontSize: '16px',
-                                          cursor: 'pointer',
-                                          background: 'transparent',
-                                          fontFamily: `${langChipSelected == 0 ? 'Playfair Display' : 'Noto Sans KR'}`,
-                                          '&:hover': {
-                                            background: `${themeMode == 'dark' ? '#999999' : 'white'}`,
-                                          },
-                                        }}
-                                        onClick={() => {
-                                          const parsedUrl = queryString.parseUrl(router.asPath).query;
-                                          parsedUrl[`category_id${index}`] = child?.id
-                                          const updatedUrl = queryString.stringifyUrl({url: queryString.parseUrl(router.asPath).url, query: parsedUrl})
-                                          
-                                          router.push(updatedUrl)
-                                        }} />
-                                    })
-
-                                  }
-                                </Row>
-                              </>
-                            }
-                            else if (textChipSelected == group?.label) {
-                              return <>
-                                <Row style={{ flexWrap: 'wrap' }}>
-                                  {
-                                    group.childs.map((child) => {
-                                      return <Chip
-                                        label={langChipSelected == 0 ? child?.category_en_name : child?.category_name}
-                                        sx={{
-                                          margin: '0.5rem 0rem 0.5rem 0',
-                                          fontSize: '16px',
-                                          cursor: 'pointer',
-                                          background: 'transparent',
-                                          fontFamily: `${langChipSelected == 0 ? 'Playfair Display' : 'Noto Sans KR'}`,
-                                          '&:hover': {
-                                            background: `${themeMode == 'dark' ? '#999999' : 'white'}`,
-                                          },
-                                        }}
-                                        onClick={() => {
-                                          const parsedUrl = queryString.parseUrl(router.asPath).query;
-                                          parsedUrl[`category_id${index}`] = child?.id
-                                          const updatedUrl = queryString.stringifyUrl({url: queryString.parseUrl(router.asPath).url, query: parsedUrl})
-                                          
-                                          router.push(updatedUrl)
-                                        }} />
-                                    })
-
-                                  }
-                                </Row>
-                              </>
-                            }
-                          })}
-
-                        </Col>
-                        <div style={{margin:'0.5rem', fontSize:'22px', fontWeight:'bold'}} >Category</div>
-                        <Row style={{flexWrap:'wrap'}}>
-                          {group?.sort_type == 0 && group?.product_categories && group?.product_categories.map((category, idx) => (
-                            <>
-                            {category.category_name != 'PRIVATE' && 
-                            <Chip
-                            label={category.category_name}
-                            sx={{
-                             margin: '0.5rem 0rem 0.5rem 0',
-                             fontSize: '16px',
-                             cursor: 'pointer',
-                             background: 'transparent',
-                             fontFamily: `${langChipSelected == 0 ? 'Playfair Display' : 'Noto Sans KR'}`,
-                             '&:hover': {
-                               background: `${themeMode == 'dark' ? '#999999' : 'white'}`,
-                             },
-                           }}
-                           onClick={() => {
-                            const parsedUrl = queryString.parseUrl(router.asPath).query;
-                            parsedUrl[`category_id0`] = category?.id
-                            const updatedUrl = queryString.stringifyUrl({url: queryString.parseUrl(router.asPath).url, query: parsedUrl})
-                            
-                            router.push(updatedUrl)
-                          }} />
-                            }
-                            </>
-                          ))}
-                        </Row>
-                      </>
+          </>
+        }
 
 
-                    </BrandFilter>
+
+
+        <>
+          {themeCategoryList.map((group, index) => {
+
+            return <Row>
+              <BrandFilter style={{ fontFamily: 'Playfair Display', overflowY: 'auto', background: `${themeMode == 'dark' ? '#222' : '#FEF8F4'}`, display: `${filterOpen ? '' : 'none'}`, position: 'absolute', }}>
+
+                <>
+                  <div style={{ margin: '0.5rem', fontSize: '22px', fontWeight: 'bold' }}>Brand</div>
+                  <Row>
+                    <Chip label={`ABC`} sx={{
+                      margin: '0.5rem 0.5rem 0.5rem 0',
+                      fontWeight: 'bold',
+                      fontSize: '16px',
+                      cursor: 'pointer',
+                      height: '40px',
+                      background: 'transparent',
+                      borderRadius: '0',
+                      fontFamily: 'Playfair Display',
+                      color: `${langChipSelected == 0 ? themeMode == 'dark' ? 'white' : 'black' : '#999999'}`,
+                      '&:hover': {
+                        textDecoration: 'underline',
+                        background: 'transparent',
+                      }
+                    }}
+                      onClick={() => { setLangChipSelected(0); sort(LANGCODE.ENG); setTextChipSelected('A'); }}
+                    />
+                    <Chip label={`가나다`} sx={{
+                      margin: '0.5rem 0.5rem 0.5rem 0',
+                      fontWeight: 'bold',
+                      fontSize: '16px',
+                      cursor: 'pointer',
+                      height: '40px',
+                      background: 'transparent',
+                      borderRadius: '0',
+                      fontFamily: 'Noto Sans KR',
+                      color: `${langChipSelected == 1 ? themeMode == 'dark' ? 'white' : 'black' : '#999999'}`,
+                      '&:hover': {
+                        textDecoration: 'underline',
+                        background: 'transparent',
+                      }
+                    }}
+                      onClick={() => { setLangChipSelected(1); sort(LANGCODE.KOR); setTextChipSelected('가'); }}
+                    />
                   </Row>
-                }
-              
-              )
+                  <Row style={{ flexWrap: 'wrap' }}>
+                    {langChipSelected == 0 ?
+                      <>
+                        {alphabetList.map((alphabet) => {
+                          return <>
+                            <Chip
+                              label={alphabet}
+                              sx={{
+                                margin: '0.5rem 0rem 0.5rem 0',
+                                fontSize: '16px',
+                                cursor: 'pointer',
+                                color: `${textChipSelected == alphabet ? themeMode == 'dark' ? 'white' : 'black' : '#999999'}`,
+                                background: 'transparent',
+                                fontFamily: 'Playfair Display',
+                                '&:hover': {
+                                  color: `${textChipSelected == alphabet ? 'white' : ''}`,
+                                  //background: `${textChipSelected == alphabet ? 'black' : ''}`,
+                                },
+                                borderRadius: '0',
+                                borderBottom: `${textChipSelected == alphabet ? '2px solid black' : ''}`
+                              }}
+                              onClick={() => { setTextChipSelected(alphabet); }}
+                            />
+                          </>
+                        })}
+                      </>
+                      :
+                      <>
+                        {hangeulList.map((hangeul) => {
+                          return <>
+                            <Chip
+                              label={hangeul}
+                              variant="soft"
+                              sx={{
+                                margin: '0.5rem 0rem 0.5rem 0',
+                                fontSize: '16px',
+                                cursor: 'pointer',
+                                color: `${textChipSelected == hangeul ? themeMode == 'dark' ? 'white' : 'black' : '#999999'}`,
+                                background: 'transparent',
+                                fontFamily: 'Noto Sans KR',
+                                '&:hover': {
+                                  color: `${textChipSelected == hangeul ? 'white' : ''}`,
+                                  //background: `${textChipSelected == hangeul ? 'black' : ''}`,
+                                },
+                                borderRadius: '0',
+                                borderBottom: `${textChipSelected == hangeul ? '2px solid black' : ''}`
+                              }}
+                              onClick={() => { setTextChipSelected(hangeul); }}
+                            />
+                          </>
+                        })}
+                      </>
+                    }
+                  </Row>
+                  <Col style={{ minWidth: '100px', flexWrap: 'wrap', alignItems: 'flex-start', rowGap: '0.2rem', marginBottom: '1rem', }}>
+
+                    {categoryGroup.map((group) => {
+                      if (textChipSelected == '') {
+                        return <>
+                          <Row style={{ flexWrap: 'wrap' }}>
+                            {
+                              group.childs.map((child) => {
+                                return <Chip
+                                  label={langChipSelected == 0 ? child?.category_en_name : child?.category_name}
+                                  sx={{
+                                    margin: '0.5rem 0rem 0.5rem 0',
+                                    fontSize: '16px',
+                                    cursor: 'pointer',
+                                    background: 'transparent',
+                                    fontFamily: `${langChipSelected == 0 ? 'Playfair Display' : 'Noto Sans KR'}`,
+                                    '&:hover': {
+                                      background: `${themeMode == 'dark' ? '#999999' : 'white'}`,
+                                    },
+                                  }}
+                                  onClick={() => {
+                                    const parsedUrl = queryString.parseUrl(router.asPath).query;
+                                    parsedUrl[`category_id${index}`] = child?.id
+                                    const updatedUrl = queryString.stringifyUrl({ url: queryString.parseUrl(router.asPath).url, query: parsedUrl })
+
+                                    router.push(updatedUrl)
+                                  }} />
+                              })
+
+                            }
+                          </Row>
+                        </>
+                      }
+                      else if (textChipSelected == group?.label) {
+                        return <>
+                          <Row style={{ flexWrap: 'wrap' }}>
+                            {
+                              group.childs.map((child) => {
+                                return <Chip
+                                  label={langChipSelected == 0 ? child?.category_en_name : child?.category_name}
+                                  sx={{
+                                    margin: '0.5rem 0rem 0.5rem 0',
+                                    fontSize: '16px',
+                                    cursor: 'pointer',
+                                    background: 'transparent',
+                                    fontFamily: `${langChipSelected == 0 ? 'Playfair Display' : 'Noto Sans KR'}`,
+                                    '&:hover': {
+                                      background: `${themeMode == 'dark' ? '#999999' : 'white'}`,
+                                    },
+                                  }}
+                                  onClick={() => {
+                                    const parsedUrl = queryString.parseUrl(router.asPath).query;
+                                    parsedUrl[`category_id${index}`] = child?.id
+                                    const updatedUrl = queryString.stringifyUrl({ url: queryString.parseUrl(router.asPath).url, query: parsedUrl })
+
+                                    router.push(updatedUrl)
+                                  }} />
+                              })
+
+                            }
+                          </Row>
+                        </>
+                      }
+                    })}
+
+                  </Col>
+                    
+                    <Row style={{ flexWrap: 'wrap', display: 'flex', borderBottom: '1px solid #999999',  }}>
+                      {group?.sort_type == 0 && group?.product_categories && group?.product_categories.map((category, idx) => {
+                        if (category.name != 'PRIVATE') {
+                          return <>
+                          {idx == 0 && <div style={{margin:'0.5rem', fontSize:'22px', fontWeight:'bold'}} >Category</div>}
+                            <Chip
+                              label={category.category_name}
+                              sx={{
+                                margin: '0.5rem 0rem 0.5rem 0',
+                                fontSize: '16px',
+                                cursor: 'pointer',
+                                background: 'transparent',
+                                fontFamily: `${langChipSelected == 0 ? 'Playfair Display' : 'Noto Sans KR'}`,
+                                '&:hover': {
+                                  background: `${themeMode == 'dark' ? '#999999' : 'white'}`,
+                                },
+                              }}
+                              onClick={() => {
+                                if (category.children) {
+                                  setDetailCategory(category.id);
+                                  console.log(detailCategory)
+                                } else {
+                                const parsedUrl = queryString.parseUrl(router.asPath).query;
+                                parsedUrl[`category_id0`] = category?.id
+                                const updatedUrl = queryString.stringifyUrl({ url: queryString.parseUrl(router.asPath).url, query: parsedUrl })
+
+                                router.push(updatedUrl)
+                                }
+                              }} />
+                        </>
+                        }
+                      })}
+                    </Row>
+                    <Row>
+                      {group?.sort_type == 0 && group.product_categories && group?.product_categories.map((category, idx) => {
+                        return <>
+                        {detailCategory == category.id && category.children.map((child, idx) => {
+                          return <>
+                          <Chip
+                            label={child.category_name}
+                            sx={{
+                              margin: '0.5rem 0rem 0.5rem 0',
+                              marginLeft: `${idx == 0 ? '7rem' : '0.5rem'}`,
+                              fontSize: '16px',
+                              cursor: 'pointer',
+                              background: 'transparent',
+                              fontFamily: `${langChipSelected == 0 ? 'Playfair Display' : 'Noto Sans KR'}`,
+                              '&:hover': {
+                                background: `${themeMode == 'dark' ? '#999999' : 'white'}`,
+                              },
+                            }}
+                            onClick={() => {
+                              const parsedUrl = queryString.parseUrl(router.asPath).query;
+                              parsedUrl[`category_id0`] = child?.id
+                              const updatedUrl = queryString.stringifyUrl({ url: queryString.parseUrl(router.asPath).url, query: parsedUrl })
+
+                              router.push(updatedUrl)
+                            }} />
+                      </>
+                        })}
+                        </>
+                      })}
+                    </Row>
+                </>
+
+
+              </BrandFilter>
+            </Row>
+          }
+
+          )
+          }
+        </>
+
+        <>
+          <TextField
+            label=''
+            variant="standard"
+            focused
+            //color='primary'
+            onChange={(e) => {
+              setSearchObj({
+                ...searchObj,
+                search: e.target.value
+              })
+            }}
+            value={searchObj?.search}
+            style={{ width: '100%', margin: '2rem auto 4rem auto', maxWidth: '700px', }}
+            autoComplete='new-password'
+            placeholder="키워드를 검색해주세요."
+            onKeyPress={(e) => {
+              if (e.key == 'Enter') {
+                let query = { ...categoryIds };
+                query[`search`] = searchObj?.search;
+
+                query = new URLSearchParams(query).toString();
+                router.push(`/shop/items?${query}`);
               }
-            </>
-            
-            <>
-            <TextField
-              label=''
-              variant="standard"
-              focused
-              //color='primary'
-              onChange={(e) => {
-                setSearchObj({
-                  ...searchObj,
-                  search: e.target.value
-                })
-              }}
-              value={searchObj?.search}
-              style={{ width: '100%', margin: '2rem auto 4rem auto', maxWidth: '700px', }}
-              autoComplete='new-password'
-              placeholder="키워드를 검색해주세요."
-              onKeyPress={(e) => {
-                if (e.key == 'Enter') {
-                  let query = { ...categoryIds };
-                  query[`search`] = searchObj?.search;
+            }}
+            InputProps={{
+              sx: {
+                padding: '0.5rem 0'
+              },
+              endAdornment: (
+                <InputAdornment position='end'>
+                  <IconButton
+                    edge='end'
+                    onClick={() => {
+                      let query = { ...categoryIds };
+                      query[`search`] = searchObj?.search;
+                      query = new URLSearchParams(query).toString();
+                      router.push(`/shop/items?${query}`);
+                    }}
+                    aria-label='toggle password visibility'
+                    style={{
+                      padding: '0.5rem',
+                    }}
+                  >
+                    <Icon icon={'tabler:search'} />
+                  </IconButton>
+                </InputAdornment>
+              )
+            }}
+          />
 
-                  query = new URLSearchParams(query).toString();
-                  router.push(`/shop/items?${query}`);
-                }
-              }}
-              InputProps={{
-                sx: {
-                  padding: '0.5rem 0'
-                },
-                endAdornment: (
-                  <InputAdornment position='end'>
-                    <IconButton
-                      edge='end'
-                      onClick={() => {
-                        let query = { ...categoryIds };
-                        query[`search`] = searchObj?.search;
-                        query = new URLSearchParams(query).toString();
-                        router.push(`/shop/items?${query}`);
-                      }}
-                      aria-label='toggle password visibility'
-                      style={{
-                        padding: '0.5rem',
-                      }}
-                    >
-                      <Icon icon={'tabler:search'} />
-                    </IconButton>
-                  </InputAdornment>
-                )
-              }}
-            />
-             
-            </>
-          
-        
+        </>
+
+
         <Row
-                style={{
-                  columnGap: '0.5rem',
-                  marginBottom: '1rem',
-                  overflowX: 'auto',
-                  whiteSpace: 'nowrap',
-                  borderTop: '1px solid #CCCCCC',
-                  borderBottom: '1px solid #CCCCCC',
-                  height: '80px',
-                  width: '100%'
-                }}
-                className={`none-scroll`}
-              >
-                <FilterTab style={{ margin: 'auto 0 auto auto', display: 'flex' }}>
-                  {sortList.map((item) => (
-                    <>
-                      <div
-                        style={{
-                          cursor: 'pointer',
-                          margin: '0.5rem',
-                          fontWeight: `${(searchObj?.order ?? "sort_idx") == item.order && (searchObj?.is_asc ?? 0) == item.is_asc ? 'bold' : ''}`,
-                          borderBottom: `${(searchObj?.order ?? "sort_idx") == item.order && (searchObj?.is_asc ?? 0) == item.is_asc ? '2px solid black' : ''}`
-                        }}
-                        onClick={() => {
-                          getItemList({ ...router.query, page: 1 }, { ...searchObj, page: 1, order: item.order, is_asc: item.is_asc })
-                        }}>
-                        {item.label}
-                      </div>
-                    </>
-                  ))}
-                </FilterTab>
-                <FormControl variant='outlined' size='small' sx={{ width: '200px', margin: 'auto 0' }}>
+          style={{
+            columnGap: '0.5rem',
+            marginBottom: '1rem',
+            overflowX: 'auto',
+            whiteSpace: 'nowrap',
+            borderTop: '1px solid #CCCCCC',
+            borderBottom: '1px solid #CCCCCC',
+            height: '80px',
+            width: '100%'
+          }}
+          className={`none-scroll`}
+        >
+          <FilterTab style={{ margin: 'auto 0 auto auto', display: 'flex' }}>
+            {sortList.map((item) => (
+              <>
+                <div
+                  style={{
+                    cursor: 'pointer',
+                    margin: '0.5rem',
+                    fontWeight: `${(searchObj?.order ?? "sort_idx") == item.order && (searchObj?.is_asc ?? 0) == item.is_asc ? 'bold' : ''}`,
+                    borderBottom: `${(searchObj?.order ?? "sort_idx") == item.order && (searchObj?.is_asc ?? 0) == item.is_asc ? '2px solid black' : ''}`
+                  }}
+                  onClick={() => {
+                    getItemList({ ...router.query, page: 1 }, { ...searchObj, page: 1, order: item.order, is_asc: item.is_asc })
+                  }}>
+                  {item.label}
+                </div>
+              </>
+            ))}
+          </FilterTab>
+          <FormControl variant='outlined' size='small' sx={{ width: '200px', margin: 'auto 0' }}>
 
-                  <Select value={searchObj.page_size}
-                    onChange={(e) => {
-                      getItemList({ ...router.query, page: 1, page_size: e.target.value }, { ...searchObj, page_size: e.target.value });
-                      //console.log(productContent)
-                      console.log(searchObj.page_size)
-                    }}>
-                    <MenuItem value={10}>10개씩 보기</MenuItem>
-                    <MenuItem value={20}>20개씩 보기</MenuItem>
-                    <MenuItem value={30}>30개씩 보기</MenuItem>
-                    <MenuItem value={50}>50개씩 보기</MenuItem>
-                    <MenuItem value={100}>100개씩 보기</MenuItem>
-                  </Select>
-                </FormControl>
+            <Select value={searchObj.page_size}
+              onChange={(e) => {
+                getItemList({ ...router.query, page: 1, page_size: e.target.value }, { ...searchObj, page_size: e.target.value });
+                //console.log(productContent)
+                console.log(searchObj.page_size)
+              }}>
+              <MenuItem value={10}>10개씩 보기</MenuItem>
+              <MenuItem value={20}>20개씩 보기</MenuItem>
+              <MenuItem value={30}>30개씩 보기</MenuItem>
+              <MenuItem value={50}>50개씩 보기</MenuItem>
+              <MenuItem value={100}>100개씩 보기</MenuItem>
+            </Select>
+          </FormControl>
 
-              </Row>
+        </Row>
 
         {productContent?.content ?
           <>
@@ -626,7 +664,7 @@ const ItemsDemo = (props) => {
                     <Divider sx={{ marginTop: '1rem' }} />
                     <Box sx={{ padding: '0.75rem', display: 'flex' }}>
                       <Pagination
-                        sx={{ marginLeft: 'auto', getItemAriaLabel:'last' }}
+                        sx={{ marginLeft: 'auto', getItemAriaLabel: 'last' }}
                         size={'medium'}
                         count={getMaxPage(productContent?.total, productContent?.page_size)}
                         page={parseInt(searchObj.page)}

@@ -93,19 +93,20 @@ const returnHomeContent = (column, data, func, demoType = 0) => {
       )
     }
 
-    useEffect(() => {
+    /*useEffect(() => {
       const handleRouteChangeStart = () => {
         const scrollPosition = document.documentElement.scrollTop;
-        sessionStorage.setItem(`scrollPosition_${router.asPath}`, scrollPosition.toString());
+        sessionStorage.setItem(`scrollPosition_${router.asPath}`, scrollPosition);
         console.log(sessionStorage)
       };
   
       const handleRouteChangeComplete = () => {
         const scrollPosition = sessionStorage.getItem(`scrollPosition_${router.asPath}`);
         if (scrollPosition) {
-          window.scrollBy({top: scrollPosition, behavior:'smooth'})
+          window.scrollTo({top: scrollPosition})
         }
         console.log(scrollPosition)
+        console.log(document.documentElement)
       };
   
       router.events.on('routeChangeStart', handleRouteChangeStart);
@@ -115,7 +116,23 @@ const returnHomeContent = (column, data, func, demoType = 0) => {
         router.events.off('routeChangeStart', handleRouteChangeStart);
         router.events.off('routeChangeComplete', handleRouteChangeComplete);
       };
-    }, [router.asPath, router.events]);
+    }, []);*/
+
+    useEffect(() => {
+      const savedScrollPosition = sessionStorage.getItem('scrollPosition');
+      if (savedScrollPosition && !loading) {  
+        window.scrollTo(0, parseInt(savedScrollPosition, 10));
+        sessionStorage.removeItem('scrollPosition');
+      }
+      const handleRouteChangeStart = () => {
+        sessionStorage.setItem('scrollPosition', window.scrollY);
+      };
+
+      router.events.on('routeChangeStart', handleRouteChangeStart);
+      return () => {
+        router.events.off('routeChangeStart', handleRouteChangeStart);
+      };
+    }, [loading])
     
     return (
       <>

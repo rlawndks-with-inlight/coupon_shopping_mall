@@ -139,6 +139,7 @@ export function SettingsProvider({ children }) {
     try {
       const { data: response } = await axios.get(`/api/domain?dns=${process.env.IS_TEST == 1 ? 'localhost' : window.location.host.split(':')[0]}`);
       let dns_data = response?.data;
+      console.log(response)
       dns_data['blog_demo_num'] = dns_data?.setting_obj?.blog_demo_num || process.env.TEST_BLOG_DEMO || 0;
       dns_data['shop_demo_num'] = dns_data?.setting_obj?.shop_demo_num || process.env.TEST_SHOP_DEMO || 0;
       dns_data['is_use_seller'] = dns_data?.setting_obj?.is_use_seller || process.env?.IS_USE_SELLER || 0;

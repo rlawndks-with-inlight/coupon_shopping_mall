@@ -97,6 +97,10 @@ const DeliveryAddressDemo = (props) => {
                             page={addressContent?.page}
                             variant='outlined' shape='rounded'
                             color='primary'
+                            siblingCount={4}
+                            boundaryCount={0}
+                            showFirstButton
+                            showLastButton
                             onChange={(_, num) => {
                                 onChangePage({ ...searchObj, page: num })
                             }} />

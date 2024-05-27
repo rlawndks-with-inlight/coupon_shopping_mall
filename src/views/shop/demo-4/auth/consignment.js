@@ -67,6 +67,10 @@ const ConsignmentDemo = (props) => {
               page={consignmentContent?.page}
               variant='outlined' shape='rounded'
               color='primary'
+              siblingCount={4}
+              boundaryCount={0}
+              showFirstButton
+              showLastButton
               onChange={(_, num) => {
                 onChangePage(num)
               }} />

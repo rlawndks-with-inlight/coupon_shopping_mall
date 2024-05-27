@@ -93,6 +93,30 @@ const returnHomeContent = (column, data, func, demoType = 0) => {
       )
     }
 
+    useEffect(() => {
+      const handleRouteChangeStart = () => {
+        const scrollPosition = document.documentElement.scrollTop;
+        sessionStorage.setItem(`scrollPosition_${router.asPath}`, scrollPosition.toString());
+        console.log(sessionStorage)
+      };
+  
+      const handleRouteChangeComplete = () => {
+        const scrollPosition = sessionStorage.getItem(`scrollPosition_${router.asPath}`);
+        if (scrollPosition) {
+          window.scrollBy({top: scrollPosition, behavior:'smooth'})
+        }
+        console.log(scrollPosition)
+      };
+  
+      router.events.on('routeChangeStart', handleRouteChangeStart);
+      router.events.on('routeChangeComplete', handleRouteChangeComplete);
+  
+      return () => {
+        router.events.off('routeChangeStart', handleRouteChangeStart);
+        router.events.off('routeChangeComplete', handleRouteChangeComplete);
+      };
+    }, [router.asPath, router.events]);
+    
     return (
       <>
         {loading ?

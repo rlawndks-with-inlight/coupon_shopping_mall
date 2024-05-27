@@ -1048,6 +1048,20 @@ const Header = () => {
                                         <div style={{ fontFamily: 'Playfair Display', }}>SALE</div>
                                     </CategoryMenu>
                                 </Link>
+                                <Link href={`/shop/items/?category_id0=1007`} passHref>
+                                    <CategoryMenu borderColor={themeDnsData?.theme_css?.main_color} style={{ fontWeight: 'bold' }} onClick={() => {
+                                        //setOpenAllCategory(group?.id)
+                                    }}>
+                                        <div style={{ fontFamily: 'Playfair Display', }}>WATCH</div>
+                                    </CategoryMenu>
+                                </Link>
+                                <Link href={`/shop/items/?category_id0=1002`} passHref>
+                                    <CategoryMenu borderColor={themeDnsData?.theme_css?.main_color} style={{ fontWeight: 'bold' }} onClick={() => {
+                                        //setOpenAllCategory(group?.id)
+                                    }}>
+                                        <div style={{ fontFamily: 'Playfair Display', }}>CLOTHES</div>
+                                    </CategoryMenu>
+                                </Link>
                                 <NoneShowMobile>
                                     <div style={{ position: 'absolute', right: '0' }}>
                                         <Link href={user ? `/shop/auth/my-page` : `/shop/auth/login`} passHref>
@@ -1090,7 +1104,7 @@ const Header = () => {
                             <CategoryContainer>
                                 <NoneShowMobile style={{ fontSize: '90%', fontWeight: 'bold' }}>
                                     <Row style={{ margin: '0 1rem' }}>
-                                        BRAND PICK |
+                                        ALL BRAND |
                                     </Row>
                                     <Link href={`/shop/items/?category_id1=501&depth=0`} passHref>
                                         <CategoryMenu

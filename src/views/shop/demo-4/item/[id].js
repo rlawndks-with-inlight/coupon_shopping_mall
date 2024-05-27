@@ -50,7 +50,7 @@ const ItemCharacter = (props) => {
     return (
       <>
         <Row style={{ columnGap: '0.25rem', marginTop: '1rem', fontSize: '14px' }}>
-          <Typography>{key_name} :</Typography>
+          <Typography style={{width:'6rem', }}>{key_name}</Typography>
           <Typography>{value}</Typography>
         </Row>
       </>
@@ -128,7 +128,7 @@ const ItemDemo = (props) => {
       label: 'Detail',
       component: product?.product_description ?
         <StyledReactQuill
-          className='none-padding'
+          className='none-scroll'
           value={`
     ${product?.product_description ?? ''}
     ${themeDnsData?.basic_info}
@@ -223,12 +223,33 @@ const ItemDemo = (props) => {
                           <ItemCharacter key_name={character?.character_name} value={character?.character_value} />
                         </>
                       ))}
+                      {commarNumber(product?.product_price) != commarNumber(product?.product_sale_price) ?
+                          <>
+                            <ItemCharacter 
+                            key_name={'판매가'} 
+                            value={<>
+                              {commarNumber(product?.product_sale_price)}원
+                            <div style={{textDecoration:'line-through', color: '#999999'}}>
+                              {commarNumber(product?.product_price)}원
+                              </div>
+                            </>
+                            } 
+                            />
+                            <ItemCharacter key_name={'할인율'} value={`${parseFloat((parseInt(product?.product_price - product?.product_sale_price) / parseInt(product?.product_price) * 100).toFixed(2))}%`} />
+                          </>
+                          :
+                          <>
+                            <div style={{ fontSize: '22px' }}>
+                              {product?.product_sale_price != 0 ? <div>{commarNumber(product?.product_sale_price)}원</div> : <div>SOLD OUT</div>}
+                            </div>
+                          </>
+                        }
                       {/* <ProductDetailsSummary
                         product={product}
                         cart={""}
                         onAddCart={() => { }}
                         onGotoStep={() => { }}
-                      /> */}
+                      /> 
                       <div style={{ marginTop: '5rem' }}>
                         {commarNumber(product?.product_price) != commarNumber(product?.product_sale_price) ?
                           <>
@@ -249,7 +270,7 @@ const ItemDemo = (props) => {
                             </div>
                           </>
                         }
-                      </div>
+                      </div> */}
                       <div style={{ borderBottom: '1px solid #ccc', width: '100%', marginTop: '1rem' }} />
                       {themePropertyList.map((group, index) => {
                         let property_list = (product?.properties ?? []).filter(el => el?.property_group_id == group?.id);

@@ -11,9 +11,10 @@ import { Col, Row, Title, themeObj } from "src/components/elements/styled-compon
 import { useSettingsContext } from "src/components/settings";
 import { useAuthContext } from "src/layouts/manager/auth/useAuthContext";
 import { apiShop } from "src/utils/api";
-import styled from "styled-components";
+import styled, {css} from "styled-components";
 import $ from 'jquery';
 import { CategorySorter, LANGCODE } from "src/views/shop/demo-4/header"
+import queryString from 'query-string'
 
 const ContentWrapper = styled.div`
 max-width:1400px;
@@ -21,11 +22,15 @@ width:90%;
 margin: 0 auto 5rem auto;
 display:flex;
 flex-direction:column;
+${({width}) => css`
+--parentWidth: ${width};
+`}
 `
 
 const BrandFilter = styled.div`
 font-size:44px;
-width:100%;
+max-width: 1400px;
+width:var(--parentWidth);
 z-index: 9;
 @media (max-width:1000px) {
   font-size:22px;
@@ -196,7 +201,7 @@ const ItemsDemo = (props) => {
 
   return (
     <>
-      <ContentWrapper>
+      <ContentWrapper width={'90%'}>
 
         {router.query?.property_ids0 &&
           <>
@@ -241,110 +246,9 @@ const ItemsDemo = (props) => {
             :
             ''
         }
-        {router.query?.not_show_select_menu == 1 ?
+        {router.query?.not_show_select_menu != 1 &&
           <>
-            <TextField
-              label=''
-              variant="standard"
-              focused
-              //color='primary'
-              onChange={(e) => {
-                setSearchObj({
-                  ...searchObj,
-                  search: e.target.value
-                })
-              }}
-              value={searchObj?.search}
-              style={{ width: '100%', margin: '2rem auto', maxWidth: '700px', }}
-              autoComplete='new-password'
-              placeholder="키워드를 검색해주세요."
-              onKeyPress={(e) => {
-                if (e.key == 'Enter') {
-                  let query = { ...categoryIds };
-                  query[`search`] = searchObj?.search;
-
-                  query = new URLSearchParams(query).toString();
-                  router.push(`/shop/items?${query}`);
-                }
-              }}
-              InputProps={{
-                sx: {
-                  padding: '0.5rem 0'
-                },
-                endAdornment: (
-                  <InputAdornment position='end'>
-                    <IconButton
-                      edge='end'
-                      onClick={() => {
-                        let query = { ...categoryIds };
-                        query[`search`] = searchObj?.search;
-                        query = new URLSearchParams(query).toString();
-                        router.push(`/shop/items?${query}`);
-                      }}
-                      aria-label='toggle password visibility'
-                      style={{
-                        padding: '0.5rem',
-                      }}
-                    >
-                      <Icon icon={'tabler:search'} />
-                    </IconButton>
-                  </InputAdornment>
-                )
-              }}
-            />
-          </>
-          :
-          <>
-            <TextField
-              label=''
-              variant="standard"
-              focused
-              //color='primary'
-              onChange={(e) => {
-                setSearchObj({
-                  ...searchObj,
-                  search: e.target.value
-                })
-              }}
-              value={searchObj?.search}
-              style={{ width: '100%', margin: '2rem auto 0 auto', maxWidth: '700px', }}
-              autoComplete='new-password'
-              placeholder="키워드를 검색해주세요."
-              onKeyPress={(e) => {
-                if (e.key == 'Enter') {
-                  let query = { ...categoryIds };
-                  query[`search`] = searchObj?.search;
-
-                  query = new URLSearchParams(query).toString();
-                  router.push(`/shop/items?${query}`);
-                }
-              }}
-              InputProps={{
-                sx: {
-                  padding: '0.5rem 0'
-                },
-                endAdornment: (
-                  <InputAdornment position='end'>
-                    <IconButton
-                      edge='end'
-                      onClick={() => {
-                        let query = { ...categoryIds };
-                        query[`search`] = searchObj?.search;
-                        query = new URLSearchParams(query).toString();
-                        router.push(`/shop/items?${query}`);
-                      }}
-                      aria-label='toggle password visibility'
-                      style={{
-                        padding: '0.5rem',
-                      }}
-                    >
-                      <Icon icon={'tabler:search'} />
-                    </IconButton>
-                  </InputAdornment>
-                )
-              }}
-            />
-            <Row style={{ justifyContent: 'space-between', minHeight: '50px', direction: 'rtl' }}>
+          <Row style={{ justifyContent: 'space-between', minHeight: '50px', direction: 'rtl' }}>
               <img
                 src={filterOpen ? '/grandparis/dropdown_02.png' : '/grandparis/dropdown_01.png'}
                 style={{
@@ -355,6 +259,7 @@ const ItemsDemo = (props) => {
                 }}
                 onClick={() => {
                   setFilterOpen(!filterOpen)
+                  console.log(themeCategoryList)
                 }}
               />
               {themeCategoryList.map((group, index) => {
@@ -391,17 +296,20 @@ const ItemsDemo = (props) => {
                 </>
               })}
             </Row>
-          </>
-        }
-        <Row style={{ width: '100%', margin: '0 auto', }}>
-          {filterOpen ?
+            </>
+}
+          
+        
+        
+          
             <>
               {themeCategoryList.map((group, index) => {
-                if (group?.sort_type == 1) {
-                  return <>
-                    <BrandFilter style={{ fontFamily: 'Playfair Display', overflowY: 'auto', background: `${themeMode == 'dark' ? '#222' : '#FEF8F4'}`, }}>
+                
+                  return <Row>
+                    <BrandFilter style={{ fontFamily: 'Playfair Display', overflowY: 'auto', background: `${themeMode == 'dark' ? '#222' : '#FEF8F4'}`, display:`${filterOpen ? '':'none'}`, position:'absolute',  }}>
 
                       <>
+                      <div style={{margin:'0.5rem', fontSize:'22px', fontWeight:'bold'}}>Brand</div>
                         <Row>
                           <Chip label={`ABC`} sx={{
                             margin: '0.5rem 0.5rem 0.5rem 0',
@@ -492,7 +400,7 @@ const ItemsDemo = (props) => {
                             </>
                           }
                         </Row>
-                        <Col style={{ minWidth: '100px', flexWrap: 'wrap', alignItems: 'flex-start', rowGap: '0.2rem', marginBottom: '1rem' }}>
+                        <Col style={{ minWidth: '100px', flexWrap: 'wrap', alignItems: 'flex-start', rowGap: '0.2rem', marginBottom: '1rem', borderBottom:'1px solid #999999' }}>
 
                           {categoryGroup.map((group) => {
                             if (textChipSelected == '') {
@@ -513,7 +421,11 @@ const ItemsDemo = (props) => {
                                           },
                                         }}
                                         onClick={() => {
-                                          router.push(`/shop/items?category_id${index}=${child?.id}&depth=0`)
+                                          const parsedUrl = queryString.parseUrl(router.asPath).query;
+                                          parsedUrl[`category_id${index}`] = child?.id
+                                          const updatedUrl = queryString.stringifyUrl({url: queryString.parseUrl(router.asPath).url, query: parsedUrl})
+                                          
+                                          router.push(updatedUrl)
                                         }} />
                                     })
 
@@ -539,7 +451,11 @@ const ItemsDemo = (props) => {
                                           },
                                         }}
                                         onClick={() => {
-                                          router.push(`/shop/items?category_id${index}=${child?.id}&depth=0`)
+                                          const parsedUrl = queryString.parseUrl(router.asPath).query;
+                                          parsedUrl[`category_id${index}`] = child?.id
+                                          const updatedUrl = queryString.stringifyUrl({url: queryString.parseUrl(router.asPath).url, query: parsedUrl})
+                                          
+                                          router.push(updatedUrl)
                                         }} />
                                     })
 
@@ -550,19 +466,100 @@ const ItemsDemo = (props) => {
                           })}
 
                         </Col>
+                        <div style={{margin:'0.5rem', fontSize:'22px', fontWeight:'bold'}} >Category</div>
+                        <Row style={{flexWrap:'wrap'}}>
+                          {group?.sort_type == 0 && group?.product_categories && group?.product_categories.map((category, idx) => (
+                            <>
+                            {category.category_name != 'PRIVATE' && 
+                            <Chip
+                            label={category.category_name}
+                            sx={{
+                             margin: '0.5rem 0rem 0.5rem 0',
+                             fontSize: '16px',
+                             cursor: 'pointer',
+                             background: 'transparent',
+                             fontFamily: `${langChipSelected == 0 ? 'Playfair Display' : 'Noto Sans KR'}`,
+                             '&:hover': {
+                               background: `${themeMode == 'dark' ? '#999999' : 'white'}`,
+                             },
+                           }}
+                           onClick={() => {
+                            const parsedUrl = queryString.parseUrl(router.asPath).query;
+                            parsedUrl[`category_id0`] = category?.id
+                            const updatedUrl = queryString.stringifyUrl({url: queryString.parseUrl(router.asPath).url, query: parsedUrl})
+                            
+                            router.push(updatedUrl)
+                          }} />
+                            }
+                            </>
+                          ))}
+                        </Row>
                       </>
 
 
                     </BrandFilter>
-                  </>
+                  </Row>
                 }
-              }
+              
               )
               }
             </>
-            :
+            
             <>
-              <Row
+            <TextField
+              label=''
+              variant="standard"
+              focused
+              //color='primary'
+              onChange={(e) => {
+                setSearchObj({
+                  ...searchObj,
+                  search: e.target.value
+                })
+              }}
+              value={searchObj?.search}
+              style={{ width: '100%', margin: '2rem auto 4rem auto', maxWidth: '700px', }}
+              autoComplete='new-password'
+              placeholder="키워드를 검색해주세요."
+              onKeyPress={(e) => {
+                if (e.key == 'Enter') {
+                  let query = { ...categoryIds };
+                  query[`search`] = searchObj?.search;
+
+                  query = new URLSearchParams(query).toString();
+                  router.push(`/shop/items?${query}`);
+                }
+              }}
+              InputProps={{
+                sx: {
+                  padding: '0.5rem 0'
+                },
+                endAdornment: (
+                  <InputAdornment position='end'>
+                    <IconButton
+                      edge='end'
+                      onClick={() => {
+                        let query = { ...categoryIds };
+                        query[`search`] = searchObj?.search;
+                        query = new URLSearchParams(query).toString();
+                        router.push(`/shop/items?${query}`);
+                      }}
+                      aria-label='toggle password visibility'
+                      style={{
+                        padding: '0.5rem',
+                      }}
+                    >
+                      <Icon icon={'tabler:search'} />
+                    </IconButton>
+                  </InputAdornment>
+                )
+              }}
+            />
+             
+            </>
+          
+        
+        <Row
                 style={{
                   columnGap: '0.5rem',
                   marginBottom: '1rem',
@@ -610,9 +607,6 @@ const ItemsDemo = (props) => {
                 </FormControl>
 
               </Row>
-            </>
-          }
-        </Row>
 
         {productContent?.content ?
           <>
@@ -632,12 +626,16 @@ const ItemsDemo = (props) => {
                     <Divider sx={{ marginTop: '1rem' }} />
                     <Box sx={{ padding: '0.75rem', display: 'flex' }}>
                       <Pagination
-                        sx={{ marginLeft: 'auto' }}
+                        sx={{ marginLeft: 'auto', getItemAriaLabel:'last' }}
                         size={'medium'}
                         count={getMaxPage(productContent?.total, productContent?.page_size)}
                         page={parseInt(searchObj.page)}
                         variant='outlined' shape='rounded'
                         color='primary'
+                        siblingCount={4}
+                        boundaryCount={0}
+                        showFirstButton
+                        showLastButton
                         onChange={(_, num) => {
                           getItemList({ ...router.query, page: num, page_size: searchObj.page_size }, { ...searchObj })
                         }} />

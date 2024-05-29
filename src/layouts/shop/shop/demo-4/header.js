@@ -532,11 +532,16 @@ const Header = () => {
                                     }}
                                 />
                             </NoneShowMobile>
-                            <a href={'/'}>
+                            
                                 <MainLogo
                                     src={logoSrc()}
+                                    onClick={() => {
+                                        //window.location.href = '/shop/auth'
+                                        sessionStorage.removeItem('scrollPosition');
+                                        window.location.replace('/')
+                                    }}
                                 />
-                            </a>
+                            
                             <NoneShowMobile>
                                 {/*<Button variant="outlined"
                                     sx={{ marginRight: '0.5rem', minWidth: '112px' }}
@@ -1103,7 +1108,7 @@ const Header = () => {
                             }}>
                             <CategoryContainer>
                                 <NoneShowMobile style={{ fontSize: '90%', fontWeight: 'bold' }}>
-                                    <Row style={{ margin: '0 1rem' }}>
+                                    <Row style={{ margin: '0 1rem',  }} onClick={() => {setOpenAllCategory('')}}>
                                         ALL BRAND |
                                     </Row>
                                     <Link href={`/shop/items/?category_id1=501&depth=0`} passHref>

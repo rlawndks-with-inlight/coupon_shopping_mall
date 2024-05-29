@@ -1,26 +1,26 @@
 server {
 listen 80;
-server_name admin.grandparis.co.kr
+server_name demo6.asapmall.kr
 root html;
 
 
 location / {
-        return 301 https://admin.grandparis.co.kr$request_uri;
+        return 301 https://demo6.asapmall.kr$request_uri;
     }
 }
 
 server {
 
     listen       443 ssl;
-    server_name  admin.grandparis.co.kr;
+    server_name  demo6.asapmall.kr;
 
     client_max_body_size 256M;
 
-    ssl_certificate     /etc/letsencrypt/live/admin.grandparis.co.kr/fullchain.pem;
-    ssl_certificate_key /etc/letsencrypt/live/admin.grandparis.co.kr/privkey.pem;
+    ssl_certificate     /etc/letsencrypt/live/demo6.asapmall.kr/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/demo6.asapmall.kr/privkey.pem;
 
     location / {
-       proxy_pass http://admin.grandparis.co.kr:3000;
+       proxy_pass http://demo6.asapmall.kr:3000;
        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
        proxy_set_header X-Forwarded-Proto $scheme;
     }
@@ -30,8 +30,8 @@ server {
     }
 }
 
-admin.grandparis.co.kr
-//  sudo certbot --nginx -d admin.grandparis.co.kr
+demo6.asapmall.kr
+//  sudo certbot --nginx -d demo6.asapmall.kr
 
 //purplevery23.cafe24.com 프론트서버
 //purplevery22.cafe24.com 백엔드서버

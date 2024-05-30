@@ -316,7 +316,7 @@ const ProductList = () => {
         )
       }
     },
-    ...(themeDnsData?.id == 43 || themeDnsData?.id == 45 ? [
+    
       {
         id: 'product_description',
         label: '설명',
@@ -334,7 +334,7 @@ const ProductList = () => {
           )
         }
       },
-    ] : [])
+
   ]
   const router = useRouter();
   const [columns, setColumns] = useState([]);

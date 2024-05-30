@@ -14,6 +14,12 @@ import { useSettingsContext } from "src/components/settings";
 import { apiManager, apiUtil } from "src/utils/api";
 import { useAuthContext } from "src/layouts/manager/auth/useAuthContext";
 import _ from "lodash";
+import dynamic from "next/dynamic";
+
+const ReactQuill = dynamic(() => import('react-quill'), {
+  ssr: false,
+  loading: () => <p></p>,
+})
 
 const ProductList = () => {
 
@@ -283,6 +289,23 @@ const ProductList = () => {
               <Icon icon='ic:outline-rate-review' />
             </IconButton>
           </>
+        )
+      }
+    },
+    {
+      id: 'product_description',
+      label: '설명',
+      sub_id: 'product_description',
+      sub_label: '설명',
+      action: (row) => {
+        return (
+          <ReactQuill
+            className='none-padding'
+            value={row?.product_description || `<body></body>`}
+            readOnly={true}
+            theme={"bubble"}
+            bounds={'.app'}
+          />
         )
       }
     },

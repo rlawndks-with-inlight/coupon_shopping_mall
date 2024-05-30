@@ -14,7 +14,6 @@ import { useSettingsContext } from "src/components/settings";
 import { apiManager, apiUtil } from "src/utils/api";
 import { useAuthContext } from "src/layouts/manager/auth/useAuthContext";
 import _ from "lodash";
-import ReactQuill from "react-quill";
 
 const ProductList = () => {
 
@@ -316,25 +315,6 @@ const ProductList = () => {
         )
       }
     },
-    
-      {
-        id: 'product_description',
-        label: '설명',
-        sub_id: 'product_description',
-        sub_label: '설명',
-        action: (row) => {
-          return (
-            <ReactQuill
-              className='none-padding'
-              value={row?.product_description || `<body></body>`}
-              readOnly={true}
-              theme={"bubble"}
-              bounds={'.app'}
-            />
-          )
-        }
-      },
-
   ]
   const router = useRouter();
   const [columns, setColumns] = useState([]);

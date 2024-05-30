@@ -34,7 +34,7 @@ import Iconify from 'src/components/iconify/Iconify';
 import { IncrementerButton } from 'src/components/custom-input';
 import { ColorSinglePicker } from 'src/components/color-utils';
 import { commarNumber, getPriceUnitByLang, getProductStatus, setProductPriceByLang } from 'src/utils/function';
-import { Row, postCodeStyle, themeObj } from 'src/components/elements/styled-components';
+import { PointerText, Row, postCodeStyle, themeObj } from 'src/components/elements/styled-components';
 import { useSettingsContext } from 'src/components/settings';
 import _ from 'lodash';
 import { toast } from 'react-hot-toast';
@@ -109,7 +109,7 @@ export default function ProductDetailsSummary({ product, onAddCart, onGotoStep, 
         toast.success(translate("장바구니에 성공적으로 추가되었습니다."))
       }
     } else {
-      toast.error(translate('로그인을 해주세요.'));
+      toast.error(<PointerText onClick={() => router.push('/shop/auth/login')}>{translate('로그인을 해주세요.')}</PointerText>);
     }
 
   };

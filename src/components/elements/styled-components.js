@@ -64,3 +64,7 @@ export const postCodeStyle = {
   width: '90%',
   margin: '16px auto',
 };
+
+export const PointerText = styled.div`
+cursor: pointer;
+`

@@ -315,7 +315,7 @@ const ProductList = () => {
         )
       }
     },
-    (themeDnsData?.id == 45 ? [
+    (themeDnsData?.id == 43 || themeDnsData?.id == 45 ? [
       {
         id: 'product_description',
         label: '설명',

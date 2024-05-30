@@ -14,6 +14,7 @@ import { useSettingsContext } from "src/components/settings";
 import { apiManager, apiUtil } from "src/utils/api";
 import { useAuthContext } from "src/layouts/manager/auth/useAuthContext";
 import _ from "lodash";
+import ReactQuill from "react-quill";
 
 const ProductList = () => {
 

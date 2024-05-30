@@ -292,7 +292,7 @@ const ProductList = () => {
         )
       }
     },
-    {
+    /*{
       id: 'product_description',
       label: '설명',
       sub_id: 'product_description',
@@ -308,7 +308,7 @@ const ProductList = () => {
           />
         )
       }
-    },
+    },*/
     {
       id: 'edit',
       label: '수정(복사) / 삭제', //수정/복사/삭제

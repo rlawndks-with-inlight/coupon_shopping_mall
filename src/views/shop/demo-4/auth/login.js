@@ -82,20 +82,20 @@ const LoginDemo = (props) => {
   return (
     <>
       <Wrappers style={{ marginBottom: '0' }}>
-        <Title 
-        style={{
-          borderTop:'1px solid #cccccc', 
-          width:'100%', 
-          textAlign:'center', 
-          fontFamily:'Playfair Display', 
-          fontSize:'40px',
-          paddingTop:'1rem'
+        <Title
+          style={{
+            borderTop: '1px solid #cccccc',
+            width: '100%',
+            textAlign: 'center',
+            fontFamily: 'Playfair Display',
+            fontSize: '40px',
+            paddingTop: '1rem'
           }}>
           Welcome to Grand Paris
-          </Title>
-          <div style={{width:'100%', textAlign:'center', marginBottom:'1rem'}}>
-            가입 또는 로그인 해주세요.
-          </div>
+        </Title>
+        <div style={{ width: '100%', textAlign: 'center', marginBottom: '1rem' }}>
+          가입 또는 로그인 해주세요.
+        </div>
         <TextField
           label='아이디'
           onChange={(e) => {
@@ -127,99 +127,99 @@ const LoginDemo = (props) => {
         <Button variant="contained" style={{
           height: '60px',
           marginTop: '1rem',
-          borderRadius:'0',
-          backgroundColor:'#FF5B0D',
-          fontSize:'18px'
+          borderRadius: '0',
+          backgroundColor: '#FF5B0D',
+          fontSize: '18px'
         }}
           onClick={onLogin}
         >로그인</Button>
-        <Row style={{ margin: '1rem 0 2rem auto'}}>
+        <Row style={{ margin: '1rem 0 2rem auto' }}>
           <HoverText style={{ borderRight: `1px solid ${themeObj.grey[300]}` }} themeDnsData={themeDnsData} onClick={() => { router.push(`/shop/auth/find-info?type=0`) }}>아이디 찾기</HoverText>
-          <HoverText style={{ paddingRight:'0' }} themeDnsData={themeDnsData} onClick={() => { router.push(`/shop/auth/find-info?type=1`) }}>비밀번호 찾기</HoverText>
+          <HoverText style={{ paddingRight: '0' }} themeDnsData={themeDnsData} onClick={() => { router.push(`/shop/auth/find-info?type=1`) }}>비밀번호 찾기</HoverText>
         </Row>
-        <Row style={{ margin: '1rem auto', marginTop:'10rem', justifyContent:'space-between', width:'100%'}}>
+        <Row style={{ margin: '1rem auto', marginTop: '10rem', justifyContent: 'space-between', width: '100%' }}>
           <div style={{}} themeDnsData={themeDnsData} onClick={() => { router.push(`/shop/auth/find-info?type=0`) }}>아직 회원이 아니신가요?</div>
-          <HoverText style={{ paddingRight:'0' }} themeDnsData={themeDnsData} onClick={() => { setDialogOpen(true) }}>비회원 주문조회</HoverText>
+          <HoverText style={{ paddingRight: '0' }} themeDnsData={themeDnsData} onClick={() => { setDialogOpen(true) }}>비회원 주문조회</HoverText>
         </Row>
         <Button variant="contained" style={{
           height: '60px',
-          borderRadius:'0',
-          backgroundColor:'#FF5B0D',
-          fontSize:'18px'
+          borderRadius: '0',
+          backgroundColor: '#FF5B0D',
+          fontSize: '18px'
         }}
-          onClick={() => {router.push(`/shop/auth/sign-up`)}}
+          onClick={() => { router.push(`/shop/auth/sign-up`) }}
         >회원가입</Button>
         <Dialog fullWidth open={dialogOpen} onClose={handleClose}>
-        <Col style={{ alignItems: 'center', margin: '2rem auto' }}>
-          <Icon 
-          icon={'material-symbols:close'} 
-          style={{position:'absolute', right:'1rem', top:'1rem', width:'24px', height:'24px', cursor:'pointer'}}
-          onClick={() => {
-            setDialogOpen(false)
-          }}
-          />
-        <Col style={{ alignItems: 'center', margin: '0 auto', width: '100%' }}>
-          <div style={{ fontSize: '22px', marginBottom: '1rem' }}>비회원 주문조회</div>
-        </Col>
-          <div>지금 회원가입을 하시면</div>
-          <div>다양하고 특별한 혜택이 준비되어 있습니다.</div>
-          <TextField
-          label='주문번호(하이픈(-) 포함)'
-          onChange={(e) => {
-            setNoneUserObj({ ...noneUserObj, ['ord_num']: e.target.value })
-          }}
-          value={noneUserObj.ord_num}
-          style={{...inputStyle, width:'100%'}}
-          autoComplete='new-password'
-          onKeyPress={(e) => {
-            if (e.key == 'Enter') {
-            }
-          }}
-        />
-        <TextField
-          label='비회원주문 비밀번호'
-          onChange={(e) => {
-            setNoneUserObj({ ...noneUserObj, ['password']: e.target.value })
-          }}
-          type='password'
-          value={noneUserObj.password}
-          style={{...inputStyle, width:'100%'}}
-          autoComplete='new-password'
-          onKeyPress={(e) => {
-            if (e.key == 'Enter') {
-            }
-          }}
-        />
-        <Button variant="contained" style={{
-          height: '56px',
-          marginTop: '1rem',
-          width:'100%',
-          borderRadius:'0',
-          backgroundColor:'#FF5B0D',
-          fontSize:'18px'
-        }}
-          onClick={() => {
-             //setModal({
-               //func: () => { onCheckNoneUserPay(row?.id) },
-               //icon: 'material-symbols:delete-outline',
-               //title: '정말로 조회하시겠습니까'
-             //})
-            onCheckNoneUserPay();
-          }}
-        >조회하기</Button>
-          <Row style={{ margin: '1rem auto', marginTop:'10rem', justifyContent:'space-between', width:'100%'}}>
-          <div style={{}} themeDnsData={themeDnsData} onClick={() => { router.push(`/shop/auth/find-info?type=0`) }}>아직 회원이 아니신가요?</div>
-          <HoverText style={{ paddingRight:'0' }} themeDnsData={themeDnsData} onClick={() => { setDialogOpen(true) }}>비회원 주문조회</HoverText>
-        </Row>
-        <Button variant="contained" style={{
-          height: '60px',
-          borderRadius:'0',
-          backgroundColor:'#FF5B0D',
-          fontSize:'18px',
-          width:'100%'
-        }}
-          onClick={() => {router.push(`/shop/auth/sign-up`)}}
-        >회원가입</Button>
+          <Col style={{ alignItems: 'center', margin: '2rem auto' }}>
+            <Icon
+              icon={'material-symbols:close'}
+              style={{ position: 'absolute', right: '1rem', top: '1rem', width: '24px', height: '24px', cursor: 'pointer' }}
+              onClick={() => {
+                setDialogOpen(false)
+              }}
+            />
+            <Col style={{ alignItems: 'center', margin: '0 auto', width: '100%' }}>
+              <div style={{ fontSize: '22px', marginBottom: '1rem' }}>비회원 주문조회</div>
+            </Col>
+            <div>지금 회원가입을 하시면</div>
+            <div>다양하고 특별한 혜택이 준비되어 있습니다.</div>
+            <TextField
+              label='주문번호(하이픈(-) 포함)'
+              onChange={(e) => {
+                setNoneUserObj({ ...noneUserObj, ['ord_num']: e.target.value })
+              }}
+              value={noneUserObj.ord_num}
+              style={{ ...inputStyle, width: '100%' }}
+              autoComplete='new-password'
+              onKeyPress={(e) => {
+                if (e.key == 'Enter') {
+                }
+              }}
+            />
+            <TextField
+              label='비회원주문 비밀번호'
+              onChange={(e) => {
+                setNoneUserObj({ ...noneUserObj, ['password']: e.target.value })
+              }}
+              type='password'
+              value={noneUserObj.password}
+              style={{ ...inputStyle, width: '100%' }}
+              autoComplete='new-password'
+              onKeyPress={(e) => {
+                if (e.key == 'Enter') {
+                }
+              }}
+            />
+            <Button variant="contained" style={{
+              height: '56px',
+              marginTop: '1rem',
+              width: '100%',
+              borderRadius: '0',
+              backgroundColor: '#FF5B0D',
+              fontSize: '18px'
+            }}
+              onClick={() => {
+                //setModal({
+                //func: () => { onCheckNoneUserPay(row?.id) },
+                //icon: 'material-symbols:delete-outline',
+                //title: '정말로 조회하시겠습니까'
+                //})
+                onCheckNoneUserPay();
+              }}
+            >조회하기</Button>
+            <Row style={{ margin: '1rem auto', marginTop: '10rem', justifyContent: 'space-between', width: '100%' }}>
+              <div style={{}} themeDnsData={themeDnsData} onClick={() => { router.push(`/shop/auth/find-info?type=0`) }}>아직 회원이 아니신가요?</div>
+              <HoverText style={{ paddingRight: '0' }} themeDnsData={themeDnsData} onClick={() => { setDialogOpen(true) }}>비회원 주문조회</HoverText>
+            </Row>
+            <Button variant="contained" style={{
+              height: '60px',
+              borderRadius: '0',
+              backgroundColor: '#FF5B0D',
+              fontSize: '18px',
+              width: '100%'
+            }}
+              onClick={() => { router.push(`/shop/auth/sign-up`) }}
+            >회원가입</Button>
           </Col>
         </Dialog>
         {/*<Col style={{ alignItems: 'center', margin: '2rem auto' }}>
@@ -281,7 +281,7 @@ const LoginDemo = (props) => {
             onCheckNoneUserPay();
           }}
         >조회</Button>*/}
-        </Wrappers>
+      </Wrappers>
       <Wrappers style={{ maxWidth: '800px', minHeight: '0', marginTop: '2rem' }}>
         {Object.keys(noneUserTrxObj).length > 0 &&
           <>

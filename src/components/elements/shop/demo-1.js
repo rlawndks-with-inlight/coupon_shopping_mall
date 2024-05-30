@@ -2,7 +2,7 @@ import { useSettingsContext } from "src/components/settings";
 import { useAuthContext } from "src/layouts/manager/auth/useAuthContext";
 import { itemThemeCssDefaultSetting } from "src/views/manager/item-card/setting";
 import styled from "styled-components";
-import { themeObj } from "../styled-components";
+import { PointerText, themeObj } from "../styled-components";
 import { useState } from "react";
 import { useEffect } from "react";
 import { IconButton } from "@mui/material";
@@ -84,7 +84,7 @@ export const Item1 = (props) => {
         if (user) {
             insertWishDataUtil(item, themeWishData, onChangeWishData);
         } else {
-            toast.error(translate('로그인을 해주세요.'))
+            toast.error(<PointerText onClick={() => router.push('/shop/auth/login')}>{translate('로그인을 해주세요.')}</PointerText>);
         }
     }
     return (

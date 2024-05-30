@@ -18,6 +18,7 @@ import { useSettingsContext } from 'src/components/settings';
 import { apiManager } from 'src/utils/api';
 import { useEffect } from 'react';
 import { useLocales } from 'src/locales';
+import { PointerText } from 'src/components/elements/styled-components';
 
 // ----------------------------------------------------------------------
 
@@ -48,7 +49,7 @@ export default function ProductDetailsReview({ product, reviewContent, onChangeP
   })
   const handleOpenReview = (data) => {
     if (!user) {
-      toast.error(translate('로그인을 해주세요.'))
+      toast.error(<PointerText onClick={() => router.push('/shop/auth/login')}>{translate('로그인을 해주세요.')}</PointerText>);
       return;
     }
     setOpenReview(true);

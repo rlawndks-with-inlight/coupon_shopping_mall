@@ -12,7 +12,7 @@ const HomeDemo = (props) => {
 
   return (
     <>
-    <HomeDemo1 {...props} />
+    <HomeDemo1 {...props} type={1} />
     </>
   )
 }

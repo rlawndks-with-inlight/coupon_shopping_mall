@@ -197,7 +197,7 @@ const ItemDemo = (props) => {
                       {product?.brand_name &&
                         <>
                           <div style={{ fontSize: '40px', fontFamily: 'Playfair Display', fontWeight: 'bold', borderTop: '1px solid #ccc', padding: '1rem 0' }}>
-                            {product?.brand_name[0].category_en_name}
+                            {product?.brand_name[0].category_en_name ?? ''}
                           </div>
                         </>
                       }

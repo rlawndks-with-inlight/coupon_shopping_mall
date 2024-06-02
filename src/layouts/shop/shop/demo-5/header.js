@@ -183,7 +183,6 @@ width:78vw;
 `
 
 const MainLogo = styled.img`
-aspect-ratio: 148/52;
 cursor: pointer;
 position: absolute;
 top: 50%;
@@ -540,7 +539,7 @@ const Header = () => {
                                             <AuthMenu theme={theme} style={{ borderRight: 'none' }}>{translate('로그인')}</AuthMenu>
                                         </>}
 
-                                    <Icon icon={'ic:baseline-plus'} color={themeMode == 'dark' ? '#fff' : '#000'} />
+                                    <Icon icon={'ic:baseline-plus'} color={themeMode == 'dark' ? '#000' : '#000'} />
                                 </div>
                             </NoneShowMobile>
                             <ShowMobile style={{ marginLeft: 'auto', columnGap: '0.5rem' }}>
@@ -548,7 +547,7 @@ const Header = () => {
                                     sx={iconButtonStyle}
                                     onClick={() => setSideMenuOpen(true)}
                                 >
-                                    <Icon icon={'basil:menu-solid'} fontSize={'2rem'} color={themeMode == 'dark' ? '#fff' : '#000'} />
+                                    <Icon icon={'basil:menu-solid'} fontSize={'2rem'} color={themeMode == 'dark' ? '#000' : '#000'} />
                                 </IconButton>
                                 <IconButton
                                     sx={iconButtonStyle}
@@ -559,7 +558,7 @@ const Header = () => {
                                         })
                                     }}
                                 >
-                                    <Icon icon={'tabler:search'} fontSize={'1.5rem'} color={themeMode == 'dark' ? '#fff' : '#000'} />
+                                    <Icon icon={'tabler:search'} fontSize={'1.5rem'} color={themeMode == 'dark' ? '#000' : '#000'} />
                                 </IconButton>
                                 <IconButton
                                     sx={iconButtonStyle}
@@ -572,14 +571,14 @@ const Header = () => {
                                     }}
                                 >
                                     <Badge badgeContent={themeCartData.length} color="error">
-                                        <Icon icon={'basil:shopping-bag-outline'} fontSize={'1.8rem'} color={themeMode == 'dark' ? '#fff' : '#000'} />
+                                        <Icon icon={'basil:shopping-bag-outline'} fontSize={'1.8rem'} color={themeMode == 'dark' ? '#000' : '#000'} />
                                     </Badge>
                                 </IconButton>
                                 <IconButton
                                     sx={iconButtonStyle}
                                     onClick={() => onToggleMode()}
                                 >
-                                    <Icon icon={themeMode === 'dark' ? 'tabler:sun' : 'tabler:moon-stars'} fontSize={'1.5rem'} color={themeMode == 'dark' ? '#fff' : '#000'} />
+                                    <Icon icon={themeMode === 'dark' ? 'tabler:sun' : 'tabler:moon-stars'} fontSize={'1.5rem'} color={themeMode == 'dark' ? '#000' : '#000'} />
                                 </IconButton>
                                 {themeDnsData?.setting_obj?.is_use_lang == 1 &&
                                     <>

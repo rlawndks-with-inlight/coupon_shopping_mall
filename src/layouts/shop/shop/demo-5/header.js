@@ -539,15 +539,21 @@ const Header = () => {
                                             <AuthMenu theme={theme} style={{ borderRight: 'none' }}>{translate('로그인')}</AuthMenu>
                                         </>}
 
-                                    <Icon icon={'ic:baseline-plus'} color={themeMode == 'dark' ? '#000' : '#000'} />
+                                    <Icon icon={'ic:baseline-plus'} color={themeMode == 'dark' ? '#fff' : '#000'} />
                                 </div>
                             </NoneShowMobile>
                             <ShowMobile style={{ marginLeft: 'auto', columnGap: '0.5rem' }}>
+                            <MainLogo
+                                    src={logoSrc()}
+                                    onClick={() => {
+                                        router.push('/shop')
+                                    }}
+                                />
                                 <IconButton
                                     sx={iconButtonStyle}
                                     onClick={() => setSideMenuOpen(true)}
                                 >
-                                    <Icon icon={'basil:menu-solid'} fontSize={'2rem'} color={themeMode == 'dark' ? '#000' : '#000'} />
+                                    <Icon icon={'basil:menu-solid'} fontSize={'2rem'} color={themeMode == 'dark' ? '#fff' : '#000'} />
                                 </IconButton>
                                 <IconButton
                                     sx={iconButtonStyle}
@@ -558,7 +564,7 @@ const Header = () => {
                                         })
                                     }}
                                 >
-                                    <Icon icon={'tabler:search'} fontSize={'1.5rem'} color={themeMode == 'dark' ? '#000' : '#000'} />
+                                    <Icon icon={'tabler:search'} fontSize={'1.5rem'} color={themeMode == 'dark' ? '#fff' : '#000'} />
                                 </IconButton>
                                 <IconButton
                                     sx={iconButtonStyle}
@@ -571,14 +577,14 @@ const Header = () => {
                                     }}
                                 >
                                     <Badge badgeContent={themeCartData.length} color="error">
-                                        <Icon icon={'basil:shopping-bag-outline'} fontSize={'1.8rem'} color={themeMode == 'dark' ? '#000' : '#000'} />
+                                        <Icon icon={'basil:shopping-bag-outline'} fontSize={'1.8rem'} color={themeMode == 'dark' ? '#fff' : '#000'} />
                                     </Badge>
                                 </IconButton>
                                 <IconButton
                                     sx={iconButtonStyle}
                                     onClick={() => onToggleMode()}
                                 >
-                                    <Icon icon={themeMode === 'dark' ? 'tabler:sun' : 'tabler:moon-stars'} fontSize={'1.5rem'} color={themeMode == 'dark' ? '#000' : '#000'} />
+                                    <Icon icon={themeMode === 'dark' ? 'tabler:sun' : 'tabler:moon-stars'} fontSize={'1.5rem'} color={themeMode == 'dark' ? '#fff' : '#000'} />
                                 </IconButton>
                                 {themeDnsData?.setting_obj?.is_use_lang == 1 &&
                                     <>
@@ -607,7 +613,7 @@ const Header = () => {
                                                 }
                                             }}
                                         >
-                                            <Icon icon={'basil:user-outline'} fontSize={'1.8rem'} color={themeMode == 'dark' ? '#000' : '#fff'} />
+                                            <Icon icon={'basil:user-outline'} fontSize={'1.8rem'} color={themeMode == 'dark' ? '#fff' : '#fff'} />
                                         </IconButton>
                                         <IconButton
                                             sx={iconButtonStyle}
@@ -620,7 +626,7 @@ const Header = () => {
                                             }}
                                         >
                                             <Badge badgeContent={themeWishData.length} color="error">
-                                                <Icon icon={'basil:heart-outline'} fontSize={'2rem'} color={themeMode == 'dark' ? '#000' : '#fff'} />
+                                                <Icon icon={'basil:heart-outline'} fontSize={'2rem'} color={themeMode == 'dark' ? '#fff' : '#fff'} />
                                             </Badge>
                                         </IconButton>
 
@@ -635,14 +641,14 @@ const Header = () => {
                                             }}
                                         >
                                             <Badge badgeContent={themeCartData.length} color="error">
-                                                <Icon icon={'basil:shopping-bag-outline'} fontSize={'1.8rem'} color={themeMode == 'dark' ? '#000' : '#fff'} />
+                                                <Icon icon={'basil:shopping-bag-outline'} fontSize={'1.8rem'} color={themeMode == 'dark' ? '#fff' : '#fff'} />
                                             </Badge>
                                         </IconButton>
                                         <IconButton
                                             sx={iconButtonStyle}
                                             onClick={() => onToggleMode()}
                                         >
-                                            <Icon icon={themeMode === 'dark' ? 'tabler:sun' : 'tabler:moon-stars'} fontSize={'1.5rem'} color={themeMode == 'dark' ? '#000' : '#fff'} />
+                                            <Icon icon={themeMode === 'dark' ? 'tabler:sun' : 'tabler:moon-stars'} fontSize={'1.5rem'} color={themeMode == 'dark' ? '#fff' : '#fff'} />
                                         </IconButton>
                                         {themeDnsData?.setting_obj?.is_use_lang == 1 &&
                                             <>

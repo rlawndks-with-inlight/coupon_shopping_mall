@@ -86,7 +86,7 @@ export default function ProductDetailsCarousel({ product }) {
 
   const [selectedImage, setSelectedImage] = useState(-1);
 
-  const imagesLightbox = product.images.map((img) => ({ src: img }));
+  const imagesLightbox = product.images?.map((img) => ({ src: img }));
   const handleOpenLightbox = (imageUrl) => {
     const imageIndex = imagesLightbox.findIndex((image) => image.src === imageUrl);
     setSelectedImage(imageIndex);
@@ -114,7 +114,7 @@ export default function ProductDetailsCarousel({ product }) {
     focusOnSelect: true,
     variableWidth: true,
     centerPadding: '0px',
-    slidesToShow: product.images.length > 3 ? 3 : product.images.length,
+    slidesToShow: product.images?.length > 3 ? 3 : product.images?.length,
   };
 
   useEffect(() => {
@@ -141,7 +141,7 @@ export default function ProductDetailsCarousel({ product }) {
   const renderLargeImg = (
     <Box sx={{ mb: 3, borderRadius: 2, overflow: 'hidden', position: 'relative' }}>
       <Carousel {...carouselSettings1} asNavFor={nav2} ref={carousel1}>
-        {product.images.map((img) => (
+        {product.images?.map((img) => (
           <Image
             key={img}
             alt="product"
@@ -154,16 +154,16 @@ export default function ProductDetailsCarousel({ product }) {
       </Carousel>
       <CarouselArrowIndex
         index={currentIndex}
-        total={product.images.length}
+        total={product.images?.length}
         onNext={handleNext}
         onPrevious={handlePrev}
       />
     </Box>
   );
   const renderThumbnails = (
-    <StyledThumbnailsContainer length={product.images.length} themeMode={themeMode}>
+    <StyledThumbnailsContainer length={product.images?.length} themeMode={themeMode}>
       <Carousel {...carouselSettings2} asNavFor={nav1} ref={carousel2}>
-        {product.images.map((img, index) => (
+        {product.images?.map((img, index) => (
           <Image
             key={img}
             disabledEffect

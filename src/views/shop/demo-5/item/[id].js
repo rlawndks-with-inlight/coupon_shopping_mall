@@ -104,20 +104,20 @@ const ItemDemo = (props) => {
     data = await apiShop('product', 'get', {
       id: router.query?.id
     });
-    /*data['sub_images'] = (data?.sub_images ?? []).map((img) => { //cannot create property on false? 오류 간헐적 발생
+    data['sub_images'] = data['sub_images'].map((img) => {
       return img?.product_sub_img
-    })*/
-    /*if (data?.product_img) {  //메인이미지를 상세이미지에 추가하는 코드
+    })
+    if (data?.product_img) {
       data['sub_images'].unshift(data?.product_img)
-    }*/
-    //data['images'] = data['sub_images'];
-    /*setReviewPage(review_page);
+    }
+    data['images'] = data['sub_images'];
+    setReviewPage(review_page);
     let review_data = await apiManager('product-reviews', 'list', {
       page: review_page,
       product_id: router.query?.id,
       page_size: 10,
     })
-    setReviewContent(review_data)*/
+    //setReviewContent(review_data)
     setProduct(data);
     setLoading(false);
   }
@@ -192,12 +192,12 @@ const ItemDemo = (props) => {
                       <ProductDetailsCarousel product={product} />
                     </Grid>
 
-                    <Grid item xs={12} md={6} lg={6}>
+                    <Grid item xs={12} md={6} lg={6} style={{paddingTop:'100px'}}>
 
                       {product?.brand_name &&
                         <>
                           <div style={{ fontSize: '40px', fontFamily: 'Playfair Display', fontWeight: 'bold', borderTop: '1px solid #ccc', padding: '1rem 0' }}>
-                            {product?.brand_name[0].category_en_name ?? ''}
+                            {product?.brand_name[0]?.category_en_name ?? ''}
                           </div>
                         </>
                       }
@@ -275,7 +275,7 @@ const ItemDemo = (props) => {
                           </>
                         }
                       </div> */}
-                      <div style={{ borderBottom: '1px solid #ccc', width: '100%', marginTop: '1rem' }} />
+                      <div style={{ borderBottom: '1px solid #ccc', width: '100%', marginTop: '2rem' }} />
                       {themePropertyList.map((group, index) => {
                         let property_list = (product?.properties ?? []).filter(el => el?.property_group_id == group?.id);
                         property_list = property_list.map(property => {

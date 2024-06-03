@@ -373,13 +373,36 @@ const ProductList = () => {
     setColumns(cols)
     onChangePage({ ...searchObj, page: 1 });
   }
-  const onChangePage = async (obj) => {
-    setSearchObj(obj);
+
+  useEffect(() => {
+    onChangePage({ ...router.query }, searchObj)
+  }, [
+    router.query.page,
+    router.query.page_size,
+    router.query.s_dt, 
+    router.query.e_dt, 
+    router.query.search, 
+    router.query.search, 
+    router.query.category_id,
+    router.query.seller_id,
+    router.query.order
+  ])
+  const onChangePage = async (query_ = {}, search_obj_ = {}) => {
+    let query = query_;
+    let search_obj = search_obj_;
+
+    let query_str = new URLSearchParams(query).toString();
+    router.push(`/manager/products/list?${query_str}`);
+
+    setSearchObj({ ...search_obj, ...query });
     setData({
       ...data,
       content: undefined
     })
-    let data_ = await apiManager('products', 'list', obj);
+    let data_ = await apiManager('products', 'list', {
+      ...search_obj,
+      ...query
+    });
     if (data_) {
       for (var i = 0; i < themeCategoryList.length; i++) {
         let parent_list = await getAllIdsWithParents(themeCategoryList[i]?.product_categories);
@@ -451,6 +474,8 @@ const ProductList = () => {
       value,
     })
   }
+
+
 
 
   return (

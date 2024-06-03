@@ -155,14 +155,7 @@ const ProductEdit = () => {
         return <div
           style={{ textDecoration: 'underline', cursor: 'pointer' }}
           onClick={() => {
-            setItem({
-              ...item,
-              ['consignment_user_name']: row['user_name'],
-              ['consignment_name']: row['name'],
-              ['consignment_user_phone_num']: row['phone_num'],
-              ['product_type']: 1
-            })
-            setDialogOpen(false)
+            consignmentSet(row)
           }}
         >
           {row['user_name']}
@@ -176,14 +169,7 @@ const ProductEdit = () => {
         return <div
           style={{ textDecoration: 'underline', cursor: 'pointer' }}
           onClick={() => {
-            setItem({
-              ...item,
-              ['consignment_user_name']: row['user_name'],
-              ['consignment_name']: row['name'],
-              ['consignment_user_phone_num']: row['phone_num'],
-              ['product_type']: 1
-            })
-            setDialogOpen(false)
+            consignmentSet(row)
           }}
         >
           {row['name']}
@@ -197,14 +183,7 @@ const ProductEdit = () => {
         return <div
           style={{ textDecoration: 'underline', cursor: 'pointer' }}
           onClick={() => {
-            setItem({
-              ...item,
-              ['consignment_user_name']: row['user_name'],
-              ['consignment_name']: row['name'],
-              ['consignment_user_phone_num']: row['phone_num'],
-              ['product_type']: 1
-            })
-            setDialogOpen(false)
+            consignmentSet(row)
           }}
         >
           {row['phone_num']}
@@ -370,7 +349,9 @@ const ProductEdit = () => {
     settingPage();
     //console.log(themeDnsData)
   }, [])
-
+useEffect(()=>{
+  console.log(item)
+},[item])
   useEffect(() => {
     if (currentTab == 2) {
       onChangeReviewsPage({ ...reviewSearchObj, product_id: item?.id });
@@ -569,6 +550,8 @@ const ProductEdit = () => {
         }
       }
     }
+
+    
     {
       type == 'edit' ?
         obj?.id ? //수정
@@ -646,6 +629,17 @@ const ProductEdit = () => {
     })
     //console.log(item)
   }, [point])
+
+  const consignmentSet = (row) => {
+    setItem((prevItem) => ({  //비동기 문제 방지용
+      ...prevItem,
+      ['consignment_user_name']: row['user_name'],
+      ['consignment_name']: row['name'],
+      ['consignment_user_phone_num']: row['phone_num'],
+      ['product_type']: 1
+    }))
+    setDialogOpen(false)
+  }
 
   return (
     <>
@@ -1032,12 +1026,10 @@ const ProductEdit = () => {
                                       if (e.target.checked) {
                                         productType = 1;
                                       }
-                                      const updateItem = {
+                                      setItem({
                                         ...item,
                                         product_type: productType
-                                      }
-                                      console.log(updateItem)
-                                      setItem(updateItem)
+                                      })
                                     }}
                                   />}
                               />

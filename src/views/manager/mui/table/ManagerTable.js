@@ -42,6 +42,10 @@ export default function ManagerTable(props) {
   const { columns, data, add_button_text, add_link, onChangePage, searchObj, want_move_card, table, detail_search, onToggle, minimal = false } = props;
   const { page, page_size } = props?.searchObj;
 
+  useEffect(() => {
+    console.log(page)
+  }, [page])
+
   const router = useRouter();
 
   const { settingPlatform } = useSettingsContext();
@@ -148,6 +152,20 @@ export default function ManagerTable(props) {
     const isDesc = checked === prop && order === 'desc';
     setOrder(isDesc ? 'asc' : 'desc')
     setChecked(prop)
+  }
+
+  const onChangeQuery = (query = {}, search_obj = {}) => {
+    let query_ = query;
+    let searchObj = search_obj;
+    let base_query = router.asPath.split('?')
+
+
+
+    let query_str = new URLSearchParams(query_).toString();
+    //console.log(searchObj)
+    //console.log(query_str)
+    //console.log(base_query)
+    router.push(`${base_query[0]}?${query_str}`)
   }
 
   return (
@@ -333,7 +351,7 @@ export default function ManagerTable(props) {
             sx={{ marginLeft: 'auto' }}
             size={'medium'}
             count={getMaxPage(data?.total, data?.page_size)}
-            page={page}
+            page={parseInt(page)}
             variant='outlined' shape='rounded'
             color='primary'
             siblingCount={4}
@@ -341,11 +359,12 @@ export default function ManagerTable(props) {
             showFirstButton
             showLastButton
             onChange={(_, num) => {
-              onChangePage({
+              onChangePage({...router.query, page: num}, {
                 ...searchObj,
                 page: num
               });
-              console.log(data)
+
+              //console.log(data)
             }} />
         </Box>
       </TableContainer>

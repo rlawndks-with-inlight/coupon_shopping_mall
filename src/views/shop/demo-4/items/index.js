@@ -97,7 +97,15 @@ const ItemsDemo = (props) => {
   ]
   useEffect(() => {
     getItemList({ ...router.query }, searchObj)
-  }, [router.query.category_id0, router.query.category_id1, router.query.category_id2, router.query.search, router.query.property_ids0,])
+  }, [
+    router.query.category_id0, 
+    router.query.category_id1, 
+    router.query.category_id2, 
+    router.query.search, 
+    router.query.property_ids0,
+    router.query.page,
+    router.query.page_size
+  ])
 
   useEffect(() => {
     setFilterOpen(false)
@@ -124,7 +132,7 @@ const ItemsDemo = (props) => {
 
     //console.log(query)
     //console.log(search_obj)
-    setLoading(true);
+    //setLoading(true);
     setCategoryIds(query);
     let category_children = {};
     for (var i = 0; i < themeCategoryList.length; i++) {
@@ -164,7 +172,7 @@ const ItemsDemo = (props) => {
       })
     }
     setProductContent(product_list);
-    setLoading(false);
+    
     // if (is_first) {
     //   setProductContent(product_list);
     //   setLoading(false);
@@ -177,7 +185,7 @@ const ItemsDemo = (props) => {
   }
   useEffect(() => {
     if ((productContent?.content ?? []).length > 0) {
-      setMoreLoading(false);
+      setLoading(false);
     }
   }, [productContent?.content])
 
@@ -200,6 +208,27 @@ const ItemsDemo = (props) => {
   const hangeulList = [
     '가', '나', '다', '라', '마', '바', '사', '아', '자', '차', '카', '타', '파', '하', '#'
   ]
+
+  useEffect(() => {
+    const query = new URLSearchParams(router.query).toString()
+
+    const savedScrollPosition = sessionStorage.getItem(`scrollPosition${query}`);
+    if (savedScrollPosition && !loading) {  
+      window.scrollTo(0, parseInt(savedScrollPosition, 10));
+      console.log(sessionStorage)
+      sessionStorage.removeItem(`scrollPosition${query}`);
+    }
+    const handleRouteChangeStart = () => {
+      if (!loading) { //items는 메인화면과 다르게 이 조건을 걸어주지 않으면 scrollTo를 실행하기 전에 scrollPosition을 0으로 바꾸는 문제 있음
+        sessionStorage.setItem(`scrollPosition${query}`, window.scrollY);
+      }
+    };
+    console.log(sessionStorage)
+    router.events.on('routeChangeStart', handleRouteChangeStart);
+    return () => {
+      router.events.off('routeChangeStart', handleRouteChangeStart);
+    };
+  }, [loading])
 
   return (
     <>

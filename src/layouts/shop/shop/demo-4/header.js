@@ -532,16 +532,17 @@ const Header = () => {
                                     }}
                                 />
                             </NoneShowMobile>
-                            
-                                <MainLogo
-                                    src={logoSrc()}
-                                    onClick={() => {
-                                        //window.location.href = '/shop/auth'
-                                        sessionStorage.removeItem('scrollPosition');
-                                        window.location.replace('/')
-                                    }}
-                                />
-                            
+
+                            <MainLogo
+                                src={logoSrc()}
+                                onClick={() => {
+                                    //window.location.href = '/shop/auth'
+                                    sessionStorage.clear();
+                                    //sessionStorage.removeItem('scrollPosition');
+                                    window.location.replace('/')
+                                }}
+                            />
+
                             <NoneShowMobile>
                                 {/*<Button variant="outlined"
                                     sx={{ marginRight: '0.5rem', minWidth: '112px' }}
@@ -759,7 +760,7 @@ const Header = () => {
                                 //className={`none-scroll pc-menu-content${index}`}
                                 >
                                     {themeCategoryList.map((group, index) => {
-                                        if (group?.category_group_name == '카테고리' || group?.category_group_name == '브랜드') {
+                                        if (group?.category_group_name == '카테고리') {
                                             return <>
                                                 <div style={{ position: 'relative', fontWeight: 'bold' }} ref={(element) => {
                                                     allCategoryRef.current[index] = element;
@@ -767,12 +768,8 @@ const Header = () => {
                                                     <CategoryMenu borderColor={themeDnsData?.theme_css?.main_color} onClick={() => {
                                                         setOpenAllCategory(group?.id)
                                                     }}>
-                                                        {group?.category_group_name == '카테고리' ?
-                                                            <div style={{ fontFamily: 'Playfair Display', color:'#FF5B0D' }}>ALL CATEGORY</div>
-                                                            :
-                                                            group?.category_group_name == '브랜드' ?
-
-                                                                <div style={{ fontFamily: 'Playfair Display', color:'#FF5B0D' }}>FIND BRAND</div> : ''}
+                                                        {group?.category_group_name == '카테고리' &&
+                                                            <div style={{ fontFamily: 'Playfair Display', color: '#FF5B0D' }}>ALL CATEGORY</div>}
                                                     </CategoryMenu>
                                                     {openAllCategory == group?.id &&
                                                         <>
@@ -864,164 +861,6 @@ const Header = () => {
                                                                             </Col>
                                                                             {/*<div style={{ border: '2px solid red', padding: '0' }} />*/}
                                                                         </>}
-                                                                    {group?.sort_type == 1 &&
-                                                                        <>
-                                                                            <Row>
-                                                                                <Chip label={`ABC`} sx={{
-                                                                                    margin: '0.5rem 0.5rem 0.5rem 0',
-                                                                                    fontWeight: 'bold',
-                                                                                    fontSize: '16px',
-                                                                                    cursor: 'pointer',
-                                                                                    height: '40px',
-                                                                                    background: 'transparent',
-                                                                                    borderRadius: '0',
-                                                                                    fontFamily: 'Playfair Display',
-                                                                                    color: `${langChipSelected == 0 ? 'white' : '#DDDDDD'}`,
-                                                                                    '&:hover': {
-                                                                                        textDecoration: 'underline',
-                                                                                        background: 'transparent',
-                                                                                    }
-                                                                                }}
-                                                                                    onClick={() => { setLangChipSelected(0); sort(LANGCODE.ENG); setTextChipSelected('A'); }}
-                                                                                />
-                                                                                <Chip label={`가나다`} sx={{
-                                                                                    margin: '0.5rem 0.5rem 0.5rem 0',
-                                                                                    fontWeight: 'bold',
-                                                                                    fontSize: '16px',
-                                                                                    cursor: 'pointer',
-                                                                                    height: '40px',
-                                                                                    background: 'transparent',
-                                                                                    borderRadius: '0',
-                                                                                    fontFamily: 'Noto Sans KR',
-                                                                                    color: `${langChipSelected == 1 ? 'white' : '#DDDDDD'}`,
-                                                                                    '&:hover': {
-                                                                                        textDecoration: 'underline',
-                                                                                        background: 'transparent',
-                                                                                    }
-                                                                                }}
-                                                                                    onClick={() => { setLangChipSelected(1); sort(LANGCODE.KOR); setTextChipSelected('가'); }}
-                                                                                />
-                                                                            </Row>
-                                                                            <Row>
-                                                                                {langChipSelected == 0 ?
-                                                                                    <>
-                                                                                        {alphabetList.map((alphabet) => {
-                                                                                            return <>
-                                                                                                <Chip
-                                                                                                    label={alphabet}
-                                                                                                    sx={{
-                                                                                                        margin: '0.5rem 0rem 0.5rem 0',
-                                                                                                        fontSize: '16px',
-                                                                                                        cursor: 'pointer',
-                                                                                                        color: 'white',
-                                                                                                        background: 'transparent',
-                                                                                                        fontFamily: 'Playfair Display',
-                                                                                                        '&:hover': {
-                                                                                                            color: `${textChipSelected == alphabet ? 'white' : ''}`,
-                                                                                                            //background: `${textChipSelected == alphabet ? 'black' : ''}`,
-                                                                                                        },
-                                                                                                        borderRadius: '0',
-                                                                                                        borderBottom: `${textChipSelected == alphabet ? '2px solid white' : ''}`
-                                                                                                    }}
-                                                                                                    onClick={() => { setTextChipSelected(alphabet); }}
-                                                                                                />
-                                                                                            </>
-                                                                                        })}
-                                                                                    </>
-                                                                                    :
-                                                                                    <>
-                                                                                        {hangeulList.map((hangeul) => {
-                                                                                            return <>
-                                                                                                <Chip
-                                                                                                    label={hangeul}
-                                                                                                    variant="soft"
-                                                                                                    sx={{
-                                                                                                        margin: '0.5rem 0rem 0.5rem 0',
-                                                                                                        fontSize: '16px',
-                                                                                                        cursor: 'pointer',
-                                                                                                        color: 'white',
-                                                                                                        background: 'transparent',
-                                                                                                        fontFamily: 'Noto Sans KR',
-                                                                                                        '&:hover': {
-                                                                                                            color: `${textChipSelected == hangeul ? 'white' : ''}`,
-                                                                                                            //background: `${textChipSelected == hangeul ? 'black' : ''}`,
-                                                                                                        },
-                                                                                                        borderRadius: '0',
-                                                                                                        borderBottom: `${textChipSelected == hangeul ? '2px solid white' : ''}`
-                                                                                                    }}
-                                                                                                    onClick={() => { setTextChipSelected(hangeul); }}
-                                                                                                />
-                                                                                            </>
-                                                                                        })}
-                                                                                    </>
-                                                                                }
-                                                                            </Row>
-                                                                            <Col style={{ minWidth: '100px', flexWrap: 'wrap', alignItems: 'flex-start', rowGap: '0.2rem', marginBottom: '1rem' }}>
-
-                                                                                {categoryGroup.map((group) => {
-                                                                                    if (textChipSelected == '') {
-                                                                                        return <>
-                                                                                            <Row>
-                                                                                                {
-                                                                                                    group.childs.map((child) => {
-                                                                                                        return <>
-                                                                                                            <Link href={`/shop/items?category_id${index}=${child?.id}&depth=0`} passHref>
-                                                                                                                <Chip
-                                                                                                                    label={langChipSelected == 0 ? child?.category_en_name : child?.category_name}
-                                                                                                                    sx={{
-                                                                                                                        margin: '0.5rem 0rem 0.5rem 0',
-                                                                                                                        fontSize: '16px',
-                                                                                                                        cursor: 'pointer',
-                                                                                                                        background: 'transparent',
-                                                                                                                        fontFamily: `${langChipSelected == 0 ? 'Playfair Display' : 'Noto Sans KR'}`,
-                                                                                                                        '&:hover': {
-                                                                                                                            background: `${themeMode == 'dark' ? '#999999' : 'white'}`,
-                                                                                                                        },
-                                                                                                                    }}
-                                                                                                                    onClick={() => {
-                                                                                                                        setOpenAllCategory("")
-                                                                                                                    }} />
-                                                                                                            </Link>
-                                                                                                        </>
-                                                                                                    })
-                                                                                                }
-                                                                                            </Row>
-                                                                                        </>
-                                                                                    }
-                                                                                    else if (textChipSelected == group?.label) {
-                                                                                        return <>
-                                                                                            <Row>
-                                                                                                {
-                                                                                                    group.childs.map((child) => {
-                                                                                                        return <>
-                                                                                                            <Link href={`/shop/items?category_id${index}=${child?.id}&depth=0`} passHref>
-                                                                                                                <Chip
-                                                                                                                    label={langChipSelected == 0 ? child?.category_en_name : child?.category_name}
-                                                                                                                    sx={{
-                                                                                                                        margin: '0.5rem 0rem 0.5rem 0',
-                                                                                                                        fontSize: '16px',
-                                                                                                                        cursor: 'pointer',
-                                                                                                                        background: 'transparent',
-                                                                                                                        fontFamily: `${langChipSelected == 0 ? 'Playfair Display' : 'Noto Sans KR'}`,
-                                                                                                                        '&:hover': {
-                                                                                                                            background: `${themeMode == 'dark' ? '#999999' : 'white'}`,
-                                                                                                                        },
-                                                                                                                    }}
-                                                                                                                    onClick={() => {
-                                                                                                                        setOpenAllCategory("")
-                                                                                                                    }} />
-                                                                                                            </Link>
-                                                                                                        </>
-                                                                                                    })
-                                                                                                }
-                                                                                            </Row>
-                                                                                        </>
-                                                                                    }
-                                                                                })}
-
-                                                                            </Col>
-
-                                                                        </>}
                                                                 </div>
                                                             </PopoverContainer>
                                                         </>}
@@ -1108,9 +947,190 @@ const Header = () => {
                             }}>
                             <CategoryContainer>
                                 <NoneShowMobile style={{ fontSize: '90%', fontWeight: 'bold' }}>
-                                    <Row style={{ margin: '0 1rem',  }} onClick={() => {setOpenAllCategory('')}}>
-                                        ALL BRAND |
-                                    </Row>
+                                    {themeCategoryList.map((group, index) => {
+                                        if (group?.category_group_name == '브랜드') {
+                                            return <div ref={(element) => {
+                                                allCategoryRef.current[index] = element;
+                                            }}>
+                                                <Row style={{ margin: '0 1rem', cursor: 'pointer', color:`${themeMode == 'dark' ? '#FF5B0D' : ''}` }} onClick={() => { setOpenAllCategory(group?.id) }}>
+                                                    ALL BRAND |
+                                                </Row>
+                                                {openAllCategory == group?.id &&
+                                                    <>
+                                                        <PopoverContainer style={{
+                                                            background: `${themeMode == 'dark' ? '#222' : '#FF5B0D'}`,
+                                                            maxHeight: `${window.innerHeight - headerHeight}px`,
+                                                            overflowY: 'auto',
+                                                            borderTop: `1px solid white`,
+                                                            //borderBottom: `2px solid ${themeDnsData?.theme_css?.main_color}`,
+                                                            fontFamily: 'Playfair Display',
+                                                            marginTop:'17px'
+                                                        }}>
+                                                            <div style={{ maxWidth: '1400px', margin: '0 auto' }}>
+                                                                {group?.sort_type == 1 &&
+                                                                    <>
+                                                                        <Row>
+                                                                            <Chip label={`ABC`} sx={{
+                                                                                margin: '0.5rem 0.5rem 0.5rem 0',
+                                                                                fontWeight: 'bold',
+                                                                                fontSize: '16px',
+                                                                                cursor: 'pointer',
+                                                                                height: '40px',
+                                                                                background: 'transparent',
+                                                                                borderRadius: '0',
+                                                                                fontFamily: 'Playfair Display',
+                                                                                color: `${langChipSelected == 0 ? 'white' : '#DDDDDD'}`,
+                                                                                '&:hover': {
+                                                                                    textDecoration: 'underline',
+                                                                                    background: 'transparent',
+                                                                                }
+                                                                            }}
+                                                                                onClick={() => { setLangChipSelected(0); sort(LANGCODE.ENG); setTextChipSelected('A'); }}
+                                                                            />
+                                                                            <Chip label={`가나다`} sx={{
+                                                                                margin: '0.5rem 0.5rem 0.5rem 0',
+                                                                                fontWeight: 'bold',
+                                                                                fontSize: '16px',
+                                                                                cursor: 'pointer',
+                                                                                height: '40px',
+                                                                                background: 'transparent',
+                                                                                borderRadius: '0',
+                                                                                fontFamily: 'Noto Sans KR',
+                                                                                color: `${langChipSelected == 1 ? 'white' : '#DDDDDD'}`,
+                                                                                '&:hover': {
+                                                                                    textDecoration: 'underline',
+                                                                                    background: 'transparent',
+                                                                                }
+                                                                            }}
+                                                                                onClick={() => { setLangChipSelected(1); sort(LANGCODE.KOR); setTextChipSelected('가'); }}
+                                                                            />
+                                                                        </Row>
+                                                                        <Row>
+                                                                            {langChipSelected == 0 ?
+                                                                                <>
+                                                                                    {alphabetList.map((alphabet) => {
+                                                                                        return <>
+                                                                                            <Chip
+                                                                                                label={alphabet}
+                                                                                                sx={{
+                                                                                                    margin: '0.5rem 0rem 0.5rem 0',
+                                                                                                    fontSize: '16px',
+                                                                                                    cursor: 'pointer',
+                                                                                                    color: 'white',
+                                                                                                    background: 'transparent',
+                                                                                                    fontFamily: 'Playfair Display',
+                                                                                                    '&:hover': {
+                                                                                                        color: `${textChipSelected == alphabet ? 'white' : ''}`,
+                                                                                                        //background: `${textChipSelected == alphabet ? 'black' : ''}`,
+                                                                                                    },
+                                                                                                    borderRadius: '0',
+                                                                                                    borderBottom: `${textChipSelected == alphabet ? '2px solid white' : ''}`
+                                                                                                }}
+                                                                                                onClick={() => { setTextChipSelected(alphabet); }}
+                                                                                            />
+                                                                                        </>
+                                                                                    })}
+                                                                                </>
+                                                                                :
+                                                                                <>
+                                                                                    {hangeulList.map((hangeul) => {
+                                                                                        return <>
+                                                                                            <Chip
+                                                                                                label={hangeul}
+                                                                                                variant="soft"
+                                                                                                sx={{
+                                                                                                    margin: '0.5rem 0rem 0.5rem 0',
+                                                                                                    fontSize: '16px',
+                                                                                                    cursor: 'pointer',
+                                                                                                    color: 'white',
+                                                                                                    background: 'transparent',
+                                                                                                    fontFamily: 'Noto Sans KR',
+                                                                                                    '&:hover': {
+                                                                                                        color: `${textChipSelected == hangeul ? 'white' : ''}`,
+                                                                                                        //background: `${textChipSelected == hangeul ? 'black' : ''}`,
+                                                                                                    },
+                                                                                                    borderRadius: '0',
+                                                                                                    borderBottom: `${textChipSelected == hangeul ? '2px solid white' : ''}`
+                                                                                                }}
+                                                                                                onClick={() => { setTextChipSelected(hangeul); }}
+                                                                                            />
+                                                                                        </>
+                                                                                    })}
+                                                                                </>
+                                                                            }
+                                                                        </Row>
+                                                                        <Col style={{ minWidth: '100px', flexWrap: 'wrap', alignItems: 'flex-start', rowGap: '0.2rem', marginBottom: '1rem' }}>
+
+                                                                            {categoryGroup.map((group) => {
+                                                                                if (textChipSelected == '') {
+                                                                                    return <>
+                                                                                        <Row>
+                                                                                            {
+                                                                                                group.childs.map((child) => {
+                                                                                                    return <>
+                                                                                                        <Link href={`/shop/items?category_id${index}=${child?.id}&depth=0`} passHref>
+                                                                                                            <Chip
+                                                                                                                label={langChipSelected == 0 ? child?.category_en_name : child?.category_name}
+                                                                                                                sx={{
+                                                                                                                    margin: '0.5rem 0rem 0.5rem 0',
+                                                                                                                    fontSize: '16px',
+                                                                                                                    cursor: 'pointer',
+                                                                                                                    background: 'transparent',
+                                                                                                                    fontFamily: `${langChipSelected == 0 ? 'Playfair Display' : 'Noto Sans KR'}`,
+                                                                                                                    '&:hover': {
+                                                                                                                        background: `${themeMode == 'dark' ? '#999999' : 'white'}`,
+                                                                                                                    },
+                                                                                                                }}
+                                                                                                                onClick={() => {
+                                                                                                                    setOpenAllCategory("")
+                                                                                                                }} />
+                                                                                                        </Link>
+                                                                                                    </>
+                                                                                                })
+                                                                                            }
+                                                                                        </Row>
+                                                                                    </>
+                                                                                }
+                                                                                else if (textChipSelected == group?.label) {
+                                                                                    return <>
+                                                                                        <Row>
+                                                                                            {
+                                                                                                group.childs.map((child) => {
+                                                                                                    return <>
+                                                                                                        <Link href={`/shop/items?category_id${index}=${child?.id}&depth=0`} passHref>
+                                                                                                            <Chip
+                                                                                                                label={langChipSelected == 0 ? child?.category_en_name : child?.category_name}
+                                                                                                                sx={{
+                                                                                                                    margin: '0.5rem 0rem 0.5rem 0',
+                                                                                                                    fontSize: '16px',
+                                                                                                                    cursor: 'pointer',
+                                                                                                                    background: 'transparent',
+                                                                                                                    fontFamily: `${langChipSelected == 0 ? 'Playfair Display' : 'Noto Sans KR'}`,
+                                                                                                                    '&:hover': {
+                                                                                                                        background: `${themeMode == 'dark' ? '#999999' : 'white'}`,
+                                                                                                                    },
+                                                                                                                }}
+                                                                                                                onClick={() => {
+                                                                                                                    setOpenAllCategory("")
+                                                                                                                }} />
+                                                                                                        </Link>
+                                                                                                    </>
+                                                                                                })
+                                                                                            }
+                                                                                        </Row>
+                                                                                    </>
+                                                                                }
+                                                                            })}
+
+                                                                        </Col>
+
+                                                                    </>}
+                                                            </div>
+                                                        </PopoverContainer>
+                                                    </>}
+                                            </div>
+                                        }
+                                    })}
                                     <Link href={`/shop/items/?category_id1=501&depth=0`} passHref>
                                         <CategoryMenu
                                             onClick={() => {

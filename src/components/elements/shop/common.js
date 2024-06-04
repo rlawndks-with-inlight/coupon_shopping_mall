@@ -237,11 +237,14 @@ export const HistoryTable = props => {
                           {row.item_name}
                         </Typography>
                       </Row>
-                      <Row>
-                        <Typography noWrap variant='subtitle2' sx={{ maxWidth: 240 }}>
-                          ({row?.orders[0]?.product_code})
-                        </Typography>
-                      </Row>
+                      {
+                        row?.is_cancel != 1 &&
+                        <Row>
+                          <Typography noWrap variant='subtitle2' sx={{ maxWidth: 240 }}>
+                            ({row?.orders[0]?.product_code})
+                          </Typography>
+                        </Row>
+                      }
                     </TableCell>
                     <TableCell>{row.ord_num}</TableCell>
                     <TableCell>{fCurrency(row.amount)}원</TableCell>

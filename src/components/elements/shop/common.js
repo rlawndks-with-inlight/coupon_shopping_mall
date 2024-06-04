@@ -196,7 +196,7 @@ export const Items = props => {
 export const HistoryTable = props => {
   const { historyContent, onChangePage, searchObj } = props
   const { translate } = useLocales();
-  const { router } = useRouter();
+  const router = useRouter();
   const TABLE_HEAD = [
     { id: 'product', label: translate('상품') },
     { id: 'ord_num', label: translate('주문번호') },
@@ -225,15 +225,22 @@ export const HistoryTable = props => {
               historyContent?.content.map(row => (
                 <>
                   <TableRow>
-                    <TableCell sx={{ display: 'flex', alignItems: 'center', cursor:'pointer' }} onClick={() => {router.push(`/shop/item/${row?.orders[0]?.product_id}`)}}>
+                    <TableCell sx={{ display: 'flex', alignItems: 'center', cursor: 'pointer' }} onClick={() => { router.push(`/shop/item/${row?.orders[0]?.product_id}`) }}>
                       <Image
                         alt='product image'
                         src={row?.orders.length > 0 && row?.orders[0]?.product_img}
                         sx={{ width: 64, height: 64, borderRadius: 1.5, mr: 2 }}
                       />
-                      <Typography noWrap variant='subtitle2' sx={{ maxWidth: 240, textDecoration:'underline' }}>
-                        {row.item_name}
-                      </Typography>
+                      <Row>
+                        <Typography noWrap variant='subtitle2' sx={{ maxWidth: 240, textDecoration: 'underline' }}>
+                          {row.item_name}
+                        </Typography>
+                      </Row>
+                      <Row>
+                        <Typography noWrap variant='subtitle2' sx={{ maxWidth: 240, textDecoration: 'underline' }}>
+                          ({row?.orders[0]?.product_code})
+                        </Typography>
+                      </Row>
                     </TableCell>
                     <TableCell>{row.ord_num}</TableCell>
                     <TableCell>{fCurrency(row.amount)}원</TableCell>

@@ -124,7 +124,16 @@ const MyPageDemo = (props) => {
       id: 'product',
       label: '',
       action: (row) => {
-        return <Row style={{ alignItems: 'center', columnGap: '0.5rem', cursor:'pointer' }} onClick={() => {console.log(row)}}>
+        return <Row style={{ 
+          alignItems: 'center', 
+          columnGap: '0.5rem', 
+          cursor:`${row?.is_cancel == 1 ? '' : 'pointer'}`
+           }} 
+           onClick={() => {
+            if(row?.is_cancel != 1) {
+              router.push(`/shop/item/${row?.orders[0]?.product_id}`)
+            }
+            }}>
           <Image
             alt='product image'
             src={row?.orders.length > 0 && row?.orders[0]?.product_img}
@@ -147,7 +156,7 @@ const MyPageDemo = (props) => {
       id: 'product_code',
       label: '',
       action: (row) => {
-        return row.product_code
+        return row?.orders[0]?.product_code
       },
       sx: (row) => {
         if (row?.is_cancel == 1) {

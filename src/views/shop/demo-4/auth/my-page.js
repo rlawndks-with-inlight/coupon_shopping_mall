@@ -143,6 +143,9 @@ const MyPageDemo = (props) => {
           <Typography noWrap variant='subtitle2' sx={{ maxWidth: 240 }}>
             {row.item_name}
           </Typography>
+          <Typography noWrap variant='subtitle2' sx={{ maxWidth: 240 }}>
+            {row?.orders[0]?.product_code}
+          </Typography>
         </Row>
       },
       sx: (row) => {
@@ -152,20 +155,6 @@ const MyPageDemo = (props) => {
           }
         }
       },
-    },
-    {
-      id: 'product_code',
-      label: '',
-      action: (row) => {
-        return row?.orders[0]?.product_code
-      },
-      sx: (row) => {
-        if (row?.is_cancel == 1) {
-          return {
-            color: 'red'
-          }
-        }
-      }
     },
     {
       id: 'ord_num',

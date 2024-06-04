@@ -28,6 +28,7 @@ import { Item7, Seller7 } from './demo-7'
 import { Col, themeObj } from '../styled-components'
 import { insertCartDataUtil, insertWishDataUtil } from 'src/utils/shop-util'
 import { useLocales } from 'src/locales'
+import { useRouter } from 'next/router'
 
 const ItemsContainer = styled.div`
   display: flex;
@@ -195,6 +196,7 @@ export const Items = props => {
 export const HistoryTable = props => {
   const { historyContent, onChangePage, searchObj } = props
   const { translate } = useLocales();
+  const { router } = useRouter();
   const TABLE_HEAD = [
     { id: 'product', label: translate('상품') },
     { id: 'ord_num', label: translate('주문번호') },
@@ -223,13 +225,13 @@ export const HistoryTable = props => {
               historyContent?.content.map(row => (
                 <>
                   <TableRow>
-                    <TableCell sx={{ display: 'flex', alignItems: 'center' }}>
+                    <TableCell sx={{ display: 'flex', alignItems: 'center', cursor:'pointer' }} onClick={() => {router.push(`/shop/item/${row?.orders[0]?.product_id}`)}}>
                       <Image
                         alt='product image'
                         src={row?.orders.length > 0 && row?.orders[0]?.product_img}
                         sx={{ width: 64, height: 64, borderRadius: 1.5, mr: 2 }}
                       />
-                      <Typography noWrap variant='subtitle2' sx={{ maxWidth: 240 }}>
+                      <Typography noWrap variant='subtitle2' sx={{ maxWidth: 240, textDecoration:'underline' }}>
                         {row.item_name}
                       </Typography>
                     </TableCell>

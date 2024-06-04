@@ -172,7 +172,6 @@ const ItemsDemo = (props) => {
       })
     }
     setProductContent(product_list);
-    
     // if (is_first) {
     //   setProductContent(product_list);
     //   setLoading(false);
@@ -228,7 +227,7 @@ const ItemsDemo = (props) => {
     return () => {
       router.events.off('routeChangeStart', handleRouteChangeStart);
     };
-  }, [loading])
+  }, [loading, router.query])
 
   return (
     <>

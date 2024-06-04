@@ -566,7 +566,7 @@ useEffect(()=>{
     }
     if (result) {
       toast.success("성공적으로 저장 되었습니다.");
-      window.location.href = '/manager/products/list';
+      window.history.back();
     }
   }
   const onSaveReview = async () => {

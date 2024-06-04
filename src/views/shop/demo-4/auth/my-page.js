@@ -149,6 +149,13 @@ const MyPageDemo = (props) => {
       action: (row) => {
         return row.product_code
       },
+      sx: (row) => {
+        if (row?.is_cancel == 1) {
+          return {
+            color: 'red'
+          }
+        }
+      }
     },
     {
       id: 'ord_num',

@@ -25,11 +25,11 @@ import { Item4, Seller4 } from './demo-4'
 import { Item5, Seller5 } from './demo-5'
 import { Item6, Seller6 } from './demo-6'
 import { Item7, Seller7 } from './demo-7'
-import { Col, themeObj } from '../styled-components'
+import { Col, Row, themeObj } from '../styled-components'
 import { insertCartDataUtil, insertWishDataUtil } from 'src/utils/shop-util'
 import { useLocales } from 'src/locales'
 import { useRouter } from 'next/router'
-import { Col, Row, RowMobileColumn, RowMobileReverceColumn, themeObj } from "src/components/elements/styled-components";
+
 
 const ItemsContainer = styled.div`
   display: flex;

@@ -142,9 +142,9 @@ const MyPageDemo = (props) => {
           />
           <Typography noWrap variant='subtitle2' sx={{ maxWidth: 240 }}>
             {row.item_name}
-          </Typography>
+          </Typography><br />
           <Typography noWrap variant='subtitle2' sx={{ maxWidth: 240 }}>
-            {row?.orders[0]?.product_code}
+            ({row?.orders[0]?.product_code})
           </Typography>
         </Row>
       },

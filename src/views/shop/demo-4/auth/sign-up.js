@@ -380,7 +380,7 @@ const SignUpDemo = (props) => {
                 }
               }}
             />
-            <TextField
+            {/*<TextField
               label='닉네임'
               onChange={(e) => {
                 setUser({ ...user, ['nickname']: e.target.value })
@@ -392,7 +392,7 @@ const SignUpDemo = (props) => {
                 if (e.key == 'Enter') {
                 }
               }}
-            />
+            />*/}
             <FormControl variant="outlined" style={{ width: '100%', marginTop: '1rem' }}>
               <InputLabel>휴대폰번호</InputLabel>
               <OutlinedInput

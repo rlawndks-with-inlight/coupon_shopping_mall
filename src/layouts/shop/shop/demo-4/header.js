@@ -1280,7 +1280,7 @@ const Header = () => {
                 >
                     {user ?
                         <>
-                            <ColumnMenuTitle style={{ borderBottom: '1px solid #ccc', paddingBlock: '1rem' }}>{user?.nickname}님, 환영합니다.</ColumnMenuTitle>
+                            <ColumnMenuTitle style={{ borderBottom: '1px solid #ccc', paddingBlock: '1rem' }}>{user?.name}님, 환영합니다.</ColumnMenuTitle>
                         </>
                         :
                         <>

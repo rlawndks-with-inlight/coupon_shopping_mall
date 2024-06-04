@@ -29,6 +29,7 @@ import { Col, themeObj } from '../styled-components'
 import { insertCartDataUtil, insertWishDataUtil } from 'src/utils/shop-util'
 import { useLocales } from 'src/locales'
 import { useRouter } from 'next/router'
+import { Col, Row, RowMobileColumn, RowMobileReverceColumn, themeObj } from "src/components/elements/styled-components";
 
 const ItemsContainer = styled.div`
   display: flex;

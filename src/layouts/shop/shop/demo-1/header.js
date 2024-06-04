@@ -171,7 +171,7 @@ margin-bottom:16px;
 padding:24px 24px 48px 24px;
 box-shadow:0px 4px 4px #00000029;
 border-radius:8px;
-width:300px;
+width:auto;
 min-height:200px;
 position:relative;
 opacity:0.95;

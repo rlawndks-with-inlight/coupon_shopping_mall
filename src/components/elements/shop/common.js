@@ -238,7 +238,7 @@ export const HistoryTable = props => {
                         </Typography>
                       </Row>
                       <Row>
-                        <Typography noWrap variant='subtitle2' sx={{ maxWidth: 240, textDecoration: 'underline' }}>
+                        <Typography noWrap variant='subtitle2' sx={{ maxWidth: 240 }}>
                           ({row?.orders[0]?.product_code})
                         </Typography>
                       </Row>

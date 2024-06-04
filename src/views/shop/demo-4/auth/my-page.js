@@ -124,7 +124,7 @@ const MyPageDemo = (props) => {
       id: 'product',
       label: '',
       action: (row) => {
-        return <Row style={{ alignItems: 'center', columnGap: '0.5rem' }}>
+        return <Row style={{ alignItems: 'center', columnGap: '0.5rem' }} onClick={() => {router.push(`/shop/item/${row.product_id}`)}}>
           <Image
             alt='product image'
             src={row?.orders.length > 0 && row?.orders[0]?.product_img}
@@ -141,6 +141,13 @@ const MyPageDemo = (props) => {
             color: 'red'
           }
         }
+      },
+    },
+    {
+      id: 'product_code',
+      label: '',
+      action: (row) => {
+        return row.product_code
       },
     },
     {

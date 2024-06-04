@@ -124,7 +124,8 @@ const MyPageDemo = (props) => {
       id: 'product',
       label: '',
       action: (row) => {
-        return <Row style={{
+        return <>
+        <Row style={{
           alignItems: 'center',
           columnGap: '0.5rem',
           cursor: `${row?.is_cancel == 1 ? '' : 'pointer'}`
@@ -140,17 +141,26 @@ const MyPageDemo = (props) => {
             src={row?.orders.length > 0 && row?.orders[0]?.product_img}
             sx={{ width: 64, height: 64, borderRadius: 1.5, mr: 2 }}
           />
-          <Row>
-            <Typography noWrap variant='subtitle2' sx={{ maxWidth: 240 }}>
+            <Typography noWrap variant='subtitle2' sx={{ maxWidth: 240, textDecoration:'underline' }}>
               {row.item_name}
             </Typography>
-          </Row>
-          <Row>
+        </Row>
+        <Row style={{
+          alignItems: 'center',
+          columnGap: '0.5rem',
+          cursor: `${row?.is_cancel == 1 ? '' : 'pointer'}`
+        }}
+          onClick={() => {
+            if (row?.is_cancel != 1) {
+              router.push(`/shop/item/${row?.orders[0]?.product_id}`)
+              //console.log(row)
+            }
+          }}>
             <Typography noWrap variant='subtitle2' sx={{ maxWidth: 240 }}>
               ({row?.orders[0]?.product_code})
             </Typography>
           </Row>
-        </Row>
+        </>
       },
       sx: (row) => {
         if (row?.is_cancel == 1) {

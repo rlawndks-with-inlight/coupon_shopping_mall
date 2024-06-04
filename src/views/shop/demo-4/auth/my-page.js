@@ -131,8 +131,8 @@ const MyPageDemo = (props) => {
            }} 
            onClick={() => {
             if(row?.is_cancel != 1) {
-              router.push(`/shop/item/${row?.orders[0]?.product_id}`)
-              //console.log(row)
+              //router.push(`/shop/item/${row?.orders[0]?.product_id}`)
+              console.log(row)
             }
             }}>
           <Image

@@ -12,7 +12,7 @@ import DialogAddAddress from 'src/components/dialog/DialogAddAddress';
 import { useLocales } from 'src/locales';
 
 const Wrappers = styled.div`
-max-width:1600px;
+max-width:1300px;
 display:flex;
 flex-direction:column;
 margin: 0 auto;

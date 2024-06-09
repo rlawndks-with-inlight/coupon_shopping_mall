@@ -17,7 +17,7 @@ import { useLocales } from 'src/locales';
 import { formatLang } from 'src/utils/format';
 
 const ContentWrapper = styled.div`
-max-width:1600px;
+max-width:1300px;
 width:90%;
 margin: 0 auto 5rem auto;
 display:flex;

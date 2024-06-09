@@ -14,7 +14,7 @@ import { useModal } from 'src/components/dialog/ModalProvider';
 import { useLocales } from 'src/locales';
 import { formatLang } from 'src/utils/format';
 const Wrappers = styled.div`
-max-width:1600px;
+max-width:1300px;
 display:flex;
 flex-direction:column;
 margin: 0 auto;

@@ -22,7 +22,7 @@ import axios from 'axios';
 import { useLocales } from 'src/locales';
 
 const Wrappers = styled.div`
-max-width:1500px;
+max-width:1200px;
 display:flex;
 flex-direction:column;
 margin: 0 auto;

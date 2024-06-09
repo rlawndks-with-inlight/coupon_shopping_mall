@@ -466,9 +466,10 @@ export const setProductPriceByLang = (product_ = {}, price_column = 'product_sal
     'ja': 0.11,
     'ko': 1,
   }
-  if (product?.price_lang_obj[to_lang]) {
+
+  /*if (product?.price_lang_obj[to_lang]) {
     return product?.price_lang_obj[to_lang][price_column];
-  }
+  }*/
 
   if (!Object.keys(multiply_obj).includes(to_lang)) {
     to_lang = 'ko';

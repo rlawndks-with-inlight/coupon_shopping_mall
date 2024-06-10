@@ -242,7 +242,7 @@ const ItemsDemo = (props) => {
               {themeCategoryList.map((group, index) => {
                 let categories = group?.product_categories;
                 if (_.find(categories, { id: parseInt(router.query?.category_id0) })) {
-                  return _.find(categories, { id: parseInt(router.query?.category_id0) })?.category_name
+                  return _.find(categories, { id: parseInt(router.query?.category_id0) })?.category_name ?? _.find(categories, { id: parseInt(router.query?.category_id0) })?.category_en_name
                 } else {
                   return ""
                 }
@@ -256,7 +256,7 @@ const ItemsDemo = (props) => {
                 {themeCategoryList.map((group, index) => {
                   let categories = group?.product_categories;
                   if (_.find(categories, { id: parseInt(router.query?.category_id1) })) {
-                    return _.find(categories, { id: parseInt(router.query?.category_id1) })?.category_en_name
+                    return _.find(categories, { id: parseInt(router.query?.category_id1) })?.category_name  ?? _.find(categories, { id: parseInt(router.query?.category_id0) })?.category_en_name
                   } else {
                     return ""
                   }
@@ -299,7 +299,7 @@ const ItemsDemo = (props) => {
                               query = new URLSearchParams(query).toString();
                               router.push(`/shop/items?${query}`);
                             }}>
-                            {category?.category_en_name ?? category?.category_name}
+                            {category?.category_name ?? category?.category_en_name}
                           </Button >
                         </>
                       ))}

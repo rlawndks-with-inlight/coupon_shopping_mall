@@ -871,35 +871,35 @@ const Header = () => {
                                 </div>
 
 
-                                <Link href={`/shop/items/?not_show_select_menu=1&property_ids0=22`} passHref>
+                                <Link href={`/shop/items/?not_show_select_menu=1&property_ids0=22&page=1&page_size=20`} passHref>
                                     <CategoryMenu borderColor={themeDnsData?.theme_css?.main_color} style={{ fontWeight: 'bold' }} onClick={() => {
                                         //setOpenAllCategory(group?.id)
                                     }}>
                                         <div style={{ fontFamily: 'Playfair Display', }}>BEST</div>
                                     </CategoryMenu>
                                 </Link>
-                                <Link href={`/shop/items/?not_show_select_menu=1&property_ids0=21`} passHref>
+                                <Link href={`/shop/items/?not_show_select_menu=1&property_ids0=21&page=1&page_size=20`} passHref>
                                     <CategoryMenu borderColor={themeDnsData?.theme_css?.main_color} style={{ fontWeight: 'bold' }} onClick={() => {
                                         //setOpenAllCategory(group?.id)
                                     }}>
                                         <div style={{ fontFamily: 'Playfair Display', }}>NEW IN</div>
                                     </CategoryMenu>
                                 </Link>
-                                <Link href={`/shop/items/?not_show_select_menu=1&property_ids0=20`} passHref>
+                                <Link href={`/shop/items/?not_show_select_menu=1&property_ids0=20&page=1&page_size=20`} passHref>
                                     <CategoryMenu borderColor={themeDnsData?.theme_css?.main_color} style={{ fontWeight: 'bold' }} onClick={() => {
                                         //setOpenAllCategory(group?.id)
                                     }}>
                                         <div style={{ fontFamily: 'Playfair Display', }}>SALE</div>
                                     </CategoryMenu>
                                 </Link>
-                                <Link href={`/shop/items/?category_id0=1007`} passHref>
+                                <Link href={`/shop/items/?category_id0=1007&page=1&page_size=20`} passHref>
                                     <CategoryMenu borderColor={themeDnsData?.theme_css?.main_color} style={{ fontWeight: 'bold' }} onClick={() => {
                                         //setOpenAllCategory(group?.id)
                                     }}>
                                         <div style={{ fontFamily: 'Playfair Display', }}>WATCH</div>
                                     </CategoryMenu>
                                 </Link>
-                                <Link href={`/shop/items/?category_id0=1002`} passHref>
+                                <Link href={`/shop/items/?category_id0=1002&page=1&page_size=20`} passHref>
                                     <CategoryMenu borderColor={themeDnsData?.theme_css?.main_color} style={{ fontWeight: 'bold' }} onClick={() => {
                                         //setOpenAllCategory(group?.id)
                                     }}>
@@ -1131,7 +1131,7 @@ const Header = () => {
                                             </div>
                                         }
                                     })}
-                                    <Link href={`/shop/items/?category_id1=501&depth=0`} passHref>
+                                    <Link href={`/shop/items/?category_id1=501&depth=0&page=1&page_size=20`} passHref>
                                         <CategoryMenu
                                             onClick={() => {
                                                 /*const route = themeCategoryList.map((group, index) => {
@@ -1146,42 +1146,42 @@ const Header = () => {
                                             HERMES
                                         </CategoryMenu>
                                     </Link>
-                                    <Link href={`/shop/items/?category_id1=506&depth=0`} passHref>
+                                    <Link href={`/shop/items/?category_id1=506&depth=0&page=1&page_size=20`} passHref>
                                         <CategoryMenu>
                                             CHANEL
                                         </CategoryMenu>
                                     </Link>
-                                    <Link href={`/shop/items/?category_id1=511&depth=0`} passHref>
+                                    <Link href={`/shop/items/?category_id1=511&depth=0&page=1&page_size=20`} passHref>
                                         <CategoryMenu>
                                             LOUIS VUITTON
                                         </CategoryMenu>
                                     </Link>
-                                    <Link href={`/shop/items/?category_id1=533&depth=0`} passHref>
+                                    <Link href={`/shop/items/?category_id1=533&depth=0&page=1&page_size=20`} passHref>
                                         <CategoryMenu>
                                             ROLEX
                                         </CategoryMenu>
                                     </Link>
-                                    <Link href={`/shop/items/?category_id1=516&depth=0`} passHref>
+                                    <Link href={`/shop/items/?category_id1=516&depth=0&page=1&page_size=20`} passHref>
                                         <CategoryMenu>
                                             CARTIER
                                         </CategoryMenu>
                                     </Link>
-                                    <Link href={`/shop/items/?category_id1=522&depth=0`} passHref>
+                                    <Link href={`/shop/items/?category_id1=522&depth=0&page=1&page_size=20`} passHref>
                                         <CategoryMenu>
                                             VAN CLEEF & ARPELS
                                         </CategoryMenu>
                                     </Link>
-                                    <Link href={`/shop/items/?category_id1=527&depth=0`} passHref>
+                                    <Link href={`/shop/items/?category_id1=527&depth=0&page=1&page_size=20`} passHref>
                                         <CategoryMenu>
                                             TIFFANY & CO.
                                         </CategoryMenu>
                                     </Link>
-                                    <Link href={`/shop/items/?category_id1=513&depth=0`} passHref>
+                                    <Link href={`/shop/items/?category_id1=513&depth=0&page=1&page_size=20`} passHref>
                                         <CategoryMenu>
                                             GOYARD
                                         </CategoryMenu>
                                     </Link>
-                                    <Link href={`/shop/items/?category_id1=512&depth=0`} passHref>
+                                    <Link href={`/shop/items/?category_id1=512&depth=0&page=1&page_size=20`} passHref>
                                         <CategoryMenu>
                                             CHRISTIAN DIOR
                                         </CategoryMenu>

@@ -155,13 +155,34 @@ const UserList = () => {
     setColumns(cols)
     onChangePage({ ...searchObj, page: 1, });
   }
-  const onChangePage = async (obj) => {
-    setSearchObj(obj);
+
+  useEffect(() => {
+    onChangePage({ ...router.query }, searchObj)
+  }, [
+    router.query.page,
+    router.query.page_size,
+    router.query.s_dt, 
+    router.query.e_dt, 
+    router.query.search, 
+    router.query.order
+  ])
+
+  const onChangePage = async (query_ = {}, search_obj_ = {}) => {
+    let query = query_;
+    let search_obj = search_obj_;
+
+    let query_str = new URLSearchParams(query).toString();
+    router.push(`/manager/users/list?${query_str}`);
+
+    setSearchObj({...search_obj, ...query});
     setData({
       ...data,
       content: undefined
     })
-    let data_ = await apiManager('users', 'list', obj);
+    let data_ = await apiManager('users', 'list', {
+      ...search_obj,
+      ...query
+    });
     if (data_) {
       setData(data_);
     }

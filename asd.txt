@@ -1,26 +1,26 @@
 server {
 listen 80;
-server_name demo6.asapmall.kr
+server_name demo7.asapmall.kr
 root html;
 
 
 location / {
-        return 301 https://demo6.asapmall.kr$request_uri;
+        return 301 https://demo7.asapmall.kr$request_uri;
     }
 }
 
 server {
 
     listen       443 ssl;
-    server_name  demo6.asapmall.kr;
+    server_name  demo7.asapmall.kr;
 
     client_max_body_size 256M;
 
-    ssl_certificate     /etc/letsencrypt/live/demo6.asapmall.kr/fullchain.pem;
-    ssl_certificate_key /etc/letsencrypt/live/demo6.asapmall.kr/privkey.pem;
+    ssl_certificate     /etc/letsencrypt/live/demo7.asapmall.kr/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/demo7.asapmall.kr/privkey.pem;
 
     location / {
-       proxy_pass http://demo6.asapmall.kr:3000;
+       proxy_pass http://demo7.asapmall.kr:3000;
        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
        proxy_set_header X-Forwarded-Proto $scheme;
     }

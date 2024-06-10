@@ -298,7 +298,7 @@ export default function ManagerTable(props) {
                   if (router.asPath.includes('list')) {
                     path = path.replace('list', '');
                   }
-                  router.push(add_link || `${path.slice(0, path.indexOf('?'))}add`)
+                  router.push(add_link || `${path.slice(0, path.indexOf('?'))}/add`)
                 }}>
                   + {add_button_text}
                 </Button>

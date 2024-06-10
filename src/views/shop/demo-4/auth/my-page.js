@@ -208,7 +208,11 @@ const MyPageDemo = (props) => {
       id: 'trx_status',
       label: '',
       action: (row) => {
-        return getTrxStatusByNumber(row?.trx_status)
+        if (row?.is_cancel != 1) {
+          return getTrxStatusByNumber(row?.trx_status)
+        } else {
+          return '취소완료'
+        }
       },
       sx: (row) => {
         if (row?.is_cancel == 1) {

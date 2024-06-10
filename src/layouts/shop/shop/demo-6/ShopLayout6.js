@@ -45,9 +45,9 @@ const ShopLayout6 = (props) => {
                     func={{
                         router
                     }} />
-                <div style={{paddingTop:`${scrollTop ? '113px' : ''}`}}>
+                
                 {children}
-                </div>
+                
                 <Footer
                     data={{
                     }}

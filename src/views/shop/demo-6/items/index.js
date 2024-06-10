@@ -7,7 +7,7 @@ import { useEffect } from "react";
 import { useState } from "react";
 import { Items } from "src/components/elements/shop/common";
 import { ContentBorderContainer, SubTitleComponent } from "src/components/elements/shop/demo-4";
-import { Col, Row, Title, themeObj } from "src/components/elements/styled-components";
+import { Col, Row, themeObj } from "src/components/elements/styled-components";
 import { useSettingsContext } from "src/components/settings";
 import { useAuthContext } from "src/layouts/manager/auth/useAuthContext";
 import { apiShop } from "src/utils/api";
@@ -32,6 +32,18 @@ display:flex;
 margin:auto 0 auto auto;
 @media screen and (max-width:500px) {
   font-size:0.75rem;
+}
+`
+
+export const Title = styled.div`
+margin: 5rem auto 1rem auto;
+font-size: 90px;
+font-weight:bold;
+@media (max-width:1000px) {
+  font-size: 75px;
+}
+@media (max-width:800px) {
+  font-size: 60px;
 }
 `
 
@@ -225,7 +237,7 @@ const ItemsDemo = (props) => {
 
         {router.query?.property_ids0 &&
           <>
-            <Title style={{ marginTop: '100px', fontFamily: 'Noto Sans KR', color: '#000', fontWeight: 'normal', fontSize: '90px', marginLeft: '0' }}>
+            <Title style={{ marginTop: '100px', fontFamily: 'Noto Sans KR', color: '#000', fontWeight: 'normal', marginLeft: '0' }}>
               {themePropertyList.map((group) => {
                 let properties = group?.product_properties;
                 if (_.find(properties, { id: parseInt(router.query?.property_ids0) })) {
@@ -238,7 +250,7 @@ const ItemsDemo = (props) => {
           </>}
         {router.query?.category_id0 ?
           <>
-            <Title style={{ marginTop: '100px', fontFamily: 'Noto Sans KR', color: '#000', fontWeight: 'normal', fontSize: '90px', marginLeft: '0' }}>
+            <Title style={{ marginTop: '100px', fontFamily: 'Noto Sans KR', color: '#000', fontWeight: 'normal', marginLeft: '0' }}>
               {themeCategoryList.map((group, index) => {
                 let categories = group?.product_categories;
                 if (_.find(categories, { id: parseInt(router.query?.category_id0) })) {
@@ -252,7 +264,7 @@ const ItemsDemo = (props) => {
           :
           router.query?.category_id1 ?
             <>
-              <Title style={{ marginTop: '100px', fontFamily: 'Noto Sans KR', color: '#000', fontWeight: 'normal', fontSize: '90px', marginLeft: '0' }}>
+              <Title style={{ marginTop: '100px', fontFamily: 'Noto Sans KR', color: '#000', fontWeight: 'normal', marginLeft: '0' }}>
                 {themeCategoryList.map((group, index) => {
                   let categories = group?.product_categories;
                   if (_.find(categories, { id: parseInt(router.query?.category_id1) })) {
@@ -291,6 +303,9 @@ const ItemsDemo = (props) => {
                                 background: 'transparent',
                                 backgroundColor:'#C51315',
                                 color:'white'
+                              },
+                              '@media (max-width:1440px)': {
+                                width:'calc(85vw / 5)'
                               }
                             }}
                             onClick={() => {

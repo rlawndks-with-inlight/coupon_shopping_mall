@@ -439,7 +439,7 @@ const Header = () => {
             </>}
           <Wrappers style={{
             background: `${themeMode == 'dark' ? '#000' : '#fff'}`,
-            position:`${scrollTop ? 'fixed' : 'relative'}`,
+            position:'fixed'
           }}
             ref={headerWrappersRef}
           >

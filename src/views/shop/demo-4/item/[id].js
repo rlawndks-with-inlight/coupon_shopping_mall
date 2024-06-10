@@ -223,6 +223,9 @@ const ItemDemo = (props) => {
                           <ItemCharacter key_name={character?.character_name} value={character?.character_value} />
                         </>
                       ))}
+                      {
+                        product?.status == 0 ? 
+                        <>
                       {commarNumber(product?.product_price) != commarNumber(product?.product_sale_price) ?
                           <>
                             <ItemCharacter 
@@ -248,6 +251,35 @@ const ItemDemo = (props) => {
                             />
                           </>
                         }
+                        </> 
+                        :
+                        product?.status == 1 ?
+                        <>
+                        <ItemCharacter
+                        key_name={'판매가'}
+                        value={<div>거래 진행중인 상품입니다</div>}
+                        />
+                        </>
+                        :
+                        product?.status == 2 || product?.status == 3 || product?.status == 4 || product?.status == 6 ?
+                        <>
+                        <ItemCharacter
+                        key_name={'판매가'}
+                        value={<div style={{color:'red'}}>SOLD OUT</div>}
+                        />
+                        </>
+                        :
+                        product?.status == 7 ? 
+                        <>
+                        <ItemCharacter
+                        key_name={'판매가'}
+                        value={<div>매장문의</div>}
+                        />
+                        </>
+                        :
+                        ''
+                      }
+                        
                       {/* <ProductDetailsSummary
                         product={product}
                         cart={""}

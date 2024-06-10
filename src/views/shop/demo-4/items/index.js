@@ -159,7 +159,7 @@ const ItemsDemo = (props) => {
       }
     }
     let query_str = new URLSearchParams(query).toString();
-    router.push(`/shop/items?${query_str}`);
+    router.replace(`/shop/items?${query_str}`);
 
     setCategoryChildren(category_children)
     setSearchObj({ ...search_obj, ...query });

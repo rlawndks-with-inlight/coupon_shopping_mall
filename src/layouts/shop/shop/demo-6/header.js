@@ -375,7 +375,7 @@ const Header = () => {
   useEffect(() => {
     const handleScroll = () => {
         const scrollTop_ = document.documentElement.scrollTop;
-        setScrollTop(scrollTop_ > 112)
+        setScrollTop(scrollTop_ > 113)
     }
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
@@ -457,14 +457,15 @@ const Header = () => {
                 transform: 'translate(-50%, -50%)'
                  }}>
                 <TextField
-                  label={translate('통합검색')}
+                  
                   id='size-small'
                   size='small'
                   onChange={(e) => {
                     setKeyword(e.target.value)
                   }}
                   value={keyword}
-                  sx={{ margin: '0 1rem 0 2rem', maxWidth: '300px' }}
+                  borderRadius={'20px'}
+                  sx={{ margin: '0 1rem 0 2rem', minWidth: '350px' }}
                   onKeyPress={(e) => {
                     if (e.key == 'Enter') {
                       onSearch();
@@ -504,7 +505,7 @@ const Header = () => {
                     }
                   }}
                 >
-                  <Icon icon={'basil:user-outline'} fontSize={'1.8rem'} color={themeMode == 'dark' ? '#fff' : '#000'} />
+                  <Icon icon={'ph:user-thin'} fontSize={'2.5rem'} color={themeMode == 'dark' ? '#fff' : '#000'} />
                 </IconButton>
                 <IconButton
                   sx={iconButtonStyle}
@@ -517,7 +518,7 @@ const Header = () => {
                   }}
                 >
                   <Badge badgeContent={themeWishData.length} color="error">
-                    <Icon icon={'basil:heart-outline'} fontSize={'2rem'} color={themeMode == 'dark' ? '#fff' : '#000'} />
+                    <Icon icon={'ph:heart-thin'} fontSize={'2.5rem'} color={themeMode == 'dark' ? '#fff' : '#000'} />
                   </Badge>
                 </IconButton>
 
@@ -532,14 +533,14 @@ const Header = () => {
                   }}
                 >
                   <Badge badgeContent={themeCartData.length} color="error">
-                    <Icon icon={'basil:shopping-bag-outline'} fontSize={'1.8rem'} color={themeMode == 'dark' ? '#fff' : '#000'} />
+                    <Icon icon={'ph:bag-thin'} fontSize={'2.5rem'} color={themeMode == 'dark' ? '#fff' : '#000'} />
                   </Badge>
                 </IconButton>
                 <IconButton
                   sx={iconButtonStyle}
                   onClick={() => onToggleMode()}
                 >
-                  <Icon icon={themeMode === 'dark' ? 'tabler:sun' : 'tabler:moon-stars'} fontSize={'1.5rem'} color={themeMode == 'dark' ? '#fff' : '#000'} />
+                  <Icon icon={themeMode === 'dark' ? 'ph:sun-thin' : 'ph:moon-stars-thin'} fontSize={'2.5rem'} color={themeMode == 'dark' ? '#fff' : '#000'} />
                 </IconButton>
                 {themeDnsData?.setting_obj?.is_use_lang == 1 &&
                   <>

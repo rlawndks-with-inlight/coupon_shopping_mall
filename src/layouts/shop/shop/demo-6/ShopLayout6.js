@@ -2,12 +2,14 @@ import styled from "styled-components";
 import Footer from "./footer"
 import Header from "./header"
 import { useSettingsContext } from "src/components/settings";
+import { useEffect, useState } from "react";
 
 const Wrappers = styled.div`
 display:flex;
 flex-direction:column;
 min-height:100vh;
 `
+
 const ShopLayout6 = (props) => {
     const { themeMode, onToggleMode } = useSettingsContext();
     const {
@@ -19,6 +21,17 @@ const ShopLayout6 = (props) => {
         },
         children, scrollToTop,
     } = props;
+
+    const [scrollTop, setScrollTop] = useState(false)
+
+    useEffect(() => {
+      const handleScroll = () => {
+          const scrollTop_ = document.documentElement.scrollTop;
+          setScrollTop(scrollTop_ > 113)
+      }
+      window.addEventListener('scroll', handleScroll);
+      return () => window.removeEventListener('scroll', handleScroll);
+    }, [])
 
     return (
         <>
@@ -32,7 +45,9 @@ const ShopLayout6 = (props) => {
                     func={{
                         router
                     }} />
+                <div style={{paddingTop:`${scrollTop ? '113px' : ''}`}}>
                 {children}
+                </div>
                 <Footer
                     data={{
                     }}

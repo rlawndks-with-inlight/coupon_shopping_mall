@@ -1,20 +1,20 @@
-import { useEffect, useRef, useState } from 'react';
-import styled from 'styled-components'
-import { useTheme } from "@emotion/react";
+import { Icon } from "@iconify/react";
+import { Button, Chip, CircularProgress, IconButton, InputAdornment, TextField, Typography, Stack, Skeleton, FormControl, InputLabel, Select, MenuItem, Box, Pagination, Divider } from "@mui/material";
+import _ from "lodash";
 import { useRouter } from "next/router";
-import { LazyLoadImage } from "react-lazy-load-image-component";
-import { commarNumber, getAllIdsWithParents } from 'src/utils/function';
-import { Col, Row, RowMobileColumn, Title, themeObj } from 'src/components/elements/styled-components';
-import { useSettingsContext } from 'src/components/settings';
-import { Item, Items } from 'src/components/elements/shop/common';
-import _ from 'lodash';
-import { Breadcrumbs, Button, CircularProgress, Divider } from '@mui/material';
-import { Icon } from '@iconify/react';
-import { Spinner } from 'evergreen-ui';
+import { useRef } from "react";
+import { useEffect } from "react";
+import { useState } from "react";
+import { Items } from "src/components/elements/shop/common";
+import { ContentBorderContainer, SubTitleComponent } from "src/components/elements/shop/demo-4";
+import { Col, Row, Title, themeObj } from "src/components/elements/styled-components";
+import { useSettingsContext } from "src/components/settings";
+import { useAuthContext } from "src/layouts/manager/auth/useAuthContext";
+import { apiShop } from "src/utils/api";
+import styled, { css } from "styled-components";
 import $ from 'jquery';
-import { apiShop } from 'src/utils/api';
-import { useLocales } from 'src/locales';
-import { formatLang } from 'src/utils/format';
+import { CategorySorter, LANGCODE } from "src/views/shop/demo-4/header"
+import queryString from 'query-string'
 
 const ContentWrapper = styled.div`
 max-width:1300px;
@@ -22,167 +22,353 @@ width:90%;
 margin: 0 auto 5rem auto;
 display:flex;
 flex-direction:column;
+${({ width }) => css`
+--parentWidth: ${width};
+`}
 `
-const ChildrenCategoryContainer = styled.div`
-overflow-x: auto;
-width: 100%;
+
+const FilterTab = styled.div`
 display:flex;
-flex-wrap:wrap;
-row-gap:0.5rem;
-column-gap:0.5rem;
-@media (max-width:1000px){
-white-space: nowrap;
-flex-wrap:inherit;
-display:block;
+margin:auto 0 auto auto;
+@media screen and (max-width:500px) {
+  font-size:0.75rem;
 }
 `
-const ItemsDemo = (props) => {
-  const {
-    data: {
 
-    },
-    func: {
-      router
-    },
-  } = props;
-  const { translate, currentLang } = useLocales();
-  const { themeCategoryList, themeMode, themeDnsData, themeDirection } = useSettingsContext();
-  const [parentList, setParentList] = useState([]);
-  const [curCategories, setCurCategories] = useState([]);
-  const [products, setProducts] = useState([]);
-  const [productContent, setProductContent] = useState({});
+const ItemsDemo = (props) => {
+
+  const router = useRouter();
+  const { user } = useAuthContext();
+  const { themeDnsData, themeCategoryList, themePropertyList, themeMode } = useSettingsContext();
+  const [categoryIds, setCategoryIds] = useState({});
   const [searchObj, setSearchObj] = useState({
     page: 1,
-    page_size: 15,
+    page_size: 20,
   })
-  useEffect(() => {
-    settingPage({
-      page: 1,
-      page_size: 15,
-    });
-  }, [themeCategoryList])
-  useEffect(() => {
-    settingPage({
-      page: 1,
-      page_size: 15,
-    }, true);
-  }, [router.query])
+  const [curCategory, setCurCategory] = useState({
+
+  })
+  const [productContent, setProductContent] = useState({});
   const [moreLoading, setMoreLoading] = useState(false);
   const [loading, setLoading] = useState(true);
   const scrollRef = useRef(null);
-  const handleScroll = () => {
+  const [categoryChildren, setCategoryChildren] = useState({});
+  const [langChipSelected, setLangChipSelected] = useState(0)
+  const [textChipSelected, setTextChipSelected] = useState('A')
+  const { sort, categoryGroup } = CategorySorter(themeCategoryList)
+  const [detailCategory, setDetailCategory] = useState()
+
+  useEffect(() => {
+    sort(LANGCODE.ENG)
+  }, [])
+
+  const sortList = [
+    /*{
+      label: '그랑파리랭킹순',
+      order: 'sort_idx',
+      is_asc: 0,
+    },*/
+    {
+      label: '최근등록순',
+      order: 'created_at',
+      is_asc: 0,
+    },
+    {
+      label: '높은가격순',
+      order: 'product_sale_price',
+      is_asc: 0,
+    },
+    {
+      label: '낮은가격순',
+      order: 'product_sale_price',
+      is_asc: 1,
+    },
+  ]
+  useEffect(() => {
+    getItemList({ ...router.query }, searchObj)
+    console.log(router.query)
+  }, [
+    router.query.category_id0, 
+    router.query.category_id1, 
+    router.query.category_id2, 
+    router.query.search, 
+    router.query.property_ids0,
+    router.query.page,
+    router.query.page_size,
+    router.query.not_show_select_menu
+  ])
+
+  useEffect(() => {
+    setDetailCategory()
+    //console.log(themeCategoryList)
+  }, [router.query])
+
+  /*const handleScroll = () => {
     if (!scrollRef.current) {
       return;
     }
     const { top, bottom } = scrollRef.current.getBoundingClientRect();
     const windowHeight = window.innerHeight;
     if (top < windowHeight && bottom >= 0 && !moreLoading) {
+      
       setMoreLoading(true);
       $('.more-page').trigger("click");
     }
-  };
-  useEffect(() => {
-    window.addEventListener('scroll', handleScroll);
-    return () => {
-      window.removeEventListener('scroll', handleScroll);
-    };
-  }, []);
-  const settingPage = async (search_obj, is_first) => {
-    if (is_first) {
-      setLoading(true);
-      setProducts([]);
-    }
-    if ((themeCategoryList[0]?.product_categories ?? []).length > 0) {
-      let parent_list = []
-      if (parentList.length > 0) {
-        parent_list = parentList;
-      } else {
-        parent_list = getAllIdsWithParents(themeCategoryList[0]?.product_categories ?? []);
-      }
-      setParentList(parent_list);
-      let use_list = [];
-      for (var i = 0; i < parent_list.length; i++) {
-        if (parent_list[i][router.query?.depth]?.id == router.query?.category_id0) {
-          use_list = parent_list[i];
+  };*/
+
+  const getItemList = async (query_ = {}, search_obj_ = {}) => {
+    let query = query_;
+    let search_obj = search_obj_;
+
+    //console.log(query)
+    //console.log(search_obj)
+    //setLoading(true);
+    setCategoryIds(query);
+    let category_children = {};
+    for (var i = 0; i < themeCategoryList.length; i++) {
+      let find_category = undefined;
+      delete search_obj[`category_id${i}`];
+      for (var j = 0; j < themeCategoryList[i]?.product_categories.length; j++) {
+        let category = themeCategoryList[i]?.product_categories[j];
+        let children = (category?.children ?? []).map(item => { return item?.id });
+        if (query[`category_id${i}`] == category?.id || children?.includes(parseInt(query[`category_id${i}`]))) {
+          find_category = category;
           break;
         }
       }
-      setCurCategories(use_list);
+      if (find_category && find_category?.children.length > 0) {
+        category_children = {
+          ...category_children,
+          [`category_id${i}`]: {
+            parent_id: find_category?.id,
+            children: find_category?.children
+          }
+        }
+      }
     }
+    let query_str = new URLSearchParams(query).toString();
+    router.replace(`/shop/items?${query_str}`);
+
+    setCategoryChildren(category_children)
+    setSearchObj({ ...search_obj, ...query });
     let product_list = await apiShop('product', 'list', {
       ...search_obj,
-      brand_id: themeDnsData?.id,
-      ...router.query
+      ...query
     })
-    setSearchObj(search_obj);
-    if (is_first) {
-      setProducts(product_list.content ?? []);
-      setLoading(false);
-    } else {
-      setProducts([...products, ...product_list.content ?? []]);
+    if (product_list.content.length == 0) {
+      setProductContent({
+        ...productContent,
+        total: -1,
+      })
     }
     setProductContent(product_list);
+    // if (is_first) {
+    //   setProductContent(product_list);
+    //   setLoading(false);
+    // } else {
+    //   setProductContent({
+    //     ...product_list,
+    //     content: [...product_list.content ?? []]
+    //   });
+    // }
   }
   useEffect(() => {
-    if (products.length > 0) {
-      setMoreLoading(false);
+    if ((productContent?.content ?? []).length > 0) {
+      setLoading(false);
     }
-  }, [products])
+  }, [productContent?.content])
+
+  const getMaxPage = (total, page_size) => {
+    if (total == 0) {
+      return 1;
+    }
+    if (total % page_size == 0) {
+      return parseInt(total / page_size);
+    } else {
+      return parseInt(total / page_size) + 1;
+    }
+  }
+
+  const alphabetList = [
+    'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N',
+    'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', '#'
+  ]
+
+  const hangeulList = [
+    '가', '나', '다', '라', '마', '바', '사', '아', '자', '차', '카', '타', '파', '하', '#'
+  ]
+
+  useEffect(() => {
+    const query = new URLSearchParams(router.query).toString()
+
+    const savedScrollPosition = sessionStorage.getItem(`scrollPosition${query}`);
+    if (savedScrollPosition && !loading) {  
+      window.scrollTo(0, parseInt(savedScrollPosition, 10));
+      console.log(sessionStorage)
+      sessionStorage.removeItem(`scrollPosition${query}`);
+    }
+    const handleRouteChangeStart = () => {
+      if (!loading) { //items는 메인화면과 다르게 이 조건을 걸어주지 않으면 scrollTo를 실행하기 전에 scrollPosition을 0으로 바꾸는 문제 있음
+        sessionStorage.setItem(`scrollPosition${query}`, window.scrollY);
+      }
+    };
+    console.log(sessionStorage)
+    router.events.on('routeChangeStart', handleRouteChangeStart);
+    return () => {
+      router.events.off('routeChangeStart', handleRouteChangeStart);
+    };
+  }, [loading, router.query])
+
   return (
     <>
-      <ContentWrapper>
-        {curCategories.length > 1 ?
+      <ContentWrapper width={'90%'}>
+
+        {router.query?.property_ids0 &&
           <>
-            <Breadcrumbs separator={<Icon icon='material-symbols:navigate-next' />} style={{
-              padding: '0.5rem 0',
-              width: '100%',
-              overflowX: 'auto'
-            }}>
-              {curCategories.map((item, idx) => (
-                <>
-                  <div style={{
-                    color: `${idx == curCategories.length - 1 ? (themeMode == 'dark' ? '#fff' : '#000') : ''}`,
-                    fontWeight: `${idx == curCategories.length - 1 ? 'bold' : ''}`,
-                    cursor: 'pointer'
-                  }}
-                    onClick={() => {
-                      router.push(`/shop/items?category_id0=${item?.id}&depth=${idx}`)
-                    }}
-                  >{formatLang(item, 'category_name', currentLang)}</div>
-                </>
-              ))}
-            </Breadcrumbs>
+            <Title style={{ marginTop: '100px', fontFamily: 'Noto Sans KR', color: '#000', fontWeight: 'normal', fontSize: '90px', marginLeft: '0' }}>
+              {themePropertyList.map((group) => {
+                let properties = group?.product_properties;
+                if (_.find(properties, { id: parseInt(router.query?.property_ids0) })) {
+                  return _.find(properties, { id: parseInt(router.query?.property_ids0) })?.property_name
+                } else {
+                  return ""
+                }
+              })}
+            </Title>
+          </>}
+        {router.query?.category_id0 ?
+          <>
+            <Title style={{ marginTop: '100px', fontFamily: 'Noto Sans KR', color: '#000', fontWeight: 'normal', fontSize: '90px', marginLeft: '0' }}>
+              {themeCategoryList.map((group, index) => {
+                let categories = group?.product_categories;
+                if (_.find(categories, { id: parseInt(router.query?.category_id0) })) {
+                  return _.find(categories, { id: parseInt(router.query?.category_id0) })?.category_name
+                } else {
+                  return ""
+                }
+              })}
+            </Title>
           </>
           :
-          <>
-            <div style={{ marginTop: '42px' }} />
-          </>}
-        <Title style={{ marginTop: '38px' }}>
-          {formatLang(curCategories[curCategories.length - 1], 'category_name', currentLang)}
-        </Title>
-        <ChildrenCategoryContainer className='none-scroll'>
-          {curCategories[curCategories.length - 1]?.children && curCategories[curCategories.length - 1]?.children.map((item, idx) => (
+          router.query?.category_id1 ?
             <>
-              <Button variant="outlined" style={{
-                height: '36px',
-                width: 'auto',
-                marginRight: '0.25rem',
-              }}
-                onClick={() => {
-                  router.push(`/shop/items?category_id0=${item?.id}&depth=${parseInt(router.query?.depth) + 1}`)
-                }}
-              >{formatLang(item, 'category_name', currentLang)}</Button>
+              <Title style={{ marginTop: '100px', fontFamily: 'Noto Sans KR', color: '#000', fontWeight: 'normal', fontSize: '90px', marginLeft: '0' }}>
+                {themeCategoryList.map((group, index) => {
+                  let categories = group?.product_categories;
+                  if (_.find(categories, { id: parseInt(router.query?.category_id1) })) {
+                    return _.find(categories, { id: parseInt(router.query?.category_id1) })?.category_en_name
+                  } else {
+                    return ""
+                  }
+                })}
+              </Title>
             </>
-          ))}
-        </ChildrenCategoryContainer>
-        <div style={{
-          marginTop: '1rem'
-        }} />
-        <Divider />
-        <div style={{
-          marginTop: '1rem'
-        }} />
-        {products ?
+            :
+            ''
+        }
+        {router.query?.not_show_select_menu != 1 &&
+          <>
+            <Row style={{ justifyContent: 'space-between', minHeight: '50px', direction: 'ltr' }}>
+              {themeCategoryList.map((group, index) => {
+                return <>
+                  {categoryChildren[`category_id${index}`] &&
+                    <div style={{ overflowX: 'auto', minHeight: '50px', direction: 'ltr', margin:'0 auto' }}>
+                      {categoryChildren[`category_id${index}`]?.children.map((category, idx) => (
+                        <>
+                          <Button
+                            sx={{
+                              fontWeight: `${categoryIds[`category_id${index}`] == category?.id ? 'bold' : 'normal'}`,
+                              width:'256px',
+                              margin: '0.1rem',
+                              border:'1px solid black',
+                              borderBottom: `${categoryIds[`category_id${index}`] == category?.id ? '2px solid black' : ''}`,
+                              cursor: 'pointer',
+                              borderRadius: '0',
+                              backgroundColor: `${categoryIds[`category_id${index}`] == category?.id ? '#C51315' : ''}`,
+                              color: `${themeMode == 'dark' || categoryIds[`category_id${index}`] == category?.id ? 'white' : 'black'}`,
+                              '&:hover': {
+                                textDecoration: 'underline',
+                                background: 'transparent',
+                                backgroundColor:'#C51315',
+                                color:'white'
+                              }
+                            }}
+                            onClick={() => {
+                              let query = { ...categoryIds };
+                              query[`category_id${index}`] = category?.id;
+                              query = new URLSearchParams(query).toString();
+                              router.push(`/shop/items?${query}`);
+                            }}>
+                            {category?.category_en_name ?? category?.category_name}
+                          </Button >
+                        </>
+                      ))}
+                    </div>
+                  }
+                </>
+              })}
+            </Row>
+          </>
+        }
+
+
+        <Row
+          style={{
+            columnGap: '0.5rem',
+            marginBottom: '1rem',
+            overflowX: 'auto',
+            whiteSpace: 'nowrap',
+            borderTop: '1px solid #CCCCCC',
+            borderBottom: '1px solid #CCCCCC',
+            height: '80px',
+            width: '100%'
+          }}
+          className={`none-scroll`}
+        >
+          <div
+          style={{
+            margin: '27px',
+            textDecoration:'underline'
+            }}>
+            총 {productContent?.total}개
+          </div>
+          <FilterTab style={{ margin: 'auto 0 auto auto', display: 'flex' }}>
+            {sortList.map((item) => (
+              <>
+                <div
+                  style={{
+                    cursor: 'pointer',
+                    margin: '0.5rem',
+                    fontWeight: `${(searchObj?.order ?? "sort_idx") == item.order && (searchObj?.is_asc ?? 0) == item.is_asc ? 'bold' : ''}`,
+                    borderBottom: `${(searchObj?.order ?? "sort_idx") == item.order && (searchObj?.is_asc ?? 0) == item.is_asc ? '2px solid black' : ''}`
+                  }}
+                  onClick={() => {
+                    getItemList({ ...router.query, page: 1 }, { ...searchObj, page: 1, order: item.order, is_asc: item.is_asc })
+                  }}>
+                  {item.label}
+                </div>
+              </>
+            ))}
+          </FilterTab>
+          <FormControl variant='outlined' size='small' sx={{ width: '200px', margin: 'auto 0' }}>
+
+            <Select value={searchObj.page_size}
+              onChange={(e) => {
+                getItemList({ ...router.query, page: 1, page_size: e.target.value }, { ...searchObj, page_size: e.target.value });
+                //console.log(productContent)
+                console.log(searchObj.page_size)
+              }}>
+              <MenuItem value={10}>10개씩 보기</MenuItem>
+              <MenuItem value={20}>20개씩 보기</MenuItem>
+              <MenuItem value={30}>30개씩 보기</MenuItem>
+              <MenuItem value={50}>50개씩 보기</MenuItem>
+              <MenuItem value={100}>100개씩 보기</MenuItem>
+            </Select>
+          </FormControl>
+
+        </Row>
+
+        {productContent?.content ?
           <>
             {loading ?
               <>
@@ -194,46 +380,140 @@ const ItemsDemo = (props) => {
               </>
               :
               <>
-                {products.length > 0 ?
+                {productContent?.content.length > 0 ?
                   <>
-                    <Items items={products} router={router} />
+                    <Items items={productContent?.content ?? []} router={router} item_column={4} />
+                    <Divider sx={{ marginTop: '1rem' }} />
+                    <Box sx={{ padding: '0.75rem', display: 'flex' }}>
+                      <Pagination
+                        sx={{ marginLeft: 'auto', getItemAriaLabel: 'last' }}
+                        size={'medium'}
+                        count={getMaxPage(productContent?.total, productContent?.page_size)}
+                        page={parseInt(searchObj.page)}
+                        variant='outlined' shape='rounded'
+                        color='primary'
+                        siblingCount={4}
+                        boundaryCount={0}
+                        showFirstButton
+                        showLastButton
+                        onChange={(_, num) => {
+                          getItemList({ ...router.query, page: num, page_size: searchObj.page_size }, { ...searchObj })
+                        }} />
+                    </Box>
                   </>
                   :
                   <>
                     <Col>
                       <Icon icon={'basil:cancel-outline'} style={{ margin: '8rem auto 1rem auto', fontSize: themeObj.font_size.size1, color: themeObj.grey[300] }} />
-                      <div style={{ margin: 'auto auto 8rem auto' }}>{translate('검색결과가 없습니다.')}</div>
+                      <div style={{ margin: 'auto auto 8rem auto' }}>검색결과가 없습니다.</div>
                     </Col>
                   </>}
               </>}
-            {moreLoading ?
+            {/* {moreLoading ?
               <>
-                {productContent?.total > products.length &&
+                {productContent?.total > productContent?.content.length &&
                   <>
-                    <Row style={{ width: '100%' }}>
-                      <div style={{ margin: '0 auto' }}>
-                        <CircularProgress />
-                      </div>
-                    </Row>
+                  
+                  
+                    <Stack spacing={'1rem'} >
+          
+          <div style={{ display:'flex',  }}>
+          <Skeleton variant='rounded' style={{
+              height: '34vw',
+              maxWidth: '200px',
+              width: '90%',
+              maxHeight: '200px',
+              margin: '10rem 1rem 10rem auto'
+            }} />
+            <Skeleton variant='rounded' style={{
+              height: '34vw',
+              maxWidth: '200px',
+              width: '90%',
+              maxHeight: '200px',
+              margin: '10rem 1rem'
+            }} />
+            <Skeleton variant='rounded' style={{
+              height: '34vw',
+              maxWidth: '200px',
+              width: '90%',
+              maxHeight: '200px',
+              margin: '10rem 1rem'
+            }} />
+            <Skeleton variant='rounded' style={{
+              height: '34vw',
+              maxWidth: '200px',
+              width: '90%',
+              maxHeight: '200px',
+              margin: '10rem 1rem'
+            }} />
+            <Skeleton variant='rounded' style={{
+              height: '34vw',
+              maxWidth: '200px',
+              width: '90%',
+              maxHeight: '200px',
+              margin: '10rem auto 10rem 1rem'
+            }} />
+          </div>
+          <div style={{ display:'flex',  }}>
+          <Skeleton variant='rounded' style={{
+              height: '34vw',
+              maxWidth: '200px',
+              width: '90%',
+              maxHeight: '200px',
+              margin: '10rem 1rem 10rem auto'
+            }} />
+            <Skeleton variant='rounded' style={{
+              height: '34vw',
+              maxWidth: '200px',
+              width: '90%',
+              maxHeight: '200px',
+              margin: '10rem 1rem'
+            }} />
+            <Skeleton variant='rounded' style={{
+              height: '34vw',
+              maxWidth: '200px',
+              width: '90%',
+              maxHeight: '200px',
+              margin: '10rem 1rem'
+            }} />
+            <Skeleton variant='rounded' style={{
+              height: '34vw',
+              maxWidth: '200px',
+              width: '90%',
+              maxHeight: '200px',
+              margin: '10rem 1rem'
+            }} />
+            <Skeleton variant='rounded' style={{
+              height: '34vw',
+              maxWidth: '200px',
+              width: '90%',
+              maxHeight: '200px',
+              margin: '10rem auto 10rem 1rem'
+            }} />
+          </div>
+            
+          </Stack>
                   </>}
-
               </>
               :
               <>
                 <Button className='more-page' onClick={() => {
-                  if (products.length < productContent?.total) {
-                    settingPage({
-                      ...searchObj,
-                      page: searchObj?.page + 1
-                    })
+
+                  if (productContent?.content.length < productContent?.total) {
+                    getItemList(
+                      categoryIds,
+                      {
+                        ...searchObj,
+                        page: searchObj?.page + 1
+                      })
                   }
                 }} ref={scrollRef} />
-              </>}
+              </>} */}
           </>
           :
           <>
           </>}
-      </ContentWrapper>
+      </ContentWrapper >
     </>
   )
 }

@@ -97,6 +97,7 @@ const ItemsDemo = (props) => {
   ]
   useEffect(() => {
     getItemList({ ...router.query }, searchObj)
+    console.log(router.query)
   }, [
     router.query.category_id0, 
     router.query.category_id1, 
@@ -104,7 +105,8 @@ const ItemsDemo = (props) => {
     router.query.search, 
     router.query.property_ids0,
     router.query.page,
-    router.query.page_size
+    router.query.page_size,
+    router.query.not_show_select_menu
   ])
 
   useEffect(() => {

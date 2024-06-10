@@ -66,7 +66,7 @@ const ProductList = () => {
         return <div 
         style={{textDecoration:'underline', cursor:'pointer'}}
         onClick={() => {
-          router.push(`edit/${row?.product_code || row?.id}`)
+          router.push(`edit/${row?.id}`)
         }}
         >
           {row['product_name']}
@@ -381,11 +381,11 @@ const ProductList = () => {
     router.query.page_size,
     router.query.s_dt, 
     router.query.e_dt, 
-    router.query.search, 
-    router.query.search, 
+    router.query.search,
     router.query.category_id,
     router.query.seller_id,
-    router.query.order
+    router.query.order,
+    router.query.is_asc
   ])
   const onChangePage = async (query_ = {}, search_obj_ = {}) => {
     let query = query_;

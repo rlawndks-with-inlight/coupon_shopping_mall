@@ -229,11 +229,11 @@ export const HistoryTable = props => {
                     <TableCell sx={{ display: 'flex', alignItems: 'center', cursor: 'pointer' }} onClick={() => { router.push(`/shop/item/${row?.orders[0]?.product_id}`) }}>
                       <Image
                         alt='product image'
-                        src={row?.orders.length > 0 && row?.orders[0]?.product_img}
+                        src={row?.orders.length > 0 ? row?.orders[0]?.product_img : ''}
                         sx={{ width: 64, height: 64, borderRadius: 1.5, mr: 2 }}
                       />
                       <Row>
-                        <Typography noWrap variant='subtitle2' sx={{ maxWidth: 240, textDecoration: 'underline' }}>
+                        <Typography noWrap variant='subtitle2' sx={{ maxWidth: '240px', textDecoration: 'underline' }}>
                           {row.item_name}
                         </Typography>
                       </Row>
@@ -241,7 +241,7 @@ export const HistoryTable = props => {
                         row?.is_cancel != 1 &&
                         <Row>
                           <Typography noWrap variant='subtitle2' sx={{ maxWidth: 240 }}>
-                            ({row?.orders[0]?.product_code})
+                            ({row?.orders[0]?.product_code ?? ''})
                           </Typography>
                         </Row>
                       }
@@ -270,6 +270,7 @@ export const HistoryTable = props => {
                                     icon: 'material-symbols:cancel-outline',
                                     title: translate('주문취소요청 하시겠습니까?')
                                   })
+                                  console.log(row)
                                 }}
                               />
                             </IconButton>

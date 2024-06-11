@@ -385,7 +385,16 @@ const ProductList = () => {
     router.query.category_id,
     router.query.seller_id,
     router.query.order,
-    router.query.is_asc
+    router.query.is_asc,
+    router.query.category_id0,
+    router.query.category_id1,
+    router.query.property_id0,
+    router.query.property_id1,
+    router.query.property_id2,
+    router.query.property_id3,
+    router.query.property_id4,
+    router.query.product_type,
+    router.query.status
   ])
   const onChangePage = async (query_ = {}, search_obj_ = {}) => {
     let query = query_;
@@ -512,16 +521,13 @@ const ProductList = () => {
                     <>
                       <FormControlLabel
                         label={<Typography style={{ fontSize: themeObj.font_size.size6 }}>{property?.property_name}</Typography>}
-                        control={<Checkbox />}
+                        control={<Checkbox checked={searchObj[`property_ids${index}`] == property?.id ? true : false} />}
                         onChange={(e) => {
-                          let property_ids = searchObj[`property_ids${index}`] ?? [];
+                          let property_ids = searchObj[`property_ids${index}`]
                           if (e.target.checked) {
-                            property_ids.push(parseInt(property?.id));
-                          } else {
-                            let find_idx = property_ids.findIndex(e => e == parseInt(property?.id)) ;
-                            property_ids.splice(find_idx, 1);
-                            //console.log(parseInt(property?.id))
-                          }
+                            property_ids = parseInt(property?.id);
+                            //console.log(property_ids)
+                          } 
                           onChangePage({
                             ...searchObj,
                             [`property_ids${index}`]: property_ids,
@@ -544,14 +550,11 @@ const ProductList = () => {
                 <Row style={{ flexWrap: 'wrap' }}>
                       <FormControlLabel
                         label={<Typography style={{ fontSize: themeObj.font_size.size6 }}>그랑파리</Typography>}
-                        control={<Checkbox />}
+                        control={<Checkbox checked={searchObj[`product_type`] == 0 ? true : false} />}
                         onChange={(e) => {
-                          let product_type = searchObj[`product_type`] ?? [];
+                          let product_type = searchObj[`product_type`]
                           if (e.target.checked) {
-                            product_type.push(0);
-                          } else {
-                            let find_idx = product_type.findIndex(e => e == 0);
-                            product_type.splice(find_idx, 1);
+                            product_type = 0;
                           }
                           onChangePage({
                             ...searchObj,
@@ -561,14 +564,11 @@ const ProductList = () => {
                       />
                       <FormControlLabel
                         label={<Typography style={{ fontSize: themeObj.font_size.size6 }}>위탁(회원)</Typography>}
-                        control={<Checkbox />}
+                        control={<Checkbox checked={searchObj[`product_type`] == 1 ? true : false} />}
                         onChange={(e) => {
-                          let product_type = searchObj[`product_type`] ?? [];
+                          let product_type = searchObj[`product_type`];
                           if (e.target.checked) {
-                            product_type.push(1);
-                          } else {
-                            let find_idx = product_type.findIndex(e => e == 1);
-                            product_type.splice(find_idx, 1);
+                            product_type = 1;
                           }
                           onChangePage({
                             ...searchObj,
@@ -578,14 +578,11 @@ const ProductList = () => {
                       />
                       <FormControlLabel
                         label={<Typography style={{ fontSize: themeObj.font_size.size6 }}>위탁(비회원)</Typography>}
-                        control={<Checkbox />}
+                        control={<Checkbox checked={searchObj[`product_type`] == 2 ? true : false} />}
                         onChange={(e) => {
-                          let product_type = searchObj[`product_type`] ?? [];
+                          let product_type = searchObj[`product_type`]
                           if (e.target.checked) {
-                            product_type.push(2);
-                          } else {
-                            let find_idx = product_type.findIndex(e => e == 2);
-                            product_type.splice(find_idx, 1);
+                            product_type = 2;
                           }
                           onChangePage({
                             ...searchObj,
@@ -602,14 +599,11 @@ const ProductList = () => {
                 <Row style={{ flexWrap: 'wrap' }}>
                       <FormControlLabel
                         label={<Typography style={{ fontSize: themeObj.font_size.size6 }}>판매중</Typography>}
-                        control={<Checkbox />}
+                        control={<Checkbox checked={searchObj[`status`] == 0 ? true : false} />}
                         onChange={(e) => {
-                          let status = searchObj[`status`] ?? [];
+                          let status = searchObj[`status`]
                           if (e.target.checked) {
-                            status.push(0);
-                          } else {
-                            let find_idx = status.findIndex(e => e == 0);
-                            status.splice(find_idx, 1);
+                            status = 0;
                           }
                           onChangePage({
                             ...searchObj,
@@ -619,14 +613,11 @@ const ProductList = () => {
                       />
                       <FormControlLabel
                         label={<Typography style={{ fontSize: themeObj.font_size.size6 }}>예약중</Typography>}
-                        control={<Checkbox />}
+                        control={<Checkbox checked={searchObj[`status`] == 6 ? true : false} />}
                         onChange={(e) => {
-                          let status = searchObj[`status`] ?? [];
+                          let status = searchObj[`status`]
                           if (e.target.checked) {
-                            status.push(6);
-                          } else {
-                            let find_idx = status.findIndex(e => e == 6);
-                            status.splice(find_idx, 1);
+                            status = 6;
                           }
                           onChangePage({
                             ...searchObj,
@@ -636,14 +627,11 @@ const ProductList = () => {
                       />
                       <FormControlLabel
                         label={<Typography style={{ fontSize: themeObj.font_size.size6 }}>매장문의</Typography>}
-                        control={<Checkbox />}
+                        control={<Checkbox checked={searchObj[`status`] == 7 ? true : false} />}
                         onChange={(e) => {
-                          let status = searchObj[`status`] ?? [];
+                          let status = searchObj[`status`]
                           if (e.target.checked) {
-                            status.push(7);
-                          } else {
-                            let find_idx = status.findIndex(e => e == 7);
-                            status.splice(find_idx, 1);
+                            status = 7;
                           }
                           onChangePage({
                             ...searchObj,
@@ -653,14 +641,11 @@ const ProductList = () => {
                       />
                       <FormControlLabel
                         label={<Typography style={{ fontSize: themeObj.font_size.size6 }}>거래진행중</Typography>}
-                        control={<Checkbox />}
+                        control={<Checkbox checked={searchObj[`status`] == 1 ? true : false} />}
                         onChange={(e) => {
-                          let status = searchObj[`status`] ?? [];
+                          let status = searchObj[`status`]
                           if (e.target.checked) {
-                            status.push(1);
-                          } else {
-                            let find_idx = status.findIndex(e => e == 1);
-                            status.splice(find_idx, 1);
+                            status.push = 1;
                           }
                           onChangePage({
                             ...searchObj,
@@ -670,14 +655,11 @@ const ProductList = () => {
                       />
                       <FormControlLabel
                         label={<Typography style={{ fontSize: themeObj.font_size.size6 }}>품절</Typography>}
-                        control={<Checkbox />}
+                        control={<Checkbox checked={searchObj[`status`] == 2 ? true : false} />}
                         onChange={(e) => {
-                          let status = searchObj[`status`] ?? [];
+                          let status = searchObj[`status`]
                           if (e.target.checked) {
-                            status.push(2);
-                          } else {
-                            let find_idx = status.findIndex(e => e == 2);
-                            status.splice(find_idx, 1);
+                            status = 2;
                           }
                           onChangePage({
                             ...searchObj,
@@ -687,14 +669,11 @@ const ProductList = () => {
                       />
                       <FormControlLabel
                         label={<Typography style={{ fontSize: themeObj.font_size.size6 }}>택배수거</Typography>}
-                        control={<Checkbox />}
+                        control={<Checkbox checked={searchObj[`status`] == 3 ? true : false} />}
                         onChange={(e) => {
-                          let status = searchObj[`status`] ?? [];
+                          let status = searchObj[`status`]
                           if (e.target.checked) {
-                            status.push(3);
-                          } else {
-                            let find_idx = status.findIndex(e => e == 3);
-                            status.splice(find_idx, 1);
+                            status = 3;
                           }
                           onChangePage({
                             ...searchObj,
@@ -704,14 +683,11 @@ const ProductList = () => {
                       />
                       <FormControlLabel
                         label={<Typography style={{ fontSize: themeObj.font_size.size6 }}>방문수거</Typography>}
-                        control={<Checkbox />}
+                        control={<Checkbox checked={searchObj[`status`] == 4 ? true : false} />}
                         onChange={(e) => {
-                          let status = searchObj[`status`] ?? [];
+                          let status = searchObj[`status`]
                           if (e.target.checked) {
-                            status.push(4);
-                          } else {
-                            let find_idx = status.findIndex(e => e == 4);
-                            status.splice(find_idx, 1);
+                            status = 4;
                           }
                           onChangePage({
                             ...searchObj,
@@ -721,14 +697,11 @@ const ProductList = () => {
                       />
                       <FormControlLabel
                         label={<Typography style={{ fontSize: themeObj.font_size.size6 }}>비공개</Typography>}
-                        control={<Checkbox />}
+                        control={<Checkbox checked={searchObj[`status`] == 5 ? true : false} />}
                         onChange={(e) => {
-                          let status = searchObj[`status`] ?? [];
+                          let status = searchObj[`status`]
                           if (e.target.checked) {
-                            status.push(5);
-                          } else {
-                            let find_idx = status.findIndex(e => e == 5);
-                            status.splice(find_idx, 1);
+                            status = 5;
                           }
                           onChangePage({
                             ...searchObj,

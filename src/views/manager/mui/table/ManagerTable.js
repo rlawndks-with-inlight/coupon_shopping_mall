@@ -364,7 +364,7 @@ export default function ManagerTable(props) {
                 page: num
               });
 
-              //console.log(data)
+              console.log(router.asPath)
             }} />
         </Box>
       </TableContainer>

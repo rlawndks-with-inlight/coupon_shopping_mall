@@ -233,13 +233,13 @@ export const HistoryTable = props => {
                         sx={{ width: 64, height: 64, borderRadius: 1.5, mr: 2 }}
                       />
                       <Row>
-                        <Typography noWrap variant='subtitle2' sx={{ maxWidth: '240px', textDecoration: 'underline' }}>
+                        <Typography noWrap variant='subtitle2' sx={{ maxWidth: 240, textDecoration: 'underline' }}>
                           {row.item_name}
                         </Typography>
                       </Row>
                       <Row>
                         <Typography noWrap variant='subtitle2' sx={{ maxWidth: 240 }}>
-                          ({row?.orders[0]?.product_code ?? ''})
+                          ({row?.orders ? row.orders[0]?.product_code : ''})
                         </Typography>
                       </Row>
                     </TableCell>

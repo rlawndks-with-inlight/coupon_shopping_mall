@@ -299,41 +299,19 @@ const TrxList = () => {
   })
   useEffect(() => {
     pageSetting();
-  }, [router.query.type])
+  }, [router.query])
   const pageSetting = () => {
     let cols = defaultColumns;
     setColumns(cols)
     onChangePage({ ...searchObj, trx_status: (router.query?.type == 'all' || !router.query?.type) ? '' : router.query?.type, page: 1 });
   }
-
-  useEffect(() => {
-    onChangePage({...router.query}, searchObj)
-  }, [
-    router.query.page,
-    router.query.page_size,
-    router.query.s_dt, 
-    router.query.e_dt, 
-    router.query.trx_status,
-    router.query.search,
-  ])
-
-  const onChangePage = async (query_ = {}, search_obj_ = {}) => {
-    let query = query_;
-    let search_obj = search_obj_;
-    console.log(search_obj.trx_status)
-
-    let query_str = new URLSearchParams(query).toString();
-    router.push(`/manager/orders/trx/${router.query.type}/?${query_str}`);
-
-    setSearchObj({ ...search_obj, ...query });
+  const onChangePage = async (obj) => {
+    setSearchObj(obj);
     setData({
       ...data,
       content: undefined
     });
-    let data_ = await apiManager('transactions', 'list', {
-      ...search_obj,
-      ...query
-    });
+    let data_ = await apiManager('transactions', 'list', obj);
     if (data_) {
       setData(data_);
     }

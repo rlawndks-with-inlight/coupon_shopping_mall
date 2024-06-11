@@ -952,7 +952,7 @@ const Header = () => {
                                             return <div ref={(element) => {
                                                 allCategoryRef.current[index] = element;
                                             }}>
-                                                <Row style={{ margin: '0 1rem', cursor: 'pointer', color:`${themeMode == 'dark' ? '#FF5B0D' : ''}` }} onClick={() => { setOpenAllCategory(group?.id) }}>
+                                                <Row style={{ margin: '0 1rem', cursor: 'pointer', color: `${themeMode == 'dark' ? '#FF5B0D' : ''}` }} onClick={() => { setOpenAllCategory(group?.id) }}>
                                                     ALL BRAND |
                                                 </Row>
                                                 {openAllCategory == group?.id &&
@@ -964,7 +964,7 @@ const Header = () => {
                                                             borderTop: `1px solid white`,
                                                             //borderBottom: `2px solid ${themeDnsData?.theme_css?.main_color}`,
                                                             fontFamily: 'Playfair Display',
-                                                            marginTop:'17px'
+                                                            marginTop: '17px'
                                                         }}>
                                                             <div style={{ maxWidth: '1400px', margin: '0 auto' }}>
                                                                 {group?.sort_type == 1 &&

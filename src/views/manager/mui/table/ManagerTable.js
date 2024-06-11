@@ -171,142 +171,142 @@ export default function ManagerTable(props) {
   return (
     <>
       <TableContainer sx={{ overflow: 'unset' }}>
-        <TableHeaderContainer style={{display:'flex', flexDirection:'column'}}>
-          <div style={{display:'flex'}}>
-          <Row style={{ flexGrow: 1, rowGap: '0.75rem', flexWrap: 'wrap', margin: '0.35rem 0' }} >
-            <FormControl variant="outlined" sx={{ flexGrow: 1, minWidth: '100px', marginRight: '0.75rem' }}>
-              <OutlinedInput
-                size='small'
-                label=''
-                autoFocus
-                placeholder='검색어 입력'
-                value={keyword}
-                endAdornment={<>
-                  <Tooltip title='해당 텍스트로 검색하시려면 엔터 또는 돋보기 버튼을 클릭해주세요.'>
-                    <IconButton position="end" sx={{ transform: 'translateX(14px)' }} onClick={() => onChangePage({ ...searchObj, search: keyword })}>
-                      <Icon icon='material-symbols:search' />
-                    </IconButton>
-                  </Tooltip>
+        <TableHeaderContainer style={{ display: 'flex', flexDirection: 'column' }}>
+          <div style={{ display: 'flex' }}>
+            <Row style={{ flexGrow: 1, rowGap: '0.75rem', flexWrap: 'wrap', margin: '0.35rem 0' }} >
+              <FormControl variant="outlined" sx={{ flexGrow: 1, minWidth: '100px', marginRight: '0.75rem' }}>
+                <OutlinedInput
+                  size='small'
+                  label=''
+                  autoFocus
+                  placeholder='검색어 입력'
+                  value={keyword}
+                  endAdornment={<>
+                    <Tooltip title='해당 텍스트로 검색하시려면 엔터 또는 돋보기 버튼을 클릭해주세요.'>
+                      <IconButton position="end" sx={{ transform: 'translateX(14px)' }} onClick={() => onChangePage({ ...searchObj, search: keyword })}>
+                        <Icon icon='material-symbols:search' />
+                      </IconButton>
+                    </Tooltip>
 
+                  </>}
+                  onChange={(e) => {
+                    setKeyWord(e.target.value)
+                  }}
+                  onKeyPress={(e) => {
+                    if (e.key == 'Enter') {
+                      onChangePage({ ...searchObj, search: keyword })
+                    }
+                  }}
+                />
+              </FormControl>
+              {detail_search &&
+                <>
+                  <Button variant='outlined' sx={{ marginRight: '0.75rem' }} onClick={onToggle}>
+                    {detail_search}
+                  </Button>
                 </>}
-                onChange={(e) => {
-                  setKeyWord(e.target.value)
-                }}
-                onKeyPress={(e) => {
-                  if (e.key == 'Enter') {
-                    onChangePage({ ...searchObj, search: keyword })
-                  }
-                }}
-              />
-            </FormControl>
-            {detail_search &&
+            </Row>
+            {
+              minimal != true &&
               <>
-                <Button variant='outlined' sx={{ marginRight: '0.75rem' }} onClick={onToggle}>
-                  {detail_search}
-                </Button>
-              </>}
-          </Row>
-          {
-            minimal != true &&
-            <>
-            <Row style={{ rowGap: '1rem', flexWrap: 'wrap', margin: '0.35rem 0' }}>
-            {window.innerWidth > 1000 ?
-              <>
-                <DesktopDatePicker
-                  label="시작일 선택"
-                  value={sDt}
-                  format='yyyy-MM-dd'
-                  onChange={(newValue) => {
-                    setSDt(newValue);
-                    onChangePage({ ...searchObj, s_dt: returnMoment(false, new Date(newValue)).substring(0, 10) })
-                  }}
-                  renderInput={(params) => <TextField fullWidth {...params} margin="normal" />}
-                  sx={{ marginRight: '0.75rem', width: '180px', height: '32px' }}
-                  slotProps={{ textField: { size: 'small' } }}
-                />
-                <DesktopDatePicker
-                  label="종료일 선택"
-                  value={eDt}
-                  format='yyyy-MM-dd'
-                  onChange={(newValue) => {
-                    setEDt(newValue);
-                    onChangePage({ ...searchObj, e_dt: returnMoment(false, new Date(newValue)).substring(0, 10) })
-                  }}
-                  renderInput={(params) => <TextField fullWidth {...params} margin="normal" />}
-                  sx={{ width: '180px', marginRight: '0.75rem' }}
-                  slotProps={{ textField: { size: 'small' } }}
-                />
+                <Row style={{ rowGap: '1rem', flexWrap: 'wrap', margin: '0.35rem 0' }}>
+                  {window.innerWidth > 1000 ?
+                    <>
+                      <DesktopDatePicker
+                        label="시작일 선택"
+                        value={sDt}
+                        format='yyyy-MM-dd'
+                        onChange={(newValue) => {
+                          setSDt(newValue);
+                          onChangePage({ ...searchObj, s_dt: returnMoment(false, new Date(newValue)).substring(0, 10) })
+                        }}
+                        renderInput={(params) => <TextField fullWidth {...params} margin="normal" />}
+                        sx={{ marginRight: '0.75rem', width: '180px', height: '32px' }}
+                        slotProps={{ textField: { size: 'small' } }}
+                      />
+                      <DesktopDatePicker
+                        label="종료일 선택"
+                        value={eDt}
+                        format='yyyy-MM-dd'
+                        onChange={(newValue) => {
+                          setEDt(newValue);
+                          onChangePage({ ...searchObj, e_dt: returnMoment(false, new Date(newValue)).substring(0, 10) })
+                        }}
+                        renderInput={(params) => <TextField fullWidth {...params} margin="normal" />}
+                        sx={{ width: '180px', marginRight: '0.75rem' }}
+                        slotProps={{ textField: { size: 'small' } }}
+                      />
+                    </>
+                    :
+                    <>
+                      <MobileDatePicker
+                        label="시작일 선택"
+                        value={sDt}
+                        format='yyyy-MM-dd'
+                        onChange={(newValue) => {
+                          setSDt(newValue);
+                        }}
+                        renderInput={(params) => <TextField fullWidth {...params} margin="normal" />}
+                        sx={{ marginRight: '0.75rem', flexGrow: 1 }}
+                        slotProps={{ textField: { size: 'small' } }}
+                      />
+                      <MobileDatePicker
+                        label="종료일 선택"
+                        value={eDt}
+                        format='yyyy-MM-dd'
+                        onChange={(newValue) => {
+                          setEDt(newValue);
+                        }}
+                        renderInput={(params) => <TextField fullWidth {...params} margin="normal" />}
+                        sx={{ flexGrow: 1, marginRight: '0.75rem' }}
+                        slotProps={{ textField: { size: 'small' } }}
+                      />
+                    </>}
+                </Row>
               </>
-              :
-              <>
-                <MobileDatePicker
-                  label="시작일 선택"
-                  value={sDt}
-                  format='yyyy-MM-dd'
-                  onChange={(newValue) => {
-                    setSDt(newValue);
-                  }}
-                  renderInput={(params) => <TextField fullWidth {...params} margin="normal" />}
-                  sx={{ marginRight: '0.75rem', flexGrow: 1 }}
-                  slotProps={{ textField: { size: 'small' } }}
-                />
-                <MobileDatePicker
-                  label="종료일 선택"
-                  value={eDt}
-                  format='yyyy-MM-dd'
-                  onChange={(newValue) => {
-                    setEDt(newValue);
-                  }}
-                  renderInput={(params) => <TextField fullWidth {...params} margin="normal" />}
-                  sx={{ flexGrow: 1, marginRight: '0.75rem' }}
-                  slotProps={{ textField: { size: 'small' } }}
-                />
-              </>}
-          </Row>
-            </>
-          }
-          <Row style={{ columnGap: '0.75rem', flexWrap: 'wrap', rowGap: '0.75rem', margin: '0.35rem 0' }}>
-            {/*
+            }
+            <Row style={{ columnGap: '0.75rem', flexWrap: 'wrap', rowGap: '0.75rem', margin: '0.35rem 0' }}>
+              {/*
             <Button variant='outlined' onClick={handleClick}>
               테이블 설정
             </Button>
                 */}
-            <Menu open={tableOption} onClose={handleClose} anchorEl={anchor}>
+              <Menu open={tableOption} onClose={handleClose} anchorEl={anchor}>
 
                 <MenuItem>
-                <FormControlLabel control={<Switch />} label='h' />
+                  <FormControlLabel control={<Switch />} label='h' />
                 </MenuItem>
 
-            </Menu>
-            <FormControl variant='outlined' size='small' sx={{ width: '100px', flexGrow: 1, }}>
-              <InputLabel>페이지사이즈</InputLabel>
-              <Select label='페이지사이즈' value={page_size}
-                onChange={(e) => {
-                  onChangePage({ ...searchObj, page_size: e.target.value })
-                }}>
-                <MenuItem value={10}>10</MenuItem>
-                <MenuItem value={20}>20</MenuItem>
-                <MenuItem value={30}>30</MenuItem>
-                <MenuItem value={50}>50</MenuItem>
-                <MenuItem value={100}>100</MenuItem>
-              </Select>
-            </FormControl>
-            {add_button_text ?
-              <>
-                <Button variant='contained' sx={{ flexGrow: 1, minWidth: '200px' }} onClick={() => {
-                  let path = router.asPath;
-                  if (router.asPath.includes('list')) {
-                    path = path.replace('list', '');
-                  }
-                  router.push(add_link || `${path.slice(0, path.indexOf('?'))}/add`)
-                }}>
-                  + {add_button_text}
-                </Button>
-              </>
-              :
-              <>
-              </>}
-          </Row>
+              </Menu>
+              <FormControl variant='outlined' size='small' sx={{ width: '100px', flexGrow: 1, }}>
+                <InputLabel>페이지사이즈</InputLabel>
+                <Select label='페이지사이즈' value={page_size}
+                  onChange={(e) => {
+                    onChangePage({ ...searchObj, page_size: e.target.value })
+                  }}>
+                  <MenuItem value={10}>10</MenuItem>
+                  <MenuItem value={20}>20</MenuItem>
+                  <MenuItem value={30}>30</MenuItem>
+                  <MenuItem value={50}>50</MenuItem>
+                  <MenuItem value={100}>100</MenuItem>
+                </Select>
+              </FormControl>
+              {add_button_text ?
+                <>
+                  <Button variant='contained' sx={{ flexGrow: 1, minWidth: '200px' }} onClick={() => {
+                    let path = router.asPath;
+                    if (router.asPath.includes('list')) {
+                      path = path.replace('list', '');
+                    }
+                    router.push(add_link || `${path.slice(0, path.indexOf('?'))}/add`)
+                  }}>
+                    + {add_button_text}
+                  </Button>
+                </>
+                :
+                <>
+                </>}
+            </Row>
           </div>
           <Row>
             검색된 총 항목 수 : {data?.total}
@@ -359,12 +359,17 @@ export default function ManagerTable(props) {
             showFirstButton
             showLastButton
             onChange={(_, num) => {
-              onChangePage({...router.query, page: num}, {
-                ...searchObj,
-                page: num
-              });
-
-              console.log(router.asPath)
+              if (router.asPath.split('?')[0] == 'manager/products/list/' || router.asPath.split('?')[0] == 'manager/users/list/') {
+                onChangePage({ ...router.query, page: num }, {
+                  ...searchObj,
+                  page: num
+                });
+              } else {
+                onChangePage({
+                  ...searchObj,
+                  page: num
+                });
+              }
             }} />
         </Box>
       </TableContainer>

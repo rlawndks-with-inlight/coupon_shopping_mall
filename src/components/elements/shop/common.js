@@ -232,8 +232,7 @@ export const HistoryTable = props => {
                       cursor: 'pointer'
                     }}
                       onClick={() => {
-                        //router.push(`/shop/item/${row?.orders[0]?.product_id}`) 
-                        console.log(row)
+                        router.push(`/shop/item/${row?.orders[0]?.product_id}`)
                       }}>
                       <Image
                         alt='product image'

@@ -226,7 +226,15 @@ export const HistoryTable = props => {
               historyContent?.content.map(row => (
                 <>
                   <TableRow>
-                    <TableCell sx={{ display: 'flex', alignItems: 'center', cursor: 'pointer' }} onClick={() => { router.push(`/shop/item/${row?.orders[0]?.product_id}`) }}>
+                    <TableCell sx={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      cursor: 'pointer'
+                    }}
+                      onClick={() => {
+                        //router.push(`/shop/item/${row?.orders[0]?.product_id}`) 
+                        console.log(row)
+                      }}>
                       <Image
                         alt='product image'
                         src={row?.orders?.length > 0 ? row?.orders[0]?.product_img : ''}

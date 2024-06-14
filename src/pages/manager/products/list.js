@@ -39,11 +39,11 @@ const ProductList = () => {
       label: '상품이미지',
       action: (row) => {
         if (row['product_img']) {
-          return <div 
-          style={{ minWidth: '100px', cursor:'pointer' }}
-          onClick={() => {
-            router.push(`edit/${row?.product_code || row?.id}`)
-          }}
+          return <div
+            style={{ minWidth: '100px', cursor: 'pointer' }}
+            onClick={() => {
+              router.push(`edit/${row?.product_code || row?.id}`)
+            }}
           >
             <LazyLoadImage src={row['product_img'] ?? "---"} style={{ height: '84px', width: 'auto' }} />
           </div>
@@ -63,14 +63,14 @@ const ProductList = () => {
       id: 'product_name',
       label: '상품명',
       action: (row) => {
-        return <div 
-        style={{textDecoration:'underline', cursor:'pointer'}}
-        onClick={() => {
-          router.push(`edit/${row?.id}`)
-        }}
+        return <div
+          style={{ textDecoration: 'underline', cursor: 'pointer' }}
+          onClick={() => {
+            router.push(`edit/${row?.id}`)
+          }}
         >
           {row['product_name']}
-          </div> ?? "---"
+        </div> ?? "---"
       }
     },
     ...themeCategoryList.map((group, index) => {
@@ -189,39 +189,39 @@ const ProductList = () => {
       id: 'status',
       label: '상태',
       action: (row) => {
-        if ( themeDnsData?.id != 5 ) {
+        if (themeDnsData?.id != 5) {
           return <Select
-          size="small"
-          defaultValue={row?.status}
-          onChange={(e) => {
-            onChangeStatus(row?.id, e.target.value);
-          }}
-          sx={{ '@media screen and (max-width: 2500px)': { size: 'smaller' } }}
-        >
-          <MenuItem value={0}>{'판매중'}</MenuItem>
-          <MenuItem value={1}>{'중단됨'}</MenuItem>
-          <MenuItem value={2}>{'품절'}</MenuItem>
-          <MenuItem value={3}>{'새상품'}</MenuItem>
-        </Select>
+            size="small"
+            defaultValue={row?.status}
+            onChange={(e) => {
+              onChangeStatus(row?.id, e.target.value);
+            }}
+            sx={{ '@media screen and (max-width: 2500px)': { size: 'smaller' } }}
+          >
+            <MenuItem value={0}>{'판매중'}</MenuItem>
+            <MenuItem value={1}>{'중단됨'}</MenuItem>
+            <MenuItem value={2}>{'품절'}</MenuItem>
+            <MenuItem value={3}>{'새상품'}</MenuItem>
+          </Select>
         }
         else {
           return <Select
-          size="small"
-          defaultValue={row?.status}
-          onChange={(e) => {
-            onChangeStatus(row?.id, e.target.value);
-          }}
-          sx={{ '@media screen and (max-width: 2500px)': { size: 'smaller' } }}
-        >
-          <MenuItem value={0}>{'판매중'}</MenuItem>
-          <MenuItem value={6}>{'예약중'}</MenuItem>
-          <MenuItem value={7}>{'매장문의'}</MenuItem>
-          <MenuItem value={1}>{'거래진행중'}</MenuItem>
-          <MenuItem value={2}>{'품절'}</MenuItem>
-          <MenuItem value={3}>{'택배수거'}</MenuItem>
-          <MenuItem value={4}>{'방문수거'}</MenuItem>
-          <MenuItem value={5}>{'비공개'}</MenuItem>    
-        </Select>
+            size="small"
+            defaultValue={row?.status}
+            onChange={(e) => {
+              onChangeStatus(row?.id, e.target.value);
+            }}
+            sx={{ '@media screen and (max-width: 2500px)': { size: 'smaller' } }}
+          >
+            <MenuItem value={0}>{'판매중'}</MenuItem>
+            <MenuItem value={6}>{'예약중'}</MenuItem>
+            <MenuItem value={7}>{'매장문의'}</MenuItem>
+            <MenuItem value={1}>{'거래진행중'}</MenuItem>
+            <MenuItem value={2}>{'품절'}</MenuItem>
+            <MenuItem value={3}>{'택배수거'}</MenuItem>
+            <MenuItem value={4}>{'방문수거'}</MenuItem>
+            <MenuItem value={5}>{'비공개'}</MenuItem>
+          </Select>
         }
       },
       sx: (row) => {
@@ -379,8 +379,8 @@ const ProductList = () => {
   }, [
     router.query.page,
     router.query.page_size,
-    router.query.s_dt, 
-    router.query.e_dt, 
+    router.query.s_dt,
+    router.query.e_dt,
     router.query.search,
     router.query.category_id,
     router.query.seller_id,
@@ -527,7 +527,7 @@ const ProductList = () => {
                           if (e.target.checked) {
                             property_ids = parseInt(property?.id);
                             //console.log(property_ids)
-                          } 
+                          }
                           onChangePage({
                             ...searchObj,
                             [`property_ids${index}`]: property_ids,
@@ -542,176 +542,176 @@ const ProductList = () => {
             </>
           ))}
           {detailSearchOpen && themeDnsData.id == 5 &&
-          <>
-          <div style={{ marginLeft: '1rem', marginBottom: '0.25rem', marginTop: '0.25rem' }}>
+            <>
+              <div style={{ marginLeft: '1rem', marginBottom: '0.25rem', marginTop: '0.25rem' }}>
                 <Typography variant="subtitle2" sx={{ color: 'text.secondary' }}>
                   위탁상태
                 </Typography>
                 <Row style={{ flexWrap: 'wrap' }}>
-                      <FormControlLabel
-                        label={<Typography style={{ fontSize: themeObj.font_size.size6 }}>그랑파리</Typography>}
-                        control={<Checkbox checked={searchObj[`product_type`] == 0 ? true : false} />}
-                        onChange={(e) => {
-                          let product_type = searchObj[`product_type`]
-                          if (e.target.checked) {
-                            product_type = 0;
-                          }
-                          onChangePage({
-                            ...searchObj,
-                            [`product_type`]: product_type,
-                          })
-                        }}
-                      />
-                      <FormControlLabel
-                        label={<Typography style={{ fontSize: themeObj.font_size.size6 }}>위탁(회원)</Typography>}
-                        control={<Checkbox checked={searchObj[`product_type`] == 1 ? true : false} />}
-                        onChange={(e) => {
-                          let product_type = searchObj[`product_type`];
-                          if (e.target.checked) {
-                            product_type = 1;
-                          }
-                          onChangePage({
-                            ...searchObj,
-                            [`product_type`]: product_type,
-                          })
-                        }}
-                      />
-                      <FormControlLabel
-                        label={<Typography style={{ fontSize: themeObj.font_size.size6 }}>위탁(비회원)</Typography>}
-                        control={<Checkbox checked={searchObj[`product_type`] == 2 ? true : false} />}
-                        onChange={(e) => {
-                          let product_type = searchObj[`product_type`]
-                          if (e.target.checked) {
-                            product_type = 2;
-                          }
-                          onChangePage({
-                            ...searchObj,
-                            [`product_type`]: product_type,
-                          })
-                        }}
-                      />
+                  <FormControlLabel
+                    label={<Typography style={{ fontSize: themeObj.font_size.size6 }}>그랑파리</Typography>}
+                    control={<Checkbox checked={searchObj[`product_type`] == 0 ? true : false} />}
+                    onChange={(e) => {
+                      let product_type = searchObj[`product_type`]
+                      if (e.target.checked) {
+                        product_type = 0;
+                      }
+                      onChangePage({
+                        ...searchObj,
+                        [`product_type`]: product_type,
+                      })
+                    }}
+                  />
+                  <FormControlLabel
+                    label={<Typography style={{ fontSize: themeObj.font_size.size6 }}>위탁(회원)</Typography>}
+                    control={<Checkbox checked={searchObj[`product_type`] == 1 ? true : false} />}
+                    onChange={(e) => {
+                      let product_type = searchObj[`product_type`];
+                      if (e.target.checked) {
+                        product_type = 1;
+                      }
+                      onChangePage({
+                        ...searchObj,
+                        [`product_type`]: product_type,
+                      })
+                    }}
+                  />
+                  <FormControlLabel
+                    label={<Typography style={{ fontSize: themeObj.font_size.size6 }}>위탁(비회원)</Typography>}
+                    control={<Checkbox checked={searchObj[`product_type`] == 2 ? true : false} />}
+                    onChange={(e) => {
+                      let product_type = searchObj[`product_type`]
+                      if (e.target.checked) {
+                        product_type = 2;
+                      }
+                      onChangePage({
+                        ...searchObj,
+                        [`product_type`]: product_type,
+                      })
+                    }}
+                  />
                 </Row>
               </div>
-          <div style={{ marginLeft: '1rem', marginBottom: '0.25rem', marginTop: '0.25rem' }}>
+              <div style={{ marginLeft: '1rem', marginBottom: '0.25rem', marginTop: '0.25rem' }}>
                 <Typography variant="subtitle2" sx={{ color: 'text.secondary' }}>
                   상태
                 </Typography>
                 <Row style={{ flexWrap: 'wrap' }}>
-                      <FormControlLabel
-                        label={<Typography style={{ fontSize: themeObj.font_size.size6 }}>판매중</Typography>}
-                        control={<Checkbox checked={searchObj[`status`] == 0 ? true : false} />}
-                        onChange={(e) => {
-                          let status = searchObj[`status`]
-                          if (e.target.checked) {
-                            status = 0;
-                          }
-                          onChangePage({
-                            ...searchObj,
-                            [`status`]: status,
-                          })
-                        }}
-                      />
-                      <FormControlLabel
-                        label={<Typography style={{ fontSize: themeObj.font_size.size6 }}>예약중</Typography>}
-                        control={<Checkbox checked={searchObj[`status`] == 6 ? true : false} />}
-                        onChange={(e) => {
-                          let status = searchObj[`status`]
-                          if (e.target.checked) {
-                            status = 6;
-                          }
-                          onChangePage({
-                            ...searchObj,
-                            [`status`]: status,
-                          })
-                        }}
-                      />
-                      <FormControlLabel
-                        label={<Typography style={{ fontSize: themeObj.font_size.size6 }}>매장문의</Typography>}
-                        control={<Checkbox checked={searchObj[`status`] == 7 ? true : false} />}
-                        onChange={(e) => {
-                          let status = searchObj[`status`]
-                          if (e.target.checked) {
-                            status = 7;
-                          }
-                          onChangePage({
-                            ...searchObj,
-                            [`status`]: status,
-                          })
-                        }}
-                      />
-                      <FormControlLabel
-                        label={<Typography style={{ fontSize: themeObj.font_size.size6 }}>거래진행중</Typography>}
-                        control={<Checkbox checked={searchObj[`status`] == 1 ? true : false} />}
-                        onChange={(e) => {
-                          let status = searchObj[`status`]
-                          if (e.target.checked) {
-                            status.push = 1;
-                          }
-                          onChangePage({
-                            ...searchObj,
-                            [`status`]: status,
-                          })
-                        }}
-                      />
-                      <FormControlLabel
-                        label={<Typography style={{ fontSize: themeObj.font_size.size6 }}>품절</Typography>}
-                        control={<Checkbox checked={searchObj[`status`] == 2 ? true : false} />}
-                        onChange={(e) => {
-                          let status = searchObj[`status`]
-                          if (e.target.checked) {
-                            status = 2;
-                          }
-                          onChangePage({
-                            ...searchObj,
-                            [`status`]: status,
-                          })
-                        }}
-                      />
-                      <FormControlLabel
-                        label={<Typography style={{ fontSize: themeObj.font_size.size6 }}>택배수거</Typography>}
-                        control={<Checkbox checked={searchObj[`status`] == 3 ? true : false} />}
-                        onChange={(e) => {
-                          let status = searchObj[`status`]
-                          if (e.target.checked) {
-                            status = 3;
-                          }
-                          onChangePage({
-                            ...searchObj,
-                            [`status`]: status,
-                          })
-                        }}
-                      />
-                      <FormControlLabel
-                        label={<Typography style={{ fontSize: themeObj.font_size.size6 }}>방문수거</Typography>}
-                        control={<Checkbox checked={searchObj[`status`] == 4 ? true : false} />}
-                        onChange={(e) => {
-                          let status = searchObj[`status`]
-                          if (e.target.checked) {
-                            status = 4;
-                          }
-                          onChangePage({
-                            ...searchObj,
-                            [`status`]: status,
-                          })
-                        }}
-                      />
-                      <FormControlLabel
-                        label={<Typography style={{ fontSize: themeObj.font_size.size6 }}>비공개</Typography>}
-                        control={<Checkbox checked={searchObj[`status`] == 5 ? true : false} />}
-                        onChange={(e) => {
-                          let status = searchObj[`status`]
-                          if (e.target.checked) {
-                            status = 5;
-                          }
-                          onChangePage({
-                            ...searchObj,
-                            [`status`]: status,
-                          })
-                        }}
-                      />
+                  <FormControlLabel
+                    label={<Typography style={{ fontSize: themeObj.font_size.size6 }}>판매중</Typography>}
+                    control={<Checkbox checked={searchObj[`status`] == 0 ? true : false} />}
+                    onChange={(e) => {
+                      let status = searchObj[`status`]
+                      if (e.target.checked) {
+                        status = 0;
+                      }
+                      onChangePage({
+                        ...searchObj,
+                        [`status`]: status,
+                      })
+                    }}
+                  />
+                  <FormControlLabel
+                    label={<Typography style={{ fontSize: themeObj.font_size.size6 }}>예약중</Typography>}
+                    control={<Checkbox checked={searchObj[`status`] == 6 ? true : false} />}
+                    onChange={(e) => {
+                      let status = searchObj[`status`]
+                      if (e.target.checked) {
+                        status = 6;
+                      }
+                      onChangePage({
+                        ...searchObj,
+                        [`status`]: status,
+                      })
+                    }}
+                  />
+                  <FormControlLabel
+                    label={<Typography style={{ fontSize: themeObj.font_size.size6 }}>매장문의</Typography>}
+                    control={<Checkbox checked={searchObj[`status`] == 7 ? true : false} />}
+                    onChange={(e) => {
+                      let status = searchObj[`status`]
+                      if (e.target.checked) {
+                        status = 7;
+                      }
+                      onChangePage({
+                        ...searchObj,
+                        [`status`]: status,
+                      })
+                    }}
+                  />
+                  <FormControlLabel
+                    label={<Typography style={{ fontSize: themeObj.font_size.size6 }}>거래진행중</Typography>}
+                    control={<Checkbox checked={searchObj[`status`] == 1 ? true : false} />}
+                    onChange={(e) => {
+                      let status = searchObj[`status`]
+                      if (e.target.checked) {
+                        status = 1;
+                      }
+                      onChangePage({
+                        ...searchObj,
+                        [`status`]: status,
+                      })
+                    }}
+                  />
+                  <FormControlLabel
+                    label={<Typography style={{ fontSize: themeObj.font_size.size6 }}>품절</Typography>}
+                    control={<Checkbox checked={searchObj[`status`] == 2 ? true : false} />}
+                    onChange={(e) => {
+                      let status = searchObj[`status`]
+                      if (e.target.checked) {
+                        status = 2;
+                      }
+                      onChangePage({
+                        ...searchObj,
+                        [`status`]: status,
+                      })
+                    }}
+                  />
+                  <FormControlLabel
+                    label={<Typography style={{ fontSize: themeObj.font_size.size6 }}>택배수거</Typography>}
+                    control={<Checkbox checked={searchObj[`status`] == 3 ? true : false} />}
+                    onChange={(e) => {
+                      let status = searchObj[`status`]
+                      if (e.target.checked) {
+                        status = 3;
+                      }
+                      onChangePage({
+                        ...searchObj,
+                        [`status`]: status,
+                      })
+                    }}
+                  />
+                  <FormControlLabel
+                    label={<Typography style={{ fontSize: themeObj.font_size.size6 }}>방문수거</Typography>}
+                    control={<Checkbox checked={searchObj[`status`] == 4 ? true : false} />}
+                    onChange={(e) => {
+                      let status = searchObj[`status`]
+                      if (e.target.checked) {
+                        status = 4;
+                      }
+                      onChangePage({
+                        ...searchObj,
+                        [`status`]: status,
+                      })
+                    }}
+                  />
+                  <FormControlLabel
+                    label={<Typography style={{ fontSize: themeObj.font_size.size6 }}>비공개</Typography>}
+                    control={<Checkbox checked={searchObj[`status`] == 5 ? true : false} />}
+                    onChange={(e) => {
+                      let status = searchObj[`status`]
+                      if (e.target.checked) {
+                        status = 5;
+                      }
+                      onChangePage({
+                        ...searchObj,
+                        [`status`]: status,
+                      })
+                    }}
+                  />
                 </Row>
               </div>
-          </>
+            </>
           }
           <Divider />
           <ManagerTable

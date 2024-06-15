@@ -12,6 +12,7 @@ import ShopLayout3 from "./shop/demo-3/ShopLayout3";
 import ShopLayout4 from "./shop/demo-4/ShopLayout4";
 import ShopLayout5 from "./shop/demo-5/ShopLayout5";
 import ShopLayout6 from "./shop/demo-6/ShopLayout6";
+import ShopLayout7 from "./shop/demo-7/ShopLayout7";
 import styled from "styled-components";
 import { useLocales } from "src/locales";
 import $ from 'jquery';
@@ -41,6 +42,8 @@ const getDemo = (num, common) => {
       return <ShopLayout5 {...common} />
     else if (num == 6)
       return <ShopLayout6 {...common} />
+    else if (num == 7)
+      return <ShopLayout7 {...common} />
     else
       return { children }
   } else if (category == 'blog') {

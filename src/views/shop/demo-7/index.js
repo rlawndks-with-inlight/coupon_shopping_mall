@@ -14,3 +14,4 @@ export { default as ArticleDemo7 } from './service/[article_category]/[id]';
 export { default as ArticlesDemo7 } from './service/[article_category]';
 export { default as HomeDemo7 } from './home';
 export { default as SearchDemo7 } from './search';
+export { default as MainDemo7 } from './main';

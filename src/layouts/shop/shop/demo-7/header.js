@@ -97,7 +97,7 @@ align-items:center;
 }
 `
 const PaddingTop = styled.div`
-margin-top:${props => props.pcHeight}px;
+margin-top: ${props => props.pcHeight}px;
 `
 const AuthMenu = styled.div`
 padding:0 0.5rem;
@@ -398,7 +398,7 @@ const Header = () => {
                 </>
                 :
                 <>
-                    {popups.length > 0 && router.asPath == '/shop/' ?
+                    {popups.length > 0 && router.asPath == '/shop/main/' ?
                         <>
                             <PopupContainer>
                                 {popups && popups.map((item, idx) => (
@@ -450,7 +450,7 @@ const Header = () => {
                         {router.asPath == '/shop/' ?
                             <>
                                 <TopMenuContainer>
-                                    <img src={scrollTop ? logoSrc() : '/qietu/group 11.png'} style={{ height: '40px', width: 'auto', cursor: 'pointer', marginRight: '2rem' }}
+                                    <img src={scrollTop ? logoSrc() : '/qietu/Group 11.png'} style={{ height: '40px', width: 'auto', cursor: 'pointer', marginRight: '2rem' }}
                                         onClick={() => {
                                             router.push('/shop')
                                         }}
@@ -864,7 +864,7 @@ const Header = () => {
                         }
                     </Wrappers>
                 </>}
-            <PaddingTop pcHeight={headerHeight} />
+            <PaddingTop pcHeight={router.asPath == '/shop/' ? '60' : '117'} />
             <Drawer
                 anchor={'left'}
                 open={sideMenuOpen}

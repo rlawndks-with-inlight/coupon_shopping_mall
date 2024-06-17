@@ -68,6 +68,7 @@ const ItemsDemo = (props) => {
   const { sort, categoryGroup } = CategorySorter(themeCategoryList)
   const [filterOpen, setFilterOpen] = useState(false)
   const [detailCategory, setDetailCategory] = useState()
+  const [detailSubCate, setDetailSubCate] = useState()
 
   useEffect(() => {
     sort(LANGCODE.ENG)
@@ -232,6 +233,21 @@ const ItemsDemo = (props) => {
       router.events.off('routeChangeStart', handleRouteChangeStart);
     };
   }, [loading, router.query])
+
+  useEffect(() => {
+    const parsedUrl = queryString.parseUrl(router.asPath).query;
+    let category_id0 = parsedUrl[`category_id0`] ?? ''
+    let cates = themeCategoryList[1]?.product_categories //?.filter(category => category.children.length != 0)
+    //let sub_cates = _.find(cates, { children.id: category_id0 })
+    console.log(cates)
+
+    if (category_id0 > 1000 && category_id0 < 1011) {
+      setDetailCategory(category_id0)
+    } else {
+
+    }
+
+  }, [router.query])
 
   return (
     <>
@@ -440,7 +456,7 @@ const ItemsDemo = (props) => {
                                             }}
                                             onClick={() => {
                                               const parsedUrl = queryString.parseUrl(router.asPath).query;
-                                              parsedUrl[`category_id${index}`] = child?.id
+                                              parsedUrl[`category_id1`] = child?.id
                                               const updatedUrl = queryString.stringifyUrl({ url: queryString.parseUrl(router.asPath).url, query: parsedUrl })
 
                                               router.push(updatedUrl)
@@ -470,7 +486,7 @@ const ItemsDemo = (props) => {
                                             }}
                                             onClick={() => {
                                               const parsedUrl = queryString.parseUrl(router.asPath).query;
-                                              parsedUrl[`category_id${index}`] = child?.id
+                                              parsedUrl[`category_id1`] = child?.id
                                               const updatedUrl = queryString.stringifyUrl({ url: queryString.parseUrl(router.asPath).url, query: parsedUrl })
 
                                               router.push(updatedUrl)
@@ -499,29 +515,26 @@ const ItemsDemo = (props) => {
                                   margin: '0.5rem 0rem 0.5rem 0',
                                   fontSize: '16px',
                                   cursor: 'pointer',
-                                  background: 'transparent',
+                                  background: `${detailCategory == category.id ? (themeMode == 'dark' ? '#999999' : 'white') : 'transparent'}`,
                                   fontFamily: `${langChipSelected == 0 ? 'Playfair Display' : 'Noto Sans KR'}`,
                                   '&:hover': {
                                     background: `${themeMode == 'dark' ? '#999999' : 'white'}`,
                                   },
                                 }}
                                 onClick={() => {
-                                  if (category.children) {
-                                    setDetailCategory(category.id);
-                                    console.log(detailCategory)
-                                  } else {
-                                    const parsedUrl = queryString.parseUrl(router.asPath).query;
-                                    parsedUrl[`category_id0`] = category?.id
-                                    const updatedUrl = queryString.stringifyUrl({ url: queryString.parseUrl(router.asPath).url, query: parsedUrl })
 
-                                    router.push(updatedUrl)
-                                  }
+                                  const parsedUrl = queryString.parseUrl(router.asPath).query;
+                                  parsedUrl[`category_id0`] = category?.id
+                                  const updatedUrl = queryString.stringifyUrl({ url: queryString.parseUrl(router.asPath).url, query: parsedUrl })
+
+                                  router.push(updatedUrl)
+
                                 }} />
                             </>
                           }
                         })}
                       </Row>
-                      <Row>
+                      <Row style={{ flexWrap: 'wrap', paddingLeft: '6.5rem' }}>
                         {group?.sort_type == 0 && group.product_categories && group?.product_categories.map((category, idx) => {
                           return <>
                             {detailCategory == category.id && category.children.map((child, idx) => {
@@ -530,10 +543,10 @@ const ItemsDemo = (props) => {
                                   label={child.category_name}
                                   sx={{
                                     margin: '0.5rem 0rem 0.5rem 0',
-                                    marginLeft: `${idx == 0 ? '7rem' : '0.5rem'}`,
+                                    marginLeft: '0.5rem',
                                     fontSize: '16px',
                                     cursor: 'pointer',
-                                    background: 'transparent',
+                                    background: `${detailCategory == child.id ? (themeMode == 'dark' ? '#999999' : 'white') : 'transparent'}`,
                                     fontFamily: `${langChipSelected == 0 ? 'Playfair Display' : 'Noto Sans KR'}`,
                                     '&:hover': {
                                       background: `${themeMode == 'dark' ? '#999999' : 'white'}`,

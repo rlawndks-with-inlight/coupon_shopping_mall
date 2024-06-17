@@ -251,7 +251,7 @@ export const HistoryTable = props => {
                       </Row>
                     </TableCell>
                     <TableCell>{row.ord_num}</TableCell>
-                    <TableCell>{fCurrency(row.amount)}원</TableCell>
+                    <TableCell onClick={() => { console.log(row) }}>{fCurrency(row.amount)}원</TableCell>
                     <TableCell>{row?.buyer_name}</TableCell>
                     <TableCell>{fCurrency(row.amount) < 0 ? '결제취소' : getTrxStatusByNumber(row?.trx_status)}</TableCell>
                     <TableCell>

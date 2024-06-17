@@ -28,7 +28,7 @@ const TrxList = () => {
         }
       },
     },
-    {
+    /*{
       id: 'card_num',
       label: '카드번호',
       action: (row) => {
@@ -39,7 +39,33 @@ const TrxList = () => {
           color: `${row?.is_cancel == 1 ? 'red' : ''}`
         }
       },
-    },
+    },*/
+    ...(themeDnsData?.id == 5 ? [
+      {
+        id: 'product_code',
+        label: '상품코드',
+        action: (row) => {
+          return <div style={{ display: 'flex', flexDirection: 'column' }}>
+            {row?.orders && row?.orders.map((order, index) => (
+              <div>{order?.product_code}</div>
+            ))}
+          </div>
+        }
+      }
+    ] : []),
+    ...(themeDnsData?.id == 5 ? [
+      {
+        id: 'product_img',
+        label: '상품이미지',
+        action: (row) => {
+          return <div style={{ display: 'flex', flexDirection: 'column', cursor: 'pointer' }}>
+            {row?.orders && row?.orders.map((order, index) => (
+              <img src={order?.product_img} style={{ maxWidth: '84px' }} onClick={() => { window.open(`/shop/item/${order?.product_id}`) }} />
+            ))}
+          </div>
+        }
+      }
+    ] : []),
     {
       id: 'buyer_name',
       label: '구매자명',
@@ -78,8 +104,11 @@ const TrxList = () => {
                 <>
                   <Col>
                     <Row>
-                      <div style={{ minWidth: '62px', fontWeight: 'bold' }}>{index + 1}.</div>
-                      <div style={{ whiteSpace: 'nowrap' }}>{order?.order_name}</div>
+                      <div style={{ minWidth: '62px', fontWeight: 'bold' }} >{index + 1}.</div>
+                      <div style={{ whiteSpace: 'nowrap', cursor: 'pointer' }}
+                        onClick={() => { window.open(`/manager/products/edit/${order?.product_id}`) }}>
+                        {order?.order_name}
+                      </div>
                     </Row>
                     {order?.groups.length > 0 &&
                       <>
@@ -221,8 +250,10 @@ const TrxList = () => {
           <MenuItem value={0}>{'결제대기'}</MenuItem>
           <MenuItem value={1}>{'취소요청'}</MenuItem>
           <MenuItem value={5}>{'결제완료'}</MenuItem>
-          <MenuItem value={10}>{'입고완료'}</MenuItem>
-          <MenuItem value={15}>{'출고완료'}</MenuItem>
+          {themeDnsData?.id != 5 && <>
+            <MenuItem value={10}>{'입고완료'}</MenuItem>
+            <MenuItem value={15}>{'출고완료'}</MenuItem>
+          </>}
           <MenuItem value={20}>{'배송중'}</MenuItem>
           <MenuItem value={25}>{'배송완료'}</MenuItem>
         </Select>

@@ -144,8 +144,11 @@ export const navConfig = () => {
                 { title: '전체', path: PATH_MANAGER.orders.trx + '/all' },
                 { title: '결제대기', path: PATH_MANAGER.orders.trx + '/0' },
                 { title: '결제완료', path: PATH_MANAGER.orders.trx + '/5' },
-                { title: '입고완료', path: PATH_MANAGER.orders.trx + '/10' },
-                { title: '출고완료', path: PATH_MANAGER.orders.trx + '/15' },
+                ...(themeDnsData?.id != 5 ?
+                  [{ title: '입고완료', path: PATH_MANAGER.orders.trx + '/10' },
+                  { title: '출고완료', path: PATH_MANAGER.orders.trx + '/15' }]
+                  : []
+                ),
                 { title: '배송중', path: PATH_MANAGER.orders.trx + '/20' },
                 { title: '배송완료', path: PATH_MANAGER.orders.trx + '/25' },
               ],

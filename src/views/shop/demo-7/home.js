@@ -190,7 +190,7 @@ const HomeDemo = (props) => {
                       onClick={() => onSearch()}
                       aria-label='toggle password visibility'
                     >
-                      <img src="/qietu/vector.png" style={{ width: '24px' }} />
+                      <img src="/qietu/Vector.png" style={{ width: '24px' }} />
                     </IconButton>
                   </InputAdornment>
                 )

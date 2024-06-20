@@ -160,7 +160,7 @@ const HomeDemo = (props) => {
               objectFit: 'cover'
             }}
           >
-            <source src='/qietu/video2.mp4' type="video/mp4" />
+            <source src='/qietu/main_video.mp4' type="video/mp4" />
           </video>
           <Title>
             Proposal of B2B Shopping<br />

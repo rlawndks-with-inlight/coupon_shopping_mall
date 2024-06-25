@@ -465,7 +465,7 @@ const Header = () => {
                                             router.push('/shop/main')
                                         }}
                                     >
-                                        구매대행
+                                        {translate('구매대행')}
                                     </CategoryMenu>
                                     <NoneShowMobile
                                         style={{

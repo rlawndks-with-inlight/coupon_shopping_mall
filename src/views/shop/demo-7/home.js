@@ -6,6 +6,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { TextField, InputAdornment, IconButton } from "@mui/material";
 import { Icon } from "@iconify/react";
 import { Col, Row } from "src/components/elements/styled-components";
+import { useLocales } from "src/locales";
 
 const Wrappers = styled.div`
 width: 100%;
@@ -116,6 +117,7 @@ const HomeDemo = (props) => {
   const videoRef1 = useRef(null);
   const videoRef2 = useRef(null);
   const [keyword, setKeyword] = useState("");
+  const { translate } = useLocales()
 
   const onSearch = () => {
     router.push(`/shop/search?keyword=${keyword}`)
@@ -210,40 +212,40 @@ const HomeDemo = (props) => {
         <div style={{ width: '100%' }}>
           <ContentBox>
             <ContentTitle>
-              사업자를 위한 특화서비스
+              {translate("사업자를 위한 특화서비스")}
             </ContentTitle>
             <ContentSubTitle>
-              해외상품을 간편하게 담아 나만의 상품 보관함에서 언제든 편리하게 관리 주문 가능합니다.
+              {translate("해외상품을 간편하게 담아 나만의 상품 보관함에서 언제든 편리하게 관리 주문 가능합니다.")}
             </ContentSubTitle>
             <Row style={{ justifyContent: 'space-between' }}>
               <Col style={{ marginRight: '0.25rem' }}>
                 <img src="/qietu/Mask group-2.png" style={{ maxWidth: '400px', width: '100%', margin: '0 auto' }} />
                 <Content>
-                  파트너사가 무엇을 원하는지
+                  {translate("파트너사가 무엇을 원하는지")}
                 </Content>
                 <ContentSub>
-                  상품구매정보 언어<br />
-                  상품설명 이미지
+                  {translate("상품구매정보 언어")}<br />
+                  {translate("상품설명 이미지")}
                 </ContentSub>
               </Col>
               <Col style={{ marginRight: '0.25rem', marginLeft: '0.25rem' }}>
                 <img src="/qietu/Mask group-1.png" style={{ maxWidth: '400px', width: '100%', margin: '0 auto' }} />
                 <Content>
-                  한국시장에서의 유행제품 소싱
+                  {translate("한국시장에서의 유행제품 소싱")}
                 </Content>
                 <ContentSub>
-                  엄선된 제품을 골라<br />
-                  가격 배송 결제를 편리하게
+                  {translate("엄선된 제품을 골라")}<br />
+                  {translate("가격 배송 결제를 편리하게")}
                 </ContentSub>
               </Col>
               <Col style={{ marginLeft: '0.25rem' }}>
                 <img src="/qietu/Mask group.png" style={{ maxWidth: '400px', width: '100%', margin: '0 auto' }} />
                 <Content>
-                  안전한 거래
+                  {translate("안전한 거래")}
                 </Content>
                 <ContentSub>
-                  모바일 / PC<br />
-                  공간에 관계없이 주문가능
+                  {translate("모바일 / PC")}<br />
+                  {translate("공간에 관계없이 주문가능")}
                 </ContentSub>
               </Col>
             </Row>
@@ -252,47 +254,47 @@ const HomeDemo = (props) => {
         <div style={{ width: '100%', backgroundColor: '#F7F7F7' }}>
           <ContentBox>
             <ContentTitle>
-              B2B 구매가 쉬워집니다
+              {translate("B2B 구매가 쉬워집니다")}
             </ContentTitle>
             <ContentSubTitle>
-              '더플러스'에서는 B2B쇼핑을 보다 빠르고 간편하며<br />
-              모두의 불안한 배송에 대한 안전한 물류를 자랑으로 합니다.
+              {translate("'더플러스'에서는 B2B쇼핑을 보다 빠르고 간편하며")}<br />
+              {translate("모두의 불안한 배송에 대한 안전한 물류를 자랑으로 합니다.")}
             </ContentSubTitle>
             <Row style={{ justifyContent: 'space-between' }}>
               <Col style={{ marginRight: '0.25rem', maxWidth: '300px' }}>
                 <img src="/qietu/Group 7.png" style={{ maxHeight: '100px', height: '25%', margin: '0 auto' }} />
                 <Content>
-                  한글검색 지원
+                  {translate("한글검색 지원")}
                 </Content>
                 <ContentSub>
-                  언어장벽 없는 상품정보 검색
+                  {translate("언어장벽 없는 상품정보 검색")}
                 </ContentSub>
               </Col>
               <Col style={{ marginRight: '0.25rem', marginLeft: '0.25rem', maxWidth: '300px' }}>
                 <img src="/qietu/Group 8.png" style={{ maxHeight: '100px', height: '25%', margin: '0 auto' }} />
                 <Content>
-                  초고속 주문가능
+                  {translate("초고속 주문가능")}
                 </Content>
                 <ContentSub>
-                  상품재고 / 가격 빠르게 선택주문가능
+                  {translate("상품재고 / 가격 빠르게 선택주문가능")}
                 </ContentSub>
               </Col>
               <Col style={{ marginRight: '0.25rem', marginLeft: '0.25rem', maxWidth: '300px' }}>
                 <img src="/qietu/Group 9.png" style={{ maxHeight: '100px', height: '25%', margin: '0 auto' }} />
                 <Content>
-                  원화결제 가능
+                  {translate("원화결제 가능")}
                 </Content>
                 <ContentSub>
-                  국내 결제대행사 연동지원 안전거래가능
+                  {translate("국내 결제대행사 연동지원 안전거래가능")}
                 </ContentSub>
               </Col>
               <Col style={{ marginLeft: '0.25rem', maxWidth: '300px' }}>
                 <img src="/qietu/Group 10.png" style={{ maxHeight: '100px', height: '25%', margin: '0 auto' }} />
                 <Content>
-                  배송위치확인
+                  {translate("배송위치확인")}
                 </Content>
                 <ContentSub>
-                  알 길 없던 중국내 배송현황 확인
+                  {translate("알 길 없던 중국내 배송현황 확인")}
                 </ContentSub>
               </Col>
             </Row>

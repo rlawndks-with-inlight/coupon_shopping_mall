@@ -14,6 +14,7 @@ import { useSettingsContext } from 'src/components/settings';
 import { apiManager } from 'src/utils/api';
 import { useLocales } from 'src/locales';
 import { generateRandomString } from 'src/utils/function';
+import { Upload } from 'src/components/upload'
 
 const Wrappers = styled.div`
 max-width:1000px;
@@ -375,6 +376,76 @@ const SignUpDemo = (props) => {
               // </>}
               />
             </FormControl>
+            <TextField
+              label={translate('회사명')}
+              onChange={(e) => {
+                setUser({ ...user, ['company_name']: e.target.value })
+              }}
+              value={user.company_name}
+              style={inputStyle}
+              autoComplete='new-password'
+              onKeyPress={(e) => {
+                if (e.key == 'Enter') {
+                }
+              }}
+            />
+            <TextField
+              label={translate('사업자등록번호')}
+              onChange={(e) => {
+                setUser({ ...user, ['business_num']: e.target.value })
+              }}
+              value={user.business_num}
+              style={inputStyle}
+              autoComplete='new-password'
+              onKeyPress={(e) => {
+                if (e.key == 'Enter') {
+                }
+              }}
+            />
+            <Typography variant='subtitle2' sx={{ color: 'text.secondary', marginTop: '10px' }}>
+              {translate("계약서 사본")}
+            </Typography>
+            <Upload
+              onDrop={acceptedFiles => {
+                const newFile = acceptedFiles[0]
+                if (newFile) {
+                  setUser({
+                    ...user,
+                    ['contract_img']: Object.assign(newFile, {
+                      preview: URL.createObjectURL(newFile)
+                    })
+                  })
+                }
+              }}
+              onDelete={() => {
+                setUser({
+                  ...user,
+                  ['contract_img']: '',
+                })
+              }}
+            />
+            <Typography variant='subtitle2' sx={{ color: 'text.secondary', marginTop: '10px' }}>
+              {translate("사업자등록증 사본")}
+            </Typography>
+            <Upload
+              onDrop={acceptedFiles => {
+                const newFile = acceptedFiles[0]
+                if (newFile) {
+                  setUser({
+                    ...user,
+                    ['bsin_lic_img']: Object.assign(newFile, {
+                      preview: URL.createObjectURL(newFile)
+                    })
+                  })
+                }
+              }}
+              onDelete={() => {
+                setUser({
+                  ...user,
+                  ['bsin_lic_img']: '',
+                })
+              }}
+            />
             {themeDnsData?.is_use_otp == 1 &&
               <>
                 <TextField

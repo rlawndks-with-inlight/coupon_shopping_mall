@@ -179,6 +179,11 @@ const SignUpDemo = (props) => {
       ) {
         toast.error(translate("필수 항목을 입력해 주세요."));
         return;
+      } else if (
+        user.password != user.passwordCheck
+      ) {
+        toast.error("비밀번호 확인란을 똑같이 입력했는지 확인해주세요");
+        return;
       }
       let result = await apiManager('auth/sign-up', 'create', { ...user, brand_id: themeDnsData?.id });
       if (!result) {
@@ -406,12 +411,13 @@ const SignUpDemo = (props) => {
               {translate("계약서 사본")}
             </Typography>
             <Upload
+              file={user.contract_file || user.contract_img}
               onDrop={acceptedFiles => {
                 const newFile = acceptedFiles[0]
                 if (newFile) {
                   setUser({
                     ...user,
-                    ['contract_img']: Object.assign(newFile, {
+                    ['contract_file']: Object.assign(newFile, {
                       preview: URL.createObjectURL(newFile)
                     })
                   })
@@ -420,6 +426,7 @@ const SignUpDemo = (props) => {
               onDelete={() => {
                 setUser({
                   ...user,
+                  ['contract_file']: undefined,
                   ['contract_img']: '',
                 })
               }}
@@ -428,12 +435,13 @@ const SignUpDemo = (props) => {
               {translate("사업자등록증 사본")}
             </Typography>
             <Upload
+              file={user.bsin_lic_file || user.bsin_lic_img}
               onDrop={acceptedFiles => {
                 const newFile = acceptedFiles[0]
                 if (newFile) {
                   setUser({
                     ...user,
-                    ['bsin_lic_img']: Object.assign(newFile, {
+                    ['bsin_lic_file']: Object.assign(newFile, {
                       preview: URL.createObjectURL(newFile)
                     })
                   })
@@ -442,6 +450,7 @@ const SignUpDemo = (props) => {
               onDelete={() => {
                 setUser({
                   ...user,
+                  ['bsin_lic_file']: undefined,
                   ['bsin_lic_img']: '',
                 })
               }}

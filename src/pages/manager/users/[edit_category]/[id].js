@@ -14,7 +14,7 @@ import { userLevelList } from "src/utils/format";
 
 const UserEdit = () => {
   const { setModal } = useModal()
-  const { themeMode } = useSettingsContext();
+  const { themeMode, themeDnsData } = useSettingsContext();
 
   const { user } = useAuthContext();
   const router = useRouter();
@@ -88,6 +88,54 @@ const UserEdit = () => {
                         }
                       )
                     }}
+                    />
+                    <Typography variant='subtitle2' sx={{ color: 'text.secondary', marginTop: '10px' }}>
+                      계약서 사본
+                    </Typography>
+                    <Upload
+                      file={item.contract_file || item.contract_img}
+                      onDrop={acceptedFiles => {
+                        const newFile = acceptedFiles[0]
+                        if (newFile) {
+                          setItem({
+                            ...item,
+                            ['contract_file']: Object.assign(newFile, {
+                              preview: URL.createObjectURL(newFile)
+                            })
+                          })
+                        }
+                      }}
+                      onDelete={() => {
+                        setItem({
+                          ...item,
+                          ['contract_file']: undefined,
+                          ['contract_img']: '',
+                        })
+                      }}
+                    />
+                    <Typography variant='subtitle2' sx={{ color: 'text.secondary', marginTop: '10px' }}>
+                      사업자등록증 사본
+                    </Typography>
+                    <Upload
+                      file={item.bsin_lic_file || item.bsin_lic_img}
+                      onDrop={acceptedFiles => {
+                        const newFile = acceptedFiles[0]
+                        if (newFile) {
+                          setItem({
+                            ...item,
+                            ['bsin_lic_file']: Object.assign(newFile, {
+                              preview: URL.createObjectURL(newFile)
+                            })
+                          })
+                        }
+                      }}
+                      onDelete={() => {
+                        setItem({
+                          ...item,
+                          ['bsin_lic_file']: undefined,
+                          ['bsin_lic_img']: '',
+                        })
+                      }}
                     />
                   </Stack>
                 </Stack>
@@ -176,6 +224,35 @@ const UserEdit = () => {
                         }
                       )
                     }} />
+                  {
+                    themeDnsData?.id == 34 &&
+                    <>
+                      <TextField
+                        label='회사명'
+                        value={item.company_name}
+                        placeholder=""
+                        onChange={(e) => {
+                          setItem(
+                            {
+                              ...item,
+                              ['company_name']: e.target.value
+                            }
+                          )
+                        }} />
+                      <TextField
+                        label='전화번호'
+                        value={item.business_num}
+                        placeholder=""
+                        onChange={(e) => {
+                          setItem(
+                            {
+                              ...item,
+                              ['business_num']: e.target.value
+                            }
+                          )
+                        }} />
+                    </>
+                  }
                   <Stack spacing={1}>
                     <TextField
                       fullWidth

@@ -179,8 +179,10 @@ const SignUpDemo = (props) => {
       ) {
         toast.error(translate("필수 항목을 입력해 주세요."));
         return;
-      } else if (
-        user.password != user.passwordCheck
+      }
+
+      if (
+        user.user_pw != user.passwordCheck
       ) {
         toast.error("비밀번호 확인란을 똑같이 입력했는지 확인해주세요");
         return;

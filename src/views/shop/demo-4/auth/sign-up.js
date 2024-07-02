@@ -124,7 +124,7 @@ const SignUpDemo = (props) => {
   const [user, setUser] = useState({
     user_name: '',
     user_pw: '',
-    passwordCheck: '',
+    user_pw_check: '',
     name: '',
     nickname: '',
     phone_num: '',
@@ -169,14 +169,14 @@ const SignUpDemo = (props) => {
       if (
         !user.user_name ||
         !user.user_pw ||
-        !user.passwordCheck ||
+        !user.user_pw_check ||
         !user.nickname ||
         !user.phone_num
       ) {
         toast.error("필수 항목을 입력해 주세요.");
         return;
       } else if (
-        user.password != user.passwordCheck
+        user.user_pw != user.user_pw_check
       ) {
         toast.error("비밀번호 확인란을 똑같이 입력했는지 확인해주세요");
         return;
@@ -361,10 +361,10 @@ const SignUpDemo = (props) => {
             <TextField
               label='비밀번호 확인'
               onChange={(e) => {
-                setUser({ ...user, ['passwordCheck']: e.target.value })
+                setUser({ ...user, ['user_pw_check']: e.target.value })
               }}
               type='password'
-              value={user.passwordCheck}
+              value={user.user_pw_check}
               style={inputStyle}
               autoComplete='new-password'
               onKeyPress={(e) => {

@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types';
-import { Button, Checkbox, Divider, FormControl, FormControlLabel, InputAdornment, InputLabel, OutlinedInput, Step, StepConnector, StepLabel, Stepper, TextField, Typography, stepConnectorClasses } from '@mui/material';
+import { Button, Checkbox, Divider, FormControl, FormControlLabel, InputAdornment, InputLabel, MenuItem, OutlinedInput, Step, StepConnector, StepLabel, Stepper, TextField, Typography, stepConnectorClasses, Select } from '@mui/material';
 import { useEffect, useState } from 'react';
 import { Col, Row, Title, themeObj } from 'src/components/elements/styled-components';
 import styled from 'styled-components'
@@ -127,7 +127,7 @@ const SignUpDemo = (props) => {
   const [user, setUser] = useState({
     user_name: '',
     user_pw: '',
-    passwordCheck: '',
+    user_pw_check: '',
     name: '',
     nickname: '',
     phone_num: '',
@@ -173,7 +173,7 @@ const SignUpDemo = (props) => {
       if (
         !user.user_name ||
         !user.user_pw ||
-        !user.passwordCheck ||
+        !user.user_pw_check ||
         !user.nickname ||
         !user.phone_num
       ) {
@@ -182,7 +182,7 @@ const SignUpDemo = (props) => {
       }
 
       if (
-        user.user_pw != user.passwordCheck
+        user.user_pw != user.user_pw_check
       ) {
         toast.error("비밀번호 확인란을 똑같이 입력했는지 확인해주세요");
         return;
@@ -325,10 +325,10 @@ const SignUpDemo = (props) => {
             <TextField
               label={translate('비밀번호확인')}
               onChange={(e) => {
-                setUser({ ...user, ['passwordCheck']: e.target.value })
+                setUser({ ...user, ['user_pw_check']: e.target.value })
               }}
               type='password'
-              value={user.passwordCheck}
+              value={user.user_pw_check}
               style={inputStyle}
               autoComplete='new-password'
               onKeyPress={(e) => {
@@ -409,6 +409,59 @@ const SignUpDemo = (props) => {
                 }
               }}
             />
+            <TextField
+              label={translate('예금주명')}
+              onChange={(e) => {
+                setUser({ ...user, ['acct_name']: e.target.value })
+              }}
+              value={user.acct_name}
+              style={inputStyle}
+              autoComplete='new-password'
+              onKeyPress={(e) => {
+                if (e.key == 'Enter') {
+                }
+              }}
+            />
+            <TextField
+              label={translate('은행')}
+              onChange={(e) => {
+                setUser({ ...user, ['acct_bank_name']: e.target.value })
+              }}
+              value={user.acct_bank_name}
+              style={inputStyle}
+              select
+            >
+              <MenuItem value='국민'>국민</MenuItem>
+              <MenuItem value='농협'>농협</MenuItem>
+              <MenuItem value='신한'>신한</MenuItem>
+              <MenuItem value='우리'>우리</MenuItem>
+              <MenuItem value='기업'>기업</MenuItem>
+              <MenuItem value='하나'>하나</MenuItem>
+              <MenuItem value='새마을'>새마을</MenuItem>
+              <MenuItem value='부산'>부산</MenuItem>
+              <MenuItem value='대구'>대구</MenuItem>
+              <MenuItem value='신협'>신협</MenuItem>
+              <MenuItem value='제일'>제일</MenuItem>
+              <MenuItem value='경남'>경남</MenuItem>
+              <MenuItem value='광주'>광주</MenuItem>
+              <MenuItem value='수협'>수협</MenuItem>
+              <MenuItem value='전북'>전북</MenuItem>
+              <MenuItem value='시티'>시티</MenuItem>
+              <MenuItem value='산업'>산업</MenuItem>
+              </TextField>
+            <TextField
+              label={translate('계좌번호')}
+              onChange={(e) => {
+                setUser({ ...user, ['acct_num']: e.target.value })
+              }}
+              value={user.acct_num}
+              style={inputStyle}
+              autoComplete='new-password'
+              onKeyPress={(e) => {
+                if (e.key == 'Enter') {
+                }
+              }}
+            />
             <Typography variant='subtitle2' sx={{ color: 'text.secondary', marginTop: '10px' }}>
               {translate("계약서 사본")}
             </Typography>
@@ -454,6 +507,54 @@ const SignUpDemo = (props) => {
                   ...user,
                   ['bsin_lic_file']: undefined,
                   ['bsin_lic_img']: '',
+                })
+              }}
+            />
+            <Typography variant='subtitle2' sx={{ color: 'text.secondary', marginTop: '10px' }}>
+              {translate("주주명부 사본")}
+            </Typography>
+            <Upload
+              file={user.shareholer_file || user.shareholder_img}
+              onDrop={acceptedFiles => {
+                const newFile = acceptedFiles[0]
+                if (newFile) {
+                  setUser({
+                    ...user,
+                    ['shareholder_file']: Object.assign(newFile, {
+                      preview: URL.createObjectURL(newFile)
+                    })
+                  })
+                }
+              }}
+              onDelete={() => {
+                setUser({
+                  ...user,
+                  ['shareholer_file']: undefined,
+                  ['shareholder_img']: '',
+                })
+              }}
+            />
+            <Typography variant='subtitle2' sx={{ color: 'text.secondary', marginTop: '10px' }}>
+              {translate("등기부 사본")}
+            </Typography>
+            <Upload
+              file={user.register_file || user.register_img}
+              onDrop={acceptedFiles => {
+                const newFile = acceptedFiles[0]
+                if (newFile) {
+                  setUser({
+                    ...user,
+                    ['register_file']: Object.assign(newFile, {
+                      preview: URL.createObjectURL(newFile)
+                    })
+                  })
+                }
+              }}
+              onDelete={() => {
+                setUser({
+                  ...user,
+                  ['register_file']: undefined,
+                  ['register_img']: '',
                 })
               }}
             />

@@ -448,7 +448,7 @@ const SignUpDemo = (props) => {
               <MenuItem value='전북'>전북</MenuItem>
               <MenuItem value='시티'>시티</MenuItem>
               <MenuItem value='산업'>산업</MenuItem>
-              </TextField>
+            </TextField>
             <TextField
               label={translate('계좌번호')}
               onChange={(e) => {
@@ -514,7 +514,7 @@ const SignUpDemo = (props) => {
               {translate("주주명부 사본")}
             </Typography>
             <Upload
-              file={user.shareholer_file || user.shareholder_img}
+              file={user.shareholder_file || user.shareholder_img}
               onDrop={acceptedFiles => {
                 const newFile = acceptedFiles[0]
                 if (newFile) {
@@ -529,7 +529,7 @@ const SignUpDemo = (props) => {
               onDelete={() => {
                 setUser({
                   ...user,
-                  ['shareholer_file']: undefined,
+                  ['shareholder_file']: undefined,
                   ['shareholder_img']: '',
                 })
               }}

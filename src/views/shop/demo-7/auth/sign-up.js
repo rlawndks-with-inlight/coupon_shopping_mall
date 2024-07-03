@@ -530,7 +530,7 @@ const SignUpDemo = (props) => {
                 setUser({
                   ...user,
                   ['shareholder_file']: undefined,
-                  ['shareholder_img']: '',
+                  ['shareholder_list']: '',
                 })
               }}
             />

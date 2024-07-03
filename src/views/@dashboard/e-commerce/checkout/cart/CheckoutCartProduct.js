@@ -11,6 +11,9 @@ import { ColorPreview } from 'src/components/color-utils';
 import { IncrementerButton } from 'src/components/custom-input';
 import _ from 'lodash';
 import { commarNumber } from 'src/utils/function';
+import { useSettingsContext } from 'src/components/settings';
+import { formatLang } from 'src/utils/format';
+import { useLocales } from 'src/locales';
 
 // ----------------------------------------------------------------------
 
@@ -22,6 +25,9 @@ CheckoutCartProduct.propTypes = {
 };
 export default function CheckoutCartProduct({ row, onDelete, onDecrease, onIncrease, calculatorPrice }) {
   const { product_name, product_comment, size, price, colors, cover, available, delivery_fee, product_sale_price, groups, order_count, product_price, product_img } = row;
+  const { themeDnsData } = useSettingsContext();
+  const { currentLang, translate } = useLocales();
+
 
   return (
     <TableRow>
@@ -34,7 +40,12 @@ export default function CheckoutCartProduct({ row, onDelete, onDecrease, onIncre
 
         <Stack spacing={0.5}>
           <Typography noWrap variant="subtitle2" sx={{ maxWidth: 240 }}>
-            {product_name}
+            {
+              themeDnsData?.setting_obj?.is_use_lang == 1 ?
+                formatLang(row, 'product_name', currentLang)
+                :
+                product_name
+            }
           </Typography>
           <Stack
             direction="row"

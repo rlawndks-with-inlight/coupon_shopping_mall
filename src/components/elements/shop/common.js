@@ -29,6 +29,7 @@ import { Col, Row, themeObj } from '../styled-components'
 import { insertCartDataUtil, insertWishDataUtil } from 'src/utils/shop-util'
 import { useLocales } from 'src/locales'
 import { useRouter } from 'next/router'
+import { formatLang } from 'src/utils/format'
 
 
 const ItemsContainer = styled.div`
@@ -386,8 +387,8 @@ export const AddressTable = props => {
 }
 export const WishTable = props => {
   const { wishContent, onDelete } = props
-  const { translate } = useLocales();
-  const { themeWishData, onChangeWishData, themeCartData, onChangeCartData } = useSettingsContext();
+  const { translate, currentLang } = useLocales();
+  const { themeWishData, onChangeWishData, themeCartData, onChangeCartData, themeDnsData } = useSettingsContext();
   const TABLE_HEAD = [
     { id: 'product_img', label: translate('상품') },
     { id: 'product_name', label: translate('상품명') },
@@ -412,7 +413,14 @@ export const WishTable = props => {
                         sx={{ width: 64, height: 64, borderRadius: 1.5, mr: 2 }}
                       />
                     </TableCell>
-                    <TableCell>{row?.product_name}</TableCell>
+                    <TableCell>
+                      {
+                        themeDnsData?.setting_obj?.is_use_lang == 1 ?
+                          formatLang(row, 'product_name', currentLang)
+                          :
+                          row?.product_name
+                      }
+                    </TableCell>
                     <TableCell>
                       {row?.product_price > row?.product_sale_price && (
                         <Box

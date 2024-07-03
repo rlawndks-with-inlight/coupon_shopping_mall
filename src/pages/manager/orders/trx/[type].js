@@ -291,30 +291,62 @@ const TrxList = () => {
         }
       },
     },
-    {
-      id: 'edit',
-      label: `삭제`,
-      action: (row) => {
-        return (
-          <>
-            {/* <IconButton>
-              <Icon icon='material-symbols:edit-outline' onClick={() => {
-                router.push(`default/${row?.id}`)
-              }} />
-            </IconButton> */}
-            <IconButton onClick={() => {
-              setModal({
-                func: () => { deleteTrx(row?.id) },
-                icon: 'material-symbols:delete-outline',
-                title: '정말 삭제하시겠습니까?'
-              })
-            }}>
-              <Icon icon='material-symbols:delete-outline' />
-            </IconButton>
-          </>
-        )
-      }
-    },
+    ...(themeDnsData?.id == 34 ? [
+      {
+        id: 'edit',
+        label: `수정 / 삭제`,
+        action: (row) => {
+          return (
+            <>
+              {/* <IconButton>
+                <Icon icon='material-symbols:edit-outline' onClick={() => {
+                  router.push(`default/${row?.id}`)
+                }} />
+              </IconButton> */}
+              <IconButton>
+                <Icon icon='material-symbols:edit-outline' onClick={() => {
+                  router.push(`/manager/orders/edit/${row?.id}`)
+                }} />
+              </IconButton>
+              <IconButton onClick={() => {
+                setModal({
+                  func: () => { deleteTrx(row?.id) },
+                  icon: 'material-symbols:delete-outline',
+                  title: '정말 삭제하시겠습니까?'
+                })
+              }}>
+                <Icon icon='material-symbols:delete-outline' />
+              </IconButton>
+            </>
+          )
+        }
+      },
+    ] : [
+      {
+        id: 'edit',
+        label: `삭제`,
+        action: (row) => {
+          return (
+            <>
+              {/* <IconButton>
+                <Icon icon='material-symbols:edit-outline' onClick={() => {
+                  router.push(`default/${row?.id}`)
+                }} />
+              </IconButton> */}
+              <IconButton onClick={() => {
+                setModal({
+                  func: () => { deleteTrx(row?.id) },
+                  icon: 'material-symbols:delete-outline',
+                  title: '정말 삭제하시겠습니까?'
+                })
+              }}>
+                <Icon icon='material-symbols:delete-outline' />
+              </IconButton>
+            </>
+          )
+        }
+      },
+    ])
   ]
   const router = useRouter();
   const [columns, setColumns] = useState([]);

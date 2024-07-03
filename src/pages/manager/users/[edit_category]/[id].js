@@ -137,6 +137,54 @@ const UserEdit = () => {
                         })
                       }}
                     />
+                    <Typography variant='subtitle2' sx={{ color: 'text.secondary', marginTop: '10px' }}>
+                      주주명부 사본
+                    </Typography>
+                    <Upload
+                      file={item.shareholder_file || item.shareholder_img}
+                      onDrop={acceptedFiles => {
+                        const newFile = acceptedFiles[0]
+                        if (newFile) {
+                          setItem({
+                            ...item,
+                            ['shareholder_file']: Object.assign(newFile, {
+                              preview: URL.createObjectURL(newFile)
+                            })
+                          })
+                        }
+                      }}
+                      onDelete={() => {
+                        setItem({
+                          ...item,
+                          ['shareholder_file']: undefined,
+                          ['shareholder_img']: '',
+                        })
+                      }}
+                    />
+                    <Typography variant='subtitle2' sx={{ color: 'text.secondary', marginTop: '10px' }}>
+                      등기부 사본
+                    </Typography>
+                    <Upload
+                      file={item.register_file || item.register_img}
+                      onDrop={acceptedFiles => {
+                        const newFile = acceptedFiles[0]
+                        if (newFile) {
+                          setItem({
+                            ...item,
+                            ['register_file']: Object.assign(newFile, {
+                              preview: URL.createObjectURL(newFile)
+                            })
+                          })
+                        }
+                      }}
+                      onDelete={() => {
+                        setItem({
+                          ...item,
+                          ['register_file']: undefined,
+                          ['register_img']: '',
+                        })
+                      }}
+                    />
                   </Stack>
                 </Stack>
               </Card>
@@ -240,7 +288,7 @@ const UserEdit = () => {
                           )
                         }} />
                       <TextField
-                        label='전화번호'
+                        label='사업자등록번호'
                         value={item.business_num}
                         placeholder=""
                         onChange={(e) => {
@@ -251,6 +299,52 @@ const UserEdit = () => {
                             }
                           )
                         }} />
+                      <TextField
+                        label='예금주명'
+                        value={item.acct_name}
+                        placeholder=""
+                        onChange={(e) => {
+                          setItem(
+                            {
+                              ...item,
+                              ['acct_name']: e.target.value
+                            }
+                          )
+                        }} />
+                      <TextField
+                        label='은행'
+                        onChange={(e) => {
+                          setUser({ ...user, ['acct_bank_name']: e.target.value })
+                        }}
+                        value={user.acct_bank_name}
+                        select
+                      >
+                        <MenuItem value='국민'>국민</MenuItem>
+                        <MenuItem value='농협'>농협</MenuItem>
+                        <MenuItem value='신한'>신한</MenuItem>
+                        <MenuItem value='우리'>우리</MenuItem>
+                        <MenuItem value='기업'>기업</MenuItem>
+                        <MenuItem value='하나'>하나</MenuItem>
+                        <MenuItem value='새마을'>새마을</MenuItem>
+                        <MenuItem value='부산'>부산</MenuItem>
+                        <MenuItem value='대구'>대구</MenuItem>
+                        <MenuItem value='신협'>신협</MenuItem>
+                        <MenuItem value='제일'>제일</MenuItem>
+                        <MenuItem value='경남'>경남</MenuItem>
+                        <MenuItem value='광주'>광주</MenuItem>
+                        <MenuItem value='수협'>수협</MenuItem>
+                        <MenuItem value='전북'>전북</MenuItem>
+                        <MenuItem value='시티'>시티</MenuItem>
+                        <MenuItem value='산업'>산업</MenuItem>
+                      </TextField>
+                      <TextField
+                        label='계좌번호'
+                        onChange={(e) => {
+                          setUser({ ...user, ['acct_num']: e.target.value })
+                        }}
+                        value={user.acct_num}
+                        placeholder=""
+                      />
                     </>
                   }
                   <Stack spacing={1}>

@@ -75,6 +75,28 @@ export default function Upload({
 
   const isError = isDragReject || !!error;
 
+  const downloadFile = () => {
+    if (file && typeof file === 'string') {
+      // file이 URL 문자열인 경우
+      const link = document.createElement('a');
+      link.href = file;
+      link.download = file.split('/').pop(); // URL에서 파일명 추출
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    } else if (file && file instanceof File) {
+      // file이 File 객체인 경우
+      const url = URL.createObjectURL(file);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = file.name;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+    }
+  };
+
   return (
     <Box sx={{ width: 1, position: 'relative', ...sx }}>
       <StyledDropZone
@@ -101,7 +123,16 @@ export default function Upload({
       >
         <input {...getInputProps()} />
         {hasFile ?
-          <SingleFilePreview file={file} />
+          <>
+            <SingleFilePreview file={file} />
+            {/*<Button
+              variant="contained"
+              onClick={downloadFile}
+              sx={{ mt: 2 }}
+            >
+              다운로드
+            </Button>*/}
+          </>
           :
           <>
             {other?.not_explain_text ?

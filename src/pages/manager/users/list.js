@@ -20,7 +20,7 @@ const UserList = () => {
       id: 'profile_img',
       label: '유저프로필',
       action: (row) => {
-        return <Avatar src={row['profile_img'] ?? "---"} />
+        return <Avatar src={row['profile_img'] ?? "---"} onClick={() => { router.push(`view/${row?.id}`) }} style={{ cursor: 'pointer' }} />
       }
     },
     {
@@ -161,9 +161,9 @@ const UserList = () => {
   }, [
     router.query.page,
     router.query.page_size,
-    router.query.s_dt, 
-    router.query.e_dt, 
-    router.query.search, 
+    router.query.s_dt,
+    router.query.e_dt,
+    router.query.search,
     router.query.order
   ])
 
@@ -174,7 +174,7 @@ const UserList = () => {
     let query_str = new URLSearchParams(query).toString();
     router.push(`/manager/users/list?${query_str}`);
 
-    setSearchObj({...search_obj, ...query});
+    setSearchObj({ ...search_obj, ...query });
     setData({
       ...data,
       content: undefined

@@ -15,6 +15,8 @@ import { apiManager, apiUtil } from "src/utils/api";
 import { useAuthContext } from "src/layouts/manager/auth/useAuthContext";
 import _ from "lodash";
 import dynamic from "next/dynamic";
+import { useLocales } from "src/locales";
+import { formatLang } from "src/utils/format";
 
 const ReactQuill = dynamic(() => import('react-quill'), {
   ssr: false,
@@ -26,6 +28,7 @@ const ProductList = () => {
   const { user } = useAuthContext();
   const { setModal } = useModal()
   const { themeCategoryList, themeDnsData, themePropertyList } = useSettingsContext();
+  const { currentLang, translate } = useLocales();
   const defaultColumns = [
     /*{
       id: 'id',
@@ -69,7 +72,12 @@ const ProductList = () => {
             router.push(`edit/${row?.id}`)
           }}
         >
-          {row['product_name']}
+          {
+            themeDnsData?.id == 34 ?
+              formatLang(row, 'product_name', currentLang)
+              :
+              row['product_name']
+          }
         </div> ?? "---"
       }
     },

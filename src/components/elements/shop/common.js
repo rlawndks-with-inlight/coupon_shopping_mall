@@ -1,5 +1,5 @@
 import styled from 'styled-components'
-import { commarNumber, getPointType } from 'src/utils/function'
+import { commarNumber, getPointType, getPriceUnitByLang, setProductPriceByLang } from 'src/utils/function'
 import { itemThemeCssDefaultSetting } from 'src/views/manager/item-card/setting'
 import { useEffect, useState } from 'react'
 import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, IconButton, TextField } from '@mui/material'
@@ -197,7 +197,7 @@ export const Items = props => {
 
 export const HistoryTable = props => {
   const { historyContent, onChangePage, searchObj } = props
-  const { translate } = useLocales();
+  const { translate, currentLang } = useLocales();
   const router = useRouter();
   const TABLE_HEAD = [
     { id: 'product', label: translate('상품') },
@@ -205,6 +205,7 @@ export const HistoryTable = props => {
     { id: 'amount', label: translate('총액') },
     { id: 'buyer_name', label: translate('구매자명') },
     { id: 'trx_status', label: translate('배송상태') },
+    { id: 'trx_date', label: translate('주문일'), align: 'right' },
     { id: 'date', label: translate('업데이트일'), align: 'right' },
     { id: 'cancel', label: translate('주문취소요청'), align: 'right' },
     { id: '' },
@@ -217,6 +218,7 @@ export const HistoryTable = props => {
       onChangePage(searchObj)
     }
   }
+  console.log(historyContent)
   return (
     <>
       <TableContainer>
@@ -241,20 +243,66 @@ export const HistoryTable = props => {
                         sx={{ width: 64, height: 64, borderRadius: 1.5, mr: 2 }}
                       />
                       <Row>
-                        <Typography noWrap variant='subtitle2' sx={{ maxWidth: 240, textDecoration: 'underline' }}>
-                          {row.item_name}
-                        </Typography>
-                      </Row>
-                      <Row>
-                        <Typography noWrap variant='subtitle2' sx={{ maxWidth: 240 }}>
-                          ({row?.orders ? row.orders[0]?.product_code : ''})
-                        </Typography>
+                        <Col>
+                          {row?.orders && row?.orders.map((order, index) => (
+                            <>
+                              <Col>
+                                <Row>
+                                  <div style={{ minWidth: '62px', fontWeight: 'bold' }} >{index + 1}.</div>
+                                  <div style={{ whiteSpace: 'nowrap', cursor: 'pointer' }}
+                                    onClick={() => { window.open(`/manager/products/edit/${order?.product_id}`) }}>
+                                    {/* {order?.order_name} */}
+                                    {formatLang(order, 'product_name', currentLang)}
+                                  </div>
+                                </Row>
+                                {order?.groups.length > 0 &&
+                                  <>
+                                    <Row>
+                                      <div style={{ minWidth: '62px' }}>옵션정보: </div>
+                                      <Col>
+                                        {order?.groups && order?.groups.map((group, idx) => (
+                                          <>
+                                            <Row>
+                                              <div style={{ minWidth: '62px', marginRight: '0.25rem' }}>{group?.group_name}: </div>
+                                              {group?.options && group?.options.map((option, idx2) => (
+                                                <>
+                                                  <div>{option?.option_name} ({option?.option_price > 0 ? '+' : ''}{option?.option_price})</div>{idx2 == group?.options.length - 1 ? '' : <>&nbsp;/&nbsp;</>}
+                                                </>
+                                              ))}
+                                            </Row>
+                                          </>
+                                        ))}
+                                      </Col>
+                                    </Row>
+                                  </>}
+                                <Row>
+                                  <div style={{ minWidth: '62px' }}>{translate('가격')}: </div>
+                                  <div>{commarNumber(setProductPriceByLang(order, 'order_amount', 'ko', currentLang?.value))} {getPriceUnitByLang(currentLang?.value)}</div>
+                                </Row>
+                                <Row>
+                                  <div style={{ minWidth: '62px' }}>{translate('배송비')}: </div>
+                                  <div>{commarNumber(setProductPriceByLang(order, 'delivery_fee', 'ko', currentLang?.value))} {getPriceUnitByLang(currentLang?.value)}</div>
+                                </Row>
+                                {order?.seller_id > 0 &&
+                                  <>
+                                    <Row>
+                                      <div style={{ minWidth: '62px' }}>셀러아이디: </div>
+                                      <div>{order?.seller_user_name}</div>
+                                    </Row>
+                                  </>}
+                              </Col>
+                            </>
+                          ))}
+                        </Col>
                       </Row>
                     </TableCell>
                     <TableCell>{row.ord_num}</TableCell>
-                    <TableCell onClick={() => { console.log(row) }}>{fCurrency(row.amount)}원</TableCell>
+                    <TableCell onClick={() => { console.log(row) }}>{commarNumber(setProductPriceByLang(row, 'amount', 'ko', currentLang?.value))} {getPriceUnitByLang(currentLang?.value)}</TableCell>
                     <TableCell>{row?.buyer_name}</TableCell>
-                    <TableCell>{fCurrency(row.amount) < 0 ? '결제취소' : getTrxStatusByNumber(row?.trx_status)}</TableCell>
+                    <TableCell>{fCurrency(row.amount) < 0 ? '결제취소' : translate(getTrxStatusByNumber(row?.trx_status))}</TableCell>
+                    <TableCell>
+                      <Box sx={{ textAlign: 'right', color: 'text.secondary' }}>{row?.trx_dt ?? "---"} {row?.trx_tm ?? ""}</Box>
+                    </TableCell>
                     <TableCell>
                       <Box sx={{ textAlign: 'right', color: 'text.secondary' }}>{row?.updated_at}</Box>
                     </TableCell>
@@ -430,7 +478,7 @@ export const WishTable = props => {
                           {commarNumber(row?.product_price)}
                         </Box>
                       )}
-                      {commarNumber(row?.product_sale_price)}원
+                      {commarNumber(setProductPriceByLang(row, 'amount', 'ko', currentLang?.value))} {getPriceUnitByLang(currentLang?.value)}
                     </TableCell>
                     <TableCell>
                       <Button variant='outlined' onClick={() => {

@@ -171,6 +171,7 @@ const en = {
   "총액": "the total amount",
   "배송상태": "Delivery status",
   "업데이트일": "Update date",
+  "주문일": "Order date",
   "주문취소요청": "Order cancellation request",
   "취소요청이 완료되었습니다.": "Cancellation request has been completed.",
   "주문취소요청 하시겠습니까?": "Would you like to request cancellation of your order?",

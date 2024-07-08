@@ -10,7 +10,7 @@ import Iconify from 'src/components/iconify/Iconify';
 import { ColorPreview } from 'src/components/color-utils';
 import { IncrementerButton } from 'src/components/custom-input';
 import _ from 'lodash';
-import { commarNumber } from 'src/utils/function';
+import { commarNumber, getPriceUnitByLang, setProductPriceByLang } from 'src/utils/function';
 import { useSettingsContext } from 'src/components/settings';
 import { formatLang } from 'src/utils/format';
 import { useLocales } from 'src/locales';
@@ -85,7 +85,7 @@ export default function CheckoutCartProduct({ row, onDelete, onDecrease, onIncre
         </Stack>
       </TableCell>
       <TableCell>
-        {commarNumber(delivery_fee)}원
+        {commarNumber(setProductPriceByLang(row, 'delivery_fee', 'ko', currentLang?.value))} {getPriceUnitByLang(currentLang?.value)}
       </TableCell>
       <TableCell>
         {product_price > product_sale_price && (
@@ -93,10 +93,10 @@ export default function CheckoutCartProduct({ row, onDelete, onDecrease, onIncre
             component="span"
             sx={{ color: 'text.disabled', textDecoration: 'line-through', mr: 0.5 }}
           >
-            {commarNumber(product_price)}
+            {commarNumber(setProductPriceByLang(row, 'product_price', 'ko', currentLang?.value))} {getPriceUnitByLang(currentLang?.value)}
           </Box>
         )}
-        {commarNumber(product_sale_price)}원
+        {commarNumber(setProductPriceByLang(row, 'product_sale_price', 'ko', currentLang?.value))} {getPriceUnitByLang(currentLang?.value)}
       </TableCell>
       <TableCell>
         <Box sx={{ width: 96, textAlign: 'right' }}>
@@ -110,7 +110,7 @@ export default function CheckoutCartProduct({ row, onDelete, onDecrease, onIncre
         </Box>
       </TableCell>
 
-      <TableCell align="right">{fCurrency(calculatorPrice(row)?.total ?? 0)}원</TableCell>
+      <TableCell align="right">{commarNumber(setProductPriceByLang(calculatorPrice(row), 'total', 'ko', currentLang?.value))} {getPriceUnitByLang(currentLang?.value)}</TableCell>
 
       <TableCell align="right">
         <IconButton onClick={onDelete}>

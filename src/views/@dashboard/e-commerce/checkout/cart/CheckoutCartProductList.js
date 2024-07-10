@@ -18,6 +18,7 @@ export default function CheckoutCartProductList({
   onDelete,
   onIncreaseQuantity,
   onDecreaseQuantity,
+  onChangeQuantity,
 }) {
   const { translate } = useLocales();
   const TABLE_HEAD = [
@@ -41,6 +42,7 @@ export default function CheckoutCartProductList({
               onDelete={() => onDelete(idx)}
               onDecrease={() => onDecreaseQuantity(idx)}
               onIncrease={() => onIncreaseQuantity(idx)}
+              onChangeQuantity={(val) => onChangeQuantity(idx, val)}
               calculatorPrice={calculatorPrice}
             />
           ))}

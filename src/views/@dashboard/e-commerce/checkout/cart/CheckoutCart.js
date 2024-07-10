@@ -21,6 +21,7 @@ CheckoutCart.propTypes = {
   onApplyDiscount: PropTypes.func,
   onDecreaseQuantity: PropTypes.func,
   onIncreaseQuantity: PropTypes.func,
+  onChangeQuantity: PropTypes.func,
 };
 
 export default function CheckoutCart({
@@ -30,6 +31,7 @@ export default function CheckoutCart({
   onDeleteCart,
   onIncreaseQuantity,
   onDecreaseQuantity,
+  onChangeQuantity,
 }) {
   const { cart, total, discount, subtotal } = checkout;
 
@@ -59,6 +61,7 @@ export default function CheckoutCart({
               onDelete={onDeleteCart}
               onIncreaseQuantity={onIncreaseQuantity}
               onDecreaseQuantity={onDecreaseQuantity}
+              onChangeQuantity={onChangeQuantity}
             />
           ) : (
             <EmptyContent

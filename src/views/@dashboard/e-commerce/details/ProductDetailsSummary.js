@@ -213,6 +213,7 @@ export default function ProductDetailsSummary({ product, onAddCart, onGotoStep, 
                 quantity={selectProductGroups.count}
                 disabledDecrease={selectProductGroups.count <= 1}
                 disabledIncrease={selectProductGroups.count >= available}
+                type='product_page'
                 onIncrease={() => {
                   setSelectProductGroups({
                     ...selectProductGroups,
@@ -223,6 +224,12 @@ export default function ProductDetailsSummary({ product, onAddCart, onGotoStep, 
                   setSelectProductGroups({
                     ...selectProductGroups,
                     count: selectProductGroups.count - 1
+                  })
+                }}
+                onQuantityChange={(val) => {
+                  setSelectProductGroups({
+                    ...selectProductGroups,
+                    count: val
                   })
                 }}
               />

@@ -39,7 +39,7 @@ const WishDemo = (props) => {
   return (
     <>
       <Wrappers>
-        <Title>{translate('찜목록')}</Title>
+        <Title onClick={() => { console.log(wishList) }}>{translate('찜목록')}</Title>
         {wishList.length > 0 ?
           <>
             <Items items={wishList} router={router} />

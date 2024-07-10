@@ -157,6 +157,11 @@ const CartDemo = (props) => {
     product_list[idx].order_count++;
     setProducts(product_list)
   }
+  const onChangeQuantity = (idx, val) => {
+    let product_list = [...products];
+    product_list[idx].order_count = val;
+    setProducts(product_list)
+  }
   const onClickNextStep = () => {
     if (activeStep == 0) {
 
@@ -293,6 +298,7 @@ const CartDemo = (props) => {
                         onDelete={onDelete}
                         onDecreaseQuantity={onDecreaseQuantity}
                         onIncreaseQuantity={onIncreaseQuantity}
+                        onChangeQuantity={onChangeQuantity}
                       />
                     </>
                     :

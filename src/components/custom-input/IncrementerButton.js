@@ -1,61 +1,101 @@
 import PropTypes from 'prop-types';
-import { forwardRef } from 'react';
-// @mui
+import { forwardRef, useState } from 'react';
 import { alpha } from '@mui/material/styles';
-import { Stack, IconButton } from '@mui/material';
-// components
+import { Stack, IconButton, InputBase } from '@mui/material';
 import Iconify from '../iconify';
 
-// ----------------------------------------------------------------------
-
 const IncrementerButton = forwardRef(
-  ({ quantity, onIncrease, onDecrease, disabledIncrease, disabledDecrease, sx, ...other }, ref) => (
-    <Stack
-      ref={ref}
-      flexShrink={0}
-      direction="row"
-      alignItems="center"
-      justifyContent="space-between"
-      sx={{
-        mb: 0.5,
-        py: 0.5,
-        px: 0.75,
-        width: 96,
-        borderRadius: 1,
-        border: (theme) => `solid 1px ${alpha(theme.palette.grey[500], 0.32)}`,
-        ...sx,
-      }}
-      {...other}
-    >
-      <IconButton
-        size="small"
-        color="inherit"
-        onClick={onDecrease}
-        disabled={disabledDecrease}
-        sx={{ color: 'text.secondary' }}
-      >
-        <Iconify icon="eva:minus-fill" width={16} />
-      </IconButton>
+  ({ quantity, onIncrease, onDecrease, onQuantityChange, disabledIncrease, disabledDecrease, sx, type, ...other }, ref) => {
+    const [localQuantity, setLocalQuantity] = useState(quantity);
 
-      {quantity}
+    const handleInputChange = (event) => {
+      const newValue = event.target.value;
+      setLocalQuantity(newValue);
+      if (onQuantityChange) {
+        onQuantityChange(Number(newValue));
+      }
+    };
 
-      <IconButton
-        size="small"
-        color="inherit"
-        onClick={onIncrease}
-        disabled={disabledIncrease}
-        sx={{ color: 'text.secondary' }}
+    const handleBlur = () => {
+      const validQuantity = Math.max(1, parseInt(localQuantity, 10) || 1);
+      setLocalQuantity(validQuantity);
+      if (onQuantityChange) {
+        onQuantityChange(validQuantity);
+      }
+    };
+
+    return (
+      <Stack
+        ref={ref}
+        flexShrink={0}
+        direction="row"
+        alignItems="center"
+        justifyContent="space-between"
+        sx={{
+          mb: 0.5,
+          py: 0.5,
+          px: 0.75,
+          width: 96,
+          borderRadius: 1,
+          border: (theme) => `solid 1px ${alpha(theme.palette.grey[500], 0.32)}`,
+          ...sx,
+        }}
+        {...other}
       >
-        <Iconify icon="eva:plus-fill" width={16} />
-      </IconButton>
-    </Stack>
-  )
+        <IconButton
+          size="small"
+          color="inherit"
+          onClick={onDecrease}
+          disabled={disabledDecrease}
+          sx={{ color: 'text.secondary' }}
+        >
+          <Iconify icon="eva:minus-fill" width={16} />
+        </IconButton>
+
+        {
+          type == 'product-page' ?
+            <InputBase
+              value={localQuantity}
+              onChange={handleInputChange}
+              onBlur={handleBlur}
+              inputProps={{
+                style: { textAlign: 'center' },
+                'aria-label': 'quantity',
+              }}
+              sx={{ width: 40 }}
+            />
+            :
+            <InputBase
+              value={quantity}
+              onChange={handleInputChange}
+              onBlur={handleBlur}
+              inputProps={{
+                style: { textAlign: 'center' },
+                'aria-label': 'quantity',
+              }}
+              sx={{ width: 40 }}
+            />
+        }
+
+        <IconButton
+          size="small"
+          color="inherit"
+          onClick={onIncrease}
+          disabled={disabledIncrease}
+          sx={{ color: 'text.secondary' }}
+        >
+          <Iconify icon="eva:plus-fill" width={16} />
+        </IconButton>
+      </Stack>
+    );
+  }
 );
 
 IncrementerButton.propTypes = {
   sx: PropTypes.object,
   onDecrease: PropTypes.func,
   onIncrease: PropTypes.func,
+  onQuantityChange: PropTypes.func,
   quantity: PropTypes.number,
   disabledDecrease: PropTypes.bool,
   disabledIncrease: PropTypes.bool,

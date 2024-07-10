@@ -235,13 +235,20 @@ export const HistoryTable = props => {
                       cursor: 'pointer'
                     }}
                       onClick={() => {
-                        router.push(`/shop/item/${row?.orders[0]?.product_id}`)
+                        //router.push(`/shop/item/${row?.orders[0]?.product_id}`)
                       }}>
-                      <Image
-                        alt='product image'
-                        src={row?.orders?.length > 0 ? row?.orders[0]?.product_img : ''}
-                        sx={{ width: 64, height: 64, borderRadius: 1.5, mr: 2 }}
-                      />
+                      <div>
+                        {
+                          row?.orders?.length > 0 && row?.orders?.map((order, idx) => {
+                            return <Image
+                              alt='product image'
+                              src={order?.product_img}
+                              sx={{ width: 64, height: 64, borderRadius: 1.5, mr: 2 }}
+                              onClick={() => { router.push(`/shop/item/${order?.product_id}`) }}
+                            />
+                          })
+                        }
+                      </div>
                       <Row>
                         <Col>
                           {row?.orders && row?.orders.map((order, index) => (
@@ -250,7 +257,7 @@ export const HistoryTable = props => {
                                 <Row>
                                   <div style={{ minWidth: '62px', fontWeight: 'bold' }} >{index + 1}.</div>
                                   <div style={{ whiteSpace: 'nowrap', cursor: 'pointer' }}
-                                    onClick={() => { window.open(`/manager/products/edit/${order?.product_id}`) }}>
+                                    onClick={() => { router.push(`/shop/item/${order?.product_id}`) }}>
                                     {/* {order?.order_name} */}
                                     {formatLang(order, 'product_name', currentLang)}
                                   </div>

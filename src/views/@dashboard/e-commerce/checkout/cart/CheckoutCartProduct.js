@@ -14,6 +14,7 @@ import { commarNumber, getPriceUnitByLang, setProductPriceByLang } from 'src/uti
 import { useSettingsContext } from 'src/components/settings';
 import { formatLang } from 'src/utils/format';
 import { useLocales } from 'src/locales';
+import { useRouter } from 'next/router';
 
 // ----------------------------------------------------------------------
 
@@ -22,11 +23,13 @@ CheckoutCartProduct.propTypes = {
   onDelete: PropTypes.func,
   onDecrease: PropTypes.func,
   onIncrease: PropTypes.func,
+  onQuantityChange: PropTypes.func,
 };
-export default function CheckoutCartProduct({ row, onDelete, onDecrease, onIncrease, calculatorPrice }) {
+export default function CheckoutCartProduct({ row, onDelete, onDecrease, onIncrease, onQuantityChange, calculatorPrice }) {
   const { product_name, product_comment, size, price, colors, cover, available, delivery_fee, product_sale_price, groups, order_count, product_price, product_img } = row;
   const { themeDnsData } = useSettingsContext();
   const { currentLang, translate } = useLocales();
+  const router = useRouter();
 
 
   return (
@@ -35,11 +38,12 @@ export default function CheckoutCartProduct({ row, onDelete, onDecrease, onIncre
         <Image
           alt="product image"
           src={product_img}
-          sx={{ width: 64, height: 64, borderRadius: 1.5, mr: 2 }}
+          sx={{ width: 64, height: 64, borderRadius: 1.5, mr: 2, cursor: 'pointer' }}
+          onClick={() => { router.push(`/shop/item/${row?.id}`) }}
         />
 
         <Stack spacing={0.5}>
-          <Typography noWrap variant="subtitle2" sx={{ maxWidth: 240 }}>
+          <Typography noWrap variant="subtitle2" sx={{ maxWidth: 240, cursor: 'pointer' }} onClick={() => { router.push(`/shop/item/${row?.id}`) }}>
             {
               themeDnsData?.setting_obj?.is_use_lang == 1 ?
                 formatLang(row, 'product_name', currentLang)
@@ -102,8 +106,10 @@ export default function CheckoutCartProduct({ row, onDelete, onDecrease, onIncre
         <Box sx={{ width: 96, textAlign: 'right' }}>
           <IncrementerButton
             quantity={order_count}
+            type="cart_page"
             onDecrease={onDecrease}
             onIncrease={onIncrease}
+            onQuantityChange={onQuantityChange}
             disabledDecrease={order_count <= 1}
             disabledIncrease={order_count >= available}
           />

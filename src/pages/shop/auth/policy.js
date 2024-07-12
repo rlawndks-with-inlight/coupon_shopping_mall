@@ -34,12 +34,12 @@ line-height:20px;
 `
 const Policy = (props) => {
   const { type } = props;
-  const {themeDnsData} = useSettingsContext();
+  const { themeDnsData } = useSettingsContext();
   const router = useRouter();
   const [title, setTitle] = useState("");
   useEffect(() => {
-    try{
-     
+    try {
+
       if (router.query?.type == 0) {
         setTitle("이용약관");
       } else if (router.query?.type == 1) {
@@ -47,7 +47,7 @@ const Policy = (props) => {
       } else if (router.query?.type == 2) {
         setTitle("저작권정책");
       }
-    }catch(err){
+    } catch (err) {
       console.log(err)
     }
 
@@ -220,7 +220,7 @@ const Policy = (props) => {
 
               <Text>
                 [부 칙]<br />
-                이 약관은 2022년 10월 1일부터 시행합니다.<br />
+                이 약관은 {themeDnsData?.establish_date}부터 시행합니다.<br />
               </Text>
             </>
             :
@@ -334,7 +334,7 @@ const Policy = (props) => {
               </Text>
               <SubTitle>제9조(개인정보 처리방침 시행 및 변경)</SubTitle>
               <Text>
-                이 개인정보 처리방침은 2022. 10. 01 부터 적용됩니다.
+                이 개인정보 처리방침은 {themeDnsData?.establish_date} 부터 적용됩니다.
               </Text>
             </>
             :

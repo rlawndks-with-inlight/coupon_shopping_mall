@@ -594,6 +594,16 @@ const DefaultSetting = () => {
                           })
                         }}
                       />
+                      <TextField
+                        label='법인설립일자'
+                        value={item.establish_date}
+                        onChange={e => {
+                          setItem({
+                            ...item,
+                            ['establish_date']: e.target.value
+                          })
+                        }}
+                      />
                     </Stack>
                   </Card>
                 </Grid>

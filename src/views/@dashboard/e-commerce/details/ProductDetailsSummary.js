@@ -226,7 +226,7 @@ export default function ProductDetailsSummary({ product, onAddCart, onGotoStep, 
                     count: selectProductGroups.count - 1
                   })
                 }}
-                onQuantityChange={(val) => {
+                onChangeQuantity={(val) => {
                   setSelectProductGroups({
                     ...selectProductGroups,
                     count: val

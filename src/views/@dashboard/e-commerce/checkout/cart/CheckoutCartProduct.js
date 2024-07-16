@@ -23,9 +23,9 @@ CheckoutCartProduct.propTypes = {
   onDelete: PropTypes.func,
   onDecrease: PropTypes.func,
   onIncrease: PropTypes.func,
-  onQuantityChange: PropTypes.func,
+  onChangeQuantity: PropTypes.func,
 };
-export default function CheckoutCartProduct({ row, onDelete, onDecrease, onIncrease, onQuantityChange, calculatorPrice }) {
+export default function CheckoutCartProduct({ row, onDelete, onDecrease, onIncrease, onChangeQuantity, calculatorPrice }) {
   const { product_name, product_comment, size, price, colors, cover, available, delivery_fee, product_sale_price, groups, order_count, product_price, product_img } = row;
   const { themeDnsData } = useSettingsContext();
   const { currentLang, translate } = useLocales();
@@ -109,7 +109,7 @@ export default function CheckoutCartProduct({ row, onDelete, onDecrease, onIncre
             type="cart_page"
             onDecrease={onDecrease}
             onIncrease={onIncrease}
-            onQuantityChange={onQuantityChange}
+            onChangeQuantity={onChangeQuantity}
             disabledDecrease={order_count <= 1}
             disabledIncrease={order_count >= available}
           />

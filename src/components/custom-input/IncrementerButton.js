@@ -5,22 +5,23 @@ import { Stack, IconButton, InputBase } from '@mui/material';
 import Iconify from '../iconify';
 
 const IncrementerButton = forwardRef(
-  ({ quantity, onIncrease, onDecrease, onQuantityChange, disabledIncrease, disabledDecrease, sx, type, ...other }, ref) => {
+  ({ quantity, onIncrease, onDecrease, onChangeQuantity, disabledIncrease, disabledDecrease, sx, type, ...other }, ref) => {
     const [localQuantity, setLocalQuantity] = useState(quantity);
 
     const handleInputChange = (event) => {
       const newValue = event.target.value;
       setLocalQuantity(newValue);
-      if (onQuantityChange) {
-        onQuantityChange(Number(newValue));
+      console.log(localQuantity)
+      if (onChangeQuantity) {
+        onChangeQuantity(Number(newValue));
       }
     };
 
     const handleBlur = () => {
       const validQuantity = Math.max(1, parseInt(localQuantity, 10) || 1);
       setLocalQuantity(validQuantity);
-      if (onQuantityChange) {
-        onQuantityChange(validQuantity);
+      if (onChangeQuantity) {
+        onChangeQuantity(validQuantity);
       }
     };
 
@@ -52,30 +53,16 @@ const IncrementerButton = forwardRef(
           <Iconify icon="eva:minus-fill" width={16} />
         </IconButton>
 
-        {
-          type == 'product-page' ?
-            <InputBase
-              value={localQuantity}
-              onChange={handleInputChange}
-              onBlur={handleBlur}
-              inputProps={{
-                style: { textAlign: 'center' },
-                'aria-label': 'quantity',
-              }}
-              sx={{ width: 40 }}
-            />
-            :
-            <InputBase
-              value={quantity}
-              onChange={handleInputChange}
-              onBlur={handleBlur}
-              inputProps={{
-                style: { textAlign: 'center' },
-                'aria-label': 'quantity',
-              }}
-              sx={{ width: 40 }}
-            />
-        }
+        <InputBase
+          value={quantity}
+          onChange={handleInputChange}
+          onBlur={handleBlur}
+          inputProps={{
+            style: { textAlign: 'center' },
+            'aria-label': 'quantity',
+          }}
+          sx={{ width: 40 }}
+        />
 
         <IconButton
           size="small"

@@ -19,6 +19,7 @@ const Wrapper = styled.div`
 display:flex;
 flex-direction:column;
 min-height:76vh;
+margin-top: 60px; //임시
 `
 const ContentWrapper = styled.div`
 max-width:1200px;

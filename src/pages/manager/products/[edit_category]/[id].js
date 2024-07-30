@@ -349,9 +349,9 @@ const ProductEdit = () => {
     settingPage();
     //console.log(themeDnsData)
   }, [])
-useEffect(()=>{
-  console.log(item)
-},[item])
+  useEffect(() => {
+    console.log(item)
+  }, [item])
   useEffect(() => {
     if (currentTab == 2) {
       onChangeReviewsPage({ ...reviewSearchObj, product_id: item?.id });
@@ -551,14 +551,14 @@ useEffect(()=>{
       }
     }
 
-    
+
     {
       type == 'edit' ?
         obj?.id ? //수정
-        sort ?
-        result = await apiManager('products', 'update', { ...obj, id: obj?.id, ...category_ids, sub_images, properties: JSON.stringify(item.properties), sort_idx: sort })
-        :
-          result = await apiManager('products', 'update', { ...obj, id: obj?.id, ...category_ids, sub_images, properties: JSON.stringify(item.properties) })
+          sort ?
+            result = await apiManager('products', 'update', { ...obj, id: obj?.id, ...category_ids, sub_images, properties: JSON.stringify(item.properties), sort_idx: sort })
+            :
+            result = await apiManager('products', 'update', { ...obj, id: obj?.id, ...category_ids, sub_images, properties: JSON.stringify(item.properties) })
           : //추가
           result = await apiManager('products', 'create', { ...obj, ...category_ids, sub_images, user_id: user?.id, properties: JSON.stringify(item.properties) })
         :
@@ -770,7 +770,7 @@ useEffect(()=>{
                                             ?
                                             item?.product_price > item?.product_sale_price
                                             :
-                                          item.properties[`${group?.id}`] && (item.properties[`${group?.id}`] ?? [])?.includes(property?.id)}
+                                            item.properties[`${group?.id}`] && (item.properties[`${group?.id}`] ?? [])?.includes(property?.id)}
                                       />}
                                     onChange={(e) => {
                                       let property_obj = { ...item.properties };
@@ -1317,9 +1317,9 @@ useEffect(()=>{
                               }
                             />
                             <FormControl variant="outlined" style={{ flexGrow: '1' }}>
-                              
+
                               <OutlinedInput
-                                
+
                                 type="text"
                                 disabled={defPoint}
                                 value={point}
@@ -1905,6 +1905,7 @@ useEffect(()=>{
                 <Stack spacing={0} style={{ display: 'flex', flexDirection: 'row' }}>
                   {router.query?.edit_category == 'edit' ?
                     <>
+                      {/*
                       <Button variant="contained" style={{
                         height: '48px', width: '180px', marginLeft: 'auto',
                       }} onClick={() => {
@@ -1921,8 +1922,9 @@ useEffect(()=>{
                       }}>
                         저장(최상단 노출)
                       </Button>
+                      */}
                       <Button variant="contained" style={{
-                        height: '48px', width: '180px', marginLeft: '1rem',
+                        height: '48px', width: '180px', marginLeft: 'auto',
                       }} onClick={() => {
                         setModal({
                           func: () => { onSave('edit') },

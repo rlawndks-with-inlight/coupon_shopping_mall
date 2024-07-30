@@ -253,10 +253,10 @@ export const HistoryTable = props => {
                         <Col>
                           {row?.orders && row?.orders.map((order, index) => (
                             <>
-                              <Col>
+                              <Col style={{ margin: '0.5rem auto' }}>
                                 <Row>
                                   <div style={{ minWidth: '62px', fontWeight: 'bold' }} >{index + 1}.</div>
-                                  <div style={{ whiteSpace: 'nowrap', cursor: 'pointer' }}
+                                  <div style={{ wordBreak: 'keep-all', cursor: 'pointer' }}
                                     onClick={() => { router.push(`/shop/item/${order?.product_id}`) }}>
                                     {/* {order?.order_name} */}
                                     {formatLang(order, 'product_name', currentLang)}
@@ -265,15 +265,15 @@ export const HistoryTable = props => {
                                 {order?.groups.length > 0 &&
                                   <>
                                     <Row>
-                                      <div style={{ minWidth: '62px' }}>옵션정보: </div>
+                                      <div style={{ minWidth: '62px' }}>옵션정보 </div>
                                       <Col>
                                         {order?.groups && order?.groups.map((group, idx) => (
                                           <>
                                             <Row>
-                                              <div style={{ minWidth: '62px', marginRight: '0.25rem' }}>{group?.group_name}: </div>
+                                              <div style={{ marginRight: '0.25rem' }}>{group?.group_name}: </div>
                                               {group?.options && group?.options.map((option, idx2) => (
                                                 <>
-                                                  <div>{option?.option_name} ({option?.option_price > 0 ? '+' : ''}{option?.option_price})</div>{idx2 == group?.options.length - 1 ? '' : <>&nbsp;/&nbsp;</>}
+                                                  <div>{option?.option_name} {/*({option?.option_price > 0 ? '+' : ''}{option?.option_price}) */}</div>{idx2 == group?.options.length - 1 ? '' : <>&nbsp;/&nbsp;</>}
                                                 </>
                                               ))}
                                             </Row>
@@ -282,6 +282,10 @@ export const HistoryTable = props => {
                                       </Col>
                                     </Row>
                                   </>}
+                                <Row>
+                                  <div style={{ minWidth: '62px' }}>{translate('수량')}: </div>
+                                  <div>{order?.order_count}</div>
+                                </Row>
                                 <Row>
                                   <div style={{ minWidth: '62px' }}>{translate('가격')}: </div>
                                   <div>{commarNumber(setProductPriceByLang(order, 'order_amount', 'ko', currentLang?.value))} {getPriceUnitByLang(currentLang?.value)}</div>

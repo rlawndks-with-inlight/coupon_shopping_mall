@@ -9,6 +9,9 @@ import { CartDemo4 } from "src/views/shop/demo-4";
 import { CartDemo5 } from "src/views/shop/demo-5";
 import { CartDemo6 } from "src/views/shop/demo-6";
 import { CartDemo7 } from "src/views/shop/demo-7";
+import { CartDemo8 } from "src/views/shop/demo-8";
+//import { CartDemo9 } from "src/views/shop/demo-9";
+//import { CartDemo10 } from "src/views/shop/demo-10";
 
 const getDemo = (num, common) => {
 
@@ -26,6 +29,12 @@ const getDemo = (num, common) => {
     return <CartDemo6 {...common} />
   else if (num == 7)
     return <CartDemo7 {...common} />
+  else if (num == 8)
+    return <CartDemo8 {...common} />
+  /*else if (num == 9)
+    return <CartDemo9 {...common} />
+  else if (num == 10)
+    return <CartDemo10 {...common} />*/
 }
 
 const Cart = () => {

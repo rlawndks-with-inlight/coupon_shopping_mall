@@ -430,7 +430,6 @@ export const AddressTable = props => {
                   </TableRow>
                 </>
               ))}
-
           </TableBody>
         </Table>
         {addressContent?.content && addressContent?.content.length == 0 &&

@@ -9,6 +9,9 @@ import { SellerDemo4 } from "src/views/shop/demo-4";
 import { SellerDemo5 } from "src/views/shop/demo-5";
 import { SellerDemo6 } from "src/views/shop/demo-6";
 import { SellerDemo7 } from "src/views/shop/demo-7";
+import { SellerDemo8 } from "src/views/shop/demo-8";
+//import { SellerDemo9 } from "src/views/shop/demo-9";
+//import { SellerDemo10 } from "src/views/shop/demo-10";
 
 const getDemo = (num, common) => {
 
@@ -26,6 +29,12 @@ const getDemo = (num, common) => {
     return <SellerDemo6 {...common} />
   else if (num == 7)
     return <SellerDemo7 {...common} />
+  else if (num == 8)
+    return <SellerDemo8 {...common} />
+  /*else if (num == 9)
+    return <SellerDemo9 {...common} />
+  else if (num == 10)
+    return <SellerDemo10 {...common} />*/
 }
 const ItemList = () => {
   const router = useRouter();

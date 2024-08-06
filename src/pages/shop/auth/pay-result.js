@@ -9,6 +9,9 @@ import { PayResultDemo4 } from "src/views/shop/demo-4";
 import { PayResultDemo5 } from "src/views/shop/demo-5";
 import { PayResultDemo6 } from "src/views/shop/demo-6";
 import { PayResultDemo7 } from "src/views/shop/demo-7";
+import { PayResultDemo8 } from "src/views/shop/demo-8";
+//import { PayResultDemo9 } from "src/views/shop/demo-9";
+//import { PayResultDemo10 } from "src/views/shop/demo-10";
 
 const getDemo = (num, common) => {
   if (num == 1)
@@ -25,6 +28,12 @@ const getDemo = (num, common) => {
     return <PayResultDemo6 {...common} />
   else if (num == 7)
     return <PayResultDemo7 {...common} />
+  else if (num == 8)
+    return <PayResultDemo8 {...common} />
+  /*else if (num == 9)
+    return <PayResultDemo9 {...common} />
+  else if (num == 10)
+    return <PayResultDemo10 {...common} />*/
 }
 const PayResult = () => {
   const router = useRouter();

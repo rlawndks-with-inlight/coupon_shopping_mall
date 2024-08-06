@@ -103,10 +103,12 @@ export default function ProductDetailsSummary({ product, onAddCart, onGotoStep, 
   const isMaxQuantity = cart.filter((item) => item.id === id).map((item) => item.quantity)[0] >= available;
 
   const handleAddCart = async () => {
+    //옵션 체크 안해도 저장 되는데 이 부분은 수정할 여지가 있어보임
     if (user) {
       let result = await insertCartDataUtil({ ...product, seller_id: router.query?.seller_id ?? 0 }, selectProductGroups, themeCartData, onChangeCartData);
       if (result) {
         toast.success(translate("장바구니에 성공적으로 추가되었습니다."))
+        router.push('/shop/auth/cart')
       }
     } else {
       toast.error(<PointerText onClick={() => router.push('/shop/auth/login')}>{translate('로그인을 해주세요.')}</PointerText>);
@@ -116,6 +118,7 @@ export default function ProductDetailsSummary({ product, onAddCart, onGotoStep, 
   const onSelectOption = (group, option, is_option_multiple) => {
     let select_product_groups = selectItemOptionUtil(group, option, selectProductGroups, is_option_multiple);
     setSelectProductGroups(select_product_groups);
+    //console.log(select_product_groups)
   }
   const [buyOpen, setBuyOpen] = useState(false);
 

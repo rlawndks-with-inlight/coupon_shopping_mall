@@ -11,6 +11,9 @@ import { WishDemo4 } from "src/views/shop/demo-4";
 import { WishDemo5 } from "src/views/shop/demo-5";
 import { WishDemo6 } from "src/views/shop/demo-6";
 import { WishDemo7 } from "src/views/shop/demo-7";
+import { WishDemo8 } from "src/views/shop/demo-8";
+//import { WishDemo9 } from "src/views/shop/demo-9";
+//import { WishDemo10 } from "src/views/shop/demo-10";
 
 const getDemo = (num, common) => {
   if (num == 1)
@@ -27,6 +30,12 @@ const getDemo = (num, common) => {
     return <WishDemo6 {...common} />
   else if (num == 7)
     return <WishDemo7 {...common} />
+  else if (num == 8)
+    return <WishDemo8 {...common} />
+  /*else if (num == 9)
+    return <WishDemo9 {...common} />
+  else if (num == 10)
+    return <WishDemo10 {...common} />*/
 }
 const Wish = () => {
   const router = useRouter();

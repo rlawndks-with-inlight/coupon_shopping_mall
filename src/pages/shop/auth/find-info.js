@@ -9,6 +9,9 @@ import { FindInfoDemo4 } from "src/views/shop/demo-4";
 import { FindInfoDemo5 } from "src/views/shop/demo-5";
 import { FindInfoDemo6 } from "src/views/shop/demo-6";
 import { FindInfoDemo7 } from "src/views/shop/demo-7";
+import { FindInfoDemo8 } from "src/views/shop/demo-8";
+//import { FindInfoDemo9 } from "src/views/shop/demo-9";
+//import { FindInfoDemo10 } from "src/views/shop/demo-10";
 
 const getDemo = (num, common) => {
 
@@ -26,6 +29,12 @@ const getDemo = (num, common) => {
     return <FindInfoDemo6 {...common} />
   else if (num == 7)
     return <FindInfoDemo7 {...common} />
+  else if (num == 8)
+    return <FindInfoDemo8 {...common} />
+  /*else if (num == 9)
+    return <FindInfoDemo9 {...common} />
+  else if (num == 10)
+    return <FindInfoDemo10 {...common} />*/
 }
 const FindInfo = () => {
   const router = useRouter();

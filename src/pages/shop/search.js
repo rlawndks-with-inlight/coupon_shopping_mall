@@ -10,6 +10,9 @@ import { SearchDemo4 } from "src/views/shop/demo-4";
 import { SearchDemo5 } from "src/views/shop/demo-5";
 import { SearchDemo6 } from "src/views/shop/demo-6";
 import { SearchDemo7 } from "src/views/shop/demo-7";
+import { SearchDemo8 } from "src/views/shop/demo-8";
+//import { SearchDemo9 } from "src/views/shop/demo-9";
+//import { SearchDemo10 } from "src/views/shop/demo-10";
 
 const getDemo = (num, common) => {
 
@@ -27,6 +30,12 @@ const getDemo = (num, common) => {
     return <SearchDemo6 {...common} />
   else if (num == 7)
     return <SearchDemo7 {...common} />
+  else if (num == 8)
+    return <SearchDemo8 {...common} />
+  /*else if (num == 9)
+    return <SearchDemo9 {...common} />
+  else if (num == 10)
+    return <SearchDemo10 {...common} />*/
 }
 const Search = () => {
   const router = useRouter();

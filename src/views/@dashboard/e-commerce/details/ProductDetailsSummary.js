@@ -108,7 +108,7 @@ export default function ProductDetailsSummary({ product, onAddCart, onGotoStep, 
       let result = await insertCartDataUtil({ ...product, seller_id: router.query?.seller_id ?? 0 }, selectProductGroups, themeCartData, onChangeCartData);
       if (result) {
         toast.success(translate("장바구니에 성공적으로 추가되었습니다."))
-        router.reload()
+        window.location.reload()
       }
     } else {
       toast.error(<PointerText onClick={() => router.push('/shop/auth/login')}>{translate('로그인을 해주세요.')}</PointerText>);

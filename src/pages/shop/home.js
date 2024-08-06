@@ -10,6 +10,9 @@ import { HomeDemo4 } from "src/views/shop/demo-4";
 import { HomeDemo5 } from "src/views/shop/demo-5";
 import { HomeDemo6 } from "src/views/shop/demo-6";
 import { HomeDemo7 } from "src/views/shop/demo-7";
+import { HomeDemo8 } from "src/views/shop/demo-8";
+//import { HomeDemo9 } from "src/views/shop/demo-9";
+//import { HomeDemo10 } from "src/views/shop/demo-10";
 
 const getDemo = (num, common) => {
   if (num == 1)
@@ -26,6 +29,12 @@ const getDemo = (num, common) => {
     return <HomeDemo6 {...common} />
   else if (num == 7)
     return <HomeDemo7 {...common} />
+  else if (num == 8)
+    return <HomeDemo8 {...common} />
+  /*else if (num == 9)
+    return <HomeDemo9 {...common} />
+  else if (num == 10)
+    return <HomeDemo10 {...common} />*/
 }
 const Home = () => {
 

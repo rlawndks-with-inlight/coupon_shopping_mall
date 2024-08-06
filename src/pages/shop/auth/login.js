@@ -10,6 +10,9 @@ import { LoginDemo4 } from "src/views/shop/demo-4";
 import { LoginDemo5 } from "src/views/shop/demo-5";
 import { LoginDemo6 } from "src/views/shop/demo-6";
 import { LoginDemo7 } from "src/views/shop/demo-7";
+import { LoginDemo8 } from "src/views/shop/demo-8";
+//import { LoginDemo9 } from "src/views/shop/demo-9";
+//import { LoginDemo10 } from "src/views/shop/demo-10";
 
 const getDemo = (num, common) => {
 
@@ -27,6 +30,12 @@ const getDemo = (num, common) => {
     return <LoginDemo6 {...common} />
   else if (num == 7)
     return <LoginDemo7 {...common} />
+  else if (num == 8)
+    return <LoginDemo8 {...common} />
+  /*else if (num == 9)
+    return <LoginDemo9 {...common} />
+  else if (num == 10)
+    return <LoginDemo10 {...common} />*/
 }
 const Login = () => {
   const router = useRouter();

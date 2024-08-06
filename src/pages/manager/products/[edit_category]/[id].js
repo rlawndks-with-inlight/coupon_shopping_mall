@@ -311,6 +311,7 @@ const ProductEdit = () => {
     groups: [],
     characters: [],
     properties: {},
+    point_save: 0,
     point_usable: 1,
     cash_usable: 1,
     pg_usable: 1,
@@ -621,14 +622,14 @@ const ProductEdit = () => {
     }
   }, [item.product_sale_price, defPoint])
 
-  useEffect(() => {
+  /*useEffect(() => { //이 코드 실행시 point가 없으면 point_save가 NaN 되는 문제 발생
     let value = parseInt(point?.replace(/,/g, ''))
     setItem({
       ...item,
       ['point_save']: value
     })
     //console.log(item)
-  }, [point])
+  }, [point])*/
 
   const consignmentSet = (row) => {
     setItem((prevItem) => ({  //비동기 문제 방지용
@@ -1951,6 +1952,7 @@ const ProductEdit = () => {
                       <Button variant="contained" style={{
                         height: '48px', width: '120px', marginLeft: 'auto'
                       }} onClick={() => {
+                        console.log(item)
                         setModal({
                           func: () => { onSave() },
                           icon: 'material-symbols:edit-outline',

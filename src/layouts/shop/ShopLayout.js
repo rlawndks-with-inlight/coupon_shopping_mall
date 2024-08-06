@@ -13,6 +13,9 @@ import ShopLayout4 from "./shop/demo-4/ShopLayout4";
 import ShopLayout5 from "./shop/demo-5/ShopLayout5";
 import ShopLayout6 from "./shop/demo-6/ShopLayout6";
 import ShopLayout7 from "./shop/demo-7/ShopLayout7";
+import ShopLayout8 from "./shop/demo-8/ShopLayout8";
+//import ShopLayout9 from "./shop/demo-9/ShopLayout9";
+//import ShopLayout10 from "./shop/demo-10/ShopLayout10";
 import styled from "styled-components";
 import { useLocales } from "src/locales";
 import $ from 'jquery';
@@ -44,6 +47,12 @@ const getDemo = (num, common) => {
       return <ShopLayout6 {...common} />
     else if (num == 7)
       return <ShopLayout7 {...common} />
+    else if (num == 8)
+      return <ShopLayout8 {...common} />
+    /*else if (num == 9)
+      return <ShopLayout9 {...common} />
+    else if (num == 10)
+      return <ShopLayout10 {...common} />*/
     else
       return { children }
   } else if (category == 'blog') {

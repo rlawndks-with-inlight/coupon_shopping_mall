@@ -123,6 +123,20 @@ const PaymentModuleEdit = () => {
                           )
                         }} />
                     </>}
+                  {item?.trx_type == 11 &&
+                    <>
+                      <TextField
+                        label='상품권결제 발급 url'
+                        value={item.gift_certificate_url}
+                        onChange={(e) => {
+                          setItem(
+                            {
+                              ...item,
+                              ['gift_certificate_url']: e.target.value
+                            }
+                          )
+                        }} />
+                    </>}
                   <FormControl>
                     <InputLabel>비/구인증</InputLabel>
                     <Select label='비/구인증' value={item.is_old_auth} onChange={(e) => {

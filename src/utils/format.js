@@ -23,6 +23,7 @@ export const paymentModuleTypeList = [
     { label: '수기결제', value: 1 },
     { label: '인증결제', value: 2 },
     { label: '가상계좌', value: 10 },
+    { label: '상품권결제', value: 11 },
 ]
 export const bankCodeList = [
     { value: '001', label: '한국은행', },

@@ -194,6 +194,23 @@ const DialogBuyNow = (props) => {
       let link = _.find(themeDnsData?.payment_modules, { type: 'virtual_account' })?.virtual_acct_url + `?amount=${pay_data?.amount}`;
       window.open(link)
     }
+    else if (item?.type == 'gift_certificate') {
+      setBuyType('gift_certificate');
+      let pay_data = await makePayData([{
+        ...product_item,
+        groups: select_product_groups,
+        seller_id: router.query?.seller_id ?? 0,
+      }], payData);
+      delete pay_data.payment_modules;
+      let ord_num = `${pay_data?.user_id || pay_data?.password}${new Date().getTime().toString().substring(0, 11)}`;
+      pay_data.ord_num = ord_num
+      pay_data.item_name = `${pay_data?.products[0]?.order_name} 외 ${pay_data?.products?.length - 1}`;
+      let insert_pay_ready = await apiManager('pays/gift_certificate', 'create', pay_data)
+      setBuyStep(2);
+      setPayData(pay_data)
+      let link = _.find(themeDnsData?.payment_modules, { type: 'gift_certificate' })?.gift_certificate_url + `?amount=${pay_data?.amount}`;
+      window.open(link)
+    }
   }
   const onBuyNow = async () => {
     let product_item = product;
@@ -476,6 +493,11 @@ const DialogBuyNow = (props) => {
                   </Button>
                 </Stack>
               </Stack>
+            </>}
+          {(buyStep == 2 && buyType == 'virtual_account') &&
+            <>
+              가상계좌 발급주소를 준비중입니다...
+              {/* <Iframe src={_.find(themeDnsData?.payment_modules, { type: buyType })?.virtual_acct_url + `?amount=${payData?.amount}`} /> */}
             </>}
           {(buyStep == 2 && buyType == 'virtual_account') &&
             <>

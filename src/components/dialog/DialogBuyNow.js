@@ -194,7 +194,6 @@ const DialogBuyNow = (props) => {
       let insert_pay_ready = await apiManager('pays/virtual', 'create', pay_data)
       setBuyStep(2);
       setPayData(pay_data)
-
     }
     else if (item?.type == 'gift_certificate') {
       setBuyType('gift_certificate');
@@ -213,7 +212,6 @@ const DialogBuyNow = (props) => {
       let insert_pay_ready = await apiManager('pays/gift_certificate', 'create', pay_data)
       setBuyStep(2);
       setPayData(pay_data)
-
     }
   }
   const onBuyNow = async () => {

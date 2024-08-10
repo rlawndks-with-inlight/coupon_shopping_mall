@@ -499,9 +499,9 @@ const DialogBuyNow = (props) => {
               가상계좌 발급주소를 준비중입니다...
               {/* <Iframe src={_.find(themeDnsData?.payment_modules, { type: buyType })?.virtual_acct_url + `?amount=${payData?.amount}`} /> */}
             </>}
-          {(buyStep == 2 && buyType == 'virtual_account') &&
+          {(buyStep == 2 && buyType == 'gift_certificate') &&
             <>
-              가상계좌 발급주소를 준비중입니다...
+              상품권결제 준비중입니다...
               {/* <Iframe src={_.find(themeDnsData?.payment_modules, { type: buyType })?.virtual_acct_url + `?amount=${payData?.amount}`} /> */}
             </>}
         </DialogContent>

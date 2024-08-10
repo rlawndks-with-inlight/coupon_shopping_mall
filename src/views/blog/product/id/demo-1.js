@@ -133,7 +133,7 @@ const Demo1 = (props) => {
 
   const pageSetting = async () => {
 
-    let product = await apiShop('product','get',{
+    let product = await apiShop('product', 'get', {
       id: router.query?.id
     })
     if (product) {

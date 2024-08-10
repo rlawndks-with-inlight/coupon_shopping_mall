@@ -544,7 +544,7 @@ const CartDemo = (props) => {
                   {(buyType == 'gift_certificate') &&
                     <>
                       <CardContent>
-                        상품권결제 주소를 준비중입니다...
+                        상품권 결제 준비중입니다...
                         {/* <Iframe src={_.find(themeDnsData?.payment_modules, { type: buyType })?.virtual_acct_url + `?amount=${payData?.amount}`} /> */}
                       </CardContent>
                     </>}

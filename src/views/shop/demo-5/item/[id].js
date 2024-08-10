@@ -164,6 +164,7 @@ const ItemDemo = (props) => {
       }
     } else {
       toast.error('로그인을 해주세요.');
+      router.push(`/shop/auth/login`)
     }
 
   };
@@ -337,6 +338,7 @@ const ItemDemo = (props) => {
                             setBuyOpen(true)
                           } else {
                             toast.error('로그인을 해주세요.');
+                            router.push(`/shop/auth/login`)
                           }
                         }}
                       >구입하기</Button>

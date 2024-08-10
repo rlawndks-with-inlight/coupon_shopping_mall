@@ -50,7 +50,7 @@ const ItemCharacter = (props) => {
     return (
       <>
         <Row style={{ columnGap: '0.25rem', marginTop: '1rem', fontSize: '14px' }}>
-          <Typography style={{width:'6rem', }}>{key_name}</Typography>
+          <Typography style={{ width: '6rem', }}>{key_name}</Typography>
           <Typography>{value}</Typography>
         </Row>
       </>
@@ -192,7 +192,7 @@ const ItemDemo = (props) => {
                       <ProductDetailsCarousel product={product} />
                     </Grid>
 
-                    <Grid item xs={12} md={6} lg={6} style={{paddingTop:'100px'}}>
+                    <Grid item xs={12} md={6} lg={6} style={{ paddingTop: '100px' }}>
 
                       {product?.brand_name &&
                         <>
@@ -224,30 +224,30 @@ const ItemDemo = (props) => {
                         </>
                       ))}
                       {commarNumber(product?.product_price) != commarNumber(product?.product_sale_price) ?
-                          <>
-                            <ItemCharacter 
-                            key_name={'판매가'} 
+                        <>
+                          <ItemCharacter
+                            key_name={'판매가'}
                             value={<>
                               {commarNumber(product?.product_sale_price)}원
-                            <div style={{textDecoration:'line-through', color: '#999999'}}>
-                              {commarNumber(product?.product_price)}원
+                              <div style={{ textDecoration: 'line-through', color: '#999999' }}>
+                                {commarNumber(product?.product_price)}원
                               </div>
                             </>
-                            } 
-                            />
-                            <ItemCharacter key_name={'할인율'} value={`${parseFloat((parseInt(product?.product_price - product?.product_sale_price) / parseInt(product?.product_price) * 100).toFixed(2))}%`} />
-                          </>
-                          :
-                          <>
-                            <ItemCharacter 
-                            key_name={'판매가'} 
+                            }
+                          />
+                          <ItemCharacter key_name={'할인율'} value={`${parseFloat((parseInt(product?.product_price - product?.product_sale_price) / parseInt(product?.product_price) * 100).toFixed(2))}%`} />
+                        </>
+                        :
+                        <>
+                          <ItemCharacter
+                            key_name={'판매가'}
                             value={<>
                               {commarNumber(product?.product_sale_price)}원
                             </>
-                            } 
-                            />
-                          </>
-                        }
+                            }
+                          />
+                        </>
+                      }
                       {/* <ProductDetailsSummary
                         product={product}
                         cart={""}
@@ -323,7 +323,7 @@ const ItemDemo = (props) => {
                           fontSize: '18px',
                           fontFamily: 'Playfair Display',
                           color: 'white',
-                          border:'1px solid #999999',
+                          border: '1px solid #999999',
                           '&:hover': {
                             backgroundColor: 'black',
                           }
@@ -333,7 +333,11 @@ const ItemDemo = (props) => {
                           <Icon icon={'mdi:check-bold'} />
                         </>}*/
                         onClick={() => {
-                          setBuyOpen(true)
+                          if (user) {
+                            setBuyOpen(true)
+                          } else {
+                            toast.error('로그인을 해주세요.');
+                          }
                         }}
                       >구입하기</Button>
                       <Row style={{ columnGap: '0.5rem', marginTop: '0.5rem', alignItems: 'center' }}>
@@ -348,7 +352,7 @@ const ItemDemo = (props) => {
                             fontSize: '18px',
                             fontFamily: 'Playfair Display',
                             color: '#999999',
-                            border:'1px solid #999999',
+                            border: '1px solid #999999',
                             '&:hover': {
                               backgroundColor: 'transparent',
                             }

@@ -227,7 +227,7 @@ const CartDemo = (props) => {
       setBuyStep(2);
       setPayData(pay_data)
       let link = _.find(themeDnsData?.payment_modules, { type: 'gift_certificate' })?.gift_certificate_url + `?amount=${pay_data?.amount}`;
-      window.open(link)
+      popup.location.href = link;
     }
   }
   const onPayByHand = async () => {

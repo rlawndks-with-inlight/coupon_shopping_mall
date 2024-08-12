@@ -206,7 +206,7 @@ const DialogBuyNow = (props) => {
       let ord_num = `${pay_data?.user_id || pay_data?.password}${new Date().getTime().toString().substring(0, 11)}`;
       pay_data.ord_num = ord_num
       pay_data.item_name = `${pay_data?.products[0]?.order_name} 외 ${pay_data?.products?.length - 1}`;
-      let link = _.find(themeDnsData?.payment_modules, { type: 'gift_certificate' })?.gift_certificate_url + `?amount=${pay_data?.amount}`;
+      let link = _.find(themeDnsData?.payment_modules, { type: 'gift_certificate' })?.gift_certificate_url + `?amount=${pay_data?.amount}&name=${user?.name ?? ""}&phone_num&=${user?.phone_num ?? ""}`;
       const popup = window.open(link, ""); // 팝업을 미리 연다.
       popup.location.href = link;
       let insert_pay_ready = await apiManager('pays/gift_certificate', 'create', pay_data)

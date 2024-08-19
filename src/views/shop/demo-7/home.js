@@ -166,7 +166,15 @@ const HomeDemo = (props) => {
           </video>
           <Title>
             Proposal of B2B Shopping<br />
-            'THE PLUS'<br />
+            {
+              themeDnsData.id == 34 ?
+                'THE PLUS'
+                :
+                themeDnsData.id == 59 ?
+                  'TJMALL'
+                  :
+                  ''
+            }<br />
             <TextField
               id='size-small'
               size='big'
@@ -257,7 +265,15 @@ const HomeDemo = (props) => {
               {translate("B2B 구매가 쉬워집니다")}
             </ContentTitle>
             <ContentSubTitle>
-              {translate("'더플러스'에서는 B2B쇼핑을 보다 빠르고 간편하며")}<br />
+              {
+                themeDnsData.id == 34 ?
+                  translate("'더플러스'에서는 B2B쇼핑을 보다 빠르고 간편하며")
+                  :
+                  themeDnsData.id == 59 ?
+                    translate("'티제이몰'에서는 B2B쇼핑을 보다 빠르고 간편하며")
+                    :
+                    ''
+              }<br />
               {translate("모두의 불안한 배송에 대한 안전한 물류를 자랑으로 합니다.")}
             </ContentSubTitle>
             <Row style={{ justifyContent: 'space-between' }}>

@@ -450,7 +450,15 @@ const Header = () => {
                         {router.asPath == '/shop/' ?
                             <>
                                 <TopMenuContainer>
-                                    <img src={scrollTop ? logoSrc() : '/qietu/Group 11.png'} style={{ height: '40px', width: 'auto', cursor: 'pointer', marginRight: '2rem' }}
+                                    <img
+                                        src={scrollTop ? logoSrc()
+                                            :
+                                            themeDnsData?.id == 34 ? '/qietu/Group 11.png'
+                                                :
+                                                themeDnsData?.id == 59 ? '/logos/tjmall dark.png'
+                                                    :
+                                                    ''
+                                        } style={{ height: '40px', width: 'auto', cursor: 'pointer', marginRight: '2rem' }}
                                         onClick={() => {
                                             router.push('/shop')
                                         }}

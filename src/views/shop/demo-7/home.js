@@ -173,7 +173,13 @@ const HomeDemo = (props) => {
                 themeDnsData.id == 59 ?
                   'TJMALL'
                   :
-                  ''
+                  themeDnsData.id == 61 ?
+                    'DEONI'
+                    :
+                    themeDnsData.id == 59 ?
+                      'zeroshop'
+                      :
+                      ''
             }<br />
             <TextField
               id='size-small'
@@ -272,7 +278,13 @@ const HomeDemo = (props) => {
                   themeDnsData.id == 59 ?
                     translate("'티제이몰'에서는 B2B쇼핑을 보다 빠르고 간편하며")
                     :
-                    ''
+                    themeDnsData.id == 61 ?
+                      translate("'다오니'에서는 B2B쇼핑을 보다 빠르고 간편하며")
+                      :
+                      themeDnsData.id == 62 ?
+                        translate("'제로샵'에서는 B2B쇼핑을 보다 빠르고 간편하며")
+                        :
+                        ''
               }<br />
               {translate("모두의 불안한 배송에 대한 안전한 물류를 자랑으로 합니다.")}
             </ContentSubTitle>

@@ -176,8 +176,8 @@ const HomeDemo = (props) => {
                   themeDnsData.id == 61 ?
                     'DEONI'
                     :
-                    themeDnsData.id == 59 ?
-                      'zeroshop'
+                    themeDnsData.id == 63 ?
+                      'OURSHOP'
                       :
                       ''
             }<br />
@@ -281,8 +281,8 @@ const HomeDemo = (props) => {
                     themeDnsData.id == 61 ?
                       translate("'다오니'에서는 B2B쇼핑을 보다 빠르고 간편하며")
                       :
-                      themeDnsData.id == 62 ?
-                        translate("'제로샵'에서는 B2B쇼핑을 보다 빠르고 간편하며")
+                      themeDnsData.id == 63 ?
+                        translate("'아워샵'에서는 B2B쇼핑을 보다 빠르고 간편하며")
                         :
                         ''
               }<br />

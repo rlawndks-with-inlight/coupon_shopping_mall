@@ -459,7 +459,7 @@ const Header = () => {
                                                     :
                                                     themeDnsData?.id == 61 ? '/logos/deoni2.png'
                                                         :
-                                                        themeDnsData?.id == 62 ? '/logos/zeroshop2.png'
+                                                        themeDnsData?.id == 63 ? '/logos/ourshop2.png'
                                                             :
                                                             ''
                                         } style={{ height: '40px', width: 'auto', cursor: 'pointer', marginRight: '2rem' }}

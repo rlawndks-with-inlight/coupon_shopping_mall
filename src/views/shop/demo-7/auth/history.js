@@ -7,6 +7,8 @@ import { makeMaxPage } from 'src/utils/function';
 import { HistoryTable } from 'src/components/elements/shop/common';
 import { apiManager } from 'src/utils/api';
 import { useLocales } from 'src/locales';
+import { useSettingsContext } from 'src/components/settings';
+
 const Wrappers = styled.div`
 max-width:1240px;
 display:flex;
@@ -17,6 +19,9 @@ min-height:90vh;
 margin-bottom:10vh;
 `
 const HistoryDemo = (props) => {
+
+  const { themeDnsData } = useSettingsContext();
+
   const {
     data: {
 
@@ -51,7 +56,7 @@ const HistoryDemo = (props) => {
       <Wrappers>
         <Title>{translate('주문조회')}</Title>
         <Card sx={{ marginBottom: '2rem' }}>
-          <HistoryTable historyContent={historyContent} onChangePage={onChangePage} searchObj={searchObj} />
+          <HistoryTable historyContent={historyContent} onChangePage={onChangePage} searchObj={searchObj} type={themeDnsData?.id == 63 ? 1 : 0} />
         </Card>
         <Pagination
           sx={{ margin: 'auto' }}

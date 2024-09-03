@@ -196,7 +196,7 @@ export const Items = props => {
 }
 
 export const HistoryTable = props => {
-  const { historyContent, onChangePage, searchObj } = props
+  const { historyContent, onChangePage, searchObj, themeDnsData } = props
   const { translate, currentLang } = useLocales();
   const router = useRouter();
   const TABLE_HEAD = [

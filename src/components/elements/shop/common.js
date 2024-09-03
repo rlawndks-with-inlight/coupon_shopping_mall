@@ -196,7 +196,7 @@ export const Items = props => {
 }
 
 export const HistoryTable = props => {
-  const { historyContent, onChangePage, searchObj, themeDnsData } = props
+  const { historyContent, onChangePage, searchObj, type = 0 } = props
   const { translate, currentLang } = useLocales();
   const router = useRouter();
   const TABLE_HEAD = [
@@ -238,7 +238,7 @@ export const HistoryTable = props => {
                         //router.push(`/shop/item/${row?.orders[0]?.product_id}`)
                       }}>
                       {
-                        themeDnsData?.id != 63 &&
+                        type == 0 &&
                         <>
                           <div>
                             {

@@ -237,18 +237,23 @@ export const HistoryTable = props => {
                       onClick={() => {
                         //router.push(`/shop/item/${row?.orders[0]?.product_id}`)
                       }}>
-                      <div>
-                        {
-                          row?.orders?.length > 0 && row?.orders?.map((order, idx) => {
-                            return <Image
-                              alt='product image'
-                              src={order?.product_img}
-                              sx={{ width: 64, height: 64, borderRadius: 1.5, mr: 2 }}
-                              onClick={() => { router.push(`/shop/item/${order?.product_id}`) }}
-                            />
-                          })
-                        }
-                      </div>
+                      {
+                        themeDnsData?.id != 63 &&
+                        <>
+                          <div>
+                            {
+                              row?.orders?.length > 0 && row?.orders?.map((order, idx) => {
+                                return <Image
+                                  alt='product image'
+                                  src={order?.product_img}
+                                  sx={{ width: 64, height: 64, borderRadius: 1.5, mr: 2 }}
+                                  onClick={() => { router.push(`/shop/item/${order?.product_id}`) }}
+                                />
+                              })
+                            }
+                          </div>
+                        </>
+                      }
                       <Row>
                         <Col>
                           {row?.orders && row?.orders.map((order, index) => (

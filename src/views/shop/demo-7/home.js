@@ -338,7 +338,7 @@ const HomeDemo = (props) => {
             <source src='/qietu/video1.mp4' type="video/mp4" />
           </video>*/}
 
-                <Title>
+                <Title style={{ top: '65%' }}>
                   {
                     themeMode != 'dark' ?
                       <>

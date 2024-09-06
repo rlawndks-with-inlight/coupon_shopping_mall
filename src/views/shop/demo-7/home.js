@@ -333,7 +333,7 @@ const HomeDemo = (props) => {
             </>
             :
             <>
-              <TopBanner>
+              <TopBanner style={{ position: 'relative' }}>
                 {/*<video ref={videoRef1} autoPlay muted loop style={{ margin: '0 auto' }}>
             <source src='/qietu/video1.mp4' type="video/mp4" />
           </video>*/}
@@ -342,7 +342,7 @@ const HomeDemo = (props) => {
                   {
                     themeMode != 'dark' ?
                       <>
-                        <img src={logoSrc()} />
+                        <img src={logoSrc()} sty />
                       </>
                       :
                       <>

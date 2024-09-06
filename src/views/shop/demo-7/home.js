@@ -50,7 +50,7 @@ text-align: center;
 `
 
 const ContentTitle = styled.div`
-font-size: 4rem;
+font-size: 48px;
 font-weight: bold;
 font-family: Abhaya Libre ExtraBold;
 @media (max-width:1240px) {
@@ -74,9 +74,7 @@ margin-bottom: 4rem;
 @media (max-width:750px) {
   font-size: 10px;
 }
-@media (max-width:600px) {
-  font-size: 7.5px;
-}
+
 `
 
 const Content = styled.div`
@@ -352,37 +350,42 @@ const HomeDemo = (props) => {
                       </>
                   }
                   <br />
-                  <TextField
-                    id='size-small'
-                    size='big'
-                    onChange={(e) => {
-                      setKeyword(e.target.value)
-                    }}
-                    value={keyword}
-                    sx={{
-                      margin: '3rem auto 0 auto',
-                      width: '100%',
-                      backgroundColor: 'white'
-                    }}
-                    onKeyPress={(e) => {
-                      if (e.key == 'Enter') {
-                        onSearch();
-                      }
-                    }}
-                    InputProps={{
-                      endAdornment: (
-                        <InputAdornment position='end'>
-                          <IconButton
-                            edge='end'
-                            onClick={() => onSearch()}
-                            aria-label='toggle password visibility'
-                          >
-                            <img src="/qietu/Vector.png" style={{ width: '24px' }} />
-                          </IconButton>
-                        </InputAdornment>
-                      )
-                    }}
-                  />
+                  {
+                    themeDnsData?.id != 63 &&
+                    <>
+                      <TextField
+                        id='size-small'
+                        size='big'
+                        onChange={(e) => {
+                          setKeyword(e.target.value)
+                        }}
+                        value={keyword}
+                        sx={{
+                          margin: '3rem auto 0 auto',
+                          width: '100%',
+                          backgroundColor: 'white'
+                        }}
+                        onKeyPress={(e) => {
+                          if (e.key == 'Enter') {
+                            onSearch();
+                          }
+                        }}
+                        InputProps={{
+                          endAdornment: (
+                            <InputAdornment position='end'>
+                              <IconButton
+                                edge='end'
+                                onClick={() => onSearch()}
+                                aria-label='toggle password visibility'
+                              >
+                                <img src="/qietu/Vector.png" style={{ width: '24px' }} />
+                              </IconButton>
+                            </InputAdornment>
+                          )
+                        }}
+                      />
+                    </>
+                  }
                 </Title>
                 <img src="/qietu/arrow.png"
                   style={{
@@ -396,7 +399,7 @@ const HomeDemo = (props) => {
               </TopBanner>
               <div style={{ width: '100%', marginBottom: '5rem' }}>
                 <ContentBox>
-                  <ContentTitle style={{ fontSize: '48px', fontWeight: '600', marginBottom: '2rem' }}>
+                  <ContentTitle style={{ fontWeight: '600', marginBottom: '2rem' }}>
                     맞춤 무역대행 서비스
                   </ContentTitle>
                   <ContentSubTitle>
@@ -440,7 +443,7 @@ const HomeDemo = (props) => {
               </div>
               <div style={{ width: '100%', backgroundColor: '#F7F7F7', }}>
                 <ContentBox>
-                  <ContentTitle style={{ fontSize: '48px', fontWeight: '600', marginBottom: '2rem' }}>
+                  <ContentTitle style={{ fontWeight: '600', marginBottom: '2rem' }}>
                     무역부터 물류까지 원스톱 서비스
                   </ContentTitle>
                   <ContentSubTitle>
@@ -489,7 +492,7 @@ const HomeDemo = (props) => {
               </div>
               <div style={{ width: '100%', marginBottom: '5rem' }}>
                 <ContentBox>
-                  <ContentTitle style={{ fontSize: '48px', fontWeight: '600', marginBottom: '2rem' }}>
+                  <ContentTitle style={{ fontWeight: '600', marginBottom: '2rem' }}>
                     아워샵의 시스템
                   </ContentTitle>
                   <ContentSubTitle>
@@ -497,31 +500,74 @@ const HomeDemo = (props) => {
                     모두 속시원하게 해결해드립니다.
                   </ContentSubTitle>
                   <Row style={{ display: 'flex', position: 'relative' }}>
-                    <div style={{ width: '33.3%', background: '#44A9DB', color: 'white', padding: '40px', display: 'flex', flexDirection: 'column', border: '1px solid #CBD2DC' }}>
-                      <span style={{ fontSize: '24px', marginBottom: '5rem', textShadow: '0px 0px 10px rgba(0, 0, 0, 0.3)' }}>
+                    <style>
+                      {`
+                      .div1 {
+                      padding: 40px;
+                      @media (max-width: 800px) {
+                      padding: 30px;
+                      }
+                      @media (max-width: 600px) {
+                      padding: 20px;
+                      }
+                      @media (max-width: 500px) {
+                      padding: 10px;
+                      }
+                      }
+                      .span1 {
+                      font-size: 24px;
+                      margin-bottom: 5rem;
+                      @media (max-width:800px) {
+                      font-size: 20px;
+                      margin-bottom: 4rem;
+                      }
+                      @media (max-width:600px) {
+                      margin-bottom: 3rem;
+                      font-size: 16px;
+                      }
+                      @media (max-width:500px) {
+                      font-size: 14px;
+                      }
+                      }
+                      .span2 {
+                      font-size: 18px;
+                      @media (max-width:800px) {
+                      font-size: 15px;
+                      }
+                      @media (max-width: 600px) {
+                      font-size: 12px;
+                      }
+                      @media (max-width: 500px) {
+                      font-size: 10px;
+                      }
+                      }
+                      `}
+                    </style>
+                    <div className="div1" style={{ width: '33.3%', background: '#44A9DB', color: 'white', display: 'flex', flexDirection: 'column', border: '1px solid #CBD2DC' }}>
+                      <span className="span1" style={{ textShadow: '0px 0px 10px rgba(0, 0, 0, 0.3)' }}>
                         해외 플랫폼 API 연동
                       </span>
-                      <span style={{ fontSize: '18px', }}>
+                      <span className="span2" style={{}}>
                         해외 플랫폼의 API를 연동하여<br />
                         국내 쇼핑몰을 사용할 때처럼<br />
                         손쉽게 열람 및 주문이 가능합니다
                       </span>
                     </div>
-                    <div style={{ width: '33.3%', background: 'white', color: 'black', padding: '40px', display: 'flex', flexDirection: 'column', border: '1px solid #CBD2DC' }}>
-                      <span style={{ fontSize: '24px', marginBottom: '5rem', textShadow: '0px 0px 10px rgba(0, 0, 0, 0.3)' }}>
+                    <div className="div1" style={{ width: '33.3%', background: 'white', color: 'black', display: 'flex', flexDirection: 'column', border: '1px solid #CBD2DC' }}>
+                      <span className="span1" style={{ textShadow: '0px 0px 10px rgba(0, 0, 0, 0.3)' }}>
                         주문 제품 실시간 확인
                       </span>
-                      <span style={{ fontSize: '18px', }}>
+                      <span className="span2" style={{}}>
                         주문 뒤 매일 납기 체크 관리를 하여<br />
                         마이페이지에서 실시간으로<br />
                         주문 상태 확인이 가능합니다
                       </span>
                     </div>
-                    <div style={{ width: '33.3%', background: '#34619D', color: 'white', padding: '40px', display: 'flex', flexDirection: 'column', border: '1px solid #CBD2DC' }}>
-                      <span style={{ fontSize: '24px', marginBottom: '5rem', textShadow: '0px 0px 10px rgba(0, 0, 0, 0.3)' }}>
+                    <div className="div1" style={{ width: '33.3%', background: '#34619D', color: 'white', display: 'flex', flexDirection: 'column', border: '1px solid #CBD2DC' }}>
+                      <span className="span1" style={{ textShadow: '0px 0px 10px rgba(0, 0, 0, 0.3)' }}>
                         20여년 경력 빠른 피드백
                       </span>
-                      <span style={{ fontSize: '18px', }}>
+                      <span className="span2" style={{}}>
                         5분 이내 빠른 답변을 원칙으로 하여<br />
                         국내 대기업보다 빠르게<br />
                         확인 및 피드백을 약속합니다
@@ -529,31 +575,31 @@ const HomeDemo = (props) => {
                     </div>
                   </Row>
                   <Row style={{ display: 'flex', position: 'relative' }}>
-                    <div style={{ width: '33.3%', background: 'white', color: 'black', padding: '40px', display: 'flex', flexDirection: 'column', border: '1px solid #CBD2DC', borderTop: '0px' }}>
-                      <span style={{ fontSize: '24px', marginBottom: '5rem', textShadow: '0px 0px 10px rgba(0, 0, 0, 0.3)' }}>
+                    <div className="div1" style={{ width: '33.3%', background: 'white', color: 'black', display: 'flex', flexDirection: 'column', border: '1px solid #CBD2DC', borderTop: '0px' }}>
+                      <span className="span1" style={{ textShadow: '0px 0px 10px rgba(0, 0, 0, 0.3)' }}>
                         VIP 회원 5% 할인혜택
                       </span>
-                      <span style={{ fontSize: '18px', }}>
+                      <span className="span2" style={{}}>
                         VIP 회원으로 선정되실 경우<br />
                         5% 할인 가격을 적용해<br />
                         최저가로 모십니다
                       </span>
                     </div>
-                    <div style={{ width: '33.3%', background: '#5E6570', color: 'white', padding: '40px', display: 'flex', flexDirection: 'column', border: '1px solid #CBD2DC', borderTop: '0px' }}>
-                      <span style={{ fontSize: '24px', marginBottom: '5rem', textShadow: '0px 0px 10px rgba(0, 0, 0, 0.3)' }}>
+                    <div className="div1" style={{ width: '33.3%', background: '#5E6570', color: 'white', display: 'flex', flexDirection: 'column', border: '1px solid #CBD2DC', borderTop: '0px' }}>
+                      <span className="span1" style={{ textShadow: '0px 0px 10px rgba(0, 0, 0, 0.3)' }}>
                         차별화된 검수로 불량 최소화
                       </span>
-                      <span style={{ fontSize: '18px', }}>
+                      <span className="span2" style={{}}>
                         차별화된 검수 시스템으로<br />
                         불량을 최소화합니다<br />
                         입고 시 먼저 확인드리고 제품을 보내드립니다
                       </span>
                     </div>
-                    <div style={{ width: '33.3%', background: 'white', color: 'black', padding: '40px', display: 'flex', flexDirection: 'column', border: '1px solid #CBD2DC', borderTop: '0px' }}>
-                      <span style={{ fontSize: '24px', marginBottom: '5rem', textShadow: '0px 0px 10px rgba(0, 0, 0, 0.3)' }}>
+                    <div className="div1" style={{ width: '33.3%', background: 'white', color: 'black', display: 'flex', flexDirection: 'column', border: '1px solid #CBD2DC', borderTop: '0px' }}>
+                      <span className="span1" style={{ textShadow: '0px 0px 10px rgba(0, 0, 0, 0.3)' }}>
                         신용과 신뢰 100%
                       </span>
-                      <span style={{ fontSize: '18px', }}>
+                      <span className="span2" style={{}}>
                         무역은 신뢰가 전부임에<br />
                         신뢰를 바탕으로 한<br />
                         업무 진행 및 시스템을 약속드립니다

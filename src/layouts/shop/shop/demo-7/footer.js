@@ -25,7 +25,7 @@ margin: 0 auto;
 const ContentWrapper = styled.div`
 display:flex;
 flex-direction:column;
-width:90%;
+width:95%;
 margin: 0 auto;
 row-gap: 0.25rem;
 `
@@ -34,6 +34,7 @@ display:flex;
 `
 const Bold = styled.div`
 margin-right:0.5rem;
+white-space: nowrap;
 `
 const MarginRight = styled.div`
 margin-right:0.5rem;
@@ -82,22 +83,32 @@ const Footer = (props) => {
               <Bold>{translate('대표')} : </Bold>
               <MarginRight>{ceo_name}</MarginRight>
             </Row>
-          </ContentWrapper>
-          <ContentWrapper>
             <Row>
               <Bold>{translate('전화')} : </Bold>
               <MarginRight>{phone_num}</MarginRight>
             </Row>
-            <Row>
-              <Bold>{translate('이메일')} : </Bold>
-              <MarginRight>{fax_num}</MarginRight>
-            </Row>
-            <Row>
-              <Bold>{translate('개인정보 보호책임자')} : </Bold>
-              <MarginRight>{pvcy_rep_name}</MarginRight>
-            </Row>
+          </ContentWrapper>
+          <ContentWrapper>
             {
-              mail_order_num != null &&
+              fax_num &&
+              <>
+                <Row>
+                  <Bold>{translate('이메일')} : </Bold>
+                  <MarginRight>{fax_num}</MarginRight>
+                </Row>
+              </>
+            }
+            {
+              pvcy_rep_name &&
+              <>
+                <Row>
+                  <Bold>{translate('개인정보 보호책임자')} : </Bold>
+                  <MarginRight>{pvcy_rep_name}</MarginRight>
+                </Row>
+              </>
+            }
+            {
+              mail_order_num &&
               <>
                 <Row>
                   <Bold>{translate('통신판매번호')} : </Bold>
@@ -108,13 +119,15 @@ const Footer = (props) => {
           </ContentWrapper>
           <ContentWrapper>
             <Row>
+              <img src={logoSrc()} style={{ height: '30px', maxWidth: '150px', }} />
+            </Row>
+            <Row>
               <Bold style={{ cursor: 'pointer', fontWeight: 'bold' }} onClick={() => { router.push('/shop/auth/policy?type=0') }}>{translate('서비스이용약관')}</Bold>
             </Row>
             <Row>
               <Bold style={{ cursor: 'pointer', fontWeight: 'bold' }} onClick={() => { router.push('/shop/auth/policy?type=1') }}>{translate('개인정보처리방침')}</Bold>
             </Row>
           </ContentWrapper>
-          <img src={logoSrc()} style={{ height: '30px', maxWidth: '150px', marginLeft: '5%' }} />
         </SubWrapper>
       </Wrapper>
     </>

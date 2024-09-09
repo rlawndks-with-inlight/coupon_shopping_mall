@@ -17,7 +17,7 @@ word-break: keep-all;
 
 const TopBanner = styled.div`
 width: 100%;
-height: 50vh;
+height: 100vh;
 overflow: hidden;
 `
 
@@ -333,7 +333,7 @@ const HomeDemo = (props) => {
             </>
             :
             <>
-              <TopBanner style={{ position: 'relative' }}>
+              <TopBanner style={{ position: 'relative', height: '50vh' }}>
                 {/*<video ref={videoRef1} autoPlay muted loop style={{ margin: '0 auto' }}>
             <source src='/qietu/video1.mp4' type="video/mp4" />
           </video>*/}
@@ -342,7 +342,7 @@ const HomeDemo = (props) => {
                   {
                     themeMode != 'dark' ?
                       <>
-                        <img src={logoSrc()} sty />
+                        <img src={logoSrc()} />
                       </>
                       :
                       <>

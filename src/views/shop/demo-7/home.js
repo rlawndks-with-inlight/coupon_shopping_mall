@@ -144,7 +144,7 @@ const HomeDemo = (props) => {
     <>
       <Wrappers>
         {
-          themeDnsData?.id != 63 ?
+          themeDnsData?.id != 63 && themeDnsData?.id != 59 ?
             <>
               <TopBanner>
                 {/*<video ref={videoRef1} autoPlay muted loop style={{ margin: '0 auto' }}>
@@ -346,12 +346,21 @@ const HomeDemo = (props) => {
                       </>
                       :
                       <>
-                        <img src='/logos/ourshop2.png' />
+                        {
+                          themeDnsData?.id == 63 && <>
+                            <img src='/logos/ourshop2.png' />
+                          </>
+                        }
+                        {
+                          themeDnsData?.id == 59 && <>
+                            <img src='/logos/tjmall2.png' />
+                          </>
+                        }
                       </>
                   }
                   <br />
                   {
-                    themeDnsData?.id != 63 &&
+                    themeDnsData?.id != 63 || themeDnsData?.id == 59 &&
                     <>
                       <TextField
                         id='size-small'
@@ -387,42 +396,37 @@ const HomeDemo = (props) => {
                     </>
                   }
                 </Title>
-                <img src="/qietu/arrow.png"
-                  style={{
-                    width: '46px',
-                    position: 'absolute',
-                    bottom: '5%',
-                    left: '50%',
-                    transform: 'translate(-50%, -5%)'
-                  }}
-                />
+
               </TopBanner>
-              <div style={{ width: '100%', marginBottom: '5rem' }}>
-                <ContentBox>
-                  <ContentTitle style={{ fontWeight: '600', marginBottom: '2rem' }}>
-                    맞춤 무역대행 서비스
-                  </ContentTitle>
-                  <ContentSubTitle>
-                    온라인 구매대행, 배송(물류)대행, 시장사입 뿐 아니라<br />
-                    해외무역과 관련된 모든 컨설팅이 가능합니다.
-                  </ContentSubTitle>
-                  <Row style={{ display: 'flex', flexDirection: 'column', position: 'relative' }}>
-                    <img src='/china/10.png' style={{ width: '80%' }} />
-                    <div style={{ background: '#34619D', textAlign: 'left', padding: '30px', color: 'white', width: '80%', marginLeft: '20%', display: 'flex', flexDirection: 'column' }}>
-                      <span className="c" style={{ marginBottom: '2rem' }}>
-                        물류대행 서비스 (포워딩 면허소유)
-                      </span>
-                      <span className="b" style={{}}>
-                        제품의 특징, 수량에 따라<br />
-                        맞춤형으로 전 세계 모든 곳으로<br />
-                        물류를 대행해 드리며<br />
-                        최저가 물류비용을 보장합니다.<br /><br />
-                        식품, 전자제품, 위험물품 등<br />
-                        통관 가능한 제품은 모두<br />
-                        진행 가능합니다.<br />
-                      </span>
-                      <style>
-                        {`
+              {
+                themeDnsData?.id == 63 &&
+                <>
+                  <div style={{ width: '100%', marginBottom: '5rem' }}>
+                    <ContentBox>
+                      <ContentTitle style={{ fontWeight: '600', marginBottom: '2rem' }}>
+                        맞춤 무역대행 서비스
+                      </ContentTitle>
+                      <ContentSubTitle>
+                        온라인 구매대행, 배송(물류)대행, 시장사입 뿐 아니라<br />
+                        해외무역과 관련된 모든 컨설팅이 가능합니다.
+                      </ContentSubTitle>
+                      <Row style={{ display: 'flex', flexDirection: 'column', position: 'relative' }}>
+                        <img src='/china/10.png' style={{ width: '80%' }} />
+                        <div style={{ background: '#34619D', textAlign: 'left', padding: '30px', color: 'white', width: '80%', marginLeft: '20%', display: 'flex', flexDirection: 'column' }}>
+                          <span className="c" style={{ marginBottom: '2rem' }}>
+                            물류대행 서비스 (포워딩 면허소유)
+                          </span>
+                          <span className="b" style={{}}>
+                            제품의 특징, 수량에 따라<br />
+                            맞춤형으로 전 세계 모든 곳으로<br />
+                            물류를 대행해 드리며<br />
+                            최저가 물류비용을 보장합니다.<br /><br />
+                            식품, 전자제품, 위험물품 등<br />
+                            통관 가능한 제품은 모두<br />
+                            진행 가능합니다.<br />
+                          </span>
+                          <style>
+                            {`
                         .c {
                         font-size:30px;
                         @media (max-width:600px) {
@@ -436,72 +440,72 @@ const HomeDemo = (props) => {
                         }
                         }
                         `}
-                      </style>
-                    </div>
-                  </Row>
-                </ContentBox>
-              </div>
-              <div style={{ width: '100%', backgroundColor: '#F7F7F7', }}>
-                <ContentBox>
-                  <ContentTitle style={{ fontWeight: '600', marginBottom: '2rem' }}>
-                    무역부터 물류까지 원스톱 서비스
-                  </ContentTitle>
-                  <ContentSubTitle>
-                    아워샵에서는 회사 전부 직영으로<br />
-                    일관된 서비스가 가능하고 또한 원하는 서비스를 골라서 이용할 수 있습니다
-                  </ContentSubTitle>
-                  <Row style={{ justifyContent: 'space-between', flexWrap: 'wrap' }}>
-                    <Col style={{ marginRight: '0.25rem', maxWidth: '300px' }}>
-                      <img src="/china/icon-1.png" style={{ maxHeight: '100px', height: '50%', margin: '0 auto' }} />
-                      <Content style={{ fontSize: '20px' }}>
-                        해외무역
-                      </Content>
-                    </Col>
-                    <Col style={{ marginRight: '0.25rem', maxWidth: '300px' }}>
-                      <img src="/china/icon-2.png" style={{ maxHeight: '100px', height: '50%', margin: '0 auto' }} />
-                      <Content style={{ fontSize: '20px' }}>
-                        시장사입
-                      </Content>
-                    </Col>
-                    <Col style={{ marginRight: '0.25rem', maxWidth: '300px' }}>
-                      <img src="/china/icon-3.png" style={{ maxHeight: '100px', height: '50%', margin: '0 auto' }} />
-                      <Content style={{ fontSize: '20px' }}>
-                        물류(포워딩)
-                      </Content>
-                    </Col>
-                    <Col style={{ marginRight: '0.25rem', maxWidth: '300px' }}>
-                      <img src="/china/icon-4.png" style={{ maxHeight: '100px', height: '50%', margin: '0 auto' }} />
-                      <Content style={{ fontSize: '20px' }}>
-                        구매대행
-                      </Content>
-                    </Col>
-                    <Col style={{ marginRight: '0.25rem', maxWidth: '300px' }}>
-                      <img src="/china/icon-5.png" style={{ maxHeight: '100px', height: '50%', margin: '0 auto' }} />
-                      <Content style={{ fontSize: '20px' }}>
-                        각종 KC인증
-                      </Content>
-                    </Col>
-                    <Col style={{ marginRight: '0.25rem', maxWidth: '300px' }}>
-                      <img src="/china/icon-6.png" style={{ maxHeight: '100px', height: '50%', margin: '0 auto' }} />
-                      <Content style={{ fontSize: '20px' }}>
-                        OEM/ODM
-                      </Content>
-                    </Col>
-                  </Row>
-                </ContentBox>
-              </div>
-              <div style={{ width: '100%', marginBottom: '5rem' }}>
-                <ContentBox>
-                  <ContentTitle style={{ fontWeight: '600', marginBottom: '2rem' }}>
-                    아워샵의 시스템
-                  </ContentTitle>
-                  <ContentSubTitle>
-                    수입시 어려웠던 부분, 고민이 있던 부분들을<br />
-                    모두 속시원하게 해결해드립니다.
-                  </ContentSubTitle>
-                  <Row style={{ display: 'flex', position: 'relative' }}>
-                    <style>
-                      {`
+                          </style>
+                        </div>
+                      </Row>
+                    </ContentBox>
+                  </div>
+                  <div style={{ width: '100%', backgroundColor: '#F7F7F7', }}>
+                    <ContentBox>
+                      <ContentTitle style={{ fontWeight: '600', marginBottom: '2rem' }}>
+                        무역부터 물류까지 원스톱 서비스
+                      </ContentTitle>
+                      <ContentSubTitle>
+                        아워샵에서는 회사 전부 직영으로<br />
+                        일관된 서비스가 가능하고 또한 원하는 서비스를 골라서 이용할 수 있습니다
+                      </ContentSubTitle>
+                      <Row style={{ justifyContent: 'space-between', flexWrap: 'wrap' }}>
+                        <Col style={{ marginRight: '0.25rem', maxWidth: '300px' }}>
+                          <img src="/china/icon-1.png" style={{ maxHeight: '100px', height: '50%', margin: '0 auto' }} />
+                          <Content style={{ fontSize: '20px' }}>
+                            해외무역
+                          </Content>
+                        </Col>
+                        <Col style={{ marginRight: '0.25rem', maxWidth: '300px' }}>
+                          <img src="/china/icon-2.png" style={{ maxHeight: '100px', height: '50%', margin: '0 auto' }} />
+                          <Content style={{ fontSize: '20px' }}>
+                            시장사입
+                          </Content>
+                        </Col>
+                        <Col style={{ marginRight: '0.25rem', maxWidth: '300px' }}>
+                          <img src="/china/icon-3.png" style={{ maxHeight: '100px', height: '50%', margin: '0 auto' }} />
+                          <Content style={{ fontSize: '20px' }}>
+                            물류(포워딩)
+                          </Content>
+                        </Col>
+                        <Col style={{ marginRight: '0.25rem', maxWidth: '300px' }}>
+                          <img src="/china/icon-4.png" style={{ maxHeight: '100px', height: '50%', margin: '0 auto' }} />
+                          <Content style={{ fontSize: '20px' }}>
+                            구매대행
+                          </Content>
+                        </Col>
+                        <Col style={{ marginRight: '0.25rem', maxWidth: '300px' }}>
+                          <img src="/china/icon-5.png" style={{ maxHeight: '100px', height: '50%', margin: '0 auto' }} />
+                          <Content style={{ fontSize: '20px' }}>
+                            각종 KC인증
+                          </Content>
+                        </Col>
+                        <Col style={{ marginRight: '0.25rem', maxWidth: '300px' }}>
+                          <img src="/china/icon-6.png" style={{ maxHeight: '100px', height: '50%', margin: '0 auto' }} />
+                          <Content style={{ fontSize: '20px' }}>
+                            OEM/ODM
+                          </Content>
+                        </Col>
+                      </Row>
+                    </ContentBox>
+                  </div>
+                  <div style={{ width: '100%', marginBottom: '5rem' }}>
+                    <ContentBox>
+                      <ContentTitle style={{ fontWeight: '600', marginBottom: '2rem' }}>
+                        아워샵의 시스템
+                      </ContentTitle>
+                      <ContentSubTitle>
+                        수입시 어려웠던 부분, 고민이 있던 부분들을<br />
+                        모두 속시원하게 해결해드립니다.
+                      </ContentSubTitle>
+                      <Row style={{ display: 'flex', position: 'relative' }}>
+                        <style>
+                          {`
                       .div1 {
                       padding: 40px;
                       @media (max-width: 800px) {
@@ -542,72 +546,298 @@ const HomeDemo = (props) => {
                       }
                       }
                       `}
-                    </style>
-                    <div className="div1" style={{ width: '33.3%', background: '#44A9DB', color: 'white', display: 'flex', flexDirection: 'column', border: '1px solid #CBD2DC' }}>
-                      <span className="span1" style={{ textShadow: '0px 0px 10px rgba(0, 0, 0, 0.3)' }}>
-                        해외 플랫폼 API 연동
-                      </span>
-                      <span className="span2" style={{}}>
-                        해외 플랫폼의 API를 연동하여<br />
-                        국내 쇼핑몰을 사용할 때처럼<br />
-                        손쉽게 열람 및 주문이 가능합니다
-                      </span>
-                    </div>
-                    <div className="div1" style={{ width: '33.3%', background: 'white', color: 'black', display: 'flex', flexDirection: 'column', border: '1px solid #CBD2DC' }}>
-                      <span className="span1" style={{ textShadow: '0px 0px 10px rgba(0, 0, 0, 0.3)' }}>
-                        주문 제품 실시간 확인
-                      </span>
-                      <span className="span2" style={{}}>
-                        주문 뒤 매일 납기 체크 관리를 하여<br />
-                        마이페이지에서 실시간으로<br />
-                        주문 상태 확인이 가능합니다
-                      </span>
-                    </div>
-                    <div className="div1" style={{ width: '33.3%', background: '#34619D', color: 'white', display: 'flex', flexDirection: 'column', border: '1px solid #CBD2DC' }}>
-                      <span className="span1" style={{ textShadow: '0px 0px 10px rgba(0, 0, 0, 0.3)' }}>
-                        20여년 경력 빠른 피드백
-                      </span>
-                      <span className="span2" style={{}}>
-                        5분 이내 빠른 답변을 원칙으로 하여<br />
-                        국내 대기업보다 빠르게<br />
-                        확인 및 피드백을 약속합니다
-                      </span>
-                    </div>
-                  </Row>
-                  <Row style={{ display: 'flex', position: 'relative' }}>
-                    <div className="div1" style={{ width: '33.3%', background: 'white', color: 'black', display: 'flex', flexDirection: 'column', border: '1px solid #CBD2DC', borderTop: '0px' }}>
-                      <span className="span1" style={{ textShadow: '0px 0px 10px rgba(0, 0, 0, 0.3)' }}>
-                        VIP 회원 5% 할인혜택
-                      </span>
-                      <span className="span2" style={{}}>
-                        VIP 회원으로 선정되실 경우<br />
-                        5% 할인 가격을 적용해<br />
-                        최저가로 모십니다
-                      </span>
-                    </div>
-                    <div className="div1" style={{ width: '33.3%', background: '#5E6570', color: 'white', display: 'flex', flexDirection: 'column', border: '1px solid #CBD2DC', borderTop: '0px' }}>
-                      <span className="span1" style={{ textShadow: '0px 0px 10px rgba(0, 0, 0, 0.3)' }}>
-                        차별화된 검수로 불량 최소화
-                      </span>
-                      <span className="span2" style={{}}>
-                        차별화된 검수 시스템으로<br />
-                        불량을 최소화합니다<br />
-                        입고 시 먼저 확인드리고 제품을 보내드립니다
-                      </span>
-                    </div>
-                    <div className="div1" style={{ width: '33.3%', background: 'white', color: 'black', display: 'flex', flexDirection: 'column', border: '1px solid #CBD2DC', borderTop: '0px' }}>
-                      <span className="span1" style={{ textShadow: '0px 0px 10px rgba(0, 0, 0, 0.3)' }}>
-                        신용과 신뢰 100%
-                      </span>
-                      <span className="span2" style={{}}>
-                        무역은 신뢰가 전부임에<br />
-                        신뢰를 바탕으로 한<br />
-                        업무 진행 및 시스템을 약속드립니다
-                      </span>
-                    </div>
-                  </Row>
-                </ContentBox>
-              </div>
+                        </style>
+                        <div className="div1" style={{ width: '33.3%', background: '#44A9DB', color: 'white', display: 'flex', flexDirection: 'column', border: '1px solid #CBD2DC' }}>
+                          <span className="span1" style={{ textShadow: '0px 0px 10px rgba(0, 0, 0, 0.3)' }}>
+                            해외 플랫폼 API 연동
+                          </span>
+                          <span className="span2" style={{}}>
+                            해외 플랫폼의 API를 연동하여<br />
+                            국내 쇼핑몰을 사용할 때처럼<br />
+                            손쉽게 열람 및 주문이 가능합니다
+                          </span>
+                        </div>
+                        <div className="div1" style={{ width: '33.3%', background: 'white', color: 'black', display: 'flex', flexDirection: 'column', border: '1px solid #CBD2DC' }}>
+                          <span className="span1" style={{ textShadow: '0px 0px 10px rgba(0, 0, 0, 0.3)' }}>
+                            주문 제품 실시간 확인
+                          </span>
+                          <span className="span2" style={{}}>
+                            주문 뒤 매일 납기 체크 관리를 하여<br />
+                            마이페이지에서 실시간으로<br />
+                            주문 상태 확인이 가능합니다
+                          </span>
+                        </div>
+                        <div className="div1" style={{ width: '33.3%', background: '#34619D', color: 'white', display: 'flex', flexDirection: 'column', border: '1px solid #CBD2DC' }}>
+                          <span className="span1" style={{ textShadow: '0px 0px 10px rgba(0, 0, 0, 0.3)' }}>
+                            20여년 경력 빠른 피드백
+                          </span>
+                          <span className="span2" style={{}}>
+                            5분 이내 빠른 답변을 원칙으로 하여<br />
+                            국내 대기업보다 빠르게<br />
+                            확인 및 피드백을 약속합니다
+                          </span>
+                        </div>
+                      </Row>
+                      <Row style={{ display: 'flex', position: 'relative' }}>
+                        <div className="div1" style={{ width: '33.3%', background: 'white', color: 'black', display: 'flex', flexDirection: 'column', border: '1px solid #CBD2DC', borderTop: '0px' }}>
+                          <span className="span1" style={{ textShadow: '0px 0px 10px rgba(0, 0, 0, 0.3)' }}>
+                            VIP 회원 5% 할인혜택
+                          </span>
+                          <span className="span2" style={{}}>
+                            VIP 회원으로 선정되실 경우<br />
+                            5% 할인 가격을 적용해<br />
+                            최저가로 모십니다
+                          </span>
+                        </div>
+                        <div className="div1" style={{ width: '33.3%', background: '#5E6570', color: 'white', display: 'flex', flexDirection: 'column', border: '1px solid #CBD2DC', borderTop: '0px' }}>
+                          <span className="span1" style={{ textShadow: '0px 0px 10px rgba(0, 0, 0, 0.3)' }}>
+                            차별화된 검수로 불량 최소화
+                          </span>
+                          <span className="span2" style={{}}>
+                            차별화된 검수 시스템으로<br />
+                            불량을 최소화합니다<br />
+                            입고 시 먼저 확인드리고 제품을 보내드립니다
+                          </span>
+                        </div>
+                        <div className="div1" style={{ width: '33.3%', background: 'white', color: 'black', display: 'flex', flexDirection: 'column', border: '1px solid #CBD2DC', borderTop: '0px' }}>
+                          <span className="span1" style={{ textShadow: '0px 0px 10px rgba(0, 0, 0, 0.3)' }}>
+                            신용과 신뢰 100%
+                          </span>
+                          <span className="span2" style={{}}>
+                            무역은 신뢰가 전부임에<br />
+                            신뢰를 바탕으로 한<br />
+                            업무 진행 및 시스템을 약속드립니다
+                          </span>
+                        </div>
+                      </Row>
+                    </ContentBox>
+                  </div>
+                </>
+              }
+              {
+                themeDnsData?.id == 59 &&
+                <>
+                  <div style={{ width: '100%', marginBottom: '5rem' }}>
+                    <ContentBox>
+
+                      <Row className="aa" style={{ display: 'flex', position: 'relative' }}>
+                        <img src='/china/a10.png' style={{ minWidth: '50%', }} />
+                        <div style={{ background: '', textAlign: 'left', padding: '30px', minWidth: '50%', marginLeft: '5%', display: 'flex', flexDirection: 'column' }}>
+                          <span className="c" style={{ marginBottom: '2rem', fontWeight: 'bold' }}>
+                            티제이몰은 믿음직한 무역 파트너가 되기 위해 최선을 다합니다.
+                          </span>
+                          <span className="b" style={{}}>
+                            티제이몰은 무역업계에서 다년간의 경험을 토대로<br />
+                            국제시장에서의 거래를 보다 효율적이고 안정적으로 진행하도록 도와드립니다.
+                          </span>
+                          <span className="c" style={{ margin: '3rem auto 2rem auto', fontWeight: 'bold' }}>
+                            티제이몰은 고객과 함께 성공하기 위해 최선을 다합니다.
+                          </span>
+                          <span className="b" style={{}}>
+                            티제이몰은 고객의 요구 사항을 충족시키면서<br />
+                            국제시장에서 경쟁력을 갖출 수 있도록 솔루션을 제공합니다.
+                          </span>
+                          <span className="c" style={{ margin: '3rem auto 2rem auto', fontWeight: 'bold' }}>
+                            티제이몰은 빠른 소통 및 피드백을 유지하기 위해 최선을 다합니다.
+                          </span>
+                          <span className="b" style={{}}>
+                            티제이몰은 고객의 요구 사항을 충족시키면서<br />
+                            국제시장에서 경쟁력을 갖출 수 있도록 솔루션을 제공합니다.
+                          </span>
+                          <style>
+                            {`
+                        .c {
+                        font-size:25px;
+                        @media (max-width:600px) {
+                        font-size:20px;
+                        }
+                        }
+                        .b {
+                        font-size: 18px;
+                        @media (max-width:600px) {
+                        font-size: 12px;
+                        }
+                        }
+                        .aa {
+                        @media (max-width:800px) {
+                        flex-direction:column;
+                        }
+                        }
+                        `}
+                          </style>
+                        </div>
+                      </Row>
+                    </ContentBox>
+                  </div>
+                  <div style={{ width: '100%', backgroundColor: '#F7F7F7', }}>
+                    <ContentBox>
+                      <ContentTitle style={{ fontWeight: '600', marginBottom: '2rem' }}>
+                        무역부터 물류까지 원스톱 서비스
+                      </ContentTitle>
+                      <ContentSubTitle>
+                        티제이몰에서는 회사 전부 직영으로<br />
+                        일관된 서비스가 가능하고 또한 원하는 서비스를 골라서 이용할 수 있습니다
+                      </ContentSubTitle>
+                      <Row style={{ justifyContent: 'space-between', flexWrap: 'wrap' }}>
+                        <Col style={{ marginRight: '0.25rem', maxWidth: '300px' }}>
+                          <img src="/china/icon-1.png" style={{ maxHeight: '100px', height: '50%', margin: '0 auto' }} />
+                          <Content style={{ fontSize: '20px' }}>
+                            해외무역
+                          </Content>
+                        </Col>
+                        <Col style={{ marginRight: '0.25rem', maxWidth: '300px' }}>
+                          <img src="/china/icon-2.png" style={{ maxHeight: '100px', height: '50%', margin: '0 auto' }} />
+                          <Content style={{ fontSize: '20px' }}>
+                            시장사입
+                          </Content>
+                        </Col>
+                        <Col style={{ marginRight: '0.25rem', maxWidth: '300px' }}>
+                          <img src="/china/icon-3.png" style={{ maxHeight: '100px', height: '50%', margin: '0 auto' }} />
+                          <Content style={{ fontSize: '20px' }}>
+                            물류(포워딩)
+                          </Content>
+                        </Col>
+                        <Col style={{ marginRight: '0.25rem', maxWidth: '300px' }}>
+                          <img src="/china/icon-4.png" style={{ maxHeight: '100px', height: '50%', margin: '0 auto' }} />
+                          <Content style={{ fontSize: '20px' }}>
+                            구매대행
+                          </Content>
+                        </Col>
+                        <Col style={{ marginRight: '0.25rem', maxWidth: '300px' }}>
+                          <img src="/china/icon-5.png" style={{ maxHeight: '100px', height: '50%', margin: '0 auto' }} />
+                          <Content style={{ fontSize: '20px' }}>
+                            각종 KC인증
+                          </Content>
+                        </Col>
+                        <Col style={{ marginRight: '0.25rem', maxWidth: '300px' }}>
+                          <img src="/china/icon-6.png" style={{ maxHeight: '100px', height: '50%', margin: '0 auto' }} />
+                          <Content style={{ fontSize: '20px' }}>
+                            OEM/ODM
+                          </Content>
+                        </Col>
+                      </Row>
+                    </ContentBox>
+                  </div>
+                  <div style={{ width: '100%', marginBottom: '5rem' }}>
+                    <ContentBox>
+                      <ContentTitle style={{ fontWeight: '600', marginBottom: '2rem' }}>
+                        티제이몰의 시스템
+                      </ContentTitle>
+                      <ContentSubTitle>
+                        수입시 어려웠던 부분, 고민이 있던 부분들을<br />
+                        모두 속시원하게 해결해드립니다.
+                      </ContentSubTitle>
+                      <Row style={{ display: 'flex', position: 'relative' }}>
+                        <style>
+                          {`
+                      .div1 {
+                      padding: 40px;
+                      @media (max-width: 800px) {
+                      padding: 30px;
+                      }
+                      @media (max-width: 600px) {
+                      padding: 20px;
+                      }
+                      @media (max-width: 500px) {
+                      padding: 10px;
+                      }
+                      }
+                      .span1 {
+                      font-size: 24px;
+                      margin-bottom: 5rem;
+                      @media (max-width:800px) {
+                      font-size: 20px;
+                      margin-bottom: 4rem;
+                      }
+                      @media (max-width:600px) {
+                      margin-bottom: 3rem;
+                      font-size: 16px;
+                      }
+                      @media (max-width:500px) {
+                      font-size: 14px;
+                      }
+                      }
+                      .span2 {
+                      font-size: 18px;
+                      @media (max-width:800px) {
+                      font-size: 15px;
+                      }
+                      @media (max-width: 600px) {
+                      font-size: 12px;
+                      }
+                      @media (max-width: 500px) {
+                      font-size: 10px;
+                      }
+                      }
+                      `}
+                        </style>
+                        <div className="div1" style={{ width: '33.3%', background: '#44A9DB', color: 'white', display: 'flex', flexDirection: 'column', border: '1px solid #CBD2DC' }}>
+                          <span className="span1" style={{ textShadow: '0px 0px 10px rgba(0, 0, 0, 0.3)' }}>
+                            해외 플랫폼 API 연동
+                          </span>
+                          <span className="span2" style={{}}>
+                            해외 플랫폼의 API를 연동하여<br />
+                            국내 쇼핑몰을 사용할 때처럼<br />
+                            손쉽게 열람 및 주문이 가능합니다
+                          </span>
+                        </div>
+                        <div className="div1" style={{ width: '33.3%', background: 'white', color: 'black', display: 'flex', flexDirection: 'column', border: '1px solid #CBD2DC' }}>
+                          <span className="span1" style={{ textShadow: '0px 0px 10px rgba(0, 0, 0, 0.3)' }}>
+                            주문 제품 실시간 확인
+                          </span>
+                          <span className="span2" style={{}}>
+                            주문 뒤 매일 납기 체크 관리를 하여<br />
+                            마이페이지에서 실시간으로<br />
+                            주문 상태 확인이 가능합니다
+                          </span>
+                        </div>
+                        <div className="div1" style={{ width: '33.3%', background: '#34619D', color: 'white', display: 'flex', flexDirection: 'column', border: '1px solid #CBD2DC' }}>
+                          <span className="span1" style={{ textShadow: '0px 0px 10px rgba(0, 0, 0, 0.3)' }}>
+                            20여년 경력 빠른 피드백
+                          </span>
+                          <span className="span2" style={{}}>
+                            5분 이내 빠른 답변을 원칙으로 하여<br />
+                            국내 대기업보다 빠르게<br />
+                            확인 및 피드백을 약속합니다
+                          </span>
+                        </div>
+                      </Row>
+                      <Row style={{ display: 'flex', position: 'relative' }}>
+                        <div className="div1" style={{ width: '33.3%', background: 'white', color: 'black', display: 'flex', flexDirection: 'column', border: '1px solid #CBD2DC', borderTop: '0px' }}>
+                          <span className="span1" style={{ textShadow: '0px 0px 10px rgba(0, 0, 0, 0.3)' }}>
+                            VIP 회원 5% 할인혜택
+                          </span>
+                          <span className="span2" style={{}}>
+                            VIP 회원으로 선정되실 경우<br />
+                            5% 할인 가격을 적용해<br />
+                            최저가로 모십니다
+                          </span>
+                        </div>
+                        <div className="div1" style={{ width: '33.3%', background: '#5E6570', color: 'white', display: 'flex', flexDirection: 'column', border: '1px solid #CBD2DC', borderTop: '0px' }}>
+                          <span className="span1" style={{ textShadow: '0px 0px 10px rgba(0, 0, 0, 0.3)' }}>
+                            차별화된 검수로 불량 최소화
+                          </span>
+                          <span className="span2" style={{}}>
+                            차별화된 검수 시스템으로<br />
+                            불량을 최소화합니다<br />
+                            입고 시 먼저 확인드리고 제품을 보내드립니다
+                          </span>
+                        </div>
+                        <div className="div1" style={{ width: '33.3%', background: 'white', color: 'black', display: 'flex', flexDirection: 'column', border: '1px solid #CBD2DC', borderTop: '0px' }}>
+                          <span className="span1" style={{ textShadow: '0px 0px 10px rgba(0, 0, 0, 0.3)' }}>
+                            신용과 신뢰 100%
+                          </span>
+                          <span className="span2" style={{}}>
+                            무역은 신뢰가 전부임에<br />
+                            신뢰를 바탕으로 한<br />
+                            업무 진행 및 시스템을 약속드립니다
+                          </span>
+                        </div>
+                      </Row>
+                    </ContentBox>
+                  </div>
+                </>
+              }
             </>
         }
       </Wrappers >

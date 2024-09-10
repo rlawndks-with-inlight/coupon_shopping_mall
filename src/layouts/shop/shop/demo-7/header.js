@@ -455,7 +455,7 @@ const Header = () => {
                                             :
                                             themeDnsData?.id == 34 ? '/qietu/Group 11.png'
                                                 :
-                                                themeDnsData?.id == 59 ? '/logos/tjmall dark.png'
+                                                themeDnsData?.id == 59 ? logoSrc()
                                                     :
                                                     themeDnsData?.id == 61 ? '/logos/deoni2.png'
                                                         :
@@ -471,7 +471,7 @@ const Header = () => {
                                         style={{
                                             fontSize: '15px',
                                             fontFamily: 'ABeeZee',
-                                            color: `${themeDnsData?.id == 63 && themeMode != 'dark' ? 'black' : themeDnsData?.id == 63 && themeMode == 'dark' ? 'white' : scrollTop ? '' : 'white'}`,
+                                            color: `${(themeDnsData?.id == 63 || themeDnsData?.id == 59) && themeMode != 'dark' ? 'black' : (themeDnsData?.id == 63 || themeDnsData?.id == 59) && themeMode == 'dark' ? 'white' : scrollTop ? '' : 'white'}`,
                                         }}
                                         onClick={() => {
                                             router.push('/shop/main')
@@ -501,7 +501,7 @@ const Header = () => {
                                                                 theme={theme}
                                                                 hoverColor={themeMode == 'dark' ? '#fff' : '#000'}
                                                                 onClick={() => { router.push(`/shop/auth/${item.link_key}`) }}
-                                                                style={{ color: `${themeDnsData?.id == 63 && themeMode != 'dark' ? 'black' : themeDnsData?.id == 63 && themeMode == 'dark' ? 'white' : scrollTop && themeMode != 'dark' ? '' : 'white'}` }}
+                                                                style={{ color: `${(themeDnsData?.id == 63 || themeDnsData?.id == 59) && themeMode != 'dark' ? 'black' : (themeDnsData?.id == 63 || themeDnsData?.id == 59) && themeMode == 'dark' ? 'white' : scrollTop && themeMode != 'dark' ? '' : 'white'}` }}
                                                             >{item.name}</AuthMenu>
                                                         </>
                                                     ))}
@@ -509,7 +509,7 @@ const Header = () => {
                                                         theme={theme}
                                                         hoverColor={themeMode == 'dark' ? '#fff' : '#000'}
                                                         onClick={onLogout}
-                                                        style={{ borderRight: `none`, color: `${themeDnsData?.id == 63 && themeMode != 'dark' ? 'black' : themeDnsData?.id == 63 && themeMode == 'dark' ? 'white' : scrollTop && themeMode != 'dark' ? '' : 'white'}` }}
+                                                        style={{ borderRight: `none`, color: `${(themeDnsData?.id == 63 || themeDnsData?.id == 59) && themeMode != 'dark' ? 'black' : (themeDnsData?.id == 63 || themeDnsData?.id == 59) && themeMode == 'dark' ? 'white' : scrollTop && themeMode != 'dark' ? '' : 'white'}` }}
                                                     >{translate('로그아웃')}</AuthMenu>
                                                 </>
                                                 :
@@ -520,7 +520,7 @@ const Header = () => {
                                                                 theme={theme}
                                                                 hoverColor={themeMode == 'dark' ? '#fff' : '#000'}
                                                                 onClick={() => { router.push(`/shop/auth/${item.link_key}`) }}
-                                                                style={{ borderRight: `${idx == noneAuthList.length - 1 ? 'none' : ''}`, color: `${themeDnsData?.id == 63 && themeMode != 'dark' ? 'black' : themeDnsData?.id == 63 && themeMode == 'dark' ? 'white' : scrollTop && themeMode != 'dark' ? '' : 'white'}` }}
+                                                                style={{ borderRight: `${idx == noneAuthList.length - 1 ? 'none' : ''}`, color: `${(themeDnsData?.id == 63 || themeDnsData?.id == 59) && themeMode != 'dark' ? 'black' : (themeDnsData?.id == 63 || themeDnsData?.id == 59) && themeMode == 'dark' ? 'white' : scrollTop && themeMode != 'dark' ? '' : 'white'}` }}
                                                             >{item.name}</AuthMenu>
                                                         </>
                                                     ))}
@@ -531,16 +531,16 @@ const Header = () => {
                                         <div className="fade-in-text" style={{ display: `${isAuthMenuOver ? 'none' : 'flex'}`, alignItems: 'center' }}>
                                             {user ?
                                                 <>
-                                                    <AuthMenu theme={theme} style={{ borderRight: 'none', color: `${themeDnsData?.id == 63 && themeMode != 'dark' ? 'black' : themeDnsData?.id == 63 && themeMode == 'dark' ? 'white' : scrollTop && themeMode != 'dark' ? '' : 'white'}` }}>
+                                                    <AuthMenu theme={theme} style={{ borderRight: 'none', color: `${(themeDnsData?.id == 63 || themeDnsData?.id == 59) && themeMode != 'dark' ? 'black' : (themeDnsData?.id == 63 || themeDnsData?.id == 59) && themeMode == 'dark' ? 'white' : scrollTop && themeMode != 'dark' ? '' : 'white'}` }}>
                                                         {translate('마이페이지')}
                                                     </AuthMenu>
                                                 </>
                                                 :
                                                 <>
-                                                    <AuthMenu theme={theme} style={{ color: `${themeDnsData?.id == 63 && themeMode != 'dark' ? 'black' : themeDnsData?.id == 63 && themeMode == 'dark' ? 'white' : scrollTop ? '' : 'white'}` }}>
+                                                    <AuthMenu theme={theme} style={{ color: `${(themeDnsData?.id == 63 || themeDnsData?.id == 59) && themeMode != 'dark' ? 'black' : (themeDnsData?.id == 63 || themeDnsData?.id == 59) && themeMode == 'dark' ? 'white' : scrollTop ? '' : 'white'}` }}>
                                                         {translate('회원가입')}
                                                     </AuthMenu>
-                                                    <AuthMenu theme={theme} style={{ borderRight: 'none', color: `${themeDnsData?.id == 63 && themeMode != 'dark' ? 'black' : themeDnsData?.id == 63 && themeMode == 'dark' ? 'white' : scrollTop && themeMode != 'dark' ? '' : 'white'}` }}>
+                                                    <AuthMenu theme={theme} style={{ borderRight: 'none', color: `${(themeDnsData?.id == 63 || themeDnsData?.id == 59) && themeMode != 'dark' ? 'black' : (themeDnsData?.id == 63 || themeDnsData?.id == 59) && themeMode == 'dark' ? 'white' : scrollTop && themeMode != 'dark' ? '' : 'white'}` }}>
                                                         {translate('로그인')}
                                                     </AuthMenu>
                                                 </>}

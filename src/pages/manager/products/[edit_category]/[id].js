@@ -311,7 +311,7 @@ const ProductEdit = () => {
     groups: [],
     characters: [],
     properties: {},
-    point_save: 0,
+    //point_save: 0,
     point_usable: 1,
     cash_usable: 1,
     pg_usable: 1,

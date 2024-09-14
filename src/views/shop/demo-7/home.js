@@ -169,7 +169,7 @@ const HomeDemo = (props) => {
                 <Title>
                   Proposal of B2B Shopping<br />
                   {
-                    themeDnsData.id == 34 ?
+                    (themeDnsData.id == 34 || themeDnsData.id == 64) ?
                       'THE PLUS'
                       :
                       themeDnsData.id == 59 ?

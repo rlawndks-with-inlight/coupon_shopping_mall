@@ -453,7 +453,7 @@ const Header = () => {
                                     <img
                                         src={scrollTop ? logoSrc()
                                             :
-                                            themeDnsData?.id == 34 ? '/qietu/Group 11.png'
+                                            themeDnsData?.id == 34 || themeDnsData?.id == 64 ? '/qietu/Group 11.png'
                                                 :
                                                 themeDnsData?.id == 59 ? logoSrc()
                                                     :

@@ -865,7 +865,7 @@ const HomeDemo = (props) => {
               <span style={{ margin: '2rem auto 5rem auto', fontSize: '25px', marginBottom: '1rem', fontWeight: 'bold', wordSpacing: '7px' }}>
                 {'< 자동메시지 관리 >'}
               </span>
-              <Row style={{ margin: '2rem auto', alignItems: 'center' }}>
+              <Row style={{ margin: '2rem auto', alignItems: 'center', marginLeft: '0' }}>
                 <img src="/asapmall-demo/img_list_auto01.gif" style={{ margin: '0 auto', marginRight: '1rem', maxHeight: '100px' }} />
                 <span style={{ fontSize: '18px', marginBottom: '1rem' }}>
 
@@ -874,7 +874,7 @@ const HomeDemo = (props) => {
 
                 </span>
               </Row>
-              <Row style={{ margin: '2rem auto', alignItems: 'center' }}>
+              <Row style={{ margin: '2rem auto', alignItems: 'center', marginLeft: '0' }}>
                 <img src="/asapmall-demo/img_list_auto02.gif" style={{ margin: '0 auto', marginRight: '1rem', maxHeight: '100px' }} />
                 <span style={{ margin: '2rem auto 5rem auto', fontSize: '18px', marginBottom: '1rem' }}>
 
@@ -883,7 +883,7 @@ const HomeDemo = (props) => {
 
                 </span>
               </Row>
-              <Row style={{ margin: '2rem auto', alignItems: 'center' }}>
+              <Row style={{ margin: '2rem auto', alignItems: 'center', marginLeft: '0' }}>
                 <img src="/asapmall-demo/img_list_auto03.gif" style={{ margin: '0 auto', marginRight: '1rem', maxHeight: '100px' }} />
                 <span style={{ fontSize: '18px', marginBottom: '1rem' }}>
 

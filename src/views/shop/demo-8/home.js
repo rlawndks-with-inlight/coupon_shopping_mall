@@ -740,9 +740,6 @@ const HomeDemo = (props) => {
               <span style={{ margin: '2rem auto 5rem auto', fontSize: '14px', marginBottom: '1rem' }}>
                 안전한 지급대행 서비스로 정해진 일자에 입금완료!
               </span>
-              <span style={{ margin: '2rem auto 5rem auto', fontSize: '25px', marginBottom: '1rem', fontWeight: 'bold', wordSpacing: '7px' }}>
-                차원이 다른 업계 최초 3일 정산, 에이삽몰
-              </span>
               <img src="/asapmall-demo/adjustment_03_m.png" style={{ maxWidth: '300px', margin: '2rem auto' }} />
               <img src="/asapmall-demo/adjustment_04_m.png" style={{ maxWidth: '300px', margin: '2rem auto' }} />
               <Row style={{ margin: '2rem auto', alignItems: 'center' }}>

@@ -26,19 +26,27 @@ const ShopLayout8 = (props) => {
                 background: `${themeMode == 'dark' ? '#000' : '#fff'}`,
                 color: `${themeMode == 'dark' ? '#fff' : '#000'}`,
             }}>
-                <Header
-                    data={{
-                    }}
-                    func={{
-                        router
-                    }} />
+                {
+                    /*
+                                    <Header
+                                    data={{
+                                    }}
+                                    func={{
+                                        router
+                                    }} />
+                    */
+                }
                 {children}
-                <Footer
-                    data={{
-                    }}
-                    func={{
-                        router
-                    }} />
+                {
+                    /*
+                                    <Footer
+                                    data={{
+                                    }}
+                                    func={{
+                                        router
+                                    }} />
+                    */
+                }
             </Wrappers>
         </>
     )

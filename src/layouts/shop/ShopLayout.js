@@ -20,6 +20,9 @@ import styled from "styled-components";
 import { useLocales } from "src/locales";
 import $ from 'jquery';
 import { useAuthContext } from "../manager/auth/useAuthContext";
+import BlogLayout3 from "./blog/demo-3/BlogLayout2";
+import BlogLayout4 from "./blog/demo-4/BlogLayout2";
+import BlogLayout5 from "./blog/demo-5/BlogLayout2";
 
 const Wrappers = styled.div`
 
@@ -60,8 +63,12 @@ const getDemo = (num, common) => {
       return <BlogLayout1 {...common} />
     else if (num == 2)
       return <BlogLayout2 {...common} />
-    else
-      return { children }
+    else if (num == 3)
+      return <BlogLayout3 {...common} />
+    else if (num == 4)
+      return <BlogLayout4 {...common} />
+    else if (num == 5)
+      return <BlogLayout5 {...common} />
   } else {
     { children }
   }

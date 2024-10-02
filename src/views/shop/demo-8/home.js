@@ -330,7 +330,7 @@ const HomeDemo = (props) => {
               <img src="/asapmall-demo/s1.png" style={{ maxWidth: '200px', margin: '0 auto' }} />
             </MobileMain>
             <MobileMain style={{ maxWidth: '1200px', margin: '0 auto', padding: '10px', flexDirection: 'column', justifyContent: 'center', textAlign: 'center' }}>
-              <span style={{ fontSize: '26px', color: '#515B66', letterSpacing: '-5px', wordSpacing: '5px', margin: '0 auto' }}>
+              <span style={{ fontSize: '26px', color: '#515B66', wordSpacing: '5px', margin: '0 auto' }}>
                 회원가입 후 즉시 <span style={{ fontWeight: '900' }}>판매가능</span>
               </span>
               <span style={{ margin: '1rem auto 5rem auto', fontSize: '15px', marginBottom: '5rem' }}>
@@ -342,7 +342,7 @@ const HomeDemo = (props) => {
             <MobileMain style={{ width: '100%', margin: '0 auto', flexDirection: 'column', justifyContent: 'center' }}>
               <div style={{ width: '100%', background: '#EEE', padding: '10px', paddingTop: '3rem', textAlign: 'center' }}>
                 <div style={{ maxWidth: '1200px', margin: '0 auto', display: 'flex', flexDirection: 'column', justifyContent: 'center', }}>
-                  <span style={{ fontSize: '26px', color: '#515B66', letterSpacing: '-5px', wordSpacing: '5px', margin: '0 auto' }}>
+                  <span style={{ fontSize: '26px', color: '#515B66', wordSpacing: '5px', margin: '0 auto' }}>
                     에이삽몰 <span style={{ fontWeight: '900' }}>장점</span>
                   </span>
                   <span style={{ margin: '1rem auto 5rem auto', fontSize: '15px', marginBottom: '5rem' }}>
@@ -353,7 +353,7 @@ const HomeDemo = (props) => {
               <div style={{ width: '100%', backgroundImage: `url(${banner[0]})`, backgroundSize: 'cover', backgroundRepeat: 'no-repeat' }}>
                 <div style={{ margin: '0 auto', display: 'flex', flexDirection: 'column', justifyContent: '', textAlign: 'right' }}>
                   <div style={{ width: '90%', background: 'rgba(238, 238, 238, 0.8)', padding: '10px' }}>
-                    <span style={{ fontSize: '20px', color: '#515B66', letterSpacing: '-5px', wordSpacing: '5px', margin: '0 auto' }}>
+                    <span style={{ fontSize: '20px', color: '#515B66', wordSpacing: '5px', margin: '0 auto' }}>
                       타사와 같은 기능이지만<br />
                       <span style={{ fontWeight: '900' }}>더욱 똑똑한 서비스</span><br />
                     </span>
@@ -367,7 +367,7 @@ const HomeDemo = (props) => {
               <div style={{ width: '100%', backgroundImage: `url(${banner[1]})`, backgroundSize: 'cover', backgroundRepeat: 'no-repeat' }}>
                 <div style={{ margin: '0 auto', display: 'flex', flexDirection: 'column', justifyContent: '', textAlign: 'left' }}>
                   <div style={{ width: '90%', background: 'rgba(238, 238, 238, 0.8)', padding: '10px', marginLeft: 'auto' }}>
-                    <span style={{ fontSize: '20px', color: '#515B66', letterSpacing: '-5px', wordSpacing: '5px', margin: '0 auto' }}>
+                    <span style={{ fontSize: '20px', color: '#515B66', wordSpacing: '5px', margin: '0 auto' }}>
                       다수의 판매채널 관리를<br />
                       <span style={{ fontWeight: '900' }}>마스터 아이디로 한 번에 관리</span><br />
                     </span>
@@ -381,7 +381,7 @@ const HomeDemo = (props) => {
               <div style={{ width: '100%', backgroundImage: `url(${banner[2]})`, backgroundSize: 'cover', backgroundRepeat: 'no-repeat' }}>
                 <div style={{ margin: '0 auto', display: 'flex', flexDirection: 'column', justifyContent: '', textAlign: 'right' }}>
                   <div style={{ width: '90%', background: 'rgba(238, 238, 238, 0.8)', padding: '10px' }}>
-                    <span style={{ fontSize: '20px', color: '#515B66', letterSpacing: '-5px', wordSpacing: '5px', margin: '0 auto' }}>
+                    <span style={{ fontSize: '20px', color: '#515B66', wordSpacing: '5px', margin: '0 auto' }}>
                       언제 어디서나 자동으로<br />
                       <span style={{ fontWeight: '900' }}>입금확인과 발주서 메일 발송</span><br />
                     </span>
@@ -394,7 +394,7 @@ const HomeDemo = (props) => {
               </div>
             </MobileMain>
             <MobileMain style={{ maxWidth: '1200px', margin: '0 auto', padding: '10px', paddingTop: '3rem', flexDirection: 'column', justifyContent: 'center', textAlign: 'center' }}>
-              <span style={{ fontSize: '26px', color: '#515B66', letterSpacing: '-5px', wordSpacing: '5px', margin: '0 auto' }}>
+              <span style={{ fontSize: '26px', color: '#515B66', wordSpacing: '5px', margin: '0 auto' }}>
                 최저 <span style={{ fontWeight: '900' }}>수수료 프로모션</span>
               </span>
               <span style={{ margin: '1rem auto 5rem auto', fontSize: '15px', marginBottom: '5rem' }}>
@@ -721,10 +721,10 @@ const HomeDemo = (props) => {
 
 
             <MobileMain style={{ width: '100%', margin: '0 auto', marginTop: '80px', padding: '10px', flexDirection: 'column', justifyContent: 'center', textAlign: 'center' }}>
-              <span style={{ margin: '2rem auto 5rem auto', fontSize: '25px', marginBottom: '1rem', fontWeight: 'bold', letterSpacing: '-5px', wordSpacing: '7px' }}>
+              <span style={{ margin: '2rem auto 5rem auto', fontSize: '25px', marginBottom: '1rem', fontWeight: 'bold', wordSpacing: '7px' }}>
                 {'< 매출 / 통계 >'}
               </span>
-              <span style={{ margin: '2rem auto 5rem auto', fontSize: '25px', marginBottom: '1rem', fontWeight: 'bold', letterSpacing: '-5px', wordSpacing: '7px' }}>
+              <span style={{ margin: '2rem auto 5rem auto', fontSize: '25px', marginBottom: '1rem', fontWeight: 'bold', wordSpacing: '7px' }}>
                 차원이 다른 업계 최초 3일 정산, 에이삽몰
               </span>
               <span style={{ margin: '2rem auto 5rem auto', fontSize: '14px', marginBottom: '1rem' }}>
@@ -733,14 +733,14 @@ const HomeDemo = (props) => {
               <span style={{ margin: '2rem auto 5rem auto', fontSize: '10px', marginBottom: '5rem' }}>
                 ※ 정산일은 영업일 기준이며 정산일이 비영업일이면, 다음 영업일에 정산됩니다.
               </span>
-              <span style={{ margin: '2rem auto 5rem auto', fontSize: '25px', marginBottom: '1rem', fontWeight: 'bold', letterSpacing: '-5px', wordSpacing: '7px' }}>
+              <span style={{ margin: '2rem auto 5rem auto', fontSize: '25px', marginBottom: '1rem', fontWeight: 'bold', wordSpacing: '7px' }}>
                 에이삽몰 정산 프로세스
               </span>
               <img src="/asapmall-demo/adjustment_01.png" style={{ maxWidth: '300px', margin: '0 auto' }} />
               <span style={{ margin: '2rem auto 5rem auto', fontSize: '14px', marginBottom: '1rem' }}>
                 안전한 지급대행 서비스로 정해진 일자에 입금완료!
               </span>
-              <span style={{ margin: '2rem auto 5rem auto', fontSize: '25px', marginBottom: '1rem', fontWeight: 'bold', letterSpacing: '-5px', wordSpacing: '7px' }}>
+              <span style={{ margin: '2rem auto 5rem auto', fontSize: '25px', marginBottom: '1rem', fontWeight: 'bold', wordSpacing: '7px' }}>
                 차원이 다른 업계 최초 3일 정산, 에이삽몰
               </span>
               <img src="/asapmall-demo/adjustment_03_m.png" style={{ maxWidth: '300px', margin: '2rem auto' }} />
@@ -783,7 +783,7 @@ const HomeDemo = (props) => {
               </Row>
             </MobileMain>
             <MobileMain style={{ width: '100%', margin: '0 auto', marginTop: '80px', padding: '10px', flexDirection: 'column', justifyContent: 'center', textAlign: 'center' }}>
-              <span style={{ margin: '2rem auto 5rem auto', fontSize: '25px', marginBottom: '1rem', fontWeight: 'bold', letterSpacing: '-5px', wordSpacing: '7px' }}>
+              <span style={{ margin: '2rem auto 5rem auto', fontSize: '25px', marginBottom: '1rem', fontWeight: 'bold', wordSpacing: '7px' }}>
                 {'< 주문관리 >'}
               </span>
               <span style={{ margin: '2rem auto 5rem auto', fontSize: '18px', marginBottom: '1rem' }}>
@@ -865,7 +865,7 @@ const HomeDemo = (props) => {
             </MobileMain>
 
             <MobileMain style={{ width: '100%', margin: '0 auto', marginTop: '80px', padding: '10px', flexDirection: 'column', justifyContent: 'center', }}>
-              <span style={{ margin: '2rem auto 5rem auto', fontSize: '25px', marginBottom: '1rem', fontWeight: 'bold', letterSpacing: '-5px', wordSpacing: '7px' }}>
+              <span style={{ margin: '2rem auto 5rem auto', fontSize: '25px', marginBottom: '1rem', fontWeight: 'bold', wordSpacing: '7px' }}>
                 {'< 자동메시지 관리 >'}
               </span>
               <Row style={{ margin: '2rem auto', alignItems: 'center' }}>
@@ -896,7 +896,7 @@ const HomeDemo = (props) => {
 
                 </span>
               </Row>
-              <span style={{ margin: '2rem auto 5rem auto', fontSize: '40px', marginBottom: '1rem', fontWeight: 'bold', letterSpacing: '-5px', wordSpacing: '7px' }}>
+              <span style={{ margin: '2rem auto 5rem auto', fontSize: '40px', marginBottom: '1rem', fontWeight: 'bold', wordSpacing: '7px' }}>
                 알림톡 알림서비스
               </span>
               <Row style={{ margin: '2rem auto', marginLeft: '20%' }}>
@@ -993,10 +993,10 @@ const HomeDemo = (props) => {
 
 
             <MobileMain style={{ width: '100%', margin: '0 auto', marginTop: '80px', padding: '10px', flexDirection: 'column', justifyContent: 'center', }}>
-              <span style={{ margin: '2rem auto 5rem auto', fontSize: '25px', marginBottom: '1rem', fontWeight: 'bold', letterSpacing: '-5px', wordSpacing: '7px' }}>
+              <span style={{ margin: '2rem auto 5rem auto', fontSize: '25px', marginBottom: '1rem', fontWeight: 'bold', wordSpacing: '7px' }}>
                 {'< 에이삽몰 가입 절차 및 서류안내 >'}
               </span>
-              <span style={{ margin: '2rem auto 5rem auto', fontSize: '25px', marginBottom: '1rem', fontWeight: 'bold', letterSpacing: '-5px', wordSpacing: '7px' }}>
+              <span style={{ margin: '2rem auto 5rem auto', fontSize: '25px', marginBottom: '1rem', fontWeight: 'bold', wordSpacing: '7px' }}>
                 문의
               </span>
               <span style={{ margin: '2rem auto 5rem auto', fontSize: '16px', marginBottom: '1rem' }}>
@@ -1008,7 +1008,7 @@ const HomeDemo = (props) => {
               <span style={{ margin: '2rem auto 5rem auto', fontSize: '16px', marginBottom: '1rem' }}>
                 FAX : 0504-144-9419
               </span>
-              <span style={{ margin: '2rem auto 5rem auto', fontSize: '25px', marginBottom: '1rem', fontWeight: 'bold', letterSpacing: '-5px', wordSpacing: '7px' }}>
+              <span style={{ margin: '2rem auto 5rem auto', fontSize: '25px', marginBottom: '1rem', fontWeight: 'bold', wordSpacing: '7px' }}>
                 개인사업자 필요서류
               </span>
               <span style={{ margin: '2rem auto 5rem auto', fontSize: '16px', marginBottom: '1rem' }}>
@@ -1021,7 +1021,7 @@ const HomeDemo = (props) => {
                 3. (외국인 대표일 경우)외국인등록증 사본 1부
               </span>
 
-              <span style={{ margin: '2rem auto 5rem auto', fontSize: '25px', marginBottom: '1rem', fontWeight: 'bold', letterSpacing: '-5px', wordSpacing: '7px' }}>
+              <span style={{ margin: '2rem auto 5rem auto', fontSize: '25px', marginBottom: '1rem', fontWeight: 'bold', wordSpacing: '7px' }}>
                 법인사업자 필요서류
               </span>
               <span style={{ margin: '2rem auto 5rem auto', fontSize: '16px', marginBottom: '1rem' }}>
@@ -1037,7 +1037,7 @@ const HomeDemo = (props) => {
                 4. 법인 통장 사본 1부
               </span>
 
-              <span style={{ margin: '2rem auto 5rem auto', fontSize: '25px', marginBottom: '1rem', fontWeight: 'bold', letterSpacing: '-5px', wordSpacing: '7px' }}>
+              <span style={{ margin: '2rem auto 5rem auto', fontSize: '25px', marginBottom: '1rem', fontWeight: 'bold', wordSpacing: '7px' }}>
                 가입절차
               </span>
               <span style={{ margin: '2rem auto 5rem auto', fontSize: '16px', marginBottom: '1rem', textAlign: 'center' }}>

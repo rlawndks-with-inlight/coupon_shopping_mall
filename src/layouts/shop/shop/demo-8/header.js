@@ -450,7 +450,7 @@ const Header = () => {
                         {router.asPath == '/shop/' ?
                             <>
                                 <TopMenuContainer>
-                                    <img src={scrollTop ? logoSrc() : '/qietu/Group 11.png'} style={{ height: '40px', width: 'auto', cursor: 'pointer', marginRight: '2rem' }}
+                                    <img src={'/logos/asapmall.png'} style={{ height: '50px', width: 'auto', cursor: 'pointer', marginRight: '2rem' }}
                                         onClick={() => {
                                             router.push('/shop')
                                         }}
@@ -497,7 +497,7 @@ const Header = () => {
                                                         theme={theme}
                                                         hoverColor={themeMode == 'dark' ? '#fff' : '#000'}
                                                         onClick={onLogout}
-                                                        style={{ borderRight: `none`, color: `${scrollTop && themeMode != 'dark' ? '' : 'white'}` }}
+                                                        style={{ borderRight: `none`, }}
                                                     >{translate('로그아웃')}</AuthMenu>
                                                 </>
                                                 :
@@ -508,7 +508,7 @@ const Header = () => {
                                                                 theme={theme}
                                                                 hoverColor={themeMode == 'dark' ? '#fff' : '#000'}
                                                                 onClick={() => { router.push(`/shop/auth/${item.link_key}`) }}
-                                                                style={{ borderRight: `${idx == noneAuthList.length - 1 ? 'none' : ''}`, color: `${scrollTop && themeMode != 'dark' ? '' : 'white'}` }}
+                                                                style={{ borderRight: `${idx == noneAuthList.length - 1 ? 'none' : ''}`, }}
                                                             >{item.name}</AuthMenu>
                                                         </>
                                                     ))}
@@ -519,7 +519,7 @@ const Header = () => {
                                         <div className="fade-in-text" style={{ display: `${isAuthMenuOver ? 'none' : 'flex'}`, alignItems: 'center' }}>
                                             {user ?
                                                 <>
-                                                    <AuthMenu theme={theme} style={{ borderRight: 'none', color: `${scrollTop && themeMode != 'dark' ? '' : 'white'}` }}>
+                                                    <AuthMenu theme={theme} style={{ borderRight: 'none', }}>
                                                         {translate('마이페이지')}
                                                     </AuthMenu>
                                                 </>
@@ -528,7 +528,7 @@ const Header = () => {
                                                     <AuthMenu theme={theme} style={{ color: `${scrollTop ? '' : 'white'}` }}>
                                                         {translate('회원가입')}
                                                     </AuthMenu>
-                                                    <AuthMenu theme={theme} style={{ borderRight: 'none', color: `${scrollTop && themeMode != 'dark' ? '' : 'white'}` }}>
+                                                    <AuthMenu theme={theme} style={{ borderRight: 'none', }}>
                                                         {translate('로그인')}
                                                     </AuthMenu>
                                                 </>}

@@ -9,7 +9,7 @@ const SubTitle = styled.h3`
 font-size:14px;
 font-weight:normal;
 line-height:1.38462;
-paddingBottom:1rem;
+padding-bottom:1rem;
 `
 
 const returnInquiryType = {
@@ -29,7 +29,7 @@ const returnInquiryType = {
 
 const test_inquiry = [
     {
-        id:1,
+        id: 1,
         inquiry_type: 0,
         inquiry_title: '주문문의',
         inquiry_detail: '입금했는데 입금 확인이 안됩니다',
@@ -37,14 +37,14 @@ const test_inquiry = [
         answer: '죄송합니다. 입금이 누락되어 다시 보냈으니 확인 바랍니다.'
     },
     {
-        id:2,
+        id: 2,
         inquiry_type: 1,
         inquiry_title: '일반문의',
         inquiry_detail: '배송지를 변경하고 싶어요',
         answer: '배송지 변경은 배송 시작 전에만 가능하며 판매자가 직접 변경해야 합니다. 판매자에게 문의하여 배송지 변경 요청을 해주시길 바랍니다.'
     },
     {
-        id:232,
+        id: 232,
         inquiry_type: 0,
         inquiry_title: '주문문의',
         inquiry_detail: '취소하고 싶어요',
@@ -113,33 +113,33 @@ const Demo1 = (props) => {
                         }} />
                     ))}
                 </Tabs>
-                    {inquiryList.map((item, idx) => (
-                        <>
-                            {item.inquiry_type == inquiryType &&
-                                <>
-                                    <Accordion 
+                {inquiryList.map((item, idx) => (
+                    <>
+                        {item.inquiry_type == inquiryType &&
+                            <>
+                                <Accordion
                                     key={idx}
                                     expanded={controlled === item.id}
-                                    onChange={()=>{
-                                        if(item.id == controlled){
+                                    onChange={() => {
+                                        if (item.id == controlled) {
                                             setControlled(undefined);
-                                        }else{
+                                        } else {
                                             setControlled(item.id)
                                         }
                                     }}
-                                    disabled={item.answer? false : true}
-                                    >
-                                        <AccordionSummary expandIcon={<Iconify icon="eva:arrow-ios-downward-fill" />}>
-                                            <Typography variant="subtitle1">{item.inquiry_seller ? `[${item.inquiry_seller}]` : ""} {item.inquiry_detail} {item.answer? "(답변 완료)" : "(답변 대기중)"}</Typography>
-                                        </AccordionSummary>
-                                        <AccordionDetails>
-                                            <Typography>{item.answer}</Typography>
-                                        </AccordionDetails>
-                                    </Accordion>
-                                </>
-                            }
-                        </>
-                    ))}
+                                    disabled={item.answer ? false : true}
+                                >
+                                    <AccordionSummary expandIcon={<Iconify icon="eva:arrow-ios-downward-fill" />}>
+                                        <Typography variant="subtitle1">{item.inquiry_seller ? `[${item.inquiry_seller}]` : ""} {item.inquiry_detail} {item.answer ? "(답변 완료)" : "(답변 대기중)"}</Typography>
+                                    </AccordionSummary>
+                                    <AccordionDetails>
+                                        <Typography>{item.answer}</Typography>
+                                    </AccordionDetails>
+                                </Accordion>
+                            </>
+                        }
+                    </>
+                ))}
             </Wrappers>
         </>
     )

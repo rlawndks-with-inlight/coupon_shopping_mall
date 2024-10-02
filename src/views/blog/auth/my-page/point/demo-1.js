@@ -9,7 +9,7 @@ const SubTitle = styled.h3`
 font-size:14px;
 font-weight:normal;
 line-height:1.38462;
-paddingBottom:1rem;
+padding-bottom:1rem;
 `
 
 const ContentContainer = styled.div`

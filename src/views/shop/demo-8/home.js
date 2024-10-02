@@ -200,22 +200,30 @@ const HomeDemo = (props) => {
     '/logos/asapmall_full.png'
   ]
 
+
+  const handleClick = () => {
+    const anchor = document.querySelector('body')
+    if (anchor) {
+      anchor.scrollIntoView({ behavior: 'smooth' })
+    }
+  }
+
   return (
     <>
       <Wrappers>
         <Header>
           <div style={{ display: 'flex', margin: '0 auto', maxWidth: '1200px', width: '100%', alignItems: 'center' }} >
-            <div style={{ display: 'flex', cursor: 'pointer' }} onClick={() => { setTab(0) }}>
+            <div style={{ display: 'flex', cursor: 'pointer' }} onClick={() => { setTab(0); handleClick(); }}>
               <img src={image[0]} style={{ height: '70px' }} />
             </div>
             <Main style={{ marginLeft: '2rem' }}>
-              <div style={{ fontSize: '15px', fontWeight: '600', margin: 'auto 1rem', cursor: 'pointer' }} onClick={() => { setTab(1) }}>
+              <div style={{ fontSize: '15px', fontWeight: '600', margin: 'auto 1rem', cursor: 'pointer' }} onClick={() => { setTab(1); handleClick(); }}>
                 에이삽몰이란
               </div>
-              <div style={{ fontSize: '15px', fontWeight: '600', margin: 'auto 1rem', cursor: 'pointer' }} onClick={() => { setTab(2) }}>
+              <div style={{ fontSize: '15px', fontWeight: '600', margin: 'auto 1rem', cursor: 'pointer' }} onClick={() => { setTab(2); handleClick(); }}>
                 주요기능
               </div>
-              <div style={{ fontSize: '15px', fontWeight: '600', margin: 'auto 1rem', cursor: 'pointer' }} onClick={() => { setTab(3) }}>
+              <div style={{ fontSize: '15px', fontWeight: '600', margin: 'auto 1rem', cursor: 'pointer' }} onClick={() => { setTab(3); handleClick(); }}>
                 가입안내
               </div>
             </Main>
@@ -226,13 +234,13 @@ const HomeDemo = (props) => {
           <>
             <MobileMain style={{ marginTop: '150px', }}>
               <Row>
-                <div style={{ fontSize: '15px', fontWeight: '600', margin: 'auto 1rem', cursor: 'pointer' }} onClick={() => { setTab(1) }}>
+                <div style={{ fontSize: '15px', fontWeight: '600', margin: 'auto 1rem', cursor: 'pointer' }} onClick={() => { setTab(1); handleClick(); }}>
                   에이삽몰이란
                 </div>
-                <div style={{ fontSize: '15px', fontWeight: '600', margin: 'auto 1rem', cursor: 'pointer' }} onClick={() => { setTab(2) }}>
+                <div style={{ fontSize: '15px', fontWeight: '600', margin: 'auto 1rem', cursor: 'pointer' }} onClick={() => { setTab(2); handleClick(); }}>
                   주요기능
                 </div>
-                <div style={{ fontSize: '15px', fontWeight: '600', margin: 'auto 1rem', cursor: 'pointer' }} onClick={() => { setTab(3) }}>
+                <div style={{ fontSize: '15px', fontWeight: '600', margin: 'auto 1rem', cursor: 'pointer' }} onClick={() => { setTab(3); handleClick(); }}>
                   가입안내
                 </div>
               </Row>
@@ -402,13 +410,13 @@ const HomeDemo = (props) => {
           <>
             <MobileMain style={{ marginTop: '150px', }}>
               <Row>
-                <div style={{ fontSize: '15px', fontWeight: '600', margin: 'auto 1rem', cursor: 'pointer' }} onClick={() => { setTab(1) }}>
+                <div style={{ fontSize: '15px', fontWeight: '600', margin: 'auto 1rem', cursor: 'pointer' }} onClick={() => { setTab(1); handleClick(); }}>
                   에이삽몰이란
                 </div>
-                <div style={{ fontSize: '15px', fontWeight: '600', margin: 'auto 1rem', cursor: 'pointer' }} onClick={() => { setTab(2) }}>
+                <div style={{ fontSize: '15px', fontWeight: '600', margin: 'auto 1rem', cursor: 'pointer' }} onClick={() => { setTab(2); handleClick(); }}>
                   주요기능
                 </div>
-                <div style={{ fontSize: '15px', fontWeight: '600', margin: 'auto 1rem', cursor: 'pointer' }} onClick={() => { setTab(3) }}>
+                <div style={{ fontSize: '15px', fontWeight: '600', margin: 'auto 1rem', cursor: 'pointer' }} onClick={() => { setTab(3); handleClick(); }}>
                   가입안내
                 </div>
               </Row>
@@ -506,13 +514,13 @@ const HomeDemo = (props) => {
           <>
             <MobileMain style={{ marginTop: '150px', }}>
               <Row>
-                <div style={{ fontSize: '15px', fontWeight: '600', margin: 'auto 1rem', cursor: 'pointer' }} onClick={() => { setTab(1) }}>
+                <div style={{ fontSize: '15px', fontWeight: '600', margin: 'auto 1rem', cursor: 'pointer' }} onClick={() => { setTab(1); handleClick(); }}>
                   에이삽몰이란
                 </div>
-                <div style={{ fontSize: '15px', fontWeight: '600', margin: 'auto 1rem', cursor: 'pointer' }} onClick={() => { setTab(2) }}>
+                <div style={{ fontSize: '15px', fontWeight: '600', margin: 'auto 1rem', cursor: 'pointer' }} onClick={() => { setTab(2); handleClick(); }}>
                   주요기능
                 </div>
-                <div style={{ fontSize: '15px', fontWeight: '600', margin: 'auto 1rem', cursor: 'pointer' }} onClick={() => { setTab(3) }}>
+                <div style={{ fontSize: '15px', fontWeight: '600', margin: 'auto 1rem', cursor: 'pointer' }} onClick={() => { setTab(3); handleClick(); }}>
                   가입안내
                 </div>
               </Row>
@@ -913,13 +921,13 @@ const HomeDemo = (props) => {
           <>
             <MobileMain style={{ marginTop: '150px', }}>
               <Row>
-                <div style={{ fontSize: '15px', fontWeight: '600', margin: 'auto 1rem', cursor: 'pointer' }} onClick={() => { setTab(1) }}>
+                <div style={{ fontSize: '15px', fontWeight: '600', margin: 'auto 1rem', cursor: 'pointer' }} onClick={() => { setTab(1); handleClick(); }}>
                   에이삽몰이란
                 </div>
-                <div style={{ fontSize: '15px', fontWeight: '600', margin: 'auto 1rem', cursor: 'pointer' }} onClick={() => { setTab(2) }}>
+                <div style={{ fontSize: '15px', fontWeight: '600', margin: 'auto 1rem', cursor: 'pointer' }} onClick={() => { setTab(2); handleClick(); }}>
                   주요기능
                 </div>
-                <div style={{ fontSize: '15px', fontWeight: '600', margin: 'auto 1rem', cursor: 'pointer' }} onClick={() => { setTab(3) }}>
+                <div style={{ fontSize: '15px', fontWeight: '600', margin: 'auto 1rem', cursor: 'pointer' }} onClick={() => { setTab(3); handleClick(); }}>
                   가입안내
                 </div>
               </Row>

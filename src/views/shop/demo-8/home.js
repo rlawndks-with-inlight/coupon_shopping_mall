@@ -237,7 +237,7 @@ const HomeDemo = (props) => {
                 </div>
               </Row>
             </MobileMain>
-            <Main style={{ width: '100%', margin: '0 auto', padding: '120px', flexDirection: 'column', justifyContent: 'center', background: '#CED9EA' }}>
+            <Main style={{ width: '100%', margin: '0 auto', marginTop: '80px', padding: '120px', flexDirection: 'column', justifyContent: 'center', background: '#CED9EA' }}>
               <img src="/asapmall-demo/s1.png" style={{ maxWidth: '400px', margin: '0 auto' }} />
             </Main>
             <Main style={{ maxWidth: '1200px', margin: '0 auto', padding: '120px', flexDirection: 'column', justifyContent: 'center' }}>
@@ -696,7 +696,7 @@ const HomeDemo = (props) => {
               <span style={{ margin: '2rem auto 5rem auto', fontSize: '40px', marginBottom: '1rem', fontWeight: 'bold', letterSpacing: '-5px', wordSpacing: '7px' }}>
                 알림톡 알림서비스
               </span>
-              <Row style={{ margin: '2rem auto', marginLeft: '20%' }}>
+              <Row style={{ margin: '2rem auto', }}>
                 <img src="/asapmall-demo/img_info_message01.jpg" style={{ margin: '0 auto', marginRight: '1rem' }} />
                 <img src="/asapmall-demo/img_message_tb.gif" style={{ margin: 'auto', marginRight: '1rem', maxHeight: '200px' }} />
               </Row>

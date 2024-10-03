@@ -216,7 +216,7 @@ const HomeDemo = (props) => {
       <Wrappers>
         <Header>
           <div style={{ display: 'flex', margin: '0 auto', maxWidth: '1200px', width: '100%', alignItems: 'center', flexDirection: 'column' }} >
-            <div style={{ display: 'flex', cursor: 'pointer' }} onClick={() => { setTab(0); handleClick(); }}>
+            <div style={{ display: 'flex', cursor: 'pointer', }} onClick={() => { setTab(0); handleClick(); }}>
               <img src={image[0]} style={{ height: '70px' }} />
             </div>
             <Main style={{ marginTop: '1rem' }}>
@@ -329,10 +329,10 @@ const HomeDemo = (props) => {
             </Main>
 
 
-            <MobileMain style={{ width: '100%', margin: '0 auto', marginTop: '20px', padding: '10px', flexDirection: 'column', justifyContent: 'center', background: '#CED9EA' }}>
+            <MobileMain style={{ width: '100%', margin: '0 auto', marginTop: '20px', padding: '50px', flexDirection: 'column', justifyContent: 'center', background: '#CED9EA' }}>
               <img src="/asapmall-demo/s1.png" style={{ maxWidth: '200px', margin: '0 auto' }} />
             </MobileMain>
-            <MobileMain style={{ maxWidth: '1200px', margin: '0 auto', padding: '10px', flexDirection: 'column', justifyContent: 'center', textAlign: 'center' }}>
+            <MobileMain style={{ maxWidth: '1200px', margin: '0 auto', padding: '60px 10px', flexDirection: 'column', justifyContent: 'center', textAlign: 'center' }}>
               <span style={{ fontSize: '26px', color: '#515B66', wordSpacing: '5px', margin: '0 auto' }}>
                 회원가입 후 즉시 <span style={{ fontWeight: '900' }}>판매가능</span>
               </span>
@@ -355,7 +355,7 @@ const HomeDemo = (props) => {
               </div>
               <div style={{ width: '100%', backgroundImage: `url(${banner[0]})`, backgroundSize: 'cover', backgroundRepeat: 'no-repeat' }}>
                 <div style={{ margin: '0 auto', display: 'flex', flexDirection: 'column', justifyContent: '', textAlign: 'right' }}>
-                  <div style={{ width: '90%', background: 'rgba(238, 238, 238, 0.8)', padding: '10px' }}>
+                  <div style={{ width: '90%', background: 'rgba(238, 238, 238, 0.8)', padding: '30px 10px' }}>
                     <span style={{ fontSize: '20px', color: '#515B66', wordSpacing: '5px', margin: '0 auto' }}>
                       타사와 같은 기능이지만<br />
                       <span style={{ fontWeight: '900' }}>더욱 똑똑한 서비스</span><br />
@@ -369,7 +369,7 @@ const HomeDemo = (props) => {
               </div>
               <div style={{ width: '100%', backgroundImage: `url(${banner[1]})`, backgroundSize: 'cover', backgroundRepeat: 'no-repeat' }}>
                 <div style={{ margin: '0 auto', display: 'flex', flexDirection: 'column', justifyContent: '', textAlign: 'left' }}>
-                  <div style={{ width: '90%', background: 'rgba(238, 238, 238, 0.8)', padding: '10px', marginLeft: 'auto' }}>
+                  <div style={{ width: '90%', background: 'rgba(238, 238, 238, 0.8)', padding: '30px 10px', marginLeft: 'auto' }}>
                     <span style={{ fontSize: '20px', color: '#515B66', wordSpacing: '5px', margin: '0 auto' }}>
                       다수의 판매채널 관리를<br />
                       <span style={{ fontWeight: '900' }}>마스터 아이디로 한 번에 관리</span><br />
@@ -383,7 +383,7 @@ const HomeDemo = (props) => {
               </div>
               <div style={{ width: '100%', backgroundImage: `url(${banner[2]})`, backgroundSize: 'cover', backgroundRepeat: 'no-repeat' }}>
                 <div style={{ margin: '0 auto', display: 'flex', flexDirection: 'column', justifyContent: '', textAlign: 'right' }}>
-                  <div style={{ width: '90%', background: 'rgba(238, 238, 238, 0.8)', padding: '10px' }}>
+                  <div style={{ width: '90%', background: 'rgba(238, 238, 238, 0.8)', padding: '30px 10px' }}>
                     <span style={{ fontSize: '20px', color: '#515B66', wordSpacing: '5px', margin: '0 auto' }}>
                       언제 어디서나 자동으로<br />
                       <span style={{ fontWeight: '900' }}>입금확인과 발주서 메일 발송</span><br />
@@ -482,7 +482,7 @@ const HomeDemo = (props) => {
                 </span>
                 <img src="/asapmall-demo/s3.png" style={{ maxWidth: '300px', margin: '2rem auto', marginBottom: '3rem' }} />
               </div>
-              <div style={{ width: '100%', padding: '10px', textAlign: 'center', background: '#EEE' }}>
+              <div style={{ width: '100%', padding: '50px 10px', textAlign: 'center', background: '#EEE' }}>
                 <img src="/asapmall-demo/img_tit04.png" style={{ maxWidth: '200px', margin: '2rem auto', marginBottom: '3rem' }} />
                 <span style={{ margin: '2rem auto 5rem auto', fontSize: '14px', marginBottom: '5rem' }}>
                   쇼핑몰도 만들어 주시나요? 미니쇼핑몰이 무엇인가요?<br />
@@ -950,7 +950,7 @@ const HomeDemo = (props) => {
 
                 </span>
               </Row>
-              <span style={{ margin: '2rem auto 5rem auto', fontSize: '40px', marginBottom: '1rem', fontWeight: 'bold', wordSpacing: '7px' }}>
+              <span style={{ margin: '2rem auto 5rem auto', fontSize: '25px', marginBottom: '1rem', fontWeight: 'bold', wordSpacing: '7px' }}>
                 알림톡 알림서비스
               </span>
               <Row style={{ margin: '2rem auto', marginLeft: '20%' }}>

@@ -115,9 +115,12 @@ width: 100%;
 margin: 0 auto;
 position: fixed;
 top: 0;
-height: 80px;
+height: 120px;
 z-index: 10;
 background-color: white;
+@media (max-width:1200px){
+  height: 80px;
+}
 `
 
 const Main = styled.div`
@@ -212,11 +215,11 @@ const HomeDemo = (props) => {
     <>
       <Wrappers>
         <Header>
-          <div style={{ display: 'flex', margin: '0 auto', maxWidth: '1200px', width: '100%', alignItems: 'center' }} >
+          <div style={{ display: 'flex', margin: '0 auto', maxWidth: '1200px', width: '100%', alignItems: 'center', flexDirection: 'column' }} >
             <div style={{ display: 'flex', cursor: 'pointer' }} onClick={() => { setTab(0); handleClick(); }}>
               <img src={image[0]} style={{ height: '70px' }} />
             </div>
-            <Main style={{ marginLeft: '2rem' }}>
+            <Main style={{ marginTop: '1rem' }}>
               <div style={{ fontSize: '15px', fontWeight: '600', margin: 'auto 1rem', cursor: 'pointer' }} onClick={() => { setTab(1); handleClick(); }}>
                 에이삽몰이란
               </div>
@@ -233,7 +236,7 @@ const HomeDemo = (props) => {
           tab == 0 &&
           <>
             <MobileMain style={{ marginTop: '150px', }}>
-              <Row>
+              <Row style={{ justifyContent: 'center', width: '100%' }}>
                 <div style={{ fontSize: '15px', fontWeight: '600', margin: 'auto 1rem', cursor: 'pointer' }} onClick={() => { setTab(1); handleClick(); }}>
                   에이삽몰이란
                 </div>
@@ -245,7 +248,7 @@ const HomeDemo = (props) => {
                 </div>
               </Row>
             </MobileMain>
-            <Main style={{ width: '100%', margin: '0 auto', marginTop: '80px', padding: '120px', flexDirection: 'column', justifyContent: 'center', background: '#CED9EA' }}>
+            <Main style={{ width: '100%', margin: '0 auto', marginTop: '120px', padding: '120px', flexDirection: 'column', justifyContent: 'center', background: '#CED9EA' }}>
               <img src="/asapmall-demo/s1.png" style={{ maxWidth: '400px', margin: '0 auto' }} />
             </Main>
             <Main style={{ maxWidth: '1200px', margin: '0 auto', padding: '120px', flexDirection: 'column', justifyContent: 'center' }}>
@@ -326,7 +329,7 @@ const HomeDemo = (props) => {
             </Main>
 
 
-            <MobileMain style={{ width: '100%', margin: '0 auto', marginTop: '120px', padding: '10px', flexDirection: 'column', justifyContent: 'center', background: '#CED9EA' }}>
+            <MobileMain style={{ width: '100%', margin: '0 auto', marginTop: '20px', padding: '10px', flexDirection: 'column', justifyContent: 'center', background: '#CED9EA' }}>
               <img src="/asapmall-demo/s1.png" style={{ maxWidth: '200px', margin: '0 auto' }} />
             </MobileMain>
             <MobileMain style={{ maxWidth: '1200px', margin: '0 auto', padding: '10px', flexDirection: 'column', justifyContent: 'center', textAlign: 'center' }}>
@@ -409,7 +412,7 @@ const HomeDemo = (props) => {
           tab == 1 &&
           <>
             <MobileMain style={{ marginTop: '150px', }}>
-              <Row>
+              <Row style={{ justifyContent: 'center', width: '100%' }}>
                 <div style={{ fontSize: '15px', fontWeight: '600', margin: 'auto 1rem', cursor: 'pointer' }} onClick={() => { setTab(1); handleClick(); }}>
                   에이삽몰이란
                 </div>
@@ -470,7 +473,7 @@ const HomeDemo = (props) => {
 
 
 
-            <MobileMain style={{ width: '100%', margin: '0 auto', marginTop: '120px', flexDirection: 'column', justifyContent: 'center' }}>
+            <MobileMain style={{ width: '100%', margin: '0 auto', marginTop: '80px', flexDirection: 'column', justifyContent: 'center' }}>
               <div style={{ width: '100%', padding: '10px', textAlign: 'center' }}>
                 <img src="/asapmall-demo/s2.png" style={{ maxWidth: '200px', margin: '2rem auto', marginBottom: '3rem' }} />
                 <span style={{ margin: '2rem auto 5rem auto', fontSize: '14px', marginBottom: '5rem' }}>
@@ -513,7 +516,7 @@ const HomeDemo = (props) => {
           tab == 2 &&
           <>
             <MobileMain style={{ marginTop: '150px', }}>
-              <Row>
+              <Row style={{ justifyContent: 'center', width: '100%' }}>
                 <div style={{ fontSize: '15px', fontWeight: '600', margin: 'auto 1rem', cursor: 'pointer' }} onClick={() => { setTab(1); handleClick(); }}>
                   에이삽몰이란
                 </div>
@@ -525,7 +528,7 @@ const HomeDemo = (props) => {
                 </div>
               </Row>
             </MobileMain>
-            <Main style={{ width: '100%', margin: '0 auto', padding: '120px', flexDirection: 'column', justifyContent: 'center', }}>
+            <Main style={{ width: '100%', margin: '0 auto', paddingTop: '180px', flexDirection: 'column', justifyContent: 'center', }}>
               <span style={{ margin: '2rem auto 5rem auto', fontSize: '40px', marginBottom: '1rem', fontWeight: 'bold', letterSpacing: '-5px', wordSpacing: '7px' }}>
                 {'< 매출 / 통계 >'}
               </span>
@@ -718,6 +721,60 @@ const HomeDemo = (props) => {
                 </span>
               </span>
             </Main>
+            <Main style={{ width: '100%', margin: '0 auto', marginTop: '80px', padding: '120px', flexDirection: 'column', justifyContent: 'center', }}>
+              <span style={{ margin: '2rem auto 5rem auto', fontSize: '40px', marginBottom: '1rem', fontWeight: 'bold', letterSpacing: '-5px', wordSpacing: '7px' }}>
+                {'< 무통장입금 확인 >'}
+              </span>
+              <Row style={{ margin: '2rem auto', }}>
+                <img src="/asapmall-demo/s02.png" style={{ margin: '0 auto', }} />
+              </Row>
+              <span style={{ margin: '2rem auto 5rem auto', fontSize: '25px', marginBottom: '1rem', textAlign: 'center' }}>
+                1. 무통장입금 결제<br />
+                <span style={{ margin: '2rem auto 5rem auto', fontSize: '14px', marginBottom: '5rem' }}>
+                  구매자가 무통장입금을 통해 구매 시 입금계좌로 주문금액을 입금합니다.
+                </span>
+              </span>
+              <Row style={{ margin: '2rem auto', }}>
+                <img src="/asapmall-demo/s03.png" style={{ margin: '0 auto', }} />
+              </Row>
+              <span style={{ margin: '2rem auto 5rem auto', fontSize: '25px', marginBottom: '1rem', textAlign: 'center' }}>
+                2. 입금문자 매칭
+                <br />
+                <span style={{ margin: '2rem auto 5rem auto', fontSize: '14px', marginBottom: '5rem' }}>
+                  입금된 계좌의 해당 은행으로부터 전달받은 입금정보와 주문정보를 자동으로 매칭합니다.
+                </span>
+              </span>
+              <Row style={{ margin: '2rem auto', }}>
+                <img src="/asapmall-demo/s03.png" style={{ margin: '0 auto', }} />
+              </Row>
+              <span style={{ margin: '2rem auto 5rem auto', fontSize: '25px', marginBottom: '1rem', textAlign: 'center' }}>
+                3. 무통장입금 확인<br />
+                <span style={{ margin: '2rem auto 5rem auto', fontSize: '14px', marginBottom: '5rem' }}>
+                  매칭된 주문건의 주문상태를 입금확인 처리합니다.
+                </span>
+              </span>
+              <span style={{ margin: '5rem auto', fontSize: '25px', marginBottom: '1rem', textAlign: 'center' }}>
+                지원 가능 은행
+              </span>
+              <Row style={{ margin: '2rem auto', flexWrap: 'wrap', maxWidth: '700px', justifyContent: 'center', alignItems: 'center' }}>
+                <img src="/asapmall-demo/img_bank_kb.gif" style={{ margin: '2rem', height: 'fit-content' }} />
+                <img src="/asapmall-demo/img_bank_ibk.gif" style={{ margin: '2rem', height: 'fit-content' }} />
+                <img src="/asapmall-demo/img_bank_nh.gif" style={{ margin: '2rem', height: 'fit-content' }} />
+                <img src="/asapmall-demo/img_bank_hana.gif" style={{ margin: '2rem', height: 'fit-content' }} />
+                <img src="/asapmall-demo/img_bank_sh.gif" style={{ margin: '2rem', height: 'fit-content' }} />
+                <img src="/asapmall-demo/img_bank_woo.gif" style={{ margin: '2rem', height: 'fit-content' }} />
+                <img src="/asapmall-demo/img_bank_etc01.gif" style={{ margin: '2rem', height: 'fit-content' }} />
+                <img src="/asapmall-demo/img_bank_etc02.gif" style={{ margin: '2rem', height: 'fit-content' }} />
+                <img src="/asapmall-demo/img_bank_etc03.gif" style={{ margin: '2rem', height: 'fit-content' }} />
+                <img src="/asapmall-demo/img_bank_etc04.gif" style={{ margin: '2rem', height: 'fit-content' }} />
+                <img src="/asapmall-demo/img_bank_etc06.gif" style={{ margin: '2rem', height: 'fit-content' }} />
+                <img src="/asapmall-demo/img_bank_etc07.gif" style={{ margin: '2rem', height: 'fit-content' }} />
+                <img src="/asapmall-demo/img_bank_etc08.gif" style={{ margin: '2rem', height: 'fit-content' }} />
+                <img src="/asapmall-demo/img_bank_etc09.gif" style={{ margin: '2rem', height: 'fit-content' }} />
+                <img src="/asapmall-demo/img_bank_etc10.gif" style={{ margin: '2rem', height: 'fit-content' }} />
+                <img src="/asapmall-demo/img_bank_etc11.gif" style={{ margin: '2rem', height: 'fit-content' }} />
+              </Row>
+            </Main>
 
 
             <MobileMain style={{ width: '100%', margin: '0 auto', marginTop: '80px', padding: '10px', flexDirection: 'column', justifyContent: 'center', textAlign: 'center' }}>
@@ -901,7 +958,7 @@ const HomeDemo = (props) => {
 
               </Row>
               <img src="/asapmall-demo/img_message_tb.gif" style={{ margin: 'auto', marginRight: '1rem', maxHeight: '200px' }} />
-              <span style={{ margin: '2rem auto 5rem auto', fontSize: '25px', marginBottom: '1rem' }}>
+              <span style={{ margin: '2rem auto 5rem auto', fontSize: '18px', marginBottom: '1rem' }}>
                 단문/장문 메시지 어떤 종류든 저렴한 비용<br />
                 <span style={{ margin: '2rem auto 5rem auto', fontSize: '14px', marginBottom: '5rem' }}>
                   무통장입금, 주문완료, 입금확인, 상품배송, 주문취소에 대한
@@ -911,13 +968,68 @@ const HomeDemo = (props) => {
                 </span>
               </span>
             </MobileMain>
+
+            <MobileMain style={{ width: '100%', margin: '0 auto', marginTop: '80px', padding: '10px', flexDirection: 'column', justifyContent: 'center', }}>
+              <span style={{ margin: '2rem auto 5rem auto', fontSize: '25px', marginBottom: '1rem', fontWeight: 'bold', letterSpacing: '-5px', wordSpacing: '7px' }}>
+                {'< 무통장입금 확인 >'}
+              </span>
+              <Row style={{ margin: '2rem auto', }}>
+                <img src="/asapmall-demo/s02.png" style={{ margin: '0 auto', }} />
+              </Row>
+              <span style={{ margin: '2rem auto 5rem auto', fontSize: '18px', marginBottom: '1rem', textAlign: 'center' }}>
+                1. 무통장입금 결제<br />
+                <span style={{ margin: '2rem auto 5rem auto', fontSize: '14px', marginBottom: '5rem' }}>
+                  구매자가 무통장입금을 통해 구매 시 입금계좌로 주문금액을 입금합니다.
+                </span>
+              </span>
+              <Row style={{ margin: '2rem auto', }}>
+                <img src="/asapmall-demo/s03.png" style={{ margin: '0 auto', }} />
+              </Row>
+              <span style={{ margin: '2rem auto 5rem auto', fontSize: '18px', marginBottom: '1rem', textAlign: 'center' }}>
+                2. 입금문자 매칭
+                <br />
+                <span style={{ margin: '2rem auto 5rem auto', fontSize: '14px', marginBottom: '5rem' }}>
+                  입금된 계좌의 해당 은행으로부터 전달받은 입금정보와 주문정보를 자동으로 매칭합니다.
+                </span>
+              </span>
+              <Row style={{ margin: '2rem auto', }}>
+                <img src="/asapmall-demo/s03.png" style={{ margin: '0 auto', }} />
+              </Row>
+              <span style={{ margin: '2rem auto 5rem auto', fontSize: '18px', marginBottom: '1rem', textAlign: 'center' }}>
+                3. 무통장입금 확인<br />
+                <span style={{ margin: '2rem auto 5rem auto', fontSize: '14px', marginBottom: '5rem' }}>
+                  매칭된 주문건의 주문상태를 입금확인 처리합니다.
+                </span>
+              </span>
+              <span style={{ margin: '5rem auto', fontSize: '25px', marginBottom: '1rem', textAlign: 'center' }}>
+                지원 가능 은행
+              </span>
+              <Row style={{ margin: '2rem auto', flexWrap: 'wrap', maxWidth: '700px', justifyContent: 'center', alignItems: 'center' }}>
+                <img src="/asapmall-demo/img_bank_kb.gif" style={{ margin: '2rem', height: 'fit-content' }} />
+                <img src="/asapmall-demo/img_bank_ibk.gif" style={{ margin: '2rem', height: 'fit-content' }} />
+                <img src="/asapmall-demo/img_bank_nh.gif" style={{ margin: '2rem', height: 'fit-content' }} />
+                <img src="/asapmall-demo/img_bank_hana.gif" style={{ margin: '2rem', height: 'fit-content' }} />
+                <img src="/asapmall-demo/img_bank_sh.gif" style={{ margin: '2rem', height: 'fit-content' }} />
+                <img src="/asapmall-demo/img_bank_woo.gif" style={{ margin: '2rem', height: 'fit-content' }} />
+                <img src="/asapmall-demo/img_bank_etc01.gif" style={{ margin: '2rem', height: 'fit-content' }} />
+                <img src="/asapmall-demo/img_bank_etc02.gif" style={{ margin: '2rem', height: 'fit-content' }} />
+                <img src="/asapmall-demo/img_bank_etc03.gif" style={{ margin: '2rem', height: 'fit-content' }} />
+                <img src="/asapmall-demo/img_bank_etc04.gif" style={{ margin: '2rem', height: 'fit-content' }} />
+                <img src="/asapmall-demo/img_bank_etc06.gif" style={{ margin: '2rem', height: 'fit-content' }} />
+                <img src="/asapmall-demo/img_bank_etc07.gif" style={{ margin: '2rem', height: 'fit-content' }} />
+                <img src="/asapmall-demo/img_bank_etc08.gif" style={{ margin: '2rem', height: 'fit-content' }} />
+                <img src="/asapmall-demo/img_bank_etc09.gif" style={{ margin: '2rem', height: 'fit-content' }} />
+                <img src="/asapmall-demo/img_bank_etc10.gif" style={{ margin: '2rem', height: 'fit-content' }} />
+                <img src="/asapmall-demo/img_bank_etc11.gif" style={{ margin: '2rem', height: 'fit-content' }} />
+              </Row>
+            </MobileMain>
           </>
         }
         {
           tab == 3 &&
           <>
             <MobileMain style={{ marginTop: '150px', }}>
-              <Row>
+              <Row style={{ justifyContent: 'center', width: '100%' }}>
                 <div style={{ fontSize: '15px', fontWeight: '600', margin: 'auto 1rem', cursor: 'pointer' }} onClick={() => { setTab(1); handleClick(); }}>
                   에이삽몰이란
                 </div>
@@ -931,19 +1043,7 @@ const HomeDemo = (props) => {
             </MobileMain>
             <Main style={{ width: '100%', margin: '0 auto', padding: '120px', flexDirection: 'column', justifyContent: 'center', }}>
               <span style={{ margin: '2rem auto 5rem auto', fontSize: '40px', marginBottom: '1rem', fontWeight: 'bold', letterSpacing: '-5px', wordSpacing: '7px' }}>
-                {'< 에이삽몰 가입 절차 및 서류안내 >'}
-              </span>
-              <span style={{ margin: '2rem auto 5rem auto', fontSize: '40px', marginBottom: '1rem', fontWeight: 'bold', letterSpacing: '-5px', wordSpacing: '7px' }}>
-                문의
-              </span>
-              <span style={{ margin: '2rem auto 5rem auto', fontSize: '25px', marginBottom: '1rem' }}>
-                전화 : 010-5519-2504
-              </span>
-              <span style={{ margin: '2rem auto 5rem auto', fontSize: '25px', marginBottom: '1rem' }}>
-                이메일 주소 : woojinplatform@gmail.com
-              </span>
-              <span style={{ margin: '2rem auto 5rem auto', fontSize: '25px', marginBottom: '1rem' }}>
-                FAX : 0504-144-9419
+                {'< 에이삽몰 가입절차 및 서류안내 >'}
               </span>
               <span style={{ margin: '2rem auto 5rem auto', fontSize: '40px', marginBottom: '1rem', fontWeight: 'bold', letterSpacing: '-5px', wordSpacing: '7px' }}>
                 개인사업자 필요서류
@@ -990,20 +1090,8 @@ const HomeDemo = (props) => {
 
 
             <MobileMain style={{ width: '100%', margin: '0 auto', marginTop: '80px', padding: '10px', flexDirection: 'column', justifyContent: 'center', }}>
-              <span style={{ margin: '2rem auto 5rem auto', fontSize: '25px', marginBottom: '1rem', fontWeight: 'bold', wordSpacing: '7px' }}>
-                {'< 에이삽몰 가입 절차 및 서류안내 >'}
-              </span>
-              <span style={{ margin: '2rem auto 5rem auto', fontSize: '25px', marginBottom: '1rem', fontWeight: 'bold', wordSpacing: '7px' }}>
-                문의
-              </span>
-              <span style={{ margin: '2rem auto 5rem auto', fontSize: '16px', marginBottom: '1rem' }}>
-                전화 : 010-5519-2504
-              </span>
-              <span style={{ margin: '2rem auto 5rem auto', fontSize: '16px', marginBottom: '1rem' }}>
-                이메일 주소 : woojinplatform@gmail.com
-              </span>
-              <span style={{ margin: '2rem auto 5rem auto', fontSize: '16px', marginBottom: '1rem' }}>
-                FAX : 0504-144-9419
+              <span style={{ margin: '2rem auto 5rem auto', fontSize: '20px', marginBottom: '1rem', fontWeight: 'bold', wordSpacing: '7px' }}>
+                {'< 에이삽몰 가입절차 및 서류안내 >'}
               </span>
               <span style={{ margin: '2rem auto 5rem auto', fontSize: '25px', marginBottom: '1rem', fontWeight: 'bold', wordSpacing: '7px' }}>
                 개인사업자 필요서류

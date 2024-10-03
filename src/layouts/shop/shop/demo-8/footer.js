@@ -62,59 +62,24 @@ const Footer = (props) => {
     return (
         <>
             <div style={{ marginTop: '2rem' }} />
-            <Wrapper style={{ background: `${theme.palette.mode == 'dark' ? '' : '#FFFFFF'}` }}>
+            <Wrapper style={{ background: `${theme.palette.mode == 'dark' ? '' : '#EEEEEE'}` }}>
                 <SubWrapper>
-                    <ContentWrapper>
-
-                        <Row>
-                            <Bold>{translate('회사명')} : </Bold>
-                            <MarginRight>{company_name}</MarginRight>
-                        </Row>
-                        <Row>
-                            <Bold>{translate('주소')} : </Bold>
-                            <MarginRight>{addr}</MarginRight>
-                        </Row>
-                        <Row>
-                            <Bold>{translate('사업자등록번호')} : </Bold>
-                            <MarginRight>{business_num}</MarginRight>
-                        </Row>
-                        <Row>
-                            <Bold>{translate('대표')} : </Bold>
-                            <MarginRight>{ceo_name}</MarginRight>
-                        </Row>
-                    </ContentWrapper>
-                    <ContentWrapper>
-                        <Row>
-                            <Bold>{translate('전화')} : </Bold>
-                            <MarginRight>{phone_num}</MarginRight>
-                        </Row>
-                        <Row>
-                            <Bold>{translate('이메일')} : </Bold>
-                            <MarginRight>{fax_num}</MarginRight>
-                        </Row>
-                        <Row>
-                            <Bold>{translate('개인정보 보호책임자')} : </Bold>
-                            <MarginRight>{pvcy_rep_name}</MarginRight>
-                        </Row>
-                        {
-                            mail_order_num != null &&
-                            <>
-                                <Row>
-                                    <Bold>{translate('통신판매번호')} : </Bold>
-                                    <MarginRight>{mail_order_num}</MarginRight>
-                                </Row>
-                            </>
-                        }
-                    </ContentWrapper>
                     <ContentWrapper>
                         <Row>
                             <Bold style={{ cursor: 'pointer', fontWeight: 'bold' }} onClick={() => { router.push('/shop/auth/policy?type=0') }}>{translate('서비스이용약관')}</Bold>
-                        </Row>
-                        <Row>
                             <Bold style={{ cursor: 'pointer', fontWeight: 'bold' }} onClick={() => { router.push('/shop/auth/policy?type=1') }}>{translate('개인정보처리방침')}</Bold>
                         </Row>
+                        <Row style={{ marginTop: '1rem' }}>
+                            <img src='/logos/asapmall_full.png' style={{ height: '30px', maxWidth: '150px', marginRight: '1rem' }} />
+                            <Row style={{ color: '#999', marginRight: '1rem' }}>
+                                서울특별시 영등포구 여의대방로67길 11, 5층 에이5-41호(여의도동)<br />
+                                대표 : 장지영 | 사업자번호 : 421-88-02504<br />
+                                Tel. : 010-5519-2504<br />
+                                FAX : 0504-144-9419<br />
+                                E-mail : woojinplatform@gmail.com
+                            </Row>
+                        </Row>
                     </ContentWrapper>
-                    <img src={logoSrc()} style={{ height: '30px', maxWidth: '150px', marginLeft: '5%' }} />
                 </SubWrapper>
             </Wrapper>
         </>

@@ -37,16 +37,14 @@ const ShopLayout8 = (props) => {
                     */
                 }
                 {children}
-                {
-                    /*
-                                    <Footer
-                                    data={{
-                                    }}
-                                    func={{
-                                        router
-                                    }} />
-                    */
-                }
+
+                <Footer
+                    data={{
+                    }}
+                    func={{
+                        router
+                    }} />
+
             </Wrappers>
         </>
     )

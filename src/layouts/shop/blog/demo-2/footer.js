@@ -98,9 +98,9 @@ const Footer = () => {
           </Row>
 
           <Row style={{ fontSize: '10px' }}>
-            {ceo_name.length > 1 &&
+            {company_name.length > 1 &&
               <>
-                <MarginRight>BS컴퍼니</MarginRight>
+                <MarginRight>{company_name}</MarginRight>
                 <MarginRight>|</MarginRight>
               </>
             }

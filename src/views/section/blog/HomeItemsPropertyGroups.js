@@ -1,6 +1,6 @@
 import styled from 'styled-components'
 import { Row, themeObj } from 'src/components/elements/styled-components'
-import { Items } from 'src/components/elements/shop/common'
+import { Items } from 'src/components/elements/blog/common'
 import _ from 'lodash'
 import { Button } from '@mui/material'
 import { useEffect, useState } from 'react'

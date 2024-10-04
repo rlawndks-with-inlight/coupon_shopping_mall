@@ -44,7 +44,7 @@ const Header = (props) => {
     search: false
   })
   const onSearch = () => {
-
+    router.push(`/blog/search?keyword=${keyword}`)
   }
   const [hoverItems, setHoverItems] = useState({
 

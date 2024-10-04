@@ -1,20 +1,22 @@
 
 import styled from "styled-components"
-import { themeObj } from "../styled-components"
+import { Row, themeObj } from "../styled-components"
 import { IconButton } from "@mui/material"
 import { Icon } from "@iconify/react"
 import { LazyLoadImage } from "react-lazy-load-image-component"
+import { commarNumber } from "src/utils/function"
 
 //김인욱 컴포넌트
 const ItemContent = styled.div`
 display:flex;
 flex-direction:column;
-width:23.5%;
+width:95%;
 cursor:pointer;
-@media (max-width:840px){
+aspect-ratio: 1/1;
+/*@media (max-width:840px){
     width:97%;
     margin:0 auto;
-}
+}*/
 `
 const SellerItemContent = styled.div`
 display:flex;
@@ -35,16 +37,32 @@ const ItemText = styled.div`
 font-size:${themeObj.font_size.size8};
 margin-top:0.5rem;
 `
-export const Item = (props) => {
+export const Item2 = (props) => {
     const { item, router } = props;
     return (
         <>
-            <ItemContent onClick={() => {
+            <ItemContent style={{ margin: '1rem' }} onClick={() => {
                 router.push(`/blog/product/${item.id}`)
             }}>
-                <LazyLoadImage style={{ width: '100%' }} src={item?.product_img} />
-                <ItemText style={{ fontWeight: 'bold' }}>{item?.name}</ItemText>
-                <ItemText style={{ color: themeObj.grey[500] }}>{item?.sub_name}</ItemText>
+                <LazyLoadImage style={{ width: '100%', height: '100%' }} src={item?.product_img} />
+                <ItemText style={{ fontWeight: 'bold' }}>{item?.product_name}</ItemText>
+                <ItemText style={{ color: themeObj.grey[500] }}>
+                    {item.product_sale_price < item.product_price &&
+                        <>
+                            <div style={{ color: 'red', marginRight: '0.25rem' }}>
+                                {commarNumber((item.product_price - item.product_sale_price) * 100 / item.product_price) + '%'}
+                            </div>
+                        </>}
+                    <Row>
+                        <div style={{ color: 'black', fontSize: themeObj.font_size.size7, }}>{commarNumber(item.product_sale_price)} 원</div>
+                        {item.product_sale_price < item.product_price &&
+                            <>
+                                <div style={{ textDecoration: 'line-through', marginLeft: '0.25rem', fontSize: themeObj.font_size.size7, color: themeObj.grey[500] }}>
+                                    {item.product_sale_price < item.product_price ? commarNumber(item.product_price) : ''}
+                                </div>
+                            </>}
+                    </Row>
+                </ItemText>
             </ItemContent>
         </>
     )

@@ -45,7 +45,7 @@ const Header = (props) => {
         search: false
     })
     const onSearch = () => {
-
+        router.push(`/blog/search?keyword=${keyword}`)
     }
     const [hoverItems, setHoverItems] = useState({
 
@@ -173,10 +173,9 @@ const Header = (props) => {
                                 <>
                                     <img src={logoSrc()} style={{ height: '40px', width: 'auto', cursor: 'pointer' }} onClick={() => { router.push('/blog') }} />
                                 </>}
-                            {
-                                /*
-                                <IconButton
-                                sx={{ ...iconButtonStyle, marginLeft: 'auto' }}
+
+                            <IconButton
+                                sx={{ ...iconButtonStyle, marginLeft: 'auto', marginRight: '1rem' }}
                                 onClick={() => {
                                     setDialogOpenObj({
                                         ...dialogOpenObj,
@@ -186,14 +185,15 @@ const Header = (props) => {
                             >
                                 <Icon icon={'iconoir:search'} fontSize={'1.5rem'} color={themeMode == 'dark' || ((isSellerPage || isProductPage) && scrollY < 350) ? '#fff' : '#000'} />
                             </IconButton>
-                            <IconButton
+                            {/*
+                             <IconButton
                                 sx={iconButtonStyle}
                                 onClick={() => router.push('/blog/auth/cart')}
                             >
                                 <Icon icon={'fluent:cart-20-regular'} fontSize={'1.8rem'} color={themeMode == 'dark' || ((isSellerPage || isProductPage) && scrollY < 350) ? '#fff' : '#000'} />
                             </IconButton>
-                                */
-                            }
+                             */}
+
                         </TopMenuContainer>
                     </Wrappers>
                 </>}

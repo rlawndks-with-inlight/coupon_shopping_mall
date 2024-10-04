@@ -35,7 +35,7 @@ const ItemText = styled.div`
 font-size:${themeObj.font_size.size8};
 margin-top:0.5rem;
 `
-export const Item = (props) => {
+export const Item5 = (props) => {
     const { item, router } = props;
     return (
         <>

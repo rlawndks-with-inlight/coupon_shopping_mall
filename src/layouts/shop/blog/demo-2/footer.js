@@ -194,12 +194,13 @@ const Footer = () => {
       </Wrappers>
       <FixedFooter>
         <Icon icon='bi:handbag' style={{ fontSize: '24px', cursor: 'pointer' }} onClick={() => { router.push('/blog') }} />
-        <Icon icon={'iconoir:search'} style={{ fontSize: '24px', cursor: 'pointer' }} />
+
         <Icon icon={'fluent:cart-20-regular'} style={{ fontSize: '32px', cursor: 'pointer' }} onClick={() => router.push('/blog/auth/cart')} />
         {
           /*
-          <Icon icon='radix-icons:hamburger-menu' style={{ fontSize: '24px', cursor: 'pointer' }} onClick={() => {  }} />
-        <Icon icon='ph:bell' style={{ fontSize: '24px', cursor: 'pointer' }} onClick={() => {  }} />
+          <Icon icon='radix-icons:hamburger-menu' style={{ fontSize: '24px', cursor: 'pointer' }} onClick={() => { }} />
+          <Icon icon={'iconoir:search'} style={{ fontSize: '24px', cursor: 'pointer' }} />
+                <Icon icon='ph:bell' style={{ fontSize: '24px', cursor: 'pointer' }} onClick={() => { }} />
           */
         }
         <Icon icon='basil:user-outline' style={{ fontSize: '32px', cursor: 'pointer' }} onClick={() => { router.push('/blog/auth/my-page') }} />

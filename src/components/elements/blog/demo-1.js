@@ -35,14 +35,14 @@ const ItemText = styled.div`
 font-size:${themeObj.font_size.size8};
 margin-top:0.5rem;
 `
-export const Item = (props) => {
+export const Item1 = (props) => {
   const { item, router } = props;
   return (
     <>
       <ItemContent onClick={() => {
         router.push(`/blog/product/${item.id}`)
       }}>
-        <LazyLoadImage style={{width:'100%'}} src={item?.product_img} />
+        <LazyLoadImage style={{ width: '100%' }} src={item?.product_img} />
         <ItemText style={{ fontWeight: 'bold' }}>{item?.name}</ItemText>
         <ItemText style={{ color: themeObj.grey[500] }}>{item?.sub_name}</ItemText>
       </ItemContent>
@@ -55,18 +55,17 @@ export const SellerItem = (props) => {
     <>
       <SellerItemContent>
         <div style={{ width: '100%', position: 'relative' }}>
-          <LazyLoadImage style={{width:'100%'}} src={item?.product_img} onClick={() => {
+          <LazyLoadImage style={{ width: '100%' }} src={item?.product_img} onClick={() => {
             router.push(`/blog/product/${item.id}`)
           }} />
           <IconButton sx={{ position: 'absolute', right: '0', bottom: '0' }}
             onClick={() => {
               onClickCartButton(item)
-            }}> 
+            }}>
             <Icon icon='iconamoon:shopping-bag' />
           </IconButton>
         </div>
-        <ItemText style={{ fontWeight: 'bold' }} onClick={() => 
-        {
+        <ItemText style={{ fontWeight: 'bold' }} onClick={() => {
           router.push(`/blog/product/${item.id}`)
         }}>{item?.product_name}</ItemText>
         <ItemText style={{ color: themeObj.grey[500] }} onClick={() => {

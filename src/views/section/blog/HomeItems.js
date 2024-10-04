@@ -1,6 +1,6 @@
 import styled from 'styled-components'
 import { themeObj } from 'src/components/elements/styled-components'
-import { Items } from 'src/components/elements/shop/common'
+import { Items } from 'src/components/elements/blog/common'
 import _ from 'lodash'
 import { formatLang } from 'src/utils/format'
 import { useLocales } from 'src/locales'
@@ -25,7 +25,7 @@ const HomeItems = (props) => {
             }}>
                 {column?.title &&
                     <>
-                        <div style={{fontWeight: 'bold' }}>{formatLang(column, 'title', currentLang)}</div>
+                        <div style={{ fontWeight: 'bold' }}>{formatLang(column, 'title', currentLang)}</div>
                         {column?.sub_title &&
                             <>
                                 <div style={{ fontSize: themeObj.font_size.size5, color: themeObj.grey[500] }}>{column?.sub_title}</div>

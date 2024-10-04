@@ -149,7 +149,7 @@ const Demo2 = (props) => {
                         쇼핑
                         {user ?
                             <>
-                                <MenuButton themeMode={themeMode} style={{ marginBottom: '0' }} onClick={() => { router.push('/blog/auth/my-page/point') }}>
+                                <MenuButton themeMode={themeMode} style={{ marginBottom: '0' }} onClick={() => { alert('현재 점검중입니다.')/*router.push('/blog/auth/my-page/point')*/ }}>
                                     <MenuText>포인트 조회</MenuText>
                                     <IconButton style={{ width: '24px', height: '56px', padding: '0', marginRight: '18px' }}>
                                         <Icon icon='ep:arrow-right' color='black' />
@@ -159,7 +159,8 @@ const Demo2 = (props) => {
                             : ""}
                         <MenuButton themeMode={themeMode} onClick={() => {
                             if (user) {
-                                router.push('/blog/auth/my-page/order')
+                                alert('현재 점검중입니다.')
+                                //router.push('/blog/auth/my-page/order')
                             } else {
                                 setDialogOpen(true)
                                 setDialogType(0)
@@ -172,7 +173,7 @@ const Demo2 = (props) => {
                         </MenuButton>
                         {user ?
                             <>
-                                <MenuButton themeMode={themeMode} style={{ marginTop: '0' }} onClick={() => { router.push('/blog/auth/my-page/address') }}>
+                                <MenuButton themeMode={themeMode} style={{ marginTop: '0' }} onClick={() => { alert('현재 점검중입니다.')/*router.push('/blog/auth/my-page/address')*/ }}>
                                     <MenuText>배송지 관리</MenuText>
                                     <IconButton style={{ width: '24px', height: '56px', padding: '0', marginRight: '18px' }}>
                                         <Icon icon='ep:arrow-right' color='black' />
@@ -185,7 +186,8 @@ const Demo2 = (props) => {
                         문의
                         <MenuButton themeMode={themeMode} onClick={() => {
                             if (user) {
-                                router.push('/blog/auth/my-page/inquiry')
+                                alert('현재 점검중입니다.')
+                                //router.push('/blog/auth/my-page/inquiry')
                             } else {
                                 setDialogOpen(true)
                                 setDialogType(1)

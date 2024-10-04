@@ -1,6 +1,6 @@
 import styled from 'styled-components'
 import { Row, themeObj } from 'src/components/elements/styled-components'
-import { Items } from 'src/components/elements/shop/common'
+import { Items } from 'src/components/elements/blog/common'
 import { Button, Tab } from '@mui/material'
 import _ from 'lodash'
 import { styled as muiStyled } from '@mui/material/styles';

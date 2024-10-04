@@ -1,5 +1,5 @@
 import { Icon } from '@iconify/react';
-import { Select, MenuItem, Drawer, FormControl, InputLabel, Button, Avatar, Divider, Dialog, DialogTitle, DialogContent, DialogActions, IconButton } from '@mui/material';
+import { Select, MenuItem, Drawer, FormControl, InputLabel, Button, Avatar, Divider, Dialog, DialogTitle, DialogContent, DialogActions, IconButton, Stack } from '@mui/material';
 import { useEffect, useState } from 'react';
 import { Row, themeObj } from 'src/components/elements/styled-components';
 import { useSettingsContext } from 'src/components/settings';
@@ -12,6 +12,11 @@ import { useTheme } from '@emotion/react';
 import { logoSrc } from 'src/data/data';
 import dynamic from 'next/dynamic';
 import { apiShop } from 'src/utils/api';
+import { insertCartDataUtil, selectItemOptionUtil } from 'src/utils/shop-util';
+import { useAuthContext } from 'src/layouts/manager/auth/useAuthContext';
+import toast from 'react-hot-toast';
+import { useLocales } from 'src/locales';
+import DialogBuyNow from 'src/components/dialog/DialogBuyNow';
 
 
 const ReactQuill = dynamic(() => import('react-quill'), {
@@ -113,8 +118,9 @@ const Demo2 = (props) => {
             router
         },
     } = props;
-    const { themeMode } = useSettingsContext();
-
+    const { translate, currentLang } = useLocales();
+    const { themeMode, themeCartData, onChangeCartData } = useSettingsContext();
+    const { user } = useAuthContext();
     const theme = useTheme();
 
     const [item, setItem] = useState({});
@@ -124,7 +130,10 @@ const Demo2 = (props) => {
     const [dialogOpen, setDialogOpen] = useState(false);
     const [dialogType, setDialogType] = useState("");
     const [product, setProduct] = useState();
-
+    const [selectProductGroups, setSelectProductGroups] = useState({
+        count: 1,
+        groups: [],
+    });
     const product_id = parseInt(document.location.href.split('/').reverse()[1])
 
     useEffect(() => {
@@ -179,9 +188,34 @@ const Demo2 = (props) => {
         return total_price
     }
 
+    const handleAddCart = async () => {
+        //옵션 체크 안해도 저장 되는데 이 부분은 수정할 여지가 있어보임
+        if (user) {
+            let result = await insertCartDataUtil({ ...item, seller_id: router.query?.seller_id ?? 0 }, selectProductGroups, themeCartData, onChangeCartData);
+            if (result) {
+                toast.success(translate("장바구니에 성공적으로 추가되었습니다."))
+                window.location.reload()
+            }
+        } else {
+            toast.error(<PointerText onClick={() => router.push('/shop/auth/login')}>{translate('로그인을 해주세요.')}</PointerText>);
+        }
+    };
+    const onSelectOption = (group, option, is_option_multiple) => {
+        let select_product_groups = selectItemOptionUtil(group, option, selectProductGroups, is_option_multiple);
+        console.log(select_product_groups)
+        setSelectProductGroups(select_product_groups);
+        //console.log(select_product_groups)
+    }
+
+    const [buyOpen, setBuyOpen] = useState(false);
     return (
         <>
-
+            <DialogBuyNow
+                buyOpen={buyOpen}
+                setBuyOpen={setBuyOpen}
+                product={item}
+                selectProductGroups={selectProductGroups}
+            />
             <Wrappers>
                 <Slider {...sliderSetting}>
                     {item?.images && item?.images.map((item, idx) => (
@@ -273,7 +307,7 @@ const Demo2 = (props) => {
                 }}
             >
                 <SelectContainer>
-                    <FormControl sx={{ width: '100%' }}>
+                    {/* <FormControl sx={{ width: '100%' }}>
                         <InputLabel>컬러</InputLabel>
                         <Select
                             label='컬러'
@@ -312,12 +346,67 @@ const Demo2 = (props) => {
                                 >{data?.name} {data.price > 0 ? '+' + commarNumber(data.price) : ''}</MenuItem>
                             ))}
                         </Select>
-                    </FormControl>
-                    {selectOptions.map((item, idx) => (
+                    </FormControl> */}
+                    {(item?.groups ?? []).map((group) => (
+                        <>
+                            <Stack direction="row" justifyContent="space-between">
+                                <FormControl sx={{ width: '100%' }}>
+                                    <InputLabel>{group?.group_name}</InputLabel>
+                                    <Select
+                                        label={group?.group_name}
+                                        sx={{
+                                            width: '100%'
+                                        }}
+                                        placeholder={group?.group_name}
+                                        onChange={(e) => {
+                                            onSelectOption(group, e.target.value)
+                                        }}
+                                    >
+                                        {group?.options && group?.options.map((data) => (
+                                            <MenuItem
+                                                key={data?.option_name}
+                                                value={data}
+                                            >{data?.option_name} {data.option_price > 0 ? '+' + commarNumber(data.option_price) : ''}</MenuItem>
+                                        ))}
+                                    </Select>
+                                </FormControl>
+                                {/* <Typography variant="subtitle2" sx={{ height: 40, lineHeight: '40px', flexGrow: 1 }}>
+                                    {group?.group_name}
+                                </Typography>
+                                <FormControl size='small'>
+                                    <InputLabel id="demo-simple-select-label">{translate('선택')}</InputLabel>
+                                    <Select
+                                        name="size"
+                                        size="small"
+                                        sx={{
+                                            minWidth: 96,
+                                            '& .MuiFormHelperText-root': {
+                                                mx: 0,
+                                                mt: 1,
+                                                textAlign: 'right',
+                                            },
+                                        }}
+                                        label={translate("선택")}
+                                        onChange={(e) => {
+                                            onSelectOption(group, e.target.value)
+                                        }}
+                                    >
+                                        {group?.options && group?.options.map((option) => (
+                                            <MenuItem key={option?.option_name} value={option}>
+                                                {option?.option_name}
+                                                {(option?.option_price > 0 || option?.option_price < 0) ? ` (${option?.option_price > 0 ? '+' : ''}${commarNumber(setProductPriceByLang(option, 'option_price', price_lang, currentLang?.value))})` : ''}
+                                            </MenuItem>
+                                        ))}
+                                    </Select>
+                                </FormControl> */}
+                            </Stack>
+                        </>
+                    ))}
+                    {/* {selectOptions.map((option, idx) => (
                         <>
                             <DrawerBox>
                                 <Row style={{ justifyContent: 'space-between' }}>
-                                    <div>{_.find(test_color_list, { id: item?.id })?.name}</div>
+                                    <div>{option?.option_name}</div>
                                     <Icon icon='fluent-mdl2:cancel' style={{ cursor: 'pointer' }}
                                         onClick={() => {
                                             let select_options = [...selectOptions];
@@ -356,50 +445,57 @@ const Demo2 = (props) => {
                                 </Row>
                             </DrawerBox>
                         </>
-                    ))}
-                    {selectOptions[0] ?
-                        <>
-                            <DrawerBox style={{ borderBottom: 'none' }}>
-                                <Row style={{ justifyContent: 'space-between' }}>
-                                    <Row style={{ width: '150px', justifyContent: 'space-between', alignItems: 'center', padding: '0.25rem' }}>
-                                        <div>총 {_.sum(selectOptions.map(item => { return item.count }))}개 상품 금액</div>
-                                    </Row>
-                                    <div>
-                                        <span style={{ color: 'red' }}>{commarNumber(getTotalPrice())}</span>원
-                                    </div>
-                                </Row>
-                            </DrawerBox>
-                            <Button
-                                variant='outlined'
-                                color='primary'
-                                style={{
-                                    width: '30%',
-                                    height: '56px',
-                                    marginTop: '1rem',
-                                    marginRight: '1%',
-                                    fontSize: 'large'
-                                }}
-                                onClick={() => {
-                                    setDialogOpen(true)
-                                    setDialogType(0)
-                                }}
-                            >장바구니</Button>
-                            <Button
-                                variant='contained'
-                                color='primary'
-                                style={{
-                                    width: '69%',
-                                    height: '56px',
-                                    marginTop: '1rem',
-                                    fontSize: 'large'
-                                }}
-                                onClick={() => {
-                                    setDialogOpen(true)
-                                    setDialogType(1)
-                                }}
-                            >바로구매</Button>
-                        </> : ""
-                    }
+                    ))} */}
+
+                    <DrawerBox style={{ borderBottom: 'none' }}>
+                        <Row style={{ justifyContent: 'space-between' }}>
+                            <Row style={{ width: '150px', justifyContent: 'space-between', alignItems: 'center', padding: '0.25rem' }}>
+                                상품 금액
+                            </Row>
+                            <div>
+                                <span style={{ color: 'red' }}>{commarNumber(item?.product_sale_price)}</span>원
+                            </div>
+                        </Row>
+                        <Row style={{ justifyContent: 'space-between' }}>
+                            <Row style={{ width: '150px', justifyContent: 'space-between', alignItems: 'center', padding: '0.25rem' }}>
+                                배송비
+                            </Row>
+                            <div>
+                                <span style={{ color: 'red' }}>{commarNumber(item?.delivery_fee)}</span>원
+                            </div>
+                        </Row>
+                    </DrawerBox>
+                    <Button
+                        variant='outlined'
+                        color='primary'
+                        style={{
+                            width: '30%',
+                            height: '56px',
+                            marginTop: '1rem',
+                            marginRight: '1%',
+                            fontSize: 'large'
+                        }}
+                        onClick={() => {
+                            handleAddCart()
+                        }}
+                    >장바구니</Button>
+                    <Button
+                        variant='contained'
+                        color='primary'
+                        style={{
+                            width: '69%',
+                            height: '56px',
+                            marginTop: '1rem',
+                            fontSize: 'large'
+                        }}
+                        onClick={() => {
+                            if (user) {
+                                setBuyOpen(true);
+                            } else {
+                                toast.error('로그인을 해주세요.')
+                            }
+                        }}
+                    >바로구매</Button>
                 </SelectContainer>
             </Drawer>
             <Dialog

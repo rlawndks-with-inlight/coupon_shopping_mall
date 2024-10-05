@@ -112,7 +112,7 @@ const PaymentModuleEdit = () => {
                   {item?.trx_type == 10 &&
                     <>
                       <TextField
-                        label='가상계좌 발급 url'
+                        label='무통장입금 발급 url'
                         value={item.virtual_acct_url}
                         onChange={(e) => {
                           setItem(

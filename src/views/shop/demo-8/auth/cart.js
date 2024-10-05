@@ -535,7 +535,7 @@ const CartDemo = (props) => {
                   {(buyType == 'virtual_account') &&
                     <>
                       <CardContent>
-                        가상계좌 발급주소를 준비중입니다...
+                        무통장입금을 준비중입니다...
                         {/* <Iframe src={_.find(themeDnsData?.payment_modules, { type: buyType })?.virtual_acct_url + `?amount=${payData?.amount}`} /> */}
                       </CardContent>
                     </>}

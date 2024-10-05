@@ -34,7 +34,7 @@ const PaymentModuleList = () => {
     },
     {
       id: 'virtual_acct_url',
-      label: '가상계좌 발급 url',
+      label: '무통장입금 발급 url',
       action: (row) => {
         return row['virtual_acct_url'] ?? "---"
       }

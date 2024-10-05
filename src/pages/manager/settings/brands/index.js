@@ -395,7 +395,7 @@ const BrandList = () => {
               }
             />
             <FormControlLabel
-              label={<Typography style={{ fontSize: themeObj.font_size.size6 }}>티키타카 가상계좌 전용 세팅</Typography>}
+              label={<Typography style={{ fontSize: themeObj.font_size.size6 }}>티키타카 무통장입금 전용 세팅</Typography>}
               control={
                 <Checkbox
                   checked={copyObj.is_use_tikitaka == 1}

@@ -233,6 +233,7 @@ const Demo2 = (props) => {
                 setBuyOpen={setBuyOpen}
                 product={item}
                 selectProductGroups={selectProductGroups}
+                is_blog={1}
             />
             <Wrappers>
                 <Slider {...sliderSetting}>

@@ -8,8 +8,11 @@ import { useTheme } from '@emotion/react';
 import Policy from 'src/pages/blog/auth/policy';
 import { Icon } from '@iconify/react';
 import { useEffect } from 'react';
-import Header from 'src/layouts/shop/blog/demo-1/header';
+import Header from 'src/layouts/shop/blog/demo-2/header';
 import { logoSrc } from 'src/data/data';
+import toast from 'react-hot-toast';
+import { apiManager } from 'src/utils/api';
+import { useSettingsContext } from 'src/components/settings';
 
 const Wrappers = styled.div`
 max-width:720px;
@@ -100,6 +103,8 @@ const Demo2 = (props) => {
         },
     } = props;
 
+    const { themeDnsData } = useSettingsContext()
+
     const theme = useTheme();
     const [activeStep, setActiveStep] = useState(0);
     const [checkboxObj, setCheckboxObj] = useState({
@@ -110,12 +115,13 @@ const Demo2 = (props) => {
         check_4: false,
     })
     const [user, setUser] = useState({
-        id: '',
-        password: '',
-        passwordCheck: '',
+        user_name: '',
+        user_pw: '',
+        user_pw_check: '',
         name: '',
-        phone: '',
-        email: '',
+        nickname: '',
+        phone_num: '',
+        phoneCheck: '',
     })
     const [openPolicy, setOpenPolicy] = useState(false)
     const [policyType, setPolicyType] = useState("")
@@ -146,6 +152,42 @@ const Demo2 = (props) => {
         days.push(d.toString());
     }
 
+    const onClickNextButton = async () => {
+        /*if (activeStep == 0) {
+            if (
+                !checkboxObj.check_1 ||
+                !checkboxObj.check_2
+            ) {
+                toast.error("필수 항목에 체크해 주세요.");
+                return;
+            }
+        }*/
+        console.log(1)
+        if (activeStep == 1) {
+            if (
+                !user.user_name ||
+                !user.user_pw ||
+                !user.user_pw_check ||
+                !user.nickname ||
+                !user.phone_num
+            ) {
+                toast.error("필수 항목을 입력해 주세요.");
+                return;
+            } else if (
+                user.user_pw != user.user_pw_check
+            ) {
+                toast.error("비밀번호 확인란을 똑같이 입력했는지 확인해주세요");
+                return;
+            }
+            let result = await apiManager('auth/sign-up', 'create', { ...user, brand_id: themeDnsData?.id });
+            if (!result) {
+                return;
+            }
+        }
+        setActiveStep(activeStep + 1);
+        window.scrollTo(0, 0)
+    }
+
     return (
         <>
             <Header
@@ -154,15 +196,15 @@ const Demo2 = (props) => {
                 func={{
                     router
                 }}
-                is_use_step={true}
-                activeStep={activeStep}
-                setActiveStep={setActiveStep}
+            //is_use_step={true}
+            //activeStep={activeStep}
+            //setActiveStep={setActiveStep}
             />
             <Wrappers>
                 {activeStep == 0 &&
                     <>
                         <TextFieldContainer>
-                            <Title>BS컴퍼니 회원가입<br />서비스 이용약관 동의</Title>
+                            <Title>회원가입<br />서비스 이용약관 동의</Title>
                             <div style={{ marginTop: '2rem' }} />
                             <CheckBoxes>
                                 <FormControlLabel label={<Typography>전체 동의(선택 항목 포함)</Typography>} control={<Checkbox checked={checkboxObj.check_0} />} onChange={(e) => {
@@ -227,7 +269,7 @@ const Demo2 = (props) => {
                                     fontSize: 'large',
                                     height: '56px'
                                 }}
-                                onClick={() => { setActiveStep(activeStep + 1) }}
+                                onClick={() => { setActiveStep(activeStep + 1); }}
                             >다음으로</Button>
                             <Drawer
                                 anchor='bottom'
@@ -267,7 +309,7 @@ const Demo2 = (props) => {
                         </TextFieldContainer>
                     </>
                 }
-                {activeStep == 1 &&
+                {/*activeStep == 1 &&
                     <>
                         <TextFieldContainer>
                             <Title>휴대폰 번호 인증</Title>
@@ -313,8 +355,8 @@ const Demo2 = (props) => {
                             >인증완료</Button>
                         </TextFieldContainer>
                     </>
-                }
-                {activeStep == 2 &&
+                */}
+                {activeStep == 1 &&
                     <>
                         <TextFieldContainer>
                             <Title>회원가입</Title>
@@ -325,6 +367,10 @@ const Demo2 = (props) => {
                                 sx={{
                                     marginBottom: '1%'
                                 }}
+                                onChange={(e) => {
+                                    setUser({ ...user, ['user_name']: e.target.value })
+                                }}
+                                value={user.user_name}
                             />
                             <TextFieldTitle>비밀번호</TextFieldTitle>
                             <TextField
@@ -334,6 +380,10 @@ const Demo2 = (props) => {
                                 sx={{
                                     marginBottom: '1%'
                                 }}
+                                onChange={(e) => {
+                                    setUser({ ...user, ['user_pw']: e.target.value })
+                                }}
+                                value={user.user_pw}
                                 InputProps={{
                                     endAdornment: (
                                         <InputAdornment position='end'>
@@ -350,6 +400,10 @@ const Demo2 = (props) => {
                                 sx={{
                                     marginBottom: '1%'
                                 }}
+                                onChange={(e) => {
+                                    setUser({ ...user, ['user_pw_check']: e.target.value })
+                                }}
+                                value={user.user_pw_check}
                                 InputProps={{
                                     endAdornment: (
                                         <InputAdornment position='end'>
@@ -358,57 +412,26 @@ const Demo2 = (props) => {
                                     )
                                 }}
                             />
-                            <TextFieldTitle>생년월일</TextFieldTitle>
-                            <SelectContainer>
-                                <SelectBox style={{ width: '45%' }}>
-                                    <InputLabel>년</InputLabel>
-                                    <Select
-                                        value={birthDate.year}
-                                        style={{
-                                            width: '100%'
-                                        }}
-                                        onChange={(e) => {
-                                            setBirthDate({ ...birthDate, year: e.target.value })
-                                        }}
-                                    >
-                                        {years.map(item => (
-                                            <MenuItem value={item} key={item}>{item}</MenuItem>
-                                        ))}
-                                    </Select>
-                                </SelectBox>
-                                <SelectBox style={{ width: '25%' }}>
-                                    <InputLabel>월</InputLabel>
-                                    <Select
-                                        value={birthDate.month}
-                                        style={{
-                                            width: '100%'
-                                        }}
-                                        onChange={(e) => {
-                                            setBirthDate({ ...birthDate, month: e.target.value })
-                                        }}
-                                    >
-                                        {months.map(item => (
-                                            <MenuItem value={item} key={item}>{item}</MenuItem>
-                                        ))}
-                                    </Select>
-                                </SelectBox>
-                                <SelectBox style={{ width: '25%' }}>
-                                    <InputLabel>일</InputLabel>
-                                    <Select
-                                        value={birthDate.day}
-                                        style={{
-                                            width: '100%'
-                                        }}
-                                        onChange={(e) => {
-                                            setBirthDate({ ...birthDate, day: e.target.value })
-                                        }}
-                                    >
-                                        {days.map(item => (
-                                            <MenuItem value={item} key={item}>{item}</MenuItem>
-                                        ))}
-                                    </Select>
-                                </SelectBox>
-                            </SelectContainer>
+                            <TextFieldTitle>닉네임</TextFieldTitle>
+                            <TextField
+                                sx={{
+                                    marginBottom: '1%'
+                                }}
+                                onChange={(e) => {
+                                    setUser({ ...user, ['nickname']: e.target.value })
+                                }}
+                                value={user.nickname}
+                            />
+                            <TextFieldTitle>휴대폰번호</TextFieldTitle>
+                            <TextField
+                                sx={{
+                                    marginBottom: '1%'
+                                }}
+                                onChange={(e) => {
+                                    setUser({ ...user, ['phone_num']: e.target.value })
+                                }}
+                                value={user.phone_num}
+                            />
                             <Button
                                 variant='contained'
                                 color='primary'
@@ -417,15 +440,15 @@ const Demo2 = (props) => {
                                     marginTop: '3rem',
                                     fontSize: 'large'
                                 }}
-                                onClick={() => { setActiveStep(activeStep + 1) }}
+                                onClick={onClickNextButton}
                             >완료</Button>
                         </TextFieldContainer>
                     </>
                 }
-                {activeStep == 3 &&
+                {activeStep == 2 &&
                     <>
                         <TextFieldContainer>
-                            <Title>축하합니다!<br />회원가입이 완료되었습니다!<br />이제 BS컴퍼니의 서비스를 즐겨보세요!</Title>
+                            <Title>축하합니다!<br />회원가입이 완료되었습니다!<br /></Title>
                             <Button
                                 variant='contained'
                                 color='primary'

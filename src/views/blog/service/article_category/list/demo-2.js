@@ -129,7 +129,7 @@ const Demo2 = (props) => {
                         </>
                     ))}
                 </AccordionContainer>
-                <ServiceFaq themeMode={themeMode}>BS컴퍼니 서비스 문의</ServiceFaq>
+                <ServiceFaq themeMode={themeMode}>서비스 문의</ServiceFaq>
             </Wrappers>
         </>
     )

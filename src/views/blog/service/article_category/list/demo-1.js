@@ -56,7 +56,7 @@ const Demo1 = (props) => {
         getArticleList(1, router.query?.article_category)
     }
     const getArticleList = async (page, category_id) => {
-        let inquiry_data = await apiShop('post', 'list',{
+        let inquiry_data = await apiShop('post', 'list', {
             page: page,
             page_size: 100000,
             category_id: category_id
@@ -129,7 +129,7 @@ const Demo1 = (props) => {
                         </>
                     ))}
                 </AccordionContainer>
-                <ServiceFaq themeMode={themeMode}>BS컴퍼니 서비스 문의</ServiceFaq>
+                <ServiceFaq themeMode={themeMode}>서비스 문의</ServiceFaq>
             </Wrappers>
         </>
     )

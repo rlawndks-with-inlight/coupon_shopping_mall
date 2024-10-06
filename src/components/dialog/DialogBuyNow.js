@@ -45,7 +45,7 @@ const DialogBuyNow = (props) => {
   const STEPS = ['배송지 확인', '결제하기'];
 
   // ** State
-  const { buyOpen, setBuyOpen, product, selectProductGroups } = props;
+  const { buyOpen, setBuyOpen, product, selectProductGroups, is_blog } = props;
   const { user } = useAuthContext();
   const { themeDnsData, onChangeCartData, themeCartData } = useSettingsContext();
   const router = useRouter();
@@ -226,8 +226,12 @@ const DialogBuyNow = (props) => {
     }], { ...payData });
     if (result) {
       await onChangeCartData([]);
-      toast.success('성공적으로 구매에 성공하였습니다.');
-      if (payData?.user_id) {
+      toast.success('성공적으로 구매 완료하였습니다.');
+      if (is_blog == 1) {
+        alert('성공적으로 구매 완료하였습니다.\n메인 페이지로 이동합니다.')
+        router.push('/')
+        return;
+      } else if (payData?.user_id) {
         router.push('/shop/auth/history');
       } else {
         router.push(`/shop/auth/pay-result?type=0&ord_num=${result?.ord_num}`);
@@ -454,7 +458,7 @@ const DialogBuyNow = (props) => {
                 <Stack>
                   <TextField
                     size='small'
-                    label='주민번호 또는 사업자등록번호'
+                    label={is_blog == 1 ? '주민번호 앞 6자리(생년월일)' : '주민번호 또는 사업자등록번호'}
                     value={payData.auth_num}
                     onChange={(e) => {
                       let value = e.target.value;

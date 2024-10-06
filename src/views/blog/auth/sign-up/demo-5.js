@@ -162,7 +162,7 @@ const Demo5 = (props) => {
                 {activeStep == 0 &&
                     <>
                         <TextFieldContainer>
-                            <Title>BS컴퍼니 회원가입<br />서비스 이용약관 동의</Title>
+                            <Title>회원가입<br />서비스 이용약관 동의</Title>
                             <div style={{ marginTop: '2rem' }} />
                             <CheckBoxes>
                                 <FormControlLabel label={<Typography>전체 동의(선택 항목 포함)</Typography>} control={<Checkbox checked={checkboxObj.check_0} />} onChange={(e) => {
@@ -425,7 +425,7 @@ const Demo5 = (props) => {
                 {activeStep == 3 &&
                     <>
                         <TextFieldContainer>
-                            <Title>축하합니다!<br />회원가입이 완료되었습니다!<br />이제 BS컴퍼니의 서비스를 즐겨보세요!</Title>
+                            <Title>축하합니다!<br />회원가입이 완료되었습니다!<br /></Title>
                             <Button
                                 variant='contained'
                                 color='primary'

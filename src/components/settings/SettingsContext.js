@@ -139,7 +139,7 @@ export function SettingsProvider({ children }) {
     try {
       const { data: response } = await axios.get(`/api/domain?dns=${process.env.IS_TEST == 1 ? 'localhost' : window.location.host.split(':')[0]}`);
       let dns_data = response?.data;
-      console.log(response)
+      //console.log(response)
       dns_data['blog_demo_num'] = dns_data?.setting_obj?.blog_demo_num || process.env.TEST_BLOG_DEMO || 0;
       dns_data['shop_demo_num'] = dns_data?.setting_obj?.shop_demo_num || process.env.TEST_SHOP_DEMO || 0;
       dns_data['is_use_seller'] = dns_data?.setting_obj?.is_use_seller || process.env?.IS_USE_SELLER || 0;
@@ -155,7 +155,7 @@ export function SettingsProvider({ children }) {
       dns_data['products'] = data?.products ?? [];
       dns_data['basic_info'] = data?.basic_info ?? "";
 
-      
+
       onChangeWishData(data?.user_wishs ?? []);
       onChangeCategoryList(data?.product_category_groups ?? []);
       onChangePropertyList(data?.product_property_groups ?? []);

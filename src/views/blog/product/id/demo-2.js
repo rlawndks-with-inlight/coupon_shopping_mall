@@ -265,7 +265,7 @@ const Demo2 = (props) => {
                         <Row style={{ alignItems: 'flex-end', fontWeight: 'bold' }}>
                             <div style={{ fontSize: themeObj.font_size.size6, color: '' }}>{commarNumber(item.product_sale_price)}</div>
                             <div style={{ fontSize: themeObj.font_size.size8, marginLeft: '0.25rem' }}>원</div>
-                            <div style={{ fontSize: themeObj.font_size.size8, marginLeft: 'auto', fontWeight: 'normal', color: themeObj.grey[500] }}>{item?.buying_count}명 구매</div>
+                            <div style={{ fontSize: themeObj.font_size.size8, marginLeft: 'auto', fontWeight: 'normal', color: themeObj.grey[500] }}>{item.buying_count}명 구매</div>
                         </Row>
                         <Divider style={{ margin: '1rem 0' }} />
                         <Row style={{ alignItems: 'flex-end', }}>

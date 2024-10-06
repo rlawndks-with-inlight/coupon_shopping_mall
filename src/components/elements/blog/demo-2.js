@@ -80,7 +80,7 @@ export const Item2 = (props) => {
                                 </Row>
                                 <Row style={{ width: '100%' }}>
                                     <div style={{ color: 'black', fontSize: '24px', fontWeight: 'bold' }}>{commarNumber(item.product_sale_price)}원</div>
-                                    <div style={{ fontSize: themeObj.font_size.size8, marginLeft: 'auto', fontWeight: 'normal', color: themeObj.grey[500] }}>{item?.buying_count}명 구매</div>
+                                    <div style={{ fontSize: themeObj.font_size.size8, marginLeft: 'auto', fontWeight: 'normal', color: themeObj.grey[500] }}>{item.buying_count}명 구매</div>
                                 </Row>
                             </ItemText>
                         </ItemContent>
@@ -112,7 +112,7 @@ export const Item2 = (props) => {
                                             </Row>
                                             <Row style={{ width: '100%' }}>
                                                 <div style={{ color: 'black', fontSize: '20px', zIndex: '10', color: 'white', fontWeight: 'bold' }}>{commarNumber(item.product_sale_price)}원</div>
-                                                <div style={{ fontSize: themeObj.font_size.size8, marginLeft: 'auto', fontWeight: 'normal', color: themeObj.grey[500] }}>{item?.buying_count}명 구매</div>
+                                                <div style={{ fontSize: themeObj.font_size.size8, marginLeft: 'auto', fontWeight: 'normal', color: themeObj.grey[500] }}>{item.buying_count}명 구매</div>
                                             </Row>
                                         </ItemText>
                                         <div style={{ width: '100%', height: '80%', position: 'absolute', bottom: '0', zIndex: '5', background: 'linear-gradient(rgba(0, 0, 0, 0) 0%, rgb(0, 0, 0) 100%)', borderRadius: '0px 0px 12px 12px' }} />

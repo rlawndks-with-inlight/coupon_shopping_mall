@@ -13,10 +13,24 @@ flex-direction:column;
 width:95%;
 cursor:pointer;
 aspect-ratio: 1/1;
+border-radius: 12px;
 /*@media (max-width:840px){
     width:97%;
     margin:0 auto;
 }*/
+&.onlyone {
+    width: 100vw;
+    max-width: 700px;
+    aspect-ratio: 5/3;
+    @media (max-width:720px){
+        width: 90vw;
+    }
+    .onlyone {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+}
 `
 const SellerItemContent = styled.div`
 display:flex;
@@ -38,32 +52,103 @@ font-size:${themeObj.font_size.size8};
 margin-top:0.5rem;
 `
 export const Item2 = (props) => {
-    const { item, router } = props;
+    const { item, router, type, length, idx } = props;
     return (
         <>
-            <ItemContent style={{ margin: '1rem' }} onClick={() => {
-                router.push(`/blog/product/${item.id}`)
-            }}>
-                <LazyLoadImage style={{ width: '100%', height: '100%' }} src={item?.product_img} />
-                <ItemText style={{ fontWeight: 'bold' }}>{item?.product_name}</ItemText>
-                <ItemText style={{ color: themeObj.grey[500] }}>
-                    {item.product_sale_price < item.product_price &&
-                        <>
-                            <div style={{ color: 'red', marginRight: '0.25rem' }}>
-                                {commarNumber((item.product_price - item.product_sale_price) * 100 / item.product_price) + '%'}
-                            </div>
-                        </>}
-                    <Row>
-                        <div style={{ color: 'black', fontSize: themeObj.font_size.size7, }}>{commarNumber(item.product_sale_price)} 원</div>
-                        {item.product_sale_price < item.product_price &&
-                            <>
-                                <div style={{ textDecoration: 'line-through', marginLeft: '0.25rem', fontSize: themeObj.font_size.size7, color: themeObj.grey[500] }}>
-                                    {item.product_sale_price < item.product_price ? commarNumber(item.product_price) : ''}
-                                </div>
-                            </>}
-                    </Row>
-                </ItemText>
-            </ItemContent>
+            {
+                length == 1 ?
+                    <>
+                        <ItemContent className='onlyone' style={{ margin: '1rem', letterSpacing: '-1px' }} onClick={() => {
+                            router.push(`/blog/product/${item.id}`)
+                        }}>
+                            <LazyLoadImage className="onlyone" style={{ borderRadius: '12px', }} src={item?.product_img} />
+                            <ItemText style={{ fontSize: '19px', marginRight: '0.1rem' }}>{item?.product_name}</ItemText>
+                            <ItemText style={{ color: themeObj.grey[500], width: '100%' }}>
+                                <Row>
+                                    {item.product_sale_price < item.product_price &&
+                                        <>
+                                            <div style={{ color: 'red', marginRight: '0.25rem', fontSize: '16px' }}>
+                                                {commarNumber((item.product_price - item.product_sale_price) * 100 / item.product_price) + '%'}
+                                            </div>
+                                        </>}
+                                    {item.product_sale_price < item.product_price &&
+                                        <>
+                                            <div style={{ textDecoration: 'line-through', marginLeft: '0.25rem', fontSize: '16px', color: themeObj.grey[500] }}>
+                                                {item.product_sale_price < item.product_price ? commarNumber(item.product_price) : ''}원
+                                            </div>
+                                        </>}
+                                </Row>
+                                <Row style={{ width: '100%' }}>
+                                    <div style={{ color: 'black', fontSize: '24px', fontWeight: 'bold' }}>{commarNumber(item.product_sale_price)}원</div>
+                                    <div style={{ fontSize: themeObj.font_size.size8, marginLeft: 'auto', fontWeight: 'normal', color: themeObj.grey[500] }}>{item?.buying_count}명 구매</div>
+                                </Row>
+                            </ItemText>
+                        </ItemContent>
+                    </>
+                    :
+                    <>
+                        {
+                            type == 1 && idx == 0 ?
+                                <>
+                                    <ItemContent style={{ margin: '1rem', position: 'relative', letterSpacing: '-1px' }} onClick={() => {
+                                        router.push(`/blog/product/${item.id}`)
+                                    }}>
+                                        <LazyLoadImage style={{ width: '100%', height: '100%', borderRadius: '12px', }} src={item?.product_img} />
+                                        <ItemText style={{ fontWeight: 'bold', position: 'absolute', bottom: '4.5rem', left: '0.5rem', color: 'white', fontSize: '18px', zIndex: '10', marginRight: '0.1rem' }}>{item?.product_name}</ItemText>
+                                        <ItemText style={{ color: themeObj.grey[500], position: 'absolute', bottom: '0.5rem', left: '0.5rem', zIndex: '10', width: '95%' }}>
+                                            <Row>
+                                                {item.product_sale_price < item.product_price &&
+                                                    <>
+                                                        <div style={{ color: 'red', marginRight: '0.25rem', fontSize: themeObj.font_size.size7, fontWeight: 'bold' }}>
+                                                            {commarNumber((item.product_price - item.product_sale_price) * 100 / item.product_price) + '%'}
+                                                        </div>
+                                                        {item.product_sale_price < item.product_price &&
+                                                            <>
+                                                                <div style={{ textDecoration: 'line-through', marginLeft: '0.25rem', fontSize: themeObj.font_size.size7, color: themeObj.grey[500] }}>
+                                                                    {item.product_sale_price < item.product_price ? commarNumber(item.product_price) : ''}원
+                                                                </div>
+                                                            </>}
+                                                    </>}
+                                            </Row>
+                                            <Row style={{ width: '100%' }}>
+                                                <div style={{ color: 'black', fontSize: '20px', zIndex: '10', color: 'white', fontWeight: 'bold' }}>{commarNumber(item.product_sale_price)}원</div>
+                                                <div style={{ fontSize: themeObj.font_size.size8, marginLeft: 'auto', fontWeight: 'normal', color: themeObj.grey[500] }}>{item?.buying_count}명 구매</div>
+                                            </Row>
+                                        </ItemText>
+                                        <div style={{ width: '100%', height: '80%', position: 'absolute', bottom: '0', zIndex: '5', background: 'linear-gradient(rgba(0, 0, 0, 0) 0%, rgb(0, 0, 0) 100%)', borderRadius: '0px 0px 12px 12px' }} />
+                                    </ItemContent>
+                                </>
+                                :
+                                <>
+                                    <ItemContent style={{ margin: '1rem' }} onClick={() => {
+                                        router.push(`/blog/product/${item.id}`)
+                                    }}>
+                                        <LazyLoadImage style={{ width: '100%', height: '100%', borderRadius: '12px' }} src={item?.product_img} />
+                                        <ItemText style={{ fontWeight: 'bold', marginRight: '0.1rem' }}>{item?.product_name}</ItemText>
+                                        <ItemText style={{ color: themeObj.grey[500] }}>
+                                            <Row>
+                                                {item.product_sale_price < item.product_price &&
+                                                    <>
+                                                        <div style={{ color: 'red', marginRight: '0.25rem' }}>
+                                                            {commarNumber((item.product_price - item.product_sale_price) * 100 / item.product_price) + '%'}
+                                                        </div>
+                                                    </>}
+                                                {item.product_sale_price < item.product_price &&
+                                                    <>
+                                                        <div style={{ textDecoration: 'line-through', marginLeft: '0.25rem', fontSize: themeObj.font_size.size7, color: themeObj.grey[500] }}>
+                                                            {item.product_sale_price < item.product_price ? commarNumber(item.product_price) : ''}원
+                                                        </div>
+                                                    </>}
+                                            </Row>
+                                            <Row>
+                                                <div style={{ color: 'black', fontSize: themeObj.font_size.size7, }}>{commarNumber(item.product_sale_price)}원</div>
+                                            </Row>
+                                        </ItemText>
+                                    </ItemContent>
+                                </>
+                        }
+                    </>
+            }
         </>
     )
 }

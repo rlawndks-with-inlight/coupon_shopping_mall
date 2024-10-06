@@ -11,12 +11,13 @@ import Slider from 'react-slick';
 import { useTheme } from '@emotion/react';
 import { logoSrc } from 'src/data/data';
 import dynamic from 'next/dynamic';
-import { apiShop } from 'src/utils/api';
+import { apiManager, apiShop } from 'src/utils/api';
 import { insertCartDataUtil, selectItemOptionUtil } from 'src/utils/shop-util';
 import { useAuthContext } from 'src/layouts/manager/auth/useAuthContext';
 import toast from 'react-hot-toast';
 import { useLocales } from 'src/locales';
 import DialogBuyNow from 'src/components/dialog/DialogBuyNow';
+import { ProductDetailsReview } from 'src/views/@dashboard/e-commerce/details';
 
 
 const ReactQuill = dynamic(() => import('react-quill'), {
@@ -61,7 +62,7 @@ flex-direction:column;
 const ContentContainer = styled.div`
 display:flex;
 flex-direction:column;
-padding:1rem 0;
+
 `
 
 const DrawerBox = styled.div`
@@ -136,11 +137,16 @@ const Demo2 = (props) => {
     });
     const product_id = parseInt(document.location.href.split('/').reverse()[1])
 
+    const [tab, setTab] = useState(0)
+    const [reviewPage, setReviewPage] = useState(1)
+    const [reviewContent, setReviewContent] = useState({})
+    const [reviewTotal, setReviewTotal] = useState(0)
+
     useEffect(() => {
-        pageSetting();
+        pageSetting(1);
     }, [])
 
-    const pageSetting = async () => {
+    const pageSetting = async (review_page) => {
 
         let product = await apiShop('product', 'get', {
             id: router.query?.id
@@ -148,11 +154,23 @@ const Demo2 = (props) => {
         if (product) {
             product['images'] = [...[product?.product_img], ...product?.sub_images.map(item => { return item.product_sub_img })];
             setItem(product)
+            //console.log(product)
 
+            setReviewPage(review_page)
+
+            let review_data = await apiManager('product-reviews', 'list', {
+                page: review_page,
+                product_id: router.query?.id,
+                page_size: 10,
+            })
+            setReviewContent(review_data)
+            setReviewTotal(review_data.total)
+            //console.log(reviewContent)
         }
     }
 
-    /*useEffect(() => {
+    /*
+    useEffect(() => {
       let data = test_item
       data['images'].unshift(data?.product_img);
       setItem(data)
@@ -229,23 +247,7 @@ const Demo2 = (props) => {
                         </>
                     ))}
                 </Slider>
-                <ContentWrappers style={{
-                    background: `${themeMode == 'dark' ? '#000' : '#fff'}`,
-                    position: 'absolute'
-                }}>
-                    <Row style={{ justifyContent: 'space-between' }}>
-                        <Row style={{ alignItems: 'center', cursor: 'pointer' }} onClick={() => { router.push(`/blog/seller/${item.seller?.id}`) }}>
-                            <Avatar src={item.seller?.profile_img} sx={{ width: '30px', height: '30px' }} />
-                            <div style={{ marginLeft: '0.25rem', fontSize: themeObj.font_size.size8 }}>{item.seller?.nickname}</div>
-                        </Row>
-                        <Button variant='outlined' sx={{
-                            height: '30px',
-                        }}>
-                            1:1문의
-                        </Button>
-                    </Row>
 
-                </ContentWrappers>
                 <ContentWrappers style={{
                     background: `${themeMode == 'dark' ? '#000' : '#fff'}`,
                 }}>
@@ -255,14 +257,28 @@ const Demo2 = (props) => {
                         {item.product_sale_price < item.product_price &&
                             <>
                                 <Row style={{ alignItems: 'flex-end' }}>
-                                    <div style={{ fontSize: themeObj.font_size.size8, fontWeight: 'bold' }}>{parseInt((item.product_price - item.product_sale_price) / item.product_price * 100)}%</div>
+                                    <div style={{ fontSize: themeObj.font_size.size8, fontWeight: 'bold', color: theme.palette.error.main }}>{parseInt((item.product_price - item.product_sale_price) / item.product_price * 100)}%</div>
                                     <div style={{ marginLeft: '0.5rem', fontSize: themeObj.font_size.size9, textDecoration: 'line-through', color: themeObj.grey[500] }}>{commarNumber(item.product_price)}원</div>
                                 </Row>
 
                             </>}
                         <Row style={{ alignItems: 'flex-end', fontWeight: 'bold' }}>
-                            <div style={{ fontSize: themeObj.font_size.size6, color: theme.palette.error.main }}>{commarNumber(item.product_sale_price)}</div>
+                            <div style={{ fontSize: themeObj.font_size.size6, color: '' }}>{commarNumber(item.product_sale_price)}</div>
                             <div style={{ fontSize: themeObj.font_size.size8, marginLeft: '0.25rem' }}>원</div>
+                            <div style={{ fontSize: themeObj.font_size.size8, marginLeft: 'auto', fontWeight: 'normal', color: themeObj.grey[500] }}>{item?.buying_count}명 구매</div>
+                        </Row>
+                        <Divider style={{ margin: '1rem 0' }} />
+                        <Row style={{ alignItems: 'flex-end', }}>
+                            <div style={{ fontSize: themeObj.font_size.size8, color: '', fontWeight: 'bold', marginBottom: '0.5rem' }}>배송정보</div>
+                        </Row>
+                        <Row style={{ alignItems: 'flex-end', }}>
+                            <div style={{ fontSize: themeObj.font_size.size8, color: '' }}>배송비 : <span style={{ color: theme.palette.error.main }}>3000원</span></div>
+                        </Row>
+                        <Row style={{ alignItems: 'flex-end', }}>
+                            <div style={{ fontSize: themeObj.font_size.size8, color: '' }}>합배송 무제한</div>
+                        </Row>
+                        <Row style={{ alignItems: 'flex-end', marginBottom: '0.5rem' }}>
+                            <div style={{ fontSize: themeObj.font_size.size8, color: '' }}>CJ대한통운</div>
                         </Row>
                     </PriceContainer>
                     <Button variant='contained' onClick={() => { setCartOpen(true) }}>
@@ -271,17 +287,34 @@ const Demo2 = (props) => {
                     <div style={{ marginTop: '1rem' }} />
                     <Divider />
                     <ContentContainer>
-                        <div style={{ padding: '0 0 1rem 0', fontSize: themeObj.font_size.size8, fontWeight: 'bold' }}>상품정보</div>
-                        <ReactQuill
-                            className='none-padding'
-                            value={item?.product_description ?? `<body></body>`}
-                            readOnly={true}
-                            theme={"bubble"}
-                            bounds={'.app'}
-                        />
+                        <Row style={{ width: '100%', marginBottom: '1rem', paddingTop: '1rem' }}>
+                            <div style={{ padding: '0 0 1rem 0', fontSize: themeObj.font_size.size8, fontWeight: 'bold', cursor: 'pointer', width: '50%', textAlign: 'center', borderBottom: `${tab == 0 ? '2px solid black' : ''}` }} onClick={() => { setTab(0) }}>
+                                상품정보
+                            </div>
+                            <div style={{ padding: '0 0 1rem 0', fontSize: themeObj.font_size.size8, fontWeight: 'bold', cursor: 'pointer', width: '50%', textAlign: 'center', borderBottom: `${tab == 1 ? '2px solid black' : ''}` }} onClick={() => { setTab(1) }}>
+                                상품후기({reviewTotal})
+                            </div>
+                        </Row>
+                        {
+                            tab == 0 ?
+                                <>
+                                    <ReactQuill
+                                        className='none-padding'
+                                        value={item?.product_description ?? `<body></body>`}
+                                        readOnly={true}
+                                        theme={"bubble"}
+                                        bounds={'.app'}
+                                    />
+                                </>
+                                :
+                                <>
+                                    <ProductDetailsReview product={item} reviewContent={reviewContent} onChangePage={pageSetting} reviewPage={reviewPage} />,
+                                </>
+
+                        }
                     </ContentContainer>
                 </ContentWrappers>
-            </Wrappers>
+            </Wrappers >
             <Drawer
                 anchor={'bottom'}
                 open={cartOpen}
@@ -462,6 +495,14 @@ const Demo2 = (props) => {
                             </Row>
                             <div>
                                 <span style={{ color: 'red' }}>{commarNumber(item?.delivery_fee)}</span>원
+                            </div>
+                        </Row>
+                        <Row style={{ justifyContent: 'space-between' }}>
+                            <Row style={{ width: '150px', justifyContent: 'space-between', alignItems: 'center', padding: '0.25rem' }}>
+                                합계
+                            </Row>
+                            <div>
+                                <span style={{ color: 'red' }}>{commarNumber(parseInt(item?.product_sale_price + item?.delivery_fee))}</span>원
                             </div>
                         </Row>
                     </DrawerBox>

@@ -221,6 +221,7 @@ const Demo2 = (props) => {
 
         let dns_data = themeDnsData;
         let content_list = (dns_data?.blog_obj) ?? [];
+        console.log(dns_data)
         setContentList(content_list)
         setData([
             ...[{

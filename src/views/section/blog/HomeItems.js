@@ -12,7 +12,8 @@ const Wrappers = styled.div`
 
 const HomeItems = (props) => {
     const { currentLang } = useLocales();
-    const { column, data, func, is_manager } = props;
+    const { column, data, func, is_manager, } = props;
+    const { idx } = data;
     const { router } = func;
     const { style } = column;
 
@@ -22,17 +23,18 @@ const HomeItems = (props) => {
                 marginTop: `${style?.margin_top}px`,
                 display: 'flex',
                 flexDirection: `${column?.title ? 'column' : 'row'}`,
+                letterSpacing: '-1px'
             }}>
                 {column?.title &&
                     <>
-                        <div style={{ fontWeight: 'bold' }}>{formatLang(column, 'title', currentLang)}</div>
+                        <div style={{ fontWeight: 'bold', fontSize: '22px' }}>{formatLang(column, 'title', currentLang)}</div>
                         {column?.sub_title &&
                             <>
-                                <div style={{ fontSize: themeObj.font_size.size5, color: themeObj.grey[500] }}>{column?.sub_title}</div>
+                                <div style={{ fontSize: '14px', color: '#666666' }}>{column?.sub_title}</div>
                             </>}
                     </>}
                 <div style={{ marginTop: '1rem' }} />
-                <Items items={(column?.list ?? [])} router={router} is_slide={column?.list.length >= 5 ? true : false} />
+                <Items items={(column?.list ?? [])} router={router} is_slide={column?.list.length >= 5 ? true : false} type={1} length={column?.list?.length} idx={idx} />
             </Wrappers>
         </>
     )

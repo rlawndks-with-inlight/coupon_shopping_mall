@@ -100,43 +100,6 @@ const Demo2 = (props) => {
                 <Title>
                     {translate('상품검색')}
                 </Title>
-                <TextField
-                    label=''
-                    variant="standard"
-                    onChange={(e) => {
-                        setKeyword(e.target.value)
-                    }}
-                    value={keyword}
-                    style={{ width: '50%', margin: '0 auto 1rem auto' }}
-                    autoComplete='new-password'
-
-                    onKeyPress={(e) => {
-                        if (e.key == 'Enter') {
-                            router.push(`/shop/search?keyword=${keyword}`)
-                        }
-                    }}
-                    InputProps={{
-                        sx: {
-                            padding: '0.5rem 0'
-                        },
-                        endAdornment: (
-                            <InputAdornment position='end'>
-                                <IconButton
-                                    edge='end'
-                                    onClick={() => {
-                                        router.push(`/shop/search?keyword=${keyword}`)
-                                    }}
-                                    aria-label='toggle password visibility'
-                                    style={{
-                                        padding: '0.5rem'
-                                    }}
-                                >
-                                    <Icon icon={'tabler:search'} />
-                                </IconButton>
-                            </InputAdornment>
-                        )
-                    }}
-                />
                 <div style={{
                     marginTop: '1rem'
                 }} />
@@ -158,7 +121,7 @@ const Demo2 = (props) => {
                             <>
                                 {products.length > 0 ?
                                     <>
-                                        <Items items={products} router={router} />
+                                        <Items items={products} router={router} type={2} />
                                     </>
                                     :
                                     <>

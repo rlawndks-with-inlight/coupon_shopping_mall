@@ -100,7 +100,7 @@ export default function ProductDetailsReview({ product, reviewContent, onChangeP
         display="grid"
         gridTemplateColumns={{
           xs: 'repeat(1, 1fr)',
-          md: 'repeat(3, 1fr)',
+          //md: 'repeat(3, 1fr)',
         }}
       >
         <Stack
@@ -110,7 +110,6 @@ export default function ProductDetailsReview({ product, reviewContent, onChangeP
           sx={{
             pt: 2,
             pb: 2,
-
           }}
         >
           <Typography variant="subtitle1" sx={{ color: 'text.secondary' }}>
@@ -124,7 +123,9 @@ export default function ProductDetailsReview({ product, reviewContent, onChangeP
           </Typography>
         </Stack>
 
-        <Stack
+        {
+          /*
+          <Stack
           spacing={1.5}
           sx={{
             p: 3,
@@ -153,6 +154,8 @@ export default function ProductDetailsReview({ product, reviewContent, onChangeP
             {translate('리뷰 작성하기')}
           </Button>
         </Stack>
+          */
+        }
       </Box>
 
       <Divider />

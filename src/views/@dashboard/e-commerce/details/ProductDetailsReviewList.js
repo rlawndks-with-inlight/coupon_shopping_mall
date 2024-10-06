@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import { useState } from 'react';
 // @mui
-import { Stack, Button, Rating, Avatar, Pagination, Typography, IconButton } from '@mui/material';
+import { Stack, Button, Rating, Avatar, Pagination, Typography, IconButton, Divider } from '@mui/material';
 // utils
 // components
 import Iconify from 'src/components/iconify/Iconify';
@@ -79,7 +79,7 @@ ReviewItem.propTypes = {
 function ReviewItem({ review, onChangePage, reviewData, setReviewData, deleteReview, handleOpenReview }) {
   const { setModal } = useModal()
   const { user } = useAuthContext();
-  const { nickname, scope, content, avatarUrl, isPurchased, created_at, title, profile_img, user_id, id } = review;
+  const { nickname, scope, content, avatarUrl, isPurchased, created_at, title, profile_img, content_img, user_id, id } = review;
 
   return (
     <Stack
@@ -88,6 +88,7 @@ function ReviewItem({ review, onChangePage, reviewData, setReviewData, deleteRev
         xs: 'column',
         md: 'row',
       }}
+      style={{ paddingBottom: '1rem', borderBottom: '1px solid lightgray', marginTop: '1rem' }}
     >
       <Stack
         spacing={2}
@@ -97,13 +98,14 @@ function ReviewItem({ review, onChangePage, reviewData, setReviewData, deleteRev
           md: 'column',
         }}
         sx={{
-          width: { md: 240 },
+          width: { md: '20%' },
           textAlign: { md: 'center' },
         }}
         style={{
-          width: '240px !important'
+          //width: '240px !important'
         }}
       >
+        {/*
         <Avatar
           src={avatarUrl}
           sx={{
@@ -111,9 +113,16 @@ function ReviewItem({ review, onChangePage, reviewData, setReviewData, deleteRev
             height: { md: 64 },
           }}
         />
+*/}
+        {
+          content_img &&
+          <>
+            <img style={{ maxHeight: '100px', }} src={content_img} />
+          </>
+        }
 
         <Stack spacing={{ md: 0.5 }}>
-          <Typography variant="subtitle2" noWrap>
+          <Typography variant="subtitle2" noWrap >
             {nickname}
           </Typography>
 
@@ -124,10 +133,10 @@ function ReviewItem({ review, onChangePage, reviewData, setReviewData, deleteRev
       </Stack>
 
       <Stack spacing={1} flexGrow={1} style={{
-        maxWidth: '920px'
+        maxWidth: '920px',
       }}>
         <Rating size="small" value={scope / 2} precision={0.1} readOnly />
-        <img style={{ width: '200px', height: 'auto' }} src={profile_img} />
+        <img style={{ width: '200px', height: 'auto' }} /*src={profile_img}*/ />
         {isPurchased && (
           <Typography
             variant="caption"

@@ -117,7 +117,7 @@ export const Item = props => {
 }
 export const Items = props => {
     const { themeDnsData } = useSettingsContext()
-    const { items, router, is_slide, slide_setting = {}, slide_ref, seller, rows = 1, autoplaySpeed = 2500, text_align = 'center', item_column = 0 } = props;
+    const { items, router, is_slide, slide_setting = {}, slide_ref, seller, rows = 1, autoplaySpeed = 2500, text_align = 'center', item_column = 0, type, length, idx } = props;
     const [itemThemeCss, setItemThemeCss] = useState(itemThemeCssDefaultSetting)
 
     useEffect(() => {
@@ -134,18 +134,27 @@ export const Items = props => {
             } else {
                 return 5
             }
-        }*/
+        }
         if (window.innerWidth > 850) {
             if (itemThemeCss?.container?.is_vertical == 1) {
                 return 2
             } else {
-                return 2
+                return 1
             }
         }
         if (itemThemeCss?.container?.is_vertical == 1) {
-            return 1
-        } else {
             return 2
+        } else {
+            return 1
+        }*/
+        if (idx != 0 && window.innerWidth > 850) {
+            return 3
+        } else if (idx != 0) {
+            return 2
+        } else if (window.innerWidth > 850) {
+            return 2
+        } else {
+            return 1
         }
     }
     const items_setting = {
@@ -164,21 +173,62 @@ export const Items = props => {
     }
     return (
         <>
-            {//is_slide ? (
+            {
+                type == 2 ?
+                    <>
+                        <div style={{ display: 'flex', flexWrap: 'wrap' }}>
+                            {items &&
+                                items.map((item,) => {
+                                    return (
+                                        <ItemWrapper theme_css={itemThemeCss} style={{ marginLeft: '-0.5rem', width: 'calc(50%)' }}>
+                                            <Item item={item} router={router} theme_css={itemThemeCss} seller={seller} text_align={text_align} type={type} length={length} idx={idx} />
+                                        </ItemWrapper>
+                                    )
+                                })}
+                        </div>
+                    </>
+                    :
+                    length == 1 ?
+                        <>
+                            {items &&
+                                items.map((item,) => {
+                                    return (
+                                        <ItemWrapper theme_css={itemThemeCss} style={{ margin: '-1rem' }}>
+                                            <Item item={item} router={router} theme_css={itemThemeCss} seller={seller} text_align={text_align} type={type} length={length} idx={idx} />
+                                        </ItemWrapper>
+                                    )
+                                })}
+                        </>
+                        :
+                        <>
+                            <>
+                                <Slider {...items_setting} className='margin-slide' ref={slide_ref} style={{ margin: '-1rem', marginTop: '-2rem' }}>
+                                    {items &&
+                                        items.map((item,) => {
+                                            return (
+                                                <ItemWrapper theme_css={itemThemeCss}>
+                                                    <Item item={item} router={router} theme_css={itemThemeCss} seller={seller} text_align={text_align} type={type} idx={idx} />
+                                                </ItemWrapper>
+                                            )
+                                        })}
+                                </Slider>
+                            </>
+                        </>
+            }
+            {/*is_slide ? (
                 <>
-                    <Slider {...items_setting} className='margin-slide' ref={slide_ref}>
+                    <Slider {...items_setting} className='margin-slide' ref={slide_ref} style={{ margin: '-1rem', marginTop: '-2rem' }}>
                         {items &&
                             items.map((item, idx) => {
                                 return (
                                     <ItemWrapper theme_css={itemThemeCss}>
-                                        <Item item={item} router={router} theme_css={itemThemeCss} seller={seller} text_align={text_align} />
+                                        <Item item={item} router={router} theme_css={itemThemeCss} seller={seller} text_align={text_align} type={type} />
                                     </ItemWrapper>
                                 )
-
                             })}
                     </Slider>
                 </>
-            /*) : (
+            ) : (
                 <>
                     <ItemsContainer theme_css={itemThemeCss}>
                         {items &&

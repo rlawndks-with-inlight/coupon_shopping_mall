@@ -40,186 +40,186 @@ const returnHomeContent = (column, data, func, demoType = 0) => {
   }
 }
 
-  const HomeDemo = (props) => {
-    const {
-      data: {
+const HomeDemo = (props) => {
+  const {
+    data: {
 
-      },
-      func: {
-        router
-      },
-    } = props;
-    const { type } = props;
+    },
+    func: {
+      router
+    },
+  } = props;
+  const { type } = props;
 
-    const { themeDnsData, themePostCategoryList } = useSettingsContext();
-    const [loading, setLoading] = useState(true);
-    const [windowWidth, setWindowWidth] = useState(0);
-    const [contentList, setContentList] = useState([]);
+  const { themeDnsData, themePostCategoryList } = useSettingsContext();
+  const [loading, setLoading] = useState(true);
+  const [windowWidth, setWindowWidth] = useState(0);
+  const [contentList, setContentList] = useState([]);
 
-    const [posts, setPosts] = useState({});
+  const [posts, setPosts] = useState({});
 
-    useEffect(() => {
-      if (themeDnsData?.id > 0) {
-        mainPageSetting();
-      }
-    }, [themeDnsData])
-    useEffect(() => {
-      if (contentList.length > 0) {
-        setLoading(false);
-      }
-    }, [contentList])
-    const mainPageSetting = async () => {
-      if (contentList.length > 0) {
-        return;
-      }
-      let dns_data = themeDnsData;
-      let content_list = (dns_data?.shop_obj) ?? [];
-      setWindowWidth(window.innerWidth)
-      setContentList(content_list)
+  useEffect(() => {
+    if (themeDnsData?.id > 0) {
+      mainPageSetting();
     }
-
-    const returnHomeContentByColumn = (column, idx, type = 0) => {
-      return returnHomeContent(
-        column,
-        {
-          windowWidth: window.innerWidth,
-          themeDnsData: themeDnsData,
-          idx,
-        },
-        {
-          router,
-        },
-        type,
-      )
+  }, [themeDnsData])
+  useEffect(() => {
+    if (contentList.length > 0) {
+      setLoading(false);
     }
+  }, [contentList])
+  const mainPageSetting = async () => {
+    if (contentList.length > 0) {
+      return;
+    }
+    let dns_data = themeDnsData;
+    let content_list = (dns_data?.shop_obj) ?? [];
+    setWindowWidth(window.innerWidth)
+    setContentList(content_list)
+  }
 
-    /*useEffect(() => {
-      const handleRouteChangeStart = () => {
-        const scrollPosition = document.documentElement.scrollTop;
-        sessionStorage.setItem(`scrollPosition_${router.asPath}`, scrollPosition);
-        console.log(sessionStorage)
-      };
-  
-      const handleRouteChangeComplete = () => {
-        const scrollPosition = sessionStorage.getItem(`scrollPosition_${router.asPath}`);
-        if (scrollPosition) {
-          window.scrollTo({top: scrollPosition})
-        }
-        console.log(scrollPosition)
-        console.log(document.documentElement)
-      };
-  
-      router.events.on('routeChangeStart', handleRouteChangeStart);
-      router.events.on('routeChangeComplete', handleRouteChangeComplete);
-  
-      return () => {
-        router.events.off('routeChangeStart', handleRouteChangeStart);
-        router.events.off('routeChangeComplete', handleRouteChangeComplete);
-      };
-    }, []);*/
+  const returnHomeContentByColumn = (column, idx, type = 0) => {
+    return returnHomeContent(
+      column,
+      {
+        windowWidth: window.innerWidth,
+        themeDnsData: themeDnsData,
+        idx,
+      },
+      {
+        router,
+      },
+      type,
+    )
+  }
 
-    useEffect(() => {
-      const savedScrollPosition = sessionStorage.getItem('scrollPosition');
-      if (savedScrollPosition && !loading) {  
-        window.scrollTo(0, parseInt(savedScrollPosition, 10));
-        console.log(sessionStorage)
-        sessionStorage.removeItem('scrollPosition');
-      }
-      const handleRouteChangeStart = () => {
-        sessionStorage.setItem('scrollPosition', window.scrollY);
-      };
+  /*useEffect(() => {
+    const handleRouteChangeStart = () => {
+      const scrollPosition = document.documentElement.scrollTop;
+      sessionStorage.setItem(`scrollPosition_${router.asPath}`, scrollPosition);
       console.log(sessionStorage)
-      router.events.on('routeChangeStart', handleRouteChangeStart);
-      return () => {
-        router.events.off('routeChangeStart', handleRouteChangeStart);
-      };
-    }, [loading])
-    
-    return (
-      <>
-        {loading ?
-          <>
-            <Stack spacing={'1rem'} >
-              {/*
+    };
+ 
+    const handleRouteChangeComplete = () => {
+      const scrollPosition = sessionStorage.getItem(`scrollPosition_${router.asPath}`);
+      if (scrollPosition) {
+        window.scrollTo({top: scrollPosition})
+      }
+      console.log(scrollPosition)
+      console.log(document.documentElement)
+    };
+ 
+    router.events.on('routeChangeStart', handleRouteChangeStart);
+    router.events.on('routeChangeComplete', handleRouteChangeComplete);
+ 
+    return () => {
+      router.events.off('routeChangeStart', handleRouteChangeStart);
+      router.events.off('routeChangeComplete', handleRouteChangeComplete);
+    };
+  }, []);*/
+
+  useEffect(() => {
+    const savedScrollPosition = sessionStorage.getItem('scrollPosition');
+    if (savedScrollPosition && !loading) {
+      window.scrollTo(0, parseInt(savedScrollPosition, 10));
+      console.log(sessionStorage)
+      sessionStorage.removeItem('scrollPosition');
+    }
+    const handleRouteChangeStart = () => {
+      sessionStorage.setItem('scrollPosition', window.scrollY);
+    };
+    console.log(sessionStorage)
+    router.events.on('routeChangeStart', handleRouteChangeStart);
+    return () => {
+      router.events.off('routeChangeStart', handleRouteChangeStart);
+    };
+  }, [loading])
+
+  return (
+    <>
+      {loading ?
+        <>
+          <Stack spacing={'1rem'} >
+            {/*
             <Skeleton variant='rectangular' style={{
               height: '40vw'
             }} />
           */}
-              <div style={{ display: 'flex', marginTop: '100px' }}>
-                <Skeleton variant='rounded' style={{
-                  height: '34vw',
-                  maxWidth: '200px',
-                  width: '90%',
-                  maxHeight: '200px',
-                  margin: '10rem 1rem 10rem auto'
-                }} />
-                <Skeleton variant='rounded' style={{
-                  height: '34vw',
-                  maxWidth: '200px',
-                  width: '90%',
-                  maxHeight: '200px',
-                  margin: '10rem 1rem'
-                }} />
-                <Skeleton variant='rounded' style={{
-                  height: '34vw',
-                  maxWidth: '200px',
-                  width: '90%',
-                  maxHeight: '200px',
-                  margin: '10rem 1rem'
-                }} />
-                <Skeleton variant='rounded' style={{
-                  height: '34vw',
-                  maxWidth: '200px',
-                  width: '90%',
-                  maxHeight: '200px',
-                  margin: '10rem 1rem'
-                }} />
-                <Skeleton variant='rounded' style={{
-                  height: '34vw',
-                  maxWidth: '200px',
-                  width: '90%',
-                  maxHeight: '200px',
-                  margin: '10rem auto 10rem 1rem'
-                }} />
-              </div>
-              <div style={{ display: 'flex', }}>
-                <Skeleton variant='rounded' style={{
-                  height: '34vw',
-                  maxWidth: '200px',
-                  width: '90%',
-                  maxHeight: '200px',
-                  margin: '10rem 1rem 10rem auto'
-                }} />
-                <Skeleton variant='rounded' style={{
-                  height: '34vw',
-                  maxWidth: '200px',
-                  width: '90%',
-                  maxHeight: '200px',
-                  margin: '10rem 1rem'
-                }} />
-                <Skeleton variant='rounded' style={{
-                  height: '34vw',
-                  maxWidth: '200px',
-                  width: '90%',
-                  maxHeight: '200px',
-                  margin: '10rem 1rem'
-                }} />
-                <Skeleton variant='rounded' style={{
-                  height: '34vw',
-                  maxWidth: '200px',
-                  width: '90%',
-                  maxHeight: '200px',
-                  margin: '10rem 1rem'
-                }} />
-                <Skeleton variant='rounded' style={{
-                  height: '34vw',
-                  maxWidth: '200px',
-                  width: '90%',
-                  maxHeight: '200px',
-                  margin: '10rem auto 10rem 1rem'
-                }} />
-              </div>
-              {/*
+            <div style={{ display: 'flex', marginTop: '100px' }}>
+              <Skeleton variant='rounded' style={{
+                height: '34vw',
+                maxWidth: '200px',
+                width: '90%',
+                maxHeight: '200px',
+                margin: '10rem 1rem 10rem auto'
+              }} />
+              <Skeleton variant='rounded' style={{
+                height: '34vw',
+                maxWidth: '200px',
+                width: '90%',
+                maxHeight: '200px',
+                margin: '10rem 1rem'
+              }} />
+              <Skeleton variant='rounded' style={{
+                height: '34vw',
+                maxWidth: '200px',
+                width: '90%',
+                maxHeight: '200px',
+                margin: '10rem 1rem'
+              }} />
+              <Skeleton variant='rounded' style={{
+                height: '34vw',
+                maxWidth: '200px',
+                width: '90%',
+                maxHeight: '200px',
+                margin: '10rem 1rem'
+              }} />
+              <Skeleton variant='rounded' style={{
+                height: '34vw',
+                maxWidth: '200px',
+                width: '90%',
+                maxHeight: '200px',
+                margin: '10rem auto 10rem 1rem'
+              }} />
+            </div>
+            <div style={{ display: 'flex', }}>
+              <Skeleton variant='rounded' style={{
+                height: '34vw',
+                maxWidth: '200px',
+                width: '90%',
+                maxHeight: '200px',
+                margin: '10rem 1rem 10rem auto'
+              }} />
+              <Skeleton variant='rounded' style={{
+                height: '34vw',
+                maxWidth: '200px',
+                width: '90%',
+                maxHeight: '200px',
+                margin: '10rem 1rem'
+              }} />
+              <Skeleton variant='rounded' style={{
+                height: '34vw',
+                maxWidth: '200px',
+                width: '90%',
+                maxHeight: '200px',
+                margin: '10rem 1rem'
+              }} />
+              <Skeleton variant='rounded' style={{
+                height: '34vw',
+                maxWidth: '200px',
+                width: '90%',
+                maxHeight: '200px',
+                margin: '10rem 1rem'
+              }} />
+              <Skeleton variant='rounded' style={{
+                height: '34vw',
+                maxWidth: '200px',
+                width: '90%',
+                maxHeight: '200px',
+                margin: '10rem auto 10rem 1rem'
+              }} />
+            </div>
+            {/*
             <Skeleton variant='rounded' style={{
               height: '34vw',
               maxWidth: '1200px',
@@ -228,20 +228,20 @@ const returnHomeContent = (column, data, func, demoType = 0) => {
               margin: '1rem auto'
             }} />
             */}
-            </Stack>
-          </>
-          :
-          <>
-            {contentList && contentList.map((column, idx) => (
-              <>
-                {returnHomeContentByColumn(column, idx, type)}
-              </>
-            ))}
-            <div style={{
-              marginTop: '5rem'
-            }} />
-          </>}
-      </>
-    )
-  }
-  export default HomeDemo
+          </Stack>
+        </>
+        :
+        <>
+          {contentList && contentList.map((column, idx) => (
+            <>
+              {returnHomeContentByColumn(column, idx, type)}
+            </>
+          ))}
+          <div style={{
+            marginTop: '5rem'
+          }} />
+        </>}
+    </>
+  )
+}
+export default HomeDemo

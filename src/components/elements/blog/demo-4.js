@@ -76,7 +76,7 @@ export const SellerItem = (props) => {
         </>
     )
 }
-export const Seller = (props) => {
+export const Seller4 = (props) => {
     const { item, router } = props;
     return (
         <>

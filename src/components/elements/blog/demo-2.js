@@ -180,7 +180,7 @@ export const SellerItem = (props) => {
         </>
     )
 }
-export const Seller = (props) => {
+export const Seller2 = (props) => {
     const { item, router } = props;
     return (
         <>

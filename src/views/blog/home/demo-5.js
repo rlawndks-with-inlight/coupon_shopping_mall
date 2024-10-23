@@ -5,7 +5,7 @@ import Slider from 'react-slick';
 import { useSettingsContext } from 'src/components/settings';
 import { themeObj } from 'src/components/elements/styled-components';
 import { useAuthContext } from 'src/layouts/manager/auth/useAuthContext';
-import { Item, Seller } from 'src/components/elements/blog/demo-1';
+import { Item5, Seller5 } from 'src/components/elements/blog/demo-5';
 import HomeBanner from 'src/views/section/blog/HomeBanner'
 import HomeEditor from 'src/views/section/blog/HomeEditor'
 import HomeItems from 'src/views/section/blog/HomeItems'
@@ -163,11 +163,11 @@ const ItemSectionContent = (props) => {
                     <>
                         {data?.type == 'seller' &&
                             <>
-                                <Seller item={item} router={router} type={data?.type} />
+                                <Seller5 item={item} router={router} type={data?.type} />
                             </>}
                         {data?.type == 'items' &&
                             <>
-                                <Item item={item} router={router} type={data?.type} />
+                                <Item5 item={item} router={router} type={data?.type} />
                             </>}
                     </>
                 ))}
@@ -178,11 +178,11 @@ const ItemSectionContent = (props) => {
                         <>
                             {data?.type == 'seller' &&
                                 <>
-                                    <Seller item={item} router={router} type={data?.type} />
+                                    <Seller5 item={item} router={router} type={data?.type} />
                                 </>}
                             {data?.type == 'items' &&
                                 <>
-                                    <Item item={item} router={router} type={data?.type} />
+                                    <Item5 item={item} router={router} type={data?.type} />
                                 </>}
                         </>
                     ))}

@@ -876,7 +876,7 @@ const Header = () => {
                         }
                     </Wrappers>
                 </>}
-            <PaddingTop pcHeight={router.asPath == '/shop/' ? '60' : '117'} />
+            <PaddingTop pcHeight={router.asPath == '/shop/' ? '60' : '227'} />
             <Drawer
                 anchor={'left'}
                 open={sideMenuOpen}

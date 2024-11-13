@@ -218,7 +218,7 @@ export const HistoryTable = props => {
       onChangePage(searchObj)
     }
   }
-  console.log(historyContent)
+  //console.log(historyContent)
   return (
     <>
       <TableContainer>
@@ -313,7 +313,7 @@ export const HistoryTable = props => {
                       </Row>
                     </TableCell>
                     <TableCell>{row.ord_num}</TableCell>
-                    <TableCell onClick={() => { console.log(row) }}>{commarNumber(setProductPriceByLang(row, 'amount', 'ko', currentLang?.value))} {getPriceUnitByLang(currentLang?.value)}</TableCell>
+                    <TableCell onClick={() => { /*console.log(row)*/ }}>{commarNumber(setProductPriceByLang(row, 'amount', 'ko', currentLang?.value))} {getPriceUnitByLang(currentLang?.value)}</TableCell>
                     <TableCell>{row?.buyer_name}</TableCell>
                     <TableCell>{fCurrency(row.amount) < 0 ? '결제취소' : translate(getTrxStatusByNumber(row?.trx_status))}</TableCell>
                     <TableCell>
@@ -339,7 +339,7 @@ export const HistoryTable = props => {
                                     icon: 'material-symbols:cancel-outline',
                                     title: translate('주문취소요청 하시겠습니까?')
                                   })
-                                  console.log(row)
+                                  //console.log(row)
                                 }}
                               />
                             </IconButton>

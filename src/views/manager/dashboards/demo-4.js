@@ -253,7 +253,7 @@ export const DashboardDemo4 = () => {
                                 <>
                                     <Grid item xs={12} md={12}>
                                         <Row style={{ alignItems: 'center', width: '100%', justifyContent: 'space-between', maxWidth: `300px` }}>
-                                            <Button variant="outlined" style={{ cursor: 'pointer' }} onClick={() => { router.push(`/manager/articles/${category?.id}`, console.log(data)) }}>
+                                            <Button variant="outlined" style={{ cursor: 'pointer' }} onClick={() => { router.push(`/manager/articles/${category?.id}`, /*console.log(data)*/) }}>
                                                 {category?.post_category_title}
                                             </Button>
                                             <Row style={{ fontWeight: 'bold' }}>

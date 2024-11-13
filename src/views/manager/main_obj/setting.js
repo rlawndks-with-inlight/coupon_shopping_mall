@@ -237,7 +237,7 @@ const MainObjSetting = props => {
     brand_data = settingBrandObj(item, brand_data)
     let content_list = brand_data[`${MAIN_OBJ_TYPE}`] ?? []
     setItem(brand_data)
-    console.log(content_list)
+    //console.log(content_list)
     setContentList(content_list)
     setLoading(false)
   }
@@ -408,7 +408,7 @@ const MainObjSetting = props => {
       window.location.reload()
     }
     else {
-      console.log(result)
+      //console.log(result)
     }
   }
   const [tourOpen, setTourOpen] = useState(false)
@@ -562,7 +562,7 @@ const MainObjSetting = props => {
               }
               content_list[idx]['style']['margin_top'] = e.target.value
               setContentList(content_list)
-              console.log(item)
+              //console.log(item)
             }}
             InputProps={{
               endAdornment: <>px</>
@@ -770,7 +770,7 @@ const MainObjSetting = props => {
                                 height: 85
                               }}
                             />
-                            
+
                             {item?.list &&
                               item.list.map((itm, index) => (
                                 <>

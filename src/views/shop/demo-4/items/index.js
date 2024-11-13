@@ -98,7 +98,7 @@ const ItemsDemo = (props) => {
   ]
   useEffect(() => {
     getItemList({ ...router.query }, searchObj)
-    console.log(router.query)
+    //console.log(router.query)
   }, [
     router.query.category_id0,
     router.query.category_id1,
@@ -219,7 +219,7 @@ const ItemsDemo = (props) => {
     const savedScrollPosition = sessionStorage.getItem(`scrollPosition${query}`);
     if (savedScrollPosition && !loading) {
       window.scrollTo(0, parseInt(savedScrollPosition, 10));
-      console.log(sessionStorage)
+      //console.log(sessionStorage)
       sessionStorage.removeItem(`scrollPosition${query}`);
     }
     const handleRouteChangeStart = () => {
@@ -227,7 +227,7 @@ const ItemsDemo = (props) => {
         sessionStorage.setItem(`scrollPosition${query}`, window.scrollY);
       }
     };
-    console.log(sessionStorage)
+    //console.log(sessionStorage)
     router.events.on('routeChangeStart', handleRouteChangeStart);
     return () => {
       router.events.off('routeChangeStart', handleRouteChangeStart);
@@ -239,7 +239,7 @@ const ItemsDemo = (props) => {
     let category_id0 = parsedUrl[`category_id0`] ?? ''
     let cates = themeCategoryList[1]?.product_categories //?.filter(category => category.children.length != 0)
     //let sub_cates = _.find(cates, { children.id: category_id0 })
-    console.log(cates)
+    //console.log(cates)
 
     if (category_id0 > 1000 && category_id0 < 1011) {
       setDetailCategory(category_id0)
@@ -675,7 +675,7 @@ const ItemsDemo = (props) => {
               onChange={(e) => {
                 getItemList({ ...router.query, page: 1, page_size: e.target.value }, { ...searchObj, page_size: e.target.value });
                 //console.log(productContent)
-                console.log(searchObj.page_size)
+                //console.log(searchObj.page_size)
               }}>
               <MenuItem value={10}>10개씩 보기</MenuItem>
               <MenuItem value={20}>20개씩 보기</MenuItem>

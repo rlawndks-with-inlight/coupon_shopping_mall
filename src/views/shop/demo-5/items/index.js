@@ -248,7 +248,7 @@ const ItemsDemo = (props) => {
             :
             ''
         }
-        
+
 
 
 
@@ -343,7 +343,7 @@ const ItemsDemo = (props) => {
               onChange={(e) => {
                 getItemList({ ...router.query, page: 1, page_size: e.target.value }, { ...searchObj, page_size: e.target.value });
                 //console.log(productContent)
-                console.log(searchObj.page_size)
+                //console.log(searchObj.page_size)
               }}>
               <MenuItem value={10}>10개씩 보기</MenuItem>
               <MenuItem value={20}>20개씩 보기</MenuItem>

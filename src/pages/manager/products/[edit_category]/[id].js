@@ -351,7 +351,7 @@ const ProductEdit = () => {
     //console.log(themeDnsData)
   }, [])
   useEffect(() => {
-    console.log(item)
+    //console.log(item)
   }, [item])
   useEffect(() => {
     if (currentTab == 2) {
@@ -517,7 +517,7 @@ const ProductEdit = () => {
     }*/
     let obj = item;
     if (sort) {
-      console.log(sort)
+      //console.log(sort)
     }
     let sub_images = [];
     let upload_files = [];
@@ -611,7 +611,7 @@ const ProductEdit = () => {
   ]
 
   useEffect(() => {
-    console.log(item)
+    //console.log(item)
 
   }, [])
 
@@ -1333,7 +1333,7 @@ const ProductEdit = () => {
                                       ['point_save']: value
                                     }
                                   )
-                                  console.log(item.point_save)
+                                  //console.log(item.point_save)
                                   setPoint(value.toLocaleString('ko-KR'))
                                 }} />
                             </FormControl>
@@ -1952,7 +1952,7 @@ const ProductEdit = () => {
                       <Button variant="contained" style={{
                         height: '48px', width: '120px', marginLeft: 'auto'
                       }} onClick={() => {
-                        console.log(item)
+                        //console.log(item)
                         setModal({
                           func: () => { onSave() },
                           icon: 'material-symbols:edit-outline',

@@ -98,12 +98,12 @@ const ItemsDemo = (props) => {
   ]
   useEffect(() => {
     getItemList({ ...router.query }, searchObj)
-    console.log(router.query)
+    //console.log(router.query)
   }, [
-    router.query.category_id0, 
-    router.query.category_id1, 
-    router.query.category_id2, 
-    router.query.search, 
+    router.query.category_id0,
+    router.query.category_id1,
+    router.query.category_id2,
+    router.query.search,
     router.query.property_ids0,
     router.query.page,
     router.query.page_size,
@@ -214,9 +214,9 @@ const ItemsDemo = (props) => {
     const query = new URLSearchParams(router.query).toString()
 
     const savedScrollPosition = sessionStorage.getItem(`scrollPosition${query}`);
-    if (savedScrollPosition && !loading) {  
+    if (savedScrollPosition && !loading) {
       window.scrollTo(0, parseInt(savedScrollPosition, 10));
-      console.log(sessionStorage)
+      //console.log(sessionStorage)
       sessionStorage.removeItem(`scrollPosition${query}`);
     }
     const handleRouteChangeStart = () => {
@@ -224,7 +224,7 @@ const ItemsDemo = (props) => {
         sessionStorage.setItem(`scrollPosition${query}`, window.scrollY);
       }
     };
-    console.log(sessionStorage)
+    //console.log(sessionStorage)
     router.events.on('routeChangeStart', handleRouteChangeStart);
     return () => {
       router.events.off('routeChangeStart', handleRouteChangeStart);
@@ -268,7 +268,7 @@ const ItemsDemo = (props) => {
                 {themeCategoryList.map((group, index) => {
                   let categories = group?.product_categories;
                   if (_.find(categories, { id: parseInt(router.query?.category_id1) })) {
-                    return _.find(categories, { id: parseInt(router.query?.category_id1) })?.category_name  ?? _.find(categories, { id: parseInt(router.query?.category_id0) })?.category_en_name
+                    return _.find(categories, { id: parseInt(router.query?.category_id1) })?.category_name ?? _.find(categories, { id: parseInt(router.query?.category_id0) })?.category_en_name
                   } else {
                     return ""
                   }
@@ -284,15 +284,15 @@ const ItemsDemo = (props) => {
               {themeCategoryList.map((group, index) => {
                 return <>
                   {categoryChildren[`category_id${index}`] &&
-                    <div style={{ overflowX: 'auto', minHeight: '50px', direction: 'ltr', margin:'0 auto' }}>
+                    <div style={{ overflowX: 'auto', minHeight: '50px', direction: 'ltr', margin: '0 auto' }}>
                       {categoryChildren[`category_id${index}`]?.children.map((category, idx) => (
                         <>
                           <Button
                             sx={{
                               fontWeight: `${categoryIds[`category_id${index}`] == category?.id ? 'bold' : 'normal'}`,
-                              width:'256px',
+                              width: '256px',
                               margin: '0.1rem',
-                              border:'1px solid black',
+                              border: '1px solid black',
                               borderBottom: `${categoryIds[`category_id${index}`] == category?.id ? '2px solid black' : ''}`,
                               cursor: 'pointer',
                               borderRadius: '0',
@@ -301,11 +301,11 @@ const ItemsDemo = (props) => {
                               '&:hover': {
                                 textDecoration: 'underline',
                                 background: 'transparent',
-                                backgroundColor:'#C51315',
-                                color:'white'
+                                backgroundColor: '#C51315',
+                                color: 'white'
                               },
                               '@media (max-width:1440px)': {
-                                width:'calc(85vw / 5)'
+                                width: 'calc(85vw / 5)'
                               }
                             }}
                             onClick={() => {
@@ -341,9 +341,9 @@ const ItemsDemo = (props) => {
           className={`none-scroll`}
         >
           <div
-          style={{
-            margin: '27px',
-            textDecoration:'underline'
+            style={{
+              margin: '27px',
+              textDecoration: 'underline'
             }}>
             총 {productContent?.total}개
           </div>

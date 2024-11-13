@@ -79,7 +79,7 @@ export const Item2 = (props) => {
                                         </>}
                                 </Row>
                                 <Row style={{ width: '100%' }}>
-                                    {console.log(item?.buying_count)}
+                                    {/*console.log(item?.buying_count)*/}
                                     <div style={{ color: 'black', fontSize: '24px', fontWeight: 'bold' }}>{commarNumber(item.product_sale_price)}원</div>
                                     <div style={{ fontSize: themeObj.font_size.size8, marginLeft: 'auto', fontWeight: 'normal', color: themeObj.grey[500] }}>{item?.buying_count}명 구매</div>
                                 </Row>

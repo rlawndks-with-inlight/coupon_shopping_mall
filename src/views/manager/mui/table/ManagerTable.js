@@ -43,7 +43,7 @@ export default function ManagerTable(props) {
   const { page, page_size } = props?.searchObj;
 
   useEffect(() => {
-    console.log(page)
+    //console.log(page)
   }, [page])
 
   const router = useRouter();

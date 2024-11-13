@@ -170,7 +170,7 @@ const SignUpDemo = (props) => {
         !user.user_name ||
         !user.user_pw ||
         !user.user_pw_check ||
-        !user.nickname ||
+        !user.name ||
         !user.phone_num
       ) {
         toast.error("필수 항목을 입력해 주세요.");

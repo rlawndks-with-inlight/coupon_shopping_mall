@@ -420,7 +420,7 @@ const UserEdit = () => {
                               )
                             }}
                             />
-                            <Typography variant='subtitle2' sx={{ color: 'text.secondary', marginTop: '10px' }} onClick={() => { console.log(item.contract_file || item.contract_img) }}>
+                            <Typography variant='subtitle2' sx={{ color: 'text.secondary', marginTop: '10px' }} onClick={() => { /*console.log(item.contract_file || item.contract_img)*/ }}>
                               계약서 사본
                             </Typography>
                             <Upload

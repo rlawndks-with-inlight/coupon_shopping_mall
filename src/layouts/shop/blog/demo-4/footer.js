@@ -88,7 +88,7 @@ const Footer = () => {
           {phone_num.length > 1 &&
             <>
               <Row>
-                <Bold>{translate('전화')}</Bold>
+                <Bold>{translate('고객센터')}</Bold>
                 <div style={{ display: 'flex' }}>
                   <MarginRight>{phone_num}</MarginRight>
                 </div>

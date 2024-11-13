@@ -70,7 +70,7 @@ const Footer = (props) => {
             <MarginRight>{ceo_name}</MarginRight>
           </Row>
           <Row>
-            <Bold>{translate('전화')}</Bold>
+            <Bold>{translate('고객센터')}</Bold>
             <MarginRight>{phone_num}</MarginRight>
           </Row>
           <Row>

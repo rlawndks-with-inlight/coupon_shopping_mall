@@ -92,7 +92,7 @@ const Footer = (props) => {
             phone_num &&
             <>
               <Row>
-                <Bold>{translate('전화')}</Bold>
+                <Bold>{translate('고객센터')}</Bold>
                 <MarginRight>{phone_num}</MarginRight>
               </Row>
             </>

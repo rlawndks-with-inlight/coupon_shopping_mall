@@ -28,15 +28,28 @@ export const DashboardDemo4 = () => {
     const [eDt, setEDt] = useState(new Date());
     const [data, setData] = useState({});
 
+    const [amountSum, setAmountSum] = useState()
+
     useEffect(() => {
         onChangePage(searchObj)
-    }, [])
+        onChangeAmountSum(data)
+    }, [data])
 
     const onChangePage = async (search_obj) => {
         setSearchObj(search_obj);
         let result = await apiManager(`dashboards`, 'list', search_obj);
         setData(result);
     }
+
+    const onChangeAmountSum = async (data) => {
+        const val = data?.trx_amounts_sum ?? [];
+        let sum = 0;
+        for (let i = 0; i < val?.length; i++) {
+            sum += val[i].total_amount;
+        }
+        setAmountSum(sum)
+    }
+
     const onClickDateButton = (num) => {
         setSDt(new Date(returnMoment(-num)));
         setEDt(new Date(returnMoment()));
@@ -121,6 +134,9 @@ export const DashboardDemo4 = () => {
                     </Grid>
                     <Grid item xs={12} md={12}>
                         <Typography variant="subtitle1" >주문관리</Typography>
+                    </Grid>
+                    <Grid item xs={12} md={12}>
+                        <Typography variant="subtitle1" >기간 매출액 : {commarNumber(amountSum ?? 0)} 원</Typography>
                     </Grid>
                     <Grid item xs={12} md={3}>
                         <AppWidget

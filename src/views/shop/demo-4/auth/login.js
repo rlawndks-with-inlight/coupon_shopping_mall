@@ -91,7 +91,7 @@ const LoginDemo = (props) => {
             fontSize: '40px',
             paddingTop: '1rem'
           }}>
-          Welcome to Grand Paris
+          Welcome to {themeDnsData?.company_name}
         </Title>
         <div style={{ width: '100%', textAlign: 'center', marginBottom: '1rem' }}>
           가입 또는 로그인 해주세요.
@@ -134,12 +134,20 @@ const LoginDemo = (props) => {
           onClick={onLogin}
         >로그인</Button>
         <Row style={{ margin: '1rem 0 2rem auto' }}>
-          <HoverText style={{ borderRight: `1px solid ${themeObj.grey[300]}` }} themeDnsData={themeDnsData} onClick={() => { router.push(`/shop/auth/find-info?type=0`) }}>아이디 찾기</HoverText>
+          {
+            /*
+            <HoverText style={{ borderRight: `1px solid ${themeObj.grey[300]}` }} themeDnsData={themeDnsData} onClick={() => { router.push(`/shop/auth/find-info?type=0`) }}>아이디 찾기</HoverText>
           <HoverText style={{ paddingRight: '0' }} themeDnsData={themeDnsData} onClick={() => { router.push(`/shop/auth/find-info?type=1`) }}>비밀번호 찾기</HoverText>
+            */
+          }
         </Row>
         <Row style={{ margin: '1rem auto', marginTop: '10rem', justifyContent: 'space-between', width: '100%' }}>
           <div style={{}} themeDnsData={themeDnsData} onClick={() => { router.push(`/shop/auth/find-info?type=0`) }}>아직 회원이 아니신가요?</div>
-          <HoverText style={{ paddingRight: '0' }} themeDnsData={themeDnsData} onClick={() => { setDialogOpen(true) }}>비회원 주문조회</HoverText>
+          {
+            /*
+            <HoverText style={{ paddingRight: '0' }} themeDnsData={themeDnsData} onClick={() => { setDialogOpen(true) }}>비회원 주문조회</HoverText>
+            */
+          }
         </Row>
         <Button variant="contained" style={{
           height: '60px',

@@ -82,7 +82,9 @@ const Footer = (props) => {
         <>
             <div style={{ marginTop: '2rem' }} />
             <Wrapper style={{ fontFamily: 'Noto Sans KR' }}>
-                <ContentWrapper style={{ backgroundColor: `${themeMode != 'dark' ? '#FF5B0D' : ''}`, }}>
+                {
+                    /*
+                    <ContentWrapper style={{ backgroundColor: `${themeMode != 'dark' ? '#FF5B0D' : ''}`, }}>
                     <MainContent style={{ display: 'flex', flexDirection: 'row', marginTop: '50px', justifyContent: 'space-between' }}>
                         <div>
                             <Row style={{ fontWeight: 'bold', fontSize: '16px', color: 'white', fontFamily: 'Playfair Display', }}>
@@ -108,29 +110,6 @@ const Footer = (props) => {
                                 </Row>
                             </Link>
                         </div>
-                        {/*<div>
-                            <Row style={{fontWeight:'bold', fontSize:'16px', color:'#FFFFFF', fontFamily:'Playfair Display',}}>
-                                SELL
-                            </Row>
-                            <br /><br />
-                            <Row style={{marginBottom:'0.7rem', cursor:'pointer'}}>
-                                온라인 판매
-                            </Row>
-                            <Row 
-                            style={{marginBottom:'0.7rem', cursor:'pointer'}}
-                            onClick={() => {
-                                router.push('shop/guide/brand-about')
-                            }}
-                            >
-                                오프라인
-                            </Row>
-                            <Row style={{marginBottom:'0.7rem', cursor:'pointer'}}>
-                                매입센터
-                            </Row>
-                            <Row style={{cursor:'pointer'}}>
-                                위탁센터
-                            </Row>
-                        </div>*/}
                         <div>
                             <Row style={{ fontWeight: 'bold', fontSize: '16px', color: 'white', fontFamily: 'Playfair Display', }}>
                                 HELP
@@ -187,6 +166,9 @@ const Footer = (props) => {
                         </div>
                     </MainContent>
                 </ContentWrapper>
+                    */
+                }
+                <ContentWrapper style={{ backgroundColor: `${themeMode != 'dark' ? '#FF5B0D' : ''}`, height: '100px' }}></ContentWrapper>
                 <ContentWrapper style={{ display: 'flex', maxWidth: '1400px' }}>
                     <MainContent style={{ marginTop: '50px' }}>
                         <Row style={{ position: 'relative' }}>
@@ -198,7 +180,6 @@ const Footer = (props) => {
                                     <div style={{ display: 'flex', flexDirection: 'column' }}>
                                         <MarginRight>{addr}</MarginRight>
                                     </div>
-
                                 </>
                             }
                         </Row>
@@ -267,26 +248,30 @@ const Footer = (props) => {
                                 </Link>
                             </Row>
                             <br />
-                            <Row >
-                                <img
-                                    src='/grandparis/instagram.png'
-                                    style={{ marginRight: '0.5rem', cursor: 'pointer' }}
-                                    onClick={() => {
-                                        window.open('https://www.instagram.com/grandparis__/')
-                                    }}
-                                />
-                                <img
-                                    src='/grandparis/kakaotalk.png'
-                                    style={{ marginRight: '0.5rem', cursor: 'pointer' }}
-                                />
-                                <img
-                                    src='/grandparis/band.png'
-                                    style={{ marginRight: '0.5rem', cursor: 'pointer' }}
-                                    onClick={() => {
-                                        window.open('https://blog.naver.com/grandparis88')
-                                    }}
-                                />
-                            </Row>
+                            {
+                                /*
+                                 <Row>
+                                    <img
+                                        src='/grandparis/instagram.png'
+                                        style={{ marginRight: '0.5rem', cursor: 'pointer' }}
+                                        onClick={() => {
+                                            window.open('https://www.instagram.com/grandparis__/')
+                                        }}
+                                    />
+                                    <img
+                                        src='/grandparis/kakaotalk.png'
+                                        style={{ marginRight: '0.5rem', cursor: 'pointer' }}
+                                    />
+                                    <img
+                                        src='/grandparis/band.png'
+                                        style={{ marginRight: '0.5rem', cursor: 'pointer' }}
+                                        onClick={() => {
+                                            window.open('https://blog.naver.com/grandparis88')
+                                        }}
+                                    />
+                                </Row>
+                                */
+                            }
                         </Col>
                     </MainContent>
                     <MainContent style={{ marginTop: '50px' }}>

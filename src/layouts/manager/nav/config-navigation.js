@@ -177,7 +177,7 @@ export const navConfig = () => {
             ...(isUseProductPropertyGroup() ? [{ title: '특성 그룹 관리', path: PATH_MANAGER.products.propertyGroups }] : []),
             ...(isManager() ? [...propertyGroupList] : []),
             //{ title: '상품관리', path: PATH_MANAGER.products.list },
-            { title: '상품문의', path: PATH_MANAGER.products.faq },
+            //{ title: '상품문의', path: PATH_MANAGER.products.faq },
             ...(themeDnsData?.setting_obj?.is_use_consignment == 1 ? [
               { title: '위탁 변경 요청', path: PATH_MANAGER.products.consignments + '/list/0' },
               { title: '위탁 수거 요청', path: PATH_MANAGER.products.consignments + '/list/5' },
@@ -195,8 +195,8 @@ export const navConfig = () => {
           children: [
             ...(isManager() ? [
               { title: '회원관리', path: PATH_MANAGER.users.list },
-              { title: '포인트관리', path: PATH_MANAGER.users.points },
-              { title: '찜관리', path: PATH_MANAGER.users.wishs },
+              //{ title: '포인트관리', path: PATH_MANAGER.users.points },
+              //{ title: '찜관리', path: PATH_MANAGER.users.wishs },
             ] : []),
             ...(themeDnsData?.is_use_seller > 0 ? [{ title: '셀러관리', path: PATH_MANAGER.users.sellers }] : []),
             // { title: '매출관리', path: PATH_MANAGER.users.sales },

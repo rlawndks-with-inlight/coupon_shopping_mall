@@ -122,6 +122,42 @@ const PaymentModuleEdit = () => {
                             }
                           )
                         }} />
+                      <div>
+                        발급 url이 없을 시 아래 정보 입력
+                      </div>
+                      <TextField
+                        label='무통장입금 예금은행'
+                        value={item.virtual_acct_bank}
+                        onChange={(e) => {
+                          setItem(
+                            {
+                              ...item,
+                              ['virtual_acct_bank']: e.target.value
+                            }
+                          )
+                        }} />
+                      <TextField
+                        label='무통장입금 예금주'
+                        value={item.virtual_acct_name}
+                        onChange={(e) => {
+                          setItem(
+                            {
+                              ...item,
+                              ['virtual_acct_name']: e.target.value
+                            }
+                          )
+                        }} />
+                      <TextField
+                        label='무통장입금 계좌번호'
+                        value={item.virtual_acct_num}
+                        onChange={(e) => {
+                          setItem(
+                            {
+                              ...item,
+                              ['virtual_acct_num']: e.target.value
+                            }
+                          )
+                        }} />
                     </>}
                   {item?.trx_type == 11 &&
                     <>

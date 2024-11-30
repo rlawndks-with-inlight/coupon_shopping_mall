@@ -394,12 +394,16 @@ const DefaultSetting = () => {
                             :
                             ""
                           }
-                          <div>
-                            <Typography variant='subtitle2' sx={{ color: 'text.secondary' }}>
-                              위탁 수수료 설정
-                            </Typography>
-
-                          </div>
+                          {
+                            /*
+                                                      <div>
+                                                      <Typography variant='subtitle2' sx={{ color: 'text.secondary' }}>
+                                                        위탁 수수료 설정
+                                                      </Typography>
+                          
+                                                    </div>
+                            */
+                          }
                         </>}
 
                       <Stack spacing={1}>

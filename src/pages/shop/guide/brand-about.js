@@ -6,8 +6,8 @@ import { BrandAboutDemo4 } from "src/views/shop/demo-4";
 
 const getDemo = (num, common) => {
 
-  if (num == 4)
-    return <BrandAboutDemo4 {...common} />
+  //if (num == 4)
+  //return <BrandAboutDemo4 {...common} />
 }
 
 const BrandAbout = () => {

@@ -55,7 +55,7 @@ const HomePage = ({
   if (window.location.host.split(':')[0] != process.env.MAIN_FRONT_URL) {
     return (
       <>
-      
+
       </>
     )
   }

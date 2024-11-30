@@ -225,8 +225,10 @@ const Cart2 = (props) => {
             pay_data.ord_num = ord_num
             pay_data.item_name = `${pay_data?.products[0]?.order_name} 외 ${pay_data?.products?.length - 1}`;
             let link = _.find(themeDnsData?.payment_modules, { type: 'virtual_account' })?.virtual_acct_url + `?amount=${pay_data?.amount}`;
-            const popup = window.open(link, ""); // 팝업을 미리 연다.
-            popup.location.href = link;
+            if (_.find(themeDnsData?.payment_modules, { type: 'virtual_account' })?.virtual_acct_url) {
+                const popup = window.open(link, ""); // 팝업을 미리 연다.
+                popup.location.href = link;
+            }
             let insert_pay_ready = await apiManager('pays/virtual', 'create', pay_data)
             setPayData(pay_data)
             return;
@@ -534,10 +536,29 @@ const Cart2 = (props) => {
                                         </>}
                                     {(buyType == 'virtual_account') &&
                                         <>
-                                            <CardContent>
-                                                무통장입금을 준비중입니다...
-                                                {/* <Iframe src={_.find(themeDnsData?.payment_modules, { type: buyType })?.virtual_acct_url + `?amount=${payData?.amount}`} /> */}
-                                            </CardContent>
+                                            {
+                                                _.find(themeDnsData?.payment_modules, { type: buyType })?.virtual_acct_bank && _.find(themeDnsData?.payment_modules, { type: buyType })?.virtual_acct_name && _.find(themeDnsData?.payment_modules, { type: buyType })?.virtual_acct_num
+                                                    ?
+                                                    <>
+                                                        <div style={{ marginBottom: '1rem' }}>
+                                                            은행 : {_.find(themeDnsData?.payment_modules, { type: buyType })?.virtual_acct_bank}
+                                                        </div>
+                                                        <div style={{ marginBottom: '1rem' }}>
+                                                            예금주 : {_.find(themeDnsData?.payment_modules, { type: buyType })?.virtual_acct_name}
+                                                        </div>
+                                                        <div style={{ marginBottom: '1rem' }}>
+                                                            계좌번호 : {_.find(themeDnsData?.payment_modules, { type: buyType })?.virtual_acct_num}
+                                                        </div>
+                                                        <div style={{ marginBottom: '1rem' }}>
+                                                            입금 후 1일 안에 구매처리됩니다.
+                                                        </div>
+                                                    </>
+                                                    :
+                                                    <>
+                                                        무통장입금을 준비중입니다...
+                                                    </>
+                                            }
+                                            {/* <Iframe src={_.find(themeDnsData?.payment_modules, { type: buyType })?.virtual_acct_url + `?amount=${payData?.amount}`} /> */}
                                         </>}
                                     {(buyType == 'gift_certificate') &&
                                         <>

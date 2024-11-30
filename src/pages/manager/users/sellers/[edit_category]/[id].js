@@ -366,17 +366,6 @@ const SellerEdit = () => {
                             }
                           )
                         }} />
-                      <TextField
-                        label='은행명'
-                        value={item.acct_bank_name}
-                        onChange={(e) => {
-                          setItem(
-                            {
-                              ...item,
-                              ['acct_bank_name']: e.target.value
-                            }
-                          )
-                        }} />
                       <Stack spacing={1}>
                         <FormControl>
                           <InputLabel>은행선택</InputLabel>

@@ -6,8 +6,8 @@ import { PurchaseGuideDemo4 } from "src/views/shop/demo-4";
 
 const getDemo = (num, common) => {
 
-  if (num == 4)
-    return <PurchaseGuideDemo4 {...common} />
+  //if (num == 4)
+  //return <PurchaseGuideDemo4 {...common} />
 }
 
 const PurchaseGuide = () => {

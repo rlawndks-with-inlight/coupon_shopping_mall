@@ -50,7 +50,7 @@ const ItemCharacter = (props) => {
     return (
       <>
         <Row style={{ columnGap: '0.25rem', marginTop: '1rem', fontSize: '14px' }}>
-          <Typography style={{width:'6rem', }}>{key_name}</Typography>
+          <Typography style={{ width: '6rem', }}>{key_name}</Typography>
           <Typography>{value}</Typography>
         </Row>
       </>
@@ -97,6 +97,7 @@ const ItemDemo = (props) => {
     getItemInfo(1);
     //console.log(themePropertyList)
     //console.log(product)
+    //console.log(themeDnsData)
   }, [])
 
   const getItemInfo = async (review_page) => {
@@ -143,14 +144,14 @@ const ItemDemo = (props) => {
       label: '기본정보',
       component: product ?
         <BasicInfo /> : null,
-    },*/
+    },
     {
       value: 'item_faq',
       label: 'Q&A',
       component: product ? //<></> : null,
         <ProductFaq /> : null,
     },
-    /*{
+    {
       value: 'reviews',
       label: `상품후기 (${reviewContent?.total})`,
       component: product ? <ProductDetailsReview product={product} reviewContent={reviewContent} onChangePage={getItemInfo} reviewPage={reviewPage} /> : null,
@@ -192,7 +193,7 @@ const ItemDemo = (props) => {
                       <ProductDetailsCarousel product={product} />
                     </Grid>
 
-                    <Grid item xs={12} md={6} lg={6}>
+                    <Grid item xs={12} md={6} lg={6} style={{ marginTop: 'auto' }}>
 
                       {product?.brand_name &&
                         <>
@@ -224,62 +225,64 @@ const ItemDemo = (props) => {
                         </>
                       ))}
                       {
-                        product?.status == 0 ? 
-                        <>
-                      {commarNumber(product?.product_price) != commarNumber(product?.product_sale_price) ?
+                        product?.status == 0 ?
                           <>
-                            <ItemCharacter 
-                            key_name={'판매가'} 
-                            value={<>
-                              {commarNumber(product?.product_sale_price)}원
-                            <div style={{textDecoration:'line-through', color: '#999999'}}>
-                              {commarNumber(product?.product_price)}원
-                              </div>
+                            {/*
+                            {commarNumber(product?.product_price) != commarNumber(product?.product_sale_price) ?
+                              <>
+                                <ItemCharacter
+                                  key_name={'판매가'}
+                                  value={<>
+                                    {commarNumber(product?.product_sale_price)}원
+                                    <div style={{ textDecoration: 'line-through', color: '#999999' }}>
+                                      {commarNumber(product?.product_price)}원
+                                    </div>
+                                  </>
+                                  }
+                                />
+                                <ItemCharacter key_name={'할인율'} value={`${parseFloat((parseInt(product?.product_price - product?.product_sale_price) / parseInt(product?.product_price) * 100).toFixed(2))}%`} />
+                              </>
+                              :
+                            */}
+                            <>
+                              <ItemCharacter
+                                key_name={'판매가'}
+                                value={<>
+                                  {commarNumber(parseInt(product?.product_sale_price))}원
+                                </>
+                                }
+                              />
                             </>
-                            } 
-                            />
-                            <ItemCharacter key_name={'할인율'} value={`${parseFloat((parseInt(product?.product_price - product?.product_sale_price) / parseInt(product?.product_price) * 100).toFixed(2))}%`} />
+
                           </>
                           :
-                          <>
-                            <ItemCharacter 
-                            key_name={'판매가'} 
-                            value={<>
-                              {commarNumber(product?.product_sale_price)}원
+                          product?.status == 1 ?
+                            <>
+                              <ItemCharacter
+                                key_name={'판매가'}
+                                value={<div>거래 진행중인 상품입니다</div>}
+                              />
                             </>
-                            } 
-                            />
-                          </>
-                        }
-                        </> 
-                        :
-                        product?.status == 1 ?
-                        <>
-                        <ItemCharacter
-                        key_name={'판매가'}
-                        value={<div>거래 진행중인 상품입니다</div>}
-                        />
-                        </>
-                        :
-                        product?.status == 2 || product?.status == 3 || product?.status == 4 || product?.status == 6 ?
-                        <>
-                        <ItemCharacter
-                        key_name={'판매가'}
-                        value={<div style={{color:'red'}}>SOLD OUT</div>}
-                        />
-                        </>
-                        :
-                        product?.status == 7 ? 
-                        <>
-                        <ItemCharacter
-                        key_name={'판매가'}
-                        value={<div>매장문의</div>}
-                        />
-                        </>
-                        :
-                        ''
+                            :
+                            product?.status == 2 || product?.status == 3 || product?.status == 4 || product?.status == 6 ?
+                              <>
+                                <ItemCharacter
+                                  key_name={'판매가'}
+                                  value={<div style={{ color: 'red' }}>SOLD OUT</div>}
+                                />
+                              </>
+                              :
+                              product?.status == 7 ?
+                                <>
+                                  <ItemCharacter
+                                    key_name={'판매가'}
+                                    value={<div>매장문의</div>}
+                                  />
+                                </>
+                                :
+                                ''
                       }
-                        
+
                       {/* <ProductDetailsSummary
                         product={product}
                         cart={""}
@@ -313,6 +316,7 @@ const ItemDemo = (props) => {
                         property_list = property_list.map(property => {
                           return property?.property_name
                         })
+                        /*
                         if (group?.property_group_name == '매장') {
                           return <>
                             <div style={{ margin: '1rem 0 3rem 0' }}>
@@ -342,6 +346,7 @@ const ItemDemo = (props) => {
                             </div>
                           </>
                         }
+                        */
                       })}
                       <Button
                         disabled={product?.status != 0 || !(product?.product_sale_price > 0)}
@@ -355,7 +360,7 @@ const ItemDemo = (props) => {
                           fontSize: '18px',
                           fontFamily: 'Playfair Display',
                           color: 'white',
-                          border:'1px solid #999999',
+                          border: '1px solid #999999',
                           '&:hover': {
                             backgroundColor: 'black',
                           }
@@ -380,7 +385,7 @@ const ItemDemo = (props) => {
                             fontSize: '18px',
                             fontFamily: 'Playfair Display',
                             color: '#999999',
-                            border:'1px solid #999999',
+                            border: '1px solid #999999',
                             '&:hover': {
                               backgroundColor: 'transparent',
                             }
@@ -457,7 +462,8 @@ const ItemDemo = (props) => {
                               }),
                             }}
                           >
-                            {commarNumber(product?.product_price) != commarNumber(product?.product_sale_price) && currentTab === 'description' ?
+                            {/*
+                            commarNumber(product?.product_price) != commarNumber(product?.product_sale_price) && currentTab === 'description' ?
                               <>
                                 <div style={{ color: `${themeDnsData?.theme_css?.main_color}`, fontWeight: 'bold' }}>
                                   {commarNumber(product?.product_price)} 원에서 {commarNumber(product?.product_sale_price)} 원으로 가격인하를 하였습니다.
@@ -466,6 +472,7 @@ const ItemDemo = (props) => {
                               :
                               <>
                               </>
+                              */
                             }
                             {tab.component}
                           </Box>

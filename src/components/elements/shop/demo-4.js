@@ -122,12 +122,14 @@ export const Item4 = (props) => {
                   :
                   <>
                     {commarNumber(item?.product_sale_price) + '원'}
-                    {item?.product_price != item?.product_sale_price ?
+                    {/*
+                    item?.product_price != item?.product_sale_price ?
                       <span style={{ color: '#EC1C24', marginLeft: '0.5rem' }}>
                         {parseInt((item?.product_price - item?.product_sale_price) * 100 / item?.product_price) + '%'}
                       </span>
                       :
                       ''
+                      */
                     }
                   </>
           }
@@ -290,10 +292,10 @@ export const AuthMenuSideComponent = (props) => {
           label: '반품/환불조회',
           link: '/shop/auth/history/?is_cancel=1',
         },
-        {
+        {/*
           label: '위탁상품관리',
           link: '/shop/auth/consignment/',
-        },
+        */},
         {
           label: '위시리스트',
           link: '/shop/auth/wish/',

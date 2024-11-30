@@ -625,6 +625,7 @@ const Header = () => {
                                     <Icon icon={themeMode === 'dark' ? 'tabler:sun' : 'tabler:moon-stars'} fontSize={'1.5rem'} color={themeMode == 'dark' ? '#fff' : '#000'} />
                                 </IconButton>*/}
                                 <div style={{ position: 'absolute', right: '0' }}>
+                                    {/*
                                     <Link href={'/shop/guide/purchase-guide'} passHref>
                                         <Button style={{
                                             width: '74px',
@@ -640,12 +641,14 @@ const Header = () => {
                                             Sell Item
                                         </Button>
                                     </Link>
+                                    */}
                                     <Button style={{
                                         width: '74px',
                                         height: '30px',
                                         fontWeight: 'bold',
                                         fontSize: '12px',
-                                        color: `${themeMode == 'dark' ? 'white' : 'black'}`,
+                                        color: `${themeMode == 'dark' ? 'black' : 'white'}`,
+                                        backgroundColor: `${themeMode == 'dark' ? 'white' : '#FF5B0D'}`,
                                         borderRadius: '0',
                                         marginRight: '10px'
                                     }}

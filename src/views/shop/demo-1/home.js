@@ -122,13 +122,13 @@ const HomeDemo = (props) => {
     const savedScrollPosition = sessionStorage.getItem('scrollPosition');
     if (savedScrollPosition && !loading) {
       window.scrollTo(0, parseInt(savedScrollPosition, 10));
-      console.log(sessionStorage)
+      //console.log(sessionStorage)
       sessionStorage.removeItem('scrollPosition');
     }
     const handleRouteChangeStart = () => {
       sessionStorage.setItem('scrollPosition', window.scrollY);
     };
-    console.log(sessionStorage)
+    //console.log(sessionStorage)
     router.events.on('routeChangeStart', handleRouteChangeStart);
     return () => {
       router.events.off('routeChangeStart', handleRouteChangeStart);

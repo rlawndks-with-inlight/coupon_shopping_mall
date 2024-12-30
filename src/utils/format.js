@@ -20,8 +20,10 @@ export const productPropertyCanSelectMultipleList = [
     { label: '가능(여러개)', value: 1 },
 ]
 export const paymentModuleTypeList = [
-    { label: '수기결제', value: 1 },
-    { label: '인증결제', value: 2 },
+    { label: '수기결제(페이베리)', value: 1 },
+    { label: '인증결제(페이베리)', value: 2 },
+    { label: '수기결제(핀트리)', value: 3 },
+    { label: '인증결제(핀트리)', value: 4 },
     { label: '무통장입금', value: 10 },
     { label: '상품권결제', value: 11 },
 ]

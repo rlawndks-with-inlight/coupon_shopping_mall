@@ -23,7 +23,7 @@ import { apiManager } from 'src/utils/api'
 import { AddressItem } from 'src/views/shop/demo-1/auth/cart'
 import Iconify from '../iconify'
 import DaumPostcode from 'react-daum-postcode';
-import { makePayData, onPayProductsByAuth, onPayProductsByHand, onPayProductsByVirtualAccount } from 'src/utils/shop-util'
+import { makePayData, onPayProductsByAuth, onPayProductsByAuth_Fintree, onPayProductsByHand, onPayProductsByVirtualAccount } from 'src/utils/shop-util'
 import { formatCreditCardNumber, formatExpirationDate } from 'src/utils/formatCard'
 import { useModal } from './ModalProvider'
 import toast from 'react-hot-toast'
@@ -173,6 +173,22 @@ const DialogBuyNow = (props) => {
 
       setPayLoading(true);
       let result = await onPayProductsByAuth([{
+        ...product_item,
+        groups: select_product_groups,
+        seller_id: router.query?.seller_id ?? 0,
+      }], { ...payData, payment_modules: item });
+    } else if (item?.type == 'card_fintree') {//카드결제 핀트리
+      setBuyType('card_fintree');
+      setBuyStep(2);
+      setPayData({
+        ...payData,
+        payment_modules: item,
+      })
+    } else if (item?.type == 'certification_fintree') {
+      setBuyType('certification_fintree');
+
+      setPayLoading(true);
+      let result = await onPayProductsByAuth_Fintree([{
         ...product_item,
         groups: select_product_groups,
         seller_id: router.query?.seller_id ?? 0,
@@ -377,6 +393,132 @@ const DialogBuyNow = (props) => {
               </RadioGroup>
             </>}
           {(buyStep == 2 && buyType == 'card') &&
+            <>
+              <Typography variant='subtitle1' sx={{ borderBottom: `1px solid #000`, paddingBottom: '0.5rem', marginBottom: '0.5rem' }}>{_.find(payList, { type: buyType })?.title}</Typography>
+              <Stack spacing={2}>
+                <Cards cvc={''} focused={cardFucus} expiry={payData.yymm} name={payData.buyer_name} number={payData.card_num} />
+                <Stack>
+                  <TextField
+                    size='small'
+                    label='카드 번호'
+                    value={payData.card_num}
+                    placeholder='0000 0000 0000 0000'
+                    onChange={(e) => {
+                      let value = e.target.value;
+                      value = formatCreditCardNumber(value, Payment)
+                      setPayData({
+                        ...payData,
+                        ['card_num']: value
+                      })
+                    }}
+                  />
+                </Stack>
+                <Stack>
+                  <TextField
+                    size='small'
+                    label='카드 사용자명'
+                    value={payData.buyer_name}
+                    onChange={(e) => {
+                      let value = e.target.value;
+                      setPayData({
+                        ...payData,
+                        ['buyer_name']: value
+                      })
+                    }}
+                  />
+                </Stack>
+                <Stack>
+                  <TextField
+                    size='small'
+                    label='만료일'
+                    value={payData.yymm}
+                    inputProps={{ maxLength: '5' }}
+                    onChange={(e) => {
+                      let value = e.target.value;
+                      value = formatExpirationDate(value, Payment)
+                      setPayData({
+                        ...payData,
+                        ['yymm']: value
+                      })
+                    }}
+                  />
+                </Stack>
+                <Stack>
+                  <TextField
+                    size='small'
+                    label='카드비밀번호 앞 두자리'
+                    value={payData.card_pw}
+                    type='password'
+                    inputProps={{ maxLength: '2' }}
+                    onChange={(e) => {
+                      let value = e.target.value;
+                      setPayData({
+                        ...payData,
+                        ['card_pw']: value
+                      })
+                    }}
+                  />
+                </Stack>
+                <Stack>
+                  <TextField
+                    size='small'
+                    label='구매자 휴대폰번호'
+                    value={payData.buyer_phone}
+                    onChange={(e) => {
+                      let value = e.target.value;
+                      setPayData({
+                        ...payData,
+                        ['buyer_phone']: value
+                      })
+                    }}
+                  />
+                </Stack>
+                <Stack>
+                  <TextField
+                    size='small'
+                    label={is_blog == 1 ? '주민번호 앞 6자리(생년월일)' : '주민번호 또는 사업자등록번호'}
+                    value={payData.auth_num}
+                    onChange={(e) => {
+                      let value = e.target.value;
+                      setPayData({
+                        ...payData,
+                        ['auth_num']: value
+                      })
+                    }}
+                  />
+                </Stack>
+                {!user &&
+                  <>
+                    <Stack>
+                      <TextField
+                        size='small'
+                        label='비회원주문 비밀번호'
+                        type='password'
+                        value={payData.password}
+                        onChange={(e) => {
+                          let value = e.target.value;
+                          setPayData({
+                            ...payData,
+                            ['password']: value
+                          })
+                        }}
+                      />
+                    </Stack>
+                  </>}
+                <Stack>
+                  <Button variant='contained' onClick={() => {
+                    setModal({
+                      func: () => { onBuyNow() },
+                      icon: 'ion:card-outline',
+                      title: '정말로 결제 하시겠습니까?'
+                    })
+                  }}>
+                    결제하기
+                  </Button>
+                </Stack>
+              </Stack>
+            </>}
+          {(buyStep == 2 && buyType == 'card_fintree') &&
             <>
               <Typography variant='subtitle1' sx={{ borderBottom: `1px solid #000`, paddingBottom: '0.5rem', marginBottom: '0.5rem' }}>{_.find(payList, { type: buyType })?.title}</Typography>
               <Stack spacing={2}>

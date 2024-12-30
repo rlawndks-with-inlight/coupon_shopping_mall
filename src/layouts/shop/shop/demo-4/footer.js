@@ -230,9 +230,13 @@ const Footer = (props) => {
                             }
                         </Row>
                         <br />
-                        <Row>
+                        {
+                            /*
+                            <Row>
                             COPYRIGHT © GRANDPARIS ALL RIGHTS RESERVED.
-                        </Row>
+                            </Row>
+                            */
+                        }
                         <br />
                         <Col>
                             <Row>
@@ -275,7 +279,9 @@ const Footer = (props) => {
                         </Col>
                     </MainContent>
                     <MainContent style={{ marginTop: '50px' }}>
-                        <Row style={{ position: 'relative' }}>
+                        {
+                            /*
+                            <Row style={{ position: 'relative' }}>
                             <MarginRight style={{ fontWeight: 'bold', fontSize: '16px' }}>(주)럭셔리에디션</MarginRight>
                         </Row>
                         <Row>
@@ -288,12 +294,14 @@ const Footer = (props) => {
                                 <MarginRight>TEL : 032-215-8887, 032-215-8889</MarginRight>
                             </div>
                         </Row>
-                        {/*<Row>
+                        <Row>
                             <MarginRight>대표 : 최성일, 최윤영, 이동영</MarginRight>
-                                </Row>*/}
+                                </Row>
                         <Row>
                             <MarginRight>사업자등록번호 : 592-87-02871</MarginRight>
                         </Row>
+                            */
+                        }
 
                     </MainContent>
                 </ContentWrapper>

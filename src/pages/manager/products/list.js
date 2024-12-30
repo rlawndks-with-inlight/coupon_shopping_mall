@@ -115,30 +115,33 @@ const ProductList = () => {
         }
       }
     }),
-    {
-      id: 'product_price',
-      label: '정상가',
-      sub_id: 'product_sale_price',
-      sub_label: '판매가',
-      action: (row) => {
-        return (
-          <>
-            <div>
-              {commarNumber(row['product_price'])}
-            </div>
-            <div style={{ marginTop: '1rem' }}>
-              {commarNumber(row['product_sale_price'])}
-            </div>
-          </>)
-      }
-    },
-    /*{
-      id: 'product_sale_price',
-      label: '상품 할인가',
-      action: (row) => {
-        return commarNumber(row['product_sale_price'])
-      }
-    },*/
+    ...(themeDnsData?.id == 74 ? [
+      {
+        id: 'product_sale_price',
+        label: '가격',
+        action: (row) => {
+          return commarNumber(row['product_sale_price'] + themeDnsData?.seller_info?.seller_trx_fee)
+        }
+      },
+    ] : [
+      {
+        id: 'product_price',
+        label: '정상가',
+        sub_id: 'product_sale_price',
+        sub_label: '판매가',
+        action: (row) => {
+          return (
+            <>
+              <div onClick={() => { console.log(row) }}>
+                {commarNumber(row['product_price'])}
+              </div>
+              <div style={{ marginTop: '1rem' }}>
+                {commarNumber(row['product_sale_price'])}
+              </div>
+            </>)
+        }
+      },
+    ]),
     {
       id: 'user_name',
       label: '생성한유저 아이디',
@@ -197,7 +200,26 @@ const ProductList = () => {
       id: 'status',
       label: '상태',
       action: (row) => {
-        if (themeDnsData?.id != 5) {
+        if (themeDnsData?.id == 5) {
+          return <Select
+            size="small"
+            defaultValue={row?.status}
+            onChange={(e) => {
+              onChangeStatus(row?.id, e.target.value);
+            }}
+            sx={{ '@media screen and (max-width: 2500px)': { size: 'smaller' } }}
+          >
+            <MenuItem value={0}>{'판매중'}</MenuItem>
+            <MenuItem value={6}>{'예약중'}</MenuItem>
+            <MenuItem value={7}>{'매장문의'}</MenuItem>
+            <MenuItem value={1}>{'거래진행중'}</MenuItem>
+            <MenuItem value={2}>{'품절'}</MenuItem>
+            <MenuItem value={3}>{'택배수거'}</MenuItem>
+            <MenuItem value={4}>{'방문수거'}</MenuItem>
+            <MenuItem value={5}>{'비공개'}</MenuItem>
+          </Select>
+        }
+        else if (themeDnsData?.id == 74) {
           return <Select
             size="small"
             defaultValue={row?.status}
@@ -222,13 +244,9 @@ const ProductList = () => {
             sx={{ '@media screen and (max-width: 2500px)': { size: 'smaller' } }}
           >
             <MenuItem value={0}>{'판매중'}</MenuItem>
-            <MenuItem value={6}>{'예약중'}</MenuItem>
-            <MenuItem value={7}>{'매장문의'}</MenuItem>
-            <MenuItem value={1}>{'거래진행중'}</MenuItem>
+            <MenuItem value={1}>{'중단됨'}</MenuItem>
             <MenuItem value={2}>{'품절'}</MenuItem>
-            <MenuItem value={3}>{'택배수거'}</MenuItem>
-            <MenuItem value={4}>{'방문수거'}</MenuItem>
-            <MenuItem value={5}>{'비공개'}</MenuItem>
+            <MenuItem value={3}>{'새상품'}</MenuItem>
           </Select>
         }
       },
@@ -285,7 +303,7 @@ const ProductList = () => {
         return row['updated_at'] ?? "---"
       }
     },*/
-    {
+    /*{
       id: 'edit',
       label: '리뷰 확인',
       action: (row) => {
@@ -299,7 +317,7 @@ const ProductList = () => {
           </>
         )
       }
-    },
+    },*/
     /*{
       id: 'product_description',
       label: '설명',
@@ -317,35 +335,37 @@ const ProductList = () => {
         )
       }
     },*/
-    {
-      id: 'edit',
-      label: '수정(복사) / 삭제', //수정/복사/삭제
-      action: (row) => {
-        return (
-          <>
-            <IconButton>
-              <Icon icon='material-symbols:edit-outline' onClick={() => {
-                router.push(`edit/${row?.id}`)
-              }} />
-            </IconButton>
-            {/*<IconButton>
-              <Icon icon='material-symbols:content-copy-outline' onClick={() => {
-                router.push(`edit/${row?.product_code || row?.id}`)
-              }} />
-            </IconButton> */}
-            <IconButton onClick={() => {
-              setModal({
-                func: () => { deleteProduct(row?.id) },
-                icon: 'material-symbols:delete-outline',
-                title: '정말 삭제하시겠습니까?'
-              })
-            }}>
-              <Icon icon='material-symbols:delete-outline' />
-            </IconButton>
-          </>
-        )
-      }
-    },
+    ...(themeDnsData?.dns_type != 'seller' ? [
+      {
+        id: 'edit',
+        label: '수정(복사) / 삭제', //수정/복사/삭제
+        action: (row) => {
+          return (
+            <>
+              <IconButton>
+                <Icon icon='material-symbols:edit-outline' onClick={() => {
+                  router.push(`edit/${row?.id}`)
+                }} />
+              </IconButton>
+              {/*<IconButton>
+                <Icon icon='material-symbols:content-copy-outline' onClick={() => {
+                  router.push(`edit/${row?.product_code || row?.id}`)
+                }} />
+              </IconButton> */}
+              <IconButton onClick={() => {
+                setModal({
+                  func: () => { deleteProduct(row?.id) },
+                  icon: 'material-symbols:delete-outline',
+                  title: '정말 삭제하시겠습니까?'
+                })
+              }}>
+                <Icon icon='material-symbols:delete-outline' />
+              </IconButton>
+            </>
+          )
+        }
+      },
+    ] : [])
   ]
   const router = useRouter();
   const [columns, setColumns] = useState([]);

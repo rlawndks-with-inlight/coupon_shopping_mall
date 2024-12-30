@@ -245,6 +245,21 @@ const SellerEdit = () => {
                       </Stack>
                       <Stack spacing={1}>
                         <TextField
+                          label='셀러 도메인'
+                          value={item.dns}
+                          onChange={(e) => {
+                            setItem(
+                              {
+                                ...item,
+                                ['dns']: e.target.value
+                              }
+                            )
+                          }} />
+                      </Stack>
+                      {
+                        /*
+                        <Stack spacing={1}>
+                        <TextField
                           label='인스타그램 아이디'
                           value={item.sns_obj.instagram_id}
                           onChange={(e) => {
@@ -276,6 +291,8 @@ const SellerEdit = () => {
                             )
                           }} />
                       </Stack>
+                        */
+                      }
                     </Stack>
                   </Card>
                 </Grid>

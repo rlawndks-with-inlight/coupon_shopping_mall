@@ -133,7 +133,140 @@ export const onPayProductsByAuth = async (products_, payData_) => { // 인증결
         delete payData.payment_modules;
 
         let query = Object.entries(payData).map(e => e.join('=')).join('&');
-        window.location.href = (`${process.env.NOTI_URL}/v2/pay/auth?${query}`);
+        window.open(`${process.env.NOTI_URL}/v2/pay/auth?${query}`);
+        //console.log(products_);
+        //console.log(payData_)
+        console.log(payData)
+        //console.log(query)
+
+    } catch (err) {
+        console.log(err);
+        return false;
+    }
+}
+export const onPayProductsByHand_Fintree = async (products_, payData_) => { // 핀트리 수기결제
+    let products = products_;
+    let pay_data = payData_;
+    let payData = await makePayData(products, pay_data);
+    let ord_num = `${payData?.user_id || payData?.password}${new Date().getTime().toString().substring(0, 11)}`
+    let return_url = `${window.location.protocol}//${window.location.host}/shop/auth/pay-result`
+
+    const now = new Date();
+    const yyyymmdd = now.toISOString().slice(0, 10).replace(/-/g, "");
+    const hhmmss = now.toTimeString().slice(0, 8).replace(/:/g, "");
+    const time = yyyymmdd + hhmmss;
+
+    payData = {
+        ...payData,
+        payMethod: 'card',
+        mid: payData?.payment_modules?.mid,
+        trxCd: '0',
+        goodsNm: 'item_name',
+        ordNo: ord_num,
+        goodsAmt: payData?.amount,
+        ordNm: payData?.buyer_name,
+        ordTel: payData?.buyer_phone,
+        return_url: return_url,
+        //success_url: return_url + '?result_cd=0000',
+        //fail_url: return_url + '?result_cd=9999',
+        ediDate: time,
+
+        //pay_key: payData?.payment_modules?.pay_key,
+    }
+    if (payData?.products?.length > 1 || !payData?.item_name) {
+        payData.item_name = `${payData?.products[0]?.order_name} 외 ${payData?.products?.length - 1}`;
+    }
+    try {
+
+        let insert_pay_ready = await apiManager('pays/auth', 'create', payData)
+        payData.temp = insert_pay_ready?.id
+
+        delete payData.products;
+        delete payData.payment_modules;
+        delete payData.amount;
+        delete payData.buyer_phone;
+
+
+        //let query = Object.entries(payData).map(e => e.join('=')).join('&');
+        window.location.href = (`https://api.fintree.kr/payInit_hash.do`);
+
+    } catch (err) {
+        console.log(err);
+        return false;
+    }
+}
+export const onPayProductsByAuth_Fintree = async (products_, payData_) => { // 핀트리 인증결제
+    let products = products_;
+    let pay_data = payData_;
+    let payData = await makePayData(products, pay_data);
+    let ord_num = `${payData?.user_id || payData?.password}${new Date().getTime().toString().substring(0, 11)}`
+    let return_url = `${window.location.protocol}//${window.location.host}/shop/auth/pay-result`
+
+    const now = new Date();
+    const yyyymmdd = now.toISOString().slice(0, 10).replace(/-/g, "");
+    const hhmmss = now.toTimeString().slice(0, 8).replace(/:/g, "");
+    const time = yyyymmdd + hhmmss;
+
+    const handleSubmit = async (data) => {
+        try {
+            const response = await axios.post(
+                "https://api.fintree.kr/payInit_hash.do",
+                new URLSearchParams(data), // 데이터 변환
+                {
+                    headers: {
+                        "Content-Type": "application/x-www-form-urlencoded; charset=utf-8",
+                    },
+                }
+            );
+
+            // 결과 처리
+            if (response.status === 200) {
+                alert("결제가 성공적으로 처리되었습니다!");
+                console.log("결제 응답:", response.data);
+            } else {
+                alert("결제 요청 실패! 상태 코드: " + response.status);
+            }
+        } catch (error) {
+            console.error("결제 요청 중 오류 발생:", error);
+            alert("결제 요청 중 오류가 발생했습니다.");
+        }
+    };
+
+    payData = {
+        ...payData,
+        payMethod: 'card',
+        mid: payData?.payment_modules?.mid,
+        trxCd: '0',
+        goodsNm: 'item_name',
+        ordNo: ord_num,
+        goodsAmt: payData?.amount,
+        ordNm: payData?.buyer_name,
+        ordTel: payData?.buyer_phone,
+        return_url: return_url,
+        //success_url: return_url + '?result_cd=0000',
+        //fail_url: return_url + '?result_cd=9999',
+        ediDate: time,
+
+        //pay_key: payData?.payment_modules?.pay_key,
+    }
+    if (payData?.products?.length > 1 || !payData?.item_name) {
+        payData.item_name = `${payData?.products[0]?.order_name} 외 ${payData?.products?.length - 1}`;
+    }
+    try {
+
+        let insert_pay_ready = await apiManager('pays/auth', 'create', payData)
+        payData.temp = insert_pay_ready?.id
+
+        delete payData.products;
+        delete payData.payment_modules;
+        delete payData.amount;
+        delete payData.buyer_phone;
+
+        console.log(payData)
+
+        handleSubmit()
+        //let query = Object.entries(payData).map(e => e.join('=')).join('&');
+        //window.location.href = (`https://api.fintree.kr/payInit_hash.do`);
 
     } catch (err) {
         console.log(err);

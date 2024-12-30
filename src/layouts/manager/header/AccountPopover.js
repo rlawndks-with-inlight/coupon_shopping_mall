@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/router';
 // @mui
 import { alpha } from '@mui/material/styles';
-import { Box, Divider, Typography, Stack, MenuItem } from '@mui/material';
+import { Box, Divider, Button, Typography, Stack, MenuItem, Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions, TextField } from '@mui/material';
 // routes
 import { PATH_AUTH } from '../../../data/manager-data';
 // auth
@@ -17,18 +17,24 @@ import { IconButtonAnimate } from '../../../components/animate';
 import { useSettingsContext } from 'src/components/settings';
 import _ from 'lodash';
 import { userLevelList } from 'src/utils/format';
+import { apiManager } from 'src/utils/api';
+import toast from 'react-hot-toast';
 
 // ----------------------------------------------------------------------
 
 const OPTIONS = [
-  {
+  /*{
     label: '프로필',
     linkTo: '/',
   },
   {
     label: '설정',
     linkTo: '/',
-  },
+  },*/
+  {
+    label: '비밀번호 변경',
+
+  }
 ];
 
 // ----------------------------------------------------------------------
@@ -41,6 +47,14 @@ export default function AccountPopover() {
   const { enqueueSnackbar } = useSnackbar();
 
   const [openPopover, setOpenPopover] = useState(null);
+
+  const [dialogObj, setDialogObj] = useState({
+    changePassword: false,
+  })
+  const [changePasswordObj, setChangePasswordObj] = useState({
+    id: '',
+    user_pw: ''
+  })
 
   const handleOpenPopover = (event) => {
     setOpenPopover(event.currentTarget);
@@ -67,6 +81,17 @@ export default function AccountPopover() {
     handleClosePopover();
     push(path);
   };
+
+  const onChangeUserPassword = async () => {
+    let result = await apiManager(`users/change-pw`, 'update', changePasswordObj);
+    if (result) {
+      setDialogObj({
+        ...dialogObj,
+        changePassword: false
+      })
+      toast.success("성공적으로 변경 되었습니다.");
+    }
+  }
 
   return (
     <>
@@ -105,7 +130,14 @@ export default function AccountPopover() {
 
         <Stack sx={{ p: 1 }}>
           {OPTIONS.map((option) => (
-            <MenuItem key={option.label} onClick={() => handleClickItem(option.linkTo)}>
+            <MenuItem key={option.label} onClick={() => {
+              //handleClickItem(option.linkTo)
+              setDialogObj({ ...dialogObj, changePassword: true })
+              setChangePasswordObj({
+                user_pw: '',
+                id: user?.id
+              })
+            }}>
               {option.label}
             </MenuItem>
           ))}
@@ -116,6 +148,44 @@ export default function AccountPopover() {
           로그아웃
         </MenuItem>
       </MenuPopover>
+      <Dialog
+        open={dialogObj.changePassword}
+      >
+        <DialogTitle>{`비밀번호 변경`}</DialogTitle>
+
+        <DialogContent>
+          <DialogContentText>
+            새 비밀번호를 입력 후 확인을 눌러주세요.
+          </DialogContentText>
+          <TextField
+            autoFocus
+            fullWidth
+            value={changePasswordObj.user_pw}
+            type="password"
+            margin="dense"
+            label="새 비밀번호"
+            onChange={(e) => {
+              setChangePasswordObj({
+                ...changePasswordObj,
+                user_pw: e.target.value
+              })
+            }}
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button variant="contained" onClick={onChangeUserPassword}>
+            변경
+          </Button>
+          <Button color="inherit" onClick={() => {
+            setDialogObj({
+              ...dialogObj,
+              changePassword: false
+            })
+          }}>
+            취소
+          </Button>
+        </DialogActions>
+      </Dialog>
     </>
   );
 }

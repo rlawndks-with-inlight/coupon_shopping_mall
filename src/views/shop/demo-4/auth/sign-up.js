@@ -13,6 +13,7 @@ import { Icon } from '@iconify/react';
 import { useSettingsContext } from 'src/components/settings';
 import { apiManager } from 'src/utils/api';
 import { bankCodeList } from 'src/utils/format';
+import { Upload } from 'src/components/upload';
 
 const Wrappers = styled.div`
 max-width:1000px;
@@ -485,10 +486,167 @@ const SignUpDemo = (props) => {
                     )
                   }} />
               </>}
+            {
+              /*
+              <Grid item xs={12} md={6}>
+              <Card sx={{ p: 2, height: '100%' }}>
+                <Stack spacing={3}>
+                  <Stack spacing={1}>
+                    <Typography variant="subtitle2" sx={{ color: 'text.secondary' }}>
+                      통장사본 이미지
+                    </Typography>
+                    <Upload file={user.passbook_file || user.passbook_img} onDrop={(acceptedFiles) => {
+                      const newFile = acceptedFiles[0];
+                      if (newFile) {
+                        setUser(
+                          {
+                            ...user,
+                            ['passbook_file']: Object.assign(newFile, {
+                              preview: URL.createObjectURL(newFile),
+                            })
+                          }
+                        );
+                      }
+                    }} onDelete={() => {
+                      setUser(
+                        {
+                          ...user,
+                          ['passbook_file']: undefined,
+                          ['passbook_img']: '',
+                        }
+                      )
+                    }}
+                      fileExplain={{
+                        width: '(800x300 추천)'
+                      }}
+                      boxStyle={{
+                        padding: '0',
+                        height: '300px',
+                        display: 'flex'
+                      }}
+                    />
+                  </Stack>
+                  <Stack spacing={1}>
+                    <Typography variant="subtitle2" sx={{ color: 'text.secondary' }}>
+                      계약서 이미지
+                    </Typography>
+                    <Upload file={user.contract_file || user.contract_img} onDrop={(acceptedFiles) => {
+                      const newFile = acceptedFiles[0];
+                      if (newFile) {
+                        setUser(
+                          {
+                            ...user,
+                            ['contract_file']: Object.assign(newFile, {
+                              preview: URL.createObjectURL(newFile),
+                            })
+                          }
+                        );
+                      }
+                    }} onDelete={() => {
+                      setUser(
+                        {
+                          ...user,
+                          ['contract_file']: undefined,
+                          ['contract_img']: '',
+                        }
+                      )
+                    }}
+                      fileExplain={{
+                        width: '(800x300 추천)'
+                      }}
+                      boxStyle={{
+                        padding: '0',
+                        height: '300px',
+                        display: 'flex'
+                      }}
+                    />
+                  </Stack>
+                </Stack>
+              </Card>
+            </Grid>
+            <Grid item xs={12} md={6}>
+              <Card sx={{ p: 2, height: '100%' }}>
+                <Stack spacing={3}>
+                  <Stack spacing={1}>
+                    <Typography variant="subtitle2" sx={{ color: 'text.secondary' }}>
+                      사업자등록증 이미지
+                    </Typography>
+                    <Upload file={user.bsin_lic_file || user.bsin_lic_img} onDrop={(acceptedFiles) => {
+                      const newFile = acceptedFiles[0];
+                      if (newFile) {
+                        setUser(
+                          {
+                            ...user,
+                            ['bsin_lic_file']: Object.assign(newFile, {
+                              preview: URL.createObjectURL(newFile),
+                            })
+                          }
+                        );
+                      }
+                    }} onDelete={() => {
+                      setUser(
+                        {
+                          ...user,
+                          ['bsin_lic_file']: undefined,
+                          ['bsin_lic_img']: '',
+                        }
+                      )
+                    }}
+                      fileExplain={{
+                        width: '(800x300 추천)'
+                      }}
+                      boxStyle={{
+                        padding: '0',
+                        height: '300px',
+                        display: 'flex'
+                      }}
+                    />
+                  </Stack>
+                  <Stack spacing={1}>
+                    <Typography variant="subtitle2" sx={{ color: 'text.secondary' }}>
+                      신분증 사본 이미지
+                    </Typography>
+                    <Upload file={user.id_file || user.id_img} onDrop={(acceptedFiles) => {
+                      const newFile = acceptedFiles[0];
+                      if (newFile) {
+                        setUser(
+                          {
+                            ...user,
+                            ['id_file']: Object.assign(newFile, {
+                              preview: URL.createObjectURL(newFile),
+                            })
+                          }
+                        );
+                      }
+                    }} onDelete={() => {
+                      setUser(
+                        {
+                          ...user,
+                          ['id_file']: undefined,
+                          ['id_img']: '',
+                        }
+                      )
+                    }}
+                      fileExplain={{
+                        width: '(800x300 추천)'
+                      }}
+                      boxStyle={{
+                        padding: '0',
+                        height: '300px',
+                        display: 'flex'
+                      }}
+                    />
+                  </Stack>
+                </Stack>
+              </Card>
+            </Grid>
+              */
+            }
           </>}
         {activeStep == 2 &&
           <>
             <Col>
+              {console.log(user)}
               <Icon icon={'fluent-mdl2:completed'} style={{ margin: '8rem auto 1rem auto', fontSize: themeObj.font_size.size1, color: theme.palette.primary.main }} />
               <div style={{ margin: 'auto auto 8rem auto' }}>회원가입이 완료되었습니다.</div>
             </Col>

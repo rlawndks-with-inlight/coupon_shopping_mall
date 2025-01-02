@@ -142,7 +142,7 @@ const ProductList = () => {
         }
       },
     ]),
-    {
+    /*{
       id: 'user_name',
       label: '생성한유저 아이디',
       sub_id: 'seller_name',
@@ -159,7 +159,7 @@ const ProductList = () => {
           </>
         )
       }
-    },
+    },*/
     /*{
       id: 'seller_name',
       label: '생성한유저셀러명',
@@ -229,9 +229,7 @@ const ProductList = () => {
             sx={{ '@media screen and (max-width: 2500px)': { size: 'smaller' } }}
           >
             <MenuItem value={0}>{'판매중'}</MenuItem>
-            <MenuItem value={1}>{'중단됨'}</MenuItem>
-            <MenuItem value={2}>{'품절'}</MenuItem>
-            <MenuItem value={3}>{'새상품'}</MenuItem>
+            <MenuItem value={5}>{'비공개'}</MenuItem>
           </Select>
         }
         else {

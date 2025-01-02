@@ -28,21 +28,21 @@ const SellerEdit = () => {
     content: [],
   });
   const [item, setItem] = useState({
-    user_name: '',//
-    nickname: '',//
+    //user_name: '',
+    //nickname: '',
     name: '',//
-    seller_name: '',//
-    addr: '',
-    acct_bank_name: '',
+    //seller_name: '',
+    //addr: '',
+    //acct_bank_name: '',
     acct_num: '',
     acct_name: '',
     phone_num: '',//
-    note: '',
-    seller_trx_fee: 0,
-    sns_obj: {
+    //note: '',
+    //seller_trx_fee: 0,
+    /*sns_obj: {
       youtube_channel: '',
       instagram_id: ''
-    },
+    },*/
     background_file: undefined,
     background_img: '',
     passbook_file: undefined,
@@ -55,7 +55,7 @@ const SellerEdit = () => {
     id_img: '',
     profile_file: undefined,
     profile_img: '',
-    user_pw: '',//
+    //user_pw: '',//
   })
   const [productIds, setProductIds] = useState([]);
   const [currentTab, setCurrentTab] = useState(0);
@@ -69,12 +69,12 @@ const SellerEdit = () => {
       value: 1,
       label: '파일 설정'
     },
-    ...(user?.level >= 40 ? [
+    /*...(user?.level >= 40 ? [
       {
         value: 2,
         label: '수수료 설정 및 분양할 상품'
       },
-    ] : [])
+    ] : [])*/
   ]
   useEffect(() => {
     settingPage();
@@ -115,9 +115,9 @@ const SellerEdit = () => {
     let result = undefined;
     let obj = item;
     if (router.query?.edit_category == 'edit') {
-      result = await apiManager('sellers', 'update', { ...obj, id: router.query?.id, product_ids: productIds });
+      result = await apiManager('sellers', 'update', { ...obj, id: router.query?.id, });
     } else {
-      result = await apiManager('sellers', 'create', { ...obj, product_ids: productIds });
+      result = await apiManager('sellers', 'create', { ...obj, });
     }
     if (result) {
       toast.success("성공적으로 저장 되었습니다.");
@@ -172,15 +172,15 @@ const SellerEdit = () => {
                     <Stack spacing={3}>
                       <Stack spacing={1}>
                         <Typography variant="subtitle2" sx={{ color: 'text.secondary' }}>
-                          프로필사진 및 배경사진
+                          셀러로고
                         </Typography>
-                        <Upload file={item.background_file || item.background_img} onDrop={(acceptedFiles) => {
+                        <Upload file={item.profile_img || item.profile_img} onDrop={(acceptedFiles) => {
                           const newFile = acceptedFiles[0];
                           if (newFile) {
                             setItem(
                               {
                                 ...item,
-                                ['background_file']: Object.assign(newFile, {
+                                ['profile_img']: Object.assign(newFile, {
                                   preview: URL.createObjectURL(newFile),
                                 })
                               }
@@ -190,8 +190,8 @@ const SellerEdit = () => {
                           setItem(
                             {
                               ...item,
-                              ['background_img']: '',
-                              ['background_file']: undefined
+                              ['profile_img']: '',
+                              ['profile_file']: undefined
                             }
                           )
                         }}
@@ -204,6 +204,7 @@ const SellerEdit = () => {
                             display: 'flex'
                           }}
                         />
+                        {/*
                         <Row style={{ margin: 'auto', transform: 'translateY(-42px)', position: 'relative', flexDirection: 'column', alignItems: 'center' }}>
                           {item.profile_img &&
                             <>
@@ -235,13 +236,14 @@ const SellerEdit = () => {
                             </>}
                           <Tooltip title={`${item.profile_img ? '' : '프로필사진을 업로드 해주세요.'}`} >
                             <label for='profile-img' style={{ cursor: 'pointer' }}>
-                              {/* <Avatar sx={{ width: '84px', height: '84px' }} src={item.profile_img ? `${typeof item.profile_img == 'string' ? item.profile_img : URL.createObjectURL(item.profile_img)}` : ''} /> */}
+                              <Avatar sx={{ width: '84px', height: '84px' }} src={item.profile_img ? `${typeof item.profile_img == 'string' ? item.profile_img : URL.createObjectURL(item.profile_img)}` : ''} />
                               <Avatar sx={{ width: '84px', height: '84px' }} src={item.profile_file ? URL.createObjectURL(item.profile_file) : item.profile_img} />
                             </label>
                           </Tooltip>
                           <input type="file" style={{ display: 'none' }} id='profile-img' onChange={addProfileImg} />
                           <div style={{ marginTop: '1rem', fontWeight: 'bold', height: '24px' }}>{item.instagram_id}</div>
                         </Row>
+                        */}
                       </Stack>
                       <Stack spacing={1}>
                         <TextField
@@ -299,7 +301,9 @@ const SellerEdit = () => {
                 <Grid item xs={12} md={6}>
                   <Card sx={{ p: 2, height: '100%' }}>
                     <Stack spacing={3}>
-                      <TextField
+                      {
+                        /*
+                        <TextField
                         label='아이디'
                         value={item.user_name}
                         disabled={router.query?.edit_category == 'edit'}
@@ -327,6 +331,8 @@ const SellerEdit = () => {
                               )
                             }} />
                         </>}
+                        */
+                      }
                       <TextField
                         label='이름'
                         value={item.name}
@@ -338,28 +344,32 @@ const SellerEdit = () => {
                             }
                           )
                         }} />
-                      <TextField
-                        label='닉네임'
-                        value={item.nickname}
-                        onChange={(e) => {
-                          setItem(
-                            {
-                              ...item,
-                              ['nickname']: e.target.value
-                            }
-                          )
-                        }} />
-                      <TextField
-                        label='셀러명'
-                        value={item.seller_name}
-                        onChange={(e) => {
-                          setItem(
-                            {
-                              ...item,
-                              ['seller_name']: e.target.value
-                            }
-                          )
-                        }} />
+                      {
+                        /*
+                                              <TextField
+                                              label='닉네임'
+                                              value={item.nickname}
+                                              onChange={(e) => {
+                                                setItem(
+                                                  {
+                                                    ...item,
+                                                    ['nickname']: e.target.value
+                                                  }
+                                                )
+                                              }} />
+                                            <TextField
+                                              label='셀러명'
+                                              value={item.seller_name}
+                                              onChange={(e) => {
+                                                setItem(
+                                                  {
+                                                    ...item,
+                                                    ['seller_name']: e.target.value
+                                                  }
+                                                )
+                                              }} />
+                        */
+                      }
                       <TextField
                         label='전화번호'
                         value={item.phone_num}
@@ -372,17 +382,21 @@ const SellerEdit = () => {
                             }
                           )
                         }} />
-                      <TextField
-                        label='주소'
-                        value={item.addr}
-                        onChange={(e) => {
-                          setItem(
-                            {
-                              ...item,
-                              ['addr']: e.target.value
-                            }
-                          )
-                        }} />
+                      {
+                        /*
+                                            <TextField
+                                              label='주소'
+                                              value={item.addr}
+                                              onChange={(e) => {
+                                                setItem(
+                                                  {
+                                                    ...item,
+                                                    ['addr']: e.target.value
+                                                  }
+                                                )
+                                              }} />
+                      */
+                      }
                       <Stack spacing={1}>
                         <FormControl>
                           <InputLabel>은행선택</InputLabel>

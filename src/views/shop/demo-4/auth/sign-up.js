@@ -210,7 +210,7 @@ const SignUpDemo = (props) => {
       <Wrappers>
         <Title>회원가입</Title>
         <Grid container spacing={3}>
-          <Grid item xs={12} md={6}>
+          <Grid item xs={12} md={/*6*/0}>
             <Card sx={{ p: 2, height: '100%', height: '300px', display: 'flex', cursor: 'pointer' }}
               onClick={() => {
                 setUser({
@@ -224,7 +224,9 @@ const SignUpDemo = (props) => {
               </Col>
             </Card>
           </Grid>
-          <Grid item xs={12} md={6}>
+          {
+            /*
+            <Grid item xs={12} md={6}>
             <Card sx={{ p: 2, height: '100%', height: '300px', display: 'flex', cursor: 'pointer' }}
               onClick={() => {
                 setUser({
@@ -238,6 +240,8 @@ const SignUpDemo = (props) => {
               </Col>
             </Card>
           </Grid>
+            */
+          }
         </Grid>
       </Wrappers>
     </>

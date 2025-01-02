@@ -26,25 +26,41 @@ const SellerList = () => {
   const defaultColumns = [
     {
       id: 'profile_img',
-      label: '유저프로필',
+      label: '셀러로고',
       action: (row) => {
         return <Avatar src={row['profile_img'] ?? "---"} />
       }
     },
     {
-      id: 'user_name',
-      label: '유저아이디',
+      id: 'dns',
+      label: '셀러몰',
       action: (row) => {
-        return row['user_name'] ?? "---"
+        return (
+          <div
+            style={{ cursor: 'pointer', color: 'blue' }}
+            onClick={() => {
+              window.open('https://' + row['dns'] ?? '---')
+            }}
+          >
+            {row['dns'] ?? '---'}
+          </div>
+        )
       }
     },
     {
+      id: 'user_name',
+      label: '셀러명',
+      action: (row) => {
+        return row['name'] ?? "---"
+      }
+    },
+    /*{
       id: 'nickname',
       label: '닉네임',
       action: (row) => {
         return row['nickname'] ?? "---"
       }
-    },
+    },*/
     {
       id: 'phone_num',
       label: '휴대폰번호',
@@ -59,7 +75,7 @@ const SellerList = () => {
         return row['created_at'] ?? "---"
       }
     },
-    {
+    /*{
       id: 'edit_password',
       label: '비밀번호 변경',
       action: (row) => {
@@ -77,7 +93,7 @@ const SellerList = () => {
           </>
         )
       }
-    },
+    },*/
     {
       id: 'edit',
       label: '수정/삭제',

@@ -228,10 +228,10 @@ const Header = () => {
             name: translate('찜목록'),
             link_key: 'wish'
         },
-        {
+        /*{
             name: translate('포인트내역'),
             link_key: 'point'
-        },
+        },*/
         {
             name: translate('주문조회'),
             link_key: 'history'
@@ -543,7 +543,7 @@ const Header = () => {
                                 </div>
                             </NoneShowMobile>
                             <ShowMobile style={{ marginLeft: 'auto', columnGap: '0.5rem' }}>
-                            <MainLogo
+                                <MainLogo
                                     src={logoSrc()}
                                     onClick={() => {
                                         router.push('/shop')
@@ -593,16 +593,16 @@ const Header = () => {
                             </ShowMobile>
                         </TopMenuContainer>
                         <div
-                           style={{
-                            width: '100%',
-                            borderTop: `1px solid ${theme.palette.grey[300]}`,
-                            backgroundColor: `${themeMode != 'dark' ? themeDnsData?.theme_css?.main_color : ''}`,
-                            fontFamily: 'Noto Sans KR'
-                        }}>
+                            style={{
+                                width: '100%',
+                                borderTop: `1px solid ${theme.palette.grey[300]}`,
+                                backgroundColor: `${themeMode != 'dark' ? themeDnsData?.theme_css?.main_color : ''}`,
+                                fontFamily: 'Noto Sans KR'
+                            }}>
                             <CategoryContainer>
-                                <NoneShowMobile style={{ fontSize: '90%', fontWeight: 'bold', height:'50px' }}>
-                                    
-                                    <Row style={{ margin: '0 1rem', position:'absolute', right:'0' }} >
+                                <NoneShowMobile style={{ fontSize: '90%', fontWeight: 'bold', height: '50px' }}>
+
+                                    <Row style={{ margin: '0 1rem', position: 'absolute', right: '0' }} >
                                         <IconButton
                                             sx={iconButtonStyle}
                                             onClick={() => {

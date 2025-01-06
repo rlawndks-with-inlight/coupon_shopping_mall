@@ -302,7 +302,7 @@ export const AuthMenuSideComponent = (props) => {
         },
       ]
     },
-    {
+    /*{
       label: '혜택관리',
       children: [
 
@@ -311,7 +311,7 @@ export const AuthMenuSideComponent = (props) => {
           link: '/shop/auth/point/',
         },
       ]
-    },
+    },*/
     {
       label: '고객센터',
       children: [
@@ -330,10 +330,10 @@ export const AuthMenuSideComponent = (props) => {
           label: '배송지 관리',
           link: '/shop/auth/delivery-address/',
         },
-        {
+        /*{
           label: '회원정보 변경',
           link: '/shop/auth/change-info/',
-        },
+        },*/
         {
           label: '회원탈퇴',
           link: '/shop/auth/resign/',

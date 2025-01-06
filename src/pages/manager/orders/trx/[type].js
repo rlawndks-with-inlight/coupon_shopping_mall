@@ -40,6 +40,31 @@ const TrxList = () => {
         }
       },
     },*/
+    ...(themeDnsData?.is_head == 1 ? [
+      {
+        id: 'seller_mall',
+        label: '셀러몰',
+        action: (row) => {
+          return <div
+            style={{ cursor: `${themeDnsData?.is_head == 1 ? 'pointer' : ''}`, color: `${themeDnsData?.is_head == 1 ? 'blue' : ''}` }}
+            onClick={() => {
+              if (themeDnsData?.is_head == 1) {
+                window.open('https://' + row['seller_dns'] ?? '---')
+              } else {
+                return;
+              }
+            }}
+          >
+            {`${row['seller_title']}(${row['seller_dns']})` ?? '---'}
+          </div>
+        },
+        sx: (row) => {
+          return {
+            color: `${row?.is_cancel == 1 ? 'red' : ''}`
+          }
+        },
+      },
+    ] : []),
     ...(themeDnsData?.id == 5 ? [
       {
         id: 'product_code',

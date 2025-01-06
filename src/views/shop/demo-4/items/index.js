@@ -272,7 +272,7 @@ const ItemsDemo = (props) => {
               {themeCategoryList.map((group, index) => {
                 let categories = group?.product_categories;
                 if (_.find(categories, { id: parseInt(router.query?.category_id0) })) {
-                  return _.find(categories, { id: parseInt(router.query?.category_id0) })?.category_en_name
+                  return _.find(categories, { id: parseInt(router.query?.category_id0) })?.category_en_name ?? category_name
                 } else {
                   return ""
                 }
@@ -286,7 +286,7 @@ const ItemsDemo = (props) => {
                 {themeCategoryList.map((group, index) => {
                   let categories = group?.product_categories;
                   if (_.find(categories, { id: parseInt(router.query?.category_id1) })) {
-                    return _.find(categories, { id: parseInt(router.query?.category_id1) })?.category_en_name
+                    return _.find(categories, { id: parseInt(router.query?.category_id1) })?.category_en_name ?? category_name
                   } else {
                     return ""
                   }
@@ -334,7 +334,7 @@ const ItemsDemo = (props) => {
               })}
             </Row>
             <>
-              {themeCategoryList.sort((a, b) => b.sort_type - a.sort_type).map((group, index) => {
+              {/*themeCategoryList.sort((a, b) => b.sort_type - a.sort_type).map((group, index) => {
 
                 return <Row>
                   <BrandFilter style={{ fontFamily: 'Playfair Display', overflowY: 'auto', background: `${themeMode == 'dark' ? '#222' : '#FEF8F4'}`, width: '100%' }}>
@@ -631,7 +631,65 @@ const ItemsDemo = (props) => {
               }
 
               )
-              }
+              */}
+              <Row>
+                <BrandFilter style={{ fontFamily: 'Playfair Display', overflowY: 'auto', background: `${themeMode == 'dark' ? '#222' : '#FEF8F4'}`, width: '100%' }}>
+                  <Row>
+                    <>
+                      <TextField
+                        label=''
+                        variant="standard"
+                        focused
+                        //color='primary'
+                        onChange={(e) => {
+                          setSearchObj({
+                            ...searchObj,
+                            search: e.target.value
+                          })
+                        }}
+                        value={searchObj?.search}
+                        style={{ width: '100%', margin: '2rem auto 4rem 1rem', maxWidth: '700px', }}
+                        autoComplete='new-password'
+                        placeholder="키워드를 검색해주세요."
+                        onKeyPress={(e) => {
+                          if (e.key == 'Enter') {
+                            let query = { ...categoryIds };
+                            query[`search`] = searchObj?.search;
+
+                            query = new URLSearchParams(query).toString();
+                            router.push(`/shop/items?${query}`);
+                          }
+                        }}
+                        InputProps={{
+                          sx: {
+                            padding: '0.5rem 0'
+                          },
+                          endAdornment: (
+                            <InputAdornment position='end'>
+                              <IconButton
+                                edge='end'
+                                onClick={() => {
+                                  let query = { ...categoryIds };
+                                  query[`search`] = searchObj?.search;
+                                  query = new URLSearchParams(query).toString();
+                                  router.push(`/shop/items?${query}`);
+                                }}
+                                aria-label='toggle password visibility'
+                                style={{
+                                  padding: '0.5rem',
+                                }}
+                              >
+                                <Icon icon={'tabler:search'} />
+                              </IconButton>
+                            </InputAdornment>
+                          )
+                        }}
+                      />
+
+                    </>
+                  </Row>
+                </BrandFilter>
+              </Row>
             </>
           </>
         }

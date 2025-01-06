@@ -357,7 +357,7 @@ export const AuthMenuSideComponent = (props) => {
   return (
     <>
       <MenuContainer>
-        <TitleLabel>{user ? authLabel : noneAuthLabel}</TitleLabel>
+        <TitleLabel style={{ visibility: 'hidden' }}>{user ? authLabel : noneAuthLabel}</TitleLabel>
         <div style={{ border: '2px solid black', marginTop: '0.5rem', marginBottom: '1.5rem' }} />
         {(user ? authList : noneAuthList).map((item) => (
           <>

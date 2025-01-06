@@ -31,6 +31,7 @@ const SellerEdit = () => {
     //user_name: '',
     //nickname: '',
     name: '',//
+    title: '',
     //seller_name: '',
     //addr: '',
     //acct_bank_name: '',
@@ -247,7 +248,20 @@ const SellerEdit = () => {
                       </Stack>
                       <Stack spacing={1}>
                         <TextField
-                          label='셀러 도메인'
+                          label='셀러몰 이름'
+                          value={item.title}
+                          onChange={(e) => {
+                            setItem(
+                              {
+                                ...item,
+                                ['title']: e.target.value
+                              }
+                            )
+                          }} />
+                      </Stack>
+                      <Stack spacing={1}>
+                        <TextField
+                          label='셀러몰 도메인'
                           value={item.dns}
                           onChange={(e) => {
                             setItem(

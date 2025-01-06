@@ -1,6 +1,7 @@
 import styled from "styled-components";
 import Footer from "./footer"
-import Header from "./header"
+//import Header from "./header"
+import Header from "../demo-5/header"
 import { useSettingsContext } from "src/components/settings";
 
 const Wrappers = styled.div`

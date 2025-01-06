@@ -1,4 +1,4 @@
-import { Button, Container, Grid, TextField, Typography } from "@mui/material";
+import { Button, Container, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Grid, TextField, Typography } from "@mui/material";
 import { useSettingsContext } from "src/components/settings";
 import { AppWidget, AppWidgetSummary } from "src/views/@dashboard/general/app";
 import { useTheme } from '@mui/material/styles';
@@ -13,12 +13,15 @@ import { useEffect, useState } from "react";
 import { commarNumber, getPercentByNumber, returnMoment } from "src/utils/function";
 import { apiManager } from "src/utils/api";
 import { useRouter } from "next/router";
+import toast from "react-hot-toast";
+import { useAuthContext } from "src/layouts/manager/auth/useAuthContext";
 
 export const DashboardDemo4 = () => {
 
     const router = useRouter();
     const theme = useTheme();
     const { themeStretch, themePostCategoryList, themeDnsData } = useSettingsContext();
+    const { user } = useAuthContext();
 
     const [searchObj, setSearchObj] = useState({
         s_dt: returnMoment().substring(0, 10),
@@ -27,6 +30,10 @@ export const DashboardDemo4 = () => {
     const [sDt, setSDt] = useState(new Date());
     const [eDt, setEDt] = useState(new Date());
     const [data, setData] = useState({});
+    const [adjustData, setAdjustData] = useState({});
+    const [adjustMoney, setAdjustMoney] = useState(0)
+    const [adjustPopup, setAdjustPopup] = useState(false)
+    const [waiting, setWaiting] = useState(false)
 
     const [amountSum, setAmountSum] = useState()
 
@@ -39,6 +46,9 @@ export const DashboardDemo4 = () => {
         setSearchObj(search_obj);
         let result = await apiManager(`dashboards`, 'list', search_obj);
         setData(result);
+        let adjust_result = await apiManager(`seller-adjustments`, 'list', { ...search_obj, state: '0' })
+        setAdjustData(adjust_result)
+        //console.log(adjust_result)
     }
 
     const onChangeAmountSum = async (data) => {
@@ -59,6 +69,44 @@ export const DashboardDemo4 = () => {
             e_dt: returnMoment().substring(0, 10),
         })
     }
+
+    const sellerAdjustment = async () => {
+        /*let e_dt = returnMoment().substring(0, 10)
+        let result = await apiManager(`dashboards`, 'list', { s_dt: '2000-01-01', e_dt: e_dt });
+
+        const val = result?.trx_amounts_sum ?? [];
+        let sum = 0;
+        for (let i = 0; i < val?.length; i++) {
+            sum += val[i].total_amount;
+        }
+        setAdjustMoney(sum)
+
+        console.log(sum)*/
+
+        setAdjustPopup(true)
+    }
+
+    const onAdjustment = async () => {
+        let brand_id = themeDnsData?.parent_id;
+        let seller_id = themeDnsData?.seller_id;
+        let user_id = user?.id;
+        let amount = adjustMoney
+
+        if (amount < 10000) {
+            toast.error("10000원 이상의 금액만 요청 가능합니다.")
+            return;
+        }
+
+        let result = await apiManager(`seller-adjustments`, 'create', { brand_id: brand_id, seller_id: seller_id, user_id: user_id, amount: amount })
+        if (result) {
+            toast.success("정상적으로 요청되었습니다.");
+            window.location.reload()
+        } else {
+            toast.error("문제가 발생했습니다.")
+            return;
+        }
+    }
+
     return (
         <>
             <Container maxWidth={themeStretch ? false : 'xl'}>
@@ -260,30 +308,118 @@ export const DashboardDemo4 = () => {
                             }}
                         />
                     </Grid>
-                    <Grid item xs={12} md={12}>
-                        <Typography variant="subtitle1" >문의관리</Typography>
-                    </Grid>
-                    {themePostCategoryList.map((category) => (
+                    {
+                        themeDnsData?.is_head == 1 &&
                         <>
-                            {(category?.post_category_read_type == 1 && category?.is_able_user_add == 1) &&
-                                <>
-                                    <Grid item xs={12} md={12}>
-                                        <Row style={{ alignItems: 'center', width: '100%', justifyContent: 'space-between', maxWidth: `300px` }}>
-                                            <Button variant="outlined" style={{ cursor: 'pointer' }} onClick={() => { router.push(`/manager/articles/${category?.id}`, /*console.log(data)*/) }}>
-                                                {category?.post_category_title}
-                                            </Button>
-                                            <Row style={{ fontWeight: 'bold' }}>
-                                                <div style={{ marginRight: '1rem' }}>답변대기 : </div>
-                                                <div
-                                                    style={{ color: themeDnsData?.theme_css?.main_color }}
-                                                >{commarNumber(data[`request_${category?.id}`])}</div>
-                                                <div>건</div>
-                                            </Row>
-                                        </Row>
-                                    </Grid>
-                                </>}
+                            <Grid item xs={12} md={12}>
+                                <Typography variant="subtitle1" >정산관리</Typography>
+                            </Grid>
+                            <Grid item xs={12} md={12}>
+                                <Row style={{ alignItems: 'center', width: '100%', justifyContent: 'space-between', maxWidth: `300px` }}>
+                                    <Row style={{ fontWeight: 'bold' }}>
+                                        <div style={{ marginRight: '1rem' }}>정산대기 : </div>
+                                        <div
+                                            style={{ color: themeDnsData?.theme_css?.main_color }}
+                                        >{commarNumber(adjustData?.total)}</div>
+                                        <div>건</div>
+                                    </Row>
+                                    <Button variant="outlined" style={{ cursor: 'pointer' }} onClick={() => { router.push(`/manager/adjustments`) }}>
+                                        이동하기
+                                    </Button>
+                                </Row>
+                            </Grid>
                         </>
-                    ))}
+                    }
+                    {
+                        themeDnsData?.seller_id > 0 &&
+                        <>
+                            <Grid item xs={12} md={12}>
+                                <Typography variant="subtitle1" >정산관리</Typography>
+                            </Grid>
+                            <Grid item xs={12} md={12}>
+                                <Row style={{ alignItems: 'center', width: '100%', justifyContent: 'space-between', maxWidth: `300px` }}>
+                                    <Button variant="outlined" style={{ cursor: 'pointer' }} onClick={() => { sellerAdjustment(); /*setWaiting(true);*/ }}>
+                                        누적매출 정산요청
+                                    </Button>
+                                </Row>
+                                {/*
+                                    waiting &&
+                                    <>
+                                        <Row style={{ alignItems: 'center', width: '100%', justifyContent: 'space-between', marginTop: '1rem', maxWidth: `300px` }}>
+                                            누적매출 금액을 계산 중입니다...
+                                        </Row>
+                                    </>
+                                */}
+                            </Grid>
+                        </>
+                    }
+                    <Dialog
+                        open={adjustPopup}
+                    >
+                        <DialogTitle>{`누적매출 정산요청`}</DialogTitle>
+
+                        {
+                            /*
+                            <DialogContent>
+                            총 {commarNumber(adjustMoney)}원의 누적금액을 정산합니다.
+                        </DialogContent>
+                            */
+                        }
+                        <DialogContent>
+                            <DialogContentText style={{ marginBottom: '0.5rem' }}>
+                                정산요청할 금액을 입력해주세요.
+                            </DialogContentText>
+                            <TextField
+                                autoFocus
+                                fullWidth
+                                value={adjustMoney}
+                                margin="dense"
+                                type="number"
+                                label="정산요청금액"
+                                onChange={(e) => {
+                                    setAdjustMoney(e.target.value)
+                                }}
+                            />
+                        </DialogContent>
+                        <DialogActions>
+                            <Button variant="contained" onClick={() => { onAdjustment() }}>
+                                요청
+                            </Button>
+                            <Button color="inherit" onClick={() => {
+                                window.location.reload()
+                            }}>
+                                취소
+                            </Button>
+                        </DialogActions>
+                    </Dialog>
+                    {
+                        /*
+                         <Grid item xs={12} md={12}>
+                            <Typography variant="subtitle1" >문의관리</Typography>
+                        </Grid>
+                        {themePostCategoryList.map((category) => (
+                            <>
+                                {(category?.post_category_read_type == 1 && category?.is_able_user_add == 1) &&
+                                    <>
+                                        <Grid item xs={12} md={12}>
+                                            <Row style={{ alignItems: 'center', width: '100%', justifyContent: 'space-between', maxWidth: `300px` }}>
+                                                <Button variant="outlined" style={{ cursor: 'pointer' }} onClick={() => { router.push(`/manager/articles/${category?.id}`) }}>
+                                                    {category?.post_category_title}
+                                                </Button>
+                                                <Row style={{ fontWeight: 'bold' }}>
+                                                    <div style={{ marginRight: '1rem' }}>답변대기 : </div>
+                                                    <div
+                                                        style={{ color: themeDnsData?.theme_css?.main_color }}
+                                                    >{commarNumber(data[`request_${category?.id}`])}</div>
+                                                    <div>건</div>
+                                                </Row>
+                                            </Row>
+                                        </Grid>
+                                    </>}
+                            </>
+                        ))}
+                        */
+                    }
                 </Grid>
             </Container>
         </>

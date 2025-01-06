@@ -168,7 +168,7 @@ const Footer = (props) => {
                 </ContentWrapper>
                     */
                 }
-                <ContentWrapper style={{ backgroundColor: `${themeMode != 'dark' ? '#FF5B0D' : ''}`, height: '100px' }}></ContentWrapper>
+                <ContentWrapper style={{ backgroundColor: `${themeMode != 'dark' ? /*'#FF5B0D'*/themeDnsData?.theme_css.main_color : ''}`, height: '100px' }}></ContentWrapper>
                 <ContentWrapper style={{ display: 'flex', maxWidth: '1400px' }}>
                     <MainContent style={{ marginTop: '50px' }}>
                         <Row style={{ position: 'relative' }}>

@@ -15,6 +15,7 @@ export const PATH_AUTH = {
 export const PATH_MANAGER = {
   root: ROOTS_MANAGER,
   dashboards: path(ROOTS_MANAGER, '/dashboards'),
+  adjustments: path(ROOTS_MANAGER, '/adjustments'),
   users: {
     root: path(ROOTS_MANAGER, '/users'),
     list: path(ROOTS_MANAGER, '/users/list'),

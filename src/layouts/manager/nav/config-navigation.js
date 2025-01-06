@@ -37,6 +37,7 @@ const ICONS = {
   ecommerce: icon('ic_ecommerce'),
   analytics: icon('ic_analytics'),
   dashboard: icon('ic_dashboard'),
+  //adjustments: icon('ic_cash'),
   setting: icon('ic_setting', 'setting'),
 };
 
@@ -131,6 +132,13 @@ export const navConfig = () => {
         { title: '대시보드', path: PATH_MANAGER.dashboards, icon: ICONS.dashboard },
       ],
     },
+    ...(themeDnsData?.is_head == 1 || themeDnsData?.seller_id > 0 ? [
+      {
+        items: [
+          { title: '정산관리', path: PATH_MANAGER.adjustments, icon: ICONS.invoice },
+        ]
+      }
+    ] : []),
     {
       items: [
         {

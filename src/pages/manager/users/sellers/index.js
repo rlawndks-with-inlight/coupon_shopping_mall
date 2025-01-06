@@ -42,7 +42,7 @@ const SellerList = () => {
               window.open('https://' + row['dns'] ?? '---')
             }}
           >
-            {row['dns'] ?? '---'}
+            {`${row['title']}(${row['dns'] ?? '---'})`}
           </div>
         )
       }

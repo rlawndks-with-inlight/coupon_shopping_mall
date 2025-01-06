@@ -403,7 +403,7 @@ const ItemDemo = (props) => {
                           style={{
                             width: '30px',
                             height: '30px',
-                            color: '#FF5B0D',
+                            color: `${themeDnsData?.theme_css.main_color}`,
                             cursor: 'pointer',
                             margin: '0 1rem'
                           }}

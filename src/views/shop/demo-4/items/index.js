@@ -272,7 +272,7 @@ const ItemsDemo = (props) => {
               {themeCategoryList.map((group, index) => {
                 let categories = group?.product_categories;
                 if (_.find(categories, { id: parseInt(router.query?.category_id0) })) {
-                  return _.find(categories, { id: parseInt(router.query?.category_id0) })?.category_en_name ?? category_name
+                  return _.find(categories, { id: parseInt(router.query?.category_id0) })?.category_en_name ?? _.find(categories, { id: parseInt(router.query?.category_id1) })?.category_name
                 } else {
                   return ""
                 }
@@ -286,7 +286,7 @@ const ItemsDemo = (props) => {
                 {themeCategoryList.map((group, index) => {
                   let categories = group?.product_categories;
                   if (_.find(categories, { id: parseInt(router.query?.category_id1) })) {
-                    return _.find(categories, { id: parseInt(router.query?.category_id1) })?.category_en_name ?? category_name
+                    return _.find(categories, { id: parseInt(router.query?.category_id1) })?.category_en_name ?? _.find(categories, { id: parseInt(router.query?.category_id1) })?.category_name
                   } else {
                     return ""
                   }

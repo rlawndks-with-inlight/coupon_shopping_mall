@@ -120,7 +120,7 @@ const ProductList = () => {
         id: 'product_sale_price',
         label: '가격',
         action: (row) => {
-          return commarNumber(row['product_sale_price'] + themeDnsData?.seller_info?.seller_trx_fee)
+          return commarNumber(row['product_sale_price'])
         }
       },
     ] : [

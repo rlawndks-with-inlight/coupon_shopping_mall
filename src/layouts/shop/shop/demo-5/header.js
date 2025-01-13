@@ -209,7 +209,8 @@ const Header = () => {
     const [headerHeight, setHeaderHeight] = useState(130);
     const [keyword, setKeyword] = useState("");
     const onSearch = () => {
-        router.push(`/shop/search?keyword=${keyword}`)
+        setKeyword("");
+        router.push(`/shop/items?keyword=${keyword}`)
     }
     const [isAuthMenuOver, setIsAuthMenuOver] = useState(false)
     const [hoverItems, setHoverItems] = useState({
@@ -803,7 +804,7 @@ const Header = () => {
                 }}
                     className="none-scroll"
                 >
-                    {themeDnsData?.setting_obj?.is_use_seller == 1 &&
+                    {/*themeDnsData?.setting_obj?.is_use_seller == 1 &&
                         <>
                             <ColumnMenuTitle>{translate('셀러')}</ColumnMenuTitle>
                             {themeSellerList.map((seller) => (
@@ -814,7 +815,7 @@ const Header = () => {
                                     }} style={{ paddingLeft: '1rem' }}>{seller.seller_name}</ColumnMenuContent>
                                 </>
                             ))}
-                        </>}
+                        </>*/}
                     {themeCategoryList && themeCategoryList.map((group, index) => (
                         <>
                             <ColumnMenuTitle>{formatLang(group, 'category_group_name', currentLang)}</ColumnMenuTitle>

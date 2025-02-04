@@ -134,7 +134,7 @@ const Footer = () => {
           <Row style={{ fontSize: '10px' }}>
             {phone_num.length > 1 &&
               <>
-                <MarginRight>{translate('전화')} {phone_num}</MarginRight>
+                <MarginRight>{translate('고객센터')} {phone_num}</MarginRight>
                 <MarginRight>|</MarginRight>
               </>
             }

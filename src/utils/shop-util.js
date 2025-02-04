@@ -67,7 +67,7 @@ export const makePayData = async (products_, payData_) => {
     }
     return payData;
 }
-export const onPayProductsByHand = async (products_, payData_) => { // 수기결제
+export const onPayProductsByHand = async (products_, payData_) => { // 수기결제(페이베리)
     let products = products_;
     let pay_data = payData_;
     let payData = await makePayData(products, pay_data);
@@ -105,7 +105,7 @@ export const onPayProductsByHand = async (products_, payData_) => { // 수기결
         return false;
     }
 }
-export const onPayProductsByAuth = async (products_, payData_) => { // 인증결제
+export const onPayProductsByAuth = async (products_, payData_, type) => { // 인증결제(페이베리 & 위루트)
     let products = products_;
     let pay_data = payData_;
     let payData = await makePayData(products, pay_data);
@@ -133,7 +133,11 @@ export const onPayProductsByAuth = async (products_, payData_) => { // 인증결
         delete payData.payment_modules;
 
         let query = Object.entries(payData).map(e => e.join('=')).join('&');
-        window.open(`${process.env.NOTI_URL}/v2/pay/auth?${query}`);
+        if (type == 'payvery') {
+            window.open(`${process.env.NOTI_URL}/v2/pay/auth?${query}`);
+        } else if (type == 'weroute') {
+            window.open(`https://api.weroutefincorp.com/v2/pay/auth?${query}`);
+        }
         //console.log(products_);
         //console.log(payData_)
         console.log(payData)
@@ -273,7 +277,7 @@ export const onPayProductsByAuth_Fintree = async (products_, payData_) => { // �
         return false;
     }
 }
-export const onPayProductsByVirtualAccount = async (products_, payData_) => { // 수기결제가 아니라 무통장입금 아님?
+export const onPayProductsByVirtualAccount = async (products_, payData_) => { // 무통장입금
     let products = products_;
     let pay_data = payData_;
     let payData = await makePayData(products, pay_data);

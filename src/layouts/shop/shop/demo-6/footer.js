@@ -52,7 +52,6 @@ const Footer = (props) => {
       <div style={{ marginTop: '2rem' }} />
       <Wrapper style={{ background: `${theme.palette.mode == 'dark' ? '' : 'white'}` }}>
         <ContentWrapper>
-
           <Row>
             <Bold>{translate('회사명')}</Bold>
             <MarginRight>{company_name}</MarginRight>

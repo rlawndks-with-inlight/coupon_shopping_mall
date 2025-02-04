@@ -176,7 +176,7 @@ const DialogBuyNow = (props) => {
         ...product_item,
         groups: select_product_groups,
         seller_id: router.query?.seller_id ?? 0,
-      }], { ...payData, payment_modules: item });
+      }], { ...payData, payment_modules: item }, 'payvery');
     } else if (item?.type == 'card_fintree') {//카드결제 핀트리
       setBuyType('card_fintree');
       setBuyStep(2);
@@ -230,6 +230,16 @@ const DialogBuyNow = (props) => {
       let insert_pay_ready = await apiManager('pays/gift_certificate', 'create', pay_data)
       setBuyStep(2);
       setPayData(pay_data)
+    }
+    else if (item?.type == 'certification_weroute') {
+      setBuyType('certification_weroute');
+
+      setPayLoading(true);
+      let result = await onPayProductsByAuth([{
+        ...product_item,
+        groups: select_product_groups,
+        seller_id: router.query?.seller_id ?? 0,
+      }], { ...payData, payment_modules: item }, 'weroute');
     }
   }
   const onBuyNow = async () => {

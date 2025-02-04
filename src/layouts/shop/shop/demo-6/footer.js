@@ -53,35 +53,55 @@ const Footer = (props) => {
       <Wrapper style={{ background: `${theme.palette.mode == 'dark' ? '' : 'white'}` }}>
         <ContentWrapper>
 
-          <Row>
-            <Bold>{translate('회사명')}</Bold>
-            <MarginRight>{company_name}</MarginRight>
-          </Row>
-          <Row>
-            <Bold>{translate('주소')}</Bold>
-            <MarginRight>{addr}</MarginRight>
-          </Row>
-          <Row>
-            <Bold>{translate('사업자등록번호')}</Bold>
-            <MarginRight>{business_num}</MarginRight>
-          </Row>
-          <Row>
-            <Bold>{translate('대표')}</Bold>
-            <MarginRight>{ceo_name}</MarginRight>
-          </Row>
-          <Row>
-            <Bold>{translate('전화')}</Bold>
-            <MarginRight>{phone_num}</MarginRight>
-          </Row>
-          <Row>
-            <Bold>{translate('팩스')}</Bold>
-            <MarginRight>{fax_num}</MarginRight>
-          </Row>
-
-          <Row>
-            <Bold>{translate('개인정보 보호책임자')}</Bold>
-            <MarginRight>{pvcy_rep_name}</MarginRight>
-          </Row>
+          {
+            company_name &&
+            <Row>
+              <Bold>{translate('회사명')}</Bold>
+              <MarginRight>{company_name}</MarginRight>
+            </Row>
+          }
+          {
+            addr &&
+            <Row>
+              <Bold>{translate('주소')}</Bold>
+              <MarginRight>{addr}</MarginRight>
+            </Row>
+          }
+          {
+            business_num &&
+            <Row>
+              <Bold>{translate('사업자등록번호')}</Bold>
+              <MarginRight>{business_num}</MarginRight>
+            </Row>
+          }
+          {
+            ceo_name &&
+            <Row>
+              <Bold>{translate('대표')}</Bold>
+              <MarginRight>{ceo_name}</MarginRight>
+            </Row>
+          }
+          {
+            phone_num &&
+            <Row>
+              <Bold>{translate('전화')}</Bold>
+              <MarginRight>{phone_num}</MarginRight>
+            </Row>
+          }
+          {
+            fax_num &&
+            <Row>
+              <Bold>{translate('팩스')}</Bold>
+              <MarginRight>{fax_num}</MarginRight>
+            </Row>
+          }
+          {
+            pvcy_rep_name &&
+            <Row>
+              <Bold>{translate('개인정보 보호책임자')}</Bold>
+              <MarginRight>{pvcy_rep_name}</MarginRight>
+            </Row>
+          }
           {
             mail_order_num != null &&
             <>

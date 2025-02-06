@@ -1362,8 +1362,13 @@ const Header = () => {
                                 </>}
                         </>
                     ))} */}
-                    <ColumnMenuTitle>고객센터</ColumnMenuTitle>
-                    {postCategories && postCategories.map((item, idx) => (
+                    {
+                        postCategories.length > 0 &&
+                        <>
+                            <ColumnMenuTitle>{translate('고객센터')}</ColumnMenuTitle>
+                        </>
+                    }
+                    {postCategories.length > 0 && postCategories.map((item, idx) => (
                         <>
                             <Typography onClick={() => {
                                 window.location.href = (`/shop/service/${item.id}`);

@@ -396,7 +396,12 @@ const Header = () => {
                     :
                     <>
                       <Button sx={{ height: '24px' }} onClick={() => router.push('/shop/auth/sign-up')}>회원가입</Button>
-                      <Button sx={{ height: '24px' }} onClick={() => router.push(`/shop/service/${themePostCategoryList[0]?.id}`)}>고객센터</Button>
+                      {
+                        themePostCategoryList.length > 0 &&
+                        <>
+                          <Button sx={{ height: '24px' }} onClick={() => router.push(`/shop/service/${themePostCategoryList[0]?.id}`)}>고객센터</Button>
+                        </>
+                      }
                       <Button variant="outlined" sx={{ height: '24px' }} onClick={() => router.push('/shop/auth/login')}>로그인</Button>
                     </>}
                 </Row>
@@ -669,17 +674,22 @@ const Header = () => {
               </Row>
             </>
           ))}
-          <DialogMenuTitle style={{ marginTop: '1rem' }}>고객센터</DialogMenuTitle>
-          <Row style={{ flexWrap: 'wrap', padding: '0.5rem', columnGap: '1rem', rowGap: '1rem' }}>
-            {themePostCategoryList.map((item, idx) => (
-              <>
-                <DialogMenuContent onClick={() => {
-                  router.push(`/shop/service/${item.id}`);
-                  setDialogMenuOpen(false);
-                }}>{item?.post_category_title}</DialogMenuContent>
-              </>
-            ))}
-          </Row>
+          {
+            themePostCategoryList.length > 0 &&
+            <>
+              <DialogMenuTitle style={{ marginTop: '1rem' }}>고객센터</DialogMenuTitle>
+              <Row style={{ flexWrap: 'wrap', padding: '0.5rem', columnGap: '1rem', rowGap: '1rem' }}>
+                {themePostCategoryList.map((item, idx) => (
+                  <>
+                    <DialogMenuContent onClick={() => {
+                      router.push(`/shop/service/${item.id}`);
+                      setDialogMenuOpen(false);
+                    }}>{item?.post_category_title}</DialogMenuContent>
+                  </>
+                ))}
+              </Row>
+            </>
+          }
           <DialogMenuTitle style={{ marginTop: '1rem' }}>마이페이지</DialogMenuTitle>
           <Row style={{ flexWrap: 'wrap', padding: '0.5rem', columnGap: '1rem', rowGap: '1rem' }}>
             {user ?
@@ -742,13 +752,18 @@ const Header = () => {
               </>
             ))}
           </TreeView>
-          <ColumnMenuTitle>고객센터</ColumnMenuTitle>
-          {themePostCategoryList.map((item, idx) => (
+          {
+            postCategories.length > 0 &&
+            <>
+              <ColumnMenuTitle>{translate('고객센터')}</ColumnMenuTitle>
+            </>
+          }
+          {postCategories.length > 0 && postCategories.map((item, idx) => (
             <>
               <ColumnMenuContent onClick={() => {
                 router.push(`/shop/service/${item.id}`);
                 setSideMenuOpen(false);
-              }} style={{ paddingLeft: '1rem' }}>{item.post_category_title}</ColumnMenuContent>
+              }} style={{ paddingLeft: '1rem' }}>{formatLang(item, 'post_category_title', currentLang)}</ColumnMenuContent>
             </>
           ))}
           <ColumnMenuTitle>마이페이지</ColumnMenuTitle>

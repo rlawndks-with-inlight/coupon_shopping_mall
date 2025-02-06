@@ -216,10 +216,29 @@ const CartDemo = (props) => {
         return;
       }
       setPayLoading(true);
-      let result = await onPayProductsByAuth(products, { ...payData, payment_modules: item, });
+      let result = await onPayProductsByAuth(products, { ...payData, payment_modules: item, }, 'payvery');
+    } else if (item?.type == 'card_fintree') {//카드결제 핀트리
+      setBuyType('card_fintree');
+      setBuyStep(2);
+      setPayData({
+        ...payData,
+        payment_modules: item,
+      })
+    } else if (item?.type == 'certification_fintree') {
+      setBuyType('certification_fintree');
+      setPayLoading(true);
+      let result = await onPayProductsByAuth_Fintree([{
+        ...product_item,
+        groups: select_product_groups,
+        seller_id: router.query?.seller_id ?? 0,
+      }], { ...payData, payment_modules: item });
     } else if (item?.type == 'virtual_account') {
       setBuyType('virtual_account');
-      let pay_data = await makePayData(products, payData);
+      let pay_data = await makePayData([{
+        ...product_item,
+        groups: select_product_groups,
+        seller_id: router.query?.seller_id ?? 0,
+      }], payData);
       delete pay_data.payment_modules;
       let ord_num = `${pay_data?.user_id || pay_data?.password}${new Date().getTime().toString().substring(0, 11)}`;
       pay_data.ord_num = ord_num
@@ -230,11 +249,16 @@ const CartDemo = (props) => {
         popup.location.href = link;
       }
       let insert_pay_ready = await apiManager('pays/virtual', 'create', pay_data)
+      setBuyStep(2);
       setPayData(pay_data)
-      return;
-    } else if (item?.type == 'gift_certificate') {
+    }
+    else if (item?.type == 'gift_certificate') {
       setBuyType('gift_certificate');
-      let pay_data = await makePayData(products, payData);
+      let pay_data = await makePayData([{
+        ...product_item,
+        groups: select_product_groups,
+        seller_id: router.query?.seller_id ?? 0,
+      }], payData);
       delete pay_data.payment_modules;
       let ord_num = `${pay_data?.user_id || pay_data?.password}${new Date().getTime().toString().substring(0, 11)}`;
       pay_data.ord_num = ord_num
@@ -243,8 +267,17 @@ const CartDemo = (props) => {
       const popup = window.open(link, ""); // 팝업을 미리 연다.
       popup.location.href = link;
       let insert_pay_ready = await apiManager('pays/gift_certificate', 'create', pay_data)
+      setBuyStep(2);
       setPayData(pay_data)
-
+    }
+    else if (item?.type == 'certification_weroute') {
+      setBuyType('certification_weroute');
+      setPayLoading(true);
+      let result = await onPayProductsByAuth([{
+        ...product_item,
+        groups: select_product_groups,
+        seller_id: router.query?.seller_id ?? 0,
+      }], { ...payData, payment_modules: item }, 'weroute');
     }
   }
   const onPayByHand = async () => {

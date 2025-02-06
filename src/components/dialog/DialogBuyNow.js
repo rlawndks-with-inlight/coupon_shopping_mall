@@ -186,7 +186,6 @@ const DialogBuyNow = (props) => {
       })
     } else if (item?.type == 'certification_fintree') {
       setBuyType('certification_fintree');
-
       setPayLoading(true);
       let result = await onPayProductsByAuth_Fintree([{
         ...product_item,
@@ -233,7 +232,6 @@ const DialogBuyNow = (props) => {
     }
     else if (item?.type == 'certification_weroute') {
       setBuyType('certification_weroute');
-
       setPayLoading(true);
       let result = await onPayProductsByAuth([{
         ...product_item,

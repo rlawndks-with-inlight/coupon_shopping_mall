@@ -111,15 +111,36 @@ export const onPayProductsByAuth = async (products_, payData_, type) => { // 인
     let payData = await makePayData(products, pay_data);
     let ord_num = `${payData?.user_id || payData?.password}${new Date().getTime().toString().substring(0, 11)}`
     let return_url = `${window.location.protocol}//${window.location.host}/shop/auth/pay-result`
-    payData = {
-        ...payData,
-        ord_num: ord_num,
-        return_url: return_url,
-        success_url: return_url + '?result_cd=0000',
-        fail_url: return_url + '?result_cd=9999',
-        pay_key: payData?.payment_modules?.pay_key,
-        mid: payData?.payment_modules?.mid,
-        tid: payData?.payment_modules?.tid,
+    /*let user_agent = navigator.userAgent;
+    if (user_agent.indexOf('iPhone') > -1 || userIsMobile.indexOf("Android") > -1) {
+        user_agent = 'WM'
+    } else {
+        user_agent = 'WP'
+    }*/
+
+    if (type == 'payvery') {
+        payData = {
+            ...payData,
+            ord_num: ord_num,
+            return_url: return_url,
+            success_url: return_url + '?result_cd=0000',
+            fail_url: return_url + '?result_cd=9999',
+            pay_key: payData?.payment_modules?.pay_key,
+            mid: payData?.payment_modules?.mid,
+            tid: payData?.payment_modules?.tid,
+        }
+    } else if (type == 'weroute') {
+        payData = {
+            ...payData,
+            ord_num: ord_num,
+            return_url: return_url,
+            success_url: return_url + '?result_cd=0000',
+            fail_url: return_url + '?result_cd=9999',
+            pay_key: payData?.payment_modules?.pay_key,
+            mid: payData?.payment_modules?.mid,
+            tid: payData?.payment_modules?.tid,
+            is_send_email: 0
+        }
     }
     if (payData?.products?.length > 1 || !payData?.item_name) {
         payData.item_name = `${payData?.products[0]?.order_name} 외 ${payData?.products?.length - 1}`;
@@ -343,6 +364,85 @@ export const onPayProductsByVirtualAccount = async (products_, payData_) => { //
         return false;
     }
 }
+export const onPayProductsByHand_Hecto = async (products_, payData_) => { // 수기결제(헥토)
+    let products = products_;
+    let pay_data = payData_;
+    let payData = await makePayData(products, pay_data);
+    let ord_num = `${payData?.user_id || payData?.password}${new Date().getTime().toString().substring(0, 11)}`
+    let return_url = `${window.location.protocol}//${window.location.host}/shop/auth/pay-result`
+    payData.yymm = payData?.yymm?.split('/');
+    payData = {
+        ...payData,
+        ord_num: ord_num,
+        return_url: return_url,
+        success_url: return_url + '?result_cd=0000',
+        fail_url: return_url + '?result_cd=9999',
+        pay_key: payData?.payment_modules?.pay_key,
+        mid: payData?.payment_modules?.mid,
+        tid: payData?.payment_modules?.tid,
+        card_num: payData?.card_num.replaceAll(' ', ''),
+        yymm: payData?.yymm[1] + payData?.yymm[0],
+    }
+    if (payData?.products?.length > 1 || !payData?.item_name) {
+        payData.item_name = `${payData?.products[0]?.order_name} 외 ${payData?.products?.length - 1}`;
+    }
+    try {
+        let insert_pay_ready = await apiManager('pays/hand', 'create', payData);
+        if (insert_pay_ready?.id > 0) {
+            return {
+                ...payData,
+                trans_id: insert_pay_ready?.id
+            };
+        } else {
+            return false;
+        }
+
+    } catch (err) {
+        console.log(err);
+        return false;
+    }
+}
+export const onPayProductsByPhone_Hecto = async (products_, payData_) => { // 휴대폰결제(헥토)
+    let products = products_;
+    let pay_data = payData_;
+    let payData = await makePayData(products, pay_data);
+    let ord_num = `${payData?.user_id || payData?.password}${new Date().getTime().toString().substring(0, 11)}`
+    let return_url = `${window.location.protocol}//${window.location.host}/shop/auth/pay-result`
+    payData.yymm = payData?.yymm?.split('/');
+    payData = {
+        ...payData,
+        ord_num: ord_num,
+        return_url: return_url,
+        success_url: return_url + '?result_cd=0000',
+        fail_url: return_url + '?result_cd=9999',
+        pay_key: payData?.payment_modules?.pay_key,
+        mid: payData?.payment_modules?.mid,
+        tid: payData?.payment_modules?.tid,
+        card_num: payData?.card_num.replaceAll(' ', ''),
+        yymm: payData?.yymm[1] + payData?.yymm[0],
+    }
+    if (payData?.products?.length > 1 || !payData?.item_name) {
+        payData.item_name = `${payData?.products[0]?.order_name} 외 ${payData?.products?.length - 1}`;
+    }
+    try {
+        let insert_pay_ready = await apiManager('pays/hand', 'create', payData);
+        if (insert_pay_ready?.id > 0) {
+            return {
+                ...payData,
+                trans_id: insert_pay_ready?.id
+            };
+        } else {
+            return false;
+        }
+
+    } catch (err) {
+        console.log(err);
+        return false;
+    }
+}
+
+
+
 export const getCartDataUtil = async (themeCartData) => {//장바구니 페이지에서 상품 불러오기
     let data = themeCartData ?? [];
     return data;

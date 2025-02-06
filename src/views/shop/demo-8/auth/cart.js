@@ -216,7 +216,7 @@ const CartDemo = (props) => {
         return;
       }
       setPayLoading(true);
-      let result = await onPayProductsByAuth(products, { ...payData, payment_modules: item, });
+      let result = await onPayProductsByAuth(products, { ...payData, payment_modules: item, }, 'payvery');
     } else if (item?.type == 'virtual_account') {
       setBuyType('virtual_account');
       let pay_data = await makePayData(products, payData);

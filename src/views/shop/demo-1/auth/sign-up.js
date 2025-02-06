@@ -368,16 +368,21 @@ const SignUpDemo = (props) => {
                   setUser({ ...user, ['phone_num']: e.target.value })
                 }}
                 value={user.phone_num}
-              // endAdornment={<>
-              //   <Button style={{ width: '144px', height: '56px', transform: 'translateX(14px)' }}
-              //     variant="contained"
-              //     onClick={() => {
-              //       if (phoneCheckStep == 0) {
-              //         onClickSendPhoneVerifyCode();
-              //       }
-              //     }}
-              //   >인증번호발송</Button>
-              // </>}
+                endAdornment={
+                  themeDnsData?.id == 77 ?
+                    <>
+                      <Button style={{ width: '144px', height: '56px', transform: 'translateX(14px)' }}
+                        variant="contained"
+                        onClick={() => {
+                          if (phoneCheckStep == 0) {
+                            onClickSendPhoneVerifyCode();
+                          }
+                        }}
+                      >인증번호발송</Button>
+                    </>
+                    :
+                    ''
+                }
               />
             </FormControl>
             {themeDnsData?.is_use_otp == 1 &&

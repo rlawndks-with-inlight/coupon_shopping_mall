@@ -374,8 +374,8 @@ const Header = () => {
 
   useEffect(() => {
     const handleScroll = () => {
-        const scrollTop_ = document.documentElement.scrollTop;
-        setScrollTop(scrollTop_ > 113)
+      const scrollTop_ = document.documentElement.scrollTop;
+      setScrollTop(scrollTop_ > 113)
     }
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
@@ -439,25 +439,25 @@ const Header = () => {
             </>}
           <Wrappers style={{
             background: `${themeMode == 'dark' ? '#000' : '#fff'}`,
-            position:'fixed'
+            position: 'fixed'
           }}
             ref={headerWrappersRef}
           >
-            <TopMenuContainer style={{display:`${scrollTop ? 'none' : ''}`,}}>
+            <TopMenuContainer style={{ display: `${scrollTop ? 'none' : ''}`, }}>
               <img src={logoSrc()} style={{ height: '80px', width: 'auto', cursor: 'pointer' }}
                 onClick={() => {
                   router.push('/shop')
                 }}
               />
-              <NoneShowMobile style={{ 
-                columnGap: '0.5rem', 
-                position:'absolute', 
-                top:'50%', 
-                left:'50%',
+              <NoneShowMobile style={{
+                columnGap: '0.5rem',
+                position: 'absolute',
+                top: '50%',
+                left: '50%',
                 transform: 'translate(-50%, -50%)'
-                 }}>
+              }}>
                 <TextField
-                  
+
                   id='size-small'
                   size='small'
                   onChange={(e) => {
@@ -494,109 +494,109 @@ const Header = () => {
                 }}
               >
                 <Col>
-                <Row style={{marginBottom:"1rem", marginLeft:'auto'}}>
-                <IconButton
-                  sx={iconButtonStyle}
-                  onClick={() => {
-                    if (user) {
-                      router.push(`/shop/auth/my-page`)
-                    } else {
-                      router.push(`/shop/auth/login`)
-                    }
-                  }}
-                >
-                  <Icon icon={'ph:user-thin'} fontSize={'2.5rem'} color={themeMode == 'dark' ? '#fff' : '#000'} />
-                </IconButton>
-                <IconButton
-                  sx={iconButtonStyle}
-                  onClick={() => {
-                    if (user) {
-                      router.push(`/shop/auth/wish`)
-                    } else {
-                      router.push(`/shop/auth/login`)
-                    }
-                  }}
-                >
-                  <Badge badgeContent={themeWishData.length} color="error">
-                    <Icon icon={'ph:heart-thin'} fontSize={'2.5rem'} color={themeMode == 'dark' ? '#fff' : '#000'} />
-                  </Badge>
-                </IconButton>
+                  <Row style={{ marginBottom: "1rem", marginLeft: 'auto' }}>
+                    <IconButton
+                      sx={iconButtonStyle}
+                      onClick={() => {
+                        if (user) {
+                          router.push(`/shop/auth/my-page`)
+                        } else {
+                          router.push(`/shop/auth/login`)
+                        }
+                      }}
+                    >
+                      <Icon icon={'ph:user-thin'} fontSize={'2.5rem'} color={themeMode == 'dark' ? '#fff' : '#000'} />
+                    </IconButton>
+                    <IconButton
+                      sx={iconButtonStyle}
+                      onClick={() => {
+                        if (user) {
+                          router.push(`/shop/auth/wish`)
+                        } else {
+                          router.push(`/shop/auth/login`)
+                        }
+                      }}
+                    >
+                      <Badge badgeContent={themeWishData.length} color="error">
+                        <Icon icon={'ph:heart-thin'} fontSize={'2.5rem'} color={themeMode == 'dark' ? '#fff' : '#000'} />
+                      </Badge>
+                    </IconButton>
 
-                <IconButton
-                  sx={iconButtonStyle}
-                  onClick={() => {
-                    if (user) {
-                      router.push(`/shop/auth/cart`)
-                    } else {
-                      router.push(`/shop/auth/login`)
-                    }
-                  }}
-                >
-                  <Badge badgeContent={themeCartData.length} color="error">
-                    <Icon icon={'ph:bag-thin'} fontSize={'2.5rem'} color={themeMode == 'dark' ? '#fff' : '#000'} />
-                  </Badge>
-                </IconButton>
-                <IconButton
-                  sx={iconButtonStyle}
-                  onClick={() => onToggleMode()}
-                >
-                  <Icon icon={themeMode === 'dark' ? 'ph:sun-thin' : 'ph:moon-stars-thin'} fontSize={'2.5rem'} color={themeMode == 'dark' ? '#fff' : '#000'} />
-                </IconButton>
-                {themeDnsData?.setting_obj?.is_use_lang == 1 &&
-                  <>
-                    <LanguagePopover />
-                  </>}
-                </Row>
-                <div>
-                <div className="fade-in-text" style={{ display: `${isAuthMenuOver ? 'flex' : 'none'}`, alignItems: 'center' }}>
-                  {user ?
-                    <>
-                      {authList.map((item, idx) => (
+                    <IconButton
+                      sx={iconButtonStyle}
+                      onClick={() => {
+                        if (user) {
+                          router.push(`/shop/auth/cart`)
+                        } else {
+                          router.push(`/shop/auth/login`)
+                        }
+                      }}
+                    >
+                      <Badge badgeContent={themeCartData.length} color="error">
+                        <Icon icon={'ph:bag-thin'} fontSize={'2.5rem'} color={themeMode == 'dark' ? '#fff' : '#000'} />
+                      </Badge>
+                    </IconButton>
+                    <IconButton
+                      sx={iconButtonStyle}
+                      onClick={() => onToggleMode()}
+                    >
+                      <Icon icon={themeMode === 'dark' ? 'ph:sun-thin' : 'ph:moon-stars-thin'} fontSize={'2.5rem'} color={themeMode == 'dark' ? '#fff' : '#000'} />
+                    </IconButton>
+                    {themeDnsData?.setting_obj?.is_use_lang == 1 &&
+                      <>
+                        <LanguagePopover />
+                      </>}
+                  </Row>
+                  <div>
+                    <div className="fade-in-text" style={{ display: `${isAuthMenuOver ? 'flex' : 'none'}`, alignItems: 'center' }}>
+                      {user ?
                         <>
+                          {authList.map((item, idx) => (
+                            <>
+                              <AuthMenu
+                                theme={theme}
+                                hoverColor={themeMode == 'dark' ? '#fff' : '#000'}
+                                onClick={() => { router.push(`/shop/auth/${item.link_key}`) }}
+                              >{item.name}</AuthMenu>
+                            </>
+                          ))}
                           <AuthMenu
                             theme={theme}
                             hoverColor={themeMode == 'dark' ? '#fff' : '#000'}
-                            onClick={() => { router.push(`/shop/auth/${item.link_key}`) }}
-                          >{item.name}</AuthMenu>
+                            onClick={onLogout}
+                            style={{ borderRight: `none` }}
+                          >{translate('로그아웃')}</AuthMenu>
                         </>
-                      ))}
-                      <AuthMenu
-                        theme={theme}
-                        hoverColor={themeMode == 'dark' ? '#fff' : '#000'}
-                        onClick={onLogout}
-                        style={{ borderRight: `none` }}
-                      >{translate('로그아웃')}</AuthMenu>
-                    </>
-                    :
-                    <>
-                      {noneAuthList.map((item, idx) => (
+                        :
                         <>
-                          <AuthMenu
-                            theme={theme}
-                            hoverColor={themeMode == 'dark' ? '#fff' : '#000'}
-                            onClick={() => { router.push(`/shop/auth/${item.link_key}`) }}
-                            style={{ borderRight: `${idx == noneAuthList.length - 1 ? 'none' : ''}` }}
-                          >{item.name}</AuthMenu>
+                          {noneAuthList.map((item, idx) => (
+                            <>
+                              <AuthMenu
+                                theme={theme}
+                                hoverColor={themeMode == 'dark' ? '#fff' : '#000'}
+                                onClick={() => { router.push(`/shop/auth/${item.link_key}`) }}
+                                style={{ borderRight: `${idx == noneAuthList.length - 1 ? 'none' : ''}` }}
+                              >{item.name}</AuthMenu>
+                            </>
+                          ))}
+
+                        </>}
+
+                    </div>
+                    <div className="fade-in-text" style={{ display: `${isAuthMenuOver ? 'none' : 'flex'}`, alignItems: 'center' }}>
+                      {user ?
+                        <>
+                          <AuthMenu theme={theme} style={{ borderRight: 'none' }}>{translate('마이페이지')}</AuthMenu>
                         </>
-                      ))}
+                        :
+                        <>
+                          <AuthMenu theme={theme}>{translate('회원가입')}</AuthMenu>
+                          <AuthMenu theme={theme} style={{ borderRight: 'none' }}>{translate('로그인')}</AuthMenu>
+                        </>}
 
-                    </>}
-
-                </div>
-                <div className="fade-in-text" style={{ display: `${isAuthMenuOver ? 'none' : 'flex'}`, alignItems: 'center' }}>
-                  {user ?
-                    <>
-                      <AuthMenu theme={theme} style={{ borderRight: 'none' }}>{translate('마이페이지')}</AuthMenu>
-                    </>
-                    :
-                    <>
-                      <AuthMenu theme={theme}>{translate('회원가입')}</AuthMenu>
-                      <AuthMenu theme={theme} style={{ borderRight: 'none' }}>{translate('로그인')}</AuthMenu>
-                    </>}
-
-                  <Icon icon={'ic:baseline-plus'} color={themeMode == 'dark' ? '#fff' : '#000'} />
-                </div>
-                </div>
+                      <Icon icon={'ic:baseline-plus'} color={themeMode == 'dark' ? '#fff' : '#000'} />
+                    </div>
+                  </div>
                 </Col>
               </NoneShowMobile>
               <ShowMobile style={{ marginLeft: 'auto', columnGap: '0.5rem' }}>
@@ -707,35 +707,40 @@ const Header = () => {
                       </>}
                   </>
                 ))}
-                <div style={{ position: 'relative', marginLeft: 'auto' }} className={`menu-service`}>
-                  <CategoryMenu borderColor={themeMode == 'dark' ? '#fff' : '#000'} >
-                    <div>{translate('고객센터')}</div>
-                  </CategoryMenu>
-                  <DropDownMenuContainer parentId={'service'} style={{
-                    border: `1px solid ${theme.palette.grey[300]}`,
-                    width: `154px`,
-                    fontSize: '12px',
-                    fontWeight: 'normal',
-                    background: `${themeMode == 'dark' ? '#000' : '#fff'}`
-                  }}>
-                    <div style={{
-                      display: 'flex',
-                      flexDirection: 'column',
-                      width: '154px'
-                    }}>
-                      {postCategories.map((item, idx) => (
-                        <>
-                          <DropDownMenu theme={theme}
-                            onClick={() => {
-                              router.push(`/shop/service/${item.id}`)
-                            }}>
-                            <div>{formatLang(item, 'post_category_title', currentLang)}</div>
-                          </DropDownMenu>
-                        </>
-                      ))}
+                {
+                  postCategories.length > 0 &&
+                  <>
+                    <div style={{ position: 'relative', marginLeft: 'auto' }} className={`menu-service`}>
+                      <CategoryMenu borderColor={themeMode == 'dark' ? '#fff' : '#000'} >
+                        <div>{translate('고객센터')}</div>
+                      </CategoryMenu>
+                      <DropDownMenuContainer parentId={'service'} style={{
+                        border: `1px solid ${theme.palette.grey[300]}`,
+                        width: `154px`,
+                        fontSize: '12px',
+                        fontWeight: 'normal',
+                        background: `${themeMode == 'dark' ? '#000' : '#fff'}`
+                      }}>
+                        <div style={{
+                          display: 'flex',
+                          flexDirection: 'column',
+                          width: '154px'
+                        }}>
+                          {postCategories.map((item, idx) => (
+                            <>
+                              <DropDownMenu theme={theme}
+                                onClick={() => {
+                                  router.push(`/shop/service/${item.id}`)
+                                }}>
+                                <div>{formatLang(item, 'post_category_title', currentLang)}</div>
+                              </DropDownMenu>
+                            </>
+                          ))}
+                        </div>
+                      </DropDownMenuContainer>
                     </div>
-                  </DropDownMenuContainer>
-                </div>
+                  </>
+                }
               </NoneShowMobile>
               <ShowMobile style={{
                 whiteSpace: 'nowrap',
@@ -759,9 +764,13 @@ const Header = () => {
                       </>}
                   </>
                 ))}
-                <CategoryMenu borderColor={themeMode == 'dark' ? '#fff' : '#000'} onClick={() => {
+                {
+                  /*
+                  <CategoryMenu borderColor={themeMode == 'dark' ? '#fff' : '#000'} onClick={() => {
 
                 }}>{translate('고객센터')}</CategoryMenu>
+                  */
+                }
               </ShowMobile>
               <NoneShowMobile style={{
                 marginLeft: 'auto'
@@ -819,8 +828,13 @@ const Header = () => {
             </>
           ))}
 
-          <ColumnMenuTitle>{translate('고객센터')}</ColumnMenuTitle>
-          {postCategories && postCategories.map((item, idx) => (
+          {
+            postCategories.length > 0 &&
+            <>
+              <ColumnMenuTitle>{translate('고객센터')}</ColumnMenuTitle>
+            </>
+          }
+          {postCategories.length > 0 && postCategories.map((item, idx) => (
             <>
               <ColumnMenuContent onClick={() => {
                 router.push(`/shop/service/${item.id}`);

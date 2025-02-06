@@ -798,35 +798,40 @@ const Header = () => {
                                                     </>}
                                             </>
                                         ))}
-                                        <div style={{ position: 'relative', marginLeft: 'auto' }} className={`menu-service`}>
-                                            <CategoryMenu borderColor={themeMode == 'dark' ? '#fff' : '#000'} >
-                                                <div>{translate('고객센터')}</div>
-                                            </CategoryMenu>
-                                            <DropDownMenuContainer parentId={'service'} style={{
-                                                border: `1px solid ${theme.palette.grey[300]}`,
-                                                width: `154px`,
-                                                fontSize: '12px',
-                                                fontWeight: 'normal',
-                                                background: `${themeMode == 'dark' ? '#000' : '#fff'}`
-                                            }}>
-                                                <div style={{
-                                                    display: 'flex',
-                                                    flexDirection: 'column',
-                                                    width: '154px'
-                                                }}>
-                                                    {postCategories.map((item, idx) => (
-                                                        <>
-                                                            <DropDownMenu theme={theme}
-                                                                onClick={() => {
-                                                                    router.push(`/shop/service/${item.id}`)
-                                                                }}>
-                                                                <div>{formatLang(item, 'post_category_title', currentLang)}</div>
-                                                            </DropDownMenu>
-                                                        </>
-                                                    ))}
+                                        {
+                                            postCategories.length > 0 &&
+                                            <>
+                                                <div style={{ position: 'relative', marginLeft: 'auto' }} className={`menu-service`}>
+                                                    <CategoryMenu borderColor={themeMode == 'dark' ? '#fff' : '#000'} >
+                                                        <div>{translate('고객센터')}</div>
+                                                    </CategoryMenu>
+                                                    <DropDownMenuContainer parentId={'service'} style={{
+                                                        border: `1px solid ${theme.palette.grey[300]}`,
+                                                        width: `154px`,
+                                                        fontSize: '12px',
+                                                        fontWeight: 'normal',
+                                                        background: `${themeMode == 'dark' ? '#000' : '#fff'}`
+                                                    }}>
+                                                        <div style={{
+                                                            display: 'flex',
+                                                            flexDirection: 'column',
+                                                            width: '154px'
+                                                        }}>
+                                                            {postCategories.map((item, idx) => (
+                                                                <>
+                                                                    <DropDownMenu theme={theme}
+                                                                        onClick={() => {
+                                                                            router.push(`/shop/service/${item.id}`)
+                                                                        }}>
+                                                                        <div>{formatLang(item, 'post_category_title', currentLang)}</div>
+                                                                    </DropDownMenu>
+                                                                </>
+                                                            ))}
+                                                        </div>
+                                                    </DropDownMenuContainer>
                                                 </div>
-                                            </DropDownMenuContainer>
-                                        </div>
+                                            </>
+                                        }
                                     </NoneShowMobile>
                                     <ShowMobile style={{
                                         whiteSpace: 'nowrap',
@@ -850,9 +855,13 @@ const Header = () => {
                                                     </>}
                                             </>
                                         ))}
-                                        <CategoryMenu borderColor={themeMode == 'dark' ? '#fff' : '#000'} onClick={() => {
+                                        {
+                                            /*
+                                            <CategoryMenu borderColor={themeMode == 'dark' ? '#fff' : '#000'} onClick={() => {
 
                                         }}>{translate('고객센터')}</CategoryMenu>
+                                            */
+                                        }
                                     </ShowMobile>
                                     <NoneShowMobile style={{
                                         marginLeft: 'auto'
@@ -911,9 +920,13 @@ const Header = () => {
                             </TreeView>
                         </>
                     ))}
-
-                    <ColumnMenuTitle>{translate('고객센터')}</ColumnMenuTitle>
-                    {postCategories && postCategories.map((item, idx) => (
+                    {
+                        postCategories.length > 0 &&
+                        <>
+                            <ColumnMenuTitle>{translate('고객센터')}</ColumnMenuTitle>
+                        </>
+                    }
+                    {postCategories.length > 0 && postCategories.map((item, idx) => (
                         <>
                             <ColumnMenuContent onClick={() => {
                                 router.push(`/shop/service/${item.id}`);

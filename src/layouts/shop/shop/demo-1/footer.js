@@ -2,6 +2,7 @@ import { useTheme } from "@emotion/react"
 import { useSettingsContext } from "src/components/settings"
 import { useLocales } from "src/locales"
 import styled from "styled-components"
+import { useEffect } from "react"
 
 const Wrapper = styled.footer`
 width:100%;
@@ -47,6 +48,25 @@ const Footer = (props) => {
     pvcy_rep_name,
     mail_order_num
   } = themeDnsData;
+
+
+  useEffect(() => {
+    window.KB_AUTHMARK_FORM = document.querySelector('form[name="KB_AUTHMARK_FORM"]');
+  }, []);
+
+  const onPopKBAuthMark = () => {
+    window.open(
+      '',
+      'KB_AUTHMARK',
+      'height=604, width=648, status=yes, toolbar=no, menubar=no, location=no'
+    );
+
+    const form = window.KB_AUTHMARK_FORM;
+    form.action = 'https://okbfex.kbstar.com/quics';
+    form.target = 'KB_AUTHMARK';
+    form.submit();
+  };
+
   return (
     <>
       <div style={{ marginTop: '2rem' }} />
@@ -128,6 +148,37 @@ const Footer = (props) => {
           <Row style={{ flexWrap: 'wrap', textDecoration: 'underline' }}>
             <Bold style={{ marginRight: '1rem', cursor: 'pointer' }} onClick={() => { router.push('/shop/auth/policy?type=0') }}>{translate('서비스이용약관')}</Bold>
             <Bold style={{ cursor: 'pointer' }} onClick={() => { router.push('/shop/auth/policy?type=1') }}>{translate('개인정보처리방침')}</Bold>
+          </Row>
+          <Row>
+            {
+              themeDnsData.id == 77 &&
+              <>
+                <>
+                  <form name="KB_AUTHMARK_FORM" method="get">
+                    <input type="hidden" name="page" value="C021590" />
+                    <input type="hidden" name="cc" value="b034066:b035526" />
+                    <input
+                      type="hidden"
+                      name="mHValue"
+                      value="20710323f146ce27b983d5b8ec7fd913"
+                    />
+                  </form>
+                  <a
+                    href="#"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      onPopKBAuthMark();
+                    }}
+                  >
+                    <img
+                      src="http://img1.kbstar.com/img/escrow/escrowcmark.gif"
+                      alt="KB에스크로 이체 인증마크"
+                      style={{ border: 0 }}
+                    />
+                  </a>
+                </>
+              </>
+            }
           </Row>
         </ContentWrapper>
       </Wrapper>

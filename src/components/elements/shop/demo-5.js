@@ -300,7 +300,7 @@ export const AuthMenuSideComponent = (props) => {
         },
       ]
     },
-    {
+    /*{
       label: '혜택관리',
       children: [
 
@@ -309,18 +309,20 @@ export const AuthMenuSideComponent = (props) => {
           link: '/shop/auth/point/',
         },
       ]
-    },
-    {
-      label: '고객센터',
-      children: [
-        ...themePostCategoryList.map((item) => {
-          return {
-            label: item?.post_category_title,
-            link: `/shop/service/${item?.id}/`,
-          }
-        })
-      ]
-    },
+    },*/
+    ...(themePostCategoryList ? [
+      {
+        label: '고객센터',
+        children: [
+          ...themePostCategoryList.map((item) => {
+            return {
+              label: item?.post_category_title,
+              link: `/shop/service/${item?.id}/`,
+            }
+          })
+        ]
+      },
+    ] : []),
     {
       label: '회원정보',
       children: [

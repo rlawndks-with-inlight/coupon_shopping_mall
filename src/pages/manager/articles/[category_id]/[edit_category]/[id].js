@@ -152,6 +152,7 @@ const ArticleEdit = () => {
                       상세설명
                     </Typography>
                     <ReactQuillComponent
+                      disabled
                       value={item.post_content}
                       setValue={(value) => {
                         setItem({

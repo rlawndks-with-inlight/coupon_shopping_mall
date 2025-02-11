@@ -132,46 +132,48 @@ export const navConfig = () => {
         { title: '대시보드', path: PATH_MANAGER.dashboards, icon: ICONS.dashboard },
       ],
     },
-    ...(themeDnsData?.is_head == 1 || themeDnsData?.seller_id > 0 ? [
+    ...(themeDnsData?.setting_obj?.is_use_seller > 0 ? [
       {
         items: [
           { title: '정산관리', path: PATH_MANAGER.adjustments, icon: ICONS.invoice },
         ]
       }
     ] : []),
-    {
-      items: [
-        {
-          title: '주문관리',
-          path: PATH_MANAGER.orders.trx + '/all',//PATH_MANAGER.orders.root,
-          icon: ICONS.ecommerce,
-          children: [
-            {
-              title: '주문관리', path: PATH_MANAGER.orders.trx + '/all',
-              children: [
-                { title: '전체', path: PATH_MANAGER.orders.trx + '/all' },
-                { title: '결제대기', path: PATH_MANAGER.orders.trx + '/0' },
-                { title: '결제완료', path: PATH_MANAGER.orders.trx + '/5' },
-                ...(themeDnsData?.id != 5 ?
-                  [{ title: '입고완료', path: PATH_MANAGER.orders.trx + '/10' },
-                  { title: '출고완료', path: PATH_MANAGER.orders.trx + '/15' }]
-                  : []
-                ),
-                { title: '배송중', path: PATH_MANAGER.orders.trx + '/20' },
-                { title: '배송완료', path: PATH_MANAGER.orders.trx + '/25' },
-              ],
-            },
-            {
-              title: '주문취소관리', path: PATH_MANAGER.orders.trxCancel + '/1',
-              children: [
-                { title: '취소요청', path: PATH_MANAGER.orders.trxCancel + '/1' },
-                { title: '취소완료', path: PATH_MANAGER.orders.trxCancel + '/5' },
-              ],
-            },
-          ],
-        },
-      ],
-    },
+    ...(user?.level != 20 ? [
+      {
+        items: [
+          {
+            title: '주문관리',
+            path: PATH_MANAGER.orders.trx + '/all',//PATH_MANAGER.orders.root,
+            icon: ICONS.ecommerce,
+            children: [
+              {
+                title: '주문관리', path: PATH_MANAGER.orders.trx + '/all',
+                children: [
+                  { title: '전체', path: PATH_MANAGER.orders.trx + '/all' },
+                  { title: '결제대기', path: PATH_MANAGER.orders.trx + '/0' },
+                  { title: '결제완료', path: PATH_MANAGER.orders.trx + '/5' },
+                  ...(themeDnsData?.id != 5 ?
+                    [{ title: '입고완료', path: PATH_MANAGER.orders.trx + '/10' },
+                    { title: '출고완료', path: PATH_MANAGER.orders.trx + '/15' }]
+                    : []
+                  ),
+                  { title: '배송중', path: PATH_MANAGER.orders.trx + '/20' },
+                  { title: '배송완료', path: PATH_MANAGER.orders.trx + '/25' },
+                ],
+              },
+              {
+                title: '주문취소관리', path: PATH_MANAGER.orders.trxCancel + '/1',
+                children: [
+                  { title: '취소요청', path: PATH_MANAGER.orders.trxCancel + '/1' },
+                  { title: '취소완료', path: PATH_MANAGER.orders.trxCancel + '/5' },
+                ],
+              },
+            ],
+          },
+        ],
+      },
+    ] : []),
     {
       items: [
         {
@@ -206,7 +208,8 @@ export const navConfig = () => {
               //{ title: '포인트관리', path: PATH_MANAGER.users.points },
               //{ title: '찜관리', path: PATH_MANAGER.users.wishs },
             ] : []),
-            ...(themeDnsData?.is_use_seller > 0 ? [{ title: '셀러관리', path: PATH_MANAGER.users.sellers }] : []),
+            ...(themeDnsData?.is_use_seller > 0 && user.level >= 40 ? [{ title: '영업자관리', path: PATH_MANAGER.users.agents }] : []),
+            ...(themeDnsData?.is_use_seller > 0 && user.level >= 20 ? [{ title: '셀러관리', path: PATH_MANAGER.users.sellers }] : []),
             // { title: '매출관리', path: PATH_MANAGER.users.sales },
           ],
         },

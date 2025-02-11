@@ -11,9 +11,11 @@ import toast from "react-hot-toast";
 import { apiManager, apiUtil } from "src/utils/api";
 import { useSettingsContext } from "src/components/settings";
 import { paymentModuleTypeList } from "src/utils/format";
+import { useAuthContext } from "src/layouts/manager/auth/useAuthContext";
 
 const TrxList = () => {
   const { setModal } = useModal()
+  const { user } = useAuthContext();
   const { themeDnsData } = useSettingsContext();
   const defaultColumns = [
     {
@@ -40,15 +42,15 @@ const TrxList = () => {
         }
       },
     },*/
-    ...(themeDnsData?.is_head == 1 ? [
+    ...(themeDnsData?.setting_obj?.is_use_seller > 0 && user?.level >= 40 ? [
       {
         id: 'seller_mall',
         label: '셀러몰',
         action: (row) => {
           return <div
-            style={{ cursor: `${themeDnsData?.is_head == 1 ? 'pointer' : ''}`, color: `${themeDnsData?.is_head == 1 ? 'blue' : ''}` }}
+            style={{ cursor: `${user?.level >= 40 ? 'pointer' : ''}`, color: `${user?.level >= 40 ? 'blue' : ''}` }}
             onClick={() => {
-              if (themeDnsData?.is_head == 1) {
+              if (user?.level >= 40) {
                 window.open('https://' + row['seller_dns'] ?? '---')
               } else {
                 return;

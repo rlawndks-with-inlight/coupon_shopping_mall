@@ -182,7 +182,7 @@ const SignUpDemo = (props) => {
         toast.error("비밀번호 확인란을 똑같이 입력했는지 확인해주세요");
         return;
       }
-      let result = await apiManager('auth/sign-up', 'create', { ...user, brand_id: themeDnsData?.id });
+      let result = await apiManager('auth/sign-up', 'create', { ...user, brand_id: themeDnsData?.id, seller_id: themeDnsData?.seller_id ?? 0 });
       if (!result) {
         return;
       }

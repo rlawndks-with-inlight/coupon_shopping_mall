@@ -41,21 +41,44 @@ export default function LoginLayout({ children }) {
     <>
       {!loading &&
         <>
-          <StyledRoot style={{ flexDirection: 'column' }}>
-            <Row style={{
-              margin: '1rem auto 1rem 1rem',
-              alignItems: 'center',
-              fontWeight:'bold',
-              columnGap:'0.5rem'
-            }}>
-              <TopLogoImg src={logoSrc()} onClick={() => { router.push('/manager/login') }} />
-              <div>판매자 센터</div>
-            </Row>
-            <Row style={{minHeight:'90vh'}}>
-              {children}
-            </Row>
-          </StyledRoot>
-        </>}
+          {
+            themeDnsData?.seller_id > 0 ?
+              <>
+                <StyledRoot style={{ flexDirection: 'column' }}>
+                  <Row style={{
+                    margin: '1rem auto 1rem 1rem',
+                    alignItems: 'center',
+                    fontWeight: 'bold',
+                    columnGap: '0.5rem'
+                  }}>
+                  </Row>
+                  <Row style={{ minHeight: '90vh' }}>
+                    {children}
+                  </Row>
+                </StyledRoot>
+              </>
+              :
+              <>
+                <>
+                  <StyledRoot style={{ flexDirection: 'column' }}>
+                    <Row style={{
+                      margin: '1rem auto 1rem 1rem',
+                      alignItems: 'center',
+                      fontWeight: 'bold',
+                      columnGap: '0.5rem'
+                    }}>
+                      <TopLogoImg src={logoSrc()} onClick={() => { router.push('/manager/login') }} />
+                      <div>판매자 센터</div>
+                    </Row>
+                    <Row style={{ minHeight: '90vh' }}>
+                      {children}
+                    </Row>
+                  </StyledRoot>
+                </>
+              </>
+          }
+        </>
+      }
     </>
   );
 }

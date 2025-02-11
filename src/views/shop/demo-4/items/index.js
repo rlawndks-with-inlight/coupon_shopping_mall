@@ -166,10 +166,19 @@ const ItemsDemo = (props) => {
 
     setCategoryChildren(category_children)
     setSearchObj({ ...search_obj, ...query });
-    let product_list = await apiShop('product', 'list', {
-      ...search_obj,
-      ...query
-    })
+    let product_list = 0;
+    if (themeDnsData?.seller_id > 0) {
+      product_list = await apiShop('product', 'list', {
+        ...search_obj,
+        ...query,
+        seller_id: themeDnsData?.seller_id ?? 0
+      })
+    } else {
+      product_list = await apiShop('product', 'list', {
+        ...search_obj,
+        ...query,
+      })
+    }
     if (product_list.content.length == 0) {
       setProductContent({
         ...productContent,

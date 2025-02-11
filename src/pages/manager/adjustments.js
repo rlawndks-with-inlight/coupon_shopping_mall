@@ -10,19 +10,22 @@ import { commarNumber } from "src/utils/function";
 import toast from "react-hot-toast";
 import { apiManager, apiUtil } from "src/utils/api";
 import { useSettingsContext } from "src/components/settings";
+import { useAuthContext } from "src/layouts/manager/auth/useAuthContext";
+import { bankCodeList } from "src/utils/format";
 
 const Adjustments = () => {
     const { setModal } = useModal()
+    const { user } = useAuthContext();
     const { themeDnsData } = useSettingsContext();
     const defaultColumns = [
-        {
+        /*{
             id: 'seller_mall',
-            label: '정산요청몰',
+            label: '정산요청자',
             action: (row) => {
                 return <div
-                    style={{ cursor: `${themeDnsData?.is_head == 1 ? 'pointer' : ''}`, color: `${themeDnsData?.is_head == 1 ? 'blue' : ''}` }}
+                    style={{ cursor: `${user?.level >= 40 ? 'pointer' : ''}`, color: `${user?.level >= 40 ? 'blue' : ''}` }}
                     onClick={() => {
-                        if (themeDnsData?.is_head == 1) {
+                        if (user?.level >= 40) {
                             window.open('https://' + row['seller_dns'] ?? '---')
                         } else {
                             return;
@@ -37,22 +40,26 @@ const Adjustments = () => {
                     color: `${row?.is_cancel == 1 ? 'red' : ''}`
                 }
             },
-        },
+        },*/
         {
-            id: 'seller_name',
-            label: '셀러명',
+            id: 'adjustment_name',
+            label: '정산요청자명',
             action: (row) => {
                 return <div
-                    style={{ cursor: `${themeDnsData?.is_head == 1 ? 'pointer' : ''}`, color: `${themeDnsData?.is_head == 1 ? 'blue' : ''}` }}
+                    style={{ cursor: `${user?.level >= 40 ? 'pointer' : ''}`, color: `${user?.level >= 40 ? 'blue' : ''}` }}
                     onClick={() => {
-                        if (themeDnsData?.is_head == 1) {
-                            router.push('users/sellers/edit/' + row['seller_id'] ?? '---')
+                        if (user?.level >= 40) {
+                            if (row['seller_id'] == 0) {
+                                router.push('users/agents/edit/' + row['oper_id'] ?? '---')
+                            } else {
+                                router.push('users/sellers/edit/' + row['seller_id'] ?? '---')
+                            }
                         } else {
                             return;
                         }
                     }}
                 >
-                    {row['seller_name']}
+                    {row['seller_name']}{row['seller_id'] == 0 ? '(영업자)' : '(셀러)'}
                 </div>
             },
             sx: (row) => {
@@ -62,10 +69,14 @@ const Adjustments = () => {
             },
         },
         {
-            id: 'amount',
-            label: '정산요청금액',
+            id: 'bank',
+            label: '은행',
             action: (row) => {
-                return `${commarNumber(row['amount'])}원`
+                return <div>
+                    {
+                        bankCodeList.find(item => item.value === row['seller_acct_bank_code'])?.label
+                    }
+                </div>
             },
             sx: (row) => {
                 return {
@@ -75,7 +86,7 @@ const Adjustments = () => {
         },
         {
             id: 'seller_acct_num',
-            label: '셀러계좌번호',
+            label: '계좌번호',
             action: (row) => {
                 return row['seller_acct_num']
             },
@@ -87,7 +98,7 @@ const Adjustments = () => {
         },
         {
             id: 'seller_phone',
-            label: '셀러전화번호',
+            label: '전화번호',
             action: (row) => {
                 return row['seller_phone']
             },
@@ -128,7 +139,7 @@ const Adjustments = () => {
                 return <Select
                     size="small"
                     defaultValue={row?.state}
-                    disabled={themeDnsData?.is_head != 1}
+                    disabled={user?.level < 40}
                     onChange={(e) => {
                         onChangeState(row?.id, e.target.value);
                     }}
@@ -137,6 +148,25 @@ const Adjustments = () => {
                     <MenuItem value={1}>{'지급완료'}</MenuItem>
                     <MenuItem value={2}>{'요청거절'}</MenuItem>
                 </Select>
+            },
+            sx: (row) => {
+                return {
+                    color: `${row?.is_cancel == 1 ? 'red' : ''}`
+                }
+            },
+        },
+        {
+            id: 'amount',
+            label: '정산금액',
+            action: (row) => {
+                return <TextField
+                    size="small"
+                    defaultValue={row?.amount}
+                    disabled={user?.level < 40}
+                    onChange={(e) => {
+                        onChangeAmount(row?.id, e.target.value);
+                    }}
+                />
             },
             sx: (row) => {
                 return {
@@ -194,7 +224,7 @@ const Adjustments = () => {
         if (data_) {
             setData(data_);
         }
-        console.log(data_)
+        //console.log(data_)
     }
     const deleteAdj = async (id) => {
         let result = await apiManager('seller-adjustments', 'delete', { id: id });
@@ -207,8 +237,16 @@ const Adjustments = () => {
         let result = await apiUtil(`seller_adjustments/state`, 'update', {
             id, value
         })
-        console.log(id, value)
+        //console.log(id, value)
     }
+
+    const onChangeAmount = async (id, value) => {
+        let result = await apiUtil(`seller_adjustments/amount`, 'update', {
+            id, value
+        })
+        //console.log(id, value)
+    }
+
 
     return (
         <>

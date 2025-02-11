@@ -203,6 +203,15 @@ const SignUpDemo = (props) => {
     })
 
   }
+
+  const onClickCheckPhoneVerifyCode = async () => {
+    setPhoneCheckStep(2);
+    let result = await apiManager('auth/code/check', 'create', {
+      rand_num: user?.phoneCheck
+    })
+
+  }
+
   return (
     <>
       <Wrappers style={{ paddingBottom: '2rem' }}>
@@ -385,6 +394,32 @@ const SignUpDemo = (props) => {
                 }
               />
             </FormControl>
+            {
+              themeDnsData?.id == 77 &&
+              <>
+                <FormControl variant="outlined" style={{ width: '100%', marginTop: '1rem' }}>
+                  <InputLabel>휴대폰번호</InputLabel>
+                  <OutlinedInput
+                    label='휴대폰번호'
+                    placeholder="하이픈(-) 제외 입력"
+                    onChange={(e) => {
+                      setUser({ ...user, ['phoneCheck']: e.target.value })
+                    }}
+                    value={user.phoneCheck}
+                    endAdornment={<>
+                      <Button style={{ width: '144px', height: '56px', transform: 'translateX(14px)' }}
+                        variant="contained"
+                        onClick={() => {
+                          if (phoneCheckStep == 1) {
+                            onClickCheckPhoneVerifyCode();
+                          }
+                        }}
+                      >인증번호확인</Button>
+                    </>}
+                  />
+                </FormControl>
+              </>
+            }
             {themeDnsData?.is_use_otp == 1 &&
               <>
                 <TextField
@@ -399,24 +434,6 @@ const SignUpDemo = (props) => {
                   }}
                 />
               </>}
-            {/* <FormControl variant="outlined" style={{ width: '100%', marginTop: '1rem' }}>
-              <InputLabel>휴대폰번호</InputLabel>
-              <OutlinedInput
-                label='휴대폰번호'
-                placeholder="하이픈(-) 제외 입력"
-                onChange={(e) => {
-                  setUser({ ...user, ['phoneCheck']: e.target.value })
-                }}
-                value={user.phoneCheck}
-                endAdornment={<>
-                  <Button style={{ width: '144px', height: '56px', transform: 'translateX(14px)' }}
-                    variant="contained"
-                    onClick={() => {
-                    }}
-                  >인증번호확인</Button>
-                </>}
-              />
-            </FormControl> */}
           </>}
         {activeStep == 2 &&
           <>

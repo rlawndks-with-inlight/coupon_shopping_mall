@@ -28,10 +28,10 @@ const SellerEdit = () => {
     content: [],
   });
   const [item, setItem] = useState({
-    //user_name: '',
+    user_name: '',
     //nickname: '',
     name: '',//
-    title: '',
+    //title: '',
     //seller_name: '',
     //addr: '',
     //acct_bank_name: '',
@@ -56,8 +56,14 @@ const SellerEdit = () => {
     id_img: '',
     profile_file: undefined,
     profile_img: '',
-    //user_pw: '',//
+    user_pw: '',//
+    level: 10,
+    oper_id: '',
+    oper_fee: ''
   })
+
+  const [agents, setAgents] = useState([])
+
   const [productIds, setProductIds] = useState([]);
   const [currentTab, setCurrentTab] = useState(0);
   const [searchTextList, setSearchTextList] = useState([]);
@@ -99,6 +105,21 @@ const SellerEdit = () => {
         setItem(data);
       }
     }
+
+    let agent_data = await apiManager('users', 'list', {
+      page: 1,
+      page_size: 100,
+      s_dt: '',
+      e_dt: '',
+      search: '',
+      category_id: null,
+      is_agent: 1
+    })
+    if (agent_data) {
+      setAgents(agent_data.content)
+      //console.log(agent_data.content)
+    }
+
     setLoading(false);
   }
   const addProfileImg = (e) => {
@@ -171,6 +192,7 @@ const SellerEdit = () => {
                 <Grid item xs={12} md={6}>
                   <Card sx={{ p: 2, height: '100%' }}>
                     <Stack spacing={3}>
+                      {/*
                       <Stack spacing={1}>
                         <Typography variant="subtitle2" sx={{ color: 'text.secondary' }}>
                           셀러로고
@@ -205,7 +227,6 @@ const SellerEdit = () => {
                             display: 'flex'
                           }}
                         />
-                        {/*
                         <Row style={{ margin: 'auto', transform: 'translateY(-42px)', position: 'relative', flexDirection: 'column', alignItems: 'center' }}>
                           {item.profile_img &&
                             <>
@@ -244,8 +265,9 @@ const SellerEdit = () => {
                           <input type="file" style={{ display: 'none' }} id='profile-img' onChange={addProfileImg} />
                           <div style={{ marginTop: '1rem', fontWeight: 'bold', height: '24px' }}>{item.instagram_id}</div>
                         </Row>
-                        */}
                       </Stack>
+*/}
+                      {/*
                       <Stack spacing={1}>
                         <TextField
                           label='셀러몰 이름'
@@ -259,6 +281,7 @@ const SellerEdit = () => {
                             )
                           }} />
                       </Stack>
+                      */}
                       <Stack spacing={1}>
                         <TextField
                           label='셀러몰 도메인'
@@ -309,6 +332,68 @@ const SellerEdit = () => {
                       </Stack>
                         */
                       }
+                      <TextField
+                        label='이름'
+                        value={item.name}
+                        onChange={(e) => {
+                          setItem(
+                            {
+                              ...item,
+                              ['name']: e.target.value
+                            }
+                          )
+                        }} />
+                      <Stack spacing={1}>
+                        <TextField
+                          label='셀러 아이디'
+                          value={item.user_name}
+                          onChange={(e) => {
+                            setItem(
+                              {
+                                ...item,
+                                ['user_name']: e.target.value
+                              }
+                            )
+                          }} />
+                      </Stack>
+                      {
+                        router.query?.edit_category != 'edit' &&
+                        <>
+                          <Stack spacing={1}>
+                            <TextField
+                              label='셀러 비밀번호'
+                              value={item.user_pw}
+                              type="password"
+                              onChange={(e) => {
+                                setItem(
+                                  {
+                                    ...item,
+                                    ['user_pw']: e.target.value
+                                  }
+                                )
+                              }} />
+                          </Stack>
+                        </>
+                      }
+                      <Stack spacing={1}>
+                        <FormControl>
+                          <InputLabel>영업자선택</InputLabel>
+                          <Select
+                            label='영업자선택'
+                            value={item.oper_id}
+                            onChange={e => {
+                              setItem({
+                                ...item,
+                                ['oper_id']: e.target.value
+                              })
+                            }}
+                          >
+                            {agents.map((agent, idx) => {
+                              return <MenuItem value={agent.id}>{agent.name} ({parseFloat(agent.seller_trx_fee * 100)}%)</MenuItem>
+                            })}
+                          </Select>
+                        </FormControl>
+                      </Stack>
                     </Stack>
                   </Card>
                 </Grid>
@@ -347,17 +432,7 @@ const SellerEdit = () => {
                         </>}
                         */
                       }
-                      <TextField
-                        label='이름'
-                        value={item.name}
-                        onChange={(e) => {
-                          setItem(
-                            {
-                              ...item,
-                              ['name']: e.target.value
-                            }
-                          )
-                        }} />
+
                       {
                         /*
                                               <TextField

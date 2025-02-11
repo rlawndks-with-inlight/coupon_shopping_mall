@@ -1,4 +1,4 @@
-import { Button, Card, Container, Divider, IconButton, MenuItem, Select, Stack, Typography, FormControlLabel, Checkbox } from "@mui/material";
+import { Button, Card, Container, Divider, IconButton, MenuItem, Select, Stack, Typography, FormControlLabel, Checkbox, Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions, TextField } from "@mui/material";
 import { useEffect, useState } from "react";
 import ManagerLayout from "src/layouts/manager/ManagerLayout";
 import ManagerTable from "src/views/manager/mui/table/ManagerTable";
@@ -29,6 +29,7 @@ const ProductList = () => {
   const { setModal } = useModal()
   const { themeCategoryList, themeDnsData, themePropertyList } = useSettingsContext();
   const { currentLang, translate } = useLocales();
+
   const defaultColumns = [
     /*{
       id: 'id',
@@ -115,12 +116,26 @@ const ProductList = () => {
         }
       }
     }),
-    ...(themeDnsData?.id == 74 ? [
+    ...(themeDnsData?.is_use_seller == 1 ? [
       {
         id: 'product_sale_price',
         label: '가격',
         action: (row) => {
-          return commarNumber(row['product_sale_price'])
+          return (
+            <>
+              <div>
+                {commarNumber(row['product_sale_price'])} (본사)
+              </div>
+              {
+                user?.level == 10 && row?.seller_id > 0 &&
+                <>
+                  <div>
+                    {commarNumber(row['seller_price'])} (셀러)
+                  </div>
+                </>
+              }
+            </>
+          )
         }
       },
     ] : [
@@ -132,7 +147,7 @@ const ProductList = () => {
         action: (row) => {
           return (
             <>
-              <div onClick={() => { console.log(row) }}>
+              <div onClick={() => { /*console.log(row)*/ }}>
                 {commarNumber(row['product_price'])}
               </div>
               <div style={{ marginTop: '1rem' }}>
@@ -204,6 +219,7 @@ const ProductList = () => {
           return <Select
             size="small"
             defaultValue={row?.status}
+            disabled={user?.level < 40}
             onChange={(e) => {
               onChangeStatus(row?.id, e.target.value);
             }}
@@ -254,7 +270,7 @@ const ProductList = () => {
         }
       },
     },
-    {
+    /*{
       id: 'order_count',
       label: '주문',
       sub_id: 'review_count',
@@ -268,7 +284,7 @@ const ProductList = () => {
           </>
         )
       }
-    },
+    },*/
     /*{
       id: 'review_count',
       label: '리뷰',
@@ -333,7 +349,7 @@ const ProductList = () => {
         )
       }
     },*/
-    ...(themeDnsData?.dns_type != 'seller' ? [
+    ...(user?.level >= 40 ? [
       {
         id: 'edit',
         label: '수정(복사) / 삭제', //수정/복사/삭제
@@ -363,6 +379,53 @@ const ProductList = () => {
           )
         }
       },
+    ] : []),
+    ...(user?.level == 10 ? [
+      {
+        id: 'check',
+        label: '상품판매체크',
+        action: (row) => {
+          return (
+            <>
+              {
+                row['seller_id'] > 0 ?
+                  <>
+                    <IconButton>
+                      <Icon icon='material-symbols:content-copy-outline' onClick={() => {
+                        setPopup({
+                          ...popup,
+                          type: 2,
+                          seller_product_id: row?.seller_product_id
+                        });
+                      }} />
+                    </IconButton>
+                    <IconButton onClick={() => {
+                      setModal({
+                        func: () => { deleteSellerProducts(row?.seller_product_id) },
+                        icon: 'material-symbols:delete-outline',
+                        title: '정말 셀러몰에서 제외하시겠습니까?'
+                      })
+                    }}>
+                      <Icon icon='material-symbols:delete-outline' />
+                    </IconButton>
+                  </>
+                  :
+                  <>
+                    <IconButton>
+                      <Icon icon='material-symbols:content-copy-outline' onClick={() => {
+                        setPopup({
+                          ...popup,
+                          type: 1,
+                          id: row?.id
+                        });
+                      }} />
+                    </IconButton>
+                  </>
+              }
+            </>
+          )
+        }
+      }
     ] : [])
   ]
   const router = useRouter();
@@ -383,6 +446,14 @@ const ProductList = () => {
   const [curProperties, setCurProperties] = useState({})
   const [categoryChildrenList, setCategoryChildrenList] = useState({});
   const [detailSearchOpen, setDetailSearchOpen] = useState(false)
+
+  const [popup, setPopup] = useState({
+    type: '',
+    id: '',
+    seller_product_id: ''
+  })
+  const [productPrice, setProductPrice] = useState(0)
+
   useEffect(() => {
     pageSetting();
   }, [])
@@ -434,10 +505,19 @@ const ProductList = () => {
       ...data,
       content: undefined
     })
-    let data_ = await apiManager('products', 'list', {
-      ...search_obj,
-      ...query
-    });
+    let data_ = 0;
+    if (user?.level != 10) {
+      data_ = await apiManager('products', 'list', {
+        ...search_obj,
+        ...query
+      });
+    } else {
+      data_ = await apiManager('products', 'list', {
+        ...search_obj,
+        ...query,
+        manager_type: 'seller'
+      });
+    }
     if (data_) {
       for (var i = 0; i < themeCategoryList.length; i++) {
         let parent_list = await getAllIdsWithParents(themeCategoryList[i]?.product_categories);
@@ -510,7 +590,30 @@ const ProductList = () => {
     })
   }
 
+  const onSellerProducts = async (id, price) => {
+    let result = await apiManager(`seller-products`, 'create', {
+      seller_id: user?.id, product_id: id, seller_price: price
+    })
+    if (result) {
+      window.location.reload()
+    }
+  }
 
+  const deleteSellerProducts = async (id) => {
+    let result = await apiManager(`seller-products`, 'delete', { id: id })
+    if (result) {
+      onChangePage(searchObj);
+    }
+  }
+
+  const changeSellerProducts = async (id, value) => {
+    let result = await apiUtil(`seller_products/seller_price`, 'update', {
+      id, value
+    })
+    if (result) {
+      window.location.reload()
+    }
+  }
 
 
   return (
@@ -740,13 +843,75 @@ const ProductList = () => {
             </>
           }
           <Divider />
+          <Dialog
+            open={popup['type'] == 1}
+          >
+            <DialogTitle>{`상품판매체크 및 가격설정`}</DialogTitle>
+            <DialogContent>
+              <DialogContentText style={{ marginBottom: '0.5rem' }}>
+                셀러몰에 해당 상품을 등록합니다.
+              </DialogContentText>
+              <TextField
+                autoFocus
+                fullWidth
+                value={productPrice}
+                margin="dense"
+                type="number"
+                label="가격설정"
+                onChange={(e) => {
+                  setProductPrice(e.target.value)
+                }}
+              />
+            </DialogContent>
+            <DialogActions>
+              <Button variant="contained" onClick={() => { onSellerProducts(popup['id'], productPrice) }}>
+                요청
+              </Button>
+              <Button color="inherit" onClick={() => {
+                window.location.reload()
+              }}>
+                취소
+              </Button>
+            </DialogActions>
+          </Dialog>
+          <Dialog
+            open={popup['type'] == 2}
+          >
+            <DialogTitle>{`상품가격변경`}</DialogTitle>
+            <DialogContent>
+              <DialogContentText style={{ marginBottom: '0.5rem' }}>
+                등록된 상품의 가격을 변경합니다.
+              </DialogContentText>
+              <TextField
+                autoFocus
+                fullWidth
+                value={productPrice}
+                margin="dense"
+                type="number"
+                label="가격설정"
+                onChange={(e) => {
+                  setProductPrice(e.target.value)
+                }}
+              />
+            </DialogContent>
+            <DialogActions>
+              <Button variant="contained" onClick={() => { changeSellerProducts(popup['seller_product_id'], productPrice) }}>
+                요청
+              </Button>
+              <Button color="inherit" onClick={() => {
+                window.location.reload()
+              }}>
+                취소
+              </Button>
+            </DialogActions>
+          </Dialog>
           <ManagerTable
             data={data}
             setData={setData}
             columns={columns}
             searchObj={searchObj}
             onChangePage={onChangePage}
-            add_button_text={'상품 추가'}
+            add_button_text={user?.level >= 40 ? '상품 추가' : ''}
             want_move_card={false}
             table={'products'}
             detail_search={'상세검색'}

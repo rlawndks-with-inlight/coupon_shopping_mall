@@ -24,13 +24,13 @@ const SellerList = () => {
   const { user } = useAuthContext();
   const { setModal } = useModal()
   const defaultColumns = [
-    {
+    /*{
       id: 'profile_img',
       label: '셀러로고',
       action: (row) => {
         return <Avatar src={row['profile_img'] ?? "---"} />
       }
-    },
+    },*/
     {
       id: 'dns',
       label: '셀러몰',
@@ -39,19 +39,27 @@ const SellerList = () => {
           <div
             style={{ cursor: 'pointer', color: 'blue' }}
             onClick={() => {
-              window.open('https://' + row['dns'] ?? '---')
+              console.log(row)
+              //window.open('https://' + row['dns'] ?? '---')
             }}
           >
-            {`${row['title']}(${row['dns'] ?? '---'})`}
+            {`${row['dns'] ?? '---'}`}
           </div>
         )
       }
     },
     {
-      id: 'user_name',
+      id: 'seller_name',
       label: '셀러명',
       action: (row) => {
-        return row['name'] ?? "---"
+        return row['user_name'] ?? "---"
+      }
+    },
+    {
+      id: 'agent_name',
+      label: '영업자명',
+      action: (row) => {
+        return row['agent_name'] ?? "---"
       }
     },
     /*{
@@ -75,7 +83,7 @@ const SellerList = () => {
         return row['created_at'] ?? "---"
       }
     },
-    /*{
+    {
       id: 'edit_password',
       label: '비밀번호 변경',
       action: (row) => {
@@ -93,7 +101,7 @@ const SellerList = () => {
           </>
         )
       }
-    },*/
+    },
     {
       id: 'edit',
       label: '수정/삭제',

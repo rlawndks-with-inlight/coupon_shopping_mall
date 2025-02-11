@@ -232,14 +232,35 @@ const HomeDemo = (props) => {
         </>
         :
         <>
-          {contentList && contentList.map((column, idx) => (
-            <>
-              {returnHomeContentByColumn(column, idx, type)}
-            </>
-          ))}
-          <div style={{
-            marginTop: '5rem'
-          }} />
+          {
+            themeDnsData?.seller_id > 0 ?
+              <>
+                {contentList && contentList.map((column, idx) => (
+                  <>
+                    {
+                      idx < 2 &&
+                      <>
+                        {returnHomeContentByColumn(column, idx, type)}
+                      </>
+                    }
+                  </>
+                ))}
+                <div style={{
+                  marginTop: '5rem'
+                }} />
+              </>
+              :
+              <>
+                {contentList && contentList.map((column, idx) => (
+                  <>
+                    {returnHomeContentByColumn(column, idx, type)}
+                  </>
+                ))}
+                <div style={{
+                  marginTop: '5rem'
+                }} />
+              </>
+          }
         </>}
     </>
   )

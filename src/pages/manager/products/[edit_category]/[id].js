@@ -1249,44 +1249,74 @@ const ProductEdit = () => {
                         </>
                       }
                       <>
-                        <FormControl variant="outlined">
-                          <InputLabel>상품가</InputLabel>
-                          <OutlinedInput
-                            label='상품가'
-                            type="text"
-                            value={price}
-                            endAdornment={<InputAdornment position="end">원</InputAdornment>}
-                            onChange={(e) => {
-                              let value = parseInt(e.target.value.replace(/,/g, ''))
-                              //console.log(value)
-                              setItem(
-                                {
-                                  ...item,
-                                  ['product_price']: value
-                                }
-                              )
-                              setPrice(value.toLocaleString('ko-KR'))
-                              //console.log(price)
-                            }} />
-                        </FormControl>
-                        <FormControl variant="outlined">
-                          <InputLabel>상품 할인가</InputLabel>
-                          <OutlinedInput
-                            label='상품 할인가'
-                            type="text"
-                            value={salePrice}
-                            endAdornment={<InputAdornment position="end">원</InputAdornment>}
-                            onChange={(e) => {
-                              let value = parseInt(e.target.value.replace(/,/g, ''))
-                              setItem(
-                                {
-                                  ...item,
-                                  ['product_sale_price']: value
-                                }
-                              )
-                              setSalePrice(value.toLocaleString('ko-KR'))
-                            }} />
-                        </FormControl>
+
+                        {
+                          themeDnsData?.is_use_seller != 1 ?
+                            <>
+                              <FormControl variant="outlined">
+                                <InputLabel>상품가</InputLabel>
+                                <OutlinedInput
+                                  label='상품가'
+                                  type="text"
+                                  value={price}
+                                  endAdornment={<InputAdornment position="end">원</InputAdornment>}
+                                  onChange={(e) => {
+                                    let value = parseInt(e.target.value.replace(/,/g, ''))
+                                    //console.log(value)
+                                    setItem(
+                                      {
+                                        ...item,
+                                        ['product_price']: value
+                                      }
+                                    )
+                                    setPrice(value.toLocaleString('ko-KR'))
+                                    //console.log(price)
+                                  }} />
+                              </FormControl>
+                              <FormControl variant="outlined">
+                                <InputLabel>상품 할인가</InputLabel>
+                                <OutlinedInput
+                                  label='상품 할인가'
+                                  type="text"
+                                  value={salePrice}
+                                  endAdornment={<InputAdornment position="end">원</InputAdornment>}
+                                  onChange={(e) => {
+                                    let value = parseInt(e.target.value.replace(/,/g, ''))
+                                    setItem(
+                                      {
+                                        ...item,
+                                        ['product_sale_price']: value
+                                      }
+                                    )
+                                    setSalePrice(value.toLocaleString('ko-KR'))
+                                  }} />
+                              </FormControl>
+                            </>
+                            :
+                            <>
+                              <FormControl variant="outlined">
+                                <InputLabel>상품가</InputLabel>
+                                <OutlinedInput
+                                  label='상품가'
+                                  type="text"
+                                  value={salePrice}
+                                  endAdornment={<InputAdornment position="end">원</InputAdornment>}
+                                  onChange={(e) => {
+                                    let value = parseInt(e.target.value.replace(/,/g, ''))
+                                    //console.log(value)
+                                    setItem(
+                                      {
+                                        ...item,
+                                        ['product_price']: value,
+                                        ['product_sale_price']: value
+                                      }
+                                    )
+                                    setSalePrice(value.toLocaleString('ko-KR'))
+                                    //console.log(price)
+                                  }} />
+                              </FormControl>
+                            </>
+                        }
                       </>
                       {/*<FormControl variant="outlined">
                         <InputLabel>배송비</InputLabel>

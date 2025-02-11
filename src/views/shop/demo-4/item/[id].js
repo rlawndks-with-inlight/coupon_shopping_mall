@@ -103,7 +103,8 @@ const ItemDemo = (props) => {
   const getItemInfo = async (review_page) => {
     let data = { ...product };
     data = await apiShop('product', 'get', {
-      id: router.query?.id
+      id: router.query?.id,
+      seller_id: themeDnsData?.seller_id ?? 0
     });
     data['sub_images'] = (data?.sub_images ?? []).map((img) => { //cannot create property on false? 오류 간헐적 발생
       return img?.product_sub_img

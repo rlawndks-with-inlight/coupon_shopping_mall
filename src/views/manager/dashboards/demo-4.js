@@ -21,7 +21,7 @@ export const DashboardDemo4 = () => {
     const router = useRouter();
     const theme = useTheme();
     const { themeStretch, themePostCategoryList, themeDnsData } = useSettingsContext();
-    const { user } = useAuthContext();
+    const { user, logout } = useAuthContext();
 
     const [searchObj, setSearchObj] = useState({
         s_dt: returnMoment().substring(0, 10),
@@ -31,15 +31,27 @@ export const DashboardDemo4 = () => {
     const [eDt, setEDt] = useState(new Date());
     const [data, setData] = useState({});
     const [adjustData, setAdjustData] = useState({});
-    const [adjustMoney, setAdjustMoney] = useState(0)
+    //const [adjustMoney, setAdjustMoney] = useState(0)
     const [adjustPopup, setAdjustPopup] = useState(false)
     const [waiting, setWaiting] = useState(false)
 
     const [amountSum, setAmountSum] = useState()
 
+    const onLogout = async () => {
+        let result = await logout();
+        router.push('/shop');
+    }
+
+    useEffect(() => {
+        if (themeDnsData?.seller_id > 0) {
+            onLogout();
+        }
+    }, [themeDnsData])
+
     useEffect(() => {
         onChangePage(searchObj)
         onChangeAmountSum(data)
+        //console.log(user)
     }, [data])
 
     const onChangePage = async (search_obj) => {
@@ -87,17 +99,17 @@ export const DashboardDemo4 = () => {
     }
 
     const onAdjustment = async () => {
-        let brand_id = themeDnsData?.parent_id;
-        let seller_id = themeDnsData?.seller_id;
-        let user_id = user?.id;
-        let amount = adjustMoney
+        let brand_id = themeDnsData?.id;
+        let seller_id = user?.level == 10 ? user.id : user?.level == 20 ? 0 : '';
+        let oper_id = user?.level == 10 ? user?.oper_id : user?.level == 20 ? user?.id : '';
+        /*let amount = adjustMoney
 
         if (amount < 10000) {
             toast.error("10000원 이상의 금액만 요청 가능합니다.")
             return;
-        }
+        }*/
 
-        let result = await apiManager(`seller-adjustments`, 'create', { brand_id: brand_id, seller_id: seller_id, user_id: user_id, amount: amount })
+        let result = await apiManager(`seller-adjustments`, 'create', { brand_id: brand_id, seller_id: seller_id, oper_id: oper_id })
         if (result) {
             toast.success("정상적으로 요청되었습니다.");
             window.location.reload()
@@ -111,112 +123,115 @@ export const DashboardDemo4 = () => {
         <>
             <Container maxWidth={themeStretch ? false : 'xl'}>
                 <Grid container spacing={3}>
-                    <Grid item xs={12} md={12}>
-                        <Row style={{ rowGap: '1rem', flexWrap: 'wrap', columnGap: '1rem' }}>
-                            {window.innerWidth > 1000 ?
-                                <>
-                                    <DesktopDatePicker
-                                        label="시작일 선택"
-                                        value={sDt}
-                                        format='yyyy-MM-dd'
-                                        onChange={(newValue) => {
-                                            setSDt(newValue);
-                                            onChangePage({ ...searchObj, s_dt: returnMoment(false, new Date(newValue)).substring(0, 10) })
-                                        }}
-                                        renderInput={(params) => <TextField fullWidth {...params} margin="normal" />}
-                                        sx={{ width: '180px', height: '32px' }}
-                                        slotProps={{ textField: { size: 'small' } }}
-                                    />
-                                    <DesktopDatePicker
-                                        label="종료일 선택"
-                                        value={eDt}
-                                        format='yyyy-MM-dd'
-                                        onChange={(newValue) => {
-                                            setEDt(newValue);
-                                            onChangePage({ ...searchObj, e_dt: returnMoment(false, new Date(newValue)).substring(0, 10) })
-                                        }}
-                                        renderInput={(params) => <TextField fullWidth {...params} margin="normal" />}
-                                        sx={{ width: '180px' }}
-                                        slotProps={{ textField: { size: 'small' } }}
-                                    />
-                                </>
-                                :
-                                <>
+                    {
+                        user?.level != 20 &&
+                        <>
+                            <Grid item xs={12} md={12}>
+                                <Row style={{ rowGap: '1rem', flexWrap: 'wrap', columnGap: '1rem' }}>
+                                    {window.innerWidth > 1000 ?
+                                        <>
+                                            <DesktopDatePicker
+                                                label="시작일 선택"
+                                                value={sDt}
+                                                format='yyyy-MM-dd'
+                                                onChange={(newValue) => {
+                                                    setSDt(newValue);
+                                                    onChangePage({ ...searchObj, s_dt: returnMoment(false, new Date(newValue)).substring(0, 10) })
+                                                }}
+                                                renderInput={(params) => <TextField fullWidth {...params} margin="normal" />}
+                                                sx={{ width: '180px', height: '32px' }}
+                                                slotProps={{ textField: { size: 'small' } }}
+                                            />
+                                            <DesktopDatePicker
+                                                label="종료일 선택"
+                                                value={eDt}
+                                                format='yyyy-MM-dd'
+                                                onChange={(newValue) => {
+                                                    setEDt(newValue);
+                                                    onChangePage({ ...searchObj, e_dt: returnMoment(false, new Date(newValue)).substring(0, 10) })
+                                                }}
+                                                renderInput={(params) => <TextField fullWidth {...params} margin="normal" />}
+                                                sx={{ width: '180px' }}
+                                                slotProps={{ textField: { size: 'small' } }}
+                                            />
+                                        </>
+                                        :
+                                        <>
+                                            <Row style={{ columnGap: '0.5rem' }}>
+                                                <MobileDatePicker
+                                                    label="시작일 선택"
+                                                    value={sDt}
+                                                    format='yyyy-MM-dd'
+                                                    onChange={(newValue) => {
+                                                        setSDt(newValue);
+                                                        onChangePage({ ...searchObj, s_dt: returnMoment(false, new Date(newValue)).substring(0, 10) })
+                                                    }}
+                                                    renderInput={(params) => <TextField fullWidth {...params} margin="normal" />}
+                                                    sx={{ width: '50%' }}
+                                                    slotProps={{ textField: { size: 'small' } }}
+                                                />
+                                                <MobileDatePicker
+                                                    label="종료일 선택"
+                                                    value={eDt}
+                                                    format='yyyy-MM-dd'
+                                                    onChange={(newValue) => {
+                                                        setEDt(newValue);
+                                                        onChangePage({ ...searchObj, e_dt: returnMoment(false, new Date(newValue)).substring(0, 10) })
+                                                    }}
+                                                    renderInput={(params) => <TextField fullWidth {...params} margin="normal" />}
+                                                    sx={{ width: '50%' }}
+                                                    slotProps={{ textField: { size: 'small' } }}
+                                                />
+                                            </Row>
+                                        </>}
                                     <Row style={{ columnGap: '0.5rem' }}>
-                                        <MobileDatePicker
-                                            label="시작일 선택"
-                                            value={sDt}
-                                            format='yyyy-MM-dd'
-                                            onChange={(newValue) => {
-                                                setSDt(newValue);
-                                                onChangePage({ ...searchObj, s_dt: returnMoment(false, new Date(newValue)).substring(0, 10) })
-                                            }}
-                                            renderInput={(params) => <TextField fullWidth {...params} margin="normal" />}
-                                            sx={{ width: '50%' }}
-                                            slotProps={{ textField: { size: 'small' } }}
-                                        />
-                                        <MobileDatePicker
-                                            label="종료일 선택"
-                                            value={eDt}
-                                            format='yyyy-MM-dd'
-                                            onChange={(newValue) => {
-                                                setEDt(newValue);
-                                                onChangePage({ ...searchObj, e_dt: returnMoment(false, new Date(newValue)).substring(0, 10) })
-                                            }}
-                                            renderInput={(params) => <TextField fullWidth {...params} margin="normal" />}
-                                            sx={{ width: '50%' }}
-                                            slotProps={{ textField: { size: 'small' } }}
-                                        />
+                                        <Button variant="outlined" sx={{ flexGrow: 1 }} onClick={() => onClickDateButton(0)}>오늘</Button>
+                                        <Button variant="outlined" sx={{ flexGrow: 1 }} onClick={() => onClickDateButton(7)}>7일</Button>
+                                        <Button variant="outlined" sx={{ flexGrow: 1 }} onClick={() => onClickDateButton(15)}>15일</Button>
+                                        <Button variant="outlined" sx={{ flexGrow: 1 }} onClick={() => onClickDateButton(30)}>1개월</Button>
+                                        <Button variant="outlined" sx={{ flexGrow: 1 }} onClick={() => onClickDateButton(90)}>3개월</Button>
+                                        <Button variant="outlined" sx={{ flexGrow: 1 }} onClick={() => onClickDateButton(365)}>1년</Button>
                                     </Row>
-                                </>}
-                            <Row style={{ columnGap: '0.5rem' }}>
-                                <Button variant="outlined" sx={{ flexGrow: 1 }} onClick={() => onClickDateButton(0)}>오늘</Button>
-                                <Button variant="outlined" sx={{ flexGrow: 1 }} onClick={() => onClickDateButton(7)}>7일</Button>
-                                <Button variant="outlined" sx={{ flexGrow: 1 }} onClick={() => onClickDateButton(15)}>15일</Button>
-                                <Button variant="outlined" sx={{ flexGrow: 1 }} onClick={() => onClickDateButton(30)}>1개월</Button>
-                                <Button variant="outlined" sx={{ flexGrow: 1 }} onClick={() => onClickDateButton(90)}>3개월</Button>
-                                <Button variant="outlined" sx={{ flexGrow: 1 }} onClick={() => onClickDateButton(365)}>1년</Button>
-                            </Row>
-                        </Row>
+                                </Row>
 
-                    </Grid>
-                    <Grid item xs={12} md={12}>
-                        <Typography variant="subtitle1" >주문관리</Typography>
-                    </Grid>
-                    <Grid item xs={12} md={12}>
-                        <Typography variant="subtitle1" >기간 매출액 : {commarNumber(amountSum ?? 0)} 원</Typography>
-                    </Grid>
-                    <Grid item xs={12} md={3}>
-                        <AppWidget
-                            title="결제대기"
-                            total={data?.trx?.trx_0 ?? 0}
-                            icon="medical-icon:waiting-area"
-                            color="info"
-                            sx={{ cursor: 'pointer' }}
-                            chart={{
-                                series: getPercentByNumber(data?.trx_sum, data?.trx?.trx_0),
-                            }}
-                            onClick={() => {
-                                router.push(`/manager/orders/trx/0`)
-                            }}
-                        />
-                    </Grid>
-                    <Grid item xs={12} md={3}>
-                        <AppWidget
-                            title="결제완료"
-                            total={data?.trx?.trx_5 ?? 0}
-                            icon="line-md:confirm-circle"
-                            color="success"
-                            sx={{ cursor: 'pointer' }}
-                            chart={{
-                                series: getPercentByNumber(data?.trx_sum, data?.trx?.trx_5),
-                            }}
-                            onClick={() => {
-                                router.push(`/manager/orders/trx/5`)
-                            }}
-                        />
-                    </Grid>
-                    {/*
+                            </Grid>
+                            <Grid item xs={12} md={12}>
+                                <Typography variant="subtitle1" >주문관리</Typography>
+                            </Grid>
+                            <Grid item xs={12} md={12}>
+                                <Typography variant="subtitle1" >기간 매출액 : {commarNumber(amountSum ?? 0)} 원</Typography>
+                            </Grid>
+                            <Grid item xs={12} md={3}>
+                                <AppWidget
+                                    title="결제대기"
+                                    total={data?.trx?.trx_0 ?? 0}
+                                    icon="medical-icon:waiting-area"
+                                    color="info"
+                                    sx={{ cursor: 'pointer' }}
+                                    chart={{
+                                        series: getPercentByNumber(data?.trx_sum, data?.trx?.trx_0),
+                                    }}
+                                    onClick={() => {
+                                        router.push(`/manager/orders/trx/0`)
+                                    }}
+                                />
+                            </Grid>
+                            <Grid item xs={12} md={3}>
+                                <AppWidget
+                                    title="결제완료"
+                                    total={data?.trx?.trx_5 ?? 0}
+                                    icon="line-md:confirm-circle"
+                                    color="success"
+                                    sx={{ cursor: 'pointer' }}
+                                    chart={{
+                                        series: getPercentByNumber(data?.trx_sum, data?.trx?.trx_5),
+                                    }}
+                                    onClick={() => {
+                                        router.push(`/manager/orders/trx/5`)
+                                    }}
+                                />
+                            </Grid>
+                            {/*
                     <Grid item xs={12} md={3}>
                         <AppWidget
                             title="입고완료"
@@ -248,101 +263,101 @@ export const DashboardDemo4 = () => {
                         />
                     </Grid>
                     */}
-                    <Grid item xs={12} md={3}>
-                        <AppWidget
-                            title="배송중"
-                            total={data?.trx?.trx_20 ?? 0}
-                            icon="iconamoon:delivery-fast"
-                            color="success"
-                            sx={{ cursor: 'pointer' }}
-                            chart={{
-                                series: getPercentByNumber(data?.trx_sum, data?.trx?.trx_20),
-                            }}
-                            onClick={() => {
-                                router.push(`/manager/orders/trx/20`)
-                            }}
-                        />
-                    </Grid>
-                    <Grid item xs={12} md={3}>
-                        <AppWidget
-                            title="배송완료"
-                            total={data?.trx?.trx_25 ?? 0}
-                            icon="icon-park-solid:delivery"
-                            color="success"
-                            sx={{ cursor: 'pointer' }}
-                            chart={{
-                                series: getPercentByNumber(data?.trx_sum, data?.trx?.trx_25),
-                            }}
-                            onClick={() => {
-                                router.push(`/manager/orders/trx/25`)
-                            }}
-                        />
-                    </Grid>
-                    <Grid item xs={12} md={3}>
-                        <AppWidget
-                            title="취소요청"
-                            total={data?.trx?.trx_1 ?? 0}
-                            icon="solar:call-cancel-bold"
-                            color="warning"
-                            sx={{ cursor: 'pointer' }}
-                            chart={{
-                                series: getPercentByNumber(data?.trx_sum, data?.trx?.trx_1),
-                            }}
-                            onClick={() => {
-                                router.push(`/manager/orders/trx-cancel/1`)
-                            }}
-                        />
-                    </Grid>
-                    <Grid item xs={12} md={3}>
-                        <AppWidget
-                            title="취소완료"
-                            total={data?.is_cancel ?? 0}
-                            icon="ic:outline-cancel"
-                            color="error"
-                            sx={{ cursor: 'pointer' }}
-                            chart={{
-                                series: getPercentByNumber(data?.trx_sum, data?.is_cancel),
-                            }}
-                            onClick={() => {
-                                router.push(`/manager/orders/trx-cancel/5`)
-                            }}
-                        />
-                    </Grid>
-                    {
-                        themeDnsData?.is_head == 1 &&
-                        <>
-                            <Grid item xs={12} md={12}>
-                                <Typography variant="subtitle1" >정산관리</Typography>
+                            <Grid item xs={12} md={3}>
+                                <AppWidget
+                                    title="배송중"
+                                    total={data?.trx?.trx_20 ?? 0}
+                                    icon="iconamoon:delivery-fast"
+                                    color="success"
+                                    sx={{ cursor: 'pointer' }}
+                                    chart={{
+                                        series: getPercentByNumber(data?.trx_sum, data?.trx?.trx_20),
+                                    }}
+                                    onClick={() => {
+                                        router.push(`/manager/orders/trx/20`)
+                                    }}
+                                />
                             </Grid>
-                            <Grid item xs={12} md={12}>
-                                <Row style={{ alignItems: 'center', width: '100%', justifyContent: 'space-between', maxWidth: `300px` }}>
-                                    <Row style={{ fontWeight: 'bold' }}>
-                                        <div style={{ marginRight: '1rem' }}>정산대기 : </div>
-                                        <div
-                                            style={{ color: themeDnsData?.theme_css?.main_color }}
-                                        >{commarNumber(adjustData?.total)}</div>
-                                        <div>건</div>
-                                    </Row>
-                                    <Button variant="outlined" style={{ cursor: 'pointer' }} onClick={() => { router.push(`/manager/adjustments`) }}>
-                                        이동하기
-                                    </Button>
-                                </Row>
+                            <Grid item xs={12} md={3}>
+                                <AppWidget
+                                    title="배송완료"
+                                    total={data?.trx?.trx_25 ?? 0}
+                                    icon="icon-park-solid:delivery"
+                                    color="success"
+                                    sx={{ cursor: 'pointer' }}
+                                    chart={{
+                                        series: getPercentByNumber(data?.trx_sum, data?.trx?.trx_25),
+                                    }}
+                                    onClick={() => {
+                                        router.push(`/manager/orders/trx/25`)
+                                    }}
+                                />
+                            </Grid>
+                            <Grid item xs={12} md={3}>
+                                <AppWidget
+                                    title="취소요청"
+                                    total={data?.trx?.trx_1 ?? 0}
+                                    icon="solar:call-cancel-bold"
+                                    color="warning"
+                                    sx={{ cursor: 'pointer' }}
+                                    chart={{
+                                        series: getPercentByNumber(data?.trx_sum, data?.trx?.trx_1),
+                                    }}
+                                    onClick={() => {
+                                        router.push(`/manager/orders/trx-cancel/1`)
+                                    }}
+                                />
+                            </Grid>
+                            <Grid item xs={12} md={3}>
+                                <AppWidget
+                                    title="취소완료"
+                                    total={data?.is_cancel ?? 0}
+                                    icon="ic:outline-cancel"
+                                    color="error"
+                                    sx={{ cursor: 'pointer' }}
+                                    chart={{
+                                        series: getPercentByNumber(data?.trx_sum, data?.is_cancel),
+                                    }}
+                                    onClick={() => {
+                                        router.push(`/manager/orders/trx-cancel/5`)
+                                    }}
+                                />
                             </Grid>
                         </>
                     }
                     {
-                        themeDnsData?.seller_id > 0 &&
-                        <>
-                            <Grid item xs={12} md={12}>
-                                <Typography variant="subtitle1" >정산관리</Typography>
-                            </Grid>
-                            <Grid item xs={12} md={12}>
-                                <Row style={{ alignItems: 'center', width: '100%', justifyContent: 'space-between', maxWidth: `300px` }}>
-                                    <Button variant="outlined" style={{ cursor: 'pointer' }} onClick={() => { sellerAdjustment(); /*setWaiting(true);*/ }}>
-                                        누적매출 정산요청
-                                    </Button>
-                                </Row>
-                                {/*
+                        themeDnsData?.setting_obj?.is_use_seller > 0 && user?.level >= 40 ?
+                            <>
+                                <Grid item xs={12} md={12}>
+                                    <Typography variant="subtitle1" >정산관리</Typography>
+                                </Grid>
+                                <Grid item xs={12} md={12}>
+                                    <Row style={{ alignItems: 'center', width: '100%', justifyContent: 'space-between', maxWidth: `300px` }}>
+                                        <Row style={{ fontWeight: 'bold' }}>
+                                            <div style={{ marginRight: '1rem' }}>정산대기 : </div>
+                                            <div
+                                                style={{ color: themeDnsData?.theme_css?.main_color }}
+                                            >{commarNumber(adjustData?.total)}</div>
+                                            <div>건</div>
+                                        </Row>
+                                        <Button variant="outlined" style={{ cursor: 'pointer' }} onClick={() => { router.push(`/manager/adjustments`) }}>
+                                            이동하기
+                                        </Button>
+                                    </Row>
+                                </Grid>
+                            </>
+                            :
+                            <>
+                                <Grid item xs={12} md={12}>
+                                    <Typography variant="subtitle1" >정산관리</Typography>
+                                </Grid>
+                                <Grid item xs={12} md={12}>
+                                    <Row style={{ alignItems: 'center', width: '100%', justifyContent: 'space-between', maxWidth: `300px` }}>
+                                        <Button variant="outlined" style={{ cursor: 'pointer' }} onClick={() => { sellerAdjustment(); /*setWaiting(true);*/ }}>
+                                            누적매출 정산요청
+                                        </Button>
+                                    </Row>
+                                    {/*
                                     waiting &&
                                     <>
                                         <Row style={{ alignItems: 'center', width: '100%', justifyContent: 'space-between', marginTop: '1rem', maxWidth: `300px` }}>
@@ -350,8 +365,8 @@ export const DashboardDemo4 = () => {
                                         </Row>
                                     </>
                                 */}
-                            </Grid>
-                        </>
+                                </Grid>
+                            </>
                     }
                     <Dialog
                         open={adjustPopup}
@@ -367,9 +382,11 @@ export const DashboardDemo4 = () => {
                         }
                         <DialogContent>
                             <DialogContentText style={{ marginBottom: '0.5rem' }}>
-                                정산요청할 금액을 입력해주세요.
+                                정산요청을 하시겠습니까?
                             </DialogContentText>
-                            <TextField
+                            {
+                                /*
+                                <TextField
                                 autoFocus
                                 fullWidth
                                 value={adjustMoney}
@@ -380,6 +397,8 @@ export const DashboardDemo4 = () => {
                                     setAdjustMoney(e.target.value)
                                 }}
                             />
+                                */
+                            }
                         </DialogContent>
                         <DialogActions>
                             <Button variant="contained" onClick={() => { onAdjustment() }}>

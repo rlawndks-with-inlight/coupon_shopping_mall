@@ -32,17 +32,25 @@ const PayResultDemo = (props) => {
   const { themeDnsData } = useSettingsContext();
 
   const getResultContent = (type) => {
-    if (type === '0000') {
+    if (themeDnsData?.id == 77) {
       return {
         icon: <Icon icon={'mdi:success-circle-outline'} style={{ margin: 'auto', fontSize: '8rem', color: themeDnsData?.theme_css?.main_color }} />,
-        title: translate('결제에 성공하였습니다.'),
+        title: '테스트결제 진행중입니다.',
         content: '',
       }
     } else {
-      return {
-        icon: <Icon icon={'material-symbols:cancel-outline'} style={{ margin: 'auto', fontSize: '8rem', color: themeDnsData?.theme_css?.main_color }} />,
-        title: translate('결제에 실패하였습니다.'),
-        content: '',
+      if (type === '0000') {
+        return {
+          icon: <Icon icon={'mdi:success-circle-outline'} style={{ margin: 'auto', fontSize: '8rem', color: themeDnsData?.theme_css?.main_color }} />,
+          title: translate('결제에 성공하였습니다.'),
+          content: '',
+        }
+      } else {
+        return {
+          icon: <Icon icon={'material-symbols:cancel-outline'} style={{ margin: 'auto', fontSize: '8rem', color: themeDnsData?.theme_css?.main_color }} />,
+          title: translate('결제에 실패하였습니다.'),
+          content: '',
+        }
       }
     }
   }
@@ -95,7 +103,7 @@ const PayResultDemo = (props) => {
                     <div>{router.query?.trx_dttm}</div>
                   </Row>
                 }
-                <div style={{marginBottom:'1rem'}} />
+                <div style={{ marginBottom: '1rem' }} />
               </Col>
             </Card>
           </Grid>

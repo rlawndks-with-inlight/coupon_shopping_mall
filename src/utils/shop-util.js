@@ -364,13 +364,20 @@ export const onPayProductsByVirtualAccount = async (products_, payData_) => { //
         return false;
     }
 }
-export const onPayProductsByHand_Hecto = async (products_, payData_) => { // 수기결제(헥토)
+
+export const onPayProductsByAuth_Hecto = async (products_, payData_, type) => { // 결제(헥토)
     let products = products_;
     let pay_data = payData_;
     let payData = await makePayData(products, pay_data);
     let ord_num = `${payData?.user_id || payData?.password}${new Date().getTime().toString().substring(0, 11)}`
     let return_url = `${window.location.protocol}//${window.location.host}/shop/auth/pay-result`
-    payData.yymm = payData?.yymm?.split('/');
+
+    const script = document.createElement('script')
+    script.src = 'https://npg.settlebank.co.kr/resources/js/v1/SettlePG.js'
+    script.async = true;
+    document.body.appendChild(script);
+
+
     payData = {
         ...payData,
         ord_num: ord_num,
@@ -380,22 +387,29 @@ export const onPayProductsByHand_Hecto = async (products_, payData_) => { // 수
         pay_key: payData?.payment_modules?.pay_key,
         mid: payData?.payment_modules?.mid,
         tid: payData?.payment_modules?.tid,
-        card_num: payData?.card_num.replaceAll(' ', ''),
-        yymm: payData?.yymm[1] + payData?.yymm[0],
     }
+
     if (payData?.products?.length > 1 || !payData?.item_name) {
         payData.item_name = `${payData?.products[0]?.order_name} 외 ${payData?.products?.length - 1}`;
     }
     try {
-        let insert_pay_ready = await apiManager('pays/hand', 'create', payData);
-        if (insert_pay_ready?.id > 0) {
-            return {
-                ...payData,
-                trans_id: insert_pay_ready?.id
-            };
-        } else {
-            return false;
-        }
+
+        let insert_pay_ready = await apiManager('pays/card_hecto', 'create', payData)
+        console.log(insert_pay_ready)
+
+        delete payData.products;
+        delete payData.payment_modules;
+
+        let query = Object.entries(payData).map(e => e.join('=')).join('&');
+
+        //window.open(`https://tbnpg.settlebank.co.kr/card/main.do/${query}`)
+
+        //console.log(products_);
+        //console.log(payData_)
+        //console.log(payData)
+        //console.log(query)
+
+        document.body.removeChild(script)
 
     } catch (err) {
         console.log(err);

@@ -398,9 +398,9 @@ const SignUpDemo = (props) => {
               themeDnsData?.id == 77 &&
               <>
                 <FormControl variant="outlined" style={{ width: '100%', marginTop: '1rem' }}>
-                  <InputLabel>휴대폰번호</InputLabel>
+                  <InputLabel>인증번호</InputLabel>
                   <OutlinedInput
-                    label='휴대폰번호'
+                    label='인증번호'
                     placeholder="하이픈(-) 제외 입력"
                     onChange={(e) => {
                       setUser({ ...user, ['phoneCheck']: e.target.value })

@@ -23,7 +23,7 @@ import { apiManager } from 'src/utils/api'
 import { AddressItem } from 'src/views/shop/demo-1/auth/cart'
 import Iconify from '../iconify'
 import DaumPostcode from 'react-daum-postcode';
-import { makePayData, onPayProductsByAuth, onPayProductsByAuth_Fintree, onPayProductsByHand, onPayProductsByVirtualAccount } from 'src/utils/shop-util'
+import { makePayData, onPayProductsByAuth, onPayProductsByAuth_Fintree, onPayProductsByAuth_Hecto, onPayProductsByHand, onPayProductsByVirtualAccount } from 'src/utils/shop-util'
 import { formatCreditCardNumber, formatExpirationDate } from 'src/utils/formatCard'
 import { useModal } from './ModalProvider'
 import toast from 'react-hot-toast'
@@ -238,6 +238,15 @@ const DialogBuyNow = (props) => {
         groups: select_product_groups,
         seller_id: router.query?.seller_id ?? 0,
       }], { ...payData, payment_modules: item }, 'weroute');
+    }
+    else if (item?.type == 'card_hecto') {
+      setBuyType('card_hecto');
+      setPayLoading(true);
+      let result = await onPayProductsByAuth_Hecto([{
+        ...product_item,
+        groups: select_product_groups,
+        seller_id: router.query?.seller_id ?? 0,
+      }], { ...payData, payment_modules: item });
     }
   }
   const onBuyNow = async () => {

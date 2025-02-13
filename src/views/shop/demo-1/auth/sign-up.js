@@ -135,6 +135,7 @@ const SignUpDemo = (props) => {
   const [phoneCheckStep, setPhoneCheckStep] = useState(0);
 
   const [phoneToken, setPhoneToken] = useState('')
+  const [phoneChecked, setPhoneChecked] = useState(false)
 
   useEffect(() => {
     settingPage();
@@ -187,9 +188,10 @@ const SignUpDemo = (props) => {
         ) {
           toast.error("비밀번호 확인란을 똑같이 입력했는지 확인해주세요");
           return;
-        }
-        let result = await apiManager('auth/sign-up', 'create', { ...user, brand_id: themeDnsData?.id });
-        if (!result) {
+        } else if (
+          !phoneChecked
+        ) {
+          toast.error("인증번호가 확인되지 않았습니다.");
           return;
         }
       } else if (
@@ -239,7 +241,7 @@ const SignUpDemo = (props) => {
     })
     if (result) {
       alert('인증 완료되었습니다')
-      setUser({ ...user, ['phoneCheck']: true })
+      setPhoneChecked(true)
     } else {
       alert('새로고침하고 다시 시도해주세요.')
     }

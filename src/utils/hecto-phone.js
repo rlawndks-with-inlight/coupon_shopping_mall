@@ -126,7 +126,7 @@ const PayProductsByPhoneHecto = ({ props }) => {
 
     return (
         <div>
-            <button onClick={handlePayment}>결제하기</button>
+            <Button style={{ border: `1px solid black`, color: 'black' }} onClick={handlePayment}>{'결제창으로 이동하시려면 눌러주세요.'}</Button>
         </div>
     );
 };

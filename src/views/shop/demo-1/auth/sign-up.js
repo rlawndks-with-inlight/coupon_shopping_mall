@@ -134,6 +134,8 @@ const SignUpDemo = (props) => {
   })
   const [phoneCheckStep, setPhoneCheckStep] = useState(0);
 
+  const [phoneToken, setPhoneToken] = useState('')
+
   useEffect(() => {
     settingPage();
   }, []);
@@ -169,7 +171,28 @@ const SignUpDemo = (props) => {
       }
     }
     if (activeStep == 1) {
-      if (
+      if (themeDnsData?.id == 77) {
+        if (
+          !user.user_name ||
+          !user.user_pw ||
+          !user.user_pw_check ||
+          !user.nickname ||
+          !user.phone_num ||
+          !user.phoneCheck
+        ) {
+          toast.error(translate("필수 항목을 입력해 주세요."));
+          return;
+        } else if (
+          user.user_pw != user.user_pw_check
+        ) {
+          toast.error("비밀번호 확인란을 똑같이 입력했는지 확인해주세요");
+          return;
+        }
+        let result = await apiManager('auth/sign-up', 'create', { ...user, brand_id: themeDnsData?.id });
+        if (!result) {
+          return;
+        }
+      } else if (
         !user.user_name ||
         !user.user_pw ||
         !user.user_pw_check ||
@@ -201,15 +224,25 @@ const SignUpDemo = (props) => {
     let result = await apiManager('auth/code', 'create', {
       phone_num: user.phone_num
     })
-
+    console.log(result)
+    if (result?.phone_token) {
+      alert('성공적으로 발송되었습니다.')
+      setPhoneToken(result.phone_token)
+    }
   }
 
   const onClickCheckPhoneVerifyCode = async () => {
     setPhoneCheckStep(2);
     let result = await apiManager('auth/code/check', 'create', {
-      rand_num: user?.phoneCheck
+      rand_num: user?.phoneCheck,
+      phone_token: phoneToken
     })
-
+    if (result) {
+      alert('인증 완료되었습니다')
+      setUser({ ...user, ['phoneCheck']: true })
+    } else {
+      alert('새로고침하고 다시 시도해주세요.')
+    }
   }
 
   return (

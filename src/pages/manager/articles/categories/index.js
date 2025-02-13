@@ -53,7 +53,7 @@ const ArticleCategoryList = () => {
       id: 'created_at',
       label: '생성시간',
       action: (row) => {
-        return row['created_at'] ?? "---"
+        return row['created_at'].split("T").join(" ").replace("Z", "").split(".")[0] ?? "---"
       }
     },
 
@@ -61,7 +61,7 @@ const ArticleCategoryList = () => {
       id: 'updated_at',
       label: '최종수정시간',
       action: (row) => {
-        return row['updated_at'] ?? "---"
+        return row['updated_at'].split("T").join(" ").replace("Z", "").split(".")[0] ?? "---"
       }
     },
     {

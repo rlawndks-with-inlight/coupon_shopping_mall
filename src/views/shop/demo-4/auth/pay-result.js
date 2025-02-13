@@ -93,15 +93,15 @@ const PayResultDemo = (props) => {
                     <div>{router.query?.trx_dttm}</div>
                   </Row>
                 }
-                <div style={{marginBottom:'1rem'}} />
+                <div style={{ marginBottom: '1rem' }} />
               </Col>
             </Card>
 
           </Grid>
         </Grid>
         <Row style={{ margin: '1rem auto', columnGap: '0.5rem' }}>
-          <Button variant="outlined" onClick={() => {router.push('/shop')}}>홈으로</Button>
-          <Button variant="outlined" onClick={() => {router.push('/shop/auth/history')}}>결제내역</Button>
+          <Button variant="outlined" onClick={() => { router.push('/shop') }}>홈으로</Button>
+          <Button variant="outlined" onClick={() => { router.push('/shop/auth/history') }}>결제내역</Button>
         </Row>
       </Wrappers>
     </>

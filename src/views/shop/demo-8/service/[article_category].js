@@ -80,7 +80,7 @@ const ArticlesDemo = (props) => {
       action: (row) => {
         return <>
           <div style={{ color: themeObj.grey[500] }}>
-            {row['created_at'] ?? "---"}
+            {row['created_at'].split("T").join(" ").replace("Z", "").split(".")[0] ?? "---"}
           </div>
         </>
       }

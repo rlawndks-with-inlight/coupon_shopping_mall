@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { encryptAES256, decryptAES256 } from './encryption';
 import { sha256 } from 'js-sha256'
+import Button from '@mui/material/Button';
 
 const PayProductsByAuthHecto = ({ props }) => {
     const scriptRef = useRef(null);
@@ -126,7 +127,7 @@ const PayProductsByAuthHecto = ({ props }) => {
 
     return (
         <div>
-            <button onClick={handlePayment}>결제하기</button>
+            <Button style={{ border: `1px solid black`, color: 'black' }} onClick={handlePayment}>{'결제창으로 이동하시려면 눌러주세요.'}</Button>
         </div>
     );
 };

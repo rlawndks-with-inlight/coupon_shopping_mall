@@ -29,7 +29,7 @@ export const paymentModuleTypeList = [
     { label: '상품권결제', value: 11 },
     /*{ label: '수기결제(위루트)', value: 20 },*/
     { label: '인증결제(위루트)', value: 21 },
-    { label: '수기결제(헥토)', value: 30 },
+    { label: '인증결제(헥토)', value: 30 },
     { label: '휴대폰결제(헥토)', value: 31 },
 ]
 export const bankCodeList = [

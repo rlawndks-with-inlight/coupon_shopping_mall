@@ -39,7 +39,7 @@ const PayProductsByPhoneHecto = ({ props }) => {
 
     useEffect(() => {
         const script = document.createElement('script');
-        script.src = 'https://npg.settlebank.co.kr/resources/js/v1/SettlePG.js';
+        script.src = 'https://tbnpg.settlebank.co.kr/resources/js/v1/SettlePG_v1.2.js';
         script.async = true;
         script.onload = () => setScriptLoaded(true);
         document.body.appendChild(script);

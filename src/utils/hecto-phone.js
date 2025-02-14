@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { encryptAES256, decryptAES256 } from './encryption';
 import { sha256 } from 'js-sha256'
-import { Button } from '@mui/material/Button';
+import { Button } from '@mui/material';
 
 const PayProductsByPhoneHecto = ({ props }) => {
     const scriptRef = useRef(null);

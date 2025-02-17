@@ -68,7 +68,7 @@ export const SelectCategoryComponent = (props) => {
   );
 
   const filterCategories = (searchValue) => {
-    if (!searchValue || searchValue.length < 3) {
+    if (!searchValue || searchValue.length < 1) {
       setFilteredCategories([]);
       return;
     }
@@ -85,7 +85,7 @@ export const SelectCategoryComponent = (props) => {
     const value = e.target.value;
     setSearchText(value);
 
-    if (value.length >= 3) {
+    if (value.length >= 1) {
       try {
         const category_content = await apiManager('product-categories', 'list', {
           page: 1,
@@ -118,6 +118,11 @@ export const SelectCategoryComponent = (props) => {
         label='검색'
         value={searchText}
         onChange={onSearchCategories}
+        onKeyPress={(e) => {
+          if (e.key == 'Enter') {
+            onSearchCategories
+          }
+        }}
         placeholder='3글자 이상 입력해 주세요.'
       />
       <CategoryHeader style={{

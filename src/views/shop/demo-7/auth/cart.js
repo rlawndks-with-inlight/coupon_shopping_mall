@@ -20,6 +20,8 @@ import { apiManager } from 'src/utils/api';
 import DialogAddAddress from 'src/components/dialog/DialogAddAddress';
 import axios from 'axios';
 import { useLocales } from 'src/locales';
+import PayProductsByAuthHecto from 'src/utils/hecto-auth';
+import PayProductsByPhoneHecto from 'src/utils/hecto-phone';
 
 const Wrappers = styled.div`
 max-width:1240px;
@@ -219,7 +221,7 @@ const CartDemo = (props) => {
       let result = await onPayProductsByAuth(products, { ...payData, payment_modules: item, }, 'payvery');
     } else if (item?.type == 'card_fintree') {//카드결제 핀트리
       setBuyType('card_fintree');
-      setBuyStep(2);
+      setActiveStep(2);
       setPayData({
         ...payData,
         payment_modules: item,
@@ -249,7 +251,7 @@ const CartDemo = (props) => {
         popup.location.href = link;
       }
       let insert_pay_ready = await apiManager('pays/virtual', 'create', pay_data)
-      setBuyStep(2);
+      setActiveStep(2);
       setPayData(pay_data)
     }
     else if (item?.type == 'gift_certificate') {
@@ -267,7 +269,7 @@ const CartDemo = (props) => {
       const popup = window.open(link, ""); // 팝업을 미리 연다.
       popup.location.href = link;
       let insert_pay_ready = await apiManager('pays/gift_certificate', 'create', pay_data)
-      setBuyStep(2);
+      setActiveStep(2);
       setPayData(pay_data)
     }
     else if (item?.type == 'certification_weroute') {
@@ -278,6 +280,12 @@ const CartDemo = (props) => {
         groups: select_product_groups,
         seller_id: router.query?.seller_id ?? 0,
       }], { ...payData, payment_modules: item }, 'weroute');
+    } else if (item?.type == 'card_hecto') {
+      setBuyType('card_hecto');
+      setActiveStep(2)
+    } else if (item?.type == 'phone_hecto') {
+      setBuyType('phone_hecto');
+      setActiveStep(2)
     }
   }
   const onPayByHand = async () => {
@@ -595,6 +603,22 @@ const CartDemo = (props) => {
                       {/*<>
                       <Iframe src={_.find(themeDnsData?.payment_modules, { type: buyType })?.virtual_acct_url + `?amount=${payData?.amount}`} />
                     </> */}
+                    </>
+                  }
+                  {
+                    buyType == 'card_hecto' &&
+                    <>
+                      <PayProductsByAuthHecto
+                        props={[product, payData]}
+                      />
+                    </>
+                  }
+                  {
+                    buyType == 'phone_hecto' &&
+                    <>
+                      <PayProductsByPhoneHecto
+                        props={[product, payData]}
+                      />
                     </>
                   }
                 </Card>

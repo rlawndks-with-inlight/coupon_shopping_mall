@@ -1,4 +1,4 @@
-import { Button, Card, Checkbox, FormControl, FormControlLabel, Grid, IconButton, InputAdornment, InputLabel, Menu, MenuItem, OutlinedInput, Rating, Select, Stack, TextField, Typography, Dialog, DialogTitle } from "@mui/material";
+import { Button, Card, Checkbox, FormControl, FormControlLabel, Grid, IconButton, InputAdornment, InputLabel, Menu, MenuItem, OutlinedInput, Rating, Select, Stack, TextField, Typography, Dialog, DialogTitle, Autocomplete } from "@mui/material";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { Col, Row, themeObj } from "src/components/elements/styled-components";
@@ -44,7 +44,6 @@ cursor:pointer;
 }
 `
 export const SelectCategoryComponent = (props) => {
-
   const {
     curCategories,
     categories,
@@ -52,81 +51,153 @@ export const SelectCategoryComponent = (props) => {
     onClickCategory,
     noneSelectText,
     sort_idx,
+    id
   } = props;
   const theme = useTheme();
+  const { themeDnsData } = useSettingsContext();
+
+  const [searchText, setSearchText] = useState('');
+  const [filteredCategories, setFilteredCategories] = useState([]);
+  const [categoryContent, setCategoryContent] = useState({
+    total: 100,
+    content: []
+  });
+
+  const hasChildCategories = categories.some(category =>
+    category.children && category.children.length > 0
+  );
+
+  const filterCategories = (searchValue) => {
+    if (!searchValue || searchValue.length < 3) {
+      setFilteredCategories([]);
+      return;
+    }
+
+    const searchLower = searchValue.toLowerCase();
+    const filtered = categoryContent.content.filter(category =>
+      category.category_name.toLowerCase().includes(searchLower) ||
+      (category.category_en_name && category.category_en_name.toLowerCase().includes(searchLower))
+    );
+    setFilteredCategories(filtered);
+  };
+
+  const onSearchCategories = async (e) => {
+    const value = e.target.value;
+    setSearchText(value);
+
+    if (value.length >= 3) {
+      try {
+        const category_content = await apiManager('product-categories', 'list', {
+          page: 1,
+          page_size: 100000,
+          product_category_group_id: id,
+          search: value
+        });
+
+        setCategoryContent(prev => ({
+          ...prev,
+          content: _.uniqBy([...prev.content, ...category_content.content], 'id')
+        }));
+
+        filterCategories(value);
+      } catch (error) {
+        console.error('Error fetching categories:', error);
+      }
+    } else {
+      setFilteredCategories([]);
+    }
+  };
+
   return (
-    <>
-      <CategoryWrappers style={{ border: `1px solid ${theme.palette.mode == 'dark' ? themeObj.grey[700] : themeObj.grey[300]}` }}>
-        <CategoryHeader style={{
-          background: `${theme.palette.mode == 'dark' ? '#919eab29' : ''}`,
-          borderBottom: `1px solid ${theme.palette.mode == 'dark' ? themeObj.grey[700] : themeObj.grey[300]}`
-        }}>
-          {curCategories.length > 0 ?
-            <>
-              <Row>
-                {curCategories.map((item, idx) => (
-                  <>
-                    <div style={{ marginRight: '0.25rem' }}>
-                      {item.category_name}
-                    </div>
-                    {idx != curCategories.length - 1 &&
-                      <>
-                        <div style={{ marginRight: '0.25rem' }}>
-                          {'>'}
-                        </div>
-                      </>}
-                  </>
-                ))}
-              </Row>
-            </>
-            :
-            <>
-              {noneSelectText}
-            </>}
-        </CategoryHeader>
-        <div style={{ overflowX: 'auto', width: '100%', display: '-webkit-box' }} className={`category-container-${sort_idx}`}>
-          <CategoryContainer>
-            {categories.map((category, idx) => (
+    <CategoryWrappers style={{ border: `1px solid ${theme.palette.mode == 'dark' ? themeObj.grey[700] : themeObj.grey[300]}` }}>
+      <TextField
+        style={{
+          display: `${hasChildCategories ? 'none' : ''}`
+        }}
+        fullWidth
+        label='검색'
+        value={searchText}
+        onChange={onSearchCategories}
+        placeholder='3글자 이상 입력해 주세요.'
+      />
+      <CategoryHeader style={{
+        background: `${theme.palette.mode == 'dark' ? '#919eab29' : ''}`,
+        borderBottom: `1px solid ${theme.palette.mode == 'dark' ? themeObj.grey[700] : themeObj.grey[300]}`,
+        display: 'flex'
+      }}>
+        {curCategories.length > 0 ?
+          <Row>
+            {curCategories.map((item, idx) => (
               <>
-                <Category hoverColor={theme.palette?.mode == 'dark' ? themeObj.grey[700] : themeObj.grey[200]} style={{
-                  color: `${curCategories.map(item => { return item?.id }).includes(category?.id) ? '' : themeObj.grey[500]}`,
-                  fontWeight: `${curCategories.map(item => { return item?.id }).includes(category?.id) ? 'bold' : ''}`,
-                }} onClick={() => {
-                  onClickCategory(category, 0, sort_idx)
-                }}>
-                  <div>{category.category_name}</div>
-                  <div>{category?.children && category?.children.length > 0 ? '>' : ''}</div>
-                </Category>
+                <div style={{ marginRight: '0.25rem' }}>
+                  {item.category_name}
+                </div>
+                {idx != curCategories.length - 1 &&
+                  <div style={{ marginRight: '0.25rem' }}>{'>'}</div>
+                }
               </>
             ))}
+          </Row>
+          :
+          <>{noneSelectText}</>
+        }
+      </CategoryHeader>
+      <div style={{ overflowX: 'auto', width: '100%', display: '-webkit-box' }} className={`category-container-${sort_idx}`}>
+        <CategoryContainer>
+          {filteredCategories.length > 0 ?
+            filteredCategories.map((category) => (
+              <Category
+                key={category.id}
+                hoverColor={theme.palette?.mode == 'dark' ? themeObj.grey[700] : themeObj.grey[200]}
+                style={{
+                  color: `${curCategories.map(item => item?.id).includes(category?.id) ? '' : themeObj.grey[500]}`,
+                  fontWeight: `${curCategories.map(item => item?.id).includes(category?.id) ? 'bold' : ''}`
+                }}
+                onClick={() => onClickCategory(category, 0, sort_idx)}
+              >
+                <div>{category.category_name}</div>
+                <div>{category?.children && category?.children.length > 0 ? '>' : ''}</div>
+              </Category>
+            ))
+            :
+            categories.map((category) => (
+              <Category
+                key={category.id}
+                hoverColor={theme.palette?.mode == 'dark' ? themeObj.grey[700] : themeObj.grey[200]}
+                style={{
+                  color: `${curCategories.map(item => item?.id).includes(category?.id) ? '' : themeObj.grey[500]}`,
+                  fontWeight: `${curCategories.map(item => item?.id).includes(category?.id) ? 'bold' : ''}`
+                }}
+                onClick={() => onClickCategory(category, 0, sort_idx)}
+              >
+                <div>{category.category_name}</div>
+                <div>{category?.children && category?.children.length > 0 ? '>' : ''}</div>
+              </Category>
+            ))
+          }
+        </CategoryContainer>
+        {filteredCategories.length === 0 && categoryChildrenList.map((category_list, index) => (
+          category_list.length > 0 &&
+          <CategoryContainer key={index}>
+            {category_list.map((category) => (
+              <Category
+                key={category.id}
+                style={{
+                  color: `${curCategories.map(item => item?.id).includes(category?.id) ? '' : themeObj.grey[500]}`,
+                  fontWeight: `${curCategories.map(item => item?.id).includes(category?.id) ? 'bold' : ''}`
+                }}
+                onClick={() => onClickCategory(category, index + 1, sort_idx)}
+              >
+                <div>{category.category_name}</div>
+                <div>{category?.children && category?.children.length > 0 ? '>' : ''}</div>
+              </Category>
+            ))}
           </CategoryContainer>
-          {categoryChildrenList.map((category_list, index) => (
-            <>
-              {category_list.length > 0 &&
-                <>
-                  <CategoryContainer>
-                    {category_list.map((category, idx) => (
-                      <>
-                        <Category style={{
-                          color: `${curCategories.map(item => { return item?.id }).includes(category?.id) ? '' : themeObj.grey[500]}`,
-                          fontWeight: `${curCategories.map(item => { return item?.id }).includes(category?.id) ? 'bold' : ''}`,
-                        }}
-                          onClick={() => {
-                            onClickCategory(category, index + 1, sort_idx)
-                          }}><div>{category.category_name}</div>
-                          <div>{category?.children && category?.children.length > 0 ? '>' : ''}</div>
-                        </Category>
-                      </>
-                    ))}
-                  </CategoryContainer>
-                </>}
-            </>
-          ))}
-        </div>
-      </CategoryWrappers>
-    </>
-  )
-}
+        ))}
+      </div>
+    </CategoryWrappers>
+  );
+};
 
 
 export const SelectPropertyComponent = (props) => {
@@ -748,6 +819,7 @@ const ProductEdit = () => {
                               onClickCategory={onClickCategory}
                               noneSelectText={`${group?.category_group_name}를 선택해 주세요`}
                               sort_idx={index}
+                              id={group?.id}
                             />
                           </Stack>
                         </>

@@ -126,7 +126,7 @@ const TrxCancelList = () => {
       id: 'created_at',
       label: '구매시간',
       action: (row) => {
-        return `${row['trx_dt']} ${row['trx_tm']}`
+        return row['created_at'].split("T").join(" ").replace("Z", "").split(".")[0] ?? "---"//`${row['trx_dt']} ${row['trx_tm']}`
       },
       sx: (row) => {
         return {
@@ -138,7 +138,7 @@ const TrxCancelList = () => {
       id: 'updated_at',
       label: '업데이트시간',
       action: (row) => {
-        return row['updated_at'] ?? "---"
+        return row['updated_at'].split("T").join(" ").replace("Z", "").split(".")[0] ?? "---"
       },
       sx: (row) => {
         return {

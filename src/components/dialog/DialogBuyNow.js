@@ -245,26 +245,10 @@ const DialogBuyNow = (props) => {
     }
     else if (item?.type == 'card_hecto') {
       setBuyType('card_hecto');
-      //setPayLoading(true);
       setBuyStep(2)
-      /*console.log(product_item)
-      console.log(payData)
-      let result = await PayProductsByAuthHecto({
-        ...product_item,
-        groups: select_product_groups,
-        seller_id: router.query?.seller_id ?? 0,
-      }, { ...payData, payment_modules: item });*/
     } else if (item?.type == 'phone_hecto') {
       setBuyType('phone_hecto');
-      //setPayLoading(true);
       setBuyStep(2)
-      /*console.log(product_item)
-      console.log(payData)
-      let result = await PayProductsByAuthHecto({
-        ...product_item,
-        groups: select_product_groups,
-        seller_id: router.query?.seller_id ?? 0,
-      }, { ...payData, payment_modules: item });*/
     }
   }
   const onBuyNow = async () => {

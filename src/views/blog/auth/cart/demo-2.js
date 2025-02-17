@@ -612,7 +612,7 @@ const Cart2 = (props) => {
                                         buyType == 'card_hecto' &&
                                         <>
                                             <PayProductsByAuthHecto
-                                                props={[product, payData]}
+                                                props={[products, payData]}
                                             />
                                         </>
                                     }
@@ -620,7 +620,7 @@ const Cart2 = (props) => {
                                         buyType == 'phone_hecto' &&
                                         <>
                                             <PayProductsByPhoneHecto
-                                                props={[product, payData]}
+                                                props={[products, payData]}
                                             />
                                         </>
                                     }

@@ -68,7 +68,7 @@ export const SelectCategoryComponent = (props) => {
   );
 
   const filterCategories = (searchValue) => {
-    if (!searchValue || searchValue.length < 1) {
+    if (!searchValue) {
       setFilteredCategories([]);
       return;
     }
@@ -85,7 +85,7 @@ export const SelectCategoryComponent = (props) => {
     const value = e.target.value;
     setSearchText(value);
 
-    if (value.length >= 1) {
+    if (value) {
       try {
         const category_content = await apiManager('product-categories', 'list', {
           page: 1,

@@ -611,17 +611,21 @@ const CartDemo = (props) => {
                   {
                     buyType == 'card_hecto' &&
                     <>
-                      <PayProductsByAuthHecto
-                        props={[products, payData]}
-                      />
+                      <div style={{ margin: '2rem' }}>
+                        <PayProductsByAuthHecto
+                          props={[products, payData]}
+                        />
+                      </div>
                     </>
                   }
                   {
                     buyType == 'phone_hecto' &&
                     <>
-                      <PayProductsByPhoneHecto
-                        props={[products, payData]}
-                      />
+                      <div style={{ margin: '2rem' }}>
+                        <PayProductsByPhoneHecto
+                          props={[products, payData]}
+                        />
+                      </div>
                     </>
                   }
                 </Card>

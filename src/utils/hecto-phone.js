@@ -16,7 +16,7 @@ const PayProductsByPhoneHecto = ({ props }) => {
         buyer_phone
     } = payData;
 
-    console.log(products);
+    //console.log(products);
 
     let ord_num = `${user_id}${new Date().getTime().toString().substring(0, 11)}`;
     let mid = 'nxhp_pl_il';
@@ -112,7 +112,7 @@ const PayProductsByPhoneHecto = ({ props }) => {
             ui: { type: 'self' },
         };
 
-        console.log(params);
+        //console.log(params);
 
 
         SETTLE_PG.pay(params, (rsp) => {

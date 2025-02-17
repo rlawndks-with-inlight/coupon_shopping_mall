@@ -64,7 +64,6 @@ const PayProductsByAuthHecto = ({ props }) => {
             ? `${products[0].product_name} 외 ${products.length - 1}건`
             : products.product_name;
 
-
         const encParams = {
             trdAmt: encryptAES256(String(totalPrice), apiKey),
             mchtCustNm: encryptAES256(buyer_name, apiKey),
@@ -82,7 +81,7 @@ const PayProductsByAuthHecto = ({ props }) => {
         const params = {
             ...encParams,
             mchtId: mid,
-            method: 'mobile',
+            method: 'card',
             trdDt: ymd,
             trdTm: his,
             mchtTrdNo: ord_num,
@@ -102,13 +101,13 @@ const PayProductsByAuthHecto = ({ props }) => {
             autoPayType: '',
             linkMethod: '',
             appScheme: '',
-            instmtMon: null,/*noti.installment*/
-            custIp: null,/*window.location.hostname*/
+            instmtMon: /*noti.installment*/null,
+            custIp: /*window.location.hostname*/null,
             corpPayCode: '',
             corpPayType: '',
             cashRcptUIYn: '',
             respMchtParam: null,
-            pktHash: sha256(mid + 'mobile' + ord_num + ymd + his + String(totalPrice) + shaKey),
+            pktHash: sha256(mid + 'card' + ord_num + ymd + his + String(totalPrice) + shaKey),
             env: 'https://tbnpg.settlebank.co.kr',
             notiUrl: notiUrl,
             nextUrl: returnUrl,
@@ -127,7 +126,9 @@ const PayProductsByAuthHecto = ({ props }) => {
 
     return (
         <div>
-            <Button style={{ border: `1px solid black`, color: 'black' }} onClick={handlePayment}>{'결제창으로 이동하시려면 눌러주세요.'}</Button>
+            <Button style={{ border: `1px solid black`, color: 'black' }} onClick={handlePayment}>
+                {'결제창으로 이동하시려면 눌러주세요.'}
+            </Button>
         </div>
     );
 };

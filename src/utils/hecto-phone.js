@@ -2,21 +2,13 @@ import { useEffect, useRef, useState } from 'react';
 import { encryptAES256, decryptAES256 } from './encryption';
 import { sha256 } from 'js-sha256'
 import { Button } from '@mui/material';
+import { useSettingsContext } from 'src/components/settings';
 
 const PayProductsByPhoneHecto = ({ props }) => {
     const scriptRef = useRef(null);
+    const { themeDnsData } = useSettingsContext()
     const [scriptLoaded, setScriptLoaded] = useState(false);
-    const [product, payData] = props;
-    const {
-        brand_id,
-        brand_name,
-        buying_count,
-        id,
-        order_count,
-        product_code,
-        product_name,
-        product_sale_price,
-    } = product;
+    const [products, payData] = props;
 
     const {
         user_id,
@@ -24,18 +16,12 @@ const PayProductsByPhoneHecto = ({ props }) => {
         buyer_phone
     } = payData;
 
-    //console.log(props)
+    console.log(products);
 
-    //let products = products_;
-    //let payData = payData_;
-    let ord_num = `${user_id}${new Date().getTime().toString().substring(0, 11)}`
-    let mid = 'nxhp_pl_il'
-    //let id = 'hamonyshop', 
-    // tid = 'tester', 
-    let apiKey = 'pgSettle30y739r82jtd709yOfZ2yK5K'
-    let shaKey = 'ST1009281328226982205'
-    //let user = 0;
-    //let ver = 0;
+    let ord_num = `${user_id}${new Date().getTime().toString().substring(0, 11)}`;
+    let mid = 'nxhp_pl_il';
+    let apiKey = 'pgSettle30y739r82jtd709yOfZ2yK5K';
+    let shaKey = 'ST1009281328226982205';
 
     useEffect(() => {
         const script = document.createElement('script');
@@ -51,9 +37,7 @@ const PayProductsByPhoneHecto = ({ props }) => {
         };
     }, []);
 
-
     const handlePayment = () => {
-
         if (!scriptLoaded) {
             console.error('결제 스크립트가 로드되지 않았습니다.');
             return;
@@ -62,11 +46,20 @@ const PayProductsByPhoneHecto = ({ props }) => {
         const ymd = new Date().toISOString().split('T')[0].replace(/-/g, '');
         const his = new Date().toISOString().split('T')[1].slice(0, 8).replace(/:/g, '');
 
-        const returnUrl = `${window.location.protocol}//${window.location.host}/shop/auth/pay-result`
-        const notiUrl = `${window.location.protocol}//${window.location.host}/shop` //임시
+        const returnUrl = `${window.location.protocol}//${window.location.host}/shop/auth/pay-result`;
+        const notiUrl = `${window.location.protocol}//${window.location.host}/shop`; // 임시
+
+
+        const totalPrice = products.length > 1
+            ? products.reduce((acc, product) => acc + Number(product.product_sale_price * product.order_count), 0)
+            : Number(products.product_sale_price * products.order_count)
+        const productNames = products.length > 1
+            ? `${products[0].product_name} 외 ${products.length - 1}건`
+            : products.product_name;
+
 
         const encParams = {
-            trdAmt: encryptAES256(String(product_sale_price), apiKey),
+            trdAmt: encryptAES256(String(totalPrice), apiKey),
             mchtCustNm: encryptAES256(buyer_name, apiKey),
             cphoneNo: encryptAES256(buyer_phone, apiKey),
             email: null,
@@ -86,9 +79,9 @@ const PayProductsByPhoneHecto = ({ props }) => {
             trdDt: ymd,
             trdTm: his,
             mchtTrdNo: ord_num,
-            mchtName: id,
-            mchtEName: id,
-            pmtPrdtNm: product_name,
+            mchtName: themeDnsData?.name,
+            mchtEName: themeDnsData?.name,
+            pmtPrdtNm: productNames,
             custAcntSumry: null,
             expireDt: null,
             mchtParam: {},
@@ -102,13 +95,13 @@ const PayProductsByPhoneHecto = ({ props }) => {
             autoPayType: '',
             linkMethod: '',
             appScheme: '',
-            instmtMon: /*noti.installment*/null,
-            custIp: /*window.location.hostname*/null,
+            instmtMon: null,/*noti.installment*/
+            custIp: null,/*window.location.hostname*/
             corpPayCode: '',
             corpPayType: '',
             cashRcptUIYn: '',
             respMchtParam: null,
-            pktHash: sha256(mid + 'mobile' + ord_num + ymd + his + String(product_sale_price) + shaKey),
+            pktHash: sha256(mid + 'mobile' + ord_num + ymd + his + String(totalPrice) + shaKey),
             env: 'https://tbnpg.settlebank.co.kr',
             notiUrl: notiUrl,
             nextUrl: returnUrl,
@@ -119,6 +112,9 @@ const PayProductsByPhoneHecto = ({ props }) => {
             ui: { type: 'self' },
         };
 
+        console.log(params);
+
+
         SETTLE_PG.pay(params, (rsp) => {
             console.log('Payment Response:', rsp);
         });
@@ -127,9 +123,11 @@ const PayProductsByPhoneHecto = ({ props }) => {
 
     return (
         <div>
-            <Button style={{ border: `1px solid black`, color: 'black' }} onClick={handlePayment}>{'결제창으로 이동하시려면 눌러주세요.'}</Button>
+            <Button style={{ border: `1px solid black`, color: 'black' }} onClick={handlePayment}>
+                {'결제창으로 이동하시려면 눌러주세요.'}
+            </Button>
         </div>
     );
 };
 
-export default PayProductsByPhoneHecto
+export default PayProductsByPhoneHecto;

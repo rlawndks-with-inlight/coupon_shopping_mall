@@ -2,21 +2,13 @@ import { useEffect, useRef, useState } from 'react';
 import { encryptAES256, decryptAES256 } from './encryption';
 import { sha256 } from 'js-sha256'
 import Button from '@mui/material/Button';
+import { useSettingsContext } from 'src/components/settings';
 
 const PayProductsByAuthHecto = ({ props }) => {
     const scriptRef = useRef(null);
+    const { themeDnsData } = useSettingsContext()
     const [scriptLoaded, setScriptLoaded] = useState(false);
-    const [product, payData] = props;
-    const {
-        brand_id,
-        brand_name,
-        buying_count,
-        id,
-        order_count,
-        product_code,
-        product_name,
-        product_sale_price,
-    } = product;
+    const [products, payData] = props;
 
     const {
         user_id,
@@ -65,8 +57,16 @@ const PayProductsByAuthHecto = ({ props }) => {
         const returnUrl = `${window.location.protocol}//${window.location.host}/shop/auth/pay-result`
         const notiUrl = `${window.location.protocol}//${window.location.host}/shop` //임시
 
+        const totalPrice = products.length > 1
+            ? products.reduce((acc, product) => acc + Number(product.product_sale_price * product.order_count), 0)
+            : Number(products.product_sale_price * products.order_count)
+        const productNames = products.length > 1
+            ? `${products[0].product_name} 외 ${products.length - 1}건`
+            : products.product_name;
+
+
         const encParams = {
-            trdAmt: encryptAES256(String(product_sale_price), apiKey),
+            trdAmt: encryptAES256(String(totalPrice), apiKey),
             mchtCustNm: encryptAES256(buyer_name, apiKey),
             cphoneNo: encryptAES256(buyer_phone, apiKey),
             email: null,
@@ -82,13 +82,13 @@ const PayProductsByAuthHecto = ({ props }) => {
         const params = {
             ...encParams,
             mchtId: mid,
-            method: 'card',
+            method: 'mobile',
             trdDt: ymd,
             trdTm: his,
             mchtTrdNo: ord_num,
-            mchtName: id,
-            mchtEName: id,
-            pmtPrdtNm: product_name,
+            mchtName: themeDnsData?.name,
+            mchtEName: themeDnsData?.name,
+            pmtPrdtNm: productNames,
             custAcntSumry: null,
             expireDt: null,
             mchtParam: {},
@@ -102,13 +102,13 @@ const PayProductsByAuthHecto = ({ props }) => {
             autoPayType: '',
             linkMethod: '',
             appScheme: '',
-            instmtMon: /*noti.installment*/null,
-            custIp: /*window.location.hostname*/null,
+            instmtMon: null,/*noti.installment*/
+            custIp: null,/*window.location.hostname*/
             corpPayCode: '',
             corpPayType: '',
             cashRcptUIYn: '',
             respMchtParam: null,
-            pktHash: sha256(mid + 'card' + ord_num + ymd + his + String(product_sale_price) + shaKey),
+            pktHash: sha256(mid + 'mobile' + ord_num + ymd + his + String(totalPrice) + shaKey),
             env: 'https://tbnpg.settlebank.co.kr',
             notiUrl: notiUrl,
             nextUrl: returnUrl,

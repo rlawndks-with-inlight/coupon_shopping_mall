@@ -68,7 +68,7 @@ export const SelectCategoryComponent = (props) => {
   );
 
   const filterCategories = (searchValue) => {
-    if (!searchValue) {
+    if (!searchValue /*|| searchValue.length < 3*/) { //기능 개선 여지 있음
       setFilteredCategories([]);
       return;
     }
@@ -85,7 +85,7 @@ export const SelectCategoryComponent = (props) => {
     const value = e.target.value;
     setSearchText(value);
 
-    if (value) {
+    if (value/*.length >= 1*/) { //기능 개선 여지 있음
       try {
         const category_content = await apiManager('product-categories', 'list', {
           page: 1,

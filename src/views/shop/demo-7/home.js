@@ -286,7 +286,10 @@ const HomeDemo = (props) => {
                             themeDnsData.id == 63 ?
                               translate("'아워샵'에서는 B2B쇼핑을 보다 빠르고 간편하며")
                               :
-                              ''
+                              themeDnsData.id == 84 ?
+                                translate("'두온카'에서는 B2B쇼핑을 보다 빠르고 간편하며")
+                                :
+                                ''
                     }<br />
                     {translate("모두의 불안한 배송에 대한 안전한 물류를 자랑으로 합니다.")}
                   </ContentSubTitle>

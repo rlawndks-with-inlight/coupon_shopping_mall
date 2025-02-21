@@ -318,7 +318,7 @@ const TrxList = () => {
         }
       },
     },
-    ...(themeDnsData?.id == 34 || themeDnsData?.id == 64 ? [
+    ...(themeDnsData?.id == 34 || themeDnsData?.id == 64 || themeDnsData?.id == 84 ? [
       {
         id: 'edit',
         label: `수정 / 삭제`,

@@ -461,7 +461,9 @@ const Header = () => {
                                                         :
                                                         themeDnsData?.id == 63 ? logoSrc()
                                                             :
-                                                            ''
+                                                            themeDnsData?.id == 84 ? logoSrc()
+                                                                :
+                                                                ''
                                         } style={{ height: '40px', width: 'auto', cursor: 'pointer', marginRight: '2rem' }}
                                         onClick={() => {
                                             router.push('/shop')

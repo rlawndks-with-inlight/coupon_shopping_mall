@@ -181,7 +181,10 @@ const HomeDemo = (props) => {
                           themeDnsData.id == 63 ?
                             'OURSHOP'
                             :
-                            ''
+                            themeDnsData.id == 84 ?
+                              'DOONCAR'
+                              :
+                              ''
                   }<br />
                   <TextField
                     id='size-small'

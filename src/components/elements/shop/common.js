@@ -317,10 +317,10 @@ export const HistoryTable = props => {
                     <TableCell>{row?.buyer_name}</TableCell>
                     <TableCell>{fCurrency(row.amount) < 0 ? '결제취소' : translate(getTrxStatusByNumber(row?.trx_status))}</TableCell>
                     <TableCell>
-                      <Box sx={{ textAlign: 'right', color: 'text.secondary' }}>{row?.trx_dt.split("T").join(" ").replace("Z", "").split(".")[0] ?? "---" ?? "---"} {row?.trx_tm ?? ""}</Box>
+                      <Box sx={{ textAlign: 'right', color: 'text.secondary' }}>{row?.trx_dt?.split("T").join(" ").replace("Z", "").split(".")[0] ?? "---" ?? "---"} {row?.trx_tm ?? ""}</Box>
                     </TableCell>
                     <TableCell>
-                      <Box sx={{ textAlign: 'right', color: 'text.secondary' }}>{row?.updated_at.split("T").join(" ").replace("Z", "").split(".")[0] ?? "---"}</Box>
+                      <Box sx={{ textAlign: 'right', color: 'text.secondary' }}>{row?.updated_at?.split("T").join(" ").replace("Z", "").split(".")[0] ?? "---"}</Box>
                     </TableCell>
                     <TableCell>
                       <Box sx={{ textAlign: 'right', color: 'text.secondary' }}>

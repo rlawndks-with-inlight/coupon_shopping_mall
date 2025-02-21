@@ -82,13 +82,13 @@ export const navConfig = () => {
     setIsSettingComplete(true);
   }
   const isUseProductCategoryGroup = () => {
-    if (window.location.host.split(':')[0] == process.env.MAIN_FRONT_URL || user?.level >= 50) {
+    if (window.location.host.split(':')[0] == process.env.MAIN_FRONT_URL || user?.level >= 40) {
       return true;
     }
     return false
   }
   const isUseProductPropertyGroup = () => {
-    if (window.location.host.split(':')[0] == process.env.MAIN_FRONT_URL || user?.level >= 50) {
+    if (window.location.host.split(':')[0] == process.env.MAIN_FRONT_URL || user?.level >= 40) {
       return true;
     }
     return false

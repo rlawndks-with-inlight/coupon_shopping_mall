@@ -67,14 +67,14 @@ const ConsignmentList = () => {
             id: 'created_at',
             label: '요청일',
             action: (row) => {
-                return row['created_at'] ?? "---"
+                return row['created_at'].split("T").join(" ").replace("Z", "").split(".")[0] ?? "---" ?? "---"
             }
         },
         {
             id: 'updated_at',
             label: '처리일',
             action: (row) => {
-                return (row['created_at'] == row['updated_at'] ? '---' : row['updated_at']) ?? "---"
+                return (row['created_at'] == row['updated_at'] ? '---' : row['updated_at'].split("T").join(" ").replace("Z", "").split(".")[0] ?? "---") ?? "---"
             }
         },
         {

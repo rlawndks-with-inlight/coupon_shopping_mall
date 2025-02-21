@@ -115,7 +115,7 @@ const MyPageDemo = (props) => {
       id: 'created_at',
       label: '',
       action: (row) => {
-        return row?.created_at
+        return row?.created_at.split("T").join(" ").replace("Z", "").split(".")[0] ?? "---"
       },
     },
   ]
@@ -203,7 +203,7 @@ const MyPageDemo = (props) => {
       id: 'updated_at',
       label: '',
       action: (row) => {
-        return row?.updated_at
+        return row?.updated_at.split("T").join(" ").replace("Z", "").split(".")[0] ?? "---"
       },
       sx: (row) => {
         if (row?.is_cancel == 1) {
@@ -224,46 +224,46 @@ const MyPageDemo = (props) => {
         <RowMobileReverceColumn>
           <AuthMenuSideComponent />
           <ContentWrappers>
-            <TitleComponent style={{marginBottom:'0'}}>{'마이페이지'}</TitleComponent>
-            <ContentBorderContainer style={{ display: 'flex', border:'0' }}>
+            <TitleComponent style={{ marginBottom: '0' }}>{'마이페이지'}</TitleComponent>
+            <ContentBorderContainer style={{ display: 'flex', border: '0' }}>
               <MypageTitle>
-                <div style={{fontSize:'32px'}}>
+                <div style={{ fontSize: '32px' }}>
                   {user?.name} 고객님<br />
                   안녕하세요 :)
+                </div>
+                <Row>
+                  <div style={{ textAlign: 'right', marginRight: '2rem', fontSize: '1rem' }}>
+                    포인트<br /><br />
+                    <span style={{ fontFamily: 'Playfair Display', }}>
+                      {commarNumber(user?.point)} P
+                    </span>
                   </div>
-                  <Row>
-                <div style={{textAlign:'right', marginRight:'2rem', fontSize:'1rem'}}>
-                  포인트<br /><br />
-                <span style={{fontFamily:'Playfair Display', }}>
-                  {commarNumber(user?.point)} P
-                </span>
-                </div>
-                <div style={{textAlign:'right', marginRight:'2rem', fontSize:'1rem'}}>
-                  위탁상품관리<br /><br />
-                <span style={{fontFamily:'Playfair Display', }}>
-                  {commarNumber(userInfo?.consignment_products?.length)}개
-                </span>
-                </div>
-                <div style={{textAlign:'right', fontSize:'1rem'}}>
-                  최근주문목록<br /><br />
-                <span style={{fontFamily:'Playfair Display', }}>
-                  {commarNumber(userInfo?.orders?.length)}개
-                </span>
-                </div>
+                  <div style={{ textAlign: 'right', marginRight: '2rem', fontSize: '1rem' }}>
+                    위탁상품관리<br /><br />
+                    <span style={{ fontFamily: 'Playfair Display', }}>
+                      {commarNumber(userInfo?.consignment_products?.length)}개
+                    </span>
+                  </div>
+                  <div style={{ textAlign: 'right', fontSize: '1rem' }}>
+                    최근주문목록<br /><br />
+                    <span style={{ fontFamily: 'Playfair Display', }}>
+                      {commarNumber(userInfo?.orders?.length)}개
+                    </span>
+                  </div>
                 </Row>
               </MypageTitle>
             </ContentBorderContainer>
-            
+
             <ContentBorderContainer>
-            <SubTitleComponent
-              endComponent={<Icon
-                icon={'ph:plus-light'}
-                style={{ width: '25px', height: '25px', margin: 'auto 0', cursor: 'pointer' }}
-                onClick={() => {
+              <SubTitleComponent
+                endComponent={<Icon
+                  icon={'ph:plus-light'}
+                  style={{ width: '25px', height: '25px', margin: 'auto 0', cursor: 'pointer' }}
+                  onClick={() => {
                     router.push(`/shop/auth/consignment`)
-                }}
-            />}
-            >위탁상품관리</SubTitleComponent>
+                  }}
+                />}
+              >위탁상품관리</SubTitleComponent>
               <Table>
                 {userInfo?.consignment_products && userInfo?.consignment_products.map((product, idx) => (
                   <>
@@ -280,15 +280,15 @@ const MyPageDemo = (props) => {
             </ContentBorderContainer>
 
             <ContentBorderContainer>
-            <SubTitleComponent
-              endComponent={<Icon
-                icon={'ph:plus-light'}
-                style={{ width: '25px', height: '25px', margin: 'auto 0', cursor: 'pointer' }}
-                onClick={() => {
+              <SubTitleComponent
+                endComponent={<Icon
+                  icon={'ph:plus-light'}
+                  style={{ width: '25px', height: '25px', margin: 'auto 0', cursor: 'pointer' }}
+                  onClick={() => {
                     router.push(`/shop/auth/history`)
-                }}
-            />}
-            >최근 주문목록</SubTitleComponent>
+                  }}
+                />}
+              >최근 주문목록</SubTitleComponent>
               <Table>
                 {userInfo?.orders && userInfo?.orders.map((order, idx) => (
                   <>
@@ -303,22 +303,22 @@ const MyPageDemo = (props) => {
                 ))}
               </Table>
             </ContentBorderContainer>
-            
+
             <ContentBorderContainer>
-            <SubTitleComponent
-              endComponent={<Row style={{ alignItems: 'center' }}>
-                <IconButton onClick={() => {
-                  slideRef.current.slickPrev();
-                }}>
-                  <Icon icon='carbon:previous-filled' style={{ color: themeDnsData?.theme_css?.main_color }} />
-                </IconButton>
-                <IconButton onClick={() => {
-                  slideRef.current.slickNext();
-                }}>
-                  <Icon icon='carbon:next-filled' style={{ color: themeDnsData?.theme_css?.main_color }} />
-                </IconButton>
-              </Row>}
-            >최근 본 상품</SubTitleComponent>
+              <SubTitleComponent
+                endComponent={<Row style={{ alignItems: 'center' }}>
+                  <IconButton onClick={() => {
+                    slideRef.current.slickPrev();
+                  }}>
+                    <Icon icon='carbon:previous-filled' style={{ color: themeDnsData?.theme_css?.main_color }} />
+                  </IconButton>
+                  <IconButton onClick={() => {
+                    slideRef.current.slickNext();
+                  }}>
+                    <Icon icon='carbon:next-filled' style={{ color: themeDnsData?.theme_css?.main_color }} />
+                  </IconButton>
+                </Row>}
+              >최근 본 상품</SubTitleComponent>
               <Items
                 items={(userInfo?.product_views ?? []).map(item => {
                   return {

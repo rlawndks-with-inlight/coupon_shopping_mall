@@ -437,7 +437,7 @@ export const PointTable = props => {
                                 <>
                                     <TableRow>
                                         <TableCell>{`${row['point'] > 0 ? '+' : ''}` + commarNumber(row['point'])}</TableCell>
-                                        <TableCell>{row?.created_at}</TableCell>
+                                        <TableCell>{row?.created_at.split("T").join(" ").replace("Z", "").split(".")[0] ?? "---"}</TableCell>
                                         <TableCell>{getPointType(row)}</TableCell>
                                     </TableRow>
                                 </>

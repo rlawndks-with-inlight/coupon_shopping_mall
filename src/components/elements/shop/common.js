@@ -317,10 +317,10 @@ export const HistoryTable = props => {
                     <TableCell>{row?.buyer_name}</TableCell>
                     <TableCell>{fCurrency(row.amount) < 0 ? '결제취소' : translate(getTrxStatusByNumber(row?.trx_status))}</TableCell>
                     <TableCell>
-                      <Box sx={{ textAlign: 'right', color: 'text.secondary' }}>{row?.trx_dt ?? "---"} {row?.trx_tm ?? ""}</Box>
+                      <Box sx={{ textAlign: 'right', color: 'text.secondary' }}>{row?.trx_dt.split("T").join(" ").replace("Z", "").split(".")[0] ?? "---" ?? "---"} {row?.trx_tm ?? ""}</Box>
                     </TableCell>
                     <TableCell>
-                      <Box sx={{ textAlign: 'right', color: 'text.secondary' }}>{row?.updated_at}</Box>
+                      <Box sx={{ textAlign: 'right', color: 'text.secondary' }}>{row?.updated_at.split("T").join(" ").replace("Z", "").split(".")[0] ?? "---"}</Box>
                     </TableCell>
                     <TableCell>
                       <Box sx={{ textAlign: 'right', color: 'text.secondary' }}>
@@ -385,7 +385,7 @@ export const PointTable = props => {
                 <>
                   <TableRow>
                     <TableCell>{`${row['point'] > 0 ? '+' : ''}` + commarNumber(row['point'])}</TableCell>
-                    <TableCell>{row?.created_at}</TableCell>
+                    <TableCell>{row?.created_at.split("T").join(" ").replace("Z", "").split(".")[0] ?? "---"}</TableCell>
                     <TableCell>{getPointType(row)}</TableCell>
                   </TableRow>
                 </>

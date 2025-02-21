@@ -69,7 +69,7 @@ const FaqList = () => {
       id: 'updated_at',
       label: '최종수정시간',
       action: (row) => {
-        return row['updated_at'] ?? "---"
+        return row['updated_at'].split("T").join(" ").replace("Z", "").split(".")[0] ?? "---" ?? "---"
       }
     },
     {

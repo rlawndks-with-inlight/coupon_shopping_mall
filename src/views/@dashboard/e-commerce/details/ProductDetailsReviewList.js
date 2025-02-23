@@ -127,7 +127,7 @@ function ReviewItem({ review, onChangePage, reviewData, setReviewData, deleteRev
           </Typography>
 
           <Typography variant="caption" sx={{ color: 'text.secondary' }} noWrap>
-            {created_at.split("T").join(" ").replace("Z", "").split(".")[0] ?? "---"}
+            {created_at?.split("T").join(" ").replace("Z", "").split(".")[0] ?? "---"}
           </Typography>
         </Stack>
       </Stack>

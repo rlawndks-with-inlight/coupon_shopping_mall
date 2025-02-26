@@ -35,6 +35,7 @@ const HistoryDemo = (props) => {
   const [searchObj, setSearchObj] = useState({
     page: 1,
     page_size: 10,
+    type: 'user'
   })
   useEffect(() => {
     onChangePage(searchObj);

@@ -97,7 +97,7 @@ const OrderEdit = () => {
                                         }} />
                                     <TextField
                                         label='구매날짜(예: 2024-01-01)'
-                                        value={item.trx_dt}
+                                        value={item.trx_dt?.split("T")[0] ?? "---"}
                                         onChange={(e) => {
                                             setItem(
                                                 {

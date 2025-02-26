@@ -256,9 +256,9 @@ export const HistoryTable = props => {
         { id: 'ord_num', label: translate('주문번호') },
         { id: 'amount', label: translate('총액') },
         { id: 'buyer_name', label: translate('구매자명') },
-        { id: 'trx_status', label: translate('배송상태') },
+        { id: 'trx_status', label: translate('주문상태') },
         { id: 'trx_date', label: translate('주문일'), align: 'right' },
-        { id: 'date', label: translate('업데이트일'), align: 'right' },
+        //{ id: 'date', label: translate('업데이트일'), align: 'right' },
         { id: 'cancel', label: translate('주문취소요청'), align: 'right' },
         { id: '' },
     ];
@@ -310,7 +310,7 @@ export const HistoryTable = props => {
                                                 <Col>
                                                     {row?.orders && row?.orders.map((order, index) => (
                                                         <>
-                                                            <Col style={{ margin: '0.5rem auto' }}>
+                                                            <Col style={{ marginTop: '0.5rem', marginBottom: '0.5rem' }}>
                                                                 <Row>
                                                                     <div style={{ minWidth: '62px', fontWeight: 'bold' }} >{index + 1}.</div>
                                                                     <div style={{ wordBreak: 'keep-all', cursor: 'pointer' }}
@@ -369,11 +369,19 @@ export const HistoryTable = props => {
                                         <TableCell>{row?.buyer_name}</TableCell>
                                         <TableCell>{fCurrency(row.amount) < 0 ? '결제취소' : translate(getTrxStatusByNumber(row?.trx_status))}</TableCell>
                                         <TableCell>
-                                            <Box sx={{ textAlign: 'right', color: 'text.secondary' }}>{row?.trx_dt?.split("T").join(" ").replace("Z", "").split(".")[0] ?? "---"} {row?.trx_tm?.split("T").join(" ").replace("Z", "").split(".")[0] ?? ""}</Box>
+                                            <Box sx={{ textAlign: 'right', color: 'text.secondary' }}>{row?.trx_dt?.split("T")[0] ?? "---"} {row?.trx_tm?.split("T").join(" ").replace("Z", "").split(".")[0] ?? ""}</Box>
                                         </TableCell>
-                                        <TableCell>
-                                            <Box sx={{ textAlign: 'right', color: 'text.secondary' }}>{row?.updated_at?.split("T").join(" ").replace("Z", "").split(".")[0] ?? "---"}</Box>
-                                        </TableCell>
+                                        {
+                                            themeDnsData?.id == 64 || themeDnsData?.id == 84 ?
+                                                <>
+                                                </>
+                                                :
+                                                <>
+                                                    <TableCell>
+                                                        <Box sx={{ textAlign: 'right', color: 'text.secondary' }}>{row?.updated_at?.split("T").join(" ").replace("Z", "").split(".")[0] ?? "---"}</Box>
+                                                    </TableCell>
+                                                </>
+                                        }
                                         <TableCell>
                                             <Box sx={{ textAlign: 'right', color: 'text.secondary' }}>
                                                 {row?.is_cancel == 1 || row?.trx_status == 1 ? (

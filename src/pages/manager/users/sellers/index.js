@@ -39,8 +39,8 @@ const SellerList = () => {
           <div
             style={{ cursor: 'pointer', color: 'blue' }}
             onClick={() => {
-              console.log(row)
-              //window.open('https://' + row['dns'] ?? '---')
+              //console.log(row)
+              window.open('https://' + row['dns'] ?? '---')
             }}
           >
             {`${row['dns'] ?? '---'}`}

@@ -210,6 +210,7 @@ export const navConfig = () => {
             ] : []),
             ...(themeDnsData?.is_use_seller > 0 && user.level >= 40 ? [{ title: '영업자관리', path: PATH_MANAGER.users.agents }] : []),
             ...(themeDnsData?.is_use_seller > 0 && user.level >= 20 ? [{ title: '셀러관리', path: PATH_MANAGER.users.sellers }] : []),
+            ...(themeDnsData?.is_use_seller > 0 && user.level >= 10 ? [{ title: '회원가입번호관리', path: PATH_MANAGER.users.phoneRegistration }] : []),
             // { title: '매출관리', path: PATH_MANAGER.users.sales },
           ],
         },

@@ -124,7 +124,7 @@ const ProductList = () => {
           return (
             <>
               <div>
-                {commarNumber(row['product_sale_price'])} (본사)
+                {commarNumber(row['product_sale_price'] * (1 + user?.seller_trx_fee))} (본사)
               </div>
               {
                 user?.level == 10 && row?.seller_id > 0 &&

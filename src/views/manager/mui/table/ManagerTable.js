@@ -1,5 +1,5 @@
 // @mui
-import { Table, TableRow, TableBody, TableCell, TableContainer, Pagination, Divider, Box, TextField, Button, FormControl, InputLabel, OutlinedInput, InputAdornment, IconButton, CircularProgress, Tooltip, Select, MenuItem, Menu, FormControlLabel, Switch } from '@mui/material';
+import { Table, TableRow, TableBody, TableCell, TableContainer, Pagination, Divider, Box, TextField, Button, FormControl, InputLabel, OutlinedInput, InputAdornment, IconButton, CircularProgress, Tooltip, Select, MenuItem, Menu, FormControlLabel, Switch, Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions } from '@mui/material';
 import { TableHeadCustom, TableNoData } from 'src/components/table';
 import {
   DatePicker,
@@ -23,9 +23,11 @@ import { HTML5Backend } from 'react-dnd-html5-backend';
 import { DndProvider } from 'react-dnd';
 import update from 'immutability-helper'
 import _ from 'lodash';
-import { apiUtil } from 'src/utils/api';
+import { apiManager, apiUtil } from 'src/utils/api';
 import { useSettingsContext } from 'src/components/settings';
 import useTable from 'src/components/table';
+import { useAuthContext } from 'src/layouts/manager/auth/useAuthContext';
+import toast from 'react-hot-toast';
 
 const TableHeaderContainer = styled.div`
 padding: 0.75rem;
@@ -39,8 +41,10 @@ justify-content:space-between;
 `
 
 export default function ManagerTable(props) {
-  const { columns, data, add_button_text, add_link, onChangePage, searchObj, want_move_card, table, detail_search, onToggle, minimal = false } = props;
+  const { columns, data, add_button_text, add_link, onChangePage, searchObj, want_move_card, table, detail_search, onToggle, minimal = false, type } = props;
   const { page, page_size } = props?.searchObj;
+  const { themeDnsData } = useSettingsContext();
+  const { user } = useAuthContext();
 
   useEffect(() => {
     //console.log(page)
@@ -56,6 +60,8 @@ export default function ManagerTable(props) {
   const [anchor, setAnchor] = useState(null)
   const [checked, setChecked] = useState('id')
   const [order, setOrder] = useState('desc')
+  const [dialogOpen, setDialogOpen] = useState(false)
+  const [phoneNumber, setPhoneNumber] = useState()
 
   const handleClose = () => {
     setAnchor(null)
@@ -152,6 +158,16 @@ export default function ManagerTable(props) {
     const isDesc = checked === prop && order === 'desc';
     setOrder(isDesc ? 'asc' : 'desc')
     setChecked(prop)
+  }
+
+  const onRegistration = async () => {
+    let result = await apiManager('phone-registration', 'create', { brand_id: themeDnsData?.id, phone_number: phoneNumber, registrar: user?.id });
+    if (!result) {
+      //toast.error('등록 중 오류가 발생했습니다.')
+    } else {
+      toast.success('등록되었습니다')
+      router.reload()
+    }
   }
 
   const onChangeQuery = (query = {}, search_obj = {}) => {
@@ -298,7 +314,10 @@ export default function ManagerTable(props) {
                     if (router.asPath.includes('list')) {
                       path = path.replace('list', '');
                     }
-                    router.push(add_link || `${path.slice(0, path.indexOf('?'))}/add`)
+                    type != 'dialog' ?
+                      router.push(add_link || `${path.slice(0, path.indexOf('?'))}/add`)
+                      :
+                      setDialogOpen(true)
                   }}>
                     + {add_button_text}
                   </Button>
@@ -307,6 +326,41 @@ export default function ManagerTable(props) {
                 <>
                 </>}
             </Row>
+            <Dialog
+              open={dialogOpen}
+            >
+              <DialogTitle>{`전화번호 등록`}</DialogTitle>
+
+              <DialogContent>
+                <DialogContentText>
+                  회원가입을 허용할 전화번호를 입력 후 확인을 눌러주세요.
+                </DialogContentText>
+                <TextField
+                  autoFocus
+                  fullWidth
+                  value={phoneNumber}
+                  type='number'
+                  margin="dense"
+                  label="전화번호(하이픈(-) 제외 입력)"
+                  onChange={(e) => {
+                    setPhoneNumber(e.target.value)
+                  }}
+                />
+              </DialogContent>
+              <DialogActions>
+                <Button variant="contained" onClick={() => {
+                  onRegistration()
+                }}>
+                  등록
+                </Button>
+                <Button color="inherit" onClick={() => {
+                  setDialogOpen(false);
+                  setPhoneNumber();
+                }}>
+                  취소
+                </Button>
+              </DialogActions>
+            </Dialog>
           </div>
           <Row>
             검색된 총 항목 수 : {data?.total}

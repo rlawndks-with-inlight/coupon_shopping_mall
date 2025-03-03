@@ -1,5 +1,5 @@
 
-import { Autocomplete, Avatar, Button, Card, FormControl, Grid, IconButton, InputLabel, MenuItem, Select, Stack, TextField, Tooltip, Typography, alpha } from "@mui/material";
+import { Autocomplete, Avatar, Button, Card, Checkbox, FormControl, FormControlLabel, Grid, IconButton, InputLabel, MenuItem, Select, Stack, TextField, Tooltip, Typography, alpha } from "@mui/material";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { Row, themeObj } from "src/components/elements/styled-components";
@@ -14,12 +14,14 @@ import { useModal } from "src/components/dialog/ModalProvider";
 import _ from "lodash";
 import { apiManager, uploadFileByManager } from "src/utils/api";
 import { bankCodeList } from "src/utils/format";
+import { SelectCategoryComponent } from "src/pages/manager/products/[edit_category]/[id]";
+import { getAllIdsWithParents } from "src/utils/function";
 
 
 const SellerEdit = () => {
   const { setModal } = useModal()
   const { user } = useAuthContext();
-  const { themeMode } = useSettingsContext();
+  const { themeCategoryList, themeDnsData, themePropertyList } = useSettingsContext();
 
   const router = useRouter();
 
@@ -39,7 +41,6 @@ const SellerEdit = () => {
     acct_name: '',
     phone_num: '',//
     //note: '',
-    //seller_trx_fee: 0,
     /*sns_obj: {
       youtube_channel: '',
       instagram_id: ''
@@ -59,7 +60,12 @@ const SellerEdit = () => {
     user_pw: '',//
     level: 10,
     oper_id: '',
-    oper_fee: ''
+    oper_fee: '',
+    seller_trx_fee: '',
+    seller_range_u: 0,
+    seller_range_o: 0,
+    seller_brand: '',
+    seller_category: ''
   })
 
   const [agents, setAgents] = useState([])
@@ -67,6 +73,28 @@ const SellerEdit = () => {
   const [productIds, setProductIds] = useState([]);
   const [currentTab, setCurrentTab] = useState(0);
   const [searchTextList, setSearchTextList] = useState([]);
+  const [curCategories, setCurCategories] = useState({});
+  const [categoryChildrenList, setCategoryChildrenList] = useState({});
+  const [categoryEdit, setCategoryEdit] = useState(false);
+  const [brandEdit, setBrandEdit] = useState(false);
+
+
+  const handleSelectCategory = (index, category) => {
+    let ids = category.map(cat => cat.id);
+    ids = JSON.stringify(ids.join(', '))
+    if (index == 0) {
+      setItem({
+        ...item,
+        ['seller_category']: ids
+      })
+    } else if (index == 1) {
+      setItem({
+        ...item,
+        ['seller_brand']: ids
+      })
+    }
+  }
+
   const tab_list = [
     {
       value: 0,
@@ -122,20 +150,40 @@ const SellerEdit = () => {
 
     setLoading(false);
   }
-  const addProfileImg = (e) => {
-    if (e.target.files[0]) {
-      setItem(
-        {
-          ...item,
-          ['profile_file']: e.target.files[0],
-        }
-      );
-      $('#profile-img').val("");
+  const onClickCategory = (category, depth, idx) => {
+    let parent_list = getAllIdsWithParents(themeCategoryList[idx]?.product_categories);
+    let use_list = [];
+    for (var i = 0; i < parent_list.length; i++) {
+      if (parent_list[i][depth]?.id == category?.id) {
+        use_list = parent_list[i];
+        break;
+      }
     }
+    setCurCategories({
+      ...curCategories,
+      [idx]: use_list
+    });
+    let children_list = [];
+    for (var i = 0; i < use_list.length; i++) {
+      children_list.push(use_list[i]?.children);
+    }
+    setCategoryChildrenList({
+      ...categoryChildrenList,
+      [idx]: children_list
+    });
+    $(`.category-container-${idx}`).scrollLeft(100000);
   }
   const onSave = async () => {
     let result = undefined;
     let obj = item;
+    if (user?.level == 20) {
+      obj['oper_id'] = user?.id
+      //console.log(obj)
+    }
+    if (item?.seller_range_o != 0 && item?.seller_range_u >= item?.seller_range_o) {
+      toast.error('상품 판매 가능한 최소 가격이 최대 가격보다 낮아야 합니다.')
+      return;
+    }
     if (router.query?.edit_category == 'edit') {
       result = await apiManager('sellers', 'update', { ...obj, id: router.query?.id, });
     } else {
@@ -375,12 +423,16 @@ const SellerEdit = () => {
                           </Stack>
                         </>
                       }
+
                       <Stack spacing={1}>
                         <FormControl>
-                          <InputLabel>영업자선택</InputLabel>
+                          <InputLabel>
+                            {user?.level >= 40 ? '영업자선택' : `영업자 : ${user?.name}`}
+                          </InputLabel>
                           <Select
                             label='영업자선택'
                             value={item.oper_id}
+                            disabled={user?.level >= 40 ? false : true}
                             onChange={e => {
                               setItem({
                                 ...item,
@@ -389,11 +441,106 @@ const SellerEdit = () => {
                             }}
                           >
                             {agents.map((agent, idx) => {
-                              return <MenuItem value={agent.id}>{agent.name} ({parseFloat(agent.seller_trx_fee * 100)}%)</MenuItem>
+                              return <MenuItem value={agent.id}>{agent.name}</MenuItem>
                             })}
                           </Select>
                         </FormControl>
                       </Stack>
+                      <Stack spacing={3}>
+                        <TextField
+                          label='수수료율(예: 0.1로 입력할 시 10%)'
+                          value={item.seller_trx_fee}
+                          type="number"
+                          onChange={(e) => {
+                            setItem(
+                              {
+                                ...item,
+                                ['seller_trx_fee']: e.target.value
+                              }
+                            )
+                          }} />
+                      </Stack>
+
+                      <TextField
+                        label='전화번호'
+                        value={item.phone_num}
+                        placeholder="하이픈(-) 제외 입력"
+                        onChange={(e) => {
+                          setItem(
+                            {
+                              ...item,
+                              ['phone_num']: e.target.value
+                            }
+                          )
+                        }} />
+                      {
+                        /*
+                                            <TextField
+                                              label='주소'
+                                              value={item.addr}
+                                              onChange={(e) => {
+                                                setItem(
+                                                  {
+                                                    ...item,
+                                                    ['addr']: e.target.value
+                                                  }
+                                                )
+                                              }} />
+                      */
+                      }
+                      <FormControl>
+                        <InputLabel>은행선택</InputLabel>
+                        <Select
+                          label='은행선택'
+                          value={item.acct_bank_code}
+                          onChange={e => {
+                            setItem({
+                              ...item,
+                              ['acct_bank_code']: e.target.value
+                            })
+                          }}
+                        >
+                          {bankCodeList.map((itm, idx) => {
+                            return <MenuItem value={itm.value}>{itm.label}</MenuItem>
+                          })}
+                        </Select>
+                      </FormControl>
+                      <TextField
+                        label='계좌번호'
+                        value={item.acct_num}
+                        onChange={(e) => {
+                          setItem(
+                            {
+                              ...item,
+                              ['acct_num']: e.target.value
+                            }
+                          )
+                        }} />
+                      <TextField
+                        label='예금주명'
+                        value={item.acct_name}
+                        onChange={(e) => {
+                          setItem(
+                            {
+                              ...item,
+                              ['acct_name']: e.target.value
+                            }
+                          )
+                        }} />
+                      <TextField
+                        label='메인색상'
+                        value={item.seller_color}
+                        type='color'
+                        style={{
+                          border: 'none'
+                        }}
+                        onChange={e => {
+                          setItem({
+                            ...item,
+                            ['seller_color']: e.target.value
+                          })
+                        }}
+                      />
                     </Stack>
                   </Card>
                 </Grid>
@@ -459,74 +606,141 @@ const SellerEdit = () => {
                                               }} />
                         */
                       }
-                      <TextField
-                        label='전화번호'
-                        value={item.phone_num}
-                        placeholder="하이픈(-) 제외 입력"
-                        onChange={(e) => {
-                          setItem(
-                            {
-                              ...item,
-                              ['phone_num']: e.target.value
-                            }
-                          )
-                        }} />
                       {
-                        /*
-                                            <TextField
-                                              label='주소'
-                                              value={item.addr}
-                                              onChange={(e) => {
-                                                setItem(
-                                                  {
-                                                    ...item,
-                                                    ['addr']: e.target.value
-                                                  }
-                                                )
-                                              }} />
-                      */
+                        router?.query?.edit_category == 'edit' ?
+                          <>
+                            <Stack spacing={3}>
+                              <Button variant="outlined" style={{ maxWidth: '200px' }} onClick={() => { setCategoryEdit(!categoryEdit) }}>
+                                노출 카테고리 재설정
+                              </Button>
+                              {
+                                categoryEdit &&
+                                <>
+                                  {themeCategoryList.map((group, index) => (
+                                    <>
+                                      {
+                                        index == 0 &&
+                                        <>
+                                          <Stack spacing={1}>
+                                            <Typography variant="subtitle2" sx={{ color: 'text.secondary' }}>
+                                              {group?.category_group_name}
+                                            </Typography>
+                                            <Typography>
+                                              (미설정시 전체노출)
+                                            </Typography>
+                                            <SelectCategoryComponent
+                                              curCategories={curCategories[index] ?? []}
+                                              categories={group?.product_categories}
+                                              categoryChildrenList={categoryChildrenList[index] ?? []}
+                                              onClickCategory={onClickCategory}
+                                              noneSelectText={`${group?.category_group_name}를 선택해 주세요`}
+                                              sort_idx={index}
+                                              id={group?.id}
+                                              onChange={(selectedCategory) => handleSelectCategory(0, selectedCategory)}
+                                              type={'seller'}
+                                            />
+                                          </Stack>
+                                        </>
+                                      }
+                                    </>
+                                  ))}
+                                </>
+                              }
+                              <Button variant="outlined" style={{ maxWidth: '200px' }} onClick={() => { setBrandEdit(!brandEdit) }}>
+                                노출 브랜드 재설정
+                              </Button>
+                              {
+                                brandEdit &&
+                                <>
+                                  {themeCategoryList.map((group, index) => (
+                                    <>
+                                      {
+                                        index == 1 &&
+                                        <>
+                                          <Stack spacing={1}>
+                                            <Typography variant="subtitle2" sx={{ color: 'text.secondary' }}>
+                                              {group?.category_group_name}
+                                            </Typography>
+                                            <Typography>
+                                              (미설정시 전체노출)
+                                            </Typography>
+                                            <SelectCategoryComponent
+                                              curCategories={curCategories[index] ?? []}
+                                              categories={group?.product_categories}
+                                              categoryChildrenList={categoryChildrenList[index] ?? []}
+                                              onClickCategory={onClickCategory}
+                                              noneSelectText={`${group?.category_group_name}를 선택해 주세요`}
+                                              sort_idx={index}
+                                              id={group?.id}
+                                              onChange={(selectedCategory) => handleSelectCategory(1, selectedCategory)}
+                                              type={'seller'}
+                                            />
+                                          </Stack>
+                                        </>
+                                      }
+                                    </>
+                                  ))}
+                                </>
+                              }
+                            </Stack>
+                          </>
+                          :
+                          <>
+                            <Stack spacing={3}>
+                              {themeCategoryList.map((group, index) => (
+                                <>
+                                  <Stack spacing={1}>
+                                    <Typography variant="subtitle2" sx={{ color: 'text.secondary' }}>
+                                      {group?.category_group_name}
+                                    </Typography>
+                                    <Typography>
+                                      (미설정시 전체노출)
+                                    </Typography>
+                                    <SelectCategoryComponent
+                                      curCategories={curCategories[index] ?? []}
+                                      categories={group?.product_categories}
+                                      categoryChildrenList={categoryChildrenList[index] ?? []}
+                                      onClickCategory={onClickCategory}
+                                      noneSelectText={`${group?.category_group_name}를 선택해 주세요`}
+                                      sort_idx={index}
+                                      id={group?.id}
+                                      onChange={(selectedCategory) => handleSelectCategory(index, selectedCategory)}
+                                      type={'seller'}
+                                    />
+                                  </Stack>
+                                </>
+                              ))}
+                            </Stack>
+                          </>
                       }
-                      <Stack spacing={1}>
-                        <FormControl>
-                          <InputLabel>은행선택</InputLabel>
-                          <Select
-                            label='은행선택'
-                            value={item.acct_bank_code}
-                            onChange={e => {
-                              setItem({
+                      <Stack spacing={3}>
+                        <TextField
+                          label='상품 판매 가능한 최소 가격(미설정시 0원)'
+                          value={item.seller_range_u}
+                          type="number"
+                          onChange={(e) => {
+                            setItem(
+                              {
                                 ...item,
-                                ['acct_bank_code']: e.target.value
-                              })
-                            }}
-                          >
-                            {bankCodeList.map((itm, idx) => {
-                              return <MenuItem value={itm.value}>{itm.label}</MenuItem>
-                            })}
-                          </Select>
-                        </FormControl>
+                                ['seller_range_u']: e.target.value
+                              }
+                            )
+                          }} />
                       </Stack>
-                      <TextField
-                        label='계좌번호'
-                        value={item.acct_num}
-                        onChange={(e) => {
-                          setItem(
-                            {
-                              ...item,
-                              ['acct_num']: e.target.value
-                            }
-                          )
-                        }} />
-                      <TextField
-                        label='예금주명'
-                        value={item.acct_name}
-                        onChange={(e) => {
-                          setItem(
-                            {
-                              ...item,
-                              ['acct_name']: e.target.value
-                            }
-                          )
-                        }} />
+                      <Stack spacing={3}>
+                        <TextField
+                          label='상품 판매 가능한 최대 가격(미설정시 제한없음)'
+                          value={item.seller_range_o}
+                          type="number"
+                          onChange={(e) => {
+                            setItem(
+                              {
+                                ...item,
+                                ['seller_range_o']: e.target.value
+                              }
+                            )
+                          }} />
+                      </Stack>
                     </Stack>
                   </Card>
                 </Grid>
@@ -536,6 +750,41 @@ const SellerEdit = () => {
                 <Grid item xs={12} md={6}>
                   <Card sx={{ p: 2, height: '100%' }}>
                     <Stack spacing={3}>
+                      <Stack spacing={1}>
+                        <Typography variant="subtitle2" sx={{ color: 'text.secondary' }}>
+                          로고 이미지
+                        </Typography>
+                        <Upload file={item.seller_logo_file || item.seller_logo_img} onDrop={(acceptedFiles) => {
+                          const newFile = acceptedFiles[0];
+                          if (newFile) {
+                            setItem(
+                              {
+                                ...item,
+                                ['seller_logo_file']: Object.assign(newFile, {
+                                  preview: URL.createObjectURL(newFile),
+                                })
+                              }
+                            );
+                          }
+                        }} onDelete={() => {
+                          setItem(
+                            {
+                              ...item,
+                              ['seller_logo_file']: undefined,
+                              ['seller_logo_img']: '',
+                            }
+                          )
+                        }}
+                          fileExplain={{
+                            width: '(800x300 추천)'
+                          }}
+                          boxStyle={{
+                            padding: '0',
+                            height: '300px',
+                            display: 'flex'
+                          }}
+                        />
+                      </Stack>
                       <Stack spacing={1}>
                         <Typography variant="subtitle2" sx={{ color: 'text.secondary' }}>
                           통장사본 이미지

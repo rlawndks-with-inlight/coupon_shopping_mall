@@ -189,7 +189,9 @@ const AgentEdit = () => {
                                                     </Stack>
                                                 </>
                                             }
-                                            <Stack spacing={3}>
+                                            {
+                                                /*
+                                                <Stack spacing={3}>
                                                 <TextField
                                                     label='수수료율(예: 0.1로 입력할 시 10%)'
                                                     value={item.seller_trx_fee}
@@ -203,6 +205,8 @@ const AgentEdit = () => {
                                                         )
                                                     }} />
                                             </Stack>
+                                                */
+                                            }
                                         </Stack>
                                     </Card>
                                 </Grid>

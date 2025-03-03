@@ -650,7 +650,6 @@ const SignUpDemo = (props) => {
         {activeStep == 2 &&
           <>
             <Col>
-              {console.log(user)}
               <Icon icon={'fluent-mdl2:completed'} style={{ margin: '8rem auto 1rem auto', fontSize: themeObj.font_size.size1, color: theme.palette.primary.main }} />
               <div style={{ margin: 'auto auto 8rem auto' }}>회원가입이 완료되었습니다.</div>
             </Col>

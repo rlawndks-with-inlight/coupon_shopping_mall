@@ -198,7 +198,7 @@ export const Items = props => {
 export const HistoryTable = props => {
   const { historyContent, onChangePage, searchObj, type = 0 } = props
   const { translate, currentLang } = useLocales();
-  const { themeDnsData } = useSettingsContext()
+  const { themeDnsData } = useSettingsContext();
   const router = useRouter();
   const TABLE_HEAD = [
     { id: 'product', label: translate('상품') },
@@ -207,7 +207,7 @@ export const HistoryTable = props => {
     { id: 'buyer_name', label: translate('구매자명') },
     { id: 'trx_status', label: translate('주문상태') },
     { id: 'trx_date', label: translate('주문일'), align: 'right' },
-    ...(themeDnsData?.id == 64 || themeDnsData?.id == 84 ? '' : { id: 'date', label: translate('업데이트일'), align: 'right' }),
+    ...(themeDnsData?.id == 64 || themeDnsData?.id == 84 ? [] : [{ id: 'date', label: translate('업데이트일'), align: 'right' }]),
     { id: 'cancel', label: translate('주문취소요청'), align: 'right' },
     { id: '' },
   ];

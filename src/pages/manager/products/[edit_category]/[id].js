@@ -51,7 +51,9 @@ export const SelectCategoryComponent = (props) => {
     onClickCategory,
     noneSelectText,
     sort_idx,
-    id
+    id,
+    onChange,
+    type = 'product',
   } = props;
   const theme = useTheme();
   const { themeDnsData } = useSettingsContext();
@@ -62,6 +64,60 @@ export const SelectCategoryComponent = (props) => {
     total: 100,
     content: []
   });
+
+  const [selectedCategoryIds, setSelectedCategoryIds] = useState(
+    curCategories.map(cat => cat.id) || []
+  );
+
+  const handleCategoryToggle = (category, depth, sortIdx) => {
+    setSelectedCategoryIds(prevIds => {
+      // 이미 선택된 카테고리인 경우 해제
+      if (prevIds.includes(category.id)) {
+        const updatedIds = prevIds.filter(id => id !== category.id);
+
+        // 부모 컴포넌트에 변경 사항 알림
+        const updatedCategories = updatedIds.map(id => {
+          // 모든 가능한 카테고리에서 id와 일치하는 항목 찾기
+          const allCategories = [
+            ...categories,
+            ...categoryChildrenList.flat()
+          ];
+          return allCategories.find(cat => cat.id === id) || {};
+        });
+
+        if (onChange) {
+          onChange(updatedCategories);
+        }
+
+        return updatedIds;
+      }
+      // 선택되지 않은 카테고리인 경우 추가
+      else {
+        const updatedIds = [...prevIds, category.id];
+
+        // 부모 컴포넌트에 변경 사항 알림
+        const updatedCategories = updatedIds.map(id => {
+          // 모든 가능한 카테고리에서 id와 일치하는 항목 찾기
+          const allCategories = [
+            ...categories,
+            ...categoryChildrenList.flat()
+          ];
+          return allCategories.find(cat => cat.id === id) || {};
+        });
+
+        if (onChange) {
+          onChange(updatedCategories);
+        }
+
+        return updatedIds;
+      }
+    });
+
+    // 기존 onClickCategory 함수도 호출 (기존 기능 유지)
+    if (onClickCategory) {
+      onClickCategory(category, depth, sortIdx);
+    }
+  };
 
   const hasChildCategories = categories.some(category =>
     category.children && category.children.length > 0
@@ -108,6 +164,10 @@ export const SelectCategoryComponent = (props) => {
     }
   };
 
+  const isCategorySelected = (categoryId) => {
+    return selectedCategoryIds.includes(categoryId);
+  };
+
   return (
     <CategoryWrappers style={{ border: `1px solid ${theme.palette.mode == 'dark' ? themeObj.grey[700] : themeObj.grey[300]}` }}>
       <TextField
@@ -130,72 +190,193 @@ export const SelectCategoryComponent = (props) => {
         borderBottom: `1px solid ${theme.palette.mode == 'dark' ? themeObj.grey[700] : themeObj.grey[300]}`,
         display: 'flex'
       }}>
-        {curCategories.length > 0 ?
-          <Row>
-            {curCategories.map((item, idx) => (
-              <>
-                <div style={{ marginRight: '0.25rem' }}>
-                  {item.category_name}
-                </div>
-                {idx != curCategories.length - 1 &&
-                  <div style={{ marginRight: '0.25rem' }}>{'>'}</div>
-                }
-              </>
-            ))}
-          </Row>
+        {type == 'product' ?
+          <>
+            {curCategories.length > 0 ?
+              <Row>
+                {curCategories.map((item, idx) => (
+                  <>
+                    <div style={{ marginRight: '0.25rem' }}>
+                      {item.category_name}
+                    </div>
+                    {idx != curCategories.length - 1 &&
+                      <div style={{ marginRight: '0.25rem' }}>{'>'}</div>
+                    }
+                  </>
+                ))}
+              </Row>
+              :
+              <>{noneSelectText}</>
+            }
+          </>
           :
-          <>{noneSelectText}</>
+          <>
+            {selectedCategoryIds.length > 0 ? (
+              <Row style={{ flexWrap: 'wrap', gap: '0.5rem' }}>
+                {/* 선택된 카테고리들을 표시 (태그 형태로) */}
+                {selectedCategoryIds.map(id => {
+                  const allCategories = [
+                    ...categories,
+                    ...categoryChildrenList.flat(),
+                    ...categoryContent.content
+                  ];
+                  const category = allCategories.find(cat => cat.id === id);
+
+                  return category ? (
+                    <div key={id} style={{
+                      display: 'inline-block',
+                      padding: '2px 8px',
+                      border: `1px solid ${theme.palette.primary.main}`,
+                      borderRadius: '4px',
+                      marginRight: '4px',
+                      marginBottom: '4px',
+                      background: theme.palette.primary.lighter,
+                      display: 'flex',
+                      alignItems: 'center'
+                    }}>
+                      <span>{category.category_name}</span>
+                      <Icon
+                        icon="mdi:close"
+                        width={16}
+                        height={16}
+                        style={{ marginLeft: '4px', cursor: 'pointer' }}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleCategoryToggle(category, 0, sort_idx);
+                        }}
+                      />
+                    </div>
+                  ) : null;
+                })}
+              </Row>
+            ) : (
+              <>{noneSelectText}</>
+            )}
+          </>
         }
       </CategoryHeader>
       <div style={{ overflowX: 'auto', width: '100%', display: '-webkit-box' }} className={`category-container-${sort_idx}`}>
         <CategoryContainer>
-          {filteredCategories.length > 0 ?
-            filteredCategories.map((category) => (
-              <Category
-                key={category.id}
-                hoverColor={theme.palette?.mode == 'dark' ? themeObj.grey[700] : themeObj.grey[200]}
-                style={{
-                  color: `${curCategories.map(item => item?.id).includes(category?.id) ? '' : themeObj.grey[500]}`,
-                  fontWeight: `${curCategories.map(item => item?.id).includes(category?.id) ? 'bold' : ''}`
-                }}
-                onClick={() => onClickCategory(category, 0, sort_idx)}
-              >
-                <div>{category.category_name}</div>
-                <div>{category?.children && category?.children.length > 0 ? '>' : ''}</div>
-              </Category>
-            ))
+          {type == 'product' ?
+            <>
+              {filteredCategories.length > 0 ?
+                filteredCategories.map((category) => (
+                  <Category
+                    key={category.id}
+                    hoverColor={theme.palette?.mode == 'dark' ? themeObj.grey[700] : themeObj.grey[200]}
+                    style={{
+                      color: `${curCategories.map(item => item?.id).includes(category?.id) ? '' : themeObj.grey[500]}`,
+                      fontWeight: `${curCategories.map(item => item?.id).includes(category?.id) ? 'bold' : ''}`
+                    }}
+                    onClick={() => onClickCategory(category, 0, sort_idx)}
+                  >
+                    <div>{category.category_name}</div>
+                    <div>{category?.children && category?.children.length > 0 ? '>' : ''}</div>
+                  </Category>
+                ))
+                :
+                categories.map((category) => (
+                  <Category
+                    key={category.id}
+                    hoverColor={theme.palette?.mode == 'dark' ? themeObj.grey[700] : themeObj.grey[200]}
+                    style={{
+                      color: `${curCategories.map(item => item?.id).includes(category?.id) ? '' : themeObj.grey[500]}`,
+                      fontWeight: `${curCategories.map(item => item?.id).includes(category?.id) ? 'bold' : ''}`
+                    }}
+                    onClick={() => onClickCategory(category, 0, sort_idx)}
+                  >
+                    <div>{category.category_name}</div>
+                    <div>{category?.children && category?.children.length > 0 ? '>' : ''}</div>
+                  </Category>
+                ))
+              }
+            </>
             :
-            categories.map((category) => (
-              <Category
-                key={category.id}
-                hoverColor={theme.palette?.mode == 'dark' ? themeObj.grey[700] : themeObj.grey[200]}
-                style={{
-                  color: `${curCategories.map(item => item?.id).includes(category?.id) ? '' : themeObj.grey[500]}`,
-                  fontWeight: `${curCategories.map(item => item?.id).includes(category?.id) ? 'bold' : ''}`
-                }}
-                onClick={() => onClickCategory(category, 0, sort_idx)}
-              >
-                <div>{category.category_name}</div>
-                <div>{category?.children && category?.children.length > 0 ? '>' : ''}</div>
-              </Category>
-            ))
+            <>
+              {filteredCategories.length > 0 ?
+                filteredCategories.map((category) => (
+                  <Category
+                    key={category.id}
+                    hoverColor={theme.palette?.mode == 'dark' ? themeObj.grey[700] : themeObj.grey[200]}
+                    style={{
+                      color: isCategorySelected(category.id) ? theme.palette.primary.main : theme.palette.mode === 'dark' ? '#fff' : '#000',
+                      fontWeight: isCategorySelected(category.id) ? 'bold' : 'normal',
+                      backgroundColor: isCategorySelected(category.id) ? theme.palette.primary.lighter : 'transparent',
+                    }}
+                    onClick={() => handleCategoryToggle(category, 0, sort_idx)}
+                  >
+                    <div>{category.category_name}</div>
+                    <div>
+                      {isCategorySelected(category.id) ? (
+                        <Icon icon="mdi:check" width={16} height={16} />
+                      ) : (
+                        category?.children && category?.children.length > 0 ? '>' : ''
+                      )}
+                    </div>
+                  </Category>
+                ))
+                :
+                categories.map((category) => (
+                  <Category
+                    key={category.id}
+                    hoverColor={theme.palette?.mode == 'dark' ? themeObj.grey[700] : themeObj.grey[200]}
+                    style={{
+                      color: isCategorySelected(category.id) ? theme.palette.primary.main : theme.palette.mode === 'dark' ? '#fff' : '#000',
+                      fontWeight: isCategorySelected(category.id) ? 'bold' : 'normal',
+                      backgroundColor: isCategorySelected(category.id) ? theme.palette.primary.lighter : 'transparent',
+                    }}
+                    onClick={() => handleCategoryToggle(category, 0, sort_idx)}
+                  >
+                    <div>{category.category_name}</div>
+                    <div>
+                      {isCategorySelected(category.id) ? (
+                        <Icon icon="mdi:check" width={16} height={16} />
+                      ) : (
+                        category?.children && category?.children.length > 0 ? '>' : ''
+                      )}
+                    </div>
+                  </Category>
+                ))
+              }
+            </>
           }
         </CategoryContainer>
         {filteredCategories.length === 0 && categoryChildrenList.map((category_list, index) => (
           category_list.length > 0 &&
           <CategoryContainer key={index}>
             {category_list.map((category) => (
-              <Category
-                key={category.id}
-                style={{
-                  color: `${curCategories.map(item => item?.id).includes(category?.id) ? '' : themeObj.grey[500]}`,
-                  fontWeight: `${curCategories.map(item => item?.id).includes(category?.id) ? 'bold' : ''}`
-                }}
-                onClick={() => onClickCategory(category, index + 1, sort_idx)}
-              >
-                <div>{category.category_name}</div>
-                <div>{category?.children && category?.children.length > 0 ? '>' : ''}</div>
-              </Category>
+              type == 'product' ?
+                <Category
+                  key={category.id}
+                  style={{
+                    color: `${curCategories.map(item => item?.id).includes(category?.id) ? '' : themeObj.grey[500]}`,
+                    fontWeight: `${curCategories.map(item => item?.id).includes(category?.id) ? 'bold' : ''}`
+                  }}
+                  onClick={() => onClickCategory(category, index + 1, sort_idx)}
+                >
+                  <div>{category.category_name}</div>
+                  <div>{category?.children && category?.children.length > 0 ? '>' : ''}</div>
+                </Category>
+                :
+                <Category
+                  key={category.id}
+                  hoverColor={theme.palette?.mode == 'dark' ? themeObj.grey[700] : themeObj.grey[200]}
+                  style={{
+                    color: isCategorySelected(category.id) ? theme.palette.primary.main : theme.palette.mode === 'dark' ? '#fff' : '#000',
+                    fontWeight: isCategorySelected(category.id) ? 'bold' : 'normal',
+                    backgroundColor: isCategorySelected(category.id) ? theme.palette.primary.lighter : 'transparent',
+                  }}
+                  onClick={() => handleCategoryToggle(category, index + 1, sort_idx)}
+                >
+                  <div>{category.category_name}</div>
+                  <div>
+                    {isCategorySelected(category.id) ? (
+                      <Icon icon="mdi:check" width={16} height={16} />
+                    ) : (
+                      category?.children && category?.children.length > 0 ? '>' : ''
+                    )}
+                  </div>
+                </Category>
             ))}
           </CategoryContainer>
         ))}

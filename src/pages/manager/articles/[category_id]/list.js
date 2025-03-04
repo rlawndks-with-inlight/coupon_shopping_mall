@@ -52,7 +52,7 @@ const ArticleList = () => {
       id: 'created_at',
       label: '생성시간',
       action: (row) => {
-        return row['created_at'].split("T").join(" ").replace("Z", "").split(".")[0] ?? "---"
+        return row['created_at'] ?? "---"
       }
     },
     ...((category?.is_able_user_add == 1 && category?.post_category_read_type == 1) ? [
@@ -68,7 +68,7 @@ const ArticleList = () => {
       id: 'updated_at',
       label: '최종수정시간',
       action: (row) => {
-        return row['updated_at'].split("T").join(" ").replace("Z", "").split(".")[0] ?? "---" ?? "---"
+        return row['updated_at'] ?? "---" ?? "---"
       }
     },
     {

@@ -317,8 +317,8 @@ export const HistoryTable = props => {
                     <TableCell onClick={() => { console.log(row) }}>{commarNumber(setProductPriceByLang(row, 'amount', 'ko', currentLang?.value))} {getPriceUnitByLang(currentLang?.value)}</TableCell>
                     <TableCell>{row?.buyer_name}</TableCell>
                     <TableCell>{fCurrency(row.amount) < 0 ? '결제취소' : translate(getTrxStatusByNumber(row?.trx_status))}</TableCell>
-                    <TableCell>
-                      <Box sx={{ textAlign: 'right', color: 'text.secondary' }}>{row?.trx_dt?.split("T")[0] ?? "---"} {row?.trx_tm?.split("T").join(" ").replace("Z", "").split(".")[0] ?? ""}</Box>
+                    <TableCell onClick={() => { console.log(row) }}>
+                      <Box sx={{ textAlign: 'right', color: 'text.secondary' }}>{row?.trx_dt ?? "---"} {row?.trx_tm ?? ""}</Box>
                     </TableCell>
                     {
                       themeDnsData?.id == 64 || themeDnsData?.id == 84 ?
@@ -327,7 +327,7 @@ export const HistoryTable = props => {
                         :
                         <>
                           <TableCell>
-                            <Box sx={{ textAlign: 'right', color: 'text.secondary' }}>{row?.updated_at?.split("T").join(" ").replace("Z", "").split(".")[0] ?? "---"}</Box>
+                            <Box sx={{ textAlign: 'right', color: 'text.secondary' }}>{row?.updated_at ?? "---"}</Box>
                           </TableCell>
                         </>
                     }
@@ -394,7 +394,7 @@ export const PointTable = props => {
                 <>
                   <TableRow>
                     <TableCell>{`${row['point'] > 0 ? '+' : ''}` + commarNumber(row['point'])}</TableCell>
-                    <TableCell>{row?.created_at?.split("T").join(" ").replace("Z", "").split(".")[0] ?? "---"}</TableCell>
+                    <TableCell>{row?.created_at ?? "---"}</TableCell>
                     <TableCell>{getPointType(row)}</TableCell>
                   </TableRow>
                 </>

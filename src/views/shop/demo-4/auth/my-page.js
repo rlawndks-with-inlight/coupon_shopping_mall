@@ -115,7 +115,7 @@ const MyPageDemo = (props) => {
       id: 'created_at',
       label: '',
       action: (row) => {
-        return row?.created_at?.split("T").join(" ").replace("Z", "").split(".")[0] ?? "---"
+        return row?.created_at ?? "---"
       },
     },
   ]
@@ -226,7 +226,7 @@ const MyPageDemo = (props) => {
       id: 'updated_at',
       label: '',
       action: (row) => {
-        return row?.updated_at?.split("T").join(" ").replace("Z", "").split(".")[0] ?? "---"
+        return row?.updated_at ?? "---"
       },
       sx: (row) => {
         if (row?.is_cancel == 1) {

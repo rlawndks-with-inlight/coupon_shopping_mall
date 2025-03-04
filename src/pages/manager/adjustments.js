@@ -112,7 +112,7 @@ const Adjustments = () => {
             id: 'created_at',
             label: '요청시간',
             action: (row) => {
-                return row['created_at'].split("T").join(" ").replace("Z", "").split(".")[0] ?? "---"
+                return row['created_at'] ?? "---"
             },
             sx: (row) => {
                 return {
@@ -124,7 +124,7 @@ const Adjustments = () => {
             id: 'updated_at',
             label: '업데이트시간',
             action: (row) => {
-                return row['updated_at'].split("T").join(" ").replace("Z", "").split(".")[0] ?? "---"
+                return row['updated_at'] ?? "---"
             },
             sx: (row) => {
                 return {

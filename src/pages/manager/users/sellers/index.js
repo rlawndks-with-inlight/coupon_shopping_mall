@@ -80,7 +80,7 @@ const SellerList = () => {
       id: 'created_at',
       label: '가입일',
       action: (row) => {
-        return row['created_at'].split("T").join(" ").replace("Z", "").split(".")[0] ?? "---"
+        return row['created_at'] ?? "---"
       }
     },
     {

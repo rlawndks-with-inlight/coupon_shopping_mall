@@ -118,7 +118,7 @@ const ContentTable = (props) => {
                       <Typography variant='subtitle2' onClick={() => {
                         router.push(`/shop/service/${postCategory?.id}/${row?.id}/`)
                       }}>{row?.post_title}</Typography>
-                      <Typography variant='body2' color={themeObj.grey[500]}>{row?.created_at?.split("T").join(" ").replace("Z", "").split(".")[0] ?? "---"}</Typography>
+                      <Typography variant='body2' color={themeObj.grey[500]}>{row?.created_at ?? "---"}</Typography>
                       <Row>
                         {row?.user_id == user?.id &&
                           <>

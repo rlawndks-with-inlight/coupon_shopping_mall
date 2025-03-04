@@ -214,6 +214,7 @@ const CartDemo = (props) => {
         return;
       }
       if (parseFloat(user?.point ?? 0) < parseFloat(payData.use_point)) {
+        console.log(user)
         toast.error(translate('보유포인트가 부족합니다.'));
         return;
       }

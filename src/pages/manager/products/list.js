@@ -301,10 +301,10 @@ const ProductList = () => {
         return (
           <>
             <div>
-              {row['created_at'].split("T").join(" ").replace("Z", "").split(".")[0] ?? "---"}
+              {row['created_at'] ?? "---"}
             </div>
             <div style={{ marginTop: '1rem' }}>
-              {row['updated_at'].split("T").join(" ").replace("Z", "").split(".")[0] ?? "---"}
+              {row['updated_at'] ?? "---"}
             </div>
           </>
         )

@@ -60,7 +60,7 @@ const Policy = (props) => {
 
           <Title not_arrow={true}>{title}</Title>
           {router.query?.type == 0 || type == 0 ?
-            themeDnsData?.id != 74 ?
+            themeDnsData?.id != 77 ?
               <>
                 <SubTitle>제 1 장 총 칙</SubTitle>
 

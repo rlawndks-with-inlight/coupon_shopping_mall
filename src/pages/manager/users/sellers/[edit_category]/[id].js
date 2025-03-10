@@ -527,6 +527,28 @@ const SellerEdit = () => {
                             }
                           )
                         }} />
+                      <Stack spacing={3}>
+                        <FormControl>
+                          <InputLabel>쇼핑몰 데모넘버</InputLabel>
+                          <Select
+                            label='쇼핑몰 데모넘버'
+                            value={item.seller_demo_num}
+                            onChange={e => {
+                              setItem({
+                                ...item,
+                                seller_demo_num: e.target.value
+                              })
+                            }}
+                          >
+                            <MenuItem value={0}>사용안함</MenuItem>
+                            <MenuItem value={1}>디자인1</MenuItem>
+                            <MenuItem value={2}>디자인2</MenuItem>
+                            {/*SHOP_DEMO_DATAdemo_data.map((item, idx) => {
+                              return <MenuItem value={item.value}>{item.title}</MenuItem>
+                            })*/}
+                          </Select>
+                        </FormControl>
+                      </Stack>
                       <TextField
                         label='메인색상'
                         value={item.seller_color}

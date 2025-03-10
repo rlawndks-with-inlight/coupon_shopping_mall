@@ -402,7 +402,6 @@ export const selectItemOptionUtil = (group, option, selectProductGroups, is_opti
     let find_group_idx = _.findIndex(select_product_groups?.groups, { id: parseInt(group?.id) });
     if (find_group_idx >= 0) {
         let find_option_idx = _.findIndex(select_product_groups?.groups[find_group_idx]?.options, { id: parseInt(option?.id) });
-
         if (is_option_multiple) {
             if (find_option_idx >= 0) {
                 //
@@ -421,7 +420,8 @@ export const selectItemOptionUtil = (group, option, selectProductGroups, is_opti
             ...group,
             options: [
                 {
-                    ...option,
+                    //...option, 문자열은 스프레드로 감싸면 한 글자씩 저장됨
+                    value: option
                 }
             ]
         })

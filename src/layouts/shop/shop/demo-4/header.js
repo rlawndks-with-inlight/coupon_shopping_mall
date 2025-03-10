@@ -19,6 +19,7 @@ import dynamic from 'next/dynamic';
 import MenuPopover from "src/components/menu-popover"
 import { TitleComponent } from "src/components/elements/shop/demo-4"
 import Link from "next/link"
+import { useLocales } from "src/locales"
 const ReactQuill = dynamic(() => import('react-quill'), {
     ssr: false,
     loading: () => <p>Loading ...</p>,
@@ -227,7 +228,8 @@ height: 88px;
 
 const Header = () => {
     const router = useRouter();
-    const theme = useTheme()
+    const theme = useTheme();
+    const { translate } = useLocales();
     const { themeMode, onToggleMode, themeCategoryList, themeDnsData, themePopupList, themePostCategoryList, onChangePopupList, themeWishData, themeCartData, onChangeCartData, onChangeWishData, themeSellerList } = useSettingsContext();
     const { user, logout } = useAuthContext();
     const headerWrappersRef = useRef();

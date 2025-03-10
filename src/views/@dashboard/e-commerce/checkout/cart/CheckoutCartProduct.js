@@ -61,7 +61,7 @@ export default function CheckoutCartProduct({ row, onDelete, onDecrease, onIncre
         </Stack>
       </TableCell>
       <TableCell>
-        <Stack spacing={0.5}>
+        <Stack spacing={0.5} onClick={() => { console.log(row) }}>
           {groups && groups.length > 0 ?
             <>
               {groups.map((group, index) => {
@@ -72,9 +72,9 @@ export default function CheckoutCartProduct({ row, onDelete, onDecrease, onIncre
                     sx={{ typography: 'body2', color: 'text.secondary' }}
                   >
                     <div style={{ display: 'flex' }}>
-                      {group?.group_name}: {group?.options && group?.options.map((option, idx) => (
+                      {group?.character_name}: {group?.options && group?.options.map((option, idx) => (
                         <>
-                          {option?.option_name} {option?.option_price > 0 ? '+' : ''}{commarNumber(option?.option_price)}
+                          {option?.value} {/*option?.option_price > 0 ? '+' : ''}{commarNumber(option?.option_price)*/}
                         </>
                       ))}
                     </div>

@@ -1,5 +1,5 @@
 import styled from 'styled-components'
-import { Box, Tab, Tabs, Card, Grid, Divider, Typography, Button, Radio, FormControlLabel } from '@mui/material';
+import { Box, Tab, Tabs, Card, Grid, Divider, Typography, Button, Radio, FormControlLabel, Dialog, DialogTitle, DialogContent, MenuItem, FormControl, DialogActions, Stack, InputLabel, Select, TextField } from '@mui/material';
 import { test_item } from 'src/data/test-data';
 import { useSettingsContext } from 'src/components/settings';
 import { ProductDetailsCarousel, ProductDetailsReview, ProductDetailsSummary } from 'src/views/@dashboard/e-commerce/details';
@@ -18,6 +18,7 @@ import DialogBuyNow from 'src/components/dialog/DialogBuyNow';
 import { useAuthContext } from 'src/layouts/manager/auth/useAuthContext';
 import { useModal } from 'src/components/dialog/ModalProvider';
 import { BasicInfo, ProductFaq } from 'src/components/elements/shop/demo-4';
+import axios from 'axios';
 
 const ReactQuill = dynamic(() => import('react-quill'), {
   ssr: false,
@@ -88,16 +89,19 @@ const ItemDemo = (props) => {
   const [product, setProduct] = useState({});
   const [reviewPage, setReviewPage] = useState(1);
   const [buyOpen, setBuyOpen] = useState(false);
+  const [characterSelect, setCharacterSelect] = useState(false);
+  const [unipassPopup, setUnipassPopup] = useState(false);
+  const [unipass, setUnipass] = useState();
   //const [reviewContent, setReviewContent] = useState({});
   const [selectProductGroups, setSelectProductGroups] = useState({
     count: 1,
     groups: [],
   });
+
+  const [buyOrCart, setBuyOrCart] = useState();
+
   useEffect(() => {
     getItemInfo(1);
-    //console.log(themePropertyList)
-    //console.log(product)
-    //console.log(themeDnsData)
   }, [])
 
   const getItemInfo = async (review_page) => {
@@ -172,9 +176,151 @@ const ItemDemo = (props) => {
   const onSelectOption = (group, option, is_option_multiple) => {
     let select_product_groups = selectItemOptionUtil(group, option, selectProductGroups, is_option_multiple);
     setSelectProductGroups(select_product_groups);
+    //console.log(selectProductGroups)
+    //console.log(product?.characters?.length)
+    //console.log(selectProductGroups?.groups?.length)
   }
+
+  async function verifyUnipass(code) {
+
+    let result = await apiManager('util/unipass', 'create', { code: code })
+    if (result) {
+      if (result?.message == '정상 : ') {
+        toast.success('개인통관고유부호가 확인되었습니다.');
+        setUnipassPopup(false);
+        setBuyOpen(true);
+      } else {
+        toast.error('회원정보와 일치하지 않는 번호입니다. 다시 확인 바랍니다.');
+      }
+    } else {
+      return;
+    }
+  }
+
   return (
     <>
+      <Dialog
+        open={characterSelect}
+        onClose={() => {
+          setCharacterSelect(false);
+          router.reload()
+        }}
+        PaperProps={{
+          style: {
+            maxWidth: '600px', width: '90%'
+          }
+        }}
+      >
+        <DialogTitle>옵션선택</DialogTitle>
+        <DialogContent>
+          {product?.characters && product?.characters.map((character) => (
+            <>
+              <Stack direction="row" justifyContent="space-between">
+                <FormControl sx={{ width: '100%', marginTop: '1rem' }}>
+                  <InputLabel>{character?.character_name}</InputLabel>
+                  <Select
+                    label={character?.character_name}
+                    sx={{
+                      width: '100%',
+                    }}
+                    placeholder={character?.character_name}
+                    onChange={(e) => {
+                      onSelectOption(character, e.target.value)
+                    }}
+                  >
+                    {character?.character_value && character?.character_value.split(/[,/]\s*/)?.map(val => val.trim()).map((data, idx) => (
+                      <MenuItem
+                        key={idx}
+                        value={data}
+                      >{data} {/*data.option_price > 0 ? '+' + commarNumber(data.option_price) : ''*/}</MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+              </Stack>
+            </>
+          ))}
+        </DialogContent>
+        <DialogActions>
+          <Button
+            variant='contained'
+            onClick={() => {
+              if (product?.characters?.length > selectProductGroups?.groups?.length) {
+                toast.error('옵션선택을 완료해주세요.')
+              } else {
+                if (buyOrCart == 'buy') {
+                  setCharacterSelect(false);
+                  setUnipassPopup(true);
+                } else {
+                  handleAddCart();
+                  setCharacterSelect(false);
+                }
+              }
+            }} color="inherit">
+            선택완료
+          </Button>
+          <Button onClick={() => {
+            setCharacterSelect(false);
+            router.reload()
+          }} color="inherit">
+            나가기
+          </Button>
+        </DialogActions>
+      </Dialog>
+      <Dialog
+        open={unipassPopup}
+        onClose={() => {
+          setUnipassPopup(false);
+          router.reload()
+        }}
+        PaperProps={{
+          style: {
+            maxWidth: '600px', width: '90%'
+          }
+        }}
+      >
+        <DialogTitle>개인통관고유부호확인</DialogTitle>
+        <DialogContent>
+          <div>
+            해외직구 배송을 위해 개인통관고유부호 확인이 필요합니다.<br />
+            <a href='https://unipass.customs.go.kr/csp/persIndex.do' target='_blank' style={{ textDecoration: 'underline', color: 'blue' }}>
+              https://unipass.customs.go.kr/csp/persIndex.do
+            </a>
+          </div>
+
+          <Stack direction="row" justifyContent="space-between">
+            <FormControl sx={{ width: '100%', marginTop: '1rem' }}>
+              <TextField
+                sx={{
+                  width: '100%',
+                }}
+                placeholder={unipass}
+                onChange={(e) => {
+                  setUnipass(e.target.value)
+                }}
+              />
+            </FormControl>
+          </Stack>
+        </DialogContent>
+        <DialogActions>
+          <Button
+            variant='contained'
+            onClick={() => {
+              if (!unipass) {
+                toast.error('개인통관고유부호를 입력해주세요.')
+              } else {
+                verifyUnipass(unipass)
+              }
+            }} color="inherit">
+            확인
+          </Button>
+          <Button onClick={() => {
+            setUnipassPopup(false);
+            router.reload()
+          }} color="inherit">
+            나가기
+          </Button>
+        </DialogActions>
+      </Dialog>
       <DialogBuyNow
         buyOpen={buyOpen}
         setBuyOpen={setBuyOpen}
@@ -371,7 +517,17 @@ const ItemDemo = (props) => {
                           <Icon icon={'mdi:check-bold'} />
                         </>}*/
                         onClick={() => {
-                          setBuyOpen(true)
+                          if (user) {
+                            if (product?.characters?.length > 0) {
+                              setCharacterSelect(true);
+                              setBuyOrCart('buy');
+                            } else {
+                              setUnipassPopup(true);
+                              //setBuyOpen(true);
+                            }
+                          } else {
+                            toast.error('로그인을 해주세요.')
+                          }
                         }}
                       >Buy Now</Button>
                       <Row style={{ columnGap: '0.5rem', marginTop: '0.5rem', alignItems: 'center' }}>
@@ -396,7 +552,12 @@ const ItemDemo = (props) => {
                             <Icon icon={'mdi:cart'} />
                           </>}*/
                           onClick={() => {
-                            handleAddCart()
+                            if (product?.characters?.length > 0) {
+                              setCharacterSelect(true);
+                              setBuyOrCart('cart');
+                            } else {
+                              handleAddCart()
+                            }
                           }}
                         >add to cart</Button>
                         <Icon

@@ -12,7 +12,7 @@ import { WishDemo5 } from "src/views/shop/demo-5";
 import { WishDemo6 } from "src/views/shop/demo-6";
 import { WishDemo7 } from "src/views/shop/demo-7";
 import { WishDemo8 } from "src/views/shop/demo-8";
-//import { WishDemo9 } from "src/views/shop/demo-9";
+import { WishDemo9 } from "src/views/shop/demo-9";
 //import { WishDemo10 } from "src/views/shop/demo-10";
 
 const getDemo = (num, common) => {
@@ -32,9 +32,9 @@ const getDemo = (num, common) => {
     return <WishDemo7 {...common} />
   else if (num == 8)
     return <WishDemo8 {...common} />
-  /*else if (num == 9)
+  else if (num == 9)
     return <WishDemo9 {...common} />
-  else if (num == 10)
+  /*else if (num == 10)
     return <WishDemo10 {...common} />*/
 }
 const Wish = () => {

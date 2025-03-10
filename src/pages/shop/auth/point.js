@@ -12,7 +12,7 @@ import { PointDemo5 } from "src/views/shop/demo-5";
 import { PointDemo6 } from "src/views/shop/demo-6";
 import { PointDemo7 } from "src/views/shop/demo-7";
 import { PointDemo8 } from "src/views/shop/demo-8";
-//import { PointDemo9 } from "src/views/shop/demo-9";
+import { PointDemo9 } from "src/views/shop/demo-9";
 //import { PointDemo10 } from "src/views/shop/demo-10";
 
 const getDemo = (num, common) => {
@@ -33,9 +33,9 @@ const getDemo = (num, common) => {
     return <PointDemo7 {...common} />
   else if (num == 8)
     return <PointDemo8 {...common} />
-  /*else if (num == 9)
+  else if (num == 9)
     return <PointDemo9 {...common} />
-  else if (num == 10)
+  /*else if (num == 10)
     return <PointDemo10 {...common} />*/
 }
 const Point = () => {

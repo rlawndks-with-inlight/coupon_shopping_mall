@@ -25,6 +25,7 @@ import { Item4, Seller4 } from './demo-4'
 import { Item5, Seller5 } from './demo-5'
 import { Item6, Seller6 } from './demo-6'
 import { Item7, Seller7 } from './demo-7'
+import { Item9, Seller9 } from './demo-9'
 import { Col, Row, themeObj } from '../styled-components'
 import { insertCartDataUtil, insertWishDataUtil } from 'src/utils/shop-util'
 import { useLocales } from 'src/locales'
@@ -111,6 +112,7 @@ export const Item = props => {
     else if (shop_demo_num == 5) return <Item5 {...props} />
     else if (shop_demo_num == 6) return <Item6 {...props} />
     else if (shop_demo_num == 7) return <Item7 {...props} />
+    else if (shop_demo_num == 9) return <Item9 {...props} />
     else return <Item5 {...props} />
   }
   return <>{returnSellerCard()}</>

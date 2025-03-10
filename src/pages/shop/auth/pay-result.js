@@ -10,7 +10,7 @@ import { PayResultDemo5 } from "src/views/shop/demo-5";
 import { PayResultDemo6 } from "src/views/shop/demo-6";
 import { PayResultDemo7 } from "src/views/shop/demo-7";
 import { PayResultDemo8 } from "src/views/shop/demo-8";
-//import { PayResultDemo9 } from "src/views/shop/demo-9";
+import { PayResultDemo9 } from "src/views/shop/demo-9";
 //import { PayResultDemo10 } from "src/views/shop/demo-10";
 
 const getDemo = (num, common) => {
@@ -30,9 +30,9 @@ const getDemo = (num, common) => {
     return <PayResultDemo7 {...common} />
   else if (num == 8)
     return <PayResultDemo8 {...common} />
-  /*else if (num == 9)
+  else if (num == 9)
     return <PayResultDemo9 {...common} />
-  else if (num == 10)
+  /*else if (num == 10)
     return <PayResultDemo10 {...common} />*/
 }
 const PayResult = () => {

@@ -94,17 +94,15 @@ const DialogBuyNow = (props) => {
   }
   const [payData, setPayData] = useState(payDataInitialSetting)
 
-  const [hectoOn, setHectoOn] = useState(0);
-
   useEffect(() => {
     if (user) {
       onChangeAddressPage(addressSearchObj)
     }
     setPayList(themeDnsData?.payment_modules)
   }, [])
-  /*useEffect(() => {
+  useEffect(() => {
     console.log(payData)
-  }, [payData])*/
+  }, [payData])
   const onChangeAddressPage = async (search_obj) => {
     setAddressContent({
       ...addressContent,
@@ -118,6 +116,7 @@ const DialogBuyNow = (props) => {
   }
   const onBuyDialogClose = () => {
     setBuyOpen(false);
+    router.reload();
 
     setTimeout(() => {
       setBuyStep(0);
@@ -285,7 +284,7 @@ const DialogBuyNow = (props) => {
         }}
         PaperProps={{
           style: {
-            maxWidth: '600px', width: '90%',
+            maxWidth: '600px', width: '90%'
           }
         }}
       >

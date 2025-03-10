@@ -11,7 +11,7 @@ import { ArticlesDemo5 } from "src/views/shop/demo-5";
 import { ArticlesDemo6 } from "src/views/shop/demo-6";
 import { ArticlesDemo7 } from "src/views/shop/demo-7";
 import { ArticlesDemo8 } from "src/views/shop/demo-8";
-//import { ArticlesDemo9 } from "src/views/shop/demo-9";
+import { ArticlesDemo9 } from "src/views/shop/demo-9";
 //import { ArticlesDemo10 } from "src/views/shop/demo-10";
 
 const getDemo = (num, common) => {
@@ -32,9 +32,9 @@ const getDemo = (num, common) => {
     return <ArticlesDemo7 {...common} />
   else if (num == 8)
     return <ArticlesDemo8 {...common} />
-  /*else if (num == 9)
+  else if (num == 9)
     return <ArticlesDemo9 {...common} />
-  else if (num == 10)
+  /*else if (num == 10)
     return <ArticlesDemo10 {...common} />*/
 }
 const ArticleList = () => {

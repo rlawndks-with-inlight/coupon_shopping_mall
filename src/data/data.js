@@ -20,8 +20,8 @@ export const SHOP_DEMO_DATA = [
   { value: 6, title: '데모 6' },
   { value: 7, title: '데모 7' },
   { value: 8, title: '데모 8' },
-  /*{ value: 9, title: '데모 9' },
-  { value: 10, title: '데모 10' },*/
+  { value: 9, title: '데모 9' },
+  /*{ value: 10, title: '데모 10' },*/
 ];
 export const BLOG_DEMO_DATA = [
   { value: 1, title: '데모 1' },

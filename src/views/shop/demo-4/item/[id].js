@@ -110,12 +110,16 @@ const ItemDemo = (props) => {
       id: router.query?.id,
       seller_id: themeDnsData?.seller_id ?? 0
     });
-    data['sub_images'] = (data?.sub_images ?? []).map((img) => { //cannot create property on false? 오류 간헐적 발생
-      return img?.product_sub_img
-    })
+
+    let sub_image = data?.sub_images;
+    let description_image = data?.sub_images;
+
+    data['sub_images'] = (sub_image ?? []).map((img) => img?.product_sub_img).filter((img) => img !== null && img !== undefined)
     /*if (data?.product_img) {  //메인이미지를 상세이미지에 추가하는 코드
       data['sub_images'].unshift(data?.product_img)
     }*/
+
+    data['description_images'] = (description_image ?? []).map((img) => img?.product_description_img).filter((img) => img !== null && img !== undefined)
     data['images'] = data['sub_images'];
     /*setReviewPage(review_page);
     let review_data = await apiManager('product-reviews', 'list', {
@@ -132,7 +136,7 @@ const ItemDemo = (props) => {
     {
       value: 'description',
       label: 'Detail',
-      component: product?.product_description ?
+      component: themeDnsData?.id != 74 ? product?.product_description ?
         <StyledReactQuill
           className='none-scroll'
           value={`
@@ -142,7 +146,20 @@ const ItemDemo = (props) => {
           readOnly={true}
           theme={"bubble"}
           bounds={'.app'}
-        /> : null,
+        /> : null
+        :
+        <>
+          <StyledReactQuill
+            className='none-scroll'
+            value={product?.description_images
+              ?.map((img) => `<img src="${img}" alt="이미지" />`)
+              .join("")
+            }
+            readOnly={true}
+            theme={"bubble"}
+            bounds={'.app'}
+          />
+        </>,
     },
     /*{
       value: 'basic_info',
@@ -249,7 +266,7 @@ const ItemDemo = (props) => {
               } else {
                 if (buyOrCart == 'buy') {
                   setCharacterSelect(false);
-                  setUnipassPopup(true);
+                  setBuyOpen(true);
                 } else {
                   handleAddCart();
                   setCharacterSelect(false);
@@ -266,61 +283,7 @@ const ItemDemo = (props) => {
           </Button>
         </DialogActions>
       </Dialog>
-      <Dialog
-        open={unipassPopup}
-        onClose={() => {
-          setUnipassPopup(false);
-          router.reload()
-        }}
-        PaperProps={{
-          style: {
-            maxWidth: '600px', width: '90%'
-          }
-        }}
-      >
-        <DialogTitle>개인통관고유부호확인</DialogTitle>
-        <DialogContent>
-          <div>
-            해외직구 배송을 위해 개인통관고유부호 확인이 필요합니다.<br />
-            <a href='https://unipass.customs.go.kr/csp/persIndex.do' target='_blank' style={{ textDecoration: 'underline', color: 'blue' }}>
-              https://unipass.customs.go.kr/csp/persIndex.do
-            </a>
-          </div>
 
-          <Stack direction="row" justifyContent="space-between">
-            <FormControl sx={{ width: '100%', marginTop: '1rem' }}>
-              <TextField
-                sx={{
-                  width: '100%',
-                }}
-                placeholder={unipass}
-                onChange={(e) => {
-                  setUnipass(e.target.value)
-                }}
-              />
-            </FormControl>
-          </Stack>
-        </DialogContent>
-        <DialogActions>
-          <Button
-            variant='contained'
-            onClick={() => {
-              if (!unipass) {
-                toast.error('개인통관고유부호를 입력해주세요.')
-              } else {
-                verifyUnipass(unipass)
-              }
-            }} color="inherit">
-            확인
-          </Button>
-          <Button onClick={() => {
-            setUnipassPopup(false);
-            router.reload()
-          }} color="inherit">
-            나가기
-          </Button>
-        </DialogActions>
-      </Dialog>
       <DialogBuyNow
         buyOpen={buyOpen}
         setBuyOpen={setBuyOpen}
@@ -340,41 +303,42 @@ const ItemDemo = (props) => {
                       <ProductDetailsCarousel product={product} />
                     </Grid>
 
-                    <Grid item xs={12} md={6} lg={6} style={{ marginTop: 'auto' }}>
+                    <Grid item xs={12} md={6} lg={6} style={{ position: 'relative' }}>
 
-                      {product?.brand_name &&
-                        <>
-                          <div style={{ fontSize: '40px', fontFamily: 'Playfair Display', fontWeight: 'bold', borderTop: '1px solid #ccc', padding: '1rem 0' }}>
-                            {product?.brand_name[0].category_en_name}
-                          </div>
-                        </>
-                      }
-                      <ItemName style={{ whiteSpace: 'wrap' }}>{product?.product_name}</ItemName>
-                      {product?.product_code &&
-                        <>
-                          <ItemCharacter key_name={'상품코드'} value={product?.product_code} />
-                        </>}
-                      {themePropertyList.map((group, index) => {
-                        let property_list = (product?.properties ?? []).filter(el => el?.property_group_id == group?.id);
-                        property_list = property_list.map(property => {
-                          return property?.property_name
-                        })
-                        if (group?.property_group_name == '등급') {
-                          return <ItemCharacter key_name={group?.property_group_name} value={`${property_list.join(', ')}`} />
-                        }
-                        /*if (group?.property_group_name == '매장') {
-                          return <ItemCharacter key_name={group?.property_group_name} value={`${property_list.join(', ')}`} type='1' />
-                        }*/
-                      })}
-                      {product?.characters && product?.characters.map((character) => (
-                        <>
-                          <ItemCharacter key_name={character?.character_name} value={character?.character_value} />
-                        </>
-                      ))}
-                      {
-                        product?.status == 0 ?
+                      <div>
+                        {product?.brand_name &&
                           <>
-                            {/*
+                            <div style={{ fontSize: '30px', fontFamily: 'Playfair Display', fontWeight: 'bold', borderTop: '1px solid #ccc', padding: '1rem 0' }}>
+                              {product?.brand_name[0].category_en_name}
+                            </div>
+                          </>
+                        }
+                        <ItemName style={{ whiteSpace: 'wrap', fontFamily: 'Noto Sans KR', fontSize: '25px' }}>{product?.product_name}</ItemName>
+                        {product?.product_code &&
+                          <>
+                            <ItemCharacter key_name={'상품코드'} value={product?.product_code} />
+                          </>}
+                        {themePropertyList.map((group, index) => {
+                          let property_list = (product?.properties ?? []).filter(el => el?.property_group_id == group?.id);
+                          property_list = property_list.map(property => {
+                            return property?.property_name
+                          })
+                          if (group?.property_group_name == '등급') {
+                            return <ItemCharacter key_name={group?.property_group_name} value={`${property_list.join(', ')}`} />
+                          }
+                          /*if (group?.property_group_name == '매장') {
+                            return <ItemCharacter key_name={group?.property_group_name} value={`${property_list.join(', ')}`} type='1' />
+                          }*/
+                        })}
+                        {product?.characters && product?.characters.map((character) => (
+                          <>
+                            <ItemCharacter key_name={character?.character_name} value={character?.character_value} />
+                          </>
+                        ))}
+                        {
+                          product?.status == 0 ?
+                            <>
+                              {/*
                             {commarNumber(product?.product_price) != commarNumber(product?.product_sale_price) ?
                               <>
                                 <ItemCharacter
@@ -391,46 +355,46 @@ const ItemDemo = (props) => {
                               </>
                               :
                             */}
-                            <>
-                              <ItemCharacter
-                                key_name={'판매가'}
-                                value={<>
-                                  {commarNumber(parseInt(product?.product_sale_price))}원
-                                </>
-                                }
-                              />
-                            </>
-
-                          </>
-                          :
-                          product?.status == 1 ?
-                            <>
-                              <ItemCharacter
-                                key_name={'판매가'}
-                                value={<div>거래 진행중인 상품입니다</div>}
-                              />
-                            </>
-                            :
-                            product?.status == 2 || product?.status == 3 || product?.status == 4 || product?.status == 6 ?
                               <>
                                 <ItemCharacter
                                   key_name={'판매가'}
-                                  value={<div style={{ color: 'red' }}>SOLD OUT</div>}
+                                  value={<>
+                                    {commarNumber(parseInt(product?.product_sale_price))}원
+                                  </>
+                                  }
+                                />
+                              </>
+
+                            </>
+                            :
+                            product?.status == 1 ?
+                              <>
+                                <ItemCharacter
+                                  key_name={'판매가'}
+                                  value={<div>거래 진행중인 상품입니다</div>}
                                 />
                               </>
                               :
-                              product?.status == 7 ?
+                              product?.status == 2 || product?.status == 3 || product?.status == 4 || product?.status == 6 ?
                                 <>
                                   <ItemCharacter
                                     key_name={'판매가'}
-                                    value={<div>매장문의</div>}
+                                    value={<div style={{ color: 'red' }}>SOLD OUT</div>}
                                   />
                                 </>
                                 :
-                                ''
-                      }
+                                product?.status == 7 ?
+                                  <>
+                                    <ItemCharacter
+                                      key_name={'판매가'}
+                                      value={<div>매장문의</div>}
+                                    />
+                                  </>
+                                  :
+                                  ''
+                        }
 
-                      {/* <ProductDetailsSummary
+                        {/* <ProductDetailsSummary
                         product={product}
                         cart={""}
                         onAddCart={() => { }}
@@ -457,136 +421,143 @@ const ItemDemo = (props) => {
                           </>
                         }
                       </div> */}
-                      <div style={{ borderBottom: '1px solid #ccc', width: '100%', marginTop: '1rem' }} />
-                      {themePropertyList.map((group, index) => {
-                        let property_list = (product?.properties ?? []).filter(el => el?.property_group_id == group?.id);
-                        property_list = property_list.map(property => {
-                          return property?.property_name
-                        })
-                        /*
-                        if (group?.property_group_name == '매장') {
-                          return <>
-                            <div style={{ margin: '1rem 0 3rem 0' }}>
-                              {`${property_list.join(', ')}` == '압구정, 인스파이어' ?
-                                <div style={{ fontSize: '14px' }}>
-                                  <Icon icon={'mdi:location'} style={{ color: '#FF5B0D' }} /> 압구정 그랑파리<br />
-                                  <Icon icon={'mdi:location'} style={{ color: '#FF5B0D' }} /> 인스파이어 럭셔리에디션
-                                </div>
-                                :
-                                `${property_list.join(', ')}` == '압구정' ?
-                                  <div style={{ fontSize: '14px', color: '#999999' }}>
-                                    <Row style={{ color: 'black' }}><Icon icon={'mdi:location'} style={{ color: '#FF5B0D' }} /> &nbsp;압구정 그랑파리</Row>
-                                    <Icon icon={'mdi:location'} /> 인스파이어 럭셔리에디션
+                        <div style={{ borderBottom: '1px solid #ccc', width: '100%', marginTop: '1rem' }} />
+                        {themePropertyList.map((group, index) => {
+                          let property_list = (product?.properties ?? []).filter(el => el?.property_group_id == group?.id);
+                          property_list = property_list.map(property => {
+                            return property?.property_name
+                          })
+                          /*
+                          if (group?.property_group_name == '매장') {
+                            return <>
+                              <div style={{ margin: '1rem 0 3rem 0' }}>
+                                {`${property_list.join(', ')}` == '압구정, 인스파이어' ?
+                                  <div style={{ fontSize: '14px' }}>
+                                    <Icon icon={'mdi:location'} style={{ color: '#FF5B0D' }} /> 압구정 그랑파리<br />
+                                    <Icon icon={'mdi:location'} style={{ color: '#FF5B0D' }} /> 인스파이어 럭셔리에디션
                                   </div>
                                   :
-                                  `${property_list.join(', ')}` == '인스파이어' ?
+                                  `${property_list.join(', ')}` == '압구정' ?
                                     <div style={{ fontSize: '14px', color: '#999999' }}>
-                                      <Icon icon={'mdi:location'} /> 압구정 그랑파리
-                                      <Row style={{ color: 'black' }}><Icon icon={'mdi:location'} style={{ color: '#FF5B0D' }} /> &nbsp;인스파이어 럭셔리에디션</Row>
+                                      <Row style={{ color: 'black' }}><Icon icon={'mdi:location'} style={{ color: '#FF5B0D' }} /> &nbsp;압구정 그랑파리</Row>
+                                      <Icon icon={'mdi:location'} /> 인스파이어 럭셔리에디션
                                     </div>
                                     :
-                                    <div style={{ fontSize: '14px', color: '#999999' }}>
-                                      <Icon icon={'mdi:location-on-outline'} /> 압구정 그랑파리<br />
-                                      <Icon icon={'mdi:location-on-outline'} /> 인스파이어 럭셔리에디션
-                                    </div>
-                              }
-                            </div>
-                          </>
-                        }
-                        */
-                      })}
-                      <Button
-                        disabled={product?.status != 0 || !(product?.product_sale_price > 0)}
-                        sx={{
-                          width: '100%',
-                          marginTop: '1rem',
-                          height: '60px',
-                          backgroundColor: 'black',
-                          borderRadius: '0',
-                          fontWeight: 'bold',
-                          fontSize: '18px',
-                          fontFamily: 'Playfair Display',
-                          color: 'white',
-                          border: '1px solid #999999',
-                          '&:hover': {
-                            backgroundColor: 'black',
+                                    `${property_list.join(', ')}` == '인스파이어' ?
+                                      <div style={{ fontSize: '14px', color: '#999999' }}>
+                                        <Icon icon={'mdi:location'} /> 압구정 그랑파리
+                                        <Row style={{ color: 'black' }}><Icon icon={'mdi:location'} style={{ color: '#FF5B0D' }} /> &nbsp;인스파이어 럭셔리에디션</Row>
+                                      </div>
+                                      :
+                                      <div style={{ fontSize: '14px', color: '#999999' }}>
+                                        <Icon icon={'mdi:location-on-outline'} /> 압구정 그랑파리<br />
+                                        <Icon icon={'mdi:location-on-outline'} /> 인스파이어 럭셔리에디션
+                                      </div>
+                                }
+                              </div>
+                            </>
                           }
-                        }}
-                        //variant='contained'
-                        /*startIcon={<>
-                          <Icon icon={'mdi:check-bold'} />
-                        </>}*/
-                        onClick={() => {
-                          if (user) {
-                            if (product?.characters?.length > 0) {
-                              setCharacterSelect(true);
-                              setBuyOrCart('buy');
-                            } else {
-                              setUnipassPopup(true);
-                              //setBuyOpen(true);
-                            }
-                          } else {
-                            toast.error('로그인을 해주세요.')
-                          }
-                        }}
-                      >Buy Now</Button>
-                      <Row style={{ columnGap: '0.5rem', marginTop: '0.5rem', alignItems: 'center' }}>
+                          */
+                        })}
+                      </div>
+                      <div style={{ position: 'absolute', bottom: '0', width: '100%' }}>
                         <Button
                           disabled={product?.status != 0 || !(product?.product_sale_price > 0)}
                           sx={{
-                            width: '90%',
+                            width: '100%',
+                            //marginTop: '1rem',
                             height: '60px',
-                            //backgroundColor: 'white',
+                            backgroundColor: 'black',
                             borderRadius: '0',
                             fontWeight: 'bold',
                             fontSize: '18px',
                             fontFamily: 'Playfair Display',
-                            color: '#999999',
+                            color: 'white',
                             border: '1px solid #999999',
                             '&:hover': {
-                              backgroundColor: 'transparent',
+                              backgroundColor: 'black',
                             }
                           }}
-                          //variant='outlined'
+                          //variant='contained'
                           /*startIcon={<>
-                            <Icon icon={'mdi:cart'} />
+                            <Icon icon={'mdi:check-bold'} />
                           </>}*/
                           onClick={() => {
-                            if (product?.characters?.length > 0) {
-                              setCharacterSelect(true);
-                              setBuyOrCart('cart');
-                            } else {
-                              handleAddCart()
-                            }
-                          }}
-                        >add to cart</Button>
-                        <Icon
-                          icon={themeWishData.map(wish => { return wish?.product_id }).includes(product?.id) ? 'ph:heart-fill' : 'ph:heart-light'}
-                          style={{
-                            width: '30px',
-                            height: '30px',
-                            color: `${themeDnsData?.theme_css.main_color}`,
-                            cursor: 'pointer',
-                            margin: '0 1rem'
-                          }}
-                          onClick={async () => {
                             if (user) {
-                              let result = await insertWishDataUtil(product, themeWishData, onChangeWishData);
-                              if (result?.is_add) {
-                                setModal({
-                                  func: () => {
-                                    router.push(`/shop/auth/wish`)
-                                  },
-                                  icon: 'mdi:heart',
-                                  title: '상품이 위시리스트에 담겼습니다\n바로 확인 하시겠습니까?'
-                                })
+                              if (user?.unipass) {
+                                if (product?.characters?.length > 0) {
+                                  setCharacterSelect(true);
+                                  setBuyOrCart('buy');
+                                } else {
+                                  //setUnipassPopup(true);
+                                  setBuyOpen(true);
+                                }
+                              } else {
+                                toast.error('개인통관고유부호가 존재하지 않습니다. 관리자에 문의하세요.')
                               }
                             } else {
                               toast.error('로그인을 해주세요.')
                             }
                           }}
-                        />
-                      </Row>
+                        >Buy Now</Button>
+                        <Row style={{ columnGap: '0.5rem', marginTop: '0.5rem', alignItems: 'center' }}>
+                          <Button
+                            disabled={product?.status != 0 || !(product?.product_sale_price > 0)}
+                            sx={{
+                              width: '90%',
+                              height: '60px',
+                              //backgroundColor: 'white',
+                              borderRadius: '0',
+                              fontWeight: 'bold',
+                              fontSize: '18px',
+                              fontFamily: 'Playfair Display',
+                              color: '#999999',
+                              border: '1px solid #999999',
+                              '&:hover': {
+                                backgroundColor: 'transparent',
+                              }
+                            }}
+                            //variant='outlined'
+                            /*startIcon={<>
+                              <Icon icon={'mdi:cart'} />
+                            </>}*/
+                            onClick={() => {
+                              if (product?.characters?.length > 0) {
+                                setCharacterSelect(true);
+                                setBuyOrCart('cart');
+                              } else {
+                                handleAddCart()
+                              }
+                            }}
+                          >add to cart</Button>
+                          <Icon
+                            icon={themeWishData.map(wish => { return wish?.product_id }).includes(product?.id) ? 'ph:heart-fill' : 'ph:heart-light'}
+                            style={{
+                              width: '30px',
+                              height: '30px',
+                              color: `${themeDnsData?.theme_css.main_color}`,
+                              cursor: 'pointer',
+                              margin: '0 1rem'
+                            }}
+                            onClick={async () => {
+                              if (user) {
+                                let result = await insertWishDataUtil(product, themeWishData, onChangeWishData);
+                                if (result?.is_add) {
+                                  setModal({
+                                    func: () => {
+                                      router.push(`/shop/auth/wish`)
+                                    },
+                                    icon: 'mdi:heart',
+                                    title: '상품이 위시리스트에 담겼습니다\n바로 확인 하시겠습니까?'
+                                  })
+                                }
+                              } else {
+                                toast.error('로그인을 해주세요.')
+                              }
+                            }}
+                          />
+                        </Row>
+                      </div>
                     </Grid>
                   </Grid>
                   <Card style={{

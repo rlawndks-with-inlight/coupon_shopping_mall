@@ -270,61 +270,7 @@ const ItemDemo = (props) => {
           </Button>
         </DialogActions>
       </Dialog>
-      <Dialog
-        open={unipassPopup}
-        onClose={() => {
-          setUnipassPopup(false);
-          router.reload()
-        }}
-        PaperProps={{
-          style: {
-            maxWidth: '600px', width: '90%'
-          }
-        }}
-      >
-        <DialogTitle>개인통관고유부호확인</DialogTitle>
-        <DialogContent>
-          <div>
-            해외직구 배송을 위해 개인통관고유부호 확인이 필요합니다.<br />
-            <a href='https://unipass.customs.go.kr/csp/persIndex.do' target='_blank' style={{ textDecoration: 'underline', color: 'blue' }}>
-              https://unipass.customs.go.kr/csp/persIndex.do
-            </a>
-          </div>
 
-          <Stack direction="row" justifyContent="space-between">
-            <FormControl sx={{ width: '100%', marginTop: '1rem' }}>
-              <TextField
-                sx={{
-                  width: '100%',
-                }}
-                placeholder={unipass}
-                onChange={(e) => {
-                  setUnipass(e.target.value)
-                }}
-              />
-            </FormControl>
-          </Stack>
-        </DialogContent>
-        <DialogActions>
-          <Button
-            variant='contained'
-            onClick={() => {
-              if (!unipass) {
-                toast.error('개인통관고유부호를 입력해주세요.')
-              } else {
-                verifyUnipass(unipass)
-              }
-            }} color="inherit">
-            확인
-          </Button>
-          <Button onClick={() => {
-            setUnipassPopup(false);
-            router.reload()
-          }} color="inherit">
-            나가기
-          </Button>
-        </DialogActions>
-      </Dialog>
       <DialogBuyNow
         buyOpen={buyOpen}
         setBuyOpen={setBuyOpen}
@@ -344,7 +290,7 @@ const ItemDemo = (props) => {
                       <ProductDetailsCarousel product={product} />
                     </Grid>
 
-                    <Grid item xs={12} md={6} lg={6} style={{ marginTop: 'auto' }}>
+                    <Grid item xs={12} md={6} lg={6} style={{ position: 'relative' }}>
 
                       {product?.brand_name &&
                         <>
@@ -437,7 +383,7 @@ const ItemDemo = (props) => {
                           return property?.property_name
                         })
                       })}
-                      <Row style={{ columnGap: '0.5rem', marginTop: '0.5rem', alignItems: 'center' }}>
+                      <Row style={{ columnGap: '0.5rem', alignItems: 'center', position: 'absolute', bottom: '0' }}>
                         <Button
                           disabled={product?.status != 0 || !(product?.product_sale_price > 0)}
                           sx={{
@@ -480,12 +426,16 @@ const ItemDemo = (props) => {
                           }}
                           onClick={() => {
                             if (user) {
-                              if (product?.characters?.length > 0) {
-                                setCharacterSelect(true);
-                                setBuyOrCart('buy');
+                              if (user?.unipass) {
+                                if (product?.characters?.length > 0) {
+                                  setCharacterSelect(true);
+                                  setBuyOrCart('buy');
+                                } else {
+                                  //setUnipassPopup(true);
+                                  setBuyOpen(true);
+                                }
                               } else {
-                                setUnipassPopup(true);
-                                //setBuyOpen(true);
+                                toast.error('개인통관고유부호가 존재하지 않습니다. 관리자에 문의하세요.')
                               }
                             } else {
                               toast.error('로그인을 해주세요.')

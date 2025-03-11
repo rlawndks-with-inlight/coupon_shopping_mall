@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types';
-import { Button, Card, Checkbox, Divider, FormControl, FormControlLabel, Grid, InputAdornment, InputLabel, MenuItem, OutlinedInput, Select, Stack, Step, StepConnector, StepLabel, Stepper, TextField, Typography, stepConnectorClasses } from '@mui/material';
+import { Button, Card, Checkbox, Dialog, DialogActions, DialogContent, DialogTitle, Divider, FormControl, FormControlLabel, Grid, InputAdornment, InputLabel, MenuItem, OutlinedInput, Select, Stack, Step, StepConnector, StepLabel, Stepper, TextField, Typography, stepConnectorClasses } from '@mui/material';
 import { useEffect, useState } from 'react';
 import { Col, Row, Title, themeObj } from 'src/components/elements/styled-components';
 import styled from 'styled-components'
@@ -130,9 +130,14 @@ const SignUpDemo = (props) => {
     nickname: '',
     phone_num: '',
     phoneCheck: '',
+    unipass: '',
   })
   const [loading, setLoading] = useState(true);
   const [phoneCheckStep, setPhoneCheckStep] = useState(0);
+
+  const [unipassPopup, setUnipassPopup] = useState(false);
+  const [unipass, setUnipass] = useState();
+
   const onClickPrevButton = () => {
     if (activeStep == 0) {
       router.back();
@@ -172,7 +177,8 @@ const SignUpDemo = (props) => {
         !user.user_pw ||
         !user.user_pw_check ||
         !user.name ||
-        !user.phone_num
+        !user.phone_num ||
+        !user.unipass
       ) {
         toast.error("필수 항목을 입력해 주세요.");
         return;
@@ -246,6 +252,30 @@ const SignUpDemo = (props) => {
       </Wrappers>
     </>
   }
+
+
+  async function verifyUnipass(code) {
+    if (!user?.name || !user?.phone_num) {
+      toast.error('이름과 전화번호를 먼저 입력해주세요')
+    }
+
+    let result = await apiManager('util/unipass', 'create', { name: user?.name, code: code, phone_num: user?.phone_num })
+    if (result) {
+      if (result?.message == '정상 : ') {
+        toast.success('개인통관고유부호가 확인되었습니다.');
+        setUnipassPopup(false);
+        setUser({
+          ...user,
+          unipass: unipass
+        })
+      } else {
+        toast.error('회원정보와 일치하지 않는 번호입니다. 다시 확인 바랍니다.');
+      }
+    } else {
+      return;
+    }
+  }
+
   return (
     <>
       <Wrappers>
@@ -443,6 +473,64 @@ const SignUpDemo = (props) => {
                 </>}
               />
             </FormControl> */}
+            <Button variant='outlined' onClick={() => { setUnipassPopup(true) }} style={{ marginTop: '1rem', maxWidth: '200px' }}>
+              개인통관고유부호 등록
+            </Button>
+            <Dialog
+              open={unipassPopup}
+              onClose={() => {
+                setUnipassPopup(false);
+                router.reload()
+              }}
+              PaperProps={{
+                style: {
+                  maxWidth: '600px', width: '90%'
+                }
+              }}
+            >
+              <DialogTitle>개인통관고유부호확인</DialogTitle>
+              <DialogContent>
+                <div>
+                  해외직구 배송을 위해 개인통관고유부호 확인이 필요합니다.<br />
+                  <a href='https://unipass.customs.go.kr/csp/persIndex.do' target='_blank' style={{ textDecoration: 'underline', color: 'blue' }}>
+                    https://unipass.customs.go.kr/csp/persIndex.do
+                  </a>
+                </div>
+
+                <Stack direction="row" justifyContent="space-between">
+                  <FormControl sx={{ width: '100%', marginTop: '1rem' }}>
+                    <TextField
+                      sx={{
+                        width: '100%',
+                      }}
+                      placeholder={unipass}
+                      onChange={(e) => {
+                        setUnipass(e.target.value)
+                      }}
+                    />
+                  </FormControl>
+                </Stack>
+              </DialogContent>
+              <DialogActions>
+                <Button
+                  variant='contained'
+                  onClick={() => {
+                    if (!unipass) {
+                      toast.error('개인통관고유부호를 입력해주세요.')
+                    } else {
+                      verifyUnipass(unipass)
+                    }
+                  }} color="inherit">
+                  확인
+                </Button>
+                <Button onClick={() => {
+                  setUnipassPopup(false);
+                  router.reload()
+                }} color="inherit">
+                  나가기
+                </Button>
+              </DialogActions>
+            </Dialog>
             {user?.level == 10 &&
               <>
                 <Stack spacing={1}>

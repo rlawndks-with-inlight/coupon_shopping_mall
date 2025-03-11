@@ -1,4 +1,4 @@
-import { Box, Button, Card, CardContent, CardHeader, CircularProgress, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, FormControl, FormControlLabel, Grid, Paper, Radio, RadioGroup, Stack, TextField, Typography } from '@mui/material';
+import { Box, Button, Card, CardContent, CardHeader, CircularProgress, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, FormControlLabel, Grid, Paper, Radio, RadioGroup, Stack, TextField, Typography } from '@mui/material';
 import { useEffect, useState } from 'react';
 import { Row, Title, postCodeStyle } from 'src/components/elements/styled-components';
 import { CheckoutCartProductList, CheckoutSteps, CheckoutSummary } from 'src/views/@dashboard/e-commerce/checkout';
@@ -135,14 +135,9 @@ const CartDemo = (props) => {
     use_point: 0,
   })
   const [payLoading, setPayLoading] = useState(false);
-
-  const [unipassPopup, setUnipassPopup] = useState(false);
-  const [unipass, setUnipass] = useState();
-
   useEffect(() => {
     getCart();
   }, [])
-
   const getCart = async () => {
     let data = await getCartDataUtil(themeCartData);
     setProducts(data);
@@ -327,79 +322,8 @@ const CartDemo = (props) => {
     }
   }
 
-  async function verifyUnipass(code) {
-
-    let result = await apiManager('util/unipass', 'create', { code: code })
-    if (result) {
-      if (result?.message == '정상 : ') {
-        toast.success('개인통관고유부호가 확인되었습니다.');
-        setUnipassPopup(false);
-        onClickNextStep();
-      } else {
-        toast.error('회원정보와 일치하지 않는 번호입니다. 다시 확인 바랍니다.');
-      }
-    } else {
-      return;
-    }
-  }
-
   return (
     <>
-      <Dialog
-        open={unipassPopup}
-        onClose={() => {
-          setUnipassPopup(false);
-          router.reload()
-        }}
-        PaperProps={{
-          style: {
-            maxWidth: '600px', width: '90%'
-          }
-        }}
-      >
-        <DialogTitle>개인통관고유부호확인</DialogTitle>
-        <DialogContent>
-          <div>
-            해외직구 배송을 위해 개인통관고유부호 확인이 필요합니다.<br />
-            <a href='https://unipass.customs.go.kr/csp/persIndex.do' target='_blank' style={{ textDecoration: 'underline', color: 'blue' }}>
-              https://unipass.customs.go.kr/csp/persIndex.do
-            </a>
-          </div>
-
-          <Stack direction="row" justifyContent="space-between">
-            <FormControl sx={{ width: '100%', marginTop: '1rem' }}>
-              <TextField
-                sx={{
-                  width: '100%',
-                }}
-                placeholder={unipass}
-                onChange={(e) => {
-                  setUnipass(e.target.value)
-                }}
-              />
-            </FormControl>
-          </Stack>
-        </DialogContent>
-        <DialogActions>
-          <Button
-            variant='contained'
-            onClick={() => {
-              if (!unipass) {
-                toast.error('개인통관고유부호를 입력해주세요.')
-              } else {
-                verifyUnipass(unipass)
-              }
-            }} color="inherit">
-            확인
-          </Button>
-          <Button onClick={() => {
-            setUnipassPopup(false);
-            router.reload()
-          }} color="inherit">
-            나가기
-          </Button>
-        </DialogActions>
-      </Dialog>
       <Dialog open={payLoading}
         onClose={() => {
           setPayLoading(false);
@@ -707,8 +631,7 @@ const CartDemo = (props) => {
                   type="submit"
                   variant="contained"
                   disabled={_.sum(_.map(products, (item) => { return item.quantity * item.product_sale_price })) <= 0}
-                  //onClick={onClickNextStep}
-                  onClick={() => { setUnipassPopup(true); }}
+                  onClick={() => { user?.unipass ? onClickNextStep : toast.error('개인통관고유부호가 존재하지 않습니다. 관리자에 문의하세요') }}
                 >
                   {'배송지 선택하기'}
                 </Button>

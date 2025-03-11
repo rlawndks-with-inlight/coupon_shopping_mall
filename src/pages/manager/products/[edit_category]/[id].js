@@ -565,6 +565,7 @@ const ProductEdit = () => {
     consignment_fee_type: 0,
     product_file: undefined,
     sub_images: [],
+    description_images: [],
     groups: [],
     characters: [],
     properties: {},
@@ -704,6 +705,18 @@ const ProductEdit = () => {
     setItem({ ...item, ['sub_images']: sub_images })
   };
 
+  const handleDropMultiDescription = (acceptedFiles) => {
+    let description_images = [...item.description_images];
+    for (var i = 0; i < acceptedFiles.length; i++) {
+      description_images.push({
+        product_description_file: Object.assign(acceptedFiles[i], {
+          preview: URL.createObjectURL(acceptedFiles[i])
+        }),
+      })
+    }
+    setItem({ ...item, ['description_images']: description_images })
+  }
+
   const handleRemoveFile = (inputFile) => {
     let sub_images = [...item.sub_images];
     let find_index = _.findIndex(sub_images.map(img => { return img.product_sub_file }), {
@@ -727,11 +740,40 @@ const ProductEdit = () => {
     }
   };
 
+  const handleRemoveDescription = (inputFile) => {
+    let description_images = [...item.description_images];
+    let find_index = _.findIndex(description_images.map(img => { return img.product_description_file }), {
+      path: inputFile.path,
+      preview: inputFile.preview
+    });
+    if (find_index < 0) {
+      for (var i = 0; i < description_images.length; i++) {
+        if (description_images[i]?.product_description_img == inputFile) {
+          find_index = i;
+        }
+      }
+    }
+    if (find_index >= 0) {
+      if (description_images[find_index]?.id) {
+        description_images[find_index].is_delete = 1;
+      } else {
+        description_images.splice(find_index, 1);
+      }
+      setItem({ ...item, ['description_images']: description_images })
+    }
+  };
+
   const handleRemoveAllFiles = () => {
     let sub_images = [...item.sub_images];
     sub_images = [];
     setItem({ ...item, ['sub_images']: sub_images })
   };
+
+  const handleRemoveAllDescriptionFiles = () => {
+    let description_images = [...item.description_images];
+    description_images = [];
+    setItem({ ...item, ['description_images']: description_images })
+  }
   const onClickCategory = (category, depth, idx) => {
     let parent_list = getAllIdsWithParents(themeCategoryList[idx]?.product_categories);
     let use_list = [];
@@ -773,12 +815,16 @@ const ProductEdit = () => {
       }
     }*/
     let obj = item;
+    //console.log(obj)
     if (sort) {
       //console.log(sort)
     }
     let sub_images = [];
+    let description_images = [];
     let upload_files = [];
+    let upload_files_d = [];
     for (var i = 0; i < item.sub_images.length; i++) {
+      console.log(item?.sub_images)
       if (item.sub_images[i]?.product_sub_file) {
         upload_files.push({
           image: item.sub_images[i]?.product_sub_file,
@@ -788,7 +834,19 @@ const ProductEdit = () => {
     upload_files = await uploadFilesByManager({
       images: upload_files,
     })
+    for (var i = 0; i < item.description_images.length; i++) {
+      if (item.description_images[i]?.product_description_file) {
+        console.log(item?.description_images)
+        upload_files_d.push({
+          image: item.description_images[i]?.product_description_file,
+        })
+      }
+    }
+    upload_files_d = await uploadFilesByManager({
+      images: upload_files_d,
+    })
     let upload_idx = 0;
+    let upload_idx_d = 0;
     for (var i = 0; i < obj.sub_images.length; i++) {
       if (obj.sub_images[i]?.product_sub_file) {
         sub_images.push({
@@ -797,6 +855,16 @@ const ProductEdit = () => {
         upload_idx++;
       } else {
         sub_images.push(obj.sub_images[i]);
+      }
+    }
+    for (var i = 0; i < obj.description_images.length; i++) {
+      if (obj.description_images[i]?.product_description_file) {
+        description_images.push({
+          product_description_img: upload_files_d[upload_idx_d]?.url,
+        });
+        upload_idx_d++;
+      } else {
+        description_images.push(obj.description_images[i]);
       }
     }
     for (var i = 0; i < item.groups.length; i++) {
@@ -814,13 +882,13 @@ const ProductEdit = () => {
       type == 'edit' ?
         obj?.id ? //수정
           sort ?
-            result = await apiManager('products', 'update', { ...obj, id: obj?.id, ...category_ids, sub_images, properties: JSON.stringify(item.properties), sort_idx: sort })
+            result = await apiManager('products', 'update', { ...obj, id: obj?.id, ...category_ids, sub_images, description_images, properties: JSON.stringify(item.properties), sort_idx: sort })
             :
-            result = await apiManager('products', 'update', { ...obj, id: obj?.id, ...category_ids, sub_images, properties: JSON.stringify(item.properties) })
+            result = await apiManager('products', 'update', { ...obj, id: obj?.id, ...category_ids, sub_images, description_images, properties: JSON.stringify(item.properties) })
           : //추가
-          result = await apiManager('products', 'create', { ...obj, ...category_ids, sub_images, user_id: user?.id, properties: JSON.stringify(item.properties) })
+          result = await apiManager('products', 'create', { ...obj, ...category_ids, sub_images, description_images, user_id: user?.id, properties: JSON.stringify(item.properties) })
         :
-        result = await apiManager('products', 'create', { ...obj, ...category_ids, sub_images, user_id: user?.id, properties: JSON.stringify(item.properties) })
+        result = await apiManager('products', 'create', { ...obj, ...category_ids, sub_images, description_images, user_id: user?.id, properties: JSON.stringify(item.properties) })
     }
     if (result) {
       toast.success("성공적으로 저장 되었습니다.");
@@ -1711,15 +1779,53 @@ const ProductEdit = () => {
                           상품설명
                         </Typography>
 
-                        <ReactQuillComponent
-                          value={item.product_description}
-                          setValue={(value) => {
-                            setItem({
-                              ...item,
-                              product_description: value,
-                            })
-                          }}
-                        />
+                        {
+                          themeDnsData?.id != 74 ?
+                            <>
+                              <ReactQuillComponent
+                                value={item.product_description}
+                                setValue={(value) => {
+                                  setItem({
+                                    ...item,
+                                    product_description: value,
+                                  })
+                                }}
+                              />
+                            </>
+                            :
+                            <>
+                              <Upload
+                                multiple
+                                thumbnail={true}
+                                files={item.description_images.map(img => {
+                                  if (img.is_delete == 1) {
+                                    return undefined;
+                                  }
+                                  if (img.product_description_img) {
+                                    return img.product_description_img
+                                  } else {
+                                    return img.product_description_file
+                                  }
+                                }).filter(e => e)}
+                                onDrop={(acceptedFiles) => {
+                                  handleDropMultiDescription(acceptedFiles)
+                                }}
+                                onRemove={(inputFile) => {
+                                  handleRemoveDescription(inputFile)
+                                }}
+                                onRemoveAll={() => {
+                                  handleRemoveAllDescriptionFiles();
+                                }}
+                                fileExplain={{
+                                  //width: '(512x512 추천)'
+                                }}
+                                imageSize={{ //썸네일 사이즈
+                                  width: 200,
+                                  height: 200
+                                }}
+                              />
+                            </>
+                        }
                       </Stack>
                       {!themeDnsData?.none_use_column_obj['products']?.includes('characters') &&
                         <>

@@ -17,6 +17,7 @@ import _ from "lodash";
 import dynamic from "next/dynamic";
 import { useLocales } from "src/locales";
 import { formatLang } from "src/utils/format";
+import toast from "react-hot-toast";
 
 const ReactQuill = dynamic(() => import('react-quill'), {
   ssr: false,
@@ -395,7 +396,8 @@ const ProductList = () => {
                         setPopup({
                           ...popup,
                           type: 2,
-                          seller_product_id: row?.seller_product_id
+                          seller_product_id: row?.seller_product_id,
+                          seller_price: row?.product_sale_price
                         });
                       }} />
                     </IconButton>
@@ -416,7 +418,8 @@ const ProductList = () => {
                         setPopup({
                           ...popup,
                           type: 1,
-                          id: row?.id
+                          id: row?.id,
+                          seller_price: row?.product_sale_price
                         });
                       }} />
                     </IconButton>
@@ -450,7 +453,8 @@ const ProductList = () => {
   const [popup, setPopup] = useState({
     type: '',
     id: '',
-    seller_product_id: ''
+    seller_product_id: '',
+    seller_price: ''
   })
   const [productPrice, setProductPrice] = useState(0)
 
@@ -590,12 +594,18 @@ const ProductList = () => {
     })
   }
 
-  const onSellerProducts = async (id, price) => {
-    let result = await apiManager(`seller-products`, 'create', {
-      seller_id: user?.id, product_id: id, seller_price: price
-    })
-    if (result) {
-      window.location.reload()
+  const onSellerProducts = async (id, price, price_low) => {
+    if (price < price_low) {
+      toast.error('본사 가격보다 낮게 등록할 수 없습니다.');
+      return;
+    }
+    else {
+      let result = await apiManager(`seller-products`, 'create', {
+        seller_id: user?.id, product_id: id, seller_price: price
+      })
+      if (result) {
+        window.location.reload()
+      }
     }
   }
 
@@ -606,12 +616,17 @@ const ProductList = () => {
     }
   }
 
-  const changeSellerProducts = async (id, value) => {
-    let result = await apiUtil(`seller_products/seller_price`, 'update', {
-      id, value
-    })
-    if (result) {
-      window.location.reload()
+  const changeSellerProducts = async (id, value, price_low) => {
+    if (value < price_low) {
+      toast.error('본사 가격보다 낮게 등록할 수 없습니다.');
+      return;
+    } else {
+      let result = await apiUtil(`seller_products/seller_price`, 'update', {
+        id, value
+      })
+      if (result) {
+        window.location.reload()
+      }
     }
   }
 
@@ -634,6 +649,7 @@ const ProductList = () => {
                     onClickCategory={onClickCategory}
                     noneSelectText={`${group?.category_group_name} 선택`}
                     sort_idx={idx}
+                    id={group?.id}
                   />
                 </div>
               </>
@@ -864,7 +880,7 @@ const ProductList = () => {
               />
             </DialogContent>
             <DialogActions>
-              <Button variant="contained" onClick={() => { onSellerProducts(popup['id'], productPrice) }}>
+              <Button variant="contained" onClick={() => { onSellerProducts(popup['id'], productPrice, popup['seller_price']) }}>
                 요청
               </Button>
               <Button color="inherit" onClick={() => {
@@ -895,7 +911,7 @@ const ProductList = () => {
               />
             </DialogContent>
             <DialogActions>
-              <Button variant="contained" onClick={() => { changeSellerProducts(popup['seller_product_id'], productPrice) }}>
+              <Button variant="contained" onClick={() => { changeSellerProducts(popup['seller_product_id'], productPrice, popup['seller_price']) }}>
                 요청
               </Button>
               <Button color="inherit" onClick={() => {

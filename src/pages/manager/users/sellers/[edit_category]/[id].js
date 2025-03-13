@@ -81,7 +81,7 @@ const SellerEdit = () => {
 
   const handleSelectCategory = (index, category) => {
     let ids = category.map(cat => cat.id);
-    ids = JSON.stringify(ids.join(', '))
+    ids = ids.join(', ')
     if (index == 0) {
       setItem({
         ...item,
@@ -647,9 +647,16 @@ const SellerEdit = () => {
                                             <Typography variant="subtitle2" sx={{ color: 'text.secondary' }}>
                                               {group?.category_group_name}
                                             </Typography>
-                                            <Typography>
-                                              (미설정시 전체노출)
-                                            </Typography>
+                                            <Button variant="contained" onClick={() => {
+                                              setItem({
+                                                ...item,
+                                                ['seller_category']: ''
+                                              });
+                                              toast.success('카테고리 전체노출로 초기화되었습니다.');
+                                              setCategoryEdit(!categoryEdit);
+                                            }}>
+                                              초기화(전체노출)
+                                            </Button>
                                             <SelectCategoryComponent
                                               curCategories={curCategories[index] ?? []}
                                               categories={group?.product_categories}
@@ -683,9 +690,16 @@ const SellerEdit = () => {
                                             <Typography variant="subtitle2" sx={{ color: 'text.secondary' }}>
                                               {group?.category_group_name}
                                             </Typography>
-                                            <Typography>
-                                              (미설정시 전체노출)
-                                            </Typography>
+                                            <Button variant="contained" onClick={() => {
+                                              setItem({
+                                                ...item,
+                                                ['seller_brand']: ''
+                                              });
+                                              toast.success('브랜드 전체노출로 초기화되었습니다.');
+                                              setBrandEdit(!brandEdit);
+                                            }}>
+                                              초기화(전체노출)
+                                            </Button>
                                             <SelectCategoryComponent
                                               curCategories={curCategories[index] ?? []}
                                               categories={group?.product_categories}

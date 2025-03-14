@@ -141,8 +141,8 @@ const LoginDemo = (props) => {
             */
           }
         </Row>
-        <Row style={{ margin: '1rem auto', marginTop: '10rem', justifyContent: 'space-between', width: '100%' }}>
-          <div style={{}} themeDnsData={themeDnsData} onClick={() => { router.push(`/shop/auth/find-info?type=0`) }}>아직 회원이 아니신가요?</div>
+        <Row style={{ margin: '1rem auto', marginTop: '10rem', justifyContent: 'space-between', width: '100%', display: `${themeDnsData?.id == 74 && !themeDnsData?.seller_id ? 'none' : ''}` }}>
+          <div style={{}} themeDnsData={themeDnsData} onClick={() => { }}>아직 회원이 아니신가요?</div>
           {
             /*
             <HoverText style={{ paddingRight: '0' }} themeDnsData={themeDnsData} onClick={() => { setDialogOpen(true) }}>비회원 주문조회</HoverText>
@@ -153,7 +153,8 @@ const LoginDemo = (props) => {
           height: '60px',
           borderRadius: '0',
           backgroundColor: `${themeDnsData?.theme_css.main_color}`,
-          fontSize: '18px'
+          fontSize: '18px',
+          display: `${themeDnsData?.id == 74 && !themeDnsData?.seller_id ? 'none' : ''}`
         }}
           onClick={() => { router.push(`/shop/auth/sign-up`) }}
         >회원가입</Button>

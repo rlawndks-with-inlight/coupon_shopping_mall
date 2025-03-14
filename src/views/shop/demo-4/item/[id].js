@@ -483,6 +483,10 @@ const ItemDemo = (props) => {
                             <Icon icon={'mdi:check-bold'} />
                           </>}*/
                           onClick={() => {
+                            if (themeDnsData?.id == 74 && !themeDnsData?.seller_id) {
+                              toast.error('본사페이지에서는 결제가 진행되지 않습니다.')
+                              return;
+                            }
                             if (user) {
                               if (user?.unipass) {
                                 if (product?.characters?.length > 0) {

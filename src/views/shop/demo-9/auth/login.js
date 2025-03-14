@@ -216,7 +216,7 @@ const LoginDemo = (props) => {
               }}
             >조회하기</Button>
             <Row style={{ margin: '1rem auto', marginTop: '10rem', justifyContent: 'space-between', width: '100%' }}>
-              <div style={{}} themeDnsData={themeDnsData} onClick={() => { router.push(`/shop/auth/find-info?type=0`) }}>아직 회원이 아니신가요?</div>
+              <div style={{}} themeDnsData={themeDnsData} onClick={() => { }}>아직 회원이 아니신가요?</div>
             </Row>
             <Button variant="contained" style={{
               height: '60px',

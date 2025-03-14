@@ -247,10 +247,10 @@ const Header = () => {
             name: translate('로그인'),
             link_key: 'login'
         },
-        {
+        ...(themeDnsData?.id == 74 ? [] : [{
             name: translate('회원가입'),
             link_key: 'sign-up'
-        },
+        }]),
         /*{
             name: translate('비회원 주문조회'),
             link_key: 'login?scroll_to=100000'
@@ -536,7 +536,7 @@ const Header = () => {
                                         </>
                                         :
                                         <>
-                                            <AuthMenu theme={theme}>{translate('회원가입')}</AuthMenu>
+                                            <AuthMenu theme={theme} style={{ display: `${themeDnsData?.id == 74 && !themeDnsData?.seller_id ? 'none' : ''}` }}>{translate('회원가입')}</AuthMenu>
                                             <AuthMenu theme={theme} style={{ borderRight: 'none' }}>{translate('로그인')}</AuthMenu>
                                         </>}
 

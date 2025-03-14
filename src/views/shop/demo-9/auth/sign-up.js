@@ -137,6 +137,7 @@ const SignUpDemo = (props) => {
 
   const [unipassPopup, setUnipassPopup] = useState(false);
   const [unipass, setUnipass] = useState();
+  const [phoneVerified, setPhoneVerified] = useState(false);
 
   const onClickPrevButton = () => {
     if (activeStep == 0) {
@@ -186,6 +187,10 @@ const SignUpDemo = (props) => {
         user.user_pw != user.user_pw_check
       ) {
         toast.error("비밀번호 확인란을 똑같이 입력했는지 확인해주세요");
+        return;
+      }
+      if (!phoneVerified) {
+        toast.error("전화번호가 등록되었는지 확인해주세요");
         return;
       }
       let result = await apiManager('auth/sign-up', 'create', { ...user, brand_id: themeDnsData?.id, seller_id: themeDnsData?.seller_id ?? 0 });
@@ -253,6 +258,17 @@ const SignUpDemo = (props) => {
     </>
   }
 
+  const verifyPhone = async () => {
+    let result = await apiManager('phone-registration', 'list', { type: 'user', brand_id: themeDnsData?.id, seller_id: themeDnsData?.seller_id ?? 0, phone_number: user?.phone_num });
+    if (!result.content.length > 0) {
+      toast.error('등록되지 않은 번호입니다.')
+
+    } else {
+      console.log(result.content)
+      toast.success('등록이 확인되었습니다.')
+      setPhoneVerified(true);
+    }
+  }
 
   async function verifyUnipass(code) {
     if (!user?.name || !user?.phone_num) {
@@ -443,16 +459,17 @@ const SignUpDemo = (props) => {
                   setUser({ ...user, ['phone_num']: e.target.value })
                 }}
                 value={user.phone_num}
-              // endAdornment={<>
-              //   <Button style={{ width: '144px', height: '56px', transform: 'translateX(14px)' }}
-              //     variant="contained"
-              //     onClick={() => {
-              //       if (phoneCheckStep == 0) {
-              //         onClickSendPhoneVerifyCode();
-              //       }
-              //     }}
-              //   >인증번호발송</Button>
-              // </>}
+                endAdornment={<>
+                  <Button style={{ width: '144px', height: '56px', transform: 'translateX(14px)' }}
+                    variant="contained"
+                    onClick={() => {
+                      verifyPhone()
+                      /*if (phoneCheckStep == 0) {
+                        onClickSendPhoneVerifyCode();
+                      }*/
+                    }}
+                  >번호등록확인</Button>
+                </>}
               />
             </FormControl>
             {/* <FormControl variant="outlined" style={{ width: '100%', marginTop: '1rem' }}>

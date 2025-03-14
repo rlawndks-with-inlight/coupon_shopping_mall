@@ -631,7 +631,13 @@ const CartDemo = (props) => {
                   type="submit"
                   variant="contained"
                   disabled={_.sum(_.map(products, (item) => { return item.quantity * item.product_sale_price })) <= 0}
-                  onClick={() => { user?.unipass ? onClickNextStep : toast.error('개인통관고유부호가 존재하지 않습니다. 관리자에 문의하세요') }}
+                  onClick={() => {
+                    if (themeDnsData?.id == 74 && !themeDnsData?.seller_id) {
+                      toast.error('본사페이지에서는 결제가 진행되지 않습니다.')
+                      return;
+                    }
+                    user?.unipass ? onClickNextStep : toast.error('개인통관고유부호가 존재하지 않습니다. 관리자에 문의하세요')
+                  }}
                 >
                   {'배송지 선택하기'}
                 </Button>

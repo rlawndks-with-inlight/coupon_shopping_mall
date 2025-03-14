@@ -47,8 +47,8 @@ export default function ManagerTable(props) {
   const { user } = useAuthContext();
 
   useEffect(() => {
-    //console.log(page)
-  }, [page])
+    settingSeller()
+  }, [])
 
   const router = useRouter();
 
@@ -62,6 +62,8 @@ export default function ManagerTable(props) {
   const [order, setOrder] = useState('desc')
   const [dialogOpen, setDialogOpen] = useState(false)
   const [phoneNumber, setPhoneNumber] = useState()
+  const [sellerData, setSellerData] = useState([]);
+  const [sellerID, setSellerID] = useState();
 
   const handleClose = () => {
     setAnchor(null)
@@ -161,12 +163,27 @@ export default function ManagerTable(props) {
   }
 
   const onRegistration = async () => {
-    let result = await apiManager('phone-registration', 'create', { brand_id: themeDnsData?.id, phone_number: phoneNumber, registrar: user?.id });
+    let result = await apiManager('phone-registration', 'create', { brand_id: themeDnsData?.id, seller_id: user?.level == 10 ? user?.id : sellerID, phone_number: phoneNumber, registrar: user?.id });
     if (!result) {
-      //toast.error('등록 중 오류가 발생했습니다.')
+      toast.error('등록 중 오류가 발생했습니다.')
     } else {
       toast.success('등록되었습니다')
       router.reload()
+    }
+  }
+
+  const settingSeller = async () => {
+    let seller_data = await apiManager('sellers', 'list', {
+      page: 1,
+      page_size: 10,
+      s_dt: '',
+      e_dt: '',
+      search: '',
+      category_id: null,
+      is_seller: 1,
+    })
+    if (seller_data) {
+      setSellerData(seller_data.content)
     }
   }
 
@@ -333,7 +350,7 @@ export default function ManagerTable(props) {
 
               <DialogContent>
                 <DialogContentText>
-                  회원가입을 허용할 전화번호를 입력 후 확인을 눌러주세요.
+                  회원가입을 허용할 전화번호 및 적용할 셀러몰을 입력 후 확인을 눌러주세요.
                 </DialogContentText>
                 <TextField
                   autoFocus
@@ -346,6 +363,23 @@ export default function ManagerTable(props) {
                     setPhoneNumber(e.target.value)
                   }}
                 />
+                <FormControl sx={{ width: '100%', marginTop: '1rem' }}>
+                  <InputLabel>
+                    {user?.level >= 20 ? '셀러선택' : `셀러 : ${user?.name}`}
+                  </InputLabel>
+                  <Select
+                    label='셀러선택'
+                    value={sellerID}
+                    disabled={user?.level >= 20 ? false : true}
+                    onChange={e => {
+                      setSellerID(e.target.value)
+                    }}
+                  >
+                    {sellerData.map((seller, idx) => {
+                      return <MenuItem value={seller.id}>{seller.name}</MenuItem>
+                    })}
+                  </Select>
+                </FormControl>
               </DialogContent>
               <DialogActions>
                 <Button variant="contained" onClick={() => {

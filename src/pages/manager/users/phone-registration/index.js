@@ -14,6 +14,21 @@ const PhoneRegistration = () => {
     const { setModal } = useModal()
     const defaultColumns = [
         {
+            id: 'seller_id',
+            label: '셀러몰',
+            action: (row) => {
+                return <div
+                    style={{ cursor: 'pointer', color: 'blue' }}
+                    onClick={() => {
+                        //console.log(row)
+                        window.open('https://' + row['dns'] ?? '---')
+                    }}
+                >
+                    {`${row['dns'] ?? '---'}`}
+                </div>
+            }
+        },
+        {
             id: 'phone_number',
             label: '휴대폰번호',
             action: (row) => {
@@ -34,6 +49,7 @@ const PhoneRegistration = () => {
                 return (
                     <>
                         <IconButton onClick={() => {
+                            console.log(row);
                             setModal({
                                 func: () => { deleteSeller(row?.id) },
                                 icon: 'material-symbols:delete-outline',
@@ -103,44 +119,6 @@ const PhoneRegistration = () => {
     }*/
     return (
         <>
-            <Dialog
-                open={dialogObj.changePassword}
-            >
-                <DialogTitle>{`비밀번호 변경`}</DialogTitle>
-
-                <DialogContent>
-                    <DialogContentText>
-                        새 비밀번호를 입력 후 확인을 눌러주세요.
-                    </DialogContentText>
-                    <TextField
-                        autoFocus
-                        fullWidth
-                        value={changePasswordObj.user_pw}
-                        type="password"
-                        margin="dense"
-                        label="새 비밀번호"
-                        onChange={(e) => {
-                            setChangePasswordObj({
-                                ...changePasswordObj,
-                                user_pw: e.target.value
-                            })
-                        }}
-                    />
-                </DialogContent>
-                <DialogActions>
-                    <Button variant="contained" >
-                        변경
-                    </Button>
-                    <Button color="inherit" onClick={() => {
-                        setDialogObj({
-                            ...dialogObj,
-                            changePassword: false
-                        })
-                    }}>
-                        취소
-                    </Button>
-                </DialogActions>
-            </Dialog>
             <Stack spacing={3}>
                 <Card>
                     <ManagerTable

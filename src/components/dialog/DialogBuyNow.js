@@ -36,6 +36,8 @@ import _ from 'lodash'
 import { commarNumber, returnMoment } from 'src/utils/function'
 import PayProductsByAuthHecto from 'src/utils/hecto-auth'
 import PayProductsByPhoneHecto from 'src/utils/hecto-phone'
+import PayProductsByAuthFintree from 'src/utils/fintree-auth'
+import PayProductsByHandFintree from 'src/utils/fintree-hand'
 
 const Iframe = styled.iframe`
 border: none;
@@ -101,7 +103,7 @@ const DialogBuyNow = (props) => {
     setPayList(themeDnsData?.payment_modules)
   }, [])
   useEffect(() => {
-    console.log(payData)
+    //console.log(payData)
   }, [payData])
   const onChangeAddressPage = async (search_obj) => {
     setAddressContent({
@@ -182,19 +184,10 @@ const DialogBuyNow = (props) => {
       }], { ...payData, payment_modules: item }, 'payvery');
     } else if (item?.type == 'card_fintree') {//카드결제 핀트리
       setBuyType('card_fintree');
-      setBuyStep(2);
-      setPayData({
-        ...payData,
-        payment_modules: item,
-      })
+      setBuyStep(2)
     } else if (item?.type == 'certification_fintree') {
       setBuyType('certification_fintree');
-      setPayLoading(true);
-      let result = await onPayProductsByAuth_Fintree([{
-        ...product_item,
-        groups: select_product_groups,
-        seller_id: router.query?.seller_id ?? 0,
-      }], { ...payData, payment_modules: item });
+      setBuyStep(2)
     } else if (item?.type == 'virtual_account') {
       setBuyType('virtual_account');
       let pay_data = await makePayData([{
@@ -411,22 +404,7 @@ const DialogBuyNow = (props) => {
               </RadioGroup>
             </>}
           {
-            buyStep == 2 && buyType == 'card_hecto' &&
-            <>
-              <PayProductsByAuthHecto
-                props={[product, payData]}
-              />
-            </>
-          }
-          {
-            buyStep == 2 && buyType == 'phone_hecto' &&
-            <>
-              <PayProductsByPhoneHecto
-                props={[product, payData]}
-              />
-            </>
-          }
-          {(buyStep == 2 && buyType == 'card') &&
+            buyStep == 2 && buyType == 'card_fintree' &&
             <>
               <Typography variant='subtitle1' sx={{ borderBottom: `1px solid #000`, paddingBottom: '0.5rem', marginBottom: '0.5rem' }}>{_.find(payList, { type: buyType })?.title}</Typography>
               <Stack spacing={2}>
@@ -540,19 +518,38 @@ const DialogBuyNow = (props) => {
                     </Stack>
                   </>}
                 <Stack>
-                  <Button variant='contained' onClick={() => {
-                    setModal({
-                      func: () => { onBuyNow() },
-                      icon: 'ion:card-outline',
-                      title: '정말로 결제 하시겠습니까?'
-                    })
-                  }}>
-                    결제하기
-                  </Button>
+                  <PayProductsByHandFintree
+                    props={[product, payData, selectProductGroups]}
+                  />
                 </Stack>
               </Stack>
-            </>}
-          {(buyStep == 2 && buyType == 'card_fintree') &&
+            </>
+          }
+          {
+            buyStep == 2 && buyType == 'certification_fintree' &&
+            <>
+              <PayProductsByAuthFintree
+                props={[product, payData]}
+              />
+            </>
+          }
+          {
+            buyStep == 2 && buyType == 'card_hecto' &&
+            <>
+              <PayProductsByAuthHecto
+                props={[product, payData]}
+              />
+            </>
+          }
+          {
+            buyStep == 2 && buyType == 'phone_hecto' &&
+            <>
+              <PayProductsByPhoneHecto
+                props={[product, payData]}
+              />
+            </>
+          }
+          {(buyStep == 2 && buyType == 'card') &&
             <>
               <Typography variant='subtitle1' sx={{ borderBottom: `1px solid #000`, paddingBottom: '0.5rem', marginBottom: '0.5rem' }}>{_.find(payList, { type: buyType })?.title}</Typography>
               <Stack spacing={2}>

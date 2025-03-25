@@ -483,17 +483,18 @@ const ItemDemo = (props) => {
                             <Icon icon={'mdi:check-bold'} />
                           </>}*/
                           onClick={() => {
-
                             if (user) {
-
-                              if (product?.characters?.length > 0) {
-                                setCharacterSelect(true);
-                                setBuyOrCart('buy');
+                              if (user?.unipass) {
+                                if (product?.characters?.length > 0) {
+                                  setCharacterSelect(true);
+                                  setBuyOrCart('buy');
+                                } else {
+                                  //setUnipassPopup(true);
+                                  setBuyOpen(true);
+                                }
                               } else {
-                                //setUnipassPopup(true);
-                                setBuyOpen(true);
+                                toast.error('개인통관고유부호가 존재하지 않습니다. 관리자에 문의하세요.')
                               }
-
                             } else {
                               toast.error('로그인을 해주세요.')
                             }

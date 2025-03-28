@@ -12,24 +12,76 @@ import { apiManager, apiUtil } from "src/utils/api";
 import { useSettingsContext } from "src/components/settings";
 import { paymentModuleTypeList } from "src/utils/format";
 import { useAuthContext } from "src/layouts/manager/auth/useAuthContext";
+import { Upload } from "src/components/upload";
 
 const TrxList = () => {
   const { setModal } = useModal()
   const { user } = useAuthContext();
   const { themeDnsData } = useSettingsContext();
+  const [chkpic, setChkpic] = useState({
+    check_file: undefined
+  })
   const defaultColumns = [
-    {
-      id: 'appr_num',
-      label: '승인번호',
-      action: (row) => {
-        return row['appr_num'] ?? "---"
+    ...(themeDnsData?.setting_obj?.is_use_seller > 0 ? [
+      {
+        id: 'check_img',
+        label: '검품사진',
+        action: (row) => {
+          return row['check_img'] ?? user?.level >= 40 ?
+            <Button variant="outlined"
+              onClick={() => {
+                setModal({
+                  func: () => { updatePicture(row?.id) },
+                  title: <Upload file={chkpic?.check_file || chkpic?.check_img}
+                    onDrop={(acceptedFiles) => {
+                      const newFile = acceptedFiles[0];
+                      if (newFile) {
+                        setChkpic(
+                          {
+                            ['check_file']: Object.assign(newFile, {
+                              preview: URL.createObjectURL(newFile),
+                            })
+                          }
+                        );
+                      }
+                    }}
+                    onDelete={() => {
+                      setChkpic(
+                        {
+                          ['check_file']: undefined,
+                          ['check_img']: '',
+                        }
+                      );
+                    }}
+                  />
+                })
+              }}
+            >
+              업로드
+            </Button>
+            :
+            "---"
+        },
+        sx: (row) => {
+          return {
+            color: `${row?.is_cancel == 1 ? 'red' : ''}`
+          }
+        },
       },
-      sx: (row) => {
-        return {
-          color: `${row?.is_cancel == 1 ? 'red' : ''}`
-        }
+    ] : [
+      {
+        id: 'appr_num',
+        label: '승인번호',
+        action: (row) => {
+          return row['appr_num'] ?? "---"
+        },
+        sx: (row) => {
+          return {
+            color: `${row?.is_cancel == 1 ? 'red' : ''}`
+          }
+        },
       },
-    },
+    ]),
     /*{
       id: 'card_num',
       label: '카드번호',
@@ -411,6 +463,13 @@ const TrxList = () => {
     if (result) {
       onChangePage(searchObj);
     }
+  }
+  const updatePicture = async (id) => {
+    console.log(chkpic)
+    //let result = await apiManager('transactions', 'update', { id: id, check_img: chkpic['check_img'] })
+    //if (result) {
+    //onChangePage(searchObj);
+    //}
   }
   const onPayCancel = async (item) => {
     let obj = {

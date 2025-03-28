@@ -65,7 +65,9 @@ const SellerEdit = () => {
     seller_range_u: 0,
     seller_range_o: 0,
     seller_brand: '',
-    seller_category: ''
+    seller_category: '',
+    seller_property: '',
+    seller_point: '',
   })
 
   const [agents, setAgents] = useState([])
@@ -220,6 +222,38 @@ const SellerEdit = () => {
       })
     }
   }
+
+  const gender_options = [
+    { label: "공용", value: "0" },
+    { label: "남성", value: "1" },
+    { label: "여성", value: "2" },
+  ];
+
+  const genderChange = (value) => {
+    let selectedValues = item.seller_property ? item.seller_property.split(",") : [];
+
+    if (value === "all") {
+      // 전체 선택 → 모두 해제 (user.property = "")
+      setItem({ ...item, seller_property: "" });
+      return;
+    }
+
+    // 체크된 경우 해제, 해제된 경우 추가
+    if (selectedValues.includes(value)) {
+      selectedValues = selectedValues.filter((v) => v !== value);
+    } else {
+      selectedValues.push(value);
+    }
+
+    // 공용, 남성, 여성이 모두 체크되었으면 전체로 변경
+    if (selectedValues.length === 3) {
+      setItem({ ...item, seller_property: "" });
+    } else {
+      setItem({ ...item, seller_property: selectedValues.join(",") });
+    }
+
+  };
+
   return (
     <>
       {!loading &&
@@ -460,7 +494,20 @@ const SellerEdit = () => {
                             )
                           }} />
                       </Stack>
-
+                      <Stack spacing={3}>
+                        <TextField
+                          label='포인트 적립률(예: 0.1로 입력할 시 10%)'
+                          value={item.seller_point}
+                          type="number"
+                          onChange={(e) => {
+                            setItem(
+                              {
+                                ...item,
+                                ['seller_point']: e.target.value
+                              }
+                            )
+                          }} />
+                      </Stack>
                       <TextField
                         label='전화번호'
                         value={item.phone_num}
@@ -749,6 +796,24 @@ const SellerEdit = () => {
                             </Stack>
                           </>
                       }
+                      <Stack>
+                        <div style={{ color: 'gray', fontSize: '14px' }}>성별 노출</div>
+                        <Row style={{ flexWrap: 'wrap' }}>
+                          <FormControlLabel
+                            label={<Typography style={{ fontSize: themeObj.font_size.size6 }}>전체</Typography>}
+                            control={<Checkbox checked={(item.seller_property ?? '') === ''} />}
+                            onChange={() => genderChange('all')}
+                          />
+                          {gender_options.map(({ label, value }) => (
+                            <FormControlLabel
+                              key={value}
+                              label={<Typography style={{ fontSize: themeObj.font_size.size6 }}>{label}</Typography>}
+                              control={<Checkbox checked={(item.seller_property ?? '')?.split(",").includes(value)} />}
+                              onChange={() => genderChange(value)}
+                            />
+                          ))}
+                        </Row>
+                      </Stack>
                       <Stack spacing={3}>
                         <TextField
                           label='상품 판매 가능한 최소 가격(미설정시 0원)'

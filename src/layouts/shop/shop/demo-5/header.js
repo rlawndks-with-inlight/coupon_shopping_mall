@@ -397,405 +397,425 @@ const Header = () => {
                 handleClose={handleDialogClose}
                 root_path={'/shop/search?keyword='}
             />
-            {loading ?
+            {themeDnsData?.id == 74 && !user ?
                 <>
                 </>
                 :
-                <>
-                    {popups.length > 0 && router.asPath == '/shop/' ?
-                        <>
-                            <PopupContainer>
-                                {popups && popups.map((item, idx) => (
-                                    <>
-                                        {!(themeNoneTodayPopupList[`${returnMoment().substring(0, 10)}`] ?? []).includes(item?.id) &&
-                                            <>
-                                                <PopupContent>
-                                                    <Icon icon='ion:close' style={{ color: `${themeMode == 'dark' ? '#fff' : '#222'}`, position: 'absolute', right: '8px', top: '8px', fontSize: themeObj.font_size.size8, cursor: 'pointer' }} onClick={() => {
-                                                        let popup_list = [...popups];
-                                                        popup_list.splice(idx, 1);
-                                                        setPopups(popup_list);
-                                                    }} />
-                                                    <ReactQuill
-                                                        className='none-padding'
-                                                        value={item?.popup_content ?? `<body></body>`}
-                                                        readOnly={true}
-                                                        theme={"bubble"}
-                                                        bounds={'.app'}
-                                                    />
-                                                    <Row style={{ alignItems: 'center', position: 'absolute', left: '8px', bottom: '8px', cursor: 'pointer' }}
-                                                        onClick={() => {
-                                                            let none_today_popup_list = { ...themeNoneTodayPopupList };
-                                                            if (!none_today_popup_list[`${returnMoment().substring(0, 10)}`]) {
-                                                                none_today_popup_list[`${returnMoment().substring(0, 10)}`] = [];
-                                                            }
-                                                            none_today_popup_list[`${returnMoment().substring(0, 10)}`].push(item?.id);
-                                                            onChangeNoneTodayPopupList(none_today_popup_list);
-                                                        }}
+                loading ?
+                    <>
+                    </>
+                    :
+                    <>
+                        {popups.length > 0 && router.asPath == '/shop/' ?
+                            <>
+                                <PopupContainer>
+                                    {popups && popups.map((item, idx) => (
+                                        <>
+                                            {!(themeNoneTodayPopupList[`${returnMoment().substring(0, 10)}`] ?? []).includes(item?.id) &&
+                                                <>
+                                                    <PopupContent>
+                                                        <Icon icon='ion:close' style={{ color: `${themeMode == 'dark' ? '#fff' : '#222'}`, position: 'absolute', right: '8px', top: '8px', fontSize: themeObj.font_size.size8, cursor: 'pointer' }} onClick={() => {
+                                                            let popup_list = [...popups];
+                                                            popup_list.splice(idx, 1);
+                                                            setPopups(popup_list);
+                                                        }} />
+                                                        <ReactQuill
+                                                            className='none-padding'
+                                                            value={item?.popup_content ?? `<body></body>`}
+                                                            readOnly={true}
+                                                            theme={"bubble"}
+                                                            bounds={'.app'}
+                                                        />
+                                                        <Row style={{ alignItems: 'center', position: 'absolute', left: '8px', bottom: '8px', cursor: 'pointer' }}
+                                                            onClick={() => {
+                                                                let none_today_popup_list = { ...themeNoneTodayPopupList };
+                                                                if (!none_today_popup_list[`${returnMoment().substring(0, 10)}`]) {
+                                                                    none_today_popup_list[`${returnMoment().substring(0, 10)}`] = [];
+                                                                }
+                                                                none_today_popup_list[`${returnMoment().substring(0, 10)}`].push(item?.id);
+                                                                onChangeNoneTodayPopupList(none_today_popup_list);
+                                                            }}
+                                                        >
+                                                            <Icon icon='ion:close' style={{ color: `${themeMode == 'dark' ? '#fff' : '#222'}`, fontSize: themeObj.font_size.size8, marginRight: '4px' }} onClick={() => { }} />
+                                                            <div style={{ fontSize: themeObj.font_size.size8, }}>{translate('오늘 하루 보지않기')}</div>
+                                                        </Row>
+                                                    </PopupContent>
+                                                </>}
+                                        </>
+                                    ))}
+                                </PopupContainer>
+
+                            </>
+                            :
+                            <>
+                            </>}
+                        <Wrappers style={{
+                            background: `${themeMode == 'dark' ? '#000' : '#fff'}`
+                        }}
+                            ref={headerWrappersRef}
+                        >
+                            <TopMenuContainer>
+                                <NoneShowMobile style={{ columnGap: '0.5rem' }}>
+                                    <TextField
+                                        label={translate('통합검색')}
+                                        id='size-small'
+                                        size='small'
+                                        onChange={(e) => {
+                                            setKeyword(e.target.value)
+                                        }}
+                                        value={keyword}
+                                        sx={{ maxWidth: '300px' }}
+                                        onKeyPress={(e) => {
+                                            if (e.key == 'Enter') {
+                                                onSearch();
+                                            }
+                                        }}
+                                        InputProps={{
+                                            endAdornment: (
+                                                <InputAdornment position='end'>
+                                                    <IconButton
+                                                        edge='end'
+                                                        onClick={() => onSearch()}
+                                                        aria-label='toggle password visibility'
                                                     >
-                                                        <Icon icon='ion:close' style={{ color: `${themeMode == 'dark' ? '#fff' : '#222'}`, fontSize: themeObj.font_size.size8, marginRight: '4px' }} onClick={() => { }} />
-                                                        <div style={{ fontSize: themeObj.font_size.size8, }}>{translate('오늘 하루 보지않기')}</div>
-                                                    </Row>
-                                                </PopupContent>
-                                            </>}
-                                    </>
-                                ))}
-                            </PopupContainer>
-
-                        </>
-                        :
-                        <>
-                        </>}
-                    <Wrappers style={{
-                        background: `${themeMode == 'dark' ? '#000' : '#fff'}`
-                    }}
-                        ref={headerWrappersRef}
-                    >
-                        <TopMenuContainer>
-                            <NoneShowMobile style={{ columnGap: '0.5rem' }}>
-                                <TextField
-                                    label={translate('통합검색')}
-                                    id='size-small'
-                                    size='small'
-                                    onChange={(e) => {
-                                        setKeyword(e.target.value)
-                                    }}
-                                    value={keyword}
-                                    sx={{ maxWidth: '300px' }}
-                                    onKeyPress={(e) => {
-                                        if (e.key == 'Enter') {
-                                            onSearch();
-                                        }
-                                    }}
-                                    InputProps={{
-                                        endAdornment: (
-                                            <InputAdornment position='end'>
-                                                <IconButton
-                                                    edge='end'
-                                                    onClick={() => onSearch()}
-                                                    aria-label='toggle password visibility'
-                                                >
-                                                    <Icon icon={'tabler:search'} />
-                                                </IconButton>
-                                            </InputAdornment>
-                                        )
-                                    }}
-                                />
-                                <MainLogo
-                                    src={logoSrc()}
-                                    onClick={() => {
-                                        router.push('/shop')
-                                    }}
-                                />
-                            </NoneShowMobile>
-                            <NoneShowMobile style={{ marginLeft: 'auto', cursor: 'pointer', fontSize: '14px' }} onMouseOver={() => {
-                                setIsAuthMenuOver(true)
-                            }}
-                                onMouseLeave={() => {
-                                    setIsAuthMenuOver(false)
-                                }}
-                            >
-                                <div className="fade-in-text" style={{ display: `${isAuthMenuOver ? 'flex' : 'none'}`, alignItems: 'center', fontFamily: 'Noto Sans KR' }}>
-                                    {user ?
-                                        <>
-                                            {authList.map((item, idx) => (
-                                                <>
-                                                    <AuthMenu
-                                                        theme={theme}
-                                                        hoverColor={themeMode == 'dark' ? '#fff' : '#000'}
-                                                        onClick={() => { router.push(`/shop/auth/${item.link_key}`) }}
-                                                    >{item.name}</AuthMenu>
-                                                </>
-                                            ))}
-                                            <AuthMenu
-                                                theme={theme}
-                                                hoverColor={themeMode == 'dark' ? '#fff' : '#000'}
-                                                onClick={onLogout}
-                                                style={{ borderRight: `none` }}
-                                            >{translate('로그아웃')}</AuthMenu>
-                                        </>
-                                        :
-                                        <>
-                                            {noneAuthList.map((item, idx) => (
-                                                <>
-                                                    <AuthMenu
-                                                        theme={theme}
-                                                        hoverColor={themeMode == 'dark' ? '#fff' : '#000'}
-                                                        onClick={() => { router.push(`/shop/auth/${item.link_key}`) }}
-                                                        style={{ borderRight: `${idx == noneAuthList.length - 1 ? 'none' : ''}` }}
-                                                    >{item.name}</AuthMenu>
-                                                </>
-                                            ))}
-
-                                        </>}
-
-                                </div>
-                                <div className="fade-in-text" style={{ display: `${isAuthMenuOver ? 'none' : 'flex'}`, alignItems: 'center' }}>
-                                    {user ?
-                                        <>
-                                            <AuthMenu theme={theme} style={{ borderRight: 'none' }}>{translate('마이페이지')}</AuthMenu>
-                                        </>
-                                        :
-                                        <>
-                                            <AuthMenu theme={theme} style={{ display: `${themeDnsData?.id == 74 && !themeDnsData?.seller_id ? 'none' : ''}` }}>{translate('회원가입')}</AuthMenu>
-                                            <AuthMenu theme={theme} style={{ borderRight: 'none' }}>{translate('로그인')}</AuthMenu>
-                                        </>}
-
-                                    <Icon icon={'ic:baseline-plus'} color={themeMode == 'dark' ? '#fff' : '#000'} />
-                                </div>
-                            </NoneShowMobile>
-                            <ShowMobile style={{ marginLeft: 'auto', columnGap: '0.5rem' }}>
-                                <MainLogo
-                                    src={logoSrc()}
-                                    onClick={() => {
-                                        router.push('/shop')
-                                    }}
-                                />
-                                <IconButton
-                                    sx={iconButtonStyle}
-                                    onClick={() => setSideMenuOpen(true)}
-                                >
-                                    <Icon icon={'basil:menu-solid'} fontSize={'2rem'} color={themeMode == 'dark' ? '#fff' : '#000'} />
-                                </IconButton>
-                                <IconButton
-                                    sx={iconButtonStyle}
-                                    onClick={() => {
-                                        setDialogOpenObj({
-                                            ...dialogOpenObj,
-                                            ['search']: true
-                                        })
-                                    }}
-                                >
-                                    <Icon icon={'tabler:search'} fontSize={'1.5rem'} color={themeMode == 'dark' ? '#fff' : '#000'} />
-                                </IconButton>
-                                <IconButton
-                                    sx={iconButtonStyle}
-                                    onClick={() => {
-                                        if (user) {
-                                            router.push(`/shop/auth/cart`)
-                                        } else {
-                                            router.push(`/shop/auth/login`)
-                                        }
-                                    }}
-                                >
-                                    <Badge badgeContent={themeCartData.length} color="error">
-                                        <Icon icon={'basil:shopping-bag-outline'} fontSize={'1.8rem'} color={themeMode == 'dark' ? '#fff' : '#000'} />
-                                    </Badge>
-                                </IconButton>
-                                <IconButton
-                                    sx={iconButtonStyle}
-                                    onClick={() => onToggleMode()}
-                                >
-                                    <Icon icon={themeMode === 'dark' ? 'tabler:sun' : 'tabler:moon-stars'} fontSize={'1.5rem'} color={themeMode == 'dark' ? '#fff' : '#000'} />
-                                </IconButton>
-                                {themeDnsData?.setting_obj?.is_use_lang == 1 &&
-                                    <>
-                                        <LanguagePopover />
-                                    </>}
-                            </ShowMobile>
-                        </TopMenuContainer>
-                        <div
-                            style={{
-                                width: '100%',
-                                borderTop: `1px solid ${theme.palette.grey[300]}`,
-                                backgroundColor: `${themeMode != 'dark' ? themeDnsData?.theme_css?.main_color : ''}`,
-                                fontFamily: 'Noto Sans KR'
-                            }}>
-                            <CategoryContainer>
-                                <NoneShowMobile style={{ fontSize: '90%', fontWeight: 'bold', height: '50px' }}>
-
-                                    <Row style={{ margin: '0 1rem', position: 'absolute', right: '0' }} >
-                                        <IconButton
-                                            sx={iconButtonStyle}
-                                            onClick={() => {
-                                                if (user) {
-                                                    router.push(`/shop/auth/my-page`)
-                                                } else {
-                                                    router.push(`/shop/auth/login`)
-                                                }
-                                            }}
-                                        >
-                                            <Icon icon={'basil:user-outline'} fontSize={'1.8rem'} color={themeMode == 'dark' ? '#fff' : '#fff'} />
-                                        </IconButton>
-                                        <IconButton
-                                            sx={iconButtonStyle}
-                                            onClick={() => {
-                                                if (user) {
-                                                    router.push(`/shop/auth/wish`)
-                                                } else {
-                                                    router.push(`/shop/auth/login`)
-                                                }
-                                            }}
-                                        >
-                                            <Badge badgeContent={themeWishData.length} color="error">
-                                                <Icon icon={'basil:heart-outline'} fontSize={'2rem'} color={themeMode == 'dark' ? '#fff' : '#fff'} />
-                                            </Badge>
-                                        </IconButton>
-
-                                        <IconButton
-                                            sx={iconButtonStyle}
-                                            onClick={() => {
-                                                if (user) {
-                                                    router.push(`/shop/auth/cart`)
-                                                } else {
-                                                    router.push(`/shop/auth/login`)
-                                                }
-                                            }}
-                                        >
-                                            <Badge badgeContent={themeCartData.length} color="error">
-                                                <Icon icon={'basil:shopping-bag-outline'} fontSize={'1.8rem'} color={themeMode == 'dark' ? '#fff' : '#fff'} />
-                                            </Badge>
-                                        </IconButton>
-                                        <IconButton
-                                            sx={iconButtonStyle}
-                                            onClick={() => onToggleMode()}
-                                        >
-                                            <Icon icon={themeMode === 'dark' ? 'tabler:sun' : 'tabler:moon-stars'} fontSize={'1.5rem'} color={themeMode == 'dark' ? '#fff' : '#fff'} />
-                                        </IconButton>
-                                        {themeDnsData?.setting_obj?.is_use_lang == 1 &&
-                                            <>
-                                                <LanguagePopover />
-                                            </>}
-                                    </Row>
-
+                                                        <Icon icon={'tabler:search'} />
+                                                    </IconButton>
+                                                </InputAdornment>
+                                            )
+                                        }}
+                                    />
+                                    <MainLogo
+                                        src={logoSrc()}
+                                        onClick={() => {
+                                            router.push('/shop')
+                                        }}
+                                    />
                                 </NoneShowMobile>
-                            </CategoryContainer>
-                        </div>
-                        <div style={{ borderBottom: `1px solid ${theme.palette.grey[300]}` }} />
-
-                        <CategoryContainer>
-                            <NoneShowMobile>
-                                <IconButton
-                                    onClick={() => setSideMenuOpen(true)}
-                                    sx={{ marginRight: '1rem' }}
+                                <NoneShowMobile style={{ marginLeft: 'auto', cursor: 'pointer', fontSize: '14px' }} onMouseOver={() => {
+                                    setIsAuthMenuOver(true)
+                                }}
+                                    onMouseLeave={() => {
+                                        setIsAuthMenuOver(false)
+                                    }}
                                 >
-                                    <Icon icon={'basil:menu-solid'} fontSize={'2rem'} color={themeMode == 'dark' ? '#fff' : '#000'} />
-                                </IconButton>
-                            </NoneShowMobile>
-                            <NoneShowMobile
+                                    <div className="fade-in-text" style={{ display: `${isAuthMenuOver ? 'flex' : 'none'}`, alignItems: 'center', fontFamily: 'Noto Sans KR' }}>
+                                        {user ?
+                                            <>
+                                                {authList.map((item, idx) => (
+                                                    <>
+                                                        <AuthMenu
+                                                            theme={theme}
+                                                            hoverColor={themeMode == 'dark' ? '#fff' : '#000'}
+                                                            onClick={() => { router.push(`/shop/auth/${item.link_key}`) }}
+                                                        >{item.name}</AuthMenu>
+                                                    </>
+                                                ))}
+                                                <AuthMenu
+                                                    theme={theme}
+                                                    hoverColor={themeMode == 'dark' ? '#fff' : '#000'}
+                                                    onClick={onLogout}
+                                                    style={{ borderRight: `none` }}
+                                                >{translate('로그아웃')}</AuthMenu>
+                                            </>
+                                            :
+                                            <>
+                                                {noneAuthList.map((item, idx) => (
+                                                    <>
+                                                        <AuthMenu
+                                                            theme={theme}
+                                                            hoverColor={themeMode == 'dark' ? '#fff' : '#000'}
+                                                            onClick={() => { router.push(`/shop/auth/${item.link_key}`) }}
+                                                            style={{ borderRight: `${idx == noneAuthList.length - 1 ? 'none' : ''}` }}
+                                                        >{item.name}</AuthMenu>
+                                                    </>
+                                                ))}
+
+                                            </>}
+
+                                    </div>
+                                    <div className="fade-in-text" style={{ display: `${isAuthMenuOver ? 'none' : 'flex'}`, alignItems: 'center' }}>
+                                        {user ?
+                                            <>
+                                                <AuthMenu theme={theme} style={{ borderRight: 'none' }}>{translate('마이페이지')}</AuthMenu>
+                                            </>
+                                            :
+                                            <>
+                                                <AuthMenu theme={theme} style={{ display: `${themeDnsData?.id == 74 && !themeDnsData?.seller_id ? 'none' : ''}` }}>{translate('회원가입')}</AuthMenu>
+                                                <AuthMenu theme={theme} style={{ borderRight: 'none' }}>{translate('로그인')}</AuthMenu>
+                                            </>}
+
+                                        <Icon icon={'ic:baseline-plus'} color={themeMode == 'dark' ? '#fff' : '#000'} />
+                                    </div>
+                                </NoneShowMobile>
+                                <ShowMobile style={{ marginLeft: 'auto', columnGap: '0.5rem' }}>
+                                    <MainLogo
+                                        src={logoSrc()}
+                                        onClick={() => {
+                                            router.push('/shop')
+                                        }}
+                                    />
+                                    <IconButton
+                                        sx={iconButtonStyle}
+                                        onClick={() => setSideMenuOpen(true)}
+                                    >
+                                        <Icon icon={'basil:menu-solid'} fontSize={'2rem'} color={themeMode == 'dark' ? '#fff' : '#000'} />
+                                    </IconButton>
+                                    <IconButton
+                                        sx={iconButtonStyle}
+                                        onClick={() => {
+                                            setDialogOpenObj({
+                                                ...dialogOpenObj,
+                                                ['search']: true
+                                            })
+                                        }}
+                                    >
+                                        <Icon icon={'tabler:search'} fontSize={'1.5rem'} color={themeMode == 'dark' ? '#fff' : '#000'} />
+                                    </IconButton>
+                                    <IconButton
+                                        sx={iconButtonStyle}
+                                        onClick={() => {
+                                            if (user) {
+                                                router.push(`/shop/auth/cart`)
+                                            } else {
+                                                router.push(`/shop/auth/login`)
+                                            }
+                                        }}
+                                    >
+                                        <Badge badgeContent={themeCartData.length} color="error">
+                                            <Icon icon={'basil:shopping-bag-outline'} fontSize={'1.8rem'} color={themeMode == 'dark' ? '#fff' : '#000'} />
+                                        </Badge>
+                                    </IconButton>
+                                    <IconButton
+                                        sx={iconButtonStyle}
+                                        onClick={() => onToggleMode()}
+                                    >
+                                        <Icon icon={themeMode === 'dark' ? 'tabler:sun' : 'tabler:moon-stars'} fontSize={'1.5rem'} color={themeMode == 'dark' ? '#fff' : '#000'} />
+                                    </IconButton>
+                                    {themeDnsData?.setting_obj?.is_use_lang == 1 &&
+                                        <>
+                                            <LanguagePopover />
+                                        </>}
+                                </ShowMobile>
+                            </TopMenuContainer>
+                            <div
                                 style={{
                                     width: '100%',
-                                    flexWrap: 'wrap'
-                                }}
-                                className="none-scroll pc-menu-content"
-                            >
-                                {themeCategoryList[0]?.product_categories && themeCategoryList[0]?.product_categories.map((item1, idx1) => (
-                                    <>
-                                        {item1?.is_show_header_menu == 1 &&
-                                            <>
-                                                <div style={{ position: 'relative', fontFamily: 'Noto Sans KR' }} className={`menu-${item1?.id}`}>
-                                                    <CategoryMenu borderColor={themeMode == 'dark' ? '#fff' : '#000'} onClick={() => {
-                                                        router.push(`/shop/items?category_id0=${item1?.id}&depth=0`)
+                                    borderTop: `1px solid ${theme.palette.grey[300]}`,
+                                    backgroundColor: `${themeMode != 'dark' ? themeDnsData?.theme_css?.main_color : ''}`,
+                                    fontFamily: 'Noto Sans KR'
+                                }}>
+                                <CategoryContainer>
+                                    <NoneShowMobile style={{ fontSize: '90%', fontWeight: 'bold', height: '50px' }}>
+
+                                        <Row style={{ margin: '0 1rem', position: 'absolute', right: '0' }} >
+                                            <IconButton
+                                                sx={iconButtonStyle}
+                                                onClick={() => {
+                                                    if (user) {
+                                                        router.push(`/shop/auth/my-page`)
+                                                    } else {
+                                                        router.push(`/shop/auth/login`)
+                                                    }
+                                                }}
+                                            >
+                                                <Icon icon={'basil:user-outline'} fontSize={'1.8rem'} color={themeMode == 'dark' ? '#fff' : '#fff'} />
+                                            </IconButton>
+                                            <IconButton
+                                                sx={iconButtonStyle}
+                                                onClick={() => {
+                                                    if (user) {
+                                                        router.push(`/shop/auth/wish`)
+                                                    } else {
+                                                        router.push(`/shop/auth/login`)
+                                                    }
+                                                }}
+                                            >
+                                                <Badge badgeContent={themeWishData.length} color="error">
+                                                    <Icon icon={'basil:heart-outline'} fontSize={'2rem'} color={themeMode == 'dark' ? '#fff' : '#fff'} />
+                                                </Badge>
+                                            </IconButton>
+
+                                            <IconButton
+                                                sx={iconButtonStyle}
+                                                onClick={() => {
+                                                    if (user) {
+                                                        router.push(`/shop/auth/cart`)
+                                                    } else {
+                                                        router.push(`/shop/auth/login`)
+                                                    }
+                                                }}
+                                            >
+                                                <Badge badgeContent={themeCartData.length} color="error">
+                                                    <Icon icon={'basil:shopping-bag-outline'} fontSize={'1.8rem'} color={themeMode == 'dark' ? '#fff' : '#fff'} />
+                                                </Badge>
+                                            </IconButton>
+                                            <IconButton
+                                                sx={iconButtonStyle}
+                                                onClick={() => onToggleMode()}
+                                            >
+                                                <Icon icon={themeMode === 'dark' ? 'tabler:sun' : 'tabler:moon-stars'} fontSize={'1.5rem'} color={themeMode == 'dark' ? '#fff' : '#fff'} />
+                                            </IconButton>
+                                            {themeDnsData?.setting_obj?.is_use_lang == 1 &&
+                                                <>
+                                                    <LanguagePopover />
+                                                </>}
+                                        </Row>
+
+                                    </NoneShowMobile>
+                                </CategoryContainer>
+                            </div>
+                            <div style={{ borderBottom: `1px solid ${theme.palette.grey[300]}` }} />
+
+                            <CategoryContainer>
+                                <NoneShowMobile>
+                                    <IconButton
+                                        onClick={() => setSideMenuOpen(true)}
+                                        sx={{ marginRight: '1rem' }}
+                                    >
+                                        <Icon icon={'basil:menu-solid'} fontSize={'2rem'} color={themeMode == 'dark' ? '#fff' : '#000'} />
+                                    </IconButton>
+                                </NoneShowMobile>
+                                <NoneShowMobile
+                                    style={{
+                                        width: '100%',
+                                        flexWrap: 'wrap'
+                                    }}
+                                    className="none-scroll pc-menu-content"
+                                >
+                                    {themeCategoryList[0]?.product_categories && themeCategoryList[0]?.product_categories.map((item1, idx1) => (
+                                        <>
+                                            {item1?.is_show_header_menu == 1 &&
+                                                <>
+                                                    <div style={{ position: 'relative', fontFamily: 'Noto Sans KR' }} className={`menu-${item1?.id}`}>
+                                                        <CategoryMenu borderColor={themeMode == 'dark' ? '#fff' : '#000'} onClick={() => {
+                                                            router.push(`/shop/items?category_id0=${item1?.id}&depth=0`)
+                                                        }}>
+                                                            <div>{formatLang(item1, 'category_name', currentLang)}</div>
+                                                        </CategoryMenu>
+                                                        {item1?.children.length > 0 ?
+                                                            <>
+                                                                <DropDownMenuContainer parentId={item1?.id} style={{
+                                                                    border: `1px solid ${theme.palette.grey[300]}`,
+                                                                    width: `${item1.category_img ? '430px' : '154px'}`,
+                                                                    fontSize: '12px',
+                                                                    fontWeight: 'normal',
+                                                                    background: `${themeMode == 'dark' ? '#000' : '#fff'}`,
+                                                                }}>
+                                                                    <div style={{
+                                                                        display: 'flex',
+                                                                        flexDirection: 'column',
+                                                                        width: '154px'
+                                                                    }}>
+                                                                        {item1?.children.map((item2, idx2) => (
+                                                                            <>
+                                                                                {returnDropdownMenu(item2, 1)}
+                                                                            </>
+                                                                        ))}
+                                                                    </div>
+                                                                    {item1.category_img ?
+                                                                        <>
+                                                                            <img src={item1.category_img} style={{ height: 'auto', width: '270px' }} />
+                                                                        </>
+                                                                        :
+                                                                        <>
+                                                                        </>}
+                                                                </DropDownMenuContainer>
+                                                            </>
+                                                            :
+                                                            <>
+                                                            </>}
+                                                    </div>
+                                                </>}
+                                        </>
+                                    ))}
+                                    {postCategories.length > 0 &&
+                                        <>
+                                            <div style={{ position: 'relative', marginLeft: 'auto', fontFamily: 'Noto Sans KR' }} className={`menu-service`}>
+                                                <CategoryMenu borderColor={themeMode == 'dark' ? '#fff' : '#000'} >
+                                                    <div>{translate('고객센터')}</div>
+                                                </CategoryMenu>
+                                                <DropDownMenuContainer parentId={'service'} style={{
+                                                    border: `1px solid ${theme.palette.grey[300]}`,
+                                                    width: `154px`,
+                                                    fontSize: '12px',
+                                                    fontWeight: 'normal',
+                                                    background: `${themeMode == 'dark' ? '#000' : '#fff'}`
+                                                }}>
+                                                    <div style={{
+                                                        display: 'flex',
+                                                        flexDirection: 'column',
+                                                        width: '154px'
                                                     }}>
+                                                        {postCategories.map((item, idx) => (
+                                                            <>
+                                                                {
+                                                                    user?.level < 10 ?
+                                                                        item?.post_category_title != '관리자문의' ?
+                                                                            <>
+                                                                                <DropDownMenu theme={theme}
+                                                                                    onClick={() => {
+                                                                                        router.push(`/shop/service/${item.id}`)
+                                                                                    }}>
+                                                                                    <div>{formatLang(item, 'post_category_title', currentLang)}</div>
+                                                                                </DropDownMenu>
+                                                                            </>
+                                                                            :
+                                                                            <>
+                                                                            </>
+                                                                        :
+                                                                        <DropDownMenu theme={theme}
+                                                                            onClick={() => {
+                                                                                router.push(`/shop/service/${item.id}`)
+                                                                            }}>
+                                                                            <div>{formatLang(item, 'post_category_title', currentLang)}</div>
+                                                                        </DropDownMenu>
+                                                                }
+                                                            </>
+                                                        ))}
+                                                    </div>
+                                                </DropDownMenuContainer>
+                                            </div>
+                                        </>
+                                    }
+                                </NoneShowMobile>
+                                <ShowMobile style={{
+                                    whiteSpace: 'nowrap',
+                                    overflowX: 'auto',
+                                }}
+                                    className="none-scroll"
+                                >
+                                    {themeCategoryList[0]?.product_categories && themeCategoryList[0]?.product_categories.map((item1, idx1) => (
+                                        <>
+                                            {item1?.is_show_header_menu == 1 &&
+                                                <>
+                                                    <CategoryMenu borderColor={themeMode == 'dark' ? '#fff' : '#000'} onMouseOver={() => {
+                                                        onHoverCategory(`hover_${item1?.id}`)
+                                                    }}
+                                                        onClick={() => {
+                                                            router.push(`/shop/items?category_id0=${item1?.id}&depth=0`)
+                                                        }}
+                                                    >
                                                         <div>{formatLang(item1, 'category_name', currentLang)}</div>
                                                     </CategoryMenu>
-                                                    {item1?.children.length > 0 ?
-                                                        <>
-                                                            <DropDownMenuContainer parentId={item1?.id} style={{
-                                                                border: `1px solid ${theme.palette.grey[300]}`,
-                                                                width: `${item1.category_img ? '430px' : '154px'}`,
-                                                                fontSize: '12px',
-                                                                fontWeight: 'normal',
-                                                                background: `${themeMode == 'dark' ? '#000' : '#fff'}`,
-                                                            }}>
-                                                                <div style={{
-                                                                    display: 'flex',
-                                                                    flexDirection: 'column',
-                                                                    width: '154px'
-                                                                }}>
-                                                                    {item1?.children.map((item2, idx2) => (
-                                                                        <>
-                                                                            {returnDropdownMenu(item2, 1)}
-                                                                        </>
-                                                                    ))}
-                                                                </div>
-                                                                {item1.category_img ?
-                                                                    <>
-                                                                        <img src={item1.category_img} style={{ height: 'auto', width: '270px' }} />
-                                                                    </>
-                                                                    :
-                                                                    <>
-                                                                    </>}
-                                                            </DropDownMenuContainer>
-                                                        </>
-                                                        :
-                                                        <>
-                                                        </>}
-                                                </div>
-                                            </>}
-                                    </>
-                                ))}
-                                {postCategories.length > 0 &&
-                                    <>
-                                        <div style={{ position: 'relative', marginLeft: 'auto', fontFamily: 'Noto Sans KR' }} className={`menu-service`}>
-                                            <CategoryMenu borderColor={themeMode == 'dark' ? '#fff' : '#000'} >
-                                                <div>{translate('고객센터')}</div>
-                                            </CategoryMenu>
-                                            <DropDownMenuContainer parentId={'service'} style={{
-                                                border: `1px solid ${theme.palette.grey[300]}`,
-                                                width: `154px`,
-                                                fontSize: '12px',
-                                                fontWeight: 'normal',
-                                                background: `${themeMode == 'dark' ? '#000' : '#fff'}`
-                                            }}>
-                                                <div style={{
-                                                    display: 'flex',
-                                                    flexDirection: 'column',
-                                                    width: '154px'
-                                                }}>
-                                                    {postCategories.map((item, idx) => (
-                                                        <>
-                                                            <DropDownMenu theme={theme}
-                                                                onClick={() => {
-                                                                    router.push(`/shop/service/${item.id}`)
-                                                                }}>
-                                                                <div>{formatLang(item, 'post_category_title', currentLang)}</div>
-                                                            </DropDownMenu>
-                                                        </>
-                                                    ))}
-                                                </div>
-                                            </DropDownMenuContainer>
-                                        </div>
-                                    </>
-                                }
-                            </NoneShowMobile>
-                            <ShowMobile style={{
-                                whiteSpace: 'nowrap',
-                                overflowX: 'auto',
-                            }}
-                                className="none-scroll"
-                            >
-                                {themeCategoryList[0]?.product_categories && themeCategoryList[0]?.product_categories.map((item1, idx1) => (
-                                    <>
-                                        {item1?.is_show_header_menu == 1 &&
-                                            <>
-                                                <CategoryMenu borderColor={themeMode == 'dark' ? '#fff' : '#000'} onMouseOver={() => {
-                                                    onHoverCategory(`hover_${item1?.id}`)
-                                                }}
-                                                    onClick={() => {
-                                                        router.push(`/shop/items?category_id0=${item1?.id}&depth=0`)
-                                                    }}
-                                                >
-                                                    <div>{formatLang(item1, 'category_name', currentLang)}</div>
-                                                </CategoryMenu>
-                                            </>}
-                                    </>
-                                ))}
-                                {
-                                    /*
-                                    <CategoryMenu borderColor={themeMode == 'dark' ? '#fff' : '#000'} onClick={() => {
-
-                                }}>{translate('고객센터')}</CategoryMenu>
-                                    */
-                                }
-                            </ShowMobile>
-                            <NoneShowMobile style={{
-                                marginLeft: 'auto'
-                            }}>
-                            </NoneShowMobile>
-                        </CategoryContainer>
-                        <div style={{ borderBottom: `1px solid ${theme.palette.grey[300]}` }} />
-                    </Wrappers>
-                </>}
+                                                </>}
+                                        </>
+                                    ))}
+                                    {
+                                        /*
+                                        <CategoryMenu borderColor={themeMode == 'dark' ? '#fff' : '#000'} onClick={() => {
+    
+                                    }}>{translate('고객센터')}</CategoryMenu>
+                                        */
+                                    }
+                                </ShowMobile>
+                                <NoneShowMobile style={{
+                                    marginLeft: 'auto'
+                                }}>
+                                </NoneShowMobile>
+                            </CategoryContainer>
+                            <div style={{ borderBottom: `1px solid ${theme.palette.grey[300]}` }} />
+                        </Wrappers>
+                    </>}
             <PaddingTop pcHeight={headerHeight} />
             <Drawer
                 anchor={'left'}

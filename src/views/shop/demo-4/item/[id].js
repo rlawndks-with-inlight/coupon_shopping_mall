@@ -101,6 +101,12 @@ const ItemDemo = (props) => {
   const [buyOrCart, setBuyOrCart] = useState();
 
   useEffect(() => {
+    if (themeDnsData?.id == 74 && !user) {
+      router.push('/shop/auth/login')
+    }
+  }, [themeDnsData])
+
+  useEffect(() => {
     getItemInfo(1);
   }, [])
 
@@ -149,16 +155,16 @@ const ItemDemo = (props) => {
         /> : null
         :
         <>
-          <StyledReactQuill
-            className='none-scroll'
-            value={product?.description_images
-              ?.map((img) => `<img src="${img}" alt="이미지" />`)
-              .join("")
-            }
-            readOnly={true}
-            theme={"bubble"}
-            bounds={'.app'}
-          />
+          <div>
+            {product?.description_images?.map((img, index) => (
+              <img
+                key={index}
+                src={img}
+                alt="Product Image"
+                style={{ maxWidth: '100%', height: 'auto', margin: '0 auto' }}
+              />
+            ))}
+          </div>
         </>,
     },
     /*{
@@ -303,9 +309,9 @@ const ItemDemo = (props) => {
                       <ProductDetailsCarousel product={product} />
                     </Grid>
 
-                    <Grid item xs={12} md={6} lg={6} style={{ position: 'relative' }}>
+                    <Grid item xs={12} md={6} lg={6} style={{ position: 'relative', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
 
-                      <div>
+                      <div style={{}}>
                         {product?.brand_name &&
                           <>
                             <div style={{ fontSize: '30px', fontFamily: 'Playfair Display', fontWeight: 'bold', borderTop: '1px solid #ccc', padding: '1rem 0' }}>
@@ -330,15 +336,15 @@ const ItemDemo = (props) => {
                             return <ItemCharacter key_name={group?.property_group_name} value={`${property_list.join(', ')}`} type='1' />
                           }*/
                         })}
-                        {product?.characters && product?.characters.map((character) => (
+                        {themeDnsData?.id != 74 && product?.characters && product?.characters.map((character) => (
                           <>
                             <ItemCharacter key_name={character?.character_name} value={character?.character_value} />
                           </>
                         ))}
-                        {
+                        {/*
                           product?.status == 0 ?
                             <>
-                              {/*
+                              {
                             {commarNumber(product?.product_price) != commarNumber(product?.product_sale_price) ?
                               <>
                                 <ItemCharacter
@@ -354,7 +360,7 @@ const ItemDemo = (props) => {
                                 <ItemCharacter key_name={'할인율'} value={`${parseFloat((parseInt(product?.product_price - product?.product_sale_price) / parseInt(product?.product_price) * 100).toFixed(2))}%`} />
                               </>
                               :
-                            */}
+                            }
                               <>
                                 <ItemCharacter
                                   key_name={'판매가'}
@@ -392,7 +398,7 @@ const ItemDemo = (props) => {
                                   </>
                                   :
                                   ''
-                        }
+                        */}
 
                         {/* <ProductDetailsSummary
                         product={product}
@@ -460,7 +466,30 @@ const ItemDemo = (props) => {
                           */
                         })}
                       </div>
-                      <div style={{ position: 'absolute', bottom: '0', width: '100%' }}>
+                      <div style={{ width: '100%' }}>
+                        <div style={{ borderTop: '1px solid #ccc', width: '100%', }} onClick={() => { }}>
+                          <ItemCharacter
+                            key_name={'판매가'}
+                            value={<>
+                              {commarNumber(parseInt(product?.product_sale_price))}원
+                            </>
+                            }
+                          />
+                          <div style={{ textAlign: 'right', color: 'gray' }}>
+                            구매시 {commarNumber(product?.product_sale_price * themeDnsData?.seller_point)}원 적립
+                          </div>
+                        </div>
+                        <div style={{ borderTop: '1px solid #ccc', width: '100%', padding: '1rem 0' }} onClick={() => { }}>
+                          <ItemCharacter
+                            key_name={'배송기간'}
+                            value={<div style={{}}>10-14일 내 도착 예정(검수 후 배송)</div>}
+                          />
+                        </div>
+                        <div style={{ width: '100%', padding: '1rem 0' }} onClick={() => { }}>
+                          <div style={{ color: 'gray' }}>
+                            모든 상품은 배송 전 검수를 거칩니다
+                          </div>
+                        </div>
                         <Button
                           disabled={product?.status != 0 || !(product?.product_sale_price > 0)}
                           sx={{
@@ -483,6 +512,10 @@ const ItemDemo = (props) => {
                             <Icon icon={'mdi:check-bold'} />
                           </>}*/
                           onClick={() => {
+                            if (themeDnsData?.id == 74 && !themeDnsData?.seller_id) {
+                              toast.error('본사페이지에서는 결제가 진행되지 않습니다.')
+                              return;
+                            }
                             if (user) {
                               if (user?.unipass) {
                                 if (product?.characters?.length > 0) {
@@ -499,7 +532,7 @@ const ItemDemo = (props) => {
                               toast.error('로그인을 해주세요.')
                             }
                           }}
-                        >Buy Now</Button>
+                        >구매하기</Button>
                         <Row style={{ columnGap: '0.5rem', marginTop: '0.5rem', alignItems: 'center' }}>
                           <Button
                             disabled={product?.status != 0 || !(product?.product_sale_price > 0)}
@@ -529,7 +562,7 @@ const ItemDemo = (props) => {
                                 handleAddCart()
                               }
                             }}
-                          >add to cart</Button>
+                          >장바구니</Button>
                           <Icon
                             icon={themeWishData.map(wish => { return wish?.product_id }).includes(product?.id) ? 'ph:heart-fill' : 'ph:heart-light'}
                             style={{

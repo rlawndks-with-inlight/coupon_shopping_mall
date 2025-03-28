@@ -69,7 +69,7 @@ ProductDetailsCarousel.propTypes = {
   product: PropTypes.object,
 };
 
-export default function ProductDetailsCarousel({ product }) {
+export default function ProductDetailsCarousel({ product, type = '' }) {
 
   const { themeMode } = useSettingsContext();
   const theme = useTheme();
@@ -86,7 +86,7 @@ export default function ProductDetailsCarousel({ product }) {
 
   const [selectedImage, setSelectedImage] = useState(-1);
 
-  const imagesLightbox = product.images?.map((img) => ({ src: img }));
+  const imagesLightbox = type == 'early' ? product.sub_images?.map((img) => ({ src: img?.product_sub_file?.preview })) : product.images?.map((img) => ({ src: img }));
   const handleOpenLightbox = (imageUrl) => {
     const imageIndex = imagesLightbox.findIndex((image) => image.src === imageUrl);
     setSelectedImage(imageIndex);
@@ -114,7 +114,7 @@ export default function ProductDetailsCarousel({ product }) {
     focusOnSelect: true,
     variableWidth: true,
     centerPadding: '0px',
-    slidesToShow: product.images?.length > 3 ? 3 : product.images?.length,
+    slidesToShow: type == 'early' ? product.sub_images?.length > 3 ? 3 : product.sub_images?.length : product.images?.length > 3 ? 3 : product.images?.length,
   };
 
   useEffect(() => {
@@ -140,47 +140,84 @@ export default function ProductDetailsCarousel({ product }) {
 
   const renderLargeImg = (
     <Box sx={{ mb: 3, borderRadius: 2, overflow: 'hidden', position: 'relative' }}>
-      <Carousel {...carouselSettings1} asNavFor={nav2} ref={carousel1}>
-        {product.images?.map((img) => (
-          <Image
-            key={img}
-            alt="product"
-            src={img}
-            ratio="1/1"
-            onClick={() => handleOpenLightbox(img)}
-            sx={{ cursor: 'zoom-in', objectFit: 'cover' }}
-          />
-        ))}
-      </Carousel>
+      {type == 'early' ?
+        <Carousel {...carouselSettings1} asNavFor={nav2} ref={carousel1}>
+          {product.sub_images?.map((img, idx) => (
+            <Image
+              key={idx}
+              alt="product"
+              src={img?.product_sub_file?.preview}
+              ratio="1/1"
+              onClick={() => handleOpenLightbox(img)}
+              sx={{ cursor: 'zoom-in', objectFit: 'cover' }}
+            />
+          ))}
+        </Carousel>
+        :
+        <Carousel {...carouselSettings1} asNavFor={nav2} ref={carousel1}>
+          {product.images?.map((img) => (
+            <Image
+              key={img}
+              alt="product"
+              src={img}
+              ratio="1/1"
+              onClick={() => handleOpenLightbox(img)}
+              sx={{ cursor: 'zoom-in', objectFit: 'cover' }}
+            />
+          ))}
+        </Carousel>
+      }
       <CarouselArrowIndex
         index={currentIndex}
-        total={product.images?.length}
+        total={type == 'early' ? product.sub_images?.length : product.images?.length}
         onNext={handleNext}
         onPrevious={handlePrev}
       />
     </Box>
   );
   const renderThumbnails = (
-    <StyledThumbnailsContainer length={product.images?.length} themeMode={themeMode}>
-      <Carousel {...carouselSettings2} asNavFor={nav1} ref={carousel2}>
-        {product.images?.map((img, index) => (
-          <Image
-            key={img}
-            disabledEffect
-            alt="thumbnail"
-            src={img}
-            sx={{
-              width: THUMB_SIZE,
-              height: THUMB_SIZE,
-              borderRadius: 1.5,
-              cursor: 'pointer',
-              ...(currentIndex === index && {
-                border: `solid 2px ${theme.palette.primary.main}`,
-              }),
-            }}
-          />
-        ))}
-      </Carousel>
+    <StyledThumbnailsContainer length={type == 'early' ? product.sub_images?.length : product.images?.length} themeMode={themeMode}>
+      {type == 'early' ?
+        <Carousel {...carouselSettings2} asNavFor={nav1} ref={carousel2}>
+          {product.sub_images?.map((img, idx) => (
+            <Image
+              key={idx}
+              disabledEffect
+              alt="thumbnail"
+              src={img?.product_sub_file?.preview}
+              sx={{
+                width: THUMB_SIZE,
+                height: THUMB_SIZE,
+                borderRadius: 1.5,
+                cursor: 'pointer',
+                ...(currentIndex === idx && {
+                  border: `solid 2px ${theme.palette.primary.main}`,
+                }),
+              }}
+            />
+          ))}
+        </Carousel>
+        :
+        <Carousel {...carouselSettings2} asNavFor={nav1} ref={carousel2}>
+          {product.images?.map((img, index) => (
+            <Image
+              key={img}
+              disabledEffect
+              alt="thumbnail"
+              src={img}
+              sx={{
+                width: THUMB_SIZE,
+                height: THUMB_SIZE,
+                borderRadius: 1.5,
+                cursor: 'pointer',
+                ...(currentIndex === index && {
+                  border: `solid 2px ${theme.palette.primary.main}`,
+                }),
+              }}
+            />
+          ))}
+        </Carousel>
+      }
     </StyledThumbnailsContainer>
   );
 

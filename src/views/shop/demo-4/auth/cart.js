@@ -35,8 +35,9 @@ border: none;
 width: 100%;
 `
 const STEPS = ['장바구니 확인', '배송지 확인', '결제하기'];
-export function AddressItem({ item, onCreateBilling, onDeleteAddress }) {
+export function AddressItem({ item, onCreateBilling, onDeleteAddress, onUpdateAddress }) {
   const { receiver, addr, address_type, phone, is_default, detail_addr, id } = item;
+  const { themeDnsData } = useSettingsContext();
   return (
     <Card
       sx={{
@@ -77,6 +78,14 @@ export function AddressItem({ item, onCreateBilling, onDeleteAddress }) {
           <Button variant="outlined" size="small" color="inherit" sx={{ mr: 1 }} onClick={() => { onDeleteAddress(id) }}>
             삭제
           </Button>
+          {
+            themeDnsData?.id == 74 &&
+            <>
+              <Button variant="outlined" size="small" color="inherit" sx={{ mr: 1 }} onClick={() => { onUpdateAddress(id); }}>
+                수정
+              </Button>
+            </>
+          }
           <Button variant="outlined" size="small" onClick={onCreateBilling}>
             해당 주소로 배송하기
           </Button>
@@ -112,6 +121,8 @@ const CartDemo = (props) => {
     user_id: user?.id,
   });
   const [addAddressOpen, setAddAddressOpen] = useState(false);
+  const [updateAddressOpen, setUpdatedAddressOpen] = useState(false);
+  const [addressID, setAddressID] = useState();
   const [addAddressObj, setAddAddressObj] = useState({
     addr: '',
     detail_addr: '',
@@ -135,6 +146,14 @@ const CartDemo = (props) => {
     use_point: 0,
   })
   const [payLoading, setPayLoading] = useState(false);
+
+
+  useEffect(() => {
+    if (themeDnsData?.id == 74 && !user) {
+      router.push('/shop/auth/login')
+    }
+  }, [themeDnsData])
+
   useEffect(() => {
     getCart();
   }, [])
@@ -310,6 +329,12 @@ const CartDemo = (props) => {
       onChangeAddressPage(addressSearchObj);
     }
   }
+
+  const onUpdateAddress = async (id) => {
+    setAddressID(id);
+    setUpdatedAddressOpen(true);
+  }
+
   const onChangeAddressPage = async (search_obj) => {
     setAddressContent({
       ...addressContent,
@@ -341,6 +366,14 @@ const CartDemo = (props) => {
         addAddressOpen={addAddressOpen}
         setAddAddressOpen={setAddAddressOpen}
         onAddAddress={onAddAddress}
+      />
+      <DialogAddAddress
+        addAddressOpen={updateAddressOpen}
+        setAddAddressOpen={setUpdatedAddressOpen}
+        onAddAddress={onAddAddress}
+        type={'update'}
+        id={addressID}
+        onDeleteAddress={onDeleteAddress}
       />
       <Wrappers>
         <Title>장바구니</Title>
@@ -383,6 +416,7 @@ const CartDemo = (props) => {
                               item={item}
                               onCreateBilling={() => onCreateBilling(item)}
                               onDeleteAddress={onDeleteAddress}
+                              onUpdateAddress={onUpdateAddress}
                             />
                           </>
                         ))}
@@ -636,7 +670,7 @@ const CartDemo = (props) => {
                       toast.error('본사페이지에서는 결제가 진행되지 않습니다.')
                       return;
                     }
-                    user?.unipass ? onClickNextStep : toast.error('개인통관고유부호가 존재하지 않습니다. 관리자에 문의하세요')
+                    user?.unipass ? onClickNextStep() : toast.error('개인통관고유부호가 존재하지 않습니다. 관리자에 문의하세요')
                   }}
                 >
                   {'배송지 선택하기'}

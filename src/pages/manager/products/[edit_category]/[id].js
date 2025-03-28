@@ -1,4 +1,4 @@
-import { Button, Card, Checkbox, FormControl, FormControlLabel, Grid, IconButton, InputAdornment, InputLabel, Menu, MenuItem, OutlinedInput, Rating, Select, Stack, TextField, Typography, Dialog, DialogTitle, Autocomplete } from "@mui/material";
+import { Button, Card, Checkbox, FormControl, FormControlLabel, Grid, IconButton, InputAdornment, InputLabel, Menu, MenuItem, OutlinedInput, Rating, Select, Stack, TextField, Typography, Dialog, DialogTitle, Autocomplete, Tabs, Tab, Divider, Box } from "@mui/material";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { Col, Row, themeObj } from "src/components/elements/styled-components";
@@ -17,6 +17,14 @@ import { useModal } from "src/components/dialog/ModalProvider";
 import ReactQuillComponent from "src/views/manager/react-quill";
 import { apiManager, uploadFilesByManager } from "src/utils/api";
 import { useAuthContext } from "src/layouts/manager/auth/useAuthContext";
+import { styled as muiStyle } from '@mui/material'
+import dynamic from 'next/dynamic'
+import { ProductDetailsCarousel } from "src/views/@dashboard/e-commerce/details";
+
+const ReactQuill = dynamic(() => import('react-quill'), {
+  ssr: false,
+  loading: () => <p>Loading ...</p>,
+})
 
 const CategoryWrappers = styled.div`
 display:flex;
@@ -43,6 +51,42 @@ cursor:pointer;
   background:${props => props.hoverColor};
 }
 `
+
+const Wrapper = styled.div`
+display:flex;
+flex-direction:column;
+min-height:76vh;
+width:100%;
+`
+const ContentWrapper = styled.div`
+max-width:1200px;
+width:90%;
+margin: 1rem auto;
+`
+const ItemName = muiStyle(Typography)`
+font-size:16px;
+`
+
+const StyledReactQuill = styled(ReactQuill)`
+.ql-editor {
+  font-size: 16px;
+  font-family: 'Noto Sans KR';
+}
+`
+const ItemCharacter = (props) => {
+  const { key_name, value, type = 0 } = props;
+  if (type == 0) {
+    return (
+      <>
+        <Row style={{ columnGap: '0.25rem', marginTop: '1rem', fontSize: '14px' }}>
+          <Typography style={{ width: '6rem', }}>{key_name}</Typography>
+          <Typography>{value}</Typography>
+        </Row>
+      </>
+    )
+  }
+}
+
 export const SelectCategoryComponent = (props) => {
   const {
     curCategories,
@@ -525,6 +569,11 @@ const ProductEdit = () => {
       }
     },
   ]
+
+
+
+
+
   const router = useRouter();
 
   const defaultItemCharacter = [
@@ -594,6 +643,7 @@ const ProductEdit = () => {
   const [reviewAction, setReviewAction] = useState(false);
   const [defaultCorner, setDefaultCorner] = useState(true)
   const [dialogOpen, setDialogOpen] = useState(false)
+  const [popupOpen, setPopupOpen] = useState(false);
 
   const [reviewSearchObj, setReviewSearchObj] = useState({
     page: 1,
@@ -824,7 +874,7 @@ const ProductEdit = () => {
     let upload_files = [];
     let upload_files_d = [];
     for (var i = 0; i < item.sub_images.length; i++) {
-      console.log(item?.sub_images)
+      //console.log(item?.sub_images)
       if (item.sub_images[i]?.product_sub_file) {
         upload_files.push({
           image: item.sub_images[i]?.product_sub_file,
@@ -836,7 +886,7 @@ const ProductEdit = () => {
     })
     for (var i = 0; i < item.description_images.length; i++) {
       if (item.description_images[i]?.product_description_file) {
-        console.log(item?.description_images)
+        //console.log(item?.description_images)
         upload_files_d.push({
           image: item.description_images[i]?.product_description_file,
         })
@@ -966,6 +1016,43 @@ const ProductEdit = () => {
     }))
     setDialogOpen(false)
   }
+
+
+
+  const TABS = [
+    {
+      value: 'description',
+      label: 'Detail',
+      component: themeDnsData?.id != 74 ? item?.product_description ?
+        <StyledReactQuill
+          className='none-scroll'
+          value={`
+    ${item?.product_description ?? ''}
+    ${themeDnsData?.basic_info}
+  `}
+          readOnly={true}
+          theme={"bubble"}
+          bounds={'.app'}
+        />
+        :
+        null
+        :
+        <>
+          <div>
+            {item?.description_images?.map((img, index) => (
+              <img
+                key={index}
+                src={img?.product_description_file?.preview}
+                alt="Product Image"
+                style={{ maxWidth: '100%', height: 'auto', margin: '0 auto' }}
+              />
+            ))}
+          </div>
+        </>,
+    },
+
+  ];
+
 
   return (
     <>
@@ -2320,6 +2407,18 @@ const ProductEdit = () => {
                         저장(최상단 노출)
                       </Button>
                       */}
+                      {
+                        themeDnsData?.id == 74 &&
+                        <>
+                          <Button variant="outlined" style={{
+                            height: '48px', width: '180px',
+                          }} onClick={() => {
+                            setPopupOpen(true);
+                          }}>
+                            미리보기
+                          </Button>
+                        </>
+                      }
                       <Button variant="contained" style={{
                         height: '48px', width: '180px', marginLeft: 'auto',
                       }} onClick={() => {
@@ -2345,8 +2444,20 @@ const ProductEdit = () => {
                     </>
                     :
                     <>
+                      {
+                        themeDnsData?.id == 74 &&
+                        <>
+                          <Button variant="outlined" style={{
+                            height: '48px', width: '180px',
+                          }} onClick={() => {
+                            setPopupOpen(true);
+                          }}>
+                            미리보기
+                          </Button>
+                        </>
+                      }
                       <Button variant="contained" style={{
-                        height: '48px', width: '120px', marginLeft: 'auto'
+                        height: '48px', width: '120px', marginLeft: 'auto',
                       }} onClick={() => {
                         //console.log(item)
                         setModal({
@@ -2363,6 +2474,195 @@ const ProductEdit = () => {
               </Card>
             </Grid>
           </Grid>
+
+
+
+
+
+
+
+
+
+
+          {
+            popupOpen &&
+            <>
+              <Dialog fullScreen open={popupOpen} onClose={() => setPopupOpen(false)} sx={{ width: '100vw', height: '100vh', zIndex: '9999', position: 'relative' }}>
+                <div style={{ width: '100%', height: '5vh', color: 'magenta', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>화면 어느 곳이든 클릭하면 돌아갑니다.</div>
+                <Wrapper onClick={() => { setPopupOpen(false); }}>
+                  <ContentWrapper>
+                    {loading ?
+                      <SkeletonProductDetails />
+                      :
+                      <>
+                        {item && (
+                          <>
+                            <Grid container spacing={3}>
+                              <Grid item xs={12} md={6} lg={6}>
+                                <ProductDetailsCarousel product={item} type={'early'} />
+                              </Grid>
+
+                              <Grid item xs={12} md={6} lg={6} style={{ position: 'relative', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+
+                                <div style={{}}>
+                                  {item?.brand_name &&
+                                    <>
+                                      <div style={{ fontSize: '30px', fontFamily: 'Playfair Display', fontWeight: 'bold', borderTop: '1px solid #ccc', padding: '1rem 0' }}>
+                                        {item?.brand_name[0].category_en_name}
+                                      </div>
+                                    </>
+                                  }
+                                  <ItemName style={{ whiteSpace: 'wrap', fontFamily: 'Noto Sans KR', fontSize: '25px' }}>{item?.product_name}</ItemName>
+                                  {item?.product_code &&
+                                    <>
+                                      <ItemCharacter key_name={'상품코드'} value={item?.product_code} />
+                                    </>}
+                                  {/*themePropertyList.map((group, index) => {
+                                    let property_list = (item?.properties ?? []).filter(el => el?.property_group_id == group?.id);
+                                    property_list = property_list.map(property => {
+                                      return property?.property_name
+                                    })
+                                    if (group?.property_group_name == '등급') {
+                                      return <ItemCharacter key_name={group?.property_group_name} value={`${property_list.join(', ')}`} />
+                                    }
+                                  })*/}
+                                  {themeDnsData?.id != 74 && item?.characters && item?.characters.map((character) => (
+                                    <>
+                                      <ItemCharacter key_name={character?.character_name} value={character?.character_value} />
+                                    </>
+                                  ))}
+                                </div>
+                                <div style={{ width: '100%' }}>
+                                  <div style={{ borderTop: '1px solid #ccc', width: '100%', }} onClick={() => { }}>
+                                    <ItemCharacter
+                                      key_name={'판매가'}
+                                      value={<>
+                                        {commarNumber(parseInt(item?.product_sale_price))}원
+                                      </>
+                                      }
+                                    />
+                                    <div style={{ textAlign: 'right', color: 'gray' }}>
+                                      구매시 {commarNumber(item?.product_sale_price * themeDnsData?.seller_point)}원 적립
+                                    </div>
+                                  </div>
+                                  <div style={{ borderTop: '1px solid #ccc', width: '100%', padding: '1rem 0' }} onClick={() => { }}>
+                                    <ItemCharacter
+                                      key_name={'배송기간'}
+                                      value={<div style={{}}>10-14일 내 도착 예정(검수 후 배송)</div>}
+                                    />
+                                  </div>
+                                  <div style={{ width: '100%', padding: '1rem 0' }} onClick={() => { }}>
+                                    <div style={{ color: 'gray' }}>
+                                      모든 상품은 배송 전 검수를 거칩니다
+                                    </div>
+                                  </div>
+                                  <Button
+                                    disabled={item?.status != 0 || !(item?.product_sale_price > 0)}
+                                    sx={{
+                                      width: '100%',
+                                      height: '60px',
+                                      backgroundColor: 'black',
+                                      borderRadius: '0',
+                                      fontWeight: 'bold',
+                                      fontSize: '18px',
+                                      fontFamily: 'Playfair Display',
+                                      color: 'white',
+                                      border: '1px solid #999999',
+                                      '&:hover': {
+                                        backgroundColor: 'black',
+                                      }
+                                    }}
+
+                                    onClick={() => {
+                                    }}
+                                  >구매하기</Button>
+                                  <Row style={{ columnGap: '0.5rem', marginTop: '0.5rem', alignItems: 'center' }}>
+                                    <Button
+                                      disabled={item?.status != 0 || !(item?.product_sale_price > 0)}
+                                      sx={{
+                                        width: '90%',
+                                        height: '60px',
+                                        //backgroundColor: 'white',
+                                        borderRadius: '0',
+                                        fontWeight: 'bold',
+                                        fontSize: '18px',
+                                        fontFamily: 'Playfair Display',
+                                        color: '#999999',
+                                        border: '1px solid #999999',
+                                        '&:hover': {
+                                          backgroundColor: 'transparent',
+                                        }
+                                      }}
+                                      //variant='outlined'
+                                      /*startIcon={<>
+                                        <Icon icon={'mdi:cart'} />
+                                      </>}*/
+                                      onClick={() => {
+
+                                      }}
+                                    >장바구니</Button>
+                                    <Icon
+                                      icon='ph:heart-light'
+                                      style={{
+                                        width: '30px',
+                                        height: '30px',
+                                        color: `${themeDnsData?.theme_css.main_color}`,
+                                        cursor: 'pointer',
+                                        margin: '0 1rem'
+                                      }}
+                                      onClick={async () => {
+                                      }}
+                                    />
+                                  </Row>
+                                </div>
+                              </Grid>
+                            </Grid>
+                            <Card style={{
+                              marginTop: '2rem'
+                            }}>
+                              <Tabs
+                                value={currentTab}
+                                onChange={(event, newValue) => setCurrentTab(newValue)}
+                                sx={{ px: 3, bgcolor: 'background.neutral' }}
+                              >
+                                {themeDnsData?.show_basic_info ?
+                                  TABS.map((tab, index) => (
+                                    <Tab key={tab.value} value={tab.value} label={tab.label} />
+                                  ))
+                                  :
+                                  TABS.map((tab, index) => {
+                                    if (index !== 1) {
+                                      return (
+                                        <Tab key={tab.value} value={tab.value} label={tab.label} />
+                                      )
+                                    }
+                                  })
+                                }
+                              </Tabs>
+                              <Divider />
+
+                              {TABS.map(
+                                (tab) =>
+                                  tab.value === 'description' && (
+                                    <Box
+                                      key={tab.value}
+                                      sx={{
+                                        p: 3
+                                      }}
+                                    >
+                                      {tab.component}
+                                    </Box>
+                                  )
+                              )}
+                            </Card>
+                          </>
+                        )}
+                      </>}
+                  </ContentWrapper>
+                </Wrapper>
+              </Dialog>
+            </>
+          }
         </>}
     </>
   )

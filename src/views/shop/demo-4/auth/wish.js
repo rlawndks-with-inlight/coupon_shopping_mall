@@ -33,6 +33,13 @@ const WishDemo = (props) => {
     },
   } = props;
   const [wishList, setWishList] = useState([]);
+
+  useEffect(() => {
+    if (themeDnsData?.id == 74 && !user) {
+      router.push('/shop/auth/login')
+    }
+  }, [themeDnsData])
+
   useEffect(() => {
     if (user) {
       pageSetting();

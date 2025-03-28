@@ -72,7 +72,7 @@ export default function Header({ onOpenNav }) {
             src={`/assets/icons/setting/${themeMode === 'light' ? 'ic_sun' : 'ic_moon'}.svg`}
           />
         </IconButton>
-        <NotificationsPopover />
+        {/*<NotificationsPopover /> */}
 
         {/* <ContactsPopover /> */}
 

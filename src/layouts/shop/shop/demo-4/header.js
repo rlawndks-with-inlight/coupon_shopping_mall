@@ -458,96 +458,100 @@ const Header = () => {
                 handleClose={handleDialogClose}
                 root_path={'/shop/items?search='}
             />
-            {loading ?
+            {themeDnsData?.id == 74 && !user ?
                 <>
                 </>
                 :
-                <>
-                    {popups.length > 0 && router.pathname === '/shop' ?  //&& router.asPath == '/shop' 이 조건 넣으니까 팝업이 안 뜸
-                        <>
-                            <PopupContainer>
-                                {popups && popups.map((item, idx) => (
-                                    <>
-                                        { }
-                                        <PopupContent>
-                                            <Icon icon='ion:close' style={{ color: `${themeMode == 'dark' ? '#fff' : '#222'}`, position: 'absolute', right: '8px', top: '8px', fontSize: themeObj.font_size.size8, cursor: 'pointer' }} onClick={() => {
-                                                let popup_list = [...popups];
-                                                popup_list.splice(idx, 1);
-                                                setPopups(popup_list);
-                                            }} />
-                                            <ReactQuill
-                                                className='none-padding'
-                                                value={item?.popup_content ?? `<body></body>`}
-                                                readOnly={true}
-                                                theme={"bubble"}
-                                                bounds={'.app'}
-                                            />
-                                            <div style={{ display: 'flex', alignItems: 'center', position: 'absolute', left: '8px', bottom: '8px', cursor: 'pointer' }} onClick={() => {
-                                                let popup_list = [...popups];
-                                                popup_list.splice(idx, 1);
-                                                setPopups(popup_list);
-                                            }}>
-                                                <Icon icon='ion:close' style={{ color: `${themeMode == 'dark' ? '#fff' : '#222'}`, fontSize: themeObj.font_size.size8, marginRight: '4px', }} onClick={() => { }} />
-                                                <div style={{ fontSize: themeObj.font_size.size8, }}>오늘 하루 보지않기</div>
-                                            </div>
-                                        </PopupContent>
-                                    </>
-                                ))}
-                            </PopupContainer>
-                        </>
-                        :
-                        <>
-                        </>}
-                    <Wrappers style={{
-                        background: `${themeMode == 'dark' ? '#000' : '#fff'}`,
-                    }}
-                        ref={headerWrappersRef}
-                    >
+                loading ?
+                    <>
+                    </>
+                    :
+                    <>
+                        {popups.length > 0 && router.pathname === '/shop' ?  //&& router.asPath == '/shop' 이 조건 넣으니까 팝업이 안 뜸
+                            <>
+                                <PopupContainer>
+                                    {popups && popups.map((item, idx) => (
+                                        <>
+                                            { }
+                                            <PopupContent>
+                                                <Icon icon='ion:close' style={{ color: `${themeMode == 'dark' ? '#fff' : '#222'}`, position: 'absolute', right: '8px', top: '8px', fontSize: themeObj.font_size.size8, cursor: 'pointer' }} onClick={() => {
+                                                    let popup_list = [...popups];
+                                                    popup_list.splice(idx, 1);
+                                                    setPopups(popup_list);
+                                                }} />
+                                                <ReactQuill
+                                                    className='none-padding'
+                                                    value={item?.popup_content ?? `<body></body>`}
+                                                    readOnly={true}
+                                                    theme={"bubble"}
+                                                    bounds={'.app'}
+                                                />
+                                                <div style={{ display: 'flex', alignItems: 'center', position: 'absolute', left: '8px', bottom: '8px', cursor: 'pointer' }} onClick={() => {
+                                                    let popup_list = [...popups];
+                                                    popup_list.splice(idx, 1);
+                                                    setPopups(popup_list);
+                                                }}>
+                                                    <Icon icon='ion:close' style={{ color: `${themeMode == 'dark' ? '#fff' : '#222'}`, fontSize: themeObj.font_size.size8, marginRight: '4px', }} onClick={() => { }} />
+                                                    <div style={{ fontSize: themeObj.font_size.size8, }}>오늘 하루 보지않기</div>
+                                                </div>
+                                            </PopupContent>
+                                        </>
+                                    ))}
+                                </PopupContainer>
+                            </>
+                            :
+                            <>
+                            </>}
+                        <Wrappers style={{
+                            background: `${themeMode == 'dark' ? '#000' : '#fff'}`,
+                        }}
+                            ref={headerWrappersRef}
+                        >
 
-                        <TopMenuContainer>
-                            <NoneShowMobile>
-                                <TextField
-                                    label='search by...'
-                                    id='size-small'
-                                    size='small'
-                                    onChange={(e) => {
-                                        setKeyword(e.target.value)
-                                    }}
-                                    value={keyword}
-                                    sx={{ maxWidth: '300px' }}
-                                    onKeyPress={(e) => {
-                                        if (e.key == 'Enter') {
-                                            onSearch();
-                                        }
-                                    }}
-                                    InputProps={{
-                                        endAdornment: (
-                                            <InputAdornment position='end'>
-                                                <IconButton
-                                                    edge='end'
-                                                    onClick={() => onSearch()}
-                                                    aria-label='toggle password visibility'
-                                                >
-                                                    <Icon icon={'tabler:search'} />
-                                                </IconButton>
-                                            </InputAdornment>
-                                        )
+                            <TopMenuContainer>
+                                <NoneShowMobile>
+                                    <TextField
+                                        label='search by...'
+                                        id='size-small'
+                                        size='small'
+                                        onChange={(e) => {
+                                            setKeyword(e.target.value)
+                                        }}
+                                        value={keyword}
+                                        sx={{ maxWidth: '300px' }}
+                                        onKeyPress={(e) => {
+                                            if (e.key == 'Enter') {
+                                                onSearch();
+                                            }
+                                        }}
+                                        InputProps={{
+                                            endAdornment: (
+                                                <InputAdornment position='end'>
+                                                    <IconButton
+                                                        edge='end'
+                                                        onClick={() => onSearch()}
+                                                        aria-label='toggle password visibility'
+                                                    >
+                                                        <Icon icon={'tabler:search'} />
+                                                    </IconButton>
+                                                </InputAdornment>
+                                            )
+                                        }}
+                                    />
+                                </NoneShowMobile>
+
+                                <MainLogo
+                                    src={logoSrc()}
+                                    onClick={() => {
+                                        //window.location.href = '/shop/auth'
+                                        sessionStorage.clear();
+                                        //sessionStorage.removeItem('scrollPosition');
+                                        window.location.replace('/')
                                     }}
                                 />
-                            </NoneShowMobile>
 
-                            <MainLogo
-                                src={logoSrc()}
-                                onClick={() => {
-                                    //window.location.href = '/shop/auth'
-                                    sessionStorage.clear();
-                                    //sessionStorage.removeItem('scrollPosition');
-                                    window.location.replace('/')
-                                }}
-                            />
-
-                            <NoneShowMobile>
-                                {/*<Button variant="outlined"
+                                <NoneShowMobile>
+                                    {/*<Button variant="outlined"
                                     sx={{ marginRight: '0.5rem', minWidth: '112px' }}
                                     startIcon={<>
                                         <Icon icon={'bx:store'} />
@@ -627,8 +631,8 @@ const Header = () => {
                                 >
                                     <Icon icon={themeMode === 'dark' ? 'tabler:sun' : 'tabler:moon-stars'} fontSize={'1.5rem'} color={themeMode == 'dark' ? '#fff' : '#000'} />
                                 </IconButton>*/}
-                                <div style={{ position: 'absolute', right: '0' }}>
-                                    {/*
+                                    <div style={{ position: 'absolute', right: '0' }}>
+                                        {/*
                                     <Link href={'/shop/guide/purchase-guide'} passHref>
                                         <Button style={{
                                             width: '74px',
@@ -645,557 +649,557 @@ const Header = () => {
                                         </Button>
                                     </Link>
                                     */}
-                                    <Button style={{
-                                        width: '74px',
-                                        height: '30px',
-                                        fontWeight: 'bold',
-                                        fontSize: '12px',
-                                        color: `${themeMode == 'dark' ? 'black' : 'white'}`,
-                                        backgroundColor: `${themeMode == 'dark' ? 'white' : '#FF5B0D'}`,
-                                        borderRadius: '0',
-                                        marginRight: '10px'
-                                    }}
-                                        onClick={() => {
-                                            if (!user) {
-                                                router.push(`/shop/auth/login`)
-                                            } else {
-                                                onLogout()
-                                            }
+                                        <Button style={{
+                                            width: '74px',
+                                            height: '30px',
+                                            fontWeight: 'bold',
+                                            fontSize: '12px',
+                                            color: `${themeMode == 'dark' ? 'black' : 'white'}`,
+                                            backgroundColor: `${themeMode == 'dark' ? 'white' : '#FF5B0D'}`,
+                                            borderRadius: '0',
+                                            marginRight: '10px'
                                         }}
-                                    >
-                                        {user ? 'Sign out' : 'Sign in'}
-                                    </Button>
-                                    {user ?
-                                        <>
-                                        </>
-                                        :
-                                        <Link href={'/shop/auth/sign-up'} passHref>
-                                            <Button style={{
-                                                width: '74px',
-                                                height: '30px',
-                                                fontWeight: 'bold',
-                                                fontSize: '12px',
-                                                color: `${themeMode == 'dark' ? 'white' : 'black'}`,
-                                                borderRadius: '0',
-                                                marginRight: '8px'
+                                            onClick={() => {
+                                                if (!user) {
+                                                    router.push(`/shop/auth/login`)
+                                                } else {
+                                                    onLogout()
+                                                }
                                             }}
-                                            >
-                                                Sign up
-                                            </Button>
-                                        </Link>
-                                    }
-                                    <Link href={user ? '/shop/auth/cart' : '/shop/auth/login'} passHref>
-                                        <IconButton
-                                            sx={{ padding: '0' }}
                                         >
-                                            <Badge badgeContent={themeCartData.length} color="error">
-                                                <Icon icon={'basil:shopping-bag-outline'} width={'30px'} color={themeMode == 'dark' ? '#fff' : '#000'} />
-                                            </Badge>
-                                        </IconButton>
-                                    </Link>
-                                </div>
-                            </NoneShowMobile>
-                            <NoneShowMobile style={{ marginLeft: 'auto', cursor: 'pointer', fontSize: '14px' }} onMouseOver={() => {
-                                setIsAuthMenuOver(true)
-                            }}
-                                onMouseLeave={() => {
-                                    setIsAuthMenuOver(false)
-                                }}
-                            >
-
-                            </NoneShowMobile>
-                            <ShowMobile style={{ marginLeft: 'auto' }}>
-                                <IconButton
-                                    sx={iconButtonStyle}
-                                    onClick={() => setSideMenuOpen(true)}
-                                >
-                                    <Icon icon={'basil:menu-solid'} fontSize={'2rem'} color={themeMode == 'dark' ? '#fff' : '#000'} />
-                                </IconButton>
-                                <IconButton
-                                    sx={iconButtonStyle}
-                                    onClick={() => {
-                                        setDialogOpenObj({
-                                            ...dialogOpenObj,
-                                            ['search']: true
-                                        })
-                                    }}
-                                >
-                                    <Icon icon={'tabler:search'} fontSize={'1.5rem'} color={themeMode == 'dark' ? '#fff' : '#000'} />
-                                </IconButton>
-                                <IconButton
-                                    sx={iconButtonStyle}
-                                    onClick={() => {
-                                        if (user) {
-                                            router.push(`/shop/auth/cart`)
-                                        } else {
-                                            router.push(`/shop/auth/login`)
+                                            {user ? 'Sign out' : 'Sign in'}
+                                        </Button>
+                                        {user ?
+                                            <>
+                                            </>
+                                            :
+                                            <Link href={'/shop/auth/sign-up'} passHref>
+                                                <Button style={{
+                                                    width: '74px',
+                                                    height: '30px',
+                                                    fontWeight: 'bold',
+                                                    fontSize: '12px',
+                                                    color: `${themeMode == 'dark' ? 'white' : 'black'}`,
+                                                    borderRadius: '0',
+                                                    marginRight: '8px'
+                                                }}
+                                                >
+                                                    Sign up
+                                                </Button>
+                                            </Link>
                                         }
+                                        <Link href={user ? '/shop/auth/cart' : '/shop/auth/login'} passHref>
+                                            <IconButton
+                                                sx={{ padding: '0' }}
+                                            >
+                                                <Badge badgeContent={themeCartData.length} color="error">
+                                                    <Icon icon={'basil:shopping-bag-outline'} width={'30px'} color={themeMode == 'dark' ? '#fff' : '#000'} />
+                                                </Badge>
+                                            </IconButton>
+                                        </Link>
+                                    </div>
+                                </NoneShowMobile>
+                                <NoneShowMobile style={{ marginLeft: 'auto', cursor: 'pointer', fontSize: '14px' }} onMouseOver={() => {
+                                    setIsAuthMenuOver(true)
+                                }}
+                                    onMouseLeave={() => {
+                                        setIsAuthMenuOver(false)
                                     }}
                                 >
-                                    <Badge badgeContent={themeCartData.length} color="error">
-                                        <Icon icon={'basil:shopping-bag-outline'} fontSize={'1.8rem'} color={themeMode == 'dark' ? '#fff' : '#000'} />
-                                    </Badge>
-                                </IconButton>
-                                <IconButton
-                                    sx={iconButtonStyle}
-                                    onClick={() => onToggleMode()}
-                                >
-                                    <Icon icon={themeMode === 'dark' ? 'tabler:sun' : 'tabler:moon-stars'} fontSize={'1.5rem'} color={themeMode == 'dark' ? '#fff' : '#000'} />
-                                </IconButton>
-                            </ShowMobile>
-                        </TopMenuContainer>
-                        <div style={{ width: '100%', borderTop: `1px solid ${theme.palette.grey[300]}`, }}>
-                            <CategoryContainer>
-                                <NoneShowMobile>
+
+                                </NoneShowMobile>
+                                <ShowMobile style={{ marginLeft: 'auto' }}>
                                     <IconButton
+                                        sx={iconButtonStyle}
                                         onClick={() => setSideMenuOpen(true)}
-                                        sx={{ marginRight: '1rem' }}
                                     >
                                         <Icon icon={'basil:menu-solid'} fontSize={'2rem'} color={themeMode == 'dark' ? '#fff' : '#000'} />
                                     </IconButton>
-                                </NoneShowMobile>
-                                <div
-                                    style={{
-                                        //width: '100%',
-                                        whiteSpace: 'nowrap',
-                                        //overflowX: 'auto',
-                                        //margin: '0 auto',
-                                        display: 'flex',
-                                        alignItems: 'center'
-                                    }}
-                                //className={`none-scroll pc-menu-content${index}`}
-                                >
-                                    {themeCategoryList.map((group, index) => {
-                                        if (group?.category_group_name == '카테고리') {
-                                            return <>
-                                                <div style={{ position: 'relative', fontWeight: 'bold' }} ref={(element) => {
+                                    <IconButton
+                                        sx={iconButtonStyle}
+                                        onClick={() => {
+                                            setDialogOpenObj({
+                                                ...dialogOpenObj,
+                                                ['search']: true
+                                            })
+                                        }}
+                                    >
+                                        <Icon icon={'tabler:search'} fontSize={'1.5rem'} color={themeMode == 'dark' ? '#fff' : '#000'} />
+                                    </IconButton>
+                                    <IconButton
+                                        sx={iconButtonStyle}
+                                        onClick={() => {
+                                            if (user) {
+                                                router.push(`/shop/auth/cart`)
+                                            } else {
+                                                router.push(`/shop/auth/login`)
+                                            }
+                                        }}
+                                    >
+                                        <Badge badgeContent={themeCartData.length} color="error">
+                                            <Icon icon={'basil:shopping-bag-outline'} fontSize={'1.8rem'} color={themeMode == 'dark' ? '#fff' : '#000'} />
+                                        </Badge>
+                                    </IconButton>
+                                    <IconButton
+                                        sx={iconButtonStyle}
+                                        onClick={() => onToggleMode()}
+                                    >
+                                        <Icon icon={themeMode === 'dark' ? 'tabler:sun' : 'tabler:moon-stars'} fontSize={'1.5rem'} color={themeMode == 'dark' ? '#fff' : '#000'} />
+                                    </IconButton>
+                                </ShowMobile>
+                            </TopMenuContainer>
+                            <div style={{ width: '100%', borderTop: `1px solid ${theme.palette.grey[300]}`, }}>
+                                <CategoryContainer>
+                                    <NoneShowMobile>
+                                        <IconButton
+                                            onClick={() => setSideMenuOpen(true)}
+                                            sx={{ marginRight: '1rem' }}
+                                        >
+                                            <Icon icon={'basil:menu-solid'} fontSize={'2rem'} color={themeMode == 'dark' ? '#fff' : '#000'} />
+                                        </IconButton>
+                                    </NoneShowMobile>
+                                    <div
+                                        style={{
+                                            //width: '100%',
+                                            whiteSpace: 'nowrap',
+                                            //overflowX: 'auto',
+                                            //margin: '0 auto',
+                                            display: 'flex',
+                                            alignItems: 'center'
+                                        }}
+                                    //className={`none-scroll pc-menu-content${index}`}
+                                    >
+                                        {themeCategoryList.map((group, index) => {
+                                            if (group?.category_group_name == '카테고리') {
+                                                return <>
+                                                    <div style={{ position: 'relative', fontWeight: 'bold' }} ref={(element) => {
+                                                        allCategoryRef.current[index] = element;
+                                                    }}>
+                                                        <CategoryMenu borderColor={themeDnsData?.theme_css?.main_color} onClick={() => {
+                                                            setOpenAllCategory(group?.id)
+                                                        }}>
+                                                            {group?.category_group_name == '카테고리' &&
+                                                                <div style={{ fontFamily: 'Playfair Display', color: '#FF5B0D' }}>ALL CATEGORY</div>}
+                                                        </CategoryMenu>
+                                                        {openAllCategory == group?.id &&
+                                                            <>
+                                                                <PopoverContainer style={{
+                                                                    background: `${themeMode == 'dark' ? '#222' : '#FF5B0D'}`,
+                                                                    maxHeight: `${window.innerHeight - headerHeight}px`,
+                                                                    overflowY: 'auto',
+                                                                    borderTop: `2px solid ${themeDnsData?.theme_css?.main_color}`,
+                                                                    borderBottom: `2px solid ${themeDnsData?.theme_css?.main_color}`,
+                                                                    fontFamily: 'Playfair Display'
+                                                                }}>
+                                                                    <div style={{ maxWidth: '1400px', margin: '0 auto' }}>
+
+                                                                        {group?.sort_type == 0 &&
+                                                                            <>
+                                                                                <Row style={{ columnGap: '1rem', flexWrap: 'wrap', rowGap: '2rem', margin: '2rem 0', flexDirection: 'column', color: 'white' }}>
+                                                                                    {group?.product_categories && group?.product_categories.map((category, idx) => (
+                                                                                        <>
+                                                                                            {category.category_name != 'WATCH' && category.category_name != 'PRIVATE' && (
+                                                                                                <Row style={{ minWidth: '100px', }}>
+                                                                                                    <Link href={`/shop/items?category_id${index}=${category?.id}&depth=0`} passHref>
+                                                                                                        <ColumnMenuTitle style={{ margin: '0', cursor: 'pointer', width: '130px' }} onClick={() => {
+                                                                                                            setOpenAllCategory("")
+                                                                                                        }}>
+                                                                                                            {category?.category_name}
+                                                                                                        </ColumnMenuTitle>
+                                                                                                    </Link>
+                                                                                                    {category?.children && category?.children.map(children => (
+                                                                                                        <>
+                                                                                                            <Link href={`/shop/items?category_id${index}=${children?.id}&depth=0`} passHref>
+                                                                                                                <Typography variant="body2" style={{ cursor: 'pointer', marginBottom: '0.2rem', marginRight: '2rem', fontFamily: 'Noto Sans KR' }} onClick={() => {
+                                                                                                                    setOpenAllCategory("")
+                                                                                                                }}>{children?.category_name}</Typography>
+                                                                                                            </Link>
+                                                                                                        </>
+                                                                                                    ))}
+                                                                                                </Row>
+                                                                                            )}
+                                                                                            {category.category_name == 'PRIVATE' && user && (
+                                                                                                <Row style={{ minWidth: '100px', color: 'white' }}>
+                                                                                                    <Link href={`/shop/items?category_id${index}=${category?.id}&depth=0`} passHref>
+                                                                                                        <ColumnMenuTitle style={{ margin: '0', cursor: 'pointer', width: '130px' }} onClick={() => {
+                                                                                                            setOpenAllCategory("")
+                                                                                                        }}>
+                                                                                                            {category?.category_name}
+                                                                                                        </ColumnMenuTitle>
+                                                                                                    </Link>
+                                                                                                    {category?.children && category?.children.map(children => (
+                                                                                                        <>
+                                                                                                            <Link href={`/shop/items?category_id${index}=${children?.id}&depth=0`} passHref>
+                                                                                                                <Typography variant="body2" style={{ cursor: 'pointer', marginBottom: '0.2rem', marginRight: '2rem', fontFamily: 'Playfair Display' }} onClick={() => {
+                                                                                                                    setOpenAllCategory("")
+                                                                                                                }}>{children?.category_name}</Typography>
+                                                                                                            </Link>
+                                                                                                        </>
+                                                                                                    ))}
+                                                                                                </Row>
+                                                                                            )}
+                                                                                        </>
+                                                                                    ))}
+                                                                                </Row>
+                                                                                {/*<div style={{ border: '2px solid red', padding: '0' }} />*/}
+                                                                                <Col style={{ columnGap: '1rem', flexWrap: 'wrap', alignItems: 'flex-start', rowGap: '2rem', maxHeight: '200px', marginBottom: '2rem', color: 'white' }}>
+                                                                                    {group?.product_categories && group?.product_categories.map((category, idx) => {
+                                                                                        return <>
+                                                                                            {category.category_name == 'WATCH' && (
+                                                                                                <div style={{ minWidth: '100px', display: 'flex' }}>
+                                                                                                    <Link href={`/shop/items?category_id${index}=${category?.id}&depth=0`} passHref>
+                                                                                                        <ColumnMenuTitle style={{ margin: '0', cursor: 'pointer', width: '130px' }} onClick={() => {
+                                                                                                            setOpenAllCategory("")
+                                                                                                        }}>
+                                                                                                            {category?.category_name}
+                                                                                                        </ColumnMenuTitle>
+                                                                                                    </Link>
+                                                                                                    <Col style={{ columnGap: '3rem', flexWrap: 'wrap', alignItems: 'flex-start', rowGap: '1rem', maxHeight: '200px' }}>
+                                                                                                        {category?.children && category?.children.map((children) => {
+                                                                                                            return <>
+                                                                                                                <Link href={`/shop/items?category_id${index}=${children?.id}&depth=0`} passHref>
+                                                                                                                    <Typography variant="body2" style={{ cursor: 'pointer', fontFamily: 'Playfair Display' }} onClick={() => {
+                                                                                                                        setOpenAllCategory("")
+                                                                                                                    }}>{children?.category_name}</Typography>
+                                                                                                                </Link>
+                                                                                                            </>
+                                                                                                        })}</Col>
+                                                                                                </div>
+                                                                                            )}
+                                                                                        </>
+                                                                                    })}
+                                                                                </Col>
+                                                                                {/*<div style={{ border: '2px solid red', padding: '0' }} />*/}
+                                                                            </>}
+                                                                    </div>
+                                                                </PopoverContainer>
+                                                            </>}
+                                                    </div>
+                                                </>
+                                            }
+                                        })}
+                                    </div>
+
+
+                                    <Link href={`/shop/items/?not_show_select_menu=1&property_ids0=22&page=1&page_size=20`} passHref>
+                                        <CategoryMenu borderColor={themeDnsData?.theme_css?.main_color} style={{ fontWeight: 'bold' }} onClick={() => {
+                                            //setOpenAllCategory(group?.id)
+                                        }}>
+                                            <div style={{ fontFamily: 'Playfair Display', }}>BEST</div>
+                                        </CategoryMenu>
+                                    </Link>
+                                    <Link href={`/shop/items/?not_show_select_menu=1&property_ids0=21&page=1&page_size=20`} passHref>
+                                        <CategoryMenu borderColor={themeDnsData?.theme_css?.main_color} style={{ fontWeight: 'bold' }} onClick={() => {
+                                            //setOpenAllCategory(group?.id)
+                                        }}>
+                                            <div style={{ fontFamily: 'Playfair Display', }}>NEW IN</div>
+                                        </CategoryMenu>
+                                    </Link>
+                                    <Link href={`/shop/items/?not_show_select_menu=1&property_ids0=20&page=1&page_size=20`} passHref>
+                                        <CategoryMenu borderColor={themeDnsData?.theme_css?.main_color} style={{ fontWeight: 'bold' }} onClick={() => {
+                                            //setOpenAllCategory(group?.id)
+                                        }}>
+                                            <div style={{ fontFamily: 'Playfair Display', }}>SALE</div>
+                                        </CategoryMenu>
+                                    </Link>
+                                    <Link href={`/shop/items/?category_id0=1007&page=1&page_size=20`} passHref>
+                                        <CategoryMenu borderColor={themeDnsData?.theme_css?.main_color} style={{ fontWeight: 'bold' }} onClick={() => {
+                                            //setOpenAllCategory(group?.id)
+                                        }}>
+                                            <div style={{ fontFamily: 'Playfair Display', }}>WATCH</div>
+                                        </CategoryMenu>
+                                    </Link>
+                                    <Link href={`/shop/items/?category_id0=1002&page=1&page_size=20`} passHref>
+                                        <CategoryMenu borderColor={themeDnsData?.theme_css?.main_color} style={{ fontWeight: 'bold' }} onClick={() => {
+                                            //setOpenAllCategory(group?.id)
+                                        }}>
+                                            <div style={{ fontFamily: 'Playfair Display', }}>CLOTHES</div>
+                                        </CategoryMenu>
+                                    </Link>
+                                    <NoneShowMobile>
+                                        <div style={{ position: 'absolute', right: '0' }}>
+                                            <Link href={user ? `/shop/auth/my-page` : `/shop/auth/login`} passHref>
+                                                <IconButton
+                                                    sx={{ padding: '0', marginRight: '20px' }}
+                                                >
+                                                    <Badge badgeContent={themeCartData.length} color="error">
+                                                        <Icon icon={'basil:user-outline'} width={'30px'} color={themeMode == 'dark' ? '#fff' : '#000'} />
+                                                    </Badge>
+                                                </IconButton>
+                                            </Link>
+                                            <IconButton
+                                                sx={{ padding: '0', marginRight: '20px' }}
+                                                onClick={() => onToggleMode()}
+                                            >
+                                                <Icon icon={themeMode === 'dark' ? 'tabler:sun' : 'tabler:moon-stars'} width={'25px'} color={themeMode == 'dark' ? '#fff' : '#000'} />
+                                            </IconButton>
+                                            <Link href={user ? `/shop/auth/wish` : `/shop/auth/login`} passHref>
+                                                <IconButton
+                                                    sx={{ padding: '0' }}
+                                                >
+                                                    <Badge badgeContent={themeCartData.length} color="error">
+                                                        <Icon icon={'basil:heart-outline'} width={'30px'} color={themeMode == 'dark' ? '#fff' : '#000'} />
+                                                    </Badge>
+                                                </IconButton>
+                                            </Link>
+                                        </div>
+                                    </NoneShowMobile>
+
+                                </CategoryContainer>
+                            </div>
+                            <div
+                                style={{
+                                    width: '100%',
+                                    borderTop: `1px solid ${theme.palette.grey[300]}`,
+                                    backgroundColor: `${themeMode != 'dark' ? '#FF5B0D' : ''}`,
+                                    color: 'white',
+                                    fontFamily: 'Playfair Display'
+                                }}>
+                                <CategoryContainer>
+                                    <NoneShowMobile style={{ fontSize: '90%', fontWeight: 'bold' }}>
+                                        {themeCategoryList.map((group, index) => {
+                                            if (group?.category_group_name == '브랜드') {
+                                                return <div ref={(element) => {
                                                     allCategoryRef.current[index] = element;
                                                 }}>
-                                                    <CategoryMenu borderColor={themeDnsData?.theme_css?.main_color} onClick={() => {
-                                                        setOpenAllCategory(group?.id)
-                                                    }}>
-                                                        {group?.category_group_name == '카테고리' &&
-                                                            <div style={{ fontFamily: 'Playfair Display', color: '#FF5B0D' }}>ALL CATEGORY</div>}
-                                                    </CategoryMenu>
+                                                    <Row style={{ margin: '0 1rem', cursor: 'pointer', color: `${themeMode == 'dark' ? '#FF5B0D' : ''}` }} onClick={() => { setOpenAllCategory(group?.id) }}>
+                                                        ALL BRAND |
+                                                    </Row>
                                                     {openAllCategory == group?.id &&
                                                         <>
                                                             <PopoverContainer style={{
                                                                 background: `${themeMode == 'dark' ? '#222' : '#FF5B0D'}`,
                                                                 maxHeight: `${window.innerHeight - headerHeight}px`,
                                                                 overflowY: 'auto',
-                                                                borderTop: `2px solid ${themeDnsData?.theme_css?.main_color}`,
-                                                                borderBottom: `2px solid ${themeDnsData?.theme_css?.main_color}`,
-                                                                fontFamily: 'Playfair Display'
+                                                                borderTop: `1px solid white`,
+                                                                //borderBottom: `2px solid ${themeDnsData?.theme_css?.main_color}`,
+                                                                fontFamily: 'Playfair Display',
+                                                                marginTop: '17px'
                                                             }}>
                                                                 <div style={{ maxWidth: '1400px', margin: '0 auto' }}>
-
-                                                                    {group?.sort_type == 0 &&
+                                                                    {group?.sort_type == 1 &&
                                                                         <>
-                                                                            <Row style={{ columnGap: '1rem', flexWrap: 'wrap', rowGap: '2rem', margin: '2rem 0', flexDirection: 'column', color: 'white' }}>
-                                                                                {group?.product_categories && group?.product_categories.map((category, idx) => (
-                                                                                    <>
-                                                                                        {category.category_name != 'WATCH' && category.category_name != 'PRIVATE' && (
-                                                                                            <Row style={{ minWidth: '100px', }}>
-                                                                                                <Link href={`/shop/items?category_id${index}=${category?.id}&depth=0`} passHref>
-                                                                                                    <ColumnMenuTitle style={{ margin: '0', cursor: 'pointer', width: '130px' }} onClick={() => {
-                                                                                                        setOpenAllCategory("")
-                                                                                                    }}>
-                                                                                                        {category?.category_name}
-                                                                                                    </ColumnMenuTitle>
-                                                                                                </Link>
-                                                                                                {category?.children && category?.children.map(children => (
-                                                                                                    <>
-                                                                                                        <Link href={`/shop/items?category_id${index}=${children?.id}&depth=0`} passHref>
-                                                                                                            <Typography variant="body2" style={{ cursor: 'pointer', marginBottom: '0.2rem', marginRight: '2rem', fontFamily: 'Noto Sans KR' }} onClick={() => {
-                                                                                                                setOpenAllCategory("")
-                                                                                                            }}>{children?.category_name}</Typography>
-                                                                                                        </Link>
-                                                                                                    </>
-                                                                                                ))}
-                                                                                            </Row>
-                                                                                        )}
-                                                                                        {category.category_name == 'PRIVATE' && user && (
-                                                                                            <Row style={{ minWidth: '100px', color: 'white' }}>
-                                                                                                <Link href={`/shop/items?category_id${index}=${category?.id}&depth=0`} passHref>
-                                                                                                    <ColumnMenuTitle style={{ margin: '0', cursor: 'pointer', width: '130px' }} onClick={() => {
-                                                                                                        setOpenAllCategory("")
-                                                                                                    }}>
-                                                                                                        {category?.category_name}
-                                                                                                    </ColumnMenuTitle>
-                                                                                                </Link>
-                                                                                                {category?.children && category?.children.map(children => (
-                                                                                                    <>
-                                                                                                        <Link href={`/shop/items?category_id${index}=${children?.id}&depth=0`} passHref>
-                                                                                                            <Typography variant="body2" style={{ cursor: 'pointer', marginBottom: '0.2rem', marginRight: '2rem', fontFamily: 'Playfair Display' }} onClick={() => {
-                                                                                                                setOpenAllCategory("")
-                                                                                                            }}>{children?.category_name}</Typography>
-                                                                                                        </Link>
-                                                                                                    </>
-                                                                                                ))}
-                                                                                            </Row>
-                                                                                        )}
-                                                                                    </>
-                                                                                ))}
+                                                                            <Row>
+                                                                                <Chip label={`ABC`} sx={{
+                                                                                    margin: '0.5rem 0.5rem 0.5rem 0',
+                                                                                    fontWeight: 'bold',
+                                                                                    fontSize: '16px',
+                                                                                    cursor: 'pointer',
+                                                                                    height: '40px',
+                                                                                    background: 'transparent',
+                                                                                    borderRadius: '0',
+                                                                                    fontFamily: 'Playfair Display',
+                                                                                    color: `${langChipSelected == 0 ? 'white' : '#DDDDDD'}`,
+                                                                                    '&:hover': {
+                                                                                        textDecoration: 'underline',
+                                                                                        background: 'transparent',
+                                                                                    }
+                                                                                }}
+                                                                                    onClick={() => { setLangChipSelected(0); sort(LANGCODE.ENG); setTextChipSelected('A'); }}
+                                                                                />
+                                                                                <Chip label={`가나다`} sx={{
+                                                                                    margin: '0.5rem 0.5rem 0.5rem 0',
+                                                                                    fontWeight: 'bold',
+                                                                                    fontSize: '16px',
+                                                                                    cursor: 'pointer',
+                                                                                    height: '40px',
+                                                                                    background: 'transparent',
+                                                                                    borderRadius: '0',
+                                                                                    fontFamily: 'Noto Sans KR',
+                                                                                    color: `${langChipSelected == 1 ? 'white' : '#DDDDDD'}`,
+                                                                                    '&:hover': {
+                                                                                        textDecoration: 'underline',
+                                                                                        background: 'transparent',
+                                                                                    }
+                                                                                }}
+                                                                                    onClick={() => { setLangChipSelected(1); sort(LANGCODE.KOR); setTextChipSelected('가'); }}
+                                                                                />
                                                                             </Row>
-                                                                            {/*<div style={{ border: '2px solid red', padding: '0' }} />*/}
-                                                                            <Col style={{ columnGap: '1rem', flexWrap: 'wrap', alignItems: 'flex-start', rowGap: '2rem', maxHeight: '200px', marginBottom: '2rem', color: 'white' }}>
-                                                                                {group?.product_categories && group?.product_categories.map((category, idx) => {
-                                                                                    return <>
-                                                                                        {category.category_name == 'WATCH' && (
-                                                                                            <div style={{ minWidth: '100px', display: 'flex' }}>
-                                                                                                <Link href={`/shop/items?category_id${index}=${category?.id}&depth=0`} passHref>
-                                                                                                    <ColumnMenuTitle style={{ margin: '0', cursor: 'pointer', width: '130px' }} onClick={() => {
-                                                                                                        setOpenAllCategory("")
-                                                                                                    }}>
-                                                                                                        {category?.category_name}
-                                                                                                    </ColumnMenuTitle>
-                                                                                                </Link>
-                                                                                                <Col style={{ columnGap: '3rem', flexWrap: 'wrap', alignItems: 'flex-start', rowGap: '1rem', maxHeight: '200px' }}>
-                                                                                                    {category?.children && category?.children.map((children) => {
+                                                                            <Row>
+                                                                                {langChipSelected == 0 ?
+                                                                                    <>
+                                                                                        {alphabetList.map((alphabet) => {
+                                                                                            return <>
+                                                                                                <Chip
+                                                                                                    label={alphabet}
+                                                                                                    sx={{
+                                                                                                        margin: '0.5rem 0rem 0.5rem 0',
+                                                                                                        fontSize: '16px',
+                                                                                                        cursor: 'pointer',
+                                                                                                        color: 'white',
+                                                                                                        background: 'transparent',
+                                                                                                        fontFamily: 'Playfair Display',
+                                                                                                        '&:hover': {
+                                                                                                            color: `${textChipSelected == alphabet ? 'white' : ''}`,
+                                                                                                            //background: `${textChipSelected == alphabet ? 'black' : ''}`,
+                                                                                                        },
+                                                                                                        borderRadius: '0',
+                                                                                                        borderBottom: `${textChipSelected == alphabet ? '2px solid white' : ''}`
+                                                                                                    }}
+                                                                                                    onClick={() => { setTextChipSelected(alphabet); }}
+                                                                                                />
+                                                                                            </>
+                                                                                        })}
+                                                                                    </>
+                                                                                    :
+                                                                                    <>
+                                                                                        {hangeulList.map((hangeul) => {
+                                                                                            return <>
+                                                                                                <Chip
+                                                                                                    label={hangeul}
+                                                                                                    variant="soft"
+                                                                                                    sx={{
+                                                                                                        margin: '0.5rem 0rem 0.5rem 0',
+                                                                                                        fontSize: '16px',
+                                                                                                        cursor: 'pointer',
+                                                                                                        color: 'white',
+                                                                                                        background: 'transparent',
+                                                                                                        fontFamily: 'Noto Sans KR',
+                                                                                                        '&:hover': {
+                                                                                                            color: `${textChipSelected == hangeul ? 'white' : ''}`,
+                                                                                                            //background: `${textChipSelected == hangeul ? 'black' : ''}`,
+                                                                                                        },
+                                                                                                        borderRadius: '0',
+                                                                                                        borderBottom: `${textChipSelected == hangeul ? '2px solid white' : ''}`
+                                                                                                    }}
+                                                                                                    onClick={() => { setTextChipSelected(hangeul); }}
+                                                                                                />
+                                                                                            </>
+                                                                                        })}
+                                                                                    </>
+                                                                                }
+                                                                            </Row>
+                                                                            <Col style={{ minWidth: '100px', flexWrap: 'wrap', alignItems: 'flex-start', rowGap: '0.2rem', marginBottom: '1rem' }}>
+
+                                                                                {categoryGroup.map((group) => {
+                                                                                    if (textChipSelected == '') {
+                                                                                        return <>
+                                                                                            <Row>
+                                                                                                {
+                                                                                                    group.childs.map((child) => {
                                                                                                         return <>
-                                                                                                            <Link href={`/shop/items?category_id${index}=${children?.id}&depth=0`} passHref>
-                                                                                                                <Typography variant="body2" style={{ cursor: 'pointer', fontFamily: 'Playfair Display' }} onClick={() => {
-                                                                                                                    setOpenAllCategory("")
-                                                                                                                }}>{children?.category_name}</Typography>
+                                                                                                            <Link href={`/shop/items?category_id${index}=${child?.id}&depth=0`} passHref>
+                                                                                                                <Chip
+                                                                                                                    label={langChipSelected == 0 ? child?.category_en_name : child?.category_name}
+                                                                                                                    sx={{
+                                                                                                                        margin: '0.5rem 0rem 0.5rem 0',
+                                                                                                                        fontSize: '16px',
+                                                                                                                        cursor: 'pointer',
+                                                                                                                        background: 'transparent',
+                                                                                                                        fontFamily: `${langChipSelected == 0 ? 'Playfair Display' : 'Noto Sans KR'}`,
+                                                                                                                        '&:hover': {
+                                                                                                                            background: `${themeMode == 'dark' ? '#999999' : 'white'}`,
+                                                                                                                        },
+                                                                                                                    }}
+                                                                                                                    onClick={() => {
+                                                                                                                        setOpenAllCategory("")
+                                                                                                                    }} />
                                                                                                             </Link>
                                                                                                         </>
-                                                                                                    })}</Col>
-                                                                                            </div>
-                                                                                        )}
-                                                                                    </>
+                                                                                                    })
+                                                                                                }
+                                                                                            </Row>
+                                                                                        </>
+                                                                                    }
+                                                                                    else if (textChipSelected == group?.label) {
+                                                                                        return <>
+                                                                                            <Row>
+                                                                                                {
+                                                                                                    group.childs.map((child) => {
+                                                                                                        return <>
+                                                                                                            <Link href={`/shop/items?category_id${index}=${child?.id}&depth=0`} passHref>
+                                                                                                                <Chip
+                                                                                                                    label={langChipSelected == 0 ? child?.category_en_name : child?.category_name}
+                                                                                                                    sx={{
+                                                                                                                        margin: '0.5rem 0rem 0.5rem 0',
+                                                                                                                        fontSize: '16px',
+                                                                                                                        cursor: 'pointer',
+                                                                                                                        background: 'transparent',
+                                                                                                                        fontFamily: `${langChipSelected == 0 ? 'Playfair Display' : 'Noto Sans KR'}`,
+                                                                                                                        '&:hover': {
+                                                                                                                            background: `${themeMode == 'dark' ? '#999999' : 'white'}`,
+                                                                                                                        },
+                                                                                                                    }}
+                                                                                                                    onClick={() => {
+                                                                                                                        setOpenAllCategory("")
+                                                                                                                    }} />
+                                                                                                            </Link>
+                                                                                                        </>
+                                                                                                    })
+                                                                                                }
+                                                                                            </Row>
+                                                                                        </>
+                                                                                    }
                                                                                 })}
+
                                                                             </Col>
-                                                                            {/*<div style={{ border: '2px solid red', padding: '0' }} />*/}
+
                                                                         </>}
                                                                 </div>
                                                             </PopoverContainer>
                                                         </>}
                                                 </div>
-                                            </>
-                                        }
-                                    })}
-                                </div>
-
-
-                                <Link href={`/shop/items/?not_show_select_menu=1&property_ids0=22&page=1&page_size=20`} passHref>
-                                    <CategoryMenu borderColor={themeDnsData?.theme_css?.main_color} style={{ fontWeight: 'bold' }} onClick={() => {
-                                        //setOpenAllCategory(group?.id)
-                                    }}>
-                                        <div style={{ fontFamily: 'Playfair Display', }}>BEST</div>
-                                    </CategoryMenu>
-                                </Link>
-                                <Link href={`/shop/items/?not_show_select_menu=1&property_ids0=21&page=1&page_size=20`} passHref>
-                                    <CategoryMenu borderColor={themeDnsData?.theme_css?.main_color} style={{ fontWeight: 'bold' }} onClick={() => {
-                                        //setOpenAllCategory(group?.id)
-                                    }}>
-                                        <div style={{ fontFamily: 'Playfair Display', }}>NEW IN</div>
-                                    </CategoryMenu>
-                                </Link>
-                                <Link href={`/shop/items/?not_show_select_menu=1&property_ids0=20&page=1&page_size=20`} passHref>
-                                    <CategoryMenu borderColor={themeDnsData?.theme_css?.main_color} style={{ fontWeight: 'bold' }} onClick={() => {
-                                        //setOpenAllCategory(group?.id)
-                                    }}>
-                                        <div style={{ fontFamily: 'Playfair Display', }}>SALE</div>
-                                    </CategoryMenu>
-                                </Link>
-                                <Link href={`/shop/items/?category_id0=1007&page=1&page_size=20`} passHref>
-                                    <CategoryMenu borderColor={themeDnsData?.theme_css?.main_color} style={{ fontWeight: 'bold' }} onClick={() => {
-                                        //setOpenAllCategory(group?.id)
-                                    }}>
-                                        <div style={{ fontFamily: 'Playfair Display', }}>WATCH</div>
-                                    </CategoryMenu>
-                                </Link>
-                                <Link href={`/shop/items/?category_id0=1002&page=1&page_size=20`} passHref>
-                                    <CategoryMenu borderColor={themeDnsData?.theme_css?.main_color} style={{ fontWeight: 'bold' }} onClick={() => {
-                                        //setOpenAllCategory(group?.id)
-                                    }}>
-                                        <div style={{ fontFamily: 'Playfair Display', }}>CLOTHES</div>
-                                    </CategoryMenu>
-                                </Link>
-                                <NoneShowMobile>
-                                    <div style={{ position: 'absolute', right: '0' }}>
-                                        <Link href={user ? `/shop/auth/my-page` : `/shop/auth/login`} passHref>
-                                            <IconButton
-                                                sx={{ padding: '0', marginRight: '20px' }}
+                                            }
+                                        })}
+                                        <Link href={`/shop/items/?category_id1=501&depth=0&page=1&page_size=20`} passHref>
+                                            <CategoryMenu
+                                                onClick={() => {
+                                                    /*const route = themeCategoryList.map((group, index) => {
+                                                        let categories = group?.product_categories;
+                                                        if (_.find(categories, { category_name: 'HERMES' })) {
+                                                          return _.find(categories, { category_name: 'HERMES' })?.id
+                                                        }
+                                                      })
+                                                      console.log(route)*/
+                                                }}
                                             >
-                                                <Badge badgeContent={themeCartData.length} color="error">
-                                                    <Icon icon={'basil:user-outline'} width={'30px'} color={themeMode == 'dark' ? '#fff' : '#000'} />
-                                                </Badge>
-                                            </IconButton>
+                                                HERMES
+                                            </CategoryMenu>
                                         </Link>
-                                        <IconButton
-                                            sx={{ padding: '0', marginRight: '20px' }}
-                                            onClick={() => onToggleMode()}
-                                        >
-                                            <Icon icon={themeMode === 'dark' ? 'tabler:sun' : 'tabler:moon-stars'} width={'25px'} color={themeMode == 'dark' ? '#fff' : '#000'} />
-                                        </IconButton>
-                                        <Link href={user ? `/shop/auth/wish` : `/shop/auth/login`} passHref>
-                                            <IconButton
-                                                sx={{ padding: '0' }}
-                                            >
-                                                <Badge badgeContent={themeCartData.length} color="error">
-                                                    <Icon icon={'basil:heart-outline'} width={'30px'} color={themeMode == 'dark' ? '#fff' : '#000'} />
-                                                </Badge>
-                                            </IconButton>
+                                        <Link href={`/shop/items/?category_id1=506&depth=0&page=1&page_size=20`} passHref>
+                                            <CategoryMenu>
+                                                CHANEL
+                                            </CategoryMenu>
                                         </Link>
-                                    </div>
-                                </NoneShowMobile>
-
-                            </CategoryContainer>
-                        </div>
-                        <div
-                            style={{
-                                width: '100%',
-                                borderTop: `1px solid ${theme.palette.grey[300]}`,
-                                backgroundColor: `${themeMode != 'dark' ? '#FF5B0D' : ''}`,
-                                color: 'white',
-                                fontFamily: 'Playfair Display'
-                            }}>
-                            <CategoryContainer>
-                                <NoneShowMobile style={{ fontSize: '90%', fontWeight: 'bold' }}>
-                                    {themeCategoryList.map((group, index) => {
-                                        if (group?.category_group_name == '브랜드') {
-                                            return <div ref={(element) => {
-                                                allCategoryRef.current[index] = element;
-                                            }}>
-                                                <Row style={{ margin: '0 1rem', cursor: 'pointer', color: `${themeMode == 'dark' ? '#FF5B0D' : ''}` }} onClick={() => { setOpenAllCategory(group?.id) }}>
-                                                    ALL BRAND |
-                                                </Row>
-                                                {openAllCategory == group?.id &&
-                                                    <>
-                                                        <PopoverContainer style={{
-                                                            background: `${themeMode == 'dark' ? '#222' : '#FF5B0D'}`,
-                                                            maxHeight: `${window.innerHeight - headerHeight}px`,
-                                                            overflowY: 'auto',
-                                                            borderTop: `1px solid white`,
-                                                            //borderBottom: `2px solid ${themeDnsData?.theme_css?.main_color}`,
-                                                            fontFamily: 'Playfair Display',
-                                                            marginTop: '17px'
-                                                        }}>
-                                                            <div style={{ maxWidth: '1400px', margin: '0 auto' }}>
-                                                                {group?.sort_type == 1 &&
-                                                                    <>
-                                                                        <Row>
-                                                                            <Chip label={`ABC`} sx={{
-                                                                                margin: '0.5rem 0.5rem 0.5rem 0',
-                                                                                fontWeight: 'bold',
-                                                                                fontSize: '16px',
-                                                                                cursor: 'pointer',
-                                                                                height: '40px',
-                                                                                background: 'transparent',
-                                                                                borderRadius: '0',
-                                                                                fontFamily: 'Playfair Display',
-                                                                                color: `${langChipSelected == 0 ? 'white' : '#DDDDDD'}`,
-                                                                                '&:hover': {
-                                                                                    textDecoration: 'underline',
-                                                                                    background: 'transparent',
-                                                                                }
-                                                                            }}
-                                                                                onClick={() => { setLangChipSelected(0); sort(LANGCODE.ENG); setTextChipSelected('A'); }}
-                                                                            />
-                                                                            <Chip label={`가나다`} sx={{
-                                                                                margin: '0.5rem 0.5rem 0.5rem 0',
-                                                                                fontWeight: 'bold',
-                                                                                fontSize: '16px',
-                                                                                cursor: 'pointer',
-                                                                                height: '40px',
-                                                                                background: 'transparent',
-                                                                                borderRadius: '0',
-                                                                                fontFamily: 'Noto Sans KR',
-                                                                                color: `${langChipSelected == 1 ? 'white' : '#DDDDDD'}`,
-                                                                                '&:hover': {
-                                                                                    textDecoration: 'underline',
-                                                                                    background: 'transparent',
-                                                                                }
-                                                                            }}
-                                                                                onClick={() => { setLangChipSelected(1); sort(LANGCODE.KOR); setTextChipSelected('가'); }}
-                                                                            />
-                                                                        </Row>
-                                                                        <Row>
-                                                                            {langChipSelected == 0 ?
-                                                                                <>
-                                                                                    {alphabetList.map((alphabet) => {
-                                                                                        return <>
-                                                                                            <Chip
-                                                                                                label={alphabet}
-                                                                                                sx={{
-                                                                                                    margin: '0.5rem 0rem 0.5rem 0',
-                                                                                                    fontSize: '16px',
-                                                                                                    cursor: 'pointer',
-                                                                                                    color: 'white',
-                                                                                                    background: 'transparent',
-                                                                                                    fontFamily: 'Playfair Display',
-                                                                                                    '&:hover': {
-                                                                                                        color: `${textChipSelected == alphabet ? 'white' : ''}`,
-                                                                                                        //background: `${textChipSelected == alphabet ? 'black' : ''}`,
-                                                                                                    },
-                                                                                                    borderRadius: '0',
-                                                                                                    borderBottom: `${textChipSelected == alphabet ? '2px solid white' : ''}`
-                                                                                                }}
-                                                                                                onClick={() => { setTextChipSelected(alphabet); }}
-                                                                                            />
-                                                                                        </>
-                                                                                    })}
-                                                                                </>
-                                                                                :
-                                                                                <>
-                                                                                    {hangeulList.map((hangeul) => {
-                                                                                        return <>
-                                                                                            <Chip
-                                                                                                label={hangeul}
-                                                                                                variant="soft"
-                                                                                                sx={{
-                                                                                                    margin: '0.5rem 0rem 0.5rem 0',
-                                                                                                    fontSize: '16px',
-                                                                                                    cursor: 'pointer',
-                                                                                                    color: 'white',
-                                                                                                    background: 'transparent',
-                                                                                                    fontFamily: 'Noto Sans KR',
-                                                                                                    '&:hover': {
-                                                                                                        color: `${textChipSelected == hangeul ? 'white' : ''}`,
-                                                                                                        //background: `${textChipSelected == hangeul ? 'black' : ''}`,
-                                                                                                    },
-                                                                                                    borderRadius: '0',
-                                                                                                    borderBottom: `${textChipSelected == hangeul ? '2px solid white' : ''}`
-                                                                                                }}
-                                                                                                onClick={() => { setTextChipSelected(hangeul); }}
-                                                                                            />
-                                                                                        </>
-                                                                                    })}
-                                                                                </>
-                                                                            }
-                                                                        </Row>
-                                                                        <Col style={{ minWidth: '100px', flexWrap: 'wrap', alignItems: 'flex-start', rowGap: '0.2rem', marginBottom: '1rem' }}>
-
-                                                                            {categoryGroup.map((group) => {
-                                                                                if (textChipSelected == '') {
-                                                                                    return <>
-                                                                                        <Row>
-                                                                                            {
-                                                                                                group.childs.map((child) => {
-                                                                                                    return <>
-                                                                                                        <Link href={`/shop/items?category_id${index}=${child?.id}&depth=0`} passHref>
-                                                                                                            <Chip
-                                                                                                                label={langChipSelected == 0 ? child?.category_en_name : child?.category_name}
-                                                                                                                sx={{
-                                                                                                                    margin: '0.5rem 0rem 0.5rem 0',
-                                                                                                                    fontSize: '16px',
-                                                                                                                    cursor: 'pointer',
-                                                                                                                    background: 'transparent',
-                                                                                                                    fontFamily: `${langChipSelected == 0 ? 'Playfair Display' : 'Noto Sans KR'}`,
-                                                                                                                    '&:hover': {
-                                                                                                                        background: `${themeMode == 'dark' ? '#999999' : 'white'}`,
-                                                                                                                    },
-                                                                                                                }}
-                                                                                                                onClick={() => {
-                                                                                                                    setOpenAllCategory("")
-                                                                                                                }} />
-                                                                                                        </Link>
-                                                                                                    </>
-                                                                                                })
-                                                                                            }
-                                                                                        </Row>
-                                                                                    </>
-                                                                                }
-                                                                                else if (textChipSelected == group?.label) {
-                                                                                    return <>
-                                                                                        <Row>
-                                                                                            {
-                                                                                                group.childs.map((child) => {
-                                                                                                    return <>
-                                                                                                        <Link href={`/shop/items?category_id${index}=${child?.id}&depth=0`} passHref>
-                                                                                                            <Chip
-                                                                                                                label={langChipSelected == 0 ? child?.category_en_name : child?.category_name}
-                                                                                                                sx={{
-                                                                                                                    margin: '0.5rem 0rem 0.5rem 0',
-                                                                                                                    fontSize: '16px',
-                                                                                                                    cursor: 'pointer',
-                                                                                                                    background: 'transparent',
-                                                                                                                    fontFamily: `${langChipSelected == 0 ? 'Playfair Display' : 'Noto Sans KR'}`,
-                                                                                                                    '&:hover': {
-                                                                                                                        background: `${themeMode == 'dark' ? '#999999' : 'white'}`,
-                                                                                                                    },
-                                                                                                                }}
-                                                                                                                onClick={() => {
-                                                                                                                    setOpenAllCategory("")
-                                                                                                                }} />
-                                                                                                        </Link>
-                                                                                                    </>
-                                                                                                })
-                                                                                            }
-                                                                                        </Row>
-                                                                                    </>
-                                                                                }
-                                                                            })}
-
-                                                                        </Col>
-
-                                                                    </>}
-                                                            </div>
-                                                        </PopoverContainer>
-                                                    </>}
-                                            </div>
-                                        }
-                                    })}
-                                    <Link href={`/shop/items/?category_id1=501&depth=0&page=1&page_size=20`} passHref>
-                                        <CategoryMenu
-                                            onClick={() => {
-                                                /*const route = themeCategoryList.map((group, index) => {
-                                                    let categories = group?.product_categories;
-                                                    if (_.find(categories, { category_name: 'HERMES' })) {
-                                                      return _.find(categories, { category_name: 'HERMES' })?.id
-                                                    }
-                                                  })
-                                                  console.log(route)*/
-                                            }}
-                                        >
-                                            HERMES
-                                        </CategoryMenu>
-                                    </Link>
-                                    <Link href={`/shop/items/?category_id1=506&depth=0&page=1&page_size=20`} passHref>
-                                        <CategoryMenu>
-                                            CHANEL
-                                        </CategoryMenu>
-                                    </Link>
-                                    <Link href={`/shop/items/?category_id1=511&depth=0&page=1&page_size=20`} passHref>
-                                        <CategoryMenu>
-                                            LOUIS VUITTON
-                                        </CategoryMenu>
-                                    </Link>
-                                    <Link href={`/shop/items/?category_id1=533&depth=0&page=1&page_size=20`} passHref>
-                                        <CategoryMenu>
-                                            ROLEX
-                                        </CategoryMenu>
-                                    </Link>
-                                    <Link href={`/shop/items/?category_id1=516&depth=0&page=1&page_size=20`} passHref>
-                                        <CategoryMenu>
-                                            CARTIER
-                                        </CategoryMenu>
-                                    </Link>
-                                    <Link href={`/shop/items/?category_id1=522&depth=0&page=1&page_size=20`} passHref>
-                                        <CategoryMenu>
-                                            VAN CLEEF & ARPELS
-                                        </CategoryMenu>
-                                    </Link>
-                                    <Link href={`/shop/items/?category_id1=527&depth=0&page=1&page_size=20`} passHref>
-                                        <CategoryMenu>
-                                            TIFFANY & CO.
-                                        </CategoryMenu>
-                                    </Link>
-                                    <Link href={`/shop/items/?category_id1=513&depth=0&page=1&page_size=20`} passHref>
-                                        <CategoryMenu>
-                                            GOYARD
-                                        </CategoryMenu>
-                                    </Link>
-                                    <Link href={`/shop/items/?category_id1=512&depth=0&page=1&page_size=20`} passHref>
-                                        <CategoryMenu>
-                                            CHRISTIAN DIOR
-                                        </CategoryMenu>
-                                    </Link>
-                                </NoneShowMobile>
-                            </CategoryContainer>
-                        </div>
-                        {/*<TopMenuContainer>
+                                        <Link href={`/shop/items/?category_id1=511&depth=0&page=1&page_size=20`} passHref>
+                                            <CategoryMenu>
+                                                LOUIS VUITTON
+                                            </CategoryMenu>
+                                        </Link>
+                                        <Link href={`/shop/items/?category_id1=533&depth=0&page=1&page_size=20`} passHref>
+                                            <CategoryMenu>
+                                                ROLEX
+                                            </CategoryMenu>
+                                        </Link>
+                                        <Link href={`/shop/items/?category_id1=516&depth=0&page=1&page_size=20`} passHref>
+                                            <CategoryMenu>
+                                                CARTIER
+                                            </CategoryMenu>
+                                        </Link>
+                                        <Link href={`/shop/items/?category_id1=522&depth=0&page=1&page_size=20`} passHref>
+                                            <CategoryMenu>
+                                                VAN CLEEF & ARPELS
+                                            </CategoryMenu>
+                                        </Link>
+                                        <Link href={`/shop/items/?category_id1=527&depth=0&page=1&page_size=20`} passHref>
+                                            <CategoryMenu>
+                                                TIFFANY & CO.
+                                            </CategoryMenu>
+                                        </Link>
+                                        <Link href={`/shop/items/?category_id1=513&depth=0&page=1&page_size=20`} passHref>
+                                            <CategoryMenu>
+                                                GOYARD
+                                            </CategoryMenu>
+                                        </Link>
+                                        <Link href={`/shop/items/?category_id1=512&depth=0&page=1&page_size=20`} passHref>
+                                            <CategoryMenu>
+                                                CHRISTIAN DIOR
+                                            </CategoryMenu>
+                                        </Link>
+                                    </NoneShowMobile>
+                                </CategoryContainer>
+                            </div>
+                            {/*<TopMenuContainer>
                             <NoneShowMobile>
                                 <IconButton
                                     onClick={() => setSideMenuOpen(true)}
@@ -1268,8 +1272,8 @@ const Header = () => {
                                 </div>
                             </NoneShowMobile>
                                     </TopMenuContainer>*/}
-                    </Wrappers>
-                </>}
+                        </Wrappers>
+                    </>}
             <PaddingTop pcHeight={headerHeight} />
             <Drawer
                 anchor={'left'}
@@ -1372,10 +1376,24 @@ const Header = () => {
                     }
                     {postCategories.length > 0 && postCategories.map((item, idx) => (
                         <>
-                            <Typography onClick={() => {
-                                window.location.href = (`/shop/service/${item.id}`);
-                                setSideMenuOpen(false);
-                            }} style={{ padding: '0.3rem', cursor: 'pointer' }} variant="subtitle2">{item.post_category_title}</Typography>
+                            {
+                                user?.level < 10 ?
+                                    item?.post_category_title != '관리자문의' ?
+                                        <>
+                                            <Typography onClick={() => {
+                                                window.location.href = (`/shop/service/${item.id}`);
+                                                setSideMenuOpen(false);
+                                            }} style={{ padding: '0.3rem', cursor: 'pointer' }} variant="subtitle2">{item.post_category_title}</Typography>
+                                        </>
+                                        :
+                                        <>
+                                        </>
+                                    :
+                                    <Typography onClick={() => {
+                                        window.location.href = (`/shop/service/${item.id}`);
+                                        setSideMenuOpen(false);
+                                    }} style={{ padding: '0.3rem', cursor: 'pointer' }} variant="subtitle2">{item.post_category_title}</Typography>
+                            }
                         </>
                     ))}
 

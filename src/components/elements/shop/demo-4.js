@@ -317,9 +317,18 @@ export const AuthMenuSideComponent = (props) => {
         label: '고객센터',
         children: [
           ...themePostCategoryList.map((item) => {
-            return {
-              label: item?.post_category_title,
-              link: `/shop/service/${item?.id}/`,
+            if (user?.level < 10) {
+              if (item?.post_category_title != '관리자문의') {
+                return {
+                  label: item?.post_category_title,
+                  link: `/shop/service/${item?.id}/`,
+                }
+              }
+            } else {
+              return {
+                label: item?.post_category_title,
+                link: `/shop/service/${item?.id}/`,
+              }
             }
           })
         ]
@@ -372,15 +381,15 @@ export const AuthMenuSideComponent = (props) => {
                 <>
                   <SubMenuLabel
                     onClick={() => {
-                      router.push(itm.link);
+                      router.push(itm?.link);
                     }}
                     style={{
-                      fontWeight: `${router.asPath == itm.link ? 'bold' : ''}`,
+                      fontWeight: `${router.asPath == itm?.link ? 'bold' : ''}`,
 
                     }}
                     themeDnsData={themeDnsData}
                     themeMode={themeMode}
-                  >{itm.label}</SubMenuLabel>
+                  >{itm?.label}</SubMenuLabel>
                 </>
               ))}
             </SubMenuLabelContainer>

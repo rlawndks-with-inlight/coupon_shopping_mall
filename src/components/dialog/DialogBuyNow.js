@@ -55,6 +55,8 @@ const DialogBuyNow = (props) => {
   const router = useRouter();
   const [buyType, setBuyType] = useState(undefined);
   const [addAddressOpen, setAddAddressOpen] = useState(false);
+  const [updateAddressOpen, setUpdatedAddressOpen] = useState(false);
+  const [addressID, setAddressID] = useState();
   const [payLoading, setPayLoading] = useState(false);
   const [buyStep, setBuyStep] = useState(0);
   const [payList, setPayList] = useState([]);
@@ -151,6 +153,12 @@ const DialogBuyNow = (props) => {
       onChangeAddressPage(addressSearchObj);
     }
   }
+
+  const onUpdateAddress = async (id) => {
+    setAddressID(id);
+    setUpdatedAddressOpen(true);
+  }
+
   const onCreateBilling = (item) => {
     setSelectAddress(item);
     setPayData({
@@ -299,6 +307,7 @@ const DialogBuyNow = (props) => {
                                 item={item}
                                 onCreateBilling={() => onCreateBilling(item)}
                                 onDeleteAddress={onDeleteAddress}
+                                onUpdateAddress={onUpdateAddress}
                               />
                             </>
                           ))}
@@ -731,6 +740,14 @@ const DialogBuyNow = (props) => {
         addAddressOpen={addAddressOpen}
         setAddAddressOpen={setAddAddressOpen}
         onAddAddress={onAddAddress}
+      />
+      <DialogAddAddress
+        addAddressOpen={updateAddressOpen}
+        setAddAddressOpen={setUpdatedAddressOpen}
+        onAddAddress={onAddAddress}
+        type={'update'}
+        id={addressID}
+        onDeleteAddress={onDeleteAddress}
       />
     </>
   )

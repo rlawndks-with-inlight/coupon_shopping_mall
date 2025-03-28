@@ -18,7 +18,7 @@ const STEPS = ['배송지 확인', '결제하기'];
 const DialogAddAddress = (props) => {
 
   // ** State
-  const { addAddressOpen, setAddAddressOpen, onAddAddress } = props;
+  const { addAddressOpen, setAddAddressOpen, onAddAddress, type, id, onDeleteAddress } = props;
 
   const [addAddressObj, setAddAddressObj] = useState({
     addr: '',
@@ -59,10 +59,10 @@ const DialogAddAddress = (props) => {
           </>
           :
           <>
-            <DialogTitle>{`주소지 추가`}</DialogTitle>
+            <DialogTitle>{type == 'update' ? `주소지 수정` : `주소지 추가`}</DialogTitle>
             <DialogContent>
               <DialogContentText>
-                새 주소를 입력후 저장을 눌러주세요.
+                {type == 'update' ? `수정하실 주소를 입력 후 저장을 눌러주세요.` : `새 주소를 입력 후 저장을 눌러주세요.`}
               </DialogContentText>
               <TextField
                 autoFocus
@@ -94,14 +94,24 @@ const DialogAddAddress = (props) => {
             </DialogContent>
             <DialogActions>
               <Button variant="contained" onClick={() => {
-                setAddAddressObj({
-                  addr: '',
-                  detail_addr: '',
-                  is_open_daum_post: false,
-                })
-                setAddAddressOpen(false);
-                onAddAddress(addAddressObj)
-
+                if (type == 'update') {
+                  onDeleteAddress(id)
+                  setAddAddressObj({
+                    addr: '',
+                    detail_addr: '',
+                    is_open_daum_post: false,
+                  })
+                  setAddAddressOpen(false);
+                  onAddAddress(addAddressObj)
+                } else {
+                  setAddAddressObj({
+                    addr: '',
+                    detail_addr: '',
+                    is_open_daum_post: false,
+                  })
+                  setAddAddressOpen(false);
+                  onAddAddress(addAddressObj)
+                }
               }}>
                 저장
               </Button>

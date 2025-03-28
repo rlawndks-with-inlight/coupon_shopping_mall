@@ -36,10 +36,12 @@ const Iframe = styled.iframe`
 border: none;
 width: 100%;
 `
-export function AddressItem({ item, onCreateBilling, onDeleteAddress }) {
+export function AddressItem({ item, onCreateBilling, onDeleteAddress, onUpdateAddress }) {
 
   const { translate } = useLocales();
   const { receiver, addr, address_type, phone, is_default, detail_addr, id } = item;
+  const { themeDnsData } = useSettingsContext();
+
   return (
     <Card
       sx={{
@@ -80,6 +82,14 @@ export function AddressItem({ item, onCreateBilling, onDeleteAddress }) {
           <Button variant="outlined" size="small" color="inherit" sx={{ mr: 1 }} onClick={() => { onDeleteAddress(id) }}>
             {translate('삭제')}
           </Button>
+          {
+            themeDnsData?.id == 74 &&
+            <>
+              <Button variant="outlined" size="small" color="inherit" sx={{ mr: 1 }} onClick={() => { onUpdateAddress(id); }}>
+                {translate('수정')}
+              </Button>
+            </>
+          }
           <Button variant="outlined" size="small" onClick={onCreateBilling}>
             {translate('해당 주소로 배송하기')}
           </Button>

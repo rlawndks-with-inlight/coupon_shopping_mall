@@ -91,7 +91,7 @@ const LoginDemo = (props) => {
             fontSize: '40px',
             paddingTop: '1rem'
           }}>
-          Welcome to {themeDnsData.company_name}
+          Welcome to {themeDnsData?.id == 74 ? 'The grazia' : themeDnsData?.company_name}
         </Title>
         <div style={{ width: '100%', textAlign: 'center', marginBottom: '1rem' }}>
           가입 또는 로그인 해주세요.

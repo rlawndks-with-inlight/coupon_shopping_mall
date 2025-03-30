@@ -1039,14 +1039,23 @@ const ProductEdit = () => {
         :
         <>
           <div>
-            {item?.description_images?.map((img, index) => (
-              <img
-                key={index}
-                src={img?.product_description_file?.preview}
-                alt="Product Image"
-                style={{ maxWidth: '100%', height: 'auto', margin: '0 auto' }}
-              />
-            ))}
+            {item?.description_images?.map((img, index) => {
+              if (img?.product_description_file) {
+                return <img
+                  key={index}
+                  src={img?.product_description_file?.preview}
+                  alt="Product Image"
+                  style={{ maxWidth: '100%', height: 'auto', margin: '0 auto' }}
+                />
+              } else if (img?.product_description_img) {
+                return <img
+                  key={index}
+                  src={img?.product_description_img}
+                  alt="Product Image"
+                  style={{ maxWidth: '100%', height: 'auto', margin: '0 auto' }}
+                />
+              }
+            })}
           </div>
         </>,
     },
@@ -2489,7 +2498,7 @@ const ProductEdit = () => {
             <>
               <Dialog fullScreen open={popupOpen} onClose={() => setPopupOpen(false)} sx={{ width: '100vw', height: '100vh', zIndex: '9999', position: 'relative' }}>
                 <div style={{ width: '100%', height: '5vh', color: 'magenta', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>화면 어느 곳이든 클릭하면 돌아갑니다.</div>
-                <Wrapper onClick={() => { setPopupOpen(false); }}>
+                <Wrapper onClick={() => { setPopupOpen(false); console.log(item) }}>
                   <ContentWrapper>
                     {loading ?
                       <SkeletonProductDetails />

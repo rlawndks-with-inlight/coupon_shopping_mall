@@ -86,7 +86,7 @@ export default function ProductDetailsCarousel({ product, type = '' }) {
 
   const [selectedImage, setSelectedImage] = useState(-1);
 
-  const imagesLightbox = type == 'early' ? product.sub_images?.map((img) => ({ src: img?.product_sub_file?.preview })) : product.images?.map((img) => ({ src: img }));
+  const imagesLightbox = type == 'early' ? product?.sub_images?.product_sub_file ? product.sub_images?.map((img) => ({ src: img?.product_sub_file?.preview })) : product.sub_images?.map((img) => ({ src: img?.product_sub_img })) : product.images?.map((img) => ({ src: img }));
   const handleOpenLightbox = (imageUrl) => {
     const imageIndex = imagesLightbox.findIndex((image) => image.src === imageUrl);
     setSelectedImage(imageIndex);
@@ -95,6 +95,8 @@ export default function ProductDetailsCarousel({ product, type = '' }) {
   const handleCloseLightbox = () => {
     setSelectedImage(-1);
   };
+
+  let val = product.sub_images[0].product_sub_file ? product.sub_images?.length : product.sub_images?.filter(item => 'product_sub_img' in item && item['product_sub_img'] != null).length
 
   const carouselSettings1 = {
     dots: false,
@@ -114,7 +116,7 @@ export default function ProductDetailsCarousel({ product, type = '' }) {
     focusOnSelect: true,
     variableWidth: true,
     centerPadding: '0px',
-    slidesToShow: type == 'early' ? product.sub_images?.length > 3 ? 3 : product.sub_images?.length : product.images?.length > 3 ? 3 : product.images?.length,
+    slidesToShow: type == 'early' ? val > 3 ? 3 : val : product.images?.length > 3 ? 3 : product.images?.length,
   };
 
   useEffect(() => {
@@ -142,16 +144,27 @@ export default function ProductDetailsCarousel({ product, type = '' }) {
     <Box sx={{ mb: 3, borderRadius: 2, overflow: 'hidden', position: 'relative' }}>
       {type == 'early' ?
         <Carousel {...carouselSettings1} asNavFor={nav2} ref={carousel1}>
-          {product.sub_images?.map((img, idx) => (
-            <Image
-              key={idx}
-              alt="product"
-              src={img?.product_sub_file?.preview}
-              ratio="1/1"
-              onClick={() => handleOpenLightbox(img)}
-              sx={{ cursor: 'zoom-in', objectFit: 'cover' }}
-            />
-          ))}
+          {product.sub_images?.map((img, idx) => {
+            if (img?.product_sub_file) {
+              return <Image
+                key={idx}
+                alt="product"
+                src={img?.product_sub_file?.preview}
+                ratio="1/1"
+                onClick={() => handleOpenLightbox(img)}
+                sx={{ cursor: 'zoom-in', objectFit: 'cover' }}
+              />
+            } else if (img?.product_sub_img) {
+              return <Image
+                key={idx}
+                alt="product"
+                src={img?.product_sub_img}
+                ratio="1/1"
+                onClick={() => handleOpenLightbox(img)}
+                sx={{ cursor: 'zoom-in', objectFit: 'cover' }}
+              />
+            }
+          })}
         </Carousel>
         :
         <Carousel {...carouselSettings1} asNavFor={nav2} ref={carousel1}>
@@ -169,33 +182,51 @@ export default function ProductDetailsCarousel({ product, type = '' }) {
       }
       <CarouselArrowIndex
         index={currentIndex}
-        total={type == 'early' ? product.sub_images?.length : product.images?.length}
+        total={type == 'early' ? val : product.images?.length}
         onNext={handleNext}
         onPrevious={handlePrev}
       />
     </Box>
   );
   const renderThumbnails = (
-    <StyledThumbnailsContainer length={type == 'early' ? product.sub_images?.length : product.images?.length} themeMode={themeMode}>
+    <StyledThumbnailsContainer length={type == 'early' ? val : product.images?.length} themeMode={themeMode}>
       {type == 'early' ?
         <Carousel {...carouselSettings2} asNavFor={nav1} ref={carousel2}>
-          {product.sub_images?.map((img, idx) => (
-            <Image
-              key={idx}
-              disabledEffect
-              alt="thumbnail"
-              src={img?.product_sub_file?.preview}
-              sx={{
-                width: THUMB_SIZE,
-                height: THUMB_SIZE,
-                borderRadius: 1.5,
-                cursor: 'pointer',
-                ...(currentIndex === idx && {
-                  border: `solid 2px ${theme.palette.primary.main}`,
-                }),
-              }}
-            />
-          ))}
+          {product.sub_images?.map((img, idx) => {
+            if (img?.product_sub_file) {
+              return <Image
+                key={idx}
+                disabledEffect
+                alt="thumbnail"
+                src={img?.product_sub_file?.preview}
+                sx={{
+                  width: THUMB_SIZE,
+                  height: THUMB_SIZE,
+                  borderRadius: 1.5,
+                  cursor: 'pointer',
+                  ...(currentIndex === idx && {
+                    border: `solid 2px ${theme.palette.primary.main}`,
+                  }),
+                }}
+              />
+            } else if (img?.product_sub_img) {
+              return <Image
+                key={idx}
+                disabledEffect
+                alt="thumbnail"
+                src={img?.product_sub_img}
+                sx={{
+                  width: THUMB_SIZE,
+                  height: THUMB_SIZE,
+                  borderRadius: 1.5,
+                  cursor: 'pointer',
+                  ...(currentIndex === idx && {
+                    border: `solid 2px ${theme.palette.primary.main}`,
+                  }),
+                }}
+              />
+            }
+          })}
         </Carousel>
         :
         <Carousel {...carouselSettings2} asNavFor={nav1} ref={carousel2}>

@@ -105,6 +105,12 @@ const ItemDemo = (props) => {
   const [buyOrCart, setBuyOrCart] = useState();
 
   useEffect(() => {
+    if (themeDnsData?.id == 74 && !user) {
+      router.push('/shop/auth/login')
+    }
+  }, [themeDnsData])
+
+  useEffect(() => {
     getItemInfo(1);
   }, [])
 
@@ -136,7 +142,7 @@ const ItemDemo = (props) => {
     {
       value: 'description',
       label: '상품정보',
-      component: product?.product_description ?
+      component: themeDnsData?.id != 74 ? product?.product_description ?
         <StyledReactQuill
           className='none-scroll'
           value={`
@@ -146,7 +152,20 @@ const ItemDemo = (props) => {
           readOnly={true}
           theme={"bubble"}
           bounds={'.app'}
-        /> : null,
+        /> : null
+        :
+        <>
+          <div>
+            {product?.description_images?.map((img, index) => (
+              <img
+                key={index}
+                src={img}
+                alt="Product Image"
+                style={{ maxWidth: '100%', height: 'auto', margin: '0 auto' }}
+              />
+            ))}
+          </div>
+        </>,
     },
     /*{
       value: 'basic_info',
@@ -290,7 +309,7 @@ const ItemDemo = (props) => {
                       <ProductDetailsCarousel product={product} />
                     </Grid>
 
-                    <Grid item xs={12} md={6} lg={6} style={{ position: 'relative' }}>
+                    <Grid item xs={12} md={6} lg={6} style={{ position: 'relative', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
 
                       {product?.brand_name &&
                         <>
@@ -318,10 +337,10 @@ const ItemDemo = (props) => {
                           <ItemCharacter key_name={character?.character_name} value={character?.character_value} />
                         </>
                       ))*/}
-                      {
+                      {/*
                         product?.status == 0 ?
                           <>
-                            {/*
+                            
                             {commarNumber(product?.product_price) != commarNumber(product?.product_sale_price) ?
                               <>
                                 <ItemCharacter
@@ -337,7 +356,7 @@ const ItemDemo = (props) => {
                                 <ItemCharacter key_name={'할인율'} value={`${parseFloat((parseInt(product?.product_price - product?.product_sale_price) / parseInt(product?.product_price) * 100).toFixed(2))}%`} />
                               </>
                               :
-                            */}
+                            
                             <>
                               <ItemCharacter
                                 key_name={'판매가'}
@@ -375,7 +394,7 @@ const ItemDemo = (props) => {
                                 </>
                                 :
                                 ''
-                      }
+                      */}
                       <div style={{ borderBottom: '1px solid #ccc', width: '100%', marginTop: '1rem' }} />
                       {themePropertyList.map((group, index) => {
                         let property_list = (product?.properties ?? []).filter(el => el?.property_group_id == group?.id);
@@ -383,6 +402,29 @@ const ItemDemo = (props) => {
                           return property?.property_name
                         })
                       })}
+                      <div style={{ borderTop: '1px solid #ccc', width: '100%', }} onClick={() => { }}>
+                        <ItemCharacter
+                          key_name={'판매가'}
+                          value={<>
+                            {commarNumber(parseInt(product?.product_sale_price))}원
+                          </>
+                          }
+                        />
+                        <div style={{ textAlign: 'right', color: 'gray' }}>
+                          구매시 {commarNumber(product?.product_sale_price * themeDnsData?.seller_point)}원 적립
+                        </div>
+                      </div>
+                      <div style={{ borderTop: '1px solid #ccc', width: '100%', padding: '1rem 0' }} onClick={() => { }}>
+                        <ItemCharacter
+                          key_name={'배송기간'}
+                          value={<div style={{}}>10-14일 내 도착 예정(검수 후 배송)</div>}
+                        />
+                      </div>
+                      <div style={{ width: '100%', padding: '1rem 0' }} onClick={() => { }}>
+                        <div style={{ color: 'gray' }}>
+                          모든 상품은 배송 전 검수를 거칩니다
+                        </div>
+                      </div>
                       <Row style={{ columnGap: '0.5rem', alignItems: 'center', position: 'absolute', bottom: '0' }}>
                         <Button
                           disabled={product?.status != 0 || !(product?.product_sale_price > 0)}

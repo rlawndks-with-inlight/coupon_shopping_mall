@@ -22,6 +22,8 @@ import axios from 'axios';
 import { useLocales } from 'src/locales';
 import PayProductsByAuthHecto from 'src/utils/hecto-auth';
 import PayProductsByPhoneHecto from 'src/utils/hecto-phone';
+import PayProductsByAuthFintree from 'src/utils/fintree-auth';
+import PayProductsByHandFintree from 'src/utils/fintree-hand';
 
 const Wrappers = styled.div`
 max-width:1200px;
@@ -222,18 +224,9 @@ const CartDemo = (props) => {
     } else if (item?.type == 'card_fintree') {//카드결제 핀트리
       setBuyType('card_fintree');
       setActiveStep(2);
-      setPayData({
-        ...payData,
-        payment_modules: item,
-      })
     } else if (item?.type == 'certification_fintree') {
       setBuyType('certification_fintree');
-      setPayLoading(true);
-      let result = await onPayProductsByAuth_Fintree([{
-        ...product_item,
-        groups: select_product_groups,
-        seller_id: router.query?.seller_id ?? 0,
-      }], { ...payData, payment_modules: item });
+      setActiveStep(2)
     } else if (item?.type == 'virtual_account') {
       setBuyType('virtual_account');
       let pay_data = await makePayData([{
@@ -603,6 +596,138 @@ const CartDemo = (props) => {
                       {/*<>
                       <Iframe src={_.find(themeDnsData?.payment_modules, { type: buyType })?.virtual_acct_url + `?amount=${payData?.amount}`} />
                     </> */}
+                    </>
+                  }
+                  {
+                    buyType == 'card_fintree' &&
+                    <>
+                      <Typography variant='subtitle1' sx={{ borderBottom: `1px solid #000`, paddingBottom: '0.5rem', marginBottom: '0.5rem' }}>{_.find(payList, { type: buyType })?.title}</Typography>
+                      <Stack spacing={2}>
+                        <Cards cvc={''} focused={cardFucus} expiry={payData.yymm} name={payData.buyer_name} number={payData.card_num} />
+                        <Stack>
+                          <TextField
+                            size='small'
+                            label='카드 번호'
+                            value={payData.card_num}
+                            placeholder='0000 0000 0000 0000'
+                            onChange={(e) => {
+                              let value = e.target.value;
+                              value = formatCreditCardNumber(value, Payment)
+                              setPayData({
+                                ...payData,
+                                ['card_num']: value
+                              })
+                            }}
+                          />
+                        </Stack>
+                        <Stack>
+                          <TextField
+                            size='small'
+                            label='카드 사용자명'
+                            value={payData.buyer_name}
+                            onChange={(e) => {
+                              let value = e.target.value;
+                              setPayData({
+                                ...payData,
+                                ['buyer_name']: value
+                              })
+                            }}
+                          />
+                        </Stack>
+                        <Stack>
+                          <TextField
+                            size='small'
+                            label='만료일'
+                            value={payData.yymm}
+                            inputProps={{ maxLength: '5' }}
+                            onChange={(e) => {
+                              let value = e.target.value;
+                              value = formatExpirationDate(value, Payment)
+                              setPayData({
+                                ...payData,
+                                ['yymm']: value
+                              })
+                            }}
+                          />
+                        </Stack>
+                        <Stack>
+                          <TextField
+                            size='small'
+                            label='카드비밀번호 앞 두자리'
+                            value={payData.card_pw}
+                            type='password'
+                            inputProps={{ maxLength: '2' }}
+                            onChange={(e) => {
+                              let value = e.target.value;
+                              setPayData({
+                                ...payData,
+                                ['card_pw']: value
+                              })
+                            }}
+                          />
+                        </Stack>
+                        <Stack>
+                          <TextField
+                            size='small'
+                            label='구매자 휴대폰번호'
+                            value={payData.buyer_phone}
+                            onChange={(e) => {
+                              let value = e.target.value;
+                              setPayData({
+                                ...payData,
+                                ['buyer_phone']: value
+                              })
+                            }}
+                          />
+                        </Stack>
+                        <Stack>
+                          <TextField
+                            size='small'
+                            label={is_blog == 1 ? '주민번호 앞 6자리(생년월일)' : '주민번호 또는 사업자등록번호'}
+                            value={payData.auth_num}
+                            onChange={(e) => {
+                              let value = e.target.value;
+                              setPayData({
+                                ...payData,
+                                ['auth_num']: value
+                              })
+                            }}
+                          />
+                        </Stack>
+                        {!user &&
+                          <>
+                            <Stack>
+                              <TextField
+                                size='small'
+                                label='비회원주문 비밀번호'
+                                type='password'
+                                value={payData.password}
+                                onChange={(e) => {
+                                  let value = e.target.value;
+                                  setPayData({
+                                    ...payData,
+                                    ['password']: value
+                                  })
+                                }}
+                              />
+                            </Stack>
+                          </>}
+                        <Stack>
+                          <PayProductsByHandFintree
+                            props={[product, payData, selectProductGroups]}
+                          />
+                        </Stack>
+                      </Stack>
+                    </>
+                  }
+                  {
+                    buyType == 'certification_fintree' &&
+                    <>
+                      <div style={{ margin: '2rem' }}>
+                        <PayProductsByAuthFintree
+                          props={[products, payData]}
+                        />
+                      </div>
                     </>
                   }
                   {

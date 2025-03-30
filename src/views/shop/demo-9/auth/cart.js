@@ -35,8 +35,9 @@ border: none;
 width: 100%;
 `
 const STEPS = ['장바구니 확인', '배송지 확인', '결제하기'];
-export function AddressItem({ item, onCreateBilling, onDeleteAddress }) {
+export function AddressItem({ item, onCreateBilling, onDeleteAddress, onUpdateAddress }) {
   const { receiver, addr, address_type, phone, is_default, detail_addr, id } = item;
+  const { themeDnsData } = useSettingsContext();
   return (
     <Card
       sx={{
@@ -77,6 +78,14 @@ export function AddressItem({ item, onCreateBilling, onDeleteAddress }) {
           <Button variant="outlined" size="small" color="inherit" sx={{ mr: 1 }} onClick={() => { onDeleteAddress(id) }}>
             삭제
           </Button>
+          {
+            themeDnsData?.id == 74 &&
+            <>
+              <Button variant="outlined" size="small" color="inherit" sx={{ mr: 1 }} onClick={() => { onUpdateAddress(id); }}>
+                수정
+              </Button>
+            </>
+          }
           <Button variant="outlined" size="small" onClick={onCreateBilling}>
             해당 주소로 배송하기
           </Button>
@@ -112,6 +121,8 @@ const CartDemo = (props) => {
     user_id: user?.id,
   });
   const [addAddressOpen, setAddAddressOpen] = useState(false);
+  const [updateAddressOpen, setUpdatedAddressOpen] = useState(false);
+  const [addressID, setAddressID] = useState();
   const [addAddressObj, setAddAddressObj] = useState({
     addr: '',
     detail_addr: '',
@@ -135,6 +146,14 @@ const CartDemo = (props) => {
     use_point: 0,
   })
   const [payLoading, setPayLoading] = useState(false);
+
+
+  useEffect(() => {
+    if (themeDnsData?.id == 74 && !user) {
+      router.push('/shop/auth/login')
+    }
+  }, [themeDnsData])
+
   useEffect(() => {
     getCart();
   }, [])
@@ -207,18 +226,9 @@ const CartDemo = (props) => {
     } else if (item?.type == 'card_fintree') {//카드결제 핀트리
       setBuyType('card_fintree');
       setActiveStep(2);
-      setPayData({
-        ...payData,
-        payment_modules: item,
-      })
     } else if (item?.type == 'certification_fintree') {
       setBuyType('certification_fintree');
-      setPayLoading(true);
-      let result = await onPayProductsByAuth_Fintree([{
-        ...product_item,
-        groups: select_product_groups,
-        seller_id: router.query?.seller_id ?? 0,
-      }], { ...payData, payment_modules: item });
+      setActiveStep(2)
     } else if (item?.type == 'virtual_account') {
       setBuyType('virtual_account');
       let pay_data = await makePayData([{
@@ -310,6 +320,12 @@ const CartDemo = (props) => {
       onChangeAddressPage(addressSearchObj);
     }
   }
+
+  const onUpdateAddress = async (id) => {
+    setAddressID(id);
+    setUpdatedAddressOpen(true);
+  }
+
   const onChangeAddressPage = async (search_obj) => {
     setAddressContent({
       ...addressContent,
@@ -341,6 +357,14 @@ const CartDemo = (props) => {
         addAddressOpen={addAddressOpen}
         setAddAddressOpen={setAddAddressOpen}
         onAddAddress={onAddAddress}
+      />
+      <DialogAddAddress
+        addAddressOpen={updateAddressOpen}
+        setAddAddressOpen={setUpdatedAddressOpen}
+        onAddAddress={onAddAddress}
+        type={'update'}
+        id={addressID}
+        onDeleteAddress={onDeleteAddress}
       />
       <Wrappers>
         <Title>장바구니</Title>
@@ -383,6 +407,7 @@ const CartDemo = (props) => {
                               item={item}
                               onCreateBilling={() => onCreateBilling(item)}
                               onDeleteAddress={onDeleteAddress}
+                              onUpdateAddress={onUpdateAddress}
                             />
                           </>
                         ))}
@@ -591,6 +616,138 @@ const CartDemo = (props) => {
                     </>
                   }
                   {
+                    buyType == 'card_fintree' &&
+                    <>
+                      <Typography variant='subtitle1' sx={{ borderBottom: `1px solid #000`, paddingBottom: '0.5rem', marginBottom: '0.5rem' }}>{_.find(payList, { type: buyType })?.title}</Typography>
+                      <Stack spacing={2}>
+                        <Cards cvc={''} focused={cardFucus} expiry={payData.yymm} name={payData.buyer_name} number={payData.card_num} />
+                        <Stack>
+                          <TextField
+                            size='small'
+                            label='카드 번호'
+                            value={payData.card_num}
+                            placeholder='0000 0000 0000 0000'
+                            onChange={(e) => {
+                              let value = e.target.value;
+                              value = formatCreditCardNumber(value, Payment)
+                              setPayData({
+                                ...payData,
+                                ['card_num']: value
+                              })
+                            }}
+                          />
+                        </Stack>
+                        <Stack>
+                          <TextField
+                            size='small'
+                            label='카드 사용자명'
+                            value={payData.buyer_name}
+                            onChange={(e) => {
+                              let value = e.target.value;
+                              setPayData({
+                                ...payData,
+                                ['buyer_name']: value
+                              })
+                            }}
+                          />
+                        </Stack>
+                        <Stack>
+                          <TextField
+                            size='small'
+                            label='만료일'
+                            value={payData.yymm}
+                            inputProps={{ maxLength: '5' }}
+                            onChange={(e) => {
+                              let value = e.target.value;
+                              value = formatExpirationDate(value, Payment)
+                              setPayData({
+                                ...payData,
+                                ['yymm']: value
+                              })
+                            }}
+                          />
+                        </Stack>
+                        <Stack>
+                          <TextField
+                            size='small'
+                            label='카드비밀번호 앞 두자리'
+                            value={payData.card_pw}
+                            type='password'
+                            inputProps={{ maxLength: '2' }}
+                            onChange={(e) => {
+                              let value = e.target.value;
+                              setPayData({
+                                ...payData,
+                                ['card_pw']: value
+                              })
+                            }}
+                          />
+                        </Stack>
+                        <Stack>
+                          <TextField
+                            size='small'
+                            label='구매자 휴대폰번호'
+                            value={payData.buyer_phone}
+                            onChange={(e) => {
+                              let value = e.target.value;
+                              setPayData({
+                                ...payData,
+                                ['buyer_phone']: value
+                              })
+                            }}
+                          />
+                        </Stack>
+                        <Stack>
+                          <TextField
+                            size='small'
+                            label={is_blog == 1 ? '주민번호 앞 6자리(생년월일)' : '주민번호 또는 사업자등록번호'}
+                            value={payData.auth_num}
+                            onChange={(e) => {
+                              let value = e.target.value;
+                              setPayData({
+                                ...payData,
+                                ['auth_num']: value
+                              })
+                            }}
+                          />
+                        </Stack>
+                        {!user &&
+                          <>
+                            <Stack>
+                              <TextField
+                                size='small'
+                                label='비회원주문 비밀번호'
+                                type='password'
+                                value={payData.password}
+                                onChange={(e) => {
+                                  let value = e.target.value;
+                                  setPayData({
+                                    ...payData,
+                                    ['password']: value
+                                  })
+                                }}
+                              />
+                            </Stack>
+                          </>}
+                        <Stack>
+                          <PayProductsByHandFintree
+                            props={[product, payData, selectProductGroups]}
+                          />
+                        </Stack>
+                      </Stack>
+                    </>
+                  }
+                  {
+                    buyType == 'certification_fintree' &&
+                    <>
+                      <div style={{ margin: '2rem' }}>
+                        <PayProductsByAuthFintree
+                          props={[products, payData]}
+                        />
+                      </div>
+                    </>
+                  }
+                  {
                     buyType == 'card_hecto' &&
                     <>
                       <div style={{ margin: '2rem' }}>
@@ -631,7 +788,13 @@ const CartDemo = (props) => {
                   type="submit"
                   variant="contained"
                   disabled={_.sum(_.map(products, (item) => { return item.quantity * item.product_sale_price })) <= 0}
-                  onClick={() => { user?.unipass ? onClickNextStep : toast.error('개인통관고유부호가 존재하지 않습니다. 관리자에 문의하세요') }}
+                  onClick={() => {
+                    if (themeDnsData?.id == 74 && !themeDnsData?.seller_id) {
+                      toast.error('본사페이지에서는 결제가 진행되지 않습니다.')
+                      return;
+                    }
+                    user?.unipass ? onClickNextStep() : toast.error('개인통관고유부호가 존재하지 않습니다. 관리자에 문의하세요')
+                  }}
                 >
                   {'배송지 선택하기'}
                 </Button>

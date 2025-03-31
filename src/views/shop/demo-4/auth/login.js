@@ -56,6 +56,7 @@ const LoginDemo = (props) => {
   const [noneUserTrxObj, setNoneUserTrxObj] = useState({});
 
   useEffect(() => {
+    console.log(themeDnsData)
     if (router.query?.scroll_to) {
       window.scrollTo(0, router.query?.scroll_to);
     }

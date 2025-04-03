@@ -68,6 +68,7 @@ const SellerEdit = () => {
     seller_category: '',
     seller_property: '',
     seller_point: '',
+    seller_color: ''
   })
 
   const [agents, setAgents] = useState([])

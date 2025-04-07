@@ -120,12 +120,16 @@ const ItemDemo = (props) => {
       id: router.query?.id,
       seller_id: themeDnsData?.seller_id ?? 0
     });
-    data['sub_images'] = (data?.sub_images ?? []).map((img) => { //cannot create property on false? 오류 간헐적 발생
-      return img?.product_sub_img
-    })
+
+    let sub_image = data?.sub_images;
+    let description_image = data?.sub_images;
+
+    data['sub_images'] = (sub_image ?? []).map((img) => img?.product_sub_img).filter((img) => img !== null && img !== undefined)
     /*if (data?.product_img) {  //메인이미지를 상세이미지에 추가하는 코드
       data['sub_images'].unshift(data?.product_img)
     }*/
+
+    data['description_images'] = (description_image ?? []).map((img) => img?.product_description_img).filter((img) => img !== null && img !== undefined)
     data['images'] = data['sub_images'];
     /*setReviewPage(review_page);
     let review_data = await apiManager('product-reviews', 'list', {
@@ -141,7 +145,7 @@ const ItemDemo = (props) => {
   const TABS = [
     {
       value: 'description',
-      label: '상품정보',
+      label: 'Detail',
       component: themeDnsData?.id != 74 ? product?.product_description ?
         <StyledReactQuill
           className='none-scroll'
@@ -272,7 +276,7 @@ const ItemDemo = (props) => {
               } else {
                 if (buyOrCart == 'buy') {
                   setCharacterSelect(false);
-                  setUnipassPopup(true);
+                  setBuyOpen(true);
                 } else {
                   handleAddCart();
                   setCharacterSelect(false);
@@ -310,15 +314,26 @@ const ItemDemo = (props) => {
                     </Grid>
 
                     <Grid item xs={12} md={6} lg={6} style={{ position: 'relative', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+                      <div style={{ borderTop: '1px solid #ccc', padding: '1rem 0' }}>
+                        {product?.brand_name &&
+                          <>
+                            <div style={{ fontSize: '18px', fontFamily: 'Playfair Display', fontWeight: 'bold', }}>
+                              {product?.brand_name[0].category_en_name}
+                            </div>
+                          </>
+                        }
+                        <ItemName style={{ whiteSpace: 'wrap', marginTop: '1rem', fontSize: '22px', fontWeight: 'bold', letterSpacing: '-1px' }}>
+                          {product?.product_name}
+                        </ItemName>
+                        <ItemCharacter
+                          key_name={'판매가'}
+                          value={<>
+                            {commarNumber(parseInt(product?.product_sale_price))}원
+                          </>
+                          }
+                        />
+                      </div>
 
-                      {product?.brand_name &&
-                        <>
-                          <div style={{ fontSize: '18px', fontFamily: 'Playfair Display', fontWeight: 'bold', borderTop: '1px solid #ccc', padding: '1rem 0' }}>
-                            {product?.brand_name[0].category_en_name}
-                          </div>
-                        </>
-                      }
-                      <ItemName style={{ whiteSpace: 'wrap', fontSize: '22px', fontWeight: 'bold', letterSpacing: '-1px' }}>{product?.product_name}</ItemName>
                       {/*product?.product_code &&
                         <>
                           <ItemCharacter key_name={'상품코드'} value={product?.product_code} />
@@ -395,37 +410,30 @@ const ItemDemo = (props) => {
                                 :
                                 ''
                       */}
-                      <div style={{ borderBottom: '1px solid #ccc', width: '100%', marginTop: '1rem' }} />
                       {themePropertyList.map((group, index) => {
                         let property_list = (product?.properties ?? []).filter(el => el?.property_group_id == group?.id);
                         property_list = property_list.map(property => {
                           return property?.property_name
                         })
                       })}
-                      <div style={{ borderTop: '1px solid #ccc', width: '100%', }} onClick={() => { }}>
-                        <ItemCharacter
-                          key_name={'판매가'}
-                          value={<>
-                            {commarNumber(parseInt(product?.product_sale_price))}원
-                          </>
-                          }
-                        />
-                        <div style={{ textAlign: 'right', color: 'gray' }}>
-                          구매시 {commarNumber(product?.product_sale_price * themeDnsData?.seller_point)}원 적립
+                      <div style={{ borderTop: '1px solid #ccc', borderBottom: '1px solid #ccc', width: '100%', padding: '1rem 0' }} onClick={() => { }}>
+                        <div style={{ width: '100%', display: 'flex', justifyContent: 'space-between', }}>
+                          <div>포인트 적립</div>
+                          <div style={{ textAlign: 'right', }}>
+                            구매시 {commarNumber(product?.product_sale_price * themeDnsData?.seller_point)} P
+                          </div>
                         </div>
-                      </div>
-                      <div style={{ borderTop: '1px solid #ccc', width: '100%', padding: '1rem 0' }} onClick={() => { }}>
-                        <ItemCharacter
-                          key_name={'배송기간'}
-                          value={<div style={{}}>10-14일 내 도착 예정(검수 후 배송)</div>}
-                        />
-                      </div>
-                      <div style={{ width: '100%', padding: '1rem 0' }} onClick={() => { }}>
-                        <div style={{ color: 'gray' }}>
+                        <div style={{ width: '100%', display: 'flex', justifyContent: 'space-between', marginTop: '1rem' }}>
+                          <div>배송 기간</div>
+                          <div>10~14일</div>
+                        </div>
+                        <div style={{ color: 'gray', marginTop: '1rem', textAlign: 'right' }}>
                           모든 상품은 배송 전 검수를 거칩니다
                         </div>
                       </div>
-                      <Row style={{ columnGap: '0.5rem', alignItems: 'center', position: 'absolute', bottom: '0' }}>
+                      <div style={{ width: '100%', padding: '1rem 0' }} onClick={() => { }}>
+                      </div>
+                      <Row style={{ columnGap: '0.5rem', alignItems: 'center', width: '100%' }}>
                         <Button
                           disabled={product?.status != 0 || !(product?.product_sale_price > 0)}
                           sx={{
@@ -467,6 +475,10 @@ const ItemDemo = (props) => {
                             }
                           }}
                           onClick={() => {
+                            if (themeDnsData?.id == 74 && !themeDnsData?.seller_id) {
+                              toast.error('본사페이지에서는 결제가 진행되지 않습니다.')
+                              return;
+                            }
                             if (user) {
                               if (user?.unipass) {
                                 if (product?.characters?.length > 0) {

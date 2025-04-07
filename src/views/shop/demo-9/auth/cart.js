@@ -20,6 +20,8 @@ import { apiManager } from 'src/utils/api';
 import DialogAddAddress from 'src/components/dialog/DialogAddAddress';
 import PayProductsByAuthHecto from 'src/utils/hecto-auth';
 import PayProductsByPhoneHecto from 'src/utils/hecto-phone';
+import PayProductsByAuthFintree from 'src/utils/fintree-auth';
+import PayProductsByHandFintree from 'src/utils/fintree-hand';
 
 const Wrappers = styled.div`
 max-width:1400px;

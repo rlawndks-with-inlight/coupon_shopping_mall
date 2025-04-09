@@ -96,7 +96,7 @@ export default function ProductDetailsCarousel({ product, type = '' }) {
     setSelectedImage(-1);
   };
 
-  let val = product.sub_images[0].product_sub_file
+  let val = product.sub_images.length > 0 && product.sub_images[0].product_sub_file
     ? product.sub_images?.length
     : product.sub_images?.filter(
       item => typeof item === 'object' && item !== null && 'product_sub_img' in item && item['product_sub_img'] != null

@@ -22,7 +22,7 @@ const TrxList = () => {
     check_file: undefined
   })
   const defaultColumns = [
-    ...(themeDnsData?.setting_obj?.is_use_seller > 0 ? [
+    ...(themeDnsData?.setting_obj?.is_use_seller == 2 ? [
       {
         id: 'check_img',
         label: '검품사진',

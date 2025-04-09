@@ -22,6 +22,7 @@ import PayProductsByAuthHecto from 'src/utils/hecto-auth';
 import PayProductsByPhoneHecto from 'src/utils/hecto-phone';
 import PayProductsByAuthFintree from 'src/utils/fintree-auth';
 import PayProductsByHandFintree from 'src/utils/fintree-hand';
+import PaymentModuleList from 'src/pages/manager/settings';
 
 const Wrappers = styled.div`
 max-width:1400px;
@@ -620,7 +621,7 @@ const CartDemo = (props) => {
                   {
                     buyType == 'card_fintree' &&
                     <>
-                      <Typography variant='subtitle1' sx={{ borderBottom: `1px solid #000`, paddingBottom: '0.5rem', marginBottom: '0.5rem' }}>{_.find(payList, { type: buyType })?.title}</Typography>
+                      <Typography variant='subtitle1' sx={{ borderBottom: `1px solid #000`, paddingBottom: '0.5rem', marginBottom: '0.5rem' }}>{_.find(PaymentModuleList, { type: buyType })?.title}</Typography>
                       <Stack spacing={2}>
                         <Cards cvc={''} focused={cardFucus} expiry={payData.yymm} name={payData.buyer_name} number={payData.card_num} />
                         <Stack>
@@ -702,7 +703,7 @@ const CartDemo = (props) => {
                         <Stack>
                           <TextField
                             size='small'
-                            label={is_blog == 1 ? '주민번호 앞 6자리(생년월일)' : '주민번호 또는 사업자등록번호'}
+                            label={'주민번호 또는 사업자등록번호'}
                             value={payData.auth_num}
                             onChange={(e) => {
                               let value = e.target.value;
@@ -733,7 +734,7 @@ const CartDemo = (props) => {
                           </>}
                         <Stack>
                           <PayProductsByHandFintree
-                            props={[product, payData, selectProductGroups]}
+                            props={[products, payData, selectProductGroups]}
                           />
                         </Stack>
                       </Stack>
@@ -791,11 +792,8 @@ const CartDemo = (props) => {
                   variant="contained"
                   disabled={_.sum(_.map(products, (item) => { return item.quantity * item.product_sale_price })) <= 0}
                   onClick={() => {
-                    if (themeDnsData?.id == 74 && !themeDnsData?.seller_id) {
-                      toast.error('본사페이지에서는 결제가 진행되지 않습니다.')
-                      return;
-                    }
-                    user?.unipass ? onClickNextStep() : toast.error('개인통관고유부호가 존재하지 않습니다. 관리자에 문의하세요')
+
+                    onClickNextStep()
                   }}
                 >
                   {'배송지 선택하기'}

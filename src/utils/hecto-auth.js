@@ -59,10 +59,10 @@ const PayProductsByAuthHecto = ({ props }) => {
 
         const totalPrice = products.length > 1
             ? products.reduce((acc, product) => acc + Number(product.product_sale_price * product.order_count), 0)
-            : Number(products.product_sale_price * products.order_count)
+            : Number(products[0].product_sale_price * products[0].order_count)
         const productNames = products.length > 1
             ? `${products[0].product_name} 외 ${products.length - 1}건`
-            : products.product_name;
+            : products[0].product_name;
 
         const encParams = {
             trdAmt: encryptAES256(String(totalPrice), apiKey),

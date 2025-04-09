@@ -475,22 +475,17 @@ const ItemDemo = (props) => {
                             }
                           }}
                           onClick={() => {
-                            if (themeDnsData?.id == 74 && !themeDnsData?.seller_id) {
-                              toast.error('본사페이지에서는 결제가 진행되지 않습니다.')
-                              return;
-                            }
+
                             if (user) {
-                              if (user?.unipass) {
-                                if (product?.characters?.length > 0) {
-                                  setCharacterSelect(true);
-                                  setBuyOrCart('buy');
-                                } else {
-                                  //setUnipassPopup(true);
-                                  setBuyOpen(true);
-                                }
+
+                              if (product?.characters?.length > 0) {
+                                setCharacterSelect(true);
+                                setBuyOrCart('buy');
                               } else {
-                                toast.error('개인통관고유부호가 존재하지 않습니다. 관리자에 문의하세요.')
+                                //setUnipassPopup(true);
+                                setBuyOpen(true);
                               }
+
                             } else {
                               toast.error('로그인을 해주세요.')
                             }

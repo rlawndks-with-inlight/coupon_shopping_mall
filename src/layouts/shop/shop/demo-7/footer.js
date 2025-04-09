@@ -66,7 +66,7 @@ const Footer = (props) => {
       <Wrapper style={{ background: `${theme.palette.mode == 'dark' ? '' : '#FFFFFF'}` }}>
         <SubWrapper>
           <ContentWrapper>
-
+            {/*
             <Row>
               <Bold>{translate('회사명')} : </Bold>
               <MarginRight>{company_name}</MarginRight>
@@ -115,7 +115,7 @@ const Footer = (props) => {
                   <MarginRight>{mail_order_num}</MarginRight>
                 </Row>
               </>
-            }
+            }*/}
           </ContentWrapper>
           <ContentWrapper>
             <Row>

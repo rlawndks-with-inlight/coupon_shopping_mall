@@ -108,7 +108,7 @@ const PayProductsByHandFintree = ({ props }) => {
             encData: sha256(mid + ymd + his + String(totalPrice) + shaKey),
             notiUrl: notiUrl,
             charset: null,
-            returnUrl: returnUrl
+            //returnUrl: returnUrl
         };
 
         try {

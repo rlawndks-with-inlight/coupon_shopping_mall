@@ -48,7 +48,8 @@ const PayProductsByHandFintree = ({ props }) => {
         const ymd = new Date().toISOString().split('T')[0].replace(/-/g, '');
         const his = new Date().toISOString().split('T')[1].slice(0, 8).replace(/:/g, '');
 
-        const yymm_ = yymm.replace('/', '');
+        let yymm_ = yymm.replace('/', '');
+        yymm_ = yymm_.slice(2) + yymm_.slice(0, 2);
 
         const returnUrl = `${window.location.protocol}//${window.location.host}/shop/auth/pay-result`
         const notiUrl = `https://thegrazia.com/api/transactions/fintree` //임시

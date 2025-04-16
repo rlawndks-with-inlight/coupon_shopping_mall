@@ -48,7 +48,8 @@ const PayProductsByHandFintree = ({ props }) => {
         const ymd = new Date().toISOString().split('T')[0].replace(/-/g, '');
         const his = new Date().toISOString().split('T')[1].slice(0, 8).replace(/:/g, '');
 
-        const yymm_ = yymm.replace('/', '');
+        let yymm_ = yymm.replace('/', '');
+        yymm_ = yymm_.slice(2) + yymm_.slice(0, 2);
 
         const returnUrl = `${window.location.protocol}//${window.location.host}/shop/auth/pay-result`
         const notiUrl = `https://thegrazia.com/api/transactions/fintree` //임시
@@ -76,10 +77,10 @@ const PayProductsByHandFintree = ({ props }) => {
             clipCustCi: null,
             clipCustPhoneNo: null,
         };
-
+        console.log(pay_data)
         const params = {
             //...encParams,
-            ...pay_data,
+            //...pay_data,
             payMethod: 'card',
             mid: mid,
             trxCd: '0',
@@ -88,32 +89,34 @@ const PayProductsByHandFintree = ({ props }) => {
             goodsAmt: String(totalPrice),
             ordNm: buyer_name,//themeDnsData?.name,
             ordTel: buyer_phone,
-            ordEmail: null,
-            userIp: null,
-            mbsReserved: null,
-            cpCd: null,
+            //ordEmail: null,
+            //userIp: null,
+            //mbsReserved: null,
+            //cpCd: null,
             cardNo: card_num,
-            cardTypeCd: null,
+            //cardTypeCd: null,
             expireYymm: yymm_,
-            ordAuthNo: null,
+            ordAuthNo: pay_data.auth_num,
             cardPw: card_pw,
             quotaMon: '00',
             noIntFlg: '0',
             pointFlg: '0',
-            goodsSplAmt: null,
-            goodsVat: null,
-            goodsSvsAmt: null,
-            channel: null,
+            goodsSplAmt: '1',
+            goodsVat: '1',
+            goodsSvsAmt: '1',
+            //channel: '0001',
             ediDate: ymd + his,
             encData: sha256(mid + ymd + his + String(totalPrice) + shaKey),
-            notiUrl: notiUrl,
-            charset: null,
+            products: pay_data.products,
+            //lmtDay: 1,
+            //notiUrl: notiUrl,
+            //charset: null,
             //returnUrl: returnUrl
         };
 
         try {
             let insert_pay_ready = await apiManager('pays/hand_fintree', 'create', params);
-            console.log(insert_pay_ready)
+            //console.log(insert_pay_ready)
             if (insert_pay_ready?.id > 0) {
                 return {
                     ...payData,

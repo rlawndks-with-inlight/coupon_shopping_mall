@@ -161,7 +161,7 @@ export const onPayProductsByAuth = async (products_, payData_, type) => { // 인
         }
         //console.log(products_);
         //console.log(payData_)
-        console.log(payData)
+        //console.log(payData)
         //console.log(query)
 
     } catch (err) {

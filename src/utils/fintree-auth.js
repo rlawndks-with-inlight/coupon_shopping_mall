@@ -16,16 +16,16 @@ const PayProductsByAuthFintree = ({ props }) => {
         buyer_phone
     } = payData;
 
-    console.log(props)
+    //console.log(props)
 
     //let products = products_;
     //let payData = payData_;
     let ord_num = `${user_id}${new Date().getTime().toString().substring(0, 11)}`
-    let mid = 'chchhh001m'
+    let mid = 'hpftauth1m'
     //let id = 'hamonyshop', 
     // tid = 'tester', 
     let apiKey = 'pgSettle30y739r82jtd709yOfZ2yK5K'
-    let shaKey = 'N4COCwG7yR88hkpVEVZydMj7aEZ8Q8p+/kVZIwBpqfJvD+pAEke7a32ytjZXA1RGIgqKjfTSvgfw81EXtM3djA=='
+    let shaKey = 'zrELBxK4tsQaIPLtU851u93w5IYQZ3N0m+nyIL9KA0Az36in2xxHx018tAyNEwNic0dN+LjBs0U4ctn9+lTtaQ=='
     //let user = 0;
     //let ver = 0;
 
@@ -54,7 +54,7 @@ const PayProductsByAuthFintree = ({ props }) => {
             const input = document.createElement("input");
             input.type = "hidden";
             input.name = key;
-            input.value = params[key] || "";  // 값이 없으면 빈 문자열
+            input.value = params[key] !== undefined && params[key] !== null ? params[key] : "";
             form.appendChild(input);
         });
 
@@ -74,7 +74,7 @@ const PayProductsByAuthFintree = ({ props }) => {
         const his = new Date().toISOString().split('T')[1].slice(0, 8).replace(/:/g, '');
 
         const returnUrl = `${window.location.protocol}//${window.location.host}/shop/auth/pay-result`
-        const notiUrl = `${window.location.protocol}//${window.location.host}/shop` //임시
+        const notiUrl = `https://thegrazia.com/api/transactions/fintree` //임시
 
         const productArray = Array.isArray(products) ? products : [products];
 
@@ -122,6 +122,7 @@ const PayProductsByAuthFintree = ({ props }) => {
             encData: sha256(mid + ymd + his + String(totalPrice) + shaKey),
             notiUrl: notiUrl,
             charset: null,
+            //authType: '02',
         };
 
         const form = createPaymentForm(params);

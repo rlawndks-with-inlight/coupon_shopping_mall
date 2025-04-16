@@ -31,11 +31,11 @@ const PayProductsByHandFintree = ({ props }) => {
     //let products = products_;
     //let payData = payData_;
     let ord_num = `${user_id}${new Date().getTime().toString().substring(0, 11)}`
-    let mid = 'chchhh001m'
+    let mid = 'hpftsugi1m'
     //let id = 'hamonyshop', 
     // tid = 'tester', 
     let apiKey = 'pgSettle30y739r82jtd709yOfZ2yK5K'
-    let shaKey = 'N4COCwG7yR88hkpVEVZydMj7aEZ8Q8p+/kVZIwBpqfJvD+pAEke7a32ytjZXA1RGIgqKjfTSvgfw81EXtM3djA=='
+    let shaKey = 'ozImAPcI95NDe86AC2k757SAkpN5fFUlwwzr5qsKpXdYONTGHk9/V6xWn0fYeHaipdZEHuK7eVKayLEuMiuUTg=='
     //let user = 0;
     //let ver = 0;
 
@@ -43,7 +43,7 @@ const PayProductsByHandFintree = ({ props }) => {
     const handlePayment = async () => {
 
         const pay_data = await makePayData([{ ...product_item, groups: select_product_groups }], payData);
-        console.log(pay_data)
+        //console.log(pay_data)
 
         const ymd = new Date().toISOString().split('T')[0].replace(/-/g, '');
         const his = new Date().toISOString().split('T')[1].slice(0, 8).replace(/:/g, '');
@@ -51,7 +51,7 @@ const PayProductsByHandFintree = ({ props }) => {
         const yymm_ = yymm.replace('/', '');
 
         const returnUrl = `${window.location.protocol}//${window.location.host}/shop/auth/pay-result`
-        const notiUrl = `${window.location.protocol}//${window.location.host}/shop` //임시
+        const notiUrl = `https://thegrazia.com/api/transactions/fintree` //임시
 
         const productArray = Array.isArray(products) ? products : [products];
 
@@ -86,7 +86,7 @@ const PayProductsByHandFintree = ({ props }) => {
             goodsNm: productNames,
             ordNo: ord_num,
             goodsAmt: String(totalPrice),
-            ordNm: themeDnsData?.name,
+            ordNm: buyer_name,//themeDnsData?.name,
             ordTel: buyer_phone,
             ordEmail: null,
             userIp: null,
@@ -108,6 +108,7 @@ const PayProductsByHandFintree = ({ props }) => {
             encData: sha256(mid + ymd + his + String(totalPrice) + shaKey),
             notiUrl: notiUrl,
             charset: null,
+            returnUrl: returnUrl
         };
 
         try {

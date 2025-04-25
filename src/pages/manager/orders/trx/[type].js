@@ -456,6 +456,7 @@ const TrxList = () => {
     let data_ = await apiManager('transactions', 'list', obj);
     if (data_) {
       setData(data_);
+      console.log(data)
     }
   }
   const deleteTrx = async (id) => {

@@ -767,6 +767,51 @@ const Header = () => {
                             </TreeView>
                         </>
                     ))}
+                    {
+                        themeDnsData?.id == 74 &&
+                        <>
+                            <ColumnMenuTitle>{'성별'}</ColumnMenuTitle>
+                            <TreeView
+                                defaultCollapseIcon={<Icon icon={'ic:baseline-minus'} />}
+                                defaultExpandIcon={<Icon icon={'ic:baseline-plus'} />}
+                                defaultEndIcon={<Icon icon={'mdi:dot'} />}
+                            >
+                                <TreeItem label={<div
+                                    style={{
+                                        marginLeft: '0.25rem'
+                                    }}
+                                    onClick={() => {
+                                        router.push(`/shop/items?property_ids0=48&depth=0`);
+                                        setSideMenuOpen(false);
+                                    }}>공용</div>}
+                                    style={{ margin: '0.25rem 0' }}
+                                >
+                                </TreeItem>
+                                <TreeItem label={<div
+                                    style={{
+                                        marginLeft: '0.25rem'
+                                    }}
+                                    onClick={() => {
+                                        router.push(`/shop/items?property_ids0=47&depth=0`);
+                                        setSideMenuOpen(false);
+                                    }}>남성</div>}
+                                    style={{ margin: '0.25rem 0' }}
+                                >
+                                </TreeItem>
+                                <TreeItem label={<div
+                                    style={{
+                                        marginLeft: '0.25rem'
+                                    }}
+                                    onClick={() => {
+                                        router.push(`/shop/items?property_ids0=46&depth=0`);
+                                        setSideMenuOpen(false);
+                                    }}>여성</div>}
+                                    style={{ margin: '0.25rem 0' }}
+                                >
+                                </TreeItem>
+                            </TreeView>
+                        </>
+                    }
                     <ColumnMenuTitle>{translate('마이페이지')}</ColumnMenuTitle>
                     {user ?
                         <>

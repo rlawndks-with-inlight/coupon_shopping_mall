@@ -113,9 +113,9 @@ const PayProductsByAuthFintree = ({ props }) => {
             ordEmail: null,
             userIp: null,
             mbsReserved: null,
-            goodsSplAmt: null,
-            goodsVat: null,
-            goodsSvsAmt: null,
+            //goodsSplAmt: null, //0으로 보내든가 아예 보내지 말 것
+            //goodsVat: null, //0으로 보내든가 아예 보내지 말 것
+            //goodsSvsAmt: null, //0으로 보내든가 아예 보내지 말 것
             channel: null,
             period: null,
             ediDate: ymd + his,

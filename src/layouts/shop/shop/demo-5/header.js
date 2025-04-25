@@ -203,7 +203,7 @@ const Header = () => {
     const router = useRouter();
     const theme = useTheme();
     const { translate, currentLang } = useLocales();
-    const { themeMode, onToggleMode, themeCategoryList, themeDnsData, themePopupList, themeNoneTodayPopupList, onChangeNoneTodayPopupList, themePostCategoryList, onChangePopupList, themeWishData, themeCartData, onChangeCartData, onChangeWishData, themeSellerList } = useSettingsContext();
+    const { themeMode, onToggleMode, themeCategoryList, themePropertyList, themeDnsData, themePopupList, themeNoneTodayPopupList, onChangeNoneTodayPopupList, themePostCategoryList, onChangePopupList, themeWishData, themeCartData, onChangeCartData, onChangeWishData, themeSellerList } = useSettingsContext();
     const { user, logout } = useAuthContext();
     const headerWrappersRef = useRef();
     const [headerHeight, setHeaderHeight] = useState(130);
@@ -863,7 +863,51 @@ const Header = () => {
                             </TreeView>
                         </>
                     ))}
-
+                    {
+                        themeDnsData?.id == 74 &&
+                        <>
+                            <ColumnMenuTitle>{'성별'}</ColumnMenuTitle>
+                            <TreeView
+                                defaultCollapseIcon={<Icon icon={'ic:baseline-minus'} />}
+                                defaultExpandIcon={<Icon icon={'ic:baseline-plus'} />}
+                                defaultEndIcon={<Icon icon={'mdi:dot'} />}
+                            >
+                                <TreeItem label={<div
+                                    style={{
+                                        marginLeft: '0.25rem'
+                                    }}
+                                    onClick={() => {
+                                        router.push(`/shop/items?property_ids0=48&depth=0`);
+                                        setSideMenuOpen(false);
+                                    }}>공용</div>}
+                                    style={{ margin: '0.25rem 0' }}
+                                >
+                                </TreeItem>
+                                <TreeItem label={<div
+                                    style={{
+                                        marginLeft: '0.25rem'
+                                    }}
+                                    onClick={() => {
+                                        router.push(`/shop/items?property_ids0=47&depth=0`);
+                                        setSideMenuOpen(false);
+                                    }}>남성</div>}
+                                    style={{ margin: '0.25rem 0' }}
+                                >
+                                </TreeItem>
+                                <TreeItem label={<div
+                                    style={{
+                                        marginLeft: '0.25rem'
+                                    }}
+                                    onClick={() => {
+                                        router.push(`/shop/items?property_ids0=46&depth=0`);
+                                        setSideMenuOpen(false);
+                                    }}>여성</div>}
+                                    style={{ margin: '0.25rem 0' }}
+                                >
+                                </TreeItem>
+                            </TreeView>
+                        </>
+                    }
                     {
                         postCategories.length > 0 &&
                         <>

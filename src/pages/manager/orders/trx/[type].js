@@ -13,6 +13,7 @@ import { useSettingsContext } from "src/components/settings";
 import { paymentModuleTypeList } from "src/utils/format";
 import { useAuthContext } from "src/layouts/manager/auth/useAuthContext";
 import { Upload } from "src/components/upload";
+import { sha256 } from "js-sha256";
 
 const TrxList = () => {
   const { setModal } = useModal()
@@ -473,24 +474,48 @@ const TrxList = () => {
     //}
   }
   const onPayCancel = async (item) => {
-    let obj = {
-      trx_id: item?.trx_id,
-      pay_key: item?.pay_key,
-      amount: item?.amount,
-      mid: item?.mid,
-      tid: item?.tid,
-      id: item?.id
-    }
-    if (item?.user_id) {
-      obj['user_id'] = item?.user_id;
+
+    let mid = 'chchhh001m';//'fintrtst1m'
+    let shaKey = 'N4COCwG7yR88hkpVEVZydMj7aEZ8Q8p+/kVZIwBpqfJvD+pAEke7a32ytjZXA1RGIgqKjfTSvgfw81EXtM3djA=='//'Lg+QGq2qip/iI2sID1U951W++FLXmFlEM3CvQ8uf7rezi+SE/7ogXUPI1SMQ8chL1VCqOuHgPJLMKOZUTsl17A==' 테스트키
+
+    const ymd = new Date().toISOString().split('T')[0].replace(/-/g, '');
+    const his = new Date().toISOString().split('T')[1].slice(0, 8).replace(/:/g, '');
+
+    if (item.trx_method != 4) {
+      let obj = {
+        trx_id: item?.trx_id,
+        pay_key: item?.pay_key,
+        amount: item?.amount,
+        mid: item?.mid,
+        tid: item?.tid,
+        id: item?.id
+      }
+      if (item?.user_id) {
+        obj['user_id'] = item?.user_id;
+      } else {
+        obj['password'] = item?.password;
+      }
+      let result = await apiManager('pays/cancel', 'create', obj);
+      if (result) {
+        toast.success("성공적으로 취소 되었습니다.");
+        onChangePage(searchObj);
+      }
     } else {
-      obj['password'] = item?.password;
+      let obj = {
+        tid: item?.tid,
+        canAmt: item?.amount,
+        canMsg: '고객요청',
+        partCanFlg: '0',
+        encData: sha256(mid + ymd + his + String(item?.amount) + shaKey),
+        ediDate: ymd + his
+      }
+      let result = await apiManager('pays/cancel', 'create', obj);
+      if (result) {
+        toast.success("성공적으로 취소 되었습니다.");
+        onChangePage(searchObj);
+      }
     }
-    let result = await apiManager('pays/cancel', 'create', obj);
-    if (result) {
-      toast.success("성공적으로 취소 되었습니다.");
-      onChangePage(searchObj);
-    }
+    //console.log(item)
   }
   const onChangeStatus = async (id, value) => {
     let result = await apiUtil(`transactions/trx_status`, 'update', {

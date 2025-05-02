@@ -3,6 +3,8 @@ import { encryptAES256, decryptAES256 } from './encryption';
 import { sha256 } from 'js-sha256'
 import Button from '@mui/material/Button';
 import { useSettingsContext } from 'src/components/settings';
+import { makePayData } from './shop-util';
+import toast from 'react-hot-toast';
 
 const PayProductsByAuthFintree = ({ props }) => {
     const scriptRef = useRef(null);
@@ -21,13 +23,28 @@ const PayProductsByAuthFintree = ({ props }) => {
     //let products = products_;
     //let payData = payData_;
     let ord_num = `${user_id}${new Date().getTime().toString().substring(0, 11)}`
-    let mid = 'hpftauth1m'
+    let mid = 'chchhh001m'//'fintrtst1m' 테스트키
     //let id = 'hamonyshop', 
-    // tid = 'tester', 
+    // tid = 'tester', '
     let apiKey = 'pgSettle30y739r82jtd709yOfZ2yK5K'
-    let shaKey = 'zrELBxK4tsQaIPLtU851u93w5IYQZ3N0m+nyIL9KA0Az36in2xxHx018tAyNEwNic0dN+LjBs0U4ctn9+lTtaQ=='
+    let shaKey = 'N4COCwG7yR88hkpVEVZydMj7aEZ8Q8p+/kVZIwBpqfJvD+pAEke7a32ytjZXA1RGIgqKjfTSvgfw81EXtM3djA=='//'Lg+QGq2qip/iI2sID1U951W++FLXmFlEM3CvQ8uf7rezi+SE/7ogXUPI1SMQ8chL1VCqOuHgPJLMKOZUTsl17A==' 테스트키
     //let user = 0;
     //let ver = 0;
+
+    const make_pay_data = async (data) => {
+        const productArray = Array.isArray(data) ? data : [data];
+        const pay_data = await makePayData(productArray, payData);
+
+        const pay_data_ = {
+            ...pay_data,
+            ord_num: `${pay_data?.user_id || pay_data?.password}${new Date().getTime().toString().substring(0, 11)}`,
+        }
+        if (pay_data_?.products?.length > 1 || !pay_data_?.item_name) {
+            pay_data_.item_name = `${pay_data_?.products[0]?.order_name} 외 ${pay_data_?.products?.length - 1}`;
+        }
+        sessionStorage.setItem("products", JSON.stringify(pay_data_));
+        //console.log(pay_data)
+    }
 
     useEffect(() => {
         const script = document.createElement('script');
@@ -62,6 +79,26 @@ const PayProductsByAuthFintree = ({ props }) => {
         return form;
     }
 
+    useEffect(() => {
+        make_pay_data(products)
+        window.addEventListener("message", (event) => {
+            if (event.origin == "https://api.fintree.kr" && event.data[0] == 'SUCCESS') {
+
+                const data = event.data;
+
+                sessionStorage.setItem("fintreePaymentResult", JSON.stringify(data));
+                window.location.href = "/shop/auth/pay-result";
+            } else if (event.data[0] == 'CANCEL') {
+                toast.error('결제가 취소되었습니다.');
+                window.location.reload();
+                return;
+            } else {
+                toast.error('문제가 발생했습니다.');
+                window.location.reload();
+                return;
+            }
+        });
+    }, []);
 
     const handlePayment = () => {
 

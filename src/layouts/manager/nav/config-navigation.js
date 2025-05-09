@@ -166,7 +166,7 @@ export const navConfig = () => {
                 title: '주문취소관리', path: PATH_MANAGER.orders.trxCancel + '/1',
                 children: [
                   { title: '취소요청', path: PATH_MANAGER.orders.trxCancel + '/1' },
-                  { title: '취소완료', path: PATH_MANAGER.orders.trxCancel + '/5' },
+                  { title: '취소완료', path: PATH_MANAGER.orders.trxCancel + '/2' },
                 ],
               },
             ],

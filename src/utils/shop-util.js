@@ -35,7 +35,7 @@ export const makePayData = async (products_, payData_) => {
         let groups = products[i].groups;
         for (var j = 0; j < groups.length; j++) {
             let options = groups[j]?.options;
-            for (var k = 0; k < options.length; k++) {
+            /*for (var k = 0; k < options.length; k++) {
                 products[i].order_name += ' ' + options[k]?.option_name
                 products[i].groups[j].options[k] = {
                     id: products[i].groups[j]?.options[k]?.id,
@@ -46,7 +46,7 @@ export const makePayData = async (products_, payData_) => {
             products[i].groups[j] = {
                 id: products[i].groups[j]?.id,
                 options: products[i].groups[j]?.options,
-            }
+            }*/
         }
         products[i].order_amount = await calculatorPrice(products[i])?.total;
         amount += products[i].order_amount;

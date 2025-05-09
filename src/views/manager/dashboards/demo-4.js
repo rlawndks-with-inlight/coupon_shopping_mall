@@ -67,8 +67,9 @@ export const DashboardDemo4 = () => {
         const val = data?.trx_amounts_sum ?? [];
         let sum = 0;
         for (let i = 0; i < val?.length; i++) {
-            sum += val[i].total_amount;
+            sum += Number(val[i].total_amount);
         }
+
         setAmountSum(sum)
     }
 
@@ -199,7 +200,7 @@ export const DashboardDemo4 = () => {
                                 <Typography variant="subtitle1" >주문관리</Typography>
                             </Grid>
                             <Grid item xs={12} md={12}>
-                                <Typography variant="subtitle1" >기간 매출액 : {commarNumber(amountSum ?? 0)} 원</Typography>
+                                <Typography variant="subtitle1" >기간 매출액 : {commarNumber(amountSum)} 원</Typography>
                             </Grid>
                             <Grid item xs={12} md={3}>
                                 <AppWidget

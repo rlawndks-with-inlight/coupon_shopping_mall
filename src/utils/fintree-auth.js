@@ -42,6 +42,7 @@ const PayProductsByAuthFintree = ({ props }) => {
         if (pay_data_?.products?.length > 1 || !pay_data_?.item_name) {
             pay_data_.item_name = `${pay_data_?.products[0]?.order_name} 외 ${pay_data_?.products?.length - 1}`;
         }
+        pay_data_.seller_id = themeDnsData?.seller_id
         sessionStorage.setItem("products", JSON.stringify(pay_data_));
         //console.log(pay_data)
     }
@@ -111,17 +112,19 @@ const PayProductsByAuthFintree = ({ props }) => {
         const his = new Date().toISOString().split('T')[1].slice(0, 8).replace(/:/g, '');
 
         const returnUrl = `${window.location.protocol}//${window.location.host}/shop/auth/pay-result`
-        const notiUrl = `https://thegrazia.com/api/transactions/fintree` //임시
+        //const notiUrl = `https://thegrazia.com/api/transactions/fintree`
 
         const productArray = Array.isArray(products) ? products : [products];
 
+
         const totalPrice = productArray.length > 1
-            ? productArray.reduce((acc, product) => acc + Number(product.product_sale_price * product.order_count), 0)
-            : Number(productArray[0].product_sale_price * productArray[0].order_count);
+            ? productArray.reduce((acc, product) => acc + Number(product.order_amount * product.order_count), 0)
+            : Number(productArray[0].order_amount * productArray[0].order_count);
 
         const productNames = productArray.length > 1
-            ? `${productArray[0].product_name} 외 ${productArray.length - 1}건`
-            : productArray[0].product_name;
+            ? `${productArray[0].order_name} 외 ${productArray.length - 1}건`
+            : productArray[0].order_name;
+
 
         const encParams = {
             trdAmt: encryptAES256(String(totalPrice), apiKey),
@@ -157,7 +160,7 @@ const PayProductsByAuthFintree = ({ props }) => {
             period: null,
             ediDate: ymd + his,
             encData: sha256(mid + ymd + his + String(totalPrice) + shaKey),
-            notiUrl: notiUrl,
+            //notiUrl: notiUrl,
             charset: null,
             //authType: '02',
         };

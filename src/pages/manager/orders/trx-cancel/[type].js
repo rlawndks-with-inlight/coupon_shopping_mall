@@ -77,39 +77,54 @@ const TrxCancelList = () => {
             <Col>
               {row?.orders && row?.orders.map((order, index) => (
                 <>
-                  <Col>
-                    <Row>
-                      <div style={{ minWidth: '62px', fontWeight: 'bold' }}>No.{index + 1}</div>
-                    </Row>
-                    <Row style={{ flexWrap: 'wrap' }}>
-                      <div style={{ minWidth: '62px' }}>주문명: </div>
-                      <div style={{ wordBreak: 'break-all' }}>{order?.order_name}</div>
-                    </Row>
-                    {order?.groups.length > 0 &&
-                      <>
+                  {row?.orders && row?.orders.map((order, index) => (
+                    <>
+                      <Col>
                         <Row>
-                          <div style={{ minWidth: '62px' }}>옵션정보: </div>
-                          <Col>
-                            {order?.groups && order?.groups.map((group, idx) => (
-                              <>
-                                <Row>
-                                  <div style={{ minWidth: '62px', marginRight: '0.25rem' }}>{group?.group_name}: </div>
-                                  {group?.options && group?.options.map((option, idx2) => (
-                                    <>
-                                      <div>{option?.option_name} ({option?.option_price > 0 ? '+' : ''}{option?.option_price})</div>{idx2 == group?.options.length - 1 ? '' : <>&nbsp;/&nbsp;</>}
-                                    </>
-                                  ))}
-                                </Row>
-                              </>
-                            ))}
-                          </Col>
+                          <div style={{ minWidth: '62px', fontWeight: 'bold' }} >{index + 1}.</div>
+                          <div style={{ whiteSpace: 'nowrap', cursor: 'pointer' }}
+                            onClick={() => { /*window.open(`/manager/products/edit/${order?.product_id}`)*/ }}>
+                            {order?.order_name}
+                          </div>
                         </Row>
-                      </>}
-                    <Row>
-                      <div style={{ minWidth: '62px' }}>가격: </div>
-                      <div>{commarNumber(order?.order_amount)}</div>
-                    </Row>
-                  </Col>
+                        {order?.groups.length > 0 &&
+                          <>
+                            <Row>
+                              <div style={{ minWidth: '62px' }}>옵션정보: </div>
+                              <Col>
+                                {order?.groups && order?.groups.map((group, idx) => (
+                                  <>
+                                    <Row>
+                                      <div style={{ minWidth: '62px', marginRight: '0.25rem' }}>{group?.group_name}: </div>
+                                      {group?.options && group?.options.map((option, idx2) => (
+                                        <>
+                                          <div>{option?.option_name} ({option?.option_price > 0 ? '+' : ''}{option?.option_price})</div>{idx2 == group?.options.length - 1 ? '' : <>&nbsp;/&nbsp;</>}
+                                        </>
+                                      ))}
+                                    </Row>
+                                  </>
+                                ))}
+                              </Col>
+                            </Row>
+                          </>}
+                        <Row>
+                          <div style={{ minWidth: '62px' }}>가격: </div>
+                          <div>{commarNumber(order?.order_amount)}</div>
+                        </Row>
+                        <Row>
+                          <div style={{ minWidth: '62px' }}>배송비: </div>
+                          <div>{commarNumber(order?.delivery_fee)}</div>
+                        </Row>
+                        {order?.seller_id > 0 &&
+                          <>
+                            <Row>
+                              <div style={{ minWidth: '62px' }}>셀러아이디: </div>
+                              <div>{order?.seller_user_name}</div>
+                            </Row>
+                          </>}
+                      </Col>
+                    </>
+                  ))}
                   <br />
                 </>
               ))}
@@ -319,7 +334,8 @@ const TrxCancelList = () => {
         canMsg: '고객요청',
         partCanFlg: '0',
         encData: sha256(mid + ymd + his + String(item?.amount) + shaKey),
-        ediDate: ymd + his
+        ediDate: ymd + his,
+        id: item?.id
       }
       let result = await apiManager('pays/cancel', 'create', obj);
       if (result) {
@@ -344,6 +360,7 @@ const TrxCancelList = () => {
         <Card>
           <Row style={{ padding: '12px', columnGap: '0.5rem', flexWrap: 'wrap', rowGap: '0.5rem' }}>
             <FormControl variant='outlined' size='small' sx={{ minWidth: '150px' }}>
+              {/*
               <InputLabel>취소형식</InputLabel>
               <Select label='취소형식' value={searchObj[`cancel_type`]}
                 onChange={(e) => {
@@ -354,6 +371,7 @@ const TrxCancelList = () => {
                   return <MenuItem value={status.value}>{`${status.label}`}</MenuItem>
                 })}
               </Select>
+              */}
             </FormControl>
           </Row>
           <ManagerTable

@@ -2142,6 +2142,25 @@ const ProductEdit = () => {
                             }}>옵션그룹 추가</Button>
                           </Stack>
                         </>}
+                      {
+                        themeDnsData?.id == 74 && <>
+                          <Stack spacing={1}>
+                            <TextField
+                              fullWidth
+                              label="상품메모"
+                              multiline
+                              rows={4}
+                              value={item.memo}
+                              onChange={(e) => {
+                                setItem({
+                                  ...item,
+                                  ['memo']: e.target.value
+                                })
+                              }}
+                            />
+                          </Stack>
+                        </>
+                      }
                     </Stack>
                   </Card>
                 </Grid>

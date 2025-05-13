@@ -110,7 +110,7 @@ const TrxList = () => {
               }
             }}
           >
-            {`${row['seller_title']}(${row['seller_dns']})` ?? '---'}
+            {`${row['seller_user_name']}(${row['seller_dns']})` ?? '---'}
           </div>
         },
         sx: (row) => {
@@ -186,7 +186,7 @@ const TrxList = () => {
                     <Row>
                       <div style={{ minWidth: '62px', fontWeight: 'bold' }} >{index + 1}.</div>
                       <div style={{ whiteSpace: 'nowrap', cursor: 'pointer' }}
-                        onClick={() => { window.open(`/manager/products/edit/${order?.product_id}`) }}>
+                        onClick={() => { /*window.open(`/manager/products/edit/${order?.product_id}`)*/ }}>
                         {order?.order_name}
                       </div>
                     </Row>
@@ -238,18 +238,33 @@ const TrxList = () => {
         }
       },
     },
-    {
-      id: 'created_at',
-      label: '구매시간',
-      action: (row) => {
-        return `${row['trx_dt'] ?? "---"} ${row['trx_tm'] ?? "---"}`
+    ...(themeDnsData?.id == 74 ? [
+      {
+        id: 'unipass',
+        label: '구매자개인통관고유부호',
+        action: (row) => {
+          return `${row['user_unipass'] ?? "---"}`
+        },
+        sx: (row) => {
+          return {
+            color: `${row?.is_cancel == 1 ? 'red' : ''}`
+          }
+        },
       },
-      sx: (row) => {
-        return {
-          color: `${row?.is_cancel == 1 ? 'red' : ''}`
-        }
+    ] : [
+      {
+        id: 'created_at',
+        label: '구매시간',
+        action: (row) => {
+          return `${row['trx_dt'] ?? "---"} ${row['trx_tm'] ?? "---"}`
+        },
+        sx: (row) => {
+          return {
+            color: `${row?.is_cancel == 1 ? 'red' : ''}`
+          }
+        },
       },
-    },
+    ]),
     {
       id: 'updated_at',
       label: '업데이트시간',
@@ -330,10 +345,8 @@ const TrxList = () => {
           <MenuItem value={0}>{'결제대기'}</MenuItem>
           <MenuItem value={1}>{'취소요청'}</MenuItem>
           <MenuItem value={5}>{'결제완료'}</MenuItem>
-          {themeDnsData?.id != 5 && <>
-            <MenuItem value={10}>{'입고완료'}</MenuItem>
-            <MenuItem value={15}>{'출고완료'}</MenuItem>
-          </>}
+          <MenuItem value={10}>{'입고완료'}</MenuItem>
+          <MenuItem value={15}>{'출고완료'}</MenuItem>
           <MenuItem value={20}>{'배송중'}</MenuItem>
           <MenuItem value={25}>{'배송완료'}</MenuItem>
         </Select>
@@ -507,7 +520,8 @@ const TrxList = () => {
         canMsg: '고객요청',
         partCanFlg: '0',
         encData: sha256(mid + ymd + his + String(item?.amount) + shaKey),
-        ediDate: ymd + his
+        ediDate: ymd + his,
+        id: item?.id
       }
       let result = await apiManager('pays/cancel', 'create', obj);
       if (result) {
@@ -522,6 +536,7 @@ const TrxList = () => {
       id,
       value,
     })
+    console.log(result)
   }
   const onChangeInvoice = () => {
 

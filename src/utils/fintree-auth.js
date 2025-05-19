@@ -43,8 +43,9 @@ const PayProductsByAuthFintree = ({ props }) => {
             pay_data_.item_name = `${pay_data_?.products[0]?.order_name} 외 ${pay_data_?.products?.length - 1}`;
         }
         pay_data_.seller_id = themeDnsData?.seller_id
+        pay_data_.agent_amount = data?.product_agent_price
         sessionStorage.setItem("products", JSON.stringify(pay_data_));
-        //console.log(pay_data)
+        //console.log(pay_data_)
     }
 
     useEffect(() => {

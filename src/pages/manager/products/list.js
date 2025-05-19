@@ -397,7 +397,7 @@ const ProductList = () => {
                           ...popup,
                           type: 2,
                           seller_product_id: row?.seller_product_id,
-                          seller_price: row?.product_sale_price
+                          seller_price: row?.product_sale_price * (1 + user?.seller_trx_fee)
                         });
                       }} />
                     </IconButton>
@@ -419,7 +419,7 @@ const ProductList = () => {
                           ...popup,
                           type: 1,
                           id: row?.id,
-                          seller_price: row?.product_sale_price
+                          seller_price: row?.product_sale_price * (1 + user?.seller_trx_fee)
                         });
                       }} />
                     </IconButton>
@@ -601,7 +601,7 @@ const ProductList = () => {
     }
     else {
       let result = await apiManager(`seller-products`, 'create', {
-        seller_id: user?.id, product_id: id, seller_price: price
+        seller_id: user?.id, product_id: id, seller_price: price, agent_price: price_low
       })
       if (result) {
         window.location.reload()

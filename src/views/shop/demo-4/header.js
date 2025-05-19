@@ -2,8 +2,8 @@ import { useState } from "react"
 
 const SortGroupBase = () => {
     const unKnownCategory = {
-        'label' : '#',
-        'childs' : [],
+        'label': '#',
+        'childs': [],
     }
     const bigCategoryGroup = []
     return {
@@ -11,42 +11,42 @@ const SortGroupBase = () => {
     }
 }
 
-const KorSorter = (categories)  => {
+const KorSorter = (categories) => {
     // 대분류 그룹화. level 2
     const SortedKOR = () => {
-        
+
         const { unKnownCategory, bigCategoryGroup } = SortGroupBase()
         const hangeulCodes = [
-            {'label' : '가', 'limit_code': 45208, 'start_code': 44031},
-            {'label' : '나', 'limit_code': 45796, 'start_code': 45208},
-            {'label' : '다', 'limit_code': 46972, 'start_code': 45796},
-            {'label' : '라', 'limit_code': 47560, 'start_code': 46972},
-            {'label' : '마', 'limit_code': 48148, 'start_code': 47560},
-            {'label' : '바', 'limit_code': 49324, 'start_code': 48148},
-            {'label' : '사', 'limit_code': 50500, 'start_code': 49324},
-            {'label' : '아', 'limit_code': 51088, 'start_code': 50500},
-            {'label' : '자', 'limit_code': 52264, 'start_code': 51088},
-            {'label' : '차', 'limit_code': 52852, 'start_code': 52264},
-            {'label' : '카', 'limit_code': 53440, 'start_code': 52852},
-            {'label' : '타', 'limit_code': 54028, 'start_code': 53440},
-            {'label' : '파', 'limit_code': 54616, 'start_code': 54028},
-            {'label' : '하', 'limit_code': 55204, 'start_code': 54616},
-        ]       
+            { 'label': '가', 'limit_code': 45208, 'start_code': 44031 },
+            { 'label': '나', 'limit_code': 45796, 'start_code': 45208 },
+            { 'label': '다', 'limit_code': 46972, 'start_code': 45796 },
+            { 'label': '라', 'limit_code': 47560, 'start_code': 46972 },
+            { 'label': '마', 'limit_code': 48148, 'start_code': 47560 },
+            { 'label': '바', 'limit_code': 49324, 'start_code': 48148 },
+            { 'label': '사', 'limit_code': 50500, 'start_code': 49324 },
+            { 'label': '아', 'limit_code': 51088, 'start_code': 50500 },
+            { 'label': '자', 'limit_code': 52264, 'start_code': 51088 },
+            { 'label': '차', 'limit_code': 52852, 'start_code': 52264 },
+            { 'label': '카', 'limit_code': 53440, 'start_code': 52852 },
+            { 'label': '타', 'limit_code': 54028, 'start_code': 53440 },
+            { 'label': '파', 'limit_code': 54616, 'start_code': 54028 },
+            { 'label': '하', 'limit_code': 55204, 'start_code': 54616 },
+        ]
         categories.forEach(category => {
             let firstTextCode = null
             let hangeulCode = null
 
-            if(category.category_name?.length > 0) {
+            if (category.category_name?.length > 0) {
                 firstTextCode = category.category_name.charCodeAt(0)
-                hangeulCode = hangeulCodes.find(obj => firstTextCode >= obj.start_code && firstTextCode < obj.limit_code)   
+                hangeulCode = hangeulCodes.find(obj => firstTextCode >= obj.start_code && firstTextCode < obj.limit_code)
             }
-            if(hangeulCode) {
+            if (hangeulCode) {
                 let bigCateIdx = bigCategoryGroup.findIndex(obj => obj.label === hangeulCode.label)
-                if(bigCateIdx === -1) {
+                if (bigCateIdx === -1) {
                     // 대분류 카테고리에 없는 경우
                     bigCategoryGroup.push({
-                        'label' : hangeulCode.label,
-                        'childs' : [
+                        'label': hangeulCode.label,
+                        'childs': [
                             category,
                         ]
                     })
@@ -80,7 +80,7 @@ const EngSorter = (categories) => {
     const isAddCategory = (category, bigCategoryGroup) => {
         for (let i = 0; i < bigCategoryGroup.length; i++) {
             let isAdded = bigCategoryGroup[i].childs.findIndex(obj => obj.id === category.id)
-            if(isAdded !== -1) 
+            if (isAdded !== -1)
                 return true
         }
         return false
@@ -91,13 +91,13 @@ const EngSorter = (categories) => {
         const { unKnownCategory, bigCategoryGroup } = SortGroupBase()
         categories?.forEach(category => {
             for (var i = 65; i < 91; i++) {
-                if(category.category_en_name?.[0]?.toUpperCase() == String.fromCharCode(i)) {
+                if (category.category_en_name?.[0]?.toUpperCase() == String.fromCharCode(i)) {
                     let bigCateIdx = bigCategoryGroup.findIndex(obj => obj.label === String.fromCharCode(i))
-                    if(bigCateIdx === -1) {
+                    if (bigCateIdx === -1) {
                         // 대분류 카테고리에 없는 경우
                         bigCategoryGroup.push({
-                            'label' : String.fromCharCode(i),
-                            'childs' : [
+                            'label': String.fromCharCode(i),
+                            'childs': [
                                 category,
                             ]
                         })
@@ -111,18 +111,18 @@ const EngSorter = (categories) => {
         })
         // unKnownCategory 추가
         categories?.forEach(category => {
-            if(isAddCategory(category, bigCategoryGroup) === false)
+            if (isAddCategory(category, bigCategoryGroup) === false)
                 unKnownCategory.childs.push(category)
         })
         // bigCategoryGroup chuld 정렬
         bigCategoryGroup.forEach(category => {
             category.childs.sort((a, b) => a.category_en_name.localeCompare(b.category_en_name))
         })
-        
+
         return [
             ...bigCategoryGroup.sort((a, b) => a.label.localeCompare(b.label)),
             unKnownCategory
-        ]        
+        ]
     }
 
     return {
@@ -132,15 +132,22 @@ const EngSorter = (categories) => {
 
 export const LANGCODE = {
     NOT_USE: null,
-    ENG : 0,
-    KOR : 1,
+    ENG: 0,
+    KOR: 1,
 }
 
 export const CategorySorter = (themeCategoryList) => {
     const initailize = () => {
         return themeCategoryList?.[1]?.product_categories?.sort((a, b) => {
-            if (a.category_en_name > b.category_en_name) return 1;
-            if (a.category_en_name < b.category_en_name) return -1;
+            const isKorean = (str) => /^[가-힣]/.test(str);
+            const aIsKorean = isKorean(a.category_name);
+            const bIsKorean = isKorean(b.category_name);
+            if (aIsKorean && !bIsKorean) return -1; // a는 한글, b는 숫자/영문 → a가 앞
+            if (!aIsKorean && bIsKorean) return 1;  // a는 숫자/영문, b는 한글 → b가 앞
+            if (a.category_name > b.category_name) return 1;
+            if (a.category_name < b.category_name) return -1;
+            //if (a.category_en_name > b.category_en_name) return 1;
+            //if (a.category_en_name < b.category_en_name) return -1;
             return 0;
         })
     }
@@ -151,10 +158,10 @@ export const CategorySorter = (themeCategoryList) => {
     const [categoryGroup, setCategoryGroup] = useState([]);
 
     const sort = (sortType) => {
-        if(sortType == LANGCODE.ENG) {
+        if (sortType == LANGCODE.ENG) {
             setCategoryGroup(SortedENG())
         }
-        else if(sortType == LANGCODE.KOR) {
+        else if (sortType == LANGCODE.KOR) {
             setCategoryGroup(SortedKOR())
         }
         else {

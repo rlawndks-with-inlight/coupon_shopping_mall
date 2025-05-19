@@ -36,6 +36,8 @@ export const DashboardDemo4 = () => {
     const [waiting, setWaiting] = useState(false)
 
     const [amountSum, setAmountSum] = useState()
+    const [agentAmountSum, setAgentAmountSum] = useState();
+    //const [sellerAmountSum, setSellerAmountSum] = useState();
 
     const onLogout = async () => {
         let result = await logout();
@@ -70,7 +72,14 @@ export const DashboardDemo4 = () => {
             sum += Number(val[i].total_amount);
         }
 
+        const agent_val = data?.trx_agent_amounts_sum ?? [];
+        let agent_sum = 0;
+        for (let i = 0; i < agent_val?.length; i++) {
+            agent_sum += Number(agent_val[i].total_agent_amount);
+        }
+
         setAmountSum(sum)
+        setAgentAmountSum(agent_sum)
     }
 
     const onClickDateButton = (num) => {
@@ -124,6 +133,15 @@ export const DashboardDemo4 = () => {
         <>
             <Container maxWidth={themeStretch ? false : 'xl'}>
                 <Grid container spacing={3}>
+                    {
+                        user?.level == 20 &&
+                        <>
+                            <Grid item xs={12} md={12}>
+                                <Typography variant="subtitle1" >기간 매출액 : {commarNumber(amountSum)} 원</Typography>
+                                <Typography variant="subtitle1" >기간 실수익 : {commarNumber(agentAmountSum)} 원</Typography>
+                            </Grid>
+                        </>
+                    }
                     {
                         user?.level != 20 &&
                         <>
@@ -201,6 +219,14 @@ export const DashboardDemo4 = () => {
                             </Grid>
                             <Grid item xs={12} md={12}>
                                 <Typography variant="subtitle1" >기간 매출액 : {commarNumber(amountSum)} 원</Typography>
+                                {
+                                    user?.level == 10 ?
+                                        <>
+                                            <Typography variant="subtitle1" >기간 실수익 : {commarNumber(amountSum - agentAmountSum - (amountSum * 0.15))} 원</Typography>
+                                        </>
+                                        :
+                                        ''
+                                }
                             </Grid>
                             <Grid item xs={12} md={3}>
                                 <AppWidget

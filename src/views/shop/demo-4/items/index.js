@@ -647,6 +647,52 @@ const ItemsDemo = (props) => {
 
               )
               */}
+              <>
+                {themeCategoryList.sort((a, b) => b.sort_type - a.sort_type).map((group, index) => {
+
+                  if (index == 1) {
+                    return <Row>
+                      <BrandFilter style={{ fontFamily: 'Playfair Display', overflowY: 'auto', background: `${themeMode == 'dark' ? '#222' : '#FEF8F4'}`, width: '100%' }}>
+                        <>
+                          <Row style={{ flexWrap: 'wrap', display: 'flex', borderBottom: '1px solid #999999', }}>
+                            {group?.sort_type == 0 && group?.product_categories && group?.product_categories.map((category, idx) => {
+                              if (category.category_name != 'PRIVATE') {
+                                return <>
+                                  {idx == 0 && <div style={{ margin: '0.5rem', fontSize: '22px', fontWeight: 'bold' }} >Brand</div>}
+                                  <Chip
+                                    label={category.category_name}
+                                    sx={{
+                                      margin: '0.5rem 0rem 0.5rem 0',
+                                      fontSize: '16px',
+                                      cursor: 'pointer',
+                                      background: `${detailCategory == category.id ? (themeMode == 'dark' ? '#999999' : 'white') : 'transparent'}`,
+                                      fontFamily: `${langChipSelected == 0 ? 'Playfair Display' : 'Noto Sans KR'}`,
+                                      '&:hover': {
+                                        background: `${themeMode == 'dark' ? '#999999' : 'white'}`,
+                                      },
+                                    }}
+                                    onClick={() => {
+
+                                      const parsedUrl = queryString.parseUrl(router.asPath).query;
+                                      parsedUrl[`category_id1`] = category?.id
+                                      const updatedUrl = queryString.stringifyUrl({ url: queryString.parseUrl(router.asPath).url, query: parsedUrl })
+
+                                      router.push(updatedUrl)
+
+                                    }} />
+                                </>
+                              }
+                            })}
+                          </Row>
+                        </>
+                      </BrandFilter>
+                    </Row>
+                  }
+                }
+
+                )
+                }
+              </>
               <Row>
                 <BrandFilter style={{ fontFamily: 'Playfair Display', overflowY: 'auto', background: `${themeMode == 'dark' ? '#222' : '#FEF8F4'}`, width: '100%' }}>
                   <Row>

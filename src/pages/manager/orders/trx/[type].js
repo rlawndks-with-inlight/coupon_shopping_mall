@@ -103,11 +103,7 @@ const TrxList = () => {
           return <div
             style={{ cursor: `${user?.level >= 40 ? 'pointer' : ''}`, color: `${user?.level >= 40 ? 'blue' : ''}` }}
             onClick={() => {
-              if (user?.level >= 40) {
-                window.open('https://' + row['seller_dns'] ?? '---')
-              } else {
-                return;
-              }
+              console.log(row)
             }}
           >
             {`${row['seller_user_name']}(${row['seller_dns']})` ?? '---'}
@@ -470,7 +466,7 @@ const TrxList = () => {
     let data_ = await apiManager('transactions', 'list', obj);
     if (data_) {
       setData(data_);
-      console.log(data)
+      //console.log(data)
     }
   }
   const deleteTrx = async (id) => {

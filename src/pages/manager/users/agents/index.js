@@ -113,7 +113,7 @@ const AgentList = () => {
         e_dt: '',
         search: '',
         category_id: null,
-        is_agent: 1,
+        is_agent: user?.level >= 40 ? 1 : user?.level == 20 ? 2 : '',
     })
     const [dialogObj, setDialogObj] = useState({
         changePassword: false,

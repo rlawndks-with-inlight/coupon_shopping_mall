@@ -110,8 +110,8 @@ export const DashboardDemo4 = () => {
 
     const onAdjustment = async () => {
         let brand_id = themeDnsData?.id;
-        let seller_id = user?.level == 10 ? user.id : user?.level == 20 ? 0 : '';
-        let oper_id = user?.level == 10 ? user?.oper_id : user?.level == 20 ? user?.id : '';
+        let seller_id = user?.level == 10 ? user.id : (user?.level == 20 || user?.level == 15) ? 0 : '';
+        let oper_id = user?.level == 10 ? user?.oper_id : (user?.level == 20 || user?.level == 15) ? user?.id : '';
         /*let amount = adjustMoney
 
         if (amount < 10000) {
@@ -134,16 +134,7 @@ export const DashboardDemo4 = () => {
             <Container maxWidth={themeStretch ? false : 'xl'}>
                 <Grid container spacing={3}>
                     {
-                        user?.level == 20 &&
-                        <>
-                            <Grid item xs={12} md={12}>
-                                <Typography variant="subtitle1" >기간 매출액 : {commarNumber(amountSum)} 원</Typography>
-                                <Typography variant="subtitle1" >기간 실수익 : {commarNumber(agentAmountSum)} 원</Typography>
-                            </Grid>
-                        </>
-                    }
-                    {
-                        user?.level != 20 &&
+                        user?.level != 20 && user?.level != 15 &&
                         <>
                             <Grid item xs={12} md={12}>
                                 <Row style={{ rowGap: '1rem', flexWrap: 'wrap', columnGap: '1rem' }}>
@@ -349,6 +340,84 @@ export const DashboardDemo4 = () => {
                                         router.push(`/manager/orders/trx-cancel/5`)
                                     }}
                                 />
+                            </Grid>
+                        </>
+                    }
+                    {
+                        (user?.level == 20 || user?.level == 15) &&
+                        <>
+                            <Grid item xs={12} md={12}>
+                                <Row style={{ rowGap: '1rem', flexWrap: 'wrap', columnGap: '1rem' }}>
+                                    {window.innerWidth > 1000 ?
+                                        <>
+                                            <DesktopDatePicker
+                                                label="시작일 선택"
+                                                value={sDt}
+                                                format='yyyy-MM-dd'
+                                                onChange={(newValue) => {
+                                                    setSDt(newValue);
+                                                    onChangePage({ ...searchObj, s_dt: returnMoment(false, new Date(newValue)).substring(0, 10) })
+                                                }}
+                                                renderInput={(params) => <TextField fullWidth {...params} margin="normal" />}
+                                                sx={{ width: '180px', height: '32px' }}
+                                                slotProps={{ textField: { size: 'small' } }}
+                                            />
+                                            <DesktopDatePicker
+                                                label="종료일 선택"
+                                                value={eDt}
+                                                format='yyyy-MM-dd'
+                                                onChange={(newValue) => {
+                                                    setEDt(newValue);
+                                                    onChangePage({ ...searchObj, e_dt: returnMoment(false, new Date(newValue)).substring(0, 10) })
+                                                }}
+                                                renderInput={(params) => <TextField fullWidth {...params} margin="normal" />}
+                                                sx={{ width: '180px' }}
+                                                slotProps={{ textField: { size: 'small' } }}
+                                            />
+                                        </>
+                                        :
+                                        <>
+                                            <Row style={{ columnGap: '0.5rem' }}>
+                                                <MobileDatePicker
+                                                    label="시작일 선택"
+                                                    value={sDt}
+                                                    format='yyyy-MM-dd'
+                                                    onChange={(newValue) => {
+                                                        setSDt(newValue);
+                                                        onChangePage({ ...searchObj, s_dt: returnMoment(false, new Date(newValue)).substring(0, 10) })
+                                                    }}
+                                                    renderInput={(params) => <TextField fullWidth {...params} margin="normal" />}
+                                                    sx={{ width: '50%' }}
+                                                    slotProps={{ textField: { size: 'small' } }}
+                                                />
+                                                <MobileDatePicker
+                                                    label="종료일 선택"
+                                                    value={eDt}
+                                                    format='yyyy-MM-dd'
+                                                    onChange={(newValue) => {
+                                                        setEDt(newValue);
+                                                        onChangePage({ ...searchObj, e_dt: returnMoment(false, new Date(newValue)).substring(0, 10) })
+                                                    }}
+                                                    renderInput={(params) => <TextField fullWidth {...params} margin="normal" />}
+                                                    sx={{ width: '50%' }}
+                                                    slotProps={{ textField: { size: 'small' } }}
+                                                />
+                                            </Row>
+                                        </>}
+                                    <Row style={{ columnGap: '0.5rem' }}>
+                                        <Button variant="outlined" sx={{ flexGrow: 1 }} onClick={() => onClickDateButton(0)}>오늘</Button>
+                                        <Button variant="outlined" sx={{ flexGrow: 1 }} onClick={() => onClickDateButton(7)}>7일</Button>
+                                        <Button variant="outlined" sx={{ flexGrow: 1 }} onClick={() => onClickDateButton(15)}>15일</Button>
+                                        <Button variant="outlined" sx={{ flexGrow: 1 }} onClick={() => onClickDateButton(30)}>1개월</Button>
+                                        <Button variant="outlined" sx={{ flexGrow: 1 }} onClick={() => onClickDateButton(90)}>3개월</Button>
+                                        <Button variant="outlined" sx={{ flexGrow: 1 }} onClick={() => onClickDateButton(365)}>1년</Button>
+                                    </Row>
+                                </Row>
+
+                            </Grid>
+                            <Grid item xs={12} md={12}>
+                                <Typography variant="subtitle1" >기간 매출액 : {commarNumber(amountSum)} 원</Typography>
+                                <Typography variant="subtitle1" >기간 실수익 : {commarNumber(agentAmountSum)} 원</Typography>
                             </Grid>
                         </>
                     }

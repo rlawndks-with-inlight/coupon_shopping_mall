@@ -12,7 +12,8 @@ export const userStatusList = [
 export const userLevelList = [
     { label: '일반유저', value: 0 },
     { label: '셀러', value: 10 },
-    { label: '영업자', value: 20 },
+    { label: '영업자', value: 15 },
+    { label: '영업자(총판)', value: 20 },
     { label: '관리자', value: 40 },
     { label: '개발사', value: 50 },
 ]

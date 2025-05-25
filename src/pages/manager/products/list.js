@@ -71,7 +71,7 @@ const ProductList = () => {
         return <div
           style={{ textDecoration: 'underline', cursor: user?.level > 20 ? 'pointer' : '' }}
           onClick={() => {
-            user?.level > 20 ? router.push(`edit/${row?.id}`) : ''
+            console.log(user)
           }}
         >
           {
@@ -124,9 +124,20 @@ const ProductList = () => {
         action: (row) => {
           return (
             <>
-              <div>
-                {commarNumber(row['product_sale_price'] * (1 + user?.seller_trx_fee)).split('.')[0]} (본사)
-              </div>
+              {
+                user?.level >= 15 ?
+                  <>
+                    <div>
+                      {commarNumber(row['product_sale_price'] * (1 + (user?.oper_trx_fee ?? 0)))} (본사)
+                    </div>
+                  </>
+                  :
+                  <>
+                    <div>
+                      {commarNumber(row['product_sale_price'] * (1 + (user?.oper_trx_fee ?? 0)) * (1 + user?.seller_trx_fee ?? 0))} (본사)
+                    </div>
+                  </>
+              }
               {
                 user?.level == 10 && row?.seller_id > 0 &&
                 <>

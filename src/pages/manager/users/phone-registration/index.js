@@ -73,7 +73,6 @@ const PhoneRegistration = () => {
         e_dt: '',
         search: '',
         category_id: null,
-        is_agent: 1,
     })
     const [dialogObj, setDialogObj] = useState({
         changePassword: false,

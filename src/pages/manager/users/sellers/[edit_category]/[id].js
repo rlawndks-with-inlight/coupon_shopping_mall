@@ -144,7 +144,7 @@ const SellerEdit = () => {
       e_dt: '',
       search: '',
       category_id: null,
-      is_agent: 1
+      is_agent: user?.level >= 40 ? 1 : /*user?.level == 20 ? 2 :*/ '',
     })
     if (agent_data) {
       setAgents(agent_data.content)
@@ -179,7 +179,7 @@ const SellerEdit = () => {
   const onSave = async () => {
     let result = undefined;
     let obj = item;
-    if (user?.level == 20) {
+    if (user?.level == 20 || user?.level == 15) {
       obj['oper_id'] = user?.id
       //console.log(obj)
     }

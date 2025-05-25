@@ -57,11 +57,16 @@ const AgentEdit = () => {
         profile_file: undefined,
         profile_img: '',
         user_pw: '',//
-        level: 20
+        level: 20,
+        oper_id: '',
+        oper_trx_fee: '',
     })
     const [productIds, setProductIds] = useState([]);
     const [currentTab, setCurrentTab] = useState(0);
     const [searchTextList, setSearchTextList] = useState([]);
+
+    const [agents, setAgents] = useState([])
+
     const tab_list = [
         {
             value: 0,
@@ -100,6 +105,21 @@ const AgentEdit = () => {
                 setItem(data);
             }
         }
+
+        let agent_data = await apiManager('users', 'list', {
+            page: 1,
+            page_size: 100,
+            s_dt: '',
+            e_dt: '',
+            search: '',
+            category_id: null,
+            is_agent: user?.level >= 40 ? 1 : /*user?.level == 20 ? 2 :*/ '',
+        })
+        if (agent_data) {
+            setAgents(agent_data.content)
+            //console.log(agent_data.content)
+        }
+
         setLoading(false);
     }
     const addProfileImg = (e) => {
@@ -117,9 +137,17 @@ const AgentEdit = () => {
         let result = undefined;
         let obj = item;
         if (router.query?.edit_category == 'edit') {
-            result = await apiManager('users', 'update', { ...obj, id: router.query?.id, });
+            if (item?.oper_id != '') {
+                result = await apiManager('users', 'update', { ...obj, id: router.query?.id, level: 15 });
+            } else {
+                result = await apiManager('users', 'update', { ...obj, id: router.query?.id, });
+            }
         } else {
-            result = await apiManager('users', 'create', { ...obj, });
+            if (item?.oper_id != '') {
+                result = await apiManager('users', 'create', { ...obj, level: 15 });
+            } else {
+                result = await apiManager('users', 'create', { ...obj, });
+            }
         }
         if (result) {
             toast.success("성공적으로 저장 되었습니다.");
@@ -189,23 +217,47 @@ const AgentEdit = () => {
                                                     </Stack>
                                                 </>
                                             }
-                                            {
-                                                /*
-                                                <Stack spacing={3}>
-                                                <TextField
-                                                    label='수수료율(예: 0.1로 입력할 시 10%)'
-                                                    value={item.seller_trx_fee}
-                                                    type="number"
-                                                    onChange={(e) => {
-                                                        setItem(
-                                                            {
+                                            <Stack spacing={1}>
+                                                <FormControl>
+                                                    <InputLabel>
+                                                        {user?.level >= 40 ? '영업자선택' : `영업자 : ${user?.name}`}
+                                                    </InputLabel>
+                                                    <Select
+                                                        label='영업자선택'
+                                                        value={item.oper_id}
+                                                        disabled={user?.level >= 40 ? false : true}
+                                                        onChange={e => {
+                                                            setItem({
                                                                 ...item,
-                                                                ['seller_trx_fee']: e.target.value
-                                                            }
-                                                        )
-                                                    }} />
+                                                                ['oper_id']: e.target.value
+                                                            })
+                                                        }}
+                                                    >
+                                                        <MenuItem value={''}>영업자 없음</MenuItem>
+                                                        {agents.map((agent, idx) => {
+                                                            return <MenuItem value={agent.id}>{agent.name}</MenuItem>
+                                                        })}
+                                                    </Select>
+                                                </FormControl>
                                             </Stack>
-                                                */
+                                            {
+                                                item?.oper_id != '' &&
+                                                <>
+                                                    <Stack spacing={3}>
+                                                        <TextField
+                                                            label='수수료율(예: 0.1로 입력할 시 10%)'
+                                                            value={item.oper_trx_fee}
+                                                            type="number"
+                                                            onChange={(e) => {
+                                                                setItem(
+                                                                    {
+                                                                        ...item,
+                                                                        ['oper_trx_fee']: e.target.value
+                                                                    }
+                                                                )
+                                                            }} />
+                                                    </Stack>
+                                                </>
                                             }
                                         </Stack>
                                     </Card>

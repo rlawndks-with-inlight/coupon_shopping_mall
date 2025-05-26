@@ -86,6 +86,11 @@ export default function ProductDetailsCarousel({ product, type = '' }) {
 
   const [selectedImage, setSelectedImage] = useState(-1);
 
+  useEffect(() => {
+
+    console.log(product)
+  }, [])
+
   const imagesLightbox = type == 'early' ? product?.sub_images?.product_sub_file ? product.sub_images?.map((img) => ({ src: img?.product_sub_file?.preview })) : product.sub_images?.map((img) => ({ src: img?.product_sub_img })) : product.images?.map((img) => ({ src: img }));
   const handleOpenLightbox = (imageUrl) => {
     const imageIndex = imagesLightbox.findIndex((image) => image.src === imageUrl);

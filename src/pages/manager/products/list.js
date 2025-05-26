@@ -71,7 +71,7 @@ const ProductList = () => {
         return <div
           style={{ textDecoration: 'underline', cursor: user?.level > 20 ? 'pointer' : '' }}
           onClick={() => {
-            console.log(user)
+            user?.level > 20 ? router.push(`edit/${row?.id}`) : ''
           }}
         >
           {

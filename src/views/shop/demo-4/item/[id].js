@@ -50,7 +50,7 @@ const ItemCharacter = (props) => {
   if (type == 0) {
     return (
       <>
-        <Row style={{ columnGap: '0.25rem', marginTop: '1rem', fontSize: '14px' }}>
+        <Row style={{ columnGap: '0.25rem', marginTop: '1rem', marginBottom: '1rem', fontSize: '14px' }}>
           <Typography style={{ width: '6rem', }}>{key_name}</Typography>
           <Typography>{value}</Typography>
         </Row>
@@ -111,31 +111,55 @@ const ItemDemo = (props) => {
   }, [])
 
   const getItemInfo = async (review_page) => {
-    let data = { ...product };
-    data = await apiShop('product', 'get', {
-      id: router.query?.id,
-      seller_id: themeDnsData?.seller_id ?? 0
-    });
+    if (themeDnsData?.id == 74) {
+      let data = { ...product };
+      data = await apiShop('product', 'get', {
+        id: router.query?.id,
+        seller_id: themeDnsData?.seller_id ?? 0
+      });
 
-    let sub_image = data?.sub_images;
-    let description_image = data?.sub_images;
+      let sub_image = data?.sub_images;
+      let description_image = data?.sub_images;
 
-    data['sub_images'] = (sub_image ?? []).map((img) => img?.product_sub_img).filter((img) => img !== null && img !== undefined)
-    /*if (data?.product_img) {  //메인이미지를 상세이미지에 추가하는 코드
-      data['sub_images'].unshift(data?.product_img)
-    }*/
+      data['sub_images'] = (sub_image ?? []).map((img) => img?.product_sub_img).filter((img) => img !== null && img !== undefined)
+      /*if (data?.product_img) {  //메인이미지를 상세이미지에 추가하는 코드
+        data['sub_images'].unshift(data?.product_img)
+      }*/
 
-    data['description_images'] = (description_image ?? []).map((img) => img?.product_description_img).filter((img) => img !== null && img !== undefined)
-    data['images'] = data['sub_images'];
-    /*setReviewPage(review_page);
-    let review_data = await apiManager('product-reviews', 'list', {
-      page: review_page,
-      product_id: router.query?.id,
-      page_size: 10,
-    })
-    setReviewContent(review_data)*/
-    setProduct(data);
-    setLoading(false);
+      data['description_images'] = (description_image ?? []).map((img) => img?.product_description_img).filter((img) => img !== null && img !== undefined)
+      data['images'] = data['sub_images'];
+      /*setReviewPage(review_page);
+      let review_data = await apiManager('product-reviews', 'list', {
+        page: review_page,
+        product_id: router.query?.id,
+        page_size: 10,
+      })
+      setReviewContent(review_data)*/
+      setProduct(data);
+      setLoading(false);
+    }
+    else {
+      let data = { ...product };
+      data = await apiShop('product', 'get', {
+        id: router.query?.id
+      });
+      data['sub_images'] = data['sub_images'].map((img) => {
+        return img?.product_sub_img
+      })
+      if (data?.product_img) {
+        data['sub_images'].unshift(data?.product_img)
+      }
+      data['images'] = data['sub_images'];
+      setReviewPage(review_page);
+      let review_data = await apiManager('product-reviews', 'list', {
+        page: review_page,
+        product_id: router.query?.id,
+        page_size: 10,
+      })
+      //setReviewContent(review_data)
+      setProduct(data);
+      setLoading(false);
+    }
   }
 
   const TABS = [
@@ -315,7 +339,7 @@ const ItemDemo = (props) => {
                         {product?.brand_name &&
                           <>
                             <div style={{ fontSize: '30px', fontFamily: 'Playfair Display', fontWeight: 'bold', borderTop: '1px solid #ccc', padding: '1rem 0' }}>
-                              {product?.brand_name[0].category_en_name}
+                              {product?.brand_name[0]?.category_en_name ?? ''}
                             </div>
                           </>
                         }
@@ -475,9 +499,14 @@ const ItemDemo = (props) => {
                             </>
                             }
                           />
-                          <div style={{ textAlign: 'right', color: 'gray' }}>
-                            구매시 {commarNumber(product?.product_sale_price * themeDnsData?.seller_point)}원 적립
-                          </div>
+                          {
+                            themeDnsData?.id == 74 &&
+                            <>
+                              <div style={{ textAlign: 'right', color: 'gray' }}>
+                                구매시 {commarNumber(product?.product_sale_price * themeDnsData?.seller_point)}원 적립
+                              </div>
+                            </>
+                          }
                         </div>
                         <div style={{ borderTop: '1px solid #ccc', width: '100%', padding: '1rem 0' }} onClick={() => { }}>
                           <ItemCharacter

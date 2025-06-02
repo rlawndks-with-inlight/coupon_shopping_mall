@@ -312,6 +312,8 @@ export const insertWishDataUtil = async (item, themeWishData, onChangeWishData) 
             let result = await apiManager('user-wishs', 'delete', {
                 id: wish_data[find_index]?.id,
             })
+            //console.log(result)
+            window.location.reload()
             wish_data.splice(find_index, 1);
             is_add = false;
         } else {

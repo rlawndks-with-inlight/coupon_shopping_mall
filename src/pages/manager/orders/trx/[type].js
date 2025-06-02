@@ -182,23 +182,22 @@ const TrxList = () => {
                     <Row>
                       <div style={{ minWidth: '62px', fontWeight: 'bold' }} >{index + 1}.</div>
                       <div style={{ whiteSpace: 'nowrap', cursor: 'pointer' }}
-                        onClick={() => { /*window.open(`/manager/products/edit/${order?.product_id}`)*/ }}>
+                        onClick={() => { user?.level > 20 && window.open(`/manager/products/edit/${order?.product_id}`) }}>
                         {order?.order_name}
                       </div>
                     </Row>
                     {order?.groups.length > 0 &&
                       <>
                         <Row>
-                          <div style={{ minWidth: '62px' }}>옵션정보: </div>
+                          <div style={{ minWidth: '62px' }}>옵션정보 </div>
                           <Col>
                             {order?.groups && order?.groups.map((group, idx) => (
                               <>
                                 <Row>
-                                  <div style={{ minWidth: '62px', marginRight: '0.25rem' }}>{group?.group_name}: </div>
+                                  <div style={{ /*minWidth: '62px',*/ marginRight: '0.25rem' }}>{group?.group_name}: </div>
                                   {group?.options && group?.options.map((option, idx2) => (
                                     <>
-                                      <div>{option?.option_name} ({option?.option_price > 0 ? '+' : ''}{option?.option_price})</div>{idx2 == group?.options.length - 1 ? '' : <>&nbsp;/&nbsp;</>}
-                                    </>
+                                      <div>{option?.option_name ?? option.value} {/*({option?.option_price > 0 ? '+' : ''}{option?.option_price}) */}</div>{idx2 == group?.options.length - 1 ? '' : <>&nbsp;/&nbsp;</>}                                    </>
                                   ))}
                                 </Row>
                               </>
@@ -210,10 +209,14 @@ const TrxList = () => {
                       <div style={{ minWidth: '62px' }}>가격: </div>
                       <div>{commarNumber(order?.order_amount)}</div>
                     </Row>
-                    <Row>
+                    {
+                      /*
+                      <Row>
                       <div style={{ minWidth: '62px' }}>배송비: </div>
                       <div>{commarNumber(order?.delivery_fee)}</div>
                     </Row>
+                      */
+                    }
                     {order?.seller_id > 0 &&
                       <>
                         <Row>

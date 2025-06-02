@@ -216,7 +216,7 @@ export const navConfig = () => {
         },
       ],
     },
-    ...(isManager() ? [
+    ...(user?.level >= 10 ? [
       {
         items: [
           {
@@ -225,7 +225,9 @@ export const navConfig = () => {
             icon: ICONS.calendar,
             children: [
               ...(isUsePostCategory() ? [{ title: '게시판 카테고리 관리', path: PATH_MANAGER.articles.categories }] : []),
-              ...postCategoryList
+              ...(user?.level >= 10 && user?.level <= 20
+                ? postCategoryList.filter((item) => item.id === 91)
+                : postCategoryList)
             ],
           },
         ],

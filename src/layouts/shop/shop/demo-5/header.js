@@ -749,26 +749,18 @@ const Header = () => {
                                                         {postCategories.map((item, idx) => (
                                                             <>
                                                                 {
-                                                                    user?.level < 10 ?
-                                                                        item?.post_category_title != '관리자문의' ?
-                                                                            <>
-                                                                                <DropDownMenu theme={theme}
-                                                                                    onClick={() => {
-                                                                                        router.push(`/shop/service/${item.id}`)
-                                                                                    }}>
-                                                                                    <div>{formatLang(item, 'post_category_title', currentLang)}</div>
-                                                                                </DropDownMenu>
-                                                                            </>
-                                                                            :
-                                                                            <>
-                                                                            </>
+                                                                    item?.post_category_title != '관리자문의' ?
+                                                                        <>
+                                                                            <DropDownMenu theme={theme}
+                                                                                onClick={() => {
+                                                                                    router.push(`/shop/service/${item.id}`)
+                                                                                }}>
+                                                                                <div>{formatLang(item, 'post_category_title', currentLang)}</div>
+                                                                            </DropDownMenu>
+                                                                        </>
                                                                         :
-                                                                        <DropDownMenu theme={theme}
-                                                                            onClick={() => {
-                                                                                router.push(`/shop/service/${item.id}`)
-                                                                            }}>
-                                                                            <div>{formatLang(item, 'post_category_title', currentLang)}</div>
-                                                                        </DropDownMenu>
+                                                                        <>
+                                                                        </>
                                                                 }
                                                             </>
                                                         ))}

@@ -208,7 +208,7 @@ export const HistoryTable = props => {
     { id: 'amount', label: translate('총액') },
     { id: 'buyer_name', label: translate('구매자명') },
     { id: 'trx_status', label: translate('주문상태') },
-    { id: 'trx_date', label: translate('주문일'), align: 'right' },
+    //{ id: 'trx_date', label: translate('주문일'), align: 'right' },
     ...(themeDnsData?.id == 64 || themeDnsData?.id == 84 ? [] : [{ id: 'date', label: translate('업데이트일'), align: 'right' }]),
     { id: 'cancel', label: translate('주문취소요청'), align: 'right' },
     { id: '' },
@@ -281,7 +281,7 @@ export const HistoryTable = props => {
                                               <div style={{ marginRight: '0.25rem' }}>{group?.group_name}: </div>
                                               {group?.options && group?.options.map((option, idx2) => (
                                                 <>
-                                                  <div>{option?.option_name} {/*({option?.option_price > 0 ? '+' : ''}{option?.option_price}) */}</div>{idx2 == group?.options.length - 1 ? '' : <>&nbsp;/&nbsp;</>}
+                                                  <div>{option?.option_name ?? option.value} {/*({option?.option_price > 0 ? '+' : ''}{option?.option_price}) */}</div>{idx2 == group?.options.length - 1 ? '' : <>&nbsp;/&nbsp;</>}
                                                 </>
                                               ))}
                                             </Row>
@@ -298,10 +298,14 @@ export const HistoryTable = props => {
                                   <div style={{ minWidth: '62px' }}>{translate('가격')}: </div>
                                   <div>{commarNumber(setProductPriceByLang(order, 'order_amount', 'ko', currentLang?.value))} {getPriceUnitByLang(currentLang?.value)}</div>
                                 </Row>
-                                <Row>
+                                {
+                                  /*
+                                  <Row>
                                   <div style={{ minWidth: '62px' }}>{translate('배송비')}: </div>
                                   <div>{commarNumber(setProductPriceByLang(order, 'delivery_fee', 'ko', currentLang?.value))} {getPriceUnitByLang(currentLang?.value)}</div>
                                 </Row>
+                                  */
+                                }
                                 {order?.seller_id > 0 &&
                                   <>
                                     <Row>
@@ -319,9 +323,11 @@ export const HistoryTable = props => {
                     <TableCell onClick={() => { console.log(row) }}>{commarNumber(setProductPriceByLang(row, 'amount', 'ko', currentLang?.value))} {getPriceUnitByLang(currentLang?.value)}</TableCell>
                     <TableCell>{row?.buyer_name}</TableCell>
                     <TableCell>{fCurrency(row.amount) < 0 ? '결제취소' : translate(getTrxStatusByNumber(row?.trx_status))}</TableCell>
+                    {/*
                     <TableCell onClick={() => { console.log(row) }}>
                       <Box sx={{ textAlign: 'right', color: 'text.secondary' }}>{row?.trx_dt ?? "---"} {row?.trx_tm ?? ""}</Box>
                     </TableCell>
+                    */}
                     {
                       themeDnsData?.id == 64 || themeDnsData?.id == 84 ?
                         <>

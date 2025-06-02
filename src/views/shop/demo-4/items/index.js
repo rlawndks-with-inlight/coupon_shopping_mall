@@ -746,8 +746,70 @@ const ItemsDemo = (props) => {
                           )
                         }}
                       />
-
                     </>
+                    <Chip
+                      label={'공용'}
+                      sx={{
+                        margin: '0.5rem 0rem 0.5rem 0',
+                        fontSize: '16px',
+                        cursor: 'pointer',
+                        background: `${queryString.parseUrl(router.asPath).query[`property_ids0`] == '48' ? (themeMode == 'dark' ? '#999999' : 'white') : 'transparent'}`,
+                        fontFamily: `Noto Sans KR`,
+                        '&:hover': {
+                          background: `${themeMode == 'dark' ? '#999999' : 'white'}`,
+                        },
+                      }}
+                      onClick={() => {
+
+                        const parsedUrl = queryString.parseUrl(router.asPath).query;
+                        parsedUrl[`property_ids0`] = '48'
+                        const updatedUrl = queryString.stringifyUrl({ url: queryString.parseUrl(router.asPath).url, query: parsedUrl })
+
+                        router.push(updatedUrl)
+
+                      }} />
+                    <Chip
+                      label={'남성'}
+                      sx={{
+                        margin: '0.5rem 0rem 0.5rem 0',
+                        fontSize: '16px',
+                        cursor: 'pointer',
+                        background: `${queryString.parseUrl(router.asPath).query[`property_ids0`] == '47' ? (themeMode == 'dark' ? '#999999' : 'white') : 'transparent'}`,
+                        fontFamily: `Noto Sans KR`,
+                        '&:hover': {
+                          background: `${themeMode == 'dark' ? '#999999' : 'white'}`,
+                        },
+                      }}
+                      onClick={() => {
+
+                        const parsedUrl = queryString.parseUrl(router.asPath).query;
+                        parsedUrl[`property_ids0`] = '47'
+                        const updatedUrl = queryString.stringifyUrl({ url: queryString.parseUrl(router.asPath).url, query: parsedUrl })
+
+                        router.push(updatedUrl)
+
+                      }} />
+                    <Chip
+                      label={'여성'}
+                      sx={{
+                        margin: '0.5rem 0rem 0.5rem 0',
+                        fontSize: '16px',
+                        cursor: 'pointer',
+                        background: `${queryString.parseUrl(router.asPath).query[`property_ids0`] == '46' ? (themeMode == 'dark' ? '#999999' : 'white') : 'transparent'}`,
+                        fontFamily: `Noto Sans KR`,
+                        '&:hover': {
+                          background: `${themeMode == 'dark' ? '#999999' : 'white'}`,
+                        },
+                      }}
+                      onClick={() => {
+
+                        const parsedUrl = queryString.parseUrl(router.asPath).query;
+                        parsedUrl[`property_ids0`] = '46'
+                        const updatedUrl = queryString.stringifyUrl({ url: queryString.parseUrl(router.asPath).url, query: parsedUrl })
+
+                        router.push(updatedUrl)
+
+                      }} />
                   </Row>
                 </BrandFilter>
               </Row>

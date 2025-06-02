@@ -317,14 +317,7 @@ export const AuthMenuSideComponent = (props) => {
         label: '고객센터',
         children: [
           ...themePostCategoryList.map((item) => {
-            if (user?.level < 10) {
-              if (item?.post_category_title != '관리자문의') {
-                return {
-                  label: item?.post_category_title,
-                  link: `/shop/service/${item?.id}/`,
-                }
-              }
-            } else {
+            if (item?.post_category_title != '관리자문의') {
               return {
                 label: item?.post_category_title,
                 link: `/shop/service/${item?.id}/`,
@@ -385,7 +378,7 @@ export const AuthMenuSideComponent = (props) => {
                     }}
                     style={{
                       fontWeight: `${router.asPath == itm?.link ? 'bold' : ''}`,
-
+                      display: `${itm?.link ? '' : 'none'}`
                     }}
                     themeDnsData={themeDnsData}
                     themeMode={themeMode}

@@ -342,8 +342,7 @@ const LoginDemo = (props) => {
                                         <div style={{ minWidth: '62px', marginRight: '0.25rem' }}>{group?.group_name}: </div>
                                         {group?.options && group?.options.map((option, idx2) => (
                                           <>
-                                            <div>{option?.option_name} ({option?.option_price > 0 ? '+' : ''}{option?.option_price})</div>{idx2 == group?.options.length - 1 ? '' : <>&nbsp;/&nbsp;</>}
-                                          </>
+                                            <div>{option?.option_name ?? option.value} {/*({option?.option_price > 0 ? '+' : ''}{option?.option_price}) */}</div>{idx2 == group?.options.length - 1 ? '' : <>&nbsp;/&nbsp;</>}                                          </>
                                         ))}
                                       </Row>
                                     </>

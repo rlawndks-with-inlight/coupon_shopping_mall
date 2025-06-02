@@ -167,38 +167,85 @@ const ArticleEdit = () => {
             </Grid>
             {(category?.is_able_user_add == 1 && category?.post_category_read_type == 1) &&
               <>
-                <Grid item xs={12} md={12}>
-                  <Card sx={{ p: 2, height: '100%' }}>
-                    <Stack spacing={3}>
-                      <TextField
-                        label='답변제목'
-                        value={reply?.post_title}
-                        onChange={(e) => {
-                          setReply(
-                            {
-                              ...reply,
-                              ['post_title']: e.target.value
-                            }
-                          )
-                        }} />
-                      <Stack spacing={1}>
+                {
+                  category?.id == 91 ?
+                    <>
+                      {
+                        reply?.id > 0 ?
+                          <>
+                            <Grid item xs={12} md={12}>
+                              <Card sx={{ p: 2, height: '100%' }}>
+                                <Stack spacing={3}>
+                                  <TextField
+                                    label='답변제목'
+                                    value={reply?.post_title}
+                                    onChange={(e) => {
+                                      setReply(
+                                        {
+                                          ...reply,
+                                          ['post_title']: e.target.value
+                                        }
+                                      )
+                                    }} />
+                                  <Stack spacing={1}>
 
-                        <Typography variant="subtitle2" sx={{ color: 'text.secondary' }}>
-                          답변내용
-                        </Typography>
-                        <ReactQuillComponent
-                          value={reply?.post_content}
-                          setValue={(value) => {
-                            setReply({
-                              ...reply,
-                              ['post_content']: value
-                            });
-                          }}
-                        />
-                      </Stack>
-                    </Stack>
-                  </Card>
-                </Grid>
+                                    <Typography variant="subtitle2" sx={{ color: 'text.secondary' }}>
+                                      답변내용
+                                    </Typography>
+                                    <ReactQuillComponent
+                                      value={reply?.post_content}
+                                      setValue={(value) => {
+                                        setReply({
+                                          ...reply,
+                                          ['post_content']: value
+                                        });
+                                      }}
+                                    />
+                                  </Stack>
+                                </Stack>
+                              </Card>
+                            </Grid>
+                          </>
+                          :
+                          ''
+                      }
+                    </>
+                    :
+                    <>
+                      <Grid item xs={12} md={12}>
+                        <Card sx={{ p: 2, height: '100%' }}>
+                          <Stack spacing={3}>
+                            <TextField
+                              label='답변제목'
+                              value={reply?.post_title}
+                              onChange={(e) => {
+                                setReply(
+                                  {
+                                    ...reply,
+                                    ['post_title']: e.target.value
+                                  }
+                                )
+                              }} />
+                            <Stack spacing={1}>
+
+                              <Typography variant="subtitle2" sx={{ color: 'text.secondary' }}>
+                                답변내용
+                              </Typography>
+                              <ReactQuillComponent
+                                value={reply?.post_content}
+                                setValue={(value) => {
+                                  setReply({
+                                    ...reply,
+                                    ['post_content']: value
+                                  });
+                                }}
+                              />
+                            </Stack>
+                          </Stack>
+                        </Card>
+                      </Grid>
+                    </>
+                }
               </>}
             <Grid item xs={12} md={12}>
               <Card sx={{ p: 3 }}>

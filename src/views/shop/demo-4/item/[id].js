@@ -92,7 +92,7 @@ const ItemDemo = (props) => {
   const [characterSelect, setCharacterSelect] = useState(false);
   const [unipassPopup, setUnipassPopup] = useState(false);
   const [unipass, setUnipass] = useState();
-  //const [reviewContent, setReviewContent] = useState({});
+  const [reviewContent, setReviewContent] = useState({});
   const [selectProductGroups, setSelectProductGroups] = useState({
     count: 1,
     groups: [],
@@ -128,13 +128,13 @@ const ItemDemo = (props) => {
 
       data['description_images'] = (description_image ?? []).map((img) => img?.product_description_img).filter((img) => img !== null && img !== undefined)
       data['images'] = data['sub_images'];
-      /*setReviewPage(review_page);
+      setReviewPage(review_page);
       let review_data = await apiManager('product-reviews', 'list', {
         page: review_page,
         product_id: router.query?.id,
         page_size: 10,
       })
-      setReviewContent(review_data)*/
+      setReviewContent(review_data)
       setProduct(data);
       setLoading(false);
     }
@@ -156,7 +156,7 @@ const ItemDemo = (props) => {
         product_id: router.query?.id,
         page_size: 10,
       })
-      //setReviewContent(review_data)
+      setReviewContent(review_data)
       setProduct(data);
       setLoading(false);
     }
@@ -202,12 +202,12 @@ const ItemDemo = (props) => {
       label: 'Q&A',
       component: product ? //<></> : null,
         <ProductFaq /> : null,
-    },
+    },*/
     {
       value: 'reviews',
       label: `상품후기 (${reviewContent?.total})`,
       component: product ? <ProductDetailsReview product={product} reviewContent={reviewContent} onChangePage={getItemInfo} reviewPage={reviewPage} /> : null,
-    },*/
+    },
   ];
   const handleAddCart = async () => {
     if (user) {

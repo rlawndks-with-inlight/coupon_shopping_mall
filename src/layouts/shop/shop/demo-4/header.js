@@ -1377,22 +1377,16 @@ const Header = () => {
                     {postCategories.length > 0 && postCategories.map((item, idx) => (
                         <>
                             {
-                                user?.level < 10 ?
-                                    item?.post_category_title != '관리자문의' ?
-                                        <>
-                                            <Typography onClick={() => {
-                                                window.location.href = (`/shop/service/${item.id}`);
-                                                setSideMenuOpen(false);
-                                            }} style={{ padding: '0.3rem', cursor: 'pointer' }} variant="subtitle2">{item.post_category_title}</Typography>
-                                        </>
-                                        :
-                                        <>
-                                        </>
+                                item?.post_category_title != '관리자문의' ?
+                                    <>
+                                        <Typography onClick={() => {
+                                            window.location.href = (`/shop/service/${item.id}`);
+                                            setSideMenuOpen(false);
+                                        }} style={{ padding: '0.3rem', cursor: 'pointer' }} variant="subtitle2">{item.post_category_title}</Typography>
+                                    </>
                                     :
-                                    <Typography onClick={() => {
-                                        window.location.href = (`/shop/service/${item.id}`);
-                                        setSideMenuOpen(false);
-                                    }} style={{ padding: '0.3rem', cursor: 'pointer' }} variant="subtitle2">{item.post_category_title}</Typography>
+                                    <>
+                                    </>
                             }
                         </>
                     ))}

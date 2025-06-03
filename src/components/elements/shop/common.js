@@ -423,7 +423,7 @@ export const PointTable = props => {
 
 export const AddressTable = props => {
   const { translate } = useLocales();
-  const { addressContent, onDelete } = props
+  const { addressContent, onDelete, onUpdate } = props
 
   const TABLE_HEAD = [
     { id: 'No.', label: 'No.' },
@@ -445,6 +445,9 @@ export const AddressTable = props => {
                     <TableCell>{row?.addr}</TableCell>
                     <TableCell>{row?.detail_addr}</TableCell>
                     <TableCell align='right'>
+                      <Button variant="outlined" style={{ marginLeft: 'auto', marginRight: '1rem' }} onClick={() => onUpdate(row?.id)}>
+                        수정
+                      </Button>
                       <IconButton onClick={() => onDelete(row?.id)}>
                         <Icon icon='eva:trash-2-outline' />
                       </IconButton>

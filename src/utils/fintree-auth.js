@@ -18,7 +18,7 @@ const PayProductsByAuthFintree = ({ props }) => {
         buyer_phone
     } = payData;
 
-    //console.log(props)
+    console.log(payData)
 
     //let products = products_;
     //let payData = payData_;
@@ -31,6 +31,45 @@ const PayProductsByAuthFintree = ({ props }) => {
     //let user = 0;
     //let ver = 0;
 
+
+    function truncateByByte(str, maxBytes = 50) {
+        let bytes = 0;
+        let result = '';
+
+        for (let i = 0; i < str.length; i++) {
+            const char = str[i];
+            const charCode = char.codePointAt(0);
+
+            // UTF-8 바이트 계산
+            if (charCode <= 0x007f) {
+                bytes += 1;
+            } else if (charCode <= 0x07ff) {
+                bytes += 2;
+            } else if (charCode <= 0xffff) {
+                bytes += 3;
+            } else {
+                bytes += 4;
+            }
+
+            // 남은 공간이 줄임표 포함보다 작으면 중단
+            if (bytes > maxBytes) {
+                break;
+            }
+
+            result += char;
+        }
+
+        // 실제 바이트가 초과되었다면 줄임표 추가 (줄임표는 3바이트)
+        const encoder = new TextEncoder();
+        if (encoder.encode(str).length > maxBytes) {
+            // 줄임표도 포함해야 하므로 여유 3바이트 확보 후 재호출
+            return truncateByByte(str, maxBytes - 3) + '…';
+        }
+
+        return result;
+    }
+
+
     const make_pay_data = async (data) => {
         const productArray = Array.isArray(data) ? data : [data];
         const pay_data = await makePayData(productArray, payData);
@@ -40,7 +79,8 @@ const PayProductsByAuthFintree = ({ props }) => {
             ord_num: `${pay_data?.user_id || pay_data?.password}${new Date().getTime().toString().substring(0, 11)}`,
         }
         if (pay_data_?.products?.length > 1 || !pay_data_?.item_name) {
-            pay_data_.item_name = `${pay_data_?.products[0]?.order_name} 외 ${pay_data_?.products?.length - 1}`;
+            const rawName = `${pay_data_?.products[0]?.order_name} 외 ${pay_data_?.products?.length - 1}`;
+            pay_data_.item_name = truncateByByte(rawName, 50);
         }
         pay_data_.seller_id = themeDnsData?.seller_id
         pay_data_.agent_amount = data?.product_agent_price

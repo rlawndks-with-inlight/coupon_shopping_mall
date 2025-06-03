@@ -29,6 +29,10 @@ const DeliveryAddressDemo = (props) => {
     const router = useRouter();
     const [addAddressOpen, setAddAddressOpen] = useState(false);
     const [addressContent, setAddressContent] = useState({});
+
+    const [updateAddressOpen, setUpdatedAddressOpen] = useState(false);
+    const [addressID, setAddressID] = useState();
+
     const [searchObj, setSearchObj] = useState({
         page: 1,
         page_size: 10,
@@ -72,12 +76,26 @@ const DeliveryAddressDemo = (props) => {
             onChangePage(searchObj);
         }
     }
+
+    const onUpdateAddress = async (id) => {
+        setAddressID(id);
+        setUpdatedAddressOpen(true);
+    }
+
     return (
         <>
             <DialogAddAddress
                 addAddressOpen={addAddressOpen}
                 setAddAddressOpen={setAddAddressOpen}
                 onAddAddress={onAddAddress}
+            />
+            <DialogAddAddress
+                addAddressOpen={updateAddressOpen}
+                setAddAddressOpen={setUpdatedAddressOpen}
+                onAddAddress={onAddAddress}
+                type={'update'}
+                id={addressID}
+                onDeleteAddress={onDeleteAddress}
             />
             <Wrappers>
                 <RowMobileReverceColumn>
@@ -88,6 +106,7 @@ const DeliveryAddressDemo = (props) => {
                             <AddressTable
                                 addressContent={addressContent}
                                 onDelete={onDeleteAddress}
+                                onUpdate={onUpdateAddress}
                             />
                         </Card>
                         <Pagination

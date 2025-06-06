@@ -123,9 +123,7 @@ export default function ProductDetailsReview({ product, reviewContent, onChangeP
           </Typography>
         </Stack>
 
-        {
-          /*
-          <Stack
+        <Stack
           spacing={1.5}
           sx={{
             p: 3,
@@ -154,8 +152,7 @@ export default function ProductDetailsReview({ product, reviewContent, onChangeP
             {translate('리뷰 작성하기')}
           </Button>
         </Stack>
-          */
-        }
+
       </Box>
 
       <Divider />

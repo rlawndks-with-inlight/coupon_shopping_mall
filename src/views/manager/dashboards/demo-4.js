@@ -54,6 +54,7 @@ export const DashboardDemo4 = () => {
         onChangePage(searchObj)
         onChangeAmountSum(data)
         //console.log(user)
+        //console.log(data)
     }, [data])
 
     const onChangePage = async (search_obj) => {
@@ -508,32 +509,35 @@ export const DashboardDemo4 = () => {
                         </DialogActions>
                     </Dialog>
                     {
-                        /*
-                         <Grid item xs={12} md={12}>
-                            <Typography variant="subtitle1" >문의관리</Typography>
-                        </Grid>
-                        {themePostCategoryList.map((category) => (
+                        themeDnsData?.id == 74 && user?.level > 20 ?
                             <>
-                                {(category?.post_category_read_type == 1 && category?.is_able_user_add == 1) &&
+                                <Grid item xs={12} md={12}>
+                                    <Typography variant="subtitle1" >문의관리</Typography>
+                                </Grid>
+                                {themePostCategoryList.map((category) => (
                                     <>
-                                        <Grid item xs={12} md={12}>
-                                            <Row style={{ alignItems: 'center', width: '100%', justifyContent: 'space-between', maxWidth: `300px` }}>
-                                                <Button variant="outlined" style={{ cursor: 'pointer' }} onClick={() => { router.push(`/manager/articles/${category?.id}`) }}>
-                                                    {category?.post_category_title}
-                                                </Button>
-                                                <Row style={{ fontWeight: 'bold' }}>
-                                                    <div style={{ marginRight: '1rem' }}>답변대기 : </div>
-                                                    <div
-                                                        style={{ color: themeDnsData?.theme_css?.main_color }}
-                                                    >{commarNumber(data[`request_${category?.id}`])}</div>
-                                                    <div>건</div>
-                                                </Row>
-                                            </Row>
-                                        </Grid>
-                                    </>}
+                                        {(category?.post_category_read_type == 1 && category?.is_able_user_add == 1) &&
+                                            <>
+                                                <Grid item xs={12} md={12}>
+                                                    <Row style={{ alignItems: 'center', width: '100%', justifyContent: 'space-between', maxWidth: `300px` }}>
+                                                        <Row style={{ fontWeight: 'bold' }}>
+                                                            <div style={{ marginRight: '1rem' }}>답변대기 : </div>
+                                                            <div
+                                                                style={{ color: themeDnsData?.theme_css?.main_color }}
+                                                            >{commarNumber(data[`request_${category?.id}`])}</div>
+                                                            <div>건</div>
+                                                        </Row>
+                                                        <Button variant="outlined" style={{ cursor: 'pointer' }} onClick={() => { router.push(`/manager/articles/${category?.id}`) }}>
+                                                            {category?.post_category_title}
+                                                        </Button>
+                                                    </Row>
+                                                </Grid>
+                                            </>}
+                                    </>
+                                ))}
                             </>
-                        ))}
-                        */
+                            :
+                            ''
                     }
                 </Grid>
             </Container>

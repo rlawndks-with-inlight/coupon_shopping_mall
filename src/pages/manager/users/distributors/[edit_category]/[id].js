@@ -16,7 +16,7 @@ import { apiManager, uploadFileByManager } from "src/utils/api";
 import { bankCodeList } from "src/utils/format";
 
 
-const AgentEdit = () => {
+const DistributorEdit = () => {
     const { setModal } = useModal()
     const { user } = useAuthContext();
     const { themeMode } = useSettingsContext();
@@ -57,15 +57,13 @@ const AgentEdit = () => {
         profile_file: undefined,
         profile_img: '',
         user_pw: '',//
-        level: 15,
-        oper_id: '',
-        oper_trx_fee: '',
+        level: 20,
+        //oper_id: '',
+        //oper_trx_fee: '',
     })
     const [productIds, setProductIds] = useState([]);
     const [currentTab, setCurrentTab] = useState(0);
     const [searchTextList, setSearchTextList] = useState([]);
-
-    const [agents, setAgents] = useState([])
 
     const tab_list = [
         {
@@ -106,20 +104,6 @@ const AgentEdit = () => {
             }
         }
 
-        let agent_data = await apiManager('users', 'list', {
-            page: 1,
-            page_size: 100,
-            s_dt: '',
-            e_dt: '',
-            search: '',
-            category_id: null,
-            is_agent: 3,
-        })
-        if (agent_data) {
-            setAgents(agent_data.content)
-            //console.log(agent_data.content)
-        }
-
         setLoading(false);
     }
     const addProfileImg = (e) => {
@@ -143,7 +127,7 @@ const AgentEdit = () => {
         }
         if (result) {
             toast.success("성공적으로 저장 되었습니다.");
-            router.push('/manager/users/agents');
+            router.push('/manager/users/distributors');
         }
     }
     return (
@@ -179,7 +163,7 @@ const AgentEdit = () => {
                                                 }} />
                                             <Stack spacing={1}>
                                                 <TextField
-                                                    label='영업자 아이디'
+                                                    label='총판 아이디'
                                                     value={item.user_name}
                                                     onChange={(e) => {
                                                         setItem(
@@ -195,7 +179,7 @@ const AgentEdit = () => {
                                                 <>
                                                     <Stack spacing={1}>
                                                         <TextField
-                                                            label='영업자 비밀번호'
+                                                            label='총판 비밀번호'
                                                             value={item.user_pw}
                                                             type="password"
                                                             onChange={(e) => {
@@ -209,45 +193,24 @@ const AgentEdit = () => {
                                                     </Stack>
                                                 </>
                                             }
-                                            <Stack spacing={1}>
-                                                <FormControl>
-                                                    <InputLabel>
-                                                        {user?.level >= 40 ? '총판선택' : `총판 : ${user?.name}`}
-                                                    </InputLabel>
-                                                    <Select
-                                                        label='총판선택'
-                                                        value={item.oper_id}
-                                                        disabled={user?.level >= 40 ? false : true}
-                                                        onChange={e => {
-                                                            setItem({
-                                                                ...item,
-                                                                ['oper_id']: e.target.value
-                                                            })
-                                                        }}
-                                                    >
-                                                        {/*<MenuItem value={''}>영업자 없음</MenuItem> */}
-                                                        {agents.map((agent, idx) => {
-                                                            return <MenuItem value={agent.id}>{agent.name}</MenuItem>
-                                                        })}
-                                                    </Select>
-                                                </FormControl>
-                                            </Stack>
-
-                                            <Stack spacing={3}>
-                                                <TextField
-                                                    label='수수료율(예: 0.1로 입력할 시 10%)'
-                                                    value={item.oper_trx_fee}
-                                                    type="number"
-                                                    onChange={(e) => {
-                                                        setItem(
-                                                            {
-                                                                ...item,
-                                                                ['oper_trx_fee']: e.target.value
-                                                            }
-                                                        )
-                                                    }} />
-                                            </Stack>
-
+                                            {
+                                                /*
+                                                    <Stack spacing={3}>
+                                                        <TextField
+                                                            label='수수료율(예: 0.1로 입력할 시 10%)'
+                                                            value={item.oper_trx_fee}
+                                                            type="number"
+                                                            onChange={(e) => {
+                                                                setItem(
+                                                                    {
+                                                                        ...item,
+                                                                        ['oper_trx_fee']: e.target.value
+                                                                    }
+                                                                )
+                                                            }} />
+                                                    </Stack>
+                                                    */
+                                            }
                                         </Stack>
                                     </Card>
                                 </Grid>
@@ -333,5 +296,5 @@ const AgentEdit = () => {
         </>
     )
 }
-AgentEdit.getLayout = (page) => <ManagerLayout>{page}</ManagerLayout>;
-export default AgentEdit
+DistributorEdit.getLayout = (page) => <ManagerLayout>{page}</ManagerLayout>;
+export default DistributorEdit

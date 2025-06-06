@@ -15,9 +15,11 @@ const ReactQuill = dynamic(() => import('react-quill'), {
 import { useModal } from "src/components/dialog/ModalProvider";
 import ReactQuillComponent from "src/views/manager/react-quill";
 import { apiManager } from "src/utils/api";
+import { useAuthContext } from "src/layouts/manager/auth/useAuthContext";
 const ArticleEdit = () => {
   const { setModal } = useModal()
   const { themeMode } = useSettingsContext();
+  const { user } = useAuthContext()
 
   const router = useRouter();
 
@@ -152,7 +154,6 @@ const ArticleEdit = () => {
                       상세설명
                     </Typography>
                     <ReactQuillComponent
-
                       value={item.post_content}
                       setValue={(value) => {
                         setItem({
@@ -171,7 +172,7 @@ const ArticleEdit = () => {
                   category?.id == 91 ?
                     <>
                       {
-                        reply?.id > 0 ?
+                        user?.level > 20 || (user?.level == 10 && reply?.id > 0) ?
                           <>
                             <Grid item xs={12} md={12}>
                               <Card sx={{ p: 2, height: '100%' }}>

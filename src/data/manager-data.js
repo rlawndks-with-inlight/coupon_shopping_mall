@@ -19,6 +19,7 @@ export const PATH_MANAGER = {
   users: {
     root: path(ROOTS_MANAGER, '/users'),
     list: path(ROOTS_MANAGER, '/users/list'),
+    distributors: path(ROOTS_MANAGER, '/users/distributors'),
     agents: path(ROOTS_MANAGER, '/users/agents'),
     sellers: path(ROOTS_MANAGER, '/users/sellers'),
     points: path(ROOTS_MANAGER, '/users/points'),

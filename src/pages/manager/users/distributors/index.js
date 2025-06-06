@@ -20,7 +20,7 @@ const test_data = [
         phone_num: '01000000000',
     }
 ]
-const AgentList = () => {
+const DistributorList = () => {
     const { user } = useAuthContext();
     const { setModal } = useModal()
     const defaultColumns = [
@@ -33,7 +33,7 @@ const AgentList = () => {
         },*/
         {
             id: 'user_name',
-            label: '영업자명',
+            label: '총판명',
             action: (row) => {
                 return row['name'] ?? "---"
             }
@@ -86,7 +86,7 @@ const AgentList = () => {
                     <>
                         <IconButton>
                             <Icon icon='material-symbols:edit-outline' onClick={() => {
-                                router.push(`agents/edit/${row?.id}`)
+                                router.push(`distributors/edit/${row?.id}`)
                             }} />
                         </IconButton>
                         <IconButton onClick={() => {
@@ -113,7 +113,7 @@ const AgentList = () => {
         e_dt: '',
         search: '',
         category_id: null,
-        is_agent: user?.level >= 40 ? 1 : user?.level == 20 ? 2 : '',
+        is_agent: 3,
     })
     const [dialogObj, setDialogObj] = useState({
         changePassword: false,
@@ -204,12 +204,12 @@ const AgentList = () => {
                         columns={columns}
                         searchObj={searchObj}
                         onChangePage={onChangePage}
-                        add_button_text={user?.level >= 20 ? '영업자 추가' : ''}
+                        add_button_text={user?.level >= 40 ? '총판 추가' : ''}
                     />
                 </Card>
             </Stack>
         </>
     )
 }
-AgentList.getLayout = (page) => <ManagerLayout>{page}</ManagerLayout>;
-export default AgentList
+DistributorList.getLayout = (page) => <ManagerLayout>{page}</ManagerLayout>;
+export default DistributorList

@@ -205,6 +205,7 @@ export const HistoryTable = props => {
   const TABLE_HEAD = [
     { id: 'product', label: translate('상품') },
     { id: 'ord_num', label: translate('주문번호') },
+    { id: 'invoice_num', label: translate('송장번호') },
     { id: 'amount', label: translate('총액') },
     { id: 'buyer_name', label: translate('구매자명') },
     { id: 'trx_status', label: translate('주문상태') },
@@ -320,6 +321,7 @@ export const HistoryTable = props => {
                       </Row>
                     </TableCell>
                     <TableCell>{row.ord_num}</TableCell>
+                    <TableCell>{row.invoice_num ?? '-'}</TableCell>
                     <TableCell onClick={() => { console.log(row) }}>{commarNumber(setProductPriceByLang(row, 'amount', 'ko', currentLang?.value))} {getPriceUnitByLang(currentLang?.value)}</TableCell>
                     <TableCell>{row?.buyer_name}</TableCell>
                     <TableCell>{fCurrency(row.amount) < 0 ? '결제취소' : translate(getTrxStatusByNumber(row?.trx_status))}</TableCell>

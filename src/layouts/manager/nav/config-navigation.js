@@ -203,13 +203,14 @@ export const navConfig = () => {
           path: PATH_MANAGER.users.root,
           icon: ICONS.user,
           children: [
+            ...(themeDnsData?.is_use_seller > 0 && user.level >= 40 ? [{ title: '총판관리', path: PATH_MANAGER.users.distributors }] : []),
+            ...(themeDnsData?.is_use_seller > 0 && user.level >= 20 ? [{ title: '영업자관리', path: PATH_MANAGER.users.agents }] : []),
+            ...(themeDnsData?.is_use_seller > 0 && user.level >= 15 && user?.level != 20 ? [{ title: '셀러관리', path: PATH_MANAGER.users.sellers }] : []),
             ...(isManager() ? [
               { title: '회원관리', path: PATH_MANAGER.users.list },
               //{ title: '포인트관리', path: PATH_MANAGER.users.points },
               //{ title: '찜관리', path: PATH_MANAGER.users.wishs },
             ] : []),
-            ...(themeDnsData?.is_use_seller > 0 && user.level >= 40 ? [{ title: '영업자관리', path: PATH_MANAGER.users.agents }] : []),
-            ...(themeDnsData?.is_use_seller > 0 && user.level >= 15 ? [{ title: '셀러관리', path: PATH_MANAGER.users.sellers }] : []),
             ...(themeDnsData?.is_use_seller > 0 && user.level >= 10 ? [{ title: '회원가입번호관리', path: PATH_MANAGER.users.phoneRegistration }] : []),
             // { title: '매출관리', path: PATH_MANAGER.users.sales },
           ],

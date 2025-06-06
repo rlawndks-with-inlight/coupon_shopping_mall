@@ -41,7 +41,7 @@ justify-content:space-between;
 `
 
 export default function ManagerTable(props) {
-  const { columns, data, add_button_text, add_link, onChangePage, searchObj, want_move_card, table, detail_search, onToggle, minimal = false, type } = props;
+  const { columns, data, add_button_text, add_link, onClickSeller, onChangePage, searchObj, want_move_card, table, detail_search, onToggle, minimal = false, type } = props;
   const { page, page_size } = props?.searchObj;
   const { themeDnsData } = useSettingsContext();
   const { user } = useAuthContext();
@@ -328,11 +328,16 @@ export default function ManagerTable(props) {
                 <>
                   <Button variant='contained' sx={{ flexGrow: 1, minWidth: '200px' }} onClick={() => {
                     let path = router.asPath;
-                    if (router.asPath.includes('list')) {
+                    if (user?.level == 10) {
+                      onClickSeller()
+                    } else if (router.asPath.includes('list')) {
                       path = path.replace('list', '');
                     }
                     type != 'dialog' ?
-                      router.push(add_link || `${path.slice(0, path.indexOf('?'))}/add`)
+                      user?.level != 10 ?
+                        router.push(add_link || `${path.slice(0, path.indexOf('?'))}/add`)
+                        :
+                        ''
                       :
                       setDialogOpen(true)
                   }}>

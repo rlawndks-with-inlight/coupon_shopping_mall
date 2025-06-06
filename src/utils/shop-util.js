@@ -65,6 +65,7 @@ export const makePayData = async (products_, payData_) => {
         amount: amount - (payData?.use_point ?? 0),
         products: products,
     }
+
     return payData;
 }
 export const onPayProductsByHand = async (products_, payData_) => { // 수기결제(페이베리)

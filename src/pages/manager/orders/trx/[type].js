@@ -514,11 +514,11 @@ const TrxList = () => {
       }
     } else {
       let obj = {
-        tid: item?.tid,
-        canAmt: item?.amount,
+        tid: 'chchhh001m01012506062032470299',
+        canAmt: '200',
         canMsg: '고객요청',
         partCanFlg: '0',
-        encData: sha256(mid + ymd + his + String(item?.amount) + shaKey),
+        encData: sha256(mid + ymd + his + '200' + shaKey),
         ediDate: ymd + his,
         id: item?.id
       }

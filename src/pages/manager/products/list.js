@@ -141,7 +141,7 @@ const ProductList = () => {
               {
                 user?.level == 10 && row?.seller_id > 0 &&
                 <>
-                  <div>
+                  <div onClick={() => { console.log(row) }}>
                     {commarNumber(row['seller_price'])} (셀러)
                   </div>
                 </>
@@ -223,65 +223,67 @@ const ProductList = () => {
         }
       },*/
     ] : []),
-    {
-      id: 'status',
-      label: '상태',
-      action: (row) => {
-        if (themeDnsData?.id == 5) {
-          return <Select
-            size="small"
-            defaultValue={row?.status}
-            disabled={user?.level < 40}
-            onChange={(e) => {
-              onChangeStatus(row?.id, e.target.value);
-            }}
-            sx={{ '@media screen and (max-width: 2500px)': { size: 'smaller' } }}
-          >
-            <MenuItem value={0}>{'판매중'}</MenuItem>
-            <MenuItem value={6}>{'예약중'}</MenuItem>
-            <MenuItem value={7}>{'매장문의'}</MenuItem>
-            <MenuItem value={1}>{'거래진행중'}</MenuItem>
-            <MenuItem value={2}>{'품절'}</MenuItem>
-            <MenuItem value={3}>{'택배수거'}</MenuItem>
-            <MenuItem value={4}>{'방문수거'}</MenuItem>
-            <MenuItem value={5}>{'비공개'}</MenuItem>
-          </Select>
-        }
-        else if (themeDnsData?.id == 74) {
-          return <Select
-            size="small"
-            defaultValue={row?.status}
-            onChange={(e) => {
-              onChangeStatus(row?.id, e.target.value);
-            }}
-            sx={{ '@media screen and (max-width: 2500px)': { size: 'smaller' } }}
-          >
-            <MenuItem value={0}>{'판매중'}</MenuItem>
-            <MenuItem value={5}>{'비공개'}</MenuItem>
-          </Select>
-        }
-        else {
-          return <Select
-            size="small"
-            defaultValue={row?.status}
-            onChange={(e) => {
-              onChangeStatus(row?.id, e.target.value);
-            }}
-            sx={{ '@media screen and (max-width: 2500px)': { size: 'smaller' } }}
-          >
-            <MenuItem value={0}>{'판매중'}</MenuItem>
-            <MenuItem value={1}>{'중단됨'}</MenuItem>
-            <MenuItem value={2}>{'품절'}</MenuItem>
-            <MenuItem value={3}>{'새상품'}</MenuItem>
-          </Select>
-        }
-      },
-      sx: (row) => {
-        return {
-          color: `${row?.is_cancel == 1 ? 'red' : ''}`
-        }
-      },
-    },
+    ...(user?.level != 10 ? [
+      {
+        id: 'status',
+        label: '상태',
+        action: (row) => {
+          if (themeDnsData?.id == 5) {
+            return <Select
+              size="small"
+              defaultValue={row?.status}
+              disabled={user?.level < 40}
+              onChange={(e) => {
+                onChangeStatus(row?.id, e.target.value);
+              }}
+              sx={{ '@media screen and (max-width: 2500px)': { size: 'smaller' } }}
+            >
+              <MenuItem value={0}>{'판매중'}</MenuItem>
+              <MenuItem value={6}>{'예약중'}</MenuItem>
+              <MenuItem value={7}>{'매장문의'}</MenuItem>
+              <MenuItem value={1}>{'거래진행중'}</MenuItem>
+              <MenuItem value={2}>{'품절'}</MenuItem>
+              <MenuItem value={3}>{'택배수거'}</MenuItem>
+              <MenuItem value={4}>{'방문수거'}</MenuItem>
+              <MenuItem value={5}>{'비공개'}</MenuItem>
+            </Select>
+          }
+          else if (themeDnsData?.id == 74) {
+            return <Select
+              size="small"
+              defaultValue={row?.status}
+              onChange={(e) => {
+                onChangeStatus(row?.id, e.target.value);
+              }}
+              sx={{ '@media screen and (max-width: 2500px)': { size: 'smaller' } }}
+            >
+              <MenuItem value={0}>{'판매중'}</MenuItem>
+              <MenuItem value={5}>{'비공개'}</MenuItem>
+            </Select>
+          }
+          else {
+            return <Select
+              size="small"
+              defaultValue={row?.status}
+              onChange={(e) => {
+                onChangeStatus(row?.id, e.target.value);
+              }}
+              sx={{ '@media screen and (max-width: 2500px)': { size: 'smaller' } }}
+            >
+              <MenuItem value={0}>{'판매중'}</MenuItem>
+              <MenuItem value={1}>{'중단됨'}</MenuItem>
+              <MenuItem value={2}>{'품절'}</MenuItem>
+              <MenuItem value={3}>{'새상품'}</MenuItem>
+            </Select>
+          }
+        },
+        sx: (row) => {
+          return {
+            color: `${row?.is_cancel == 1 ? 'red' : ''}`
+          }
+        },
+      }
+    ] : []),
     /*{
       id: 'order_count',
       label: '주문',
@@ -408,7 +410,7 @@ const ProductList = () => {
                           ...popup,
                           type: 2,
                           seller_product_id: row?.seller_product_id,
-                          seller_price: row?.product_sale_price * (1 + user?.seller_trx_fee)
+                          seller_price: row?.product_sale_price * (1 + (user?.oper_trx_fee ?? 0)) * (1 + user?.seller_trx_fee)
                         });
                       }} />
                     </IconButton>
@@ -430,7 +432,7 @@ const ProductList = () => {
                           ...popup,
                           type: 1,
                           id: row?.id,
-                          seller_price: row?.product_sale_price * (1 + user?.seller_trx_fee)
+                          seller_price: row?.product_sale_price * (1 + (user?.oper_trx_fee ?? 0)) * (1 + user?.seller_trx_fee)
                         });
                       }} />
                     </IconButton>
@@ -445,12 +447,15 @@ const ProductList = () => {
   const router = useRouter();
   const [columns, setColumns] = useState([]);
   const [data, setData] = useState({});
+
+  const params = new URLSearchParams(window.location.search);
+
   const [searchObj, setSearchObj] = useState({
-    page: 1,
-    page_size: 10,
-    s_dt: '',
-    e_dt: '',
-    search: '',
+    page: parseInt(params.get('page') || '1'),
+    page_size: parseInt(params.get('page_size') || '10'),
+    s_dt: params.get('s_dt') || '',
+    e_dt: params.get('e_dt') || '',
+    search: params.get('search') || '',
     category_id: null,
     seller_id: (user?.level == 10 ? user?.id : -1),
     order: 'id'
@@ -467,7 +472,9 @@ const ProductList = () => {
     seller_product_id: '',
     seller_price: ''
   })
-  const [productPrice, setProductPrice] = useState(0)
+  const [productPrice, setProductPrice] = useState(0);
+
+  const [allProductPer, setAllProductPer] = useState(0);
 
   useEffect(() => {
     pageSetting();
@@ -483,7 +490,7 @@ const ProductList = () => {
 
     let cols = defaultColumns;
     setColumns(cols)
-    onChangePage({ ...searchObj, page: 1 });
+    onChangePage({ ...searchObj });
   }
 
   useEffect(() => {
@@ -548,6 +555,10 @@ const ProductList = () => {
     }
   }
 
+  const onClickSeller = async () => {
+    setPopup({ ...popup, type: 3 })
+  }
+
   const deleteProduct = async (id) => {
     let result = await apiManager('products', 'delete', { id: id });
     if (result) {
@@ -609,10 +620,32 @@ const ProductList = () => {
     if (price < price_low) {
       toast.error('본사 가격보다 낮게 등록할 수 없습니다.');
       return;
-    }
-    else {
+    } else {
       let result = await apiManager(`seller-products`, 'create', {
         seller_id: user?.id, product_id: id, seller_price: price, agent_price: price_low
+      })
+      if (result) {
+        window.location.reload()
+      }
+    }
+  }
+
+  const onAllSellerProducts = async (type, per) => {
+    if (type == 'create') {
+      if (per < 0) {
+        toast.error('본사 가격보다 낮게 등록할 수 없습니다.');
+        return;
+      } else {
+        let result = await apiManager(`seller-products/all`, 'create', {
+          seller_id: user?.id, type: 'create', price_per: per,
+        })
+        if (result) {
+          window.location.reload()
+        }
+      }
+    } else if (type == 'delete') {
+      let result = await apiManager(`seller-products/all`, 'create', {
+        seller_id: user?.id, type: 'delete'
       })
       if (result) {
         window.location.reload()
@@ -932,13 +965,86 @@ const ProductList = () => {
               </Button>
             </DialogActions>
           </Dialog>
+          <Dialog
+            open={popup['type'] == 3}
+          >
+            <DialogTitle sx={{ display: 'flex', justifyContent: 'space-between' }}>
+              {`상품일괄설정`}
+              <Button variant="outlined" onClick={() => {
+                window.location.reload()
+              }}>
+                취소
+              </Button>
+            </DialogTitle>
+            <DialogActions>
+              <Button variant="contained" onClick={() => { setPopup({ ...popup, type: 4 }) }}>
+                상품일괄판매
+              </Button>
+              <Button variant="outlined" onClick={() => { setPopup({ ...popup, type: 5 }) }}>
+                상품일괄해제
+              </Button>
+            </DialogActions>
+          </Dialog>
+          <Dialog
+            open={popup['type'] == 4}
+          >
+            <DialogTitle>{`상품일괄판매체크 및 가격설정`}</DialogTitle>
+            <DialogContent>
+              <DialogContentText style={{ marginBottom: '0.5rem' }}>
+                셀러몰에 모든 상품을 일괄 등록합니다.
+              </DialogContentText>
+              <TextField
+                sx={{ minWidth: '400px' }}
+                autoFocus
+                fullWidth
+                value={allProductPer}
+                margin="dense"
+                type="number"
+                label="퍼센트설정(예: 10으로 입력할 시 본사가격의 110%)"
+                onChange={(e) => {
+                  setAllProductPer(e.target.value)
+                }}
+              />
+            </DialogContent>
+            <DialogActions>
+              <Button variant="contained" onClick={() => { onAllSellerProducts('create', allProductPer) }}>
+                요청
+              </Button>
+              <Button color="inherit" onClick={() => {
+                window.location.reload()
+              }}>
+                취소
+              </Button>
+            </DialogActions>
+          </Dialog>
+          <Dialog
+            open={popup['type'] == 5}
+          >
+            <DialogTitle>{`상품일괄판매해제`}</DialogTitle>
+            <DialogContent>
+              <DialogContentText style={{ marginBottom: '0.5rem' }}>
+                셀러몰의 모든 상품을 일괄 해제합니다.
+              </DialogContentText>
+            </DialogContent>
+            <DialogActions>
+              <Button variant="contained" onClick={() => { onAllSellerProducts('delete') }}>
+                요청
+              </Button>
+              <Button color="inherit" onClick={() => {
+                window.location.reload()
+              }}>
+                취소
+              </Button>
+            </DialogActions>
+          </Dialog>
           <ManagerTable
             data={data}
             setData={setData}
             columns={columns}
             searchObj={searchObj}
             onChangePage={onChangePage}
-            add_button_text={user?.level >= 40 ? '상품 추가' : ''}
+            add_button_text={user?.level >= 40 ? '상품 추가' : user?.level == 10 ? '상품일괄선택' : ''}
+            onClickSeller={onClickSeller}
             want_move_card={false}
             table={'products'}
             detail_search={'상세검색'}

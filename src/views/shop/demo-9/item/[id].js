@@ -207,11 +207,11 @@ const ItemDemo = (props) => {
       component: product ? //<></> : null,
         <ProductFaq /> : null,
     },*/
-    {
+    {/*
       value: 'reviews',
       label: `상품후기 (${reviewContent?.total})`,
       component: product ? <ProductDetailsReview product={product} reviewContent={reviewContent} onChangePage={getItemInfo} reviewPage={reviewPage} /> : null,
-    },
+    */},
   ];
   const handleAddCart = async () => {
     if (user) {
@@ -518,6 +518,11 @@ const ItemDemo = (props) => {
                       </Row>
                     </Grid>
                   </Grid>
+                  <Card style={{
+                    marginTop: '2rem'
+                  }}>
+                    <ProductDetailsReview product={product} reviewContent={reviewContent} onChangePage={getItemInfo} reviewPage={reviewPage} />
+                  </Card>
                   <Card style={{
                     marginTop: '2rem'
                   }}>

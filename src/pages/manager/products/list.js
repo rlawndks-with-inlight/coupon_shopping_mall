@@ -45,9 +45,9 @@ const ProductList = () => {
       action: (row) => {
         if (row['product_img']) {
           return <div
-            style={{ minWidth: '100px', cursor: user?.level > 20 ? 'pointer' : '' }}
+            style={{ minWidth: '100px', cursor: /*user?.level > 20 &&*/ 'pointer' }}
             onClick={() => {
-              user?.level > 20 ? router.push(`edit/${row?.product_code || row?.id}`) : ''
+              /*user?.level > 20 &&*/ router.push(`edit/${row?.product_code || row?.id}`)
             }}
           >
             <LazyLoadImage src={row['product_img'] ?? "---"} style={{ height: '84px', width: 'auto' }} />
@@ -69,9 +69,9 @@ const ProductList = () => {
       label: '상품명',
       action: (row) => {
         return <div
-          style={{ textDecoration: 'underline', cursor: user?.level > 20 ? 'pointer' : '' }}
+          style={{ textDecoration: 'underline', cursor: /*user?.level > 20 &&*/ 'pointer' }}
           onClick={() => {
-            user?.level > 20 ? router.push(`edit/${row?.id}`) : ''
+            /*user?.level > 20 &&*/ router.push(`edit/${row?.id}`)
           }}
         >
           {
@@ -1045,6 +1045,7 @@ const ProductList = () => {
             onChangePage={onChangePage}
             add_button_text={user?.level >= 40 ? '상품 추가' : user?.level == 10 ? '상품일괄선택' : ''}
             onClickSeller={onClickSeller}
+            type={'product'}
             want_move_card={false}
             table={'products'}
             detail_search={'상세검색'}

@@ -182,7 +182,7 @@ const TrxList = () => {
                     <Row>
                       <div style={{ minWidth: '62px', fontWeight: 'bold' }} >{index + 1}.</div>
                       <div style={{ whiteSpace: 'nowrap', cursor: 'pointer' }}
-                        onClick={() => { user?.level > 20 && window.open(`/manager/products/edit/${order?.product_id}`) }}>
+                        onClick={() => { /*user?.level > 20 &&*/ window.open(`/manager/products/edit/${order?.product_id}`) }}>
                         {order?.order_name}
                       </div>
                     </Row>
@@ -514,11 +514,11 @@ const TrxList = () => {
       }
     } else {
       let obj = {
-        tid: 'chchhh001m01012506062032470299',
-        canAmt: '200',
+        tid: item?.tid,
+        canAmt: item?.amount,
         canMsg: '고객요청',
         partCanFlg: '0',
-        encData: sha256(mid + ymd + his + '200' + shaKey),
+        encData: sha256(mid + ymd + his + String(item?.amount) + shaKey),
         ediDate: ymd + his,
         id: item?.id
       }

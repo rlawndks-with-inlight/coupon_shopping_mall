@@ -150,6 +150,7 @@ const ArticleList = () => {
             searchObj={searchObj}
             onChangePage={onChangePage}
             add_button_text={'게시물 추가'}
+            type={'article'}
           />
         </Card>
       </Stack>

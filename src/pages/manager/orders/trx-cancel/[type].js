@@ -83,7 +83,7 @@ const TrxCancelList = () => {
                         <Row>
                           <div style={{ minWidth: '62px', fontWeight: 'bold' }} >{index + 1}.</div>
                           <div style={{ whiteSpace: 'nowrap', cursor: 'pointer' }}
-                            onClick={() => { user?.level > 20 && window.open(`/manager/products/edit/${order?.product_id}`) }}>
+                            onClick={() => { /*user?.level > 20 &&*/ window.open(`/manager/products/edit/${order?.product_id}`) }}>
                             {order?.order_name}
                           </div>
                         </Row>

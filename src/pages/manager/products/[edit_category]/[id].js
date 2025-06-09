@@ -98,6 +98,7 @@ export const SelectCategoryComponent = (props) => {
     id,
     onChange,
     type = 'product',
+    disabled
   } = props;
   const theme = useTheme();
   const { themeDnsData } = useSettingsContext();
@@ -216,7 +217,7 @@ export const SelectCategoryComponent = (props) => {
     <CategoryWrappers style={{ border: `1px solid ${theme.palette.mode == 'dark' ? themeObj.grey[700] : themeObj.grey[300]}` }}>
       <TextField
         style={{
-          display: `${hasChildCategories ? 'none' : ''}`
+          display: `${hasChildCategories || disabled ? 'none' : ''}`
         }}
         fullWidth
         label='검색'
@@ -300,7 +301,7 @@ export const SelectCategoryComponent = (props) => {
         }
       </CategoryHeader>
       <div style={{ overflowX: 'auto', width: '100%', display: '-webkit-box' }} className={`category-container-${sort_idx}`}>
-        <CategoryContainer>
+        <CategoryContainer style={{ display: `${disabled && 'none'}` }}>
           {type == 'product' ?
             <>
               {filteredCategories.length > 0 ?
@@ -387,7 +388,7 @@ export const SelectCategoryComponent = (props) => {
         </CategoryContainer>
         {filteredCategories.length === 0 && categoryChildrenList.map((category_list, index) => (
           category_list.length > 0 &&
-          <CategoryContainer key={index}>
+          <CategoryContainer style={{ display: `${disabled && 'none'}` }} key={index}>
             {category_list.map((category) => (
               type == 'product' ?
                 <Category
@@ -977,12 +978,12 @@ const ProductEdit = () => {
         label: '위탁정보'
       }
     ] : []),
-    ...(router.query?.edit_category == 'edit' && themeDnsData.id != 5 ? [
+    /*...(router.query?.edit_category == 'edit' && themeDnsData.id != 5 ? [
       {
         value: 2,
         label: '상품리뷰 관리'
       }
-    ] : []),
+    ] : []),*/
   ]
 
   useEffect(() => {
@@ -1088,7 +1089,7 @@ const ProductEdit = () => {
                         <Typography variant="subtitle2" sx={{ color: 'text.secondary' }}>
                           대표이미지등록
                         </Typography>
-                        <Upload file={item.product_file || item.product_img} onDrop={(acceptedFiles) => {
+                        <Upload disabled={user?.level < 40} file={item.product_file || item.product_img} onDrop={(acceptedFiles) => {
                           const newFile = acceptedFiles[0];
                           if (newFile) {
                             setItem(
@@ -1120,6 +1121,7 @@ const ProductEdit = () => {
                           개별이미지등록 (여러장 업로드)
                         </Typography>
                         <Upload
+                          disabled={user?.level < 40}
                           multiple
                           thumbnail={true}
                           files={item.sub_images.map(img => {
@@ -1133,13 +1135,19 @@ const ProductEdit = () => {
                             }
                           }).filter(e => e)}
                           onDrop={(acceptedFiles) => {
-                            handleDropMultiFile(acceptedFiles)
+                            if (user?.level >= 40) {
+                              handleDropMultiFile(acceptedFiles)
+                            }
                           }}
                           onRemove={(inputFile) => {
-                            handleRemoveFile(inputFile)
+                            if (user?.level >= 40) {
+                              handleRemoveFile(inputFile)
+                            }
                           }}
                           onRemoveAll={() => {
-                            handleRemoveAllFiles();
+                            if (user?.level >= 40) {
+                              handleRemoveAllFiles();
+                            }
                           }}
                           fileExplain={{
                             width: '(512x512 추천)'//파일 사이즈 설명
@@ -1163,6 +1171,7 @@ const ProductEdit = () => {
                               {group?.category_group_name}
                             </Typography>
                             <SelectCategoryComponent
+                              disabled={user?.level < 40}
                               curCategories={curCategories[index] ?? []}
                               categories={group?.product_categories}
                               categoryChildrenList={categoryChildrenList[index] ?? []}
@@ -1188,6 +1197,7 @@ const ProductEdit = () => {
                                     label={<Typography style={{ fontSize: themeObj.font_size.size6 }}>{property?.property_name}</Typography>}
                                     control={
                                       <Checkbox
+                                        disabled={user?.level < 40}
                                         checked={
                                           group?.brand_id == 5 && property?.property_name == '특가(PRICE DOWN)'
                                             ?
@@ -1557,6 +1567,7 @@ const ProductEdit = () => {
                         </>
                       }
                       <TextField
+                        disabled={user?.level < 40}
                         label='상품코드'
                         value={item.product_code}
                         placeholder="선택"
@@ -1569,6 +1580,7 @@ const ProductEdit = () => {
                           )
                         }} />
                       <TextField
+                        disabled={user?.level < 40}
                         label='상품명'
                         value={item.product_name}
                         placeholder="예시) 블랙 럭셔리 팔찌, 팔찌 1위 상품"
@@ -1607,6 +1619,7 @@ const ProductEdit = () => {
                       {!themeDnsData?.none_use_column_obj['products']?.includes('product_comment') &&
                         <>
                           <TextField
+                            disabled={user?.level < 40}
                             label='상품 간단한 설명'
                             value={item.product_comment}
                             placeholder="예시) 주문폭주!! 다양한 디자인으로 어떠한 룩도 소화!"
@@ -1719,9 +1732,10 @@ const ProductEdit = () => {
                               <FormControl variant="outlined">
                                 <InputLabel>상품가</InputLabel>
                                 <OutlinedInput
+                                  disabled={user?.level < 40}
                                   label='상품가'
                                   type="text"
-                                  value={salePrice}
+                                  value={user?.level >= 20 ? salePrice : user?.level == 15 ? parseInt(item?.product_sale_price * (1 + (user?.oper_trx_fee ?? 0))) : parseInt(item?.product_sale_price * (1 + (user?.oper_trx_fee ?? 0)) * (1 + (user?.seller_trx_fee ?? 0)))}
                                   endAdornment={<InputAdornment position="end">원</InputAdornment>}
                                   onChange={(e) => {
                                     let value = parseInt(e.target.value.replace(/,/g, ''))
@@ -1935,6 +1949,7 @@ const ProductEdit = () => {
                                   <>
                                     <Row style={{ columnGap: '0.5rem' }}>
                                       <TextField
+                                        disabled={user?.level < 40}
                                         sx={{ flexGrow: 1 }}
                                         label='특성키명'
                                         placeholder="예시) 원산지"
@@ -1952,6 +1967,7 @@ const ProductEdit = () => {
                                       <FormControl variant="outlined" sx={{ flexGrow: 1 }}>
                                         <InputLabel>특성값</InputLabel>
                                         <OutlinedInput
+                                          disabled={user?.level < 40}
                                           label='특성값'
                                           placeholder="예시) 국내산"
                                           value={character.character_value}
@@ -1966,37 +1982,40 @@ const ProductEdit = () => {
                                             )
                                           }} />
                                       </FormControl>
-                                      <IconButton onClick={() => {
-                                        let character_list = item?.characters;
-                                        if (character_list[index]?.id) {
-                                          character_list[index].is_delete = 1;
-                                        } else {
-                                          character_list.splice(index, 1);
-                                        }
-                                        setItem(
-                                          {
-                                            ...item,
-                                            ['characters']: character_list
+                                      <IconButton
+                                        sx={{ display: `${user?.level < 40 && 'none'}` }}
+                                        onClick={() => {
+                                          let character_list = item?.characters;
+                                          if (character_list[index]?.id) {
+                                            character_list[index].is_delete = 1;
+                                          } else {
+                                            character_list.splice(index, 1);
                                           }
-                                        )
-                                      }}>
+                                          setItem(
+                                            {
+                                              ...item,
+                                              ['characters']: character_list
+                                            }
+                                          )
+                                        }}>
                                         <Icon icon='material-symbols:delete-outline' />
                                       </IconButton>
                                     </Row>
                                   </>}
                               </>
                             ))}
-                            <Button variant="outlined" sx={{ height: '48px' }} onClick={() => {
-                              let character_list = [...item.characters];
-                              character_list.push({
-                                character_name: '',
-                                character_value: '',
-                              })
-                              setItem({
-                                ...item,
-                                ['characters']: character_list
-                              })
-                            }}>새 특성 추가</Button>
+                            <Button variant="outlined" sx={{ height: '48px', display: `${user?.level < 40 && 'none'}` }}
+                              onClick={() => {
+                                let character_list = [...item.characters];
+                                character_list.push({
+                                  character_name: '',
+                                  character_value: '',
+                                })
+                                setItem({
+                                  ...item,
+                                  ['characters']: character_list
+                                })
+                              }}>새 특성 추가</Button>
                           </Stack>
                         </>}
                       {!themeDnsData?.none_use_column_obj['products']?.includes('options') &&
@@ -2013,11 +2032,12 @@ const ProductEdit = () => {
                                       <FormControl variant="outlined" style={{ width: '100%' }}>
                                         <InputLabel>옵션그룹명</InputLabel>
                                         <OutlinedInput
+                                          disabled={user?.level < 40}
                                           label='옵션그룹명'
                                           placeholder="예시) 색상"
                                           value={group.group_name}
                                           endAdornment={<>
-                                            <Button style={{ width: '114px', height: '56px', transform: 'translateX(14px)' }}
+                                            <Button style={{ width: '114px', height: '56px', transform: 'translateX(14px)', display: `${user?.level < 40 && 'none'}` }}
                                               variant="contained"
                                               onClick={() => {
                                                 let option_list = item?.groups;
@@ -2047,20 +2067,22 @@ const ProductEdit = () => {
                                             )
                                           }} />
                                       </FormControl>
-                                      <IconButton onClick={() => {
-                                        let option_list = item?.groups;
-                                        if (option_list[index]?.id) {
-                                          option_list[index].is_delete = 1;
-                                        } else {
-                                          option_list.splice(index, 1);
-                                        }
-                                        setItem(
-                                          {
-                                            ...item,
-                                            ['groups']: option_list
+                                      <IconButton
+                                        sx={{ display: `${user?.level < 40 && 'none'}` }}
+                                        onClick={() => {
+                                          let option_list = item?.groups;
+                                          if (option_list[index]?.id) {
+                                            option_list[index].is_delete = 1;
+                                          } else {
+                                            option_list.splice(index, 1);
                                           }
-                                        )
-                                      }}>
+                                          setItem(
+                                            {
+                                              ...item,
+                                              ['groups']: option_list
+                                            }
+                                          )
+                                        }}>
                                         <Icon icon='material-symbols:delete-outline' />
                                       </IconButton>
                                     </Row>
@@ -2126,24 +2148,25 @@ const ProductEdit = () => {
 
                               </>
                             ))}
-                            <Button variant="outlined" sx={{ height: '48px' }} onClick={() => {
-                              let option_list = [...item.groups];
-                              option_list.push({
-                                group_name: '',
-                                group_description: '',
-                                group_file: undefined,
-                                is_able_duplicate_select: 0,
-                                options: []
-                              })
-                              setItem({
-                                ...item,
-                                ['groups']: option_list
-                              })
-                            }}>옵션그룹 추가</Button>
+                            <Button variant="outlined" sx={{ height: '48px', display: `${user?.level < 40 && 'none'}` }}
+                              onClick={() => {
+                                let option_list = [...item.groups];
+                                option_list.push({
+                                  group_name: '',
+                                  group_description: '',
+                                  group_file: undefined,
+                                  is_able_duplicate_select: 0,
+                                  options: []
+                                })
+                                setItem({
+                                  ...item,
+                                  ['groups']: option_list
+                                })
+                              }}>옵션그룹 추가</Button>
                           </Stack>
                         </>}
                       {
-                        themeDnsData?.id == 74 && <>
+                        themeDnsData?.id == 74 && user?.level >= 40 && <>
                           <Stack spacing={1}>
                             <TextField
                               fullWidth
@@ -2414,7 +2437,7 @@ const ProductEdit = () => {
               </>}
             <Grid item xs={12} md={12}>
               <Card sx={{ p: 3 }}>
-                <Stack spacing={0} style={{ display: 'flex', flexDirection: 'row' }}>
+                <Stack spacing={0} style={{ display: `${user?.level < 40 ? 'none' : 'flex'}`, flexDirection: 'row' }}>
                   {router.query?.edit_category == 'edit' ?
                     <>
                       {/*

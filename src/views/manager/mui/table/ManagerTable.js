@@ -328,7 +328,7 @@ export default function ManagerTable(props) {
                 <>
                   <Button variant='contained' sx={{ flexGrow: 1, minWidth: '200px' }} onClick={() => {
                     let path = router.asPath;
-                    if (user?.level == 10) {
+                    if (type == 'product' && user?.level == 10) {
                       onClickSeller()
                     } else if (router.asPath.includes('list')) {
                       path = path.replace('list', '');
@@ -337,7 +337,10 @@ export default function ManagerTable(props) {
                       user?.level != 10 ?
                         router.push(add_link || `${path.slice(0, path.indexOf('?'))}/add`)
                         :
-                        ''
+                        type == 'article' ?
+                          router.push(add_link || `${path.slice(0, path.indexOf('?'))}/add`)
+                          :
+                          ''
                       :
                       setDialogOpen(true)
                   }}>

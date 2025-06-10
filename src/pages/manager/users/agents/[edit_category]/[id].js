@@ -39,7 +39,7 @@ const AgentEdit = () => {
         acct_name: '',
         phone_num: '',//
         //note: '',
-        //seller_trx_fee: 0,
+        seller_trx_fee: 0,
         /*sns_obj: {
           youtube_channel: '',
           instagram_id: ''

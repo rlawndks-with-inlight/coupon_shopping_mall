@@ -456,7 +456,10 @@ const ProductList = () => {
     s_dt: params.get('s_dt') || '',
     e_dt: params.get('e_dt') || '',
     search: params.get('search') || '',
-    category_id: null,
+    category_id: params.get('category_id') || '',
+    category_id0: params.get('category_id0') || '',
+    category_id1: params.get('category_id1') || '',
+    property_ids0: params.get('property_ids0') || '',
     seller_id: (user?.level == 10 ? user?.id : -1),
     order: 'id'
   })

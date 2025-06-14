@@ -8,6 +8,7 @@ import { TableHeadCustom } from 'src/components/table';
 import CheckoutCartProduct from './CheckoutCartProduct';
 import { calculatorPrice } from 'src/utils/shop-util';
 import { useLocales } from 'src/locales';
+import { useSettingsContext } from 'src/components/settings';
 
 // ----------------------------------------------------------------------
 
@@ -21,12 +22,15 @@ export default function CheckoutCartProductList({
   onChangeQuantity,
 }) {
   const { translate } = useLocales();
+  const { themeDnsData } = useSettingsContext();
   const TABLE_HEAD = [
     { id: 'product', label: translate('상품') },
     { id: 'option', label: translate('옵션') },
     { id: 'delivery_fee', label: translate('배송비') },
     { id: 'price', label: translate('가격') },
-    { id: 'count', label: translate('수량') },
+    ...(themeDnsData?.id != 74 ? [
+      { id: 'count', label: translate('수량') },
+    ] : []),
     { id: 'totalPrice', label: translate('총액'), align: 'right' },
     { id: '' },
   ];

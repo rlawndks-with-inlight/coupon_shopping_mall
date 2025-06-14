@@ -102,19 +102,26 @@ export default function CheckoutCartProduct({ row, onDelete, onDecrease, onIncre
         )}
         {commarNumber(setProductPriceByLang(row, 'product_sale_price', 'ko', currentLang?.value))} {getPriceUnitByLang(currentLang?.value)}
       </TableCell>
-      <TableCell>
-        <Box sx={{ width: 96, textAlign: 'right' }}>
-          <IncrementerButton
-            quantity={order_count}
-            type="cart_page"
-            onDecrease={onDecrease}
-            onIncrease={onIncrease}
-            onChangeQuantity={onChangeQuantity}
-            disabledDecrease={order_count <= 1}
-            disabledIncrease={order_count >= available}
-          />
-        </Box>
-      </TableCell>
+      {
+        themeDnsData?.id != 74 ?
+          <>
+            <TableCell>
+              <Box sx={{ width: 96, textAlign: 'right' }}>
+                <IncrementerButton
+                  quantity={order_count}
+                  type="cart_page"
+                  onDecrease={onDecrease}
+                  onIncrease={onIncrease}
+                  onChangeQuantity={onChangeQuantity}
+                  disabledDecrease={order_count <= 1}
+                  disabledIncrease={order_count >= available}
+                />
+              </Box>
+            </TableCell>
+          </>
+          :
+          ''
+      }
 
       <TableCell align="right">{commarNumber(setProductPriceByLang(calculatorPrice(row), 'total', 'ko', currentLang?.value))} {getPriceUnitByLang(currentLang?.value)}</TableCell>
 

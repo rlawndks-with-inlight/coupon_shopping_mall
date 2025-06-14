@@ -31,6 +31,7 @@ import { insertCartDataUtil, insertWishDataUtil } from 'src/utils/shop-util'
 import { useLocales } from 'src/locales'
 import { useRouter } from 'next/router'
 import { formatLang } from 'src/utils/format'
+import React from 'react'
 
 
 const ItemsContainer = styled.div`
@@ -321,7 +322,32 @@ export const HistoryTable = props => {
                       </Row>
                     </TableCell>
                     <TableCell>{row.ord_num}</TableCell>
-                    <TableCell>{row.invoice_num ?? '-'}</TableCell>
+                    <TableCell>
+                      {row.invoice_num
+                        ? row.invoice_num
+                          .split(',')
+                          .map((entry, idx, arr) => {
+                            const [courier, invoice] = entry.trim().split('-');
+                            return (
+                              <React.Fragment key={idx}>
+                                {
+                                  row.invoice_num?.split(',').length > 1 ?
+                                    <>
+                                      {idx + 1}.
+                                      <br />
+                                    </>
+                                    :
+                                    ''
+                                }
+                                {courier}
+                                <br />
+                                {invoice}
+                                {idx < arr.length - 1 && <><br /><br /></>}
+                              </React.Fragment>
+                            );
+                          })
+                        : '-'}
+                    </TableCell>
                     <TableCell onClick={() => { console.log(row) }}>{commarNumber(setProductPriceByLang(row, 'amount', 'ko', currentLang?.value))} {getPriceUnitByLang(currentLang?.value)}</TableCell>
                     <TableCell>{row?.buyer_name}</TableCell>
                     <TableCell>{fCurrency(row.amount) < 0 ? '결제취소' : translate(getTrxStatusByNumber(row?.trx_status))}</TableCell>

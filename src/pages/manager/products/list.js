@@ -639,19 +639,39 @@ const ProductList = () => {
         toast.error('본사 가격보다 낮게 등록할 수 없습니다.');
         return;
       } else {
-        let result = await apiManager(`seller-products/all`, 'create', {
-          seller_id: user?.id, type: 'create', price_per: per,
+        let result = apiManager(`seller-products/all`, 'create', {
+          seller_id: user?.id, type: 'create', price_per: parseInt(per * 100),
         })
-        if (result) {
-          window.location.reload()
+        toast.promise(result, {
+          loading: '처리 중입니다...',
+          success: '일괄 등록되었습니다.',
+          error: '문제가 발생했습니다.'
+        })
+        try {
+          const result_ = await result;
+          if (result_) {
+            window.location.reload();
+          }
+        } catch (e) {
+          // 에러는 toast.promise에서 처리되므로 여기서는 추가 처리 필요 없음
         }
       }
     } else if (type == 'delete') {
-      let result = await apiManager(`seller-products/all`, 'create', {
+      let result = apiManager(`seller-products/all`, 'create', {
         seller_id: user?.id, type: 'delete'
       })
-      if (result) {
-        window.location.reload()
+      toast.promise(result, {
+        loading: '처리 중입니다...',
+        success: '일괄 해제되었습니다.',
+        error: '문제가 발생했습니다.'
+      })
+      try {
+        const result_ = await result;
+        if (result_) {
+          window.location.reload();
+        }
+      } catch (e) {
+        // 에러는 toast.promise에서 처리되므로 여기서는 추가 처리 필요 없음
       }
     }
   }
@@ -995,6 +1015,13 @@ const ProductList = () => {
             <DialogContent>
               <DialogContentText style={{ marginBottom: '0.5rem' }}>
                 셀러몰에 모든 상품을 일괄 등록합니다.
+                <br />
+                상품가격에 적용할 퍼센트를 설정해주세요.
+                <br />
+                <br />
+                예{')'} 0.1로 입력할 시 본사가격의 10%가 추가됩니다.
+                <br />
+                본사가격 10000 {'=>'} 셀러가격 11000
               </DialogContentText>
               <TextField
                 sx={{ minWidth: '400px' }}
@@ -1003,7 +1030,7 @@ const ProductList = () => {
                 value={allProductPer}
                 margin="dense"
                 type="number"
-                label="퍼센트설정(예: 10으로 입력할 시 본사가격의 110%)"
+                label="퍼센트설정"
                 onChange={(e) => {
                   setAllProductPer(e.target.value)
                 }}

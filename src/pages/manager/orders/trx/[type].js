@@ -239,6 +239,86 @@ const TrxList = () => {
     },
     ...(themeDnsData?.id == 74 ? [
       {
+        id: 'invoice_num',
+        label: '송장번호',
+        action: (row) => {
+          const [couriers, setCouriers] = useState(() => {
+            const raw = row?.invoice_num ?? '';
+            const parsed = raw.split(',').map(item => item.trim().split('-')[0]?.trim() || '');
+            const orderCount = row?.orders?.length ?? 1;
+            while (parsed.length < orderCount) parsed.push('');
+            return parsed;
+          });
+
+          const [invoices, setInvoices] = useState(() => {
+            const raw = row?.invoice_num ?? '';
+            const parsed = raw.split(',').map(item => item.trim().split('-')[1]?.trim() || '');
+            const orderCount = row?.orders?.length ?? 1;
+            while (parsed.length < orderCount) parsed.push('');
+            return parsed;
+          });
+
+          const handleCourierChange = (value, idx) => {
+            const newCouriers = [...couriers];
+            newCouriers[idx] = value;
+            setCouriers(newCouriers);
+          };
+
+          const handleInvoiceChange = (value, idx) => {
+            const newInvoices = [...invoices];
+            newInvoices[idx] = value;
+            setInvoices(newInvoices);
+          };
+
+          const handleSave = async () => {
+            const joined = couriers.map((courier, idx) => {
+              const invoice = invoices[idx]?.trim();
+              const courierName = courier?.trim();
+              if (!invoice) return ''; // 빈 송장번호는 저장 안함
+              return courierName ? `${courierName}-${invoice}` : invoice;
+            }).filter(Boolean).join(',');
+
+            let result = await apiManager(`transactions/${row?.id}/invoice`, 'create', {
+              id: row?.id,
+              invoice_num: joined
+            });
+
+            if (result) {
+              toast.success('성공적으로 저장 되었습니다.');
+            }
+          };
+
+          return (
+            <Col style={{ rowGap: '0.5rem', minWidth: '200px' }}>
+              {(row?.orders || [{}]).map((order, idx) => (
+                <Row key={idx} style={{ columnGap: '0.5rem' }}>
+                  <TextField
+                    size="small"
+                    label={row?.orders.length > 1 ? `택배사 ${idx + 1}` : `택배사`}
+                    value={couriers[idx]}
+                    onChange={(e) => handleCourierChange(e.target.value, idx)}
+                  />
+                  <TextField
+                    size="small"
+                    label={row?.orders.length > 1 ? `송장번호 ${idx + 1}` : `송장번호`}
+                    value={invoices[idx]}
+                    onChange={(e) => handleInvoiceChange(e.target.value, idx)}
+                  />
+                </Row>
+              ))}
+              <Button variant="contained" onClick={handleSave}>
+                저장
+              </Button>
+            </Col>
+          );
+        },
+        sx: (row) => ({
+          color: `${row?.is_cancel == 1 ? 'red' : ''}`
+        }),
+      }
+    ] : []),
+    ...(themeDnsData?.id == 74 ? [
+      {
         id: 'unipass',
         label: '구매자개인통관고유부호',
         action: (row) => {
@@ -299,37 +379,39 @@ const TrxList = () => {
         return _.find(paymentModuleTypeList, { value: row?.trx_method })?.label ?? "---"
       }
     },
-    {
-      id: 'invoice_num',
-      label: '송장번호',
-      action: (row) => {
-        const [invoice, setInvoice] = useState(row?.invoice_num);
-        return <Col style={{ rowGap: '0.5rem' }}>
-          <TextField
-            size={'small'}
-            className={`invoice-${row?.id}`}
-            value={invoice}
-            onChange={(e) => {
-              setInvoice(e.target.value);
-            }}
-          />
-          <Button variant="contained" onClick={async () => {
-            let result = await apiManager(`transactions/${row?.id}/invoice`, 'create', {
-              id: row?.id,
-              invoice_num: invoice
-            })
-            if (result) {
-              toast.success('성공적으로 저장 되었습니다.')
-            }
-          }}>저장</Button>
-        </Col>
+    ...(themeDnsData?.id != 74 ? [
+      {
+        id: 'invoice_num',
+        label: '송장번호',
+        action: (row) => {
+          const [invoice, setInvoice] = useState(row?.invoice_num);
+          return <Col style={{ rowGap: '0.5rem' }}>
+            <TextField
+              size={'small'}
+              className={`invoice-${row?.id}`}
+              value={invoice}
+              onChange={(e) => {
+                setInvoice(e.target.value);
+              }}
+            />
+            <Button variant="contained" onClick={async () => {
+              let result = await apiManager(`transactions/${row?.id}/invoice`, 'create', {
+                id: row?.id,
+                invoice_num: invoice
+              })
+              if (result) {
+                toast.success('성공적으로 저장 되었습니다.')
+              }
+            }}>저장</Button>
+          </Col>
+        },
+        sx: (row) => {
+          return {
+            color: `${row?.is_cancel == 1 ? 'red' : ''}`
+          }
+        },
       },
-      sx: (row) => {
-        return {
-          color: `${row?.is_cancel == 1 ? 'red' : ''}`
-        }
-      },
-    },
+    ] : []),
     {
       id: 'trx_status',
       label: '상태',

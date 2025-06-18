@@ -128,20 +128,20 @@ const ProductList = () => {
                 user?.level >= 15 ?
                   <>
                     <div>
-                      {commarNumber(row['product_sale_price'] * (1 + (user?.oper_trx_fee ?? 0)))} (본사)
+                      {commarNumber(Math.round(Math.floor(Number((row['product_sale_price'] * (1 + (user?.oper_trx_fee ?? 0))).toFixed(6))) / 1000) * 1000)} (본사)
                     </div>
                   </>
                   :
                   <>
                     <div>
-                      {commarNumber(row['product_sale_price'] * (1 + (user?.oper_trx_fee ?? 0)) * (1 + user?.seller_trx_fee ?? 0))} (본사)
+                      {commarNumber(Math.round(Math.floor(Number((row['product_sale_price'] * (1 + (user?.oper_trx_fee ?? 0)) * (1 + (user?.seller_trx_fee ?? 0))).toFixed(6))) / 1000) * 1000)} (본사)
                     </div>
                   </>
               }
               {
                 user?.level == 10 && row?.seller_id > 0 &&
                 <>
-                  <div onClick={() => { console.log(row) }}>
+                  <div /*onClick={() => { console.log(row) }}*/>
                     {commarNumber(row['seller_price'])} (셀러)
                   </div>
                 </>
@@ -410,7 +410,8 @@ const ProductList = () => {
                           ...popup,
                           type: 2,
                           seller_product_id: row?.seller_product_id,
-                          seller_price: row?.product_sale_price * (1 + (user?.oper_trx_fee ?? 0)) * (1 + user?.seller_trx_fee)
+                          //여기의 가격은 개별로 셀러가 설정하기에 반올림 설정 안했음
+                          seller_price: row?.product_sale_price * (1 + (user?.oper_trx_fee ?? 0)) * (1 + (user?.seller_trx_fee ?? 0))
                         });
                       }} />
                     </IconButton>
@@ -432,7 +433,8 @@ const ProductList = () => {
                           ...popup,
                           type: 1,
                           id: row?.id,
-                          seller_price: row?.product_sale_price * (1 + (user?.oper_trx_fee ?? 0)) * (1 + user?.seller_trx_fee)
+                          //여기의 가격은 개별로 셀러가 설정하기에 반올림 설정 안했음
+                          seller_price: row?.product_sale_price * (1 + (user?.oper_trx_fee ?? 0)) * (1 + (user?.seller_trx_fee ?? 0))
                         });
                       }} />
                     </IconButton>
@@ -1017,6 +1019,8 @@ const ProductList = () => {
                 셀러몰에 모든 상품을 일괄 등록합니다.
                 <br />
                 상품가격에 적용할 퍼센트를 설정해주세요.
+                <br />
+                적용된 가격에서 1000원 단위 이하는 반올림 처리됩니다.
                 <br />
                 <br />
                 예{')'} 0.1로 입력할 시 본사가격의 10%가 추가됩니다.

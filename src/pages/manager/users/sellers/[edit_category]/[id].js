@@ -144,7 +144,7 @@ const SellerEdit = () => {
       e_dt: '',
       search: '',
       category_id: null,
-      is_agent: user?.level >= 40 ? 1 : /*user?.level == 20 ? 2 :*/ '',
+      is_agent: user?.level >= 20 ? 1 : /*user?.level == 20 ? 2 :*/ '',
     })
     if (agent_data) {
       setAgents(agent_data.content)
@@ -462,12 +462,12 @@ const SellerEdit = () => {
                       <Stack spacing={1}>
                         <FormControl>
                           <InputLabel>
-                            {user?.level >= 40 ? '영업자선택' : `영업자 : ${user?.name}`}
+                            {user?.level >= 20 ? '영업자선택' : `영업자 : ${user?.name}`}
                           </InputLabel>
                           <Select
                             label='영업자선택'
                             value={item.oper_id}
-                            disabled={user?.level >= 40 ? false : true}
+                            disabled={user?.level >= 20 ? false : true}
                             onChange={e => {
                               setItem({
                                 ...item,

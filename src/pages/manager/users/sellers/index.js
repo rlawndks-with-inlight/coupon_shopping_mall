@@ -228,7 +228,7 @@ const SellerList = () => {
             columns={columns}
             searchObj={searchObj}
             onChangePage={onChangePage}
-            add_button_text={user?.level >= 20 ? '셀러 추가' : ''}
+            add_button_text={user?.level >= 15 ? '셀러 추가' : ''}
           />
         </Card>
       </Stack>

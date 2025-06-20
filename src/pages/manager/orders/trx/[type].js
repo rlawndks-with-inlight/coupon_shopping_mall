@@ -100,13 +100,19 @@ const TrxList = () => {
         id: 'seller_mall',
         label: '셀러몰',
         action: (row) => {
-          return <div
-            style={{ cursor: `${user?.level >= 40 ? 'pointer' : ''}`, color: `${user?.level >= 40 ? 'blue' : ''}` }}
-            onClick={() => {
-              console.log(row)
-            }}
-          >
-            {`${row['seller_user_name']}(${row['seller_dns']})` ?? '---'}
+          return <div style={{ display: 'flex' }}>
+            <div>
+              {`${row['seller_user_name']}`}
+            </div>
+            <div
+              style={{ cursor: `${user?.level >= 40 ? 'pointer' : ''}`, color: `${user?.level >= 40 ? 'blue' : ''}` }}
+              onClick={() => {
+                //console.log(row)
+                window.open(`https://${row['seller_dns']}`)
+              }}
+            >
+              {`(${row['seller_dns']})` ?? '---'}
+            </div>
           </div>
         },
         sx: (row) => {

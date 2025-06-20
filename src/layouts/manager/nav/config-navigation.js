@@ -139,41 +139,41 @@ export const navConfig = () => {
         ]
       }
     ] : []),
-    ...(user?.level != 20 && user?.level != 15 ? [
-      {
-        items: [
-          {
-            title: '주문관리',
-            path: PATH_MANAGER.orders.trx + '/all',//PATH_MANAGER.orders.root,
-            icon: ICONS.ecommerce,
-            children: [
-              {
-                title: '주문관리', path: PATH_MANAGER.orders.trx + '/all',
-                children: [
-                  { title: '전체', path: PATH_MANAGER.orders.trx + '/all' },
-                  { title: '결제대기', path: PATH_MANAGER.orders.trx + '/0' },
-                  { title: '결제완료', path: PATH_MANAGER.orders.trx + '/5' },
-                  ...(themeDnsData?.id != 5 ?
-                    [{ title: '입고완료', path: PATH_MANAGER.orders.trx + '/10' },
-                    { title: '출고완료', path: PATH_MANAGER.orders.trx + '/15' }]
-                    : []
-                  ),
-                  { title: '배송중', path: PATH_MANAGER.orders.trx + '/20' },
-                  { title: '배송완료', path: PATH_MANAGER.orders.trx + '/25' },
-                ],
-              },
-              {
-                title: '주문취소관리', path: PATH_MANAGER.orders.trxCancel + '/1',
-                children: [
-                  { title: '취소요청', path: PATH_MANAGER.orders.trxCancel + '/1' },
-                  { title: '취소완료', path: PATH_MANAGER.orders.trxCancel + '/2' },
-                ],
-              },
-            ],
-          },
-        ],
-      },
-    ] : []),
+
+    {
+      items: [
+        {
+          title: '주문관리',
+          path: PATH_MANAGER.orders.trx + '/all',//PATH_MANAGER.orders.root,
+          icon: ICONS.ecommerce,
+          children: [
+            {
+              title: '주문관리', path: PATH_MANAGER.orders.trx + '/all',
+              children: [
+                { title: '전체', path: PATH_MANAGER.orders.trx + '/all' },
+                { title: '결제대기', path: PATH_MANAGER.orders.trx + '/0' },
+                { title: '결제완료', path: PATH_MANAGER.orders.trx + '/5' },
+                ...(themeDnsData?.id != 5 ?
+                  [{ title: '입고완료', path: PATH_MANAGER.orders.trx + '/10' },
+                  { title: '출고완료', path: PATH_MANAGER.orders.trx + '/15' }]
+                  : []
+                ),
+                { title: '배송중', path: PATH_MANAGER.orders.trx + '/20' },
+                { title: '배송완료', path: PATH_MANAGER.orders.trx + '/25' },
+              ],
+            },
+            {
+              title: '주문취소관리', path: PATH_MANAGER.orders.trxCancel + '/1',
+              children: [
+                { title: '취소요청', path: PATH_MANAGER.orders.trxCancel + '/1' },
+                { title: '취소완료', path: PATH_MANAGER.orders.trxCancel + '/2' },
+              ],
+            },
+          ],
+        },
+      ],
+    },
+
     {
       items: [
         {

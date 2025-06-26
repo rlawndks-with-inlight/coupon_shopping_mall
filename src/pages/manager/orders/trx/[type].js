@@ -95,7 +95,7 @@ const TrxList = () => {
         }
       },
     },*/
-    ...(themeDnsData?.setting_obj?.is_use_seller > 0 && user?.level >= 40 ? [
+    ...(themeDnsData?.setting_obj?.is_use_seller > 0 && user?.level >= 15 ? [
       {
         id: 'seller_mall',
         label: '셀러몰',
@@ -366,7 +366,7 @@ const TrxList = () => {
       id: 'addr',
       label: '주소',
       action: (row) => {
-        return <Col onClick={() => { console.log(row) }}>
+        return <Col onClick={() => { /*console.log(row)*/ }}>
 
           <div>{row['addr'] ?? "---"}</div>
           <div>{row['detail_addr'] ?? ""}</div>
@@ -623,7 +623,7 @@ const TrxList = () => {
       id,
       value,
     })
-    console.log(result)
+    /*console.log(result)*/
   }
   const onChangeInvoice = () => {
 

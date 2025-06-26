@@ -61,8 +61,8 @@ export const DashboardDemo4 = () => {
         setSearchObj(search_obj);
         let result = await apiManager(`dashboards`, 'list', search_obj);
         setData(result);
-        let adjust_result = await apiManager(`seller-adjustments`, 'list', { ...search_obj, state: '0' })
-        setAdjustData(adjust_result)
+        //let adjust_result = await apiManager(`seller-adjustments`, 'list', { ...search_obj, state: '0' })
+        //setAdjustData(adjust_result)
         //console.log(adjust_result)
     }
 
@@ -209,17 +209,21 @@ export const DashboardDemo4 = () => {
                             <Grid item xs={12} md={12}>
                                 <Typography variant="subtitle1" >주문관리</Typography>
                             </Grid>
-                            <Grid item xs={12} md={12}>
-                                <Typography variant="subtitle1" >기간 매출액 : {commarNumber(amountSum)} 원</Typography>
-                                {
-                                    user?.level == 10 ?
-                                        <>
-                                            <Typography variant="subtitle1" >기간 실수익 : {commarNumber(amountSum - agentAmountSum - (amountSum * 0.15))} 원</Typography>
-                                        </>
-                                        :
-                                        ''
-                                }
-                            </Grid>
+                            {
+                                /*
+                                                            <Grid item xs={12} md={12}>
+                                                            <Typography variant="subtitle1" >기간 매출액 : {commarNumber(amountSum)} 원</Typography>
+                                                            {
+                                                                user?.level == 10 ?
+                                                                    <>
+                                                                        <Typography variant="subtitle1" >기간 실수익 : {commarNumber(amountSum - agentAmountSum - (amountSum * 0.15))} 원</Typography>
+                                                                    </>
+                                                                    :
+                                                                    ''
+                                                            }
+                                                        </Grid>
+                                */
+                            }
                             <Grid item xs={12} md={3}>
                                 <AppWidget
                                     title="결제대기"
@@ -422,7 +426,7 @@ export const DashboardDemo4 = () => {
                             </Grid>
                         </>
                     }
-                    {
+                    {/*
                         themeDnsData?.setting_obj?.is_use_seller > 0 && user?.level >= 40 ?
                             <>
                                 <Grid item xs={12} md={12}>
@@ -450,21 +454,21 @@ export const DashboardDemo4 = () => {
                                 </Grid>
                                 <Grid item xs={12} md={12}>
                                     <Row style={{ alignItems: 'center', width: '100%', justifyContent: 'space-between', maxWidth: `300px` }}>
-                                        <Button variant="outlined" style={{ cursor: 'pointer' }} onClick={() => { sellerAdjustment(); /*setWaiting(true);*/ }}>
+                                        <Button variant="outlined" style={{ cursor: 'pointer' }} onClick={() => { sellerAdjustment(); setWaiting(true);}}>
                                             누적매출 정산요청
                                         </Button>
                                     </Row>
-                                    {/*
+                                    {
                                     waiting &&
                                     <>
                                         <Row style={{ alignItems: 'center', width: '100%', justifyContent: 'space-between', marginTop: '1rem', maxWidth: `300px` }}>
                                             누적매출 금액을 계산 중입니다...
                                         </Row>
                                     </>
-                                */}
+                                }
                                 </Grid>
                             </>
-                    }
+                    */}
                     <Dialog
                         open={adjustPopup}
                     >

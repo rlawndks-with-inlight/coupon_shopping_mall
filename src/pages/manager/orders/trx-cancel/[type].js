@@ -12,10 +12,12 @@ import { apiManager, apiUtil } from "src/utils/api";
 import { useSettingsContext } from "src/components/settings";
 import { cancelTypeList, paymentModuleTypeList } from "src/utils/format";
 import { sha256 } from "js-sha256";
+import { useAuthContext } from "src/layouts/manager/auth/useAuthContext";
 
 const TrxCancelList = () => {
   const { setModal } = useModal()
   const { themeDnsData } = useSettingsContext();
+  const { user } = useAuthContext()
   const defaultColumns = [
     {
       id: 'appr_num',
@@ -29,7 +31,7 @@ const TrxCancelList = () => {
         }
       },
     },
-    {
+    /*{
       id: 'card_num',
       label: '카드번호',
       action: (row) => {
@@ -40,7 +42,34 @@ const TrxCancelList = () => {
           color: `${row?.is_cancel == 1 ? 'red' : ''}`
         }
       },
-    },
+    },*/
+    ...(themeDnsData?.setting_obj?.is_use_seller > 0 && user?.level >= 15 ? [
+      {
+        id: 'seller_mall',
+        label: '셀러몰',
+        action: (row) => {
+          return <div style={{ display: 'flex' }}>
+            <div>
+              {`${row['seller_user_name']}`}
+            </div>
+            <div
+              style={{ cursor: `${user?.level >= 40 ? 'pointer' : ''}`, color: `${user?.level >= 40 ? 'blue' : ''}` }}
+              onClick={() => {
+                //console.log(row)
+                window.open(`https://${row['seller_dns']}`)
+              }}
+            >
+              {`(${row['seller_dns']})` ?? '---'}
+            </div>
+          </div>
+        },
+        sx: (row) => {
+          return {
+            color: `${row?.is_cancel == 1 ? 'red' : ''}`
+          }
+        },
+      },
+    ] : []),
     {
       id: 'buyer_name',
       label: '구매자명',
@@ -182,7 +211,7 @@ const TrxCancelList = () => {
         }
       },
     },
-    {
+    /*{
       id: 'invoice_num',
       label: '송장번호',
       action: (row) => {
@@ -212,7 +241,7 @@ const TrxCancelList = () => {
           color: `${row?.is_cancel == 1 ? 'red' : ''}`
         }
       },
-    },
+    },*/
     {
       id: 'created_at',
       label: '결제취소',

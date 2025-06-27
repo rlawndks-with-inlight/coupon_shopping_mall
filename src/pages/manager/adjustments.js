@@ -169,7 +169,7 @@ const Adjustments = () => {
             action: (row) => {
                 return <div style={{ display: 'flex' }} /*onClick={() => { console.log(searchObj) }}*/>
                     {searchObj?.state == 0 ?
-                        `${row['total_amount'] - row['total_card'] - row['total_agent'] - row['total_seller']}`
+                        `${row['total_amount'] - row['total_agent'] - row['total_seller']}`
                         :
                         searchObj?.state == 1 ?
                             `${row['total_agent']}`
@@ -201,23 +201,7 @@ const Adjustments = () => {
                 }
             }
         },
-        ...((searchObj?.state == 1 || searchObj?.state == 2) ? [
-            {
-                id: 'amount_sum',
-                label: '본사수수료',
-                action: (row) => {
-                    return <div style={{ display: 'flex' }}>
-                        {`${row['total_amount'] - row['total_card'] - row['total_agent'] - row['total_seller']}`}원
-                    </div>
-                },
-                sx: (row) => {
-                    return {
-                        //color: `${row?.is_cancel == 1 ? 'red' : ''}`
-                    }
-                }
-            },
-        ] : []),
-        ...((searchObj?.state == 0 || searchObj?.state == 2) ? [
+        ...((searchObj?.state == 0) ? [
             {
                 id: 'amount_sum',
                 label: '영업자수수료',
@@ -370,6 +354,7 @@ const Adjustments = () => {
                             searchObj={searchObj}
                             onChangePage={onChangePage}
                             add_button_text={''}
+                            type={'adjustment'}
                         //minimal
                         />
                     </Card>

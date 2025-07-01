@@ -65,20 +65,21 @@ const Adjustments = () => {
         }
     }, [themeDnsData])
 
-    useEffect(() => {
-        onChangePage(searchObj)
-        //onChangeAmountSum(data)
-
-    }, [searchObj])
 
     const onChangePage = async (search_obj) => {
         setSearchObj(search_obj);
+        //setColumns(defaultColumns)
         //let result = await apiManager(`dashboards`, 'list', search_obj);
         //setData(result);
+        setData({
+            ...data,
+            content: undefined
+        });
         let adjust_result = await apiManager(`seller-adjustments`, 'list', search_obj)
-        setData(adjust_result)
-        setColumns(defaultColumns)
-        console.log(adjust_result)
+        if (adjust_result) {
+            setData(adjust_result)
+            //console.log(adjust_result)
+        }
     }
 
     const onChangeAmountSum = async (data) => {
@@ -164,7 +165,7 @@ const Adjustments = () => {
             }
         },
         {
-            id: 'amount_sum',
+            id: 'adjustment_sum',
             label: '정산금액',
             action: (row) => {
                 return <div style={{ display: 'flex' }} /*onClick={() => { console.log(searchObj) }}*/>
@@ -203,7 +204,7 @@ const Adjustments = () => {
         },
         ...((searchObj?.state == 0) ? [
             {
-                id: 'amount_sum',
+                id: 'agent_sum',
                 label: '영업자수수료',
                 action: (row) => {
                     return <div style={{ display: 'flex' }}>
@@ -219,7 +220,7 @@ const Adjustments = () => {
         ] : []),
         ...((searchObj?.state == 0 || searchObj?.state == 1) ? [
             {
-                id: 'amount_sum',
+                id: 'seller_sum',
                 label: '셀러수수료',
                 action: (row) => {
                     return <div style={{ display: 'flex' }}>
@@ -234,7 +235,7 @@ const Adjustments = () => {
             },
         ] : []),
         {
-            id: 'amount_sum',
+            id: 'card_sum',
             label: '카드수수료',
             action: (row) => {
                 return <div style={{ display: 'flex' }}>

@@ -55,7 +55,7 @@ export const DashboardDemo4 = () => {
         onChangeAmountSum(data)
         //console.log(user)
         //console.log(data)
-    }, [data])
+    }, [searchObj])
 
     const onChangePage = async (search_obj) => {
         setSearchObj(search_obj);

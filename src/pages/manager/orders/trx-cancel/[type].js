@@ -242,7 +242,7 @@ const TrxCancelList = () => {
         }
       },
     },*/
-    {
+    /*{
       id: 'created_at',
       label: '결제취소',
       action: (row) => {
@@ -268,7 +268,7 @@ const TrxCancelList = () => {
           color: `${row?.is_cancel == 1 ? 'red' : ''}`
         }
       },
-    },
+    },*/
     {
       id: 'edit',
       label: `수정/삭제`,

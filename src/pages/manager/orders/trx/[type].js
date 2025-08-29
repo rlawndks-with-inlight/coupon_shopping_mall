@@ -444,7 +444,7 @@ const TrxList = () => {
         }
       },
     },
-    {
+    /*{
       id: 'created_at',
       label: '결제취소',
       action: (row) => {
@@ -470,7 +470,7 @@ const TrxList = () => {
           color: `${row?.is_cancel == 1 ? 'red' : ''}`
         }
       },
-    },
+    },*/
     ...(themeDnsData?.id == 34 || themeDnsData?.id == 64 || themeDnsData?.id == 84 ? [
       {
         id: 'edit',
@@ -580,7 +580,6 @@ const TrxList = () => {
 
     const ymd = new Date().toISOString().split('T')[0].replace(/-/g, '');
     const his = new Date().toISOString().split('T')[1].slice(0, 8).replace(/:/g, '');
-
     if (item.trx_method != 4) {
       let obj = {
         trx_id: item?.trx_id,

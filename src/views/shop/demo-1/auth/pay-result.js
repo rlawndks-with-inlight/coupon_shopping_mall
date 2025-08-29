@@ -58,14 +58,14 @@ const PayResultDemo = (props) => {
   return (
     <>
       <Wrappers>
-        <Title>{getResultContent(router.query?.type).title}</Title>
+        <Title>{getResultContent(router.query?.result_cd/*type */).title}</Title>
         <Grid container spacing={3}>
           <Grid item xs={12} md={12}>
             <Card>
               <Col style={{ minHeight: '18rem' }}>
                 <Logo />
                 <div style={{ margin: 'auto' }}>
-                  {getResultContent(router.query?.type).icon}
+                  {getResultContent(router.query?.result_cd/*type */).icon}
                 </div>
                 {router.query?.ord_num &&
                   <Row style={{ margin: '1rem auto auto auto', columnGap: '1rem' }}>

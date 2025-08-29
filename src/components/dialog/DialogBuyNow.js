@@ -103,6 +103,7 @@ const DialogBuyNow = (props) => {
       onChangeAddressPage(addressSearchObj)
     }
     setPayList(themeDnsData?.payment_modules)
+    //console.log(themeDnsData)
   }, [])
   useEffect(() => {
     //console.log(payData)

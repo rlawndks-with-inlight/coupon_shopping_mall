@@ -65,7 +65,7 @@ ProductDetailsSummary.propTypes = {
 export default function ProductDetailsSummary({ product, onAddCart, onGotoStep, ...other }) {
   const router = useRouter();
   const { translate, currentLang } = useLocales();
-  const { themeCartData, onChangeCartData, themeDirection } = useSettingsContext();
+  const { themeDnsData, themeCartData, onChangeCartData, themeDirection } = useSettingsContext();
 
   const { user } = useAuthContext();
   const [selectProductGroups, setSelectProductGroups] = useState({
@@ -261,6 +261,8 @@ export default function ProductDetailsSummary({ product, onAddCart, onGotoStep, 
             </Button>
             <Button fullWidth disabled={getProductStatus(status).color != 'info' || !(product_sale_price > 0)} size="large" variant="contained" onClick={() => {
               if (user) {
+                setBuyOpen(true);
+              } else if (themeDnsData?.id == 93) {
                 setBuyOpen(true);
               } else {
                 toast.error('로그인을 해주세요.')

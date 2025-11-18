@@ -39,7 +39,7 @@ const HomeDemo = (props) => {
   return (
     <>
       <Dialog fullScreen open={loading}>
-        <img src={'/images/gifs/grandpris-loading.gif'} style={{ width: '100px', margin: 'auto' }} />
+        {/*<img src={'/images/gifs/grandpris-loading.gif'} style={{ width: '100px', margin: 'auto' }} /> */}
       </Dialog>
       <HomeDemo1 {...props} type={1} />
       <div>

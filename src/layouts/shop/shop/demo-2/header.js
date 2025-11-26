@@ -752,7 +752,7 @@ const Header = () => {
               </>
             ))}
           </TreeView>
-          {
+          {/*
             postCategories.length > 0 &&
             <>
               <ColumnMenuTitle>{translate('고객센터')}</ColumnMenuTitle>
@@ -765,7 +765,7 @@ const Header = () => {
                 setSideMenuOpen(false);
               }} style={{ paddingLeft: '1rem' }}>{formatLang(item, 'post_category_title', currentLang)}</ColumnMenuContent>
             </>
-          ))}
+          ))*/}
           <ColumnMenuTitle>마이페이지</ColumnMenuTitle>
           {user ?
             <>

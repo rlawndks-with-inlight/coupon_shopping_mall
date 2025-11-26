@@ -72,7 +72,7 @@ export const Item1 = (props) => {
 
     const { currentLang, translate } = useLocales();
     const { user } = useAuthContext();
-    const { themeWishData, onChangeWishData } = useSettingsContext();
+    const { themeWishData, onChangeWishData, themeDnsData } = useSettingsContext();
     const { item, router, theme_css, seller } = props;
     const [itemThemeCss, setItemThemeCss] = useState(itemThemeCssDefaultSetting);
     useEffect(() => {
@@ -122,19 +122,28 @@ export const Item1 = (props) => {
                     <ItemPrice style={{
                         marginTop: 'auto'
                     }}>
-                        {item.product_sale_price < item.product_price &&
-                            <>
-                                <div style={{ color: 'red', marginRight: '0.25rem' }}>
-                                    {commarNumber((item.product_price - item.product_sale_price) * 100 / item.product_price) + '%'}
-                                </div>
-                            </>}
-                        <div>{commarNumber(setProductPriceByLang(item, 'product_sale_price', item?.price_lang, currentLang?.value))} {getPriceUnitByLang(currentLang?.value)}</div>
-                        {item.product_sale_price < item.product_price &&
-                            <>
-                                <div style={{ textDecoration: 'line-through', marginLeft: '0.25rem', fontSize: themeObj.font_size.size7, color: themeObj.grey[500] }}>
-                                    {item.product_sale_price < item.product_price ? commarNumber(setProductPriceByLang(item, 'product_price', item?.price_lang, currentLang?.value)) : ''}
-                                </div>
-                            </>}
+                        {
+                            themeDnsData?.id == 95 && item?.product_sale_price > 99999 ?
+                                <>
+                                    <div>별도 문의 필요</div>
+                                </>
+                                :
+                                <>
+                                    {item.product_sale_price < item.product_price &&
+                                        <>
+                                            <div style={{ color: 'red', marginRight: '0.25rem' }}>
+                                                {commarNumber((item.product_price - item.product_sale_price) * 100 / item.product_price) + '%'}
+                                            </div>
+                                        </>}
+                                    <div>{commarNumber(setProductPriceByLang(item, 'product_sale_price', item?.price_lang, currentLang?.value))} {getPriceUnitByLang(currentLang?.value)}</div>
+                                    {item.product_sale_price < item.product_price &&
+                                        <>
+                                            <div style={{ textDecoration: 'line-through', marginLeft: '0.25rem', fontSize: themeObj.font_size.size7, color: themeObj.grey[500] }}>
+                                                {item.product_sale_price < item.product_price ? commarNumber(setProductPriceByLang(item, 'product_price', item?.price_lang, currentLang?.value)) : ''}
+                                            </div>
+                                        </>}
+                                </>
+                        }
                     </ItemPrice>
                 </ItemTextContainer>
             </ItemContainer>

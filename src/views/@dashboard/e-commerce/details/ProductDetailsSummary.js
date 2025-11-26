@@ -156,128 +156,165 @@ export default function ProductDetailsSummary({ product, onAddCart, onGotoStep, 
                 ({commarNumber(product_average_scope)})
               </Typography>
             </Stack>
-            <Typography variant="h4">
-              {product_price > product_sale_price && (
-                <Box
-                  component="span"
-                  sx={{ color: 'text.disabled', textDecoration: 'line-through', mr: 0.5 }}
-                >
-                  {fCurrency(setProductPriceByLang(product, 'product_price', price_lang, currentLang?.value))}
-                </Box>
-              )}
-              {commarNumber(setProductPriceByLang(product, 'product_sale_price', price_lang, currentLang?.value))} {getPriceUnitByLang(currentLang?.value)}
-            </Typography>
-            <Typography variant="h7" color={themeObj.grey[500]}>{translate('배송비')}: {commarNumber(setProductPriceByLang(product, 'delivery_fee', price_lang, currentLang?.value))}{getPriceUnitByLang(currentLang?.value)}</Typography>
+            {
+              themeDnsData?.id == 95 && product_sale_price > 99999 ?
+                <>
+                </>
+                :
+                <>
+                  <Typography variant="h4">
+                    {product_price > product_sale_price && (
+                      <Box
+                        component="span"
+                        sx={{ color: 'text.disabled', textDecoration: 'line-through', mr: 0.5 }}
+                      >
+                        {fCurrency(setProductPriceByLang(product, 'product_price', price_lang, currentLang?.value))}
+                      </Box>
+                    )}
+                    {commarNumber(setProductPriceByLang(product, 'product_sale_price', price_lang, currentLang?.value))} {getPriceUnitByLang(currentLang?.value)}
+                  </Typography>
+                  <Typography variant="h7" color={themeObj.grey[500]}>{translate('배송비')}: {commarNumber(setProductPriceByLang(product, 'delivery_fee', price_lang, currentLang?.value))}{getPriceUnitByLang(currentLang?.value)}</Typography>
+                  {
+                    themeDnsData?.id == 95 && product_sale_price < 100000 &&
+                    <>
+                      <Typography variant="h7" style={{ color: 'black' }}>⚠️결제 시 주의사항⚠️</Typography>
+                      <Typography variant="h7" style={{ color: 'black' }}>주말 및 공휴일은 카드 결제 시 카드 취소 불가로,</Typography>
+                      <Typography variant="h7" style={{ color: 'black' }}>카드 수수료 12% 제외 후 계좌이체로 환불이 진행됩니다</Typography>
+                    </>
+                  }
+                </>
+            }
           </Stack>
           <Divider sx={{ borderStyle: 'dashed' }} />
-          {groups.map((group) => (
-            <>
-              <Stack direction="row" justifyContent="space-between">
-                <Typography variant="subtitle2" sx={{ height: 40, lineHeight: '40px', flexGrow: 1 }}>
-                  {group?.group_name}
-                </Typography>
-                <FormControl size='small'>
-                  <InputLabel id="demo-simple-select-label">{translate('선택')}</InputLabel>
-                  <Select
-                    name="size"
-                    size="small"
-                    sx={{
-                      minWidth: 96,
-                      '& .MuiFormHelperText-root': {
-                        mx: 0,
-                        mt: 1,
-                        textAlign: 'right',
-                      },
-                    }}
-                    label={translate("선택")}
-                    onChange={(e) => {
-                      onSelectOption(group, e.target.value)
-                    }}
-                  >
-                    {group?.options && group?.options.map((option) => (
-                      <MenuItem key={option?.option_name} value={option}>
-                        {option?.option_name}
-                        {(option?.option_price > 0 || option?.option_price < 0) ? ` (${option?.option_price > 0 ? '+' : ''}${commarNumber(setProductPriceByLang(option, 'option_price', price_lang, currentLang?.value))})` : ''}
-                      </MenuItem>
-                    ))}
-                  </Select>
-                </FormControl>
-              </Stack>
-            </>
-          ))}
-          <Stack direction="row" justifyContent="space-between">
-            <Typography variant="subtitle2" sx={{ height: 36, lineHeight: '36px' }}>
-              {translate('수량')}
-            </Typography>
+          {
+            themeDnsData?.id == 95 && product_sale_price > 99999 ?
+              <>
+              </>
+              :
+              <>
+                {groups.map((group) => (
+                  <>
+                    <Stack direction="row" justifyContent="space-between">
+                      <Typography variant="subtitle2" sx={{ height: 40, lineHeight: '40px', flexGrow: 1 }}>
+                        {group?.group_name}
+                      </Typography>
+                      <FormControl size='small'>
+                        <InputLabel id="demo-simple-select-label">{translate('선택')}</InputLabel>
+                        <Select
+                          name="size"
+                          size="small"
+                          sx={{
+                            minWidth: 96,
+                            '& .MuiFormHelperText-root': {
+                              mx: 0,
+                              mt: 1,
+                              textAlign: 'right',
+                            },
+                          }}
+                          label={translate("선택")}
+                          onChange={(e) => {
+                            onSelectOption(group, e.target.value)
+                          }}
+                        >
+                          {group?.options && group?.options.map((option) => (
+                            <MenuItem key={option?.option_name} value={option}>
+                              {option?.option_name}
+                              {(option?.option_price > 0 || option?.option_price < 0) ? ` (${option?.option_price > 0 ? '+' : ''}${commarNumber(setProductPriceByLang(option, 'option_price', price_lang, currentLang?.value))})` : ''}
+                            </MenuItem>
+                          ))}
+                        </Select>
+                      </FormControl>
+                    </Stack>
+                  </>
+                ))}
+              </>
+          }
+          {
+            themeDnsData?.id == 95 && product_sale_price > 99999 ?
+              <>
+                <Stack direction="row" justifyContent="space-between">
+                  <div>
+                    별도 문의가 필요한 상품입니다. 페이지 하단의 고객센터로 문의바랍니다.
+                  </div>
+                </Stack>
+              </>
+              :
+              <>
+                <Stack direction="row" justifyContent="space-between">
+                  <Typography variant="subtitle2" sx={{ height: 36, lineHeight: '36px' }}>
+                    {translate('수량')}
+                  </Typography>
 
-            <Stack spacing={1}>
-              <IncrementerButton
-                name="quantity"
-                quantity={selectProductGroups.count}
-                disabledDecrease={selectProductGroups.count <= 1}
-                disabledIncrease={selectProductGroups.count >= available}
-                type='product_page'
-                onIncrease={() => {
-                  setSelectProductGroups({
-                    ...selectProductGroups,
-                    count: selectProductGroups.count + 1
-                  })
-                }}
-                onDecrease={() => {
-                  setSelectProductGroups({
-                    ...selectProductGroups,
-                    count: selectProductGroups.count - 1
-                  })
-                }}
-                onChangeQuantity={(val) => {
-                  setSelectProductGroups({
-                    ...selectProductGroups,
-                    count: val
-                  })
-                }}
-              />
-              {/* <Typography
+                  <Stack spacing={1}>
+                    <IncrementerButton
+                      name="quantity"
+                      quantity={selectProductGroups.count}
+                      disabledDecrease={selectProductGroups.count <= 1}
+                      disabledIncrease={selectProductGroups.count >= available}
+                      type='product_page'
+                      onIncrease={() => {
+                        setSelectProductGroups({
+                          ...selectProductGroups,
+                          count: selectProductGroups.count + 1
+                        })
+                      }}
+                      onDecrease={() => {
+                        setSelectProductGroups({
+                          ...selectProductGroups,
+                          count: selectProductGroups.count - 1
+                        })
+                      }}
+                      onChangeQuantity={(val) => {
+                        setSelectProductGroups({
+                          ...selectProductGroups,
+                          count: val
+                        })
+                      }}
+                    />
+                    {/* <Typography
               variant="caption"
               component="div"
               sx={{ textAlign: 'right', color: 'text.secondary' }}
             >
               재고: ss ({commarNumber(inventory)})
             </Typography> */}
-            </Stack>
-          </Stack>
-          <Divider sx={{ borderStyle: 'dashed' }} />
-          <Stack direction="row" spacing={2}>
-            <Button
-              fullWidth
-              disabled={getProductStatus(status).color != 'info' || !(product_sale_price > 0)}
-              size="large"
-              color="warning"
-              variant="contained"
-              startIcon={<Iconify icon="ic:round-add-shopping-cart" />}
-              onClick={handleAddCart}
-              sx={{ whiteSpace: 'nowrap' }}
-            >
-              {translate('장바구니')}
-            </Button>
-            <Button fullWidth disabled={getProductStatus(status).color != 'info' || !(product_sale_price > 0)} size="large" variant="contained" onClick={() => {
-              if (user) {
-                setBuyOpen(true);
-              } else if (themeDnsData?.id == 93) {
-                setBuyOpen(true);
-              } else {
-                toast.error('로그인을 해주세요.')
-              }
-            }}>
-              {translate('바로구매')}
-            </Button>
-          </Stack>
-          <Stack direction="row" alignItems="center" justifyContent="center">
-            {[].map((social) => (
-              <IconButton key={social.name}>
-                <Iconify icon={social.icon} />
-              </IconButton>
-            ))}
-          </Stack>
+                  </Stack>
+                </Stack>
+                <Divider sx={{ borderStyle: 'dashed' }} />
+                <Stack direction="row" spacing={2}>
+                  <Button
+                    fullWidth
+                    disabled={getProductStatus(status).color != 'info' || !(product_sale_price > 0)}
+                    size="large"
+                    color="warning"
+                    variant="contained"
+                    startIcon={<Iconify icon="ic:round-add-shopping-cart" />}
+                    onClick={handleAddCart}
+                    sx={{ whiteSpace: 'nowrap' }}
+                  >
+                    {translate('장바구니')}
+                  </Button>
+                  <Button fullWidth disabled={getProductStatus(status).color != 'info' || !(product_sale_price > 0)} size="large" variant="contained" onClick={() => {
+                    if (user) {
+                      setBuyOpen(true);
+                    } else if (themeDnsData?.id == 93 || themeDnsData?.id == 95) {
+                      setBuyOpen(true);
+                    } else {
+                      toast.error('로그인을 해주세요.')
+                    }
+                  }}>
+                    {translate('바로구매')}
+                  </Button>
+                </Stack>
+                <Stack direction="row" alignItems="center" justifyContent="center">
+                  {[].map((social) => (
+                    <IconButton key={social.name}>
+                      <Iconify icon={social.icon} />
+                    </IconButton>
+                  ))}
+                </Stack>
+              </>
+          }
         </Stack>
       </form>
     </>

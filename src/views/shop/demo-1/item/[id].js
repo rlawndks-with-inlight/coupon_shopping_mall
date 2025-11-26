@@ -109,18 +109,38 @@ const ItemDemo = (props) => {
               {product && (
                 <>
                   <Grid container spacing={3}>
-                    <Grid item xs={12} md={6} lg={7}>
-                      <ProductDetailsCarousel product={product} />
-                    </Grid>
+                    {
+                      themeDnsData?.id != 95 ?
+                        <>
+                          <Grid item xs={12} md={6} lg={7}>
+                            <ProductDetailsCarousel product={product} />
+                          </Grid>
 
-                    <Grid item xs={12} md={6} lg={5}>
-                      <ProductDetailsSummary
-                        product={product}
-                        cart={""}
-                        onAddCart={() => { }}
-                        onGotoStep={() => { }}
-                      />
-                    </Grid>
+                          <Grid item xs={12} md={6} lg={5}>
+                            <ProductDetailsSummary
+                              product={product}
+                              cart={""}
+                              onAddCart={() => { }}
+                              onGotoStep={() => { }}
+                            />
+                          </Grid>
+                        </>
+                        :
+                        <>
+                          <Grid item xs={12} md={6} lg={4}>
+                            <ProductDetailsCarousel product={product} />
+                          </Grid>
+
+                          <Grid item xs={12} md={6} lg={8}>
+                            <ProductDetailsSummary
+                              product={product}
+                              cart={""}
+                              onAddCart={() => { }}
+                              onGotoStep={() => { }}
+                            />
+                          </Grid>
+                        </>
+                    }
                   </Grid>
                   <Card style={{
                     marginTop: '2rem'

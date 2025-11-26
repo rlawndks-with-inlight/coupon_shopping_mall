@@ -197,6 +197,13 @@ const DialogBuyNow = (props) => {
     } else if (item?.type == 'certification_fintree') {
       setBuyType('certification_fintree');
       setBuyStep(2)
+    } else if (item?.type == 'hand_oleuda') {
+      setBuyType('hand_oleuda');
+      setBuyStep(2);
+      setPayData({
+        ...payData,
+        payment_modules: item,
+      })
     } else if (item?.type == 'virtual_account') {
       setBuyType('virtual_account');
       let pay_data = await makePayData([{
@@ -559,7 +566,7 @@ const DialogBuyNow = (props) => {
               />
             </>
           }
-          {(buyStep == 2 && buyType == 'card') &&
+          {(buyStep == 2 && (buyType == 'card' || buyType == 'hand_oleuda')) &&
             <>
               <Typography variant='subtitle1' sx={{ borderBottom: `1px solid #000`, paddingBottom: '0.5rem', marginBottom: '0.5rem' }}>{_.find(payList, { type: buyType })?.title}</Typography>
               <Stack spacing={2}>

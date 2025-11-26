@@ -26,6 +26,7 @@ export const paymentModuleTypeList = [
     { label: '인증결제(페이베리)', value: 2 },
     { label: '수기결제(핀트리)', value: 3 },
     { label: '인증결제(핀트리)', value: 4 },
+    { label: '수기결제(오르다)', value: 5 },
     { label: '무통장입금', value: 10 },
     { label: '상품권결제', value: 11 },
     /*{ label: '수기결제(위루트)', value: 20 },*/

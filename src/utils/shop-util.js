@@ -158,7 +158,8 @@ export const onPayProductsByAuth = async (products_, payData_, type) => { // 인
         if (type == 'payvery') {
             window.open(`${process.env.NOTI_URL}/v2/pay/auth?${query}`);
         } else if (type == 'weroute') {
-            window.open(`https://api.routeup.kr/v2/pay/auth?${query}`);//window.open(`https://api.weroutefincorp.com/v2/pay/auth?${query}`);
+            //window.open(`https://api.routeup.kr/v2/pay/auth?${query}`);
+            window.open(`https://api.weroutefincorp.com/v2/pay/auth?${query}`);
         }
         //console.log(products_);
         //console.log(payData_)

@@ -65,7 +65,7 @@ const LoginDemo = (props) => {
       let user = await login(username, password, false, otp)
       if (user) {
         onChangeWishData(user?.wish_data ?? []);
-        router.push('/shop/auth/my-page')
+        router.push('/')
       }
     } catch (err) {
       toast.error(err?.message)

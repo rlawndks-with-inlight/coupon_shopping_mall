@@ -138,7 +138,8 @@ const CustomContent = forwardRef(function CustomContent(props, ref) {
 });
 
 function CustomTreeItem(props) {
-    return <StyledTreeItem ContentComponent={CustomContent} {...props} ContentProps={...props} />; / / 이거 왜 빨간줄 뜸 ?
+    return <StyledTreeItem ContentComponent={CustomContent} {...props} ContentProps={...props} />;
+    // 이거 왜 빨간줄 뜸 ?
 }
 const Wrappers = styled.div`
 width:100%;

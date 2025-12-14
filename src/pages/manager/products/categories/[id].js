@@ -211,7 +211,7 @@ const CategoryList = () => {
     const getCategoryGroups = async () => {
         let category_group_list = await apiManager('product-category-groups', 'list', {
             page: 1,
-            page_size: 100000,
+            page_size: 1000,
         });
         category_group_list = category_group_list?.content ?? [];
         let group = _.find(category_group_list, { id: parseInt(router.query?.id) });
@@ -224,7 +224,7 @@ const CategoryList = () => {
         setCategory(defaultSetting);
         let category_list = await apiManager('product-categories', 'list', {
             page: 1,
-            page_size: 100000,
+            page_size: 1000,
             product_category_group_id: router.query?.id
         })
         if (category_list) {

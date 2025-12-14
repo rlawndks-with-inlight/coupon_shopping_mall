@@ -58,7 +58,7 @@ const Demo5 = (props) => {
     const getArticleList = async (page, category_id) => {
         let inquiry_data = await apiShop('post', 'list', {
             page: page,
-            page_size: 100000,
+            page_size: 1000,
             category_id: category_id
         })
         setInquiryList(inquiry_data.content)

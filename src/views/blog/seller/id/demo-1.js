@@ -128,18 +128,18 @@ const Demo1 = (props) => {
     }, [])
 
     const pageSetting = async () => {
-        let seller_info = await apiManager('sellers','get',{
+        let seller_info = await apiManager('sellers', 'get', {
             id: router.query?.id
         })
         setSellerData(seller_info)
-        let products = await apiShop('product', 'list',{
+        let products = await apiShop('product', 'list', {
             page: 1,
-            page_size: 100000,
+            page_size: 1000,
             seller_id: router.query?.id
         })
         let category_list = [];
         for (var i = 0; i < products?.content.length; i++) {
-            let top_category_id = getDownToTopChildren(products?.content[i]?.category_id, themeCategoryList[0]?.product_categories??[]);
+            let top_category_id = getDownToTopChildren(products?.content[i]?.category_id, themeCategoryList[0]?.product_categories ?? []);
             if (!category_list.includes(top_category_id[0])) {
                 category_list.push(top_category_id[0]);
             }
@@ -264,7 +264,7 @@ const Demo1 = (props) => {
                 <ItemContainer>
                     {products.map((item, idx) => (
                         <>
-                            {(categoryId == 0 || getDownToTopChildren(item?.category_id, themeCategoryList[0]?.product_categories??[]).includes(categoryId)) &&
+                            {(categoryId == 0 || getDownToTopChildren(item?.category_id, themeCategoryList[0]?.product_categories ?? []).includes(categoryId)) &&
                                 <>
                                     <SellerItem router={router} item={item} onClickCartButton={onClickCartButton} />
                                 </>}

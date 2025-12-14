@@ -134,7 +134,7 @@ const Demo3 = (props) => {
         setSellerData(seller_info)
         let products = await apiShop('product', 'list', {
             page: 1,
-            page_size: 100000,
+            page_size: 1000,
             seller_id: router.query?.id
         })
         let category_list = [];

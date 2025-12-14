@@ -646,7 +646,7 @@ const MainObjSetting = props => {
       setSearchTextList(search_text_list)
       let product_content = await apiManager('products', 'list', {
         page: 1,
-        page_size: 100000,
+        page_size: 1000,
         search: value
       })
       let product_content_list = [...productContent?.content, ...product_content?.content]

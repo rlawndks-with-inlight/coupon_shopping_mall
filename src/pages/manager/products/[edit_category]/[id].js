@@ -190,7 +190,7 @@ export const SelectCategoryComponent = (props) => {
       try {
         const category_content = await apiManager('product-categories', 'list', {
           page: 1,
-          page_size: 100000,
+          page_size: 1000,
           product_category_group_id: id,
           search: value
         });

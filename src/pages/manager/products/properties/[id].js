@@ -138,7 +138,7 @@ const CustomContent = forwardRef(function CustomContent(props, ref) {
 });
 
 function CustomTreeItem(props) {
-    return <StyledTreeItem ContentComponent={CustomContent} {...props} ContentProps={...props} />; // 이거 왜 빨간줄 뜸?
+    return <StyledTreeItem ContentComponent={CustomContent} {...props} ContentProps={...props} />; / / 이거 왜 빨간줄 뜸 ?
 }
 const Wrappers = styled.div`
 width:100%;
@@ -168,7 +168,7 @@ const PropertyList = () => {
     const getPropertyGroups = async () => {
         let property_group_list = await apiManager('product-property-groups', 'list', {
             page: 1,
-            page_size: 100000,
+            page_size: 1000,
         });
         property_group_list = property_group_list?.content ?? [];
         let group = _.find(property_group_list, { id: parseInt(router.query?.id) });
@@ -181,7 +181,7 @@ const PropertyList = () => {
         setProperty(defaultSetting);
         let property_list = await apiManager('product-properties', 'list', {
             page: 1,
-            page_size: 100000,
+            page_size: 1000,
             product_property_group_id: router.query?.id
         })
         if (property_list) {

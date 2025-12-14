@@ -64,7 +64,7 @@ const DialogBuyNow = (props) => {
   const [selectAddress, setSelectAddress] = useState({});
   const [addressSearchObj, setAddressSearchObj] = useState({
     page: 1,
-    page_size: 10000,
+    page_size: 10,
     search: '',
     user_id: user?.id,
   })

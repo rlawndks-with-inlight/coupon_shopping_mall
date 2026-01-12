@@ -29,10 +29,11 @@ export const paymentModuleTypeList = [
     { label: '수기결제(오르다)', value: 5 },
     { label: '무통장입금', value: 10 },
     { label: '상품권결제', value: 11 },
-    /*{ label: '수기결제(위루트)', value: 20 },*/
+    //{ label: '수기결제(위루트)', value: 20 },
     { label: '인증결제(위루트)', value: 21 },
     { label: '인증결제(헥토)', value: 30 },
     { label: '휴대폰결제(헥토)', value: 31 },
+    //{ label: '인증결제(웨이업)', value: 41 },
 ]
 export const bankCodeList = [
     { value: '001', label: '한국은행', },

@@ -97,6 +97,7 @@ const ItemDemo = (props) => {
   const [unipassPopup, setUnipassPopup] = useState(false);
   const [unipass, setUnipass] = useState();
   const [reviewContent, setReviewContent] = useState({});
+  const [reviewLoading, setReviewLoading] = useState(false);
   const [selectProductGroups, setSelectProductGroups] = useState({
     count: 1,
     groups: [],
@@ -110,43 +111,48 @@ const ItemDemo = (props) => {
     }
   }, [themeDnsData])
 
+  // 상품 정보 로드 (최초 1회)
   useEffect(() => {
-    getItemInfo(1);
-  }, [])
+    getProductInfo();
+  }, [router.query?.id])
 
-  const getItemInfo = async (review_page) => {
+  // 리뷰 로드 (상품 로드 후 + 페이지 변경 시)
+  useEffect(() => {
+    if (product?.id) {
+      getReviewInfo(reviewPage);
+    }
+  }, [product?.id, reviewPage])
+
+  const getProductInfo = async () => {
+    if (!router.query?.id) return;
+
     if (themeDnsData?.id == 74) {
-      let data = { ...product };
-      data = await apiShop('product', 'get', {
+      let data = await apiShop('product', 'get', {
         id: router.query?.id,
         seller_id: themeDnsData?.seller_id ?? 0
       });
+      if (!data) {
+        setLoading(false);
+        return;
+      }
 
       let sub_image = data?.sub_images;
       let description_image = data?.sub_images;
 
       data['sub_images'] = (sub_image ?? []).map((img) => img?.product_sub_img).filter((img) => img !== null && img !== undefined)
-      /*if (data?.product_img) {  //메인이미지를 상세이미지에 추가하는 코드
-        data['sub_images'].unshift(data?.product_img)
-      }*/
-
       data['description_images'] = (description_image ?? []).map((img) => img?.product_description_img).filter((img) => img !== null && img !== undefined)
       data['images'] = data['sub_images'];
-      setReviewPage(review_page);
-      let review_data = await apiManager('product-reviews', 'list', {
-        page: review_page,
-        product_id: router.query?.id,
-        page_size: 10,
-      })
-      setReviewContent(review_data)
       setProduct(data);
       setLoading(false);
     }
     else {
-      let data = { ...product };
-      data = await apiShop('product', 'get', {
+      let data = await apiShop('product', 'get', {
         id: router.query?.id
       });
+      if (!data) {
+        setLoading(false);
+        return;
+      }
       data['sub_images'] = data['sub_images'].map((img) => {
         return img?.product_sub_img
       })
@@ -154,16 +160,24 @@ const ItemDemo = (props) => {
         data['sub_images'].unshift(data?.product_img)
       }
       data['images'] = data['sub_images'];
-      setReviewPage(review_page);
-      let review_data = await apiManager('product-reviews', 'list', {
-        page: review_page,
-        product_id: router.query?.id,
-        page_size: 10,
-      })
-      //setReviewContent(review_data)
       setProduct(data);
       setLoading(false);
     }
+  }
+
+  const getReviewInfo = async (page) => {
+    setReviewLoading(true);
+    let review_data = await apiManager('product-reviews', 'list', {
+      page: page,
+      product_id: router.query?.id,
+      page_size: 10,
+    })
+    setReviewContent(review_data);
+    setReviewLoading(false);
+  }
+
+  const onChangeReviewPage = (page) => {
+    setReviewPage(page);
   }
 
   const TABS = [
@@ -521,7 +535,7 @@ const ItemDemo = (props) => {
                   <Card style={{
                     marginTop: '2rem'
                   }}>
-                    <ProductDetailsReview product={product} reviewContent={reviewContent} onChangePage={getItemInfo} reviewPage={reviewPage} />
+                    <ProductDetailsReview product={product} reviewContent={reviewContent} onChangePage={onChangeReviewPage} reviewPage={reviewPage} reviewLoading={reviewLoading} />
                   </Card>
                   <Card style={{
                     marginTop: '2rem'

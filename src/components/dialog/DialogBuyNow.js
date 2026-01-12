@@ -38,6 +38,7 @@ import PayProductsByAuthHecto from 'src/utils/hecto-auth'
 import PayProductsByPhoneHecto from 'src/utils/hecto-phone'
 import PayProductsByAuthFintree from 'src/utils/fintree-auth'
 import PayProductsByHandFintree from 'src/utils/fintree-hand'
+import PayProductsByAuthWayup from 'src/utils/wayup-auth'
 
 const Iframe = styled.iframe`
 border: none;
@@ -204,6 +205,9 @@ const DialogBuyNow = (props) => {
         ...payData,
         payment_modules: item,
       })
+    } else if (item?.type == 'certification_wayup') {
+      setBuyType('certification_wayup');
+      setBuyStep(2)
     } else if (item?.type == 'virtual_account') {
       setBuyType('virtual_account');
       let pay_data = await makePayData([{
@@ -562,6 +566,14 @@ const DialogBuyNow = (props) => {
             buyStep == 2 && buyType == 'phone_hecto' &&
             <>
               <PayProductsByPhoneHecto
+                props={[product, payData]}
+              />
+            </>
+          }
+          {
+            buyStep == 2 && buyType == 'certification_wayup' &&
+            <>
+              <PayProductsByAuthWayup
                 props={[product, payData]}
               />
             </>

@@ -1,10 +1,9 @@
+import { memo, useState, useEffect, useCallback } from "react";
 import { useSettingsContext } from "src/components/settings";
 import { useAuthContext } from "src/layouts/manager/auth/useAuthContext";
 import { itemThemeCssDefaultSetting } from "src/views/manager/item-card/setting";
 import styled from "styled-components";
 import { PointerText, themeObj } from "../styled-components";
-import { useState } from "react";
-import { useEffect } from "react";
 import { IconButton } from "@mui/material";
 import { Icon } from "@iconify/react";
 import { commarNumber, getPriceUnitByLang, setProductPriceByLang } from "src/utils/function";
@@ -68,7 +67,7 @@ object-fit: contain;
 margin: auto;
 height: 100%;
 `
-export const Item1 = (props) => {
+export const Item1 = memo((props) => {
 
     const { currentLang, translate } = useLocales();
     const { user } = useAuthContext();
@@ -80,13 +79,13 @@ export const Item1 = (props) => {
             setItemThemeCss(theme_css)
         }
     }, [theme_css])
-    const onClickHeart = () => {
+    const onClickHeart = useCallback(() => {
         if (user) {
             insertWishDataUtil(item, themeWishData, onChangeWishData);
         } else {
             toast.error(<PointerText onClick={() => router.push('/shop/auth/login')}>{translate('로그인을 해주세요.')}</PointerText>);
         }
-    }
+    }, [user, item, themeWishData, onChangeWishData, router, translate])
     return (
         <>
             <ItemContainer style={{
@@ -149,7 +148,13 @@ export const Item1 = (props) => {
             </ItemContainer>
         </>
     )
-}
+}, (prevProps, nextProps) => {
+    // item의 id가 같으면 리렌더링 방지
+    return prevProps.item?.id === nextProps.item?.id &&
+           prevProps.theme_css === nextProps.theme_css &&
+           prevProps.seller?.id === nextProps.seller?.id;
+});
+
 const SellerContainer = styled.div`
 width:100%;
 display:flex;

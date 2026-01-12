@@ -24,6 +24,7 @@ import PayProductsByAuthHecto from 'src/utils/hecto-auth';
 import PayProductsByPhoneHecto from 'src/utils/hecto-phone';
 import PayProductsByAuthFintree from 'src/utils/fintree-auth';
 import PayProductsByHandFintree from 'src/utils/fintree-hand';
+import PayProductsByAuthWayup from 'src/utils/wayup-auth';
 
 const Wrappers = styled.div`
 max-width:720px;
@@ -748,6 +749,16 @@ const Cart2 = (props) => {
                                         <>
                                             <div style={{ margin: '2rem' }}>
                                                 <PayProductsByPhoneHecto
+                                                    props={[products, payData]}
+                                                />
+                                            </div>
+                                        </>
+                                    }
+                                    {
+                                        buyType == 'certification_wayup' &&
+                                        <>
+                                            <div style={{ margin: '2rem' }}>
+                                                <PayProductsByAuthWayup
                                                     props={[products, payData]}
                                                 />
                                             </div>

@@ -763,6 +763,16 @@ const CartDemo = (props) => {
                       </div>
                     </>
                   }
+                  {
+                    buyType == 'certification_wayup' &&
+                    <>
+                      <div style={{ margin: '2rem' }}>
+                        <PayProductsByAuthWayup
+                          props={[products, payData]}
+                        />
+                      </div>
+                    </>
+                  }
                 </Card>
               </>}
           </Grid>

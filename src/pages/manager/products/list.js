@@ -406,12 +406,13 @@ const ProductList = () => {
                   <>
                     <IconButton>
                       <Icon icon='material-symbols:content-copy-outline' onClick={() => {
+                        const agentPrice = Math.ceil(row?.product_sale_price * (1 + (user?.oper_trx_fee ?? 0)) * (1 + (user?.seller_trx_fee ?? 0)));
+                        setProductPrice(row?.seller_price ?? agentPrice);
                         setPopup({
                           ...popup,
                           type: 2,
                           seller_product_id: row?.seller_product_id,
-                          //여기의 가격은 개별로 셀러가 설정하기에 반올림 설정 안했음
-                          seller_price: row?.product_sale_price * (1 + (user?.oper_trx_fee ?? 0)) * (1 + (user?.seller_trx_fee ?? 0))
+                          seller_price: agentPrice
                         });
                       }} />
                     </IconButton>
@@ -429,12 +430,13 @@ const ProductList = () => {
                   <>
                     <IconButton>
                       <Icon icon='material-symbols:content-copy-outline' onClick={() => {
+                        const agentPrice = Math.ceil(row?.product_sale_price * (1 + (user?.oper_trx_fee ?? 0)) * (1 + (user?.seller_trx_fee ?? 0)));
+                        setProductPrice(agentPrice);
                         setPopup({
                           ...popup,
                           type: 1,
                           id: row?.id,
-                          //여기의 가격은 개별로 셀러가 설정하기에 반올림 설정 안했음
-                          seller_price: row?.product_sale_price * (1 + (user?.oper_trx_fee ?? 0)) * (1 + (user?.seller_trx_fee ?? 0))
+                          seller_price: agentPrice
                         });
                       }} />
                     </IconButton>

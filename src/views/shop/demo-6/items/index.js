@@ -104,6 +104,7 @@ const ItemsDemo = (props) => {
     router.query.category_id1,
     router.query.category_id2,
     router.query.search,
+    router.query.keyword,
     router.query.property_ids0,
     router.query.page,
     router.query.page_size,
@@ -129,7 +130,11 @@ const ItemsDemo = (props) => {
   };*/
 
   const getItemList = async (query_ = {}, search_obj_ = {}) => {
-    let query = query_;
+    let query = { ...query_ };
+    if (query.keyword && !query.search) {
+      query.search = query.keyword;
+    }
+    delete query.keyword;
     let search_obj = search_obj_;
 
     //console.log(query)

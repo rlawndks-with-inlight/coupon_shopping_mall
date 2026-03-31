@@ -229,7 +229,7 @@ const ItemDemo = (props) => {
   ];
   const handleAddCart = async () => {
     if (user) {
-      let result = await insertCartDataUtil({ ...product, seller_id: router.query?.seller_id ?? 0 }, selectProductGroups, themeCartData, onChangeCartData);
+      let result = await insertCartDataUtil({ ...product, seller_id: themeDnsData?.seller_id ?? router.query?.seller_id ?? 0 }, selectProductGroups, themeCartData, onChangeCartData);
       if (result) {
         toast.success("장바구니에 성공적으로 추가되었습니다.")
       }

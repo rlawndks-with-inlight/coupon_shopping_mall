@@ -24,6 +24,12 @@ const ReactQuill = dynamic(() => import('react-quill'), {
   loading: () => <p></p>,
 })
 
+const calcAgentPrice = (basePrice, user) => {
+  const afterOper = user?.oper_trx_fee_type == 1 ? basePrice + (user?.oper_trx_fee ?? 0) : basePrice * (1 + (user?.oper_trx_fee ?? 0));
+  const afterSeller = user?.seller_trx_fee_type == 1 ? afterOper + (user?.seller_trx_fee ?? 0) : afterOper * (1 + (user?.seller_trx_fee ?? 0));
+  return Math.round(Math.floor(Number(afterSeller.toFixed(6))) / 1000) * 1000;
+}
+
 const ProductList = () => {
 
   const { user } = useAuthContext();
@@ -134,7 +140,7 @@ const ProductList = () => {
                   :
                   <>
                     <div>
-                      {commarNumber(Math.round(Math.floor(Number((row['product_sale_price'] * (1 + (user?.oper_trx_fee ?? 0)) * (1 + (user?.seller_trx_fee ?? 0))).toFixed(6))) / 1000) * 1000)} (본사)
+                      {commarNumber(calcAgentPrice(row['product_sale_price'], user))} (본사)
                     </div>
                   </>
               }
@@ -406,7 +412,7 @@ const ProductList = () => {
                   <>
                     <IconButton>
                       <Icon icon='material-symbols:content-copy-outline' onClick={() => {
-                        const agentPrice = Math.ceil(row?.product_sale_price * (1 + (user?.oper_trx_fee ?? 0)) * (1 + (user?.seller_trx_fee ?? 0)));
+                        const agentPrice = calcAgentPrice(row?.product_sale_price, user);
                         setProductPrice(row?.seller_price ?? agentPrice);
                         setPopup({
                           ...popup,
@@ -430,7 +436,7 @@ const ProductList = () => {
                   <>
                     <IconButton>
                       <Icon icon='material-symbols:content-copy-outline' onClick={() => {
-                        const agentPrice = Math.ceil(row?.product_sale_price * (1 + (user?.oper_trx_fee ?? 0)) * (1 + (user?.seller_trx_fee ?? 0)));
+                        const agentPrice = calcAgentPrice(row?.product_sale_price, user);
                         setProductPrice(agentPrice);
                         setPopup({
                           ...popup,

@@ -62,6 +62,7 @@ const SellerEdit = () => {
     oper_id: '',
     oper_fee: '',
     seller_trx_fee: '',
+    seller_trx_fee_type: 0,
     seller_range_u: 0,
     seller_range_o: 0,
     seller_brand: '',
@@ -84,7 +85,7 @@ const SellerEdit = () => {
 
   const handleSelectCategory = (index, category) => {
     let ids = category.map(cat => cat.id);
-    ids = ids.join(', ')
+    ids = ids.join(',')
     if (index == 0) {
       setItem({
         ...item,
@@ -482,8 +483,21 @@ const SellerEdit = () => {
                         </FormControl>
                       </Stack>
                       <Stack spacing={3}>
+                        <FormControl fullWidth size="small">
+                          <InputLabel>수수료 유형</InputLabel>
+                          <Select
+                            label='수수료 유형'
+                            value={item.seller_trx_fee_type ?? 0}
+                            onChange={(e) => {
+                              setItem({ ...item, seller_trx_fee_type: e.target.value, seller_trx_fee: '' })
+                            }}
+                          >
+                            <MenuItem value={0}>비율 (%)</MenuItem>
+                            <MenuItem value={1}>건당 고정금액 (원)</MenuItem>
+                          </Select>
+                        </FormControl>
                         <TextField
-                          label='수수료율(예: 0.1로 입력할 시 10%)'
+                          label={item.seller_trx_fee_type == 1 ? '건당 수수료 (원, 예: 20000)' : '수수료율(예: 0.1로 입력할 시 10%)'}
                           value={item.seller_trx_fee}
                           type="number"
                           onChange={(e) => {
@@ -1042,8 +1056,21 @@ const SellerEdit = () => {
                 <Grid item xs={12} md={6}>
                   <Card sx={{ p: 2, height: '100%' }}>
                     <Stack spacing={3}>
+                      <FormControl fullWidth size="small">
+                        <InputLabel>수수료 유형</InputLabel>
+                        <Select
+                          label='수수료 유형'
+                          value={item.seller_trx_fee_type ?? 0}
+                          onChange={(e) => {
+                            setItem({ ...item, seller_trx_fee_type: e.target.value, seller_trx_fee: '' })
+                          }}
+                        >
+                          <MenuItem value={0}>비율 (%)</MenuItem>
+                          <MenuItem value={1}>건당 고정금액 (원)</MenuItem>
+                        </Select>
+                      </FormControl>
                       <TextField
-                        label='수수료률'
+                        label={item.seller_trx_fee_type == 1 ? '건당 수수료 (원, 예: 20000)' : '수수료율(예: 0.1로 입력할 시 10%)'}
                         value={item.seller_trx_fee}
                         type="number"
                         onChange={(e) => {

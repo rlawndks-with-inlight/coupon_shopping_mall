@@ -235,11 +235,7 @@ const CartDemo = (props) => {
       setActiveStep(2)
     } else if (item?.type == 'virtual_account') {
       setBuyType('virtual_account');
-      let pay_data = await makePayData([{
-        ...product_item,
-        groups: select_product_groups,
-        seller_id: router.query?.seller_id ?? 0,
-      }], payData);
+      let pay_data = await makePayData(products, payData);
       delete pay_data.payment_modules;
       let ord_num = `${pay_data?.user_id || pay_data?.password}${new Date().getTime().toString().substring(0, 11)}`;
       pay_data.ord_num = ord_num
@@ -255,11 +251,7 @@ const CartDemo = (props) => {
     }
     else if (item?.type == 'gift_certificate') {
       setBuyType('gift_certificate');
-      let pay_data = await makePayData([{
-        ...product_item,
-        groups: select_product_groups,
-        seller_id: router.query?.seller_id ?? 0,
-      }], payData);
+      let pay_data = await makePayData(products, payData);
       delete pay_data.payment_modules;
       let ord_num = `${pay_data?.user_id || pay_data?.password}${new Date().getTime().toString().substring(0, 11)}`;
       pay_data.ord_num = ord_num
@@ -274,11 +266,7 @@ const CartDemo = (props) => {
     else if (item?.type == 'certification_weroute') {
       setBuyType('certification_weroute');
       setPayLoading(true);
-      let result = await onPayProductsByAuth([{
-        ...product_item,
-        groups: select_product_groups,
-        seller_id: router.query?.seller_id ?? 0,
-      }], { ...payData, payment_modules: item }, 'weroute');
+      let result = await onPayProductsByAuth(products, { ...payData, payment_modules: item }, 'weroute');
     } else if (item?.type == 'card_hecto') {
       setBuyType('card_hecto');
       setActiveStep(2)

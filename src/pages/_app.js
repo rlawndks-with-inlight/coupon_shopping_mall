@@ -163,7 +163,24 @@ App.getInitialProps = async context => {
       seller_id = parseInt(route_list[3]);
     }
     if (host) {
-      const url = `${process.env.BACK_URL}/api/domain?dns=${host}&product_id=${product_id}&post_id=${post_id}&seller_id=${seller_id}`;
+      // 데모 프리뷰: ?demo=X 로 다른 브랜드 디자인 미리보기 (로컬 전용)
+      let dnsToQuery = host;
+      if (process.env.NEXT_PUBLIC_DEMO_PREVIEW === 'true') {
+        const demoMap = {
+          '1': 'jjpay.co.kr',
+          '2': 'shop.minbeautym.com',
+          '4': 'attending-income-flashers-alias.trycloudflare.com',
+          'blog1': 'bs-company.co.kr',
+          'blog2': 'hynet777.com',
+        };
+        if (ctx?.query?.demo && demoMap[ctx.query.demo]) {
+          dnsToQuery = demoMap[ctx.query.demo];
+        } else {
+          // demo 파라미터 없으면 클라이언트의 sessionStorage에서 복구하도록 빈 데이터 반환
+          return { head_data: {} };
+        }
+      }
+      const url = `${process.env.BACK_URL}/api/domain?dns=${dnsToQuery}&product_id=${product_id}&post_id=${post_id}&seller_id=${seller_id}`;
       const res = await fetch(url)
       head_data = await res.json()
       let dns_data = head_data?.data

@@ -43,6 +43,25 @@ const PhoneRegistration = () => {
             }
         },
         {
+            id: 'registered_user_id',
+            label: '가입여부',
+            action: (row) => {
+                if (row['registered_user_id']) {
+                    return <div style={{ color: 'green', fontWeight: 'bold' }}>
+                        가입완료 ({row['registered_name'] || row['registered_user_name']})
+                    </div>
+                }
+                return <div style={{ color: '#999' }}>미가입</div>
+            }
+        },
+        {
+            id: 'registered_at',
+            label: '가입일',
+            action: (row) => {
+                return row['registered_at'] ?? "---"
+            }
+        },
+        {
             id: 'edit',
             label: '삭제',
             action: (row) => {

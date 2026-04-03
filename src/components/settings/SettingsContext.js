@@ -137,7 +137,28 @@ export function SettingsProvider({ children }) {
   }, []);
   const settingPlatform = async () => {
     try {
-      const { data: response } = await axios.get(`/api/domain?dns=${process.env.IS_TEST == 1 ? 'localhost' : window.location.host.split(':')[0]}`);
+      // 데모 프리뷰: ?demo=X 로 다른 브랜드 조회 (로컬 전용)
+      let dnsHost = process.env.IS_TEST == 1 ? 'localhost' : window.location.host.split(':')[0];
+      if (process.env.NEXT_PUBLIC_DEMO_PREVIEW === 'true') {
+        const urlParams = new URLSearchParams(window.location.search);
+        const demoParam = urlParams.get('demo');
+        const savedDemo = sessionStorage.getItem('DEMO_PREVIEW_ID');
+        const activeDemo = demoParam || savedDemo;
+        const demoMap = {
+          '1': 'jjpay.co.kr',
+          '2': 'shop.minbeautym.com',
+          '4': 'attending-income-flashers-alias.trycloudflare.com',
+          'blog1': 'bs-company.co.kr',
+          'blog2': 'hynet777.com',
+        };
+        if (activeDemo && demoMap[activeDemo]) {
+          dnsHost = demoMap[activeDemo];
+          sessionStorage.setItem('DEMO_PREVIEW_ID', activeDemo);
+        } else {
+          return;
+        }
+      }
+      const { data: response } = await axios.get(`/api/domain?dns=${dnsHost}`);
       let dns_data = response?.data;
       //console.log(response)
       dns_data['blog_demo_num'] = dns_data?.setting_obj?.blog_demo_num || process.env.TEST_BLOG_DEMO || 0;

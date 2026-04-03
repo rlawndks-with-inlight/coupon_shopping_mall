@@ -22,7 +22,7 @@ import HomeItemsPropertyGroups from 'src/views/section/blog/HomeItemsPropertyGro
 const Wrappers = styled.div`
 max-width: 840px;
 width:100%;
-margin: 56px auto;
+margin: 48px auto 0;
 display:flex;
 flex-direction:column;
 `
@@ -96,22 +96,23 @@ const test_home_data = [
 const ItemWrapper = styled.div`
 display:flex;
 flex-direction:column;
-width:calc(100% - 32px);
+width:100%;
 margin: 0 auto;
-@media (max-width:840px){
-    margin: 0 auto;
-    width:90%;
-}
+padding-top:8px;
 `
 const SectionTitle = styled.div`
-font-weight:bold;
+font-size:18px;
+font-weight:700;
+letter-spacing:-0.3px;
+margin-bottom:8px;
+padding:0 8px;
 `
 const ItemContainer = styled.div`
 display:flex;
 flex-wrap:wrap;
-column-gap: 2%;
-row-gap: 1rem;
-margin:1rem 0 4rem 0;
+column-gap: 4%;
+row-gap: 0;
+margin:0 0 16px 0;
 @media (max-width:840px){
     display:none;
 }

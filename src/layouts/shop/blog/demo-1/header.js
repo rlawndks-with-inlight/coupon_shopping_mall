@@ -1,12 +1,8 @@
-import Logo from "src/components/logo/Logo"
 import styled from "styled-components"
-import { IconButton, TextField, InputAdornment } from "@mui/material"
+import { IconButton } from "@mui/material"
 import { useEffect, useState } from "react"
 import { Icon } from "@iconify/react"
-import { Row } from 'src/components/elements/styled-components'
-import { useTheme } from '@mui/material/styles';
 import { useSettingsContext } from "src/components/settings"
-import { test_categories } from "src/data/test-data"
 import { useRouter } from "next/router"
 import DialogSearch from "src/components/dialog/DialogSearch"
 import { logoSrc } from "src/data/data"
@@ -18,197 +14,83 @@ top: 0;
 display: flex;
 flex-direction: column;
 z-index: 10;
+transition: background 0.3s ease;
 `
 const TopMenuContainer = styled.div`
 display:flex;
-padding: 0.5rem 0;
-max-width: 798px;
+padding: 10px 0;
+max-width: 840px;
 width:90%;
 margin: 0 auto;
 align-items:center;
-position:relative;
 `
 
-
 const Header = (props) => {
-
   const { activeStep, setActiveStep, is_use_step } = props;
-  const theme = useTheme();
   const router = useRouter();
-
-  const { themeMode, onToggleMode, themeDnsData, themeCategoryList, onChangeCategoryList, onChangePostCategoryList } = useSettingsContext();
-  const [keyword, setKeyword] = useState("");
-  const [isSellerPage, setIsSellerPage] = useState(false);
-  const [isProductPage, setIsProductPage] = useState(false);
-  const [dialogOpenObj, setDialogOpenObj] = useState({
-    search: false
-  })
-  const onSearch = () => {
-    router.push(`/blog/search?keyword=${keyword}`)
-  }
-  const [hoverItems, setHoverItems] = useState({
-
-  })
-  const [categories, setCategories] = useState(test_categories)
-  const [loading, setLoading] = useState(true);
+  const { themeMode, themeDnsData } = useSettingsContext();
+  const [isDetailPage, setIsDetailPage] = useState(false);
   const [scrollY, setScrollY] = useState(0);
+  const [searchOpen, setSearchOpen] = useState(false);
+
   useEffect(() => {
-    setLoading(true);
-    let hover_list = getAllIdsWithParents(categories);
-    let hover_items = {};
-    for (var i = 0; i < hover_list.length; i++) {
-      hover_list[i] = hover_list[i].join('_');
-      hover_items[`hover_${hover_list[i]}`] = false;
-    }
-    hover_items['service'] = false;
-    setHoverItems(hover_items);
-    settingHeader();
-    setLoading(false);
-
-  }, [])
-  const settingHeader = async () => {
-    setLoading(true);
-
-    setCategories(themeCategoryList[0]?.product_categories ?? []);
-
-    setLoading(false);
-  }
-  useEffect(() => {
-    if (router.asPath.split('/')[2] == 'seller') {
-      setIsSellerPage(true)
-    } else {
-      setIsSellerPage(false)
-    }
-    if (router.asPath.split('/')[2] == 'product') {
-      setIsProductPage(true)
-    } else {
-      setIsProductPage(false)
-    }
+    const path = router.asPath.split('/')[2];
+    setIsDetailPage(path == 'product' || path == 'seller');
   }, [router.asPath])
-  function getAllIdsWithParents(categories) {
-    const result = [];
-    function traverseCategories(category, parentIds = []) {
-      const idsWithParents = [...parentIds, category.id];
-      result.push(idsWithParents);
-      if (category.children && category.children.length > 0) {
-        for (const child of category.children) {
-          traverseCategories(child, idsWithParents);
-        }
-      }
-    }
-    for (const category of categories) {
-      traverseCategories(category);
-    }
-    return result;
-  }
-  useEffect(() => {
-    const handleScroll = () => {
-      const currentScrollHeight = window.scrollY;
-      setScrollY(currentScrollHeight)
-    };
-    window.addEventListener('scroll', handleScroll);
 
-    return () => {
-      window.removeEventListener('scroll', handleScroll);
-    };
+  useEffect(() => {
+    const handleScroll = () => setScrollY(window.scrollY);
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
   }, []);
-  const onHoverCategory = (category_name) => {
-    let hover_items = hoverItems;
-    for (let key in hover_items) {
-      hover_items[key] = false;
-    }
-    hover_items[category_name] = true;
-    setHoverItems(hover_items);
-  }
-  const handleDialogClose = () => {
-    let obj = { ...dialogOpenObj };
-    for (let key in obj) {
-      obj[key] = false
-    }
-    setDialogOpenObj(obj);
-  }
-  const isBackArrowShow = () => {
-    if (isProductPage) {
-      return true;
-    }
-    if (router.asPath.includes('/my-page') || router.asPath.includes('/cart')) {
-      return true;
-    }
-    return false;
-  }
+
+  const isTransparent = isDetailPage && scrollY < 350;
+  const isDark = themeMode == 'dark';
+  const iconColor = isDark || isTransparent ? '#fff' : '#111';
+  const showBackArrow = isDetailPage || router.asPath.includes('/my-page') || router.asPath.includes('/cart');
+
   return (
     <>
-      {loading ?
-        <>
-        </>
-        :
-        <>
-          <DialogSearch
-            open={dialogOpenObj.search}
-            handleClose={handleDialogClose}
-            root_path={'/blog/search?keyword='}
-          />
-          <Wrappers style={{
-            background: `${(isSellerPage || isProductPage) && scrollY < 350 ? 'transparent' : (themeMode == 'dark' ? '#000' : '#fff')}`
-          }}
-          >
-            <TopMenuContainer>
-              {isBackArrowShow() || is_use_step ?
-                <>
-                  <IconButton
-                    sx={{ ...iconButtonStyle, marginLeft: '-4px' }}
-                    onClick={() => {
-                      if (is_use_step && activeStep > 0) {
-                        setActiveStep(activeStep - 1);
-                        return;
-                      }
-                      router.back()
-                    }}
-                  >
-                    <Icon icon={'ic:round-arrow-back'} fontSize={'1.8rem'} color={themeMode == 'dark' || ((isSellerPage || isProductPage) && scrollY < 350) ? '#fff' : '#000'} />
-                  </IconButton>
-                </>
-                :
-                <>
-                  <img src={logoSrc()} style={{ height: '40px', width: 'auto', cursor: 'pointer' }} onClick={() => { router.push('/blog') }} />
-                </>}
-              <IconButton
-                sx={{ ...iconButtonStyle, marginLeft: 'auto' }}
-                onClick={() => {
-                  setDialogOpenObj({
-                    ...dialogOpenObj,
-                    ['search']: true
-                  })
-                }}
-              >
-                <Icon icon={'tabler:search'} fontSize={'1.5rem'} color={themeMode == 'dark' || ((isSellerPage || isProductPage) && scrollY < 350) ? '#fff' : '#000'} />
-              </IconButton>
-              <IconButton
-                sx={iconButtonStyle}
-                onClick={() => router.push('/blog/auth/my-page')}
-              >
-                <Icon icon={'basil:user-outline'} fontSize={'1.8rem'} color={themeMode == 'dark' || ((isSellerPage || isProductPage) && scrollY < 350) ? '#fff' : '#000'} />
-              </IconButton>
-              <IconButton
-                sx={iconButtonStyle}
-                onClick={() => router.push('/blog/auth/cart')}
-              >
-                <Icon icon={'basil:shopping-bag-outline'} fontSize={'1.8rem'} color={themeMode == 'dark' || ((isSellerPage || isProductPage) && scrollY < 350) ? '#fff' : '#000'} />
-              </IconButton>
-              <IconButton
-                sx={iconButtonStyle}
-                onClick={() => onToggleMode()}
-              >
-                <Icon icon={themeMode === 'dark' ? 'tabler:sun' : 'tabler:moon-stars'} fontSize={'1.5rem'} color={themeMode == 'dark' || ((isSellerPage || isProductPage) && scrollY < 350) ? '#fff' : '#000'} />
-              </IconButton>
-            </TopMenuContainer>
-          </Wrappers>
-        </>}
+      <DialogSearch
+        open={searchOpen}
+        handleClose={() => setSearchOpen(false)}
+        root_path={'/blog/search?keyword='}
+      />
+      <Wrappers style={{
+        background: isTransparent ? 'transparent' : (isDark ? '#000' : '#fff'),
+        borderBottom: isTransparent ? 'none' : `1px solid ${isDark ? '#333' : '#eee'}`,
+      }}>
+        <TopMenuContainer>
+          {showBackArrow || is_use_step ?
+            <IconButton
+              sx={{ padding: '6px', marginLeft: '-6px' }}
+              onClick={() => {
+                if (is_use_step && activeStep > 0) {
+                  setActiveStep(activeStep - 1);
+                  return;
+                }
+                router.back()
+              }}
+            >
+              <Icon icon={'ic:round-arrow-back'} fontSize={'1.4rem'} color={iconColor} />
+            </IconButton>
+            :
+            <img src={logoSrc()} style={{ height: '28px', width: 'auto', cursor: 'pointer' }} onClick={() => router.push('/blog')} />
+          }
+          <div style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: '2px' }}>
+            <IconButton sx={{ padding: '6px' }} onClick={() => setSearchOpen(true)}>
+              <Icon icon={'tabler:search'} fontSize={'1.3rem'} color={iconColor} />
+            </IconButton>
+            <IconButton sx={{ padding: '6px' }} onClick={() => router.push('/blog/auth/my-page')}>
+              <Icon icon={'basil:user-outline'} fontSize={'1.4rem'} color={iconColor} />
+            </IconButton>
+            <IconButton sx={{ padding: '6px' }} onClick={() => router.push('/blog/auth/cart')}>
+              <Icon icon={'basil:shopping-bag-outline'} fontSize={'1.4rem'} color={iconColor} />
+            </IconButton>
+          </div>
+        </TopMenuContainer>
+      </Wrappers>
     </>
   )
-}
-const iconButtonStyle = {
-  padding: '0.1rem',
-  marginLeft: '0.5rem'
 }
 export default Header

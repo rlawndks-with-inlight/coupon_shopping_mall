@@ -1735,7 +1735,7 @@ const ProductEdit = () => {
                                   disabled={user?.level < 40}
                                   label='상품가'
                                   type="text"
-                                  value={user?.level >= 20 ? salePrice : user?.level == 15 ? parseInt(Math.round(Math.floor(Number((item?.product_sale_price * (1 + (user?.oper_trx_fee ?? 0))).toFixed(6))) / 1000) * 1000) : parseInt(Math.round(Math.floor(Number((item?.product_sale_price * (1 + (user?.oper_trx_fee ?? 0)) * (1 + (user?.seller_trx_fee ?? 0))).toFixed(6))) / 1000) * 1000)}
+                                  value={user?.level >= 20 ? salePrice : (() => { const base = item?.product_sale_price; const aO = user?.oper_trx_fee_type == 1 ? base + (user?.oper_trx_fee ?? 0) : base * (1 + (user?.oper_trx_fee ?? 0)); if (user?.level == 15) return parseInt(Math.round(Math.floor(Number(aO.toFixed(6))) / 1000) * 1000); const aS = user?.seller_trx_fee_type == 1 ? aO + (user?.seller_trx_fee ?? 0) : aO * (1 + (user?.seller_trx_fee ?? 0)); return parseInt(Math.round(Math.floor(Number(aS.toFixed(6))) / 1000) * 1000); })()}
                                   endAdornment={<InputAdornment position="end">원</InputAdornment>}
                                   onChange={(e) => {
                                     let value = parseInt(e.target.value.replace(/,/g, ''))

@@ -140,7 +140,7 @@ const ProductList = () => {
                   :
                   <>
                     <div>
-                      {commarNumber(calcAgentPrice(row['product_sale_price'], user))} (본사)
+                      {commarNumber(row['agent_price'] || calcAgentPrice(row['product_sale_price'], user))} (본사)
                     </div>
                   </>
               }

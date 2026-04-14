@@ -51,7 +51,7 @@ module.exports = {
   experimental: {
     esmExternals: false,
     //scrollRestoration: true
-    optimizePackageImports: ['@mui/material', '@mui/icons-material', 'lodash', 'recharts'],
+    //scrollRestoration: true
   },
   webpack: config => {
     config.resolve.alias = {
@@ -63,7 +63,6 @@ module.exports = {
   },
   env: {
     HOST_API_KEY: `${process.env.BACK_URL}`,
-    NODE_ENV: process.env.NODE_ENV,
     BACK_URL: process.env.BACK_URL,
     NOTI_URL: process.env.NOTI_URL,
     SETTING_SITEMAP_URL: process.env.SETTING_SITEMAP_URL,

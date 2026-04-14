@@ -20,30 +20,6 @@ module.exports = {
   async headers() {
     return [
       {
-        source: "/api/auth/:path*",
-        headers: [
-          { key: "Cache-Control", value: "no-store, no-cache, must-revalidate, private" },
-        ],
-      },
-      {
-        source: "/api/pays/:path*",
-        headers: [
-          { key: "Cache-Control", value: "no-store, no-cache, must-revalidate, private" },
-        ],
-      },
-      {
-        source: "/api/shop/:path*",
-        headers: [
-          { key: "Cache-Control", value: "public, s-maxage=60, stale-while-revalidate=120" },
-        ],
-      },
-      {
-        source: "/api/domain/:path*",
-        headers: [
-          { key: "Cache-Control", value: "public, s-maxage=300, stale-while-revalidate=600" },
-        ],
-      },
-      {
         source: "/:all*(svg|jpg|jpeg|png|gif|ico|webp)",
         headers: [
           { key: "Cache-Control", value: "public, max-age=86400, immutable" },

@@ -56,7 +56,6 @@ module.exports = {
     return config
   },
   env: {
-    HOST_API_KEY: `${process.env.BACK_URL}`,
     BACK_URL: process.env.BACK_URL,
     NOTI_URL: process.env.NOTI_URL,
     SETTING_SITEMAP_URL: process.env.SETTING_SITEMAP_URL,

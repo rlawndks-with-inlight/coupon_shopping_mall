@@ -116,7 +116,7 @@ const App = props => {
         <AuthProvider>
           <ReduxProvider store={store}>
             <LocalizationProvider dateAdapter={AdapterDateFns}>
-              <SettingsProvider serverDnsData={head_data}>
+              <SettingsProvider>
                 <ThemeColorPresets>
                   <ThemeContrast>
                     <ThemeRtlLayout>

@@ -71,10 +71,9 @@ export const useSettingsContext = () => {
 
 SettingsProvider.propTypes = {
   children: PropTypes.node,
-  serverDnsData: PropTypes.object,
 };
 
-export function SettingsProvider({ children, serverDnsData }) {
+export function SettingsProvider({ children }) {
 
   const router = useRouter();
 
@@ -133,41 +132,34 @@ export function SettingsProvider({ children, serverDnsData }) {
       setThemeCartData(cartData);
       setThemeWishData(wishData);
       setThemeNoneTodayPopupList(noneTodayPopupData);
-      settingPlatform(serverDnsData);
+      settingPlatform();
     }
   }, []);
-  const settingPlatform = async (initialDnsData) => {
+  const settingPlatform = async () => {
     try {
-      let dns_data = null;
-
-      // 서버에서 이미 가져온 데이터가 있으면 재사용 (중복 API 호출 제거)
-      if (initialDnsData && Object.keys(initialDnsData).length > 0) {
-        dns_data = initialDnsData;
-      } else {
-        // 데모 프리뷰: ?demo=X 로 다른 브랜드 조회 (로컬 전용)
-        let dnsHost = process.env.IS_TEST == 1 ? 'localhost' : window.location.host.split(':')[0];
-        if (process.env.NEXT_PUBLIC_DEMO_PREVIEW === 'true') {
-          const urlParams = new URLSearchParams(window.location.search);
-          const demoParam = urlParams.get('demo');
-          const savedDemo = sessionStorage.getItem('DEMO_PREVIEW_ID');
-          const activeDemo = demoParam || savedDemo;
-          const demoMap = {
-            '1': 'jjpay.co.kr',
-            '2': 'shop.minbeautym.com',
-            '4': 'telling-soc-cumulative-interviews.trycloudflare.com',
-            'blog1': 'bs-company.co.kr',
-            'blog2': 'hynet777.com',
-          };
-          if (activeDemo && demoMap[activeDemo]) {
-            dnsHost = demoMap[activeDemo];
-            sessionStorage.setItem('DEMO_PREVIEW_ID', activeDemo);
-          } else {
-            return;
-          }
+      // 데모 프리뷰: ?demo=X 로 다른 브랜드 조회 (로컬 전용)
+      let dnsHost = process.env.IS_TEST == 1 ? 'localhost' : window.location.host.split(':')[0];
+      if (process.env.NEXT_PUBLIC_DEMO_PREVIEW === 'true') {
+        const urlParams = new URLSearchParams(window.location.search);
+        const demoParam = urlParams.get('demo');
+        const savedDemo = sessionStorage.getItem('DEMO_PREVIEW_ID');
+        const activeDemo = demoParam || savedDemo;
+        const demoMap = {
+          '1': 'jjpay.co.kr',
+          '2': 'shop.minbeautym.com',
+          '4': 'telling-soc-cumulative-interviews.trycloudflare.com',
+          'blog1': 'bs-company.co.kr',
+          'blog2': 'hynet777.com',
+        };
+        if (activeDemo && demoMap[activeDemo]) {
+          dnsHost = demoMap[activeDemo];
+          sessionStorage.setItem('DEMO_PREVIEW_ID', activeDemo);
+        } else {
+          return;
         }
-        const { data: response } = await axios.get(`/api/domain?dns=${dnsHost}`);
-        dns_data = response?.data;
       }
+      const { data: response } = await axios.get(`/api/domain?dns=${dnsHost}`);
+      let dns_data = response?.data;
       //console.log(response)
       dns_data['blog_demo_num'] = dns_data?.setting_obj?.blog_demo_num || process.env.TEST_BLOG_DEMO || 0;
       dns_data['shop_demo_num'] = dns_data?.setting_obj?.shop_demo_num || process.env.TEST_SHOP_DEMO || 0;

@@ -8,11 +8,7 @@ const path = require('path')
 module.exports = {
   trailingSlash: true,
   reactStrictMode: true,
-  env: {
-    // HOST
-    HOST_API_KEY: `${process.env.BACK_URL}`,
-    NODE_ENV: process.env.NODE_ENV,
-  },
+  // env block은 아래에 통합됨
   async rewrites() {
     return [
       {
@@ -21,6 +17,29 @@ module.exports = {
       },
     ]
   },
+  async headers() {
+    return [
+      {
+        source: "/api/:path*",
+        headers: [
+          { key: "Cache-Control", value: "public, s-maxage=60, stale-while-revalidate=120" },
+        ],
+      },
+      {
+        source: "/:all*(svg|jpg|jpeg|png|gif|ico|webp)",
+        headers: [
+          { key: "Cache-Control", value: "public, max-age=86400, immutable" },
+        ],
+      },
+      {
+        source: "/_next/static/:path*",
+        headers: [
+          { key: "Cache-Control", value: "public, max-age=31536000, immutable" },
+        ],
+      },
+    ]
+  },
+  compress: true,
   transpilePackages: [
     '@fullcalendar/common',
     '@fullcalendar/core',
@@ -32,6 +51,7 @@ module.exports = {
   experimental: {
     esmExternals: false,
     //scrollRestoration: true
+    optimizePackageImports: ['@mui/material', '@mui/icons-material', 'lodash', 'recharts'],
   },
   webpack: config => {
     config.resolve.alias = {
@@ -42,6 +62,8 @@ module.exports = {
     return config
   },
   env: {
+    HOST_API_KEY: `${process.env.BACK_URL}`,
+    NODE_ENV: process.env.NODE_ENV,
     BACK_URL: process.env.BACK_URL,
     NOTI_URL: process.env.NOTI_URL,
     SETTING_SITEMAP_URL: process.env.SETTING_SITEMAP_URL,

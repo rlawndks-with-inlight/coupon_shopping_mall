@@ -116,7 +116,7 @@ const App = props => {
         <AuthProvider>
           <ReduxProvider store={store}>
             <LocalizationProvider dateAdapter={AdapterDateFns}>
-              <SettingsProvider>
+              <SettingsProvider serverDnsData={head_data}>
                 <ThemeColorPresets>
                   <ThemeContrast>
                     <ThemeRtlLayout>
@@ -169,7 +169,7 @@ App.getInitialProps = async context => {
         const demoMap = {
           '1': 'jjpay.co.kr',
           '2': 'shop.minbeautym.com',
-          '4': 'attending-income-flashers-alias.trycloudflare.com',
+          '4': 'telling-soc-cumulative-interviews.trycloudflare.com',
           'blog1': 'bs-company.co.kr',
           'blog2': 'hynet777.com',
         };

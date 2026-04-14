@@ -40,6 +40,21 @@ export const notiAxiosIns = (host, protocol) => {
 
 const axiosInstance = axios.create({ baseURL: HOST_API_KEY });
 
+// GET 요청 중복 제거: 동일 URL 요청이 진행 중이면 기존 Promise 재사용
+const pendingRequests = new Map();
+const originalGet = axiosInstance.get.bind(axiosInstance);
+axiosInstance.get = function (url, config) {
+  const key = url + (config?.params ? JSON.stringify(config.params) : '');
+  if (pendingRequests.has(key)) {
+    return pendingRequests.get(key);
+  }
+  const promise = originalGet(url, config).finally(() => {
+    pendingRequests.delete(key);
+  });
+  pendingRequests.set(key, promise);
+  return promise;
+};
+
 axiosInstance.interceptors.response.use(
   (response) => response,
   (error) => Promise.reject((error.response && error.response.data) || 'Something went wrong')

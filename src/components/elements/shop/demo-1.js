@@ -48,13 +48,13 @@ height: 300px;
 margin: 0 auto;
 display: flex;
 @media screen and (max-width:1700px){
-  height:16vw; 
+  height:16vw;
 }
 @media screen and (max-width:1150px){
-  height:28vw; 
+  height:28vw;
 }
 @media screen and (max-width:850px){
-  height:40vw; 
+  height:40vw;
 }
 `
 

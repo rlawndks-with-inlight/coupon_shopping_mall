@@ -171,7 +171,7 @@ export const Items = props => {
             {items &&
               items.map((item, idx) => {
                 return (
-                  <ItemWrapper theme_css={itemThemeCss}>
+                  <ItemWrapper theme_css={itemThemeCss} item_column={item_column}>
                     <Item item={item} router={router} theme_css={itemThemeCss} seller={seller} text_align={text_align} />
                   </ItemWrapper>
                 )

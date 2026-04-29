@@ -23,6 +23,7 @@ import { useAuthContext } from "../manager/auth/useAuthContext";
 import BlogLayout3 from "./blog/demo-3/BlogLayout2";
 import BlogLayout4 from "./blog/demo-4/BlogLayout2";
 import BlogLayout5 from "./blog/demo-5/BlogLayout2";
+import BlogLayout6 from "./blog/demo-6/BlogLayout6";
 
 const Wrappers = styled.div`
 
@@ -66,9 +67,17 @@ const getDemo = (num, common) => {
     else if (num == 3)
       return <BlogLayout3 {...common} />
     else if (num == 4)
-      return <BlogLayout4 {...common} />
+      return <BlogLayout6 {...common} />
     else if (num == 5)
-      return <BlogLayout5 {...common} />
+      return <BlogLayout6 {...common} />
+    else if (num == 6)
+      return <BlogLayout6 {...common} />
+    else if (num == 7)
+      return <BlogLayout6 {...common} />
+    else if (num == 8)
+      return <BlogLayout6 {...common} />
+    else if (num == 9)
+      return <BlogLayout6 {...common} />
   } else {
     { children }
   }

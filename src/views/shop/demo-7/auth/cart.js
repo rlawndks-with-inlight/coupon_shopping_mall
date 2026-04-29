@@ -110,6 +110,7 @@ const CartDemo = (props) => {
   const [products, setProducts] = useState([]);
   const [activeStep, setActiveStep] = useState(0);
   const [buyType, setBuyType] = useState(undefined);
+  const [smsPayData, setSmsPayData] = useState({ name: '', phone_num: '' });
   const [cardFucus, setCardFocus] = useState();
   const [addressContent, setAddressContent] = useState({});
   const [addressSearchObj, setAddressSearchObj] = useState({
@@ -281,6 +282,9 @@ const CartDemo = (props) => {
     } else if (item?.type == 'phone_hecto') {
       setBuyType('phone_hecto');
       setActiveStep(2)
+    } else if (item?.type == 'sms_pay') {
+      setBuyType('sms_pay');
+      setActiveStep(2);
     }
   }
   const onPayByHand = async () => {
@@ -760,6 +764,55 @@ const CartDemo = (props) => {
                           props={[products, payData]}
                         />
                       </div>
+                    </>
+                  }
+                  {
+                    buyType == 'sms_pay' &&
+                    <>
+                      <CardHeader title="SMS결제 정보입력" />
+                      <CardContent>
+                        <Stack spacing={2}>
+                          <TextField
+                            size='small'
+                            label='이름'
+                            value={smsPayData.name}
+                            onChange={(e) => {
+                              setSmsPayData({ ...smsPayData, name: e.target.value });
+                            }}
+                          />
+                          <TextField
+                            size='small'
+                            label='핸드폰번호'
+                            value={smsPayData.phone_num}
+                            onChange={(e) => {
+                              const value = e.target.value.replace(/[^0-9]/g, '');
+                              setSmsPayData({ ...smsPayData, phone_num: value });
+                            }}
+                            inputProps={{ maxLength: 11 }}
+                            placeholder='01012345678'
+                          />
+                          <Button
+                            variant='contained'
+                            size='large'
+                            onClick={() => {
+                              if (!smsPayData.name) {
+                                toast.error('이름을 입력해 주세요.');
+                                return;
+                              }
+                              if (!smsPayData.phone_num || smsPayData.phone_num.length < 10) {
+                                toast.error('핸드폰번호를 정확히 입력해 주세요.');
+                                return;
+                              }
+                              toast.success('결제 신청이 완료되었습니다.');
+                              setSmsPayData({ name: '', phone_num: '' });
+                              setBuyType(undefined);
+                              setActiveStep(0);
+                            }}
+                          >
+                            완료
+                          </Button>
+                        </Stack>
+                      </CardContent>
                     </>
                   }
                 </Card>

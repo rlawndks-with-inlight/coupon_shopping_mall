@@ -15,13 +15,14 @@ import HomeSellers from 'src/views/section/shop/HomeSellers'
 import { getMainObjType } from 'src/utils/function'
 import HomeItemsPropertyGroups from 'src/views/section/shop/HomeItemsPropertyGroups'
 import HomeTextBanner from 'src/views/section/shop/HomeTextBanner'
+import HomeItemHero from 'src/views/section/shop/HomeItemHero'
 
 
 const returnHomeContent = (column, data, func, demoType = 0) => {
   let type = getMainObjType(column?.type);
 
-
-  if (type == 'banner') return <HomeBanner column={column} data={data} func={func} demoType={demoType} />
+  if (type == 'item-hero') return <HomeItemHero column={column} data={data} func={func} demoType={demoType} />
+  else if (type == 'banner') return <HomeBanner column={column} data={data} func={func} demoType={demoType} />
   else if (type == 'editor') return <HomeEditor column={column} data={data} func={func} demoType={demoType} />
   else if (type == 'items' || type == 'items-ids') {
     return <HomeItems column={column} data={data} func={func} demoType={demoType} />

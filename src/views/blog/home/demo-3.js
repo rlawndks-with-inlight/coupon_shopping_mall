@@ -17,6 +17,7 @@ import HomeProductReview from 'src/views/section/blog/HomeProductReview'
 import HomeSellers from 'src/views/section/blog/HomeSellers'
 import { getMainObjType } from 'src/utils/function'
 import HomeItemsPropertyGroups from 'src/views/section/blog/HomeItemsPropertyGroups'
+import HomeItemHero from 'src/views/section/shop/HomeItemHero'
 
 
 const Wrappers = styled.div`
@@ -126,7 +127,8 @@ display: none;
 const returnHomeContent = (column, data, func) => {
     let type = getMainObjType(column?.type);
 
-    if (type == 'banner') return <HomeBanner column={column} data={data} func={func} />
+    if (type == 'item-hero') return <HomeItemHero column={column} data={data} func={func} />
+    else if (type == 'banner') return <HomeBanner column={column} data={data} func={func} />
     else if (type == 'editor') return <HomeEditor column={column} data={data} func={func} />
     else if (type == 'items' || type == 'items-ids') {
         return <HomeItems column={column} data={data} func={func} />

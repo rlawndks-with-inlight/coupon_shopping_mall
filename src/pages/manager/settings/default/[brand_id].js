@@ -707,6 +707,20 @@ const DefaultSetting = () => {
                           })}
                         </Select>
                       </FormControl>
+                      <TextField
+                        label='대표 상품 ID (단일 상품 데모용)'
+                        placeholder='상품 ID 입력 (미입력 시 첫 번째 상품 자동 선택)'
+                        value={item.setting_obj?.featured_product_id ?? ''}
+                        onChange={e => {
+                          setItem({
+                            ...item,
+                            ['setting_obj']: {
+                              ...item.setting_obj,
+                              featured_product_id: e.target.value
+                            }
+                          })
+                        }}
+                      />
                     </Stack>
                   </Card>
                 </Grid>

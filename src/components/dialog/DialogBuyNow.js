@@ -55,6 +55,7 @@ const DialogBuyNow = (props) => {
   const { themeDnsData, onChangeCartData, themeCartData } = useSettingsContext();
   const router = useRouter();
   const [buyType, setBuyType] = useState(undefined);
+  const [smsPayData, setSmsPayData] = useState({ name: '', phone_num: '' });
   const [addAddressOpen, setAddAddressOpen] = useState(false);
   const [updateAddressOpen, setUpdatedAddressOpen] = useState(false);
   const [addressID, setAddressID] = useState();
@@ -260,6 +261,9 @@ const DialogBuyNow = (props) => {
       setBuyStep(2)
     } else if (item?.type == 'phone_hecto') {
       setBuyType('phone_hecto');
+      setBuyStep(2)
+    } else if (item?.type == 'sms_pay') {
+      setBuyType('sms_pay');
       setBuyStep(2)
     }
   }
@@ -576,6 +580,53 @@ const DialogBuyNow = (props) => {
               <PayProductsByAuthWayup
                 props={[product, payData]}
               />
+            </>
+          }
+          {
+            buyStep == 2 && buyType == 'sms_pay' &&
+            <>
+              <Typography variant='subtitle1' sx={{ borderBottom: `1px solid #000`, paddingBottom: '0.5rem', marginBottom: '0.5rem' }}>SMS결제 정보입력</Typography>
+              <Stack spacing={2}>
+                <TextField
+                  size='small'
+                  label='이름'
+                  value={smsPayData.name}
+                  onChange={(e) => {
+                    setSmsPayData({ ...smsPayData, name: e.target.value });
+                  }}
+                />
+                <TextField
+                  size='small'
+                  label='핸드폰번호'
+                  value={smsPayData.phone_num}
+                  onChange={(e) => {
+                    const value = e.target.value.replace(/[^0-9]/g, '');
+                    setSmsPayData({ ...smsPayData, phone_num: value });
+                  }}
+                  inputProps={{ maxLength: 11 }}
+                  placeholder='01012345678'
+                />
+                <Button
+                  variant='contained'
+                  size='large'
+                  onClick={() => {
+                    if (!smsPayData.name) {
+                      toast.error('이름을 입력해 주세요.');
+                      return;
+                    }
+                    if (!smsPayData.phone_num || smsPayData.phone_num.length < 10) {
+                      toast.error('핸드폰번호를 정확히 입력해 주세요.');
+                      return;
+                    }
+                    toast.success('결제 신청이 완료되었습니다.');
+                    setSmsPayData({ name: '', phone_num: '' });
+                    setBuyOpen(false);
+                    router.push('/shop/auth/pay-result');
+                  }}
+                >
+                  완료
+                </Button>
+              </Stack>
             </>
           }
           {(buyStep == 2 && (buyType == 'card' || buyType == 'hand_oleuda')) &&

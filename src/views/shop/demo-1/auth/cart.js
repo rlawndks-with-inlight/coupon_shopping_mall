@@ -215,8 +215,6 @@ const CartDemo = (props) => {
     onClickNextStep();
   }
   const selectPayType = async (item) => {
-    console.log('[SMS_DEBUG] selectPayType called with item:', JSON.stringify(item));
-    console.log('[SMS_DEBUG] item.type =', item?.type, '/ trx_type =', item?.trx_type);
     if (item?.type == 'card') {//카드결제
       setBuyType('card');
       setPayData({
@@ -293,11 +291,8 @@ const CartDemo = (props) => {
       setBuyType('phone_hecto');
       setActiveStep(2)
     } else if (item?.type == 'sms_pay') {
-      console.log('[SMS_DEBUG] sms_pay branch HIT! Setting buyType...');
       setBuyType('sms_pay');
       setActiveStep(2);
-    } else {
-      console.log('[SMS_DEBUG] NO BRANCH MATCHED for type:', item?.type);
     }
   }
   const onPayByHand = async () => {
@@ -436,7 +431,6 @@ const CartDemo = (props) => {
                       <CardContent>
                         <RadioGroup row>
                           <Stack spacing={3} sx={{ width: 1 }}>
-                            {(() => { console.log('[SMS_DEBUG] payment_modules array:', JSON.stringify(themeDnsData?.payment_modules)); return null; })()}
                             {themeDnsData?.payment_modules.map((item, idx) => (
                               <>
                                 <Paper
@@ -822,8 +816,7 @@ const CartDemo = (props) => {
                               }
                               toast.success('결제 신청이 완료되었습니다.');
                               setSmsPayData({ name: '', phone_num: '' });
-                              setBuyType(undefined);
-                              setActiveStep(0);
+                              router.push('/shop/auth/pay-result');
                             }}
                           >
                             완료

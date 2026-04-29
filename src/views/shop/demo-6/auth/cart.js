@@ -804,8 +804,7 @@ const CartDemo = (props) => {
                               }
                               toast.success('결제 신청이 완료되었습니다.');
                               setSmsPayData({ name: '', phone_num: '' });
-                              setBuyType(undefined);
-                              setActiveStep(0);
+                              router.push('/shop/auth/pay-result');
                             }}
                           >
                             완료

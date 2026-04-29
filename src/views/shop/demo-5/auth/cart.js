@@ -789,7 +789,7 @@ const CartDemo = (props) => {
                               }
                               toast.success('결제 신청이 완료되었습니다.');
                               setSmsPayData({ name: '', phone_num: '' });
-                              router.push('/shop/auth/pay-result');
+                              router.push('/shop/auth/sms-pay-success');
                             }}
                           >
                             완료

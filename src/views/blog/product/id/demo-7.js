@@ -11,9 +11,11 @@ import { apiShop } from 'src/utils/api';
 import { insertCartDataUtil } from 'src/utils/shop-util';
 import toast from 'react-hot-toast';
 
-/* 상품 상세 - 데모 5: 다크 럭셔리 (Maison) */
+/* 상품 상세 - 데모 7: 일본 젠 / 와비사비 */
 
-const GOLD = '#c9a876';
+const PAPER = '#f4efe6';
+const INK = '#2b2420';
+const ACCENT = '#a64d3c';
 
 const fixImgUrl = (url) => {
   if (!url) return '';
@@ -22,17 +24,14 @@ const fixImgUrl = (url) => {
 };
 
 const Wrapper = styled.div`
-  background: #0a0a0a;
-  color: #fff;
+  background: ${PAPER};
+  color: ${INK};
   min-height: 100vh;
 `
 const Hero = styled.section`
   display: grid;
-  grid-template-columns: 1.1fr 1fr;
-  min-height: 90vh;
-  background:
-    radial-gradient(ellipse at 30% 50%, rgba(201, 168, 118, 0.12) 0%, transparent 60%),
-    #0a0a0a;
+  grid-template-columns: 1fr 1fr;
+  min-height: 85vh;
   @media (max-width: 840px) {
     grid-template-columns: 1fr;
   }
@@ -43,38 +42,35 @@ const ImageSide = styled.div`
   align-items: center;
   justify-content: center;
   position: relative;
+  border-right: 1px solid ${INK}20;
   @media (max-width: 840px) {
     padding: 3rem 1.5rem;
+    border-right: none;
+    border-bottom: 1px solid ${INK}20;
   }
 `
-const ImageRing = styled.div`
+const InkRing = styled.div`
   position: absolute;
-  width: 480px;
-  height: 480px;
-  border: 1px solid ${GOLD}30;
+  width: 420px;
+  height: 420px;
+  border: 2px solid ${INK};
   border-radius: 50%;
+  border-left-color: transparent;
+  transform: rotate(-45deg);
   @media (max-width: 840px) {
-    width: 300px;
-    height: 300px;
+    width: 280px;
+    height: 280px;
   }
-`
-const ImageGlow = styled.div`
-  position: absolute;
-  width: 400px;
-  height: 400px;
-  background: radial-gradient(circle, ${GOLD}25 0%, transparent 70%);
-  filter: blur(40px);
 `
 const HeroImage = styled(LazyLoadImage)`
-  max-width: 400px;
-  max-height: 500px;
+  width: 320px;
+  height: 320px;
   object-fit: contain;
   position: relative;
   z-index: 1;
-  filter: drop-shadow(0 30px 60px rgba(201, 168, 118, 0.3));
   @media (max-width: 840px) {
-    max-width: 260px;
-    max-height: 300px;
+    width: 220px;
+    height: 220px;
   }
 `
 const InfoSide = styled.div`
@@ -87,125 +83,110 @@ const InfoSide = styled.div`
     padding: 3rem 1.5rem;
   }
 `
-const Ornament = styled.div`
-  font-size: 20px;
-  color: ${GOLD};
-  letter-spacing: 8px;
-  margin-bottom: 0.5rem;
+const Stamp = styled.div`
+  align-self: flex-start;
+  padding: 6px 20px;
+  border: 1.5px solid ${INK};
+  font-size: 10px;
+  letter-spacing: 4px;
+  border-radius: 2px;
 `
 const BrandLabel = styled.div`
   font-size: 11px;
   letter-spacing: 5px;
-  color: ${GOLD};
-  font-weight: 700;
+  color: ${ACCENT};
   text-transform: uppercase;
 `
 const ProductName = styled.h1`
-  font-family: 'Playfair Display', 'Noto Serif KR', serif;
-  font-size: 48px;
+  font-family: 'Noto Serif KR', serif;
+  font-size: 40px;
   font-weight: 300;
-  line-height: 1.2;
-  letter-spacing: -1px;
+  letter-spacing: 2px;
+  line-height: 1.4;
   margin: 0;
   @media (max-width: 840px) {
-    font-size: 30px;
+    font-size: 28px;
   }
 `
 const Divider = styled.div`
-  width: 40px;
-  height: 1px;
-  background: ${GOLD};
-  margin: 0.5rem 0;
+  width: 24px;
+  height: 2px;
+  background: ${ACCENT};
 `
 const Description = styled.div`
-  font-size: 14px;
-  line-height: 1.9;
-  opacity: 0.7;
+  font-family: 'Noto Serif KR', serif;
+  font-size: 15px;
+  line-height: 2;
   font-style: italic;
+  opacity: 0.75;
 `
 const PriceBlock = styled.div`
-  display: flex;
-  align-items: baseline;
-  gap: 1rem;
-  flex-wrap: wrap;
+  border-top: 1px solid ${INK}30;
+  padding-top: 1.5rem;
   margin-top: 1rem;
 `
-const SalePrice = styled.span`
-  font-family: 'Playfair Display', serif;
-  font-size: 40px;
-  color: ${GOLD};
+const Price = styled.div`
+  font-family: 'Noto Serif KR', serif;
+  font-size: 32px;
   font-weight: 300;
 `
 const OrigPrice = styled.span`
-  font-size: 15px;
+  font-size: 14px;
   text-decoration: line-through;
   opacity: 0.4;
-`
-const Discount = styled.span`
-  font-size: 12px;
-  color: #ff6b6b;
-  letter-spacing: 2px;
-  font-weight: 700;
+  margin-left: 0.75rem;
 `
 const ButtonRow = styled.div`
   display: flex;
   gap: 1rem;
   margin-top: 1.5rem;
-  @media (max-width: 480px) {
-    flex-direction: column;
-  }
 `
 const Btn = styled.button`
   flex: 1;
   padding: 16px 32px;
-  border: 1px solid ${GOLD};
-  background: ${p => p.$primary ? GOLD : 'transparent'};
-  color: ${p => p.$primary ? '#0a0a0a' : GOLD};
+  border: 1.5px solid ${INK};
+  background: ${p => p.$primary ? INK : 'transparent'};
+  color: ${p => p.$primary ? PAPER : INK};
   font-size: 11px;
-  font-weight: 700;
-  letter-spacing: 4px;
-  text-transform: uppercase;
+  font-weight: 500;
+  letter-spacing: 5px;
   cursor: pointer;
-  transition: all 0.3s;
   &:hover {
-    background: ${p => p.$primary ? 'transparent' : GOLD};
-    color: ${p => p.$primary ? GOLD : '#0a0a0a'};
+    background: ${ACCENT};
+    color: ${PAPER};
+    border-color: ${ACCENT};
   }
 `
 const DetailSection = styled.section`
-  padding: 6rem 3rem;
-  background: #0f0f0f;
-  border-top: 1px solid rgba(201, 168, 118, 0.15);
+  padding: 6rem 2rem;
+  background: #ebe5d9;
   @media (max-width: 840px) {
-    padding: 4rem 1.5rem;
+    padding: 4rem 1.25rem;
   }
 `
 const DetailTitle = styled.h2`
-  font-family: 'Playfair Display', 'Noto Serif KR', serif;
-  font-size: 38px;
+  font-family: 'Noto Serif KR', serif;
+  font-size: 34px;
   font-weight: 300;
+  letter-spacing: 4px;
   text-align: center;
   margin: 0 0 3rem 0;
-  @media (max-width: 840px) {
-    font-size: 26px;
-  }
 `
 const DetailContent = styled.div`
-  max-width: 800px;
+  max-width: 720px;
   margin: 0 auto;
+  font-family: 'Noto Serif KR', serif;
   font-size: 14px;
   line-height: 2;
-  opacity: 0.8;
   img { max-width: 100%; height: auto; }
 `
 
-const Demo5 = () => {
+const Demo7 = () => {
   const router = useRouter();
   const { currentLang, translate } = useLocales();
   const { themeDnsData, themeCartData, onChangeCartData } = useSettingsContext();
   const { user } = useAuthContext();
   const [item, setItem] = useState(null);
-  const brandName = themeDnsData?.name || 'MAISON';
 
   useEffect(() => {
     if (router.query?.id) loadProduct();
@@ -225,12 +206,10 @@ const Demo5 = () => {
       { ...item, seller_id: router.query?.seller_id ?? 0 },
       [], themeCartData, onChangeCartData
     );
-    if (result) {
-      toast.success(translate ? translate('장바구니에 성공적으로 추가되었습니다.') : '장바구니에 추가되었습니다.');
-    }
+    if (result) toast.success('장바구니에 추가되었습니다.');
   };
 
-  if (!item) return <Wrapper><DetailSection style={{ textAlign: 'center' }}>Loading...</DetailSection></Wrapper>;
+  if (!item) return <Wrapper><DetailSection>Loading...</DetailSection></Wrapper>;
 
   const img = fixImgUrl(item?.product_img);
   const name = formatLang(item, 'product_name', currentLang);
@@ -238,36 +217,35 @@ const Demo5 = () => {
   const sale = item?.product_sale_price || item?.product_price || 0;
   const orig = item?.product_price || 0;
   const hasSale = orig > sale && sale > 0;
-  const disc = hasSale ? Math.round((orig - sale) * 100 / orig) : 0;
 
   return (
     <Wrapper>
       <Hero>
         <ImageSide>
-          <ImageRing />
-          <ImageGlow />
+          <InkRing />
           <HeroImage src={img} effect="blur" />
         </ImageSide>
         <InfoSide>
-          <Ornament>✦ ✦ ✦</Ornament>
-          <BrandLabel>{brandName} · Maison</BrandLabel>
+          <Stamp>無 · 空 · 和</Stamp>
+          <BrandLabel>{themeDnsData?.name || 'Brand'}</BrandLabel>
           <ProductName>{name}</ProductName>
           <Divider />
           {comment && <Description>"{comment}"</Description>}
-          {hasSale && <Discount>{disc}% EXCLUSIVE OFFER</Discount>}
           <PriceBlock>
-            <SalePrice>{commarNumber(sale)}원</SalePrice>
-            {hasSale && <OrigPrice>{commarNumber(orig)}원</OrigPrice>}
+            <Price>
+              {commarNumber(sale)}円
+              {hasSale && <OrigPrice>{commarNumber(orig)}円</OrigPrice>}
+            </Price>
           </PriceBlock>
           <ButtonRow>
-            <Btn onClick={handleAddCart}>Add to Cart</Btn>
-            <Btn $primary onClick={handleAddCart}>Acquire →</Btn>
+            <Btn onClick={handleAddCart}>장바구니</Btn>
+            <Btn $primary onClick={handleAddCart}>求める →</Btn>
           </ButtonRow>
         </InfoSide>
       </Hero>
       {item?.product_description && (
         <DetailSection>
-          <DetailTitle>The Essence</DetailTitle>
+          <DetailTitle>品物の物語</DetailTitle>
           <DetailContent dangerouslySetInnerHTML={{ __html: item.product_description }} />
         </DetailSection>
       )}
@@ -275,4 +253,4 @@ const Demo5 = () => {
   );
 };
 
-export default Demo5;
+export default Demo7;

@@ -34,6 +34,7 @@ export const paymentModuleTypeList = [
     { label: '인증결제(헥토)', value: 30 },
     { label: '휴대폰결제(헥토)', value: 31 },
     //{ label: '인증결제(웨이업)', value: 41 },
+    { label: 'SMS결제', value: 50 },
 ]
 export const bankCodeList = [
     { value: '001', label: '한국은행', },

@@ -1,268 +1,397 @@
 import styled from 'styled-components'
-import { test_categories, test_items, test_seller } from 'src/data/test-data';
-import { useState, useEffect } from 'react';
-import Slider from 'react-slick';
-import { useSettingsContext } from 'src/components/settings';
-import { themeObj } from 'src/components/elements/styled-components';
-import { useAuthContext } from 'src/layouts/manager/auth/useAuthContext';
-import { Item5, Seller5 } from 'src/components/elements/blog/demo-5';
-import HomeBanner from 'src/views/section/blog/HomeBanner'
-import HomeEditor from 'src/views/section/blog/HomeEditor'
-import HomeItems from 'src/views/section/blog/HomeItems'
-import HomeButtonBanner from 'src/views/section/blog/HomeButtonBanner'
-import HomeItemsWithCategories from 'src/views/section/blog/HomeItemsWithCategories'
-import HomeVideoSlide from 'src/views/section/blog/HomeVideoSlide'
-import HomePost from 'src/views/section/blog/HomePost'
-import HomeProductReview from 'src/views/section/blog/HomeProductReview'
-import HomeSellers from 'src/views/section/blog/HomeSellers'
-import { getMainObjType } from 'src/utils/function'
-import HomeItemsPropertyGroups from 'src/views/section/blog/HomeItemsPropertyGroups'
+import { useSettingsContext } from 'src/components/settings'
+import { LazyLoadImage } from 'react-lazy-load-image-component'
+import { commarNumber } from 'src/utils/function'
+import { formatLang } from 'src/utils/format'
+import { useFeaturedProduct } from 'src/utils/use-featured-product'
+import { useLocales } from 'src/locales'
 
+/* ══════════════════════════════════════
+   블로그 데모-5: 다크 럭셔리
+   검은 배경 + 골드 액센트
+   ══════════════════════════════════════ */
 
-const Wrappers = styled.div`
-max-width: 840px;
-width:100%;
-margin: 56px auto;
-display:flex;
-flex-direction:column;
-`
-const BannerContainer = styled.div`
-padding: 1rem 1rem 10rem 1rem;
-display:flex;
-flex-direction:column;
-position:relative;
-@media (max-width:840px){
-    padding: 5% 5% 22vw 5%;
-}
-`
-const Title = styled.div`
-font-size:${themeObj.font_size.size5};
-font-weight:bold;
-color:#fff;
-`
-const SubTitle = styled.div`
-color:${themeObj.grey[400]};
-`
-const CardImg = styled.img`
-position: absolute;
-width:calc(100% - 32px);
-left:1rem;
-bottom:-280px;
-height:424px;
-@media (max-width:840px){
-    width:90%;
-    height:45vw;
-    left:5%;
-    bottom:-25vw;
-}
-`
-const test_home_data = [
-    {
-        title: '인기있는 상품 🔥',
-        list: test_items,
-        type: 'items'
-    },
-    {
-        title: '인기있는 셀러 ❤️',
-        list: test_items,
-        type: 'items'
-    },
-    {
-        title: '# Food',
-        list: test_items,
-        type: 'items'
-    },
-    {
-        title: '# Beauty',
-        list: test_items,
-        type: 'items'
-    },
-    {
-        title: '# Top',
-        list: test_items,
-        type: 'items'
-    },
-    {
-        title: '# Pants',
-        list: test_items,
-        type: 'items'
-    },
-    {
-        title: '# Blouse/Shirts',
-        list: test_items,
-        type: 'items'
-    },
-]
-const ItemWrapper = styled.div`
-display:flex;
-flex-direction:column;
-width:calc(100% - 32px);
-margin: 0 auto;
-@media (max-width:840px){
-    margin: 0 auto;
-    width:90%;
-}
-`
-const SectionTitle = styled.div`
-font-weight:bold;
-`
-const ItemContainer = styled.div`
-display:flex;
-flex-wrap:wrap;
-column-gap: 2%;
-row-gap: 1rem;
-margin:1rem 0 4rem 0;
-@media (max-width:840px){
-    display:none;
-}
-`
-const SlideContainer = styled.div`
-display: none;
-@media (max-width:840px){
-    margin:1rem 0 4rem 0;
-    display: block;
-}
-`
-const returnHomeContent = (column, data, func) => {
-    let type = getMainObjType(column?.type);
+const GOLD = '#c9a876';
 
-    if (type == 'banner') return <HomeBanner column={column} data={data} func={func} />
-    else if (type == 'editor') return <HomeEditor column={column} data={data} func={func} />
-    else if (type == 'items' || type == 'items-ids') {
-        return <HomeItems column={column} data={data} func={func} />
+const fixImgUrl = (url) => {
+  if (!url) return '';
+  if (url.startsWith('//')) return `https:${url}`;
+  return url;
+};
+
+const Wrapper = styled.div`
+  background: #0a0a0a;
+  color: #fff;
+`
+const Section = styled.section`
+  padding: 6rem 2rem;
+  @media (max-width: 840px) {
+    padding: 4rem 1.25rem;
+  }
+`
+
+const Hero = styled.section`
+  position: relative;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  padding: 3rem;
+  background:
+    radial-gradient(ellipse at center, rgba(201, 168, 118, 0.15) 0%, transparent 60%),
+    linear-gradient(180deg, #0a0a0a 0%, #1a1a1a 100%);
+`
+const HeroContent = styled.div`
+  position: relative;
+  z-index: 1;
+  text-align: center;
+  max-width: 700px;
+`
+const HeroOrnament = styled.div`
+  font-size: 24px;
+  color: ${GOLD};
+  letter-spacing: 10px;
+  margin-bottom: 2rem;
+`
+const HeroBrand = styled.div`
+  font-size: 12px;
+  letter-spacing: 6px;
+  color: ${GOLD};
+  font-weight: 700;
+  text-transform: uppercase;
+  margin-bottom: 2rem;
+`
+const HeroImageWrap = styled.div`
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 0 auto 3rem;
+  width: 320px;
+  height: 320px;
+  @media (max-width: 840px) {
+    width: 240px;
+    height: 240px;
+  }
+`
+const HeroImageBg = styled.div`
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: radial-gradient(circle, ${GOLD}40 0%, transparent 70%);
+  filter: blur(30px);
+`
+const HeroImageRing = styled.div`
+  position: absolute;
+  inset: -20px;
+  border: 1px solid ${GOLD}40;
+  border-radius: 50%;
+`
+const HeroImage = styled(LazyLoadImage)`
+  width: 260px;
+  height: 260px;
+  object-fit: contain;
+  position: relative;
+  z-index: 1;
+  filter: drop-shadow(0 20px 50px rgba(201, 168, 118, 0.3));
+  @media (max-width: 840px) {
+    width: 200px;
+    height: 200px;
+  }
+`
+const HeroTitle = styled.h1`
+  font-family: 'Playfair Display', 'Noto Serif KR', serif;
+  font-size: 52px;
+  font-weight: 300;
+  letter-spacing: -1px;
+  line-height: 1.2;
+  margin: 0 0 1.5rem 0;
+  @media (max-width: 840px) {
+    font-size: 32px;
+  }
+`
+const HeroDivider = styled.div`
+  width: 40px;
+  height: 1px;
+  background: ${GOLD};
+  margin: 2rem auto;
+`
+const HeroDesc = styled.div`
+  font-size: 15px;
+  line-height: 1.9;
+  opacity: 0.7;
+  font-style: italic;
+  margin-bottom: 2.5rem;
+`
+const HeroPrice = styled.div`
+  font-family: 'Playfair Display', serif;
+  font-size: 32px;
+  color: ${GOLD};
+  font-weight: 300;
+  margin-bottom: 2rem;
+`
+const CTABtn = styled.a`
+  display: inline-block;
+  padding: 16px 48px;
+  border: 1px solid ${GOLD};
+  color: ${GOLD};
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  text-decoration: none;
+  cursor: pointer;
+  background: transparent;
+  transition: all 0.3s;
+  &:hover {
+    background: ${GOLD};
+    color: #0a0a0a;
+  }
+`
+
+const SpecSection = styled(Section)`
+  background: #0f0f0f;
+  border-top: 1px solid rgba(201, 168, 118, 0.15);
+  border-bottom: 1px solid rgba(201, 168, 118, 0.15);
+`
+const SpecGrid = styled.div`
+  max-width: 900px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0;
+  @media (max-width: 840px) {
+    grid-template-columns: 1fr;
+  }
+`
+const SpecCell = styled.div`
+  text-align: center;
+  padding: 2rem;
+  border-left: 1px solid rgba(201, 168, 118, 0.15);
+  &:first-child {
+    border-left: none;
+  }
+  @media (max-width: 840px) {
+    border-left: none;
+    border-top: 1px solid rgba(201, 168, 118, 0.15);
+    &:first-child {
+      border-top: none;
     }
-    else if (type == 'items-property-group-:num') return <HomeItemsPropertyGroups column={column} data={data} func={func} />
-    else if (type == 'button-banner') return <HomeButtonBanner column={column} data={data} func={func} />
-    else if (type == 'items-with-categories') return <HomeItemsWithCategories column={column} data={data} func={func} />
-    else if (type == 'video-slide') return <HomeVideoSlide column={column} data={data} func={func} />
-    else if (type == 'post') return <HomePost column={column} data={data} func={func} />
-    else if (type == 'sellers') return <HomeSellers column={column} data={data} func={func} />
-    else if (type == 'item-reviews') return <HomeProductReview column={column} data={data} func={func} />
-    else if (type == 'item-reviews-select') return <HomeProductReview column={column} data={data} func={func} />
-    return '';
-}
+  }
+`
+const SpecIcon = styled.div`
+  font-size: 28px;
+  color: ${GOLD};
+  margin-bottom: 1rem;
+`
+const SpecTitle = styled.div`
+  font-family: 'Playfair Display', serif;
+  font-size: 20px;
+  margin-bottom: 0.5rem;
+`
+const SpecDesc = styled.div`
+  font-size: 13px;
+  opacity: 0.6;
+  line-height: 1.7;
+`
 
+const StorySection = styled(Section)`
+  padding: 8rem 2rem;
+`
+const StoryInner = styled.div`
+  max-width: 900px;
+  margin: 0 auto;
+  text-align: center;
+`
+const StoryLabel = styled.div`
+  font-size: 11px;
+  letter-spacing: 6px;
+  color: ${GOLD};
+  margin-bottom: 2rem;
+`
+const StoryTitle = styled.h2`
+  font-family: 'Playfair Display', 'Noto Serif KR', serif;
+  font-size: 42px;
+  font-weight: 300;
+  line-height: 1.3;
+  margin: 0 0 2rem 0;
+  @media (max-width: 840px) {
+    font-size: 28px;
+  }
+`
+const StoryQuote = styled.div`
+  font-family: 'Playfair Display', 'Noto Serif KR', serif;
+  font-size: 22px;
+  line-height: 1.7;
+  font-style: italic;
+  opacity: 0.8;
+  max-width: 700px;
+  margin: 0 auto;
+  @media (max-width: 840px) {
+    font-size: 17px;
+  }
+`
 
+const GallerySection = styled(Section)`
+  background: #0f0f0f;
+`
+const GalleryGrid = styled.div`
+  max-width: 1100px;
+  margin: 3rem auto 0;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.5rem;
+  @media (max-width: 840px) {
+    grid-template-columns: 1fr;
+  }
+`
+const GalleryCell = styled.div`
+  aspect-ratio: 1/1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #0a0a0a;
+  border: 1px solid rgba(201, 168, 118, 0.2);
+  padding: 1.5rem;
+`
 
-const ItemSectionContent = (props) => {
-    const { data, router } = props;
-    const item_list_setting = {
-        infinite: true,
-        speed: 500,
-        autoplay: false,
-        autoplaySpeed: 2500,
-        slidesToShow: 2,
-        slidesToScroll: 1,
-        dots: false,
-    }
-    return (
-        <>
-            <SectionTitle>{data?.title}</SectionTitle>
-            <ItemContainer>
-                {data?.list && data?.list.slice(0, 8).map((item, idx) => (
-                    <>
-                        {data?.type == 'seller' &&
-                            <>
-                                <Seller5 item={item} router={router} type={data?.type} />
-                            </>}
-                        {data?.type == 'items' &&
-                            <>
-                                <Item5 item={item} router={router} type={data?.type} />
-                            </>}
-                    </>
-                ))}
-            </ItemContainer>
-            <SlideContainer>
-                <Slider {...item_list_setting}>
-                    {data?.list && data?.list.map((item, idx) => (
-                        <>
-                            {data?.type == 'seller' &&
-                                <>
-                                    <Seller5 item={item} router={router} type={data?.type} />
-                                </>}
-                            {data?.type == 'items' &&
-                                <>
-                                    <Item5 item={item} router={router} type={data?.type} />
-                                </>}
-                        </>
-                    ))}
-                </Slider>
-            </SlideContainer>
-        </>
-    )
-}
+const FinalCTA = styled(Section)`
+  text-align: center;
+  background:
+    radial-gradient(ellipse at center, rgba(201, 168, 118, 0.15) 0%, transparent 70%),
+    #0a0a0a;
+`
+const FinalTitle = styled.h2`
+  font-family: 'Playfair Display', 'Noto Serif KR', serif;
+  font-size: 56px;
+  font-weight: 300;
+  letter-spacing: -1px;
+  margin: 0 0 2rem 0;
+  @media (max-width: 840px) {
+    font-size: 36px;
+  }
+`
 
+const SectionHeading = styled.h2`
+  font-family: 'Playfair Display', 'Noto Serif KR', serif;
+  font-size: 38px;
+  font-weight: 300;
+  text-align: center;
+  margin: 0 0 3rem 0;
+  @media (max-width: 840px) {
+    font-size: 26px;
+  }
+`
 
-// 메인화면 김인욱
 const Demo5 = (props) => {
-    const {
-        data: {
+  const { currentLang } = useLocales();
+  const { themeDnsData } = useSettingsContext();
+  const { func } = props;
+  const router = func?.router;
+  const brandName = themeDnsData?.name || 'BRAND';
+  const product = useFeaturedProduct();
 
-        },
-        func: {
-            router
-        },
-    } = props;
-    const { themeDnsData, themeSellerList } = useSettingsContext();
-    const { user } = useAuthContext();
-    const [homeContent, setHomeContent] = useState({});
-    const [data, setData] = useState([]);
-    const [contentList, setContentList] = useState([]);
-    useEffect(() => {
-        if (themeDnsData?.id > 0) {
-            pageSetting();
-        }
-    }, [themeDnsData])
-    const pageSetting = async () => {
-
-        let dns_data = themeDnsData;
-        let content_list = (dns_data?.blog_obj) ?? [];
-        setContentList(content_list)
-        setData([
-            ...[{
-                title: '마켓 오픈했어요 ✨',
-                list: themeSellerList,
-                type: 'seller'
-            },],
-
-        ])
-    }
-
-    const returnHomeContentByColumn = (column, idx) => {
-        return returnHomeContent(
-            column,
-            {
-                windowWidth: window.innerWidth,
-                themeDnsData: themeDnsData,
-                idx,
-            },
-            {
-                router,
-            })
-    }
-
+  if (!product) {
     return (
-        <>
-            <Wrappers>
-                {/*<BannerContainer style={{
-                    background: `${themeDnsData?.theme_css?.main_color}`
-                }}>
-                    <Title>아직도 일일이</Title>
-                    <Title>주문받는 당신에게</Title>
-                    <SubTitle style={{ marginTop: '1rem' }}>판매, 주문관리, 송장, 현금영수증, 고객관리</SubTitle>
-                    <SubTitle>모든 기능이 100% 무료</SubTitle>
-                    <CardImg
-                        src={'https://www.inpock.co.kr/_next/image?url=https%3A%2F%2Fstorage.googleapis.com%2Finpock-store-asset-prod%2Fclient%2Fimg%2Finpock-image-thumbnail-store.60df99b.png&w=3840&q=75'} />
-            </BannerContainer>*/}
-                <ItemWrapper>
-                    {contentList && contentList.map((column, idx) => (
-                        <>
-                            {returnHomeContentByColumn(column, idx)}
-                        </>
-                    ))}
-                </ItemWrapper>
-            </Wrappers>
-        </>
-    )
-}
-export default Demo5
+      <Wrapper>
+        <Section style={{ textAlign: 'center' }}>
+          <HeroTitle>Coming Soon</HeroTitle>
+          <HeroDesc>관리자 페이지에서 대표 상품을 등록해주세요.</HeroDesc>
+        </Section>
+      </Wrapper>
+    );
+  }
+
+  const img = fixImgUrl(product?.product_img);
+  const name = formatLang(product, 'product_name', currentLang);
+  const comment = product?.product_comment;
+  const sale = product?.product_sale_price || product?.product_price || 0;
+  const orig = product?.product_price || 0;
+  const hasSale = orig > sale && sale > 0;
+  const disc = hasSale ? Math.round((orig - sale) * 100 / orig) : 0;
+  const goTo = () => router?.push?.(`/blog/product/${product?.id}`);
+
+  return (
+    <Wrapper>
+      <Hero>
+        <HeroContent>
+          <HeroOrnament>✦ ✦ ✦</HeroOrnament>
+          <HeroBrand>{brandName} · Maison</HeroBrand>
+          <HeroImageWrap>
+            <HeroImageBg />
+            <HeroImageRing />
+            <HeroImage src={img} effect="blur" onClick={goTo} style={{ cursor: 'pointer' }} />
+          </HeroImageWrap>
+          <HeroTitle>{name}</HeroTitle>
+          <HeroDivider />
+          {comment && <HeroDesc>"{comment}"</HeroDesc>}
+          {hasSale && (
+            <div style={{ fontSize: '14px', color: '#ff6b6b', marginBottom: '1rem', letterSpacing: '2px' }}>
+              {disc}% EXCLUSIVE OFFER
+            </div>
+          )}
+          <HeroPrice>{commarNumber(sale)}원</HeroPrice>
+          <CTABtn onClick={goTo}>Acquire</CTABtn>
+        </HeroContent>
+      </Hero>
+
+      <SpecSection>
+        <SectionHeading>Excellence, Defined</SectionHeading>
+        <SpecGrid>
+          <SpecCell>
+            <SpecIcon>✦</SpecIcon>
+            <SpecTitle>Pure Craftsmanship</SpecTitle>
+            <SpecDesc>한 땀 한 땀 정성으로 완성된 장인의 작품.</SpecDesc>
+          </SpecCell>
+          <SpecCell>
+            <SpecIcon>♦</SpecIcon>
+            <SpecTitle>Rare Materials</SpecTitle>
+            <SpecDesc>세계 각지에서 엄선된 최고의 원료만을 사용.</SpecDesc>
+          </SpecCell>
+          <SpecCell>
+            <SpecIcon>♛</SpecIcon>
+            <SpecTitle>Timeless Elegance</SpecTitle>
+            <SpecDesc>유행에 흔들리지 않는 영원한 아름다움.</SpecDesc>
+          </SpecCell>
+        </SpecGrid>
+      </SpecSection>
+
+      <StorySection>
+        <StoryInner>
+          <StoryLabel>MAISON STORY</StoryLabel>
+          <StoryTitle>The Art of {brandName}</StoryTitle>
+          <StoryQuote>
+            "완벽을 추구한다는 것은 평범한 것을 만드는 것이 아닙니다.
+            오랜 시간 수많은 시도 끝에 단 하나의 답을 찾아내는 여정입니다."
+          </StoryQuote>
+        </StoryInner>
+      </StorySection>
+
+      <GallerySection>
+        <SectionHeading>Visual Heritage</SectionHeading>
+        <GalleryGrid>
+          <GalleryCell>
+            <LazyLoadImage src={img} effect="blur" style={{ maxWidth: '75%', maxHeight: '75%', objectFit: 'contain', filter: 'drop-shadow(0 10px 30px rgba(201,168,118,0.2))' }} />
+          </GalleryCell>
+          <GalleryCell>
+            <LazyLoadImage src={img} effect="blur" style={{ maxWidth: '75%', maxHeight: '75%', objectFit: 'contain', filter: 'drop-shadow(0 10px 30px rgba(201,168,118,0.2))' }} />
+          </GalleryCell>
+          <GalleryCell>
+            <LazyLoadImage src={img} effect="blur" style={{ maxWidth: '75%', maxHeight: '75%', objectFit: 'contain', filter: 'drop-shadow(0 10px 30px rgba(201,168,118,0.2))' }} />
+          </GalleryCell>
+        </GalleryGrid>
+      </GallerySection>
+
+      <FinalCTA>
+        <HeroOrnament>✦</HeroOrnament>
+        <FinalTitle>Enter the World<br />of {brandName}</FinalTitle>
+        <HeroDivider />
+        <HeroPrice>{commarNumber(sale)}원</HeroPrice>
+        <CTABtn onClick={goTo}>Begin Your Journey</CTABtn>
+      </FinalCTA>
+    </Wrapper>
+  );
+};
+
+export default Demo5;

@@ -169,9 +169,15 @@ App.getInitialProps = async context => {
         const demoMap = {
           '1': 'jjpay.co.kr',
           '2': 'shop.minbeautym.com',
-          '4': 'telling-soc-cumulative-interviews.trycloudflare.com',
+          '4': 'sprint-modules-was-counseling.trycloudflare.com',
           'blog1': 'bs-company.co.kr',
           'blog2': 'hynet777.com',
+          'blog4': 'glamup.co.kr',
+          'blog5': 'babypop.co.kr',
+          'blog6': 'dokdoland.com',
+          'blog7': 'buddymall.co.kr',
+          'blog8': 'malu-79.com',
+          'blog9': 'msbtmall.com',
         };
         if (ctx?.query?.demo && demoMap[ctx.query.demo]) {
           dnsToQuery = demoMap[ctx.query.demo];

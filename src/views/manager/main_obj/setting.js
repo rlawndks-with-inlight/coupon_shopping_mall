@@ -41,6 +41,7 @@ import HomeItems from 'src/views/section/shop/HomeItems'
 import HomeButtonBanner from 'src/views/section/shop/HomeButtonBanner'
 import HomeItemsWithCategories from 'src/views/section/shop/HomeItemsWithCategories'
 import HomeVideoSlide from 'src/views/section/shop/HomeVideoSlide'
+import HomeItemHero from 'src/views/section/shop/HomeItemHero'
 import { homeItemsSetting, homeItemsWithCategoriesSetting } from 'src/views/section/shop/utils'
 import ReactQuillComponent from '../react-quill'
 import { apiManager, uploadFilesByManager } from 'src/utils/api'
@@ -100,6 +101,16 @@ const MainObjSetting = props => {
         type: 'text-banner',
         list: [],
         style: {}
+      },
+    },
+    {
+      label: '히어로 상품 (단일 상품 강조)',
+      type: 'item-hero',
+      default_value: {
+        type: 'item-hero',
+        title: '',
+        list: [],
+        style: { hero_type: '1' }
       },
     },
     {
@@ -618,6 +629,10 @@ const MainObjSetting = props => {
     const func = {}
     if (type == 'banner') setPreviewSection(<HomeBanner column={column} data={data} func={func} is_manager={true} />)
     if (type == 'editor') setPreviewSection(<HomeEditor column={column} data={data} func={func} is_manager={true} />)
+    if (type == 'item-hero') {
+      column = homeItemsSetting(column, productContent?.content ?? [])
+      setPreviewSection(<HomeItemHero column={column} data={data} func={func} is_manager={true} />)
+    }
     if (type == 'items') {
       column = homeItemsSetting(column, productContent?.content ?? [])
       setPreviewSection(<HomeItems column={column} data={data} func={func} is_manager={true} />)
@@ -1005,6 +1020,74 @@ const MainObjSetting = props => {
                                   </Row>
                                 </>
                               ))}
+                          </>
+                        )}
+                        {conditionOfSection('item-hero', item) && (
+                          <>
+                            <Row style={{ alignItems: 'end' }}>
+                              <CardHeader
+                                title={`히어로 상품 ${curTypeNum(contentList, 'item-hero', idx)}`}
+                                sx={{ paddingLeft: '0' }}
+                              />
+                              <SectionProcess idx={idx} item={item} isProductList={1} />
+                            </Row>
+                            <TextField
+                              select
+                              label='디자인 타입'
+                              value={item?.style?.hero_type || '1'}
+                              onChange={e => {
+                                let content_list = [...contentList]
+                                content_list[idx]['style'] = { ...content_list[idx]['style'], hero_type: e.target.value }
+                                setContentList(content_list)
+                              }}
+                              SelectProps={{ native: true }}
+                            >
+                              <option value='1'>타입1: 매거진 커버 스토리 (에디토리얼)</option>
+                              <option value='2'>타입2: 매거진 피처 스프레드 (다크)</option>
+                              <option value='3'>타입3: 매거진 인터뷰 (인용구 중심)</option>
+                              <option value='4'>타입4: 매거진 에디토리얼 (Serif 감성)</option>
+                              <option value='5'>타입5: 프로모션 와이드 배너 (홈쇼핑 스타일)</option>
+                              <option value='6'>타입6: 풀블리드 이미지 배너 (프리미엄 쇼핑몰)</option>
+                              <option value='7'>타입7: 스포트라이트 (다크 럭셔리)</option>
+                              <option value='8'>타입8: 그리드 쇼케이스 (모듈식 블록)</option>
+                            </TextField>
+                            <TextField
+                              label='제목'
+                              value={item.title}
+                              onChange={e => {
+                                let content_list = [...contentList]
+                                content_list[idx]['title'] = e.target.value
+                                setContentList(content_list)
+                              }}
+                            />
+                            <Autocomplete
+                              multiple
+                              fullWidth
+                              options={
+                                productContent?.content &&
+                                (productContent?.content ?? []).map(item => {
+                                  return item?.id
+                                })
+                              }
+                              getOptionLabel={item_id =>
+                                _.find(productContent?.content ?? [], { id: parseInt(item_id) })?.product_name
+                              }
+                              defaultValue={item.list}
+                              value={item.list}
+                              onChange={(e, value) => {
+                                handleChangeItemMultiSelect(value, idx)
+                              }}
+                              renderInput={params => (
+                                <TextField
+                                  {...params}
+                                  label='강조할 상품 선택 (1개 권장)'
+                                  placeholder='3글자 이상 입력해 주세요.'
+                                  onChange={e => {
+                                    onSearchProducts(e)
+                                  }}
+                                />
+                              )}
+                            />
                           </>
                         )}
                         {conditionOfSection('items', item) && (

@@ -5,7 +5,7 @@ import Slider from 'react-slick';
 import { useSettingsContext } from 'src/components/settings';
 import { themeObj } from 'src/components/elements/styled-components';
 import { useAuthContext } from 'src/layouts/manager/auth/useAuthContext';
-import { Item1, Seller1 } from 'src/components/elements/blog/demo-1';
+import { Item4, Seller4 } from 'src/components/elements/blog/demo-4';
 import HomeBanner from 'src/views/section/blog/HomeBanner'
 import HomeEditor from 'src/views/section/blog/HomeEditor'
 import HomeItems from 'src/views/section/blog/HomeItems'
@@ -23,7 +23,7 @@ import HomeItemHero from 'src/views/section/shop/HomeItemHero'
 const Wrappers = styled.div`
 max-width: 840px;
 width:100%;
-margin: 48px auto 0;
+margin: 56px auto;
 display:flex;
 flex-direction:column;
 `
@@ -97,23 +97,22 @@ const test_home_data = [
 const ItemWrapper = styled.div`
 display:flex;
 flex-direction:column;
-width:100%;
+width:calc(100% - 32px);
 margin: 0 auto;
-padding-top:8px;
+@media (max-width:840px){
+    margin: 0 auto;
+    width:90%;
+}
 `
 const SectionTitle = styled.div`
-font-size:18px;
-font-weight:700;
-letter-spacing:-0.3px;
-margin-bottom:8px;
-padding:0 8px;
+font-weight:bold;
 `
 const ItemContainer = styled.div`
 display:flex;
 flex-wrap:wrap;
-column-gap: 4%;
-row-gap: 0;
-margin:0 0 16px 0;
+column-gap: 2%;
+row-gap: 1rem;
+margin:1rem 0 4rem 0;
 @media (max-width:840px){
     display:none;
 }
@@ -166,11 +165,11 @@ const ItemSectionContent = (props) => {
                     <>
                         {data?.type == 'seller' &&
                             <>
-                                <Seller1 item={item} router={router} type={data?.type} />
+                                <Seller4 item={item} router={router} type={data?.type} />
                             </>}
                         {data?.type == 'items' &&
                             <>
-                                <Item1 item={item} router={router} type={data?.type} />
+                                <Item4 item={item} router={router} type={data?.type} />
                             </>}
                     </>
                 ))}
@@ -181,11 +180,11 @@ const ItemSectionContent = (props) => {
                         <>
                             {data?.type == 'seller' &&
                                 <>
-                                    <Seller1 item={item} router={router} type={data?.type} />
+                                    <Seller4 item={item} router={router} type={data?.type} />
                                 </>}
                             {data?.type == 'items' &&
                                 <>
-                                    <Item1 item={item} router={router} type={data?.type} />
+                                    <Item4 item={item} router={router} type={data?.type} />
                                 </>}
                         </>
                     ))}
@@ -197,7 +196,7 @@ const ItemSectionContent = (props) => {
 
 
 // 메인화면 김인욱
-const Demo1 = (props) => {
+const Demo4 = (props) => {
     const {
         data: {
 
@@ -268,4 +267,4 @@ const Demo1 = (props) => {
         </>
     )
 }
-export default Demo1
+export default Demo4

@@ -5,6 +5,7 @@ import axios from "axios";
 import toast from "react-hot-toast";
 import { returnMoment } from "./function";
 import { getLocalStorage } from "./local-storage";
+import { isDemoHost } from "src/components/main-site/frameList";
 
 export const calculatorPrice = (item) => {// 상품별로 가격
     if (!item) {
@@ -69,6 +70,10 @@ export const makePayData = async (products_, payData_) => {
     return payData;
 }
 export const onPayProductsByHand = async (products_, payData_) => { // 수기결제(페이베리)
+    if (isDemoHost()) {
+        toast.error('데모 미리보기에서는 결제할 수 없습니다.');
+        return false;
+    }
     let products = products_;
     let pay_data = payData_;
     let payData = await makePayData(products, pay_data);
@@ -107,6 +112,10 @@ export const onPayProductsByHand = async (products_, payData_) => { // 수기결
     }
 }
 export const onPayProductsByAuth = async (products_, payData_, type) => { // 인증결제(페이베리 & 위루트)
+    if (isDemoHost()) {
+        toast.error('데모 미리보기에서는 결제할 수 없습니다.');
+        return false;
+    }
     let products = products_;
     let pay_data = payData_;
     let payData = await makePayData(products, pay_data);
@@ -172,6 +181,10 @@ export const onPayProductsByAuth = async (products_, payData_, type) => { // 인
     }
 }
 export const onPayProductsByVirtualAccount = async (products_, payData_) => { // 무통장입금
+    if (isDemoHost()) {
+        toast.error('데모 미리보기에서는 결제할 수 없습니다.');
+        return false;
+    }
     let products = products_;
     let pay_data = payData_;
     let payData = await makePayData(products, pay_data);

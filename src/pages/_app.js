@@ -38,6 +38,7 @@ import { useTranslation, I18nextProvider } from 'react-i18next';
 import i18n from 'src/locales/i18n';
 import { allLangs } from 'src/locales'
 import { getDemoBrandDns } from 'src/components/main-site/frameList'
+import DemoNotice from 'src/components/main-site/DemoNotice'
 
 const clientSideEmotionCache = createEmotionCache();
 
@@ -127,6 +128,7 @@ const App = props => {
                             <I18nextProvider i18n={i18n}>
                               <ModalProvider>
                                 {getLayout(<Component {...pageProps} />)}
+                                <DemoNotice />
                                 <Toaster position={'right-top'} toastOptions={{ className: 'react-hot-toast' }} />
                               </ModalProvider>
                             </I18nextProvider>
@@ -168,8 +170,8 @@ App.getInitialProps = async context => {
       const mainHosts = [process.env.MAIN_FRONT_URL, 'localhost', '127.0.0.1'].filter(Boolean);
       const isMainHost = mainHosts.includes(host);
       const rootDomain = (process.env.MAIN_FRONT_URL || '').replace(/^www\./, '');
-      // 서브 브랜드 서브도메인이 루트(/)로 들어오면 쇼핑몰 홈으로 이동 (마스터 랜딩은 메인 도메인 전용)
-      if (!isMainHost && ctx?.pathname === '/' && ctx?.res) {
+      // [ShopGo 전용] 서브 브랜드 서브도메인이 루트(/)로 들어오면 쇼핑몰 홈으로 이동 (마스터 랜딩은 메인 도메인 전용)
+      if (process.env.NEXT_PUBLIC_IS_SHOPGO === 'true' && !isMainHost && ctx?.pathname === '/' && ctx?.res) {
         ctx.res.writeHead(302, { Location: '/shop/' });
         ctx.res.end();
         return { head_data: {} };

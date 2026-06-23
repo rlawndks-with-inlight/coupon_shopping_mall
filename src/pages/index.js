@@ -1,6 +1,25 @@
 import { useRouter } from 'next/router';
+import { m, useScroll, useSpring } from 'framer-motion';
+import { useTheme } from '@mui/material/styles';
 import { Box, Container, Stack, Typography, Button, Grid } from '@mui/material';
+// 기존 템플릿 홈 (ShopGo가 아닌 프로젝트의 원래 동작 유지)
+import MainLayout from 'src/layouts/main';
+import {
+  HomeHero,
+  HomeMinimal,
+  HomeDarkMode,
+  HomeLookingFor,
+  HomeForDesigner,
+  HomeColorPresets,
+  HomePricingPlans,
+  HomeAdvertisement,
+  HomeCleanInterfaces,
+} from 'src/views/home';
+// ShopGo 마스터 랜딩
 import MainSiteLayout, { MAIN_DOMAIN } from 'src/components/main-site/MainSiteLayout';
+
+// ShopGo 배포에서만 마스터 랜딩 노출 (.env: NEXT_PUBLIC_IS_SHOPGO=true)
+const IS_SHOPGO = process.env.NEXT_PUBLIC_IS_SHOPGO === 'true';
 
 const TARGETS = [
   { title: '구축 비용이 부담되는 사업자', desc: '쇼핑몰 제작비 0원, 바로 판매를 시작할 수 있습니다.' },
@@ -23,7 +42,8 @@ const LANGS = [
   { flag: '🇪🇸', label: '스페인어' },
 ];
 
-const HomePage = () => {
+// ShopGo 마스터 랜딩
+const ShopGoLanding = () => {
   const router = useRouter();
 
   return (
@@ -143,7 +163,7 @@ const HomePage = () => {
               GLOBAL READY
             </Typography>
             <Typography sx={{ fontSize: { xs: 24, md: 36 }, fontWeight: 900, letterSpacing: '-1px' }}>
-              다국어 자동 지원
+              다국어 자동 번역
             </Typography>
             <Typography sx={{ fontSize: 14, color: '#666', mt: 1 }}>
               상품을 등록하면 자동으로 번역되어, 해외 고객까지 그대로 응대할 수 있습니다.
@@ -203,6 +223,63 @@ const HomePage = () => {
   );
 };
 
-HomePage.getLayout = (page) => <MainSiteLayout>{page}</MainSiteLayout>;
+// 기존 템플릿 홈 (ShopGo가 아닌 배포의 원래 동작 그대로)
+const TemplateHome = () => {
+  const theme = useTheme();
+
+  const { scrollYProgress } = useScroll();
+
+  const scaleX = useSpring(scrollYProgress, {
+    stiffness: 100,
+    damping: 30,
+    restDelta: 0.001,
+  });
+
+  const progress = (
+    <m.div
+      style={{
+        top: 0,
+        left: 0,
+        right: 0,
+        height: 3,
+        zIndex: 1999,
+        position: 'fixed',
+        transformOrigin: '0%',
+        backgroundColor: theme.palette.primary.main,
+        scaleX,
+      }}
+    />
+  );
+  if (window.location.host.split(':')[0] != process.env.MAIN_FRONT_URL) {
+    return <></>;
+  }
+  return (
+    <>
+      {progress}
+      <HomeHero />
+      <Box
+        sx={{
+          overflow: 'hidden',
+          position: 'relative',
+          bgcolor: 'background.default',
+        }}
+      >
+        <HomeMinimal />
+        <HomeForDesigner />
+        <HomeDarkMode />
+        <HomeColorPresets />
+        <HomeCleanInterfaces />
+        <HomePricingPlans />
+        <HomeLookingFor />
+        <HomeAdvertisement />
+      </Box>
+    </>
+  );
+};
+
+const HomePage = () => (IS_SHOPGO ? <ShopGoLanding /> : <TemplateHome />);
+
+HomePage.getLayout = (page) =>
+  IS_SHOPGO ? <MainSiteLayout>{page}</MainSiteLayout> : <MainLayout> {page} </MainLayout>;
 
 export default HomePage;

@@ -170,12 +170,6 @@ App.getInitialProps = async context => {
       const mainHosts = [process.env.MAIN_FRONT_URL, 'localhost', '127.0.0.1'].filter(Boolean);
       const isMainHost = mainHosts.includes(host);
       const rootDomain = (process.env.MAIN_FRONT_URL || '').replace(/^www\./, '');
-      // [ShopGo 전용] 서브 브랜드 서브도메인이 루트(/)로 들어오면 쇼핑몰 홈으로 이동 (마스터 랜딩은 메인 도메인 전용)
-      if (process.env.NEXT_PUBLIC_IS_SHOPGO === 'true' && !isMainHost && ctx?.pathname === '/' && ctx?.res) {
-        ctx.res.writeHead(302, { Location: '/shop/' });
-        ctx.res.end();
-        return { head_data: {} };
-      }
       // demo-N.<도메인> 미리보기: 해당 프레임의 기존 브랜드 dns로 조회
       let dnsToQuery = host;
       const demoBrandDns = getDemoBrandDns(host);
@@ -189,6 +183,13 @@ App.getInitialProps = async context => {
       const res = await fetch(url)
       head_data = await res.json()
       let dns_data = head_data?.data
+      // [ShopGo] 마스터(is_main_dns=1)가 아닌 브랜드가 루트(/)로 들어오면 쇼핑몰 홈으로 이동.
+      // 마스터 판별을 DB의 is_main_dns로 하므로 MAIN_FRONT_URL 설정과 무관하게 동작.
+      if (process.env.NEXT_PUBLIC_IS_SHOPGO === 'true' && ctx?.pathname === '/' && ctx?.res && dns_data && dns_data.is_main_dns != 1) {
+        ctx.res.writeHead(302, { Location: '/shop/' });
+        ctx.res.end();
+        return { head_data: {} };
+      }
       return {
         head_data: dns_data
       }

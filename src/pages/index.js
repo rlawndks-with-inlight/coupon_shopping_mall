@@ -33,7 +33,7 @@ const HomePage = () => {
         <Container maxWidth="lg">
           <Stack spacing={3} alignItems="center" textAlign="center">
             <Typography sx={{ fontSize: 12, letterSpacing: 4, color: '#888', fontWeight: 700 }}>
-              FREE SHOPPING MALL · POSPAY
+              FREE SHOPPING MALL · FORSPAY
             </Typography>
             <Typography
               sx={{
@@ -146,7 +146,7 @@ const HomePage = () => {
               다국어 자동 지원
             </Typography>
             <Typography sx={{ fontSize: 14, color: '#666', mt: 1 }}>
-              Google Translate 기반으로 해외 고객 응대를 시작할 수 있습니다.
+              상품을 등록하면 자동으로 번역되어, 해외 고객까지 그대로 응대할 수 있습니다.
             </Typography>
           </Stack>
           <Stack direction="row" justifyContent="center" spacing={{ xs: 2, sm: 4 }} flexWrap="wrap">

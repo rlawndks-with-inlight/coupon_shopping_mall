@@ -37,6 +37,7 @@ import createEmotionCache from '../utils/createEmotionCache';
 import { useTranslation, I18nextProvider } from 'react-i18next';
 import i18n from 'src/locales/i18n';
 import { allLangs } from 'src/locales'
+import { getDemoBrandDns } from 'src/components/main-site/frameList'
 
 const clientSideEmotionCache = createEmotionCache();
 
@@ -163,36 +164,23 @@ App.getInitialProps = async context => {
       seller_id = parseInt(route_list[3]);
     }
     if (host) {
-      // 메인 사이트(랜딩)로 취급할 호스트: 메인 도메인 / localhost / 클플 터널
+      // 메인 사이트(랜딩)로 취급할 호스트: 메인 도메인 / localhost
       const mainHosts = [process.env.MAIN_FRONT_URL, 'localhost', '127.0.0.1'].filter(Boolean);
-      const isMainHost = mainHosts.includes(host) || host.endsWith('.trycloudflare.com');
+      const isMainHost = mainHosts.includes(host);
       const rootDomain = (process.env.MAIN_FRONT_URL || '').replace(/^www\./, '');
-      // 데모 프리뷰: ?demo=X 로 다른 브랜드 디자인 미리보기 (로컬 전용)
+      // 서브 브랜드 서브도메인이 루트(/)로 들어오면 쇼핑몰 홈으로 이동 (마스터 랜딩은 메인 도메인 전용)
+      if (!isMainHost && ctx?.pathname === '/' && ctx?.res) {
+        ctx.res.writeHead(302, { Location: '/shop/' });
+        ctx.res.end();
+        return { head_data: {} };
+      }
+      // demo-N.<도메인> 미리보기: 해당 프레임의 기존 브랜드 dns로 조회
       let dnsToQuery = host;
-      if (process.env.NEXT_PUBLIC_DEMO_PREVIEW === 'true') {
-        const demoMap = {
-          '1': 'jjpay.co.kr',
-          '2': 'shop.minbeautym.com',
-          '4': 'das-composed-montana-bears.trycloudflare.com',
-          'test': 'testmall.shopgo.co.kr',
-          'blog1': 'bs-company.co.kr',
-          'blog2': 'hynet777.com',
-          'blog4': 'glamup.co.kr',
-          'blog5': 'babypop.co.kr',
-          'blog6': 'dokdoland.com',
-          'blog7': 'buddymall.co.kr',
-          'blog8': 'malu-79.com',
-          'blog9': 'msbtmall.com',
-        };
-        if (ctx?.query?.demo && demoMap[ctx.query.demo]) {
-          dnsToQuery = demoMap[ctx.query.demo];
-        } else if (isMainHost && rootDomain) {
-          // demo 없고 메인 호스트면 마스터 브랜드 조회
-          dnsToQuery = rootDomain;
-        } else {
-          return { head_data: {} };
-        }
+      const demoBrandDns = getDemoBrandDns(host);
+      if (demoBrandDns) {
+        dnsToQuery = demoBrandDns;
       } else if (isMainHost && rootDomain) {
+        // 메인 호스트는 마스터 브랜드(메인 도메인) 조회
         dnsToQuery = rootDomain;
       }
       const url = `${process.env.BACK_URL}/api/domain?dns=${dnsToQuery}&product_id=${product_id}&post_id=${post_id}&seller_id=${seller_id}`;

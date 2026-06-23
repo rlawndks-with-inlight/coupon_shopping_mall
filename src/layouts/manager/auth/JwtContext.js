@@ -3,6 +3,7 @@ import { createContext, useEffect, useReducer, useCallback, useMemo } from 'reac
 // utils
 import axios from 'src/utils/axios';
 import localStorageAvailable from 'src/utils/localStorageAvailable';
+import { isDemoHost } from 'src/components/main-site/frameList';
 //
 import { useRouter } from 'next/router';
 import { isManagerRouter } from 'src/utils/function';
@@ -116,6 +117,10 @@ export function AuthProvider({ children }) {
 
   // LOGIN
   const login = useCallback(async (user_name, user_pw, is_manager, otp_num) => {
+    if (isDemoHost()) {
+      toast.error('데모 미리보기에서는 로그인할 수 없습니다.');
+      return false;
+    }
     if (!user_name || !user_pw) {
       toast.error('필수값을 입력해 주세요.');
       return false;
@@ -142,6 +147,10 @@ export function AuthProvider({ children }) {
 
   // REGISTER
   const register = useCallback(async (email, password, firstName, lastName) => {
+    if (isDemoHost()) {
+      toast.error('데모 미리보기에서는 회원가입할 수 없습니다.');
+      return false;
+    }
     const response = await axios.post('/api/account/register', {
       email,
       password,

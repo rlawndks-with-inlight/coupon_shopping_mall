@@ -20,7 +20,7 @@ const FramesPage = () => {
             <Typography sx={{ fontSize: { xs: 26, md: 40 }, fontWeight: 900, letterSpacing: '-1.2px' }}>
               무료 쇼핑몰 프레임
             </Typography>
-            <Typography sx={{ fontSize: 14, color: '#666', maxWidth: 620, mx: 'auto', lineHeight: 1.7, textAlign: 'center' }}>
+            <Typography sx={{ fontSize: 14, color: '#666', maxWidth: 620, alignSelf: 'center', lineHeight: 1.7, textAlign: 'center' }}>
               브랜드와 업종에 맞춰 디자인은 협의 후 조정 가능합니다.
               <br />
               아래 카드의 미리보기 버튼으로 실제 동작을 확인해 보세요.

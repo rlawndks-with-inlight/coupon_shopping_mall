@@ -66,7 +66,8 @@ export const PATH_MANAGER = {
     paymentModules: path(ROOTS_MANAGER, '/settings/payment-modules'),
     brands: path(ROOTS_MANAGER, '/settings/brands'),
     columns: path(ROOTS_MANAGER, '/settings/columns'),
-  }
+  },
+  merchantApplications: path(ROOTS_MANAGER, '/merchant-applications'),
 }
 export const pg_companies = [
   {

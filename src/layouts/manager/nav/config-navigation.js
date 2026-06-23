@@ -117,6 +117,11 @@ export const navConfig = () => {
     }
     return false
   }
+  // 현재 로드된 브랜드가 마스터(메인)인지로 판단. 가맹점 신청 관리 등 마스터 전용 메뉴용.
+  // 터널 환경에선 모든 데모가 같은 host라, host가 아니라 브랜드의 is_main_dns로 구분.
+  const isMasterSite = () => {
+    return themeDnsData?.is_main_dns == 1;
+  }
   const isManager = () => {
     if (user?.level >= 40) {
       return true;
@@ -132,6 +137,13 @@ export const navConfig = () => {
         { title: '대시보드', path: PATH_MANAGER.dashboards, icon: ICONS.dashboard },
       ],
     },
+    ...(isMasterSite() ? [
+      {
+        items: [
+          { title: '가맹점 신청 관리', path: PATH_MANAGER.merchantApplications, icon: ICONS.user },
+        ],
+      },
+    ] : []),
     ...(themeDnsData?.setting_obj?.is_use_seller > 0 ? [
       {
         items: [

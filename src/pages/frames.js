@@ -1,15 +1,12 @@
 import { useRouter } from 'next/router';
 import { Box, Container, Stack, Typography, Button, Grid, Chip } from '@mui/material';
-import MainSiteLayout from 'src/components/main-site/MainSiteLayout';
-import { FRAMES } from 'src/components/main-site/frameList';
+import MainSiteLayout, { MAIN_DOMAIN } from 'src/components/main-site/MainSiteLayout';
+import { FRAMES, getFramePreviewBrand } from 'src/components/main-site/frameList';
 
 const FramesPage = () => {
   const router = useRouter();
 
-  const buildPreviewUrl = (f) => {
-    const demoParam = f.category === 'shop' ? `${f.demo}` : `blog${f.demo}`;
-    return `/${f.category}?demo=${demoParam}`;
-  };
+  const buildPreviewUrl = (f) => `https://demo-${f.no}.${MAIN_DOMAIN}/${f.category}`;
 
   return (
     <Box>
@@ -23,8 +20,8 @@ const FramesPage = () => {
             <Typography sx={{ fontSize: { xs: 26, md: 40 }, fontWeight: 900, letterSpacing: '-1.2px' }}>
               무료 쇼핑몰 프레임
             </Typography>
-            <Typography sx={{ fontSize: 14, color: '#666', maxWidth: 620, mx: 'auto', lineHeight: 1.7 }}>
-              브랜드와 업종에 맞춰 디자인은 자유롭게 조정 가능합니다.
+            <Typography sx={{ fontSize: 14, color: '#666', maxWidth: 620, mx: 'auto', lineHeight: 1.7, textAlign: 'center' }}>
+              브랜드와 업종에 맞춰 디자인은 협의 후 조정 가능합니다.
               <br />
               아래 카드의 미리보기 버튼으로 실제 동작을 확인해 보세요.
             </Typography>
@@ -75,6 +72,7 @@ const FramesPage = () => {
                   <Button
                     fullWidth
                     variant="outlined"
+                    disabled={!getFramePreviewBrand(f.no)}
                     onClick={() => window.open(buildPreviewUrl(f), '_blank')}
                     sx={{
                       borderColor: '#111',
@@ -82,9 +80,10 @@ const FramesPage = () => {
                       fontWeight: 700,
                       borderRadius: 1.5,
                       '&:hover': { borderColor: '#000', bgcolor: '#fafafa' },
+                      '&.Mui-disabled': { borderColor: '#ddd', color: '#bbb' },
                     }}
                   >
-                    미리보기
+                    {getFramePreviewBrand(f.no) ? '미리보기' : '준비중'}
                   </Button>
                   <Button
                     fullWidth

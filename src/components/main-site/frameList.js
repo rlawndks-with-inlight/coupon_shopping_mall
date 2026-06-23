@@ -6,7 +6,7 @@ export const FRAMES = [
     category: 'shop',
     demo: 1,
     keyword: '다카테고리 종합몰',
-    desc: '상단 카테고리 메뉴를 항상 노출해 다수의 상품을 빠르게 탐색. 풀폭 슬라이드 배너 + 인기상품/품절임박 섹션.',
+    desc: '상단 카테고리 메뉴를 항상 노출해 다수의 상품을 빠르게 탐색. 전체 폭 슬라이드 배너 + 인기상품/품절임박 섹션.',
     recommend: '카테고리·SKU가 많은 종합 쇼핑몰 (가전·잡화·식품 등)',
   },
   {
@@ -16,7 +16,7 @@ export const FRAMES = [
     category: 'shop',
     demo: 2,
     keyword: '단일/소수 브랜드 매장',
-    desc: '큰 히어로 배너로 브랜드/시즌 분위기 어필. 상단 메뉴는 접어두고 비주얼에 집중.',
+    desc: '큰 메인 배너로 브랜드·시즌 분위기를 강조. 상단 메뉴는 접어두고 비주얼에 집중.',
     recommend: '브랜드 정체성을 강조하는 단일/소수 브랜드 매장 (화장품·패션 등)',
   },
   {
@@ -25,7 +25,7 @@ export const FRAMES = [
     title: '다카테고리 잡화몰',
     category: 'shop',
     demo: 4,
-    keyword: '패션·잡화 다SKU',
+    keyword: '패션·잡화 다품목',
     desc: '카테고리별 상품 그리드를 다채롭게 배치. 가방·시계·신발·액세서리 등 종류별 분류 진열.',
     recommend: '카테고리가 많고 SKU가 다양한 잡화몰 (가방·시계·신발·액세서리 등)',
   },
@@ -56,7 +56,7 @@ export const FRAMES = [
     category: 'blog',
     demo: 4,
     keyword: '단일 프리미엄 상품',
-    desc: '단일 상품을 큰 비주얼로 매거진처럼 표현. 흑백 모노크롬 톤, 절제된 타이포그래피.',
+    desc: '단일 상품을 큰 비주얼로 매거진처럼 표현. 흑백 톤, 절제된 타이포그래피.',
     recommend: '단일 프리미엄 상품(가전·디자인 가구·아트 굿즈), 한정 에디션 브랜드',
   },
   {
@@ -65,9 +65,9 @@ export const FRAMES = [
     title: '다크 럭셔리',
     category: 'blog',
     demo: 5,
-    keyword: '메종/한정판 브랜드',
-    desc: '다크 톤 배경으로 절제·고급·신비로운 무드. 헤리티지 카피.',
-    recommend: '럭셔리 침구·생활용품, 프리미엄 메종 브랜드, 한정/리미티드 컬렉션',
+    keyword: '고급·한정판 브랜드',
+    desc: '다크 톤 배경으로 절제·고급·신비로운 무드. 브랜드 헤리티지를 담은 문구.',
+    recommend: '럭셔리 침구·생활용품, 프리미엄 브랜드, 한정 컬렉션',
   },
   {
     no: 8,
@@ -75,8 +75,8 @@ export const FRAMES = [
     title: '신뢰형 단일 브랜드',
     category: 'blog',
     demo: 6,
-    keyword: '소수 SKU · 신뢰형',
-    desc: '정돈된 깔끔한 레이아웃. Why 신뢰 포인트 + 통계 + 갤러리로 신뢰감을 단계적으로 전달.',
+    keyword: '소수 품목 · 신뢰형',
+    desc: '정돈된 깔끔한 레이아웃. 신뢰 포인트·통계·갤러리로 믿음을 단계적으로 전달.',
     recommend: '단일/소수 SKU 브랜드 (생수·영양제, 단일 화장품 라인, 일상 소비재 등)',
   },
   {
@@ -112,3 +112,34 @@ export const FRAMES = [
 ];
 
 export const findFrameByKey = (key) => FRAMES.find((f) => f.key === key);
+
+// demo-N.<도메인> 미리보기가 연결할 기존 브랜드 dns (frame.no 기준 단일 소스)
+const DEMO_PREVIEW_BRAND = {
+  1: 'jjpay.co.kr',
+  2: 'shop.minbeautym.com',
+  3: 'demo4.asapmall.kr',
+  4: 'bs-company.co.kr',
+  5: 'hynet777.com',
+  6: 'glamup.co.kr',
+  7: 'babypop.co.kr',
+  8: 'dokdoland.com',
+  9: 'buddymall.co.kr',
+  10: 'malu-79.com',
+  11: 'msbtmall.com',
+};
+
+// 프레임 번호 → 미리보기 연결 브랜드 (없으면 null)
+export const getFramePreviewBrand = (no) => DEMO_PREVIEW_BRAND[no] || null;
+
+// 호스트(demo-N.<도메인>) → 연결할 기존 브랜드 dns (아니면 null)
+export const getDemoBrandDns = (host) => {
+  const m = /^demo-(\d+)\./.exec(host || '');
+  if (!m) return null;
+  return DEMO_PREVIEW_BRAND[Number(m[1])] || null;
+};
+
+// 현재 호스트가 데모 미리보기 서브도메인(demo-N.*)인지 (브라우저 전용)
+export const isDemoHost = () => {
+  if (typeof window === 'undefined') return false;
+  return /^demo-\d+\./.test(window.location.host || '');
+};

@@ -161,6 +161,20 @@ export const Items = props => {
     dots: false,
     slidesPerRow: getSlideToShow(),
     rows: rows,
+    responsive: [
+      {
+        breakpoint: 1150,
+        settings: {
+          slidesPerRow: itemThemeCss?.container?.is_vertical == 1 ? 2 : 3,
+        },
+      },
+      {
+        breakpoint: 850,
+        settings: {
+          slidesPerRow: itemThemeCss?.container?.is_vertical == 1 ? 1 : 2,
+        },
+      },
+    ],
     ...slide_setting
   }
   return (

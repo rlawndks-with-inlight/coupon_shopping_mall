@@ -58,7 +58,7 @@ const getDemo = (num, common) => {
     /*else if (num == 10)
       return <ShopLayout10 {...common} />*/
     else
-      return { children }
+      return <>{children}</>
   } else if (category == 'blog') {
     if (num == 1)
       return <BlogLayout1 {...common} />
@@ -78,8 +78,10 @@ const getDemo = (num, common) => {
       return <BlogLayout6 {...common} />
     else if (num == 9)
       return <BlogLayout6 {...common} />
+    else
+      return <>{children}</>
   } else {
-    { children }
+    return <>{children}</>
   }
 }
 

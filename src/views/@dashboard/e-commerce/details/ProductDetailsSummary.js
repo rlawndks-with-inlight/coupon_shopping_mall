@@ -94,6 +94,7 @@ export default function ProductDetailsSummary({ product, onAddCart, onGotoStep, 
     inventory,
     product_name,
     product_comment,
+    product_spec,
     groups = [],
     delivery_fee,
     lang_obj,
@@ -149,6 +150,21 @@ export default function ProductDetailsSummary({ product, onAddCart, onGotoStep, 
             </Typography>
             <Typography variant="h5">{formatLang(product, 'product_name', currentLang)}</Typography>
             <Typography variant="h7" color={themeObj.grey[500]}>{formatLang(product, 'product_comment', currentLang)}</Typography>
+
+            {product_spec &&
+              <Box
+                sx={{
+                  p: 2,
+                  bgcolor: 'grey.100',
+                  borderRadius: 1,
+                  whiteSpace: 'pre-line',
+                  fontSize: 14,
+                  lineHeight: 1.7,
+                  color: 'text.secondary',
+                }}
+              >
+                {formatLang(product, 'product_spec', currentLang)}
+              </Box>}
 
             <Stack direction="row" alignItems="center" spacing={1}>
               <Rating value={product_average_scope} precision={0.1} readOnly />

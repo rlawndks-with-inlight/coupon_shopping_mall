@@ -604,6 +604,7 @@ const ProductEdit = () => {
     product_name: '',
     product_code: '',
     product_comment: '',
+    product_spec: '',
     product_price: 0,
     product_sale_price: 0,
     product_type: 0,
@@ -1628,6 +1629,21 @@ const ProductEdit = () => {
                                 {
                                   ...item,
                                   ['product_comment']: e.target.value
+                                }
+                              )
+                            }} />
+                          <TextField
+                            disabled={user?.level < 40}
+                            label='제품 특징 / 사양'
+                            value={item.product_spec}
+                            multiline
+                            minRows={4}
+                            placeholder={"제품 상단(가격 옆)에 표시됩니다. 줄바꿈으로 여러 줄 입력 가능."}
+                            onChange={(e) => {
+                              setItem(
+                                {
+                                  ...item,
+                                  ['product_spec']: e.target.value
                                 }
                               )
                             }} />

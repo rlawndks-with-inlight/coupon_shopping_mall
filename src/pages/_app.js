@@ -163,13 +163,18 @@ App.getInitialProps = async context => {
       seller_id = parseInt(route_list[3]);
     }
     if (host) {
+      // 메인 사이트(랜딩)로 취급할 호스트: 메인 도메인 / localhost / 클플 터널
+      const mainHosts = [process.env.MAIN_FRONT_URL, 'localhost', '127.0.0.1'].filter(Boolean);
+      const isMainHost = mainHosts.includes(host) || host.endsWith('.trycloudflare.com');
+      const rootDomain = (process.env.MAIN_FRONT_URL || '').replace(/^www\./, '');
       // 데모 프리뷰: ?demo=X 로 다른 브랜드 디자인 미리보기 (로컬 전용)
       let dnsToQuery = host;
       if (process.env.NEXT_PUBLIC_DEMO_PREVIEW === 'true') {
         const demoMap = {
           '1': 'jjpay.co.kr',
           '2': 'shop.minbeautym.com',
-          '4': 'sprint-modules-was-counseling.trycloudflare.com',
+          '4': 'das-composed-montana-bears.trycloudflare.com',
+          'test': 'testmall.shopgo.co.kr',
           'blog1': 'bs-company.co.kr',
           'blog2': 'hynet777.com',
           'blog4': 'glamup.co.kr',
@@ -181,10 +186,14 @@ App.getInitialProps = async context => {
         };
         if (ctx?.query?.demo && demoMap[ctx.query.demo]) {
           dnsToQuery = demoMap[ctx.query.demo];
+        } else if (isMainHost && rootDomain) {
+          // demo 없고 메인 호스트면 마스터 브랜드 조회
+          dnsToQuery = rootDomain;
         } else {
-          // demo 파라미터 없으면 클라이언트의 sessionStorage에서 복구하도록 빈 데이터 반환
           return { head_data: {} };
         }
+      } else if (isMainHost && rootDomain) {
+        dnsToQuery = rootDomain;
       }
       const url = `${process.env.BACK_URL}/api/domain?dns=${dnsToQuery}&product_id=${product_id}&post_id=${post_id}&seller_id=${seller_id}`;
       const res = await fetch(url)

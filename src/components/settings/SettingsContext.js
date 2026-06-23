@@ -139,6 +139,11 @@ export function SettingsProvider({ children }) {
     try {
       // 데모 프리뷰: ?demo=X 로 다른 브랜드 조회 (로컬 전용)
       let dnsHost = process.env.IS_TEST == 1 ? 'localhost' : window.location.host.split(':')[0];
+      // 메인 사이트(랜딩)로 취급할 호스트: 메인 도메인 / localhost / 클플 터널
+      const mainHosts = [process.env.MAIN_FRONT_URL, 'localhost', '127.0.0.1'].filter(Boolean);
+      const isMainHost = mainHosts.includes(dnsHost) || dnsHost.endsWith('.trycloudflare.com');
+      // 메인 호스트는 마스터 브랜드(메인 도메인)를 조회해 테마/설정을 채운다
+      const rootDomain = (process.env.MAIN_FRONT_URL || '').replace(/^www\./, '');
       if (process.env.NEXT_PUBLIC_DEMO_PREVIEW === 'true') {
         const urlParams = new URLSearchParams(window.location.search);
         const demoParam = urlParams.get('demo');
@@ -147,7 +152,8 @@ export function SettingsProvider({ children }) {
         const demoMap = {
           '1': 'jjpay.co.kr',
           '2': 'shop.minbeautym.com',
-          '4': 'sprint-modules-was-counseling.trycloudflare.com',
+          '4': 'das-composed-montana-bears.trycloudflare.com',
+          'test': 'testmall.shopgo.co.kr',
           'blog1': 'bs-company.co.kr',
           'blog2': 'hynet777.com',
           'blog4': 'glamup.co.kr',
@@ -157,12 +163,19 @@ export function SettingsProvider({ children }) {
           'blog8': 'malu-79.com',
           'blog9': 'msbtmall.com',
         };
+        // demo 파라미터(또는 세션)가 있으면 데모 우선
         if (activeDemo && demoMap[activeDemo]) {
           dnsHost = demoMap[activeDemo];
           sessionStorage.setItem('DEMO_PREVIEW_ID', activeDemo);
+        } else if (isMainHost && rootDomain) {
+          // demo 없고 메인 호스트면 마스터 브랜드 조회
+          dnsHost = rootDomain;
         } else {
           return;
         }
+      } else if (isMainHost && rootDomain) {
+        // 운영: 메인 호스트면 마스터 브랜드 조회
+        dnsHost = rootDomain;
       }
       const { data: response } = await axios.get(`/api/domain?dns=${dnsHost}`);
       let dns_data = response?.data;

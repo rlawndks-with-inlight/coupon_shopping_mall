@@ -15,9 +15,15 @@ export default function useLocales() {
 
   const storageAvailable = localStorageAvailable();
 
-  const langStorage = storageAvailable ? localStorage.getItem('i18nextLng') : (themeDnsData?.setting_obj?.default_lang ?? 'ko');
+  // i18n 활성 언어를 우선 사용 (UI/국기가 항상 일치하도록). 없으면 localStorage → 기본 언어 순
+  const langStorage = i18n.language
+    || (storageAvailable ? localStorage.getItem('i18nextLng') : null)
+    || (themeDnsData?.setting_obj?.default_lang ?? 'ko');
 
-  const currentLang = allLangs.find((_lang) => _lang.value === langStorage) || themeDnsData?.setting_obj?.default_lang;
+  const currentLang = allLangs.find((_lang) => _lang.value === langStorage)
+    || allLangs.find((_lang) => _lang.value === String(langStorage).split('-')[0])
+    || allLangs.find((_lang) => _lang.value === (themeDnsData?.setting_obj?.default_lang ?? 'ko'))
+    || allLangs[0];
 
   const handleChangeLanguage = (newlang) => {
     i18n.changeLanguage(newlang);

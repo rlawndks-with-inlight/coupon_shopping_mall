@@ -27,7 +27,6 @@ export default function LanguagePopover() {
   const handleChangeLang = (newLang) => {
     onChangeLang(newLang);
     handleClosePopover();
-    window.location.reload();
   };
 
   return (

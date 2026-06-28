@@ -8,6 +8,10 @@ export const MAIN_DOMAIN = 'shopgo.co.kr';
 
 const HEADER_HEIGHT = 64;
 
+const PRIMARY = '#a3e635';
+const PRIMARY_HOVER = '#84cc16';
+const ON_PRIMARY = '#1a1a1a';
+
 const NAV = [
   { label: '서비스 소개', href: '/#features' },
   { label: '프레임', href: '/frames' },
@@ -36,9 +40,9 @@ export const MainSiteHeader = () => {
       sx={{
         position: 'sticky',
         top: 0,
-        bgcolor: 'rgba(255,255,255,0.96)',
+        bgcolor: 'rgba(17,17,17,0.96)',
         backdropFilter: 'blur(8px)',
-        borderBottom: '1px solid #eee',
+        borderBottom: `1px solid ${PRIMARY}`,
         zIndex: 10,
       }}
     >
@@ -51,42 +55,62 @@ export const MainSiteHeader = () => {
         >
           <Typography
             variant="h6"
-            sx={{ fontWeight: 800, letterSpacing: '-0.5px', cursor: 'pointer' }}
             onClick={() => router.push('/')}
+            sx={{
+              fontWeight: 800,
+              letterSpacing: '-0.5px',
+              cursor: 'pointer',
+              color: '#fff',
+              userSelect: 'none',
+            }}
           >
-            {SERVICE_NAME}
+            Shop
+            <Box component="span" sx={{ color: PRIMARY }}>
+              Go
+            </Box>
           </Typography>
-          <Stack direction="row" spacing={3} alignItems="center">
-            {NAV.map((n) => (
-              <Typography
-                key={n.label}
-                onClick={() => handleNavClick(n.href, router)}
+          <Stack direction="row" spacing={{ md: 3 }} alignItems="center">
+            <Stack
+              direction="row"
+              spacing={3}
+              alignItems="center"
+              sx={{ display: { xs: 'none', md: 'flex' }, mr: 1 }}
+            >
+              {NAV.map((n) => (
+                <Typography
+                  key={n.label}
+                  onClick={() => handleNavClick(n.href, router)}
+                  sx={{
+                    fontSize: 14,
+                    fontWeight: 500,
+                    cursor: 'pointer',
+                    color: '#bbb',
+                    '&:hover': { color: '#fff' },
+                  }}
+                >
+                  {n.label}
+                </Typography>
+              ))}
+            </Stack>
+            <Stack direction="row" spacing={1.5} alignItems="center">
+              <Button
+                variant="contained"
+                disableElevation
+                onClick={() => router.push('/apply')}
                 sx={{
-                  fontSize: 14,
-                  cursor: 'pointer',
-                  display: { xs: 'none', md: 'block' },
-                  color: '#555',
-                  '&:hover': { color: '#000' },
+                  bgcolor: PRIMARY,
+                  color: ON_PRIMARY,
+                  fontWeight: 700,
+                  px: 2.5,
+                  py: 0.75,
+                  borderRadius: 999,
+                  whiteSpace: 'nowrap',
+                  '&:hover': { bgcolor: PRIMARY_HOVER },
                 }}
               >
-                {n.label}
-              </Typography>
-            ))}
-            <Button
-              variant="contained"
-              onClick={() => router.push('/apply')}
-              sx={{
-                bgcolor: '#111',
-                color: '#fff',
-                fontWeight: 700,
-                px: 2.5,
-                py: 1,
-                borderRadius: 999,
-                '&:hover': { bgcolor: '#000' },
-              }}
-            >
-              무료 신청
-            </Button>
+                무료 쇼핑몰 만들기
+              </Button>
+            </Stack>
           </Stack>
         </Stack>
       </Container>
@@ -95,7 +119,10 @@ export const MainSiteHeader = () => {
 };
 
 export const MainSiteFooter = () => (
-  <Box component="footer" sx={{ py: 6, bgcolor: '#fafafa', borderTop: '1px solid #eee' }}>
+  <Box
+    component="footer"
+    sx={{ py: 6, bgcolor: '#fafaf7', borderTop: `2px solid ${PRIMARY}` }}
+  >
     <Container maxWidth="lg">
       <Stack spacing={2}>
         <Typography sx={{ fontSize: 13, color: '#888', fontWeight: 700 }}>{COMPANY_NAME}</Typography>

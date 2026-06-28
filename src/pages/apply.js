@@ -37,7 +37,7 @@ const initial = {
 
 const isValidEmail = (v) => !v || /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v);
 const isValidPhone = (v) => /^[0-9-+\s()]{8,20}$/.test(v);
-const isValidBizNo = (v) => /^[0-9]{10}$/.test(v.replace(/-/g, ''));
+const isValidBizNo = (v) => /^[0-9]{10}$/.test(v.replace(/[\s-]/g, ''));
 const isValidSlug = (v) => /^[a-z0-9][a-z0-9-]{1,28}[a-z0-9]$/.test(v);
 
 const Section = ({ title, children }) => (
@@ -103,9 +103,12 @@ const ApplyPage = () => {
     }
     setSubmitting(true);
     try {
+      const trimmed = Object.fromEntries(
+        Object.entries(form).map(([k, v]) => [k, typeof v === 'string' ? v.trim() : v])
+      );
       const payload = {
-        ...form,
-        business_number: form.business_number.replace(/-/g, ''),
+        ...trimmed,
+        business_number: trimmed.business_number.replace(/[\s-]/g, ''),
         agreement_agreed: true,
       };
       const { data } = await axios.post('/api/merchant-application', payload);
@@ -214,7 +217,7 @@ const ApplyPage = () => {
                 size="small"
                 placeholder="ceo@example.com"
                 value={form.ceo_email}
-                onChange={(e) => set('ceo_email', e.target.value)}
+                onChange={(e) => set('ceo_email', e.target.value.trim())}
                 error={!!errors.ceo_email}
                 helperText={errors.ceo_email || ''}
               />
@@ -257,7 +260,7 @@ const ApplyPage = () => {
                 size="small"
                 placeholder="manager@example.com"
                 value={form.manager_email}
-                onChange={(e) => set('manager_email', e.target.value)}
+                onChange={(e) => set('manager_email', e.target.value.trim())}
                 error={!!errors.manager_email}
                 helperText={errors.manager_email || ''}
               />

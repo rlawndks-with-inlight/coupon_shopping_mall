@@ -17,6 +17,7 @@ import {
 } from 'src/views/home';
 // ShopGo 마스터 랜딩
 import MainSiteLayout, { MAIN_DOMAIN } from 'src/components/main-site/MainSiteLayout';
+import ShopSearch from 'src/components/main-site/ShopSearch';
 
 // ShopGo 배포에서만 마스터 랜딩 노출 (.env: NEXT_PUBLIC_IS_SHOPGO=true)
 const IS_SHOPGO = process.env.NEXT_PUBLIC_IS_SHOPGO === 'true';
@@ -35,119 +36,343 @@ const ACTIONS = [
 ];
 
 const LANGS = [
-  { flag: '🇰🇷', label: '한국어' },
-  { flag: '🇺🇸', label: '영어' },
-  { flag: '🇯🇵', label: '일본어' },
-  { flag: '🇨🇳', label: '중국어' },
-  { flag: '🇪🇸', label: '스페인어' },
+  { img: '/assets/icons/flags/ic_flag_kr.svg', label: '한국어' },
+  { img: '/assets/icons/flags/ic_flag_us.svg', label: '영어' },
+  { img: '/assets/icons/flags/ic_flag_jp.svg', label: '일본어' },
+  { img: '/assets/icons/flags/ic_flag_cn.svg', label: '중국어' },
+  { img: '/assets/icons/flags/ic_flag_es.svg', label: '스페인어' },
 ];
 
 // ShopGo 마스터 랜딩
+// 브랜드 포인트 컬러 (라임그린)
+const SG = {
+  primary: '#a3e635',
+  hover: '#84cc16',
+  onPrimary: '#1a1a1a',
+  accentText: '#65a30d',
+  text: '#111',
+  bg: '#fff',
+  subBg: '#fafaf7',
+  gray: '#666',
+};
+
+// 코드로만 그린 디바이스 목업 (외부 이미지 없음, SSR 안전)
+const DeviceMockup = () => (
+  <Box
+    sx={{
+      position: 'relative',
+      width: '100%',
+      maxWidth: 520,
+      mx: 'auto',
+      pb: { xs: 6, md: 4 },
+    }}
+  >
+    {/* 노트북 */}
+    <Box>
+      {/* 화면 + 베젤 */}
+      <Box
+        sx={{
+          bgcolor: '#1a1a1a',
+          borderRadius: '14px',
+          p: { xs: 1, md: 1.25 },
+          boxShadow: '0 30px 60px -20px rgba(0,0,0,0.25)',
+        }}
+      >
+        {/* 미니 쇼핑몰 UI */}
+        <Box sx={{ bgcolor: '#fff', borderRadius: '8px', overflow: 'hidden' }}>
+          {/* 상단바 */}
+          <Box
+            sx={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              px: 1.5,
+              py: 1,
+              borderBottom: '1px solid #f0f0f0',
+            }}
+          >
+            <Typography sx={{ fontSize: 11, fontWeight: 900, color: SG.text, letterSpacing: '-0.3px' }}>
+              ShopGo
+            </Typography>
+            <Stack direction="row" spacing={0.75} sx={{ display: { xs: 'none', sm: 'flex' } }}>
+              {[1, 2, 3].map((n) => (
+                <Box key={n} sx={{ width: 22, height: 5, borderRadius: 3, bgcolor: '#eee' }} />
+              ))}
+            </Stack>
+            <Box
+              sx={{
+                px: 1,
+                py: 0.4,
+                borderRadius: 999,
+                bgcolor: SG.primary,
+                fontSize: 8,
+                fontWeight: 800,
+                color: SG.onPrimary,
+              }}
+            >
+              SHOP
+            </Box>
+          </Box>
+          {/* 히어로 배너 */}
+          <Box
+            sx={{
+              mx: 1.25,
+              my: 1.25,
+              height: { xs: 40, md: 54 },
+              borderRadius: '6px',
+              background: `linear-gradient(105deg, ${SG.primary} 0%, ${SG.hover} 100%)`,
+              display: 'flex',
+              alignItems: 'center',
+              px: 1.5,
+            }}
+          >
+            <Box sx={{ width: '45%' }}>
+              <Box sx={{ height: 6, borderRadius: 3, bgcolor: 'rgba(26,26,26,0.55)', mb: 0.75 }} />
+              <Box sx={{ height: 5, width: '70%', borderRadius: 3, bgcolor: 'rgba(26,26,26,0.35)' }} />
+            </Box>
+          </Box>
+          {/* 상품 카드 그리드 */}
+          <Box
+            sx={{
+              px: 1.25,
+              pb: 1.5,
+              display: 'grid',
+              gridTemplateColumns: 'repeat(3, 1fr)',
+              gap: 1,
+            }}
+          >
+            {[0, 1, 2, 3, 4, 5].map((n) => (
+              <Box key={n}>
+                <Box
+                  sx={{
+                    height: { xs: 30, md: 42 },
+                    borderRadius: '5px',
+                    bgcolor: '#f3f4ef',
+                    mb: 0.6,
+                  }}
+                />
+                <Box sx={{ height: 4, width: '85%', borderRadius: 2, bgcolor: '#eee', mb: 0.5 }} />
+                <Box sx={{ height: 4, width: '55%', borderRadius: 2, bgcolor: SG.primary }} />
+              </Box>
+            ))}
+          </Box>
+        </Box>
+      </Box>
+      {/* 하단 받침 */}
+      <Box
+        sx={{
+          mx: 'auto',
+          width: '112%',
+          ml: '-6%',
+          height: 12,
+          borderRadius: '0 0 12px 12px',
+          background: 'linear-gradient(#d8d8d2, #c4c4be)',
+        }}
+      />
+      <Box
+        sx={{
+          mx: 'auto',
+          width: '20%',
+          height: 5,
+          bgcolor: '#bdbdb6',
+          borderRadius: '0 0 6px 6px',
+        }}
+      />
+    </Box>
+
+    {/* 겹치는 스마트폰 */}
+    <Box
+      sx={{
+        position: 'absolute',
+        right: { xs: -4, md: -14 },
+        bottom: { xs: 8, md: 0 },
+        width: { xs: 84, md: 116 },
+        bgcolor: '#1a1a1a',
+        borderRadius: '18px',
+        p: 0.75,
+        boxShadow: '0 18px 40px -12px rgba(0,0,0,0.3)',
+      }}
+    >
+      <Box sx={{ bgcolor: '#fff', borderRadius: '14px', overflow: 'hidden' }}>
+        {/* 상품 이미지 */}
+        <Box
+          sx={{
+            height: { xs: 64, md: 90 },
+            background: `linear-gradient(160deg, ${SG.primary}, ${SG.hover})`,
+          }}
+        />
+        <Box sx={{ p: 1 }}>
+          <Box sx={{ height: 5, width: '80%', borderRadius: 3, bgcolor: '#eee', mb: 0.75 }} />
+          <Box sx={{ height: 5, width: '55%', borderRadius: 3, bgcolor: '#eee', mb: 1 }} />
+          <Box
+            sx={{
+              height: { xs: 14, md: 18 },
+              borderRadius: 999,
+              bgcolor: SG.primary,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}
+          >
+            <Box sx={{ height: 4, width: '45%', borderRadius: 2, bgcolor: 'rgba(26,26,26,0.55)' }} />
+          </Box>
+        </Box>
+      </Box>
+    </Box>
+  </Box>
+);
+
 const ShopGoLanding = () => {
   const router = useRouter();
 
   return (
     <>
       {/* HERO */}
-      <Box sx={{ py: { xs: 8, md: 16 } }}>
+      <Box sx={{ py: { xs: 7, md: 14 }, bgcolor: SG.bg }}>
         <Container maxWidth="lg">
-          <Stack spacing={3} alignItems="center" textAlign="center">
-            <Typography sx={{ fontSize: 12, letterSpacing: 4, color: '#888', fontWeight: 700 }}>
-              FREE SHOPPING MALL · FORSPAY
-            </Typography>
-            <Typography
-              sx={{
-                fontSize: { xs: 32, md: 56 },
-                fontWeight: 900,
-                lineHeight: 1.15,
-                letterSpacing: '-1.5px',
-                maxWidth: 900,
-              }}
-            >
-              쇼핑몰 제작비 없이,
-              <br />
-              바로 판매를 시작하세요.
-            </Typography>
-            <Typography sx={{ fontSize: { xs: 14, md: 18 }, color: '#555', maxWidth: 640, lineHeight: 1.7 }}>
-              포스페이 가맹점 전용 무료 쇼핑몰 시스템.
-              <br />
-              사업자 정보와 가맹점명만 입력하면 바로 내 쇼핑몰이 열립니다.
-            </Typography>
-            <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1.5} sx={{ pt: 2 }}>
-              <Button
-                size="large"
-                variant="contained"
-                onClick={() => router.push('/apply')}
-                sx={{
-                  bgcolor: '#111',
-                  color: '#fff',
-                  fontWeight: 700,
-                  px: 4,
-                  py: 1.5,
-                  borderRadius: 999,
-                  '&:hover': { bgcolor: '#000' },
-                }}
-              >
-                무료 쇼핑몰 신청하기
-              </Button>
-              <Button
-                size="large"
-                variant="outlined"
-                onClick={() => router.push('/frames')}
-                sx={{
-                  borderColor: '#111',
-                  color: '#111',
-                  fontWeight: 700,
-                  px: 4,
-                  py: 1.5,
-                  borderRadius: 999,
-                  '&:hover': { borderColor: '#000', bgcolor: '#fafafa' },
-                }}
-              >
-                프레임 미리보기
-              </Button>
-            </Stack>
-            <Box
-              sx={{
-                mt: 4,
-                px: 3,
-                py: 1.5,
-                border: '1px dashed #ccc',
-                borderRadius: 2,
-                bgcolor: '#fafaf7',
-              }}
-            >
-              <Typography sx={{ fontSize: 13, color: '#666' }}>
-                내 쇼핑몰 주소 예시 —{' '}
-                <Box component="span" sx={{ fontWeight: 700, color: '#111' }}>
-                  가맹점명.{MAIN_DOMAIN}
+          <Grid container spacing={{ xs: 6, md: 4 }} alignItems="center">
+            {/* 좌측: 텍스트 */}
+            <Grid item xs={12} md={6}>
+              <Stack spacing={3} alignItems={{ xs: 'center', md: 'flex-start' }} textAlign={{ xs: 'center', md: 'left' }}>
+                <Typography sx={{ fontSize: 12, letterSpacing: 4, color: SG.gray, fontWeight: 700 }}>
+                  FREE SHOPPING MALL · SHOPGO
+                </Typography>
+                <Typography
+                  sx={{
+                    fontSize: { xs: 32, md: 52 },
+                    fontWeight: 900,
+                    lineHeight: 1.18,
+                    letterSpacing: '-1.5px',
+                    color: SG.text,
+                  }}
+                >
+                  쇼핑몰 제작비 없이,
+                  <br />
+                  <Box component="span" sx={{ color: SG.accentText }}>
+                    바로 판매
+                  </Box>
+                  를 시작하세요.
+                </Typography>
+                <Typography sx={{ fontSize: { xs: 14, md: 18 }, color: '#555', maxWidth: 560, lineHeight: 1.7 }}>
+                  포스페이 가맹점 전용 무료 쇼핑몰 시스템.
+                  <br />
+                  사업자 정보와 가맹점명만 입력하면 바로 내 쇼핑몰이 열립니다.
+                </Typography>
+                <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1.5} sx={{ pt: 1 }}>
+                  <Button
+                    size="large"
+                    variant="contained"
+                    disableElevation
+                    onClick={() => router.push('/apply')}
+                    sx={{
+                      bgcolor: SG.primary,
+                      color: SG.onPrimary,
+                      fontWeight: 800,
+                      px: 4,
+                      py: 1.5,
+                      borderRadius: 999,
+                      '&:hover': { bgcolor: SG.hover },
+                    }}
+                  >
+                    무료 쇼핑몰 신청하기
+                  </Button>
+                  <Button
+                    size="large"
+                    variant="outlined"
+                    onClick={() => router.push('/frames')}
+                    sx={{
+                      borderColor: '#d6d6d0',
+                      color: SG.text,
+                      fontWeight: 800,
+                      px: 4,
+                      py: 1.5,
+                      borderRadius: 999,
+                      '&:hover': { borderColor: SG.hover, bgcolor: SG.subBg },
+                    }}
+                  >
+                    프레임 미리보기
+                  </Button>
+                </Stack>
+                <Box
+                  sx={{
+                    mt: 1,
+                    px: 3,
+                    py: 1.5,
+                    border: `1px dashed ${SG.primary}`,
+                    borderRadius: 2,
+                    bgcolor: SG.subBg,
+                  }}
+                >
+                  <Typography sx={{ fontSize: 13, color: SG.gray }}>
+                    내 쇼핑몰 주소 예시 —{' '}
+                    <Box component="span" sx={{ fontWeight: 700, color: SG.text }}>
+                      가맹점명.{MAIN_DOMAIN}
+                    </Box>
+                  </Typography>
                 </Box>
-              </Typography>
-            </Box>
-          </Stack>
+              </Stack>
+            </Grid>
+            {/* 우측: 코드로 만든 디바이스 목업 */}
+            <Grid item xs={12} md={6}>
+              <DeviceMockup />
+            </Grid>
+          </Grid>
         </Container>
       </Box>
 
+      {/* 가맹점·상품 검색 */}
+      <ShopSearch />
+
       {/* TARGETS */}
-      <Box id="features" sx={{ py: { xs: 8, md: 12 }, bgcolor: '#fafaf7' }}>
+      <Box id="features" sx={{ py: { xs: 8, md: 12 }, bgcolor: SG.subBg }}>
         <Container maxWidth="lg">
           <Stack spacing={1} textAlign="center" mb={6}>
-            <Typography sx={{ fontSize: 12, letterSpacing: 4, color: '#888', fontWeight: 700 }}>
+            <Typography sx={{ fontSize: 12, letterSpacing: 4, color: SG.accentText, fontWeight: 700 }}>
               WHO IT'S FOR
             </Typography>
-            <Typography sx={{ fontSize: { xs: 24, md: 36 }, fontWeight: 900, letterSpacing: '-1px' }}>
+            <Typography sx={{ fontSize: { xs: 24, md: 36 }, fontWeight: 900, letterSpacing: '-1px', color: SG.text }}>
               이런 분께 추천드립니다
             </Typography>
           </Stack>
           <Grid container spacing={2}>
             {TARGETS.map((t, idx) => (
               <Grid item xs={12} sm={6} md={3} key={idx}>
-                <Box sx={{ p: 3, bgcolor: '#fff', border: '1px solid #eee', borderRadius: 2, height: '100%' }}>
-                  <Box sx={{ fontSize: 11, letterSpacing: 2, color: '#888', fontWeight: 700, mb: 1 }}>
+                <Box
+                  sx={{
+                    p: 3,
+                    bgcolor: '#fff',
+                    border: '1px solid #eee',
+                    borderRadius: 2,
+                    height: '100%',
+                    transition: 'all 0.2s',
+                    '&:hover': {
+                      borderColor: SG.primary,
+                      transform: 'translateY(-3px)',
+                      boxShadow: '0 14px 30px -16px rgba(0,0,0,0.18)',
+                    },
+                  }}
+                >
+                  <Box
+                    sx={{
+                      width: 36,
+                      height: 36,
+                      borderRadius: '10px',
+                      bgcolor: SG.primary,
+                      color: SG.onPrimary,
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      fontSize: 13,
+                      fontWeight: 900,
+                      mb: 2,
+                    }}
+                  >
                     0{idx + 1}
                   </Box>
-                  <Typography sx={{ fontSize: 16, fontWeight: 800, mb: 1, lineHeight: 1.3 }}>{t.title}</Typography>
-                  <Typography sx={{ fontSize: 13, color: '#666', lineHeight: 1.6 }}>{t.desc}</Typography>
+                  <Typography sx={{ fontSize: 16, fontWeight: 800, mb: 1, lineHeight: 1.3, color: SG.text }}>
+                    {t.title}
+                  </Typography>
+                  <Typography sx={{ fontSize: 13, color: SG.gray, lineHeight: 1.6 }}>{t.desc}</Typography>
                 </Box>
               </Grid>
             ))}
@@ -156,24 +381,53 @@ const ShopGoLanding = () => {
       </Box>
 
       {/* LANGS */}
-      <Box sx={{ py: { xs: 8, md: 12 } }}>
+      <Box sx={{ py: { xs: 8, md: 12 }, bgcolor: SG.bg }}>
         <Container maxWidth="md">
           <Stack spacing={1} textAlign="center" mb={5}>
-            <Typography sx={{ fontSize: 12, letterSpacing: 4, color: '#888', fontWeight: 700 }}>
+            <Typography sx={{ fontSize: 12, letterSpacing: 4, color: SG.accentText, fontWeight: 700 }}>
               GLOBAL READY
             </Typography>
-            <Typography sx={{ fontSize: { xs: 24, md: 36 }, fontWeight: 900, letterSpacing: '-1px' }}>
+            <Typography sx={{ fontSize: { xs: 24, md: 36 }, fontWeight: 900, letterSpacing: '-1px', color: SG.text }}>
               다국어 자동 번역
             </Typography>
-            <Typography sx={{ fontSize: 14, color: '#666', mt: 1 }}>
+            <Typography sx={{ fontSize: 14, color: SG.gray, mt: 1 }}>
               상품을 등록하면 자동으로 번역되어, 해외 고객까지 그대로 응대할 수 있습니다.
             </Typography>
           </Stack>
           <Stack direction="row" justifyContent="center" spacing={{ xs: 2, sm: 4 }} flexWrap="wrap">
             {LANGS.map((l) => (
-              <Stack key={l.label} alignItems="center" spacing={1} sx={{ p: 2 }}>
-                <Typography sx={{ fontSize: 40 }}>{l.flag}</Typography>
-                <Typography sx={{ fontSize: 13, color: '#555' }}>{l.label}</Typography>
+              <Stack
+                key={l.label}
+                alignItems="center"
+                spacing={1}
+                sx={{
+                  px: 2,
+                  py: 2,
+                  borderRadius: 2,
+                  transition: 'all 0.2s',
+                  '&:hover': { bgcolor: SG.subBg },
+                }}
+              >
+                <Box
+                  sx={{
+                    width: 64,
+                    height: 64,
+                    borderRadius: '50%',
+                    border: `2px solid ${SG.primary}`,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    bgcolor: '#fff',
+                  }}
+                >
+                  <Box
+                    component="img"
+                    src={l.img}
+                    alt={l.label}
+                    sx={{ width: 42, height: 42, borderRadius: '50%', objectFit: 'cover' }}
+                  />
+                </Box>
+                <Typography sx={{ fontSize: 13, color: '#555', fontWeight: 600 }}>{l.label}</Typography>
               </Stack>
             ))}
           </Stack>
@@ -184,7 +438,7 @@ const ShopGoLanding = () => {
       <Box sx={{ py: { xs: 8, md: 12 }, bgcolor: '#111', color: '#fff' }}>
         <Container maxWidth="lg">
           <Stack spacing={1} textAlign="center" mb={6}>
-            <Typography sx={{ fontSize: 12, letterSpacing: 4, color: '#888', fontWeight: 700 }}>
+            <Typography sx={{ fontSize: 12, letterSpacing: 4, color: SG.primary, fontWeight: 700 }}>
               GET STARTED
             </Typography>
             <Typography sx={{ fontSize: { xs: 24, md: 36 }, fontWeight: 900, letterSpacing: '-1px' }}>
@@ -204,15 +458,15 @@ const ShopGoLanding = () => {
                     cursor: 'pointer',
                     transition: 'all 0.2s',
                     bgcolor: '#1a1a1a',
-                    '&:hover': { bgcolor: '#222', borderColor: '#555', transform: 'translateY(-2px)' },
+                    '&:hover': { bgcolor: '#222', borderColor: SG.primary, transform: 'translateY(-2px)' },
                   }}
                 >
-                  <Box sx={{ fontSize: 11, letterSpacing: 2, color: '#888', fontWeight: 700, mb: 1.5 }}>
+                  <Box sx={{ fontSize: 11, letterSpacing: 2, color: SG.primary, fontWeight: 800, mb: 1.5 }}>
                     STEP {idx + 1}
                   </Box>
                   <Typography sx={{ fontSize: 18, fontWeight: 800, mb: 1.5 }}>{a.title}</Typography>
                   <Typography sx={{ fontSize: 13, color: '#aaa', mb: 3, lineHeight: 1.6 }}>{a.desc}</Typography>
-                  <Typography sx={{ fontSize: 13, color: '#fff', fontWeight: 700 }}>{a.cta} →</Typography>
+                  <Typography sx={{ fontSize: 13, color: SG.primary, fontWeight: 800 }}>{a.cta} →</Typography>
                 </Box>
               </Grid>
             ))}

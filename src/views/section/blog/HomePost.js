@@ -91,8 +91,8 @@ const HomePost = (props) => {
         <ContentWrappers>
           <Content style={{ color: '#fff' }}>
             <div style={{ fontSize: themeObj.font_size.size5 }}>CALL CENTER</div>
-            <div style={{ fontSize: themeObj.font_size.size3 }}>PHONE: {themeDnsData?.phone_num}</div>
-            <div style={{ fontSize: themeObj.font_size.size3 }}>FAX: {themeDnsData?.fax_num}</div>
+            {themeDnsData?.phone_num && <div style={{ fontSize: themeObj.font_size.size3 }}>PHONE: {themeDnsData?.phone_num}</div>}
+            {themeDnsData?.fax_num && <div style={{ fontSize: themeObj.font_size.size3 }}>FAX: {themeDnsData?.fax_num}</div>}
           </Content>
         </ContentWrappers>
         <ContentWrappers>

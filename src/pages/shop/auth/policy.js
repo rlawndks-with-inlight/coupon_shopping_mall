@@ -5,6 +5,7 @@ import { useRouter } from "next/router";
 import { themeObj } from "src/components/elements/styled-components";
 import ShopLayout from "src/layouts/shop/ShopLayout";
 import { useSettingsContext } from "src/components/settings";
+import { isDemoHost } from "src/components/main-site/frameList";
 const Wrappers = styled.div`
 display:flex;
 flex-direction:column;
@@ -530,7 +531,7 @@ const Policy = (props) => {
 
                 위 내용은 저작권법 제123조(침해정지), 저작권법 제125조(손해배상청구)에 근거합니다.<br /><br />
 
-                저작권 관련 문의사항은 {themeDnsData?.phone_num}로 문의 바랍니다.<br />
+                {!isDemoHost() && themeDnsData?.phone_num && <>저작권 관련 문의사항은 {themeDnsData?.phone_num}로 문의 바랍니다.<br /></>}
               </Text>
             </>
             :

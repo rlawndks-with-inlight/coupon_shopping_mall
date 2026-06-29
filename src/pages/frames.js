@@ -21,7 +21,7 @@ const FramesPage = () => {
               무료 쇼핑몰 프레임
             </Typography>
             <Typography sx={{ fontSize: 14, color: '#666', maxWidth: 620, alignSelf: 'center', lineHeight: 1.7, textAlign: 'center' }}>
-              브랜드와 업종에 맞춰 디자인은 협의 후 조정 가능합니다.
+              브랜드와 업종에 맞추어 여러 디자인들이 준비되어 있습니다.
               <br />
               아래 카드의 미리보기 버튼으로 실제 동작을 확인해 보세요.
             </Typography>
@@ -115,7 +115,9 @@ const FramesPage = () => {
               <br />
               이제 신청만으로 모든 준비가 완료됩니다.
             </Typography>
-            <Button
+            {
+              /*
+              <Button
               variant="contained"
               size="large"
               onClick={() => router.push('/apply')}
@@ -131,6 +133,8 @@ const FramesPage = () => {
             >
               무료 쇼핑몰 신청하기
             </Button>
+              */
+            }
           </Stack>
         </Container>
       </Box>

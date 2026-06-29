@@ -132,7 +132,7 @@ export const MainSiteFooter = () => (
         <Typography sx={{ fontSize: 13, color: '#888', fontWeight: 700 }}>{COMPANY_NAME}</Typography>
         <Typography sx={{ fontSize: 12, color: '#999', lineHeight: 1.8 }}>{COMPANY_ADDRESS}</Typography>
         <Box sx={{ pt: 2, borderTop: '1px solid #eee' }}>
-          <Typography sx={{ fontSize: 11, color: '#aaa', lineHeight: 1.7 }}>
+          <Typography sx={{ fontSize: 10, color: '#aaa', lineHeight: 1.7 }}>
             {COMPANY_NAME}은 무료 쇼핑몰 구축 및 운영 시스템만 제공하는 플랫폼 사업자로, 판매 당사자가 아닙니다.
             상품의 판매, 계약, 결제, 배송, 환불, 고객응대 및 관련 법적 책임은 판매자에게 있으며,
             쇼핑몰 운영에 따른 모든 법적 의무 또한 판매자가 부담합니다.

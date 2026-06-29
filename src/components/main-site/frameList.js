@@ -155,6 +155,8 @@ export const DEMO_MASKED_BRAND_FIELDS = [
   'pvcy_rep_name', // 개인정보 보호책임자
   'mail_order_num', // 통신판매번호
   'addr', // 사업장 주소
+  'name', // 브랜드 표시명 (헤더 텍스트 · 브라우저 탭 제목 · og:title)
+  'og_description', // 사이트 설명(메타)
 ];
 
 // 호스트(demo-N.<도메인>)에서 데모 번호 N을 추출 (아니면 null)
@@ -168,10 +170,34 @@ export const getDemoNum = (host) => {
 // 비어있지 않은 문구로 대체하면 라벨·줄은 그대로 유지되고 값만 가려진다.
 export const demoMaskPlaceholder = (demoNum) => (demoNum ? `데모${demoNum}` : '데모');
 
-// 원래 값이 있던 민감 필드만 '데모N'으로 치환한 사본 반환.
-// - 값이 있던 줄: 라벨은 그대로 두고 값만 '데모N'으로 대체 (푸터·줄 유지)
-// - 원래 값이 없던 필드: 건드리지 않아 실제 사이트와 동일하게 해당 줄이 표시되지 않음
-//   (빈 값/undefined를 그대로 두므로 `field.length` 가드의 동작도 실제 사이트와 동일)
+// 로고 슬롯에 넣을 '데모N' 이미지 (data URI SVG).
+// 로고 필드를 빈 값으로 두면 폴백 없이 `<img src={logoSrc()}>`로 렌더하는 푸터/헤더가 깨지므로,
+// 실제 로고 대신 '데모N' 글자를 그린 이미지를 넣어 어디서든 안전하게 표시되게 한다.
+const demoLogoDataUri = (label, fill) => {
+  const svg =
+    `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 48">` +
+    `<text x="80" y="24" dominant-baseline="central" text-anchor="middle" ` +
+    `font-family="-apple-system, BlinkMacSystemFont, sans-serif" font-size="24" font-weight="800" fill="${fill}">` +
+    `${label}</text></svg>`;
+  return `data:image/svg+xml,${encodeURIComponent(svg)}`;
+};
+
+// 로고 이미지 필드 → '데모N' SVG 로고로 치환 (라이트/다크 헤더별 글자색)
+const DEMO_MASKED_LOGO_FIELDS = [
+  { key: 'logo_img', fill: '#222' }, // 라이트 헤더용(어두운 글자)
+  { key: 'dark_logo_img', fill: '#eee' }, // 다크 헤더용(밝은 글자)
+];
+// 투명 1x1 PNG — 파비콘을 투명 아이콘으로 강제해 탭에서 안 보이게 한다.
+// (빈 문자열로 두면 브라우저가 /favicon.ico 기본 아이콘으로 폴백해 여전히 보일 수 있음)
+const TRANSPARENT_PIXEL =
+  'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=';
+
+// 원래 값이 있던 민감/식별 필드만 데모용으로 치환한 사본 반환.
+// - 텍스트 필드: '데모N'으로 치환 (회사명·브랜드명·사업자정보·탭 제목 등)
+// - 로고 필드: '데모N' SVG 로고로 치환 (헤더·푸터 로고 슬롯)
+// - 파비콘: 투명 픽셀로 강제 → 탭 아이콘 안 보이게 (브랜드 파비콘 유무와 무관)
+// - OG 이미지: 비움
+// 그 외 원래 값이 없던 필드는 건드리지 않아 실제 사이트와 동일하게 동작한다.
 export const maskDemoBrandData = (dns_data, demoNum) => {
   if (!dns_data || typeof dns_data !== 'object') return dns_data;
   const placeholder = demoMaskPlaceholder(demoNum);
@@ -179,5 +205,10 @@ export const maskDemoBrandData = (dns_data, demoNum) => {
   DEMO_MASKED_BRAND_FIELDS.forEach((key) => {
     if (masked[key]) masked[key] = placeholder;
   });
+  DEMO_MASKED_LOGO_FIELDS.forEach(({ key, fill }) => {
+    if (masked[key]) masked[key] = demoLogoDataUri(placeholder, fill);
+  });
+  masked.favicon_img = TRANSPARENT_PIXEL; // 파비콘 안 보이게(강제)
+  if (masked.og_img) masked.og_img = '';
   return masked;
 };

@@ -1,5 +1,7 @@
 import { useRouter } from 'next/router';
 import { Box, Container, Stack, Typography, Button } from '@mui/material';
+import { useLandingT } from './landingStrings';
+import LangSwitcher from './LangSwitcher';
 
 export const SERVICE_NAME = 'ShopGo';
 export const COMPANY_NAME = '주식회사 우진플랫폼';
@@ -13,9 +15,9 @@ const PRIMARY_HOVER = '#84cc16';
 const ON_PRIMARY = '#1a1a1a';
 
 const NAV = [
-  { label: '서비스 소개', href: '/#features' },
-  { label: '프레임', href: '/frames' },
-  { label: '매뉴얼', href: '/manual' },
+  { k: 'navAbout', href: '/#features' },
+  { k: 'navFrames', href: '/frames' },
+  { k: 'navManual', href: '/manual' },
 ];
 
 const handleNavClick = (href, router) => {
@@ -34,6 +36,7 @@ const handleNavClick = (href, router) => {
 
 export const MainSiteHeader = () => {
   const router = useRouter();
+  const t = useLandingT();
   return (
     <Box
       component="header"
@@ -78,7 +81,7 @@ export const MainSiteHeader = () => {
             >
               {NAV.map((n) => (
                 <Typography
-                  key={n.label}
+                  key={n.k}
                   onClick={() => handleNavClick(n.href, router)}
                   sx={{
                     fontSize: 14,
@@ -88,11 +91,12 @@ export const MainSiteHeader = () => {
                     '&:hover': { color: '#fff' },
                   }}
                 >
-                  {n.label}
+                  {t[n.k]}
                 </Typography>
               ))}
             </Stack>
-            <Stack direction="row" spacing={1.5} alignItems="center">
+            <Stack direction="row" spacing={1} alignItems="center">
+              <LangSwitcher dark />
               <Button
                 variant="contained"
                 disableElevation
@@ -108,7 +112,7 @@ export const MainSiteHeader = () => {
                   '&:hover': { bgcolor: PRIMARY_HOVER },
                 }}
               >
-                무료 쇼핑몰 만들기
+                {t.ctaCreate}
               </Button>
             </Stack>
           </Stack>

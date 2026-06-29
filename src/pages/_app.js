@@ -50,7 +50,8 @@ const App = props => {
   const [headData, setHeadData] = useState({})
   useEffect(() => {
     if (Object.keys(head_data).length > 0) {
-      if (head_data?.setting_obj?.is_use_lang != 1) {
+      const isShopgoMaster = process.env.NEXT_PUBLIC_IS_SHOPGO === 'true' && head_data?.is_main_dns == 1;
+      if (!isShopgoMaster && head_data?.setting_obj?.is_use_lang != 1) {
         localStorage.setItem(`i18nextLng`, 'ko')
       } else {
         if (!allLangs.map(itm => {

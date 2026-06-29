@@ -11,6 +11,9 @@ import {
 } from '@mui/material';
 import { Icon } from '@iconify/react';
 import axios from 'axios';
+import { useLocales } from 'src/locales';
+import { formatLang } from 'src/utils/format';
+import { useLandingT } from './landingStrings';
 
 // 브랜드 포인트 (라임그린) — 랜딩과 동일 톤
 const SG = {
@@ -22,10 +25,20 @@ const SG = {
   gray: '#666',
 };
 
-const won = (v) => `${Number(v || 0).toLocaleString()}원`;
+const won = (v) => `₩${Number(v || 0).toLocaleString()}`;
 
 // 가맹점 상품 미니 카드
 function ProductCard({ shopUrl, product }) {
+  const { currentLang } = useLocales();
+  let langObj = product.lang_obj;
+  if (typeof langObj === 'string') {
+    try {
+      langObj = JSON.parse(langObj);
+    } catch (e) {
+      langObj = null;
+    }
+  }
+  const name = formatLang({ ...product, lang_obj: langObj }, 'product_name', currentLang);
   return (
     <Box
       component="a"
@@ -70,7 +83,7 @@ function ProductCard({ shopUrl, product }) {
             minHeight: 32,
           }}
         >
-          {product.product_name}
+          {name}
         </Typography>
         <Typography sx={{ fontSize: 12, fontWeight: 800, color: SG.text, mt: 0.5 }}>
           {won(product.product_sale_price)}
@@ -82,6 +95,7 @@ function ProductCard({ shopUrl, product }) {
 
 // 가맹점 카드 (로고 + 이름 + 주소 + 방문 + 상품들)
 function ShopCard({ shop }) {
+  const t = useLandingT();
   const shopUrl = `https://${shop.dns}`;
   return (
     <Box sx={{ p: { xs: 2, md: 2.5 }, bgcolor: '#fff', border: '1px solid #eee', borderRadius: 2 }}>
@@ -141,7 +155,7 @@ function ShopCard({ shop }) {
             '&:hover': { bgcolor: SG.hover },
           }}
         >
-          방문하기 →
+          {t.searchVisit} →
         </Box>
       </Stack>
 
@@ -159,6 +173,7 @@ function ShopCard({ shop }) {
 }
 
 export default function ShopSearch() {
+  const t = useLandingT();
   const [q, setQ] = useState('');
   const [shops, setShops] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -199,7 +214,7 @@ export default function ShopSearch() {
         <Stack spacing={1} textAlign="center" mb={3}>
           <Typography sx={{ fontSize: 12, letterSpacing: 4, color: SG.primary, fontWeight: 700 }}>FIND A SHOP</Typography>
           <Typography sx={{ fontSize: { xs: 22, md: 32 }, fontWeight: 900, letterSpacing: '-1px', color: SG.text }}>
-            가맹점·상품 찾기
+            {t.searchTitle}
           </Typography>
         </Stack>
 
@@ -207,7 +222,7 @@ export default function ShopSearch() {
           fullWidth
           value={q}
           onChange={(e) => setQ(e.target.value)}
-          placeholder="가맹점명 · 주소 · 상품명으로 검색"
+          placeholder={t.searchPlaceholder}
           InputProps={{
             startAdornment: (
               <InputAdornment position="start">
@@ -235,12 +250,12 @@ export default function ShopSearch() {
         <Box sx={{ mt: 3 }}>
           {q.trim().length === 1 && (
             <Typography sx={{ textAlign: 'center', color: SG.gray, py: 4 }}>
-              2글자 이상 입력해 주세요.
+              {t.searchMin}
             </Typography>
           )}
           {searched && !loading && shops.length === 0 && (
             <Typography sx={{ textAlign: 'center', color: SG.gray, py: 4 }}>
-              검색 결과가 없습니다. 가맹점명 · 주소 · 상품명으로 검색해 보세요.
+              {t.searchNone}
             </Typography>
           )}
           <Stack spacing={2}>

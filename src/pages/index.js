@@ -1,4 +1,5 @@
 import { useRouter } from 'next/router';
+import { Fragment } from 'react';
 import { m, useScroll, useSpring } from 'framer-motion';
 import { useTheme } from '@mui/material/styles';
 import { Box, Container, Stack, Typography, Button, Grid } from '@mui/material';
@@ -24,6 +25,43 @@ import { useLandingT } from 'src/components/main-site/landingStrings';
 // ShopGo 배포에서만 마스터 랜딩 노출 (.env: NEXT_PUBLIC_IS_SHOPGO=true)
 const IS_SHOPGO = process.env.NEXT_PUBLIC_IS_SHOPGO === 'true';
 
+// 문구의 '|' 위치를 모바일 전용 줄바꿈으로 렌더 (PC에서는 원문 그대로 한 줄로 이어짐)
+const MobileBreakText = ({ text }) =>
+  String(text)
+    .split('|')
+    .map((part, i) => (
+      <Fragment key={i}>
+        {i > 0 && <Box component="br" sx={{ display: { xs: 'block', md: 'none' } }} />}
+        {part}
+      </Fragment>
+    ));
+
+// 문구의 '[[LOGO]]' 위치에 FORSPAY 로고를 인라인 이미지로 삽입 (브랜드명 글씨 대체)
+const FORSPAY_LOGO_SRC = '/assets/images/forspay-logo2.png';
+const WithLogo = ({ text }) =>
+  String(text)
+    .split('[[LOGO]]')
+    .map((part, i) => (
+      <Fragment key={i}>
+        {i > 0 && (
+          <Box
+            component="img"
+            src={FORSPAY_LOGO_SRC}
+            alt="FORSPAY"
+            sx={{
+              height: '2.6em',
+              width: 'auto',
+              verticalAlign: 'middle',
+              mx: 0.5,
+              display: 'inline-block',
+              transform: 'translateY(-0.18em)',
+            }}
+          />
+        )}
+        {part}
+      </Fragment>
+    ));
+
 const TARGETS = [
   { icon: 'tabler:shopping-cart', k: 't1' },
   { icon: 'tabler:device-mobile', k: 't2' },
@@ -31,10 +69,12 @@ const TARGETS = [
   { icon: 'tabler:chart-line', k: 't4' },
 ];
 
+// '지금 바로 시작하기' — 제목·설명 + 라인 아이콘 병렬 표시(이런 분께 추천 영역과 동일 구성, 아이콘만 흰색).
+// 클릭 이동과 하단 CTA 문구만 보류(추후 재추가).
 const ACTIONS = [
-  { href: '/frames', k: 'a1' },
-  { href: '/apply', k: 'a2' },
-  { href: '/manual', k: 'a3' },
+  { href: '/frames', k: 'a1', icon: 'tabler:layout-grid' },
+  { href: '/apply', k: 'a2', icon: 'tabler:file-text' },
+  { href: '/manual', k: 'a3', icon: 'tabler:book' },
 ];
 
 const LANGS = [
@@ -109,9 +149,9 @@ const ShopGoLanding = () => {
                   {t.heroLine2}
                 </Typography>
                 <Typography sx={{ fontSize: { xs: 14, md: 18 }, color: '#555', maxWidth: 560, lineHeight: 1.7 }}>
-                  {t.heroSub1}
+                  <WithLogo text={t.heroSub1} />
                   <br />
-                  {t.heroSub2}
+                  <MobileBreakText text={t.heroSub2} />
                 </Typography>
                 <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1.5} sx={{ pt: 1 }}>
                   <Button
@@ -145,7 +185,7 @@ const ShopGoLanding = () => {
                   <Typography sx={{ fontSize: 13, color: SG.gray }}>
                     {t.heroAddrLabel}{' '}
                     <Box component="span" sx={{ fontWeight: 700, color: SG.text }}>
-                      mystore.{MAIN_DOMAIN}
+                      {t.heroAddrExample}.{MAIN_DOMAIN}
                     </Box>
                   </Typography>
                 </Box>
@@ -216,17 +256,17 @@ const ShopGoLanding = () => {
               {t.langsTitle}
             </Typography>
             <Typography sx={{ fontSize: 14, color: SG.gray, mt: 1 }}>
-              {t.langsSub}
+              <MobileBreakText text={t.langsSub} />
             </Typography>
           </Stack>
-          <Stack direction="row" justifyContent="center" spacing={{ xs: 2, sm: 4 }} flexWrap="wrap">
+          <Stack direction="row" justifyContent="center" spacing={{ xs: 1, sm: 4 }} flexWrap="nowrap">
             {LANGS.map((l) => (
               <Stack
                 key={l.code}
                 alignItems="center"
                 spacing={0.75}
                 sx={{
-                  px: 2,
+                  px: { xs: 0.75, sm: 2 },
                   py: 2,
                   borderRadius: 2,
                   transition: 'all 0.2s',
@@ -237,12 +277,20 @@ const ShopGoLanding = () => {
                   component="img"
                   src={l.img}
                   alt={l.code}
-                  sx={{ width: 40, height: 40, borderRadius: '50%', objectFit: 'cover', display: 'block' }}
+                  sx={{
+                    width: { xs: 32, sm: 40 },
+                    height: { xs: 32, sm: 40 },
+                    borderRadius: '50%',
+                    objectFit: 'cover',
+                    display: 'block',
+                  }}
                 />
-                <Typography sx={{ fontSize: 16, fontWeight: 800, color: SG.text, letterSpacing: 0.5 }}>
+                <Typography sx={{ fontSize: { xs: 13, sm: 16 }, fontWeight: 800, color: SG.text, letterSpacing: 0.5 }}>
                   {l.code}
                 </Typography>
-                <Typography sx={{ fontSize: 14, color: '#888' }}>{t[l.k]}</Typography>
+                <Typography sx={{ fontSize: 14, color: '#888', display: { xs: 'none', sm: 'block' } }}>
+                  {t[l.k]}
+                </Typography>
               </Stack>
             ))}
           </Stack>
@@ -264,24 +312,22 @@ const ShopGoLanding = () => {
             {ACTIONS.map((a, idx) => (
               <Grid item xs={12} md={4} key={a.k}>
                 <Box
-                  onClick={() => router.push(a.href)}
                   sx={{
                     p: 4,
                     height: '100%',
                     border: '1px solid #333',
                     borderRadius: 2,
-                    cursor: 'pointer',
-                    transition: 'all 0.2s',
                     bgcolor: '#1a1a1a',
-                    '&:hover': { bgcolor: '#222', borderColor: SG.primary, transform: 'translateY(-2px)' },
                   }}
                 >
                   <Box sx={{ fontSize: 11, letterSpacing: 2, color: SG.primary, fontWeight: 800, mb: 1.5 }}>
                     STEP {idx + 1}
                   </Box>
+                  <Box sx={{ mb: 1.5, lineHeight: 0 }}>
+                    <Icon icon={a.icon} width={40} height={40} color="#fff" />
+                  </Box>
                   <Typography sx={{ fontSize: 18, fontWeight: 800, mb: 1.5 }}>{t[`${a.k}Title`]}</Typography>
-                  <Typography sx={{ fontSize: 13, color: '#aaa', mb: 3, lineHeight: 1.6 }}>{t[`${a.k}Desc`]}</Typography>
-                  <Typography sx={{ fontSize: 13, color: SG.primary, fontWeight: 800 }}>{t[`${a.k}Cta`]} →</Typography>
+                  <Typography sx={{ fontSize: 13, color: '#aaa', lineHeight: 1.6 }}>{t[`${a.k}Desc`]}</Typography>
                 </Box>
               </Grid>
             ))}

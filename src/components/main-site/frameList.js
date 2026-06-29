@@ -143,3 +143,26 @@ export const isDemoHost = () => {
   if (typeof window === 'undefined') return false;
   return /^demo-\d+\./.test(window.location.host || '');
 };
+
+// 데모 미리보기에서 노출되면 안 되는 실제 가맹점의 민감 사업자/개인정보 필드.
+// demo-N은 실제 운영 브랜드의 DNS 데이터를 그대로 조회하므로, 화면에 뜨기 전에 가려야 한다.
+// (company_name=상호는 매장 자체에 이미 노출되므로 유지)
+export const DEMO_MASKED_BRAND_FIELDS = [
+  'business_num', // 사업자등록번호
+  'ceo_name', // 대표자명
+  'phone_num', // 고객센터/대표 전화
+  'fax_num', // 팩스
+  'pvcy_rep_name', // 개인정보 보호책임자
+  'mail_order_num', // 통신판매번호
+  'addr', // 사업장 주소
+];
+
+// 민감 필드를 빈 값으로 만든 사본 반환 (푸터 등은 `field && <Row>`라 빈 값이면 줄째로 사라짐)
+export const maskDemoBrandData = (dns_data) => {
+  if (!dns_data || typeof dns_data !== 'object') return dns_data;
+  const masked = { ...dns_data };
+  DEMO_MASKED_BRAND_FIELDS.forEach((key) => {
+    if (key in masked) masked[key] = '';
+  });
+  return masked;
+};

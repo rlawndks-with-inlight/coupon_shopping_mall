@@ -10,7 +10,7 @@ import axios from 'axios';
 import localStorageAvailable from 'src/utils/localStorageAvailable';
 import { useRouter } from 'next/router';
 import { apiManager } from 'src/utils/api';
-import { getDemoBrandDns, maskDemoBrandData } from 'src/components/main-site/frameList';
+import { getDemoBrandDns, getDemoNum, maskDemoBrandData } from 'src/components/main-site/frameList';
 // ----------------------------------------------------------------------
 
 const initialState = {
@@ -145,6 +145,7 @@ export function SettingsProvider({ children }) {
       const rootDomain = (process.env.MAIN_FRONT_URL || '').replace(/^www\./, '');
       // demo-N.<도메인> 미리보기: 해당 프레임의 기존 브랜드 dns로 조회
       const demoBrandDns = getDemoBrandDns(dnsHost);
+      const demoNum = getDemoNum(dnsHost); // 원래 호스트에서 데모 번호 추출 (dnsHost 재할당 전)
       if (demoBrandDns) {
         dnsHost = demoBrandDns;
       } else if (isMainHost && rootDomain) {
@@ -153,9 +154,9 @@ export function SettingsProvider({ children }) {
       }
       const { data: response } = await axios.get(`/api/domain?dns=${dnsHost}`);
       let dns_data = response?.data;
-      // 데모 미리보기(demo-N.*)에서는 실제 가맹점의 민감 사업자/개인정보를 가린다.
+      // 데모 미리보기(demo-N.*)에서는 실제 가맹점의 민감 사업자/개인정보를 '데모N'으로 가린다.
       if (demoBrandDns) {
-        dns_data = maskDemoBrandData(dns_data);
+        dns_data = maskDemoBrandData(dns_data, demoNum);
       }
       //console.log(response)
       dns_data['blog_demo_num'] = dns_data?.setting_obj?.blog_demo_num || process.env.TEST_BLOG_DEMO || 0;

@@ -37,7 +37,7 @@ import createEmotionCache from '../utils/createEmotionCache';
 import { useTranslation, I18nextProvider } from 'react-i18next';
 import i18n from 'src/locales/i18n';
 import { allLangs } from 'src/locales'
-import { getDemoBrandDns, maskDemoBrandData } from 'src/components/main-site/frameList'
+import { getDemoBrandDns, getDemoNum, maskDemoBrandData } from 'src/components/main-site/frameList'
 import DemoNotice from 'src/components/main-site/DemoNotice'
 
 const clientSideEmotionCache = createEmotionCache();
@@ -191,10 +191,10 @@ App.getInitialProps = async context => {
         ctx.res.end();
         return { head_data: {} };
       }
-      // 데모 미리보기(demo-N.*)에서는 실제 가맹점의 민감 사업자/개인정보를 가린다.
-      // (서버 렌더 단계에서 제거해 __NEXT_DATA__로도 노출되지 않게 함)
+      // 데모 미리보기(demo-N.*)에서는 실제 가맹점의 민감 사업자/개인정보를 '데모N'으로 가린다.
+      // (서버 렌더 단계에서 치환해 __NEXT_DATA__로도 실제 값이 노출되지 않게 함)
       return {
-        head_data: demoBrandDns ? maskDemoBrandData(dns_data) : dns_data
+        head_data: demoBrandDns ? maskDemoBrandData(dns_data, getDemoNum(host)) : dns_data
       }
     } else {
       return {

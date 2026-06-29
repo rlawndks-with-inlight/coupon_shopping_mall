@@ -146,8 +146,8 @@ export const isDemoHost = () => {
 
 // 데모 미리보기에서 노출되면 안 되는 실제 가맹점의 민감 사업자/개인정보 필드.
 // demo-N은 실제 운영 브랜드의 DNS 데이터를 그대로 조회하므로, 화면에 뜨기 전에 가려야 한다.
-// (company_name=상호는 매장 자체에 이미 노출되므로 유지)
 export const DEMO_MASKED_BRAND_FIELDS = [
+  'company_name', // 회사명(상호)
   'business_num', // 사업자등록번호
   'ceo_name', // 대표자명
   'phone_num', // 고객센터/대표 전화
@@ -157,12 +157,27 @@ export const DEMO_MASKED_BRAND_FIELDS = [
   'addr', // 사업장 주소
 ];
 
-// 민감 필드를 빈 값으로 만든 사본 반환 (푸터 등은 `field && <Row>`라 빈 값이면 줄째로 사라짐)
-export const maskDemoBrandData = (dns_data) => {
+// 호스트(demo-N.<도메인>)에서 데모 번호 N을 추출 (아니면 null)
+export const getDemoNum = (host) => {
+  const m = /^demo-(\d+)\./.exec(host || '');
+  return m ? Number(m[1]) : null;
+};
+
+// 데모에서 실제 값 대신 보여줄 문구 (예: 데모3). 번호를 모르면 '데모'.
+// 값을 빈 문자열로 두면 푸터의 `{field && <Row>}` 가드 때문에 줄이 통째로 사라져 푸터가 휑해진다.
+// 비어있지 않은 문구로 대체하면 라벨·줄은 그대로 유지되고 값만 가려진다.
+export const demoMaskPlaceholder = (demoNum) => (demoNum ? `데모${demoNum}` : '데모');
+
+// 원래 값이 있던 민감 필드만 '데모N'으로 치환한 사본 반환.
+// - 값이 있던 줄: 라벨은 그대로 두고 값만 '데모N'으로 대체 (푸터·줄 유지)
+// - 원래 값이 없던 필드: 건드리지 않아 실제 사이트와 동일하게 해당 줄이 표시되지 않음
+//   (빈 값/undefined를 그대로 두므로 `field.length` 가드의 동작도 실제 사이트와 동일)
+export const maskDemoBrandData = (dns_data, demoNum) => {
   if (!dns_data || typeof dns_data !== 'object') return dns_data;
+  const placeholder = demoMaskPlaceholder(demoNum);
   const masked = { ...dns_data };
   DEMO_MASKED_BRAND_FIELDS.forEach((key) => {
-    if (key in masked) masked[key] = '';
+    if (masked[key]) masked[key] = placeholder;
   });
   return masked;
 };

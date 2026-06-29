@@ -59,169 +59,21 @@ const SG = {
 };
 
 // 코드로만 그린 디바이스 목업 (외부 이미지 없음, SSR 안전)
+// 히어로 비주얼: 노트북 + 스마트폰 목업 이미지
+// 파일 위치: public/assets/images/hero-mockup.png (디자인 렌더 이미지)
 const DeviceMockup = () => (
   <Box
+    component="img"
+    src="/assets/images/hero-mockup.png"
+    alt="ShopGo 쇼핑몰 미리보기"
     sx={{
-      position: 'relative',
+      display: 'block',
       width: '100%',
-      maxWidth: 520,
+      maxWidth: 640,
+      height: 'auto',
       mx: 'auto',
-      pb: { xs: 6, md: 4 },
     }}
-  >
-    {/* 노트북 */}
-    <Box>
-      {/* 화면 + 베젤 */}
-      <Box
-        sx={{
-          bgcolor: '#1a1a1a',
-          borderRadius: '14px',
-          p: { xs: 1, md: 1.25 },
-          boxShadow: '0 30px 60px -20px rgba(0,0,0,0.25)',
-        }}
-      >
-        {/* 미니 쇼핑몰 UI */}
-        <Box sx={{ bgcolor: '#fff', borderRadius: '8px', overflow: 'hidden' }}>
-          {/* 상단바 */}
-          <Box
-            sx={{
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'space-between',
-              px: 1.5,
-              py: 1,
-              borderBottom: '1px solid #f0f0f0',
-            }}
-          >
-            <Typography sx={{ fontSize: 11, fontWeight: 900, color: SG.text, letterSpacing: '-0.3px' }}>
-              ShopGo
-            </Typography>
-            <Stack direction="row" spacing={0.75} sx={{ display: { xs: 'none', sm: 'flex' } }}>
-              {[1, 2, 3].map((n) => (
-                <Box key={n} sx={{ width: 22, height: 5, borderRadius: 3, bgcolor: '#eee' }} />
-              ))}
-            </Stack>
-            <Box
-              sx={{
-                px: 1,
-                py: 0.4,
-                borderRadius: 999,
-                bgcolor: SG.primary,
-                fontSize: 8,
-                fontWeight: 800,
-                color: SG.onPrimary,
-              }}
-            >
-              SHOP
-            </Box>
-          </Box>
-          {/* 히어로 배너 */}
-          <Box
-            sx={{
-              mx: 1.25,
-              my: 1.25,
-              height: { xs: 40, md: 54 },
-              borderRadius: '6px',
-              background: `linear-gradient(105deg, ${SG.primary} 0%, ${SG.hover} 100%)`,
-              display: 'flex',
-              alignItems: 'center',
-              px: 1.5,
-            }}
-          >
-            <Box sx={{ width: '45%' }}>
-              <Box sx={{ height: 6, borderRadius: 3, bgcolor: 'rgba(26,26,26,0.55)', mb: 0.75 }} />
-              <Box sx={{ height: 5, width: '70%', borderRadius: 3, bgcolor: 'rgba(26,26,26,0.35)' }} />
-            </Box>
-          </Box>
-          {/* 상품 카드 그리드 */}
-          <Box
-            sx={{
-              px: 1.25,
-              pb: 1.5,
-              display: 'grid',
-              gridTemplateColumns: 'repeat(3, 1fr)',
-              gap: 1,
-            }}
-          >
-            {[0, 1, 2, 3, 4, 5].map((n) => (
-              <Box key={n}>
-                <Box
-                  sx={{
-                    height: { xs: 30, md: 42 },
-                    borderRadius: '5px',
-                    bgcolor: '#f3f4ef',
-                    mb: 0.6,
-                  }}
-                />
-                <Box sx={{ height: 4, width: '85%', borderRadius: 2, bgcolor: '#eee', mb: 0.5 }} />
-                <Box sx={{ height: 4, width: '55%', borderRadius: 2, bgcolor: SG.primary }} />
-              </Box>
-            ))}
-          </Box>
-        </Box>
-      </Box>
-      {/* 하단 받침 */}
-      <Box
-        sx={{
-          mx: 'auto',
-          width: '112%',
-          ml: '-6%',
-          height: 12,
-          borderRadius: '0 0 12px 12px',
-          background: 'linear-gradient(#d8d8d2, #c4c4be)',
-        }}
-      />
-      <Box
-        sx={{
-          mx: 'auto',
-          width: '20%',
-          height: 5,
-          bgcolor: '#bdbdb6',
-          borderRadius: '0 0 6px 6px',
-        }}
-      />
-    </Box>
-
-    {/* 겹치는 스마트폰 */}
-    <Box
-      sx={{
-        position: 'absolute',
-        right: { xs: -4, md: -14 },
-        bottom: { xs: 8, md: 0 },
-        width: { xs: 84, md: 116 },
-        bgcolor: '#1a1a1a',
-        borderRadius: '18px',
-        p: 0.75,
-        boxShadow: '0 18px 40px -12px rgba(0,0,0,0.3)',
-      }}
-    >
-      <Box sx={{ bgcolor: '#fff', borderRadius: '14px', overflow: 'hidden' }}>
-        {/* 상품 이미지 */}
-        <Box
-          sx={{
-            height: { xs: 64, md: 90 },
-            background: `linear-gradient(160deg, ${SG.primary}, ${SG.hover})`,
-          }}
-        />
-        <Box sx={{ p: 1 }}>
-          <Box sx={{ height: 5, width: '80%', borderRadius: 3, bgcolor: '#eee', mb: 0.75 }} />
-          <Box sx={{ height: 5, width: '55%', borderRadius: 3, bgcolor: '#eee', mb: 1 }} />
-          <Box
-            sx={{
-              height: { xs: 14, md: 18 },
-              borderRadius: 999,
-              bgcolor: SG.primary,
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-            }}
-          >
-            <Box sx={{ height: 4, width: '45%', borderRadius: 2, bgcolor: 'rgba(26,26,26,0.55)' }} />
-          </Box>
-        </Box>
-      </Box>
-    </Box>
-  </Box>
+  />
 );
 
 const ShopGoLanding = () => {

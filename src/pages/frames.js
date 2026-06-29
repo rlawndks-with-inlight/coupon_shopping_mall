@@ -111,7 +111,9 @@ const FramesPage = () => {
         <Container maxWidth="md">
           <Stack spacing={2} alignItems="center" textAlign="center">
             <Typography sx={{ fontSize: { xs: 20, md: 28 }, fontWeight: 900, letterSpacing: '-0.5px' }}>
-              마음에 드는 프레임을 골랐다면, 신청만 하면 끝.
+              마음에 드는 프레임을 선택하셨다면,
+              <br />
+              이제 신청만으로 모든 준비가 완료됩니다.
             </Typography>
             <Button
               variant="contained"

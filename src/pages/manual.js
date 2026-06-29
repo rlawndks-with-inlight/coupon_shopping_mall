@@ -125,7 +125,7 @@ const ManualPage = () => {
             아직 신청 전이신가요?{' '}
             <Box
               component="span"
-              onClick={() => router.push('/apply')}
+              onClick={() => router.push('/frames')}
               sx={{ color: '#111', fontWeight: 700, cursor: 'pointer', textDecoration: 'underline' }}
             >
               무료 쇼핑몰 신청하기

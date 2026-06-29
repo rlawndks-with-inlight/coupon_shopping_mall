@@ -2,6 +2,7 @@ import { useRouter } from 'next/router';
 import { m, useScroll, useSpring } from 'framer-motion';
 import { useTheme } from '@mui/material/styles';
 import { Box, Container, Stack, Typography, Button, Grid } from '@mui/material';
+import { Icon } from '@iconify/react';
 // 기존 템플릿 홈 (ShopGo가 아닌 프로젝트의 원래 동작 유지)
 import MainLayout from 'src/layouts/main';
 import {
@@ -23,10 +24,10 @@ import ShopSearch from 'src/components/main-site/ShopSearch';
 const IS_SHOPGO = process.env.NEXT_PUBLIC_IS_SHOPGO === 'true';
 
 const TARGETS = [
-  { title: '구축 비용이 부담되는 사업자', desc: '쇼핑몰 제작비 0원, 바로 판매를 시작할 수 있습니다.' },
-  { title: 'SNS 중심으로 판매하는 사업자', desc: '인스타·블로그·카카오톡 채널과 자연스럽게 연결됩니다.' },
-  { title: '해외 고객 대상 판매 사업자', desc: '다국어·다통화로 글로벌 고객을 응대할 수 있습니다.' },
-  { title: '해외 결제 솔루션이 필요한 사업자', desc: 'PayPal·Stripe 등 해외 결제 PG 연동을 지원합니다.' },
+  { icon: 'tabler:shopping-cart', title: '구매 비용이 부담되는 사업자', desc: '초기 비용 0원으로\n온라인 쇼핑몰을 시작하세요.' },
+  { icon: 'tabler:device-mobile', title: 'SNS 중심으로 판매하는 사업자', desc: '인스타·블로그·카카오톡\n채널과 연동해 판매하세요.' },
+  { icon: 'tabler:rocket', title: '빠르게 매출을 만들고 싶은 사업자', desc: '복잡한 설정 없이\n오늘 바로 판매를 시작하세요.' },
+  { icon: 'tabler:chart-line', title: '판매 채널을 확장하고 싶은 사업자', desc: '다양한 마케팅 도구로\n더 많은 고객에게 도달하세요.' },
 ];
 
 const ACTIONS = [
@@ -36,11 +37,11 @@ const ACTIONS = [
 ];
 
 const LANGS = [
-  { img: '/assets/icons/flags/ic_flag_kr.svg', label: '한국어' },
-  { img: '/assets/icons/flags/ic_flag_us.svg', label: '영어' },
-  { img: '/assets/icons/flags/ic_flag_jp.svg', label: '일본어' },
-  { img: '/assets/icons/flags/ic_flag_cn.svg', label: '중국어' },
-  { img: '/assets/icons/flags/ic_flag_es.svg', label: '스페인어' },
+  { img: '/assets/icons/flags/ic_flag_kr.svg', code: 'KR', label: '한국어' },
+  { img: '/assets/icons/flags/ic_flag_us.svg', code: 'US', label: '영어' },
+  { img: '/assets/icons/flags/ic_flag_jp.svg', code: 'JP', label: '일본어' },
+  { img: '/assets/icons/flags/ic_flag_cn.svg', code: 'CN', label: '중국어' },
+  { img: '/assets/icons/flags/ic_flag_es.svg', code: 'ES', label: '스페인어' },
 ];
 
 // ShopGo 마스터 랜딩
@@ -49,7 +50,7 @@ const SG = {
   primary: '#a3e635',
   hover: '#84cc16',
   onPrimary: '#1a1a1a',
-  accentText: '#65a30d',
+  accentText: '#a3e635',
   text: '#111',
   bg: '#fff',
   subBg: '#fafaf7',
@@ -234,7 +235,7 @@ const ShopGoLanding = () => {
             {/* 좌측: 텍스트 */}
             <Grid item xs={12} md={6}>
               <Stack spacing={3} alignItems={{ xs: 'center', md: 'flex-start' }} textAlign={{ xs: 'center', md: 'left' }}>
-                <Typography sx={{ fontSize: 12, letterSpacing: 4, color: SG.gray, fontWeight: 700 }}>
+                <Typography sx={{ fontSize: 12, letterSpacing: 4, color: SG.primary, fontWeight: 700 }}>
                   FREE SHOPPING MALL · SHOPGO
                 </Typography>
                 <Typography
@@ -248,15 +249,15 @@ const ShopGoLanding = () => {
                 >
                   쇼핑몰 제작비 없이,
                   <br />
-                  <Box component="span" sx={{ color: SG.accentText }}>
-                    바로 판매
+                  <Box component="span" sx={{ color: SG.primary }}>
+                    바로 판매를 시작
                   </Box>
-                  를 시작하세요.
+                  하세요.
                 </Typography>
                 <Typography sx={{ fontSize: { xs: 14, md: 18 }, color: '#555', maxWidth: 560, lineHeight: 1.7 }}>
-                  포스페이 가맹점 전용 무료 쇼핑몰 시스템.
+                  포스페이의 무료 쇼핑몰 서비스로,
                   <br />
-                  사업자 정보와 가맹점명만 입력하면 바로 내 쇼핑몰이 열립니다.
+                  사업자 누구나 가장 빠르고 간편하게 나만의 쇼핑몰을 운영할 수 있습니다.
                 </Typography>
                 <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1.5} sx={{ pt: 1 }}>
                   <Button
@@ -352,27 +353,13 @@ const ShopGoLanding = () => {
                     },
                   }}
                 >
-                  <Box
-                    sx={{
-                      width: 36,
-                      height: 36,
-                      borderRadius: '10px',
-                      bgcolor: SG.primary,
-                      color: SG.onPrimary,
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      fontSize: 13,
-                      fontWeight: 900,
-                      mb: 2,
-                    }}
-                  >
-                    0{idx + 1}
+                  <Box sx={{ mb: 1.5, lineHeight: 0 }}>
+                    <Icon icon={t.icon} width={38} height={38} color="#a3e635" />
                   </Box>
                   <Typography sx={{ fontSize: 16, fontWeight: 800, mb: 1, lineHeight: 1.3, color: SG.text }}>
                     {t.title}
                   </Typography>
-                  <Typography sx={{ fontSize: 13, color: SG.gray, lineHeight: 1.6 }}>{t.desc}</Typography>
+                  <Typography sx={{ fontSize: 13, color: SG.gray, lineHeight: 1.6, whiteSpace: 'pre-line' }}>{t.desc}</Typography>
                 </Box>
               </Grid>
             ))}
@@ -391,15 +378,15 @@ const ShopGoLanding = () => {
               다국어 자동 번역
             </Typography>
             <Typography sx={{ fontSize: 14, color: SG.gray, mt: 1 }}>
-              상품을 등록하면 자동으로 번역되어, 해외 고객까지 그대로 응대할 수 있습니다.
+              상품명과 상세 정보를 자동으로 번역하여, 해외 고객에게도 쉽게 판매할 수 있습니다.
             </Typography>
           </Stack>
           <Stack direction="row" justifyContent="center" spacing={{ xs: 2, sm: 4 }} flexWrap="wrap">
             {LANGS.map((l) => (
               <Stack
-                key={l.label}
+                key={l.code}
                 alignItems="center"
-                spacing={1}
+                spacing={0.75}
                 sx={{
                   px: 2,
                   py: 2,
@@ -409,25 +396,15 @@ const ShopGoLanding = () => {
                 }}
               >
                 <Box
-                  sx={{
-                    width: 64,
-                    height: 64,
-                    borderRadius: '50%',
-                    border: `2px solid ${SG.primary}`,
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    bgcolor: '#fff',
-                  }}
-                >
-                  <Box
-                    component="img"
-                    src={l.img}
-                    alt={l.label}
-                    sx={{ width: 42, height: 42, borderRadius: '50%', objectFit: 'cover' }}
-                  />
-                </Box>
-                <Typography sx={{ fontSize: 13, color: '#555', fontWeight: 600 }}>{l.label}</Typography>
+                  component="img"
+                  src={l.img}
+                  alt={l.label}
+                  sx={{ width: 40, height: 40, borderRadius: '50%', objectFit: 'cover', display: 'block' }}
+                />
+                <Typography sx={{ fontSize: 16, fontWeight: 800, color: SG.text, letterSpacing: 0.5 }}>
+                  {l.code}
+                </Typography>
+                <Typography sx={{ fontSize: 14, color: '#888' }}>{l.label}</Typography>
               </Stack>
             ))}
           </Stack>

@@ -197,7 +197,7 @@ export default function ShopSearch() {
     >
       <Container maxWidth="md">
         <Stack spacing={1} textAlign="center" mb={3}>
-          <Typography sx={{ fontSize: 12, letterSpacing: 4, color: SG.gray, fontWeight: 700 }}>FIND A SHOP</Typography>
+          <Typography sx={{ fontSize: 12, letterSpacing: 4, color: SG.primary, fontWeight: 700 }}>FIND A SHOP</Typography>
           <Typography sx={{ fontSize: { xs: 22, md: 32 }, fontWeight: 900, letterSpacing: '-1px', color: SG.text }}>
             가맹점·상품 찾기
           </Typography>

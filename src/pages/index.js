@@ -250,7 +250,7 @@ const ShopGoLanding = () => {
         <Container maxWidth="md">
           <Stack spacing={1} textAlign="center" mb={5}>
             <Typography sx={{ fontSize: 12, letterSpacing: 4, color: SG.accentText, fontWeight: 700 }}>
-              GLOBAL READY
+              Go Global
             </Typography>
             <Typography sx={{ fontSize: { xs: 24, md: 36 }, fontWeight: 900, letterSpacing: '-1px', color: SG.text }}>
               {t.langsTitle}

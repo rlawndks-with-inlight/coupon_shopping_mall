@@ -2,9 +2,12 @@ import { useRouter } from 'next/router';
 import { Box, Container, Stack, Typography, Button, Grid, Chip } from '@mui/material';
 import MainSiteLayout, { MAIN_DOMAIN } from 'src/components/main-site/MainSiteLayout';
 import { FRAMES, getFramePreviewBrand } from 'src/components/main-site/frameList';
+import { useSubpageT, useFrameT } from 'src/components/main-site/landingStrings';
 
 const FramesPage = () => {
   const router = useRouter();
+  const st = useSubpageT();
+  const ft = useFrameT();
 
   const buildPreviewUrl = (f) => `https://demo-${f.no}.${MAIN_DOMAIN}/${f.category}`;
 
@@ -18,12 +21,12 @@ const FramesPage = () => {
               FRAME CATALOG · 11 DESIGNS
             </Typography>
             <Typography sx={{ fontSize: { xs: 26, md: 40 }, fontWeight: 900, letterSpacing: '-1.2px' }}>
-              무료 쇼핑몰 프레임
+              {st('frames.title')}
             </Typography>
             <Typography sx={{ fontSize: 14, color: '#666', maxWidth: 620, alignSelf: 'center', lineHeight: 1.7, textAlign: 'center' }}>
-              브랜드와 업종에 맞추어 여러 디자인들이 준비되어 있습니다.
+              {st('frames.desc1')}
               <br />
-              아래 카드의 미리보기 버튼으로 실제 동작을 확인해 보세요.
+              {st('frames.desc2')}
             </Typography>
           </Stack>
         </Container>
@@ -32,7 +35,9 @@ const FramesPage = () => {
       {/* FRAME GRID */}
       <Container maxWidth="lg" sx={{ py: { xs: 6, md: 10 } }}>
         <Grid container spacing={3}>
-          {FRAMES.map((f) => (
+          {FRAMES.map((f) => {
+            const fi = ft(f.key);
+            return (
             <Grid item xs={12} sm={6} md={4} key={f.key}>
               <Stack
                 spacing={2}
@@ -51,22 +56,22 @@ const FramesPage = () => {
                     DEMO · {f.no.toString().padStart(2, '0')}
                   </Box>
                   <Chip
-                    label={f.keyword}
+                    label={fi.keyword}
                     size="small"
                     sx={{ fontSize: 11, height: 22, bgcolor: '#fafaf7', color: '#555' }}
                   />
                 </Stack>
                 <Typography sx={{ fontSize: 20, fontWeight: 900, letterSpacing: '-0.5px', lineHeight: 1.2 }}>
-                  {f.title}
+                  {fi.title}
                 </Typography>
                 <Typography sx={{ fontSize: 13, color: '#666', lineHeight: 1.7, flexGrow: 1 }}>
-                  {f.desc}
+                  {fi.desc}
                 </Typography>
                 <Box sx={{ pt: 1.5, borderTop: '1px dashed #eee' }}>
                   <Typography sx={{ fontSize: 11, color: '#888', fontWeight: 700, mb: 0.5 }}>
-                    추천 업종
+                    {st('frames.recommendLabel')}
                   </Typography>
-                  <Typography sx={{ fontSize: 12, color: '#444', lineHeight: 1.6 }}>{f.recommend}</Typography>
+                  <Typography sx={{ fontSize: 12, color: '#444', lineHeight: 1.6 }}>{fi.recommend}</Typography>
                 </Box>
                 <Stack direction="row" spacing={1} sx={{ pt: 1 }}>
                   <Button
@@ -83,7 +88,7 @@ const FramesPage = () => {
                       '&.Mui-disabled': { borderColor: '#ddd', color: '#bbb' },
                     }}
                   >
-                    {getFramePreviewBrand(f.no) ? '미리보기' : '준비중'}
+                    {getFramePreviewBrand(f.no) ? st('frames.preview') : st('frames.comingSoon')}
                   </Button>
                   <Button
                     fullWidth
@@ -97,12 +102,13 @@ const FramesPage = () => {
                       '&:hover': { bgcolor: '#000' },
                     }}
                   >
-                    이 프레임으로 신청
+                    {st('frames.applyBtn')}
                   </Button>
                 </Stack>
               </Stack>
             </Grid>
-          ))}
+            );
+          })}
         </Grid>
       </Container>
 
@@ -111,9 +117,9 @@ const FramesPage = () => {
         <Container maxWidth="md">
           <Stack spacing={2} alignItems="center" textAlign="center">
             <Typography sx={{ fontSize: { xs: 20, md: 28 }, fontWeight: 900, letterSpacing: '-0.5px' }}>
-              마음에 드는 프레임을 선택하셨다면,
+              {st('frames.ctaLine1')}
               <br />
-              이제 신청만으로 모든 준비가 완료됩니다.
+              {st('frames.ctaLine2')}
             </Typography>
             {
               /*

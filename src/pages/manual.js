@@ -2,20 +2,23 @@ import { useRouter } from 'next/router';
 import { Box, Container, Stack, Typography, Button, Grid } from '@mui/material';
 import { Icon } from '@iconify/react';
 import MainSiteLayout from 'src/components/main-site/MainSiteLayout';
+import { useSubpageT } from 'src/components/main-site/landingStrings';
 
 const PDF_URL = '/manual/manager-guide.pdf';
 
-const HIGHLIGHTS = [
-  { icon: 'tabler:layout-dashboard', title: '대시보드', desc: '주문·매출·회원 현황을 한눈에 확인합니다.' },
-  { icon: 'tabler:shopping-bag', title: '상품 관리', desc: '상품 등록·옵션 설정·재고/품절 관리.' },
-  { icon: 'tabler:receipt', title: '주문 처리', desc: '주문 확인·배송·환불·교환 처리 흐름.' },
-  { icon: 'tabler:users', title: '회원 관리', desc: '회원 등급·쿠폰·포인트·CS 응대.' },
-  { icon: 'tabler:palette', title: '디자인 설정', desc: '프레임 변경·로고·컬러·배너 편집.' },
-  { icon: 'tabler:settings', title: '운영 설정', desc: '배송비·결제 수단·정책 페이지 관리.' },
+// 아이콘만 (제목·설명은 번역에서: manual.h{n}Title / manual.h{n}Desc)
+const HL_ICONS = [
+  'tabler:layout-dashboard',
+  'tabler:shopping-bag',
+  'tabler:receipt',
+  'tabler:users',
+  'tabler:palette',
+  'tabler:settings',
 ];
 
 const ManualPage = () => {
   const router = useRouter();
+  const st = useSubpageT();
 
   return (
     <Box>
@@ -25,12 +28,12 @@ const ManualPage = () => {
             MANUAL · 2026
           </Typography>
           <Typography sx={{ fontSize: { xs: 26, md: 40 }, fontWeight: 900, letterSpacing: '-1.2px' }}>
-            관리자 페이지 가이드
+            {st('manual.title')}
           </Typography>
           <Typography sx={{ fontSize: 14, color: '#666', maxWidth: 540, lineHeight: 1.7 }}>
-            쇼핑몰 운영에 필요한 모든 메뉴와 기능을 한 권으로 정리한 가이드입니다.
+            {st('manual.desc1')}
             <br />
-            PDF로 다운로드해 언제든 확인할 수 있습니다.
+            {st('manual.desc2')}
           </Typography>
 
           <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1.5} sx={{ pt: 2 }}>
@@ -50,7 +53,7 @@ const ManualPage = () => {
               }}
               startIcon={<Icon icon="tabler:download" />}
             >
-              매뉴얼 PDF 다운로드
+              {st('manual.download')}
             </Button>
             <Button
               variant="outlined"
@@ -67,18 +70,18 @@ const ManualPage = () => {
               }}
               startIcon={<Icon icon="tabler:eye" />}
             >
-              새 탭에서 보기
+              {st('manual.viewNewTab')}
             </Button>
           </Stack>
         </Stack>
 
         <Box sx={{ mt: 2 }}>
           <Typography sx={{ fontSize: 12, letterSpacing: 3, color: '#888', fontWeight: 700, mb: 2 }}>
-            매뉴얼에 포함된 주요 항목
+            {st('manual.itemsLabel')}
           </Typography>
           <Grid container spacing={2}>
-            {HIGHLIGHTS.map((h) => (
-              <Grid item xs={12} sm={6} md={4} key={h.title}>
+            {HL_ICONS.map((icon, i) => (
+              <Grid item xs={12} sm={6} md={4} key={icon}>
                 <Stack
                   spacing={1.5}
                   sx={{
@@ -101,10 +104,10 @@ const ManualPage = () => {
                       justifyContent: 'center',
                     }}
                   >
-                    <Icon icon={h.icon} width={20} height={20} />
+                    <Icon icon={icon} width={20} height={20} />
                   </Box>
-                  <Typography sx={{ fontSize: 15, fontWeight: 800 }}>{h.title}</Typography>
-                  <Typography sx={{ fontSize: 13, color: '#666', lineHeight: 1.6 }}>{h.desc}</Typography>
+                  <Typography sx={{ fontSize: 15, fontWeight: 800 }}>{st(`manual.h${i + 1}Title`)}</Typography>
+                  <Typography sx={{ fontSize: 13, color: '#666', lineHeight: 1.6 }}>{st(`manual.h${i + 1}Desc`)}</Typography>
                 </Stack>
               </Grid>
             ))}
@@ -122,13 +125,13 @@ const ManualPage = () => {
           }}
         >
           <Typography sx={{ fontSize: 13, color: '#666', lineHeight: 1.7 }}>
-            아직 신청 전이신가요?{' '}
+            {st('manual.preApply')}{' '}
             <Box
               component="span"
               onClick={() => router.push('/frames')}
               sx={{ color: '#111', fontWeight: 700, cursor: 'pointer', textDecoration: 'underline' }}
             >
-              무료 쇼핑몰 신청하기
+              {st('manual.applyLink')}
             </Box>
           </Typography>
         </Box>

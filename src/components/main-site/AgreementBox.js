@@ -1,12 +1,19 @@
 import { Box, Typography, Stack, FormControlLabel, Checkbox } from '@mui/material';
-import { AGREEMENT_TITLE, AGREEMENT_INTRO, AGREEMENT_ARTICLES } from './agreementText';
+import { useAgreement } from './agreementTextI18n';
 
-const AgreementBox = ({ agreed, onChange, error }) => {
+const AgreementBox = ({ agreed, onChange, error, agreeLabel, errorText }) => {
+  const { data, refNote } = useAgreement();
+  const { title, intro, articles } = data;
   return (
     <Box>
       <Typography sx={{ fontSize: 14, fontWeight: 800, mb: 1.5, color: '#111' }}>
-        {AGREEMENT_TITLE}
+        {title}
       </Typography>
+      {refNote && (
+        <Typography sx={{ fontSize: 11, color: '#999', mb: 1, lineHeight: 1.5 }}>
+          {refNote}
+        </Typography>
+      )}
 
       <Box
         sx={{
@@ -22,13 +29,13 @@ const AgreementBox = ({ agreed, onChange, error }) => {
         }}
       >
         <Stack spacing={1.5}>
-          {AGREEMENT_INTRO.map((line, idx) => (
+          {intro.map((line, idx) => (
             <Typography key={`intro-${idx}`} sx={{ fontSize: 12, lineHeight: 1.7, color: '#444' }}>
               {line}
             </Typography>
           ))}
 
-          {AGREEMENT_ARTICLES.map((article, idx) => (
+          {articles.map((article, idx) => (
             <Box key={`art-${idx}`} sx={{ pt: 1 }}>
               <Typography sx={{ fontSize: 12, fontWeight: 700, color: '#111', mb: 0.5 }}>
                 {article.title}
@@ -57,13 +64,13 @@ const AgreementBox = ({ agreed, onChange, error }) => {
         }
         label={
           <Typography sx={{ fontSize: 13, fontWeight: 600 }}>
-            위 무료 쇼핑몰 제공 약정서 내용을 확인하였으며, 이에 동의합니다. (필수)
+            {agreeLabel || '위 무료 쇼핑몰 제공 약정서 내용을 확인하였으며, 이에 동의합니다. (필수)'}
           </Typography>
         }
       />
       {error && (
         <Typography sx={{ fontSize: 12, color: '#d33', mt: 0.5 }}>
-          약정서 동의가 필요합니다.
+          {errorText || '약정서 동의가 필요합니다.'}
         </Typography>
       )}
     </Box>

@@ -7,6 +7,8 @@ export const SERVICE_NAME = 'ShopGo';
 export const COMPANY_NAME = '주식회사 우진플랫폼';
 export const COMPANY_ADDRESS = '서울시 영등포구 여의대방로 67길 11, 5층 에이5-41호(여의도동)';
 export const MAIN_DOMAIN = 'shopgo.co.kr';
+export const SHOP_INQUIRY_EMAIL = 'kimin6756@gmail.com'; // ㈜우진플랫폼 (쇼핑몰 문의)
+export const PAY_INQUIRY_EMAIL = 'office@forspay.com'; // ㈜포스페이 (결제 문의)
 
 const HEADER_HEIGHT = 64;
 
@@ -131,11 +133,34 @@ export const MainSiteFooter = () => (
       <Stack spacing={2}>
         <Typography sx={{ fontSize: 13, color: '#888', fontWeight: 700 }}>{COMPANY_NAME}</Typography>
         <Typography sx={{ fontSize: 12, color: '#999', lineHeight: 1.8 }}>{COMPANY_ADDRESS}</Typography>
+        <Stack direction={{ xs: 'column', sm: 'row' }} spacing={{ xs: 0.5, sm: 3 }} sx={{ pt: 0.5 }}>
+          <Typography sx={{ fontSize: 12, color: '#999' }}>
+            가맹 및 결제 문의{' '}
+            <Box
+              component="a"
+              href={`mailto:${PAY_INQUIRY_EMAIL}`}
+              sx={{ color: '#666', fontWeight: 600, textDecoration: 'none', '&:hover': { textDecoration: 'underline' } }}
+            >
+              {PAY_INQUIRY_EMAIL}
+            </Box>
+          </Typography>
+          <Typography sx={{ fontSize: 12, color: '#999' }}>
+            쇼핑몰 문의{' '}
+            <Box
+              component="a"
+              href={`mailto:${SHOP_INQUIRY_EMAIL}`}
+              sx={{ color: '#666', fontWeight: 600, textDecoration: 'none', '&:hover': { textDecoration: 'underline' } }}
+            >
+              {SHOP_INQUIRY_EMAIL}
+            </Box>
+          </Typography>
+        </Stack>
         <Box sx={{ pt: 2, borderTop: '1px solid #eee' }}>
           <Typography sx={{ fontSize: 10, color: '#aaa', lineHeight: 1.7 }}>
-            {COMPANY_NAME}은 무료 쇼핑몰 구축 및 운영 시스템만 제공하는 플랫폼 사업자로, 판매 당사자가 아닙니다.
-            상품의 판매, 계약, 결제, 배송, 환불, 고객응대 및 관련 법적 책임은 판매자에게 있으며,
-            쇼핑몰 운영에 따른 모든 법적 의무 또한 판매자가 부담합니다.
+            무료 쇼핑몰은 ㈜우진플랫폼이 제공하며,
+            결제서비스는 ㈜포스페이의 결제 솔루션을 통해 제공됩니다.
+            상품의 판매, 계약, 배송, 환불, 고객응대 및 쇼핑몰 운영에 관한 모든 책임은 해당 판매자에게 있으며,
+            양사는 플랫폼 및 결제서비스 제공자로서 거래의 당사자가 아닙니다.
           </Typography>
         </Box>
       </Stack>

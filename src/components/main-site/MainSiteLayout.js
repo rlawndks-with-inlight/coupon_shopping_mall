@@ -135,16 +135,6 @@ export const MainSiteFooter = () => (
         <Typography sx={{ fontSize: 12, color: '#999', lineHeight: 1.8 }}>{COMPANY_ADDRESS}</Typography>
         <Stack direction={{ xs: 'column', sm: 'row' }} spacing={{ xs: 0.5, sm: 3 }} sx={{ pt: 0.5 }}>
           <Typography sx={{ fontSize: 12, color: '#999' }}>
-            가맹 및 결제 문의{' '}
-            <Box
-              component="a"
-              href={`mailto:${PAY_INQUIRY_EMAIL}`}
-              sx={{ color: '#666', fontWeight: 600, textDecoration: 'none', '&:hover': { textDecoration: 'underline' } }}
-            >
-              {PAY_INQUIRY_EMAIL}
-            </Box>
-          </Typography>
-          <Typography sx={{ fontSize: 12, color: '#999' }}>
             쇼핑몰 문의{' '}
             <Box
               component="a"
@@ -152,6 +142,16 @@ export const MainSiteFooter = () => (
               sx={{ color: '#666', fontWeight: 600, textDecoration: 'none', '&:hover': { textDecoration: 'underline' } }}
             >
               {SHOP_INQUIRY_EMAIL}
+            </Box>
+          </Typography>
+          <Typography sx={{ fontSize: 12, color: '#999' }}>
+            가맹 및 결제 문의{' '}
+            <Box
+              component="a"
+              href={`mailto:${PAY_INQUIRY_EMAIL}`}
+              sx={{ color: '#666', fontWeight: 600, textDecoration: 'none', '&:hover': { textDecoration: 'underline' } }}
+            >
+              {PAY_INQUIRY_EMAIL}
             </Box>
           </Typography>
         </Stack>

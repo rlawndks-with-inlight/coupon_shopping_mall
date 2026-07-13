@@ -169,9 +169,9 @@ export const MainSiteFooter = () => (
 );
 
 const MainSiteLayout = ({ children }) => (
-  <Box sx={{ bgcolor: '#fff', color: '#111', minHeight: '100vh' }}>
+  <Box sx={{ bgcolor: '#fff', color: '#111', minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
     <MainSiteHeader />
-    <Box component="main">{children}</Box>
+    <Box component="main" sx={{ flex: 1 }}>{children}</Box>
     <MainSiteFooter />
   </Box>
 );

@@ -125,7 +125,19 @@ const ApplyPage = () => {
         toast.error(data?.message || st('apply.tError'));
       }
     } catch (err) {
-      toast.error(st('apply.tServerError'));
+      // 백엔드 response 헬퍼는 음수 코드(-101 중복 등)도 HTTP 500으로 보내므로,
+      // 에러 응답 본문(err.response.data)을 읽어 구체 메시지를 표시한다.
+      const resp = err?.response?.data;
+      if (resp?.result === -101) {
+        setErrors((prev) => ({ ...prev, desired_slug: st('apply.tDupSlug') }));
+        toast.error(st('apply.tDupSlug'));
+      } else if (resp?.result === -200 || resp?.result == null) {
+        toast.error(st('apply.tServerError'));
+      } else if (resp?.message) {
+        toast.error(resp.message);
+      } else {
+        toast.error(st('apply.tServerError'));
+      }
     } finally {
       setSubmitting(false);
     }

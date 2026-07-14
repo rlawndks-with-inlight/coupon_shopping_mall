@@ -63,7 +63,7 @@ const UserEdit = () => {
         <>
           <Grid container spacing={3}>
             {
-              router.query?.edit_category == 'edit' ?
+              (router.query?.edit_category == 'edit' || router.query?.edit_category == 'add') ?
                 <>
                   <Grid item xs={12} md={6}>
                     <Card sx={{ p: 2, height: '100%' }}>

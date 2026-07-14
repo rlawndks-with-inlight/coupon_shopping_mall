@@ -8,7 +8,7 @@ import Label from 'src/components/label/Label';
 import EmptyContent from 'src/components/empty-content/EmptyContent';
 import Iconify from 'src/components/iconify/Iconify';
 import { useSettingsContext } from 'src/components/settings';
-import { calculatorPrice, getCartDataUtil, makePayData, onPayProductsByAuth, onPayProductsByHand, onPayProductsByVirtualAccount } from 'src/utils/shop-util';
+import { calculatorPrice, getCartDataUtil, makePayData, onPayProductsByAuth, onPayProductsByHand, onPayProductsByVirtualAccount, onPayProductsByPayletter } from 'src/utils/shop-util';
 import { useAuthContext } from 'src/layouts/manager/auth/useAuthContext';
 import Payment from 'payment'
 import Cards from 'react-credit-cards'
@@ -281,6 +281,9 @@ const Cart2 = (props) => {
         } else if (item?.type == 'phone_hecto') {
             setBuyType('phone_hecto');
             setActiveStep(2)
+        } else if (item?.type == 'card_payletter') {
+            setBuyType('card_payletter');
+            let result = await onPayProductsByPayletter(products, { ...payData, payment_modules: item });
         } else if (item?.type == 'sms_pay') {
             setBuyType('sms_pay');
             setActiveStep(2);

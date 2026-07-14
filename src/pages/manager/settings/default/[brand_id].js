@@ -103,7 +103,7 @@ const DefaultSetting = () => {
         }
       ]
       : []),
-    ...(user?.level >= 40
+    ...(user?.level >= 50
       ? [
         {
           value: 5,

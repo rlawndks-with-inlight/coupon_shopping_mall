@@ -138,7 +138,8 @@ const UserList = () => {
     s_dt: '',
     e_dt: '',
     search: '',
-    is_user: 1,
+    // 마스터(shopgo)에서는 운영자 계정(레벨40/50 등)도 보이도록 회원 필터 해제, 그 외는 일반회원(레벨0)만
+    is_user: themeDnsData?.is_main_dns == 1 ? 0 : 1,
   })
   const [dialogObj, setDialogObj] = useState({
     changePassword: false,
@@ -250,7 +251,7 @@ const UserList = () => {
             columns={columns}
             searchObj={searchObj}
             onChangePage={onChangePage}
-          //add_button_text={'유저 추가'}
+            add_button_text={user?.level >= 50 ? '유저 추가' : ''}
           />
         </Card>
       </Stack>

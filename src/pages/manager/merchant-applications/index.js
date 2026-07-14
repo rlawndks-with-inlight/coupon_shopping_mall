@@ -35,6 +35,8 @@ const MerchantApplicationsPage = () => {
   const [statusFilter, setStatusFilter] = useState('');
   const [detail, setDetail] = useState(null);
   const [memo, setMemo] = useState('');
+  const [approveOpen, setApproveOpen] = useState(false);
+  const [adminId, setAdminId] = useState('');
 
   const fetchList = async () => {
     setLoading(true);
@@ -69,22 +71,21 @@ const MerchantApplicationsPage = () => {
     }
   };
 
-  const updateStatus = async (id, status) => {
+  const updateStatus = async (id, status, adminIdArg) => {
     try {
-      const { data: res } = await axios.put('/api/merchant-application/status', {
-        id,
-        status,
-        memo,
-      });
+      const body = { id, status, memo };
+      if (adminIdArg !== undefined) body.admin_id = adminIdArg;
+      const { data: res } = await axios.put('/api/merchant-application/status', body);
       if (res?.result === 100) {
-        toast.success('상태 변경 완료');
+        toast.success(status === 'approved' ? '승인 및 개설 완료' : '상태 변경 완료');
+        setApproveOpen(false);
         setDetail(null);
         fetchList();
       } else {
         toast.error(res?.message || '변경 실패');
       }
     } catch (err) {
-      toast.error('변경 실패');
+      toast.error(err?.response?.data?.message || '변경 실패');
     }
   };
 
@@ -225,7 +226,7 @@ const MerchantApplicationsPage = () => {
               </Button>
               <Button
                 variant="contained"
-                onClick={() => updateStatus(detail.id, 'approved')}
+                onClick={() => { setAdminId(detail.desired_slug || ''); setApproveOpen(true); }}
                 disabled={detail.status === 'approved'}
                 sx={{ bgcolor: '#111', '&:hover': { bgcolor: '#000' } }}
               >
@@ -234,6 +235,40 @@ const MerchantApplicationsPage = () => {
             </DialogActions>
           </>
         )}
+      </Dialog>
+
+      <Dialog open={approveOpen} onClose={() => setApproveOpen(false)} fullWidth maxWidth="xs">
+        <DialogTitle sx={{ fontWeight: 800 }}>가맹점 개설 승인</DialogTitle>
+        <DialogContent dividers>
+          <Typography sx={{ fontSize: 13, color: '#555', lineHeight: 1.7, mb: 2 }}>
+            가맹점과 <b>협의한 로그인 아이디</b>를 입력하세요. 초기 <b>비밀번호는 아이디와 동일</b>하게 생성됩니다.
+            개설 후 가맹점이 로그인하여 <b>비밀번호 변경</b>(우측 상단 프로필 → 비밀번호 변경)하도록 안내해 주세요.
+          </Typography>
+          <TextField
+            fullWidth
+            size="small"
+            label="가맹점 관리자 아이디"
+            placeholder="영문/숫자/-/_ 3~20자"
+            value={adminId}
+            onChange={(e) => setAdminId(e.target.value.trim())}
+            autoFocus
+          />
+          <Typography sx={{ fontSize: 12, color: '#888', mt: 1.5 }}>
+            접속: <b>{detail?.desired_slug || ''}.shopgo.co.kr/manager</b><br />
+            아이디 / 초기 비밀번호: <b>{adminId || '-'}</b>
+          </Typography>
+        </DialogContent>
+        <DialogActions sx={{ p: 2 }}>
+          <Button onClick={() => setApproveOpen(false)}>취소</Button>
+          <Button
+            variant="contained"
+            onClick={() => updateStatus(detail.id, 'approved', adminId)}
+            disabled={!adminId || adminId.length < 3}
+            sx={{ bgcolor: '#111', '&:hover': { bgcolor: '#000' } }}
+          >
+            승인 &amp; 개설
+          </Button>
+        </DialogActions>
       </Dialog>
     </Container>
   );

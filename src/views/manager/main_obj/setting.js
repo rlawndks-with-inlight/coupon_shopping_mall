@@ -601,7 +601,7 @@ const MainObjSetting = props => {
               <Icon icon={'grommet-icons:link-down'} />
             </IconButton>
           </Tooltip>
-          {user?.level >= 50 && (
+          {user?.level >= 40 && (
             <>
               <Tooltip title='해당 섹션을 삭제하시려면 클릭해 주세요.'>
                 <IconButton
@@ -703,7 +703,7 @@ const MainObjSetting = props => {
             <Grid
               item
               xs={12}
-              md={window.location.host.split(':')[0] == process.env.MAIN_FRONT_URL || user?.level >= 50 ? 8 : 12}
+              md={window.location.host.split(':')[0] == process.env.MAIN_FRONT_URL || user?.level >= 40 ? 8 : 12}
             >
               <Card sx={{ p: 3, minHeight: '100%' }}>
                 <Stack spacing={1}>
@@ -1640,7 +1640,7 @@ const MainObjSetting = props => {
                 </Stack>
               </Card>
             </Grid>
-            {(window.location.host.split(':')[0] == process.env.MAIN_FRONT_URL || user?.level >= 50) && (
+            {(window.location.host.split(':')[0] == process.env.MAIN_FRONT_URL || user?.level >= 40) && (
               <>
                 <Grid item xs={12} md={4}>
                   <Card sx={{ p: 3 }}>

@@ -153,6 +153,14 @@ export const navConfig = () => {
           },
         ],
       },
+      // 유저관리: 최상위(개발사, 레벨50)만 노출 — shopgo 운영자 계정 추가/관리용
+      ...(isDeveloper() ? [
+        {
+          items: [
+            { title: '유저관리', path: PATH_MANAGER.users.list, icon: ICONS.user },
+          ],
+        },
+      ] : []),
     ];
   }
   return [

@@ -250,6 +250,37 @@ export const onPayProductsByVirtualAccount = async (products_, payData_) => { //
         return false;
     }
 }
+export const onPayProductsByPayletter = async (products_, payData_) => { // 카드결제(페이레터-테스트)
+    if (isDemoHost()) {
+        toast.error('데모 미리보기에서는 결제할 수 없습니다.');
+        return false;
+    }
+    let products = products_;
+    let payData = await makePayData(products, payData_);
+    let ord_num = `PL${payData?.user_id || payData?.password || ''}${new Date().getTime().toString().substring(0, 11)}`.replace(/[^a-zA-Z0-9]/g, '');
+    if (payData?.products?.length > 1 || !payData?.item_name) {
+        payData.item_name = `${payData?.products[0]?.order_name} 외 ${payData?.products?.length - 1}`;
+    }
+    payData = {
+        ...payData,
+        ord_num,
+        front_url: window.location.origin, // 결제완료 후 리다이렉트할 프론트 주소
+    };
+    delete payData.payment_modules;
+    try {
+        let res = await apiManager('pays/card_payletter', 'create', payData);
+        if (res?.id > 0 && (res?.online_url || res?.mobile_url)) {
+            const isMobile = /iPhone|Android|iPad|iPod|Mobile/i.test(navigator.userAgent);
+            const payUrl = (isMobile && res?.mobile_url) ? res.mobile_url : (res.online_url || res.mobile_url);
+            window.location.href = payUrl; // 페이레터 결제창으로 이동
+            return { ...payData, trans_id: res.id };
+        }
+        return false;
+    } catch (err) {
+        console.log(err);
+        return false;
+    }
+}
 
 
 

@@ -33,6 +33,7 @@ export const paymentModuleTypeList = [
     { label: '인증결제(위루트)', value: 21 },
     { label: '인증결제(헥토)', value: 30 },
     { label: '휴대폰결제(헥토)', value: 31 },
+    { label: '카드결제(페이레터-테스트)', value: 40 },
     //{ label: '인증결제(웨이업)', value: 41 },
     { label: 'SMS결제', value: 50 },
 ]

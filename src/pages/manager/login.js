@@ -39,12 +39,6 @@ const Login = () => {
     }
     setLoading(false);
   }, [user])
-  useEffect(() => {
-    if (router.query?.is_first && !user) {
-      openTour('is-first', "판매자 계정이 없으시면 클릭 후 가입해 주세요.\n5분 내에 가입이 완료됩니다 !")
-    }
-  }, [router.query?.is_first])
-
   const LoginSchema = Yup.object().shape({
     email: Yup.string().required('Email is required').email('Email must be a valid email address'),
     password: Yup.string().required('Password is required'),
@@ -176,21 +170,6 @@ const Login = () => {
                 >
                   로그인
                 </LoadingButton>
-                {window.location.host.split(':')[0] == process.env.MAIN_FRONT_URL &&
-                  <>
-                    <Stack alignItems="flex-end" sx={{ my: 2 }}>
-                      <Link
-                        component={NextLink}
-                        href={'/manager/register'}
-                        variant="body2"
-                        color="inherit"
-                        underline="always"
-                        className='is-first'
-                      >
-                        컴어게인이 처음이신가요?
-                      </Link>
-                    </Stack>
-                  </>}
               </Stack>
             </StyledContent>
             <Tour

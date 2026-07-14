@@ -68,6 +68,7 @@ export const PATH_MANAGER = {
     columns: path(ROOTS_MANAGER, '/settings/columns'),
   },
   merchantApplications: path(ROOTS_MANAGER, '/merchant-applications'),
+  merchants: path(ROOTS_MANAGER, '/merchants'),
 }
 export const pg_companies = [
   {

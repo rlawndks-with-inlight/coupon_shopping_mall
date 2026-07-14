@@ -1,7 +1,10 @@
-import { Card, Container, IconButton, Stack, Chip, Button, Dialog, DialogTitle, DialogContent, DialogActions, TextField, Box, Typography, Grid } from "@mui/material";
+import {
+  Card, Container, IconButton, Stack, Chip, Button, Dialog, DialogTitle, DialogContent,
+  DialogActions, TextField, Box, Typography, Grid,
+  Table, TableBody, TableCell, TableContainer, TableHead, TableRow,
+} from "@mui/material";
 import { useEffect, useState } from "react";
 import ManagerLayout from "src/layouts/manager/ManagerLayout";
-import ManagerTable from "src/views/manager/mui/table/ManagerTable";
 import { Icon } from "@iconify/react";
 import { useRouter } from "next/router";
 import axios from "axios";
@@ -28,8 +31,6 @@ const StatusChip = ({ status }) => {
 const MerchantApplicationsPage = () => {
   const router = useRouter();
   const [data, setData] = useState([]);
-  const [page, setPage] = useState(1);
-  const [maxPage, setMaxPage] = useState(10);
   const [loading, setLoading] = useState(false);
   const [statusFilter, setStatusFilter] = useState('');
   const [detail, setDetail] = useState(null);
@@ -38,13 +39,12 @@ const MerchantApplicationsPage = () => {
   const fetchList = async () => {
     setLoading(true);
     try {
-      const params = {};
+      const params = { page_size: 1000 };
       if (statusFilter) params.status = statusFilter;
       const { data: res } = await axios.get('/api/merchant-application/list', { params });
       if (res?.result === 100) {
         const rows = res.data?.content || res.data || [];
-        setData(rows);
-        setMaxPage(res.data?.total_page || 1);
+        setData(Array.isArray(rows) ? rows : []);
       }
     } catch (err) {
       toast.error('목록 조회 실패');
@@ -124,7 +124,7 @@ const MerchantApplicationsPage = () => {
   ];
 
   return (
-    <>
+    <Container maxWidth="xl">
       <Stack spacing={2}>
         <Stack direction="row" spacing={1} alignItems="center">
           {FILTER_BUTTONS.map((f) => (
@@ -143,13 +143,29 @@ const MerchantApplicationsPage = () => {
           </Button>
         </Stack>
         <Card>
-          <ManagerTable
-            data={data}
-            columns={columns}
-            page={page}
-            maxPage={maxPage}
-            onChangePage={setPage}
-          />
+          <TableContainer>
+            <Table>
+              <TableHead>
+                <TableRow>
+                  {columns.map((c) => <TableCell key={c.id}>{c.label}</TableCell>)}
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {data.length === 0 && (
+                  <TableRow>
+                    <TableCell colSpan={columns.length} align="center" sx={{ py: 5, color: 'text.secondary' }}>
+                      {loading ? '불러오는 중…' : '신청 내역이 없습니다.'}
+                    </TableCell>
+                  </TableRow>
+                )}
+                {data.map((r) => (
+                  <TableRow key={r.id} hover>
+                    {columns.map((c) => <TableCell key={c.id}>{c.action(r)}</TableCell>)}
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </TableContainer>
         </Card>
       </Stack>
 
@@ -219,7 +235,7 @@ const MerchantApplicationsPage = () => {
           </>
         )}
       </Dialog>
-    </>
+    </Container>
   );
 };
 

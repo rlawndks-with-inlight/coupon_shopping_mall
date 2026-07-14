@@ -131,6 +131,30 @@ export const navConfig = () => {
   if (!isSettingComplete) {
     return []
   }
+  // 마스터(shopgo) 전용 메뉴: 가맹점 관리에 집중.
+  // 상품/회원/주문/디자인/게시판/설정 등 판매용 메뉴는 마스터에서 숨긴다.
+  if (isMasterSite()) {
+    return [
+      {
+        items: [
+          { title: '대시보드', path: PATH_MANAGER.dashboards, icon: ICONS.dashboard },
+        ],
+      },
+      {
+        items: [
+          {
+            title: '가맹점 관리',
+            path: PATH_MANAGER.merchantApplications,
+            icon: ICONS.user,
+            children: [
+              { title: '가맹점 신청 관리', path: PATH_MANAGER.merchantApplications },
+              { title: '가맹점 현황', path: PATH_MANAGER.merchants },
+            ],
+          },
+        ],
+      },
+    ];
+  }
   return [
     {
       items: [

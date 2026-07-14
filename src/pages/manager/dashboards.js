@@ -3,40 +3,23 @@ import { useSettingsContext } from "src/components/settings";
 
 import ManagerLayout from "src/layouts/manager/ManagerLayout";
 import DashboardDemo2 from "src/views/manager/dashboards/demo-2";
-import DashboardDemo4 from "src/views/manager/dashboards/demo-4";
-import DashboardBlog4 from "src/views/manager/dashboards/blog-1";
+import MasterDashboard from "src/views/manager/dashboards/master";
 
-const getDemo = (num, common) => {
-  if (num == 1)
-    return
-  else if (num == 2)
-    return <DashboardDemo2 {...common} />
-  else if (num == 3)
-    return
-  else if (num == 4)
-    return <DashboardDemo4 {...common} />
-  else if (num == 5)
-    return
-  else if (num == 6)
-    return
-  else if (num == 7)
-    return
-  else
-    return <DashboardDemo4 {...common} />
-}
 const Dashboards = () => {
-
   const router = useRouter();
   const { themeDnsData } = useSettingsContext();
+  const common = {
+    data: {},
+    func: {
+      router
+    },
+  };
   return (
     <>
-      {getDemo(themeDnsData?.shop_demo_num, {
-        data: {
-        },
-        func: {
-          router
-        },
-      })}
+      {/* 마스터(shopgo)는 가맹점 관리 대시보드, 하위 가맹점은 매출·주문 대시보드(Demo2)로 통일 */}
+      {themeDnsData?.is_main_dns == 1
+        ? <MasterDashboard {...common} />
+        : <DashboardDemo2 {...common} />}
     </>
   )
 }

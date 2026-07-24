@@ -3,25 +3,29 @@ import { Icon } from '@iconify/react';
 import MainSiteLayout from 'src/components/main-site/MainSiteLayout';
 
 // 실제로 사실인 항목만 기재. (개인정보 DB 암호화는 적용 완료 후 추가 예정)
+// 순서·공식 로고는 메인 최하단 보안 섹션과 통일.
 const PILLARS = [
   {
-    icon: 'tabler:lock',
-    title: 'SSL 보안 통신',
+    icon: 'tabler:credit-card',
+    title: '포스페이 전자결제(PG)',
     desc:
-      '모든 페이지는 SSL/TLS로 암호화되어 전송됩니다. 와일드카드 SSL 인증서를 적용해 shopgo.co.kr은 물론 모든 가맹점 주소(가맹점명.shopgo.co.kr)까지 https 보안 접속이 적용됩니다.',
+      '결제는 ㈜포스페이의 전자결제(PG) 솔루션을 통해 처리됩니다. 검증된 결제대행 시스템을 통해 결제가 안전하게 이루어집니다.',
+    logo: '/assets/images/forspay-logo.png',
+    logoH: 34,
   },
   {
     icon: 'tabler:cloud',
     title: 'AWS 클라우드 인프라',
     desc:
       'ShopGo는 Amazon Web Services(AWS) 클라우드 인프라 위에서 운영됩니다. 검증된 글로벌 클라우드 환경에서 안정적으로 서비스를 제공합니다.',
-    caption: 'Powered by AWS',
+    logo: '/assets/images/powered-by-aws.png',
+    logoH: 30,
   },
   {
-    icon: 'tabler:credit-card',
-    title: '포스페이 전자결제(PG)',
+    icon: 'tabler:lock',
+    title: 'SSL 보안 통신',
     desc:
-      '결제는 ㈜포스페이의 전자결제(PG) 솔루션을 통해 처리됩니다. 검증된 결제대행 시스템을 통해 결제가 이루어집니다.',
+      '모든 페이지는 SSL/TLS로 암호화되어 전송됩니다. 와일드카드 SSL 인증서를 적용해 shopgo.co.kr은 물론 모든 가맹점 주소(가맹점명.shopgo.co.kr)까지 https 보안 접속이 적용됩니다.',
   },
   {
     icon: 'tabler:shield-lock',
@@ -68,12 +72,15 @@ const SecurityPage = () => (
               >
                 <Icon icon={p.icon} width={22} height={22} />
               </Box>
-              <Typography sx={{ fontSize: 16, fontWeight: 800 }}>{p.title}</Typography>
-              <Typography sx={{ fontSize: 13.5, color: '#666', lineHeight: 1.7 }}>{p.desc}</Typography>
-              {p.caption && (
-                <Typography sx={{ fontSize: 11, color: '#aaa', fontWeight: 700, letterSpacing: 0.5, pt: 0.5 }}>
-                  {p.caption}
-                </Typography>
+              <Typography sx={{ fontSize: 16, fontWeight: 800, wordBreak: 'keep-all' }}>{p.title}</Typography>
+              <Typography sx={{ fontSize: 13.5, color: '#666', lineHeight: 1.7, flexGrow: 1, wordBreak: 'keep-all' }}>{p.desc}</Typography>
+              {p.logo && (
+                <Box
+                  component="img"
+                  src={p.logo}
+                  alt={p.title}
+                  sx={{ height: p.logoH || 26, width: 'auto', mt: 0.5, alignSelf: 'flex-start' }}
+                />
               )}
             </Stack>
           </Grid>

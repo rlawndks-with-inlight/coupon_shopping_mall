@@ -220,7 +220,7 @@ const ShopGoLanding = () => {
             <Typography sx={{ fontSize: { xs: 24, md: 36 }, fontWeight: 900, letterSpacing: '-1px', color: SG.text }}>
               {t.targetsTitle}
             </Typography>
-            <Typography sx={{ fontSize: { xs: 14, md: 16 }, color: SG.gray, lineHeight: 1.7, maxWidth: 660, mx: 'auto', pt: 0.5, wordBreak: 'keep-all' }}>
+            <Typography sx={{ fontSize: { xs: 14, md: 16 }, color: SG.gray, lineHeight: 1.7, maxWidth: 660, alignSelf: 'center', pt: 0.5, wordBreak: 'keep-all', textAlign: 'center' }}>
               <MobileBreakText text={t.targetsSub} />
             </Typography>
           </Stack>

@@ -127,7 +127,7 @@ const DefaultSetting = () => {
         }
       ]
       : []),
-    ...(user?.level >= 50
+    ...(user?.level >= 40
       ? [
         {
           value: 8,
@@ -1138,6 +1138,64 @@ const DefaultSetting = () => {
                           }}
                         />
                       </FormControl>
+                    </Stack>
+                  </Card>
+                </Grid>
+              </>
+            )}
+            {currentTab == 8 && (
+              <>
+                <Grid item xs={12} md={6}>
+                  <Card sx={{ p: 2, height: '100%' }}>
+                    <Stack spacing={1.5}>
+                      <FormControl variant='outlined'>
+                        <InputLabel>기본 배송비</InputLabel>
+                        <OutlinedInput
+                          label='기본 배송비'
+                          type='number'
+                          value={item?.setting_obj?.delivery_fee_default ?? 0}
+                          endAdornment={<InputAdornment position='end'>원</InputAdornment>}
+                          onChange={e => {
+                            setItem({
+                              ...item,
+                              ['setting_obj']: {
+                                ...item?.setting_obj,
+                                ['delivery_fee_default']: e.target.value
+                              }
+                            })
+                          }}
+                        />
+                      </FormControl>
+                      <Typography variant='caption' sx={{ color: 'text.secondary' }}>
+                        주문 1건당 부과되는 기본 배송비입니다. 0원이면 무료배송으로 표시됩니다.
+                      </Typography>
+                    </Stack>
+                  </Card>
+                </Grid>
+                <Grid item xs={12} md={6}>
+                  <Card sx={{ p: 2, height: '100%' }}>
+                    <Stack spacing={1.5}>
+                      <FormControl variant='outlined'>
+                        <InputLabel>무료배송 기준금액</InputLabel>
+                        <OutlinedInput
+                          label='무료배송 기준금액'
+                          type='number'
+                          value={item?.setting_obj?.free_ship_min ?? 0}
+                          endAdornment={<InputAdornment position='end'>원</InputAdornment>}
+                          onChange={e => {
+                            setItem({
+                              ...item,
+                              ['setting_obj']: {
+                                ...item?.setting_obj,
+                                ['free_ship_min']: e.target.value
+                              }
+                            })
+                          }}
+                        />
+                      </FormControl>
+                      <Typography variant='caption' sx={{ color: 'text.secondary' }}>
+                        주문 금액이 이 값 이상이면 배송비가 무료가 됩니다. 0원이면 미사용(항상 기본 배송비 부과).
+                      </Typography>
                     </Stack>
                   </Card>
                 </Grid>

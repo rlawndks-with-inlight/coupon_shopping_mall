@@ -341,21 +341,28 @@ export const HistoryTable = props => {
                         ? row.invoice_num
                           .split(',')
                           .map((entry, idx, arr) => {
-                            const [courier, invoice] = entry.trim().split('-');
+                            // '택배사-송장번호' 형식: 앞부분에 숫자 아닌 글자가 있으면 택배사명으로 간주(숫자만이면 전체가 송장번호)
+                            const trimmed = entry.trim();
+                            const di = trimmed.indexOf('-');
+                            const hasCourier = di > 0 && /[^0-9]/.test(trimmed.slice(0, di));
+                            const courier = hasCourier ? trimmed.slice(0, di) : '';
+                            const invoice = hasCourier ? trimmed.slice(di + 1) : trimmed;
                             return (
                               <React.Fragment key={idx}>
-                                {
-                                  row.invoice_num?.split(',').length > 1 ?
-                                    <>
-                                      {idx + 1}.
-                                      <br />
-                                    </>
-                                    :
-                                    ''
-                                }
-                                {courier}
-                                <br />
+                                {arr.length > 1 ? <>{idx + 1}.<br /></> : ''}
+                                {courier ? <>{courier}<br /></> : ''}
                                 {invoice}
+                                {invoice ? (
+                                  <>
+                                    <br />
+                                    <a
+                                      href={`https://search.naver.com/search.naver?query=${encodeURIComponent(`${courier || ''} ${invoice} 택배조회`.trim())}`}
+                                      target="_blank"
+                                      rel="noreferrer"
+                                      style={{ fontSize: 12, color: '#1a73e8' }}
+                                    >배송조회</a>
+                                  </>
+                                ) : ''}
                                 {idx < arr.length - 1 && <><br /><br /></>}
                               </React.Fragment>
                             );

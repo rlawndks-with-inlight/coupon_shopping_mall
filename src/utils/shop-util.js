@@ -7,6 +7,25 @@ import { returnMoment } from "./function";
 import { getLocalStorage } from "./local-storage";
 import { isDemoHost } from "src/components/main-site/frameList";
 
+// 브랜드 공통 배송비 정책 (설정 > 배송비설정). 정책이 설정된 경우에만 활성.
+// - delivery_fee_default: 주문당 기본 배송비
+// - free_ship_min: 이 금액 이상이면 무료배송(0=미사용)
+// 정책 미설정(둘 다 0) 브랜드는 active:false → 기존 상품별 배송비 동작을 그대로 유지(하위호환).
+export const getBrandShipping = (merchandiseSubtotal = 0) => {
+    try {
+        const dns = JSON.parse(getLocalStorage('themeDnsData') || '{}');
+        const s = dns?.setting_obj || {};
+        const base = parseInt(s.delivery_fee_default || 0) || 0;
+        const freeMin = parseInt(s.free_ship_min || 0) || 0;
+        const active = base > 0 || freeMin > 0;
+        if (!active) return { active: false, fee: 0 };
+        const fee = (freeMin > 0 && Number(merchandiseSubtotal) >= freeMin) ? 0 : base;
+        return { active: true, fee };
+    } catch (e) {
+        return { active: false, fee: 0 };
+    }
+}
+
 export const calculatorPrice = (item) => {// 상품별로 가격
     if (!item) {
         return 0;
@@ -31,31 +50,33 @@ export const makePayData = async (products_, payData_) => {
     let amount = 0;
     let payData = { ...payData_ };
 
+    // 1) 각 라인 상품금액(배송비 제외) 계산
+    let merchTotal = 0;
+    const merchByIdx = [];
     for (var i = 0; i < products.length; i++) {
         products[i].order_name = products[i]?.product_name;
-        let groups = products[i].groups;
-        for (var j = 0; j < groups.length; j++) {
-            let options = groups[j]?.options;
-            /*for (var k = 0; k < options.length; k++) {
-                products[i].order_name += ' ' + options[k]?.option_name
-                products[i].groups[j].options[k] = {
-                    id: products[i].groups[j]?.options[k]?.id,
-                    option_name: products[i].groups[j]?.options[k]?.option_name,
-                    option_price: products[i].groups[j]?.options[k]?.option_price,
-                }
-            }
-            products[i].groups[j] = {
-                id: products[i].groups[j]?.id,
-                options: products[i].groups[j]?.options,
-            }*/
-        }
-        products[i].order_amount = await calculatorPrice(products[i])?.total;
-        amount += products[i].order_amount;
+        const calc = await calculatorPrice(products[i]);
+        const lineDelivery = products[i]?.delivery_fee ?? 0;
+        const lineMerch = (calc?.total ?? 0) - lineDelivery;
+        merchByIdx[i] = lineMerch;
+        merchTotal += lineMerch;
+    }
+
+    // 2) 브랜드 배송비 정책이 설정돼 있으면 주문단위 배송비로 대체(첫 상품에 1회 부과),
+    //    미설정이면 기존 상품별 배송비를 그대로 사용(하위호환).
+    const ship = getBrandShipping(merchTotal);
+
+    for (var i = 0; i < products.length; i++) {
+        const lineDelivery = ship.active
+            ? (i === 0 ? ship.fee : 0)
+            : (products[i]?.delivery_fee ?? 0);
+        const order_amount = merchByIdx[i] + lineDelivery;
+        amount += order_amount;
         products[i] = {
             id: products[i]?.id,
             order_name: products[i]?.order_name,
-            delivery_fee: products[i]?.delivery_fee ?? 0,
-            order_amount: products[i]?.order_amount,
+            delivery_fee: lineDelivery,
+            order_amount: order_amount,
             order_count: products[i]?.order_count,
             groups: products[i]?.groups,
             seller_id: products[i]?.seller_id ?? 0,

@@ -15,6 +15,12 @@ import { useAuthContext } from "src/layouts/manager/auth/useAuthContext";
 import { Upload } from "src/components/upload";
 import { sha256 } from "js-sha256";
 
+// 택배사 목록 (송장 저장 형식: `택배사-송장번호`, 구매자 주문내역에서 그대로 파싱됨)
+const COURIER_LIST = ['CJ대한통운', '우체국택배', '한진택배', '롯데택배', '로젠택배', '경동택배', 'GS Postbox', 'CU 편의점택배', '대신택배', '일양로지스', '기타'];
+// 택배사·송장번호로 배송조회 (네이버 통합 택배조회 — 택배사 무관하게 동작)
+const courierTrackUrl = (courier, no) =>
+  `https://search.naver.com/search.naver?query=${encodeURIComponent(`${courier || ''} ${no || ''} 택배조회`.trim())}`;
+
 const TrxList = () => {
   const { setModal } = useModal()
   const { user } = useAuthContext();
@@ -388,12 +394,28 @@ const TrxList = () => {
     ...(themeDnsData?.id != 74 ? [
       {
         id: 'invoice_num',
-        label: '송장번호',
+        label: '택배사/송장번호',
         action: (row) => {
-          const [invoice, setInvoice] = useState(row?.invoice_num);
-          return <Col style={{ rowGap: '0.5rem' }}>
+          // 기존 저장값 파싱: '택배사-송장번호' 형식이고 앞부분이 알려진 택배사일 때만 분리, 아니면 전체를 송장번호로 간주
+          const raw = row?.invoice_num ?? '';
+          const firstDash = raw.indexOf('-');
+          const maybeCourier = firstDash > 0 ? raw.slice(0, firstDash) : '';
+          const isCourier = COURIER_LIST.includes(maybeCourier);
+          const [courier, setCourier] = useState(isCourier ? maybeCourier : '');
+          const [invoice, setInvoice] = useState(isCourier ? raw.slice(firstDash + 1) : raw);
+          return <Col style={{ rowGap: '0.5rem', minWidth: '190px' }}>
+            <Select
+              size={'small'}
+              displayEmpty
+              value={courier}
+              onChange={(e) => setCourier(e.target.value)}
+            >
+              <MenuItem value={''}>{'택배사 선택'}</MenuItem>
+              {COURIER_LIST.map((c) => <MenuItem key={c} value={c}>{c}</MenuItem>)}
+            </Select>
             <TextField
               size={'small'}
+              placeholder={'송장번호'}
               className={`invoice-${row?.id}`}
               value={invoice}
               onChange={(e) => {
@@ -401,14 +423,20 @@ const TrxList = () => {
               }}
             />
             <Button variant="contained" onClick={async () => {
+              const num = (invoice || '').trim();
+              const joined = num ? (courier ? `${courier}-${num}` : num) : '';
               let result = await apiManager(`transactions/${row?.id}/invoice`, 'create', {
                 id: row?.id,
-                invoice_num: invoice
+                invoice_num: joined
               })
               if (result) {
                 toast.success('성공적으로 저장 되었습니다.')
               }
             }}>저장</Button>
+            {invoice ? (
+              <a href={courierTrackUrl(courier, invoice)} target="_blank" rel="noreferrer"
+                style={{ fontSize: 12, color: '#1a73e8' }}>배송조회</a>
+            ) : null}
           </Col>
         },
         sx: (row) => {

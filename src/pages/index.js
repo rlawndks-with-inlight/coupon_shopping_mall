@@ -63,10 +63,10 @@ const WithLogo = ({ text }) =>
     ));
 
 const TARGETS = [
-  { icon: 'tabler:shopping-cart', k: 't1' },
-  { icon: 'tabler:device-mobile', k: 't2' },
-  { icon: 'tabler:rocket', k: 't3' },
-  { icon: 'tabler:chart-line', k: 't4' },
+  { icon: 'tabler:coin', k: 't1' },
+  { icon: 'tabler:world', k: 't2' },
+  { icon: 'tabler:brand-instagram', k: 't3' },
+  { icon: 'tabler:building-store', k: 't4' },
 ];
 
 // '지금 바로 시작하기' — 제목·설명 + 라인 아이콘 병렬 표시(이런 분께 추천 영역과 동일 구성, 아이콘만 흰색).
@@ -204,13 +204,16 @@ const ShopGoLanding = () => {
 
       {/* TARGETS */}
       <Box id="features" sx={{ py: { xs: 8, md: 12 }, bgcolor: SG.subBg }}>
-        <Container maxWidth="lg">
+        <Container maxWidth={false} sx={{ maxWidth: 1320, mx: 'auto' }}>
           <Stack spacing={1} textAlign="center" mb={6}>
             <Typography sx={{ fontSize: 12, letterSpacing: 4, color: SG.accentText, fontWeight: 700 }}>
               WHO IT'S FOR
             </Typography>
             <Typography sx={{ fontSize: { xs: 24, md: 36 }, fontWeight: 900, letterSpacing: '-1px', color: SG.text }}>
               {t.targetsTitle}
+            </Typography>
+            <Typography sx={{ fontSize: { xs: 14, md: 16 }, color: SG.gray, lineHeight: 1.7, maxWidth: 660, mx: 'auto', pt: 0.5, wordBreak: 'keep-all' }}>
+              <MobileBreakText text={t.targetsSub} />
             </Typography>
           </Stack>
           <Grid container spacing={2}>
@@ -234,10 +237,10 @@ const ShopGoLanding = () => {
                   <Box sx={{ mb: 1.5, lineHeight: 0 }}>
                     <Icon icon={item.icon} width={38} height={38} color="#a3e635" />
                   </Box>
-                  <Typography sx={{ fontSize: 16, fontWeight: 800, mb: 1, lineHeight: 1.3, color: SG.text }}>
+                  <Typography sx={{ fontSize: 16, fontWeight: 800, mb: 1, lineHeight: 1.3, color: SG.text, wordBreak: 'keep-all', minHeight: { xs: 'auto', sm: '2.6em' } }}>
                     {t[`${item.k}Title`]}
                   </Typography>
-                  <Typography sx={{ fontSize: 13, color: SG.gray, lineHeight: 1.6, whiteSpace: 'pre-line' }}>{t[`${item.k}Desc`]}</Typography>
+                  <Typography sx={{ fontSize: 13, color: SG.gray, lineHeight: 1.6, whiteSpace: 'pre-line', wordBreak: 'keep-all' }}>{t[`${item.k}Desc`]}</Typography>
                 </Box>
               </Grid>
             ))}

@@ -86,10 +86,10 @@ const ApplyPage = () => {
     if (!isValidBizNo(form.business_number)) e.business_number = st('apply.vBizNo');
     if (!form.ceo_name.trim()) e.ceo_name = st('apply.vCeoName');
     if (!isValidPhone(form.ceo_phone)) e.ceo_phone = st('apply.vCeoPhone');
-    if (!isValidEmail(form.ceo_email)) e.ceo_email = st('apply.vEmail');
+    if (!form.ceo_email.trim() || !isValidEmail(form.ceo_email)) e.ceo_email = st('apply.vEmail');
     if (!form.manager_name.trim()) e.manager_name = st('apply.vMgrName');
     if (!isValidPhone(form.manager_phone)) e.manager_phone = st('apply.vMgrPhone');
-    if (!isValidEmail(form.manager_email)) e.manager_email = st('apply.vEmail');
+    if (!form.manager_email.trim() || !isValidEmail(form.manager_email)) e.manager_email = st('apply.vEmail');
     if (!isValidSlug(form.desired_slug)) {
       e.desired_slug = st('apply.vSlug');
     }
@@ -226,7 +226,7 @@ const ApplyPage = () => {
             </Field>
           </Grid>
           <Grid item xs={12} sm={4}>
-            <Field label={st('apply.fCeoEmail')}>
+            <Field label={st('apply.fCeoEmail')} required>
               <TextField
                 fullWidth
                 size="small"
@@ -269,7 +269,7 @@ const ApplyPage = () => {
             </Field>
           </Grid>
           <Grid item xs={12} sm={4}>
-            <Field label={st('apply.fMgrEmail')}>
+            <Field label={st('apply.fMgrEmail')} required>
               <TextField
                 fullWidth
                 size="small"

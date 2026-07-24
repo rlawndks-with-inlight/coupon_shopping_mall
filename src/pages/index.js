@@ -69,6 +69,14 @@ const TARGETS = [
   { icon: 'tabler:building-store', k: 't4' },
 ];
 
+// 메인 최하단 보안/신뢰 섹션 — 사실인 항목만(개인정보 암호화는 DB 암호화 적용 후 추가)
+const TRUST = [
+  { icon: 'tabler:credit-card', title: '포스페이 안전결제', desc: '전자결제(PG)를 통해\n결제가 안전하게 처리됩니다.', logo: '/assets/images/forspay-logo.png', logoH: 42 },
+  { icon: 'tabler:cloud', title: 'AWS 클라우드 인프라', desc: '검증된 글로벌 클라우드에서\n안정적으로 운영됩니다.', logo: '/assets/images/powered-by-aws.png', logoH: 36 },
+  { icon: 'tabler:lock', title: 'SSL 보안 통신', desc: '256-bit SSL 암호화로\n전 구간을 안전하게 보호합니다.' },
+  { icon: 'tabler:shield-lock', title: '비밀번호 보호', desc: '단방향 암호화(PBKDF2)로\n비밀번호를 안전하게 저장합니다.' },
+];
+
 // '지금 바로 시작하기' — 제목·설명 + 라인 아이콘 병렬 표시(이런 분께 추천 영역과 동일 구성, 아이콘만 흰색).
 // 클릭 이동과 하단 CTA 문구만 보류(추후 재추가).
 const ACTIONS = [
@@ -335,6 +343,84 @@ const ShopGoLanding = () => {
               </Grid>
             ))}
           </Grid>
+        </Container>
+      </Box>
+
+      {/* SECURITY / TRUST — 메인 최하단 */}
+      <Box sx={{ py: { xs: 7, md: 10 }, bgcolor: '#fafaf7', borderTop: '1px solid #eee' }}>
+        <Container maxWidth="lg">
+          <Stack spacing={1} textAlign="center" mb={5}>
+            <Typography sx={{ fontSize: 12, letterSpacing: 4, color: '#888', fontWeight: 700 }}>
+              SECURITY &amp; TRUST
+            </Typography>
+            <Typography sx={{ fontSize: { xs: 22, md: 30 }, fontWeight: 900, letterSpacing: '-0.8px', color: '#1a1a1f' }}>
+              안전하게 운영되는 쇼핑몰
+            </Typography>
+          </Stack>
+          <Grid container spacing={2}>
+            {TRUST.map((b) => (
+              <Grid item xs={12} sm={6} md={3} key={b.title}>
+                <Box
+                  sx={{
+                    p: 3,
+                    height: '100%',
+                    border: '1px solid #eee',
+                    borderRadius: 2,
+                    bgcolor: '#fff',
+                    display: 'flex',
+                    flexDirection: 'column',
+                  }}
+                >
+                  <Box
+                    sx={{
+                      width: 40,
+                      height: 40,
+                      borderRadius: 1.5,
+                      bgcolor: '#111',
+                      color: '#a3e635',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      mb: 1.5,
+                    }}
+                  >
+                    <Icon icon={b.icon} width={22} height={22} />
+                  </Box>
+                  <Typography sx={{ fontSize: 15, fontWeight: 800, mb: 0.75, color: '#1a1a1f', wordBreak: 'keep-all' }}>
+                    {b.title}
+                  </Typography>
+                  <Typography
+                    sx={{ fontSize: 13, color: '#666', lineHeight: 1.65, whiteSpace: 'pre-line', wordBreak: 'keep-all', flexGrow: 1 }}
+                  >
+                    {b.desc}
+                  </Typography>
+                  {b.logo && (
+                    <Box
+                      component="img"
+                      src={b.logo}
+                      alt={b.title}
+                      sx={{ height: b.logoH || 20, width: 'auto', mt: 1.75, alignSelf: 'flex-start' }}
+                    />
+                  )}
+                </Box>
+              </Grid>
+            ))}
+          </Grid>
+          <Stack alignItems="center" sx={{ mt: 4 }}>
+            <Box
+              component="a"
+              href="/security"
+              sx={{
+                fontSize: 13,
+                color: '#888',
+                fontWeight: 700,
+                textDecoration: 'none',
+                '&:hover': { color: '#111', textDecoration: 'underline' },
+              }}
+            >
+              보안 안내 자세히 →
+            </Box>
+          </Stack>
         </Container>
       </Box>
     </>

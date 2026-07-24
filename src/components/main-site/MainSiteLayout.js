@@ -1,6 +1,5 @@
 import { useRouter } from 'next/router';
 import { Box, Container, Stack, Typography, Button } from '@mui/material';
-import { Icon } from '@iconify/react';
 import { useLandingT } from './landingStrings';
 import LangSwitcher from './LangSwitcher';
 
@@ -21,6 +20,7 @@ const NAV = [
   { k: 'navAbout', href: '/#features' },
   { k: 'navFrames', href: '/frames' },
   { k: 'navManual', href: '/manual' },
+  { k: 'navFaq', href: '/faq' },
 ];
 
 const handleNavClick = (href, router) => {
@@ -125,13 +125,6 @@ export const MainSiteHeader = () => {
   );
 };
 
-// 푸터 신뢰 배지 — 실제로 사실인 항목만 표기(개인정보 암호화는 DB 암호화 적용 후 추가).
-const TRUST_BADGES = [
-  { icon: 'tabler:lock', label: 'SSL 보안접속' },
-  { icon: 'tabler:cloud', label: 'AWS 클라우드 인프라' },
-  { icon: 'tabler:credit-card', label: '포스페이 안전결제(PG)' },
-];
-
 export const MainSiteFooter = () => (
   <Box
     component="footer"
@@ -162,34 +155,6 @@ export const MainSiteFooter = () => (
               {PAY_INQUIRY_EMAIL}
             </Box>
           </Typography>
-        </Stack>
-        <Stack direction="row" flexWrap="wrap" alignItems="center" sx={{ gap: 1, pt: 1 }}>
-          {TRUST_BADGES.map((b) => (
-            <Stack
-              key={b.label}
-              direction="row"
-              alignItems="center"
-              spacing={0.75}
-              sx={{ px: 1.25, py: 0.5, borderRadius: 999, border: '1px solid #e8e8e2', bgcolor: '#fff' }}
-            >
-              <Icon icon={b.icon} width={14} height={14} style={{ color: '#6b8f2e' }} />
-              <Typography sx={{ fontSize: 11.5, color: '#777', fontWeight: 600 }}>{b.label}</Typography>
-            </Stack>
-          ))}
-          <Box
-            component="a"
-            href="/security"
-            sx={{
-              fontSize: 11.5,
-              color: '#888',
-              fontWeight: 600,
-              textDecoration: 'none',
-              ml: 0.5,
-              '&:hover': { color: '#111', textDecoration: 'underline' },
-            }}
-          >
-            보안 안내 자세히 →
-          </Box>
         </Stack>
         <Box sx={{ pt: 2, borderTop: '1px solid #eee' }}>
           <Typography sx={{ fontSize: 10, color: '#aaa', lineHeight: 1.7 }}>

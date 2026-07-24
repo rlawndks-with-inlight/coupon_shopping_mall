@@ -71,7 +71,6 @@ const TARGETS = [
 
 // 메인 최하단 보안/신뢰 섹션 — 사실인 항목만(개인정보 암호화는 DB 암호화 적용 후 추가)
 const TRUST = [
-  { icon: 'tabler:credit-card', title: '포스페이 안전결제', desc: '전자결제(PG)를 통해\n결제가 안전하게 처리됩니다.', logo: '/assets/images/forspay-logo.png', logoH: 42 },
   { icon: 'tabler:cloud', title: 'AWS 클라우드 인프라', desc: '검증된 글로벌 클라우드에서\n안정적으로 운영됩니다.', logo: '/assets/images/powered-by-aws.png', logoH: 36 },
   { icon: 'tabler:lock', title: 'SSL 보안 통신', desc: '256-bit SSL 암호화로\n전 구간을 안전하게 보호합니다.' },
   { icon: 'tabler:shield-lock', title: '비밀번호 보호', desc: '단방향 암호화(PBKDF2)로\n비밀번호를 안전하게 저장합니다.' },
@@ -359,7 +358,7 @@ const ShopGoLanding = () => {
           </Stack>
           <Grid container spacing={2}>
             {TRUST.map((b) => (
-              <Grid item xs={12} sm={6} md={3} key={b.title}>
+              <Grid item xs={12} sm={4} key={b.title}>
                 <Box
                   sx={{
                     p: 3,

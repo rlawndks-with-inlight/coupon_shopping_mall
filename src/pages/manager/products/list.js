@@ -280,6 +280,7 @@ const ProductList = () => {
               <MenuItem value={1}>{'중단됨'}</MenuItem>
               <MenuItem value={2}>{'품절'}</MenuItem>
               <MenuItem value={3}>{'새상품'}</MenuItem>
+              <MenuItem value={5}>{'비공개'}</MenuItem>
             </Select>
           }
         },

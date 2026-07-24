@@ -23,6 +23,7 @@ import { Col } from 'src/components/elements/styled-components';
 import { useAuthContext } from 'src/layouts/manager/auth/useAuthContext';
 import { useSettingsContext } from 'src/components/settings';
 import { commarNumber } from 'src/utils/function';
+import { getBrandShipping } from 'src/utils/shop-util';
 import { useState } from 'react';
 import { useEffect } from 'react';
 import { useLocales } from 'src/locales';
@@ -56,6 +57,9 @@ export default function CheckoutSummary({
   const { translate } = useLocales();
   const { setting_obj } = themeDnsData;
   const { use_point_min_price = 0, max_use_point = 0, point_rate = 0 } = setting_obj;
+  // 브랜드 배송비 정책(설정 시) — 정책 미설정이면 active:false로 기존 표시 유지
+  const brandShip = getBrandShipping((subtotal ?? 0) - (discount ?? 0));
+  const displayTotal = brandShip.active ? ((total ?? 0) + brandShip.fee) : total;
   return (
     <Card sx={{ mb: 3 }}>
       <CardHeader
@@ -83,6 +87,16 @@ export default function CheckoutSummary({
             </Typography>
             <Typography variant="subtitle2">{discount ? fCurrency(-discount) : '0'}원</Typography>
           </Stack>
+          {brandShip.active && (
+            <Stack direction="row" justifyContent="space-between">
+              <Typography variant="body2" sx={{ color: 'text.secondary' }}>
+                {translate('배송비')}
+              </Typography>
+              <Typography variant="subtitle2">
+                {brandShip.fee > 0 ? `${fCurrency(brandShip.fee)}원` : translate('무료배송')}
+              </Typography>
+            </Stack>
+          )}
           <Stack direction="row" justifyContent="space-between">
             <Typography variant="body2" sx={{ color: 'text.secondary' }}>
               {translate('사용할 포인트')}
@@ -122,7 +136,7 @@ export default function CheckoutSummary({
             <Typography variant="subtitle1">{translate('총 결제금액')}</Typography>
             <Box sx={{ textAlign: 'right' }}>
               <Typography variant="subtitle1" sx={{ color: 'error.main' }}>
-                {total ? fCurrency(total ?? 0) : '0'}원
+                {displayTotal ? fCurrency(displayTotal ?? 0) : '0'}원
               </Typography>
               {/* <Typography variant="caption" sx={{ fontStyle: 'italic' }}>
                 (VAT included if applicable)

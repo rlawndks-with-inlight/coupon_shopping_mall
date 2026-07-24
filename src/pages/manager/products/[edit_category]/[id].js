@@ -591,6 +591,7 @@ const ProductEdit = () => {
 
   const [price, setPrice] = useState('')
   const [salePrice, setSalePrice] = useState('')
+  const [useDiscount, setUseDiscount] = useState(false) // 할인 표시 사용 여부(정가를 판매가보다 높게 별도 입력)
   const [point, setPoint] = useState('')
   const [defPoint, setDefPoint] = useState(0)
   const [showStatus, setShowStatus] = useState()
@@ -721,6 +722,8 @@ const ProductEdit = () => {
       setItem(product)
       setPrice(product?.product_price.toLocaleString('ko-KR'))
       setSalePrice(product?.product_sale_price.toLocaleString('ko-KR'))
+      // 정가(product_price)가 판매가(product_sale_price)보다 클 때만 '할인 표시' 사용으로 간주
+      setUseDiscount((product?.product_price || 0) > (product?.product_sale_price || 0))
       setPoint(product?.point_save?.toLocaleString('ko-KR'))
       let cur_categories = {};
       let category_children_list = {};
@@ -1705,43 +1708,58 @@ const ProductEdit = () => {
                           themeDnsData?.is_use_seller != 1 ?
                             <>
                               <FormControl variant="outlined">
-                                <InputLabel>상품가</InputLabel>
+                                <InputLabel>판매가</InputLabel>
                                 <OutlinedInput
-                                  label='상품가'
-                                  type="text"
-                                  value={price}
-                                  endAdornment={<InputAdornment position="end">원</InputAdornment>}
-                                  onChange={(e) => {
-                                    let value = parseInt(e.target.value.replace(/,/g, ''))
-                                    //console.log(value)
-                                    setItem(
-                                      {
-                                        ...item,
-                                        ['product_price']: value
-                                      }
-                                    )
-                                    setPrice(value.toLocaleString('ko-KR'))
-                                    //console.log(price)
-                                  }} />
-                              </FormControl>
-                              <FormControl variant="outlined">
-                                <InputLabel>상품 할인가</InputLabel>
-                                <OutlinedInput
-                                  label='상품 할인가'
+                                  label='판매가'
                                   type="text"
                                   value={salePrice}
                                   endAdornment={<InputAdornment position="end">원</InputAdornment>}
                                   onChange={(e) => {
-                                    let value = parseInt(e.target.value.replace(/,/g, ''))
-                                    setItem(
-                                      {
-                                        ...item,
-                                        ['product_sale_price']: value
-                                      }
-                                    )
+                                    let value = parseInt(e.target.value.replace(/,/g, '')) || 0
+                                    // 할인 미사용이면 정가(product_price)도 판매가와 동일하게 맞춰 할인 표시가 뜨지 않게 한다
+                                    setItem({
+                                      ...item,
+                                      ['product_sale_price']: value,
+                                      ...(useDiscount ? {} : { ['product_price']: value }),
+                                    })
                                     setSalePrice(value.toLocaleString('ko-KR'))
+                                    if (!useDiscount) setPrice(value.toLocaleString('ko-KR'))
                                   }} />
                               </FormControl>
+                              <FormControlLabel
+                                sx={{ ml: 0 }}
+                                control={<Checkbox
+                                  checked={useDiscount}
+                                  onChange={(e) => {
+                                    const on = e.target.checked
+                                    setUseDiscount(on)
+                                    if (!on) {
+                                      // 할인 표시 해제: 정가를 판매가와 동일하게 되돌려 취소선/할인율이 사라지게 한다
+                                      setItem({ ...item, ['product_price']: item?.product_sale_price || 0 })
+                                      setPrice((item?.product_sale_price || 0).toLocaleString('ko-KR'))
+                                    }
+                                  }}
+                                />}
+                                label="할인 표시하기 (할인 전 가격 별도 입력)"
+                              />
+                              {useDiscount &&
+                                <FormControl variant="outlined">
+                                  <InputLabel>할인 전 가격(정가)</InputLabel>
+                                  <OutlinedInput
+                                    label='할인 전 가격(정가)'
+                                    type="text"
+                                    value={price}
+                                    endAdornment={<InputAdornment position="end">원</InputAdornment>}
+                                    onChange={(e) => {
+                                      let value = parseInt(e.target.value.replace(/,/g, '')) || 0
+                                      setItem({ ...item, ['product_price']: value })
+                                      setPrice(value.toLocaleString('ko-KR'))
+                                    }} />
+                                  <Typography variant="caption" sx={{ color: 'text.secondary', mt: 0.5 }}>
+                                    판매가보다 높게 입력하세요. 쇼핑몰에 정가는 취소선, 할인율(%)이 함께 표시됩니다.
+                                  </Typography>
+                                </FormControl>
+                              }
                             </>
                             :
                             <>

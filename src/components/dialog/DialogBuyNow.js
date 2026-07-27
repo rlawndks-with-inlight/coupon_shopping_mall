@@ -57,7 +57,8 @@ const DialogBuyNow = (props) => {
   // 바로구매(shop): 팝업 대신 공용 주문서 페이지로 이동. blog은 기존 팝업 유지(추후 정리).
   // 다이얼로그 UI는 보존하되 shop에서는 열리지 않는다(open={buyOpen && is_blog}).
   useEffect(() => {
-    if (buyOpen && !is_blog) {
+    // 바로구매(shop·blog 공통): 팝업 대신 공용 주문서 페이지로 이동.
+    if (buyOpen) {
       startBuyNow(product, selectProductGroups, router);
       setBuyOpen(false);
     }
@@ -310,7 +311,7 @@ const DialogBuyNow = (props) => {
   return (
     <>
       <Dialog
-        open={buyOpen && is_blog}
+        open={false}
         onClose={() => {
           onBuyDialogClose();
         }}

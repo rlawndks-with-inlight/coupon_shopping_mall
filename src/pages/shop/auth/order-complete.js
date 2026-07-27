@@ -90,7 +90,11 @@ const OrderComplete = () => {
           )}
 
           <Typography variant="caption" sx={{ color: 'text.secondary', display: 'block', textAlign: 'center', mb: 2 }}>
-            승인번호·배송현황은 주문내역에서 확인하실 수 있습니다. 비회원은 주문번호와 주문비밀번호로 조회할 수 있습니다.
+            승인번호·배송현황은 주문내역에서 확인하실 수 있습니다.<br />
+            비회원은{' '}
+            <Box component="a" onClick={() => router.push('/shop/auth/order-check')}
+              sx={{ color: 'primary.main', textDecoration: 'underline', cursor: 'pointer' }}>전화번호+주문비밀번호로 조회</Box>
+            할 수 있습니다.
           </Typography>
         </>
       ) : (

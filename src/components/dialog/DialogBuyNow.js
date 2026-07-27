@@ -23,7 +23,7 @@ import { apiManager } from 'src/utils/api'
 import { AddressItem } from 'src/views/shop/demo-1/auth/cart'
 import Iconify from '../iconify'
 import DaumPostcode from 'react-daum-postcode';
-import { makePayData, onPayProductsByAuth, onPayProductsByAuth_Fintree, onPayProductsByHand, onPayProductsByPayletter, onPayProductsByVirtualAccount } from 'src/utils/shop-util'
+import { makePayData, onPayProductsByAuth, onPayProductsByAuth_Fintree, onPayProductsByHand, onPayProductsByPayletter, onPayProductsByVirtualAccount, startBuyNow } from 'src/utils/shop-util'
 import { formatCreditCardNumber, formatExpirationDate } from 'src/utils/formatCard'
 import { useModal } from './ModalProvider'
 import toast from 'react-hot-toast'
@@ -54,6 +54,14 @@ const DialogBuyNow = (props) => {
   const { user } = useAuthContext();
   const { themeDnsData, onChangeCartData, themeCartData } = useSettingsContext();
   const router = useRouter();
+  // 바로구매(shop): 팝업 대신 공용 주문서 페이지로 이동. blog은 기존 팝업 유지(추후 정리).
+  // 다이얼로그 UI는 보존하되 shop에서는 열리지 않는다(open={buyOpen && is_blog}).
+  useEffect(() => {
+    if (buyOpen && !is_blog) {
+      startBuyNow(product, selectProductGroups, router);
+      setBuyOpen(false);
+    }
+  }, [buyOpen]);
   const [buyType, setBuyType] = useState(undefined);
   const [smsPayData, setSmsPayData] = useState({ name: '', phone_num: '' });
   const [addAddressOpen, setAddAddressOpen] = useState(false);
@@ -302,7 +310,7 @@ const DialogBuyNow = (props) => {
   return (
     <>
       <Dialog
-        open={buyOpen}
+        open={buyOpen && is_blog}
         onClose={() => {
           onBuyDialogClose();
         }}

@@ -305,6 +305,21 @@ export const onPayProductsByPayletter = async (products_, payData_) => { // 카�
 
 
 
+// 바로구매: 단일 상품을 주문서 페이지로 전달(팝업 대신 페이지 이동). sessionStorage로 넘기고 ?buynow=1.
+export const startBuyNow = (product, selectProductGroups, router) => {
+    try {
+        const item = {
+            ...product,
+            groups: selectProductGroups?.groups ?? [],
+            order_count: selectProductGroups?.count ?? 1,
+        };
+        sessionStorage.setItem('buyNowItem', JSON.stringify(item));
+        router.push('/shop/auth/order?buynow=1');
+    } catch (e) {
+        console.log(e);
+    }
+};
+
 export const getCartDataUtil = async (themeCartData) => {//장바구니 페이지에서 상품 불러오기
     let data = themeCartData ?? [];
     return data;

@@ -87,8 +87,17 @@ export default function OrderSheet({ router }) {
   }, []);
 
   const getCart = async () => {
-    const data = await getCartDataUtil(themeCartData);
-    setProducts(data);
+    let items = [];
+    if (typeof window !== 'undefined' && window.location.search.includes('buynow')) {
+      // 바로구매: sessionStorage의 단일 상품 사용(장바구니 무관)
+      try {
+        const raw = sessionStorage.getItem('buyNowItem');
+        if (raw) items = [JSON.parse(raw)];
+      } catch (e) { /* noop */ }
+    } else {
+      items = await getCartDataUtil(themeCartData);
+    }
+    setProducts(items);
     onChangeAddressPage(addressSearchObj);
   };
 
@@ -257,7 +266,12 @@ export default function OrderSheet({ router }) {
     const result = await onPayProductsByHand(products.map((p) => ({ ...p })), payData);
     setPayLoading(false);
     if (result) {
-      await onChangeCartData([]);
+      // 바로구매면 buyNowItem만 정리(장바구니 유지), 일반 주문이면 장바구니 비움
+      if (typeof window !== 'undefined' && window.location.search.includes('buynow')) {
+        try { sessionStorage.removeItem('buyNowItem'); } catch (e) { /* noop */ }
+      } else {
+        await onChangeCartData([]);
+      }
       // 결제완료 화면 전달용 — 카드번호/카드비번/만료일/주민번호/PG키 등 민감정보는 저장하지 않는다.
       const { card_num, card_pw, yymm, auth_num, pay_key, mid, tid, payment_modules, ...safe } = result;
       try { sessionStorage.setItem('lastOrder', JSON.stringify(safe)); } catch (e) { /* noop */ }

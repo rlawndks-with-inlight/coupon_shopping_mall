@@ -844,13 +844,12 @@ const CartDemo = (props) => {
                   size="large"
                   type="submit"
                   variant="contained"
-                  disabled={_.sum(_.map(products, (item) => { return item.quantity * item.product_sale_price })) <= 0}
+                  disabled={products.length <= 0}
                   onClick={() => {
-
-                    onClickNextStep()
+                    router.push('/shop/auth/order');
                   }}
                 >
-                  {'배송지 선택하기'}
+                  {'주문하기'}
                 </Button>
               </>}
           </Grid>

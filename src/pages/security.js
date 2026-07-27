@@ -6,6 +6,11 @@ import MainSiteLayout from 'src/components/main-site/MainSiteLayout';
 // 순서·공식 로고는 메인 최하단 보안 섹션과 통일.
 const PILLARS = [
   {
+    icon: 'tabler:credit-card',
+    title: '안전결제',
+    desc: 'PG·글로벌 PSP·매입사 결제를 안전하게 지원합니다.',
+  },
+  {
     icon: 'tabler:cloud',
     title: 'AWS 클라우드 인프라',
     desc:
@@ -29,7 +34,7 @@ const PILLARS = [
 
 const SecurityPage = () => (
   <Box>
-    <Container maxWidth="md" sx={{ py: { xs: 6, md: 10 } }}>
+    <Container maxWidth="lg" sx={{ py: { xs: 6, md: 10 } }}>
       <Stack spacing={2} alignItems="center" textAlign="center" mb={6}>
         <Typography sx={{ fontSize: 12, letterSpacing: 4, color: '#888', fontWeight: 700 }}>
           SECURITY &amp; TRUST
@@ -38,14 +43,14 @@ const SecurityPage = () => (
           안전하게 운영되는 쇼핑몰
         </Typography>
         <Typography sx={{ fontSize: 14, color: '#666', maxWidth: 560, lineHeight: 1.7 }}>
-          ShopGo는 보안 통신, 검증된 클라우드 인프라, 계정 보호를 기반으로
-          가맹점과 고객이 믿고 사용할 수 있는 환경을 제공합니다.
+          ShopGo는 안전한 결제, 보안 통신, 검증된 클라우드 인프라, 계정 보호를
+          기반으로 가맹점과 고객이 믿고 사용할 수 있는 환경을 제공합니다.
         </Typography>
       </Stack>
 
       <Grid container spacing={2}>
         {PILLARS.map((p) => (
-          <Grid item xs={12} sm={4} key={p.title}>
+          <Grid item xs={12} sm={6} md={3} key={p.title}>
             <Stack
               spacing={1.5}
               sx={{ p: 3, border: '1px solid #eee', borderRadius: 2, bgcolor: '#fff', height: '100%' }}

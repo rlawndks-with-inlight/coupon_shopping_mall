@@ -83,7 +83,6 @@ const Demo4 = (props) => {
         let result = await apiManager('auth/change-info', 'update', {
             nickname: userObj?.nickname,
             phone_num: userObj?.phone_num,
-            email: userObj?.email,
         })
         if (result) {
             toast.success('성공적으로 변경되었습니다.');
@@ -253,32 +252,6 @@ const Demo4 = (props) => {
                                 }
                             }}
                         >{isEditContact ? '저장' : '변경'}</Button>
-                    </div>
-                    <TextFieldTitle>이메일</TextFieldTitle>
-                    <div style={{ display: 'flex' }}>
-                        <TextField
-                            name='mailaddress'
-                            value={userObj?.email ?? ''}
-                            placeholder='이메일 주소 입력'
-                            onChange={(e) => {
-                                setUserObj({ ...userObj, email: e.target.value })
-                            }}
-                            sx={{
-                                marginBottom: '1%',
-                                width: '80%',
-                                marginRight: '1%'
-                            }}
-                        />
-                        <Button
-                            variant='outlined'
-                            style={{
-                                height: '56px',
-                                width: '19%'
-                            }}
-                            onClick={() => {
-                                toast('이메일 인증은 준비 중입니다.');
-                            }}
-                        >인증받기</Button>
                     </div>
                     <TextFieldTitle>기본 배송지</TextFieldTitle>
                     <FormControl sx={{ width: '100%' }}>

@@ -79,7 +79,6 @@ const Demo5 = (props) => {
         let result = await apiManager('auth/change-info', 'update', {
             nickname: userObj?.nickname,
             phone_num: userObj?.phone_num,
-            email: userObj?.email,
         })
         if (result) {
             toast.success('성공적으로 변경되었습니다.');
@@ -167,32 +166,6 @@ const Demo5 = (props) => {
                             }}
                         >{buttonText}</Button>
                     </div>
-                    <TextFieldTitle>이메일</TextFieldTitle>
-                    <div style={{ display: 'flex' }}>
-                        <TextField
-                            name='email'
-                            placeholder='이메일 주소 입력'
-                            value={userObj?.email ?? ''}
-                            onChange={(e) => {
-                                setUserObj({ ...userObj, email: e.target.value })
-                            }}
-                            sx={{
-                                marginBottom: '1%',
-                                width: '80%',
-                                marginRight: '1%'
-                            }}
-                        />
-                        <Button
-                            variant='outlined'
-                            style={{
-                                height: '56px',
-                                width: '19%'
-                            }}
-                            onClick={() => {
-                                onChangeUserInfo()
-                            }}
-                        >저장</Button>
-                    </div>
                     <TextFieldTitle>기본 배송지</TextFieldTitle>
                     <FormControl sx={{ width: '100%' }}>
                         <InputLabel>{addressList.length > 0 ? '기본 배송지 선택' : '배송지를 추가해주세요'}</InputLabel>
@@ -240,6 +213,17 @@ const Demo5 = (props) => {
                         variant='contained'
                         style={{
                             marginTop: '2rem',
+                            height: '56px',
+                            fontSize: 'large'
+                        }}
+                        onClick={() => {
+                            onChangeUserInfo()
+                        }}
+                    >변경사항 저장</Button>
+                    <Button
+                        variant='contained'
+                        style={{
+                            marginTop: '1rem',
                             height: '56px',
                             fontSize: 'large'
                         }}

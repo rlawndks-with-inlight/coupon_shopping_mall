@@ -57,7 +57,6 @@ const Demo1 = (props) => {
       setUserObj({
         name: user?.name ?? '',
         phone_num: user?.phone_num ?? '',
-        email: user?.email ?? '',
         nickname: user?.nickname ?? '',
       });
       onLoadAddresses();
@@ -83,7 +82,6 @@ const Demo1 = (props) => {
     let result = await apiManager('auth/change-info', 'update', {
       nickname: userObj?.nickname,
       phone_num: userObj?.phone_num,
-      email: userObj?.email,
     });
     if (result) {
       toast.success('성공적으로 변경되었습니다.');
@@ -162,32 +160,6 @@ const Demo1 = (props) => {
               sx={{
                 marginBottom: '1%',
                 backgroundColor: '#F6F6F6',
-                width: '80%',
-                marginRight: '1%'
-              }}
-            />
-            <Button
-              variant='outlined'
-              style={{
-                height: '56px',
-                width: '19%'
-              }}
-              onClick={() => {
-                setButtonText("인증받기")
-              }}
-            >{buttonText}</Button>
-          </div>
-          <TextFieldTitle>이메일</TextFieldTitle>
-          <div style={{ display: 'flex' }}>
-            <TextField
-              name='email'
-              placeholder='이메일 주소 입력'
-              value={userObj?.email ?? ''}
-              onChange={(e) => {
-                setUserObj({ ...userObj, email: e.target.value })
-              }}
-              sx={{
-                marginBottom: '1%',
                 width: '80%',
                 marginRight: '1%'
               }}

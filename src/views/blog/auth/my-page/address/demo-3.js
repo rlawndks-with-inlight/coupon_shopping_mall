@@ -46,7 +46,6 @@ const EMPTY_ADDRESS = {
     detail_addr: '',
     phone: '',
     is_default: false,
-    is_jeju: false,
 }
 
 // 공지사항, faq 등 상세페이지 김인욱
@@ -94,7 +93,6 @@ const Demo3 = (props) => {
             phone: newAddress.phone,
             nickname: nickname,
             is_default: newAddress.is_default,
-            is_jeju: newAddress.is_jeju,
             user_id: user?.id,
         }
         let result;
@@ -126,7 +124,6 @@ const Demo3 = (props) => {
             detail_addr: row?.detail_addr ?? '',
             phone: row?.phone ?? '',
             is_default: !!row?.is_default,
-            is_jeju: !!row?.is_jeju,
         });
         setNickname(row?.nickname ?? '');
         setIsOpenDaumPost(false);
@@ -322,11 +319,6 @@ const Demo3 = (props) => {
                                     <Button variant='outlined' style={{ marginRight: '1%' }} onClick={() => { setNickname('친구') }}>친구</Button>
                                     <Button variant='outlined' style={{ marginRight: '1%' }} onClick={() => { setNickname('가족') }}>가족</Button>
                                 </div>
-                                <FormControlLabel
-                                    label={<Typography style={{ display: 'flex' }}>제주/도서 산간지역</Typography>}
-                                    control={<Checkbox checked={!!newAddress.is_jeju} onChange={(e) => {
-                                        setNewAddress({ ...newAddress, is_jeju: e.target.checked })
-                                    }} />} />
                                 <FormControlLabel
                                     label={<Typography style={{ display: 'flex' }}>기본 배송지</Typography>}
                                     control={<Checkbox checked={!!newAddress.is_default} onChange={(e) => {

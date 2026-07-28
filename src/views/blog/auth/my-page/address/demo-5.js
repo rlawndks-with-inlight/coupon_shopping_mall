@@ -97,7 +97,6 @@ const Demo5 = (props) => {
             detail_addr: row?.detail_addr ?? '',
             zonecode: row?.zonecode ?? '',
             is_default: !!row?.is_default,
-            is_remote: !!row?.is_remote,
         });
         setNickname(row?.nickname ?? '');
         setEditId(row?.id ?? null);
@@ -129,7 +128,6 @@ const Demo5 = (props) => {
             zonecode: newAddress?.zonecode,
             nickname: nickname,
             is_default: newAddress?.is_default ? true : false,
-            is_remote: newAddress?.is_remote ? true : false,
             user_id: user?.id,
         }
         let result;
@@ -324,11 +322,6 @@ const Demo5 = (props) => {
                                     <Button variant='outlined' style={{ marginRight: '1%' }} onClick={() => { setNickname('친구') }}>친구</Button>
                                     <Button variant='outlined' style={{ marginRight: '1%' }} onClick={() => { setNickname('가족') }}>가족</Button>
                                 </div>
-                                <FormControlLabel
-                                    label={<Typography style={{ display: 'flex' }}>제주/도서 산간지역</Typography>}
-                                    control={<Checkbox checked={!!newAddress?.is_remote} onChange={(e) => {
-                                        setNewAddress({ ...newAddress, is_remote: e.target.checked })
-                                    }} />} />
                                 <FormControlLabel
                                     label={<Typography style={{ display: 'flex' }}>기본 배송지</Typography>}
                                     control={<Checkbox checked={!!newAddress?.is_default} onChange={(e) => {

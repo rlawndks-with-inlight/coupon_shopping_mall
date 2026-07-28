@@ -66,7 +66,6 @@ const Demo2 = (props) => {
     const [newAddress, setNewAddress] = useState({ ...DEFAULT_ADDRESS });
     const [nickname, setNickname] = useState("");
     const [isOpenPost, setIsOpenPost] = useState(false);
-    const [isIsland, setIsIsland] = useState(false);
 
     useEffect(() => {
         if (user) {
@@ -88,7 +87,6 @@ const Demo2 = (props) => {
     const onClickAddAddress = () => {
         setNewAddress({ ...DEFAULT_ADDRESS });
         setNickname("");
-        setIsIsland(false);
         setIsOpenPost(false);
         setActiveStep(1);
     }
@@ -104,7 +102,6 @@ const Demo2 = (props) => {
             is_default: data?.is_default ?? false,
         });
         setNickname(data?.address_type ?? "");
-        setIsIsland(false);
         setIsOpenPost(false);
         setActiveStep(1);
     }
@@ -137,7 +134,6 @@ const Demo2 = (props) => {
         if (result) {
             setNewAddress({ ...DEFAULT_ADDRESS });
             setNickname("");
-            setIsIsland(false);
             setActiveStep(0);
             loadAddressList();
         }
@@ -314,11 +310,6 @@ const Demo2 = (props) => {
                                     <Button variant='outlined' style={{ marginRight: '1%' }} onClick={() => { setNickname('친구') }}>친구</Button>
                                     <Button variant='outlined' style={{ marginRight: '1%' }} onClick={() => { setNickname('가족') }}>가족</Button>
                                 </div>
-                                <FormControlLabel
-                                    label={<Typography style={{ display: 'flex' }}>제주/도서 산간지역</Typography>}
-                                    control={<Checkbox checked={isIsland} onChange={(e) => {
-                                        setIsIsland(e.target.checked)
-                                    }} />} />
                                 <FormControlLabel
                                     label={<Typography style={{ display: 'flex' }}>기본 배송지</Typography>}
                                     control={<Checkbox checked={newAddress?.is_default ?? false} onChange={(e) => {

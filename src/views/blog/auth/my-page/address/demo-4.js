@@ -95,7 +95,6 @@ const Demo4 = (props) => {
             addr: data?.addr ?? '',
             detail_addr: data?.detail_addr ?? '',
             phone: data?.phone ?? '',
-            is_far: data?.is_far ?? false,
             is_default: data?.is_default ?? false,
         });
         setNickname(data?.nickname ?? '');
@@ -326,11 +325,6 @@ const Demo4 = (props) => {
                                     <Button variant='outlined' style={{ marginRight: '1%' }} onClick={() => { setNickname('친구') }}>친구</Button>
                                     <Button variant='outlined' style={{ marginRight: '1%' }} onClick={() => { setNickname('가족') }}>가족</Button>
                                 </div>
-                                <FormControlLabel
-                                    label={<Typography style={{ display: 'flex' }}>제주/도서 산간지역</Typography>}
-                                    control={<Checkbox checked={!!newAddress.is_far} onChange={(e) => {
-                                        setNewAddress({ ...newAddress, is_far: e.target.checked })
-                                    }} />} />
                                 <FormControlLabel
                                     label={<Typography style={{ display: 'flex' }}>기본 배송지</Typography>}
                                     control={<Checkbox checked={!!newAddress.is_default} onChange={(e) => {

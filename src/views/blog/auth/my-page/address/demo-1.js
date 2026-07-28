@@ -322,11 +322,6 @@ const Demo1 = (props) => {
                                     <Button variant='outlined' style={{ marginRight: '1%' }} onClick={() => { setNewAddress({ ...newAddress, address_type: '가족' }) }}>가족</Button>
                                 </div>
                                 <FormControlLabel
-                                    label={<Typography style={{ display: 'flex' }}>제주/도서 산간지역</Typography>}
-                                    control={<Checkbox checked={!!newAddress.is_far} onChange={(e) => {
-                                        setNewAddress({ ...newAddress, is_far: e.target.checked })
-                                    }} />} />
-                                <FormControlLabel
                                     label={<Typography style={{ display: 'flex' }}>기본 배송지</Typography>}
                                     control={<Checkbox checked={!!newAddress.is_default} onChange={(e) => {
                                         setNewAddress({ ...newAddress, is_default: e.target.checked })

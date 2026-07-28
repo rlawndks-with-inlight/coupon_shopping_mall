@@ -1,11 +1,63 @@
 import styled from 'styled-components'
 import { Wrappers, Title } from 'src/components/elements/blog/demo-1';
-import { Tabs, Tab, Accordion, AccordionSummary, AccordionDetails, Typography } from '@mui/material';
+import { Tabs, Tab } from '@mui/material';
 import { useState, useEffect } from 'react';
-import Iconify from 'src/components/iconify/Iconify';
 import { useSettingsContext } from 'src/components/settings';
+import { useAuthContext } from 'src/layouts/manager/auth/useAuthContext';
 import _ from 'lodash';
+import toast from 'react-hot-toast';
 import { apiShop } from 'src/utils/api';
+
+const ListContainer = styled.div`
+color:${props => props.themeMode == 'dark' ? '#fff' : 'gray'};
+border-top:2px solid ${props => props.themeMode == 'dark' ? '#555' : '#333'};
+`
+
+const ListRow = styled.div`
+display:flex;
+align-items:center;
+justify-content:space-between;
+column-gap:1rem;
+padding:1.1rem 0.5rem;
+border-bottom:1px solid ${props => props.themeMode == 'dark' ? '#444' : '#e5e5e5'};
+cursor:pointer;
+transition:background-color 0.15s;
+&:hover{
+    background-color:${props => props.themeMode == 'dark' ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.03)'};
+}
+`
+
+const RowTitle = styled.div`
+font-size:1rem;
+font-weight:500;
+color:${props => props.themeMode == 'dark' ? '#eee' : '#333'};
+overflow:hidden;
+text-overflow:ellipsis;
+white-space:nowrap;
+`
+
+const RowMeta = styled.div`
+display:flex;
+align-items:center;
+column-gap:1rem;
+font-size:0.85rem;
+white-space:nowrap;
+`
+
+const Writer = styled.span`
+color:${props => props.themeMode == 'dark' ? '#bbb' : 'gray'};
+`
+
+const StatusBadge = styled.span`
+font-weight:bold;
+color:${props => props.done ? (props.themeMode == 'dark' ? '#8ab4ff' : '#1976d2') : (props.themeMode == 'dark' ? '#999' : '#aaa')};
+`
+
+const Empty = styled.div`
+text-align:center;
+padding:3.5rem 0;
+color:${props => props.themeMode == 'dark' ? '#aaa' : '#999'};
+`
 
 const ServiceFaq = styled.div`
 display:flex;
@@ -16,10 +68,6 @@ margin:2rem 0 2rem 0;
 color:${props => props.themeMode == 'dark' ? '#fff' : 'gray'};
 text-decoration:underline;
 cursor:pointer;
-`
-
-const AccordionContainer = styled.div`
-color:${props => props.themeMode == 'dark' ? '#fff' : 'gray'};
 `
 
 // 공지사항, faq 등 리스트 페이지 김인욱
@@ -33,45 +81,57 @@ const Demo3 = (props) => {
         },
     } = props;
 
+    const { user } = useAuthContext();
+    const { themeMode, themePostCategoryList } = useSettingsContext();
+
     const [inquiryType, setInquiryType] = useState(0)
     const [inquiryList, setInquiryList] = useState([])
-    const [controlled, setControlled] = useState(undefined)
-    const { themeMode, themePostCategoryList } = useSettingsContext();
-    const [category, setCaetgory] = useState({});
+    const [category, setCategory] = useState({});
+
     useEffect(() => {
-        pageSetting();
-    }, [])
+        if (router.query?.article_category && themePostCategoryList) {
+            pageSetting();
+        }
+    }, [router.query?.article_category, themePostCategoryList])
 
     const pageSetting = async () => {
-        let category = _.find(themePostCategoryList, { id: parseInt(router.query?.article_category) });
-        category.children = [
-            ...[{
-                id: router.query?.article_category,
-                post_category_title: '전체'
-            }],
-            ...category.children
-        ]
-        setCaetgory(category);
+        let found = _.find(themePostCategoryList, { id: parseInt(router.query?.article_category) });
+        let category_ = {
+            ...found,
+            children: [
+                { id: router.query?.article_category, post_category_title: '전체' },
+                ...(found?.children ?? [])
+            ]
+        }
+        setCategory(category_);
         setInquiryType(router.query?.article_category)
         getArticleList(1, router.query?.article_category)
     }
+
     const getArticleList = async (page, category_id) => {
         let inquiry_data = await apiShop('post', 'list', {
             page: page,
             page_size: 1000,
             category_id: category_id
         })
-        setInquiryList(inquiry_data.content)
+        setInquiryList(inquiry_data?.content ?? [])
     }
-    /*const settingPage = () => {
-        let inquiry_data = [...test_inquiry];
-        inquiry_data = inquiry_data.map((item) => {
-            return {
-                ...item
-            }
-        })
-        setInquiryList(inquiry_data);
-    }*/
+
+    const moveToDetail = (id) => {
+        router.push(`/blog/service/${router.query?.article_category}/${id}`)
+    }
+
+    const onClickWrite = () => {
+        if (user?.id) {
+            router.push(`/blog/service/${router.query?.article_category}/add`)
+        } else {
+            toast.error('로그인을 해주세요.')
+        }
+    }
+
+    const isAbleUserAdd = category?.is_able_user_add == 1;
+    const showWriter = category?.is_able_user_add == 1 && category?.post_category_read_type == 0;
+    const showStatus = category?.is_able_user_add == 1 && category?.post_category_read_type == 1;
 
     return (
         <>
@@ -93,7 +153,7 @@ const Demo3 = (props) => {
                         getArticleList(1, newValue)
                     }}
                 >
-                    {category?.children && category?.children.map((item,) => (
+                    {category?.children && category?.children.map((item) => (
                         <Tab key={item?.post_category_title} value={item?.id} label={item?.post_category_title} style={{
                             borderBottom: '1px solid',
                             borderColor: 'inherit',
@@ -104,32 +164,30 @@ const Demo3 = (props) => {
                         }} />
                     ))}
                 </Tabs>
-                <AccordionContainer themeMode={themeMode}>
-                    {inquiryList.map((item, idx) => (
-                        <>
-                            <Accordion
-                                key={idx}
-                                expanded={controlled === item.id}
-                                onChange={() => {
-                                    if (item.id == controlled) {
-                                        setControlled(undefined);
-                                    } else {
-                                        setControlled(item.id)
-                                    }
-                                }}
-                                disabled={item.answer ? false : true}
-                            >
-                                <AccordionSummary expandIcon={<Iconify icon="eva:arrow-ios-downward-fill" />}>
-                                    <Typography variant="subtitle1">[{item.post_writer}] {item.post_title}</Typography>
-                                </AccordionSummary>
-                                <AccordionDetails>
-                                    <Typography>{item.answer}</Typography>
-                                </AccordionDetails>
-                            </Accordion>
-                        </>
-                    ))}
-                </AccordionContainer>
-                <ServiceFaq themeMode={themeMode}>서비스 문의</ServiceFaq>
+                <ListContainer themeMode={themeMode}>
+                    {inquiryList.length > 0 ?
+                        inquiryList.map((item, idx) => (
+                            <ListRow key={idx} themeMode={themeMode} onClick={() => {
+                                moveToDetail(item?.id)
+                            }}>
+                                <RowTitle themeMode={themeMode}>{item?.post_title ?? '---'}</RowTitle>
+                                <RowMeta>
+                                    {showWriter && item?.writer_nickname &&
+                                        <Writer themeMode={themeMode}>{item?.writer_nickname}</Writer>}
+                                    {showStatus &&
+                                        <StatusBadge themeMode={themeMode} done={item?.replies?.length > 0}>
+                                            {item?.replies?.length > 0 ? '답변완료' : '답변대기'}
+                                        </StatusBadge>}
+                                </RowMeta>
+                            </ListRow>
+                        ))
+                        :
+                        <Empty themeMode={themeMode}>등록된 게시글이 없습니다.</Empty>}
+                </ListContainer>
+                {isAbleUserAdd &&
+                    <ServiceFaq themeMode={themeMode} onClick={() => {
+                        onClickWrite()
+                    }}>서비스 문의</ServiceFaq>}
             </Wrappers>
         </>
     )

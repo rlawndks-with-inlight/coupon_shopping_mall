@@ -69,12 +69,12 @@ const TARGETS = [
   { icon: 'tabler:building-store', k: 't4' },
 ];
 
-// 메인 최하단 보안/신뢰 섹션 — 사실인 항목만(개인정보 암호화는 DB 암호화 적용 후 추가)
+// 메인 최하단 보안/신뢰 섹션 — 사실인 항목만. 전용 페이지(security.js)와 항목·순서 통일.
 const TRUST = [
-  { icon: 'tabler:credit-card', title: '안전결제', desc: 'PG·글로벌 PSP·매입사 결제를\n안전하게 지원합니다.' },
-  { icon: 'tabler:cloud', title: 'AWS 클라우드 인프라', desc: '검증된 글로벌 클라우드에서\n안정적으로 운영됩니다.', logo: '/assets/images/powered-by-aws.png', logoH: 36 },
-  { icon: 'tabler:lock', title: 'SSL 보안 통신', desc: '256-bit SSL 암호화로\n전 구간을 안전하게 보호합니다.' },
-  { icon: 'tabler:shield-lock', title: '비밀번호 보호', desc: '단방향 암호화(PBKDF2)로\n비밀번호를 안전하게 저장합니다.' },
+  { icon: 'tabler:credit-card', title: '안전결제', desc: '검증된 PG·PSP를 통해\n안전하게 결제됩니다' },
+  { icon: 'tabler:cloud', title: 'AWS 클라우드 인프라', desc: '검증된 글로벌 클라우드에서\n안정적으로 운영됩니다', logo: '/assets/images/powered-by-aws.png', logoH: 36 },
+  { icon: 'tabler:lock', title: '개인정보 암호화 저장', desc: '이름·연락처·주소 등 개인정보를\n암호화하여 저장합니다' },
+  { icon: 'tabler:shield-lock', title: '결제정보 미보관', desc: '카드번호 등 결제정보는\n서버에 저장하지 않습니다' },
 ];
 
 // '지금 바로 시작하기' — 제목·설명 + 라인 아이콘 병렬 표시(이런 분께 추천 영역과 동일 구성, 아이콘만 흰색).

@@ -61,7 +61,7 @@ export const MainSiteHeader = () => {
         >
           <Typography
             variant="h6"
-            onClick={() => router.push('/')}
+            onClick={() => { window.location.href = '/'; }}
             sx={{
               fontWeight: 800,
               letterSpacing: '-0.5px',

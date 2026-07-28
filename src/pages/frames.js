@@ -64,7 +64,7 @@ const FramesPage = () => {
                 <Typography sx={{ fontSize: 20, fontWeight: 900, letterSpacing: '-0.5px', lineHeight: 1.2 }}>
                   {fi.title}
                 </Typography>
-                <Typography sx={{ fontSize: 13, color: '#666', lineHeight: 1.7, flexGrow: 1 }}>
+                <Typography sx={{ fontSize: 13, color: '#666', lineHeight: 1.7, flexGrow: 1, whiteSpace: 'pre-line', wordBreak: 'keep-all' }}>
                   {fi.desc}
                 </Typography>
                 <Box sx={{ pt: 1.5, borderTop: '1px dashed #eee' }}>

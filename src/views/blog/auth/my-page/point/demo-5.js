@@ -1,9 +1,12 @@
 import styled from 'styled-components'
 import { Wrappers, Title } from 'src/components/elements/blog/demo-1';
-import { Tabs, Tab } from '@mui/material';
+import { Pagination } from '@mui/material';
 import { useState, useEffect } from 'react';
 import { useSettingsContext } from 'src/components/settings';
-import _ from 'lodash';
+import { useAuthContext } from 'src/layouts/manager/auth/useAuthContext';
+import { themeObj } from 'src/components/elements/styled-components';
+import { commarNumber, getPointType, makeMaxPage } from 'src/utils/function';
+import { apiManager } from 'src/utils/api';
 
 const SubTitle = styled.h3`
 font-size:14px;
@@ -18,42 +21,66 @@ flex-direction:column;
 padding:1rem;
 `
 
-const Point = styled.div`
+const BalanceBox = styled.div`
 display:flex;
+justify-content:space-between;
+align-items:center;
+padding:1.25rem 1rem;
+font-size:1rem;
+font-weight:bold;
+border-radius:4px;
 margin-bottom:1rem;
 `
 
-const DisabledPoint = styled.div`
+const PointList = styled.div`
 display:flex;
-margin-bottom:1rem;
+flex-direction:column;
+border-radius:4px;
+overflow:hidden;
 `
 
-const test_point = [
-    {
-        seller: {
-            id: 123,
-            profile_img: 'https://d32rratnkhh4zp.cloudfront.net/media/images/2021/7/5/thumb@1080_1625479198-59043e92-67de-46b1-8755-f21c5ca0a9ae.jpg',
-            nickname: 'Merrymond',
-        },
-        point: [
-            { id: 1, date: 20230101, count: 1000 },
-            { id: 2, date: 20230710, count: 2000 },
-        ],
-    },
-    {
-        seller: {
-            id: 2,
-            profile_img: 'https://d32rratnkhh4zp.cloudfront.net/media/images/2021/7/5/thumb@1080_1625479198-59043e92-67de-46b1-8755-f21c5ca0a9ae.jpg',
-            nickname: '벨르시 마켓',
-        },
-        point: [
-            { id: 1, date: 20230402, count: 10000 },
-            { id: 2, date: 20230624, count: 1000 },
-        ],
-    },
-]
+const PointRow = styled.div`
+display:flex;
+justify-content:space-between;
+align-items:center;
+padding:1rem;
+border-bottom:1px solid ${themeObj.grey[200]};
+&:last-child{
+    border-bottom:none;
+}
+`
 
-// 공지사항, faq 등 상세페이지 김인욱
+const PointInfo = styled.div`
+display:flex;
+flex-direction:column;
+`
+
+const PointReason = styled.div`
+font-size:0.95rem;
+`
+
+const PointDate = styled.div`
+font-size:0.8rem;
+color:${themeObj.grey[500]};
+margin-top:0.25rem;
+`
+
+const PointAmount = styled.div`
+font-size:1rem;
+font-weight:bold;
+white-space:nowrap;
+`
+
+const EmptyBox = styled.div`
+display:flex;
+flex-direction:column;
+align-items:center;
+justify-content:center;
+padding:6rem 0;
+color:${themeObj.grey[400]};
+`
+
+// 회원 포인트 조회 - 실 포인트 내역(발생일/증감/사유) 렌더 김인욱
 const Demo5 = (props) => {
     const {
         data: {
@@ -65,17 +92,30 @@ const Demo5 = (props) => {
     } = props;
 
     const { themeMode } = useSettingsContext();
-    const [sellerId, setSellerId] = useState("")
-    const [sellerList, setSellerList] = useState([])
+    const { user } = useAuthContext();
+    const [historyContent, setHistoryContent] = useState({});
+    const [searchObj, setSearchObj] = useState({
+        page: 1,
+        page_size: 20,
+    })
 
     useEffect(() => {
-        let test_data = test_point;
-        setSellerId(test_data[0]?.seller.id);
-        setSellerList(test_data.map(item => {
-            return item.seller
-        }))
-
+        onChangePage(searchObj);
     }, [])
+
+    const onChangePage = async (search_obj) => {
+        setSearchObj(search_obj);
+        setHistoryContent((prev) => ({
+            ...prev,
+            content: undefined,
+        }))
+        let data = await apiManager('points', 'list', search_obj);
+        if (data) {
+            setHistoryContent(data);
+        }
+    }
+
+    const pointList = historyContent?.content || [];
 
     return (
         <>
@@ -84,51 +124,50 @@ const Demo5 = (props) => {
                 <SubTitle>
                     상품 구매 포인트는 구매 14일 이후 사용할 수 있습니다
                     <br />
-                    각 셀러별로 쌓인 포인트를 사용할 수 있습니다
+                    보유하신 포인트로 상품을 구매할 수 있습니다
                 </SubTitle>
-                <Tabs
-                    indicatorColor='primary'
-                    textColor='primary'
-                    scrollButtons='false'
-                    variant='scrollable'
-                    value={sellerId}
-                    onChange={(event, newValue) => {
-                        setSellerId(newValue)
-                    }}
-                    sx={{
-                        width: '100%',
-                        float: 'left'
-                    }}
-                >
-                    {_.uniqBy(sellerList, 'id').map((seller, idx) => {
-                        return <Tab
-                            label={seller.nickname}
-                            value={seller.id}
-                            sx={{
-                                borderBottom: '1px solid',
-                                borderColor: 'inherit',
-                                textColor: 'inherit',
-                                fontSize: '1rem',
-                                fontWeight: 'bold',
-                                marginRight: '1rem'
-                            }}
-                            style={{
-                                marginRight: '1rem'
-                            }}
-                        />
-                    })}
-                </Tabs>
-                <ContentContainer>
-                    {sellerList.map((seller, idx) => (
-                        <>
-                            {seller.id == sellerId &&
-                                <>
-                                    {seller.id}
-                                </>
-                            }
-                        </>
-                    ))}
+                <ContentContainer style={{
+                    background: `${themeMode == 'dark' ? '#000' : '#F6F6F6'}`
+                }}>
+                    <BalanceBox style={{
+                        background: `${themeMode == 'dark' ? '#222' : '#fff'}`
+                    }}>
+                        <span>보유 포인트</span>
+                        <span>{commarNumber(user?.point)}P</span>
+                    </BalanceBox>
+                    <PointList style={{
+                        background: `${themeMode == 'dark' ? '#222' : '#fff'}`
+                    }}>
+                        {pointList.map((row, idx) => (
+                            <PointRow key={row?.id ?? idx}>
+                                <PointInfo>
+                                    <PointReason>{getPointType(row)}</PointReason>
+                                    <PointDate>{row?.created_at ?? '---'}</PointDate>
+                                </PointInfo>
+                                <PointAmount style={{
+                                    color: `${row?.point > 0 ? '#2e7d32' : '#d32f2f'}`
+                                }}>
+                                    {`${row?.point > 0 ? '+' : ''}` + commarNumber(row?.point)}P
+                                </PointAmount>
+                            </PointRow>
+                        ))}
+                        {historyContent?.content && pointList.length == 0 &&
+                            <EmptyBox>포인트 내역이 없습니다.</EmptyBox>
+                        }
+                    </PointList>
                 </ContentContainer>
+                {makeMaxPage(historyContent?.total, historyContent?.page_size) > 1 &&
+                    <Pagination
+                        sx={{ margin: '1rem auto' }}
+                        size={window.innerWidth > 700 ? 'medium' : 'small'}
+                        count={makeMaxPage(historyContent?.total, historyContent?.page_size)}
+                        page={historyContent?.page}
+                        variant='outlined' shape='rounded'
+                        color='primary'
+                        onChange={(_, num) => {
+                            onChangePage({ ...searchObj, page: num })
+                        }} />
+                }
             </Wrappers>
         </>
     )

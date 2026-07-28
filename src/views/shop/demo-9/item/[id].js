@@ -519,6 +519,46 @@ const ItemDemo = (props) => {
                             }
                           }}
                         >구매하기</Button>
+                        <Box
+                          onClick={async () => {
+                            if (user) {
+                              let result = await insertWishDataUtil(product, themeWishData, onChangeWishData);
+                              if (result?.is_add) {
+                                setModal({
+                                  func: () => {
+                                    router.push(`/shop/auth/wish`)
+                                  },
+                                  icon: 'mdi:heart',
+                                  title: '상품이 위시리스트에 담겼습니다\n바로 확인 하시겠습니까?'
+                                })
+                              }
+                            } else {
+                              toast.error('로그인을 해주세요.')
+                            }
+                          }}
+                          sx={{
+                            minWidth: '60px',
+                            height: '60px',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            borderRadius: '8px',
+                            border: '1px solid #ccc',
+                            cursor: 'pointer',
+                            '&:hover': {
+                              backgroundColor: '#fafafa',
+                            }
+                          }}
+                        >
+                          <Icon
+                            icon={themeWishData.map(wish => { return wish?.product_id }).includes(product?.id) ? 'ph:heart-fill' : 'ph:heart-light'}
+                            style={{
+                              width: '30px',
+                              height: '30px',
+                              color: '#EF6253',
+                            }}
+                          />
+                        </Box>
                       </Row>
                     </Grid>
                   </Grid>

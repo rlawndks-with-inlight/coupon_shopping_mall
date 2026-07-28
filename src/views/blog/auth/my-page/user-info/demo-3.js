@@ -1,9 +1,11 @@
 import { Title } from 'src/components/elements/blog/demo-1';
-import { Checkbox, TextField, Button, FormControl, InputLabel, Select, FormControlLabel, Typography } from '@mui/material';
+import { Checkbox, TextField, Button, FormControl, InputLabel, Select, MenuItem, FormControlLabel, Typography } from '@mui/material';
 import { useAuthContext } from 'src/layouts/manager/auth/useAuthContext';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import styled from 'styled-components'
 import { useSettingsContext } from 'src/components/settings';
+import { apiManager } from 'src/utils/api';
+import toast from 'react-hot-toast';
 
 // 공지사항, faq 등 상세페이지 김인욱
 const Wrappers = styled.div`
@@ -38,16 +40,88 @@ const Demo3 = (props) => {
     const { onChangeCartData, onChangeWishData } = useSettingsContext();
     const { user, logout } = useAuthContext();
     const [buttonText, setButtonText] = useState("변경")
+    const [userObj, setUserObj] = useState({})
+    const [addressList, setAddressList] = useState([])
+    const [defaultAddressId, setDefaultAddressId] = useState('')
     const [checkboxObj, setCheckboxObj] = useState({
         check_0: false,
         check_1: false,
     })
+
+    useEffect(() => {
+        if (user) {
+            setUserObj({ ...user });
+            getAddressList();
+        }
+    }, [user])
+
+    const getAddressList = async () => {
+        let data = await apiManager('user-addresses', 'list', {
+            page: 1,
+            page_size: 100,
+            user_id: user?.id,
+        });
+        if (data) {
+            setAddressList(data?.content ?? []);
+        }
+    }
 
     const onLogout = async () => {
         let user = await logout();
         onChangeCartData([]);
         onChangeWishData([]);
         if (user) {
+            router.push('/blog/auth/my-page');
+        }
+    }
+
+    const onChangeUserInfo = async () => {
+        let result = await apiManager('auth/change-info', 'update', {
+            nickname: userObj?.nickname,
+            phone_num: userObj?.phone_num,
+            email: userObj?.email,
+        })
+        if (result) {
+            toast.success('성공적으로 변경되었습니다.');
+        }
+    }
+
+    const onChangePassword = async () => {
+        let password = window.prompt('현재 비밀번호를 입력해주세요.');
+        if (!password) {
+            return;
+        }
+        let new_password = window.prompt('새 비밀번호를 입력해주세요.');
+        if (!new_password) {
+            return;
+        }
+        let new_password_check = window.prompt('새 비밀번호를 다시 입력해주세요.');
+        if (new_password != new_password_check) {
+            return toast.error('비밀번호가 일치하지 않습니다.');
+        }
+        let result = await apiManager('auth/change-password', 'update', {
+            password,
+            new_password,
+        })
+        if (result) {
+            toast.success('성공적으로 비밀번호가 변경되었습니다.');
+        }
+    }
+
+    const onResign = async () => {
+        if (!window.confirm('정말 회원탈퇴 하시겠습니까?')) {
+            return;
+        }
+        let password = window.prompt('본인 확인을 위해 비밀번호를 입력해주세요.');
+        if (!password) {
+            return;
+        }
+        let result = await apiManager('auth/resign', 'update', { password });
+        if (result) {
+            toast.success('회원탈퇴가 완료되었습니다.');
+            onChangeCartData([]);
+            onChangeWishData([]);
+            await logout();
             router.push('/blog/auth/my-page');
         }
     }
@@ -60,8 +134,9 @@ const Demo3 = (props) => {
                     <TextFieldTitle>이름</TextFieldTitle>
                     <TextField
                         disabled
-                        name='username'
-                        placeholder='홍길동'//{user.nickname}
+                        name='name'
+                        placeholder='이름'
+                        value={userObj?.name ?? ''}
                         sx={{
                             marginBottom: '1%',
                             backgroundColor: '#F6F6F6'
@@ -71,8 +146,9 @@ const Demo3 = (props) => {
                     <div style={{ display: 'flex' }}>
                         <TextField
                             disabled
-                            name='username'
-                            placeholder='01012345678'//{user.id}
+                            name='phone_num'
+                            placeholder='연락처'
+                            value={userObj?.phone_num ?? ''}
                             sx={{
                                 marginBottom: '1%',
                                 backgroundColor: '#F6F6F6',
@@ -94,8 +170,12 @@ const Demo3 = (props) => {
                     <TextFieldTitle>이메일</TextFieldTitle>
                     <div style={{ display: 'flex' }}>
                         <TextField
-                            name='mailaddress'
+                            name='email'
                             placeholder='이메일 주소 입력'
+                            value={userObj?.email ?? ''}
+                            onChange={(e) => {
+                                setUserObj({ ...userObj, email: e.target.value })
+                            }}
                             sx={{
                                 marginBottom: '1%',
                                 width: '80%',
@@ -109,29 +189,28 @@ const Demo3 = (props) => {
                                 width: '19%'
                             }}
                             onClick={() => {
-                                setButtonText("인증받기")
+                                onChangeUserInfo()
                             }}
-                        >{buttonText}</Button>
+                        >저장</Button>
                     </div>
                     <TextFieldTitle>기본 배송지</TextFieldTitle>
                     <FormControl sx={{ width: '100%' }}>
-                        <InputLabel>배송지를 추가해주세요</InputLabel>
+                        <InputLabel>{addressList.length > 0 ? '기본 배송지 선택' : '배송지를 추가해주세요'}</InputLabel>
                         <Select
-                            label='배송지를 추가해주세요'
+                            label={addressList.length > 0 ? '기본 배송지 선택' : '배송지를 추가해주세요'}
+                            value={defaultAddressId}
                             sx={{
                                 width: '100%'
                             }}
                             onChange={(e) => {
-                                if (e.target.value) {
-                                    if (_.findIndex(selectOptions, { id: e.target.value }) < 0) {
-                                        setSelectOptions([...selectOptions, {
-                                            id: e.target.value,
-                                            count: 1
-                                        }])
-                                    }
-                                }
+                                setDefaultAddressId(e.target.value)
                             }}
                         >
+                            {addressList.map((item) => (
+                                <MenuItem key={item?.id} value={item?.id}>
+                                    {`${item?.addr ?? ''} ${item?.detail_addr ?? ''}`.trim()}
+                                </MenuItem>
+                            ))}
                         </Select>
                     </FormControl>
                     <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
@@ -142,6 +221,9 @@ const Demo3 = (props) => {
                                 height: '56px',
                                 width: '19%',
                                 whiteSpace: 'nowrap'
+                            }}
+                            onClick={() => {
+                                router.push('/blog/auth/my-page/address')
                             }}
                         >배송지<br />추가</Button>
                     </div>
@@ -174,11 +256,13 @@ const Demo3 = (props) => {
                         <div
                             style={{ marginRight: '5%', cursor: 'pointer' }}
                             onClick={() => {
+                                onChangePassword()
                             }}
                         >비밀번호 변경</div>
                         <div
                             style={{ marginRight: '5%', cursor: 'pointer' }}
                             onClick={() => {
+                                onResign()
                             }}
                         >회원탈퇴</div>
                     </div>

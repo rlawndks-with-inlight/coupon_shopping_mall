@@ -303,7 +303,7 @@ const Header = () => {
         },
         {
             name: '비회원 주문조회',
-            link_key: '/shop/auth/login?scroll_to=700',
+            link_key: '/shop/auth/order-check',
             icon: 'lets-icons:order',
         },
     ]

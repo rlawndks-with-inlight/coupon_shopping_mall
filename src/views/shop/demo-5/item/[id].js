@@ -334,12 +334,8 @@ const ItemDemo = (props) => {
                           <Icon icon={'mdi:check-bold'} />
                         </>}*/
                         onClick={() => {
-                          if (user) {
-                            setBuyOpen(true)
-                          } else {
-                            toast.error('로그인을 해주세요.');
-                            router.push(`/shop/auth/login`)
-                          }
+                          // 비회원도 바로구매 허용(주문서에서 비회원 주문비밀번호로 진행)
+                          setBuyOpen(true)
                         }}
                       >구입하기</Button>
                       <Row style={{ columnGap: '0.5rem', marginTop: '0.5rem', alignItems: 'center' }}>

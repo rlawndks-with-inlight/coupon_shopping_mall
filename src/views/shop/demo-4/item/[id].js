@@ -555,6 +555,8 @@ const ItemDemo = (props) => {
                             <Icon icon={'mdi:check-bold'} />
                           </>}*/
                           onClick={() => {
+                            // TODO(게스트 바로구매 보류): shop-4는 unipass(개인통관고유부호) 필수 해외직구 데모.
+                            // 주문서(OrderSheet)에 unipass 입력칸 추가 후 게스트 게이트 완화 예정 — 현재는 로그인+unipass 유지.
                             if (themeDnsData?.id == 74 && !themeDnsData?.seller_id) {
                               toast.error('본사페이지에서는 결제가 진행되지 않습니다.')
                               return;

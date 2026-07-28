@@ -49,7 +49,7 @@ const LoginDemo = (props) => {
   const [otp, setOtp] = useState("");
   const [noneUserObj, setNoneUserObj] = useState({
     brand_id: themeDnsData?.id,
-    ord_num: '',
+    buyer_phone: '',
     password: ''
   })
   const [noneUserTrxObj, setNoneUserTrxObj] = useState({});
@@ -76,7 +76,9 @@ const LoginDemo = (props) => {
   const onCheckNoneUserPay = async () => {
     let data = await apiManager(`transactions/0`, 'get', noneUserObj);
     if (data) {
-      setNoneUserTrxObj(data);
+      // 전화번호 조회는 여러 건(배열)을 반환할 수 있어 안전하게 처리한다.
+      const trx = Array.isArray(data) ? (data[0] ?? {}) : data;
+      setNoneUserTrxObj(trx ?? {});
     }
   }
 
@@ -158,14 +160,15 @@ const LoginDemo = (props) => {
           <>
             <Col style={{ alignItems: 'center', margin: '2rem auto 1rem auto', width: '100%' }}>
               <div style={{ fontSize: themeObj.font_size.size4, marginBottom: '1rem' }}>{translate('비회원 주문조회')}</div>
-              <div style={{ color: themeObj.grey[500] }}>{translate('비회원의 경우, 주문시의 주문번호로 주문조회가 가능합니다.')}</div>
+              <div style={{ color: themeObj.grey[500] }}>{translate('비회원의 경우, 주문시 입력한 전화번호와 주문비밀번호로 주문조회가 가능합니다.')}</div>
             </Col>
             <TextField
-              label={translate('주문번호(하이픈(-) 포함)')}
+              label={translate('전화번호')}
+              placeholder={'010-1234-5678'}
               onChange={(e) => {
-                setNoneUserObj({ ...noneUserObj, ['ord_num']: e.target.value })
+                setNoneUserObj({ ...noneUserObj, ['buyer_phone']: e.target.value })
               }}
-              value={noneUserObj.ord_num}
+              value={noneUserObj.buyer_phone}
               style={inputStyle}
               autoComplete='new-password'
               onKeyPress={(e) => {

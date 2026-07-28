@@ -311,13 +311,8 @@ export default function ProductDetailsSummary({ product, onAddCart, onGotoStep, 
                     {translate('장바구니')}
                   </Button>
                   <Button fullWidth disabled={getProductStatus(status).color != 'info' || !(product_sale_price > 0)} size="large" variant="contained" onClick={() => {
-                    if (user) {
-                      setBuyOpen(true);
-                    } else if (themeDnsData?.id == 93 || themeDnsData?.id == 95) {
-                      setBuyOpen(true);
-                    } else {
-                      toast.error('로그인을 해주세요.')
-                    }
+                    // 비회원도 바로구매 허용(주문서에서 비회원 주문비밀번호로 진행) — 장바구니 주문과 통일
+                    setBuyOpen(true);
                   }}>
                     {translate('바로구매')}
                   </Button>

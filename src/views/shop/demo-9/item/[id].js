@@ -513,19 +513,13 @@ const ItemDemo = (props) => {
                             }
                           }}
                           onClick={() => {
-
-                            if (user) {
-
-                              if (product?.characters?.length > 0) {
-                                setCharacterSelect(true);
-                                setBuyOrCart('buy');
-                              } else {
-                                //setUnipassPopup(true);
-                                setBuyOpen(true);
-                              }
-
+                            // 비회원도 바로구매 허용(주문서에서 비회원 주문비밀번호로 진행)
+                            if (product?.characters?.length > 0) {
+                              setCharacterSelect(true);
+                              setBuyOrCart('buy');
                             } else {
-                              toast.error('로그인을 해주세요.')
+                              //setUnipassPopup(true);
+                              setBuyOpen(true);
                             }
                           }}
                         >구매하기</Button>

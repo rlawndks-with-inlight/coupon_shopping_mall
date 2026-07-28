@@ -208,14 +208,10 @@ const Demo2 = (props) => {
 
     const handleAddCart = async () => {
         //옵션 체크 안해도 저장 되는데 이 부분은 수정할 여지가 있어보임
-        if (user) {
-            let result = await insertCartDataUtil({ ...item, seller_id: router.query?.seller_id ?? 0 }, selectProductGroups, themeCartData, onChangeCartData);
-            if (result) {
-                toast.success(translate("장바구니에 성공적으로 추가되었습니다."))
-                window.location.reload()
-            }
-        } else {
-            toast.error(<PointerText onClick={() => router.push('/shop/auth/login')}>{translate('로그인을 해주세요.')}</PointerText>);
+        let result = await insertCartDataUtil({ ...item, seller_id: router.query?.seller_id ?? 0 }, selectProductGroups, themeCartData, onChangeCartData);
+        if (result) {
+            toast.success(translate("장바구니에 성공적으로 추가되었습니다."))
+            window.location.reload()
         }
     };
     const onSelectOption = (group, option, is_option_multiple) => {
@@ -531,11 +527,8 @@ const Demo2 = (props) => {
                             fontSize: 'large'
                         }}
                         onClick={() => {
-                            if (user) {
-                                setBuyOpen(true);
-                            } else {
-                                toast.error('로그인을 해주세요.')
-                            }
+                            // 비회원도 바로구매 허용(주문서에서 비회원 주문비밀번호로 진행)
+                            setBuyOpen(true);
                         }}
                     >바로구매</Button>
                 </SelectContainer>

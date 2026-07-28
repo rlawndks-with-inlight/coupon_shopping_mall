@@ -8,7 +8,7 @@ import { LazyLoadImage } from 'react-lazy-load-image-component';
 import { commarNumber } from 'src/utils/function';
 import { formatLang } from 'src/utils/format';
 import { apiShop } from 'src/utils/api';
-import { insertCartDataUtil } from 'src/utils/shop-util';
+import { insertCartDataUtil, startBuyNow } from 'src/utils/shop-util';
 import toast from 'react-hot-toast';
 
 /* 상품 상세 - 데모 7: 일본 젠 / 와비사비 */
@@ -198,10 +198,7 @@ const Demo7 = () => {
   };
 
   const handleAddCart = async () => {
-    if (!user) {
-      toast.error(translate ? translate('로그인을 해주세요.') : '로그인을 해주세요.');
-      return;
-    }
+    // 비회원도 담기 허용(카트→주문서에서 비회원 주문비밀번호로 진행)
     const result = await insertCartDataUtil(
       { ...item, seller_id: router.query?.seller_id ?? 0 },
       [], themeCartData, onChangeCartData
@@ -239,7 +236,7 @@ const Demo7 = () => {
           </PriceBlock>
           <ButtonRow>
             <Btn onClick={handleAddCart}>장바구니</Btn>
-            <Btn $primary onClick={handleAddCart}>求める →</Btn>
+            <Btn $primary onClick={() => startBuyNow(item, { count: 1, groups: [] }, router)}>求める →</Btn>
           </ButtonRow>
         </InfoSide>
       </Hero>

@@ -112,10 +112,7 @@ const ItemDemo = (props) => {
   }
 
   const handleBuyNow = () => {
-    if (!user) {
-      toast.error('로그인을 해주세요.');
-      return;
-    }
+    // 비회원도 바로구매 허용(주문서에서 비회원 주문비밀번호로 진행)
     if (product?.characters?.length > 0 && selectProductGroups?.groups?.length < product?.characters?.length) {
       toast.error('옵션을 선택해주세요.');
       return;

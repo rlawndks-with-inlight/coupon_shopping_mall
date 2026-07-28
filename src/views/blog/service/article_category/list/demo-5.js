@@ -1,9 +1,10 @@
 import styled from 'styled-components'
 import { Wrappers, Title } from 'src/components/elements/blog/demo-1';
-import { Tabs, Tab, Accordion, AccordionSummary, AccordionDetails, Typography } from '@mui/material';
+import { Tabs, Tab } from '@mui/material';
 import { useState, useEffect } from 'react';
-import Iconify from 'src/components/iconify/Iconify';
 import { useSettingsContext } from 'src/components/settings';
+import { useAuthContext } from 'src/layouts/manager/auth/useAuthContext';
+import toast from 'react-hot-toast';
 import _ from 'lodash';
 import { apiShop } from 'src/utils/api';
 
@@ -18,8 +19,47 @@ text-decoration:underline;
 cursor:pointer;
 `
 
-const AccordionContainer = styled.div`
+const ListContainer = styled.div`
 color:${props => props.themeMode == 'dark' ? '#fff' : 'gray'};
+border-top:1px solid ${props => props.themeMode == 'dark' ? '#333' : '#eee'};
+`
+
+const ListRow = styled.div`
+display:flex;
+justify-content:space-between;
+align-items:center;
+column-gap:1rem;
+padding:1rem 0.5rem;
+border-bottom:1px solid ${props => props.themeMode == 'dark' ? '#333' : '#eee'};
+cursor:pointer;
+&:hover{
+    background-color:${props => props.themeMode == 'dark' ? '#222' : '#fafafa'};
+}
+`
+
+const RowTitle = styled.div`
+font-size:1rem;
+overflow:hidden;
+text-overflow:ellipsis;
+white-space:nowrap;
+`
+
+const RowWriter = styled.span`
+color:${props => props.themeMode == 'dark' ? '#aaa' : '#999'};
+margin-right:0.35rem;
+`
+
+const RowStatus = styled.div`
+flex-shrink:0;
+font-size:0.85rem;
+font-weight:bold;
+color:${props => props.done ? '#2e7d32' : (props.themeMode == 'dark' ? '#aaa' : '#bbb')};
+`
+
+const EmptyBox = styled.div`
+text-align:center;
+padding:3rem 0;
+color:${props => props.themeMode == 'dark' ? '#aaa' : '#bbb'};
 `
 
 // 공지사항, faq 등 리스트 페이지 김인욱
@@ -35,23 +75,29 @@ const Demo5 = (props) => {
 
     const [inquiryType, setInquiryType] = useState(0)
     const [inquiryList, setInquiryList] = useState([])
-    const [controlled, setControlled] = useState(undefined)
     const { themeMode, themePostCategoryList } = useSettingsContext();
+    const { user } = useAuthContext();
     const [category, setCaetgory] = useState({});
+
     useEffect(() => {
-        pageSetting();
-    }, [])
+        if (router.query?.article_category) {
+            pageSetting();
+        }
+    }, [router.query?.article_category, themePostCategoryList])
 
     const pageSetting = async () => {
-        let category = _.find(themePostCategoryList, { id: parseInt(router.query?.article_category) });
-        category.children = [
-            ...[{
-                id: router.query?.article_category,
-                post_category_title: '전체'
-            }],
-            ...category.children
-        ]
-        setCaetgory(category);
+        let found = _.find(themePostCategoryList, { id: parseInt(router.query?.article_category) });
+        let categoryData = {
+            ...found,
+            children: [
+                {
+                    id: router.query?.article_category,
+                    post_category_title: '전체'
+                },
+                ...(found?.children || [])
+            ]
+        }
+        setCaetgory(categoryData);
         setInquiryType(router.query?.article_category)
         getArticleList(1, router.query?.article_category)
     }
@@ -61,17 +107,10 @@ const Demo5 = (props) => {
             page_size: 1000,
             category_id: category_id
         })
-        setInquiryList(inquiry_data.content)
+        setInquiryList(inquiry_data?.content || [])
     }
-    /*const settingPage = () => {
-        let inquiry_data = [...test_inquiry];
-        inquiry_data = inquiry_data.map((item) => {
-            return {
-                ...item
-            }
-        })
-        setInquiryList(inquiry_data);
-    }*/
+
+    const isInquiry = category?.is_able_user_add == 1 && category?.post_category_read_type == 1;
 
     return (
         <>
@@ -104,32 +143,40 @@ const Demo5 = (props) => {
                         }} />
                     ))}
                 </Tabs>
-                <AccordionContainer themeMode={themeMode}>
-                    {inquiryList.map((item, idx) => (
-                        <>
-                            <Accordion
+                <ListContainer themeMode={themeMode}>
+                    {inquiryList.length > 0 ?
+                        inquiryList.map((item, idx) => (
+                            <ListRow
                                 key={idx}
-                                expanded={controlled === item.id}
-                                onChange={() => {
-                                    if (item.id == controlled) {
-                                        setControlled(undefined);
-                                    } else {
-                                        setControlled(item.id)
-                                    }
+                                themeMode={themeMode}
+                                onClick={() => {
+                                    router.push(`/blog/service/${router.query?.article_category}/${item?.id}`)
                                 }}
-                                disabled={item.answer ? false : true}
                             >
-                                <AccordionSummary expandIcon={<Iconify icon="eva:arrow-ios-downward-fill" />}>
-                                    <Typography variant="subtitle1">[{item.post_writer}] {item.post_title}</Typography>
-                                </AccordionSummary>
-                                <AccordionDetails>
-                                    <Typography>{item.answer}</Typography>
-                                </AccordionDetails>
-                            </Accordion>
-                        </>
-                    ))}
-                </AccordionContainer>
-                <ServiceFaq themeMode={themeMode}>서비스 문의</ServiceFaq>
+                                <RowTitle>
+                                    {item?.writer_nickname &&
+                                        <RowWriter themeMode={themeMode}>[{item?.writer_nickname}]</RowWriter>}
+                                    {item?.post_title}
+                                </RowTitle>
+                                {isInquiry &&
+                                    <RowStatus themeMode={themeMode} done={item?.replies?.length > 0}>
+                                        {item?.replies?.length > 0 ? '답변완료' : '답변대기'}
+                                    </RowStatus>}
+                            </ListRow>
+                        ))
+                        :
+                        <EmptyBox themeMode={themeMode}>등록된 게시글이 없습니다.</EmptyBox>
+                    }
+                </ListContainer>
+                {category?.is_able_user_add == 1 &&
+                    <ServiceFaq themeMode={themeMode} onClick={() => {
+                        if (user?.id) {
+                            router.push(`/blog/service/${router.query?.article_category}/add`)
+                        } else {
+                            toast.error('로그인을 해주세요.')
+                            router.push('/blog/auth/login')
+                        }
+                    }}>서비스 문의</ServiceFaq>}
             </Wrappers>
         </>
     )

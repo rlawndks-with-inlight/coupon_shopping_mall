@@ -1,6 +1,6 @@
 import Logo from "src/components/logo/Logo"
 import styled from "styled-components"
-import { IconButton, TextField, InputAdornment, Drawer, Badge, Button, Typography, Stack, Chip } from "@mui/material"
+import { IconButton, TextField, InputAdornment, Drawer, Badge, Button, Typography, Chip } from "@mui/material"
 import { forwardRef, useEffect, useRef, useState } from "react"
 import { Icon } from "@iconify/react"
 import { Col, Row, themeObj } from 'src/components/elements/styled-components'
@@ -16,8 +16,6 @@ import { useAuthContext } from "src/layouts/manager/auth/useAuthContext"
 import { logoSrc } from "src/data/data"
 import $ from 'jquery'
 import dynamic from 'next/dynamic';
-import MenuPopover from "src/components/menu-popover"
-import { TitleComponent } from "src/components/elements/shop/demo-4"
 import Link from "next/link"
 import { useLocales } from "src/locales"
 const ReactQuill = dynamic(() => import('react-quill'), {
@@ -303,7 +301,7 @@ const Header = () => {
         },
         {
             name: '비회원 주문조회',
-            link_key: '/shop/auth/login?scroll_to=700',
+            link_key: '/shop/auth/order-check',
             icon: 'lets-icons:order',
         },
     ]
@@ -331,14 +329,6 @@ const Header = () => {
         hover_items['service'] = false;
         setHoverItems(hover_items);
         setLoading(false);
-    }
-    const onHoverCategory = (category_name) => {
-        let hover_items = hoverItems;
-        for (let key in hover_items) {
-            hover_items[key] = false;
-        }
-        hover_items[category_name] = true;
-        setHoverItems(hover_items);
     }
     const handleOutsideClick = (e) => {
         let is_contain = false;
@@ -435,11 +425,6 @@ const Header = () => {
     useEffect(() => {
         sort(LANGCODE.ENG)
     }, [])
-
-    const toLuxuryEdition = () => {
-        const luxuryEditionUrl = 'https://luxuryedition.co.kr';
-        window.location.href = luxuryEditionUrl;
-    }
 
     const alphabetList = [
         'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N',

@@ -4,10 +4,11 @@ import _ from "lodash";
 import { useRouter } from "next/router";
 import { useEffect } from "react";
 import { useState } from "react";
+import toast from "react-hot-toast";
 import { useModal } from "src/components/dialog/ModalProvider";
 import ContentTable from "src/components/elements/content-table";
 import { AuthMenuSideComponent, ContentWrappers, TitleComponent } from "src/components/elements/shop/demo-5";
-import { Col, RowMobileColumn, RowMobileReverceColumn, Title, themeObj } from "src/components/elements/styled-components";
+import { RowMobileReverceColumn } from "src/components/elements/styled-components";
 import { useSettingsContext } from "src/components/settings";
 import { useAuthContext } from "src/layouts/manager/auth/useAuthContext";
 import { apiShop } from "src/utils/api";
@@ -48,17 +49,6 @@ const ArticlesDemo = (props) => {
         }
       }
     ] : []),
-    /*{
-      id: 'created_at',
-      label: '생성시간',
-      action: (row) => {
-        return <>
-          <div style={{ color: themeObj.grey[500] }}>
-            {row['created_at'] ?? "---"}
-          </div>
-        </>
-      }
-    },*/
     ...((postCategory?.is_able_user_add == 1 && postCategory?.post_category_read_type == 1) ? [
       {
         id: 'replies',
@@ -109,7 +99,7 @@ const ArticlesDemo = (props) => {
       }
     },
   ]
-  const { themeMode, themePostCategoryList } = useSettingsContext();
+  const { themePostCategoryList } = useSettingsContext();
   const [data, setData] = useState({
 
   })

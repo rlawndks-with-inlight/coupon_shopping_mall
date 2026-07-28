@@ -8,7 +8,7 @@ import Label from 'src/components/label/Label';
 import EmptyContent from 'src/components/empty-content/EmptyContent';
 import Iconify from 'src/components/iconify/Iconify';
 import { useSettingsContext } from 'src/components/settings';
-import { calculatorPrice, getCartDataUtil, makePayData, onPayProductsByAuth, onPayProductsByHand, onPayProductsByPayletter } from 'src/utils/shop-util';
+import { calculatorPrice, getCartDataUtil, makePayData, onPayProductsByAuth, onPayProductsByHand, onPayProductsByPayletter, onPayProductsByForspay } from 'src/utils/shop-util';
 import { useAuthContext } from 'src/layouts/manager/auth/useAuthContext';
 import Payment from 'payment'
 import Cards from 'react-credit-cards'
@@ -153,6 +153,7 @@ const CartDemo = (props) => {
   const [payLoading, setPayLoading] = useState(false);
 
 
+  // 브랜드 정책(id==74 전용): 이 브랜드는 게스트 체크아웃을 막고 로그인을 강제함(의도된 예외). 다른 브랜드는 게스트 주문서 진입 허용.
   useEffect(() => {
     if (themeDnsData?.id == 74 && !user) {
       router.push('/shop/auth/login')
@@ -277,6 +278,9 @@ const CartDemo = (props) => {
     } else if (item?.type == 'card_payletter') {
       setBuyType('card_payletter');
       let result = await onPayProductsByPayletter(products, { ...payData, payment_modules: item });
+    } else if (item?.type == 'auth_forspay') {
+      setBuyType('auth_forspay');
+      let result = await onPayProductsByForspay(products, { ...payData, payment_modules: item });
     } else if (item?.type == 'sms_pay') {
       setBuyType('sms_pay');
       setActiveStep(2);

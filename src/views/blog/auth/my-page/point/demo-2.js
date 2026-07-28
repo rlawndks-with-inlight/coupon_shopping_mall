@@ -1,15 +1,22 @@
 import styled from 'styled-components'
 import { Wrappers, Title } from 'src/components/elements/blog/demo-1';
-import { Tabs, Tab } from '@mui/material';
 import { useState, useEffect } from 'react';
 import { useSettingsContext } from 'src/components/settings';
-import _ from 'lodash';
+import { useAuthContext } from 'src/layouts/manager/auth/useAuthContext';
+import { apiManager } from 'src/utils/api';
+import { commarNumber, getPointType } from 'src/utils/function';
 
 const SubTitle = styled.h3`
 font-size:14px;
 font-weight:normal;
 line-height:1.38462;
 padding-bottom:1rem;
+`
+
+const Balance = styled.div`
+font-size:1.1rem;
+font-weight:bold;
+margin-bottom:1rem;
 `
 
 const ContentContainer = styled.div`
@@ -20,40 +27,14 @@ padding:1rem;
 
 const Point = styled.div`
 display:flex;
+justify-content:space-between;
+align-items:center;
+padding:1rem;
 margin-bottom:1rem;
+border-radius:4px;
 `
 
-const DisabledPoint = styled.div`
-display:flex;
-margin-bottom:1rem;
-`
-
-const test_point = [
-    {
-        seller: {
-            id: 123,
-            profile_img: 'https://d32rratnkhh4zp.cloudfront.net/media/images/2021/7/5/thumb@1080_1625479198-59043e92-67de-46b1-8755-f21c5ca0a9ae.jpg',
-            nickname: 'Merrymond',
-        },
-        point: [
-            { id: 1, date: 20230101, count: 1000 },
-            { id: 2, date: 20230710, count: 2000 },
-        ],
-    },
-    {
-        seller: {
-            id: 2,
-            profile_img: 'https://d32rratnkhh4zp.cloudfront.net/media/images/2021/7/5/thumb@1080_1625479198-59043e92-67de-46b1-8755-f21c5ca0a9ae.jpg',
-            nickname: '벨르시 마켓',
-        },
-        point: [
-            { id: 1, date: 20230402, count: 10000 },
-            { id: 2, date: 20230624, count: 1000 },
-        ],
-    },
-]
-
-// 공지사항, faq 등 상세페이지 김인욱
+// 포인트내역 조회 김인욱
 const Demo2 = (props) => {
     const {
         data: {
@@ -65,17 +46,18 @@ const Demo2 = (props) => {
     } = props;
 
     const { themeMode } = useSettingsContext();
-    const [sellerId, setSellerId] = useState("")
-    const [sellerList, setSellerList] = useState([])
+    const { user } = useAuthContext();
+    const [pointList, setPointList] = useState([])
 
     useEffect(() => {
-        let test_data = test_point;
-        setSellerId(test_data[0]?.seller.id);
-        setSellerList(test_data.map(item => {
-            return item.seller
-        }))
-
+        getPointList();
     }, [])
+
+    // 실 포인트내역 로드 → data.content(날짜/증감/비고) 렌더
+    const getPointList = async () => {
+        let data = await apiManager('points', 'list', { page: 1, page_size: 20 });
+        setPointList(data?.content ?? []);
+    }
 
     return (
         <>
@@ -84,50 +66,34 @@ const Demo2 = (props) => {
                 <SubTitle>
                     상품 구매 포인트는 구매 14일 이후 사용할 수 있습니다
                     <br />
-                    각 셀러별로 쌓인 포인트를 사용할 수 있습니다
+                    보유 포인트는 결제 시 사용할 수 있습니다
                 </SubTitle>
-                <Tabs
-                    indicatorColor='primary'
-                    textColor='primary'
-                    scrollButtons='false'
-                    variant='scrollable'
-                    value={sellerId}
-                    onChange={(event, newValue) => {
-                        setSellerId(newValue)
-                    }}
-                    sx={{
-                        width: '100%',
-                        float: 'left'
-                    }}
-                >
-                    {_.uniqBy(sellerList, 'id').map((seller, idx) => {
-                        return <Tab
-                            label={seller.nickname}
-                            value={seller.id}
-                            sx={{
-                                borderBottom: '1px solid',
-                                borderColor: 'inherit',
-                                textColor: 'inherit',
-                                fontSize: '1rem',
+                <Balance>보유 포인트 : {commarNumber(user?.point)}P</Balance>
+                <ContentContainer style={{
+                    background: `${themeMode == 'dark' ? '#000' : '#F6F6F6'}`
+                }}>
+                    {pointList.map((row, idx) => (
+                        <Point key={idx} style={{
+                            background: `${themeMode == 'dark' ? '#222' : '#fff'}`
+                        }}>
+                            <div style={{ display: 'flex', flexDirection: 'column' }}>
+                                <div>{getPointType(row)}</div>
+                                <div style={{ fontSize: '0.85rem', marginTop: '0.25rem', opacity: 0.7 }}>{row?.created_at ?? '---'}</div>
+                            </div>
+                            <div style={{
                                 fontWeight: 'bold',
-                                marginRight: '1rem'
-                            }}
-                            style={{
-                                marginRight: '1rem'
-                            }}
-                        />
-                    })}
-                </Tabs>
-                <ContentContainer>
-                    {sellerList.map((seller, idx) => (
-                        <>
-                            {seller.id == sellerId &&
-                                <>
-                                    {seller.id}
-                                </>
-                            }
-                        </>
+                                whiteSpace: 'nowrap',
+                                color: `${row?.point > 0 ? '#1976d2' : '#d32f2f'}`
+                            }}>
+                                {`${row?.point > 0 ? '+' : ''}` + commarNumber(row?.point)}P
+                            </div>
+                        </Point>
                     ))}
+                    {pointList.length == 0 &&
+                        <div style={{ padding: '2rem', textAlign: 'center', opacity: 0.7 }}>
+                            포인트 내역이 없습니다.
+                        </div>
+                    }
                 </ContentContainer>
             </Wrappers>
         </>

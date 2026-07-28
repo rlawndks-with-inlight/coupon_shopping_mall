@@ -2,8 +2,7 @@ import { Box, Container, Stack, Typography, Grid } from '@mui/material';
 import { Icon } from '@iconify/react';
 import MainSiteLayout from 'src/components/main-site/MainSiteLayout';
 
-// 실제로 사실인 항목만 기재. (개인정보 DB 암호화는 적용 완료 후 추가 예정)
-// 순서·공식 로고는 메인 최하단 보안 섹션과 통일.
+// 실제로 사실인 항목만 기재. 항목·순서·로고는 메인 최하단 TRUST 섹션과 통일.
 const PILLARS = [
   {
     icon: 'tabler:credit-card',
@@ -20,15 +19,15 @@ const PILLARS = [
   },
   {
     icon: 'tabler:lock',
-    title: 'SSL 보안 통신',
+    title: '개인정보 암호화 저장',
     desc:
-      '모든 페이지는 SSL/TLS로 암호화되어 전송됩니다. 와일드카드 SSL 인증서를 적용해 shopgo.co.kr은 물론 모든 가맹점 주소(가맹점명.shopgo.co.kr)까지 https 보안 접속이 적용됩니다.',
+      '회원과 주문자의 이름·연락처·주소 등 개인정보를 데이터베이스에 암호화하여 저장합니다.',
   },
   {
     icon: 'tabler:shield-lock',
-    title: '비밀번호 보호',
+    title: '결제정보 미보관',
     desc:
-      '회원 비밀번호는 복호화가 불가능한 단방향 해시(PBKDF2)와 계정별 고유 salt로 저장됩니다. 데이터베이스가 노출되어도 원문 비밀번호를 확인할 수 없습니다.',
+      '카드 결제는 결제사(PG)의 인증 화면에서 직접 처리되며, ShopGo 서버에는 전체 카드번호가 저장되지 않습니다.',
   },
 ];
 
@@ -43,7 +42,7 @@ const SecurityPage = () => (
           안전하게 운영되는 쇼핑몰
         </Typography>
         <Typography sx={{ fontSize: 14, color: '#666', maxWidth: 560, lineHeight: 1.7 }}>
-          ShopGo는 안전한 결제, 보안 통신, 검증된 클라우드 인프라, 계정 보호를
+          ShopGo는 안전한 결제, 검증된 클라우드 인프라, 개인정보 암호화, 결제정보 보호를
           기반으로 가맹점과 고객이 믿고 사용할 수 있는 환경을 제공합니다.
         </Typography>
       </Stack>

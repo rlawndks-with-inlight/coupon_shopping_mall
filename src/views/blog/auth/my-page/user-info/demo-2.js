@@ -1,9 +1,11 @@
 import { Title } from 'src/components/elements/blog/demo-1';
-import { Checkbox, TextField, Button, FormControl, InputLabel, Select, FormControlLabel, Typography } from '@mui/material';
+import { Checkbox, TextField, Button, FormControl, InputLabel, Select, MenuItem, FormControlLabel, Typography } from '@mui/material';
 import { useAuthContext } from 'src/layouts/manager/auth/useAuthContext';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import styled from 'styled-components'
 import { useSettingsContext } from 'src/components/settings';
+import { apiManager } from 'src/utils/api';
+import toast from 'react-hot-toast';
 
 // 공지사항, faq 등 상세페이지 김인욱
 const Wrappers = styled.div`
@@ -37,18 +39,80 @@ const Demo2 = (props) => {
 
     const { onChangeCartData, onChangeWishData } = useSettingsContext();
     const { user, logout } = useAuthContext();
-    const [buttonText, setButtonText] = useState("변경")
+    const [userObj, setUserObj] = useState({})
+    const [addressList, setAddressList] = useState([])
+    const [selectedAddress, setSelectedAddress] = useState('')
     const [checkboxObj, setCheckboxObj] = useState({
         check_0: false,
         check_1: false,
     })
+    // 비밀번호 변경 인라인 섹션 토글
+    const [authMode, setAuthMode] = useState(null)
+
+    useEffect(() => {
+        if (user) {
+            setUserObj({ ...user });
+            onLoadAddresses();
+        }
+    }, [user])
+
+    const onLoadAddresses = async () => {
+        if (!user?.id) {
+            return;
+        }
+        let data = await apiManager('user-addresses', 'list', {
+            page: 1,
+            page_size: 100,
+            user_id: user?.id,
+        })
+        if (data?.content) {
+            setAddressList(data?.content ?? []);
+        }
+    }
 
     const onLogout = async () => {
-        let user = await logout();
+        let result = await logout();
         onChangeCartData([]);
         onChangeWishData([]);
-        if (user) {
+        if (result) {
             router.push('/blog/auth/my-page');
+        }
+    }
+
+    const onChangeUserInfo = async () => {
+        let result = await apiManager('auth/change-info', 'update', {
+            nickname: userObj?.nickname,
+            phone_num: userObj?.phone_num,
+        })
+        if (result) {
+            toast.success('성공적으로 변경되었습니다.');
+        }
+    }
+
+    const onChangePassword = async () => {
+        if (!userObj?.password) {
+            return toast.error('현재비밀번호를 입력해주세요.');
+        }
+        if (!userObj?.new_password) {
+            return toast.error('새비밀번호를 입력해주세요.');
+        }
+        if (userObj.new_password != userObj.new_password_check) {
+            return toast.error('비밀번호가 일치하지 않습니다.');
+        }
+        let result = await apiManager('auth/change-password', 'update', {
+            password: userObj.password,
+            new_password: userObj.new_password,
+        });
+        if (result) {
+            toast.success('성공적으로 비밀번호가 변경되었습니다.');
+            setAuthMode(null);
+            setUserObj({ ...userObj, password: '', new_password: '', new_password_check: '' });
+        }
+    }
+
+    const onResign = () => {
+        if (window.confirm('정말 회원탈퇴를 진행하시겠습니까?\n탈퇴 후에는 계정 복구가 불가능합니다.')) {
+            toast('회원탈퇴는 본인 확인 절차가 필요합니다. 고객센터로 문의해 주세요.');
         }
     }
 
@@ -60,8 +124,9 @@ const Demo2 = (props) => {
                     <TextFieldTitle>이름</TextFieldTitle>
                     <TextField
                         disabled
-                        name='username'
-                        placeholder='홍길동'//{user.nickname}
+                        name='name'
+                        placeholder='홍길동'
+                        value={userObj?.name ?? ''}
                         sx={{
                             marginBottom: '1%',
                             backgroundColor: '#F6F6F6'
@@ -71,67 +136,42 @@ const Demo2 = (props) => {
                     <div style={{ display: 'flex' }}>
                         <TextField
                             disabled
-                            name='username'
-                            placeholder='01012345678'//{user.id}
+                            name='phone_num'
+                            placeholder='01012345678'
+                            value={userObj?.phone_num ?? ''}
                             sx={{
                                 marginBottom: '1%',
                                 backgroundColor: '#F6F6F6',
-                                width: '80%',
-                                marginRight: '1%'
+                                width: '100%'
                             }}
                         />
-                        <Button
-                            variant='outlined'
-                            style={{
-                                height: '56px',
-                                width: '19%'
-                            }}
-                            onClick={() => {
-                                setButtonText("인증받기")
-                            }}
-                        >{buttonText}</Button>
-                    </div>
-                    <TextFieldTitle>이메일</TextFieldTitle>
-                    <div style={{ display: 'flex' }}>
-                        <TextField
-                            name='mailaddress'
-                            placeholder='이메일 주소 입력'
-                            sx={{
-                                marginBottom: '1%',
-                                width: '80%',
-                                marginRight: '1%'
-                            }}
-                        />
-                        <Button
-                            variant='outlined'
-                            style={{
-                                height: '56px',
-                                width: '19%'
-                            }}
-                            onClick={() => {
-                                setButtonText("인증받기")
-                            }}
-                        >{buttonText}</Button>
                     </div>
                     <TextFieldTitle>기본 배송지</TextFieldTitle>
                     <FormControl sx={{ width: '100%' }}>
-                        <InputLabel>배송지를 추가해주세요</InputLabel>
+                        <InputLabel>{addressList.length > 0 ? '기본 배송지를 선택해주세요' : '배송지를 추가해주세요'}</InputLabel>
                         <Select
-                            label='배송지를 추가해주세요'
+                            label={addressList.length > 0 ? '기본 배송지를 선택해주세요' : '배송지를 추가해주세요'}
+                            value={selectedAddress}
                             sx={{
                                 width: '100%'
                             }}
-                            onChange={(e) => {
-                                if (e.target.value) {
-                                    if (_.findIndex(selectOptions, { id: e.target.value }) < 0) {
-                                        setSelectOptions([...selectOptions, {
-                                            id: e.target.value,
-                                            count: 1
-                                        }])
-                                    }
+                            onChange={async (e) => {
+                                let id = e.target.value;
+                                setSelectedAddress(id);
+                                let result = await apiManager('user-addresses', 'update', {
+                                    id,
+                                    is_default: 1,
+                                });
+                                if (result) {
+                                    toast.success('기본 배송지로 설정되었습니다.');
                                 }
                             }}
                         >
+                            {addressList.map((address) => (
+                                <MenuItem key={address?.id} value={address?.id}>
+                                    {address?.addr} {address?.detail_addr}
+                                </MenuItem>
+                            ))}
                         </Select>
                     </FormControl>
                     <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
@@ -142,6 +182,9 @@ const Demo2 = (props) => {
                                 height: '56px',
                                 width: '19%',
                                 whiteSpace: 'nowrap'
+                            }}
+                            onClick={() => {
+                                router.push('/blog/auth/my-page/address');
                             }}
                         >배송지<br />추가</Button>
                     </div>
@@ -162,6 +205,17 @@ const Demo2 = (props) => {
                             fontSize: 'large'
                         }}
                         onClick={() => {
+                            onChangeUserInfo()
+                        }}
+                    >변경사항 저장</Button>
+                    <Button
+                        variant='outlined'
+                        style={{
+                            marginTop: '1rem',
+                            height: '56px',
+                            fontSize: 'large'
+                        }}
+                        onClick={() => {
                             onLogout()
                         }}
                     >로그아웃</Button>
@@ -174,14 +228,57 @@ const Demo2 = (props) => {
                         <div
                             style={{ marginRight: '5%', cursor: 'pointer' }}
                             onClick={() => {
+                                setAuthMode(authMode === 'password' ? null : 'password')
                             }}
                         >비밀번호 변경</div>
                         <div
                             style={{ marginRight: '5%', cursor: 'pointer' }}
                             onClick={() => {
+                                onResign()
                             }}
                         >회원탈퇴</div>
                     </div>
+                    {authMode === 'password' &&
+                        <div style={{ display: 'flex', flexDirection: 'column', marginTop: '1rem' }}>
+                            <TextField
+                                type='password'
+                                name='password'
+                                placeholder='현재 비밀번호'
+                                value={userObj?.password ?? ''}
+                                onChange={(e) => {
+                                    setUserObj({ ...userObj, password: e.target.value })
+                                }}
+                                sx={{ marginBottom: '1%' }}
+                            />
+                            <TextField
+                                type='password'
+                                name='new_password'
+                                placeholder='새 비밀번호'
+                                value={userObj?.new_password ?? ''}
+                                onChange={(e) => {
+                                    setUserObj({ ...userObj, new_password: e.target.value })
+                                }}
+                                sx={{ marginBottom: '1%' }}
+                            />
+                            <TextField
+                                type='password'
+                                name='new_password_check'
+                                placeholder='새 비밀번호 확인'
+                                value={userObj?.new_password_check ?? ''}
+                                onChange={(e) => {
+                                    setUserObj({ ...userObj, new_password_check: e.target.value })
+                                }}
+                                sx={{ marginBottom: '1%' }}
+                            />
+                            <Button
+                                variant='contained'
+                                style={{ height: '56px', marginTop: '1rem' }}
+                                onClick={() => {
+                                    onChangePassword()
+                                }}
+                            >비밀번호 변경</Button>
+                        </div>
+                    }
                 </TextFieldContainer>
             </Wrappers >
         </>

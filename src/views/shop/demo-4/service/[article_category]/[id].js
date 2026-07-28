@@ -76,7 +76,7 @@ const ArticleDemo = (props) => {
             {!loading &&
               <>
                 <Stack spacing={3}>
-                  {(router.query?.id == 'add' || item?.user_id != user?.id) ? //item?.user_id == user?.id에서 바꿈
+                  {(router.query?.id == 'add' || item?.user_id == user?.id) ?
                     <>
                       {postCategory.post_category_type == 1 &&
                         <>

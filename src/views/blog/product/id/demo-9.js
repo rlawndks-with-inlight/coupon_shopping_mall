@@ -8,7 +8,7 @@ import { LazyLoadImage } from 'react-lazy-load-image-component';
 import { commarNumber } from 'src/utils/function';
 import { formatLang } from 'src/utils/format';
 import { apiShop } from 'src/utils/api';
-import { insertCartDataUtil } from 'src/utils/shop-util';
+import { insertCartDataUtil, startBuyNow, selectItemOptionUtil } from 'src/utils/shop-util';
 import toast from 'react-hot-toast';
 
 /* 상품 상세 - 데모 9: 파스텔 드림 */
@@ -127,6 +127,41 @@ const OrigPrice = styled.span`
   text-decoration: line-through;
   opacity: 0.4;
 `
+const OptionWrap = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+`
+const OptionGroup = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+`
+const OptionLabel = styled.label`
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  opacity: 0.6;
+  padding-left: 0.75rem;
+`
+const OptionSelect = styled.select`
+  width: 100%;
+  padding: 13px 22px;
+  border-radius: 50px;
+  border: 2px solid ${PINK};
+  background: #fff;
+  color: ${TEXT};
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  appearance: none;
+  outline: none;
+  transition: border-color 0.3s;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.04);
+  &:focus {
+    border-color: ${CORAL};
+  }
+`
 const ButtonRow = styled.div`
   display: flex;
   gap: 0.75rem;
@@ -183,6 +218,7 @@ const Demo9 = () => {
   const { themeDnsData, themeCartData, onChangeCartData } = useSettingsContext();
   const { user } = useAuthContext();
   const [item, setItem] = useState(null);
+  const [selectProductGroups, setSelectProductGroups] = useState({ count: 1, groups: [] });
 
   useEffect(() => {
     if (router.query?.id) loadProduct();
@@ -194,15 +230,17 @@ const Demo9 = () => {
   };
 
   const handleAddCart = async () => {
-    if (!user) {
-      toast.error('로그인을 해주세요.');
-      return;
-    }
+    // 비회원도 담기 허용(카트→주문서에서 비회원 주문비밀번호로 진행)
     const result = await insertCartDataUtil(
       { ...item, seller_id: router.query?.seller_id ?? 0 },
-      [], themeCartData, onChangeCartData
+      selectProductGroups, themeCartData, onChangeCartData
     );
     if (result) toast.success('장바구니에 추가되었습니다 💕');
+  };
+
+  const onSelectOption = (group, option) => {
+    const next = selectItemOptionUtil(group, option, selectProductGroups);
+    setSelectProductGroups({ ...next });
   };
 
   if (!item) return <Wrapper><DetailSection>Loading...</DetailSection></Wrapper>;
@@ -234,9 +272,33 @@ const Demo9 = () => {
               <Price>{commarNumber(sale)}원</Price>
               {hasSale && <OrigPrice>{commarNumber(orig)}원</OrigPrice>}
             </PriceWrap>
+            {item?.groups?.length > 0 && (
+              <OptionWrap>
+                {item.groups.map((group) => (
+                  <OptionGroup key={group?.id ?? group?.group_name}>
+                    <OptionLabel>{group?.group_name}</OptionLabel>
+                    <OptionSelect
+                      defaultValue=""
+                      onChange={(e) => {
+                        const idx = e.target.value;
+                        if (idx === '') return;
+                        onSelectOption(group, group?.options?.[idx]);
+                      }}
+                    >
+                      <option value="" disabled>선택해주세요</option>
+                      {(group?.options ?? []).map((option, idx) => (
+                        <option key={option?.id ?? option?.option_name ?? idx} value={idx}>
+                          {option?.option_name}{option?.option_price > 0 ? ` (+${commarNumber(option.option_price)}원)` : ''}
+                        </option>
+                      ))}
+                    </OptionSelect>
+                  </OptionGroup>
+                ))}
+              </OptionWrap>
+            )}
             <ButtonRow>
               <Btn onClick={handleAddCart}>🛒 장바구니</Btn>
-              <Btn $primary onClick={handleAddCart}>구매하기 💫</Btn>
+              <Btn $primary onClick={() => startBuyNow(item, selectProductGroups, router)}>구매하기 💫</Btn>
             </ButtonRow>
           </Info>
         </HeroInner>

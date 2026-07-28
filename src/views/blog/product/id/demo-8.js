@@ -8,7 +8,7 @@ import { LazyLoadImage } from 'react-lazy-load-image-component';
 import { commarNumber } from 'src/utils/function';
 import { formatLang } from 'src/utils/format';
 import { apiShop } from 'src/utils/api';
-import { insertCartDataUtil } from 'src/utils/shop-util';
+import { insertCartDataUtil, startBuyNow, selectItemOptionUtil } from 'src/utils/shop-util';
 import toast from 'react-hot-toast';
 
 /* 상품 상세 - 데모 8: 브루탈리스트 */
@@ -112,6 +112,60 @@ const OrigPrice = styled.div`
   opacity: 0.5;
   margin-top: 0.5rem;
 `
+const OptionSection = styled.section`
+  display: flex;
+  flex-direction: column;
+  border-bottom: 4px solid ${BLACK};
+`
+const OptionField = styled.div`
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  border-bottom: 2px solid ${BLACK};
+  &:last-child {
+    border-bottom: none;
+  }
+  @media (max-width: 840px) {
+    grid-template-columns: 1fr;
+  }
+`
+const OptionLabel = styled.label`
+  font-family: 'Courier New', monospace;
+  font-size: 10px;
+  text-transform: uppercase;
+  font-weight: 700;
+  letter-spacing: 2px;
+  padding: 20px 2rem;
+  display: flex;
+  align-items: center;
+  background: ${NEON};
+  color: ${BLACK};
+  border-right: 4px solid ${BLACK};
+  @media (max-width: 840px) {
+    border-right: none;
+    border-bottom: 2px solid ${BLACK};
+  }
+`
+const OptionSelect = styled.select`
+  width: 100%;
+  padding: 20px 2rem;
+  font-family: 'Courier New', monospace;
+  font-size: 13px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  border: none;
+  background: ${WHITE};
+  color: ${BLACK};
+  cursor: pointer;
+  outline: none;
+  &:focus {
+    background: ${NEON};
+  }
+  option {
+    background: ${WHITE};
+    color: ${BLACK};
+  }
+`
 const ButtonGrid = styled.section`
   display: grid;
   grid-template-columns: 1fr 2fr;
@@ -176,6 +230,7 @@ const Demo8 = () => {
   const { themeDnsData, themeCartData, onChangeCartData } = useSettingsContext();
   const { user } = useAuthContext();
   const [item, setItem] = useState(null);
+  const [selectProductGroups, setSelectProductGroups] = useState({ count: 1, groups: [] });
 
   useEffect(() => {
     if (router.query?.id) loadProduct();
@@ -187,15 +242,16 @@ const Demo8 = () => {
   };
 
   const handleAddCart = async () => {
-    if (!user) {
-      toast.error('로그인을 해주세요.');
-      return;
-    }
+    // 비회원도 담기 허용(카트→주문서에서 비회원 주문비밀번호로 진행)
     const result = await insertCartDataUtil(
       { ...item, seller_id: router.query?.seller_id ?? 0 },
-      [], themeCartData, onChangeCartData
+      selectProductGroups, themeCartData, onChangeCartData
     );
     if (result) toast.success('장바구니에 추가되었습니다.');
+  };
+
+  const onSelectOption = (group, option) => {
+    setSelectProductGroups(selectItemOptionUtil(group, option, selectProductGroups));
   };
 
   if (!item) return <Wrapper><DetailSection>Loading...</DetailSection></Wrapper>;
@@ -226,9 +282,34 @@ const Demo8 = () => {
         </PriceCell>
       </Hero>
 
+      {item?.groups?.length > 0 && (
+        <OptionSection>
+          {item.groups.map((group, gIdx) => (
+            <OptionField key={group?.id ?? group?.group_name ?? gIdx}>
+              <OptionLabel>{group?.group_name}</OptionLabel>
+              <OptionSelect
+                defaultValue=""
+                onChange={(e) => {
+                  if (e.target.value === '') return;
+                  const option = group?.options?.[Number(e.target.value)];
+                  if (option) onSelectOption(group, option);
+                }}
+              >
+                <option value="" disabled>Select</option>
+                {group?.options?.map((option, oIdx) => (
+                  <option key={option?.id ?? option?.option_name ?? oIdx} value={oIdx}>
+                    {option?.option_name}{option?.option_price > 0 ? ` (+${commarNumber(option.option_price)}원)` : ''}
+                  </option>
+                ))}
+              </OptionSelect>
+            </OptionField>
+          ))}
+        </OptionSection>
+      )}
+
       <ButtonGrid>
         <BtnCell onClick={handleAddCart}>Cart</BtnCell>
-        <BtnCell $primary onClick={handleAddCart}>Buy Now →</BtnCell>
+        <BtnCell $primary onClick={() => startBuyNow(item, selectProductGroups, router)}>Buy Now →</BtnCell>
       </ButtonGrid>
 
       {item?.product_description && (

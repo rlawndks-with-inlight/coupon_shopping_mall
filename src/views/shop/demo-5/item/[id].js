@@ -1,8 +1,7 @@
 import styled from 'styled-components'
-import { Box, Tab, Tabs, Card, Grid, Divider, Typography, Button, Radio, FormControlLabel } from '@mui/material';
-import { test_item } from 'src/data/test-data';
+import { Box, Tab, Tabs, Card, Grid, Divider, Typography, Button, Radio, FormControlLabel, Dialog, DialogTitle, DialogContent, DialogActions, Stack, FormControl, InputLabel, Select, MenuItem } from '@mui/material';
 import { useSettingsContext } from 'src/components/settings';
-import { ProductDetailsCarousel, ProductDetailsReview, ProductDetailsSummary } from 'src/views/@dashboard/e-commerce/details';
+import { ProductDetailsCarousel } from 'src/views/@dashboard/e-commerce/details';
 import { useEffect, useState } from 'react';
 import { SkeletonProductDetails } from 'src/components/skeleton';
 import dynamic from 'next/dynamic'
@@ -10,14 +9,14 @@ import { apiManager, apiShop } from 'src/utils/api';
 import { styled as muiStyle } from '@mui/material'
 import Head from 'next/head';
 import { Row } from 'src/components/elements/styled-components';
-import { commarNumber, getProductStatus } from 'src/utils/function';
+import { commarNumber } from 'src/utils/function';
 import { Icon } from '@iconify/react';
 import { insertCartDataUtil, insertWishDataUtil, selectItemOptionUtil } from 'src/utils/shop-util';
 import toast from 'react-hot-toast';
 import DialogBuyNow from 'src/components/dialog/DialogBuyNow';
 import { useAuthContext } from 'src/layouts/manager/auth/useAuthContext';
 import { useModal } from 'src/components/dialog/ModalProvider';
-import { BasicInfo, ProductFaq } from 'src/components/elements/shop/demo-4';
+import { ProductFaq } from 'src/components/elements/shop/demo-4';
 
 const ReactQuill = dynamic(() => import('react-quill'), {
   ssr: false,
@@ -88,6 +87,8 @@ const ItemDemo = (props) => {
   const [product, setProduct] = useState({});
   const [reviewPage, setReviewPage] = useState(1);
   const [buyOpen, setBuyOpen] = useState(false);
+  const [characterSelect, setCharacterSelect] = useState(false);
+  const [buyOrCart, setBuyOrCart] = useState();
   //const [reviewContent, setReviewContent] = useState({});
   const [selectProductGroups, setSelectProductGroups] = useState({
     count: 1,
@@ -112,12 +113,6 @@ const ItemDemo = (props) => {
     }
     data['images'] = data['sub_images'];
     setReviewPage(review_page);
-    let review_data = await apiManager('product-reviews', 'list', {
-      page: review_page,
-      product_id: router.query?.id,
-      page_size: 10,
-    })
-    //setReviewContent(review_data)
     setProduct(data);
     setLoading(false);
   }
@@ -174,6 +169,82 @@ const ItemDemo = (props) => {
   }
   return (
     <>
+      <Dialog
+        open={characterSelect}
+        onClose={() => {
+          setCharacterSelect(false);
+          router.reload()
+        }}
+        PaperProps={{
+          style: {
+            maxWidth: '600px', width: '90%', borderRadius: '0'
+          }
+        }}
+      >
+        <DialogTitle style={{ fontFamily: 'Playfair Display', fontWeight: 'bold' }}>옵션선택</DialogTitle>
+        <DialogContent>
+          {product?.characters && product?.characters.map((character, index) => (
+            <Stack key={index} direction="row" justifyContent="space-between">
+              <FormControl sx={{ width: '100%', marginTop: '1rem' }}>
+                <InputLabel>{character?.character_name}</InputLabel>
+                <Select
+                  label={character?.character_name}
+                  sx={{ width: '100%', borderRadius: '0' }}
+                  placeholder={character?.character_name}
+                  onChange={(e) => {
+                    onSelectOption(character, e.target.value)
+                  }}
+                >
+                  {character?.character_value && character?.character_value.split(/[,/]\s*/)?.map(val => val.trim()).map((data, idx) => (
+                    <MenuItem
+                      key={idx}
+                      value={data}
+                    >{data}</MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            </Stack>
+          ))}
+        </DialogContent>
+        <DialogActions>
+          <Button
+            onClick={() => {
+              if (product?.characters?.length > selectProductGroups?.groups?.length) {
+                toast.error('옵션선택을 완료해주세요.')
+              } else {
+                if (buyOrCart == 'buy') {
+                  setCharacterSelect(false);
+                  setBuyOpen(true);
+                } else {
+                  handleAddCart();
+                  setCharacterSelect(false);
+                }
+              }
+            }}
+            sx={{
+              backgroundColor: 'black',
+              color: 'white',
+              borderRadius: '0',
+              fontFamily: 'Playfair Display',
+              '&:hover': {
+                backgroundColor: 'black',
+              }
+            }}
+          >
+            선택완료
+          </Button>
+          <Button
+            onClick={() => {
+              setCharacterSelect(false);
+              router.reload()
+            }}
+            sx={{ color: '#999999', borderRadius: '0' }}
+          >
+            나가기
+          </Button>
+        </DialogActions>
+      </Dialog>
+
       <DialogBuyNow
         buyOpen={buyOpen}
         setBuyOpen={setBuyOpen}
@@ -334,11 +405,12 @@ const ItemDemo = (props) => {
                           <Icon icon={'mdi:check-bold'} />
                         </>}*/
                         onClick={() => {
-                          if (user) {
-                            setBuyOpen(true)
+                          // 비회원도 바로구매 허용(주문서에서 비회원 주문비밀번호로 진행)
+                          if (product?.characters?.length > 0) {
+                            setBuyOrCart('buy');
+                            setCharacterSelect(true);
                           } else {
-                            toast.error('로그인을 해주세요.');
-                            router.push(`/shop/auth/login`)
+                            setBuyOpen(true)
                           }
                         }}
                       >구입하기</Button>
@@ -364,7 +436,12 @@ const ItemDemo = (props) => {
                             <Icon icon={'mdi:cart'} />
                           </>}*/
                           onClick={() => {
-                            handleAddCart()
+                            if (product?.characters?.length > 0) {
+                              setBuyOrCart('cart');
+                              setCharacterSelect(true);
+                            } else {
+                              handleAddCart()
+                            }
                           }}
                         >장바구니</Button>
                         <Icon

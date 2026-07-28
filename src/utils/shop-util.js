@@ -302,6 +302,37 @@ export const onPayProductsByPayletter = async (products_, payData_) => { // 카�
         return false;
     }
 }
+export const onPayProductsByForspay = async (products_, payData_) => { // 인증결제(포스페이)
+    if (isDemoHost()) {
+        toast.error('데모 미리보기에서는 결제할 수 없습니다.');
+        return false;
+    }
+    let products = products_;
+    let payData = await makePayData(products, payData_);
+    let ord_num = `FS${payData?.user_id || payData?.password || ''}${new Date().getTime().toString().substring(0, 11)}`.replace(/[^a-zA-Z0-9]/g, '');
+    if (payData?.products?.length > 1 || !payData?.item_name) {
+        payData.item_name = `${payData?.products[0]?.order_name} 외 ${payData?.products?.length - 1}`;
+    }
+    const isMobile = /iPhone|Android|iPad|iPod|Mobile/i.test(navigator.userAgent);
+    payData = {
+        ...payData,
+        ord_num,
+        front_url: window.location.origin, // 결제완료 후 리다이렉트할 프론트 주소
+        user_agent: isMobile ? 'MW' : 'WP',
+    };
+    delete payData.payment_modules;
+    try {
+        let res = await apiManager('pays/auth_forspay', 'create', payData);
+        if (res?.id > 0 && res?.launch_page_url) {
+            window.location.href = res.launch_page_url; // 포스페이 PG 결제창으로 이동
+            return { ...payData, trans_id: res.id };
+        }
+        return false;
+    } catch (err) {
+        console.log(err);
+        return false;
+    }
+}
 
 
 

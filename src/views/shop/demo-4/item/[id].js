@@ -1,8 +1,7 @@
 import styled from 'styled-components'
 import { Box, Tab, Tabs, Card, Grid, Divider, Typography, Button, Radio, FormControlLabel, Dialog, DialogTitle, DialogContent, MenuItem, FormControl, DialogActions, Stack, InputLabel, Select, TextField } from '@mui/material';
-import { test_item } from 'src/data/test-data';
 import { useSettingsContext } from 'src/components/settings';
-import { ProductDetailsCarousel, ProductDetailsReview, ProductDetailsSummary } from 'src/views/@dashboard/e-commerce/details';
+import { ProductDetailsCarousel, ProductDetailsReview } from 'src/views/@dashboard/e-commerce/details';
 import { useEffect, useState } from 'react';
 import { SkeletonProductDetails } from 'src/components/skeleton';
 import dynamic from 'next/dynamic'
@@ -10,15 +9,13 @@ import { apiManager, apiShop } from 'src/utils/api';
 import { styled as muiStyle } from '@mui/material'
 import Head from 'next/head';
 import { Row } from 'src/components/elements/styled-components';
-import { commarNumber, getProductStatus } from 'src/utils/function';
+import { commarNumber } from 'src/utils/function';
 import { Icon } from '@iconify/react';
 import { insertCartDataUtil, insertWishDataUtil, selectItemOptionUtil } from 'src/utils/shop-util';
 import toast from 'react-hot-toast';
 import DialogBuyNow from 'src/components/dialog/DialogBuyNow';
 import { useAuthContext } from 'src/layouts/manager/auth/useAuthContext';
 import { useModal } from 'src/components/dialog/ModalProvider';
-import { BasicInfo, ProductFaq } from 'src/components/elements/shop/demo-4';
-import axios from 'axios';
 
 const ReactQuill = dynamic(() => import('react-quill'), {
   ssr: false,
@@ -555,6 +552,8 @@ const ItemDemo = (props) => {
                             <Icon icon={'mdi:check-bold'} />
                           </>}*/
                           onClick={() => {
+                            // TODO(게스트 바로구매 보류): shop-4는 unipass(개인통관고유부호) 필수 해외직구 데모.
+                            // 주문서(OrderSheet)에 unipass 입력칸 추가 후 게스트 게이트 완화 예정 — 현재는 로그인+unipass 유지.
                             if (themeDnsData?.id == 74 && !themeDnsData?.seller_id) {
                               toast.error('본사페이지에서는 결제가 진행되지 않습니다.')
                               return;
@@ -650,7 +649,7 @@ const ItemDemo = (props) => {
                         ))
                         :
                         TABS.map((tab, index) => {
-                          if (index !== 1) {
+                          if (tab.value !== 'basic_info' && tab.value !== 'item_faq') {
                             return (
                               <Tab key={tab.value} value={tab.value} label={tab.label} />
                             )

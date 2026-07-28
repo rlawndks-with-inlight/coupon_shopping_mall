@@ -30,7 +30,7 @@ margin-top: 2rem;
 const ArticleDemo = (props) => {
   const { setModal } = useModal()
   const { user } = useAuthContext();
-  const { themeDnsData, themePostCategoryList } = useSettingsContext();
+  const { themePostCategoryList } = useSettingsContext();
   const router = useRouter();
   const [postCategory, setPostCategory] = useState({});
   const [loading, setLoading] = useState(true);
@@ -76,7 +76,7 @@ const ArticleDemo = (props) => {
             {!loading &&
               <>
                 <Stack spacing={3}>
-                  {(router.query?.id == 'add' || item?.user_id != user?.id) ? //item?.user_id == user?.id에서 바꿈
+                  {(router.query?.id == 'add' || item?.user_id == user?.id) ?
                     <>
                       {postCategory.post_category_type == 1 &&
                         <>

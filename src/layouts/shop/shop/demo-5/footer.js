@@ -24,10 +24,6 @@ const Col = styled.div`
 display:flex;
 flex-direction: column;
 `
-const Bold = styled.div`
-font-weight:bold;
-margin-right:0.5rem;
-`
 const MarginRight = styled.div`
 margin-right:0.2rem;
 `
@@ -42,12 +38,6 @@ max-width: 1400px;
 margin:0 auto;
 width:90%;
 margin-bottom: 85px;
-`
-
-const SubContent = styled.div`
-display:flex;
-flex-direction: column;
-row-gap: 0.25rem;
 `
 
 const Footer = (props) => {

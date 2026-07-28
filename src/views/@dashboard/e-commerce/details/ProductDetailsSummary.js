@@ -10,7 +10,6 @@ import {
   Divider,
   MenuItem,
   Typography,
-  IconButton,
   Select,
   FormControl,
   InputLabel,
@@ -72,7 +71,6 @@ export default function ProductDetailsSummary({ product, onAddCart, onGotoStep, 
     count: 1,
     groups: [],
   });
-  const cart = []
 
   const {
     id,
@@ -91,7 +89,6 @@ export default function ProductDetailsSummary({ product, onAddCart, onGotoStep, 
     product_average_scope,
     totalReview,
     inventoryType,
-    inventory,
     product_name,
     product_comment,
     product_spec,
@@ -100,8 +97,6 @@ export default function ProductDetailsSummary({ product, onAddCart, onGotoStep, 
     lang_obj,
     price_lang = 'ko'
   } = product;
-
-  const isMaxQuantity = cart.filter((item) => item.id === id).map((item) => item.quantity)[0] >= available;
 
   const handleAddCart = async () => {
     //옵션 체크 안해도 저장 되는데 이 부분은 수정할 여지가 있어보임
@@ -287,13 +282,6 @@ export default function ProductDetailsSummary({ product, onAddCart, onGotoStep, 
                         })
                       }}
                     />
-                    {/* <Typography
-              variant="caption"
-              component="div"
-              sx={{ textAlign: 'right', color: 'text.secondary' }}
-            >
-              재고: ss ({commarNumber(inventory)})
-            </Typography> */}
                   </Stack>
                 </Stack>
                 <Divider sx={{ borderStyle: 'dashed' }} />
@@ -311,23 +299,11 @@ export default function ProductDetailsSummary({ product, onAddCart, onGotoStep, 
                     {translate('장바구니')}
                   </Button>
                   <Button fullWidth disabled={getProductStatus(status).color != 'info' || !(product_sale_price > 0)} size="large" variant="contained" onClick={() => {
-                    if (user) {
-                      setBuyOpen(true);
-                    } else if (themeDnsData?.id == 93 || themeDnsData?.id == 95) {
-                      setBuyOpen(true);
-                    } else {
-                      toast.error('로그인을 해주세요.')
-                    }
+                    // 비회원도 바로구매 허용(주문서에서 비회원 주문비밀번호로 진행) — 장바구니 주문과 통일
+                    setBuyOpen(true);
                   }}>
                     {translate('바로구매')}
                   </Button>
-                </Stack>
-                <Stack direction="row" alignItems="center" justifyContent="center">
-                  {[].map((social) => (
-                    <IconButton key={social.name}>
-                      <Iconify icon={social.icon} />
-                    </IconButton>
-                  ))}
                 </Stack>
               </>
           }

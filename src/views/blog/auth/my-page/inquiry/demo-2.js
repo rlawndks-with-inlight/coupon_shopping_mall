@@ -1,9 +1,11 @@
 import styled from 'styled-components'
 import { Wrappers, Title } from 'src/components/elements/blog/demo-1';
-import { Tabs, Tab, Accordion, AccordionSummary, AccordionDetails, IconButton, Typography, Card } from '@mui/material';
+import { Accordion, AccordionSummary, AccordionDetails, Typography } from '@mui/material';
 import { useState, useEffect } from 'react';
-import { Icon } from '@iconify/react';
 import Iconify from 'src/components/iconify/Iconify';
+import { useSettingsContext } from 'src/components/settings';
+import _ from 'lodash';
+import { apiShop } from 'src/utils/api';
 
 const SubTitle = styled.h3`
 font-size:14px;
@@ -12,48 +14,32 @@ line-height:1.38462;
 padding-bottom:1rem;
 `
 
-const returnInquiryType = {
-    0: {
-        title: '주문문의',
-        defaultObj: {
+const Label = styled.div`
+font-size:0.8125rem;
+font-weight:bold;
+margin-bottom:0.5rem;
+`
 
-        }
-    },
-    1: {
-        title: '일반문의',
-        defaultObj: {
+const Content = styled.div`
+font-size:0.875rem;
+line-height:1.6;
+word-break:break-word;
+& img { max-width:100%; }
+`
 
-        }
-    }
-}
+const AnswerBox = styled.div`
+margin-top:1.25rem;
+padding-top:1rem;
+border-top:1px dashed rgba(145,158,171,0.24);
+`
 
-const test_inquiry = [
-    {
-        id: 1,
-        inquiry_type: 0,
-        inquiry_title: '주문문의',
-        inquiry_detail: '입금했는데 입금 확인이 안됩니다',
-        inquiry_seller: '룩아웃사이드',
-        answer: '죄송합니다. 입금이 누락되어 다시 보냈으니 확인 바랍니다.'
-    },
-    {
-        id: 2,
-        inquiry_type: 1,
-        inquiry_title: '일반문의',
-        inquiry_detail: '배송지를 변경하고 싶어요',
-        answer: '배송지 변경은 배송 시작 전에만 가능하며 판매자가 직접 변경해야 합니다. 판매자에게 문의하여 배송지 변경 요청을 해주시길 바랍니다.'
-    },
-    {
-        id: 232,
-        inquiry_type: 0,
-        inquiry_title: '주문문의',
-        inquiry_detail: '취소하고 싶어요',
-        inquiry_seller: '베이브',
-        answer: ""
-    },
-]
+const Status = styled.span`
+font-size:0.8125rem;
+margin-left:0.5rem;
+color:${props => props.answered ? '#229A16' : '#B78103'};
+`
 
-// 공지사항, faq 등 상세페이지 김인욱
+// 1:1문의 게시판(post) 연동 - 나의 문의 내역
 const Demo2 = (props) => {
     const {
         data: {
@@ -64,20 +50,28 @@ const Demo2 = (props) => {
         },
     } = props;
 
-    const [inquiryType, setInquiryType] = useState(0)
-    const [inquiryList, setInquiryList] = useState([])
-    const [controlled, setControlled] = useState(undefined)
+    const { themePostCategoryList } = useSettingsContext();
+    const [inquiryList, setInquiryList] = useState([]);
+    const [controlled, setControlled] = useState(undefined);
+
     useEffect(() => {
         settingPage();
-    }, [])
-    const settingPage = () => {
-        let inquiry_data = [...test_inquiry];
-        inquiry_data = inquiry_data.map((item) => {
-            return {
-                ...item
-            }
-        })
-        setInquiryList(inquiry_data);
+    }, [themePostCategoryList])
+
+    const settingPage = async () => {
+        // 공용 게시판(post)의 '1:1문의' 카테고리를 찾아 회원 본인 글을 조회한다.
+        const category = _.find(themePostCategoryList, { post_category_title: '1:1문의' });
+        if (!category?.id) {
+            setInquiryList([]);
+            return;
+        }
+        // read_type=1 게시판이라 백엔드가 회원 본인 글로 스코프한다.
+        const data = await apiShop('post', 'list', {
+            page: 1,
+            page_size: 50,
+            category_id: category.id,
+        });
+        setInquiryList(data?.content ?? []);
     }
 
     return (
@@ -87,59 +81,41 @@ const Demo2 = (props) => {
                 <SubTitle>
                     문의했던 내용을 확인할 수 있습니다
                 </SubTitle>
-                <Tabs
-                    indicatorColor='primary'
-                    textColor='primary'
-                    scrollButtons='false'
-                    variant='scrollable'
-                    value={inquiryType}
-                    sx={{
-                        width: '100%',
-                        float: 'left',
-                        marginBottom: '1rem'
-                    }}
-                    onChange={(event, newValue) => {
-                        setInquiryType(newValue)
-                    }}
-                >
-                    {Object.keys(returnInquiryType).map((key) => (
-                        <Tab key={returnInquiryType[key].title} value={key} label={returnInquiryType[key].title} style={{
-                            borderBottom: '1px solid',
-                            borderColor: 'inherit',
-                            textColor: 'inherit',
-                            fontSize: '1rem',
-                            fontWeight: 'bold',
-                            marginRight: '1rem'
-                        }} />
-                    ))}
-                </Tabs>
-                {inquiryList.map((item, idx) => (
-                    <>
-                        {item.inquiry_type == inquiryType &&
-                            <>
-                                <Accordion
-                                    key={idx}
-                                    expanded={controlled === item.id}
-                                    onChange={() => {
-                                        if (item.id == controlled) {
-                                            setControlled(undefined);
-                                        } else {
-                                            setControlled(item.id)
-                                        }
-                                    }}
-                                    disabled={item.answer ? false : true}
-                                >
-                                    <AccordionSummary expandIcon={<Iconify icon="eva:arrow-ios-downward-fill" />}>
-                                        <Typography variant="subtitle1">{item.inquiry_seller ? `[${item.inquiry_seller}]` : ""} {item.inquiry_detail} {item.answer ? "(답변 완료)" : "(답변 대기중)"}</Typography>
-                                    </AccordionSummary>
-                                    <AccordionDetails>
-                                        <Typography>{item.answer}</Typography>
-                                    </AccordionDetails>
-                                </Accordion>
-                            </>
-                        }
-                    </>
-                ))}
+                {inquiryList.length === 0 ? (
+                    <Typography variant="body2" sx={{ padding: '2rem 0', textAlign: 'center', color: 'text.secondary' }}>
+                        등록된 문의 내역이 없습니다.
+                    </Typography>
+                ) : (
+                    inquiryList.map((item) => {
+                        const answered = (item?.replies?.length ?? 0) > 0;
+                        return (
+                            <Accordion
+                                key={item.id}
+                                expanded={controlled === item.id}
+                                onChange={() => {
+                                    setControlled(controlled === item.id ? undefined : item.id);
+                                }}
+                            >
+                                <AccordionSummary expandIcon={<Iconify icon="eva:arrow-ios-downward-fill" />}>
+                                    <Typography variant="subtitle1">
+                                        {item.post_title}
+                                        <Status answered={answered}>{answered ? '답변완료' : '답변 대기중'}</Status>
+                                    </Typography>
+                                </AccordionSummary>
+                                <AccordionDetails>
+                                    <Label>문의내용</Label>
+                                    <Content dangerouslySetInnerHTML={{ __html: item?.post_content ?? '' }} />
+                                    {answered && (
+                                        <AnswerBox>
+                                            <Label>답변</Label>
+                                            <Content dangerouslySetInnerHTML={{ __html: item?.replies?.[0]?.post_content ?? '' }} />
+                                        </AnswerBox>
+                                    )}
+                                </AccordionDetails>
+                            </Accordion>
+                        );
+                    })
+                )}
             </Wrappers>
         </>
     )

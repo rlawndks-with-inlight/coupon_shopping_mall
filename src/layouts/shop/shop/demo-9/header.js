@@ -243,10 +243,10 @@ const Header = () => {
             name: translate('회원가입'),
             link_key: 'sign-up'
         },
-        /*{
+        {
             name: translate('비회원 주문조회'),
-            link_key: 'login?scroll_to=100000'
-        },*/
+            link_key: 'order-check'
+        },
     ]
     useEffect(() => {
     }, [user])

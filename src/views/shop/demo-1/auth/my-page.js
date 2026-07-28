@@ -151,8 +151,6 @@ const MyPageDemo = (props) => {
                     <TextField name="email" label={translate("이름")} defaultValue={userObj?.nickname} value={userObj?.nickname} disabled={true} />
 
                     <TextField name="phone_num" label={translate("전화번호")} defaultValue={userObj?.phone_num} value={userObj?.phone_num} disabled={true} />
-
-                    <TextField name="address" label={translate("이메일")} />
                   </Box>
                   <Stack spacing={3} alignItems="flex-end" sx={{ mt: 3 }}>
 

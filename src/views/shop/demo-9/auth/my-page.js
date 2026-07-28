@@ -255,12 +255,14 @@ const MyPageDemo = (props) => {
                   안녕하세요 :)
                 </div>
                 <Row>
-                  <div style={{ textAlign: 'right', marginRight: '2rem', fontSize: '1rem' }}>
-                    포인트<br /><br />
-                    <span style={{ fontFamily: 'Playfair Display', }}>
-                      {commarNumber(user?.point)} P
-                    </span>
-                  </div>
+                  {(user && (themeDnsData?.seller_point > 0 || themeDnsData?.point_rate > 0)) &&
+                    <div style={{ textAlign: 'right', marginRight: '2rem', fontSize: '1rem' }}>
+                      포인트<br /><br />
+                      <span style={{ fontFamily: 'Playfair Display', }}>
+                        {commarNumber(user?.point)} P
+                      </span>
+                    </div>
+                  }
                   <div style={{ textAlign: 'right', marginRight: '2rem', fontSize: '1rem' }}>
                     위탁상품관리<br /><br />
                     <span style={{ fontFamily: 'Playfair Display', }}>

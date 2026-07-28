@@ -1,15 +1,15 @@
 import { Icon } from '@iconify/react';
-import { Select, MenuItem, Drawer, FormControl, InputLabel, Button, Dialog, DialogContent, DialogActions, DialogTitle, IconButton } from '@mui/material';
+import { Select, MenuItem, Drawer, FormControl, InputLabel, Button, Stack } from '@mui/material';
 import { useEffect, useState } from 'react';
 import { SellerItem } from 'src/components/elements/blog/demo-1';
 import { Row, themeObj } from 'src/components/elements/styled-components';
 import { useSettingsContext } from 'src/components/settings';
-import { test_categories, test_items, test_seller } from 'src/data/test-data';
 import styled from 'styled-components'
 import _ from 'lodash'
+import toast from 'react-hot-toast';
 import { commarNumber, getAllIdsWithParents, getDownToTopChildren } from 'src/utils/function';
-import { logoSrc } from 'src/data/data';
 import { apiManager, apiShop } from 'src/utils/api';
+import { insertCartDataUtil, selectItemOptionUtil, startBuyNow } from 'src/utils/shop-util';
 
 const Wrappers = styled.div`
 max-width: 720px;
@@ -81,20 +81,6 @@ const SelectContainer = styled.div`
 padding:4rem 2.5% 0 2.5%;
 `
 
-const DialogBox = styled.div`
-display:flex;
-flex-direction:column;
-margin: 0 auto;
-width:100%;
-`
-
-const test_color_list = [
-    { id: 1, name: "블랙", price: 0 },
-    { id: 2, name: "베이지", price: 500 },
-    { id: 3, name: "크림", price: 1500 },
-]
-const test_product_sale_price = 20000;
-
 // 셀러별 메인페이지 김인욱
 const Demo2 = (props) => {
     const {
@@ -105,23 +91,19 @@ const Demo2 = (props) => {
             router
         },
     } = props;
-    const { themeMode, themeCategoryList, themePostCategoryList } = useSettingsContext();
-    const test_seller_data = {
-        seller: test_seller[0],
-        banner: 'https://d32rratnkhh4zp.cloudfront.net/media/images/2022/1/11/thumb@1080_1641873353-1ecca7c0-00a5-42fe-9d2a-8e79c7b29f75.jpeg',
-        categories: test_categories,
-    }
+    const { themeMode, themeCategoryList, themePostCategoryList, themeCartData, onChangeCartData } = useSettingsContext();
 
     const [sellerData, setSellerData] = useState({});
     const [sellerCategories, setSellerCategories] = useState([]);
     const [categoryId, setCategoryId] = useState(0);
     const [scrollY, setScrollY] = useState(0);
     const [cartOpen, setCartOpen] = useState(false);
-    const [itemColor, setItemColor] = useState("");
-    const [selectOptions, setSelectOptions] = useState([]);
-    const [dialogOpen, setDialogOpen] = useState(false);
-    const [dialogType, setDialogType] = useState("");
     const [products, setProducts] = useState([])
+    const [selectedItem, setSelectedItem] = useState(null);
+    const [selectProductGroups, setSelectProductGroups] = useState({
+        count: 1,
+        groups: [],
+    });
 
     useEffect(() => {
         pageSetting();
@@ -163,17 +145,25 @@ const Demo2 = (props) => {
         };
     }, []);
     const onClickCartButton = (item) => {
+        // 클릭한 실제 상품을 드로어 대상으로 지정
+        setSelectedItem(item);
+        setSelectProductGroups({ count: 1, groups: [] });
         setCartOpen(true);
     }
 
-    const getTotalPrice = () => {
-        let total_price = 0;
-        for (var i = 0; i < selectOptions.length; i++) {
-            let find_item = _.find(test_color_list, { id: selectOptions[i]?.id });
-            total_price += (test_product_sale_price + find_item?.price) * selectOptions[i]?.count;
-        }
-        return total_price
+    const onSelectOption = (group, option) => {
+        let select_product_groups = selectItemOptionUtil(group, option, selectProductGroups);
+        setSelectProductGroups(select_product_groups);
     }
+
+    const handleAddCart = async () => {
+        // 비회원도 담기 허용(카트→주문서에서 비회원 주문비밀번호로 진행)
+        let result = await insertCartDataUtil({ ...selectedItem, seller_id: router.query?.id ?? 0 }, selectProductGroups, themeCartData, onChangeCartData);
+        if (result) {
+            toast.success('장바구니에 추가되었습니다.');
+        }
+    }
+
     return (
         <>
             <Wrappers>
@@ -220,7 +210,7 @@ const Demo2 = (props) => {
                     }}>
                         {themePostCategoryList && themePostCategoryList.map((item, idx) => (
                             <>
-                                <SubTitle style={{ borderRight: `${idx == themePostCategoryList.length - 1 ? 'none' : '1px solid #fff'}`, width: '65px', cursor: 'pointer' }}>{item?.post_category_title}</SubTitle>
+                                <SubTitle style={{ borderRight: `${idx == themePostCategoryList.length - 1 ? 'none' : '1px solid #fff'}`, width: '65px' }}>{item?.post_category_title}</SubTitle>
                             </>
                         ))}
                     </Row>
@@ -277,7 +267,7 @@ const Demo2 = (props) => {
                 open={cartOpen}
                 onClose={() => {
                     setCartOpen(false);
-                    setSelectOptions([]);
+                    setSelectProductGroups({ count: 1, groups: [] });
                 }}
                 disableScrollLock={true}
                 sx={{
@@ -297,220 +287,88 @@ const Demo2 = (props) => {
                 }}
             >
                 <SelectContainer>
-                    <FormControl sx={{ width: '100%' }}>
-                        <InputLabel>컬러</InputLabel>
-                        <Select
-                            label='컬러'
-                            sx={{
-                                width: '100%'
-                            }}
-                            placeholder='컬러'
-                            onChange={(e) => {
-                                if (e.target.value) {
-                                    if (_.findIndex(selectOptions, { id: e.target.value }) < 0) {
-                                        setSelectOptions([...selectOptions, {
-                                            id: e.target.value,
-                                            count: 1
-                                        }])
-                                    }
-                                }
-                            }}
-                        >
-                            {test_color_list.map((data) => (
-                                <MenuItem
-                                    key={data?.name}
-                                    value={data?.id}
-                                    onClick={() => {
-                                        let find_index = _.findIndex(selectOptions, { id: data?.id });
-                                        if (find_index < 0) {
-                                            setSelectOptions([...selectOptions, {
-                                                id: data?.id,
-                                                count: 1
-                                            }])
-                                        } else {
-                                            let select_options = [...selectOptions];
-                                            select_options[find_index].count++;
-                                            setSelectOptions(select_options);
-                                        }
-                                    }}
-                                >{data?.name} {data.price > 0 ? '+' + commarNumber(data.price) : ''}</MenuItem>
-                            ))}
-                        </Select>
-                    </FormControl>
-                    {selectOptions.map((item, idx) => (
+                    {(selectedItem?.groups ?? []).map((group) => (
                         <>
-                            <DrawerBox>
-                                <Row style={{ justifyContent: 'space-between' }}>
-                                    <div>{_.find(test_color_list, { id: item?.id })?.name}</div>
-                                    <Icon icon='fluent-mdl2:cancel' style={{ cursor: 'pointer' }}
-                                        onClick={() => {
-                                            let select_options = [...selectOptions];
-                                            let find_index = _.findIndex(selectOptions, { id: item?.id });
-                                            select_options.splice(find_index, 1);
-                                            setSelectOptions(select_options)
-                                        }} />
-                                </Row>
-                                <Row style={{ justifyContent: 'space-between' }}>
-                                    <Row style={{ border: `1px solid ${themeObj.grey[300]}`, width: '150px', justifyContent: 'space-between', alignItems: 'center', padding: '0.25rem' }}>
-                                        <Icon icon='ic:baseline-minus' style={{ cursor: 'pointer' }}
-                                            onClick={() => {
-                                                let select_options = [...selectOptions];
-                                                let find_index = _.findIndex(selectOptions, { id: item?.id });
-                                                if (select_options[find_index].count == 1) {
-                                                    select_options.splice(find_index, 1);
-                                                    setSelectOptions(select_options)
-                                                } else {
-                                                    select_options[find_index].count--;
-                                                    setSelectOptions(select_options)
-                                                }
-
-                                            }} />
-                                        <div>{item.count}</div>
-
-                                        <Icon icon='ic:baseline-plus' style={{ cursor: 'pointer' }}
-                                            onClick={() => {
-                                                let select_options = [...selectOptions];
-                                                let find_index = _.findIndex(selectOptions, { id: item?.id });
-                                                select_options[find_index].count++;
-                                                setSelectOptions(select_options)
-                                            }} />
-                                    </Row>
-                                    <div>{commarNumber((test_product_sale_price + _.find(test_color_list, { id: item?.id }).price) * (item.count))}원</div>
-
-                                </Row>
-                            </DrawerBox>
+                            <Stack key={group?.id} direction="row" justifyContent="space-between">
+                                <FormControl sx={{ width: '100%' }}>
+                                    <InputLabel>{group?.group_name}</InputLabel>
+                                    <Select
+                                        label={group?.group_name}
+                                        sx={{
+                                            width: '100%'
+                                        }}
+                                        placeholder={group?.group_name}
+                                        onChange={(e) => {
+                                            onSelectOption(group, e.target.value)
+                                        }}
+                                    >
+                                        {group?.options && group?.options.map((data) => (
+                                            <MenuItem
+                                                key={data?.option_name}
+                                                value={data}
+                                            >{data?.option_name} {data.option_price > 0 ? '+' + commarNumber(data.option_price) : ''}</MenuItem>
+                                        ))}
+                                    </Select>
+                                </FormControl>
+                            </Stack>
                         </>
                     ))}
-                    {selectOptions[0] ?
-                        <>
-                            <DrawerBox style={{ borderBottom: 'none' }}>
-                                <Row style={{ justifyContent: 'space-between' }}>
-                                    <Row style={{ width: '150px', justifyContent: 'space-between', alignItems: 'center', padding: '0.25rem' }}>
-                                        <div>총 {_.sum(selectOptions.map(item => { return item.count }))}개 상품 금액</div>
-                                    </Row>
-                                    <div>
-                                        <span style={{ color: 'red' }}>{commarNumber(getTotalPrice())}</span>원
-                                    </div>
-                                </Row>
-                            </DrawerBox>
-                            <Button
-                                variant='outlined'
-                                color='primary'
-                                style={{
-                                    width: '30%',
-                                    height: '56px',
-                                    marginTop: '1rem',
-                                    marginRight: '1%',
-                                    fontSize: 'large'
-                                }}
-                                onClick={() => {
-                                    setDialogOpen(true)
-                                    setDialogType(0)
-                                }}
-                            >장바구니</Button>
-                            <Button
-                                variant='contained'
-                                color='primary'
-                                style={{
-                                    width: '69%',
-                                    height: '56px',
-                                    marginTop: '1rem',
-                                    fontSize: 'large'
-                                }}
-                                onClick={() => {
-                                    setDialogOpen(true)
-                                    setDialogType(1)
-                                }}
-                            >바로구매</Button>
-                        </> : ""
-                    }
+                    <DrawerBox style={{ borderBottom: 'none' }}>
+                        <Row style={{ justifyContent: 'space-between' }}>
+                            <Row style={{ width: '150px', justifyContent: 'space-between', alignItems: 'center', padding: '0.25rem' }}>
+                                상품 금액
+                            </Row>
+                            <div>
+                                <span style={{ color: 'red' }}>{commarNumber(selectedItem?.product_sale_price)}</span>원
+                            </div>
+                        </Row>
+                        <Row style={{ justifyContent: 'space-between' }}>
+                            <Row style={{ width: '150px', justifyContent: 'space-between', alignItems: 'center', padding: '0.25rem' }}>
+                                배송비
+                            </Row>
+                            <div>
+                                <span style={{ color: 'red' }}>{commarNumber(selectedItem?.delivery_fee)}</span>원
+                            </div>
+                        </Row>
+                        <Row style={{ justifyContent: 'space-between' }}>
+                            <Row style={{ width: '150px', justifyContent: 'space-between', alignItems: 'center', padding: '0.25rem' }}>
+                                합계
+                            </Row>
+                            <div>
+                                <span style={{ color: 'red' }}>{commarNumber(parseInt((selectedItem?.product_sale_price ?? 0) + (selectedItem?.delivery_fee ?? 0)))}</span>원
+                            </div>
+                        </Row>
+                    </DrawerBox>
+                    <Button
+                        variant='outlined'
+                        color='primary'
+                        style={{
+                            width: '30%',
+                            height: '56px',
+                            marginTop: '1rem',
+                            marginRight: '1%',
+                            fontSize: 'large'
+                        }}
+                        onClick={() => {
+                            handleAddCart()
+                        }}
+                    >장바구니</Button>
+                    <Button
+                        variant='contained'
+                        color='primary'
+                        style={{
+                            width: '69%',
+                            height: '56px',
+                            marginTop: '1rem',
+                            fontSize: 'large'
+                        }}
+                        onClick={() => {
+                            // 비회원도 바로구매 허용(주문서에서 비회원 주문비밀번호로 진행)
+                            startBuyNow({ ...selectedItem, seller_id: router.query?.id ?? 0 }, selectProductGroups, router)
+                        }}
+                    >바로구매</Button>
                 </SelectContainer>
             </Drawer>
-            <Dialog
-                open={dialogOpen}
-                onClose={() => { setDialogOpen(false) }}
-                fullWidth
-                PaperProps={{
-                    sx: {
-                        maxWidth: '540px',
-                        width: '90vw'
-                    }
-                }}
-            >
-                {dialogType == 0 ?
-                    <>
-                        <DialogTitle
-                            sx={{
-                                display: 'flex',
-                                justifyContent: 'space-between',
-                                padding: '0 0 1.5rem 1.5rem'
-                            }}
-                        >
-                            <img src={logoSrc()} style={{ height: '56px', width: 'auto' }} />
-                            <IconButton
-                                onClick={() => {
-                                    setDialogOpen(false)
-                                }}
-                            >
-                                <Icon icon={'ic:round-close'} fontSize={'2.5rem'} />
-                            </IconButton>
-                        </DialogTitle>
-                        <DialogContent
-                            style={{ textAlign: 'center', marginBottom: '4%' }}
-                        >로그인하시면<br />장바구니 이용이 가능합니다!
-                        </DialogContent>
-                        <DialogActions>
-                            <DialogBox>
-                                <Button
-                                    variant='contained'
-                                    size='large'
-                                    sx={{ marginBottom: '2%' }}
-                                    onClick={() => { router.push('/blog/auth/login') }}>로그인하기</Button>
-                                <Button
-                                    variant='outlined'
-                                    size='large'
-                                    onClick={() => { setDialogOpen(false) }}>돌아가기</Button>
-                            </DialogBox>
-                        </DialogActions>
-                    </>
-                    :
-                    <>
-                        <DialogTitle
-                            sx={{
-                                display: 'flex',
-                                justifyContent: 'space-between',
-                                padding: '0 0 1.5rem 1.5rem'
-                            }}
-                        >
-                            <img src={logoSrc()} style={{ height: '56px', width: 'auto' }} />
-                            <IconButton
-                                sx={{}}
-                                onClick={() => {
-                                    setDialogOpen(false)
-                                }}
-                            >
-                                <Icon icon={'ic:round-close'} fontSize={'2.5rem'} />
-                            </IconButton>
-                        </DialogTitle>
-                        <DialogContent
-                            style={{ textAlign: 'center', marginBottom: '4%' }}
-                        >로그인하시면<br />더 편하게 구매 가능합니다!</DialogContent>
-                        <DialogActions>
-                            <DialogBox>
-                                <Button
-                                    variant='contained'
-                                    size='large'
-                                    sx={{ marginBottom: '2%' }}
-                                    onClick={() => { router.push('/blog/auth/login') }}>로그인하기</Button>
-                                <Button
-                                    variant='outlined'
-                                    size='large'
-                                    onClick={() => { setDialogOpen(false) }}>비회원으로 구매할게요</Button>
-                            </DialogBox>
-                        </DialogActions>
-                    </>
-                }
-            </Dialog>
         </>
     )
 }

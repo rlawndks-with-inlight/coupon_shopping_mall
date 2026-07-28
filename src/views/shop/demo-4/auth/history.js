@@ -80,7 +80,7 @@ const HistoryDemo = (props) => {
               showFirstButton
               showLastButton
               onChange={(_, num) => {
-                onChangePage(num)
+                onChangePage({ ...searchObj, page: num })
               }} />
           </ContentWrappers>
         </RowMobileReverceColumn>

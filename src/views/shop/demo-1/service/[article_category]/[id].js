@@ -1,4 +1,3 @@
-import { useTheme } from "@emotion/react";
 import { Button, Stack, TextField, Typography } from "@mui/material";
 import _ from "lodash";
 import dynamic from "next/dynamic";
@@ -7,7 +6,7 @@ import { useEffect } from "react";
 import { useState } from "react";
 import { toast } from "react-hot-toast";
 import { useModal } from "src/components/dialog/ModalProvider";
-import { Col, Row, Title } from "src/components/elements/styled-components";
+import { Row, Title } from "src/components/elements/styled-components";
 import { useSettingsContext } from "src/components/settings";
 import { Upload } from "src/components/upload";
 import { useAuthContext } from "src/layouts/manager/auth/useAuthContext";
@@ -42,8 +41,7 @@ const ArticleDemo = (props) => {
     },
   } = props;
   const { translate, currentLang } = useLocales();
-  const { themeMode, themePostCategoryList, themeDnsData } = useSettingsContext();
-  const theme = useTheme();
+  const { themePostCategoryList, themeDnsData } = useSettingsContext();
   const [postCategory, setPostCategory] = useState({});
   const [loading, setLoading] = useState(true);
   const [item, setItem] = useState({

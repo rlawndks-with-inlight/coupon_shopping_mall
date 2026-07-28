@@ -6,7 +6,6 @@ import { useEffect, useState } from 'react';
 import { SkeletonProductDetails } from 'src/components/skeleton';
 import dynamic from 'next/dynamic'
 import { apiManager, apiShop } from 'src/utils/api';
-import { styled as muiStyle } from '@mui/material'
 import { commarNumber } from 'src/utils/function';
 import { Icon } from '@iconify/react';
 import { insertCartDataUtil, insertWishDataUtil, selectItemOptionUtil } from 'src/utils/shop-util';
@@ -112,10 +111,7 @@ const ItemDemo = (props) => {
   }
 
   const handleBuyNow = () => {
-    if (!user) {
-      toast.error('로그인을 해주세요.');
-      return;
-    }
+    // 비회원도 바로구매 허용(주문서에서 비회원 주문비밀번호로 진행)
     if (product?.characters?.length > 0 && selectProductGroups?.groups?.length < product?.characters?.length) {
       toast.error('옵션을 선택해주세요.');
       return;

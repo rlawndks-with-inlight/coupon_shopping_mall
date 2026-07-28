@@ -1,19 +1,16 @@
-import Logo from "src/components/logo/Logo"
 import styled from "styled-components"
 import { IconButton, TextField, InputAdornment, Drawer, Badge } from "@mui/material"
-import { forwardRef, useEffect, useRef, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import { Icon } from "@iconify/react"
 import { Row, themeObj } from 'src/components/elements/styled-components'
 import { useTheme } from '@mui/material/styles';
 import { useSettingsContext } from "src/components/settings"
-import { test_categories } from "src/data/test-data"
 import { useRouter } from "next/router"
 import { TreeItem, TreeView } from "@mui/lab"
 import { getAllIdsWithParents, returnMoment } from "src/utils/function"
 import DialogSearch from "src/components/dialog/DialogSearch"
 import { useAuthContext } from "src/layouts/manager/auth/useAuthContext"
 import { logoSrc } from "src/data/data"
-import $ from 'jquery'
 import dynamic from 'next/dynamic';
 import LanguagePopover from "src/layouts/manager/header/LanguagePopover"
 import { useLocales } from "src/locales"
@@ -235,7 +232,7 @@ const Header = () => {
     },
     {
       name: translate('비회원 주문조회'),
-      link_key: 'login?scroll_to=100000'
+      link_key: 'order-check'
     },
   ]
   useEffect(() => {

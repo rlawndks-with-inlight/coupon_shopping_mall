@@ -147,7 +147,7 @@ const Demo4 = (props) => {
                 <MenuContainer style={{ color: `${themeDnsData?.theme_css?.main_color}`, fontWeight: 'bold' }}>
                     <MenuBox>
                         쇼핑
-                        {user ?
+                        {(user && (themeDnsData?.seller_point > 0 || themeDnsData?.point_rate > 0)) ?
                             <>
                                 <MenuButton themeMode={themeMode} style={{ marginBottom: '0' }} onClick={() => { router.push('/blog/auth/my-page/point') }}>
                                     <MenuText>포인트 조회</MenuText>
@@ -308,7 +308,7 @@ const Demo4 = (props) => {
                         <Button
                             variant='outlined'
                             size='large'
-                            onClick={() => { dialogType == 0 ? router.push('/blog/auth/my-page/order') : router.push('/blog/auth/my-page/inquiry') }}>
+                            onClick={() => { dialogType == 0 ? router.push('/shop/auth/order-check') : router.push('/blog/auth/my-page/inquiry') }}>
                             {dialogType == 0 ?
                                 <>비회원으로 주문/배송조회 할게요</>
                                 :

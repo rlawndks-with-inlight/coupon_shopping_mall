@@ -137,7 +137,7 @@ const Footer = (props) => {
                                         >
                                             {user ? '로그아웃' : '로그인'}
                                         </Row>
-                                        <Link href={'/shop/auth/login/?scroll_to=700'} passHref>
+                                        <Link href={'/shop/auth/order-check'} passHref>
                                             <Row style={{ marginBottom: '0.7rem', color: 'white', cursor: 'pointer' }}>
                                                 비회원주문조회
                                             </Row>

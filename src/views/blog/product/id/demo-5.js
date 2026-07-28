@@ -8,7 +8,7 @@ import { LazyLoadImage } from 'react-lazy-load-image-component';
 import { commarNumber } from 'src/utils/function';
 import { formatLang } from 'src/utils/format';
 import { apiShop } from 'src/utils/api';
-import { insertCartDataUtil } from 'src/utils/shop-util';
+import { insertCartDataUtil, startBuyNow, selectItemOptionUtil } from 'src/utils/shop-util';
 import toast from 'react-hot-toast';
 
 /* 상품 상세 - 데모 5: 다크 럭셔리 (Maison) */
@@ -172,6 +172,43 @@ const Btn = styled.button`
     color: ${p => p.$primary ? GOLD : '#0a0a0a'};
   }
 `
+const OptionGroup = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+  margin-top: 0.5rem;
+`
+const OptionField = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+`
+const OptionLabel = styled.label`
+  font-size: 10px;
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  color: ${GOLD};
+  font-weight: 700;
+`
+const OptionSelect = styled.select`
+  width: 100%;
+  padding: 13px 14px;
+  background: transparent;
+  border: 1px solid rgba(201, 168, 118, 0.35);
+  color: #fff;
+  font-size: 13px;
+  letter-spacing: 1px;
+  cursor: pointer;
+  transition: border-color 0.3s;
+  &:focus {
+    outline: none;
+    border-color: ${GOLD};
+  }
+  option {
+    background: #0a0a0a;
+    color: #fff;
+  }
+`
 const DetailSection = styled.section`
   padding: 6rem 3rem;
   background: #0f0f0f;
@@ -205,6 +242,7 @@ const Demo5 = () => {
   const { themeDnsData, themeCartData, onChangeCartData } = useSettingsContext();
   const { user } = useAuthContext();
   const [item, setItem] = useState(null);
+  const [selectProductGroups, setSelectProductGroups] = useState({ count: 1, groups: [] });
   const brandName = themeDnsData?.name || 'MAISON';
 
   useEffect(() => {
@@ -217,17 +255,18 @@ const Demo5 = () => {
   };
 
   const handleAddCart = async () => {
-    if (!user) {
-      toast.error(translate ? translate('로그인을 해주세요.') : '로그인을 해주세요.');
-      return;
-    }
+    // 비회원도 담기 허용(카트→주문서에서 비회원 주문비밀번호로 진행)
     const result = await insertCartDataUtil(
       { ...item, seller_id: router.query?.seller_id ?? 0 },
-      [], themeCartData, onChangeCartData
+      selectProductGroups, themeCartData, onChangeCartData
     );
     if (result) {
       toast.success(translate ? translate('장바구니에 성공적으로 추가되었습니다.') : '장바구니에 추가되었습니다.');
     }
+  };
+
+  const onSelectOption = (group, option) => {
+    setSelectProductGroups(selectItemOptionUtil(group, option, selectProductGroups));
   };
 
   if (!item) return <Wrapper><DetailSection style={{ textAlign: 'center' }}>Loading...</DetailSection></Wrapper>;
@@ -259,9 +298,33 @@ const Demo5 = () => {
             <SalePrice>{commarNumber(sale)}원</SalePrice>
             {hasSale && <OrigPrice>{commarNumber(orig)}원</OrigPrice>}
           </PriceBlock>
+          {item?.groups?.length > 0 && (
+            <OptionGroup>
+              {item.groups.map((group, gIdx) => (
+                <OptionField key={group?.id ?? group?.group_name ?? gIdx}>
+                  <OptionLabel>{group?.group_name}</OptionLabel>
+                  <OptionSelect
+                    defaultValue=""
+                    onChange={(e) => {
+                      if (e.target.value === '') return;
+                      const option = group?.options?.[Number(e.target.value)];
+                      if (option) onSelectOption(group, option);
+                    }}
+                  >
+                    <option value="" disabled>선택</option>
+                    {group?.options?.map((option, oIdx) => (
+                      <option key={option?.id ?? option?.option_name ?? oIdx} value={oIdx}>
+                        {option?.option_name}{option?.option_price > 0 ? ` (+${commarNumber(option.option_price)}원)` : ''}
+                      </option>
+                    ))}
+                  </OptionSelect>
+                </OptionField>
+              ))}
+            </OptionGroup>
+          )}
           <ButtonRow>
             <Btn onClick={handleAddCart}>Add to Cart</Btn>
-            <Btn $primary onClick={handleAddCart}>Acquire →</Btn>
+            <Btn $primary onClick={() => startBuyNow(item, selectProductGroups, router)}>Acquire →</Btn>
           </ButtonRow>
         </InfoSide>
       </Hero>

@@ -120,10 +120,7 @@ const Demo2 = (props) => {
                     <Title>마이페이지</Title>
                     {user ?
                         <>
-                            <MenuButton themeMode={themeMode} onClick={() => {
-                                //router.push('/blog/auth/my-page/user-info')
-                                alert('현재 점검중입니다.\n자세한 사항은 고객센터에 문의해주세요.')
-                            }}>
+                            <MenuButton themeMode={themeMode} onClick={() => { router.push('/blog/auth/my-page/user-info') }}>
                                 <MenuText>{user.nickname}</MenuText>
                                 <IconButton style={{ width: '24px', height: '56px', padding: '0', marginRight: '18px' }}>
                                     <Icon icon='ep:arrow-right' color='black' />
@@ -152,9 +149,9 @@ const Demo2 = (props) => {
                 <MenuContainer style={{ color: `${themeDnsData?.theme_css?.main_color}`, fontWeight: 'bold' }}>
                     <MenuBox>
                         쇼핑
-                        {user ?
+                        {(user && (themeDnsData?.seller_point > 0 || themeDnsData?.point_rate > 0)) ?
                             <>
-                                <MenuButton themeMode={themeMode} style={{ marginBottom: '0' }} onClick={() => { alert('현재 점검중입니다.\n자세한 사항은 고객센터에 문의해주세요.')/*router.push('/blog/auth/my-page/point')*/ }}>
+                                <MenuButton themeMode={themeMode} style={{ marginBottom: '0' }} onClick={() => { router.push('/blog/auth/my-page/point') }}>
                                     <MenuText>포인트 조회</MenuText>
                                     <IconButton style={{ width: '24px', height: '56px', padding: '0', marginRight: '18px' }}>
                                         <Icon icon='ep:arrow-right' color='black' />
@@ -164,8 +161,7 @@ const Demo2 = (props) => {
                             : ""}
                         <MenuButton themeMode={themeMode} onClick={() => {
                             if (user) {
-                                alert('현재 점검중입니다.\n자세한 사항은 고객센터에 문의해주세요.')
-                                //router.push('/blog/auth/my-page/order')
+                                router.push('/blog/auth/my-page/order')
                             } else {
                                 setDialogOpen(true)
                                 setDialogType(0)
@@ -178,7 +174,7 @@ const Demo2 = (props) => {
                         </MenuButton>
                         {user ?
                             <>
-                                <MenuButton themeMode={themeMode} style={{ marginTop: '0' }} onClick={() => { alert('현재 점검중입니다.\n자세한 사항은 고객센터에 문의해주세요.')/*router.push('/blog/auth/my-page/address')*/ }}>
+                                <MenuButton themeMode={themeMode} style={{ marginTop: '0' }} onClick={() => { router.push('/blog/auth/my-page/address') }}>
                                     <MenuText>배송지 관리</MenuText>
                                     <IconButton style={{ width: '24px', height: '56px', padding: '0', marginRight: '18px' }}>
                                         <Icon icon='ep:arrow-right' color='black' />
@@ -191,8 +187,7 @@ const Demo2 = (props) => {
                         문의
                         <MenuButton themeMode={themeMode} onClick={() => {
                             if (user) {
-                                alert('현재 점검중입니다.\n자세한 사항은 고객센터에 문의해주세요.')
-                                //router.push('/blog/auth/my-page/inquiry')
+                                router.push('/blog/auth/my-page/inquiry')
                             } else {
                                 setDialogOpen(true)
                                 setDialogType(1)
@@ -323,7 +318,7 @@ const Demo2 = (props) => {
                         <Button
                             variant='outlined'
                             size='large'
-                            onClick={() => { dialogType == 0 ? router.push('/blog/auth/my-page/order') : router.push('/blog/auth/my-page/inquiry') }}>
+                            onClick={() => { dialogType == 0 ? router.push('/shop/auth/order-check') : router.push('/blog/auth/my-page/inquiry') }}>
                             {dialogType == 0 ?
                                 <>비회원으로 주문/배송조회 할게요</>
                                 :

@@ -50,7 +50,7 @@ const LoginDemo = (props) => {
 
   const [noneUserObj, setNoneUserObj] = useState({
     brand_id: themeDnsData?.id,
-    ord_num: '',
+    buyer_phone: '',
     password: ''
   })
   const [noneUserTrxObj, setNoneUserTrxObj] = useState({});
@@ -72,7 +72,9 @@ const LoginDemo = (props) => {
   const onCheckNoneUserPay = async () => {
     let data = await apiManager(`transactions/0`, 'get', noneUserObj);
     if (data) {
-      setNoneUserTrxObj(data);
+      // 전화번호 조회는 여러 건(배열)이 반환될 수 있음 → 배열이면 첫 건을 상세로 표시
+      const detail = Array.isArray(data) ? (data[0] || {}) : data;
+      setNoneUserTrxObj(detail);
     }
   }
 
@@ -174,11 +176,12 @@ const LoginDemo = (props) => {
             <div>지금 회원가입을 하시면</div>
             <div>다양하고 특별한 혜택이 준비되어 있습니다.</div>
             <TextField
-              label='주문번호(하이픈(-) 포함)'
+              label='전화번호'
+              placeholder='010-1234-5678'
               onChange={(e) => {
-                setNoneUserObj({ ...noneUserObj, ['ord_num']: e.target.value })
+                setNoneUserObj({ ...noneUserObj, ['buyer_phone']: e.target.value })
               }}
-              value={noneUserObj.ord_num}
+              value={noneUserObj.buyer_phone}
               style={{ ...inputStyle, width: '100%' }}
               autoComplete='new-password'
               onKeyPress={(e) => {
@@ -248,14 +251,15 @@ const LoginDemo = (props) => {
           </Col>
         <Col style={{ alignItems: 'center', margin: '2rem auto 1rem auto', width: '100%' }}>
           <div style={{ fontSize: themeObj.font_size.size4, marginBottom: '1rem' }}>비회원 주문조회</div>
-          <div style={{ color: themeObj.grey[500] }}>비회원의 경우, 주문시의 주문번호로 주문조회가 가능합니다.</div>
+          <div style={{ color: themeObj.grey[500] }}>비회원의 경우, 주문시 입력한 전화번호와 주문비밀번호로 주문조회가 가능합니다.</div>
         </Col>
         <TextField
-          label='주문번호(하이픈(-) 포함)'
+          label='전화번호'
+          placeholder='010-1234-5678'
           onChange={(e) => {
-            setNoneUserObj({ ...noneUserObj, ['ord_num']: e.target.value })
+            setNoneUserObj({ ...noneUserObj, ['buyer_phone']: e.target.value })
           }}
-          value={noneUserObj.ord_num}
+          value={noneUserObj.buyer_phone}
           style={inputStyle}
           autoComplete='new-password'
           onKeyPress={(e) => {

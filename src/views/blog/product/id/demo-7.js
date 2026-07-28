@@ -8,7 +8,7 @@ import { LazyLoadImage } from 'react-lazy-load-image-component';
 import { commarNumber } from 'src/utils/function';
 import { formatLang } from 'src/utils/format';
 import { apiShop } from 'src/utils/api';
-import { insertCartDataUtil } from 'src/utils/shop-util';
+import { insertCartDataUtil, startBuyNow, selectItemOptionUtil } from 'src/utils/shop-util';
 import toast from 'react-hot-toast';
 
 /* 상품 상세 - 데모 7: 일본 젠 / 와비사비 */
@@ -157,6 +157,40 @@ const Btn = styled.button`
     border-color: ${ACCENT};
   }
 `
+const OptionArea = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  border-top: 1px solid ${INK}30;
+  padding-top: 1.5rem;
+`
+const OptionField = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+`
+const OptionLabel = styled.span`
+  font-size: 10px;
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  color: ${ACCENT};
+`
+const OptionSelect = styled.select`
+  width: 100%;
+  padding: 12px 14px;
+  border: 1px solid ${INK}40;
+  border-radius: 2px;
+  background: transparent;
+  color: ${INK};
+  font-family: 'Noto Serif KR', serif;
+  font-size: 14px;
+  letter-spacing: 1px;
+  cursor: pointer;
+  outline: none;
+  &:focus {
+    border-color: ${ACCENT};
+  }
+`
 const DetailSection = styled.section`
   padding: 6rem 2rem;
   background: #ebe5d9;
@@ -187,6 +221,7 @@ const Demo7 = () => {
   const { themeDnsData, themeCartData, onChangeCartData } = useSettingsContext();
   const { user } = useAuthContext();
   const [item, setItem] = useState(null);
+  const [selectProductGroups, setSelectProductGroups] = useState({ count: 1, groups: [] });
 
   useEffect(() => {
     if (router.query?.id) loadProduct();
@@ -198,15 +233,17 @@ const Demo7 = () => {
   };
 
   const handleAddCart = async () => {
-    if (!user) {
-      toast.error(translate ? translate('로그인을 해주세요.') : '로그인을 해주세요.');
-      return;
-    }
+    // 비회원도 담기 허용(카트→주문서에서 비회원 주문비밀번호로 진행)
     const result = await insertCartDataUtil(
       { ...item, seller_id: router.query?.seller_id ?? 0 },
-      [], themeCartData, onChangeCartData
+      selectProductGroups, themeCartData, onChangeCartData
     );
     if (result) toast.success('장바구니에 추가되었습니다.');
+  };
+
+  const onSelectOption = (group, option) => {
+    const select_product_groups = selectItemOptionUtil(group, option, selectProductGroups);
+    setSelectProductGroups(select_product_groups);
   };
 
   if (!item) return <Wrapper><DetailSection>Loading...</DetailSection></Wrapper>;
@@ -237,9 +274,34 @@ const Demo7 = () => {
               {hasSale && <OrigPrice>{commarNumber(orig)}円</OrigPrice>}
             </Price>
           </PriceBlock>
+          {item?.groups?.length > 0 && (
+            <OptionArea>
+              {item.groups.map((group, gIdx) => (
+                <OptionField key={group?.id ?? gIdx}>
+                  <OptionLabel>{group?.group_name}</OptionLabel>
+                  <OptionSelect
+                    defaultValue=""
+                    onChange={(e) => {
+                      if (e.target.value === '') return;
+                      const option = group?.options?.[Number(e.target.value)];
+                      if (option) onSelectOption(group, option);
+                    }}
+                  >
+                    <option value="" disabled>選択 · 선택</option>
+                    {(group?.options ?? []).map((option, oIdx) => (
+                      <option key={option?.id ?? oIdx} value={oIdx}>
+                        {option?.option_name}
+                        {option?.option_price > 0 ? ` (+${commarNumber(option.option_price)})` : ''}
+                      </option>
+                    ))}
+                  </OptionSelect>
+                </OptionField>
+              ))}
+            </OptionArea>
+          )}
           <ButtonRow>
             <Btn onClick={handleAddCart}>장바구니</Btn>
-            <Btn $primary onClick={handleAddCart}>求める →</Btn>
+            <Btn $primary onClick={() => startBuyNow(item, selectProductGroups, router)}>求める →</Btn>
           </ButtonRow>
         </InfoSide>
       </Hero>

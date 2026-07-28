@@ -1,8 +1,7 @@
 import styled from 'styled-components'
 import { Box, Tab, Tabs, Card, Grid, Divider, Typography, Button, Radio, FormControlLabel, Dialog, DialogTitle, DialogContent, MenuItem, FormControl, DialogActions, Stack, InputLabel, Select, TextField } from '@mui/material';
-import { test_item } from 'src/data/test-data';
 import { useSettingsContext } from 'src/components/settings';
-import { ProductDetailsCarousel, ProductDetailsReview, ProductDetailsSummary } from 'src/views/@dashboard/e-commerce/details';
+import { ProductDetailsCarousel, ProductDetailsReview } from 'src/views/@dashboard/e-commerce/details';
 import { useEffect, useState } from 'react';
 import { SkeletonProductDetails } from 'src/components/skeleton';
 import dynamic from 'next/dynamic'
@@ -10,15 +9,13 @@ import { apiManager, apiShop } from 'src/utils/api';
 import { styled as muiStyle } from '@mui/material'
 import Head from 'next/head';
 import { Row } from 'src/components/elements/styled-components';
-import { commarNumber, getProductStatus } from 'src/utils/function';
+import { commarNumber } from 'src/utils/function';
 import { Icon } from '@iconify/react';
 import { insertCartDataUtil, insertWishDataUtil, selectItemOptionUtil } from 'src/utils/shop-util';
 import toast from 'react-hot-toast';
 import DialogBuyNow from 'src/components/dialog/DialogBuyNow';
 import { useAuthContext } from 'src/layouts/manager/auth/useAuthContext';
 import { useModal } from 'src/components/dialog/ModalProvider';
-import { BasicInfo, ProductFaq } from 'src/components/elements/shop/demo-4';
-import axios from 'axios';
 
 const ReactQuill = dynamic(() => import('react-quill'), {
   ssr: false,
@@ -221,11 +218,6 @@ const ItemDemo = (props) => {
       component: product ? //<></> : null,
         <ProductFaq /> : null,
     },*/
-    {/*
-      value: 'reviews',
-      label: `상품후기 (${reviewContent?.total})`,
-      component: product ? <ProductDetailsReview product={product} reviewContent={reviewContent} onChangePage={getItemInfo} reviewPage={reviewPage} /> : null,
-    */},
   ];
   const handleAddCart = async () => {
     if (user) {
@@ -448,19 +440,15 @@ const ItemDemo = (props) => {
                                 :
                                 ''
                       */}
-                      {themePropertyList.map((group, index) => {
-                        let property_list = (product?.properties ?? []).filter(el => el?.property_group_id == group?.id);
-                        property_list = property_list.map(property => {
-                          return property?.property_name
-                        })
-                      })}
                       <div style={{ borderTop: '1px solid #ccc', borderBottom: '1px solid #ccc', width: '100%', padding: '1rem 0' }} onClick={() => { }}>
-                        <div style={{ width: '100%', display: 'flex', justifyContent: 'space-between', }}>
-                          <div>포인트 적립</div>
-                          <div style={{ textAlign: 'right', }}>
-                            구매시 {commarNumber(product?.product_sale_price * themeDnsData?.seller_point)} P
+                        {(themeDnsData?.seller_point > 0) && (
+                          <div style={{ width: '100%', display: 'flex', justifyContent: 'space-between', }}>
+                            <div>포인트 적립</div>
+                            <div style={{ textAlign: 'right', }}>
+                              구매시 {commarNumber(product?.product_sale_price * themeDnsData?.seller_point)} P
+                            </div>
                           </div>
-                        </div>
+                        )}
                         <div style={{ width: '100%', display: 'flex', justifyContent: 'space-between', marginTop: '1rem' }}>
                           <div>배송 기간</div>
                           <div>10~14일</div>
@@ -513,22 +501,56 @@ const ItemDemo = (props) => {
                             }
                           }}
                           onClick={() => {
-
+                            // 비회원도 바로구매 허용(주문서에서 비회원 주문비밀번호로 진행)
+                            if (product?.characters?.length > 0) {
+                              setCharacterSelect(true);
+                              setBuyOrCart('buy');
+                            } else {
+                              //setUnipassPopup(true);
+                              setBuyOpen(true);
+                            }
+                          }}
+                        >구매하기</Button>
+                        <Box
+                          onClick={async () => {
                             if (user) {
-
-                              if (product?.characters?.length > 0) {
-                                setCharacterSelect(true);
-                                setBuyOrCart('buy');
-                              } else {
-                                //setUnipassPopup(true);
-                                setBuyOpen(true);
+                              let result = await insertWishDataUtil(product, themeWishData, onChangeWishData);
+                              if (result?.is_add) {
+                                setModal({
+                                  func: () => {
+                                    router.push(`/shop/auth/wish`)
+                                  },
+                                  icon: 'mdi:heart',
+                                  title: '상품이 위시리스트에 담겼습니다\n바로 확인 하시겠습니까?'
+                                })
                               }
-
                             } else {
                               toast.error('로그인을 해주세요.')
                             }
                           }}
-                        >구매하기</Button>
+                          sx={{
+                            minWidth: '60px',
+                            height: '60px',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            borderRadius: '8px',
+                            border: '1px solid #ccc',
+                            cursor: 'pointer',
+                            '&:hover': {
+                              backgroundColor: '#fafafa',
+                            }
+                          }}
+                        >
+                          <Icon
+                            icon={themeWishData.map(wish => { return wish?.product_id }).includes(product?.id) ? 'ph:heart-fill' : 'ph:heart-light'}
+                            style={{
+                              width: '30px',
+                              height: '30px',
+                              color: '#EF6253',
+                            }}
+                          />
+                        </Box>
                       </Row>
                     </Grid>
                   </Grid>

@@ -1,19 +1,17 @@
 import Logo from "src/components/logo/Logo"
 import styled from "styled-components"
-import { IconButton, TextField, InputAdornment, Drawer, Button, Chip, Dialog } from "@mui/material"
+import { IconButton, TextField, InputAdornment, Drawer, Button, Dialog } from "@mui/material"
 import { forwardRef, useEffect, useState } from "react"
 import { Icon } from "@iconify/react"
-import { Row, themeObj } from 'src/components/elements/styled-components'
+import { Col, Row, themeObj } from 'src/components/elements/styled-components'
 import { useTheme } from '@mui/material/styles';
 import { useSettingsContext } from "src/components/settings"
-import { test_categories } from "src/data/test-data"
 import { useRouter } from "next/router"
 import { TreeItem, TreeView } from "@mui/lab"
 import { getAllIdsWithParents } from "src/utils/function"
 import DialogSearch from "src/components/dialog/DialogSearch"
 import { useAuthContext } from "src/layouts/manager/auth/useAuthContext"
 import { logoSrc } from "src/data/data"
-import Slider from "react-slick"
 
 const Wrappers = styled.header`
 width: 100%;
@@ -131,17 +129,66 @@ margin-bottom:auto;
     font-size:${themeObj.font_size.size10};
   }
 `
+const DialogMenuTitle = styled.div`
+color:#fff;
+border-bottom: 1px solid #fff;
+padding: 0.5rem;
+font-size: 2rem;
+font-weight: bold;
+`
+const DialogMenuContent = styled.div`
+color:#fff;
+cursor: pointer;
+width: 15%;
+font-weight: bold;
+padding: 1rem;
+`
+const authList = [
+  {
+    name: '장바구니',
+    link_key: 'cart'
+  },
+  {
+    name: '찜목록',
+    link_key: 'wish'
+  },
+  {
+    name: '포인트내역',
+    link_key: 'point'
+  },
+  {
+    name: '주문내역',
+    link_key: 'history'
+  },
+  {
+    name: '마이페이지',
+    link_key: 'my-page'
+  },
+]
+const noneAuthList = [
+  {
+    name: '로그인',
+    link_key: 'login'
+  },
+  {
+    name: '회원가입',
+    link_key: 'sign-up'
+  },
+  {
+    name: '비회원 주문조회',
+    link_key: 'order-check'
+  },
+]
 const Header = () => {
 
   const router = useRouter();
   const theme = useTheme();
-  const { themeMode, onToggleMode, onChangeCategoryList, onChangeCartData, onChangeWishData, themeCategoryList } = useSettingsContext();
+  const { themeMode, onToggleMode, onChangeCartData, onChangeWishData, themeCategoryList, themePostCategoryList } = useSettingsContext();
   const { user, logout } = useAuthContext();
   const [keyword, setKeyword] = useState("");
   const onSearch = () => {
     router.push(`/shop/search?keyword=${keyword}`)
   }
-  const [isAuthMenuOver, setIsAuthMenuOver] = useState(false)
   const [hoverItems, setHoverItems] = useState({
 
   })
@@ -151,9 +198,7 @@ const Header = () => {
   }, [user])
   useEffect(() => {
     setLoading(true);
-    let data = [...test_categories];
-    onChangeCategoryList(data);
-    let hover_list = getAllIdsWithParents(data);
+    let hover_list = getAllIdsWithParents(themeCategoryList[0]?.product_categories ?? []);
     let hover_items = {};
     for (var i = 0; i < hover_list.length; i++) {
       hover_list[i] = hover_list[i].join('_');
@@ -163,15 +208,6 @@ const Header = () => {
     setHoverItems(hover_items);
     setLoading(false);
   }, [])
-  const onHoverCategory = (category_name) => {
-    let hover_items = hoverItems;
-    for (let key in hover_items) {
-      hover_items[key] = false;
-    }
-    hover_items[category_name] = true;
-    setHoverItems(hover_items);
-  }
-
   const [dialogOpenObj, setDialogOpenObj] = useState({
     search: false
   })
@@ -214,7 +250,7 @@ const Header = () => {
                   {user ?
                     <>
                       <Button sx={{ height: '24px' }} onClick={() => router.push('/shop/auth/my-page')}>마이페이지</Button>
-                      <Button sx={{ height: '24px' }} onClick={() => router.push('/shop/service/history')}>주문내역</Button>
+                      <Button sx={{ height: '24px' }} onClick={() => router.push('/shop/auth/history')}>주문내역</Button>
                       <Button variant="outlined" sx={{ height: '24px' }} onClick={() => {
                         logout();
                         onChangeCartData([]);
@@ -301,7 +337,12 @@ const Header = () => {
       }}>
         <MenuContainer>
           <OneMenuContainer
-            onClick={() => { }}
+            onClick={() => {
+              setDialogOpenObj({
+                ...dialogOpenObj,
+                ['search']: true
+              })
+            }}
           >
             <Icon icon={'carbon:search'} fontSize={'1.5rem'} style={{ marginTop: 'auto' }} />
             <OneMenuName>
@@ -309,7 +350,7 @@ const Header = () => {
             </OneMenuName>
           </OneMenuContainer>
           <OneMenuContainer
-            onClick={() => { }}
+            onClick={() => setDialogMenuOpen(true)}
           >
             <Icon icon={'ri:menu-line'} fontSize={'1.5rem'} style={{ marginTop: 'auto' }} />
             <OneMenuName>
@@ -354,13 +395,91 @@ const Header = () => {
         onClose={() => {
           setDialogMenuOpen(false);
         }}
+        BackdropProps={{
+          style: {
+            background: `${theme.palette.primary.main}dd`,
+          }
+        }}
         PaperProps={{
           style: {
-            backgroundColor: 'transparent',
+            background: 'transparent',
+            maxWidth: '1150px',
+            overflow: 'hidden',
             boxShadow: 'none',
+            borderRadius: 'none',
           },
         }}
       >
+        <div style={{ position: 'fixed', top: '16px', right: '16px', cursor: 'pointer', zIndex: 10 }} onClick={() => {
+          setDialogMenuOpen(false);
+        }}>
+          <Icon icon={'mdi:close-box'} style={{ fontSize: '50px', color: '#fff' }} />
+        </div>
+        <Col style={{ width: '90vw', background: 'transparent', maxHeight: '55vh', overflowY: 'auto' }} className="none-scroll">
+          {themeCategoryList.map((group, index) => (
+            <>
+              <DialogMenuTitle>{group?.category_group_name}</DialogMenuTitle>
+              <Row style={{ flexWrap: 'wrap', padding: '0.5rem', columnGap: '1rem', rowGap: '1rem' }}>
+                {group?.product_categories && group?.product_categories.map((category) => (
+                  <>
+                    <DialogMenuContent onClick={() => {
+                      router.push(`/shop/items?category_id${index}=${category?.id}&depth=0`);
+                      setDialogMenuOpen(false);
+                    }}>{category?.category_name}</DialogMenuContent>
+                  </>
+                ))}
+              </Row>
+            </>
+          ))}
+          {
+            themePostCategoryList.length > 0 &&
+            <>
+              <DialogMenuTitle style={{ marginTop: '1rem' }}>고객센터</DialogMenuTitle>
+              <Row style={{ flexWrap: 'wrap', padding: '0.5rem', columnGap: '1rem', rowGap: '1rem' }}>
+                {themePostCategoryList.map((item, idx) => (
+                  <>
+                    <DialogMenuContent onClick={() => {
+                      router.push(`/shop/service/${item.id}`);
+                      setDialogMenuOpen(false);
+                    }}>{item?.post_category_title}</DialogMenuContent>
+                  </>
+                ))}
+              </Row>
+            </>
+          }
+          <DialogMenuTitle style={{ marginTop: '1rem' }}>마이페이지</DialogMenuTitle>
+          <Row style={{ flexWrap: 'wrap', padding: '0.5rem', columnGap: '1rem', rowGap: '1rem' }}>
+            {user ?
+              <>
+                {authList.map((item, idx) => (
+                  <>
+                    <DialogMenuContent onClick={() => {
+                      router.push(`/shop/auth/${item.link_key}`);
+                      setDialogMenuOpen(false);
+                    }}>{item.name}</DialogMenuContent>
+                  </>
+                ))}
+                <DialogMenuContent onClick={() => {
+                  logout();
+                  onChangeCartData([]);
+                  onChangeWishData([]);
+                  router.push('/shop/auth/login');
+                  setDialogMenuOpen(false);
+                }} >로그아웃</DialogMenuContent>
+              </>
+              :
+              <>
+                {noneAuthList.map((item, idx) => (
+                  <>
+                    <DialogMenuContent onClick={() => {
+                      router.push(`/shop/auth/${item.link_key}`);
+                      setDialogMenuOpen(false);
+                    }}>{item?.name}</DialogMenuContent>
+                  </>
+                ))}
+              </>}
+          </Row>
+        </Col>
       </Dialog>
     </>
   )

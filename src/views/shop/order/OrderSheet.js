@@ -14,7 +14,7 @@ import Label from 'src/components/label/Label';
 import EmptyContent from 'src/components/empty-content/EmptyContent';
 import Iconify from 'src/components/iconify/Iconify';
 import { useSettingsContext } from 'src/components/settings';
-import { calculatorPrice, getCartDataUtil, makePayData, onPayProductsByAuth, onPayProductsByHand, onPayProductsByPayletter } from 'src/utils/shop-util';
+import { calculatorPrice, getCartDataUtil, makePayData, onPayProductsByAuth, onPayProductsByHand, onPayProductsByPayletter, onPayProductsByForspay } from 'src/utils/shop-util';
 import { useAuthContext } from 'src/layouts/manager/auth/useAuthContext';
 import { formatCreditCardNumber, formatExpirationDate } from 'src/utils/formatCard';
 import { useModal } from 'src/components/dialog/ModalProvider';
@@ -197,7 +197,7 @@ export default function OrderSheet({ router }) {
       setPayData({ ...payData, payment_modules: item });
     } else if (item?.type == 'certification') {
       setPayLoading(true);
-      await onPayProductsByAuth(products, { ...payData, payment_modules: item }, 'payvery');
+      await onPayProductsByAuth(products.map((p) => ({ ...p })), { ...payData, payment_modules: item }, 'payvery');
     } else if (item?.type == 'card_fintree') {
       setBuyType('card_fintree');
       setPayData({ ...payData, payment_modules: item });
@@ -206,7 +206,8 @@ export default function OrderSheet({ router }) {
       setPayData({ ...payData, payment_modules: item });
     } else if (item?.type == 'virtual_account') {
       setBuyType('virtual_account');
-      const pay_data = await makePayData(products, payData);
+      // makePayData가 배열을 in-place 변형하므로 사본을 넘겨 화면 상태(products)를 보호한다.
+      const pay_data = await makePayData(products.map((p) => ({ ...p })), payData);
       delete pay_data.payment_modules;
       const ord_num = `${pay_data?.user_id || pay_data?.password}${new Date().getTime().toString().substring(0, 11)}`;
       pay_data.ord_num = ord_num;
@@ -221,7 +222,8 @@ export default function OrderSheet({ router }) {
       setPayData(pay_data);
     } else if (item?.type == 'gift_certificate') {
       setBuyType('gift_certificate');
-      const pay_data = await makePayData(products, payData);
+      // makePayData가 배열을 in-place 변형하므로 사본을 넘겨 화면 상태(products)를 보호한다.
+      const pay_data = await makePayData(products.map((p) => ({ ...p })), payData);
       delete pay_data.payment_modules;
       const ord_num = `${pay_data?.user_id || pay_data?.password}${new Date().getTime().toString().substring(0, 11)}`;
       pay_data.ord_num = ord_num;
@@ -237,7 +239,7 @@ export default function OrderSheet({ router }) {
     } else if (item?.type == 'certification_weroute') {
       setBuyType('certification_weroute');
       setPayLoading(true);
-      await onPayProductsByAuth(products, { ...payData, payment_modules: item }, 'weroute');
+      await onPayProductsByAuth(products.map((p) => ({ ...p })), { ...payData, payment_modules: item }, 'weroute');
     } else if (item?.type == 'card_hecto') {
       setBuyType('card_hecto');
       setPayData({ ...payData, payment_modules: item });
@@ -249,7 +251,10 @@ export default function OrderSheet({ router }) {
       setPayData({ ...payData, payment_modules: item });
     } else if (item?.type == 'card_payletter') {
       setBuyType('card_payletter');
-      await onPayProductsByPayletter(products, { ...payData, payment_modules: item });
+      await onPayProductsByPayletter(products.map((p) => ({ ...p })), { ...payData, payment_modules: item });
+    } else if (item?.type == 'auth_forspay') {
+      setBuyType('auth_forspay');
+      await onPayProductsByForspay(products.map((p) => ({ ...p })), { ...payData, payment_modules: item });
     }
   };
 
@@ -374,6 +379,8 @@ export default function OrderSheet({ router }) {
                             <Stack direction="row" spacing={1}>
                               <Button size="small" variant={selectedAddrId == item?.id ? 'contained' : 'outlined'}
                                 onClick={(e) => { e.stopPropagation(); onSelectAddress(item); }}>선택</Button>
+                              <Button size="small" color="inherit" variant="outlined"
+                                onClick={(e) => { e.stopPropagation(); onUpdateAddress(item?.id); }}>수정</Button>
                               <Button size="small" color="inherit" variant="outlined"
                                 onClick={(e) => { e.stopPropagation(); onDeleteAddress(item?.id); }}>삭제</Button>
                             </Stack>

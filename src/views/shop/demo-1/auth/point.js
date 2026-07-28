@@ -64,7 +64,7 @@ const PointDemo = (props) => {
           variant='outlined' shape='rounded'
           color='primary'
           onChange={(_, num) => {
-            onChangePage(num)
+            onChangePage({ ...searchObj, page: num })
           }} />
       </Wrappers>
     </>

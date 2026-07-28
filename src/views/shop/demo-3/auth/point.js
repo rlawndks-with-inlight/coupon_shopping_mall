@@ -1,18 +1,2 @@
-import { useRouter } from "next/router";
-import { useSettingsContext } from "src/components/settings";
-import { useAuthContext } from "src/layouts/manager/auth/useAuthContext";
-import styled from "styled-components";
-
-const PointDemo = (props) => {
-
-  const { user } = useAuthContext();
-  const { themeDnsData } = useSettingsContext();
-  const router = useRouter();
-
-  return (
-    <>
-
-    </>
-  )
-}
-export default PointDemo
+// 빈 스텁 복구: 실기능 구현인 demo-1 버전을 재사용 (props는 그대로 통과)
+export { default } from '../../demo-1/auth/point';

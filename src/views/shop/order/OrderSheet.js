@@ -14,7 +14,7 @@ import Label from 'src/components/label/Label';
 import EmptyContent from 'src/components/empty-content/EmptyContent';
 import Iconify from 'src/components/iconify/Iconify';
 import { useSettingsContext } from 'src/components/settings';
-import { calculatorPrice, getCartDataUtil, makePayData, onPayProductsByAuth, onPayProductsByHand, onPayProductsByPayletter } from 'src/utils/shop-util';
+import { calculatorPrice, getCartDataUtil, makePayData, onPayProductsByAuth, onPayProductsByHand, onPayProductsByPayletter, onPayProductsByForspay } from 'src/utils/shop-util';
 import { useAuthContext } from 'src/layouts/manager/auth/useAuthContext';
 import { formatCreditCardNumber, formatExpirationDate } from 'src/utils/formatCard';
 import { useModal } from 'src/components/dialog/ModalProvider';
@@ -250,6 +250,9 @@ export default function OrderSheet({ router }) {
     } else if (item?.type == 'card_payletter') {
       setBuyType('card_payletter');
       await onPayProductsByPayletter(products, { ...payData, payment_modules: item });
+    } else if (item?.type == 'auth_forspay') {
+      setBuyType('auth_forspay');
+      await onPayProductsByForspay(products, { ...payData, payment_modules: item });
     }
   };
 

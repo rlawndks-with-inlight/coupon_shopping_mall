@@ -8,7 +8,7 @@ import Label from 'src/components/label/Label';
 import EmptyContent from 'src/components/empty-content/EmptyContent';
 import Iconify from 'src/components/iconify/Iconify';
 import { useSettingsContext } from 'src/components/settings';
-import { calculatorPrice, getCartDataUtil, makePayData, onPayProductsByAuth, onPayProductsByHand, onPayProductsByVirtualAccount, onPayProductsByPayletter } from 'src/utils/shop-util';
+import { calculatorPrice, getCartDataUtil, makePayData, onPayProductsByAuth, onPayProductsByHand, onPayProductsByVirtualAccount, onPayProductsByPayletter, onPayProductsByForspay } from 'src/utils/shop-util';
 import { useAuthContext } from 'src/layouts/manager/auth/useAuthContext';
 import Payment from 'payment'
 import Cards from 'react-credit-cards'
@@ -285,6 +285,9 @@ const CartDemo = (props) => {
     } else if (item?.type == 'card_payletter') {
       setBuyType('card_payletter');
       let result = await onPayProductsByPayletter(products, { ...payData, payment_modules: item });
+    } else if (item?.type == 'auth_forspay') {
+      setBuyType('auth_forspay');
+      let result = await onPayProductsByForspay(products, { ...payData, payment_modules: item });
     } else if (item?.type == 'sms_pay') {
       setBuyType('sms_pay');
       setActiveStep(2);

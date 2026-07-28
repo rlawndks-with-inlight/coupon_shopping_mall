@@ -335,7 +335,7 @@ export const HistoryTable = props => {
                         </Col>
                       </Row>
                     </TableCell>
-                    <TableCell>{row.ord_num}</TableCell>
+                    <TableCell>{row.ord_num}{row?.appr_num ? <><br /><span style={{ fontSize: 12, color: '#888' }}>승인 {row.appr_num}</span></> : ''}</TableCell>
                     <TableCell>
                       {row.invoice_num
                         ? row.invoice_num

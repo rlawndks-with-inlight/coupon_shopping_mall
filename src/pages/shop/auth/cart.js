@@ -15,12 +15,13 @@ import { CartDemo9 } from "src/views/shop/demo-9";
 
 const getDemo = (num, common) => {
 
+  // demo-2(오퍼된 프레임)·demo-3 카트는 빈 스텁 → 공용 흐름(주문서 연결)인 demo-4 카트로 대체
   if (num == 1)
     return <CartDemo1 {...common} />
   else if (num == 2)
-    return <CartDemo2 {...common} />
+    return <CartDemo4 {...common} />
   else if (num == 3)
-    return <CartDemo3 {...common} />
+    return <CartDemo4 {...common} />
   else if (num == 4)
     return <CartDemo4 {...common} />
   else if (num == 5)

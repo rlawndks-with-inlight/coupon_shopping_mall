@@ -9,17 +9,9 @@ import Demo4 from "src/views/blog/auth/cart/demo-4";
 import Demo5 from "src/views/blog/auth/cart/demo-5";
 
 const getDemo = (num, common) => {
-
-    if (num == 1)
-        return <Demo1 {...common} />
-    else if (num == 2)
-        return <Demo2 {...common} />
-    else if (num == 3)
-        return <Demo3 {...common} />
-    else if (num == 4)
-        return <Demo4 {...common} />
-    else if (num == 5)
-        return <Demo5 {...common} />
+    // 모든 blog 프레임 카트를 기능 카트(demo-2)로 수렴 — '주문하기'는 공용 주문서로 이동.
+    // (기존: blog 1/3/4/5는 목업, 6~9는 카트 미구현)
+    return <Demo2 {...common} />
 }
 
 const Cart = () => {

@@ -30,7 +30,7 @@ margin-top: 2rem;
 const ArticleDemo = (props) => {
   const { setModal } = useModal()
   const { user } = useAuthContext();
-  const { themeDnsData, themePostCategoryList } = useSettingsContext();
+  const { themePostCategoryList } = useSettingsContext();
   const router = useRouter();
   const [postCategory, setPostCategory] = useState({});
   const [loading, setLoading] = useState(true);

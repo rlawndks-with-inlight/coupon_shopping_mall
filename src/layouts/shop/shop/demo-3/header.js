@@ -1,6 +1,6 @@
 import Logo from "src/components/logo/Logo"
 import styled from "styled-components"
-import { IconButton, TextField, InputAdornment, Drawer, Button, Chip, Dialog } from "@mui/material"
+import { IconButton, TextField, InputAdornment, Drawer, Button, Dialog } from "@mui/material"
 import { forwardRef, useEffect, useState } from "react"
 import { Icon } from "@iconify/react"
 import { Col, Row, themeObj } from 'src/components/elements/styled-components'
@@ -12,7 +12,6 @@ import { getAllIdsWithParents } from "src/utils/function"
 import DialogSearch from "src/components/dialog/DialogSearch"
 import { useAuthContext } from "src/layouts/manager/auth/useAuthContext"
 import { logoSrc } from "src/data/data"
-import Slider from "react-slick"
 
 const Wrappers = styled.header`
 width: 100%;
@@ -190,7 +189,6 @@ const Header = () => {
   const onSearch = () => {
     router.push(`/shop/search?keyword=${keyword}`)
   }
-  const [isAuthMenuOver, setIsAuthMenuOver] = useState(false)
   const [hoverItems, setHoverItems] = useState({
 
   })
@@ -210,15 +208,6 @@ const Header = () => {
     setHoverItems(hover_items);
     setLoading(false);
   }, [])
-  const onHoverCategory = (category_name) => {
-    let hover_items = hoverItems;
-    for (let key in hover_items) {
-      hover_items[key] = false;
-    }
-    hover_items[category_name] = true;
-    setHoverItems(hover_items);
-  }
-
   const [dialogOpenObj, setDialogOpenObj] = useState({
     search: false
   })

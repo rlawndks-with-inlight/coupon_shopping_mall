@@ -6,7 +6,6 @@ import { useEffect, useState } from 'react';
 import { SkeletonProductDetails } from 'src/components/skeleton';
 import dynamic from 'next/dynamic'
 import { apiManager, apiShop } from 'src/utils/api';
-import { styled as muiStyle } from '@mui/material'
 import { commarNumber } from 'src/utils/function';
 import { Icon } from '@iconify/react';
 import { insertCartDataUtil, insertWishDataUtil, selectItemOptionUtil } from 'src/utils/shop-util';

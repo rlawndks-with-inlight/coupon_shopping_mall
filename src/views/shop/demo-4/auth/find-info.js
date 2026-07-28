@@ -285,7 +285,4 @@ const FindInfoDemo = (props) => {
     </>
   )
 }
-const inputStyle = {
-  marginTop: '1rem',
-}
 export default FindInfoDemo

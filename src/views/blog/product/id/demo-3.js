@@ -2,7 +2,6 @@ import { Select, MenuItem, Drawer, FormControl, InputLabel, Button, Avatar, Divi
 import { useEffect, useState } from 'react';
 import { Row, themeObj } from 'src/components/elements/styled-components';
 import { useSettingsContext } from 'src/components/settings';
-import { test_categories, test_items, test_seller } from 'src/data/test-data';
 import styled from 'styled-components'
 import _ from 'lodash'
 import { commarNumber } from 'src/utils/function';
@@ -106,8 +105,6 @@ const Demo3 = (props) => {
         groups: [],
     });
     const [buyOpen, setBuyOpen] = useState(false);
-
-    const product_id = parseInt(document.location.href.split('/').reverse()[1])
 
     useEffect(() => {
         pageSetting();

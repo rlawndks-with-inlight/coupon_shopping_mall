@@ -13,12 +13,6 @@ flex-direction:column;
 padding:1rem;
 `
 
-const ChooseBox = styled.div`
-display:flex;
-justify-content:space-between;
-margin:1.5rem 0 2rem 0;
-`
-
 const ItemBox = styled.div`
 margin: 1rem 0;
 `

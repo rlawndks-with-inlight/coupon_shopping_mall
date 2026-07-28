@@ -1,7 +1,7 @@
 import styled from 'styled-components'
 import { Box, Tab, Tabs, Card, Grid, Divider, Typography, Button, Radio, FormControlLabel, Dialog, DialogTitle, DialogContent, MenuItem, FormControl, DialogActions, Stack, InputLabel, Select, TextField } from '@mui/material';
 import { useSettingsContext } from 'src/components/settings';
-import { ProductDetailsCarousel, ProductDetailsReview, ProductDetailsSummary } from 'src/views/@dashboard/e-commerce/details';
+import { ProductDetailsCarousel, ProductDetailsReview } from 'src/views/@dashboard/e-commerce/details';
 import { useEffect, useState } from 'react';
 import { SkeletonProductDetails } from 'src/components/skeleton';
 import dynamic from 'next/dynamic'
@@ -9,15 +9,13 @@ import { apiManager, apiShop } from 'src/utils/api';
 import { styled as muiStyle } from '@mui/material'
 import Head from 'next/head';
 import { Row } from 'src/components/elements/styled-components';
-import { commarNumber, getProductStatus } from 'src/utils/function';
+import { commarNumber } from 'src/utils/function';
 import { Icon } from '@iconify/react';
 import { insertCartDataUtil, insertWishDataUtil, selectItemOptionUtil } from 'src/utils/shop-util';
 import toast from 'react-hot-toast';
 import DialogBuyNow from 'src/components/dialog/DialogBuyNow';
 import { useAuthContext } from 'src/layouts/manager/auth/useAuthContext';
 import { useModal } from 'src/components/dialog/ModalProvider';
-import { BasicInfo, ProductFaq } from 'src/components/elements/shop/demo-4';
-import axios from 'axios';
 
 const ReactQuill = dynamic(() => import('react-quill'), {
   ssr: false,
@@ -442,12 +440,6 @@ const ItemDemo = (props) => {
                                 :
                                 ''
                       */}
-                      {themePropertyList.map((group, index) => {
-                        let property_list = (product?.properties ?? []).filter(el => el?.property_group_id == group?.id);
-                        property_list = property_list.map(property => {
-                          return property?.property_name
-                        })
-                      })}
                       <div style={{ borderTop: '1px solid #ccc', borderBottom: '1px solid #ccc', width: '100%', padding: '1rem 0' }} onClick={() => { }}>
                         {(themeDnsData?.seller_point > 0) && (
                           <div style={{ width: '100%', display: 'flex', justifyContent: 'space-between', }}>

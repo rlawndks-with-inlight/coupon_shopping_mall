@@ -1,10 +1,9 @@
 import styled from 'styled-components'
 import { Wrappers, Title } from 'src/components/elements/blog/demo-1';
-import { Tabs, Tab, Checkbox, FormControlLabel, Typography, Button } from '@mui/material';
+import { Tabs, Tab, Button } from '@mui/material';
 import { useState, useEffect } from 'react';
 import { useSettingsContext } from 'src/components/settings';
 import _ from 'lodash';
-import { Row, themeObj } from 'src/components/elements/styled-components';
 import { commarNumber, getTrxStatusByNumber } from 'src/utils/function';
 import { apiManager } from 'src/utils/api';
 
@@ -12,12 +11,6 @@ const ContentContainer = styled.div`
 display:flex;
 flex-direction:column;
 padding:1rem;
-`
-
-const ChooseBox = styled.div`
-display:flex;
-justify-content:space-between;
-margin:1.5rem 0 2rem 0;
 `
 
 const ItemBox = styled.div`

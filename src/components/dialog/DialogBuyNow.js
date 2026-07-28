@@ -9,9 +9,8 @@ import DialogTitle from '@mui/material/DialogTitle'
 import DialogContent from '@mui/material/DialogContent'
 import DialogActions from '@mui/material/DialogActions'
 
-import { Box, Card, CircularProgress, DialogContentText, FormControl, InputLabel, MenuItem, Paper, RadioGroup, Select, Stack, TextField } from '@mui/material'
-import styled from 'styled-components'
-import { Row, postCodeStyle, themeObj } from '../elements/styled-components'
+import { Box, Card, CircularProgress, DialogContentText, Paper, RadioGroup, Stack, TextField } from '@mui/material'
+import { Row } from '../elements/styled-components'
 import { useRouter } from 'next/router'
 import { useAuthContext } from 'src/layouts/manager/auth/useAuthContext'
 import { CheckoutSteps } from 'src/views/@dashboard/e-commerce/checkout'
@@ -22,28 +21,19 @@ import Cards from 'react-credit-cards'
 import { apiManager } from 'src/utils/api'
 import { AddressItem } from 'src/views/shop/demo-1/auth/cart'
 import Iconify from '../iconify'
-import DaumPostcode from 'react-daum-postcode';
-import { makePayData, onPayProductsByAuth, onPayProductsByAuth_Fintree, onPayProductsByHand, onPayProductsByPayletter, onPayProductsByForspay, onPayProductsByVirtualAccount, startBuyNow } from 'src/utils/shop-util'
+import { makePayData, onPayProductsByAuth, onPayProductsByHand, onPayProductsByPayletter, onPayProductsByForspay, startBuyNow } from 'src/utils/shop-util'
 import { formatCreditCardNumber, formatExpirationDate } from 'src/utils/formatCard'
 import { useModal } from './ModalProvider'
 import toast from 'react-hot-toast'
 import EmptyContent from '../empty-content/EmptyContent'
 import DialogAddAddress from './DialogAddAddress'
-import { bankCodeList, ntvFrnrList, genderList, telComList } from 'src/utils/format'
-import axios from 'axios'
-import $ from 'jquery';
 import _ from 'lodash'
-import { commarNumber, returnMoment } from 'src/utils/function'
 import PayProductsByAuthHecto from 'src/utils/hecto-auth'
 import PayProductsByPhoneHecto from 'src/utils/hecto-phone'
 import PayProductsByAuthFintree from 'src/utils/fintree-auth'
 import PayProductsByHandFintree from 'src/utils/fintree-hand'
 import PayProductsByAuthWayup from 'src/utils/wayup-auth'
 
-const Iframe = styled.iframe`
-border: none;
-width: 100%;
-`
 const DialogBuyNow = (props) => {
 
   const { setModal } = useModal()
@@ -71,8 +61,8 @@ const DialogBuyNow = (props) => {
   const [payLoading, setPayLoading] = useState(false);
   const [buyStep, setBuyStep] = useState(0);
   const [payList, setPayList] = useState([]);
-  const [cardFucus, setCardFocus] = useState()
-  const [selectAddress, setSelectAddress] = useState({});
+  const [cardFucus] = useState()
+  const [, setSelectAddress] = useState({});
   const [addressSearchObj, setAddressSearchObj] = useState({
     page: 1,
     page_size: 10,

@@ -210,7 +210,7 @@ const Demo2 = (props) => {
                     }}>
                         {themePostCategoryList && themePostCategoryList.map((item, idx) => (
                             <>
-                                <SubTitle style={{ borderRight: `${idx == themePostCategoryList.length - 1 ? 'none' : '1px solid #fff'}`, width: '65px', cursor: 'pointer' }}>{item?.post_category_title}</SubTitle>
+                                <SubTitle style={{ borderRight: `${idx == themePostCategoryList.length - 1 ? 'none' : '1px solid #fff'}`, width: '65px' }}>{item?.post_category_title}</SubTitle>
                             </>
                         ))}
                     </Row>

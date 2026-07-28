@@ -147,7 +147,7 @@ const Demo3 = (props) => {
                 <MenuContainer style={{ color: `${themeDnsData?.theme_css?.main_color}`, fontWeight: 'bold' }}>
                     <MenuBox>
                         쇼핑
-                        {user ?
+                        {(user && (themeDnsData?.seller_point > 0 || themeDnsData?.point_rate > 0)) ?
                             <>
                                 <MenuButton themeMode={themeMode} style={{ marginBottom: '0' }} onClick={() => { router.push('/blog/auth/my-page/point') }}>
                                     <MenuText>포인트 조회</MenuText>

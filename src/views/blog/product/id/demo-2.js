@@ -269,13 +269,13 @@ const Demo2 = (props) => {
                             <div style={{ fontSize: themeObj.font_size.size8, color: '', fontWeight: 'bold', marginBottom: '0.5rem' }}>배송정보</div>
                         </Row>
                         <Row style={{ alignItems: 'flex-end', }}>
-                            <div style={{ fontSize: themeObj.font_size.size8, color: '' }}>배송비 : <span style={{ color: theme.palette.error.main }}>3000원</span></div>
+                            <div style={{ fontSize: themeObj.font_size.size8, color: '' }}>배송비 : <span style={{ color: theme.palette.error.main }}>{commarNumber(item?.delivery_fee ?? 0)}원</span></div>
                         </Row>
                         <Row style={{ alignItems: 'flex-end', }}>
                             <div style={{ fontSize: themeObj.font_size.size8, color: '' }}>합배송 무제한</div>
                         </Row>
                         <Row style={{ alignItems: 'flex-end', marginBottom: '0.5rem' }}>
-                            <div style={{ fontSize: themeObj.font_size.size8, color: '' }}>CJ대한통운</div>
+                            <div style={{ fontSize: themeObj.font_size.size8, color: '' }}>택배 배송</div>
                         </Row>
                     </PriceContainer>
                     <Button variant='contained' onClick={() => { setCartOpen(true) }}>

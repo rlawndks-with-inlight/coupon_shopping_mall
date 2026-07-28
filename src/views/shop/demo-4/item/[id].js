@@ -1,6 +1,5 @@
 import styled from 'styled-components'
 import { Box, Tab, Tabs, Card, Grid, Divider, Typography, Button, Radio, FormControlLabel, Dialog, DialogTitle, DialogContent, MenuItem, FormControl, DialogActions, Stack, InputLabel, Select, TextField } from '@mui/material';
-import { test_item } from 'src/data/test-data';
 import { useSettingsContext } from 'src/components/settings';
 import { ProductDetailsCarousel, ProductDetailsReview, ProductDetailsSummary } from 'src/views/@dashboard/e-commerce/details';
 import { useEffect, useState } from 'react';
@@ -652,7 +651,7 @@ const ItemDemo = (props) => {
                         ))
                         :
                         TABS.map((tab, index) => {
-                          if (index !== 1) {
+                          if (tab.value !== 'basic_info' && tab.value !== 'item_faq') {
                             return (
                               <Tab key={tab.value} value={tab.value} label={tab.label} />
                             )

@@ -1,6 +1,5 @@
 import styled from 'styled-components'
 import { Box, Tab, Tabs, Card, Grid, Divider, Typography, Button, Radio, FormControlLabel } from '@mui/material';
-import { test_item } from 'src/data/test-data';
 import { useSettingsContext } from 'src/components/settings';
 import { ProductDetailsCarousel, ProductDetailsReview, ProductDetailsSummary } from 'src/views/@dashboard/e-commerce/details';
 import { useEffect, useState } from 'react';
@@ -112,12 +111,6 @@ const ItemDemo = (props) => {
     }
     data['images'] = data['sub_images'];
     setReviewPage(review_page);
-    let review_data = await apiManager('product-reviews', 'list', {
-      page: review_page,
-      product_id: router.query?.id,
-      page_size: 10,
-    })
-    //setReviewContent(review_data)
     setProduct(data);
     setLoading(false);
   }

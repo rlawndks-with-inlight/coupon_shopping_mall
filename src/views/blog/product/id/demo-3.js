@@ -189,7 +189,7 @@ const Demo3 = (props) => {
                             <Avatar src={item.seller?.profile_img} sx={{ width: '30px', height: '30px' }} />
                             <div style={{ marginLeft: '0.25rem', fontSize: themeObj.font_size.size8 }}>{item.seller?.nickname}</div>
                         </Row>
-                        <Button variant='outlined' sx={{
+                        <Button variant='outlined' onClick={() => router.push('/blog/auth/my-page/inquiry')} sx={{
                             height: '30px',
                         }}>
                             1:1문의

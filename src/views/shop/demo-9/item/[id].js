@@ -1,6 +1,5 @@
 import styled from 'styled-components'
 import { Box, Tab, Tabs, Card, Grid, Divider, Typography, Button, Radio, FormControlLabel, Dialog, DialogTitle, DialogContent, MenuItem, FormControl, DialogActions, Stack, InputLabel, Select, TextField } from '@mui/material';
-import { test_item } from 'src/data/test-data';
 import { useSettingsContext } from 'src/components/settings';
 import { ProductDetailsCarousel, ProductDetailsReview, ProductDetailsSummary } from 'src/views/@dashboard/e-commerce/details';
 import { useEffect, useState } from 'react';
@@ -221,11 +220,6 @@ const ItemDemo = (props) => {
       component: product ? //<></> : null,
         <ProductFaq /> : null,
     },*/
-    {/*
-      value: 'reviews',
-      label: `상품후기 (${reviewContent?.total})`,
-      component: product ? <ProductDetailsReview product={product} reviewContent={reviewContent} onChangePage={getItemInfo} reviewPage={reviewPage} /> : null,
-    */},
   ];
   const handleAddCart = async () => {
     if (user) {
@@ -455,12 +449,14 @@ const ItemDemo = (props) => {
                         })
                       })}
                       <div style={{ borderTop: '1px solid #ccc', borderBottom: '1px solid #ccc', width: '100%', padding: '1rem 0' }} onClick={() => { }}>
-                        <div style={{ width: '100%', display: 'flex', justifyContent: 'space-between', }}>
-                          <div>포인트 적립</div>
-                          <div style={{ textAlign: 'right', }}>
-                            구매시 {commarNumber(product?.product_sale_price * themeDnsData?.seller_point)} P
+                        {(themeDnsData?.seller_point > 0) && (
+                          <div style={{ width: '100%', display: 'flex', justifyContent: 'space-between', }}>
+                            <div>포인트 적립</div>
+                            <div style={{ textAlign: 'right', }}>
+                              구매시 {commarNumber(product?.product_sale_price * themeDnsData?.seller_point)} P
+                            </div>
                           </div>
-                        </div>
+                        )}
                         <div style={{ width: '100%', display: 'flex', justifyContent: 'space-between', marginTop: '1rem' }}>
                           <div>배송 기간</div>
                           <div>10~14일</div>

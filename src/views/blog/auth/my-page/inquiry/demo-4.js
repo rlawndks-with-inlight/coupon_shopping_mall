@@ -27,32 +27,6 @@ const returnInquiryType = {
     }
 }
 
-const test_inquiry = [
-    {
-        id: 1,
-        inquiry_type: 0,
-        inquiry_title: '주문문의',
-        inquiry_detail: '입금했는데 입금 확인이 안됩니다',
-        inquiry_seller: '룩아웃사이드',
-        answer: '죄송합니다. 입금이 누락되어 다시 보냈으니 확인 바랍니다.'
-    },
-    {
-        id: 2,
-        inquiry_type: 1,
-        inquiry_title: '일반문의',
-        inquiry_detail: '배송지를 변경하고 싶어요',
-        answer: '배송지 변경은 배송 시작 전에만 가능하며 판매자가 직접 변경해야 합니다. 판매자에게 문의하여 배송지 변경 요청을 해주시길 바랍니다.'
-    },
-    {
-        id: 232,
-        inquiry_type: 0,
-        inquiry_title: '주문문의',
-        inquiry_detail: '취소하고 싶어요',
-        inquiry_seller: '베이브',
-        answer: ""
-    },
-]
-
 // 공지사항, faq 등 상세페이지 김인욱
 const Demo4 = (props) => {
     const {
@@ -71,13 +45,10 @@ const Demo4 = (props) => {
         settingPage();
     }, [])
     const settingPage = () => {
-        let inquiry_data = [...test_inquiry];
-        inquiry_data = inquiry_data.map((item) => {
-            return {
-                ...item
-            }
-        })
-        setInquiryList(inquiry_data);
+        // TODO: 1:1 문의 백엔드 API가 준비되면 아래에 apiManager 연결하여 실제 문의 내역을 조회한다.
+        //       예) const res = await apiManager('inquiry/list', {...}); setInquiryList(res.data ?? []);
+        //       API가 없는 현재는 가짜 데이터를 렌더하지 않고 빈 목록을 유지한다.
+        setInquiryList([]);
     }
 
     return (
@@ -113,6 +84,11 @@ const Demo4 = (props) => {
                         }} />
                     ))}
                 </Tabs>
+                {inquiryList.filter((item) => item.inquiry_type == inquiryType).length === 0 &&
+                    <Typography variant="body2" sx={{ padding: '2rem 0', textAlign: 'center', color: 'text.secondary' }}>
+                        등록된 문의 내역이 없습니다.
+                    </Typography>
+                }
                 {inquiryList.map((item, idx) => (
                     <>
                         {item.inquiry_type == inquiryType &&

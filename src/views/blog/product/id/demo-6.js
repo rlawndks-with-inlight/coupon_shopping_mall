@@ -8,7 +8,7 @@ import { LazyLoadImage } from 'react-lazy-load-image-component';
 import { commarNumber } from 'src/utils/function';
 import { formatLang } from 'src/utils/format';
 import { apiShop } from 'src/utils/api';
-import { insertCartDataUtil, startBuyNow } from 'src/utils/shop-util';
+import { insertCartDataUtil, startBuyNow, selectItemOptionUtil } from 'src/utils/shop-util';
 import { themeObj } from 'src/components/elements/styled-components';
 import toast from 'react-hot-toast';
 
@@ -174,6 +174,36 @@ const DetailContent = styled.div`
   color: ${themeObj.grey[700]};
   img { max-width: 100%; height: auto; }
 `
+const OptionArea = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-top: 0.5rem;
+`
+const OptionField = styled.label`
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+`
+const OptionName = styled.span`
+  font-size: 11px;
+  letter-spacing: 3px;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: ${themeObj.grey[600]};
+`
+const OptionSelect = styled.select`
+  padding: 14px 16px;
+  font-size: 14px;
+  font-family: inherit;
+  color: #1a1a1a;
+  background: #fff;
+  border: 1px solid ${themeObj.grey[300]};
+  cursor: pointer;
+  appearance: none;
+  transition: border-color 0.3s;
+  &:focus { outline: none; border-color: #1a1a1a; }
+`
 
 const Demo6 = () => {
   const router = useRouter();
@@ -181,6 +211,7 @@ const Demo6 = () => {
   const { themeDnsData, themeCartData, onChangeCartData } = useSettingsContext();
   const { user } = useAuthContext();
   const [item, setItem] = useState(null);
+  const [selectProductGroups, setSelectProductGroups] = useState({ count: 1, groups: [] });
   const brandName = themeDnsData?.name || 'BRAND';
   const mainColor = themeDnsData?.theme_css?.main_color || '#8B7355';
 
@@ -193,11 +224,18 @@ const Demo6 = () => {
     if (product) setItem(product);
   };
 
+  const handleSelectOption = (group, e) => {
+    const option = (group?.options ?? []).find((o) => String(o?.id) === e.target.value);
+    if (!option) return;
+    const updated = selectItemOptionUtil(group, option, selectProductGroups);
+    setSelectProductGroups({ ...updated });
+  };
+
   const handleAddCart = async () => {
     // 비회원도 담기 허용(카트→주문서에서 비회원 주문비밀번호로 진행)
     const result = await insertCartDataUtil(
       { ...item, seller_id: router.query?.seller_id ?? 0 },
-      [], themeCartData, onChangeCartData
+      selectProductGroups, themeCartData, onChangeCartData
     );
     if (result) {
       toast.success(translate ? translate('장바구니에 성공적으로 추가되었습니다.') : '장바구니에 추가되었습니다.');
@@ -230,9 +268,29 @@ const Demo6 = () => {
             <SalePrice $color={mainColor}>{commarNumber(sale)}원</SalePrice>
             {hasSale && <OrigPrice>{commarNumber(orig)}원</OrigPrice>}
           </PriceRow>
+          {item?.groups?.length > 0 && (
+            <OptionArea>
+              {item.groups.map((group) => (
+                <OptionField key={group?.id}>
+                  <OptionName>{group?.group_name}</OptionName>
+                  <OptionSelect defaultValue="" onChange={(e) => handleSelectOption(group, e)}>
+                    <option value="" disabled>
+                      {group?.group_name} 선택
+                    </option>
+                    {(group?.options ?? []).map((option) => (
+                      <option key={option?.id} value={option?.id}>
+                        {option?.option_name}
+                        {option?.option_price > 0 ? ` (+${commarNumber(option.option_price)}원)` : ''}
+                      </option>
+                    ))}
+                  </OptionSelect>
+                </OptionField>
+              ))}
+            </OptionArea>
+          )}
           <ButtonRow>
             <Btn onClick={handleAddCart}>Add to Cart</Btn>
-            <Btn $primary onClick={() => startBuyNow(item, { count: 1, groups: [] }, router)}>Buy Now →</Btn>
+            <Btn $primary onClick={() => startBuyNow(item, selectProductGroups, router)}>Buy Now →</Btn>
           </ButtonRow>
         </InfoSide>
       </Hero>

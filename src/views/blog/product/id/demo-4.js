@@ -8,7 +8,7 @@ import { LazyLoadImage } from 'react-lazy-load-image-component';
 import { commarNumber } from 'src/utils/function';
 import { formatLang } from 'src/utils/format';
 import { apiShop } from 'src/utils/api';
-import { insertCartDataUtil, startBuyNow } from 'src/utils/shop-util';
+import { insertCartDataUtil, startBuyNow, selectItemOptionUtil } from 'src/utils/shop-util';
 import toast from 'react-hot-toast';
 
 /* 상품 상세 - 데모 4: 미니멀 모노크롬 */
@@ -143,6 +143,41 @@ const Btn = styled.button`
     color: ${p => p.$primary ? '#000' : '#fff'};
   }
 `
+const OptionGroup = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+`
+const OptionField = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+`
+const OptionLabel = styled.label`
+  font-size: 10px;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  opacity: 0.5;
+`
+const OptionSelect = styled.select`
+  width: 100%;
+  padding: 16px;
+  border: 1px solid #000;
+  background: #fff;
+  color: #000;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  cursor: pointer;
+  border-radius: 0;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath d='M2 4l4 4 4-4' stroke='black' stroke-width='1.5' fill='none'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 16px center;
+  &:focus { outline: none; }
+  option { text-transform: none; letter-spacing: normal; font-weight: 400; }
+`
 const DetailSection = styled.section`
   padding: 5rem 3rem;
   @media (max-width: 840px) {
@@ -169,6 +204,7 @@ const Demo4 = () => {
   const { themeDnsData, themeCartData, onChangeCartData } = useSettingsContext();
   const { user } = useAuthContext();
   const [item, setItem] = useState(null);
+  const [selectProductGroups, setSelectProductGroups] = useState({ count: 1, groups: [] });
   const brandName = themeDnsData?.name || 'BRAND';
 
   useEffect(() => {
@@ -184,11 +220,15 @@ const Demo4 = () => {
     // 비회원도 담기 허용(카트→주문서에서 비회원 주문비밀번호로 진행)
     const result = await insertCartDataUtil(
       { ...item, seller_id: router.query?.seller_id ?? 0 },
-      [], themeCartData, onChangeCartData
+      selectProductGroups, themeCartData, onChangeCartData
     );
     if (result) {
       toast.success(translate ? translate('장바구니에 성공적으로 추가되었습니다.') : '장바구니에 추가되었습니다.');
     }
+  };
+
+  const onSelectOption = (group, option) => {
+    setSelectProductGroups(selectItemOptionUtil(group, option, selectProductGroups));
   };
 
   if (!item) return <Wrapper><DetailSection>Loading...</DetailSection></Wrapper>;
@@ -224,10 +264,36 @@ const Demo4 = () => {
               </PriceRow>
             </PriceBlock>
           </div>
-          <ButtonRow>
-            <Btn onClick={handleAddCart}>Add to Cart</Btn>
-            <Btn $primary onClick={() => startBuyNow(item, { count: 1, groups: [] }, router)}>Buy Now →</Btn>
-          </ButtonRow>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+            {item?.groups?.length > 0 && (
+              <OptionGroup>
+                {item.groups.map((group, gIdx) => (
+                  <OptionField key={group?.id ?? group?.group_name ?? gIdx}>
+                    <OptionLabel>{group?.group_name}</OptionLabel>
+                    <OptionSelect
+                      defaultValue=""
+                      onChange={(e) => {
+                        if (e.target.value === '') return;
+                        const option = group?.options?.[Number(e.target.value)];
+                        if (option) onSelectOption(group, option);
+                      }}
+                    >
+                      <option value="" disabled>Select</option>
+                      {group?.options?.map((option, oIdx) => (
+                        <option key={option?.id ?? option?.option_name ?? oIdx} value={oIdx}>
+                          {option?.option_name}{option?.option_price > 0 ? ` (+${commarNumber(option.option_price)}원)` : ''}
+                        </option>
+                      ))}
+                    </OptionSelect>
+                  </OptionField>
+                ))}
+              </OptionGroup>
+            )}
+            <ButtonRow>
+              <Btn onClick={handleAddCart}>Add to Cart</Btn>
+              <Btn $primary onClick={() => startBuyNow(item, selectProductGroups, router)}>Buy Now →</Btn>
+            </ButtonRow>
+          </div>
         </InfoSide>
       </Hero>
       {item?.product_description && (

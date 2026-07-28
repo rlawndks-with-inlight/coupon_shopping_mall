@@ -83,6 +83,7 @@ const Demo4 = (props) => {
         let result = await apiManager('auth/change-info', 'update', {
             nickname: userObj?.nickname,
             phone_num: userObj?.phone_num,
+            email: userObj?.email,
         })
         if (result) {
             toast.success('성공적으로 변경되었습니다.');

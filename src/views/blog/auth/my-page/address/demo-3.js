@@ -91,7 +91,7 @@ const Demo3 = (props) => {
             addr: newAddress.addr,
             detail_addr: newAddress.detail_addr,
             phone: newAddress.phone,
-            nickname: nickname,
+            address_type: nickname,
             is_default: newAddress.is_default,
             user_id: user?.id,
         }

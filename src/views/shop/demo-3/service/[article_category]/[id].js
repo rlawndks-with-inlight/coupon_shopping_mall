@@ -1,18 +1,1 @@
-import { useRouter } from "next/router";
-import { useSettingsContext } from "src/components/settings";
-import { useAuthContext } from "src/layouts/manager/auth/useAuthContext";
-import styled from "styled-components";
-
-const ArticleDemo = (props) => {
-
-  const { user } = useAuthContext();
-  const { themeDnsData } = useSettingsContext();
-  const router = useRouter();
-
-  return (
-    <>
-
-    </>
-  )
-}
-export default ArticleDemo
+export { default } from '../../../demo-5/service/[article_category]/[id]';

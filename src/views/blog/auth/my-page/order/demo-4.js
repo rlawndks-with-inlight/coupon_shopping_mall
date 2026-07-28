@@ -40,6 +40,22 @@ const getOptionText = (order) => {
     return arr.join(' / ');
 }
 
+// 택배 배송조회(네이버 통합조회) — 송장은 `택배사-송장번호` 형식. 송장 없으면 null.
+const parseInvoice = (invoice_num) => {
+    if (!invoice_num) return null;
+    const trimmed = String(invoice_num).trim();
+    const di = trimmed.indexOf('-');
+    const hasCourier = di > 0 && /[^0-9]/.test(trimmed.slice(0, di));
+    const courier = hasCourier ? trimmed.slice(0, di) : '';
+    const invoice = hasCourier ? trimmed.slice(di + 1) : trimmed;
+    if (!invoice) return null;
+    return {
+        courier,
+        invoice,
+        url: `https://search.naver.com/search.naver?query=${encodeURIComponent(`${courier} ${invoice} 택배조회`.trim())}`,
+    };
+}
+
 // 공지사항, faq 등 상세페이지 김인욱
 const Demo4 = (props) => {
     const {
@@ -142,18 +158,16 @@ const Demo4 = (props) => {
                                             <AddressButton>
                                                 <Button
                                                     variant='outlined'
+                                                    disabled={!parseInvoice(item?.trx?.invoice_num)}
+                                                    onClick={() => {
+                                                        const track = parseInvoice(item?.trx?.invoice_num);
+                                                        if (track) window.open(track.url, '_blank', 'noopener,noreferrer');
+                                                    }}
                                                     style={{
                                                         marginBottom: '1rem',
                                                         whiteSpace: 'nowrap'
                                                     }}
-                                                >주문정보</Button>
-                                                <Button
-                                                    variant='outlined'
-                                                    style={{
-                                                        marginBottom: '1rem',
-                                                        whiteSpace: 'nowrap'
-                                                    }}
-                                                >배송정보</Button>
+                                                >배송조회</Button>
                                             </AddressButton>
 
                                         </div>

@@ -124,7 +124,7 @@ const Demo4 = (props) => {
     const onSubmitAddress = async () => {
         let payload = {
             ...newAddress,
-            nickname: nickname,
+            address_type: nickname,
             user_id: user?.id,
         }
         let result;

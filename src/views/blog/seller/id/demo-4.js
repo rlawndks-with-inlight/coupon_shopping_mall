@@ -370,7 +370,7 @@ const Demo4 = (props) => {
                         }}
                         onClick={() => {
                             // 비회원도 바로구매 허용(주문서에서 비회원 주문비밀번호로 진행)
-                            startBuyNow(selectedItem, selectProductGroups, router)
+                            startBuyNow({ ...selectedItem, seller_id: router.query?.id ?? 0 }, selectProductGroups, router)
                         }}
                     >바로구매</Button>
                 </SelectContainer>

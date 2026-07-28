@@ -4,6 +4,7 @@ import _ from "lodash";
 import { useRouter } from "next/router";
 import { useEffect } from "react";
 import { useState } from "react";
+import toast from "react-hot-toast";
 import { useModal } from "src/components/dialog/ModalProvider";
 import ContentTable from "src/components/elements/content-table";
 import { AuthMenuSideComponent, ContentWrappers, TitleComponent } from "src/components/elements/shop/demo-5";

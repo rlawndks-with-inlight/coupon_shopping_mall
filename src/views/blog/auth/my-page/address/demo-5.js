@@ -126,7 +126,7 @@ const Demo5 = (props) => {
             addr: newAddress?.addr,
             detail_addr: newAddress?.detail_addr,
             zonecode: newAddress?.zonecode,
-            nickname: nickname,
+            address_type: nickname,
             is_default: newAddress?.is_default ? true : false,
             user_id: user?.id,
         }

@@ -388,7 +388,7 @@ const Header = () => {
                   {user ?
                     <>
                       <Button sx={{ height: '24px' }} onClick={() => router.push('/shop/auth/my-page')}>마이페이지</Button>
-                      <Button sx={{ height: '24px' }} onClick={() => router.push('/shop/service/history')}>주문내역</Button>
+                      <Button sx={{ height: '24px' }} onClick={() => router.push('/shop/auth/history')}>주문내역</Button>
                       <Button variant="outlined" sx={{ height: '24px' }} onClick={() => {
                         onLogout();
                       }}>로그아웃</Button>

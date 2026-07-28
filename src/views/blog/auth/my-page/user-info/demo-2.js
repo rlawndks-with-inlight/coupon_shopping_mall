@@ -47,6 +47,8 @@ const Demo2 = (props) => {
         check_0: false,
         check_1: false,
     })
+    // 비밀번호 변경 인라인 섹션 토글
+    const [authMode, setAuthMode] = useState(null)
 
     useEffect(() => {
         if (user) {
@@ -89,10 +91,25 @@ const Demo2 = (props) => {
         }
     }
 
-    const onMoveChangePassword = () => {
-        // 블로그 테마에는 로그인 상태 비밀번호 변경 전용 페이지가 없어
-        // auth/change-password 를 처리하는 계정 정보 페이지로 이동한다.
-        router.push('/blog/auth/find-info');
+    const onChangePassword = async () => {
+        if (!userObj?.password) {
+            return toast.error('현재비밀번호를 입력해주세요.');
+        }
+        if (!userObj?.new_password) {
+            return toast.error('새비밀번호를 입력해주세요.');
+        }
+        if (userObj.new_password != userObj.new_password_check) {
+            return toast.error('비밀번호가 일치하지 않습니다.');
+        }
+        let result = await apiManager('auth/change-password', 'update', {
+            password: userObj.password,
+            new_password: userObj.new_password,
+        });
+        if (result) {
+            toast.success('성공적으로 비밀번호가 변경되었습니다.');
+            setAuthMode(null);
+            setUserObj({ ...userObj, password: '', new_password: '', new_password_check: '' });
+        }
     }
 
     const onResign = () => {
@@ -242,7 +259,7 @@ const Demo2 = (props) => {
                         <div
                             style={{ marginRight: '5%', cursor: 'pointer' }}
                             onClick={() => {
-                                onMoveChangePassword()
+                                setAuthMode(authMode === 'password' ? null : 'password')
                             }}
                         >비밀번호 변경</div>
                         <div
@@ -252,6 +269,47 @@ const Demo2 = (props) => {
                             }}
                         >회원탈퇴</div>
                     </div>
+                    {authMode === 'password' &&
+                        <div style={{ display: 'flex', flexDirection: 'column', marginTop: '1rem' }}>
+                            <TextField
+                                type='password'
+                                name='password'
+                                placeholder='현재 비밀번호'
+                                value={userObj?.password ?? ''}
+                                onChange={(e) => {
+                                    setUserObj({ ...userObj, password: e.target.value })
+                                }}
+                                sx={{ marginBottom: '1%' }}
+                            />
+                            <TextField
+                                type='password'
+                                name='new_password'
+                                placeholder='새 비밀번호'
+                                value={userObj?.new_password ?? ''}
+                                onChange={(e) => {
+                                    setUserObj({ ...userObj, new_password: e.target.value })
+                                }}
+                                sx={{ marginBottom: '1%' }}
+                            />
+                            <TextField
+                                type='password'
+                                name='new_password_check'
+                                placeholder='새 비밀번호 확인'
+                                value={userObj?.new_password_check ?? ''}
+                                onChange={(e) => {
+                                    setUserObj({ ...userObj, new_password_check: e.target.value })
+                                }}
+                                sx={{ marginBottom: '1%' }}
+                            />
+                            <Button
+                                variant='contained'
+                                style={{ height: '56px', marginTop: '1rem' }}
+                                onClick={() => {
+                                    onChangePassword()
+                                }}
+                            >비밀번호 변경</Button>
+                        </div>
+                    }
                 </TextFieldContainer>
             </Wrappers >
         </>

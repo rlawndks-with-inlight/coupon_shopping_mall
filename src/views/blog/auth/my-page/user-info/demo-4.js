@@ -262,8 +262,16 @@ const Demo4 = (props) => {
                             sx={{
                                 width: '100%'
                             }}
-                            onChange={(e) => {
-                                setSelectedAddressId(e.target.value)
+                            onChange={async (e) => {
+                                let id = e.target.value
+                                setSelectedAddressId(id)
+                                let result = await apiManager('user-addresses', 'update', {
+                                    id,
+                                    is_default: 1,
+                                })
+                                if (result) {
+                                    toast.success('기본 배송지로 설정되었습니다.')
+                                }
                             }}
                         >
                             {addressList.map((item) => (

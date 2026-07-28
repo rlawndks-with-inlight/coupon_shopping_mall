@@ -39,7 +39,6 @@ const Demo1 = (props) => {
 
   const { onChangeCartData, onChangeWishData } = useSettingsContext();
   const { user, logout } = useAuthContext();
-  const [buttonText, setButtonText] = useState("변경")
   const [checkboxObj, setCheckboxObj] = useState({
     check_0: false,
     check_1: false,
@@ -160,20 +159,9 @@ const Demo1 = (props) => {
               sx={{
                 marginBottom: '1%',
                 backgroundColor: '#F6F6F6',
-                width: '80%',
-                marginRight: '1%'
+                width: '100%'
               }}
             />
-            <Button
-              variant='outlined'
-              style={{
-                height: '56px',
-                width: '19%'
-              }}
-              onClick={() => {
-                setButtonText("인증받기")
-              }}
-            >{buttonText}</Button>
           </div>
           <TextFieldTitle>기본 배송지</TextFieldTitle>
           {addressList.length > 0 ? (
@@ -185,8 +173,16 @@ const Demo1 = (props) => {
                 sx={{
                   width: '100%'
                 }}
-                onChange={(e) => {
-                  setSelectedAddressId(e.target.value)
+                onChange={async (e) => {
+                  let id = e.target.value
+                  setSelectedAddressId(id)
+                  let result = await apiManager('user-addresses', 'update', {
+                    id,
+                    is_default: 1,
+                  })
+                  if (result) {
+                    toast.success('기본 배송지로 설정되었습니다.')
+                  }
                 }}
               >
                 {addressList.map((address) => (

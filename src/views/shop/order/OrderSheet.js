@@ -380,6 +380,8 @@ export default function OrderSheet({ router }) {
                               <Button size="small" variant={selectedAddrId == item?.id ? 'contained' : 'outlined'}
                                 onClick={(e) => { e.stopPropagation(); onSelectAddress(item); }}>선택</Button>
                               <Button size="small" color="inherit" variant="outlined"
+                                onClick={(e) => { e.stopPropagation(); onUpdateAddress(item?.id); }}>수정</Button>
+                              <Button size="small" color="inherit" variant="outlined"
                                 onClick={(e) => { e.stopPropagation(); onDeleteAddress(item?.id); }}>삭제</Button>
                             </Stack>
                           </Stack>

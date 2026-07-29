@@ -13,6 +13,7 @@ import { useEffect, useState } from "react";
 import { commarNumber, getPercentByNumber, returnMoment } from "src/utils/function";
 import { apiManager } from "src/utils/api";
 import { useRouter } from "next/router";
+import OnboardingChecklist from "./OnboardingChecklist";
 
 export const DashboardDemo2 = () => {
 
@@ -50,6 +51,9 @@ export const DashboardDemo2 = () => {
         <>
             <Container maxWidth={themeStretch ? false : 'xl'}>
                 <Grid container spacing={3}>
+                    <Grid item xs={12} md={12}>
+                        <OnboardingChecklist />
+                    </Grid>
                     <Grid item xs={12} md={12}>
                         <Row style={{ rowGap: '1rem', flexWrap: 'wrap', columnGap: '1rem' }}>
                             {window.innerWidth > 1000 ?

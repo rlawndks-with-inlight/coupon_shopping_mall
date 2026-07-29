@@ -66,7 +66,7 @@ const LoginDemo = (props) => {
     let user = await login(username, password)
     if (user) {
       onChangeWishData(user?.wish_data ?? []);
-      router.push('/')
+      router.push('/shop')
     }
   }
   const onCheckNoneUserPay = async () => {

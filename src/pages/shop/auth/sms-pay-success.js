@@ -29,7 +29,7 @@ const SmsPaySuccess = () => {
             variant="contained"
             size="large"
             sx={{ minWidth: '180px' }}
-            onClick={() => { router.push('/'); }}
+            onClick={() => { router.push('/shop'); }}
           >
             홈으로 이동
           </Button>

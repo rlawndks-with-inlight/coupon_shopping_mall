@@ -1,5 +1,5 @@
 
-import { Avatar, Button, Card, CardHeader, FormControl, Grid, InputLabel, MenuItem, Select, Stack, TextField, } from "@mui/material";
+import { Avatar, Button, Card, CardHeader, FormControl, Grid, InputLabel, MenuItem, Select, Stack, Switch, TextField, Typography, } from "@mui/material";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { useSettingsContext } from "src/components/settings";
@@ -9,7 +9,7 @@ import { toast } from "react-hot-toast";
 import { useModal } from "src/components/dialog/ModalProvider";
 import { useAuthContext } from "src/layouts/manager/auth/useAuthContext";
 import { apiManager } from "src/utils/api";
-import { paymentModuleTypeList } from "src/utils/format";
+import { paymentModuleTypeList, forspayMethodList, forspayProviderList } from "src/utils/format";
 const Tour = dynamic(
   () => import('reactour'),
   { ssr: false },
@@ -28,6 +28,23 @@ const PaymentModuleEdit = () => {
     trx_type: 1,
     is_old_auth: 0,
   })
+  // 포스페이(41) 수단별 노출/PG 라우팅 설정
+  const [forspayCfg, setForspayCfg] = useState({ methods: {} });
+  const isForspayMethodEnabled = (m) => {
+    const mc = forspayCfg?.methods?.[m.key];
+    if (mc && typeof mc.enabled !== 'undefined') return !!mc.enabled;
+    return !m.pending; // 설정 없으면 pending(삼성페이) 제외 기본 활성
+  };
+  const getForspayProvider = (key) => {
+    const p = forspayCfg?.methods?.[key]?.provider;
+    return (p === undefined || p === null) ? '' : p;
+  };
+  const setForspayMethod = (key, patch) => {
+    setForspayCfg((prev) => ({
+      ...prev,
+      methods: { ...(prev?.methods || {}), [key]: { ...(prev?.methods?.[key] || {}), ...patch } },
+    }));
+  };
   useEffect(() => {
     settingPage();
   }, [])
@@ -36,16 +53,27 @@ const PaymentModuleEdit = () => {
       let data = await apiManager('payment-modules', 'get', { id: router.query?.id });
       if (data) {
         setItem(data);
+        if (data?.forspay_config) {
+          try { setForspayCfg(JSON.parse(data.forspay_config) || { methods: {} }); } catch (e) { /* noop */ }
+        }
       }
     }
     setLoading(false);
   }
   const onSave = async () => {
+    let payload = { ...item };
+    if (item?.trx_type == 41) {
+      // 수단별 설정을 실제로 지정한 경우에만 전송 (미설정이면 컬럼 없이도 저장 가능 → 단일 PG 테스트는 ALTER 불필요)
+      const methods = forspayCfg?.methods || {};
+      if (Object.keys(methods).length > 0) {
+        payload.forspay_config = JSON.stringify({ methods });
+      }
+    }
     let result = undefined;
     if (router.query?.edit_category == 'edit') {
-      result = await apiManager('payment-modules', 'update', { ...item, id: router.query?.id });
+      result = await apiManager('payment-modules', 'update', { ...payload, id: router.query?.id });
     } else {
-      result = await apiManager('payment-modules', 'create', item);
+      result = await apiManager('payment-modules', 'create', payload);
     }
     if (result) {
       toast.success("성공적으로 저장 되었습니다.");
@@ -109,6 +137,46 @@ const PaymentModuleEdit = () => {
                       })}
                     </Select>
                   </FormControl>
+                  {item?.trx_type == 41 &&
+                    <Card variant="outlined" sx={{ p: 2 }}>
+                      <Typography variant="subtitle2" sx={{ mb: 0.5 }}>포스페이 결제수단 · PG 라우팅</Typography>
+                      <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mb: 2 }}>
+                        구매자에게 노출할 결제수단을 켜고, 각 수단이 어느 PG(페이레터/나이스 등)로 처리될지 지정합니다. PG를 &apos;기본&apos;으로 두면 위 MID값(또는 포스페이 자동 라우팅)을 따릅니다.
+                      </Typography>
+                      <Stack spacing={1.5}>
+                        {forspayMethodList.map((m) => {
+                          const enabled = isForspayMethodEnabled(m);
+                          return (
+                            <Grid container spacing={1} alignItems="center" key={m.key}>
+                              <Grid item xs={12} sm={5}>
+                                <Stack direction="row" spacing={1} alignItems="center">
+                                  <Switch
+                                    size="small"
+                                    checked={enabled}
+                                    onChange={(e) => setForspayMethod(m.key, { enabled: e.target.checked })}
+                                  />
+                                  <Typography variant="body2">{m.label}</Typography>
+                                </Stack>
+                              </Grid>
+                              <Grid item xs={12} sm={7}>
+                                <FormControl fullWidth size="small" disabled={!enabled}>
+                                  <InputLabel>PG</InputLabel>
+                                  <Select
+                                    label="PG"
+                                    value={getForspayProvider(m.key)}
+                                    onChange={(e) => setForspayMethod(m.key, { provider: e.target.value })}
+                                  >
+                                    {forspayProviderList.map((p) => (
+                                      <MenuItem key={String(p.value)} value={p.value}>{p.label}</MenuItem>
+                                    ))}
+                                  </Select>
+                                </FormControl>
+                              </Grid>
+                            </Grid>
+                          );
+                        })}
+                      </Stack>
+                    </Card>}
                   {item?.trx_type == 10 &&
                     <>
                       <TextField

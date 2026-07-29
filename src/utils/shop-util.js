@@ -309,6 +309,8 @@ export const onPayProductsByForspay = async (products_, payData_) => { // 인증
     }
     let products = products_;
     let payData = await makePayData(products, payData_);
+    // 구매자가 고른 결제수단 키(card/bank/kakaopay/…). 선택 옵션에 실려 옴. 기본은 신용카드.
+    const pay_method = payData_?.payment_modules?.pay_method || 'card';
     let ord_num = `FS${payData?.user_id || payData?.password || ''}${new Date().getTime().toString().substring(0, 11)}`.replace(/[^a-zA-Z0-9]/g, '');
     if (payData?.products?.length > 1 || !payData?.item_name) {
         payData.item_name = `${payData?.products[0]?.order_name} 외 ${payData?.products?.length - 1}`;
@@ -317,6 +319,7 @@ export const onPayProductsByForspay = async (products_, payData_) => { // 인증
     payData = {
         ...payData,
         ord_num,
+        pay_method,
         front_url: window.location.origin, // 결제완료 후 리다이렉트할 프론트 주소
         user_agent: isMobile ? 'MW' : 'WP',
     };

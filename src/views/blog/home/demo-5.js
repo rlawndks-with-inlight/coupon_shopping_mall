@@ -3,7 +3,7 @@ import { useSettingsContext } from 'src/components/settings'
 import { LazyLoadImage } from 'react-lazy-load-image-component'
 import { commarNumber } from 'src/utils/function'
 import { formatLang } from 'src/utils/format'
-import { useFeaturedProduct } from 'src/utils/use-featured-product'
+import { useFeaturedProduct, useFeaturedProducts, getFeaturedCardData } from 'src/utils/use-featured-product'
 import { useLocales } from 'src/locales'
 
 /* ══════════════════════════════════════
@@ -255,6 +255,39 @@ const GalleryCell = styled.div`
   border: 1px solid rgba(201, 168, 118, 0.2);
   padding: 1.5rem;
 `
+const FeaturedCard = styled.div`
+  cursor: pointer;
+  text-align: center;
+  transition: transform 0.3s;
+  &:hover {
+    transform: translateY(-4px);
+  }
+`
+const FeaturedName = styled.div`
+  font-family: 'Playfair Display', 'Noto Serif KR', serif;
+  font-size: 20px;
+  font-weight: 300;
+  margin-top: 1.25rem;
+  line-height: 1.3;
+`
+const FeaturedPrice = styled.div`
+  font-family: 'Playfair Display', serif;
+  font-size: 22px;
+  color: ${GOLD};
+  font-weight: 300;
+  margin-top: 0.5rem;
+`
+const FeaturedOrig = styled.span`
+  font-size: 13px;
+  opacity: 0.4;
+  text-decoration: line-through;
+  margin-right: 0.5rem;
+`
+const FeaturedDisc = styled.span`
+  font-size: 12px;
+  letter-spacing: 1px;
+  color: ${GOLD};
+`
 
 const FinalCTA = styled(Section)`
   text-align: center;
@@ -291,6 +324,7 @@ const Demo5 = (props) => {
   const router = func?.router;
   const brandName = themeDnsData?.name || 'BRAND';
   const product = useFeaturedProduct();
+  const featuredProducts = useFeaturedProducts({ excludeId: product?.id });
 
   if (!product) {
     return (
@@ -382,6 +416,35 @@ const Demo5 = (props) => {
           </GalleryCell>
         </GalleryGrid>
       </GallerySection>
+
+      {featuredProducts.length > 0 && (
+        <GallerySection>
+          <SectionHeading>The Collection</SectionHeading>
+          <GalleryGrid>
+            {featuredProducts.map((item) => {
+              const c = getFeaturedCardData(item, currentLang);
+              return (
+                <FeaturedCard key={c.id} onClick={() => router?.push?.(`/blog/product/${c.id}`)}>
+                  <GalleryCell>
+                    <LazyLoadImage src={c.img} effect="blur" style={{ maxWidth: '75%', maxHeight: '75%', objectFit: 'contain', filter: 'drop-shadow(0 10px 30px rgba(201,168,118,0.2))' }} />
+                  </GalleryCell>
+                  <FeaturedName>{c.name}</FeaturedName>
+                  <FeaturedPrice>
+                    {c.hasSale && (
+                      <>
+                        <FeaturedOrig>{commarNumber(c.orig)}원</FeaturedOrig>
+                        <FeaturedDisc>{c.disc}%</FeaturedDisc>
+                        <br />
+                      </>
+                    )}
+                    {commarNumber(c.sale)}원
+                  </FeaturedPrice>
+                </FeaturedCard>
+              );
+            })}
+          </GalleryGrid>
+        </GallerySection>
+      )}
 
       <FinalCTA>
         <HeroOrnament>✦</HeroOrnament>

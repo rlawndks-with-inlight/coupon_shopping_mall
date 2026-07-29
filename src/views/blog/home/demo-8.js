@@ -3,7 +3,7 @@ import { useSettingsContext } from 'src/components/settings'
 import { LazyLoadImage } from 'react-lazy-load-image-component'
 import { commarNumber } from 'src/utils/function'
 import { formatLang } from 'src/utils/format'
-import { useFeaturedProduct } from 'src/utils/use-featured-product'
+import { useFeaturedProduct, useFeaturedProducts, getFeaturedCardData } from 'src/utils/use-featured-product'
 import { useLocales } from 'src/locales'
 
 /* ══════════════════════════════════════
@@ -254,6 +254,87 @@ const FinalSmall = styled.div`
   text-transform: uppercase;
 `
 
+/* 대표 상품 - 브루탈리스트 그리드 (Facts 격자 미러) */
+const Featured = styled.section`
+  border-bottom: 4px solid ${BLACK};
+`
+const FeaturedHead = styled.div`
+  padding: 5rem 2rem 3rem;
+  @media (max-width: 840px) {
+    padding: 3rem 1.25rem 2rem;
+  }
+`
+const FeaturedTitle = styled.div`
+  font-size: 88px;
+  font-weight: 900;
+  letter-spacing: -4px;
+  line-height: 1;
+  text-transform: uppercase;
+  @media (max-width: 840px) {
+    font-size: 48px;
+    letter-spacing: -2px;
+  }
+`
+const FeaturedGrid = styled.div`
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  border-top: 4px solid ${BLACK};
+  @media (max-width: 840px) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+`
+const ProductCell = styled.div`
+  padding: 2rem;
+  border-right: 4px solid ${BLACK};
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  &:last-child {
+    border-right: none;
+  }
+  &:nth-child(odd) {
+    background: ${WHITE};
+  }
+  &:nth-child(even) {
+    background: ${BLACK};
+    color: ${WHITE};
+  }
+  &:hover {
+    background: ${NEON};
+    color: ${BLACK};
+  }
+  @media (max-width: 840px) {
+    &:nth-child(even) {
+      border-right: 4px solid ${BLACK};
+    }
+    &:nth-child(2n) {
+      border-right: none;
+    }
+    border-bottom: 4px solid ${BLACK};
+  }
+`
+const CardImage = styled(LazyLoadImage)`
+  width: 100%;
+  height: 200px;
+  object-fit: contain;
+  margin-bottom: 1.5rem;
+`
+const CardName = styled.div`
+  font-size: 22px;
+  font-weight: 900;
+  letter-spacing: -1px;
+  line-height: 1;
+  text-transform: uppercase;
+  margin-top: 1rem;
+`
+const CardPrice = styled.div`
+  font-size: 34px;
+  font-weight: 900;
+  letter-spacing: -2px;
+  line-height: 0.9;
+  margin-top: 0.75rem;
+`
+
 const Demo8 = (props) => {
   const { currentLang } = useLocales();
   const { themeDnsData } = useSettingsContext();
@@ -261,6 +342,7 @@ const Demo8 = (props) => {
   const router = func?.router;
   const brandName = themeDnsData?.name || 'BRAND';
   const product = useFeaturedProduct();
+  const featuredProducts = useFeaturedProducts({ excludeId: product?.id });
 
   if (!product) {
     return (
@@ -332,6 +414,31 @@ const Demo8 = (props) => {
           <FactLabel>Filler</FactLabel>
         </FactCell>
       </Facts>
+
+      {featuredProducts.length > 0 && (
+        <Featured>
+          <FeaturedHead>
+            <MonoLabel>Collection / All</MonoLabel>
+            <FeaturedTitle style={{ marginTop: '1rem' }}>
+              More <ManifestoAccent>picks</ManifestoAccent>
+            </FeaturedTitle>
+          </FeaturedHead>
+          <FeaturedGrid>
+            {featuredProducts.map((item, i) => {
+              const c = getFeaturedCardData(item, currentLang);
+              return (
+                <ProductCell key={c.id} onClick={() => router?.push?.(`/blog/product/${c.id}`)}>
+                  <CardImage src={c.img} effect="blur" />
+                  <MonoLabel>{`Item / ${String(i + 1).padStart(2, '0')}`}</MonoLabel>
+                  <CardName>{c.name}</CardName>
+                  {c.hasSale && <PriceOrig>{commarNumber(c.orig)}원 · -{c.disc}%</PriceOrig>}
+                  <CardPrice>{commarNumber(c.sale)}원</CardPrice>
+                </ProductCell>
+              );
+            })}
+          </FeaturedGrid>
+        </Featured>
+      )}
 
       <FinalCTA onClick={goTo}>
         <FinalHuge>Get it now</FinalHuge>

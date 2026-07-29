@@ -4,7 +4,7 @@ import { themeObj } from 'src/components/elements/styled-components'
 import { LazyLoadImage } from 'react-lazy-load-image-component'
 import { commarNumber } from 'src/utils/function'
 import { formatLang } from 'src/utils/format'
-import { useFeaturedProduct } from 'src/utils/use-featured-product'
+import { useFeaturedProduct, useFeaturedProducts, getFeaturedCardData } from 'src/utils/use-featured-product'
 import { useLocales } from 'src/locales'
 
 /* ══════════════════════════════════════
@@ -247,6 +247,69 @@ const CTABtn = styled.a`
   }
 `
 
+/* Featured Products Grid (optional) */
+const FeaturedSection = styled.section`
+  padding: 6rem 3rem;
+  border-bottom: 1px solid #000;
+  @media (max-width: 840px) {
+    padding: 4rem 1.5rem;
+  }
+`
+const FeaturedGrid = styled.div`
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0;
+  @media (max-width: 840px) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+`
+const FeaturedCell = styled.div`
+  border-left: 1px solid #000;
+  cursor: pointer;
+  &:first-child {
+    border-left: none;
+  }
+  &:hover {
+    background: #000;
+    color: #fff;
+  }
+  @media (max-width: 840px) {
+    &:nth-child(3) { border-left: none; }
+  }
+`
+const FeaturedImageBox = styled.div`
+  background: #f5f5f5;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  aspect-ratio: 1 / 1;
+  padding: 2rem;
+`
+const FeaturedImage = styled(LazyLoadImage)`
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+`
+const FeaturedInfo = styled.div`
+  padding: 1.5rem;
+`
+const FeaturedName = styled.div`
+  font-size: 22px;
+  font-weight: 900;
+  line-height: 1;
+  letter-spacing: -1px;
+  text-transform: uppercase;
+  margin-bottom: 0.75rem;
+  @media (max-width: 840px) {
+    font-size: 18px;
+  }
+`
+const FeaturedPrice = styled.div`
+  font-size: 14px;
+  font-weight: 900;
+  letter-spacing: 0.5px;
+`
+
 const Demo4 = (props) => {
   const { currentLang } = useLocales();
   const { themeDnsData } = useSettingsContext();
@@ -254,6 +317,7 @@ const Demo4 = (props) => {
   const router = func?.router;
   const brandName = themeDnsData?.name || 'BRAND';
   const product = useFeaturedProduct();
+  const featuredProducts = useFeaturedProducts({ excludeId: product?.id });
 
   if (!product) {
     return (
@@ -347,6 +411,33 @@ const Demo4 = (props) => {
           </InfoBody>
         </InfoRight>
       </InfoSection>
+
+      {featuredProducts.length > 0 && (
+        <FeaturedSection>
+          <InfoHeading>More</InfoHeading>
+          <FeaturedGrid>
+            {featuredProducts.map((item) => {
+              const c = getFeaturedCardData(item, currentLang);
+              return (
+                <FeaturedCell key={c.id} onClick={() => router?.push?.(`/blog/product/${c.id}`)}>
+                  <FeaturedImageBox>
+                    <FeaturedImage src={c.img} effect="blur" alt={c.name} />
+                  </FeaturedImageBox>
+                  <FeaturedInfo>
+                    <FeaturedName>{c.name}</FeaturedName>
+                    {c.hasSale && (
+                      <div style={{ fontSize: '12px', textDecoration: 'line-through', opacity: 0.4, marginBottom: '0.35rem' }}>
+                        {commarNumber(c.orig)}원 · {c.disc}% OFF
+                      </div>
+                    )}
+                    <FeaturedPrice>{commarNumber(c.sale)}원</FeaturedPrice>
+                  </FeaturedInfo>
+                </FeaturedCell>
+              );
+            })}
+          </FeaturedGrid>
+        </FeaturedSection>
+      )}
 
       <PriceSection>
         <PriceLabel>Price</PriceLabel>

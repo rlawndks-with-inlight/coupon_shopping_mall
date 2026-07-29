@@ -4,7 +4,7 @@ import { themeObj } from 'src/components/elements/styled-components'
 import { LazyLoadImage } from 'react-lazy-load-image-component'
 import { commarNumber } from 'src/utils/function'
 import { formatLang } from 'src/utils/format'
-import { useFeaturedProduct } from 'src/utils/use-featured-product'
+import { useFeaturedProduct, useFeaturedProducts, getFeaturedCardData } from 'src/utils/use-featured-product'
 import { useLocales } from 'src/locales'
 
 /* ══════════════════════════════════════
@@ -386,6 +386,40 @@ const SectionHeading = styled.h2`
   }
 `
 
+/* Featured collection (선택적 대표 상품 그리드) */
+const FeaturedCard = styled.div`
+  display: flex;
+  flex-direction: column;
+  cursor: pointer;
+  transition: transform 0.3s;
+  &:hover {
+    transform: translateY(-6px);
+  }
+`
+const FeaturedImageWrap = styled.div`
+  aspect-ratio: 4/5;
+  background: ${p => p.$color}15;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  margin-bottom: 1.25rem;
+`
+const FeaturedImage = styled(LazyLoadImage)`
+  max-width: 80%;
+  max-height: 80%;
+  object-fit: contain;
+  filter: drop-shadow(0 20px 40px rgba(0,0,0,0.15));
+`
+const FeaturedName = styled.div`
+  font-family: 'Playfair Display', 'Noto Serif KR', serif;
+  font-size: 22px;
+  font-weight: 700;
+  letter-spacing: -0.5px;
+  text-align: center;
+  margin-bottom: 0.5rem;
+`
+
 const Demo6 = (props) => {
   const { currentLang } = useLocales();
   const { themeDnsData } = useSettingsContext();
@@ -394,6 +428,7 @@ const Demo6 = (props) => {
   const mainColor = themeDnsData?.theme_css?.main_color || '#8B7355';
   const brandName = themeDnsData?.name || 'BRAND';
   const product = useFeaturedProduct();
+  const featuredProducts = useFeaturedProducts({ excludeId: product?.id });
 
   if (!product) {
     return (
@@ -528,6 +563,33 @@ const Demo6 = (props) => {
           </GalleryGrid>
         </Container>
       </GallerySection>
+
+      {/* 6.5 Featured collection (선택적 대표 상품 그리드) */}
+      {featuredProducts.length > 0 && (
+        <Section>
+          <Container>
+            <SectionHeading>The Collection</SectionHeading>
+            <FeatureGrid>
+              {featuredProducts.map((item) => {
+                const c = getFeaturedCardData(item, currentLang);
+                return (
+                  <FeaturedCard key={c.id} onClick={() => router?.push?.(`/blog/product/${c.id}`)}>
+                    <FeaturedImageWrap $color={mainColor}>
+                      <FeaturedImage src={c.img} effect="blur" />
+                    </FeaturedImageWrap>
+                    <FeaturedName>{c.name}</FeaturedName>
+                    <HeroPriceRow style={{ justifyContent: 'center', marginTop: 0 }}>
+                      {c.hasSale && <HeroDisc>{c.disc}% OFF</HeroDisc>}
+                      <HeroSalePrice $color={mainColor} style={{ fontSize: '26px' }}>{commarNumber(c.sale)}원</HeroSalePrice>
+                      {c.hasSale && <HeroOrigPrice>{commarNumber(c.orig)}원</HeroOrigPrice>}
+                    </HeroPriceRow>
+                  </FeaturedCard>
+                );
+              })}
+            </FeatureGrid>
+          </Container>
+        </Section>
+      )}
 
       {/* 7. Final CTA */}
       <FinalCTA $color={mainColor}>

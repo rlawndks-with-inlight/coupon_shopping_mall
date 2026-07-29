@@ -3,7 +3,7 @@ import { useSettingsContext } from 'src/components/settings'
 import { LazyLoadImage } from 'react-lazy-load-image-component'
 import { commarNumber } from 'src/utils/function'
 import { formatLang } from 'src/utils/format'
-import { useFeaturedProduct } from 'src/utils/use-featured-product'
+import { useFeaturedProduct, useFeaturedProducts, getFeaturedCardData } from 'src/utils/use-featured-product'
 import { useLocales } from 'src/locales'
 
 /* ══════════════════════════════════════
@@ -298,6 +298,73 @@ const SectionHeading = styled.h2`
   }
 `
 
+/* Featured Products (대표 상품) — mirrors Heart grid/card language */
+const FeaturedSection = styled(Section)`
+  text-align: center;
+`
+const FeaturedGrid = styled.div`
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.5rem;
+  max-width: 900px;
+  margin: 3rem auto 0;
+  @media (max-width: 840px) {
+    grid-template-columns: 1fr;
+  }
+`
+const FeaturedCard = styled.div`
+  background: #fff;
+  padding: 1.25rem 1.25rem 1.75rem;
+  border-radius: 24px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+  text-align: center;
+  cursor: pointer;
+  transition: transform 0.3s, box-shadow 0.3s;
+  &:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 32px rgba(255, 138, 128, 0.2);
+  }
+`
+const FeaturedImgWrap = styled.div`
+  position: relative;
+  width: 100%;
+  height: 200px;
+  margin-bottom: 1rem;
+  background: ${BG};
+  border-radius: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+`
+const FeaturedImg = styled(LazyLoadImage)`
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+`
+const FeaturedBadge = styled(Sticker)`
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  z-index: 1;
+  padding: 6px 12px;
+  font-size: 11px;
+`
+const FeaturedName = styled.h3`
+  font-size: 18px;
+  font-weight: 900;
+  letter-spacing: -0.5px;
+  line-height: 1.3;
+  color: ${TEXT};
+  margin: 0 0 0.75rem 0;
+`
+const FeaturedPriceRow = styled.div`
+  display: flex;
+  align-items: baseline;
+  justify-content: center;
+  gap: 0.5rem;
+`
+
 const Demo9 = (props) => {
   const { currentLang } = useLocales();
   const { themeDnsData } = useSettingsContext();
@@ -305,6 +372,7 @@ const Demo9 = (props) => {
   const router = func?.router;
   const brandName = themeDnsData?.name || 'BRAND';
   const product = useFeaturedProduct();
+  const featuredProducts = useFeaturedProducts({ excludeId: product?.id });
 
   if (!product) {
     return (
@@ -396,6 +464,30 @@ const Demo9 = (props) => {
           </HeartCard>
         </HeartGrid>
       </HeartSection>
+
+      {featuredProducts.length > 0 && (
+        <FeaturedSection>
+          <SectionHeading>🛍️ 대표 상품</SectionHeading>
+          <FeaturedGrid>
+            {featuredProducts.map((item) => {
+              const c = getFeaturedCardData(item, currentLang);
+              return (
+                <FeaturedCard key={c.id} onClick={() => router?.push?.(`/blog/product/${c.id}`)}>
+                  <FeaturedImgWrap>
+                    {c.hasSale && <FeaturedBadge $bg={CORAL} $color="#fff">🔥 {c.disc}% OFF</FeaturedBadge>}
+                    <FeaturedImg src={c.img} effect="blur" />
+                  </FeaturedImgWrap>
+                  <FeaturedName>{c.name}</FeaturedName>
+                  <FeaturedPriceRow>
+                    <HeroPrice style={{ fontSize: '20px' }}>{commarNumber(c.sale)}원</HeroPrice>
+                    {c.hasSale && <HeroOrig>{commarNumber(c.orig)}원</HeroOrig>}
+                  </FeaturedPriceRow>
+                </FeaturedCard>
+              );
+            })}
+          </FeaturedGrid>
+        </FeaturedSection>
+      )}
 
       <FinalCTA>
         <FinalTitle>지금이 {brandName}과<br />함께할 순간이에요 💕</FinalTitle>

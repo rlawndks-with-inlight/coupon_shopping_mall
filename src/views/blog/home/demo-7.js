@@ -3,7 +3,7 @@ import { useSettingsContext } from 'src/components/settings'
 import { LazyLoadImage } from 'react-lazy-load-image-component'
 import { commarNumber } from 'src/utils/function'
 import { formatLang } from 'src/utils/format'
-import { useFeaturedProduct } from 'src/utils/use-featured-product'
+import { useFeaturedProduct, useFeaturedProducts, getFeaturedCardData } from 'src/utils/use-featured-product'
 import { useLocales } from 'src/locales'
 
 /* ══════════════════════════════════════
@@ -294,6 +294,54 @@ const SectionHeading = styled.h2`
   }
 `
 
+/* Featured products - 대표 상품 (optional grid, mirrors Values) */
+const Featured = styled(Section)`
+  text-align: center;
+`
+const FeaturedGrid = styled.div`
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 3rem;
+  max-width: 900px;
+  margin: 0 auto;
+  @media (max-width: 840px) {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+  }
+`
+const FeaturedCard = styled.div`
+  padding: 2rem 1rem;
+  border: 1px solid ${INK}30;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  transition: border-color 0.3s, background 0.3s;
+  &:hover {
+    border-color: ${ACCENT};
+    background: rgba(166, 77, 60, 0.04);
+  }
+`
+const FeaturedImage = styled(LazyLoadImage)`
+  width: 160px;
+  height: 160px;
+  object-fit: contain;
+`
+const FeaturedName = styled.div`
+  font-family: 'Noto Serif KR', serif;
+  font-size: 18px;
+  font-weight: 300;
+  letter-spacing: 2px;
+  line-height: 1.4;
+`
+const FeaturedPrice = styled.div`
+  font-family: 'Noto Serif KR', serif;
+  font-size: 15px;
+  font-weight: 300;
+  opacity: 0.75;
+`
+
 const Demo7 = (props) => {
   const { currentLang } = useLocales();
   const { themeDnsData } = useSettingsContext();
@@ -301,6 +349,7 @@ const Demo7 = (props) => {
   const router = func?.router;
   const brandName = themeDnsData?.name || '無名';
   const product = useFeaturedProduct();
+  const featuredProducts = useFeaturedProducts({ excludeId: product?.id });
 
   if (!product) {
     return (
@@ -370,6 +419,25 @@ const Demo7 = (props) => {
           </ValueCard>
         </ValuesGrid>
       </Values>
+
+      {featuredProducts.length > 0 && (
+        <Featured>
+          <SectionHeading>選ばれた品</SectionHeading>
+          <FeaturedGrid>
+            {featuredProducts.map((item) => {
+              const c = getFeaturedCardData(item, currentLang);
+              return (
+                <FeaturedCard key={c.id} onClick={() => router?.push?.(`/blog/product/${c.id}`)}>
+                  <FeaturedImage src={c.img} effect="blur" />
+                  <HeroDivider />
+                  <FeaturedName>{c.name}</FeaturedName>
+                  <FeaturedPrice>{commarNumber(c.sale)}円</FeaturedPrice>
+                </FeaturedCard>
+              );
+            })}
+          </FeaturedGrid>
+        </Featured>
+      )}
 
       <FinalCTA>
         <FinalTitle>{brandName}</FinalTitle>

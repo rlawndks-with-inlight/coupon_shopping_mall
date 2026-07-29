@@ -2,6 +2,7 @@ import { useRouter } from 'next/router';
 import { Box, Container, Stack, Typography, Button } from '@mui/material';
 import { useLandingT } from './landingStrings';
 import LangSwitcher from './LangSwitcher';
+import { POLICY_DOCS } from './policyContent';
 
 export const SERVICE_NAME = 'ShopGo';
 export const COMPANY_NAME = '주식회사 우진플랫폼';
@@ -155,6 +156,24 @@ export const MainSiteFooter = () => (
               {PAY_INQUIRY_EMAIL}
             </Box>
           </Typography>
+        </Stack>
+        <Stack direction="row" flexWrap="wrap" gap={{ xs: 1, sm: 2 }} sx={{ pt: 1 }}>
+          {POLICY_DOCS.map((d) => (
+            <Box
+              key={d.slug}
+              component="a"
+              href={`/policy/${d.slug}`}
+              sx={{
+                fontSize: 12,
+                color: d.slug === 'privacy' ? '#555' : '#999',
+                fontWeight: d.slug === 'privacy' ? 700 : 400,
+                textDecoration: 'none',
+                '&:hover': { textDecoration: 'underline' },
+              }}
+            >
+              {d.title.replace('SHOPGO ', '')}
+            </Box>
+          ))}
         </Stack>
         <Box sx={{ pt: 2, borderTop: '1px solid #eee' }}>
           <Typography sx={{ fontSize: 10, color: '#aaa', lineHeight: 1.7 }}>

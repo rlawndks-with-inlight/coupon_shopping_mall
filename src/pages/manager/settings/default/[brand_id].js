@@ -1,4 +1,5 @@
 import {
+  Autocomplete,
   Avatar,
   Button,
   Card,
@@ -35,6 +36,7 @@ import { useModal } from 'src/components/dialog/ModalProvider'
 import { useAuthContext } from 'src/layouts/manager/auth/useAuthContext'
 import ReactQuillComponent from 'src/views/manager/react-quill'
 import { apiManager } from 'src/utils/api'
+import { commarNumber } from 'src/utils/function'
 import { BLOG_DEMO_DATA, DEMO_DATA, SHOP_DEMO_DATA } from 'src/data/data'
 import { allLangs } from 'src/locales'
 
@@ -707,19 +709,42 @@ const DefaultSetting = () => {
                           })}
                         </Select>
                       </FormControl>
-                      <TextField
-                        label='대표 상품 ID (단일 상품 데모용)'
-                        placeholder='상품 ID 입력 (미입력 시 첫 번째 상품 자동 선택)'
-                        value={item.setting_obj?.featured_product_id ?? ''}
-                        onChange={e => {
+                      <Autocomplete
+                        multiple
+                        fullWidth
+                        options={themeDnsData?.products ?? []}
+                        value={(item.setting_obj?.featured_product_ids ?? (item.setting_obj?.featured_product_id ? [item.setting_obj?.featured_product_id] : []))
+                          .map(id => (themeDnsData?.products ?? []).find(p => String(p?.id) === String(id)))
+                          .filter(Boolean)}
+                        getOptionLabel={(p) => p?.product_name ?? ''}
+                        isOptionEqualToValue={(a, b) => String(a?.id) === String(b?.id)}
+                        onChange={(e, value) => {
+                          const ids = value.map(p => p?.id);
                           setItem({
                             ...item,
                             ['setting_obj']: {
                               ...item.setting_obj,
-                              featured_product_id: e.target.value
+                              featured_product_ids: ids,
+                              // 하위호환: 단일 히어로 훅(useFeaturedProduct)용 첫 번째 id 미러링
+                              featured_product_id: ids[0] ?? ''
                             }
                           })
                         }}
+                        renderOption={(props, p) => (
+                          <li {...props} key={p?.id}>
+                            <Avatar src={p?.product_img} variant='rounded' sx={{ width: 32, height: 32, mr: 1 }} />
+                            <span style={{ flex: 1 }}>{p?.product_name}</span>
+                            <span style={{ color: '#888', fontSize: 13 }}>{commarNumber(p?.product_sale_price || p?.product_price || 0)}원</span>
+                          </li>
+                        )}
+                        renderInput={(params) => (
+                          <TextField
+                            {...params}
+                            label='대표 상품 (단일·소수 상품 데모용)'
+                            placeholder='상품 검색·선택 (미선택 시 첫 번째 상품 자동)'
+                            helperText='블로그 단일/소수 상품 데모에 노출됩니다. 첫 번째가 메인, 2개 이상 선택 시 나머지는 하단 그리드에 표시됩니다.'
+                          />
+                        )}
                       />
                     </Stack>
                   </Card>

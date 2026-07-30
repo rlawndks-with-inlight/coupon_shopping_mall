@@ -17,6 +17,9 @@ const OnboardingChecklist = () => {
   const so = dns.setting_obj ?? {};
   const isShop = Number(dns.shop_demo_num) > 0;
   const isBlog = Number(dns.blog_demo_num) > 0;
+  // 대표 상품 지정은 단일/소수 상품 데모(블로그 4~9, useFeaturedProduct 사용)만 해당.
+  // 섹션 빌더형(블로그 1·2·3)은 blog_obj로 상품 배치 → 대표상품 무관.
+  const isSingleProductBlog = [4, 5, 6, 7, 8, 9].includes(Number(dns.blog_demo_num));
 
   const catDone = (themeCategoryList ?? []).some((g) => (g?.product_categories?.length ?? 0) > 0);
   const catRoute = (themeCategoryList ?? [])[0]?.id
@@ -31,12 +34,12 @@ const OnboardingChecklist = () => {
       { key: 'delivery', label: '배송비 설정', tag: '권장', note: '미설정 시 무료배송', done: Number(so?.delivery_fee_default) > 0 || Number(so?.free_ship_min) > 0, route: settingRoute },
       { key: 'category', label: '카테고리 등록', tag: '필수', required: true, done: catDone, route: catRoute },
       { key: 'product', label: '상품 등록', tag: '필수', required: true, done: (dns?.products?.length ?? 0) > 0, route: '/manager/products/list', note: catDone ? '' : '카테고리를 먼저 등록하세요' },
-      ...(isBlog ? [{ key: 'featured', label: '대표 상품 지정 (단일·소수 상품 데모)', tag: '권장', done: (so?.featured_product_ids?.length ?? 0) > 0, route: settingRoute }] : []),
+      ...(isSingleProductBlog ? [{ key: 'featured', label: '대표 상품 지정', tag: '권장', done: (so?.featured_product_ids?.length ?? 0) > 0, route: settingRoute }] : []),
       { key: 'payment', label: '결제수단 연결', tag: '필수', required: true, hqManaged: true, done: (dns?.payment_modules?.length ?? 0) > 0 },
       { key: 'design', label: '메인페이지 꾸미기', tag: '권장', done: ((dns?.shop_obj?.length ?? 0) + (dns?.blog_obj?.length ?? 0)) > 0, route: isBlog && !isShop ? '/manager/designs/blog-main/all' : '/manager/designs/main/all' },
     ];
     return list;
-  }, [dns, so, themeCategoryList, catDone, catRoute, isBlog, isShop]);
+  }, [dns, so, themeCategoryList, catDone, catRoute, isBlog, isShop, isSingleProductBlog]);
 
   const doneCount = steps.filter((s) => s.done).length;
   const requiredAllDone = steps.filter((s) => s.required).every((s) => s.done);

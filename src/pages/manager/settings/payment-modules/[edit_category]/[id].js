@@ -160,9 +160,11 @@ const PaymentModuleEdit = () => {
                               </Grid>
                               <Grid item xs={12} sm={7}>
                                 <FormControl fullWidth size="small" disabled={!enabled}>
-                                  <InputLabel>PG</InputLabel>
+                                  <InputLabel shrink>PG</InputLabel>
                                   <Select
                                     label="PG"
+                                    displayEmpty
+                                    notched
                                     value={getForspayProvider(m.key)}
                                     onChange={(e) => setForspayMethod(m.key, { provider: e.target.value })}
                                   >

@@ -253,10 +253,25 @@ export default function OrderSheet({ router }) {
       setPayData({ ...payData, payment_modules: item });
     } else if (item?.type == 'card_payletter') {
       setBuyType('card_payletter');
-      await onPayProductsByPayletter(products.map((p) => ({ ...p })), { ...payData, payment_modules: item });
+      setPayData({ ...payData, payment_modules: item }); // 선택만 — 결제는 하단 '결제하기' 버튼에서
     } else if (item?.type == 'auth_forspay') {
       setBuyType('auth_forspay');
-      await onPayProductsByForspay(products.map((p) => ({ ...p })), { ...payData, payment_modules: item });
+      setPayData({ ...payData, payment_modules: item }); // 선택만 — 결제는 하단 '결제하기' 버튼에서
+    }
+  };
+
+  // 리다이렉트형 결제(포스페이/페이레터): 수단 선택 후 '결제하기'를 눌러야 결제창으로 이동
+  const onPaySelectedRedirect = async () => {
+    if (!guardBeforePay()) return;
+    setPayLoading(true);
+    try {
+      if (buyType == 'auth_forspay') {
+        await onPayProductsByForspay(products.map((p) => ({ ...p })), payData);
+      } else if (buyType == 'card_payletter') {
+        await onPayProductsByPayletter(products.map((p) => ({ ...p })), payData);
+      }
+    } finally {
+      setPayLoading(false);
     }
   };
 
@@ -545,8 +560,23 @@ export default function OrderSheet({ router }) {
                   subtotal={_.sum(_.map(products, (item) => calculatorPrice(item, payData).subtotal))}
                 />
                 <Typography variant="caption" sx={{ color: 'text.secondary', display: 'block', mt: 1, textAlign: 'center' }}>
-                  결제수단을 선택하면 해당 결제창/입력란이 나타납니다.
+                  결제수단을 선택한 뒤 결제 방법(결제하기 버튼 또는 입력란)에 따라 진행하세요.
                 </Typography>
+                {(buyType == 'auth_forspay' || buyType == 'card_payletter') && (
+                  <Box sx={{ mt: 2 }}>
+                    <Typography variant="body2" sx={{ mb: 1, textAlign: 'center' }}>
+                      선택한 결제수단: <b>{_.find(paymentModules, (m) => m?.type == buyType && (buyType != 'auth_forspay' || m?.pay_method == buyPayMethod))?.title || '-'}</b>
+                    </Typography>
+                    <Button fullWidth variant="contained" size="large" disabled={payLoading}
+                      onClick={() => setModal({
+                        func: () => { onPaySelectedRedirect(); },
+                        icon: 'ion:card-outline',
+                        title: '결제를 진행하시겠습니까?',
+                      })}>
+                      결제하기
+                    </Button>
+                  </Box>
+                )}
               </Box>
             </Grid>
           </Grid>

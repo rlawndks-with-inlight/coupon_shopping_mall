@@ -48,6 +48,7 @@ export default function OrderSheet({ router }) {
 
   const [products, setProducts] = useState([]);
   const [buyType, setBuyType] = useState(undefined);
+  const [buyPayMethod, setBuyPayMethod] = useState(undefined); // 포스페이 수단별 선택 표시용(같은 type 구분)
   const [payLoading, setPayLoading] = useState(false);
 
   // 배송지(주소록)
@@ -192,6 +193,7 @@ export default function OrderSheet({ router }) {
   // ── 결제수단 선택 (demo-9 selectPayType 이식, sms_pay 제외) ──
   const selectPayType = async (item) => {
     if (!guardBeforePay()) return;
+    setBuyPayMethod(item?.pay_method); // 클릭한 결제수단 기억(포스페이 수단별 하이라이트)
     if (item?.type == 'card') {
       setBuyType('card');
       setPayData({ ...payData, payment_modules: item });
@@ -429,14 +431,18 @@ export default function OrderSheet({ router }) {
                     </Box>
                   </Box>
                   <Stack spacing={1.5}>
-                    {paymentModules.map((item, idx) => (
-                      <Paper key={idx} variant="outlined"
-                        sx={{ p: 2, cursor: 'pointer', borderColor: buyType == item?.type ? 'primary.main' : 'divider', borderWidth: buyType == item?.type ? 2 : 1 }}
-                        onClick={() => selectPayType(item)}>
-                        <Typography variant="subtitle2">{item.title}</Typography>
-                        {item.description && <Typography variant="body2" sx={{ color: 'text.secondary' }}>{item.description}</Typography>}
-                      </Paper>
-                    ))}
+                    {paymentModules.map((item, idx) => {
+                      // 포스페이는 8개 옵션이 모두 type='auth_forspay'라, pay_method까지 봐야 클릭한 하나만 선택 표시됨
+                      const selected = buyType == item?.type && (item?.type != 'auth_forspay' || buyPayMethod == item?.pay_method);
+                      return (
+                        <Paper key={idx} variant="outlined"
+                          sx={{ p: 2, cursor: 'pointer', borderColor: selected ? 'primary.main' : 'divider', borderWidth: selected ? 2 : 1 }}
+                          onClick={() => selectPayType(item)}>
+                          <Typography variant="subtitle2">{item.title}</Typography>
+                          {item.description && <Typography variant="body2" sx={{ color: 'text.secondary' }}>{item.description}</Typography>}
+                        </Paper>
+                      );
+                    })}
                     {paymentModules.length == 0 && (
                       <Typography variant="body2" sx={{ color: 'text.secondary' }}>등록된 결제수단이 없습니다.</Typography>
                     )}

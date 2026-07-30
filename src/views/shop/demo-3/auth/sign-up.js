@@ -1,18 +1,558 @@
-import { useRouter } from "next/router";
-import { useSettingsContext } from "src/components/settings";
-import { useAuthContext } from "src/layouts/manager/auth/useAuthContext";
-import styled from "styled-components";
+import PropTypes from 'prop-types';
+import { Button, Checkbox, Divider, FormControl, FormControlLabel, InputAdornment, InputLabel, OutlinedInput, Step, StepConnector, StepLabel, Stepper, TextField, Typography, stepConnectorClasses } from '@mui/material';
+import { useEffect, useState } from 'react';
+import { Col, Row, themeObj } from 'src/components/elements/styled-components';
+import styled from 'styled-components'
+import { styled as muiStyled } from '@mui/material/styles';
+import Iconify from 'src/components/iconify/Iconify';
+import { bgGradient } from 'src/utils/cssStyles';
+import { useTheme } from '@emotion/react';
+import Policy from 'src/pages/shop/auth/policy';
+import { toast } from 'react-hot-toast';
+import { Icon } from '@iconify/react';
+import { useSettingsContext } from 'src/components/settings';
+import { apiManager } from 'src/utils/api';
+import { useLocales } from 'src/locales';
+import { generateRandomString } from 'src/utils/function';
+
+const Wrappers = styled.div`
+max-width: 620px;
+display: flex;
+flex-direction: column;
+margin: 0 auto 6rem auto;
+width: 90%;
+min-height: 90vh;
+`
+const HeadTitle = styled.div`
+text-transform: uppercase;
+letter-spacing: 3px;
+font-weight: 700;
+font-size: ${themeObj.font_size.size3};
+text-align: center;
+margin: 4rem auto 0.75rem auto;
+`
+const HeadLine = styled.div`
+width: 46px;
+height: 3px;
+margin: 0 auto 2.75rem auto;
+border-radius: 2px;
+`
+const StepCard = styled.div`
+border: 1px solid ${themeObj.grey[300]};
+border-radius: 12px;
+padding: 1.75rem 1.5rem;
+@media (max-width:600px) {
+  padding: 1.25rem 1rem;
+}
+`
+const AgreeAllBox = styled.div`
+border: 1px solid ${themeObj.grey[300]};
+border-radius: 10px;
+padding: 0.5rem 1rem;
+background: ${themeObj.grey[100]};
+`
+const PolicyBox = styled.div`
+height: 10rem;
+overflow-y: auto;
+border: 1px solid ${themeObj.grey[300]};
+border-radius: 10px;
+`
+const SectionLabel = styled.div`
+text-transform: uppercase;
+letter-spacing: 1px;
+font-size: ${themeObj.font_size.size9};
+font-weight: 700;
+color: ${themeObj.grey[600]};
+margin-bottom: 0.75rem;
+`
+const CompletedText = styled.div`
+text-align: center;
+letter-spacing: 1px;
+font-weight: 600;
+font-size: ${themeObj.font_size.size5};
+`
+
+const ColorlibConnector = muiStyled(StepConnector)(({ theme }) => ({
+  [`&.${stepConnectorClasses.alternativeLabel}`]: {
+    top: 22,
+  },
+  [`&.${stepConnectorClasses.active}`]: {
+    [`& .${stepConnectorClasses.line}`]: {
+      ...bgGradient({
+        startColor: theme.palette.primary.light,
+        endColor: theme.palette.primary.main,
+      }),
+    },
+  },
+  [`&.${stepConnectorClasses.completed}`]: {
+    [`& .${stepConnectorClasses.line}`]: {
+      ...bgGradient({
+        startColor: theme.palette.primary.light,
+        endColor: theme.palette.primary.main,
+      }),
+    },
+  },
+  [`& .${stepConnectorClasses.line}`]: {
+    height: 3,
+    border: 0,
+    borderRadius: 1,
+    backgroundColor: theme.palette.divider,
+  },
+}));
+const ColorlibStepIconRoot = muiStyled('div')(({ theme, ownerState }) => ({
+  zIndex: 1,
+  width: 46,
+  height: 46,
+  display: 'flex',
+  borderRadius: '50%',
+  alignItems: 'center',
+  justifyContent: 'center',
+  color: theme.palette.text.disabled,
+  backgroundColor:
+    theme.palette.mode === 'light' ? theme.palette.grey[300] : theme.palette.grey[700],
+  ...(ownerState.active && {
+    boxShadow: '0 4px 10px 0 rgba(0,0,0,.25)',
+    color: theme.palette.common.white,
+    ...bgGradient({
+      startColor: theme.palette.primary.light,
+      endColor: theme.palette.primary.main,
+    }),
+  }),
+  ...(ownerState.completed && {
+    color: theme.palette.common.white,
+    ...bgGradient({
+      startColor: theme.palette.primary.light,
+      endColor: theme.palette.primary.main,
+    }),
+  }),
+}));
+
+function ColorlibStepIcon(props) {
+  const { active, completed, className, icon } = props;
+
+  const icons = {
+    1: <Iconify icon="eva:settings-2-outline" width={22} />,
+    2: <Iconify icon="eva:person-add-outline" width={22} />,
+    3: <Iconify icon="fluent-mdl2:completed" width={22} />,
+  };
+
+  return (
+    <ColorlibStepIconRoot ownerState={{ completed, active }} className={className}>
+      {icons[String(icon)]}
+    </ColorlibStepIconRoot>
+  );
+}
+ColorlibStepIcon.propTypes = {
+  active: PropTypes.bool,
+  icon: PropTypes.number,
+  completed: PropTypes.bool,
+  className: PropTypes.string,
+};
 
 const SignUpDemo = (props) => {
+  const {
+    data: {
 
-  const { user } = useAuthContext();
+    },
+    func: {
+      router
+    },
+  } = props;
+  const { translate } = useLocales();
+  const STEPS = [translate('약관동의'), translate('정보입력'), translate('가입완료')];
   const { themeDnsData } = useSettingsContext();
-  const router = useRouter();
+  const theme = useTheme();
+  const [activeStep, setActiveStep] = useState(0);
+  const [checkboxObj, setCheckboxObj] = useState({
+    check_0: false,
+    check_1: false,
+    check_2: false,
+    check_3: false,
+    check_4: false,
+    check_5: false,
+  })
+  const [user, setUser] = useState({
+    user_name: '',
+    user_pw: '',
+    user_pw_check: '',
+    name: '',
+    nickname: '',
+    phone_num: '',
+    phoneCheck: '',
+  })
+  const [phoneCheckStep, setPhoneCheckStep] = useState(0);
+
+  const [phoneToken, setPhoneToken] = useState('')
+  const [phoneChecked, setPhoneChecked] = useState(false)
+
+  useEffect(() => {
+    settingPage();
+  }, []);
+  const settingPage = async () => {
+    const response = await apiManager(`brands/otp`, 'create')
+    setUser({
+      ...user,
+      otp_token: response?.base32,
+    })
+  }
+  const onClickPrevButton = () => {
+    if (activeStep == 0) {
+      router.back();
+      return;
+    }
+    if (activeStep == 1) {
+
+    }
+    if (activeStep == 2) {
+
+    }
+    setActiveStep(activeStep - 1);
+    window.scrollTo(0, 0)
+  }
+  const onClickNextButton = async () => {
+    if (activeStep == 0) {
+      if (
+        !checkboxObj.check_1 ||
+        !checkboxObj.check_2
+      ) {
+        toast.error(translate("필수 항목에 체크해 주세요."));
+        return;
+      }
+    }
+    if (activeStep == 1) {
+      if (themeDnsData?.id == 77) {
+        if (
+          !user.user_name ||
+          !user.user_pw ||
+          !user.user_pw_check ||
+          !user.nickname ||
+          !user.phone_num ||
+          !user.phoneCheck
+        ) {
+          toast.error(translate("필수 항목을 입력해 주세요."));
+          return;
+        } else if (
+          user.user_pw != user.user_pw_check
+        ) {
+          toast.error("비밀번호 확인란을 똑같이 입력했는지 확인해주세요");
+          return;
+        } else if (
+          !phoneChecked
+        ) {
+          toast.error("인증번호가 확인되지 않았습니다.");
+          return;
+        }
+      } else if (
+        !user.user_name ||
+        !user.user_pw ||
+        !user.user_pw_check ||
+        !user.nickname ||
+        !user.phone_num
+      ) {
+        toast.error(translate("필수 항목을 입력해 주세요."));
+        return;
+      } else if (
+        user.user_pw != user.user_pw_check
+      ) {
+        toast.error("비밀번호 확인란을 똑같이 입력했는지 확인해주세요");
+        return;
+      }
+      let result = await apiManager('auth/sign-up', 'create', { ...user, brand_id: themeDnsData?.id });
+      if (!result) {
+        return;
+      }
+    }
+    if (activeStep == 2) {
+      router.push('/shop/auth/login');
+      return;
+    }
+    setActiveStep(activeStep + 1);
+    window.scrollTo(0, 0)
+  }
+  const onClickSendPhoneVerifyCode = async () => {
+    setPhoneCheckStep(1);
+    let result = await apiManager('auth/code', 'create', {
+      phone_num: user.phone_num
+    })
+    console.log(result)
+    if (result?.phone_token) {
+      alert('성공적으로 발송되었습니다.')
+      setPhoneToken(result.phone_token)
+    }
+  }
+
+  const onClickCheckPhoneVerifyCode = async () => {
+    setPhoneCheckStep(2);
+    let result = await apiManager('auth/code/check', 'create', {
+      rand_num: user?.phoneCheck,
+      phone_token: phoneToken
+    })
+    if (result) {
+      alert('인증 완료되었습니다')
+      setPhoneChecked(true)
+    } else {
+      alert('새로고침하고 다시 시도해주세요.')
+    }
+  }
 
   return (
     <>
+      <Wrappers style={{ paddingBottom: '2rem' }}>
+        <HeadTitle>{translate('회원가입')}</HeadTitle>
+        <HeadLine style={{ background: theme.palette.primary.main }} />
+        <Stepper alternativeLabel activeStep={activeStep} connector={<ColorlibConnector />}>
+          {STEPS.map((label) => (
+            <Step key={label}>
+              <StepLabel StepIconComponent={ColorlibStepIcon}>{label}</StepLabel>
+            </Step>
+          ))}
+        </Stepper>
+        <div style={{ marginTop: '2.5rem' }} />
+        <StepCard>
+          {activeStep == 0 &&
+            <>
+              <AgreeAllBox>
+                <FormControlLabel style={{ margin: 0 }} label={<Typography style={{ fontWeight: 'bold', fontSize: themeObj.font_size.size6 }}> {translate('이용약관 및 개인정보수집 및 이용, 쇼핑정보 수신(선택)에 모두 동의합니다.')}</Typography>} control={<Checkbox checked={checkboxObj.check_0} />} onChange={(e) => {
+                  let check_obj = {}
+                  if (e.target.checked) {
+                    for (let key in checkboxObj) {
+                      check_obj[key] = true;
+                    }
+                  } else {
+                    for (let key in checkboxObj) {
+                      check_obj[key] = false;
+                    }
+                  }
+                  setCheckboxObj(check_obj)
+                }} />
+              </AgreeAllBox>
+              <div style={{ marginTop: '1.75rem' }} />
+              <FormControlLabel label={<Typography style={{ fontSize: themeObj.font_size.size6, fontWeight: 600 }}>{translate('이용약관 동의 (필수)')}</Typography>} control={<Checkbox checked={checkboxObj.check_1} onChange={(e) => {
+                setCheckboxObj({ ...checkboxObj, ['check_1']: e.target.checked })
+              }} />} />
+              <div style={{ marginTop: '0.5rem' }} />
+              <PolicyBox>
+                <Policy type={0} />
+              </PolicyBox>
+              <div style={{ marginTop: '1.75rem' }} />
+              <FormControlLabel label={<Typography style={{ fontSize: themeObj.font_size.size6, fontWeight: 600 }}>{translate('개인정보 수집 및 이용 동의 (필수)')}</Typography>} control={<Checkbox checked={checkboxObj.check_2} onChange={(e) => {
+                setCheckboxObj({ ...checkboxObj, ['check_2']: e.target.checked })
+              }} />} />
+              <div style={{ marginTop: '0.5rem' }} />
+              <PolicyBox>
+                <Policy type={1} />
+              </PolicyBox>
+              <div style={{ marginTop: '1.75rem' }} />
+              <FormControlLabel label={<Typography style={{ fontSize: themeObj.font_size.size6, fontWeight: 600 }}>{translate('쇼핑정보 수신 동의 (선택)')}</Typography>} control={<Checkbox checked={checkboxObj.check_3} onChange={(e) => {
 
+                setCheckboxObj({ ...checkboxObj, ['check_3']: e.target.checked, ['check_4']: e.target.checked, ['check_5']: e.target.checked, })
+              }} />} />
+              <div style={{ marginTop: '0.75rem' }} />
+              <Divider />
+              <div style={{ marginTop: '0.75rem' }} />
+              <Row>
+                <FormControlLabel label={<Typography style={{ fontSize: themeObj.font_size.size7 }}>{translate('SMS 수신 동의 (선택)')}</Typography>} control={<Checkbox checked={checkboxObj.check_4} onChange={(e) => {
+                  setCheckboxObj({ ...checkboxObj, ['check_4']: e.target.checked })
+                }} />} />
+                <FormControlLabel label={<Typography style={{ fontSize: themeObj.font_size.size7 }}>{translate('이메일 수신 동의 (선택)')}</Typography>} control={<Checkbox checked={checkboxObj.check_5} onChange={(e) => {
+                  setCheckboxObj({ ...checkboxObj, ['check_5']: e.target.checked })
+                }} />} />
+              </Row>
+              <div style={{ marginTop: '0.5rem' }} />
+              <div style={{
+                height: '10rem',
+                overflowY: 'auto',
+                border: `1px solid ${themeObj.grey[300]}`,
+                borderRadius: '10px',
+                padding: '1.5rem',
+                fontSize: themeObj.font_size.size7,
+                color: themeObj.grey[600],
+                lineHeight: 1.7
+              }}>
+                {translate('할인쿠폰 및 혜택, 이벤트, 신상품 소식 등 쇼핑몰에서 제공하는 유익한 쇼핑정보를 SMS나 이메일로 받아보실 수 있습니다. 단, 주문/거래 정보 및 주요 정책과 관련된 내용은 수신동의 여부와 관계없이 발송됩니다. 선택 약관에 동의하지 않으셔도 회원가입은 가능하며, 회원가입 후 회원정보수정 페이지에서 언제든지 수신여부를 변경하실 수 있습니다.')}
+              </div>
+            </>}
+          {activeStep == 1 &&
+            <>
+              <SectionLabel>{translate('정보입력')}</SectionLabel>
+              <TextField
+                label={translate('아이디')}
+                fullWidth
+                onChange={(e) => {
+                  setUser({ ...user, ['user_name']: e.target.value })
+                }}
+                value={user.user_name}
+                style={inputStyle}
+                autoComplete='new-password'
+                onKeyPress={(e) => {
+                  if (e.key == 'Enter') {
+                  }
+                }}
+                InputProps={{
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <Icon icon="eva:person-fill" width={22} color={theme.palette.primary.main} />
+                    </InputAdornment>
+                  ),
+                }}
+              />
+              <TextField
+                label={translate('비밀번호')}
+                fullWidth
+                onChange={(e) => {
+                  setUser({ ...user, ['user_pw']: e.target.value })
+                }}
+                type='password'
+                value={user.user_pw}
+                style={inputStyle}
+                autoComplete='new-password'
+                onKeyPress={(e) => {
+                  if (e.key == 'Enter') {
+                  }
+                }}
+              />
+              <TextField
+                label={translate('비밀번호확인')}
+                fullWidth
+                onChange={(e) => {
+                  setUser({ ...user, ['user_pw_check']: e.target.value })
+                }}
+                type='password'
+                value={user.user_pw_check}
+                style={inputStyle}
+                autoComplete='new-password'
+                onKeyPress={(e) => {
+                  if (e.key == 'Enter') {
+                  }
+                }}
+              />
+              <TextField
+                label={translate('이름')}
+                fullWidth
+                onChange={(e) => {
+                  setUser({ ...user, ['name']: e.target.value })
+                }}
+                value={user.name}
+                style={inputStyle}
+                autoComplete='new-password'
+                onKeyPress={(e) => {
+                  if (e.key == 'Enter') {
+                  }
+                }}
+              />
+              <TextField
+                label={translate('닉네임')}
+                fullWidth
+                onChange={(e) => {
+                  setUser({ ...user, ['nickname']: e.target.value })
+                }}
+                value={user.nickname}
+                style={inputStyle}
+                autoComplete='new-password'
+                onKeyPress={(e) => {
+                  if (e.key == 'Enter') {
+                  }
+                }}
+              />
+              <FormControl variant="outlined" style={{ width: '100%', marginTop: '1rem' }}>
+                <InputLabel>{translate('휴대폰번호')}</InputLabel>
+                <OutlinedInput
+                  label={translate('휴대폰번호')}
+                  placeholder={translate("하이픈(-) 제외 입력")}
+                  onChange={(e) => {
+                    setUser({ ...user, ['phone_num']: e.target.value })
+                  }}
+                  value={user.phone_num}
+                  endAdornment={
+                    themeDnsData?.id == 77 ?
+                      <>
+                        <Button style={{ width: '144px', height: '56px', transform: 'translateX(14px)' }}
+                          variant="contained"
+                          onClick={() => {
+                            if (phoneCheckStep == 0) {
+                              onClickSendPhoneVerifyCode();
+                            }
+                          }}
+                        >인증번호발송</Button>
+                      </>
+                      :
+                      ''
+                  }
+                />
+              </FormControl>
+              {
+                themeDnsData?.id == 77 &&
+                <>
+                  <FormControl variant="outlined" style={{ width: '100%', marginTop: '1rem' }}>
+                    <InputLabel>인증번호</InputLabel>
+                    <OutlinedInput
+                      label='인증번호'
+                      placeholder="하이픈(-) 제외 입력"
+                      onChange={(e) => {
+                        setUser({ ...user, ['phoneCheck']: e.target.value })
+                      }}
+                      value={user.phoneCheck}
+                      endAdornment={<>
+                        <Button style={{ width: '144px', height: '56px', transform: 'translateX(14px)' }}
+                          variant="contained"
+                          onClick={() => {
+                            if (phoneCheckStep == 1) {
+                              onClickCheckPhoneVerifyCode();
+                            }
+                          }}
+                        >인증번호확인</Button>
+                      </>}
+                    />
+                  </FormControl>
+                </>
+              }
+              {themeDnsData?.is_use_otp == 1 &&
+                <>
+                  <TextField
+                    label={translate('OTP TOKEN')}
+                    fullWidth
+                    disabled={true}
+                    value={user.otp_token}
+                    style={inputStyle}
+                    autoComplete='new-password'
+                    onKeyPress={(e) => {
+                      if (e.key == 'Enter') {
+                      }
+                    }}
+                  />
+                </>}
+            </>}
+          {activeStep == 2 &&
+            <>
+              <Col>
+                <Icon icon={'fluent-mdl2:completed'} style={{ margin: '6rem auto 1.5rem auto', fontSize: themeObj.font_size.size1, color: theme.palette.primary.main }} />
+                <CompletedText style={{ margin: 'auto auto 6rem auto' }}>{translate('회원가입이 완료되었습니다.')}</CompletedText>
+              </Col>
+            </>}
+        </StepCard>
+        <Row style={{ width: '100%', justifyContent: 'space-between' }}>
+          <Button variant="outlined" style={{
+            height: '54px',
+            marginTop: '1.5rem',
+            width: '49%',
+            letterSpacing: '1px'
+          }}
+            onClick={onClickPrevButton}
+          >{translate('이전')}</Button>
+          <Button variant="contained" style={{
+            height: '54px',
+            marginTop: '1.5rem',
+            width: '49%',
+            letterSpacing: '1px'
+          }}
+            onClick={onClickNextButton}
+          >{activeStep == 2 ? translate('완료') : translate('다음')}</Button>
+        </Row>
+      </Wrappers>
     </>
   )
+}
+const inputStyle = {
+  marginTop: '1rem',
 }
 export default SignUpDemo

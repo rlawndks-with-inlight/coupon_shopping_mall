@@ -37,6 +37,27 @@ export const paymentModuleTypeList = [
     { label: '인증결제(포스페이)', value: 41 },
     { label: 'SMS결제', value: 50 },
 ]
+// 포스페이(41) 결제수단 — 어드민 노출/라우팅 설정용. 백엔드 FORSPAY_METHODS와 동일 키.
+export const forspayMethodList = [
+    { key: 'card', label: '신용카드(국내발행)' },
+    { key: 'bank', label: '실시간계좌이체' },
+    { key: 'kakaopay', label: '카카오페이' },
+    { key: 'naverpay', label: '네이버페이' },
+    { key: 'linepay', label: '라인페이' },
+    { key: 'foreign_card', label: '해외발행카드' },
+    { key: 'wechat', label: '위챗페이' },
+    { key: 'alipay', label: '알리페이' },
+    { key: 'samsungpay', label: '삼성페이 (준비중·협력사 확인 필요)', pending: true },
+]
+// 포스페이 PG provider — 빈 값이면 모듈 기본(MID) 또는 포스페이 자동 라우팅.
+export const forspayProviderList = [
+    { value: '', label: '기본(모듈 MID값)' },
+    { value: 1, label: 'PayLetter (페이레터)' },
+    { value: 4, label: 'NICEPAY (나이스정보통신)' },
+    { value: 0, label: 'NHN KCP' },
+    { value: 2, label: 'KSNET' },
+    { value: 3, label: 'Danal' },
+]
 export const bankCodeList = [
     { value: '001', label: '한국은행', },
     { value: '002', label: '산업은행', },

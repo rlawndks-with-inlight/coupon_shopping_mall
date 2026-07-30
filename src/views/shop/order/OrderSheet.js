@@ -15,6 +15,7 @@ import EmptyContent from 'src/components/empty-content/EmptyContent';
 import Iconify from 'src/components/iconify/Iconify';
 import { useSettingsContext } from 'src/components/settings';
 import { calculatorPrice, getCartDataUtil, makePayData, onPayProductsByAuth, onPayProductsByHand, onPayProductsByPayletter, onPayProductsByForspay } from 'src/utils/shop-util';
+import { forspayMethodList } from 'src/utils/format';
 import { useAuthContext } from 'src/layouts/manager/auth/useAuthContext';
 import { formatCreditCardNumber, formatExpirationDate } from 'src/utils/formatCard';
 import { useModal } from 'src/components/dialog/ModalProvider';
@@ -449,12 +450,18 @@ export default function OrderSheet({ router }) {
                     {paymentModules.map((item, idx) => {
                       // 포스페이는 8개 옵션이 모두 type='auth_forspay'라, pay_method까지 봐야 클릭한 하나만 선택 표시됨
                       const selected = buyType == item?.type && (item?.type != 'auth_forspay' || buyPayMethod == item?.pay_method);
+                      const fm = item?.pay_method ? _.find(forspayMethodList, { key: item.pay_method }) : null; // 결제수단 로고
                       return (
                         <Paper key={idx} variant="outlined"
                           sx={{ p: 2, cursor: 'pointer', borderColor: selected ? 'primary.main' : 'divider', borderWidth: selected ? 2 : 1 }}
                           onClick={() => selectPayType(item)}>
-                          <Typography variant="subtitle2">{item.title}</Typography>
-                          {item.description && <Typography variant="body2" sx={{ color: 'text.secondary' }}>{item.description}</Typography>}
+                          <Stack direction="row" spacing={1.5} alignItems="center">
+                            {fm?.icon && <Iconify icon={fm.icon} width={26} sx={{ color: fm.color, flexShrink: 0 }} />}
+                            <Box>
+                              <Typography variant="subtitle2">{item.title}</Typography>
+                              {item.description && <Typography variant="body2" sx={{ color: 'text.secondary' }}>{item.description}</Typography>}
+                            </Box>
+                          </Stack>
                         </Paper>
                       );
                     })}

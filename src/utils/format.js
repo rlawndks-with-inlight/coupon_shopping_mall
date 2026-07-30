@@ -38,16 +38,17 @@ export const paymentModuleTypeList = [
     { label: 'SMS결제', value: 50 },
 ]
 // 포스페이(41) 결제수단 — 어드민 노출/라우팅 설정용. 백엔드 FORSPAY_METHODS와 동일 키.
+// icon: @iconify 아이콘명, color: 브랜드 색(매장 결제수단 목록 앞 로고에 사용)
 export const forspayMethodList = [
-    { key: 'card', label: '신용카드(국내발행)' },
-    { key: 'bank', label: '실시간계좌이체' },
-    { key: 'kakaopay', label: '카카오페이' },
-    { key: 'naverpay', label: '네이버페이' },
-    { key: 'linepay', label: '라인페이' },
-    { key: 'foreign_card', label: '해외발행카드' },
-    { key: 'wechat', label: '위챗페이' },
-    { key: 'alipay', label: '알리페이' },
-    { key: 'samsungpay', label: '삼성페이 (준비중·협력사 확인 필요)', pending: true },
+    { key: 'card', label: '신용카드(국내발행)', icon: 'mdi:credit-card-outline', color: '#5B6472' },
+    { key: 'bank', label: '실시간계좌이체', icon: 'mdi:bank-outline', color: '#5B6472' },
+    { key: 'kakaopay', label: '카카오페이', icon: 'simple-icons:kakaotalk', color: '#FEE500' },
+    { key: 'naverpay', label: '네이버페이', icon: 'simple-icons:naver', color: '#03C75A' },
+    { key: 'linepay', label: '라인페이', icon: 'simple-icons:line', color: '#00C300' },
+    { key: 'foreign_card', label: '해외발행카드', icon: 'mdi:earth', color: '#5B6472' },
+    { key: 'wechat', label: '위챗페이', icon: 'simple-icons:wechat', color: '#09B83E' },
+    { key: 'alipay', label: '알리페이', icon: 'simple-icons:alipay', color: '#1677FF' },
+    { key: 'samsungpay', label: '삼성페이 (준비중·협력사 확인 필요)', icon: 'simple-icons:samsungpay', color: '#1428A0', pending: true },
 ]
 // 포스페이 PG provider — 빈 값이면 모듈 기본(MID) 또는 포스페이 자동 라우팅.
 export const forspayProviderList = [

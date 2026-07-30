@@ -114,11 +114,16 @@ const OnboardingChecklist = () => {
       </Stack>
 
       <Box sx={{ mt: 1.5, pt: 1.5, borderTop: '1px dashed #e5e5e5' }}>
-        <Typography sx={{ fontSize: 13 }}>
-          <Box component="span" sx={{ fontWeight: 700 }}>판매 준비: </Box>
-          <Box component="span" sx={{ color: '#d33', fontWeight: 700 }}>아직</Box>
-          <Box component="span" sx={{ color: '#888' }}> — 카테고리·상품·결제수단이 모두 완료되면 판매가 시작됩니다.</Box>
-        </Typography>
+        <Stack direction={{ xs: 'column', sm: 'row' }} alignItems={{ sm: 'center' }} justifyContent="space-between" spacing={1}>
+          <Typography sx={{ fontSize: 13 }}>
+            <Box component="span" sx={{ fontWeight: 700 }}>판매 준비: </Box>
+            <Box component="span" sx={{ color: '#d33', fontWeight: 700 }}>아직</Box>
+            <Box component="span" sx={{ color: '#888' }}> — 카테고리·상품·결제수단이 모두 완료되면 판매가 시작됩니다.</Box>
+          </Typography>
+          <Button size="small" onClick={() => router.push('/manager/guide')} sx={{ whiteSpace: 'nowrap' }} startIcon={<Icon icon="mdi:book-open-variant" />}>
+            이용가이드
+          </Button>
+        </Stack>
       </Box>
     </Card>
   );

@@ -169,6 +169,11 @@ export const navConfig = () => {
         { title: '대시보드', path: PATH_MANAGER.dashboards, icon: ICONS.dashboard },
       ],
     },
+    {
+      items: [
+        { title: '이용가이드', path: '/manager/guide', icon: ICONS.file },
+      ],
+    },
     ...(isMasterSite() ? [
       {
         items: [

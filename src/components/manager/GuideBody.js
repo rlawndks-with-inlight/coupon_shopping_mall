@@ -28,19 +28,24 @@ const CheckCaption = ({ text }) => (
 );
 
 // 사진 한 장 카드: 로드되면 이미지(+캡션) 표시, 404면 스스로 숨김.
+// 이미지는 '원본 픽셀 크기'를 넘겨 확대(upscale)하지 않는다.
+//  - 저해상도 사진: 원본 크기 그대로, 가운데에 여백(매트)을 두르고 선명하게 표시
+//  - 큰 스크린샷: 컨테이너 폭까지 축소(축소는 화질이 깨지지 않음)
 const ShotCard = ({ img, cap, onResolve }) => {
   const [state, setState] = useState('loading'); // loading | ok | failed
   if (state === 'failed') return null;
   return (
     <Box sx={{ border: '1px solid #eee', borderRadius: 1.5, overflow: 'hidden', bgcolor: '#fff', display: state === 'ok' ? 'block' : 'none' }}>
-      <Box
-        component="img"
-        src={`/manual/guide/${img}.png`}
-        alt=""
-        onLoad={() => { setState('ok'); onResolve?.(img, true); }}
-        onError={() => { setState('failed'); onResolve?.(img, false); }}
-        sx={{ width: '100%', display: 'block' }}
-      />
+      <Box sx={{ display: 'flex', justifyContent: 'center', p: 1.5, bgcolor: '#fbfbfb' }}>
+        <Box
+          component="img"
+          src={`/manual/guide/${img}.png`}
+          alt=""
+          onLoad={() => { setState('ok'); onResolve?.(img, true); }}
+          onError={() => { setState('failed'); onResolve?.(img, false); }}
+          sx={{ maxWidth: '100%', height: 'auto', display: 'block', borderRadius: 0.75 }}
+        />
+      </Box>
       {cap && (
         <Box sx={{ borderTop: '1px solid #f4f4f4', bgcolor: '#fafafa' }}>
           <CheckCaption text={cap} />
@@ -49,6 +54,27 @@ const ShotCard = ({ img, cap, onResolve }) => {
     </Box>
   );
 };
+
+// 메뉴 안의 항목/버튼별 설명 표. fields: [{ label, desc }]
+// 왼쪽 라벨(테마 초록·굵게) + 오른쪽 설명. 모바일에선 라벨이 위로 쌓임.
+const FieldTable = ({ fields }) => (
+  <Stack sx={{ mt: 1.5, border: '1px solid #eee', borderRadius: 1.5, overflow: 'hidden' }}>
+    {fields.map((f, i) => (
+      <Stack
+        key={i}
+        direction={{ xs: 'column', sm: 'row' }}
+        sx={{ borderTop: i ? '1px solid #f0f0f0' : 'none' }}
+      >
+        <Box sx={{ width: { sm: 150 }, minWidth: { sm: 150 }, flexShrink: 0, px: 1.5, py: 1.25, bgcolor: '#f7faf7', color: '#2e7d32', fontWeight: 700, fontSize: 13 }}>
+          {f.label}
+        </Box>
+        <Box sx={{ px: 1.5, py: 1.25, fontSize: 13, color: '#444', lineHeight: 1.65 }}>
+          {f.desc}
+        </Box>
+      </Stack>
+    ))}
+  </Stack>
+);
 
 // 단계별 스크린샷.
 // - shots가 있으면 [{ img, cap }] 순서대로 (사진별 체크·설명) 렌더.
@@ -100,11 +126,15 @@ const GuideCard = ({ s, ordered, showRouteButtons, brandId, router }) => {
 
       <Typography sx={{ fontSize: 13.5, color: '#555', lineHeight: 1.7, mb: 1.5 }}>{s.why}</Typography>
 
-      <Stack component="ol" spacing={0.5} sx={{ m: 0, pl: 2.5 }}>
-        {s.steps.map((step, i) => (
-          <Typography key={i} component="li" sx={{ fontSize: 13.5, color: '#333', lineHeight: 1.7 }}>{step}</Typography>
-        ))}
-      </Stack>
+      {s.steps?.length > 0 && (
+        <Stack component="ol" spacing={0.5} sx={{ m: 0, pl: 2.5 }}>
+          {s.steps.map((step, i) => (
+            <Typography key={i} component="li" sx={{ fontSize: 13.5, color: '#333', lineHeight: 1.7 }}>{step}</Typography>
+          ))}
+        </Stack>
+      )}
+
+      {s.fields?.length > 0 && <FieldTable fields={s.fields} />}
 
       <GuideImage id={s.id} shots={s.shots} />
 
@@ -137,8 +167,8 @@ const GuideBody = ({ showRouteButtons = false, brandId }) => {
 
       <Divider sx={{ my: 4 }} />
 
-      <Typography sx={{ fontSize: 18, fontWeight: 800, mb: 0.5 }}>② 운영하며 필요할 때</Typography>
-      <Typography sx={{ fontSize: 13, color: '#999', mb: 2 }}>아래는 특별한 순서 없이, 그때그때 필요할 때 사용하는 기능입니다.</Typography>
+      <Typography sx={{ fontSize: 18, fontWeight: 800, mb: 0.5 }}>② 메뉴별 상세 안내</Typography>
+      <Typography sx={{ fontSize: 13, color: '#999', mb: 2 }}>각 메뉴가 어떤 역할을 하는지 항목별로 정리했습니다. 특별한 순서 없이, 필요할 때 찾아보세요.</Typography>
       <Stack spacing={2}>
         {GUIDE_PART2.map((s) => (
           <GuideCard key={s.id} s={s} showRouteButtons={showRouteButtons} brandId={brandId} router={router} />

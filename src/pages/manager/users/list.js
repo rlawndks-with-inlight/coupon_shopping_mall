@@ -31,10 +31,10 @@ const UserList = () => {
       }
     },
     {
-      id: `${themeDnsData.id != 5 ? 'nickname' : 'name'}`,
-      label: `${themeDnsData.id != 5 ? '닉네임' : '이름'}`,
+      id: 'name',
+      label: '이름',
       action: (row) => {
-        return row[`${themeDnsData.id != 5 ? 'nickname' : 'name'}`] ?? "---"
+        return row['name'] || row['nickname'] || "---"
       }
     },
     {

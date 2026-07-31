@@ -214,7 +214,7 @@ export default function OrderSheet({ router }) {
       delete pay_data.payment_modules;
       const ord_num = `${pay_data?.user_id || pay_data?.password}${new Date().getTime().toString().substring(0, 11)}`;
       pay_data.ord_num = ord_num;
-      pay_data.item_name = `${pay_data?.products[0]?.order_name} 외 ${pay_data?.products?.length - 1}`;
+      pay_data.item_name = pay_data?.products?.length > 1 ? `${pay_data?.products[0]?.order_name} 외 ${pay_data?.products?.length - 1}건` : (pay_data?.products[0]?.order_name || '상품');
       const module = _.find(themeDnsData?.payment_modules, { type: 'virtual_account' });
       if (module?.virtual_acct_url) {
         const link = module.virtual_acct_url + `?amount=${pay_data?.amount}`;
@@ -230,7 +230,7 @@ export default function OrderSheet({ router }) {
       delete pay_data.payment_modules;
       const ord_num = `${pay_data?.user_id || pay_data?.password}${new Date().getTime().toString().substring(0, 11)}`;
       pay_data.ord_num = ord_num;
-      pay_data.item_name = `${pay_data?.products[0]?.order_name} 외 ${pay_data?.products?.length - 1}`;
+      pay_data.item_name = pay_data?.products?.length > 1 ? `${pay_data?.products[0]?.order_name} 외 ${pay_data?.products?.length - 1}건` : (pay_data?.products[0]?.order_name || '상품');
       const module = _.find(themeDnsData?.payment_modules, { type: 'gift_certificate' });
       if (module?.gift_certificate_url) {
         const link = module.gift_certificate_url + `?amount=${pay_data?.amount}&name=${user?.name ?? ''}&phone_num=${user?.phone_num ?? ''}`;
@@ -316,7 +316,13 @@ export default function OrderSheet({ router }) {
       <DialogAddAddress addAddressOpen={addAddressOpen} setAddAddressOpen={setAddAddressOpen} onAddAddress={onAddAddress} />
       <DialogAddAddress addAddressOpen={updateAddressOpen} setAddAddressOpen={setUpdatedAddressOpen}
         onAddAddress={onAddAddress} type={'update'} id={addressID} onDeleteAddress={onDeleteAddress} />
-      <Dialog open={postOpen} onClose={() => setPostOpen(false)}>
+      <Dialog open={postOpen} onClose={() => setPostOpen(false)}
+        fullScreen={typeof window !== 'undefined' && window.innerWidth < 700}
+        PaperProps={{ style: { width: typeof window !== 'undefined' && window.innerWidth >= 700 ? '600px' : '100%', maxWidth: '100%' } }}>
+        <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', px: 2, py: 1.25, borderBottom: '1px solid #eee' }}>
+          <Box sx={{ fontWeight: 700 }}>우편번호 검색</Box>
+          <Button size="small" color="inherit" onClick={() => setPostOpen(false)}>닫기</Button>
+        </Box>
         <DaumPostcode style={postCodeStyle} onComplete={onCompletePost} />
       </Dialog>
 

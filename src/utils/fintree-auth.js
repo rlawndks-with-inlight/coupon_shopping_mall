@@ -40,7 +40,7 @@ const PayProductsByAuthFintree = ({ props }) => {
             ord_num: `${pay_data?.user_id || pay_data?.password}${new Date().getTime().toString().substring(0, 11)}`,
         }
         if (pay_data_?.products?.length > 1 || !pay_data_?.item_name) {
-            pay_data_.item_name = `${pay_data_?.products[0]?.order_name} 외 ${pay_data_?.products?.length - 1}`;
+            pay_data_.item_name = pay_data_?.products?.length > 1 ? `${pay_data_?.products[0]?.order_name} 외 ${pay_data_?.products?.length - 1}건` : (pay_data_?.products[0]?.order_name || '상품');
         }
         pay_data_.seller_id = themeDnsData?.seller_id
         pay_data_.agent_amount = Array.isArray(data) ? data.reduce((sum, item) => sum + (item?.product_agent_price || 0), 0) : data?.product_agent_price

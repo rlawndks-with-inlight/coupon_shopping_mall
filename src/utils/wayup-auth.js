@@ -33,7 +33,7 @@ const PayProductsByAuthWayup = ({ props }) => {
         };
 
         if (pay_data_?.products?.length > 1 || !pay_data_?.item_name) {
-            pay_data_.item_name = `${pay_data_?.products[0]?.order_name} 외 ${pay_data_?.products?.length - 1}`;
+            pay_data_.item_name = pay_data_?.products?.length > 1 ? `${pay_data_?.products[0]?.order_name} 외 ${pay_data_?.products?.length - 1}건` : (pay_data_?.products[0]?.order_name || '상품');
         }
 
         pay_data_.seller_id = themeDnsData?.seller_id;

@@ -43,10 +43,10 @@ const FaqList = () => {
       }
     },
     {
-      id: 'writer_nickname',
-      label: '작성자 닉네임',
+      id: 'writer_name',
+      label: '작성자',
       action: (row) => {
-        return row['writer_nickname'] ?? "---"
+        return row['writer_name'] || row['writer_nickname'] || "---"
       }
     },
     {

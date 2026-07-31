@@ -444,26 +444,7 @@ const Demo9 = (props) => {
         </Quote>
       </QuoteSection>
 
-      <HeartSection>
-        <SectionHeading>💗 Customer Love</SectionHeading>
-        <HeartGrid>
-          <HeartCard>
-            <HeartEmoji>🥰</HeartEmoji>
-            <HeartText>"정말 좋아요! 기대했던 것보다 훨씬 만족스러워요."</HeartText>
-            <HeartAuthor>— 지수님</HeartAuthor>
-          </HeartCard>
-          <HeartCard>
-            <HeartEmoji>✨</HeartEmoji>
-            <HeartText>"단 하나의 상품에 이렇게 진심일 수 있다니. 감동."</HeartText>
-            <HeartAuthor>— 민지님</HeartAuthor>
-          </HeartCard>
-          <HeartCard>
-            <HeartEmoji>💕</HeartEmoji>
-            <HeartText>"친구들한테도 추천했어요. 반응 너무 좋아요!"</HeartText>
-            <HeartAuthor>— 서연님</HeartAuthor>
-          </HeartCard>
-        </HeartGrid>
-      </HeartSection>
+      {/* 가짜 후기 섹션 제거(조작된 고객 후기·가상 이름) — 추후 실제 상품후기 연동 시 복원 */}
 
       {featuredProducts.length > 0 && (
         <FeaturedSection>

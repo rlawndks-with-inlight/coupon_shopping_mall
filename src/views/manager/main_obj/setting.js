@@ -45,6 +45,7 @@ import HomeItemHero from 'src/views/section/shop/HomeItemHero'
 import { homeItemsSetting, homeItemsWithCategoriesSetting } from 'src/views/section/shop/utils'
 import ReactQuillComponent from '../react-quill'
 import { apiManager, uploadFilesByManager } from 'src/utils/api'
+import { DEFAULT_BANNERS } from 'src/data/default-banners'
 
 const Tour = dynamic(() => import('reactour'), { ssr: false })
 //메인화면
@@ -350,6 +351,20 @@ const MainObjSetting = props => {
     let content_list = [...contentList]
     let list = [...value]
     content_list[idx]['list'] = list
+    setContentList(content_list)
+  }
+  // 기본 배너(완성 이미지)를 배너슬라이드에 추가. src가 이미 있어 저장 시 업로드 없이 반영됨.
+  const addDefaultBanner = (banner, idx) => {
+    let content_list = [...contentList]
+    content_list[idx]['list'] = content_list[idx]['list'] ?? []
+    content_list[idx]['list'].push({
+      src: banner.src,
+      title: '',
+      title_color: '#ffffff',
+      sub_title: '',
+      sub_title_color: '#ffffff',
+      link: ''
+    })
     setContentList(content_list)
   }
   const onSave = async () => {
@@ -785,6 +800,35 @@ const MainObjSetting = props => {
                                 height: 85
                               }}
                             />
+
+                            <Box sx={{ mt: 0.5 }}>
+                              <Typography sx={{ fontSize: 13, color: 'text.secondary', mb: 0.75 }}>
+                                기본 배너 — 클릭하면 위 슬라이드에 추가됩니다. (추가 후 원하는 이미지로 교체하거나 제목·링크를 넣을 수 있어요)
+                              </Typography>
+                              <Row style={{ gap: '0.5rem', overflowX: 'auto', paddingBottom: '0.25rem' }}>
+                                {DEFAULT_BANNERS.map(b => (
+                                  <Tooltip title={`'${b.label}' 배너 추가`} key={b.id}>
+                                    <Box
+                                      component='img'
+                                      src={b.src}
+                                      alt={b.label}
+                                      onClick={() => addDefaultBanner(b, idx)}
+                                      sx={{
+                                        width: 160,
+                                        height: 68,
+                                        objectFit: 'cover',
+                                        borderRadius: 1,
+                                        border: '1px solid #e0e0e0',
+                                        cursor: 'pointer',
+                                        flexShrink: 0,
+                                        transition: 'border-color .15s',
+                                        '&:hover': { borderColor: 'primary.main' }
+                                      }}
+                                    />
+                                  </Tooltip>
+                                ))}
+                              </Row>
+                            </Box>
 
                             {item?.list &&
                               item.list.map((itm, index) => (

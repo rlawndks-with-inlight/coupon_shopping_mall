@@ -523,26 +523,7 @@ const Demo6 = (props) => {
         </StoryInner>
       </StorySection>
 
-      {/* 5. Numbers */}
-      <NumbersSection>
-        <Container>
-          <SectionHeading style={{ color: '#fff' }}>By the Numbers</SectionHeading>
-          <NumbersGrid>
-            <NumberCard>
-              <NumberValue $color={mainColor}>100%</NumberValue>
-              <NumberLabel>Quality Guaranteed</NumberLabel>
-            </NumberCard>
-            <NumberCard>
-              <NumberValue $color={mainColor}>1000+</NumberValue>
-              <NumberLabel>Happy Customers</NumberLabel>
-            </NumberCard>
-            <NumberCard>
-              <NumberValue $color={mainColor}>4.9★</NumberValue>
-              <NumberLabel>Average Rating</NumberLabel>
-            </NumberCard>
-          </NumbersGrid>
-        </Container>
-      </NumbersSection>
+      {/* 가짜 통계 섹션 제거(조작된 고객수·평점) */}
 
       {/* 6. Gallery */}
       <GallerySection>

@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
-import { Box, Typography, Stack, FormControlLabel, Checkbox, Divider } from '@mui/material';
-import { POLICY_DOCS } from './policyContent';
+import { Box, Typography, Stack, FormControlLabel, Checkbox, Divider, Dialog, DialogTitle, DialogContent, IconButton, useMediaQuery } from '@mui/material';
+import { Icon } from '@iconify/react';
+import { POLICY_DOCS, getPolicyDoc } from './policyContent';
 
 // SHOPGO 가맹점 신청 약관 동의 — 항목별 개별 동의(개인정보보호법상 개별 동의 원칙).
 // 필수 4종(이용약관·이용동의·개인정보처리방침·PG정책) 모두 체크해야 onChange(true) 전달.
@@ -8,8 +9,12 @@ import { POLICY_DOCS } from './policyContent';
 const REQUIRED = POLICY_DOCS.filter((d) => d.consent === 'required');
 const NOTICE = POLICY_DOCS.filter((d) => d.consent === 'notice');
 
-const openDoc = (slug) => {
-  if (typeof window !== 'undefined') window.open(`/policy/${slug}`, '_blank');
+// 문단 유형 판별 → 장/조/부칙 강조 (policy 페이지와 동일 규칙)
+const lineKind = (s) => {
+  if (/^제\s*\d+\s*장/.test(s)) return 'chapter';
+  if (/^제\s*\d+\s*조/.test(s)) return 'article';
+  if (/^부칙/.test(s)) return 'article';
+  return 'body';
 };
 
 const AgreementBox = ({ onChange, error, errorText }) => {
@@ -18,6 +23,10 @@ const AgreementBox = ({ onChange, error, errorText }) => {
     REQUIRED.forEach((d) => (o[d.slug] = false));
     return o;
   });
+
+  const [viewSlug, setViewSlug] = useState(null);
+  const viewDoc = viewSlug ? getPolicyDoc(viewSlug) : null;
+  const fullScreen = useMediaQuery('(max-width:600px)');
 
   const allChecked = REQUIRED.every((d) => checked[d.slug]);
 
@@ -64,7 +73,7 @@ const AgreementBox = ({ onChange, error, errorText }) => {
                 }
                 label={
                   <Typography sx={{ fontSize: 13.5 }}>
-                    <Box component="span" sx={{ color: '#d33', fontWeight: 700, mr: 0.5 }}>
+                    <Box component="span" sx={{ color: '#84cc16', fontWeight: 700, mr: 0.5 }}>
                       [필수]
                     </Box>
                     {d.title}
@@ -74,7 +83,7 @@ const AgreementBox = ({ onChange, error, errorText }) => {
               <Box
                 component="button"
                 type="button"
-                onClick={() => openDoc(d.slug)}
+                onClick={() => setViewSlug(d.slug)}
                 sx={{
                   border: 'none', background: 'none', cursor: 'pointer',
                   color: '#888', fontSize: 12, textDecoration: 'underline', whiteSpace: 'nowrap', px: 0.5,
@@ -114,6 +123,61 @@ const AgreementBox = ({ onChange, error, errorText }) => {
           {errorText || '필수 약관에 모두 동의해 주세요.'}
         </Typography>
       )}
+
+      {/* 약관 보기 — 새 창 대신 팝업(모달) */}
+      <Dialog
+        open={!!viewDoc}
+        onClose={() => setViewSlug(null)}
+        maxWidth="md"
+        fullWidth
+        fullScreen={fullScreen}
+        scroll="paper"
+        PaperProps={{ sx: { borderRadius: fullScreen ? 0 : 2, maxHeight: fullScreen ? '100%' : '85vh' } }}
+      >
+        {viewDoc && (
+          <>
+            <DialogTitle sx={{ pr: 6, fontSize: 18, fontWeight: 800 }}>
+              {viewDoc.title}
+              {viewDoc.effectiveDate && (
+                <Typography sx={{ fontSize: 12, color: '#999', fontWeight: 400, mt: 0.5 }}>
+                  시행일: {viewDoc.effectiveDate}
+                </Typography>
+              )}
+              <IconButton
+                aria-label="닫기"
+                onClick={() => setViewSlug(null)}
+                sx={{ position: 'absolute', right: 8, top: 8, color: '#888' }}
+              >
+                <Icon icon="mdi:close" />
+              </IconButton>
+            </DialogTitle>
+            <DialogContent dividers>
+              {viewDoc.lines.map((line, i) => {
+                const kind = lineKind(line);
+                if (kind === 'chapter') {
+                  return (
+                    <Typography key={i} sx={{ fontSize: 16, fontWeight: 800, mt: 3, mb: 1.25, color: '#111' }}>
+                      {line}
+                    </Typography>
+                  );
+                }
+                if (kind === 'article') {
+                  return (
+                    <Typography key={i} sx={{ fontSize: 14.5, fontWeight: 700, mt: 2, mb: 0.75, color: '#222' }}>
+                      {line}
+                    </Typography>
+                  );
+                }
+                return (
+                  <Typography key={i} sx={{ fontSize: 13.5, color: '#444', lineHeight: 1.85, mb: 0.75, whiteSpace: 'pre-wrap', wordBreak: 'keep-all' }}>
+                    {line}
+                  </Typography>
+                );
+              })}
+            </DialogContent>
+          </>
+        )}
+      </Dialog>
     </Box>
   );
 };

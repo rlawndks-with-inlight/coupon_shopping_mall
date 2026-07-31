@@ -383,7 +383,7 @@ const Demo7 = (props) => {
             <HeroName>{name}</HeroName>
             <HeroDivider />
             {comment && <HeroBrush>"{comment}"</HeroBrush>}
-            <HeroPrice>{commarNumber(sale)}円</HeroPrice>
+            <HeroPrice>{commarNumber(sale)}원</HeroPrice>
             <CTABtn onClick={goTo}>求める</CTABtn>
           </HeroCenter>
           <HeroRight>SINCE {new Date().getFullYear()}</HeroRight>
@@ -431,7 +431,7 @@ const Demo7 = (props) => {
                   <FeaturedImage src={c.img} effect="blur" />
                   <HeroDivider />
                   <FeaturedName>{c.name}</FeaturedName>
-                  <FeaturedPrice>{commarNumber(c.sale)}円</FeaturedPrice>
+                  <FeaturedPrice>{commarNumber(c.sale)}원</FeaturedPrice>
                 </FeaturedCard>
               );
             })}

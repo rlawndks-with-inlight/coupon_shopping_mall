@@ -28,7 +28,7 @@ const HomeDemo = (props) => {
   const [loading, setLoading] = useState(true);
   const { user } = useAuthContext();
   useEffect(() => {
-    if (themeDnsData?.id == 74 && !user) {
+    if (themeDnsData?.is_closure == 1 && !user) {
       router.push('/shop/auth/login')
     }
     if (themeDnsData?.id > 0) {

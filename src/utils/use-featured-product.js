@@ -33,19 +33,15 @@ export const useFeaturedProduct = () => {
       setFetchedProduct(null);
       return;
     }
-    // 먼저 products 배열에서 찾고, 없으면 API 호출
-    const found = products.find(p => String(p?.id) === String(featuredId));
-    if (found) {
-      setFetchedProduct(found);
-    } else {
-      apiShop('product', 'get', { id: featuredId }).then(result => {
-        if (result) setFetchedProduct(result);
-      }).catch(() => {});
-    }
-  }, [featuredId, products?.length]);
+    // sub_images(서브이미지) 등 전체 필드는 list 데이터에 없으므로 항상 상세를 조회한다.
+    apiShop('product', 'get', { id: featuredId }).then(result => {
+      if (result) setFetchedProduct(result);
+    }).catch(() => {});
+  }, [featuredId]);
 
   if (featuredId && fetchedProduct) return fetchedProduct;
   if (featuredId) {
+    // 상세 로드 전 임시로 list 데이터 사용(대표이미지·가격 등만, 서브이미지는 상세 로드 후)
     const found = products.find(p => String(p?.id) === String(featuredId));
     if (found) return found;
   }

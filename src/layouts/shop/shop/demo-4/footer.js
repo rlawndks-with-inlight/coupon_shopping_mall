@@ -81,7 +81,7 @@ const Footer = (props) => {
     return (
         <>
             {
-                themeDnsData?.id == 74 && !user ?
+                themeDnsData?.is_closure == 1 && !user ?
                     <></>
                     :
                     <>

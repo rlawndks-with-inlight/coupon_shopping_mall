@@ -1,5 +1,7 @@
 import { Button, Container, Grid, TextField, Typography } from "@mui/material";
+import { Icon } from "@iconify/react";
 import { useSettingsContext } from "src/components/settings";
+import { isShopgoMerchant } from "src/utils/is-shopgo";
 import { AppWidget, AppWidgetSummary } from "src/views/@dashboard/general/app";
 import { useTheme } from '@mui/material/styles';
 import { Row } from "src/components/elements/styled-components";
@@ -54,6 +56,19 @@ export const DashboardDemo2 = () => {
                     <Grid item xs={12} md={12}>
                         <OnboardingChecklist />
                     </Grid>
+                    {isShopgoMerchant(themeDnsData) && (
+                        <Grid item xs={12} md={12}>
+                            <Button
+                                variant="contained"
+                                startIcon={<Icon icon="mdi:chart-box-outline" />}
+                                endIcon={<Icon icon="mdi:open-in-new" width={16} />}
+                                onClick={() => window.open('https://oms.forspay.net/build/login', '_blank', 'noopener,noreferrer')}
+                                sx={{ bgcolor: '#111', '&:hover': { bgcolor: '#333' } }}
+                            >
+                                매출 조회
+                            </Button>
+                        </Grid>
+                    )}
                     <Grid item xs={12} md={12}>
                         <Row style={{ rowGap: '1rem', flexWrap: 'wrap', columnGap: '1rem' }}>
                             {window.innerWidth > 1000 ?

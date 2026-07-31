@@ -155,7 +155,7 @@ const CartDemo = (props) => {
 
   // 브랜드 정책(id==74 전용): 이 브랜드는 게스트 체크아웃을 막고 로그인을 강제함(의도된 예외). 다른 브랜드는 게스트 주문서 진입 허용.
   useEffect(() => {
-    if (themeDnsData?.id == 74 && !user) {
+    if (themeDnsData?.is_closure == 1 && !user) {
       router.push('/shop/auth/login')
     }
   }, [themeDnsData])

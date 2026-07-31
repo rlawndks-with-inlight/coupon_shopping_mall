@@ -427,6 +427,7 @@ const Demo6 = (props) => {
   const router = func?.router;
   const mainColor = themeDnsData?.theme_css?.main_color || '#8B7355';
   const brandName = themeDnsData?.name || 'BRAND';
+  const t = themeDnsData?.setting_obj?.home_texts?.demo6 ?? {}; // 가맹점 편집 문구(미입력 시 기본값)
   const product = useFeaturedProduct();
   const featuredProducts = useFeaturedProducts({ excludeId: product?.id });
 
@@ -444,6 +445,8 @@ const Demo6 = (props) => {
   }
 
   const img = fixImgUrl(product?.product_img);
+  // 갤러리: 상품 서브이미지 사용(없으면 대표이미지). 어드민 상품편집에서 서브이미지 등록 시 반영.
+  const galleryImgs = [img, ...(product?.sub_images ?? []).map(s => fixImgUrl(s?.product_sub_img))].filter(Boolean);
   const name = formatLang(product, 'product_name', currentLang);
   const comment = product?.product_comment;
   const sale = product?.product_sale_price || product?.product_price || 0;
@@ -483,22 +486,22 @@ const Demo6 = (props) => {
       {/* 3. Features */}
       <Section>
         <Container>
-          <SectionHeading>Why {brandName}</SectionHeading>
+          <SectionHeading>{t.feature_heading || `Why ${brandName}`}</SectionHeading>
           <FeatureGrid>
             <FeatureCard>
               <FeatureIcon>✦</FeatureIcon>
-              <FeatureTitle>Premium Quality</FeatureTitle>
-              <FeatureDesc>최고급 원료와 장인의 손길로 완성된 품질. 엄선된 재료만을 사용합니다.</FeatureDesc>
+              <FeatureTitle>{t.feature1_title || 'Premium Quality'}</FeatureTitle>
+              <FeatureDesc>{t.feature1_desc || '최고급 원료와 장인의 손길로 완성된 품질. 엄선된 재료만을 사용합니다.'}</FeatureDesc>
             </FeatureCard>
             <FeatureCard>
               <FeatureIcon>♡</FeatureIcon>
-              <FeatureTitle>Thoughtful Design</FeatureTitle>
-              <FeatureDesc>오랜 시간 다듬어진 디자인. 일상에 품격을 더하는 섬세한 디테일.</FeatureDesc>
+              <FeatureTitle>{t.feature2_title || 'Thoughtful Design'}</FeatureTitle>
+              <FeatureDesc>{t.feature2_desc || '오랜 시간 다듬어진 디자인. 일상에 품격을 더하는 섬세한 디테일.'}</FeatureDesc>
             </FeatureCard>
             <FeatureCard>
               <FeatureIcon>✧</FeatureIcon>
-              <FeatureTitle>Time-honored</FeatureTitle>
-              <FeatureDesc>전통과 현대의 조화. 변하지 않는 가치를 담아 오래도록 함께하는 선택.</FeatureDesc>
+              <FeatureTitle>{t.feature3_title || 'Time-honored'}</FeatureTitle>
+              <FeatureDesc>{t.feature3_desc || '전통과 현대의 조화. 변하지 않는 가치를 담아 오래도록 함께하는 선택.'}</FeatureDesc>
             </FeatureCard>
           </FeatureGrid>
         </Container>
@@ -514,10 +517,14 @@ const Demo6 = (props) => {
             <StoryLabel $color={mainColor}>Our Story</StoryLabel>
             <StoryTitle>단 하나의 완성,<br />{brandName}</StoryTitle>
             <StoryBody>
-              오랜 시간 연구와 다듬음을 거쳐 완성된 단 하나의 제품입니다.
-              <br /><br />
-              저희는 여러 가지를 한꺼번에 만들기보다, 진심으로 자신 있는 하나에 집중합니다.
-              이것이 저희가 고객에게 드릴 수 있는 가장 정성스러운 선물입니다.
+              {t.story_body ? t.story_body : (
+                <>
+                  오랜 시간 연구와 다듬음을 거쳐 완성된 단 하나의 제품입니다.
+                  <br /><br />
+                  저희는 여러 가지를 한꺼번에 만들기보다, 진심으로 자신 있는 하나에 집중합니다.
+                  이것이 저희가 고객에게 드릴 수 있는 가장 정성스러운 선물입니다.
+                </>
+              )}
             </StoryBody>
           </StoryText>
         </StoryInner>
@@ -531,14 +538,14 @@ const Demo6 = (props) => {
           <SectionHeading>Gallery</SectionHeading>
           <GalleryGrid>
             <GalleryMain $color={mainColor}>
-              <LazyLoadImage src={img} effect="blur" style={{ maxWidth: '70%', maxHeight: '80%', objectFit: 'contain' }} />
+              <LazyLoadImage src={galleryImgs[0]} effect="blur" style={{ maxWidth: '70%', maxHeight: '80%', objectFit: 'contain' }} />
             </GalleryMain>
             <GallerySide>
               <GallerySmall $color={mainColor}>
-                <LazyLoadImage src={img} effect="blur" style={{ maxWidth: '65%', maxHeight: '75%', objectFit: 'contain' }} />
+                <LazyLoadImage src={galleryImgs[1 % galleryImgs.length]} effect="blur" style={{ maxWidth: '65%', maxHeight: '75%', objectFit: 'contain' }} />
               </GallerySmall>
               <GallerySmall $color={mainColor}>
-                <LazyLoadImage src={img} effect="blur" style={{ maxWidth: '65%', maxHeight: '75%', objectFit: 'contain' }} />
+                <LazyLoadImage src={galleryImgs[2 % galleryImgs.length]} effect="blur" style={{ maxWidth: '65%', maxHeight: '75%', objectFit: 'contain' }} />
               </GallerySmall>
             </GallerySide>
           </GalleryGrid>
@@ -575,10 +582,14 @@ const Demo6 = (props) => {
       {/* 7. Final CTA */}
       <FinalCTA $color={mainColor}>
         <Container>
-          <FinalCTATitle>Experience {brandName}</FinalCTATitle>
+          <FinalCTATitle>{t.final_title || `Experience ${brandName}`}</FinalCTATitle>
           <FinalCTADesc>
-            지금 바로 {brandName}의 시그니처를 만나보세요.
-            <br />한 번의 선택이 일상을 바꿉니다.
+            {t.final_desc ? t.final_desc : (
+              <>
+                지금 바로 {brandName}의 시그니처를 만나보세요.
+                <br />한 번의 선택이 일상을 바꿉니다.
+              </>
+            )}
           </FinalCTADesc>
           <HeroPriceRow style={{ justifyContent: 'center', marginBottom: '2rem' }}>
             {hasSale && <HeroDisc>{disc}% OFF</HeroDisc>}

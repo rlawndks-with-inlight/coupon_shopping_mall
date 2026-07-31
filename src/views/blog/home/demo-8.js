@@ -341,6 +341,7 @@ const Demo8 = (props) => {
   const { func } = props;
   const router = func?.router;
   const brandName = themeDnsData?.name || 'BRAND';
+  const t = themeDnsData?.setting_obj?.home_texts?.demo8 ?? {}; // 가맹점 편집 문구(미입력 시 기본값)
   const product = useFeaturedProduct();
   const featuredProducts = useFeaturedProducts({ excludeId: product?.id });
 
@@ -390,28 +391,32 @@ const Demo8 = (props) => {
       </Hero>
 
       <Manifesto>
-        <ManifestoBig>
-          One <ManifestoAccent>product</ManifestoAccent>.<br />
-          Zero <ManifestoAccent>compromise</ManifestoAccent>.
-        </ManifestoBig>
+        {t.manifesto ? (
+          <ManifestoBig>{t.manifesto}</ManifestoBig>
+        ) : (
+          <ManifestoBig>
+            One <ManifestoAccent>product</ManifestoAccent>.<br />
+            Zero <ManifestoAccent>compromise</ManifestoAccent>.
+          </ManifestoBig>
+        )}
       </Manifesto>
 
       <Facts>
         <FactCell>
-          <FactNum>01</FactNum>
-          <FactLabel>Single SKU</FactLabel>
+          <FactNum>{t.fact1_num || '01'}</FactNum>
+          <FactLabel>{t.fact1_label || 'Single SKU'}</FactLabel>
         </FactCell>
         <FactCell>
-          <FactNum>100</FactNum>
-          <FactLabel>% quality</FactLabel>
+          <FactNum>{t.fact2_num || '100'}</FactNum>
+          <FactLabel>{t.fact2_label || '% quality'}</FactLabel>
         </FactCell>
         <FactCell>
-          <FactNum>∞</FactNum>
-          <FactLabel>Dedication</FactLabel>
+          <FactNum>{t.fact3_num || '∞'}</FactNum>
+          <FactLabel>{t.fact3_label || 'Dedication'}</FactLabel>
         </FactCell>
         <FactCell>
-          <FactNum>0</FactNum>
-          <FactLabel>Filler</FactLabel>
+          <FactNum>{t.fact4_num || '0'}</FactNum>
+          <FactLabel>{t.fact4_label || 'Filler'}</FactLabel>
         </FactCell>
       </Facts>
 
@@ -441,8 +446,8 @@ const Demo8 = (props) => {
       )}
 
       <FinalCTA onClick={goTo}>
-        <FinalHuge>Get it now</FinalHuge>
-        <FinalSmall>tap anywhere to purchase</FinalSmall>
+        <FinalHuge>{t.cta_title || 'Get it now'}</FinalHuge>
+        <FinalSmall>{t.cta_sub || 'tap anywhere to purchase'}</FinalSmall>
       </FinalCTA>
     </Wrapper>
   );

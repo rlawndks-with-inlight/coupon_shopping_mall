@@ -323,6 +323,7 @@ const Demo5 = (props) => {
   const { func } = props;
   const router = func?.router;
   const brandName = themeDnsData?.name || 'BRAND';
+  const t = themeDnsData?.setting_obj?.home_texts?.demo5 ?? {}; // 가맹점 편집 문구(미입력 시 기본값)
   const product = useFeaturedProduct();
   const featuredProducts = useFeaturedProducts({ excludeId: product?.id });
 
@@ -338,6 +339,8 @@ const Demo5 = (props) => {
   }
 
   const img = fixImgUrl(product?.product_img);
+  // 갤러리: 상품 서브이미지 사용(없으면 대표이미지). 어드민 상품편집에서 서브이미지 등록 시 반영.
+  const galleryImgs = [img, ...(product?.sub_images ?? []).map(s => fixImgUrl(s?.product_sub_img))].filter(Boolean);
   const name = formatLang(product, 'product_name', currentLang);
   const comment = product?.product_comment;
   const sale = product?.product_sale_price || product?.product_price || 0;
@@ -371,22 +374,22 @@ const Demo5 = (props) => {
       </Hero>
 
       <SpecSection>
-        <SectionHeading>Excellence, Defined</SectionHeading>
+        <SectionHeading>{t.spec_heading || 'Excellence, Defined'}</SectionHeading>
         <SpecGrid>
           <SpecCell>
             <SpecIcon>✦</SpecIcon>
-            <SpecTitle>Pure Craftsmanship</SpecTitle>
-            <SpecDesc>한 땀 한 땀 정성으로 완성된 장인의 작품.</SpecDesc>
+            <SpecTitle>{t.spec1_title || 'Pure Craftsmanship'}</SpecTitle>
+            <SpecDesc>{t.spec1_desc || '한 땀 한 땀 정성으로 완성된 장인의 작품.'}</SpecDesc>
           </SpecCell>
           <SpecCell>
             <SpecIcon>♦</SpecIcon>
-            <SpecTitle>Rare Materials</SpecTitle>
-            <SpecDesc>세계 각지에서 엄선된 최고의 원료만을 사용.</SpecDesc>
+            <SpecTitle>{t.spec2_title || 'Rare Materials'}</SpecTitle>
+            <SpecDesc>{t.spec2_desc || '세계 각지에서 엄선된 최고의 원료만을 사용.'}</SpecDesc>
           </SpecCell>
           <SpecCell>
             <SpecIcon>♛</SpecIcon>
-            <SpecTitle>Timeless Elegance</SpecTitle>
-            <SpecDesc>유행에 흔들리지 않는 영원한 아름다움.</SpecDesc>
+            <SpecTitle>{t.spec3_title || 'Timeless Elegance'}</SpecTitle>
+            <SpecDesc>{t.spec3_desc || '유행에 흔들리지 않는 영원한 아름다움.'}</SpecDesc>
           </SpecCell>
         </SpecGrid>
       </SpecSection>
@@ -396,8 +399,7 @@ const Demo5 = (props) => {
           <StoryLabel>MAISON STORY</StoryLabel>
           <StoryTitle>The Art of {brandName}</StoryTitle>
           <StoryQuote>
-            "완벽을 추구한다는 것은 평범한 것을 만드는 것이 아닙니다.
-            오랜 시간 수많은 시도 끝에 단 하나의 답을 찾아내는 여정입니다."
+            {t.story_quote || '"완벽을 추구한다는 것은 평범한 것을 만드는 것이 아닙니다. 오랜 시간 수많은 시도 끝에 단 하나의 답을 찾아내는 여정입니다."'}
           </StoryQuote>
         </StoryInner>
       </StorySection>
@@ -406,13 +408,13 @@ const Demo5 = (props) => {
         <SectionHeading>Visual Heritage</SectionHeading>
         <GalleryGrid>
           <GalleryCell>
-            <LazyLoadImage src={img} effect="blur" style={{ maxWidth: '75%', maxHeight: '75%', objectFit: 'contain', filter: 'drop-shadow(0 10px 30px rgba(201,168,118,0.2))' }} />
+            <LazyLoadImage src={galleryImgs[0]} effect="blur" style={{ maxWidth: '75%', maxHeight: '75%', objectFit: 'contain', filter: 'drop-shadow(0 10px 30px rgba(201,168,118,0.2))' }} />
           </GalleryCell>
           <GalleryCell>
-            <LazyLoadImage src={img} effect="blur" style={{ maxWidth: '75%', maxHeight: '75%', objectFit: 'contain', filter: 'drop-shadow(0 10px 30px rgba(201,168,118,0.2))' }} />
+            <LazyLoadImage src={galleryImgs[1 % galleryImgs.length]} effect="blur" style={{ maxWidth: '75%', maxHeight: '75%', objectFit: 'contain', filter: 'drop-shadow(0 10px 30px rgba(201,168,118,0.2))' }} />
           </GalleryCell>
           <GalleryCell>
-            <LazyLoadImage src={img} effect="blur" style={{ maxWidth: '75%', maxHeight: '75%', objectFit: 'contain', filter: 'drop-shadow(0 10px 30px rgba(201,168,118,0.2))' }} />
+            <LazyLoadImage src={galleryImgs[2 % galleryImgs.length]} effect="blur" style={{ maxWidth: '75%', maxHeight: '75%', objectFit: 'contain', filter: 'drop-shadow(0 10px 30px rgba(201,168,118,0.2))' }} />
           </GalleryCell>
         </GalleryGrid>
       </GallerySection>

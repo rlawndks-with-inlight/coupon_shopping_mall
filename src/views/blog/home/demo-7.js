@@ -348,6 +348,7 @@ const Demo7 = (props) => {
   const { func } = props;
   const router = func?.router;
   const brandName = themeDnsData?.name || '無名';
+  const t = themeDnsData?.setting_obj?.home_texts?.demo7 ?? {}; // 가맹점 편집 문구(미입력 시 기본값)
   const product = useFeaturedProduct();
   const featuredProducts = useFeaturedProducts({ excludeId: product?.id });
 
@@ -392,9 +393,13 @@ const Demo7 = (props) => {
 
       <Philosophy>
         <PhilosophyText>
-          오래 지속되는 것에는 이유가 있습니다.<br />
-          빠르지 않아도, 화려하지 않아도,<br />
-          진심으로 만들어진 단 하나를.
+          {t.philosophy ? t.philosophy : (
+            <>
+              오래 지속되는 것에는 이유가 있습니다.<br />
+              빠르지 않아도, 화려하지 않아도,<br />
+              진심으로 만들어진 단 하나를.
+            </>
+          )}
         </PhilosophyText>
         <PhilosophySign>— {brandName} —</PhilosophySign>
       </Philosophy>
@@ -404,18 +409,18 @@ const Demo7 = (props) => {
         <ValuesGrid>
           <ValueCard>
             <ValueKanji>無</ValueKanji>
-            <ValueTitle>없음의 미학</ValueTitle>
-            <ValueDesc>덜어내는 것이 곧 본질을 드러내는 길이라 믿습니다.</ValueDesc>
+            <ValueTitle>{t.value1_title || '없음의 미학'}</ValueTitle>
+            <ValueDesc>{t.value1_desc || '덜어내는 것이 곧 본질을 드러내는 길이라 믿습니다.'}</ValueDesc>
           </ValueCard>
           <ValueCard>
             <ValueKanji>空</ValueKanji>
-            <ValueTitle>비움의 공간</ValueTitle>
-            <ValueDesc>여백이 있기에 의미가 채워집니다.</ValueDesc>
+            <ValueTitle>{t.value2_title || '비움의 공간'}</ValueTitle>
+            <ValueDesc>{t.value2_desc || '여백이 있기에 의미가 채워집니다.'}</ValueDesc>
           </ValueCard>
           <ValueCard>
             <ValueKanji>和</ValueKanji>
-            <ValueTitle>조화의 손길</ValueTitle>
-            <ValueDesc>자연과 사람 사이, 조용한 균형을 추구합니다.</ValueDesc>
+            <ValueTitle>{t.value3_title || '조화의 손길'}</ValueTitle>
+            <ValueDesc>{t.value3_desc || '자연과 사람 사이, 조용한 균형을 추구합니다.'}</ValueDesc>
           </ValueCard>
         </ValuesGrid>
       </Values>

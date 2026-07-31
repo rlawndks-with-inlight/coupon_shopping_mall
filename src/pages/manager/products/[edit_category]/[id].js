@@ -503,10 +503,10 @@ const ProductEdit = () => {
       }
     },
     {
-      id: 'nickname',
-      label: '작성자닉네임',
+      id: 'writer_name',
+      label: '작성자',
       action: (row) => {
-        return row['nickname'] ?? "---"
+        return row['writer_name'] || row['nickname'] || "---"
       }
     },
     {

@@ -755,14 +755,17 @@ const Header = () => {
         </>}
       <PaddingTop pcHeight={headerHeight} />
       <Drawer
+        variant="persistent"
         anchor={'left'}
         open={sideMenuOpen}
         onClose={() => {
           setSideMenuOpen(false);
         }}
+        PaperProps={{ style: { zIndex: 1300 } }}
         style={{
         }}
       >
+        <div onClick={() => setSideMenuOpen(false)} style={{ display: 'flex', justifyContent: 'flex-end', padding: '10px 14px', cursor: 'pointer', fontSize: '24px', lineHeight: 1, color: '#333' }}>✕</div>
         <ColumnMenuContainer style={{
           background: (themeMode == 'dark' ? '#222' : '#fff'),
           color: (themeMode == 'dark' ? '#fff' : '#000'),

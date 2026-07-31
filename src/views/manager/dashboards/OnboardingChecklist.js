@@ -34,7 +34,7 @@ const OnboardingChecklist = () => {
       { key: 'delivery', label: '배송비 설정', tag: '권장', note: '미설정 시 무료배송', done: Number(so?.delivery_fee_default) > 0 || Number(so?.free_ship_min) > 0, route: settingRoute },
       { key: 'category', label: '카테고리 등록', tag: '필수', required: true, done: catDone, route: catRoute },
       { key: 'product', label: '상품 등록', tag: '필수', required: true, done: (dns?.products?.length ?? 0) > 0, route: '/manager/products/list', note: catDone ? '' : '카테고리를 먼저 등록하세요' },
-      ...(isSingleProductBlog ? [{ key: 'featured', label: '대표 상품 지정', tag: '권장', done: (so?.featured_product_ids?.length ?? 0) > 0, route: settingRoute }] : []),
+      ...(isSingleProductBlog ? [{ key: 'featured', label: '대표 상품 지정', tag: '권장', done: (so?.featured_product_ids?.length ?? 0) > 0, route: '/manager/designs/featured' }] : []),
       { key: 'payment', label: '결제수단 연결', tag: '필수', required: true, hqManaged: true, done: (dns?.payment_modules?.length ?? 0) > 0 },
       { key: 'design', label: '메인페이지 꾸미기', tag: '권장', done: ((dns?.shop_obj?.length ?? 0) + (dns?.blog_obj?.length ?? 0)) > 0, route: isBlog && !isShop ? '/manager/designs/blog-main/all' : '/manager/designs/main/all' },
     ];

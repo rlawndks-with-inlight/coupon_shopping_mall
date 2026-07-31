@@ -3,6 +3,9 @@
 //  - part 1 = 쇼핑몰 오픈까지의 길 (순서 중요, 앞 단계가 뒷 단계의 전제)
 //  - part 2 = 운영하며 필요할 때 (선후관계 없음 → 후순위)
 // route의 {id}는 렌더 시 현재 브랜드 id로 치환. route가 null이면 '바로가기' 없음.
+// shots: [{ img, cap }] — 단계별 스크린샷. img는 public/manual/guide/{img}.png,
+//   cap은 사진 아래 '초록 체크 + 설명' 문구(사장님이 실제 화면에 맞게 자유롭게 수정 가능).
+//   shots가 없는 항목은 스크린샷이 추가되면 캡션 없이 자동 표시됨.
 
 export const GUIDE_SECTIONS = [
   // ── Part 1 : 쇼핑몰 오픈까지 (이 순서대로) ─────────────────────────────
@@ -16,6 +19,9 @@ export const GUIDE_SECTIONS = [
       '회사/판매자 정보(사업자번호·대표자·주소·통신판매번호) 입력',
       '저장',
     ],
+    shots: [
+      { img: 'basic', cap: '상호·로고·대표색상과 회사/판매자 정보를 입력한 뒤 저장합니다.' },
+    ],
     route: '/manager/settings/default/{id}',
   },
   {
@@ -28,6 +34,9 @@ export const GUIDE_SECTIONS = [
       '무료배송 기준 금액 입력(선택)',
       '저장',
     ],
+    shots: [
+      { img: 'delivery', cap: '기본 배송비와 무료배송 기준 금액을 입력합니다.' },
+    ],
     route: '/manager/settings/default/{id}',
   },
   {
@@ -39,6 +48,11 @@ export const GUIDE_SECTIONS = [
       '카테고리 그룹 확인(개설 시 기본 제공)',
       '그룹 아래에 카테고리 추가(예: 상의·하의·액세서리)',
       '저장',
+    ],
+    shots: [
+      { img: 'category1', cap: '카테고리 그룹을 확인합니다. (개설 시 기본 제공)' },
+      { img: 'category2', cap: '그룹 아래에 카테고리를 추가합니다. (예: 상의·하의)' },
+      { img: 'category3', cap: '저장하면 상품 등록 시 이 카테고리를 선택할 수 있습니다.' },
     ],
     route: '/manager/products/category-groups',
   },
@@ -53,19 +67,23 @@ export const GUIDE_SECTIONS = [
       '카테고리 선택, 옵션(색상·사이즈 등)·재고 설정',
       '저장 (판매중 상태로 즉시 노출)',
     ],
+    shots: [
+      { img: 'product1', cap: '상품을 추가하고 상품명·판매가·대표이미지를 입력합니다.' },
+      { img: 'product2', cap: '카테고리를 선택하고 옵션·재고를 설정한 뒤 저장합니다.' },
+    ],
     route: '/manager/products/list',
   },
   {
     id: 'featured', part: 1, no: '4-1', badge: '조건부',
     title: '대표 상품 지정 (단일·소수 상품 데모만)',
-    where: '설정관리 › 기본설정 › 대표 상품',
+    where: '디자인관리 › 대표 상품',
     why: '블로그 단일/소수 상품 데모는 홈에 대표 상품을 크게 보여줍니다. 어떤 상품을 대표로 노출할지 지정하세요. (일반 쇼핑몰 데모는 해당 없음 — 등록한 상품이 목록에 자동 노출됩니다.)',
     steps: [
       '대표 상품 검색·선택',
       '1개 선택 = 단일 상품 홈 / 2개 이상 = 소수 상품 그리드',
       '저장',
     ],
-    route: '/manager/settings/default/{id}',
+    route: '/manager/designs/featured',
   },
   {
     id: 'payment', part: 1, no: '5', badge: '필수',
@@ -84,9 +102,12 @@ export const GUIDE_SECTIONS = [
     where: '디자인관리 › 메인페이지관리',
     why: '홈 화면의 배너·상품 배치를 구성합니다. 4번 상품이 있어야 배치할 상품이 생깁니다.',
     steps: [
-      '배너 이미지 등록',
+      '배너 이미지 등록(기본 배너에서 골라도 됩니다)',
       '상품 슬라이드·카테고리별 섹션 배치',
       '저장',
+    ],
+    shots: [
+      { img: 'design', cap: '배너 이미지와 상품 섹션을 배치한 뒤 저장합니다.' },
     ],
     route: '/manager/designs/main/all',
   },

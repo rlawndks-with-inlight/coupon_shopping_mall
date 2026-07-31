@@ -37,6 +37,7 @@ const DialogAddAddress = (props) => {
     <>
       <Dialog
         open={addAddressOpen}
+        fullScreen={typeof window !== 'undefined' && window.innerWidth < 700}
         onClose={() => {
           setAddAddressObj({
             addr: '',
@@ -47,15 +48,20 @@ const DialogAddAddress = (props) => {
         }}
         PaperProps={{
           style: {
-            width: `${window.innerWidth >= 700 ? '500px' : '90vw'}`,
+            width: `${typeof window !== 'undefined' && window.innerWidth >= 700 ? '600px' : '100%'}`,
+            maxWidth: '100%',
           }
         }}
       >
         {addAddressObj.is_open_daum_post ?
           <>
-            <Row>
-              <DaumPostcode style={postCodeStyle} onComplete={onSelectAddress} />
-            </Row>
+            <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', px: 2, py: 1.25, borderBottom: '1px solid #eee' }}>
+              <Box sx={{ fontWeight: 700 }}>우편번호 검색</Box>
+              <Button size="small" color="inherit" onClick={() => setAddAddressObj({ ...addAddressObj, is_open_daum_post: false })}>
+                닫기
+              </Button>
+            </Box>
+            <DaumPostcode style={postCodeStyle} onComplete={onSelectAddress} />
           </>
           :
           <>

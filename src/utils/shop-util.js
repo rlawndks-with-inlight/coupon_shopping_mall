@@ -114,7 +114,7 @@ export const onPayProductsByHand = async (products_, payData_) => { // 수기결
         yymm: payData?.yymm[1] + payData?.yymm[0],
     }
     if (payData?.products?.length > 1 || !payData?.item_name) {
-        payData.item_name = `${payData?.products[0]?.order_name} 외 ${payData?.products?.length - 1}`;
+        payData.item_name = payData?.products?.length > 1 ? `${payData?.products[0]?.order_name} 외 ${payData?.products?.length - 1}건` : (payData?.products[0]?.order_name || '상품');
     }
     try {
         let insert_pay_ready = await apiManager('pays/hand', 'create', payData);
@@ -174,7 +174,7 @@ export const onPayProductsByAuth = async (products_, payData_, type) => { // 인
         }
     }
     if (payData?.products?.length > 1 || !payData?.item_name) {
-        payData.item_name = `${payData?.products[0]?.order_name} 외 ${payData?.products?.length - 1}`;
+        payData.item_name = payData?.products?.length > 1 ? `${payData?.products[0]?.order_name} 외 ${payData?.products?.length - 1}건` : (payData?.products[0]?.order_name || '상품');
     }
     try {
 
@@ -221,7 +221,7 @@ export const onPayProductsByVirtualAccount = async (products_, payData_) => { //
         yymm: payData?.yymm[1] + payData?.yymm[0],
     }
     if (payData?.products?.length > 1 || !payData?.item_name) {
-        payData.item_name = `${payData?.products[0]?.order_name} 외 ${payData?.products?.length - 1}`;
+        payData.item_name = payData?.products?.length > 1 ? `${payData?.products[0]?.order_name} 외 ${payData?.products?.length - 1}건` : (payData?.products[0]?.order_name || '상품');
     }
     try {
         const { data: response } = await axios.post(`https://api.cashes.co.kr/api/v1/viss/request`, {
@@ -280,7 +280,7 @@ export const onPayProductsByPayletter = async (products_, payData_) => { // 카�
     let payData = await makePayData(products, payData_);
     let ord_num = `PL${payData?.user_id || payData?.password || ''}${new Date().getTime().toString().substring(0, 11)}`.replace(/[^a-zA-Z0-9]/g, '');
     if (payData?.products?.length > 1 || !payData?.item_name) {
-        payData.item_name = `${payData?.products[0]?.order_name} 외 ${payData?.products?.length - 1}`;
+        payData.item_name = payData?.products?.length > 1 ? `${payData?.products[0]?.order_name} 외 ${payData?.products?.length - 1}건` : (payData?.products[0]?.order_name || '상품');
     }
     payData = {
         ...payData,
@@ -313,7 +313,7 @@ export const onPayProductsByForspay = async (products_, payData_) => { // 인증
     const pay_method = payData_?.payment_modules?.pay_method || 'card';
     let ord_num = `FS${payData?.user_id || payData?.password || ''}${new Date().getTime().toString().substring(0, 11)}`.replace(/[^a-zA-Z0-9]/g, '');
     if (payData?.products?.length > 1 || !payData?.item_name) {
-        payData.item_name = `${payData?.products[0]?.order_name} 외 ${payData?.products?.length - 1}`;
+        payData.item_name = payData?.products?.length > 1 ? `${payData?.products[0]?.order_name} 외 ${payData?.products?.length - 1}건` : (payData?.products[0]?.order_name || '상품');
     }
     const isMobile = /iPhone|Android|iPad|iPod|Mobile/i.test(navigator.userAgent);
     payData = {

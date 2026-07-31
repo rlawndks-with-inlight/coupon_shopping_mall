@@ -61,8 +61,9 @@ font-weight:bold;
 export const postCodeStyle = {
   display: 'block',
   position: 'relative',
-  width: '90%',
-  margin: '16px auto',
+  width: '100%',
+  height: '480px',
+  margin: '0 auto',
 };
 
 export const PointerText = styled.div`

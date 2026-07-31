@@ -4,6 +4,7 @@ import { Icon } from '@iconify/react';
 import { useRouter } from 'next/router';
 import { useSettingsContext } from 'src/components/settings';
 import { apiManager } from 'src/utils/api';
+import { isShopgoMerchant } from 'src/utils/is-shopgo';
 
 // 신규 가맹점 온보딩 체크리스트 — 대시보드 상단.
 // 완료 여부는 이미 로드된 데이터로 자동 감지. 필수(카테고리·상품·결제) 완료 시 자동으로 사라짐.
@@ -47,8 +48,8 @@ const OnboardingChecklist = () => {
 
   // 필수(판매 준비) 완료 or 닫기 or 이전 닫기 이력 → 미노출
   if (hidden || dismissed || requiredAllDone) return null;
-  // 마스터(shopgo 본사)는 대상 아님
-  if (dns?.is_main_dns == 1) return null;
+  // SHOPGO 산하 가맹점만 대상 (본사·타 클라이언트 브랜드 제외)
+  if (!isShopgoMerchant(dns)) return null;
 
   const onDismiss = () => {
     setHidden(true);

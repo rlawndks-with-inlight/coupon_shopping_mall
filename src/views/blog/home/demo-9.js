@@ -371,6 +371,7 @@ const Demo9 = (props) => {
   const { func } = props;
   const router = func?.router;
   const brandName = themeDnsData?.name || 'BRAND';
+  const t = themeDnsData?.setting_obj?.home_texts?.demo9 ?? {}; // 가맹점 편집 문구(미입력 시 기본값)
   const product = useFeaturedProduct();
   const featuredProducts = useFeaturedProducts({ excludeId: product?.id });
 
@@ -385,6 +386,8 @@ const Demo9 = (props) => {
   }
 
   const img = fixImgUrl(product?.product_img);
+  // 갤러리: 상품 서브이미지 사용(없으면 대표이미지). 어드민 상품편집에서 서브이미지 등록 시 반영.
+  const galleryImgs = [img, ...(product?.sub_images ?? []).map(s => fixImgUrl(s?.product_sub_img))].filter(Boolean);
   const name = formatLang(product, 'product_name', currentLang);
   const comment = product?.product_comment;
   const sale = product?.product_sale_price || product?.product_price || 0;
@@ -423,24 +426,25 @@ const Demo9 = (props) => {
         <SectionHeading>📸 Moments</SectionHeading>
         <PolaroidGrid>
           <Polaroid $rot={-3}>
-            <PolaroidImg src={img} effect="blur" />
-            <PolaroidCaption>love it 💕</PolaroidCaption>
+            <PolaroidImg src={galleryImgs[0]} effect="blur" />
           </Polaroid>
           <Polaroid $rot={2}>
-            <PolaroidImg src={img} effect="blur" />
-            <PolaroidCaption>best ever ✨</PolaroidCaption>
+            <PolaroidImg src={galleryImgs[1 % galleryImgs.length]} effect="blur" />
           </Polaroid>
           <Polaroid $rot={-1.5}>
-            <PolaroidImg src={img} effect="blur" />
-            <PolaroidCaption>my fav 🌸</PolaroidCaption>
+            <PolaroidImg src={galleryImgs[2 % galleryImgs.length]} effect="blur" />
           </Polaroid>
         </PolaroidGrid>
       </PolaroidGallery>
 
       <QuoteSection>
         <Quote>
-          "<QuoteHighlight>하나만 만들어도 제대로</QuoteHighlight>,<br />
-          그게 바로 {brandName}의 방식이에요."
+          {t.quote ? t.quote : (
+            <>
+              "<QuoteHighlight>하나만 만들어도 제대로</QuoteHighlight>,<br />
+              그게 바로 {brandName}의 방식이에요."
+            </>
+          )}
         </Quote>
       </QuoteSection>
 
@@ -471,7 +475,7 @@ const Demo9 = (props) => {
       )}
 
       <FinalCTA>
-        <FinalTitle>지금이 {brandName}과<br />함께할 순간이에요 💕</FinalTitle>
+        <FinalTitle>{t.final_title ? t.final_title : (<>지금이 {brandName}과<br />함께할 순간이에요 💕</>)}</FinalTitle>
         <div style={{ margin: '2rem 0' }}>
           <HeroPrice style={{ fontSize: '40px' }}>{commarNumber(sale)}원</HeroPrice>
         </div>

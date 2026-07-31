@@ -316,6 +316,7 @@ const Demo4 = (props) => {
   const { func } = props;
   const router = func?.router;
   const brandName = themeDnsData?.name || 'BRAND';
+  const t = themeDnsData?.setting_obj?.home_texts?.demo4 ?? {}; // 가맹점 편집 문구(미입력 시 기본값)
   const product = useFeaturedProduct();
   const featuredProducts = useFeaturedProducts({ excludeId: product?.id });
 
@@ -346,13 +347,13 @@ const Demo4 = (props) => {
           <div>
             <HeroTop>
               <span>{brandName}</span>
-              <span>№ 001</span>
+              <span>{t.edition || '№ 001'}</span>
             </HeroTop>
             <HeroTitle>{name}</HeroTitle>
             <HeroMeta>
               <div>
                 <MetaLabel>Type</MetaLabel>
-                <MetaValue>Signature</MetaValue>
+                <MetaValue>{t.type_value || 'Signature'}</MetaValue>
               </div>
               <div>
                 <MetaLabel>Year</MetaLabel>
@@ -373,19 +374,19 @@ const Demo4 = (props) => {
         <BigNumGrid>
           <BigNumCell>
             <BigNum>01</BigNum>
-            <BigNumLabel>Premium</BigNumLabel>
+            <BigNumLabel>{t.bignum1_label || 'Premium'}</BigNumLabel>
           </BigNumCell>
           <BigNumCell>
             <BigNum>02</BigNum>
-            <BigNumLabel>Crafted</BigNumLabel>
+            <BigNumLabel>{t.bignum2_label || 'Crafted'}</BigNumLabel>
           </BigNumCell>
           <BigNumCell>
             <BigNum>03</BigNum>
-            <BigNumLabel>Timeless</BigNumLabel>
+            <BigNumLabel>{t.bignum3_label || 'Timeless'}</BigNumLabel>
           </BigNumCell>
           <BigNumCell>
             <BigNum>04</BigNum>
-            <BigNumLabel>Unique</BigNumLabel>
+            <BigNumLabel>{t.bignum4_label || 'Unique'}</BigNumLabel>
           </BigNumCell>
         </BigNumGrid>
       </BigNumSection>
@@ -406,8 +407,7 @@ const Demo4 = (props) => {
         <InfoRight>
           <InfoHeading>The Brand</InfoHeading>
           <InfoBody>
-            {brandName}은(는) 단 하나의 제품에 집중하는 브랜드입니다.
-            여러 가지를 만들기보다 진심으로 자신 있는 하나에 몰입합니다.
+            {t.brand_intro || `${brandName}은(는) 단 하나의 제품에 집중하는 브랜드입니다. 여러 가지를 만들기보다 진심으로 자신 있는 하나에 몰입합니다.`}
           </InfoBody>
         </InfoRight>
       </InfoSection>

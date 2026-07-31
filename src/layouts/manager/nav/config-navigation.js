@@ -8,6 +8,8 @@ import { useAuthContext } from '../auth/useAuthContext';
 import { useEffect, useState } from 'react';
 import { apiManager } from 'src/utils/api';
 import { mainObjSchemaList } from 'src/utils/format';
+import { isShopgoBrand } from 'src/utils/is-shopgo';
+import { HOME_TEXT_SCHEMA } from 'src/data/home-texts';
 
 // ----------------------------------------------------------------------
 
@@ -169,11 +171,11 @@ export const navConfig = () => {
         { title: '대시보드', path: PATH_MANAGER.dashboards, icon: ICONS.dashboard },
       ],
     },
-    {
+    ...(isShopgoBrand(themeDnsData) ? [{
       items: [
         { title: '이용가이드', path: '/manager/guide', icon: ICONS.file },
       ],
-    },
+    }] : []),
     ...(isMasterSite() ? [
       {
         items: [
@@ -317,6 +319,7 @@ export const navConfig = () => {
               ...((isDeveloper() && themeDnsData?.shop_demo_num > 0 && themeDnsData?.setting_obj?.is_use_item_card_style == 1) ? [{ title: `${themeDnsData?.shop_demo_num > 0 && themeDnsData?.blog_demo_num > 0 ? '쇼핑몰 ' : ''}상품카드관리`, path: PATH_MANAGER.designs.itemCard }] : []),
               ...((isDeveloper() && themeDnsData?.blog_demo_num > 0 && themeDnsData?.setting_obj?.is_use_item_card_style == 1) ? [{ title: `${themeDnsData?.shop_demo_num > 0 && themeDnsData?.blog_demo_num > 0 ? '블로그 ' : ''}상품카드관리`, path: PATH_MANAGER.designs.blogItemCard }] : []),
               ...([4, 5, 6, 7, 8, 9].includes(Number(themeDnsData?.blog_demo_num)) ? [{ title: '대표 상품', path: '/manager/designs/featured' }] : []),
+              ...(Object.keys(HOME_TEXT_SCHEMA).map(Number).includes(Number(themeDnsData?.blog_demo_num)) ? [{ title: '홈 문구', path: '/manager/designs/home-texts' }] : []),
               { title: '팝업관리', path: PATH_MANAGER.designs.popup },
             ],
           },

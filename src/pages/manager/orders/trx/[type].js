@@ -10,7 +10,7 @@ import { commarNumber } from "src/utils/function";
 import toast from "react-hot-toast";
 import { apiManager, apiUtil } from "src/utils/api";
 import { useSettingsContext } from "src/components/settings";
-import { paymentModuleTypeList } from "src/utils/format";
+import { paymentModuleTypeList, forspayMethodList } from "src/utils/format";
 import { useAuthContext } from "src/layouts/manager/auth/useAuthContext";
 import { Upload } from "src/components/upload";
 import { sha256 } from "js-sha256";
@@ -77,10 +77,10 @@ const TrxList = () => {
       },
     ] : [
       {
-        id: 'appr_num',
-        label: '승인번호',
+        id: 'ord_num',
+        label: '주문번호',
         action: (row) => {
-          return row['appr_num'] ?? "---"
+          return row['ord_num'] ?? "---"
         },
         sx: (row) => {
           return {
@@ -388,7 +388,13 @@ const TrxList = () => {
       id: 'trx_method',
       label: '결제타입',
       action: (row) => {
-        return _.find(paymentModuleTypeList, { value: row?.trx_method })?.label ?? "---"
+        const base = _.find(paymentModuleTypeList, { value: row?.trx_method })?.label ?? "---";
+        // 포스페이(41)는 산하 결제수단(카드/카카오 등)까지 표시
+        if (row?.trx_method == 41 && row?.pay_method) {
+          const sub = _.find(forspayMethodList, { key: row?.pay_method })?.label;
+          return sub ? `${base} · ${sub}` : base;
+        }
+        return base;
       }
     },
     ...(themeDnsData?.id != 74 ? [

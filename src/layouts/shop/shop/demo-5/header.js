@@ -397,7 +397,7 @@ const Header = () => {
                 handleClose={handleDialogClose}
                 root_path={'/shop/search?keyword='}
             />
-            {themeDnsData?.id == 74 && !user ?
+            {themeDnsData?.is_closure == 1 && !user ?
                 <>
                 </>
                 :

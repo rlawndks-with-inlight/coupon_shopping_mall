@@ -14,6 +14,9 @@ const Tour = dynamic(
   () => import('reactour'),
   { ssr: false },
 );
+// 포스페이 결제수단·PG 라우팅은 실드플로(상위)에서 설정하는 값을 따름 → 어드민 노출 비활성.
+// (되살리려면 true. 백엔드는 값이 비어있으면 실드플로 자동 라우팅에 위임.)
+const SHOW_FORSPAY_ROUTING = false;
 const PaymentModuleEdit = () => {
   const { setModal } = useModal()
   const { themeMode } = useSettingsContext();
@@ -137,7 +140,7 @@ const PaymentModuleEdit = () => {
                       })}
                     </Select>
                   </FormControl>
-                  {item?.trx_type == 41 &&
+                  {SHOW_FORSPAY_ROUTING && item?.trx_type == 41 &&
                     <Card variant="outlined" sx={{ p: 2 }}>
                       <Typography variant="subtitle2" sx={{ mb: 0.5 }}>포스페이 결제수단 · PG 라우팅</Typography>
                       <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mb: 2 }}>

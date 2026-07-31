@@ -77,10 +77,10 @@ const TrxList = () => {
       },
     ] : [
       {
-        id: 'appr_num',
-        label: '승인번호',
+        id: 'ord_num',
+        label: '주문번호',
         action: (row) => {
-          return row['appr_num'] ?? "---"
+          return row['ord_num'] ?? "---"
         },
         sx: (row) => {
           return {

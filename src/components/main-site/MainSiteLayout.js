@@ -1,5 +1,7 @@
+import { useState } from 'react';
 import { useRouter } from 'next/router';
-import { Box, Container, Stack, Typography, Button } from '@mui/material';
+import { Box, Container, Stack, Typography, Button, IconButton, Drawer, Divider } from '@mui/material';
+import { Icon } from '@iconify/react';
 import { useLandingT } from './landingStrings';
 import LangSwitcher from './LangSwitcher';
 import { POLICY_DOCS } from './policyContent';
@@ -41,6 +43,8 @@ const handleNavClick = (href, router) => {
 export const MainSiteHeader = () => {
   const router = useRouter();
   const t = useLandingT();
+  const [menuOpen, setMenuOpen] = useState(false);
+  const goNav = (href) => { setMenuOpen(false); handleNavClick(href, router); };
   return (
     <Box
       component="header"
@@ -118,10 +122,73 @@ export const MainSiteHeader = () => {
               >
                 {t.ctaCreate}
               </Button>
+              {/* 모바일 햄버거 — 데스크톱(md+)에선 상단 내비가 보이므로 숨김 */}
+              <IconButton
+                onClick={() => setMenuOpen(true)}
+                aria-label="menu"
+                sx={{ display: { xs: 'inline-flex', md: 'none' }, color: '#fff', ml: 0.5 }}
+              >
+                <Icon icon="mdi:menu" width={24} height={24} />
+              </IconButton>
             </Stack>
           </Stack>
         </Stack>
       </Container>
+
+      {/* 모바일 내비 Drawer */}
+      <Drawer
+        anchor="right"
+        open={menuOpen}
+        onClose={() => setMenuOpen(false)}
+        PaperProps={{ sx: { width: 260, bgcolor: '#111', color: '#fff' } }}
+      >
+        <Stack direction="row" alignItems="center" justifyContent="space-between" sx={{ px: 2, py: 1.5, borderBottom: `1px solid ${PRIMARY}` }}>
+          <Typography sx={{ fontWeight: 800, color: '#fff' }}>
+            Shop<Box component="span" sx={{ color: PRIMARY }}>Go</Box>
+          </Typography>
+          <IconButton onClick={() => setMenuOpen(false)} aria-label="close" sx={{ color: '#fff' }}>
+            <Icon icon="mdi:close" width={22} height={22} />
+          </IconButton>
+        </Stack>
+        <Stack sx={{ py: 1 }}>
+          {NAV.map((n) => (
+            <Typography
+              key={n.k}
+              onClick={() => goNav(n.href)}
+              sx={{
+                px: 2,
+                py: 1.5,
+                fontSize: 15,
+                fontWeight: 600,
+                cursor: 'pointer',
+                color: '#ddd',
+                '&:hover': { color: '#fff', bgcolor: 'rgba(255,255,255,0.06)' },
+              }}
+            >
+              {t[n.k]}
+            </Typography>
+          ))}
+        </Stack>
+        <Divider sx={{ borderColor: 'rgba(255,255,255,0.12)' }} />
+        <Box sx={{ p: 2 }}>
+          <Button
+            fullWidth
+            variant="contained"
+            disableElevation
+            onClick={() => { setMenuOpen(false); router.push('/frames'); }}
+            sx={{
+              bgcolor: PRIMARY,
+              color: ON_PRIMARY,
+              fontWeight: 700,
+              py: 1,
+              borderRadius: 999,
+              '&:hover': { bgcolor: PRIMARY_HOVER },
+            }}
+          >
+            {t.ctaCreate}
+          </Button>
+        </Box>
+      </Drawer>
     </Box>
   );
 };

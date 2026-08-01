@@ -60,7 +60,6 @@ export default function Header({ onOpenNav }) {
         justifyContent="flex-end"
         spacing={{ xs: 0.5, sm: 1.5 }}
       >
-        123
         {themeDnsData?.setting_obj?.is_use_lang == 1 &&
           <>
             <LanguagePopover />

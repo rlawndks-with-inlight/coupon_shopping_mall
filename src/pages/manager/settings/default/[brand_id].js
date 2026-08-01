@@ -202,6 +202,8 @@ const DefaultSetting = () => {
       toast.success('성공적으로 저장 되었습니다.')
       window.location.reload()
     }
+    // 저장 실패(result=false) 시에도 로딩 오버레이를 닫아 화면이 멈추지 않도록.
+    setSaveLoading(false)
   }
   return (
     <>

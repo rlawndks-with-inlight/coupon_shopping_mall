@@ -29,11 +29,14 @@ export default function ThemeProvider({ children }) {
   useEffect(() => {
     if (themeDnsData?.id) {
       let palette_obj = { ...paletteObj };
-      palette_obj['primary']['main'] = themeDnsData?.theme_css?.main_color;
-      palette_obj['primary']['dark'] = themeDnsData?.theme_css?.main_color;
-      palette_obj['primary']['darker'] = themeDnsData?.theme_css?.main_color;
-      palette_obj['primary']['light'] = themeDnsData?.theme_css?.main_color + '';
-      palette_obj['primary']['lighter'] = themeDnsData?.theme_css?.main_color + '29';
+      // 폴백: main_color가 비어있으면(예: theme_css 미설정/초기화) 기본 테마색으로.
+      //  없이 그대로 대입하면 primary가 undefined/흰색이 되어 저장버튼·강조가 안 보임.
+      const mc = themeDnsData?.theme_css?.main_color || '#00ab55';
+      palette_obj['primary']['main'] = mc;
+      palette_obj['primary']['dark'] = mc;
+      palette_obj['primary']['darker'] = mc;
+      palette_obj['primary']['light'] = mc + '';
+      palette_obj['primary']['lighter'] = mc + '29';
       palette_obj.is_dns_data = true;
       setPaletteObj(palette_obj);
     }

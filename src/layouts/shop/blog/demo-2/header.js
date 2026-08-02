@@ -38,6 +38,7 @@ const Header = (props) => {
     const router = useRouter();
 
     const { themeMode, onToggleMode, themeDnsData, themeCategoryList, onChangeCategoryList, onChangePostCategoryList } = useSettingsContext();
+    const headerCategories = (themeCategoryList ?? []).flatMap((g) => g?.product_categories ?? []);
     const [keyword, setKeyword] = useState("");
     const [isSellerPage, setIsSellerPage] = useState(false);
     const [isProductPage, setIsProductPage] = useState(false);
@@ -70,7 +71,7 @@ const Header = (props) => {
     const settingHeader = async () => {
         setLoading(true);
 
-        setCategories(themeCategoryList[0]?.product_categories ?? []);
+        setCategories(headerCategories);
 
         setLoading(false);
     }

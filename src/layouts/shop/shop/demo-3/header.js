@@ -184,6 +184,7 @@ const Header = () => {
   const router = useRouter();
   const theme = useTheme();
   const { themeMode, onToggleMode, onChangeCartData, onChangeWishData, themeCategoryList, themePostCategoryList } = useSettingsContext();
+  const headerCategories = (themeCategoryList ?? []).flatMap((g) => g?.product_categories ?? []);
   const { user, logout } = useAuthContext();
   const [keyword, setKeyword] = useState("");
   const onSearch = () => {
@@ -198,7 +199,7 @@ const Header = () => {
   }, [user])
   useEffect(() => {
     setLoading(true);
-    let hover_list = getAllIdsWithParents(themeCategoryList[0]?.product_categories ?? []);
+    let hover_list = getAllIdsWithParents(headerCategories);
     let hover_items = {};
     for (var i = 0; i < hover_list.length; i++) {
       hover_list[i] = hover_list[i].join('_');
@@ -219,7 +220,7 @@ const Header = () => {
     setDialogOpenObj(obj);
   }
   const isPageCategory = (id) => {
-    let parent_list = getAllIdsWithParents(themeCategoryList[0]?.product_categories);
+    let parent_list = getAllIdsWithParents(headerCategories);
     for (var i = 0; i < parent_list.length; i++) {
       if (parent_list[i][parent_list[i].length - 1]?.id == router.query?.category_id && parent_list[i][0]?.id == id) {
         return true;
@@ -283,7 +284,7 @@ const Header = () => {
                 </IconButton>
               </NoneShowMobile>
               <NoneShowMobile style={{ width: '100%' }}>
-                {themeCategoryList[0]?.product_categories && themeCategoryList[0]?.product_categories.map((item1, idx1) => (
+                {headerCategories.length > 0 && headerCategories.map((item1, idx1) => (
                   <>
                     {item1?.is_show_header_menu == 1 &&
                       <>

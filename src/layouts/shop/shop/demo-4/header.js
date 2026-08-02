@@ -229,6 +229,7 @@ const Header = () => {
     const theme = useTheme();
     const { translate } = useLocales();
     const { themeMode, onToggleMode, themeCategoryList, themeDnsData, themePopupList, themePostCategoryList, onChangePopupList, themeWishData, themeCartData, onChangeCartData, onChangeWishData, themeSellerList } = useSettingsContext();
+    const headerCategories = (themeCategoryList ?? []).flatMap((g) => g?.product_categories ?? []);
     const { user, logout } = useAuthContext();
     const headerWrappersRef = useRef();
     const [headerHeight, setHeaderHeight] = useState(130);
@@ -319,8 +320,8 @@ const Header = () => {
         setLoading(true);
         setPopups(themePopupList)
         setPostCategories(themePostCategoryList);
-        setCategories(themeCategoryList[0]?.product_categories ?? []);
-        let hover_list = getAllIdsWithParents(themeCategoryList[0]?.product_categories ?? []);
+        setCategories(headerCategories);
+        let hover_list = getAllIdsWithParents(headerCategories);
         let hover_items = {};
         for (var i = 0; i < hover_list.length; i++) {
             hover_list[i] = hover_list[i].join('_');

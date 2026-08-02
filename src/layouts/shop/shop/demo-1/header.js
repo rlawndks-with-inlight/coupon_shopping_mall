@@ -185,6 +185,9 @@ const Header = () => {
   const { translate, currentLang } = useLocales();
   const { themeMode, onToggleMode, themeCategoryList, themeDnsData, themePopupList, themeNoneTodayPopupList, onChangeNoneTodayPopupList, themePostCategoryList, onChangePopupList, themeWishData, themeCartData, onChangeCartData, onChangeWishData, themeSellerList } = useSettingsContext();
   const { user, logout } = useAuthContext();
+  // 상단 카테고리 메뉴: 모든 카테고리 그룹의 카테고리를 합쳐서 표시.
+  //  (예전엔 themeCategoryList[0] = 첫 그룹만 봐서, 그룹이 2개 이상이면 나머지 그룹의 카테고리가 메뉴에서 사라졌음)
+  const headerCategories = (themeCategoryList ?? []).flatMap((g) => g?.product_categories ?? []);
   const headerWrappersRef = useRef();
   const [headerHeight, setHeaderHeight] = useState(130);
   const [keyword, setKeyword] = useState("");
@@ -249,7 +252,7 @@ const Header = () => {
     setLoading(true);
     setPopups(themePopupList)
     setPostCategories(themePostCategoryList);
-    let hover_list = getAllIdsWithParents(themeCategoryList[0]?.product_categories ?? []);
+    let hover_list = getAllIdsWithParents(headerCategories);
     let hover_items = {};
     for (var i = 0; i < hover_list.length; i++) {
       hover_list[i] = hover_list[i].join('_');
@@ -634,7 +637,7 @@ const Header = () => {
                 }}
                 className="none-scroll pc-menu-content"
               >
-                {themeCategoryList[0]?.product_categories && themeCategoryList[0]?.product_categories.map((item1, idx1) => (
+                {headerCategories.length > 0 && headerCategories.map((item1, idx1) => (
                   <>
                     {item1?.is_show_header_menu == 1 &&
                       <>
@@ -721,7 +724,7 @@ const Header = () => {
               }}
                 className="none-scroll"
               >
-                {themeCategoryList[0]?.product_categories && themeCategoryList[0]?.product_categories.map((item1, idx1) => (
+                {headerCategories.length > 0 && headerCategories.map((item1, idx1) => (
                   <>
                     {item1?.is_show_header_menu == 1 &&
                       <>

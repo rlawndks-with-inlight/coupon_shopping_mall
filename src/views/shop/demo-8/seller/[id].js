@@ -140,7 +140,7 @@ const SellerDemo = (props) => {
                 marginRight: '0.25rem',
               }}
                 onClick={() => {
-                  router.push(`/shop/items?category_id0=${item?.id}&depth=${parseInt(router.query?.depth) + 1}`)
+                  router.push(`/shop/items?category_id=${item?.id}`)
                 }}
               >{formatLang(item, 'category_name', currentLang)}</Button>
             </>

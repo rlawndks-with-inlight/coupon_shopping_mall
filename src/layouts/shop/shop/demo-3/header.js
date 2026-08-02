@@ -293,7 +293,7 @@ const Header = () => {
                             theme={theme}
                             is_page_category={isPageCategory(item1?.id) ? 1 : 0}
                             onClick={() => {
-                              router.push(`/shop/items?category_id0=${item1?.id}&depth=0`)
+                              router.push(`/shop/items?category_id=${item1?.id}`)
                             }}>
                             <div>{item1.category_name}</div>
                           </CategoryMenu>
@@ -424,7 +424,7 @@ const Header = () => {
                 {group?.product_categories && group?.product_categories.map((category) => (
                   <>
                     <DialogMenuContent onClick={() => {
-                      router.push(`/shop/items?category_id${index}=${category?.id}&depth=0`);
+                      router.push(`/shop/items?category_id=${category?.id}`);
                       setDialogMenuOpen(false);
                     }}>{category?.category_name}</DialogMenuContent>
                   </>

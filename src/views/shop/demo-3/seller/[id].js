@@ -160,7 +160,7 @@ const SellerDemo = (props) => {
             <>
               <Button variant="outlined" style={categoryButtonStyle}
                 onClick={() => {
-                  router.push(`/shop/items?category_id0=${item?.id}&depth=${parseInt(router.query?.depth) + 1}`)
+                  router.push(`/shop/items?category_id=${item?.id}`)
                 }}
               >{formatLang(item, 'category_name', currentLang)}</Button>
             </>

@@ -288,7 +288,7 @@ const Header = () => {
                 <div style={{ position: 'relative' }} className={`menu-${item?.id}`}>
                     <DropDownMenu theme={theme}
                         onClick={() => {
-                            router.push(`/shop/items?category_id0=${item?.id}&depth=${num}`)
+                            router.push(`/shop/items?category_id=${item?.id}`)
                         }}>
                         <div>{formatLang(item, 'category_name', currentLang)}</div>
                         <div>{item.children.length > 0 ? '>' : ''}</div>
@@ -347,7 +347,7 @@ const Header = () => {
                         marginLeft: '0.25rem'
                     }}
                     onClick={() => {
-                        router.push(`/shop/items?category_id${index}=${item?.id}&depth=${num}`);
+                        router.push(`/shop/items?category_id=${item?.id}`);
                         setSideMenuOpen(false);
                     }}>{formatLang(item, 'category_name', currentLang)}</div>}
                     nodeId={item.id}
@@ -609,7 +609,7 @@ const Header = () => {
                                                     <>
                                                         <div style={{ position: 'relative', fontFamily: 'Noto Sans KR' }} className={`menu-${item1?.id}`}>
                                                             <CategoryMenu borderColor={themeMode == 'dark' ? '#fff' : '#000'} style={{ fontWeight: 'normal' }} onClick={() => {
-                                                                router.push(`/shop/items?category_id0=${item1?.id}&depth=0`)
+                                                                router.push(`/shop/items?category_id=${item1?.id}`)
                                                             }}>
                                                                 <div>{formatLang(item1, 'category_name', currentLang)}</div>
                                                             </CategoryMenu>
@@ -697,7 +697,7 @@ const Header = () => {
                                                             onHoverCategory(`hover_${item1?.id}`)
                                                         }}
                                                             onClick={() => {
-                                                                router.push(`/shop/items?category_id0=${item1?.id}&depth=0`)
+                                                                router.push(`/shop/items?category_id=${item1?.id}`)
                                                             }}
                                                         >
                                                             <div>{formatLang(item1, 'category_name', currentLang)}</div>

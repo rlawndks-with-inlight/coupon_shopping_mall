@@ -287,7 +287,7 @@ const Header = () => {
         <div style={{ position: 'relative' }} className={`menu-${item?.id}`}>
           <DropDownMenu theme={theme}
             onClick={() => {
-              router.push(`/shop/items?category_id0=${item?.id}&depth=${num}`)
+              router.push(`/shop/items?category_id=${item?.id}`)
             }}>
             <div>{item.category_name}</div>
             <div>{item.children.length > 0 ? '>' : ''}</div>
@@ -565,7 +565,7 @@ const Header = () => {
                             theme={theme}
                             is_page_category={isPageCategory(item1?.id) ? 1 : 0}
                             onClick={() => {
-                              router.push(`/shop/items?category_id0=${item1?.id}&depth=0`)
+                              router.push(`/shop/items?category_id=${item1?.id}`)
                             }}>
                             {item1.category_name}
                           </CategoryMenu>
@@ -615,7 +615,7 @@ const Header = () => {
                           onHoverCategory(`hover_${item1?.id}`)
                         }}
                           onClick={() => {
-                            router.push(`/shop/items?category_id0=${item1?.id}&depth=0`)
+                            router.push(`/shop/items?category_id=${item1?.id}`)
                           }}
                         >
                           <div>{item1.category_name}</div>
@@ -667,7 +667,7 @@ const Header = () => {
                 {group?.product_categories && group?.product_categories.map((category) => (
                   <>
                     <DialogMenuContent onClick={() => {
-                      router.push(`/shop/items?category_id${index}=${category?.id}&depth=0`);
+                      router.push(`/shop/items?category_id=${category?.id}`);
                       setDialogMenuOpen(false);
                     }}>{category?.category_name}</DialogMenuContent>
                   </>
@@ -815,7 +815,7 @@ const returnSidebarMenu = (item, num, func) => {
           marginLeft: '0.25rem'
         }}
         onClick={() => {
-          router.push(`/shop/items?category_id0=${item?.id}&depth=${num}`);
+          router.push(`/shop/items?category_id=${item?.id}`);
           setSideMenuOpen(false);
         }}>{item.category_name}</div>}
         nodeId={item.id}

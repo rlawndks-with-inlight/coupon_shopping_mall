@@ -11,6 +11,7 @@ import { Col, Row, Title, themeObj } from "src/components/elements/styled-compon
 import { useSettingsContext } from "src/components/settings";
 import { useAuthContext } from "src/layouts/manager/auth/useAuthContext";
 import { apiShop } from "src/utils/api";
+import { getAllIdsWithParents } from "src/utils/function";
 import styled, { css } from "styled-components";
 import $ from 'jquery';
 import { CategorySorter, LANGCODE } from "src/views/shop/demo-4/header"
@@ -106,16 +107,13 @@ const ItemsDemo = (props) => {
     getItemList({ ...router.query }, searchObj)
     //console.log(router.query)
   }, [
-    router.query.category_id0,
-    router.query.category_id1,
-    router.query.category_id2,
+    router.query.category_id,
     router.query.search,
     router.query.keyword,
     router.query.property_ids0,
     router.query.page,
     router.query.page_size,
     router.query.not_show_select_menu,
-    router.query.depth
   ])
 
   useEffect(() => {
@@ -150,26 +148,35 @@ const ItemsDemo = (props) => {
     //console.log(search_obj)
     //setLoading(true);
     setCategoryIds(query);
+    delete search_obj[`category_id`];
+    delete search_obj[`property_ids0`];
+    // 단일 트리(leaf) 기반 현재 경로 재구성: 클릭된 category_id 를 리프로 갖는 root→node 경로
+    let parent_list = getAllIdsWithParents(themeCategoryList?.[0]?.product_categories ?? []);
+    let use_list = [];
+    for (var i = 0; i < parent_list.length; i++) {
+      if (parent_list[i][parent_list[i].length - 1]?.id == query?.category_id) {
+        use_list = parent_list[i];
+        break;
+      }
+    }
+    let selected_category = use_list[use_list.length - 1];
+    setCurCategory(selected_category ?? {});
     let category_children = {};
-    for (var i = 0; i < themeCategoryList.length; i++) {
-      let find_category = undefined;
-      delete search_obj[`category_id${i}`];
-      delete search_obj[`property_ids0`]
-      for (var j = 0; j < themeCategoryList[i]?.product_categories.length; j++) {
-        let category = themeCategoryList[i]?.product_categories[j];
-        let children = (category?.children ?? []).map(item => { return item?.id });
-        if (query[`category_id${i}`] == category?.id || children?.includes(parseInt(query[`category_id${i}`]))) {
-          find_category = category;
-          break;
+    if (selected_category && (selected_category?.children ?? []).length > 0) {
+      // 선택된 노드의 자식들을 하위 카테고리 탭으로
+      category_children = {
+        [`category_id`]: {
+          parent_id: selected_category?.id,
+          children: selected_category?.children
         }
       }
-      if (find_category && find_category?.children.length > 0) {
-        category_children = {
-          ...category_children,
-          [`category_id${i}`]: {
-            parent_id: find_category?.id,
-            children: find_category?.children
-          }
+    } else if (use_list.length >= 2) {
+      // 리프 노드면 형제(부모의 자식들)를 탭으로 노출해 현재 선택을 강조
+      let parent_category = use_list[use_list.length - 2];
+      category_children = {
+        [`category_id`]: {
+          parent_id: parent_category?.id,
+          children: parent_category?.children
         }
       }
     }
@@ -255,21 +262,6 @@ const ItemsDemo = (props) => {
     };
   }, [loading, router.query])
 
-  useEffect(() => {
-    const parsedUrl = queryString.parseUrl(router.asPath).query;
-    let category_id0 = parsedUrl[`category_id0`] ?? ''
-    let cates = themeCategoryList[1]?.product_categories //?.filter(category => category.children.length != 0)
-    //let sub_cates = _.find(cates, { children.id: category_id0 })
-    //console.log(cates)
-
-    if (category_id0 > 1000 && category_id0 < 1011) {
-      setDetailCategory(category_id0)
-    } else {
-
-    }
-
-  }, [router.query])
-
   return (
     <>
       <ContentWrapper width={'90%'}>
@@ -287,118 +279,46 @@ const ItemsDemo = (props) => {
               })}
             </Title>
           </>}
-        {router.query?.category_id0 ?
+        {router.query?.category_id ?
           <>
             <Title style={{ marginTop: '100px', fontFamily: 'Playfair Display', color: '#000', fontWeight: 'normal', fontSize: '90px', marginLeft: '0' }}>
-              {themeCategoryList.map((group, index) => {
-                let categories = group?.product_categories;
-                if (_.find(categories, { id: parseInt(router.query?.category_id0) })) {
-                  return _.find(categories, { id: parseInt(router.query?.category_id0) })?.category_en_name ?? _.find(categories, { id: parseInt(router.query?.category_id1) })?.category_name
-                } else {
-                  return ""
-                }
-              })}
+              {curCategory?.category_en_name ?? curCategory?.category_name ?? ""}
             </Title>
           </>
           :
-          router.query?.category_id1 ?
-            <>
-              <Title style={{ marginTop: '100px', fontFamily: 'Playfair Display', color: '#000', fontWeight: 'normal', fontSize: '90px', marginLeft: '0' }}>
-                {themeCategoryList.map((group, index) => {
-                  let categories = group?.product_categories;
-                  if (_.find(categories, { id: parseInt(router.query?.category_id1) })) {
-                    return _.find(categories, { id: parseInt(router.query?.category_id1) })?.category_en_name ?? _.find(categories, { id: parseInt(router.query?.category_id1) })?.category_name
-                  } else {
-                    return ""
-                  }
-                })}
-              </Title>
-            </>
-            :
-            ''
+          ''
         }
         {router.query?.not_show_select_menu != 1 &&
           <>
-            <Row onClick={() => { /*console.log(themeCategoryList)*/ }} style={{ justifyContent: 'space-between', minHeight: '50px', direction: 'rtl' }}>
-              {themeCategoryList.map((group, index) => {
-                return <>
-                  {categoryChildren[`category_id${index}`] &&
-                    <div style={{ overflowX: 'auto', minHeight: '50px', direction: 'ltr' }}>
-                      {categoryChildren[`category_id${index}`]?.children.map((category, idx) => (
-                        <>
-                          <Button
-                            sx={{
-                              fontWeight: `${categoryIds[`category_id${index}`] == category?.id ? 'bold' : 'normal'}`,
-                              margin: '1rem',
-                              borderBottom: `${categoryIds[`category_id${index}`] == category?.id ? '2px solid black' : ''}`,
-                              cursor: 'pointer',
-                              borderRadius: '0',
-                              color: `${themeMode == 'dark' ? 'white' : 'black'}`,
-                              '&:hover': {
-                                textDecoration: 'underline',
-                                background: 'transparent',
-                              }
-                            }}
-                            onClick={() => {
-                              let query = { ...categoryIds };
-                              query[`category_id${index}`] = category?.id;
-                              query = new URLSearchParams(query).toString();
-                              router.push(`/shop/items?${query}`);
-                            }}>
-                            {category?.category_en_name ?? category?.category_name}
-                          </Button >
-                        </>
-                      ))}
-                    </div>
-                  }
-                </>
-              })}
+            <Row style={{ justifyContent: 'space-between', minHeight: '50px', direction: 'rtl' }}>
+              {categoryChildren[`category_id`] &&
+                <div style={{ overflowX: 'auto', minHeight: '50px', direction: 'ltr' }}>
+                  {categoryChildren[`category_id`]?.children.map((category, idx) => (
+                    <>
+                      <Button
+                        sx={{
+                          fontWeight: `${categoryIds[`category_id`] == category?.id ? 'bold' : 'normal'}`,
+                          margin: '1rem',
+                          borderBottom: `${categoryIds[`category_id`] == category?.id ? '2px solid black' : ''}`,
+                          cursor: 'pointer',
+                          borderRadius: '0',
+                          color: `${themeMode == 'dark' ? 'white' : 'black'}`,
+                          '&:hover': {
+                            textDecoration: 'underline',
+                            background: 'transparent',
+                          }
+                        }}
+                        onClick={() => {
+                          router.push(`/shop/items?category_id=${category?.id}`);
+                        }}>
+                        {category?.category_en_name ?? category?.category_name}
+                      </Button >
+                    </>
+                  ))}
+                </div>
+              }
             </Row>
             <>
-              {themeCategoryList.sort((a, b) => b.sort_type - a.sort_type).map((group, index) => {
-
-                if (index == 1) {
-                  return <Row>
-                    <BrandFilter style={{ fontFamily: 'Playfair Display', overflowY: 'auto', background: `${themeMode == 'dark' ? '#222' : '#FEF8F4'}`, width: '100%' }}>
-                      <>
-                        <Row style={{ flexWrap: 'wrap', display: 'flex', borderBottom: '1px solid #999999', }}>
-                          {group?.sort_type == 0 && group?.product_categories && group?.product_categories.map((category, idx) => {
-                            if (category.category_name != 'PRIVATE') {
-                              return <>
-                                {idx == 0 && <div style={{ margin: '0.5rem', fontSize: '22px', fontWeight: 'bold' }} >Brand</div>}
-                                <Chip
-                                  label={category.category_name}
-                                  sx={{
-                                    margin: '0.5rem 0rem 0.5rem 0',
-                                    fontSize: '16px',
-                                    cursor: 'pointer',
-                                    background: `${detailCategory == category.id ? (themeMode == 'dark' ? '#999999' : 'white') : 'transparent'}`,
-                                    fontFamily: `${langChipSelected == 0 ? 'Playfair Display' : 'Noto Sans KR'}`,
-                                    '&:hover': {
-                                      background: `${themeMode == 'dark' ? '#999999' : 'white'}`,
-                                    },
-                                  }}
-                                  onClick={() => {
-
-                                    const parsedUrl = queryString.parseUrl(router.asPath).query;
-                                    parsedUrl[`category_id1`] = category?.id
-                                    const updatedUrl = queryString.stringifyUrl({ url: queryString.parseUrl(router.asPath).url, query: parsedUrl })
-
-                                    router.push(updatedUrl)
-
-                                  }} />
-                              </>
-                            }
-                          })}
-                        </Row>
-                      </>
-                    </BrandFilter>
-                  </Row>
-                }
-              }
-
-              )
-              }
               <Row>
                 <BrandFilter style={{ fontFamily: 'Playfair Display', overflowY: 'auto', background: `${themeMode == 'dark' ? '#222' : '#FEF8F4'}`, width: '100%' }}>
                   <Row>

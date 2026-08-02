@@ -855,11 +855,10 @@ const ProductEdit = () => {
   const onSave = async (type, sort) => {
     let result = undefined
     let category_ids = {};
+    // 각 카테고리 그룹에서 '반드시 1개씩' 선택하도록 강제하지 않음.
+    //  선택한 그룹만 category_id{i}에 담고, 미선택 그룹은 건너뜀(해당 축으로만 미분류).
     for (var i = 0; i < themeCategoryList.length; i++) {
-      if (!curCategories[i]) {
-        toast.error(`${themeCategoryList[i]?.category_group_name}를 선택해 주세요.`);
-        return;
-      } else {
+      if (curCategories[i] && curCategories[i].length > 0) {
         category_ids[`category_id${i}`] = curCategories[i][curCategories[i].length - 1]?.id;
       }
     }

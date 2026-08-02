@@ -599,17 +599,14 @@ const ProductList = () => {
         break;
       }
     }
-    let category_ids = {};
     let cur_categories = {
       ...curCategories,
       [idx]: use_list
     };
-    for (var i = 0; i < themeCategoryList.length; i++) {
-      if (cur_categories[i]) {
-        category_ids[`category_id${i}`] = cur_categories[i][cur_categories[i].length - 1]?.id;
-      }
-    }
-    onChangePage({ ...searchObj, ...category_ids, page: 1 })
+    // 단일 트리: 선택된 리프를 단일 category_id 로 필터(백엔드 연결테이블 IN-서브쿼리, 하위 포함).
+    //  레거시 위치필터(category_id0/1)는 비워 혼선 방지.
+    let selected_leaf = use_list[use_list.length - 1]?.id;
+    onChangePage({ ...searchObj, category_id: selected_leaf ?? '', category_id0: '', category_id1: '', page: 1 })
     setCurCategories(cur_categories);
     let children_list = [];
     for (var i = 0; i < use_list.length; i++) {

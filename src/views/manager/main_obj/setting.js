@@ -45,7 +45,7 @@ import HomeItemHero from 'src/views/section/shop/HomeItemHero'
 import { homeItemsSetting, homeItemsWithCategoriesSetting } from 'src/views/section/shop/utils'
 import ReactQuillComponent from '../react-quill'
 import { apiManager, uploadFilesByManager } from 'src/utils/api'
-import { DEFAULT_BANNERS } from 'src/data/default-banners'
+import { getDefaultBanners, getBannerRatio } from 'src/data/default-banners'
 
 const Tour = dynamic(() => import('reactour'), { ssr: false })
 //메인화면
@@ -211,6 +211,9 @@ const MainObjSetting = props => {
   const { themeDnsData, themePostCategoryList, themePropertyList } = useSettingsContext()
   const { user } = useAuthContext()
   const router = useRouter()
+  // 현재 스토어 데모 비율에 맞는 기본 배너 세트/권장크기 (demo-4·5·6·9 = 2:1, 그 외 = 2.35:1)
+  const defaultBanners = getDefaultBanners(themeDnsData?.shop_demo_num)
+  const bannerRatio = getBannerRatio(themeDnsData?.shop_demo_num)
 
   const [item, setItem] = useState(defaultManagerObj.brands)
   const [contentList, setContentList] = useState([])
@@ -792,12 +795,12 @@ const MainObjSetting = props => {
                                 handleRemoveAllFiles(idx)
                               }}
                               fileExplain={{
-                                width: '(2000x850 추천)' //파일 사이즈 설명
+                                width: `(${bannerRatio.label} 추천)` //파일 사이즈 설명 (데모 비율에 맞춰 표기)
                               }}
                               imageSize={{
-                                //썸네일 사이즈
+                                //썸네일 사이즈 (데모 비율에 맞춤)
                                 width: 200,
-                                height: 85
+                                height: Math.round(200 / bannerRatio.aspect)
                               }}
                             />
 
@@ -806,7 +809,7 @@ const MainObjSetting = props => {
                                 기본 배너 — 클릭하면 위 슬라이드에 추가됩니다. (추가 후 원하는 이미지로 교체하거나 제목·링크를 넣을 수 있어요)
                               </Typography>
                               <Row style={{ gap: '0.5rem', overflowX: 'auto', paddingBottom: '0.25rem' }}>
-                                {DEFAULT_BANNERS.map(b => (
+                                {defaultBanners.map(b => (
                                   <Tooltip title={`'${b.label}' 배너 추가`} key={b.id}>
                                     <Box
                                       component='img'
@@ -815,7 +818,7 @@ const MainObjSetting = props => {
                                       onClick={() => addDefaultBanner(b, idx)}
                                       sx={{
                                         width: 160,
-                                        height: 68,
+                                        height: Math.round(160 / bannerRatio.aspect),
                                         objectFit: 'cover',
                                         borderRadius: 1,
                                         border: '1px solid #e0e0e0',

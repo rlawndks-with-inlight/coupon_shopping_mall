@@ -229,6 +229,7 @@ const Header = () => {
     const theme = useTheme();
     const { translate } = useLocales();
     const { themeMode, onToggleMode, themeCategoryList, themeDnsData, themePopupList, themePostCategoryList, onChangePopupList, themeWishData, themeCartData, onChangeCartData, onChangeWishData, themeSellerList } = useSettingsContext();
+    const headerCategories = (themeCategoryList ?? []).flatMap((g) => g?.product_categories ?? []);
     const { user, logout } = useAuthContext();
     const headerWrappersRef = useRef();
     const [headerHeight, setHeaderHeight] = useState(130);
@@ -319,8 +320,8 @@ const Header = () => {
         setLoading(true);
         setPopups(themePopupList)
         setPostCategories(themePostCategoryList);
-        setCategories(themeCategoryList[0]?.product_categories ?? []);
-        let hover_list = getAllIdsWithParents(themeCategoryList[0]?.product_categories ?? []);
+        setCategories(headerCategories);
+        let hover_list = getAllIdsWithParents(headerCategories);
         let hover_items = {};
         for (var i = 0; i < hover_list.length; i++) {
             hover_list[i] = hover_list[i].join('_');
@@ -358,7 +359,7 @@ const Header = () => {
                 <div style={{ position: 'relative' }} className={`menu-${item?.id}`}>
                     <DropDownMenu theme={theme}
                         onClick={() => {
-                            router.push(`/shop/items?category_id0=${item?.id}&depth=${num}`)
+                            router.push(`/shop/items?category_id=${item?.id}`)
                         }}>
                         <div>{item.category_name}</div>
                         <div>{item.children.length > 0 ? '>' : ''}</div>
@@ -785,7 +786,7 @@ const Header = () => {
                                                                                         <>
                                                                                             {category.category_name != 'WATCH' && category.category_name != 'PRIVATE' && (
                                                                                                 <Row style={{ minWidth: '100px', }}>
-                                                                                                    <Link href={`/shop/items?category_id${index}=${category?.id}&depth=0`} passHref>
+                                                                                                    <Link href={`/shop/items?category_id=${category?.id}`} passHref>
                                                                                                         <ColumnMenuTitle style={{ margin: '0', cursor: 'pointer', width: '130px' }} onClick={() => {
                                                                                                             setOpenAllCategory("")
                                                                                                         }}>
@@ -794,7 +795,7 @@ const Header = () => {
                                                                                                     </Link>
                                                                                                     {category?.children && category?.children.map(children => (
                                                                                                         <>
-                                                                                                            <Link href={`/shop/items?category_id${index}=${children?.id}&depth=0`} passHref>
+                                                                                                            <Link href={`/shop/items?category_id=${children?.id}`} passHref>
                                                                                                                 <Typography variant="body2" style={{ cursor: 'pointer', marginBottom: '0.2rem', marginRight: '2rem', fontFamily: 'Noto Sans KR' }} onClick={() => {
                                                                                                                     setOpenAllCategory("")
                                                                                                                 }}>{children?.category_name}</Typography>
@@ -805,7 +806,7 @@ const Header = () => {
                                                                                             )}
                                                                                             {category.category_name == 'PRIVATE' && user && (
                                                                                                 <Row style={{ minWidth: '100px', color: 'white' }}>
-                                                                                                    <Link href={`/shop/items?category_id${index}=${category?.id}&depth=0`} passHref>
+                                                                                                    <Link href={`/shop/items?category_id=${category?.id}`} passHref>
                                                                                                         <ColumnMenuTitle style={{ margin: '0', cursor: 'pointer', width: '130px' }} onClick={() => {
                                                                                                             setOpenAllCategory("")
                                                                                                         }}>
@@ -814,7 +815,7 @@ const Header = () => {
                                                                                                     </Link>
                                                                                                     {category?.children && category?.children.map(children => (
                                                                                                         <>
-                                                                                                            <Link href={`/shop/items?category_id${index}=${children?.id}&depth=0`} passHref>
+                                                                                                            <Link href={`/shop/items?category_id=${children?.id}`} passHref>
                                                                                                                 <Typography variant="body2" style={{ cursor: 'pointer', marginBottom: '0.2rem', marginRight: '2rem', fontFamily: 'Playfair Display' }} onClick={() => {
                                                                                                                     setOpenAllCategory("")
                                                                                                                 }}>{children?.category_name}</Typography>
@@ -832,7 +833,7 @@ const Header = () => {
                                                                                         return <>
                                                                                             {category.category_name == 'WATCH' && (
                                                                                                 <div style={{ minWidth: '100px', display: 'flex' }}>
-                                                                                                    <Link href={`/shop/items?category_id${index}=${category?.id}&depth=0`} passHref>
+                                                                                                    <Link href={`/shop/items?category_id=${category?.id}`} passHref>
                                                                                                         <ColumnMenuTitle style={{ margin: '0', cursor: 'pointer', width: '130px' }} onClick={() => {
                                                                                                             setOpenAllCategory("")
                                                                                                         }}>
@@ -842,7 +843,7 @@ const Header = () => {
                                                                                                     <Col style={{ columnGap: '3rem', flexWrap: 'wrap', alignItems: 'flex-start', rowGap: '1rem', maxHeight: '200px' }}>
                                                                                                         {category?.children && category?.children.map((children) => {
                                                                                                             return <>
-                                                                                                                <Link href={`/shop/items?category_id${index}=${children?.id}&depth=0`} passHref>
+                                                                                                                <Link href={`/shop/items?category_id=${children?.id}`} passHref>
                                                                                                                     <Typography variant="body2" style={{ cursor: 'pointer', fontFamily: 'Playfair Display' }} onClick={() => {
                                                                                                                         setOpenAllCategory("")
                                                                                                                     }}>{children?.category_name}</Typography>
@@ -887,14 +888,14 @@ const Header = () => {
                                             <div style={{ fontFamily: 'Playfair Display', }}>SALE</div>
                                         </CategoryMenu>
                                     </Link>
-                                    <Link href={`/shop/items/?category_id0=1007&page=1&page_size=20`} passHref>
+                                    <Link href={`/shop/items/?category_id=1007&page=1&page_size=20`} passHref>
                                         <CategoryMenu borderColor={themeDnsData?.theme_css?.main_color} style={{ fontWeight: 'bold' }} onClick={() => {
                                             //setOpenAllCategory(group?.id)
                                         }}>
                                             <div style={{ fontFamily: 'Playfair Display', }}>WATCH</div>
                                         </CategoryMenu>
                                     </Link>
-                                    <Link href={`/shop/items/?category_id0=1002&page=1&page_size=20`} passHref>
+                                    <Link href={`/shop/items/?category_id=1002&page=1&page_size=20`} passHref>
                                         <CategoryMenu borderColor={themeDnsData?.theme_css?.main_color} style={{ fontWeight: 'bold' }} onClick={() => {
                                             //setOpenAllCategory(group?.id)
                                         }}>
@@ -1063,7 +1064,7 @@ const Header = () => {
                                                                                                 {
                                                                                                     group.childs.map((child) => {
                                                                                                         return <>
-                                                                                                            <Link href={`/shop/items?category_id${index}=${child?.id}&depth=0`} passHref>
+                                                                                                            <Link href={`/shop/items?category_id=${child?.id}`} passHref>
                                                                                                                 <Chip
                                                                                                                     label={langChipSelected == 0 ? child?.category_en_name : child?.category_name}
                                                                                                                     sx={{
@@ -1092,7 +1093,7 @@ const Header = () => {
                                                                                                 {
                                                                                                     group.childs.map((child) => {
                                                                                                         return <>
-                                                                                                            <Link href={`/shop/items?category_id${index}=${child?.id}&depth=0`} passHref>
+                                                                                                            <Link href={`/shop/items?category_id=${child?.id}`} passHref>
                                                                                                                 <Chip
                                                                                                                     label={langChipSelected == 0 ? child?.category_en_name : child?.category_name}
                                                                                                                     sx={{
@@ -1126,61 +1127,9 @@ const Header = () => {
                                                 </div>
                                             }
                                         })}
-                                        <Link href={`/shop/items/?category_id1=501&depth=0&page=1&page_size=20`} passHref>
-                                            <CategoryMenu
-                                                onClick={() => {
-                                                    /*const route = themeCategoryList.map((group, index) => {
-                                                        let categories = group?.product_categories;
-                                                        if (_.find(categories, { category_name: 'HERMES' })) {
-                                                          return _.find(categories, { category_name: 'HERMES' })?.id
-                                                        }
-                                                      })
-                                                      console.log(route)*/
-                                                }}
-                                            >
-                                                HERMES
-                                            </CategoryMenu>
-                                        </Link>
-                                        <Link href={`/shop/items/?category_id1=506&depth=0&page=1&page_size=20`} passHref>
-                                            <CategoryMenu>
-                                                CHANEL
-                                            </CategoryMenu>
-                                        </Link>
-                                        <Link href={`/shop/items/?category_id1=511&depth=0&page=1&page_size=20`} passHref>
-                                            <CategoryMenu>
-                                                LOUIS VUITTON
-                                            </CategoryMenu>
-                                        </Link>
-                                        <Link href={`/shop/items/?category_id1=533&depth=0&page=1&page_size=20`} passHref>
-                                            <CategoryMenu>
-                                                ROLEX
-                                            </CategoryMenu>
-                                        </Link>
-                                        <Link href={`/shop/items/?category_id1=516&depth=0&page=1&page_size=20`} passHref>
-                                            <CategoryMenu>
-                                                CARTIER
-                                            </CategoryMenu>
-                                        </Link>
-                                        <Link href={`/shop/items/?category_id1=522&depth=0&page=1&page_size=20`} passHref>
-                                            <CategoryMenu>
-                                                VAN CLEEF & ARPELS
-                                            </CategoryMenu>
-                                        </Link>
-                                        <Link href={`/shop/items/?category_id1=527&depth=0&page=1&page_size=20`} passHref>
-                                            <CategoryMenu>
-                                                TIFFANY & CO.
-                                            </CategoryMenu>
-                                        </Link>
-                                        <Link href={`/shop/items/?category_id1=513&depth=0&page=1&page_size=20`} passHref>
-                                            <CategoryMenu>
-                                                GOYARD
-                                            </CategoryMenu>
-                                        </Link>
-                                        <Link href={`/shop/items/?category_id1=512&depth=0&page=1&page_size=20`} passHref>
-                                            <CategoryMenu>
-                                                CHRISTIAN DIOR
-                                            </CategoryMenu>
-                                        </Link>
+                                        {/* 카테고리 정규화: 브랜드는 상품 속성(property)으로 이전됨.
+                                            기존 하드코딩 브랜드 바로가기(category_id1=501~533)는 단일 트리 전환으로 제거.
+                                            (추후 필요 시 property_ids 필터로 재연결 — 예: BEST/NEW/SALE 처럼) */}
                                     </NoneShowMobile>
                                 </CategoryContainer>
                             </div>
@@ -1393,7 +1342,7 @@ const returnSidebarMenu = (item, num, func, index) => {
                     marginLeft: '0.25rem'
                 }}
                 onClick={() => {
-                    router.push(`/shop/items?category_id${index}=${item?.id}&depth=${num}`);
+                    router.push(`/shop/items?category_id=${item?.id}`);
                     setSideMenuOpen(false);
                 }}>{item.category_en_name}</div>}
                 nodeId={item.id}

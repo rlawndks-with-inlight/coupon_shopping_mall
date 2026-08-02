@@ -233,6 +233,7 @@ const Header = () => {
   const router = useRouter();
   const theme = useTheme();
   const { themeMode, onToggleMode, onChangeCartData, onChangeWishData, themePostCategoryList, themeCategoryList } = useSettingsContext();
+  const headerCategories = (themeCategoryList ?? []).flatMap((g) => g?.product_categories ?? []);
   const { user, logout } = useAuthContext();
   const [keyword, setKeyword] = useState("");
   const onSearch = () => {
@@ -261,7 +262,7 @@ const Header = () => {
   }, [headerWrappersRef.current, menuButtonRef.current, , themeCategoryList])
   useEffect(() => {
     setLoading(true);
-    let hover_list = getAllIdsWithParents(themeCategoryList[0]?.product_categories ?? []);
+    let hover_list = getAllIdsWithParents(headerCategories);
     let hover_items = {};
     for (var i = 0; i < hover_list.length; i++) {
       hover_list[i] = hover_list[i].join('_');
@@ -286,7 +287,7 @@ const Header = () => {
         <div style={{ position: 'relative' }} className={`menu-${item?.id}`}>
           <DropDownMenu theme={theme}
             onClick={() => {
-              router.push(`/shop/items?category_id0=${item?.id}&depth=${num}`)
+              router.push(`/shop/items?category_id=${item?.id}`)
             }}>
             <div>{item.category_name}</div>
             <div>{item.children.length > 0 ? '>' : ''}</div>
@@ -356,7 +357,7 @@ const Header = () => {
     vertical: true,
   }
   const isPageCategory = (id) => {
-    let parent_list = getAllIdsWithParents(themeCategoryList[0]?.product_categories);
+    let parent_list = getAllIdsWithParents(headerCategories);
     for (var i = 0; i < parent_list.length; i++) {
       if (parent_list[i][parent_list[i].length - 1]?.id == router.query?.category_id && parent_list[i][0]?.id == id) {
         return true;
@@ -552,7 +553,7 @@ const Header = () => {
                 </IconButton>
               </NoneShowMobile>
               <NoneShowMobile style={{ width: '100%', flexWrap: 'wrap' }}>
-                {themeCategoryList[0]?.product_categories && themeCategoryList[0]?.product_categories.map((item1, idx1) => (
+                {headerCategories.length > 0 && headerCategories.map((item1, idx1) => (
                   <>
                     {item1?.is_show_header_menu == 1 &&
                       <>
@@ -564,7 +565,7 @@ const Header = () => {
                             theme={theme}
                             is_page_category={isPageCategory(item1?.id) ? 1 : 0}
                             onClick={() => {
-                              router.push(`/shop/items?category_id0=${item1?.id}&depth=0`)
+                              router.push(`/shop/items?category_id=${item1?.id}`)
                             }}>
                             {item1.category_name}
                           </CategoryMenu>
@@ -606,7 +607,7 @@ const Header = () => {
               }}
                 className="none-scroll"
               >
-                {themeCategoryList[0]?.product_categories && themeCategoryList[0]?.product_categories.map((item1, idx1) => (
+                {headerCategories.length > 0 && headerCategories.map((item1, idx1) => (
                   <>
                     {item1?.is_show_header_menu == 1 &&
                       <>
@@ -614,7 +615,7 @@ const Header = () => {
                           onHoverCategory(`hover_${item1?.id}`)
                         }}
                           onClick={() => {
-                            router.push(`/shop/items?category_id0=${item1?.id}&depth=0`)
+                            router.push(`/shop/items?category_id=${item1?.id}`)
                           }}
                         >
                           <div>{item1.category_name}</div>
@@ -666,7 +667,7 @@ const Header = () => {
                 {group?.product_categories && group?.product_categories.map((category) => (
                   <>
                     <DialogMenuContent onClick={() => {
-                      router.push(`/shop/items?category_id${index}=${category?.id}&depth=0`);
+                      router.push(`/shop/items?category_id=${category?.id}`);
                       setDialogMenuOpen(false);
                     }}>{category?.category_name}</DialogMenuContent>
                   </>
@@ -746,7 +747,7 @@ const Header = () => {
             defaultExpandIcon={<Icon icon={'ic:baseline-plus'} />}
             defaultEndIcon={<Icon icon={'mdi:dot'} />}
           >
-            {themeCategoryList[0]?.product_categories && themeCategoryList[0]?.product_categories.map((item1, idx) => (
+            {headerCategories.length > 0 && headerCategories.map((item1, idx) => (
               <>
                 {returnSidebarMenu(item1, 0, {
                   router,
@@ -814,7 +815,7 @@ const returnSidebarMenu = (item, num, func) => {
           marginLeft: '0.25rem'
         }}
         onClick={() => {
-          router.push(`/shop/items?category_id0=${item?.id}&depth=${num}`);
+          router.push(`/shop/items?category_id=${item?.id}`);
           setSideMenuOpen(false);
         }}>{item.category_name}</div>}
         nodeId={item.id}

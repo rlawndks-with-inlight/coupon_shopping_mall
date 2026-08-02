@@ -11,9 +11,9 @@ import { Col, Row, themeObj } from "src/components/elements/styled-components";
 import { useSettingsContext } from "src/components/settings";
 import { useAuthContext } from "src/layouts/manager/auth/useAuthContext";
 import { apiShop } from "src/utils/api";
+import { getAllIdsWithParents } from "src/utils/function";
 import styled, { css } from "styled-components";
 import $ from 'jquery';
-import { CategorySorter, LANGCODE } from "src/views/shop/demo-4/header"
 import queryString from 'query-string'
 
 const ContentWrapper = styled.div`
@@ -64,15 +64,10 @@ const ItemsDemo = (props) => {
   const [moreLoading, setMoreLoading] = useState(false);
   const [loading, setLoading] = useState(true);
   const scrollRef = useRef(null);
-  const [categoryChildren, setCategoryChildren] = useState({});
+  const [categoryChildren, setCategoryChildren] = useState([]);
   const [langChipSelected, setLangChipSelected] = useState(0)
   const [textChipSelected, setTextChipSelected] = useState('A')
-  const { sort, categoryGroup } = CategorySorter(themeCategoryList)
   const [detailCategory, setDetailCategory] = useState()
-
-  useEffect(() => {
-    sort(LANGCODE.ENG)
-  }, [])
 
   const sortList = [
     /*{
@@ -100,9 +95,7 @@ const ItemsDemo = (props) => {
     getItemList({ ...router.query }, searchObj)
     //console.log(router.query)
   }, [
-    router.query.category_id0,
-    router.query.category_id1,
-    router.query.category_id2,
+    router.query.category_id,
     router.query.search,
     router.query.keyword,
     router.query.property_ids0,
@@ -141,26 +134,25 @@ const ItemsDemo = (props) => {
     //console.log(search_obj)
     //setLoading(true);
     setCategoryIds(query);
-    let category_children = {};
-    for (var i = 0; i < themeCategoryList.length; i++) {
-      let find_category = undefined;
-      delete search_obj[`category_id${i}`];
-      for (var j = 0; j < themeCategoryList[i]?.product_categories.length; j++) {
-        let category = themeCategoryList[i]?.product_categories[j];
-        let children = (category?.children ?? []).map(item => { return item?.id });
-        if (query[`category_id${i}`] == category?.id || children?.includes(parseInt(query[`category_id${i}`]))) {
-          find_category = category;
+    delete search_obj.category_id0;
+    delete search_obj.category_id1;
+    delete search_obj.category_id2;
+    delete search_obj.depth;
+    let category_children = [];
+    if (query.category_id) {
+      let parent_list = getAllIdsWithParents(themeCategoryList[0]?.product_categories ?? []);
+      let use_list = [];
+      for (var i = 0; i < parent_list.length; i++) {
+        if (parent_list[i][parent_list[i].length - 1]?.id == query.category_id) {
+          use_list = parent_list[i];
           break;
         }
       }
-      if (find_category && find_category?.children.length > 0) {
-        category_children = {
-          ...category_children,
-          [`category_id${i}`]: {
-            parent_id: find_category?.id,
-            children: find_category?.children
-          }
-        }
+      let selected_category = use_list[use_list.length - 1];
+      if ((selected_category?.children ?? []).length > 0) {
+        category_children = selected_category.children;
+      } else if (use_list.length >= 2) {
+        category_children = use_list[use_list.length - 2]?.children ?? [];
       }
     }
     let query_str = new URLSearchParams(query).toString();
@@ -253,80 +245,66 @@ const ItemsDemo = (props) => {
               })}
             </Title>
           </>}
-        {router.query?.category_id0 ?
+        {router.query?.category_id ?
           <>
             <Title style={{ marginTop: '100px', fontFamily: 'Noto Sans KR', color: '#000', fontWeight: 'normal', marginLeft: '0' }}>
-              {themeCategoryList.map((group, index) => {
-                let categories = group?.product_categories;
-                if (_.find(categories, { id: parseInt(router.query?.category_id0) })) {
-                  return _.find(categories, { id: parseInt(router.query?.category_id0) })?.category_name ?? _.find(categories, { id: parseInt(router.query?.category_id0) })?.category_en_name
-                } else {
-                  return ""
+              {(() => {
+                let parent_list = getAllIdsWithParents(themeCategoryList[0]?.product_categories ?? []);
+                let use_list = [];
+                for (var i = 0; i < parent_list.length; i++) {
+                  if (parent_list[i][parent_list[i].length - 1]?.id == parseInt(router.query?.category_id)) {
+                    use_list = parent_list[i];
+                    break;
+                  }
                 }
-              })}
+                let selected = use_list[use_list.length - 1];
+                return selected?.category_name ?? selected?.category_en_name ?? "";
+              })()}
             </Title>
           </>
           :
-          router.query?.category_id1 ?
-            <>
-              <Title style={{ marginTop: '100px', fontFamily: 'Noto Sans KR', color: '#000', fontWeight: 'normal', marginLeft: '0' }}>
-                {themeCategoryList.map((group, index) => {
-                  let categories = group?.product_categories;
-                  if (_.find(categories, { id: parseInt(router.query?.category_id1) })) {
-                    return _.find(categories, { id: parseInt(router.query?.category_id1) })?.category_name ?? _.find(categories, { id: parseInt(router.query?.category_id0) })?.category_en_name
-                  } else {
-                    return ""
-                  }
-                })}
-              </Title>
-            </>
-            :
-            ''
+          ''
         }
         {router.query?.not_show_select_menu != 1 &&
           <>
             <Row style={{ justifyContent: 'space-between', minHeight: '50px', direction: 'ltr' }}>
-              {themeCategoryList.map((group, index) => {
-                return <>
-                  {categoryChildren[`category_id${index}`] &&
-                    <div style={{ overflowX: 'auto', minHeight: '50px', direction: 'ltr', margin: '0 auto' }}>
-                      {categoryChildren[`category_id${index}`]?.children.map((category, idx) => (
-                        <>
-                          <Button
-                            sx={{
-                              fontWeight: `${categoryIds[`category_id${index}`] == category?.id ? 'bold' : 'normal'}`,
-                              width: '256px',
-                              margin: '0.1rem',
-                              border: '1px solid black',
-                              borderBottom: `${categoryIds[`category_id${index}`] == category?.id ? '2px solid black' : ''}`,
-                              cursor: 'pointer',
-                              borderRadius: '0',
-                              backgroundColor: `${categoryIds[`category_id${index}`] == category?.id ? '#C51315' : ''}`,
-                              color: `${themeMode == 'dark' || categoryIds[`category_id${index}`] == category?.id ? 'white' : 'black'}`,
-                              '&:hover': {
-                                textDecoration: 'underline',
-                                background: 'transparent',
-                                backgroundColor: '#C51315',
-                                color: 'white'
-                              },
-                              '@media (max-width:1440px)': {
-                                width: 'calc(85vw / 5)'
-                              }
-                            }}
-                            onClick={() => {
-                              let query = { ...categoryIds };
-                              query[`category_id${index}`] = category?.id;
-                              query = new URLSearchParams(query).toString();
-                              router.push(`/shop/items?${query}`);
-                            }}>
-                            {category?.category_name ?? category?.category_en_name}
-                          </Button >
-                        </>
-                      ))}
-                    </div>
-                  }
-                </>
-              })}
+              {categoryChildren.length > 0 &&
+                <div style={{ overflowX: 'auto', minHeight: '50px', direction: 'ltr', margin: '0 auto' }}>
+                  {categoryChildren.map((category, idx) => (
+                    <>
+                      <Button
+                        sx={{
+                          fontWeight: `${categoryIds.category_id == category?.id ? 'bold' : 'normal'}`,
+                          width: '256px',
+                          margin: '0.1rem',
+                          border: '1px solid black',
+                          borderBottom: `${categoryIds.category_id == category?.id ? '2px solid black' : ''}`,
+                          cursor: 'pointer',
+                          borderRadius: '0',
+                          backgroundColor: `${categoryIds.category_id == category?.id ? '#C51315' : ''}`,
+                          color: `${themeMode == 'dark' || categoryIds.category_id == category?.id ? 'white' : 'black'}`,
+                          '&:hover': {
+                            textDecoration: 'underline',
+                            background: 'transparent',
+                            backgroundColor: '#C51315',
+                            color: 'white'
+                          },
+                          '@media (max-width:1440px)': {
+                            width: 'calc(85vw / 5)'
+                          }
+                        }}
+                        onClick={() => {
+                          let query = { ...categoryIds };
+                          query.category_id = category?.id;
+                          query = new URLSearchParams(query).toString();
+                          router.push(`/shop/items?${query}`);
+                        }}>
+                        {category?.category_name ?? category?.category_en_name}
+                      </Button >
+                    </>
+                  ))}
+                </div>
+              }
             </Row>
           </>
         }

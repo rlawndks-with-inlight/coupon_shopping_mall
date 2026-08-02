@@ -600,6 +600,7 @@ const ProductEdit = () => {
   const [currentTab, setCurrentTab] = useState(0);
   const [curCategories, setCurCategories] = useState({});
   const [categoryChildrenList, setCategoryChildrenList] = useState({});
+  const [selectedCategoryIds, setSelectedCategoryIds] = useState([]); // 1상품 N카테고리 다중선택(연결테이블)
   const [item, setItem] = useState({
     category_ids: [],
     product_name: '',
@@ -745,6 +746,11 @@ const ProductEdit = () => {
       }
       setCurCategories(cur_categories);
       setCategoryChildrenList(category_children_list);
+      // 다중선택 초기화: 백엔드 category_ids(연결테이블) 우선, 없으면 레거시 category_id0 폴백
+      let init_selected = (Array.isArray(product?.category_ids) && product.category_ids.length > 0)
+        ? product.category_ids
+        : (product?.category_id0 ? [product.category_id0] : []);
+      setSelectedCategoryIds([...new Set(init_selected.map(Number).filter((v) => v > 0))]);
     }
     setLoading(false);
   }
@@ -852,16 +858,30 @@ const ProductEdit = () => {
     });
     $(`.category-container-${idx}`).scrollLeft(100000);
   }
+  // 1상품 N카테고리 다중선택 헬퍼
+  const flatCategoryList = _.uniqBy(
+    (themeCategoryList ?? []).flatMap((g) => getAllIdsWithParents(g?.product_categories ?? []).flat()),
+    'id'
+  );
+  const findCategoryById = (id) => _.find(flatCategoryList, { id: Number(id) });
+  const onAddSelectedCategory = (index) => {
+    const nav = curCategories[index] ?? [];
+    const leaf = nav[nav.length - 1]?.id;
+    if (!leaf) { toast.error('추가할 카테고리를 먼저 탐색·선택해 주세요.'); return; }
+    if (selectedCategoryIds.map(Number).includes(Number(leaf))) return;
+    setSelectedCategoryIds([...selectedCategoryIds, Number(leaf)]);
+  };
+  const onRemoveSelectedCategory = (cid) => {
+    setSelectedCategoryIds(selectedCategoryIds.filter((x) => Number(x) !== Number(cid)));
+  };
+
   const onSave = async (type, sort) => {
     let result = undefined
+    // 1상품 N카테고리: 다중선택된 카테고리들을 연결테이블용 배열로. 대표(첫번째)는 category_id0 dual-write.
+    let category_ids_arr = [...new Set((selectedCategoryIds ?? []).map(Number).filter((v) => v > 0))];
     let category_ids = {};
-    for (var i = 0; i < themeCategoryList.length; i++) {
-      if (!curCategories[i]) {
-        toast.error(`${themeCategoryList[i]?.category_group_name}를 선택해 주세요.`);
-        return;
-      } else {
-        category_ids[`category_id${i}`] = curCategories[i][curCategories[i].length - 1]?.id;
-      }
+    if (category_ids_arr.length > 0) {
+      category_ids['category_id0'] = category_ids_arr[0];
     }
     /*for (var i = 0; i < themePropertyList.length; i++) {
       if (!((item.properties[themePropertyList[i]?.id] ?? [])?.length > 0)) {
@@ -937,13 +957,13 @@ const ProductEdit = () => {
       type == 'edit' ?
         obj?.id ? //수정
           sort ?
-            result = await apiManager('products', 'update', { ...obj, id: obj?.id, ...category_ids, sub_images, description_images, properties: JSON.stringify(item.properties), sort_idx: sort })
+            result = await apiManager('products', 'update', { ...obj, id: obj?.id, ...category_ids, category_ids: JSON.stringify(category_ids_arr), sub_images, description_images, properties: JSON.stringify(item.properties), sort_idx: sort })
             :
-            result = await apiManager('products', 'update', { ...obj, id: obj?.id, ...category_ids, sub_images, description_images, properties: JSON.stringify(item.properties) })
+            result = await apiManager('products', 'update', { ...obj, id: obj?.id, ...category_ids, category_ids: JSON.stringify(category_ids_arr), sub_images, description_images, properties: JSON.stringify(item.properties) })
           : //추가
-          result = await apiManager('products', 'create', { ...obj, ...category_ids, sub_images, description_images, user_id: user?.id, properties: JSON.stringify(item.properties) })
+          result = await apiManager('products', 'create', { ...obj, ...category_ids, category_ids: JSON.stringify(category_ids_arr), sub_images, description_images, user_id: user?.id, properties: JSON.stringify(item.properties) })
         :
-        result = await apiManager('products', 'create', { ...obj, ...category_ids, sub_images, description_images, user_id: user?.id, properties: JSON.stringify(item.properties) })
+        result = await apiManager('products', 'create', { ...obj, ...category_ids, category_ids: JSON.stringify(category_ids_arr), sub_images, description_images, user_id: user?.id, properties: JSON.stringify(item.properties) })
     }
     if (result) {
       toast.success("성공적으로 저장 되었습니다.");
@@ -1184,9 +1204,38 @@ const ProductEdit = () => {
                               sort_idx={index}
                               id={group?.id}
                             />
+                            <Button size="small" variant="outlined" disabled={user?.level < 40}
+                              startIcon={<Icon icon="mdi:plus" />}
+                              onClick={() => onAddSelectedCategory(index)}>
+                              선택한 카테고리 추가
+                            </Button>
                           </Stack>
                         </>
                       ))}
+
+                      {/* 선택된 카테고리(1상품 N카테고리) — 칩으로 표시/삭제 */}
+                      <Stack spacing={1}>
+                        <Typography variant="subtitle2" sx={{ color: 'text.secondary' }}>
+                          선택된 카테고리 ({selectedCategoryIds.length})
+                        </Typography>
+                        {selectedCategoryIds.length > 0 ? (
+                          <Row style={{ flexWrap: 'wrap', gap: '6px' }}>
+                            {selectedCategoryIds.map((cid) => {
+                              const cat = findCategoryById(cid);
+                              return (
+                                <Box key={cid} sx={{ display: 'inline-flex', alignItems: 'center', px: 1, py: 0.25, border: '1px solid', borderColor: 'primary.main', borderRadius: 1, bgcolor: 'primary.lighter' }}>
+                                  <span style={{ fontSize: 13 }}>{cat?.category_name ?? `#${cid}`}</span>
+                                  <Icon icon="mdi:close" width={16} height={16} style={{ marginLeft: 4, cursor: 'pointer' }} onClick={() => onRemoveSelectedCategory(cid)} />
+                                </Box>
+                              );
+                            })}
+                          </Row>
+                        ) : (
+                          <Typography variant="caption" sx={{ color: 'text.disabled' }}>
+                            위에서 카테고리를 탐색·선택한 뒤 &apos;선택한 카테고리 추가&apos;를 눌러 담아주세요. (여러 개 가능)
+                          </Typography>
+                        )}
+                      </Stack>
 
                       {themePropertyList.map((group, index) => (
                         <>

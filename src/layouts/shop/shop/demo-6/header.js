@@ -186,6 +186,7 @@ const Header = () => {
   const theme = useTheme();
   const { translate, currentLang } = useLocales();
   const { themeMode, onToggleMode, themeCategoryList, themeDnsData, themePopupList, themeNoneTodayPopupList, onChangeNoneTodayPopupList, themePostCategoryList, onChangePopupList, themeWishData, themeCartData, onChangeCartData, onChangeWishData, themeSellerList } = useSettingsContext();
+  const headerCategories = (themeCategoryList ?? []).flatMap((g) => g?.product_categories ?? []);
   const { user, logout } = useAuthContext();
   const headerWrappersRef = useRef();
   const [headerHeight, setHeaderHeight] = useState(130);
@@ -251,7 +252,7 @@ const Header = () => {
     setLoading(true);
     setPopups(themePopupList)
     setPostCategories(themePostCategoryList);
-    let hover_list = getAllIdsWithParents(themeCategoryList[0]?.product_categories ?? []);
+    let hover_list = getAllIdsWithParents(headerCategories);
     let hover_items = {};
     for (var i = 0; i < hover_list.length; i++) {
       hover_list[i] = hover_list[i].join('_');
@@ -276,7 +277,7 @@ const Header = () => {
         <div style={{ position: 'relative' }} className={`menu-${item?.id}`}>
           <DropDownMenu theme={theme}
             onClick={() => {
-              router.push(`/shop/items?category_id0=${item?.id}&depth=${num}`)
+              router.push(`/shop/items?category_id=${item?.id}`)
             }}>
             <div>{formatLang(item, 'category_name', currentLang)}</div>
             <div>{item.children.length > 0 ? '>' : ''}</div>
@@ -335,7 +336,7 @@ const Header = () => {
             marginLeft: '0.25rem'
           }}
           onClick={() => {
-            router.push(`/shop/items?category_id${index}=${item?.id}&depth=${num}`);
+            router.push(`/shop/items?category_id=${item?.id}`);
             setSideMenuOpen(false);
           }}>{formatLang(item, 'category_name', currentLang)}</div>}
           nodeId={item.id}
@@ -661,13 +662,13 @@ const Header = () => {
                 }}
                 className="none-scroll pc-menu-content"
               >
-                {themeCategoryList[0]?.product_categories && themeCategoryList[0]?.product_categories.map((item1, idx1) => (
+                {headerCategories.length > 0 && headerCategories.map((item1, idx1) => (
                   <>
                     {item1?.is_show_header_menu == 1 &&
                       <>
                         <div style={{ position: 'relative' }} className={`menu-${item1?.id}`}>
                           <CategoryMenu borderColor={themeMode == 'dark' ? '#fff' : '#000'} onClick={() => {
-                            router.push(`/shop/items?category_id0=${item1?.id}&depth=0`)
+                            router.push(`/shop/items?category_id=${item1?.id}`)
                           }}>
                             <div>{formatLang(item1, 'category_name', currentLang)}</div>
                           </CategoryMenu>
@@ -748,7 +749,7 @@ const Header = () => {
               }}
                 className="none-scroll"
               >
-                {themeCategoryList[0]?.product_categories && themeCategoryList[0]?.product_categories.map((item1, idx1) => (
+                {headerCategories.length > 0 && headerCategories.map((item1, idx1) => (
                   <>
                     {item1?.is_show_header_menu == 1 &&
                       <>
@@ -756,7 +757,7 @@ const Header = () => {
                           onHoverCategory(`hover_${item1?.id}`)
                         }}
                           onClick={() => {
-                            router.push(`/shop/items?category_id0=${item1?.id}&depth=0`)
+                            router.push(`/shop/items?category_id=${item1?.id}`)
                           }}
                         >
                           <div>{formatLang(item1, 'category_name', currentLang)}</div>

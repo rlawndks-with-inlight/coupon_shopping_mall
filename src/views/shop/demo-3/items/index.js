@@ -134,7 +134,7 @@ const ItemsDemo = (props) => {
       setParentList(parent_list);
       let use_list = [];
       for (var i = 0; i < parent_list.length; i++) {
-        if (parent_list[i][router.query?.depth]?.id == router.query?.category_id0) {
+        if (parent_list[i][parent_list[i].length - 1]?.id == router.query?.category_id) {
           use_list = parent_list[i];
           break;
         }
@@ -179,7 +179,7 @@ const ItemsDemo = (props) => {
                       cursor: 'pointer'
                     }}
                       onClick={() => {
-                        router.push(`/shop/items?category_id0=${item?.id}&depth=${idx}`)
+                        router.push(`/shop/items?category_id=${item?.id}`)
                       }}
                     >{formatLang(item, 'category_name', currentLang)}</div>
                   </>
@@ -201,7 +201,7 @@ const ItemsDemo = (props) => {
             <>
               <CategoryButton variant="outlined"
                 onClick={() => {
-                  router.push(`/shop/items?category_id0=${item?.id}&depth=${parseInt(router.query?.depth) + 1}`)
+                  router.push(`/shop/items?category_id=${item?.id}`)
                 }}
               >{formatLang(item, 'category_name', currentLang)}</CategoryButton>
             </>

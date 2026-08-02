@@ -214,7 +214,9 @@ const CategoryList = () => {
             page_size: 1000,
         });
         category_group_list = category_group_list?.content ?? [];
-        let group = _.find(category_group_list, { id: parseInt(router.query?.id) });
+        // 단일 트리: 라우트 id 로 그룹을 찾되, 없으면(합성 그룹 id=0 등) 첫 실그룹을
+        //  신규 카테고리의 컨테이너 그룹으로 사용(라벨/설정도 여기서 파생).
+        let group = _.find(category_group_list, { id: parseInt(router.query?.id) }) || category_group_list[0];
         if (group) {
             setCategoryGroup(group);
         }
@@ -222,10 +224,10 @@ const CategoryList = () => {
     const getCategories = async () => {
         setIsAction(false);
         setCategory(defaultSetting);
+        // 단일 트리: 그룹 필터 없이 브랜드 전체 카테고리 트리를 조회(백엔드 group 선택적).
         let category_list = await apiManager('product-categories', 'list', {
             page: 1,
             page_size: 1000,
-            product_category_group_id: router.query?.id
         })
         if (category_list) {
             setCategories(category_list?.content);
@@ -338,10 +340,13 @@ const CategoryList = () => {
         getCategories();
     }
     const onSave = async () => {
+        // 단일 트리: 신규 카테고리는 컨테이너 그룹(첫 실그룹)에 담는다. 그룹 레이어는 폐지 중이나
+        //  product_category_group_id 컬럼(전환기 NOT NULL 가능)을 유효값으로 채우기 위함.
+        const container_group_id = categoryGroup?.id ?? router.query?.id;
         if (category?.id) {//수정
-            let result = await apiManager('product-categories', 'update', { ...category, product_category_group_id: router.query?.id })
+            let result = await apiManager('product-categories', 'update', { ...category, product_category_group_id: container_group_id })
         } else {//추가
-            let result = await apiManager('product-categories', 'create', { ...category, product_category_group_id: router.query?.id })
+            let result = await apiManager('product-categories', 'create', { ...category, product_category_group_id: container_group_id })
         }
         setIsAction(false);
         getCategories();

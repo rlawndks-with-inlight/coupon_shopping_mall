@@ -71,24 +71,13 @@ top: 0;
 left: 0;
 display:flex;
 position: relative;
-background-size: ${props => props.type == 1 ? 'contain' : 'cover'};
+background-size: contain;
 background-repeat: no-repeat;
 background-position: center center;
 max-width: ${props => props.type == 1 ? '1600px' : ''};
 margin:0 auto;
-animation: ${props => props.type == 1 ? '' : props => props.iscurrentSlideIndex ? 'zoom-in-out' : ''} 10s ease-in-out infinite;
-@keyframes zoom-in-out {
-    0% {
-        transform: scale(1);
-    }
-    50% {
-        transform: scale(1.02);
-    }
-    100% {
-        transform: scale(1);
-    }
-}
-
+// 배너 전부 contain 통일 → cover 잘림·줌 브리딩(불안정) 제거. 데모별 컨테이너 비율(위)만 유지.
+animation: none;
 `
 
 const TextContainer = styled.div`

@@ -862,6 +862,16 @@ const ProductEdit = () => {
         category_ids[`category_id${i}`] = curCategories[i][curCategories[i].length - 1]?.id;
       }
     }
+    // 연결테이블(products_categories)용 카테고리 id 배열 — 1상품 N카테고리.
+    //  선택된 각 (단일)트리 리프 id를 수집. 백엔드는 이 배열로 연결테이블 저장, category_id0 은 dual-write.
+    let category_ids_arr = [];
+    for (var i = 0; i < themeCategoryList.length; i++) {
+      if (curCategories[i] && curCategories[i].length > 0) {
+        let leaf = curCategories[i][curCategories[i].length - 1]?.id;
+        if (leaf) category_ids_arr.push(leaf);
+      }
+    }
+    category_ids_arr = [...new Set(category_ids_arr)];
     /*for (var i = 0; i < themePropertyList.length; i++) {
       if (!((item.properties[themePropertyList[i]?.id] ?? [])?.length > 0)) {
         toast.error(`${themePropertyList[i]?.property_group_name}를 선택해 주세요.`);
@@ -936,13 +946,13 @@ const ProductEdit = () => {
       type == 'edit' ?
         obj?.id ? //수정
           sort ?
-            result = await apiManager('products', 'update', { ...obj, id: obj?.id, ...category_ids, sub_images, description_images, properties: JSON.stringify(item.properties), sort_idx: sort })
+            result = await apiManager('products', 'update', { ...obj, id: obj?.id, ...category_ids, category_ids: JSON.stringify(category_ids_arr), sub_images, description_images, properties: JSON.stringify(item.properties), sort_idx: sort })
             :
-            result = await apiManager('products', 'update', { ...obj, id: obj?.id, ...category_ids, sub_images, description_images, properties: JSON.stringify(item.properties) })
+            result = await apiManager('products', 'update', { ...obj, id: obj?.id, ...category_ids, category_ids: JSON.stringify(category_ids_arr), sub_images, description_images, properties: JSON.stringify(item.properties) })
           : //추가
-          result = await apiManager('products', 'create', { ...obj, ...category_ids, sub_images, description_images, user_id: user?.id, properties: JSON.stringify(item.properties) })
+          result = await apiManager('products', 'create', { ...obj, ...category_ids, category_ids: JSON.stringify(category_ids_arr), sub_images, description_images, user_id: user?.id, properties: JSON.stringify(item.properties) })
         :
-        result = await apiManager('products', 'create', { ...obj, ...category_ids, sub_images, description_images, user_id: user?.id, properties: JSON.stringify(item.properties) })
+        result = await apiManager('products', 'create', { ...obj, ...category_ids, category_ids: JSON.stringify(category_ids_arr), sub_images, description_images, user_id: user?.id, properties: JSON.stringify(item.properties) })
     }
     if (result) {
       toast.success("성공적으로 저장 되었습니다.");

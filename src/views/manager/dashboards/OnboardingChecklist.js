@@ -3,14 +3,16 @@ import { Card, Box, Stack, Typography, Button, LinearProgress, IconButton } from
 import { Icon } from '@iconify/react';
 import { useRouter } from 'next/router';
 import { useSettingsContext } from 'src/components/settings';
+import { useModal } from 'src/components/dialog/ModalProvider';
 import { apiManager } from 'src/utils/api';
 import { isShopgoMerchant } from 'src/utils/is-shopgo';
 
 // 신규 가맹점 온보딩 체크리스트 — 대시보드 상단.
-// 완료 여부는 이미 로드된 데이터로 자동 감지. 필수(카테고리·상품·결제) 완료 시 자동으로 사라짐.
-// '닫기' 시 setting_obj.onboarding_dismissed 저장(서버·매장 공유) → 이후 미노출.
+// 완료 여부는 이미 로드된 데이터로 자동 감지(표시용). 필수 완료로 "자동으로 사라지지는 않음".
+// 사용자가 '닫기'(X) → 2차 확인 후에만 setting_obj.onboarding_dismissed 저장(서버·매장 공유) → 이후 미노출.
 const OnboardingChecklist = () => {
   const router = useRouter();
+  const { setModal } = useModal();
   const { themeDnsData, themeCategoryList } = useSettingsContext();
   const [hidden, setHidden] = useState(false);
 
@@ -46,17 +48,25 @@ const OnboardingChecklist = () => {
   const requiredAllDone = steps.filter((s) => s.required).every((s) => s.done);
   const dismissed = so?.onboarding_dismissed == 1;
 
-  // 필수(판매 준비) 완료 or 닫기 or 이전 닫기 이력 → 미노출
-  if (hidden || dismissed || requiredAllDone) return null;
+  // 닫기(X→2차확인) 또는 이전 닫기 이력 → 미노출. (필수 완료로는 자동으로 사라지지 않음)
+  if (hidden || dismissed) return null;
   // SHOPGO 산하 가맹점만 대상 (본사·타 클라이언트 브랜드 제외)
   if (!isShopgoMerchant(dns)) return null;
 
-  const onDismiss = () => {
+  const doDismiss = () => {
     setHidden(true);
     apiManager('brands', 'update', {
       id: dns?.id,
       setting_obj: { ...so, onboarding_dismissed: 1 },
     }).catch(() => {});
+  };
+  // X 클릭 → 2차 확인 후에만 영구 숨김
+  const onDismiss = () => {
+    setModal({
+      func: () => doDismiss(),
+      icon: 'mdi:close-circle-outline',
+      title: '이 안내를 닫으시겠어요? 닫으면 다시 표시되지 않습니다.',
+    });
   };
 
   const mainColor = dns?.theme_css?.main_color || '#2e7d32';
@@ -118,8 +128,17 @@ const OnboardingChecklist = () => {
         <Stack direction={{ xs: 'column', sm: 'row' }} alignItems={{ sm: 'center' }} justifyContent="space-between" spacing={1}>
           <Typography sx={{ fontSize: 13 }}>
             <Box component="span" sx={{ fontWeight: 700 }}>판매 준비: </Box>
-            <Box component="span" sx={{ color: '#d33', fontWeight: 700 }}>아직</Box>
-            <Box component="span" sx={{ color: '#888' }}> — 카테고리·상품·결제수단이 모두 완료되면 판매가 시작됩니다.</Box>
+            {requiredAllDone ? (
+              <>
+                <Box component="span" sx={{ color: mainColor, fontWeight: 700 }}>완료</Box>
+                <Box component="span" sx={{ color: '#888' }}> — 판매를 시작할 수 있어요. 이 안내는 우측 상단 ✕로 닫을 수 있습니다.</Box>
+              </>
+            ) : (
+              <>
+                <Box component="span" sx={{ color: '#d33', fontWeight: 700 }}>아직</Box>
+                <Box component="span" sx={{ color: '#888' }}> — 카테고리·상품·결제수단이 모두 완료되면 판매가 시작됩니다.</Box>
+              </>
+            )}
           </Typography>
           <Button size="small" onClick={() => router.push('/manager/guide')} sx={{ whiteSpace: 'nowrap' }} startIcon={<Icon icon="mdi:book-open-variant" />}>
             이용가이드

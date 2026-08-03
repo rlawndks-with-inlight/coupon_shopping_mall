@@ -71,12 +71,12 @@ top: 0;
 left: 0;
 display:flex;
 position: relative;
-background-size: contain;
+background-size: ${props => props.type == 1 ? 'contain' : 'cover'};
 background-repeat: no-repeat;
 background-position: center center;
 max-width: ${props => props.type == 1 ? '1600px' : ''};
 margin:0 auto;
-// 배너 전부 contain 통일 → cover 잘림·줌 브리딩(불안정) 제거. 데모별 컨테이너 비율(위)만 유지.
+/* 줌 브리딩(불안정)만 제거. 맞춤은 데모별 기존 방식 유지: demo-1·2·3=cover(꽉참), demo-4·5·6·9=contain */
 animation: none;
 `
 

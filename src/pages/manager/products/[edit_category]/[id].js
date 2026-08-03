@@ -857,6 +857,12 @@ const ProductEdit = () => {
       [idx]: children_list
     });
     $(`.category-container-${idx}`).scrollLeft(100000);
+    // 클릭한 카테고리를 선택목록에 토글(추가/제거) — 버튼 없이 클릭만으로 담기. 1상품 N카테고리.
+    setSelectedCategoryIds((prev) => {
+      const cid = Number(category?.id);
+      if (!cid) return prev;
+      return prev.map(Number).includes(cid) ? prev.filter((x) => Number(x) !== cid) : [...prev, cid];
+    });
   }
   // 1상품 N카테고리 다중선택 헬퍼
   const flatCategoryList = _.uniqBy(
@@ -1204,11 +1210,6 @@ const ProductEdit = () => {
                               sort_idx={index}
                               id={group?.id}
                             />
-                            <Button size="small" variant="outlined" disabled={user?.level < 40}
-                              startIcon={<Icon icon="mdi:plus" />}
-                              onClick={() => onAddSelectedCategory(index)}>
-                              선택한 카테고리 추가
-                            </Button>
                           </Stack>
                         </>
                       ))}
@@ -1232,7 +1233,7 @@ const ProductEdit = () => {
                           </Row>
                         ) : (
                           <Typography variant="caption" sx={{ color: 'text.disabled' }}>
-                            위에서 카테고리를 탐색·선택한 뒤 &apos;선택한 카테고리 추가&apos;를 눌러 담아주세요. (여러 개 가능)
+                            위 목록에서 카테고리를 클릭하면 담깁니다. 다시 클릭하면 제거. (여러 개 선택 가능)
                           </Typography>
                         )}
                       </Stack>
@@ -1634,7 +1635,7 @@ const ProductEdit = () => {
                         }} />
                       <TextField
                         disabled={user?.level < 40}
-                        label='상품명'
+                        label='상품명 (필수)'
                         value={item.product_name}
                         placeholder="예시) 블랙 럭셔리 팔찌, 팔찌 1위 상품"
                         onChange={(e) => {
@@ -1757,9 +1758,9 @@ const ProductEdit = () => {
                           themeDnsData?.is_use_seller != 1 ?
                             <>
                               <FormControl variant="outlined">
-                                <InputLabel>판매가</InputLabel>
+                                <InputLabel>판매가 (필수)</InputLabel>
                                 <OutlinedInput
-                                  label='판매가'
+                                  label='판매가 (필수)'
                                   type="text"
                                   value={salePrice}
                                   endAdornment={<InputAdornment position="end">원</InputAdornment>}

@@ -83,7 +83,11 @@ export const navConfig = () => {
     setPropertyGroupList(property_group_list);
     setIsSettingComplete(true);
   }
+  // 단계 이행: 마이그레이션(단일트리) 브랜드 감지 — shop.controller 가 합성 그룹(id=0) 하나로 응답.
+  //   마이그레이션된 브랜드에선 '카테고리 그룹 관리'를 숨기고 '카테고리 관리' 하나만 노출.
+  const isCategoryMigrated = (themeCategoryList?.length === 1) && (Number(themeCategoryList[0]?.id) === 0);
   const isUseProductCategoryGroup = () => {
+    if (isCategoryMigrated) return false;
     if (window.location.host.split(':')[0] == process.env.MAIN_FRONT_URL || user?.level >= 40) {
       return true;
     }

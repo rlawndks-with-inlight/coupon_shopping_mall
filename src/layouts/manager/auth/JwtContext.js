@@ -125,12 +125,21 @@ export function AuthProvider({ children }) {
       toast.error('필수값을 입력해 주세요.');
       return false;
     }
-    const { data: response } = await axios.post(`/api/auth/sign-in`, {
-      user_name,
-      user_pw,
-      is_manager,
-      otp_num
-    });
+    let response;
+    try {
+      const res = await axios.post(`/api/auth/sign-in`, {
+        user_name,
+        user_pw,
+        is_manager,
+        otp_num
+      });
+      response = res.data;
+    } catch (error) {
+      // 백엔드가 비즈니스 에러(잘못된 비밀번호/미가입 등)를 HTTP 500 으로 반환 → axios 가 throw.
+      //   응답 body 의 message 를 꺼내 알림(없으면 일반 문구). try/catch 부재로 지금까지 알림이 안 떴음.
+      toast.error(error?.response?.data?.message || '아이디 또는 비밀번호가 올바르지 않습니다.');
+      return false;
+    }
     if (response?.result < 0) {
       toast.error(response?.message)
       return false;

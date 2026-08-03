@@ -166,6 +166,17 @@ const HomeBanner = (props) => {
             setArrowHeight(`${imageContainerRef.current?.clientHeight / 2 - 16}px`)
         }
     }, [imageContainerRef.current])
+    // react-slick(centerMode)은 마운트 시점의 폭으로 슬라이드 가로 위치를 잡는다.
+    // 팝업(ReactQuill)·폰트·이미지 등으로 레이아웃이 늦게 확정되면 배너가 어긋난 위치로 고정될 수 있어,
+    // 로드가 안정된 뒤 resize를 발생시켜 강제 재측정 → 팝업 유무와 무관하게 항상 올바른 위치로 정렬.
+    useEffect(() => {
+        const reflow = () => { try { window.dispatchEvent(new Event('resize')) } catch (e) { } }
+        reflow()
+        const t1 = setTimeout(reflow, 150)
+        const t2 = setTimeout(reflow, 600)
+        window.addEventListener('load', reflow)
+        return () => { clearTimeout(t1); clearTimeout(t2); window.removeEventListener('load', reflow) }
+    }, [])
 
     const getTextAlign = (item) => {
         let pc_style = `

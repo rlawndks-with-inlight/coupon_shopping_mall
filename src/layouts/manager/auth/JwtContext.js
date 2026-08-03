@@ -125,12 +125,26 @@ export function AuthProvider({ children }) {
       toast.error('필수값을 입력해 주세요.');
       return false;
     }
-    const { data: response } = await axios.post(`/api/auth/sign-in`, {
-      user_name,
-      user_pw,
-      is_manager,
-      otp_num
-    });
+    let response;
+    try {
+      const res = await axios.post(`/api/auth/sign-in`, {
+        user_name,
+        user_pw,
+        is_manager,
+        otp_num
+      });
+      response = res.data;
+    } catch (error) {
+      // 백엔드가 비즈니스 에러(잘못된 비밀번호/미가입 등)를 HTTP 500 으로 반환 → axios 가 throw.
+      const backendMsg = error?.response?.data?.message;
+      // 자격증명 오류('가입되지 않은 회원입니다.' = 미가입/비번틀림 통합)는 일반 문구로 표기,
+      //   그 외 의미있는 메시지(승인대기/탈퇴/OTP 등)는 그대로 노출.
+      const msg = (!backendMsg || backendMsg === '가입되지 않은 회원입니다.')
+        ? '아이디 또는 비밀번호가 올바르지 않습니다.'
+        : backendMsg;
+      toast.error(msg);
+      return false;
+    }
     if (response?.result < 0) {
       toast.error(response?.message)
       return false;

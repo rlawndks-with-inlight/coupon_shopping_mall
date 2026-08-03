@@ -25,8 +25,9 @@ const OnboardingChecklist = () => {
   const isSingleProductBlog = [4, 5, 6, 7, 8, 9].includes(Number(dns.blog_demo_num));
 
   const catDone = (themeCategoryList ?? []).some((g) => (g?.product_categories?.length ?? 0) > 0);
-  const catRoute = (themeCategoryList ?? [])[0]?.id
-    ? `/manager/products/categories/${(themeCategoryList ?? [])[0]?.id}`
+  // 마이그레이션 브랜드는 합성 그룹 id=0(falsy) 이므로 존재 여부로 판단(?? 0 로 0 도 유효 라우팅).
+  const catRoute = (themeCategoryList ?? [])[0]
+    ? `/manager/products/categories/${(themeCategoryList ?? [])[0]?.id ?? 0}`
     : '/manager/products/category-groups';
 
   const steps = useMemo(() => {

@@ -66,9 +66,10 @@ export const GUIDE_SECTIONS = [
       '저장',
     ],
     shots: [
-      { img: 'category1', cap: '「+ 대분류 카테고리 추가」로 카테고리를 만듭니다.' },
-      { img: 'category2', cap: '하위 카테고리는 상위 항목의 + 로 추가합니다. (예: 상의 › 티셔츠)' },
-      { img: 'category3', cap: '저장하면 상품 등록 시 이 카테고리를 담을 수 있습니다.' },
+      { img: 'category4', cap: '상품관리 › 카테고리 관리에서 「대분류 카테고리 추가」로 카테고리를 만듭니다.' },
+      { img: 'category5', cap: '하위 카테고리는 상위 항목의 「+」로 추가합니다. (예: 결제단말기 아래)' },
+      { img: 'category6', cap: '만든 카테고리는 트리로 표시됩니다. ⊕ 를 눌러 하위를 펼칠 수 있습니다.' },
+      { img: 'category7', cap: '펼치면 상위 › 하위 구조가 보입니다. (예: 결제단말기 › POS)' },
     ],
     route: '/manager/products/categories/0',
   },
@@ -85,7 +86,7 @@ export const GUIDE_SECTIONS = [
     ],
     shots: [
       { img: 'product1', cap: '상품 목록에서 빨간 박스의 「+ 상품 추가」를 누릅니다.' },
-      { img: 'product2', cap: '카테고리는 클릭해 담고(여러 개 가능), 옵션·재고 설정 후 저장합니다. 상품명·판매가는 필수입니다.' },
+      { img: 'product3', cap: '카테고리는 클릭해 담습니다(여러 개 = 칩). 상품명·판매가는 필수입니다.' },
     ],
     route: '/manager/products/list',
   },

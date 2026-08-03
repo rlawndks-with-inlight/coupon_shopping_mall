@@ -165,12 +165,19 @@ export function AuthProvider({ children }) {
       toast.error('데모 미리보기에서는 회원가입할 수 없습니다.');
       return false;
     }
-    const response = await axios.post('/api/account/register', {
-      email,
-      password,
-      firstName,
-      lastName,
-    });
+    let response;
+    try {
+      response = await axios.post('/api/account/register', {
+        email,
+        password,
+        firstName,
+        lastName,
+      });
+    } catch (error) {
+      // 백엔드 비즈니스 에러를 HTTP 500 으로 반환 → axios throw. 메시지 알림(login 과 동일 이슈).
+      toast.error(error?.response?.data?.message || '회원가입에 실패했습니다.');
+      return false;
+    }
     const { accessToken, user } = response.data;
 
     localStorage.setItem('accessToken', accessToken);

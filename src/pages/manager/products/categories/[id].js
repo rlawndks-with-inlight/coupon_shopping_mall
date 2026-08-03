@@ -16,6 +16,7 @@ import { useModal } from "src/components/dialog/ModalProvider";
 import { useRouter } from "next/router";
 import _ from "lodash";
 import { apiManager } from "src/utils/api";
+import { useSettingsContext } from "src/components/settings";
 
 // ----------------------------------------------------------------------
 
@@ -187,6 +188,7 @@ display:flex;
 const ItemTypes = { CARD: 'card' }
 const CategoryList = () => {
     const { setModal } = useModal()
+    const { settingPlatform } = useSettingsContext(); // 카테고리 CRUD 후 themeCategoryList 갱신용
     const defaultSetting = {
         category_file: '',
         category_name: '',
@@ -338,6 +340,7 @@ const CategoryList = () => {
         await apiManager('product-categories', 'delete', category);
         setIsAction(false);
         getCategories();
+        settingPlatform?.();   // 컨텍스트 themeCategoryList 갱신(삭제 반영)
     }
     const onSave = async () => {
         // 단일 트리: 신규 카테고리는 컨테이너 그룹(첫 실그룹)에 담는다. 그룹 레이어는 폐지 중이나
@@ -350,6 +353,7 @@ const CategoryList = () => {
         }
         setIsAction(false);
         getCategories();
+        settingPlatform?.();   // 컨텍스트 themeCategoryList 갱신 → 상품폼 등에서 새 카테고리 즉시 반영(새로고침 불필요)
     }
     return (
         <>

@@ -46,7 +46,13 @@ import {
 //        잘못된 안내가 뜨므로 반드시 === 0 으로 판별할 것.
 //
 // 닫기는 '세션 한정'(서버 저장 없음) — 설정하기 전까지 다음 로그인에 다시 안내된다.
+//
+// 매니저(가맹점) 페이지에서는 배너에 더해 설정 팝업이 세션당 한 번 자동으로 열린다.
+// 가맹점 관리자 계정은 회원가입 폼이 없어(본사가 생성) 보안질문을 넣을 지점이 로그인 후뿐이고,
+// 답변까지 잊으면 본사 초기화 외에 복구 수단이 없어 설정률이 중요하기 때문이다.
+// 반면 스토어프론트(고객)는 자동으로 열지 않는다 — 가입 시 이미 받았고, 구매 흐름을 가로막으면 안 된다.
 const DISMISS_KEY = 'sq_prompt_dismissed';
+const AUTO_OPEN_KEY = 'sq_prompt_auto_opened';
 
 const SecurityQuestionBanner = ({ sx = {} }) => {
   const router = useRouter();
@@ -69,6 +75,24 @@ const SecurityQuestionBanner = ({ sx = {} }) => {
       setDismissed(false);
     }
   }, []);
+
+  // 매니저 페이지 진입 시 설정 팝업 1회 자동 오픈(세션당 1회).
+  // 아래 노출 게이트와 동일한 조건을 여기서 다시 검사한다 — 게이트는 early return 이라
+  // 훅보다 뒤에 있어야 하므로 이 useEffect 안에서 판정해야 한다.
+  useEffect(() => {
+    if (dismissed || saved) return;
+    if (!(user?.id > 0)) return;
+    if (!isShopgoMerchant(themeDnsData)) return;
+    if (user?.has_security_question !== 0) return;
+    if (!String(router?.pathname ?? '').startsWith('/manager')) return;
+    try {
+      if (sessionStorage.getItem(AUTO_OPEN_KEY) === '1') return;
+      sessionStorage.setItem(AUTO_OPEN_KEY, '1');
+    } catch (e) {
+      // sessionStorage 사용 불가 → 이번 마운트에서 한 번만 열림(중복 방지는 포기)
+    }
+    setOpen(true);
+  }, [dismissed, saved, user, themeDnsData, router?.pathname]);
 
   // --- 노출 게이트 (훅 선언 뒤에 위치해야 훅 순서가 깨지지 않음) ---
   if (dismissed || saved) return null;

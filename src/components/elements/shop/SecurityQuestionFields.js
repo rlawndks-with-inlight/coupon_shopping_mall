@@ -1,11 +1,11 @@
 import { FormControl, InputLabel, MenuItem, Select, TextField } from '@mui/material';
 import { useSettingsContext } from 'src/components/settings';
 import { useLocales } from 'src/locales';
-import { isShopgoMerchant } from 'src/utils/is-shopgo';
+import { isShopgoBrand } from 'src/utils/is-shopgo';
 import { SECURITY_QUESTIONS, getSecurityQuestion } from 'src/data/security-questions';
 
-// 회원가입 '보안질문 + 답변' 입력 — SHOPGO 산하 가맹점(parent_id=98) 전용.
-// shopgo 가맹점은 SMS 인증 없이 보안질문으로 비밀번호를 재설정하므로 이 질문이 유일한 본인확인 수단 → 필수 입력.
+// 회원가입 '보안질문 + 답변' 입력 — SHOPGO 본사(id=98) 및 산하 가맹점(parent_id=98) 전용.
+// SHOPGO 본사·가맹점은 SMS 인증 없이 보안질문으로 비밀번호를 재설정하므로 이 질문이 유일한 본인확인 수단 → 필수 입력.
 // 그 외 브랜드는 기존 SMS 플로우를 그대로 쓰므로 여기서 null 을 반환한다(각 데모 파일은 한 줄만 추가하면 됨).
 //
 // 사용법 (데모 sign-up.js 의 activeStep == 1 블록 마지막에 삽입) :
@@ -19,7 +19,7 @@ export const SecurityQuestionFields = ({ user, setUser, style = { marginTop: '1r
   const { themeDnsData } = useSettingsContext();
   const { translate } = useLocales();
 
-  if (!isShopgoMerchant(themeDnsData)) return null;
+  if (!isShopgoBrand(themeDnsData)) return null;
 
   const selected = getSecurityQuestion(user?.security_question_id);
 

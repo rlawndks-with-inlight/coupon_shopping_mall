@@ -10,7 +10,7 @@ import { apiManager } from 'src/utils/api';
 import { logoSrc } from 'src/data/data';
 import { Col } from 'src/components/elements/styled-components';
 import { useSettingsContext } from 'src/components/settings';
-import { isShopgoMerchant } from 'src/utils/is-shopgo';
+import { isShopgoBrand } from 'src/utils/is-shopgo';
 import FindInfoQuestion from 'src/components/elements/shop/FindInfoQuestion';
 
 // 가맹점(매니저) 관리자용 아이디/비밀번호 찾기.
@@ -135,7 +135,7 @@ const FindInfo = () => {
             ))}
           </Tabs>
 
-          {isShopgoMerchant(themeDnsData) ? (
+          {isShopgoBrand(themeDnsData) ? (
             <FindInfoQuestion tab={findType} router={router} loginPath="/manager/login" isManager />
           ) : (
             <Stack spacing={2}>

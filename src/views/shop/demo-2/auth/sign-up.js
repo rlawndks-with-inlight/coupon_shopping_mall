@@ -11,7 +11,7 @@ import { apiManager } from 'src/utils/api';
 import { useLocales } from 'src/locales';
 import SecurityQuestionFields from 'src/components/elements/shop/SecurityQuestionFields';
 import { validateSecurityQuestion, securityQuestionPayload } from 'src/data/security-questions';
-import { isShopgoMerchant } from 'src/utils/is-shopgo';
+import { isShopgoBrand } from 'src/utils/is-shopgo';
 
 const Wrapper = styled.div`
 display:flex;
@@ -140,12 +140,12 @@ const SignUpDemo = (props) => {
         toast.error("비밀번호 확인란을 똑같이 입력했는지 확인해주세요");
         return;
       }
-      // SHOPGO 산하 가맹점 전용 : 아이디 찾기(이름+휴대폰번호)에 쓰이므로 이름 필수. 다른 브랜드의 기존 검증 규칙은 그대로.
-      if (isShopgoMerchant(themeDnsData) && !user.name) {
+      // SHOPGO 본사 및 산하 가맹점 전용 : 아이디 찾기(이름+휴대폰번호)에 쓰이므로 이름 필수. 다른 브랜드의 기존 검증 규칙은 그대로.
+      if (isShopgoBrand(themeDnsData) && !user.name) {
         toast.error(translate("이름을 입력해 주세요."));
         return;
       }
-      // SHOPGO 산하 가맹점 전용 : 비밀번호 재설정용 보안질문 필수 (그 외 브랜드는 '' 반환 → 무조건 통과)
+      // SHOPGO 본사 및 산하 가맹점 전용 : 비밀번호 재설정용 보안질문 필수 (그 외 브랜드는 '' 반환 → 무조건 통과)
       const secqErr = validateSecurityQuestion(user, themeDnsData);
       if (secqErr) {
         toast.error(secqErr);

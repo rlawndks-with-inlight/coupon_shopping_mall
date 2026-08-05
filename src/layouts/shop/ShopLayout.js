@@ -134,7 +134,7 @@ const ShopLayout = ({ children, scrollToTop }) => {
               func: {
                 router
               },
-              // 보안질문 미설정 안내 배너. 자체 게이팅(로그인 + shopgo 가맹점 + has_security_question === 0)이라 조건 래핑 금지.
+              // 보안질문 미설정 안내 배너. 자체 게이팅(로그인 + SHOPGO 본사·산하 가맹점 + has_security_question === 0)이라 조건 래핑 금지.
               // 모든 ShopLayoutN/BlogLayoutN 이 {children} 을 Header 와 Footer 사이에 렌더하므로 여기 한 줄이면 전 데모에 적용된다.
               children: (
                 <>

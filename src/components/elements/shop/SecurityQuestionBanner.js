@@ -23,7 +23,7 @@ import toast from 'react-hot-toast';
 import { useSettingsContext } from 'src/components/settings';
 import { useAuthContext } from 'src/layouts/manager/auth/useAuthContext';
 import { apiManager } from 'src/utils/api';
-import { isShopgoMerchant } from 'src/utils/is-shopgo';
+import { isShopgoBrand } from 'src/utils/is-shopgo';
 import {
   SECURITY_QUESTIONS,
   getSecurityQuestionPlaceholder,
@@ -38,7 +38,7 @@ import {
 //
 // 노출 조건(셋 다 만족해야만 렌더):
 //   1) 로그인 상태 (user?.id > 0)
-//   2) SHOPGO 산하 가맹점 (isShopgoMerchant) — 다른 클라이언트 브랜드는 기존 SMS 흐름 그대로
+//   2) SHOPGO 본사 및 산하 가맹점 (isShopgoBrand) — 다른 클라이언트 브랜드는 기존 SMS 흐름 그대로
 //   3) user.has_security_question === 0  (엄격 비교)
 //      · 1        → 이미 설정 완료 → 미노출
 //      · undefined → 배포 전 발급된 구 토큰(클레임 없음) → 미노출.
@@ -82,7 +82,7 @@ const SecurityQuestionBanner = ({ sx = {} }) => {
   useEffect(() => {
     if (dismissed || saved) return;
     if (!(user?.id > 0)) return;
-    if (!isShopgoMerchant(themeDnsData)) return;
+    if (!isShopgoBrand(themeDnsData)) return;
     if (user?.has_security_question !== 0) return;
     if (!String(router?.pathname ?? '').startsWith('/manager')) return;
     try {
@@ -97,7 +97,7 @@ const SecurityQuestionBanner = ({ sx = {} }) => {
   // --- 노출 게이트 (훅 선언 뒤에 위치해야 훅 순서가 깨지지 않음) ---
   if (dismissed || saved) return null;
   if (!(user?.id > 0)) return null;
-  if (!isShopgoMerchant(themeDnsData)) return null;
+  if (!isShopgoBrand(themeDnsData)) return null;
   if (user?.has_security_question !== 0) return null;
 
   const isManagerPage = String(router?.pathname ?? '').startsWith('/manager');

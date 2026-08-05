@@ -10,6 +10,7 @@ import { commarNumber } from "src/utils/function";
 import toast from "react-hot-toast";
 import { apiManager, apiUtil } from "src/utils/api";
 import { useSettingsContext } from "src/components/settings";
+import { isShopgoMerchant } from "src/utils/is-shopgo";
 import { paymentModuleTypeList, forspayMethodList } from "src/utils/format";
 import { useAuthContext } from "src/layouts/manager/auth/useAuthContext";
 import { Upload } from "src/components/upload";
@@ -466,7 +467,10 @@ const TrxList = () => {
           <MenuItem value={0}>{'결제대기'}</MenuItem>
           <MenuItem value={1}>{'취소요청'}</MenuItem>
           <MenuItem value={5}>{'결제완료'}</MenuItem>
-          <MenuItem value={10}>{'입고완료'}</MenuItem>
+          {/* shopgo 하위 가맹점은 창고 입고 단계를 쓰지 않아 '입고완료'를 숨긴다.
+              단, 기존에 입고완료(10)로 저장된 주문은 값이 사라지지 않도록 그 행에서는 노출. */}
+          {(!isShopgoMerchant(themeDnsData) || row?.trx_status == 10) &&
+            <MenuItem value={10}>{'입고완료'}</MenuItem>}
           <MenuItem value={15}>{'출고완료'}</MenuItem>
           <MenuItem value={20}>{'배송중'}</MenuItem>
           <MenuItem value={25}>{'배송완료'}</MenuItem>
@@ -656,7 +660,8 @@ const TrxList = () => {
       id,
       value,
     })
-    /*console.log(result)*/
+    // 저장 후 목록 재조회(<Select>가 uncontrolled라 재조회 없으면 값이 이전 상태로 되돌아 보임).
+    onChangePage(searchObj);
   }
   const onChangeInvoice = () => {
 

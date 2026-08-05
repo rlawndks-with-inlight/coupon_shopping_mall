@@ -625,6 +625,9 @@ const ProductList = () => {
       id,
       value,
     })
+    // 상태는 위에서 즉시 저장되지만 목록 <Select>가 uncontrolled(defaultValue)라
+    // 재조회하지 않으면 목록이 이전 값으로 남아 상세와 불일치 → 저장 후 목록 새로고침.
+    onChangePage(searchObj);
   }
 
   const onSellerProducts = async (id, price, price_low) => {

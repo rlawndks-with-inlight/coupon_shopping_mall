@@ -7,6 +7,7 @@ import useResponsive from '../../hooks/useResponsive';
 import { HEADER, NAV } from '../../config-global';
 // components
 import { useSettingsContext } from '../../components/settings';
+import SecurityQuestionBanner from 'src/components/elements/shop/SecurityQuestionBanner';
 
 // ----------------------------------------------------------------------
 
@@ -45,6 +46,8 @@ export default function Main({ children, sx, ...other }) {
       }}
       {...other}
     >
+      {/* 보안질문 미설정 안내 배너. 자체 게이팅(로그인 + shopgo 가맹점 + has_security_question === 0)이라 조건 래핑 금지 */}
+      <SecurityQuestionBanner sx={{ mb: 2 }} />
       {children}
     </Box>
   );

@@ -35,6 +35,7 @@ export const getProductStatus = num => {
   }
   return {}
 }
+export const isPurchasable = (status) => getProductStatus(status).color === 'info';
 export const getPointType = row => {
   if (row?.type == 0) {
     return '결제완료건에 의한 포인트'

@@ -355,10 +355,10 @@ const ItemDemo = (props) => {
                           </>
                         }
                         <ItemName style={{ whiteSpace: 'wrap', fontFamily: 'Noto Sans KR', fontSize: '25px' }}>{product?.product_name}</ItemName>
-                        {product?.product_code &&
+                        {/*product?.product_code &&
                           <>
                             <ItemCharacter key_name={'상품코드'} value={product?.product_code} />
-                          </>}
+                          </>*/}
                         {themePropertyList.map((group, index) => {
                           let property_list = (product?.properties ?? []).filter(el => el?.property_group_id == group?.id);
                           property_list = property_list.map(property => {

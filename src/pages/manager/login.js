@@ -170,6 +170,15 @@ const Login = () => {
                 >
                   로그인
                 </LoadingButton>
+                <Stack direction="row" justifyContent="center" alignItems="center" spacing={1.5} sx={{ mt: 2 }}>
+                  <Link component={NextLink} href="/manager/find-info?type=0" variant="body2" sx={{ color: 'text.secondary', cursor: 'pointer' }}>
+                    아이디 찾기
+                  </Link>
+                  <Typography variant="body2" sx={{ color: 'text.disabled' }}>|</Typography>
+                  <Link component={NextLink} href="/manager/find-info?type=1" variant="body2" sx={{ color: 'text.secondary', cursor: 'pointer' }}>
+                    비밀번호 찾기
+                  </Link>
+                </Stack>
               </Stack>
             </StyledContent>
             <Tour

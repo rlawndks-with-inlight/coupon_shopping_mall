@@ -2,10 +2,13 @@ import { Icon } from '@iconify/react';
 import { Button, Divider, FormControl, InputAdornment, InputLabel, OutlinedInput, Stack, Tab, Tabs, TextField } from '@mui/material';
 import { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
+import FindInfoQuestion from 'src/components/elements/shop/FindInfoQuestion';
 import { TitleComponent } from 'src/components/elements/shop/demo-4';
 import { Col, Title } from 'src/components/elements/styled-components';
+import { useSettingsContext } from 'src/components/settings';
 import { useLocales } from 'src/locales';
 import { apiManager } from 'src/utils/api';
+import { isShopgoMerchant } from 'src/utils/is-shopgo';
 import styled from 'styled-components'
 
 
@@ -29,6 +32,7 @@ const FindInfoDemo = (props) => {
     },
   } = props;
   const { translate } = useLocales();
+  const { themeDnsData } = useSettingsContext();
   const returnFindType = {
     0: {
       title: translate('아이디 찾기'),
@@ -140,6 +144,9 @@ const FindInfoDemo = (props) => {
             ))}
           </Tabs>
         </Title>
+        {isShopgoMerchant(themeDnsData) ? (
+          <FindInfoQuestion tab={findType} router={router} loginPath="/shop/auth/login" translate={translate} />
+        ) : (
         <Stack spacing={2}>
           {findType == 0 &&
             <>
@@ -282,6 +289,7 @@ const FindInfoDemo = (props) => {
                 </>}
             </>}
         </Stack>
+        )}
       </Wrappers>
     </>
   )

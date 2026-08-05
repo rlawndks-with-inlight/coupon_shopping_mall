@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import {
   Card, Container, Stack, Typography, Button, Grid, Avatar, Box, Chip,
   Table, TableBody, TableCell, TableContainer, TableHead, TableRow,
-  Dialog, DialogTitle, DialogContent, DialogActions,
+  Dialog, DialogTitle, DialogContent, DialogActions, Tooltip, Alert,
 } from "@mui/material";
 import { Icon } from "@iconify/react";
 import ManagerLayout from "src/layouts/manager/ManagerLayout";
@@ -58,6 +58,11 @@ const MerchantsPage = () => {
   const [detail, setDetail] = useState(null);
   const [detailLoading, setDetailLoading] = useState(false);
 
+  // 관리자 비밀번호 초기화 (확인 → 실행 → 결과)
+  const [resetTarget, setResetTarget] = useState(null);
+  const [resetting, setResetting] = useState(false);
+  const [resetResult, setResetResult] = useState(null);
+
   const fetchData = async (key) => {
     setLoading(true);
     try {
@@ -86,6 +91,27 @@ const MerchantsPage = () => {
       toast.error('상세 조회 실패');
     } finally {
       setDetailLoading(false);
+    }
+  };
+
+  const runResetAdminPw = async () => {
+    if (!resetTarget || resetting) return;
+    setResetting(true);
+    try {
+      const { data: res } = await axios.put(`/api/merchant-application/merchants/${resetTarget.id}/reset-admin-pw`);
+      if (res?.result === 100) {
+        const userName = res.data?.user_name || resetTarget.admin_user_name;
+        toast.success('관리자 비밀번호를 초기화했습니다.');
+        // 목록에는 변경되는 값이 없으므로 재조회하지 않음
+        setResetResult({ brand_name: resetTarget.name, user_name: userName });
+        setResetTarget(null);
+      } else {
+        toast.error(res?.message || '비밀번호 초기화 실패');
+      }
+    } catch (e) {
+      toast.error(e?.response?.data?.message || '비밀번호 초기화 실패');
+    } finally {
+      setResetting(false);
     }
   };
 
@@ -119,13 +145,14 @@ const MerchantsPage = () => {
                   <TableCell>개설일</TableCell>
                   <TableCell align="right">주문</TableCell>
                   <TableCell align="right">매출(원)</TableCell>
+                  <TableCell align="center">관리자 계정</TableCell>
                   <TableCell align="center">상세</TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
                 {merchants.length === 0 && (
                   <TableRow>
-                    <TableCell colSpan={6} align="center" sx={{ py: 5, color: 'text.secondary' }}>
+                    <TableCell colSpan={7} align="center" sx={{ py: 5, color: 'text.secondary' }}>
                       {loading ? '불러오는 중…' : '개설된 가맹점이 없습니다.'}
                     </TableCell>
                   </TableRow>
@@ -145,6 +172,22 @@ const MerchantsPage = () => {
                     <TableCell align="right">{commarNumber(m.order_count)}</TableCell>
                     <TableCell align="right"><Typography variant="subtitle2">{commarNumber(m.sales)}</Typography></TableCell>
                     <TableCell align="center">
+                      <Tooltip
+                        title={m.admin_user_id
+                          ? `관리자 아이디: ${m.admin_user_name} · 비밀번호를 아이디와 동일하게 초기화합니다.`
+                          : '관리자 계정이 없습니다.'}
+                      >
+                        <span>
+                          <Button size="small" variant="outlined" color="warning"
+                            startIcon={<Icon icon="solar:key-minimalistic-square-linear" />}
+                            disabled={!m.admin_user_id}
+                            onClick={() => setResetTarget(m)}>
+                            비밀번호 초기화
+                          </Button>
+                        </span>
+                      </Tooltip>
+                    </TableCell>
+                    <TableCell align="center">
                       <Button size="small" variant="outlined" startIcon={<Icon icon="solar:document-text-linear" />}
                         onClick={() => openDetail(m)}>
                         상세
@@ -159,7 +202,97 @@ const MerchantsPage = () => {
       </Stack>
 
       <MerchantDetailDialog detail={detail} loading={detailLoading} period={period} onClose={() => setDetail(null)} />
+
+      <ResetAdminPwConfirmDialog
+        target={resetTarget}
+        loading={resetting}
+        onClose={() => { if (!resetting) setResetTarget(null); }}
+        onConfirm={runResetAdminPw}
+      />
+
+      <ResetAdminPwResultDialog result={resetResult} onClose={() => setResetResult(null)} />
     </Container>
+  );
+};
+
+const ResetAdminPwConfirmDialog = ({ target, loading, onClose, onConfirm }) => (
+  <Dialog open={!!target} onClose={onClose} fullWidth maxWidth="xs">
+    {target && (
+      <>
+        <DialogTitle sx={{ fontWeight: 800 }}>관리자 비밀번호 초기화</DialogTitle>
+        <DialogContent dividers>
+          <Stack spacing={1.5}>
+            <Typography variant="body2">
+              {`${target.name} 관리자 비밀번호를 초기화합니다. 새 비밀번호는 아이디(${target.admin_user_name})와 동일하게 설정됩니다.`}
+            </Typography>
+            <Alert severity="warning" sx={{ fontSize: 13 }}>
+              초기화 후에는 이전 비밀번호로 로그인할 수 없습니다. 가맹점 관리자에게 새 비밀번호를 전달하고, 로그인 후 반드시 변경하도록 안내해 주세요.
+            </Alert>
+          </Stack>
+        </DialogContent>
+        <DialogActions sx={{ p: 2 }}>
+          <Button onClick={onClose} disabled={loading}>취소</Button>
+          <Button variant="contained" color="warning" onClick={onConfirm} disabled={loading}>
+            {loading ? '초기화 중…' : '초기화'}
+          </Button>
+        </DialogActions>
+      </>
+    )}
+  </Dialog>
+);
+
+const ResetAdminPwResultDialog = ({ result, onClose }) => {
+  const copyText = result
+    ? `아이디: ${result.user_name} / 새 비밀번호: ${result.user_name}`
+    : '';
+
+  const onCopy = async () => {
+    try {
+      await navigator.clipboard.writeText(copyText);
+      toast.success('복사되었습니다.');
+    } catch (e) {
+      toast.error('복사에 실패했습니다. 직접 입력해 주세요.');
+    }
+  };
+
+  return (
+    <Dialog open={!!result} onClose={onClose} fullWidth maxWidth="xs">
+      {result && (
+        <>
+          <DialogTitle sx={{ fontWeight: 800 }}>
+            비밀번호 초기화 완료
+            <Typography component="span" sx={{ ml: 1, fontSize: 13, fontWeight: 500, color: 'text.secondary' }}>
+              {result.brand_name}
+            </Typography>
+          </DialogTitle>
+          <DialogContent dividers>
+            <Stack spacing={2}>
+              <Card variant="outlined" sx={{ p: 2 }}>
+                <Stack spacing={1}>
+                  <Stack direction="row" justifyContent="space-between" spacing={2}>
+                    <Typography variant="body2" sx={{ color: 'text.secondary' }}>아이디</Typography>
+                    <Typography variant="subtitle2" sx={{ wordBreak: 'break-all' }}>{result.user_name}</Typography>
+                  </Stack>
+                  <Stack direction="row" justifyContent="space-between" spacing={2}>
+                    <Typography variant="body2" sx={{ color: 'text.secondary' }}>새 비밀번호</Typography>
+                    <Typography variant="subtitle2" sx={{ wordBreak: 'break-all' }}>{result.user_name}</Typography>
+                  </Stack>
+                </Stack>
+              </Card>
+              <Alert severity="info" sx={{ fontSize: 13 }}>
+                가맹점 관리자에게 위 정보를 전달하고, 로그인 후 반드시 비밀번호를 변경하도록 안내해 주세요.
+              </Alert>
+            </Stack>
+          </DialogContent>
+          <DialogActions sx={{ p: 2 }}>
+            <Button variant="outlined" startIcon={<Icon icon="solar:copy-linear" />} onClick={onCopy}>
+              복사
+            </Button>
+            <Button variant="contained" onClick={onClose}>확인</Button>
+          </DialogActions>
+        </>
+      )}
+    </Dialog>
   );
 };
 

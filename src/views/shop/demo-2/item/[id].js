@@ -1,12 +1,12 @@
 import styled from 'styled-components'
-import { Grid, Typography, Button, Divider, Stack, Tab, Tabs } from '@mui/material';
+import { Grid, Typography, Button, Divider, Stack, Tab, Tabs, Chip } from '@mui/material';
 import { useSettingsContext } from 'src/components/settings';
 import { ProductDetailsCarousel, ProductDetailsReview } from 'src/views/@dashboard/e-commerce/details';
 import { useEffect, useState } from 'react';
 import { SkeletonProductDetails } from 'src/components/skeleton';
 import dynamic from 'next/dynamic'
 import { apiManager, apiShop } from 'src/utils/api';
-import { commarNumber } from 'src/utils/function';
+import { commarNumber, getProductStatus } from 'src/utils/function';
 import { Icon } from '@iconify/react';
 import { insertCartDataUtil, insertWishDataUtil, selectItemOptionUtil } from 'src/utils/shop-util';
 import toast from 'react-hot-toast';
@@ -174,11 +174,12 @@ const ItemDemo = (props) => {
                       <ProductDetailsCarousel product={product} />
                     </Grid>
                     <Grid item xs={12} md={6} style={{ display: 'flex', flexDirection: 'column' }}>
-                      {product?.product_code &&
+                      {/*product?.product_code &&
                         <Typography variant="body2" sx={{ color: 'text.secondary', mb: 1 }}>
                           {product?.product_code}
                         </Typography>
-                      }
+                      */}
+                      <Chip size="small" sx={{ alignSelf: 'flex-start', mb: 1, fontWeight: 700 }} label={product?.product_sale_price > 0 ? getProductStatus(product?.status).text : '품절'} color={getProductStatus(product?.status).color || 'default'} variant="soft" />
                       <Typography variant="h5" sx={{ fontWeight: 700, mb: 1 }}>
                         {product?.product_name}
                       </Typography>
@@ -227,10 +228,10 @@ const ItemDemo = (props) => {
                           <Button variant="outlined" color="inherit" onClick={handleWish} sx={{ minWidth: '50px' }}>
                             <Icon icon={themeWishData?.map(itm => itm?.product_id).includes(product?.id) ? 'mdi:heart' : 'mdi:heart-outline'} fontSize="1.5rem" style={{ color: themeWishData?.map(itm => itm?.product_id).includes(product?.id) ? 'red' : '' }} />
                           </Button>
-                          <Button variant="outlined" color="inherit" onClick={handleAddCart} sx={{ flex: 1, fontWeight: 600 }}>
+                          <Button variant="outlined" color="inherit" onClick={handleAddCart} disabled={getProductStatus(product?.status).color != 'info' || !(product?.product_sale_price > 0)} sx={{ flex: 1, fontWeight: 600 }}>
                             장바구니
                           </Button>
-                          <Button variant="contained" color="inherit" onClick={handleBuyNow} sx={{ flex: 1, fontWeight: 600 }}>
+                          <Button variant="contained" color="inherit" onClick={handleBuyNow} disabled={getProductStatus(product?.status).color != 'info' || !(product?.product_sale_price > 0)} sx={{ flex: 1, fontWeight: 600 }}>
                             바로구매
                           </Button>
                         </Stack>

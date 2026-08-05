@@ -3,9 +3,12 @@ import { Button, FormControl, InputLabel, OutlinedInput, Stack, Tab, Tabs } from
 import { useTheme } from '@mui/material/styles';
 import { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
+import FindInfoQuestion from 'src/components/elements/shop/FindInfoQuestion';
 import { themeObj } from 'src/components/elements/styled-components';
+import { useSettingsContext } from 'src/components/settings';
 import { useLocales } from 'src/locales';
 import { apiManager } from 'src/utils/api';
+import { isShopgoMerchant } from 'src/utils/is-shopgo';
 import styled from 'styled-components'
 
 
@@ -71,6 +74,7 @@ const FindInfoDemo = (props) => {
   } = props;
   const theme = useTheme();
   const { translate } = useLocales();
+  const { themeDnsData } = useSettingsContext();
   const returnFindType = {
     0: {
       title: translate('아이디 찾기'),
@@ -191,6 +195,9 @@ const FindInfoDemo = (props) => {
           ))}
         </Tabs>
         <Card>
+          {isShopgoMerchant(themeDnsData) ? (
+            <FindInfoQuestion tab={findType} router={router} loginPath="/shop/auth/login" translate={translate} />
+          ) : (
           <Stack spacing={2}>
             {findType == 0 &&
               <>
@@ -329,6 +336,7 @@ const FindInfoDemo = (props) => {
                   </>}
               </>}
           </Stack>
+          )}
         </Card>
       </Wrappers>
     </>

@@ -37,7 +37,14 @@ const ArticlesDemo = (props) => {
       id: 'post_title',
       label: '제목',
       action: (row) => {
-        return row['post_title'] ?? "---"
+        return (
+          <span
+            style={{ cursor: 'pointer', textDecoration: 'underline' }}
+            onClick={() => { router.push(`/shop/service/${router.query?.article_category}/${row?.id}`) }}
+          >
+            {row['post_title'] ?? "---"}
+          </span>
+        )
       }
     },
     ...((postCategory?.is_able_user_add == 1 && postCategory?.post_category_read_type == 0) ? [
@@ -58,46 +65,26 @@ const ArticlesDemo = (props) => {
         }
       }
     ] : []),
-    {
-      id: 'edit',
-      label: '자세히보기',
-      action: (row) => {
-        return (
-          <>
-            {
-              row?.replies.length > 0 ?
-                <>
-                  <IconButton onClick={() => {
-                    router.push(`/shop/service/${router.query?.article_category}/${row?.id}`)
-                  }}>
-                    <Icon icon={row?.user_id == user?.id ? 'bx:detail' : 'bx:detail'} />
-                  </IconButton>
-                </>
-                :
-                <>
-                  <IconButton onClick={() => {
-                    router.push(`/shop/service/${router.query?.article_category}/${row?.id}`)
-                  }}>
-                    <Icon icon={row?.user_id == user?.id ? 'material-symbols:edit-outline' : 'bx:detail'} />
-                  </IconButton>
-                  {row?.user_id == user?.id &&
-                    <>
-                      <IconButton onClick={() => {
-                        setModal({
-                          func: () => { deletePost(row?.id) },
-                          icon: 'material-symbols:delete-outline',
-                          title: '정말 삭제하시겠습니까?'
-                        })
-                      }}>
-                        <Icon icon='material-symbols:delete-outline' />
-                      </IconButton>
-                    </>}
-                </>
-            }
-          </>
-        )
+    ...(postCategory?.is_able_user_add == 1 ? [
+      {
+        id: 'edit',
+        label: '관리',
+        action: (row) => {
+          if (!(user?.id && row?.user_id == user?.id)) return null;
+          if (row?.replies.length > 0) return null; // 답변 완료 후 수정/삭제 잠금(기존 동작 유지)
+          return (
+            <>
+              <IconButton onClick={() => { router.push(`/shop/service/${router.query?.article_category}/${row?.id}`) }}>
+                <Icon icon='material-symbols:edit-outline' />
+              </IconButton>
+              <IconButton onClick={() => { setModal({ func: () => { deletePost(row?.id) }, icon: 'material-symbols:delete-outline', title: '정말 삭제하시겠습니까?' }) }}>
+                <Icon icon='material-symbols:delete-outline' />
+              </IconButton>
+            </>
+          )
+        }
       }
-    },
+    ] : []),
   ]
   const { themePostCategoryList } = useSettingsContext();
   const [data, setData] = useState({

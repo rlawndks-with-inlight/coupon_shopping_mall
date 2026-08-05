@@ -9,6 +9,9 @@ import { Icon } from '@iconify/react';
 import { useSettingsContext } from 'src/components/settings';
 import { apiManager } from 'src/utils/api';
 import { useLocales } from 'src/locales';
+import SecurityQuestionFields from 'src/components/elements/shop/SecurityQuestionFields';
+import { validateSecurityQuestion, securityQuestionPayload } from 'src/data/security-questions';
+import { isShopgoMerchant } from 'src/utils/is-shopgo';
 
 const Wrapper = styled.div`
 display:flex;
@@ -137,7 +140,18 @@ const SignUpDemo = (props) => {
         toast.error("비밀번호 확인란을 똑같이 입력했는지 확인해주세요");
         return;
       }
-      let result = await apiManager('auth/sign-up', 'create', { ...user, brand_id: themeDnsData?.id });
+      // SHOPGO 산하 가맹점 전용 : 아이디 찾기(이름+휴대폰번호)에 쓰이므로 이름 필수. 다른 브랜드의 기존 검증 규칙은 그대로.
+      if (isShopgoMerchant(themeDnsData) && !user.name) {
+        toast.error(translate("이름을 입력해 주세요."));
+        return;
+      }
+      // SHOPGO 산하 가맹점 전용 : 비밀번호 재설정용 보안질문 필수 (그 외 브랜드는 '' 반환 → 무조건 통과)
+      const secqErr = validateSecurityQuestion(user, themeDnsData);
+      if (secqErr) {
+        toast.error(secqErr);
+        return;
+      }
+      let result = await apiManager('auth/sign-up', 'create', { ...user, ...securityQuestionPayload(themeDnsData, user), brand_id: themeDnsData?.id });
       if (!result) {
         return;
       }
@@ -377,6 +391,7 @@ const SignUpDemo = (props) => {
                 />
               </FormControl>
             }
+            <SecurityQuestionFields user={user} setUser={setUser} style={{ marginTop: '1rem', width: '100%' }} />
             {themeDnsData?.is_use_otp == 1 &&
               <TextField
                 label={translate('OTP TOKEN')}

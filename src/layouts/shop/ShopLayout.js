@@ -24,6 +24,7 @@ import BlogLayout3 from "./blog/demo-3/BlogLayout2";
 import BlogLayout4 from "./blog/demo-4/BlogLayout2";
 import BlogLayout5 from "./blog/demo-5/BlogLayout2";
 import BlogLayout6 from "./blog/demo-6/BlogLayout6";
+import SecurityQuestionBanner from "src/components/elements/shop/SecurityQuestionBanner";
 
 const Wrappers = styled.div`
 
@@ -133,7 +134,14 @@ const ShopLayout = ({ children, scrollToTop }) => {
               func: {
                 router
               },
-              children,
+              // 보안질문 미설정 안내 배너. 자체 게이팅(로그인 + shopgo 가맹점 + has_security_question === 0)이라 조건 래핑 금지.
+              // 모든 ShopLayoutN/BlogLayoutN 이 {children} 을 Header 와 Footer 사이에 렌더하므로 여기 한 줄이면 전 데모에 적용된다.
+              children: (
+                <>
+                  <SecurityQuestionBanner />
+                  {children}
+                </>
+              ),
               scrollToTop
             })}
             <ScrollToTop className='mui-fixed'>

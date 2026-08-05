@@ -1620,7 +1620,7 @@ const ProductEdit = () => {
                           }
                         </>
                       }
-                      <TextField
+                      {/*<TextField
                         disabled={user?.level < 40}
                         label='상품코드'
                         value={item.product_code}
@@ -1632,7 +1632,7 @@ const ProductEdit = () => {
                               ['product_code']: e.target.value
                             }
                           )
-                        }} />
+                        }} />*/}
                       <TextField
                         disabled={user?.level < 40}
                         label='상품명 (필수)'
@@ -2648,10 +2648,12 @@ const ProductEdit = () => {
                                     </>
                                   }
                                   <ItemName style={{ whiteSpace: 'wrap', fontFamily: 'Noto Sans KR', fontSize: '25px' }}>{item?.product_name}</ItemName>
+                                  {/* 상품코드 표시 숨김
                                   {item?.product_code &&
                                     <>
                                       <ItemCharacter key_name={'상품코드'} value={item?.product_code} />
                                     </>}
+                                  */}
                                   {/*themePropertyList.map((group, index) => {
                                     let property_list = (item?.properties ?? []).filter(el => el?.property_group_id == group?.id);
                                     property_list = property_list.map(property => {

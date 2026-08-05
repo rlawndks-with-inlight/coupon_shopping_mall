@@ -14,6 +14,8 @@ import { useSettingsContext } from 'src/components/settings';
 import { apiManager } from 'src/utils/api';
 import { bankCodeList } from 'src/utils/format';
 import { Upload } from 'src/components/upload';
+import SecurityQuestionFields from 'src/components/elements/shop/SecurityQuestionFields';
+import { validateSecurityQuestion, securityQuestionPayload } from 'src/data/security-questions';
 
 const Wrappers = styled.div`
 max-width:1000px;
@@ -193,7 +195,14 @@ const SignUpDemo = (props) => {
         toast.error("전화번호가 등록되었는지 확인해주세요");
         return;
       }
-      let result = await apiManager('auth/sign-up', 'create', { ...user, brand_id: themeDnsData?.id, seller_id: themeDnsData?.seller_id ?? 0 });
+      // SHOPGO 산하 가맹점 전용 : 비밀번호 재설정용 보안질문 필수 (그 외 브랜드는 '' 반환 → 무조건 통과)
+      // 이름(name)은 위 필수 항목 검증에 이미 포함되어 있으므로 추가 검증하지 않는다.
+      const secqErr = validateSecurityQuestion(user, themeDnsData);
+      if (secqErr) {
+        toast.error(secqErr);
+        return;
+      }
+      let result = await apiManager('auth/sign-up', 'create', { ...user, ...securityQuestionPayload(themeDnsData, user), brand_id: themeDnsData?.id, seller_id: themeDnsData?.seller_id ?? 0 });
       if (!result) {
         return;
       }
@@ -491,6 +500,7 @@ const SignUpDemo = (props) => {
                       </>}
                     />
                   </FormControl> */}
+                <SecurityQuestionFields user={user} setUser={setUser} style={{ marginTop: '1rem', width: '100%' }} />
                 {user?.level == 10 &&
                   <>
                     <Stack spacing={1}>
@@ -762,6 +772,7 @@ const SignUpDemo = (props) => {
                 </>}
               />
             </FormControl> */}
+                <SecurityQuestionFields user={user} setUser={setUser} style={{ marginTop: '1rem', width: '100%' }} />
                 <Button variant='outlined' onClick={() => { setUnipassPopup(true) }} style={{ marginTop: '1rem', maxWidth: '200px' }}>
                   개인통관고유부호 등록
                 </Button>

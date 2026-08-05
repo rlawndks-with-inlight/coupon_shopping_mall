@@ -134,7 +134,9 @@ const SellerEdit = () => {
       if (data) {
         setProductIds((data?.products ?? []).map(item => { return item?.id }))
         setProductContent({ content: data?.products ?? [] })
-        setItem(data);
+        // ⚠ 비밀번호칸은 항상 '빈 값'으로 시작한다. 서버가 내려준 값을 절대 채워넣지 않는다.
+        //    (비워두면 onSave 가 user_pw 키 자체를 보내지 않아 기존 비밀번호가 그대로 유지된다)
+        setItem({ ...data, user_pw: '' });
       }
     }
 
@@ -179,7 +181,7 @@ const SellerEdit = () => {
   }
   const onSave = async () => {
     let result = undefined;
-    let obj = item;
+    let obj = { ...item };
     if (user?.level == 20 || user?.level == 15) {
       obj['oper_id'] = user?.id
       //console.log(obj)
@@ -189,6 +191,11 @@ const SellerEdit = () => {
       return;
     }
     if (router.query?.edit_category == 'edit') {
+      // 비밀번호를 입력하지 않았으면 user_pw 키를 아예 보내지 않는다.
+      // (빈 문자열로 보내면 multipart 에 빈 값이 실려 서버가 '변경 요청'으로 오해할 여지가 생긴다)
+      if (!`${obj?.user_pw ?? ''}`.trim()) {
+        delete obj.user_pw;
+      }
       result = await apiManager('sellers', 'update', { ...obj, id: router.query?.id, });
     } else {
       result = await apiManager('sellers', 'create', { ...obj, });
@@ -440,25 +447,23 @@ const SellerEdit = () => {
                             )
                           }} />
                       </Stack>
-                      {
-                        router.query?.edit_category != 'edit' &&
-                        <>
-                          <Stack spacing={1}>
-                            <TextField
-                              label='셀러 비밀번호'
-                              value={item.user_pw}
-                              type="password"
-                              onChange={(e) => {
-                                setItem(
-                                  {
-                                    ...item,
-                                    ['user_pw']: e.target.value
-                                  }
-                                )
-                              }} />
-                          </Stack>
-                        </>
-                      }
+                      <Stack spacing={1}>
+                        <TextField
+                          label={router.query?.edit_category == 'edit' ? '셀러 비밀번호 변경' : '셀러 비밀번호'}
+                          value={item.user_pw ?? ''}
+                          type="password"
+                          autoComplete="new-password"
+                          placeholder={router.query?.edit_category == 'edit' ? '비워두면 기존 비밀번호가 유지됩니다.' : ''}
+                          helperText={router.query?.edit_category == 'edit' ? '비워두면 기존 비밀번호가 유지됩니다.' : ''}
+                          onChange={(e) => {
+                            setItem(
+                              {
+                                ...item,
+                                ['user_pw']: e.target.value
+                              }
+                            )
+                          }} />
+                      </Stack>
 
                       <Stack spacing={1}>
                         <FormControl>

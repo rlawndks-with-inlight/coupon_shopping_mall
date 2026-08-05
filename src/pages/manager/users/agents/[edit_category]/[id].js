@@ -102,7 +102,10 @@ const AgentEdit = () => {
             if (data) {
                 setProductIds((data?.products ?? []).map(item => { return item?.id }))
                 setProductContent({ content: data?.products ?? [] })
-                setItem(data);
+                // ⚠ 비밀번호칸은 항상 '빈 값'으로 시작한다(서버 응답값을 채워넣지 않는다).
+                //    이 화면의 저장은 PUT /api/users/:id 로 가고 그쪽은 user_pw 를 아예 수정 대상에서 제외한다.
+                //    비밀번호 변경은 목록화면의 '비밀번호 변경' 모달(users/change-pw)에서만 한다.
+                setItem({ ...data, user_pw: '' });
             }
         }
 

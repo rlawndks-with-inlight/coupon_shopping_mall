@@ -8,7 +8,7 @@ import { useAuthContext } from '../auth/useAuthContext';
 import { useEffect, useState } from 'react';
 import { apiManager } from 'src/utils/api';
 import { mainObjSchemaList } from 'src/utils/format';
-import { isShopgoBrand } from 'src/utils/is-shopgo';
+import { isShopgoBrand, isShopgoMerchant } from 'src/utils/is-shopgo';
 import { HOME_TEXT_SCHEMA } from 'src/data/home-texts';
 
 // ----------------------------------------------------------------------
@@ -209,8 +209,10 @@ export const navConfig = () => {
                 { title: '결제대기', path: PATH_MANAGER.orders.trx + '/0' },
                 { title: '결제완료', path: PATH_MANAGER.orders.trx + '/5' },
                 ...(themeDnsData?.id != 5 ?
-                  [{ title: '입고완료', path: PATH_MANAGER.orders.trx + '/10' },
-                  { title: '출고완료', path: PATH_MANAGER.orders.trx + '/15' }]
+                  [
+                    // shopgo 하위 가맹점은 창고 입고 단계를 쓰지 않아 '입고완료' 메뉴를 숨긴다.
+                    ...(isShopgoMerchant(themeDnsData) ? [] : [{ title: '입고완료', path: PATH_MANAGER.orders.trx + '/10' }]),
+                    { title: '출고완료', path: PATH_MANAGER.orders.trx + '/15' }]
                   : []
                 ),
                 { title: '배송중', path: PATH_MANAGER.orders.trx + '/20' },

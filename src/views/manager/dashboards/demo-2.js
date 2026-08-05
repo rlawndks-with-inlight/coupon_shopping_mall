@@ -171,21 +171,23 @@ export const DashboardDemo2 = () => {
                             }}
                         />
                     </Grid>
-                    <Grid item xs={12} md={3}>
-                        <AppWidget
-                            title="입고완료"
-                            total={data?.trx?.trx_10 ?? 0}
-                            icon="ic:baseline-store"
-                            color="success"
-                            sx={{ cursor: 'pointer' }}
-                            chart={{
-                                series: getPercentByNumber(data?.trx_sum, data?.trx?.trx_10),
-                            }}
-                            onClick={() => {
-                                router.push(`/manager/orders/trx/10`)
-                            }}
-                        />
-                    </Grid>
+                    {/* shopgo 하위 가맹점은 창고 입고 단계를 쓰지 않아 '입고완료' 위젯을 숨긴다. */}
+                    {!isShopgoMerchant(themeDnsData) &&
+                        <Grid item xs={12} md={3}>
+                            <AppWidget
+                                title="입고완료"
+                                total={data?.trx?.trx_10 ?? 0}
+                                icon="ic:baseline-store"
+                                color="success"
+                                sx={{ cursor: 'pointer' }}
+                                chart={{
+                                    series: getPercentByNumber(data?.trx_sum, data?.trx?.trx_10),
+                                }}
+                                onClick={() => {
+                                    router.push(`/manager/orders/trx/10`)
+                                }}
+                            />
+                        </Grid>}
                     <Grid item xs={12} md={3}>
                         <AppWidget
                             title="출고완료"

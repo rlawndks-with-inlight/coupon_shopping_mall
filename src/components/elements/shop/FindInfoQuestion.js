@@ -209,9 +209,13 @@ const FindInfoQuestion = ({
               </FormControl>
               <FormControl variant="outlined">
                 <InputLabel>{translate('휴대폰번호')}</InputLabel>
+                {/* type="number" 를 쓰면 하이픈을 아예 입력할 수 없어(붙여넣기 시 값이 비워짐)
+                    '010-1234-5678' 형태로 적는 사용자가 진행하지 못한다.
+                    서버는 blindIndex 에서 공백·하이픈을 제거해 비교하므로 두 형태 모두 매칭된다. */}
                 <OutlinedInput
                   label={translate('휴대폰번호')}
-                  type="number"
+                  type="tel"
+                  inputMode="tel"
                   autoComplete="new-password"
                   value={obj.phone_num}
                   onChange={(e) => {

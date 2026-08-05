@@ -48,6 +48,25 @@ const DnsLink = ({ dns }) => (
   </Box>
 );
 
+// 전화번호는 tel: 링크로 렌더 (모바일에서 바로 통화 / PC에서 드래그 복사 가능).
+// 값이 없으면 '-' 로 표시한다.
+const PhoneLink = ({ value, variant = 'body2' }) => {
+  if (!value) return <Typography variant={variant} sx={{ color: 'text.disabled' }}>-</Typography>;
+  return (
+    <Typography
+      component="a"
+      variant={variant}
+      href={`tel:${String(value).replace(/[^0-9+]/g, '')}`}
+      sx={{
+        color: 'primary.main', textDecoration: 'none', userSelect: 'text',
+        wordBreak: 'break-all', '&:hover': { textDecoration: 'underline' },
+      }}
+    >
+      {value}
+    </Typography>
+  );
+};
+
 const MerchantsPage = () => {
   const [merchants, setMerchants] = useState([]);
   const [summary, setSummary] = useState({ merchant_count: 0, total_sales: 0, order_count: 0 });
@@ -78,7 +97,13 @@ const MerchantsPage = () => {
   useEffect(() => { fetchData(period); }, [period]);
 
   const openDetail = async (m) => {
-    setDetail({ brand: { id: m.id, name: m.name, dns: m.dns, created_at: m.created_at } });
+    // 상세 응답 도착 전까지 목록이 이미 가진 값으로 먼저 채워 깜빡임을 줄인다(고객센터 번호는 상세에서만 온다).
+    setDetail({
+      brand: {
+        id: m.id, name: m.name, dns: m.dns, created_at: m.created_at,
+        admin_user_id: m.admin_user_id, admin_user_name: m.admin_user_name, admin_phone_num: m.admin_phone_num,
+      },
+    });
     setDetailLoading(true);
     try {
       const { data: res } = await axios.get(`/api/merchant-application/merchants/${m.id}`, { params: periodToRange(period) });
@@ -145,7 +170,7 @@ const MerchantsPage = () => {
                   <TableCell>개설일</TableCell>
                   <TableCell align="right">주문</TableCell>
                   <TableCell align="right">매출(원)</TableCell>
-                  <TableCell align="center">관리자 계정</TableCell>
+                  <TableCell align="center">관리자 계정 / 연락처</TableCell>
                   <TableCell align="center">상세</TableCell>
                 </TableRow>
               </TableHead>
@@ -172,20 +197,28 @@ const MerchantsPage = () => {
                     <TableCell align="right">{commarNumber(m.order_count)}</TableCell>
                     <TableCell align="right"><Typography variant="subtitle2">{commarNumber(m.sales)}</Typography></TableCell>
                     <TableCell align="center">
-                      <Tooltip
-                        title={m.admin_user_id
-                          ? `관리자 아이디: ${m.admin_user_name} · 비밀번호를 아이디와 동일하게 초기화합니다.`
-                          : '관리자 계정이 없습니다.'}
-                      >
-                        <span>
-                          <Button size="small" variant="outlined" color="warning"
-                            startIcon={<Icon icon="solar:key-minimalistic-square-linear" />}
-                            disabled={!m.admin_user_id}
-                            onClick={() => setResetTarget(m)}>
-                            비밀번호 초기화
-                          </Button>
-                        </span>
-                      </Tooltip>
+                      <Stack spacing={1} alignItems="center">
+                        <Stack spacing={0.25} alignItems="center">
+                          <Typography variant="subtitle2" sx={{ userSelect: 'text' }}>
+                            {m.admin_user_name || '-'}
+                          </Typography>
+                          <PhoneLink value={m.admin_phone_num} variant="caption" />
+                        </Stack>
+                        <Tooltip
+                          title={m.admin_user_id
+                            ? `관리자 아이디: ${m.admin_user_name} · 비밀번호를 아이디와 동일하게 초기화합니다.`
+                            : '관리자 계정이 없습니다.'}
+                        >
+                          <span>
+                            <Button size="small" variant="outlined" color="warning"
+                              startIcon={<Icon icon="solar:key-minimalistic-square-linear" />}
+                              disabled={!m.admin_user_id}
+                              onClick={() => setResetTarget(m)}>
+                              비밀번호 초기화
+                            </Button>
+                          </span>
+                        </Tooltip>
+                      </Stack>
                     </TableCell>
                     <TableCell align="center">
                       <Button size="small" variant="outlined" startIcon={<Icon icon="solar:document-text-linear" />}
@@ -324,6 +357,29 @@ const MerchantDetailDialog = ({ detail, loading, period, onClose }) => {
                   <Grid item xs={4}><SummaryCard label="기간 주문" value={commarNumber(summary?.order_count || 0)} suffix="건" /></Grid>
                   <Grid item xs={4}><SummaryCard label="취소" value={commarNumber(summary?.cancel_count || 0)} suffix="건" /></Grid>
                 </Grid>
+
+                {/* 연락처 */}
+                <Box>
+                  <Typography variant="subtitle2" sx={{ mb: 1, color: 'text.secondary' }}>연락처</Typography>
+                  <Card variant="outlined" sx={{ p: 2 }}>
+                    <Stack spacing={1}>
+                      <Stack direction="row" justifyContent="space-between" spacing={2}>
+                        <Typography variant="body2" sx={{ color: 'text.secondary' }}>관리자 아이디</Typography>
+                        <Typography variant="subtitle2" sx={{ wordBreak: 'break-all', userSelect: 'text' }}>
+                          {brand.admin_user_name || '-'}
+                        </Typography>
+                      </Stack>
+                      <Stack direction="row" justifyContent="space-between" spacing={2}>
+                        <Typography variant="body2" sx={{ color: 'text.secondary' }}>관리자 연락처</Typography>
+                        <PhoneLink value={brand.admin_phone_num} variant="subtitle2" />
+                      </Stack>
+                      <Stack direction="row" justifyContent="space-between" spacing={2}>
+                        <Typography variant="body2" sx={{ color: 'text.secondary' }}>쇼핑몰 고객센터 번호</Typography>
+                        <PhoneLink value={brand.phone_num} variant="subtitle2" />
+                      </Stack>
+                    </Stack>
+                  </Card>
+                </Box>
 
                 {/* 상태별 집계 */}
                 <Box>

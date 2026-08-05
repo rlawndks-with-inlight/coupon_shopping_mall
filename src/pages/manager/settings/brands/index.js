@@ -288,6 +288,7 @@ const BrandList = () => {
     sender_brand_id: 0, //카피할 브랜드
     dns: '', //카피한 데이터를 받을 도메인
     is_copy_brand_setting: 0,
+    is_copy_main_obj: 0, //메인페이지(배너)·블로그 구성 카피 (기본 꺼짐)
     is_copy_product: 0,
     is_copy_post: 0
   })
@@ -367,6 +368,24 @@ const BrandList = () => {
               }
             />
             <FormControlLabel
+              label={
+                <Typography style={{ fontSize: themeObj.font_size.size6, color: '#d32f2f' }}>
+                  메인페이지·블로그 구성 카피 (대상 몰의 배너·메인페이지 구성이 덮어써집니다)
+                </Typography>
+              }
+              control={
+                <Checkbox
+                  checked={copyObj.is_copy_main_obj == 1}
+                  onChange={e => {
+                    setCopyObj({
+                      ...copyObj,
+                      is_copy_main_obj: e.target.checked ? 1 : 0
+                    })
+                  }}
+                />
+              }
+            />
+            <FormControlLabel
               label={<Typography style={{ fontSize: themeObj.font_size.size6 }}>상품정보 카피</Typography>}
               control={
                 <Checkbox
@@ -418,8 +437,14 @@ const BrandList = () => {
                 func: () => {
                   onCopyBrand()
                 },
-                icon: 'material-symbols:edit-outline',
-                title: '저장 하시겠습니까?'
+                icon:
+                  copyObj?.is_copy_main_obj == 1
+                    ? 'material-symbols:warning-outline'
+                    : 'material-symbols:edit-outline',
+                title:
+                  copyObj?.is_copy_main_obj == 1
+                    ? `[${copyObj?.dns}] 몰의 배너·메인페이지 구성이 삭제되고 덮어써집니다. 진행 하시겠습니까?`
+                    : '저장 하시겠습니까?'
               })
             }}
           >

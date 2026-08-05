@@ -1,6 +1,9 @@
 import { Tab, Tabs, TextField, Button } from '@mui/material';
 import { useEffect, useState } from 'react';
 import styled from 'styled-components'
+import { useSettingsContext } from 'src/components/settings';
+import { isShopgoMerchant } from 'src/utils/is-shopgo';
+import FindInfoQuestion from 'src/components/elements/shop/FindInfoQuestion';
 
 //아이디 찾기 및 비밀번호 찾기 김인욱
 const Wrappers = styled.div`
@@ -55,6 +58,8 @@ const Demo4 = (props) => {
         },
     } = props;
 
+    const { themeDnsData } = useSettingsContext();
+
     const [findType, setFindType] = useState(0);
     const [phoneNum, setPhoneNum] = useState("");
     const [username, setUsername] = useState("")
@@ -97,7 +102,12 @@ const Demo4 = (props) => {
                             ))}
                         </Tabs>
                     </div>
-                    {findType == 0 ?
+                    {isShopgoMerchant(themeDnsData) ?
+                        <div style={{ marginTop: '1.5rem' }}>
+                            <FindInfoQuestion tab={findType} router={router} loginPath="/blog/auth/login" />
+                        </div>
+                        :
+                        findType == 0 ?
                         <>
                             <TextField
                                 name='userId'

@@ -9,6 +9,9 @@ import { StyledContent } from 'src/layouts/login/styles';
 import { apiManager } from 'src/utils/api';
 import { logoSrc } from 'src/data/data';
 import { Col } from 'src/components/elements/styled-components';
+import { useSettingsContext } from 'src/components/settings';
+import { isShopgoMerchant } from 'src/utils/is-shopgo';
+import FindInfoQuestion from 'src/components/elements/shop/FindInfoQuestion';
 
 // 가맹점(매니저) 관리자용 아이디/비밀번호 찾기.
 // 백엔드(SMS 휴대폰 인증) 및 스토어프론트 UI는 이미 존재하며, 여기서는 동일한 3개 엔드포인트를 재사용한다.
@@ -23,6 +26,7 @@ const returnFindType = {
 
 const FindInfo = () => {
   const router = useRouter();
+  const { themeDnsData } = useSettingsContext();
   const [findType, setFindType] = useState('0');
   const [findUserObj, setFindUserObj] = useState({
     user_name: '',
@@ -131,178 +135,182 @@ const FindInfo = () => {
             ))}
           </Tabs>
 
-          <Stack spacing={2}>
-            {findType == 0 && (
-              <>
-                {findUserObj?.find_user_list?.length > 0 ? (
-                  <>
-                    <Typography variant="subtitle1" sx={{ mt: 1 }}>
-                      찾은 아이디
-                    </Typography>
-                    <Col>
-                      {findUserObj?.find_user_list.map((item) => (
-                        <>
-                          <div style={{ padding: '0.5rem' }}>{item?.user_name}</div>
-                          <Divider />
-                        </>
-                      ))}
-                    </Col>
-                    <Button
-                      variant="contained"
-                      style={{ height: '48px' }}
-                      startIcon={<Icon icon="material-symbols:lock" style={{ marginBottom: '0.2rem' }} />}
-                      onClick={() => router.push(`/manager/login`)}
-                    >
-                      로그인하기
-                    </Button>
-                  </>
-                ) : (
-                  <>
-                    <FormControl variant="outlined">
-                      <InputLabel>휴대폰번호</InputLabel>
-                      <OutlinedInput
-                        label="휴대폰번호"
-                        type="number"
-                        autoComplete="new-password"
-                        value={findUserObj.phone_num}
-                        endAdornment={
-                          <Button
-                            variant="outlined"
-                            style={{ width: '150px', height: '48px', marginRight: '-0.5rem' }}
-                            onClick={onSendPhoneVerifyCode}
-                          >
-                            인증번호 발송
-                          </Button>
-                        }
-                        onChange={(e) => {
-                          setFindUserObj({ ...findUserObj, ['phone_num']: e.target.value });
-                        }}
-                      />
-                    </FormControl>
-                    <FormControl variant="outlined">
-                      <InputLabel>인증번호</InputLabel>
-                      <OutlinedInput
-                        label="인증번호"
-                        type="number"
-                        autoComplete="new-password"
-                        value={findUserObj.phoneCheck}
-                        endAdornment={
-                          <Button
-                            variant="outlined"
-                            style={{ width: '150px', height: '48px', marginRight: '-0.5rem' }}
-                            disabled={!findUserObj.is_send_phone_check_num}
-                            onClick={onCheckPhoneVerifyCode}
-                          >
-                            {findUserObj.find_user_list.length > 0 ? '확인완료' : '인증번호 확인'}
-                          </Button>
-                        }
-                        onChange={(e) => {
-                          setFindUserObj({ ...findUserObj, ['phoneCheck']: e.target.value });
-                        }}
-                      />
-                    </FormControl>
-                  </>
-                )}
-              </>
-            )}
-            {findType == 1 && (
-              <>
-                {findUserObj.find_user_list?.length > 0 ? (
-                  <>
-                    <FormControl variant="outlined">
-                      <InputLabel>새 비밀번호</InputLabel>
-                      <OutlinedInput
-                        label="새 비밀번호"
-                        autoComplete="new-password"
-                        type="password"
-                        value={findUserObj.password}
-                        onChange={(e) => {
-                          setFindUserObj({ ...findUserObj, ['password']: e.target.value });
-                        }}
-                      />
-                    </FormControl>
-                    <FormControl variant="outlined">
-                      <InputLabel>새 비밀번호 확인</InputLabel>
-                      <OutlinedInput
-                        label="새 비밀번호 확인"
-                        autoComplete="new-password"
-                        type="password"
-                        value={findUserObj.passwordCheck}
-                        onChange={(e) => {
-                          setFindUserObj({ ...findUserObj, ['passwordCheck']: e.target.value });
-                        }}
-                      />
-                    </FormControl>
-                    <Button
-                      variant="contained"
-                      style={{ height: '48px' }}
-                      startIcon={<Icon icon="material-symbols:lock" style={{ marginBottom: '0.2rem' }} />}
-                      onClick={onChangePassword}
-                    >
-                      비밀번호 변경하기
-                    </Button>
-                  </>
-                ) : (
-                  <>
-                    <FormControl variant="outlined">
-                      <InputLabel>아이디</InputLabel>
-                      <OutlinedInput
-                        label="아이디"
-                        autoComplete="new-password"
-                        value={findUserObj.user_name}
-                        onChange={(e) => {
-                          setFindUserObj({ ...findUserObj, ['user_name']: e.target.value });
-                        }}
-                      />
-                    </FormControl>
-                    <FormControl variant="outlined">
-                      <InputLabel>휴대폰번호</InputLabel>
-                      <OutlinedInput
-                        label="휴대폰번호"
-                        type="number"
-                        autoComplete="new-password"
-                        value={findUserObj.phone_num}
-                        endAdornment={
-                          <Button
-                            variant="outlined"
-                            style={{ width: '150px', height: '48px', marginRight: '-0.5rem' }}
-                            onClick={onSendPhoneVerifyCode}
-                          >
-                            인증번호 발송
-                          </Button>
-                        }
-                        onChange={(e) => {
-                          setFindUserObj({ ...findUserObj, ['phone_num']: e.target.value });
-                        }}
-                      />
-                    </FormControl>
-                    <FormControl variant="outlined">
-                      <InputLabel>인증번호</InputLabel>
-                      <OutlinedInput
-                        label="인증번호"
-                        type="number"
-                        autoComplete="new-password"
-                        value={findUserObj.phoneCheck}
-                        endAdornment={
-                          <Button
-                            variant="outlined"
-                            style={{ width: '150px', height: '48px', marginRight: '-0.5rem' }}
-                            disabled={!findUserObj.is_send_phone_check_num}
-                            onClick={onCheckPhoneVerifyCode}
-                          >
-                            {findUserObj.find_user_list.length > 0 ? '확인완료' : '인증번호 확인'}
-                          </Button>
-                        }
-                        onChange={(e) => {
-                          setFindUserObj({ ...findUserObj, ['phoneCheck']: e.target.value });
-                        }}
-                      />
-                    </FormControl>
-                  </>
-                )}
-              </>
-            )}
-          </Stack>
+          {isShopgoMerchant(themeDnsData) ? (
+            <FindInfoQuestion tab={findType} router={router} loginPath="/manager/login" isManager />
+          ) : (
+            <Stack spacing={2}>
+              {findType == 0 && (
+                <>
+                  {findUserObj?.find_user_list?.length > 0 ? (
+                    <>
+                      <Typography variant="subtitle1" sx={{ mt: 1 }}>
+                        찾은 아이디
+                      </Typography>
+                      <Col>
+                        {findUserObj?.find_user_list.map((item) => (
+                          <>
+                            <div style={{ padding: '0.5rem' }}>{item?.user_name}</div>
+                            <Divider />
+                          </>
+                        ))}
+                      </Col>
+                      <Button
+                        variant="contained"
+                        style={{ height: '48px' }}
+                        startIcon={<Icon icon="material-symbols:lock" style={{ marginBottom: '0.2rem' }} />}
+                        onClick={() => router.push(`/manager/login`)}
+                      >
+                        로그인하기
+                      </Button>
+                    </>
+                  ) : (
+                    <>
+                      <FormControl variant="outlined">
+                        <InputLabel>휴대폰번호</InputLabel>
+                        <OutlinedInput
+                          label="휴대폰번호"
+                          type="number"
+                          autoComplete="new-password"
+                          value={findUserObj.phone_num}
+                          endAdornment={
+                            <Button
+                              variant="outlined"
+                              style={{ width: '150px', height: '48px', marginRight: '-0.5rem' }}
+                              onClick={onSendPhoneVerifyCode}
+                            >
+                              인증번호 발송
+                            </Button>
+                          }
+                          onChange={(e) => {
+                            setFindUserObj({ ...findUserObj, ['phone_num']: e.target.value });
+                          }}
+                        />
+                      </FormControl>
+                      <FormControl variant="outlined">
+                        <InputLabel>인증번호</InputLabel>
+                        <OutlinedInput
+                          label="인증번호"
+                          type="number"
+                          autoComplete="new-password"
+                          value={findUserObj.phoneCheck}
+                          endAdornment={
+                            <Button
+                              variant="outlined"
+                              style={{ width: '150px', height: '48px', marginRight: '-0.5rem' }}
+                              disabled={!findUserObj.is_send_phone_check_num}
+                              onClick={onCheckPhoneVerifyCode}
+                            >
+                              {findUserObj.find_user_list.length > 0 ? '확인완료' : '인증번호 확인'}
+                            </Button>
+                          }
+                          onChange={(e) => {
+                            setFindUserObj({ ...findUserObj, ['phoneCheck']: e.target.value });
+                          }}
+                        />
+                      </FormControl>
+                    </>
+                  )}
+                </>
+              )}
+              {findType == 1 && (
+                <>
+                  {findUserObj.find_user_list?.length > 0 ? (
+                    <>
+                      <FormControl variant="outlined">
+                        <InputLabel>새 비밀번호</InputLabel>
+                        <OutlinedInput
+                          label="새 비밀번호"
+                          autoComplete="new-password"
+                          type="password"
+                          value={findUserObj.password}
+                          onChange={(e) => {
+                            setFindUserObj({ ...findUserObj, ['password']: e.target.value });
+                          }}
+                        />
+                      </FormControl>
+                      <FormControl variant="outlined">
+                        <InputLabel>새 비밀번호 확인</InputLabel>
+                        <OutlinedInput
+                          label="새 비밀번호 확인"
+                          autoComplete="new-password"
+                          type="password"
+                          value={findUserObj.passwordCheck}
+                          onChange={(e) => {
+                            setFindUserObj({ ...findUserObj, ['passwordCheck']: e.target.value });
+                          }}
+                        />
+                      </FormControl>
+                      <Button
+                        variant="contained"
+                        style={{ height: '48px' }}
+                        startIcon={<Icon icon="material-symbols:lock" style={{ marginBottom: '0.2rem' }} />}
+                        onClick={onChangePassword}
+                      >
+                        비밀번호 변경하기
+                      </Button>
+                    </>
+                  ) : (
+                    <>
+                      <FormControl variant="outlined">
+                        <InputLabel>아이디</InputLabel>
+                        <OutlinedInput
+                          label="아이디"
+                          autoComplete="new-password"
+                          value={findUserObj.user_name}
+                          onChange={(e) => {
+                            setFindUserObj({ ...findUserObj, ['user_name']: e.target.value });
+                          }}
+                        />
+                      </FormControl>
+                      <FormControl variant="outlined">
+                        <InputLabel>휴대폰번호</InputLabel>
+                        <OutlinedInput
+                          label="휴대폰번호"
+                          type="number"
+                          autoComplete="new-password"
+                          value={findUserObj.phone_num}
+                          endAdornment={
+                            <Button
+                              variant="outlined"
+                              style={{ width: '150px', height: '48px', marginRight: '-0.5rem' }}
+                              onClick={onSendPhoneVerifyCode}
+                            >
+                              인증번호 발송
+                            </Button>
+                          }
+                          onChange={(e) => {
+                            setFindUserObj({ ...findUserObj, ['phone_num']: e.target.value });
+                          }}
+                        />
+                      </FormControl>
+                      <FormControl variant="outlined">
+                        <InputLabel>인증번호</InputLabel>
+                        <OutlinedInput
+                          label="인증번호"
+                          type="number"
+                          autoComplete="new-password"
+                          value={findUserObj.phoneCheck}
+                          endAdornment={
+                            <Button
+                              variant="outlined"
+                              style={{ width: '150px', height: '48px', marginRight: '-0.5rem' }}
+                              disabled={!findUserObj.is_send_phone_check_num}
+                              onClick={onCheckPhoneVerifyCode}
+                            >
+                              {findUserObj.find_user_list.length > 0 ? '확인완료' : '인증번호 확인'}
+                            </Button>
+                          }
+                          onChange={(e) => {
+                            setFindUserObj({ ...findUserObj, ['phoneCheck']: e.target.value });
+                          }}
+                        />
+                      </FormControl>
+                    </>
+                  )}
+                </>
+              )}
+            </Stack>
+          )}
 
           <Stack direction="row" justifyContent="center" sx={{ mt: 3 }}>
             <Link component={NextLink} href="/manager/login" variant="body2" sx={{ color: 'text.secondary', cursor: 'pointer' }}>

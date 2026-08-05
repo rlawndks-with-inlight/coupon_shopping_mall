@@ -6,7 +6,7 @@ import FindInfoQuestion from 'src/components/elements/shop/FindInfoQuestion';
 import { useSettingsContext } from 'src/components/settings';
 import { useLocales } from 'src/locales';
 import { apiManager } from 'src/utils/api';
-import { isShopgoMerchant } from 'src/utils/is-shopgo';
+import { isShopgoBrand } from 'src/utils/is-shopgo';
 import styled from 'styled-components'
 
 
@@ -179,7 +179,7 @@ const FindInfoDemo = (props) => {
               <Tab key={returnFindType[key].title} value={key} label={returnFindType[key].title} sx={{ fontWeight: 600 }} />
             ))}
           </Tabs>
-          {isShopgoMerchant(themeDnsData) ? (
+          {isShopgoBrand(themeDnsData) ? (
             <FindInfoQuestion tab={findType} router={router} loginPath="/shop/auth/login" translate={translate} slotProps={{ button: primaryButtonSx }} />
           ) : (
           <Stack spacing={2.5}>

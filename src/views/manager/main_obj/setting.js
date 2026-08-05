@@ -324,25 +324,27 @@ const MainObjSetting = props => {
     }
     setContentList(content_list)
   }
-  const handleRemoveFile = (inputFile, idx) => {
+  const handleRemoveFile = (inputFile, idx, file_index) => {
     let content_list = [...contentList]
-    let find_index = _.findIndex(
-      content_list[idx]?.list.map(img => {
-        return img
-      }),
-      {
-        path: inputFile.path,
-        preview: inputFile.preview
-      }
-    )
+    let list = content_list[idx]?.list ?? []
+    // 썸네일에서 넘어온 순번이 있으면 그대로 사용 (같은 이미지가 여러개여도 클릭한 배너만 삭제됨)
+    let find_index = typeof file_index == 'number' && file_index >= 0 && file_index < list.length ? file_index : -1
     if (find_index < 0) {
-      for (var i = 0; i < content_list[idx].list.length; i++) {
-        if (content_list[idx].list[i]?.src == inputFile) {
-          find_index = i
-        }
-      }
+      // Upload 에 넘긴 목록(img?.src || img)과 동일한 형태로 비교
+      find_index = _.findIndex(list, img => (img?.src || img) === inputFile)
     }
-    content_list[idx].list.splice(find_index, 1)
+    if (find_index < 0) {
+      find_index = _.findIndex(list, {
+        path: inputFile?.path,
+        preview: inputFile?.preview
+      })
+    }
+    if (find_index < 0) {
+      // 못찾았을때 마지막 배너가 지워지는것 방지
+      toast.error('삭제할 배너를 찾지 못했습니다. 새로고침 후 다시 시도해 주세요.')
+      return
+    }
+    list.splice(find_index, 1)
     setContentList(content_list)
   }
   const handleRemoveAllFiles = idx => {
@@ -378,13 +380,15 @@ const MainObjSetting = props => {
     for (var i = 0; i < content_list.length; i++) {
       if (['banner', 'button-banner'].includes(content_list[i]?.type)) {
         for (var j = 0; j < content_list[i]?.list?.length; j++) {
-          if (!content_list[i].list[j]?.src) {
+          let list_item = content_list[i].list[j]
+          // 새로 올린 파일만 업로드 대상. src 없는 기존 항목은 업로드 불가하므로 그대로 둠
+          if (!list_item?.src && (list_item instanceof File || list_item instanceof Blob)) {
             file_index_list.push({
               i: i,
               j: j
             })
             images.push({
-              image: content_list[i].list[j]
+              image: list_item
             })
           }
         }
@@ -410,24 +414,57 @@ const MainObjSetting = props => {
         images
       })
 
-      if (!file_result.length > 0) {
+      if (!Array.isArray(file_result) || !(file_result.length > 0)) {
+        toast.error('이미지 업로드에 실패했습니다. 잠시 후 다시 시도해 주세요.')
         return
       }
+      let fail_index_list = [] //업로드 실패한 배너 위치
+      let fail_text_list = [] //업로드 실패 안내 문구
       for (var i = 0; i < file_index_list.length; i++) {
+        let upload_url = file_result[i]?.url
         if (file_index_list[i]['i'] >= 0 && file_index_list[i]['j'] >= 0) {
+          let prev_item = content_list[file_index_list[i]['i']].list[file_index_list[i]['j']] ?? {}
+          if (!upload_url) {
+            // 업로드 실패한 배너는 빈 이미지로 저장하지 않고 목록에서 제외
+            let section_type = content_list[file_index_list[i]['i']]?.type
+            let section_label = section_type == 'button-banner' ? '버튼형 배너슬라이드' : '배너슬라이드'
+            fail_index_list.push(file_index_list[i])
+            fail_text_list.push(
+              `${section_label} ${curTypeNum(content_list, section_type, file_index_list[i]['i'])}의 ${file_index_list[i]['j'] + 1
+              }번째 이미지`
+            )
+            continue
+          }
           content_list[file_index_list[i]['i']].list[file_index_list[i]['j']] = {
-            title: content_list[file_index_list[i]['i']].list[file_index_list[i]['j']]?.title ?? '',
-            sub_title: content_list[file_index_list[i]['i']].list[file_index_list[i]['j']]?.sub_title ?? '',
-            link: content_list[file_index_list[i]['i']].list[file_index_list[i]['j']]?.link ?? '',
-            src: file_result[i]?.url ?? ''
+            title: prev_item?.title ?? '',
+            sub_title: prev_item?.sub_title ?? '',
+            link: prev_item?.link ?? '',
+            title_color: prev_item?.title_color ?? '#ffffff',
+            sub_title_color: prev_item?.sub_title_color ?? '#ffffff',
+            ...(prev_item?.pc_text_align ? { pc_text_align: prev_item?.pc_text_align } : {}),
+            ...(prev_item?.mobile_text_align ? { mobile_text_align: prev_item?.mobile_text_align } : {}),
+            src: upload_url
           }
           continue
         }
         if (file_index_list[i]['i'] >= 0) {
-          content_list[file_index_list[i]['i']].src = file_result[i]?.url
+          if (!upload_url) {
+            // 업로드 실패시 기존에 저장된 src 는 그대로 유지
+            delete content_list[file_index_list[i]['i']].file
+            fail_text_list.push(`${file_index_list[i]['i'] + 1}번째 섹션의 파일`)
+            continue
+          }
+          content_list[file_index_list[i]['i']].src = upload_url
           delete content_list[file_index_list[i]['i']].file
           continue
         }
+      }
+      // 뒤에서부터 제거해야 앞쪽 순번이 밀리지 않음
+      for (var i = fail_index_list.length - 1; i >= 0; i--) {
+        content_list[fail_index_list[i]['i']].list.splice(fail_index_list[i]['j'], 1)
+      }
+      if (fail_text_list.length > 0) {
+        toast.error(`${fail_text_list.join(', ')} 업로드에 실패하여 저장에서 제외되었습니다. 다시 등록해 주세요.`)
       }
     }
     let brand_data = { ...item, [`${MAIN_OBJ_TYPE}`]: content_list }
@@ -788,8 +825,8 @@ const MainObjSetting = props => {
                               onDrop={acceptedFiles => {
                                 handleDropMultiFile(acceptedFiles, idx)
                               }}
-                              onRemove={inputFile => {
-                                handleRemoveFile(inputFile, idx)
+                              onRemove={(inputFile, file_index) => {
+                                handleRemoveFile(inputFile, idx, file_index)
                               }}
                               onRemoveAll={() => {
                                 handleRemoveAllFiles(idx)
@@ -956,8 +993,8 @@ const MainObjSetting = props => {
                               onDrop={acceptedFiles => {
                                 handleDropMultiFile(acceptedFiles, idx)
                               }}
-                              onRemove={inputFile => {
-                                handleRemoveFile(inputFile, idx)
+                              onRemove={(inputFile, file_index) => {
+                                handleRemoveFile(inputFile, idx, file_index)
                               }}
                               onRemoveAll={() => {
                                 handleRemoveAllFiles(idx)

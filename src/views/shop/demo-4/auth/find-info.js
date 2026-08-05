@@ -7,7 +7,7 @@ import { TitleComponent } from 'src/components/elements/shop/demo-4';
 import { Col, Title } from 'src/components/elements/styled-components';
 import { useSettingsContext } from 'src/components/settings';
 import { apiManager } from 'src/utils/api';
-import { isShopgoMerchant } from 'src/utils/is-shopgo';
+import { isShopgoBrand } from 'src/utils/is-shopgo';
 import styled from 'styled-components'
 
 
@@ -143,7 +143,7 @@ const FindInfoDemo = (props) => {
             ))}
           </Tabs>
         </Title>
-        {isShopgoMerchant(themeDnsData) ? (
+        {isShopgoBrand(themeDnsData) ? (
           <FindInfoQuestion tab={findType} router={router} loginPath="/shop/auth/login" />
         ) : (
         <Stack spacing={2}>

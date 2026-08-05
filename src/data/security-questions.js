@@ -1,7 +1,7 @@
-import { isShopgoMerchant } from 'src/utils/is-shopgo';
+import { isShopgoBrand } from 'src/utils/is-shopgo';
 
 // ============================================================================
-// 비밀번호 재설정용 고정 보안질문 8종 (SHOPGO 산하 가맹점 전용)
+// 비밀번호 재설정용 고정 보안질문 8종 (SHOPGO 본사 및 산하 가맹점 전용)
 // 회원가입(질문 선택) · 아이디/비밀번호 찾기(질문 확인) · 로그인 후 설정 배너 ·
 // 관리자 화면이 모두 이 파일 하나를 공유한다.
 //
@@ -70,13 +70,13 @@ const resolveArgs = (a, b) => (looksLikeUser(b) && !looksLikeUser(a) ? { user: b
 
 /**
  * 보안질문 입력 검증. 통과 시 '' , 실패 시 토스트에 띄울 메시지 문자열을 반환한다.
- * - validateSecurityQuestion(user)       : 호출부가 이미 isShopgoMerchant 로 게이팅한 경우
- * - validateSecurityQuestion(user, dns)  : themeDnsData 를 함께 넘기면 스스로 게이팅 → shopgo 가맹점이 아니면 항상 ''
+ * - validateSecurityQuestion(user)       : 호출부가 이미 isShopgoBrand 로 게이팅한 경우
+ * - validateSecurityQuestion(user, dns)  : themeDnsData 를 함께 넘기면 스스로 게이팅 → SHOPGO 본사·산하 가맹점이 아니면 항상 ''
  * ※ dns 를 넘기지 않으면 무조건 검증한다. 게이팅 없이 호출하면 다른 브랜드 가입이 막히므로 둘 중 하나는 반드시 지킬 것.
  */
 export const validateSecurityQuestion = (...args) => {
   const { user, dns } = resolveArgs(args[0], args[1]);
-  if (dns && !isShopgoMerchant(dns)) return '';
+  if (dns && !isShopgoBrand(dns)) return '';
   if (!(Number(user?.security_question_id) > 0)) return '보안질문을 선택해 주세요.';
   if (!getSecurityQuestion(user?.security_question_id)) return '보안질문을 다시 선택해 주세요.';
   const answer = normalizeAnswer(user?.security_answer);
@@ -86,7 +86,7 @@ export const validateSecurityQuestion = (...args) => {
 };
 
 /**
- * 가입 payload 조각. shopgo 산하 가맹점이 아니면 빈 객체를 반환하므로
+ * 가입 payload 조각. SHOPGO 본사 및 산하 가맹점이 아니면 빈 객체를 반환하므로
  * 다른 브랜드의 auth/sign-up 요청 바디는 한 글자도 변하지 않는다.
  * (apiManager 는 object-to-formdata 로 직렬화 → user 객체에 빈 키를 넣으면 모든 브랜드 바디가 바뀐다. 반드시 이 헬퍼 사용)
  * 서버 계약 : security_question_id (int 1..8), security_answer (원문 문자열, 서버가 정규화+해시)
@@ -94,7 +94,7 @@ export const validateSecurityQuestion = (...args) => {
  */
 export const securityQuestionPayload = (...args) => {
   const { user, dns } = resolveArgs(args[0], args[1]);
-  if (!isShopgoMerchant(dns)) return {};
+  if (!isShopgoBrand(dns)) return {};
   return {
     security_question_id: Number(user?.security_question_id),
     security_answer: user?.security_answer,

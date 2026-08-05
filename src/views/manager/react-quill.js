@@ -45,42 +45,63 @@ const ReactQuillComponent = (props) => {
 
     const quillRef = useRef(null);
 
-    // react-quill이 dynamic(ssr:false) 로딩이라 마운트 직후엔 toolbar DOM이 아직 없을 수 있어
-    // 짧게 폴링하다 toolbar container가 준비되면 한 번만 title/aria-label을 주입한다.
+    // 툴바 버튼에 한글 설명(title) 주입.
+    //
+    // ⚠ quillRef 로는 안 된다. next/dynamic(Next 13)은 ref 를 전달하지 않아
+    //   quillRef.current 가 항상 null 이다(= getEditor() 호출 불가). 그래서 ref 대신
+    //   Quill 이 실제로 만들어 둔 .ql-toolbar DOM 을 직접 찾아 title 을 단다.
+    //
+    // 에디터는 탭/아코디언 안에서 뒤늦게 마운트되거나 다시 마운트될 수 있으므로
+    // MutationObserver 로 계속 지켜보되, 이미 처리한 툴바는 data 속성으로 건너뛴다.
     useEffect(() => {
-        let tries = 0;
-        const timer = setInterval(() => {
-            tries += 1;
-            const container = quillRef.current?.getEditor?.()?.getModule?.('toolbar')?.container;
-            if (container) {
-                // 일반 버튼(bold/align/list/indent/header/link/image/video/clean 등)
-                container.querySelectorAll('button[class*="ql-"]').forEach((btn) => {
+        const applyTitle = (el, key) => {
+            const label = QUILL_TOOLTIPS[key];
+            if (!label) return;
+            el.setAttribute('title', label);
+            el.setAttribute('aria-label', label);
+        };
+
+        const decorate = () => {
+            // 아직 처리 안 된 툴바만 고른다(처리 후엔 매칭 0건이라 즉시 끝난다).
+            document.querySelectorAll('.ql-toolbar:not([data-kr-tooltip="1"])').forEach((toolbar) => {
+                toolbar.dataset.krTooltip = '1';
+
+                // 일반 버튼(굵게/기울임/목록/들여쓰기/링크/이미지/맞춤/서식지우기 등)
+                toolbar.querySelectorAll('button[class*="ql-"]').forEach((btn) => {
                     const cls = Array.from(btn.classList).find((c) => c.startsWith('ql-'));
                     if (!cls) return;
+                    // 같은 클래스에 value 로 구분되는 버튼(header 1/2, list, indent, align)
                     const suffix = btn.hasAttribute('value') ? `[${btn.getAttribute('value')}]` : '';
-                    const label = QUILL_TOOLTIPS[cls + suffix] || QUILL_TOOLTIPS[cls];
-                    if (label) {
-                        btn.setAttribute('title', label);
-                        btn.setAttribute('aria-label', label);
-                    }
+                    applyTitle(btn, QUILL_TOOLTIPS[cls + suffix] ? cls + suffix : cls);
                 });
-                // 드롭다운(글꼴/글자 크기/글자 색)은 span.ql-picker 형태
-                container.querySelectorAll('span.ql-picker').forEach((picker) => {
+
+                // 드롭다운(글꼴/글자 크기/글자 색)은 button 이 아니라 span.ql-picker
+                toolbar.querySelectorAll('span.ql-picker').forEach((picker) => {
                     const cls = Array.from(picker.classList).find(
                         (c) => c.startsWith('ql-') && c !== 'ql-picker' && !c.endsWith('-picker')
                     );
-                    const label = cls && QUILL_TOOLTIPS[cls];
-                    if (!label) return;
-                    const target = picker.querySelector('.ql-picker-label') || picker;
-                    target.setAttribute('title', label);
-                    target.setAttribute('aria-label', label);
+                    if (!cls) return;
+                    applyTitle(picker.querySelector('.ql-picker-label') || picker, cls);
                 });
-                clearInterval(timer);
-            } else if (tries > 40) {
-                clearInterval(timer);
-            }
-        }, 100);
-        return () => clearInterval(timer);
+            });
+        };
+
+        decorate(); // 이미 떠 있으면 즉시 적용
+
+        // 에디터 입력마다 mutation 이 쏟아지므로, 한 프레임에 한 번으로 묶어 처리한다.
+        let scheduled = 0;
+        const observer = new MutationObserver(() => {
+            if (scheduled) return;
+            scheduled = requestAnimationFrame(() => {
+                scheduled = 0;
+                decorate();
+            });
+        });
+        observer.observe(document.body, { childList: true, subtree: true });
+        return () => {
+            observer.disconnect();
+            if (scheduled) cancelAnimationFrame(scheduled);
+        };
     }, []);
 
     const modules = useMemo(

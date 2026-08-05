@@ -28,7 +28,7 @@ import { apiManager } from 'src/utils/api';
 //
 // !! 노출 게이트는 호출부 책임 !!
 //   const { themeDnsData } = useSettingsContext();
-//   isShopgoMerchant(themeDnsData) ? <FindInfoQuestion .../> : (기존 SMS JSX 그대로)
+//   isShopgoBrand(themeDnsData) ? <FindInfoQuestion .../> : (기존 SMS JSX 그대로)
 // 여기서 게이트를 걸면 게이트 미적용 호출부에서 화면이 통째로 비어버리므로 걸지 않는다.
 //
 // API (백엔드가 이 형태로 구현됨):

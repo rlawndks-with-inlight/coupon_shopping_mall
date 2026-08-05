@@ -195,7 +195,7 @@ const SignUpDemo = (props) => {
         toast.error("전화번호가 등록되었는지 확인해주세요");
         return;
       }
-      // SHOPGO 산하 가맹점 전용 : 비밀번호 재설정용 보안질문 필수 (그 외 브랜드는 '' 반환 → 무조건 통과)
+      // SHOPGO 본사 및 산하 가맹점 전용 : 비밀번호 재설정용 보안질문 필수 (그 외 브랜드는 '' 반환 → 무조건 통과)
       // 이름(name)은 위 필수 항목 검증에 이미 포함되어 있으므로 추가 검증하지 않는다.
       const secqErr = validateSecurityQuestion(user, themeDnsData);
       if (secqErr) {

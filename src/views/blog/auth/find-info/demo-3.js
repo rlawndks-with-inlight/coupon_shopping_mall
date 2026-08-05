@@ -2,7 +2,7 @@ import { Tab, Tabs, TextField, Button } from '@mui/material';
 import { useEffect, useState } from 'react';
 import styled from 'styled-components'
 import { useSettingsContext } from 'src/components/settings';
-import { isShopgoMerchant } from 'src/utils/is-shopgo';
+import { isShopgoBrand } from 'src/utils/is-shopgo';
 import FindInfoQuestion from 'src/components/elements/shop/FindInfoQuestion';
 
 //아이디 찾기 및 비밀번호 찾기 김인욱
@@ -102,7 +102,7 @@ const Demo3 = (props) => {
                             ))}
                         </Tabs>
                     </div>
-                    {isShopgoMerchant(themeDnsData) ?
+                    {isShopgoBrand(themeDnsData) ?
                         <div style={{ marginTop: '1.5rem' }}>
                             <FindInfoQuestion tab={findType} router={router} loginPath="/blog/auth/login" />
                         </div>

@@ -61,7 +61,7 @@ export default function MultiFilePreview({ thumbnail, files, onRemove, sx, image
                 {onRemove && (
                   <IconButton
                     size="small"
-                    onClick={() => onRemove(file)}
+                    onClick={() => onRemove(file, idx)}
                     sx={{
                       top: 4,
                       right: 4,
@@ -111,7 +111,7 @@ export default function MultiFilePreview({ thumbnail, files, onRemove, sx, image
               </Typography>
             </Stack>
             {onRemove && (
-              <IconButton edge="end" size="small" onClick={() => onRemove(file)}>
+              <IconButton edge="end" size="small" onClick={() => onRemove(file, idx)}>
                 <Iconify icon="eva:close-fill" />
               </IconButton>
             )}

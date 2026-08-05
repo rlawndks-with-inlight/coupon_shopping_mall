@@ -380,6 +380,8 @@ const TrxCancelList = () => {
       id,
       value,
     })
+    // 저장 후 목록 재조회(<Select>가 uncontrolled라 재조회 없으면 값이 이전 상태로 되돌아 보임).
+    onChangePage(searchObj);
   }
   const onChangeInvoice = () => {
 

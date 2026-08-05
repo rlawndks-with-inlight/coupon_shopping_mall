@@ -12,6 +12,7 @@ import { insertWishDataUtil } from "src/utils/shop-util";
 import toast from "react-hot-toast";
 import Slider from "react-slick";
 import { Seller1 } from "./demo-1";
+import { ProductStatusBadge } from './ProductStatusBadge';
 
 const ItemName = styled.div`
 font-weight: bold;
@@ -110,6 +111,7 @@ export const Item2 = (props) => {
             }}
             >
                 <ItemImgContainer>
+                    <ProductStatusBadge status={item?.status} />
                     <Slider {...item_img_setting}>
                         {images.map(url => (
                             <>

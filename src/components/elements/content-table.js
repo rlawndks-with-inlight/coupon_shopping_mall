@@ -120,7 +120,7 @@ const ContentTable = (props) => {
                       }}>{row?.post_title}</Typography>
                       <Typography variant='body2' color={themeObj.grey[500]}>{row?.created_at ?? "---"}</Typography>
                       <Row>
-                        {row?.user_id == user?.id &&
+                        {(postCategory?.is_able_user_add == 1 && user?.id && row?.user_id == user?.id) &&
                           <>
                             <IconButton onClick={() => {
                               router.push(`/shop/service/${postCategory?.id}/${row?.id}/`)

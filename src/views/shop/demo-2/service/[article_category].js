@@ -69,7 +69,14 @@ const ArticlesDemo = (props) => {
       id: 'post_title',
       label: translate('제목'),
       action: (row) => {
-        return formatLang(row, 'post_title', currentLang) ?? "---"
+        return (
+          <span
+            style={{ cursor: 'pointer', textDecoration: 'underline' }}
+            onClick={() => { router.push(`/shop/service/${router.query?.article_category}/${row?.id}`) }}
+          >
+            {formatLang(row, 'post_title', currentLang) ?? "---"}
+          </span>
+        )
       }
     },
     ...((postCategory?.is_able_user_add == 1 && postCategory?.post_category_read_type == 0) ? [
@@ -101,33 +108,25 @@ const ArticlesDemo = (props) => {
         }
       }
     ] : []),
-    {
-      id: 'edit',
-      label: translate('자세히보기'),
-      action: (row) => {
-        return (
-          <>
-            <IconButton onClick={() => {
-              router.push(`/shop/service/${router.query?.article_category}/${row?.id}`)
-            }}>
-              <Icon icon={row?.user_id == user?.id ? 'material-symbols:edit-outline' : 'bx:detail'} />
-            </IconButton>
-            {row?.user_id == user?.id &&
-              <>
-                <IconButton onClick={() => {
-                  setModal({
-                    func: () => { deletePost(row?.id) },
-                    icon: 'material-symbols:delete-outline',
-                    title: translate('정말 삭제하시겠습니까?')
-                  })
-                }}>
-                  <Icon icon='material-symbols:delete-outline' />
-                </IconButton>
-              </>}
-          </>
-        )
+    ...(postCategory?.is_able_user_add == 1 ? [
+      {
+        id: 'edit',
+        label: translate('관리'),
+        action: (row) => {
+          if (!(user?.id && row?.user_id == user?.id)) return null;
+          return (
+            <>
+              <IconButton onClick={() => { router.push(`/shop/service/${router.query?.article_category}/${row?.id}`) }}>
+                <Icon icon='material-symbols:edit-outline' />
+              </IconButton>
+              <IconButton onClick={() => { setModal({ func: () => { deletePost(row?.id) }, icon: 'material-symbols:delete-outline', title: translate('정말 삭제하시겠습니까?') }) }}>
+                <Icon icon='material-symbols:delete-outline' />
+              </IconButton>
+            </>
+          )
+        }
       }
-    },
+    ] : []),
   ]
   const {
     data: {

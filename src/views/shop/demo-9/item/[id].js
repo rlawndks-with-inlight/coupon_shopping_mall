@@ -1,5 +1,5 @@
 import styled from 'styled-components'
-import { Box, Tab, Tabs, Card, Grid, Divider, Typography, Button, Radio, FormControlLabel, Dialog, DialogTitle, DialogContent, MenuItem, FormControl, DialogActions, Stack, InputLabel, Select, TextField } from '@mui/material';
+import { Box, Tab, Tabs, Card, Grid, Divider, Typography, Button, Radio, FormControlLabel, Dialog, DialogTitle, DialogContent, MenuItem, FormControl, DialogActions, Stack, InputLabel, Select, TextField, Chip } from '@mui/material';
 import { useSettingsContext } from 'src/components/settings';
 import { ProductDetailsCarousel, ProductDetailsReview } from 'src/views/@dashboard/e-commerce/details';
 import { useEffect, useState } from 'react';
@@ -9,7 +9,7 @@ import { apiManager, apiShop } from 'src/utils/api';
 import { styled as muiStyle } from '@mui/material'
 import Head from 'next/head';
 import { Row } from 'src/components/elements/styled-components';
-import { commarNumber } from 'src/utils/function';
+import { commarNumber, getProductStatus } from 'src/utils/function';
 import { Icon } from '@iconify/react';
 import { insertCartDataUtil, insertWishDataUtil, selectItemOptionUtil } from 'src/utils/shop-util';
 import toast from 'react-hot-toast';
@@ -355,6 +355,7 @@ const ItemDemo = (props) => {
                         <ItemName style={{ whiteSpace: 'wrap', marginTop: '1rem', fontSize: '22px', fontWeight: 'bold', letterSpacing: '-1px' }}>
                           {product?.product_name}
                         </ItemName>
+                        <Chip size="small" sx={{ mt: 1, alignSelf: 'flex-start', fontWeight: 700 }} label={getProductStatus(product?.status).text} color={getProductStatus(product?.status).color || 'default'} variant="soft" />
                         <ItemCharacter
                           key_name={'판매가'}
                           value={<>
@@ -461,7 +462,7 @@ const ItemDemo = (props) => {
                       </div>
                       <Row style={{ columnGap: '0.5rem', alignItems: 'center', width: '100%' }}>
                         <Button
-                          disabled={product?.status != 0 || !(product?.product_sale_price > 0)}
+                          disabled={getProductStatus(product?.status).color != 'info' || !(product?.product_sale_price > 0)}
                           sx={{
                             width: '100%',
                             height: '60px',
@@ -486,7 +487,7 @@ const ItemDemo = (props) => {
                           }}
                         >장바구니</Button>
                         <Button
-                          disabled={product?.status != 0 || !(product?.product_sale_price > 0)}
+                          disabled={getProductStatus(product?.status).color != 'info' || !(product?.product_sale_price > 0)}
                           sx={{
                             width: '100%',
                             height: '60px',

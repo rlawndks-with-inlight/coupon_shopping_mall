@@ -14,6 +14,7 @@ import Slider from "react-slick";
 import { LazyLoadImage } from "react-lazy-load-image-component";
 import { useLocales } from "src/locales";
 import { formatLang } from "src/utils/format";
+import { ProductStatusBadge } from './ProductStatusBadge';
 
 const ItemName = styled.div`
 font-weight: 500;
@@ -48,6 +49,7 @@ width: 100%;
 height: 300px;
 margin: 0 auto;
 display: flex;
+position: relative;
 @media screen and (max-width:1700px){
   height:16vw; 
 }
@@ -100,6 +102,7 @@ export const Item6 = (props) => {
             }}
             >
                 <ItemImgContainer>
+                    <ProductStatusBadge status={item?.status} />
                     <ItemImg src={item?.product_img} onClick={() => {
                         if (item?.id) {
                             router.push(`/shop/item/${item?.id}${seller ? `?seller_id=${seller?.id}` : ''}`)

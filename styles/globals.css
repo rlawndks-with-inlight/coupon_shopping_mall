@@ -148,3 +148,11 @@ a {
   color: inherit;
   text-decoration: none;
 }
+
+/* 이미지 주소가 비어 있으면 요소 자체를 숨긴다.
+   로고 미등록 브랜드에서 헤더·푸터·로그인의 <img src={logoSrc()}> 가
+   '깨진 이미지' 아이콘이나 alt 텍스트로 보이던 문제 방지(기본 로고는 쓰지 않음).
+   src 가 빈 값인 다른 이미지도 어차피 깨져 보이므로 함께 숨겨진다. */
+img[src=""] {
+  display: none;
+}

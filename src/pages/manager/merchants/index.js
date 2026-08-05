@@ -101,7 +101,8 @@ const MerchantsPage = () => {
     setDetail({
       brand: {
         id: m.id, name: m.name, dns: m.dns, created_at: m.created_at,
-        admin_user_id: m.admin_user_id, admin_user_name: m.admin_user_name, admin_phone_num: m.admin_phone_num,
+        admin_user_id: m.admin_user_id, admin_user_name: m.admin_user_name,
+        admin_name: m.admin_name, admin_phone_num: m.admin_phone_num,
       },
     });
     setDetailLoading(true);
@@ -202,6 +203,17 @@ const MerchantsPage = () => {
                           <Typography variant="subtitle2" sx={{ userSelect: 'text' }}>
                             {m.admin_user_name || '-'}
                           </Typography>
+                          {/* 실명(name)은 '아이디 찾기'의 매칭 기준이라, 비어 있으면 그 계정은
+                              아이디 찾기가 불가능하다 → 눈에 띄게 표시해 본사가 바로 알아채도록 한다. */}
+                          {m.admin_name ? (
+                            <Typography variant="caption" sx={{ color: 'text.secondary', userSelect: 'text' }}>
+                              {m.admin_name}
+                            </Typography>
+                          ) : (
+                            <Typography variant="caption" sx={{ color: 'warning.main' }}>
+                              이름 없음
+                            </Typography>
+                          )}
                           <PhoneLink value={m.admin_phone_num} variant="caption" />
                         </Stack>
                         <Tooltip
@@ -364,9 +376,15 @@ const MerchantDetailDialog = ({ detail, loading, period, onClose }) => {
                   <Card variant="outlined" sx={{ p: 2 }}>
                     <Stack spacing={1}>
                       <Stack direction="row" justifyContent="space-between" spacing={2}>
-                        <Typography variant="body2" sx={{ color: 'text.secondary' }}>관리자 아이디</Typography>
-                        <Typography variant="subtitle2" sx={{ wordBreak: 'break-all', userSelect: 'text' }}>
+                        <Typography variant="body2" sx={{ color: 'text.secondary' }}>관리자 아이디 / 이름</Typography>
+                        <Typography variant="subtitle2" sx={{ wordBreak: 'break-all', userSelect: 'text', textAlign: 'right' }}>
                           {brand.admin_user_name || '-'}
+                          {/* 실명이 비면 아이디 찾기가 불가능한 계정이므로 눈에 띄게 표시 */}
+                          {brand.admin_user_name && (
+                            brand.admin_name
+                              ? <Box component="span" sx={{ color: 'text.secondary', fontWeight: 400 }}>{` / ${brand.admin_name}`}</Box>
+                              : <Box component="span" sx={{ color: 'warning.main', fontWeight: 400 }}> / 이름 없음</Box>
+                          )}
                         </Typography>
                       </Stack>
                       <Stack direction="row" justifyContent="space-between" spacing={2}>

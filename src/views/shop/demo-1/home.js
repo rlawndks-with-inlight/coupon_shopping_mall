@@ -16,6 +16,7 @@ import { getMainObjType } from 'src/utils/function'
 import HomeItemsPropertyGroups from 'src/views/section/shop/HomeItemsPropertyGroups'
 import HomeTextBanner from 'src/views/section/shop/HomeTextBanner'
 import HomeItemHero from 'src/views/section/shop/HomeItemHero'
+import { getDefaultHomeContent } from 'src/data/default-banners'
 
 
 const returnHomeContent = (column, data, func, demoType = 0) => {
@@ -64,19 +65,21 @@ const HomeDemo = (props) => {
       mainPageSetting();
     }
   }, [themeDnsData])
-  useEffect(() => {
-    if (contentList.length > 0) {
-      setLoading(false);
-    }
-  }, [contentList])
   const mainPageSetting = async () => {
     if (contentList.length > 0) {
       return;
     }
     let dns_data = themeDnsData;
     let content_list = (dns_data?.shop_obj) ?? [];
+    // 섹션이 하나도 없으면(신규 개설 직후) 기본 배너 구성으로 대체해 백지 홈을 막는다.
+    if (content_list.length <= 0) {
+      content_list = getDefaultHomeContent(dns_data?.shop_demo_num);
+    }
     setWindowWidth(window.innerWidth)
     setContentList(content_list)
+    // 스켈레톤은 '데이터 도착 전'에만 보여야 한다.
+    // (기존엔 contentList가 채워질 때만 해제 → 섹션 0개면 스켈레톤이 영구 표시됐음)
+    setLoading(false);
   }
 
   const returnHomeContentByColumn = (column, idx, type = 0) => {

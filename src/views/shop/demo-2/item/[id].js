@@ -99,14 +99,11 @@ const ItemDemo = (props) => {
     setSelectProductGroups(select_product_groups);
   }
 
+  // 비회원도 장바구니 담기 허용(아래 handleBuyNow와 동일 정책).
   const handleAddCart = async () => {
-    if (user) {
-      let result = await insertCartDataUtil({ ...product, seller_id: themeDnsData?.seller_id ?? 0 }, selectProductGroups, themeCartData, onChangeCartData);
-      if (result) {
-        toast.success("장바구니에 추가되었습니다.");
-      }
-    } else {
-      toast.error('로그인을 해주세요.');
+    let result = await insertCartDataUtil({ ...product, seller_id: themeDnsData?.seller_id ?? 0 }, selectProductGroups, themeCartData, onChangeCartData);
+    if (result) {
+      toast.success("장바구니에 추가되었습니다.");
     }
   }
 

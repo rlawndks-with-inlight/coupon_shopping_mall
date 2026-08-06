@@ -9,6 +9,8 @@ import { useSettingsContext } from "src/components/settings"
 import { useRouter } from "next/router"
 import { TreeItem, TreeView } from "@mui/lab"
 import { getAllIdsWithParents } from "src/utils/function"
+import { formatLang } from "src/utils/format"
+import { useLocales } from "src/locales"
 import DialogSearch from "src/components/dialog/DialogSearch"
 import { useAuthContext } from "src/layouts/manager/auth/useAuthContext"
 import { logoSrc } from "src/data/data"
@@ -177,8 +179,13 @@ const DialogMenuTitle = styled.div`
 color:#fff;
 border-bottom: 1px solid #fff;
 padding: 0.5rem;
-font-size: 2rem;
+/* 기존 2rem(32px)은 카테고리가 몇 개만 있어도 화면을 잡아먹어 '너무 크다'는 피드백을 받았다. */
+font-size: 1.25rem;
 font-weight: bold;
+cursor: pointer;
+@media (max-width:1000px) {
+  font-size: 1.05rem;
+}
 `
 const DialogMenuContent = styled.div`
 color:#fff;
@@ -201,10 +208,11 @@ const authList = [
     name: '찜목록',
     link_key: 'wish'
   },
-  {
+  // 포인트 비노출 — 적립·차감이 완성되지 않아 항상 0 P 로만 보인다(demo-5 헤더와 동일 처리).
+  /*{
     name: '포인트내역',
     link_key: 'point'
-  },
+  },*/
   {
     name: '주문내역',
     link_key: 'history'
@@ -235,6 +243,7 @@ const Header = () => {
   const { themeMode, onToggleMode, onChangeCartData, onChangeWishData, themePostCategoryList, themeCategoryList } = useSettingsContext();
   const headerCategories = (themeCategoryList ?? []).flatMap((g) => g?.product_categories ?? []);
   const { user, logout } = useAuthContext();
+  const { currentLang } = useLocales();
   const [keyword, setKeyword] = useState("");
   const onSearch = () => {
     router.push(`/shop/search?keyword=${keyword}`)
@@ -434,7 +443,9 @@ const Header = () => {
                   router.push('/shop')
                 }}
               />
-              <NoneShowMobile>
+              {/* 검색순위 블록(아래 주석)을 내리면서 우측을 채우던 marginLeft:auto 요소가 사라졌다.
+                  PC에서 검색창·아이콘 묶음이 좌측에 몰리지 않도록 여기서 우측 정렬을 받는다. */}
+              <NoneShowMobile style={{ marginLeft: 'auto' }}>
                 <TextField
                   label='통합검색'
                   id='size-small'
@@ -478,11 +489,9 @@ const Header = () => {
                 <IconButton
                   sx={{ ...iconButtonStyle, marginRight: '0.5rem' }}
                   onClick={() => {
-                    if (user) {
-                      router.push(`/shop/auth/cart`)
-                    } else {
-                      router.push(`/shop/auth/login`)
-                    }
+                    // 장바구니는 비회원도 사용한다(localStorage 저장 + 주문서가 비회원 주문 지원).
+                    // 기존엔 비회원을 로그인으로 튕겨 비회원 구매 자체가 불가능했다. 찜하기는 회원 전용 유지.
+                    router.push(`/shop/auth/cart`)
                   }}
                 >
                   <Icon icon={'ph:shopping-bag-open-thin'} fontSize={'2.8rem'} color={themeMode == 'dark' ? '#fff' : '#000'} />
@@ -494,6 +503,10 @@ const Header = () => {
                   <Icon icon={themeMode === 'dark' ? 'ph:sun-thin' : 'ph:moon-stars-thin'} fontSize={'2.8rem'} color={themeMode == 'dark' ? '#fff' : '#000'} />
                 </IconButton>
               </NoneShowMobile>
+              {/* 실시간 검색순위 — '티셔츠/바지/양말'이 하드코딩된 데모용 UI라 비노출 처리.
+                  실제 검색어 집계 기능이 아니라 고정 문자열 3개를 돌리는 것이었음.
+                  되살리려면 아래 주석과 상단 ranking_text_list 를 함께 복구할 것. */}
+              {/*
               <NoneShowMobile style={{ marginLeft: 'auto' }}>
                 <div>
                   <Slider {...text_setting} style={{ width: '200px' }}>
@@ -508,6 +521,7 @@ const Header = () => {
                   </Slider>
                 </div>
               </NoneShowMobile>
+              */}
               <ShowMobile style={{ marginLeft: 'auto' }}>
                 <IconButton
                   sx={iconButtonStyle}
@@ -524,11 +538,9 @@ const Header = () => {
                 <IconButton
                   sx={iconButtonStyle}
                   onClick={() => {
-                    if (user) {
-                      router.push(`/shop/auth/cart`)
-                    } else {
-                      router.push(`/shop/auth/login`)
-                    }
+                    // 장바구니는 비회원도 사용한다(localStorage 저장 + 주문서가 비회원 주문 지원).
+                    // 기존엔 비회원을 로그인으로 튕겨 비회원 구매 자체가 불가능했다. 찜하기는 회원 전용 유지.
+                    router.push(`/shop/auth/cart`)
                   }}
                 >
                   <Icon icon={'ph:shopping-bag-open-thin'} fontSize={'1.8rem'} color={themeMode == 'dark' ? '#fff' : '#000'} />
@@ -660,16 +672,23 @@ const Header = () => {
           <Icon icon={'mdi:close-box'} style={{ fontSize: '50px', color: '#fff' }} />
         </div>
         <Col style={{ width: '90vw', background: 'transparent', maxHeight: '55vh', overflowY: 'auto' }} className="none-scroll">
-          {themeCategoryList.map((group, index) => (
+          {/* 전체메뉴는 '대분류(최상위 카테고리) → 하위' 로 보여준다.
+              기존엔 카테고리 그룹 이름을 제목으로 찍었는데, 그룹은 원래 '분류축'이라
+              가맹점이 만든 대분류가 화면에 드러나지 않았다. 단일 트리 전환 후에는
+              그룹이 '카테고리' 하나로 합성되어 제목이 무의미해지기도 한다. */}
+          {headerCategories.map((category, index) => (
             <>
-              <DialogMenuTitle>{group?.category_group_name}</DialogMenuTitle>
+              <DialogMenuTitle onClick={() => {
+                router.push(`/shop/items?category_id=${category?.id}`);
+                setDialogMenuOpen(false);
+              }}>{formatLang(category, 'category_name', currentLang)}</DialogMenuTitle>
               <Row style={{ flexWrap: 'wrap', padding: '0.5rem', columnGap: '1rem', rowGap: '1rem' }}>
-                {group?.product_categories && group?.product_categories.map((category) => (
+                {category?.children && category?.children.map((child) => (
                   <>
                     <DialogMenuContent onClick={() => {
-                      router.push(`/shop/items?category_id=${category?.id}`);
+                      router.push(`/shop/items?category_id=${child?.id}`);
                       setDialogMenuOpen(false);
-                    }}>{category?.category_name}</DialogMenuContent>
+                    }}>{formatLang(child, 'category_name', currentLang)}</DialogMenuContent>
                   </>
                 ))}
               </Row>

@@ -15,6 +15,7 @@ import { apiShop } from "src/utils/api";
 import { formatLang } from "src/utils/format";
 import ReactQuillComponent from "src/views/manager/react-quill";
 import styled from "styled-components";
+import PostDate from 'src/components/elements/shop/PostDate';
 const ReactQuill = dynamic(() => import('react-quill'), {
   ssr: false,
   loading: () => <p>Loading ...</p>,
@@ -180,6 +181,7 @@ const ArticleDemo = (props) => {
                         <Typography variant='h5' sx={{ fontWeight: 700, wordBreak: 'break-all' }}>
                           {formatLang(item, 'post_title', currentLang)}
                         </Typography>
+                        <PostDate value={item?.created_at} style={{ marginTop: '0.35rem' }} />
                       </Box>
                       <Divider />
                       {item?.post_title_img &&

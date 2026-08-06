@@ -6,6 +6,7 @@ import { useSettingsContext } from 'src/components/settings';
 import { useModal } from 'src/components/dialog/ModalProvider';
 import { apiManager } from 'src/utils/api';
 import { isShopgoMerchant } from 'src/utils/is-shopgo';
+import { HOME_TEXT_SCHEMA } from 'src/data/home-texts';
 
 // 신규 가맹점 온보딩 체크리스트 — 대시보드 상단.
 // 완료 여부는 이미 로드된 데이터로 자동 감지(표시용). 필수 완료로 "자동으로 사라지지는 않음".
@@ -23,6 +24,12 @@ const OnboardingChecklist = () => {
   // 대표 상품 지정은 단일/소수 상품 데모(블로그 4~9, useFeaturedProduct 사용)만 해당.
   // 섹션 빌더형(블로그 1·2·3)은 blog_obj로 상품 배치 → 대표상품 무관.
   const isSingleProductBlog = [4, 5, 6, 7, 8, 9].includes(Number(dns.blog_demo_num));
+  // 메인페이지관리(섹션 편집)가 존재하는 데모인지. 고정 레이아웃 데모는 편집 대상이 없으므로
+  // '메인페이지 꾸미기'를 띄우면 영영 미완료로 남고 클릭해도 메뉴가 없다. → 홈 문구로 대체.
+  // shop 4·5·6·9는 HomeDemo1을 감싸는 구조라 shop_obj를 쓴다(= 섹션빌더). shop 7·8·10, blog 4~9는 고정 레이아웃.
+  const isSectionBuilder = [1, 2, 3, 4, 5, 6, 9].includes(Number(dns.shop_demo_num))
+    || [1, 2, 3].includes(Number(dns.blog_demo_num));
+  const hasHomeTexts = Object.keys(HOME_TEXT_SCHEMA).map(Number).includes(Number(dns.blog_demo_num));
 
   const catDone = (themeCategoryList ?? []).some((g) => (g?.product_categories?.length ?? 0) > 0);
   // 마이그레이션 브랜드는 합성 그룹 id=0(falsy) 이므로 존재 여부로 판단(?? 0 로 0 도 유효 라우팅).
@@ -40,10 +47,11 @@ const OnboardingChecklist = () => {
       { key: 'product', label: '상품 등록', tag: '필수', required: true, done: (dns?.products?.length ?? 0) > 0, route: '/manager/products/list', note: catDone ? '' : '카테고리를 먼저 등록하세요' },
       ...(isSingleProductBlog ? [{ key: 'featured', label: '대표 상품 지정', tag: '조건부', done: (so?.featured_product_ids?.length ?? 0) > 0, route: '/manager/designs/featured' }] : []),
       { key: 'payment', label: '결제수단 연결', tag: '필수', required: true, hqManaged: true, done: (dns?.payment_modules?.length ?? 0) > 0 },
-      { key: 'design', label: '메인페이지 꾸미기', tag: '권장', done: ((dns?.shop_obj?.length ?? 0) + (dns?.blog_obj?.length ?? 0)) > 0, route: isBlog && !isShop ? '/manager/designs/blog-main/all' : '/manager/designs/main/all' },
+      ...(isSectionBuilder ? [{ key: 'design', label: '메인페이지 꾸미기', tag: '권장', done: ((dns?.shop_obj?.length ?? 0) + (dns?.blog_obj?.length ?? 0)) > 0, route: isBlog && !isShop ? '/manager/designs/blog-main/all' : '/manager/designs/main/all' }] : []),
+      ...(!isSectionBuilder && hasHomeTexts ? [{ key: 'home-texts', label: '홈 화면 문구 작성', tag: '권장', note: '미입력 시 기본 문구', done: Object.keys(so?.home_texts ?? {}).length > 0, route: '/manager/designs/home-texts' }] : []),
     ];
     return list;
-  }, [dns, so, themeCategoryList, catDone, catRoute, isBlog, isShop, isSingleProductBlog]);
+  }, [dns, so, themeCategoryList, catDone, catRoute, isBlog, isShop, isSingleProductBlog, isSectionBuilder, hasHomeTexts]);
 
   const doneCount = steps.filter((s) => s.done).length;
   const requiredAllDone = steps.filter((s) => s.required).every((s) => s.done);
@@ -102,7 +110,8 @@ const OnboardingChecklist = () => {
               <Stack direction="row" alignItems="center" spacing={1} sx={{ minWidth: 0 }}>
                 <Icon icon={statusIcon.icon} color={statusIcon.color} width={20} height={20} />
                 <Box sx={{ minWidth: 0 }}>
-                  <Typography sx={{ fontSize: 14, fontWeight: s.done ? 400 : 600, color: s.done ? '#999' : '#222', textDecoration: s.done ? 'line-through' : 'none' }}>
+                  {/* 완료 항목은 취소선 대신 색만 옅게 — 취소선은 '더는 못 고친다'는 인상을 준다. */}
+                  <Typography sx={{ fontSize: 14, fontWeight: s.done ? 400 : 600, color: s.done ? '#9a9aa2' : '#222' }}>
                     <Box component="span" sx={{ fontSize: 11, fontWeight: 700, color: s.tag === '필수' ? '#d33' : '#aaa', mr: 0.75 }}>[{s.tag}]</Box>
                     {s.label}
                   </Typography>
@@ -111,14 +120,22 @@ const OnboardingChecklist = () => {
                   )}
                 </Box>
               </Stack>
-              {s.done ? (
-                <Typography sx={{ fontSize: 12, color: mainColor, whiteSpace: 'nowrap', pl: 1 }}>완료</Typography>
-              ) : s.hqManaged ? (
+              {/* 완료 항목도 '완료' 표시는 유지하되 수정 버튼을 함께 둔다.
+                  기존엔 완료되면 버튼이 사라져 배송비·회사정보 등을 다시 고치러 갈 길이 막혔다.
+                  본사가 처리하는 항목(결제수단)은 가맹점이 손댈 수 없으므로 버튼 없이 상태만 표시. */}
+              {s.hqManaged && !s.done ? (
                 <Typography sx={{ fontSize: 12, color: '#f0a020', whiteSpace: 'nowrap', pl: 1 }}>본사 연결 대기중</Typography>
               ) : (
-                <Button size="small" variant="outlined" onClick={() => router.push(s.route)} sx={{ whiteSpace: 'nowrap', ml: 1 }}>
-                  바로가기
-                </Button>
+                <Stack direction="row" alignItems="center" spacing={1} sx={{ pl: 1 }}>
+                  {s.done && (
+                    <Typography sx={{ fontSize: 12, color: mainColor, whiteSpace: 'nowrap' }}>완료</Typography>
+                  )}
+                  {s.route && (
+                    <Button size="small" variant="outlined" onClick={() => router.push(s.route)} sx={{ whiteSpace: 'nowrap' }}>
+                      {s.done ? '수정' : '바로가기'}
+                    </Button>
+                  )}
+                </Stack>
               )}
             </Stack>
           );

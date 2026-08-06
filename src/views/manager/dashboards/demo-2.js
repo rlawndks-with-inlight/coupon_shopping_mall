@@ -259,7 +259,9 @@ export const DashboardDemo2 = () => {
                                 series: getPercentByNumber(data?.trx_sum, data?.is_cancel),
                             }}
                             onClick={() => {
-                                router.push(`/manager/orders/trx-cancel/5`)
+                                // 위젯 라벨이 '취소완료'인데 /5(취소요청+취소완료 전체)로 보내
+                                // 좌측 메뉴의 '취소완료'(/2)와 결과가 달랐다. 메뉴와 같은 /2 로 맞춘다.
+                                router.push(`/manager/orders/trx-cancel/2`)
                             }}
                         />
                     </Grid>

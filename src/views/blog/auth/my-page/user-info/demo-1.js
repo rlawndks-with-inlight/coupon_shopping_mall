@@ -305,7 +305,7 @@ const Demo1 = (props) => {
           {authMode === 'resign' &&
             <div style={{ display: 'flex', flexDirection: 'column', marginTop: '1rem' }}>
               <Typography style={{ color: 'gray', marginBottom: '0.5rem' }}>
-                회원 탈퇴를 하시면 포인트와 혜택을 더 이상 이용하실 수 없습니다. 계속하시려면 비밀번호를 입력해주세요.
+                회원 탈퇴를 하시면 회원 혜택을 더 이상 이용하실 수 없습니다. 계속하시려면 비밀번호를 입력해주세요.
               </Typography>
               <TextField
                 type='password'

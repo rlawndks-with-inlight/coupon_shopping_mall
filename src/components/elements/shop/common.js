@@ -240,6 +240,16 @@ export const HistoryTable = props => {
       onChangePage(searchObj)
     }
   }
+  // 취소 요청이 가능한 주문 상태. 백엔드 cancelRequest 의 CANCELABLE_STATUS 와 같은 값을 유지할 것.
+  // 0=결제대기, 5=결제완료, 10=입고 까지만 취소 가능. 출고(15) 이후는 반품 절차.
+  // 기존에는 상태와 무관하게 버튼이 떠서, 배송완료된 주문에도 취소 아이콘이 보였다.
+  const CANCELABLE_STATUS = [0, 5, 10];
+  const canCancel = row => (
+    row?.is_cancel != 1
+    && row?.is_cancel_trans != 1
+    && row?.trx_status != 1
+    && CANCELABLE_STATUS.includes(Number(row?.trx_status))
+  );
   //console.log(historyContent)
   return (
     <>
@@ -393,26 +403,30 @@ export const HistoryTable = props => {
                     }
                     <TableCell>
                       <Box sx={{ textAlign: 'right', color: 'text.secondary' }}>
-                        {row?.is_cancel == 1 || row?.trx_status == 1 ? (
-                          <>---</>
+                        {row?.is_cancel == 1 || row?.is_cancel_trans == 1 ? (
+                          <>{translate('취소완료')}</>
+                        ) : row?.trx_status == 1 ? (
+                          <>{translate('취소요청됨')}</>
+                        ) : canCancel(row) ? (
+                          <Button
+                            size='small'
+                            variant='outlined'
+                            color='error'
+                            startIcon={<Icon icon='material-symbols:cancel-outline' />}
+                            onClick={() => {
+                              setModal({
+                                func: () => {
+                                  onPayCancelRequest(row)
+                                },
+                                icon: 'material-symbols:cancel-outline',
+                                title: translate('주문취소요청 하시겠습니까?')
+                              })
+                            }}
+                          >
+                            {translate('취소요청')}
+                          </Button>
                         ) : (
-                          <>
-                            <IconButton>
-                              <Icon
-                                icon='material-symbols:cancel-outline'
-                                onClick={() => {
-                                  setModal({
-                                    func: () => {
-                                      onPayCancelRequest(row)
-                                    },
-                                    icon: 'material-symbols:cancel-outline',
-                                    title: translate('주문취소요청 하시겠습니까?')
-                                  })
-                                  //console.log(row)
-                                }}
-                              />
-                            </IconButton>
-                          </>
+                          <>---</>
                         )}
                       </Box>
                     </TableCell>
@@ -497,9 +511,12 @@ export const AddressTable = props => {
                     <TableCell>{row?.addr}</TableCell>
                     <TableCell>{row?.detail_addr}</TableCell>
                     <TableCell align='right'>
-                      <Button variant="outlined" style={{ marginLeft: 'auto', marginRight: '1rem' }} onClick={() => onUpdate(row?.id)}>
-                        수정
-                      </Button>
+                      {/* onUpdate 를 안 넘기는 화면(shop demo-1·2 마이페이지)이 있어
+                          누르면 undefined 호출로 크래시했다. 넘어온 경우에만 버튼을 그린다. */}
+                      {onUpdate &&
+                        <Button variant="outlined" style={{ marginLeft: 'auto', marginRight: '1rem' }} onClick={() => onUpdate(row?.id)}>
+                          수정
+                        </Button>}
                       <IconButton onClick={() => onDelete(row?.id)}>
                         <Icon icon='eva:trash-2-outline' />
                       </IconButton>

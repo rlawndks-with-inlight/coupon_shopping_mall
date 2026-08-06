@@ -20,6 +20,10 @@ const getDemo = (num, common) => {
         return <Demo4 {...common} />
     else if (num == 5)
         return <Demo5 {...common} />
+    // blog_demo_num 6~9(프레임8~11)는 전용 화면이 없다. 폴백이 없으면 undefined 를 반환해
+    // 헤더/푸터만 남고 본문이 백지가 되므로, 기능이 갖춰진 demo-2 로 떨어뜨린다.
+    else
+        return <Demo2 {...common} />
 }
 const Inquiry = () => {
     const router = useRouter();

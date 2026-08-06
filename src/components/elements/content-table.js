@@ -72,6 +72,15 @@ const ContentTable = (props) => {
       onChangePage({ ...searchObj });
     }
   }
+  // 제목뿐 아니라 행(칸) 전체를 눌러도 상세로 들어가게 한다.
+  // '관리' 칸의 수정/삭제 아이콘까지 같이 눌리면 안 되므로, 버튼·링크·입력 위에서 시작된
+  // 클릭은 무시한다(수정 버튼은 자기 라우팅, 삭제 버튼은 확인 모달을 각자 처리).
+  const onRowClick = (e, row) => {
+    if (e?.target?.closest?.('button, a, input, textarea, select, [role="button"]')) return;
+    const categoryId = postCategory?.id ?? router.query?.article_category;
+    if (categoryId === undefined || categoryId === null || !row?.id) return;
+    router.push(`/shop/service/${categoryId}/${row?.id}/`);
+  }
   return (
     <>
 
@@ -96,7 +105,10 @@ const ContentTable = (props) => {
                       ))}
                     </Tr>
                     {data?.content && data?.content.map((row, index) => (
-                      <Tr style={{ color: `${themeMode == 'dark' ? '#fff' : themeObj.grey[700]}` }}>
+                      <Tr
+                        style={{ color: `${themeMode == 'dark' ? '#fff' : themeObj.grey[700]}`, cursor: 'pointer' }}
+                        onClick={(e) => onRowClick(e, row)}
+                      >
                         {columns && columns.map((col, idx) => (
                           <>
                             <Td align="left" sx={{ ...col.sx }}>{col.action(row)}</Td>

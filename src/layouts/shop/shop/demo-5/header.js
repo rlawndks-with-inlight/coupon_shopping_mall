@@ -842,7 +842,10 @@ const Header = () => {
                         </>*/}
                     {themeCategoryList && themeCategoryList.map((group, index) => (
                         <>
-                            <ColumnMenuTitle>{formatLang(group, 'category_group_name', currentLang)}</ColumnMenuTitle>
+                            {/* 그룹이 여러 개일 때만 구분용 제목을 낸다.
+                                단일 트리 전환 브랜드는 합성 그룹 1개('카테고리')뿐이라 제목이 군더더기가 된다. */}
+                            {themeCategoryList.length > 1 &&
+                                <ColumnMenuTitle>{formatLang(group, 'category_group_name', currentLang)}</ColumnMenuTitle>}
                             <TreeView
                                 defaultCollapseIcon={<Icon icon={'ic:baseline-minus'} />}
                                 defaultExpandIcon={<Icon icon={'ic:baseline-plus'} />}

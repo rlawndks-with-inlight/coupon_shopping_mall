@@ -127,7 +127,7 @@ const Demo5 = (props) => {
                         </>
                         :
                         <>
-                            <SubTitle>회원가입하고<br />셀러 별 포인트를 사용해보세요!</SubTitle>
+                            <SubTitle>회원가입하고<br />주문내역을 간편하게 확인해보세요!</SubTitle>
                             <Button
                                 variant='contained'
                                 color='primary'

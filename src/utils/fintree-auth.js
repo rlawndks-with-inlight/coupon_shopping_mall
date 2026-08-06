@@ -5,6 +5,7 @@ import Button from '@mui/material/Button';
 import { useSettingsContext } from 'src/components/settings';
 import { makePayData } from './shop-util';
 import toast from 'react-hot-toast';
+import { makeOrdNum } from 'src/utils/function';
 
 const PayProductsByAuthFintree = ({ props }) => {
     const scriptRef = useRef(null);
@@ -22,7 +23,9 @@ const PayProductsByAuthFintree = ({ props }) => {
 
     //let products = products_;
     //let payData = payData_;
-    let ord_num = `${user_id}${new Date().getTime().toString().substring(0, 11)}`
+    // 주문번호는 컴포넌트가 살아있는 동안 고정이어야 한다.
+    // 본문에서 매 렌더 재생성하면 PG 로 보낸 ordNo 와 세션·DB 저장값이 어긋난다.
+    const [ord_num] = useState(() => makeOrdNum());
     let mid = 'chchhh001m'//'fintrtst1m' 테스트키
     //let id = 'hamonyshop', 
     // tid = 'tester', '
@@ -36,8 +39,11 @@ const PayProductsByAuthFintree = ({ props }) => {
         const pay_data = await makePayData(productArray, payData);
 
         const pay_data_ = {
+            // 위 26행에서 만든 ord_num 을 그대로 쓴다.
+            // 여기서 다시 생성하면 PG 로 보내는 주문번호(ordNo)와 세션·DB 에 남는 주문번호가
+            // 서로 달라져 결제 콜백·정산 대사에서 주문을 못 찾는다.
             ...pay_data,
-            ord_num: `${pay_data?.user_id || pay_data?.password}${new Date().getTime().toString().substring(0, 11)}`,
+            ord_num,
         }
         if (pay_data_?.products?.length > 1 || !pay_data_?.item_name) {
             pay_data_.item_name = pay_data_?.products?.length > 1 ? `${pay_data_?.products[0]?.order_name} 외 ${pay_data_?.products?.length - 1}건` : (pay_data_?.products[0]?.order_name || '상품');

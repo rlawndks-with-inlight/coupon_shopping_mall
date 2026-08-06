@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 import { Box, Button, Card, CardContent, CardHeader, Divider, Stack, Typography } from '@mui/material';
 import { Icon } from '@iconify/react';
 import ShopLayout from 'src/layouts/shop/ShopLayout';
+import { useSettingsContext } from 'src/components/settings';
 import styled from 'styled-components';
 
 const Wrappers = styled.div`
@@ -24,6 +25,8 @@ const KV = ({ k, v, strong }) => (
 // 외부 PG 결제는 기존 /shop/auth/pay-result 가 처리한다.
 const OrderComplete = () => {
   const router = useRouter();
+  const { themeDnsData } = useSettingsContext();
+  const isBlogOnly = !(themeDnsData?.shop_demo_num > 0) && themeDnsData?.blog_demo_num > 0;
   const [order, setOrder] = useState(null);
 
   useEffect(() => {
@@ -105,9 +108,12 @@ const OrderComplete = () => {
         </Card>
       )}
 
+      {/* 블로그 전용 브랜드(shop_demo_num=0)는 /shop/* 경로가 없다.
+          기존엔 무조건 /shop 과 /shop/auth/history 로 보내서, 결제 직후 가장 많이 눌리는
+          '주문내역 보기'가 백지(새로고침 시 404)가 됐다. 브랜드 유형에 맞는 경로로 보낸다. */}
       <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1.5}>
-        <Button fullWidth variant="outlined" color="inherit" onClick={() => router.push('/shop')}>쇼핑 계속하기</Button>
-        <Button fullWidth variant="contained" onClick={() => router.push('/shop/auth/history')}>주문내역 보기</Button>
+        <Button fullWidth variant="outlined" color="inherit" onClick={() => router.push(isBlogOnly ? '/blog' : '/shop')}>쇼핑 계속하기</Button>
+        <Button fullWidth variant="contained" onClick={() => router.push(isBlogOnly ? '/blog/auth/my-page/order' : '/shop/auth/history')}>주문내역 보기</Button>
       </Stack>
     </Wrappers>
   );

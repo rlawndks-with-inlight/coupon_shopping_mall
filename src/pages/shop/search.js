@@ -22,8 +22,10 @@ const getDemo = (num, common) => {
     return <SearchDemo2 {...common} />
   else if (num == 3)
     return <SearchDemo3 {...common} />
+  // demo-4·demo-9 의 검색 뷰는 443B 빈 스텁(return <></>)이라 헤더 검색 버튼을 눌러도 백지였다.
+  // 프레임3(shop:4)이 실사용 중이므로 같은 계열 헤더를 쓰는 demo-5 구현으로 대체한다.
   else if (num == 4)
-    return <SearchDemo4 {...common} />
+    return <SearchDemo5 {...common} />
   else if (num == 5)
     return <SearchDemo5 {...common} />
   else if (num == 6)
@@ -33,9 +35,11 @@ const getDemo = (num, common) => {
   else if (num == 8)
     return <SearchDemo8 {...common} />
   else if (num == 9)
-    return <SearchDemo9 {...common} />
+    return <SearchDemo5 {...common} />
   /*else if (num == 10)
     return <SearchDemo10 {...common} />*/
+  else
+    return <SearchDemo1 {...common} />
 }
 const Search = () => {
   const router = useRouter();

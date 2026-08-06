@@ -8,7 +8,7 @@ import toast from "react-hot-toast";
 import { useModal } from "src/components/dialog/ModalProvider";
 import ContentTable from "src/components/elements/content-table";
 import { AuthMenuSideComponent, ContentWrappers, TitleComponent } from "src/components/elements/shop/demo-5";
-import { RowMobileReverceColumn } from "src/components/elements/styled-components";
+import { RowMobileReverceColumn, themeObj } from "src/components/elements/styled-components";
 import { useSettingsContext } from "src/components/settings";
 import { useAuthContext } from "src/layouts/manager/auth/useAuthContext";
 import { apiShop } from "src/utils/api";
@@ -56,6 +56,17 @@ const ArticlesDemo = (props) => {
         }
       }
     ] : []),
+    {
+      id: 'created_at',
+      label: '작성일',
+      action: (row) => {
+        return <>
+          <div style={{ color: themeObj.grey[500] }}>
+            {row['created_at'] ?? "---"}
+          </div>
+        </>
+      }
+    },
     ...((postCategory?.is_able_user_add == 1 && postCategory?.post_category_read_type == 1) ? [
       {
         id: 'replies',

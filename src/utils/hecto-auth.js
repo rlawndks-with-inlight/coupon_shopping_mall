@@ -3,6 +3,7 @@ import { encryptAES256, decryptAES256 } from './encryption';
 import { sha256 } from 'js-sha256'
 import Button from '@mui/material/Button';
 import { useSettingsContext } from 'src/components/settings';
+import { makeOrdNum } from 'src/utils/function';
 
 const PayProductsByAuthHecto = ({ props }) => {
     const scriptRef = useRef(null);
@@ -20,7 +21,10 @@ const PayProductsByAuthHecto = ({ props }) => {
 
     //let products = products_;
     //let payData = payData_;
-    let ord_num = `${user_id}${new Date().getTime().toString().substring(0, 11)}`
+        // 주문번호는 컴포넌트가 살아있는 동안 고정이어야 한다.
+    // 본문에서 매 렌더 재생성하면 PG 로 보낸 값과 서명(pktHash)·저장값이 어긋난다.
+    // (기존 타임스탬프 방식은 100ms 해상도라 우연히 같아 보였을 뿐이다)
+    const [ord_num] = useState(() => makeOrdNum());
     let mid = 'nxca_jt_il'
     //let id = 'hamonyshop', 
     // tid = 'tester', 

@@ -98,18 +98,14 @@ export default function ProductDetailsSummary({ product, onAddCart, onGotoStep, 
     price_lang = 'ko'
   } = product;
 
+  // 비회원도 장바구니 담기 허용 — 장바구니는 localStorage에 저장되고 주문서가 비회원 주문을 지원한다.
+  // 바로 아래 handleBuyNow는 이미 비회원에게 열려 있었는데 담기만 로그인을 요구해 앞뒤가 안 맞았다.
   const handleAddCart = async () => {
     //옵션 체크 안해도 저장 되는데 이 부분은 수정할 여지가 있어보임
-    if (user) {
-      let result = await insertCartDataUtil({ ...product, seller_id: router.query?.seller_id ?? 0 }, selectProductGroups, themeCartData, onChangeCartData);
-      if (result) {
-        toast.success(translate("장바구니에 성공적으로 추가되었습니다."))
-        window.location.reload()
-      }
-    } else {
-      toast.error(<PointerText onClick={() => router.push('/shop/auth/login')}>{translate('로그인을 해주세요.')}</PointerText>);
+    let result = await insertCartDataUtil({ ...product, seller_id: router.query?.seller_id ?? 0 }, selectProductGroups, themeCartData, onChangeCartData);
+    if (result) {
+      toast.success(translate("장바구니에 성공적으로 추가되었습니다."))
     }
-
   };
   const onSelectOption = (group, option, is_option_multiple) => {
     let select_product_groups = selectItemOptionUtil(group, option, selectProductGroups, is_option_multiple);

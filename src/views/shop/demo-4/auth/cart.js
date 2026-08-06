@@ -383,7 +383,12 @@ const CartDemo = (props) => {
       />
       <Wrappers>
         <Title>장바구니</Title>
-        <CheckoutSteps activeStep={activeStep} steps={STEPS} />
+        {/* 3단계 진행바 비노출.
+                    결제가 공용 주문서(/shop/auth/order)로 분리되면서 이 화면은 '장바구니 확인' 한 단계로 끝난다.
+                    activeStep 은 0 에서 변하지 않으므로(0단계 버튼이 곧바로 주문서로 이동)
+                    '배송지 확인 / 결제하기' 가 계속 남아 있어 다음 단계가 있는 것처럼 보였다.
+                    아래 activeStep==1·2 블록은 되살릴 여지를 남겨 그대로 둔다. */}
+                {false && <CheckoutSteps activeStep={activeStep} steps={STEPS} />}
         <Grid container spacing={3}>
           <Grid item xs={12} md={8}>
             {activeStep == 0 &&

@@ -62,15 +62,16 @@ const Demo2 = (props) => {
         };
     }, []);
     useEffect(() => {
-        if (router.query?.keyword) {
-            setKeyword(router.query?.keyword);
-            settingPage({
-                page: 1,
-                page_size: 15,
-                search: router.query?.keyword,
-            }, true);
-        }
-    }, [router.query])
+        if (!router.isReady) return;
+        setKeyword(router.query?.keyword ?? '');
+        // 키워드 없이 들어오면(헤더 검색 아이콘 → 빈 검색) 전체 상품을 보여준다.
+        // 기존엔 keyword 가 있을 때만 조회해서, 없으면 loading=true 인 채로 스피너가 영구 표시됐다.
+        settingPage({
+            page: 1,
+            page_size: 15,
+            search: router.query?.keyword ?? '',
+        }, true);
+    }, [router.isReady, router.query?.keyword])
     const settingPage = async (search_obj, is_first) => {
         if (is_first) {
             setLoading(true);

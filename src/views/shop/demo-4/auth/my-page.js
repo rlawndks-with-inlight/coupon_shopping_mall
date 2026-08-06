@@ -255,18 +255,19 @@ const MyPageDemo = (props) => {
                   안녕하세요 :)
                 </div>
                 <Row>
-                  <div style={{ textAlign: 'right', marginRight: '2rem', fontSize: '1rem' }}>
-                    포인트<br /><br />
-                    <span style={{ fontFamily: 'Playfair Display', }}>
-                      {commarNumber(user?.point)} P
-                    </span>
-                  </div>
-                  <div style={{ textAlign: 'right', marginRight: '2rem', fontSize: '1rem' }}>
-                    위탁상품관리<br /><br />
-                    <span style={{ fontFamily: 'Playfair Display', }}>
-                      {commarNumber(userInfo?.consignment_products?.length)}개
-                    </span>
-                  </div>
+                  {/* 포인트 비노출 — 신규 가맹점은 point_rate 기본값이 0 이라 적립이 일어나지 않고,
+                      가맹점 관리자(레벨40)는 포인트 설정을 켤 수도 없다(설정 탭이 레벨50 전용).
+                      게다가 사용분을 points 테이블에서 차감하는 코드가 없어(pay.controller 의 INSERT 4곳이 전부 적립)
+                      켜는 순간 같은 포인트를 무한 재사용할 수 있다. 기능이 완성되기 전에는 노출하지 않는다. */}
+                  {/* 위탁을 쓰지 않는 가맹점(setting_obj.is_use_consignment != 1)에는 숨긴다.
+                      백엔드가 consignment_products 를 아예 안 내려줘 항상 '0개' 로만 보였다. */}
+                  {themeDnsData?.setting_obj?.is_use_consignment == 1 &&
+                    <div style={{ textAlign: 'right', marginRight: '2rem', fontSize: '1rem' }}>
+                      위탁상품관리<br /><br />
+                      <span style={{ fontFamily: 'Playfair Display', }}>
+                        {commarNumber(userInfo?.consignment_products?.length)}개
+                      </span>
+                    </div>}
                   <div style={{ textAlign: 'right', fontSize: '1rem' }}>
                     최근주문목록<br /><br />
                     <span style={{ fontFamily: 'Playfair Display', }}>
@@ -277,6 +278,9 @@ const MyPageDemo = (props) => {
               </MypageTitle>
             </ContentBorderContainer>
 
+            {/* 위탁 섹션 전체를 게이트. 상단 요약(위)만 숨기고 이 표는 남아 있어
+                위탁을 안 쓰는 가맹점에도 빈 '위탁상품관리' 표가 계속 보였다. */}
+            {themeDnsData?.setting_obj?.is_use_consignment == 1 &&
             <ContentBorderContainer>
               <SubTitleComponent
                 endComponent={<Icon
@@ -300,7 +304,7 @@ const MyPageDemo = (props) => {
                   </>
                 ))}
               </Table>
-            </ContentBorderContainer>
+            </ContentBorderContainer>}
 
             <ContentBorderContainer>
               <SubTitleComponent

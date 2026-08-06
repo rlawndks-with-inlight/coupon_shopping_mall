@@ -15,6 +15,7 @@ import { paymentModuleTypeList, forspayMethodList } from "src/utils/format";
 import { useAuthContext } from "src/layouts/manager/auth/useAuthContext";
 import { Upload } from "src/components/upload";
 import { sha256 } from "js-sha256";
+import _ from 'lodash';
 
 // 택배사 목록 (송장 저장 형식: `택배사-송장번호`, 구매자 주문내역에서 그대로 파싱됨)
 const COURIER_LIST = ['CJ대한통운', '우체국택배', '한진택배', '롯데택배', '로젠택배', '경동택배', 'GS Postbox', 'CU 편의점택배', '대신택배', '일양로지스', '기타'];

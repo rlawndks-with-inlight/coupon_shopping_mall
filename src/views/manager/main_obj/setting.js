@@ -30,6 +30,7 @@ import { defaultManagerObj } from 'src/data/manager-data'
 import { base64toFile, getMainObjType } from 'src/utils/function'
 import _, { constant } from 'lodash'
 import { useSettingsContext } from 'src/components/settings'
+import { isShopgoMerchant } from 'src/utils/is-shopgo'
 import { useRouter } from 'next/router'
 import CustomBreadcrumbs from 'src/components/custom-breadcrumbs/CustomBreadcrumbs'
 import { toast } from 'react-hot-toast'
@@ -767,6 +768,11 @@ const MainObjSetting = props => {
                       <Typography variant='subtitle2' sx={{ color: 'text.secondary' }}>
                         콘텐츠가 없습니다.
                       </Typography>
+                      {/* 섹션이 0개면 쇼핑몰 홈에 기본 배너가 임시로 표시된다(저장된 값 아님).
+                          편집기는 비어 있는데 몰에는 배너가 보이는 상황을 오해하지 않도록 안내. */}
+                      <Typography variant='caption' sx={{ color: 'text.secondary' }}>
+                        섹션이 없는 동안에는 쇼핑몰 홈에 기본 배너가 임시로 표시됩니다. 아래 &lsquo;섹션 추가&rsquo;로 하나라도 만들면 그 구성으로 바뀝니다.
+                      </Typography>
                     </>
                   )}
                   {contentList &&
@@ -870,7 +876,11 @@ const MainObjSetting = props => {
                               </Row>
                             </Box>
 
-                            {item?.list &&
+                            {/* 배너 슬라이드별 부가 입력(제목·부제목·색상·글자배치·링크).
+                                SHOPGO 가맹점은 '이미지만' 쓰도록 숨긴다 — 사장님들이 채우지 않는데
+                                입력칸만 잔뜩 보여 혼란스럽다는 피드백. 저장된 값은 그대로 유지되고,
+                                다른 클라이언트 브랜드는 현행대로 전부 노출된다. */}
+                            {!isShopgoMerchant(themeDnsData) && item?.list &&
                               item.list.map((itm, index) => (
                                 <>
                                   <Row style={{ width: '100%', columnGap: '1rem' }}>

@@ -5,7 +5,7 @@ import styled from 'styled-components';
 import ShopLayout from 'src/layouts/shop/ShopLayout';
 import { useSettingsContext } from 'src/components/settings';
 import { apiManager } from 'src/utils/api';
-import { getTrxStatusByNumber, commarNumber } from 'src/utils/function';
+import { getTrxStatusByNumber, commarNumber, sanitizePhoneInput } from 'src/utils/function';
 
 const Wrappers = styled.div`
   max-width: 640px;
@@ -136,7 +136,8 @@ const OrderCheck = () => {
         <CardContent>
           <Stack spacing={2}>
             <TextField fullWidth size="small" label="전화번호" placeholder="010-1234-5678" value={form.buyer_phone}
-              onChange={(e) => setForm({ ...form, buyer_phone: e.target.value })}
+              inputMode="tel"
+              onChange={(e) => setForm({ ...form, buyer_phone: sanitizePhoneInput(e.target.value) })}
               onKeyPress={(e) => { if (e.key === 'Enter') onSearch(); }} />
             <TextField fullWidth size="small" type="password" label="주문 비밀번호" value={form.password}
               onChange={(e) => setForm({ ...form, password: e.target.value })}

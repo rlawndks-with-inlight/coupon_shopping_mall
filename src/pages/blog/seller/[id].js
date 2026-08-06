@@ -20,6 +20,10 @@ const getDemo = (num, common) => {
         return <Demo4 {...common} />
     else if (num == 5)
         return <Demo5 {...common} />
+    // blog_demo_num 6~9(프레임8~11)는 전용 셀러 화면이 없다. 매핑이 없으면 undefined 를 반환해
+    // 헤더/푸터만 있고 본문이 텅 빈 화면이 나오므로, 기능이 갖춰진 demo-2 로 폴백한다.
+    else
+        return <Demo2 {...common} />
 }
 const Seller = () => {
     const router = useRouter();

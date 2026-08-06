@@ -332,7 +332,6 @@ const Demo5 = (props) => {
       <Wrapper>
         <Section style={{ textAlign: 'center' }}>
           <HeroTitle>Coming Soon</HeroTitle>
-          <HeroDesc>관리자 페이지에서 대표 상품을 등록해주세요.</HeroDesc>
         </Section>
       </Wrapper>
     );

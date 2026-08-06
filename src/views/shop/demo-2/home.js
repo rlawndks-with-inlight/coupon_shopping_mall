@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Skeleton, Stack } from '@mui/material'
 import { useSettingsContext } from 'src/components/settings'
+import { getDefaultHomeContent } from 'src/data/default-banners'
 import HomeBanner from 'src/views/section/shop/HomeBanner'
 import HomeEditor from 'src/views/section/shop/HomeEditor'
 import HomeItems from 'src/views/section/shop/HomeItems'
@@ -55,13 +56,16 @@ const HomeDemo = (props) => {
     }
   }, [themeDnsData])
 
-  useEffect(() => {
-    if (contentList.length > 0) setLoading(false);
-  }, [contentList])
-
   const mainPageSetting = async () => {
     if (contentList.length > 0) return;
-    setContentList(themeDnsData?.shop_obj ?? []);
+    let content_list = themeDnsData?.shop_obj ?? [];
+    // 섹션이 하나도 없으면(신규 개설 직후) 기본 배너 구성으로 대체해 백지 홈을 막는다.
+    if (content_list.length <= 0) {
+      content_list = getDefaultHomeContent(themeDnsData?.shop_demo_num);
+    }
+    setContentList(content_list);
+    // 스켈레톤은 '데이터 도착 전'에만. (기존엔 섹션 0개면 영구 표시됐음)
+    setLoading(false);
   }
 
   useEffect(() => {

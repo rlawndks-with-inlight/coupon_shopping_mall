@@ -34,6 +34,10 @@ const getDemo = (num, common) => {
     return <LoginDemo8 {...common} />
   else if (num == 9)
     return <LoginDemo9 {...common} />
+  // 폐쇄몰(is_closure=1) 블로그 전용 브랜드는 ShopLayout 이 여기로 리다이렉트하는데
+  // shop_demo_num=0 이라 위 분기에 안 걸려 로그인 화면조차 백지가 됐다(= 사이트 진입 불가).
+  else
+    return <LoginDemo1 {...common} />
   /*else if (num == 10)
     return <LoginDemo10 {...common} />*/
 }

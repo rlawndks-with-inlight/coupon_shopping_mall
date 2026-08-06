@@ -7,6 +7,7 @@ import { useRouter } from "next/router";
 import { useModal } from "src/components/dialog/ModalProvider";
 import { apiManager } from "src/utils/api";
 import { paymentModuleTypeList } from "src/utils/format";
+import _ from 'lodash';
 
 const PaymentModuleList = () => {
   const { setModal } = useModal()

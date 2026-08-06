@@ -52,6 +52,10 @@ const MyPageDemo = (props) => {
   const [userObj, setUserObj] = useState({})
   const [addressContent, setAddressContent] = useState({});
   const [addAddressOpen, setAddAddressOpen] = useState(false);
+  // 배송지 수정 — 기능(DialogAddAddress type='update')은 이미 있는데 이 화면만 배선이 빠져
+  //   AddressTable 의 '수정' 버튼이 undefined 를 호출해 크래시했다. 프레임3과 동일하게 연결한다.
+  const [updateAddressOpen, setUpdatedAddressOpen] = useState(false);
+  const [addressID, setAddressID] = useState();
   const [searchObj, setSearchObj] = useState({
     page: 1,
     page_size: 10,
@@ -92,6 +96,10 @@ const MyPageDemo = (props) => {
       onChangePage(searchObj);
     }
   }
+  const onUpdateAddress = async (id) => {
+    setAddressID(id);
+    setUpdatedAddressOpen(true);
+  }
   const onDeleteAddress = async (id) => {
     let result = await apiManager('user-addresses', 'delete', {
       id: id
@@ -106,6 +114,14 @@ const MyPageDemo = (props) => {
         addAddressOpen={addAddressOpen}
         setAddAddressOpen={setAddAddressOpen}
         onAddAddress={onAddAddress}
+      />
+      <DialogAddAddress
+        addAddressOpen={updateAddressOpen}
+        setAddAddressOpen={setUpdatedAddressOpen}
+        onAddAddress={onAddAddress}
+        type={'update'}
+        id={addressID}
+        onDeleteAddress={onDeleteAddress}
       />
       <Wrapper>
         <ContentWrapper>
@@ -138,13 +154,9 @@ const MyPageDemo = (props) => {
                     />
                     <Typography variant='h6' sx={{ fontWeight: 700 }}>{userObj.nickname}</Typography>
                     <Typography variant='body2' sx={{ color: 'text.secondary', mb: 2 }}>{userObj.user_name}</Typography>
-                    <Divider sx={{ width: '100%', my: 1 }} />
-                    <Box sx={{ mt: 2 }}>
-                      <Typography variant='caption' sx={{ color: 'text.secondary' }}>{translate('보유 포인트')}</Typography>
-                      <Typography variant='h5' sx={{ fontWeight: 700, color: mainColor || 'primary.main' }}>
-                        {commarNumber(userObj.point)} P
-                      </Typography>
-                    </Box>
+                  {/* 포인트 비노출 — 적립률 기본값 0, 가맹점은 설정을 켤 수 없고,
+                      사용분을 차감하는 코드가 없어 켜면 무한 재사용이 가능하다.
+                      기능 완성 전까지 숨긴다. */}
                   </Card>
                 </Grid>
                 <Grid item xs={12} md={8}>
@@ -167,12 +179,8 @@ const MyPageDemo = (props) => {
 
                       <TextField name="phone_num" label={translate("전화번호")} defaultValue={userObj?.phone_num} value={userObj?.phone_num} disabled={true} fullWidth />
                     </Box>
-                    <Divider sx={{ my: 4 }} />
-                    <Stack spacing={3} alignItems="flex-end">
-                      <Button type="submit" variant="contained" color="inherit" loading={isSubmitting} sx={{ fontWeight: 600, px: 4 }}>
-                        {translate('변경사항 저장')}
-                      </Button>
-                    </Stack>
+                    {/* '변경사항 저장' 버튼 제거 — 위 입력이 전부 disabled 이고
+                        onSubmit·onClick 이 어디에도 없어 눌러도 아무 일이 없었다. */}
                   </Card>
                 </Grid>
               </>}
@@ -186,6 +194,7 @@ const MyPageDemo = (props) => {
                     <AddressTable
                       addressContent={addressContent}
                       onDelete={onDeleteAddress}
+                      onUpdate={onUpdateAddress}
                     />
                   </Card>
                   <Pagination

@@ -325,7 +325,6 @@ const Demo4 = (props) => {
       <Wrapper>
         <PriceSection>
           <InfoHeading>COMING SOON</InfoHeading>
-          <InfoBody>관리자 페이지에서 대표 상품을 등록해주세요.</InfoBody>
         </PriceSection>
       </Wrapper>
     );

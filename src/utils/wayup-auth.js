@@ -3,6 +3,7 @@ import Button from "@mui/material/Button";
 import toast from "react-hot-toast";
 import { useSettingsContext } from "src/components/settings";
 import { makePayData } from "./shop-util";
+import { makeOrdNum } from 'src/utils/function';
 
 const PayProductsByAuthWayup = ({ props }) => {
     const scriptRef = useRef(null);
@@ -29,7 +30,7 @@ const PayProductsByAuthWayup = ({ props }) => {
 
         const pay_data_ = {
             ...pay_data,
-            ord_num: `${pay_data?.user_id || pay_data?.password}${new Date().getTime().toString().substring(0, 11)}`,
+            ord_num: makeOrdNum(),
         };
 
         if (pay_data_?.products?.length > 1 || !pay_data_?.item_name) {
@@ -174,7 +175,14 @@ const PayProductsByAuthWayup = ({ props }) => {
                 ? productArray.reduce((acc, p) => acc + Number(p.order_amount) * Number(p.order_count), 0)
                 : Number(productArray[0].order_amount) * Number(productArray[0].order_count);
 
-        const trackId = `${user_id}${new Date().getTime().toString().substring(0, 11)}`;
+        // WAYUP 으로 보내는 trackId 는 세션에 저장된(=결제 후 DB 에 남는) 주문번호와 반드시 같아야 한다.
+        // 여기서 새로 만들면 두 값이 어긋나 결제 콜백·정산 대사에서 주문을 찾지 못한다.
+        // (make_pay_data 가 sessionStorage['products'].ord_num 에 이미 넣어둔다)
+        let trackId;
+        try {
+            trackId = JSON.parse(sessionStorage.getItem("products") || '{}')?.ord_num;
+        } catch (e) { /* noop */ }
+        if (!trackId) trackId = makeOrdNum();
 
         const returnUrl = `${window.location.protocol}//${window.location.host}/shop/auth/pay-result`;
         const failureUrl = returnUrl;

@@ -170,9 +170,13 @@ const MyPageDemo = (props) => {
 
                     <TextField name="phone_num" label={translate("전화번호")} defaultValue={userObj?.phone_num} value={userObj?.phone_num} disabled={true} />
                   </Box>
-                  {/* '변경사항 저장' 버튼 제거 — 위 입력이 전부 disabled 이고
-                      onSubmit·onClick 이 어디에도 없어 눌러도 아무 일이 없었다.
-                      회원정보 수정이 필요해지면 별도 화면으로 붙이는 편이 맞다. */}
+                  {/* 여기 입력은 표시 전용이다(전부 disabled). 실제 수정은 공용 화면에서 한다.
+                      예전엔 아무 동작도 없는 '변경사항 저장' 버튼만 있어서 눌러도 아무 일이 없었다. */}
+                  <Stack direction="row" justifyContent="flex-end" sx={{ mt: 3 }}>
+                    <Button variant="contained" onClick={() => router.push('/shop/auth/change-info')}>
+                      {translate('회원정보 수정')}
+                    </Button>
+                  </Stack>
                 </Card>
               </Grid>
             </>}

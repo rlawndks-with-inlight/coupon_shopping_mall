@@ -1,44 +1,29 @@
-import { useRouter } from "next/router";
-import { useState } from "react";
 import ShopLayout from "src/layouts/shop/ShopLayout";
-import Demo1 from "src/views/blog/auth/my-page/user-info/demo-1";
-import { useSettingsContext } from "src/components/settings";
-import Demo2 from "src/views/blog/auth/my-page/user-info/demo-2";
-import Demo3 from "src/views/blog/auth/my-page/user-info/demo-3";
-import Demo4 from "src/views/blog/auth/my-page/user-info/demo-4";
-import Demo5 from "src/views/blog/auth/my-page/user-info/demo-5";
+import AccountEditPanel from "src/components/elements/shop/AccountEditPanel";
+import styled from "styled-components";
 
-const getDemo = (num, common) => {
+// 회원정보 수정 — 데모 구분 없는 공용 패널 한 벌(AccountEditPanel).
+// shop 쪽 /shop/auth/change-info 와 완전히 같은 내용을 보여준다.
+//
+// 기존 demo-1~5 화면은 이름·연락처가 disabled 라 사실상 기본 배송지만 고를 수 있었고
+// (프레임6 만 연락처 수정 가능), '변경' 버튼은 이미 있는 값을 그대로 다시 보냈다.
+// SMS/E-mail 수신동의 체크박스는 저장할 컬럼이 없어 새로고침하면 초기화됐다.
+// 공용 패널은 휴대폰번호·비밀번호(2회 입력)·배송지·회원탈퇴를 전 프레임 동일하게 제공한다.
+//
+// 기존 뷰 파일(views/blog/auth/my-page/user-info/demo-1~5.js)은 지우지 않고 남겨 둔다.
 
-    if (num == 1)
-        return <Demo1 {...common} />
-    else if (num == 2)
-        return <Demo2 {...common} />
-    else if (num == 3)
-        return <Demo3 {...common} />
-    else if (num == 4)
-        return <Demo4 {...common} />
-    else if (num == 5)
-        return <Demo5 {...common} />
-    // blog_demo_num 6~9(프레임8~11)는 전용 화면이 없다. 폴백이 없으면 undefined 를 반환해
-    // 헤더/푸터만 남고 본문이 백지가 되므로, 기능이 갖춰진 demo-2 로 떨어뜨린다.
-    else
-        return <Demo2 {...common} />
-}
+const Wrappers = styled.div`
+  max-width: 720px;
+  width: 92%;
+  min-height: 70vh;
+  margin: 3vh auto 8vh;
+`;
+
 const UserInfo = () => {
-    const router = useRouter();
-    const { themeDnsData } = useSettingsContext();
-
     return (
-        <>
-            {getDemo(themeDnsData?.blog_demo_num, {
-                data: {
-                },
-                func: {
-                    router
-                },
-            })}
-        </>
+        <Wrappers>
+            <AccountEditPanel loginPath="/blog/auth/login" />
+        </Wrappers>
     )
 }
 UserInfo.getLayout = (page) => <ShopLayout>{page}</ShopLayout>;

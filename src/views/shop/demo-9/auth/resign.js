@@ -52,7 +52,7 @@ const ResignDemo = (props) => {
           <ContentWrappers>
             <TitleComponent>{'회원탈퇴'}</TitleComponent>
             <div style={{ fontFamily: 'Noto Sans KR' }}>
-              회원 탈퇴를 하시면 포인트와 혜택을 더 이상 이용하실 수 없습니다.<br />
+              회원 탈퇴를 하시면 회원 혜택을 더 이상 이용하실 수 없습니다.<br />
               정말 탈퇴하시려면 비밀번호를 입력하고 탈퇴하기 버튼을 눌러주세요.<br />
               <span style={{ fontSize: '32px' }}>;(</span>
             </div>

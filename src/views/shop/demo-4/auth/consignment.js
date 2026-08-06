@@ -72,7 +72,9 @@ const ConsignmentDemo = (props) => {
               showFirstButton
               showLastButton
               onChange={(_, num) => {
-                onChangePage(num)
+                // onChangePage 는 search_obj 를 받는데 숫자를 넘겨서
+                // { ...2 } => {} 가 되어 페이지·검색조건이 통째로 초기화됐다(2페이지를 눌러도 1페이지).
+                onChangePage({ ...searchObj, page: num })
               }} />
           </ContentWrappers>
         </RowMobileReverceColumn>

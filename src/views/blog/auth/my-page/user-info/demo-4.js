@@ -190,7 +190,7 @@ const Demo4 = (props) => {
                 <DialogTitle>회원탈퇴</DialogTitle>
                 <DialogContent>
                     <DialogContentText>
-                        회원 탈퇴를 하시면 포인트와 혜택을 더 이상 이용하실 수 없습니다.<br />
+                        회원 탈퇴를 하시면 회원 혜택을 더 이상 이용하실 수 없습니다.<br />
                         정말 탈퇴하시려면 비밀번호를 입력해주세요.
                     </DialogContentText>
                     <Stack spacing={2} sx={{ marginTop: '1rem', minWidth: '280px' }}>

@@ -211,10 +211,11 @@ const Header = () => {
       name: translate('찜목록'),
       link_key: 'wish'
     },
-    {
+    // 포인트 비노출 — 적립·차감이 완성되지 않아 항상 0 P 로만 보인다(demo-5 헤더와 동일 처리).
+    /*{
       name: translate('포인트내역'),
       link_key: 'point'
-    },
+    },*/
     {
       name: translate('주문조회'),
       link_key: 'history'
@@ -497,11 +498,9 @@ const Header = () => {
                 <IconButton
                   sx={iconButtonStyle}
                   onClick={() => {
-                    if (user) {
-                      router.push(`/shop/auth/cart`)
-                    } else {
-                      router.push(`/shop/auth/login`)
-                    }
+                    // 장바구니는 비회원도 사용한다(localStorage 저장 + 주문서가 비회원 주문 지원).
+                    // 기존엔 비회원을 로그인으로 튕겨 비회원 구매 자체가 불가능했다. 찜하기는 회원 전용 유지.
+                    router.push(`/shop/auth/cart`)
                   }}
                 >
                   <Badge badgeContent={themeCartData.length} color="error">
@@ -596,11 +595,9 @@ const Header = () => {
                 <IconButton
                   sx={iconButtonStyle}
                   onClick={() => {
-                    if (user) {
-                      router.push(`/shop/auth/cart`)
-                    } else {
-                      router.push(`/shop/auth/login`)
-                    }
+                    // 장바구니는 비회원도 사용한다(localStorage 저장 + 주문서가 비회원 주문 지원).
+                    // 기존엔 비회원을 로그인으로 튕겨 비회원 구매 자체가 불가능했다. 찜하기는 회원 전용 유지.
+                    router.push(`/shop/auth/cart`)
                   }}
                 >
                   <Badge badgeContent={themeCartData.length} color="error">
@@ -789,7 +786,10 @@ const Header = () => {
             </>}
           {themeCategoryList && themeCategoryList.map((group, index) => (
             <>
-              <ColumnMenuTitle>{formatLang(group, 'category_group_name', currentLang)}</ColumnMenuTitle>
+              {/* 그룹이 여러 개일 때만 구분용 제목을 낸다.
+                  단일 트리 전환 브랜드는 합성 그룹 1개('카테고리')뿐이라 제목이 군더더기가 된다. */}
+              {themeCategoryList.length > 1 &&
+                <ColumnMenuTitle>{formatLang(group, 'category_group_name', currentLang)}</ColumnMenuTitle>}
               <TreeView
                 defaultCollapseIcon={<Icon icon={'ic:baseline-minus'} />}
                 defaultExpandIcon={<Icon icon={'ic:baseline-plus'} />}

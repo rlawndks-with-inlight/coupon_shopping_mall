@@ -13,6 +13,7 @@ import { useSettingsContext } from "src/components/settings";
 import { cancelTypeList, paymentModuleTypeList } from "src/utils/format";
 import { sha256 } from "js-sha256";
 import { useAuthContext } from "src/layouts/manager/auth/useAuthContext";
+import _ from 'lodash';
 
 const TrxCancelList = () => {
   const { setModal } = useModal()

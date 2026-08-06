@@ -180,9 +180,9 @@ const SignUpDemo = (props) => {
         !user.name ||
         !user.user_pw ||
         !user.user_pw_check ||
-        !user.name ||
         !user.phone_num ||
-        !user.unipass
+        // 개인통관고유부호는 해외직구 브랜드(74)에서만 필수(demo-4 와 동일 처리)
+        (themeDnsData?.id == 74 && !user.unipass)
       ) {
         toast.error("필수 항목을 입력해 주세요.");
         return;

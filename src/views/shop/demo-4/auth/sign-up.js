@@ -180,9 +180,12 @@ const SignUpDemo = (props) => {
         !user.name ||
         !user.user_pw ||
         !user.user_pw_check ||
-        !user.name ||
         !user.phone_num ||
-        !user.unipass
+        // 개인통관고유부호는 해외직구 브랜드(74)에서만 필수다.
+        // 이 데모가 프레임3 으로 팔리면서 일반 가맹점에도 필수로 걸려 있었는데,
+        // 입력 버튼은 브랜드74 전용으로 가렸으므로 그대로 두면 넣을 방법도 없이
+        // 가입이 영영 막힌다.
+        (themeDnsData?.id == 74 && !user.unipass)
       ) {
         toast.error("필수 항목을 입력해 주세요.");
         return;

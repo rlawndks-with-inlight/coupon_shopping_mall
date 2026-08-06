@@ -86,6 +86,23 @@ const getDemo = (num, common) => {
   }
 }
 
+// 데모 종류와 무관하게 공용으로 쓰는 /shop 경로들.
+// 주문서·주문완료·결제결과·주문조회는 shop/blog 구분 없이 한 벌만 존재하고,
+// 블로그형 브랜드의 장바구니·바로구매도 여기로 넘어온다(shop-util.js startBuyNow 등).
+// 이 예외가 없으면 shop_demo_num=0 인 블로그 전용 브랜드에서 결제 진입이 404로 튕겨
+// 비회원은 물론 회원도 주문을 완료할 수 없다. (PG 리턴 URL도 /shop/auth/pay-result 고정)
+const SHARED_SHOP_PATHS = [
+  '/shop/auth/order',
+  '/shop/auth/order-complete',
+  '/shop/auth/pay-result',
+  '/shop/auth/order-check',
+  '/shop/auth/sms-pay-success',
+];
+const isSharedShopPath = (path = '') => {
+  const clean = String(path).split('?')[0].replace(/\/+$/, '');
+  return SHARED_SHOP_PATHS.includes(clean);
+};
+
 const ShopLayout = ({ children, scrollToTop }) => {
   const router = useRouter();
   const [layoutDemoNum, setLayoutDemoNum] = useState(1);// 데모 번호
@@ -95,31 +112,57 @@ const ShopLayout = ({ children, scrollToTop }) => {
   const { user } = useAuthContext();
   const { currentLang } = useLocales();
 
+  // 블로그 전용 브랜드가 공용 /shop 주문 경로에 들어오면 category를 'blog'로 잡아
+  // 블로그 레이아웃(헤더·푸터)을 그대로 쓴다. 그러지 않으면 shop_demo_num=0 이라
+  // getDemo가 레이아웃 없이 children만 뱉어 주문서가 맨몸으로 뜬다.
+  const isBlogOnlyBrand = !(themeDnsData?.shop_demo_num > 0) && themeDnsData?.blog_demo_num > 0;
   useEffect(() => {
-    if (router.asPath.split('/')[1] == 'shop' || router.asPath.split('/')[1] == 'blog') {
-      setCategory(router.asPath.split('/')[1])
+    const path = router.asPath.split('?')[0];
+    const rootSegment = path.split('/')[1];
+    if (rootSegment == 'shop' && isBlogOnlyBrand && isSharedShopPath(path)) {
+      setCategory('blog')
+    } else if (rootSegment == 'shop' || rootSegment == 'blog') {
+      setCategory(rootSegment)
     }
-  }, [router.asPath])
+  }, [router.asPath, isBlogOnlyBrand])
   useEffect(() => {
     if (themeDnsData?.id > 0 && themeCategoryList) {
-      if (themeDnsData?.shop_demo_num > 0 && router.asPath.split('/')[1] == 'shop') {
+      const path = router.asPath.split('?')[0];
+      const rootSegment = path.split('/')[1];
+      const isHomePath = ['/shop', '/shop/', '/blog', '/blog/'].includes(path);
+      if (themeDnsData?.shop_demo_num > 0 && rootSegment == 'shop') {
         setLoading(false);
-      } else if (themeDnsData?.blog_demo_num > 0 && router.asPath.split('/')[1] == 'blog') {
+      } else if (themeDnsData?.blog_demo_num > 0 && rootSegment == 'blog') {
         setLoading(false);
+      } else if (isSharedShopPath(path)) {
+        // 주문서·결제결과 등 데모 구분 없는 공용 화면은 블로그형 브랜드도 그대로 쓴다.
+        setLoading(false);
+      } else if (isHomePath && themeDnsData?.blog_demo_num > 0 && rootSegment == 'shop') {
+        // 블로그형 전용 브랜드의 /shop 접근(구 북마크·외부링크) → 블로그 홈으로. 404 방지.
+        router.replace('/blog/')
+      } else if (isHomePath && themeDnsData?.shop_demo_num > 0 && rootSegment == 'blog') {
+        router.replace('/shop/')
       } else {
         router.push('/404')
       }
     }
   }, [themeDnsData, themeCategoryList])
   const getDemoNum = () => {
-    if (router.asPath.split('/')[1] == 'shop') {
+    const path = router.asPath.split('?')[0];
+    const rootSegment = path.split('/')[1];
+    if (rootSegment == 'shop') {
+      // 공용 주문 경로 + 블로그 전용 브랜드 → 블로그 데모 번호로 레이아웃을 고른다.
+      if (isBlogOnlyBrand && isSharedShopPath(path)) return themeDnsData?.blog_demo_num
       return themeDnsData?.shop_demo_num
-    } else if (router.asPath.split('/')[1] == 'blog') {
+    } else if (rootSegment == 'blog') {
       return themeDnsData?.blog_demo_num
     }
   }
+  // 폐쇄몰: 비로그인 방문자를 로그인으로 보낸다.
+  // 블로그 전용 브랜드를 /shop/auth/login 으로 보내면 shop_demo_num=0 이라 화면이 비어
+  // 로그인 자체가 불가능해진다(사이트 진입 봉쇄). 브랜드 유형에 맞는 로그인으로 보낸다.
   if (themeDnsData?.is_closure == 1 && !user) {
-    router.push(`/shop/auth/login`)
+    router.push(isBlogOnlyBrand ? `/blog/auth/login` : `/shop/auth/login`)
     return <></>
   }
   return (

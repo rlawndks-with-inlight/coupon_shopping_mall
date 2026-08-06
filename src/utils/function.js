@@ -530,3 +530,59 @@ export function generateRandomString(length = 1) {
 
   return randomString;
 }
+
+// 전화번호 입력 정제 — 숫자와 하이픈만 남긴다.
+// 비회원 주문서에서 아무 글자나 입력되던 문제(한글·영문·특수문자 모두 통과) 대응.
+// 입력 중에는 하이픈을 허용해야 하므로(010-1234-5678 직접 타이핑) 숫자만 남기지 않는다.
+// 길이는 20자로 제한 — DB 컬럼과 PG 전송 규격 모두 이 이하다.
+export const sanitizePhoneInput = (value = '') =>
+  String(value ?? '').replace(/[^0-9-]/g, '').slice(0, 20);
+
+// 저장/전송 직전 정규화 — 하이픈까지 제거한 숫자만.
+export const normalizePhone = (value = '') => String(value ?? '').replace(/[^0-9]/g, '');
+
+// 국내 휴대폰/일반전화로 성립하는 자릿수인지. (숫자 기준 9~11자리)
+// 형식 강제가 아니라 '명백히 잘못된 값'만 걸러내는 용도.
+export const isValidPhoneNumber = (value = '') => {
+  const digits = normalizePhone(value);
+  return digits.length >= 9 && digits.length <= 11;
+};
+
+// ── 주문번호 생성 ───────────────────────────────────────────────────────────
+// 기존 형식: `${user_id || password}${타임스탬프11자리}`
+//   → 비회원 주문은 접두부가 '주문조회 비밀번호' 그 자체였다.
+//     주문번호는 주문완료 화면·관리자 목록·PG 요청 URL 경로에까지 노출되므로,
+//     뒤 11자를 떼면 누구나 비밀번호를 알 수 있었고 주문조회 인증이 무력화됐다.
+//     회원 주문도 접두부가 작은 정수(user_id)라 추측이 쉬웠다.
+//
+// 새 형식: <날짜시각 14자리><난수 6자리>  예) 20260807153012K7X2M9
+//   · 신원·비밀 정보를 전혀 담지 않는다
+//   · 영숫자만 사용 → 페이레터·포스페이의 영숫자 필터와 길이 제한(50/64자)에 안전
+//   · 같은 100ms 안에 여러 건이 들어와도 난수 6자리(36^6 ≈ 21.7억)로 충돌을 피한다
+const ORD_NUM_ALPHABET = 'ABCDEFGHIJKLMNPQRSTUVWXYZ23456789'; // 혼동 문자(O,0,I,1) 제외
+
+const randomOrdSuffix = (len = 6) => {
+  let out = '';
+  const n = ORD_NUM_ALPHABET.length;
+  // 브라우저 CSPRNG 우선, 없으면 Math.random 폴백(SSR·구형 브라우저 대비)
+  const cryptoObj = (typeof window !== 'undefined' && window.crypto) ? window.crypto : null;
+  if (cryptoObj?.getRandomValues) {
+    const buf = new Uint32Array(len);
+    cryptoObj.getRandomValues(buf);
+    for (let i = 0; i < len; i++) out += ORD_NUM_ALPHABET[buf[i] % n];
+  } else {
+    for (let i = 0; i < len; i++) out += ORD_NUM_ALPHABET[Math.floor(Math.random() * n)];
+  }
+  return out;
+};
+
+/**
+ * 주문번호를 만든다. prefix 는 PG 구분자(예: 'PL', 'FS')가 필요할 때만 쓴다.
+ * 반환 길이 = prefix + 20자.
+ */
+export const makeOrdNum = (prefix = '') => {
+  const d = new Date();
+  const p = (v, l = 2) => String(v).padStart(l, '0');
+  const stamp = `${d.getFullYear()}${p(d.getMonth() + 1)}${p(d.getDate())}${p(d.getHours())}${p(d.getMinutes())}${p(d.getSeconds())}`;
+  return `${prefix}${stamp}${randomOrdSuffix(6)}`.replace(/[^a-zA-Z0-9]/g, '');
+};

@@ -6,6 +6,7 @@ import toast from "react-hot-toast";
 import { returnMoment } from "./function";
 import { getLocalStorage } from "./local-storage";
 import { isDemoHost } from "src/components/main-site/frameList";
+import { makeOrdNum } from 'src/utils/function';
 
 // 브랜드 공통 배송비 정책 (설정 > 배송비설정). 정책이 설정된 경우에만 활성.
 // - delivery_fee_default: 주문당 기본 배송비
@@ -98,7 +99,7 @@ export const onPayProductsByHand = async (products_, payData_) => { // 수기결
     let products = products_;
     let pay_data = payData_;
     let payData = await makePayData(products, pay_data);
-    let ord_num = `${payData?.user_id || payData?.password}${new Date().getTime().toString().substring(0, 11)}`
+    let ord_num = makeOrdNum()
     let return_url = `${window.location.protocol}//${window.location.host}/shop/auth/pay-result`
     payData.yymm = payData?.yymm?.split('/');
     payData = {
@@ -140,7 +141,7 @@ export const onPayProductsByAuth = async (products_, payData_, type) => { // 인
     let products = products_;
     let pay_data = payData_;
     let payData = await makePayData(products, pay_data);
-    let ord_num = `${payData?.user_id || payData?.password}${new Date().getTime().toString().substring(0, 11)}`
+    let ord_num = makeOrdNum()
     let return_url = `${window.location.protocol}//${window.location.host}/shop/auth/pay-result`
     /*let user_agent = navigator.userAgent;
     if (user_agent.indexOf('iPhone') > -1 || userIsMobile.indexOf("Android") > -1) {
@@ -209,7 +210,7 @@ export const onPayProductsByVirtualAccount = async (products_, payData_) => { //
     let products = products_;
     let pay_data = payData_;
     let payData = await makePayData(products, pay_data);
-    let ord_num = `${payData?.user_id || payData?.password}${new Date().getTime().toString().substring(0, 11)}`
+    let ord_num = makeOrdNum()
     payData.yymm = payData?.yymm?.split('/');
     payData = {
         ...payData,
@@ -278,7 +279,7 @@ export const onPayProductsByPayletter = async (products_, payData_) => { // 카�
     }
     let products = products_;
     let payData = await makePayData(products, payData_);
-    let ord_num = `PL${payData?.user_id || payData?.password || ''}${new Date().getTime().toString().substring(0, 11)}`.replace(/[^a-zA-Z0-9]/g, '');
+    let ord_num = makeOrdNum('PL');
     if (payData?.products?.length > 1 || !payData?.item_name) {
         payData.item_name = payData?.products?.length > 1 ? `${payData?.products[0]?.order_name} 외 ${payData?.products?.length - 1}건` : (payData?.products[0]?.order_name || '상품');
     }
@@ -311,7 +312,7 @@ export const onPayProductsByForspay = async (products_, payData_) => { // 인증
     let payData = await makePayData(products, payData_);
     // 구매자가 고른 결제수단 키(card/bank/kakaopay/…). 선택 옵션에 실려 옴. 기본은 신용카드.
     const pay_method = payData_?.payment_modules?.pay_method || 'card';
-    let ord_num = `FS${payData?.user_id || payData?.password || ''}${new Date().getTime().toString().substring(0, 11)}`.replace(/[^a-zA-Z0-9]/g, '');
+    let ord_num = makeOrdNum('FS');
     if (payData?.products?.length > 1 || !payData?.item_name) {
         payData.item_name = payData?.products?.length > 1 ? `${payData?.products[0]?.order_name} 외 ${payData?.products?.length - 1}건` : (payData?.products[0]?.order_name || '상품');
     }

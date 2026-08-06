@@ -186,8 +186,13 @@ App.getInitialProps = async context => {
       let dns_data = head_data?.data
       // [ShopGo] 마스터(is_main_dns=1)가 아닌 브랜드가 루트(/)로 들어오면 쇼핑몰 홈으로 이동.
       // 마스터 판별을 DB의 is_main_dns로 하므로 MAIN_FRONT_URL 설정과 무관하게 동작.
+      // 블로그형 전용 브랜드(shop_demo_num=0, blog_demo_num>0)는 /shop/에 렌더할 데모가 없어
+      // 백지가 되므로 반드시 /blog/로 보낸다. 둘 다 쓰는 브랜드는 기존대로 /shop/.
       if (process.env.NEXT_PUBLIC_IS_SHOPGO === 'true' && ctx?.pathname === '/' && ctx?.res && dns_data && dns_data.is_main_dns != 1) {
-        ctx.res.writeHead(302, { Location: '/shop/' });
+        const shopDemoNum = Number(dns_data?.setting_obj?.shop_demo_num) || 0;
+        const blogDemoNum = Number(dns_data?.setting_obj?.blog_demo_num) || 0;
+        const homePath = (shopDemoNum <= 0 && blogDemoNum > 0) ? '/blog/' : '/shop/';
+        ctx.res.writeHead(302, { Location: homePath });
         ctx.res.end();
         return { head_data: {} };
       }

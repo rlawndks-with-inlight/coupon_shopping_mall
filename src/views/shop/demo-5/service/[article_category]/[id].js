@@ -14,6 +14,7 @@ import styled from "styled-components";
 import { Upload } from "src/components/upload";
 import ReactQuillComponent from "src/views/manager/react-quill";
 import dynamic from "next/dynamic";
+import PostDate from 'src/components/elements/shop/PostDate';
 const ReactQuill = dynamic(() => import('react-quill'), {
   ssr: false,
   loading: () => <p>Loading ...</p>,
@@ -157,6 +158,7 @@ const ArticleDemo = (props) => {
                         <div>제목: </div>
                         <h1 style={{ fontSize: '1rem' }}>{item?.post_title}</h1>
                       </Row>
+                      <PostDate value={item?.created_at} />
                       <img src={item?.post_title_img} style={{ width: '100%' }} />
                       <ReactQuill
                         className='none-padding'

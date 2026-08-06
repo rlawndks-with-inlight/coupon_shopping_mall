@@ -56,9 +56,9 @@ const ArticlesDemo = (props) => {
         }
       }
     ] : []),
-    /*{
+    {
       id: 'created_at',
-      label: '생성시간',
+      label: '작성일',
       action: (row) => {
         return <>
           <div style={{ color: themeObj.grey[500] }}>
@@ -66,7 +66,7 @@ const ArticlesDemo = (props) => {
           </div>
         </>
       }
-    },*/
+    },
     ...((postCategory?.is_able_user_add == 1 && postCategory?.post_category_read_type == 1) ? [
       {
         id: 'replies',

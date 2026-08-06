@@ -128,6 +128,16 @@ export const navConfig = () => {
   const isMasterSite = () => {
     return themeDnsData?.is_main_dns == 1;
   }
+  // 홈을 shop_obj/blog_obj 섹션 배열로 그리는 데모(=메인페이지관리로 편집 가능한 데모).
+  // shop 4·5·6·9는 자체 파일이 HomeDemo1을 감싸는 구조라 shop_obj를 그대로 쓴다(= 섹션빌더).
+  // shop 7·8은 자체 고정 레이아웃, shop 10은 빈 컴포넌트, blog 4~9는 고정 레이아웃 → 편집 대상 없음.
+  // (구 조건은 blog가 is_use_blog_obj_style==1을 요구했는데 브랜드 생성 시 항상 '0'이라 메뉴가 영영 안 떴음)
+  const SECTION_BUILDER_SHOP_DEMOS = [1, 2, 3, 4, 5, 6, 9];
+  const SECTION_BUILDER_BLOG_DEMOS = [1, 2, 3];
+  const isShopSectionBuilder = SECTION_BUILDER_SHOP_DEMOS.includes(Number(themeDnsData?.shop_demo_num))
+    || themeDnsData?.setting_obj?.is_use_shop_obj_style == 1;
+  const isBlogSectionBuilder = SECTION_BUILDER_BLOG_DEMOS.includes(Number(themeDnsData?.blog_demo_num))
+    || themeDnsData?.setting_obj?.is_use_blog_obj_style == 1;
   const isManager = () => {
     if (user?.level >= 40) {
       return true;
@@ -300,7 +310,7 @@ export const navConfig = () => {
             icon: ICONS.label,
             children: [
               // { title: '기본설정', path: PATH_MANAGER.designs.settings },
-              ...(themeDnsData?.shop_demo_num > 0 ? [{
+              ...(themeDnsData?.shop_demo_num > 0 && isShopSectionBuilder ? [{
                 title: `${themeDnsData?.shop_demo_num > 0 && themeDnsData?.blog_demo_num > 0 ? '쇼핑몰 ' : ''}메인페이지관리`, path: PATH_MANAGER.designs.main, children: [
                   { title: '전체', path: PATH_MANAGER.designs.main + '/all' },
                   ...mainObjSchemaList.filter(el => themeDnsData?.shop_obj?.map(itm => { return itm?.type })?.indexOf(el.type) >= 0).map((itm => {
@@ -311,7 +321,7 @@ export const navConfig = () => {
                   }))
                 ],
               }] : []),
-              ...((themeDnsData?.blog_demo_num > 0 && themeDnsData?.setting_obj?.is_use_blog_obj_style == 1) ? [{
+              ...((themeDnsData?.blog_demo_num > 0 && isBlogSectionBuilder) ? [{
                 title: `${themeDnsData?.shop_demo_num > 0 && themeDnsData?.blog_demo_num > 0 ? '블로그 ' : ''}메인페이지관리`, path: PATH_MANAGER.designs.blogMain, children: [
                   { title: '전체', path: PATH_MANAGER.designs.blogMain + '/all' },
                   ...mainObjSchemaList.filter(el => themeDnsData?.blog_obj?.map(itm => { return itm?.type })?.indexOf(el.type) >= 0).map((itm => {

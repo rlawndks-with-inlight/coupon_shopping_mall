@@ -437,7 +437,6 @@ const Demo6 = (props) => {
         <Section>
           <Container style={{ textAlign: 'center' }}>
             <SectionHeading>Coming Soon</SectionHeading>
-            <FinalCTADesc>관리자 페이지에서 대표 상품을 등록해주세요.</FinalCTADesc>
           </Container>
         </Section>
       </Wrapper>

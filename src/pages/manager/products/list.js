@@ -746,16 +746,15 @@ const ProductList = () => {
                         label={<Typography style={{ fontSize: themeObj.font_size.size6 }}>{property?.property_name}</Typography>}
                         control={<Checkbox checked={searchObj[`property_ids${index}`] == property?.id ? true : false} />}
                         onChange={(e) => {
-                          let property_ids = searchObj[`property_ids${index}`]
+                          // 체크 해제 시 기존 값을 그대로 두어 필터를 지울 수 없었다.
+                          // (해제해도 property_ids{index} 가 남아 계속 걸러진 상태로 조회됨)
+                          const next = { ...searchObj };
                           if (e.target.checked) {
-                            property_ids = parseInt(property?.id);
-                            //console.log(property_ids)
+                            next[`property_ids${index}`] = parseInt(property?.id);
+                          } else {
+                            delete next[`property_ids${index}`];
                           }
-                          onChangePage({
-                            ...searchObj,
-                            [`property_ids${index}`]: property_ids,
-                          })
-                          //console.log(searchObj)
+                          onChangePage(next)
                         }}
                       />
                     </>

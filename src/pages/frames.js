@@ -28,6 +28,11 @@ const FramesPage = () => {
               <br />
               {st('frames.desc2')}
             </Typography>
+            {/* 미리보기는 콘텐츠가 채워진 예시 화면이라 개설 직후 빈 몰과 격차가 크다.
+                "본 화면 그대로 개설된다"는 오해를 카탈로그 단계에서 먼저 막는다. */}
+            <Typography sx={{ fontSize: 13, color: '#8a8a90', maxWidth: 620, alignSelf: 'center', lineHeight: 1.7, textAlign: 'center', pt: 0.5 }}>
+              {st('frames.noticeContent')}
+            </Typography>
           </Stack>
         </Container>
       </Box>

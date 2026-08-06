@@ -44,4 +44,25 @@ export const getBannerRatio = (shopDemoNum) =>
 export const getDefaultBanners = (shopDemoNum) =>
   RATIO_2X1_DEMOS.includes(Number(shopDemoNum)) ? DEFAULT_BANNERS_2X1 : DEFAULT_BANNERS;
 
+// 섹션 빌더형 데모(shop 1·2·3·4·5·6·9, blog 1·2·3)에서 shop_obj/blog_obj가 비었을 때
+// 홈이 완전 백지가 되지 않도록 렌더 시점에만 끼워 넣는 기본 구성.
+// - DB에 저장하지 않는다. 가맹점이 섹션을 하나라도 만들면 즉시 사라진다.
+// - 배너만 넣는다. 상품 섹션은 상품 id를 직접 지정해야 하는 구조라 브랜드 공통 기본값이 성립하지 않음.
+// 항목 shape은 관리자 편집기 addDefaultBanner / 백엔드 utils.js/default-home.js 와 동일하게 유지.
+export const getDefaultHomeContent = (shopDemoNum) => ([
+  {
+    type: 'banner',
+    is_default: 1, // 기본 구성 표시용(저장 대상 아님)
+    list: getDefaultBanners(shopDemoNum).map((b) => ({
+      src: b.src,
+      title: '',
+      title_color: '#ffffff',
+      sub_title: '',
+      sub_title_color: '#ffffff',
+      link: '',
+    })),
+    style: { min_height: 200 },
+  },
+]);
+
 export default DEFAULT_BANNERS;

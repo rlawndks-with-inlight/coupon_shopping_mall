@@ -16,6 +16,7 @@ import HomePost from 'src/views/section/blog/HomePost'
 import HomeProductReview from 'src/views/section/blog/HomeProductReview'
 import HomeSellers from 'src/views/section/blog/HomeSellers'
 import { getMainObjType } from 'src/utils/function'
+import { getDefaultHomeContent } from 'src/data/default-banners'
 import HomeItemsPropertyGroups from 'src/views/section/blog/HomeItemsPropertyGroups'
 import HomeItemHero from 'src/views/section/shop/HomeItemHero'
 
@@ -220,6 +221,10 @@ const Demo1 = (props) => {
 
         let dns_data = themeDnsData;
         let content_list = (dns_data?.blog_obj) ?? [];
+        // 섹션이 하나도 없으면(신규 개설 직후) 기본 배너 구성으로 대체해 백지 홈을 막는다.
+        if (content_list.length <= 0) {
+            content_list = getDefaultHomeContent();
+        }
         setContentList(content_list)
         setData([
             ...[{

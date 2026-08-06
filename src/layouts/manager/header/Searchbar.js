@@ -132,9 +132,17 @@ function Searchbar() {
   };
 
   const handleKeyUp = (event) => {
-    if (event.key === 'Enter') {
-      handleClick(searchQuery);
-    }
+    if (event.key !== 'Enter') return;
+    // 기존엔 입력한 문자열을 그대로 경로로 push 해서, 검색어가 무엇이든 404 로 갔다.
+    // (getOptionLabel 이 "제목 경로 indexKey" 형태라 searchQuery 는 애초에 경로가 아니다)
+    // 이제는 검색어와 일치하는 메뉴가 있을 때만 그 경로로 이동하고, 없으면 아무 것도 하지 않는다.
+    const q = String(searchQuery ?? '').trim().toLowerCase();
+    if (!q) return;
+    const matched =
+      allItems.find((o) => `${o.title} ${o.path} ${o.indexKey}`.toLowerCase() === q) ||
+      allItems.find((o) => String(o.title).toLowerCase() === q) ||
+      allItems.find((o) => `${o.title} ${o.path} ${o.indexKey}`.toLowerCase().includes(q));
+    if (matched?.path) handleClick(matched.path);
   };
 
   return (

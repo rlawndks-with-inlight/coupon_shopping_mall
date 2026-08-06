@@ -157,13 +157,15 @@ const AccountEditPanel = ({ loginPath = '/shop/auth/login' }) => {
           <CardContent>
             <Stack spacing={2.5}>
               <TextField label={translate('아이디')} value={user?.user_name ?? ''} disabled fullWidth />
-              {/* 이름은 주문자 정보와 아이디 찾기에 쓰인다. 임의로 바꾸면 곤란하므로 읽기 전용. */}
+              {/* 이름은 주문자 정보와 아이디 찾기에 쓰인다. 임의로 바꾸면 곤란하므로 읽기 전용.
+                  nickname 폴백: 블로그형은 예전에 이름을 안 받아서 기존 회원은 name 이 비어 있다.
+                  그 시절 화면들이 nickname 을 '이름' 으로 표시해 왔으므로 같은 값을 보여준다. */}
               <TextField
                 label={translate('이름')}
-                value={user?.name ?? ''}
+                value={user?.name || user?.nickname || ''}
                 disabled
                 fullWidth
-                helperText={user?.name ? '' : '이름이 등록되어 있지 않습니다. 고객센터로 문의해 주세요.'}
+                helperText={(user?.name || user?.nickname) ? '' : '이름이 등록되어 있지 않습니다. 고객센터로 문의해 주세요.'}
               />
               <TextField
                 label={translate('휴대폰번호')}

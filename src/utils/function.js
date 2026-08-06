@@ -586,3 +586,11 @@ export const makeOrdNum = (prefix = '') => {
   const stamp = `${d.getFullYear()}${p(d.getMonth() + 1)}${p(d.getDate())}${p(d.getHours())}${p(d.getMinutes())}${p(d.getSeconds())}`;
   return `${prefix}${stamp}${randomOrdSuffix(6)}`.replace(/[^a-zA-Z0-9]/g, '');
 };
+
+// ── 회원가입 payload 보정 ────────────────────────────────────────────────────
+// 가입폼에서 '닉네임' 칸을 없애고 이름 하나만 받기로 했다(전 프레임 공통).
+// 그런데 코드 전반 — 마이페이지 인사말, 회원정보 표시(라벨이 아예 '이름'인데 값은
+// nickname 이다), 주문자명 폴백(user?.name ?? user?.nickname) — 이 nickname 을
+// 표시용 이름으로 쓰고 있다. 비워 보내면 이름이 안 나오는 화면이 생긴다.
+// → nickname 에 이름을 그대로 넣어 저장한다. 기존 회원 데이터는 건드리지 않는다.
+export const withSignUpName = (user) => ({ ...user, nickname: user?.name ?? '' });

@@ -15,8 +15,7 @@ import { apiManager } from 'src/utils/api';
 import { useSettingsContext } from 'src/components/settings';
 import SecurityQuestionFields from 'src/components/elements/shop/SecurityQuestionFields';
 import { validateSecurityQuestion, securityQuestionPayload } from 'src/data/security-questions';
-import { isShopgoBrand } from 'src/utils/is-shopgo';
-import { sanitizePhoneInput } from 'src/utils/function';
+import { sanitizePhoneInput, withSignUpName } from 'src/utils/function';
 
 const Wrappers = styled.div`
 max-width:720px;
@@ -169,9 +168,9 @@ const Demo2 = (props) => {
         if (activeStep == 1) {
             if (
                 !user.user_name ||
+                !user.name ||
                 !user.user_pw ||
                 !user.user_pw_check ||
-                !user.nickname ||
                 !user.phone_num
             ) {
                 toast.error("필수 항목을 입력해 주세요.");
@@ -182,12 +181,6 @@ const Demo2 = (props) => {
                 toast.error("비밀번호 확인란을 똑같이 입력했는지 확인해주세요");
                 return;
             }
-            // SHOPGO 본사·산하 가맹점은 아이디 찾기(이름+연락처)와 주문자 정보에 쓰이므로 이름 필수.
-            // 다른 브랜드는 기존대로 선택 입력.
-            if (isShopgoBrand(themeDnsData) && !user.name) {
-                toast.error("이름을 입력해 주세요.");
-                return;
-            }
             // 보안질문 — shopgo 가 아니면 '' 를 반환해 무조건 통과한다.
             const secqErr = validateSecurityQuestion(user, themeDnsData);
             if (secqErr) {
@@ -195,7 +188,7 @@ const Demo2 = (props) => {
                 return;
             }
             let result = await apiManager('auth/sign-up', 'create', {
-                ...user,
+                ...withSignUpName(user),
                 ...securityQuestionPayload(themeDnsData, user),
                 brand_id: themeDnsData?.id,
             });
@@ -451,6 +444,8 @@ const Demo2 = (props) => {
                                 }}
                                 value={user.name}
                             />
+                            {/* 닉네임 입력 제거 — 이름 하나만 받기로 통일했다(전 프레임 공통).
+                                저장 시 nickname 에는 이름을 그대로 넣는다(utils/function.js withSignUpName).
                             <TextFieldTitle>닉네임</TextFieldTitle>
                             <TextField
                                 sx={{
@@ -461,6 +456,7 @@ const Demo2 = (props) => {
                                 }}
                                 value={user.nickname}
                             />
+                            */}
                             <TextFieldTitle>휴대폰번호</TextFieldTitle>
                             <TextField
                                 placeholder='숫자와 하이픈(-)만 입력'

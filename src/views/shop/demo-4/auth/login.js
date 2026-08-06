@@ -137,20 +137,18 @@ const LoginDemo = (props) => {
           onClick={onLogin}
         >로그인</Button>
         <Row style={{ margin: '1rem 0 2rem auto' }}>
-          {
-            /*
-            <HoverText style={{ borderRight: `1px solid ${themeObj.grey[300]}` }} themeDnsData={themeDnsData} onClick={() => { router.push(`/shop/auth/find-info?type=0`) }}>아이디 찾기</HoverText>
+          {/* 찾기 링크가 통째로 주석 처리돼 있어 프레임3에서는 아이디·비밀번호를 찾을 방법이 없었다.
+              (/shop/auth/find-info 페이지 자체는 정상 동작한다) */}
+          <HoverText style={{ borderRight: `1px solid ${themeObj.grey[300]}` }} themeDnsData={themeDnsData} onClick={() => { router.push(`/shop/auth/find-info?type=0`) }}>아이디 찾기</HoverText>
           <HoverText style={{ paddingRight: '0' }} themeDnsData={themeDnsData} onClick={() => { router.push(`/shop/auth/find-info?type=1`) }}>비밀번호 찾기</HoverText>
-            */
-          }
         </Row>
         <Row style={{ margin: '1rem auto', marginTop: '10rem', justifyContent: 'space-between', width: '100%', display: `${themeDnsData?.id == 74 && !themeDnsData?.seller_id ? 'none' : ''}` }}>
-          <div style={{}} themeDnsData={themeDnsData} onClick={() => { }}>아직 회원이 아니신가요?</div>
-          {
-            /*
-            <HoverText style={{ paddingRight: '0' }} themeDnsData={themeDnsData} onClick={() => { setDialogOpen(true) }}>비회원 주문조회</HoverText>
-            */
-          }
+          {/* 아래 '회원가입' 버튼으로 유도하는 안내 문구. 링크는 중복이라 두지 않는다.
+              (themeDnsData 는 styled 컴포넌트가 아닌 div 에 넘기면 React 경고가 나므로 제거) */}
+          <div>아직 회원이 아니신가요?</div>
+          {/* 아래 Dialog(open={dialogOpen})를 여는 유일한 트리거였는데 주석 처리돼 있어
+              비회원 주문조회 화면을 띄울 방법이 없었다. */}
+          <HoverText style={{ paddingRight: '0' }} themeDnsData={themeDnsData} onClick={() => { setDialogOpen(true) }}>비회원 주문조회</HoverText>
         </Row>
         <Button variant="contained" style={{
           height: '60px',
@@ -221,7 +219,9 @@ const LoginDemo = (props) => {
               }}
             >조회하기</Button>
             <Row style={{ margin: '1rem auto', marginTop: '10rem', justifyContent: 'space-between', width: '100%' }}>
-              <div style={{}} themeDnsData={themeDnsData} onClick={() => { router.push(`/shop/auth/find-info?type=0`) }}>아직 회원이 아니신가요?</div>
+              {/* 문구는 '회원이 아니신가요?' 인데 '아이디 찾기'로 보내던 잘못된 링크였다.
+                  바로 아래 회원가입 버튼이 있으므로 안내 문구로만 둔다. */}
+              <div>아직 회원이 아니신가요?</div>
             </Row>
             <Button variant="contained" style={{
               height: '60px',

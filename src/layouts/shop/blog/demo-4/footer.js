@@ -35,16 +35,19 @@ const Footer = () => {
   const { themeMode } = useSettingsContext();
   const { translate } = useLocales();
   const { themeDnsData } = useSettingsContext();
-  const {
-    company_name,
-    addr,
-    business_num,
-    ceo_name,
-    phone_num,
-    fax_num,
-    mail_order_num,
-    pvcy_rep_name,
-  } = themeDnsData;
+  // 브랜드 정보는 DB 에서 NULL 로 내려오는데 아래에서 `xxx.length` 로 검사한다.
+  // 구조분해 기본값은 undefined 에만 적용되고 null 에는 적용되지 않으므로 명시적으로 문자열화한다.
+  // (미설정 브랜드에서 푸터가 터지면 레이아웃 전체가 하얗게 된다)
+  const s = (v) => (v == null ? '' : String(v));
+  const d = themeDnsData ?? {};
+  const company_name = s(d.company_name);
+  const addr = s(d.addr);
+  const business_num = s(d.business_num);
+  const ceo_name = s(d.ceo_name);
+  const phone_num = s(d.phone_num);
+  const fax_num = s(d.fax_num);
+  const mail_order_num = s(d.mail_order_num);
+  const pvcy_rep_name = s(d.pvcy_rep_name);
   return (
     <>
       <Wrappers style={{

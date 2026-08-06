@@ -3,6 +3,9 @@ import { useSettingsContext } from "src/components/settings";
 import { useRouter } from "next/router";
 import { Icon } from "@iconify/react";
 import { LazyLoadImage } from "react-lazy-load-image-component";
+import { useState } from "react";
+import DialogSearch from "src/components/dialog/DialogSearch";
+import { useAuthContext } from "src/layouts/manager/auth/useAuthContext";
 
 /* 단일 상품 전용 럭셔리 레이아웃 — 심플 헤더 + 심플 푸터 */
 
@@ -61,6 +64,10 @@ const IconBtn = styled.button`
     opacity: 0.6;
   }
 `
+const HeaderActions = styled.div`
+  display: flex;
+  align-items: center;
+`
 const Main = styled.main`
   flex: 1;
 `
@@ -110,9 +117,19 @@ const BlogLayout6 = (props) => {
   const router = useRouter();
   const { children } = props;
   const brandName = themeDnsData?.name || 'BRAND';
+  const { user } = useAuthContext();
+  const [searchOpen, setSearchOpen] = useState(false);
 
   return (
     <Wrapper>
+      {/* 블로그 프레임에는 상품 목록 페이지(/blog/items)도 카테고리 메뉴도 없다.
+          검색이 홈의 대표상품 외 상품을 찾는 유일한 수단인데 이 헤더엔 진입점이 없었다.
+          (프레임6~11이 이 레이아웃을 공유하므로 한 번만 넣으면 6개가 함께 해결된다) */}
+      <DialogSearch
+        open={searchOpen}
+        handleClose={() => setSearchOpen(false)}
+        root_path={'/blog/search?keyword='}
+      />
       <Header>
         <IconBtn onClick={() => router.back()}>
           <Icon icon="material-symbols:arrow-back" />
@@ -124,9 +141,21 @@ const BlogLayout6 = (props) => {
             <BrandText>{brandName}</BrandText>
           )}
         </LogoArea>
-        <IconBtn onClick={() => router.push('/blog/auth/cart')}>
-          <Icon icon="iconamoon:shopping-bag" />
-        </IconBtn>
+        {/* 아이콘을 한 묶음으로 — Header 가 space-between 이라 낱개로 두면 로고가 가운데서 밀린다.
+            사람 아이콘: 이 레이아웃(프레임6~11 공용)에는 로그인·마이페이지 진입점이 아예 없어서
+            회원가입을 해도 로그인할 방법이, 주문을 해도 주문내역을 볼 방법이 없었다.
+            로그인 상태면 마이페이지, 아니면 로그인 화면으로 보낸다(프레임4·5와 동일). */}
+        <HeaderActions>
+          <IconBtn onClick={() => setSearchOpen(true)}>
+            <Icon icon="tabler:search" />
+          </IconBtn>
+          <IconBtn onClick={() => router.push(user ? '/blog/auth/my-page' : '/blog/auth/login')}>
+            <Icon icon="basil:user-outline" />
+          </IconBtn>
+          <IconBtn onClick={() => router.push('/blog/auth/cart')}>
+            <Icon icon="iconamoon:shopping-bag" />
+          </IconBtn>
+        </HeaderActions>
       </Header>
       <Main>{children}</Main>
       <Footer>

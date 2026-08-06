@@ -72,16 +72,22 @@ const Footer = () => {
 
   const router = useRouter();
 
-  const {
-    company_name,
-    addr,
-    business_num,
-    ceo_name,
-    phone_num,
-    fax_num,
-    mail_order_num,
-    pvcy_rep_name,
-  } = themeDnsData;
+  // 아래에서 각 값을 `xxx.length > 1` 로 검사하는데, 브랜드 정보는 DB 에서 NULL 로 내려온다.
+  // 신규 개설 몰은 이 값들이 전부 비어 있어 null.length 로 푸터가 터지고,
+  // 푸터는 레이아웃에 포함되므로 그 브랜드의 '모든 페이지'가 하얗게 됐다.
+  //
+  // ※ 구조분해 기본값(= '')은 undefined 에만 적용되고 null 에는 적용되지 않는다.
+  //   DB NULL 은 JSON null 로 그대로 오므로 아래처럼 명시적으로 문자열화해야 한다.
+  const s = (v) => (v == null ? '' : String(v));
+  const d = themeDnsData ?? {};
+  const company_name = s(d.company_name);
+  const addr = s(d.addr);
+  const business_num = s(d.business_num);
+  const ceo_name = s(d.ceo_name);
+  const phone_num = s(d.phone_num);
+  const fax_num = s(d.fax_num);
+  const mail_order_num = s(d.mail_order_num);
+  const pvcy_rep_name = s(d.pvcy_rep_name);
   return (
     <>
       <Wrappers style={{

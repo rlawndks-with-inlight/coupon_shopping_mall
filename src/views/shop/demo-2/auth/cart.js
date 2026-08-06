@@ -94,14 +94,11 @@ export function AddressItem({ item, onCreateBilling, onDeleteAddress, onUpdateAd
           <Button variant="outlined" size="small" color="inherit" sx={{ mr: 1 }} onClick={() => { onDeleteAddress(id) }}>
             {translate('삭제')}
           </Button>
-          {
-            themeDnsData?.id == 74 &&
-            <>
-              <Button variant="outlined" size="small" color="inherit" sx={{ mr: 1 }} onClick={() => { onUpdateAddress(id); }}>
-                {translate('수정')}
-              </Button>
-            </>
-          }
+          {/* 배송지 '수정' — 예전엔 브랜드74 에서만 보였다. 삭제는 되는데 수정이 안 돼
+              주소를 고치려면 지웠다 다시 등록해야 했다. 전 브랜드 공통으로 연다. */}
+            <Button variant="outlined" size="small" color="inherit" sx={{ mr: 1 }} onClick={() => { onUpdateAddress(id); }}>
+              {translate('수정')}
+            </Button>
           <Button variant="contained" size="small" color="inherit" sx={{ fontWeight: 600 }} onClick={onCreateBilling}>
             {translate('해당 주소로 배송하기')}
           </Button>
@@ -140,6 +137,10 @@ const CartDemo = (props) => {
     user_id: user?.id,
   });
   const [addAddressOpen, setAddAddressOpen] = useState(false);
+  // 배송지 수정 — 기능(DialogAddAddress type='update')은 이미 있는데 이 화면만 배선이 빠져
+  //   '수정' 버튼이 undefined 를 호출했다. 프레임3(demo-4) 과 동일하게 연결한다.
+  const [updateAddressOpen, setUpdatedAddressOpen] = useState(false);
+  const [addressID, setAddressID] = useState();
   const [addAddressObj, setAddAddressObj] = useState({
     addr: '',
     detail_addr: '',
@@ -349,6 +350,11 @@ const CartDemo = (props) => {
       onChangeAddressPage(addressSearchObj);
     }
   }
+
+  const onUpdateAddress = async (id) => {
+    setAddressID(id);
+    setUpdatedAddressOpen(true);
+  }
   const onChangeAddressPage = async (search_obj) => {
     setAddressContent({
       ...addressContent,
@@ -380,6 +386,15 @@ const CartDemo = (props) => {
         addAddressOpen={addAddressOpen}
         setAddAddressOpen={setAddAddressOpen}
         onAddAddress={onAddAddress}
+      />
+      <DialogAddAddress
+        addAddressOpen={updateAddressOpen}
+        setAddAddressOpen={setUpdatedAddressOpen}
+        onAddAddress={onAddAddress}
+        type={'update'}
+        id={addressID}
+        onDeleteAddress={onDeleteAddress}
+        onUpdateAddress={onUpdateAddress}
       />
       <Wrappers>
         <Typography variant="h4" sx={{ fontWeight: 700, mt: 8, mb: 2 }}>

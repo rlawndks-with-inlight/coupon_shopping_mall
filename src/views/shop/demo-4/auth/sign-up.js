@@ -778,9 +778,13 @@ const SignUpDemo = (props) => {
               />
             </FormControl> */}
                 <SecurityQuestionFields user={user} setUser={setUser} style={{ marginTop: '1rem', width: '100%' }} />
-                <Button variant='outlined' onClick={() => { setUnipassPopup(true) }} style={{ marginTop: '1rem', maxWidth: '200px' }}>
-                  개인통관고유부호 등록
-                </Button>
+                {/* 개인통관고유부호는 해외직구 브랜드(74) 전용이다.
+                    이 데모가 프레임3 으로 팔리면서 일반 가맹점 가입폼에도 그대로 노출되고 있었다.
+                    (국내 배송만 하는 몰에서 통관부호를 요구하면 가입이 막히는 것처럼 보인다) */}
+                {themeDnsData?.id == 74 &&
+                  <Button variant='outlined' onClick={() => { setUnipassPopup(true) }} style={{ marginTop: '1rem', maxWidth: '200px' }}>
+                    개인통관고유부호 등록
+                  </Button>}
                 <Dialog
                   open={unipassPopup}
                   onClose={() => {

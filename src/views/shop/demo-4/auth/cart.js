@@ -82,14 +82,11 @@ export function AddressItem({ item, onCreateBilling, onDeleteAddress, onUpdateAd
           <Button variant="outlined" size="small" color="inherit" sx={{ mr: 1 }} onClick={() => { onDeleteAddress(id) }}>
             삭제
           </Button>
-          {
-            themeDnsData?.id == 74 &&
-            <>
-              <Button variant="outlined" size="small" color="inherit" sx={{ mr: 1 }} onClick={() => { onUpdateAddress(id); }}>
-                수정
-              </Button>
-            </>
-          }
+          {/* 배송지 '수정' — 예전엔 브랜드74 에서만 보였다. 삭제는 되는데 수정이 안 돼
+              주소를 고치려면 지웠다 다시 등록해야 했다. 전 브랜드 공통으로 연다. */}
+            <Button variant="outlined" size="small" color="inherit" sx={{ mr: 1 }} onClick={() => { onUpdateAddress(id); }}>
+              수정
+            </Button>
           <Button variant="outlined" size="small" onClick={onCreateBilling}>
             해당 주소로 배송하기
           </Button>

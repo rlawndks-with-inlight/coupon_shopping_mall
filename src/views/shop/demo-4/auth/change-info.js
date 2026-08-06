@@ -7,6 +7,7 @@ import { Col, Row, RowMobileColumn, RowMobileReverceColumn, Title } from "src/co
 import { useSettingsContext } from "src/components/settings";
 import { useAuthContext } from "src/layouts/manager/auth/useAuthContext";
 import { apiManager, uploadFileByManager } from "src/utils/api";
+import { sanitizePhoneInput, isValidPhoneNumber } from "src/utils/function";
 import styled from "styled-components";
 import $ from 'jquery';
 
@@ -79,10 +80,10 @@ const ChangeInfoDemo = (props) => {
     }
   }
   const onChangeUserInfo = async () => {
-    if (user?.phone_num != userObj?.phone_num) {
-      if (!userObj?.is_send_phone_check_num) {
-        return toast.error('휴대폰인증을 완료해 주세요.');
-      }
+    // 휴대폰 인증 요구 제거 — 문자 게이트웨이를 쓰지 않아 인증 자체가 불가능했고,
+    // 그 탓에 번호를 바꾸려 하면 저장이 막혀 있었다(닉네임·사진만 바뀌었다).
+    if (userObj?.phone_num && !isValidPhoneNumber(userObj.phone_num)) {
+      return toast.error('휴대폰번호를 정확히 입력해 주세요.');
     }
     let profile_img = userObj?.profile_img;
     if (userObj?.profile_file) {
@@ -94,12 +95,14 @@ const ChangeInfoDemo = (props) => {
     let result = await apiManager('auth/change-info', 'update', {
       nickname: userObj?.nickname,
       phone_num: userObj?.phone_num,
-      phone_token: userObj?.phone_token,
       profile_img: profile_img,
     })
     if (result) {
       toast.success('성공적으로 변경되었습니다.');
-      window.location.href = `/shop/auth/login`;
+      // 백엔드가 저장 후 토큰을 재발급하므로 재로그인이 필요 없다.
+      // (기존엔 쿠키를 지워 강제 로그아웃시켜서 로그인 화면으로 보냈다)
+      // 헤더·마이페이지가 새 닉네임/연락처를 읽도록 새로고침만 한다.
+      window.location.href = `/shop/auth/my-page`;
     }
   }
   const onSendPhoneVerifyCode = async () => {
@@ -197,27 +200,22 @@ const ChangeInfoDemo = (props) => {
                             ['nickname']: e.target.value
                           })
                         }} />
-                        <FormControl variant="outlined" >
-                          <InputLabel>휴대폰번호</InputLabel>
-                          <OutlinedInput
-                            label='휴대폰번호'
-                            value={userObj.phone_num}
-                            defaultValue={userObj.phone_num}
-                            disabled={userObj.is_check_phone_num}
-                            endAdornment={<Button
-                              variant='outlined'
-                              style={{ width: '160px', height: '48px', marginRight: '-0.5rem' }}
-                              size="small"
-                              disabled={userObj.is_check_phone_num}
-                              onClick={onSendPhoneVerifyCode}
-                            >인증번호 발송</Button>}
-                            onChange={(e) => {
-                              setUserObj({
-                                ...userObj,
-                                ['phone_num']: e.target.value
-                              })
-                            }} />
-                        </FormControl>
+                        {/* 휴대폰번호 — 인증 없이 바로 수정한다.
+                            문자 게이트웨이(보내자)를 쓰지 않기로 해서 인증 발송이 불가능한데,
+                            기존 화면은 번호를 바꾸면 인증을 요구해서 아예 못 바꿨다
+                            (백엔드가 브랜드별 bonaeja_obj 설정을 요구 → "본사에 문의해 주세요").
+                            shopgo 는 아이디 찾기에 전화번호가 아니라 보안질문을 쓰므로
+                            여기서 인증을 걷어내도 계정 복구 경로에는 영향이 없다. */}
+                        <TextField
+                          label='휴대폰번호'
+                          value={userObj.phone_num ?? ''}
+                          onChange={(e) => {
+                            setUserObj({
+                              ...userObj,
+                              ['phone_num']: sanitizePhoneInput(e.target.value)
+                            })
+                          }} />
+                        {/* 인증번호 입력칸 비노출 — 위와 같은 이유. 되살릴 경우 아래 주석을 풀 것.
                         <FormControl variant="outlined">
                           <InputLabel>인증번호</InputLabel>
                           <OutlinedInput
@@ -239,6 +237,7 @@ const ChangeInfoDemo = (props) => {
                               })
                             }} />
                         </FormControl>
+                        */}
                       </Stack>
                       <Stack spacing={3} alignItems="flex-end" sx={{ mt: 3 }}>
                         <Button variant="contained" onClick={onChangeUserInfo}>

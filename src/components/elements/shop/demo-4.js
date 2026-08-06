@@ -330,18 +330,23 @@ export const AuthMenuSideComponent = (props) => {
     {
       label: '회원정보',
       children: [
+        // '회원정보 변경' 링크가 주석 처리돼 있어서 이 프레임은 회원정보 화면에
+        // 들어갈 방법이 아예 없었다(페이지는 멀쩡히 있었다). 복원한다.
         {
+          label: '회원정보 변경',
+          link: '/shop/auth/change-info/',
+        },
+        // 배송지 관리·회원탈퇴는 '회원정보 변경' 화면(공용 패널) 안에 함께 들어가 있어
+        // 메뉴에 또 두면 같은 일을 하는 입구가 둘이 된다. 메뉴에서만 감춘다.
+        // (페이지 자체는 남아 있어 /shop/auth/delivery-address, /resign 으로 직접 들어가면 동작한다)
+        /*{
           label: '배송지 관리',
           link: '/shop/auth/delivery-address/',
         },
-        /*{
-          label: '회원정보 변경',
-          link: '/shop/auth/change-info/',
-        },*/
         {
           label: '회원탈퇴',
           link: '/shop/auth/resign/',
-        },
+        },*/
       ]
     },
   ];

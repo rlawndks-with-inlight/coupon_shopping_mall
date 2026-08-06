@@ -16,6 +16,8 @@ import Iconify from 'src/components/iconify/Iconify';
 import { useSettingsContext } from 'src/components/settings';
 import { calculatorPrice, getCartDataUtil, makePayData, onPayProductsByAuth, onPayProductsByHand, onPayProductsByPayletter, onPayProductsByForspay } from 'src/utils/shop-util';
 import { forspayMethodList } from 'src/utils/format';
+import { sanitizePhoneInput, isValidPhoneNumber } from 'src/utils/function';
+import Policy from 'src/pages/shop/auth/policy';
 import { useAuthContext } from 'src/layouts/manager/auth/useAuthContext';
 import { formatCreditCardNumber, formatExpirationDate } from 'src/utils/formatCard';
 import { useModal } from 'src/components/dialog/ModalProvider';
@@ -40,6 +42,11 @@ const Wrappers = styled.div`
 // 공용 주문서(주문/결제) — 단일 페이지. demo-9 카트의 결제 로직을 그대로 이식하되
 // 스텝퍼가 아니라 모든 섹션(주문상품·주문자·배송지·결제수단·약관·요약)을 한 화면에 표시한다.
 // 결제모듈(payment_modules)에 설정된 수단만 노출. 가짜 sms_pay는 이식 대상에서 제외.
+// 비회원 주문 비밀번호 길이. DB transactions.password 컬럼 크기와 함께 관리한다.
+// (마이그레이션 2026-08-07_widen_transactions_password.sql 로 컬럼을 넓혔다)
+const GUEST_PW_MIN = 6;
+const GUEST_PW_MAX = 16;
+
 export default function OrderSheet({ router }) {
   const { setModal } = useModal();
   const { user } = useAuthContext();
@@ -64,8 +71,14 @@ export default function OrderSheet({ router }) {
     page: 1, page_size: 10, search: '', user_id: user?.id,
   });
 
-  // 약관 동의 (실제 항목·문구는 클라이언트가 채우는 자리)
-  const [agreeAll, setAgreeAll] = useState(false);
+  // 결제 동의 — 전자상거래법상 필수 2종을 개별 항목으로 받는다.
+  // (기존엔 '모두 동의' 체크박스 1개에 약관 본문이 연결되지 않은 자리표시자였다)
+  // agree1: 이용약관 / agree2: 개인정보 수집·이용. 둘 다 있어야 결제가 진행된다.
+  const [agree1, setAgree1] = useState(false);
+  const [agree2, setAgree2] = useState(false);
+  const [openPolicy, setOpenPolicy] = useState(0); // 0=닫힘, 1=이용약관, 2=개인정보
+  const agreeAll = agree1 && agree2;
+  const toggleAgreeAll = (checked) => { setAgree1(checked); setAgree2(checked); };
 
   const [payData, setPayData] = useState({
     brand_id: themeDnsData?.id,
@@ -87,6 +100,32 @@ export default function OrderSheet({ router }) {
   useEffect(() => {
     getCart();
   }, []);
+
+  // 동의를 해제하면 이미 펼쳐진 결제수단 영역을 닫는다.
+  // 핀트리·헥토·웨이업 결제 컴포넌트는 자기 결제 버튼을 갖고 있어 guardBeforePay를 타지 않는다.
+  // 그래서 '동의 → 결제수단 선택 → 동의 해제 → 자식 버튼 클릭'으로 동의 없이 결제가 가능했다.
+  // buyType을 비우면 그 자식 컴포넌트 자체가 렌더되지 않으므로 우회 경로가 사라진다.
+  useEffect(() => {
+    if (!agreeAll && buyType) {
+      setBuyType(undefined);
+      setBuyPayMethod(undefined);
+    }
+  }, [agreeAll]);
+
+  // 로그인 정보는 JwtContext가 비동기로 채운다(초기 user=null).
+  // payData의 useState 초기값은 첫 렌더 1회만 계산되므로 그 시점엔 user가 없어
+  // user_id·buyer_name·buyer_phone이 전부 비어 있는 채로 결제까지 갔다.
+  // (회원 주문인데 user_id 없이 저장 → 주문내역에서 안 보이고, 휴대폰도 빈 값)
+  // user가 도착하면 아직 사용자가 직접 고치지 않은 값만 채워 넣는다.
+  useEffect(() => {
+    if (!user?.id) return;
+    setPayData((prev) => ({
+      ...prev,
+      user_id: prev.user_id ?? user?.id,
+      buyer_name: prev.buyer_name || user?.name || user?.nickname || '',
+      buyer_phone: prev.buyer_phone || sanitizePhoneInput(user?.phone_num ?? ''),
+    }));
+  }, [user?.id]);
 
   const getCart = async () => {
     let items = [];
@@ -178,6 +217,20 @@ export default function OrderSheet({ router }) {
     }
     if (!user && !payData.password) {
       toast.error('비회원 주문 비밀번호를 입력해 주세요.');
+      return false;
+    }
+    if (!user && (payData.password.length < GUEST_PW_MIN || payData.password.length > GUEST_PW_MAX)) {
+      toast.error(`비회원 주문 비밀번호는 ${GUEST_PW_MIN}~${GUEST_PW_MAX}자로 입력해 주세요.`);
+      return false;
+    }
+    // 전화번호는 배송 연락·주문 확인의 유일한 수단이라 결제 전에 반드시 성립해야 한다.
+    // 입력창에서 숫자·하이픈만 받도록 필터링하지만, 빈 값이나 자릿수 미달은 여기서 막는다.
+    if (!isValidPhoneNumber(payData.buyer_phone)) {
+      toast.error('구매자 휴대폰번호를 정확히 입력해 주세요.');
+      return false;
+    }
+    if (payData.addr_phone && !isValidPhoneNumber(payData.addr_phone)) {
+      toast.error('받는 분 연락처를 정확히 입력해 주세요.');
       return false;
     }
     if (parseFloat(max_use_point) < parseFloat(payData.use_point || 0)) {
@@ -356,7 +409,17 @@ export default function OrderSheet({ router }) {
                   {isMember ? (
                     <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2}>
                       <TextField fullWidth size="small" label="이름" value={user?.name ?? user?.nickname ?? ''} InputProps={{ readOnly: true }} />
-                      <TextField fullWidth size="small" label="휴대폰" value={user?.phone_num ?? ''} InputProps={{ readOnly: true }} />
+                      {/* 계정에 저장된 휴대폰이 있으면 읽기전용으로 보여주고,
+                          없는 계정(구 데이터·개발자 생성 계정 등)은 직접 입력받는다.
+                          읽기전용 고정이면 번호 없는 회원이 결제를 진행할 방법이 없다. */}
+                      {user?.phone_num ? (
+                        <TextField fullWidth size="small" label="휴대폰" value={user?.phone_num} InputProps={{ readOnly: true }} />
+                      ) : (
+                        <TextField fullWidth size="small" label="휴대폰" value={payData.buyer_phone}
+                          inputMode="tel" placeholder="010-1234-5678"
+                          helperText="계정에 등록된 번호가 없어 직접 입력이 필요합니다."
+                          onChange={(e) => setPayData({ ...payData, buyer_phone: sanitizePhoneInput(e.target.value) })} />
+                      )}
                     </Stack>
                   ) : (
                     <Stack spacing={2}>
@@ -364,10 +427,17 @@ export default function OrderSheet({ router }) {
                         <TextField fullWidth size="small" label="이름" value={payData.buyer_name}
                           onChange={(e) => setPayData({ ...payData, buyer_name: e.target.value })} />
                         <TextField fullWidth size="small" label="휴대폰" value={payData.buyer_phone}
-                          onChange={(e) => setPayData({ ...payData, buyer_phone: e.target.value })} />
+                          inputMode="tel" placeholder="010-1234-5678"
+                          onChange={(e) => setPayData({ ...payData, buyer_phone: sanitizePhoneInput(e.target.value) })} />
                       </Stack>
-                      <TextField fullWidth size="small" type="password" label="비회원 주문 비밀번호 (주문조회 시 사용)"
-                        value={payData.password} inputProps={{ maxLength: 20 }}
+                      {/* DB 컬럼이 varchar(8) 이었는데 여기 maxLength 가 20 이라
+                          9자 이상 입력하면 주문 INSERT 가 'Data too long' 으로 실패했다.
+                          컬럼을 넉넉히 넓히고(마이그레이션), 입력은 6~16자로 안내·제한한다. */}
+                      <TextField fullWidth size="small" type="password"
+                        label="비회원 주문 비밀번호 (주문조회 시 사용)"
+                        value={payData.password} inputProps={{ maxLength: GUEST_PW_MAX }}
+                        error={!!payData.password && payData.password.length < GUEST_PW_MIN}
+                        helperText={`${GUEST_PW_MIN}~${GUEST_PW_MAX}자로 입력해 주세요. 주문조회 시 필요하니 꼭 기억해 두세요.`}
                         onChange={(e) => setPayData({ ...payData, password: e.target.value })} />
                     </Stack>
                   )}
@@ -420,7 +490,8 @@ export default function OrderSheet({ router }) {
                         <TextField fullWidth size="small" label="받는 사람" value={payData.receiver || ''}
                           onChange={(e) => setPayData({ ...payData, receiver: e.target.value })} />
                         <TextField fullWidth size="small" label="연락처" value={payData.addr_phone || ''}
-                          onChange={(e) => setPayData({ ...payData, addr_phone: e.target.value })} />
+                          inputMode="tel" placeholder="010-1234-5678"
+                          onChange={(e) => setPayData({ ...payData, addr_phone: sanitizePhoneInput(e.target.value) })} />
                       </Stack>
                       <Stack direction="row" spacing={1} alignItems="flex-start">
                         <TextField size="small" label="우편번호" value={payData.zonecode || ''} InputProps={{ readOnly: true }} sx={{ width: 140 }} />
@@ -443,14 +514,47 @@ export default function OrderSheet({ router }) {
                 <CardContent>
                   <Box sx={{ mb: 2, pb: 1.5, borderBottom: '1px solid', borderColor: 'divider' }}>
                     <FormControlLabel
-                      control={<Checkbox checked={agreeAll} onChange={(e) => setAgreeAll(e.target.checked)} />}
-                      label={<Typography variant="subtitle2">주문 내용을 확인하였으며, 아래 약관에 모두 동의합니다. (필수)</Typography>}
+                      control={<Checkbox checked={agreeAll} onChange={(e) => toggleAgreeAll(e.target.checked)} />}
+                      label={<Typography variant="subtitle2">주문 내용을 확인하였으며, 아래 약관에 모두 동의합니다.</Typography>}
                     />
-                    <Box sx={{ pl: 4, color: 'text.secondary' }}>
-                      <Typography variant="caption" component="div">· (필수) 구매조건 확인 및 결제진행 동의</Typography>
-                      <Typography variant="caption" component="div">· (필수) 개인정보 제3자 제공(배송·결제) 동의</Typography>
-                      <Typography variant="caption" component="div" sx={{ mt: 0.5, color: 'text.disabled' }}>※ 약관 항목·문구는 확정 후 연결됩니다.</Typography>
-                    </Box>
+                    <Divider sx={{ my: 1 }} />
+                    <Stack sx={{ pl: 1 }}>
+                      {/* 항목별 개별 동의 — '전체 동의'는 아래 두 개를 켜고 끄는 편의 장치일 뿐이고,
+                          실제 결제 통과 조건은 두 항목이 각각 체크됐는지다. */}
+                      <Stack direction="row" alignItems="center" justifyContent="space-between">
+                        <FormControlLabel
+                          control={<Checkbox size="small" checked={agree1} onChange={(e) => setAgree1(e.target.checked)} />}
+                          label={<Typography variant="body2">이용약관 동의 <Box component="span" sx={{ color: 'error.main' }}>(필수)</Box></Typography>}
+                        />
+                        <Button size="small" variant="text" onClick={() => setOpenPolicy(openPolicy === 1 ? 0 : 1)}>
+                          {openPolicy === 1 ? '접기' : '보기'}
+                        </Button>
+                      </Stack>
+                      {openPolicy === 1 && (
+                        <Box sx={{ height: '12rem', overflowY: 'auto', border: '1px solid', borderColor: 'divider', borderRadius: 1, mb: 1 }}>
+                          <Policy type={0} />
+                        </Box>
+                      )}
+                      <Stack direction="row" alignItems="center" justifyContent="space-between">
+                        <FormControlLabel
+                          control={<Checkbox size="small" checked={agree2} onChange={(e) => setAgree2(e.target.checked)} />}
+                          label={<Typography variant="body2">개인정보 수집 및 이용 동의 <Box component="span" sx={{ color: 'error.main' }}>(필수)</Box></Typography>}
+                        />
+                        <Button size="small" variant="text" onClick={() => setOpenPolicy(openPolicy === 2 ? 0 : 2)}>
+                          {openPolicy === 2 ? '접기' : '보기'}
+                        </Button>
+                      </Stack>
+                      {openPolicy === 2 && (
+                        <Box sx={{ height: '12rem', overflowY: 'auto', border: '1px solid', borderColor: 'divider', borderRadius: 1 }}>
+                          <Policy type={1} />
+                        </Box>
+                      )}
+                    </Stack>
+                    {!agreeAll && (
+                      <Typography variant="caption" sx={{ color: 'text.secondary', pl: 1, mt: 1, display: 'block' }}>
+                        필수 항목에 모두 동의하셔야 결제를 진행할 수 있습니다.
+                      </Typography>
+                    )}
                   </Box>
                   <Stack spacing={1.5}>
                     {paymentModules.map((item, idx) => {
@@ -491,7 +595,8 @@ export default function OrderSheet({ router }) {
                         <TextField size="small" label="카드비밀번호 앞 두자리" type="password" value={payData.card_pw} inputProps={{ maxLength: '2' }}
                           onChange={(e) => setPayData({ ...payData, card_pw: e.target.value })} />
                         <TextField size="small" label="구매자 휴대폰번호" value={payData.buyer_phone}
-                          onChange={(e) => setPayData({ ...payData, buyer_phone: e.target.value })} />
+                          inputMode="tel" placeholder="010-1234-5678"
+                          onChange={(e) => setPayData({ ...payData, buyer_phone: sanitizePhoneInput(e.target.value) })} />
                         <TextField size="small" label="주민번호 또는 사업자등록번호" value={payData.auth_num}
                           onChange={(e) => setPayData({ ...payData, auth_num: e.target.value })} />
                         <Button variant="contained" size="large" onClick={() => setModal({
@@ -535,7 +640,8 @@ export default function OrderSheet({ router }) {
                         <TextField size="small" label="카드비밀번호 앞 두자리" type="password" value={payData.card_pw} inputProps={{ maxLength: '2' }}
                           onChange={(e) => setPayData({ ...payData, card_pw: e.target.value })} />
                         <TextField size="small" label="구매자 휴대폰번호" value={payData.buyer_phone}
-                          onChange={(e) => setPayData({ ...payData, buyer_phone: e.target.value })} />
+                          inputMode="tel" placeholder="010-1234-5678"
+                          onChange={(e) => setPayData({ ...payData, buyer_phone: sanitizePhoneInput(e.target.value) })} />
                         <TextField size="small" label="주민번호 또는 사업자등록번호" value={payData.auth_num}
                           onChange={(e) => setPayData({ ...payData, auth_num: e.target.value })} />
                         <PayProductsByHandFintree props={[products, payData]} />

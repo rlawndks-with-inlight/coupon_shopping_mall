@@ -220,16 +220,12 @@ const ItemDemo = (props) => {
       component: product ? <ProductDetailsReview product={product} reviewContent={reviewContent} onChangePage={onChangeReviewPage} reviewPage={reviewPage} reviewLoading={reviewLoading} /> : null,
     },
   ];
+  // 비회원도 장바구니 담기 허용(다른 데모와 동일 정책).
   const handleAddCart = async () => {
-    if (user) {
-      let result = await insertCartDataUtil({ ...product, seller_id: router.query?.seller_id ?? 0 }, selectProductGroups, themeCartData, onChangeCartData);
-      if (result) {
-        toast.success("장바구니에 성공적으로 추가되었습니다.")
-      }
-    } else {
-      toast.error('로그인을 해주세요.');
+    let result = await insertCartDataUtil({ ...product, seller_id: router.query?.seller_id ?? 0 }, selectProductGroups, themeCartData, onChangeCartData);
+    if (result) {
+      toast.success("장바구니에 성공적으로 추가되었습니다.")
     }
-
   };
   const onSelectOption = (group, option, is_option_multiple) => {
     let select_product_groups = selectItemOptionUtil(group, option, selectProductGroups, is_option_multiple);
@@ -552,26 +548,28 @@ const ItemDemo = (props) => {
                             <Icon icon={'mdi:check-bold'} />
                           </>}*/
                           onClick={() => {
-                            // TODO(게스트 바로구매 보류): shop-4는 unipass(개인통관고유부호) 필수 해외직구 데모.
-                            // 주문서(OrderSheet)에 unipass 입력칸 추가 후 게스트 게이트 완화 예정 — 현재는 로그인+unipass 유지.
+                            // 해외직구 전용 로직(로그인 강제 + 개인통관고유부호 검증)을 걷어내고
+                            // 다른 데모와 동일하게 비회원 바로구매를 허용한다.
+                            // 원래 shop:4는 unipass 필수 해외직구 데모였으나, 지금은 일반 가맹점이 쓰는
+                            // 프레임3이라 그 제약이 그대로 남아 비회원 구매가 막혀 있었다.
+                            /* 되살릴 경우 아래 블록을 복구할 것 (브랜드 74 = 해외직구 본사)
                             if (themeDnsData?.id == 74 && !themeDnsData?.seller_id) {
                               toast.error('본사페이지에서는 결제가 진행되지 않습니다.')
                               return;
                             }
                             if (user) {
-                              if (user?.unipass) {
-                                if (product?.characters?.length > 0) {
-                                  setCharacterSelect(true);
-                                  setBuyOrCart('buy');
-                                } else {
-                                  //setUnipassPopup(true);
-                                  setBuyOpen(true);
-                                }
-                              } else {
+                              if (user?.unipass) { ... } else {
                                 toast.error('개인통관고유부호가 존재하지 않습니다. 관리자에 문의하세요.')
                               }
                             } else {
                               toast.error('로그인을 해주세요.')
+                            }
+                            */
+                            if (product?.characters?.length > 0) {
+                              setCharacterSelect(true);
+                              setBuyOrCart('buy');
+                            } else {
+                              setBuyOpen(true);
                             }
                           }}
                         >구매하기</Button>

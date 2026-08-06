@@ -216,7 +216,10 @@ const ItemsDemo = (props) => {
     // }
   }
   useEffect(() => {
-    if ((productContent?.content ?? []).length > 0) {
+    // 응답이 도착했으면 결과가 0건이어도 로딩을 끝낸다.
+    // 기존엔 content.length > 0 일 때만 해제해서, 검색·필터 결과가 0건이면
+    // '검색결과 없음' 대신 스피너가 영원히 돌았다.
+    if (productContent?.content) {
       setLoading(false);
     }
   }, [productContent?.content])
@@ -373,6 +376,10 @@ const ItemsDemo = (props) => {
                         }}
                       />
                     </>
+                    {/* 성별 필터칩(공용/남성/여성) — property_ids0 = 48/47/46 을 하드코딩한
+                        브랜드74(해외직구) 전용 UI다. 다른 가맹점에는 그 id 의 속성이 없어
+                        누르면 항상 '검색결과 0건' 이 된다. 해당 브랜드에서만 노출한다. */}
+                    {themeDnsData?.id == 74 && <>
                     <Chip
                       label={'공용'}
                       sx={{
@@ -436,6 +443,7 @@ const ItemsDemo = (props) => {
                         router.push(updatedUrl)
 
                       }} />
+                    </>}
                   </Row>
                 </BrandFilter>
               </Row>

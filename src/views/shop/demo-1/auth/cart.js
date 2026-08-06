@@ -1,4 +1,5 @@
 import { Box, Button, Card, CardContent, CardHeader, CircularProgress, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, FormControl, FormControlLabel, Grid, InputLabel, MenuItem, Paper, Radio, RadioGroup, Select, Stack, TextField, Typography } from '@mui/material';
+import { makeOrdNum } from 'src/utils/function';
 import { useEffect, useState } from 'react';
 import { Row, Title, postCodeStyle, themeObj } from 'src/components/elements/styled-components';
 import { CheckoutCartProductList, CheckoutSteps, CheckoutSummary } from 'src/views/@dashboard/e-commerce/checkout';
@@ -24,6 +25,9 @@ import PayProductsByAuthHecto from 'src/utils/hecto-auth';
 import PayProductsByPhoneHecto from 'src/utils/hecto-phone';
 import PayProductsByHandFintree from 'src/utils/fintree-hand';
 import PayProductsByAuthFintree from 'src/utils/fintree-auth';
+// 아래 JSX 에서 <PayProductsByAuthWayup> 을 쓰는데 import 가 빠져 있었다.
+// 웨이업 인증결제를 켠 브랜드에서 그 단계로 넘어가면 렌더 즉시 터진다.
+import PayProductsByAuthWayup from 'src/utils/wayup-auth';
 
 const Wrappers = styled.div`
 max-width:1500px;
@@ -241,13 +245,12 @@ const CartDemo = (props) => {
       setActiveStep(2);
     } else if (item?.type == 'virtual_account') {
       setBuyType('virtual_account');
-      let pay_data = await makePayData([{
-        ...product_item,
-        groups: select_product_groups,
-        seller_id: router.query?.seller_id ?? 0,
-      }], payData);
+      // 장바구니의 카트 배열을 그대로 넘긴다. 예전엔 상품상세 바로구매에서 복사해 온
+      // product_item / select_product_groups 를 썼는데 이 화면엔 그런 변수가 없어
+      // 고객이 무통장입금을 고르는 순간 터졌다.
+      let pay_data = await makePayData(products, payData);
       delete pay_data.payment_modules;
-      let ord_num = `${pay_data?.user_id || pay_data?.password}${new Date().getTime().toString().substring(0, 11)}`;
+      let ord_num = makeOrdNum();
       pay_data.ord_num = ord_num
       pay_data.item_name = pay_data?.products?.length > 1 ? `${pay_data?.products[0]?.order_name} 외 ${pay_data?.products?.length - 1}건` : (pay_data?.products[0]?.order_name || '상품');
       let link = _.find(themeDnsData?.payment_modules, { type: 'virtual_account' })?.virtual_acct_url + `?amount=${pay_data?.amount}`;
@@ -261,13 +264,9 @@ const CartDemo = (props) => {
     }
     else if (item?.type == 'gift_certificate') {
       setBuyType('gift_certificate');
-      let pay_data = await makePayData([{
-        ...product_item,
-        groups: select_product_groups,
-        seller_id: router.query?.seller_id ?? 0,
-      }], payData);
+      let pay_data = await makePayData(products, payData);
       delete pay_data.payment_modules;
-      let ord_num = `${pay_data?.user_id || pay_data?.password}${new Date().getTime().toString().substring(0, 11)}`;
+      let ord_num = makeOrdNum();
       pay_data.ord_num = ord_num
       pay_data.item_name = pay_data?.products?.length > 1 ? `${pay_data?.products[0]?.order_name} 외 ${pay_data?.products?.length - 1}건` : (pay_data?.products[0]?.order_name || '상품');
       let link = _.find(themeDnsData?.payment_modules, { type: 'gift_certificate' })?.gift_certificate_url + `?amount=${pay_data?.amount}&name=${user?.name ?? ""}&phone_num=${user?.phone_num ?? ""}`;
@@ -280,11 +279,7 @@ const CartDemo = (props) => {
     else if (item?.type == 'certification_weroute') {
       setBuyType('certification_weroute');
       setPayLoading(true);
-      let result = await onPayProductsByAuth([{
-        ...product_item,
-        groups: select_product_groups,
-        seller_id: router.query?.seller_id ?? 0,
-      }], { ...payData, payment_modules: item }, 'weroute');
+      let result = await onPayProductsByAuth(products, { ...payData, payment_modules: item }, 'weroute');
     } else if (item?.type == 'card_hecto') {
       setBuyType('card_hecto');
       setActiveStep(2)
@@ -644,7 +639,7 @@ const CartDemo = (props) => {
                   {
                     buyType == 'card_fintree' &&
                     <>
-                      <Typography variant='subtitle1' sx={{ borderBottom: `1px solid #000`, paddingBottom: '0.5rem', marginBottom: '0.5rem' }}>{_.find(payList, { type: buyType })?.title}</Typography>
+                      <Typography variant='subtitle1' sx={{ borderBottom: `1px solid #000`, paddingBottom: '0.5rem', marginBottom: '0.5rem' }}>{_.find(themeDnsData?.payment_modules, { type: buyType })?.title}</Typography>
                       <Stack spacing={2}>
                         <Cards cvc={''} focused={cardFucus} expiry={payData.yymm} name={payData.buyer_name} number={payData.card_num} />
                         <Stack>
@@ -726,7 +721,7 @@ const CartDemo = (props) => {
                         <Stack>
                           <TextField
                             size='small'
-                            label={is_blog == 1 ? '주민번호 앞 6자리(생년월일)' : '주민번호 또는 사업자등록번호'}
+                            label={themeDnsData?.blog_demo_num > 0 ? '주민번호 앞 6자리(생년월일)' : '주민번호 또는 사업자등록번호'}
                             value={payData.auth_num}
                             onChange={(e) => {
                               let value = e.target.value;
@@ -757,7 +752,7 @@ const CartDemo = (props) => {
                           </>}
                         <Stack>
                           <PayProductsByHandFintree
-                            props={[product, payData, selectProductGroups]}
+                            props={[products, payData, undefined]}
                           />
                         </Stack>
                       </Stack>

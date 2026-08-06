@@ -1,4 +1,5 @@
 import PropTypes from 'prop-types';
+import { withSignUpName } from 'src/utils/function';
 import { Button, Card, Checkbox, Divider, FormControl, FormControlLabel, Grid, InputAdornment, InputLabel, MenuItem, OutlinedInput, Select, Stack, Step, StepConnector, StepLabel, Stepper, TextField, Typography, stepConnectorClasses } from '@mui/material';
 import { useEffect, useState } from 'react';
 import { Col, Row, Title, themeObj } from 'src/components/elements/styled-components';

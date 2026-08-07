@@ -13,7 +13,7 @@ import { Icon } from '@iconify/react';
 import { useSettingsContext } from 'src/components/settings';
 import { apiManager } from 'src/utils/api';
 import { useLocales } from 'src/locales';
-import { generateRandomString } from 'src/utils/function';
+import { generateRandomString, withSignUpName } from 'src/utils/function';
 import SecurityQuestionFields from 'src/components/elements/shop/SecurityQuestionFields';
 import { validateSecurityQuestion, securityQuestionPayload } from 'src/data/security-questions';
 import { isShopgoBrand } from 'src/utils/is-shopgo';
@@ -226,9 +226,9 @@ const SignUpDemo = (props) => {
       if (themeDnsData?.id == 77) {
         if (
           !user.user_name ||
+          !user.name ||
           !user.user_pw ||
           !user.user_pw_check ||
-          !user.nickname ||
           !user.phone_num ||
           !user.phoneCheck
         ) {
@@ -247,9 +247,9 @@ const SignUpDemo = (props) => {
         }
       } else if (
         !user.user_name ||
+        !user.name ||
         !user.user_pw ||
         !user.user_pw_check ||
-        !user.nickname ||
         !user.phone_num
       ) {
         toast.error(translate("필수 항목을 입력해 주세요."));
@@ -271,7 +271,7 @@ const SignUpDemo = (props) => {
         toast.error(secqErr);
         return;
       }
-      let result = await apiManager('auth/sign-up', 'create', { ...user, ...securityQuestionPayload(themeDnsData, user), brand_id: themeDnsData?.id });
+      let result = await apiManager('auth/sign-up', 'create', { ...withSignUpName(user), ...securityQuestionPayload(themeDnsData, user), brand_id: themeDnsData?.id });
       if (!result) {
         return;
       }
@@ -454,6 +454,9 @@ const SignUpDemo = (props) => {
                   }
                 }}
               />
+              {/* 닉네임 입력 제거 — 이름 하나만 받기로 통일했다(전 프레임 공통).
+                  저장 시 nickname 에는 이름을 그대로 넣는다(utils/function.js withSignUpName).
+                  코드 전반이 nickname 을 표시용 이름으로 쓰고 있어 비우면 이름이 안 보인다.
               <TextField
                 label={translate('닉네임')}
                 fullWidth
@@ -468,6 +471,7 @@ const SignUpDemo = (props) => {
                   }
                 }}
               />
+              */}
               <FormControl variant="outlined" style={{ width: '100%', marginTop: '1rem' }}>
                 <InputLabel>{translate('휴대폰번호')}</InputLabel>
                 <OutlinedInput

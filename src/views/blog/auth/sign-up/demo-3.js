@@ -267,7 +267,11 @@ const Demo3 = (props) => {
                         </TextFieldContainer>
                     </>
                 }
-                {activeStep == 1 &&
+                {/* 휴대폰 번호 인증 단계 비노출.
+                    문자 게이트웨이(보내자)를 쓰지 않기로 해서 이 단계는 동작할 수 없다.
+                    원래도 '인증완료' 가 setActiveStep(+1) 만 해서 아무 값이나 통과하는 껍데기였다.
+                    되살리려면 이 주석을 풀고 아래 단계 번호를 1씩 올릴 것.
+                activeStep == 1 &&
                     <>
                         <TextFieldContainer>
                             <Title>휴대폰 번호 인증</Title>
@@ -313,8 +317,8 @@ const Demo3 = (props) => {
                             >인증완료</Button>
                         </TextFieldContainer>
                     </>
-                }
-                {activeStep == 2 &&
+                */}
+                {activeStep == 1 &&
                     <>
                         <TextFieldContainer>
                             <Title>회원가입</Title>
@@ -422,7 +426,7 @@ const Demo3 = (props) => {
                         </TextFieldContainer>
                     </>
                 }
-                {activeStep == 3 &&
+                {activeStep == 2 &&
                     <>
                         <TextFieldContainer>
                             <Title>축하합니다!<br />회원가입이 완료되었습니다!<br /></Title>

@@ -1,4 +1,5 @@
 import PropTypes from 'prop-types';
+import { withSignUpName } from 'src/utils/function';
 import { Button, Card, Checkbox, Dialog, DialogActions, DialogContent, DialogTitle, Divider, FormControl, FormControlLabel, Grid, InputAdornment, InputLabel, MenuItem, OutlinedInput, Select, Stack, Step, StepConnector, StepLabel, Stepper, TextField, Typography, stepConnectorClasses } from '@mui/material';
 import { useEffect, useState } from 'react';
 import { Col, Row, Title, themeObj } from 'src/components/elements/styled-components';
@@ -177,11 +178,15 @@ const SignUpDemo = (props) => {
     if (activeStep == 1) {
       if (
         !user.user_name ||
+        !user.name ||
         !user.user_pw ||
         !user.user_pw_check ||
-        !user.name ||
         !user.phone_num ||
-        !user.unipass
+        // 개인통관고유부호는 해외직구 브랜드(74)에서만 필수다.
+        // 이 데모가 프레임3 으로 팔리면서 일반 가맹점에도 필수로 걸려 있었는데,
+        // 입력 버튼은 브랜드74 전용으로 가렸으므로 그대로 두면 넣을 방법도 없이
+        // 가입이 영영 막힌다.
+        (themeDnsData?.id == 74 && !user.unipass)
       ) {
         toast.error("필수 항목을 입력해 주세요.");
         return;
@@ -202,7 +207,7 @@ const SignUpDemo = (props) => {
         toast.error(secqErr);
         return;
       }
-      let result = await apiManager('auth/sign-up', 'create', { ...user, ...securityQuestionPayload(themeDnsData, user), brand_id: themeDnsData?.id, seller_id: themeDnsData?.seller_id ?? 0 });
+      let result = await apiManager('auth/sign-up', 'create', { ...withSignUpName(user), ...securityQuestionPayload(themeDnsData, user), brand_id: themeDnsData?.id, seller_id: themeDnsData?.seller_id ?? 0 });
       if (!result) {
         return;
       }
@@ -447,6 +452,9 @@ const SignUpDemo = (props) => {
                     }
                   }}
                 />
+                {/* 닉네임 입력 제거 — 이름 하나만 받기로 통일했다(전 프레임 공통).
+                    저장 시 nickname 에는 이름을 그대로 넣는다(utils/function.js withSignUpName).
+                    코드 전반이 nickname 을 표시용 이름으로 쓰고 있어 비우면 이름이 안 보인다.
                 <TextField
                   label='닉네임'
                   onChange={(e) => {
@@ -460,6 +468,7 @@ const SignUpDemo = (props) => {
                     }
                   }}
                 />
+                */}
                 <FormControl variant="outlined" style={{ width: '100%', marginTop: '1rem' }}>
                   <InputLabel>휴대폰번호</InputLabel>
                   <OutlinedInput
@@ -773,9 +782,13 @@ const SignUpDemo = (props) => {
               />
             </FormControl> */}
                 <SecurityQuestionFields user={user} setUser={setUser} style={{ marginTop: '1rem', width: '100%' }} />
-                <Button variant='outlined' onClick={() => { setUnipassPopup(true) }} style={{ marginTop: '1rem', maxWidth: '200px' }}>
-                  개인통관고유부호 등록
-                </Button>
+                {/* 개인통관고유부호는 해외직구 브랜드(74) 전용이다.
+                    이 데모가 프레임3 으로 팔리면서 일반 가맹점 가입폼에도 그대로 노출되고 있었다.
+                    (국내 배송만 하는 몰에서 통관부호를 요구하면 가입이 막히는 것처럼 보인다) */}
+                {themeDnsData?.id == 74 &&
+                  <Button variant='outlined' onClick={() => { setUnipassPopup(true) }} style={{ marginTop: '1rem', maxWidth: '200px' }}>
+                    개인통관고유부호 등록
+                  </Button>}
                 <Dialog
                   open={unipassPopup}
                   onClose={() => {

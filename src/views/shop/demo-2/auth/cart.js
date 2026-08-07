@@ -1,4 +1,5 @@
 import { Box, Button, Card, CardContent, CardHeader, CircularProgress, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Divider, FormControl, FormControlLabel, Grid, InputLabel, MenuItem, Paper, Radio, RadioGroup, Select, Stack, TextField, Typography } from '@mui/material';
+import { makeOrdNum } from 'src/utils/function';
 import { useEffect, useState } from 'react';
 import { Row, Title, postCodeStyle, themeObj } from 'src/components/elements/styled-components';
 import { CheckoutCartProductList, CheckoutSteps, CheckoutSummary } from 'src/views/@dashboard/e-commerce/checkout';
@@ -94,14 +95,11 @@ export function AddressItem({ item, onCreateBilling, onDeleteAddress, onUpdateAd
           <Button variant="outlined" size="small" color="inherit" sx={{ mr: 1 }} onClick={() => { onDeleteAddress(id) }}>
             {translate('삭제')}
           </Button>
-          {
-            themeDnsData?.id == 74 &&
-            <>
-              <Button variant="outlined" size="small" color="inherit" sx={{ mr: 1 }} onClick={() => { onUpdateAddress(id); }}>
-                {translate('수정')}
-              </Button>
-            </>
-          }
+          {/* 배송지 '수정' — 예전엔 브랜드74 에서만 보였다. 삭제는 되는데 수정이 안 돼
+              주소를 고치려면 지웠다 다시 등록해야 했다. 전 브랜드 공통으로 연다. */}
+            <Button variant="outlined" size="small" color="inherit" sx={{ mr: 1 }} onClick={() => { onUpdateAddress(id); }}>
+              {translate('수정')}
+            </Button>
           <Button variant="contained" size="small" color="inherit" sx={{ fontWeight: 600 }} onClick={onCreateBilling}>
             {translate('해당 주소로 배송하기')}
           </Button>
@@ -140,6 +138,10 @@ const CartDemo = (props) => {
     user_id: user?.id,
   });
   const [addAddressOpen, setAddAddressOpen] = useState(false);
+  // 배송지 수정 — 기능(DialogAddAddress type='update')은 이미 있는데 이 화면만 배선이 빠져
+  //   '수정' 버튼이 undefined 를 호출했다. 프레임3(demo-4) 과 동일하게 연결한다.
+  const [updateAddressOpen, setUpdatedAddressOpen] = useState(false);
+  const [addressID, setAddressID] = useState();
   const [addAddressObj, setAddAddressObj] = useState({
     addr: '',
     detail_addr: '',
@@ -251,13 +253,12 @@ const CartDemo = (props) => {
       setActiveStep(2);
     } else if (item?.type == 'virtual_account') {
       setBuyType('virtual_account');
-      let pay_data = await makePayData([{
-        ...product_item,
-        groups: select_product_groups,
-        seller_id: router.query?.seller_id ?? 0,
-      }], payData);
+      // 장바구니의 카트 배열을 그대로 넘긴다. 예전엔 상품상세 바로구매에서 복사해 온
+      // product_item / select_product_groups 를 썼는데 이 화면엔 그런 변수가 없어
+      // 고객이 무통장입금을 고르는 순간 터졌다.
+      let pay_data = await makePayData(products, payData);
       delete pay_data.payment_modules;
-      let ord_num = `${pay_data?.user_id || pay_data?.password}${new Date().getTime().toString().substring(0, 11)}`;
+      let ord_num = makeOrdNum();
       pay_data.ord_num = ord_num
       pay_data.item_name = pay_data?.products?.length > 1 ? `${pay_data?.products[0]?.order_name} 외 ${pay_data?.products?.length - 1}건` : (pay_data?.products[0]?.order_name || '상품');
       let link = _.find(themeDnsData?.payment_modules, { type: 'virtual_account' })?.virtual_acct_url + `?amount=${pay_data?.amount}`;
@@ -271,13 +272,9 @@ const CartDemo = (props) => {
     }
     else if (item?.type == 'gift_certificate') {
       setBuyType('gift_certificate');
-      let pay_data = await makePayData([{
-        ...product_item,
-        groups: select_product_groups,
-        seller_id: router.query?.seller_id ?? 0,
-      }], payData);
+      let pay_data = await makePayData(products, payData);
       delete pay_data.payment_modules;
-      let ord_num = `${pay_data?.user_id || pay_data?.password}${new Date().getTime().toString().substring(0, 11)}`;
+      let ord_num = makeOrdNum();
       pay_data.ord_num = ord_num
       pay_data.item_name = pay_data?.products?.length > 1 ? `${pay_data?.products[0]?.order_name} 외 ${pay_data?.products?.length - 1}건` : (pay_data?.products[0]?.order_name || '상품');
       let link = _.find(themeDnsData?.payment_modules, { type: 'gift_certificate' })?.gift_certificate_url + `?amount=${pay_data?.amount}&name=${user?.name ?? ""}&phone_num=${user?.phone_num ?? ""}`;
@@ -290,11 +287,7 @@ const CartDemo = (props) => {
     else if (item?.type == 'certification_weroute') {
       setBuyType('certification_weroute');
       setPayLoading(true);
-      let result = await onPayProductsByAuth([{
-        ...product_item,
-        groups: select_product_groups,
-        seller_id: router.query?.seller_id ?? 0,
-      }], { ...payData, payment_modules: item }, 'weroute');
+      let result = await onPayProductsByAuth(products, { ...payData, payment_modules: item }, 'weroute');
     } else if (item?.type == 'card_hecto') {
       setBuyType('card_hecto');
       setActiveStep(2)
@@ -349,6 +342,11 @@ const CartDemo = (props) => {
       onChangeAddressPage(addressSearchObj);
     }
   }
+
+  const onUpdateAddress = async (id) => {
+    setAddressID(id);
+    setUpdatedAddressOpen(true);
+  }
   const onChangeAddressPage = async (search_obj) => {
     setAddressContent({
       ...addressContent,
@@ -380,6 +378,15 @@ const CartDemo = (props) => {
         addAddressOpen={addAddressOpen}
         setAddAddressOpen={setAddAddressOpen}
         onAddAddress={onAddAddress}
+      />
+      <DialogAddAddress
+        addAddressOpen={updateAddressOpen}
+        setAddAddressOpen={setUpdatedAddressOpen}
+        onAddAddress={onAddAddress}
+        type={'update'}
+        id={addressID}
+        onDeleteAddress={onDeleteAddress}
+        onUpdateAddress={onUpdateAddress}
       />
       <Wrappers>
         <Typography variant="h4" sx={{ fontWeight: 700, mt: 8, mb: 2 }}>
@@ -651,7 +658,7 @@ const CartDemo = (props) => {
                     buyType == 'card_fintree' &&
                     <>
                       <CardContent>
-                        <Typography variant='h6' sx={{ fontWeight: 700, borderBottom: `1px solid`, borderColor: 'divider', paddingBottom: '0.75rem', marginBottom: '1rem' }}>{_.find(payList, { type: buyType })?.title}</Typography>
+                        <Typography variant='h6' sx={{ fontWeight: 700, borderBottom: `1px solid`, borderColor: 'divider', paddingBottom: '0.75rem', marginBottom: '1rem' }}>{_.find(themeDnsData?.payment_modules, { type: buyType })?.title}</Typography>
                         <Stack spacing={2}>
                           <Cards cvc={''} focused={cardFucus} expiry={payData.yymm} name={payData.buyer_name} number={payData.card_num} />
                           <Stack>
@@ -733,7 +740,7 @@ const CartDemo = (props) => {
                           <Stack>
                             <TextField
                               size='small'
-                              label={is_blog == 1 ? '주민번호 앞 6자리(생년월일)' : '주민번호 또는 사업자등록번호'}
+                              label={themeDnsData?.blog_demo_num > 0 ? '주민번호 앞 6자리(생년월일)' : '주민번호 또는 사업자등록번호'}
                               value={payData.auth_num}
                               onChange={(e) => {
                                 let value = e.target.value;
@@ -764,7 +771,7 @@ const CartDemo = (props) => {
                             </>}
                           <Stack>
                             <PayProductsByHandFintree
-                              props={[product, payData, selectProductGroups]}
+                              props={[products, payData, undefined]}
                             />
                           </Stack>
                         </Stack>

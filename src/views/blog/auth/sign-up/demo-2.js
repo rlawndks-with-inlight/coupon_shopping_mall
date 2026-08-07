@@ -13,6 +13,9 @@ import { logoSrc } from 'src/data/data';
 import toast from 'react-hot-toast';
 import { apiManager } from 'src/utils/api';
 import { useSettingsContext } from 'src/components/settings';
+import SecurityQuestionFields from 'src/components/elements/shop/SecurityQuestionFields';
+import { validateSecurityQuestion, securityQuestionPayload } from 'src/data/security-questions';
+import { sanitizePhoneInput, withSignUpName } from 'src/utils/function';
 
 const Wrappers = styled.div`
 max-width:720px;
@@ -162,13 +165,12 @@ const Demo2 = (props) => {
                 return;
             }
         }*/
-        console.log(1)
         if (activeStep == 1) {
             if (
                 !user.user_name ||
+                !user.name ||
                 !user.user_pw ||
                 !user.user_pw_check ||
-                !user.nickname ||
                 !user.phone_num
             ) {
                 toast.error("필수 항목을 입력해 주세요.");
@@ -179,7 +181,17 @@ const Demo2 = (props) => {
                 toast.error("비밀번호 확인란을 똑같이 입력했는지 확인해주세요");
                 return;
             }
-            let result = await apiManager('auth/sign-up', 'create', { ...user, brand_id: themeDnsData?.id });
+            // 보안질문 — shopgo 가 아니면 '' 를 반환해 무조건 통과한다.
+            const secqErr = validateSecurityQuestion(user, themeDnsData);
+            if (secqErr) {
+                toast.error(secqErr);
+                return;
+            }
+            let result = await apiManager('auth/sign-up', 'create', {
+                ...withSignUpName(user),
+                ...securityQuestionPayload(themeDnsData, user),
+                brand_id: themeDnsData?.id,
+            });
             if (!result) {
                 return;
             }
@@ -207,7 +219,8 @@ const Demo2 = (props) => {
                             <Title>회원가입<br />서비스 이용약관 동의</Title>
                             <div style={{ marginTop: '2rem' }} />
                             <CheckBoxes>
-                                <FormControlLabel label={<Typography>전체 동의(선택 항목 포함)</Typography>} control={<Checkbox checked={checkboxObj.check_0} />} onChange={(e) => {
+                                {/* 선택 항목(마케팅 수신)을 감췄으므로 '선택 항목 포함' 문구도 뺀다 */}
+                                <FormControlLabel label={<Typography>전체 동의</Typography>} control={<Checkbox checked={checkboxObj.check_0} />} onChange={(e) => {
                                     let check_obj = {}
                                     if (e.target.checked) {
                                         for (let key in checkboxObj) {
@@ -246,6 +259,11 @@ const Demo2 = (props) => {
                                             }} />
                                         </IconButton>
                                     </DetailedCheckbox>
+                                    {/* 마케팅 정보 수신 동의 비노출.
+                                        동의를 받아도 저장할 곳이 없다 — users 에 수신동의 컬럼이 없고
+                                        signUp 도 그 값을 받지 않는다(체크가 그냥 버려진다).
+                                        발송 수단도 없다: 이메일은 아예 수집하지 않고, 문자 게이트웨이도 쓰지 않기로 했다.
+                                        나중에 실제로 보낼 수 있게 되면 컬럼 추가 + 저장 + 발송 연동까지 함께 붙일 것.
                                     <DetailedCheckbox>
                                         <FormControlLabel label={<Typography>마케팅 정보 수신 동의<span style={{ color: 'gray' }}>(선택)</span></Typography>} control={<Checkbox checked={checkboxObj.check_4} onChange={(e) => {
                                             setCheckboxObj({ ...checkboxObj, ['check_4']: e.target.checked })
@@ -257,6 +275,7 @@ const Demo2 = (props) => {
                                             }} />
                                         </IconButton>
                                     </DetailedCheckbox>
+                                    */}
                                 </ChildCheckboxes>
                             </CheckBoxes>
                             <Button
@@ -412,6 +431,21 @@ const Demo2 = (props) => {
                                     )
                                 }}
                             />
+                            {/* 이름 — 블로그형 가입폼에만 빠져 있었다.
+                                shop 데모 9개는 모두 받고 있고, 안 받으면 마이페이지 '이름' 이 영영 빈칸이다. */}
+                            <TextFieldTitle>이름</TextFieldTitle>
+                            <TextField
+                                placeholder='주문·배송에 사용됩니다'
+                                sx={{
+                                    marginBottom: '1%'
+                                }}
+                                onChange={(e) => {
+                                    setUser({ ...user, ['name']: e.target.value })
+                                }}
+                                value={user.name}
+                            />
+                            {/* 닉네임 입력 제거 — 이름 하나만 받기로 통일했다(전 프레임 공통).
+                                저장 시 nickname 에는 이름을 그대로 넣는다(utils/function.js withSignUpName).
                             <TextFieldTitle>닉네임</TextFieldTitle>
                             <TextField
                                 sx={{
@@ -422,16 +456,23 @@ const Demo2 = (props) => {
                                 }}
                                 value={user.nickname}
                             />
+                            */}
                             <TextFieldTitle>휴대폰번호</TextFieldTitle>
                             <TextField
+                                placeholder='숫자와 하이픈(-)만 입력'
                                 sx={{
                                     marginBottom: '1%'
                                 }}
                                 onChange={(e) => {
-                                    setUser({ ...user, ['phone_num']: e.target.value })
+                                    setUser({ ...user, ['phone_num']: sanitizePhoneInput(e.target.value) })
                                 }}
                                 value={user.phone_num}
                             />
+                            {/* 보안질문 — SHOPGO 본사·산하 가맹점에서만 렌더된다(컴포넌트가 자체 게이팅).
+                                백엔드 signUp 이 shopgo 브랜드면 security_question_id·answer 를 '필수' 로 검사하는데
+                                블로그형 가입폼에만 이 입력이 없어서 프레임4~11 은 가입이 통째로 실패하고 있었다.
+                                ("보안질문을 선택해 주세요.") 비밀번호 재설정의 유일한 수단이기도 하다. */}
+                            <SecurityQuestionFields user={user} setUser={setUser} />
                             <Button
                                 variant='contained'
                                 color='primary'

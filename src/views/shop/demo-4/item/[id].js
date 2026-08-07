@@ -515,17 +515,23 @@ const ItemDemo = (props) => {
                             </>
                           }
                         </div>
-                        <div style={{ borderTop: '1px solid #ccc', width: '100%', padding: '1rem 0' }} onClick={() => { }}>
-                          <ItemCharacter
-                            key_name={'배송기간'}
-                            value={<div style={{}}>10-14일 내 도착 예정(검수 후 배송)</div>}
-                          />
-                        </div>
-                        <div style={{ width: '100%', padding: '1rem 0' }} onClick={() => { }}>
-                          <div style={{ color: 'gray' }}>
-                            모든 상품은 배송 전 검수를 거칩니다
+                        {/* '10-14일 내 도착 예정(검수 후 배송)' · '배송 전 검수' 는
+                            해외직구 브랜드(74)의 운영 정책 문구다. 프레임3 으로 팔리면서
+                            국내 배송만 하는 가맹점 상품에도 그대로 붙어 고객에게 틀린 배송기간을
+                            안내하고 있었다. 해당 브랜드에서만 노출한다. */}
+                        {themeDnsData?.id == 74 && <>
+                          <div style={{ borderTop: '1px solid #ccc', width: '100%', padding: '1rem 0' }}>
+                            <ItemCharacter
+                              key_name={'배송기간'}
+                              value={<div style={{}}>10-14일 내 도착 예정(검수 후 배송)</div>}
+                            />
                           </div>
-                        </div>
+                          <div style={{ width: '100%', padding: '1rem 0' }}>
+                            <div style={{ color: 'gray' }}>
+                              모든 상품은 배송 전 검수를 거칩니다
+                            </div>
+                          </div>
+                        </>}
                         <Button
                           disabled={product?.status != 0 || !(product?.product_sale_price > 0)}
                           sx={{

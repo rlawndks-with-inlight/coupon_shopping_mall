@@ -21,9 +21,7 @@ import DialogAddAddress from 'src/components/dialog/DialogAddAddress';
 import PayProductsByAuthHecto from 'src/utils/hecto-auth';
 import PayProductsByPhoneHecto from 'src/utils/hecto-phone';
 import PayProductsByAuthFintree from 'src/utils/fintree-auth';
-import PayProductsByHandFintree from 'src/utils/fintree-hand';
-import PaymentModuleList from 'src/pages/manager/settings';
-import PayProductsByAuthWayup from 'src/utils/wayup-auth';
+import PayProductsByHandFintree from 'src/utils/fintree-hand';import PayProductsByAuthWayup from 'src/utils/wayup-auth';
 
 const Wrappers = styled.div`
 max-width:1400px;
@@ -306,7 +304,7 @@ const CartDemo = (props) => {
     }
   }
   const onAddAddress = async (address_obj) => {
-    let result = await apiManager('user-addresses', 'create', {
+    let result = await apiManager('user-addresses', (address_obj?.id > 0 ? 'update' : 'create'), {
       ...address_obj,
       user_id: user?.id,
     })
@@ -621,7 +619,7 @@ const CartDemo = (props) => {
                   {
                     buyType == 'card_fintree' &&
                     <>
-                      <Typography variant='subtitle1' sx={{ borderBottom: `1px solid #000`, paddingBottom: '0.5rem', marginBottom: '0.5rem' }}>{_.find(PaymentModuleList, { type: buyType })?.title}</Typography>
+                      <Typography variant='subtitle1' sx={{ borderBottom: `1px solid #000`, paddingBottom: '0.5rem', marginBottom: '0.5rem' }}>{payData?.payment_modules?.title}</Typography>
                       <Stack spacing={2}>
                         <Cards cvc={''} focused={cardFucus} expiry={payData.yymm} name={payData.buyer_name} number={payData.card_num} />
                         <Stack>

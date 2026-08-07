@@ -351,7 +351,13 @@ const Adjustments = () => {
                         </Row>
                         <ManagerTable
                             data={data}
-                            columns={columns}
+                            // defaultColumns 는 searchObj.state(총판/영업자/셀러)에 따라
+                            // 라벨과 정산금액 공식이 달라진다. 그런데 columns state 는 마운트 때
+                            // 한 번만 채워졌고 갱신 코드(onChangePage 의 setColumns)가 주석 처리돼 있어,
+                            // '영업자/셀러 매출확인'으로 바꿔도 표는 총판 기준 그대로였다
+                            // (정산금액이 총판 공식으로 계산돼 실제와 다르게 표시됐다).
+                            // 매 렌더 계산본을 그대로 넘겨 state 와 표가 어긋날 수 없게 한다.
+                            columns={defaultColumns}
                             searchObj={searchObj}
                             onChangePage={onChangePage}
                             add_button_text={''}

@@ -33,7 +33,43 @@ export const isBlogBrand = (dns) =>
 //   '/'      가맹점 도메인 루트 (rewrite 경유)
 //   '/shop/' 직접 접근하거나 본사 도메인에서 들어온 경우
 // 경로가 고정된 /shop/main 같은 화면은 rewrite 대상이 아니므로 여기 해당하지 않는다.
+// 비교용 경로 정규화.
+//
+// next.config.js 가 trailingSlash: true 라 asPath 에는 늘 끝 슬래시가 붙고("/shop/auth/cart/"),
+// 쿼리스트링도 섞여 들어온다. 그래서 `asPath == '/shop/auth/sign-up'` 같은 완전일치 비교는
+// 실제로는 한 번도 참이 되지 않는다. 문자열로 경로를 판정할 땐 반드시 이걸 거친다.
+export const normalizePath = (router) =>
+  String(router?.asPath ?? '').split('?')[0].replace(/\/+$/, '') || '/';
+
 export const isStorefrontHome = (router) => {
-  const path = String(router?.asPath ?? '').split('?')[0].replace(/\/+$/, '');
-  return path === '' || path === '/shop';
+  const path = normalizePath(router);
+  return path === '/' || path === '/shop';
 };
+
+// 마이페이지 계열 화면인지.
+//
+// /blog → /shop 통일 때 my-page 하위가 전부 평탄해졌다:
+//   /blog/auth/my-page/order     → /shop/auth/history
+//   /blog/auth/my-page/address   → /shop/auth/delivery-address
+//   /blog/auth/my-page/user-info → /shop/auth/change-info
+//   /blog/auth/my-page/inquiry   → /shop/auth/inquiry
+// 그래서 asPath.includes('/my-page') 로 판정하던 코드가 조용히 전부 거짓이 됐다.
+// (문자열에 '/blog' 가 없어 grep '/blog' 로는 안 잡히던 부류다)
+// 뒤로가기 화살표·하단 내비 활성표시가 이것 때문에 사라졌다.
+const MY_PAGE_PATHS = [
+  '/shop/auth/my-page',
+  '/shop/auth/history',
+  '/shop/auth/delivery-address',
+  '/shop/auth/change-info',
+  '/shop/auth/inquiry',
+  '/shop/auth/point',
+  '/shop/auth/wish',
+  '/shop/auth/order-check',
+  '/shop/auth/resign',
+  '/shop/auth/consignment',
+];
+export const isMyPagePath = (router) => MY_PAGE_PATHS.includes(normalizePath(router));
+
+// 정확히 이 경로인지(끝 슬래시·쿼리 무시).
+export const isPath = (router, path) =>
+  normalizePath(router) === String(path).replace(/\/+$/, '');

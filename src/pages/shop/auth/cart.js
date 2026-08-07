@@ -32,13 +32,16 @@ const getDemo = (dns, common) => {
   if (isBlogBrand(dns)) return getBlogDemo(dns?.blog_demo_num, common);
   const num = dns?.shop_demo_num;
 
-  // demo-2(오퍼된 프레임)·demo-3 카트는 빈 스텁 → 공용 흐름(주문서 연결)인 demo-4 카트로 대체
+  // 예전 주석에 'demo-2·demo-3 카트는 빈 스텁'이라 적고 demo-4 카트로 돌려놨었는데 사실이 아니었다.
+  // 두 파일 다 900줄이 넘는 실제 구현이고 '주문하기'도 공용 주문서(/shop/auth/order)로 간다.
+  // 그대로 두면 프레임2 고객이 자기 프레임 톤(max-width 1200 미니멀)과 다국어 처리를 동시에 잃는다
+  // — demo-4 카트는 폭도 다르고 STEPS·'주문하기'·'비회원주문 비밀번호'가 한국어 하드코딩이다.
   if (num == 1)
     return <CartDemo1 {...common} />
   else if (num == 2)
-    return <CartDemo4 {...common} />
+    return <CartDemo2 {...common} />
   else if (num == 3)
-    return <CartDemo4 {...common} />
+    return <CartDemo3 {...common} />
   else if (num == 4)
     return <CartDemo4 {...common} />
   else if (num == 5)

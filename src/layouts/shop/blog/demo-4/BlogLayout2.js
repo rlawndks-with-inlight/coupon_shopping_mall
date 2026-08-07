@@ -3,6 +3,7 @@ import Footer from "./footer"
 import Header from "./header"
 import { useSettingsContext } from "src/components/settings";
 import { useEffect, useState } from "react";
+import { isPath } from 'src/utils/blog-shop-route';
 
 const Wrappers = styled.div`
 display:flex;
@@ -26,7 +27,7 @@ const BlogLayout4 = (props) => {
         setUseLayout(result);
     }, [router.asPath])
     const settingPage = () => {
-        if (router.asPath == '/shop/auth/sign-up') {
+        if (isPath(router, '/shop/auth/sign-up')) {
             return false;
         }
         return true;

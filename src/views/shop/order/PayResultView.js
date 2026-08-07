@@ -1,4 +1,5 @@
 import { useRouter } from 'next/router';
+import { useEffect, useRef } from 'react';
 import { Box, Button, Card, CardContent, CardHeader, Stack, Typography } from '@mui/material';
 import { Icon } from '@iconify/react';
 import styled from 'styled-components';
@@ -39,7 +40,7 @@ const KV = ({ k, v }) => {
 const PayResultView = () => {
   const router = useRouter();
   const { translate } = useLocales();
-  const { themeDnsData } = useSettingsContext();
+  const { themeDnsData, onChangeCartData } = useSettingsContext();
 
   const isBlogOnly = !(themeDnsData?.shop_demo_num > 0) && themeDnsData?.blog_demo_num > 0;
   const mainColor = themeDnsData?.theme_css?.main_color || '#111111';
@@ -47,6 +48,24 @@ const PayResultView = () => {
   const q = router.query || {};
   const isTestBrand = themeDnsData?.id == 77;   // 기존 동작 보존
   const isSuccess = q.result_cd === '0000';
+
+  // 결제 성공으로 돌아왔으면 장바구니를 비운다.
+  //
+  // 예전엔 장바구니 비우기가 수기 카드결제 성공 경로(OrderSheet 의 onPayByHand)에만 있었다.
+  // 인증결제·페이레터·포스페이·무통장입금·상품권처럼 PG 창으로 나갔다 돌아오는 결제는
+  // 그 코드를 지나지 않아, 결제를 마치고 와도 방금 산 상품이 장바구니에 그대로 남았다.
+  // 고객이 '결제가 안 됐나' 하고 다시 주문하면 이중 결제가 된다(백엔드에 중복 주문 방어가 없다).
+  //
+  // 리다이렉트형 PG 는 복귀 시점이 유일한 훅이라 여기서 처리한다.
+  // 바로구매(buyNowItem)는 장바구니를 거치지 않으므로 그 항목만 정리한다.
+  const clearedRef = useRef(false);
+  useEffect(() => {
+    if (!router.isReady) return;          // 첫 렌더에는 query 가 비어 있다
+    if (!isSuccess || clearedRef.current) return;
+    clearedRef.current = true;
+    try { sessionStorage.removeItem('buyNowItem'); } catch (e) { /* noop */ }
+    onChangeCartData([]);
+  }, [router.isReady, isSuccess]);
 
   const view = isTestBrand
     ? { icon: 'mdi:progress-clock', color: '#f0a020', title: '테스트결제 진행중입니다.' }

@@ -5,7 +5,7 @@ import { Row, themeObj } from 'src/components/elements/styled-components';
 import styled from 'styled-components'
 import Iconify from 'src/components/iconify/Iconify';
 import { useTheme } from '@emotion/react';
-import Policy from 'src/pages/blog/auth/policy';
+import Policy from 'src/pages/shop/auth/policy';
 import { Icon } from '@iconify/react';
 import { useEffect } from 'react';
 import Header from 'src/layouts/shop/blog/demo-1/header';

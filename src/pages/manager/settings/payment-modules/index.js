@@ -139,7 +139,11 @@ const PaymentModuleList = () => {
             searchObj={searchObj}
             onChangePage={onChangePage}
             add_button_text={'결제모듈 추가'}
-            want_move_card={true}
+            // 드래그 정렬을 껐다. 백엔드 util/sort 의 ALLOWED_SORT_TABLES 에 payment_modules 가 없어
+            // 순서를 바꿀 때마다 500 이 났다. 화이트리스트에 넣더라도 이 테이블에 sort_idx 컬럼이
+            // 있는지부터 확인해야 한다(없으면 Unknown column 으로 여전히 실패).
+            // 결제모듈은 건수가 적어 순서에 의미가 없으므로 UI 를 없애는 편이 정직하다.
+            want_move_card={false}
             table={'payment_modules'}
           />
         </Card>

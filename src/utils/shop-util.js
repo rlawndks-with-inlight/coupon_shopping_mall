@@ -3,7 +3,7 @@ import { axiosIns } from "./axios";
 import { apiManager } from "./api";
 import axios from "axios";
 import toast from "react-hot-toast";
-import { returnMoment } from "./function";
+import { returnMoment, isPurchasable, getProductStatus } from "./function";
 import { getLocalStorage } from "./local-storage";
 import { isDemoHost } from "src/components/main-site/frameList";
 import { makeOrdNum } from 'src/utils/function';
@@ -46,6 +46,49 @@ export const calculatorPrice = (item) => {// 상품별로 가격
         discount: (product_price - product_sale_price) * order_count//할인가
     }
 }
+// 주문 금액 계산 — '화면에 보여줄 값'과 '실제로 청구할 값'이 같은 함수를 쓰게 한다.
+//
+// 예전엔 두 곳이 각자 계산했다. 주문서 요약(CheckoutSummary)은 상품별 배송비가 포함된
+// 합계에 브랜드 배송비를 한 번 더 얹어 보여줬고, 실제 청구는 상품별 배송비를 버리고
+// 브랜드 배송비만 1회 부과했다. 그래서 배송비 정책을 켠 브랜드에서
+// 고객이 본 금액과 결제되는 금액이 어긋났다. 무료배송 판정 기준도 서로 달랐다
+// (화면은 '상품가+배송비', 청구는 '상품가만')。
+//
+// makePayData 와 같은 규칙이다:
+//   라인 상품가 = calculatorPrice(item).total - 그 라인의 delivery_fee
+//   배송비      = 브랜드 정책이 켜져 있으면 주문당 1회, 아니면 상품별 delivery_fee 합
+//   결제금액    = 상품가 합 + 배송비 - 사용포인트
+export const calcOrderTotals = (products_, use_point = 0) => {
+    const products = Array.isArray(products_) ? products_ : [];
+    const merchByIdx = [];
+    let merchTotal = 0;
+    for (let i = 0; i < products.length; i++) {
+        const calc = calculatorPrice(products[i]);
+        const lineDelivery = products[i]?.delivery_fee ?? 0;
+        const lineMerch = (calc?.total ?? 0) - lineDelivery;
+        merchByIdx[i] = lineMerch;
+        merchTotal += lineMerch;
+    }
+    const ship = getBrandShipping(merchTotal);
+    let delivery = 0;
+    const lineDeliveries = [];
+    for (let i = 0; i < products.length; i++) {
+        const d = ship.active ? (i === 0 ? ship.fee : 0) : (products[i]?.delivery_fee ?? 0);
+        lineDeliveries[i] = d;
+        delivery += d;
+    }
+    const point = Math.max(0, parseInt(use_point) || 0);
+    return {
+        merchTotal,
+        delivery,
+        shipActive: ship.active,
+        usedPoint: point,
+        amount: merchTotal + delivery - point,
+        merchByIdx,
+        lineDeliveries,
+    };
+};
+
 export const makePayData = async (products_, payData_) => {
     let products = products_;
     let amount = 0;
@@ -341,8 +384,32 @@ export const onPayProductsByForspay = async (products_, payData_) => { // 인증
 
 
 // 바로구매: 단일 상품을 주문서 페이지로 전달(팝업 대신 페이지 이동). sessionStorage로 넘기고 ?buynow=1.
+// 판매 가능한 상품인지 확인하고, 아니면 이유를 알려준다.
+//
+// 쇼핑몰형 프레임(1·2·3)은 상세화면에서 버튼을 disabled 처리하지만
+// 블로그형 상세(views/blog/product/id/demo-1~9)에는 상태를 보는 코드가 아예 없었다.
+// 그래서 프레임4~11 고객은 품절·판매중단 상품을 장바구니에 담고 주문서까지 진행한 뒤
+// 결제 직전 백엔드(pay.controller 의 구매가능 하드블록)에서야 거절당했다.
+//
+// 버튼마다 고치는 대신 장바구니·바로구매의 공용 진입점에서 막는다 —
+// 어느 프레임이든, 어느 화면에서 부르든 같은 규칙이 걸린다.
+// 주의: status 가 없으면 막지 않는다(fail-open).
+//   getProductStatus 는 모르는 값에 {} 를 돌려주고 isPurchasable 은 그걸 false 로 본다.
+//   그래서 status 를 안 실어 보내는 화면이 하나라도 있으면 멀쩡한 상품의
+//   장바구니 담기가 통째로 막힌다. 최종 차단은 어차피 백엔드가 하므로
+//   여기서는 '상태를 아는 경우에만' 미리 알려주는 역할로 제한한다.
+const assertPurchasable = (product) => {
+    const status = product?.status;
+    if (status === undefined || status === null || status === '') return true;
+    if (isPurchasable(status)) return true;
+    const label = getProductStatus(status)?.text || '판매하지 않는';
+    toast.error(`${label} 상품입니다.`);
+    return false;
+};
+
 export const startBuyNow = (product, selectProductGroups, router) => {
     try {
+        if (!assertPurchasable(product)) return false;
         const item = {
             ...product,
             groups: selectProductGroups?.groups ?? [],
@@ -369,6 +436,7 @@ export const insertCartDataUtil = (
     onChangeCartData
 ) => { //장바구니 버튼 클릭해서 넣기
     try {
+        if (!assertPurchasable(product_)) return false;
         let cart_data = [...themeCartData];
         let product = product_;
         let selectProductGroups = selectProductGroups_;

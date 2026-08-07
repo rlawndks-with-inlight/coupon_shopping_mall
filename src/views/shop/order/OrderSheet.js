@@ -2,7 +2,7 @@ import {
   Box, Button, Card, CardContent, CardHeader, Checkbox, CircularProgress,
   Dialog, Divider, FormControlLabel, Grid, Paper, Stack, TextField, Typography,
 } from '@mui/material';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import _ from 'lodash';
 import styled from 'styled-components';
 import toast from 'react-hot-toast';
@@ -14,9 +14,9 @@ import Label from 'src/components/label/Label';
 import EmptyContent from 'src/components/empty-content/EmptyContent';
 import Iconify from 'src/components/iconify/Iconify';
 import { useSettingsContext } from 'src/components/settings';
-import { calculatorPrice, getCartDataUtil, makePayData, onPayProductsByAuth, onPayProductsByHand, onPayProductsByPayletter, onPayProductsByForspay } from 'src/utils/shop-util';
+import { calcOrderTotals, calculatorPrice, getCartDataUtil, makePayData, onPayProductsByAuth, onPayProductsByHand, onPayProductsByPayletter, onPayProductsByForspay } from 'src/utils/shop-util';
 import { forspayMethodList } from 'src/utils/format';
-import { sanitizePhoneInput, isValidPhoneNumber } from 'src/utils/function';
+import { sanitizePhoneInput, isValidPhoneNumber, makeOrdNum } from 'src/utils/function';
 import Policy from 'src/pages/shop/auth/policy';
 import { useAuthContext } from 'src/layouts/manager/auth/useAuthContext';
 import { formatCreditCardNumber, formatExpirationDate } from 'src/utils/formatCard';
@@ -29,7 +29,6 @@ import PayProductsByPhoneHecto from 'src/utils/hecto-phone';
 import PayProductsByAuthFintree from 'src/utils/fintree-auth';
 import PayProductsByHandFintree from 'src/utils/fintree-hand';
 import PayProductsByAuthWayup from 'src/utils/wayup-auth';
-import PaymentModuleList from 'src/pages/manager/settings';
 
 const Wrappers = styled.div`
   max-width: 1080px;
@@ -185,7 +184,7 @@ export default function OrderSheet({ router }) {
     });
   };
   const onAddAddress = async (address_obj) => {
-    const result = await apiManager('user-addresses', 'create', { ...address_obj, user_id: user?.id });
+    const result = await apiManager('user-addresses', (address_obj?.id > 0 ? 'update' : 'create'), { ...address_obj, user_id: user?.id });
     if (result) {
       setAddAddressOpen(false);
       onChangeAddressPage(addressSearchObj);
@@ -245,6 +244,28 @@ export default function OrderSheet({ router }) {
   };
 
   // ── 결제수단 선택 (demo-9 selectPayType 이식, sms_pay 제외) ──
+  // 무통장입금·상품권처럼 '선택하는 순간 주문이 만들어지는' 결제수단의 중복 생성 방지.
+  // 결제수단 카드를 다시 누를 때마다 새 주문이 쌓이던 것을 막는다.
+  const createdOrderRef = useRef({});
+
+  // 주문이 만들어졌지만 아직 입금 전인 상태를 마무리한다.
+  //
+  // 예전엔 apiManager 호출로 끝나서 — 주문번호도 안 알려주고, 장바구니도 그대로고,
+  // 어디로도 이동하지 않았다. 고객 입장에선 '접수됐다'는 신호가 전혀 없어
+  // 카드를 다시 누르게 되고 그때마다 주문이 하나씩 더 생겼다.
+  // 비회원은 주문번호를 못 받았으니 주문조회도 어려웠다.
+  const finishPendingOrder = async (pay_data) => {
+    if (typeof window !== 'undefined' && window.location.search.includes('buynow')) {
+      try { sessionStorage.removeItem('buyNowItem'); } catch (e) { /* noop */ }
+    } else {
+      await onChangeCartData([]);
+    }
+    // 결제완료 화면 전달용 — 민감정보는 담지 않는다(수기결제 경로와 동일 규칙).
+    const { card_num, card_pw, yymm, auth_num, pay_key, mid, tid, payment_modules, password, ...safe } = pay_data;
+    try { sessionStorage.setItem('lastOrder', JSON.stringify(safe)); } catch (e) { /* noop */ }
+    toast.success('주문이 접수되었습니다. 입금 확인 후 처리됩니다.');
+  };
+
   const selectPayType = async (item) => {
     if (!guardBeforePay()) return;
     setBuyPayMethod(item?.pay_method); // 클릭한 결제수단 기억(포스페이 수단별 하이라이트)
@@ -262,10 +283,17 @@ export default function OrderSheet({ router }) {
       setPayData({ ...payData, payment_modules: item });
     } else if (item?.type == 'virtual_account') {
       setBuyType('virtual_account');
+      // 이미 만든 주문이 있으면 다시 만들지 않는다.
+      // 예전엔 카드를 누를 때마다 pays/virtual 이 재실행돼 transactions 행이 계속 쌓였다.
+      // 화면에 '접수됐다'는 신호가 없어 고객이 반복해서 누르기 쉬웠다.
+      if (createdOrderRef.current.virtual_account) {
+        setBuyType('virtual_account');
+        return;
+      }
       // makePayData가 배열을 in-place 변형하므로 사본을 넘겨 화면 상태(products)를 보호한다.
       const pay_data = await makePayData(products.map((p) => ({ ...p })), payData);
       delete pay_data.payment_modules;
-      const ord_num = `${pay_data?.user_id || pay_data?.password}${new Date().getTime().toString().substring(0, 11)}`;
+      const ord_num = makeOrdNum();
       pay_data.ord_num = ord_num;
       pay_data.item_name = pay_data?.products?.length > 1 ? `${pay_data?.products[0]?.order_name} 외 ${pay_data?.products?.length - 1}건` : (pay_data?.products[0]?.order_name || '상품');
       const module = _.find(themeDnsData?.payment_modules, { type: 'virtual_account' });
@@ -274,14 +302,22 @@ export default function OrderSheet({ router }) {
         const popup = window.open(link, '');
         if (popup) popup.location.href = link;
       }
-      await apiManager('pays/virtual', 'create', pay_data);
+      const created = await apiManager('pays/virtual', 'create', pay_data);
+      if (created) {
+        createdOrderRef.current.virtual_account = ord_num;
+        await finishPendingOrder(pay_data);
+      }
       setPayData(pay_data);
     } else if (item?.type == 'gift_certificate') {
       setBuyType('gift_certificate');
+      if (createdOrderRef.current.gift_certificate) {
+        setBuyType('gift_certificate');
+        return;
+      }
       // makePayData가 배열을 in-place 변형하므로 사본을 넘겨 화면 상태(products)를 보호한다.
       const pay_data = await makePayData(products.map((p) => ({ ...p })), payData);
       delete pay_data.payment_modules;
-      const ord_num = `${pay_data?.user_id || pay_data?.password}${new Date().getTime().toString().substring(0, 11)}`;
+      const ord_num = makeOrdNum();
       pay_data.ord_num = ord_num;
       pay_data.item_name = pay_data?.products?.length > 1 ? `${pay_data?.products[0]?.order_name} 외 ${pay_data?.products?.length - 1}건` : (pay_data?.products[0]?.order_name || '상품');
       const module = _.find(themeDnsData?.payment_modules, { type: 'gift_certificate' });
@@ -290,7 +326,11 @@ export default function OrderSheet({ router }) {
         const popup = window.open(link, '');
         if (popup) popup.location.href = link;
       }
-      await apiManager('pays/gift_certificate', 'create', pay_data);
+      const created_gift = await apiManager('pays/gift_certificate', 'create', pay_data);
+      if (created_gift) {
+        createdOrderRef.current.gift_certificate = ord_num;
+        await finishPendingOrder(pay_data);
+      }
       setPayData(pay_data);
     } else if (item?.type == 'certification_weroute') {
       setBuyType('certification_weroute');
@@ -355,6 +395,12 @@ export default function OrderSheet({ router }) {
       router.push('/shop/auth/order-complete');
     }
   };
+
+  // 화면에 보여줄 금액. 실제 청구(makePayData)와 같은 규칙으로 계산한다.
+  // 예전엔 요약 카드가 자체 계산했고, 상품별 배송비가 포함된 합계에 브랜드 배송비를
+  // 한 번 더 얹었다. 무료배송 판정 기준도 서로 달라서(화면 '상품가+배송비' / 청구 '상품가만')
+  // 배송비 정책을 켠 브랜드에서 고객이 본 금액과 결제되는 금액이 어긋났다.
+  const orderTotals = calcOrderTotals(products, payData?.use_point);
 
   const paymentModules = (themeDnsData?.payment_modules || []).filter((m) => m?.type != 'sms_pay');
   const addressList = addressContent?.content || [];
@@ -617,6 +663,10 @@ export default function OrderSheet({ router }) {
                             <Typography variant="body2">은행 : {m.virtual_acct_bank}</Typography>
                             <Typography variant="body2">예금주 : {m.virtual_acct_name}</Typography>
                             <Typography variant="body2">계좌번호 : {m.virtual_acct_num}</Typography>
+                            {/* 주문번호를 보여준다. 예전엔 알려주지 않아 비회원은 주문조회조차 못 했다. */}
+                            {payData?.ord_num && (
+                              <Typography variant="body2" sx={{ fontWeight: 700 }}>주문번호 : {payData.ord_num}</Typography>
+                            )}
                             <Typography variant="body2" sx={{ color: 'text.secondary' }}>입금 후 1일 안에 구매처리됩니다.</Typography>
                           </Stack>
                         ) : <Typography variant="body2">무통장입금을 준비중입니다...</Typography>;
@@ -628,7 +678,7 @@ export default function OrderSheet({ router }) {
                   {buyType == 'card_fintree' && (
                     <Box sx={{ mt: 3 }}>
                       <Divider sx={{ mb: 2 }} />
-                      <Typography variant="subtitle1" sx={{ mb: 1 }}>{_.find(PaymentModuleList, { type: buyType })?.title}</Typography>
+                      <Typography variant="subtitle1" sx={{ mb: 1 }}>{payData?.payment_modules?.title}</Typography>
                       <Stack spacing={2}>
                         <Cards cvc={''} focused={undefined} expiry={payData.yymm} name={payData.buyer_name} number={payData.card_num} />
                         <TextField size="small" label="카드 번호" value={payData.card_num} placeholder="0000 0000 0000 0000"
@@ -674,9 +724,11 @@ export default function OrderSheet({ router }) {
                   themeDnsData={themeDnsData}
                   payData={payData}
                   setPayData={setPayData}
-                  total={_.sum(_.map(products, (item) => calculatorPrice(item, payData).total)) - (payData?.use_point || 0)}
+                  total={orderTotals.amount}
+                  shipping={orderTotals.delivery}
+                  shipActive={orderTotals.shipActive}
                   discount={_.sum(_.map(products, (item) => calculatorPrice(item, payData).discount))}
-                  subtotal={_.sum(_.map(products, (item) => calculatorPrice(item, payData).subtotal))}
+                  subtotal={orderTotals.merchTotal}
                 />
                 <Typography variant="caption" sx={{ color: 'text.secondary', display: 'block', mt: 1, textAlign: 'center' }}>
                   결제수단을 선택한 뒤 결제 방법(결제하기 버튼 또는 입력란)에 따라 진행하세요.

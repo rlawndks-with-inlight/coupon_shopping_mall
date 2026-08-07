@@ -6,6 +6,7 @@ import { useSettingsContext } from "src/components/settings"
 import { useRouter } from "next/router"
 import DialogSearch from "src/components/dialog/DialogSearch"
 import { logoSrc } from "src/data/data"
+import { isMyPagePath, isPath } from "src/utils/blog-shop-route"
 
 const Wrappers = styled.header`
 width: 100%;
@@ -49,7 +50,8 @@ const Header = (props) => {
   const isTransparent = isDetailPage && scrollY < 350;
   const isDark = themeMode == 'dark';
   const iconColor = isDark || isTransparent ? '#fff' : '#111';
-  const showBackArrow = isDetailPage || router.asPath.includes('/my-page') || router.asPath.includes('/cart');
+  // 마이페이지 하위가 평탄해져 'my-page' 조각 판정이 전부 거짓이 됐다(뒤로가기 화살표 소실).
+  const showBackArrow = isDetailPage || isMyPagePath(router) || isPath(router, '/shop/auth/cart');
 
   return (
     <>

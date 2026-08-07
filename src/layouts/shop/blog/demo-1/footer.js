@@ -7,6 +7,7 @@ import { Icon } from "@iconify/react"
 import { useRouter } from "next/router"
 import { useState } from "react"
 import DialogSearch from "src/components/dialog/DialogSearch"
+import { isMyPagePath, isPath, isStorefrontHome } from "src/utils/blog-shop-route"
 
 const Wrappers = styled.footer`
 margin-top: auto;
@@ -141,19 +142,21 @@ const Footer = () => {
         background: isDark ? '#111' : '#fff',
         borderTop: `1px solid ${isDark ? '#333' : '#eee'}`,
       }}>
-        <NavItem $active={currentPath === '/shop'} onClick={() => router.push('/shop')}>
+        <NavItem $active={isStorefrontHome(router)} onClick={() => router.push('/shop')}>
           <Icon icon="ph:house" fontSize="1.3rem" color={navColor} />
           <NavLabel style={{ color: navColor }}>HOME</NavLabel>
         </NavItem>
-        <NavItem $active={currentPath.includes('/search')} onClick={() => setSearchOpen(true)}>
+        {/* 검색은 페이지 이동이 아니라 다이얼로그라 경로가 바뀌지 않는다 —
+            경로로 판정하면 이 버튼은 영영 비활성이다. 다이얼로그 상태를 그대로 쓴다. */}
+        <NavItem $active={searchOpen || isPath(router, '/shop/search')} onClick={() => setSearchOpen(true)}>
           <Icon icon="ph:magnifying-glass" fontSize="1.3rem" color={navColor} />
           <NavLabel style={{ color: navColor }}>SEARCH</NavLabel>
         </NavItem>
-        <NavItem $active={currentPath.includes('/cart')} onClick={() => router.push('/shop/auth/cart')}>
+        <NavItem $active={isPath(router, '/shop/auth/cart')} onClick={() => router.push('/shop/auth/cart')}>
           <Icon icon="ph:shopping-cart" fontSize="1.3rem" color={navColor} />
           <NavLabel style={{ color: navColor }}>CART</NavLabel>
         </NavItem>
-        <NavItem $active={currentPath.includes('/my-page')} onClick={() => router.push('/shop/auth/my-page')}>
+        <NavItem $active={isMyPagePath(router)} onClick={() => router.push('/shop/auth/my-page')}>
           <Icon icon="ph:user" fontSize="1.3rem" color={navColor} />
           <NavLabel style={{ color: navColor }}>MY</NavLabel>
         </NavItem>

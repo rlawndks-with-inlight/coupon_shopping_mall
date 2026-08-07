@@ -2,13 +2,12 @@
 import { useState } from 'react'
 
 // ** MUI Imports
-import Button from '@mui/material/Button'
+// Button, DialogActions 는 이 파일에서 실제로 쓰이는 곳이 없어 제거했다(Typography 는 아래에서 사용 중).
 import Dialog from '@mui/material/Dialog'
 import IconButton from '@mui/material/IconButton'
 import Typography from '@mui/material/Typography'
 import DialogTitle from '@mui/material/DialogTitle'
 import DialogContent from '@mui/material/DialogContent'
-import DialogActions from '@mui/material/DialogActions'
 
 // ** Icon Imports
 import { Icon } from '@iconify/react'
@@ -29,6 +28,21 @@ cursor:pointer;
 margin-left:0.5rem;
 font-weight:bold;
 `
+// 검색 입력창과 닫기(X) 버튼을 같은 행에 묶는다.
+// 기존에는 입력창이 화면 정중앙(width 80%/max 700px)이고 X 는 position:absolute 로 뷰포트 오른쪽 끝(right:10px)에
+// 붙어 있어서, 넓은 화면일수록 둘이 멀어졌다(1920px 기준 약 570px). 폭은 700px 그대로 두고 X 만 옆에 붙인다.
+const SearchRow = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 80%;
+  max-width: 748px;   /* 입력 700 + gap 8 + 버튼 40 — 기존 입력폭 700 을 그대로 보존 */
+  margin: 0 auto;
+  @media (max-width: 600px) {
+    width: 100%;
+    gap: 4px;
+  }
+`
 const testSearchList = [
 
 ]
@@ -42,7 +56,7 @@ const DialogSearch = (props) => {
     <Dialog fullScreen onClose={handleClose} open={open}>
       <DialogTitle id='full-screen-dialog-title' style={{ paddingBottom: '2rem' }}>
         <Typography variant='h6' component='span'>
-          <div style={{ display: 'flex' }}>
+          <SearchRow>
             <TextField
               label='통합검색'
               id='size-small'
@@ -51,7 +65,8 @@ const DialogSearch = (props) => {
                 setKeyword(e.target.value)
               }}
               value={keyword}
-              sx={{ width: '80%', margin: '0 auto', maxWidth: '700px' }}
+              // 폭은 SearchRow 가 잡는다. flex:1 로 남은 공간을 채우고, minWidth:0 은 flex 아이템 축소를 허용한다.
+              sx={{ flex: 1, minWidth: 0 }}
               onKeyPress={(e) => {
                 if (e.key == 'Enter') {
                   router.push(`${root_path}${keyword}`)
@@ -68,7 +83,8 @@ const DialogSearch = (props) => {
                         setKeyword('')
                         handleClose();
                       }}
-                      aria-label='toggle password visibility'
+                      // 복붙 잔재였던 'toggle password visibility' 를 실제 동작에 맞게 교정
+                      aria-label='검색'
                     >
                       <Icon icon={'tabler:search'} />
                     </IconButton>
@@ -76,15 +92,16 @@ const DialogSearch = (props) => {
                 )
               }}
             />
-          </div>
+            {/* 닫기 버튼 — absolute 를 걷어내고 입력창 바로 옆에 둔다 */}
+            <IconButton
+              aria-label='close'
+              onClick={handleClose}
+              sx={{ color: 'grey.500', flexShrink: 0 }}
+            >
+              <Icon icon='tabler:x' />
+            </IconButton>
+          </SearchRow>
         </Typography>
-        <IconButton
-          aria-label='close'
-          onClick={handleClose}
-          sx={{ top: 18, right: 10, position: 'absolute', color: 'grey.500' }}
-        >
-          <Icon icon='tabler:x' />
-        </IconButton>
       </DialogTitle>
       <div style={{ borderTop: `1px solid ${themeObj.grey[300]}` }} />
       <DialogContent style={{ maxWidth: '750px', margin: '1rem auto', width: '80%' }}>

@@ -1,5 +1,6 @@
 import { Icon } from '@iconify/react';
-import { Select, MenuItem, Drawer, FormControl, InputLabel, Button, Avatar, Divider, Stack } from '@mui/material';
+// 판매자 영역 삭제로 Avatar 를 더 이상 쓰지 않아 import 에서 뺐다.
+import { Select, MenuItem, Drawer, FormControl, InputLabel, Button, Divider, Stack } from '@mui/material';
 import { useEffect, useState } from 'react';
 import { Row, themeObj } from 'src/components/elements/styled-components';
 import { useSettingsContext } from 'src/components/settings';
@@ -14,6 +15,7 @@ import { insertCartDataUtil, selectItemOptionUtil } from 'src/utils/shop-util';
 import { useAuthContext } from 'src/layouts/manager/auth/useAuthContext';
 import toast from 'react-hot-toast';
 import { useLocales } from 'src/locales';
+import { formatLang } from 'src/utils/format';
 import DialogBuyNow from 'src/components/dialog/DialogBuyNow';
 
 
@@ -85,8 +87,14 @@ const Demo1 = (props) => {
       router
     },
   } = props;
-  const { translate } = useLocales();
-  const { themeMode, themeCartData, onChangeCartData } = useSettingsContext();
+  // currentLang: 상품명 등 번역 컬럼(lang_obj) 표시용
+  const { translate, currentLang } = useLocales();
+  const { themeMode, themeCartData, onChangeCartData, themePostCategoryList } = useSettingsContext();
+  // '1:1문의' 는 예전엔 /shop/auth/inquiry(= 내가 쓴 문의 목록)로 갔다.
+  // 목록은 마이페이지 '고객센터'에서 게시판으로 들어가면 그대로 보이므로 메뉴에서 뺐고,
+  // 여기 버튼은 실제로 글을 쓰는 화면으로 보낸다. 게시판이 없으면 예전 경로로 폴백.
+  const inquiryBoard = (themePostCategoryList ?? []).find((c) => c?.is_able_user_add == 1);
+  const goInquiry = () => router.push(inquiryBoard?.id ? `/shop/service/${inquiryBoard.id}/add` : '/shop/auth/inquiry');
   const { user } = useAuthContext();
 
   const theme = useTheme();
@@ -177,12 +185,14 @@ const Demo1 = (props) => {
           background: `${themeMode == 'dark' ? '#000' : '#fff'}`,
           position: 'absolute'
         }}>
-          <Row style={{ justifyContent: 'space-between' }}>
-            <Row style={{ alignItems: 'center', cursor: 'pointer' }} onClick={() => { router.push(`/shop/seller/${item.seller?.id}`) }}>
-              <Avatar src={item.seller?.profile_img} sx={{ width: '30px', height: '30px' }} />
-              <div style={{ marginLeft: '0.25rem', fontSize: themeObj.font_size.size8 }}>{item.seller?.nickname}</div>
-            </Row>
-            <Button variant='outlined' onClick={() => router.push('/shop/auth/inquiry')} sx={{
+          {/* 판매자(셀러) 표시 영역을 제거했다.
+              상품상세 API 가 seller 중첩 객체를 내려주지 않아 item.seller?.profile_img / nickname 이
+              항상 undefined 였다 → 기본 사람 아이콘 + 빈 이름이 뜨고, 클릭하면 /shop/seller/undefined 로 이동했다.
+              어느 브랜드에서도 채워지지 않는 값이라 조건부 노출이 아니라 삭제로 처리한다.
+              1:1문의 버튼은 셀러와 무관하므로 남기고(이동 대상은 아래 goInquiry 참고),
+              혼자 남으면 왼쪽에 붙으므로 justifyContent 를 flex-end 로 바꿨다. */}
+          <Row style={{ justifyContent: 'flex-end' }}>
+            <Button variant='outlined' onClick={goInquiry} sx={{
               height: '30px',
             }}>
               1:1문의
@@ -193,7 +203,8 @@ const Demo1 = (props) => {
         <ContentWrappers style={{
           background: `${themeMode == 'dark' ? '#000' : '#fff'}`,
         }}>
-          <ItemName>{item.product_name}</ItemName>
+          {/* 상품명은 lang_obj 번역본을 우선 표시한다(번역이 없으면 formatLang 이 원문을 그대로 반환). */}
+          <ItemName>{formatLang(item, 'product_name', currentLang)}</ItemName>
           <Divider />
           <PriceContainer>
             {item.product_sale_price < item.product_price &&

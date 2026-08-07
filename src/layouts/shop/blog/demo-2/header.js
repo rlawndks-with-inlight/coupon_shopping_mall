@@ -10,6 +10,7 @@ import { test_categories } from "src/data/test-data"
 import { useRouter } from "next/router"
 import DialogSearch from "src/components/dialog/DialogSearch"
 import { logoSrc } from "src/data/data"
+import LanguagePopover from "src/layouts/manager/header/LanguagePopover"
 
 const Wrappers = styled.header`
 width: 100%;
@@ -187,6 +188,8 @@ const Header = (props) => {
                             >
                                 <Icon icon={'iconoir:search'} fontSize={'1.5rem'} color={themeMode == 'dark' || ((isSellerPage || isProductPage) && scrollY < 350) ? '#fff' : '#000'} />
                             </IconButton>
+                            {/* 언어 선택 — 이 헤더엔 언어 UI 가 없어 설정을 켜도 고객이 언어를 바꿀 수 없었다. */}
+                            {themeDnsData?.setting_obj?.is_use_lang == 1 && <LanguagePopover />}
                             {/*
                              <IconButton
                                 sx={iconButtonStyle}

@@ -7,6 +7,7 @@ import { useRef } from "react";
 import { useEffect } from "react";
 import { Items } from "src/components/elements/shop/common";
 import { AuthMenuSideComponent, ContentBorderContainer, ContentWrappers, SubTitleComponent, Title, TitleComponent } from "src/components/elements/shop/demo-4";
+import MyPageGuestPanel from "src/components/elements/shop/MyPageGuestPanel";
 import { Col, Row, RowMobileColumn, RowMobileReverceColumn, themeObj } from "src/components/elements/styled-components";
 import { useSettingsContext } from "src/components/settings";
 import { useAuthContext } from "src/layouts/manager/auth/useAuthContext";
@@ -70,23 +71,33 @@ justify-content:space-between;
 
 const MyPageDemo = (props) => {
 
-  const { user } = useAuthContext();
+  const { user, isInitialized } = useAuthContext();
   const { themeDnsData } = useSettingsContext();
   const router = useRouter();
   const [userInfo, setUserInfo] = useState({});
   const slideRef = useRef();
+  // 비로그인을 로그인 화면으로 튕기던 리다이렉트를 없앴다(11개 프레임 중 여기만 그랬다).
+  // 의존성도 []에서 [user]로 바꾼다 — 예전엔 user 로딩이 끝나기 전에 한 번만 돌아
+  //   로그인 상태인데도 로그인 화면으로 보내지는 경우가 있었다.
   useEffect(() => {
     if (user) {
       getUserInfo();
-    } else {
-      router.push(`/shop/auth/login`);
     }
-  }, [])
+  }, [user])
 
   const getUserInfo = async () => {
     const response = await apiShop('user-info');
     setUserInfo(response);
   }
+
+  // 비로그인이면 게스트 랜딩을 보여준다.
+  // isInitialized 를 같이 보는 이유: user 는 로딩 중에도 null 이라 !user 만 보면
+  //   로그인 사용자에게도 이 패널이 한 번 깜빡인다.
+  // 위치는 훅(useState/useRef/useEffect)을 전부 호출한 뒤여야 훅 순서가 깨지지 않는다.
+  if (isInitialized && !user) {
+    return <MyPageGuestPanel />;
+  }
+
   const consignmentColumns = [
     {
       id: 'product_img',

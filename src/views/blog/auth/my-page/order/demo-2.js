@@ -54,6 +54,8 @@ const Demo2 = (props) => {
     const { themeMode } = useSettingsContext();
     const [sellerId, setSellerId] = useState(0)
     const [orderList, setOrderList] = useState([]);
+    // 최초 렌더에서 목록이 [] 이라 "주문 내역이 없습니다" 가 깜빡이는 걸 막기 위한 로딩 플래그
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         getOrderList();
@@ -61,27 +63,36 @@ const Demo2 = (props) => {
 
     // 실 주문내역 로드 → 주문라인(orders[]) 단위로 평탄화해서 셀러 탭/목록 렌더에 사용
     const getOrderList = async () => {
-        let data = await apiManager('transactions', 'list', { page: 1, page_size: 20 });
-        let content = data?.content ?? [];
-        let flat = [];
-        for (var i = 0; i < content.length; i++) {
-            let trx = content[i];
-            let lines = trx?.orders ?? [];
-            for (var j = 0; j < lines.length; j++) {
-                let line = lines[j];
-                flat.push({
-                    ...line,
-                    trx,
-                    seller_id: line?.seller_id ?? 0,
-                    seller_title: line?.seller_user_name || '기본배송',
-                });
+        try {
+            let data = await apiManager('transactions', 'list', { page: 1, page_size: 20 });
+            let content = data?.content ?? [];
+            let flat = [];
+            for (var i = 0; i < content.length; i++) {
+                let trx = content[i];
+                let lines = trx?.orders ?? [];
+                for (var j = 0; j < lines.length; j++) {
+                    let line = lines[j];
+                    flat.push({
+                        ...line,
+                        trx,
+                        seller_id: line?.seller_id ?? 0,
+                        seller_title: line?.seller_user_name || '기본배송',
+                    });
+                }
             }
-        }
-        setOrderList(flat);
-        if (flat.length > 0) {
-            setSellerId(flat[0].seller_id);
+            setOrderList(flat);
+            if (flat.length > 0) {
+                setSellerId(flat[0].seller_id);
+            }
+        } finally {
+            // 성공/실패와 무관하게 로딩 종료 (실패 시엔 빈 상태 문구가 뜬다)
+            setLoading(false);
         }
     }
+
+    // 목록 렌더 조건(item.seller_id == sellerId)과 동일한 기준으로 계산 —
+    // "주문은 있는데 이 탭엔 0건" 인 경우도 빈 상태로 잡기 위함
+    const filtered_list = orderList.filter((item) => item.seller_id == sellerId);
 
     return (
         <>
@@ -123,6 +134,16 @@ const Demo2 = (props) => {
                 <ContentContainer style={{
                     background: `${themeMode == 'dark' ? '#000' : '#F6F6F6'}`
                 }}>
+                    {/* 로딩 중 / 목록 0건일 때 회색 박스가 빈 채로 남아 있던 문제 대응 */}
+                    {loading &&
+                        <div style={{ textAlign: 'center', padding: '3rem 0', opacity: 0.6 }}>불러오는 중...</div>
+                    }
+                    {!loading && filtered_list.length === 0 &&
+                        <div style={{ textAlign: 'center', padding: '3rem 0', color: '#888' }}>
+                            주문 내역이 없습니다.<br />
+                            <Button variant='outlined' sx={{ mt: 2 }} onClick={() => router.push('/shop')}>쇼핑하러 가기</Button>
+                        </div>
+                    }
                     {orderList.map((item, idx) => (
                         <>
                             {item.seller_id == sellerId &&

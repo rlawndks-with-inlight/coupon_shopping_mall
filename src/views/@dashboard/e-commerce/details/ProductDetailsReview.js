@@ -19,6 +19,7 @@ import { apiManager } from 'src/utils/api';
 import { useEffect } from 'react';
 import { useLocales } from 'src/locales';
 import { PointerText } from 'src/components/elements/styled-components';
+import { isShopgoBrand } from 'src/utils/is-shopgo';
 
 // ----------------------------------------------------------------------
 
@@ -30,6 +31,11 @@ export default function ProductDetailsReview({ product, reviewContent, onChangeP
 
   const { translate } = useLocales();
   const { themeDnsData } = useSettingsContext();
+  // ShopGo 산하는 상품후기를 쓰지 않는다.
+  // shop 상세 9종은 탭 목록에서 아예 빼지만, 블로그형 상세(blog/product/id/demo-2)처럼
+  // 이 컴포넌트를 직접 렌더하는 곳도 있어 여기서도 막는다.
+  // 후기 탭·별점·작성 버튼이 한 곳에서라도 살아 있으면 정책이 반쪽이 된다.
+  const hideReview = isShopgoBrand(themeDnsData);
   const { user } = useAuthContext();
   const { rating, totalReview, ratings = [], product_average_scope } = product;
 
@@ -81,6 +87,8 @@ export default function ProductDetailsReview({ product, reviewContent, onChangeP
       onChangePage(reviewPage);
     }
   }
+  // 훅은 전부 위에서 호출한 뒤 여기서 빠져나간다(훅 순서가 흔들리면 안 된다).
+  if (hideReview) return <></>;
   return (
     <>
       <Dialog open={editLoading}

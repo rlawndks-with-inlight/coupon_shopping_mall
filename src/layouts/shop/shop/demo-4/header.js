@@ -13,6 +13,7 @@ import { TreeItem, TreeView } from "@mui/lab"
 import { getAllIdsWithParents } from "src/utils/function"
 import DialogSearch from "src/components/dialog/DialogSearch"
 import { useAuthContext } from "src/layouts/manager/auth/useAuthContext"
+import LanguagePopover from "src/layouts/manager/header/LanguagePopover"
 import { logoSrc } from "src/data/data"
 import $ from 'jquery'
 import dynamic from 'next/dynamic';
@@ -733,6 +734,7 @@ const Header = () => {
                                     >
                                         <Icon icon={themeMode === 'dark' ? 'tabler:sun' : 'tabler:moon-stars'} fontSize={'1.5rem'} color={themeMode == 'dark' ? '#fff' : '#000'} />
                                     </IconButton>
+                                    {themeDnsData?.setting_obj?.is_use_lang == 1 && <LanguagePopover />}
                                 </ShowMobile>
                             </TopMenuContainer>
                             <div style={{ width: '100%', borderTop: `1px solid ${theme.palette.grey[300]}`, }}>
@@ -929,6 +931,9 @@ const Header = () => {
                                                     </Badge>
                                                 </IconButton>
                                             </Link>
+                                            {/* 언어 선택 — 이 헤더엔 언어 UI 가 없어 설정을 켜도 고객이 언어를 바꿀 수 없었다.
+                                                PC 는 이 아이콘 줄, 모바일은 아래 ShowMobile 묶음에 함께 넣는다. */}
+                                            {themeDnsData?.setting_obj?.is_use_lang == 1 && <LanguagePopover />}
                                         </div>
                                     </NoneShowMobile>
 

@@ -9,7 +9,7 @@ import Label from 'src/components/label/Label';
 import EmptyContent from 'src/components/empty-content/EmptyContent';
 import Iconify from 'src/components/iconify/Iconify';
 import { useSettingsContext } from 'src/components/settings';
-import { calculatorPrice, getCartDataUtil, makePayData, onPayProductsByAuth, onPayProductsByForspay, onPayProductsByHand, onPayProductsByPayletter, onPayProductsByVirtualAccount } from 'src/utils/shop-util';
+import { calcOrderTotals, calculatorPrice, getCartDataUtil, makePayData, onPayProductsByAuth, onPayProductsByForspay, onPayProductsByHand, onPayProductsByPayletter, onPayProductsByVirtualAccount } from 'src/utils/shop-util';
 import { useAuthContext } from 'src/layouts/manager/auth/useAuthContext';
 import Payment from 'payment'
 import Cards from 'react-credit-cards'
@@ -172,6 +172,12 @@ const CartDemo = (props) => {
     check_virtual_auth_code: '',
   })
   const [payLoading, setPayLoading] = useState(false);
+
+  // 카트 금액 계산 — 주문서/실제 청구(makePayData)와 같은 함수를 쓴다.
+  // 예전엔 CheckoutSummary 에 shipping/shipActive 를 안 넘겨 옛 폴백 분기를 탔고,
+  // 이미 상품별 배송비가 포함된 합계 위에 브랜드 배송비를 한 번 더 얹었다(이중 부과).
+  // 무료배송 판정 기준도 '상품가+배송비'라 주문서('상품가만')와 결과가 뒤집혔다.
+  const cartTotals = calcOrderTotals(products, payData?.use_point);
 
   const STEPS = [translate('장바구니 확인'), translate('배송지 확인'), translate('결제하기'),];
 
@@ -875,12 +881,19 @@ const CartDemo = (props) => {
           <Grid item xs={12} md={4}>
             <CheckoutSummary
               enableDiscount
+              // 카트의 use_point 는 주문서로 전달되지 않아 입력해도 버려진다. 포인트는 주문서에서만 입력받는다.
+              enablePoint={false}
               themeDnsData={themeDnsData}
               payData={payData}
               setPayData={setPayData}
-              total={_.sum(_.map(products, (item) => { return calculatorPrice(item, payData).total })) - payData?.use_point}
-              discount={_.sum(_.map(products, (item) => { return calculatorPrice(item, payData).discount }))}
-              subtotal={_.sum(_.map(products, (item) => { return calculatorPrice(item, payData).subtotal }))}
+              // 배송비/최종금액을 calcOrderTotals 로 계산해 넘긴다(옛 폴백 분기의 배송비 이중 부과 제거).
+              total={cartTotals.amount}
+              shipping={cartTotals.delivery}
+              shipActive={cartTotals.shipActive}
+              // '총액'은 할인 전 상품가(배송비 제외) = merchTotal(할인가) + 할인액.
+              // 화면에서 '총액 − 할인 + 배송비 = 총 결제금액' 이 맞아떨어진다.
+              subtotal={cartTotals.merchTotal + _.sum(_.map(products, (item) => calculatorPrice(item).discount))}
+              discount={_.sum(_.map(products, (item) => calculatorPrice(item).discount))}
             />
             {activeStep == 0 &&
               <>

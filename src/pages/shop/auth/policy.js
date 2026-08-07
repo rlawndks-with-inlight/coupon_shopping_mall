@@ -6,17 +6,21 @@ import { themeObj } from "src/components/elements/styled-components";
 import ShopLayout from "src/layouts/shop/ShopLayout";
 import { useSettingsContext } from "src/components/settings";
 import { isDemoHost } from "src/components/main-site/frameList";
+// $embedded — 모달(DialogPolicy) 안에 끼울 때 켜는 모드.
+// 페이지용 세로 확보(90vh)와 하단 여백을 그대로 두면 모달 본문에 뷰포트 높이만큼 빈 공간이 생긴다.
+// styled-components 5.1+ 의 transient prop($) 이라 DOM 속성으로 새어나가지 않는다.
 const Wrappers = styled.div`
 display:flex;
 flex-direction:column;
-min-height:90vh;
-padding: 0 0 4rem 0;
+min-height:${props => props.$embedded ? 'auto' : '90vh'};
+padding: ${props => props.$embedded ? '0' : '0 0 4rem 0'};
 position: relative;
 `
+// 모달은 DialogContent 가 이미 좌우 패딩을 주므로 여기서 90% 로 또 줄이지 않는다.
 const ContentWrapper = styled.div`
 max-width:1200px;
-width:90%;
-margin: 1rem auto;
+width:${props => props.$embedded ? '100%' : '90%'};
+margin:${props => props.$embedded ? '0' : '1rem auto'};
 `
 const Title = styled.div`
 font-weight:bold;
@@ -28,13 +32,19 @@ font-weight:bold;
 margin-bottom:16px;
 font-size:${themeObj.font_size.size7};
 `
+// 행간 20px(=1.25)은 16px 본문에 너무 촘촘했다. 배수(1.8)로 바꿔 글자 크기를 따라가게 한다.
+// keep-all 이 없으면 좁은 폭에서 한글 단어가 중간에서 잘린다.
+// ※ embedded 여부와 무관한 전역 변경 — 독립 페이지·주문서·쇼핑몰형 가입 박스도 함께 길어진다(의도).
 const Text = styled.div`
 margin-bottom:24px;
 font-size:${themeObj.font_size.size7};
-line-height:20px;
+line-height:1.8;
+word-break:keep-all;
 `
 const Policy = (props) => {
-  const { type } = props;
+  // embedded 기본값 false — 이 컴포넌트를 그냥 끼워 쓰는 22곳(쇼핑몰형/블로그형 회원가입, 주문서, 관리자 등)의
+  // 렌더 결과가 지금과 동일해야 한다.
+  const { type, embedded = false } = props;
   const { themeDnsData } = useSettingsContext();
   const router = useRouter();
   const [title, setTitle] = useState("");
@@ -56,10 +66,13 @@ const Policy = (props) => {
 
   return (
     <>
-      <Wrappers style={{ margin: `${type >= 0 ? '0' : ''}` }}>
-        <ContentWrapper>
+      <Wrappers $embedded={embedded} style={{ margin: `${type >= 0 ? '0' : ''}` }}>
+        <ContentWrapper $embedded={embedded}>
 
-          <Title not_arrow={true}>{title}</Title>
+          {/* 모달에서는 DialogTitle 이 제목을 담당한다.
+              여기 Title 은 router.query.type 으로만 채워져 모달에선 항상 빈 문자열이었고,
+              빈 <Title> 이 margin-bottom:2rem 만 남겨 상단에 빈 공백을 만들었다. */}
+          {!embedded && <Title not_arrow={true}>{title}</Title>}
           {router.query?.type == 0 || type == 0 ?
             themeDnsData?.id != 77 ?
               <>

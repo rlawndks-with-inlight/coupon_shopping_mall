@@ -66,6 +66,8 @@ const Demo4 = (props) => {
     const [sellerId, setSellerId] = useState(undefined)
     const [sellerList, setSellerList] = useState([])
     const [orderList, setOrderList] = useState([]);
+    // 최초 렌더에서 목록이 [] 이라 "주문 내역이 없습니다" 가 깜빡이는 걸 막기 위한 로딩 플래그
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         getOrderList();
@@ -73,20 +75,29 @@ const Demo4 = (props) => {
 
     // 로그인 회원의 실 주문목록을 불러와 주문상품 단위로 펼쳐 렌더한다.
     const getOrderList = async () => {
-        let data = await apiManager('transactions', 'list', { page: 1, page_size: 20 });
-        let content = data?.content ?? [];
-        let items = [];
-        content.forEach((trx) => {
-            (trx?.orders || []).forEach((order) => {
-                // 각 주문상품에 상위 트랜잭션(주문번호/상태/배송지/송장)을 결합
-                items.push({ ...order, trx });
+        try {
+            let data = await apiManager('transactions', 'list', { page: 1, page_size: 20 });
+            let content = data?.content ?? [];
+            let items = [];
+            content.forEach((trx) => {
+                (trx?.orders || []).forEach((order) => {
+                    // 각 주문상품에 상위 트랜잭션(주문번호/상태/배송지/송장)을 결합
+                    items.push({ ...order, trx });
+                });
             });
-        });
-        setOrderList(items);
-        if (items.length > 0) {
-            setSellerId(items[0]?.seller_id);
+            setOrderList(items);
+            if (items.length > 0) {
+                setSellerId(items[0]?.seller_id);
+            }
+        } finally {
+            // 성공/실패와 무관하게 로딩 종료 (실패 시엔 빈 상태 문구가 뜬다)
+            setLoading(false);
         }
     }
+
+    // 목록 렌더 조건(item.seller_id == sellerId)과 동일한 기준으로 계산 —
+    // "주문은 있는데 이 탭엔 0건" 인 경우도 빈 상태로 잡기 위함
+    const filtered_list = orderList.filter((item) => item.seller_id == sellerId);
 
     return (
         <>
@@ -109,7 +120,8 @@ const Demo4 = (props) => {
                     {_.uniqBy(orderList, 'seller_id').map((data, idx) => {
                         return <Tab
                             key={idx}
-                            label={data?.seller_user_name || '판매자'}
+                            // 셀러 시스템 미사용으로 seller_user_name 은 항상 null — 폴백 문구를 '기본배송' 으로 통일
+                            label={data?.seller_user_name || '기본배송'}
                             value={data?.seller_id}
                             sx={{
                                 borderBottom: '1px solid',
@@ -128,6 +140,16 @@ const Demo4 = (props) => {
                 <ContentContainer style={{
                     background: `${themeMode == 'dark' ? '#000' : '#F6F6F6'}`
                 }}>
+                    {/* 로딩 중 / 목록 0건일 때 회색 박스가 빈 채로 남아 있던 문제 대응 */}
+                    {loading &&
+                        <div style={{ textAlign: 'center', padding: '3rem 0', opacity: 0.6 }}>불러오는 중...</div>
+                    }
+                    {!loading && filtered_list.length === 0 &&
+                        <div style={{ textAlign: 'center', padding: '3rem 0', color: '#888' }}>
+                            주문 내역이 없습니다.<br />
+                            <Button variant='outlined' sx={{ mt: 2 }} onClick={() => router.push('/shop')}>쇼핑하러 가기</Button>
+                        </div>
+                    }
                     {orderList.map((item, idx) => (
                         <>
                             {item.seller_id == sellerId &&

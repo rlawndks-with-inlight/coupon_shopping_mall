@@ -13,6 +13,7 @@ import toast from 'react-hot-toast';
 import DialogBuyNow from 'src/components/dialog/DialogBuyNow';
 import { useAuthContext } from 'src/layouts/manager/auth/useAuthContext';
 import Head from 'next/head';
+import { isShopgoBrand } from 'src/utils/is-shopgo';
 
 const ReactQuill = dynamic(() => import('react-quill'), {
   ssr: false,
@@ -96,6 +97,7 @@ const ItemDemo = (props) => {
 
   const onSelectOption = (group, option) => {
     let select_product_groups = selectItemOptionUtil(group, option, selectProductGroups);
+    // selectItemOptionUtil 이 새 객체를 돌려주므로 그대로 넣으면 리렌더된다.
     setSelectProductGroups(select_product_groups);
   }
 
@@ -127,7 +129,7 @@ const ItemDemo = (props) => {
   const hasDiscount = product?.product_price > product?.product_sale_price && product?.product_sale_price > 0;
   const discountRate = hasDiscount ? Math.round((1 - product.product_sale_price / product.product_price) * 100) : 0;
 
-  const TABS = [
+  const ALL_TABS = [
     {
       value: 'description',
       label: '상품정보',
@@ -146,6 +148,9 @@ const ItemDemo = (props) => {
       component: product ? <ProductDetailsReview product={product} reviewContent={reviewContent} onChangePage={(page) => setReviewPage(page)} reviewPage={reviewPage} reviewLoading={reviewLoading} /> : null,
     },
   ];
+  // ShopGo 산하는 상품후기를 쓰지 않는다 — 후기 탭을 감춘다.
+  // (별점과 작성 버튼은 ProductDetailsSummary·ProductDetailsReview 에서 함께 막는다)
+  const TABS = ALL_TABS.filter((t) => t?.value !== 'reviews' || !isShopgoBrand(themeDnsData));
 
   return (
     <>
@@ -208,7 +213,13 @@ const ItemDemo = (props) => {
                             {character?.character_value && character?.character_value.split(/[,/]\s*/)?.map(val => val.trim()).map((option, optIdx) => (
                               <Button
                                 key={optIdx}
-                                variant={selectProductGroups?.groups?.find(g => g?.character_name === character?.character_name && g?.option === option) ? 'contained' : 'outlined'}
+                                // 저장 형태에 맞춰 판정한다. selectItemOptionUtil 은 'option' 키를 만들지 않고
+                                // options: [{ value: '블랙' }] 로 넣는다 — 예전 판정식(g?.option === option)은
+                                // 늘 undefined 라 무엇을 골라도 버튼이 미선택(outlined) 그대로였다.
+                                variant={selectProductGroups?.groups?.find(g =>
+                                  g?.character_name === character?.character_name
+                                  && (g?.options?.[0]?.value === option || g?.options?.[0]?.option_name === option)
+                                ) ? 'contained' : 'outlined'}
                                 size="small"
                                 color="inherit"
                                 onClick={() => onSelectOption(character, option)}

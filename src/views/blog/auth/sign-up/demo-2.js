@@ -1,15 +1,14 @@
 import PropTypes from 'prop-types';
-import { Checkbox, FormControlLabel, TextField, Typography, IconButton, Drawer, Button, Select, MenuItem, InputLabel, InputAdornment } from '@mui/material';
+import { Checkbox, FormControlLabel, TextField, Typography, IconButton, Button, Select, MenuItem, InputLabel, InputAdornment } from '@mui/material';
 import { useState } from 'react';
 import { Row, themeObj } from 'src/components/elements/styled-components';
 import styled from 'styled-components'
 import Iconify from 'src/components/iconify/Iconify';
 import { useTheme } from '@emotion/react';
-import Policy from 'src/pages/shop/auth/policy';
+import DialogPolicy from 'src/components/dialog/DialogPolicy';
 import { Icon } from '@iconify/react';
 import { useEffect } from 'react';
 import Header from 'src/layouts/shop/blog/demo-2/header';
-import { logoSrc } from 'src/data/data';
 import toast from 'react-hot-toast';
 import { apiManager } from 'src/utils/api';
 import { useSettingsContext } from 'src/components/settings';
@@ -69,10 +68,6 @@ width:100%;
 margin: 0 auto;
 `
 
-const PolicyContainer = styled.div`
-padding:0 2.5%;
-`
-
 const SelectContainer = styled.div`
 display:flex;
 width:100%;
@@ -87,13 +82,10 @@ flex-direction:column;
 flex-grow:1;
 `
 
-const DrawerTitle = styled.div`
-display:flex;
-margin-left:auto;
-width:95%;
-padding-left:2.5%;
-justify-content:space-between;
-`
+// 약관 type ↔ 동의 체크박스 대응표.
+// 화살표(>) 를 눌러 약관을 끝까지 읽고 '동의하고 닫기' 를 누르면 여기 대응하는 체크박스가 켜진다.
+// 0=서비스 이용약관(check_2), 1=개인정보 수집 이용 동의(check_3), 2=마케팅 수신(check_4, 현재 비노출)
+const POLICY_CHECK_KEY = { 0: 'check_2', 1: 'check_3', 2: 'check_4' };
 
 // 회원가입 김인욱
 const Demo2 = (props) => {
@@ -290,41 +282,26 @@ const Demo2 = (props) => {
                                 }}
                                 onClick={() => { setActiveStep(activeStep + 1); }}
                             >다음으로</Button>
-                            <Drawer
-                                anchor='bottom'
+                            {/* 바텀시트(Drawer) → Dialog scroll="paper" 로 교체.
+                                기존에는 Paper 전체가 스크롤돼 로고와 닫기(X)가 같이 사라졌고,
+                                약관을 끝까지 읽으면 닫을 방법이 없어 맨 위로 되돌아가야 했다.
+                                ※ policyType 2(마케팅 수신 안내문) 분기는 제거했다 —
+                                  마케팅 체크박스 자체가 비노출이라 2 를 세팅하는 곳이 없다(도달 불가 코드였다). */}
+                            <DialogPolicy
                                 open={openPolicy}
+                                type={policyType}
                                 onClose={() => {
                                     setOpenPolicy(false)
-
                                 }}
-                                PaperProps={{
-                                    sx: {
-                                        maxWidth: '790px',
-                                        width: '90%',
-                                        maxHeight: '500px',
-                                        margin: '0 auto',
-                                        borderTopLeftRadius: '24px',
-                                        borderTopRightRadius: '24px',
-                                        paddingBottom: '2rem',
-                                        position: 'fixed'
+                                onAgree={() => {
+                                    // 읽고 나면 해당 약관 체크박스를 켜준다.
+                                    // 개별 체크와 동일하게 동작하므로 '전체 동의'(check_0) 는 건드리지 않는다.
+                                    const key = POLICY_CHECK_KEY[policyType];
+                                    if (key) {
+                                        setCheckboxObj((prev) => ({ ...prev, [key]: true }))
                                     }
                                 }}
-                            >
-                                <DrawerTitle>
-                                    <img src={logoSrc()} style={{ height: '56px', width: 'auto' }} />
-                                    <IconButton
-                                        sx={{}}
-                                        onClick={() => {
-                                            setOpenPolicy(false)
-                                        }}
-                                    >
-                                        <Icon icon={'ic:round-close'} fontSize={'2.5rem'} />
-                                    </IconButton>
-                                </DrawerTitle>
-                                <PolicyContainer>
-                                    {policyType != 2 ? <Policy type={policyType} /> : " 할인쿠폰 및 혜택, 이벤트, 신상품 소식 등 쇼핑몰에서 제공하는 유익한 쇼핑정보를 SMS나 이메일로 받아보실 수 있습니다. 단, 주문/거래 정보 및 주요 정책과 관련된 내용은 수신동의 여부와 관계없이 발송됩니다. 선택 약관에 동의하지 않으셔도 회원가입은 가능하며, 회원가입 후 회원정보수정 페이지에서 언제든지 수신여부를 변경하실 수 있습니다."}
-                                </PolicyContainer>
-                            </Drawer>
+                            />
                         </TextFieldContainer>
                     </>
                 }

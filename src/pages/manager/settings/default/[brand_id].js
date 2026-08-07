@@ -9,6 +9,7 @@ import {
   Dialog,
   FormControl,
   FormControlLabel,
+  FormHelperText,
   Grid,
   InputAdornment,
   InputLabel,
@@ -38,6 +39,7 @@ import ReactQuillComponent from 'src/views/manager/react-quill'
 import { apiManager } from 'src/utils/api'
 import { commarNumber } from 'src/utils/function'
 import { BLOG_DEMO_DATA, SHOP_DEMO_DATA } from 'src/data/data'
+import { FRAMES } from 'src/components/main-site/frameList'
 import { allLangs } from 'src/locales'
 
 const KakaoWrappers = styled.div`
@@ -65,6 +67,42 @@ const OgDescription = styled.div`
   flex-direction: column;
   padding: 0.5rem;
 `
+
+// --- 프레임(디자인) 선택 ---
+// 화면상 입력칸은 하나지만 저장 형식은 그대로다. 'shop:1' 같은 키를 골라
+// setting_obj.shop_demo_num / blog_demo_num 두 값에 나눠 담는다(번호체계 통합 아님).
+//
+// 판매중 프레임 목록은 frameList.js 의 FRAMES 가 단일 소스다(여기서 매핑을 다시 만들지 않는다).
+// FRAMES 에 없는 조합(미판매·레거시 데모)도 반드시 목록에 남긴다 —
+// 기존 브랜드가 그 값을 쓰고 있는데 목록에서 빠지면 저장하는 순간 값이 날아간다.
+const FRAME_OPTION_KEYS = new Set(FRAMES.map(f => f.key))
+const DEMO_FRAME_OPTIONS = [
+  ...FRAMES.map(f => ({
+    value: f.key,
+    label: `프레임${String(f.no).padStart(2, '0')} · ${f.title}`
+  })),
+  ...[
+    ...SHOP_DEMO_DATA.map(d => ({ value: `shop:${d.value}`, label: `(구) 쇼핑몰 데모 ${d.value}` })),
+    ...BLOG_DEMO_DATA.map(d => ({ value: `blog:${d.value}`, label: `(구) 블로그 데모 ${d.value}` }))
+  ].filter(o => !FRAME_OPTION_KEYS.has(o.value))
+]
+
+// 저장값 → Select value.
+// shop 우선. utils/blog-shop-route.js 의 isBlogBrand 가 `!(shop_demo_num > 0) && blog_demo_num > 0` 이라
+// 둘 다 0보다 크면 실제 화면은 쇼핑몰형으로 뜬다. 폼도 그 결과를 그대로 보여준다.
+const getDemoFrameValue = (setting_obj) => {
+  const shopNum = Number(setting_obj?.shop_demo_num) || 0
+  const blogNum = Number(setting_obj?.blog_demo_num) || 0
+  return shopNum > 0 ? `shop:${shopNum}` : blogNum > 0 ? `blog:${blogNum}` : ''
+}
+
+// 목록에 없는 번호(예: 아직 정의되지 않은 데모)가 저장돼 있으면 그 항목만 임시로 덧붙인다.
+// 안 그러면 선택칸이 빈 칸으로 보여 무엇이 걸려 있는지 알 수 없다.
+const getDemoFrameOptions = (value) =>
+  !value || DEMO_FRAME_OPTIONS.some(o => o.value === value)
+    ? DEMO_FRAME_OPTIONS
+    : [...DEMO_FRAME_OPTIONS, { value, label: `(구) ${value}` }]
+
 const DefaultSetting = () => {
   const { setModal } = useModal()
   const { themeMode, themeDnsData } = useSettingsContext()
@@ -668,48 +706,32 @@ const DefaultSetting = () => {
                 <Grid item xs={12} md={6}>
                   <Card sx={{ p: 2, height: '100%' }}>
                     <Stack spacing={3}>
+                      {/* 쇼핑몰/블로그 데모넘버 입력칸을 하나로 통합. 저장은 기존 두 키를 그대로 쓴다. */}
                       <FormControl>
-                        <InputLabel>쇼핑몰 데모넘버</InputLabel>
+                        <InputLabel>프레임(디자인)</InputLabel>
                         <Select
-                          label='쇼핑몰 데모넘버'
-                          value={item.setting_obj?.shop_demo_num}
+                          label='프레임(디자인)'
+                          value={getDemoFrameValue(item.setting_obj)}
                           onChange={e => {
+                            const value = String(e.target.value || '')
+                            const matched = /^(shop|blog):(\d+)$/.exec(value)
+                            // 고른 쪽만 번호를 넣고 반대쪽은 0 — 두 값이 같이 살아 있으면 shop 이 이겨 블로그 설정이 묻힌다.
                             setItem({
                               ...item,
                               ['setting_obj']: {
                                 ...item.setting_obj,
-                                shop_demo_num: e.target.value
+                                shop_demo_num: matched && matched[1] == 'shop' ? Number(matched[2]) : 0,
+                                blog_demo_num: matched && matched[1] == 'blog' ? Number(matched[2]) : 0
                               }
                             })
                           }}
                         >
-                          <MenuItem value={0}>사용안함</MenuItem>
-                          {SHOP_DEMO_DATA.map((item, idx) => {
-                            return <MenuItem value={item.value}>{item.title}</MenuItem>
+                          <MenuItem value=''>사용안함</MenuItem>
+                          {getDemoFrameOptions(getDemoFrameValue(item.setting_obj)).map((option) => {
+                            return <MenuItem key={option.value} value={option.value}>{option.label}</MenuItem>
                           })}
                         </Select>
-                      </FormControl>
-
-                      <FormControl>
-                        <InputLabel>블로그 데모넘버</InputLabel>
-                        <Select
-                          label='블로그 데모넘버'
-                          value={item.setting_obj?.blog_demo_num}
-                          onChange={e => {
-                            setItem({
-                              ...item,
-                              ['setting_obj']: {
-                                ...item.setting_obj,
-                                blog_demo_num: e.target.value
-                              }
-                            })
-                          }}
-                        >
-                          <MenuItem value={0}>사용안함</MenuItem>
-                          {BLOG_DEMO_DATA.map((item, idx) => {
-                            return <MenuItem value={item.value}>{item.title}</MenuItem>
-                          })}
-                        </Select>
+                        <FormHelperText>쇼핑몰형과 블로그형은 동시에 선택할 수 없습니다. 하나를 고르면 반대쪽은 자동으로 해제됩니다.</FormHelperText>
                       </FormControl>
                       <Autocomplete
                         multiple

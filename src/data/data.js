@@ -14,6 +14,10 @@ export const KAKAO_OBJ = {
   FONT_COLOR: '#371C1D'
 }
 
+// 데모 번호 목록. 관리자 '데모설정' 탭의 입력칸이 프레임(디자인) 하나로 통합되면서
+// 이제 이 목록은 '판매중 프레임(components/main-site/frameList.js 의 FRAMES)에 없는 번호',
+// 즉 미판매·레거시 데모를 골라내는 용도로만 쓰인다.
+// 기존 브랜드가 쓰고 있는 번호가 선택지에서 빠지면 저장 시 값이 날아가므로 항목을 지우지 말 것.
 export const SHOP_DEMO_DATA = [
   { value: 1, title: '데모 1 (일반 쇼핑몰에 적합)' },
   { value: 2, title: '데모 2' },

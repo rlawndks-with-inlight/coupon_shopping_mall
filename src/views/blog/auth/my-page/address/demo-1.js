@@ -178,6 +178,11 @@ const Demo1 = (props) => {
                         >배송지 추가하기</Button>
                         <ContentContainer>
                             <>
+                                {/* 목록 0건일 때 아무것도 안 나오던 문제 대응 (demo-4/5 와 동일 문구).
+                                    로딩 중에는 content 가 undefined 라 이 조건이 걸리지 않아 깜빡임이 없다. */}
+                                {addressContent?.content?.length == 0 &&
+                                    <div style={{ textAlign: 'center', padding: '2rem 0', color: 'grey' }}>등록된 배송지가 없습니다.</div>
+                                }
                                 {addressContent?.content && addressContent?.content.map((data, idx) => (
                                     <div key={data?.id ?? idx}>
                                         <AddressContainer>

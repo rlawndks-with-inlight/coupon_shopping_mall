@@ -353,8 +353,12 @@ const CategoryList = () => {
 
     const onClickCategoryDelete = async (category) => { // 해당 카테고리 삭제
         setIsAction(false);
-        await apiManager('product-categories', 'delete', category);
+        // 백엔드가 하위 카테고리·연결 상품이 있으면 거부한다(-100).
+        // 그때 apiManager 는 false 를 돌려주고 deleteItem 이 이미 사유 토스트를 띄우므로,
+        // 여기서는 목록을 새로 그리지 않고 끝낸다(안 지워졌는데 갱신만 도는 걸 막는다).
+        const result = await apiManager('product-categories', 'delete', category);
         setIsAction(false);
+        if (result === false) return;
         getCategories();
         settingPlatform?.();   // 컨텍스트 themeCategoryList 갱신(삭제 반영)
     }

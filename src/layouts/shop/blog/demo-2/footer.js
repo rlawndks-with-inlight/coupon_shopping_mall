@@ -1,12 +1,11 @@
 import { themeObj } from "src/components/elements/styled-components"
 import { useSettingsContext } from "src/components/settings"
+import { useAuthContext } from "src/layouts/manager/auth/useAuthContext"
 import styled from "styled-components"
-import { logoSrc } from "src/data/data"
 import { useLocales } from "src/locales"
 import { useState } from "react"
-import { Drawer, IconButton } from "@mui/material"
 import { Icon } from "@iconify/react"
-import Policy from 'src/pages/shop/auth/policy'
+import DialogPolicy from 'src/components/dialog/DialogPolicy'
 import { useRouter } from "next/router"
 
 const Wrappers = styled.footer`
@@ -36,17 +35,6 @@ font-size: 12px;
 const MarginRight = styled.div`
 margin-right:0.5rem;
 `
-const DrawerTitle = styled.div`
-display:flex;
-margin-left:auto;
-width:95%;
-padding-left:2.5%;
-justify-content:space-between;
-`
-const PolicyContainer = styled.div`
-padding:0 2.5%;
-`
-
 const FixedFooter = styled.div`
 height: 60px;
 max-width: 720px;
@@ -69,6 +57,11 @@ const Footer = () => {
   const { themeDnsData } = useSettingsContext();
 
   const [policyType, setPolicyType] = useState(0);
+  const { user, logout } = useAuthContext();
+  const onLogout = async () => {
+    await logout();
+    window.location.reload();
+  };
 
   const router = useRouter();
 
@@ -101,6 +94,11 @@ const Footer = () => {
             <Bold style={{ cursor: 'pointer' }} onClick={() => { setPolicyType(2) }}>
               개인정보정책
             </Bold>
+            {/* 로그아웃 — 헤더가 아니라 여기 둔다. 아이콘만으로는 무슨 버튼인지 알기 어렵다. */}
+            {user &&
+              <Bold style={{ cursor: 'pointer' }} onClick={onLogout}>
+                로그아웃
+              </Bold>}
           </Row>
 
           <Row style={{ fontSize: '10px' }}>
@@ -158,45 +156,23 @@ const Footer = () => {
             }
           </Row>
 
-          <Row style={{ marginTop: '1rem', color: '#999999', fontSize: '10px' }}>
-            본 사이트는 위탁판매자이며 상품은 다수의 위탁업체에서 제공하고 있습니다. 상품, 상품정보, 거래에 관한 의무와 책임은 공급사에게 있습니다.
-          </Row>
+          {/* '본 사이트는 위탁판매자이며 ... 책임은 공급사에게 있습니다' 고지를 제거했다.
+              ① 판매중 11개 프레임 중 이 파일 하나에만 있던 문구다 → 공통 정책이 아니라 특정 클라이언트 유물
+              ② 위탁 기능 자체가 꺼져 있다(setting_obj.is_use_consignment 기본 0, 백엔드가 consignment_products 를 내려주지 않음)
+              ③ 가맹점이 직접 파는 구조에서 "책임은 공급사에게 있다"는 고지는 사실과 다르다 */}
 
         </ContentWrapper>
-        <Drawer
-          anchor='bottom'
-          open={policyType}
+        {/* 바텀시트(Drawer) → Dialog scroll="paper" 로 교체.
+            ※ 이 파일만 policyType 이 1-base 다(0=닫힘 / 1=이용약관 / 2=개인정보정책).
+              열림 여부는 policyType > 0, 약관 종류는 policyType - 1 로 0-base 로 되돌려 넘긴다.
+              오프셋을 빼먹으면 '이용약관' 자리에 개인정보처리방침이 뜬다. */}
+        <DialogPolicy
+          open={policyType > 0}
+          type={policyType - 1}
           onClose={() => {
             setPolicyType(0)
           }}
-          PaperProps={{
-            sx: {
-              maxWidth: '790px',
-              width: '90%',
-              maxHeight: '500px',
-              margin: '0 auto',
-              borderTopLeftRadius: '24px',
-              borderTopRightRadius: '24px',
-              paddingBottom: '2rem',
-              position: 'fixed'
-            }
-          }}
-        >
-          <DrawerTitle>
-            <img src={logoSrc()} style={{ height: '56px', width: 'auto' }} />
-            <IconButton
-              sx={{}}
-              onClick={() => {
-                setPolicyType(0)
-              }}
-            >
-              <Icon icon={'ic:round-close'} fontSize={'2.5rem'} />
-            </IconButton>
-          </DrawerTitle>
-          <PolicyContainer>
-            <Policy type={policyType - 1} />
-          </PolicyContainer>
-        </Drawer>
+        />
       </Wrappers>
       <FixedFooter>
         <Icon icon='bi:handbag' style={{ fontSize: '24px', cursor: 'pointer' }} onClick={() => { router.push('/shop') }} />

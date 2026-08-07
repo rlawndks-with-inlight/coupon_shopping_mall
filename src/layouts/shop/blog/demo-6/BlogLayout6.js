@@ -7,6 +7,8 @@ import { useState } from "react";
 import DialogSearch from "src/components/dialog/DialogSearch";
 import { useAuthContext } from "src/layouts/manager/auth/useAuthContext";
 import StorefrontPopups from "src/components/elements/shop/StorefrontPopups";
+import { isStorefrontHome } from "src/utils/blog-shop-route";
+import LanguagePopover from "src/layouts/manager/header/LanguagePopover";
 
 /* 단일 상품 전용 럭셔리 레이아웃 — 심플 헤더 + 심플 푸터 */
 
@@ -31,13 +33,23 @@ const Header = styled.header`
     padding: 1rem 1.25rem;
   }
 `
+/* 로고는 좌·우 슬롯(SideSlot / HeaderActions) 사이에 자기 폭만 차지하고 놓인다.
+   예전엔 LogoArea 가 flex:1 이라 우측 아이콘이 늘어날수록 로고가 왼쪽으로 밀렸다.
+   좌우를 flex:1 로 똑같이 나눠 가지면 우측 아이콘 개수(로그인 여부·언어 사용 여부)가
+   달라져도 로고가 가운데 그대로 있는다. */
 const LogoArea = styled.div`
   display: flex;
   align-items: center;
   gap: 0.75rem;
   cursor: pointer;
-  flex: 1;
+  flex: 0 0 auto;
   justify-content: center;
+`
+/* 헤더 좌측 슬롯(뒤로가기 버튼 자리). 우측 액션과 같은 flex 를 가져 로고를 가운데로 민다. */
+const SideSlot = styled.div`
+  display: flex;
+  align-items: center;
+  flex: 1;
 `
 const Logo = styled(LazyLoadImage)`
   height: 28px;
@@ -64,10 +76,28 @@ const IconBtn = styled.button`
   &:hover {
     opacity: 0.6;
   }
+  /* 좁은 화면에서는 아이콘 묶음(검색·계정·로그아웃·장바구니·언어)이 헤더 폭을 다 먹어
+     로고가 두 줄로 깨진다. 작은 폰에서만 아이콘 폭을 줄인다. */
+  @media (max-width: 480px) {
+    width: 36px;
+    padding: 0.35rem;
+    font-size: 18px;
+  }
+`
+/* 홈에서 뒤로가기 버튼 자리를 대신 차지하는 빈 칸.
+   폭은 IconBtn 과 똑같이 맞춘다(다르게 주면 홈과 하위 화면의 좌측 여백이 어긋난다). */
+const IconSpacer = styled.div`
+  width: 44px;
+  flex-shrink: 0;
+  @media (max-width: 480px) {
+    width: 36px;
+  }
 `
 const HeaderActions = styled.div`
   display: flex;
   align-items: center;
+  flex: 1;
+  justify-content: flex-end;
 `
 const Main = styled.main`
   flex: 1;
@@ -106,6 +136,25 @@ const FooterInfo = styled.div`
   padding-top: 2rem;
   border-top: 1px solid rgba(255, 255, 255, 0.1);
 `
+/* 푸터 링크 줄 — 비회원 주문조회 / 이용약관 / 개인정보처리방침.
+   같은 스타일이 세 번 반복되므로 인라인 style 대신 styled 로 뺐다(이 파일은 전부 styled 다).
+   톤은 FooterInfo 계열에 맞춘 12px / opacity 0.6 / 밑줄. */
+const FooterLinks = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 1rem;
+  margin-top: 1.5rem;
+`
+const FooterLink = styled.span`
+  font-size: 12px;
+  opacity: 0.6;
+  cursor: pointer;
+  text-decoration: underline;
+  &:hover {
+    opacity: 1;
+  }
+`
 const FooterLine = styled.div`
   font-size: 11px;
   opacity: 0.4;
@@ -118,8 +167,14 @@ const BlogLayout6 = (props) => {
   const router = useRouter();
   const { children } = props;
   const brandName = themeDnsData?.name || 'BRAND';
-  const { user } = useAuthContext();
+  const { user, logout } = useAuthContext();
   const [searchOpen, setSearchOpen] = useState(false);
+
+  // 로그아웃 후 전체 리로드 — src/views/blog/auth/my-page/demo-2.js 에서 쓰는 것과 같은 방식.
+  const onLogout = async () => {
+    await logout();
+    window.location.reload();
+  };
 
   return (
     <Wrapper>
@@ -132,9 +187,17 @@ const BlogLayout6 = (props) => {
         root_path={'/shop/search?keyword='}
       />
       <Header>
-        <IconBtn onClick={() => router.back()}>
-          <Icon icon="material-symbols:arrow-back" />
-        </IconBtn>
+        {/* 뒤로가기는 조건 없이 렌더되고 있어서 메인페이지에도 ← 가 떴다.
+            홈에서는 같은 폭의 스페이서로 바꿔 좌측 여백을 그대로 유지한다
+            (로고 중앙정렬 자체는 SideSlot/HeaderActions 의 flex:1 이 잡는다).
+            isStorefrontHome 은 '/'(가맹점 도메인 루트 rewrite)와 '/shop' 둘 다 홈으로 본다. */}
+        <SideSlot>
+          {isStorefrontHome(router)
+            ? <IconSpacer />
+            : <IconBtn onClick={() => router.back()}>
+              <Icon icon="material-symbols:arrow-back" />
+            </IconBtn>}
+        </SideSlot>
         <LogoArea onClick={() => router.push('/shop')}>
           {themeDnsData?.logo_img ? (
             <Logo src={themeDnsData.logo_img} effect="blur" />
@@ -156,6 +219,9 @@ const BlogLayout6 = (props) => {
           <IconBtn onClick={() => router.push('/shop/auth/cart')}>
             <Icon icon="iconamoon:shopping-bag" />
           </IconBtn>
+          {/* 언어 선택 — 이 레이아웃(프레임6~11 공용)에는 언어 UI 가 아예 없어서
+              가맹점 언어 설정이 켜져 있어도 고객이 언어를 바꿀 방법이 없었다. */}
+          {themeDnsData?.setting_obj?.is_use_lang == 1 && <LanguagePopover />}
         </HeaderActions>
       </Header>
       <StorefrontPopups />
@@ -169,6 +235,18 @@ const BlogLayout6 = (props) => {
           {themeDnsData?.phone_num && <div>고객센터 · {themeDnsData.phone_num}</div>}
           {themeDnsData?.addr && <div>주소 · {themeDnsData.addr}</div>}
         </FooterInfo>
+        {/* 비회원 주문조회: 이 레이아웃에는 진입로가 마이페이지 안 다이얼로그뿐이라
+            비회원은 도달할 수가 없었다. 푸터에서 바로 열어준다.
+            이용약관·개인정보처리방침: 전자상거래법상 상시 열람 경로가 필요한데 이 푸터엔 없었다.
+            policy.js 가 query type 으로 갈라진다(0=이용약관, 1=개인정보처리방침). */}
+        <FooterLinks>
+          <FooterLink onClick={() => router.push('/shop/auth/order-check')}>비회원 주문조회</FooterLink>
+          <FooterLink onClick={() => router.push('/shop/auth/policy?type=0')}>이용약관</FooterLink>
+          <FooterLink onClick={() => router.push('/shop/auth/policy?type=1')}>개인정보처리방침</FooterLink>
+          {/* 로그아웃은 헤더가 아니라 여기 둔다. 헤더는 로고가 가운데 정렬이라
+              우측 아이콘이 하나 늘 때마다 로고가 왼쪽으로 밀린다. */}
+          {user && <FooterLink onClick={onLogout}>로그아웃</FooterLink>}
+        </FooterLinks>
         <FooterLine>© {new Date().getFullYear()} {brandName.toUpperCase()} · ALL RIGHTS RESERVED</FooterLine>
       </Footer>
     </Wrapper>

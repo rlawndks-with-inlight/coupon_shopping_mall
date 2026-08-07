@@ -5,6 +5,8 @@ import { IconButton } from "@mui/material"
 import { Icon } from "@iconify/react"
 import { LazyLoadImage } from "react-lazy-load-image-component"
 import { commarNumber } from "src/utils/function"
+import { formatLang } from "src/utils/format"
+import { useLocales } from "src/locales"
 
 const ItemContent = styled.div`
 display:flex;
@@ -82,6 +84,9 @@ background-repeat:no-repeat;
 
 export const Item1 = (props) => {
   const { item, router } = props;
+  // 상품명·요약을 선택된 언어로 표시한다. lang_obj 가 없으면 formatLang 이 원문으로 폴백한다.
+  // (섹션 제목은 HomeItems 에서 이미 번역되는데 카드 안쪽만 원문으로 남아 있었다)
+  const { currentLang } = useLocales();
   const hasDiscount = item?.product_price > item?.product_sale_price && item?.product_sale_price > 0;
   const discountRate = hasDiscount ? Math.round((1 - item.product_sale_price / item.product_price) * 100) : 0;
   const displayPrice = item?.product_sale_price || item?.product_price || 0;
@@ -94,8 +99,8 @@ export const Item1 = (props) => {
           src={item?.product_img}
         />
       </ItemImgWrap>
-      <ItemName>{item?.product_name}</ItemName>
-      {item?.product_comment && <ItemComment>{item?.product_comment}</ItemComment>}
+      <ItemName>{formatLang(item, 'product_name', currentLang)}</ItemName>
+      {item?.product_comment && <ItemComment>{formatLang(item, 'product_comment', currentLang)}</ItemComment>}
       <ItemPrice>
         {hasDiscount && <DiscountBadge>{discountRate}%</DiscountBadge>}
         {commarNumber(displayPrice)}원

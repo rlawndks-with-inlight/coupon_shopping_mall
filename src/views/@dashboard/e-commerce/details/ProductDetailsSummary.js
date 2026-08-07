@@ -52,6 +52,7 @@ import { useRouter } from 'next/router';
 import DialogBuyNow from 'src/components/dialog/DialogBuyNow';
 import { useLocales } from 'src/locales';
 import { formatLang } from 'src/utils/format';
+import { isShopgoBrand } from 'src/utils/is-shopgo';
 // ----------------------------------------------------------------------
 
 ProductDetailsSummary.propTypes = {
@@ -157,12 +158,16 @@ export default function ProductDetailsSummary({ product, onAddCart, onGotoStep, 
                 {formatLang(product, 'product_spec', currentLang)}
               </Box>}
 
-            <Stack direction="row" alignItems="center" spacing={1}>
-              <Rating value={product_average_scope} precision={0.1} readOnly />
-              <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-                ({commarNumber(product_average_scope)})
-              </Typography>
-            </Stack>
+            {/* ShopGo 산하는 상품후기를 쓰지 않는다 — 별점도 함께 감춘다.
+                후기 탭이 없는데 별점만 남으면 근거 없는 숫자가 된다. */}
+            {!isShopgoBrand(themeDnsData) && (
+              <Stack direction="row" alignItems="center" spacing={1}>
+                <Rating value={product_average_scope} precision={0.1} readOnly />
+                <Typography variant="body2" sx={{ color: 'text.secondary' }}>
+                  ({commarNumber(product_average_scope)})
+                </Typography>
+              </Stack>
+            )}
             {
               themeDnsData?.id == 95 && product_sale_price > 99999 ?
                 <>

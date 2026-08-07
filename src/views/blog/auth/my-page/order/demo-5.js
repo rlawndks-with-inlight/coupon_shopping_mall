@@ -66,36 +66,47 @@ const Demo5 = (props) => {
     const { themeMode } = useSettingsContext();
     const [statusValue, setStatusValue] = useState(false)
     const [orderList, setOrderList] = useState([]);
+    // 최초 렌더에서 목록이 [] 이라 "주문 내역이 없습니다" 가 깜빡이는 걸 막기 위한 로딩 플래그
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         loadOrderList();
     }, [])
 
     const loadOrderList = async () => {
-        let data = await apiManager('transactions', 'list', { page: 1, page_size: 20 });
-        let content = data?.content || [];
-        // 각 트랜잭션(주문)의 주문상품(orders[])을 펼쳐 부모 주문정보를 함께 부여
-        let rows = [];
-        content.forEach((trx) => {
-            (trx?.orders || []).forEach((order) => {
-                rows.push({
-                    ...order,
-                    ord_num: trx?.ord_num,
-                    trx_status: trx?.trx_status,
-                    amount: trx?.amount,
-                    addr: trx?.addr,
-                    detail_addr: trx?.detail_addr,
-                    receiver: trx?.receiver || trx?.buyer_name,
-                    receiver_phone: trx?.receiver_phone || trx?.buyer_phone,
-                    invoice_num: trx?.invoice_num,
-                });
+        try {
+            let data = await apiManager('transactions', 'list', { page: 1, page_size: 20 });
+            let content = data?.content || [];
+            // 각 트랜잭션(주문)의 주문상품(orders[])을 펼쳐 부모 주문정보를 함께 부여
+            let rows = [];
+            content.forEach((trx) => {
+                (trx?.orders || []).forEach((order) => {
+                    rows.push({
+                        ...order,
+                        ord_num: trx?.ord_num,
+                        trx_status: trx?.trx_status,
+                        amount: trx?.amount,
+                        addr: trx?.addr,
+                        detail_addr: trx?.detail_addr,
+                        receiver: trx?.receiver || trx?.buyer_name,
+                        receiver_phone: trx?.receiver_phone || trx?.buyer_phone,
+                        invoice_num: trx?.invoice_num,
+                    });
+                })
             })
-        })
-        setOrderList(rows);
-        if (rows.length > 0) {
-            setStatusValue(rows[0].trx_status);
+            setOrderList(rows);
+            if (rows.length > 0) {
+                setStatusValue(rows[0].trx_status);
+            }
+        } finally {
+            // 성공/실패와 무관하게 로딩 종료 (실패 시엔 빈 상태 문구가 뜬다)
+            setLoading(false);
         }
     }
+
+    // 목록 렌더 조건(item.trx_status == statusValue)과 동일한 기준으로 계산 —
+    // "주문은 있는데 이 상태 탭엔 0건" 인 경우도 빈 상태로 잡기 위함
+    const filtered_list = orderList.filter((item) => item.trx_status == statusValue);
 
     return (
         <>
@@ -136,6 +147,16 @@ const Demo5 = (props) => {
                 <ContentContainer style={{
                     background: `${themeMode == 'dark' ? '#000' : '#F6F6F6'}`
                 }}>
+                    {/* 로딩 중 / 목록 0건일 때 회색 박스가 빈 채로 남아 있던 문제 대응 */}
+                    {loading &&
+                        <div style={{ textAlign: 'center', padding: '3rem 0', opacity: 0.6 }}>불러오는 중...</div>
+                    }
+                    {!loading && filtered_list.length === 0 &&
+                        <div style={{ textAlign: 'center', padding: '3rem 0', color: '#888' }}>
+                            주문 내역이 없습니다.<br />
+                            <Button variant='outlined' sx={{ mt: 2 }} onClick={() => router.push('/shop')}>쇼핑하러 가기</Button>
+                        </div>
+                    }
                     {orderList.map((item, idx) => (
                         <>
                             {item.trx_status == statusValue &&

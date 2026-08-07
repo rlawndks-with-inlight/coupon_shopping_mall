@@ -15,8 +15,10 @@ import { insertCartDataUtil, selectItemOptionUtil } from 'src/utils/shop-util';
 import { useAuthContext } from 'src/layouts/manager/auth/useAuthContext';
 import toast from 'react-hot-toast';
 import { useLocales } from 'src/locales';
+import { formatLang } from 'src/utils/format';
 import DialogBuyNow from 'src/components/dialog/DialogBuyNow';
 import { ProductDetailsReview } from 'src/views/@dashboard/e-commerce/details';
+import { isShopgoBrand } from 'src/utils/is-shopgo';
 
 
 const ReactQuill = dynamic(() => import('react-quill'), {
@@ -95,7 +97,7 @@ const Demo2 = (props) => {
         },
     } = props;
     const { translate, currentLang } = useLocales();
-    const { themeMode, themeCartData, onChangeCartData } = useSettingsContext();
+    const { themeMode, themeCartData, onChangeCartData, themeDnsData } = useSettingsContext();
     const { user } = useAuthContext();
     const theme = useTheme();
 
@@ -212,7 +214,8 @@ const Demo2 = (props) => {
                 <ContentWrappers style={{
                     background: `${themeMode == 'dark' ? '#000' : '#fff'}`,
                 }}>
-                    <ItemName>{item.product_name}</ItemName>
+                    {/* 상품명은 lang_obj 번역본을 우선 표시한다(번역이 없으면 formatLang 이 원문을 그대로 반환). */}
+                    <ItemName>{formatLang(item, 'product_name', currentLang)}</ItemName>
                     <Divider />
                     <PriceContainer>
                         {item.product_sale_price < item.product_price &&
@@ -223,10 +226,12 @@ const Demo2 = (props) => {
                                 </Row>
 
                             </>}
+                        {/* '몇 명 구매'(products.buying_count) 표시를 제거했다.
+                            컬럼은 DB 에 있지만 백엔드에 값을 증가시키는 코드가 없어 항상 초기값만 찍히는 유령 지표다.
+                            지운 div 는 marginLeft:'auto' 로 오른쪽 끝에 있던 요소라, 남은 금액/원 은 왼쪽 정렬 그대로 유지된다. */}
                         <Row style={{ alignItems: 'flex-end', fontWeight: 'bold' }}>
                             <div style={{ fontSize: themeObj.font_size.size6, color: '' }}>{commarNumber(item.product_sale_price)}</div>
                             <div style={{ fontSize: themeObj.font_size.size8, marginLeft: '0.25rem' }}>원</div>
-                            <div style={{ fontSize: themeObj.font_size.size8, marginLeft: 'auto', fontWeight: 'normal', color: themeObj.grey[500] }}>{item?.buying_count}명 구매</div>
                         </Row>
                         <Divider style={{ margin: '1rem 0' }} />
                         <Row style={{ alignItems: 'flex-end', }}>
@@ -249,12 +254,16 @@ const Demo2 = (props) => {
                     <Divider />
                     <ContentContainer>
                         <Row style={{ width: '100%', marginBottom: '1rem', paddingTop: '1rem' }}>
-                            <div style={{ padding: '0 0 1rem 0', fontSize: themeObj.font_size.size8, fontWeight: 'bold', cursor: 'pointer', width: '50%', textAlign: 'center', borderBottom: `${tab == 0 ? '2px solid black' : ''}` }} onClick={() => { setTab(0) }}>
+                            {/* ShopGo 산하는 상품후기를 쓰지 않는다.
+                                후기 탭을 숨길 땐 '상품정보'가 남은 폭을 다 쓰게 해야
+                                반쪽짜리 탭 하나가 덩그러니 남지 않는다. */}
+                            <div style={{ padding: '0 0 1rem 0', fontSize: themeObj.font_size.size8, fontWeight: 'bold', cursor: 'pointer', width: `${isShopgoBrand(themeDnsData) ? '100%' : '50%'}`, textAlign: 'center', borderBottom: `${tab == 0 ? '2px solid black' : ''}` }} onClick={() => { setTab(0) }}>
                                 상품정보
                             </div>
-                            <div style={{ padding: '0 0 1rem 0', fontSize: themeObj.font_size.size8, fontWeight: 'bold', cursor: 'pointer', width: '50%', textAlign: 'center', borderBottom: `${tab == 1 ? '2px solid black' : ''}` }} onClick={() => { setTab(1) }}>
-                                상품후기({reviewTotal})
-                            </div>
+                            {!isShopgoBrand(themeDnsData) &&
+                                <div style={{ padding: '0 0 1rem 0', fontSize: themeObj.font_size.size8, fontWeight: 'bold', cursor: 'pointer', width: '50%', textAlign: 'center', borderBottom: `${tab == 1 ? '2px solid black' : ''}` }} onClick={() => { setTab(1) }}>
+                                    상품후기({reviewTotal})
+                                </div>}
                         </Row>
                         {
                             tab == 0 ?

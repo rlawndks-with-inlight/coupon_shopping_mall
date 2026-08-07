@@ -13,6 +13,7 @@ import { useLocales } from 'src/locales';
 import { formatLang } from 'src/utils/format';
 import { BasicInfo } from 'src/components/elements/shop/demo-4';
 import { themeObj } from 'src/components/elements/styled-components';
+import { isShopgoBrand } from 'src/utils/is-shopgo';
 const ReactQuill = dynamic(() => import('react-quill'), {
   ssr: false,
   loading: () => <p>Loading ...</p>,
@@ -122,7 +123,7 @@ const ItemDemo = (props) => {
   const onChangeReviewPage = (page) => {
     setReviewPage(page);
   }
-  const TABS = [
+  const ALL_TABS = [
     {
       value: 'description',
       label: translate('상품설명'),
@@ -147,6 +148,9 @@ const ItemDemo = (props) => {
       component: product ? <ProductDetailsReview product={product} reviewContent={reviewContent} onChangePage={onChangeReviewPage} reviewPage={reviewPage} reviewLoading={reviewLoading} /> : null,
     },
   ];
+  // ShopGo 산하는 상품후기를 쓰지 않는다 — 후기 탭을 감춘다.
+  // (별점과 작성 버튼은 ProductDetailsSummary·ProductDetailsReview 에서 함께 막는다)
+  const TABS = ALL_TABS.filter((t) => t?.value !== 'reviews' || !isShopgoBrand(themeDnsData));
 
   return (
     <>

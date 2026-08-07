@@ -7,6 +7,8 @@ import { useRouter } from "next/router"
 import DialogSearch from "src/components/dialog/DialogSearch"
 import { logoSrc } from "src/data/data"
 import { isMyPagePath, isPath } from "src/utils/blog-shop-route"
+// 헤더 로그아웃 아이콘용
+import LanguagePopover from "src/layouts/manager/header/LanguagePopover"
 
 const Wrappers = styled.header`
 width: 100%;
@@ -88,9 +90,14 @@ const Header = (props) => {
             <IconButton sx={{ padding: '6px' }} onClick={() => router.push('/shop/auth/my-page')}>
               <Icon icon={'basil:user-outline'} fontSize={'1.4rem'} color={iconColor} />
             </IconButton>
+            {/* 로그아웃은 헤더가 아니라 푸터에 텍스트로 둔다.
+                아이콘만으로는 무슨 버튼인지 알기 어렵고, 우측 아이콘이 늘수록 헤더가 빽빽해진다. */}
             <IconButton sx={{ padding: '6px' }} onClick={() => router.push('/shop/auth/cart')}>
               <Icon icon={'basil:shopping-bag-outline'} fontSize={'1.4rem'} color={iconColor} />
             </IconButton>
+            {/* 언어 선택 — 이 헤더엔 언어 UI 가 없어 설정을 켜도 고객이 언어를 바꿀 수 없었다.
+                LanguagePopover 는 국기 이미지라 다크/투명 헤더에서도 색 보정이 필요 없다. */}
+            {themeDnsData?.setting_obj?.is_use_lang == 1 && <LanguagePopover />}
           </div>
         </TopMenuContainer>
       </Wrappers>

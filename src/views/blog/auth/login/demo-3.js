@@ -145,7 +145,7 @@ const Demo3 = (props) => {
                             height: '56px',
                             width: `100%`,
                         }}
-                    >3초만에 빠른 회원가입</Button>
+                    >회원가입</Button>
                 </ButtonContainer>
 
                 <NotSignup themeMode={themeMode}><div style={{ cursor: 'pointer' }} onClick={() => { router.push('/shop/auth/history') }}>비회원 주문 조회</div></NotSignup>

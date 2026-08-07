@@ -9,6 +9,7 @@ import styled from 'styled-components'
 import DaumPostcode from 'react-daum-postcode';
 import { apiManager } from 'src/utils/api';
 import DialogAddAddress from 'src/components/dialog/DialogAddAddress';
+import MyPageGuestPanel from 'src/components/elements/shop/MyPageGuestPanel';
 import { useLocales } from 'src/locales';
 
 const Wrappers = styled.div`
@@ -46,7 +47,7 @@ const MyPageDemo = (props) => {
       }
     }
   }
-  const { user } = useAuthContext();
+  const { user, isInitialized } = useAuthContext();
   const [myPageType, setMyPageType] = useState(undefined);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [userObj, setUserObj] = useState({})
@@ -62,9 +63,14 @@ const MyPageDemo = (props) => {
     search: '',
     user_id: user?.id,
   })
+  // 비로그인 상태에서 user_id=undefined 로 주소 목록을 조회하던 호출을 막는다.
+  //   (백엔드는 비로그인 요청을 거부하므로 어차피 실패만 하던 호출이다)
+  // 겸사겸사 user.id 가 확정된 뒤에 부르도록 바꿨다 — 마운트 시점의 searchObj 는
+  //   user 가 아직 안 들어와 user_id 가 undefined 인 채로 나갔다.
   useEffect(() => {
-    onChangePage(searchObj)
-  }, [])
+    if (!user?.id) return;
+    onChangePage({ page: 1, page_size: 10, search: '', user_id: user?.id })
+  }, [user?.id])
   useEffect(() => {
     if (user) {
       setUserObj(user);
@@ -108,6 +114,16 @@ const MyPageDemo = (props) => {
       onChangePage(searchObj);
     }
   }
+
+  // 비로그인이면 게스트 랜딩만 보여준다.
+  // 예전엔 가드가 없어 빈 아바타 + 빈 입력칸 + '회원정보 수정' 버튼이 그대로 떴다.
+  // isInitialized 를 같이 보는 이유: user 는 로딩 중에도 null 이라
+  //   !user 만 보면 로그인 사용자에게도 이 패널이 한 번 깜빡인다.
+  // 위치는 훅(useState/useEffect)을 전부 호출한 뒤여야 훅 순서가 깨지지 않는다.
+  if (isInitialized && !user) {
+    return <MyPageGuestPanel />;
+  }
+
   return (
     <>
       <DialogAddAddress

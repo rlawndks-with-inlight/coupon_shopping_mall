@@ -6,6 +6,7 @@ import { commarNumber } from 'src/utils/function'
 import { formatLang } from 'src/utils/format'
 import { useFeaturedProduct, useFeaturedProducts, getFeaturedCardData } from 'src/utils/use-featured-product'
 import { useLocales } from 'src/locales'
+import StorefrontEmptyHome from 'src/components/elements/shop/StorefrontEmptyHome'
 
 /* ══════════════════════════════════════
    블로그 데모-4: 미니멀 모노크롬
@@ -320,11 +321,14 @@ const Demo4 = (props) => {
   const product = useFeaturedProduct();
   const featuredProducts = useFeaturedProducts({ excludeId: product?.id });
 
+  // 상품 0건(대표상품 지정도 없고 판매상품도 없음)일 때만 여기로 온다.
+  // 'COMING SOON' 영어 단독은 고객에게 '공사중/안 연 사이트'로 읽혀 이탈 사유가 되므로
+  // 브랜드명 + 한국어 안내를 쓰는 공용 컴포넌트로 교체. 배경/여백은 데모 톤 그대로 유지.
   if (!product) {
     return (
       <Wrapper>
         <PriceSection>
-          <InfoHeading>COMING SOON</InfoHeading>
+          <StorefrontEmptyHome />
         </PriceSection>
       </Wrapper>
     );

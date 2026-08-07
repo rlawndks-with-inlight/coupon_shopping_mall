@@ -5,6 +5,7 @@ import { commarNumber } from 'src/utils/function'
 import { formatLang } from 'src/utils/format'
 import { useFeaturedProduct, useFeaturedProducts, getFeaturedCardData } from 'src/utils/use-featured-product'
 import { useLocales } from 'src/locales'
+import StorefrontEmptyHome from 'src/components/elements/shop/StorefrontEmptyHome'
 
 /* ══════════════════════════════════════
    블로그 데모-8: 브루탈리스트
@@ -345,11 +346,16 @@ const Demo8 = (props) => {
   const product = useFeaturedProduct();
   const featuredProducts = useFeaturedProducts({ excludeId: product?.id });
 
+  // 상품 0건(대표상품 지정도 없고 판매상품도 없음)일 때만 여기로 온다.
+  // 'Coming soon' 영어 단독은 고객에게 '공사중/안 연 사이트'로 읽혀 이탈 사유가 되므로
+  // 브랜드명 + 한국어 안내를 쓰는 공용 컴포넌트로 교체.
+  // ManifestoBig(120px, text-transform:uppercase)로 감싸면 한국어 세 줄이 화면을 넘겨서
+  // 타이포 컴포넌트는 벗기고, 배경/여백/4px 하단 보더를 가진 Manifesto 섹션만 유지했다.
   if (!product) {
     return (
       <Wrapper>
         <Manifesto>
-          <ManifestoBig>Coming <ManifestoAccent>soon</ManifestoAccent></ManifestoBig>
+          <StorefrontEmptyHome />
         </Manifesto>
       </Wrapper>
     );

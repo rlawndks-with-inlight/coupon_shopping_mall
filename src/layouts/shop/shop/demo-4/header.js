@@ -18,6 +18,7 @@ import $ from 'jquery'
 import dynamic from 'next/dynamic';
 import Link from "next/link"
 import { useLocales } from "src/locales"
+import { isStorefrontHome } from "src/utils/blog-shop-route";
 const ReactQuill = dynamic(() => import('react-quill'), {
     ssr: false,
     loading: () => <p>Loading ...</p>,
@@ -453,7 +454,7 @@ const Header = () => {
                     </>
                     :
                     <>
-                        {popups.length > 0 && router.pathname === '/shop' ?  //&& router.asPath == '/shop' 이 조건 넣으니까 팝업이 안 뜸
+                        {popups.length > 0 && isStorefrontHome(router) ?
                             <>
                                 <PopupContainer>
                                     {popups && popups.map((item, idx) => (

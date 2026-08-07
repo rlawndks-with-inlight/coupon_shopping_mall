@@ -18,6 +18,7 @@ import dynamic from 'next/dynamic';
 import LanguagePopover from "src/layouts/manager/header/LanguagePopover"
 import { useLocales } from "src/locales"
 import { formatLang } from "src/utils/format"
+import { isStorefrontHome } from "src/utils/blog-shop-route";
 const ReactQuill = dynamic(() => import('react-quill'), {
     ssr: false,
     loading: () => <p></p>,
@@ -443,12 +444,12 @@ const Header = () => {
                         <>
                         </>}
                     <Wrappers style={{
-                        background: `${router.asPath == '/shop/' ? (scrollTop && themeMode != 'dark' ? 'white' : 'transparent') : (themeMode == 'dark' ? '#000' : '#fff')}`,
+                        background: `${isStorefrontHome(router) ? (scrollTop && themeMode != 'dark' ? 'white' : 'transparent') : (themeMode == 'dark' ? '#000' : '#fff')}`,
 
                     }}
                         ref={headerWrappersRef}
                     >
-                        {router.asPath == '/shop/' ?
+                        {isStorefrontHome(router) ?
                             <>
                                 <TopMenuContainer>
                                     <img
@@ -747,7 +748,7 @@ const Header = () => {
                             </>
                         }
 
-                        {router.asPath == '/shop/' ?
+                        {isStorefrontHome(router) ?
                             ''
                             :
                             <>
@@ -888,7 +889,7 @@ const Header = () => {
                         }
                     </Wrappers>
                 </>}
-            <PaddingTop pcHeight={router.asPath == '/shop/' ? '60' : '227'} />
+            <PaddingTop pcHeight={isStorefrontHome(router) ? '60' : '227'} />
             <Drawer
                 variant="persistent"
                 anchor={'left'}

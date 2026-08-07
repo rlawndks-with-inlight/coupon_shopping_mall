@@ -15,6 +15,7 @@ import dynamic from 'next/dynamic';
 import LanguagePopover from "src/layouts/manager/header/LanguagePopover"
 import { useLocales } from "src/locales"
 import { formatLang } from "src/utils/format"
+import { isStorefrontHome } from "src/utils/blog-shop-route";
 const ReactQuill = dynamic(() => import('react-quill'), {
   ssr: false,
   loading: () => <p></p>,
@@ -385,7 +386,7 @@ const Header = () => {
         </>
         :
         <>
-          {popups.length > 0 && router.asPath == '/shop/' ?
+          {popups.length > 0 && isStorefrontHome(router) ?
             <>
               <PopupContainer>
                 {popups && popups.map((item, idx) => (

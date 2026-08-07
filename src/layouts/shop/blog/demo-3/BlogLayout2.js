@@ -26,7 +26,7 @@ const BlogLayout3 = (props) => {
         setUseLayout(result);
     }, [router.asPath])
     const settingPage = () => {
-        if (router.asPath == '/blog/auth/sign-up') {
+        if (router.asPath == '/shop/auth/sign-up') {
             return false;
         }
         return true;

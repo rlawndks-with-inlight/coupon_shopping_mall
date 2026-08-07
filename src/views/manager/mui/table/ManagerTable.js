@@ -342,12 +342,18 @@ export default function ManagerTable(props) {
                     } else if (router.asPath.includes('list')) {
                       path = path.replace('list', '');
                     }
+                    // 예전엔 path.slice(0, path.indexOf('?')) 로 쿼리를 잘랐는데,
+                    // asPath 에 '?' 가 없으면 indexOf 가 -1 이라 slice(0,-1) 이 되어
+                    // 경로 마지막 글자가 잘렸다. (/manager/users/sellers → /manager/users/seller/add)
+                    // …/list 경로만 위 replace 가 남긴 끝 슬래시가 대신 잘려 우연히 맞아떨어졌던 탓에
+                    // '상품 추가'는 되고 '셀러/영업자/총판/포인트/결제모듈 추가'만 깨져 보였다.
+                    const base = path.split('?')[0].replace(/\/+$/, '');
                     type != 'dialog' ?
                       user?.level != 10 ?
-                        router.push(add_link || `${path.slice(0, path.indexOf('?'))}/add`)
+                        router.push(add_link || `${base}/add`)
                         :
                         type == 'article' ?
-                          router.push(add_link || `${path.slice(0, path.indexOf('?'))}/add`)
+                          router.push(add_link || `${base}/add`)
                           :
                           ''
                       :

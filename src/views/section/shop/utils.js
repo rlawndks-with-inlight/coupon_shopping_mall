@@ -1,3 +1,5 @@
+import _ from 'lodash';
+
 export const homeItemsSetting = (column_, products) => {
     let column = column_;
 

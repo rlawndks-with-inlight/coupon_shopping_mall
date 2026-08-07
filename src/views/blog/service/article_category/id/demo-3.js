@@ -122,7 +122,7 @@ const Demo3 = (props) => {
         let result = await apiShop('post', 'create', { ...item, category_id: router.query?.article_category });
         if (result) {
             toast.success('성공적으로 저장 되었습니다.');
-            router.push(`/blog/service/${router.query?.article_category}`);
+            router.push(`/shop/service/${router.query?.article_category}`);
         }
     }
 
@@ -168,7 +168,7 @@ const Demo3 = (props) => {
                                     <LoginNotice themeMode={themeMode}>
                                         <div>로그인 후 이용하실 수 있습니다.</div>
                                         <Button variant='contained' onClick={() => {
-                                            router.push('/blog/auth/login')
+                                            router.push('/shop/auth/login')
                                         }}>
                                             로그인하기
                                         </Button>
@@ -210,7 +210,7 @@ const Demo3 = (props) => {
                                 ))}
                                 <BackRow>
                                     <Button variant='outlined' onClick={() => {
-                                        router.push(`/blog/service/${router.query?.article_category}`)
+                                        router.push(`/shop/service/${router.query?.article_category}`)
                                     }}>
                                         목록
                                     </Button>

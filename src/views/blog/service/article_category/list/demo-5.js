@@ -150,7 +150,7 @@ const Demo5 = (props) => {
                                 key={idx}
                                 themeMode={themeMode}
                                 onClick={() => {
-                                    router.push(`/blog/service/${router.query?.article_category}/${item?.id}`)
+                                    router.push(`/shop/service/${router.query?.article_category}/${item?.id}`)
                                 }}
                             >
                                 <RowTitle>
@@ -171,10 +171,10 @@ const Demo5 = (props) => {
                 {category?.is_able_user_add == 1 &&
                     <ServiceFaq themeMode={themeMode} onClick={() => {
                         if (user?.id) {
-                            router.push(`/blog/service/${router.query?.article_category}/add`)
+                            router.push(`/shop/service/${router.query?.article_category}/add`)
                         } else {
                             toast.error('로그인을 해주세요.')
-                            router.push('/blog/auth/login')
+                            router.push('/shop/auth/login')
                         }
                     }}>서비스 문의</ServiceFaq>}
             </Wrappers>

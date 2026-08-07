@@ -1,45 +1,20 @@
+import { useEffect } from "react";
 import { useRouter } from "next/router";
-import { useState } from "react";
-import ShopLayout from "src/layouts/shop/ShopLayout";
-import Demo1 from "src/views/blog/seller/id/demo-1";
-import { useSettingsContext } from "src/components/settings";
-import Demo2 from "src/views/blog/seller/id/demo-2";
-import Demo3 from "src/views/blog/seller/id/demo-3";
-import Demo4 from "src/views/blog/seller/id/demo-4";
-import Demo5 from "src/views/blog/seller/id/demo-5";
 
-const getDemo = (num, common) => {
+// /blog 경로는 /shop 으로 통일했다. 이 파일은 옛 주소로 들어온 방문자를 넘겨주기만 한다.
+// (화면은 /shop 쪽 페이지가 브랜드 유형을 보고 고른다)
+// 남은 옛 링크가 404 로 죽지 않도록 지우지 않고 리다이렉트로 둔다.
+const Redirect = () => {
+  const router = useRouter();
 
-    if (num == 1)
-        return <Demo1 {...common} />
-    else if (num == 2)
-        return <Demo2 {...common} />
-    else if (num == 3)
-        return <Demo3 {...common} />
-    else if (num == 4)
-        return <Demo4 {...common} />
-    else if (num == 5)
-        return <Demo5 {...common} />
-    // blog_demo_num 6~9(프레임8~11)는 전용 셀러 화면이 없다. 매핑이 없으면 undefined 를 반환해
-    // 헤더/푸터만 있고 본문이 텅 빈 화면이 나오므로, 기능이 갖춰진 demo-2 로 폴백한다.
-    else
-        return <Demo2 {...common} />
-}
-const Seller = () => {
-    const router = useRouter();
-    const { themeDnsData } = useSettingsContext();
+  useEffect(() => {
+    if (!router.isReady) return;
+    // 쿼리스트링은 그대로 넘긴다(?type=0 같은 탭 지정이 살아 있어야 한다).
+    const qs = router.asPath.split('?')[1];
+    router.replace(`/shop/seller/${router.query?.id ?? ''}` + (qs ? `?${qs}` : ''));
+  }, [router.isReady]);
 
-    return (
-        <>
-            {getDemo(themeDnsData?.blog_demo_num, {
-                data: {
-                },
-                func: {
-                    router
-                },
-            })}
-        </>
-    )
-}
-Seller.getLayout = (page) => <ShopLayout>{page}</ShopLayout>;
-export default Seller;
+  return <></>;
+};
+
+export default Redirect;

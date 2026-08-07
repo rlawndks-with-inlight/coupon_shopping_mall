@@ -40,7 +40,7 @@ export const Item4 = (props) => {
     return (
         <>
             <ItemContent onClick={() => {
-                router.push(`/blog/product/${item.id}`)
+                router.push(`/shop/item/${item.id}`)
             }}>
                 <LazyLoadImage style={{ width: '100%' }} src={item?.product_img} />
                 <ItemText style={{ fontWeight: 'bold' }}>{item?.name}</ItemText>
@@ -56,7 +56,7 @@ export const SellerItem = (props) => {
             <SellerItemContent>
                 <div style={{ width: '100%', position: 'relative' }}>
                     <LazyLoadImage style={{ width: '100%' }} src={item?.product_img} onClick={() => {
-                        router.push(`/blog/product/${item.id}`)
+                        router.push(`/shop/item/${item.id}`)
                     }} />
                     <IconButton sx={{ position: 'absolute', right: '0', bottom: '0' }}
                         onClick={() => {
@@ -66,10 +66,10 @@ export const SellerItem = (props) => {
                     </IconButton>
                 </div>
                 <ItemText style={{ fontWeight: 'bold' }} onClick={() => {
-                    router.push(`/blog/product/${item.id}`)
+                    router.push(`/shop/item/${item.id}`)
                 }}>{item?.product_name}</ItemText>
                 <ItemText style={{ color: themeObj.grey[500] }} onClick={() => {
-                    router.push(`/blog/product/${item.id}`)
+                    router.push(`/shop/item/${item.id}`)
                 }}>{item?.product_comment}</ItemText>
 
             </SellerItemContent>
@@ -81,7 +81,7 @@ export const Seller4 = (props) => {
     return (
         <>
             <ItemContent onClick={() => {
-                router.push(`/blog/seller/${item.id}`)
+                router.push(`/shop/seller/${item.id}`)
             }}>
                 <SellerImg style={{
                     backgroundImage: `url(${item?.profile_img})`,

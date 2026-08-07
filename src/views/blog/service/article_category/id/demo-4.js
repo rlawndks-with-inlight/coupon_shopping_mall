@@ -106,7 +106,7 @@ const Demo4 = (props) => {
         });
         if (result) {
             toast.success('성공적으로 저장 되었습니다.');
-            router.push(`/blog/service/${router.query?.article_category}`);
+            router.push(`/shop/service/${router.query?.article_category}`);
         }
     }
 
@@ -151,7 +151,7 @@ const Demo4 = (props) => {
                                     <Stack spacing={2} sx={{ mt: 5, alignItems: 'center' }}>
                                         <Typography variant='body1'>로그인 후 이용하실 수 있습니다.</Typography>
                                         <Button variant='contained' style={{ height: '48px', width: '160px' }}
-                                            onClick={() => { router.push('/blog/auth/login') }}>
+                                            onClick={() => { router.push('/shop/auth/login') }}>
                                             로그인 하러가기
                                         </Button>
                                     </Stack>
@@ -174,7 +174,7 @@ const Demo4 = (props) => {
                                     ))
                                 }
                                 <BackLink themeMode={themeMode} onClick={() => {
-                                    router.push(`/blog/service/${router.query?.article_category}`)
+                                    router.push(`/shop/service/${router.query?.article_category}`)
                                 }}>
                                     목록으로
                                 </BackLink>

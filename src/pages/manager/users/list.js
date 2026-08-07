@@ -9,7 +9,7 @@ import { useModal } from "src/components/dialog/ModalProvider";
 import { apiManager } from "src/utils/api";
 import { commarNumber } from "src/utils/function";
 import { useSettingsContext } from "src/components/settings";
-import { userStatusList } from "src/utils/format";
+import { userStatusList, getUserStatusByNum } from "src/utils/format";
 import { useAuthContext } from "src/layouts/manager/auth/useAuthContext";
 const UserList = () => {
   const { themeDnsData } = useSettingsContext();

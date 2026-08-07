@@ -34,7 +34,7 @@ export default function MainLayout({ children }) {
           return;
         }
         if (themeDnsData?.blog_demo_num > 0) {
-          push('/blog')
+          push('/shop')
           return;
         }
         push('/404')

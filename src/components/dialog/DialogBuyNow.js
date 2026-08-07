@@ -295,7 +295,7 @@ const DialogBuyNow = (props) => {
       toast.success('성공적으로 구매 완료하였습니다.');
       if (is_blog == 1) {
         alert('성공적으로 구매 완료하였습니다.\n메인 페이지로 이동합니다.')
-        router.push('/blog')
+        router.push('/shop')
         return;
       } else if (payData?.user_id) {
         router.push('/shop/auth/history');

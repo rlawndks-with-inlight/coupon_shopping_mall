@@ -112,8 +112,8 @@ const OrderComplete = () => {
           기존엔 무조건 /shop 과 /shop/auth/history 로 보내서, 결제 직후 가장 많이 눌리는
           '주문내역 보기'가 백지(새로고침 시 404)가 됐다. 브랜드 유형에 맞는 경로로 보낸다. */}
       <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1.5}>
-        <Button fullWidth variant="outlined" color="inherit" onClick={() => router.push(isBlogOnly ? '/blog' : '/shop')}>쇼핑 계속하기</Button>
-        <Button fullWidth variant="contained" onClick={() => router.push(isBlogOnly ? '/blog/auth/my-page/order' : '/shop/auth/history')}>주문내역 보기</Button>
+        <Button fullWidth variant="outlined" color="inherit" onClick={() => router.push(isBlogOnly ? '/shop' : '/shop')}>쇼핑 계속하기</Button>
+        <Button fullWidth variant="contained" onClick={() => router.push(isBlogOnly ? '/shop/auth/history' : '/shop/auth/history')}>주문내역 보기</Button>
       </Stack>
     </Wrappers>
   );

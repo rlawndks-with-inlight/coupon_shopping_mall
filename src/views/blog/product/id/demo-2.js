@@ -537,7 +537,7 @@ const Demo2 = (props) => {
                                     variant='contained'
                                     size='large'
                                     sx={{ marginBottom: '2%' }}
-                                    onClick={() => { router.push('/blog/auth/login') }}>로그인하기</Button>
+                                    onClick={() => { router.push('/shop/auth/login') }}>로그인하기</Button>
                                 <Button
                                     variant='outlined'
                                     size='large'
@@ -573,7 +573,7 @@ const Demo2 = (props) => {
                                     variant='contained'
                                     size='large'
                                     sx={{ marginBottom: '2%' }}
-                                    onClick={() => { router.push('/blog/auth/login') }}>로그인하기</Button>
+                                    onClick={() => { router.push('/shop/auth/login') }}>로그인하기</Button>
                                 <Button
                                     variant='outlined'
                                     size='large'

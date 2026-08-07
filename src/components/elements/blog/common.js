@@ -250,6 +250,8 @@ export const Items = props => {
 export const HistoryTable = props => {
     const { historyContent, onChangePage, searchObj, type = 0 } = props
     const { translate, currentLang } = useLocales();
+    // 아래 표에서 themeDnsData 를 참조하는데 가져오는 곳이 없어 주문내역 렌더 자체가 죽었다.
+    const { themeDnsData } = useSettingsContext();
     const router = useRouter();
     const TABLE_HEAD = [
         { id: 'product', label: translate('상품') },

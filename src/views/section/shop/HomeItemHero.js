@@ -833,8 +833,8 @@ const HomeItemHero = (props) => {
   const nextRouter = useRouter();
   const router = func?.router || nextRouter;
   const isMobile = useMediaQuery('(max-width: 768px)');
-  const isBlogContext = (nextRouter?.asPath || '').startsWith('/blog') || (nextRouter?.asPath || '') === '/';
-  const productPathPrefix = isBlogContext ? '/blog/product' : '/shop/item';
+  const isBlogContext = (nextRouter?.asPath || '').startsWith('/shop') || (nextRouter?.asPath || '') === '/';
+  const productPathPrefix = isBlogContext ? '/shop/item' : '/shop/item';
   const wrappedRouter = router ? {
     ...router,
     push: (path) => router?.push?.(typeof path === 'string' ? path.replace(/^\/shop\/item\//, `${productPathPrefix}/`) : path),

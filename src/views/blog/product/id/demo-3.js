@@ -182,11 +182,11 @@ const Demo3 = (props) => {
                     position: 'absolute'
                 }}>
                     <Row style={{ justifyContent: 'space-between' }}>
-                        <Row style={{ alignItems: 'center', cursor: 'pointer' }} onClick={() => { router.push(`/blog/seller/${item.seller?.id}`) }}>
+                        <Row style={{ alignItems: 'center', cursor: 'pointer' }} onClick={() => { router.push(`/shop/seller/${item.seller?.id}`) }}>
                             <Avatar src={item.seller?.profile_img} sx={{ width: '30px', height: '30px' }} />
                             <div style={{ marginLeft: '0.25rem', fontSize: themeObj.font_size.size8 }}>{item.seller?.nickname}</div>
                         </Row>
-                        <Button variant='outlined' onClick={() => router.push('/blog/auth/my-page/inquiry')} sx={{
+                        <Button variant='outlined' onClick={() => router.push('/shop/auth/inquiry')} sx={{
                             height: '30px',
                         }}>
                             1:1문의

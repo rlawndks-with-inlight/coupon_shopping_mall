@@ -9,6 +9,9 @@ export const userStatusList = [
     { label: '로그인차단', value: 2 },
     { label: '탈퇴', value: 3 },
 ]
+// 회원목록 엑셀 내려받기에서 쓴다(화면은 Select 로 보여주지만 엑셀엔 글자가 들어가야 한다).
+export const getUserStatusByNum = (num) =>
+    userStatusList.find(itm => itm.value == num)?.label ?? '---'
 export const userLevelList = [
     { label: '일반유저', value: 0 },
     { label: '셀러', value: 10 },

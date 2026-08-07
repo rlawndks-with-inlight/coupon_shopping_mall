@@ -106,7 +106,7 @@ const AgreementBox = ({ onChange, error, errorText }) => {
               key={d.slug}
               component="button"
               type="button"
-              onClick={() => openDoc(d.slug)}
+              onClick={() => setViewSlug(d.slug)}
               sx={{
                 border: 'none', background: 'none', cursor: 'pointer',
                 color: '#666', fontSize: 12, textDecoration: 'underline', p: 0,

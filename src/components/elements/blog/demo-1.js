@@ -87,7 +87,7 @@ export const Item1 = (props) => {
   const displayPrice = item?.product_sale_price || item?.product_price || 0;
 
   return (
-    <ItemContent onClick={() => { router.push(`/blog/product/${item.id}`) }}>
+    <ItemContent onClick={() => { router.push(`/shop/item/${item.id}`) }}>
       <ItemImgWrap>
         <LazyLoadImage
           style={{ width: '100%', height: '100%', objectFit: 'cover' }}
@@ -109,7 +109,7 @@ export const SellerItem = (props) => {
   return (
     <ItemContent style={{ position: 'relative' }}>
       <div style={{ width: '100%', position: 'relative' }}>
-        <ItemImgWrap onClick={() => { router.push(`/blog/product/${item.id}`) }}>
+        <ItemImgWrap onClick={() => { router.push(`/shop/item/${item.id}`) }}>
           <LazyLoadImage style={{ width: '100%', height: '100%', objectFit: 'cover' }} src={item?.product_img} />
         </ItemImgWrap>
         <IconButton sx={{ position: 'absolute', right: '8px', bottom: '8px', background: 'rgba(255,255,255,0.9)', '&:hover': { background: '#fff' } }}
@@ -117,15 +117,15 @@ export const SellerItem = (props) => {
           <Icon icon='iconamoon:shopping-bag' />
         </IconButton>
       </div>
-      <ItemName onClick={() => { router.push(`/blog/product/${item.id}`) }}>{item?.product_name}</ItemName>
-      <ItemComment onClick={() => { router.push(`/blog/product/${item.id}`) }}>{item?.product_comment}</ItemComment>
+      <ItemName onClick={() => { router.push(`/shop/item/${item.id}`) }}>{item?.product_name}</ItemName>
+      <ItemComment onClick={() => { router.push(`/shop/item/${item.id}`) }}>{item?.product_comment}</ItemComment>
     </ItemContent>
   )
 }
 export const Seller1 = (props) => {
   const { item, router } = props;
   return (
-    <SellerContent onClick={() => { router.push(`/blog/seller/${item.id}`) }}>
+    <SellerContent onClick={() => { router.push(`/shop/seller/${item.id}`) }}>
       <SellerImg style={{ backgroundImage: `url(${item?.profile_img})` }} />
       <ItemName style={{ textAlign: 'center', fontSize: '14px' }}>{item?.nickname}</ItemName>
       <ItemComment style={{ textAlign: 'center' }}>{item?.seller_name}</ItemComment>

@@ -105,7 +105,7 @@ const Demo4 = (props) => {
                     <Button variant="contained" style={{
                         height: '48px', width: '120px', margin: '1.5rem 0 1rem auto'
                     }} onClick={() => {
-                        router.push(`/blog/service/${inquiryCategory.id}/add`)
+                        router.push(`/shop/service/${inquiryCategory.id}/add`)
                     }}>
                         문의하기
                     </Button>

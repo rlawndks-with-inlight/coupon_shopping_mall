@@ -6,7 +6,7 @@ import { Icon } from "@iconify/react";
 import { useRouter } from "next/router";
 import { useModal } from "src/components/dialog/ModalProvider";
 import { LazyLoadImage } from "react-lazy-load-image-component";
-import { apiManager } from "src/utils/api";
+import { apiManager, apiShop } from "src/utils/api";
 
 const FaqList = () => {
   const { setModal } = useModal()

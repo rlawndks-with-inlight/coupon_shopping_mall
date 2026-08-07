@@ -241,13 +241,19 @@ const MainObjSetting = props => {
     }
     return obj
   }
+  // 편집 대상 브랜드 id. 브랜드설정에서 타 가맹점의 '메인페이지 수정'으로 들어오면
+  // router.query.type 이 그 가맹점 id 이고, 자기 브랜드를 편집할 땐 없다.
+  // 로드와 저장이 반드시 이 하나를 같이 써야 한다(어긋나면 엉뚱한 브랜드가 덮어써진다).
+  const getTargetBrandId = () =>
+    (!isNaN(parseInt(router.query.type)) ? router.query.type : '') || themeDnsData?.id;
+
   const settingPage = async () => {
     setProductContent({
       ...productContent,
       content: themeDnsData?.products ?? []
     })
     let brand_data = await apiManager('brands', 'get', {
-      id: (!isNaN(parseInt(router.query.type)) ? router.query.type : '') || themeDnsData?.id
+      id: getTargetBrandId()
     })
 
     brand_data = settingBrandObj(item, brand_data)
@@ -469,7 +475,11 @@ const MainObjSetting = props => {
       }
     }
     let brand_data = { ...item, [`${MAIN_OBJ_TYPE}`]: content_list }
-    let result = await apiManager('brands', 'update', { ...brand_data, id: themeDnsData?.id })
+    // 저장 대상은 반드시 '불러온 대상'과 같아야 한다.
+    // 예전엔 로드만 router.query.type(=편집 대상 가맹점)이고 저장은 themeDnsData.id(=현재 접속 브랜드)라,
+    // 브랜드설정에서 타 가맹점의 메인페이지를 열어 저장하면 그 가맹점이 아니라
+    // '내 브랜드'가 상대 데이터로 통째로 덮어써졌다(dns·상호·프레임번호까지).
+    let result = await apiManager('brands', 'update', { ...brand_data, id: getTargetBrandId() })
     if (result) {
       toast.success('성공적으로 저장 되었습니다.')
       window.location.reload()

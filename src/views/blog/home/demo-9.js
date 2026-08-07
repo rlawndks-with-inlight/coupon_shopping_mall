@@ -394,7 +394,7 @@ const Demo9 = (props) => {
   const orig = product?.product_price || 0;
   const hasSale = orig > sale && sale > 0;
   const disc = hasSale ? Math.round((orig - sale) * 100 / orig) : 0;
-  const goTo = () => router?.push?.(`/blog/product/${product?.id}`);
+  const goTo = () => router?.push?.(`/shop/item/${product?.id}`);
 
   return (
     <Wrapper>
@@ -457,7 +457,7 @@ const Demo9 = (props) => {
             {featuredProducts.map((item) => {
               const c = getFeaturedCardData(item, currentLang);
               return (
-                <FeaturedCard key={c.id} onClick={() => router?.push?.(`/blog/product/${c.id}`)}>
+                <FeaturedCard key={c.id} onClick={() => router?.push?.(`/shop/item/${c.id}`)}>
                   <FeaturedImgWrap>
                     {c.hasSale && <FeaturedBadge $bg={CORAL} $color="#fff">🔥 {c.disc}% OFF</FeaturedBadge>}
                     <FeaturedImg src={c.img} effect="blur" />

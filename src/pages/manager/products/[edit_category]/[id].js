@@ -20,6 +20,7 @@ import { useAuthContext } from "src/layouts/manager/auth/useAuthContext";
 import { styled as muiStyle } from '@mui/material'
 import dynamic from 'next/dynamic'
 import { ProductDetailsCarousel } from "src/views/@dashboard/e-commerce/details";
+import { SkeletonProductDetails } from "src/components/skeleton";
 
 const ReactQuill = dynamic(() => import('react-quill'), {
   ssr: false,

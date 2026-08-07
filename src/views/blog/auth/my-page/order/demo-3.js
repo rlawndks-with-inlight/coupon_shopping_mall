@@ -6,6 +6,7 @@ import { useSettingsContext } from 'src/components/settings';
 import _ from 'lodash';
 import { commarNumber, getTrxStatusByNumber } from 'src/utils/function';
 import { apiManager } from 'src/utils/api';
+import { getOptionLabel } from 'src/utils/shop-util';
 
 const ContentContainer = styled.div`
 display:flex;
@@ -26,7 +27,7 @@ flex-direction:column;
 const getOptionText = (order) => {
     if (!order?.groups || order?.groups.length === 0) return '';
     return order.groups.map((group) => {
-        const options = (group?.options || []).map((option) => option?.option_name ?? option?.value).join(' / ');
+        const options = (group?.options || []).map((option) => getOptionLabel(option)).join(' / ');
         return `${group?.group_name}: ${options}`;
     }).join(' / ');
 }

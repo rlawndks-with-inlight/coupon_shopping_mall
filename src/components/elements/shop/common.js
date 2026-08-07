@@ -28,7 +28,7 @@ import { Item7, Seller7 } from './demo-7'
 import { Item8, Seller8 } from './demo-8'
 import { Item9, Seller9 } from './demo-9'
 import { Col, Row, themeObj } from '../styled-components'
-import { insertCartDataUtil, insertWishDataUtil } from 'src/utils/shop-util'
+import { getOptionLabel, insertCartDataUtil, insertWishDataUtil } from 'src/utils/shop-util'
 import { useLocales } from 'src/locales'
 import { useRouter } from 'next/router'
 import { formatLang } from 'src/utils/format'
@@ -310,7 +310,7 @@ export const HistoryTable = props => {
                                               <div style={{ marginRight: '0.25rem' }}>{group?.group_name}: </div>
                                               {group?.options && group?.options.map((option, idx2) => (
                                                 <>
-                                                  <div>{option?.option_name ?? option.value} {/*({option?.option_price > 0 ? '+' : ''}{option?.option_price}) */}</div>{idx2 == group?.options.length - 1 ? '' : <>&nbsp;/&nbsp;</>}
+                                                  <div>{getOptionLabel(option)} {/*({option?.option_price > 0 ? '+' : ''}{option?.option_price}) */}</div>{idx2 == group?.options.length - 1 ? '' : <>&nbsp;/&nbsp;</>}
                                                 </>
                                               ))}
                                             </Row>

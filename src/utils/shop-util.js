@@ -385,33 +385,73 @@ export const insertCartDataUtil = (
         return false;
     }
 }
+// 주문내역·관리자 주문서에서 옵션 하나를 사람이 읽는 문자열로 바꾼다.
+//
+// 이미 저장된 주문에는 아래 버그(selectItemOptionUtil 의 옛 분기)로 생긴 형태가 섞여 있다:
+//   { value: { id, option_name, ... } }  객체를 통째로 감싼 것
+//        → 그대로 렌더하면 React 가 'Objects are not valid as a React child' 로 죽어
+//          주문내역 화면이 통째로 백지가 된다.
+//   { 0:'블', 1:'랙' }                    문자열을 스프레드해서 글자로 흩어진 것
+//        → 옵션명이 공백으로 보여 '무엇을 산 주문인지' 알 수 없다.
+// 지난 주문은 되돌릴 수 없으므로 읽는 쪽에서 흡수하고, 가능한 건 원래 값으로 복원한다.
+export const getOptionLabel = (option) => {
+    if (option === null || option === undefined) return '';
+    if (typeof option !== 'object') return String(option);
+    if (option.option_name !== null && option.option_name !== undefined) return String(option.option_name);
+
+    const v = option.value;
+    if (v !== null && v !== undefined) {
+        if (typeof v === 'object') return String(v.option_name ?? v.value ?? '');
+        return String(v);
+    }
+    // {0:'블',1:'랙'} → '블랙' 으로 이어붙여 복원
+    const keys = Object.keys(option);
+    if (keys.length > 0 && keys.every(k => /^\d+$/.test(k))) {
+        return keys.sort((a, b) => Number(a) - Number(b)).map(k => option[k]).join('');
+    }
+    return '';
+};
+
+// 선택한 옵션 하나를 저장 형태로 맞춘다.
+//
+// 옵션 값은 두 형태로 들어온다:
+//   객체   { id, option_name, option_price, ... }  — 옵션그룹(product_option_groups)을 쓰는 상품
+//   문자열 '블랙'                                   — 문자열 옵션만 쓰는 상품
+//
+// 예전에는 세 분기가 제각각이었다:
+//   - {...option} : 문자열이면 {0:'블',1:'랙'} 으로 부서져 옵션명이 사라졌다(프레임2·3)
+//   - {value: option} : 객체를 통째로 감싸 option_price 를 잃었다
+//     → 추가금액이 0원으로 계산돼 실제보다 싸게 결제됐고(가맹점 손실),
+//       주문내역 렌더가 객체를 그리려다 예외로 죽었다(프레임1)
+// 한 곳에서 정규화해 세 분기의 shape 을 일치시킨다.
+const normalizeSelectedOption = (option) =>
+    (option !== null && typeof option === 'object') ? { ...option } : { value: option };
+
+// 이미 담긴 옵션인지. 객체는 id 로, 문자열은 값으로 비교한다.
+// (예전엔 _.findIndex(..., { id: parseInt(option?.id) }) 하나로만 봐서
+//  문자열 옵션은 id 가 undefined → NaN 이라 중복 판정이 늘 실패했다)
+const isSameSelectedOption = (saved, option) =>
+    (option !== null && typeof option === 'object')
+        ? saved?.id === option?.id
+        : saved?.value === option;
+
 export const selectItemOptionUtil = (group, option, selectProductGroups, is_option_multiple) => {//아이템 옵션 선택하기
     let select_product_groups = selectProductGroups;
     let find_group_idx = _.findIndex(select_product_groups?.groups, { id: parseInt(group?.id) });
     if (find_group_idx >= 0) {
-        let find_option_idx = _.findIndex(select_product_groups?.groups[find_group_idx]?.options, { id: parseInt(option?.id) });
         if (is_option_multiple) {
-            if (find_option_idx >= 0) {
-                //
-            } else {
-                select_product_groups.groups[find_group_idx]?.options.push({
-                    ...option
-                })
+            const already = (select_product_groups.groups[find_group_idx]?.options ?? [])
+                .some(saved => isSameSelectedOption(saved, option));
+            if (!already) {
+                select_product_groups.groups[find_group_idx]?.options.push(normalizeSelectedOption(option))
             }
         } else {
-            select_product_groups.groups[find_group_idx].options = [{
-                ...option
-            }]
+            select_product_groups.groups[find_group_idx].options = [normalizeSelectedOption(option)]
         }
     } else {
         select_product_groups.groups.push({
             ...group,
-            options: [
-                {
-                    //...option, 문자열은 스프레드로 감싸면 한 글자씩 저장됨
-                    value: option
-                }
-            ]
+            options: [normalizeSelectedOption(option)]
         })
     }
     return select_product_groups;

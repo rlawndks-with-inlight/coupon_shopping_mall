@@ -6,7 +6,7 @@ import { useLocales } from "src/locales"
 import { useState } from "react"
 import { Drawer, IconButton } from "@mui/material"
 import { Icon } from "@iconify/react"
-import Policy from "src/pages/blog/auth/policy"
+import Policy from 'src/pages/shop/auth/policy'
 import { useRouter } from "next/router"
 
 const Wrappers = styled.footer`

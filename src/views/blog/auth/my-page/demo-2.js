@@ -3,7 +3,7 @@ import { Button, Divider, IconButton, Drawer, Dialog, DialogContent, DialogActio
 import { Icon } from '@iconify/react';
 import { useState } from 'react';
 import { useSettingsContext } from 'src/components/settings';
-import Policy from 'src/pages/blog/auth/policy';
+import Policy from 'src/pages/shop/auth/policy';
 import { useAuthContext } from 'src/layouts/manager/auth/useAuthContext';
 import { useEffect } from 'react';
 import { Title } from 'src/components/elements/blog/demo-1';

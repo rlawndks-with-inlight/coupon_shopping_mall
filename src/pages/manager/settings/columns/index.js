@@ -33,7 +33,10 @@ const ColumnSetting = () => {
             return;
         }
         const response = await apiManager(`column/${table}`, 'get');
-        setColumnList(response);
+        // 백엔드 화이트리스트에 없는 테이블이면 500 이 나고 apiManager 가 false 를 돌려준다.
+        // 그걸 그대로 넣으면 아래 columnList.map 에서 TypeError 로 화면 전체가 흰 화면이 됐다
+        // (에러 토스트조차 안 보였다). 배열이 아니면 빈 배열로 받는다.
+        setColumnList(Array.isArray(response) ? response : []);
     }
     const onChangeUseColumn = async (column, is_not_use = 0) => {
         setLoading(true);

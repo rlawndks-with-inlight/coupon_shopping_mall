@@ -192,7 +192,9 @@ export const SelectCategoryComponent = (props) => {
         const category_content = await apiManager('product-categories', 'list', {
           page: 1,
           page_size: 1000,
-          product_category_group_id: id,
+          // 마이그레이션된 브랜드의 합성 그룹은 id 가 0 이다. 그대로 보내면
+          // 백엔드에서 `AND product_category_group_id=0` 이 붙어 검색이 항상 0건이 된다.
+          ...(id > 0 ? { product_category_group_id: id } : {}),
           search: value
         });
 

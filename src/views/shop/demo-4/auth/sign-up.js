@@ -196,7 +196,14 @@ const SignUpDemo = (props) => {
         toast.error("비밀번호 확인란을 똑같이 입력했는지 확인해주세요");
         return;
       }
-      if (!phoneVerified) {
+      // 이 검사는 '가입 허용 번호 화이트리스트(phone_registration)'를 쓰는 브랜드 전용이다.
+      // 백엔드도 같은 조건에서만 요구한다(auth.controller: setting_obj.is_use_seller == 1).
+      //
+      // 예전엔 조건 없이 걸려 있었는데, phoneVerified 를 참으로 만드는 '번호등록확인' 버튼이
+      // themeDnsData?.id == 74 분기 안에만 있었다. 판매중 프레임은 전부 id != 74 라
+      // 일반 폼만 렌더되고 → 버튼이 없고 → phoneVerified 는 영영 false 였다.
+      // 결과: 프레임3 회원가입이 '다음'에서 무조건 막혔다(화면엔 만족시킬 방법이 없었다).
+      if (themeDnsData?.setting_obj?.is_use_seller == 1 && !phoneVerified) {
         toast.error("전화번호가 등록되었는지 확인해주세요");
         return;
       }
@@ -479,16 +486,15 @@ const SignUpDemo = (props) => {
                       setUser({ ...user, ['phone_num']: e.target.value })
                     }}
                     value={user.phone_num}
-                  // endAdornment={<>
-                  //   <Button style={{ width: '144px', height: '56px', transform: 'translateX(14px)' }}
-                  //     variant="contained"
-                  //     onClick={() => {
-                  //       if (phoneCheckStep == 0) {
-                  //         onClickSendPhoneVerifyCode();
-                  //       }
-                  //     }}
-                  //   >인증번호발송</Button>
-                  // </>}
+                    // 가입 허용 번호 화이트리스트를 쓰는 브랜드에서만 확인 버튼을 붙인다.
+                    // (예전엔 이 버튼이 브랜드74 분기에만 있어서, 그런 브랜드가 이 폼을 쓰면
+                    //  검증을 통과할 수단이 화면에 없었다)
+                    endAdornment={themeDnsData?.setting_obj?.is_use_seller == 1 ? <>
+                      <Button style={{ width: '144px', height: '56px', transform: 'translateX(14px)' }}
+                        variant="contained"
+                        onClick={() => { verifyPhone() }}
+                      >번호등록확인</Button>
+                    </> : undefined}
                   />
                 </FormControl>
                 {/* <FormControl variant="outlined" style={{ width: '100%', marginTop: '1rem' }}>

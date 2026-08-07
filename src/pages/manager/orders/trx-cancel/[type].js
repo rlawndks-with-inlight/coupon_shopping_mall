@@ -14,6 +14,7 @@ import { cancelTypeList, paymentModuleTypeList } from "src/utils/format";
 import { sha256 } from "js-sha256";
 import { useAuthContext } from "src/layouts/manager/auth/useAuthContext";
 import _ from 'lodash';
+import { getOptionLabel } from 'src/utils/shop-util';
 
 const TrxCancelList = () => {
   const { setModal } = useModal()
@@ -128,7 +129,7 @@ const TrxCancelList = () => {
                                       <div style={{ /*minWidth: '62px',*/ marginRight: '0.25rem' }}>{group?.group_name}: </div>
                                       {group?.options && group?.options.map((option, idx2) => (
                                         <>
-                                          <div>{option?.option_name ?? option.value} {/*({option?.option_price > 0 ? '+' : ''}{option?.option_price}) */}</div>{idx2 == group?.options.length - 1 ? '' : <>&nbsp;/&nbsp;</>}                                        </>
+                                          <div>{getOptionLabel(option)} {/*({option?.option_price > 0 ? '+' : ''}{option?.option_price}) */}</div>{idx2 == group?.options.length - 1 ? '' : <>&nbsp;/&nbsp;</>}                                        </>
                                       ))}
                                     </Row>
                                   </>

@@ -11,6 +11,7 @@ import { apiManager } from 'src/utils/api';
 import { commarNumber, getTrxStatusByNumber } from 'src/utils/function';
 import { useLocales } from 'src/locales';
 import toast from 'react-hot-toast';
+import { getOptionLabel } from 'src/utils/shop-util';
 
 const Wrappers = styled.div`
 max-width:460px;
@@ -322,7 +323,7 @@ const LoginDemo = (props) => {
                                         <div style={{ minWidth: '62px', marginRight: '0.25rem' }}>{group?.group_name}: </div>
                                         {group?.options && group?.options.map((option, idx2) => (
                                           <>
-                                            <div>{option?.option_name ?? option.value} {/*({option?.option_price > 0 ? '+' : ''}{option?.option_price}) */}</div>{idx2 == group?.options.length - 1 ? '' : <>&nbsp;/&nbsp;</>}                                          </>
+                                            <div>{getOptionLabel(option)} {/*({option?.option_price > 0 ? '+' : ''}{option?.option_price}) */}</div>{idx2 == group?.options.length - 1 ? '' : <>&nbsp;/&nbsp;</>}                                          </>
                                         ))}
                                       </Row>
                                     </>

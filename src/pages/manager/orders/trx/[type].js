@@ -16,6 +16,7 @@ import { useAuthContext } from "src/layouts/manager/auth/useAuthContext";
 import { Upload } from "src/components/upload";
 import { sha256 } from "js-sha256";
 import _ from 'lodash';
+import { getOptionLabel } from 'src/utils/shop-util';
 
 // 택배사 목록 (송장 저장 형식: `택배사-송장번호`, 구매자 주문내역에서 그대로 파싱됨)
 const COURIER_LIST = ['CJ대한통운', '우체국택배', '한진택배', '롯데택배', '로젠택배', '경동택배', 'GS Postbox', 'CU 편의점택배', '대신택배', '일양로지스', '기타'];
@@ -211,7 +212,7 @@ const TrxList = () => {
                                   <div style={{ /*minWidth: '62px',*/ marginRight: '0.25rem' }}>{group?.group_name}: </div>
                                   {group?.options && group?.options.map((option, idx2) => (
                                     <>
-                                      <div>{option?.option_name ?? option.value} {/*({option?.option_price > 0 ? '+' : ''}{option?.option_price}) */}</div>{idx2 == group?.options.length - 1 ? '' : <>&nbsp;/&nbsp;</>}                                    </>
+                                      <div>{getOptionLabel(option)} {/*({option?.option_price > 0 ? '+' : ''}{option?.option_price}) */}</div>{idx2 == group?.options.length - 1 ? '' : <>&nbsp;/&nbsp;</>}                                    </>
                                   ))}
                                 </Row>
                               </>

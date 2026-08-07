@@ -193,7 +193,11 @@ const SignUpDemo = (props) => {
         toast.error("비밀번호 확인란을 똑같이 입력했는지 확인해주세요");
         return;
       }
-      if (!phoneVerified) {
+      // demo-4(프레임3)와 같은 구조의 지뢰. '번호등록확인' 버튼이 브랜드74 분기에만 있어서
+      // 그 외 브랜드에서는 phoneVerified 가 영영 false → 회원가입이 막힌다.
+      // 이 데모는 현재 판매 프레임이 아니지만 같은 조건으로 맞춰 둔다.
+      // (백엔드도 setting_obj.is_use_seller == 1 일 때만 화이트리스트를 요구한다)
+      if (themeDnsData?.setting_obj?.is_use_seller == 1 && !phoneVerified) {
         toast.error("전화번호가 등록되었는지 확인해주세요");
         return;
       }

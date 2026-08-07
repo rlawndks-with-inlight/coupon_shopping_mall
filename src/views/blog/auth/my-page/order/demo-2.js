@@ -6,6 +6,7 @@ import { useSettingsContext } from 'src/components/settings';
 import _ from 'lodash';
 import { commarNumber, getTrxStatusByNumber } from 'src/utils/function';
 import { apiManager } from 'src/utils/api';
+import { getOptionLabel } from 'src/utils/shop-util';
 
 const ContentContainer = styled.div`
 display:flex;
@@ -136,7 +137,7 @@ const Demo2 = (props) => {
                                                     <div>{item.order_name}</div>
                                                     <div>{commarNumber(item.order_amount)}원</div>
                                                     {item.groups?.length > 0 &&
-                                                        <div>옵션 : {item.groups.map((group) => `${group?.group_name}: ${(group?.options ?? []).map((option) => option?.option_name ?? option?.value).join(' / ')}`).join(', ')}</div>
+                                                        <div>옵션 : {item.groups.map((group) => `${group?.group_name}: ${(group?.options ?? []).map((option) => getOptionLabel(option)).join(' / ')}`).join(', ')}</div>
                                                     }
                                                     <div>수량 : {item.order_count}개</div>
                                                     <div style={{ marginTop: '0.5rem' }}>주문번호 : {item.trx?.ord_num}</div>

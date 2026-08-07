@@ -1,5 +1,6 @@
 import { themeObj } from "src/components/elements/styled-components"
 import { useSettingsContext } from "src/components/settings"
+import { useAuthContext } from "src/layouts/manager/auth/useAuthContext"
 import styled from "styled-components"
 import { useLocales } from "src/locales"
 import { useState } from "react"
@@ -56,6 +57,11 @@ const Footer = () => {
   const { themeDnsData } = useSettingsContext();
 
   const [policyType, setPolicyType] = useState(0);
+  const { user, logout } = useAuthContext();
+  const onLogout = async () => {
+    await logout();
+    window.location.reload();
+  };
 
   const router = useRouter();
 
@@ -88,6 +94,11 @@ const Footer = () => {
             <Bold style={{ cursor: 'pointer' }} onClick={() => { setPolicyType(2) }}>
               개인정보정책
             </Bold>
+            {/* 로그아웃 — 헤더가 아니라 여기 둔다. 아이콘만으로는 무슨 버튼인지 알기 어렵다. */}
+            {user &&
+              <Bold style={{ cursor: 'pointer' }} onClick={onLogout}>
+                로그아웃
+              </Bold>}
           </Row>
 
           <Row style={{ fontSize: '10px' }}>

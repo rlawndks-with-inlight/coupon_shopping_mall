@@ -216,12 +216,6 @@ const BlogLayout6 = (props) => {
           <IconBtn onClick={() => router.push(user ? '/shop/auth/my-page' : '/shop/auth/login')}>
             <Icon icon="basil:user-outline" />
           </IconBtn>
-          {/* 프레임6·7 은 로그인해도 로그아웃할 방법이 UI 상 없었다
-              (프레임8~11 은 마이페이지 폴백 화면 덕에 우연히 가능했다).
-              로그인 상태에서만 노출한다. */}
-          {user && <IconBtn onClick={onLogout}>
-            <Icon icon="ri:logout-circle-r-line" />
-          </IconBtn>}
           <IconBtn onClick={() => router.push('/shop/auth/cart')}>
             <Icon icon="iconamoon:shopping-bag" />
           </IconBtn>
@@ -249,6 +243,9 @@ const BlogLayout6 = (props) => {
           <FooterLink onClick={() => router.push('/shop/auth/order-check')}>비회원 주문조회</FooterLink>
           <FooterLink onClick={() => router.push('/shop/auth/policy?type=0')}>이용약관</FooterLink>
           <FooterLink onClick={() => router.push('/shop/auth/policy?type=1')}>개인정보처리방침</FooterLink>
+          {/* 로그아웃은 헤더가 아니라 여기 둔다. 헤더는 로고가 가운데 정렬이라
+              우측 아이콘이 하나 늘 때마다 로고가 왼쪽으로 밀린다. */}
+          {user && <FooterLink onClick={onLogout}>로그아웃</FooterLink>}
         </FooterLinks>
         <FooterLine>© {new Date().getFullYear()} {brandName.toUpperCase()} · ALL RIGHTS RESERVED</FooterLine>
       </Footer>

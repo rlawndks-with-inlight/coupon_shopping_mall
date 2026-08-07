@@ -8,6 +8,7 @@ import { useRouter } from "next/router"
 import { useState } from "react"
 import DialogSearch from "src/components/dialog/DialogSearch"
 import { isMyPagePath, isPath, isStorefrontHome } from "src/utils/blog-shop-route"
+import { useAuthContext } from "src/layouts/manager/auth/useAuthContext"
 
 const Wrappers = styled.footer`
 margin-top: auto;
@@ -77,6 +78,12 @@ const Footer = () => {
   const router = useRouter();
   const currentPath = router.asPath;
   const [searchOpen, setSearchOpen] = useState(false);
+  // 로그아웃은 헤더가 아니라 푸터에 둔다(헤더는 아이콘만이라 무슨 버튼인지 알기 어렵다).
+  const { user, logout } = useAuthContext();
+  const onLogout = async () => {
+    await logout();
+    window.location.reload();
+  };
 
   const {
     company_name,
@@ -134,6 +141,14 @@ const Footer = () => {
             <InfoRow>
               <Label>{translate('개인정보 보호책임자')}</Label>
               <span>{pvcy_rep_name}</span>
+            </InfoRow>
+          }
+          {/* 로그아웃 — 헤더가 아니라 여기 둔다. 아이콘만으로는 무슨 버튼인지 알기 어렵다. */}
+          {user &&
+            <InfoRow>
+              <span style={{ cursor: 'pointer', textDecoration: 'underline' }} onClick={onLogout}>
+                {translate('로그아웃')}
+              </span>
             </InfoRow>
           }
         </ContentWrapper>

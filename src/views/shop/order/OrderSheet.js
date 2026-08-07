@@ -29,7 +29,6 @@ import PayProductsByPhoneHecto from 'src/utils/hecto-phone';
 import PayProductsByAuthFintree from 'src/utils/fintree-auth';
 import PayProductsByHandFintree from 'src/utils/fintree-hand';
 import PayProductsByAuthWayup from 'src/utils/wayup-auth';
-import PaymentModuleList from 'src/pages/manager/settings';
 
 const Wrappers = styled.div`
   max-width: 1080px;
@@ -628,7 +627,7 @@ export default function OrderSheet({ router }) {
                   {buyType == 'card_fintree' && (
                     <Box sx={{ mt: 3 }}>
                       <Divider sx={{ mb: 2 }} />
-                      <Typography variant="subtitle1" sx={{ mb: 1 }}>{_.find(PaymentModuleList, { type: buyType })?.title}</Typography>
+                      <Typography variant="subtitle1" sx={{ mb: 1 }}>{payData?.payment_modules?.title}</Typography>
                       <Stack spacing={2}>
                         <Cards cvc={''} focused={undefined} expiry={payData.yymm} name={payData.buyer_name} number={payData.card_num} />
                         <TextField size="small" label="카드 번호" value={payData.card_num} placeholder="0000 0000 0000 0000"

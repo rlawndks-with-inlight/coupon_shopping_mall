@@ -36,6 +36,12 @@ const getDemo = (num, common) => {
     return <ItemsDemo9 {...common} />
   /*else if (num == 10)
     return <ItemsDemo10 {...common} />*/
+  // 블로그형 브랜드는 shop_demo_num 이 0 이라 위 어느 조건에도 안 걸려 undefined 를 반환했고,
+  // 헤더·푸터만 남은 백지가 됐다. 프레임4·5 홈의 '속성그룹' 섹션 View More 가 이리로 온다
+  // (통일 전엔 /blog/items 로 가서 404 였다 — 백지보다 낫지도 않았다).
+  // 블로그 전용 상품목록 뷰는 없으므로 기본 목록으로 떨어뜨린다. 최소한 상품은 볼 수 있다.
+  else
+    return <ItemsDemo1 {...common} />
 }
 const ItemList = () => {
   const router = useRouter();

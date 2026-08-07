@@ -36,6 +36,10 @@ const getDemo = (num, common) => {
     return <WishDemo9 {...common} />
   /*else if (num == 10)
     return <WishDemo10 {...common} />*/
+  // 블로그형(shop_demo_num=0)은 어느 조건에도 안 걸려 백지가 됐다.
+  // 현재 블로그 레이아웃에 찜 진입점은 없지만 주소로 들어오면 빈 화면이 뜬다.
+  else
+    return <WishDemo1 {...common} />
 }
 const Wish = () => {
   const router = useRouter();

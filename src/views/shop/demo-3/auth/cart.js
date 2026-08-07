@@ -390,7 +390,8 @@ const CartDemo = (props) => {
       <Wrappers>
         <PageTitle>{translate('장바구니')}</PageTitle>
         <TitleAccent theme={theme} />
-        <CheckoutSteps activeStep={activeStep} steps={STEPS} />
+        {/* 결제는 공용 주문서(/shop/auth/order)에서 한다 — 여기 3단계 진행바는 맞지 않는다 */}
+        {false && <CheckoutSteps activeStep={activeStep} steps={STEPS} />}
         <Grid container spacing={3} sx={{ mt: 1 }}>
           <Grid item xs={12} md={8}>
             {activeStep == 0 &&

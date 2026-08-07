@@ -886,10 +886,21 @@ const ProductEdit = () => {
     let result = undefined
     // 1상품 N카테고리: 다중선택된 카테고리들을 연결테이블용 배열로. 대표(첫번째)는 category_id0 dual-write.
     let category_ids_arr = [...new Set((selectedCategoryIds ?? []).map(Number).filter((v) => v > 0))];
-    let category_ids = {};
-    if (category_ids_arr.length > 0) {
-      category_ids['category_id0'] = category_ids_arr[0];
-    }
+    // category_id0 은 '항상' 보낸다. 선택이 하나도 없으면 0 을 명시해 비운다.
+    //
+    // 예전엔 선택이 없으면 키 자체를 안 보냈는데, 백엔드가 온 필드만 UPDATE 하므로
+    // (product.controller.js 의 `if (req.body[`category_id${i}`])`) 옛 값이 그대로 남았다.
+    // 연결테이블(products_categories)은 비워지는데 category_id0 만 살아남고,
+    // 목록·스토어 필터가 `OR category_id0 IN (...)` 로 그걸 읽어서
+    // '카테고리를 다 뺐는데 예전 카테고리에 계속 보이는' 상태가 됐다.
+    //
+    // category_id1/2 는 건드리지 않는다. 옛 '그룹 facet' 시절 값이 남아 있는 브랜드가 있고,
+    // 그중 일부는 이미 soft-delete 된 카테고리를 가리켜 화면상 무해하다.
+    // 게다가 is_category_migrated=0 으로 되돌리는 롤백 경로가 아직 살아 있어
+    // 위치컬럼을 지우면 복구가 불가능해진다.
+    let category_ids = {
+      category_id0: category_ids_arr.length > 0 ? category_ids_arr[0] : 0,
+    };
     /*for (var i = 0; i < themePropertyList.length; i++) {
       if (!((item.properties[themePropertyList[i]?.id] ?? [])?.length > 0)) {
         toast.error(`${themePropertyList[i]?.property_group_name}를 선택해 주세요.`);

@@ -278,7 +278,10 @@ const TrxCancelList = () => {
           <>
             <IconButton>
               <Icon icon='material-symbols:edit-outline' onClick={() => {
-                router.push(`default/${row?.id}`)
+                // 상대경로면 /manager/orders/trx-cancel/default/{id} 로 해석돼 라우트가 없다(404).
+                // 'default' 가 아니라 'edit' 이어야 [edit_category]/[id] 가 기존 건을 불러온다
+                // ('default' 로 가면 빈 등록폼이 뜨고 저장 시 새 거래가 생긴다).
+                router.push(`/manager/orders/edit/${row?.id}`)
               }} />
             </IconButton>
             <IconButton onClick={() => {

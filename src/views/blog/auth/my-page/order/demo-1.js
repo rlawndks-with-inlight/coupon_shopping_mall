@@ -63,6 +63,8 @@ const Demo1 = (props) => {
     const { themeMode } = useSettingsContext();
     const [sellerId, setSellerId] = useState(0)
     const [orderList, setOrderList] = useState([]);
+    // 최초 렌더에서 목록이 [] 이라 "주문 내역이 없습니다" 가 깜빡이는 걸 막기 위한 로딩 플래그
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         onLoadOrders();
@@ -70,38 +72,48 @@ const Demo1 = (props) => {
 
     // 로그인 회원의 실 주문내역 로드 → 트랜잭션을 order-line 단위로 평탄화(셀러 탭/아이템 렌더용)
     const onLoadOrders = async () => {
-        let data = await apiManager('transactions', 'list', { page: 1, page_size: 20 });
-        let content = data?.content || [];
-        let flat_list = [];
-        content.forEach((trx) => {
-            (trx?.orders || []).forEach((order) => {
-                let order_count = order?.order_count || 0;
-                let order_amount = order?.order_amount || 0;
-                flat_list.push({
-                    seller_id: order?.seller_id || 0,
-                    seller_title: order?.seller_user_name || '판매자',
-                    order_name: order?.order_name ?? order?.product_name,
-                    order_count: order_count,
-                    order_amount: order_amount,
-                    unit_price: order_count > 0 ? Math.round(order_amount / order_count) : order_amount,
-                    option_text: getOptionText(order),
-                    product_img: order?.product_img,
-                    product_id: order?.product_id,
-                    ord_num: trx?.ord_num,
-                    trx_status: trx?.trx_status,
-                    amount: trx?.amount,
-                    addr: trx?.addr,
-                    detail_addr: trx?.detail_addr,
-                    receiver: trx?.receiver || trx?.buyer_name,
-                    invoice_num: trx?.invoice_num,
+        try {
+            let data = await apiManager('transactions', 'list', { page: 1, page_size: 20 });
+            let content = data?.content || [];
+            let flat_list = [];
+            content.forEach((trx) => {
+                (trx?.orders || []).forEach((order) => {
+                    let order_count = order?.order_count || 0;
+                    let order_amount = order?.order_amount || 0;
+                    flat_list.push({
+                        seller_id: order?.seller_id || 0,
+                        // 셀러 시스템을 쓰지 않아 seller_user_name 은 항상 null — 폴백 문구를 '기본배송' 으로 통일
+                        seller_title: order?.seller_user_name || '기본배송',
+                        order_name: order?.order_name ?? order?.product_name,
+                        order_count: order_count,
+                        order_amount: order_amount,
+                        unit_price: order_count > 0 ? Math.round(order_amount / order_count) : order_amount,
+                        option_text: getOptionText(order),
+                        product_img: order?.product_img,
+                        product_id: order?.product_id,
+                        ord_num: trx?.ord_num,
+                        trx_status: trx?.trx_status,
+                        amount: trx?.amount,
+                        addr: trx?.addr,
+                        detail_addr: trx?.detail_addr,
+                        receiver: trx?.receiver || trx?.buyer_name,
+                        invoice_num: trx?.invoice_num,
+                    });
                 });
             });
-        });
-        setOrderList(flat_list);
-        if (flat_list.length > 0) {
-            setSellerId(flat_list[0].seller_id);
+            setOrderList(flat_list);
+            if (flat_list.length > 0) {
+                setSellerId(flat_list[0].seller_id);
+            }
+        } finally {
+            // 성공/실패와 무관하게 로딩 종료 (실패 시엔 빈 상태 문구가 뜬다)
+            setLoading(false);
         }
     }
+
+    // 목록 렌더 조건(item.seller_id == sellerId)과 동일한 기준으로 계산 —
+    // "주문은 있는데 이 탭엔 0건" 인 경우도 빈 상태로 잡기 위함
+    const filtered_list = orderList.filter((item) => item.seller_id == sellerId);
 
     return (
         <>
@@ -143,6 +155,16 @@ const Demo1 = (props) => {
                 <ContentContainer style={{
                     background: `${themeMode == 'dark' ? '#000' : '#F6F6F6'}`
                 }}>
+                    {/* 로딩 중 / 목록 0건일 때 회색 박스가 빈 채로 남아 있던 문제 대응 */}
+                    {loading &&
+                        <div style={{ textAlign: 'center', padding: '3rem 0', opacity: 0.6 }}>불러오는 중...</div>
+                    }
+                    {!loading && filtered_list.length === 0 &&
+                        <div style={{ textAlign: 'center', padding: '3rem 0', color: '#888' }}>
+                            주문 내역이 없습니다.<br />
+                            <Button variant='outlined' sx={{ mt: 2 }} onClick={() => router.push('/shop')}>쇼핑하러 가기</Button>
+                        </div>
+                    }
                     {orderList.map((item, idx) => (
                         <>
                             {item.seller_id == sellerId &&

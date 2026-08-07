@@ -7,6 +7,8 @@ import { useRouter } from "next/router"
 import DialogSearch from "src/components/dialog/DialogSearch"
 import { logoSrc } from "src/data/data"
 import { isMyPagePath, isPath } from "src/utils/blog-shop-route"
+// 헤더 로그아웃 아이콘용
+import { useAuthContext } from "src/layouts/manager/auth/useAuthContext"
 
 const Wrappers = styled.header`
 width: 100%;
@@ -30,6 +32,7 @@ const Header = (props) => {
   const { activeStep, setActiveStep, is_use_step } = props;
   const router = useRouter();
   const { themeMode, themeDnsData } = useSettingsContext();
+  const { user, logout } = useAuthContext();
   const [isDetailPage, setIsDetailPage] = useState(false);
   const [scrollY, setScrollY] = useState(0);
   const [searchOpen, setSearchOpen] = useState(false);
@@ -52,6 +55,12 @@ const Header = (props) => {
   const iconColor = isDark || isTransparent ? '#fff' : '#111';
   // 마이페이지 하위가 평탄해져 'my-page' 조각 판정이 전부 거짓이 됐다(뒤로가기 화살표 소실).
   const showBackArrow = isDetailPage || isMyPagePath(router) || isPath(router, '/shop/auth/cart');
+
+  // 로그아웃 진입점이 없어 로그인 후 계정을 바꿀 수 없었다. 마이페이지 화면과 동일한 처리.
+  const onLogout = async () => {
+    await logout();
+    window.location.reload();
+  }
 
   return (
     <>
@@ -88,6 +97,11 @@ const Header = (props) => {
             <IconButton sx={{ padding: '6px' }} onClick={() => router.push('/shop/auth/my-page')}>
               <Icon icon={'basil:user-outline'} fontSize={'1.4rem'} color={iconColor} />
             </IconButton>
+            {/* 로그인 상태에서만 노출되는 로그아웃 버튼 */}
+            {user &&
+              <IconButton sx={{ padding: '6px' }} onClick={onLogout}>
+                <Icon icon={'ri:logout-circle-r-line'} fontSize={'1.4rem'} color={iconColor} />
+              </IconButton>}
             <IconButton sx={{ padding: '6px' }} onClick={() => router.push('/shop/auth/cart')}>
               <Icon icon={'basil:shopping-bag-outline'} fontSize={'1.4rem'} color={iconColor} />
             </IconButton>

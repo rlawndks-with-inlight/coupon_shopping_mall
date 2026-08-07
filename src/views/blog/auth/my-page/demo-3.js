@@ -8,6 +8,8 @@ import { useAuthContext } from 'src/layouts/manager/auth/useAuthContext';
 import { useEffect } from 'react';
 import { Title } from 'src/components/elements/blog/demo-1';
 import { logoSrc } from 'src/data/data';
+// 로그아웃 링크용. demo-2 와 동일하게 Row 를 쓴다.
+import { Row } from 'src/components/elements/styled-components';
 
 const Wrappers = styled.div`
 max-width:798px;
@@ -98,12 +100,19 @@ const Demo3 = (props) => {
     } = props;
 
     const { themeDnsData, themeMode, themePostCategoryList } = useSettingsContext();
-    const { user } = useAuthContext();
+    const { user, logout } = useAuthContext();
     const [openPolicy, setOpenPolicy] = useState(false)
     const [policyType, setPolicyType] = useState("")
     const [activeStep, setActiveStep] = useState(0);
     const [dialogOpen, setDialogOpen] = useState(false)
     const [dialogType, setDialogType] = useState("");
+
+    // 로그인 후 로그아웃할 방법이 UI 에 전혀 없었다. demo-2 의 구현을 그대로 가져왔다.
+    const onLogout = async () => {
+        let result = await logout();
+        //router.reload();
+        window.location.reload();
+    }
 
     return (
         <>
@@ -181,35 +190,52 @@ const Demo3 = (props) => {
                             </>
                             : ""}
                     </MenuBox>
-                    <MenuBox>
-                        문의
-                        <MenuButton themeMode={themeMode} onClick={() => {
-                            if (user) {
-                                router.push('/shop/auth/inquiry')
-                            } else {
-                                setDialogOpen(true)
-                                setDialogType(1)
-                            }
-                        }}>
-                            <MenuText>나의 문의 내역</MenuText>
-                            <IconButton style={{ width: '24px', height: '56px', padding: '0', marginRight: '18px' }}>
-                                <Icon icon='ep:arrow-right' color='black' />
-                            </IconButton>
-                        </MenuButton>
-                    </MenuBox>
-                    <MenuBox>
-                        안내
-                        {themePostCategoryList.map(item => (
-                            <>
-                                <MenuButton themeMode={themeMode} onClick={() => { router.push(`/shop/service/${item?.id}`) }} style={{ marginBottom: '0' }}>
-                                    <MenuText>{item.post_category_title}</MenuText>
+                    {/* 기존에는 하드코딩 라벨 '문의'(나의 문의 내역)와 '안내'(DB 게시판 목록)가 따로 렌더돼
+                        자동 시드된 1:1문의 게시판이 '안내' 밑에 들어갔다. 두 그룹을 '고객센터' 하나로 합쳤다.
+                        themePostCategoryList 는 localStorage 캐시라 배포 직후 비어 있을 수 있어,
+                        비었으면 빈 껍데기가 보이지 않도록 그룹 자체를 렌더하지 않는다. */}
+                    {themePostCategoryList?.length > 0 &&
+                        <MenuBox>
+                            고객센터
+                            {/* 읽기 전용 게시판(공지사항 등): 비회원 포함 누구나 */}
+                            {themePostCategoryList
+                                .filter(item => item?.is_able_user_add != 1)
+                                .map(item => (
+                                    <MenuButton key={item?.id} themeMode={themeMode} style={{ marginBottom: '0' }}
+                                        onClick={() => { router.push(`/shop/service/${item?.id}`) }}>
+                                        <MenuText>{item.post_category_title}</MenuText>
+                                        <IconButton style={{ width: '24px', height: '56px', padding: '0', marginRight: '18px' }}>
+                                            <Icon icon='ep:arrow-right' color='black' />
+                                        </IconButton>
+                                    </MenuButton>
+                                ))}
+                            {/* 회원 글쓰기 게시판(1:1문의): 로그인 필요 */}
+                            {themePostCategoryList
+                                .filter(item => item?.is_able_user_add == 1)
+                                .map(item => (
+                                    <MenuButton key={item?.id} themeMode={themeMode} style={{ marginBottom: '0' }}
+                                        onClick={() => {
+                                            if (user) { router.push(`/shop/service/${item?.id}/add`) }
+                                            else { setDialogOpen(true); setDialogType(1) }
+                                        }}>
+                                        <MenuText>{item.post_category_title}</MenuText>
+                                        <IconButton style={{ width: '24px', height: '56px', padding: '0', marginRight: '18px' }}>
+                                            <Icon icon='ep:arrow-right' color='black' />
+                                        </IconButton>
+                                    </MenuButton>
+                                ))}
+                            {/* 나의 문의 내역: DB 카테고리가 아닌 전용 화면이라 하드코딩 유지. 문의 게시판이 있을 때만 노출 */}
+                            {themePostCategoryList.some(item => item?.is_able_user_add == 1) &&
+                                <MenuButton themeMode={themeMode} onClick={() => {
+                                    if (user) { router.push('/shop/auth/inquiry') }
+                                    else { setDialogOpen(true); setDialogType(1) }
+                                }}>
+                                    <MenuText>나의 문의 내역</MenuText>
                                     <IconButton style={{ width: '24px', height: '56px', padding: '0', marginRight: '18px' }}>
                                         <Icon icon='ep:arrow-right' color='black' />
                                     </IconButton>
-                                </MenuButton>
-                            </>
-                        ))}
-                    </MenuBox>
+                                </MenuButton>}
+                        </MenuBox>}
                     <PolicyBox>
                         <div
                             style={{ marginRight: '5%', cursor: 'pointer' }}
@@ -226,6 +252,15 @@ const Demo3 = (props) => {
                             }}
                         >이용약관</div>
                     </PolicyBox>
+                    {/* 로그아웃 진입점이 없어 로그인 후 계정을 바꿀 수 없었다. demo-2 와 동일한 형태로 추가. */}
+                    {
+                        user &&
+                        <>
+                            <Row style={{ marginTop: '2rem', cursor: 'pointer', textDecoration: 'underline' }} onClick={() => { onLogout() }}>
+                                로그아웃
+                            </Row>
+                        </>
+                    }
                 </MenuContainer>
                 <Drawer
                     anchor='bottom'
@@ -295,7 +330,8 @@ const Demo3 = (props) => {
                     {dialogType == 0 ?
                         <>로그인하고 상품 상태별로<br />알림을 받아보시는 건 어떨까요?</>
                         :
-                        <>회원가입 후 로그인하면<br />1:1 문의를 더 간편하게 할 수 있어요</>
+                        // 비회원은 1:1문의를 쓸 수 없으므로, 대신 공지사항은 열려 있다는 걸 알려준다.
+                        <>1:1문의는 로그인 후 이용하실 수 있습니다.<br />공지사항은 로그인 없이 확인하실 수 있어요.</>
                     }
                 </DialogContent>
                 <DialogActions>
@@ -305,15 +341,17 @@ const Demo3 = (props) => {
                             size='large'
                             sx={{ marginBottom: '2%' }}
                             onClick={() => { router.push('/shop/auth/login') }}>로그인하기</Button>
-                        <Button
-                            variant='outlined'
-                            size='large'
-                            onClick={() => { dialogType == 0 ? router.push('/shop/auth/order-check') : router.push('/shop/auth/inquiry') }}>
-                            {dialogType == 0 ?
-                                <>비회원으로 주문/배송조회 할게요</>
-                                :
-                                <>비회원으로 문의할게요</>
-                            }</Button>
+                        {/* '비회원으로 문의할게요' 는 눌러도 항상 비어 있는 문의 목록으로 보내
+                            "비회원 1:1문의 불가" 정책과 충돌해 없앴다.
+                            주문/배송조회(dialogType 0)는 비회원 조회 경로라 그대로 둔다. */}
+                        {dialogType == 0 && (
+                            <Button
+                                variant='outlined'
+                                size='large'
+                                onClick={() => { router.push('/shop/auth/order-check') }}>
+                                비회원으로 주문/배송조회 할게요
+                            </Button>
+                        )}
                     </DialogBox>
                 </DialogActions>
             </Dialog>

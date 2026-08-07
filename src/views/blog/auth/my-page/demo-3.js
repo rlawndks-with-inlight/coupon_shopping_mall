@@ -212,17 +212,8 @@ const Demo3 = (props) => {
                                         </IconButton>
                                     </MenuButton>
                                 ))}
-                            {/* 나의 문의 내역: DB 카테고리가 아닌 전용 화면이라 하드코딩 유지. 문의 게시판이 있을 때만 노출 */}
-                            {themePostCategoryList.some(item => item?.is_able_user_add == 1) &&
-                                <MenuButton themeMode={themeMode} onClick={() => {
-                                    if (user) { router.push('/shop/auth/inquiry') }
-                                    else { setDialogOpen(true); setDialogType(1) }
-                                }}>
-                                    <MenuText>나의 문의 내역</MenuText>
-                                    <IconButton style={{ width: '24px', height: '56px', padding: '0', marginRight: '18px' }}>
-                                        <Icon icon='ep:arrow-right' color='black' />
-                                    </IconButton>
-                                </MenuButton>}
+                            {/* '나의 문의 내역' 은 뺐다. 1:1문의 게시판으로 들어가면 자기 글 목록이
+                                그대로 보여서 같은 기능이 두 줄로 보였다. */}
                         </MenuBox>}
                     <PolicyBox>
                         <div

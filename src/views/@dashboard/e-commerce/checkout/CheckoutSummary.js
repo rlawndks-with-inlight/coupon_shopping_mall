@@ -39,6 +39,7 @@ CheckoutSummary.propTypes = {
   shipActive: PropTypes.bool,
   enableEdit: PropTypes.bool,
   enableDiscount: PropTypes.bool,
+  enablePoint: PropTypes.bool,
   onApplyDiscount: PropTypes.func,
 };
 
@@ -51,6 +52,9 @@ export default function CheckoutSummary({
   shipActive = false,
   enableEdit = false,
   enableDiscount = false,
+  // 포인트 입력란 노출 여부. 기본 true — 기존 호출부(주문서 등)의 동작을 그대로 유지한다.
+  // 카트에서는 false 를 넘긴다(아래 showPointUsage 주석 참고).
+  enablePoint = true,
   payData,
   setPayData,
   themeDnsData
@@ -78,7 +82,9 @@ export default function CheckoutSummary({
     : (fallbackShip.active ? ((total ?? 0) + fallbackShip.fee) : total);
   // 포인트 UI 노출 게이트: 로그인(user) && 포인트설정값 존재(최대사용가능 포인트 또는 적립률이 truthy)일 때만 노출.
   // 비회원/미사용 브랜드면 숨김.
-  const showPointUsage = !!user && (parseFloat(max_use_point) > 0 || parseFloat(point_rate) > 0);
+  // 추가로 enablePoint 게이트를 둔다 — 카트의 use_point 는 주문서로 전달되지 않아
+  // 입력해도 버려진다. 포인트는 주문서에서만 입력받는다.
+  const showPointUsage = enablePoint && !!user && (parseFloat(max_use_point) > 0 || parseFloat(point_rate) > 0);
   // '전체사용': 보유 포인트와 최대사용가능 포인트 중 작은 값으로 입력값을 채움(둘 다 초과 방지).
   const handleUseAllPoint = () => {
     const maxUsable = Math.min(parseFloat(user?.point) || 0, parseFloat(max_use_point) || 0);

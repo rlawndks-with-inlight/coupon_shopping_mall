@@ -728,7 +728,13 @@ export default function OrderSheet({ router }) {
                   shipping={orderTotals.delivery}
                   shipActive={orderTotals.shipActive}
                   discount={_.sum(_.map(products, (item) => calculatorPrice(item, payData).discount))}
-                  subtotal={orderTotals.merchTotal}
+                  // '총액'은 할인 전 상품가(배송비 제외)로 넘긴다 = merchTotal(할인가) + 할인액.
+                  // (1) 화면에서 '총액 − 할인 + 배송비 − 포인트 = 총 결제금액' 이 맞아떨어진다.
+                  //     merchTotal 만 넘기면 이미 할인이 반영된 값이라 할인 행을 또 빼는 셈이 돼 계산이 안 맞았다.
+                  // (2) CheckoutSummary 의 포인트 입력 잠금 기준이 subtotal - discount 인데,
+                  //     merchTotal 을 넘기면 할인이 이중 차감돼 기준금액이 실제보다 작게 나온다.
+                  //     그래서 카트에선 포인트를 넣을 수 있는데 주문서에선 잠기는 불일치가 있었다. 같이 해소된다.
+                  subtotal={orderTotals.merchTotal + _.sum(_.map(products, (item) => calculatorPrice(item).discount))}
                 />
                 <Typography variant="caption" sx={{ color: 'text.secondary', display: 'block', mt: 1, textAlign: 'center' }}>
                   결제수단을 선택한 뒤 결제 방법(결제하기 버튼 또는 입력란)에 따라 진행하세요.

@@ -17,6 +17,7 @@ import toast from 'react-hot-toast';
 import { useLocales } from 'src/locales';
 import DialogBuyNow from 'src/components/dialog/DialogBuyNow';
 import { ProductDetailsReview } from 'src/views/@dashboard/e-commerce/details';
+import { isShopgoBrand } from 'src/utils/is-shopgo';
 
 
 const ReactQuill = dynamic(() => import('react-quill'), {
@@ -95,7 +96,7 @@ const Demo2 = (props) => {
         },
     } = props;
     const { translate, currentLang } = useLocales();
-    const { themeMode, themeCartData, onChangeCartData } = useSettingsContext();
+    const { themeMode, themeCartData, onChangeCartData, themeDnsData } = useSettingsContext();
     const { user } = useAuthContext();
     const theme = useTheme();
 
@@ -249,12 +250,16 @@ const Demo2 = (props) => {
                     <Divider />
                     <ContentContainer>
                         <Row style={{ width: '100%', marginBottom: '1rem', paddingTop: '1rem' }}>
-                            <div style={{ padding: '0 0 1rem 0', fontSize: themeObj.font_size.size8, fontWeight: 'bold', cursor: 'pointer', width: '50%', textAlign: 'center', borderBottom: `${tab == 0 ? '2px solid black' : ''}` }} onClick={() => { setTab(0) }}>
+                            {/* ShopGo 산하는 상품후기를 쓰지 않는다.
+                                후기 탭을 숨길 땐 '상품정보'가 남은 폭을 다 쓰게 해야
+                                반쪽짜리 탭 하나가 덩그러니 남지 않는다. */}
+                            <div style={{ padding: '0 0 1rem 0', fontSize: themeObj.font_size.size8, fontWeight: 'bold', cursor: 'pointer', width: `${isShopgoBrand(themeDnsData) ? '100%' : '50%'}`, textAlign: 'center', borderBottom: `${tab == 0 ? '2px solid black' : ''}` }} onClick={() => { setTab(0) }}>
                                 상품정보
                             </div>
-                            <div style={{ padding: '0 0 1rem 0', fontSize: themeObj.font_size.size8, fontWeight: 'bold', cursor: 'pointer', width: '50%', textAlign: 'center', borderBottom: `${tab == 1 ? '2px solid black' : ''}` }} onClick={() => { setTab(1) }}>
-                                상품후기({reviewTotal})
-                            </div>
+                            {!isShopgoBrand(themeDnsData) &&
+                                <div style={{ padding: '0 0 1rem 0', fontSize: themeObj.font_size.size8, fontWeight: 'bold', cursor: 'pointer', width: '50%', textAlign: 'center', borderBottom: `${tab == 1 ? '2px solid black' : ''}` }} onClick={() => { setTab(1) }}>
+                                    상품후기({reviewTotal})
+                                </div>}
                         </Row>
                         {
                             tab == 0 ?

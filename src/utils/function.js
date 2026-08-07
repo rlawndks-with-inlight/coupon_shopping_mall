@@ -594,3 +594,9 @@ export const makeOrdNum = (prefix = '') => {
 // 표시용 이름으로 쓰고 있다. 비워 보내면 이름이 안 나오는 화면이 생긴다.
 // → nickname 에 이름을 그대로 넣어 저장한다. 기존 회원 데이터는 건드리지 않는다.
 export const withSignUpName = (user) => ({ ...user, nickname: user?.name ?? '' });
+
+// 관리자 영역인지. JwtContext 가 예전부터 이 이름으로 import 하고 있었는데 정의가 없어
+// 비로그인 초기화 때마다 TypeError 가 났고, 그 줄의 /manager/login 리다이렉트가 죽어 있었다.
+// (지금은 ManagerLayout 이 대신 밀어주지만 그 레이아웃을 안 쓰는 화면이 생기면 무방비다)
+export const isManagerRouter = (router) =>
+  String(router?.pathname ?? '').startsWith('/manager');

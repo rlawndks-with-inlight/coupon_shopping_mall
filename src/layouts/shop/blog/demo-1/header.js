@@ -35,7 +35,9 @@ const Header = (props) => {
 
   useEffect(() => {
     const path = router.asPath.split('/')[2];
-    setIsDetailPage(path == 'product' || path == 'seller');
+    // /blog/product/:id → /shop/item/:id 로 통일됐다. 'product' 만 보면 상품 상세에서
+    // 헤더가 상세 모드로 안 바뀌어 대표 이미지를 덮고 뒤로가기 화살표가 사라진다.
+    setIsDetailPage(path == 'item' || path == 'seller');
   }, [router.asPath])
 
   useEffect(() => {

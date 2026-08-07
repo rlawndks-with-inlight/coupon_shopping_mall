@@ -81,7 +81,8 @@ const Header = (props) => {
         } else {
             setIsSellerPage(false)
         }
-        if (router.asPath.split('/')[2] == 'product') {
+        // /blog/product/:id → /shop/item/:id 로 통일됨(예전 'product' 로는 상세 판별이 안 된다)
+        if (router.asPath.split('/')[2] == 'item') {
             setIsProductPage(true)
         } else {
             setIsProductPage(false)

@@ -426,7 +426,10 @@ export const ProductFaq = () => {
     let result2 = undefined;
     if (router.query?.edit_category == 'edit') {
       result = await apiManager('product-faq', 'update', { ...item, id: router.query?.id });
-      if (category?.is_able_user_add == 1 && result) {
+      // 예전엔 category?.is_able_user_add 를 봤는데 category 라는 변수가 이 파일에 없어서
+      // 문의 '수정'은 저장 버튼을 누르는 순간 ReferenceError 로 죽었다.
+      // 원래 하려던 건 '답변이 있을 때만 답변도 같이 저장' 이므로 그 조건으로 바꾼다.
+      if (reply?.post_content && result) {
         if (reply?.id > 0) {
           result2 = await apiManager('product-faq', 'update', { ...reply, });
         } else {

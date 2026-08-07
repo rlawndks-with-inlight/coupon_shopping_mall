@@ -9,7 +9,10 @@ const FramesPage = () => {
   const st = useSubpageT();
   const ft = useFrameT();
 
-  const buildPreviewUrl = (f) => `https://demo-${f.no}.${MAIN_DOMAIN}/${f.category}`;
+  // 경로는 /shop 하나다. f.category('shop'|'blog')는 프레임 분류 표시용일 뿐 URL 이 아니다.
+  // (예전엔 그대로 붙여서 프레임 4~11 미리보기가 /blog 로 열렸다 — grep '/blog' 로는
+  //  안 잡히는 조립형 URL 이라 /shop 통일 때 누락됐던 자리)
+  const buildPreviewUrl = (f) => `https://demo-${f.no}.${MAIN_DOMAIN}/shop`;
 
   return (
     <Box>

@@ -37,7 +37,7 @@ import { useAuthContext } from 'src/layouts/manager/auth/useAuthContext'
 import ReactQuillComponent from 'src/views/manager/react-quill'
 import { apiManager } from 'src/utils/api'
 import { commarNumber } from 'src/utils/function'
-import { BLOG_DEMO_DATA, DEMO_DATA, SHOP_DEMO_DATA } from 'src/data/data'
+import { BLOG_DEMO_DATA, SHOP_DEMO_DATA } from 'src/data/data'
 import { allLangs } from 'src/locales'
 
 const KakaoWrappers = styled.div`

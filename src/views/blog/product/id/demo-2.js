@@ -224,10 +224,12 @@ const Demo2 = (props) => {
                                 </Row>
 
                             </>}
+                        {/* '몇 명 구매'(products.buying_count) 표시를 제거했다.
+                            컬럼은 DB 에 있지만 백엔드에 값을 증가시키는 코드가 없어 항상 초기값만 찍히는 유령 지표다.
+                            지운 div 는 marginLeft:'auto' 로 오른쪽 끝에 있던 요소라, 남은 금액/원 은 왼쪽 정렬 그대로 유지된다. */}
                         <Row style={{ alignItems: 'flex-end', fontWeight: 'bold' }}>
                             <div style={{ fontSize: themeObj.font_size.size6, color: '' }}>{commarNumber(item.product_sale_price)}</div>
                             <div style={{ fontSize: themeObj.font_size.size8, marginLeft: '0.25rem' }}>원</div>
-                            <div style={{ fontSize: themeObj.font_size.size8, marginLeft: 'auto', fontWeight: 'normal', color: themeObj.grey[500] }}>{item?.buying_count}명 구매</div>
                         </Row>
                         <Divider style={{ margin: '1rem 0' }} />
                         <Row style={{ alignItems: 'flex-end', }}>

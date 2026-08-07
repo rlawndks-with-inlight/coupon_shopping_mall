@@ -6,6 +6,8 @@ import _ from 'lodash'
 import { LazyLoadImage } from 'react-lazy-load-image-component'
 import { Rating, Typography } from '@mui/material'
 import { useRouter } from 'next/router'
+import { useSettingsContext } from 'src/components/settings'
+import { isShopgoBrand } from 'src/utils/is-shopgo'
 
 const Wrappers = styled.div`
   width:90%;
@@ -70,6 +72,13 @@ const Review = (props) => {
   )
 }
 const HomeProductReview = (props) => {
+  // ShopGo 산하는 상품후기를 쓰지 않는다. 상품상세의 후기·별점은 이미 가렸는데
+  // 홈의 '상품후기' 섹션에는 Rating(별점)이 그대로 남아 있어 정책이 반쪽이었다.
+  // 별점만 빼면 빈 후기 카드가 남으므로 섹션 통째로 렌더하지 않는다.
+  // useSettingsContext 는 훅이라 조기 return 위에서 호출해야 훅 순서가 어긋나지 않는다.
+  const { themeDnsData } = useSettingsContext();
+  if (isShopgoBrand(themeDnsData)) return null;
+
   const { column, data, func, is_manager } = props;
   const { style } = column;
 

@@ -30,7 +30,7 @@ import { defaultManagerObj } from 'src/data/manager-data'
 import { base64toFile, getMainObjType } from 'src/utils/function'
 import _, { constant } from 'lodash'
 import { useSettingsContext } from 'src/components/settings'
-import { isShopgoMerchant } from 'src/utils/is-shopgo'
+import { isShopgoBrand, isShopgoMerchant } from 'src/utils/is-shopgo'
 import { useRouter } from 'next/router'
 import CustomBreadcrumbs from 'src/components/custom-breadcrumbs/CustomBreadcrumbs'
 import { toast } from 'react-hot-toast'
@@ -1763,9 +1763,16 @@ const MainObjSetting = props => {
                           setSectionType(e.target.value)
                         }}
                       >
-                        {[...mainObjSchemaList, ...getSettingPropertyList(themePropertyList)].map((itm) => {
-                          return <MenuItem value={itm.type}>{itm.label} ({hasTypeCount(contentList, itm.type)})</MenuItem>
-                        })}
+                        {/* ShopGo 산하는 셀러 시스템과 상품후기를 쓰지 않는다.
+                            고객화면에서 해당 섹션을 렌더하지 않도록 막았으므로, 추가하는 입구도 같이 막는다.
+                            (안 그러면 섹션을 추가해두고 "몰에 안 나온다"는 문의가 생긴다)
+                            여기는 '신규 추가' 목록 필터일 뿐이라 이미 저장된 섹션 데이터에는 영향이 없다.
+                            type 값은 위 mainObjSchemaList 정의(sellers / item-reviews / item-reviews-select) 그대로다. */}
+                        {[...mainObjSchemaList, ...getSettingPropertyList(themePropertyList)]
+                          .filter(itm => !(isShopgoBrand(themeDnsData) && ['sellers', 'item-reviews', 'item-reviews-select'].includes(itm.type)))
+                          .map((itm) => {
+                            return <MenuItem value={itm.type}>{itm.label} ({hasTypeCount(contentList, itm.type)})</MenuItem>
+                          })}
                       </Select>
                       <Button
                         variant='contained'

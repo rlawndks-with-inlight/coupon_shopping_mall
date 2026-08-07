@@ -152,7 +152,7 @@ const FindInfoQuestion = ({
       ) : (
         <>
           <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-            판매자 고객센터로 문의해 주세요.
+            비밀번호를 찾을 수 없으면 고객센터로 문의해 주세요.
           </Typography>
           {themeDnsData?.phone_num ? (
             <Typography variant="body2" sx={{ color: 'text.secondary' }}>

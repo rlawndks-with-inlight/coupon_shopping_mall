@@ -346,7 +346,7 @@ const Demo5 = (props) => {
   const orig = product?.product_price || 0;
   const hasSale = orig > sale && sale > 0;
   const disc = hasSale ? Math.round((orig - sale) * 100 / orig) : 0;
-  const goTo = () => router?.push?.(`/blog/product/${product?.id}`);
+  const goTo = () => router?.push?.(`/shop/item/${product?.id}`);
 
   return (
     <Wrapper>
@@ -425,7 +425,7 @@ const Demo5 = (props) => {
             {featuredProducts.map((item) => {
               const c = getFeaturedCardData(item, currentLang);
               return (
-                <FeaturedCard key={c.id} onClick={() => router?.push?.(`/blog/product/${c.id}`)}>
+                <FeaturedCard key={c.id} onClick={() => router?.push?.(`/shop/item/${c.id}`)}>
                   <GalleryCell>
                     <LazyLoadImage src={c.img} effect="blur" style={{ maxWidth: '75%', maxHeight: '75%', objectFit: 'contain', filter: 'drop-shadow(0 10px 30px rgba(201,168,118,0.2))' }} />
                   </GalleryCell>

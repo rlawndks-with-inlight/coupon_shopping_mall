@@ -120,7 +120,7 @@ const Demo1 = (props) => {
       onChangeCartData([]);
       onChangeWishData([]);
       await logout();
-      router.push('/blog/auth/login');
+      router.push('/shop/auth/login');
     }
   }
 
@@ -129,7 +129,7 @@ const Demo1 = (props) => {
     onChangeCartData([]);
     onChangeWishData([]);
     if (user) {
-      router.push('/blog/auth/my-page');
+      router.push('/shop/auth/my-page');
     }
   }
 
@@ -207,7 +207,7 @@ const Demo1 = (props) => {
                 whiteSpace: 'nowrap'
               }}
               onClick={() => {
-                router.push('/blog/auth/my-page/address')
+                router.push('/shop/auth/delivery-address')
               }}
             >배송지<br />추가</Button>
           </div>

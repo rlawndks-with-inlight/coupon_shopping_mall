@@ -128,13 +128,13 @@ const BlogLayout6 = (props) => {
       <DialogSearch
         open={searchOpen}
         handleClose={() => setSearchOpen(false)}
-        root_path={'/blog/search?keyword='}
+        root_path={'/shop/search?keyword='}
       />
       <Header>
         <IconBtn onClick={() => router.back()}>
           <Icon icon="material-symbols:arrow-back" />
         </IconBtn>
-        <LogoArea onClick={() => router.push('/blog')}>
+        <LogoArea onClick={() => router.push('/shop')}>
           {themeDnsData?.logo_img ? (
             <Logo src={themeDnsData.logo_img} effect="blur" />
           ) : (
@@ -149,10 +149,10 @@ const BlogLayout6 = (props) => {
           <IconBtn onClick={() => setSearchOpen(true)}>
             <Icon icon="tabler:search" />
           </IconBtn>
-          <IconBtn onClick={() => router.push(user ? '/blog/auth/my-page' : '/blog/auth/login')}>
+          <IconBtn onClick={() => router.push(user ? '/shop/auth/my-page' : '/shop/auth/login')}>
             <Icon icon="basil:user-outline" />
           </IconBtn>
-          <IconBtn onClick={() => router.push('/blog/auth/cart')}>
+          <IconBtn onClick={() => router.push('/shop/auth/cart')}>
             <Icon icon="iconamoon:shopping-bag" />
           </IconBtn>
         </HeaderActions>

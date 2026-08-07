@@ -117,7 +117,7 @@ const Demo5 = (props) => {
         });
         if (result) {
             toast.success('성공적으로 저장 되었습니다.');
-            router.push(`/blog/service/${router.query?.article_category}`);
+            router.push(`/shop/service/${router.query?.article_category}`);
         }
     }
 
@@ -153,7 +153,7 @@ const Demo5 = (props) => {
                                             <Button variant='outlined' style={{
                                                 height: '48px', width: '120px'
                                             }} onClick={() => {
-                                                router.push(`/blog/service/${router.query?.article_category}`)
+                                                router.push(`/shop/service/${router.query?.article_category}`)
                                             }}>
                                                 취소
                                             </Button>
@@ -174,7 +174,7 @@ const Demo5 = (props) => {
                                     <LoginPrompt themeMode={themeMode}>
                                         <div>로그인 후 이용할 수 있습니다.</div>
                                         <Button variant='contained' size='large' sx={{ height: '48px', width: '180px' }} onClick={() => {
-                                            router.push('/blog/auth/login')
+                                            router.push('/shop/auth/login')
                                         }}>
                                             로그인하기
                                         </Button>
@@ -216,7 +216,7 @@ const Demo5 = (props) => {
                                 <Button variant='outlined' style={{
                                     height: '48px', width: '120px', margin: '1.5rem 0 0 auto'
                                 }} onClick={() => {
-                                    router.push(`/blog/service/${router.query?.article_category}`)
+                                    router.push(`/shop/service/${router.query?.article_category}`)
                                 }}>
                                     목록
                                 </Button>

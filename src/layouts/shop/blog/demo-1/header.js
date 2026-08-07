@@ -54,7 +54,7 @@ const Header = (props) => {
       <DialogSearch
         open={searchOpen}
         handleClose={() => setSearchOpen(false)}
-        root_path={'/blog/search?keyword='}
+        root_path={'/shop/search?keyword='}
       />
       <Wrappers style={{
         background: isTransparent ? 'transparent' : (isDark ? '#000' : '#fff'),
@@ -75,16 +75,16 @@ const Header = (props) => {
               <Icon icon={'ic:round-arrow-back'} fontSize={'1.4rem'} color={iconColor} />
             </IconButton>
             :
-            <img src={logoSrc()} style={{ height: '28px', width: 'auto', cursor: 'pointer' }} onClick={() => router.push('/blog')} />
+            <img src={logoSrc()} style={{ height: '28px', width: 'auto', cursor: 'pointer' }} onClick={() => router.push('/shop')} />
           }
           <div style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: '2px' }}>
             <IconButton sx={{ padding: '6px' }} onClick={() => setSearchOpen(true)}>
               <Icon icon={'tabler:search'} fontSize={'1.3rem'} color={iconColor} />
             </IconButton>
-            <IconButton sx={{ padding: '6px' }} onClick={() => router.push('/blog/auth/my-page')}>
+            <IconButton sx={{ padding: '6px' }} onClick={() => router.push('/shop/auth/my-page')}>
               <Icon icon={'basil:user-outline'} fontSize={'1.4rem'} color={iconColor} />
             </IconButton>
-            <IconButton sx={{ padding: '6px' }} onClick={() => router.push('/blog/auth/cart')}>
+            <IconButton sx={{ padding: '6px' }} onClick={() => router.push('/shop/auth/cart')}>
               <Icon icon={'basil:shopping-bag-outline'} fontSize={'1.4rem'} color={iconColor} />
             </IconButton>
           </div>

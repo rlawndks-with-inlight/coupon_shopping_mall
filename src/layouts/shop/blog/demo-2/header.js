@@ -46,7 +46,7 @@ const Header = (props) => {
         search: false
     })
     const onSearch = () => {
-        router.push(`/blog/search?keyword=${keyword}`)
+        router.push(`/shop/search?keyword=${keyword}`)
     }
     const [hoverItems, setHoverItems] = useState({
 
@@ -148,7 +148,7 @@ const Header = (props) => {
                     <DialogSearch
                         open={dialogOpenObj.search}
                         handleClose={handleDialogClose}
-                        root_path={'/blog/search?keyword='}
+                        root_path={'/shop/search?keyword='}
                     />
                     <Wrappers style={{
                         background: `${(isSellerPage || isProductPage) && scrollY < 350 ? 'transparent' : (themeMode == 'dark' ? '#000' : '#fff')}`
@@ -172,7 +172,7 @@ const Header = (props) => {
                                 </>
                                 :
                                 <>
-                                    <img src={logoSrc()} style={{ height: '40px', width: 'auto', cursor: 'pointer' }} onClick={() => { router.push('/blog') }} />
+                                    <img src={logoSrc()} style={{ height: '40px', width: 'auto', cursor: 'pointer' }} onClick={() => { router.push('/shop') }} />
                                 </>}
 
                             <IconButton
@@ -189,7 +189,7 @@ const Header = (props) => {
                             {/*
                              <IconButton
                                 sx={iconButtonStyle}
-                                onClick={() => router.push('/blog/auth/cart')}
+                                onClick={() => router.push('/shop/auth/cart')}
                             >
                                 <Icon icon={'fluent:cart-20-regular'} fontSize={'1.8rem'} color={themeMode == 'dark' || ((isSellerPage || isProductPage) && scrollY < 350) ? '#fff' : '#000'} />
                             </IconButton>

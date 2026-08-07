@@ -1,34 +1,20 @@
+import { useEffect } from "react";
 import { useRouter } from "next/router";
-import { useState } from "react";
-import ShopLayout from "src/layouts/shop/ShopLayout";
-import Demo1 from "src/views/blog/auth/cart/demo-1";
-import { useSettingsContext } from "src/components/settings";
-import Demo2 from "src/views/blog/auth/cart/demo-2";
-import Demo3 from "src/views/blog/auth/cart/demo-3";
-import Demo4 from "src/views/blog/auth/cart/demo-4";
-import Demo5 from "src/views/blog/auth/cart/demo-5";
 
-const getDemo = (num, common) => {
-    // 모든 blog 프레임 카트를 기능 카트(demo-2)로 수렴 — '주문하기'는 공용 주문서로 이동.
-    // (기존: blog 1/3/4/5는 목업, 6~9는 카트 미구현)
-    return <Demo2 {...common} />
-}
+// /blog 경로는 /shop 으로 통일했다. 이 파일은 옛 주소로 들어온 방문자를 넘겨주기만 한다.
+// (화면은 /shop 쪽 페이지가 브랜드 유형을 보고 고른다)
+// 남은 옛 링크가 404 로 죽지 않도록 지우지 않고 리다이렉트로 둔다.
+const Redirect = () => {
+  const router = useRouter();
 
-const Cart = () => {
-    const router = useRouter();
-    const { themeDnsData } = useSettingsContext();
+  useEffect(() => {
+    if (!router.isReady) return;
+    // 쿼리스트링은 그대로 넘긴다(?type=0 같은 탭 지정이 살아 있어야 한다).
+    const qs = router.asPath.split('?')[1];
+    router.replace('/shop/auth/cart' + (qs ? `?${qs}` : ''));
+  }, [router.isReady]);
 
-    return (
-        <>
-            {getDemo(themeDnsData?.blog_demo_num, {
-                data: {
-                },
-                func: {
-                    router
-                },
-            })}
-        </>
-    )
-}
-Cart.getLayout = (page) => <ShopLayout>{page}</ShopLayout>;
-export default Cart;
+  return <></>;
+};
+
+export default Redirect;

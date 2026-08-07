@@ -136,7 +136,7 @@ const Demo4 = (props) => {
             onChangeCartData([]);
             onChangeWishData([]);
             await logout();
-            router.push('/blog/auth/login');
+            router.push('/shop/auth/login');
         }
     }
 
@@ -145,7 +145,7 @@ const Demo4 = (props) => {
         onChangeCartData([]);
         onChangeWishData([]);
         if (user) {
-            router.push('/blog/auth/my-page');
+            router.push('/shop/auth/my-page');
         }
     }
 

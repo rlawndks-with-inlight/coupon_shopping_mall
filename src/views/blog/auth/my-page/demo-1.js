@@ -116,7 +116,7 @@ const Demo1 = (props) => {
                             <MenuButton themeMode={themeMode} onClick={() => { router.
                                 
                                 
-                                push('/blog/auth/my-page/user-info') }}>
+                                push('/shop/auth/change-info') }}>
                                 <MenuText>{user.nickname}</MenuText>
                                 <IconButton style={{ width: '24px', height: '56px', padding: '0', marginRight: '18px' }}>
                                     <Icon icon='ep:arrow-right' color='black' />
@@ -135,7 +135,7 @@ const Demo1 = (props) => {
                                     height: '56px'
                                 }}
                                 onClick={() => {
-                                    router.push('/blog/auth/login')
+                                    router.push('/shop/auth/login')
                                 }}
                             >로그인/회원가입</Button>
                         </>
@@ -147,7 +147,7 @@ const Demo1 = (props) => {
                         쇼핑
                         {(user && (themeDnsData?.seller_point > 0 || themeDnsData?.point_rate > 0)) ?
                             <>
-                                <MenuButton themeMode={themeMode} style={{ marginBottom: '0' }} onClick={() => { router.push('/blog/auth/my-page/point') }}>
+                                <MenuButton themeMode={themeMode} style={{ marginBottom: '0' }} onClick={() => { router.push('/shop/auth/point') }}>
                                     <MenuText>포인트 조회</MenuText>
                                     <IconButton style={{ width: '24px', height: '56px', padding: '0', marginRight: '18px' }}>
                                         <Icon icon='ep:arrow-right' color='black' />
@@ -157,7 +157,7 @@ const Demo1 = (props) => {
                             : ""}
                         <MenuButton themeMode={themeMode} onClick={() => {
                             if (user) {
-                                router.push('/blog/auth/my-page/order')
+                                router.push('/shop/auth/history')
                             } else {
                                 setDialogOpen(true)
                                 setDialogType(0)
@@ -170,7 +170,7 @@ const Demo1 = (props) => {
                         </MenuButton>
                         {user ?
                             <>
-                                <MenuButton themeMode={themeMode} style={{ marginTop: '0' }} onClick={() => { router.push('/blog/auth/my-page/address') }}>
+                                <MenuButton themeMode={themeMode} style={{ marginTop: '0' }} onClick={() => { router.push('/shop/auth/delivery-address') }}>
                                     <MenuText>배송지 관리</MenuText>
                                     <IconButton style={{ width: '24px', height: '56px', padding: '0', marginRight: '18px' }}>
                                         <Icon icon='ep:arrow-right' color='black' />
@@ -183,7 +183,7 @@ const Demo1 = (props) => {
                         문의
                         <MenuButton themeMode={themeMode} onClick={() => {
                             if (user) {
-                                router.push('/blog/auth/my-page/inquiry')
+                                router.push('/shop/auth/inquiry')
                             } else {
                                 setDialogOpen(true)
                                 setDialogType(1)
@@ -199,7 +199,7 @@ const Demo1 = (props) => {
                         안내
                         {themePostCategoryList.map(item => (
                             <>
-                                <MenuButton themeMode={themeMode} onClick={() => { router.push(`/blog/service/${item?.id}`) }} style={{marginBottom:'0'}}>
+                                <MenuButton themeMode={themeMode} onClick={() => { router.push(`/shop/service/${item?.id}`) }} style={{marginBottom:'0'}}>
                                     <MenuText>{item.post_category_title}</MenuText>
                                     <IconButton style={{ width: '24px', height: '56px', padding: '0', marginRight: '18px' }}>
                                         <Icon icon='ep:arrow-right' color='black' />
@@ -302,11 +302,11 @@ const Demo1 = (props) => {
                             variant='contained'
                             size='large'
                             sx={{ marginBottom: '2%' }}
-                            onClick={() => { router.push('/blog/auth/login') }}>로그인하기</Button>
+                            onClick={() => { router.push('/shop/auth/login') }}>로그인하기</Button>
                         <Button
                             variant='outlined'
                             size='large'
-                            onClick={() => { dialogType == 0 ? router.push('/shop/auth/order-check') : router.push('/blog/auth/my-page/inquiry') }}>
+                            onClick={() => { dialogType == 0 ? router.push('/shop/auth/order-check') : router.push('/shop/auth/inquiry') }}>
                             {dialogType == 0 ?
                                 <>비회원으로 주문/배송조회 할게요</>
                                 :

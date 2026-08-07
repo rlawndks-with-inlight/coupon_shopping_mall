@@ -118,12 +118,12 @@ const Demo3 = (props) => {
     }
 
     const moveToDetail = (id) => {
-        router.push(`/blog/service/${router.query?.article_category}/${id}`)
+        router.push(`/shop/service/${router.query?.article_category}/${id}`)
     }
 
     const onClickWrite = () => {
         if (user?.id) {
-            router.push(`/blog/service/${router.query?.article_category}/add`)
+            router.push(`/shop/service/${router.query?.article_category}/add`)
         } else {
             toast.error('로그인을 해주세요.')
         }

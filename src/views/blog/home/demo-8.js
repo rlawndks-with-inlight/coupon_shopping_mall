@@ -362,7 +362,7 @@ const Demo8 = (props) => {
   const orig = product?.product_price || 0;
   const hasSale = orig > sale && sale > 0;
   const disc = hasSale ? Math.round((orig - sale) * 100 / orig) : 0;
-  const goTo = () => router?.push?.(`/blog/product/${product?.id}`);
+  const goTo = () => router?.push?.(`/shop/item/${product?.id}`);
 
   return (
     <Wrapper>
@@ -432,7 +432,7 @@ const Demo8 = (props) => {
             {featuredProducts.map((item, i) => {
               const c = getFeaturedCardData(item, currentLang);
               return (
-                <ProductCell key={c.id} onClick={() => router?.push?.(`/blog/product/${c.id}`)}>
+                <ProductCell key={c.id} onClick={() => router?.push?.(`/shop/item/${c.id}`)}>
                   <CardImage src={c.img} effect="blur" />
                   <MonoLabel>{`Item / ${String(i + 1).padStart(2, '0')}`}</MonoLabel>
                   <CardName>{c.name}</CardName>

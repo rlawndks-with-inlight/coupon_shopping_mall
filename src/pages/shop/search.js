@@ -12,9 +12,28 @@ import { SearchDemo6 } from "src/views/shop/demo-6";
 import { SearchDemo7 } from "src/views/shop/demo-7";
 import { SearchDemo8 } from "src/views/shop/demo-8";
 import { SearchDemo9 } from "src/views/shop/demo-9";
+import { isBlogBrand } from "src/utils/blog-shop-route";
+import Blog_Demo1 from "src/views/blog/search/demo-1";
+import Blog_Demo2 from "src/views/blog/search/demo-2";
+import Blog_Demo3 from "src/views/blog/search/demo-3";
+import Blog_Demo4 from "src/views/blog/search/demo-4";
+import Blog_Demo5 from "src/views/blog/search/demo-5";
 //import { SearchDemo10 } from "src/views/shop/demo-10";
 
-const getDemo = (num, common) => {
+// 블로그형 브랜드용 화면. URL 을 /shop 으로 통일하면서 blog 페이지의 뷰 선택을 여기로 옮겼다.
+const getBlogDemo = (num, common) => {
+    // 모든 blog 프레임 검색을 기능 검색(demo-2)으로 수렴 — 장바구니(pages/blog/auth/cart.js)와 같은 방식.
+    // 기존: demo-1/3/4/5 는 299B 빈 스텁(return <></>)이라 검색 버튼을 눌러도 백지였고,
+    //       blog_demo_num 6~9(프레임8~11)는 매핑 자체가 없어 undefined 를 반환했다.
+    // 블로그 프레임에는 상품 목록 페이지(/blog/items)가 없어 검색이 유일한 상품 탐색 수단이다.
+    return <Blog_Demo2 {...common} />
+}
+
+// 첫 인자가 데모번호가 아니라 브랜드 정보다 — 어떤 화면을 보여줄지는 경로가 아니라
+// 브랜드 유형으로 정한다(/blog 경로를 /shop 으로 통일하면서 바뀐 규칙).
+const getDemo = (dns, common) => {
+  if (isBlogBrand(dns)) return getBlogDemo(dns?.blog_demo_num, common);
+  const num = dns?.shop_demo_num;
 
   if (num == 1)
     return <SearchDemo1 {...common} />
@@ -46,7 +65,7 @@ const Search = () => {
   const { themeDnsData } = useSettingsContext();
   return (
     <>
-      {getDemo(themeDnsData?.shop_demo_num, {
+      {getDemo(themeDnsData, {
         data: {
         },
         func: {

@@ -121,10 +121,10 @@ const Demo1 = (props) => {
     }
     const onClickAdd = () => {
         if (user?.id) {
-            router.push(`/blog/service/${router.query?.article_category}/add`)
+            router.push(`/shop/service/${router.query?.article_category}/add`)
         } else {
             toast.error('로그인을 해주세요.')
-            router.push('/blog/auth/login')
+            router.push('/shop/auth/login')
         }
     }
 
@@ -165,7 +165,7 @@ const Demo1 = (props) => {
                             key={item?.id ?? idx}
                             themeMode={themeMode}
                             onClick={() => {
-                                router.push(`/blog/service/${router.query?.article_category}/${item?.id}`)
+                                router.push(`/shop/service/${router.query?.article_category}/${item?.id}`)
                             }}
                         >
                             <RowTitle>{item?.post_title ?? '---'}</RowTitle>

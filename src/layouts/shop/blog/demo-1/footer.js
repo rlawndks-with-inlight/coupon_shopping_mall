@@ -96,7 +96,7 @@ const Footer = () => {
       <DialogSearch
         open={searchOpen}
         handleClose={() => setSearchOpen(false)}
-        root_path={'/blog/search?keyword='}
+        root_path={'/shop/search?keyword='}
       />
       <Wrappers style={{
         background: isDark ? '#111' : '#fafafa',
@@ -141,7 +141,7 @@ const Footer = () => {
         background: isDark ? '#111' : '#fff',
         borderTop: `1px solid ${isDark ? '#333' : '#eee'}`,
       }}>
-        <NavItem $active={currentPath === '/blog'} onClick={() => router.push('/blog')}>
+        <NavItem $active={currentPath === '/shop'} onClick={() => router.push('/shop')}>
           <Icon icon="ph:house" fontSize="1.3rem" color={navColor} />
           <NavLabel style={{ color: navColor }}>HOME</NavLabel>
         </NavItem>
@@ -149,11 +149,11 @@ const Footer = () => {
           <Icon icon="ph:magnifying-glass" fontSize="1.3rem" color={navColor} />
           <NavLabel style={{ color: navColor }}>SEARCH</NavLabel>
         </NavItem>
-        <NavItem $active={currentPath.includes('/cart')} onClick={() => router.push('/blog/auth/cart')}>
+        <NavItem $active={currentPath.includes('/cart')} onClick={() => router.push('/shop/auth/cart')}>
           <Icon icon="ph:shopping-cart" fontSize="1.3rem" color={navColor} />
           <NavLabel style={{ color: navColor }}>CART</NavLabel>
         </NavItem>
-        <NavItem $active={currentPath.includes('/my-page')} onClick={() => router.push('/blog/auth/my-page')}>
+        <NavItem $active={currentPath.includes('/my-page')} onClick={() => router.push('/shop/auth/my-page')}>
           <Icon icon="ph:user" fontSize="1.3rem" color={navColor} />
           <NavLabel style={{ color: navColor }}>MY</NavLabel>
         </NavItem>

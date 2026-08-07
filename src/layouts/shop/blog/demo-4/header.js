@@ -147,7 +147,7 @@ const Header = (props) => {
                     <DialogSearch
                         open={dialogOpenObj.search}
                         handleClose={handleDialogClose}
-                        root_path={'/blog/search?keyword='}
+                        root_path={'/shop/search?keyword='}
                     />
                     <Wrappers style={{
                         background: `${(isSellerPage || isProductPage) && scrollY < 350 ? 'transparent' : (themeMode == 'dark' ? '#000' : '#fff')}`
@@ -171,7 +171,7 @@ const Header = (props) => {
                                 </>
                                 :
                                 <>
-                                    <img src={logoSrc()} style={{ height: '40px', width: 'auto', cursor: 'pointer' }} onClick={() => { router.push('/blog') }} />
+                                    <img src={logoSrc()} style={{ height: '40px', width: 'auto', cursor: 'pointer' }} onClick={() => { router.push('/shop') }} />
                                 </>}
                             <IconButton
                                 sx={{ ...iconButtonStyle, marginLeft: 'auto' }}
@@ -186,13 +186,13 @@ const Header = (props) => {
                             </IconButton>
                             <IconButton
                                 sx={iconButtonStyle}
-                                onClick={() => router.push('/blog/auth/my-page')}
+                                onClick={() => router.push('/shop/auth/my-page')}
                             >
                                 <Icon icon={'basil:user-outline'} fontSize={'1.8rem'} color={themeMode == 'dark' || ((isSellerPage || isProductPage) && scrollY < 350) ? '#fff' : '#000'} />
                             </IconButton>
                             <IconButton
                                 sx={iconButtonStyle}
-                                onClick={() => router.push('/blog/auth/cart')}
+                                onClick={() => router.push('/shop/auth/cart')}
                             >
                                 <Icon icon={'basil:shopping-bag-outline'} fontSize={'1.8rem'} color={themeMode == 'dark' || ((isSellerPage || isProductPage) && scrollY < 350) ? '#fff' : '#000'} />
                             </IconButton>

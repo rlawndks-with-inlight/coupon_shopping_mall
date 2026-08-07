@@ -98,15 +98,15 @@ const PayResultView = () => {
 
       <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1.5} sx={{ mt: 3 }}>
         <Button fullWidth variant="outlined" color="inherit"
-          onClick={() => router.push(isBlogOnly ? '/blog' : '/shop')}>
+          onClick={() => router.push(isBlogOnly ? '/shop' : '/shop')}>
           쇼핑 계속하기
         </Button>
         {/* 실패 시엔 주문내역이 없으므로 장바구니로 되돌려 재시도를 돕는다. */}
         <Button fullWidth variant="contained"
           onClick={() => router.push(
             isSuccess
-              ? (isBlogOnly ? '/blog/auth/my-page/order' : '/shop/auth/history')
-              : (isBlogOnly ? '/blog/auth/cart' : '/shop/auth/cart')
+              ? (isBlogOnly ? '/shop/auth/history' : '/shop/auth/history')
+              : (isBlogOnly ? '/shop/auth/cart' : '/shop/auth/cart')
           )}>
           {isSuccess ? '주문내역 보기' : '장바구니로'}
         </Button>

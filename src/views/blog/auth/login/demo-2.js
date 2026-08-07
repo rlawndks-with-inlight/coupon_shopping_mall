@@ -79,7 +79,7 @@ const Demo2 = (props) => {
         let user = await login(username, password);
         if (user) {
             onChangeWishData(user?.wish_data ?? []);
-            router.push('/blog/auth/my-page');
+            router.push('/shop/auth/my-page');
         }
     }
     return (
@@ -119,7 +119,7 @@ const Demo2 = (props) => {
                     />
                 </TextFieldContainer>
                 <FindInfo themeMode={themeMode}>
-                    <div style={{ cursor: 'pointer', marginLeft: 'auto' }} onClick={() => { router.push('/blog/auth/find-info?type=0', '/blog/auth/find-info') }}>아이디 / 비밀번호 찾기</div>
+                    <div style={{ cursor: 'pointer', marginLeft: 'auto' }} onClick={() => { router.push('/shop/auth/find-info?type=0', '/shop/auth/find-info') }}>아이디 / 비밀번호 찾기</div>
                 </FindInfo>
                 <ButtonContainer>
                     <Button
@@ -138,7 +138,7 @@ const Demo2 = (props) => {
                         color='primary'
                         size='large'
                         onClick={() => {
-                            router.push('/blog/auth/sign-up')
+                            router.push('/shop/auth/sign-up')
                         }}
                         style={{
                             fontSize: 'large',
@@ -148,7 +148,7 @@ const Demo2 = (props) => {
                     >3초만에 빠른 회원가입</Button>
                 </ButtonContainer>
 
-                <NotSignup themeMode={themeMode}><div style={{ cursor: 'pointer' }} onClick={() => { router.push('/blog/auth/my-page/order') }}>비회원 주문 조회</div></NotSignup>
+                <NotSignup themeMode={themeMode}><div style={{ cursor: 'pointer' }} onClick={() => { router.push('/shop/auth/history') }}>비회원 주문 조회</div></NotSignup>
             </Wrappers>
         </>
     )

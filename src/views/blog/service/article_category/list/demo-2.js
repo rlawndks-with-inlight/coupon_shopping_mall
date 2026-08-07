@@ -158,7 +158,7 @@ const Demo2 = (props) => {
                             let answered = item?.replies?.length > 0;
                             return (
                                 <ListRow key={idx} themeMode={themeMode} onClick={() => {
-                                    router.push(`/blog/service/${router.query?.article_category}/${item.id}`)
+                                    router.push(`/shop/service/${router.query?.article_category}/${item.id}`)
                                 }}>
                                     <RowTitle>{item?.post_title ?? '---'}</RowTitle>
                                     {item?.writer_nickname &&
@@ -182,7 +182,7 @@ const Demo2 = (props) => {
                 {postCategory?.is_able_user_add == 1 &&
                     <ServiceFaq themeMode={themeMode} onClick={() => {
                         if (user?.id) {
-                            router.push(`/blog/service/${router.query?.article_category}/add`)
+                            router.push(`/shop/service/${router.query?.article_category}/add`)
                         } else {
                             toast.error("로그인을 해주세요.")
                         }

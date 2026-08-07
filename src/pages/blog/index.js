@@ -1,54 +1,20 @@
+import { useEffect } from "react";
 import { useRouter } from "next/router";
-import { useState } from "react";
-import ShopLayout from "src/layouts/shop/ShopLayout";
-import Demo1 from "src/views/blog/home/demo-1";
-import { useSettingsContext } from "src/components/settings";
-import Demo2 from "src/views/blog/home/demo-2";
-import Demo3 from "src/views/blog/home/demo-3";
-import Demo4 from "src/views/blog/home/demo-4";
-import Demo5 from "src/views/blog/home/demo-5";
-import Demo6 from "src/views/blog/home/demo-6";
-import Demo7 from "src/views/blog/home/demo-7";
-import Demo8 from "src/views/blog/home/demo-8";
-import Demo9 from "src/views/blog/home/demo-9";
 
-const getDemo = (num, common) => {
+// /blog 경로는 /shop 으로 통일했다. 이 파일은 옛 주소로 들어온 방문자를 넘겨주기만 한다.
+// (화면은 /shop 쪽 페이지가 브랜드 유형을 보고 고른다)
+// 남은 옛 링크가 404 로 죽지 않도록 지우지 않고 리다이렉트로 둔다.
+const Redirect = () => {
+  const router = useRouter();
 
-    if (num == 1)
-        return <Demo1 {...common} />
-    else if (num == 2)
-        return <Demo2 {...common} />
-    else if (num == 3)
-        return <Demo3 {...common} />
-    else if (num == 4)
-        return <Demo4 {...common} />
-    else if (num == 5)
-        return <Demo5 {...common} />
-    else if (num == 6)
-        return <Demo6 {...common} />
-    else if (num == 7)
-        return <Demo7 {...common} />
-    else if (num == 8)
-        return <Demo8 {...common} />
-    else if (num == 9)
-        return <Demo9 {...common} />
-}
-const BlogIndex = () => {
-    const router = useRouter();
-    const { themeDnsData } = useSettingsContext();
+  useEffect(() => {
+    if (!router.isReady) return;
+    // 쿼리스트링은 그대로 넘긴다(?type=0 같은 탭 지정이 살아 있어야 한다).
+    const qs = router.asPath.split('?')[1];
+    router.replace('/shop' + (qs ? `?${qs}` : ''));
+  }, [router.isReady]);
 
-    return (
-        <>
-            {getDemo(themeDnsData?.blog_demo_num, {
-                data: {
-                },
-                func: {
-                    router
-                },
-            })}
-        </>
-    )
-}
-BlogIndex.getLayout = (page) => <ShopLayout>{page}</ShopLayout>;
+  return <></>;
+};
 
-export default BlogIndex;
+export default Redirect;

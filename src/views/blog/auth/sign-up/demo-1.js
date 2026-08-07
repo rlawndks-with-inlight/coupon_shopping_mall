@@ -439,7 +439,7 @@ const Demo1 = (props) => {
                   fontSize: 'large'
                 }}
                 onClick={() => {
-                  router.push('/blog/auth/login')
+                  router.push('/shop/auth/login')
                 }}
               >로그인하러 가기</Button>
             </TextFieldContainer>

@@ -1,34 +1,20 @@
+import { useEffect } from "react";
 import { useRouter } from "next/router";
-import { useState } from "react";
-import ShopLayout from "src/layouts/shop/ShopLayout";
-import Demo1 from "src/views/blog/search/demo-1";
-import { useSettingsContext } from "src/components/settings";
-import Demo2 from "src/views/blog/search/demo-2";
-import Demo3 from "src/views/blog/search/demo-3";
-import Demo4 from "src/views/blog/search/demo-4";
-import Demo5 from "src/views/blog/search/demo-5";
 
-const getDemo = (num, common) => {
-    // 모든 blog 프레임 검색을 기능 검색(demo-2)으로 수렴 — 장바구니(pages/blog/auth/cart.js)와 같은 방식.
-    // 기존: demo-1/3/4/5 는 299B 빈 스텁(return <></>)이라 검색 버튼을 눌러도 백지였고,
-    //       blog_demo_num 6~9(프레임8~11)는 매핑 자체가 없어 undefined 를 반환했다.
-    // 블로그 프레임에는 상품 목록 페이지(/blog/items)가 없어 검색이 유일한 상품 탐색 수단이다.
-    return <Demo2 {...common} />
-}
-const Search = () => {
-    const router = useRouter();
-    const { themeDnsData } = useSettingsContext();
-    return (
-        <>
-            {getDemo(themeDnsData?.blog_demo_num, {
-                data: {
-                },
-                func: {
-                    router
-                },
-            })}
-        </>
-    )
-}
-Search.getLayout = (page) => <ShopLayout>{page}</ShopLayout>;
-export default Search;
+// /blog 경로는 /shop 으로 통일했다. 이 파일은 옛 주소로 들어온 방문자를 넘겨주기만 한다.
+// (화면은 /shop 쪽 페이지가 브랜드 유형을 보고 고른다)
+// 남은 옛 링크가 404 로 죽지 않도록 지우지 않고 리다이렉트로 둔다.
+const Redirect = () => {
+  const router = useRouter();
+
+  useEffect(() => {
+    if (!router.isReady) return;
+    // 쿼리스트링은 그대로 넘긴다(?type=0 같은 탭 지정이 살아 있어야 한다).
+    const qs = router.asPath.split('?')[1];
+    router.replace('/shop/search' + (qs ? `?${qs}` : ''));
+  }, [router.isReady]);
+
+  return <></>;
+};
+
+export default Redirect;

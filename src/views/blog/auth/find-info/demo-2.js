@@ -94,7 +94,7 @@ const Demo2 = (props) => {
                             value={findType}
                             scrollButtons='false'
                             variant='fullWidth'
-                            onChange={(event, newValue) => router.push(`/blog/auth/find-info?type=${newValue}`, '/blog/auth/find-info')}
+                            onChange={(event, newValue) => router.push(`/shop/auth/find-info?type=${newValue}`, '/shop/auth/find-info')}
                             sx={{ width: '100%' }}
                         >
                             {Object.keys(returnFindType).map((key) => (
@@ -104,7 +104,7 @@ const Demo2 = (props) => {
                     </div>
                     {isShopgoBrand(themeDnsData) ?
                         <div style={{ marginTop: '1.5rem' }}>
-                            <FindInfoQuestion tab={findType} router={router} loginPath="/blog/auth/login" />
+                            <FindInfoQuestion tab={findType} router={router} loginPath="/shop/auth/login" />
                         </div>
                         :
                         findType == 0 ?

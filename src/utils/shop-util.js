@@ -46,6 +46,49 @@ export const calculatorPrice = (item) => {// 상품별로 가격
         discount: (product_price - product_sale_price) * order_count//할인가
     }
 }
+// 주문 금액 계산 — '화면에 보여줄 값'과 '실제로 청구할 값'이 같은 함수를 쓰게 한다.
+//
+// 예전엔 두 곳이 각자 계산했다. 주문서 요약(CheckoutSummary)은 상품별 배송비가 포함된
+// 합계에 브랜드 배송비를 한 번 더 얹어 보여줬고, 실제 청구는 상품별 배송비를 버리고
+// 브랜드 배송비만 1회 부과했다. 그래서 배송비 정책을 켠 브랜드에서
+// 고객이 본 금액과 결제되는 금액이 어긋났다. 무료배송 판정 기준도 서로 달랐다
+// (화면은 '상품가+배송비', 청구는 '상품가만')。
+//
+// makePayData 와 같은 규칙이다:
+//   라인 상품가 = calculatorPrice(item).total - 그 라인의 delivery_fee
+//   배송비      = 브랜드 정책이 켜져 있으면 주문당 1회, 아니면 상품별 delivery_fee 합
+//   결제금액    = 상품가 합 + 배송비 - 사용포인트
+export const calcOrderTotals = (products_, use_point = 0) => {
+    const products = Array.isArray(products_) ? products_ : [];
+    const merchByIdx = [];
+    let merchTotal = 0;
+    for (let i = 0; i < products.length; i++) {
+        const calc = calculatorPrice(products[i]);
+        const lineDelivery = products[i]?.delivery_fee ?? 0;
+        const lineMerch = (calc?.total ?? 0) - lineDelivery;
+        merchByIdx[i] = lineMerch;
+        merchTotal += lineMerch;
+    }
+    const ship = getBrandShipping(merchTotal);
+    let delivery = 0;
+    const lineDeliveries = [];
+    for (let i = 0; i < products.length; i++) {
+        const d = ship.active ? (i === 0 ? ship.fee : 0) : (products[i]?.delivery_fee ?? 0);
+        lineDeliveries[i] = d;
+        delivery += d;
+    }
+    const point = Math.max(0, parseInt(use_point) || 0);
+    return {
+        merchTotal,
+        delivery,
+        shipActive: ship.active,
+        usedPoint: point,
+        amount: merchTotal + delivery - point,
+        merchByIdx,
+        lineDeliveries,
+    };
+};
+
 export const makePayData = async (products_, payData_) => {
     let products = products_;
     let amount = 0;

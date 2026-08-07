@@ -36,6 +36,7 @@ CheckoutSummary.propTypes = {
   discount: PropTypes.number,
   subtotal: PropTypes.number,
   shipping: PropTypes.number,
+  shipActive: PropTypes.bool,
   enableEdit: PropTypes.bool,
   enableDiscount: PropTypes.bool,
   onApplyDiscount: PropTypes.func,
@@ -47,6 +48,7 @@ export default function CheckoutSummary({
   discount,
   subtotal,
   shipping,
+  shipActive = false,
   enableEdit = false,
   enableDiscount = false,
   payData,
@@ -57,9 +59,23 @@ export default function CheckoutSummary({
   const { translate } = useLocales();
   const { setting_obj } = themeDnsData;
   const { use_point_min_price = 0, max_use_point = 0, point_rate = 0 } = setting_obj;
-  // 브랜드 배송비 정책(설정 시) — 정책 미설정이면 active:false로 기존 표시 유지
-  const brandShip = getBrandShipping((subtotal ?? 0) - (discount ?? 0));
-  const displayTotal = brandShip.active ? ((total ?? 0) + brandShip.fee) : total;
+  // 배송비·최종금액은 호출부가 calcOrderTotals 로 계산해 넘겨준다.
+  //
+  // 예전엔 여기서 자체 계산했다 — 상품별 배송비가 포함된 total 에 브랜드 배송비를
+  // 한 번 더 얹었고, 무료배송 기준도 '상품가+배송비'로 봐서 실제 청구(상품가만 기준)와
+  // 어긋났다. 결과적으로 고객이 본 금액과 결제되는 금액이 달랐다.
+  // 표시와 청구는 반드시 같은 함수를 써야 한다.
+  //
+  // 호출부가 shipping 을 주면 그 값을 그대로 쓴다(공용 주문서 — 실제 결제가 일어나는 화면).
+  // 안 주면 예전처럼 자체 계산한다(데모 카트들 — 결제는 하지 않고 주문서로 넘어간다).
+  // 카트도 순차적으로 calcOrderTotals 로 옮기는 게 맞지만, 안 넘기는 호출부를
+  // 갑자기 깨뜨리지 않도록 폴백을 남겨 둔다.
+  const fallbackShip = getBrandShipping((subtotal ?? 0) - (discount ?? 0));
+  const hasExplicitShipping = shipping !== undefined && shipping !== null;
+  const brandShip = hasExplicitShipping ? { active: shipActive, fee: shipping } : fallbackShip;
+  const displayTotal = hasExplicitShipping
+    ? total
+    : (fallbackShip.active ? ((total ?? 0) + fallbackShip.fee) : total);
   // 포인트 UI 노출 게이트: 로그인(user) && 포인트설정값 존재(최대사용가능 포인트 또는 적립률이 truthy)일 때만 노출.
   // 비회원/미사용 브랜드면 숨김.
   const showPointUsage = !!user && (parseFloat(max_use_point) > 0 || parseFloat(point_rate) > 0);

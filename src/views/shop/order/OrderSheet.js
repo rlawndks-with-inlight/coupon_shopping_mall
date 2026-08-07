@@ -14,7 +14,7 @@ import Label from 'src/components/label/Label';
 import EmptyContent from 'src/components/empty-content/EmptyContent';
 import Iconify from 'src/components/iconify/Iconify';
 import { useSettingsContext } from 'src/components/settings';
-import { calculatorPrice, getCartDataUtil, makePayData, onPayProductsByAuth, onPayProductsByHand, onPayProductsByPayletter, onPayProductsByForspay } from 'src/utils/shop-util';
+import { calcOrderTotals, calculatorPrice, getCartDataUtil, makePayData, onPayProductsByAuth, onPayProductsByHand, onPayProductsByPayletter, onPayProductsByForspay } from 'src/utils/shop-util';
 import { forspayMethodList } from 'src/utils/format';
 import { sanitizePhoneInput, isValidPhoneNumber, makeOrdNum } from 'src/utils/function';
 import Policy from 'src/pages/shop/auth/policy';
@@ -396,6 +396,12 @@ export default function OrderSheet({ router }) {
     }
   };
 
+  // 화면에 보여줄 금액. 실제 청구(makePayData)와 같은 규칙으로 계산한다.
+  // 예전엔 요약 카드가 자체 계산했고, 상품별 배송비가 포함된 합계에 브랜드 배송비를
+  // 한 번 더 얹었다. 무료배송 판정 기준도 서로 달라서(화면 '상품가+배송비' / 청구 '상품가만')
+  // 배송비 정책을 켠 브랜드에서 고객이 본 금액과 결제되는 금액이 어긋났다.
+  const orderTotals = calcOrderTotals(products, payData?.use_point);
+
   const paymentModules = (themeDnsData?.payment_modules || []).filter((m) => m?.type != 'sms_pay');
   const addressList = addressContent?.content || [];
   const isMember = !!user;
@@ -718,9 +724,11 @@ export default function OrderSheet({ router }) {
                   themeDnsData={themeDnsData}
                   payData={payData}
                   setPayData={setPayData}
-                  total={_.sum(_.map(products, (item) => calculatorPrice(item, payData).total)) - (payData?.use_point || 0)}
+                  total={orderTotals.amount}
+                  shipping={orderTotals.delivery}
+                  shipActive={orderTotals.shipActive}
                   discount={_.sum(_.map(products, (item) => calculatorPrice(item, payData).discount))}
-                  subtotal={_.sum(_.map(products, (item) => calculatorPrice(item, payData).subtotal))}
+                  subtotal={orderTotals.merchTotal}
                 />
                 <Typography variant="caption" sx={{ color: 'text.secondary', display: 'block', mt: 1, textAlign: 'center' }}>
                   결제수단을 선택한 뒤 결제 방법(결제하기 버튼 또는 입력란)에 따라 진행하세요.

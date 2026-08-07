@@ -185,7 +185,7 @@ export default function OrderSheet({ router }) {
     });
   };
   const onAddAddress = async (address_obj) => {
-    const result = await apiManager('user-addresses', 'create', { ...address_obj, user_id: user?.id });
+    const result = await apiManager('user-addresses', (address_obj?.id > 0 ? 'update' : 'create'), { ...address_obj, user_id: user?.id });
     if (result) {
       setAddAddressOpen(false);
       onChangeAddressPage(addressSearchObj);

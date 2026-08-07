@@ -88,7 +88,7 @@ const MyPageDemo = (props) => {
     }
   }
   const onAddAddress = async (address_obj) => {
-    let result = await apiManager('user-addresses', 'create', {
+    let result = await apiManager('user-addresses', (address_obj?.id > 0 ? 'update' : 'create'), {
       ...address_obj,
       user_id: user?.id,
     })

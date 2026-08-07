@@ -62,7 +62,7 @@ const AccountEditPanel = ({ loginPath = '/shop/auth/login' }) => {
   };
 
   const onAddAddress = async (address_obj) => {
-    let result = await apiManager('user-addresses', 'create', { ...address_obj, user_id: user?.id });
+    let result = await apiManager('user-addresses', (address_obj?.id > 0 ? 'update' : 'create'), { ...address_obj, user_id: user?.id });
     if (result) onChangePage(searchObj);
   };
   const onUpdateAddress = async (id) => {

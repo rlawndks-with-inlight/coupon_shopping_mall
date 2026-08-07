@@ -7,6 +7,7 @@ import _ from 'lodash';
 import { commarNumber, getTrxStatusByNumber } from 'src/utils/function';
 import { apiManager } from 'src/utils/api';
 import { getOptionLabel } from 'src/utils/shop-util';
+import OrderCancelButton from 'src/components/elements/shop/OrderCancelButton';
 
 const ContentContainer = styled.div`
 display:flex;
@@ -166,6 +167,8 @@ const Demo2 = (props) => {
                                                         whiteSpace: 'nowrap'
                                                     }}
                                                 >배송조회</Button>
+                                                {/* 블로그형 프레임에는 취소요청 수단이 아예 없었다 — 공용 버튼으로 통일 */}
+                                                <OrderCancelButton trx={item.trx} onDone={getOrderList} sx={{ marginBottom: '1rem', whiteSpace: 'nowrap' }} />
                                             </AddressButton>
 
                                         </div>

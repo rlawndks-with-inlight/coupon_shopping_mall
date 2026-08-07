@@ -1,7 +1,7 @@
 import Logo from "src/components/logo/Logo"
 import styled from "styled-components"
 import { IconButton, TextField, InputAdornment, Drawer, Badge } from "@mui/material"
-import { forwardRef, useEffect, useRef, useState } from "react"
+import { forwardRef, Fragment, useEffect, useRef, useState } from "react"
 import { Icon } from "@iconify/react"
 import { Row, themeObj } from 'src/components/elements/styled-components'
 import { useTheme } from '@mui/material/styles';
@@ -198,6 +198,21 @@ height: 88px;
     height: 44px;
 }
 `
+
+// 2단 이하 카테고리 — 들여쓰기와 크기로만 위계를 준다(접기/펼치기 없음).
+const returnSidebarLeaf = (item, depth, func, currentLang) => {
+    const { router, setSideMenuOpen } = func;
+    const go = () => { router.push(`/shop/items?category_id=${item?.id}`); setSideMenuOpen(false); };
+    return (
+        <Fragment key={item.id}>
+            <ColumnMenuContent onClick={go}
+                style={{ paddingLeft: `${depth}rem`, fontSize: depth >= 2 ? '0.85rem' : '0.9rem', opacity: depth >= 2 ? 0.7 : 0.85 }}>
+                {formatLang(item, 'category_name', currentLang)}
+            </ColumnMenuContent>
+            {(item.children ?? []).map((c) => returnSidebarLeaf(c, depth + 1, func, currentLang))}
+        </Fragment>
+    );
+};
 
 const Header = () => {
 
@@ -841,27 +856,37 @@ const Header = () => {
                                 </>
                             ))}
                         </>*/}
-                    {themeCategoryList && themeCategoryList.map((group, index) => (
-                        <>
-                            {/* 그룹이 여러 개일 때만 구분용 제목을 낸다.
-                                단일 트리 전환 브랜드는 합성 그룹 1개('카테고리')뿐이라 제목이 군더더기가 된다. */}
-                            {themeCategoryList.length > 1 &&
-                                <ColumnMenuTitle>{formatLang(group, 'category_group_name', currentLang)}</ColumnMenuTitle>}
-                            <TreeView
-                                defaultCollapseIcon={<Icon icon={'ic:baseline-minus'} />}
-                                defaultExpandIcon={<Icon icon={'ic:baseline-plus'} />}
-                                defaultEndIcon={<Icon icon={'mdi:dot'} />}
+                    {/* 상품 카테고리 — 1단은 섹션 제목(고객센터·마이페이지와 동급), 2단 이하는 들여쓴 하위 항목.
+                        단일 트리 전환으로 그룹 레이어가 사라져 합성 그룹명을 제목으로 쓸 수 없게 됐고,
+                        그 결과 이 블록만 라벨 없는 불릿 목록이 되어 위계가 안 보였다.
+                        ※ 이 헤더는 프레임3(ShopLayout4)이 쓴다 — demo-4/header.js 는 쓰이지 않는다. */}
+                    {headerCategories.map((cat) => (
+                        <Fragment key={cat.id}>
+                            <CategoryTitle
+                                style={{ cursor: 'pointer' }}
+                                onClick={() => { router.push(`/shop/items?category_id=${cat.id}`); setSideMenuOpen(false); }}
                             >
-                                {group?.product_categories && group?.product_categories.map((item1, idx) => (
-                                    <>
-                                        {returnSidebarMenu(item1, 0, {
-                                            router,
-                                            setSideMenuOpen
-                                        }, index)}
-                                    </>
-                                ))}
-                            </TreeView>
-                        </>
+                                {formatLang(cat, 'category_name', currentLang)}
+                            </CategoryTitle>
+                            {(cat.children ?? []).length > 6 ?
+                                <>
+                                    {/* 하위가 7개 이상이면 목록이 길어지므로 이 카테고리만 기존 TreeView(접기/펼치기)로 감싼다. */}
+                                    <TreeView
+                                        defaultCollapseIcon={<Icon icon={'ic:baseline-minus'} />}
+                                        defaultExpandIcon={<Icon icon={'ic:baseline-plus'} />}
+                                        defaultEndIcon={<Icon icon={'mdi:dot'} />}
+                                    >
+                                        {(cat.children ?? []).map((sub) => (
+                                            <Fragment key={sub.id}>
+                                                {returnSidebarMenu(sub, 0, { router, setSideMenuOpen }, 0)}
+                                            </Fragment>
+                                        ))}
+                                    </TreeView>
+                                </>
+                                :
+                                (cat.children ?? []).map((sub) => returnSidebarLeaf(sub, 1, { router, setSideMenuOpen }, currentLang))
+                            }
+                        </Fragment>
                     ))}
                     {
                         themeDnsData?.id == 74 &&
@@ -972,6 +997,11 @@ const ColumnMenuContainer = styled.div`
 const ColumnMenuTitle = styled.div`
         margin: 2rem 0 0.5rem 0;
         font-weight: bold;
+`
+/* 상품 카테고리 전용 제목 — 1단이 여러 개 반복되므로 ColumnMenuTitle 의 2rem 간격은 너무 벌어진다.
+   ColumnMenuTitle 자체를 고치면 고객센터·마이페이지 헤딩까지 같이 바뀌므로 따로 둔다. */
+const CategoryTitle = styled(ColumnMenuTitle)`
+        margin: 1.25rem 0 0.25rem 0;
 `
 const ColumnMenuContent = styled.div`
         display:flex;

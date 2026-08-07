@@ -1,12 +1,10 @@
 import { themeObj } from "src/components/elements/styled-components"
 import { useSettingsContext } from "src/components/settings"
 import styled from "styled-components"
-import { logoSrc } from "src/data/data"
 import { useLocales } from "src/locales"
 import { useState } from "react"
-import { Drawer, IconButton } from "@mui/material"
 import { Icon } from "@iconify/react"
-import Policy from 'src/pages/shop/auth/policy'
+import DialogPolicy from 'src/components/dialog/DialogPolicy'
 import { useRouter } from "next/router"
 
 const Wrappers = styled.footer`
@@ -36,17 +34,6 @@ font-size: 12px;
 const MarginRight = styled.div`
 margin-right:0.5rem;
 `
-const DrawerTitle = styled.div`
-display:flex;
-margin-left:auto;
-width:95%;
-padding-left:2.5%;
-justify-content:space-between;
-`
-const PolicyContainer = styled.div`
-padding:0 2.5%;
-`
-
 const FixedFooter = styled.div`
 height: 60px;
 max-width: 720px;
@@ -164,40 +151,17 @@ const Footer = () => {
               ③ 가맹점이 직접 파는 구조에서 "책임은 공급사에게 있다"는 고지는 사실과 다르다 */}
 
         </ContentWrapper>
-        <Drawer
-          anchor='bottom'
-          open={policyType}
+        {/* 바텀시트(Drawer) → Dialog scroll="paper" 로 교체.
+            ※ 이 파일만 policyType 이 1-base 다(0=닫힘 / 1=이용약관 / 2=개인정보정책).
+              열림 여부는 policyType > 0, 약관 종류는 policyType - 1 로 0-base 로 되돌려 넘긴다.
+              오프셋을 빼먹으면 '이용약관' 자리에 개인정보처리방침이 뜬다. */}
+        <DialogPolicy
+          open={policyType > 0}
+          type={policyType - 1}
           onClose={() => {
             setPolicyType(0)
           }}
-          PaperProps={{
-            sx: {
-              maxWidth: '790px',
-              width: '90%',
-              maxHeight: '500px',
-              margin: '0 auto',
-              borderTopLeftRadius: '24px',
-              borderTopRightRadius: '24px',
-              paddingBottom: '2rem',
-              position: 'fixed'
-            }
-          }}
-        >
-          <DrawerTitle>
-            <img src={logoSrc()} style={{ height: '56px', width: 'auto' }} />
-            <IconButton
-              sx={{}}
-              onClick={() => {
-                setPolicyType(0)
-              }}
-            >
-              <Icon icon={'ic:round-close'} fontSize={'2.5rem'} />
-            </IconButton>
-          </DrawerTitle>
-          <PolicyContainer>
-            <Policy type={policyType - 1} />
-          </PolicyContainer>
-        </Drawer>
+        />
       </Wrappers>
       <FixedFooter>
         <Icon icon='bi:handbag' style={{ fontSize: '24px', cursor: 'pointer' }} onClick={() => { router.push('/shop') }} />

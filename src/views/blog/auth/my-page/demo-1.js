@@ -1,9 +1,9 @@
 import styled from 'styled-components'
-import { Button, Divider, IconButton, Drawer, Dialog, DialogContent, DialogActions, DialogTitle } from '@mui/material';
+import { Button, Divider, IconButton, Dialog, DialogContent, DialogActions, DialogTitle } from '@mui/material';
 import { Icon } from '@iconify/react';
 import { useState } from 'react';
 import { useSettingsContext } from 'src/components/settings';
-import Policy from 'src/pages/shop/auth/policy';
+import DialogPolicy from 'src/components/dialog/DialogPolicy';
 import { useAuthContext } from 'src/layouts/manager/auth/useAuthContext';
 import { useEffect } from 'react';
 import { Title } from 'src/components/elements/blog/demo-1';
@@ -69,23 +69,11 @@ color:gray;
 margin-top:16px;
 `
 
-const PolicyContainer = styled.div`
-padding:0 2.5%;
-`
-
 const DialogBox = styled.div`
 display:flex;
 flex-direction:column;
 margin: 0 auto;
 width:100%;
-`
-
-const DrawerTitle = styled.div`
-display:flex;
-margin-left:auto;
-width:95%;
-padding-left:2.5%;
-justify-content:space-between;
 `
 
 //마이페이지 김인욱
@@ -260,41 +248,16 @@ const Demo1 = (props) => {
                         </>
                     }
                 </MenuContainer>
-                <Drawer
-                    anchor='bottom'
+                {/* 바텀시트(Drawer) → Dialog scroll="paper" 로 교체.
+                    기존에는 Paper 전체가 스크롤돼 제목/닫기(X)가 본문과 함께 사라졌고,
+                    로고 미등록 가맹점은 헤더가 통째로 빈 줄이 됐다. 이제 약관 제목이 상단에 고정된다. */}
+                <DialogPolicy
                     open={openPolicy}
+                    type={policyType}
                     onClose={() => {
                         setOpenPolicy(false)
-
                     }}
-                    PaperProps={{
-                        sx: {
-                            maxWidth: '790px',
-                            width: '90%',
-                            maxHeight: '500px',
-                            margin: '0 auto',
-                            borderTopLeftRadius: '24px',
-                            borderTopRightRadius: '24px',
-                            paddingBottom: '2rem',
-                            position: 'fixed'
-                        }
-                    }}
-                >
-                    <DrawerTitle>
-                        <img src={logoSrc()} style={{ height: '56px', width: 'auto' }} />
-                        <IconButton
-                            sx={{}}
-                            onClick={() => {
-                                setOpenPolicy(false)
-                            }}
-                        >
-                            <Icon icon={'ic:round-close'} fontSize={'2.5rem'} />
-                        </IconButton>
-                    </DrawerTitle>
-                    <PolicyContainer>
-                        <Policy type={policyType} />
-                    </PolicyContainer>
-                </Drawer>
+                />
             </Wrappers>
             <Dialog
                 open={dialogOpen}

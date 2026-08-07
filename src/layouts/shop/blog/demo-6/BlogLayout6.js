@@ -6,6 +6,7 @@ import { LazyLoadImage } from "react-lazy-load-image-component";
 import { useState } from "react";
 import DialogSearch from "src/components/dialog/DialogSearch";
 import { useAuthContext } from "src/layouts/manager/auth/useAuthContext";
+import StorefrontPopups from "src/components/elements/shop/StorefrontPopups";
 
 /* 단일 상품 전용 럭셔리 레이아웃 — 심플 헤더 + 심플 푸터 */
 
@@ -157,6 +158,7 @@ const BlogLayout6 = (props) => {
           </IconBtn>
         </HeaderActions>
       </Header>
+      <StorefrontPopups />
       <Main>{children}</Main>
       <Footer>
         <FooterBrand>{brandName}</FooterBrand>

@@ -3,6 +3,7 @@ import Footer from "./footer"
 import Header from "./header"
 import { useSettingsContext } from "src/components/settings";
 import { useEffect, useState } from "react";
+import StorefrontPopups from "src/components/elements/shop/StorefrontPopups";
 
 const Wrappers = styled.div`
 display:flex;
@@ -45,6 +46,7 @@ const BlogLayout3 = (props) => {
                             func={{
                                 router
                             }} />
+                        <StorefrontPopups />
                         {children}
                         <Footer
                             data={{

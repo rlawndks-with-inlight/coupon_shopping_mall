@@ -2,6 +2,7 @@ import styled from "styled-components";
 import Footer from "./footer"
 import Header from "./header"
 import { useSettingsContext } from "src/components/settings";
+import StorefrontPopups from "src/components/elements/shop/StorefrontPopups";
 
 const Wrappers = styled.div`
 display:flex;
@@ -32,6 +33,7 @@ const ShopLayout2 = (props) => {
                     func={{
                         router
                     }} />
+                <StorefrontPopups />
                 {children}
                 <Footer
                     data={{

@@ -163,16 +163,32 @@ const CustomContent = forwardRef(function CustomContent(props, ref) {
                         </IconButton>
                     </Tooltip>
                 </>}
-            <Tooltip title={`해당 ${categoryGroup?.category_group_name} 및 하위 ${categoryGroup?.category_group_name}을(를) 삭제하시려면 클릭해 주세요.`}>
-                <IconButton onClick={() => {
-                    setModal({
-                        func: () => { onClickCategoryDelete(category) },
-                        icon: 'material-symbols:delete-outline',
-                        title: '정말 삭제하시겠습니까?'
-                    })
-                }}>
-                    <Icon icon='material-symbols:delete-outline' fontSize={16} />
-                </IconButton>
+            {/* 삭제는 '이 카테고리 하나만' 숨긴다. 백엔드 delete 가 그 행 하나만 is_delete=1 로
+                바꾸기 때문이다(product_category.controller.js).
+                예전 툴팁은 '및 하위까지 삭제'라고 약속했지만 실제로는 자식이 그대로 남았고,
+                부모가 사라진 자식은 트리에서 탈락해 관리화면·고객화면 어디에도 안 보이면서
+                DB 에는 살아있는 고아가 됐다. 거기 걸린 상품도 카테고리로는 도달 불가가 됐다.
+                → 약속을 지키게 만드는 대신, 지킬 수 있는 것만 약속한다.
+                  하위가 있으면 막고 아래부터 지우게 한다. */}
+            <Tooltip title={
+                category?.children?.length > 0
+                    ? `하위 ${categoryGroup?.category_group_name}이(가) ${category?.children?.length}개 있어 삭제할 수 없습니다. 하위부터 삭제해 주세요.`
+                    : `해당 ${categoryGroup?.category_group_name}을(를) 삭제하시려면 클릭해 주세요.`
+            }>
+                {/* disabled 인 버튼은 이벤트를 안 내보내 Tooltip 이 안 뜬다 — span 으로 감싼다 */}
+                <span>
+                    <IconButton
+                        disabled={category?.children?.length > 0}
+                        onClick={() => {
+                            setModal({
+                                func: () => { onClickCategoryDelete(category) },
+                                icon: 'material-symbols:delete-outline',
+                                title: '정말 삭제하시겠습니까?'
+                            })
+                        }}>
+                        <Icon icon='material-symbols:delete-outline' fontSize={16} />
+                    </IconButton>
+                </span>
             </Tooltip>
         </div>
     );

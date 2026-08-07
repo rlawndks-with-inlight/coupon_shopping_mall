@@ -13,6 +13,7 @@ import { formatLang } from "src/utils/format"
 import { useLocales } from "src/locales"
 import DialogSearch from "src/components/dialog/DialogSearch"
 import { useAuthContext } from "src/layouts/manager/auth/useAuthContext"
+import LanguagePopover from "src/layouts/manager/header/LanguagePopover"
 import { logoSrc } from "src/data/data"
 import Slider from "react-slick"
 import { useRef } from "react"
@@ -240,7 +241,8 @@ const Header = () => {
 
   const router = useRouter();
   const theme = useTheme();
-  const { themeMode, onToggleMode, onChangeCartData, onChangeWishData, themePostCategoryList, themeCategoryList } = useSettingsContext();
+  // themeDnsData: 언어 선택 UI 노출 조건(setting_obj.is_use_lang) 확인용
+  const { themeMode, onToggleMode, onChangeCartData, onChangeWishData, themePostCategoryList, themeCategoryList, themeDnsData } = useSettingsContext();
   const headerCategories = (themeCategoryList ?? []).flatMap((g) => g?.product_categories ?? []);
   const { user, logout } = useAuthContext();
   const { currentLang } = useLocales();
@@ -502,6 +504,9 @@ const Header = () => {
                 >
                   <Icon icon={themeMode === 'dark' ? 'ph:sun-thin' : 'ph:moon-stars-thin'} fontSize={'2.8rem'} color={themeMode == 'dark' ? '#fff' : '#000'} />
                 </IconButton>
+                {/* 언어 선택 — 이 헤더엔 언어 UI 가 없어 설정을 켜도 고객이 언어를 바꿀 수 없었다.
+                    (shop demo-1 헤더와 동일하게 PC·모바일 아이콘 묶음 양쪽에 넣는다) */}
+                {themeDnsData?.setting_obj?.is_use_lang == 1 && <LanguagePopover />}
               </NoneShowMobile>
               {/* 실시간 검색순위 — '티셔츠/바지/양말'이 하드코딩된 데모용 UI라 비노출 처리.
                   실제 검색어 집계 기능이 아니라 고정 문자열 3개를 돌리는 것이었음.
@@ -552,6 +557,7 @@ const Header = () => {
                 >
                   <Icon icon={themeMode === 'dark' ? 'ph:sun-thin' : 'ph:moon-stars-thin'} fontSize={'1.8rem'} color={themeMode == 'dark' ? '#fff' : '#000'} />
                 </IconButton>
+                {themeDnsData?.setting_obj?.is_use_lang == 1 && <LanguagePopover />}
               </ShowMobile>
             </TopMenuContainer>
             <CategoryContainer>

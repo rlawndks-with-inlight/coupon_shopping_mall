@@ -9,6 +9,7 @@ import { logoSrc } from "src/data/data"
 import { isMyPagePath, isPath } from "src/utils/blog-shop-route"
 // 헤더 로그아웃 아이콘용
 import { useAuthContext } from "src/layouts/manager/auth/useAuthContext"
+import LanguagePopover from "src/layouts/manager/header/LanguagePopover"
 
 const Wrappers = styled.header`
 width: 100%;
@@ -105,6 +106,9 @@ const Header = (props) => {
             <IconButton sx={{ padding: '6px' }} onClick={() => router.push('/shop/auth/cart')}>
               <Icon icon={'basil:shopping-bag-outline'} fontSize={'1.4rem'} color={iconColor} />
             </IconButton>
+            {/* 언어 선택 — 이 헤더엔 언어 UI 가 없어 설정을 켜도 고객이 언어를 바꿀 수 없었다.
+                LanguagePopover 는 국기 이미지라 다크/투명 헤더에서도 색 보정이 필요 없다. */}
+            {themeDnsData?.setting_obj?.is_use_lang == 1 && <LanguagePopover />}
           </div>
         </TopMenuContainer>
       </Wrappers>

@@ -15,6 +15,7 @@ import { insertCartDataUtil, selectItemOptionUtil } from 'src/utils/shop-util';
 import { useAuthContext } from 'src/layouts/manager/auth/useAuthContext';
 import toast from 'react-hot-toast';
 import { useLocales } from 'src/locales';
+import { formatLang } from 'src/utils/format';
 import DialogBuyNow from 'src/components/dialog/DialogBuyNow';
 import { ProductDetailsReview } from 'src/views/@dashboard/e-commerce/details';
 import { isShopgoBrand } from 'src/utils/is-shopgo';
@@ -213,7 +214,8 @@ const Demo2 = (props) => {
                 <ContentWrappers style={{
                     background: `${themeMode == 'dark' ? '#000' : '#fff'}`,
                 }}>
-                    <ItemName>{item.product_name}</ItemName>
+                    {/* 상품명은 lang_obj 번역본을 우선 표시한다(번역이 없으면 formatLang 이 원문을 그대로 반환). */}
+                    <ItemName>{formatLang(item, 'product_name', currentLang)}</ItemName>
                     <Divider />
                     <PriceContainer>
                         {item.product_sale_price < item.product_price &&

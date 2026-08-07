@@ -8,6 +8,7 @@ import DialogSearch from "src/components/dialog/DialogSearch";
 import { useAuthContext } from "src/layouts/manager/auth/useAuthContext";
 import StorefrontPopups from "src/components/elements/shop/StorefrontPopups";
 import { isStorefrontHome } from "src/utils/blog-shop-route";
+import LanguagePopover from "src/layouts/manager/header/LanguagePopover";
 
 /* 단일 상품 전용 럭셔리 레이아웃 — 심플 헤더 + 심플 푸터 */
 
@@ -32,13 +33,23 @@ const Header = styled.header`
     padding: 1rem 1.25rem;
   }
 `
+/* 로고는 좌·우 슬롯(SideSlot / HeaderActions) 사이에 자기 폭만 차지하고 놓인다.
+   예전엔 LogoArea 가 flex:1 이라 우측 아이콘이 늘어날수록 로고가 왼쪽으로 밀렸다.
+   좌우를 flex:1 로 똑같이 나눠 가지면 우측 아이콘 개수(로그인 여부·언어 사용 여부)가
+   달라져도 로고가 가운데 그대로 있는다. */
 const LogoArea = styled.div`
   display: flex;
   align-items: center;
   gap: 0.75rem;
   cursor: pointer;
-  flex: 1;
+  flex: 0 0 auto;
   justify-content: center;
+`
+/* 헤더 좌측 슬롯(뒤로가기 버튼 자리). 우측 액션과 같은 flex 를 가져 로고를 가운데로 민다. */
+const SideSlot = styled.div`
+  display: flex;
+  align-items: center;
+  flex: 1;
 `
 const Logo = styled(LazyLoadImage)`
   height: 28px;
@@ -65,18 +76,28 @@ const IconBtn = styled.button`
   &:hover {
     opacity: 0.6;
   }
+  /* 좁은 화면에서는 아이콘 묶음(검색·계정·로그아웃·장바구니·언어)이 헤더 폭을 다 먹어
+     로고가 두 줄로 깨진다. 작은 폰에서만 아이콘 폭을 줄인다. */
+  @media (max-width: 480px) {
+    width: 36px;
+    padding: 0.35rem;
+    font-size: 18px;
+  }
 `
 /* 홈에서 뒤로가기 버튼 자리를 대신 차지하는 빈 칸.
-   Header 가 space-between 이고 LogoArea 가 flex:1 이라, 버튼을 그냥 렌더하지 않으면
-   로고가 22px 우측으로 밀린다. 폭은 IconBtn 과 똑같이 44px 로 맞춘다
-   (다르게 주면 홈과 하위 화면의 로고 위치가 서로 어긋난다). */
+   폭은 IconBtn 과 똑같이 맞춘다(다르게 주면 홈과 하위 화면의 좌측 여백이 어긋난다). */
 const IconSpacer = styled.div`
   width: 44px;
   flex-shrink: 0;
+  @media (max-width: 480px) {
+    width: 36px;
+  }
 `
 const HeaderActions = styled.div`
   display: flex;
   align-items: center;
+  flex: 1;
+  justify-content: flex-end;
 `
 const Main = styled.main`
   flex: 1;
@@ -167,13 +188,16 @@ const BlogLayout6 = (props) => {
       />
       <Header>
         {/* 뒤로가기는 조건 없이 렌더되고 있어서 메인페이지에도 ← 가 떴다.
-            홈에서는 같은 폭(44px) 스페이서로 바꿔 로고 위치를 그대로 유지한다.
+            홈에서는 같은 폭의 스페이서로 바꿔 좌측 여백을 그대로 유지한다
+            (로고 중앙정렬 자체는 SideSlot/HeaderActions 의 flex:1 이 잡는다).
             isStorefrontHome 은 '/'(가맹점 도메인 루트 rewrite)와 '/shop' 둘 다 홈으로 본다. */}
-        {isStorefrontHome(router)
-          ? <IconSpacer />
-          : <IconBtn onClick={() => router.back()}>
-            <Icon icon="material-symbols:arrow-back" />
-          </IconBtn>}
+        <SideSlot>
+          {isStorefrontHome(router)
+            ? <IconSpacer />
+            : <IconBtn onClick={() => router.back()}>
+              <Icon icon="material-symbols:arrow-back" />
+            </IconBtn>}
+        </SideSlot>
         <LogoArea onClick={() => router.push('/shop')}>
           {themeDnsData?.logo_img ? (
             <Logo src={themeDnsData.logo_img} effect="blur" />
@@ -201,6 +225,9 @@ const BlogLayout6 = (props) => {
           <IconBtn onClick={() => router.push('/shop/auth/cart')}>
             <Icon icon="iconamoon:shopping-bag" />
           </IconBtn>
+          {/* 언어 선택 — 이 레이아웃(프레임6~11 공용)에는 언어 UI 가 아예 없어서
+              가맹점 언어 설정이 켜져 있어도 고객이 언어를 바꿀 방법이 없었다. */}
+          {themeDnsData?.setting_obj?.is_use_lang == 1 && <LanguagePopover />}
         </HeaderActions>
       </Header>
       <StorefrontPopups />

@@ -5,6 +5,8 @@ import { IconButton } from "@mui/material"
 import { Icon } from "@iconify/react"
 import { LazyLoadImage } from "react-lazy-load-image-component"
 import { commarNumber } from "src/utils/function"
+import { formatLang } from "src/utils/format"
+import { useLocales } from "src/locales"
 
 //김인욱 컴포넌트
 const ItemContent = styled.div`
@@ -53,6 +55,10 @@ margin-top:0.5rem;
 `
 export const Item2 = (props) => {
     const { item, router, type, length, idx } = props;
+    // 상품명을 선택된 언어로 표시한다. lang_obj 가 없으면 formatLang 이 원문으로 폴백한다.
+    // (섹션 제목은 HomeItems 에서 이미 번역되는데 카드 안쪽만 원문으로 남아 있었다)
+    const { currentLang } = useLocales();
+    const productName = formatLang(item, 'product_name', currentLang);
     return (
         <>
             {
@@ -62,7 +68,7 @@ export const Item2 = (props) => {
                             router.push(`/shop/item/${item.id}`)
                         }}>
                             <LazyLoadImage className="onlyone" style={{ borderRadius: '12px', }} src={item?.product_img} />
-                            <ItemText style={{ fontSize: '19px', marginRight: '0.1rem' }}>{item?.product_name}</ItemText>
+                            <ItemText style={{ fontSize: '19px', marginRight: '0.1rem' }}>{productName}</ItemText>
                             <ItemText style={{ color: themeObj.grey[500], width: '100%' }}>
                                 <Row>
                                     {item.product_sale_price < item.product_price &&
@@ -96,7 +102,7 @@ export const Item2 = (props) => {
                                         router.push(`/shop/item/${item.id}`)
                                     }}>
                                         <LazyLoadImage style={{ width: '100%', height: '100%', borderRadius: '12px', }} src={item?.product_img} />
-                                        <ItemText style={{ fontWeight: 'bold', position: 'absolute', bottom: '4.5rem', left: '0.5rem', color: 'white', fontSize: '18px', zIndex: '10', marginRight: '0.1rem' }}>{item?.product_name}</ItemText>
+                                        <ItemText style={{ fontWeight: 'bold', position: 'absolute', bottom: '4.5rem', left: '0.5rem', color: 'white', fontSize: '18px', zIndex: '10', marginRight: '0.1rem' }}>{productName}</ItemText>
                                         <ItemText style={{ color: themeObj.grey[500], position: 'absolute', bottom: '0.5rem', left: '0.5rem', zIndex: '10', width: '95%' }}>
                                             <Row>
                                                 {item.product_sale_price < item.product_price &&
@@ -127,7 +133,7 @@ export const Item2 = (props) => {
                                         router.push(`/shop/item/${item.id}`)
                                     }}>
                                         <LazyLoadImage style={{ width: '100%', height: '100%', borderRadius: '12px' }} src={item?.product_img} />
-                                        <ItemText style={{ fontWeight: 'bold', marginRight: '0.1rem' }}>{item?.product_name}</ItemText>
+                                        <ItemText style={{ fontWeight: 'bold', marginRight: '0.1rem' }}>{productName}</ItemText>
                                         <ItemText style={{ color: themeObj.grey[500] }}>
                                             <Row>
                                                 {item.product_sale_price < item.product_price &&

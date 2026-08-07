@@ -97,6 +97,7 @@ const ItemDemo = (props) => {
 
   const onSelectOption = (group, option) => {
     let select_product_groups = selectItemOptionUtil(group, option, selectProductGroups);
+    // selectItemOptionUtil 이 새 객체를 돌려주므로 그대로 넣으면 리렌더된다.
     setSelectProductGroups(select_product_groups);
   }
 
@@ -212,7 +213,13 @@ const ItemDemo = (props) => {
                             {character?.character_value && character?.character_value.split(/[,/]\s*/)?.map(val => val.trim()).map((option, optIdx) => (
                               <Button
                                 key={optIdx}
-                                variant={selectProductGroups?.groups?.find(g => g?.character_name === character?.character_name && g?.option === option) ? 'contained' : 'outlined'}
+                                // 저장 형태에 맞춰 판정한다. selectItemOptionUtil 은 'option' 키를 만들지 않고
+                                // options: [{ value: '블랙' }] 로 넣는다 — 예전 판정식(g?.option === option)은
+                                // 늘 undefined 라 무엇을 골라도 버튼이 미선택(outlined) 그대로였다.
+                                variant={selectProductGroups?.groups?.find(g =>
+                                  g?.character_name === character?.character_name
+                                  && (g?.options?.[0]?.value === option || g?.options?.[0]?.option_name === option)
+                                ) ? 'contained' : 'outlined'}
                                 size="small"
                                 color="inherit"
                                 onClick={() => onSelectOption(character, option)}

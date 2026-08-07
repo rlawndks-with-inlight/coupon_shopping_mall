@@ -504,25 +504,32 @@ const isSameSelectedOption = (saved, option) =>
         : saved?.value === option;
 
 export const selectItemOptionUtil = (group, option, selectProductGroups, is_option_multiple) => {//아이템 옵션 선택하기
-    let select_product_groups = selectProductGroups;
-    let find_group_idx = _.findIndex(select_product_groups?.groups, { id: parseInt(group?.id) });
+    // 넘겨받은 객체를 변형하지 않고 새 객체를 만들어 돌려준다.
+    //
+    // 예전엔 인자를 그대로 고쳐서 되돌려줬다. 호출부 11곳이 전부
+    // `setSelectProductGroups(결과)` 를 하는데 참조가 같으니 React 가 변화를 못 알아채고
+    // 리렌더가 일어나지 않았다 — 옵션을 골라도 선택 표시가 안 바뀌고,
+    // 화면이 선택 상태를 반영하지 못했다.
+    const groups = [...(selectProductGroups?.groups ?? [])];
+    const find_group_idx = _.findIndex(groups, { id: parseInt(group?.id) });
+
     if (find_group_idx >= 0) {
+        const current = groups[find_group_idx];
+        let options = [...(current?.options ?? [])];
         if (is_option_multiple) {
-            const already = (select_product_groups.groups[find_group_idx]?.options ?? [])
-                .some(saved => isSameSelectedOption(saved, option));
-            if (!already) {
-                select_product_groups.groups[find_group_idx]?.options.push(normalizeSelectedOption(option))
-            }
+            const already = options.some(saved => isSameSelectedOption(saved, option));
+            if (!already) options.push(normalizeSelectedOption(option));
         } else {
-            select_product_groups.groups[find_group_idx].options = [normalizeSelectedOption(option)]
+            options = [normalizeSelectedOption(option)];
         }
+        groups[find_group_idx] = { ...current, options };
     } else {
-        select_product_groups.groups.push({
+        groups.push({
             ...group,
             options: [normalizeSelectedOption(option)]
-        })
+        });
     }
-    return select_product_groups;
+    return { ...selectProductGroups, groups };
 }
 export const getWishDataUtil = async () => {//아이템찜 불러오기
     let result = await apiManager('user-wishs/items', 'list');

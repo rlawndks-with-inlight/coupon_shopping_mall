@@ -148,7 +148,8 @@ const Demo2 = (props) => {
                     >회원가입</Button>
                 </ButtonContainer>
 
-                <NotSignup themeMode={themeMode}><div style={{ cursor: 'pointer' }} onClick={() => { router.push('/shop/auth/history') }}>비회원 주문 조회</div></NotSignup>
+                {/* 비회원은 /shop/auth/history(회원 주문내역)로 가면 빈 목록만 본다. 전화번호+주문비밀번호로 조회하는 order-check 로 보낸다 */}
+                <NotSignup themeMode={themeMode}><div style={{ cursor: 'pointer' }} onClick={() => { router.push('/shop/auth/order-check') }}>비회원 주문 조회</div></NotSignup>
             </Wrappers>
         </>
     )

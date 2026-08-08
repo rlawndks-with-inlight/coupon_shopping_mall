@@ -373,13 +373,22 @@ export default function OrderSheet({ router }) {
         setBuyType('virtual_account');
         return;
       }
+      const module = _.find(themeDnsData?.payment_modules, { type: 'virtual_account' });
+      // ⚠ 계좌 확인을 주문 생성보다 먼저 한다.
+      //   예전엔 주문부터 만들고 나서 계좌가 없으면 '무통장입금을 준비중입니다...' 만 띄웠다.
+      //   고객은 어디로 입금해야 할지 모르는데 장바구니는 비워졌고, 결제대기 주문만 쌓였다.
+      //   입금할 곳이 없으면 주문 자체를 만들지 않는다.
+      if (!(module?.virtual_acct_bank && module?.virtual_acct_name && module?.virtual_acct_num)) {
+        toast.error('무통장입금 계좌 정보가 등록되어 있지 않습니다. 판매자에게 문의해 주세요.');
+        setBuyType(undefined);
+        return;
+      }
       // makePayData가 배열을 in-place 변형하므로 사본을 넘겨 화면 상태(products)를 보호한다.
       const pay_data = await makePayData(products.map((p) => ({ ...p })), payData);
       delete pay_data.payment_modules;
       const ord_num = makeOrdNum();
       pay_data.ord_num = ord_num;
       pay_data.item_name = pay_data?.products?.length > 1 ? `${pay_data?.products[0]?.order_name} 외 ${pay_data?.products?.length - 1}건` : (pay_data?.products[0]?.order_name || '상품');
-      const module = _.find(themeDnsData?.payment_modules, { type: 'virtual_account' });
       if (module?.virtual_acct_url) {
         const link = module.virtual_acct_url + `?amount=${pay_data?.amount}`;
         const popup = window.open(link, '');
@@ -401,13 +410,21 @@ export default function OrderSheet({ router }) {
         setBuyType('gift_certificate');
         return;
       }
+      const module = _.find(themeDnsData?.payment_modules, { type: 'gift_certificate' });
+      // ⚠ 상품권결제 주소 확인을 주문 생성보다 먼저 한다.
+      //   주소가 없으면 결제창도 안 열리고 이 화면에 안내도 없어서, 토스트 하나만 뜨고
+      //   화면은 그대로인데 장바구니만 비워졌다(주문은 결제대기로 남는다).
+      if (!module?.gift_certificate_url) {
+        toast.error('상품권결제 정보가 등록되어 있지 않습니다. 판매자에게 문의해 주세요.');
+        setBuyType(undefined);
+        return;
+      }
       // makePayData가 배열을 in-place 변형하므로 사본을 넘겨 화면 상태(products)를 보호한다.
       const pay_data = await makePayData(products.map((p) => ({ ...p })), payData);
       delete pay_data.payment_modules;
       const ord_num = makeOrdNum();
       pay_data.ord_num = ord_num;
       pay_data.item_name = pay_data?.products?.length > 1 ? `${pay_data?.products[0]?.order_name} 외 ${pay_data?.products?.length - 1}건` : (pay_data?.products[0]?.order_name || '상품');
-      const module = _.find(themeDnsData?.payment_modules, { type: 'gift_certificate' });
       if (module?.gift_certificate_url) {
         const link = module.gift_certificate_url + `?amount=${pay_data?.amount}&name=${user?.name ?? ''}&phone_num=${user?.phone_num ?? ''}`;
         const popup = window.open(link, '');
@@ -781,6 +798,40 @@ export default function OrderSheet({ router }) {
                           </Stack>
                         ) : <Typography variant="body2">무통장입금을 준비중입니다...</Typography>;
                       })()}
+                    </Box>
+                  )}
+
+                  {/* 상품권결제 안내.
+                      예전엔 이 블록이 아예 없었다. 상품권결제를 고르면 주문만 만들어지고
+                      토스트 하나 뜬 뒤 화면은 그대로였다 — 장바구니는 비워졌는데 고객은
+                      무엇을 해야 하는지 알 수 없었고, 결제창 팝업이 차단되면 완전히 막혔다. */}
+                  {buyType == 'gift_certificate' && (
+                    <Box sx={{ mt: 3 }}>
+                      <Divider sx={{ mb: 2 }} />
+                      <Stack spacing={1}>
+                        <Typography variant="body2">상품권결제 창에서 결제를 완료해 주세요.</Typography>
+                        {payData?.ord_num && (
+                          <Typography variant="body2" sx={{ fontWeight: 700 }}>주문번호 : {payData.ord_num}</Typography>
+                        )}
+                        {(() => {
+                          const m = _.find(themeDnsData?.payment_modules, { type: 'gift_certificate' });
+                          // 팝업이 차단되면 위에서 연 창이 안 뜬다. 직접 열 수 있는 링크를 남긴다.
+                          return m?.gift_certificate_url ? (
+                            <Button
+                              variant="outlined"
+                              size="small"
+                              sx={{ alignSelf: 'flex-start' }}
+                              onClick={() => {
+                                const link = m.gift_certificate_url
+                                  + `?amount=${payData?.amount}&name=${user?.name ?? ''}&phone_num=${user?.phone_num ?? ''}`;
+                                window.open(link, '');
+                              }}>
+                              결제창 다시 열기
+                            </Button>
+                          ) : null;
+                        })()}
+                        <Typography variant="body2" sx={{ color: 'text.secondary' }}>결제 확인 후 구매처리됩니다.</Typography>
+                      </Stack>
                     </Box>
                   )}
 

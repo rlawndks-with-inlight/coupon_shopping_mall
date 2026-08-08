@@ -1,3 +1,4 @@
+import { safeRedirectPath } from 'src/utils/function';
 import { useTheme } from '@emotion/react';
 import { Button, TextField, IconButton, InputAdornment } from '@mui/material';
 import { useEffect, useState } from 'react';
@@ -79,7 +80,8 @@ const Demo3 = (props) => {
         let user = await login(username, password);
         if (user) {
             onChangeWishData(user?.wish_data ?? []);
-            router.push('/shop/auth/my-page');
+            // 로그인이 필요해 튕겨 나온 화면이 있으면 그리로 돌려보낸다(없으면 마이페이지).
+      router.push(safeRedirectPath(router.query?.redirect, '/shop/auth/my-page'));
         }
     }
     return (

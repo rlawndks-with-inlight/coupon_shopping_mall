@@ -1,6 +1,6 @@
 import styled from 'styled-components'
 import { Wrappers, Title } from 'src/components/elements/blog/demo-1';
-import { Tabs, Tab } from '@mui/material';
+import { Button, Tabs, Tab } from '@mui/material';
 import { useState, useEffect } from 'react';
 import { useSettingsContext } from 'src/components/settings';
 import { useAuthContext } from 'src/layouts/manager/auth/useAuthContext';
@@ -86,6 +86,12 @@ const Demo3 = (props) => {
 
     const [inquiryType, setInquiryType] = useState(0)
     const [inquiryList, setInquiryList] = useState([])
+    // 게시판 목록 페이지네이션.
+    // 예전엔 page_size:1000 으로 한 번에 긁어왔다 — 1000건이 넘으면 조용히 잘리고,
+    // 그 전에도 게시글이 많은 브랜드에서는 한 번에 다 받아 화면이 느려졌다.
+    const [postPage, setPostPage] = useState(1)
+    const [postTotal, setPostTotal] = useState(0)
+    const [postLoading, setPostLoading] = useState(false)
     const [category, setCategory] = useState({});
 
     useEffect(() => {
@@ -107,14 +113,18 @@ const Demo3 = (props) => {
         setInquiryType(router.query?.article_category)
         getArticleList(1, router.query?.article_category)
     }
-
-    const getArticleList = async (page, category_id) => {
+    const getArticleList = async (page, category_id, append = false) => {
+        setPostLoading(true);
         let inquiry_data = await apiShop('post', 'list', {
             page: page,
-            page_size: 1000,
+            page_size: 20,
             category_id: category_id
         })
-        setInquiryList(inquiry_data?.content ?? [])
+        setPostLoading(false);
+        const rows = inquiry_data?.content ?? [];
+        setPostTotal(Number(inquiry_data?.total) || 0);
+        setPostPage(page);
+        setInquiryList((prev) => (append ? [...prev, ...rows] : rows));
     }
 
     const moveToDetail = (id) => {
@@ -184,6 +194,13 @@ const Demo3 = (props) => {
                         :
                         <Empty themeMode={themeMode}>등록된 게시글이 없습니다.</Empty>}
                 </ListContainer>
+                {inquiryList.length < postTotal &&
+                    <div style={{ display: 'flex', justifyContent: 'center', padding: '1rem' }}>
+                        <Button variant="outlined" disabled={postLoading}
+                            onClick={() => getArticleList(postPage + 1, router.query?.article_category, true)}>
+                            {postLoading ? '불러오는 중...' : `더 보기 (${inquiryList.length}/${postTotal})`}
+                        </Button>
+                    </div>}
                 {isAbleUserAdd &&
                     <ServiceFaq themeMode={themeMode} onClick={() => {
                         onClickWrite()

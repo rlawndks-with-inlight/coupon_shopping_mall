@@ -25,13 +25,13 @@ import {
   Typography
 } from '@mui/material'
 import { useRouter } from 'next/router'
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Row, themeObj } from 'src/components/elements/styled-components'
 import { useSettingsContext } from 'src/components/settings'
 import { Upload } from 'src/components/upload'
 import ManagerLayout from 'src/layouts/manager/ManagerLayout'
 import styled from 'styled-components'
-import { defaultManagerObj } from 'src/data/manager-data'
+import { createDefaultManagerObj } from 'src/data/manager-data'
 import { toast } from 'react-hot-toast'
 import { useModal } from 'src/components/dialog/ModalProvider'
 import { useAuthContext } from 'src/layouts/manager/auth/useAuthContext'
@@ -110,9 +110,12 @@ const DefaultSetting = () => {
   const router = useRouter()
   const [loading, setLoading] = useState(true)
   const [currentTab, setCurrentTab] = useState(0)
-  const [item, setItem] = useState(defaultManagerObj.brands)
+  // 모듈 전역 기본객체를 그대로 넣으면 이 화면에서 변형될 때 원본이 오염된다(브랜드 추가 시 직전 브랜드가 섞임).
+  const [item, setItem] = useState(() => createDefaultManagerObj('brands'))
   const [saveLoading, setSaveLoading] = useState(false)
   const [useBasicInfo, setUseBasicInfo] = useState(false)
+  // 화면 진입 시점의 값(깊은 복사). 저장할 때 '실제로 바뀐 키'만 가려내는 기준으로만 쓴다.
+  const loadedItemRef = useRef(null)
 
   const tab_list = [
     {
@@ -191,29 +194,73 @@ const DefaultSetting = () => {
       settingPage()
     }
   }, [router.query])
-  const settingBrandObj = (item, brand_data) => {
-    let obj = item
-    let brand_data_keys = Object.keys(brand_data)
+  // 조회한 브랜드 값을 폼 기본값(default_obj) 위에 얹는다.
+  // ⚠ 인자로 받은 객체를 직접 변형하지 않는다 — 예전엔 state(=모듈 전역 기본객체)를 그대로 변형해
+  //    defaultManagerObj.brands 가 통째로 오염됐다(브랜드 추가가 직전 브랜드를 덮어쓴 원인).
+  const settingBrandObj = (default_obj, brand_data) => {
+    let obj = { ...default_obj }
+    let brand_data_keys = Object.keys(brand_data ?? {})
     for (var i = 0; i < brand_data_keys.length; i++) {
-      if (brand_data[brand_data_keys[i]]) {
-        if (typeof obj[brand_data_keys[i]] == 'object') {
-          obj[brand_data_keys[i]] = Object.assign(obj[brand_data_keys[i]], brand_data[brand_data_keys[i]])
-        } else {
-          obj[brand_data_keys[i]] = brand_data[brand_data_keys[i]]
-        }
+      let key = brand_data_keys[i]
+      let value = brand_data[key]
+      if (value === undefined || value === null) {
+        continue // 서버가 값을 안 준 컬럼은 폼 기본값을 그대로 둔다
+      }
+      if (Array.isArray(value)) {
+        // 배열은 서버 값을 통째로 쓴다.
+        // 예전엔 Object.assign(기본배열, 서버배열) 이라 서버가 빈 배열을 준 shop_obj/blog_obj 에
+        // 기본값(개발용 테스트 배너)이 그대로 남았고, 저장하면 그게 DB로 나갔다.
+        obj[key] = value
+      } else if (typeof value == 'object' && obj[key] && typeof obj[key] == 'object' && !Array.isArray(obj[key])) {
+        obj[key] = { ...obj[key], ...value } // setting_obj 등은 빠진 키를 기본값으로 채운다(기존 동작 유지)
+      } else {
+        obj[key] = value
       }
     }
     return obj
   }
   const settingPage = async () => {
+    // 브랜드가 바뀔 때마다 기본값을 새로 복사해서 시작한다.
+    // ('브랜드 추가'는 조회를 안 하므로, 여기서 초기화하지 않으면 직전에 열어본 브랜드가 id째로 남는다)
+    let obj = createDefaultManagerObj('brands')
     if (router.query?.brand_id != 'add') {
       let brand_data = await apiManager('brands', 'get', {
         id: router.query.brand_id || themeDnsData?.id
       })
-      brand_data = settingBrandObj(item, brand_data)
-      setItem(brand_data)
+      obj = settingBrandObj(obj, brand_data)
     }
+    setItem(obj)
+    // 저장 시 비교 기준. 폼에서 setting_obj 를 직접 변형하는 곳(언어팩 체크박스)이 있어
+    // 참조를 공유하면 비교가 무의미해진다 → 깊은 복사본으로 따로 보관한다.
+    loadedItemRef.current = JSON.parse(JSON.stringify(obj))
     setLoading(false)
+  }
+  // 이 화면이 편집하지 않는 컬럼. 조회해서 받은 값을 저장 때 되돌려 보내지 않는다.
+  // shop_obj/blog_obj(홈 섹션)는 디자인관리에서 편집한다.
+  // none_use_column_obj 는 설정관리 › 컬럼관리에서 편집한다.
+  const NOT_EDITABLE_COLUMNS = ['shop_obj', 'blog_obj', 'none_use_column_obj']
+  // 값 비교. 객체·배열은 JSON 문자열로 비교한다.
+  // 새로 고른 이미지(File)는 JSON 으로 비교되지 않으므로 항상 '바뀜'으로 본다.
+  const isSameValue = (origin_value, value) => {
+    if (origin_value === value) return true
+    if (value && typeof value == 'object' && typeof value.name == 'string' && typeof value.size == 'number') {
+      return false
+    }
+    return JSON.stringify(origin_value) === JSON.stringify(value)
+  }
+  // 저장 payload: 불러온 값과 비교해 실제로 바뀐 키만 담는다.
+  // 백엔드 updateQuery 는 body 에 없는 컬럼을 SET 절에서 빼므로, 보내지 않으면 DB 값이 그대로 유지된다.
+  const getUpdatePayload = (obj) => {
+    let origin = loadedItemRef.current ?? {}
+    let payload = {}
+    let keys = Object.keys(obj)
+    for (var i = 0; i < keys.length; i++) {
+      let key = keys[i]
+      if (NOT_EDITABLE_COLUMNS.includes(key)) continue
+      if (isSameValue(origin[key], obj[key])) continue
+      payload[key] = obj[key]
+    }
+    return payload
   }
   const onSave = async () => {
 
@@ -221,8 +268,13 @@ const DefaultSetting = () => {
     let obj = item
     if (obj?.id) {
       //수정
+      let payload = getUpdatePayload(obj)
+      if (Object.keys(payload).length == 0) {
+        toast.success('변경된 내용이 없습니다.')
+        return
+      }
       setSaveLoading(true);
-      result = await apiManager('brands', 'update', { ...obj, id: obj?.id })
+      result = await apiManager('brands', 'update', { ...payload, id: obj?.id })
     } else {
       //추가
       if (!obj?.user_name || !obj?.user_pw || !obj?.seller_name || !obj?.user_pw_check) {

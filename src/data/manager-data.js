@@ -301,10 +301,13 @@ export const defaultManagerObj = {
     theme_css: {
       main_color: '#00ab55'
     },
-    /*slider_css: { 
+    /*slider_css: {
       rows: '',
       autoplay_speed: '',
     },*/
+    // ⚠ shop_obj / blog_obj 는 '브랜드 추가(create)' 때만 쓰는 개발용 기본 배너다.
+    //    홈 섹션의 실제 편집 화면은 디자인관리(designs/main)이고, 설정관리 › 기본설정은 이 값을 편집하지 않는다.
+    //    → 기본설정 저장(update) payload 에는 실리면 안 된다. 실리면 홈 섹션이 이 테스트 배너로 덮어써진다.
     shop_obj: [
       {
         type: 'banner',
@@ -336,3 +339,12 @@ export const defaultManagerObj = {
     is_reply: 0
   }
 }
+
+// defaultManagerObj 는 모듈 전역 상수다. 이걸 그대로 화면 state 초기값으로 넣고
+// 조회한 값을 Object.assign 등으로 채우면 원본 자체가 변형된다.
+// 그러면 같은 SPA 세션에서 다음에 연 화면·다음 브랜드에 직전 브랜드 값(심지어 id)이 남는다.
+// state 초기값이 필요하면 반드시 이 함수로 깊은 복사본을 받아 쓴다.
+//
+// defaultManagerObj 는 함수·Date·File 없이 순수 JSON 값만 담고 있어 JSON 왕복 복사로 충분하다.
+// (logo_file 처럼 값이 undefined 인 키는 복사본에서 사라지지만, 읽으면 undefined 인 건 동일하다)
+export const createDefaultManagerObj = (key) => JSON.parse(JSON.stringify(defaultManagerObj[key] ?? {}))

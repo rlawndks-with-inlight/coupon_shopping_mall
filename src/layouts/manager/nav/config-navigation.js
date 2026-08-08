@@ -60,19 +60,24 @@ export const navConfig = () => {
     }
   }, [themeDnsData])
   const getSidebarSetting = async () => {
-    let post_category_list = themePostCategoryList;
+    // ⚠ 아래 세 배열은 SettingsContext 가 전 앱에 내보내는 '공유 상태'다.
+    //    예전엔 참조만 받아 title/path 를 덧쓰고 children 을 delete 해서 원본을 훼손했다.
+    //    그러면 같은 SPA 세션에서 고객 게시판·카테고리 화면으로 이동했을 때
+    //    children 이 사라진 트리를 그리게 된다(새로고침하면 localStorage 로 복구돼
+    //    재현이 들쭉날쭉했다). 사본을 만들어 쓴다.
+    let post_category_list = (themePostCategoryList ?? []).map((item) => ({ ...item }));
     for (var i = 0; i < post_category_list.length; i++) {
       post_category_list[i]['title'] = post_category_list[i]['post_category_title'];
       post_category_list[i]['path'] = `/manager/articles/${post_category_list[i]?.id}`;
       delete post_category_list[i]?.children;
     }
-    let category_group_list = themeCategoryList;
+    let category_group_list = (themeCategoryList ?? []).map((item) => ({ ...item }));
     for (var i = 0; i < category_group_list.length; i++) {
       category_group_list[i]['title'] = category_group_list[i]['category_group_name'] + ' 관리';
       category_group_list[i]['path'] = `/manager/products/categories/${category_group_list[i]?.id}`;
       delete category_group_list[i]?.children;
     }
-    let property_group_list = themePropertyList;
+    let property_group_list = (themePropertyList ?? []).map((item) => ({ ...item }));
     for (var i = 0; i < property_group_list.length; i++) {
       property_group_list[i]['title'] = property_group_list[i]['property_group_name'] + ' 관리';
       property_group_list[i]['path'] = `/manager/products/properties/${property_group_list[i]?.id}`;

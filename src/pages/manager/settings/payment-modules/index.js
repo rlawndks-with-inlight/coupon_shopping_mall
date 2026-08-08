@@ -11,26 +11,37 @@ import _ from 'lodash';
 
 const PaymentModuleList = () => {
   const { setModal } = useModal()
+  // PG 자격증명은 목록에 전체를 찍지 않는다.
+  //
+  // 결제키·MID·TID 는 그대로 결제 요청에 쓰이는 값이다. 예전엔 표에 평문 전체가 떠서
+  // 화면 공유·원격지원·어깨너머로 그대로 새어나갔다. 어느 값이 들어있는지 확인하는 용도로는
+  // 앞뒤 일부만 있으면 충분하고, 전체 값은 수정 화면에서 본다.
+  const maskSecret = (value) => {
+    const v = String(value ?? '');
+    if (!v) return "---";
+    if (v.length <= 8) return v.slice(0, 2) + '*'.repeat(Math.max(1, v.length - 2));
+    return v.slice(0, 4) + '*'.repeat(6) + v.slice(-4);
+  };
   const defaultColumns = [
     {
       id: 'pay_key',
       label: '결제키',
       action: (row) => {
-        return row['pay_key'] ?? "---"
+        return maskSecret(row['pay_key'])
       }
     },
     {
       id: 'mid',
       label: 'MID',
       action: (row) => {
-        return row['mid'] ?? "---"
+        return maskSecret(row['mid'])
       }
     },
     {
       id: 'tid',
       label: 'TID',
       action: (row) => {
-        return row['tid'] ?? "---"
+        return maskSecret(row['tid'])
       }
     },
     {

@@ -50,7 +50,11 @@ const ContentTable = (props) => {
   const { setModal } = useModal()
   const { translate } = useLocales();
   const { data, onChangePage, searchObj, columns, postCategory } = props;
-  const { post_category_type } = postCategory;
+  // postCategory 는 themePostCategoryList 에서 find 한 결과라 '못 찾으면 undefined' 다
+  // (삭제된 게시판 id·하위 게시판 id·오래된 북마크로 들어오면 그렇게 된다).
+  // 옵셔널 체이닝이 없어 여기서 TypeError 가 나고, 앱에 ErrorBoundary 가 없어
+  // 게시판 화면이 통째로 백지가 됐다. 같은 파일의 다른 참조는 이미 postCategory?. 다.
+  const { post_category_type } = postCategory ?? {};
   const { page, page_size } = props?.searchObj;
   const router = useRouter();
   const { themeMode } = useSettingsContext();

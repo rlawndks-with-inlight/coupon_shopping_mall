@@ -79,7 +79,10 @@ const MyPageDemo = (props) => {
   useEffect(() => {
     setMyPageType(router.query?.type ?? 0)
     if (!router.query?.type) {
-      router.push(`/shop/auth/my-page?type=0`)
+      // replace 여야 한다. push 면 히스토리에 '쿼리 없는 URL -> ?type=0' 이 쌓여서
+      // 뒤로가기를 눌러 쿼리 없는 URL 로 돌아오는 순간 이 effect 가 다시 push 한다
+      // — 마이페이지에서 뒤로가기가 영영 먹지 않는다.
+      router.replace(`/shop/auth/my-page?type=0`)
     }
   }, [router.query])
   const onChangePage = async (search_obj) => {

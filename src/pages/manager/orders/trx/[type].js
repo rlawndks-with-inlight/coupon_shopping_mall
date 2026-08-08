@@ -377,7 +377,14 @@ const TrxList = () => {
       action: (row) => {
         return <Col onClick={() => { /*console.log(row)*/ }}>
 
-          <div>{row['addr'] ?? "---"}</div>
+          {/* 받는사람·연락처는 주문서에서 입력받아 transactions 에 저장되는데
+              (pay.controller 가 receiver·receiver_phone·zonecode 로 저장한다)
+              이 컬럼이 주소만 찍어서 관리자가 볼 수 없었다 — 송장을 쓸 수가 없다. */}
+          {(row['receiver'] || row['receiver_phone']) &&
+            <div style={{ fontWeight: 600 }}>
+              {row['receiver'] ?? ''}{row['receiver_phone'] ? ` · ${row['receiver_phone']}` : ''}
+            </div>}
+          <div>{row['zonecode'] ? `(${row['zonecode']}) ` : ''}{row['addr'] ?? "---"}</div>
           <div>{row['detail_addr'] ?? ""}</div>
         </Col>
       },

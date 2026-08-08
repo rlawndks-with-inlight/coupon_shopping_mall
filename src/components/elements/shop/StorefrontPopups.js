@@ -30,7 +30,10 @@ top:16px;
 left:0px;
 display:flex;
 flex-wrap:wrap;
-z-index:20;
+/* 프레임6~11 공용 헤더(BlogLayout6)가 position:sticky; z-index:100 이라
+   z-index:20 이던 팝업이 헤더 뒤로 들어갔다 — 팝업 윗부분과 닫기(X) 버튼이 가려져
+   닫을 수가 없었다. 팝업은 헤더보다 위에 있어야 한다(MUI modal 과 같은 층). */
+z-index:1300;
 `;
 const PopupContent = styled.div`
 background:#fff;

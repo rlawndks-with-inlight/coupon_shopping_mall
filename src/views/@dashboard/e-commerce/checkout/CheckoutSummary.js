@@ -136,7 +136,10 @@ export default function CheckoutSummary({
             </Typography>
             <Typography variant="subtitle2">{discount ? fCurrency(-discount) : '0'}원</Typography>
           </Stack>
-          {brandShip.active && (
+          {/* brandShip.active 는 '브랜드 일괄 배송비 정책'을 켠 경우에만 true 다.
+              정책을 안 켜고 상품별 배송비만 쓰는 브랜드는 fee > 0 인데도 이 줄이 숨겨져,
+              총액과 총 결제금액이 배송비만큼 어긋나 보였다(청구액은 정상). */}
+          {(brandShip.active || brandShip.fee > 0) && (
             <Stack direction="row" justifyContent="space-between">
               <Typography variant="body2" sx={{ color: 'text.secondary' }}>
                 {translate('배송비')}

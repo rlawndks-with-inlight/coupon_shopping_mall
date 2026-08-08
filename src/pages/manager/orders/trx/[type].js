@@ -569,7 +569,6 @@ const TrxList = () => {
     ])
   ]
   const router = useRouter();
-  const [columns, setColumns] = useState([]);
   const [data, setData] = useState({});
   const [searchObj, setSearchObj] = useState({
     page: 1,
@@ -584,8 +583,6 @@ const TrxList = () => {
     pageSetting();
   }, [router.query])
   const pageSetting = () => {
-    let cols = defaultColumns;
-    setColumns(cols)
     onChangePage({ ...searchObj, trx_status: (router.query?.type == 'all' || !router.query?.type) ? '' : router.query?.type, page: 1 });
   }
   const onChangePage = async (obj) => {
@@ -674,7 +671,13 @@ const TrxList = () => {
         <Card>
           <ManagerTable
             data={data}
-            columns={columns}
+            // defaultColumns 를 매 렌더 계산본 그대로 넘긴다.
+            // 예전엔 columns state 에 마운트 때 한 번만 담아 썼는데, 그 컬럼 정의 안의
+            // 삭제·상태변경 핸들러가 '첫 렌더의 searchObj'를 붙든 채 얼어붙었다.
+            // 그래서 상태를 바꾸거나 삭제하면 onChangePage(초기 searchObj) 가 나가면서
+            // trx_status 가 빈 값이 되어 목록 필터가 '전체'로 되돌아갔다.
+            // (adjustments.js 가 같은 이유로 이미 이렇게 고쳐져 있다)
+            columns={defaultColumns}
             searchObj={searchObj}
             onChangePage={onChangePage}
             add_button_text={''}

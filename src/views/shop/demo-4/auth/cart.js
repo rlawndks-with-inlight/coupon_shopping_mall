@@ -237,6 +237,14 @@ const CartDemo = (props) => {
     onClickNextStep();
   }
   const selectPayType = async (item) => {
+    // 구매할 수 없는 상품(품절·판매중단·내려간 상품)이 남아 있으면 결제로 넘어가지 않는다.
+    // 공용 주문서(OrderSheet)에는 이 차단이 있었는데 장바구니 화면에는 없어서,
+    // 여기서 결제를 시작하면 서버가 거절할 때까지 갔다가 이유를 알 수 없는 실패만 봤다.
+    // unavailable 은 화면에 남은 라인에서 파생되므로, 안내대로 지우면 즉시 풀린다.
+    if (unavailable.length > 0) {
+      toast.error(makeUnavailableMessage(unavailable));
+      return;
+    }
     if (item?.type == 'card') {//카드결제
       setBuyType('card');
       setPayData({
@@ -315,6 +323,14 @@ const CartDemo = (props) => {
     }
   }
   const onPayByHand = async () => {
+    // 구매할 수 없는 상품(품절·판매중단·내려간 상품)이 남아 있으면 결제로 넘어가지 않는다.
+    // 공용 주문서(OrderSheet)에는 이 차단이 있었는데 장바구니 화면에는 없어서,
+    // 여기서 결제를 시작하면 서버가 거절할 때까지 갔다가 이유를 알 수 없는 실패만 봤다.
+    // unavailable 은 화면에 남은 라인에서 파생되므로, 안내대로 지우면 즉시 풀린다.
+    if (unavailable.length > 0) {
+      toast.error(makeUnavailableMessage(unavailable));
+      return;
+    }
     if (buyType == 'card') {//카드결제
       if (parseFloat(max_use_point) < parseFloat(payData.use_point)) {
         toast.error('최대사용가능 포인트를 초과하였습니다.');

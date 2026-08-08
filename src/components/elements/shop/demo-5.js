@@ -119,7 +119,10 @@ export const Item5 = (props) => {
         <ItemDetail variant="subtitle2" style={{ margin: '0 auto', width: '90%' }}>
           {item?.status == 1 ? '거래 진행중'
             :
-            item?.status == 2 || item?.status == 3 || item?.status == 4 ? 'SOLD OUT'
+            /* status 3 은 '새상품' — 파는 상태다. 여기 SOLD OUT 목록에 들어 있어서
+               새상품으로 등록한 상품이 목록·홈에서 품절로 보이고 가격까지 감춰졌다. 뺀다.
+               (2=품절, 4=레거시 미사용 코드는 그대로 둔다) */
+            item?.status == 2 || item?.status == 4 ? 'SOLD OUT'
               :
               item?.status == 6 ? '예약중'
                 : item?.status == 7 ? '매장문의'

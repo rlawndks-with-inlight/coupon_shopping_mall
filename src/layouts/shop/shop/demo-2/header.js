@@ -397,6 +397,14 @@ const Header = () => {
             <NoneShowMobile style={{ borderBottom: `1px solid ${theme.palette.grey[300]}` }}>
               <TopMenuContainer style={{ padding: '0.5rem 0' }}>
                 <Row style={{ marginLeft: 'auto', columnGap: '1rem' }}>
+                  {/* 고객센터는 로그인 여부와 무관하게 보여야 한다.
+                      예전엔 이 버튼이 비로그인 분기 '안에만' 있어서, 로그인하는 순간 사라졌다.
+                      정작 1:1문의는 회원 기능이라 필요한 사람에게 입구가 없는 상태였다.
+                      (모바일은 사이드메뉴, PC 전체메뉴는 다이얼로그에 따로 있다 — 여기는 PC 상단 바) */}
+                  {
+                    themePostCategoryList.length > 0 &&
+                    <Button sx={{ height: '24px' }} onClick={() => router.push(`/shop/service/${themePostCategoryList[0]?.id}`)}>고객센터</Button>
+                  }
                   {user ?
                     <>
                       <Button sx={{ height: '24px' }} onClick={() => router.push('/shop/auth/my-page')}>마이페이지</Button>
@@ -408,12 +416,6 @@ const Header = () => {
                     :
                     <>
                       <Button sx={{ height: '24px' }} onClick={() => router.push('/shop/auth/sign-up')}>회원가입</Button>
-                      {
-                        themePostCategoryList.length > 0 &&
-                        <>
-                          <Button sx={{ height: '24px' }} onClick={() => router.push(`/shop/service/${themePostCategoryList[0]?.id}`)}>고객센터</Button>
-                        </>
-                      }
                       <Button variant="outlined" sx={{ height: '24px' }} onClick={() => router.push('/shop/auth/login')}>로그인</Button>
                     </>}
                 </Row>

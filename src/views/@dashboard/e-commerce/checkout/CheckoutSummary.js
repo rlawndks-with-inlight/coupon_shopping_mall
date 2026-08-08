@@ -85,12 +85,28 @@ export default function CheckoutSummary({
   // 추가로 enablePoint 게이트를 둔다 — 카트의 use_point 는 주문서로 전달되지 않아
   // 입력해도 버려진다. 포인트는 주문서에서만 입력받는다.
   const showPointUsage = enablePoint && !!user && (parseFloat(max_use_point) > 0 || parseFloat(point_rate) > 0);
-  // '전체사용': 보유 포인트와 최대사용가능 포인트 중 작은 값으로 입력값을 채움(둘 다 초과 방지).
+  // 이번 주문에서 포인트로 깎을 수 있는 상한.
+  //
+  // 예전엔 보유 포인트와 '최대사용가능 포인트'만 봤다. 주문금액은 보지 않아서,
+  // 주문금액보다 큰 포인트를 넣을 수 있었고 '총 결제금액'이 음수로 표시된 뒤
+  // 결제 시점에 서버 금액검증에서 거절됐다(고객은 이유를 알 수 없다).
+  //
+  // 기준금액은 화면에 뜬 '총 결제금액'에 지금 입력된 포인트를 도로 더해서 얻는다.
+  // calcOrderTotals 가 amount = 상품가 + 배송비 - 포인트 로 계산하므로 이러면
+  // 배송비 정책(브랜드 일괄/상품별)을 여기서 다시 해석하지 않고도 정확히 되돌아온다.
+  const currentUsedPoint = Math.max(0, parseInt(payData?.use_point) || 0);
+  const payableBeforePoint = Math.max(0, (parseFloat(displayTotal) || 0) + currentUsedPoint);
+  // max_use_point 가 0 이면 '포인트 사용 안 함'이라는 뜻이다(기존 동작 유지).
+  const pointCap = Math.max(0, Math.min(
+    parseFloat(user?.point) || 0,
+    parseFloat(max_use_point) || 0,
+    payableBeforePoint,
+  ));
+  // '전체사용': 보유 포인트·최대사용가능 포인트·주문금액 중 가장 작은 값으로 채운다.
   const handleUseAllPoint = () => {
-    const maxUsable = Math.min(parseFloat(user?.point) || 0, parseFloat(max_use_point) || 0);
     setPayData({
       ...payData,
-      use_point: maxUsable,
+      use_point: pointCap,
     });
   };
   return (
@@ -139,9 +155,10 @@ export default function CheckoutSummary({
                 <FormControl variant="outlined" size='small' sx={{ maxWidth: '170px', paddingRight: '0' }}>
                   <OutlinedInput
                     disabled={parseFloat(use_point_min_price) > subtotal - discount}
-                    error={parseFloat(payData?.use_point) > parseFloat(user?.point) || parseFloat(payData?.use_point) > parseFloat(max_use_point)}
+                    error={parseFloat(payData?.use_point) > pointCap}
                     value={payData?.use_point ?? 0}
                     type='number'
+                    inputProps={{ min: 0, max: pointCap }}
                     sx={{ paddingRight: '8px' }}
                     endAdornment={<>
                       <InputAdornment position="end">P</InputAdornment>
@@ -150,9 +167,17 @@ export default function CheckoutSummary({
                       </Button>
                     </>}
                     onChange={(e) => {
+                      // 상한을 넘겨 입력하면 그 자리에서 상한으로 깎는다.
+                      // (그냥 두면 총 결제금액이 음수로 뜨고 결제 시점에 서버가 거절한다)
+                      const raw = e.target.value;
+                      if (raw === '') {
+                        setPayData({ ...payData, use_point: '' });
+                        return;
+                      }
+                      const num = Math.max(0, parseInt(raw) || 0);
                       setPayData({
                         ...payData,
-                        use_point: e.target.value,
+                        use_point: Math.min(num, pointCap),
                       })
                     }} />
                 </FormControl>

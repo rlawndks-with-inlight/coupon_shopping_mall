@@ -26,7 +26,7 @@ import dynamic from 'next/dynamic'
 import { useCallback, useEffect, useState } from 'react'
 import { Row, themeObj } from 'src/components/elements/styled-components'
 import { Upload } from 'src/components/upload'
-import { defaultManagerObj } from 'src/data/manager-data'
+import { createDefaultManagerObj } from 'src/data/manager-data'
 import { base64toFile, getMainObjType } from 'src/utils/function'
 import _, { constant } from 'lodash'
 import { useSettingsContext } from 'src/components/settings'
@@ -216,7 +216,10 @@ const MainObjSetting = props => {
   const defaultBanners = getDefaultBanners(themeDnsData?.shop_demo_num)
   const bannerRatio = getBannerRatio(themeDnsData?.shop_demo_num)
 
-  const [item, setItem] = useState(defaultManagerObj.brands)
+  // 모듈 전역 기본객체(defaultManagerObj.brands)를 그대로 state 에 넣으면 이 화면에서 변형될 때
+  // 원본이 오염된다. 그러면 같은 SPA 세션에서 '브랜드 추가'에 들어갔을 때 직전 브랜드 값이 id째로 남아
+  // 신규 브랜드 정보가 기존 가맹점에 PUT 된다. 반드시 깊은 복사본으로 시작한다.
+  const [item, setItem] = useState(() => createDefaultManagerObj('brands'))
   const [contentList, setContentList] = useState([])
   const [sectionType, setSectionType] = useState('banner')
   const [productContent, setProductContent] = useState({
@@ -231,9 +234,12 @@ const MainObjSetting = props => {
   useEffect(() => {
     settingPage()
   }, [])
+  // ⚠ 인자로 받은 객체를 변형하지 않는다(복사본에 채워 새 객체를 돌려준다).
+  //    예전엔 `let obj = item` 이라 state(=모듈 전역 기본객체)를 그대로 in-place 변형했고,
+  //    그 결과 defaultManagerObj.brands 에 이 브랜드 값이 id 까지 남았다.
   const settingBrandObj = (item, brand_data) => {
-    let obj = item
-    let brand_data_keys = Object.keys(brand_data)
+    let obj = { ...item }
+    let brand_data_keys = Object.keys(brand_data ?? {})
     for (var i = 0; i < brand_data_keys.length; i++) {
       if (brand_data[brand_data_keys[i]]) {
         obj[brand_data_keys[i]] = brand_data[brand_data_keys[i]]

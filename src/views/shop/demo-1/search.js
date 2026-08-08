@@ -61,16 +61,27 @@ const SearchDemo = (props) => {
       window.removeEventListener('scroll', handleScroll);
     };
   }, []);
+  // 빈 검색어(헤더에서 아무것도 입력하지 않고 Enter/돋보기 → /shop/search?keyword=) 처리.
+  // router.query 는 하이드레이션 전에 비어 있으므로 isReady 이후에만 빈 검색어로 판단한다.
+  const searchKeyword = router.isReady ? String(router.query?.keyword ?? '').trim() : '';
+  const isEmptyKeyword = router.isReady && !searchKeyword;
   useEffect(() => {
-    if (router.query?.keyword) {
-      setKeyword(router.query?.keyword);
-      settingPage({
-        page: 1,
-        page_size: 15,
-        search: router.query?.keyword,
-      }, true);
+    if (!router.isReady) return;
+    setKeyword(router.query?.keyword ?? '');
+    if (!searchKeyword) {
+      // 조회를 아예 하지 않는 분기라 여기서 loading 을 직접 내려야 한다.
+      // 기존엔 keyword 가 있을 때만 조회하고 loading(초기값 true)을 내리지 않아 스피너가 영구히 돌았다.
+      setProducts([]);
+      setProductContent({});
+      setLoading(false);
+      return;
     }
-  }, [router.query])
+    settingPage({
+      page: 1,
+      page_size: 15,
+      search: searchKeyword,
+    }, true);
+  }, [router.isReady, router.query?.keyword])
   const settingPage = async (search_obj, is_first) => {
     if (is_first) {
       setLoading(true);
@@ -144,7 +155,16 @@ const SearchDemo = (props) => {
         <div style={{
           marginTop: '1rem'
         }} />
-        {products ?
+        {isEmptyKeyword ?
+          <>
+            {/* 검색어 없이 들어온 경우 — 조회할 대상이 없으므로 스피너 대신 안내를 보여준다 */}
+            <Col>
+              <Icon icon={'tabler:search'} style={{ margin: '8rem auto 1rem auto', fontSize: themeObj.font_size.size1, color: themeObj.grey[300] }} />
+              <div style={{ margin: 'auto auto 8rem auto' }}>{translate('검색어를 입력해 주세요.')}</div>
+            </Col>
+          </>
+          :
+          products ?
           <>
             {loading ?
               <>

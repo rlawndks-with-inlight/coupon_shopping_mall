@@ -4,6 +4,18 @@ import { serialize } from 'object-to-formdata';
 import { getLocalStorage } from "./local-storage";
 import { when } from "jquery";
 
+// 마지막 API 실패 사유 기록.
+//
+// post/get/put/delete 는 실패를 전부 false 한 가지로 뭉개서 돌려준다. 그래서 호출부는
+// '금액이 바뀌어서 거절당했다'와 '네트워크가 끊겼다'를 구분할 수 없었고,
+// 결제 실패라면 무조건 장바구니 전체 재동기화를 돌리는 과잉 대응을 하게 됐다.
+// 응답을 바꾸면 모든 호출부가 영향을 받으므로, 사유만 따로 남겨 필요한 곳에서 읽어 간다.
+let last_api_error = { message: '', at: 0 };
+const setLastApiError = (message) => {
+    last_api_error = { message: String(message ?? ''), at: Date.now() };
+};
+export const getLastApiError = () => last_api_error;
+
 export const post = async (url, obj) => {
     try {
         let formData = new FormData();
@@ -20,11 +32,13 @@ export const post = async (url, obj) => {
         if (response?.result > 0) {
             return response?.data;
         } else {
+            setLastApiError(response?.message);
             toast.error(response?.message);
             return false;
         }
     } catch (err) {
         console.log(err)
+        setLastApiError(err?.message);
         toast.error(err?.message);
         return false;
     }

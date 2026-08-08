@@ -9,7 +9,7 @@ import { apiManager, apiShop } from 'src/utils/api';
 import { styled as muiStyle } from '@mui/material'
 import Head from 'next/head';
 import { Row } from 'src/components/elements/styled-components';
-import { commarNumber } from 'src/utils/function';
+import { commarNumber, isPurchasable } from 'src/utils/function';
 import { Icon } from '@iconify/react';
 import { insertCartDataUtil, insertWishDataUtil, selectItemOptionUtil } from 'src/utils/shop-util';
 import toast from 'react-hot-toast';
@@ -537,7 +537,10 @@ const ItemDemo = (props) => {
                           </div>
                         </>}
                         <Button
-                          disabled={product?.status != 0 || !(product?.product_sale_price > 0)}
+                          // '새상품(3)'도 파는 상태다. status != 0 으로 막으면 새상품으로 등록한 상품이
+                          // 구매·장바구니 둘 다 비활성이 되어 아예 팔 수 없다.
+                          // 판정은 공용 헬퍼(getProductStatus 의 color=='info')로 통일한다.
+                          disabled={!isPurchasable(product?.status) || !(product?.product_sale_price > 0)}
                           sx={{
                             width: '100%',
                             //marginTop: '1rem',
@@ -585,7 +588,10 @@ const ItemDemo = (props) => {
                         >구매하기</Button>
                         <Row style={{ columnGap: '0.5rem', marginTop: '0.5rem', alignItems: 'center' }}>
                           <Button
-                            disabled={product?.status != 0 || !(product?.product_sale_price > 0)}
+                            // '새상품(3)'도 파는 상태다. status != 0 으로 막으면 새상품으로 등록한 상품이
+                          // 구매·장바구니 둘 다 비활성이 되어 아예 팔 수 없다.
+                          // 판정은 공용 헬퍼(getProductStatus 의 color=='info')로 통일한다.
+                          disabled={!isPurchasable(product?.status) || !(product?.product_sale_price > 0)}
                             sx={{
                               width: '90%',
                               height: '60px',

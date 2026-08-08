@@ -1,6 +1,6 @@
 import { Box, Button, Card, CardContent, CardHeader, CircularProgress, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Divider, FormControl, FormControlLabel, Grid, InputLabel, MenuItem, Paper, Radio, RadioGroup, Select, Stack, TextField, Typography } from '@mui/material';
 import { makeOrdNum } from 'src/utils/function';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Row, Title, postCodeStyle, themeObj } from 'src/components/elements/styled-components';
 import { CheckoutCartProductList, CheckoutSteps, CheckoutSummary } from 'src/views/@dashboard/e-commerce/checkout';
 import styled from 'styled-components'
@@ -10,6 +10,7 @@ import EmptyContent from 'src/components/empty-content/EmptyContent';
 import Iconify from 'src/components/iconify/Iconify';
 import { useSettingsContext } from 'src/components/settings';
 import { calcOrderTotals, calculatorPrice, getCartDataUtil, makePayData, onPayProductsByAuth, onPayProductsByForspay, onPayProductsByHand, onPayProductsByPayletter, onPayProductsByVirtualAccount } from 'src/utils/shop-util';
+import { syncCartWithServer, makeUnavailableMessage, filterUnavailableByProducts } from 'src/utils/cart-sync';
 import { useAuthContext } from 'src/layouts/manager/auth/useAuthContext';
 import Payment from 'payment'
 import Cards from 'react-credit-cards'
@@ -126,6 +127,11 @@ const CartDemo = (props) => {
   const { use_point_min_price = 0, max_use_point = 0, point_rate = 0 } = setting_obj;
   const mainColor = themeDnsData?.theme_css?.main_color;
   const [products, setProducts] = useState([]);
+  // 서버가 '지금 살 수 없다'고 알려준 라인(품절·판매중단·내려간 상품).
+  // 화면에 남아 있는 상품하고만 대조해서 쓴다 — 안내를 보고 지우면 그 즉시 사라져야 한다.
+  // (토스트는 사라지므로 안내를 화면에도 남긴다)
+  const [unavailableRaw, setUnavailableRaw] = useState([]);
+  const unavailable = useMemo(() => filterUnavailableByProducts(unavailableRaw, products), [unavailableRaw, products]);
   const [activeStep, setActiveStep] = useState(0);
   const [buyType, setBuyType] = useState(undefined);
   const [smsPayData, setSmsPayData] = useState({ name: '', phone_num: '' });
@@ -188,6 +194,23 @@ const CartDemo = (props) => {
   const getCart = async () => {
     let data = await getCartDataUtil(themeCartData);
     setProducts(data);
+    // 담을 때 저장한 가격 스냅샷이 낡으면 결제 직전 서버 금액검증(recalcOrderAmount)에서 거절된다.
+    // 장바구니를 열 때 서버의 현재 값으로 갱신하고 저장소(localStorage)까지 반영해
+    // '새로고침해도 옛 가격이 그대로 복원되는' 상태를 끊는다. 금액 계산식 자체는 건드리지 않는다.
+    // 빈 장바구니면 서버에 물어볼 것도, 저장소에 덮어쓸 것도 없다.
+    let sync = (data?.length > 0) ? await syncCartWithServer(data) : null;
+    if (sync && !sync.failed) {
+      setProducts(sync.items);
+      onChangeCartData(sync.items);
+      // 조회에 실패한 라인(타임아웃·500)은 sync.unavailable 에 들어오지 않는다.
+      // 일시적 실패를 '판매하지 않는 상품'으로 낙인찍지 않기 위해서다.
+      setUnavailableRaw(sync.unavailable);
+      if (sync.unavailable.length > 0) {
+        toast.error(makeUnavailableMessage(sync.unavailable));
+      } else if (sync.priceChanged) {
+        toast(translate('상품 가격이 변경되어 최신 금액으로 갱신했습니다.'));
+      }
+    }
     onChangeAddressPage(addressSearchObj);
   }
   const onDelete = (idx) => {
@@ -234,6 +257,14 @@ const CartDemo = (props) => {
     onClickNextStep();
   }
   const selectPayType = async (item) => {
+    // 구매할 수 없는 상품(품절·판매중단·내려간 상품)이 남아 있으면 결제로 넘어가지 않는다.
+    // 공용 주문서(OrderSheet)에는 이 차단이 있었는데 장바구니 화면에는 없어서,
+    // 여기서 결제를 시작하면 서버가 거절할 때까지 갔다가 이유를 알 수 없는 실패만 봤다.
+    // unavailable 은 화면에 남은 라인에서 파생되므로, 안내대로 지우면 즉시 풀린다.
+    if (unavailable.length > 0) {
+      toast.error(makeUnavailableMessage(unavailable));
+      return;
+    }
     if (item?.type == 'card') {//카드결제
       setBuyType('card');
       setPayData({
@@ -312,6 +343,14 @@ const CartDemo = (props) => {
     }
   }
   const onPayByHand = async () => {
+    // 구매할 수 없는 상품(품절·판매중단·내려간 상품)이 남아 있으면 결제로 넘어가지 않는다.
+    // 공용 주문서(OrderSheet)에는 이 차단이 있었는데 장바구니 화면에는 없어서,
+    // 여기서 결제를 시작하면 서버가 거절할 때까지 갔다가 이유를 알 수 없는 실패만 봤다.
+    // unavailable 은 화면에 남은 라인에서 파생되므로, 안내대로 지우면 즉시 풀린다.
+    if (unavailable.length > 0) {
+      toast.error(makeUnavailableMessage(unavailable));
+      return;
+    }
     if (buyType == 'card') {//카드결제
       if (parseFloat(max_use_point) < parseFloat(payData.use_point)) {
         toast.error(translate('최대사용가능 포인트를 초과하였습니다.'));
@@ -410,6 +449,12 @@ const CartDemo = (props) => {
                 <Card sx={softCardSx}>
                   {products.length > 0 ?
                     <>
+                      {unavailable.length > 0 &&
+                        <Box sx={{ mx: 2, mt: 2, p: 1.5, borderRadius: 1, bgcolor: 'error.lighter' }}>
+                          <Typography variant="body2" sx={{ color: 'error.main' }}>
+                            {makeUnavailableMessage(unavailable)}
+                          </Typography>
+                        </Box>}
                       <CheckoutCartProductList
                         products={products}
                         onDelete={onDelete}

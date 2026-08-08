@@ -9,7 +9,7 @@ import { apiManager, apiShop } from 'src/utils/api';
 import { styled as muiStyle } from '@mui/material'
 import Head from 'next/head';
 import { Row } from 'src/components/elements/styled-components';
-import { commarNumber } from 'src/utils/function';
+import { commarNumber, isPurchasable } from 'src/utils/function';
 import { Icon } from '@iconify/react';
 import { insertCartDataUtil, insertWishDataUtil, selectItemOptionUtil } from 'src/utils/shop-util';
 import toast from 'react-hot-toast';
@@ -388,7 +388,7 @@ const ItemDemo = (props) => {
                         }
                       })}
                       <Button
-                        disabled={product?.status != 0 || !(product?.product_sale_price > 0)}
+                        disabled={!isPurchasable(product?.status) || !(product?.product_sale_price > 0)}
                         sx={{
                           width: '100%',
                           marginTop: '1rem',
@@ -420,7 +420,7 @@ const ItemDemo = (props) => {
                       >구입하기</Button>
                       <Row style={{ columnGap: '0.5rem', marginTop: '0.5rem', alignItems: 'center' }}>
                         <Button
-                          disabled={product?.status != 0 || !(product?.product_sale_price > 0)}
+                          disabled={!isPurchasable(product?.status) || !(product?.product_sale_price > 0)}
                           sx={{
                             width: '90%',
                             height: '60px',

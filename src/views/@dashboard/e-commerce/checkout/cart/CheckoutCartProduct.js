@@ -10,7 +10,8 @@ import Iconify from 'src/components/iconify/Iconify';
 import { ColorPreview } from 'src/components/color-utils';
 import { IncrementerButton } from 'src/components/custom-input';
 import _ from 'lodash';
-import { commarNumber, getPriceUnitByLang, setProductPriceByLang } from 'src/utils/function';
+import { commarNumber, getPriceUnitByLang, setProductPriceByLang, getProductStatus, isPurchasable } from 'src/utils/function';
+import { getOptionLabel } from 'src/utils/shop-util';
 import { useSettingsContext } from 'src/components/settings';
 import { formatLang } from 'src/utils/format';
 import { useLocales } from 'src/locales';
@@ -26,10 +27,17 @@ CheckoutCartProduct.propTypes = {
   onChangeQuantity: PropTypes.func,
 };
 export default function CheckoutCartProduct({ row, onDelete, onDecrease, onIncrease, onChangeQuantity, calculatorPrice }) {
-  const { product_name, product_comment, size, price, colors, cover, available, delivery_fee, product_sale_price, groups, order_count, product_price, product_img } = row;
+  // status 가 빠져 있어 장바구니에서는 품절·판매중단 상품이 판매중과 똑같이 보였다.
+  // 결제 직전 백엔드 하드블록에서야 막히는데 그때도 어느 상품인지 알려주지 않았다.
+  const { product_name, product_comment, size, price, colors, cover, available, delivery_fee, product_sale_price, groups, order_count, product_price, product_img, status } = row;
   const { themeDnsData } = useSettingsContext();
   const { currentLang, translate } = useLocales();
   const router = useRouter();
+
+  // status 를 아는 경우에만 표시한다. 값이 없으면(옛 장바구니 데이터) 아무 표시도 하지 않는다.
+  const status_known = !(status === undefined || status === null || status === '');
+  const is_blocked = status_known && !isPurchasable(status);
+  const status_text = getProductStatus(status)?.text;
 
 
   return (
@@ -51,6 +59,14 @@ export default function CheckoutCartProduct({ row, onDelete, onDecrease, onIncre
                 product_name
             }
           </Typography>
+          {is_blocked && (
+            <Stack direction="row" alignItems="center" spacing={0.5}>
+              <Label color={getProductStatus(status)?.color || 'error'}>{status_text || '판매불가'}</Label>
+              <Typography variant="caption" sx={{ color: 'error.main' }}>
+                {translate('이 상품은 결제할 수 없습니다.')}
+              </Typography>
+            </Stack>
+          )}
           <Stack
             direction="row"
             alignItems="center"
@@ -61,25 +77,34 @@ export default function CheckoutCartProduct({ row, onDelete, onDecrease, onIncre
         </Stack>
       </TableCell>
       <TableCell>
-        <Stack spacing={0.5} onClick={() => { console.log(row) }}>
+        {/* 옵션 칸이 늘 비어 있던 자리.
+            (1) 그룹 이름 필드가 틀렸다 — 옵션그룹(product_option_groups)은 group_name 이고
+                character_name 은 상품 스펙(product_characters)의 필드라 여기선 항상 undefined 였다.
+            (2) 옵션 값도 option?.value 로 읽었는데, selectItemOptionUtil 이 객체 옵션은
+                {id, option_name, option_price, ...} 그대로 저장한다(value 는 문자열 옵션에만 있다).
+                그래서 옵션그룹을 쓰는 상품은 옵션명이 통째로 사라졌다.
+            두 형태(+ 옛 데이터의 깨진 형태)를 모두 흡수하는 getOptionLabel 을 쓴다. */}
+        <Stack spacing={0.5}>
           {groups && groups.length > 0 ?
             <>
               {groups.map((group, index) => {
-                return <>
+                const option_text = (group?.options ?? [])
+                  .map((option) => getOptionLabel(option))
+                  .filter((v) => v !== '')
+                  .join(' / ');
+                if (!option_text) return null;
+                return (
                   <Stack
+                    key={group?.id ?? group?.group_name ?? index}
                     direction="row"
                     alignItems="center"
                     sx={{ typography: 'body2', color: 'text.secondary' }}
                   >
-                    <div style={{ display: 'flex' }}>
-                      {group?.character_name}: {group?.options && group?.options.map((option, idx) => (
-                        <>
-                          {option?.value} {/*option?.option_price > 0 ? '+' : ''}{commarNumber(option?.option_price)*/}
-                        </>
-                      ))}
+                    <div style={{ display: 'flex', flexWrap: 'wrap' }}>
+                      {group?.group_name ? `${group?.group_name}: ` : ''}{option_text}
                     </div>
                   </Stack>
-                </>
+                );
               })}
             </>
             :

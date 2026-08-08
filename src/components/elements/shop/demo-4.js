@@ -110,12 +110,19 @@ export const Item4 = (props) => {
           {(item?.category_en_name1 ?? "").toUpperCase()}
         </div>
         <ItemName>
-          {item?.product_name.length < 30 ? item.product_name : `${item.product_name.slice(0, 30)}...`}
+          {/* product_name 에 옵셔널체이닝이 없어, 상품이 없는 자리(빈 객체)가 들어오면
+              undefined.length 에서 TypeError 가 났다. 앱에 ErrorBoundary 가 없어
+              그 예외 하나로 페이지가 통째로 백지가 된다. 백엔드에서 빈 자리를 걸러내지만
+              여기서도 방어한다. */}
+          {(item?.product_name ?? '').length < 30 ? (item?.product_name ?? '') : `${item.product_name.slice(0, 30)}...`}
         </ItemName>
         <ItemDetail variant="subtitle2" style={{ margin: '0 auto', width: '90%' }}>
           {item?.status == 1 ? '거래 진행중'
             :
-            item?.status == 2 || item?.status == 3 || item?.status == 4 ? 'SOLD OUT'
+            /* status 3 은 '새상품' — 파는 상태다. 여기 SOLD OUT 목록에 들어 있어서
+               새상품으로 등록한 상품이 목록·홈에서 품절로 보이고 가격까지 감춰졌다. 뺀다.
+               (2=품절, 4=레거시 미사용 코드는 그대로 둔다) */
+            item?.status == 2 || item?.status == 4 ? 'SOLD OUT'
               :
               item?.status == 6 ? '예약중'
                 : item?.status == 7 ? '매장문의'

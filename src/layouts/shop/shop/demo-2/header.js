@@ -781,20 +781,25 @@ const Header = () => {
               </>
             ))}
           </TreeView>
-          {/*
-            postCategories.length > 0 &&
+          {/* 고객센터(공지사항·1:1문의).
+              예전엔 이 구간이 통째로 주석이었다. 존재하지 않는 변수 postCategories 를
+              참조하고 있어서 살리면 ReferenceError 가 났기 때문으로 보인다.
+              그 결과 모바일 폭(≤1000px)에서는 게시판으로 갈 방법이 아예 없었다 —
+              PC 전체메뉴 다이얼로그에만 있었고 모바일 사이드메뉴에는 없었다.
+              실제 변수(themePostCategoryList)로 되살린다. PC 다이얼로그와 같은 목록이다.
+              ※ 이 파일에는 translate 가 없다(useLocales 에서 currentLang 만 받는다).
+                 주변 live 코드와 동일하게 한글 문자열을 그대로 쓴다. */}
+          {themePostCategoryList.length > 0 &&
             <>
-              <ColumnMenuTitle>{translate('고객센터')}</ColumnMenuTitle>
+              <ColumnMenuTitle>고객센터</ColumnMenuTitle>
+              {themePostCategoryList.map((item, idx) => (
+                <ColumnMenuContent key={item?.id ?? idx} onClick={() => {
+                  router.push(`/shop/service/${item.id}`);
+                  setSideMenuOpen(false);
+                }} style={{ paddingLeft: '1rem' }}>{formatLang(item, 'post_category_title', currentLang)}</ColumnMenuContent>
+              ))}
             </>
           }
-          {postCategories.length > 0 && postCategories.map((item, idx) => (
-            <>
-              <ColumnMenuContent onClick={() => {
-                router.push(`/shop/service/${item.id}`);
-                setSideMenuOpen(false);
-              }} style={{ paddingLeft: '1rem' }}>{formatLang(item, 'post_category_title', currentLang)}</ColumnMenuContent>
-            </>
-          ))*/}
           <ColumnMenuTitle>마이페이지</ColumnMenuTitle>
           {user ?
             <>

@@ -275,7 +275,10 @@ export const navConfig = () => {
             ...(themeDnsData?.is_use_seller > 0 && user.level >= 15 ? [{ title: '셀러관리', path: PATH_MANAGER.users.sellers }] : []),
             ...(isManager() ? [
               { title: '회원관리', path: PATH_MANAGER.users.list },
-              //{ title: '포인트관리', path: PATH_MANAGER.users.points },
+              // 포인트관리 메뉴가 주석이라, 고객은 주문서에서 포인트를 쓸 수 있는데
+              // 가맹점은 포인트를 지급·조정할 방법이 아예 없었다(페이지 자체는 정상 동작한다 —
+              // 주소창에 직접 넣으면 목록·지급 모두 된다). 메뉴만 되살린다.
+              { title: '포인트관리', path: PATH_MANAGER.users.points },
               //{ title: '찜관리', path: PATH_MANAGER.users.wishs },
             ] : []),
             ...(themeDnsData?.is_use_seller > 0 && user.level >= 10 ? [{ title: '회원가입번호관리', path: PATH_MANAGER.users.phoneRegistration }] : []),

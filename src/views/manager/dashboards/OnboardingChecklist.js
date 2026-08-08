@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Card, Box, Stack, Typography, Button, LinearProgress, IconButton } from '@mui/material';
 import { Icon } from '@iconify/react';
 import { useRouter } from 'next/router';
@@ -31,6 +31,27 @@ const OnboardingChecklist = () => {
     || [1, 2, 3].includes(Number(dns.blog_demo_num));
   const hasHomeTexts = Object.keys(HOME_TEXT_SCHEMA).map(Number).includes(Number(dns.blog_demo_num));
 
+  // '상품 등록' 완료 여부는 상품 목록 API 로 직접 센다.
+  //
+  // 예전엔 themeDnsData.products 를 봤는데 그 값은 채워지지 않는다
+  // (디자인관리 › 대표 상품의 후보 목록이 늘 비어 있던 것과 같은 원인이다).
+  // 그래서 상품을 아무리 등록해도 '상품 등록'이 미완료로 남고 '판매 준비: 아직'이
+  // 영영 고정됐다 — 체크리스트가 끝나지 않으니 신규 가맹점은 뭘 더 해야 하는지 알 수 없었다.
+  //
+  // null = 아직 확인 전(완료로 치지 않는다). 목록은 1건만 받아 개수만 본다.
+  const [productCount, setProductCount] = useState(null);
+  useEffect(() => {
+    let alive = true;
+    // 체크리스트가 뜨지 않는 브랜드에서는 굳이 부르지 않는다(아래 early return 과 같은 조건).
+    if (!dns?.id || !isShopgoMerchant(dns) || so?.onboarding_dismissed == 1) return;
+    (async () => {
+      const result = await apiManager('products', 'list', { page: 1, page_size: 1 });
+      if (!alive || !result) return;
+      setProductCount(Number(result?.total ?? result?.content?.length ?? 0) || 0);
+    })();
+    return () => { alive = false; };
+  }, [dns?.id, so?.onboarding_dismissed]);
+
   const catDone = (themeCategoryList ?? []).some((g) => (g?.product_categories?.length ?? 0) > 0);
   // 마이그레이션 브랜드는 합성 그룹 id=0(falsy) 이므로 존재 여부로 판단(?? 0 로 0 도 유효 라우팅).
   const catRoute = (themeCategoryList ?? [])[0]
@@ -44,14 +65,14 @@ const OnboardingChecklist = () => {
       { key: 'company', label: '회사·판매자 정보', tag: '권장', done: !!dns?.company_name, route: settingRoute },
       { key: 'delivery', label: '배송비 설정', tag: '권장', note: '미설정 시 무료배송', done: Number(so?.delivery_fee_default) > 0 || Number(so?.free_ship_min) > 0, route: settingRoute },
       { key: 'category', label: '카테고리 등록', tag: '필수', required: true, done: catDone, route: catRoute },
-      { key: 'product', label: '상품 등록', tag: '필수', required: true, done: (dns?.products?.length ?? 0) > 0, route: '/manager/products/list', note: catDone ? '' : '카테고리를 먼저 등록하세요' },
+      { key: 'product', label: '상품 등록', tag: '필수', required: true, done: (productCount ?? 0) > 0, route: '/manager/products/list', note: catDone ? '' : '카테고리를 먼저 등록하세요' },
       ...(isSingleProductBlog ? [{ key: 'featured', label: '대표 상품 지정', tag: '조건부', done: (so?.featured_product_ids?.length ?? 0) > 0, route: '/manager/designs/featured' }] : []),
       { key: 'payment', label: '결제수단 연결', tag: '필수', required: true, hqManaged: true, done: (dns?.payment_modules?.length ?? 0) > 0 },
       ...(isSectionBuilder ? [{ key: 'design', label: '메인페이지 꾸미기', tag: '권장', done: ((dns?.shop_obj?.length ?? 0) + (dns?.blog_obj?.length ?? 0)) > 0, route: isBlog && !isShop ? '/manager/designs/blog-main/all' : '/manager/designs/main/all' }] : []),
       ...(!isSectionBuilder && hasHomeTexts ? [{ key: 'home-texts', label: '홈 화면 문구 작성', tag: '권장', note: '미입력 시 기본 문구', done: Object.keys(so?.home_texts ?? {}).length > 0, route: '/manager/designs/home-texts' }] : []),
     ];
     return list;
-  }, [dns, so, themeCategoryList, catDone, catRoute, isBlog, isShop, isSingleProductBlog, isSectionBuilder, hasHomeTexts]);
+  }, [dns, so, themeCategoryList, catDone, catRoute, isBlog, isShop, isSingleProductBlog, isSectionBuilder, hasHomeTexts, productCount]);
 
   const doneCount = steps.filter((s) => s.done).length;
   const requiredAllDone = steps.filter((s) => s.required).every((s) => s.done);

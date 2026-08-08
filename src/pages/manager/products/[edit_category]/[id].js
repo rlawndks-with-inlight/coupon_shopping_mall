@@ -885,6 +885,24 @@ const ProductEdit = () => {
   };
 
   const onSave = async (type, sort) => {
+    // 필수값 검증.
+    //
+    // 예전엔 옵션 변동가 NaN 검사 하나뿐이라, 상품명이 비고 판매가가 0 인 상품이 그대로
+    // 저장됐다. 라벨에는 '(필수)'라고 써 있는데 아무것도 막지 않았다.
+    // 그렇게 만들어진 상품은 고객 목록에 이름 없이 뜨고 카드가 SOLD OUT 으로 보인다
+    // (가격 0 이면 구매 버튼도 비활성이다).
+    if (!String(item?.product_name ?? '').trim()) {
+      toast.error('상품명을 입력해 주세요.');
+      return;
+    }
+    if (!(parseFloat(item?.product_sale_price) > 0)) {
+      toast.error('판매가를 입력해 주세요.');
+      return;
+    }
+    if ((selectedCategoryIds ?? []).length == 0) {
+      toast.error('카테고리를 한 개 이상 선택해 주세요.');
+      return;
+    }
     let result = undefined
     // 1상품 N카테고리: 다중선택된 카테고리들을 연결테이블용 배열로. 대표(첫번째)는 category_id0 dual-write.
     let category_ids_arr = [...new Set((selectedCategoryIds ?? []).map(Number).filter((v) => v > 0))];

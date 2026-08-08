@@ -224,21 +224,22 @@ export default function OrderSheet({ router }) {
     }
     setProducts(list);
   };
-  const onDecreaseQuantity = (idx) => {
-    const list = [...products];
-    if (list[idx].order_count > 1) list[idx].order_count--;
+  // 수량 변경도 저장소에 반영한다(onDelete 와 같은 분기).
+  // 예전엔 setProducts 만 해서, 새로고침하거나 동기화가 한 번 돌면 바꾼 수량이
+  // 원래대로 되돌아갔다. 요소는 in-place 대신 새 객체로 교체한다.
+  const setQuantity = (idx, next) => {
+    const count = Math.max(1, parseInt(next) || 1);
+    const list = products.map((item, i) => (i == idx ? { ...item, order_count: count } : item));
+    if (isBuyNow()) {
+      try { sessionStorage.setItem('buyNowItem', JSON.stringify(list[0] ?? null)); } catch (e) { /* noop */ }
+    } else {
+      onChangeCartData(list);
+    }
     setProducts(list);
   };
-  const onIncreaseQuantity = (idx) => {
-    const list = [...products];
-    list[idx].order_count++;
-    setProducts(list);
-  };
-  const onChangeQuantity = (idx, val) => {
-    const list = [...products];
-    list[idx].order_count = val;
-    setProducts(list);
-  };
+  const onDecreaseQuantity = (idx) => setQuantity(idx, (products[idx]?.order_count ?? 1) - 1);
+  const onIncreaseQuantity = (idx) => setQuantity(idx, (products[idx]?.order_count ?? 1) + 1);
+  const onChangeQuantity = (idx, val) => setQuantity(idx, val);
 
   // ── 배송지(주소록) ──
   const onChangeAddressPage = async (search_obj) => {
@@ -282,6 +283,16 @@ export default function OrderSheet({ router }) {
 
   // ── 결제 진행 전 공통 검증(포인트·약관) ──
   const guardBeforePay = () => {
+    // 이미 접수된 주문이 있으면 다른 결제수단으로 하나 더 만들지 못하게 막는다.
+    //
+    // 무통장입금·상품권결제는 '수단을 고르는 순간' 주문이 만들어지고 화면에 그대로 머문다.
+    // 그 상태에서 카드결제나 포스페이를 누르면 두 번째 주문이 또 생성됐다 —
+    // 같은 장바구니로 결제대기 주문이 두 건 쌓이고, 가맹점은 어느 것이 진짜인지 알 수 없다.
+    // (수단별 중복 방지는 있었지만 '교차 수단' 차단이 없었다)
+    if (Object.keys(createdOrderRef.current).length > 0) {
+      toast.error('이미 접수된 주문이 있습니다. 주문내역에서 확인해 주세요.');
+      return false;
+    }
     if (!agreeAll) {
       toast.error('주문 내용 및 약관에 동의해 주세요.');
       return false;

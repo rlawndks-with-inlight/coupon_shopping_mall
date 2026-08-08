@@ -198,21 +198,19 @@ const Cart2 = (props) => {
         onChangeCartData(product_list);
         setProducts(product_list);
     }
-    const onDecreaseQuantity = (idx) => {
-        let product_list = [...products];
-        product_list[idx].order_count--;
-        setProducts(product_list)
+    // 수량 변경도 저장소에 반영한다.
+    // 예전엔 setProducts 만 하고 onChangeCartData 를 안 불러서, 새로고침하거나
+    // 주문서로 넘어가면 바꾼 수량이 원래대로 되돌아갔다(onDelete 는 부른다).
+    // 요소는 in-place 대신 새 객체로 교체한다.
+    const setQuantity = (idx, next) => {
+        const count = Math.max(1, parseInt(next) || 1);
+        const product_list = products.map((item, i) => (i == idx ? { ...item, order_count: count } : item));
+        onChangeCartData(product_list);
+        setProducts(product_list);
     }
-    const onIncreaseQuantity = (idx) => {
-        let product_list = [...products];
-        product_list[idx].order_count++;
-        setProducts(product_list)
-    }
-    const onChangeQuantity = (idx, val) => {
-        let product_list = [...products];
-        product_list[idx].order_count = val;
-        setProducts(product_list)
-    }
+    const onDecreaseQuantity = (idx) => setQuantity(idx, (products[idx]?.order_count ?? 1) - 1);
+    const onIncreaseQuantity = (idx) => setQuantity(idx, (products[idx]?.order_count ?? 1) + 1);
+    const onChangeQuantity = (idx, val) => setQuantity(idx, val);
     const onClickNextStep = () => {
         if (activeStep == 0) {
 

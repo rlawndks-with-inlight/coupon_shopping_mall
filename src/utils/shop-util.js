@@ -407,9 +407,34 @@ const assertPurchasable = (product) => {
     return false;
 };
 
+// 옵션그룹이 있는 상품은 그룹마다 하나 이상 골라야 한다.
+//
+// 예전엔 이 검사가 없어서 옵션을 하나도 안 고른 채 장바구니에 담거나 바로구매로 넘어갈 수 있었다.
+// 그러면 주문서 '옵션' 칸이 비고, 옵션 추가금액도 안 붙고, 가맹점은 무엇을 보내야 할지 모른다.
+// (상품상세에 `//옵션 체크 안해도 저장 되는데 이 부분은 수정할 여지가 있어보임` 주석이
+//  프레임1 진입부에 남아 있었다 — 그 자리가 여기다)
+//
+// assertPurchasable 과 같은 방침으로 **모르면 통과**시킨다.
+// 상품 카드처럼 groups 를 싣지 않는 경로에서 담기가 통째로 막히면 안 된다.
+// 최종 차단은 어차피 서버가 한다.
+const assertOptionsSelected = (product, selectProductGroups) => {
+    const required = Array.isArray(product?.groups) ? product.groups : [];
+    if (required.length == 0) return true;
+    const picked = Array.isArray(selectProductGroups?.groups) ? selectProductGroups.groups : [];
+    const allPicked = required.every((g) => picked.some(
+        (p) => Number(p?.id) === Number(g?.id) && (p?.options?.length ?? 0) > 0
+    ));
+    if (!allPicked) {
+        toast.error('옵션을 선택해 주세요.');
+        return false;
+    }
+    return true;
+};
+
 export const startBuyNow = (product, selectProductGroups, router) => {
     try {
         if (!assertPurchasable(product)) return false;
+        if (!assertOptionsSelected(product, selectProductGroups)) return false;
         const item = {
             ...product,
             groups: selectProductGroups?.groups ?? [],
@@ -437,6 +462,7 @@ export const insertCartDataUtil = (
 ) => { //장바구니 버튼 클릭해서 넣기
     try {
         if (!assertPurchasable(product_)) return false;
+        if (!assertOptionsSelected(product_, selectProductGroups_)) return false;
         let cart_data = [...themeCartData];
         let product = product_;
         let selectProductGroups = selectProductGroups_;

@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { Item } from "src/components/elements/shop/common";
 import { themeObj } from "src/components/elements/styled-components";
 import { useSettingsContext } from "src/components/settings";
-import { defaultManagerObj } from "src/data/manager-data";
+import { createDefaultManagerObj } from "src/data/manager-data";
 import styled from "styled-components";
 import { useModal } from "src/components/dialog/ModalProvider";
 import { toast } from "react-hot-toast";
@@ -66,7 +66,9 @@ const ItemCardSetting = (props) => {
   const { themeDnsData } = useSettingsContext();
 
   const router = useRouter();
-  const [item, setItem] = useState(defaultManagerObj.brands);
+  // 모듈 전역 기본객체를 그대로 state 에 넣으면 이 화면에서 변형될 때 원본이 오염된다.
+  // (그 뒤 '브랜드 추가'에 들어가면 직전 브랜드 값이 id째로 남아 신규 정보가 기존 가맹점에 PUT 된다)
+  const [item, setItem] = useState(() => createDefaultManagerObj('brands'));
   const [itemThemeCss, setItemThemeCss] = useState(undefined);
   const [loading, setLoading] = useState(true);
   const [testText, setTestText] = useState({
@@ -83,9 +85,12 @@ const ItemCardSetting = (props) => {
       setLoading(false);
     }
   }, [itemThemeCss])
+  // ⚠ 인자로 받은 객체를 변형하지 않는다(복사본에 채워 새 객체를 돌려준다).
+  //    예전엔 `let obj = item` 이라 state(=모듈 전역 기본객체)를 그대로 in-place 변형했고,
+  //    그 결과 defaultManagerObj.brands 에 이 브랜드 값이 id 까지 남았다.
   const settingBrandObj = (item, brand_data) => {
-    let obj = item;
-    let brand_data_keys = Object.keys(brand_data);
+    let obj = { ...item };
+    let brand_data_keys = Object.keys(brand_data ?? {});
     for (var i = 0; i < brand_data_keys.length; i++) {
       if (brand_data[brand_data_keys[i]]) {
         obj[brand_data_keys[i]] = brand_data[brand_data_keys[i]];
@@ -98,13 +103,16 @@ const ItemCardSetting = (props) => {
       id: router.query?.id || themeDnsData?.id
     })
     brand_data = settingBrandObj(item, brand_data);
-    setItemThemeCss(brand_data?.theme_css[ITEM_CARD_TYPE] || itemThemeCssDefaultSetting)
+    setItemThemeCss(brand_data?.theme_css?.[ITEM_CARD_TYPE] || itemThemeCssDefaultSetting)
     setItem(brand_data);
   }
 
   const onSave = async () => {
-    let brand_data = item;
-    brand_data['theme_css'][ITEM_CARD_TYPE] = itemThemeCss;
+    // theme_css 를 in-place 로 건드리지 않는다(state·기본객체 공유 참조 오염 방지).
+    let brand_data = {
+      ...item,
+      theme_css: { ...(item?.theme_css ?? {}), [ITEM_CARD_TYPE]: itemThemeCss }
+    };
     let result = await apiManager('brands', 'update',{ ...brand_data, id: (router.query?.id || themeDnsData?.id) })
     if (result) {
       toast.success("성공적으로 저장 되었습니다.");

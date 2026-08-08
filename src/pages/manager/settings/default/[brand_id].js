@@ -116,6 +116,13 @@ const DefaultSetting = () => {
   const [useBasicInfo, setUseBasicInfo] = useState(false)
   // 화면 진입 시점의 값(깊은 복사). 저장할 때 '실제로 바뀐 키'만 가려내는 기준으로만 쓴다.
   const loadedItemRef = useRef(null)
+  // 추가/수정 분기는 폼 상태(obj.id)가 아니라 '경로'로 판단한다.
+  // SPA 로 다른 화면(디자인관리 등)을 거쳐 들어오면 상태에 직전 브랜드 id 가 남아 있을 수 있고,
+  // 그 id 를 믿으면 신규 브랜드 정보가 기존 가맹점에 PUT 되어 그 가맹점 dns 가 바뀐다(도메인 접속 사망).
+  const isAddMode = router.query?.brand_id == 'add'
+  // 수정 경로에서 다룰 브랜드 id. 조회와 저장이 반드시 같은 값을 써야 한다.
+  const getTargetBrandId = () =>
+    (!isNaN(parseInt(router.query?.brand_id)) ? router.query?.brand_id : '') || themeDnsData?.id
 
   const tab_list = [
     {
@@ -130,7 +137,7 @@ const DefaultSetting = () => {
       value: 2,
       label: '회사정보'
     },
-    ...(router.query?.brand_id == 'add'
+    ...(isAddMode
       ? [
         {
           value: 3,
@@ -212,20 +219,42 @@ const DefaultSetting = () => {
         // 기본값(개발용 테스트 배너)이 그대로 남았고, 저장하면 그게 DB로 나갔다.
         obj[key] = value
       } else if (typeof value == 'object' && obj[key] && typeof obj[key] == 'object' && !Array.isArray(obj[key])) {
-        obj[key] = { ...obj[key], ...value } // setting_obj 등은 빠진 키를 기본값으로 채운다(기존 동작 유지)
+        // 수정 경로에서는 base 의 setting_obj/theme_css 등이 비어 있으므로(clearAddOnlyDefaults)
+        // 결과는 서버 값 그대로다. 모듈 기본값을 여기서 채워 넣지 않는다 — 아래 주석 참고.
+        obj[key] = { ...obj[key], ...value }
       } else {
         obj[key] = value
       }
     }
     return obj
   }
+  // 모듈 기본값 중 '브랜드 추가(create)' 때만 의미가 있는 키.
+  // 수정 경로에서 이 기본값을 서버 값에 섞으면, 서버에 없던 키가 폼에 들어오고
+  // 스냅샷(loadedItemRef)도 '섞은 뒤'에 뜨기 때문에 diff 에 잡히지 않은 채 payload 로 나간다.
+  // 특히 setting_obj 기본값의 is_use_lang:1 / lang_list 5개국 때문에,
+  // 언어팩을 안 쓰던 브랜드가 설정을 한 번 저장하는 것만으로 언어팩이 켜지고
+  // 백엔드가 그 브랜드 콘텐츠 전량을 번역 큐에 적재했다(번역 API 부하·과금, 고객화면에 언어선택 UI 노출).
+  // → 수정 경로에서는 이 키들을 빈 값으로 비우고 서버 값만 싣는다. 없는 키는 렌더에서 `?? 0` 등으로 폴백한다.
+  const DEFAULT_ONLY_ON_ADD_KEYS = ['setting_obj', 'seo_obj', 'bonaeja_obj', 'theme_css', 'shop_obj', 'blog_obj']
+  const clearAddOnlyDefaults = obj => {
+    let result = { ...obj }
+    for (var i = 0; i < DEFAULT_ONLY_ON_ADD_KEYS.length; i++) {
+      let key = DEFAULT_ONLY_ON_ADD_KEYS[i]
+      result[key] = Array.isArray(result[key]) ? [] : {}
+    }
+    return result
+  }
   const settingPage = async () => {
     // 브랜드가 바뀔 때마다 기본값을 새로 복사해서 시작한다.
     // ('브랜드 추가'는 조회를 안 하므로, 여기서 초기화하지 않으면 직전에 열어본 브랜드가 id째로 남는다)
     let obj = createDefaultManagerObj('brands')
-    if (router.query?.brand_id != 'add') {
+    if (isAddMode) {
+      // 추가 경로에서는 id 를 절대 물고 가지 않는다(오염된 id 로 기존 가맹점을 덮어쓰는 사고 방지).
+      delete obj.id
+    } else {
+      obj = clearAddOnlyDefaults(obj)
       let brand_data = await apiManager('brands', 'get', {
-        id: router.query.brand_id || themeDnsData?.id
+        id: getTargetBrandId()
       })
       obj = settingBrandObj(obj, brand_data)
     }
@@ -266,7 +295,9 @@ const DefaultSetting = () => {
 
     let result = undefined
     let obj = item
-    if (obj?.id) {
+    // ⚠ 분기 기준은 경로다. obj?.id 로 판단하면 SPA 로 다른 화면을 거쳐 들어왔을 때
+    //    상태에 남은 직전 브랜드 id 때문에 '브랜드 추가'가 그 가맹점을 update 해버린다.
+    if (!isAddMode) {
       //수정
       let payload = getUpdatePayload(obj)
       if (Object.keys(payload).length == 0) {
@@ -274,7 +305,7 @@ const DefaultSetting = () => {
         return
       }
       setSaveLoading(true);
-      result = await apiManager('brands', 'update', { ...payload, id: obj?.id })
+      result = await apiManager('brands', 'update', { ...payload, id: obj?.id || getTargetBrandId() })
     } else {
       //추가
       if (!obj?.user_name || !obj?.user_pw || !obj?.seller_name || !obj?.user_pw_check) {
@@ -286,7 +317,9 @@ const DefaultSetting = () => {
         return
       }
       setSaveLoading(true);
-      result = await apiManager('brands', 'create', { ...obj })
+      // 신규 생성에는 id 를 절대 싣지 않는다(백엔드가 id 를 보면 기존 행을 건드릴 여지를 남기지 않는다).
+      let { id, ...create_data } = obj
+      result = await apiManager('brands', 'create', { ...create_data })
     }
     if (result) {
       toast.success('성공적으로 저장 되었습니다.')
@@ -435,7 +468,9 @@ const DefaultSetting = () => {
                       />
                       <TextField
                         label='메인색상'
-                        value={item.theme_css.main_color}
+                        // 수정 경로에서는 theme_css 에 모듈 기본값을 얹지 않으므로(서버 값 그대로)
+                        // 서버에 값이 없을 때를 대비해 렌더에서만 폴백한다. 저장값은 사용자가 고를 때만 생긴다.
+                        value={item.theme_css?.main_color ?? '#00ab55'}
                         type='color'
                         style={{
                           border: 'none'

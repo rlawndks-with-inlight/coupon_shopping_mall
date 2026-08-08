@@ -60,7 +60,18 @@ const Footer = (props) => {
     } = props;
     const theme = useTheme();
     const { translate } = useLocales();
-    const { themeDnsData, themeMode } = useSettingsContext();
+    const { themeDnsData, themeMode, themePostCategoryList } = useSettingsContext();
+    // 푸터 HELP 영역의 게시판 링크.
+    //
+    // 예전엔 '/shop/service/47'(공지사항)·'/shop/service/46'(1:1문의)로 id 가 하드코딩돼 있었다.
+    // 그 두 id 는 brand 5(demo4.asapmall.kr)의 게시판이다. 같은 프레임3을 쓰는 다른 가맹점
+    // (testshop·testshop1·test030)은 자기 게시판 id 가 따로 있어서, 푸터를 누르면 남의 브랜드
+    // 게시판으로 갔다(교차 브랜드 차단이 들어간 뒤로는 그냥 열리지 않는다).
+    // 지금 브랜드의 게시판 목록에서 제목으로 찾고, 못 찾으면 링크 자체를 감춘다.
+    const findBoard = (keyword) => (themePostCategoryList ?? [])
+        .find((c) => String(c?.post_category_title ?? '').includes(keyword));
+    const noticeBoard = findBoard('공지');
+    const inquiryBoard = findBoard('문의');
     const {
         company_name,
         addr,
@@ -120,11 +131,12 @@ const Footer = (props) => {
                                             HELP
                                         </Row>
                                         <br /><br />
-                                        <Link href={'/shop/service/47'} passHref>
-                                            <Row style={{ marginBottom: '0.7rem', color: 'white', cursor: 'pointer' }}>
-                                                공지사항
-                                            </Row>
-                                        </Link>
+                                        {noticeBoard &&
+                                            <Link href={`/shop/service/${noticeBoard?.id}`} passHref>
+                                                <Row style={{ marginBottom: '0.7rem', color: 'white', cursor: 'pointer' }}>
+                                                    공지사항
+                                                </Row>
+                                            </Link>}
                                         <Row
                                             style={{ marginBottom: '0.7rem', color: 'white', cursor: 'pointer' }}
                                             onClick={() => {
@@ -142,11 +154,12 @@ const Footer = (props) => {
                                                 비회원주문조회
                                             </Row>
                                         </Link>
-                                        <Link href={'/shop/service/46'} passHref>
-                                            <Row style={{ color: 'white', cursor: 'pointer' }}>
-                                                1:1문의
-                                            </Row>
-                                        </Link>
+                                        {inquiryBoard &&
+                                            <Link href={`/shop/service/${inquiryBoard?.id}`} passHref>
+                                                <Row style={{ color: 'white', cursor: 'pointer' }}>
+                                                    1:1문의
+                                                </Row>
+                                            </Link>}
                                     </div>
                                     <div>
                                         <Row style={{ fontWeight: 'bold', fontSize: '16px', color: 'white', fontFamily: 'Playfair Display', }}>

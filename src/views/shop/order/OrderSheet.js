@@ -326,6 +326,17 @@ export default function OrderSheet({ router }) {
       toast.error('받는 분 연락처를 정확히 입력해 주세요.');
       return false;
     }
+    // 주문자 이름은 주문 확인·배송·CS 의 기준값이다. 비회원은 이 값이 유일한 식별 수단인데
+    // 검증이 없어 빈 이름으로 결제까지 갔다(백엔드도 비회원 비밀번호 길이만 봤다).
+    if (!user && !String(payData.buyer_name ?? '').trim()) {
+      toast.error('주문자 이름을 입력해 주세요.');
+      return false;
+    }
+    // 주소록을 쓰지 않고 직접 입력하는 경우, 받는 분 성함이 비면 송장을 쓸 수 없다.
+    if (directMode && !String(payData.receiver ?? '').trim()) {
+      toast.error('받는 분 성함을 입력해 주세요.');
+      return false;
+    }
     if (parseFloat(max_use_point) < parseFloat(payData.use_point || 0)) {
       toast.error('최대사용가능 포인트를 초과하였습니다.');
       return false;
@@ -367,8 +378,15 @@ export default function OrderSheet({ router }) {
       setBuyType('card');
       setPayData({ ...payData, payment_modules: item });
     } else if (item?.type == 'certification') {
+      // 예전엔 setPayLoading(true) 만 하고 되돌리지 않았다. 결제창은 새 창으로 뜨는데
+      // 이 화면에는 전체화면 로딩 다이얼로그가 계속 떠 있어서, 결제를 마치거나 취소하고
+      // 돌아와도 화면이 잠긴 채였다(백드롭 클릭 말고는 닫을 방법이 없다).
       setPayLoading(true);
-      await onPayProductsByAuth(products.map((p) => ({ ...p })), { ...payData, payment_modules: item }, 'payvery');
+      try {
+        await onPayProductsByAuth(products.map((p) => ({ ...p })), { ...payData, payment_modules: item }, 'payvery');
+      } finally {
+        setPayLoading(false);
+      }
     } else if (item?.type == 'card_fintree') {
       setBuyType('card_fintree');
       setPayData({ ...payData, payment_modules: item });
@@ -453,8 +471,13 @@ export default function OrderSheet({ router }) {
       setPayData(pay_data);
     } else if (item?.type == 'certification_weroute') {
       setBuyType('certification_weroute');
+      // payvery 와 같은 이유 — 로딩 다이얼로그를 반드시 되돌린다.
       setPayLoading(true);
-      await onPayProductsByAuth(products.map((p) => ({ ...p })), { ...payData, payment_modules: item }, 'weroute');
+      try {
+        await onPayProductsByAuth(products.map((p) => ({ ...p })), { ...payData, payment_modules: item }, 'weroute');
+      } finally {
+        setPayLoading(false);
+      }
     } else if (item?.type == 'card_hecto') {
       setBuyType('card_hecto');
       setPayData({ ...payData, payment_modules: item });

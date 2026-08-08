@@ -6,7 +6,7 @@ import Scrollbar from 'src/components/scrollbar';
 import { TableHeadCustom } from 'src/components/table';
 //
 import CheckoutCartProduct from './CheckoutCartProduct';
-import { calculatorPrice } from 'src/utils/shop-util';
+import { calculatorPrice, cartLineSignature } from 'src/utils/shop-util';
 import { useLocales } from 'src/locales';
 import { useSettingsContext } from 'src/components/settings';
 
@@ -41,7 +41,9 @@ export default function CheckoutCartProductList({
         <TableBody>
           {products.map((row, idx) => (
             <CheckoutCartProduct
-              key={row.id}
+              // 같은 상품을 옵션만 다르게 담으면 row.id 가 겹쳐 React key 가 중복된다.
+              // key 가 겹치면 수량 변경·삭제가 엉뚱한 줄에 먹는다. 옵션까지 포함한 시그니처를 쓴다.
+              key={`${cartLineSignature(row)}#${idx}`}
               row={row}
               onDelete={() => onDelete(idx)}
               onDecrease={() => onDecreaseQuantity(idx)}

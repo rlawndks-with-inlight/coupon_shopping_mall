@@ -451,6 +451,18 @@ export const getCartDataUtil = async (themeCartData) => {//장바구니 페이�
     let data = themeCartData ?? [];
     return data;
 }
+// 장바구니 한 줄을 식별하는 시그니처 — 상품 + 셀러 + 고른 옵션 조합.
+// 같은 상품이라도 옵션이 다르면 다른 줄이어야 하고, 옵션까지 같으면 같은 줄이다.
+// 옵션 순서가 달라도 같은 조합으로 보도록 정렬한다.
+export const cartLineSignature = (line) => {
+    const groups = Array.isArray(line?.groups) ? line.groups : [];
+    const picked = groups
+        .map((g) => `${g?.id}:${(g?.options ?? []).map((o) => o?.id ?? o?.value ?? o?.option_name ?? '').sort().join('|')}`)
+        .sort()
+        .join(';');
+    return `${line?.id ?? 0}/${line?.seller_id ?? 0}/${picked}`;
+};
+
 export const insertCartDataUtil = (
     product_,
     selectProductGroups_ = {
@@ -466,12 +478,30 @@ export const insertCartDataUtil = (
         let cart_data = [...themeCartData];
         let product = product_;
         let selectProductGroups = selectProductGroups_;
-        product.order_count = selectProductGroups?.count ?? 1;
-        selectProductGroups = selectProductGroups?.groups ?? [];
-        cart_data.push({
-            ...product,
-            groups: selectProductGroups,
-        })
+        const order_count = Math.max(1, parseInt(selectProductGroups?.count) || 1);
+        const groups = selectProductGroups?.groups ?? [];
+
+        // 같은 상품을 같은 옵션으로 또 담으면 새 줄을 만들지 않고 수량을 합친다.
+        //
+        // 예전엔 무조건 push 했다. 그래서
+        //   · 장바구니에 똑같은 줄이 여러 개 쌓이고
+        //   · 목록 key 가 row.id 라 React key 가 중복되며(수량 변경이 엉뚱한 줄에 먹는다)
+        //   · 상품별 배송비를 쓰는 브랜드는 배송비가 줄 수마다 중복 계산됐다.
+        const signature = cartLineSignature({ id: product?.id, seller_id: product?.seller_id, groups });
+        const found_idx = cart_data.findIndex((line) => cartLineSignature(line) === signature);
+        if (found_idx >= 0) {
+            const prev = cart_data[found_idx];
+            cart_data[found_idx] = {
+                ...prev,
+                order_count: Math.max(1, (parseInt(prev?.order_count) || 1) + order_count),
+            };
+        } else {
+            cart_data.push({
+                ...product,
+                order_count,
+                groups,
+            });
+        }
         onChangeCartData(cart_data);
         return true;
     } catch (err) {

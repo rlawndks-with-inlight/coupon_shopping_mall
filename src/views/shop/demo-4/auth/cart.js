@@ -1,6 +1,6 @@
 import { Box, Button, Card, CardContent, CardHeader, CircularProgress, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, FormControlLabel, Grid, Paper, Radio, RadioGroup, Stack, TextField, Typography } from '@mui/material';
 import { makeOrdNum } from 'src/utils/function';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Row, Title, postCodeStyle } from 'src/components/elements/styled-components';
 import { CheckoutCartProductList, CheckoutSteps, CheckoutSummary } from 'src/views/@dashboard/e-commerce/checkout';
 import styled from 'styled-components'
@@ -10,7 +10,7 @@ import EmptyContent from 'src/components/empty-content/EmptyContent';
 import Iconify from 'src/components/iconify/Iconify';
 import { useSettingsContext } from 'src/components/settings';
 import { calcOrderTotals, calculatorPrice, getCartDataUtil, makePayData, onPayProductsByAuth, onPayProductsByHand, onPayProductsByPayletter, onPayProductsByForspay } from 'src/utils/shop-util';
-import { syncCartWithServer, makeUnavailableMessage } from 'src/utils/cart-sync';
+import { syncCartWithServer, makeUnavailableMessage, filterUnavailableByProducts } from 'src/utils/cart-sync';
 import { useAuthContext } from 'src/layouts/manager/auth/useAuthContext';
 import Payment from 'payment'
 import Cards from 'react-credit-cards'
@@ -112,6 +112,11 @@ const CartDemo = (props) => {
   const { setting_obj } = themeDnsData;
   const { use_point_min_price = 0, max_use_point = 0, point_rate = 0 } = setting_obj;
   const [products, setProducts] = useState([]);
+  // 서버가 '지금 살 수 없다'고 알려준 라인(품절·판매중단·내려간 상품).
+  // 화면에 남아 있는 상품하고만 대조해서 쓴다 — 안내를 보고 지우면 그 즉시 사라져야 한다.
+  // (토스트는 사라지므로 안내를 화면에도 남긴다)
+  const [unavailableRaw, setUnavailableRaw] = useState([]);
+  const unavailable = useMemo(() => filterUnavailableByProducts(unavailableRaw, products), [unavailableRaw, products]);
   const [activeStep, setActiveStep] = useState(0);
   const [buyType, setBuyType] = useState(undefined);
   const [smsPayData, setSmsPayData] = useState({ name: '', phone_num: '' });
@@ -177,6 +182,9 @@ const CartDemo = (props) => {
     if (sync && !sync.failed) {
       setProducts(sync.items);
       onChangeCartData(sync.items);
+      // 조회에 실패한 라인(타임아웃·500)은 sync.unavailable 에 들어오지 않는다.
+      // 일시적 실패를 '판매하지 않는 상품'으로 낙인찍지 않기 위해서다.
+      setUnavailableRaw(sync.unavailable);
       if (sync.unavailable.length > 0) {
         toast.error(makeUnavailableMessage(sync.unavailable));
       } else if (sync.priceChanged) {
@@ -404,6 +412,12 @@ const CartDemo = (props) => {
                 <Card>
                   {products.length > 0 ?
                     <>
+                      {unavailable.length > 0 &&
+                        <Box sx={{ mx: 2, mt: 2, p: 1.5, borderRadius: 1, bgcolor: 'error.lighter' }}>
+                          <Typography variant="body2" sx={{ color: 'error.main' }}>
+                            {makeUnavailableMessage(unavailable)}
+                          </Typography>
+                        </Box>}
                       <CheckoutCartProductList
                         products={products}
                         onDelete={onDelete}

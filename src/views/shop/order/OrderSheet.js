@@ -2,7 +2,7 @@ import {
   Box, Button, Card, CardContent, CardHeader, Checkbox, CircularProgress,
   Dialog, Divider, FormControlLabel, Grid, Paper, Stack, TextField, Typography,
 } from '@mui/material';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import _ from 'lodash';
 import styled from 'styled-components';
 import toast from 'react-hot-toast';
@@ -15,14 +15,14 @@ import EmptyContent from 'src/components/empty-content/EmptyContent';
 import Iconify from 'src/components/iconify/Iconify';
 import { useSettingsContext } from 'src/components/settings';
 import { calcOrderTotals, calculatorPrice, getCartDataUtil, makePayData, onPayProductsByAuth, onPayProductsByHand, onPayProductsByPayletter, onPayProductsByForspay } from 'src/utils/shop-util';
-import { syncCartWithServer, makeUnavailableMessage } from 'src/utils/cart-sync';
+import { syncCartWithServer, makeUnavailableMessage, filterUnavailableByProducts } from 'src/utils/cart-sync';
 import { forspayMethodList } from 'src/utils/format';
 import { sanitizePhoneInput, isValidPhoneNumber, makeOrdNum } from 'src/utils/function';
 import Policy from 'src/pages/shop/auth/policy';
 import { useAuthContext } from 'src/layouts/manager/auth/useAuthContext';
 import { formatCreditCardNumber, formatExpirationDate } from 'src/utils/formatCard';
 import { useModal } from 'src/components/dialog/ModalProvider';
-import { apiManager } from 'src/utils/api';
+import { apiManager, getLastApiError } from 'src/utils/api';
 import DialogAddAddress from 'src/components/dialog/DialogAddAddress';
 import DaumPostcode from 'react-daum-postcode';
 import PayProductsByAuthHecto from 'src/utils/hecto-auth';
@@ -47,6 +47,13 @@ const Wrappers = styled.div`
 const GUEST_PW_MIN = 6;
 const GUEST_PW_MAX = 16;
 
+// 서버(pay.controller)가 금액 불일치로 거절할 때 돌려주는 문구의 앞부분.
+// "결제금액이 변경되었습니다. 주문서를 새로고침한 뒤 다시 시도해 주세요."
+// 이 경우에만 낡은 장바구니 값을 다시 받아온다 — 네트워크 오류·데모 호스트 차단 등
+// 금액과 무관한 실패까지 재동기화를 돌리면, 원인과 상관없는 안내가 하나 더 뜨고
+// 고객은 무엇을 고쳐야 하는지 더 헷갈린다.
+const AMOUNT_MISMATCH_HINT = '결제금액이 변경';
+
 export default function OrderSheet({ router }) {
   const { setModal } = useModal();
   const { user } = useAuthContext();
@@ -55,8 +62,20 @@ export default function OrderSheet({ router }) {
   const { max_use_point = 0, point_rate = 0, use_point_min_price = 0 } = setting_obj;
 
   const [products, setProducts] = useState([]);
-  // 지금 구매할 수 없는 라인(품절·판매중단·내려간 상품). 결제 차단과 안내에 쓴다.
-  const [unavailable, setUnavailable] = useState([]);
+  // 서버 동기화가 알려준 '구매할 수 없는 상품' 목록(원본).
+  // 이 값을 그대로 결제 차단에 쓰면 안 된다 — 아래 unavailable 참고.
+  const [unavailableRaw, setUnavailableRaw] = useState([]);
+  // 실제로 결제를 막는 목록 — '지금 주문서에 남아 있는 라인'만 남긴다.
+  //
+  // 예전엔 동기화 때 만든 목록을 state 에 그대로 들고 결제를 막았다. 안내를 보고
+  // 문제 상품을 지워도 그 목록은 다시 계산되지 않아 차단이 영영 풀리지 않았다
+  // (지웠는데 계속 "구매할 수 없는 상품" 이라며 막히는 막다른 길).
+  // products 에서 파생시키면 라인을 지우는 순간 자동으로 사라진다.
+  const unavailable = useMemo(
+    () => filterUnavailableByProducts(unavailableRaw, products),
+    [unavailableRaw, products]
+  );
+
   const [buyType, setBuyType] = useState(undefined);
   const [buyPayMethod, setBuyPayMethod] = useState(undefined); // 포스페이 수단별 선택 표시용(같은 type 구분)
   const [payLoading, setPayLoading] = useState(false);
@@ -143,9 +162,10 @@ export default function OrderSheet({ router }) {
     // 빈 주문서에서 저장소를 덮어쓰지 않는다(바로구매 항목을 날려버릴 수 있다).
     if (!Array.isArray(items) || items.length == 0) return items;
     const sync = await syncCartWithServer(items);
-    if (sync.failed) return items; // 서버를 한 건도 못 읽었다 — 기존 값을 그대로 둔다
+    if (sync.failed) return items; // 아무것도 확인하지 못했다 — 기존 값을 그대로 둔다
     setProducts(sync.items);
-    setUnavailable(sync.unavailable);
+    // 조회에 실패한 라인은 sync.unavailable 에 들어오지 않는다(실패는 차단 사유가 아니다).
+    setUnavailableRaw(sync.unavailable);
     if (isBuyNow()) {
       try { sessionStorage.setItem('buyNowItem', JSON.stringify(sync.items[0] ?? null)); } catch (e) { /* noop */ }
     } else {
@@ -157,6 +177,16 @@ export default function OrderSheet({ router }) {
       toast(changed_message);
     }
     return sync.items;
+  };
+
+  // 결제가 거절된 뒤의 후처리.
+  // 서버가 '금액 불일치'로 거절했을 때만 최신 금액을 다시 받아온다.
+  // since 는 결제 시도 직전 시각 — 그 이후에 기록된 실패만 이번 결제의 사유로 인정한다.
+  const resyncIfAmountMismatch = async (since, changed_message) => {
+    const err = getLastApiError();
+    if (!(err?.at >= since)) return;
+    if (!String(err?.message || '').includes(AMOUNT_MISMATCH_HINT)) return;
+    await runSync(products, changed_message);
   };
 
   const getCart = async () => {
@@ -176,10 +206,22 @@ export default function OrderSheet({ router }) {
   };
 
   // ── 주문상품 수량/삭제 ──
+  // 구매불가 안내를 보고 상품을 지우는 통로다. 여기서 저장소까지 같이 정리하지 않으면
+  // 새로고침할 때 지운 상품이 되살아나 다시 결제가 막힌다.
+  // 바로구매(?buynow)는 장바구니와 무관한 sessionStorage 를 쓴다 —
+  // 예전엔 여기서도 onChangeCartData 를 불러, 바로구매 상품을 지우면
+  // 엉뚱하게 고객의 진짜 장바구니가 비워졌다.
   const onDelete = (idx) => {
     const list = [...products];
     list.splice(idx, 1);
-    onChangeCartData(list);
+    if (isBuyNow()) {
+      try {
+        if (list.length > 0) sessionStorage.setItem('buyNowItem', JSON.stringify(list[0]));
+        else sessionStorage.removeItem('buyNowItem');
+      } catch (e) { /* noop */ }
+    } else {
+      onChangeCartData(list);
+    }
     setProducts(list);
   };
   const onDecreaseQuantity = (idx) => {
@@ -343,13 +385,14 @@ export default function OrderSheet({ router }) {
         const popup = window.open(link, '');
         if (popup) popup.location.href = link;
       }
+      const started_at = Date.now();
       const created = await apiManager('pays/virtual', 'create', pay_data);
       if (created) {
         createdOrderRef.current.virtual_account = ord_num;
         await finishPendingOrder(pay_data);
       } else {
-        // 주문 생성이 거절됐다(금액검증 불일치·상품상태). 낡은 장바구니 값을 실제로 갱신한다.
-        await runSync(products, '가격이 변경되어 최신 금액으로 갱신했습니다. 금액을 확인하고 다시 시도해 주세요.');
+        // 금액검증 불일치로 거절됐을 때만 낡은 장바구니 값을 실제로 갱신한다.
+        await resyncIfAmountMismatch(started_at, '가격이 변경되어 최신 금액으로 갱신했습니다. 금액을 확인하고 다시 시도해 주세요.');
       }
       setPayData(pay_data);
     } else if (item?.type == 'gift_certificate') {
@@ -370,13 +413,14 @@ export default function OrderSheet({ router }) {
         const popup = window.open(link, '');
         if (popup) popup.location.href = link;
       }
+      const started_at = Date.now();
       const created_gift = await apiManager('pays/gift_certificate', 'create', pay_data);
       if (created_gift) {
         createdOrderRef.current.gift_certificate = ord_num;
         await finishPendingOrder(pay_data);
       } else {
-        // 주문 생성이 거절됐다(금액검증 불일치·상품상태). 낡은 장바구니 값을 실제로 갱신한다.
-        await runSync(products, '가격이 변경되어 최신 금액으로 갱신했습니다. 금액을 확인하고 다시 시도해 주세요.');
+        // 금액검증 불일치로 거절됐을 때만 낡은 장바구니 값을 실제로 갱신한다.
+        await resyncIfAmountMismatch(started_at, '가격이 변경되어 최신 금액으로 갱신했습니다. 금액을 확인하고 다시 시도해 주세요.');
       }
       setPayData(pay_data);
     } else if (item?.type == 'certification_weroute') {
@@ -405,6 +449,7 @@ export default function OrderSheet({ router }) {
   const onPaySelectedRedirect = async () => {
     if (!guardBeforePay()) return;
     setPayLoading(true);
+    const started_at = Date.now();
     try {
       let result = false;
       if (buyType == 'auth_forspay') {
@@ -412,9 +457,10 @@ export default function OrderSheet({ router }) {
       } else if (buyType == 'card_payletter') {
         result = await onPayProductsByPayletter(products.map((p) => ({ ...p })), payData);
       }
-      // 성공하면 결제창으로 이동한다. 실패했으면 대개 서버 금액검증 불일치나 상품상태 문제이므로
-      // 안내만 하지 말고 실제로 최신 정보를 다시 받아 곧바로 재시도할 수 있게 한다.
-      if (!result) await runSync(products, '가격이 변경되어 최신 금액으로 갱신했습니다. 금액을 확인하고 다시 결제해 주세요.');
+      // 성공하면 결제창으로 이동한다. 실패 사유가 '금액이 바뀌었다'일 때만
+      // 안내에 그치지 말고 실제로 최신 정보를 다시 받아 곧바로 재시도할 수 있게 한다.
+      // (네트워크 오류·데모 미리보기 차단 등은 재동기화로 해결되지 않는다 — 사유 안내만 남긴다)
+      if (!result) await resyncIfAmountMismatch(started_at, '가격이 변경되어 최신 금액으로 갱신했습니다. 금액을 확인하고 다시 결제해 주세요.');
     } finally {
       setPayLoading(false);
     }
@@ -429,6 +475,7 @@ export default function OrderSheet({ router }) {
       return;
     }
     setPayLoading(true);
+    const started_at = Date.now();
     // makePayData가 배열을 in-place 변형하므로 사본을 넘겨 화면 상태(products)를 보호한다.
     const result = await onPayProductsByHand(products.map((p) => ({ ...p })), payData);
     setPayLoading(false);
@@ -445,8 +492,9 @@ export default function OrderSheet({ router }) {
       toast.success('주문이 완료되었습니다.');
       router.push('/shop/auth/order-complete');
     } else {
-      // 실패 사유는 대부분 서버 금액검증 불일치다. 낡은 장바구니 값을 실제로 갱신해 준다.
-      await runSync(products, '가격이 변경되어 최신 금액으로 갱신했습니다. 금액을 확인하고 다시 결제해 주세요.');
+      // 서버 금액검증 불일치일 때만 낡은 장바구니 값을 실제로 갱신해 준다.
+      // 카드 승인 거절·네트워크 오류는 재동기화 대상이 아니다(사유는 이미 안내됐다).
+      await resyncIfAmountMismatch(started_at, '가격이 변경되어 최신 금액으로 갱신했습니다. 금액을 확인하고 다시 결제해 주세요.');
     }
   };
 

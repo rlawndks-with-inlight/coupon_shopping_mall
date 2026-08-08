@@ -1,5 +1,5 @@
-import { apiShop } from './api';
 import { getProductStatus, isPurchasable } from './function';
+import { getLocalStorage } from './local-storage';
 
 // 장바구니를 서버의 현재 상품 정보로 다시 채운다.
 //
@@ -23,27 +23,85 @@ const toInt = (v) => {
 };
 const toNum = (v) => Number(v) || 0;
 
-// 상품 1건을 서버에서 읽는다. 실패하면 undefined.
-// apiShop 은 '없는 상품'과 '통신 실패' 둘 다 false 를 돌려주므로 여기서 구분하지 않는다.
-// (구분은 호출부에서 '한 건이라도 성공했는가'로 판단한다)
-const fetchServerProduct = async (id, seller_id) => {
+export const lineKey = (line) => `${toInt(line?.id)}:${toInt(line?.seller_id)}`;
+
+// 조회 1건의 결과. '못 읽었다'와 '살 수 없다'를 반드시 구분한다.
+//   ok          : 서버가 상품을 돌려줬다
+//   unavailable : 서버가 "그런 상품 없음"이라고 답했다(삭제·비공개 status 5)
+//   error       : 타임아웃·5xx·네트워크 장애 등 — 아무 판단도 할 수 없다
+const OK = 'ok';
+const UNAVAILABLE = 'unavailable';
+const ERROR = 'error';
+
+const FETCH_TIMEOUT_MS = 15000;
+
+// apiShop 이 붙여주는 브랜드 식별자. 상품 상세 API 는 brand_id 가 없으면 -400 을 준다.
+const getBrandParams = () => {
     try {
-        const params = { id };
-        if (toInt(seller_id) > 0) params.seller_id = toInt(seller_id);
-        const data = await apiShop('product', 'get', params);
-        return (data && toInt(data?.id) > 0) ? data : undefined;
+        const dns = JSON.parse(getLocalStorage('themeDnsData') || '{}');
+        return { brand_id: toInt(dns?.id), root_id: toInt(dns?.root_id) };
     } catch (e) {
-        return undefined;
+        return { brand_id: 0, root_id: 0 };
+    }
+};
+
+// 상품 1건을 서버에서 읽는다.
+//
+// 여기서 apiShop('product','get') 을 쓰지 않는 이유가 두 가지 있다.
+//
+// 1) apiShop 뒤의 get() 은 '없는 상품'과 '통신 실패'를 똑같이 false 로 뭉갠다.
+//    그래서 일부 상품 조회가 잠깐 실패(타임아웃·500)했을 뿐인데 그 라인이
+//    '판매하지 않는 상품'으로 낙인찍혀 결제가 막혔다. 조회 실패는 차단 사유가 아니다.
+//    HTTP 상태와 응답 본문의 result 코드를 직접 보고 셋으로 나눈다.
+//    (백엔드 shop.controller 의 item 은 상품이 없을 때도 200 + result 100 + data:false 를 준다)
+//
+// 2) 백엔드 shop.controller 의 item 은 '로그인 쿠키가 실린 요청'이면
+//    product_views 에 조회 이력을 남긴다. 장바구니를 열기만 해도 담긴 상품이 전부
+//    '최근 본 상품'이 되던 원인이다. 옵션 추가금액(product_options)을 돌려주는 조회 경로는
+//    이 상세 API 뿐이라 다른 엔드포인트로 갈아탈 수 없으므로,
+//    쿠키를 빼고(credentials:'omit') 익명으로 물어본다.
+//    상세 응답에서 사용자에 따라 달라지는 값은 없다(셀러가는 seller_id 쿼리로 정해진다).
+const fetchServerProduct = async (id, seller_id) => {
+    if (typeof window === 'undefined' || typeof fetch !== 'function') return { state: ERROR };
+    const { brand_id, root_id } = getBrandParams();
+    if (!(brand_id > 0)) return { state: ERROR }; // 브랜드를 모르면 판단할 수 없다 — 실패로 본다
+    const params = new URLSearchParams();
+    params.set('id', String(id));
+    params.set('brand_id', String(brand_id));
+    if (root_id > 0) params.set('root_id', String(root_id));
+    if (toInt(seller_id) > 0) params.set('seller_id', String(toInt(seller_id)));
+
+    const controller = (typeof AbortController === 'function') ? new AbortController() : null;
+    const timer = controller ? setTimeout(() => controller.abort(), FETCH_TIMEOUT_MS) : null;
+    try {
+        const res = await fetch(`/api/shop/product/${id}?${params.toString()}`, {
+            method: 'GET',
+            credentials: 'omit', // 조회 이력(product_views)을 남기지 않기 위해 로그인 쿠키를 보내지 않는다
+            cache: 'no-store',   // 여기서 받는 값이 곧 결제금액의 입력값이다 — 브라우저 캐시를 타면 안 된다
+            headers: { Accept: 'application/json' },
+            signal: controller?.signal,
+        });
+        if (!res.ok) return { state: ERROR };            // 5xx·429 등 — 실패지 품절이 아니다
+        const body = await res.json();
+        if (!(toNum(body?.result) > 0)) return { state: ERROR }; // 서버 에러 응답
+        const data = body?.data;
+        if (data && toInt(data?.id) > 0) return { state: OK, product: data };
+        return { state: UNAVAILABLE };                   // 삭제됐거나 비공개(status 5)로 내려갔다
+    } catch (e) {
+        return { state: ERROR };                         // 타임아웃·네트워크 장애
+    } finally {
+        if (timer) clearTimeout(timer);
     }
 };
 
 export const syncCartWithServer = async (products = []) => {
     const list = Array.isArray(products) ? products : [];
     const result = {
-        items: list,        // 갱신된 라인(순서·길이 유지)
+        items: list,         // 갱신된 라인(순서·길이 유지)
         priceChanged: false, // 금액에 영향을 주는 값이 하나라도 바뀌었는지
-        unavailable: [],     // 구매할 수 없는 라인 [{ id, name, label }]
-        failed: false,       // 서버를 한 건도 못 읽음 — 아무 판단도 하지 않는다
+        unavailable: [],     // 구매할 수 없는 라인 [{ id, seller_id, name, label }]
+        failed: false,       // 아무것도 확인하지 못했다 — 호출부는 아무 판단도 하지 않는다
+        uncheckedCount: 0,   // 조회에 실패해 판단을 보류한 라인 수(차단 사유가 아니다)
     };
     if (list.length == 0) return result;
 
@@ -59,29 +117,41 @@ export const syncCartWithServer = async (products = []) => {
     }
     if (keys.length == 0) return result;
 
-    const fetched = new Map();
+    const states = new Map();
     const responses = await Promise.all(keys.map((k) => fetchServerProduct(k.id, k.seller_id)));
+    let answered = 0;
     for (let i = 0; i < keys.length; i++) {
-        if (responses[i]) fetched.set(keys[i].key, responses[i]);
+        const state = responses[i]?.state ?? ERROR;
+        states.set(keys[i].key, responses[i] ?? { state: ERROR });
+        if (state != ERROR) answered++;
     }
 
-    // 한 건도 못 읽었으면 네트워크 장애로 보고 라인을 전혀 손대지 않는다(fail-open).
+    // 한 건도 확인하지 못했으면 네트워크 장애로 보고 라인을 전혀 손대지 않는다(fail-open).
     // 여기서 '전부 품절'처럼 처리하면 멀쩡한 주문까지 막힌다.
-    if (fetched.size == 0) {
+    if (answered == 0) {
         result.failed = true;
+        result.uncheckedCount = keys.length;
         return result;
     }
 
     const items = list.map((line) => {
         const id = toInt(line?.id);
         const key = `${id}:${toInt(line?.seller_id)}`;
-        const server = fetched.get(key);
+        const state = states.get(key)?.state ?? ERROR;
+        const server = states.get(key)?.product;
 
-        // 다른 상품은 읽혔는데 이 상품만 못 읽었다 = 삭제됐거나 비공개(status 5)로 내려갔다.
-        // (shop/product/:id 는 삭제·비공개 상품에 데이터를 주지 않는다)
-        if (!server) {
+        // 조회 자체가 실패한 라인은 판단을 보류한다. 값도 그대로 두고 차단도 하지 않는다.
+        // (일시적 타임아웃·500 을 '판매하지 않는 상품'으로 낙인찍으면 결제가 부당하게 막힌다)
+        if (state == ERROR) {
+            result.uncheckedCount++;
+            return line;
+        }
+
+        // 서버가 "없는 상품"이라고 분명히 답했다 = 삭제됐거나 비공개(status 5)로 내려갔다.
+        if (state == UNAVAILABLE || !server) {
             result.unavailable.push({
                 id,
+                seller_id: toInt(line?.seller_id),
                 name: line?.product_name || `상품 ${id}`,
                 label: '판매하지 않는',
             });
@@ -125,6 +195,7 @@ export const syncCartWithServer = async (products = []) => {
         if (!isPurchasable(server?.status)) {
             result.unavailable.push({
                 id,
+                seller_id: toInt(line?.seller_id),
                 name: next.product_name || `상품 ${id}`,
                 label: getProductStatus(server?.status)?.text || '판매하지 않는',
             });
@@ -136,6 +207,19 @@ export const syncCartWithServer = async (products = []) => {
     return result;
 };
 
+// 지금 장바구니(주문서)에 남아 있는 라인만 남긴다.
+//
+// 안내를 보고 문제 상품을 지웠는데도 결제가 계속 막히던 원인이 여기 있었다.
+// 구매불가 목록은 동기화할 때 한 번 만들어진 뒤 그대로 남았고, 라인을 지워도
+// 다시 계산되지 않아 '지웠는데 안 풀리는' 막다른 길이 됐다.
+// 화면에 남은 상품과 대조해서 판정하면, 지우는 순간 자동으로 풀린다.
+export const filterUnavailableByProducts = (unavailable = [], products = []) => {
+    const list = Array.isArray(unavailable) ? unavailable : [];
+    const lines = Array.isArray(products) ? products : [];
+    if (list.length == 0 || lines.length == 0) return [];
+    return list.filter((u) => lines.some((line) => lineKey(line) == `${toInt(u?.id)}:${toInt(u?.seller_id)}`));
+};
+
 // 구매 불가 라인을 사람이 읽는 한 줄로 만든다.
 // 예전엔 결제 직전에 "구매할 수 없는 상품이 포함되어 있습니다."만 떠서
 // 여러 건을 담은 고객은 어느 상품이 문제인지 알 수 없었다.
@@ -144,5 +228,5 @@ export const makeUnavailableMessage = (unavailable = []) => {
     if (list.length == 0) return '';
     const head = list.slice(0, 3).map((v) => `${v?.name}(${v?.label})`).join(', ');
     const rest = list.length > 3 ? ` 외 ${list.length - 3}건` : '';
-    return `${head}${rest} 은(는) 지금 구매할 수 없습니다. 장바구니에서 빼주세요.`;
+    return `${head}${rest} 은(는) 지금 구매할 수 없습니다. 목록에서 빼주시면 나머지 상품으로 결제할 수 있습니다.`;
 };

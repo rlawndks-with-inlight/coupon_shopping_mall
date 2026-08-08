@@ -270,8 +270,10 @@ const Demo7 = () => {
           {comment && <Description>"{comment}"</Description>}
           <PriceBlock>
             <Price>
-              {commarNumber(sale)}円
-              {hasSale && <OrigPrice>{commarNumber(orig)}円</OrigPrice>}
+              {/* 통화 단위가 '円'(엔)으로 박혀 있었다. 원화로 파는 몰이고
+                  결제도 원화로 나가므로 표시만 엔이면 고객이 금액을 오해한다. */}
+              {commarNumber(sale)}원
+              {hasSale && <OrigPrice>{commarNumber(orig)}원</OrigPrice>}
             </Price>
           </PriceBlock>
           {item?.groups?.length > 0 && (

@@ -1,4 +1,5 @@
 import styled from "styled-components"
+import { useRouter } from "next/router"
 import { useSettingsContext } from "src/components/settings"
 import { useLocales } from "src/locales"
 
@@ -31,8 +32,15 @@ const Sep = styled.span`
 margin:0 8px;
 color:#ddd;
 `
+const PolicyLink = styled.span`
+cursor:pointer;
+text-decoration:underline;
+font-weight:600;
+color:#777;
+`
 const Footer = (props) => {
   const { translate } = useLocales();
+  const router = useRouter();
   const { themeDnsData, themeMode } = useSettingsContext();
   const { company_name, addr, business_num, ceo_name, phone_num, fax_num, mail_order_num, pvcy_rep_name } = themeDnsData;
 
@@ -55,6 +63,13 @@ const Footer = (props) => {
             {fax_num && <span><Label>{translate('팩스')}</Label>{fax_num}</span>}
           </InfoRow>
           {pvcy_rep_name && <InfoRow><Label>{translate('개인정보 보호책임자')}</Label><span>{pvcy_rep_name}</span></InfoRow>}
+          {/* 이용약관·개인정보처리방침 상시 열람 경로.
+              프레임2에는 이 링크가 어디에도 없어서, 회원가입 화면 안에서만 볼 수 있었다
+              (비회원·기존회원은 열람 불가). 다른 프레임(예: demo-1 footer)과 같은 자리·같은 경로로 맞춘다. */}
+          <InfoRow style={{ marginTop: '8px', columnGap: '1rem' }}>
+            <PolicyLink onClick={() => router.push('/shop/auth/policy?type=0')}>{translate('서비스이용약관')}</PolicyLink>
+            <PolicyLink onClick={() => router.push('/shop/auth/policy?type=1')}>{translate('개인정보처리방침')}</PolicyLink>
+          </InfoRow>
         </ContentWrapper>
       </Wrapper>
     </>

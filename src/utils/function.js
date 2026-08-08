@@ -36,6 +36,25 @@ export const getProductStatus = num => {
   return {}
 }
 export const isPurchasable = (status) => getProductStatus(status).color === 'info';
+
+// 로그인 후 돌아갈 경로를 고른다.
+//
+// 예전엔 로그인하면 무조건 홈(쇼핑몰형) 또는 마이페이지(블로그형)로 갔다.
+// 장바구니·게시글 쓰기처럼 로그인이 필요해 튕겨 나온 사람도 원래 보던 화면으로
+// 돌아가지 못하고 처음부터 다시 찾아가야 했다.
+//
+// ⚠ 외부 URL 을 그대로 받으면 열린 리다이렉트가 된다(피싱 경유지로 쓰인다).
+//    '내부 절대경로'만 허용한다.
+export const safeRedirectPath = (value, fallback = '/shop') => {
+  const raw = Array.isArray(value) ? value[0] : value;
+  const path = String(raw ?? '').trim();
+  if (!path) return fallback;
+  // 내부 절대경로만 통과시킨다.
+  //   · '/' 로 시작하지 않으면 외부 URL 이거나 상대경로다.
+  //   · '//host' 와 '/\host' 는 브라우저가 프로토콜 상대 URL 로 해석해 외부로 나간다.
+  if (!/^\/[^/\\]/.test(path)) return fallback;
+  return path;
+};
 export const getPointType = row => {
   if (row?.type == 0) {
     return '결제완료건에 의한 포인트'

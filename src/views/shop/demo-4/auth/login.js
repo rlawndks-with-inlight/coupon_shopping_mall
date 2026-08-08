@@ -8,7 +8,7 @@ import styled from 'styled-components'
 import { useModal } from "src/components/dialog/ModalProvider";
 import { HistoryTable } from 'src/components/elements/shop/common';
 import { apiManager } from 'src/utils/api';
-import { commarNumber, getTrxStatusByNumber } from 'src/utils/function';
+import { commarNumber, getTrxStatusByNumber, safeRedirectPath } from 'src/utils/function';
 import { Icon } from '@iconify/react';
 import { getOptionLabel } from 'src/utils/shop-util';
 
@@ -67,7 +67,8 @@ const LoginDemo = (props) => {
     let user = await login(username, password)
     if (user) {
       onChangeWishData(user?.wish_data ?? []);
-      router.push('/shop')
+      // 로그인이 필요해 튕겨 나온 화면이 있으면 그리로 돌려보낸다(없으면 홈).
+      router.push(safeRedirectPath(router.query?.redirect, '/shop'))
     }
   }
   const onCheckNoneUserPay = async () => {

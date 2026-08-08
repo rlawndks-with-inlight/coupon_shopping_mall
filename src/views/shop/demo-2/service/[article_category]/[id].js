@@ -193,26 +193,30 @@ const ArticleDemo = (props) => {
                         theme={"bubble"}
                         bounds={'.app'}
                       />
-                      {item?.replies && item?.replies.map((reply, idx) => (
-                        <Box key={idx} sx={{ backgroundColor: themeObj.grey[100], borderRadius: '4px', p: { xs: 2, sm: 3 }, mt: 1 }}>
-                          <Col style={{ rowGap: '0.5rem' }}>
-                            <Row style={{ columnGap: '0.5rem', alignItems: 'center' }}>
-                              <Typography variant='caption' sx={{ color: 'text.secondary' }}>{translate('답변제목')}</Typography>
-                              <Typography variant='subtitle1' sx={{ fontWeight: 700, wordBreak: 'break-all' }}>
-                                {formatLang(reply, 'post_title', currentLang)}
-                              </Typography>
-                            </Row>
-                            <ReactQuill
-                              className='none-padding'
-                              value={formatLang(reply, 'post_content', currentLang) ?? `<body></body>`}
-                              readOnly={true}
-                              theme={"bubble"}
-                              bounds={'.app'}
-                            />
-                          </Col>
-                        </Box>
-                      ))}
                     </>}
+                  {/* 답변은 위 삼항의 '읽기' 분기 안에만 있었다. 그래서 작성자 본인이 자기 글을 열면
+                      '수정폼' 분기로 빠져 관리자 답변이 화면에 아예 나오지 않았다(1:1문의 답변 안 보임).
+                      분기 밖으로 빼서 본인/타인 모두 답변을 보게 한다. 새 글(add)에는 답변이 없다.
+                      블로그형(blog/service/.../id/demo-1~5)은 이미 이렇게 동작한다. */}
+                  {router.query?.id != 'add' && (item?.replies ?? []).map((reply, idx) => (
+                    <Box key={reply?.id ?? idx} sx={{ backgroundColor: themeObj.grey[100], borderRadius: '4px', p: { xs: 2, sm: 3 }, mt: 1 }}>
+                      <Col style={{ rowGap: '0.5rem' }}>
+                        <Row style={{ columnGap: '0.5rem', alignItems: 'center' }}>
+                          <Typography variant='caption' sx={{ color: 'text.secondary' }}>{translate('답변제목')}</Typography>
+                          <Typography variant='subtitle1' sx={{ fontWeight: 700, wordBreak: 'break-all' }}>
+                            {formatLang(reply, 'post_title', currentLang)}
+                          </Typography>
+                        </Row>
+                        <ReactQuill
+                          className='none-padding'
+                          value={formatLang(reply, 'post_content', currentLang) ?? `<body></body>`}
+                          readOnly={true}
+                          theme={"bubble"}
+                          bounds={'.app'}
+                        />
+                      </Col>
+                    </Box>
+                  ))}
                 </Stack>
               </Card>
             </>}

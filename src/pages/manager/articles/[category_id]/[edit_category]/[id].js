@@ -16,6 +16,23 @@ import { useModal } from "src/components/dialog/ModalProvider";
 import ReactQuillComponent from "src/views/manager/react-quill";
 import { apiManager } from "src/utils/api";
 import { useAuthContext } from "src/layouts/manager/auth/useAuthContext";
+// 리치에디터는 내용을 지워도 <p><br></p> 같은 빈 태그를 남긴다. 태그를 걷어낸 뒤
+// 실제 글자가 남는지로 판정한다.
+const isBlankHtml = (value) => {
+  return !String(value ?? '')
+    .replace(/<[^>]*>/g, '')
+    .replace(/&nbsp;/gi, ' ')
+    .trim();
+}
+// 글자가 없어도 이미지/영상만 넣은 답변은 내용이 있는 것으로 본다.
+const hasEmbeddedMedia = (value) => {
+  return /<(img|iframe|video)[\s>]/i.test(String(value ?? ''));
+}
+// 답변제목/답변내용 중 하나라도 채워져 있으면 답변을 쓴 것으로 본다.
+const hasReplyContent = (reply) => {
+  if (hasEmbeddedMedia(reply?.post_content)) return true;
+  return !(isBlankHtml(reply?.post_title) && isBlankHtml(reply?.post_content));
+}
 const ArticleEdit = () => {
   const { setModal } = useModal()
   const { themeMode } = useSettingsContext();
@@ -64,8 +81,14 @@ const ArticleEdit = () => {
       if (category?.is_able_user_add == 1 && result) {
         if (reply?.id > 0) {
           result2 = await apiManager('posts', 'update', { ...reply, category_id: category?.id, parent_id: router.query?.id ?? -1 });
-        } else {
+        } else if (hasReplyContent(reply)) {
           result2 = await apiManager('posts', 'create', { ...reply, category_id: category?.id, parent_id: router.query?.id ?? -1 });
+        } else {
+          // 답변칸이 비어 있으면 자식글을 만들지 않는다.
+          // 예전엔 무조건 create 라서 문의 본문만 고치고 저장해도 빈 답변이 생겼고,
+          // 목록의 답변여부는 replies.length 로만 판정하므로 '답변완료'로 뒤집혔다.
+          // 답변칸이 아예 렌더되지 않는 경우(읽기권한/등급 조건)에도 여기로 온다.
+          result2 = true;
         }
       } else {
         result2 = true;

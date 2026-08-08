@@ -4,6 +4,7 @@ import dynamic from "next/dynamic";
 import Head from "next/head";
 import { useEffect } from "react";
 import { useState } from "react";
+import { Fragment } from "react";
 import { toast } from "react-hot-toast";
 import { useModal } from "src/components/dialog/ModalProvider";
 import { Row, Title } from "src/components/elements/styled-components";
@@ -180,22 +181,26 @@ const ArticleDemo = (props) => {
                     theme={"bubble"}
                     bounds={'.app'}
                   />
-                  {item?.replies && item?.replies.map((reply, idx) => (
-                    <>
-                      <Row style={{ columnGap: '0.5rem', fontSize: '1rem', alignItems: 'center' }}>
-                        <div>{translate('답변제목')}: </div>
-                        <h1 style={{ fontSize: '1rem' }}>{formatLang(reply, 'post_title', currentLang)}</h1>
-                      </Row>
-                      <ReactQuill
-                        className='none-padding'
-                        value={formatLang(reply, 'post_content', currentLang) ?? `<body></body>`}
-                        readOnly={true}
-                        theme={"bubble"}
-                        bounds={'.app'}
-                      />
-                    </>
-                  ))}
                 </>}
+              {/* 답변은 위 삼항의 '읽기' 분기 안에만 있었다. 그래서 작성자 본인이 자기 글을 열면
+                  '수정폼' 분기로 빠져 관리자 답변이 화면에 아예 나오지 않았다(1:1문의 답변 안 보임).
+                  분기 밖으로 빼서 본인/타인 모두 답변을 보게 한다. 새 글(add)에는 답변이 없다.
+                  블로그형(blog/service/.../id/demo-1~5)은 이미 이렇게 동작한다. */}
+              {router.query?.id != 'add' && (item?.replies ?? []).map((reply, idx) => (
+                <Fragment key={reply?.id ?? idx}>
+                  <Row style={{ columnGap: '0.5rem', fontSize: '1rem', alignItems: 'center' }}>
+                    <div>{translate('답변제목')}: </div>
+                    <h1 style={{ fontSize: '1rem' }}>{formatLang(reply, 'post_title', currentLang)}</h1>
+                  </Row>
+                  <ReactQuill
+                    className='none-padding'
+                    value={formatLang(reply, 'post_content', currentLang) ?? `<body></body>`}
+                    readOnly={true}
+                    theme={"bubble"}
+                    bounds={'.app'}
+                  />
+                </Fragment>
+              ))}
             </Stack>
           </>}
       </Wrappers>

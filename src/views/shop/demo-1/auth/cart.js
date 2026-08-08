@@ -10,6 +10,7 @@ import EmptyContent from 'src/components/empty-content/EmptyContent';
 import Iconify from 'src/components/iconify/Iconify';
 import { useSettingsContext } from 'src/components/settings';
 import { calcOrderTotals, calculatorPrice, getCartDataUtil, makePayData, onPayProductsByAuth, onPayProductsByForspay, onPayProductsByHand, onPayProductsByPayletter, onPayProductsByVirtualAccount } from 'src/utils/shop-util';
+import { syncCartWithServer, makeUnavailableMessage } from 'src/utils/cart-sync';
 import { useAuthContext } from 'src/layouts/manager/auth/useAuthContext';
 import Payment from 'payment'
 import Cards from 'react-credit-cards'
@@ -180,6 +181,20 @@ const CartDemo = (props) => {
   const getCart = async () => {
     let data = await getCartDataUtil(themeCartData);
     setProducts(data);
+    // 담을 때 저장한 가격 스냅샷이 낡으면 결제 직전 서버 금액검증(recalcOrderAmount)에서 거절된다.
+    // 장바구니를 열 때 서버의 현재 값으로 갱신하고 저장소(localStorage)까지 반영해
+    // '새로고침해도 옛 가격이 그대로 복원되는' 상태를 끊는다. 금액 계산식 자체는 건드리지 않는다.
+    // 빈 장바구니면 서버에 물어볼 것도, 저장소에 덮어쓸 것도 없다.
+    let sync = (data?.length > 0) ? await syncCartWithServer(data) : null;
+    if (sync && !sync.failed) {
+      setProducts(sync.items);
+      onChangeCartData(sync.items);
+      if (sync.unavailable.length > 0) {
+        toast.error(makeUnavailableMessage(sync.unavailable));
+      } else if (sync.priceChanged) {
+        toast(translate('상품 가격이 변경되어 최신 금액으로 갱신했습니다.'));
+      }
+    }
     onChangeAddressPage(addressSearchObj);
   }
   const onDelete = (idx) => {

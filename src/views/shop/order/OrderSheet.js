@@ -15,6 +15,7 @@ import EmptyContent from 'src/components/empty-content/EmptyContent';
 import Iconify from 'src/components/iconify/Iconify';
 import { useSettingsContext } from 'src/components/settings';
 import { calcOrderTotals, calculatorPrice, getCartDataUtil, makePayData, onPayProductsByAuth, onPayProductsByHand, onPayProductsByPayletter, onPayProductsByForspay } from 'src/utils/shop-util';
+import { syncCartWithServer, makeUnavailableMessage } from 'src/utils/cart-sync';
 import { forspayMethodList } from 'src/utils/format';
 import { sanitizePhoneInput, isValidPhoneNumber, makeOrdNum } from 'src/utils/function';
 import Policy from 'src/pages/shop/auth/policy';
@@ -54,6 +55,8 @@ export default function OrderSheet({ router }) {
   const { max_use_point = 0, point_rate = 0, use_point_min_price = 0 } = setting_obj;
 
   const [products, setProducts] = useState([]);
+  // 지금 구매할 수 없는 라인(품절·판매중단·내려간 상품). 결제 차단과 안내에 쓴다.
+  const [unavailable, setUnavailable] = useState([]);
   const [buyType, setBuyType] = useState(undefined);
   const [buyPayMethod, setBuyPayMethod] = useState(undefined); // 포스페이 수단별 선택 표시용(같은 type 구분)
   const [payLoading, setPayLoading] = useState(false);
@@ -126,9 +129,39 @@ export default function OrderSheet({ router }) {
     }));
   }, [user?.id]);
 
+  const isBuyNow = () => (typeof window !== 'undefined' && window.location.search.includes('buynow'));
+
+  // 서버의 현재 상품정보로 주문 라인을 갱신한다.
+  //
+  // 장바구니는 '담을 때의 가격'을 localStorage 에 그대로 들고 있다. 그 사이 관리자가
+  // 판매가·배송비·옵션 추가금액을 바꾸면, 결제 직전 서버 재계산(recalcOrderAmount)과
+  // 값이 어긋나 "결제금액이 변경되었습니다. 주문서를 새로고침한 뒤 다시 시도해 주세요."로 거절된다.
+  // 그런데 새로고침해도 같은 localStorage 를 다시 읽으니 낡은 값이 그대로 복원돼
+  // 안내대로 해도 영원히 풀리지 않았다. 여기서 실제로 최신값을 받아 저장소까지 갱신한다.
+  // (금액 계산식은 건드리지 않는다 — 계산에 들어가는 입력값만 최신으로 바꾼다)
+  const runSync = async (items, changed_message) => {
+    // 빈 주문서에서 저장소를 덮어쓰지 않는다(바로구매 항목을 날려버릴 수 있다).
+    if (!Array.isArray(items) || items.length == 0) return items;
+    const sync = await syncCartWithServer(items);
+    if (sync.failed) return items; // 서버를 한 건도 못 읽었다 — 기존 값을 그대로 둔다
+    setProducts(sync.items);
+    setUnavailable(sync.unavailable);
+    if (isBuyNow()) {
+      try { sessionStorage.setItem('buyNowItem', JSON.stringify(sync.items[0] ?? null)); } catch (e) { /* noop */ }
+    } else {
+      onChangeCartData(sync.items);
+    }
+    if (sync.unavailable.length > 0) {
+      toast.error(makeUnavailableMessage(sync.unavailable));
+    } else if (sync.priceChanged && changed_message) {
+      toast(changed_message);
+    }
+    return sync.items;
+  };
+
   const getCart = async () => {
     let items = [];
-    if (typeof window !== 'undefined' && window.location.search.includes('buynow')) {
+    if (isBuyNow()) {
       // 바로구매: sessionStorage의 단일 상품 사용(장바구니 무관)
       try {
         const raw = sessionStorage.getItem('buyNowItem');
@@ -138,6 +171,7 @@ export default function OrderSheet({ router }) {
       items = await getCartDataUtil(themeCartData);
     }
     setProducts(items);
+    await runSync(items, '상품 가격이 변경되어 최신 금액으로 갱신했습니다.');
     onChangeAddressPage(addressSearchObj);
   };
 
@@ -208,6 +242,13 @@ export default function OrderSheet({ router }) {
   const guardBeforePay = () => {
     if (!agreeAll) {
       toast.error('주문 내용 및 약관에 동의해 주세요.');
+      return false;
+    }
+    // 어느 상품이 문제인지 이름으로 알려준다.
+    // 예전엔 백엔드 하드블록이 "구매할 수 없는 상품이 포함되어 있습니다."만 돌려줘
+    // 여러 건을 담은 고객은 무엇을 빼야 하는지 알 수 없었다.
+    if (unavailable.length > 0) {
+      toast.error(makeUnavailableMessage(unavailable));
       return false;
     }
     if (!payData.addr) {
@@ -306,6 +347,9 @@ export default function OrderSheet({ router }) {
       if (created) {
         createdOrderRef.current.virtual_account = ord_num;
         await finishPendingOrder(pay_data);
+      } else {
+        // 주문 생성이 거절됐다(금액검증 불일치·상품상태). 낡은 장바구니 값을 실제로 갱신한다.
+        await runSync(products, '가격이 변경되어 최신 금액으로 갱신했습니다. 금액을 확인하고 다시 시도해 주세요.');
       }
       setPayData(pay_data);
     } else if (item?.type == 'gift_certificate') {
@@ -330,6 +374,9 @@ export default function OrderSheet({ router }) {
       if (created_gift) {
         createdOrderRef.current.gift_certificate = ord_num;
         await finishPendingOrder(pay_data);
+      } else {
+        // 주문 생성이 거절됐다(금액검증 불일치·상품상태). 낡은 장바구니 값을 실제로 갱신한다.
+        await runSync(products, '가격이 변경되어 최신 금액으로 갱신했습니다. 금액을 확인하고 다시 시도해 주세요.');
       }
       setPayData(pay_data);
     } else if (item?.type == 'certification_weroute') {
@@ -359,11 +406,15 @@ export default function OrderSheet({ router }) {
     if (!guardBeforePay()) return;
     setPayLoading(true);
     try {
+      let result = false;
       if (buyType == 'auth_forspay') {
-        await onPayProductsByForspay(products.map((p) => ({ ...p })), payData);
+        result = await onPayProductsByForspay(products.map((p) => ({ ...p })), payData);
       } else if (buyType == 'card_payletter') {
-        await onPayProductsByPayletter(products.map((p) => ({ ...p })), payData);
+        result = await onPayProductsByPayletter(products.map((p) => ({ ...p })), payData);
       }
+      // 성공하면 결제창으로 이동한다. 실패했으면 대개 서버 금액검증 불일치나 상품상태 문제이므로
+      // 안내만 하지 말고 실제로 최신 정보를 다시 받아 곧바로 재시도할 수 있게 한다.
+      if (!result) await runSync(products, '가격이 변경되어 최신 금액으로 갱신했습니다. 금액을 확인하고 다시 결제해 주세요.');
     } finally {
       setPayLoading(false);
     }
@@ -393,6 +444,9 @@ export default function OrderSheet({ router }) {
       try { sessionStorage.setItem('lastOrder', JSON.stringify(safe)); } catch (e) { /* noop */ }
       toast.success('주문이 완료되었습니다.');
       router.push('/shop/auth/order-complete');
+    } else {
+      // 실패 사유는 대부분 서버 금액검증 불일치다. 낡은 장바구니 값을 실제로 갱신해 준다.
+      await runSync(products, '가격이 변경되어 최신 금액으로 갱신했습니다. 금액을 확인하고 다시 결제해 주세요.');
     }
   };
 
@@ -439,6 +493,14 @@ export default function OrderSheet({ router }) {
               {/* 주문상품 */}
               <Card sx={{ mb: 3 }}>
                 <CardHeader title="주문 상품" />
+                {unavailable.length > 0 && (
+                  // 토스트는 사라지므로, 결제가 막힌 이유는 화면에 계속 남겨 둔다.
+                  <Box sx={{ mx: 2, mb: 1, p: 1.5, borderRadius: 1, bgcolor: 'error.lighter' }}>
+                    <Typography variant="body2" sx={{ color: 'error.main' }}>
+                      {makeUnavailableMessage(unavailable)}
+                    </Typography>
+                  </Box>
+                )}
                 <CheckoutCartProductList
                   products={products}
                   onDelete={onDelete}

@@ -28,9 +28,10 @@ const BlogLayout2 = (props) => {
         setUseLayout(result);
     }, [router.asPath])
     const settingPage = () => {
-        if (isPath(router, '/shop/auth/sign-up')) {
-            return false;
-        }
+        // 가입 화면에서 레이아웃(헤더+푸터)을 끄던 예외를 없앤다.
+        // 가입 뷰가 본문에 헤더를 직접 그려서 겹치는 걸 피하려던 것인데,
+        // 그 결과 이 프레임에서는 가입 화면에서 나갈 링크가 하나도 없었다.
+        // 이제 가입 뷰가 헤더를 그리지 않으므로 예외가 필요 없다.
         return true;
     }
     return (

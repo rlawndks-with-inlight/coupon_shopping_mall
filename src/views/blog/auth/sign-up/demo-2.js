@@ -8,7 +8,6 @@ import { useTheme } from '@emotion/react';
 import DialogPolicy from 'src/components/dialog/DialogPolicy';
 import { Icon } from '@iconify/react';
 import { useEffect } from 'react';
-import Header from 'src/layouts/shop/blog/demo-2/header';
 import toast from 'react-hot-toast';
 import { apiManager } from 'src/utils/api';
 import { useSettingsContext } from 'src/components/settings';
@@ -194,16 +193,12 @@ const Demo2 = (props) => {
 
     return (
         <>
-            <Header
-                data={{
-                }}
-                func={{
-                    router
-                }}
-            //is_use_step={true}
-            //activeStep={activeStep}
-            //setActiveStep={setActiveStep}
-            />
+            {/* 헤더를 여기서 직접 그리지 않는다.
+                이 뷰는 블로그형 8개 프레임이 공유하는데, blog demo-2 의 헤더를 본문에 박아 넣고 있었다.
+                그래서 레이아웃이 헤더를 그리는 프레임6~11 에서는 헤더가 두 개 겹쳐 보였고,
+                프레임4·5 는 그걸 피하려고 레이아웃(헤더+푸터)을 통째로 꺼서
+                가입 화면에서 나갈 링크가 하나도 없는 막다른 길이 됐다.
+                레이아웃 헤더 하나만 쓰도록 통일한다(아래 BlogLayout1·2 의 예외도 함께 제거). */}
             <Wrappers>
                 {activeStep == 0 &&
                     <>

@@ -229,11 +229,18 @@ const BlogLayout6 = (props) => {
       <Footer>
         <FooterBrand>{brandName}</FooterBrand>
         <FooterTagline>Crafted with care, made for you.</FooterTagline>
+        {/* 전자상거래법상 표시 의무 항목이 빠져 있었다 —
+            상호(company_name)·통신판매업신고번호(mail_order_num)·개인정보보호책임자(pvcy_rep_name).
+            관리자 설정관리 › 기본설정 › 회사정보 탭에 입력칸은 있어서 가맹점이 값을 채워도
+            이 프레임(6~11)에서는 화면에 나오지 않았다. FooterBrand 는 브랜드명(name)이지 상호가 아니다. */}
         <FooterInfo>
+          {themeDnsData?.company_name && <div>상호 · {themeDnsData.company_name}</div>}
           {themeDnsData?.ceo_name && <div>대표 · {themeDnsData.ceo_name}</div>}
           {themeDnsData?.business_num && <div>사업자등록번호 · {themeDnsData.business_num}</div>}
+          {themeDnsData?.mail_order_num && <div>통신판매업신고번호 · {themeDnsData.mail_order_num}</div>}
           {themeDnsData?.phone_num && <div>고객센터 · {themeDnsData.phone_num}</div>}
           {themeDnsData?.addr && <div>주소 · {themeDnsData.addr}</div>}
+          {themeDnsData?.pvcy_rep_name && <div>개인정보보호책임자 · {themeDnsData.pvcy_rep_name}</div>}
         </FooterInfo>
         {/* 비회원 주문조회: 이 레이아웃에는 진입로가 마이페이지 안 다이얼로그뿐이라
             비회원은 도달할 수가 없었다. 푸터에서 바로 열어준다.

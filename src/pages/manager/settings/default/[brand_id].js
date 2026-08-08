@@ -1,5 +1,4 @@
 import {
-  Autocomplete,
   Avatar,
   Button,
   Card,
@@ -820,43 +819,19 @@ const DefaultSetting = () => {
                         </Select>
                         <FormHelperText>쇼핑몰형과 블로그형은 동시에 선택할 수 없습니다. 하나를 고르면 반대쪽은 자동으로 해제됩니다.</FormHelperText>
                       </FormControl>
-                      <Autocomplete
-                        multiple
-                        fullWidth
-                        options={themeDnsData?.products ?? []}
-                        value={(item.setting_obj?.featured_product_ids ?? (item.setting_obj?.featured_product_id ? [item.setting_obj?.featured_product_id] : []))
-                          .map(id => (themeDnsData?.products ?? []).find(p => String(p?.id) === String(id)))
-                          .filter(Boolean)}
-                        getOptionLabel={(p) => p?.product_name ?? ''}
-                        isOptionEqualToValue={(a, b) => String(a?.id) === String(b?.id)}
-                        onChange={(e, value) => {
-                          const ids = value.map(p => p?.id);
-                          setItem({
-                            ...item,
-                            ['setting_obj']: {
-                              ...item.setting_obj,
-                              featured_product_ids: ids,
-                              // 하위호환: 단일 히어로 훅(useFeaturedProduct)용 첫 번째 id 미러링
-                              featured_product_id: ids[0] ?? ''
-                            }
-                          })
-                        }}
-                        renderOption={(props, p) => (
-                          <li {...props} key={p?.id}>
-                            <Avatar src={p?.product_img} variant='rounded' sx={{ width: 32, height: 32, mr: 1 }} />
-                            <span style={{ flex: 1 }}>{p?.product_name}</span>
-                            <span style={{ color: '#888', fontSize: 13 }}>{commarNumber(p?.product_sale_price || p?.product_price || 0)}원</span>
-                          </li>
-                        )}
-                        renderInput={(params) => (
-                          <TextField
-                            {...params}
-                            label='대표 상품 (단일·소수 상품 데모용)'
-                            placeholder='상품 검색·선택 (미선택 시 첫 번째 상품 자동)'
-                            helperText='블로그 단일/소수 상품 데모에 노출됩니다. 첫 번째가 메인, 2개 이상 선택 시 나머지는 하단 그리드에 표시됩니다.'
-                          />
-                        )}
-                      />
+                      {/* '대표 상품' 입력은 여기 두지 않는다 — 디자인관리 › 대표 상품
+                          (/manager/designs/featured)이 유일한 편집 화면이다.
+                          예전엔 같은 setting_obj.featured_product_ids 를 이 데모설정 탭에서도
+                          편집할 수 있었는데, 두 가지 이유로 위험한 잔재였다.
+                            1) 후보 목록이 themeDnsData.products 였다. 그 배열은 백엔드가
+                               shop_obj/blog_obj 에 배치된 상품 id 로만 IN 조회해 만들기 때문에
+                               (shop.controller 의 홈 섹션 쿼리) 섹션빌더가 없는 블로그 4~9
+                               프레임에서는 항상 0건이다. 즉 '선택'은 불가능하고 '전체 해제'만
+                               가능한 상태였다 — 값을 지우는 방향으로만 동작하는 함정이다.
+                            2) 저장 시 setting_obj 를 객체 단위로 통째 전송하므로, 본사(레벨50)가
+                               이 탭에서 아무거나 저장하면 가맹점이 디자인관리에서 지정해 둔
+                               대표상품이 빈 값으로 덮어써질 수 있었다.
+                          프레임 선택 Select 만 남긴다. */}
                     </Stack>
                   </Card>
                 </Grid>

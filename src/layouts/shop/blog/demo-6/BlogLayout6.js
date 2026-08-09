@@ -246,6 +246,8 @@ const BlogLayout6 = (props) => {
             policy.js 가 query type 으로 갈라진다(0=이용약관, 1=개인정보처리방침). */}
         <FooterLinks>
           <FooterLink onClick={() => router.push('/shop/auth/order-check')}>비회원 주문조회</FooterLink>
+          {/* 비회원은 계정이 없어 1:1문의 답변을 확인할 경로가 필요하다(연락처 + 글비밀번호). */}
+          <FooterLink onClick={() => router.push('/shop/auth/inquiry-check')}>비회원 문의조회</FooterLink>
           <FooterLink onClick={() => router.push('/shop/auth/policy?type=0')}>이용약관</FooterLink>
           <FooterLink onClick={() => router.push('/shop/auth/policy?type=1')}>개인정보처리방침</FooterLink>
           {/* 로그아웃은 헤더가 아니라 여기 둔다. 헤더는 로고가 가운데 정렬이라

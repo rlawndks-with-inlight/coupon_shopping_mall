@@ -9,6 +9,7 @@ import { AuthMenuSideComponent, ContentWrappers, TitleComponent } from "src/comp
 import { Row, RowMobileReverceColumn } from "src/components/elements/styled-components";
 import { useSettingsContext } from "src/components/settings";
 import { useAuthContext } from "src/layouts/manager/auth/useAuthContext";
+import GuestInquiryFields, { GUEST_INQUIRY_EMPTY, validateGuestInquiry } from 'src/components/elements/shop/GuestInquiryFields';
 import { apiShop } from "src/utils/api";
 import styled from "styled-components";
 import { Upload } from "src/components/upload";
@@ -31,6 +32,8 @@ margin-top: 2rem;
 const ArticleDemo = (props) => {
   const { setModal } = useModal()
   const { user } = useAuthContext();
+  // 비회원 1:1문의 입력값(이름·연락처·글비밀번호). 로그인 상태면 쓰지 않는다.
+  const [guestObj, setGuestObj] = useState({ ...GUEST_INQUIRY_EMPTY });
   const { themePostCategoryList } = useSettingsContext();
   const router = useRouter();
   const [postCategory, setPostCategory] = useState({});
@@ -48,8 +51,13 @@ const ArticleDemo = (props) => {
   const settingPage = async () => {
     setPostCategory(_.find(themePostCategoryList, { id: parseInt(router.query?.article_category) }))
     if (router.query?.id > 0) {
+      // 비회원이 조회 화면(/shop/auth/inquiry-check)에서 넘어온 경우 연락처·글비밀번호를 함께 보낸다.
+      // 백엔드 post.get 이 이 두 값으로 '작성자 본인' 을 인정한다(계정이 없어 이것뿐이다).
+      // 회원이거나 일반 게시판이면 router.query 에 없으므로 아무 영향이 없다.
       let data = await apiShop('post', 'get', {
-        id: router.query?.id
+        id: router.query?.id,
+        none_user_phone: router.query?.none_user_phone,
+        password: router.query?.password,
       })
       setItem(data);
     }
@@ -57,8 +65,17 @@ const ArticleDemo = (props) => {
   }
   const onSave = async () => {
     let result = undefined;
+    // 비회원은 이름·연락처·글비밀번호가 있어야 저장할 수 있다(백엔드와 같은 기준).
+    if (!user && router.query?.id == 'add') {
+      const invalid = validateGuestInquiry(guestObj);
+      if (invalid) { toast.error(invalid); return; }
+    }
     if (router.query?.id == 'add') {
-      result = await apiShop('post', 'create', { ...item, category_id: router.query?.article_category });
+      result = await apiShop('post', 'create', {
+        ...item,
+        category_id: router.query?.article_category,
+        ...(user ? {} : guestObj),
+      });
     } else {
       result = await apiShop('post', 'update', { ...item });
     }
@@ -79,6 +96,9 @@ const ArticleDemo = (props) => {
                 <Stack spacing={3}>
                   {(router.query?.id == 'add' || item?.user_id == user?.id) ?
                     <>
+                    {/* 비회원 작성 칸. 로그인 상태면 그리지 않는다. */}
+                    {!user && router.query?.id == 'add' &&
+                      <GuestInquiryFields value={guestObj} onChange={setGuestObj} />}
                       {postCategory.post_category_type == 1 &&
                         <>
                           <Typography variant="subtitle2" sx={{ color: 'text.secondary' }}>

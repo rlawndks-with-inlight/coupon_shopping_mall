@@ -26,15 +26,17 @@ const HomeDemo = (props) => {
 
   const { themeDnsData } = useSettingsContext();
   const [loading, setLoading] = useState(true);
-  const { user } = useAuthContext();
+  const { user, isInitialized } = useAuthContext();
   useEffect(() => {
-    if (themeDnsData?.is_closure == 1 && !user) {
+    // isInitialized 를 함께 본다 — 첫 렌더의 user=null 을 비로그인으로 오판하면
+    // 로그인한 고객도 폐쇄몰에서 새로고침할 때마다 로그인 화면으로 튕긴다.
+    if (themeDnsData?.is_closure == 1 && isInitialized && !user) {
       router.push('/shop/auth/login')
     }
     if (themeDnsData?.id > 0) {
       setLoading(false);
     }
-  }, [themeDnsData])
+  }, [themeDnsData, isInitialized, user])
   const router = useRouter();
   return (
     <>

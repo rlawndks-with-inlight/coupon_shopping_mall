@@ -49,7 +49,7 @@ margin:auto 0 auto auto;
 const ItemsDemo = (props) => {
 
   const router = useRouter();
-  const { user } = useAuthContext();
+  const { user, isInitialized } = useAuthContext();
   const { themeDnsData, themeCategoryList, themePropertyList, themeMode } = useSettingsContext();
   const [categoryIds, setCategoryIds] = useState({});
   const [searchObj, setSearchObj] = useState({
@@ -72,10 +72,12 @@ const ItemsDemo = (props) => {
   const [detailSubCate, setDetailSubCate] = useState()
 
   useEffect(() => {
-    if (themeDnsData?.is_closure == 1 && !user) {
+    // isInitialized 를 함께 본다 — 첫 렌더의 user=null 을 비로그인으로 오판하면
+    // 로그인한 고객도 폐쇄몰에서 새로고침할 때마다 로그인 화면으로 튕긴다.
+    if (themeDnsData?.is_closure == 1 && isInitialized && !user) {
       router.push('/shop/auth/login')
     }
-  }, [themeDnsData])
+  }, [themeDnsData, isInitialized, user])
 
   useEffect(() => {
     sort(LANGCODE.ENG)

@@ -106,7 +106,7 @@ const CartDemo = (props) => {
     },
   } = props;
   const { setModal } = useModal()
-  const { user } = useAuthContext();
+  const { user, isInitialized } = useAuthContext();
 
   const { themeCartData, onChangeCartData, themeDnsData } = useSettingsContext();
   const { setting_obj } = themeDnsData;
@@ -163,10 +163,12 @@ const CartDemo = (props) => {
 
   // 브랜드 정책(id==74 전용): 이 브랜드는 게스트 체크아웃을 막고 로그인을 강제함(의도된 예외). 다른 브랜드는 게스트 주문서 진입 허용.
   useEffect(() => {
-    if (themeDnsData?.is_closure == 1 && !user) {
+    // isInitialized 를 함께 본다 — 첫 렌더의 user=null 을 비로그인으로 오판하면
+    // 로그인한 고객도 폐쇄몰에서 새로고침할 때마다 로그인 화면으로 튕긴다.
+    if (themeDnsData?.is_closure == 1 && isInitialized && !user) {
       router.push('/shop/auth/login')
     }
-  }, [themeDnsData])
+  }, [themeDnsData, isInitialized, user])
 
   useEffect(() => {
     getCart();

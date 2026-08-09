@@ -420,13 +420,18 @@ const SignUpDemo = (props) => {
           </Stack>}
 
         <Stack direction="row" spacing={2} sx={{ mt: 4 }}>
-          <Button
-            variant="outlined"
-            color="inherit"
-            fullWidth
-            sx={{ height: '52px' }}
-            onClick={onClickPrevButton}
-          >{translate('이전')}</Button>
+          {/* 가입완료(2단계)에서는 '이전'을 감춘다.
+              이미 계정이 만들어진 뒤라, 이전으로 돌아가 '다음'을 다시 누르면
+              가입 API 가 한 번 더 호출돼 '이미 사용 중인 아이디' 오류가 뜬다.
+              가입에 성공했는데 실패한 것처럼 보인다. */}
+          {activeStep != 2 &&
+            <Button
+              variant="outlined"
+              color="inherit"
+              fullWidth
+              sx={{ height: '52px' }}
+              onClick={onClickPrevButton}
+            >{translate('이전')}</Button>}
           <Button
             variant="contained"
             color="inherit"

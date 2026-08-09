@@ -8,7 +8,7 @@ import styled from 'styled-components'
 import { useModal } from "src/components/dialog/ModalProvider";
 import { HistoryTable } from 'src/components/elements/shop/common';
 import { apiManager } from 'src/utils/api';
-import { commarNumber, getTrxStatusByNumber } from 'src/utils/function';
+import { commarNumber, getOrderStatusText } from 'src/utils/function';
 import { useLocales } from 'src/locales';
 import toast from 'react-hot-toast';
 import { getOptionLabel } from 'src/utils/shop-util';
@@ -292,7 +292,7 @@ const LoginDemo = (props) => {
               </OrderRow>
               <OrderRow>
                 <Typography variant='subtitle2' style={{ color: themeObj.grey[600], textTransform: 'uppercase', letterSpacing: '0.05em' }}>{translate('주문현황')}</Typography>
-                <Typography variant='body2'>{getTrxStatusByNumber(noneUserTrxObj?.trx_status)}</Typography>
+                <Typography variant='body2'>{getOrderStatusText(noneUserTrxObj)}</Typography>
               </OrderRow>
               <OrderRow>
                 <Typography variant='subtitle2' style={{ color: themeObj.grey[600], textTransform: 'uppercase', letterSpacing: '0.05em' }}>{translate('송장번호')}</Typography>

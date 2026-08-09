@@ -4,7 +4,7 @@ import { Tabs, Tab, Button } from '@mui/material';
 import { useState, useEffect } from 'react';
 import { useSettingsContext } from 'src/components/settings';
 import _ from 'lodash';
-import { commarNumber, getTrxStatusByNumber } from 'src/utils/function';
+import { commarNumber, getOrderStatusText } from 'src/utils/function';
 import { apiManager } from 'src/utils/api';
 import { getOptionLabel } from 'src/utils/shop-util';
 import OrderCancelButton from 'src/components/elements/shop/OrderCancelButton';
@@ -166,7 +166,7 @@ const Demo4 = (props) => {
                                                     <div>{commarNumber(item?.order_amount)}원</div>
                                                     <div>옵션 : {getOptionText(item) || '-'} / {item?.order_count}개</div>
                                                     <div style={{ marginTop: '0.5rem' }}>주문번호 : {item?.trx?.ord_num}</div>
-                                                    <div>주문상태 : {getTrxStatusByNumber(item?.trx?.trx_status)}</div>
+                                                    <div>주문상태 : {getOrderStatusText(item?.trx)}</div>
                                                     <div>받는분 : {item?.trx?.receiver || item?.trx?.buyer_name || '-'}</div>
                                                     <div>배송지 : {item?.trx?.addr ? `${item?.trx?.addr} ${item?.trx?.detail_addr || ''}` : '-'}</div>
                                                     <div>송장번호 : {item?.trx?.invoice_num || '-'}</div>

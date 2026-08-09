@@ -4,7 +4,7 @@ import { Tabs, Tab, Button } from '@mui/material';
 import { useState, useEffect } from 'react';
 import { useSettingsContext } from 'src/components/settings';
 import _ from 'lodash';
-import { commarNumber, getTrxStatusByNumber } from 'src/utils/function';
+import { commarNumber, getOrderStatusText } from 'src/utils/function';
 import { apiManager } from 'src/utils/api';
 import { getOptionLabel } from 'src/utils/shop-util';
 import OrderCancelButton from 'src/components/elements/shop/OrderCancelButton';
@@ -128,7 +128,7 @@ const Demo5 = (props) => {
                 >
                     {_.uniqBy(orderList, 'trx_status').map((data, idx) => {
                         return <Tab
-                            label={getTrxStatusByNumber(data.trx_status)}
+                            label={getOrderStatusText(data)}
                             value={data.trx_status}
                             sx={{
                                 borderBottom: '1px solid',
@@ -172,7 +172,7 @@ const Demo5 = (props) => {
                                                     <div>{item.order_name}</div>
                                                     <div>{commarNumber(item.order_amount)}원</div>
                                                     <div>옵션 : {getOptionText(item)} / {item.order_count}개</div>
-                                                    <div style={{ marginTop: '0.5rem' }}>{getTrxStatusByNumber(item.trx_status)} · 주문번호 {item.ord_num}</div>
+                                                    <div style={{ marginTop: '0.5rem' }}>{getOrderStatusText(item)} · 주문번호 {item.ord_num}</div>
                                                 </div>
                                             </div>
                                             <AddressButton>

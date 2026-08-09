@@ -9,6 +9,7 @@ import { useState } from "react"
 import DialogSearch from "src/components/dialog/DialogSearch"
 import { isMyPagePath, isPath, isStorefrontHome } from "src/utils/blog-shop-route"
 import { useAuthContext } from "src/layouts/manager/auth/useAuthContext"
+import { Badge } from "@mui/material"
 
 const Wrappers = styled.footer`
 margin-top: auto;
@@ -72,7 +73,8 @@ font-weight:500;
 `
 
 const Footer = () => {
-  const { themeMode } = useSettingsContext();
+  // themeCartData: 하단 고정바 장바구니 개수 배지용
+  const { themeMode, themeCartData } = useSettingsContext();
   const { translate } = useLocales();
   const { themeDnsData } = useSettingsContext();
   const router = useRouter();
@@ -167,8 +169,13 @@ const Footer = () => {
           <Icon icon="ph:magnifying-glass" fontSize="1.3rem" color={navColor} />
           <NavLabel style={{ color: navColor }}>SEARCH</NavLabel>
         </NavItem>
+        {/* 하단 고정바의 장바구니에도 담긴 개수를 붙인다.
+            헤더에는 배지가 있는데 이 바에는 없어서, 같은 화면에 배지 있는 장바구니와
+            없는 장바구니가 동시에 보였다. */}
         <NavItem $active={isPath(router, '/shop/auth/cart')} onClick={() => router.push('/shop/auth/cart')}>
-          <Icon icon="ph:shopping-cart" fontSize="1.3rem" color={navColor} />
+          <Badge badgeContent={themeCartData?.length ?? 0} color="error">
+            <Icon icon="ph:shopping-cart" fontSize="1.3rem" color={navColor} />
+          </Badge>
           <NavLabel style={{ color: navColor }}>CART</NavLabel>
         </NavItem>
         <NavItem $active={isMyPagePath(router)} onClick={() => router.push('/shop/auth/my-page')}>

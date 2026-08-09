@@ -8,7 +8,7 @@ import styled from 'styled-components'
 import { useModal } from "src/components/dialog/ModalProvider";
 import { HistoryTable } from 'src/components/elements/shop/common';
 import { apiManager } from 'src/utils/api';
-import { commarNumber, getTrxStatusByNumber } from 'src/utils/function';
+import { commarNumber, getOrderStatusText } from 'src/utils/function';
 import { Icon } from '@iconify/react';
 import { getOptionLabel } from 'src/utils/shop-util';
 
@@ -309,7 +309,7 @@ const LoginDemo = (props) => {
               </Col>
               <Col style={{ margin: 'auto', width: '100%', maxWidth: '500px' }}>
                 <Typography variant='subtitle1'>주문현황</Typography>
-                <Typography variant='body2'>{getTrxStatusByNumber(noneUserTrxObj?.trx_status)}</Typography>
+                <Typography variant='body2'>{getOrderStatusText(noneUserTrxObj)}</Typography>
               </Col>
               <Col style={{ margin: 'auto', width: '100%', maxWidth: '500px' }}>
                 <Typography variant='subtitle1'>송장번호</Typography>

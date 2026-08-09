@@ -256,11 +256,9 @@ const ArticlesDemo = (props) => {
                   <Button variant="contained" style={{
                     height: '48px', width: '120px', marginLeft: 'auto'
                   }} onClick={() => {
-                    if (user?.id) {
-                      router.push(`/shop/service/${router.query?.article_category}/add`)
-                    } else {
-                      toast.error(translate("로그인을 해주세요."))
-                    }
+                    // 비회원도 1:1문의를 남길 수 있다 — 작성 화면에서 이름·연락처·글비밀번호를 받는다.
+                  // 여기서 로그인을 요구하면 비회원은 작성 화면에 도달할 방법이 없다.
+                  router.push(`/shop/service/${router.query?.article_category}/add`)
                   }}>
                     {translate('작성')}
                   </Button>

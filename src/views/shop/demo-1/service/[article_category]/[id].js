@@ -111,7 +111,10 @@ const ArticleDemo = (props) => {
         {!loading &&
           <>
             <Stack spacing={3}>
-              {(router.query?.id == 'add' || item?.user_id == user?.id) ?
+              {/* ⚠ 느슨한 비교(==)면 비회원 글(user_id=null)을 비로그인(user=undefined)으로 열 때
+                  null == undefined 가 true 가 되어 읽기 화면 대신 수정 폼이 뜬다.
+                  '로그인했고 + 본인 글' 을 양성 조건으로 둔다. */}
+              {(router.query?.id == 'add' || (user?.id > 0 && item?.user_id == user?.id)) ?
                 <>
                   {/* 비회원 작성 칸. 로그인 상태면 그리지 않는다. */}
                   {!user && router.query?.id == 'add' &&

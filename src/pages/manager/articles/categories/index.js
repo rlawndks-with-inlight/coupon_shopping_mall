@@ -64,7 +64,12 @@ const ArticleCategoryList = () => {
         return row['updated_at'] ?? "---"
       }
     },
-    {
+    // 게시판 생성·수정·삭제는 백엔드가 레벨50(본사)만 허용한다
+    // (post_category.controller 의 create/update/remove 가드).
+    // 그런데 이 화면은 레벨과 무관하게 수정·삭제 아이콘을 그려서, 가맹점이 누르면
+    // 서버가 거부하는 '눌러도 안 되는 버튼' 이 남아 있었다 — 특히 1:1문의 게시판을
+    // 지우려다 실패하는 흐름이 그대로 노출됐다. 권한 있는 계정에게만 보여준다.
+    ...(user?.level >= 50 ? [{
       id: 'edit',
       label: '수정/삭제',
       action: (row) => {
@@ -87,7 +92,7 @@ const ArticleCategoryList = () => {
           </>
         )
       }
-    },
+    }] : []),
   ]
   const router = useRouter();
   const [columns, setColumns] = useState([]);

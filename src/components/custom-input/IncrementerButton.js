@@ -10,10 +10,15 @@ const IncrementerButton = forwardRef(
 
     const handleInputChange = (event) => {
       const newValue = event.target.value;
+      // 화면에는 입력 중인 값을 그대로 둔다(지우고 다시 치는 동안 숫자가 튀지 않게).
       setLocalQuantity(newValue);
-      console.log(localQuantity)
-      if (onChangeQuantity) {
-        onChangeQuantity(Number(newValue));
+      // ⚠ 상위에는 **유효한 수량일 때만** 올린다.
+      //   예전엔 Number('') === 0, Number('abc') === NaN 을 그대로 올려서
+      //   입력칸을 비우는 순간 수량이 0 이 되고 합계·결제금액이 0원으로 계산됐다.
+      //   (하한 보정은 blur 에만 있어서, 지운 채로 결제하면 그대로 나갔다)
+      const parsed = parseInt(newValue, 10);
+      if (onChangeQuantity && Number.isFinite(parsed) && parsed >= 1) {
+        onChangeQuantity(parsed);
       }
     };
 

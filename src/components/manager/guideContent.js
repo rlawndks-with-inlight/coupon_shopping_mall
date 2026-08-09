@@ -209,7 +209,7 @@ export const GUIDE_SECTIONS = [
   {
     id: 'boards', part: 2, badge: '참조',
     title: '게시판관리 (공지사항 · 1:1문의)',
-    where: '게시판관리',
+    where: '왼쪽 메뉴 「게시판관리」 › 「1:1문의」 또는 「공지사항」',
     why: '공지사항·1:1문의 등 게시판을 관리합니다. 개설 시 기본 게시판이 자동 생성됩니다.',
     fields: [
       { label: '공지사항', desc: '안내글을 작성해 고객에게 공지합니다.' },
@@ -220,7 +220,13 @@ export const GUIDE_SECTIONS = [
       { img: 'inquiry-list', cap: '1:1문의 게시판의 문의 글 목록' },
       { img: 'inquiry-reply', cap: '문의 글 상세 하단에서 답변제목·답변내용을 작성해 저장합니다.' },
     ],
-    route: '/manager/articles/categories',
+    // ⚠ route 를 비워 둔다.
+    //   예전엔 '/manager/articles/categories'(게시판 카테고리 관리)로 보냈는데 그 화면은
+    //   레벨50(본사) 전용이다 — 가맹점이 눌러도 수정·삭제가 서버에서 거부된다.
+    //   가맹점이 실제로 할 일은 '1:1문의 답변'이고, 그 화면 경로는 게시판 id 가 브랜드마다
+    //   달라서(/manager/articles/{id}) 가이드에서 고정 링크를 걸 수 없다.
+    //   잘못된 곳으로 보내느니 사이드바로 안내한다(아래 where 문구).
+    route: null,
   },
   {
     id: 'menu-design', part: 2, badge: '참조',

@@ -10,6 +10,7 @@ import { Upload } from "src/components/upload";
 import PropTypes from 'prop-types';
 import clsx from "clsx";
 import { Icon } from "@iconify/react";
+import toast from "react-hot-toast";
 import { useTheme } from "@emotion/react";
 import { getAllIdsWithParents } from "src/utils/function";
 import { useModal } from "src/components/dialog/ModalProvider";
@@ -195,7 +196,11 @@ const CustomContent = forwardRef(function CustomContent(props, ref) {
 });
 
 function CustomTreeItem(props) {
-    return <StyledTreeItem ContentComponent={CustomContent} {...props} ContentProps={...props} />
+    // ContentProps={...props} 는 JSX 문법상 올바르지 않다(속성 값 자리에는 스프레드를 못 쓴다).
+    // SWC 는 관대해서 `ContentProps: props` 로 컴파일해 왔지만, 표준 파서(babel 등)는 이 파일을
+    // 통째로 읽지 못한다 — 린트·정적분석 도구가 이 파일만 건너뛰게 된다.
+    // 컴파일 결과가 같은 형태(ContentProps={props})로 바로잡는다.
+    return <StyledTreeItem ContentComponent={CustomContent} {...props} ContentProps={props} />
 }
 const Wrappers = styled.div`
 width:100%;
@@ -335,6 +340,9 @@ const CategoryList = () => {
             id: id,
             value: value,
         });
+        // 실패해도 목록을 다시 그리면 서버가 거부한 값이 화면에는 바뀐 것처럼 보였다가
+        // 다음 조회에서 슬그머니 되돌아간다. 거부 사유는 apiManager 가 이미 토스트로 띄운다.
+        if (result === false) return;
         getCategories();
     }
     const onClickCategoryLabel = (category, depth) => { // 해당 카테고리 수정
@@ -366,11 +374,21 @@ const CategoryList = () => {
         // 단일 트리: 신규 카테고리는 컨테이너 그룹(첫 실그룹)에 담는다. 그룹 레이어는 폐지 중이나
         //  product_category_group_id 컬럼(전환기 NOT NULL 가능)을 유효값으로 채우기 위함.
         const container_group_id = categoryGroup?.id ?? router.query?.id;
-        if (category?.id) {//수정
-            let result = await apiManager('product-categories', 'update', { ...category, product_category_group_id: container_group_id })
-        } else {//추가
-            let result = await apiManager('product-categories', 'create', { ...category, product_category_group_id: container_group_id })
+        // 이름이 비면 저장하지 않는다 — 백엔드에 검사가 없어 빈 이름 카테고리가 그대로 만들어졌고,
+        // 그러면 고객 화면 메뉴에 빈 칸이 생긴다.
+        if (!String(category?.category_name ?? '').trim()) {
+            toast.error('카테고리 이름을 입력해 주세요.');
+            return;
         }
+        let result = undefined;
+        if (category?.id) {//수정
+            result = await apiManager('product-categories', 'update', { ...category, product_category_group_id: container_group_id })
+        } else {//추가
+            result = await apiManager('product-categories', 'create', { ...category, product_category_group_id: container_group_id })
+        }
+        // 저장 결과를 확인한다. 예전엔 결과를 받기만 하고 무조건 폼을 닫아버려서,
+        // 서버가 거부해도 입력값이 사라지고 저장된 것처럼 보였다(삭제 경로에는 원래 이 가드가 있다).
+        if (result === false) return;
         setIsAction(false);
         getCategories();
         settingPlatform?.();   // 컨텍스트 themeCategoryList 갱신 → 상품폼 등에서 새 카테고리 즉시 반영(새로고침 불필요)

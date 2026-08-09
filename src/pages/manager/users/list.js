@@ -34,7 +34,12 @@ const UserList = () => {
       id: 'name',
       label: '이름',
       action: (row) => {
-        return row['name'] || row['nickname'] || "---"
+        // ⚠ 실명이 없으면 닉네임으로 덮어 보여주고 있었다. 그래서 실명이 비어 있는 회원을
+        //   화면에서는 알아볼 수 없었는데, 아이디찾기는 '이름 + 휴대폰' 으로 대조하므로
+        //   (back auth.controller findId) 실명이 없는 회원은 아이디를 영영 찾지 못한다.
+        //   가맹점 현황 화면과 같은 방식으로 경고를 띄운다.
+        if (row['name']) return row['name'];
+        return <span style={{ color: '#ed6c02' }}>{row['nickname'] ? `${row['nickname']} / 이름 없음` : '이름 없음'}</span>;
       }
     },
     {

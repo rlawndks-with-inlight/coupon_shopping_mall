@@ -392,9 +392,10 @@ const TrxCancelList = () => {
     <>
       <Stack spacing={3}>
         <Card>
+          {/* '취소형식' 필터가 통째로 주석이라 12px 패딩만 남은 빈 상자가 표 위에 떠 있었다.
+              되살리려면 아래 주석과 cancelTypeList 를 함께 복구할 것.
           <Row style={{ padding: '12px', columnGap: '0.5rem', flexWrap: 'wrap', rowGap: '0.5rem' }}>
             <FormControl variant='outlined' size='small' sx={{ minWidth: '150px' }}>
-              {/*
               <InputLabel>취소형식</InputLabel>
               <Select label='취소형식' value={searchObj[`cancel_type`]}
                 onChange={(e) => {
@@ -405,9 +406,9 @@ const TrxCancelList = () => {
                   return <MenuItem value={status.value}>{`${status.label}`}</MenuItem>
                 })}
               </Select>
-              */}
             </FormControl>
           </Row>
+          */}
           <ManagerTable
             data={data}
             // defaultColumns 를 매 렌더 계산본 그대로 넘긴다.

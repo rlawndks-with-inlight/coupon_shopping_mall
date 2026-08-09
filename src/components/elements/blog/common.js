@@ -121,7 +121,14 @@ export const Items = props => {
 
     useEffect(() => {
         if (themeDnsData) {
-            setItemThemeCss(Object.assign(itemThemeCss, themeDnsData?.theme_css?.shop_item_card_css))
+            // 블로그형 카드는 blog_item_card_css 를 봐야 한다.
+            // '블로그 상품카드관리' 화면이 그 키로 저장하는데(designs/blog-item-card.js) 읽는 코드가 없어서,
+            // 가맹점이 아무리 고쳐도 화면은 쇼핑몰용 설정(shop_item_card_css)만 따라갔다.
+            // 블로그 설정이 없으면 기존처럼 쇼핑몰 설정으로 넘어간다(하위호환).
+            setItemThemeCss(Object.assign(
+                itemThemeCss,
+                themeDnsData?.theme_css?.blog_item_card_css ?? themeDnsData?.theme_css?.shop_item_card_css,
+            ))
         }
     }, [themeDnsData])
     const getSlideToShow = () => {

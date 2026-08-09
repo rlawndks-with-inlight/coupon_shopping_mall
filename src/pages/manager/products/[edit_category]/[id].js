@@ -220,6 +220,15 @@ export const SelectCategoryComponent = (props) => {
     <CategoryWrappers style={{ border: `1px solid ${theme.palette.mode == 'dark' ? themeObj.grey[700] : themeObj.grey[300]}` }}>
       <TextField
         style={{
+          // ⚠ hasChildCategories 일 때 검색창을 숨긴다 — 하위 카테고리가 있을 때, 즉
+          //    검색이 가장 필요한 상황에서 정확히 사라진다. 열어주는 게 맞지만 그전에
+          //    검색결과 클릭 경로를 먼저 고쳐야 한다: type=='product' 분기는
+          //    onClickCategory(category, 0, ...) 로 depth 를 0 으로 고정해 넘기는데,
+          //    호출부(products/list.js 의 returnCurCategories)가
+          //    `parent_list[i][depth]?.id == category?.id` 로 찾기 때문에
+          //    하위 카테고리 검색결과를 누르면 경로를 못 찾아 필터가 빈 값이 된다.
+          //    (반대쪽 분기의 handleCategoryToggle 은 depth 를 안 쓰므로 영향 없다)
+          //    지금 열면 '검색은 되는데 눌러도 안 걸리는' 상태가 되어 더 나쁘다.
           display: `${hasChildCategories || disabled ? 'none' : ''}`
         }}
         fullWidth
@@ -231,7 +240,10 @@ export const SelectCategoryComponent = (props) => {
             onSearchCategories
           }
         }}
-        placeholder='3글자 이상 입력해 주세요.'
+        // 안내는 '3글자 이상'이었는데 실제로는 1글자부터 검색한다
+        // (filterCategories 의 길이조건이 주석 처리돼 있다).
+        // 문구를 실제 동작에 맞춘다 — 3글자를 채워야 하는 줄 알고 기다리게 된다.
+        placeholder='카테고리명을 입력해 주세요.'
       />
       <CategoryHeader style={{
         background: `${theme.palette.mode == 'dark' ? '#919eab29' : ''}`,

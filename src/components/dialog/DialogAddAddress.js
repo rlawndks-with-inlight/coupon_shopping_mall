@@ -14,6 +14,8 @@ import DialogActions from '@mui/material/DialogActions'
 import { Box, Card, Checkbox, CircularProgress, DialogContentText, FormControlLabel, Paper, RadioGroup, Stack, TextField } from '@mui/material'
 import { Row, postCodeStyle, themeObj } from '../elements/styled-components'
 import DaumPostcode from 'react-daum-postcode';
+import { COUNTRIES, KOREA_CODE, isDomestic } from 'src/data/countries';
+import { MenuItem, ToggleButton, ToggleButtonGroup } from '@mui/material';
 
 
 
@@ -35,6 +37,10 @@ const EMPTY_FORM = {
   zonecode: '',
   is_default: false,
   is_open_daum_post: false,
+  // 국내/해외 구분. 기본은 국내(KR) — 기존 배송지도 전부 국내로 취급된다.
+  country_code: KOREA_CODE,
+  city: '',
+  state_region: '',
 };
 
 const DialogAddAddress = (props) => {
@@ -77,6 +83,9 @@ const DialogAddAddress = (props) => {
         zonecode: data?.zonecode ?? '',
         is_default: Number(data?.is_default) === 1,
         is_open_daum_post: false,
+        country_code: data?.country_code || KOREA_CODE,
+        city: data?.city ?? '',
+        state_region: data?.state_region ?? '',
       });
     })();
     return () => { alive = false; };
@@ -142,34 +151,118 @@ const DialogAddAddress = (props) => {
                 margin="dense"
                 label="연락처"
                 placeholder="010-0000-0000"
-                onChange={(e) => setField('phone', sanitizePhoneInput(e.target.value))}
+                // 국내는 하이픈 자동정리, 해외는 국가번호(+)·공백을 살려야 하므로 그대로 받는다.
+                onChange={(e) => setField('phone',
+                  isDomestic(addAddressObj.country_code) ? sanitizePhoneInput(e.target.value) : e.target.value)}
               />
-              <TextField
+              {/* 국내/해외 토글 — 이 하나로 주소 입력 방식이 갈린다.
+                  국내는 지금까지처럼 다음 우편번호 팝업(행안부 도로명주소 DB)을 쓴다.
+                  택배 송장·통관에 쓰는 것이 그 표준 주소라, 해외용 자동완성으로 바꾸면
+                  표기가 달라져 택배사 시스템이 못 읽는다.
+                  해외는 나라마다 주소 체계가 달라 자유입력으로 받는다. */}
+              <ToggleButtonGroup
+                exclusive
+                size="small"
                 fullWidth
-                value={addAddressObj.zonecode}
-                margin="dense"
-                label="우편번호"
-                InputProps={{ readOnly: true }}
-                placeholder="우편번호 검색으로 입력"
-                onClick={() => setField('is_open_daum_post', true)}
-              />
-              <TextField
-                fullWidth
-                value={addAddressObj.addr}
-                margin="dense"
-                label="주소"
-                aria-readonly='true'
-                InputProps={{ readOnly: true }}
-                placeholder="눌러서 우편번호 검색"
-                onClick={() => setField('is_open_daum_post', true)}
-              />
-              <TextField
-                fullWidth
-                value={addAddressObj.detail_addr}
-                margin="dense"
-                label="상세주소"
-                onChange={(e) => setField('detail_addr', e.target.value)}
-              />
+                sx={{ mt: 1.5, mb: 0.5 }}
+                value={isDomestic(addAddressObj.country_code) ? 'KR' : 'OVERSEAS'}
+                onChange={(e, v) => {
+                  if (!v) return;
+                  // 방식을 바꾸면 이전 방식으로 채운 주소값은 그대로 두면 안 된다
+                  // (국내 도로명주소가 해외 주소칸에 남거나 그 반대가 된다).
+                  setAddAddressObj((prev) => ({
+                    ...prev,
+                    country_code: v === 'KR' ? KOREA_CODE : '',
+                    addr: '', detail_addr: '', zonecode: '', city: '', state_region: '',
+                    is_open_daum_post: false,
+                  }));
+                }}
+              >
+                <ToggleButton value="KR">국내배송</ToggleButton>
+                <ToggleButton value="OVERSEAS">해외배송</ToggleButton>
+              </ToggleButtonGroup>
+
+              {isDomestic(addAddressObj.country_code) ?
+                <>
+                  <TextField
+                    fullWidth
+                    value={addAddressObj.zonecode}
+                    margin="dense"
+                    label="우편번호"
+                    InputProps={{ readOnly: true }}
+                    placeholder="우편번호 검색으로 입력"
+                    onClick={() => setField('is_open_daum_post', true)}
+                  />
+                  <TextField
+                    fullWidth
+                    value={addAddressObj.addr}
+                    margin="dense"
+                    label="주소"
+                    aria-readonly='true'
+                    InputProps={{ readOnly: true }}
+                    placeholder="눌러서 우편번호 검색"
+                    onClick={() => setField('is_open_daum_post', true)}
+                  />
+                  <TextField
+                    fullWidth
+                    value={addAddressObj.detail_addr}
+                    margin="dense"
+                    label="상세주소"
+                    onChange={(e) => setField('detail_addr', e.target.value)}
+                  />
+                </>
+                :
+                <>
+                  <TextField
+                    select
+                    fullWidth
+                    margin="dense"
+                    label="국가"
+                    value={addAddressObj.country_code}
+                    onChange={(e) => setField('country_code', e.target.value)}
+                  >
+                    {COUNTRIES.filter((c) => c.code !== KOREA_CODE).map((c) => (
+                      <MenuItem key={c.code} value={c.code}>{c.name} ({c.en})</MenuItem>
+                    ))}
+                  </TextField>
+                  <TextField
+                    fullWidth
+                    value={addAddressObj.addr}
+                    margin="dense"
+                    label="주소 (Address line 1)"
+                    placeholder="123 Main St"
+                    onChange={(e) => setField('addr', e.target.value)}
+                  />
+                  <TextField
+                    fullWidth
+                    value={addAddressObj.detail_addr}
+                    margin="dense"
+                    label="상세주소 (Address line 2)"
+                    placeholder="Apt, Suite 등"
+                    onChange={(e) => setField('detail_addr', e.target.value)}
+                  />
+                  <TextField
+                    fullWidth
+                    value={addAddressObj.city}
+                    margin="dense"
+                    label="도시 (City)"
+                    onChange={(e) => setField('city', e.target.value)}
+                  />
+                  <TextField
+                    fullWidth
+                    value={addAddressObj.state_region}
+                    margin="dense"
+                    label="주/지역 (State / Province)"
+                    onChange={(e) => setField('state_region', e.target.value)}
+                  />
+                  <TextField
+                    fullWidth
+                    value={addAddressObj.zonecode}
+                    margin="dense"
+                    label="우편번호 (ZIP / Postal code)"
+                    onChange={(e) => setField('zonecode', e.target.value)}
+                  />
+                </>}
               <FormControlLabel
                 sx={{ mt: 1 }}
                 control={
@@ -195,9 +288,27 @@ const DialogAddAddress = (props) => {
                   toast.error('받는 분 성함을 입력해 주세요.');
                   return;
                 }
-                if (!isValidPhoneNumber(addAddressObj.phone)) {
-                  toast.error('받는 분 연락처를 정확히 입력해 주세요.');
-                  return;
+                // 연락처 형식 검사는 국내 번호 기준(9~11자리)이다.
+                // 해외 번호는 국가번호 포함 길이가 제각각이라 같은 잣대를 대면 멀쩡한 번호가 막힌다.
+                // 해외는 '비어 있지 않은지'만 본다 — 최종 확인은 어차피 가맹점이 한다.
+                if (isDomestic(addAddressObj.country_code)) {
+                  if (!isValidPhoneNumber(addAddressObj.phone)) {
+                    toast.error('받는 분 연락처를 정확히 입력해 주세요.');
+                    return;
+                  }
+                } else {
+                  if (!String(addAddressObj.phone || '').trim()) {
+                    toast.error('받는 분 연락처를 입력해 주세요.');
+                    return;
+                  }
+                  if (!addAddressObj.country_code) {
+                    toast.error('배송 국가를 선택해 주세요.');
+                    return;
+                  }
+                  if (!String(addAddressObj.city || '').trim()) {
+                    toast.error('도시를 입력해 주세요.');
+                    return;
+                  }
                 }
                 setSaving(true);
                 try {

@@ -22,6 +22,7 @@ import { apiManager } from 'src/utils/api';
 import DialogAddAddress from 'src/components/dialog/DialogAddAddress';
 import axios from 'axios';
 import { useLocales } from 'src/locales';
+import { formatOverseasAddress, isDomestic } from 'src/data/countries';
 import PayProductsByAuthHecto from 'src/utils/hecto-auth';
 import PayProductsByPhoneHecto from 'src/utils/hecto-phone';
 import PayProductsByHandFintree from 'src/utils/fintree-hand';
@@ -47,6 +48,9 @@ export function AddressItem({ item, onCreateBilling, onDeleteAddress, onUpdateAd
 
   const { translate } = useLocales();
   const { receiver, addr, address_type, phone, is_default, detail_addr, id } = item;
+  // 해외 배송지는 도로명주소 한 줄로 끝나지 않는다 — 도시·주/지역·우편번호·국가까지 있어야
+  // 어디로 가는 주소인지 알 수 있다. 국내는 지금까지와 똑같이 보인다.
+  const domestic = isDomestic(item?.country_code);
   const { themeDnsData } = useSettingsContext();
 
   return (
@@ -69,7 +73,7 @@ export function AddressItem({ item, onCreateBilling, onDeleteAddress, onUpdateAd
         <Stack flexGrow={1} spacing={1}>
           <Stack direction="row" alignItems="center">
             <Typography variant="subtitle1">
-              {addr}
+              {domestic ? addr : formatOverseasAddress(item)}
               {/* <Box component="span" sx={{ ml: 0.5, typography: 'body2', color: 'text.secondary' }}>
                 (123)
               </Box> */}
@@ -82,7 +86,7 @@ export function AddressItem({ item, onCreateBilling, onDeleteAddress, onUpdateAd
           </Stack>
           {/* <Typography variant="body2">{addr}</Typography> */}
           <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-            {detail_addr}
+            {domestic ? detail_addr : ''}
           </Typography>
         </Stack>
         <Stack flexDirection="row" flexWrap="wrap" flexShrink={0}>

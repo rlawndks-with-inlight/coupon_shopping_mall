@@ -103,39 +103,34 @@ const HeaderActions = styled.div`
 const Main = styled.main`
   flex: 1;
 `
+/* 정보 줄 자체는 원래 가로였는데, 상단 여백 4rem + 28px 브랜드명 + 이탤릭 태그라인 때문에
+   푸터가 한 화면 가까이 차지했다("너무 크고 돋보인다"는 가맹점 의견).
+   표시 의무 항목은 그대로 두고 여백과 글자 크기만 낮춘다. */
 const Footer = styled.footer`
   background: #1a1a1a;
   color: #fff;
-  padding: 4rem 2rem 2rem;
+  padding: 2rem 2rem 1.25rem;
   text-align: center;
   @media (max-width: 720px) {
-    padding: 3rem 1.25rem 1.5rem;
+    padding: 1.75rem 1.25rem 1rem;
   }
 `
 const FooterBrand = styled.div`
   font-family: 'Playfair Display', 'Noto Serif KR', serif;
-  font-size: 28px;
-  font-weight: 900;
-  letter-spacing: 4px;
-  margin-bottom: 1rem;
-`
-const FooterTagline = styled.div`
   font-size: 14px;
-  opacity: 0.6;
-  font-style: italic;
-  letter-spacing: 1px;
-  margin-bottom: 2rem;
+  font-weight: 700;
+  letter-spacing: 3px;
+  opacity: 0.75;
+  margin-bottom: 0.75rem;
 `
 const FooterInfo = styled.div`
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
-  gap: 1.5rem;
-  font-size: 12px;
-  opacity: 0.5;
-  margin-top: 2rem;
-  padding-top: 2rem;
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  gap: 0.75rem 1.1rem;
+  font-size: 11px;
+  opacity: 0.42;
+  line-height: 1.7;
 `
 /* 푸터 링크 줄 — 비회원 주문조회 / 이용약관 / 개인정보처리방침.
    같은 스타일이 세 번 반복되므로 인라인 style 대신 styled 로 뺐다(이 파일은 전부 styled 다).
@@ -144,12 +139,12 @@ const FooterLinks = styled.div`
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
-  gap: 1rem;
-  margin-top: 1.5rem;
+  gap: 0.9rem;
+  margin-top: 0.7rem;
 `
 const FooterLink = styled.span`
-  font-size: 12px;
-  opacity: 0.6;
+  font-size: 11px;
+  opacity: 0.55;
   cursor: pointer;
   text-decoration: underline;
   &:hover {
@@ -157,10 +152,10 @@ const FooterLink = styled.span`
   }
 `
 const FooterLine = styled.div`
-  font-size: 11px;
-  opacity: 0.4;
+  font-size: 10px;
+  opacity: 0.3;
   letter-spacing: 2px;
-  margin-top: 1.5rem;
+  margin-top: 0.9rem;
 `
 
 const BlogLayout6 = (props) => {
@@ -232,7 +227,6 @@ const BlogLayout6 = (props) => {
       <Main>{children}</Main>
       <Footer>
         <FooterBrand>{brandName}</FooterBrand>
-        <FooterTagline>Crafted with care, made for you.</FooterTagline>
         {/* 전자상거래법상 표시 의무 항목이 빠져 있었다 —
             상호(company_name)·통신판매업신고번호(mail_order_num)·개인정보보호책임자(pvcy_rep_name).
             관리자 설정관리 › 기본설정 › 회사정보 탭에 입력칸은 있어서 가맹점이 값을 채워도

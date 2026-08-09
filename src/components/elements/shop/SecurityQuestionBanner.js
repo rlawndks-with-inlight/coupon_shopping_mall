@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useLocales } from 'src/locales';
 import { useRouter } from 'next/router';
 import {
   Box,
@@ -57,6 +58,7 @@ const AUTO_OPEN_KEY = 'sq_prompt_auto_opened';
 const SecurityQuestionBanner = ({ sx = {} }) => {
   const router = useRouter();
   const { themeDnsData } = useSettingsContext();
+  const { translate } = useLocales();
   const { user, initialize } = useAuthContext();
 
   // SSR/하이드레이션 안전: 첫 렌더는 무조건 숨김 → 마운트 후 세션 닫기 이력 확인.
@@ -121,7 +123,7 @@ const SecurityQuestionBanner = ({ sx = {} }) => {
   const onSave = async () => {
     if (loading) return;
     if (!(questionId > 0)) {
-      toast.error('보안질문을 선택해 주세요.');
+      toast.error(translate('보안질문을 선택해 주세요.'));
       return;
     }
     if (!isValidSecurityAnswer(answer)) {
@@ -139,7 +141,7 @@ const SecurityQuestionBanner = ({ sx = {} }) => {
     // api.js 는 실패 시 정확히 false 를 반환하고 메시지를 toast 한다.
     // 성공 응답의 data 가 비어있을 수 있으므로 falsy 가 아닌 === false 로 판별.
     if (result === false) return;
-    toast.success('보안질문이 등록되었습니다.');
+    toast.success(translate('보안질문이 등록되었습니다.'));
     setOpen(false);
     setSaved(true);
     try {
@@ -166,10 +168,10 @@ const SecurityQuestionBanner = ({ sx = {} }) => {
           <Icon icon="mdi:shield-key-outline" color={mainColor} width={22} height={22} />
           <Box sx={{ minWidth: 0 }}>
             <Typography sx={{ fontSize: 14, fontWeight: 700, color: '#222' }}>
-              보안질문을 설정해 주세요
+              {translate('보안질문을 설정해 주세요')}
             </Typography>
             <Typography sx={{ fontSize: 12.5, color: '#888' }}>
-              비밀번호를 잊었을 때 본인 확인용으로 사용됩니다. 1분이면 됩니다.
+              {translate('비밀번호를 잊었을 때 본인 확인용으로 사용됩니다. 1분이면 됩니다.')}
             </Typography>
           </Box>
         </Stack>
@@ -180,7 +182,7 @@ const SecurityQuestionBanner = ({ sx = {} }) => {
             onClick={onOpen}
             sx={{ whiteSpace: 'nowrap', bgcolor: mainColor, '&:hover': { bgcolor: mainColor, opacity: 0.9 } }}
           >
-            설정하기
+            {translate('설정하기')}
           </Button>
           <IconButton size="small" onClick={onDismiss} aria-label="닫기">
             <Icon icon="mdi:close" fontSize="1.05rem" />
@@ -199,14 +201,14 @@ const SecurityQuestionBanner = ({ sx = {} }) => {
       )}
 
       <Dialog open={open} onClose={() => setOpen(false)} fullWidth maxWidth="xs">
-        <DialogTitle sx={{ fontSize: 17, fontWeight: 700 }}>보안질문 설정</DialogTitle>
+        <DialogTitle sx={{ fontSize: 17, fontWeight: 700 }}>{translate('보안질문 설정')}</DialogTitle>
         <DialogContent>
           <Typography sx={{ fontSize: 13, color: '#888', mb: 2 }}>
             비밀번호를 잊었을 때 본인 확인에 사용됩니다. 답변은 나중에 확인할 수 없으니 잊지 않을 내용으로 정해 주세요.
           </Typography>
           <Stack spacing={2}>
             <FormControl fullWidth size="small">
-              <InputLabel id="security-question-select-label">보안질문</InputLabel>
+              <InputLabel id="security-question-select-label">{translate('보안질문')}</InputLabel>
               <Select
                 labelId="security-question-select-label"
                 label="보안질문"
@@ -214,11 +216,13 @@ const SecurityQuestionBanner = ({ sx = {} }) => {
                 onChange={(e) => setQuestionId(e.target.value)}
               >
                 <MenuItem value={0} disabled>
-                  질문을 선택해 주세요
+                  {translate('보안질문을 먼저 선택해 주세요')}
                 </MenuItem>
+                {/* 질문 문구도 번역한다 — 고객이 보는 화면이다.
+                    (사전에 없으면 i18next 가 키를 그대로 돌려주므로 한국어로 보인다) */}
                 {SECURITY_QUESTIONS.map((q) => (
                   <MenuItem key={q.id} value={q.id}>
-                    {q.label}
+                    {translate(q.label)}
                   </MenuItem>
                 ))}
               </Select>

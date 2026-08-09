@@ -240,7 +240,7 @@ const FindInfoQuestion = ({
                   {translate('보안질문')}
                 </Typography>
                 <Typography variant="subtitle2" sx={{ fontWeight: 700 }}>
-                  {getSecurityQuestionLabel(obj.security_question_id)}
+                  {translate(getSecurityQuestionLabel(obj.security_question_id))}
                 </Typography>
               </Col>
               <FormControl variant="outlined">

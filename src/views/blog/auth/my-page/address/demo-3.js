@@ -4,7 +4,6 @@ import { Button, Divider, TextField, InputAdornment, IconButton, Checkbox, FormC
 import { useState, useEffect } from 'react';
 import { useSettingsContext } from 'src/components/settings';
 import _ from 'lodash';
-import Header from 'src/layouts/shop/blog/demo-1/header';
 import { Icon } from '@iconify/react';
 import DaumPostcode from 'react-daum-postcode';
 import { useAuthContext } from 'src/layouts/manager/auth/useAuthContext';
@@ -150,16 +149,8 @@ const Demo3 = (props) => {
 
     return (
         <>
-            <Header
-                data={{
-                }}
-                func={{
-                    router
-                }}
-                is_use_step={true}
-                activeStep={activeStep}
-                setActiveStep={setActiveStep}
-            />
+            {/* 헤더를 여기서 다시 그리지 않는다 — 페이지에 ShopLayout(블로그형 레이아웃 헤더)이
+                이미 씌워져 있어 프레임4~11 에서 헤더가 두 개 겹쳐 보였다. */}
             <Wrappers>
                 {activeStep == 0 &&
                     <>
@@ -334,6 +325,13 @@ const Demo3 = (props) => {
                                     style={{ height: '56px', fontSize: 'large', marginTop: '1rem' }}
                                     onClick={onAddAddress}
                                 >완료</Button>
+                                {/* 목록으로 — 예전엔 '돌아가기'가 본문 안의 헤더 뒤로가기 화살표뿐이었다.
+                                    그 헤더를 걷어내면서(레이아웃 헤더와 2중이었다) 여기로 옮긴다. */}
+                                <Button
+                                    variant='outlined'
+                                    style={{ height: '56px', fontSize: 'large', marginTop: '0.5rem' }}
+                                    onClick={() => setActiveStep(0)}
+                                >취소</Button>
                             </>
                         }
                     </>

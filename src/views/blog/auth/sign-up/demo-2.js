@@ -13,7 +13,7 @@ import { apiManager } from 'src/utils/api';
 import { useSettingsContext } from 'src/components/settings';
 import SecurityQuestionFields from 'src/components/elements/shop/SecurityQuestionFields';
 import { validateSecurityQuestion, securityQuestionPayload } from 'src/data/security-questions';
-import { sanitizePhoneInput, withSignUpName } from 'src/utils/function';
+import { sanitizePhoneInput, withSignUpName, validateSignUpInput, marketingAgreePayload } from 'src/utils/function';
 
 const Wrappers = styled.div`
 max-width:720px;
@@ -172,6 +172,14 @@ const Demo2 = (props) => {
                 toast.error("비밀번호 확인란을 똑같이 입력했는지 확인해주세요");
                 return;
             }
+            // 아이디·비밀번호·휴대폰 형식 검증. 예전엔 빈값만 봐서 한 글자 아이디·비밀번호가
+            // 그대로 가입됐다(서버에도 검사가 없었다 — 백엔드 signUp 에도 같은 규칙을 넣었다).
+            const formErr = validateSignUpInput(user);
+            if (formErr) {
+              toast.error(formErr);
+              return;
+            }
+
             // 보안질문 — shopgo 가 아니면 '' 를 반환해 무조건 통과한다.
             const secqErr = validateSecurityQuestion(user, themeDnsData);
             if (secqErr) {
@@ -181,6 +189,7 @@ const Demo2 = (props) => {
             let result = await apiManager('auth/sign-up', 'create', {
                 ...withSignUpName(user),
                 ...securityQuestionPayload(themeDnsData, user),
+                ...marketingAgreePayload({ marketing: checkboxObj.check_4, sms: false, email: false }),
                 brand_id: themeDnsData?.id,
             });
             if (!result) {

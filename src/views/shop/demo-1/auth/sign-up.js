@@ -13,7 +13,7 @@ import { Icon } from '@iconify/react';
 import { useSettingsContext } from 'src/components/settings';
 import { apiManager } from 'src/utils/api';
 import { useLocales } from 'src/locales';
-import { generateRandomString, withSignUpName } from 'src/utils/function';
+import { generateRandomString, withSignUpName, validateSignUpInput, marketingAgreePayload, sanitizePhoneInput } from 'src/utils/function';
 import SecurityQuestionFields from 'src/components/elements/shop/SecurityQuestionFields';
 import { validateSecurityQuestion, securityQuestionPayload } from 'src/data/security-questions';
 import { isShopgoBrand } from 'src/utils/is-shopgo';
@@ -217,13 +217,21 @@ const SignUpDemo = (props) => {
         toast.error(translate("이름을 입력해 주세요."));
         return;
       }
+      // 아이디·비밀번호·휴대폰 형식 검증. 예전엔 빈값만 봐서 한 글자 아이디·비밀번호가
+      // 그대로 가입됐다(서버에도 검사가 없었다 — 백엔드 signUp 에도 같은 규칙을 넣었다).
+      const formErr = validateSignUpInput(user);
+      if (formErr) {
+        toast.error(formErr);
+        return;
+      }
+
       // SHOPGO 본사 및 산하 가맹점 전용 : 비밀번호 재설정용 보안질문 필수 (그 외 브랜드는 '' 반환 → 무조건 통과)
       const secqErr = validateSecurityQuestion(user, themeDnsData);
       if (secqErr) {
         toast.error(secqErr);
         return;
       }
-      let result = await apiManager('auth/sign-up', 'create', { ...withSignUpName(user), ...securityQuestionPayload(themeDnsData, user), brand_id: themeDnsData?.id });
+      let result = await apiManager('auth/sign-up', 'create', { ...withSignUpName(user), ...securityQuestionPayload(themeDnsData, user), ...marketingAgreePayload({ marketing: checkboxObj.check_3, sms: checkboxObj.check_4, email: checkboxObj.check_5 }), brand_id: themeDnsData?.id });
       if (!result) {
         return;
       }
@@ -427,7 +435,7 @@ const SignUpDemo = (props) => {
                 label={translate('휴대폰번호')}
                 placeholder={translate("하이픈(-) 제외 입력")}
                 onChange={(e) => {
-                  setUser({ ...user, ['phone_num']: e.target.value })
+                  setUser({ ...user, ['phone_num']: sanitizePhoneInput(e.target.value) }) // 숫자·하이픈만 (한글·영문이 그대로 저장되던 것)
                 }}
                 value={user.phone_num}
                 endAdornment={

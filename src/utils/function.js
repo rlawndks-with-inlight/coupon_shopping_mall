@@ -607,6 +607,59 @@ export const makeOrdNum = (prefix = '') => {
 // → nickname 에 이름을 그대로 넣어 저장한다. 기존 회원 데이터는 건드리지 않는다.
 export const withSignUpName = (user) => ({ ...user, nickname: user?.name ?? '' });
 
+// ── 가입 수신동의 payload ────────────────────────────────────────────────────
+// 가입폼의 '쇼핑정보/SMS/이메일 수신 동의' 체크박스는 전송 자체가 되지 않아
+// 어디에도 저장되지 않았다. 그런데 폼의 안내문은 '회원가입 후 회원정보수정
+// 페이지에서 언제든지 수신여부를 변경하실 수 있습니다' 라고 약속하고 있었다.
+//
+// 체크박스 키 이름은 프레임마다 다르다(블로그형은 마케팅 동의가 check_4 하나뿐).
+// 그래서 키가 아니라 '무엇에 동의했는가'를 받는다.
+export const marketingAgreePayload = ({ marketing = false, sms = false, email = false } = {}) => ({
+  is_marketing_agree: marketing ? 1 : 0,
+  is_sms_agree: sms ? 1 : 0,
+  is_email_agree: email ? 1 : 0,
+});
+
+// ── 가입 입력 형식 검증 ──────────────────────────────────────────────────────
+// 가입 폼 4곳(프레임1·2·3, 블로그형) 어디에도 형식 검증이 없었다. 빈값만 봤기 때문에
+//   · 한 글자짜리 아이디, 한 글자짜리 비밀번호가 그대로 만들어지고
+//   · 휴대폰번호에 아무 글자나 들어갔다(아이디 찾기·주문 연락에 쓰이는 값인데도)
+// 서버에도 검사가 없어 API 를 직접 호출하면 무엇이든 통과했다(백엔드에도 같은 규칙을 넣었다).
+//
+// 규칙은 '명백히 잘못된 값'만 막는 선에서 최소로 잡는다 — 기존 회원은 대상이 아니고
+// (가입 시점에만 적용) 특수문자 강제 같은 규칙은 이탈만 늘린다.
+export const SIGNUP_ID_MIN = 4;
+export const SIGNUP_ID_MAX = 20;
+export const SIGNUP_PW_MIN = 8;
+export const SIGNUP_PW_MAX = 20;
+
+// 아이디: 영문·숫자·밑줄만. 대문자는 소문자와 같은 아이디로 오인되기 쉬워 소문자로 통일한다.
+const SIGNUP_ID_RE = /^[a-z0-9_]+$/;
+
+export const validateSignUpInput = (user = {}) => {
+  const id = String(user?.user_name ?? '').trim();
+  const pw = String(user?.user_pw ?? '');
+  const phone = String(user?.phone_num ?? '');
+
+  if (id.length < SIGNUP_ID_MIN || id.length > SIGNUP_ID_MAX) {
+    return `아이디는 ${SIGNUP_ID_MIN}~${SIGNUP_ID_MAX}자로 입력해 주세요.`;
+  }
+  if (!SIGNUP_ID_RE.test(id)) {
+    return '아이디는 영문 소문자·숫자·밑줄(_)만 사용할 수 있습니다.';
+  }
+  if (pw.length < SIGNUP_PW_MIN || pw.length > SIGNUP_PW_MAX) {
+    return `비밀번호는 ${SIGNUP_PW_MIN}~${SIGNUP_PW_MAX}자로 입력해 주세요.`;
+  }
+  // 아이디와 같은 비밀번호는 사실상 비밀번호가 없는 것과 같다.
+  if (pw.toLowerCase() === id.toLowerCase()) {
+    return '비밀번호를 아이디와 다르게 입력해 주세요.';
+  }
+  if (phone && !isValidPhoneNumber(phone)) {
+    return '휴대폰번호를 정확히 입력해 주세요.';
+  }
+  return '';
+};
+
 // 관리자 영역인지. JwtContext 가 예전부터 이 이름으로 import 하고 있었는데 정의가 없어
 // 비로그인 초기화 때마다 TypeError 가 났고, 그 줄의 /manager/login 리다이렉트가 죽어 있었다.
 // (지금은 ManagerLayout 이 대신 밀어주지만 그 레이아웃을 안 쓰는 화면이 생기면 무방비다)

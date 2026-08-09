@@ -9,6 +9,7 @@ import { useAuthContext } from "src/layouts/manager/auth/useAuthContext";
 import StorefrontPopups from "src/components/elements/shop/StorefrontPopups";
 import { isStorefrontHome } from "src/utils/blog-shop-route";
 import LanguagePopover from "src/layouts/manager/header/LanguagePopover";
+import { Badge } from "@mui/material";
 
 /* 단일 상품 전용 럭셔리 레이아웃 — 심플 헤더 + 심플 푸터 */
 
@@ -163,7 +164,8 @@ const FooterLine = styled.div`
 `
 
 const BlogLayout6 = (props) => {
-  const { themeDnsData } = useSettingsContext();
+  // themeCartData: 장바구니 아이콘에 담긴 개수 배지를 붙이기 위해 함께 읽는다.
+  const { themeDnsData, themeCartData } = useSettingsContext();
   const router = useRouter();
   const { children } = props;
   const brandName = themeDnsData?.name || 'BRAND';
@@ -217,7 +219,9 @@ const BlogLayout6 = (props) => {
             <Icon icon="basil:user-outline" />
           </IconBtn>
           <IconBtn onClick={() => router.push('/shop/auth/cart')}>
-            <Icon icon="iconamoon:shopping-bag" />
+            <Badge badgeContent={themeCartData?.length ?? 0} color="error">
+              <Icon icon="iconamoon:shopping-bag" />
+            </Badge>
           </IconBtn>
           {/* 언어 선택 — 이 레이아웃(프레임6~11 공용)에는 언어 UI 가 아예 없어서
               가맹점 언어 설정이 켜져 있어도 고객이 언어를 바꿀 방법이 없었다. */}

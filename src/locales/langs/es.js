@@ -155,7 +155,6 @@ const es = {
   "주소": "DIRECCIÓN",
   "사업자등록번호": "Número de registro comercial",
   "대표": "representante",
-  "찜목록": "Lista de deseos",
   "오늘 하루 보지않기": "no me veas hoy",
   "통합검색": "Búsqueda integrada",
   "로그아웃": "finalizar la sesión",

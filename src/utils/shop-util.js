@@ -407,6 +407,24 @@ const assertPurchasable = (product) => {
     return false;
 };
 
+// 고른 옵션 묶음이 같은 그룹인지 판정한다.
+//
+// 상품에는 성격이 다른 두 가지가 붙는다:
+//   옵션그룹(product_option_groups) — { id, group_name, options:[{id, option_name, option_price}] }
+//   특성(characters)                — { character_name, character_value } — **id 가 없다**
+// 예전엔 `_.findIndex(groups, { id: parseInt(group?.id) })` 하나로만 찾았다.
+// 특성은 id 가 undefined 라 parseInt 가 NaN 이 되고, 저장된 쪽에는 id 키 자체가 없어
+// 매칭이 늘 실패했다 → 같은 특성을 고를 때마다 새 항목이 쌓였다.
+// 그 결과 '색상' 하나짜리 상품인데 selectProductGroups.groups 가 2·3개로 불어나
+// 주문 옵션이 중복 표기되고, 장바구니 시그니처도 매번 달라져 같은 줄로 합쳐지지 않았다.
+const isSameOptionGroup = (saved, group) => {
+    const gid = Number(group?.id);
+    if (Number.isFinite(gid) && gid > 0) return Number(saved?.id) === gid;
+    const name = group?.character_name ?? group?.group_name;
+    if (!name) return false;
+    return (saved?.character_name ?? saved?.group_name) === name;
+};
+
 // 옵션그룹이 있는 상품은 그룹마다 하나 이상 골라야 한다.
 //
 // 예전엔 이 검사가 없어서 옵션을 하나도 안 고른 채 장바구니에 담거나 바로구매로 넘어갈 수 있었다.
@@ -417,12 +435,18 @@ const assertPurchasable = (product) => {
 // assertPurchasable 과 같은 방침으로 **모르면 통과**시킨다.
 // 상품 카드처럼 groups 를 싣지 않는 경로에서 담기가 통째로 막히면 안 된다.
 // 최종 차단은 어차피 서버가 한다.
+//
+// ⚠ 여기서 요구하는 것은 `product.groups`(옵션그룹)뿐이다. 특성(characters)은 넣지 않는다.
+//   프레임1 상세(ProductDetailsSummary)가 특성을 화면에 안 그리기 때문에, 특성까지 필수로 보면
+//   고를 방법이 없는 화면에서 담기·바로구매가 영구히 막힌다.
+//   반대로 옵션그룹은 **모든 프레임 상세가 그리도록** 맞춰 두었다(프레임2·3 은 이 검사를 넣은 뒤에야
+//   옵션그룹 UI 가 없다는 사실이 드러나서 함께 추가했다). 새 프레임을 만들 때도 같은 전제를 지켜야 한다.
 const assertOptionsSelected = (product, selectProductGroups) => {
     const required = Array.isArray(product?.groups) ? product.groups : [];
     if (required.length == 0) return true;
     const picked = Array.isArray(selectProductGroups?.groups) ? selectProductGroups.groups : [];
     const allPicked = required.every((g) => picked.some(
-        (p) => Number(p?.id) === Number(g?.id) && (p?.options?.length ?? 0) > 0
+        (p) => isSameOptionGroup(p, g) && (p?.options?.length ?? 0) > 0
     ));
     if (!allPicked) {
         toast.error('옵션을 선택해 주세요.');
@@ -457,7 +481,8 @@ export const getCartDataUtil = async (themeCartData) => {//장바구니 페이�
 export const cartLineSignature = (line) => {
     const groups = Array.isArray(line?.groups) ? line.groups : [];
     const picked = groups
-        .map((g) => `${g?.id}:${(g?.options ?? []).map((o) => o?.id ?? o?.value ?? o?.option_name ?? '').sort().join('|')}`)
+        // 특성(characters)은 id 가 없다 — 이름으로 대체해야 서로 다른 특성이 구분된다.
+        .map((g) => `${g?.id ?? g?.character_name ?? g?.group_name ?? ''}:${(g?.options ?? []).map((o) => o?.id ?? o?.value ?? o?.option_name ?? '').sort().join('|')}`)
         .sort()
         .join(';');
     return `${line?.id ?? 0}/${line?.seller_id ?? 0}/${picked}`;
@@ -567,7 +592,8 @@ export const selectItemOptionUtil = (group, option, selectProductGroups, is_opti
     // 리렌더가 일어나지 않았다 — 옵션을 골라도 선택 표시가 안 바뀌고,
     // 화면이 선택 상태를 반영하지 못했다.
     const groups = [...(selectProductGroups?.groups ?? [])];
-    const find_group_idx = _.findIndex(groups, { id: parseInt(group?.id) });
+    // 특성(characters)은 id 가 없어서 id 매칭이 늘 실패했다 — isSameOptionGroup 참고.
+    const find_group_idx = groups.findIndex((saved) => isSameOptionGroup(saved, group));
 
     if (find_group_idx >= 0) {
         const current = groups[find_group_idx];

@@ -473,45 +473,23 @@ export const getPercentByNumber = (num = 1, sub_num = 0) => {
   return Math.round(sub_num / num * 100);
 }
 
+// 표시 금액. **언어와 상관없이 언제나 원화(KRW) 그대로다.**
+//
+// [예전 동작] 하드코딩 환율표(en 0.00074 / cn 0.0054 / ja 0.11 / vi 18.42)로 화면 금액을 환산했다.
+//   그래서 언어를 영어로 바꾸면 10,000원짜리가 "$7.4" 로 보였다.
+// [문제] 실제 청구는 환산을 전혀 거치지 않는다 — makePayData·calculatorPrice 는 DB 원본 숫자를
+//   그대로 쓰고 PG 도 전부 원화 결제다. 즉 **본 금액과 결제되는 금액이 통화부터 달랐다.**
+//   환율표도 갱신 지점이 없어 시세와 계속 벌어졌고, 목록·상세·장바구니가 각각 다른 시점에
+//   반올림해 합계가 안 맞았다. es(스페인어)는 표에 아예 없어 원화 숫자에 다른 단위가 붙었다.
+// [확인] 운영 DB 상품 148,131건 전부 price_lang='ko' 다(관리자 화면에 통화 입력칸 자체가 없고
+//   생성·수정 기본값이 'ko'). 즉 저장된 숫자는 예외 없이 원화이므로 그대로 보여주는 것이 맞다.
+//
+// 인자를 그대로 두는 이유: 호출부가 41곳이라 시그니처를 바꾸면 그 전부를 손대야 한다.
+// 나중에 실제 다통화가 필요해지면 여기 한 곳에 실시간 환율을 붙이고,
+// **결제 금액도 같은 함수를 거치게** 만들어야 한다(그러지 않으면 같은 문제가 되풀이된다).
 export const setProductPriceByLang = (product_ = {}, price_column = 'product_sale_price', from_lang_ = 'ko', to_lang_ = 'ko') => {
-  let product = product_;
-  if (typeof product?.price_lang_obj == 'string') {
-    product.price_lang_obj = JSON.parse(product?.price_lang_obj ?? '{}');
-  }
-  let amount = parseFloat(product[price_column] ?? 0);
-  let from_lang = from_lang_;
-  let to_lang = to_lang_;
-  let multiply_obj = {
-    'en': 0.00074,
-    'cn': 0.0054,
-    'vi': 18.42,
-    'ja': 0.11,
-    'ko': 1,
-  }
-
-  /*if (product?.price_lang_obj[to_lang]) {
-    return product?.price_lang_obj[to_lang][price_column];
-  }*/
-
-  if (!Object.keys(multiply_obj).includes(to_lang)) {
-    to_lang = 'ko';
-  }
-
-  if (from_lang == to_lang) {
-    return amount;
-  }
-  if (from_lang == 'ko') {
-    amount = amount * multiply_obj[to_lang]
-  } else {
-    let decimal_count = countDecimalPlaces(multiply_obj[from_lang]);
-    let ten_zekop = Math.pow(10, decimal_count);
-    let brother = multiply_obj[from_lang] * ten_zekop;
-    amount = (amount * ten_zekop) / brother * multiply_obj[to_lang]
-  }
-  if (to_lang == 'ko') {
-    amount = parseInt(amount);
-  }
-  return amount;
+  const product = product_ ?? {};
+  return parseFloat(product[price_column] ?? 0) || 0;
 }
 function countDecimalPlaces(number) {
   const numberString = number.toString();
@@ -523,19 +501,12 @@ function countDecimalPlaces(number) {
 
   return numberString.length - decimalIndex - 1;
 }
+// 금액 단위. 결제는 어느 언어에서나 원화로 이뤄지므로 단위도 원화만 쓴다.
+// 한국어는 기존처럼 '원', 그 외 언어는 국제 표기 'KRW'.
+// (예전엔 $ · ¥ · VND 를 붙였는데, 붙는 숫자는 환산된 값이고 실제 청구는 원화라
+//  고객이 보는 통화와 결제되는 통화가 달랐다 — setProductPriceByLang 주석 참고)
 export const getPriceUnitByLang = (lang_ = 'ko') => {
-  let lang = lang_;
-  let unit_obj = {
-    'en': '$',
-    'cn': '¥',
-    'vi': 'VND',
-    'ja': '¥',
-    'ko': '원',
-  }
-  if (!Object.keys(unit_obj).includes(lang)) {
-    lang = 'ko';
-  }
-  return unit_obj[lang]
+  return lang_ === 'ko' ? '원' : 'KRW';
 }
 
 export function generateRandomString(length = 1) {

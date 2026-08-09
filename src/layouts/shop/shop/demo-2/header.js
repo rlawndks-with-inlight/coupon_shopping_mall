@@ -1,6 +1,6 @@
 
 import styled from "styled-components"
-import { IconButton, TextField, InputAdornment, Drawer, Button, Chip, Dialog } from "@mui/material"
+import { IconButton, TextField, InputAdornment, Drawer, Button, Chip, Dialog, Badge } from "@mui/material"
 import { forwardRef, useEffect, useState } from "react"
 import { Icon } from "@iconify/react"
 import { Col, Row, Title, themeObj } from 'src/components/elements/styled-components'
@@ -242,7 +242,9 @@ const Header = () => {
   const router = useRouter();
   const theme = useTheme();
   // themeDnsData: 언어 선택 UI 노출 조건(setting_obj.is_use_lang) 확인용
-  const { themeMode, onToggleMode, onChangeCartData, onChangeWishData, themePostCategoryList, themeCategoryList, themeDnsData } = useSettingsContext();
+  // themeWishData·themeCartData: 아이콘에 담긴 개수 배지를 붙이기 위해 함께 읽는다.
+  // 이 헤더만 배지가 없어서, 담아도 헤더가 아무 반응이 없었다(프레임1·3 은 원래 있다).
+  const { themeMode, onToggleMode, onChangeCartData, onChangeWishData, themePostCategoryList, themeCategoryList, themeDnsData, themeWishData, themeCartData } = useSettingsContext();
   const headerCategories = (themeCategoryList ?? []).flatMap((g) => g?.product_categories ?? []);
   const { user, logout } = useAuthContext();
   const { currentLang } = useLocales();
@@ -488,7 +490,7 @@ const Header = () => {
                     }
                   }}
                 >
-                  <Icon icon={'ph:heart-thin'} fontSize={'2.8rem'} color={themeMode == 'dark' ? '#fff' : '#000'} />
+                  <Badge badgeContent={themeWishData?.length ?? 0} color="error"><Icon icon={'ph:heart-thin'} fontSize={'2.8rem'} color={themeMode == 'dark' ? '#fff' : '#000'} /></Badge>
                 </IconButton>
                 <IconButton
                   sx={{ ...iconButtonStyle, marginRight: '0.5rem' }}
@@ -498,7 +500,7 @@ const Header = () => {
                     router.push(`/shop/auth/cart`)
                   }}
                 >
-                  <Icon icon={'ph:shopping-bag-open-thin'} fontSize={'2.8rem'} color={themeMode == 'dark' ? '#fff' : '#000'} />
+                  <Badge badgeContent={themeCartData?.length ?? 0} color="error"><Icon icon={'ph:shopping-bag-open-thin'} fontSize={'2.8rem'} color={themeMode == 'dark' ? '#fff' : '#000'} /></Badge>
                 </IconButton>
                 <IconButton
                   sx={iconButtonStyle}
@@ -540,7 +542,7 @@ const Header = () => {
                     }
                   }}
                 >
-                  <Icon icon={'ph:heart-thin'} fontSize={'1.8rem'} color={themeMode == 'dark' ? '#fff' : '#000'} />
+                  <Badge badgeContent={themeWishData?.length ?? 0} color="error"><Icon icon={'ph:heart-thin'} fontSize={'1.8rem'} color={themeMode == 'dark' ? '#fff' : '#000'} /></Badge>
                 </IconButton>
                 <IconButton
                   sx={iconButtonStyle}
@@ -550,7 +552,7 @@ const Header = () => {
                     router.push(`/shop/auth/cart`)
                   }}
                 >
-                  <Icon icon={'ph:shopping-bag-open-thin'} fontSize={'1.8rem'} color={themeMode == 'dark' ? '#fff' : '#000'} />
+                  <Badge badgeContent={themeCartData?.length ?? 0} color="error"><Icon icon={'ph:shopping-bag-open-thin'} fontSize={'1.8rem'} color={themeMode == 'dark' ? '#fff' : '#000'} /></Badge>
                 </IconButton>
 
                 <IconButton

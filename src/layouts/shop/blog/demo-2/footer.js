@@ -7,6 +7,7 @@ import { useState } from "react"
 import { Icon } from "@iconify/react"
 import DialogPolicy from 'src/components/dialog/DialogPolicy'
 import { useRouter } from "next/router"
+import { Badge } from "@mui/material"
 
 const Wrappers = styled.footer`
 margin-top: auto;
@@ -52,7 +53,8 @@ justify-content: space-around;
 `
 
 const Footer = () => {
-  const { themeMode } = useSettingsContext();
+  // themeCartData: 하단 고정바 장바구니에 담긴 개수 배지를 붙이기 위해 함께 읽는다.
+  const { themeMode, themeCartData } = useSettingsContext();
   const { translate } = useLocales();
   const { themeDnsData } = useSettingsContext();
 
@@ -177,7 +179,9 @@ const Footer = () => {
       <FixedFooter>
         <Icon icon='bi:handbag' style={{ fontSize: '24px', cursor: 'pointer' }} onClick={() => { router.push('/shop') }} />
 
-        <Icon icon={'fluent:cart-20-regular'} style={{ fontSize: '32px', cursor: 'pointer' }} onClick={() => router.push('/shop/auth/cart')} />
+        <Badge badgeContent={themeCartData?.length ?? 0} color="error">
+          <Icon icon={'fluent:cart-20-regular'} style={{ fontSize: '32px', cursor: 'pointer' }} onClick={() => router.push('/shop/auth/cart')} />
+        </Badge>
         {
           /*
           <Icon icon='radix-icons:hamburger-menu' style={{ fontSize: '24px', cursor: 'pointer' }} onClick={() => { }} />

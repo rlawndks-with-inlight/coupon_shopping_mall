@@ -379,7 +379,7 @@ export const AuthMenuSideComponent = (props) => {
           <>
             {item.label &&
               <>
-                <ManuLabel variant="subtitle1" style={{ color: '#000' }}>{item.label}</ManuLabel>
+                <ManuLabel variant="subtitle1" style={{ color: themeMode == 'dark' ? '#fff' : '#000' }}>{item.label}</ManuLabel>
               </>}
             <SubMenuLabelContainer>
               {item.children.map(itm => (

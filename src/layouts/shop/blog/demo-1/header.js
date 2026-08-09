@@ -1,5 +1,5 @@
 import styled from "styled-components"
-import { IconButton } from "@mui/material"
+import { IconButton, Badge } from "@mui/material"
 import { useEffect, useState } from "react"
 import { Icon } from "@iconify/react"
 import { useSettingsContext } from "src/components/settings"
@@ -31,7 +31,8 @@ align-items:center;
 const Header = (props) => {
   const { activeStep, setActiveStep, is_use_step } = props;
   const router = useRouter();
-  const { themeMode, themeDnsData } = useSettingsContext();
+  // themeCartData: 장바구니 아이콘에 담긴 개수 배지를 붙이기 위해 함께 읽는다.
+  const { themeMode, themeDnsData, themeCartData } = useSettingsContext();
   const [isDetailPage, setIsDetailPage] = useState(false);
   const [scrollY, setScrollY] = useState(0);
   const [searchOpen, setSearchOpen] = useState(false);
@@ -93,7 +94,9 @@ const Header = (props) => {
             {/* 로그아웃은 헤더가 아니라 푸터에 텍스트로 둔다.
                 아이콘만으로는 무슨 버튼인지 알기 어렵고, 우측 아이콘이 늘수록 헤더가 빽빽해진다. */}
             <IconButton sx={{ padding: '6px' }} onClick={() => router.push('/shop/auth/cart')}>
-              <Icon icon={'basil:shopping-bag-outline'} fontSize={'1.4rem'} color={iconColor} />
+              <Badge badgeContent={themeCartData?.length ?? 0} color="error">
+                <Icon icon={'basil:shopping-bag-outline'} fontSize={'1.4rem'} color={iconColor} />
+              </Badge>
             </IconButton>
             {/* 언어 선택 — 이 헤더엔 언어 UI 가 없어 설정을 켜도 고객이 언어를 바꿀 수 없었다.
                 LanguagePopover 는 국기 이미지라 다크/투명 헤더에서도 색 보정이 필요 없다. */}

@@ -248,6 +248,26 @@ export const mainObjSchemaList = [
     },
 ]
 
+// 번역본 꺼내기. lang_obj 는 { 컬럼명: { 언어코드: '번역문' } } 구조다.
+//
+// ⚠ lang_obj 가 **문자열로 올 때가 있다.** DB 컬럼이 TEXT 라 그대로 내려오는데,
+//    파싱해 주는 컨트롤러(product.controller)와 안 해 주는 컨트롤러(product_category.controller 등)가
+//    섞여 있다. 문자열에 ['category_name'] 을 하면 undefined 라 조용히 한국어로 되돌아갔고,
+//    그래서 '카테고리는 다국어가 아예 안 먹는다' 로 보였다(번역문은 DB 에 들어 있었는데도).
+//    읽는 쪽에서 흡수한다 — 컨트롤러마다 파싱을 맞추는 것보다 새는 곳이 없다.
+const parseLangObj = (lang_obj) => {
+    if (!lang_obj) return null;
+    if (typeof lang_obj === 'object') return lang_obj;
+    if (typeof lang_obj === 'string') {
+        try { return JSON.parse(lang_obj); } catch (e) { return null; }
+    }
+    return null;
+}
+
 export const formatLang = (obj = {}, column, lang = 'ko') => {
-    return (obj?.lang_obj && obj?.lang_obj[column] && obj?.lang_obj[column][lang?.value]) || obj[column];
+    const lang_obj = parseLangObj(obj?.lang_obj);
+    // lang 은 useLocales().currentLang 객체({value:'cn',...})로 들어오지만
+    // 호출부에 따라 'cn' 문자열이 그대로 들어오는 곳도 있다. 둘 다 받는다.
+    const code = (lang && typeof lang === 'object') ? lang?.value : lang;
+    return (lang_obj?.[column]?.[code]) || obj?.[column];
 }

@@ -177,8 +177,17 @@ const Header = (props) => {
                                     <img src={logoSrc()} style={{ height: '40px', width: 'auto', cursor: 'pointer' }} onClick={() => { router.push('/shop') }} />
                                 </>}
 
+                            {/* 상품 목록 — 이 헤더에는 상품을 둘러볼 수단이 검색뿐이었다.
+                                카테고리를 읽어 두기만 하고(headerCategories) 클릭 이동은 없었다.
+                                고객이 찾는 물건의 '이름을 이미 알고 있을 때'만 살 수 있었다는 뜻이다. */}
                             <IconButton
-                                sx={{ ...iconButtonStyle, marginLeft: 'auto', marginRight: '1rem' }}
+                                sx={{ ...iconButtonStyle, marginLeft: 'auto' }}
+                                onClick={() => router.push('/shop/items')}
+                            >
+                                <Icon icon={'material-symbols:grid-view-outline'} fontSize={'1.5rem'} color={themeMode == 'dark' || ((isSellerPage || isProductPage) && scrollY < 350) ? '#fff' : '#000'} />
+                            </IconButton>
+                            <IconButton
+                                sx={{ ...iconButtonStyle, marginRight: '1rem' }}
                                 onClick={() => {
                                     setDialogOpenObj({
                                         ...dialogOpenObj,

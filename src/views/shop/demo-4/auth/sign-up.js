@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types';
-import { withSignUpName } from 'src/utils/function';
+import { withSignUpName, validateSignUpInput, marketingAgreePayload, sanitizePhoneInput } from 'src/utils/function';
 import { Button, Card, Checkbox, Dialog, DialogActions, DialogContent, DialogTitle, Divider, FormControl, FormControlLabel, Grid, InputAdornment, InputLabel, MenuItem, OutlinedInput, Select, Stack, Step, StepConnector, StepLabel, Stepper, TextField, Typography, stepConnectorClasses } from '@mui/material';
 import { useEffect, useState } from 'react';
 import { Col, Row, Title, themeObj } from 'src/components/elements/styled-components';
@@ -207,14 +207,23 @@ const SignUpDemo = (props) => {
         toast.error("전화번호가 등록되었는지 확인해주세요");
         return;
       }
+      // 아이디·비밀번호·휴대폰 형식 검증. 예전엔 빈값만 봐서 한 글자 아이디·비밀번호가
+      // 그대로 가입됐다(서버에도 검사가 없었다 — 백엔드 signUp 에도 같은 규칙을 넣었다).
+      const formErr = validateSignUpInput(user);
+      if (formErr) {
+        toast.error(formErr);
+        return;
+      }
+
       // SHOPGO 본사 및 산하 가맹점 전용 : 비밀번호 재설정용 보안질문 필수 (그 외 브랜드는 '' 반환 → 무조건 통과)
       // 이름(name)은 위 필수 항목 검증에 이미 포함되어 있으므로 추가 검증하지 않는다.
+
       const secqErr = validateSecurityQuestion(user, themeDnsData);
       if (secqErr) {
         toast.error(secqErr);
         return;
       }
-      let result = await apiManager('auth/sign-up', 'create', { ...withSignUpName(user), ...securityQuestionPayload(themeDnsData, user), brand_id: themeDnsData?.id, seller_id: themeDnsData?.seller_id ?? 0 });
+      let result = await apiManager('auth/sign-up', 'create', { ...withSignUpName(user), ...securityQuestionPayload(themeDnsData, user), ...marketingAgreePayload({ marketing: checkboxObj.check_3, sms: checkboxObj.check_4, email: checkboxObj.check_5 }), brand_id: themeDnsData?.id, seller_id: themeDnsData?.seller_id ?? 0 });
       if (!result) {
         return;
       }
@@ -480,10 +489,13 @@ const SignUpDemo = (props) => {
                   <InputLabel>휴대폰번호</InputLabel>
                   <OutlinedInput
                     label='휴대폰번호'
-                    type='number'
-                    placeholder="하이픈(-) 제외 입력"
+                    // type='number' 였다. 숫자 입력칸인데도 브라우저는 e·+·-·. 을 받아들이고,
+                    // 그 상태의 value 는 빈 문자열로 읽혀 입력값이 조용히 사라졌다(휠 스크롤로도 값이 바뀐다).
+                    type='text'
+                    inputMode='numeric'
+                    placeholder='숫자와 하이픈(-)만 입력'
                     onChange={(e) => {
-                      setUser({ ...user, ['phone_num']: e.target.value })
+                      setUser({ ...user, ['phone_num']: sanitizePhoneInput(e.target.value) }) // 숫자·하이픈만 (한글·영문이 그대로 저장되던 것)
                     }}
                     value={user.phone_num}
                     // 가입 허용 번호 화이트리스트를 쓰는 브랜드에서만 확인 버튼을 붙인다.
@@ -755,10 +767,13 @@ const SignUpDemo = (props) => {
                   <InputLabel>휴대폰번호</InputLabel>
                   <OutlinedInput
                     label='휴대폰번호'
-                    type='number'
-                    placeholder="하이픈(-) 제외 입력"
+                    // type='number' 였다. 숫자 입력칸인데도 브라우저는 e·+·-·. 을 받아들이고,
+                    // 그 상태의 value 는 빈 문자열로 읽혀 입력값이 조용히 사라졌다(휠 스크롤로도 값이 바뀐다).
+                    type='text'
+                    inputMode='numeric'
+                    placeholder='숫자와 하이픈(-)만 입력'
                     onChange={(e) => {
-                      setUser({ ...user, ['phone_num']: e.target.value })
+                      setUser({ ...user, ['phone_num']: sanitizePhoneInput(e.target.value) }) // 숫자·하이픈만 (한글·영문이 그대로 저장되던 것)
                     }}
                     value={user.phone_num}
                     endAdornment={<>

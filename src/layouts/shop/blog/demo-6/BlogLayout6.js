@@ -207,6 +207,12 @@ const BlogLayout6 = (props) => {
             회원가입을 해도 로그인할 방법이, 주문을 해도 주문내역을 볼 방법이 없었다.
             로그인 상태면 마이페이지, 아니면 로그인 화면으로 보낸다(프레임4·5와 동일). */}
         <HeaderActions>
+          {/* 상품 목록 — 이 레이아웃에는 상품을 둘러볼 수단이 검색뿐이었다.
+              고객이 찾는 물건의 '이름을 이미 알고 있을 때'만 살 수 있었다는 뜻이다.
+              /shop/items 는 카테고리 탐색과 목록을 함께 제공한다. */}
+          <IconBtn onClick={() => router.push('/shop/items')}>
+            <Icon icon="material-symbols:grid-view-outline" />
+          </IconBtn>
           <IconBtn onClick={() => setSearchOpen(true)}>
             <Icon icon="tabler:search" />
           </IconBtn>

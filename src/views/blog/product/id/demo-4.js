@@ -9,6 +9,8 @@ import { commarNumber } from 'src/utils/function';
 import { formatLang } from 'src/utils/format';
 import { apiShop } from 'src/utils/api';
 import { insertCartDataUtil, startBuyNow, selectItemOptionUtil } from 'src/utils/shop-util';
+import QuantityStepper from 'src/components/elements/shop/QuantityStepper';
+import ProductThumbs, { buildProductImages } from 'src/components/elements/shop/ProductThumbs';
 import toast from 'react-hot-toast';
 
 /* 상품 상세 - 데모 4: 미니멀 모노크롬 */
@@ -205,6 +207,7 @@ const Demo4 = () => {
   const { user } = useAuthContext();
   const [item, setItem] = useState(null);
   const [selectProductGroups, setSelectProductGroups] = useState({ count: 1, groups: [] });
+  const [imgIdx, setImgIdx] = useState(0);
   const brandName = themeDnsData?.name || 'BRAND';
 
   useEffect(() => {
@@ -213,7 +216,7 @@ const Demo4 = () => {
 
   const loadProduct = async () => {
     const product = await apiShop('product', 'get', { id: router.query?.id });
-    if (product) setItem(product);
+    if (product) { setItem(product); setImgIdx(0); }
   };
 
   const handleAddCart = async () => {
@@ -233,7 +236,10 @@ const Demo4 = () => {
 
   if (!item) return <Wrapper><DetailSection>Loading...</DetailSection></Wrapper>;
 
-  const img = fixImgUrl(item?.product_img);
+  // 대표이미지 + 서브이미지.
+  // 예전엔 대표 한 장만 그려서, 관리자에서 올린 서브이미지가 고객 화면에 아예 안 나왔다.
+  const images = buildProductImages(item, fixImgUrl);
+  const img = images[Math.min(imgIdx, Math.max(0, images.length - 1))] ?? '';
   const name = formatLang(item, 'product_name', currentLang);
   const comment = item?.product_comment;
   const sale = item?.product_sale_price || item?.product_price || 0;
@@ -245,7 +251,11 @@ const Demo4 = () => {
     <Wrapper>
       <Hero>
         <ImageSide>
-          <HeroImage src={img} effect="blur" />
+          {/* 이미지 컨테이너가 가로 flex 라 썸네일을 그냥 두면 이미지 옆에 붙는다 — 세로로 묶는다. */}
+          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', position: 'relative', zIndex: 1, maxWidth: '100%' }}>
+            <HeroImage src={img} effect="blur" />
+            <ProductThumbs images={images} activeIndex={imgIdx} onSelect={setImgIdx} />
+          </div>
         </ImageSide>
         <InfoSide>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
@@ -294,6 +304,16 @@ const Demo4 = () => {
                 ))}
               </OptionGroup>
             )}
+            {/* 수량 — 이 프레임엔 수량 UI 가 없어서 늘 1개만 살 수 있었다 */}
+            <OptionField>
+              <OptionLabel>Quantity</OptionLabel>
+              <div>
+                <QuantityStepper
+                  value={selectProductGroups?.count ?? 1}
+                  onChange={(count) => setSelectProductGroups((prev) => ({ ...prev, count }))}
+                />
+              </div>
+            </OptionField>
             <ButtonRow>
               <Btn onClick={handleAddCart}>Add to Cart</Btn>
               <Btn $primary onClick={() => startBuyNow(item, selectProductGroups, router)}>Buy Now →</Btn>

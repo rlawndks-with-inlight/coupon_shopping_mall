@@ -930,7 +930,10 @@ const CartDemo = (props) => {
                   size="large"
                   type="submit"
                   variant="contained"
-                  disabled={_.sum(_.map(products, (item) => { return item.quantity * item.product_sale_price })) <= 0}
+                  // 빈 장바구니에서 주문하기가 눌리지 않게 한다.
+                  // 예전 조건은 item.quantity 를 봤는데 장바구니 줄의 수량 필드는 order_count 라
+                  // 늘 undefined → NaN 이었고, `NaN <= 0` 은 false 라 **한 번도 비활성이 된 적이 없다**.
+                  disabled={products.length === 0 || _.sum(_.map(products, (item) => (parseInt(item?.order_count) || 0) * (parseFloat(item?.product_sale_price) || 0))) <= 0}
                   onClick={() => { router.push('/shop/auth/order'); }}
                 >
                   {translate('주문하기')}

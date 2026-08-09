@@ -1,13 +1,12 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
-import { Button, Card, CardContent, CardHeader, Dialog, DialogActions, DialogContent, DialogTitle, Divider, Stack, TextField, Typography } from '@mui/material';
+import { Button, Card, CardContent, CardHeader, Checkbox, Dialog, DialogActions, DialogContent, DialogTitle, Divider, FormControlLabel, Stack, TextField, Typography } from '@mui/material';
 import toast from 'react-hot-toast';
 import { apiManager } from 'src/utils/api';
 import { useAuthContext } from 'src/layouts/manager/auth/useAuthContext';
 import { useLocales } from 'src/locales';
-import { sanitizePhoneInput, isValidPhoneNumber } from 'src/utils/function';
-import { AddressTable } from 'src/components/elements/shop/common';
-import DialogAddAddress from 'src/components/dialog/DialogAddAddress';
+import { sanitizePhoneInput, isValidPhoneNumber, marketingAgreePayload } from 'src/utils/function';
+import AddressBookPanel from 'src/components/elements/shop/AddressBookPanel';
 
 // 회원정보 수정 — 데모 구분 없는 공용 패널.
 //
@@ -41,38 +40,22 @@ const AccountEditPanel = ({ loginPath = '/shop/auth/login' }) => {
   const [pw, setPw] = useState({ password: '', new_password: '', new_password_check: '' });
   const [resignOpen, setResignOpen] = useState(false);
   const [resignPw, setResignPw] = useState('');
+  // 수신동의 — 가입 화면이 '회원가입 후 회원정보수정 페이지에서 언제든지 수신여부를
+  // 변경하실 수 있습니다' 라고 안내하는데 정작 이 화면에 항목이 없었다(값도 저장되지 않았다).
+  const [agree, setAgree] = useState({ marketing: false, sms: false, email: false });
 
-  const [addressContent, setAddressContent] = useState({});
-  const [addAddressOpen, setAddAddressOpen] = useState(false);
-  const [updateAddressOpen, setUpdateAddressOpen] = useState(false);
-  const [addressId, setAddressId] = useState();
-  const [searchObj, setSearchObj] = useState({ page: 1, page_size: 10, search: '', user_id: user?.id });
+  // 배송지 목록·추가·수정·삭제는 공용 패널(AddressBookPanel)에 맡긴다.
+  // 여기에 복사돼 있던 같은 코드에는 페이지 이동 수단이 빠져 있어 11번째 배송지부터 볼 수 없었다.
 
   useEffect(() => {
     if (!user?.id) return;
     setPhoneNum(user?.phone_num ?? '');
-    onChangePage({ page: 1, page_size: 10, search: '', user_id: user?.id });
+    setAgree({
+      marketing: Number(user?.is_marketing_agree) === 1,
+      sms: Number(user?.is_sms_agree) === 1,
+      email: Number(user?.is_email_agree) === 1,
+    });
   }, [user?.id]);
-
-  const onChangePage = async (search_obj) => {
-    setSearchObj(search_obj);
-    setAddressContent({ ...addressContent, content: undefined });
-    let data = await apiManager('user-addresses', 'list', search_obj);
-    if (data) setAddressContent(data);
-  };
-
-  const onAddAddress = async (address_obj) => {
-    let result = await apiManager('user-addresses', (address_obj?.id > 0 ? 'update' : 'create'), { ...address_obj, user_id: user?.id });
-    if (result) onChangePage(searchObj);
-  };
-  const onUpdateAddress = async (id) => {
-    setAddressId(id);
-    setUpdateAddressOpen(true);
-  };
-  const onDeleteAddress = async (id) => {
-    let result = await apiManager('user-addresses', 'delete', { id });
-    if (result) onChangePage(searchObj);
-  };
 
   const onSaveInfo = async () => {
     if (!phoneNum) return toast.error(translate('휴대폰번호를 입력해 주세요.'));
@@ -81,6 +64,7 @@ const AccountEditPanel = ({ loginPath = '/shop/auth/login' }) => {
     let result = await apiManager('auth/change-info', 'update', {
       nickname: user?.nickname,
       phone_num: phoneNum,
+      ...marketingAgreePayload({ marketing: agree.marketing, sms: agree.sms, email: agree.email }),
     });
     if (result) {
       toast.success(translate('성공적으로 변경되었습니다.'));
@@ -136,20 +120,6 @@ const AccountEditPanel = ({ loginPath = '/shop/auth/login' }) => {
 
   return (
     <>
-      <DialogAddAddress
-        addAddressOpen={addAddressOpen}
-        setAddAddressOpen={setAddAddressOpen}
-        onAddAddress={onAddAddress}
-      />
-      <DialogAddAddress
-        addAddressOpen={updateAddressOpen}
-        setAddAddressOpen={setUpdateAddressOpen}
-        onAddAddress={onAddAddress}
-        type={'update'}
-        id={addressId}
-        onDeleteAddress={onDeleteAddress}
-      />
-
       <Stack spacing={3}>
         {/* ── 회원정보 ─────────────────────────────── */}
         <Card>
@@ -224,24 +194,61 @@ const AccountEditPanel = ({ loginPath = '/shop/auth/login' }) => {
           </CardContent>
         </Card>
 
-        {/* ── 배송지 ───────────────────────────────── */}
+        {/* ── 수신동의 ─────────────────────────────── */}
         <Card>
-          <CardHeader
-            title={translate('배송지 관리')}
-            action={
-              <Button variant="outlined" onClick={() => setAddAddressOpen(true)}>
-                {translate('배송지 추가')}
-              </Button>
-            }
-          />
-          <CardContent sx={{ pt: 0 }}>
-            <AddressTable
-              addressContent={addressContent}
-              onUpdate={onUpdateAddress}
-              onDelete={onDeleteAddress}
-            />
+          <CardHeader title={translate('수신 동의')} />
+          <CardContent>
+            <Typography variant="body2" sx={{ color: 'text.secondary', mb: 1 }}>
+              할인쿠폰·이벤트·신상품 소식 등 쇼핑정보를 받아보실 수 있습니다.
+              주문·배송 등 거래 정보는 수신동의와 관계없이 발송됩니다.
+            </Typography>
+            <Stack>
+              <FormControlLabel
+                label={translate('쇼핑정보 수신 동의 (선택)')}
+                control={
+                  <Checkbox
+                    checked={agree.marketing}
+                    onChange={(e) => {
+                      // 상위를 끄면 하위 채널도 함께 꺼야 한다 — 안 그러면 '동의 안 했는데
+                      // SMS 는 켜져 있는' 상태가 저장된다(가입폼도 같은 방식이다).
+                      const on = e.target.checked;
+                      setAgree(on ? { ...agree, marketing: true } : { marketing: false, sms: false, email: false });
+                    }}
+                  />
+                }
+              />
+              <Stack direction="row" sx={{ pl: 3 }}>
+                <FormControlLabel
+                  label={translate('SMS 수신 동의 (선택)')}
+                  control={
+                    <Checkbox
+                      checked={agree.sms}
+                      disabled={!agree.marketing}
+                      onChange={(e) => setAgree({ ...agree, sms: e.target.checked })}
+                    />
+                  }
+                />
+                <FormControlLabel
+                  label={translate('이메일 수신 동의 (선택)')}
+                  control={
+                    <Checkbox
+                      checked={agree.email}
+                      disabled={!agree.marketing}
+                      onChange={(e) => setAgree({ ...agree, email: e.target.checked })}
+                    />
+                  }
+                />
+              </Stack>
+            </Stack>
+            <Stack direction="row" justifyContent="flex-end">
+              {/* 위 '회원정보' 카드의 저장 버튼과 같은 API 를 쓴다(한 번에 함께 저장된다). */}
+              <Button variant="contained" onClick={onSaveInfo}>{translate('저장')}</Button>
+            </Stack>
           </CardContent>
         </Card>
+
+        {/* ── 배송지 ───────────────────────────────── */}
+        <AddressBookPanel />
 
         {/* ── 회원 탈퇴 ─────────────────────────────── */}
         <Card>

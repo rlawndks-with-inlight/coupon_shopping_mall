@@ -866,13 +866,25 @@ const HomeItemHero = (props) => {
   }
 
   // 상품 2개 이상 → 기존 복수 디자인
+  //
+  // [증상] '디자인 타입' 5~8 을 고른 채 상품을 2개 이상 담으면 섹션이 제목만 남고 비어 보였다.
+  // [원인] 복수 상품 렌더러는 타입 1~4(랭킹·폴라로이드·비교·타임라인)뿐이다.
+  //        5~8 은 단일 상품 전용 디자인(renderShopPromo/Fullbleed/Spotlight/Showcase)인데,
+  //        관리자 화면의 '디자인 타입' select 는 상품 개수와 무관하게 5~8 을 고를 수 있다.
+  //        그래서 아래 네 조건이 전부 false 가 되어 아무것도 그려지지 않았다.
+  // [수정] 복수 상품 모드에서 지원하지 않는 타입은 타입1(랭킹)로 떨어뜨린다.
+  //        랭킹은 세로 flex 라 상품 수가 늘거나 모바일이어도 레이아웃이 깨지지 않는다.
+  //        (renderCompare 는 grid 열이 상품 수만큼 고정이라 폴백으로 쓰면 모바일에서 넘친다)
+  // DB 확인: 현재 hero_type 을 쓰는 브랜드는 1곳이고 전부 타입1·2·4 에 상품 1개라
+  //          이 수정으로 갑자기 나타나는 섹션은 없다.
+  const multiHeroType = ['1', '2', '3', '4'].includes(heroType) ? heroType : '1';
   return (
     <div style={{ marginTop: `${style?.margin_top || 0}px` }}>
       {column?.title && <SectionTitle>{formatLang(column, 'title', currentLang)}</SectionTitle>}
-      {heroType === '1' && renderRanking(products, wrappedRouter, currentLang, mainColor)}
-      {heroType === '2' && renderPolaroid(products, wrappedRouter, currentLang, mainColor)}
-      {heroType === '3' && renderCompare(products, wrappedRouter, currentLang, mainColor)}
-      {heroType === '4' && renderTimeline(products, wrappedRouter, currentLang, mainColor)}
+      {multiHeroType === '1' && renderRanking(products, wrappedRouter, currentLang, mainColor)}
+      {multiHeroType === '2' && renderPolaroid(products, wrappedRouter, currentLang, mainColor)}
+      {multiHeroType === '3' && renderCompare(products, wrappedRouter, currentLang, mainColor)}
+      {multiHeroType === '4' && renderTimeline(products, wrappedRouter, currentLang, mainColor)}
     </div>
   );
 };

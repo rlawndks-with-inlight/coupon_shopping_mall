@@ -254,9 +254,32 @@ const MainObjSetting = props => {
     (!isNaN(parseInt(router.query.type)) ? router.query.type : '') || themeDnsData?.id;
 
   const settingPage = async () => {
+    // [증상] 섹션에 넣을 상품을 고르려는데 후보 목록이 비어 있거나, 이미 홈에 배치한 상품만 나왔다.
+    //        섹션을 처음 만드는 가맹점은 후보가 0건이라 아무것도 고를 수 없다.
+    // [원인] themeDnsData.products 를 후보로 썼다. 그 배열은 백엔드가 shop_obj/blog_obj 를 훑어
+    //        '이미 홈 섹션에 배치된 상품 id' 만 모아 조회한 것이다(shop.controller 의 홈 섹션 쿼리).
+    //        디자인관리 › 대표 상품이 늘 비어 있던 것과 같은 원인이다.
+    // [수정] 상품 목록 API 로 받아 후보를 채운다. 검색은 onSearchProducts 가 추가로 채운다.
+    //
+    // ⚠ 기존 값(themeDnsData.products)을 버리면 안 된다. 이 배열은 homeItemsSetting 이
+    //   '이미 배치된 상품 id → 표시용 정보'로 되풀 때 쓰는 사전이다(views/section/shop/utils.js).
+    //   API 목록에 없는 상품(상품 수가 많아 첫 페이지 밖에 있는 경우)이 배치돼 있으면
+    //   _.find 가 undefined 를 돌려줘 그 섹션이 상품 정보를 통째로 잃는다.
+    //   그래서 '배치된 것 + 새로 고를 수 있는 것'을 합친다.
+    const product_list = await apiManager('products', 'list', {
+      page: 1,
+      page_size: 100,
+      order: 'id',
+    })
+    const placed = themeDnsData?.products ?? []
+    const fetched = product_list?.content ?? []
+    const merged = [...placed, ...fetched].reduce((acc, cur) => {
+      if (!acc.some((x) => Number(x?.id) === Number(cur?.id))) acc.push(cur)
+      return acc
+    }, [])
     setProductContent({
-      ...productContent,
-      content: themeDnsData?.products ?? []
+      total: Number(product_list?.total) || merged.length,
+      content: merged,
     })
     let brand_data = await apiManager('brands', 'get', {
       id: getTargetBrandId()
@@ -726,11 +749,16 @@ const MainObjSetting = props => {
     setContentList(content_list)
   }
   const onSearchProducts = async e => {
-    let value = e.target.value
-    if (value.length == 3 && !searchTextList.includes(value)) {
-      let search_text_list = searchTextList
-      search_text_list.push(value)
-      setSearchTextList(search_text_list)
+    let value = String(e.target.value ?? '').trim()
+    // [증상] 상품 검색이 '정확히 3글자'일 때만 동작했다. 2글자는 물론이고
+    //        4글자 이상으로 계속 치면 다시 조회하지 않는다 — 3글자를 지나가는 순간 딱 한 번만 검색된다.
+    //        placeholder 는 '3글자 이상'이라고 안내하고 있어 코드와도 어긋났다.
+    // [원인] 조건이 `value.length == 3` 이었다.
+    // [수정] 2글자 이상이면 계속 조회한다. searchTextList 는 '같은 검색어를 두 번 안 부른다'는
+    //        캐시 역할이라 그대로 두되, 배열을 in-place 로 push 하던 것도 새 배열로 바꾼다
+    //        (같은 참조라 setState 가 리렌더를 못 알아채는 자리였다).
+    if (value.length >= 2 && !searchTextList.includes(value)) {
+      setSearchTextList([...searchTextList, value])
       let product_content = await apiManager('products', 'list', {
         page: 1,
         page_size: 1000,
@@ -1191,7 +1219,7 @@ const MainObjSetting = props => {
                                 <TextField
                                   {...params}
                                   label='강조할 상품 선택 (1개 권장)'
-                                  placeholder='3글자 이상 입력해 주세요.'
+                                  placeholder='2글자 이상 입력해 주세요.'
                                   onChange={e => {
                                     onSearchProducts(e)
                                   }}
@@ -1248,7 +1276,7 @@ const MainObjSetting = props => {
                                 <TextField
                                   {...params}
                                   label='선택할 상품'
-                                  placeholder='3글자 이상 입력해 주세요.'
+                                  placeholder='2글자 이상 입력해 주세요.'
                                   onChange={e => {
                                     onSearchProducts(e)
                                   }}
@@ -1404,7 +1432,7 @@ const MainObjSetting = props => {
                                       <TextField
                                         {...params}
                                         label='선택할 상품'
-                                        placeholder='3글자 이상 입력해 주세요.'
+                                        placeholder='2글자 이상 입력해 주세요.'
                                         onChange={e => {
                                           onSearchProducts(e)
                                         }}
@@ -1740,7 +1768,7 @@ const MainObjSetting = props => {
                                 handleChangeItemMultiSelect(value, idx)
                               }}
                               renderInput={params => (
-                                <TextField {...params} label='선택할 리뷰' placeholder='3글자 이상 입력해 주세요.' />
+                                <TextField {...params} label='선택할 리뷰' placeholder='2글자 이상 입력해 주세요.' />
                               )}
                             />
                           </>

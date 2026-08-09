@@ -203,7 +203,11 @@ const Demo3 = (props) => {
                                 .map(item => (
                                     <MenuButton key={item?.id} themeMode={themeMode} style={{ marginBottom: '0' }}
                                         onClick={() => {
-                                            if (user) { router.push(`/shop/service/${item?.id}/add`) }
+                                            // 곧장 글쓰기(/add)로 보내고 있어서 회원이 자기 문의·답변을 볼 입구가 마이페이지에 없었다.
+                                            // 아래 주석은 '게시판으로 들어가면 자기 글 목록이 보인다'는 전제였는데 정작 링크가 /add 였다.
+                                            // 게시판 목록(/shop/service/{id})으로 보낸다 — 목록에 답변완료/답변대기 뱃지와
+                                            // '서비스 문의'(글쓰기) 버튼이 이미 있어서 작성 경로도 그대로 살아 있다.
+                                            if (user) { router.push(`/shop/service/${item?.id}`) }
                                             else { setDialogOpen(true); setDialogType(1) }
                                         }}>
                                         <MenuText>{item.post_category_title}</MenuText>

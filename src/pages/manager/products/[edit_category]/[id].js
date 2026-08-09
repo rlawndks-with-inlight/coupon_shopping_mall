@@ -915,6 +915,38 @@ const ProductEdit = () => {
       toast.error('카테고리를 한 개 이상 선택해 주세요.');
       return;
     }
+    // 옵션·특성의 '빈 껍데기' 검사.
+    //
+    // 줄만 추가하고 이름을 안 채우면 예전엔 그대로 저장돼 고객 화면에 라벨 없는 빈 버튼이 떴다.
+    // 서버도 이제 걸러내지만(product.controller cleanOptionGroups), 조용히 버리면 가맹점은
+    // 자기가 넣은 옵션이 왜 사라졌는지 모른다 — 저장 전에 알려준다.
+    //
+    // ⚠ 특히 '고를 옵션이 하나도 없는 옵션그룹' 은 그냥 보기 싫은 정도가 아니다.
+    //   고객 화면은 '옵션그룹이 있으면 그룹마다 하나 이상 골라야' 구매가 되는데,
+    //   고를 게 없으면 그 상품은 장바구니·바로구매가 통째로 막힌다.
+    const liveGroups = (item?.groups ?? []).filter((g) => g?.is_delete != 1);
+    for (const g of liveGroups) {
+      if (!String(g?.group_name ?? '').trim()) {
+        toast.error('옵션 그룹의 이름을 입력해 주세요. (비워두면 저장되지 않습니다)');
+        return;
+      }
+      const liveOptions = (g?.options ?? []).filter((o) => o?.is_delete != 1);
+      if (liveOptions.length == 0) {
+        toast.error(`'${g.group_name}' 옵션을 한 개 이상 추가해 주세요. 고를 옵션이 없으면 고객이 이 상품을 구매할 수 없습니다.`);
+        return;
+      }
+      if (liveOptions.some((o) => !String(o?.option_name ?? '').trim())) {
+        toast.error(`'${g.group_name}' 의 옵션 이름을 입력해 주세요.`);
+        return;
+      }
+    }
+    const liveCharacters = (item?.characters ?? []).filter((c) => c?.is_delete != 1);
+    for (const c of liveCharacters) {
+      if (!String(c?.character_name ?? '').trim() || !String(c?.character_value ?? '').trim()) {
+        toast.error('특성의 이름과 값을 모두 입력해 주세요. (비워두면 저장되지 않습니다)');
+        return;
+      }
+    }
     let result = undefined
     // 1상품 N카테고리: 다중선택된 카테고리들을 연결테이블용 배열로. 대표(첫번째)는 category_id0 dual-write.
     let category_ids_arr = [...new Set((selectedCategoryIds ?? []).map(Number).filter((v) => v > 0))];

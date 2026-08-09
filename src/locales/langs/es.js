@@ -218,6 +218,24 @@ const es = {
   "중단됨": "interrumpido",
   "품절": "agotado",
   "새상품": "Nuevo producto",
+  "어릴 적 살던 동네 이름은?": "¿Cómo se llamaba el barrio donde creciste?",
+  "어머니의 고향은?": "¿Cuál es la ciudad natal de tu madre?",
+  "초등학교 때 가장 친했던 친구의 이름은?": "¿Cómo se llamaba tu mejor amigo en la primaria?",
+  "어릴 적 별명은?": "¿Cuál era tu apodo de niño?",
+  "처음 키운 반려동물의 이름은?": "¿Cómo se llamaba tu primera mascota?",
+  "처음 일한 곳(아르바이트 포함)의 이름은?": "¿Cómo se llamaba tu primer lugar de trabajo (incluido a tiempo parcial)?",
+  "기억에 남는 선생님의 성함은?": "¿Cómo se llama un profesor que recuerdas bien?",
+  "어릴 때 가장 좋아했던 만화·게임 제목은?": "¿Cuál era tu cómic o videojuego favorito de niño?",
+  "보안질문": "Pregunta de seguridad",
+  "보안질문 설정": "Configurar pregunta de seguridad",
+  "보안질문을 설정해 주세요": "Configura una pregunta de seguridad",
+  "보안질문을 선택해 주세요.": "Selecciona una pregunta de seguridad.",
+  "보안질문을 먼저 선택해 주세요": "Primero selecciona una pregunta de seguridad",
+  "보안질문이 등록되었습니다.": "Tu pregunta de seguridad se ha guardado.",
+  "비밀번호를 잊었을 때 본인 확인용으로 사용됩니다. 1분이면 됩니다.": "Se usa para verificar tu identidad si olvidas la contraseña. Solo toma un minuto.",
+  "설정하기": "Configurar",
+  "답변": "Respuesta",
+  "비밀번호를 잊었을 때 본인 확인에 사용됩니다. 답변은 저장 후 다시 볼 수 없으니 꼭 기억해 주세요.": "Se usa para verificar tu identidad si olvidas la contraseña. No podrás ver la respuesta después de guardarla, así que recuérdala."
 };
 
 export default es;

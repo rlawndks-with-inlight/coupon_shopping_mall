@@ -231,7 +231,10 @@ const Header = () => {
     const [keyword, setKeyword] = useState("");
     const onSearch = () => {
         setKeyword("");
-        router.push(`/shop/items?keyword=${keyword}`)
+        // PC 검색은 /shop/items, 모바일 검색 다이얼로그는 /shop/search 로 갈라져 있었다(아래 DialogSearch).
+        // 같은 단어로 검색해도 진입 경로에 따라 완전히 다른 화면이 떠서, 고객은 결과가
+        // 왜 달라지는지 알 수 없었다. 프레임1·2 처럼 검색 전용 화면(/shop/search)으로 통일한다.
+        router.push(`/shop/search?keyword=${keyword}`)
     }
     const [isAuthMenuOver, setIsAuthMenuOver] = useState(false)
     const [hoverItems, setHoverItems] = useState({

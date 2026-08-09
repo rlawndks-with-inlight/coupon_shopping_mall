@@ -22,7 +22,15 @@ const PopupList = () => {
       id: 'status',
       label: '상태',
       action: (row) => {
-        return row['status'] ?? "---"
+        // 팝업에는 on/off 상태 컬럼이 없다(백엔드 popup.controller 가 status 를 저장하지 않는다).
+        // 그래서 이 칸은 항상 빈 값이었다 — 노출기간으로 계산해 실제로 지금 뜨는지 보여준다.
+        const today = new Date().toISOString().slice(0, 10);
+        const s = String(row['open_s_dt'] ?? '').slice(0, 10);
+        const e = String(row['open_e_dt'] ?? '').slice(0, 10);
+        if (!s || !e) return '기간 미설정';
+        if (today < s) return `노출 예정 (${s}부터)`;
+        if (today > e) return '기간 종료';
+        return '노출중';
       }
     },
     {

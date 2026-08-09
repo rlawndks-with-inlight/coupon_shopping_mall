@@ -138,7 +138,11 @@ const CustomContent = forwardRef(function CustomContent(props, ref) {
 });
 
 function CustomTreeItem(props) {
-    return <StyledTreeItem ContentComponent={CustomContent} {...props} ContentProps={...props} />
+    // ContentProps={...props} 는 JSX 문법상 올바르지 않다(속성 값 자리에는 스프레드를 못 쓴다).
+    // SWC 는 관대해서 `ContentProps: props` 로 컴파일해 왔지만, 표준 파서(babel 등)는 이 파일을
+    // 통째로 읽지 못한다 — 린트·정적분석 도구가 이 파일만 건너뛰게 된다.
+    // 컴파일 결과가 같은 형태(ContentProps={props})로 바로잡는다.
+    return <StyledTreeItem ContentComponent={CustomContent} {...props} ContentProps={props} />
 }
 const Wrappers = styled.div`
 width:100%;

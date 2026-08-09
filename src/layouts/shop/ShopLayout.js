@@ -95,7 +95,7 @@ const ShopLayout = ({ children, scrollToTop }) => {
   const router = useRouter();
   const [loading, setLoading] = useState(true);
   const { themeDnsData, themeCategoryList } = useSettingsContext();
-  const { user } = useAuthContext();
+  const { user, isInitialized } = useAuthContext();
   const { currentLang } = useLocales();
 
   // 경로가 아니라 브랜드 유형이 레이아웃을 정한다.
@@ -116,7 +116,11 @@ const ShopLayout = ({ children, scrollToTop }) => {
   }, [themeDnsData, themeCategoryList])
 
   // 폐쇄몰: 비로그인 방문자를 로그인으로 보낸다.
-  if (themeDnsData?.is_closure == 1 && !user) {
+  // ⚠ isInitialized 를 함께 봐야 한다.
+  //   useAuthContext 는 첫 렌더에서 user 가 null 이고, 저장된 토큰으로 세션을 복원한 뒤에야 채워진다.
+  //   그 사이를 '비로그인' 으로 판정하면 **로그인한 고객도 새로고침할 때마다 로그인 화면으로 튕긴다.**
+  //   (관리자 쪽 AuthGuard 는 원래 isInitialized 를 보고 기다린다 — 같은 규칙으로 맞춘다)
+  if (themeDnsData?.is_closure == 1 && isInitialized && !user) {
     router.push(`/shop/auth/login`)
     return <></>
   }

@@ -1,5 +1,5 @@
 import styled from 'styled-components'
-import { commarNumber, getPointType, getPriceUnitByLang, setProductPriceByLang } from 'src/utils/function'
+import { commarNumber, getPointType, getPriceUnitByLang, setProductPriceByLang, getOrderStatusText } from 'src/utils/function'
 import { itemThemeCssDefaultSetting } from 'src/views/manager/item-card/setting'
 import { useEffect, useState } from 'react'
 import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, IconButton, TextField } from '@mui/material'
@@ -14,7 +14,6 @@ import { TableHeadCustom } from 'src/components/table'
 //
 import Image from 'src/components/image/Image'
 import { fCurrency } from 'src/utils/formatNumber'
-import { getTrxStatusByNumber } from 'src/utils/function'
 import toast from 'react-hot-toast'
 import { apiManager } from 'src/utils/api'
 import { useModal } from 'src/components/dialog/ModalProvider'
@@ -369,7 +368,7 @@ export const HistoryTable = props => {
                                         <TableCell>{row.ord_num}</TableCell>
                                         <TableCell onClick={() => { /*console.log(row)*/ }}>{commarNumber(setProductPriceByLang(row, 'amount', 'ko', currentLang?.value))} {getPriceUnitByLang(currentLang?.value)}</TableCell>
                                         <TableCell>{row?.buyer_name}</TableCell>
-                                        <TableCell>{fCurrency(row.amount) < 0 ? '결제취소' : translate(getTrxStatusByNumber(row?.trx_status))}</TableCell>
+                                        <TableCell>{translate(getOrderStatusText(row))}</TableCell>
                                         <TableCell>
                                             <Box sx={{ textAlign: 'right', color: 'text.secondary' }}>{row?.trx_dt ?? "---"} {row?.trx_tm ?? ""}</Box>
                                         </TableCell>

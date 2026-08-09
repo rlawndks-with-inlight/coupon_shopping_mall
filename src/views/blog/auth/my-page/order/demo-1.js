@@ -4,7 +4,7 @@ import { Tabs, Tab, Button } from '@mui/material';
 import { useState, useEffect } from 'react';
 import { useSettingsContext } from 'src/components/settings';
 import _ from 'lodash';
-import { commarNumber, getTrxStatusByNumber } from 'src/utils/function';
+import { commarNumber, getOrderStatusText } from 'src/utils/function';
 import { apiManager } from 'src/utils/api';
 import { getOptionLabel } from 'src/utils/shop-util';
 import OrderCancelButton from 'src/components/elements/shop/OrderCancelButton';
@@ -175,7 +175,7 @@ const Demo1 = (props) => {
 
                                         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '0.75rem 1rem 0', fontSize: '0.85rem', opacity: 0.8 }}>
                                             <div>주문번호 {item.ord_num}</div>
-                                            <div>{getTrxStatusByNumber(item.trx_status)}</div>
+                                            <div>{getOrderStatusText(item)}</div>
                                         </div>
 
                                         <div style={{ display: 'flex', justifyContent: 'space-between', padding: '1rem' }}>

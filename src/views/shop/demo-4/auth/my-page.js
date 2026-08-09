@@ -12,7 +12,7 @@ import { Col, Row, RowMobileColumn, RowMobileReverceColumn, themeObj } from "src
 import { useSettingsContext } from "src/components/settings";
 import { useAuthContext } from "src/layouts/manager/auth/useAuthContext";
 import { apiShop } from "src/utils/api";
-import { commarNumber, getTrxStatusByNumber } from "src/utils/function";
+import { commarNumber, getOrderStatusText } from "src/utils/function";
 import styled from "styled-components";
 
 const Wrappers = styled.div`
@@ -219,11 +219,8 @@ const MyPageDemo = (props) => {
       id: 'trx_status',
       label: '',
       action: (row) => {
-        if (row?.is_cancel != 1) {
-          return getTrxStatusByNumber(row?.trx_status)
-        } else {
-          return '취소완료'
-        }
+        // is_cancel 만 보면 포스페이·페이레터·위루트 취소(is_cancel_trans)를 놓친다.
+        return getOrderStatusText(row)
       },
       sx: (row) => {
         if (row?.is_cancel == 1) {

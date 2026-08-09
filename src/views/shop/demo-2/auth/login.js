@@ -6,7 +6,7 @@ import { useAuthContext } from 'src/layouts/manager/auth/useAuthContext';
 import styled from 'styled-components'
 import { useModal } from "src/components/dialog/ModalProvider";
 import { apiManager } from 'src/utils/api';
-import { commarNumber, getTrxStatusByNumber, safeRedirectPath } from 'src/utils/function';
+import { commarNumber, safeRedirectPath, getOrderStatusText } from 'src/utils/function';
 import { useLocales } from 'src/locales';
 import toast from 'react-hot-toast';
 import { getOptionLabel } from 'src/utils/shop-util';
@@ -245,7 +245,7 @@ const LoginDemo = (props) => {
             {renderRow(translate('승인번호'), noneUserTrxObj?.appr_num)}
             {renderRow(translate('구매자명'), noneUserTrxObj?.buyer_name)}
             {renderRow(translate('구매자휴대폰번호'), noneUserTrxObj?.buyer_phone)}
-            {renderRow(translate('주문현황'), getTrxStatusByNumber(noneUserTrxObj?.trx_status))}
+            {renderRow(translate('주문현황'), getOrderStatusText(noneUserTrxObj))}
             {renderRow(translate('송장번호'), noneUserTrxObj?.invoice_num)}
             <Row style={{ padding: '0.85rem 0', flexDirection: 'column' }}>
               <Typography variant='body2' sx={{ color: 'text.secondary', mb: 1.5 }}>{translate('주문상세')}</Typography>

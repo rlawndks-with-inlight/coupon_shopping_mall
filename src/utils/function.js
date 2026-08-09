@@ -248,6 +248,28 @@ export const getTrxStatusByNumber = num => {
   else if (num == 25) return '배송완료'
   else return '---'
 }
+
+// 주문 한 건의 '보여줄 상태'. 반드시 주문 행 전체를 넘겨야 한다.
+//
+// [왜 필요한가]
+// 관리자가 결제취소를 실행하면 바뀌는 것은 **is_cancel_trans(또는 is_cancel)뿐이고
+// trx_status 는 결제완료(5) 그대로 남는다.** 그런데 화면들은 전부
+// getTrxStatusByNumber(trx_status) 만 불렀다 — 그래서 환불이 끝난 주문도
+// 고객 주문내역·비회원 주문조회에 계속 '결제완료'로 보였다.
+// 취소했는데 화면이 그대로면 고객은 취소가 안 된 줄 알고 다시 문의한다.
+//
+// 취소 완료 표시는 두 컬럼을 모두 봐야 한다 — PG 마다 쓰는 컬럼이 다르다:
+//   is_cancel       : 핀트리
+//   is_cancel_trans : 포스페이 · 페이레터 · 위루트
+// (백엔드 transaction.controller 의 '반품/환불조회' 필터도 둘 다 본다)
+//
+// 우선순위: 취소완료 > 취소요청 > 일반 진행상태.
+export const getOrderStatusText = (row = {}) => {
+  if (Number(row?.is_cancel) === 1 || Number(row?.is_cancel_trans) === 1) return '취소완료';
+  // 금액이 음수인 행은 예전 데이터의 취소 표기 방식이다(기존 화면들이 쓰던 규칙을 유지).
+  if (Number(row?.amount) < 0) return '결제취소';
+  return getTrxStatusByNumber(row?.trx_status);
+}
 export const getMyPageParamByNumber = num => {
   if (num == 0) return 'users'
   else if (num == 10) return 'sellers'

@@ -5,7 +5,7 @@ import styled from 'styled-components';
 import ShopLayout from 'src/layouts/shop/ShopLayout';
 import { useSettingsContext } from 'src/components/settings';
 import { apiManager } from 'src/utils/api';
-import { getTrxStatusByNumber, commarNumber, sanitizePhoneInput } from 'src/utils/function';
+import { commarNumber, sanitizePhoneInput, getOrderStatusText } from 'src/utils/function';
 
 const Wrappers = styled.div`
   max-width: 640px;
@@ -50,7 +50,7 @@ const OrderDetail = ({ order }) => {
         <CardContent sx={{ pt: 0 }}>
           <KV k="주문번호" v={order?.ord_num} strong />
           {order?.appr_num && <KV k="승인번호" v={order?.appr_num} />}
-          <KV k="주문현황" v={getTrxStatusByNumber(order?.trx_status)} />
+          <KV k="주문현황" v={getOrderStatusText(order)} />
           <KV k="구매자" v={`${order?.buyer_name || '-'}${order?.buyer_phone ? ' · ' + order?.buyer_phone : ''}`} />
           {order?.invoice_num && (
             <KV k="택배사/송장" v={track
@@ -162,7 +162,7 @@ const OrderCheck = () => {
                     <Box>
                       <Typography variant="subtitle2">{o?.ord_num}</Typography>
                       <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-                        {getTrxStatusByNumber(o?.trx_status)} · {(o?.orders?.[0]?.order_name) || '-'}
+                        {getOrderStatusText(o)} · {(o?.orders?.[0]?.order_name) || '-'}
                         {o?.orders?.length > 1 ? ` 외 ${o.orders.length - 1}건` : ''}
                       </Typography>
                     </Box>

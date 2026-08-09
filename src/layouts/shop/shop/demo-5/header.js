@@ -167,6 +167,10 @@ flex-wrap:wrap;
 z-index:20;
 `
 const PopupContent = styled.div`
+/* 카드 배경은 테마와 무관하게 항상 흰색이다.
+   글자색을 지정하지 않으면 MUI 테마 글자색(다크모드=흰색)을 물려받아
+   흰 배경에 흰 글자가 되어 팝업 내용이 통째로 안 보였다. */
+color:#212121;
 background:#fff;
 margin-right:16px;
 margin-bottom:16px;

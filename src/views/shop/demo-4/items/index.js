@@ -271,7 +271,7 @@ const ItemsDemo = (props) => {
 
         {router.query?.property_ids0 &&
           <>
-            <Title style={{ marginTop: '100px', fontFamily: 'Playfair Display', color: '#000', fontWeight: 'normal', fontSize: '90px', marginLeft: '0' }}>
+            <Title style={{ marginTop: '100px', fontFamily: 'Playfair Display', color: themeMode == 'dark' ? '#fff' : '#000', fontWeight: 'normal', fontSize: '90px', marginLeft: '0' }}>
               {themePropertyList.map((group) => {
                 let properties = group?.product_properties;
                 if (_.find(properties, { id: parseInt(router.query?.property_ids0) })) {
@@ -284,7 +284,7 @@ const ItemsDemo = (props) => {
           </>}
         {router.query?.category_id ?
           <>
-            <Title style={{ marginTop: '100px', fontFamily: 'Playfair Display', color: '#000', fontWeight: 'normal', fontSize: '90px', marginLeft: '0' }}>
+            <Title style={{ marginTop: '100px', fontFamily: 'Playfair Display', color: themeMode == 'dark' ? '#fff' : '#000', fontWeight: 'normal', fontSize: '90px', marginLeft: '0' }}>
               {/* ?? 는 null·undefined 만 걸러 빈 문자열('')을 그대로 통과시킨다.
                   실제 데이터의 category_en_name 은 대부분 NULL 이지만 220건이 빈 문자열이라,
                   그 카테고리들은 제목이 통째로 빈칸으로 나왔다. || 로 바꿔 한글명으로 넘어가게 한다. */}

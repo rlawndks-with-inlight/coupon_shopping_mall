@@ -13,6 +13,8 @@ import toast from "react-hot-toast";
 import Slider from "react-slick";
 import { Seller1 } from "./demo-1";
 import { ProductStatusBadge } from './ProductStatusBadge';
+import { formatLang } from "src/utils/format";
+import { useLocales } from "src/locales";
 
 const ItemName = styled.div`
 font-weight: bold;
@@ -76,6 +78,9 @@ export const Item2 = (props) => {
     const { user } = useAuthContext();
     const { themeWishData, onChangeWishData } = useSettingsContext();
     const { item, router, theme_css, seller } = props;
+    // 프레임2 상품 카드는 상품명·설명을 원문 그대로 그렸다 — 언어를 바꿔도 상품만 한국어로 남았다.
+    // 다른 프레임(1·3·6~11)의 카드는 전부 formatLang 을 거친다. 같은 규칙으로 맞춘다.
+    const { currentLang } = useLocales();
     const [itemThemeCss, setItemThemeCss] = useState(itemThemeCssDefaultSetting);
     const images = [...[item?.product_img], ...(item?.sub_images ?? []).map(itm => { return itm.product_sub_img })]
     useEffect(() => {
@@ -146,8 +151,8 @@ export const Item2 = (props) => {
                             router.push(`/shop/item/${item?.id}${seller ? `?seller_id=${seller?.id}` : ''}`)
                         }
                     }}>
-                    <ItemName>{item.product_name}</ItemName>
-                    <ItemSubName>{item.product_comment}</ItemSubName>
+                    <ItemName>{formatLang(item, 'product_name', currentLang)}</ItemName>
+                    <ItemSubName>{formatLang(item, 'product_comment', currentLang)}</ItemSubName>
                     <ItemPrice style={{
                         marginTop: 'auto'
                     }}>

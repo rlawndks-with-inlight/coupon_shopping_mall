@@ -234,10 +234,24 @@ const ItemDemo = (props) => {
   const onSelectOption = (group, option, is_option_multiple) => {
     let select_product_groups = selectItemOptionUtil(group, option, selectProductGroups, is_option_multiple);
     setSelectProductGroups(select_product_groups);
-    //console.log(selectProductGroups)
-    //console.log(product?.characters?.length)
-    //console.log(selectProductGroups?.groups?.length)
   }
+
+  // 옵션 선택이 끝났는지 — 특성(이름으로 매칭, id 없음)과 옵션그룹(id 로 매칭)을 모두 본다.
+  const isAllOptionPicked = () => {
+    const picked = selectProductGroups?.groups ?? [];
+    const characters_ok = (product?.characters ?? []).every((c) => picked.some(
+      (g) => g?.character_name === c?.character_name && (g?.options?.length ?? 0) > 0
+    ));
+    const groups_ok = (product?.groups ?? []).every((grp) => picked.some(
+      (g) => Number(g?.id) === Number(grp?.id) && (g?.options?.length ?? 0) > 0
+    ));
+    return characters_ok && groups_ok;
+  }
+
+  // 옵션이든 특성이든 하나라도 있으면 선택 다이얼로그를 먼저 띄운다.
+  // 예전엔 characters 만 봐서, 옵션그룹만 있는 상품은 다이얼로그 없이 곧장 결제로 넘어갔다가
+  // 공용 검사에 걸려 '옵션을 선택해 주세요' 만 반복됐다(고를 화면이 없었다).
+  const needOptionSelect = () => (product?.characters?.length > 0) || (product?.groups?.length > 0);
 
   async function verifyUnipass(code) {
 
@@ -271,6 +285,32 @@ const ItemDemo = (props) => {
       >
         <DialogTitle>옵션선택</DialogTitle>
         <DialogContent>
+          {/* 옵션그룹(product_option_groups) 선택.
+              이 다이얼로그는 특성(characters)만 그렸다. 그래서 관리자에서 '옵션'을 등록한 상품은
+              프레임3에서 고를 방법이 없었고, 공용 검사(assertOptionsSelected)가 '그룹마다 하나 이상'을
+              요구하므로 구매·장바구니가 통째로 막혔다. 옵션 추가금액도 붙지 않았다. */}
+          {product?.groups && product?.groups.map((group, gIdx) => (
+            <Stack key={group?.id ?? gIdx} direction="row" justifyContent="space-between">
+              <FormControl sx={{ width: '100%', marginTop: '1rem' }}>
+                <InputLabel>{group?.group_name}</InputLabel>
+                <Select
+                  label={group?.group_name}
+                  sx={{ width: '100%' }}
+                  placeholder={group?.group_name}
+                  onChange={(e) => {
+                    const option = (group?.options ?? [])[Number(e.target.value)];
+                    if (option) onSelectOption(group, option);
+                  }}
+                >
+                  {(group?.options ?? []).map((option, oIdx) => (
+                    <MenuItem key={option?.id ?? oIdx} value={oIdx}>
+                      {option?.option_name}{option?.option_price > 0 ? ` (+${commarNumber(option?.option_price)})` : ''}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            </Stack>
+          ))}
           {product?.characters && product?.characters.map((character) => (
             <>
               <Stack direction="row" justifyContent="space-between">
@@ -302,7 +342,11 @@ const ItemDemo = (props) => {
           <Button
             variant='contained'
             onClick={() => {
-              if (product?.characters?.length > selectProductGroups?.groups?.length) {
+              // 예전엔 `characters.length > groups.length` 로 개수만 셌다. groups 에는 특성과 옵션그룹이
+              // 섞여 쌓이므로 옵션그룹을 고르면 특성을 안 골라도 통과했고, 같은 특성을 두 번 고른 경우도
+              // 통과했다(특성은 id 가 없어 예전 selectItemOptionUtil 이 매번 새 항목을 밀어 넣었다).
+              // 개수 대신 항목 하나하나가 실제로 골라졌는지 본다.
+              if (!isAllOptionPicked()) {
                 toast.error('옵션선택을 완료해주세요.')
               } else {
                 if (buyOrCart == 'buy') {
@@ -587,7 +631,7 @@ const ItemDemo = (props) => {
                               toast.error('로그인을 해주세요.')
                             }
                             */
-                            if (product?.characters?.length > 0) {
+                            if (needOptionSelect()) {
                               setCharacterSelect(true);
                               setBuyOrCart('buy');
                             } else {
@@ -620,7 +664,7 @@ const ItemDemo = (props) => {
                               <Icon icon={'mdi:cart'} />
                             </>}*/
                             onClick={() => {
-                              if (product?.characters?.length > 0) {
+                              if (needOptionSelect()) {
                                 setCharacterSelect(true);
                                 setBuyOrCart('cart');
                               } else {

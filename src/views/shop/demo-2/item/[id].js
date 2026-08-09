@@ -14,6 +14,8 @@ import DialogBuyNow from 'src/components/dialog/DialogBuyNow';
 import { useAuthContext } from 'src/layouts/manager/auth/useAuthContext';
 import Head from 'next/head';
 import { isShopgoBrand } from 'src/utils/is-shopgo';
+import { formatLang } from 'src/utils/format';
+import { useLocales } from 'src/locales';
 
 const ReactQuill = dynamic(() => import('react-quill'), {
   ssr: false,
@@ -43,6 +45,8 @@ const ItemDemo = (props) => {
   } = props;
   const { themeDnsData, themeWishData, onChangeWishData, themeCartData, onChangeCartData } = useSettingsContext();
   const { user } = useAuthContext();
+  // 프레임2 상세는 다국어를 전혀 거치지 않았다 — 언어를 바꿔도 상품명·설명·탭 이름이 한국어로 남았다.
+  const { translate, currentLang } = useLocales();
   const [loading, setLoading] = useState(true);
   const [currentTab, setCurrentTab] = useState('description');
   const [product, setProduct] = useState({});
@@ -109,9 +113,19 @@ const ItemDemo = (props) => {
     }
   }
 
+  // 고른 특성인지 판정 — 특성(characters)은 id 가 없어 이름으로 본다.
+  const isCharacterPicked = (character) => selectProductGroups?.groups?.some(
+    (g) => g?.character_name === character?.character_name && (g?.options?.length ?? 0) > 0
+  );
+
   const handleBuyNow = () => {
     // 비회원도 바로구매 허용(주문서에서 비회원 주문비밀번호로 진행)
-    if (product?.characters?.length > 0 && selectProductGroups?.groups?.length < product?.characters?.length) {
+    //
+    // 예전 조건은 `groups.length < characters.length` 였다. groups 에는 특성과 옵션그룹이 섞여 쌓이므로
+    // 개수만 세면 '색상만 두 번 고른' 경우도 통과했고, 옵션그룹을 고르면 특성을 안 골라도 통과했다.
+    // 개수 대신 특성 하나하나가 실제로 골라졌는지 본다. 옵션그룹은 startBuyNow 안의 공용 검사가 맡는다.
+    const characters = product?.characters ?? [];
+    if (characters.length > 0 && !characters.every(isCharacterPicked)) {
       toast.error('옵션을 선택해주세요.');
       return;
     }
@@ -132,11 +146,11 @@ const ItemDemo = (props) => {
   const ALL_TABS = [
     {
       value: 'description',
-      label: '상품정보',
+      label: translate('상품설명'),
       component: product?.product_description ?
         <StyledReactQuill
           className='none-scroll'
-          value={product?.product_description ?? ''}
+          value={formatLang(product, 'product_description', currentLang) ?? ''}
           readOnly={true}
           theme={"bubble"}
           bounds={'.app'}
@@ -144,7 +158,7 @@ const ItemDemo = (props) => {
     },
     {
       value: 'reviews',
-      label: `상품후기 (${reviewContent?.total ?? 0})`,
+      label: `${translate('상품후기')} (${reviewContent?.total ?? 0})`,
       component: product ? <ProductDetailsReview product={product} reviewContent={reviewContent} onChangePage={(page) => setReviewPage(page)} reviewPage={reviewPage} reviewLoading={reviewLoading} /> : null,
     },
   ];
@@ -155,7 +169,7 @@ const ItemDemo = (props) => {
   return (
     <>
       <Head>
-        <title>{product?.product_name ?? ''}</title>
+        <title>{formatLang(product, 'product_name', currentLang) ?? ''}</title>
       </Head>
       <DialogBuyNow
         buyOpen={buyOpen}
@@ -183,11 +197,11 @@ const ItemDemo = (props) => {
                       */}
                       <Chip size="small" sx={{ alignSelf: 'flex-start', mb: 1, fontWeight: 700 }} label={product?.product_sale_price > 0 ? getProductStatus(product?.status).text : '품절'} color={getProductStatus(product?.status).color || 'default'} variant="soft" />
                       <Typography variant="h5" sx={{ fontWeight: 700, mb: 1 }}>
-                        {product?.product_name}
+                        {formatLang(product, 'product_name', currentLang)}
                       </Typography>
                       {product?.product_comment &&
                         <Typography variant="body2" sx={{ color: 'text.secondary', mb: 2 }}>
-                          {product?.product_comment}
+                          {formatLang(product, 'product_comment', currentLang)}
                         </Typography>
                       }
                       <Divider sx={{ my: 1 }} />
@@ -206,6 +220,35 @@ const ItemDemo = (props) => {
                       <Typography variant="body2" sx={{ color: 'text.secondary', my: 1 }}>
                         {product?.delivery_fee > 0 ? `배송비 ${commarNumber(product?.delivery_fee)}원` : '무료배송'}
                       </Typography>
+                      {/* 옵션그룹(product_option_groups) 선택.
+                          이 화면은 특성(characters)만 그리고 옵션그룹은 아예 그리지 않았다.
+                          그래서 관리자에서 '옵션'을 등록한 상품은 프레임2 상세에 선택 UI 가 없었고,
+                          고객은 옵션을 고를 방법이 없는 채로 장바구니·바로구매가 막혔다
+                          (공용 검사 assertOptionsSelected 가 '그룹마다 하나 이상' 을 요구한다).
+                          옵션 추가금액도 붙지 않아 실제보다 싸게 주문됐다.
+                          프레임1(ProductDetailsSummary)·프레임4~11 은 원래 그리고 있었다 — 같은 규칙으로 맞춘다. */}
+                      {product?.groups && product?.groups.map((group, gIdx) => (
+                        <div key={group?.id ?? gIdx} style={{ marginTop: '0.5rem' }}>
+                          <Typography variant="body2" sx={{ fontWeight: 600, mb: 0.5 }}>{group?.group_name}</Typography>
+                          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
+                            {(group?.options ?? []).map((option, oIdx) => (
+                              <Button
+                                key={option?.id ?? oIdx}
+                                variant={selectProductGroups?.groups?.find(g =>
+                                  Number(g?.id) === Number(group?.id)
+                                  && g?.options?.some(o => Number(o?.id) === Number(option?.id))
+                                ) ? 'contained' : 'outlined'}
+                                size="small"
+                                color="inherit"
+                                onClick={() => onSelectOption(group, option)}
+                                sx={{ minWidth: '60px', fontSize: '13px' }}
+                              >
+                                {option?.option_name}{option?.option_price > 0 ? ` (+${commarNumber(option?.option_price)}원)` : ''}
+                              </Button>
+                            ))}
+                          </div>
+                        </div>
+                      ))}
                       {product?.characters && product?.characters.map((character, idx) => (
                         <div key={idx} style={{ marginTop: '0.5rem' }}>
                           <Typography variant="body2" sx={{ fontWeight: 600, mb: 0.5 }}>{character?.character_name}</Typography>
@@ -237,10 +280,10 @@ const ItemDemo = (props) => {
                             <Icon icon={themeWishData?.map(itm => itm?.product_id).includes(product?.id) ? 'mdi:heart' : 'mdi:heart-outline'} fontSize="1.5rem" style={{ color: themeWishData?.map(itm => itm?.product_id).includes(product?.id) ? 'red' : '' }} />
                           </Button>
                           <Button variant="outlined" color="inherit" onClick={handleAddCart} disabled={getProductStatus(product?.status).color != 'info' || !(product?.product_sale_price > 0)} sx={{ flex: 1, fontWeight: 600 }}>
-                            장바구니
+                            {translate('장바구니')}
                           </Button>
                           <Button variant="contained" color="inherit" onClick={handleBuyNow} disabled={getProductStatus(product?.status).color != 'info' || !(product?.product_sale_price > 0)} sx={{ flex: 1, fontWeight: 600 }}>
-                            바로구매
+                            {translate('바로구매')}
                           </Button>
                         </Stack>
                       </div>

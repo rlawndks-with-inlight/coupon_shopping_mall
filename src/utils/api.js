@@ -248,13 +248,31 @@ const settingdeleteImageObj = async (obj_) => {//이미지 존재안할시 삭�
     let upload_files = await uploadFilesByManager({
         images: img_list,
     })
+    // 업로드 실패를 조용히 넘기지 않는다.
+    //
+    // [증상] Cloudinary 업로드가 실패해도 아무 안내 없이 '저장 되었습니다' 가 떴다.
+    //        가맹점은 이미지가 올라간 줄 알고 넘어가는데 실제로는 안 올라가 있다.
+    // [원인] uploadFileByCloudinary 가 실패 시 false 를 돌려주고, 여기서 `?.url` 로 벗겨
+    //        undefined 를 그대로 `${key}_img` 에 넣었다. 알림도 없었다.
+    // [수정] 실패한 항목은 **키를 아예 넣지 않는다.** 백엔드 updateQuery 는 보내지 않은 컬럼을
+    //        SET 절에서 빼므로 기존 이미지가 그대로 유지된다(undefined 를 넣으면 신규 등록에서
+    //        빈 값이 되고, 수정에서도 의도가 모호해진다). 그리고 몇 장이 실패했는지 알린다.
     let upload_idx = 0;
+    let failed_uploads = 0;
     for (var i = 0; i < keys.length; i++) {
         if (keys[i].slice(-5) == '_file' && obj[keys[i]]) {
             let key = keys[i].split('_file')[0];
-            obj[`${key}_img`] = upload_files[upload_idx]?.url
+            const uploaded = upload_files?.[upload_idx];
             upload_idx++;
+            if (uploaded?.url) {
+                obj[`${key}_img`] = uploaded.url;
+            } else {
+                failed_uploads++;
+            }
         }
+    }
+    if (failed_uploads > 0) {
+        toast.error(`이미지 ${failed_uploads}장을 올리지 못했습니다. 나머지 내용만 저장되니 이미지는 다시 등록해 주세요.`);
     }
     for (var i = 0; i < keys.length; i++) {
         if (keys[i].slice(-5) == '_file') {

@@ -4,6 +4,7 @@ import { Box, Button, Card, CardContent, CardHeader, Divider, Stack, Typography 
 import { Icon } from '@iconify/react';
 import ShopLayout from 'src/layouts/shop/ShopLayout';
 import { useSettingsContext } from 'src/components/settings';
+import { useAuthContext } from 'src/layouts/manager/auth/useAuthContext';
 import styled from 'styled-components';
 
 const Wrappers = styled.div`
@@ -26,6 +27,7 @@ const KV = ({ k, v, strong }) => (
 const OrderComplete = () => {
   const router = useRouter();
   const { themeDnsData } = useSettingsContext();
+const { user } = useAuthContext();
   const isBlogOnly = !(themeDnsData?.shop_demo_num > 0) && themeDnsData?.blog_demo_num > 0;
   const [order, setOrder] = useState(null);
 
@@ -113,7 +115,13 @@ const OrderComplete = () => {
           '주문내역 보기'가 백지(새로고침 시 404)가 됐다. 브랜드 유형에 맞는 경로로 보낸다. */}
       <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1.5}>
         <Button fullWidth variant="outlined" color="inherit" onClick={() => router.push(isBlogOnly ? '/shop' : '/shop')}>쇼핑 계속하기</Button>
-        <Button fullWidth variant="contained" onClick={() => router.push(isBlogOnly ? '/shop/auth/history' : '/shop/auth/history')}>주문내역 보기</Button>
+        {/* 비회원은 /shop/auth/history 가 늘 빈 표다(회원 주문만 조회한다).
+            결제 직후 가장 많이 눌리는 버튼이라 '주문이 사라졌다'로 읽힌다.
+            비회원은 전화번호+주문비밀번호로 보는 주문조회로 보낸다. */}
+        <Button fullWidth variant="contained"
+          onClick={() => router.push(user?.id ? '/shop/auth/history' : '/shop/auth/order-check')}>
+          {user?.id ? '주문내역 보기' : '주문 조회하기'}
+        </Button>
       </Stack>
     </Wrappers>
   );

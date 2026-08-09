@@ -188,12 +188,9 @@ const Demo5 = (props) => {
                     </div>}
                 {category?.is_able_user_add == 1 &&
                     <ServiceFaq themeMode={themeMode} onClick={() => {
-                        if (user?.id) {
-                            router.push(`/shop/service/${router.query?.article_category}/add`)
-                        } else {
-                            toast.error('로그인을 해주세요.')
-                            router.push('/shop/auth/login')
-                        }
+                        // 비회원도 1:1문의를 남길 수 있다 — 작성 화면에서 이름·연락처·글비밀번호를 받는다.
+                        // 여기서 로그인을 요구하면 비회원은 작성 화면에 도달할 방법이 없다.
+                        router.push(`/shop/service/${router.query?.article_category}/add`)
                     }}>서비스 문의</ServiceFaq>}
             </Wrappers>
         </>

@@ -7,6 +7,7 @@ import _ from 'lodash';
 import dynamic from 'next/dynamic';
 import { useSettingsContext } from 'src/components/settings';
 import { useAuthContext } from 'src/layouts/manager/auth/useAuthContext';
+import GuestInquiryFields, { GUEST_INQUIRY_EMPTY, validateGuestInquiry } from 'src/components/elements/shop/GuestInquiryFields';
 import { useModal } from 'src/components/dialog/ModalProvider';
 import { apiShop } from 'src/utils/api';
 import ReactQuillComponent from 'src/views/manager/react-quill';
@@ -82,6 +83,8 @@ const Demo5 = (props) => {
 
     const { setModal } = useModal();
     const { user } = useAuthContext();
+    // 비회원 1:1문의 입력값. 로그인 상태면 쓰지 않는다.
+    const [guestObj, setGuestObj] = useState({ ...GUEST_INQUIRY_EMPTY });
     const { themeMode, themePostCategoryList } = useSettingsContext();
 
     const [postCategory, setPostCategory] = useState({});
@@ -102,8 +105,13 @@ const Demo5 = (props) => {
     const settingPage = async () => {
         setPostCategory(_.find(themePostCategoryList, { id: parseInt(router.query?.article_category) }));
         if (router.query?.id > 0) {
+            // 비회원이 조회 화면(/shop/auth/inquiry-check)에서 넘어온 경우 연락처·글비밀번호를 함께 보낸다.
+            // 백엔드 post.get 이 이 두 값으로 '작성자 본인' 을 인정한다(계정이 없어 이것뿐이다).
+            // 회원이거나 일반 게시판이면 router.query 에 없으므로 아무 영향이 없다.
             let data = await apiShop('post', 'get', {
-                id: router.query?.id
+              id: router.query?.id,
+              none_user_phone: router.query?.none_user_phone,
+              password: router.query?.password,
             })
             setItem(data);
         }
@@ -111,9 +119,15 @@ const Demo5 = (props) => {
     }
 
     const onSave = async () => {
+        // 비회원은 이름·연락처·글비밀번호가 있어야 저장할 수 있다(백엔드와 같은 기준).
+        if (!user) {
+            const invalid = validateGuestInquiry(guestObj);
+            if (invalid) { toast.error(invalid); return; }
+        }
         let result = await apiShop('post', 'create', {
             ...item,
-            category_id: router.query?.article_category
+            category_id: router.query?.article_category,
+            ...(user ? {} : guestObj),
         });
         if (result) {
             toast.success('성공적으로 저장 되었습니다.');
@@ -129,8 +143,11 @@ const Demo5 = (props) => {
                     <Content themeMode={themeMode}>
                         {isAdd ?
                             <>
-                                {user?.id ?
+                                {/* 비회원도 문의를 남길 수 있다 — 로그인 대신 이름·연락처·글비밀번호를 받는다.
+                                    (예전엔 여기서 '로그인 후 이용하실 수 있습니다' 로 막았다) */}
+                                {true ?
                                     <Stack spacing={3}>
+                                        {!user && <GuestInquiryFields value={guestObj} onChange={setGuestObj} />}
                                         <TextField
                                             label='제목'
                                             value={item.post_title}

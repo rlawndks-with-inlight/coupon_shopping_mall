@@ -47,7 +47,11 @@ const FindInfoDemo = (props) => {
       }
     }
   }
-  const [findType, setFindType] = useState(undefined);
+  // 기본 탭은 '아이디 찾기'('0').
+  // 예전 초기값은 undefined 였다. 본문이 `{findType == 0 && ...}` / `{findType == 1 && ...}` 뿐이라
+  // ?type 없이 들어오면 둘 다 false → **탭만 뜨고 본문이 통째로 백지**였다.
+  // Tab 의 value 는 Object.keys 결과(문자열)이므로 초기값도 문자열로 맞춘다.
+  const [findType, setFindType] = useState('0');
   const [phoneNum, setPhoneNum] = useState("");
   const [findUserObj, setFindUserObj] = useState({})
 
@@ -62,9 +66,8 @@ const FindInfoDemo = (props) => {
       password: '',
       passwordCheck: ''
     })
-    if (router.query?.type >= 0) {
-      setFindType(router.query?.type)
-    }
+    // ?type 이 없으면 기본 탭을 유지한다.
+    setFindType(router.query?.type >= 0 ? String(router.query?.type) : '0');
   }, [router.query])
 
   const onSendPhoneVerifyCode = async () => {

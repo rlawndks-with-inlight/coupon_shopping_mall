@@ -17,6 +17,7 @@ import { fCurrency } from 'src/utils/formatNumber'
 import toast from 'react-hot-toast'
 import { apiManager } from 'src/utils/api'
 import { useModal } from 'src/components/dialog/ModalProvider'
+import { isDomestic, formatOverseasAddress } from 'src/data/countries'
 import { Item1, Seller1 } from './demo-1'
 import { Item2, Seller2 } from './demo-2'
 import { Item3, Seller3 } from './demo-3'
@@ -225,6 +226,10 @@ export const HistoryTable = props => {
     { id: 'invoice_num', label: translate('송장번호') },
     { id: 'amount', label: translate('총액') },
     { id: 'buyer_name', label: translate('구매자명') },
+    // 배송지 — 주문내역에 '어디로 보내지는지'가 아예 없었다.
+    // 배송지는 주문 시점 값이 주문에 박혀 저장되므로(주소록을 나중에 고쳐도 안 바뀐다)
+    // 고객이 배송 사고를 확인할 유일한 근거인데 화면에 나오질 않았다.
+    { id: 'receiver', label: translate('배송지') },
     { id: 'trx_status', label: translate('주문상태') },
     //{ id: 'trx_date', label: translate('주문일'), align: 'right' },
     ...(themeDnsData?.id == 64 || themeDnsData?.id == 84 ? [] : [{ id: 'date', label: translate('업데이트일'), align: 'right' }]),
@@ -382,7 +387,21 @@ export const HistoryTable = props => {
                         : '-'}
                     </TableCell>
                     <TableCell onClick={() => { console.log(row) }}>{commarNumber(setProductPriceByLang(row, 'amount', 'ko', currentLang?.value))} {getPriceUnitByLang(currentLang?.value)}</TableCell>
-                    <TableCell>{row?.buyer_name}</TableCell>
+                    <TableCell sx={{ minWidth: 200 }}>
+                      {row?.receiver || row?.addr ? (
+                        <Box sx={{ fontSize: 13, lineHeight: 1.6, wordBreak: 'keep-all' }}>
+                          {row?.receiver && <div style={{ fontWeight: 700 }}>{row.receiver}</div>}
+                          {row?.receiver_phone && <div style={{ color: '#888' }}>{row.receiver_phone}</div>}
+                          {/* 해외 주소는 나라마다 순서가 달라 한 줄로 잇는다(우편 관례: 좁은 단위 → 넓은 단위).
+                              국내는 기존 표기 그대로 '(우편번호) 주소 상세주소'. */}
+                          <div>
+                            {isDomestic(row?.country_code)
+                              ? `${row?.zonecode ? `(${row.zonecode}) ` : ''}${row?.addr ?? ''} ${row?.detail_addr ?? ''}`.trim()
+                              : formatOverseasAddress(row)}
+                          </div>
+                        </Box>
+                      ) : '-'}
+                    </TableCell>
                     <TableCell>{translate(getOrderStatusText(row))}</TableCell>
                     {/*
                     <TableCell onClick={() => { console.log(row) }}>

@@ -85,6 +85,11 @@ const Header = (props) => {
             <img src={logoSrc()} style={{ height: '28px', width: 'auto', cursor: 'pointer' }} onClick={() => router.push('/shop')} />
           }
           <div style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: '2px' }}>
+            {/* 상품 목록 — 이 헤더에는 상품을 둘러볼 수단이 검색뿐이었다(홈·마이페이지·장바구니만 있었다).
+                고객이 찾는 물건의 '이름을 이미 알고 있을 때'만 살 수 있었다는 뜻이다. */}
+            <IconButton sx={{ padding: '6px' }} onClick={() => router.push('/shop/items')}>
+              <Icon icon={'material-symbols:grid-view-outline'} fontSize={'1.3rem'} color={iconColor} />
+            </IconButton>
             <IconButton sx={{ padding: '6px' }} onClick={() => setSearchOpen(true)}>
               <Icon icon={'tabler:search'} fontSize={'1.3rem'} color={iconColor} />
             </IconButton>

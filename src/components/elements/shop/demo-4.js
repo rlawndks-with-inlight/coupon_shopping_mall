@@ -279,12 +279,22 @@ export const AuthMenuSideComponent = (props) => {
   const noneAuthLabel = '고객센터';
   const authList = [
     {
+      // '회원정보' 그룹은 하나만 둔다.
+      // 예전엔 같은 이름의 그룹이 목록 맨 앞(마이페이지)과 맨 뒤(회원정보 변경)에 따로 있어서
+      // 사이드메뉴에 '회원정보' 제목이 두 번 찍혔다.
       label: '회원정보',
       children: [
         {
           label: '마이페이지',
           link: '/shop/auth/my-page/',
         },
+        {
+          label: '회원정보 변경',
+          link: '/shop/auth/change-info/',
+        },
+        // 배송지 관리·회원탈퇴는 '회원정보 변경' 화면(공용 패널) 안에 함께 들어가 있어
+        // 메뉴에 또 두면 같은 일을 하는 입구가 둘이 된다. 메뉴에서만 감춘다.
+        // (페이지 자체는 남아 있어 /shop/auth/delivery-address, /resign 으로 직접 들어가면 동작한다)
       ]
     },
     {
@@ -299,10 +309,8 @@ export const AuthMenuSideComponent = (props) => {
           label: '반품/환불조회',
           link: '/shop/auth/history/?is_cancel=1',
         },
-        {/*
-          label: '위탁상품관리',
-          link: '/shop/auth/consignment/',
-        */},
+        // 위탁상품관리는 이 브랜드에서 쓰지 않는다.
+        // (예전엔 주석이 객체 리터럴 안에 있어 `{}` 빈 항목이 배열에 그대로 남았다)
         {
           label: '위시리스트',
           link: '/shop/auth/wish/',
@@ -323,51 +331,26 @@ export const AuthMenuSideComponent = (props) => {
       {
         label: '고객센터',
         children: [
-          ...themePostCategoryList.map((item) => {
-            if (item?.post_category_title != '관리자문의') {
-              return {
-                label: item?.post_category_title,
-                link: `/shop/service/${item?.id}/`,
-              }
-            }
-          })
+          // filter 로 걸러낸다 — map 안의 if 는 else 경로에서 undefined 를 배열에 남긴다.
+          // (그 undefined 를 링크 없는 빈 줄로 렌더하다가 display:none 으로 겨우 감추고 있었다)
+          ...themePostCategoryList
+            .filter((item) => item?.post_category_title != '관리자문의')
+            .map((item) => ({
+              label: item?.post_category_title,
+              link: `/shop/service/${item?.id}/`,
+            }))
         ]
       },
     ] : []),
-    {
-      label: '회원정보',
-      children: [
-        // '회원정보 변경' 링크가 주석 처리돼 있어서 이 프레임은 회원정보 화면에
-        // 들어갈 방법이 아예 없었다(페이지는 멀쩡히 있었다). 복원한다.
-        {
-          label: '회원정보 변경',
-          link: '/shop/auth/change-info/',
-        },
-        // 배송지 관리·회원탈퇴는 '회원정보 변경' 화면(공용 패널) 안에 함께 들어가 있어
-        // 메뉴에 또 두면 같은 일을 하는 입구가 둘이 된다. 메뉴에서만 감춘다.
-        // (페이지 자체는 남아 있어 /shop/auth/delivery-address, /resign 으로 직접 들어가면 동작한다)
-        /*{
-          label: '배송지 관리',
-          link: '/shop/auth/delivery-address/',
-        },
-        {
-          label: '회원탈퇴',
-          link: '/shop/auth/resign/',
-        },*/
-      ]
-    },
   ];
   const noneAuthList = [
     {
       label: '',
-      children: [
-        ...themePostCategoryList.map((item) => {
-          return {
-            label: item?.post_category_title,
-            link: `/shop/service/${item?.id}`,
-          }
-        })
-      ]
+      // themePostCategoryList 는 첫 렌더에 아직 안 와 있을 수 있다(그대로 map 하면 크래시).
+      children: (themePostCategoryList ?? []).map((item) => ({
+        label: item?.post_category_title,
+        link: `/shop/service/${item?.id}`,
+      }))
     },
   ]
   return (

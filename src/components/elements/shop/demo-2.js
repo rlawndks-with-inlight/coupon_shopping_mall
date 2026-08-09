@@ -82,7 +82,10 @@ export const Item2 = (props) => {
     // 다른 프레임(1·3·6~11)의 카드는 전부 formatLang 을 거친다. 같은 규칙으로 맞춘다.
     const { currentLang } = useLocales();
     const [itemThemeCss, setItemThemeCss] = useState(itemThemeCssDefaultSetting);
-    const images = [...[item?.product_img], ...(item?.sub_images ?? []).map(itm => { return itm.product_sub_img })]
+    // sub_images 에는 상세설명 이미지 행도 섞여 온다(백엔드가 product_images 를 통째로 담아
+    // sub_images·description_images 양쪽에 넣는다). 그 행들은 product_sub_img 가 null 이라
+    // 걸러내지 않으면 슬라이더에 빈 칸이 생겼다.
+    const images = [item?.product_img, ...(item?.sub_images ?? []).map(itm => itm?.product_sub_img)].filter(Boolean)
     useEffect(() => {
         if (theme_css) {
             setItemThemeCss(theme_css)

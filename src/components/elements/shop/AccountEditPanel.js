@@ -6,8 +6,7 @@ import { apiManager } from 'src/utils/api';
 import { useAuthContext } from 'src/layouts/manager/auth/useAuthContext';
 import { useLocales } from 'src/locales';
 import { sanitizePhoneInput, isValidPhoneNumber } from 'src/utils/function';
-import { AddressTable } from 'src/components/elements/shop/common';
-import DialogAddAddress from 'src/components/dialog/DialogAddAddress';
+import AddressBookPanel from 'src/components/elements/shop/AddressBookPanel';
 
 // 회원정보 수정 — 데모 구분 없는 공용 패널.
 //
@@ -42,37 +41,13 @@ const AccountEditPanel = ({ loginPath = '/shop/auth/login' }) => {
   const [resignOpen, setResignOpen] = useState(false);
   const [resignPw, setResignPw] = useState('');
 
-  const [addressContent, setAddressContent] = useState({});
-  const [addAddressOpen, setAddAddressOpen] = useState(false);
-  const [updateAddressOpen, setUpdateAddressOpen] = useState(false);
-  const [addressId, setAddressId] = useState();
-  const [searchObj, setSearchObj] = useState({ page: 1, page_size: 10, search: '', user_id: user?.id });
+  // 배송지 목록·추가·수정·삭제는 공용 패널(AddressBookPanel)에 맡긴다.
+  // 여기에 복사돼 있던 같은 코드에는 페이지 이동 수단이 빠져 있어 11번째 배송지부터 볼 수 없었다.
 
   useEffect(() => {
     if (!user?.id) return;
     setPhoneNum(user?.phone_num ?? '');
-    onChangePage({ page: 1, page_size: 10, search: '', user_id: user?.id });
   }, [user?.id]);
-
-  const onChangePage = async (search_obj) => {
-    setSearchObj(search_obj);
-    setAddressContent({ ...addressContent, content: undefined });
-    let data = await apiManager('user-addresses', 'list', search_obj);
-    if (data) setAddressContent(data);
-  };
-
-  const onAddAddress = async (address_obj) => {
-    let result = await apiManager('user-addresses', (address_obj?.id > 0 ? 'update' : 'create'), { ...address_obj, user_id: user?.id });
-    if (result) onChangePage(searchObj);
-  };
-  const onUpdateAddress = async (id) => {
-    setAddressId(id);
-    setUpdateAddressOpen(true);
-  };
-  const onDeleteAddress = async (id) => {
-    let result = await apiManager('user-addresses', 'delete', { id });
-    if (result) onChangePage(searchObj);
-  };
 
   const onSaveInfo = async () => {
     if (!phoneNum) return toast.error(translate('휴대폰번호를 입력해 주세요.'));
@@ -136,20 +111,6 @@ const AccountEditPanel = ({ loginPath = '/shop/auth/login' }) => {
 
   return (
     <>
-      <DialogAddAddress
-        addAddressOpen={addAddressOpen}
-        setAddAddressOpen={setAddAddressOpen}
-        onAddAddress={onAddAddress}
-      />
-      <DialogAddAddress
-        addAddressOpen={updateAddressOpen}
-        setAddAddressOpen={setUpdateAddressOpen}
-        onAddAddress={onAddAddress}
-        type={'update'}
-        id={addressId}
-        onDeleteAddress={onDeleteAddress}
-      />
-
       <Stack spacing={3}>
         {/* ── 회원정보 ─────────────────────────────── */}
         <Card>
@@ -225,23 +186,7 @@ const AccountEditPanel = ({ loginPath = '/shop/auth/login' }) => {
         </Card>
 
         {/* ── 배송지 ───────────────────────────────── */}
-        <Card>
-          <CardHeader
-            title={translate('배송지 관리')}
-            action={
-              <Button variant="outlined" onClick={() => setAddAddressOpen(true)}>
-                {translate('배송지 추가')}
-              </Button>
-            }
-          />
-          <CardContent sx={{ pt: 0 }}>
-            <AddressTable
-              addressContent={addressContent}
-              onUpdate={onUpdateAddress}
-              onDelete={onDeleteAddress}
-            />
-          </CardContent>
-        </Card>
+        <AddressBookPanel />
 
         {/* ── 회원 탈퇴 ─────────────────────────────── */}
         <Card>

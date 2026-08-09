@@ -8,6 +8,7 @@ import { commarNumber, getOrderStatusText } from 'src/utils/function';
 import { apiManager } from 'src/utils/api';
 import { getOptionLabel } from 'src/utils/shop-util';
 import OrderCancelButton from 'src/components/elements/shop/OrderCancelButton';
+import { isDomestic, formatOverseasAddress } from 'src/data/countries';
 
 const ContentContainer = styled.div`
 display:flex;
@@ -171,7 +172,13 @@ const Demo2 = (props) => {
                                                     <div style={{ fontSize: '0.85rem', marginBottom: '0.25rem', whiteSpace: 'nowrap' }}>받는분 : {item.trx?.receiver || item.trx?.buyer_name}</div>
                                                 }
                                                 {item.trx?.addr &&
-                                                    <div style={{ fontSize: '0.85rem', marginBottom: '0.25rem', maxWidth: '220px' }}>{item.trx?.addr} {item.trx?.detail_addr || ''}</div>
+                                                    // 해외 주소는 나라마다 순서가 달라 국내 형식(주소+상세주소)으로는 표기가 안 된다
+                                                    // — 도시·주·국가가 통째로 빠져 어디로 가는 주문인지 알 수 없었다.
+                                                    <div style={{ fontSize: '0.85rem', marginBottom: '0.25rem', maxWidth: '220px' }}>
+                                                        {isDomestic(item.trx?.country_code)
+                                                            ? `${item.trx?.addr} ${item.trx?.detail_addr || ''}`.trim()
+                                                            : formatOverseasAddress(item.trx)}
+                                                    </div>
                                                 }
                                                 {item.trx?.invoice_num &&
                                                     <div style={{ fontSize: '0.85rem', marginBottom: '1rem' }}>송장 : {item.trx?.invoice_num}</div>

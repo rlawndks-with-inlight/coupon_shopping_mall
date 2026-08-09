@@ -272,6 +272,11 @@ const Demo9 = () => {
               <Price>{commarNumber(sale)}원</Price>
               {hasSale && <OrigPrice>{commarNumber(orig)}원</OrigPrice>}
             </PriceWrap>
+            {/* 배송비를 상세에 표시한다. 예전엔 이 프레임들에 배송비 표기가 없어서
+                고객이 장바구니·주문서에 가서야 배송비를 알았다(주문 직전 금액이 달라 보인다). */}
+            {item?.delivery_fee > 0
+                ? <div style={{ fontSize: '13px', color: '#888', marginTop: '6px' }}>배송비 {commarNumber(item?.delivery_fee)}원</div>
+                : <div style={{ fontSize: '13px', color: '#888', marginTop: '6px' }}>무료배송</div>}
             {item?.groups?.length > 0 && (
               <OptionWrap>
                 {item.groups.map((group) => (

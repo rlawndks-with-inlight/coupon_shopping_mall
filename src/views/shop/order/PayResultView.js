@@ -4,6 +4,7 @@ import { Box, Button, Card, CardContent, CardHeader, Stack, Typography } from '@
 import { Icon } from '@iconify/react';
 import styled from 'styled-components';
 import { useSettingsContext } from 'src/components/settings';
+import { useAuthContext } from 'src/layouts/manager/auth/useAuthContext';
 import { useLocales } from 'src/locales';
 
 // 공용 결제결과 화면 — 데모 구분 없는 단일 화면.
@@ -41,6 +42,7 @@ const PayResultView = () => {
   const router = useRouter();
   const { translate } = useLocales();
   const { themeDnsData, onChangeCartData } = useSettingsContext();
+const { user } = useAuthContext();
 
   const isBlogOnly = !(themeDnsData?.shop_demo_num > 0) && themeDnsData?.blog_demo_num > 0;
   const mainColor = themeDnsData?.theme_css?.main_color || '#111111';
@@ -120,14 +122,16 @@ const PayResultView = () => {
           onClick={() => router.push(isBlogOnly ? '/shop' : '/shop')}>
           쇼핑 계속하기
         </Button>
-        {/* 실패 시엔 주문내역이 없으므로 장바구니로 되돌려 재시도를 돕는다. */}
+        {/* 실패 시엔 주문내역이 없으므로 장바구니로 되돌려 재시도를 돕는다.
+            성공이어도 비회원은 /shop/auth/history 가 늘 빈 표라(회원 주문만 조회한다)
+            전화번호+주문비밀번호로 보는 주문조회로 보낸다. */}
         <Button fullWidth variant="contained"
           onClick={() => router.push(
             isSuccess
-              ? (isBlogOnly ? '/shop/auth/history' : '/shop/auth/history')
-              : (isBlogOnly ? '/shop/auth/cart' : '/shop/auth/cart')
+              ? (user?.id ? '/shop/auth/history' : '/shop/auth/order-check')
+              : '/shop/auth/cart'
           )}>
-          {isSuccess ? '주문내역 보기' : '장바구니로'}
+          {isSuccess ? (user?.id ? '주문내역 보기' : '주문 조회하기') : '장바구니로'}
         </Button>
       </Stack>
 

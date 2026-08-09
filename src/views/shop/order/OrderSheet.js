@@ -18,6 +18,7 @@ import { calcOrderTotals, calculatorPrice, getCartDataUtil, makePayData, onPayPr
 import { syncCartWithServer, makeUnavailableMessage, filterUnavailableByProducts } from 'src/utils/cart-sync';
 import { forspayMethodList } from 'src/utils/format';
 import { sanitizePhoneInput, isValidPhoneNumber, makeOrdNum } from 'src/utils/function';
+import { formatOverseasAddress, isDomestic } from 'src/data/countries';
 import Policy from 'src/pages/shop/auth/policy';
 import { useAuthContext } from 'src/layouts/manager/auth/useAuthContext';
 import { formatCreditCardNumber, formatExpirationDate } from 'src/utils/formatCard';
@@ -258,6 +259,10 @@ export default function OrderSheet({ router }) {
       receiver: item?.receiver ?? undefined,
       addr_phone: item?.phone ?? undefined,
       zonecode: item?.zonecode ?? undefined,
+      // 국가 정보도 주문에 함께 남긴다 — 주소록 행은 나중에 바뀌거나 지워질 수 있다.
+      country_code: item?.country_code || 'KR',
+      city: item?.city ?? undefined,
+      state_region: item?.state_region ?? undefined,
     });
   };
   const onAddAddress = async (address_obj) => {
@@ -674,7 +679,13 @@ export default function OrderSheet({ router }) {
                                 <Typography variant="subtitle2">{item?.receiver || item?.addr}</Typography>
                                 {!!item?.is_default && <Label color="info">기본</Label>}
                               </Stack>
-                              <Typography variant="body2" sx={{ color: 'text.secondary' }}>{item?.addr} {item?.detail_addr}</Typography>
+                              <Typography variant="body2" sx={{ color: 'text.secondary' }}>
+                                {/* 해외 배송지는 도시·주·국가까지 보여야 어디로 가는 주소인지 알 수 있다.
+                                    국내는 지금까지처럼 도로명주소 + 상세주소만 붙인다. */}
+                                {isDomestic(item?.country_code)
+                                  ? `${item?.addr ?? ''} ${item?.detail_addr ?? ''}`
+                                  : formatOverseasAddress(item)}
+                              </Typography>
                               {item?.phone && <Typography variant="body2" sx={{ color: 'text.secondary' }}>{item?.phone}</Typography>}
                             </Box>
                             <Stack direction="row" spacing={1}>

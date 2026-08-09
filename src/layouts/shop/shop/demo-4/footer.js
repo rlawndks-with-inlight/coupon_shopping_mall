@@ -186,68 +186,25 @@ const Footer = (props) => {
                             </ContentWrapper>
                                 */
                             }
-                            <ContentWrapper style={{ backgroundColor: `${themeMode != 'dark' ? /*'#FF5B0D'*/themeDnsData?.theme_css.main_color : ''}`, height: '100px' }}></ContentWrapper>
+                            <ContentWrapper style={{ backgroundColor: `${themeMode != 'dark' ? /*'#FF5B0D'*/themeDnsData?.theme_css.main_color : ''}`, height: '56px' }}></ContentWrapper>
                             <ContentWrapper style={{ display: 'flex', maxWidth: '1400px' }}>
-                                <MainContent style={{ marginTop: '50px' }}>
-                                    <Row style={{ position: 'relative' }}>
-                                        <MarginRight style={{ fontWeight: 'bold', fontSize: '16px' }}>{company_name}</MarginRight>
+                                <MainContent style={{ marginTop: '28px' }}>
+                                    {/* 예전엔 항목마다 <Row> 한 줄씩 8줄이 세로로 쌓였다.
+                                        검은 푸터가 스크롤 한 화면을 거의 다 먹어서 "너무 크고 돋보인다"는
+                                        가맹점 의견이 나왔다. 표시 의무 항목은 그대로 두고 배치만 가로 wrap 으로
+                                        바꾸고 한 단계 더 흐리게 한다(배경은 이 프레임의 디자인이라 유지). */}
+                                    <Row style={{ position: 'relative', marginBottom: '6px' }}>
+                                        <MarginRight style={{ fontWeight: 'bold', fontSize: '14px', opacity: 0.85 }}>{company_name}</MarginRight>
                                     </Row>
-                                    <Row>
-                                        {addr?.length > 1 &&
-                                            <>
-                                                <div style={{ display: 'flex', flexDirection: 'column' }}>
-                                                    <MarginRight>{addr}</MarginRight>
-                                                </div>
-                                            </>
-                                        }
+                                    <Row style={{ flexWrap: 'wrap', columnGap: '1rem', rowGap: '2px', fontSize: '12px', opacity: 0.55, lineHeight: 1.75 }}>
+                                        {ceo_name?.length > 1 && <span>대표 {ceo_name}</span>}
+                                        {business_num?.length > 1 && <span>사업자등록번호 {business_num}</span>}
+                                        {mail_order_num?.length > 1 && <span>통신판매번호 {mail_order_num}</span>}
+                                        {addr?.length > 1 && <span>주소 {addr}</span>}
+                                        {phone_num?.length > 1 && <span>TEL {phone_num}</span>}
+                                        {fax_num?.length > 1 && <span>FAX {fax_num}</span>}
+                                        {pvcy_rep_name?.length > 1 && <span>개인정보 보호책임자 {pvcy_rep_name}</span>}
                                     </Row>
-                                    <Row>
-                                        {phone_num?.length > 1 &&
-                                            <>
-                                                <div style={{ display: 'flex' }}>
-                                                    <MarginRight>TEL : {phone_num}</MarginRight>
-                                                </div>
-
-                                            </>
-                                        }
-                                    </Row>
-                                    <Row>
-                                        {ceo_name?.length > 1 &&
-                                            <>
-                                                <MarginRight>대표 : {ceo_name}</MarginRight>
-
-                                            </>
-                                        }
-                                    </Row>
-                                    <Row>
-                                        {business_num?.length > 1 &&
-                                            <>
-                                                <MarginRight>사업자등록번호 : {business_num}</MarginRight>
-                                            </>
-                                        }
-                                    </Row>
-                                    <Row>
-                                        {pvcy_rep_name?.length > 1 &&
-                                            <>
-                                                <MarginRight>개인정보 보호책임자 : {pvcy_rep_name}</MarginRight>
-                                            </>
-                                        }
-                                    </Row>
-                                    <Row>
-                                        {fax_num?.length > 1 &&
-                                            <>
-                                                <MarginRight>FAX : {fax_num}</MarginRight>
-                                            </>
-                                        }
-                                    </Row>
-                                    <Row>
-                                        {mail_order_num?.length > 1 &&
-                                            <>
-                                                <MarginRight>통신판매번호 : {mail_order_num}</MarginRight>
-                                            </>
-                                        }
-                                    </Row>
-                                    <br />
                                     {
                                         /*
                                         <Row>
@@ -255,8 +212,7 @@ const Footer = (props) => {
                                         </Row>
                                         */
                                     }
-                                    <br />
-                                    <Col>
+                                    <Col style={{ marginTop: '10px', fontSize: '12px', opacity: 0.7 }}>
                                         <Row>
                                             <Link href={'/shop/auth/policy?type=0'} passHref>
                                                 <MarginRight style={{ cursor: 'pointer' }}>

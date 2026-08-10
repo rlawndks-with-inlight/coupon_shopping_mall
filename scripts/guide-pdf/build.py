@@ -13,9 +13,10 @@ next build 에 넣으면 배포 서버에 Python·reportlab 을 깔아야 하는
 import json
 import os
 import sys
+from datetime import date
 
-# 윈도우 콘솔 기본 코드페이지가 cp949 라 한글·— 를 출력하다 죽는다. PDF 내용과는 무관하지만
-# 스크립트가 마지막 print 에서 실패하면 '실패한 줄' 알기 어렵다.
+# 윈도우 콘솔 기본 코드페이지가 cp949 라 한글을 출력하다 죽는다. PDF 내용과는 무관하지만
+# 스크립트가 마지막 print 에서 실패하면 '어디서 실패했는지' 알기 어렵다.
 for _stream in (sys.stdout, sys.stderr):
     try:
         _stream.reconfigure(encoding='utf-8')
@@ -31,157 +32,224 @@ from reportlab.lib.utils import ImageReader
 from reportlab.pdfbase import pdfmetrics
 from reportlab.pdfbase.cidfonts import UnicodeCIDFont
 from reportlab.pdfbase.ttfonts import TTFont
-from reportlab.platypus import (BaseDocTemplate, Frame, Image, KeepTogether,
-                                PageBreak, PageTemplate, Paragraph, Spacer,
-                                Table, TableStyle)
+from reportlab.platypus import (BaseDocTemplate, CondPageBreak, Flowable, Frame,
+                                Image, KeepTogether, PageBreak, PageTemplate,
+                                Paragraph, Spacer, Table, TableStyle)
+from reportlab.platypus.tableofcontents import TableOfContents
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.abspath(os.path.join(HERE, '..', '..'))
 SRC_JSON = os.path.join(HERE, 'build', 'guide.json')
 OUT_PDF = os.path.join(ROOT, 'public', 'manual', 'manager-guide.pdf')
 
-# 폰트.
-#
+
+# ── 폰트 ──────────────────────────────────────────────────────────────────
 # 처음엔 reportlab 내장 CID 폰트(HYGothic-Medium)를 썼다. 폰트 파일이 필요 없어 편했지만
 # **문자 범위가 Adobe-Korea1 로 제한돼 있어 글자가 깨졌다.** verify.py 가 잡아낸 실제 증상:
 #   · 가운뎃점(U+00B7)이 통째로 사라짐 — '프레임1·2·3' → '프레임123'
-#   · 이모지(📍)가 깨지면서 뒤따르는 한글까지 오염 — '촀糊봀‰賂판관리」'
-# 그래서 유니코드 커버리지가 넓은 TTF(맑은고딕)를 우선 쓰고, 없으면 CID 로 떨어진다.
-# 맑은고딕은 한국어 윈도우 기본 탑재라 이 프로젝트 개발 환경에서는 사실상 항상 있다.
+#   · 이모지가 깨지며 뒤따르는 한글까지 오염 — '촀糊봀‰賂판관리」'
+# 그래서 유니코드 커버리지가 넓은 TTF 를 우선 쓰고, 없으면 CID 로 떨어진다.
 def _register_fonts():
     candidates = [
         (r'C:\Windows\Fonts\malgun.ttf', r'C:\Windows\Fonts\malgunbd.ttf'),
-        ('/usr/share/fonts/truetype/nanum/NanumGothic.ttf', '/usr/share/fonts/truetype/nanum/NanumGothicBold.ttf'),
+        ('/usr/share/fonts/truetype/nanum/NanumGothic.ttf',
+         '/usr/share/fonts/truetype/nanum/NanumGothicBold.ttf'),
     ]
     for regular, bold in candidates:
         if os.path.exists(regular):
             pdfmetrics.registerFont(TTFont('GuideSans', regular))
             pdfmetrics.registerFont(TTFont('GuideSans-Bold', bold if os.path.exists(bold) else regular))
             pdfmetrics.registerFontFamily('GuideSans', normal='GuideSans', bold='GuideSans-Bold')
-            return 'GuideSans', 'GuideSans', True
-    # 폴백: 글자가 일부 깨질 수 있다. verify.py 가 걸러내므로 조용히 넘어가지 않는다.
+            return 'GuideSans', 'GuideSans-Bold', True
     print('⚠ 한글 TTF 를 찾지 못해 내장 CID 폰트로 떨어진다 — 가운뎃점·기호가 깨질 수 있다', file=sys.stderr)
     pdfmetrics.registerFont(UnicodeCIDFont('HYGothic-Medium'))
-    pdfmetrics.registerFont(UnicodeCIDFont('HYSMyeongJo-Medium'))
-    return 'HYGothic-Medium', 'HYSMyeongJo-Medium', False
+    return 'HYGothic-Medium', 'HYGothic-Medium', False
 
 
-SANS, SERIF, HAS_TTF = _register_fonts()
-BOLD = 'GuideSans-Bold' if HAS_TTF else SANS
+SANS, BOLD, HAS_TTF = _register_fonts()
 
-INK = colors.HexColor('#1a1a1a')
+# ── 색 ────────────────────────────────────────────────────────────────────
+# 먹색 하나 + 회색 단계 + 초록 악센트 하나. 배지마다 색을 다 다르게 주면 문서가 알록달록해진다.
+INK = colors.HexColor('#111827')
+BODY = colors.HexColor('#374151')
 MUTED = colors.HexColor('#6b7280')
-LINE = colors.HexColor('#e5e7eb')
-ACCENT = colors.HexColor('#2e7d32')
+FAINT = colors.HexColor('#9ca3af')
+RULE_C = colors.HexColor('#e5e7eb')
+RULE_SOFT = colors.HexColor('#f1f3f5')
+ACCENT = colors.HexColor('#166534')
+PANEL = colors.HexColor('#f8faf8')
 
-BADGE_COLORS = {
-    '필수': ('#fdecea', '#c62828'),
-    '권장': ('#eef4ff', '#2e6bd6'),
-    '조건부': ('#fff4e5', '#b26a00'),
-    '시작': ('#eaf7ee', '#2e7d32'),
-    '참조': ('#eef0f3', '#5b6472'),
-    '운영': ('#eaf7ee', '#2e7d32'),
-}
-
-def esc(text):
-    """Paragraph 는 미니 HTML 을 해석한다 — 본문에 든 <, &, 「」 등이 깨지지 않게 이스케이프."""
-    return (str(text if text is not None else '')
-            .replace('&', '&amp;').replace('<', '&lt;').replace('>', '&gt;'))
-
-S = {
-    'h1': ParagraphStyle('h1', fontName=SANS, fontSize=20, leading=27, textColor=INK, spaceAfter=4),
-    'lead': ParagraphStyle('lead', fontName=SANS, fontSize=9.5, leading=15, textColor=MUTED, spaceAfter=14),
-    'part': ParagraphStyle('part', fontName=SANS, fontSize=14, leading=20, textColor=INK, spaceBefore=6, spaceAfter=2),
-    'partsub': ParagraphStyle('partsub', fontName=SANS, fontSize=9, leading=14, textColor=MUTED, spaceAfter=10),
-    'title': ParagraphStyle('title', fontName=SANS, fontSize=12.5, leading=18, textColor=INK),
-    'where': ParagraphStyle('where', fontName=SANS, fontSize=8.5, leading=13, textColor=MUTED, spaceBefore=2),
-    'why': ParagraphStyle('why', fontName=SANS, fontSize=9.5, leading=15.5, textColor=colors.HexColor('#374151'), spaceBefore=5),
-    'step': ParagraphStyle('step', fontName=SANS, fontSize=9.5, leading=15.5, textColor=colors.HexColor('#222'),
-                           leftIndent=13, firstLineIndent=-13, spaceBefore=2, alignment=TA_LEFT),
-    'flabel': ParagraphStyle('flabel', fontName=SANS, fontSize=9, leading=14, textColor=ACCENT),
-    'fdesc': ParagraphStyle('fdesc', fontName=SANS, fontSize=9, leading=14.5, textColor=colors.HexColor('#374151')),
-    'cap': ParagraphStyle('cap', fontName=SANS, fontSize=8.5, leading=13, textColor=colors.HexColor('#555')),
-    'foot': ParagraphStyle('foot', fontName=SERIF, fontSize=7.5, leading=10, textColor=MUTED),
-    # 표 셀의 ALIGN 속성은 Paragraph 안의 텍스트를 가운데로 옮기지 않는다. 스타일에 줘야 한다.
-    'num': ParagraphStyle('num', fontName=SANS, fontSize=9.5, leading=12, textColor=colors.white, alignment=TA_CENTER),
+# 배지는 '해야 하는 정도'를 나타내는 단계값이다. 단계가 드러나도록 세 톤만 쓴다.
+BADGE_HEX = {
+    '필수': '#b91c1c',
+    '시작': '#b91c1c',
+    '권장': '#1d4ed8',
+    '조건부': '#b45309',
+    '참조': '#9ca3af',
+    '운영': '#9ca3af',
 }
 
 PAGE_W, PAGE_H = A4
-MARGIN = 18 * mm
-CONTENT_W = PAGE_W - MARGIN * 2
+MARGIN_X = 20 * mm
+MARGIN_TOP = 22 * mm
+MARGIN_BOT = 20 * mm
+CONTENT_W = PAGE_W - MARGIN_X * 2
+NUM_W = 7.5 * mm        # 번호 칩 한 변
+GUTTER = 5 * mm         # 칩과 본문 사이
 
 
-def badge_table(section, group_label):
-    """제목 줄: [번호] 제목 ......... (계열 꼬리표) [배지]"""
-    no = section.get('no')
-    bits = []
-    if no:
-        bits.append(Paragraph(f'<font color="#ffffff"><b>{esc(no)}</b></font>', S['title']))
-    bits.append(Paragraph(f'<b>{esc(section.get("title"))}</b>', S['title']))
+def esc(text):
+    """Paragraph 는 미니 HTML 을 해석한다 — 본문의 <, & 가 깨지지 않게 이스케이프."""
+    return (str(text if text is not None else '')
+            .replace('&', '&amp;').replace('<', '&lt;').replace('>', '&gt;'))
 
-    tag = ''
+
+S = {
+    'cover_kicker': ParagraphStyle('ck', fontName=BOLD, fontSize=8, leading=12, textColor=FAINT),
+    'cover_title': ParagraphStyle('ct', fontName=BOLD, fontSize=26, leading=34, textColor=INK),
+    'cover_lead': ParagraphStyle('cl', fontName=SANS, fontSize=10, leading=17, textColor=BODY),
+    'cover_meta': ParagraphStyle('cm', fontName=SANS, fontSize=8.5, leading=14, textColor=FAINT),
+
+    'part_no': ParagraphStyle('pn', fontName=BOLD, fontSize=8, leading=11, textColor=ACCENT),
+    'pt': ParagraphStyle('pt', fontName=BOLD, fontSize=15, leading=21, textColor=INK),
+    'part_sub': ParagraphStyle('ps', fontName=SANS, fontSize=9, leading=14, textColor=MUTED),
+
+    # 배지·계열 표시. 번호 칩 오른쪽 본문 열에 맞춰 들여쓴다(칩과 겹치지 않게).
+    'eyebrow': ParagraphStyle('eb', fontName=BOLD, fontSize=7.5, leading=11,
+                              leftIndent=(7.5 + 5) * mm, textColor=FAINT),
+    'ti': ParagraphStyle('ti', fontName=BOLD, fontSize=13, leading=18, textColor=INK),
+    'where': ParagraphStyle('wh', fontName=SANS, fontSize=8.5, leading=13, textColor=MUTED),
+    'why': ParagraphStyle('wy', fontName=SANS, fontSize=9.5, leading=16, textColor=BODY),
+    'step': ParagraphStyle('st', fontName=SANS, fontSize=9.5, leading=16, textColor=BODY,
+                           leftIndent=12, firstLineIndent=-12),
+    'flabel': ParagraphStyle('fl', fontName=BOLD, fontSize=8.5, leading=13.5, textColor=ACCENT),
+    'fdesc': ParagraphStyle('fd', fontName=SANS, fontSize=8.5, leading=13.5, textColor=BODY),
+    'cap': ParagraphStyle('cp', fontName=SANS, fontSize=8, leading=12.5, textColor=MUTED),
+    'num': ParagraphStyle('nu', fontName=BOLD, fontSize=9, leading=12,
+                          textColor=colors.white, alignment=TA_CENTER),
+    # 목차 표제. 'pt' 를 쓰면 목차가 자기 자신을 항목으로 등록한다.
+    'toc_head': ParagraphStyle('th', fontName=BOLD, fontSize=15, leading=21, textColor=INK),
+}
+
+
+class TocMark(Flowable):
+    """목차 등록용 보이지 않는 표식(높이 0).
+
+    reportlab 의 afterFlowable 은 **문서가 직접 그린 flowable** 만 통지한다.
+    섹션 제목은 번호 칩과 함께 Table 안에 들어 있어(section_head) 통지 대상이 아니다.
+    그래서 섹션이 시작되는 자리에 이 표식을 따로 흘려 페이지 번호를 잡는다.
+    CondPageBreak 뒤에 놓아야 '실제로 섹션이 시작된 페이지'가 기록된다.
+    """
+
+    def __init__(self, level, text):
+        Flowable.__init__(self)
+        self.level = level
+        self.text = text
+        self.width = 0
+        self.height = 0
+
+    def draw(self):
+        pass
+
+
+class Rule(Flowable):
+    """가는 가로선. Table 로 선을 그리면 페이지 나눔 계산이 지저분해진다."""
+
+    def __init__(self, width, color=RULE_C, thickness=0.5):
+        Flowable.__init__(self)
+        self.width = width
+        self.color = color
+        self.thickness = thickness
+        self.height = thickness
+
+    def draw(self):
+        self.canv.setStrokeColor(self.color)
+        self.canv.setLineWidth(self.thickness)
+        self.canv.line(0, 0, self.width, 0)
+
+
+def num_chip(no):
+    """번호 칩. 표 셀의 ALIGN 은 Paragraph 내부 정렬을 바꾸지 않아 스타일에 alignment 를 준다."""
+    cell = Table([[Paragraph(esc(no), S['num'])]], colWidths=[NUM_W], rowHeights=[NUM_W])
+    cell.setStyle(TableStyle([
+        ('BACKGROUND', (0, 0), (-1, -1), INK),
+        ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'),
+        ('LEFTPADDING', (0, 0), (-1, -1), 0), ('RIGHTPADDING', (0, 0), (-1, -1), 0),
+        ('TOPPADDING', (0, 0), (-1, -1), 0), ('BOTTOMPADDING', (0, 0), (-1, -1), 0),
+    ]))
+    cell.hAlign = 'LEFT'
+    return cell
+
+
+def section_head(section, group_label):
+    """[배지·계열] 줄 → [번호 칩 | 제목·위치] 2단.
+
+    예전엔 배지를 제목 오른쪽 끝에 띄웠다. 제목 길이에 따라 위치가 제각각이고
+    계열 꼬리표까지 들어가면 두 줄로 접혀 더 지저분했다 — '애매한 위치·크기'라는 지적을 받았다.
+    배지는 제목 위 왼쪽으로 올린다. 본문 열에 맞춰 들여쓰므로 제목과 세로선이 맞는다.
+
+    ⚠ 칩 열의 폭은 반드시 NUM_W + GUTTER 여야 한다. NUM_W 로 두고 RIGHTPADDING 을 주면
+      칸보다 내용이 넓어져 배지·제목이 칩 위로 겹쳐 찍힌다(실제로 그렇게 났었다).
+    """
+    flow = []
+
+    badge = section.get('badge') or ''
+    parts = []
+    if badge:
+        parts.append(f'<font color="{BADGE_HEX.get(badge, "#9ca3af")}">{esc(badge)}</font>')
     groups = section.get('groups') or []
     if groups:
         names = ' · '.join(group_label.get(g, g) for g in groups)
-        tag = f'{names} 전용'
+        parts.append(f'{esc(names)} 전용')
+    if parts:
+        flow.append(Paragraph('&nbsp;&nbsp;&nbsp;'.join(parts), S['eyebrow']))
+        flow.append(Spacer(1, 2))
 
-    badge = section.get('badge') or ''
-    bg, fg = BADGE_COLORS.get(badge, ('#eef0f3', '#5b6472'))
+    col = [Paragraph(esc(section.get('title')), S['ti'])]
+    if section.get('where'):
+        col.append(Spacer(1, 1))
+        col.append(Paragraph(esc(section['where']), S['where']))
 
-    right = []
-    if tag:
-        right.append(Paragraph(f'<font color="#5b6472" size="8">{esc(tag)}</font>', S['where']))
-    right.append(Paragraph(f'<font color="{fg}" size="8"><b>{esc(badge)}</b></font>', S['where']))
-
-    num_cell = ''
+    no = section.get('no')
     if no:
-        num_cell = Table([[Paragraph(f'<b>{esc(no)}</b>', S['num'])]],
-                         colWidths=[11 * mm], rowHeights=[8 * mm])
-        num_cell.setStyle(TableStyle([
-            ('BACKGROUND', (0, 0), (-1, -1), INK),
-            ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'),
-            ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
+        t = Table([[num_chip(no), col]],
+                  colWidths=[NUM_W + GUTTER, CONTENT_W - NUM_W - GUTTER])
+        t.setStyle(TableStyle([
+            ('VALIGN', (0, 0), (-1, -1), 'TOP'),
             ('LEFTPADDING', (0, 0), (-1, -1), 0), ('RIGHTPADDING', (0, 0), (-1, -1), 0),
-            ('TOPPADDING', (0, 0), (-1, -1), 0), ('BOTTOMPADDING', (0, 0), (-1, -1), 0),
+            ('TOPPADDING', (0, 0), (0, 0), 2),   # 칩 윗변을 제목 글자 윗선에 맞춘다
+            ('TOPPADDING', (1, 0), (1, 0), 0),
+            ('BOTTOMPADDING', (0, 0), (-1, -1), 0),
         ]))
-
-    title_w = CONTENT_W - (13 * mm if no else 0) - 42 * mm
-    row = [num_cell, Paragraph(f'<b>{esc(section.get("title"))}</b>', S['title']), right]
-    widths = [13 * mm if no else 0.01, title_w, 42 * mm]
-    t = Table([row], colWidths=widths)
-    t.setStyle(TableStyle([
-        ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'),
-        ('ALIGN', (2, 0), (2, 0), 'RIGHT'),
-        ('LEFTPADDING', (0, 0), (-1, -1), 0), ('RIGHTPADDING', (0, 0), (-1, -1), 0),
-        ('TOPPADDING', (0, 0), (-1, -1), 2), ('BOTTOMPADDING', (0, 0), (-1, -1), 2),
-    ]))
-    return t
+        flow.append(t)
+    else:
+        flow.extend(col)
+    return flow
 
 
 def fields_table(fields):
-    rows = []
-    for f in fields:
-        rows.append([
-            Paragraph(f'<b>{esc(f.get("label"))}</b>', S['flabel']),
-            Paragraph(esc(f.get('desc')), S['fdesc']),
-        ])
-    # 라벨 칸이 좁으면 '프레임이 정하는 / 범위' 처럼 어색하게 접힌다.
-    t = Table(rows, colWidths=[42 * mm, CONTENT_W - 42 * mm])
+    rows = [[Paragraph(esc(f.get('label')), S['flabel']),
+             Paragraph(esc(f.get('desc')), S['fdesc'])] for f in fields]
+    t = Table(rows, colWidths=[40 * mm, CONTENT_W - 40 * mm], repeatRows=0)
     t.setStyle(TableStyle([
         ('VALIGN', (0, 0), (-1, -1), 'TOP'),
-        ('BACKGROUND', (0, 0), (0, -1), colors.HexColor('#f7faf7')),
-        ('BOX', (0, 0), (-1, -1), 0.5, LINE),
-        ('INNERGRID', (0, 0), (-1, -1), 0.4, LINE),
-        ('LEFTPADDING', (0, 0), (-1, -1), 6), ('RIGHTPADDING', (0, 0), (-1, -1), 6),
-        ('TOPPADDING', (0, 0), (-1, -1), 5), ('BOTTOMPADDING', (0, 0), (-1, -1), 5),
+        ('BACKGROUND', (0, 0), (0, -1), PANEL),
+        ('LINEBELOW', (0, 0), (-1, -2), 0.4, RULE_SOFT),
+        ('BOX', (0, 0), (-1, -1), 0.5, RULE_C),
+        ('LEFTPADDING', (0, 0), (-1, -1), 7), ('RIGHTPADDING', (0, 0), (-1, -1), 7),
+        ('TOPPADDING', (0, 0), (-1, -1), 6), ('BOTTOMPADDING', (0, 0), (-1, -1), 6),
     ]))
     return t
 
 
-def shot_flowables(shots):
-    """스크린샷은 원본보다 크게 늘리지 않는다(확대하면 글자가 뭉개진다)."""
+# 스크린샷 한 장이 한 페이지를 다 먹으면 앞뒤 설명과 떨어져 읽기 나빠진다.
+SHOT_MAX_H = 112 * mm
+SHOT_MAX_W = CONTENT_W
+
+
+def shot_blocks(shots):
+    """이미지와 캡션은 반드시 붙어 있어야 한다(KeepTogether)."""
     out = []
-    max_w = CONTENT_W
     for sh in shots:
         path = sh.get('path')
         if not path or not os.path.exists(path):
@@ -190,25 +258,54 @@ def shot_flowables(shots):
             iw, ih = ImageReader(path).getSize()
         except Exception:
             continue
-        scale = min(max_w / iw, 1.0)
-        w, h = iw * scale, ih * scale
-        # 한 페이지를 넘는 세로 스크린샷은 페이지 높이에 맞춘다
-        max_h = PAGE_H - MARGIN * 2 - 40 * mm
-        if h > max_h:
-            w, h = w * (max_h / h), max_h
-        img = Image(path, width=w, height=h)
+        scale = min(SHOT_MAX_W / iw, SHOT_MAX_H / ih, 1.0)  # 원본보다 확대하지 않는다
+        img = Image(path, width=iw * scale, height=ih * scale)
         img.hAlign = 'LEFT'
-        block = [Spacer(1, 5), img]
+        block = [img]
         if sh.get('cap'):
             block.append(Spacer(1, 3))
-            block.append(Paragraph(f'<font color="#2e7d32">●</font> {esc(sh["cap"])}', S['cap']))
+            block.append(Paragraph(esc(sh['cap']), S['cap']))
         out.append(KeepTogether(block))
+        out.append(Spacer(1, 7))
     return out
+
+
+class GuideDoc(BaseDocTemplate):
+    """목차 페이지번호를 채우려면 multiBuild + afterFlowable 통지가 필요하다."""
+
+    def afterFlowable(self, flowable):
+        if isinstance(flowable, TocMark):
+            self.notify('TOCEntry', (flowable.level, flowable.text, self.page))
+        elif isinstance(flowable, Paragraph) and flowable.style.name == 'pt':
+            self.notify('TOCEntry', (0, flowable.getPlainText(), self.page))
+
+
+def draw_frame(canvas, doc):
+    """머리말·꼬리말.
+
+    지문(fingerprint)은 **여기 찍지 않는다.** 내부 검증용 값이라 가맹점에게는 의미가 없고,
+    실제로 '이게 왜 있냐'는 지적을 받았다. PDF 메타데이터(subject)에만 넣고
+    verify.py 가 거기서 읽는다.
+    """
+    canvas.saveState()
+    if doc.page > 1:
+        canvas.setFont(SANS, 7.5)
+        canvas.setFillColor(FAINT)
+        canvas.drawString(MARGIN_X, PAGE_H - MARGIN_TOP + 7 * mm, 'SHOPGO 관리자 이용가이드')
+        canvas.setStrokeColor(RULE_SOFT)
+        canvas.setLineWidth(0.5)
+        y = PAGE_H - MARGIN_TOP + 5 * mm
+        canvas.line(MARGIN_X, y, PAGE_W - MARGIN_X, y)
+        canvas.setFont(SANS, 8.5)
+        canvas.setFillColor(MUTED)
+        canvas.drawRightString(PAGE_W - MARGIN_X, MARGIN_BOT - 9 * mm, str(doc.page))
+    canvas.restoreState()
 
 
 def build():
     if not os.path.exists(SRC_JSON):
-        print('build/guide.json 이 없다. 먼저 `node scripts/guide-pdf/extract.mjs` 를 돌릴 것', file=sys.stderr)
+        print('build/guide.json 이 없다. 먼저 `node scripts/guide-pdf/extract.mjs` 를 돌릴 것',
+              file=sys.stderr)
         return 1
     with open(SRC_JSON, encoding='utf-8') as fp:
         data = json.load(fp)
@@ -216,68 +313,111 @@ def build():
     fingerprint = data.get('fingerprint', '')
     group_label = data.get('frameGroupLabel', {})
     sections = data.get('sections', [])
+    issued = date.today().strftime('%Y년 %-m월 %-d일') if os.name != 'nt' else date.today().strftime('%Y년 %m월 %d일').replace(' 0', ' ')
 
-    def on_page(canvas, doc):
-        canvas.saveState()
-        canvas.setFont(SERIF, 7.5)
-        canvas.setFillColor(MUTED)
-        # 지문을 푸터에 박아 둔다 — verify.py 가 이 값으로 최신 여부를 판정한다.
-        canvas.drawString(MARGIN, 11 * mm, f'SHOPGO 관리자 이용가이드 · 내용본 {fingerprint}')
-        canvas.drawRightString(PAGE_W - MARGIN, 11 * mm, f'{doc.page}')
-        canvas.setStrokeColor(LINE)
-        canvas.line(MARGIN, 14 * mm, PAGE_W - MARGIN, 14 * mm)
-        canvas.restoreState()
-
-    doc = BaseDocTemplate(OUT_PDF, pagesize=A4,
-                          leftMargin=MARGIN, rightMargin=MARGIN,
-                          topMargin=MARGIN, bottomMargin=MARGIN + 6 * mm,
-                          title='SHOPGO 관리자 이용가이드', author='SHOPGO',
-                          subject=f'guide-fingerprint:{fingerprint}')
-    frame = Frame(MARGIN, MARGIN + 6 * mm, CONTENT_W, PAGE_H - MARGIN * 2 - 6 * mm, id='body')
-    doc.addPageTemplates([PageTemplate(id='main', frames=[frame], onPage=on_page)])
+    doc = GuideDoc(OUT_PDF, pagesize=A4,
+                   leftMargin=MARGIN_X, rightMargin=MARGIN_X,
+                   topMargin=MARGIN_TOP, bottomMargin=MARGIN_BOT,
+                   title='SHOPGO 관리자 이용가이드', author='SHOPGO',
+                   subject=f'guide-fingerprint:{fingerprint}')
+    frame = Frame(MARGIN_X, MARGIN_BOT, CONTENT_W, PAGE_H - MARGIN_TOP - MARGIN_BOT, id='body')
+    doc.addPageTemplates([PageTemplate(id='main', frames=[frame], onPage=draw_frame)])
 
     story = []
-    story.append(Paragraph('관리자 이용가이드', S['h1']))
-    story.append(Paragraph(
-        '처음이시라면 아래 순서대로 따라 하시면 쇼핑몰을 열 수 있습니다. 앞 단계가 뒤 단계의 준비가 되니 순서를 지켜주세요.<br/>'
-        '프레임 계열에 따라 관리자 메뉴가 다릅니다 — 항목에 「프레임4·5 전용」 같은 표시가 있으면 그 계열에만 해당합니다.',
-        S['lead']))
 
-    for part, heading, sub in (
-        (1, '① 쇼핑몰 오픈까지 — 이 순서대로', '앞 단계가 뒤 단계의 전제입니다.'),
-        (2, '② 메뉴별 상세 안내', '각 메뉴가 어떤 역할을 하는지 항목별로 정리했습니다. 필요할 때 찾아보세요.'),
+    # ── 표지 ─────────────────────────────────────────────────────────────
+    story.append(Spacer(1, 24 * mm))
+    story.append(Paragraph('SHOPGO', S['cover_kicker']))
+    story.append(Spacer(1, 3))
+    story.append(Paragraph('관리자 이용가이드', S['cover_title']))
+    story.append(Spacer(1, 5 * mm))
+    story.append(Rule(CONTENT_W, INK, 1.2))
+    story.append(Spacer(1, 7 * mm))
+    story.append(Paragraph(
+        '처음이시라면 <b>1부의 순서대로</b> 따라 하시면 쇼핑몰을 열 수 있습니다. '
+        '앞 단계가 뒤 단계의 준비가 되니 순서를 지켜 주세요.<br/>'
+        '2부는 메뉴별 상세 안내입니다. 순서 없이 필요할 때 찾아보세요.', S['cover_lead']))
+    story.append(Spacer(1, 5 * mm))
+    story.append(Paragraph(
+        '프레임 계열에 따라 관리자 메뉴가 다릅니다. 항목 위에 '
+        '<font color="#9ca3af">프레임4·5 전용</font> 같은 표시가 있으면 그 계열에만 해당합니다.',
+        S['cover_lead']))
+    story.append(Spacer(1, 14 * mm))
+    story.append(Paragraph(f'발행 {issued}', S['cover_meta']))
+    story.append(Paragraph('문의 office@forspay.com', S['cover_meta']))
+
+    # ── 목차 ─────────────────────────────────────────────────────────────
+    story.append(PageBreak())
+    story.append(Paragraph('목차', S['toc_head']))
+    story.append(Spacer(1, 2.5 * mm))
+    story.append(Rule(CONTENT_W, RULE_C, 0.5))
+    story.append(Spacer(1, 5 * mm))
+    toc = TableOfContents()
+    toc.levelStyles = [
+        ParagraphStyle('toc0', fontName=BOLD, fontSize=10, leading=21, textColor=INK, spaceBefore=10),
+        ParagraphStyle('toc1', fontName=SANS, fontSize=9.5, leading=17, textColor=BODY, leftIndent=9),
+    ]
+    toc.dotsMinLevel = 1
+    story.append(toc)
+
+    # ── 본문 ─────────────────────────────────────────────────────────────
+    for part, no, heading, sub in (
+        (1, '1부', '쇼핑몰 오픈까지', '이 순서대로 따라 하시면 됩니다. 앞 단계가 뒤 단계의 전제입니다.'),
+        (2, '2부', '메뉴별 상세 안내', '각 메뉴가 어떤 역할을 하는지 항목별로 정리했습니다.'),
     ):
         rows = [s for s in sections if s.get('part') == part]
         if not rows:
             continue
-        if part == 2:
-            story.append(PageBreak())
-        story.append(Paragraph(esc(heading), S['part']))
-        story.append(Paragraph(esc(sub), S['partsub']))
-        for s in rows:
-            block = [badge_table(s, group_label)]
-            if s.get('where'):
-                block.append(Paragraph(f'▸ {esc(s["where"])}', S['where']))
-            if s.get('why'):
-                block.append(Paragraph(esc(s['why']), S['why']))
-            if s.get('steps'):
-                for i, step in enumerate(s['steps'], 1):
-                    block.append(Paragraph(f'{i}. {esc(step)}', S['step']))
-            if s.get('fields'):
-                block.append(Spacer(1, 6))
-                block.append(fields_table(s['fields']))
-            # 제목~설명까지는 한 페이지에 붙여 둔다. 스크린샷은 커서 따로 흘린다.
-            story.append(KeepTogether(block))
-            story.extend(shot_flowables(s.get('shots') or []))
-            story.append(Spacer(1, 7))
-            story.append(Table([['']], colWidths=[CONTENT_W], rowHeights=[0.4],
-                               style=TableStyle([('BACKGROUND', (0, 0), (-1, -1), LINE)])))
-            story.append(Spacer(1, 9))
+        story.append(PageBreak())
+        story.append(Paragraph(no, S['part_no']))
+        story.append(Spacer(1, 1))
+        story.append(Paragraph(heading, S['pt']))
+        story.append(Spacer(1, 2 * mm))
+        story.append(Paragraph(sub, S['part_sub']))
+        story.append(Spacer(1, 3.5 * mm))
+        story.append(Rule(CONTENT_W, INK, 1.0))
+        story.append(Spacer(1, 8 * mm))
 
-    doc.build(story)
+        for idx, s in enumerate(rows):
+            # 페이지 끝에 제목만 걸치고 내용이 다음 장으로 넘어가는 걸 막는다.
+            # 남은 높이가 이만큼 안 되면 새 페이지에서 시작한다 — '애매하게 우겨넣지 않기'.
+            story.append(CondPageBreak(62 * mm))
+            # 목차 라벨. 계열이 다른 항목끼리 번호·제목이 겹친다(6번이 둘, '디자인관리'가 둘) —
+            # 웹 가이드에서는 자기 계열 것만 보이니 문제가 없지만 PDF 는 전부 싣기 때문에
+            # 목차에서 구분이 안 된다. 계열명을 붙여 갈라 준다.
+            label = f"{s['no']}. {s['title']}" if s.get('no') else s.get('title', '')
+            if s.get('groups'):
+                label += ' · ' + ' · '.join(group_label.get(g, g) for g in s['groups'])
+            story.append(TocMark(1, label))
+            head = list(section_head(s, group_label))
+            if s.get('why'):
+                head.append(Spacer(1, 3.5 * mm))
+                head.append(Paragraph(esc(s['why']), S['why']))
+            # 제목·위치·요약은 반드시 한 덩어리로 붙어 있어야 한다.
+            story.append(KeepTogether(head))
+
+            if s.get('steps'):
+                story.append(Spacer(1, 3 * mm))
+                for i, step in enumerate(s['steps'], 1):
+                    story.append(Paragraph(f'{i}.&nbsp;&nbsp;{esc(step)}', S['step']))
+            if s.get('fields'):
+                story.append(Spacer(1, 4.5 * mm))
+                story.append(fields_table(s['fields']))
+            shots = shot_blocks(s.get('shots') or [])
+            if shots:
+                story.append(Spacer(1, 5 * mm))
+                story.extend(shots)
+
+            if idx < len(rows) - 1:
+                story.append(Spacer(1, 5 * mm))
+                story.append(Rule(CONTENT_W, RULE_SOFT, 0.6))
+                story.append(Spacer(1, 8 * mm))
+
+    doc.multiBuild(story)
     size_kb = os.path.getsize(OUT_PDF) / 1024
     print(f'PDF 생성 완료 — {OUT_PDF}')
-    print(f'  섹션 {len(sections)}개 · {size_kb:.0f}KB · 지문 {fingerprint}')
+    print(f'  섹션 {len(sections)}개 · {size_kb:.0f}KB')
+    print(f'  지문 {fingerprint} — 본문에 찍지 않고 메타데이터에만 기록한다')
     return 0
 
 

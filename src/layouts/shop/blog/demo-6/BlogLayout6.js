@@ -7,7 +7,7 @@ import { useState } from "react";
 import DialogSearch from "src/components/dialog/DialogSearch";
 import { useAuthContext } from "src/layouts/manager/auth/useAuthContext";
 import StorefrontPopups from "src/components/elements/shop/StorefrontPopups";
-import { isStorefrontHome } from "src/utils/blog-shop-route";
+import { isStorefrontHome, normalizePath } from "src/utils/blog-shop-route";
 import LanguagePopover from "src/layouts/manager/header/LanguagePopover";
 import { Badge } from "@mui/material";
 import { useLocales } from "src/locales";
@@ -104,6 +104,16 @@ const HeaderActions = styled.div`
 const Main = styled.main`
   flex: 1;
 `
+/* PC 에서 본문이 좌우로 퍼지지 않게 프레임 폭으로 잡아둔다.
+   이 프레임(6~11)에는 전용 화면이 홈과 상품상세뿐이라, 나머지 경로
+   (/shop/items · 주문서 · 약관 · 위시리스트 등)는 쇼핑몰용 넓은 화면으로 떨어져
+   화면 끝까지 퍼졌다. 이 레이아웃의 기준 폭은 홈이 쓰는 Container 와 같은 1100px 이다.
+   홈·상품상세는 풀블리드(히어로 92vh)로 짜인 전용 화면이라 감싸면 안 된다. */
+const Contained = styled.div`
+  width: 100%;
+  max-width: 1100px;
+  margin: 0 auto;
+`
 /* 정보 줄 자체는 원래 가로였는데, 상단 여백 4rem + 28px 브랜드명 + 이탤릭 태그라인 때문에
    푸터가 한 화면 가까이 차지했다("너무 크고 돋보인다"는 가맹점 의견).
    표시 의무 항목은 그대로 두고 여백과 글자 크기만 낮춘다. */
@@ -169,6 +179,8 @@ const BlogLayout6 = (props) => {
   const brandName = themeDnsData?.name || 'BRAND';
   const { user, logout } = useAuthContext();
   const [searchOpen, setSearchOpen] = useState(false);
+  // 이 프레임 전용으로 짜인 풀블리드 화면(홈·상품상세)만 폭 제한에서 뺀다. Contained 주석 참고.
+  const isFullBleed = isStorefrontHome(router) || normalizePath(router).startsWith('/shop/item/');
 
   // 로그아웃 후 전체 리로드 — src/views/blog/auth/my-page/demo-2.js 에서 쓰는 것과 같은 방식.
   const onLogout = async () => {
@@ -233,7 +245,7 @@ const BlogLayout6 = (props) => {
         </HeaderActions>
       </Header>
       <StorefrontPopups />
-      <Main>{children}</Main>
+      <Main>{isFullBleed ? children : <Contained>{children}</Contained>}</Main>
       <Footer>
         <FooterBrand>{brandName}</FooterBrand>
         {/* 전자상거래법상 표시 의무 항목이 빠져 있었다 —

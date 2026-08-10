@@ -11,6 +11,18 @@ display:flex;
 flex-direction:column;
 min-height:100vh;
 `
+/* PC 에서 본문이 좌우로 퍼지지 않게 프레임 폭으로 잡아둔다.
+   이 프레임(프레임4)은 헤더·푸터·홈·상품상세가 전부 840px 한 컬럼으로 짜여 있는데,
+   블로그 전용 화면이 없는 경로(/shop/items, 주문서, 약관, 위시리스트 등)는
+   쇼핑몰용 넓은 화면으로 떨어진다. 그래서 헤더·푸터만 가운데 840px 이고
+   본문만 화면 끝까지 퍼져 서로 다른 사이트처럼 보였다.
+   여기서 한 번 잡으면 그 경로들이 전부 프레임 폭을 따른다 —
+   프레임 전용 화면들은 이미 840px 이라 이 래퍼가 있어도 달라지지 않는다. */
+const Content = styled.div`
+width:100%;
+max-width:840px;
+margin:0 auto;
+`
 const BlogLayout1 = (props) => {
   const { themeMode, onToggleMode } = useSettingsContext();
   const [useLayout, setUseLayout] = useState(true);
@@ -49,7 +61,7 @@ const BlogLayout1 = (props) => {
                 router
               }} />
             <StorefrontPopups />
-            {children}
+            <Content>{children}</Content>
             <Footer
               data={{
               }}

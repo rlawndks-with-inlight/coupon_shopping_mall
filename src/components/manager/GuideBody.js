@@ -2,11 +2,13 @@ import { useState } from 'react';
 import { Box, Stack, Typography, Button, Chip, Divider } from '@mui/material';
 import { Icon } from '@iconify/react';
 import { useRouter } from 'next/router';
-import { GUIDE_PART1, GUIDE_PART2 } from './guideContent';
+import { GUIDE_PART1, GUIDE_PART2, FRAME_GROUP_LABEL, guideRouteOf } from './guideContent';
 
 // 단일 소스(guideContent)를 렌더하는 공용 가이드 본문.
-// - /manager/guide (로그인 후): showRouteButtons=true, brandId 전달 → '해당 메뉴로 이동' 노출
-// - 랜딩 /manual (신청 전): showRouteButtons=false → 버튼 숨김
+// - /manager/guide (로그인 후): showRouteButtons=true, brandId·frameGroup 전달
+//   → '해당 메뉴로 이동' 노출 + 자기 프레임에 해당하는 항목만 표시
+// - 랜딩 /manual (신청 전): showRouteButtons=false, frameGroup 없음
+//   → 버튼 숨김 + 모든 항목 표시(대신 「프레임6~11 전용」 같은 꼬리표를 붙인다)
 // 스크린샷: /manual/guide/{id}.png 가 있으면 표시, 없으면 '준비중' 자리.
 
 const badgeColor = (badge) => {
@@ -105,9 +107,14 @@ const GuideImage = ({ id, shots }) => {
   );
 };
 
-const GuideCard = ({ s, ordered, showRouteButtons, brandId, router }) => {
+const GuideCard = ({ s, ordered, showRouteButtons, brandId, router, frameGroup }) => {
   const bc = badgeColor(s.badge);
-  const route = s.route ? s.route.replace('{id}', brandId ?? '') : null;
+  const rawRoute = guideRouteOf(s, frameGroup);
+  const route = rawRoute ? rawRoute.replace('{id}', brandId ?? '') : null;
+  // 프레임을 모르는 화면(신청 전 /manual)에서는 항목을 지우지 않고 어느 계열 것인지만 알려준다.
+  const groupTag = !frameGroup && s.groups?.length
+    ? s.groups.map((g) => FRAME_GROUP_LABEL[g]).filter(Boolean).join(' · ')
+    : null;
   return (
     <Box id={s.id} sx={{ border: '1px solid #eee', borderRadius: 2, p: { xs: 2, md: 2.5 }, bgcolor: '#fff', scrollMarginTop: 90 }}>
       <Stack direction="row" alignItems="center" spacing={1.5} sx={{ mb: 1 }}>
@@ -117,6 +124,9 @@ const GuideCard = ({ s, ordered, showRouteButtons, brandId, router }) => {
           </Box>
         )}
         <Typography sx={{ fontSize: 17, fontWeight: 800, flex: 1 }}>{s.title}</Typography>
+        {groupTag && (
+          <Chip label={`${groupTag} 전용`} size="small" sx={{ bgcolor: '#f1f3f6', color: '#5b6472', fontWeight: 700, height: 22 }} />
+        )}
         <Chip label={s.badge} size="small" sx={{ bgcolor: bc.bg, color: bc.fg, fontWeight: 700, height: 22 }} />
       </Stack>
 
@@ -147,15 +157,17 @@ const GuideCard = ({ s, ordered, showRouteButtons, brandId, router }) => {
   );
 };
 
-const GuideBody = ({ showRouteButtons = false, brandId }) => {
+const GuideBody = ({ showRouteButtons = false, brandId, frameGroup = null }) => {
   const router = useRouter();
+  // 프레임을 알면 자기 계열 항목만 남긴다. 모르면(신청 전 랜딩) 전부 두고 꼬리표만 붙인다.
+  const forFrame = (list) => (frameGroup ? list.filter((s) => !s.groups || s.groups.includes(frameGroup)) : list);
   return (
     <>
       <Typography sx={{ fontSize: 18, fontWeight: 800, mb: 0.5 }}>① 쇼핑몰 오픈까지 — 이 순서대로</Typography>
       <Typography sx={{ fontSize: 13, color: '#999', mb: 2 }}>앞 단계가 뒤 단계의 전제입니다.</Typography>
       <Stack spacing={2}>
-        {GUIDE_PART1.map((s) => (
-          <GuideCard key={s.id} s={s} ordered showRouteButtons={showRouteButtons} brandId={brandId} router={router} />
+        {forFrame(GUIDE_PART1).map((s) => (
+          <GuideCard key={s.id} s={s} ordered showRouteButtons={showRouteButtons} brandId={brandId} router={router} frameGroup={frameGroup} />
         ))}
       </Stack>
 
@@ -170,8 +182,8 @@ const GuideBody = ({ showRouteButtons = false, brandId }) => {
       <Typography sx={{ fontSize: 18, fontWeight: 800, mb: 0.5 }}>② 메뉴별 상세 안내</Typography>
       <Typography sx={{ fontSize: 13, color: '#999', mb: 2 }}>각 메뉴가 어떤 역할을 하는지 항목별로 정리했습니다. 특별한 순서 없이, 필요할 때 찾아보세요.</Typography>
       <Stack spacing={2}>
-        {GUIDE_PART2.map((s) => (
-          <GuideCard key={s.id} s={s} showRouteButtons={showRouteButtons} brandId={brandId} router={router} />
+        {forFrame(GUIDE_PART2).map((s) => (
+          <GuideCard key={s.id} s={s} showRouteButtons={showRouteButtons} brandId={brandId} router={router} frameGroup={frameGroup} />
         ))}
       </Stack>
     </>

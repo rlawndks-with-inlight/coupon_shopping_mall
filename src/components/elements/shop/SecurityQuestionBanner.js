@@ -68,6 +68,31 @@ const SecurityQuestionBanner = ({ sx = {} }) => {
   const [questionId, setQuestionId] = useState(0);
   const [answer, setAnswer] = useState('');
   const [loading, setLoading] = useState(false);
+  // 고정 헤더 보정값(px). 아래 useEffect 에서 실제 헤더 높이를 재서 채운다.
+  const [headerOffset, setHeaderOffset] = useState(0);
+
+  // 스토어프론트 헤더는 대부분 position:fixed 라 문서 흐름에서 빠져 있다.
+  // 이 배너는 ShopLayout 이 본문 맨 앞에 끼워 넣으므로, 보정하지 않으면 헤더 아래에 깔린다
+  // (각 화면은 자기 최상단에 56px 안팎의 여백을 직접 넣어 헤더를 피하고 있는데,
+  //  그 여백보다 위에 놓이는 게 이 배너다).
+  // 프레임마다 헤더 높이가 달라 상수표를 두면 헤더를 고칠 때 조용히 어긋난다 → 마운트 후 직접 잰다.
+  // sticky 헤더(프레임6~11)는 흐름을 차지하므로 보정하지 않는다. 매니저 페이지도 제외 —
+  // 그쪽 레이아웃이 이미 헤더 높이만큼 본문을 내려놨다.
+  useEffect(() => {
+    if (String(router?.pathname ?? '').startsWith('/manager')) return;
+    const measure = () => {
+      const el = typeof document === 'undefined' ? null : document.querySelector('header');
+      if (!el) {
+        setHeaderOffset(0);
+        return;
+      }
+      const position = window.getComputedStyle(el).position;
+      setHeaderOffset(position === 'fixed' ? el.offsetHeight : 0);
+    };
+    measure();
+    window.addEventListener('resize', measure);
+    return () => window.removeEventListener('resize', measure);
+  }, [router?.pathname]);
 
   useEffect(() => {
     try {
@@ -197,7 +222,16 @@ const SecurityQuestionBanner = ({ sx = {} }) => {
       {isManagerPage ? (
         banner
       ) : (
-        <Box sx={{ width: '92%', maxWidth: '1200px', margin: '1rem auto' }}>{banner}</Box>
+        <Box
+          sx={{
+            width: '92%',
+            maxWidth: '1200px',
+            mx: 'auto',
+            // 고정 헤더 높이 + 본래 여백(1rem=16px). headerOffset 은 sticky·매니저면 0 이다.
+            mt: `${headerOffset + 16}px`,
+            mb: '1rem',
+          }}
+        >{banner}</Box>
       )}
 
       <Dialog open={open} onClose={() => setOpen(false)} fullWidth maxWidth="xs">

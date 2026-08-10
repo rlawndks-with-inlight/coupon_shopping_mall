@@ -131,7 +131,7 @@ const Footer = (props) => {
                   >
                     <img
                       src="http://img1.kbstar.com/img/escrow/escrowcmark.gif"
-                      alt="KB에스크로 이체 인증마크"
+                      alt={translate('KB에스크로 이체 인증마크')}
                       style={{ border: 0 }}
                     />
                   </a>

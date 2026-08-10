@@ -247,7 +247,7 @@ const Header = () => {
   const { themeMode, onToggleMode, onChangeCartData, onChangeWishData, themePostCategoryList, themeCategoryList, themeDnsData, themeWishData, themeCartData } = useSettingsContext();
   const headerCategories = (themeCategoryList ?? []).flatMap((g) => g?.product_categories ?? []);
   const { user, logout } = useAuthContext();
-  const { currentLang } = useLocales();
+  const { currentLang, translate } = useLocales();
   const [keyword, setKeyword] = useState("");
   const onSearch = () => {
     router.push(`/shop/search?keyword=${keyword}`)
@@ -405,20 +405,20 @@ const Header = () => {
                       (모바일은 사이드메뉴, PC 전체메뉴는 다이얼로그에 따로 있다 — 여기는 PC 상단 바) */}
                   {
                     themePostCategoryList.length > 0 &&
-                    <Button sx={{ height: '24px' }} onClick={() => router.push(`/shop/service/${themePostCategoryList[0]?.id}`)}>고객센터</Button>
+                    <Button sx={{ height: '24px' }} onClick={() => router.push(`/shop/service/${themePostCategoryList[0]?.id}`)}>{translate('고객센터')}</Button>
                   }
                   {user ?
                     <>
-                      <Button sx={{ height: '24px' }} onClick={() => router.push('/shop/auth/my-page')}>마이페이지</Button>
-                      <Button sx={{ height: '24px' }} onClick={() => router.push('/shop/auth/history')}>주문내역</Button>
+                      <Button sx={{ height: '24px' }} onClick={() => router.push('/shop/auth/my-page')}>{translate('마이페이지')}</Button>
+                      <Button sx={{ height: '24px' }} onClick={() => router.push('/shop/auth/history')}>{translate('주문내역')}</Button>
                       <Button variant="outlined" sx={{ height: '24px' }} onClick={() => {
                         onLogout();
-                      }}>로그아웃</Button>
+                      }}>{translate('로그아웃')}</Button>
                     </>
                     :
                     <>
-                      <Button sx={{ height: '24px' }} onClick={() => router.push('/shop/auth/sign-up')}>회원가입</Button>
-                      <Button variant="outlined" sx={{ height: '24px' }} onClick={() => router.push('/shop/auth/login')}>로그인</Button>
+                      <Button sx={{ height: '24px' }} onClick={() => router.push('/shop/auth/sign-up')}>{translate('회원가입')}</Button>
+                      <Button variant="outlined" sx={{ height: '24px' }} onClick={() => router.push('/shop/auth/login')}>{translate('로그인')}</Button>
                     </>}
                 </Row>
               </TopMenuContainer>
@@ -453,7 +453,7 @@ const Header = () => {
                   PC에서 검색창·아이콘 묶음이 좌측에 몰리지 않도록 여기서 우측 정렬을 받는다. */}
               <NoneShowMobile style={{ marginLeft: 'auto' }}>
                 <TextField
-                  label='통합검색'
+                  label={translate('통합검색')}
                   id='size-small'
                   size='small'
                   onChange={(e) => {
@@ -707,7 +707,7 @@ const Header = () => {
           {
             themePostCategoryList.length > 0 &&
             <>
-              <DialogMenuTitle style={{ marginTop: '1rem' }}>고객센터</DialogMenuTitle>
+              <DialogMenuTitle style={{ marginTop: '1rem' }}>{translate('고객센터')}</DialogMenuTitle>
               <Row style={{ flexWrap: 'wrap', padding: '0.5rem', columnGap: '1rem', rowGap: '1rem' }}>
                 {themePostCategoryList.map((item, idx) => (
                   <>
@@ -720,7 +720,7 @@ const Header = () => {
               </Row>
             </>
           }
-          <DialogMenuTitle style={{ marginTop: '1rem' }}>마이페이지</DialogMenuTitle>
+          <DialogMenuTitle style={{ marginTop: '1rem' }}>{translate('마이페이지')}</DialogMenuTitle>
           <Row style={{ flexWrap: 'wrap', padding: '0.5rem', columnGap: '1rem', rowGap: '1rem' }}>
             {user ?
               <>
@@ -729,13 +729,13 @@ const Header = () => {
                     <DialogMenuContent onClick={() => {
                       router.push(`/shop/auth/${item.link_key}`);
                       setDialogMenuOpen(false);
-                    }}>{item.name}</DialogMenuContent>
+                    }}>{translate(item.name)}</DialogMenuContent>
                   </>
                 ))}
                 <DialogMenuContent onClick={() => {
                   onLogout();
                   setDialogMenuOpen(false);
-                }} >로그아웃</DialogMenuContent>
+                }} >{translate('로그아웃')}</DialogMenuContent>
               </>
               :
               <>
@@ -744,7 +744,7 @@ const Header = () => {
                     <DialogMenuContent onClick={() => {
                       router.push(`/shop/auth/${item.link_key}`);
                       setDialogMenuOpen(false);
-                    }}>{item?.name}</DialogMenuContent>
+                    }}>{translate(item?.name)}</DialogMenuContent>
                   </>
                 ))}
               </>}
@@ -770,7 +770,7 @@ const Header = () => {
         }}
           className="none-scroll"
         >
-          <ColumnMenuTitle>쇼핑 카테고리</ColumnMenuTitle>
+          <ColumnMenuTitle>{translate('쇼핑 카테고리')}</ColumnMenuTitle>
           <TreeView
             defaultCollapseIcon={<Icon icon={'ic:baseline-minus'} />}
             defaultExpandIcon={<Icon icon={'ic:baseline-plus'} />}
@@ -791,11 +791,11 @@ const Header = () => {
               그 결과 모바일 폭(≤1000px)에서는 게시판으로 갈 방법이 아예 없었다 —
               PC 전체메뉴 다이얼로그에만 있었고 모바일 사이드메뉴에는 없었다.
               실제 변수(themePostCategoryList)로 되살린다. PC 다이얼로그와 같은 목록이다.
-              ※ 이 파일에는 translate 가 없다(useLocales 에서 currentLang 만 받는다).
+              ※ translate 는 useLocales 에서 함께 받는다(메뉴 배열은 모듈 최상위라 렌더 지점에서 번역한다).
                  주변 live 코드와 동일하게 한글 문자열을 그대로 쓴다. */}
           {themePostCategoryList.length > 0 &&
             <>
-              <ColumnMenuTitle>고객센터</ColumnMenuTitle>
+              <ColumnMenuTitle>{translate('고객센터')}</ColumnMenuTitle>
               {themePostCategoryList.map((item, idx) => (
                 <ColumnMenuContent key={item?.id ?? idx} onClick={() => {
                   router.push(`/shop/service/${item.id}`);
@@ -804,7 +804,7 @@ const Header = () => {
               ))}
             </>
           }
-          <ColumnMenuTitle>마이페이지</ColumnMenuTitle>
+          <ColumnMenuTitle>{translate('마이페이지')}</ColumnMenuTitle>
           {user ?
             <>
               {authList.map((item, idx) => (
@@ -812,13 +812,13 @@ const Header = () => {
                   <ColumnMenuContent onClick={() => {
                     router.push(`/shop/auth/${item.link_key}`);
                     setSideMenuOpen(false);
-                  }} style={{ paddingLeft: '1rem' }}>{item.name}</ColumnMenuContent>
+                  }} style={{ paddingLeft: '1rem' }}>{translate(item.name)}</ColumnMenuContent>
                 </>
               ))}
               <ColumnMenuContent onClick={() => {
                 onLogout();
                 setSideMenuOpen(false);
-              }} style={{ paddingLeft: '1rem' }}>로그아웃</ColumnMenuContent>
+              }} style={{ paddingLeft: '1rem' }}>{translate('로그아웃')}</ColumnMenuContent>
             </>
             :
             <>
@@ -827,7 +827,7 @@ const Header = () => {
                   <ColumnMenuContent onClick={() => {
                     router.push(`/shop/auth/${item.link_key}`);
                     setSideMenuOpen(false);
-                  }} style={{ paddingLeft: '1rem' }}>{item.name}</ColumnMenuContent>
+                  }} style={{ paddingLeft: '1rem' }}>{translate(item.name)}</ColumnMenuContent>
                 </>
               ))}
             </>}

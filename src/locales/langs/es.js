@@ -235,7 +235,20 @@ const es = {
   "비밀번호를 잊었을 때 본인 확인용으로 사용됩니다. 1분이면 됩니다.": "Se usa para verificar tu identidad si olvidas la contraseña. Solo toma un minuto.",
   "설정하기": "Configurar",
   "답변": "Respuesta",
-  "비밀번호를 잊었을 때 본인 확인에 사용됩니다. 답변은 저장 후 다시 볼 수 없으니 꼭 기억해 주세요.": "Se usa para verificar tu identidad si olvidas la contraseña. No podrás ver la respuesta después de guardarla, así que recuérdala."
+  "비밀번호를 잊었을 때 본인 확인에 사용됩니다. 답변은 저장 후 다시 볼 수 없으니 꼭 기억해 주세요.": "Se usa para verificar tu identidad si olvidas la contraseña. No podrás ver la respuesta después de guardarla, así que recuérdala.",
+    "주문내역": "Historial de pedidos",
+    "쇼핑 카테고리": "Categorías",
+    "위시리스트": "Lista de deseos",
+    "주문/배송조회": "Pedidos y envíos",
+    "판매자센터": "Centro de vendedores",
+    "비회원 문의조회": "Consultas sin cuenta",
+    "이용약관": "Términos del servicio",
+    "개인정보정책": "Política de privacidad",
+    "셀러아이디:": "ID de vendedor:",
+    "배송조회": "Seguimiento",
+    "수정": "Editar",
+    "KB에스크로 이체 인증마크": "Certificación KB Escrow",
+    "무료배송": "Envío gratis"
 };
 
 export default es;

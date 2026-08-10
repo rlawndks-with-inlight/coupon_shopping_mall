@@ -306,7 +306,7 @@ export const HistoryTable = props => {
                                 {order?.groups.length > 0 &&
                                   <>
                                     <Row>
-                                      <div style={{ minWidth: '62px' }}>옵션정보 </div>
+                                      <div style={{ minWidth: '62px' }}>{translate('옵션정보')}</div>
                                       <Col>
                                         {order?.groups && order?.groups.map((group, idx) => (
                                           <>
@@ -342,7 +342,7 @@ export const HistoryTable = props => {
                                 {order?.seller_id > 0 &&
                                   <>
                                     <Row>
-                                      <div style={{ minWidth: '62px' }}>셀러아이디: </div>
+                                      <div style={{ minWidth: '62px' }}>{translate('셀러아이디:')} </div>
                                       <div>{order?.seller_user_name}</div>
                                     </Row>
                                   </>}
@@ -377,7 +377,7 @@ export const HistoryTable = props => {
                                       target="_blank"
                                       rel="noreferrer"
                                       style={{ fontSize: 12, color: '#1a73e8' }}
-                                    >배송조회</a>
+                                    >{translate('배송조회')}</a>
                                   </>
                                 ) : ''}
                                 {idx < arr.length - 1 && <><br /><br /></>}
@@ -532,9 +532,7 @@ export const AddressTable = props => {
                       {/* onUpdate 를 안 넘기는 화면(shop demo-1·2 마이페이지)이 있어
                           누르면 undefined 호출로 크래시했다. 넘어온 경우에만 버튼을 그린다. */}
                       {onUpdate &&
-                        <Button variant="outlined" style={{ marginLeft: 'auto', marginRight: '1rem' }} onClick={() => onUpdate(row?.id)}>
-                          수정
-                        </Button>}
+                        <Button variant="outlined" style={{ marginLeft: 'auto', marginRight: '1rem' }} onClick={() => onUpdate(row?.id)}>{translate('수정')}</Button>}
                       <IconButton onClick={() => onDelete(row?.id)}>
                         <Icon icon='eva:trash-2-outline' />
                       </IconButton>
@@ -679,7 +677,7 @@ export const ConsignmentTable = props => {
             fullWidth
             value={changeObj.request_price}
             margin="dense"
-            label="판매가"
+            label={translate('판매가')}
             type='number'
             onChange={(e) => {
               setChangeObj({

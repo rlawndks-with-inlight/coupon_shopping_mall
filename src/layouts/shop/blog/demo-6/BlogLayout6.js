@@ -10,6 +10,7 @@ import StorefrontPopups from "src/components/elements/shop/StorefrontPopups";
 import { isStorefrontHome } from "src/utils/blog-shop-route";
 import LanguagePopover from "src/layouts/manager/header/LanguagePopover";
 import { Badge } from "@mui/material";
+import { useLocales } from "src/locales";
 
 /* 단일 상품 전용 럭셔리 레이아웃 — 심플 헤더 + 심플 푸터 */
 
@@ -161,6 +162,8 @@ const FooterLine = styled.div`
 const BlogLayout6 = (props) => {
   // themeCartData: 장바구니 아이콘에 담긴 개수 배지를 붙이기 위해 함께 읽는다.
   const { themeDnsData, themeCartData } = useSettingsContext();
+  // 이 레이아웃(프레임6~11 공용)에는 번역이 아예 없어서 푸터 문구가 늘 한국어였다.
+  const { translate } = useLocales();
   const router = useRouter();
   const { children } = props;
   const brandName = themeDnsData?.name || 'BRAND';
@@ -251,14 +254,14 @@ const BlogLayout6 = (props) => {
             이용약관·개인정보처리방침: 전자상거래법상 상시 열람 경로가 필요한데 이 푸터엔 없었다.
             policy.js 가 query type 으로 갈라진다(0=이용약관, 1=개인정보처리방침). */}
         <FooterLinks>
-          <FooterLink onClick={() => router.push('/shop/auth/order-check')}>비회원 주문조회</FooterLink>
+          <FooterLink onClick={() => router.push('/shop/auth/order-check')}>{translate('비회원 주문조회')}</FooterLink>
           {/* 비회원은 계정이 없어 1:1문의 답변을 확인할 경로가 필요하다(연락처 + 글비밀번호). */}
-          <FooterLink onClick={() => router.push('/shop/auth/inquiry-check')}>비회원 문의조회</FooterLink>
-          <FooterLink onClick={() => router.push('/shop/auth/policy?type=0')}>이용약관</FooterLink>
-          <FooterLink onClick={() => router.push('/shop/auth/policy?type=1')}>개인정보처리방침</FooterLink>
+          <FooterLink onClick={() => router.push('/shop/auth/inquiry-check')}>{translate('비회원 문의조회')}</FooterLink>
+          <FooterLink onClick={() => router.push('/shop/auth/policy?type=0')}>{translate('이용약관')}</FooterLink>
+          <FooterLink onClick={() => router.push('/shop/auth/policy?type=1')}>{translate('개인정보처리방침')}</FooterLink>
           {/* 로그아웃은 헤더가 아니라 여기 둔다. 헤더는 로고가 가운데 정렬이라
               우측 아이콘이 하나 늘 때마다 로고가 왼쪽으로 밀린다. */}
-          {user && <FooterLink onClick={onLogout}>로그아웃</FooterLink>}
+          {user && <FooterLink onClick={onLogout}>{translate('로그아웃')}</FooterLink>}
         </FooterLinks>
         <FooterLine>© {new Date().getFullYear()} {brandName.toUpperCase()} · ALL RIGHTS RESERVED</FooterLine>
       </Footer>

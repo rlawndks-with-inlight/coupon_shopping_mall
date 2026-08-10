@@ -240,7 +240,20 @@ const en = {
   "비밀번호를 잊었을 때 본인 확인용으로 사용됩니다. 1분이면 됩니다.": "Used to verify your identity if you forget your password. Takes about a minute.",
   "설정하기": "Set up",
   "답변": "Answer",
-  "비밀번호를 잊었을 때 본인 확인에 사용됩니다. 답변은 저장 후 다시 볼 수 없으니 꼭 기억해 주세요.": "Used to verify your identity if you forget your password. You cannot view the answer again after saving, so please remember it."
+  "비밀번호를 잊었을 때 본인 확인에 사용됩니다. 답변은 저장 후 다시 볼 수 없으니 꼭 기억해 주세요.": "Used to verify your identity if you forget your password. You cannot view the answer again after saving, so please remember it.",
+    "주문내역": "Order History",
+    "쇼핑 카테고리": "Shop Categories",
+    "위시리스트": "Wishlist",
+    "주문/배송조회": "Orders & Delivery",
+    "판매자센터": "Seller Center",
+    "비회원 문의조회": "Guest Inquiry Lookup",
+    "이용약관": "Terms of Service",
+    "개인정보정책": "Privacy Policy",
+    "셀러아이디:": "Seller ID:",
+    "배송조회": "Track Delivery",
+    "수정": "Edit",
+    "KB에스크로 이체 인증마크": "KB Escrow Certification",
+    "무료배송": "Free Shipping"
 };
 
 export default en;

@@ -1,5 +1,6 @@
 import { Stack, TextField } from '@mui/material';
 import { sanitizePhoneInput } from 'src/utils/function';
+import { useLocales } from 'src/locales';
 
 // 비회원 1:1문의 작성 시 추가로 받는 칸 — 이름 · 연락처 · 글비밀번호.
 //
@@ -27,25 +28,28 @@ export const validateGuestInquiry = (obj = {}) => {
 };
 
 const GuestInquiryFields = ({ value = GUEST_INQUIRY_EMPTY, onChange, disabled = false }) => {
+  const { translate } = useLocales();
     const set = (key, v) => onChange?.({ ...value, [key]: v });
     return (
         <Stack spacing={2} sx={{ mb: 2 }}>
             <div style={{ fontSize: '13px', color: '#888', lineHeight: 1.6 }}>
-                답변은 <b>연락처와 글 비밀번호</b>로 다시 확인하실 수 있습니다. 비밀번호를 잊으면 찾을 수 없으니 기억해 주세요.
+                {/* 예전엔 <b> 로 문장을 쪼개 놨다. 조각을 따로 번역하면 어순이 다른 언어에서
+                    문장이 깨지므로(한국어는 조사가 붙는다) 한 문장을 통째로 번역한다. */}
+                {translate('답변은 연락처와 글 비밀번호로 다시 확인하실 수 있습니다. 비밀번호를 잊으면 찾을 수 없으니 기억해 주세요.')}
             </div>
             <TextField
-                size="small" fullWidth label="이름" disabled={disabled}
+                size="small" fullWidth label={translate('이름')} disabled={disabled}
                 value={value?.none_user_name ?? ''}
                 onChange={(e) => set('none_user_name', e.target.value)}
             />
             <TextField
-                size="small" fullWidth label="연락처" placeholder="010-0000-0000" disabled={disabled}
+                size="small" fullWidth label={translate('연락처')} placeholder="010-0000-0000" disabled={disabled}
                 value={value?.none_user_phone ?? ''}
                 onChange={(e) => set('none_user_phone', sanitizePhoneInput(e.target.value))}
             />
             <TextField
-                size="small" fullWidth label="글 비밀번호" type="password" disabled={disabled}
-                placeholder="4자 이상"
+                size="small" fullWidth label={translate('글 비밀번호')} type="password" disabled={disabled}
+                placeholder={translate('4자 이상')}
                 value={value?.password ?? ''}
                 onChange={(e) => set('password', e.target.value)}
             />

@@ -5,6 +5,7 @@ import { useSettingsContext } from 'src/components/settings';
 import { commarNumber, getPointType } from 'src/utils/function';
 import { apiManager } from 'src/utils/api';
 import { useAuthContext } from 'src/layouts/manager/auth/useAuthContext';
+import { useLocales } from 'src/locales';
 
 const SubTitle = styled.h3`
 font-size:14px;
@@ -67,6 +68,7 @@ opacity:0.6;
 
 // 회원 포인트 조회 (실 포인트 적립/사용 내역) 김인욱
 const Demo1 = (props) => {
+  const { translate } = useLocales();
     const {
         data: {
 
@@ -93,16 +95,12 @@ const Demo1 = (props) => {
     return (
         <>
             <Wrappers>
-                <Title style={{ paddingBottom: '0' }}>포인트 조회</Title>
-                <SubTitle>
-                    상품 구매 포인트는 구매 14일 이후 사용할 수 있습니다
-                    <br />
-                    포인트 적립 및 사용 내역을 확인할 수 있습니다
-                </SubTitle>
+                <Title style={{ paddingBottom: '0' }}>{translate('포인트 조회')}</Title>
+                <SubTitle>{translate('상품 구매 포인트는 구매 14일 이후 사용할 수 있습니다')}<br />{translate('포인트 적립 및 사용 내역을 확인할 수 있습니다')}</SubTitle>
                 <BalanceBox style={{
                     background: `${themeMode == 'dark' ? '#222' : '#F6F6F6'}`
                 }}>
-                    <span>보유 포인트</span>
+                    <span>{translate('보유 포인트')}</span>
                     <span style={{ fontWeight: 'bold', fontSize: '1.25rem' }}>{commarNumber(user?.point)} P</span>
                 </BalanceBox>
                 <ContentContainer>
@@ -123,7 +121,7 @@ const Demo1 = (props) => {
                         </Point>
                     ))}
                     {pointList.length == 0 &&
-                        <EmptyBox>포인트 내역이 없습니다.</EmptyBox>
+                        <EmptyBox>{translate('포인트 내역이 없습니다.')}</EmptyBox>
                     }
                 </ContentContainer>
             </Wrappers>

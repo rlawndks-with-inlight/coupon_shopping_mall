@@ -44,7 +44,7 @@ const PayResultDemo = (props) => {
     if (themeDnsData?.id == 77) {
       return {
         icon: <Icon icon={'mdi:success-circle-outline'} style={{ margin: 'auto', fontSize: '6rem', color: mainColor }} />,
-        title: '테스트결제 진행중입니다.',
+        title: translate('테스트결제 진행중입니다.'),
         content: '',
       }
     } else {

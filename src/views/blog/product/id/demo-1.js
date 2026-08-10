@@ -6,7 +6,7 @@ import { Row, themeObj } from 'src/components/elements/styled-components';
 import { useSettingsContext } from 'src/components/settings';
 import styled from 'styled-components'
 import _ from 'lodash'
-import { commarNumber, commarNumberWithUnit } from 'src/utils/function';
+import { commarNumber, commarNumberWithUnit, getPriceUnitByLang } from 'src/utils/function';
 import Slider from 'react-slick';
 import { useTheme } from '@emotion/react';
 import dynamic from 'next/dynamic';
@@ -17,6 +17,7 @@ import toast from 'react-hot-toast';
 import { useLocales } from 'src/locales';
 import { formatLang } from 'src/utils/format';
 import DialogBuyNow from 'src/components/dialog/DialogBuyNow';
+import QuantityStepper from 'src/components/elements/shop/QuantityStepper';
 
 
 const ReactQuill = dynamic(() => import('react-quill'), {
@@ -194,9 +195,7 @@ const Demo1 = (props) => {
           <Row style={{ justifyContent: 'flex-end' }}>
             <Button variant='outlined' onClick={goInquiry} sx={{
               height: '30px',
-            }}>
-              1:1문의
-            </Button>
+            }}>{translate('1:1문의')}</Button>
           </Row>
 
         </ContentWrappers>
@@ -217,16 +216,14 @@ const Demo1 = (props) => {
               </>}
             <Row style={{ alignItems: 'flex-end', fontWeight: 'bold' }}>
               <div style={{ fontSize: themeObj.font_size.size6, color: theme.palette.error.main }}>{commarNumber(item.product_sale_price)}</div>
-              <div style={{ fontSize: themeObj.font_size.size8, marginLeft: '0.25rem' }}>원</div>
+              <div style={{ fontSize: themeObj.font_size.size8, marginLeft: '0.25rem' }}>{getPriceUnitByLang()}</div>
             </Row>
           </PriceContainer>
-          <Button variant='contained' onClick={() => { setCartOpen(true) }}>
-            구매하기
-          </Button>
+          <Button variant='contained' onClick={() => { setCartOpen(true) }}>{translate('구매하기')}</Button>
           <div style={{ marginTop: '1rem' }} />
           <Divider />
           <ContentContainer>
-            <div style={{ padding: '0 0 1rem 0', fontSize: themeObj.font_size.size8, fontWeight: 'bold' }}>상품정보</div>
+            <div style={{ padding: '0 0 1rem 0', fontSize: themeObj.font_size.size8, fontWeight: 'bold' }}>{translate('상품정보')}</div>
             <ReactQuill
               className='none-padding'
               value={item?.product_description ?? `<body></body>`}
@@ -291,30 +288,33 @@ const Demo1 = (props) => {
 
           <DrawerBox style={{ borderBottom: 'none' }}>
             <Row style={{ justifyContent: 'space-between' }}>
-              <Row style={{ width: '150px', justifyContent: 'space-between', alignItems: 'center', padding: '0.25rem' }}>
-                상품 금액
-              </Row>
+              <Row style={{ width: '150px', justifyContent: 'space-between', alignItems: 'center', padding: '0.25rem' }}>{translate('상품 금액')}</Row>
               <div>
                 <span style={{ color: 'red' }}>{commarNumber(item?.product_sale_price)}</span>원
               </div>
             </Row>
             <Row style={{ justifyContent: 'space-between' }}>
-              <Row style={{ width: '150px', justifyContent: 'space-between', alignItems: 'center', padding: '0.25rem' }}>
-                배송비
-              </Row>
+              <Row style={{ width: '150px', justifyContent: 'space-between', alignItems: 'center', padding: '0.25rem' }}>{translate('배송비')}</Row>
               <div>
                 <span style={{ color: 'red' }}>{commarNumber(item?.delivery_fee)}</span>원
               </div>
             </Row>
             <Row style={{ justifyContent: 'space-between' }}>
-              <Row style={{ width: '150px', justifyContent: 'space-between', alignItems: 'center', padding: '0.25rem' }}>
-                합계
-              </Row>
+              <Row style={{ width: '150px', justifyContent: 'space-between', alignItems: 'center', padding: '0.25rem' }}>{translate('합계')}</Row>
               <div>
                 <span style={{ color: 'red' }}>{commarNumber(parseInt(item?.product_sale_price + item?.delivery_fee))}</span>원
               </div>
             </Row>
           </DrawerBox>
+          {/* 수량 — 이 프레임엔 수량 UI 가 없어서 상세에서 담으면 늘 1개였다.
+              selectProductGroups.count 는 담기·바로구매 양쪽이 이미 읽는다. */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginTop: '1rem' }}>
+            <div>{translate('수량')}</div>
+            <QuantityStepper
+              value={selectProductGroups?.count ?? 1}
+              onChange={(count) => setSelectProductGroups((prev) => ({ ...prev, count }))}
+            />
+          </div>
           <Button
             variant='outlined'
             color='primary'
@@ -328,7 +328,7 @@ const Demo1 = (props) => {
             onClick={() => {
               handleAddCart()
             }}
-          >장바구니</Button>
+          >{translate('장바구니')}</Button>
           <Button
             variant='contained'
             color='primary'
@@ -342,7 +342,7 @@ const Demo1 = (props) => {
               // 비회원도 바로구매 허용(주문서에서 비회원 주문비밀번호로 진행)
               setBuyOpen(true);
             }}
-          >바로구매</Button>
+          >{translate('바로구매')}</Button>
         </SelectContainer>
       </Drawer>
     </>

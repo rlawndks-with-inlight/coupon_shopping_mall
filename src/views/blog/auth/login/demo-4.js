@@ -8,6 +8,7 @@ import styled from 'styled-components'
 import { Icon } from '@iconify/react';
 import { Title } from 'src/components/elements/blog/demo-1';
 import { apiManager } from 'src/utils/api';
+import { useLocales } from 'src/locales';
 
 const Wrappers = styled.div`
 max-width:798px;
@@ -55,6 +56,7 @@ row-gap:1rem;
 
 // 로그인 김인욱
 const Demo4 = (props) => {
+  const { translate } = useLocales();
     const { presetsColor, onChangeWishData } = useSettingsContext();
     const { user, login } = useAuthContext();
     const {
@@ -87,10 +89,10 @@ const Demo4 = (props) => {
     return (
         <>
             <Wrappers>
-                <Title>로그인</Title>
+                <Title>{translate('로그인')}</Title>
                 <TextFieldContainer>
                     <TextField
-                        label='아이디'
+                        label={translate('아이디')}
                         name='id'
                         autoComplete='new-password'
                         onChange={(e) => {
@@ -99,7 +101,7 @@ const Demo4 = (props) => {
                     />
                     <TextField
                         sx={{ marginTop: '1rem' }}
-                        label='비밀번호'
+                        label={translate('비밀번호')}
                         name='password'
                         type={watchable ? '' : 'password'}
                         autoComplete='new-password'
@@ -121,7 +123,7 @@ const Demo4 = (props) => {
                     />
                 </TextFieldContainer>
                 <FindInfo themeMode={themeMode}>
-                    <div style={{ cursor: 'pointer', marginLeft: 'auto' }} onClick={() => { router.push('/shop/auth/find-info?type=0', '/shop/auth/find-info') }}>아이디 / 비밀번호 찾기</div>
+                    <div style={{ cursor: 'pointer', marginLeft: 'auto' }} onClick={() => { router.push('/shop/auth/find-info?type=0', '/shop/auth/find-info') }}>{translate('아이디 / 비밀번호 찾기')}</div>
                 </FindInfo>
                 <ButtonContainer>
                     <Button
@@ -134,7 +136,7 @@ const Demo4 = (props) => {
                             width: `100%`,
                         }}
                         onClick={onLogin}
-                    >로그인</Button>
+                    >{translate('로그인')}</Button>
                     <Button
                         variant='outlined'
                         color='primary'
@@ -147,11 +149,11 @@ const Demo4 = (props) => {
                             height: '56px',
                             width: `100%`,
                         }}
-                    >회원가입</Button>
+                    >{translate('회원가입')}</Button>
                 </ButtonContainer>
 
                 {/* 비회원은 /shop/auth/history(회원 주문내역)로 가면 빈 목록만 본다. 전화번호+주문비밀번호로 조회하는 order-check 로 보낸다 */}
-                <NotSignup themeMode={themeMode}><div style={{ cursor: 'pointer' }} onClick={() => { router.push('/shop/auth/order-check') }}>비회원 주문 조회</div></NotSignup>
+                <NotSignup themeMode={themeMode}><div style={{ cursor: 'pointer' }} onClick={() => { router.push('/shop/auth/order-check') }}>{translate('비회원 주문 조회')}</div></NotSignup>
             </Wrappers>
         </>
     )

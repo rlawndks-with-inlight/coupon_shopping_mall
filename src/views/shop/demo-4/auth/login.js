@@ -12,6 +12,7 @@ import { commarNumber, safeRedirectPath, getOrderStatusText } from 'src/utils/fu
 import { Icon } from '@iconify/react';
 import { getOptionLabel } from 'src/utils/shop-util';
 import { formatLang } from 'src/utils/format';
+import { useLocales } from 'src/locales';
 
 const Wrappers = styled.div`
 max-width:500px;
@@ -33,6 +34,7 @@ transition: 0.3s;
 `
 
 const LoginDemo = (props) => {
+  const { translate } = useLocales();
   const { setModal } = useModal()
   const { user, login } = useAuthContext();
   const { presetsColor, themeDnsData, onChangeWishData } = useSettingsContext();
@@ -99,11 +101,9 @@ const LoginDemo = (props) => {
           }}>
           Welcome to {themeDnsData?.id == 74 ? 'The grazia' : themeDnsData?.company_name}
         </Title>
-        <div style={{ width: '100%', textAlign: 'center', marginBottom: '1rem' }}>
-          가입 또는 로그인 해주세요.
-        </div>
+        <div style={{ width: '100%', textAlign: 'center', marginBottom: '1rem' }}>{translate('가입 또는 로그인 해주세요.')}</div>
         <TextField
-          label='아이디'
+          label={translate('아이디')}
           onChange={(e) => {
             setUsername(e.target.value)
           }}
@@ -116,7 +116,7 @@ const LoginDemo = (props) => {
           }}
         />
         <TextField
-          label='비밀번호'
+          label={translate('비밀번호')}
           onChange={(e) => {
             setPassword(e.target.value)
           }}
@@ -138,20 +138,20 @@ const LoginDemo = (props) => {
           fontSize: '18px'
         }}
           onClick={onLogin}
-        >로그인</Button>
+        >{translate('로그인')}</Button>
         <Row style={{ margin: '1rem 0 2rem auto' }}>
           {/* 찾기 링크가 통째로 주석 처리돼 있어 프레임3에서는 아이디·비밀번호를 찾을 방법이 없었다.
               (/shop/auth/find-info 페이지 자체는 정상 동작한다) */}
-          <HoverText style={{ borderRight: `1px solid ${themeObj.grey[300]}` }} themeDnsData={themeDnsData} onClick={() => { router.push(`/shop/auth/find-info?type=0`) }}>아이디 찾기</HoverText>
-          <HoverText style={{ paddingRight: '0' }} themeDnsData={themeDnsData} onClick={() => { router.push(`/shop/auth/find-info?type=1`) }}>비밀번호 찾기</HoverText>
+          <HoverText style={{ borderRight: `1px solid ${themeObj.grey[300]}` }} themeDnsData={themeDnsData} onClick={() => { router.push(`/shop/auth/find-info?type=0`) }}>{translate('아이디 찾기')}</HoverText>
+          <HoverText style={{ paddingRight: '0' }} themeDnsData={themeDnsData} onClick={() => { router.push(`/shop/auth/find-info?type=1`) }}>{translate('비밀번호 찾기')}</HoverText>
         </Row>
         <Row style={{ margin: '1rem auto', marginTop: '10rem', justifyContent: 'space-between', width: '100%', display: `${themeDnsData?.id == 74 && !themeDnsData?.seller_id ? 'none' : ''}` }}>
           {/* 아래 '회원가입' 버튼으로 유도하는 안내 문구. 링크는 중복이라 두지 않는다.
               (themeDnsData 는 styled 컴포넌트가 아닌 div 에 넘기면 React 경고가 나므로 제거) */}
-          <div>아직 회원이 아니신가요?</div>
+          <div>{translate('아직 회원이 아니신가요?')}</div>
           {/* 아래 Dialog(open={dialogOpen})를 여는 유일한 트리거였는데 주석 처리돼 있어
               비회원 주문조회 화면을 띄울 방법이 없었다. */}
-          <HoverText style={{ paddingRight: '0' }} themeDnsData={themeDnsData} onClick={() => { setDialogOpen(true) }}>비회원 주문조회</HoverText>
+          <HoverText style={{ paddingRight: '0' }} themeDnsData={themeDnsData} onClick={() => { setDialogOpen(true) }}>{translate('비회원 주문조회')}</HoverText>
         </Row>
         <Button variant="contained" style={{
           height: '60px',
@@ -161,7 +161,7 @@ const LoginDemo = (props) => {
           display: `${themeDnsData?.id == 74 && !themeDnsData?.seller_id ? 'none' : ''}`
         }}
           onClick={() => { router.push(`/shop/auth/sign-up`) }}
-        >회원가입</Button>
+        >{translate('회원가입')}</Button>
         <Dialog fullWidth open={dialogOpen} onClose={handleClose}>
           <Col style={{ alignItems: 'center', margin: '2rem auto' }}>
             <Icon
@@ -172,12 +172,12 @@ const LoginDemo = (props) => {
               }}
             />
             <Col style={{ alignItems: 'center', margin: '0 auto', width: '100%' }}>
-              <div style={{ fontSize: '22px', marginBottom: '1rem' }}>비회원 주문조회</div>
+              <div style={{ fontSize: '22px', marginBottom: '1rem' }}>{translate('비회원 주문조회')}</div>
             </Col>
-            <div>지금 회원가입을 하시면</div>
-            <div>다양하고 특별한 혜택이 준비되어 있습니다.</div>
+            <div>{translate('지금 회원가입을 하시면')}</div>
+            <div>{translate('다양하고 특별한 혜택이 준비되어 있습니다.')}</div>
             <TextField
-              label='전화번호'
+              label={translate('전화번호')}
               placeholder='010-1234-5678'
               onChange={(e) => {
                 setNoneUserObj({ ...noneUserObj, ['buyer_phone']: e.target.value })
@@ -191,7 +191,7 @@ const LoginDemo = (props) => {
               }}
             />
             <TextField
-              label='비회원주문 비밀번호'
+              label={translate('비회원주문 비밀번호')}
               onChange={(e) => {
                 setNoneUserObj({ ...noneUserObj, ['password']: e.target.value })
               }}
@@ -220,11 +220,11 @@ const LoginDemo = (props) => {
                 //})
                 onCheckNoneUserPay();
               }}
-            >조회하기</Button>
+            >{translate('조회하기')}</Button>
             <Row style={{ margin: '1rem auto', marginTop: '10rem', justifyContent: 'space-between', width: '100%' }}>
               {/* 문구는 '회원이 아니신가요?' 인데 '아이디 찾기'로 보내던 잘못된 링크였다.
                   바로 아래 회원가입 버튼이 있으므로 안내 문구로만 둔다. */}
-              <div>아직 회원이 아니신가요?</div>
+              <div>{translate('아직 회원이 아니신가요?')}</div>
             </Row>
             <Button variant="contained" style={{
               height: '60px',
@@ -234,7 +234,7 @@ const LoginDemo = (props) => {
               width: '100%'
             }}
               onClick={() => { router.push(`/shop/auth/sign-up`) }}
-            >회원가입</Button>
+            >{translate('회원가입')}</Button>
           </Col>
         </Dialog>
         {/*<Col style={{ alignItems: 'center', margin: '2rem auto' }}>
@@ -303,31 +303,31 @@ const LoginDemo = (props) => {
           <>
             <Card style={{ margin: 'auto', width: '100%', display: 'flex', flexDirection: 'column', rowGap: '1rem', padding: '1rem 0' }}>
               <Col style={{ margin: 'auto', width: '100%', maxWidth: '500px' }}>
-                <Typography variant='subtitle1'>주문번호</Typography>
+                <Typography variant='subtitle1'>{translate('주문번호')}</Typography>
                 <Typography variant='body2'>{noneUserTrxObj?.ord_num}</Typography>
               </Col>
               <Col style={{ margin: 'auto', width: '100%', maxWidth: '500px' }}>
-                <Typography variant='subtitle1'>승인번호</Typography>
+                <Typography variant='subtitle1'>{translate('승인번호')}</Typography>
                 <Typography variant='body2'>{noneUserTrxObj?.appr_num}</Typography>
               </Col>
               <Col style={{ margin: 'auto', width: '100%', maxWidth: '500px' }}>
-                <Typography variant='subtitle1'>구매자명</Typography>
+                <Typography variant='subtitle1'>{translate('구매자명')}</Typography>
                 <Typography variant='body2'>{noneUserTrxObj?.buyer_name}</Typography>
               </Col>
               <Col style={{ margin: 'auto', width: '100%', maxWidth: '500px' }}>
-                <Typography variant='subtitle1'>구매자휴대폰번호</Typography>
+                <Typography variant='subtitle1'>{translate('구매자휴대폰번호')}</Typography>
                 <Typography variant='body2'>{noneUserTrxObj?.buyer_phone}</Typography>
               </Col>
               <Col style={{ margin: 'auto', width: '100%', maxWidth: '500px' }}>
-                <Typography variant='subtitle1'>주문현황</Typography>
+                <Typography variant='subtitle1'>{translate('주문현황')}</Typography>
                 <Typography variant='body2'>{getOrderStatusText(noneUserTrxObj)}</Typography>
               </Col>
               <Col style={{ margin: 'auto', width: '100%', maxWidth: '500px' }}>
-                <Typography variant='subtitle1'>송장번호</Typography>
+                <Typography variant='subtitle1'>{translate('송장번호')}</Typography>
                 <Typography variant='body2'>{noneUserTrxObj?.invoice_num}</Typography>
               </Col>
               <Col style={{ margin: 'auto', width: '100%', maxWidth: '500px' }}>
-                <Typography variant='subtitle1'>주문상세</Typography>
+                <Typography variant='subtitle1'>{translate('주문상세')}</Typography>
                 <Typography variant='body2'>
                   <Col>
                     {noneUserTrxObj?.orders && noneUserTrxObj?.orders.map((order, index) => (
@@ -337,13 +337,13 @@ const LoginDemo = (props) => {
                             <div style={{ minWidth: '62px', fontWeight: 'bold' }}>No.{index + 1}</div>
                           </Row>
                           <Row style={{ flexWrap: 'wrap' }}>
-                            <div style={{ minWidth: '62px' }}>주문명: </div>
+                            <div style={{ minWidth: '62px' }}>{translate('주문명:')}</div>
                             <div style={{ wordBreak: 'break-all' }}>{order?.order_name}</div>
                           </Row>
                           {order?.groups.length > 0 &&
                             <>
                               <Row>
-                                <div style={{ minWidth: '62px' }}>옵션정보: </div>
+                                <div style={{ minWidth: '62px' }}>{translate('옵션정보:')}</div>
                                 <Col>
                                   {order?.groups && order?.groups.map((group, idx) => (
                                     <>
@@ -360,7 +360,7 @@ const LoginDemo = (props) => {
                               </Row>
                             </>}
                           <Row>
-                            <div style={{ minWidth: '62px' }}>가격: </div>
+                            <div style={{ minWidth: '62px' }}>{translate('가격:')}</div>
                             <div>{commarNumber(order?.order_amount)}</div>
                           </Row>
                         </Col>

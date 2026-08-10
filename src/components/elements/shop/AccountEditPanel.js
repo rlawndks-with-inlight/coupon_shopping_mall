@@ -141,7 +141,7 @@ const AccountEditPanel = ({ loginPath = '/shop/auth/login' }) => {
                 label={translate('휴대폰번호')}
                 value={phoneNum}
                 onChange={(e) => setPhoneNum(sanitizePhoneInput(e.target.value))}
-                placeholder="숫자와 하이픈(-)만 입력"
+                placeholder={translate('숫자와 하이픈(-)만 입력')}
                 fullWidth
               />
               <Stack direction="row" justifyContent="flex-end">
@@ -157,7 +157,7 @@ const AccountEditPanel = ({ loginPath = '/shop/auth/login' }) => {
           <CardContent>
             <Stack spacing={2.5}>
               <TextField
-                label="현재 비밀번호"
+                label={translate('현재 비밀번호')}
                 type="password"
                 value={pw.password}
                 onChange={(e) => setPw({ ...pw, password: e.target.value })}
@@ -165,7 +165,7 @@ const AccountEditPanel = ({ loginPath = '/shop/auth/login' }) => {
               />
               <Divider />
               <TextField
-                label="새 비밀번호"
+                label={translate('새 비밀번호')}
                 type="password"
                 value={pw.new_password}
                 onChange={(e) => setPw({ ...pw, new_password: e.target.value })}
@@ -173,11 +173,11 @@ const AccountEditPanel = ({ loginPath = '/shop/auth/login' }) => {
                 fullWidth
               />
               <TextField
-                label="새 비밀번호 확인"
+                label={translate('새 비밀번호 확인')}
                 type="password"
                 value={pw.new_password_check}
                 onChange={(e) => setPw({ ...pw, new_password_check: e.target.value })}
-                placeholder="새 비밀번호를 다시 입력해 주세요"
+                placeholder={translate('새 비밀번호를 다시 입력해 주세요')}
                 fullWidth
                 // 두 칸이 다르면 입력 중에 바로 알려준다(저장 눌러보고 알 필요 없게).
                 error={!!pw.new_password_check && pw.new_password !== pw.new_password_check}
@@ -254,9 +254,7 @@ const AccountEditPanel = ({ loginPath = '/shop/auth/login' }) => {
         <Card>
           <CardHeader title={translate('회원 탈퇴')} />
           <CardContent>
-            <Typography variant="body2" sx={{ color: 'text.secondary', mb: 2 }}>
-              회원 탈퇴를 하시면 회원 혜택을 더 이상 이용하실 수 없습니다.
-            </Typography>
+            <Typography variant="body2" sx={{ color: 'text.secondary', mb: 2 }}>{translate('회원 탈퇴를 하시면 회원 혜택을 더 이상 이용하실 수 없습니다.')}</Typography>
             <Stack direction="row" justifyContent="flex-end">
               <Button variant="outlined" color="error" onClick={() => setResignOpen(true)}>
                 {translate('회원 탈퇴')}
@@ -269,9 +267,7 @@ const AccountEditPanel = ({ loginPath = '/shop/auth/login' }) => {
       <Dialog open={resignOpen} onClose={() => setResignOpen(false)} fullWidth maxWidth="xs">
         <DialogTitle>{translate('회원 탈퇴')}</DialogTitle>
         <DialogContent>
-          <Typography variant="body2" sx={{ color: 'text.secondary', mb: 2 }}>
-            탈퇴하시려면 비밀번호를 입력해 주세요.
-          </Typography>
+          <Typography variant="body2" sx={{ color: 'text.secondary', mb: 2 }}>{translate('탈퇴하시려면 비밀번호를 입력해 주세요.')}</Typography>
           <TextField
             label={translate('비밀번호')}
             type="password"

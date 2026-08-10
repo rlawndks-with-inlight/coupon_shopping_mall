@@ -25,6 +25,7 @@ import PayProductsByPhoneHecto from 'src/utils/hecto-phone';
 import PayProductsByAuthFintree from 'src/utils/fintree-auth';
 import PayProductsByHandFintree from 'src/utils/fintree-hand';
 import PayProductsByAuthWayup from 'src/utils/wayup-auth';
+import { useLocales } from 'src/locales';
 
 const Wrappers = styled.div`
 max-width:1400px;
@@ -41,6 +42,7 @@ width: 100%;
 `
 const STEPS = ['장바구니 확인', '배송지 확인', '결제하기'];
 export function AddressItem({ item, onCreateBilling, onDeleteAddress, onUpdateAddress }) {
+  const { translate } = useLocales();
   const { receiver, addr, address_type, phone, is_default, detail_addr, id } = item;
   const { themeDnsData } = useSettingsContext();
   return (
@@ -69,9 +71,7 @@ export function AddressItem({ item, onCreateBilling, onDeleteAddress, onUpdateAd
               </Box> */}
             </Typography>
             {is_default && (
-              <Label color="info" sx={{ ml: 1 }}>
-                기본주소
-              </Label>
+              <Label color="info" sx={{ ml: 1 }}>{translate('기본주소')}</Label>
             )}
           </Stack>
           {/* <Typography variant="body2">{addr}</Typography> */}
@@ -80,23 +80,18 @@ export function AddressItem({ item, onCreateBilling, onDeleteAddress, onUpdateAd
           </Typography>
         </Stack>
         <Stack flexDirection="row" flexWrap="wrap" flexShrink={0}>
-          <Button variant="outlined" size="small" color="inherit" sx={{ mr: 1 }} onClick={() => { onDeleteAddress(id) }}>
-            삭제
-          </Button>
+          <Button variant="outlined" size="small" color="inherit" sx={{ mr: 1 }} onClick={() => { onDeleteAddress(id) }}>{translate('삭제')}</Button>
           {/* 배송지 '수정' — 예전엔 브랜드74 에서만 보였다. 삭제는 되는데 수정이 안 돼
               주소를 고치려면 지웠다 다시 등록해야 했다. 전 브랜드 공통으로 연다. */}
-            <Button variant="outlined" size="small" color="inherit" sx={{ mr: 1 }} onClick={() => { onUpdateAddress(id); }}>
-              수정
-            </Button>
-          <Button variant="outlined" size="small" onClick={onCreateBilling}>
-            해당 주소로 배송하기
-          </Button>
+            <Button variant="outlined" size="small" color="inherit" sx={{ mr: 1 }} onClick={() => { onUpdateAddress(id); }}>{translate('수정')}</Button>
+          <Button variant="outlined" size="small" onClick={onCreateBilling}>{translate('해당 주소로 배송하기')}</Button>
         </Stack>
       </Stack>
     </Card>
   );
 }
 const CartDemo = (props) => {
+  const { translate } = useLocales();
   const {
     data: {
 
@@ -418,7 +413,7 @@ const CartDemo = (props) => {
         onDeleteAddress={onDeleteAddress}
       />
       <Wrappers>
-        <Title>장바구니</Title>
+        <Title>{translate('장바구니')}</Title>
         {/* 3단계 진행바 비노출.
                     결제가 공용 주문서(/shop/auth/order)로 분리되면서 이 화면은 '장바구니 확인' 한 단계로 끝난다.
                     activeStep 은 0 에서 변하지 않으므로(0단계 버튼이 곧바로 주문서로 이동)
@@ -449,7 +444,7 @@ const CartDemo = (props) => {
                     :
                     <>
                       <EmptyContent
-                        title="장바구니가 비어 있습니다."
+                        title={translate('장바구니가 비어 있습니다.')}
                         description="장바구니에 상품을 채워 주세요."
                         img="/assets/illustrations/illustration_empty_cart.svg"
                       />
@@ -478,7 +473,7 @@ const CartDemo = (props) => {
                       <>
                         <Card sx={{ marginBottom: '1.5rem' }}>
                           <EmptyContent
-                            title="배송지가 없습니다."
+                            title={translate('배송지가 없습니다.')}
                             description="배송지를 추가해 주세요."
                             img=""
                           />
@@ -492,7 +487,7 @@ const CartDemo = (props) => {
                 <Card sx={{ marginBottom: '1.5rem' }}>
                   {!buyType &&
                     <>
-                      <CardHeader title="결제 수단 선택" />
+                      <CardHeader title={translate('결제 수단 선택')} />
                       <CardContent>
                         <RadioGroup row>
                           <Stack spacing={3} sx={{ width: 1 }}>
@@ -520,14 +515,14 @@ const CartDemo = (props) => {
                     </>}
                   {buyType == 'card' &&
                     <>
-                      <CardHeader title="카드정보입력" />
+                      <CardHeader title={translate('카드정보입력')} />
                       <CardContent>
                         <Stack spacing={2}>
                           <Cards cvc={''} focused={cardFucus} expiry={payData.yymm} name={payData.buyer_name} number={payData.card_num} />
                           <Stack>
                             <TextField
                               size='small'
-                              label='카드 번호'
+                              label={translate('카드 번호')}
                               value={payData.card_num}
                               placeholder='0000 0000 0000 0000'
                               onChange={(e) => {
@@ -543,7 +538,7 @@ const CartDemo = (props) => {
                           <Stack>
                             <TextField
                               size='small'
-                              label='카드 사용자명'
+                              label={translate('카드 사용자명')}
                               value={payData.buyer_name}
                               onChange={(e) => {
                                 let value = e.target.value;
@@ -557,7 +552,7 @@ const CartDemo = (props) => {
                           <Stack>
                             <TextField
                               size='small'
-                              label='만료일'
+                              label={translate('만료일')}
                               value={payData.yymm}
                               inputProps={{ maxLength: '5' }}
                               onChange={(e) => {
@@ -573,7 +568,7 @@ const CartDemo = (props) => {
                           <Stack>
                             <TextField
                               size='small'
-                              label='카드비밀번호 앞 두자리'
+                              label={translate('카드비밀번호 앞 두자리')}
                               value={payData.card_pw}
                               type='password'
                               inputProps={{ maxLength: '2' }}
@@ -589,7 +584,7 @@ const CartDemo = (props) => {
                           <Stack>
                             <TextField
                               size='small'
-                              label='구매자 휴대폰번호'
+                              label={translate('구매자 휴대폰번호')}
                               value={payData.buyer_phone}
                               onChange={(e) => {
                                 let value = e.target.value;
@@ -603,7 +598,7 @@ const CartDemo = (props) => {
                           <Stack>
                             <TextField
                               size='small'
-                              label='주민번호 또는 사업자등록번호'
+                              label={translate('주민번호 또는 사업자등록번호')}
                               value={payData.auth_num}
                               onChange={(e) => {
                                 let value = e.target.value;
@@ -619,7 +614,7 @@ const CartDemo = (props) => {
                               <Stack>
                                 <TextField
                                   size='small'
-                                  label='비회원주문 비밀번호'
+                                  label={translate('비회원주문 비밀번호')}
                                   type='password'
                                   value={payData.password}
                                   inputProps={{ maxLength: '6' }}
@@ -635,14 +630,13 @@ const CartDemo = (props) => {
                             </>}
                           <Stack>
                             <Button variant='contained' onClick={() => {
+  const { translate } = useLocales();
                               setModal({
                                 func: () => { onPayByHand() },
                                 icon: 'ion:card-outline',
-                                title: '정말로 결제 하시겠습니까?'
+                                title: translate('정말로 결제 하시겠습니까?')
                               })
-                            }}>
-                              결제하기
-                            </Button>
+                            }}>{translate('결제하기')}</Button>
                           </Stack>
                         </Stack>
                       </CardContent>
@@ -662,14 +656,10 @@ const CartDemo = (props) => {
                             <div style={{ marginBottom: '1rem' }}>
                               계좌번호 : {_.find(themeDnsData?.payment_modules, { type: buyType })?.virtual_acct_num}
                             </div>
-                            <div style={{ marginBottom: '1rem' }}>
-                              입금 후 1일 안에 구매처리됩니다.
-                            </div>
+                            <div style={{ marginBottom: '1rem' }}>{translate('입금 후 1일 안에 구매처리됩니다.')}</div>
                           </>
                           :
-                          <>
-                            무통장입금을 준비중입니다...
-                          </>
+                          <>{translate('무통장입금을 준비중입니다...')}</>
                       }
                       {/* <Iframe src={_.find(themeDnsData?.payment_modules, { type: buyType })?.virtual_acct_url + `?amount=${payData?.amount}`} /> */}
                       {/*<>
@@ -686,7 +676,7 @@ const CartDemo = (props) => {
                         <Stack>
                           <TextField
                             size='small'
-                            label='카드 번호'
+                            label={translate('카드 번호')}
                             value={payData.card_num}
                             placeholder='0000 0000 0000 0000'
                             onChange={(e) => {
@@ -702,7 +692,7 @@ const CartDemo = (props) => {
                         <Stack>
                           <TextField
                             size='small'
-                            label='카드 사용자명'
+                            label={translate('카드 사용자명')}
                             value={payData.buyer_name}
                             onChange={(e) => {
                               let value = e.target.value;
@@ -716,7 +706,7 @@ const CartDemo = (props) => {
                         <Stack>
                           <TextField
                             size='small'
-                            label='만료일'
+                            label={translate('만료일')}
                             value={payData.yymm}
                             inputProps={{ maxLength: '5' }}
                             onChange={(e) => {
@@ -732,7 +722,7 @@ const CartDemo = (props) => {
                         <Stack>
                           <TextField
                             size='small'
-                            label='카드비밀번호 앞 두자리'
+                            label={translate('카드비밀번호 앞 두자리')}
                             value={payData.card_pw}
                             type='password'
                             inputProps={{ maxLength: '2' }}
@@ -748,7 +738,7 @@ const CartDemo = (props) => {
                         <Stack>
                           <TextField
                             size='small'
-                            label='구매자 휴대폰번호'
+                            label={translate('구매자 휴대폰번호')}
                             value={payData.buyer_phone}
                             onChange={(e) => {
                               let value = e.target.value;
@@ -778,7 +768,7 @@ const CartDemo = (props) => {
                             <Stack>
                               <TextField
                                 size='small'
-                                label='비회원주문 비밀번호'
+                                label={translate('비회원주문 비밀번호')}
                                 type='password'
                                 value={payData.password}
                                 onChange={(e) => {
@@ -842,12 +832,12 @@ const CartDemo = (props) => {
                   {
                     buyType == 'sms_pay' &&
                     <>
-                      <CardHeader title="SMS결제 정보입력" />
+                      <CardHeader title={translate('SMS결제 정보입력')} />
                       <CardContent>
                         <Stack spacing={2}>
                           <TextField
                             size='small'
-                            label='이름'
+                            label={translate('이름')}
                             value={smsPayData.name}
                             onChange={(e) => {
                               setSmsPayData({ ...smsPayData, name: e.target.value });
@@ -855,7 +845,7 @@ const CartDemo = (props) => {
                           />
                           <TextField
                             size='small'
-                            label='핸드폰번호'
+                            label={translate('핸드폰번호')}
                             value={smsPayData.phone_num}
                             onChange={(e) => {
                               const value = e.target.value.replace(/[^0-9]/g, '');
@@ -880,9 +870,7 @@ const CartDemo = (props) => {
                               setSmsPayData({ name: '', phone_num: '' });
                               router.push('/shop/auth/sms-pay-success');
                             }}
-                          >
-                            완료
-                          </Button>
+                          >{translate('완료')}</Button>
                         </Stack>
                       </CardContent>
                     </>
@@ -930,9 +918,7 @@ const CartDemo = (props) => {
         {activeStep > 0 &&
           <>
             <Row style={{ width: '100%', justifyContent: 'space-between', maxWidth: '989px' }}>
-              <Button startIcon={<Iconify icon="grommet-icons:form-previous" />} onClick={onClickPrevStep} variant="soft" size="small">
-                이전 단계 돌아가기
-              </Button>
+              <Button startIcon={<Iconify icon="grommet-icons:form-previous" />} onClick={onClickPrevStep} variant="soft" size="small">{translate('이전 단계 돌아가기')}</Button>
               {activeStep == 1 &&
                 <>
                   <Button
@@ -940,9 +926,7 @@ const CartDemo = (props) => {
                     variant="soft"
                     onClick={() => setAddAddressOpen(true)}
                     startIcon={<Iconify icon="eva:plus-fill" />}
-                  >
-                    배송지 추가하기
-                  </Button>
+                  >{translate('배송지 추가하기')}</Button>
                 </>}
             </Row>
           </>}

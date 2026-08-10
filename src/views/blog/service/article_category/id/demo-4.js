@@ -11,6 +11,7 @@ import GuestInquiryFields, { GUEST_INQUIRY_EMPTY, validateGuestInquiry } from 's
 import { apiShop } from 'src/utils/api';
 import ReactQuillComponent from 'src/views/manager/react-quill';
 import { formatLang } from 'src/utils/format';
+import { useLocales } from 'src/locales';
 
 const PostTitle = styled.h3`
 font-size:1.25rem;
@@ -58,6 +59,7 @@ color:${props => props.themeMode == 'dark' ? '#fff' : 'gray'};
 
 // 공지사항, 1:1문의 등 상세/작성 페이지 김인욱
 const Demo4 = (props) => {
+  const { translate } = useLocales();
     const {
         data: {
 
@@ -143,7 +145,7 @@ const Demo4 = (props) => {
                                     <Stack spacing={3} sx={{ mt: 2 }}>
                                         {!user && <GuestInquiryFields value={guestObj} onChange={setGuestObj} />}
                                         <TextField
-                                            label='제목'
+                                            label={translate('제목')}
                                             value={item.post_title}
                                             onChange={(e) => {
                                                 setItem({ ...item, post_title: e.target.value })
@@ -158,22 +160,19 @@ const Demo4 = (props) => {
                                         <Button variant='contained' style={{
                                             height: '48px', width: '120px', margin: '1rem 0 0 auto'
                                         }} onClick={() => {
+  const { translate } = useLocales();
                                             setModal({
                                                 func: () => { onSave() },
                                                 icon: 'material-symbols:edit-outline',
-                                                title: '저장 하시겠습니까?'
+                                                title: translate('저장 하시겠습니까?')
                                             })
-                                        }}>
-                                            저장
-                                        </Button>
+                                        }}>{translate('저장')}</Button>
                                     </Stack>
                                     :
                                     <Stack spacing={2} sx={{ mt: 5, alignItems: 'center' }}>
-                                        <Typography variant='body1'>로그인 후 이용하실 수 있습니다.</Typography>
+                                        <Typography variant='body1'>{translate('로그인 후 이용하실 수 있습니다.')}</Typography>
                                         <Button variant='contained' style={{ height: '48px', width: '160px' }}
-                                            onClick={() => { router.push('/shop/auth/login') }}>
-                                            로그인 하러가기
-                                        </Button>
+                                            onClick={() => { router.push('/shop/auth/login') }}>{translate('로그인 하러가기')}</Button>
                                     </Stack>
                                 }
                             </>
@@ -195,9 +194,7 @@ const Demo4 = (props) => {
                                 }
                                 <BackLink themeMode={themeMode} onClick={() => {
                                     router.push(`/shop/service/${router.query?.article_category}`)
-                                }}>
-                                    목록으로
-                                </BackLink>
+                                }}>{translate('목록으로')}</BackLink>
                             </>
                         }
                     </>

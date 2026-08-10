@@ -11,6 +11,7 @@ import GuestInquiryFields, { GUEST_INQUIRY_EMPTY, validateGuestInquiry } from 's
 import { apiShop } from 'src/utils/api';
 import ReactQuillComponent from 'src/views/manager/react-quill';
 import { formatLang } from 'src/utils/format';
+import { useLocales } from 'src/locales';
 
 const ReactQuill = dynamic(() => import('react-quill'), {
     ssr: false,
@@ -68,6 +69,7 @@ color:${props => props.themeMode == 'dark' ? '#ccc' : '#666'};
 
 // 공지사항, faq 등 상세페이지 김인욱
 const Demo2 = (props) => {
+  const { translate } = useLocales();
     const {
         data: {
 
@@ -151,7 +153,7 @@ const Demo2 = (props) => {
                                     <Stack spacing={3} sx={{ marginTop: '1rem' }}>
                                         {!user && <GuestInquiryFields value={guestObj} onChange={setGuestObj} />}
                                         <TextField
-                                            label='제목'
+                                            label={translate('제목')}
                                             value={item.post_title}
                                             onChange={(e) => {
                                                 setItem({ ...item, ['post_title']: e.target.value })
@@ -166,17 +168,13 @@ const Demo2 = (props) => {
                                             height: '48px', width: '120px', margin: '1rem 0 1rem auto'
                                         }} onClick={() => {
                                             onSave()
-                                        }}>
-                                            저장
-                                        </Button>
+                                        }}>{translate('저장')}</Button>
                                     </Stack>
                                     :
                                     <LoginGuide themeMode={themeMode}>
-                                        <div>로그인 후 이용하실 수 있습니다.</div>
+                                        <div>{translate('로그인 후 이용하실 수 있습니다.')}</div>
                                         <Button variant="contained" style={{ height: '48px', width: '160px' }}
-                                            onClick={() => { router.push('/shop/auth/login') }}>
-                                            로그인 하러가기
-                                        </Button>
+                                            onClick={() => { router.push('/shop/auth/login') }}>{translate('로그인 하러가기')}</Button>
                                     </LoginGuide>}
                             </>
                             :
@@ -195,7 +193,7 @@ const Demo2 = (props) => {
                                 />
                                 {item?.replies && item?.replies.map((reply, idx) => (
                                     <ReplyBlock key={idx} themeMode={themeMode}>
-                                        <ReplyLabel>답변</ReplyLabel>
+                                        <ReplyLabel>{translate('답변')}</ReplyLabel>
                                         <PostTitle themeMode={themeMode} style={{ fontSize: '1rem', border: 'none', paddingBottom: '0' }}>{formatLang(reply, 'post_title')}</PostTitle>
                                         <ReactQuill
                                             className='none-padding'
@@ -209,7 +207,7 @@ const Demo2 = (props) => {
                             </DetailCard>}
                         <BackText themeMode={themeMode} onClick={() => {
                             router.push(`/shop/service/${router.query?.article_category}`)
-                        }}>목록으로</BackText>
+                        }}>{translate('목록으로')}</BackText>
                     </>}
             </Wrappers>
         </>

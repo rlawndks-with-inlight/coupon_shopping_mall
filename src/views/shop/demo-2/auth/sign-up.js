@@ -373,7 +373,7 @@ const SignUpDemo = (props) => {
                           onClickSendPhoneVerifyCode();
                         }
                       }}
-                    >인증번호발송</Button>
+                    >{translate('인증번호발송')}</Button>
                     :
                     ''
                 }
@@ -382,10 +382,10 @@ const SignUpDemo = (props) => {
             {
               themeDnsData?.id == 77 &&
               <FormControl variant="outlined" fullWidth>
-                <InputLabel>인증번호</InputLabel>
+                <InputLabel>{translate('인증번호')}</InputLabel>
                 <OutlinedInput
-                  label='인증번호'
-                  placeholder="하이픈(-) 제외 입력"
+                  label={translate('인증번호')}
+                  placeholder={translate('하이픈(-) 제외 입력')}
                   onChange={(e) => {
                     setUser({ ...user, ['phoneCheck']: e.target.value })
                   }}
@@ -399,7 +399,7 @@ const SignUpDemo = (props) => {
                           onClickCheckPhoneVerifyCode();
                         }
                       }}
-                    >인증번호확인</Button>
+                    >{translate('인증번호확인')}</Button>
                   }
                 />
               </FormControl>

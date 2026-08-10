@@ -4,8 +4,10 @@ import { useSettingsContext } from "src/components/settings";
 import { Button, Card, Stack, Typography } from "@mui/material";
 import { Icon } from "@iconify/react";
 import Logo from "src/components/logo";
+import { useLocales } from 'src/locales';
 
 const SmsPaySuccess = () => {
+  const { translate } = useLocales();
   const router = useRouter();
   const { themeDnsData } = useSettingsContext();
   const mainColor = themeDnsData?.theme_css?.main_color;
@@ -19,20 +21,14 @@ const SmsPaySuccess = () => {
             icon="mdi:check-circle-outline"
             style={{ fontSize: '6rem', color: mainColor || '#4caf50' }}
           />
-          <Typography variant="h4" textAlign="center">
-            결제 신청이 완료되었습니다
-          </Typography>
-          <Typography variant="body1" textAlign="center" color="text.secondary">
-            입력하신 핸드폰번호로 결제 안내가 전송될 예정입니다.
-          </Typography>
+          <Typography variant="h4" textAlign="center">{translate('결제 신청이 완료되었습니다')}</Typography>
+          <Typography variant="body1" textAlign="center" color="text.secondary">{translate('입력하신 핸드폰번호로 결제 안내가 전송될 예정입니다.')}</Typography>
           <Button
             variant="contained"
             size="large"
             sx={{ minWidth: '180px' }}
             onClick={() => { router.push('/shop'); }}
-          >
-            홈으로 이동
-          </Button>
+          >{translate('홈으로 이동')}</Button>
         </Stack>
       </Card>
     </div>

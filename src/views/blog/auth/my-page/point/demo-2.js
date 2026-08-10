@@ -5,6 +5,7 @@ import { useSettingsContext } from 'src/components/settings';
 import { useAuthContext } from 'src/layouts/manager/auth/useAuthContext';
 import { apiManager } from 'src/utils/api';
 import { commarNumber, getPointType } from 'src/utils/function';
+import { useLocales } from 'src/locales';
 
 const SubTitle = styled.h3`
 font-size:14px;
@@ -36,6 +37,7 @@ border-radius:4px;
 
 // 포인트내역 조회 김인욱
 const Demo2 = (props) => {
+  const { translate } = useLocales();
     const {
         data: {
 
@@ -62,12 +64,8 @@ const Demo2 = (props) => {
     return (
         <>
             <Wrappers>
-                <Title style={{ paddingBottom: '0' }}>포인트 조회</Title>
-                <SubTitle>
-                    상품 구매 포인트는 구매 14일 이후 사용할 수 있습니다
-                    <br />
-                    보유 포인트는 결제 시 사용할 수 있습니다
-                </SubTitle>
+                <Title style={{ paddingBottom: '0' }}>{translate('포인트 조회')}</Title>
+                <SubTitle>{translate('상품 구매 포인트는 구매 14일 이후 사용할 수 있습니다')}<br />{translate('보유 포인트는 결제 시 사용할 수 있습니다')}</SubTitle>
                 <Balance>보유 포인트 : {commarNumber(user?.point)}P</Balance>
                 <ContentContainer style={{
                     background: `${themeMode == 'dark' ? '#000' : '#F6F6F6'}`
@@ -90,9 +88,7 @@ const Demo2 = (props) => {
                         </Point>
                     ))}
                     {pointList.length == 0 &&
-                        <div style={{ padding: '2rem', textAlign: 'center', opacity: 0.7 }}>
-                            포인트 내역이 없습니다.
-                        </div>
+                        <div style={{ padding: '2rem', textAlign: 'center', opacity: 0.7 }}>{translate('포인트 내역이 없습니다.')}</div>
                     }
                 </ContentContainer>
             </Wrappers>

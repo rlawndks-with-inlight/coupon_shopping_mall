@@ -1,5 +1,6 @@
 import styled from 'styled-components'
 import { useSettingsContext } from 'src/components/settings'
+import { useLocales } from 'src/locales';
 
 // 스토어프론트 홈에 '판매할 상품이 0건'일 때 뜨는 공용 안내 화면.
 //
@@ -52,6 +53,7 @@ const Desc = styled.div`
 `
 
 const StorefrontEmptyHome = () => {
+  const { translate } = useLocales();
   const { themeDnsData } = useSettingsContext();
   // 몰 표시명은 themeDnsData.name 이다.
   // (company_name 은 사업자 상호라 고객 화면 인사말에는 부적절해서 쓰지 않는다.)
@@ -60,8 +62,8 @@ const StorefrontEmptyHome = () => {
   return (
     <Box>
       {brandName && <Brand>{brandName}</Brand>}
-      <Title>곧 만나요</Title>
-      <Desc>지금 상품을 준비하고 있습니다.</Desc>
+      <Title>{translate('곧 만나요')}</Title>
+      <Desc>{translate('지금 상품을 준비하고 있습니다.')}</Desc>
     </Box>
   );
 };

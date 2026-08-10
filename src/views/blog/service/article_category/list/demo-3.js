@@ -8,6 +8,7 @@ import _ from 'lodash';
 import toast from 'react-hot-toast';
 import { apiShop } from 'src/utils/api';
 import { formatLang } from 'src/utils/format';
+import { useLocales } from 'src/locales';
 
 const ListContainer = styled.div`
 color:${props => props.themeMode == 'dark' ? '#fff' : 'gray'};
@@ -73,6 +74,7 @@ cursor:pointer;
 
 // 공지사항, faq 등 리스트 페이지 김인욱
 const Demo3 = (props) => {
+  const { translate } = useLocales();
     const {
         data: {
 
@@ -102,11 +104,12 @@ const Demo3 = (props) => {
     }, [router.query?.article_category, themePostCategoryList])
 
     const pageSetting = async () => {
+  const { translate } = useLocales();
         let found = _.find(themePostCategoryList, { id: parseInt(router.query?.article_category) });
         let category_ = {
             ...found,
             children: [
-                { id: router.query?.article_category, post_category_title: '전체' },
+                { id: router.query?.article_category, post_category_title: translate('전체') },
                 ...(found?.children ?? [])
             ]
         }
@@ -191,7 +194,7 @@ const Demo3 = (props) => {
                             </ListRow>
                         ))
                         :
-                        <Empty themeMode={themeMode}>등록된 게시글이 없습니다.</Empty>}
+                        <Empty themeMode={themeMode}>{translate('등록된 게시글이 없습니다.')}</Empty>}
                 </ListContainer>
                 {inquiryList.length < postTotal &&
                     <div style={{ display: 'flex', justifyContent: 'center', padding: '1rem' }}>
@@ -203,7 +206,7 @@ const Demo3 = (props) => {
                 {isAbleUserAdd &&
                     <ServiceFaq themeMode={themeMode} onClick={() => {
                         onClickWrite()
-                    }}>서비스 문의</ServiceFaq>}
+                    }}>{translate('서비스 문의')}</ServiceFaq>}
             </Wrappers>
         </>
     )

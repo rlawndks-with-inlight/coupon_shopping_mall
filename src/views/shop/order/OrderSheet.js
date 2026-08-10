@@ -1,6 +1,7 @@
 import {
   Box, Button, Card, CardContent, CardHeader, Checkbox, CircularProgress,
-  Dialog, Divider, FormControlLabel, Grid, Paper, Stack, TextField, Typography,
+  Dialog, Divider, FormControlLabel, Grid, MenuItem, Paper, Stack, TextField,
+  ToggleButton, ToggleButtonGroup, Typography,
 } from '@mui/material';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import _ from 'lodash';
@@ -18,7 +19,7 @@ import { calcOrderTotals, calculatorPrice, getCartDataUtil, makePayData, onPayPr
 import { syncCartWithServer, makeUnavailableMessage, filterUnavailableByProducts } from 'src/utils/cart-sync';
 import { forspayMethodList } from 'src/utils/format';
 import { sanitizePhoneInput, isValidPhoneNumber, makeOrdNum } from 'src/utils/function';
-import { formatOverseasAddress, isDomestic } from 'src/data/countries';
+import { COUNTRIES, KOREA_CODE, formatOverseasAddress, isDomestic } from 'src/data/countries';
 import Policy from 'src/pages/shop/auth/policy';
 import { useAuthContext } from 'src/layouts/manager/auth/useAuthContext';
 import { formatCreditCardNumber, formatExpirationDate } from 'src/utils/formatCard';
@@ -26,6 +27,7 @@ import { useModal } from 'src/components/dialog/ModalProvider';
 import { apiManager, getLastApiError } from 'src/utils/api';
 import DialogAddAddress from 'src/components/dialog/DialogAddAddress';
 import DaumPostcode from 'react-daum-postcode';
+import { useLocales } from 'src/locales';
 import PayProductsByAuthHecto from 'src/utils/hecto-auth';
 import PayProductsByPhoneHecto from 'src/utils/hecto-phone';
 import PayProductsByAuthFintree from 'src/utils/fintree-auth';
@@ -57,6 +59,8 @@ const AMOUNT_MISMATCH_HINT = '결제금액이 변경';
 
 export default function OrderSheet({ router }) {
   const { setModal } = useModal();
+  // 주문서는 다국어를 전혀 거치지 않았다 — 결제 직전 화면인데 라벨이 전부 한국어였다.
+  const { translate } = useLocales();
   const { user } = useAuthContext();
   const { themeCartData, onChangeCartData, themeDnsData } = useSettingsContext();
   const setting_obj = themeDnsData?.setting_obj || {};
@@ -327,7 +331,8 @@ export default function OrderSheet({ router }) {
       toast.error('구매자 휴대폰번호를 정확히 입력해 주세요.');
       return false;
     }
-    if (payData.addr_phone && !isValidPhoneNumber(payData.addr_phone)) {
+    // 해외 연락처는 국가번호(+81 …)가 붙어 국내 자릿수 규칙에 안 맞는다 — 국내일 때만 형식을 본다.
+    if (isDomestic(payData.country_code) && payData.addr_phone && !isValidPhoneNumber(payData.addr_phone)) {
       toast.error('받는 분 연락처를 정확히 입력해 주세요.');
       return false;
     }
@@ -340,6 +345,17 @@ export default function OrderSheet({ router }) {
     // 주소록을 쓰지 않고 직접 입력하는 경우, 받는 분 성함이 비면 송장을 쓸 수 없다.
     if (directMode && !String(payData.receiver ?? '').trim()) {
       toast.error('받는 분 성함을 입력해 주세요.');
+      return false;
+    }
+    // 주소 자체가 비어 있으면 배송이 불가능하다.
+    // 국내는 우편번호 검색을 거쳐야 addr 이 채워지지만, 해외는 전부 직접 입력이라
+    // 아무것도 안 쓰고도 결제까지 갈 수 있었다.
+    if (directMode && !String(payData.addr ?? '').trim()) {
+      toast.error('배송지 주소를 입력해 주세요.');
+      return false;
+    }
+    if (directMode && !isDomestic(payData.country_code) && !String(payData.country_code ?? '').trim()) {
+      toast.error('배송 국가를 선택해 주세요.');
       return false;
     }
     if (parseFloat(max_use_point) < parseFloat(payData.use_point || 0)) {
@@ -704,19 +720,72 @@ export default function OrderSheet({ router }) {
                     </Stack>
                   ) : (
                     <Stack spacing={2}>
+                      {/* 국내/해외 전환.
+                          주소록 다이얼로그(DialogAddAddress)에는 넣었는데 이 직접입력 폼에는 없었다.
+                          비회원은 주소록 자체가 없어서, 여기 없으면 **해외 주문을 넣을 방법이 아예 없다**. */}
+                      <ToggleButtonGroup
+                        exclusive size="small"
+                        value={isDomestic(payData.country_code) ? 'KR' : 'OVERSEAS'}
+                        onChange={(e, v) => {
+                          if (!v) return;
+                          // 전환하면 이전 방식으로 채운 주소를 비운다 — 국내 도로명주소가
+                          // 해외 주문에 그대로 남아 나가는 것을 막는다.
+                          setPayData({
+                            ...payData,
+                            country_code: v === 'KR' ? KOREA_CODE : '',
+                            addr: '', detail_addr: '', zonecode: '', city: '', state_region: '',
+                          });
+                        }}
+                      >
+                        <ToggleButton value="KR">{translate('국내배송')}</ToggleButton>
+                        <ToggleButton value="OVERSEAS">{translate('해외배송')}</ToggleButton>
+                      </ToggleButtonGroup>
+
                       <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2}>
-                        <TextField fullWidth size="small" label="받는 사람" value={payData.receiver || ''}
+                        <TextField fullWidth size="small" label={translate('받는 사람')} value={payData.receiver || ''}
                           onChange={(e) => setPayData({ ...payData, receiver: e.target.value })} />
-                        <TextField fullWidth size="small" label="연락처" value={payData.addr_phone || ''}
-                          inputMode="tel" placeholder="010-1234-5678"
-                          onChange={(e) => setPayData({ ...payData, addr_phone: sanitizePhoneInput(e.target.value) })} />
+                        <TextField fullWidth size="small" label={translate('연락처')} value={payData.addr_phone || ''}
+                          inputMode="tel" placeholder={isDomestic(payData.country_code) ? '010-1234-5678' : '+81 90-1234-5678'}
+                          // 해외 번호는 국가번호(+)와 공백이 들어간다 — 국내 형식으로 걸러내면 입력이 막힌다.
+                          onChange={(e) => setPayData({ ...payData, addr_phone: isDomestic(payData.country_code) ? sanitizePhoneInput(e.target.value) : e.target.value })} />
                       </Stack>
-                      <Stack direction="row" spacing={1} alignItems="flex-start">
-                        <TextField size="small" label="우편번호" value={payData.zonecode || ''} InputProps={{ readOnly: true }} sx={{ width: 140 }} />
-                        <Button variant="outlined" sx={{ height: 40 }} onClick={() => setPostOpen(true)}>우편번호 검색</Button>
-                      </Stack>
-                      <TextField fullWidth size="small" label="주소" value={payData.addr || ''} InputProps={{ readOnly: true }} placeholder="우편번호 검색으로 입력" />
-                      <TextField fullWidth size="small" label="상세주소" value={payData.detail_addr || ''}
+
+                      {isDomestic(payData.country_code) ? (
+                        <>
+                          <Stack direction="row" spacing={1} alignItems="flex-start">
+                            <TextField size="small" label={translate('우편번호')} value={payData.zonecode || ''} InputProps={{ readOnly: true }} sx={{ width: 140 }} />
+                            <Button variant="outlined" sx={{ height: 40 }} onClick={() => setPostOpen(true)}>{translate('우편번호 검색')}</Button>
+                          </Stack>
+                          <TextField fullWidth size="small" label={translate('주소')} value={payData.addr || ''} InputProps={{ readOnly: true }} placeholder={translate('우편번호 검색으로 입력')} />
+                        </>
+                      ) : (
+                        <>
+                          {/* 해외는 우편번호 검색(다음 우편번호 서비스)이 국내 전용이라 쓸 수 없다 — 직접 입력받는다. */}
+                          <TextField
+                            fullWidth size="small" select
+                            label={translate('국가')}
+                            value={payData.country_code || ''}
+                            onChange={(e) => setPayData({ ...payData, country_code: e.target.value })}
+                          >
+                            {COUNTRIES.filter((c) => c.code !== KOREA_CODE).map((c) => (
+                              <MenuItem key={c.code} value={c.code}>{c.name}</MenuItem>
+                            ))}
+                          </TextField>
+                          <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2}>
+                            <TextField fullWidth size="small" label={translate('도시')} value={payData.city || ''}
+                              onChange={(e) => setPayData({ ...payData, city: e.target.value })} />
+                            <TextField fullWidth size="small" label={translate('주/지역')} value={payData.state_region || ''}
+                              onChange={(e) => setPayData({ ...payData, state_region: e.target.value })} />
+                          </Stack>
+                          <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2}>
+                            <TextField fullWidth size="small" label={translate('주소')} value={payData.addr || ''}
+                              onChange={(e) => setPayData({ ...payData, addr: e.target.value })} />
+                            <TextField size="small" label={translate('우편번호')} value={payData.zonecode || ''} sx={{ width: { xs: '100%', sm: 160 } }}
+                              onChange={(e) => setPayData({ ...payData, zonecode: e.target.value })} />
+                          </Stack>
+                        </>
+                      )}
+                      <TextField fullWidth size="small" label={translate('상세주소')} value={payData.detail_addr || ''}
                         onChange={(e) => setPayData({ ...payData, detail_addr: e.target.value })} />
                       {isMember && addressList.length > 0 && (
                         <Button size="small" variant="text" onClick={() => setDirectMode(false)} sx={{ alignSelf: 'flex-start' }}>← 주소록에서 선택</Button>

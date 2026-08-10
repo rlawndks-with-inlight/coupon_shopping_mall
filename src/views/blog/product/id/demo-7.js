@@ -329,7 +329,7 @@ const Demo7 = () => {
             </OptionField>
           </OptionArea>
           <ButtonRow>
-            <Btn onClick={handleAddCart}>장바구니</Btn>
+            <Btn onClick={handleAddCart}>{translate('장바구니')}</Btn>
             <Btn $primary onClick={() => startBuyNow(item, selectProductGroups, router)}>求める →</Btn>
           </ButtonRow>
         </InfoSide>

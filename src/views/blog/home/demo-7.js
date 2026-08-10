@@ -344,6 +344,7 @@ const FeaturedPrice = styled.div`
 `
 
 const Demo7 = (props) => {
+  const { translate } = useLocales();
   const { currentLang } = useLocales();
   const { themeDnsData } = useSettingsContext();
   const { func } = props;
@@ -398,11 +399,7 @@ const Demo7 = (props) => {
       <Philosophy>
         <PhilosophyText>
           {t.philosophy ? t.philosophy : (
-            <>
-              오래 지속되는 것에는 이유가 있습니다.<br />
-              빠르지 않아도, 화려하지 않아도,<br />
-              진심으로 만들어진 단 하나를.
-            </>
+            <>{translate('오래 지속되는 것에는 이유가 있습니다.')}<br />{translate('빠르지 않아도, 화려하지 않아도,')}<br />{translate('진심으로 만들어진 단 하나를.')}</>
           )}
         </PhilosophyText>
         <PhilosophySign>— {brandName} —</PhilosophySign>
@@ -450,9 +447,7 @@ const Demo7 = (props) => {
 
       <FinalCTA>
         <FinalTitle>{brandName}</FinalTitle>
-        <HeroBrush style={{ color: PAPER, opacity: 0.6, maxWidth: '500px', margin: '0 auto 2rem' }}>
-          "좋은 것을 오래도록 함께하는 기쁨"
-        </HeroBrush>
+        <HeroBrush style={{ color: PAPER, opacity: 0.6, maxWidth: '500px', margin: '0 auto 2rem' }}>{translate('"좋은 것을 오래도록 함께하는 기쁨"')}</HeroBrush>
         <FinalCTABtn onClick={goTo}>求める →</FinalCTABtn>
       </FinalCTA>
     </Wrapper>

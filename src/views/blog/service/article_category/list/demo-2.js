@@ -9,6 +9,7 @@ import _ from 'lodash';
 import toast from 'react-hot-toast';
 import { apiShop } from 'src/utils/api';
 import { formatLang } from 'src/utils/format';
+import { useLocales } from 'src/locales';
 
 const ServiceFaq = styled.div`
 display:flex;
@@ -73,6 +74,7 @@ color:${props => props.themeMode == 'dark' ? '#888' : '#999'};
 
 // 공지사항, faq 등 리스트 페이지 김인욱
 const Demo2 = (props) => {
+  const { translate } = useLocales();
     const {
         data: {
 
@@ -101,6 +103,7 @@ const Demo2 = (props) => {
     }, [router.query?.article_category, themePostCategoryList])
 
     const pageSetting = () => {
+  const { translate } = useLocales();
         let found = _.find(themePostCategoryList, { id: parseInt(router.query?.article_category) });
         if (!found) return;
         let category = {
@@ -108,7 +111,7 @@ const Demo2 = (props) => {
             children: [
                 {
                     id: router.query?.article_category,
-                    post_category_title: '전체'
+                    post_category_title: translate('전체')
                 },
                 ...(found.children ?? [])
             ]
@@ -189,7 +192,7 @@ const Demo2 = (props) => {
                             )
                         })
                         :
-                        <EmptyText themeMode={themeMode}>등록된 게시글이 없습니다.</EmptyText>}
+                        <EmptyText themeMode={themeMode}>{translate('등록된 게시글이 없습니다.')}</EmptyText>}
                 </ListContainer>
                 {inquiryList.length < postTotal &&
                     <div style={{ display: 'flex', justifyContent: 'center', padding: '1rem' }}>
@@ -203,7 +206,7 @@ const Demo2 = (props) => {
                         // 비회원도 1:1문의를 남길 수 있다 — 작성 화면에서 이름·연락처·글비밀번호를 받는다.
                         // 여기서 로그인을 요구하면 비회원은 작성 화면에 도달할 방법이 없다.
                         router.push(`/shop/service/${router.query?.article_category}/add`)
-                    }}>서비스 문의</ServiceFaq>}
+                    }}>{translate('서비스 문의')}</ServiceFaq>}
             </Wrappers>
         </>
     )

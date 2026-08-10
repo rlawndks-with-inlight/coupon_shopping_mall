@@ -422,6 +422,7 @@ const FeaturedName = styled.div`
 `
 
 const Demo6 = (props) => {
+  const { translate } = useLocales();
   const { currentLang } = useLocales();
   const { themeDnsData } = useSettingsContext();
   const { func } = props;
@@ -518,12 +519,10 @@ const Demo6 = (props) => {
           </StoryImageWrap>
           <StoryText>
             <StoryLabel $color={mainColor}>Our Story</StoryLabel>
-            <StoryTitle>단 하나의 완성,<br />{brandName}</StoryTitle>
+            <StoryTitle>{translate('단 하나의 완성,')}<br />{brandName}</StoryTitle>
             <StoryBody>
               {t.story_body ? t.story_body : (
-                <>
-                  오랜 시간 연구와 다듬음을 거쳐 완성된 단 하나의 제품입니다.
-                  <br /><br />
+                <>{translate('오랜 시간 연구와 다듬음을 거쳐 완성된 단 하나의 제품입니다.')}<br /><br />
                   저희는 여러 가지를 한꺼번에 만들기보다, 진심으로 자신 있는 하나에 집중합니다.
                   이것이 저희가 고객에게 드릴 수 있는 가장 정성스러운 선물입니다.
                 </>
@@ -590,8 +589,7 @@ const Demo6 = (props) => {
             {t.final_desc ? t.final_desc : (
               <>
                 지금 바로 {brandName}의 시그니처를 만나보세요.
-                <br />한 번의 선택이 일상을 바꿉니다.
-              </>
+                <br />{translate('한 번의 선택이 일상을 바꿉니다.')}</>
             )}
           </FinalCTADesc>
           <HeroPriceRow style={{ justifyContent: 'center', marginBottom: '2rem' }}>
@@ -599,7 +597,7 @@ const Demo6 = (props) => {
             <HeroSalePrice $color={mainColor}>{commarNumberWithUnit(sale)}</HeroSalePrice>
             {hasSale && <HeroOrigPrice>{commarNumberWithUnit(orig)}</HeroOrigPrice>}
           </HeroPriceRow>
-          <HeroCTA $color={mainColor} onClick={goTo}>지금 구매하기 →</HeroCTA>
+          <HeroCTA $color={mainColor} onClick={goTo}>{translate('지금 구매하기 →')}</HeroCTA>
         </Container>
       </FinalCTA>
     </Wrapper>

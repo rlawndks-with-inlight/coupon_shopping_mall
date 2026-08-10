@@ -9,6 +9,7 @@ import { useSettingsContext } from 'src/components/settings';
 import { apiManager } from 'src/utils/api';
 import { isShopgoBrand } from 'src/utils/is-shopgo';
 import styled from 'styled-components'
+import { useLocales } from 'src/locales';
 
 
 const Wrappers = styled.div`
@@ -22,19 +23,20 @@ min-height:90vh;
 
 const returnFindType = {
   0: {
-    title: '아이디 찾기',
+    title: "아이디 찾기",
     defaultObj: {
 
     }
   },
   1: {
-    title: '비밀번호 찾기',
+    title: "비밀번호 찾기",
     defaultObj: {
 
     }
   }
 }
 const FindInfoDemo = (props) => {
+  const { translate } = useLocales();
   const {
     data: {
 
@@ -142,7 +144,7 @@ const FindInfoDemo = (props) => {
 
           >
             {Object.keys(returnFindType).map((key) => (
-              <Tab key={returnFindType[key].title} value={key} label={returnFindType[key].title} style={{ width: '50%', margin: '0' }} />
+              <Tab key={returnFindType[key].title} value={key} label={translate(returnFindType[key].title)} style={{ width: '50%', margin: '0' }} />
             ))}
           </Tabs>
         </Title>
@@ -154,7 +156,7 @@ const FindInfoDemo = (props) => {
             <>
               {findUserObj?.find_user_list?.length > 0 ?
                 <>
-                  <Title style={{ marginTop: '0' }}>찾은 유저아이디</Title>
+                  <Title style={{ marginTop: '0' }}>{translate('찾은 유저아이디')}</Title>
                   <Col>
                     {findUserObj?.find_user_list && findUserObj?.find_user_list.map(item => (
                       <>
@@ -171,14 +173,14 @@ const FindInfoDemo = (props) => {
                     onClick={() => {
                       router.push(`/shop/auth/login`)
                     }}
-                  >로그인하기</Button>
+                  >{translate('로그인하기')}</Button>
                 </>
                 :
                 <>
                   <FormControl variant="outlined" >
-                    <InputLabel>휴대폰번호</InputLabel>
+                    <InputLabel>{translate('휴대폰번호')}</InputLabel>
                     <OutlinedInput
-                      label='휴대폰번호'
+                      label={translate('휴대폰번호')}
                       type="number"
                       autoComplete='new-password'
                       value={findUserObj.phone_num}
@@ -186,15 +188,15 @@ const FindInfoDemo = (props) => {
                         variant='outlined'
                         style={{ width: '150px', height: '48px', marginRight: '-0.5rem' }}
                         onClick={onSendPhoneVerifyCode}
-                      >인증번호 발송</Button>}
+                      >{translate('인증번호 발송')}</Button>}
                       onChange={(e) => {
                         setFindUserObj({ ...findUserObj, ['phone_num']: e.target.value })
                       }} />
                   </FormControl>
                   <FormControl variant="outlined" >
-                    <InputLabel>인증번호</InputLabel>
+                    <InputLabel>{translate('인증번호')}</InputLabel>
                     <OutlinedInput
-                      label='인증번호'
+                      label={translate('인증번호')}
                       type="number"
                       autoComplete='new-password'
                       value={findUserObj.phoneCheck}
@@ -215,9 +217,9 @@ const FindInfoDemo = (props) => {
               {findUserObj.find_user_list?.length > 0 ?
                 <>
                   <FormControl variant="outlined" >
-                    <InputLabel>새비밀번호</InputLabel>
+                    <InputLabel>{translate('새비밀번호')}</InputLabel>
                     <OutlinedInput
-                      label='새비밀번호'
+                      label={translate('새비밀번호')}
                       autoComplete='new-password'
                       type='password'
                       value={findUserObj.password}
@@ -226,9 +228,9 @@ const FindInfoDemo = (props) => {
                       }} />
                   </FormControl>
                   <FormControl variant="outlined" >
-                    <InputLabel>새비밀번호확인</InputLabel>
+                    <InputLabel>{translate('새비밀번호확인')}</InputLabel>
                     <OutlinedInput
-                      label='새비밀번호확인'
+                      label={translate('새비밀번호확인')}
                       autoComplete='new-password'
                       type='password'
                       value={findUserObj.passwordCheck}
@@ -241,14 +243,14 @@ const FindInfoDemo = (props) => {
                     style={{ height: '48px' }}
                     startIcon={<Icon icon='material-symbols:lock' style={{ marginBottom: '0.2rem' }} />}
                     onClick={onChangePassword}
-                  >비밀번호 변경하기</Button>
+                  >{translate('비밀번호 변경하기')}</Button>
                 </>
                 :
                 <>
                   <FormControl variant="outlined" >
-                    <InputLabel>유저아이디</InputLabel>
+                    <InputLabel>{translate('유저아이디')}</InputLabel>
                     <OutlinedInput
-                      label='유저아이디'
+                      label={translate('유저아이디')}
                       autoComplete='new-password'
                       value={findUserObj.user_name}
                       onChange={(e) => {
@@ -256,9 +258,9 @@ const FindInfoDemo = (props) => {
                       }} />
                   </FormControl>
                   <FormControl variant="outlined" >
-                    <InputLabel>휴대폰번호</InputLabel>
+                    <InputLabel>{translate('휴대폰번호')}</InputLabel>
                     <OutlinedInput
-                      label='휴대폰번호'
+                      label={translate('휴대폰번호')}
                       type="number"
                       autoComplete='new-password'
                       value={findUserObj.phone_num}
@@ -266,15 +268,15 @@ const FindInfoDemo = (props) => {
                         variant='outlined'
                         style={{ width: '150px', height: '48px', marginRight: '-0.5rem' }}
                         onClick={onSendPhoneVerifyCode}
-                      >인증번호 발송</Button>}
+                      >{translate('인증번호 발송')}</Button>}
                       onChange={(e) => {
                         setFindUserObj({ ...findUserObj, ['phone_num']: e.target.value })
                       }} />
                   </FormControl>
                   <FormControl variant="outlined" >
-                    <InputLabel>인증번호</InputLabel>
+                    <InputLabel>{translate('인증번호')}</InputLabel>
                     <OutlinedInput
-                      label='인증번호'
+                      label={translate('인증번호')}
                       type="number"
                       autoComplete='new-password'
                       value={findUserObj.phoneCheck}

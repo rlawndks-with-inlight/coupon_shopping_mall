@@ -7,6 +7,7 @@ import { useSettingsContext } from 'src/components/settings';
 import { apiManager } from 'src/utils/api';
 import toast from 'react-hot-toast';
 import DialogAddAddress from 'src/components/dialog/DialogAddAddress';
+import { useLocales } from 'src/locales';
 
 // 공지사항, faq 등 상세페이지 김인욱
 const Wrappers = styled.div`
@@ -29,6 +30,7 @@ flex-direction:column;
 `
 
 const Demo4 = (props) => {
+  const { translate } = useLocales();
     const {
         data: {
 
@@ -157,24 +159,24 @@ const Demo4 = (props) => {
                 onAddAddress={onAddAddress}
             />
             <Dialog open={pwOpen} onClose={() => { setPwOpen(false); setPwObj({}); }}>
-                <DialogTitle>비밀번호 변경</DialogTitle>
+                <DialogTitle>{translate('비밀번호 변경')}</DialogTitle>
                 <DialogContent>
-                    <DialogContentText>현재 비밀번호와 새 비밀번호를 입력해주세요.</DialogContentText>
+                    <DialogContentText>{translate('현재 비밀번호와 새 비밀번호를 입력해주세요.')}</DialogContentText>
                     <Stack spacing={2} sx={{ marginTop: '1rem', minWidth: '280px' }}>
                         <TextField
-                            label='현재비밀번호'
+                            label={translate('현재비밀번호')}
                             type='password'
                             value={pwObj?.password ?? ''}
                             onChange={(e) => { setPwObj({ ...pwObj, password: e.target.value }) }}
                         />
                         <TextField
-                            label='새비밀번호'
+                            label={translate('새비밀번호')}
                             type='password'
                             value={pwObj?.new_password ?? ''}
                             onChange={(e) => { setPwObj({ ...pwObj, new_password: e.target.value }) }}
                         />
                         <TextField
-                            label='새비밀번호확인'
+                            label={translate('새비밀번호확인')}
                             type='password'
                             value={pwObj?.new_password_check ?? ''}
                             onChange={(e) => { setPwObj({ ...pwObj, new_password_check: e.target.value }) }}
@@ -182,20 +184,17 @@ const Demo4 = (props) => {
                     </Stack>
                 </DialogContent>
                 <DialogActions>
-                    <Button variant='contained' onClick={onChangePassword}>변경</Button>
-                    <Button color='inherit' onClick={() => { setPwOpen(false); setPwObj({}); }}>취소</Button>
+                    <Button variant='contained' onClick={onChangePassword}>{translate('변경')}</Button>
+                    <Button color='inherit' onClick={() => { setPwOpen(false); setPwObj({}); }}>{translate('취소')}</Button>
                 </DialogActions>
             </Dialog>
             <Dialog open={resignOpen} onClose={() => { setResignOpen(false); setResignPassword(''); }}>
-                <DialogTitle>회원탈퇴</DialogTitle>
+                <DialogTitle>{translate('회원탈퇴')}</DialogTitle>
                 <DialogContent>
-                    <DialogContentText>
-                        회원 탈퇴를 하시면 회원 혜택을 더 이상 이용하실 수 없습니다.<br />
-                        정말 탈퇴하시려면 비밀번호를 입력해주세요.
-                    </DialogContentText>
+                    <DialogContentText>{translate('회원 탈퇴를 하시면 회원 혜택을 더 이상 이용하실 수 없습니다.')}<br />{translate('정말 탈퇴하시려면 비밀번호를 입력해주세요.')}</DialogContentText>
                     <Stack spacing={2} sx={{ marginTop: '1rem', minWidth: '280px' }}>
                         <TextField
-                            label='비밀번호'
+                            label={translate('비밀번호')}
                             type='password'
                             value={resignPassword}
                             onChange={(e) => { setResignPassword(e.target.value) }}
@@ -203,25 +202,25 @@ const Demo4 = (props) => {
                     </Stack>
                 </DialogContent>
                 <DialogActions>
-                    <Button variant='contained' color='error' onClick={onResign}>탈퇴하기</Button>
-                    <Button color='inherit' onClick={() => { setResignOpen(false); setResignPassword(''); }}>취소</Button>
+                    <Button variant='contained' color='error' onClick={onResign}>{translate('탈퇴하기')}</Button>
+                    <Button color='inherit' onClick={() => { setResignOpen(false); setResignPassword(''); }}>{translate('취소')}</Button>
                 </DialogActions>
             </Dialog>
             <Wrappers>
-                <Title>개인정보 관리</Title>
+                <Title>{translate('개인정보 관리')}</Title>
                 <TextFieldContainer>
-                    <TextFieldTitle>이름</TextFieldTitle>
+                    <TextFieldTitle>{translate('이름')}</TextFieldTitle>
                     <TextField
                         disabled
                         name='username'
                         value={userObj?.name ?? ''}
-                        placeholder='홍길동'
+                        placeholder={translate('홍길동')}
                         sx={{
                             marginBottom: '1%',
                             backgroundColor: '#F6F6F6'
                         }}
                     />
-                    <TextFieldTitle>연락처</TextFieldTitle>
+                    <TextFieldTitle>{translate('연락처')}</TextFieldTitle>
                     <div style={{ display: 'flex' }}>
                         <TextField
                             disabled={!isEditContact}
@@ -253,7 +252,7 @@ const Demo4 = (props) => {
                             }}
                         >{isEditContact ? '저장' : '변경'}</Button>
                     </div>
-                    <TextFieldTitle>기본 배송지</TextFieldTitle>
+                    <TextFieldTitle>{translate('기본 배송지')}</TextFieldTitle>
                     <FormControl sx={{ width: '100%' }}>
                         <InputLabel>{addressList.length > 0 ? '기본 배송지를 선택해주세요' : '배송지를 추가해주세요'}</InputLabel>
                         <Select
@@ -293,9 +292,9 @@ const Demo4 = (props) => {
                             onClick={() => {
                                 setAddAddressOpen(true)
                             }}
-                        >배송지<br />추가</Button>
+                        >{translate('배송지')}<br />{translate('추가')}</Button>
                     </div>
-                    <TextFieldTitle>마케팅 수신 동의</TextFieldTitle>
+                    <TextFieldTitle>{translate('마케팅 수신 동의')}</TextFieldTitle>
                     <div style={{ display: 'flex' }}>
                         <FormControlLabel label={<Typography>SMS</Typography>} control={<Checkbox checked={checkboxObj.check_0} />} onChange={(e) => {
                             setCheckboxObj({ ...checkboxObj, ['check_0']: e.target.checked })
@@ -314,7 +313,7 @@ const Demo4 = (props) => {
                         onClick={() => {
                             onLogout()
                         }}
-                    >로그아웃</Button>
+                    >{translate('로그아웃')}</Button>
                     <div style={{
                         display: 'flex',
                         textDecoration: 'underline',
@@ -326,13 +325,13 @@ const Demo4 = (props) => {
                             onClick={() => {
                                 setPwOpen(true)
                             }}
-                        >비밀번호 변경</div>
+                        >{translate('비밀번호 변경')}</div>
                         <div
                             style={{ marginRight: '5%', cursor: 'pointer' }}
                             onClick={() => {
                                 setResignOpen(true)
                             }}
-                        >회원탈퇴</div>
+                        >{translate('회원탈퇴')}</div>
                     </div>
                 </TextFieldContainer>
             </Wrappers >

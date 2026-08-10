@@ -9,6 +9,7 @@ import { useAuthContext } from 'src/layouts/manager/auth/useAuthContext';
 import _ from 'lodash';
 import { apiShop } from 'src/utils/api';
 import { formatLang } from 'src/utils/format';
+import { useLocales } from 'src/locales';
 
 const ServiceFaq = styled.div`
 display:flex;
@@ -66,6 +67,7 @@ color:${props => props.themeMode == 'dark' ? '#888' : '#999'};
 
 // 공지사항, 1:1문의 등 리스트 페이지 김인욱
 const Demo4 = (props) => {
+  const { translate } = useLocales();
     const {
         data: {
 
@@ -94,13 +96,14 @@ const Demo4 = (props) => {
     }, [router.query?.article_category, themePostCategoryList])
 
     const pageSetting = async () => {
+  const { translate } = useLocales();
         let found = _.find(themePostCategoryList, { id: parseInt(router.query?.article_category) });
         if (!found) return;
         // 원본 객체를 변형하지 않도록 새 객체/배열로 '전체' 탭을 앞에 붙인다.
         const category = {
             ...found,
             children: [
-                { id: router.query?.article_category, post_category_title: '전체' },
+                { id: router.query?.article_category, post_category_title: translate('전체') },
                 ...(found.children ?? [])
             ]
         }
@@ -164,7 +167,7 @@ const Demo4 = (props) => {
                 </Tabs>
                 <ListContainer themeMode={themeMode}>
                     {inquiryList.length === 0 &&
-                        <EmptyText themeMode={themeMode}>등록된 게시글이 없습니다.</EmptyText>
+                        <EmptyText themeMode={themeMode}>{translate('등록된 게시글이 없습니다.')}</EmptyText>
                     }
                     {inquiryList.map((item, idx) => {
                         const isAnswered = item?.replies?.length > 0;
@@ -199,7 +202,7 @@ const Demo4 = (props) => {
                         </Button>
                     </div>}
                 {category?.is_able_user_add == 1 &&
-                    <ServiceFaq themeMode={themeMode} onClick={onClickWrite}>서비스 문의</ServiceFaq>
+                    <ServiceFaq themeMode={themeMode} onClick={onClickWrite}>{translate('서비스 문의')}</ServiceFaq>
                 }
             </Wrappers>
         </>

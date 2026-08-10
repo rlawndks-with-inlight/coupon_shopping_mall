@@ -792,7 +792,7 @@ const Header = () => {
                                     onClick={() => {
                                         router.push(`/shop/items?property_ids0=48&depth=0`);
                                         setSideMenuOpen(false);
-                                    }}>공용</div>}
+                                    }}>{translate('공용')}</div>}
                                     style={{ margin: '0.25rem 0' }}
                                 >
                                 </TreeItem>
@@ -803,7 +803,7 @@ const Header = () => {
                                     onClick={() => {
                                         router.push(`/shop/items?property_ids0=47&depth=0`);
                                         setSideMenuOpen(false);
-                                    }}>남성</div>}
+                                    }}>{translate('남성')}</div>}
                                     style={{ margin: '0.25rem 0' }}
                                 >
                                 </TreeItem>
@@ -814,7 +814,7 @@ const Header = () => {
                                     onClick={() => {
                                         router.push(`/shop/items?property_ids0=46&depth=0`);
                                         setSideMenuOpen(false);
-                                    }}>여성</div>}
+                                    }}>{translate('여성')}</div>}
                                     style={{ margin: '0.25rem 0' }}
                                 >
                                 </TreeItem>

@@ -141,7 +141,7 @@ export const Item9 = (props) => {
                                 </div>
                             </>*/}
                 </ItemPrice>
-                <div style={{ color: '#22222280', fontSize: '12px' }}>즉시구매가</div>
+                <div style={{ color: '#22222280', fontSize: '12px' }}>{translate('즉시구매가')}</div>
             </ItemContainer>
         </>
     )

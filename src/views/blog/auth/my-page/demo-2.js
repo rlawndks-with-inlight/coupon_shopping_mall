@@ -10,6 +10,7 @@ import { Title } from 'src/components/elements/blog/demo-1';
 import { logoSrc } from 'src/data/data';
 import { Row } from 'src/components/elements/styled-components';
 import { formatLang } from 'src/utils/format';
+import { useLocales } from 'src/locales';
 
 const Wrappers = styled.div`
 max-width:720px;
@@ -78,6 +79,7 @@ width:100%;
 
 //마이페이지 김인욱
 const Demo2 = (props) => {
+  const { translate } = useLocales();
     const {
         data: {
 
@@ -106,7 +108,7 @@ const Demo2 = (props) => {
             <Wrappers>
 
                 <TitleContainer>
-                    <Title>마이페이지</Title>
+                    <Title>{translate('마이페이지')}</Title>
                     {user ?
                         <>
                             <MenuButton themeMode={themeMode} onClick={() => { router.push('/shop/auth/change-info') }}>
@@ -118,7 +120,7 @@ const Demo2 = (props) => {
                         </>
                         :
                         <>
-                            <SubTitle>회원가입하고<br />주문내역을 간편하게 확인해보세요!</SubTitle>
+                            <SubTitle>{translate('회원가입하고')}<br />{translate('주문내역을 간편하게 확인해보세요!')}</SubTitle>
                             <Button
                                 variant='contained'
                                 color='primary'
@@ -130,7 +132,7 @@ const Demo2 = (props) => {
                                 onClick={() => {
                                     router.push('/shop/auth/login')
                                 }}
-                            >로그인/회원가입</Button>
+                            >{translate('로그인/회원가입')}</Button>
                         </>
                     }
                 </TitleContainer>
@@ -141,7 +143,7 @@ const Demo2 = (props) => {
                         {(user && (themeDnsData?.seller_point > 0 || themeDnsData?.point_rate > 0)) ?
                             <>
                                 <MenuButton themeMode={themeMode} style={{ marginBottom: '0' }} onClick={() => { router.push('/shop/auth/point') }}>
-                                    <MenuText>포인트 조회</MenuText>
+                                    <MenuText>{translate('포인트 조회')}</MenuText>
                                     <IconButton style={{ width: '24px', height: '56px', padding: '0', marginRight: '18px' }}>
                                         <Icon icon='ep:arrow-right' color='black' />
                                     </IconButton>
@@ -156,7 +158,7 @@ const Demo2 = (props) => {
                                 setDialogType(0)
                             }
                         }}>
-                            <MenuText>주문 / 배송 조회</MenuText>
+                            <MenuText>{translate('주문 / 배송 조회')}</MenuText>
                             <IconButton style={{ width: '24px', height: '56px', padding: '0', marginRight: '18px' }}>
                                 <Icon icon='ep:arrow-right' color='black' />
                             </IconButton>
@@ -164,7 +166,7 @@ const Demo2 = (props) => {
                         {user ?
                             <>
                                 <MenuButton themeMode={themeMode} style={{ marginTop: '0' }} onClick={() => { router.push('/shop/auth/delivery-address') }}>
-                                    <MenuText>배송지 관리</MenuText>
+                                    <MenuText>{translate('배송지 관리')}</MenuText>
                                     <IconButton style={{ width: '24px', height: '56px', padding: '0', marginRight: '18px' }}>
                                         <Icon icon='ep:arrow-right' color='black' />
                                     </IconButton>
@@ -220,21 +222,19 @@ const Demo2 = (props) => {
                                 setOpenPolicy(true)
                                 setPolicyType(1)
                             }}
-                        >개인정보 처리방침</div>
+                        >{translate('개인정보 처리방침')}</div>
                         <div
                             style={{ marginRight: '5%', cursor: 'pointer' }}
                             onClick={() => {
                                 setOpenPolicy(true)
                                 setPolicyType(0)
                             }}
-                        >이용약관</div>
+                        >{translate('이용약관')}</div>
                     </PolicyBox>
                     {
                         user &&
                         <>
-                            <Row style={{ marginTop: '2rem', cursor: 'pointer', textDecoration: 'underline' }} onClick={() => { onLogout() }}>
-                                로그아웃
-                            </Row>
+                            <Row style={{ marginTop: '2rem', cursor: 'pointer', textDecoration: 'underline' }} onClick={() => { onLogout() }}>{translate('로그아웃')}</Row>
                         </>
                     }
                 </MenuContainer>
@@ -279,10 +279,10 @@ const Demo2 = (props) => {
                 <DialogContent
                     style={{ textAlign: 'center', marginBottom: '4%' }}>
                     {dialogType == 0 ?
-                        <>로그인하고 상품 상태별로<br />알림을 받아보시는 건 어떨까요?</>
+                        <>{translate('로그인하고 상품 상태별로')}<br />{translate('알림을 받아보시는 건 어떨까요?')}</>
                         :
                         // 비회원은 1:1문의를 쓸 수 없으므로, 대신 공지사항은 열려 있다는 걸 알려준다.
-                        <>1:1문의는 로그인 후 이용하실 수 있습니다.<br />공지사항은 로그인 없이 확인하실 수 있어요.</>
+                        <>{translate('1:1문의는 로그인 후 이용하실 수 있습니다.')}<br />{translate('공지사항은 로그인 없이 확인하실 수 있어요.')}</>
                     }
                 </DialogContent>
                 <DialogActions>
@@ -291,7 +291,7 @@ const Demo2 = (props) => {
                             variant='contained'
                             size='large'
                             sx={{ marginBottom: '2%' }}
-                            onClick={() => { router.push('/shop/auth/login') }}>로그인하기</Button>
+                            onClick={() => { router.push('/shop/auth/login') }}>{translate('로그인하기')}</Button>
                         {/* '비회원으로 문의할게요' 는 눌러도 항상 비어 있는 문의 목록으로 보내
                             "비회원 1:1문의 불가" 정책과 충돌해 없앴다.
                             주문/배송조회(dialogType 0)는 비회원 조회 경로라 그대로 둔다. */}
@@ -299,9 +299,7 @@ const Demo2 = (props) => {
                             <Button
                                 variant='outlined'
                                 size='large'
-                                onClick={() => { router.push('/shop/auth/order-check') }}>
-                                비회원으로 주문/배송조회 할게요
-                            </Button>
+                                onClick={() => { router.push('/shop/auth/order-check') }}>{translate('비회원으로 주문/배송조회 할게요')}</Button>
                         )}
                     </DialogBox>
                 </DialogActions>

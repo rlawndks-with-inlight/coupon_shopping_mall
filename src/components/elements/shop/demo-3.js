@@ -174,7 +174,7 @@ export const Item3 = memo((props) => {
                         {
                             themeDnsData?.id == 95 && item?.product_sale_price > 99999 ?
                                 <>
-                                    <div>별도 문의 필요</div>
+                                    <div>{translate('별도 문의 필요')}</div>
                                 </>
                                 :
                                 <>

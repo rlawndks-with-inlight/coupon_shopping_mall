@@ -367,6 +367,7 @@ const FeaturedPriceRow = styled.div`
 `
 
 const Demo9 = (props) => {
+  const { translate } = useLocales();
   const { currentLang } = useLocales();
   const { themeDnsData } = useSettingsContext();
   const { func } = props;
@@ -421,7 +422,7 @@ const Demo9 = (props) => {
             {hasSale && <HeroOrig>{commarNumberWithUnit(orig)}</HeroOrig>}
           </HeroPriceWrap>
           <div>
-            <CTABtn onClick={goTo}>구매하기 💫</CTABtn>
+            <CTABtn onClick={goTo}>{translate('구매하기 💫')}</CTABtn>
           </div>
         </HeroContent>
       </Hero>
@@ -445,7 +446,7 @@ const Demo9 = (props) => {
         <Quote>
           {t.quote ? t.quote : (
             <>
-              "<QuoteHighlight>하나만 만들어도 제대로</QuoteHighlight>,<br />
+              "<QuoteHighlight>{translate('하나만 만들어도 제대로')}</QuoteHighlight>,<br />
               그게 바로 {brandName}의 방식이에요."
             </>
           )}
@@ -456,7 +457,7 @@ const Demo9 = (props) => {
 
       {featuredProducts.length > 0 && (
         <FeaturedSection>
-          <SectionHeading>🛍️ 대표 상품</SectionHeading>
+          <SectionHeading>{translate('🛍️ 대표 상품')}</SectionHeading>
           <FeaturedGrid>
             {featuredProducts.map((item) => {
               const c = getFeaturedCardData(item, currentLang);
@@ -479,11 +480,11 @@ const Demo9 = (props) => {
       )}
 
       <FinalCTA>
-        <FinalTitle>{t.final_title ? t.final_title : (<>지금이 {brandName}과<br />함께할 순간이에요 💕</>)}</FinalTitle>
+        <FinalTitle>{t.final_title ? t.final_title : (<>지금이 {brandName}과<br />{translate('함께할 순간이에요 💕')}</>)}</FinalTitle>
         <div style={{ margin: '2rem 0' }}>
           <HeroPrice style={{ fontSize: '40px' }}>{commarNumberWithUnit(sale)}</HeroPrice>
         </div>
-        <CTABtn onClick={goTo}>바로 구매하기 →</CTABtn>
+        <CTABtn onClick={goTo}>{translate('바로 구매하기 →')}</CTABtn>
       </FinalCTA>
     </Wrapper>
   );

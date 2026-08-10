@@ -17,6 +17,7 @@ import $ from 'jquery';
 import { CategorySorter, LANGCODE } from "src/views/shop/demo-4/header"
 import queryString from 'query-string'
 import { formatLang } from 'src/utils/format';
+import { useLocales } from 'src/locales';
 
 const ContentWrapper = styled.div`
 max-width:1400px;
@@ -48,6 +49,7 @@ margin:auto 0 auto auto;
 `
 
 const ItemsDemo = (props) => {
+  const { translate } = useLocales();
 
   const router = useRouter();
   const { user, isInitialized } = useAuthContext();
@@ -91,17 +93,17 @@ const ItemsDemo = (props) => {
       is_asc: 0,
     },*/
     {
-      label: '최근등록순',
+      label: translate('최근등록순'),
       order: 'created_at',
       is_asc: 0,
     },
     {
-      label: '높은가격순',
+      label: translate('높은가격순'),
       order: 'product_sale_price',
       is_asc: 0,
     },
     {
-      label: '낮은가격순',
+      label: translate('낮은가격순'),
       order: 'product_sale_price',
       is_asc: 1,
     },
@@ -347,7 +349,7 @@ const ItemsDemo = (props) => {
                         value={searchObj?.search}
                         style={{ width: '100%', margin: '2rem auto 4rem 1rem', maxWidth: '700px', }}
                         autoComplete='new-password'
-                        placeholder="키워드를 검색해주세요."
+                        placeholder={translate('키워드를 검색해주세요.')}
                         onKeyPress={(e) => {
                           if (e.key == 'Enter') {
                             let query = { ...categoryIds };
@@ -499,11 +501,11 @@ const ItemsDemo = (props) => {
                 //console.log(productContent)
                 //console.log(searchObj.page_size)
               }}>
-              <MenuItem value={10}>10개씩 보기</MenuItem>
-              <MenuItem value={20}>20개씩 보기</MenuItem>
-              <MenuItem value={30}>30개씩 보기</MenuItem>
-              <MenuItem value={50}>50개씩 보기</MenuItem>
-              <MenuItem value={100}>100개씩 보기</MenuItem>
+              <MenuItem value={10}>{translate('10개씩 보기')}</MenuItem>
+              <MenuItem value={20}>{translate('20개씩 보기')}</MenuItem>
+              <MenuItem value={30}>{translate('30개씩 보기')}</MenuItem>
+              <MenuItem value={50}>{translate('50개씩 보기')}</MenuItem>
+              <MenuItem value={100}>{translate('100개씩 보기')}</MenuItem>
             </Select>
           </FormControl>
 
@@ -546,7 +548,7 @@ const ItemsDemo = (props) => {
                   <>
                     <Col>
                       <Icon icon={'basil:cancel-outline'} style={{ margin: '8rem auto 1rem auto', fontSize: themeObj.font_size.size1, color: themeObj.grey[300] }} />
-                      <div style={{ margin: 'auto auto 8rem auto' }}>검색결과가 없습니다.</div>
+                      <div style={{ margin: 'auto auto 8rem auto' }}>{translate('검색결과가 없습니다.')}</div>
                     </Col>
                   </>}
               </>}

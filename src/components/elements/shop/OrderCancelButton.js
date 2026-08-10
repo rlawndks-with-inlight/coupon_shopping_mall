@@ -53,7 +53,7 @@ const OrderCancelButton = ({ trx, onDone, sx, variant = 'outlined' }) => {
         setModal({
           func: request,
           icon: 'material-symbols:cancel-outline',
-          title: '주문을 취소요청 하시겠습니까?',
+          title: translate('주문을 취소요청 하시겠습니까?'),
         });
       }}
     >

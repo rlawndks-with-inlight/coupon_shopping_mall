@@ -6,6 +6,7 @@ import ShopLayout from 'src/layouts/shop/ShopLayout';
 import { useSettingsContext } from 'src/components/settings';
 import { apiManager } from 'src/utils/api';
 import { commarNumber, sanitizePhoneInput, getOrderStatusText } from 'src/utils/function';
+import { useLocales } from 'src/locales';
 
 const Wrappers = styled.div`
   max-width: 640px;
@@ -41,12 +42,13 @@ const won = (n) => `${commarNumber(n || 0)}원`;
 
 // 주문 상세(읽기전용) — 회원/비회원 공통 표시
 const OrderDetail = ({ order }) => {
+  const { translate } = useLocales();
   const track = parseInvoice(order?.invoice_num);
   const receiver = order?.receiver || order?.buyer_name;
   return (
     <>
       <Card sx={{ mb: 2 }}>
-        <CardHeader title="주문 정보" />
+        <CardHeader title={translate('주문 정보')} />
         <CardContent sx={{ pt: 0 }}>
           <KV k="주문번호" v={order?.ord_num} strong />
           {order?.appr_num && <KV k="승인번호" v={order?.appr_num} />}
@@ -55,7 +57,7 @@ const OrderDetail = ({ order }) => {
           {order?.invoice_num && (
             <KV k="택배사/송장" v={track
               ? <>{track.courier ? track.courier + ' · ' : ''}{track.invoice}
-                <Box component="a" href={track.url} target="_blank" rel="noreferrer" sx={{ ml: 1, color: 'primary.main', textDecoration: 'underline' }}>배송조회</Box></>
+                <Box component="a" href={track.url} target="_blank" rel="noreferrer" sx={{ ml: 1, color: 'primary.main', textDecoration: 'underline' }}>{translate('배송조회')}</Box></>
               : order?.invoice_num} />
           )}
         </CardContent>
@@ -63,7 +65,7 @@ const OrderDetail = ({ order }) => {
 
       {(order?.addr || receiver) && (
         <Card sx={{ mb: 2 }}>
-          <CardHeader title="배송지" />
+          <CardHeader title={translate('배송지')} />
           <CardContent sx={{ pt: 0 }}>
             {receiver && <KV k="받는분" v={`${receiver}${order?.receiver_phone ? ' · ' + order?.receiver_phone : ''}`} />}
             {order?.addr && <KV k="주소" v={`${order?.zonecode ? '(' + order?.zonecode + ') ' : ''}${order?.addr} ${order?.detail_addr || ''}`} />}
@@ -72,7 +74,7 @@ const OrderDetail = ({ order }) => {
       )}
 
       <Card sx={{ mb: 2 }}>
-        <CardHeader title="주문상품" />
+        <CardHeader title={translate('주문상품')} />
         <CardContent sx={{ pt: 0 }}>
           <Stack spacing={1} divider={<Divider flexItem />}>
             {(order?.orders || []).map((o, i) => (
@@ -84,7 +86,7 @@ const OrderDetail = ({ order }) => {
           </Stack>
           <Divider sx={{ my: 1.5 }} />
           <Stack direction="row" justifyContent="space-between" alignItems="baseline">
-            <Typography variant="subtitle2">결제금액</Typography>
+            <Typography variant="subtitle2">{translate('결제금액')}</Typography>
             <Typography variant="h6" sx={{ fontWeight: 900 }}>{won(order?.amount)}</Typography>
           </Stack>
         </CardContent>
@@ -96,6 +98,7 @@ const OrderDetail = ({ order }) => {
 // 비회원 주문조회 — 전화번호 + 주문비밀번호.
 // 백엔드: transactions/0 GET { brand_id, buyer_phone, password } → 해당 브랜드의 매칭 주문 배열.
 const OrderCheck = () => {
+  const { translate } = useLocales();
   const { themeDnsData } = useSettingsContext();
   const [form, setForm] = useState({ buyer_phone: '', password: '' });
   const [orders, setOrders] = useState(null); // 조회 결과(배열) / null=미조회
@@ -127,19 +130,17 @@ const OrderCheck = () => {
 
   return (
     <Wrappers>
-      <Typography variant="h5" sx={{ fontWeight: 800, textAlign: 'center', mt: 2, mb: 0.5 }}>비회원 주문조회</Typography>
-      <Typography variant="body2" sx={{ color: 'text.secondary', textAlign: 'center', mb: 3 }}>
-        주문 시 입력한 전화번호와 주문비밀번호를 입력해 주세요.
-      </Typography>
+      <Typography variant="h5" sx={{ fontWeight: 800, textAlign: 'center', mt: 2, mb: 0.5 }}>{translate('비회원 주문조회')}</Typography>
+      <Typography variant="body2" sx={{ color: 'text.secondary', textAlign: 'center', mb: 3 }}>{translate('주문 시 입력한 전화번호와 주문비밀번호를 입력해 주세요.')}</Typography>
 
       <Card sx={{ mb: 3 }}>
         <CardContent>
           <Stack spacing={2}>
-            <TextField fullWidth size="small" label="전화번호" placeholder="010-1234-5678" value={form.buyer_phone}
+            <TextField fullWidth size="small" label={translate('전화번호')} placeholder="010-1234-5678" value={form.buyer_phone}
               inputMode="tel"
               onChange={(e) => setForm({ ...form, buyer_phone: sanitizePhoneInput(e.target.value) })}
               onKeyPress={(e) => { if (e.key === 'Enter') onSearch(); }} />
-            <TextField fullWidth size="small" type="password" label="주문 비밀번호" value={form.password}
+            <TextField fullWidth size="small" type="password" label={translate('주문 비밀번호')} value={form.password}
               onChange={(e) => setForm({ ...form, password: e.target.value })}
               onKeyPress={(e) => { if (e.key === 'Enter') onSearch(); }} />
             <Button variant="contained" size="large" disabled={loading} onClick={onSearch}>
@@ -179,7 +180,7 @@ const OrderCheck = () => {
       {selected && (
         <>
           {orders && orders.length > 1 && (
-            <Button size="small" onClick={() => setSelected(null)} sx={{ mb: 1 }}>← 목록으로</Button>
+            <Button size="small" onClick={() => setSelected(null)} sx={{ mb: 1 }}>{translate('← 목록으로')}</Button>
           )}
           <OrderDetail order={selected} />
         </>

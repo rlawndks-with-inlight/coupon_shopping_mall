@@ -18,6 +18,7 @@ import ReactQuillComponent from "src/views/manager/react-quill";
 import dynamic from "next/dynamic";
 import PostDate from 'src/components/elements/shop/PostDate';
 import { formatLang } from 'src/utils/format';
+import { useLocales } from 'src/locales';
 const ReactQuill = dynamic(() => import('react-quill'), {
   ssr: false,
   loading: () => <p>Loading ...</p>,
@@ -32,6 +33,7 @@ min-height:90vh;
 margin-top: 2rem;
 `
 const ArticleDemo = (props) => {
+  const { translate } = useLocales();
   const { setModal } = useModal()
   const { user } = useAuthContext();
   // 비회원 1:1문의 입력값(이름·연락처·글비밀번호). 로그인 상태면 쓰지 않는다.
@@ -106,9 +108,7 @@ const ArticleDemo = (props) => {
                       <GuestInquiryFields value={guestObj} onChange={setGuestObj} />}
                       {postCategory.post_category_type == 1 &&
                         <>
-                          <Typography variant="subtitle2" sx={{ color: 'text.secondary' }}>
-                            대표이미지등록
-                          </Typography>
+                          <Typography variant="subtitle2" sx={{ color: 'text.secondary' }}>{translate('대표이미지등록')}</Typography>
                           <Upload file={item.post_title_file || item.post_title_img} onDrop={(acceptedFiles) => {
                             const newFile = acceptedFiles[0];
                             if (!newFile.type.includes('image')) {
@@ -145,7 +145,7 @@ const ArticleDemo = (props) => {
                           />
                         </>}
                       <TextField
-                        label='제목'
+                        label={translate('제목')}
                         value={item.post_title}
                         onChange={(e) => {
                           setItem(
@@ -168,19 +168,18 @@ const ArticleDemo = (props) => {
                       <Button variant="contained" style={{
                         height: '48px', width: '120px', margin: '1rem 0 1rem auto'
                       }} onClick={() => {
+  const { translate } = useLocales();
                         setModal({
                           func: () => { onSave() },
                           icon: 'material-symbols:edit-outline',
-                          title: '저장 하시겠습니까?'
+                          title: translate('저장 하시겠습니까?')
                         })
-                      }}>
-                        저장
-                      </Button>
+                      }}>{translate('저장')}</Button>
                     </>
                     :
                     <>
                       <Row style={{ columnGap: '0.5rem', fontSize: '1rem', alignItems: 'center' }}>
-                        <div>제목: </div>
+                        <div>{translate('제목:')}</div>
                         <h1 style={{ fontSize: '1rem' }}>{formatLang(item, 'post_title')}</h1>
                       </Row>
                       <PostDate value={item?.created_at} />
@@ -200,7 +199,7 @@ const ArticleDemo = (props) => {
                   {router.query?.id != 'add' && (item?.replies ?? []).map((reply, idx) => (
                     <Fragment key={reply?.id ?? idx}>
                       <Row style={{ columnGap: '0.5rem', fontSize: '1rem', alignItems: 'center' }}>
-                        <div>답변제목: </div>
+                        <div>{translate('답변제목:')}</div>
                         <h1 style={{ fontSize: '1rem' }}>{formatLang(reply, 'post_title')}</h1>
                       </Row>
                       <ReactQuill

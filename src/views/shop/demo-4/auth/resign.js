@@ -9,6 +9,7 @@ import { Row } from "src/components/elements/styled-components";
 import { Button, FormControl, TextField, InputLabel, OutlinedInput } from '@mui/material'
 import { apiManager } from "src/utils/api";
 import toast from 'react-hot-toast'
+import { useLocales } from 'src/locales';
 
 const Wrappers = styled.div`
 max-width:1400px;
@@ -21,6 +22,7 @@ margin-top: 2rem;
 `
 
 const ResignDemo = (props) => {
+  const { translate } = useLocales();
 
   const { user, logout } = useAuthContext();
   const { themeDnsData } = useSettingsContext();
@@ -51,16 +53,14 @@ const ResignDemo = (props) => {
           <AuthMenuSideComponent />
           <ContentWrappers>
             <TitleComponent>{'회원탈퇴'}</TitleComponent>
-            <div style={{ fontFamily: 'Noto Sans KR' }}>
-              회원 탈퇴를 하시면 회원 혜택을 더 이상 이용하실 수 없습니다.<br />
-              정말 탈퇴하시려면 비밀번호를 입력하고 탈퇴하기 버튼을 눌러주세요.<br />
+            <div style={{ fontFamily: 'Noto Sans KR' }}>{translate('회원 탈퇴를 하시면 회원 혜택을 더 이상 이용하실 수 없습니다.')}<br />{translate('정말 탈퇴하시려면 비밀번호를 입력하고 탈퇴하기 버튼을 눌러주세요.')}<br />
               <span style={{ fontSize: '32px' }}>;(</span>
             </div>
             <div style={{borderTop:'1px solid #ccc', width:'100%', display:'flex', marginTop:'1rem', paddingTop:'1rem', flexDirection:'column'}}>
               <FormControl variant="outlined" style={{width:'50%', marginBottom:'1rem'}}>
-                <InputLabel>비밀번호</InputLabel>
+                <InputLabel>{translate('비밀번호')}</InputLabel>
                 <OutlinedInput
-                label='비밀번호'
+                label={translate('비밀번호')}
                 value={password}
                 onChange={(e) => {
                   setPassword(e.target.value)
@@ -79,9 +79,7 @@ const ResignDemo = (props) => {
               onClick={() => {
                 onResign()
               }}
-            >
-              탈퇴하기
-            </Button>
+            >{translate('탈퇴하기')}</Button>
             </div>
           </ContentWrappers>
         </RowMobileReverceColumn>

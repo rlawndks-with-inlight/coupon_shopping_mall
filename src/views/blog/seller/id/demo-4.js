@@ -11,6 +11,7 @@ import { apiManager, apiShop } from 'src/utils/api';
 import { insertCartDataUtil, selectItemOptionUtil, startBuyNow } from 'src/utils/shop-util';
 import toast from 'react-hot-toast';
 import { formatLang } from 'src/utils/format';
+import { useLocales } from 'src/locales';
 
 const Wrappers = styled.div`
 max-width: 840px;
@@ -84,6 +85,7 @@ padding:4rem 2.5% 0 2.5%;
 
 // 셀러별 메인페이지 김인욱
 const Demo4 = (props) => {
+  const { translate } = useLocales();
     const {
         data: {
 
@@ -322,25 +324,19 @@ const Demo4 = (props) => {
                     ))}
                     <DrawerBox style={{ borderBottom: 'none' }}>
                         <Row style={{ justifyContent: 'space-between' }}>
-                            <Row style={{ width: '150px', justifyContent: 'space-between', alignItems: 'center', padding: '0.25rem' }}>
-                                상품 금액
-                            </Row>
+                            <Row style={{ width: '150px', justifyContent: 'space-between', alignItems: 'center', padding: '0.25rem' }}>{translate('상품 금액')}</Row>
                             <div>
                                 <span style={{ color: 'red' }}>{commarNumber(selectedItem?.product_sale_price)}</span>원
                             </div>
                         </Row>
                         <Row style={{ justifyContent: 'space-between' }}>
-                            <Row style={{ width: '150px', justifyContent: 'space-between', alignItems: 'center', padding: '0.25rem' }}>
-                                배송비
-                            </Row>
+                            <Row style={{ width: '150px', justifyContent: 'space-between', alignItems: 'center', padding: '0.25rem' }}>{translate('배송비')}</Row>
                             <div>
                                 <span style={{ color: 'red' }}>{commarNumber(selectedItem?.delivery_fee)}</span>원
                             </div>
                         </Row>
                         <Row style={{ justifyContent: 'space-between' }}>
-                            <Row style={{ width: '150px', justifyContent: 'space-between', alignItems: 'center', padding: '0.25rem' }}>
-                                합계
-                            </Row>
+                            <Row style={{ width: '150px', justifyContent: 'space-between', alignItems: 'center', padding: '0.25rem' }}>{translate('합계')}</Row>
                             <div>
                                 <span style={{ color: 'red' }}>{commarNumber(parseInt((selectedItem?.product_sale_price ?? 0) + (selectedItem?.delivery_fee ?? 0)))}</span>원
                             </div>
@@ -359,7 +355,7 @@ const Demo4 = (props) => {
                         onClick={() => {
                             handleAddCart()
                         }}
-                    >장바구니</Button>
+                    >{translate('장바구니')}</Button>
                     <Button
                         variant='contained'
                         color='primary'
@@ -373,7 +369,7 @@ const Demo4 = (props) => {
                             // 비회원도 바로구매 허용(주문서에서 비회원 주문비밀번호로 진행)
                             startBuyNow({ ...selectedItem, seller_id: router.query?.id ?? 0 }, selectProductGroups, router)
                         }}
-                    >바로구매</Button>
+                    >{translate('바로구매')}</Button>
                 </SelectContainer>
             </Drawer>
         </>

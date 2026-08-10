@@ -13,6 +13,7 @@ import { useSettingsContext } from "src/components/settings";
 import { useAuthContext } from "src/layouts/manager/auth/useAuthContext";
 import { apiShop } from "src/utils/api";
 import styled from "styled-components";
+import { useLocales } from 'src/locales';
 
 const Wrappers = styled.div`
 max-width:1400px;
@@ -25,6 +26,7 @@ margin-top: 2rem;
 `
 
 const ArticlesDemo = (props) => {
+  const { translate } = useLocales();
 
   const { user } = useAuthContext();
   const { setModal } = useModal()
@@ -35,7 +37,7 @@ const ArticlesDemo = (props) => {
   const defaultColumns = [
     {
       id: 'post_title',
-      label: '제목',
+      label: translate('제목'),
       action: (row) => {
         return (
           <span
@@ -50,7 +52,7 @@ const ArticlesDemo = (props) => {
     ...((postCategory?.is_able_user_add == 1 && postCategory?.post_category_read_type == 0) ? [
       {
         id: 'writer_nickname',
-        label: '작성자',
+        label: translate('작성자'),
         action: (row) => {
           return row['writer_nickname'] ?? "---"
         }
@@ -58,7 +60,7 @@ const ArticlesDemo = (props) => {
     ] : []),
     {
       id: 'created_at',
-      label: '작성일',
+      label: translate('작성일'),
       action: (row) => {
         return <>
           <div style={{ color: themeObj.grey[500] }}>
@@ -70,7 +72,7 @@ const ArticlesDemo = (props) => {
     ...((postCategory?.is_able_user_add == 1 && postCategory?.post_category_read_type == 1) ? [
       {
         id: 'replies',
-        label: '답변여부',
+        label: translate('답변여부'),
         action: (row) => {
           return row?.replies.length > 0 ? '답변완료' : '답변안함'
         }
@@ -79,7 +81,7 @@ const ArticlesDemo = (props) => {
     ...(postCategory?.is_able_user_add == 1 ? [
       {
         id: 'edit',
-        label: '관리',
+        label: translate('관리'),
         action: (row) => {
           if (!(user?.id && row?.user_id == user?.id)) return null;
           if (row?.replies.length > 0) return null; // 답변 완료 후 수정/삭제 잠금(기존 동작 유지)
@@ -88,7 +90,8 @@ const ArticlesDemo = (props) => {
               <IconButton onClick={() => { router.push(`/shop/service/${router.query?.article_category}/${row?.id}`) }}>
                 <Icon icon='material-symbols:edit-outline' />
               </IconButton>
-              <IconButton onClick={() => { setModal({ func: () => { deletePost(row?.id) }, icon: 'material-symbols:delete-outline', title: '정말 삭제하시겠습니까?' }) }}>
+              <IconButton onClick={() => {
+  const { translate } = useLocales(); setModal({ func: () => { deletePost(row?.id) }, icon: 'material-symbols:delete-outline', title: translate('정말 삭제하시겠습니까?') }) }}>
                 <Icon icon='material-symbols:delete-outline' />
               </IconButton>
             </>
@@ -159,9 +162,7 @@ const ArticlesDemo = (props) => {
                   // 비회원도 1:1문의를 남길 수 있다 — 작성 화면에서 이름·연락처·글비밀번호를 받는다.
                 // 여기서 로그인을 요구하면 비회원은 작성 화면에 도달할 방법이 없다.
                 router.push(`/shop/service/${router.query?.article_category}/add`)
-                }}>
-                  작성
-                </Button>
+                }}>{translate('작성')}</Button>
               </>}
           </ContentWrappers>
         </RowMobileReverceColumn>

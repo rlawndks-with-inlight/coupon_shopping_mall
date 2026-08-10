@@ -17,6 +17,7 @@ import toast from 'react-hot-toast';
 import { useLocales } from 'src/locales';
 import { formatLang } from 'src/utils/format';
 import DialogBuyNow from 'src/components/dialog/DialogBuyNow';
+import QuantityStepper from 'src/components/elements/shop/QuantityStepper';
 
 
 const ReactQuill = dynamic(() => import('react-quill'), {
@@ -305,6 +306,15 @@ const Demo1 = (props) => {
               </div>
             </Row>
           </DrawerBox>
+          {/* 수량 — 이 프레임엔 수량 UI 가 없어서 상세에서 담으면 늘 1개였다.
+              selectProductGroups.count 는 담기·바로구매 양쪽이 이미 읽는다. */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginTop: '1rem' }}>
+            <div>{translate('수량')}</div>
+            <QuantityStepper
+              value={selectProductGroups?.count ?? 1}
+              onChange={(count) => setSelectProductGroups((prev) => ({ ...prev, count }))}
+            />
+          </div>
           <Button
             variant='outlined'
             color='primary'

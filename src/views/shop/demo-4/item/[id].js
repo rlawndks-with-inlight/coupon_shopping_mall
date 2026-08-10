@@ -19,6 +19,7 @@ import { useModal } from 'src/components/dialog/ModalProvider';
 import { isShopgoBrand } from 'src/utils/is-shopgo';
 import { formatLang, characterChoices } from 'src/utils/format';
 import { useLocales } from 'src/locales';
+import QuantityStepper from 'src/components/elements/shop/QuantityStepper';
 
 const ReactQuill = dynamic(() => import('react-quill'), {
   ssr: false,
@@ -593,6 +594,16 @@ const ItemDemo = (props) => {
                             <div style={{ color: 'gray' }}>{translate('모든 상품은 배송 전 검수를 거칩니다')}</div>
                           </div>
                         </>}
+                        {/* 수량 — 이 프레임엔 수량 UI 가 없어서 상세에서 담으면 늘 1개였다.
+                            selectProductGroups.count 는 담기·바로구매 양쪽이 이미 읽고 있어
+                            여기서 값만 바꿔주면 그대로 연동된다(insertCartDataUtil / DialogBuyNow). */}
+                        <Row style={{ alignItems: 'center', columnGap: '1rem', margin: '1rem 0' }}>
+                          <div style={{ minWidth: '4rem' }}>{translate('수량')}</div>
+                          <QuantityStepper
+                            value={selectProductGroups?.count ?? 1}
+                            onChange={(count) => setSelectProductGroups((prev) => ({ ...prev, count }))}
+                          />
+                        </Row>
                         <Button
                           // '새상품(3)'도 파는 상태다. status != 0 으로 막으면 새상품으로 등록한 상품이
                           // 구매·장바구니 둘 다 비활성이 되어 아예 팔 수 없다.

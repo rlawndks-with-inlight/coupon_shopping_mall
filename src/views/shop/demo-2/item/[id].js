@@ -15,6 +15,7 @@ import { useAuthContext } from 'src/layouts/manager/auth/useAuthContext';
 import Head from 'next/head';
 import { isShopgoBrand } from 'src/utils/is-shopgo';
 import { formatLang, characterChoices } from 'src/utils/format';
+import QuantityStepper from 'src/components/elements/shop/QuantityStepper';
 import { useLocales } from 'src/locales';
 
 const ReactQuill = dynamic(() => import('react-quill'), {
@@ -276,6 +277,16 @@ const ItemDemo = (props) => {
                           </div>
                         </div>
                       ))}
+                      {/* 수량 — 이 프레임엔 수량 UI 가 없어서 상세에서 담으면 늘 1개였다.
+                          selectProductGroups.count 는 담기·바로구매 양쪽이 이미 읽고 있어
+                          여기서 값만 바꿔주면 그대로 연동된다(insertCartDataUtil / startBuyNow). */}
+                      <Stack direction="row" alignItems="center" spacing={2} sx={{ mt: 2 }}>
+                        <Typography variant="body2" sx={{ fontWeight: 600 }}>{translate('수량')}</Typography>
+                        <QuantityStepper
+                          value={selectProductGroups?.count ?? 1}
+                          onChange={(count) => setSelectProductGroups((prev) => ({ ...prev, count }))}
+                        />
+                      </Stack>
                       <div style={{ marginTop: 'auto', paddingTop: '2rem' }}>
                         <Stack direction="row" spacing={1}>
                           <Button variant="outlined" color="inherit" onClick={handleWish} sx={{ minWidth: '50px' }}>

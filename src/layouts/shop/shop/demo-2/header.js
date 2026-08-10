@@ -568,7 +568,11 @@ const Header = () => {
               <NoneShowMobile>
                 <IconButton
                   ref={menuButtonRef}
-                  onClick={() => setDialogMenuOpen(true)}
+                  // PC 햄버거를 누르면 화면을 통째로 덮는 오버레이(dialogMenuOpen)가 떴다.
+                  // 프레임1·3 은 같은 자리에서 좌측 Drawer 를 연다 — 그쪽에 맞춘다.
+                  // 이 헤더에도 Drawer(sideMenuOpen)가 이미 있어 모바일과 같은 메뉴를 재사용한다.
+                  // (기존 전체화면 UI 는 아래에 주석으로 남겨 뒀다 — 되살리려면 setDialogMenuOpen(true) 로 되돌리면 된다)
+                  onClick={() => setSideMenuOpen(true)}
                   sx={{ marginRight: '1rem' }}
                 >
                   <Icon icon={'oi:menu'} fontSize={'2rem'} color={themeMode == 'dark' ? '#fff' : '#000'} />
@@ -655,6 +659,15 @@ const Header = () => {
         </>}
       <PaddingTop pcHeight={headerHeight} />
 
+      {/* ── PC 전체화면 카테고리 메뉴 — 현재 사용하지 않음 ────────────────────
+          햄버거를 누르면 화면 전체를 덮는 오버레이가 떴다. 프레임1·3 은 같은 자리에서
+          좌측 Drawer 를 열기 때문에 프레임2 만 유독 이질적이었다.
+          햄버거는 Drawer(sideMenuOpen)로 바꿨고, 이 UI 는 재활용할 수 있게 남겨 둔다.
+
+          되살리는 법: 아래 `false &&` 를 지우고, 위 IconButton 의 onClick 을
+          setSideMenuOpen(true) → setDialogMenuOpen(true) 로 되돌린다.
+          (본문에 JSX 주석이 있어 블록주석으로는 감쌀 수 없어 이 방식을 썼다) */}
+      {false && (
       <Dialog
         open={dialogMenuOpen}
         onClose={() => {
@@ -752,6 +765,7 @@ const Header = () => {
           </Row>
         </Col>
       </Dialog>
+      )}
       <Drawer
         variant="persistent"
         anchor={'left'}

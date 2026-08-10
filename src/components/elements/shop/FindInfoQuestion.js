@@ -19,6 +19,7 @@ import {
   isValidSecurityAnswer,
 } from 'src/data/security-questions';
 import { apiManager } from 'src/utils/api';
+import { useLocales } from 'src/locales';
 
 // SMS 대신 '보안질문'으로 동작하는 아이디찾기 / 비밀번호 재설정 본문(공용).
 //
@@ -146,14 +147,10 @@ const FindInfoQuestion = ({
   const contactFooter = (
     <Stack spacing={0.5} sx={{ pt: 0.5 }}>
       {isManager ? (
-        <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-          비밀번호를 찾을 수 없으면 본사에 문의해 주세요. (office@forspay.com)
-        </Typography>
+        <Typography variant="body2" sx={{ color: 'text.secondary' }}>{translate('비밀번호를 찾을 수 없으면 본사에 문의해 주세요. (office@forspay.com)')}</Typography>
       ) : (
         <>
-          <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-            비밀번호를 찾을 수 없으면 고객센터로 문의해 주세요.
-          </Typography>
+          <Typography variant="body2" sx={{ color: 'text.secondary' }}>{translate('비밀번호를 찾을 수 없으면 고객센터로 문의해 주세요.')}</Typography>
           {themeDnsData?.phone_num ? (
             <Typography variant="body2" sx={{ color: 'text.secondary' }}>
               {themeDnsData?.phone_num}

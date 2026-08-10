@@ -14,6 +14,7 @@ import { useSettingsContext } from 'src/components/settings';
 import SecurityQuestionFields from 'src/components/elements/shop/SecurityQuestionFields';
 import { validateSecurityQuestion, securityQuestionPayload } from 'src/data/security-questions';
 import { sanitizePhoneInput, withSignUpName, validateSignUpInput, marketingAgreePayload } from 'src/utils/function';
+import { useLocales } from 'src/locales';
 
 const Wrappers = styled.div`
 max-width:720px;
@@ -88,6 +89,7 @@ const POLICY_CHECK_KEY = { 0: 'check_2', 1: 'check_3', 2: 'check_4' };
 
 // 회원가입 김인욱
 const Demo2 = (props) => {
+  const { translate } = useLocales();
     const {
         data: {
 
@@ -212,11 +214,11 @@ const Demo2 = (props) => {
                 {activeStep == 0 &&
                     <>
                         <TextFieldContainer>
-                            <Title>회원가입<br />서비스 이용약관 동의</Title>
+                            <Title>{translate('회원가입')}<br />{translate('서비스 이용약관 동의')}</Title>
                             <div style={{ marginTop: '2rem' }} />
                             <CheckBoxes>
                                 {/* 선택 항목(마케팅 수신)을 감췄으므로 '선택 항목 포함' 문구도 뺀다 */}
-                                <FormControlLabel label={<Typography>전체 동의</Typography>} control={<Checkbox checked={checkboxObj.check_0} />} onChange={(e) => {
+                                <FormControlLabel label={<Typography>{translate('전체 동의')}</Typography>} control={<Checkbox checked={checkboxObj.check_0} />} onChange={(e) => {
                                     let check_obj = {}
                                     if (e.target.checked) {
                                         for (let key in checkboxObj) {
@@ -230,11 +232,11 @@ const Demo2 = (props) => {
                                     setCheckboxObj(check_obj)
                                 }} />
                                 <ChildCheckboxes>
-                                    <FormControlLabel label={<Typography>만 14세 이상입니다<span style={{ color: 'red' }}>(필수)</span></Typography>} control={<Checkbox checked={checkboxObj.check_1} onChange={(e) => {
+                                    <FormControlLabel label={<Typography>{translate('만 14세 이상입니다')}<span style={{ color: 'red' }}>{translate('(필수)')}</span></Typography>} control={<Checkbox checked={checkboxObj.check_1} onChange={(e) => {
                                         setCheckboxObj({ ...checkboxObj, ['check_1']: e.target.checked })
                                     }} />} />
                                     <DetailedCheckbox>
-                                        <FormControlLabel label={<Typography>서비스 이용약관<span style={{ color: 'red' }}>(필수)</span></Typography>} control={<Checkbox checked={checkboxObj.check_2} onChange={(e) => {
+                                        <FormControlLabel label={<Typography>{translate('서비스 이용약관')}<span style={{ color: 'red' }}>{translate('(필수)')}</span></Typography>} control={<Checkbox checked={checkboxObj.check_2} onChange={(e) => {
                                             setCheckboxObj({ ...checkboxObj, ['check_2']: e.target.checked })
                                         }} />} />
                                         <IconButton style={{ width: '24px', height: '40px', padding: '0' }}>
@@ -245,7 +247,7 @@ const Demo2 = (props) => {
                                         </IconButton>
                                     </DetailedCheckbox>
                                     <DetailedCheckbox>
-                                        <FormControlLabel label={<Typography>개인정보 수집 이용 동의<span style={{ color: 'red' }}>(필수)</span></Typography>} control={<Checkbox checked={checkboxObj.check_3} onChange={(e) => {
+                                        <FormControlLabel label={<Typography>{translate('개인정보 수집 이용 동의')}<span style={{ color: 'red' }}>{translate('(필수)')}</span></Typography>} control={<Checkbox checked={checkboxObj.check_3} onChange={(e) => {
                                             setCheckboxObj({ ...checkboxObj, ['check_3']: e.target.checked })
                                         }} />} />
                                         <IconButton style={{ width: '24px', height: '40px', padding: '0' }} >
@@ -285,7 +287,7 @@ const Demo2 = (props) => {
                                     height: '56px'
                                 }}
                                 onClick={() => { setActiveStep(activeStep + 1); }}
-                            >다음으로</Button>
+                            >{translate('다음으로')}</Button>
                             {/* 바텀시트(Drawer) → Dialog scroll="paper" 로 교체.
                                 기존에는 Paper 전체가 스크롤돼 로고와 닫기(X)가 같이 사라졌고,
                                 약관을 끝까지 읽으면 닫을 방법이 없어 맨 위로 되돌아가야 했다.
@@ -359,11 +361,11 @@ const Demo2 = (props) => {
                 {activeStep == 1 &&
                     <>
                         <TextFieldContainer>
-                            <Title>회원가입</Title>
-                            <TextFieldTitle>아이디</TextFieldTitle>
+                            <Title>{translate('회원가입')}</Title>
+                            <TextFieldTitle>{translate('아이디')}</TextFieldTitle>
                             <TextField
                                 name='username'
-                                placeholder='영문 소문자, 숫자, 특수문자 가능 / 4~20자'
+                                placeholder={translate('영문 소문자, 숫자, 특수문자 가능 / 4~20자')}
                                 sx={{
                                     marginBottom: '1%'
                                 }}
@@ -372,11 +374,11 @@ const Demo2 = (props) => {
                                 }}
                                 value={user.user_name}
                             />
-                            <TextFieldTitle>비밀번호</TextFieldTitle>
+                            <TextFieldTitle>{translate('비밀번호')}</TextFieldTitle>
                             <TextField
                                 name='password'
                                 type={watchable_1 ? '' : 'password'}
-                                placeholder='영문 소문자, 숫자 조합 / 8~20자'
+                                placeholder={translate('영문 소문자, 숫자 조합 / 8~20자')}
                                 sx={{
                                     marginBottom: '1%'
                                 }}
@@ -392,11 +394,11 @@ const Demo2 = (props) => {
                                     )
                                 }}
                             />
-                            <TextFieldTitle>비밀번호 확인</TextFieldTitle>
+                            <TextFieldTitle>{translate('비밀번호 확인')}</TextFieldTitle>
                             <TextField
                                 name='passwordCheck'
                                 type={watchable_2 ? '' : 'password'}
-                                placeholder='비밀번호를 다시 입력해주세요'
+                                placeholder={translate('비밀번호를 다시 입력해주세요')}
                                 sx={{
                                     marginBottom: '1%'
                                 }}
@@ -414,9 +416,9 @@ const Demo2 = (props) => {
                             />
                             {/* 이름 — 블로그형 가입폼에만 빠져 있었다.
                                 shop 데모 9개는 모두 받고 있고, 안 받으면 마이페이지 '이름' 이 영영 빈칸이다. */}
-                            <TextFieldTitle>이름</TextFieldTitle>
+                            <TextFieldTitle>{translate('이름')}</TextFieldTitle>
                             <TextField
-                                placeholder='주문·배송에 사용됩니다'
+                                placeholder={translate('주문·배송에 사용됩니다')}
                                 sx={{
                                     marginBottom: '1%'
                                 }}
@@ -438,9 +440,9 @@ const Demo2 = (props) => {
                                 value={user.nickname}
                             />
                             */}
-                            <TextFieldTitle>휴대폰번호</TextFieldTitle>
+                            <TextFieldTitle>{translate('휴대폰번호')}</TextFieldTitle>
                             <TextField
-                                placeholder='숫자와 하이픈(-)만 입력'
+                                placeholder={translate('숫자와 하이픈(-)만 입력')}
                                 sx={{
                                     marginBottom: '1%'
                                 }}
@@ -463,14 +465,14 @@ const Demo2 = (props) => {
                                     fontSize: 'large'
                                 }}
                                 onClick={onClickNextButton}
-                            >완료</Button>
+                            >{translate('완료')}</Button>
                         </TextFieldContainer>
                     </>
                 }
                 {activeStep == 2 &&
                     <>
                         <TextFieldContainer>
-                            <Title>축하합니다!<br />회원가입이 완료되었습니다!<br /></Title>
+                            <Title>{translate('축하합니다!')}<br />{translate('회원가입이 완료되었습니다!')}<br /></Title>
                             <Button
                                 variant='contained'
                                 color='primary'
@@ -482,7 +484,7 @@ const Demo2 = (props) => {
                                 onClick={() => {
                                     router.push('/shop/auth/login')
                                 }}
-                            >로그인하러 가기</Button>
+                            >{translate('로그인하러 가기')}</Button>
                         </TextFieldContainer>
                     </>
                 }

@@ -4,6 +4,7 @@ import styled from 'styled-components'
 import { useSettingsContext } from 'src/components/settings';
 import { isShopgoBrand } from 'src/utils/is-shopgo';
 import FindInfoQuestion from 'src/components/elements/shop/FindInfoQuestion';
+import { useLocales } from 'src/locales';
 
 //아이디 찾기 및 비밀번호 찾기 김인욱
 const Wrappers = styled.div`
@@ -36,19 +37,20 @@ margin-top: 1.5rem;
 
 const returnFindType = {
     0: {
-        title: '아이디 찾기',
+        title: "아이디 찾기",
         defaultObj: {
 
         }
     },
     1: {
-        title: '비밀번호 찾기',
+        title: "비밀번호 찾기",
         defaultObj: {
 
         }
     }
 }
 const Demo4 = (props) => {
+  const { translate } = useLocales();
     const {
         data: {
 
@@ -87,7 +89,7 @@ const Demo4 = (props) => {
     return (
         <>
             <Wrappers>
-                <Title>아이디/비밀번호 찾기</Title>
+                <Title>{translate('아이디/비밀번호 찾기')}</Title>
                 <TabsContainer>
                     <div>
                         <Tabs
@@ -98,7 +100,7 @@ const Demo4 = (props) => {
                             sx={{ width: '100%' }}
                         >
                             {Object.keys(returnFindType).map((key) => (
-                                <Tab key={returnFindType[key].title} value={key} label={returnFindType[key].title} style={{ width: '50%', margin: '0' }} />
+                                <Tab key={returnFindType[key].title} value={key} label={translate(returnFindType[key].title)} style={{ width: '50%', margin: '0' }} />
                             ))}
                         </Tabs>
                     </div>
@@ -112,7 +114,7 @@ const Demo4 = (props) => {
                             <TextField
                                 name='userId'
                                 autoComplete='new-password'
-                                label='이름'
+                                label={translate('이름')}
                                 sx={{ marginTop: '1.5rem' }}
                                 onChange={(e) => {
                                     setUserId(e.target.value)
@@ -122,7 +124,7 @@ const Demo4 = (props) => {
                                 <TextField
                                     name='phoneNum'
                                     autoComplete='new-password'
-                                    label='연락처'
+                                    label={translate('연락처')}
                                     sx={{
                                         width: '72%',
                                         marginRight: '1%',
@@ -146,7 +148,7 @@ const Demo4 = (props) => {
                             <TextField
                                 name='certificationNum'
                                 autoComplete='new-password'
-                                label='인증번호 입력'
+                                label={translate('인증번호 입력')}
                                 sx={{
                                     marginTop: '1%'
                                 }}
@@ -159,14 +161,14 @@ const Demo4 = (props) => {
                                     margin: '3rem 0',
                                     fontSize: 'large'
                                 }}
-                            >인증완료</Button>
+                            >{translate('인증완료')}</Button>
                         </>
                         :
                         <>
                             <TextField
                                 name='userName'
                                 autoComplete='new-password'
-                                label='아이디'
+                                label={translate('아이디')}
                                 sx={{ marginTop: '1.5rem' }}
                                 onChange={(e) => {
                                     setUserName(e.target.value)
@@ -176,7 +178,7 @@ const Demo4 = (props) => {
                                 <TextField
                                     name='phoneNum'
                                     autoComplete='new-password'
-                                    label='연락처'
+                                    label={translate('연락처')}
                                     sx={{
                                         width: '72%',
                                         marginRight: '1%'
@@ -200,7 +202,7 @@ const Demo4 = (props) => {
                             <TextField
                                 name='certificationNum'
                                 autoComplete='new-password'
-                                placeholder='인증번호 입력'
+                                placeholder={translate('인증번호 입력')}
                                 sx={{
                                     marginTop: '1%'
                                 }}
@@ -213,7 +215,7 @@ const Demo4 = (props) => {
                                     margin: '3rem 0',
                                     fontSize: 'large'
                                 }}
-                            >인증완료</Button>
+                            >{translate('인증완료')}</Button>
                         </>}
                 </TabsContainer>
             </Wrappers>

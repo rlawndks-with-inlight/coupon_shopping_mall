@@ -7,6 +7,7 @@ import Logo from "src/components/logo";
 import { useSettingsContext } from "src/components/settings";
 import { apiManager } from "src/utils/api";
 import styled from "styled-components";
+import { useLocales } from 'src/locales';
 
 
 const Wrappers = styled.div`
@@ -21,6 +22,7 @@ margin-bottom:10vh;
 
 
 const PayResultDemo = (props) => {
+  const { translate } = useLocales();
   const {
     data: {
 
@@ -103,16 +105,17 @@ const PayResultDemo = (props) => {
   }, [])
 
   const getResultContent = (type) => {
+  const { translate } = useLocales();
     if (type === '0000') {
       return {
         icon: <Icon icon={'mdi:success-circle-outline'} style={{ margin: 'auto', fontSize: '8rem', color: themeDnsData?.theme_css?.main_color }} />,
-        title: '결제에 성공하였습니다.',
+        title: translate('결제에 성공하였습니다.'),
         content: '',
       }
     } else {
       return {
         icon: <Icon icon={'material-symbols:cancel-outline'} style={{ margin: 'auto', fontSize: '8rem', color: themeDnsData?.theme_css?.main_color }} />,
-        title: '결제에 실패하였습니다.',
+        title: translate('결제에 실패하였습니다.'),
         content: '',
       }
     }
@@ -135,37 +138,37 @@ const PayResultDemo = (props) => {
                       </div>
                       {router.query?.ord_num &&
                         <Row style={{ margin: '1rem auto auto auto', columnGap: '1rem' }}>
-                          <div>주문번호 :</div>
+                          <div>{translate('주문번호 :')}</div>
                           <div>{router.query?.ord_num}</div>
                         </Row>
                       }
                       {router.query?.acquirer &&
                         <Row style={{ margin: '1rem auto auto auto', columnGap: '1rem' }}>
-                          <div>매입사 :</div>
+                          <div>{translate('매입사 :')}</div>
                           <div>{router.query?.acquirer}</div>
                         </Row>
                       }
                       {router.query?.installment &&
                         <Row style={{ margin: '1rem auto auto auto', columnGap: '1rem' }}>
-                          <div>할부기간 :</div>
+                          <div>{translate('할부기간 :')}</div>
                           <div>{router.query?.installment === '00' ? '일시불' : router.query?.installment.charAt(1) + '개월'}</div>
                         </Row>
                       }
                       {router.query?.buyer_name &&
                         <Row style={{ margin: '1rem auto auto auto', columnGap: '1rem' }}>
-                          <div>구매자명 :</div>
+                          <div>{translate('구매자명 :')}</div>
                           <div>{router.query?.buyer_name}</div>
                         </Row>
                       }
                       {router.query?.buyer_phone &&
                         <Row style={{ margin: '1rem auto auto auto', columnGap: '1rem' }}>
-                          <div>구매자 전화번호 :</div>
+                          <div>{translate('구매자 전화번호 :')}</div>
                           <div>{router.query?.buyer_phone}</div>
                         </Row>
                       }
                       {router.query?.trx_dttm &&
                         <Row style={{ margin: '1rem auto auto auto', columnGap: '1rem' }}>
-                          <div>거래일시 :</div>
+                          <div>{translate('거래일시 :')}</div>
                           <div>{router.query?.trx_dttm}</div>
                         </Row>
                       }
@@ -181,13 +184,9 @@ const PayResultDemo = (props) => {
               <Title>
                 {
                   paymentResult && paymentResult[1]['resultCode'] == '0000' ?
-                    <>
-                      결제에 성공하였습니다.
-                    </>
+                    <>{translate('결제에 성공하였습니다.')}</>
                     :
-                    <>
-                      결제에 실패하였습니다.
-                    </>
+                    <>{translate('결제에 실패하였습니다.')}</>
                 }
               </Title>
               <Grid container spacing={3}>
@@ -215,8 +214,8 @@ const PayResultDemo = (props) => {
             </>
         }
         <Row style={{ margin: '1rem auto', columnGap: '0.5rem' }}>
-          <Button variant="outlined" onClick={() => { router.push('/shop') }}>홈으로</Button>
-          <Button variant="outlined" onClick={() => { router.push('/shop/auth/history') }}>결제내역</Button>
+          <Button variant="outlined" onClick={() => { router.push('/shop') }}>{translate('홈으로')}</Button>
+          <Button variant="outlined" onClick={() => { router.push('/shop/auth/history') }}>{translate('결제내역')}</Button>
         </Row>
       </Wrappers>
     </>

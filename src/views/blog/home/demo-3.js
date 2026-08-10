@@ -19,6 +19,7 @@ import { getMainObjType } from 'src/utils/function'
 import { getDefaultHomeContent } from 'src/data/default-banners'
 import HomeItemsPropertyGroups from 'src/views/section/blog/HomeItemsPropertyGroups'
 import HomeItemHero from 'src/views/section/shop/HomeItemHero'
+import { useLocales } from 'src/locales';
 
 
 const Wrappers = styled.div`
@@ -60,12 +61,12 @@ height:424px;
 `
 const test_home_data = [
     {
-        title: '인기있는 상품 🔥',
+        title: "인기있는 상품 🔥",
         list: test_items,
         type: 'items'
     },
     {
-        title: '인기있는 셀러 ❤️',
+        title: "인기있는 셀러 ❤️",
         list: test_items,
         type: 'items'
     },
@@ -148,6 +149,7 @@ const returnHomeContent = (column, data, func) => {
 
 
 const ItemSectionContent = (props) => {
+  const { translate } = useLocales();
     const { data, router } = props;
     const item_list_setting = {
         infinite: true,
@@ -160,7 +162,7 @@ const ItemSectionContent = (props) => {
     }
     return (
         <>
-            <SectionTitle>{data?.title}</SectionTitle>
+            <SectionTitle>{translate(data?.title)}</SectionTitle>
             <ItemContainer>
                 {data?.list && data?.list.slice(0, 8).map((item, idx) => (
                     <>
@@ -217,6 +219,7 @@ const Demo3 = (props) => {
         }
     }, [themeDnsData])
     const pageSetting = async () => {
+  const { translate } = useLocales();
 
         let dns_data = themeDnsData;
         let content_list = (dns_data?.blog_obj) ?? [];
@@ -227,7 +230,7 @@ const Demo3 = (props) => {
         setContentList(content_list)
         setData([
             ...[{
-                title: '마켓 오픈했어요 ✨',
+                title: translate('마켓 오픈했어요 ✨'),
                 list: themeSellerList,
                 type: 'seller'
             },],

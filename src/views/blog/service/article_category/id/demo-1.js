@@ -11,6 +11,7 @@ import { apiShop } from 'src/utils/api';
 import { useModal } from 'src/components/dialog/ModalProvider';
 import ReactQuillComponent from 'src/views/manager/react-quill';
 import { formatLang } from 'src/utils/format';
+import { useLocales } from 'src/locales';
 
 const PostTitle = styled.h1`
 font-size:1.25rem;
@@ -77,6 +78,7 @@ margin-top:1.5rem;
 
 // 공지사항, faq 등 상세페이지 김인욱
 const Demo1 = (props) => {
+  const { translate } = useLocales();
     const {
         data: {
 
@@ -157,10 +159,10 @@ const Demo1 = (props) => {
                                 {true ?
                                     <>
                                         {!user && <GuestInquiryFields value={guestObj} onChange={setGuestObj} />}
-                                        <FormLabel themeMode={themeMode}>제목</FormLabel>
+                                        <FormLabel themeMode={themeMode}>{translate('제목')}</FormLabel>
                                         <TextField
                                             fullWidth
-                                            placeholder='제목을 입력해주세요.'
+                                            placeholder={translate('제목을 입력해주세요.')}
                                             value={item.post_title}
                                             onChange={(e) => {
                                                 setItem({
@@ -169,7 +171,7 @@ const Demo1 = (props) => {
                                                 })
                                             }}
                                         />
-                                        <FormLabel themeMode={themeMode}>내용</FormLabel>
+                                        <FormLabel themeMode={themeMode}>{translate('내용')}</FormLabel>
                                         <ReactQuillComponent
                                             value={item.post_content}
                                             setValue={(value) => {
@@ -182,8 +184,9 @@ const Demo1 = (props) => {
                                         <ButtonRow>
                                             <Button color='inherit' onClick={() => {
                                                 router.push(`/shop/service/${router.query?.article_category}`)
-                                            }}>취소</Button>
+                                            }}>{translate('취소')}</Button>
                                             <Button variant='contained' onClick={() => {
+  const { translate } = useLocales();
                                                 if (!item.post_title) {
                                                     toast.error('제목을 입력해주세요.');
                                                     return;
@@ -191,17 +194,17 @@ const Demo1 = (props) => {
                                                 setModal({
                                                     func: () => { onSave() },
                                                     icon: 'material-symbols:edit-outline',
-                                                    title: '저장 하시겠습니까?'
+                                                    title: translate('저장 하시겠습니까?')
                                                 })
-                                            }}>등록</Button>
+                                            }}>{translate('등록')}</Button>
                                         </ButtonRow>
                                     </>
                                     :
                                     <LoginBox themeMode={themeMode}>
-                                        <div>로그인 후 이용하실 수 있습니다.</div>
+                                        <div>{translate('로그인 후 이용하실 수 있습니다.')}</div>
                                         <Button variant='contained' onClick={() => {
                                             router.push('/shop/auth/login')
-                                        }}>로그인하기</Button>
+                                        }}>{translate('로그인하기')}</Button>
                                     </LoginBox>
                                 }
                             </>
@@ -217,7 +220,7 @@ const Demo1 = (props) => {
                                 <Content themeMode={themeMode} dangerouslySetInnerHTML={{ __html: formatLang(item, 'post_content') ?? '' }} />
                                 {item?.replies && item?.replies.map((reply, idx) => (
                                     <ReplyBox key={idx} themeMode={themeMode}>
-                                        <ReplyLabel mainColor={mainColor}>답변</ReplyLabel>
+                                        <ReplyLabel mainColor={mainColor}>{translate('답변')}</ReplyLabel>
                                         {reply?.post_title &&
                                             <PostTitle themeMode={themeMode} style={{ fontSize: '1.05rem' }}>{formatLang(reply, 'post_title')}</PostTitle>}
                                         <Content themeMode={themeMode} dangerouslySetInnerHTML={{ __html: formatLang(reply, 'post_content') ?? '' }} />
@@ -226,7 +229,7 @@ const Demo1 = (props) => {
                                 <ButtonRow>
                                     <Button color='inherit' onClick={() => {
                                         router.push(`/shop/service/${router.query?.article_category}`)
-                                    }}>목록</Button>
+                                    }}>{translate('목록')}</Button>
                                 </ButtonRow>
                             </>
                         }

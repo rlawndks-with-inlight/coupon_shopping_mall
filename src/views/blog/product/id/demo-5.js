@@ -326,7 +326,7 @@ const Demo5 = () => {
                       if (option) onSelectOption(group, option);
                     }}
                   >
-                    <option value="" disabled>선택</option>
+                    <option value="" disabled>{translate('선택')}</option>
                     {group?.options?.map((option, oIdx) => (
                       <option key={option?.id ?? option?.option_name ?? oIdx} value={oIdx}>
                         {formatLang(option, 'option_name')}{option?.option_price > 0 ? ` (+${commarNumberWithUnit(option.option_price)})` : ''}
@@ -339,7 +339,7 @@ const Demo5 = () => {
           )}
           {/* 수량 — 이 프레임엔 수량 UI 가 없어서 늘 1개만 살 수 있었다 */}
           <OptionField>
-            <OptionLabel>수량</OptionLabel>
+            <OptionLabel>{translate('수량')}</OptionLabel>
             <div>
               <QuantityStepper
                 value={selectProductGroups?.count ?? 1}

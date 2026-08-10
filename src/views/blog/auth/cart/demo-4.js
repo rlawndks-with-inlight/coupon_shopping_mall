@@ -10,6 +10,7 @@ import { useSettingsContext } from 'src/components/settings';
 import { test_items, test_seller, test_option_list } from 'src/data/test-data';
 import { data } from 'jquery';
 import { Title } from 'src/components/elements/blog/demo-1';
+import { useLocales } from 'src/locales';
 
 const Wrappers = styled.div`
 max-width:798px;
@@ -77,6 +78,7 @@ const test_cart = [
 
 // 장바구니 김인욱
 const Demo4 = (props) => {
+  const { translate } = useLocales();
     const {
         data: {
 
@@ -120,7 +122,7 @@ const Demo4 = (props) => {
     return (
         <>
             <Wrappers>
-                <Title>장바구니</Title>
+                <Title>{translate('장바구니')}</Title>
                 <ContentWrappers>
                     <Tabs
                         indicatorColor='primary'
@@ -158,7 +160,7 @@ const Demo4 = (props) => {
                         })}
                     </Tabs>
                     <ChooseBox>
-                        <FormControlLabel label={<Typography style={{ fontSize: themeObj.font_size.size7 }}>전체 선택</Typography>} control={<Checkbox checked={buttonChecked} onChange={(e) => {
+                        <FormControlLabel label={<Typography style={{ fontSize: themeObj.font_size.size7 }}>{translate('전체 선택')}</Typography>} control={<Checkbox checked={buttonChecked} onChange={(e) => {
                             setButtonChecked(val => !val)
                             let want_buy_list = [...wantBuyList];
                             let price_sum = 0;
@@ -182,13 +184,13 @@ const Demo4 = (props) => {
                             setPriceSum(price_sum)
                             setItemQuantity(item_quantity)
                         }} />} />
-                        <ChooseDelete /*추후에 이 버튼을 누르면 장바구니 array 안의 상품을 개별적으로 삭제할 수 있어야 함*/>선택 삭제</ChooseDelete>
+                        <ChooseDelete /*추후에 이 버튼을 누르면 장바구니 array 안의 상품을 개별적으로 삭제할 수 있어야 함*/>{translate('선택 삭제')}</ChooseDelete>
                     </ChooseBox>
 
                     <ContentContainer style={{
                         background: `${themeMode == 'dark' ? '#000' : '#F6F6F6'}`
                     }}>
-                        <ContainerTitle style={{ fontWeight: 'bold' }}>일반배송 상품</ContainerTitle>
+                        <ContainerTitle style={{ fontWeight: 'bold' }}>{translate('일반배송 상품')}</ContainerTitle>
                         {cartList.map((item, idx) => (
                             <>
 
@@ -236,24 +238,22 @@ const Demo4 = (props) => {
                         background: `${themeMode == 'dark' ? '#000' : '#F6F6F6'}`,
                     }}>
                         <Row style={{ margin: '0.5rem 0', justifyContent: 'space-between' }}>
-                            <div>주문 상품 수</div>
+                            <div>{translate('주문 상품 수')}</div>
                             <div>{itemQuantity}개</div>
                         </Row>
                         <Row style={{ margin: '0.5rem 0', justifyContent: 'space-between' }}>
-                            <div>총 주문금액</div>
+                            <div>{translate('총 주문금액')}</div>
                             <div>{commarNumberWithUnit(priceSum + deliveryFee)}</div>
                         </Row>
                         <Row style={{ margin: '0.5rem 0', justifyContent: 'space-between' }}>
-                            <div>배송비</div>
+                            <div>{translate('배송비')}</div>
                             <div>{commarNumberWithUnit(deliveryFee)}</div>
                         </Row>
                         <Row style={{ margin: '1rem 0 2rem 0', justifyContent: 'space-between', fontWeight: 'bold', color: themeDnsData.theme_css?.main_color }}>
-                            <div>총 결제금액</div>
+                            <div>{translate('총 결제금액')}</div>
                             <div>{commarNumberWithUnit(priceSum + deliveryFee)}</div>
                         </Row>
-                        <Button variant='contained' style={{ height: '56px', fontSize: 'large' }}>
-                            구매하기
-                        </Button>
+                        <Button variant='contained' style={{ height: '56px', fontSize: 'large' }}>{translate('구매하기')}</Button>
                     </ContentContainer>
                 </ContentWrappers>
             </Wrappers>

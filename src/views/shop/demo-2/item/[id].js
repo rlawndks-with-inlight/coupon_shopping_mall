@@ -195,7 +195,7 @@ const ItemDemo = (props) => {
                           {product?.product_code}
                         </Typography>
                       */}
-                      <Chip size="small" sx={{ alignSelf: 'flex-start', mb: 1, fontWeight: 700 }} label={translate(product?.product_sale_price > 0 ? getProductStatus(product?.status).text : '품절')} color={getProductStatus(product?.status).color || 'default'} variant="soft" />
+                      <Chip size="small" sx={{ alignSelf: 'flex-start', mb: 1, fontWeight: 700 }} label={translate(product?.product_sale_price > 0 ? getProductStatus(product?.status).text : translate('품절'))} color={getProductStatus(product?.status).color || 'default'} variant="soft" />
                       <Typography variant="h5" sx={{ fontWeight: 700, mb: 1 }}>
                         {formatLang(product, 'product_name', currentLang)}
                       </Typography>

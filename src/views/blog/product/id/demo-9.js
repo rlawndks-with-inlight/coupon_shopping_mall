@@ -303,7 +303,7 @@ const Demo9 = () => {
                         onSelectOption(group, group?.options?.[idx]);
                       }}
                     >
-                      <option value="" disabled>선택해주세요</option>
+                      <option value="" disabled>{translate('선택해주세요')}</option>
                       {(group?.options ?? []).map((option, idx) => (
                         <option key={option?.id ?? option?.option_name ?? idx} value={idx}>
                           {formatLang(option, 'option_name')}{option?.option_price > 0 ? ` (+${commarNumberWithUnit(option.option_price)})` : ''}
@@ -317,7 +317,7 @@ const Demo9 = () => {
             {/* 수량 — 이 프레임엔 수량 UI 가 없어서 늘 1개만 살 수 있었다 */}
             <OptionWrap>
               <OptionGroup>
-                <OptionLabel>수량</OptionLabel>
+                <OptionLabel>{translate('수량')}</OptionLabel>
                 <div>
                   <QuantityStepper
                     value={selectProductGroups?.count ?? 1}
@@ -327,8 +327,8 @@ const Demo9 = () => {
               </OptionGroup>
             </OptionWrap>
             <ButtonRow>
-              <Btn onClick={handleAddCart}>🛒 장바구니</Btn>
-              <Btn $primary onClick={() => startBuyNow(item, selectProductGroups, router)}>구매하기 💫</Btn>
+              <Btn onClick={handleAddCart}>{translate('🛒 장바구니')}</Btn>
+              <Btn $primary onClick={() => startBuyNow(item, selectProductGroups, router)}>{translate('구매하기 💫')}</Btn>
             </ButtonRow>
           </Info>
         </HeroInner>

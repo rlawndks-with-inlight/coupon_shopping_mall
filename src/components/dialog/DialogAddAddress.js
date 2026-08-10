@@ -126,10 +126,8 @@ const DialogAddAddress = (props) => {
         {addAddressObj.is_open_daum_post ?
           <>
             <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', px: 2, py: 1.25, borderBottom: '1px solid #eee' }}>
-              <Box sx={{ fontWeight: 700 }}>우편번호 검색</Box>
-              <Button size="small" color="inherit" onClick={() => setField('is_open_daum_post', false)}>
-                닫기
-              </Button>
+              <Box sx={{ fontWeight: 700 }}>{translate('우편번호 검색')}</Box>
+              <Button size="small" color="inherit" onClick={() => setField('is_open_daum_post', false)}>{translate('닫기')}</Button>
             </Box>
             <DaumPostcode style={postCodeStyle} onComplete={onSelectAddress} />
           </>
@@ -181,8 +179,8 @@ const DialogAddAddress = (props) => {
                   }));
                 }}
               >
-                <ToggleButton value="KR">국내배송</ToggleButton>
-                <ToggleButton value="OVERSEAS">해외배송</ToggleButton>
+                <ToggleButton value="KR">{translate('국내배송')}</ToggleButton>
+                <ToggleButton value="OVERSEAS">{translate('해외배송')}</ToggleButton>
               </ToggleButtonGroup>
 
               {isDomestic(addAddressObj.country_code) ?
@@ -193,7 +191,7 @@ const DialogAddAddress = (props) => {
                     margin="dense"
                     label={translate('우편번호')}
                     InputProps={{ readOnly: true }}
-                    placeholder="우편번호 검색으로 입력"
+                    placeholder={translate('우편번호 검색으로 입력')}
                     onClick={() => setField('is_open_daum_post', true)}
                   />
                   <TextField
@@ -203,7 +201,7 @@ const DialogAddAddress = (props) => {
                     label={translate('주소')}
                     aria-readonly='true'
                     InputProps={{ readOnly: true }}
-                    placeholder="눌러서 우편번호 검색"
+                    placeholder={translate('눌러서 우편번호 검색')}
                     onClick={() => setField('is_open_daum_post', true)}
                   />
                   <TextField
@@ -241,7 +239,7 @@ const DialogAddAddress = (props) => {
                     value={addAddressObj.detail_addr}
                     margin="dense"
                     label={`${translate('상세주소')} (Address line 2)`}
-                    placeholder="Apt, Suite 등"
+                    placeholder={translate('Apt, Suite 등')}
                     onChange={(e) => setField('detail_addr', e.target.value)}
                   />
                   <TextField
@@ -333,12 +331,8 @@ const DialogAddAddress = (props) => {
                 } finally {
                   setSaving(false);
                 }
-              }}>
-                저장
-              </Button>
-              <Button color="inherit" onClick={closeAndReset}>
-                취소
-              </Button>
+              }}>{translate('저장')}</Button>
+              <Button color="inherit" onClick={closeAndReset}>{translate('취소')}</Button>
             </DialogActions>
           </>}
       </Dialog>

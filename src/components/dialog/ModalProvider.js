@@ -2,10 +2,12 @@ import { Icon } from '@iconify/react'
 import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from '@mui/material'
 import React, { useCallback, useEffect, useState } from 'react'
 import { Row } from '../elements/styled-components'
+import { useLocales } from 'src/locales';
 
 const ModalContext = React.createContext()
 
 const Modal = ({ modal, unSetModal }) => {
+  const { translate } = useLocales();
   useEffect(() => {
     const bind = e => {
       if (e.keyCode !== 27) {
@@ -51,8 +53,8 @@ const Modal = ({ modal, unSetModal }) => {
         <Button focusVisible variant='contained' onClick={() => {
           modal?.func()
           unSetModal()
-        }}>확인</Button>
-        <Button variant='outlined' onClick={() => unSetModal()}>취소</Button>
+        }}>{translate('확인')}</Button>
+        <Button variant='outlined' onClick={() => unSetModal()}>{translate('취소')}</Button>
       </DialogActions>
     </Dialog>
   )

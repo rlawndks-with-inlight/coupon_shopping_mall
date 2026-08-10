@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import styled from 'styled-components';
+import { useLocales } from 'src/locales';
 
 // 블로그형 프레임(6~11) 상품상세용 수량 스테퍼.
 //
@@ -51,6 +52,7 @@ const Field = styled.input`
 const MAX = 999;
 
 const QuantityStepper = ({ value = 1, onChange, max = MAX, className }) => {
+  const { translate } = useLocales();
   // 입력 중인 글자는 그대로 보여주되(지웠다 다시 치는 동안 숫자가 튀지 않게)
   // 상위에는 유효한 수량일 때만 올린다. 빈칸이 0 으로 올라가면 결제금액이 0원이 된다.
   const [text, setText] = useState(String(value));
@@ -64,11 +66,11 @@ const QuantityStepper = ({ value = 1, onChange, max = MAX, className }) => {
 
   return (
     <Box className={className}>
-      <Step type="button" aria-label="수량 줄이기" disabled={value <= 1} onClick={() => commit(value - 1)}>−</Step>
+      <Step type="button" aria-label={translate('수량 줄이기')} disabled={value <= 1} onClick={() => commit(value - 1)}>−</Step>
       <Field
         type="number"
         inputMode="numeric"
-        aria-label="수량"
+        aria-label={translate('수량')}
         value={text}
         onChange={(e) => {
           setText(e.target.value);
@@ -80,7 +82,7 @@ const QuantityStepper = ({ value = 1, onChange, max = MAX, className }) => {
         // 비운 채로 벗어나면 1 로 되돌린다.
         onBlur={() => commit(parseInt(text, 10) || 1)}
       />
-      <Step type="button" aria-label="수량 늘리기" disabled={value >= max} onClick={() => commit(value + 1)}>+</Step>
+      <Step type="button" aria-label={translate('수량 늘리기')} disabled={value >= max} onClick={() => commit(value + 1)}>+</Step>
     </Box>
   );
 };

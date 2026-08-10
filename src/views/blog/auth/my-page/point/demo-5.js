@@ -7,6 +7,7 @@ import { useAuthContext } from 'src/layouts/manager/auth/useAuthContext';
 import { themeObj } from 'src/components/elements/styled-components';
 import { commarNumber, getPointType, makeMaxPage } from 'src/utils/function';
 import { apiManager } from 'src/utils/api';
+import { useLocales } from 'src/locales';
 
 const SubTitle = styled.h3`
 font-size:14px;
@@ -82,6 +83,7 @@ color:${themeObj.grey[400]};
 
 // 회원 포인트 조회 - 실 포인트 내역(발생일/증감/사유) 렌더 김인욱
 const Demo5 = (props) => {
+  const { translate } = useLocales();
     const {
         data: {
 
@@ -120,19 +122,15 @@ const Demo5 = (props) => {
     return (
         <>
             <Wrappers>
-                <Title style={{ paddingBottom: '0' }}>포인트 조회</Title>
-                <SubTitle>
-                    상품 구매 포인트는 구매 14일 이후 사용할 수 있습니다
-                    <br />
-                    보유하신 포인트로 상품을 구매할 수 있습니다
-                </SubTitle>
+                <Title style={{ paddingBottom: '0' }}>{translate('포인트 조회')}</Title>
+                <SubTitle>{translate('상품 구매 포인트는 구매 14일 이후 사용할 수 있습니다')}<br />{translate('보유하신 포인트로 상품을 구매할 수 있습니다')}</SubTitle>
                 <ContentContainer style={{
                     background: `${themeMode == 'dark' ? '#000' : '#F6F6F6'}`
                 }}>
                     <BalanceBox style={{
                         background: `${themeMode == 'dark' ? '#222' : '#fff'}`
                     }}>
-                        <span>보유 포인트</span>
+                        <span>{translate('보유 포인트')}</span>
                         <span>{commarNumber(user?.point)}P</span>
                     </BalanceBox>
                     <PointList style={{
@@ -152,7 +150,7 @@ const Demo5 = (props) => {
                             </PointRow>
                         ))}
                         {historyContent?.content && pointList.length == 0 &&
-                            <EmptyBox>포인트 내역이 없습니다.</EmptyBox>
+                            <EmptyBox>{translate('포인트 내역이 없습니다.')}</EmptyBox>
                         }
                     </PointList>
                 </ContentContainer>

@@ -675,14 +675,10 @@ const CartDemo = (props) => {
                             <div style={{ marginBottom: '1rem' }}>
                               계좌번호 : {_.find(themeDnsData?.payment_modules, { type: buyType })?.virtual_acct_num}
                             </div>
-                            <div style={{ marginBottom: '1rem' }}>
-                              입금 후 1일 안에 구매처리됩니다.
-                            </div>
+                            <div style={{ marginBottom: '1rem' }}>{translate('입금 후 1일 안에 구매처리됩니다.')}</div>
                           </>
                           :
-                          <>
-                            무통장입금을 준비중입니다...
-                          </>
+                          <>{translate('무통장입금을 준비중입니다...')}</>
                       }
                       {/* <Iframe src={_.find(themeDnsData?.payment_modules, { type: buyType })?.virtual_acct_url + `?amount=${payData?.amount}`} /> */}
                     </>}
@@ -702,7 +698,7 @@ const CartDemo = (props) => {
                         <Stack>
                           <TextField
                             size='small'
-                            label='카드 번호'
+                            label={translate('카드 번호')}
                             value={payData.card_num}
                             placeholder='0000 0000 0000 0000'
                             onChange={(e) => {
@@ -718,7 +714,7 @@ const CartDemo = (props) => {
                         <Stack>
                           <TextField
                             size='small'
-                            label='카드 사용자명'
+                            label={translate('카드 사용자명')}
                             value={payData.buyer_name}
                             onChange={(e) => {
                               let value = e.target.value;
@@ -732,7 +728,7 @@ const CartDemo = (props) => {
                         <Stack>
                           <TextField
                             size='small'
-                            label='만료일'
+                            label={translate('만료일')}
                             value={payData.yymm}
                             inputProps={{ maxLength: '5' }}
                             onChange={(e) => {
@@ -748,7 +744,7 @@ const CartDemo = (props) => {
                         <Stack>
                           <TextField
                             size='small'
-                            label='카드비밀번호 앞 두자리'
+                            label={translate('카드비밀번호 앞 두자리')}
                             value={payData.card_pw}
                             type='password'
                             inputProps={{ maxLength: '2' }}
@@ -764,7 +760,7 @@ const CartDemo = (props) => {
                         <Stack>
                           <TextField
                             size='small'
-                            label='구매자 휴대폰번호'
+                            label={translate('구매자 휴대폰번호')}
                             value={payData.buyer_phone}
                             onChange={(e) => {
                               let value = e.target.value;
@@ -794,7 +790,7 @@ const CartDemo = (props) => {
                             <Stack>
                               <TextField
                                 size='small'
-                                label='비회원주문 비밀번호'
+                                label={translate('비회원주문 비밀번호')}
                                 type='password'
                                 value={payData.password}
                                 onChange={(e) => {
@@ -858,12 +854,12 @@ const CartDemo = (props) => {
                   {
                     buyType == 'sms_pay' &&
                     <>
-                      <CardHeader title="SMS결제 정보입력" />
+                      <CardHeader title={translate('SMS결제 정보입력')} />
                       <CardContent>
                         <Stack spacing={2}>
                           <TextField
                             size='small'
-                            label='이름'
+                            label={translate('이름')}
                             value={smsPayData.name}
                             onChange={(e) => {
                               setSmsPayData({ ...smsPayData, name: e.target.value });
@@ -871,7 +867,7 @@ const CartDemo = (props) => {
                           />
                           <TextField
                             size='small'
-                            label='핸드폰번호'
+                            label={translate('핸드폰번호')}
                             value={smsPayData.phone_num}
                             onChange={(e) => {
                               const value = e.target.value.replace(/[^0-9]/g, '');
@@ -896,9 +892,7 @@ const CartDemo = (props) => {
                               setSmsPayData({ name: '', phone_num: '' });
                               router.push('/shop/auth/sms-pay-success');
                             }}
-                          >
-                            완료
-                          </Button>
+                          >{translate('완료')}</Button>
                         </Stack>
                       </CardContent>
                     </>

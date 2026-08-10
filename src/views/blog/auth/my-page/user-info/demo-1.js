@@ -6,6 +6,7 @@ import styled from 'styled-components'
 import { useSettingsContext } from 'src/components/settings';
 import { apiManager } from 'src/utils/api';
 import toast from 'react-hot-toast';
+import { useLocales } from 'src/locales';
 
 // 공지사항, faq 등 상세페이지 김인욱
 const Wrappers = styled.div`
@@ -28,6 +29,7 @@ flex-direction:column;
 `
 
 const Demo1 = (props) => {
+  const { translate } = useLocales();
   const {
     data: {
 
@@ -136,20 +138,20 @@ const Demo1 = (props) => {
   return (
     <>
       <Wrappers>
-        <Title>개인정보 관리</Title>
+        <Title>{translate('개인정보 관리')}</Title>
         <TextFieldContainer>
-          <TextFieldTitle>이름</TextFieldTitle>
+          <TextFieldTitle>{translate('이름')}</TextFieldTitle>
           <TextField
             disabled
             name='name'
             value={userObj?.name ?? ''}
-            placeholder='홍길동'
+            placeholder={translate('홍길동')}
             sx={{
               marginBottom: '1%',
               backgroundColor: '#F6F6F6'
             }}
           />
-          <TextFieldTitle>연락처</TextFieldTitle>
+          <TextFieldTitle>{translate('연락처')}</TextFieldTitle>
           <div style={{ display: 'flex' }}>
             <TextField
               disabled
@@ -163,12 +165,12 @@ const Demo1 = (props) => {
               }}
             />
           </div>
-          <TextFieldTitle>기본 배송지</TextFieldTitle>
+          <TextFieldTitle>{translate('기본 배송지')}</TextFieldTitle>
           {addressList.length > 0 ? (
             <FormControl sx={{ width: '100%' }}>
-              <InputLabel>기본 배송지를 선택해주세요</InputLabel>
+              <InputLabel>{translate('기본 배송지를 선택해주세요')}</InputLabel>
               <Select
-                label='기본 배송지를 선택해주세요'
+                label={translate('기본 배송지를 선택해주세요')}
                 value={selectedAddressId}
                 sx={{
                   width: '100%'
@@ -193,9 +195,7 @@ const Demo1 = (props) => {
               </Select>
             </FormControl>
           ) : (
-            <Typography style={{ color: 'gray', margin: '0.5rem 0' }}>
-              등록된 배송지가 없습니다. 배송지를 추가해주세요.
-            </Typography>
+            <Typography style={{ color: 'gray', margin: '0.5rem 0' }}>{translate('등록된 배송지가 없습니다. 배송지를 추가해주세요.')}</Typography>
           )}
           <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
             <Button
@@ -209,9 +209,9 @@ const Demo1 = (props) => {
               onClick={() => {
                 router.push('/shop/auth/delivery-address')
               }}
-            >배송지<br />추가</Button>
+            >{translate('배송지')}<br />{translate('추가')}</Button>
           </div>
-          <TextFieldTitle>마케팅 수신 동의</TextFieldTitle>
+          <TextFieldTitle>{translate('마케팅 수신 동의')}</TextFieldTitle>
           <div style={{ display: 'flex' }}>
             <FormControlLabel label={<Typography>SMS</Typography>} control={<Checkbox checked={checkboxObj.check_0} />} onChange={(e) => {
               setCheckboxObj({ ...checkboxObj, ['check_0']: e.target.checked })
@@ -230,7 +230,7 @@ const Demo1 = (props) => {
             onClick={() => {
               onChangeUserInfo()
             }}
-          >변경사항 저장</Button>
+          >{translate('변경사항 저장')}</Button>
           <Button
             variant='contained'
             style={{
@@ -241,7 +241,7 @@ const Demo1 = (props) => {
             onClick={() => {
               onLogout()
             }}
-          >로그아웃</Button>
+          >{translate('로그아웃')}</Button>
           <div style={{
             display: 'flex',
             textDecoration: 'underline',
@@ -253,20 +253,20 @@ const Demo1 = (props) => {
               onClick={() => {
                 setAuthMode(authMode === 'password' ? null : 'password')
               }}
-            >비밀번호 변경</div>
+            >{translate('비밀번호 변경')}</div>
             <div
               style={{ marginRight: '5%', cursor: 'pointer' }}
               onClick={() => {
                 setAuthMode(authMode === 'resign' ? null : 'resign')
               }}
-            >회원탈퇴</div>
+            >{translate('회원탈퇴')}</div>
           </div>
           {authMode === 'password' &&
             <div style={{ display: 'flex', flexDirection: 'column', marginTop: '1rem' }}>
               <TextField
                 type='password'
                 name='password'
-                placeholder='현재 비밀번호'
+                placeholder={translate('현재 비밀번호')}
                 value={userObj?.password ?? ''}
                 onChange={(e) => {
                   setUserObj({ ...userObj, password: e.target.value })
@@ -276,7 +276,7 @@ const Demo1 = (props) => {
               <TextField
                 type='password'
                 name='new_password'
-                placeholder='새 비밀번호'
+                placeholder={translate('새 비밀번호')}
                 value={userObj?.new_password ?? ''}
                 onChange={(e) => {
                   setUserObj({ ...userObj, new_password: e.target.value })
@@ -286,7 +286,7 @@ const Demo1 = (props) => {
               <TextField
                 type='password'
                 name='new_password_check'
-                placeholder='새 비밀번호 확인'
+                placeholder={translate('새 비밀번호 확인')}
                 value={userObj?.new_password_check ?? ''}
                 onChange={(e) => {
                   setUserObj({ ...userObj, new_password_check: e.target.value })
@@ -299,18 +299,16 @@ const Demo1 = (props) => {
                 onClick={() => {
                   onChangePassword()
                 }}
-              >비밀번호 변경</Button>
+              >{translate('비밀번호 변경')}</Button>
             </div>
           }
           {authMode === 'resign' &&
             <div style={{ display: 'flex', flexDirection: 'column', marginTop: '1rem' }}>
-              <Typography style={{ color: 'gray', marginBottom: '0.5rem' }}>
-                회원 탈퇴를 하시면 회원 혜택을 더 이상 이용하실 수 없습니다. 계속하시려면 비밀번호를 입력해주세요.
-              </Typography>
+              <Typography style={{ color: 'gray', marginBottom: '0.5rem' }}>{translate('회원 탈퇴를 하시면 회원 혜택을 더 이상 이용하실 수 없습니다. 계속하시려면 비밀번호를 입력해주세요.')}</Typography>
               <TextField
                 type='password'
                 name='resign_password'
-                placeholder='비밀번호를 입력해주세요'
+                placeholder={translate('비밀번호를 입력해주세요')}
                 value={userObj?.resign_password ?? ''}
                 onChange={(e) => {
                   setUserObj({ ...userObj, resign_password: e.target.value })
@@ -324,7 +322,7 @@ const Demo1 = (props) => {
                 onClick={() => {
                   onResign()
                 }}
-              >회원탈퇴</Button>
+              >{translate('회원탈퇴')}</Button>
             </div>
           }
         </TextFieldContainer>

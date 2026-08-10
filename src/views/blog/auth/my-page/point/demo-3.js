@@ -6,6 +6,7 @@ import { useAuthContext } from 'src/layouts/manager/auth/useAuthContext';
 import { commarNumber, makeMaxPage } from 'src/utils/function';
 import { PointTable } from 'src/components/elements/blog/common';
 import { apiManager } from 'src/utils/api';
+import { useLocales } from 'src/locales';
 
 const SubTitle = styled.h3`
 font-size:14px;
@@ -22,6 +23,7 @@ padding:1rem;
 
 // 공지사항, faq 등 상세페이지 김인욱
 const Demo3 = (props) => {
+  const { translate } = useLocales();
     const {
         data: {
 
@@ -58,10 +60,8 @@ const Demo3 = (props) => {
     return (
         <>
             <Wrappers>
-                <Title style={{ paddingBottom: '0' }}>포인트 조회</Title>
-                <SubTitle>
-                    상품 구매 포인트는 구매 14일 이후 사용할 수 있습니다
-                    <br />
+                <Title style={{ paddingBottom: '0' }}>{translate('포인트 조회')}</Title>
+                <SubTitle>{translate('상품 구매 포인트는 구매 14일 이후 사용할 수 있습니다')}<br />
                     보유 포인트 : {commarNumber(user?.point ?? 0)}P
                 </SubTitle>
                 <ContentContainer>

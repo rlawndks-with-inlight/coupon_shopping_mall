@@ -5,7 +5,7 @@ import { Row, themeObj } from 'src/components/elements/styled-components';
 import { useSettingsContext } from 'src/components/settings';
 import styled from 'styled-components'
 import _ from 'lodash'
-import { commarNumber, commarNumberWithUnit } from 'src/utils/function';
+import { commarNumber, commarNumberWithUnit, getPriceUnitByLang } from 'src/utils/function';
 import Slider from 'react-slick';
 import { useTheme } from '@emotion/react';
 import { logoSrc } from 'src/data/data';
@@ -231,25 +231,23 @@ const Demo2 = (props) => {
                             지운 div 는 marginLeft:'auto' 로 오른쪽 끝에 있던 요소라, 남은 금액/원 은 왼쪽 정렬 그대로 유지된다. */}
                         <Row style={{ alignItems: 'flex-end', fontWeight: 'bold' }}>
                             <div style={{ fontSize: themeObj.font_size.size6, color: '' }}>{commarNumber(item.product_sale_price)}</div>
-                            <div style={{ fontSize: themeObj.font_size.size8, marginLeft: '0.25rem' }}>원</div>
+                            <div style={{ fontSize: themeObj.font_size.size8, marginLeft: '0.25rem' }}>{getPriceUnitByLang()}</div>
                         </Row>
                         <Divider style={{ margin: '1rem 0' }} />
                         <Row style={{ alignItems: 'flex-end', }}>
-                            <div style={{ fontSize: themeObj.font_size.size8, color: '', fontWeight: 'bold', marginBottom: '0.5rem' }}>배송정보</div>
+                            <div style={{ fontSize: themeObj.font_size.size8, color: '', fontWeight: 'bold', marginBottom: '0.5rem' }}>{translate('배송정보')}</div>
                         </Row>
                         <Row style={{ alignItems: 'flex-end', }}>
-                            <div style={{ fontSize: themeObj.font_size.size8, color: '' }}>배송비 : <span style={{ color: theme.palette.error.main }}>{commarNumberWithUnit(item?.delivery_fee ?? 0)}</span></div>
+                            <div style={{ fontSize: themeObj.font_size.size8, color: '' }}>{translate('배송비 :')}<span style={{ color: theme.palette.error.main }}>{commarNumberWithUnit(item?.delivery_fee ?? 0)}</span></div>
                         </Row>
                         <Row style={{ alignItems: 'flex-end', }}>
-                            <div style={{ fontSize: themeObj.font_size.size8, color: '' }}>합배송 무제한</div>
+                            <div style={{ fontSize: themeObj.font_size.size8, color: '' }}>{translate('합배송 무제한')}</div>
                         </Row>
                         <Row style={{ alignItems: 'flex-end', marginBottom: '0.5rem' }}>
-                            <div style={{ fontSize: themeObj.font_size.size8, color: '' }}>택배 배송</div>
+                            <div style={{ fontSize: themeObj.font_size.size8, color: '' }}>{translate('택배 배송')}</div>
                         </Row>
                     </PriceContainer>
-                    <Button variant='contained' onClick={() => { setCartOpen(true) }}>
-                        구매하기
-                    </Button>
+                    <Button variant='contained' onClick={() => { setCartOpen(true) }}>{translate('구매하기')}</Button>
                     <div style={{ marginTop: '1rem' }} />
                     <Divider />
                     <ContentContainer>
@@ -257,9 +255,7 @@ const Demo2 = (props) => {
                             {/* ShopGo 산하는 상품후기를 쓰지 않는다.
                                 후기 탭을 숨길 땐 '상품정보'가 남은 폭을 다 쓰게 해야
                                 반쪽짜리 탭 하나가 덩그러니 남지 않는다. */}
-                            <div style={{ padding: '0 0 1rem 0', fontSize: themeObj.font_size.size8, fontWeight: 'bold', cursor: 'pointer', width: `${isShopgoBrand(themeDnsData) ? '100%' : '50%'}`, textAlign: 'center', borderBottom: `${tab == 0 ? '2px solid black' : ''}` }} onClick={() => { setTab(0) }}>
-                                상품정보
-                            </div>
+                            <div style={{ padding: '0 0 1rem 0', fontSize: themeObj.font_size.size8, fontWeight: 'bold', cursor: 'pointer', width: `${isShopgoBrand(themeDnsData) ? '100%' : '50%'}`, textAlign: 'center', borderBottom: `${tab == 0 ? '2px solid black' : ''}` }} onClick={() => { setTab(0) }}>{translate('상품정보')}</div>
                             {!isShopgoBrand(themeDnsData) &&
                                 <div style={{ padding: '0 0 1rem 0', fontSize: themeObj.font_size.size8, fontWeight: 'bold', cursor: 'pointer', width: '50%', textAlign: 'center', borderBottom: `${tab == 1 ? '2px solid black' : ''}` }} onClick={() => { setTab(1) }}>
                                     상품후기({reviewTotal})
@@ -452,25 +448,19 @@ const Demo2 = (props) => {
 
                     <DrawerBox style={{ borderBottom: 'none' }}>
                         <Row style={{ justifyContent: 'space-between' }}>
-                            <Row style={{ width: '150px', justifyContent: 'space-between', alignItems: 'center', padding: '0.25rem' }}>
-                                상품 금액
-                            </Row>
+                            <Row style={{ width: '150px', justifyContent: 'space-between', alignItems: 'center', padding: '0.25rem' }}>{translate('상품 금액')}</Row>
                             <div>
                                 <span style={{ color: 'red' }}>{commarNumber(item?.product_sale_price)}</span>원
                             </div>
                         </Row>
                         <Row style={{ justifyContent: 'space-between' }}>
-                            <Row style={{ width: '150px', justifyContent: 'space-between', alignItems: 'center', padding: '0.25rem' }}>
-                                배송비
-                            </Row>
+                            <Row style={{ width: '150px', justifyContent: 'space-between', alignItems: 'center', padding: '0.25rem' }}>{translate('배송비')}</Row>
                             <div>
                                 <span style={{ color: 'red' }}>{commarNumber(item?.delivery_fee)}</span>원
                             </div>
                         </Row>
                         <Row style={{ justifyContent: 'space-between' }}>
-                            <Row style={{ width: '150px', justifyContent: 'space-between', alignItems: 'center', padding: '0.25rem' }}>
-                                합계
-                            </Row>
+                            <Row style={{ width: '150px', justifyContent: 'space-between', alignItems: 'center', padding: '0.25rem' }}>{translate('합계')}</Row>
                             <div>
                                 <span style={{ color: 'red' }}>{commarNumber(parseInt(item?.product_sale_price + item?.delivery_fee))}</span>원
                             </div>
@@ -489,7 +479,7 @@ const Demo2 = (props) => {
                         onClick={() => {
                             handleAddCart()
                         }}
-                    >장바구니</Button>
+                    >{translate('장바구니')}</Button>
                     <Button
                         variant='contained'
                         color='primary'
@@ -503,7 +493,7 @@ const Demo2 = (props) => {
                             // 비회원도 바로구매 허용(주문서에서 비회원 주문비밀번호로 진행)
                             setBuyOpen(true);
                         }}
-                    >바로구매</Button>
+                    >{translate('바로구매')}</Button>
                 </SelectContainer>
             </Drawer>
             <Dialog
@@ -538,19 +528,18 @@ const Demo2 = (props) => {
                         </DialogTitle>
                         <DialogContent
                             style={{ textAlign: 'center', marginBottom: '4%' }}
-                        >로그인하시면<br />장바구니 이용이 가능합니다!
-                        </DialogContent>
+                        >{translate('로그인하시면')}<br />{translate('장바구니 이용이 가능합니다!')}</DialogContent>
                         <DialogActions>
                             <DialogBox>
                                 <Button
                                     variant='contained'
                                     size='large'
                                     sx={{ marginBottom: '2%' }}
-                                    onClick={() => { router.push('/shop/auth/login') }}>로그인하기</Button>
+                                    onClick={() => { router.push('/shop/auth/login') }}>{translate('로그인하기')}</Button>
                                 <Button
                                     variant='outlined'
                                     size='large'
-                                    onClick={() => { setDialogOpen(false) }}>돌아가기</Button>
+                                    onClick={() => { setDialogOpen(false) }}>{translate('돌아가기')}</Button>
                             </DialogBox>
                         </DialogActions>
                     </>
@@ -575,18 +564,18 @@ const Demo2 = (props) => {
                         </DialogTitle>
                         <DialogContent
                             style={{ textAlign: 'center', marginBottom: '4%' }}
-                        >로그인하시면<br />더 편하게 구매 가능합니다!</DialogContent>
+                        >{translate('로그인하시면')}<br />{translate('더 편하게 구매 가능합니다!')}</DialogContent>
                         <DialogActions>
                             <DialogBox>
                                 <Button
                                     variant='contained'
                                     size='large'
                                     sx={{ marginBottom: '2%' }}
-                                    onClick={() => { router.push('/shop/auth/login') }}>로그인하기</Button>
+                                    onClick={() => { router.push('/shop/auth/login') }}>{translate('로그인하기')}</Button>
                                 <Button
                                     variant='outlined'
                                     size='large'
-                                    onClick={() => { setDialogOpen(false) }}>비회원으로 구매할게요</Button>
+                                    onClick={() => { setDialogOpen(false) }}>{translate('비회원으로 구매할게요')}</Button>
                             </DialogBox>
                         </DialogActions>
                     </>

@@ -15,6 +15,7 @@ import { InputAdornment, TextField } from '@mui/material'
 import styled from 'styled-components'
 import { themeObj } from '../elements/styled-components'
 import { useRouter } from 'next/router'
+import { useLocales } from 'src/locales';
 
 const Title = styled.div`
 font-size: 0.9rem;
@@ -47,6 +48,7 @@ const testSearchList = [
 
 ]
 const DialogSearch = (props) => {
+  const { translate } = useLocales();
   // ** State
   const { open, handleClose, onKeepGoing, style, root_path } = props;
 
@@ -58,7 +60,7 @@ const DialogSearch = (props) => {
         <Typography variant='h6' component='span'>
           <SearchRow>
             <TextField
-              label='통합검색'
+              label={translate('통합검색')}
               id='size-small'
               size='small'
               onChange={(e) => {
@@ -84,7 +86,7 @@ const DialogSearch = (props) => {
                         handleClose();
                       }}
                       // 복붙 잔재였던 'toggle password visibility' 를 실제 동작에 맞게 교정
-                      aria-label='검색'
+                      aria-label={translate('검색')}
                     >
                       <Icon icon={'tabler:search'} />
                     </IconButton>

@@ -202,11 +202,11 @@ const ranking_text_list = [
 ]
 const authList = [
   {
-    name: '장바구니',
+    name: "장바구니",
     link_key: 'cart'
   },
   {
-    name: '찜목록',
+    name: "찜목록",
     link_key: 'wish'
   },
   // 포인트 비노출 — 적립·차감이 완성되지 않아 항상 0 P 로만 보인다(demo-5 헤더와 동일 처리).
@@ -215,25 +215,25 @@ const authList = [
     link_key: 'point'
   },*/
   {
-    name: '주문내역',
+    name: "주문내역",
     link_key: 'history'
   },
   {
-    name: '마이페이지',
+    name: "마이페이지",
     link_key: 'my-page'
   },
 ]
 const noneAuthList = [
   {
-    name: '로그인',
+    name: "로그인",
     link_key: 'login'
   },
   {
-    name: '회원가입',
+    name: "회원가입",
     link_key: 'sign-up'
   },
   {
-    name: '비회원 주문조회',
+    name: "비회원 주문조회",
     link_key: 'order-check'
   },
 ]

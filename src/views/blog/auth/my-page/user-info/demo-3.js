@@ -6,6 +6,7 @@ import styled from 'styled-components'
 import { useSettingsContext } from 'src/components/settings';
 import { apiManager } from 'src/utils/api';
 import toast from 'react-hot-toast';
+import { useLocales } from 'src/locales';
 
 // 공지사항, faq 등 상세페이지 김인욱
 const Wrappers = styled.div`
@@ -28,6 +29,7 @@ flex-direction:column;
 `
 
 const Demo3 = (props) => {
+  const { translate } = useLocales();
     const {
         data: {
 
@@ -127,25 +129,25 @@ const Demo3 = (props) => {
     return (
         <>
             <Wrappers>
-                <Title>개인정보 관리</Title>
+                <Title>{translate('개인정보 관리')}</Title>
                 <TextFieldContainer>
-                    <TextFieldTitle>이름</TextFieldTitle>
+                    <TextFieldTitle>{translate('이름')}</TextFieldTitle>
                     <TextField
                         disabled
                         name='name'
-                        placeholder='이름'
+                        placeholder={translate('이름')}
                         value={userObj?.name ?? ''}
                         sx={{
                             marginBottom: '1%',
                             backgroundColor: '#F6F6F6'
                         }}
                     />
-                    <TextFieldTitle>연락처</TextFieldTitle>
+                    <TextFieldTitle>{translate('연락처')}</TextFieldTitle>
                     <div style={{ display: 'flex' }}>
                         <TextField
                             disabled
                             name='phone_num'
-                            placeholder='연락처'
+                            placeholder={translate('연락처')}
                             value={userObj?.phone_num ?? ''}
                             sx={{
                                 marginBottom: '1%',
@@ -154,7 +156,7 @@ const Demo3 = (props) => {
                             }}
                         />
                     </div>
-                    <TextFieldTitle>기본 배송지</TextFieldTitle>
+                    <TextFieldTitle>{translate('기본 배송지')}</TextFieldTitle>
                     <FormControl sx={{ width: '100%' }}>
                         <InputLabel>{addressList.length > 0 ? '기본 배송지 선택' : '배송지를 추가해주세요'}</InputLabel>
                         <Select
@@ -194,9 +196,9 @@ const Demo3 = (props) => {
                             onClick={() => {
                                 router.push('/shop/auth/delivery-address')
                             }}
-                        >배송지<br />추가</Button>
+                        >{translate('배송지')}<br />{translate('추가')}</Button>
                     </div>
-                    <TextFieldTitle>마케팅 수신 동의</TextFieldTitle>
+                    <TextFieldTitle>{translate('마케팅 수신 동의')}</TextFieldTitle>
                     <div style={{ display: 'flex' }}>
                         <FormControlLabel label={<Typography>SMS</Typography>} control={<Checkbox checked={checkboxObj.check_0} />} onChange={(e) => {
                             setCheckboxObj({ ...checkboxObj, ['check_0']: e.target.checked })
@@ -215,7 +217,7 @@ const Demo3 = (props) => {
                         onClick={() => {
                             onChangeUserInfo()
                         }}
-                    >변경사항 저장</Button>
+                    >{translate('변경사항 저장')}</Button>
                     <Button
                         variant='contained'
                         style={{
@@ -226,7 +228,7 @@ const Demo3 = (props) => {
                         onClick={() => {
                             onLogout()
                         }}
-                    >로그아웃</Button>
+                    >{translate('로그아웃')}</Button>
                     <div style={{
                         display: 'flex',
                         textDecoration: 'underline',
@@ -238,13 +240,13 @@ const Demo3 = (props) => {
                             onClick={() => {
                                 onChangePassword()
                             }}
-                        >비밀번호 변경</div>
+                        >{translate('비밀번호 변경')}</div>
                         <div
                             style={{ marginRight: '5%', cursor: 'pointer' }}
                             onClick={() => {
                                 onResign()
                             }}
-                        >회원탈퇴</div>
+                        >{translate('회원탈퇴')}</div>
                     </div>
                 </TextFieldContainer>
             </Wrappers >

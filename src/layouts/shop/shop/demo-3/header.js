@@ -13,6 +13,7 @@ import DialogSearch from "src/components/dialog/DialogSearch"
 import { useAuthContext } from "src/layouts/manager/auth/useAuthContext"
 import { logoSrc } from "src/data/data"
 import { formatLang } from 'src/utils/format';
+import { useLocales } from 'src/locales';
 
 const Wrappers = styled.header`
 width: 100%;
@@ -146,41 +147,42 @@ padding: 1rem;
 `
 const authList = [
   {
-    name: '장바구니',
+    name: "장바구니",
     link_key: 'cart'
   },
   {
-    name: '찜목록',
+    name: "찜목록",
     link_key: 'wish'
   },
   {
-    name: '포인트내역',
+    name: "포인트내역",
     link_key: 'point'
   },
   {
-    name: '주문내역',
+    name: "주문내역",
     link_key: 'history'
   },
   {
-    name: '마이페이지',
+    name: "마이페이지",
     link_key: 'my-page'
   },
 ]
 const noneAuthList = [
   {
-    name: '로그인',
+    name: "로그인",
     link_key: 'login'
   },
   {
-    name: '회원가입',
+    name: "회원가입",
     link_key: 'sign-up'
   },
   {
-    name: '비회원 주문조회',
+    name: "비회원 주문조회",
     link_key: 'order-check'
   },
 ]
 const Header = () => {
+  const { translate } = useLocales();
 
   const router = useRouter();
   const theme = useTheme();
@@ -251,20 +253,20 @@ const Header = () => {
                 <Row style={{ marginLeft: 'auto', columnGap: '1rem' }}>
                   {user ?
                     <>
-                      <Button sx={{ height: '24px' }} onClick={() => router.push('/shop/auth/my-page')}>마이페이지</Button>
-                      <Button sx={{ height: '24px' }} onClick={() => router.push('/shop/auth/history')}>주문내역</Button>
+                      <Button sx={{ height: '24px' }} onClick={() => router.push('/shop/auth/my-page')}>{translate('마이페이지')}</Button>
+                      <Button sx={{ height: '24px' }} onClick={() => router.push('/shop/auth/history')}>{translate('주문내역')}</Button>
                       <Button variant="outlined" sx={{ height: '24px' }} onClick={() => {
                         logout();
                         onChangeCartData([]);
                         onChangeWishData([]);
                         router.push('/shop/auth/login')
-                      }}>로그아웃</Button>
+                      }}>{translate('로그아웃')}</Button>
                     </>
                     :
                     <>
-                      <Button sx={{ height: '24px' }} onClick={() => router.push('/shop/auth/sign-up')}>회원가입</Button>
-                      <Button sx={{ height: '24px' }} onClick={() => router.push('/shop/service/notice')}>고객센터</Button>
-                      <Button variant="outlined" sx={{ height: '24px' }} onClick={() => router.push('/shop/auth/login')}>로그인</Button>
+                      <Button sx={{ height: '24px' }} onClick={() => router.push('/shop/auth/sign-up')}>{translate('회원가입')}</Button>
+                      <Button sx={{ height: '24px' }} onClick={() => router.push('/shop/service/notice')}>{translate('고객센터')}</Button>
+                      <Button variant="outlined" sx={{ height: '24px' }} onClick={() => router.push('/shop/auth/login')}>{translate('로그인')}</Button>
                     </>}
                 </Row>
               </TopMenuContainer>
@@ -303,7 +305,7 @@ const Header = () => {
                   </>
                 ))}
                 <TextField
-                  label='통합검색'
+                  label={translate('통합검색')}
                   size='small'
                   variant="standard"
                   onChange={(e) => {
@@ -436,7 +438,7 @@ const Header = () => {
           {
             themePostCategoryList.length > 0 &&
             <>
-              <DialogMenuTitle style={{ marginTop: '1rem' }}>고객센터</DialogMenuTitle>
+              <DialogMenuTitle style={{ marginTop: '1rem' }}>{translate('고객센터')}</DialogMenuTitle>
               <Row style={{ flexWrap: 'wrap', padding: '0.5rem', columnGap: '1rem', rowGap: '1rem' }}>
                 {themePostCategoryList.map((item, idx) => (
                   <>
@@ -449,7 +451,7 @@ const Header = () => {
               </Row>
             </>
           }
-          <DialogMenuTitle style={{ marginTop: '1rem' }}>마이페이지</DialogMenuTitle>
+          <DialogMenuTitle style={{ marginTop: '1rem' }}>{translate('마이페이지')}</DialogMenuTitle>
           <Row style={{ flexWrap: 'wrap', padding: '0.5rem', columnGap: '1rem', rowGap: '1rem' }}>
             {user ?
               <>
@@ -458,7 +460,7 @@ const Header = () => {
                     <DialogMenuContent onClick={() => {
                       router.push(`/shop/auth/${item.link_key}`);
                       setDialogMenuOpen(false);
-                    }}>{item.name}</DialogMenuContent>
+                    }}>{translate(item.name)}</DialogMenuContent>
                   </>
                 ))}
                 <DialogMenuContent onClick={() => {
@@ -467,7 +469,7 @@ const Header = () => {
                   onChangeWishData([]);
                   router.push('/shop/auth/login');
                   setDialogMenuOpen(false);
-                }} >로그아웃</DialogMenuContent>
+                }} >{translate('로그아웃')}</DialogMenuContent>
               </>
               :
               <>
@@ -476,7 +478,7 @@ const Header = () => {
                     <DialogMenuContent onClick={() => {
                       router.push(`/shop/auth/${item.link_key}`);
                       setDialogMenuOpen(false);
-                    }}>{item?.name}</DialogMenuContent>
+                    }}>{translate(item?.name)}</DialogMenuContent>
                   </>
                 ))}
               </>}

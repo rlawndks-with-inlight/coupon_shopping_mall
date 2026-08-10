@@ -307,7 +307,7 @@ const Demo6 = () => {
               OptionField 는 <label> 이라 버튼이 든 스테퍼를 감싸면 클릭이 엉키므로 쓰지 않는다. */}
           <OptionArea>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem' }}>
-              <OptionName>수량</OptionName>
+              <OptionName>{translate('수량')}</OptionName>
               <div>
                 <QuantityStepper
                   value={selectProductGroups?.count ?? 1}

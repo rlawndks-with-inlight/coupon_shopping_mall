@@ -48,10 +48,7 @@ const ResignPanel = ({ loginPath = '/shop/auth/login' }) => {
     <Card>
       <CardHeader title={translate('회원 탈퇴')} />
       <CardContent>
-        <Typography variant="body2" sx={{ color: 'text.secondary', mb: 2 }}>
-          회원 탈퇴를 하시면 회원 혜택을 더 이상 이용하실 수 없습니다.<br />
-          탈퇴하시려면 비밀번호를 입력하고 탈퇴 버튼을 눌러 주세요.
-        </Typography>
+        <Typography variant="body2" sx={{ color: 'text.secondary', mb: 2 }}>{translate('회원 탈퇴를 하시면 회원 혜택을 더 이상 이용하실 수 없습니다.')}<br />{translate('탈퇴하시려면 비밀번호를 입력하고 탈퇴 버튼을 눌러 주세요.')}</Typography>
         <Stack spacing={2}>
           <TextField
             label={translate('비밀번호')}

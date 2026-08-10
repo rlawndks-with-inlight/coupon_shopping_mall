@@ -8,6 +8,7 @@ import { commarNumber, getOrderStatusText, commarNumberWithUnit } from 'src/util
 import { apiManager } from 'src/utils/api';
 import { getOptionLabel } from 'src/utils/shop-util';
 import OrderCancelButton from 'src/components/elements/shop/OrderCancelButton';
+import { useLocales } from 'src/locales';
 
 const ContentContainer = styled.div`
 display:flex;
@@ -54,6 +55,7 @@ const parseInvoice = (invoice_num) => {
 
 // 회원 주문/배송 조회 - 실 트랜잭션 데이터 렌더 김인욱
 const Demo5 = (props) => {
+  const { translate } = useLocales();
     const {
         data: {
 
@@ -111,7 +113,7 @@ const Demo5 = (props) => {
     return (
         <>
             <Wrappers>
-                <Title>주문/배송 조회</Title>
+                <Title>{translate('주문/배송 조회')}</Title>
                 <Tabs
                     indicatorColor='primary'
                     textColor='primary'
@@ -149,12 +151,11 @@ const Demo5 = (props) => {
                 }}>
                     {/* 로딩 중 / 목록 0건일 때 회색 박스가 빈 채로 남아 있던 문제 대응 */}
                     {loading &&
-                        <div style={{ textAlign: 'center', padding: '3rem 0', opacity: 0.6 }}>불러오는 중...</div>
+                        <div style={{ textAlign: 'center', padding: '3rem 0', opacity: 0.6 }}>{translate('불러오는 중...')}</div>
                     }
                     {!loading && filtered_list.length === 0 &&
-                        <div style={{ textAlign: 'center', padding: '3rem 0', color: '#888' }}>
-                            주문 내역이 없습니다.<br />
-                            <Button variant='outlined' sx={{ mt: 2 }} onClick={() => router.push('/shop')}>쇼핑하러 가기</Button>
+                        <div style={{ textAlign: 'center', padding: '3rem 0', color: '#888' }}>{translate('주문 내역이 없습니다.')}<br />
+                            <Button variant='outlined' sx={{ mt: 2 }} onClick={() => router.push('/shop')}>{translate('쇼핑하러 가기')}</Button>
                         </div>
                     }
                     {orderList.map((item, idx) => (
@@ -187,7 +188,7 @@ const Demo5 = (props) => {
                                                         marginBottom: '1rem',
                                                         whiteSpace: 'nowrap'
                                                     }}
-                                                >배송조회</Button>
+                                                >{translate('배송조회')}</Button>
                                                 {/* 블로그형 프레임에는 취소요청 수단이 아예 없었다 — 공용 버튼으로 통일 */}
                                                 <OrderCancelButton trx={item.trx} onDone={loadOrderList} sx={{ marginBottom: '1rem', whiteSpace: 'nowrap' }} />
                                             </AddressButton>

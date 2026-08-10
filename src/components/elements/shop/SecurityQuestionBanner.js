@@ -184,7 +184,7 @@ const SecurityQuestionBanner = ({ sx = {} }) => {
           >
             {translate('설정하기')}
           </Button>
-          <IconButton size="small" onClick={onDismiss} aria-label="닫기">
+          <IconButton size="small" onClick={onDismiss} aria-label={translate('닫기')}>
             <Icon icon="mdi:close" fontSize="1.05rem" />
           </IconButton>
         </Stack>
@@ -203,15 +203,13 @@ const SecurityQuestionBanner = ({ sx = {} }) => {
       <Dialog open={open} onClose={() => setOpen(false)} fullWidth maxWidth="xs">
         <DialogTitle sx={{ fontSize: 17, fontWeight: 700 }}>{translate('보안질문 설정')}</DialogTitle>
         <DialogContent>
-          <Typography sx={{ fontSize: 13, color: '#888', mb: 2 }}>
-            비밀번호를 잊었을 때 본인 확인에 사용됩니다. 답변은 나중에 확인할 수 없으니 잊지 않을 내용으로 정해 주세요.
-          </Typography>
+          <Typography sx={{ fontSize: 13, color: '#888', mb: 2 }}>{translate('비밀번호를 잊었을 때 본인 확인에 사용됩니다. 답변은 나중에 확인할 수 없으니 잊지 않을 내용으로 정해 주세요.')}</Typography>
           <Stack spacing={2}>
             <FormControl fullWidth size="small">
               <InputLabel id="security-question-select-label">{translate('보안질문')}</InputLabel>
               <Select
                 labelId="security-question-select-label"
-                label="보안질문"
+                label={translate('보안질문')}
                 value={questionId}
                 onChange={(e) => setQuestionId(e.target.value)}
               >
@@ -230,7 +228,7 @@ const SecurityQuestionBanner = ({ sx = {} }) => {
             <TextField
               fullWidth
               size="small"
-              label="답변"
+              label={translate('답변')}
               value={answer}
               onChange={(e) => setAnswer(e.target.value)}
               placeholder={
@@ -248,18 +246,14 @@ const SecurityQuestionBanner = ({ sx = {} }) => {
           </Stack>
         </DialogContent>
         <DialogActions sx={{ px: 3, pb: 2 }}>
-          <Button color="inherit" onClick={() => setOpen(false)} disabled={loading}>
-            나중에
-          </Button>
+          <Button color="inherit" onClick={() => setOpen(false)} disabled={loading}>{translate('나중에')}</Button>
           <Button
             variant="contained"
             onClick={onSave}
             disabled={loading}
             startIcon={loading ? <CircularProgress size={16} color="inherit" /> : null}
             sx={{ bgcolor: mainColor, '&:hover': { bgcolor: mainColor, opacity: 0.9 } }}
-          >
-            저장
-          </Button>
+          >{translate('저장')}</Button>
         </DialogActions>
       </Dialog>
     </>

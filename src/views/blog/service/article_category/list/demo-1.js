@@ -8,6 +8,7 @@ import _ from 'lodash';
 import toast from 'react-hot-toast';
 import { apiShop } from 'src/utils/api';
 import { formatLang } from 'src/utils/format';
+import { useLocales } from 'src/locales';
 
 const ServiceFaq = styled.div`
 display:flex;
@@ -74,6 +75,7 @@ color:${props => props.themeMode == 'dark' ? '#888' : '#aaa'};
 
 // 공지사항, faq 등 리스트 페이지 김인욱
 const Demo1 = (props) => {
+  const { translate } = useLocales();
     const {
         data: {
 
@@ -105,12 +107,13 @@ const Demo1 = (props) => {
     }, [router.query?.article_category, themePostCategoryList])
 
     const pageSetting = async () => {
+  const { translate } = useLocales();
         let found = _.find(themePostCategoryList, { id: parseInt(router.query?.article_category) });
         if (!found) return;
         let cat = {
             ...found,
             children: [
-                { id: router.query?.article_category, post_category_title: '전체' },
+                { id: router.query?.article_category, post_category_title: translate('전체') },
                 ...(found.children || [])
             ]
         };
@@ -199,9 +202,9 @@ const Demo1 = (props) => {
                         </Button>
                     </div>}
                 {inquiryList.length == 0 &&
-                    <EmptyBox themeMode={themeMode}>게시글이 없습니다.</EmptyBox>}
+                    <EmptyBox themeMode={themeMode}>{translate('게시글이 없습니다.')}</EmptyBox>}
                 {isAbleAdd &&
-                    <ServiceFaq themeMode={themeMode} onClick={onClickAdd}>서비스 문의</ServiceFaq>}
+                    <ServiceFaq themeMode={themeMode} onClick={onClickAdd}>{translate('서비스 문의')}</ServiceFaq>}
             </Wrappers>
         </>
     )

@@ -11,6 +11,7 @@ import GuestInquiryFields, { GUEST_INQUIRY_EMPTY, validateGuestInquiry } from 's
 import { apiShop } from 'src/utils/api';
 import ReactQuillComponent from 'src/views/manager/react-quill';
 import { formatLang } from 'src/utils/format';
+import { useLocales } from 'src/locales';
 
 const ReactQuill = dynamic(() => import('react-quill'), {
     ssr: false,
@@ -78,6 +79,7 @@ margin:2rem 0;
 
 // 공지사항, faq 등 상세페이지 김인욱
 const Demo3 = (props) => {
+  const { translate } = useLocales();
     const {
         data: {
 
@@ -162,7 +164,7 @@ const Demo3 = (props) => {
                                     <Stack spacing={3} sx={{ marginTop: '1rem' }}>
                                         {!user && <GuestInquiryFields value={guestObj} onChange={setGuestObj} />}
                                         <TextField
-                                            label='제목'
+                                            label={translate('제목')}
                                             value={item.post_title}
                                             onChange={(e) => {
                                                 setItem({
@@ -183,18 +185,14 @@ const Demo3 = (props) => {
                                             height: '48px', width: '120px', margin: '0.5rem 0 0.5rem auto'
                                         }} onClick={() => {
                                             onSave()
-                                        }}>
-                                            저장
-                                        </Button>
+                                        }}>{translate('저장')}</Button>
                                     </Stack>
                                     :
                                     <LoginNotice themeMode={themeMode}>
-                                        <div>로그인 후 이용하실 수 있습니다.</div>
+                                        <div>{translate('로그인 후 이용하실 수 있습니다.')}</div>
                                         <Button variant='contained' onClick={() => {
                                             router.push('/shop/auth/login')
-                                        }}>
-                                            로그인하기
-                                        </Button>
+                                        }}>{translate('로그인하기')}</Button>
                                     </LoginNotice>}
                             </>
                             :
@@ -217,7 +215,7 @@ const Demo3 = (props) => {
                                 </ContentBox>
                                 {item?.replies && item?.replies.map((reply, idx) => (
                                     <ReplyBox key={idx} themeMode={themeMode}>
-                                        <ReplyLabel themeMode={themeMode}>답변</ReplyLabel>
+                                        <ReplyLabel themeMode={themeMode}>{translate('답변')}</ReplyLabel>
                                         {reply?.post_title &&
                                             <PostTitle themeMode={themeMode} style={{ fontSize: '1rem' }}>{formatLang(reply, 'post_title')}</PostTitle>}
                                         <ContentBox themeMode={themeMode} style={{ minHeight: 'auto' }}>
@@ -234,9 +232,7 @@ const Demo3 = (props) => {
                                 <BackRow>
                                     <Button variant='outlined' onClick={() => {
                                         router.push(`/shop/service/${router.query?.article_category}`)
-                                    }}>
-                                        목록
-                                    </Button>
+                                    }}>{translate('목록')}</Button>
                                 </BackRow>
                             </>}
                     </>}

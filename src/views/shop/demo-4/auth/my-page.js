@@ -14,6 +14,7 @@ import { useAuthContext } from "src/layouts/manager/auth/useAuthContext";
 import { apiShop } from "src/utils/api";
 import { commarNumber, getOrderStatusText, commarNumberWithUnit } from "src/utils/function";
 import styled from "styled-components";
+import { useLocales } from 'src/locales';
 
 const Wrappers = styled.div`
 max-width:1400px;
@@ -70,6 +71,7 @@ justify-content:space-between;
 `
 
 const MyPageDemo = (props) => {
+  const { translate } = useLocales();
 
   const { user, isInitialized } = useAuthContext();
   const { themeDnsData } = useSettingsContext();
@@ -259,9 +261,7 @@ const MyPageDemo = (props) => {
             <ContentBorderContainer style={{ display: 'flex', border: '0' }}>
               <MypageTitle>
                 <div style={{ fontSize: '32px' }}>
-                  {user?.name} 고객님<br />
-                  안녕하세요 :)
-                </div>
+                  {user?.name} 고객님<br />{translate('안녕하세요 :)')}</div>
                 <Row>
                   {/* 포인트 비노출 — 신규 가맹점은 point_rate 기본값이 0 이라 적립이 일어나지 않고,
                       가맹점 관리자(레벨40)는 포인트 설정을 켤 수도 없다(설정 탭이 레벨50 전용).
@@ -270,14 +270,12 @@ const MyPageDemo = (props) => {
                   {/* 위탁을 쓰지 않는 가맹점(setting_obj.is_use_consignment != 1)에는 숨긴다.
                       백엔드가 consignment_products 를 아예 안 내려줘 항상 '0개' 로만 보였다. */}
                   {themeDnsData?.setting_obj?.is_use_consignment == 1 &&
-                    <div style={{ textAlign: 'right', marginRight: '2rem', fontSize: '1rem' }}>
-                      위탁상품관리<br /><br />
+                    <div style={{ textAlign: 'right', marginRight: '2rem', fontSize: '1rem' }}>{translate('위탁상품관리')}<br /><br />
                       <span style={{ fontFamily: 'Playfair Display', }}>
                         {commarNumber(userInfo?.consignment_products?.length)}개
                       </span>
                     </div>}
-                  <div style={{ textAlign: 'right', fontSize: '1rem' }}>
-                    최근주문목록<br /><br />
+                  <div style={{ textAlign: 'right', fontSize: '1rem' }}>{translate('최근주문목록')}<br /><br />
                     <span style={{ fontFamily: 'Playfair Display', }}>
                       {commarNumber(userInfo?.orders?.length)}개
                     </span>
@@ -298,7 +296,7 @@ const MyPageDemo = (props) => {
                     router.push(`/shop/auth/consignment`)
                   }}
                 />}
-              >위탁상품관리</SubTitleComponent>
+              >{translate('위탁상품관리')}</SubTitleComponent>
               <Table>
                 {userInfo?.consignment_products && userInfo?.consignment_products.map((product, idx) => (
                   <>
@@ -323,7 +321,7 @@ const MyPageDemo = (props) => {
                     router.push(`/shop/auth/history`)
                   }}
                 />}
-              >최근 주문목록</SubTitleComponent>
+              >{translate('최근 주문목록')}</SubTitleComponent>
               <Table>
                 {userInfo?.orders && userInfo?.orders.map((order, idx) => (
                   <>
@@ -353,7 +351,7 @@ const MyPageDemo = (props) => {
                     <Icon icon='carbon:next-filled' style={{ color: themeDnsData?.theme_css?.main_color }} />
                   </IconButton>
                 </Row>}
-              >최근 본 상품</SubTitleComponent>
+              >{translate('최근 본 상품')}</SubTitleComponent>
               <Items
                 items={(userInfo?.product_views ?? []).map(item => {
                   return {

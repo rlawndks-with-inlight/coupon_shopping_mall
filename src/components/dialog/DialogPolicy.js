@@ -1,6 +1,7 @@
 import { Button, Dialog, DialogActions, DialogContent, DialogTitle, IconButton, useMediaQuery } from '@mui/material';
 import { Icon } from '@iconify/react';
 import Policy from 'src/pages/shop/auth/policy';
+import { useLocales } from 'src/locales';
 
 // 블로그형(프레임4~11) 약관 모달 공용 컴포넌트.
 //
@@ -20,6 +21,7 @@ import Policy from 'src/pages/shop/auth/policy';
 const POLICY_TITLES = ['이용약관', '개인정보처리방침', '저작권정책'];
 
 const DialogPolicy = (props) => {
+  const { translate } = useLocales();
   const { open, type, onClose, onAgree } = props;
 
   // 호출부가 숫자로 넘기든 문자로 넘기든 같은 제목이 나오게 정규화한다.
@@ -54,7 +56,7 @@ const DialogPolicy = (props) => {
       <DialogTitle sx={{ pr: 6, fontSize: 18, fontWeight: 700 }}>
         {title}
         <IconButton
-          aria-label="닫기"
+          aria-label={translate('닫기')}
           onClick={onClose}
           sx={{ position: 'absolute', right: 8, top: 8, color: 'grey.600' }}
         >

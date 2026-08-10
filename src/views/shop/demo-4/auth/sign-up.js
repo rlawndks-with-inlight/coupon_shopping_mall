@@ -17,6 +17,7 @@ import { bankCodeList } from 'src/utils/format';
 import { Upload } from 'src/components/upload';
 import SecurityQuestionFields from 'src/components/elements/shop/SecurityQuestionFields';
 import { validateSecurityQuestion, securityQuestionPayload } from 'src/data/security-questions';
+import { useLocales } from 'src/locales';
 
 const Wrappers = styled.div`
 max-width:1000px;
@@ -106,6 +107,7 @@ ColorlibStepIcon.propTypes = {
 };
 
 const SignUpDemo = (props) => {
+  const { translate } = useLocales();
   const {
     data: {
 
@@ -249,7 +251,7 @@ const SignUpDemo = (props) => {
   if (!(user?.level >= 0)) {
     return <>
       <Wrappers>
-        <Title>회원가입</Title>
+        <Title>{translate('회원가입')}</Title>
         <Grid container spacing={3}>
           <Grid item xs={12} md={/*6*/0}>
             <Card sx={{ p: 2, height: '100%', height: '300px', display: 'flex', cursor: 'pointer' }}
@@ -327,7 +329,7 @@ const SignUpDemo = (props) => {
       {themeDnsData?.id != 74 ?
         <>
           <Wrappers>
-            <Title>회원가입</Title>
+            <Title>{translate('회원가입')}</Title>
             <Stepper alternativeLabel activeStep={activeStep} connector={<ColorlibConnector />}>
               {STEPS.map((label) => (
                 <Step key={label}>
@@ -338,7 +340,7 @@ const SignUpDemo = (props) => {
             <div style={{ marginTop: '2rem' }} />
             {activeStep == 0 &&
               <>
-                <FormControlLabel label={<Typography style={{ fontWeight: 'bold', fontSize: themeObj.font_size.size5 }}> 이용약관 및 개인정보수집 및 이용, 쇼핑정보 수신(선택)에 모두 동의합니다.</Typography>} control={<Checkbox checked={checkboxObj.check_0} />} onChange={(e) => {
+                <FormControlLabel label={<Typography style={{ fontWeight: 'bold', fontSize: themeObj.font_size.size5 }}>{translate('이용약관 및 개인정보수집 및 이용, 쇼핑정보 수신(선택)에 모두 동의합니다.')}</Typography>} control={<Checkbox checked={checkboxObj.check_0} />} onChange={(e) => {
                   let check_obj = {}
                   if (e.target.checked) {
                     for (let key in checkboxObj) {
@@ -354,7 +356,7 @@ const SignUpDemo = (props) => {
                 <div style={{ marginTop: '1rem' }} />
                 <Divider />
                 <div style={{ marginTop: '1rem' }} />
-                <FormControlLabel label={<Typography style={{ fontSize: themeObj.font_size.size6 }}>이용약관 동의 (필수)</Typography>} control={<Checkbox checked={checkboxObj.check_1} onChange={(e) => {
+                <FormControlLabel label={<Typography style={{ fontSize: themeObj.font_size.size6 }}>{translate('이용약관 동의 (필수)')}</Typography>} control={<Checkbox checked={checkboxObj.check_1} onChange={(e) => {
                   setCheckboxObj({ ...checkboxObj, ['check_1']: e.target.checked })
                 }} />} />
                 <div style={{ marginTop: '0.5rem' }} />
@@ -366,7 +368,7 @@ const SignUpDemo = (props) => {
                   <Policy type={0} />
                 </div>
                 <div style={{ marginTop: '1rem' }} />
-                <FormControlLabel label={<Typography style={{ fontSize: themeObj.font_size.size6 }}>개인정보 수집 및 이용 동의 (필수)</Typography>} control={<Checkbox checked={checkboxObj.check_2} onChange={(e) => {
+                <FormControlLabel label={<Typography style={{ fontSize: themeObj.font_size.size6 }}>{translate('개인정보 수집 및 이용 동의 (필수)')}</Typography>} control={<Checkbox checked={checkboxObj.check_2} onChange={(e) => {
                   setCheckboxObj({ ...checkboxObj, ['check_2']: e.target.checked })
                 }} />} />
                 <div style={{ marginTop: '0.5rem' }} />
@@ -378,7 +380,7 @@ const SignUpDemo = (props) => {
                   <Policy type={1} />
                 </div>
                 <div style={{ marginTop: '1rem' }} />
-                <FormControlLabel label={<Typography style={{ fontSize: themeObj.font_size.size6 }}>쇼핑정보 수신 동의 (선택)</Typography>} control={<Checkbox checked={checkboxObj.check_3} onChange={(e) => {
+                <FormControlLabel label={<Typography style={{ fontSize: themeObj.font_size.size6 }}>{translate('쇼핑정보 수신 동의 (선택)')}</Typography>} control={<Checkbox checked={checkboxObj.check_3} onChange={(e) => {
 
                   setCheckboxObj({ ...checkboxObj, ['check_3']: e.target.checked, ['check_4']: e.target.checked, ['check_5']: e.target.checked, })
                 }} />} />
@@ -386,10 +388,10 @@ const SignUpDemo = (props) => {
                 <Divider />
                 <div style={{ marginTop: '1rem' }} />
                 <Row>
-                  <FormControlLabel label={<Typography style={{ fontSize: themeObj.font_size.size7 }}>SMS 수신 동의 (선택)</Typography>} control={<Checkbox checked={checkboxObj.check_4} onChange={(e) => {
+                  <FormControlLabel label={<Typography style={{ fontSize: themeObj.font_size.size7 }}>{translate('SMS 수신 동의 (선택)')}</Typography>} control={<Checkbox checked={checkboxObj.check_4} onChange={(e) => {
                     setCheckboxObj({ ...checkboxObj, ['check_4']: e.target.checked })
                   }} />} />
-                  <FormControlLabel label={<Typography style={{ fontSize: themeObj.font_size.size7 }}>이메일 수신 동의 (선택)</Typography>} control={<Checkbox checked={checkboxObj.check_5} onChange={(e) => {
+                  <FormControlLabel label={<Typography style={{ fontSize: themeObj.font_size.size7 }}>{translate('이메일 수신 동의 (선택)')}</Typography>} control={<Checkbox checked={checkboxObj.check_5} onChange={(e) => {
                     setCheckboxObj({ ...checkboxObj, ['check_5']: e.target.checked })
                   }} />} />
                 </Row>
@@ -408,7 +410,7 @@ const SignUpDemo = (props) => {
             {activeStep == 1 &&
               <>
                 <TextField
-                  label='아이디'
+                  label={translate('아이디')}
                   onChange={(e) => {
                     setUser({ ...user, ['user_name']: e.target.value })
                   }}
@@ -428,7 +430,7 @@ const SignUpDemo = (props) => {
                   }}
                 />
                 <TextField
-                  label='비밀번호'
+                  label={translate('비밀번호')}
                   onChange={(e) => {
                     setUser({ ...user, ['user_pw']: e.target.value })
                   }}
@@ -442,7 +444,7 @@ const SignUpDemo = (props) => {
                   }}
                 />
                 <TextField
-                  label='비밀번호 확인'
+                  label={translate('비밀번호 확인')}
                   onChange={(e) => {
                     setUser({ ...user, ['user_pw_check']: e.target.value })
                   }}
@@ -456,7 +458,7 @@ const SignUpDemo = (props) => {
                   }}
                 />
                 <TextField
-                  label='이름'
+                  label={translate('이름')}
                   onChange={(e) => {
                     setUser({ ...user, ['name']: e.target.value })
                   }}
@@ -486,14 +488,14 @@ const SignUpDemo = (props) => {
                 />
                 */}
                 <FormControl variant="outlined" style={{ width: '100%', marginTop: '1rem' }}>
-                  <InputLabel>휴대폰번호</InputLabel>
+                  <InputLabel>{translate('휴대폰번호')}</InputLabel>
                   <OutlinedInput
-                    label='휴대폰번호'
+                    label={translate('휴대폰번호')}
                     // type='number' 였다. 숫자 입력칸인데도 브라우저는 e·+·-·. 을 받아들이고,
                     // 그 상태의 value 는 빈 문자열로 읽혀 입력값이 조용히 사라졌다(휠 스크롤로도 값이 바뀐다).
                     type='text'
                     inputMode='numeric'
-                    placeholder='숫자와 하이픈(-)만 입력'
+                    placeholder={translate('숫자와 하이픈(-)만 입력')}
                     onChange={(e) => {
                       setUser({ ...user, ['phone_num']: sanitizePhoneInput(e.target.value) }) // 숫자·하이픈만 (한글·영문이 그대로 저장되던 것)
                     }}
@@ -505,7 +507,7 @@ const SignUpDemo = (props) => {
                       <Button style={{ width: '144px', height: '56px', transform: 'translateX(14px)' }}
                         variant="contained"
                         onClick={() => { verifyPhone() }}
-                      >번호등록확인</Button>
+                      >{translate('번호등록확인')}</Button>
                     </> : undefined}
                   />
                 </FormControl>
@@ -532,9 +534,9 @@ const SignUpDemo = (props) => {
                   <>
                     <Stack spacing={1}>
                       <FormControl variant="outlined" style={{ width: '100%', marginTop: '1rem' }}>
-                        <InputLabel>은행선택</InputLabel>
+                        <InputLabel>{translate('은행선택')}</InputLabel>
                         <Select
-                          label='은행선택'
+                          label={translate('은행선택')}
                           value={user.acct_bank_code}
                           onChange={e => {
                             setUser({
@@ -552,7 +554,7 @@ const SignUpDemo = (props) => {
 
                     <TextField
                       style={{ marginTop: '1rem' }}
-                      label='계좌번호'
+                      label={translate('계좌번호')}
                       value={user.acct_num}
                       onChange={(e) => {
                         setUser(
@@ -564,7 +566,7 @@ const SignUpDemo = (props) => {
                       }} />
                     <TextField
                       style={{ marginTop: '1rem' }}
-                      label='예금주명'
+                      label={translate('예금주명')}
                       value={user.acct_name}
                       onChange={(e) => {
                         setUser(
@@ -580,7 +582,7 @@ const SignUpDemo = (props) => {
               <>
                 <Col>
                   <Icon icon={'fluent-mdl2:completed'} style={{ margin: '8rem auto 1rem auto', fontSize: themeObj.font_size.size1, color: theme.palette.primary.main }} />
-                  <div style={{ margin: 'auto auto 8rem auto' }}>회원가입이 완료되었습니다.</div>
+                  <div style={{ margin: 'auto auto 8rem auto' }}>{translate('회원가입이 완료되었습니다.')}</div>
                 </Col>
               </>}
             <Row style={{ width: '100%', justifyContent: 'space-between' }}>
@@ -595,7 +597,7 @@ const SignUpDemo = (props) => {
                     width: '49%'
                   }}
                     onClick={onClickPrevButton}
-                  >이전</Button>}
+                  >{translate('이전')}</Button>}
               <Button variant="contained" style={{
                 height: '56px',
                 marginTop: '1rem',
@@ -609,7 +611,7 @@ const SignUpDemo = (props) => {
         :
         <>
           <Wrappers>
-            <Title>회원가입</Title>
+            <Title>{translate('회원가입')}</Title>
             <Stepper alternativeLabel activeStep={activeStep} connector={<ColorlibConnector />}>
               {STEPS.map((label) => (
                 <Step key={label}>
@@ -620,7 +622,7 @@ const SignUpDemo = (props) => {
             <div style={{ marginTop: '2rem' }} />
             {activeStep == 0 &&
               <>
-                <FormControlLabel label={<Typography style={{ fontWeight: 'bold', fontSize: themeObj.font_size.size5 }}> 이용약관 및 개인정보수집 및 이용, 쇼핑정보 수신(선택)에 모두 동의합니다.</Typography>} control={<Checkbox checked={checkboxObj.check_0} />} onChange={(e) => {
+                <FormControlLabel label={<Typography style={{ fontWeight: 'bold', fontSize: themeObj.font_size.size5 }}>{translate('이용약관 및 개인정보수집 및 이용, 쇼핑정보 수신(선택)에 모두 동의합니다.')}</Typography>} control={<Checkbox checked={checkboxObj.check_0} />} onChange={(e) => {
                   let check_obj = {}
                   if (e.target.checked) {
                     for (let key in checkboxObj) {
@@ -636,7 +638,7 @@ const SignUpDemo = (props) => {
                 <div style={{ marginTop: '1rem' }} />
                 <Divider />
                 <div style={{ marginTop: '1rem' }} />
-                <FormControlLabel label={<Typography style={{ fontSize: themeObj.font_size.size6 }}>이용약관 동의 (필수)</Typography>} control={<Checkbox checked={checkboxObj.check_1} onChange={(e) => {
+                <FormControlLabel label={<Typography style={{ fontSize: themeObj.font_size.size6 }}>{translate('이용약관 동의 (필수)')}</Typography>} control={<Checkbox checked={checkboxObj.check_1} onChange={(e) => {
                   setCheckboxObj({ ...checkboxObj, ['check_1']: e.target.checked })
                 }} />} />
                 <div style={{ marginTop: '0.5rem' }} />
@@ -648,7 +650,7 @@ const SignUpDemo = (props) => {
                   <Policy type={0} />
                 </div>
                 <div style={{ marginTop: '1rem' }} />
-                <FormControlLabel label={<Typography style={{ fontSize: themeObj.font_size.size6 }}>개인정보 수집 및 이용 동의 (필수)</Typography>} control={<Checkbox checked={checkboxObj.check_2} onChange={(e) => {
+                <FormControlLabel label={<Typography style={{ fontSize: themeObj.font_size.size6 }}>{translate('개인정보 수집 및 이용 동의 (필수)')}</Typography>} control={<Checkbox checked={checkboxObj.check_2} onChange={(e) => {
                   setCheckboxObj({ ...checkboxObj, ['check_2']: e.target.checked })
                 }} />} />
                 <div style={{ marginTop: '0.5rem' }} />
@@ -660,7 +662,7 @@ const SignUpDemo = (props) => {
                   <Policy type={1} />
                 </div>
                 <div style={{ marginTop: '1rem' }} />
-                <FormControlLabel label={<Typography style={{ fontSize: themeObj.font_size.size6 }}>쇼핑정보 수신 동의 (선택)</Typography>} control={<Checkbox checked={checkboxObj.check_3} onChange={(e) => {
+                <FormControlLabel label={<Typography style={{ fontSize: themeObj.font_size.size6 }}>{translate('쇼핑정보 수신 동의 (선택)')}</Typography>} control={<Checkbox checked={checkboxObj.check_3} onChange={(e) => {
 
                   setCheckboxObj({ ...checkboxObj, ['check_3']: e.target.checked, ['check_4']: e.target.checked, ['check_5']: e.target.checked, })
                 }} />} />
@@ -668,10 +670,10 @@ const SignUpDemo = (props) => {
                 <Divider />
                 <div style={{ marginTop: '1rem' }} />
                 <Row>
-                  <FormControlLabel label={<Typography style={{ fontSize: themeObj.font_size.size7 }}>SMS 수신 동의 (선택)</Typography>} control={<Checkbox checked={checkboxObj.check_4} onChange={(e) => {
+                  <FormControlLabel label={<Typography style={{ fontSize: themeObj.font_size.size7 }}>{translate('SMS 수신 동의 (선택)')}</Typography>} control={<Checkbox checked={checkboxObj.check_4} onChange={(e) => {
                     setCheckboxObj({ ...checkboxObj, ['check_4']: e.target.checked })
                   }} />} />
-                  <FormControlLabel label={<Typography style={{ fontSize: themeObj.font_size.size7 }}>이메일 수신 동의 (선택)</Typography>} control={<Checkbox checked={checkboxObj.check_5} onChange={(e) => {
+                  <FormControlLabel label={<Typography style={{ fontSize: themeObj.font_size.size7 }}>{translate('이메일 수신 동의 (선택)')}</Typography>} control={<Checkbox checked={checkboxObj.check_5} onChange={(e) => {
                     setCheckboxObj({ ...checkboxObj, ['check_5']: e.target.checked })
                   }} />} />
                 </Row>
@@ -690,7 +692,7 @@ const SignUpDemo = (props) => {
             {activeStep == 1 &&
               <>
                 <TextField
-                  label='아이디'
+                  label={translate('아이디')}
                   onChange={(e) => {
                     setUser({ ...user, ['user_name']: e.target.value })
                   }}
@@ -710,7 +712,7 @@ const SignUpDemo = (props) => {
                   }}
                 />
                 <TextField
-                  label='비밀번호'
+                  label={translate('비밀번호')}
                   onChange={(e) => {
                     setUser({ ...user, ['user_pw']: e.target.value })
                   }}
@@ -724,7 +726,7 @@ const SignUpDemo = (props) => {
                   }}
                 />
                 <TextField
-                  label='비밀번호 확인'
+                  label={translate('비밀번호 확인')}
                   onChange={(e) => {
                     setUser({ ...user, ['user_pw_check']: e.target.value })
                   }}
@@ -738,7 +740,7 @@ const SignUpDemo = (props) => {
                   }}
                 />
                 <TextField
-                  label='이름'
+                  label={translate('이름')}
                   onChange={(e) => {
                     setUser({ ...user, ['name']: e.target.value })
                   }}
@@ -764,14 +766,14 @@ const SignUpDemo = (props) => {
               }}
             />*/}
                 <FormControl variant="outlined" style={{ width: '100%', marginTop: '1rem' }}>
-                  <InputLabel>휴대폰번호</InputLabel>
+                  <InputLabel>{translate('휴대폰번호')}</InputLabel>
                   <OutlinedInput
-                    label='휴대폰번호'
+                    label={translate('휴대폰번호')}
                     // type='number' 였다. 숫자 입력칸인데도 브라우저는 e·+·-·. 을 받아들이고,
                     // 그 상태의 value 는 빈 문자열로 읽혀 입력값이 조용히 사라졌다(휠 스크롤로도 값이 바뀐다).
                     type='text'
                     inputMode='numeric'
-                    placeholder='숫자와 하이픈(-)만 입력'
+                    placeholder={translate('숫자와 하이픈(-)만 입력')}
                     onChange={(e) => {
                       setUser({ ...user, ['phone_num']: sanitizePhoneInput(e.target.value) }) // 숫자·하이픈만 (한글·영문이 그대로 저장되던 것)
                     }}
@@ -785,7 +787,7 @@ const SignUpDemo = (props) => {
                             onClickSendPhoneVerifyCode();
                           }*/
                         }}
-                      >번호등록확인</Button>
+                      >{translate('번호등록확인')}</Button>
                     </>}
                   />
                 </FormControl>
@@ -812,9 +814,7 @@ const SignUpDemo = (props) => {
                     이 데모가 프레임3 으로 팔리면서 일반 가맹점 가입폼에도 그대로 노출되고 있었다.
                     (국내 배송만 하는 몰에서 통관부호를 요구하면 가입이 막히는 것처럼 보인다) */}
                 {themeDnsData?.id == 74 &&
-                  <Button variant='outlined' onClick={() => { setUnipassPopup(true) }} style={{ marginTop: '1rem', maxWidth: '200px' }}>
-                    개인통관고유부호 등록
-                  </Button>}
+                  <Button variant='outlined' onClick={() => { setUnipassPopup(true) }} style={{ marginTop: '1rem', maxWidth: '200px' }}>{translate('개인통관고유부호 등록')}</Button>}
                 <Dialog
                   open={unipassPopup}
                   onClose={() => {
@@ -827,10 +827,9 @@ const SignUpDemo = (props) => {
                     }
                   }}
                 >
-                  <DialogTitle>개인통관고유부호확인</DialogTitle>
+                  <DialogTitle>{translate('개인통관고유부호확인')}</DialogTitle>
                   <DialogContent>
-                    <div>
-                      해외직구 배송을 위해 개인통관고유부호 확인이 필요합니다.<br />
+                    <div>{translate('해외직구 배송을 위해 개인통관고유부호 확인이 필요합니다.')}<br />
                       <a href='https://unipass.customs.go.kr/csp/persIndex.do' target='_blank' style={{ textDecoration: 'underline', color: 'blue' }}>
                         https://unipass.customs.go.kr/csp/persIndex.do
                       </a>
@@ -859,24 +858,20 @@ const SignUpDemo = (props) => {
                         } else {
                           verifyUnipass(unipass)
                         }
-                      }} color="inherit">
-                      확인
-                    </Button>
+                      }} color="inherit">{translate('확인')}</Button>
                     <Button onClick={() => {
                       setUnipassPopup(false);
                       router.reload()
-                    }} color="inherit">
-                      나가기
-                    </Button>
+                    }} color="inherit">{translate('나가기')}</Button>
                   </DialogActions>
                 </Dialog>
                 {user?.level == 10 &&
                   <>
                     <Stack spacing={1}>
                       <FormControl variant="outlined" style={{ width: '100%', marginTop: '1rem' }}>
-                        <InputLabel>은행선택</InputLabel>
+                        <InputLabel>{translate('은행선택')}</InputLabel>
                         <Select
-                          label='은행선택'
+                          label={translate('은행선택')}
                           value={user.acct_bank_code}
                           onChange={e => {
                             setUser({
@@ -894,7 +889,7 @@ const SignUpDemo = (props) => {
 
                     <TextField
                       style={{ marginTop: '1rem' }}
-                      label='계좌번호'
+                      label={translate('계좌번호')}
                       value={user.acct_num}
                       onChange={(e) => {
                         setUser(
@@ -906,7 +901,7 @@ const SignUpDemo = (props) => {
                       }} />
                     <TextField
                       style={{ marginTop: '1rem' }}
-                      label='예금주명'
+                      label={translate('예금주명')}
                       value={user.acct_name}
                       onChange={(e) => {
                         setUser(
@@ -1078,7 +1073,7 @@ const SignUpDemo = (props) => {
               <>
                 <Col>
                   <Icon icon={'fluent-mdl2:completed'} style={{ margin: '8rem auto 1rem auto', fontSize: themeObj.font_size.size1, color: theme.palette.primary.main }} />
-                  <div style={{ margin: 'auto auto 8rem auto' }}>회원가입이 완료되었습니다.</div>
+                  <div style={{ margin: 'auto auto 8rem auto' }}>{translate('회원가입이 완료되었습니다.')}</div>
                 </Col>
               </>}
             <Row style={{ width: '100%', justifyContent: 'space-between' }}>
@@ -1088,7 +1083,7 @@ const SignUpDemo = (props) => {
                 width: '49%'
               }}
                 onClick={onClickPrevButton}
-              >이전</Button>
+              >{translate('이전')}</Button>
               <Button variant="contained" style={{
                 height: '56px',
                 marginTop: '1rem',

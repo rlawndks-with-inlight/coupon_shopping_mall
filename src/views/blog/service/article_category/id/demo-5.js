@@ -12,6 +12,7 @@ import { useModal } from 'src/components/dialog/ModalProvider';
 import { apiShop } from 'src/utils/api';
 import ReactQuillComponent from 'src/views/manager/react-quill';
 import { formatLang } from 'src/utils/format';
+import { useLocales } from 'src/locales';
 
 const ReactQuill = dynamic(() => import('react-quill'), {
     ssr: false,
@@ -73,6 +74,7 @@ color:${props => props.themeMode == 'dark' ? '#fff' : 'gray'};
 
 // 공지사항, faq 등 상세페이지 김인욱
 const Demo5 = (props) => {
+  const { translate } = useLocales();
     const {
         data: {
 
@@ -150,7 +152,7 @@ const Demo5 = (props) => {
                                     <Stack spacing={3}>
                                         {!user && <GuestInquiryFields value={guestObj} onChange={setGuestObj} />}
                                         <TextField
-                                            label='제목'
+                                            label={translate('제목')}
                                             value={item.post_title}
                                             onChange={(e) => {
                                                 setItem({
@@ -172,30 +174,25 @@ const Demo5 = (props) => {
                                                 height: '48px', width: '120px'
                                             }} onClick={() => {
                                                 router.push(`/shop/service/${router.query?.article_category}`)
-                                            }}>
-                                                취소
-                                            </Button>
+                                            }}>{translate('취소')}</Button>
                                             <Button variant='contained' style={{
                                                 height: '48px', width: '120px'
                                             }} onClick={() => {
+  const { translate } = useLocales();
                                                 setModal({
                                                     func: () => { onSave() },
                                                     icon: 'material-symbols:edit-outline',
-                                                    title: '저장 하시겠습니까?'
+                                                    title: translate('저장 하시겠습니까?')
                                                 })
-                                            }}>
-                                                저장
-                                            </Button>
+                                            }}>{translate('저장')}</Button>
                                         </div>
                                     </Stack>
                                     :
                                     <LoginPrompt themeMode={themeMode}>
-                                        <div>로그인 후 이용할 수 있습니다.</div>
+                                        <div>{translate('로그인 후 이용할 수 있습니다.')}</div>
                                         <Button variant='contained' size='large' sx={{ height: '48px', width: '180px' }} onClick={() => {
                                             router.push('/shop/auth/login')
-                                        }}>
-                                            로그인하기
-                                        </Button>
+                                        }}>{translate('로그인하기')}</Button>
                                     </LoginPrompt>
                                 }
                             </>
@@ -219,7 +216,7 @@ const Demo5 = (props) => {
                                 />
                                 {item?.replies && item?.replies.map((reply, idx) => (
                                     <ReplyBox key={idx} themeMode={themeMode}>
-                                        <ReplyLabel themeMode={themeMode}>답변</ReplyLabel>
+                                        <ReplyLabel themeMode={themeMode}>{translate('답변')}</ReplyLabel>
                                         {reply?.post_title &&
                                             <PostTitle themeMode={themeMode} style={{ fontSize: '1.05rem' }}>{formatLang(reply, 'post_title')}</PostTitle>}
                                         <ReactQuill
@@ -235,9 +232,7 @@ const Demo5 = (props) => {
                                     height: '48px', width: '120px', margin: '1.5rem 0 0 auto'
                                 }} onClick={() => {
                                     router.push(`/shop/service/${router.query?.article_category}`)
-                                }}>
-                                    목록
-                                </Button>
+                                }}>{translate('목록')}</Button>
                             </>
                         }
                     </Content>

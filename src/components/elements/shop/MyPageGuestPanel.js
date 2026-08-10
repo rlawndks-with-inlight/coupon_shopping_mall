@@ -1,6 +1,7 @@
 import { Button, Divider, Stack, Typography } from '@mui/material';
 import { useRouter } from 'next/router';
 import styled from 'styled-components';
+import { useLocales } from 'src/locales';
 
 // 마이페이지 비로그인 랜딩(쇼핑몰형 프레임1·2·3 공용).
 //
@@ -27,16 +28,13 @@ const Wrapper = styled.div`
 `;
 
 const MyPageGuestPanel = () => {
+  const { translate } = useLocales();
   const router = useRouter();
 
   return (
     <Wrapper>
-      <Typography variant="h5" sx={{ fontWeight: 700, mb: 1 }}>
-        마이페이지
-      </Typography>
-      <Typography variant="body1" sx={{ color: 'text.secondary', mb: 4, wordBreak: 'keep-all' }}>
-        로그인하시면 주문내역과 배송지를 간편하게 확인하실 수 있습니다.
-      </Typography>
+      <Typography variant="h5" sx={{ fontWeight: 700, mb: 1 }}>{translate('마이페이지')}</Typography>
+      <Typography variant="body1" sx={{ color: 'text.secondary', mb: 4, wordBreak: 'keep-all' }}>{translate('로그인하시면 주문내역과 배송지를 간편하게 확인하실 수 있습니다.')}</Typography>
 
       <Stack spacing={1.5}>
         <Button
@@ -44,33 +42,25 @@ const MyPageGuestPanel = () => {
           size="large"
           sx={{ height: '52px' }}
           onClick={() => router.push('/shop/auth/login')}
-        >
-          로그인
-        </Button>
+        >{translate('로그인')}</Button>
         <Button
           variant="outlined"
           size="large"
           sx={{ height: '52px' }}
           onClick={() => router.push('/shop/auth/sign-up')}
-        >
-          회원가입
-        </Button>
+        >{translate('회원가입')}</Button>
       </Stack>
 
       <Divider sx={{ my: 4 }} />
 
       {/* 비회원 주문조회 — 로그인 없이도 주문/배송을 확인할 수 있는 경로 */}
-      <Typography variant="body2" sx={{ color: 'text.secondary', mb: 1.5, wordBreak: 'keep-all' }}>
-        회원가입 없이 주문하셨나요?
-      </Typography>
+      <Typography variant="body2" sx={{ color: 'text.secondary', mb: 1.5, wordBreak: 'keep-all' }}>{translate('회원가입 없이 주문하셨나요?')}</Typography>
       <Button
         variant="text"
         size="large"
         sx={{ alignSelf: 'flex-start', px: 0 }}
         onClick={() => router.push('/shop/auth/order-check')}
-      >
-        비회원 주문/배송조회
-      </Button>
+      >{translate('비회원 주문/배송조회')}</Button>
     </Wrapper>
   );
 };

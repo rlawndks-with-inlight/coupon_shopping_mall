@@ -6,6 +6,7 @@ import ShopLayout from 'src/layouts/shop/ShopLayout';
 import { apiShop } from 'src/utils/api';
 import { sanitizePhoneInput } from 'src/utils/function';
 import { useRouter } from 'next/router';
+import { useLocales } from 'src/locales';
 
 // 비회원 1:1문의 조회.
 //
@@ -24,6 +25,7 @@ const Wrappers = styled.div`
 `;
 
 const InquiryCheck = () => {
+  const { translate } = useLocales();
   const router = useRouter();
   const [form, setForm] = useState({ none_user_phone: '', password: '' });
   const [loading, setLoading] = useState(false);
@@ -51,21 +53,22 @@ const InquiryCheck = () => {
 
   return (
     <Wrappers>
-      <Typography variant="h5" sx={{ fontWeight: 800, mb: 1 }}>비회원 문의 조회</Typography>
+      <Typography variant="h5" sx={{ fontWeight: 800, mb: 1 }}>{translate('비회원 문의 조회')}</Typography>
       <Typography variant="body2" sx={{ color: 'text.secondary', mb: 3 }}>
-        문의를 남기실 때 입력한 <b>연락처</b>와 <b>글 비밀번호</b>로 답변을 확인하실 수 있습니다.
+        {/* 문장을 <b> 로 쪼개면 조각별 번역이 되어 다른 언어에서 어순이 깨진다 — 통째로 번역한다. */}
+        {translate('문의를 남기실 때 입력한 연락처와 글 비밀번호로 답변을 확인하실 수 있습니다.')}
       </Typography>
 
       <Card variant="outlined">
         <CardContent>
           <Stack spacing={2}>
             <TextField
-              size="small" fullWidth label="연락처" placeholder="010-0000-0000"
+              size="small" fullWidth label={translate('연락처')} placeholder="010-0000-0000"
               value={form.none_user_phone}
               onChange={(e) => setForm({ ...form, none_user_phone: sanitizePhoneInput(e.target.value) })}
             />
             <TextField
-              size="small" fullWidth label="글 비밀번호" type="password"
+              size="small" fullWidth label={translate('글 비밀번호')} type="password"
               value={form.password}
               onChange={(e) => setForm({ ...form, password: e.target.value })}
               // 엔터로도 조회되게 한다 — 입력칸이 둘뿐이라 버튼까지 가는 게 번거롭다.
@@ -82,9 +85,7 @@ const InquiryCheck = () => {
         <Card variant="outlined" sx={{ mt: 3 }}>
           <CardContent>
             {rows.length === 0 ?
-              <Typography variant="body2" sx={{ color: 'text.secondary', py: 2, textAlign: 'center' }}>
-                일치하는 문의가 없습니다. 연락처와 비밀번호를 다시 확인해 주세요.
-              </Typography>
+              <Typography variant="body2" sx={{ color: 'text.secondary', py: 2, textAlign: 'center' }}>{translate('일치하는 문의가 없습니다. 연락처와 비밀번호를 다시 확인해 주세요.')}</Typography>
               :
               <Stack divider={<Divider />}>
                 {rows.map((row) => (

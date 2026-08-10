@@ -33,8 +33,10 @@ import PayProductsByPhoneHecto from 'src/utils/hecto-phone'
 import PayProductsByAuthFintree from 'src/utils/fintree-auth'
 import PayProductsByHandFintree from 'src/utils/fintree-hand'
 import PayProductsByAuthWayup from 'src/utils/wayup-auth'
+import { useLocales } from 'src/locales';
 
 const DialogBuyNow = (props) => {
+  const { translate } = useLocales();
 
   const { setModal } = useModal()
   const STEPS = ['배송지 확인', '결제하기'];
@@ -318,7 +320,7 @@ const DialogBuyNow = (props) => {
           }
         }}
       >
-        <DialogTitle>바로구매</DialogTitle>
+        <DialogTitle>{translate('바로구매')}</DialogTitle>
         <DialogContent className='dialog-content'>
           <CheckoutSteps activeStep={buyStep} steps={STEPS} />
           {buyStep == 0 &&
@@ -345,7 +347,7 @@ const DialogBuyNow = (props) => {
                         <>
                           <Card sx={{ marginBottom: '1.5rem' }}>
                             <EmptyContent
-                              title="배송지가 없습니다."
+                              title={translate('배송지가 없습니다.')}
                               description="배송지를 추가해 주세요."
                               img=""
                             />
@@ -359,9 +361,7 @@ const DialogBuyNow = (props) => {
                       style={{ marginLeft: 'auto' }}
                       onClick={() => setAddAddressOpen(true)}
                       startIcon={<Iconify icon="eva:plus-fill" />}
-                    >
-                      배송지 추가하기
-                    </Button>
+                    >{translate('배송지 추가하기')}</Button>
                   </Row>
                 </>
                 :
@@ -378,7 +378,7 @@ const DialogBuyNow = (props) => {
                           fullWidth
                           value={payData.password}
                           margin="dense"
-                          label="비회원비밀번호"
+                          label={translate('비회원비밀번호')}
                           type='password'
                           onChange={(e) => {
                             setPayData({
@@ -395,23 +395,17 @@ const DialogBuyNow = (props) => {
                           } else {
                             setBuyStep(1);
                           }
-                        }} style={{ marginLeft: 'auto' }}>
-                          다음단계로
-                        </Button>
+                        }} style={{ marginLeft: 'auto' }}>{translate('다음단계로')}</Button>
                       </Row>
                     </>
                     :
                     <>
                       <DialogTitle>{`주소지 선택`}</DialogTitle>
                       <DialogContent>
-                        <DialogContentText>
-                          새 주소를 입력후 저장을 눌러주세요.
-                        </DialogContentText>
+                        <DialogContentText>{translate('새 주소를 입력후 저장을 눌러주세요.')}</DialogContentText>
                       </DialogContent>
                       <Row style={{ marginTop: '2rem' }}>
-                        <Button variant="contained" onClick={() => setAddAddressOpen(true)} style={{ marginLeft: 'auto' }}>
-                          주소지찾기
-                        </Button>
+                        <Button variant="contained" onClick={() => setAddAddressOpen(true)} style={{ marginLeft: 'auto' }}>{translate('주소지찾기')}</Button>
                       </Row>
                     </>}
                 </>}
@@ -450,7 +444,7 @@ const DialogBuyNow = (props) => {
                 <Stack>
                   <TextField
                     size='small'
-                    label='카드 번호'
+                    label={translate('카드 번호')}
                     value={payData.card_num}
                     placeholder='0000 0000 0000 0000'
                     onChange={(e) => {
@@ -466,7 +460,7 @@ const DialogBuyNow = (props) => {
                 <Stack>
                   <TextField
                     size='small'
-                    label='카드 사용자명'
+                    label={translate('카드 사용자명')}
                     value={payData.buyer_name}
                     onChange={(e) => {
                       let value = e.target.value;
@@ -480,7 +474,7 @@ const DialogBuyNow = (props) => {
                 <Stack>
                   <TextField
                     size='small'
-                    label='만료일'
+                    label={translate('만료일')}
                     value={payData.yymm}
                     inputProps={{ maxLength: '5' }}
                     onChange={(e) => {
@@ -496,7 +490,7 @@ const DialogBuyNow = (props) => {
                 <Stack>
                   <TextField
                     size='small'
-                    label='카드비밀번호 앞 두자리'
+                    label={translate('카드비밀번호 앞 두자리')}
                     value={payData.card_pw}
                     type='password'
                     inputProps={{ maxLength: '2' }}
@@ -512,7 +506,7 @@ const DialogBuyNow = (props) => {
                 <Stack>
                   <TextField
                     size='small'
-                    label='구매자 휴대폰번호'
+                    label={translate('구매자 휴대폰번호')}
                     value={payData.buyer_phone}
                     onChange={(e) => {
                       let value = e.target.value;
@@ -542,7 +536,7 @@ const DialogBuyNow = (props) => {
                     <Stack>
                       <TextField
                         size='small'
-                        label='비회원주문 비밀번호'
+                        label={translate('비회원주문 비밀번호')}
                         type='password'
                         value={payData.password}
                         onChange={(e) => {
@@ -598,11 +592,11 @@ const DialogBuyNow = (props) => {
           {
             buyStep == 2 && buyType == 'sms_pay' &&
             <>
-              <Typography variant='subtitle1' sx={{ borderBottom: `1px solid #000`, paddingBottom: '0.5rem', marginBottom: '0.5rem' }}>SMS결제 정보입력</Typography>
+              <Typography variant='subtitle1' sx={{ borderBottom: `1px solid #000`, paddingBottom: '0.5rem', marginBottom: '0.5rem' }}>{translate('SMS결제 정보입력')}</Typography>
               <Stack spacing={2}>
                 <TextField
                   size='small'
-                  label='이름'
+                  label={translate('이름')}
                   value={smsPayData.name}
                   onChange={(e) => {
                     setSmsPayData({ ...smsPayData, name: e.target.value });
@@ -610,7 +604,7 @@ const DialogBuyNow = (props) => {
                 />
                 <TextField
                   size='small'
-                  label='핸드폰번호'
+                  label={translate('핸드폰번호')}
                   value={smsPayData.phone_num}
                   onChange={(e) => {
                     const value = e.target.value.replace(/[^0-9]/g, '');
@@ -636,9 +630,7 @@ const DialogBuyNow = (props) => {
                     setBuyOpen(false);
                     router.push('/shop/auth/sms-pay-success');
                   }}
-                >
-                  완료
-                </Button>
+                >{translate('완료')}</Button>
               </Stack>
             </>
           }
@@ -650,7 +642,7 @@ const DialogBuyNow = (props) => {
                 <Stack>
                   <TextField
                     size='small'
-                    label='카드 번호'
+                    label={translate('카드 번호')}
                     value={payData.card_num}
                     placeholder='0000 0000 0000 0000'
                     onChange={(e) => {
@@ -666,7 +658,7 @@ const DialogBuyNow = (props) => {
                 <Stack>
                   <TextField
                     size='small'
-                    label='카드 사용자명'
+                    label={translate('카드 사용자명')}
                     value={payData.buyer_name}
                     onChange={(e) => {
                       let value = e.target.value;
@@ -680,7 +672,7 @@ const DialogBuyNow = (props) => {
                 <Stack>
                   <TextField
                     size='small'
-                    label='만료일'
+                    label={translate('만료일')}
                     value={payData.yymm}
                     inputProps={{ maxLength: '5' }}
                     onChange={(e) => {
@@ -696,7 +688,7 @@ const DialogBuyNow = (props) => {
                 <Stack>
                   <TextField
                     size='small'
-                    label='카드비밀번호 앞 두자리'
+                    label={translate('카드비밀번호 앞 두자리')}
                     value={payData.card_pw}
                     type='password'
                     inputProps={{ maxLength: '2' }}
@@ -712,7 +704,7 @@ const DialogBuyNow = (props) => {
                 <Stack>
                   <TextField
                     size='small'
-                    label='구매자 휴대폰번호'
+                    label={translate('구매자 휴대폰번호')}
                     value={payData.buyer_phone}
                     onChange={(e) => {
                       let value = e.target.value;
@@ -742,7 +734,7 @@ const DialogBuyNow = (props) => {
                     <Stack>
                       <TextField
                         size='small'
-                        label='비회원주문 비밀번호'
+                        label={translate('비회원주문 비밀번호')}
                         type='password'
                         value={payData.password}
                         onChange={(e) => {
@@ -757,14 +749,13 @@ const DialogBuyNow = (props) => {
                   </>}
                 <Stack>
                   <Button variant='contained' onClick={() => {
+  const { translate } = useLocales();
                     setModal({
                       func: () => { onBuyNow() },
                       icon: 'ion:card-outline',
-                      title: '정말로 결제 하시겠습니까?'
+                      title: translate('정말로 결제 하시겠습니까?')
                     })
-                  }}>
-                    결제하기
-                  </Button>
+                  }}>{translate('결제하기')}</Button>
                 </Stack>
               </Stack>
             </>}
@@ -783,14 +774,10 @@ const DialogBuyNow = (props) => {
                     <div style={{ marginBottom: '1rem' }}>
                       계좌번호 : {_.find(themeDnsData?.payment_modules, { type: buyType })?.virtual_acct_num}
                     </div>
-                    <div style={{ marginBottom: '1rem' }}>
-                      입금 후 1일 안에 구매처리됩니다.
-                    </div>
+                    <div style={{ marginBottom: '1rem' }}>{translate('입금 후 1일 안에 구매처리됩니다.')}</div>
                   </>
                   :
-                  <>
-                    무통장입금을 준비중입니다...
-                  </>
+                  <>{translate('무통장입금을 준비중입니다...')}</>
               }
               {/* <Iframe src={_.find(themeDnsData?.payment_modules, { type: buyType })?.virtual_acct_url + `?amount=${payData?.amount}`} /> */}
             </>}
@@ -801,9 +788,7 @@ const DialogBuyNow = (props) => {
             </>}
         </DialogContent>
         <DialogActions>
-          <Button onClick={onBuyDialogClose} color="inherit">
-            나가기
-          </Button>
+          <Button onClick={onBuyDialogClose} color="inherit">{translate('나가기')}</Button>
         </DialogActions>
       </Dialog>
       <Dialog

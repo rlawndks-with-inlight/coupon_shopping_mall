@@ -289,7 +289,7 @@ const ItemDemo = (props) => {
           }
         }}
       >
-        <DialogTitle>옵션선택</DialogTitle>
+        <DialogTitle>{translate('옵션선택')}</DialogTitle>
         <DialogContent>
           {/* 옵션그룹(product_option_groups) 선택.
               이 다이얼로그는 특성(characters)만 그렸다. 그래서 관리자에서 '옵션'을 등록한 상품은
@@ -365,15 +365,11 @@ const ItemDemo = (props) => {
                   setCharacterSelect(false);
                 }
               }
-            }} color="inherit">
-            선택완료
-          </Button>
+            }} color="inherit">{translate('선택완료')}</Button>
           <Button onClick={() => {
             setCharacterSelect(false);
             router.reload()
-          }} color="inherit">
-            나가기
-          </Button>
+          }} color="inherit">{translate('나가기')}</Button>
         </DialogActions>
       </Dialog>
 
@@ -590,13 +586,11 @@ const ItemDemo = (props) => {
                           <div style={{ borderTop: '1px solid #ccc', width: '100%', padding: '1rem 0' }}>
                             <ItemCharacter
                               key_name={'배송기간'}
-                              value={<div style={{}}>10-14일 내 도착 예정(검수 후 배송)</div>}
+                              value={<div style={{}}>{translate('10-14일 내 도착 예정(검수 후 배송)')}</div>}
                             />
                           </div>
                           <div style={{ width: '100%', padding: '1rem 0' }}>
-                            <div style={{ color: 'gray' }}>
-                              모든 상품은 배송 전 검수를 거칩니다
-                            </div>
+                            <div style={{ color: 'gray' }}>{translate('모든 상품은 배송 전 검수를 거칩니다')}</div>
                           </div>
                         </>}
                         <Button
@@ -648,7 +642,7 @@ const ItemDemo = (props) => {
                               setBuyOpen(true);
                             }
                           }}
-                        >구매하기</Button>
+                        >{translate('구매하기')}</Button>
                         <Row style={{ columnGap: '0.5rem', marginTop: '0.5rem', alignItems: 'center' }}>
                           <Button
                             // '새상품(3)'도 파는 상태다. status != 0 으로 막으면 새상품으로 등록한 상품이
@@ -681,7 +675,7 @@ const ItemDemo = (props) => {
                                 handleAddCart()
                               }
                             }}
-                          >장바구니</Button>
+                          >{translate('장바구니')}</Button>
                           <Icon
                             icon={themeWishData.map(wish => { return wish?.product_id }).includes(product?.id) ? 'ph:heart-fill' : 'ph:heart-light'}
                             style={{
@@ -700,7 +694,7 @@ const ItemDemo = (props) => {
                                       router.push(`/shop/auth/wish`)
                                     },
                                     icon: 'mdi:heart',
-                                    title: '상품이 위시리스트에 담겼습니다\n바로 확인 하시겠습니까?'
+                                    title: translate('상품이 위시리스트에 담겼습니다\n바로 확인 하시겠습니까?')
                                   })
                                 }
                               } else {

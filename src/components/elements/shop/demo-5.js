@@ -17,6 +17,7 @@ import { apiShop } from "src/utils/api"
 import toast from "react-hot-toast"
 import Link from "next/link"
 import { formatLang } from 'src/utils/format';
+import { useLocales } from 'src/locales';
 
 const ItemWrapper = styled.a`
 display: flex;
@@ -83,6 +84,7 @@ margin-bottom:2rem;
 `
 
 export const Item5 = (props) => {
+  const { translate } = useLocales();
   const { user } = useAuthContext();
   const { themeWishData, onChangeWishData, themeMode, themeDnsData } = useSettingsContext();
   const { item, router, theme_css, seller, text_align = 'center' } = props;
@@ -94,7 +96,7 @@ export const Item5 = (props) => {
     { label: 'STOPPED', color: 'warning' },
     { label: 'SOLD-OUT', color: 'error' },
 
-    { label: '비공개', color: 'error' }
+    { label: translate('비공개'), color: 'error' }
   ]
   return <>
     <Link href={item?.id && `/shop/item/${item?.id}${seller ? `?seller_id=${seller?.id}` : ''}`} passHref>
@@ -268,6 +270,7 @@ transition: 0.3s;
 }
 `
 export const AuthMenuSideComponent = (props) => {
+  const { translate } = useLocales();
 
   const { user } = useAuthContext();
   const { themeDnsData, themePostCategoryList, themeMode } = useSettingsContext();
@@ -278,32 +281,32 @@ export const AuthMenuSideComponent = (props) => {
   const noneAuthLabel = '고객센터';
   const authList = [
     {
-      label: '회원정보',
+      label: translate('회원정보'),
       children: [
         {
-          label: '마이페이지',
+          label: translate('마이페이지'),
           link: '/shop/auth/my-page/',
         },
       ]
     },
     {
-      label: '쇼핑정보',
+      label: translate('쇼핑정보'),
       children: [
 
         {
-          label: '주문/배송조회',
+          label: translate('주문/배송조회'),
           link: '/shop/auth/history/',
         },
         {
-          label: '반품/환불조회',
+          label: translate('반품/환불조회'),
           link: '/shop/auth/history/?is_cancel=1',
         },
         {
-          label: '위탁상품관리',
+          label: translate('위탁상품관리'),
           link: '/shop/auth/consignment/',
         },
         {
-          label: '위시리스트',
+          label: translate('위시리스트'),
           link: '/shop/auth/wish/',
         },
       ]
@@ -320,7 +323,7 @@ export const AuthMenuSideComponent = (props) => {
     },*/
     ...(themePostCategoryList ? [
       {
-        label: '고객센터',
+        label: translate('고객센터'),
         children: [
           ...themePostCategoryList.map((item) => {
             return {
@@ -332,18 +335,18 @@ export const AuthMenuSideComponent = (props) => {
       },
     ] : []),
     {
-      label: '회원정보',
+      label: translate('회원정보'),
       children: [
         {
-          label: '배송지 관리',
+          label: translate('배송지 관리'),
           link: '/shop/auth/delivery-address/',
         },
         {
-          label: '회원정보 변경',
+          label: translate('회원정보 변경'),
           link: '/shop/auth/change-info/',
         },
         {
-          label: '회원탈퇴',
+          label: translate('회원탈퇴'),
           link: '/shop/auth/resign/',
         },
       ]
@@ -413,6 +416,7 @@ export const BasicInfo = () => {
 }
 
 export const ProductFaq = () => {
+  const { translate } = useLocales();
   const { user } = useAuthContext();
   const [item, setItem] = useState({
     title: '',
@@ -462,7 +466,7 @@ export const ProductFaq = () => {
       {user ?
         <>
           <TextField
-            label='제목'
+            label={translate('제목')}
             value={item.title}
             onChange={(e) => {
               setItem(
@@ -485,26 +489,22 @@ export const ProductFaq = () => {
           <Button variant="contained" style={{
             height: '48px', width: '120px', margin: '1rem 0 1rem auto'
           }} onClick={() => {
+  const { translate } = useLocales();
             setModal({
               func: () => { onSave() },
               icon: 'material-symbols:edit-outline',
-              title: '저장 하시겠습니까?'
+              title: translate('저장 하시겠습니까?')
             })
-          }}>
-            저장
-          </Button>
+          }}>{translate('저장')}</Button>
         </>
         :
         <>
-          <div style={{ padding: '24px' }}>
-            로그인이 필요합니다.<br />
+          <div style={{ padding: '24px' }}>{translate('로그인이 필요합니다.')}<br />
             <Button variant="contained" style={{
               height: '48px', width: '150px', margin: '1rem 0 1rem auto'
             }} onClick={() => {
               router.push('/shop/auth/login')
-            }}>
-              로그인하러 가기
-            </Button>
+            }}>{translate('로그인하러 가기')}</Button>
           </div>
         </>
       }

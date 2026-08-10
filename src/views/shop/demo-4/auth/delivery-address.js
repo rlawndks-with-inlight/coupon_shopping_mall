@@ -11,6 +11,7 @@ import { useAuthContext } from "src/layouts/manager/auth/useAuthContext";
 import { apiManager } from "src/utils/api";
 import { makeMaxPage } from "src/utils/function";
 import styled from "styled-components";
+import { useLocales } from 'src/locales';
 
 const Wrappers = styled.div`
 max-width:1400px;
@@ -23,6 +24,7 @@ margin-top: 2rem;
 `
 
 const DeliveryAddressDemo = (props) => {
+  const { translate } = useLocales();
 
     const { user } = useAuthContext();
     const { themeDnsData } = useSettingsContext();
@@ -124,9 +126,7 @@ const DeliveryAddressDemo = (props) => {
                                 onChangePage({ ...searchObj, page: num })
                             }} />
                         <Row>
-                            <Button variant="contained" style={{ marginLeft: 'auto' }} onClick={() => setAddAddressOpen(true)}>
-                                주소지 추가
-                            </Button>
+                            <Button variant="contained" style={{ marginLeft: 'auto' }} onClick={() => setAddAddressOpen(true)}>{translate('주소지 추가')}</Button>
                         </Row>
                     </ContentWrappers>
                 </RowMobileReverceColumn>

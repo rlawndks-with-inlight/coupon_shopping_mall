@@ -9,6 +9,7 @@ import { Row } from 'src/components/elements/styled-components';
 import { useAuthContext } from 'src/layouts/manager/auth/useAuthContext';
 import { Icon } from '@iconify/react';
 import { useModal } from 'src/components/dialog/ModalProvider';
+import { useLocales } from 'src/locales';
 
 // ----------------------------------------------------------------------
 
@@ -167,10 +168,11 @@ function ReviewItem({ review, onChangePage, reviewData, setReviewData, deleteRev
                 <Icon icon={'material-symbols:edit-outline'} />
               </IconButton>
               <IconButton onClick={() => {
+  const { translate } = useLocales();
                 setModal({
                   func: () => { deleteReview(id) },
                   icon: 'material-symbols:delete-outline',
-                  title: '정말 삭제하시겠습니까?'
+                  title: translate('정말 삭제하시겠습니까?')
                 })
               }}>
                 <Icon icon='material-symbols:delete-outline' />

@@ -602,17 +602,17 @@ export default function OrderSheet({ router }) {
         fullScreen={typeof window !== 'undefined' && window.innerWidth < 700}
         PaperProps={{ style: { width: typeof window !== 'undefined' && window.innerWidth >= 700 ? '600px' : '100%', maxWidth: '100%' } }}>
         <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', px: 2, py: 1.25, borderBottom: '1px solid #eee' }}>
-          <Box sx={{ fontWeight: 700 }}>우편번호 검색</Box>
-          <Button size="small" color="inherit" onClick={() => setPostOpen(false)}>닫기</Button>
+          <Box sx={{ fontWeight: 700 }}>{translate('우편번호 검색')}</Box>
+          <Button size="small" color="inherit" onClick={() => setPostOpen(false)}>{translate('닫기')}</Button>
         </Box>
         <DaumPostcode style={postCodeStyle} onComplete={onCompletePost} />
       </Dialog>
 
       <Wrappers>
-        <Title style={{ marginBottom: '1.5rem' }}>주문 / 결제</Title>
+        <Title style={{ marginBottom: '1.5rem' }}>{translate('주문 / 결제')}</Title>
         {products.length == 0 ? (
           <Card sx={{ p: 2 }}>
-            <EmptyContent title="주문할 상품이 없습니다." description="장바구니에 상품을 담아 주세요."
+            <EmptyContent title={translate('주문할 상품이 없습니다.')} description="장바구니에 상품을 담아 주세요."
               img="/assets/illustrations/illustration_empty_cart.svg" />
           </Card>
         ) : (
@@ -621,7 +621,7 @@ export default function OrderSheet({ router }) {
             <Grid item xs={12} md={8}>
               {/* 주문상품 */}
               <Card sx={{ mb: 3 }}>
-                <CardHeader title="주문 상품" />
+                <CardHeader title={translate('주문 상품')} />
                 {unavailable.length > 0 && (
                   // 토스트는 사라지므로, 결제가 막힌 이유는 화면에 계속 남겨 둔다.
                   <Box sx={{ mx: 2, mb: 1, p: 1.5, borderRadius: 1, bgcolor: 'error.lighter' }}>
@@ -641,18 +641,18 @@ export default function OrderSheet({ router }) {
 
               {/* 주문자 정보 */}
               <Card sx={{ mb: 3 }}>
-                <CardHeader title="주문자 정보" subheader={isMember ? '계정 정보가 자동 표시됩니다.' : '비회원 주문 정보를 입력해 주세요.'} />
+                <CardHeader title={translate('주문자 정보')} subheader={isMember ? '계정 정보가 자동 표시됩니다.' : '비회원 주문 정보를 입력해 주세요.'} />
                 <CardContent>
                   {isMember ? (
                     <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2}>
-                      <TextField fullWidth size="small" label="이름" value={user?.name ?? user?.nickname ?? ''} InputProps={{ readOnly: true }} />
+                      <TextField fullWidth size="small" label={translate('이름')} value={user?.name ?? user?.nickname ?? ''} InputProps={{ readOnly: true }} />
                       {/* 계정에 저장된 휴대폰이 있으면 읽기전용으로 보여주고,
                           없는 계정(구 데이터·개발자 생성 계정 등)은 직접 입력받는다.
                           읽기전용 고정이면 번호 없는 회원이 결제를 진행할 방법이 없다. */}
                       {user?.phone_num ? (
-                        <TextField fullWidth size="small" label="휴대폰" value={user?.phone_num} InputProps={{ readOnly: true }} />
+                        <TextField fullWidth size="small" label={translate('휴대폰')} value={user?.phone_num} InputProps={{ readOnly: true }} />
                       ) : (
-                        <TextField fullWidth size="small" label="휴대폰" value={payData.buyer_phone}
+                        <TextField fullWidth size="small" label={translate('휴대폰')} value={payData.buyer_phone}
                           inputMode="tel" placeholder="010-1234-5678"
                           helperText="계정에 등록된 번호가 없어 직접 입력이 필요합니다."
                           onChange={(e) => setPayData({ ...payData, buyer_phone: sanitizePhoneInput(e.target.value) })} />
@@ -661,9 +661,9 @@ export default function OrderSheet({ router }) {
                   ) : (
                     <Stack spacing={2}>
                       <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2}>
-                        <TextField fullWidth size="small" label="이름" value={payData.buyer_name}
+                        <TextField fullWidth size="small" label={translate('이름')} value={payData.buyer_name}
                           onChange={(e) => setPayData({ ...payData, buyer_name: e.target.value })} />
-                        <TextField fullWidth size="small" label="휴대폰" value={payData.buyer_phone}
+                        <TextField fullWidth size="small" label={translate('휴대폰')} value={payData.buyer_phone}
                           inputMode="tel" placeholder="010-1234-5678"
                           onChange={(e) => setPayData({ ...payData, buyer_phone: sanitizePhoneInput(e.target.value) })} />
                       </Stack>
@@ -671,7 +671,7 @@ export default function OrderSheet({ router }) {
                           9자 이상 입력하면 주문 INSERT 가 'Data too long' 으로 실패했다.
                           컬럼을 넉넉히 넓히고(마이그레이션), 입력은 6~16자로 안내·제한한다. */}
                       <TextField fullWidth size="small" type="password"
-                        label="비회원 주문 비밀번호 (주문조회 시 사용)"
+                        label={translate('비회원 주문 비밀번호 (주문조회 시 사용)')}
                         value={payData.password} inputProps={{ maxLength: GUEST_PW_MAX }}
                         error={!!payData.password && payData.password.length < GUEST_PW_MIN}
                         helperText={`${GUEST_PW_MIN}~${GUEST_PW_MAX}자로 입력해 주세요. 주문조회 시 필요하니 꼭 기억해 두세요.`}
@@ -683,7 +683,7 @@ export default function OrderSheet({ router }) {
 
               {/* 배송지 */}
               <Card sx={{ mb: 3 }}>
-                <CardHeader title="배송지"
+                <CardHeader title={translate('배송지')}
                   action={isMember && addressList.length > 0 ? (
                     <Button size="small" variant="soft"
                       startIcon={<Iconify icon={directMode ? 'eva:list-fill' : 'eva:edit-2-fill'} />}
@@ -702,7 +702,7 @@ export default function OrderSheet({ router }) {
                             <Box>
                               <Stack direction="row" alignItems="center" spacing={1}>
                                 <Typography variant="subtitle2">{item?.receiver || item?.addr}</Typography>
-                                {!!item?.is_default && <Label color="info">기본</Label>}
+                                {!!item?.is_default && <Label color="info">{translate('기본')}</Label>}
                               </Stack>
                               <Typography variant="body2" sx={{ color: 'text.secondary' }}>
                                 {/* 해외 배송지는 도시·주·국가까지 보여야 어디로 가는 주소인지 알 수 있다.
@@ -715,17 +715,17 @@ export default function OrderSheet({ router }) {
                             </Box>
                             <Stack direction="row" spacing={1}>
                               <Button size="small" variant={selectedAddrId == item?.id ? 'contained' : 'outlined'}
-                                onClick={(e) => { e.stopPropagation(); onSelectAddress(item); }}>선택</Button>
+                                onClick={(e) => { e.stopPropagation(); onSelectAddress(item); }}>{translate('선택')}</Button>
                               <Button size="small" color="inherit" variant="outlined"
-                                onClick={(e) => { e.stopPropagation(); onUpdateAddress(item?.id); }}>수정</Button>
+                                onClick={(e) => { e.stopPropagation(); onUpdateAddress(item?.id); }}>{translate('수정')}</Button>
                               <Button size="small" color="inherit" variant="outlined"
-                                onClick={(e) => { e.stopPropagation(); onDeleteAddress(item?.id); }}>삭제</Button>
+                                onClick={(e) => { e.stopPropagation(); onDeleteAddress(item?.id); }}>{translate('삭제')}</Button>
                             </Stack>
                           </Stack>
                         </Paper>
                       ))}
                       <Button size="small" variant="soft" startIcon={<Iconify icon="eva:plus-fill" />}
-                        onClick={() => setAddAddressOpen(true)} sx={{ alignSelf: 'flex-start' }}>주소록에 배송지 추가</Button>
+                        onClick={() => setAddAddressOpen(true)} sx={{ alignSelf: 'flex-start' }}>{translate('주소록에 배송지 추가')}</Button>
                     </Stack>
                   ) : (
                     <Stack spacing={2}>
@@ -805,7 +805,7 @@ export default function OrderSheet({ router }) {
                       <TextField fullWidth size="small" label={translate('상세주소')} value={payData.detail_addr || ''}
                         onChange={(e) => setPayData({ ...payData, detail_addr: e.target.value })} />
                       {isMember && addressList.length > 0 && (
-                        <Button size="small" variant="text" onClick={() => setDirectMode(false)} sx={{ alignSelf: 'flex-start' }}>← 주소록에서 선택</Button>
+                        <Button size="small" variant="text" onClick={() => setDirectMode(false)} sx={{ alignSelf: 'flex-start' }}>{translate('← 주소록에서 선택')}</Button>
                       )}
                     </Stack>
                   )}
@@ -814,12 +814,12 @@ export default function OrderSheet({ router }) {
 
               {/* 결제수단 (약관 동의 후 선택) */}
               <Card sx={{ mb: 3 }}>
-                <CardHeader title="결제수단" />
+                <CardHeader title={translate('결제수단')} />
                 <CardContent>
                   <Box sx={{ mb: 2, pb: 1.5, borderBottom: '1px solid', borderColor: 'divider' }}>
                     <FormControlLabel
                       control={<Checkbox checked={agreeAll} onChange={(e) => toggleAgreeAll(e.target.checked)} />}
-                      label={<Typography variant="subtitle2">주문 내용을 확인하였으며, 아래 약관에 모두 동의합니다.</Typography>}
+                      label={<Typography variant="subtitle2">{translate('주문 내용을 확인하였으며, 아래 약관에 모두 동의합니다.')}</Typography>}
                     />
                     <Divider sx={{ my: 1 }} />
                     <Stack sx={{ pl: 1 }}>
@@ -828,7 +828,7 @@ export default function OrderSheet({ router }) {
                       <Stack direction="row" alignItems="center" justifyContent="space-between">
                         <FormControlLabel
                           control={<Checkbox size="small" checked={agree1} onChange={(e) => setAgree1(e.target.checked)} />}
-                          label={<Typography variant="body2">이용약관 동의 <Box component="span" sx={{ color: 'error.main' }}>(필수)</Box></Typography>}
+                          label={<Typography variant="body2">{translate('이용약관 동의')}<Box component="span" sx={{ color: 'error.main' }}>{translate('(필수)')}</Box></Typography>}
                         />
                         <Button size="small" variant="text" onClick={() => setOpenPolicy(openPolicy === 1 ? 0 : 1)}>
                           {openPolicy === 1 ? '접기' : '보기'}
@@ -842,7 +842,7 @@ export default function OrderSheet({ router }) {
                       <Stack direction="row" alignItems="center" justifyContent="space-between">
                         <FormControlLabel
                           control={<Checkbox size="small" checked={agree2} onChange={(e) => setAgree2(e.target.checked)} />}
-                          label={<Typography variant="body2">개인정보 수집 및 이용 동의 <Box component="span" sx={{ color: 'error.main' }}>(필수)</Box></Typography>}
+                          label={<Typography variant="body2">{translate('개인정보 수집 및 이용 동의')}<Box component="span" sx={{ color: 'error.main' }}>{translate('(필수)')}</Box></Typography>}
                         />
                         <Button size="small" variant="text" onClick={() => setOpenPolicy(openPolicy === 2 ? 0 : 2)}>
                           {openPolicy === 2 ? '접기' : '보기'}
@@ -855,9 +855,7 @@ export default function OrderSheet({ router }) {
                       )}
                     </Stack>
                     {!agreeAll && (
-                      <Typography variant="caption" sx={{ color: 'text.secondary', pl: 1, mt: 1, display: 'block' }}>
-                        필수 항목에 모두 동의하셔야 결제를 진행할 수 있습니다.
-                      </Typography>
+                      <Typography variant="caption" sx={{ color: 'text.secondary', pl: 1, mt: 1, display: 'block' }}>{translate('필수 항목에 모두 동의하셔야 결제를 진행할 수 있습니다.')}</Typography>
                     )}
                   </Box>
                   <Stack spacing={1.5}>
@@ -880,7 +878,7 @@ export default function OrderSheet({ router }) {
                       );
                     })}
                     {paymentModules.length == 0 && (
-                      <Typography variant="body2" sx={{ color: 'text.secondary' }}>등록된 결제수단이 없습니다.</Typography>
+                      <Typography variant="body2" sx={{ color: 'text.secondary' }}>{translate('등록된 결제수단이 없습니다.')}</Typography>
                     )}
                   </Stack>
 
@@ -890,22 +888,22 @@ export default function OrderSheet({ router }) {
                       <Divider sx={{ mb: 2 }} />
                       <Stack spacing={2}>
                         <Cards cvc={''} focused={undefined} expiry={payData.yymm} name={payData.buyer_name} number={payData.card_num} />
-                        <TextField size="small" label="카드 번호" value={payData.card_num} placeholder="0000 0000 0000 0000"
+                        <TextField size="small" label={translate('카드 번호')} value={payData.card_num} placeholder="0000 0000 0000 0000"
                           onChange={(e) => setPayData({ ...payData, card_num: formatCreditCardNumber(e.target.value, Payment) })} />
-                        <TextField size="small" label="카드 사용자명" value={payData.buyer_name}
+                        <TextField size="small" label={translate('카드 사용자명')} value={payData.buyer_name}
                           onChange={(e) => setPayData({ ...payData, buyer_name: e.target.value })} />
-                        <TextField size="small" label="만료일" value={payData.yymm} inputProps={{ maxLength: '5' }}
+                        <TextField size="small" label={translate('만료일')} value={payData.yymm} inputProps={{ maxLength: '5' }}
                           onChange={(e) => setPayData({ ...payData, yymm: formatExpirationDate(e.target.value, Payment) })} />
-                        <TextField size="small" label="카드비밀번호 앞 두자리" type="password" value={payData.card_pw} inputProps={{ maxLength: '2' }}
+                        <TextField size="small" label={translate('카드비밀번호 앞 두자리')} type="password" value={payData.card_pw} inputProps={{ maxLength: '2' }}
                           onChange={(e) => setPayData({ ...payData, card_pw: e.target.value })} />
-                        <TextField size="small" label="구매자 휴대폰번호" value={payData.buyer_phone}
+                        <TextField size="small" label={translate('구매자 휴대폰번호')} value={payData.buyer_phone}
                           inputMode="tel" placeholder="010-1234-5678"
                           onChange={(e) => setPayData({ ...payData, buyer_phone: sanitizePhoneInput(e.target.value) })} />
-                        <TextField size="small" label="주민번호 또는 사업자등록번호" value={payData.auth_num}
+                        <TextField size="small" label={translate('주민번호 또는 사업자등록번호')} value={payData.auth_num}
                           onChange={(e) => setPayData({ ...payData, auth_num: e.target.value })} />
                         <Button variant="contained" size="large" onClick={() => setModal({
-                          func: () => { onPayByHand(); }, icon: 'ion:card-outline', title: '정말로 결제 하시겠습니까?',
-                        })}>결제하기</Button>
+                          func: () => { onPayByHand(); }, icon: 'ion:card-outline', title: translate('정말로 결제 하시겠습니까?'),
+                        })}>{translate('결제하기')}</Button>
                       </Stack>
                     </Box>
                   )}
@@ -925,9 +923,9 @@ export default function OrderSheet({ router }) {
                             {payData?.ord_num && (
                               <Typography variant="body2" sx={{ fontWeight: 700 }}>주문번호 : {payData.ord_num}</Typography>
                             )}
-                            <Typography variant="body2" sx={{ color: 'text.secondary' }}>입금 후 1일 안에 구매처리됩니다.</Typography>
+                            <Typography variant="body2" sx={{ color: 'text.secondary' }}>{translate('입금 후 1일 안에 구매처리됩니다.')}</Typography>
                           </Stack>
-                        ) : <Typography variant="body2">무통장입금을 준비중입니다...</Typography>;
+                        ) : <Typography variant="body2">{translate('무통장입금을 준비중입니다...')}</Typography>;
                       })()}
                     </Box>
                   )}
@@ -940,7 +938,7 @@ export default function OrderSheet({ router }) {
                     <Box sx={{ mt: 3 }}>
                       <Divider sx={{ mb: 2 }} />
                       <Stack spacing={1}>
-                        <Typography variant="body2">상품권결제 창에서 결제를 완료해 주세요.</Typography>
+                        <Typography variant="body2">{translate('상품권결제 창에서 결제를 완료해 주세요.')}</Typography>
                         {payData?.ord_num && (
                           <Typography variant="body2" sx={{ fontWeight: 700 }}>주문번호 : {payData.ord_num}</Typography>
                         )}
@@ -956,12 +954,10 @@ export default function OrderSheet({ router }) {
                                 const link = m.gift_certificate_url
                                   + `?amount=${payData?.amount}&name=${user?.name ?? ''}&phone_num=${user?.phone_num ?? ''}`;
                                 window.open(link, '');
-                              }}>
-                              결제창 다시 열기
-                            </Button>
+                              }}>{translate('결제창 다시 열기')}</Button>
                           ) : null;
                         })()}
-                        <Typography variant="body2" sx={{ color: 'text.secondary' }}>결제 확인 후 구매처리됩니다.</Typography>
+                        <Typography variant="body2" sx={{ color: 'text.secondary' }}>{translate('결제 확인 후 구매처리됩니다.')}</Typography>
                       </Stack>
                     </Box>
                   )}
@@ -973,18 +969,18 @@ export default function OrderSheet({ router }) {
                       <Typography variant="subtitle1" sx={{ mb: 1 }}>{payData?.payment_modules?.title}</Typography>
                       <Stack spacing={2}>
                         <Cards cvc={''} focused={undefined} expiry={payData.yymm} name={payData.buyer_name} number={payData.card_num} />
-                        <TextField size="small" label="카드 번호" value={payData.card_num} placeholder="0000 0000 0000 0000"
+                        <TextField size="small" label={translate('카드 번호')} value={payData.card_num} placeholder="0000 0000 0000 0000"
                           onChange={(e) => setPayData({ ...payData, card_num: formatCreditCardNumber(e.target.value, Payment) })} />
-                        <TextField size="small" label="카드 사용자명" value={payData.buyer_name}
+                        <TextField size="small" label={translate('카드 사용자명')} value={payData.buyer_name}
                           onChange={(e) => setPayData({ ...payData, buyer_name: e.target.value })} />
-                        <TextField size="small" label="만료일" value={payData.yymm} inputProps={{ maxLength: '5' }}
+                        <TextField size="small" label={translate('만료일')} value={payData.yymm} inputProps={{ maxLength: '5' }}
                           onChange={(e) => setPayData({ ...payData, yymm: formatExpirationDate(e.target.value, Payment) })} />
-                        <TextField size="small" label="카드비밀번호 앞 두자리" type="password" value={payData.card_pw} inputProps={{ maxLength: '2' }}
+                        <TextField size="small" label={translate('카드비밀번호 앞 두자리')} type="password" value={payData.card_pw} inputProps={{ maxLength: '2' }}
                           onChange={(e) => setPayData({ ...payData, card_pw: e.target.value })} />
-                        <TextField size="small" label="구매자 휴대폰번호" value={payData.buyer_phone}
+                        <TextField size="small" label={translate('구매자 휴대폰번호')} value={payData.buyer_phone}
                           inputMode="tel" placeholder="010-1234-5678"
                           onChange={(e) => setPayData({ ...payData, buyer_phone: sanitizePhoneInput(e.target.value) })} />
-                        <TextField size="small" label="주민번호 또는 사업자등록번호" value={payData.auth_num}
+                        <TextField size="small" label={translate('주민번호 또는 사업자등록번호')} value={payData.auth_num}
                           onChange={(e) => setPayData({ ...payData, auth_num: e.target.value })} />
                         <PayProductsByHandFintree props={[products, payData]} />
                       </Stack>
@@ -1028,22 +1024,17 @@ export default function OrderSheet({ router }) {
                   //     그래서 카트에선 포인트를 넣을 수 있는데 주문서에선 잠기는 불일치가 있었다. 같이 해소된다.
                   subtotal={orderTotals.merchTotal + _.sum(_.map(products, (item) => calculatorPrice(item).discount))}
                 />
-                <Typography variant="caption" sx={{ color: 'text.secondary', display: 'block', mt: 1, textAlign: 'center' }}>
-                  결제수단을 선택한 뒤 결제 방법(결제하기 버튼 또는 입력란)에 따라 진행하세요.
-                </Typography>
+                <Typography variant="caption" sx={{ color: 'text.secondary', display: 'block', mt: 1, textAlign: 'center' }}>{translate('결제수단을 선택한 뒤 결제 방법(결제하기 버튼 또는 입력란)에 따라 진행하세요.')}</Typography>
                 {(buyType == 'auth_forspay' || buyType == 'card_payletter') && (
                   <Box sx={{ mt: 2 }}>
-                    <Typography variant="body2" sx={{ mb: 1, textAlign: 'center' }}>
-                      선택한 결제수단: <b>{_.find(paymentModules, (m) => m?.type == buyType && (buyType != 'auth_forspay' || m?.pay_method == buyPayMethod))?.title || '-'}</b>
+                    <Typography variant="body2" sx={{ mb: 1, textAlign: 'center' }}>{translate('선택한 결제수단:')}<b>{_.find(paymentModules, (m) => m?.type == buyType && (buyType != 'auth_forspay' || m?.pay_method == buyPayMethod))?.title || '-'}</b>
                     </Typography>
                     <Button fullWidth variant="contained" size="large" disabled={payLoading}
                       onClick={() => setModal({
                         func: () => { onPaySelectedRedirect(); },
                         icon: 'ion:card-outline',
-                        title: '결제를 진행하시겠습니까?',
-                      })}>
-                      결제하기
-                    </Button>
+                        title: translate('결제를 진행하시겠습니까?'),
+                      })}>{translate('결제하기')}</Button>
                   </Box>
                 )}
               </Box>

@@ -5,7 +5,7 @@ import { useSettingsContext } from 'src/components/settings';
 import { useLocales } from 'src/locales';
 import { useAuthContext } from 'src/layouts/manager/auth/useAuthContext';
 import { LazyLoadImage } from 'react-lazy-load-image-component';
-import { commarNumber } from 'src/utils/function';
+import { commarNumber, commarNumberWithUnit } from 'src/utils/function';
 import { formatLang } from 'src/utils/format';
 import { apiShop } from 'src/utils/api';
 import { insertCartDataUtil, startBuyNow, selectItemOptionUtil } from 'src/utils/shop-util';
@@ -282,20 +282,20 @@ const Demo7 = () => {
             <Price>
               {/* 통화 단위가 '円'(엔)으로 박혀 있었다. 원화로 파는 몰이고
                   결제도 원화로 나가므로 표시만 엔이면 고객이 금액을 오해한다. */}
-              {commarNumber(sale)}원
-              {hasSale && <OrigPrice>{commarNumber(orig)}원</OrigPrice>}
+              {commarNumberWithUnit(sale)}
+              {hasSale && <OrigPrice>{commarNumberWithUnit(orig)}</OrigPrice>}
             </Price>
             {/* 배송비를 상세에 표시한다. 예전엔 이 프레임들에 배송비 표기가 없어서
                 고객이 장바구니·주문서에 가서야 배송비를 알았다(주문 직전 금액이 달라 보인다). */}
             {item?.delivery_fee > 0
-                ? <div style={{ fontSize: '13px', color: '#888', marginTop: '6px' }}>배송비 {commarNumber(item?.delivery_fee)}원</div>
+                ? <div style={{ fontSize: '13px', color: '#888', marginTop: '6px' }}>배송비 {commarNumberWithUnit(item?.delivery_fee)}</div>
                 : <div style={{ fontSize: '13px', color: '#888', marginTop: '6px' }}>무료배송</div>}
           </PriceBlock>
           {item?.groups?.length > 0 && (
             <OptionArea>
               {item.groups.map((group, gIdx) => (
                 <OptionField key={group?.id ?? gIdx}>
-                  <OptionLabel>{group?.group_name}</OptionLabel>
+                  <OptionLabel>{formatLang(group, 'group_name')}</OptionLabel>
                   <OptionSelect
                     defaultValue=""
                     onChange={(e) => {
@@ -307,7 +307,7 @@ const Demo7 = () => {
                     <option value="" disabled>選択 · 선택</option>
                     {(group?.options ?? []).map((option, oIdx) => (
                       <option key={option?.id ?? oIdx} value={oIdx}>
-                        {option?.option_name}
+                        {formatLang(option, 'option_name')}
                         {option?.option_price > 0 ? ` (+${commarNumber(option.option_price)})` : ''}
                       </option>
                     ))}
@@ -337,7 +337,7 @@ const Demo7 = () => {
       {item?.product_description && (
         <DetailSection>
           <DetailTitle>品物の物語</DetailTitle>
-          <DetailContent dangerouslySetInnerHTML={{ __html: item.product_description }} />
+          <DetailContent dangerouslySetInnerHTML={{ __html: formatLang(item, 'product_description') }} />
         </DetailSection>
       )}
     </Wrapper>

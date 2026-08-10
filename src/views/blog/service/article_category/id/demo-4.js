@@ -10,6 +10,7 @@ import { useAuthContext } from 'src/layouts/manager/auth/useAuthContext';
 import GuestInquiryFields, { GUEST_INQUIRY_EMPTY, validateGuestInquiry } from 'src/components/elements/shop/GuestInquiryFields';
 import { apiShop } from 'src/utils/api';
 import ReactQuillComponent from 'src/views/manager/react-quill';
+import { formatLang } from 'src/utils/format';
 
 const PostTitle = styled.h3`
 font-size:1.25rem;
@@ -131,7 +132,7 @@ const Demo4 = (props) => {
     return (
         <>
             <Wrappers>
-                <Title style={{ paddingBottom: '0' }}>{postCategory?.post_category_title}</Title>
+                <Title style={{ paddingBottom: '0' }}>{formatLang(postCategory, 'post_category_title')}</Title>
                 {!loading &&
                     <>
                         {isAdd ?
@@ -178,17 +179,17 @@ const Demo4 = (props) => {
                             </>
                             :
                             <>
-                                <PostTitle themeMode={themeMode}>{item?.post_title}</PostTitle>
+                                <PostTitle themeMode={themeMode}>{formatLang(item, 'post_title')}</PostTitle>
                                 <MetaRow themeMode={themeMode}>
                                     {item?.writer_nickname && <span>{item.writer_nickname}</span>}
                                     {item?.created_at && <span>{item.created_at}</span>}
                                 </MetaRow>
-                                <Content themeMode={themeMode} dangerouslySetInnerHTML={{ __html: item?.post_content ?? '' }} />
+                                <Content themeMode={themeMode} dangerouslySetInnerHTML={{ __html: formatLang(item, 'post_content') ?? '' }} />
                                 {isAnswered &&
                                     item.replies.map((reply, idx) => (
                                         <AnswerBox key={reply?.id ?? idx} themeMode={themeMode}>
                                             <AnswerLabel themeMode={themeMode}>답변{reply?.post_title ? ` - ${reply.post_title}` : ''}</AnswerLabel>
-                                            <Content themeMode={themeMode} dangerouslySetInnerHTML={{ __html: reply?.post_content ?? '' }} />
+                                            <Content themeMode={themeMode} dangerouslySetInnerHTML={{ __html: formatLang(reply, 'post_content') ?? '' }} />
                                         </AnswerBox>
                                     ))
                                 }

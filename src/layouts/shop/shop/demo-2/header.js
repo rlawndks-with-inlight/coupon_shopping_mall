@@ -302,7 +302,7 @@ const Header = () => {
             onClick={() => {
               router.push(`/shop/items?category_id=${item?.id}`)
             }}>
-            <div>{item.category_name}</div>
+            <div>{formatLang(item, 'category_name')}</div>
             <div>{item.children.length > 0 ? '>' : ''}</div>
           </DropDownMenu>
           {item.children.length > 0 ?
@@ -589,7 +589,7 @@ const Header = () => {
                             onClick={() => {
                               router.push(`/shop/items?category_id=${item1?.id}`)
                             }}>
-                            {item1.category_name}
+                            {formatLang(item1, 'category_name')}
                           </CategoryMenu>
                           {item1?.children.length > 0 &&
                             <>
@@ -640,7 +640,7 @@ const Header = () => {
                             router.push(`/shop/items?category_id=${item1?.id}`)
                           }}
                         >
-                          <div>{item1.category_name}</div>
+                          <div>{formatLang(item1, 'category_name')}</div>
                         </CategoryMenu>
                       </>}
                   </>
@@ -714,7 +714,7 @@ const Header = () => {
                     <DialogMenuContent onClick={() => {
                       router.push(`/shop/service/${item.id}`);
                       setDialogMenuOpen(false);
-                    }}>{item?.post_category_title}</DialogMenuContent>
+                    }}>{formatLang(item, 'post_category_title')}</DialogMenuContent>
                   </>
                 ))}
               </Row>
@@ -851,7 +851,7 @@ const returnSidebarMenu = (item, num, func) => {
         onClick={() => {
           router.push(`/shop/items?category_id=${item?.id}`);
           setSideMenuOpen(false);
-        }}>{item.category_name}</div>}
+        }}>{formatLang(item, 'category_name')}</div>}
         nodeId={item.id}
         style={{ margin: '0.25rem 0' }}
       >

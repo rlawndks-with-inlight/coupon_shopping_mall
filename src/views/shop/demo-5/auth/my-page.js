@@ -11,7 +11,7 @@ import { Col, Row, RowMobileColumn, RowMobileReverceColumn, themeObj } from "src
 import { useSettingsContext } from "src/components/settings";
 import { useAuthContext } from "src/layouts/manager/auth/useAuthContext";
 import { apiShop } from "src/utils/api";
-import { commarNumber, getOrderStatusText } from "src/utils/function";
+import { commarNumber, getOrderStatusText, commarNumberWithUnit } from "src/utils/function";
 import styled from "styled-components";
 
 const Wrappers = styled.div`
@@ -108,7 +108,7 @@ const MyPageDemo = (props) => {
       id: 'product_sale_price',
       label: '',
       action: (row) => {
-        return commarNumber(row['product_sale_price']) + '원'
+        return commarNumberWithUnit(row['product_sale_price'])
       }
     },
     {
@@ -161,7 +161,7 @@ const MyPageDemo = (props) => {
       id: 'amount',
       label: '',
       action: (row) => {
-        return commarNumber(row.amount) + '원'
+        return commarNumberWithUnit(row.amount)
       },
       sx: (row) => {
         if (row?.is_cancel == 1) {

@@ -9,7 +9,7 @@ import { apiManager, apiShop } from 'src/utils/api';
 import { styled as muiStyle } from '@mui/material'
 import Head from 'next/head';
 import { Row } from 'src/components/elements/styled-components';
-import { commarNumber, isPurchasable } from 'src/utils/function';
+import { commarNumber, isPurchasable, commarNumberWithUnit } from 'src/utils/function';
 import { Icon } from '@iconify/react';
 import { insertCartDataUtil, insertWishDataUtil, selectItemOptionUtil } from 'src/utils/shop-util';
 import toast from 'react-hot-toast';
@@ -304,9 +304,9 @@ const ItemDemo = (props) => {
                           <ItemCharacter
                             key_name={'판매가'}
                             value={<>
-                              {commarNumber(product?.product_sale_price)}원
+                              {commarNumberWithUnit(product?.product_sale_price)}
                               <div style={{ textDecoration: 'line-through', color: '#999999' }}>
-                                {commarNumber(product?.product_price)}원
+                                {commarNumberWithUnit(product?.product_price)}
                               </div>
                             </>
                             }
@@ -318,7 +318,7 @@ const ItemDemo = (props) => {
                           <ItemCharacter
                             key_name={'판매가'}
                             value={<>
-                              {commarNumber(product?.product_sale_price)}원
+                              {commarNumberWithUnit(product?.product_sale_price)}
                             </>
                             }
                           />
@@ -334,19 +334,19 @@ const ItemDemo = (props) => {
                         {commarNumber(product?.product_price) != commarNumber(product?.product_sale_price) ?
                           <>
                             <div style={{ fontSize: '14px', textDecoration: 'line-through', color: '#999999' }}>
-                              {commarNumber(product?.product_price)}원
+                              {commarNumberWithUnit(product?.product_price)}
                             </div>
                             <div style={{ fontSize: '22px', display: 'flex' }}>
                               <div style={{ marginRight: '1rem' }}>
                                 {parseFloat((parseInt(product?.product_price - product?.product_sale_price) / parseInt(product?.product_price) * 100).toFixed(2))}%
                               </div>
-                              {commarNumber(product?.product_sale_price)}원
+                              {commarNumberWithUnit(product?.product_sale_price)}
                             </div>
                           </>
                           :
                           <>
                             <div style={{ fontSize: '22px' }}>
-                              {product?.product_sale_price != 0 ? <div>{commarNumber(product?.product_sale_price)}원</div> : <div>SOLD OUT</div>}
+                              {product?.product_sale_price != 0 ? <div>{commarNumberWithUnit(product?.product_sale_price)}</div> : <div>SOLD OUT</div>}
                             </div>
                           </>
                         }

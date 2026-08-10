@@ -10,6 +10,7 @@ import { Title } from 'src/components/elements/blog/demo-1';
 import { logoSrc } from 'src/data/data';
 // 로그아웃 링크용. demo-2 와 동일하게 Row 를 쓴다.
 import { Row } from 'src/components/elements/styled-components';
+import { formatLang } from 'src/utils/format';
 
 const Wrappers = styled.div`
 max-width:798px;
@@ -191,7 +192,7 @@ const Demo4 = (props) => {
                                 .map(item => (
                                     <MenuButton key={item?.id} themeMode={themeMode} style={{ marginBottom: '0' }}
                                         onClick={() => { router.push(`/shop/service/${item?.id}`) }}>
-                                        <MenuText>{item.post_category_title}</MenuText>
+                                        <MenuText>{formatLang(item, 'post_category_title')}</MenuText>
                                         <IconButton style={{ width: '24px', height: '56px', padding: '0', marginRight: '18px' }}>
                                             <Icon icon='ep:arrow-right' color='black' />
                                         </IconButton>
@@ -210,7 +211,7 @@ const Demo4 = (props) => {
                                             if (user) { router.push(`/shop/service/${item?.id}`) }
                                             else { setDialogOpen(true); setDialogType(1) }
                                         }}>
-                                        <MenuText>{item.post_category_title}</MenuText>
+                                        <MenuText>{formatLang(item, 'post_category_title')}</MenuText>
                                         <IconButton style={{ width: '24px', height: '56px', padding: '0', marginRight: '18px' }}>
                                             <Icon icon='ep:arrow-right' color='black' />
                                         </IconButton>

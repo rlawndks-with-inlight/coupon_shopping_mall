@@ -12,6 +12,7 @@ import { getAllIdsWithParents } from "src/utils/function"
 import DialogSearch from "src/components/dialog/DialogSearch"
 import { useAuthContext } from "src/layouts/manager/auth/useAuthContext"
 import { logoSrc } from "src/data/data"
+import { formatLang } from 'src/utils/format';
 
 const Wrappers = styled.header`
 width: 100%;
@@ -295,7 +296,7 @@ const Header = () => {
                             onClick={() => {
                               router.push(`/shop/items?category_id=${item1?.id}`)
                             }}>
-                            <div>{item1.category_name}</div>
+                            <div>{formatLang(item1, 'category_name')}</div>
                           </CategoryMenu>
                         </CategoryMenuContainer>
                       </>}
@@ -419,14 +420,14 @@ const Header = () => {
         <Col style={{ width: '90vw', background: 'transparent', maxHeight: '55vh', overflowY: 'auto' }} className="none-scroll">
           {themeCategoryList.map((group, index) => (
             <>
-              <DialogMenuTitle>{group?.category_group_name}</DialogMenuTitle>
+              <DialogMenuTitle>{formatLang(group, 'category_group_name')}</DialogMenuTitle>
               <Row style={{ flexWrap: 'wrap', padding: '0.5rem', columnGap: '1rem', rowGap: '1rem' }}>
                 {group?.product_categories && group?.product_categories.map((category) => (
                   <>
                     <DialogMenuContent onClick={() => {
                       router.push(`/shop/items?category_id=${category?.id}`);
                       setDialogMenuOpen(false);
-                    }}>{category?.category_name}</DialogMenuContent>
+                    }}>{formatLang(category, 'category_name')}</DialogMenuContent>
                   </>
                 ))}
               </Row>
@@ -442,7 +443,7 @@ const Header = () => {
                     <DialogMenuContent onClick={() => {
                       router.push(`/shop/service/${item.id}`);
                       setDialogMenuOpen(false);
-                    }}>{item?.post_category_title}</DialogMenuContent>
+                    }}>{formatLang(item, 'post_category_title')}</DialogMenuContent>
                   </>
                 ))}
               </Row>

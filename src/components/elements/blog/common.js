@@ -1,5 +1,5 @@
 import styled from 'styled-components'
-import { commarNumber, getPointType, getPriceUnitByLang, setProductPriceByLang, getOrderStatusText } from 'src/utils/function'
+import { commarNumber, getPointType, getPriceUnitByLang, setProductPriceByLang, getOrderStatusText, commarNumberWithUnit } from 'src/utils/function'
 import { itemThemeCssDefaultSetting } from 'src/views/manager/item-card/setting'
 import { useEffect, useState } from 'react'
 import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, IconButton, TextField } from '@mui/material'
@@ -335,10 +335,10 @@ export const HistoryTable = props => {
                                                                                 {order?.groups && order?.groups.map((group, idx) => (
                                                                                     <>
                                                                                         <Row>
-                                                                                            <div style={{ marginRight: '0.25rem' }}>{group?.group_name}: </div>
+                                                                                            <div style={{ marginRight: '0.25rem' }}>{formatLang(group, 'group_name')}: </div>
                                                                                             {group?.options && group?.options.map((option, idx2) => (
                                                                                                 <>
-                                                                                                    <div>{option?.option_name} {/*({option?.option_price > 0 ? '+' : ''}{option?.option_price}) */}</div>{idx2 == group?.options.length - 1 ? '' : <>&nbsp;/&nbsp;</>}
+                                                                                                    <div>{formatLang(option, 'option_name')} {/*({option?.option_price > 0 ? '+' : ''}{option?.option_price}) */}</div>{idx2 == group?.options.length - 1 ? '' : <>&nbsp;/&nbsp;</>}
                                                                                                 </>
                                                                                             ))}
                                                                                         </Row>
@@ -686,7 +686,7 @@ export const ConsignmentTable = props => {
                                                     {commarNumber(row?.product_price)}
                                                 </Box>
                                             )}
-                                            {commarNumber(row?.product_sale_price)}원
+                                            {commarNumberWithUnit(row?.product_sale_price)}
                                         </TableCell>
                                         <TableCell>
                                             <Button variant='outlined' onClick={() => {

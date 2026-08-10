@@ -2,7 +2,7 @@ import styled from 'styled-components'
 import { useSettingsContext } from 'src/components/settings'
 import { themeObj } from 'src/components/elements/styled-components'
 import { LazyLoadImage } from 'react-lazy-load-image-component'
-import { commarNumber } from 'src/utils/function'
+import { commarNumber, commarNumberWithUnit } from 'src/utils/function'
 import { formatLang } from 'src/utils/format'
 import { useFeaturedProduct, useFeaturedProducts, getFeaturedCardData } from 'src/utils/use-featured-product'
 import { useLocales } from 'src/locales'
@@ -430,10 +430,10 @@ const Demo4 = (props) => {
                     <FeaturedName>{c.name}</FeaturedName>
                     {c.hasSale && (
                       <div style={{ fontSize: '12px', textDecoration: 'line-through', opacity: 0.4, marginBottom: '0.35rem' }}>
-                        {commarNumber(c.orig)}원 · {c.disc}% OFF
+                        {commarNumberWithUnit(c.orig)} · {c.disc}% OFF
                       </div>
                     )}
-                    <FeaturedPrice>{commarNumber(c.sale)}원</FeaturedPrice>
+                    <FeaturedPrice>{commarNumberWithUnit(c.sale)}</FeaturedPrice>
                   </FeaturedInfo>
                 </FeaturedCell>
               );
@@ -446,10 +446,10 @@ const Demo4 = (props) => {
         <PriceLabel>Price</PriceLabel>
         {hasSale && (
           <div style={{ fontSize: '18px', textDecoration: 'line-through', opacity: 0.4, marginBottom: '0.5rem' }}>
-            {commarNumber(orig)}원 · {disc}% OFF
+            {commarNumberWithUnit(orig)} · {disc}% OFF
           </div>
         )}
-        <PriceValue>{commarNumber(sale)}원</PriceValue>
+        <PriceValue>{commarNumberWithUnit(sale)}</PriceValue>
         <CTABtn onClick={goTo}>Order Now →</CTABtn>
       </PriceSection>
     </Wrapper>

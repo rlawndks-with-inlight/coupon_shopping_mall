@@ -9,6 +9,7 @@ import { useEffect } from 'react';
 import { Title } from 'src/components/elements/blog/demo-1';
 import { logoSrc } from 'src/data/data';
 import { Row } from 'src/components/elements/styled-components';
+import { formatLang } from 'src/utils/format';
 
 const Wrappers = styled.div`
 max-width:720px;
@@ -184,7 +185,7 @@ const Demo2 = (props) => {
                                 .map(item => (
                                     <MenuButton key={item?.id} themeMode={themeMode} style={{ marginBottom: '0' }}
                                         onClick={() => { router.push(`/shop/service/${item?.id}`) }}>
-                                        <MenuText>{item.post_category_title}</MenuText>
+                                        <MenuText>{formatLang(item, 'post_category_title')}</MenuText>
                                         <IconButton style={{ width: '24px', height: '56px', padding: '0', marginRight: '18px' }}>
                                             <Icon icon='ep:arrow-right' color='black' />
                                         </IconButton>
@@ -203,7 +204,7 @@ const Demo2 = (props) => {
                                             if (user) { router.push(`/shop/service/${item?.id}`) }
                                             else { setDialogOpen(true); setDialogType(1) }
                                         }}>
-                                        <MenuText>{item.post_category_title}</MenuText>
+                                        <MenuText>{formatLang(item, 'post_category_title')}</MenuText>
                                         <IconButton style={{ width: '24px', height: '56px', padding: '0', marginRight: '18px' }}>
                                             <Icon icon='ep:arrow-right' color='black' />
                                         </IconButton>

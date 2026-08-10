@@ -20,6 +20,7 @@ import dynamic from 'next/dynamic';
 import Link from "next/link"
 import { useLocales } from "src/locales"
 import { isStorefrontHome } from "src/utils/blog-shop-route";
+import { formatLang } from 'src/utils/format';
 const ReactQuill = dynamic(() => import('react-quill'), {
     ssr: false,
     loading: () => <p>Loading ...</p>,
@@ -367,7 +368,7 @@ const Header = () => {
                         onClick={() => {
                             router.push(`/shop/items?category_id=${item?.id}`)
                         }}>
-                        <div>{item.category_name}</div>
+                        <div>{formatLang(item, 'category_name')}</div>
                         <div>{item.children.length > 0 ? '>' : ''}</div>
                     </DropDownMenu>
                     {item.children.length > 0 ?
@@ -797,7 +798,7 @@ const Header = () => {
                                                                                                         <ColumnMenuTitle style={{ margin: '0', cursor: 'pointer', width: '130px' }} onClick={() => {
                                                                                                             setOpenAllCategory("")
                                                                                                         }}>
-                                                                                                            {category?.category_name}
+                                                                                                            {formatLang(category, 'category_name')}
                                                                                                         </ColumnMenuTitle>
                                                                                                     </Link>
                                                                                                     {category?.children && category?.children.map(children => (
@@ -805,7 +806,7 @@ const Header = () => {
                                                                                                             <Link href={`/shop/items?category_id=${children?.id}`} passHref>
                                                                                                                 <Typography variant="body2" style={{ cursor: 'pointer', marginBottom: '0.2rem', marginRight: '2rem', fontFamily: 'Noto Sans KR' }} onClick={() => {
                                                                                                                     setOpenAllCategory("")
-                                                                                                                }}>{children?.category_name}</Typography>
+                                                                                                                }}>{formatLang(children, 'category_name')}</Typography>
                                                                                                             </Link>
                                                                                                         </>
                                                                                                     ))}
@@ -817,7 +818,7 @@ const Header = () => {
                                                                                                         <ColumnMenuTitle style={{ margin: '0', cursor: 'pointer', width: '130px' }} onClick={() => {
                                                                                                             setOpenAllCategory("")
                                                                                                         }}>
-                                                                                                            {category?.category_name}
+                                                                                                            {formatLang(category, 'category_name')}
                                                                                                         </ColumnMenuTitle>
                                                                                                     </Link>
                                                                                                     {category?.children && category?.children.map(children => (
@@ -825,7 +826,7 @@ const Header = () => {
                                                                                                             <Link href={`/shop/items?category_id=${children?.id}`} passHref>
                                                                                                                 <Typography variant="body2" style={{ cursor: 'pointer', marginBottom: '0.2rem', marginRight: '2rem', fontFamily: 'Playfair Display' }} onClick={() => {
                                                                                                                     setOpenAllCategory("")
-                                                                                                                }}>{children?.category_name}</Typography>
+                                                                                                                }}>{formatLang(children, 'category_name')}</Typography>
                                                                                                             </Link>
                                                                                                         </>
                                                                                                     ))}
@@ -844,7 +845,7 @@ const Header = () => {
                                                                                                         <ColumnMenuTitle style={{ margin: '0', cursor: 'pointer', width: '130px' }} onClick={() => {
                                                                                                             setOpenAllCategory("")
                                                                                                         }}>
-                                                                                                            {category?.category_name}
+                                                                                                            {formatLang(category, 'category_name')}
                                                                                                         </ColumnMenuTitle>
                                                                                                     </Link>
                                                                                                     <Col style={{ columnGap: '3rem', flexWrap: 'wrap', alignItems: 'flex-start', rowGap: '1rem', maxHeight: '200px' }}>
@@ -853,7 +854,7 @@ const Header = () => {
                                                                                                                 <Link href={`/shop/items?category_id=${children?.id}`} passHref>
                                                                                                                     <Typography variant="body2" style={{ cursor: 'pointer', fontFamily: 'Playfair Display' }} onClick={() => {
                                                                                                                         setOpenAllCategory("")
-                                                                                                                    }}>{children?.category_name}</Typography>
+                                                                                                                    }}>{formatLang(children, 'category_name')}</Typography>
                                                                                                                 </Link>
                                                                                                             </>
                                                                                                         })}</Col>
@@ -1076,7 +1077,7 @@ const Header = () => {
                                                                                                         return <>
                                                                                                             <Link href={`/shop/items?category_id=${child?.id}`} passHref>
                                                                                                                 <Chip
-                                                                                                                    label={langChipSelected == 0 ? child?.category_en_name : child?.category_name}
+                                                                                                                    label={langChipSelected == 0 ? child?.category_en_name : formatLang(child, 'category_name')}
                                                                                                                     sx={{
                                                                                                                         margin: '0.5rem 0rem 0.5rem 0',
                                                                                                                         fontSize: '16px',
@@ -1105,7 +1106,7 @@ const Header = () => {
                                                                                                         return <>
                                                                                                             <Link href={`/shop/items?category_id=${child?.id}`} passHref>
                                                                                                                 <Chip
-                                                                                                                    label={langChipSelected == 0 ? child?.category_en_name : child?.category_name}
+                                                                                                                    label={langChipSelected == 0 ? child?.category_en_name : formatLang(child, 'category_name')}
                                                                                                                     sx={{
                                                                                                                         margin: '0.5rem 0rem 0.5rem 0',
                                                                                                                         fontSize: '16px',
@@ -1294,7 +1295,7 @@ const Header = () => {
                         <>
                             {group?.is_show_header_menu == 1 &&
                                 <>
-                                    <ColumnMenuTitle>{group?.category_group_name}</ColumnMenuTitle>
+                                    <ColumnMenuTitle>{formatLang(group, 'category_group_name')}</ColumnMenuTitle>
                                     <TreeView
                                         defaultCollapseIcon={<Icon icon={'ic:baseline-minus'} />}
                                         defaultExpandIcon={<Icon icon={'ic:baseline-plus'} />}
@@ -1326,7 +1327,7 @@ const Header = () => {
                                         <Typography onClick={() => {
                                             window.location.href = (`/shop/service/${item.id}`);
                                             setSideMenuOpen(false);
-                                        }} style={{ padding: '0.3rem', cursor: 'pointer' }} variant="subtitle2">{item.post_category_title}</Typography>
+                                        }} style={{ padding: '0.3rem', cursor: 'pointer' }} variant="subtitle2">{formatLang(item, 'post_category_title')}</Typography>
                                     </>
                                     :
                                     <>

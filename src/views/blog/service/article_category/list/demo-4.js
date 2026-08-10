@@ -8,6 +8,7 @@ import { useSettingsContext } from 'src/components/settings';
 import { useAuthContext } from 'src/layouts/manager/auth/useAuthContext';
 import _ from 'lodash';
 import { apiShop } from 'src/utils/api';
+import { formatLang } from 'src/utils/format';
 
 const ServiceFaq = styled.div`
 display:flex;
@@ -133,7 +134,7 @@ const Demo4 = (props) => {
     return (
         <>
             <Wrappers>
-                <Title style={{ paddingBottom: '0' }}>{category?.post_category_title}</Title>
+                <Title style={{ paddingBottom: '0' }}>{formatLang(category, 'post_category_title')}</Title>
                 <Tabs
                     indicatorColor='primary'
                     textColor='primary'
@@ -151,7 +152,7 @@ const Demo4 = (props) => {
                     }}
                 >
                     {category?.children && category?.children.map((item,) => (
-                        <Tab key={item?.post_category_title} value={item?.id} label={item?.post_category_title} style={{
+                        <Tab key={formatLang(item, 'post_category_title')} value={item?.id} label={formatLang(item, 'post_category_title')} style={{
                             borderBottom: '1px solid',
                             borderColor: 'inherit',
                             textColor: 'inherit',
@@ -176,7 +177,7 @@ const Demo4 = (props) => {
                                 }}
                             >
                                 <RowTitle>
-                                    {item?.writer_nickname ? `[${item.writer_nickname}] ` : ''}{item?.post_title ?? '---'}
+                                    {item?.writer_nickname ? `[${item.writer_nickname}] ` : ''}{formatLang(item, 'post_title') ?? '---'}
                                 </RowTitle>
                                 <RowMeta themeMode={themeMode}>
                                     {isInquiryBoard &&

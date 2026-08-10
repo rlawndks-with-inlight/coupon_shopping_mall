@@ -6,7 +6,7 @@ import { useEffect, useState } from 'react';
 import { SkeletonProductDetails } from 'src/components/skeleton';
 import dynamic from 'next/dynamic'
 import { apiManager, apiShop } from 'src/utils/api';
-import { commarNumber, getProductStatus } from 'src/utils/function';
+import { commarNumber, getProductStatus, commarNumberWithUnit } from 'src/utils/function';
 import { Icon } from '@iconify/react';
 import { insertCartDataUtil, insertWishDataUtil, selectItemOptionUtil } from 'src/utils/shop-util';
 import toast from 'react-hot-toast';
@@ -14,7 +14,7 @@ import DialogBuyNow from 'src/components/dialog/DialogBuyNow';
 import { useAuthContext } from 'src/layouts/manager/auth/useAuthContext';
 import Head from 'next/head';
 import { isShopgoBrand } from 'src/utils/is-shopgo';
-import { formatLang } from 'src/utils/format';
+import { formatLang, characterChoices } from 'src/utils/format';
 import { useLocales } from 'src/locales';
 
 const ReactQuill = dynamic(() => import('react-quill'), {
@@ -208,17 +208,17 @@ const ItemDemo = (props) => {
                       <div style={{ margin: '1rem 0' }}>
                         {hasDiscount &&
                           <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
-                            <span style={{ fontSize: '14px', textDecoration: 'line-through', color: '#999' }}>{commarNumber(product?.product_price)}원</span>
+                            <span style={{ fontSize: '14px', textDecoration: 'line-through', color: '#999' }}>{commarNumberWithUnit(product?.product_price)}</span>
                             <span style={{ fontSize: '14px', fontWeight: 700, color: '#e74c3c' }}>{discountRate}%</span>
                           </div>
                         }
                         <Typography variant="h4" sx={{ fontWeight: 700 }}>
-                          {commarNumber(product?.product_sale_price || product?.product_price)}원
+                          {commarNumberWithUnit(product?.product_sale_price || product?.product_price)}
                         </Typography>
                       </div>
                       <Divider sx={{ my: 1 }} />
                       <Typography variant="body2" sx={{ color: 'text.secondary', my: 1 }}>
-                        {product?.delivery_fee > 0 ? `배송비 ${commarNumber(product?.delivery_fee)}원` : '무료배송'}
+                        {product?.delivery_fee > 0 ? `배송비 ${commarNumberWithUnit(product?.delivery_fee)}` : '무료배송'}
                       </Typography>
                       {/* 옵션그룹(product_option_groups) 선택.
                           이 화면은 특성(characters)만 그리고 옵션그룹은 아예 그리지 않았다.
@@ -229,7 +229,7 @@ const ItemDemo = (props) => {
                           프레임1(ProductDetailsSummary)·프레임4~11 은 원래 그리고 있었다 — 같은 규칙으로 맞춘다. */}
                       {product?.groups && product?.groups.map((group, gIdx) => (
                         <div key={group?.id ?? gIdx} style={{ marginTop: '0.5rem' }}>
-                          <Typography variant="body2" sx={{ fontWeight: 600, mb: 0.5 }}>{group?.group_name}</Typography>
+                          <Typography variant="body2" sx={{ fontWeight: 600, mb: 0.5 }}>{formatLang(group, 'group_name')}</Typography>
                           <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
                             {(group?.options ?? []).map((option, oIdx) => (
                               <Button
@@ -243,7 +243,7 @@ const ItemDemo = (props) => {
                                 onClick={() => onSelectOption(group, option)}
                                 sx={{ minWidth: '60px', fontSize: '13px' }}
                               >
-                                {option?.option_name}{option?.option_price > 0 ? ` (+${commarNumber(option?.option_price)}원)` : ''}
+                                {formatLang(option, 'option_name')}{option?.option_price > 0 ? ` (+${commarNumberWithUnit(option?.option_price)})` : ''}
                               </Button>
                             ))}
                           </div>
@@ -251,9 +251,11 @@ const ItemDemo = (props) => {
                       ))}
                       {product?.characters && product?.characters.map((character, idx) => (
                         <div key={idx} style={{ marginTop: '0.5rem' }}>
-                          <Typography variant="body2" sx={{ fontWeight: 600, mb: 0.5 }}>{character?.character_name}</Typography>
+                          <Typography variant="body2" sx={{ fontWeight: 600, mb: 0.5 }}>{formatLang(character, 'character_name', currentLang)}</Typography>
                           <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
-                            {character?.character_value && character?.character_value.split(/[,/]\s*/)?.map(val => val.trim()).map((option, optIdx) => (
+                            {/* 보이는 건 번역, 고르면 저장되는 건 원문(value). 특성 값은 주문에 그대로
+                                박히므로 번역본을 저장하면 가맹점 주문서가 외국어가 된다. */}
+                            {characterChoices(character, currentLang).map(({ value: option, label }, optIdx) => (
                               <Button
                                 key={optIdx}
                                 // 저장 형태에 맞춰 판정한다. selectItemOptionUtil 은 'option' 키를 만들지 않고
@@ -268,7 +270,7 @@ const ItemDemo = (props) => {
                                 onClick={() => onSelectOption(character, option)}
                                 sx={{ minWidth: '60px', fontSize: '13px' }}
                               >
-                                {option}
+                                {label}
                               </Button>
                             ))}
                           </div>

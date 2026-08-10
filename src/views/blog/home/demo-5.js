@@ -1,7 +1,7 @@
 import styled from 'styled-components'
 import { useSettingsContext } from 'src/components/settings'
 import { LazyLoadImage } from 'react-lazy-load-image-component'
-import { commarNumber } from 'src/utils/function'
+import { commarNumber, commarNumberWithUnit } from 'src/utils/function'
 import { formatLang } from 'src/utils/format'
 import { useFeaturedProduct, useFeaturedProducts, getFeaturedCardData } from 'src/utils/use-featured-product'
 import { useLocales } from 'src/locales'
@@ -371,7 +371,7 @@ const Demo5 = (props) => {
               {disc}% EXCLUSIVE OFFER
             </div>
           )}
-          <HeroPrice>{commarNumber(sale)}원</HeroPrice>
+          <HeroPrice>{commarNumberWithUnit(sale)}</HeroPrice>
           <CTABtn onClick={goTo}>Acquire</CTABtn>
         </HeroContent>
       </Hero>
@@ -437,12 +437,12 @@ const Demo5 = (props) => {
                   <FeaturedPrice>
                     {c.hasSale && (
                       <>
-                        <FeaturedOrig>{commarNumber(c.orig)}원</FeaturedOrig>
+                        <FeaturedOrig>{commarNumberWithUnit(c.orig)}</FeaturedOrig>
                         <FeaturedDisc>{c.disc}%</FeaturedDisc>
                         <br />
                       </>
                     )}
-                    {commarNumber(c.sale)}원
+                    {commarNumberWithUnit(c.sale)}
                   </FeaturedPrice>
                 </FeaturedCard>
               );
@@ -455,7 +455,7 @@ const Demo5 = (props) => {
         <HeroOrnament>✦</HeroOrnament>
         <FinalTitle>Enter the World<br />of {brandName}</FinalTitle>
         <HeroDivider />
-        <HeroPrice>{commarNumber(sale)}원</HeroPrice>
+        <HeroPrice>{commarNumberWithUnit(sale)}</HeroPrice>
         <CTABtn onClick={goTo}>Begin Your Journey</CTABtn>
       </FinalCTA>
     </Wrapper>

@@ -5,6 +5,7 @@ import { Row, themeObj } from 'src/components/elements/styled-components'
 import _ from 'lodash'
 import { useState } from 'react'
 import { IconButton } from '@mui/material'
+import { formatLang } from 'src/utils/format';
 
 const FullWrappers = styled.div`
   width:100%;
@@ -104,14 +105,14 @@ const HomePost = (props) => {
                     style={{ fontWeight: `${idx == categoryId ? 'bold' : ''}` }}
                     onClick={() => {
                       setCategoryId(idx)
-                    }}>{cate?.post_category_title}</PostCategoryTab>
+                    }}>{formatLang(cate, 'post_category_title')}</PostCategoryTab>
                 </>
               ))}
             </PostCategoryTabContainer>
             <PostBox>
               <PostCategoryTitle>
                 <div>
-                  {column?.list[categoryId]?.post_category_title}
+                  {formatLang(column?.list[categoryId], 'post_category_title')}
                 </div>
                 <IconButton onClick={() => router.push(`/shop/service/${column?.list[categoryId]?.id}`)}>
                   <Icon icon={'ic:baseline-plus'} style={{ color: '#fff' }} />

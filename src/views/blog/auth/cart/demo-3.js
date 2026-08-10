@@ -3,7 +3,7 @@ import { Tab, Tabs, TextField, Button, Checkbox, FormControlLabel, Typography } 
 import { useEffect, useState } from 'react';
 import Iconify from 'src/components/iconify/Iconify';
 import { Icon } from '@iconify/react';
-import { commarNumber } from 'src/utils/function';
+import { commarNumber, commarNumberWithUnit } from 'src/utils/function';
 import _, { set } from 'lodash'
 import { Row, themeObj } from 'src/components/elements/styled-components';
 import { useSettingsContext } from 'src/components/settings';
@@ -203,9 +203,9 @@ const Demo3 = (props) => {
                                                     <img src={item.product.product_img} width='48px' height='48px' style={{ margin: '0 1rem 0 0.5rem' }} />
                                                     <div style={{ display: 'flex', flexDirection: 'column' }}>
                                                         <div>{item.product.name}</div>
-                                                        <div>{commarNumber(item.product.product_sale_price + item.option.price)}원</div>
+                                                        <div>{commarNumberWithUnit(item.product.product_sale_price + item.option.price)}</div>
                                                         <div>옵션 : {item.option.name} / {item.quantity}개</div>
-                                                        <div style={{ marginTop: '0.5rem' }}>{commarNumber((item.product.product_sale_price + item.option.price) * item.quantity)}원</div>
+                                                        <div style={{ marginTop: '0.5rem' }}>{commarNumberWithUnit((item.product.product_sale_price + item.option.price) * item.quantity)}</div>
                                                     </div>
                                                 </Typography>} control={<Checkbox checked={_.find(wantBuyList, { option_id: item.option_id, product_id: item.product_id }) ? true : false} onChange={(e) => {
                                                     let want_buy_list = [...wantBuyList];
@@ -241,15 +241,15 @@ const Demo3 = (props) => {
                         </Row>
                         <Row style={{ margin: '0.5rem 0', justifyContent: 'space-between' }}>
                             <div>총 주문금액</div>
-                            <div>{commarNumber(priceSum + deliveryFee)}원</div>
+                            <div>{commarNumberWithUnit(priceSum + deliveryFee)}</div>
                         </Row>
                         <Row style={{ margin: '0.5rem 0', justifyContent: 'space-between' }}>
                             <div>배송비</div>
-                            <div>{deliveryFee}원</div>
+                            <div>{commarNumberWithUnit(deliveryFee)}</div>
                         </Row>
                         <Row style={{ margin: '1rem 0 2rem 0', justifyContent: 'space-between', fontWeight: 'bold', color: themeDnsData.theme_css?.main_color }}>
                             <div>총 결제금액</div>
-                            <div>{commarNumber(priceSum + deliveryFee)}원</div>
+                            <div>{commarNumberWithUnit(priceSum + deliveryFee)}</div>
                         </Row>
                         <Button variant='contained' style={{ height: '56px', fontSize: 'large' }}>
                             구매하기

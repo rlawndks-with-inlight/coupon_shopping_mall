@@ -5,7 +5,7 @@ import { useSettingsContext } from 'src/components/settings';
 import { useLocales } from 'src/locales';
 import { useAuthContext } from 'src/layouts/manager/auth/useAuthContext';
 import { LazyLoadImage } from 'react-lazy-load-image-component';
-import { commarNumber } from 'src/utils/function';
+import { commarNumber, commarNumberWithUnit } from 'src/utils/function';
 import { formatLang } from 'src/utils/format';
 import { apiShop } from 'src/utils/api';
 import { insertCartDataUtil, startBuyNow, selectItemOptionUtil } from 'src/utils/shop-util';
@@ -275,27 +275,27 @@ const Demo6 = () => {
           {comment && <Description>"{comment}"</Description>}
           <PriceRow>
             {hasSale && <Discount>{disc}% OFF</Discount>}
-            <SalePrice $color={mainColor}>{commarNumber(sale)}원</SalePrice>
-            {hasSale && <OrigPrice>{commarNumber(orig)}원</OrigPrice>}
+            <SalePrice $color={mainColor}>{commarNumberWithUnit(sale)}</SalePrice>
+            {hasSale && <OrigPrice>{commarNumberWithUnit(orig)}</OrigPrice>}
           </PriceRow>
           {/* 배송비를 상세에 표시한다. 예전엔 이 프레임들에 배송비 표기가 없어서
               고객이 장바구니·주문서에 가서야 배송비를 알았다(주문 직전 금액이 달라 보인다). */}
           {item?.delivery_fee > 0
-              ? <div style={{ fontSize: '13px', color: '#888', marginTop: '6px' }}>배송비 {commarNumber(item?.delivery_fee)}원</div>
+              ? <div style={{ fontSize: '13px', color: '#888', marginTop: '6px' }}>배송비 {commarNumberWithUnit(item?.delivery_fee)}</div>
               : <div style={{ fontSize: '13px', color: '#888', marginTop: '6px' }}>무료배송</div>}
           {item?.groups?.length > 0 && (
             <OptionArea>
               {item.groups.map((group) => (
                 <OptionField key={group?.id}>
-                  <OptionName>{group?.group_name}</OptionName>
+                  <OptionName>{formatLang(group, 'group_name')}</OptionName>
                   <OptionSelect defaultValue="" onChange={(e) => handleSelectOption(group, e)}>
                     <option value="" disabled>
-                      {group?.group_name} 선택
+                      {formatLang(group, 'group_name')} 선택
                     </option>
                     {(group?.options ?? []).map((option) => (
                       <option key={option?.id} value={option?.id}>
-                        {option?.option_name}
-                        {option?.option_price > 0 ? ` (+${commarNumber(option.option_price)}원)` : ''}
+                        {formatLang(option, 'option_name')}
+                        {option?.option_price > 0 ? ` (+${commarNumberWithUnit(option.option_price)})` : ''}
                       </option>
                     ))}
                   </OptionSelect>
@@ -325,7 +325,7 @@ const Demo6 = () => {
       {item?.product_description && (
         <DetailSection>
           <DetailTitle>About This Product</DetailTitle>
-          <DetailContent dangerouslySetInnerHTML={{ __html: item.product_description }} />
+          <DetailContent dangerouslySetInnerHTML={{ __html: formatLang(item, 'product_description') }} />
         </DetailSection>
       )}
     </Wrapper>

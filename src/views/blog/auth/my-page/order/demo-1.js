@@ -4,7 +4,7 @@ import { Tabs, Tab, Button } from '@mui/material';
 import { useState, useEffect } from 'react';
 import { useSettingsContext } from 'src/components/settings';
 import _ from 'lodash';
-import { commarNumber, getOrderStatusText } from 'src/utils/function';
+import { commarNumber, getOrderStatusText, commarNumberWithUnit } from 'src/utils/function';
 import { apiManager } from 'src/utils/api';
 import { getOptionLabel } from 'src/utils/shop-util';
 import OrderCancelButton from 'src/components/elements/shop/OrderCancelButton';
@@ -183,9 +183,9 @@ const Demo1 = (props) => {
                                                 <img src={item.product_img} width='48px' height='48px' style={{ margin: '0 1rem 0 0' }} />
                                                 <div style={{ display: 'flex', flexDirection: 'column' }}>
                                                     <div>{item.order_name}</div>
-                                                    <div>{commarNumber(item.unit_price)}원</div>
+                                                    <div>{commarNumberWithUnit(item.unit_price)}</div>
                                                     <div>옵션 : {item.option_text ? `${item.option_text} / ` : ''}{item.order_count}개</div>
-                                                    <div style={{ marginTop: '0.5rem' }}>{commarNumber(item.order_amount)}원</div>
+                                                    <div style={{ marginTop: '0.5rem' }}>{commarNumberWithUnit(item.order_amount)}</div>
                                                 </div>
                                             </div>
                                             <AddressButton>

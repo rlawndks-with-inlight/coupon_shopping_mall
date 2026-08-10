@@ -2,7 +2,7 @@ import styled from 'styled-components'
 import { useSettingsContext } from 'src/components/settings'
 import { themeObj } from 'src/components/elements/styled-components'
 import { LazyLoadImage } from 'react-lazy-load-image-component'
-import { commarNumber } from 'src/utils/function'
+import { commarNumber, commarNumberWithUnit } from 'src/utils/function'
 import { formatLang } from 'src/utils/format'
 import { useFeaturedProduct, useFeaturedProducts, getFeaturedCardData } from 'src/utils/use-featured-product'
 import { useLocales } from 'src/locales'
@@ -469,8 +469,8 @@ const Demo6 = (props) => {
             {comment && <HeroDesc>"{comment}"</HeroDesc>}
             <HeroPriceRow>
               {hasSale && <HeroDisc>{disc}% OFF</HeroDisc>}
-              <HeroSalePrice $color={mainColor}>{commarNumber(sale)}원</HeroSalePrice>
-              {hasSale && <HeroOrigPrice>{commarNumber(orig)}원</HeroOrigPrice>}
+              <HeroSalePrice $color={mainColor}>{commarNumberWithUnit(sale)}</HeroSalePrice>
+              {hasSale && <HeroOrigPrice>{commarNumberWithUnit(orig)}</HeroOrigPrice>}
             </HeroPriceRow>
             <HeroCTA $color={mainColor} onClick={goTo}>DISCOVER MORE →</HeroCTA>
           </HeroText>
@@ -571,8 +571,8 @@ const Demo6 = (props) => {
                     <FeaturedName>{c.name}</FeaturedName>
                     <HeroPriceRow style={{ justifyContent: 'center', marginTop: 0 }}>
                       {c.hasSale && <HeroDisc>{c.disc}% OFF</HeroDisc>}
-                      <HeroSalePrice $color={mainColor} style={{ fontSize: '26px' }}>{commarNumber(c.sale)}원</HeroSalePrice>
-                      {c.hasSale && <HeroOrigPrice>{commarNumber(c.orig)}원</HeroOrigPrice>}
+                      <HeroSalePrice $color={mainColor} style={{ fontSize: '26px' }}>{commarNumberWithUnit(c.sale)}</HeroSalePrice>
+                      {c.hasSale && <HeroOrigPrice>{commarNumberWithUnit(c.orig)}</HeroOrigPrice>}
                     </HeroPriceRow>
                   </FeaturedCard>
                 );
@@ -596,8 +596,8 @@ const Demo6 = (props) => {
           </FinalCTADesc>
           <HeroPriceRow style={{ justifyContent: 'center', marginBottom: '2rem' }}>
             {hasSale && <HeroDisc>{disc}% OFF</HeroDisc>}
-            <HeroSalePrice $color={mainColor}>{commarNumber(sale)}원</HeroSalePrice>
-            {hasSale && <HeroOrigPrice>{commarNumber(orig)}원</HeroOrigPrice>}
+            <HeroSalePrice $color={mainColor}>{commarNumberWithUnit(sale)}</HeroSalePrice>
+            {hasSale && <HeroOrigPrice>{commarNumberWithUnit(orig)}</HeroOrigPrice>}
           </HeroPriceRow>
           <HeroCTA $color={mainColor} onClick={goTo}>지금 구매하기 →</HeroCTA>
         </Container>

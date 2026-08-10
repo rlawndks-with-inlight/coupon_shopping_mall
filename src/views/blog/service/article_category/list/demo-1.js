@@ -7,6 +7,7 @@ import { useAuthContext } from 'src/layouts/manager/auth/useAuthContext';
 import _ from 'lodash';
 import toast from 'react-hot-toast';
 import { apiShop } from 'src/utils/api';
+import { formatLang } from 'src/utils/format';
 
 const ServiceFaq = styled.div`
 display:flex;
@@ -139,7 +140,7 @@ const Demo1 = (props) => {
     return (
         <>
             <Wrappers>
-                <Title style={{ paddingBottom: '0' }}>{category?.post_category_title}</Title>
+                <Title style={{ paddingBottom: '0' }}>{formatLang(category, 'post_category_title')}</Title>
                 <Tabs
                     indicatorColor='primary'
                     textColor='primary'
@@ -157,7 +158,7 @@ const Demo1 = (props) => {
                     }}
                 >
                     {category?.children && category?.children.map((item,) => (
-                        <Tab key={item?.post_category_title} value={item?.id} label={item?.post_category_title} style={{
+                        <Tab key={formatLang(item, 'post_category_title')} value={item?.id} label={formatLang(item, 'post_category_title')} style={{
                             borderBottom: '1px solid',
                             borderColor: 'inherit',
                             textColor: 'inherit',
@@ -176,7 +177,7 @@ const Demo1 = (props) => {
                                 router.push(`/shop/service/${router.query?.article_category}/${item?.id}`)
                             }}
                         >
-                            <RowTitle>{item?.post_title ?? '---'}</RowTitle>
+                            <RowTitle>{formatLang(item, 'post_title') ?? '---'}</RowTitle>
                             {showWriter &&
                                 <RowWriter themeMode={themeMode}>{item?.writer_nickname ?? '---'}</RowWriter>}
                             {isInquiry &&

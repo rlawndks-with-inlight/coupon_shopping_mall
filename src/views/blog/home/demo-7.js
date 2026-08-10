@@ -1,7 +1,7 @@
 import styled from 'styled-components'
 import { useSettingsContext } from 'src/components/settings'
 import { LazyLoadImage } from 'react-lazy-load-image-component'
-import { commarNumber } from 'src/utils/function'
+import { commarNumber, commarNumberWithUnit } from 'src/utils/function'
 import { formatLang } from 'src/utils/format'
 import { useFeaturedProduct, useFeaturedProducts, getFeaturedCardData } from 'src/utils/use-featured-product'
 import { useLocales } from 'src/locales'
@@ -388,7 +388,7 @@ const Demo7 = (props) => {
             <HeroName>{name}</HeroName>
             <HeroDivider />
             {comment && <HeroBrush>"{comment}"</HeroBrush>}
-            <HeroPrice>{commarNumber(sale)}원</HeroPrice>
+            <HeroPrice>{commarNumberWithUnit(sale)}</HeroPrice>
             <CTABtn onClick={goTo}>求める</CTABtn>
           </HeroCenter>
           <HeroRight>SINCE {new Date().getFullYear()}</HeroRight>
@@ -440,7 +440,7 @@ const Demo7 = (props) => {
                   <FeaturedImage src={c.img} effect="blur" />
                   <HeroDivider />
                   <FeaturedName>{c.name}</FeaturedName>
-                  <FeaturedPrice>{commarNumber(c.sale)}원</FeaturedPrice>
+                  <FeaturedPrice>{commarNumberWithUnit(c.sale)}</FeaturedPrice>
                 </FeaturedCard>
               );
             })}

@@ -17,6 +17,7 @@ import { Upload } from "src/components/upload";
 import ReactQuillComponent from "src/views/manager/react-quill";
 import dynamic from "next/dynamic";
 import PostDate from 'src/components/elements/shop/PostDate';
+import { formatLang } from 'src/utils/format';
 const ReactQuill = dynamic(() => import('react-quill'), {
   ssr: false,
   loading: () => <p>Loading ...</p>,
@@ -180,13 +181,13 @@ const ArticleDemo = (props) => {
                     <>
                       <Row style={{ columnGap: '0.5rem', fontSize: '1rem', alignItems: 'center' }}>
                         <div>제목: </div>
-                        <h1 style={{ fontSize: '1rem' }}>{item?.post_title}</h1>
+                        <h1 style={{ fontSize: '1rem' }}>{formatLang(item, 'post_title')}</h1>
                       </Row>
                       <PostDate value={item?.created_at} />
                       <img src={item?.post_title_img} style={{ width: '100%' }} />
                       <ReactQuill
                         className='none-padding'
-                        value={item?.post_content ?? `<body></body>`}
+                        value={formatLang(item, 'post_content') ?? `<body></body>`}
                         readOnly={true}
                         theme={"bubble"}
                         bounds={'.app'}
@@ -200,11 +201,11 @@ const ArticleDemo = (props) => {
                     <Fragment key={reply?.id ?? idx}>
                       <Row style={{ columnGap: '0.5rem', fontSize: '1rem', alignItems: 'center' }}>
                         <div>답변제목: </div>
-                        <h1 style={{ fontSize: '1rem' }}>{reply?.post_title}</h1>
+                        <h1 style={{ fontSize: '1rem' }}>{formatLang(reply, 'post_title')}</h1>
                       </Row>
                       <ReactQuill
                         className='none-padding'
-                        value={reply?.post_content ?? `<body></body>`}
+                        value={formatLang(reply, 'post_content') ?? `<body></body>`}
                         readOnly={true}
                         theme={"bubble"}
                         bounds={'.app'}

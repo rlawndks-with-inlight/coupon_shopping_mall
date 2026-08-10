@@ -7,6 +7,7 @@ import { useAuthContext } from 'src/layouts/manager/auth/useAuthContext';
 import _ from 'lodash';
 import toast from 'react-hot-toast';
 import { apiShop } from 'src/utils/api';
+import { formatLang } from 'src/utils/format';
 
 const ListContainer = styled.div`
 color:${props => props.themeMode == 'dark' ? '#fff' : 'gray'};
@@ -144,7 +145,7 @@ const Demo3 = (props) => {
     return (
         <>
             <Wrappers>
-                <Title style={{ paddingBottom: '0' }}>{category?.post_category_title}</Title>
+                <Title style={{ paddingBottom: '0' }}>{formatLang(category, 'post_category_title')}</Title>
                 <Tabs
                     indicatorColor='primary'
                     textColor='primary'
@@ -162,7 +163,7 @@ const Demo3 = (props) => {
                     }}
                 >
                     {category?.children && category?.children.map((item) => (
-                        <Tab key={item?.post_category_title} value={item?.id} label={item?.post_category_title} style={{
+                        <Tab key={formatLang(item, 'post_category_title')} value={item?.id} label={formatLang(item, 'post_category_title')} style={{
                             borderBottom: '1px solid',
                             borderColor: 'inherit',
                             textColor: 'inherit',
@@ -178,7 +179,7 @@ const Demo3 = (props) => {
                             <ListRow key={idx} themeMode={themeMode} onClick={() => {
                                 moveToDetail(item?.id)
                             }}>
-                                <RowTitle themeMode={themeMode}>{item?.post_title ?? '---'}</RowTitle>
+                                <RowTitle themeMode={themeMode}>{formatLang(item, 'post_title') ?? '---'}</RowTitle>
                                 <RowMeta>
                                     {showWriter && item?.writer_nickname &&
                                         <Writer themeMode={themeMode}>{item?.writer_nickname}</Writer>}

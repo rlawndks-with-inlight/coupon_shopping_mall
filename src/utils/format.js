@@ -287,6 +287,10 @@ export const characterChoices = (character = {}, lang) => {
     return values.map((value, i) => ({ value, label: paired ? translated[i] : value }));
 };
 
+// 번역 원문 언어. 백엔드 settingLangs 가 lang_obj 의 ko 슬롯에 원문을 넣고
+// translateChunk 가 source:'ko' 로 보낸다 — 여기서만 바꾸면 되도록 상수로 둔다.
+const SOURCE_LANG = 'ko';
+
 const parseLangObj = (lang_obj) => {
     if (!lang_obj) return null;
     if (typeof lang_obj === 'object') return lang_obj;
@@ -306,5 +310,14 @@ export const formatLang = (obj = {}, column, lang) => {
     // 카테고리·옵션 표시를 번역 경유로 바꾸는 곳이 130곳이 넘는데, 그 파일 대부분은
     // currentLang 을 안 들고 있다(useLocales 는 훅이라 컴포넌트 밖에서는 쓸 수도 없다).
     const code = (lang && typeof lang === 'object') ? lang?.value : (lang ?? currentLangCode());
+    // 원문 언어(ko)는 lang_obj 를 보지 않고 항상 현재 컬럼 값을 쓴다.
+    //
+    // lang_obj 의 ko 슬롯은 '번역할 때의 원문 사본'이라 원본 컬럼보다 뒤처질 수 있다.
+    // 번역은 대기열(lang_processes)에 담겨 스케줄러가 1분 주기로 채우는데, 그 사이
+    // 가맹점이 상품명을 고치면 products.product_name 은 새 값인데 lang_obj.ko 는 옛 값이다.
+    // 그때 ko 슬롯을 우선하면 **한국어 화면에 옛 이름이 그대로 뜬다** — 가맹점이 방금 고친 걸
+    // 못 보고 다시 저장하게 만든다. 게시글·카테고리는 원래부터 대기열을 써서 같은 창이 있었다.
+    // ko 슬롯은 정의상 원문 사본이므로 컬럼을 우선해도 표시가 달라지는 경우는 이 '뒤처짐'뿐이다.
+    if (code === SOURCE_LANG) return obj?.[column];
     return (lang_obj?.[column]?.[code]) || obj?.[column];
 }

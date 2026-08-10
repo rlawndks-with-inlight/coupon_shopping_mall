@@ -6,6 +6,7 @@
 // ----------------------------------------------------------------------
 
 const en = {
+  "개당": "Each",
   "상품검색": "Product search",
   "검색결과가 없습니다.": "No search results found.",
   "기본주소": "Default Address",

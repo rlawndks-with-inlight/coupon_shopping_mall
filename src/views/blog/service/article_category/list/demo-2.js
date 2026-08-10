@@ -103,7 +103,6 @@ const Demo2 = (props) => {
     }, [router.query?.article_category, themePostCategoryList])
 
     const pageSetting = () => {
-  const { translate } = useLocales();
         let found = _.find(themePostCategoryList, { id: parseInt(router.query?.article_category) });
         if (!found) return;
         let category = {

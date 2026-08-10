@@ -220,7 +220,6 @@ const Demo1 = (props) => {
         }
     }, [themeDnsData])
     const pageSetting = async () => {
-  const { translate } = useLocales();
 
         let dns_data = themeDnsData;
         let content_list = (dns_data?.blog_obj) ?? [];
@@ -231,7 +230,7 @@ const Demo1 = (props) => {
         setContentList(content_list)
         setData([
             ...[{
-                title: translate('마켓 오픈했어요 ✨'),
+                title: '마켓 오픈했어요 ✨',
                 list: themeSellerList,
                 type: 'seller'
             },],

@@ -236,7 +236,6 @@ const renderSingleCard = (product, router, currentLang, mainColor, isMobile) => 
    홈쇼핑 스타일, 큰 이미지 + 큰 가격 + 강렬한 CTA
    ══════════════════════════════════════ */
 const renderShopPromo = (product, router, currentLang, mainColor, isMobile) => {
-  const { translate } = useLocales();
   const { img, name, comment, sale, orig, hasSale, disc } = pHelper(product, currentLang);
   return (
     <div style={{
@@ -300,7 +299,7 @@ const renderShopPromo = (product, router, currentLang, mainColor, isMobile) => {
           borderRadius: '12px', fontSize: isMobile ? '15px' : '17px', fontWeight: 'bold',
           textAlign: 'center', letterSpacing: '0.5px', marginTop: '0.5rem',
           boxShadow: `0 8px 24px ${mainColor}60`,
-        }}>{translate('지금 구매하기 →')}</div>
+        }}>{"지금 구매하기 →"}</div>
       </div>
     </div>
   );
@@ -311,7 +310,6 @@ const renderShopPromo = (product, router, currentLang, mainColor, isMobile) => {
    와이드 풀스크린 이미지 + 좌우 오버레이 카드
    ══════════════════════════════════════ */
 const renderShopFullbleed = (product, router, currentLang, mainColor, isMobile) => {
-  const { translate } = useLocales();
   const { img, name, comment, sale, orig, hasSale, disc } = pHelper(product, currentLang);
   if (isMobile) {
     // 모바일: 세로 스택 (이미지 위, 텍스트 아래)
@@ -354,7 +352,7 @@ const renderShopFullbleed = (product, router, currentLang, mainColor, isMobile) 
             padding: '12px 24px', background: mainColor, color: '#fff',
             borderRadius: '50px', fontSize: '14px', fontWeight: 'bold',
             alignSelf: 'flex-start', marginTop: '0.25rem',
-          }}>{translate('바로 구매 →')}</div>
+          }}>{"바로 구매 →"}</div>
         </div>
       </div>
     );
@@ -401,7 +399,7 @@ const renderShopFullbleed = (product, router, currentLang, mainColor, isMobile) 
           padding: '14px 32px', background: mainColor, color: '#fff',
           borderRadius: '50px', fontSize: '15px', fontWeight: 'bold',
           alignSelf: 'flex-start', marginTop: '0.5rem',
-        }}>{translate('바로 구매 →')}</div>
+        }}>{"바로 구매 →"}</div>
       </div>
     </div>
   );
@@ -478,7 +476,6 @@ const renderShopSpotlight = (product, router, currentLang, mainColor, isMobile) 
    이미지 + 좌우 정보 블록 + 하단 가로 CTA
    ══════════════════════════════════════ */
 const renderShopShowcase = (product, router, currentLang, mainColor, isMobile) => {
-  const { translate } = useLocales();
   const { img, name, comment, sale, orig, hasSale, disc } = pHelper(product, currentLang);
   if (isMobile) {
     // 모바일: 단일 컬럼 세로 스택
@@ -516,7 +513,7 @@ const renderShopShowcase = (product, router, currentLang, mainColor, isMobile) =
           padding: '14px 0', background: mainColor, color: '#fff',
           borderRadius: '8px', fontSize: '14px', fontWeight: 'bold',
           textAlign: 'center', letterSpacing: '1px',
-        }}>{translate('구매하기')}</div>
+        }}>{"구매하기"}</div>
       </div>
     );
   }
@@ -592,7 +589,7 @@ const renderShopShowcase = (product, router, currentLang, mainColor, isMobile) =
           padding: '10px 0', background: mainColor, color: '#fff',
           borderRadius: '8px', fontSize: '13px', fontWeight: 'bold',
           textAlign: 'center', letterSpacing: '1px',
-        }}>{translate('구매하기')}</div>
+        }}>{"구매하기"}</div>
       </div>
     </div>
   );

@@ -36,7 +36,6 @@ const Demo3 = (props) => {
     }, [themePostCategoryList])
 
     const settingPage = async () => {
-  const { translate } = useLocales();
         // 1:1문의 게시판 카테고리를 찾아 해당 게시판의 게시글(회원 본인 글)을 조회한다.
         const category = _.find(themePostCategoryList, { post_category_title: translate('1:1문의') });
         if (!category) {

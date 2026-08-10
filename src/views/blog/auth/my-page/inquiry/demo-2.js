@@ -61,7 +61,6 @@ const Demo2 = (props) => {
     }, [themePostCategoryList])
 
     const settingPage = async () => {
-  const { translate } = useLocales();
         // 공용 게시판(post)의 '1:1문의' 카테고리를 찾아 회원 본인 글을 조회한다.
         const category = _.find(themePostCategoryList, { post_category_title: translate('1:1문의') });
         if (!category?.id) {

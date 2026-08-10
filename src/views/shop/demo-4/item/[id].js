@@ -18,6 +18,7 @@ import { useAuthContext } from 'src/layouts/manager/auth/useAuthContext';
 import { useModal } from 'src/components/dialog/ModalProvider';
 import { isShopgoBrand } from 'src/utils/is-shopgo';
 import { formatLang, characterChoices } from 'src/utils/format';
+import { useLocales } from 'src/locales';
 
 const ReactQuill = dynamic(() => import('react-quill'), {
   ssr: false,
@@ -81,6 +82,8 @@ const ItemDemo = (props) => {
 
   const { setModal } = useModal();
   const { themeStretch, themeDnsData, themeWishData, onChangeWishData, themeCartData, onChangeCartData, themePropertyList } = useSettingsContext();
+  // 이 화면에는 번역이 아예 없었다(formatLang 만 쓰고 UI 문구는 한국어 그대로였다).
+  const { translate } = useLocales();
   const { user, isInitialized } = useAuthContext();
   const [loading, setLoading] = useState(true);
 
@@ -576,7 +579,7 @@ const ItemDemo = (props) => {
                             key_name={'배송비'}
                             value={product?.delivery_fee > 0
                               ? <>{commarNumberWithUnit(product?.delivery_fee)}</>
-                              : <>무료배송</>}
+                              : <>{translate('무료배송')}</>}
                           />
                         </div>
                         {/* '10-14일 내 도착 예정(검수 후 배송)' · '배송 전 검수' 는

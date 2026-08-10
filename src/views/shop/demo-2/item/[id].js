@@ -195,7 +195,7 @@ const ItemDemo = (props) => {
                           {product?.product_code}
                         </Typography>
                       */}
-                      <Chip size="small" sx={{ alignSelf: 'flex-start', mb: 1, fontWeight: 700 }} label={product?.product_sale_price > 0 ? getProductStatus(product?.status).text : '품절'} color={getProductStatus(product?.status).color || 'default'} variant="soft" />
+                      <Chip size="small" sx={{ alignSelf: 'flex-start', mb: 1, fontWeight: 700 }} label={translate(product?.product_sale_price > 0 ? getProductStatus(product?.status).text : '품절')} color={getProductStatus(product?.status).color || 'default'} variant="soft" />
                       <Typography variant="h5" sx={{ fontWeight: 700, mb: 1 }}>
                         {formatLang(product, 'product_name', currentLang)}
                       </Typography>
@@ -218,7 +218,7 @@ const ItemDemo = (props) => {
                       </div>
                       <Divider sx={{ my: 1 }} />
                       <Typography variant="body2" sx={{ color: 'text.secondary', my: 1 }}>
-                        {product?.delivery_fee > 0 ? `배송비 ${commarNumberWithUnit(product?.delivery_fee)}` : '무료배송'}
+                        {product?.delivery_fee > 0 ? `${translate('배송비')} ${commarNumberWithUnit(product?.delivery_fee)}` : translate('무료배송')}
                       </Typography>
                       {/* 옵션그룹(product_option_groups) 선택.
                           이 화면은 특성(characters)만 그리고 옵션그룹은 아예 그리지 않았다.

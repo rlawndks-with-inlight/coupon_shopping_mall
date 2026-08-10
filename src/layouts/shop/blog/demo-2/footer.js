@@ -90,17 +90,11 @@ const Footer = () => {
       }}>
         <ContentWrapper>
           <Row>
-            <Bold style={{ cursor: 'pointer' }} onClick={() => { setPolicyType(1) }}>
-              이용약관
-            </Bold>
-            <Bold style={{ cursor: 'pointer' }} onClick={() => { setPolicyType(2) }}>
-              개인정보정책
-            </Bold>
+            <Bold style={{ cursor: 'pointer' }} onClick={() => { setPolicyType(1) }}>{translate('이용약관')}</Bold>
+            <Bold style={{ cursor: 'pointer' }} onClick={() => { setPolicyType(2) }}>{translate('개인정보정책')}</Bold>
             {/* 로그아웃 — 헤더가 아니라 여기 둔다. 아이콘만으로는 무슨 버튼인지 알기 어렵다. */}
             {user &&
-              <Bold style={{ cursor: 'pointer' }} onClick={onLogout}>
-                로그아웃
-              </Bold>}
+              <Bold style={{ cursor: 'pointer' }} onClick={onLogout}>{translate('로그아웃')}</Bold>}
           </Row>
 
           <Row style={{ fontSize: '10px' }}>

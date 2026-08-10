@@ -264,33 +264,33 @@ const Header = () => {
     const authList = [
         {
             //name: 'My그랑파리',
-            name: '마이페이지',
+            name: translate('마이페이지'),
             link_key: '/shop/auth/my-page',
             icon: 'material-symbols:person',
         },
         {
-            name: '장바구니',
+            name: translate('장바구니'),
             link_key: '/shop/auth/cart',
             icon: 'mdi:cart',
         },
         {
-            name: '위시리스트',
+            name: translate('위시리스트'),
             link_key: '/shop/auth/wish',
             icon: 'mdi:heart',
         },
         {
-            name: '포인트내역',
+            name: translate('포인트내역'),
             link_key: '/shop/auth/point',
             icon: 'icon-park-solid:powerpoint',
         },
         {
-            name: '주문/배송조회',
+            name: translate('주문/배송조회'),
             link_key: '/shop/auth/history',
             icon: 'iconoir:book-solid',
         },
         ...(user?.level >= 10 ? [
             {
-                name: '판매자센터',
+                name: translate('판매자센터'),
                 link_key: '/manager',
                 icon: 'iconoir:book-solid',
             },
@@ -298,17 +298,17 @@ const Header = () => {
     ]
     const noneAuthList = [
         {
-            name: '로그인',
+            name: translate('로그인'),
             link_key: '/shop/auth/login',
             icon: 'material-symbols:lock',
         },
         {
-            name: '회원가입',
+            name: translate('회원가입'),
             link_key: '/shop/auth/sign-up',
             icon: 'ic:sharp-person-add',
         },
         {
-            name: '비회원 주문조회',
+            name: translate('비회원 주문조회'),
             link_key: '/shop/auth/order-check',
             icon: 'lets-icons:order',
         },
@@ -485,7 +485,7 @@ const Header = () => {
                                                     setPopups(popup_list);
                                                 }}>
                                                     <Icon icon='ion:close' style={{ color: `${themeMode == 'dark' ? '#fff' : '#222'}`, fontSize: themeObj.font_size.size8, marginRight: '4px', }} onClick={() => { }} />
-                                                    <div style={{ fontSize: themeObj.font_size.size8, }}>오늘 하루 보지않기</div>
+                                                    <div style={{ fontSize: themeObj.font_size.size8, }}>{translate('오늘 하루 보지않기')}</div>
                                                 </div>
                                             </PopupContent>
                                         </>
@@ -1239,9 +1239,9 @@ const Header = () => {
                         </>
                         :
                         <>
-                            <ColumnMenuTitle style={{ borderBottom: '1px solid #ccc', paddingBlock: '1rem' }}>로그인을 해주세요.</ColumnMenuTitle>
+                            <ColumnMenuTitle style={{ borderBottom: '1px solid #ccc', paddingBlock: '1rem' }}>{translate('로그인을 해주세요.')}</ColumnMenuTitle>
                         </>}
-                    <ColumnMenuTitle style={{ marginTop: '1rem' }}>마이페이지</ColumnMenuTitle>
+                    <ColumnMenuTitle style={{ marginTop: '1rem' }}>{translate('마이페이지')}</ColumnMenuTitle>
                     {user ?
                         <>
                             {authList.map((item, idx) => (
@@ -1261,7 +1261,7 @@ const Header = () => {
                                 setSideMenuOpen(false);
                             }}>
                                 <Icon icon={'ri:logout-circle-r-line'} style={{ color: themeDnsData?.theme_css?.main_color }} />
-                                <Typography style={{ padding: '0.3rem', }} variant="subtitle2">로그아웃</Typography>
+                                <Typography style={{ padding: '0.3rem', }} variant="subtitle2">{translate('로그아웃')}</Typography>
                             </Row>
                         </>
                         :
@@ -1281,7 +1281,7 @@ const Header = () => {
 
                     {themeDnsData?.setting_obj?.is_use_seller == 1 &&
                         <>
-                            <ColumnMenuTitle>셀러</ColumnMenuTitle>
+                            <ColumnMenuTitle>{translate('셀러')}</ColumnMenuTitle>
                             {themeSellerList.map((seller) => (
                                 <>
                                     <Typography onClick={() => {

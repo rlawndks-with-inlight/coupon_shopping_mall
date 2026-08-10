@@ -19,6 +19,27 @@ flex-direction: column;
 z-index: 10;
 transition: background 0.3s ease;
 `
+/* 로고를 '한 축'이 아니라 '상자'로 잡는다 — 이유는 shop/demo-1/header.js 의 LogoImg 주석 참고.
+   이 프레임은 헤더가 position:fixed 인데 본문 상단 여백을 각 화면이 직접 하드코딩한다
+   (홈 48px, 나머지 56px). 즉 헤더가 높아지면 그만큼 본문을 덮는다.
+   그래서 헤더 높이를 정하는 IconButton(padding 6px + 아이콘 1.4rem ≈ 34.4px)을 넘지 않는
+   34px 까지만 올린다 — 헤더 총높이가 1px 도 안 바뀌므로 어떤 화면의 오프셋도 건드릴 필요가 없다.
+   더 키우려면 프레임4 전 화면의 상단 여백을 함께 손봐야 한다(그건 별도 작업). */
+const LogoImg = styled.img`
+height: 34px;
+width: auto;
+max-width: 180px;
+object-fit: contain;
+flex-shrink: 0;
+cursor: pointer;
+/* 좁은 화면은 변경 전(28px, 상한 없음 = 5:1 기준 140px)을 그대로 유지한다.
+   34px 로 키우면 가로형 로고 폭이 140→170px 이 되어 359~391px 구간에서
+   우측 아이콘 묶음이 컨테이너 밖으로 밀린다(is_use_lang 을 켠 가맹점은 더 빨리 밀린다). */
+@media (max-width:480px) {
+  height: 28px;
+  max-width: 140px;
+}
+`
 const TopMenuContainer = styled.div`
 display:flex;
 padding: 10px 0;
@@ -82,7 +103,7 @@ const Header = (props) => {
               <Icon icon={'ic:round-arrow-back'} fontSize={'1.4rem'} color={iconColor} />
             </IconButton>
             :
-            <img src={logoSrc()} style={{ height: '28px', width: 'auto', cursor: 'pointer' }} onClick={() => router.push('/shop')} />
+            <LogoImg src={logoSrc()} onClick={() => router.push('/shop')} />
           }
           <div style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: '2px' }}>
             {/* 상품 목록 — 이 헤더에는 상품을 둘러볼 수단이 검색뿐이었다(홈·마이페이지·장바구니만 있었다).

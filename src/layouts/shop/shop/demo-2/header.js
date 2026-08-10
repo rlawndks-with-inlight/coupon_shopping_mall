@@ -161,10 +161,21 @@ box-shadow: 0px 4px 4px #00000029;
   display: flex;
 }
 `
+/* 로고를 '한 축'이 아니라 '상자'로 잡는다 — 이유는 demo-1/header.js 의 LogoImg 주석 참고.
+   여기서는 PC(≥1001px)에서만 키운다. ≤1000px 은 로고가 position:absolute 로 화면 중앙에
+   떠 있어(아래 블록) 키우면 좌우 햄버거·검색 아이콘과 겹치고, 모바일 PaddingTop 이
+   96px 고정이라 자동 보정도 없다. PC 는 PaddingTop 이 headerHeight 실측값을 쓰므로 안전하다.
+   덧붙여 PC 아이콘이 2.8rem(약 44.8px)이라 로고 40px 는 옆 아이콘보다도 작았다. */
 const LogoImg = styled.img`
 height: 40px;
 width: auto;
+object-fit: contain;
+flex-shrink: 0;
 cursor: pointer;
+@media (min-width:1001px) {
+  height: 56px;
+  max-width: 260px;
+}
 @media (max-width:1000px) {
   position:absolute;
   top: 50%;
@@ -265,14 +276,25 @@ const Header = () => {
     top: 0,
     left: 0
   })
+  // 헤더 높이 실측 → PaddingTop 이 이 값만큼 본문을 내린다. deps 함정과 ResizeObserver 로 바꾼
+  // 이유는 shop/demo-1/header.js 의 같은 자리 주석 참고(이 파일도 loading 게이트가 같다).
+  // 참고: 예전 deps 배열에는 빈 칸(`, ,`)까지 들어 있었다.
   useEffect(() => {
-    setHeaderHeight(headerWrappersRef.current?.clientHeight ?? 130);
-    let getBoundingClientRect = menuButtonRef.current?.getBoundingClientRect();
-    setMenuButtonLocation({
-      top: getBoundingClientRect?.top ?? 0,
-      left: getBoundingClientRect?.left ?? 0,
-    });
-  }, [headerWrappersRef.current, menuButtonRef.current, , themeCategoryList])
+    const el = headerWrappersRef.current;
+    if (!el) return;
+    const measure = () => {
+      setHeaderHeight(el.clientHeight || 130);
+      const rect = menuButtonRef.current?.getBoundingClientRect();
+      setMenuButtonLocation({
+        top: rect?.top ?? 0,
+        left: rect?.left ?? 0,
+      });
+    };
+    measure();
+    const observer = new ResizeObserver(measure);
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, [loading, themeCategoryList])
   useEffect(() => {
     setLoading(true);
     let hover_list = getAllIdsWithParents(headerCategories);

@@ -111,7 +111,10 @@ const Login = () => {
             <StyledContent style={{ minHeight: '90vh' }}>
               <Stack sx={{ width: 1 }}>
 
-                <img src={logoSrc()} style={{ maxWidth: '200px', margin: '1rem auto' }} />
+                {/* 가로 상한만 있고 세로 상한이 없었다 — 정사각·세로형 로고를 올린 가맹점은
+                    로고가 200px 높이로 떠서 입력칸을 아래로 밀어냈다. 스토어프론트 헤더와
+                    같은 '상자' 방식으로 두 축 모두 상한을 둔다. */}
+                <img src={logoSrc()} style={{ maxWidth: '200px', maxHeight: '88px', objectFit: 'contain', margin: '1rem auto' }} />
                 <Stack spacing={3}>
                   <TextField
                     name="username"

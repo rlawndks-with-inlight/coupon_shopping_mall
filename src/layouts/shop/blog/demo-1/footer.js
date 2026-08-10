@@ -113,7 +113,13 @@ const Footer = () => {
         borderTop: `1px solid ${isDark ? '#333' : '#eee'}`,
       }}>
         <ContentWrapper>
-          <img src={logoSrc()} style={{ width: '100px', marginBottom: '8px', opacity: 0.5 }} />
+          {/* 여기만 width 기준이라 세로형·2단 로고가 유독 크게, 가로형이 유독 작게 나왔다.
+              헤더와 같은 축(height)으로 통일하고 가로 상한을 따로 둔다. */}
+          {/* alignSelf 필수: ContentWrapper 가 flex-direction:column 이라 align-items 기본값(stretch)이
+              가로로 늘린다. 예전엔 width:100px 로 폭이 고정돼 있어 stretch 가 안 먹었는데,
+              width:auto 로 바꾸면서 그 보호막이 사라졌다 — 빼면 로고가 160px 로 늘어나 찌그러진다. */}
+          <img src={logoSrc()}
+            style={{ height: '32px', width: 'auto', maxWidth: '160px', objectFit: 'contain', alignSelf: 'flex-start', marginBottom: '8px', opacity: 0.5 }} />
           <InfoRow>
             {ceo_name?.length > 1 &&
               <span><Label>{translate('대표')}</Label>{ceo_name}<Separator>|</Separator></span>

@@ -41,11 +41,25 @@ export const COUNTRIES = [
     { code: 'MX', name: '멕시코', en: 'Mexico' },
 ];
 
+// 해외배송 표식.
+//
+// country_code 컬럼은 VARCHAR(2) 라 나라 이름을 담을 수 없다(ISO 코드 자리다).
+// 고객이 국가를 직접 입력하도록 바꾸면서, 코드 자리에는 '해외'라는 표식만 두고
+// 실제로 입력한 나라 이름은 country_name(VARCHAR 60)에 담는다.
+// ZZ 는 ISO 3166-1 에서 사용자 지정용으로 비워 둔 코드라 실제 국가와 겹치지 않는다.
+export const OVERSEAS_CODE = 'ZZ';
+
 export const isDomestic = (country_code) => String(country_code || KOREA_CODE) === KOREA_CODE;
 
-export const getCountryName = (country_code) =>
-    COUNTRIES.find((c) => c.code === String(country_code || KOREA_CODE))?.name
-    ?? String(country_code || KOREA_CODE);
+// 화면에 보여줄 나라 이름.
+// 고객이 직접 적은 이름(country_name)이 있으면 그것을 그대로 쓴다 — 목록에 없는 나라도 있다.
+// 없으면 예전처럼 코드로 찾아보고, 그것도 없으면 코드를 그대로 보여준다.
+export const getCountryName = (country_code, country_name) => {
+    const typed = String(country_name ?? '').trim();
+    if (typed) return typed;
+    return COUNTRIES.find((c) => c.code === String(country_code || KOREA_CODE))?.name
+        ?? String(country_code || KOREA_CODE);
+};
 
 // 해외 배송지 한 건을 한 줄 문자열로 — 주문내역·관리자 주문상세에서 그대로 보여준다.
 // 해외 주소는 나라마다 순서가 달라 필드를 따로 배치하려 들면 화면마다 규칙이 갈린다.
@@ -56,5 +70,5 @@ export const formatOverseasAddress = (row = {}) => [
     row?.city,
     row?.state_region,
     row?.zonecode,
-    getCountryName(row?.country_code),
+    getCountryName(row?.country_code, row?.country_name),
 ].map((v) => String(v ?? '').trim()).filter(Boolean).join(', ');

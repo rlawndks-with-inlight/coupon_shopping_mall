@@ -14,7 +14,7 @@ import DialogActions from '@mui/material/DialogActions'
 import { Box, Card, Checkbox, CircularProgress, DialogContentText, FormControlLabel, Paper, RadioGroup, Stack, TextField } from '@mui/material'
 import { Row, postCodeStyle, themeObj } from '../elements/styled-components'
 import DaumPostcode from 'react-daum-postcode';
-import { COUNTRIES, KOREA_CODE, isDomestic } from 'src/data/countries';
+import { KOREA_CODE, OVERSEAS_CODE, isDomestic } from 'src/data/countries';
 import { MenuItem, ToggleButton, ToggleButtonGroup } from '@mui/material';
 import { useLocales } from 'src/locales';
 
@@ -40,6 +40,7 @@ const EMPTY_FORM = {
   is_open_daum_post: false,
   // 국내/해외 구분. 기본은 국내(KR) — 기존 배송지도 전부 국내로 취급된다.
   country_code: KOREA_CODE,
+  country_name: '',
   city: '',
   state_region: '',
 };
@@ -93,6 +94,7 @@ const DialogAddAddress = (props) => {
         is_default: Number(data?.is_default) === 1,
         is_open_daum_post: false,
         country_code: data?.country_code || KOREA_CODE,
+        country_name: data?.country_name ?? '',
         city: data?.city ?? '',
         state_region: data?.state_region ?? '',
       });
@@ -184,6 +186,7 @@ const DialogAddAddress = (props) => {
                     ...prev,
                     // 해외는 국가를 아직 고르지 않은 상태('')로 둔다 — 아래 국가 선택에서 고른다.
                     country_code: v === 'KR' ? KOREA_CODE : '',
+                    country_name: '',
                     addr: '', detail_addr: '', zonecode: '', city: '', state_region: '',
                     is_open_daum_post: false,
                   }));
@@ -224,18 +227,24 @@ const DialogAddAddress = (props) => {
                 </>
                 :
                 <>
+                  {/* 국가는 목록에서 고르지 않고 직접 입력받는다.
+                      목록(27개국)에 없는 나라로는 아예 주문할 수 없었다.
+                      코드 컬럼은 VARCHAR(2) 라 이름을 못 담으므로, 코드 자리에는 해외 표식(ZZ)만 두고
+                      입력한 이름은 country_name(VARCHAR 60)에 담는다. */}
                   <TextField
-                    select
                     fullWidth
                     margin="dense"
                     label={translate('국가')}
-                    value={addAddressObj.country_code}
-                    onChange={(e) => setField('country_code', e.target.value)}
-                  >
-                    {COUNTRIES.filter((c) => c.code !== KOREA_CODE).map((c) => (
-                      <MenuItem key={c.code} value={c.code}>{c.name} ({c.en})</MenuItem>
-                    ))}
-                  </TextField>
+                    placeholder={translate('예: 일본 / Japan')}
+                    value={addAddressObj.country_name ?? ''}
+                    inputProps={{ maxLength: 60 }}
+                    onChange={(e) => setAddAddressObj((prev) => ({
+                      ...prev,
+                      country_name: e.target.value,
+                      // 이름을 적기 시작하면 해외로 확정한다(비우면 미선택으로 되돌린다).
+                      country_code: String(e.target.value).trim() ? OVERSEAS_CODE : '',
+                    }))}
+                  />
                   <TextField
                     fullWidth
                     value={addAddressObj.addr}
@@ -312,8 +321,8 @@ const DialogAddAddress = (props) => {
                     toast.error('받는 분 연락처를 입력해 주세요.');
                     return;
                   }
-                  if (!addAddressObj.country_code) {
-                    toast.error('배송 국가를 선택해 주세요.');
+                  if (!String(addAddressObj.country_name || '').trim()) {
+                    toast.error('배송 국가를 입력해 주세요.');
                     return;
                   }
                   if (!String(addAddressObj.city || '').trim()) {

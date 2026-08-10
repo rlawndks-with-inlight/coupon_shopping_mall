@@ -189,9 +189,9 @@ export default function ProductDetailsSummary({ product, onAddCart, onGotoStep, 
                   {
                     themeDnsData?.id == 95 && product_sale_price < 100000 &&
                     <>
-                      <Typography variant="h7" style={{ color: 'black' }}>⚠️결제 시 주의사항⚠️</Typography>
-                      <Typography variant="h7" style={{ color: 'black' }}>주말 및 공휴일은 카드 결제 시 카드 취소 불가로,</Typography>
-                      <Typography variant="h7" style={{ color: 'black' }}>카드 수수료 12% 제외 후 계좌이체로 환불이 진행됩니다</Typography>
+                      <Typography variant="h7" style={{ color: 'black' }}>{translate('⚠️결제 시 주의사항⚠️')}</Typography>
+                      <Typography variant="h7" style={{ color: 'black' }}>{translate('주말 및 공휴일은 카드 결제 시 카드 취소 불가로,')}</Typography>
+                      <Typography variant="h7" style={{ color: 'black' }}>{translate('카드 수수료 12% 제외 후 계좌이체로 환불이 진행됩니다')}</Typography>
                     </>
                   }
                 </>
@@ -245,9 +245,7 @@ export default function ProductDetailsSummary({ product, onAddCart, onGotoStep, 
             themeDnsData?.id == 95 && product_sale_price > 99999 ?
               <>
                 <Stack direction="row" justifyContent="space-between">
-                  <div>
-                    별도 문의가 필요한 상품입니다. 페이지 하단의 고객센터로 문의바랍니다.
-                  </div>
+                  <div>{translate('별도 문의가 필요한 상품입니다. 페이지 하단의 고객센터로 문의바랍니다.')}</div>
                 </Stack>
               </>
               :

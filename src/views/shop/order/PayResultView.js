@@ -70,7 +70,7 @@ const { user } = useAuthContext();
   }, [router.isReady, isSuccess]);
 
   const view = isTestBrand
-    ? { icon: 'mdi:progress-clock', color: '#f0a020', title: '테스트결제 진행중입니다.' }
+    ? { icon: 'mdi:progress-clock', color: '#f0a020', title: translate('테스트결제 진행중입니다.') }
     : isSuccess
       ? { icon: 'mdi:check-circle-outline', color: mainColor, title: translate('결제에 성공하였습니다.') }
       : { icon: 'mdi:close-circle-outline', color: '#d33', title: translate('결제에 실패하였습니다.') };
@@ -97,15 +97,13 @@ const { user } = useAuthContext();
           {view.title}
         </Typography>
         {!isSuccess && !isTestBrand && (
-          <Typography variant="body2" sx={{ color: 'text.secondary', mt: 0.75, textAlign: 'center' }}>
-            결제가 완료되지 않았습니다. 다시 시도해 주세요.
-          </Typography>
+          <Typography variant="body2" sx={{ color: 'text.secondary', mt: 0.75, textAlign: 'center' }}>{translate('결제가 완료되지 않았습니다. 다시 시도해 주세요.')}</Typography>
         )}
       </Stack>
 
       {hasDetail && (
         <Card sx={{ mb: 2 }}>
-          <CardHeader title="결제 정보" />
+          <CardHeader title={translate('결제 정보')} />
           <CardContent sx={{ pt: 0 }}>
             <KV k="주문번호" v={q.ord_num} />
             <KV k="승인일시" v={trxDttm} />
@@ -119,9 +117,7 @@ const { user } = useAuthContext();
 
       <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1.5} sx={{ mt: 3 }}>
         <Button fullWidth variant="outlined" color="inherit"
-          onClick={() => router.push(isBlogOnly ? '/shop' : '/shop')}>
-          쇼핑 계속하기
-        </Button>
+          onClick={() => router.push(isBlogOnly ? '/shop' : '/shop')}>{translate('쇼핑 계속하기')}</Button>
         {/* 실패 시엔 주문내역이 없으므로 장바구니로 되돌려 재시도를 돕는다.
             성공이어도 비회원은 /shop/auth/history 가 늘 빈 표라(회원 주문만 조회한다)
             전화번호+주문비밀번호로 보는 주문조회로 보낸다. */}
@@ -136,9 +132,7 @@ const { user } = useAuthContext();
       </Stack>
 
       <Box sx={{ mt: 3, textAlign: 'center' }}>
-        <Typography variant="caption" sx={{ color: 'text.disabled' }}>
-          결제 관련 문의는 판매자 고객센터로 연락해 주세요.
-        </Typography>
+        <Typography variant="caption" sx={{ color: 'text.disabled' }}>{translate('결제 관련 문의는 판매자 고객센터로 연락해 주세요.')}</Typography>
       </Box>
     </Wrappers>
   );

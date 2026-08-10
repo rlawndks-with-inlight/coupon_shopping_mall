@@ -27,6 +27,7 @@ import { getBrandShipping } from 'src/utils/shop-util';
 import { useState } from 'react';
 import { useEffect } from 'react';
 import { useLocales } from 'src/locales';
+import { getPriceUnitByLang } from 'src/utils/function';
 
 // ----------------------------------------------------------------------
 
@@ -127,14 +128,14 @@ export default function CheckoutSummary({
             <Typography variant="body2" sx={{ color: 'text.secondary' }}>
               {translate('총액')}
             </Typography>
-            <Typography variant="subtitle2">{subtotal ? fCurrency(subtotal ?? 0) : '0'}원</Typography>
+            <Typography variant="subtitle2">{subtotal ? fCurrency(subtotal ?? 0) : '0'}{getPriceUnitByLang()}</Typography>
           </Stack>
 
           <Stack direction="row" justifyContent="space-between">
             <Typography variant="body2" sx={{ color: 'text.secondary' }}>
               {translate('할인')}
             </Typography>
-            <Typography variant="subtitle2">{discount ? fCurrency(-discount) : '0'}원</Typography>
+            <Typography variant="subtitle2">{discount ? fCurrency(-discount) : '0'}{getPriceUnitByLang()}</Typography>
           </Stack>
           {/* brandShip.active 는 '브랜드 일괄 배송비 정책'을 켠 경우에만 true 다.
               정책을 안 켜고 상품별 배송비만 쓰는 브랜드는 fee > 0 인데도 이 줄이 숨겨져,
@@ -145,7 +146,7 @@ export default function CheckoutSummary({
                 {translate('배송비')}
               </Typography>
               <Typography variant="subtitle2">
-                {brandShip.fee > 0 ? `${fCurrency(brandShip.fee)}원` : translate('무료배송')}
+                {brandShip.fee > 0 ? `${fCurrency(brandShip.fee)}${getPriceUnitByLang()}` : translate('무료배송')}
               </Typography>
             </Stack>
           )}
@@ -199,7 +200,7 @@ export default function CheckoutSummary({
             <Typography variant="subtitle1">{translate('총 결제금액')}</Typography>
             <Box sx={{ textAlign: 'right' }}>
               <Typography variant="subtitle1" sx={{ color: 'error.main' }}>
-                {displayTotal ? fCurrency(displayTotal ?? 0) : '0'}원
+                {displayTotal ? fCurrency(displayTotal ?? 0) : '0'}{getPriceUnitByLang()}
               </Typography>
               {/* <Typography variant="caption" sx={{ fontStyle: 'italic' }}>
                 (VAT included if applicable)

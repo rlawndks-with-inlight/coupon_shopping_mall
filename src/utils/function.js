@@ -527,9 +527,41 @@ function countDecimalPlaces(number) {
 // 한국어는 기존처럼 '원', 그 외 언어는 국제 표기 'KRW'.
 // (예전엔 $ · ¥ · VND 를 붙였는데, 붙는 숫자는 환산된 값이고 실제 청구는 원화라
 //  고객이 보는 통화와 결제되는 통화가 달랐다 — setProductPriceByLang 주석 참고)
-export const getPriceUnitByLang = (lang_ = 'ko') => {
-  return lang_ === 'ko' ? '원' : 'KRW';
+// 현재 화면 언어 코드를 훅 없이 읽는다.
+//
+// locales/i18n 을 직접 import 하지 않는 이유: i18n → config-lang → components/settings
+// 로 이어지는 사슬이 결국 이 파일을 다시 끌어와 순환 임포트가 된다.
+// i18next-browser-languagedetector 가 선택 언어를 localStorage('i18nextLng')에 캐시하고
+// i18n.js 도 기동 시 같은 값을 읽으므로, 그 값을 그대로 본다.
+// SSR(서버 렌더)에는 localStorage 가 없다 — 그때는 'ko' 로 두고 하이드레이션 후 맞춰진다.
+export const currentLangCode = () => {
+  if (typeof window === 'undefined') return 'ko';
+  try {
+    const raw = window.localStorage.getItem('i18nextLng')
+      || JSON.parse(window.localStorage.getItem('themeDnsData') || '{}')?.setting_obj?.default_lang;
+    // 'ko-KR' 처럼 지역이 붙어 들어올 수 있다.
+    return String(raw || 'ko').split('-')[0];
+  } catch (e) {
+    return 'ko';
+  }
+};
+
+export const getPriceUnitByLang = (lang_) => {
+  // 인자를 안 주면 현재 화면 언어를 스스로 읽는다.
+  //
+  // [왜 필요한가]
+  // 화면 97곳이 `{commarNumber(x)}원` 처럼 '원' 을 그대로 박아 두고 있었다.
+  // 일본어로 바꿔도 가격만 '원' 으로 남는 이유가 이것이었다(단위 함수를 부르지 않았다).
+  // 그 97곳에 currentLang 을 일일이 배선하려면 파일마다 useLocales 를 끌어와야 하는데,
+  // 훅이라 컴포넌트 밖(템플릿 문자열·헬퍼 함수)에서는 쓸 수 없다.
+  // useLocales 도 결국 i18n.language 를 보므로, 같은 값을 훅 없이 읽는다.
+  const code = (lang_ && typeof lang_ === 'object') ? lang_?.value : lang_;
+  return (code ?? currentLangCode()) === 'ko' ? '원' : 'KRW';
 }
+
+// 금액 + 단위를 한 번에. `{commarNumber(x)}원` 을 `{commarNumberWithUnit(x)}` 로 바꾸면 된다.
+// JSX 든 템플릿 문자열이든 같은 형태로 쓸 수 있다(컴포넌트가 아니라 함수라서).
+export const commarNumberWithUnit = (value, lang_) => `${commarNumber(value)}${getPriceUnitByLang(lang_)}`;
 
 export function generateRandomString(length = 1) {
   const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';

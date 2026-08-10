@@ -4,7 +4,7 @@ import { themeObj } from "../styled-components"
 import { IconButton } from "@mui/material"
 import { Icon } from "@iconify/react"
 import { LazyLoadImage } from "react-lazy-load-image-component"
-import { commarNumber } from "src/utils/function"
+import { commarNumber, commarNumberWithUnit } from 'src/utils/function'
 import { formatLang } from "src/utils/format"
 import { useLocales } from "src/locales"
 
@@ -103,8 +103,8 @@ export const Item1 = (props) => {
       {item?.product_comment && <ItemComment>{formatLang(item, 'product_comment', currentLang)}</ItemComment>}
       <ItemPrice>
         {hasDiscount && <DiscountBadge>{discountRate}%</DiscountBadge>}
-        {commarNumber(displayPrice)}원
-        {hasDiscount && <ItemOriginalPrice>{commarNumber(item.product_price)}원</ItemOriginalPrice>}
+        {commarNumberWithUnit(displayPrice)}
+        {hasDiscount && <ItemOriginalPrice>{commarNumberWithUnit(item.product_price)}</ItemOriginalPrice>}
       </ItemPrice>
     </ItemContent>
   )

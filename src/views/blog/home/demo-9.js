@@ -1,7 +1,7 @@
 import styled from 'styled-components'
 import { useSettingsContext } from 'src/components/settings'
 import { LazyLoadImage } from 'react-lazy-load-image-component'
-import { commarNumber } from 'src/utils/function'
+import { commarNumber, commarNumberWithUnit } from 'src/utils/function'
 import { formatLang } from 'src/utils/format'
 import { useFeaturedProduct, useFeaturedProducts, getFeaturedCardData } from 'src/utils/use-featured-product'
 import { useLocales } from 'src/locales'
@@ -417,8 +417,8 @@ const Demo9 = (props) => {
           <HeroName>{name}</HeroName>
           {comment && <HeroDesc>{comment}</HeroDesc>}
           <HeroPriceWrap>
-            <HeroPrice>{commarNumber(sale)}원</HeroPrice>
-            {hasSale && <HeroOrig>{commarNumber(orig)}원</HeroOrig>}
+            <HeroPrice>{commarNumberWithUnit(sale)}</HeroPrice>
+            {hasSale && <HeroOrig>{commarNumberWithUnit(orig)}</HeroOrig>}
           </HeroPriceWrap>
           <div>
             <CTABtn onClick={goTo}>구매하기 💫</CTABtn>
@@ -468,8 +468,8 @@ const Demo9 = (props) => {
                   </FeaturedImgWrap>
                   <FeaturedName>{c.name}</FeaturedName>
                   <FeaturedPriceRow>
-                    <HeroPrice style={{ fontSize: '20px' }}>{commarNumber(c.sale)}원</HeroPrice>
-                    {c.hasSale && <HeroOrig>{commarNumber(c.orig)}원</HeroOrig>}
+                    <HeroPrice style={{ fontSize: '20px' }}>{commarNumberWithUnit(c.sale)}</HeroPrice>
+                    {c.hasSale && <HeroOrig>{commarNumberWithUnit(c.orig)}</HeroOrig>}
                   </FeaturedPriceRow>
                 </FeaturedCard>
               );
@@ -481,7 +481,7 @@ const Demo9 = (props) => {
       <FinalCTA>
         <FinalTitle>{t.final_title ? t.final_title : (<>지금이 {brandName}과<br />함께할 순간이에요 💕</>)}</FinalTitle>
         <div style={{ margin: '2rem 0' }}>
-          <HeroPrice style={{ fontSize: '40px' }}>{commarNumber(sale)}원</HeroPrice>
+          <HeroPrice style={{ fontSize: '40px' }}>{commarNumberWithUnit(sale)}</HeroPrice>
         </div>
         <CTABtn onClick={goTo}>바로 구매하기 →</CTABtn>
       </FinalCTA>

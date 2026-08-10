@@ -16,6 +16,7 @@ import styled, { css } from "styled-components";
 import $ from 'jquery';
 import { CategorySorter, LANGCODE } from "src/views/shop/demo-4/header"
 import queryString from 'query-string'
+import { formatLang } from 'src/utils/format';
 
 const ContentWrapper = styled.div`
 max-width:1400px;
@@ -290,7 +291,7 @@ const ItemsDemo = (props) => {
               {/* ?? 는 null·undefined 만 걸러 빈 문자열('')을 그대로 통과시킨다.
                   실제 데이터의 category_en_name 은 대부분 NULL 이지만 220건이 빈 문자열이라,
                   그 카테고리들은 제목이 통째로 빈칸으로 나왔다. || 로 바꿔 한글명으로 넘어가게 한다. */}
-              {curCategory?.category_en_name || curCategory?.category_name || ""}
+              {curCategory?.category_en_name || formatLang(curCategory, 'category_name') || ""}
             </Title>
           </>
           :
@@ -320,7 +321,7 @@ const ItemsDemo = (props) => {
                           router.push(`/shop/items?category_id=${category?.id}`);
                         }}>
                         {/* 위와 같은 이유 — 빈 문자열이면 한글명으로 넘어가야 버튼 라벨이 비지 않는다 */}
-                        {category?.category_en_name || category?.category_name}
+                        {category?.category_en_name || formatLang(category, 'category_name')}
                       </Button >
                     </>
                   ))}

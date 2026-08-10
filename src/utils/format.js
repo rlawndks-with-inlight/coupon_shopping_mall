@@ -255,6 +255,38 @@ export const mainObjSchemaList = [
 //    섞여 있다. 문자열에 ['category_name'] 을 하면 undefined 라 조용히 한국어로 되돌아갔고,
 //    그래서 '카테고리는 다국어가 아예 안 먹는다' 로 보였다(번역문은 DB 에 들어 있었는데도).
 //    읽는 쪽에서 흡수한다 — 컨트롤러마다 파싱을 맞추는 것보다 새는 곳이 없다.
+// 현재 화면 언어 코드. utils/function.js 와 같은 이유로 locales/i18n 을 직접 import 하지 않는다
+// (i18n → config-lang → components/settings → … 으로 순환한다). i18n 이 쓰는 저장소를 그대로 읽는다.
+const currentLangCode = () => {
+    if (typeof window === 'undefined') return 'ko';
+    try {
+        const raw = window.localStorage.getItem('i18nextLng')
+            || JSON.parse(window.localStorage.getItem('themeDnsData') || '{}')?.setting_obj?.default_lang;
+        return String(raw || 'ko').split('-')[0];
+    } catch (e) {
+        return 'ko';
+    }
+};
+
+// 특성(character)의 선택지 목록. 화면에 보일 글자와 실제로 저장할 값을 나눠 돌려준다.
+//
+// [왜 나눠야 하나]
+// 특성 값은 콤마로 구분된 문자열 하나다(예: '블랙,화이트'). 고객이 고른 값은
+// 그대로 주문에 저장되고 가맹점 주문서·배송 목록에 그 값이 찍힌다.
+// 그래서 번역본을 저장해 버리면 가맹점 화면이 일본어·중국어가 된다 —
+// 보이는 건 번역, 저장되는 건 원문이어야 한다.
+//
+// 번역이 콤마 개수를 바꿔 놓으면(번역기가 구분자를 합치거나 늘리는 일이 있다)
+// 원문↔번역 짝이 어긋난다. 그때는 번역을 통째로 포기하고 원문만 쓴다
+// — 짝이 틀린 라벨을 보여주면 엉뚱한 값이 주문에 들어간다.
+export const characterChoices = (character = {}, lang) => {
+    const split = (v) => String(v ?? '').split(/[,/]\s*/).map((s) => s.trim()).filter(Boolean);
+    const values = split(character?.character_value);
+    const translated = split(formatLang(character, 'character_value', lang));
+    const paired = translated.length === values.length;
+    return values.map((value, i) => ({ value, label: paired ? translated[i] : value }));
+};
+
 const parseLangObj = (lang_obj) => {
     if (!lang_obj) return null;
     if (typeof lang_obj === 'object') return lang_obj;
@@ -264,10 +296,15 @@ const parseLangObj = (lang_obj) => {
     return null;
 }
 
-export const formatLang = (obj = {}, column, lang = 'ko') => {
+export const formatLang = (obj = {}, column, lang) => {
     const lang_obj = parseLangObj(obj?.lang_obj);
     // lang 은 useLocales().currentLang 객체({value:'cn',...})로 들어오지만
     // 호출부에 따라 'cn' 문자열이 그대로 들어오는 곳도 있다. 둘 다 받는다.
-    const code = (lang && typeof lang === 'object') ? lang?.value : lang;
+    //
+    // 세 번째 인자를 생략하면 현재 화면 언어를 스스로 읽는다.
+    // 예전 기본값은 'ko' 였는데, 그 탓에 언어를 넘기지 않은 호출부는 조용히 원문만 보여줬다.
+    // 카테고리·옵션 표시를 번역 경유로 바꾸는 곳이 130곳이 넘는데, 그 파일 대부분은
+    // currentLang 을 안 들고 있다(useLocales 는 훅이라 컴포넌트 밖에서는 쓸 수도 없다).
+    const code = (lang && typeof lang === 'object') ? lang?.value : (lang ?? currentLangCode());
     return (lang_obj?.[column]?.[code]) || obj?.[column];
 }

@@ -3,7 +3,7 @@ import { Row, themeObj } from 'src/components/elements/styled-components'
 import { useLocales } from 'src/locales'
 import { formatLang } from 'src/utils/format'
 import { LazyLoadImage } from 'react-lazy-load-image-component'
-import { commarNumber } from 'src/utils/function'
+import { commarNumber, commarNumberWithUnit } from 'src/utils/function'
 import { useSettingsContext } from 'src/components/settings'
 import { useRouter } from 'next/router'
 import { useMediaQuery } from '@mui/material'
@@ -81,8 +81,8 @@ const renderSingleBanner = (product, router, currentLang, mainColor, isMobile) =
         </div>
         <div>
           <div style={{ display: 'flex', alignItems: 'baseline', gap: '0.75rem', marginBottom: '1rem', flexWrap: 'wrap' }}>
-            {hasSale && <span style={{ fontSize: '14px', textDecoration: 'line-through', color: themeObj.grey[400] }}>{commarNumber(orig)}원</span>}
-            <span style={{ fontSize: isMobile ? '24px' : '32px', fontWeight: 'bold', color: mainColor, fontFamily: 'serif' }}>{commarNumber(sale)}원</span>
+            {hasSale && <span style={{ fontSize: '14px', textDecoration: 'line-through', color: themeObj.grey[400] }}>{commarNumberWithUnit(orig)}</span>}
+            <span style={{ fontSize: isMobile ? '24px' : '32px', fontWeight: 'bold', color: mainColor, fontFamily: 'serif' }}>{commarNumberWithUnit(sale)}</span>
           </div>
           <div style={{
             display: 'inline-block', padding: isMobile ? '10px 24px' : '12px 36px',
@@ -151,11 +151,11 @@ const renderSingleFullbleed = (product, router, currentLang, mainColor, isMobile
           <div style={{ fontSize: '10px', letterSpacing: '4px', opacity: 0.5, marginBottom: '0.5rem' }}>PRICE</div>
           {hasSale && (
             <div style={{ fontSize: '14px', textDecoration: 'line-through', opacity: 0.4, marginBottom: '0.25rem' }}>
-              {commarNumber(orig)}원
+              {commarNumberWithUnit(orig)}
             </div>
           )}
           <div style={{ fontSize: isMobile ? '26px' : '36px', fontWeight: '900', fontFamily: 'serif', color: mainColor, marginBottom: '0.5rem' }}>
-            {commarNumber(sale)}원
+            {commarNumberWithUnit(sale)}
           </div>
           {hasSale && (
             <div style={{ fontSize: '12px', color: '#ff6b6b', letterSpacing: '2px', fontWeight: 'bold', marginBottom: '1rem' }}>
@@ -216,8 +216,8 @@ const renderSingleCard = (product, router, currentLang, mainColor, isMobile) => 
         <div style={{ textAlign: isMobile ? 'center' : 'left' }}>
           <div style={{ fontSize: isMobile ? '15px' : '18px', fontWeight: 'bold', marginBottom: '0.25rem' }}>{name}</div>
           <div style={{ fontSize: '12px', color: themeObj.grey[500], letterSpacing: '1px' }}>
-            {hasSale && <span style={{ textDecoration: 'line-through', color: themeObj.grey[400], marginRight: '0.5rem' }}>{commarNumber(orig)}원</span>}
-            <span style={{ fontWeight: 'bold', color: mainColor }}>{commarNumber(sale)}원</span>
+            {hasSale && <span style={{ textDecoration: 'line-through', color: themeObj.grey[400], marginRight: '0.5rem' }}>{commarNumberWithUnit(orig)}</span>}
+            <span style={{ fontWeight: 'bold', color: mainColor }}>{commarNumberWithUnit(sale)}</span>
             {hasSale && <span style={{ color: '#e74c3c', marginLeft: '0.5rem', fontWeight: 'bold' }}>{disc}%</span>}
           </div>
         </div>
@@ -285,7 +285,7 @@ const renderShopPromo = (product, router, currentLang, mainColor, isMobile) => {
         <div style={{ padding: isMobile ? '1rem' : '1.5rem', background: '#fafafa', borderRadius: '12px', marginTop: '0.5rem' }}>
           {hasSale && (
             <div style={{ fontSize: '14px', textDecoration: 'line-through', color: themeObj.grey[400], marginBottom: '0.25rem' }}>
-              정가 {commarNumber(orig)}원
+              정가 {commarNumberWithUnit(orig)}
             </div>
           )}
           <div style={{ display: 'flex', alignItems: 'baseline', gap: '0.5rem', flexWrap: 'wrap' }}>
@@ -345,8 +345,8 @@ const renderShopFullbleed = (product, router, currentLang, mainColor, isMobile) 
           <div style={{ fontSize: '22px', fontWeight: 'bold', lineHeight: 1.2, letterSpacing: '-0.5px' }}>{name}</div>
           {comment && <div style={{ fontSize: '13px', color: themeObj.grey[600], lineHeight: 1.6 }}>{comment}</div>}
           <div style={{ display: 'flex', alignItems: 'baseline', gap: '0.5rem', flexWrap: 'wrap' }}>
-            {hasSale && <span style={{ fontSize: '14px', textDecoration: 'line-through', color: themeObj.grey[400] }}>{commarNumber(orig)}원</span>}
-            <span style={{ fontSize: '24px', fontWeight: '900', color: mainColor }}>{commarNumber(sale)}원</span>
+            {hasSale && <span style={{ fontSize: '14px', textDecoration: 'line-through', color: themeObj.grey[400] }}>{commarNumberWithUnit(orig)}</span>}
+            <span style={{ fontSize: '24px', fontWeight: '900', color: mainColor }}>{commarNumberWithUnit(sale)}</span>
           </div>
           <div style={{
             padding: '12px 24px', background: mainColor, color: '#fff',
@@ -392,8 +392,8 @@ const renderShopFullbleed = (product, router, currentLang, mainColor, isMobile) 
         <div style={{ fontSize: '30px', fontWeight: 'bold', lineHeight: 1.2, letterSpacing: '-0.8px' }}>{name}</div>
         {comment && <div style={{ fontSize: '14px', color: themeObj.grey[600], lineHeight: 1.6 }}>{comment}</div>}
         <div style={{ display: 'flex', alignItems: 'baseline', gap: '0.5rem', marginTop: '0.5rem' }}>
-          {hasSale && <span style={{ fontSize: '15px', textDecoration: 'line-through', color: themeObj.grey[400] }}>{commarNumber(orig)}원</span>}
-          <span style={{ fontSize: '32px', fontWeight: '900', color: mainColor }}>{commarNumber(sale)}원</span>
+          {hasSale && <span style={{ fontSize: '15px', textDecoration: 'line-through', color: themeObj.grey[400] }}>{commarNumberWithUnit(orig)}</span>}
+          <span style={{ fontSize: '32px', fontWeight: '900', color: mainColor }}>{commarNumberWithUnit(sale)}</span>
         </div>
         <div style={{
           padding: '14px 32px', background: mainColor, color: '#fff',
@@ -454,9 +454,9 @@ const renderShopSpotlight = (product, router, currentLang, mainColor, isMobile) 
         <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'baseline', gap: '0.5rem', marginBottom: isMobile ? '1.5rem' : '2rem', flexWrap: 'wrap' }}>
           {hasSale && <span style={{ fontSize: isMobile ? '15px' : '18px', fontWeight: 'bold', color: '#ff6b6b' }}>{disc}%</span>}
           <span style={{ fontSize: isMobile ? '26px' : '36px', fontWeight: '900', color: '#fff', letterSpacing: '-0.5px' }}>
-            {commarNumber(sale)}원
+            {commarNumberWithUnit(sale)}
           </span>
-          {hasSale && <span style={{ fontSize: '14px', textDecoration: 'line-through', color: 'rgba(255,255,255,0.4)' }}>{commarNumber(orig)}원</span>}
+          {hasSale && <span style={{ fontSize: '14px', textDecoration: 'line-through', color: 'rgba(255,255,255,0.4)' }}>{commarNumberWithUnit(orig)}</span>}
         </div>
         <div style={{
           display: 'inline-block',
@@ -497,8 +497,8 @@ const renderShopShowcase = (product, router, currentLang, mainColor, isMobile) =
           background: '#1a1a1a', borderRadius: '16px', padding: '1.25rem',
           color: '#fff', display: 'flex', alignItems: 'baseline', gap: '0.75rem', flexWrap: 'wrap',
         }}>
-          {hasSale && <span style={{ fontSize: '13px', textDecoration: 'line-through', opacity: 0.5 }}>{commarNumber(orig)}원</span>}
-          <span style={{ fontSize: '24px', fontWeight: '900', letterSpacing: '-0.5px' }}>{commarNumber(sale)}원</span>
+          {hasSale && <span style={{ fontSize: '13px', textDecoration: 'line-through', opacity: 0.5 }}>{commarNumberWithUnit(orig)}</span>}
+          <span style={{ fontSize: '24px', fontWeight: '900', letterSpacing: '-0.5px' }}>{commarNumberWithUnit(sale)}</span>
           {hasSale && <span style={{ fontSize: '12px', color: '#ff6b6b', fontWeight: 'bold' }}>{disc}% OFF</span>}
         </div>
         <div style={{
@@ -555,11 +555,11 @@ const renderShopShowcase = (product, router, currentLang, mainColor, isMobile) =
       }}>
         {hasSale && (
           <div style={{ fontSize: '13px', textDecoration: 'line-through', opacity: 0.5, marginBottom: '0.25rem' }}>
-            {commarNumber(orig)}원
+            {commarNumberWithUnit(orig)}
           </div>
         )}
         <div style={{ fontSize: '28px', fontWeight: '900', letterSpacing: '-0.5px', marginBottom: '0.5rem' }}>
-          {commarNumber(sale)}원
+          {commarNumberWithUnit(sale)}
         </div>
         {hasSale && (
           <div style={{ fontSize: '12px', color: '#ff6b6b', letterSpacing: '2px', fontWeight: 'bold' }}>
@@ -613,9 +613,9 @@ const renderSingleMagazine = (product, router, currentLang, mainColor, brandName
         {comment && <div style={{ fontSize: isMobile ? '13px' : '15px', lineHeight: 1.7, color: themeObj.grey[600], fontStyle: 'italic', borderLeft: `3px solid ${mainColor}`, paddingLeft: '0.75rem' }}>"{comment}"</div>}
         <div style={{ display: 'flex', alignItems: 'baseline', gap: '0.75rem', marginTop: '0.25rem', flexWrap: 'wrap' }}>
           {hasSale && (
-            <div style={{ fontSize: '14px', textDecoration: 'line-through', color: themeObj.grey[400] }}>{commarNumber(orig)}원</div>
+            <div style={{ fontSize: '14px', textDecoration: 'line-through', color: themeObj.grey[400] }}>{commarNumberWithUnit(orig)}</div>
           )}
-          <div style={{ fontSize: isMobile ? '22px' : '28px', fontWeight: 'bold', color: mainColor }}>{commarNumber(sale)}원</div>
+          <div style={{ fontSize: isMobile ? '22px' : '28px', fontWeight: 'bold', color: mainColor }}>{commarNumberWithUnit(sale)}</div>
           {hasSale && <Badge style={{ background: '#e74c3c', color: '#fff' }}>-{disc}%</Badge>}
         </div>
         <div style={{
@@ -669,8 +669,8 @@ const renderRanking = (products, router, currentLang, mainColor) => {
               <div style={{ fontSize: '15px', fontWeight: 'bold' }}>{name}</div>
               <Row style={{ alignItems: 'baseline', gap: '0.3rem' }}>
                 {hasSale && <span style={{ color: 'red', fontSize: '14px', fontWeight: 'bold' }}>{disc}%</span>}
-                <span style={{ fontSize: '17px', fontWeight: 'bold' }}>{commarNumber(sale)}원</span>
-                {hasSale && <span style={{ fontSize: '12px', textDecoration: 'line-through', color: themeObj.grey[400] }}>{commarNumber(orig)}원</span>}
+                <span style={{ fontSize: '17px', fontWeight: 'bold' }}>{commarNumberWithUnit(sale)}</span>
+                {hasSale && <span style={{ fontSize: '12px', textDecoration: 'line-through', color: themeObj.grey[400] }}>{commarNumberWithUnit(orig)}</span>}
               </Row>
             </div>
           </div>
@@ -716,7 +716,7 @@ const renderPolaroid = (products, router, currentLang, mainColor) => {
               fontSize: '13px', fontWeight: 'bold',
               transform: 'rotate(3deg)',
             }}>
-              {commarNumber(sale)}원
+              {commarNumberWithUnit(sale)}
             </div>
           </div>
         );
@@ -761,10 +761,10 @@ const renderCompare = (products, router, currentLang, mainColor) => {
             <div style={{ fontSize: '14px', fontWeight: 'bold', textAlign: 'center', marginBottom: '0.5rem', minHeight: '40px' }}>{name}</div>
             {comment && <div style={{ fontSize: '12px', color: themeObj.grey[500], textAlign: 'center', marginBottom: '0.5rem', lineHeight: '1.4' }}>{comment}</div>}
             <div style={{ marginTop: 'auto', textAlign: 'center' }}>
-              {hasSale && <div style={{ fontSize: '12px', textDecoration: 'line-through', color: themeObj.grey[400] }}>{commarNumber(orig)}원</div>}
+              {hasSale && <div style={{ fontSize: '12px', textDecoration: 'line-through', color: themeObj.grey[400] }}>{commarNumberWithUnit(orig)}</div>}
               <Row style={{ justifyContent: 'center', gap: '0.25rem', alignItems: 'baseline' }}>
                 {hasSale && <span style={{ color: 'red', fontSize: '13px', fontWeight: 'bold' }}>{disc}%</span>}
-                <span style={{ fontSize: '18px', fontWeight: 'bold' }}>{commarNumber(sale)}원</span>
+                <span style={{ fontSize: '18px', fontWeight: 'bold' }}>{commarNumberWithUnit(sale)}</span>
               </Row>
             </div>
           </div>
@@ -806,7 +806,7 @@ const renderTimeline = (products, router, currentLang, mainColor) => {
               <div style={{ fontSize: '13px', fontWeight: 'bold', marginBottom: '0.2rem' }}>{name}</div>
               <Row style={{ justifyContent: 'center', gap: '0.2rem', alignItems: 'baseline' }}>
                 {hasSale && <span style={{ color: 'red', fontSize: '12px', fontWeight: 'bold' }}>{disc}%</span>}
-                <span style={{ fontSize: '15px', fontWeight: 'bold' }}>{commarNumber(sale)}원</span>
+                <span style={{ fontSize: '15px', fontWeight: 'bold' }}>{commarNumberWithUnit(sale)}</span>
               </Row>
             </div>
             <div style={{

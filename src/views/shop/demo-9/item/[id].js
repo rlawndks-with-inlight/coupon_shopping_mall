@@ -9,7 +9,7 @@ import { apiManager, apiShop } from 'src/utils/api';
 import { styled as muiStyle } from '@mui/material'
 import Head from 'next/head';
 import { Row } from 'src/components/elements/styled-components';
-import { commarNumber, getProductStatus } from 'src/utils/function';
+import { commarNumber, getProductStatus, commarNumberWithUnit } from 'src/utils/function';
 import { Icon } from '@iconify/react';
 import { insertCartDataUtil, insertWishDataUtil, selectItemOptionUtil } from 'src/utils/shop-util';
 import toast from 'react-hot-toast';
@@ -359,7 +359,7 @@ const ItemDemo = (props) => {
                         <ItemCharacter
                           key_name={'판매가'}
                           value={<>
-                            {commarNumber(parseInt(product?.product_sale_price))}원
+                            {commarNumberWithUnit(parseInt(product?.product_sale_price))}
                           </>
                           }
                         />
@@ -392,9 +392,9 @@ const ItemDemo = (props) => {
                                 <ItemCharacter
                                   key_name={'판매가'}
                                   value={<>
-                                    {commarNumber(product?.product_sale_price)}원
+                                    {commarNumberWithUnit(product?.product_sale_price)}
                                     <div style={{ textDecoration: 'line-through', color: '#999999' }}>
-                                      {commarNumber(product?.product_price)}원
+                                      {commarNumberWithUnit(product?.product_price)}
                                     </div>
                                   </>
                                   }
@@ -407,7 +407,7 @@ const ItemDemo = (props) => {
                               <ItemCharacter
                                 key_name={'판매가'}
                                 value={<>
-                                  {commarNumber(parseInt(product?.product_sale_price))}원
+                                  {commarNumberWithUnit(parseInt(product?.product_sale_price))}
                                 </>
                                 }
                               />

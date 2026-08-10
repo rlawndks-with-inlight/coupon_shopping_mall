@@ -1,7 +1,7 @@
 import styled from 'styled-components'
 import { useSettingsContext } from 'src/components/settings'
 import { LazyLoadImage } from 'react-lazy-load-image-component'
-import { commarNumber } from 'src/utils/function'
+import { commarNumber, commarNumberWithUnit } from 'src/utils/function'
 import { formatLang } from 'src/utils/format'
 import { useFeaturedProduct, useFeaturedProducts, getFeaturedCardData } from 'src/utils/use-featured-product'
 import { useLocales } from 'src/locales'
@@ -383,8 +383,8 @@ const Demo8 = (props) => {
         <PriceCell>
           <PriceLabelText>Price</PriceLabelText>
           <div>
-            {hasSale && <PriceOrig>{commarNumber(orig)}원 · -{disc}%</PriceOrig>}
-            <PriceHuge>{commarNumber(sale)}원</PriceHuge>
+            {hasSale && <PriceOrig>{commarNumberWithUnit(orig)} · -{disc}%</PriceOrig>}
+            <PriceHuge>{commarNumberWithUnit(sale)}</PriceHuge>
           </div>
         </PriceCell>
         <NameCell>
@@ -442,8 +442,8 @@ const Demo8 = (props) => {
                   <CardImage src={c.img} effect="blur" />
                   <MonoLabel>{`Item / ${String(i + 1).padStart(2, '0')}`}</MonoLabel>
                   <CardName>{c.name}</CardName>
-                  {c.hasSale && <PriceOrig>{commarNumber(c.orig)}원 · -{c.disc}%</PriceOrig>}
-                  <CardPrice>{commarNumber(c.sale)}원</CardPrice>
+                  {c.hasSale && <PriceOrig>{commarNumberWithUnit(c.orig)} · -{c.disc}%</PriceOrig>}
+                  <CardPrice>{commarNumberWithUnit(c.sale)}</CardPrice>
                 </ProductCell>
               );
             })}

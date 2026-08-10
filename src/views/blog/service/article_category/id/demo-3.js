@@ -10,6 +10,7 @@ import { useAuthContext } from 'src/layouts/manager/auth/useAuthContext';
 import GuestInquiryFields, { GUEST_INQUIRY_EMPTY, validateGuestInquiry } from 'src/components/elements/shop/GuestInquiryFields';
 import { apiShop } from 'src/utils/api';
 import ReactQuillComponent from 'src/views/manager/react-quill';
+import { formatLang } from 'src/utils/format';
 
 const ReactQuill = dynamic(() => import('react-quill'), {
     ssr: false,
@@ -198,7 +199,7 @@ const Demo3 = (props) => {
                             </>
                             :
                             <>
-                                <PostTitle themeMode={themeMode}>{item?.post_title}</PostTitle>
+                                <PostTitle themeMode={themeMode}>{formatLang(item, 'post_title')}</PostTitle>
                                 <MetaRow themeMode={themeMode}>
                                     {item?.writer_nickname && <span>{item?.writer_nickname}</span>}
                                     {item?.created_at && <span>{item?.created_at}</span>}
@@ -208,7 +209,7 @@ const Demo3 = (props) => {
                                 <ContentBox themeMode={themeMode}>
                                     <ReactQuill
                                         className='none-padding'
-                                        value={item?.post_content ?? `<body></body>`}
+                                        value={formatLang(item, 'post_content') ?? `<body></body>`}
                                         readOnly={true}
                                         theme={'bubble'}
                                         bounds={'.app'}
@@ -218,11 +219,11 @@ const Demo3 = (props) => {
                                     <ReplyBox key={idx} themeMode={themeMode}>
                                         <ReplyLabel themeMode={themeMode}>답변</ReplyLabel>
                                         {reply?.post_title &&
-                                            <PostTitle themeMode={themeMode} style={{ fontSize: '1rem' }}>{reply?.post_title}</PostTitle>}
+                                            <PostTitle themeMode={themeMode} style={{ fontSize: '1rem' }}>{formatLang(reply, 'post_title')}</PostTitle>}
                                         <ContentBox themeMode={themeMode} style={{ minHeight: 'auto' }}>
                                             <ReactQuill
                                                 className='none-padding'
-                                                value={reply?.post_content ?? `<body></body>`}
+                                                value={formatLang(reply, 'post_content') ?? `<body></body>`}
                                                 readOnly={true}
                                                 theme={'bubble'}
                                                 bounds={'.app'}

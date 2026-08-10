@@ -10,6 +10,7 @@ import toast from 'react-hot-toast';
 import { apiShop } from 'src/utils/api';
 import { useModal } from 'src/components/dialog/ModalProvider';
 import ReactQuillComponent from 'src/views/manager/react-quill';
+import { formatLang } from 'src/utils/format';
 
 const PostTitle = styled.h1`
 font-size:1.25rem;
@@ -146,7 +147,7 @@ const Demo1 = (props) => {
     return (
         <>
             <Wrappers>
-                <Title style={{ paddingBottom: '1rem' }}>{category?.post_category_title}</Title>
+                <Title style={{ paddingBottom: '1rem' }}>{formatLang(category, 'post_category_title')}</Title>
                 {!loading &&
                     <>
                         {isAdd ?
@@ -206,20 +207,20 @@ const Demo1 = (props) => {
                             </>
                             :
                             <>
-                                <PostTitle themeMode={themeMode}>{item?.post_title}</PostTitle>
+                                <PostTitle themeMode={themeMode}>{formatLang(item, 'post_title')}</PostTitle>
                                 <MetaRow themeMode={themeMode}>
                                     {item?.writer_nickname && <span>{item?.writer_nickname}</span>}
                                     {item?.created_at && <span>{item?.created_at}</span>}
                                 </MetaRow>
                                 {item?.post_title_img &&
                                     <img src={item?.post_title_img} style={{ width: '100%', marginBottom: '1rem' }} />}
-                                <Content themeMode={themeMode} dangerouslySetInnerHTML={{ __html: item?.post_content ?? '' }} />
+                                <Content themeMode={themeMode} dangerouslySetInnerHTML={{ __html: formatLang(item, 'post_content') ?? '' }} />
                                 {item?.replies && item?.replies.map((reply, idx) => (
                                     <ReplyBox key={idx} themeMode={themeMode}>
                                         <ReplyLabel mainColor={mainColor}>답변</ReplyLabel>
                                         {reply?.post_title &&
-                                            <PostTitle themeMode={themeMode} style={{ fontSize: '1.05rem' }}>{reply?.post_title}</PostTitle>}
-                                        <Content themeMode={themeMode} dangerouslySetInnerHTML={{ __html: reply?.post_content ?? '' }} />
+                                            <PostTitle themeMode={themeMode} style={{ fontSize: '1.05rem' }}>{formatLang(reply, 'post_title')}</PostTitle>}
+                                        <Content themeMode={themeMode} dangerouslySetInnerHTML={{ __html: formatLang(reply, 'post_content') ?? '' }} />
                                     </ReplyBox>
                                 ))}
                                 <ButtonRow>

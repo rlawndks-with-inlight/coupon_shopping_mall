@@ -11,6 +11,7 @@ import GuestInquiryFields, { GUEST_INQUIRY_EMPTY, validateGuestInquiry } from 's
 import { useModal } from 'src/components/dialog/ModalProvider';
 import { apiShop } from 'src/utils/api';
 import ReactQuillComponent from 'src/views/manager/react-quill';
+import { formatLang } from 'src/utils/format';
 
 const ReactQuill = dynamic(() => import('react-quill'), {
     ssr: false,
@@ -138,7 +139,7 @@ const Demo5 = (props) => {
     return (
         <>
             <Wrappers>
-                <Title style={{ paddingBottom: '0' }}>{postCategory?.post_category_title}</Title>
+                <Title style={{ paddingBottom: '0' }}>{formatLang(postCategory, 'post_category_title')}</Title>
                 {!loading &&
                     <Content themeMode={themeMode}>
                         {isAdd ?
@@ -201,7 +202,7 @@ const Demo5 = (props) => {
                             :
                             <>
                                 <PostHead themeMode={themeMode}>
-                                    <PostTitle themeMode={themeMode}>{item?.post_title}</PostTitle>
+                                    <PostTitle themeMode={themeMode}>{formatLang(item, 'post_title')}</PostTitle>
                                     <PostMeta themeMode={themeMode}>
                                         {item?.writer_nickname && <span>{item?.writer_nickname}</span>}
                                         {item?.created_at && <span>{item?.created_at}</span>}
@@ -211,7 +212,7 @@ const Demo5 = (props) => {
                                     <img src={item?.post_title_img} style={{ width: '100%' }} />}
                                 <ReactQuill
                                     className='none-padding'
-                                    value={item?.post_content ?? `<body></body>`}
+                                    value={formatLang(item, 'post_content') ?? `<body></body>`}
                                     readOnly={true}
                                     theme={'bubble'}
                                     bounds={'.app'}
@@ -220,10 +221,10 @@ const Demo5 = (props) => {
                                     <ReplyBox key={idx} themeMode={themeMode}>
                                         <ReplyLabel themeMode={themeMode}>답변</ReplyLabel>
                                         {reply?.post_title &&
-                                            <PostTitle themeMode={themeMode} style={{ fontSize: '1.05rem' }}>{reply?.post_title}</PostTitle>}
+                                            <PostTitle themeMode={themeMode} style={{ fontSize: '1.05rem' }}>{formatLang(reply, 'post_title')}</PostTitle>}
                                         <ReactQuill
                                             className='none-padding'
-                                            value={reply?.post_content ?? `<body></body>`}
+                                            value={formatLang(reply, 'post_content') ?? `<body></body>`}
                                             readOnly={true}
                                             theme={'bubble'}
                                             bounds={'.app'}

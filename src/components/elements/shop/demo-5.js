@@ -8,7 +8,7 @@ import { useRouter } from "next/router"
 import { LazyLoadImage } from "react-lazy-load-image-component"
 import { itemThemeCssDefaultSetting } from "src/views/manager/item-card/setting"
 import { useEffect, useState } from "react"
-import { commarNumber } from "src/utils/function"
+import { commarNumber, commarNumberWithUnit } from "src/utils/function"
 import { Upload } from "src/components/upload";
 import ReactQuillComponent from "src/views/manager/react-quill";
 import { useModal } from "src/components/dialog/ModalProvider"
@@ -16,6 +16,7 @@ import { apiManager } from "src/utils/api"
 import { apiShop } from "src/utils/api"
 import toast from "react-hot-toast"
 import Link from "next/link"
+import { formatLang } from 'src/utils/format';
 
 const ItemWrapper = styled.a`
 display: flex;
@@ -128,7 +129,7 @@ export const Item5 = (props) => {
                 : item?.status == 7 ? '매장문의'
                   :
                   <>
-                    {commarNumber(item?.product_sale_price) + '원'}
+                    {commarNumberWithUnit(item?.product_sale_price)}
                     {item?.product_price != item?.product_sale_price ?
                       <span style={{ color: '#EC1C24', marginLeft: '0.5rem' }}>
                         {parseInt((item?.product_price - item?.product_sale_price) * 100 / item?.product_price) + '%'}
@@ -323,7 +324,7 @@ export const AuthMenuSideComponent = (props) => {
         children: [
           ...themePostCategoryList.map((item) => {
             return {
-              label: item?.post_category_title,
+              label: formatLang(item, 'post_category_title'),
               link: `/shop/service/${item?.id}/`,
             }
           })
@@ -354,7 +355,7 @@ export const AuthMenuSideComponent = (props) => {
       children: [
         ...themePostCategoryList.map((item) => {
           return {
-            label: item?.post_category_title,
+            label: formatLang(item, 'post_category_title'),
             link: `/shop/service/${item?.id}`,
           }
         })

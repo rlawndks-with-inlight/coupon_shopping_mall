@@ -5,7 +5,7 @@ import { Row, themeObj } from 'src/components/elements/styled-components';
 import { useSettingsContext } from 'src/components/settings';
 import styled from 'styled-components'
 import _ from 'lodash'
-import { commarNumber } from 'src/utils/function';
+import { commarNumber, commarNumberWithUnit } from 'src/utils/function';
 import Slider from 'react-slick';
 import { useTheme } from '@emotion/react';
 import { logoSrc } from 'src/data/data';
@@ -222,7 +222,7 @@ const Demo2 = (props) => {
                             <>
                                 <Row style={{ alignItems: 'flex-end' }}>
                                     <div style={{ fontSize: themeObj.font_size.size8, fontWeight: 'bold', color: theme.palette.error.main }}>{parseInt((item.product_price - item.product_sale_price) / item.product_price * 100)}%</div>
-                                    <div style={{ marginLeft: '0.5rem', fontSize: themeObj.font_size.size9, textDecoration: 'line-through', color: themeObj.grey[500] }}>{commarNumber(item.product_price)}원</div>
+                                    <div style={{ marginLeft: '0.5rem', fontSize: themeObj.font_size.size9, textDecoration: 'line-through', color: themeObj.grey[500] }}>{commarNumberWithUnit(item.product_price)}</div>
                                 </Row>
 
                             </>}
@@ -238,7 +238,7 @@ const Demo2 = (props) => {
                             <div style={{ fontSize: themeObj.font_size.size8, color: '', fontWeight: 'bold', marginBottom: '0.5rem' }}>배송정보</div>
                         </Row>
                         <Row style={{ alignItems: 'flex-end', }}>
-                            <div style={{ fontSize: themeObj.font_size.size8, color: '' }}>배송비 : <span style={{ color: theme.palette.error.main }}>{commarNumber(item?.delivery_fee ?? 0)}원</span></div>
+                            <div style={{ fontSize: themeObj.font_size.size8, color: '' }}>배송비 : <span style={{ color: theme.palette.error.main }}>{commarNumberWithUnit(item?.delivery_fee ?? 0)}</span></div>
                         </Row>
                         <Row style={{ alignItems: 'flex-end', }}>
                             <div style={{ fontSize: themeObj.font_size.size8, color: '' }}>합배송 무제한</div>
@@ -354,27 +354,27 @@ const Demo2 = (props) => {
                         <>
                             <Stack direction="row" justifyContent="space-between">
                                 <FormControl sx={{ width: '100%' }}>
-                                    <InputLabel>{group?.group_name}</InputLabel>
+                                    <InputLabel>{formatLang(group, 'group_name')}</InputLabel>
                                     <Select
-                                        label={group?.group_name}
+                                        label={formatLang(group, 'group_name')}
                                         sx={{
                                             width: '100%'
                                         }}
-                                        placeholder={group?.group_name}
+                                        placeholder={formatLang(group, 'group_name')}
                                         onChange={(e) => {
                                             onSelectOption(group, e.target.value)
                                         }}
                                     >
                                         {group?.options && group?.options.map((data) => (
                                             <MenuItem
-                                                key={data?.option_name}
+                                                key={formatLang(data, 'option_name')}
                                                 value={data}
-                                            >{data?.option_name} {data.option_price > 0 ? '+' + commarNumber(data.option_price) : ''}</MenuItem>
+                                            >{formatLang(data, 'option_name')} {data.option_price > 0 ? '+' + commarNumber(data.option_price) : ''}</MenuItem>
                                         ))}
                                     </Select>
                                 </FormControl>
                                 {/* <Typography variant="subtitle2" sx={{ height: 40, lineHeight: '40px', flexGrow: 1 }}>
-                                    {group?.group_name}
+                                    {formatLang(group, 'group_name')}
                                 </Typography>
                                 <FormControl size='small'>
                                     <InputLabel id="demo-simple-select-label">{translate('선택')}</InputLabel>
@@ -395,8 +395,8 @@ const Demo2 = (props) => {
                                         }}
                                     >
                                         {group?.options && group?.options.map((option) => (
-                                            <MenuItem key={option?.option_name} value={option}>
-                                                {option?.option_name}
+                                            <MenuItem key={formatLang(option, 'option_name')} value={option}>
+                                                {formatLang(option, 'option_name')}
                                                 {(option?.option_price > 0 || option?.option_price < 0) ? ` (${option?.option_price > 0 ? '+' : ''}${commarNumber(setProductPriceByLang(option, 'option_price', price_lang, currentLang?.value))})` : ''}
                                             </MenuItem>
                                         ))}
@@ -409,7 +409,7 @@ const Demo2 = (props) => {
                         <>
                             <DrawerBox>
                                 <Row style={{ justifyContent: 'space-between' }}>
-                                    <div>{option?.option_name}</div>
+                                    <div>{formatLang(option, 'option_name')}</div>
                                     <Icon icon='fluent-mdl2:cancel' style={{ cursor: 'pointer' }}
                                         onClick={() => {
                                             let select_options = [...selectOptions];
@@ -443,7 +443,7 @@ const Demo2 = (props) => {
                                                 setSelectOptions(select_options)
                                             }} />
                                     </Row>
-                                    <div>{commarNumber((test_item.product_sale_price + _.find(test_color_list, { id: item?.id }).price) * (item.count))}원</div>
+                                    <div>{commarNumberWithUnit((test_item.product_sale_price + _.find(test_color_list, { id: item?.id }).price) * (item.count))}</div>
 
                                 </Row>
                             </DrawerBox>

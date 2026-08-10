@@ -9,7 +9,7 @@ import { apiManager, apiShop } from 'src/utils/api';
 import { styled as muiStyle } from '@mui/material'
 import Head from 'next/head';
 import { Row } from 'src/components/elements/styled-components';
-import { commarNumber, isPurchasable } from 'src/utils/function';
+import { commarNumber, isPurchasable, commarNumberWithUnit } from 'src/utils/function';
 import { Icon } from '@iconify/react';
 import { insertCartDataUtil, insertWishDataUtil, selectItemOptionUtil } from 'src/utils/shop-util';
 import toast from 'react-hot-toast';
@@ -17,6 +17,7 @@ import DialogBuyNow from 'src/components/dialog/DialogBuyNow';
 import { useAuthContext } from 'src/layouts/manager/auth/useAuthContext';
 import { useModal } from 'src/components/dialog/ModalProvider';
 import { isShopgoBrand } from 'src/utils/is-shopgo';
+import { formatLang, characterChoices } from 'src/utils/format';
 
 const ReactQuill = dynamic(() => import('react-quill'), {
   ssr: false,
@@ -184,7 +185,7 @@ const ItemDemo = (props) => {
         <StyledReactQuill
           className='none-scroll'
           value={`
-    ${product?.product_description ?? ''}
+    ${formatLang(product, 'product_description') ?? ''}
     ${themeDnsData?.basic_info}
   `}
           readOnly={true}
@@ -294,11 +295,11 @@ const ItemDemo = (props) => {
           {product?.groups && product?.groups.map((group, gIdx) => (
             <Stack key={group?.id ?? gIdx} direction="row" justifyContent="space-between">
               <FormControl sx={{ width: '100%', marginTop: '1rem' }}>
-                <InputLabel>{group?.group_name}</InputLabel>
+                <InputLabel>{formatLang(group, 'group_name')}</InputLabel>
                 <Select
-                  label={group?.group_name}
+                  label={formatLang(group, 'group_name')}
                   sx={{ width: '100%' }}
-                  placeholder={group?.group_name}
+                  placeholder={formatLang(group, 'group_name')}
                   onChange={(e) => {
                     const option = (group?.options ?? [])[Number(e.target.value)];
                     if (option) onSelectOption(group, option);
@@ -306,7 +307,7 @@ const ItemDemo = (props) => {
                 >
                   {(group?.options ?? []).map((option, oIdx) => (
                     <MenuItem key={option?.id ?? oIdx} value={oIdx}>
-                      {option?.option_name}{option?.option_price > 0 ? ` (+${commarNumber(option?.option_price)})` : ''}
+                      {formatLang(option, 'option_name')}{option?.option_price > 0 ? ` (+${commarNumber(option?.option_price)})` : ''}
                     </MenuItem>
                   ))}
                 </Select>
@@ -317,22 +318,24 @@ const ItemDemo = (props) => {
             <>
               <Stack direction="row" justifyContent="space-between">
                 <FormControl sx={{ width: '100%', marginTop: '1rem' }}>
-                  <InputLabel>{character?.character_name}</InputLabel>
+                  <InputLabel>{formatLang(character, 'character_name')}</InputLabel>
                   <Select
-                    label={character?.character_name}
+                    label={formatLang(character, 'character_name')}
                     sx={{
                       width: '100%',
                     }}
-                    placeholder={character?.character_name}
+                    placeholder={formatLang(character, 'character_name')}
                     onChange={(e) => {
                       onSelectOption(character, e.target.value)
                     }}
                   >
-                    {character?.character_value && character?.character_value.split(/[,/]\s*/)?.map(val => val.trim()).map((data, idx) => (
+                    {/* 보이는 건 번역, 고르면 저장되는 건 원문(value). 특성 값은 주문에 그대로
+                        박히므로 번역본을 저장하면 가맹점 주문서가 외국어가 된다. */}
+                    {characterChoices(character).map(({ value: data, label }, idx) => (
                       <MenuItem
                         key={idx}
                         value={data}
-                      >{data} {/*data.option_price > 0 ? '+' + commarNumber(data.option_price) : ''*/}</MenuItem>
+                      >{label} {/*data.option_price > 0 ? '+' + commarNumber(data.option_price) : ''*/}</MenuItem>
                     ))}
                   </Select>
                 </FormControl>
@@ -419,7 +422,9 @@ const ItemDemo = (props) => {
                         })}
                         {themeDnsData?.id != 74 && product?.characters && product?.characters.map((character) => (
                           <>
-                            <ItemCharacter key_name={character?.character_name} value={character?.character_value} />
+                            {/* 상세 정보표는 읽기 전용이라 값도 번역본을 그대로 보여줘도 된다
+                                (주문에 저장되는 건 위 Select 에서 고른 원문이다) */}
+                            <ItemCharacter key_name={formatLang(character, 'character_name')} value={formatLang(character, 'character_value')} />
                           </>
                         ))}
                         {/*
@@ -431,9 +436,9 @@ const ItemDemo = (props) => {
                                 <ItemCharacter
                                   key_name={'판매가'}
                                   value={<>
-                                    {commarNumber(product?.product_sale_price)}원
+                                    {commarNumberWithUnit(product?.product_sale_price)}
                                     <div style={{ textDecoration: 'line-through', color: '#999999' }}>
-                                      {commarNumber(product?.product_price)}원
+                                      {commarNumberWithUnit(product?.product_price)}
                                     </div>
                                   </>
                                   }
@@ -446,7 +451,7 @@ const ItemDemo = (props) => {
                                 <ItemCharacter
                                   key_name={'판매가'}
                                   value={<>
-                                    {commarNumber(parseInt(product?.product_sale_price))}원
+                                    {commarNumberWithUnit(parseInt(product?.product_sale_price))}
                                   </>
                                   }
                                 />
@@ -491,19 +496,19 @@ const ItemDemo = (props) => {
                         {commarNumber(product?.product_price) != commarNumber(product?.product_sale_price) ?
                           <>
                             <div style={{ fontSize: '14px', textDecoration: 'line-through', color: '#999999' }}>
-                              {commarNumber(product?.product_price)}원
+                              {commarNumberWithUnit(product?.product_price)}
                             </div>
                             <div style={{ fontSize: '22px', display: 'flex' }}>
                               <div style={{ marginRight: '1rem' }}>
                                 {parseFloat((parseInt(product?.product_price - product?.product_sale_price) / parseInt(product?.product_price) * 100).toFixed(2))}%
                               </div>
-                              {commarNumber(product?.product_sale_price)}원
+                              {commarNumberWithUnit(product?.product_sale_price)}
                             </div>
                           </>
                           :
                           <>
                             <div style={{ fontSize: '22px' }}>
-                              {product?.product_sale_price != 0 ? <div>{commarNumber(product?.product_sale_price)}원</div> : <div>SOLD OUT</div>}
+                              {product?.product_sale_price != 0 ? <div>{commarNumberWithUnit(product?.product_sale_price)}</div> : <div>SOLD OUT</div>}
                             </div>
                           </>
                         }
@@ -552,7 +557,7 @@ const ItemDemo = (props) => {
                           <ItemCharacter
                             key_name={'판매가'}
                             value={<>
-                              {commarNumber(parseInt(product?.product_sale_price))}원
+                              {commarNumberWithUnit(parseInt(product?.product_sale_price))}
                             </>
                             }
                           />
@@ -560,7 +565,7 @@ const ItemDemo = (props) => {
                             themeDnsData?.id == 74 &&
                             <>
                               <div style={{ textAlign: 'right', color: 'gray' }}>
-                                구매시 {commarNumber(product?.product_sale_price * themeDnsData?.seller_point)}원 적립
+                                구매시 {commarNumberWithUnit(product?.product_sale_price * themeDnsData?.seller_point)} 적립
                               </div>
                             </>
                           }
@@ -570,7 +575,7 @@ const ItemDemo = (props) => {
                           <ItemCharacter
                             key_name={'배송비'}
                             value={product?.delivery_fee > 0
-                              ? <>{commarNumber(product?.delivery_fee)}원</>
+                              ? <>{commarNumberWithUnit(product?.delivery_fee)}</>
                               : <>무료배송</>}
                           />
                         </div>

@@ -10,6 +10,7 @@ import { useAuthContext } from 'src/layouts/manager/auth/useAuthContext';
 import GuestInquiryFields, { GUEST_INQUIRY_EMPTY, validateGuestInquiry } from 'src/components/elements/shop/GuestInquiryFields';
 import { apiShop } from 'src/utils/api';
 import ReactQuillComponent from 'src/views/manager/react-quill';
+import { formatLang } from 'src/utils/format';
 
 const ReactQuill = dynamic(() => import('react-quill'), {
     ssr: false,
@@ -139,7 +140,7 @@ const Demo2 = (props) => {
     return (
         <>
             <Wrappers>
-                <Title style={{ paddingBottom: '0' }}>{postCategory?.post_category_title}</Title>
+                <Title style={{ paddingBottom: '0' }}>{formatLang(postCategory, 'post_category_title')}</Title>
                 {!loading &&
                     <>
                         {isAdd ?
@@ -180,14 +181,14 @@ const Demo2 = (props) => {
                             </>
                             :
                             <DetailCard themeMode={themeMode} style={{ marginTop: '1rem' }}>
-                                <PostTitle themeMode={themeMode}>{item?.post_title ?? '---'}</PostTitle>
+                                <PostTitle themeMode={themeMode}>{formatLang(item, 'post_title') ?? '---'}</PostTitle>
                                 {item?.writer_nickname &&
                                     <PostMeta themeMode={themeMode}>작성자 {item?.writer_nickname}</PostMeta>}
                                 {item?.post_title_img &&
                                     <img src={item?.post_title_img} style={{ width: '100%', marginTop: '1rem', borderRadius: '8px' }} />}
                                 <ReactQuill
                                     className='none-padding'
-                                    value={item?.post_content ?? `<body></body>`}
+                                    value={formatLang(item, 'post_content') ?? `<body></body>`}
                                     readOnly={true}
                                     theme={"bubble"}
                                     bounds={'.app'}
@@ -195,10 +196,10 @@ const Demo2 = (props) => {
                                 {item?.replies && item?.replies.map((reply, idx) => (
                                     <ReplyBlock key={idx} themeMode={themeMode}>
                                         <ReplyLabel>답변</ReplyLabel>
-                                        <PostTitle themeMode={themeMode} style={{ fontSize: '1rem', border: 'none', paddingBottom: '0' }}>{reply?.post_title}</PostTitle>
+                                        <PostTitle themeMode={themeMode} style={{ fontSize: '1rem', border: 'none', paddingBottom: '0' }}>{formatLang(reply, 'post_title')}</PostTitle>
                                         <ReactQuill
                                             className='none-padding'
-                                            value={reply?.post_content ?? `<body></body>`}
+                                            value={formatLang(reply, 'post_content') ?? `<body></body>`}
                                             readOnly={true}
                                             theme={"bubble"}
                                             bounds={'.app'}

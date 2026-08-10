@@ -10,6 +10,7 @@ import { commarNumber, getAllIdsWithParents, getDownToTopChildren } from 'src/ut
 import { apiManager, apiShop } from 'src/utils/api';
 import { insertCartDataUtil, selectItemOptionUtil, startBuyNow } from 'src/utils/shop-util';
 import toast from 'react-hot-toast';
+import { formatLang } from 'src/utils/format';
 
 const Wrappers = styled.div`
 max-width: 840px;
@@ -213,7 +214,7 @@ const Demo4 = (props) => {
                     }}>
                         {themePostCategoryList && themePostCategoryList.map((item, idx) => (
                             <>
-                                <SubTitle style={{ borderRight: `${idx == themePostCategoryList.length - 1 ? 'none' : '1px solid #fff'}`, width: '65px' }}>{item?.post_category_title}</SubTitle>
+                                <SubTitle style={{ borderRight: `${idx == themePostCategoryList.length - 1 ? 'none' : '1px solid #fff'}`, width: '65px' }}>{formatLang(item, 'post_category_title')}</SubTitle>
                             </>
                         ))}
                     </Row>
@@ -249,7 +250,7 @@ const Demo4 = (props) => {
                                         borderBottom: `2px solid ${categoryId == item?.id ? `${themeMode == 'dark' ? '#fff' : '#000'}` : 'transparent'}`,
                                         cursor: 'pointer'
                                     }}
-                                >{item.category_name}</Category>
+                                >{formatLang(item, 'category_name')}</Category>
                             </>
                         ))}
                     </CategoryContainer>
@@ -297,22 +298,22 @@ const Demo4 = (props) => {
                         <>
                             <Stack direction="row" justifyContent="space-between" key={group?.id} sx={{ marginBottom: '1rem' }}>
                                 <FormControl sx={{ width: '100%' }}>
-                                    <InputLabel>{group?.group_name}</InputLabel>
+                                    <InputLabel>{formatLang(group, 'group_name')}</InputLabel>
                                     <Select
-                                        label={group?.group_name}
+                                        label={formatLang(group, 'group_name')}
                                         sx={{
                                             width: '100%'
                                         }}
-                                        placeholder={group?.group_name}
+                                        placeholder={formatLang(group, 'group_name')}
                                         onChange={(e) => {
                                             onSelectOption(group, e.target.value)
                                         }}
                                     >
                                         {group?.options && group?.options.map((data) => (
                                             <MenuItem
-                                                key={data?.option_name}
+                                                key={formatLang(data, 'option_name')}
                                                 value={data}
-                                            >{data?.option_name} {data.option_price > 0 ? '+' + commarNumber(data.option_price) : ''}</MenuItem>
+                                            >{formatLang(data, 'option_name')} {data.option_price > 0 ? '+' + commarNumber(data.option_price) : ''}</MenuItem>
                                         ))}
                                     </Select>
                                 </FormControl>

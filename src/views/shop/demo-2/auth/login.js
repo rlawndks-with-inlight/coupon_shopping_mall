@@ -10,6 +10,7 @@ import { commarNumber, safeRedirectPath, getOrderStatusText } from 'src/utils/fu
 import { useLocales } from 'src/locales';
 import toast from 'react-hot-toast';
 import { getOptionLabel } from 'src/utils/shop-util';
+import { formatLang } from 'src/utils/format';
 
 const Wrapper = styled.div`
 display:flex;
@@ -266,7 +267,7 @@ const LoginDemo = (props) => {
                           <Col>
                             {order?.groups && order?.groups.map((group, idx) => (
                               <Row key={idx}>
-                                <div style={{ minWidth: '62px', marginRight: '0.25rem' }}>{group?.group_name}: </div>
+                                <div style={{ minWidth: '62px', marginRight: '0.25rem' }}>{formatLang(group, 'group_name')}: </div>
                                 {group?.options && group?.options.map((option, idx2) => (
                                   <>
                                     <div>{getOptionLabel(option)} </div>{idx2 == group?.options.length - 1 ? '' : <>&nbsp;/&nbsp;</>}

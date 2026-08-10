@@ -6,7 +6,7 @@ import { Row, themeObj } from 'src/components/elements/styled-components';
 import { useSettingsContext } from 'src/components/settings';
 import styled from 'styled-components'
 import _ from 'lodash'
-import { commarNumber } from 'src/utils/function';
+import { commarNumber, commarNumberWithUnit } from 'src/utils/function';
 import Slider from 'react-slick';
 import { useTheme } from '@emotion/react';
 import dynamic from 'next/dynamic';
@@ -211,7 +211,7 @@ const Demo1 = (props) => {
               <>
                 <Row style={{ alignItems: 'flex-end' }}>
                   <div style={{ fontSize: themeObj.font_size.size8, fontWeight: 'bold' }}>{parseInt((item.product_price - item.product_sale_price) / item.product_price * 100)}%</div>
-                  <div style={{ marginLeft: '0.5rem', fontSize: themeObj.font_size.size9, textDecoration: 'line-through', color: themeObj.grey[500] }}>{commarNumber(item.product_price)}원</div>
+                  <div style={{ marginLeft: '0.5rem', fontSize: themeObj.font_size.size9, textDecoration: 'line-through', color: themeObj.grey[500] }}>{commarNumberWithUnit(item.product_price)}</div>
                 </Row>
 
               </>}
@@ -266,22 +266,22 @@ const Demo1 = (props) => {
             <>
               <Stack direction="row" justifyContent="space-between">
                 <FormControl sx={{ width: '100%' }}>
-                  <InputLabel>{group?.group_name}</InputLabel>
+                  <InputLabel>{formatLang(group, 'group_name')}</InputLabel>
                   <Select
-                    label={group?.group_name}
+                    label={formatLang(group, 'group_name')}
                     sx={{
                       width: '100%'
                     }}
-                    placeholder={group?.group_name}
+                    placeholder={formatLang(group, 'group_name')}
                     onChange={(e) => {
                       onSelectOption(group, e.target.value)
                     }}
                   >
                     {group?.options && group?.options.map((data) => (
                       <MenuItem
-                        key={data?.option_name}
+                        key={formatLang(data, 'option_name')}
                         value={data}
-                      >{data?.option_name} {data.option_price > 0 ? '+' + commarNumber(data.option_price) : ''}</MenuItem>
+                      >{formatLang(data, 'option_name')} {data.option_price > 0 ? '+' + commarNumber(data.option_price) : ''}</MenuItem>
                     ))}
                   </Select>
                 </FormControl>

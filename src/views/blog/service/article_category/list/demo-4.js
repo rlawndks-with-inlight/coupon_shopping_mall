@@ -96,7 +96,6 @@ const Demo4 = (props) => {
     }, [router.query?.article_category, themePostCategoryList])
 
     const pageSetting = async () => {
-  const { translate } = useLocales();
         let found = _.find(themePostCategoryList, { id: parseInt(router.query?.article_category) });
         if (!found) return;
         // 원본 객체를 변형하지 않도록 새 객체/배열로 '전체' 탭을 앞에 붙인다.

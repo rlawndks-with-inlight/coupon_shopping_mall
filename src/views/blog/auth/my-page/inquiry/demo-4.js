@@ -37,7 +37,6 @@ const Demo4 = (props) => {
     }, [themePostCategoryList])
 
     const settingPage = async () => {
-  const { translate } = useLocales();
         // 1:1문의 게시판을 테마 게시판 목록에서 찾는다. (없으면 빈 상태 유지)
         const category = _.find(themePostCategoryList, { post_category_title: translate('1:1문의') });
         setInquiryCategory(category);

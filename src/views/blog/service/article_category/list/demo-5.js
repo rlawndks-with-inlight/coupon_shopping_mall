@@ -95,7 +95,6 @@ const Demo5 = (props) => {
     }, [router.query?.article_category, themePostCategoryList])
 
     const pageSetting = async () => {
-  const { translate } = useLocales();
         let found = _.find(themePostCategoryList, { id: parseInt(router.query?.article_category) });
         let categoryData = {
             ...found,

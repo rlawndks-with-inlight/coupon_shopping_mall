@@ -105,7 +105,6 @@ const PayResultDemo = (props) => {
   }, [])
 
   const getResultContent = (type) => {
-  const { translate } = useLocales();
     if (type === '0000') {
       return {
         icon: <Icon icon={'mdi:success-circle-outline'} style={{ margin: 'auto', fontSize: '8rem', color: themeDnsData?.theme_css?.main_color }} />,

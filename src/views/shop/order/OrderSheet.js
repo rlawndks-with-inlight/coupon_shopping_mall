@@ -61,6 +61,12 @@ export default function OrderSheet({ router }) {
   const { setModal } = useModal();
   // 주문서는 다국어를 전혀 거치지 않았다 — 결제 직전 화면인데 라벨이 전부 한국어였다.
   const { translate } = useLocales();
+  // ⚠ 배송 방식은 country_code 로 판정하면 안 된다.
+  //    isDomestic('') 는 true 다(빈 값을 KR 로 보정). 해외를 고르면 country_code 를 비우는데
+  //    그게 다시 '국내'로 읽혀 토글이 즉시 되돌아왔다 — 눌리지 않는 것처럼 보였다.
+  //    '아직 국가를 안 고름('')' 과 '국내(KR)' 는 다른 상태다.
+  const [addrMode, setAddrMode] = useState('KR'); // 'KR' | 'OVERSEAS'
+  const isKR = addrMode === 'KR';
   const { user } = useAuthContext();
   const { themeCartData, onChangeCartData, themeDnsData } = useSettingsContext();
   const setting_obj = themeDnsData?.setting_obj || {};
@@ -265,9 +271,11 @@ export default function OrderSheet({ router }) {
       zonecode: item?.zonecode ?? undefined,
       // 국가 정보도 주문에 함께 남긴다 — 주소록 행은 나중에 바뀌거나 지워질 수 있다.
       country_code: item?.country_code || 'KR',
+      // 주소록에서 고른 배송지가 해외면 화면도 해외 모드로 맞춘다.
       city: item?.city ?? undefined,
       state_region: item?.state_region ?? undefined,
     });
+    setAddrMode(isDomestic(item?.country_code) ? 'KR' : 'OVERSEAS');
   };
   const onAddAddress = async (address_obj) => {
     const result = await apiManager('user-addresses', (address_obj?.id > 0 ? 'update' : 'create'), { ...address_obj, user_id: user?.id });
@@ -332,7 +340,7 @@ export default function OrderSheet({ router }) {
       return false;
     }
     // 해외 연락처는 국가번호(+81 …)가 붙어 국내 자릿수 규칙에 안 맞는다 — 국내일 때만 형식을 본다.
-    if (isDomestic(payData.country_code) && payData.addr_phone && !isValidPhoneNumber(payData.addr_phone)) {
+    if (isKR && payData.addr_phone && !isValidPhoneNumber(payData.addr_phone)) {
       toast.error('받는 분 연락처를 정확히 입력해 주세요.');
       return false;
     }
@@ -354,7 +362,7 @@ export default function OrderSheet({ router }) {
       toast.error('배송지 주소를 입력해 주세요.');
       return false;
     }
-    if (directMode && !isDomestic(payData.country_code) && !String(payData.country_code ?? '').trim()) {
+    if (directMode && !isKR && !String(payData.country_code ?? '').trim()) {
       toast.error('배송 국가를 선택해 주세요.');
       return false;
     }
@@ -725,13 +733,15 @@ export default function OrderSheet({ router }) {
                           비회원은 주소록 자체가 없어서, 여기 없으면 **해외 주문을 넣을 방법이 아예 없다**. */}
                       <ToggleButtonGroup
                         exclusive size="small"
-                        value={isDomestic(payData.country_code) ? 'KR' : 'OVERSEAS'}
+                        value={addrMode}
                         onChange={(e, v) => {
                           if (!v) return;
                           // 전환하면 이전 방식으로 채운 주소를 비운다 — 국내 도로명주소가
                           // 해외 주문에 그대로 남아 나가는 것을 막는다.
+                          setAddrMode(v);
                           setPayData({
                             ...payData,
+                            // 해외는 국가 미선택('')으로 두고 아래 국가 선택에서 고르게 한다.
                             country_code: v === 'KR' ? KOREA_CODE : '',
                             addr: '', detail_addr: '', zonecode: '', city: '', state_region: '',
                           });
@@ -745,12 +755,12 @@ export default function OrderSheet({ router }) {
                         <TextField fullWidth size="small" label={translate('받는 사람')} value={payData.receiver || ''}
                           onChange={(e) => setPayData({ ...payData, receiver: e.target.value })} />
                         <TextField fullWidth size="small" label={translate('연락처')} value={payData.addr_phone || ''}
-                          inputMode="tel" placeholder={isDomestic(payData.country_code) ? '010-1234-5678' : '+81 90-1234-5678'}
+                          inputMode="tel" placeholder={isKR ? '010-1234-5678' : '+81 90-1234-5678'}
                           // 해외 번호는 국가번호(+)와 공백이 들어간다 — 국내 형식으로 걸러내면 입력이 막힌다.
-                          onChange={(e) => setPayData({ ...payData, addr_phone: isDomestic(payData.country_code) ? sanitizePhoneInput(e.target.value) : e.target.value })} />
+                          onChange={(e) => setPayData({ ...payData, addr_phone: isKR ? sanitizePhoneInput(e.target.value) : e.target.value })} />
                       </Stack>
 
-                      {isDomestic(payData.country_code) ? (
+                      {isKR ? (
                         <>
                           <Stack direction="row" spacing={1} alignItems="flex-start">
                             <TextField size="small" label={translate('우편번호')} value={payData.zonecode || ''} InputProps={{ readOnly: true }} sx={{ width: 140 }} />

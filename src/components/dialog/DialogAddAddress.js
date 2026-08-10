@@ -47,6 +47,12 @@ const EMPTY_FORM = {
 const DialogAddAddress = (props) => {
   // 배송지 입력 라벨이 번역을 안 거쳐 다른 언어에서도 한국어로 남았다.
   const { translate } = useLocales();
+  // ⚠ 배송 방식은 country_code 로 판정하면 안 된다.
+  //    isDomestic('') 는 true 다(빈 값을 KR 로 보정한다). 해외를 고르면 country_code 를
+  //    비우는데 그게 다시 '국내'로 읽혀 토글이 즉시 되돌아왔다 — 눌리지 않는 것처럼 보였다.
+  //    '아직 국가를 안 고름('')' 과 '국내(KR)' 는 다른 상태다. 방식은 따로 들고 간다.
+  const [addrMode, setAddrMode] = useState('KR'); // 'KR' | 'OVERSEAS'
+  const isKR = addrMode === 'KR';
 
   // ** State
   // onDeleteAddress 는 더 이상 저장 경로에서 쓰지 않는다(수정은 update 로 처리).
@@ -90,6 +96,7 @@ const DialogAddAddress = (props) => {
         city: data?.city ?? '',
         state_region: data?.state_region ?? '',
       });
+      setAddrMode(isDomestic(data?.country_code) ? 'KR' : 'OVERSEAS');
     })();
     return () => { alive = false; };
   }, [addAddressOpen, isUpdate, id])
@@ -107,6 +114,7 @@ const DialogAddAddress = (props) => {
 
   const closeAndReset = () => {
     setAddAddressObj({ ...EMPTY_FORM });
+    setAddrMode('KR'); // 방식도 함께 초기화(안 하면 다음에 열 때 해외 화면이 남는다)
     setAddAddressOpen(false);
   };
 
@@ -154,7 +162,7 @@ const DialogAddAddress = (props) => {
                 placeholder="010-0000-0000"
                 // 국내는 하이픈 자동정리, 해외는 국가번호(+)·공백을 살려야 하므로 그대로 받는다.
                 onChange={(e) => setField('phone',
-                  isDomestic(addAddressObj.country_code) ? sanitizePhoneInput(e.target.value) : e.target.value)}
+                  isKR ? sanitizePhoneInput(e.target.value) : e.target.value)}
               />
               {/* 국내/해외 토글 — 이 하나로 주소 입력 방식이 갈린다.
                   국내는 지금까지처럼 다음 우편번호 팝업(행안부 도로명주소 DB)을 쓴다.
@@ -166,13 +174,15 @@ const DialogAddAddress = (props) => {
                 size="small"
                 fullWidth
                 sx={{ mt: 1.5, mb: 0.5 }}
-                value={isDomestic(addAddressObj.country_code) ? 'KR' : 'OVERSEAS'}
+                value={addrMode}
                 onChange={(e, v) => {
                   if (!v) return;
                   // 방식을 바꾸면 이전 방식으로 채운 주소값은 그대로 두면 안 된다
                   // (국내 도로명주소가 해외 주소칸에 남거나 그 반대가 된다).
+                  setAddrMode(v);
                   setAddAddressObj((prev) => ({
                     ...prev,
+                    // 해외는 국가를 아직 고르지 않은 상태('')로 둔다 — 아래 국가 선택에서 고른다.
                     country_code: v === 'KR' ? KOREA_CODE : '',
                     addr: '', detail_addr: '', zonecode: '', city: '', state_region: '',
                     is_open_daum_post: false,
@@ -183,7 +193,7 @@ const DialogAddAddress = (props) => {
                 <ToggleButton value="OVERSEAS">{translate('해외배송')}</ToggleButton>
               </ToggleButtonGroup>
 
-              {isDomestic(addAddressObj.country_code) ?
+              {isKR ?
                 <>
                   <TextField
                     fullWidth
@@ -292,7 +302,7 @@ const DialogAddAddress = (props) => {
                 // 연락처 형식 검사는 국내 번호 기준(9~11자리)이다.
                 // 해외 번호는 국가번호 포함 길이가 제각각이라 같은 잣대를 대면 멀쩡한 번호가 막힌다.
                 // 해외는 '비어 있지 않은지'만 본다 — 최종 확인은 어차피 가맹점이 한다.
-                if (isDomestic(addAddressObj.country_code)) {
+                if (isKR) {
                   if (!isValidPhoneNumber(addAddressObj.phone)) {
                     toast.error('받는 분 연락처를 정확히 입력해 주세요.');
                     return;
@@ -327,6 +337,7 @@ const DialogAddAddress = (props) => {
                   // (예전엔 여기서 삭제 후 재생성을 했다 — 받는사람·연락처·기본배송지가 날아가고 id 도 바뀌었다)
                   await onAddAddress(isUpdate ? { ...payload, id } : payload);
                   setAddAddressObj({ ...EMPTY_FORM });
+    setAddrMode('KR'); // 방식도 함께 초기화(안 하면 다음에 열 때 해외 화면이 남는다)
                   setAddAddressOpen(false);
                 } finally {
                   setSaving(false);

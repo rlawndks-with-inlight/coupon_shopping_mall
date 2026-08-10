@@ -19,7 +19,7 @@ import { calcOrderTotals, calculatorPrice, getCartDataUtil, makePayData, onPayPr
 import { syncCartWithServer, makeUnavailableMessage, filterUnavailableByProducts } from 'src/utils/cart-sync';
 import { forspayMethodList } from 'src/utils/format';
 import { sanitizePhoneInput, isValidPhoneNumber, makeOrdNum } from 'src/utils/function';
-import { COUNTRIES, KOREA_CODE, formatOverseasAddress, isDomestic } from 'src/data/countries';
+import { KOREA_CODE, OVERSEAS_CODE, formatOverseasAddress, isDomestic } from 'src/data/countries';
 import Policy from 'src/pages/shop/auth/policy';
 import { useAuthContext } from 'src/layouts/manager/auth/useAuthContext';
 import { formatCreditCardNumber, formatExpirationDate } from 'src/utils/formatCard';
@@ -271,6 +271,7 @@ export default function OrderSheet({ router }) {
       zonecode: item?.zonecode ?? undefined,
       // 국가 정보도 주문에 함께 남긴다 — 주소록 행은 나중에 바뀌거나 지워질 수 있다.
       country_code: item?.country_code || 'KR',
+      country_name: item?.country_name ?? undefined,
       // 주소록에서 고른 배송지가 해외면 화면도 해외 모드로 맞춘다.
       city: item?.city ?? undefined,
       state_region: item?.state_region ?? undefined,
@@ -362,8 +363,8 @@ export default function OrderSheet({ router }) {
       toast.error('배송지 주소를 입력해 주세요.');
       return false;
     }
-    if (directMode && !isKR && !String(payData.country_code ?? '').trim()) {
-      toast.error('배송 국가를 선택해 주세요.');
+    if (directMode && !isKR && !String(payData.country_name ?? '').trim()) {
+      toast.error('배송 국가를 입력해 주세요.');
       return false;
     }
     if (parseFloat(max_use_point) < parseFloat(payData.use_point || 0)) {
@@ -743,6 +744,7 @@ export default function OrderSheet({ router }) {
                             ...payData,
                             // 해외는 국가 미선택('')으로 두고 아래 국가 선택에서 고르게 한다.
                             country_code: v === 'KR' ? KOREA_CODE : '',
+                            country_name: '',
                             addr: '', detail_addr: '', zonecode: '', city: '', state_region: '',
                           });
                         }}
@@ -771,16 +773,21 @@ export default function OrderSheet({ router }) {
                       ) : (
                         <>
                           {/* 해외는 우편번호 검색(다음 우편번호 서비스)이 국내 전용이라 쓸 수 없다 — 직접 입력받는다. */}
+                          {/* 국가는 목록에서 고르지 않고 직접 입력받는다 — 목록(27개국)에 없는
+                              나라로는 아예 주문할 수 없었다. country_code 는 VARCHAR(2) 라
+                              이름을 못 담으므로 해외 표식(ZZ)만 두고 이름은 country_name 에 담는다. */}
                           <TextField
-                            fullWidth size="small" select
+                            fullWidth size="small"
                             label={translate('국가')}
-                            value={payData.country_code || ''}
-                            onChange={(e) => setPayData({ ...payData, country_code: e.target.value })}
-                          >
-                            {COUNTRIES.filter((c) => c.code !== KOREA_CODE).map((c) => (
-                              <MenuItem key={c.code} value={c.code}>{c.name}</MenuItem>
-                            ))}
-                          </TextField>
+                            placeholder={translate('예: 일본 / Japan')}
+                            value={payData.country_name || ''}
+                            inputProps={{ maxLength: 60 }}
+                            onChange={(e) => setPayData({
+                              ...payData,
+                              country_name: e.target.value,
+                              country_code: String(e.target.value).trim() ? OVERSEAS_CODE : '',
+                            })}
+                          />
                           <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2}>
                             <TextField fullWidth size="small" label={translate('도시')} value={payData.city || ''}
                               onChange={(e) => setPayData({ ...payData, city: e.target.value })} />

@@ -493,13 +493,16 @@ const en = {
     "진심으로 만들어진 단 하나를.": "just one thing, made with care.",
     "로그인하고 상품 상태별로": "Sign in to get alerts",
     "알림을 받아보시는 건 어떨까요?": "about item status?",
-    "\"좋은 것을 오래도록 함께하는 기쁨\"": "\"The joy of keeping something good, for a long time\"",
     "답변은 연락처와 글 비밀번호로 다시 확인하실 수 있습니다. 비밀번호를 잊으면 찾을 수 없으니 기억해 주세요.": "You can check the reply again with your phone number and post password. It cannot be recovered if you forget it, so please remember it.",
     "문의를 남기실 때 입력한 연락처와 글 비밀번호로 답변을 확인하실 수 있습니다.": "Check the reply using the phone number and post password you entered with your inquiry.",
     "회원 탈퇴를 하시면 회원 혜택을 더 이상 이용하실 수 없습니다. 계속하시려면 비밀번호를 입력해주세요.": "Closing your account ends all member benefits. Enter your password to continue.",
-    "상품이 위시리스트에 담겼습니다\n바로 확인 하시겠습니까?": "Added to your wishlist.\nView it now?",
     "비밀번호를 찾을 수 없으면 본사에 문의해 주세요. (office@forspay.com)": "If you cannot recover your password, please contact us at office@forspay.com.",
-    "홍길동": "John Smith"
+    "홍길동": "John Smith",
+    "\"좋은 것을 오래도록 함께하는 기쁨\"": "\"The joy of keeping something good, for a long time\"",
+    "상품이 위시리스트에 담겼습니다\n바로 확인 하시겠습니까?": "Added to your wishlist.\nView it now?",
+    "예: 일본 / Japan": "e.g. Japan",
+    "배송 국가를 입력해 주세요.": "Please enter the destination country.",
+    "배송지 주소를 입력해 주세요.": "Please enter the delivery address."
 };
 
 export default en;

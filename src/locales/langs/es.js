@@ -488,13 +488,16 @@ const es = {
     "진심으로 만들어진 단 하나를.": "solo algo hecho con cuidado.",
     "로그인하고 상품 상태별로": "Inicia sesión para recibir",
     "알림을 받아보시는 건 어떨까요?": "avisos de tus artículos.",
-    "\"좋은 것을 오래도록 함께하는 기쁨\"": "\"La alegría de conservar algo bueno\"",
     "답변은 연락처와 글 비밀번호로 다시 확인하실 수 있습니다. 비밀번호를 잊으면 찾을 수 없으니 기억해 주세요.": "Puedes volver a ver la respuesta con tu teléfono y la contraseña. Si la olvidas no se puede recuperar.",
     "문의를 남기실 때 입력한 연락처와 글 비밀번호로 답변을 확인하실 수 있습니다.": "Consulta la respuesta con el teléfono y la contraseña que indicaste.",
     "회원 탈퇴를 하시면 회원 혜택을 더 이상 이용하실 수 없습니다. 계속하시려면 비밀번호를 입력해주세요.": "Al cerrar la cuenta pierdes las ventajas. Introduce tu contraseña para continuar.",
-    "상품이 위시리스트에 담겼습니다\n바로 확인 하시겠습니까?": "Añadido a tu lista.\n¿Verlo ahora?",
     "비밀번호를 찾을 수 없으면 본사에 문의해 주세요. (office@forspay.com)": "Si no puedes recuperar la contraseña, escribe a office@forspay.com.",
-    "홍길동": "Juan Pérez"
+    "홍길동": "Juan Pérez",
+    "\"좋은 것을 오래도록 함께하는 기쁨\"": "\"La alegría de conservar algo bueno\"",
+    "상품이 위시리스트에 담겼습니다\n바로 확인 하시겠습니까?": "Añadido a tu lista.\n¿Verlo ahora?",
+    "예: 일본 / Japan": "Ej.: Japón / Japan",
+    "배송 국가를 입력해 주세요.": "Introduce el país de destino.",
+    "배송지 주소를 입력해 주세요.": "Introduce la dirección de envío."
 };
 
 export default es;

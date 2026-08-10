@@ -1,7 +1,7 @@
 import { useRouter } from 'next/router';
 import { Box, Container, Stack, Typography, Button, Grid, Chip } from '@mui/material';
 import MainSiteLayout, { MAIN_DOMAIN } from 'src/components/main-site/MainSiteLayout';
-import { FRAMES, getFramePreviewBrand } from 'src/components/main-site/frameList';
+import { FRAMES, FRAME_GROUP_ORDER, getFramePreviewBrand } from 'src/components/main-site/frameList';
 import { useSubpageT, useFrameT } from 'src/components/main-site/landingStrings';
 
 const FramesPage = () => {
@@ -36,14 +36,35 @@ const FramesPage = () => {
             <Typography sx={{ fontSize: 13, color: '#8a8a90', maxWidth: 620, alignSelf: 'center', lineHeight: 1.7, textAlign: 'center', pt: 0.5 }}>
               {st('frames.noticeContent')}
             </Typography>
+            {/* 프레임을 고르는 것이 '몰 전체'를 고르는 것으로 읽히지 않게, 프레임이 정하는 범위를 먼저 밝힌다.
+                주문서·결제·주문내역 등은 어느 프레임을 골라도 같은 화면이다. */}
+            <Typography sx={{ fontSize: 13, color: '#8a8a90', maxWidth: 620, alignSelf: 'center', lineHeight: 1.7, textAlign: 'center' }}>
+              {st('frames.groupNote')}
+            </Typography>
           </Stack>
         </Container>
       </Box>
 
-      {/* FRAME GRID */}
+      {/* FRAME GRID — 계열별로 묶는다.
+          11장을 나란히 놓으면 "서로 다른 11개 몰"로 읽히는데, 실제로 갈리는 경계는 3개다.
+          특히 프레임6~11은 헤더·푸터·장바구니·주문·마이페이지가 같은 화면이고
+          홈과 상품상세 디자인만 다르다 — 그걸 모르고 고르면 기대와 어긋난다. */}
       <Container maxWidth="lg" sx={{ py: { xs: 6, md: 10 } }}>
+        {FRAME_GROUP_ORDER.map((group, gi) => {
+          const list = FRAMES.filter((f) => f.group === group);
+          if (!list.length) return null;
+          return (
+        <Box key={group} sx={{ mt: gi === 0 ? 0 : { xs: 6, md: 9 } }}>
+          <Stack spacing={0.75} sx={{ mb: 3, pb: 2, borderBottom: '1px solid #eee' }}>
+            <Typography sx={{ fontSize: { xs: 17, md: 20 }, fontWeight: 900, letterSpacing: '-0.4px' }}>
+              {st(`frames.group.${group}.title`)}
+            </Typography>
+            <Typography sx={{ fontSize: 13, color: '#666', lineHeight: 1.7, wordBreak: 'keep-all' }}>
+              {st(`frames.group.${group}.desc`)}
+            </Typography>
+          </Stack>
         <Grid container spacing={3}>
-          {FRAMES.map((f) => {
+          {list.map((f) => {
             const fi = ft(f.key);
             return (
             <Grid item xs={12} sm={6} md={4} key={f.key}>
@@ -118,6 +139,9 @@ const FramesPage = () => {
             );
           })}
         </Grid>
+        </Box>
+          );
+        })}
       </Container>
 
       {/* CTA */}

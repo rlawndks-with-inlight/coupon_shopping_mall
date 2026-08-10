@@ -7,10 +7,11 @@ import { useState } from "react";
 import DialogSearch from "src/components/dialog/DialogSearch";
 import { useAuthContext } from "src/layouts/manager/auth/useAuthContext";
 import StorefrontPopups from "src/components/elements/shop/StorefrontPopups";
-import { isStorefrontHome } from "src/utils/blog-shop-route";
+import { isStorefrontHome, normalizePath } from "src/utils/blog-shop-route";
 import LanguagePopover from "src/layouts/manager/header/LanguagePopover";
 import { Badge } from "@mui/material";
 import { useLocales } from "src/locales";
+import { logoDeliveryUrl } from "src/data/data";
 
 /* 단일 상품 전용 럭셔리 레이아웃 — 심플 헤더 + 심플 푸터 */
 
@@ -46,6 +47,14 @@ const LogoArea = styled.div`
   cursor: pointer;
   flex: 0 0 auto;
   justify-content: center;
+  /* 로고 폭 상한. Logo(styled(LazyLoadImage))가 아니라 여기에 거는 이유는 Logo 주석 참고.
+     481~519px 구간에서 가로형 로고 + 언어선택 켠 가맹점이면 아이콘 묶음이 우측 패딩을 뚫고
+     나가 문서에 가로 스크롤바가 생겼다(이 헤더는 sticky 라 잘리는 게 아니라 페이지가 흔들린다). */
+  max-width: 220px;
+  overflow: hidden;
+  @media (max-width: 520px) {
+    max-width: 130px;
+  }
 `
 /* 헤더 좌측 슬롯(뒤로가기 버튼 자리). 우측 액션과 같은 flex 를 가져 로고를 가운데로 민다. */
 const SideSlot = styled.div`
@@ -53,9 +62,26 @@ const SideSlot = styled.div`
   align-items: center;
   flex: 1;
 `
+/* 로고를 '한 축'이 아니라 '상자'로 잡는다 — 이유는 shop/demo-1/header.js 의 LogoImg 주석 참고.
+   28px 은 판매중 11개 프레임 통틀어 최소값이었고, 같은 헤더의 IconBtn(20px 아이콘 + padding 0.5rem
+   = 36×44px)보다도 작아 로고가 아이콘 하나처럼 보였다. 이 한 곳이 프레임6~11 여섯 개를 담당한다
+   (ShopLayout.js 가 blog demo 4~9 를 전부 이 레이아웃으로 보낸다).
+   이 헤더는 position:sticky 라 흐름 공간을 차지한다 — 높아진 만큼 본문이 자연히 내려가므로
+   상단 여백을 하드코딩한 화면이 없고, 그래서 프레임4·5 와 달리 마음 놓고 키울 수 있다.
+   ≤480px 은 그대로 둔다: 아이콘 5개(36px)+뒤로가기 자리 36px 로 375px 화면에서 로고 몫이
+   130px 뿐이라, 이 구간은 과거 로고가 두 줄로 깨진 이력이 있다(아래 IconBtn 주석 참고). */
 const Logo = styled(LazyLoadImage)`
-  height: 28px;
+  height: 44px;
+  width: auto;
+  /* 폭 상한은 LogoArea 가 건다 — LazyLoadImage 는 effect="blur" 일 때
+     <span class="lazy-load-image-background"> 로 한 겹 감싸고, styled() 가 만든 클래스는
+     그 span 이 아니라 안쪽 <img> 에 붙는다. 즉 여기 max-width 를 줘도 flex 자식(span)은
+     안 줄어서 상한이 헛돈다. flex-shrink 도 같은 이유로 여기서는 무의미하다. */
+  max-width: 100%;
   object-fit: contain;
+  @media (max-width: 480px) {
+    height: 28px;
+  }
 `
 const BrandText = styled.div`
   font-family: 'Playfair Display', 'Noto Serif KR', serif;
@@ -103,6 +129,16 @@ const HeaderActions = styled.div`
 `
 const Main = styled.main`
   flex: 1;
+`
+/* PC 에서 본문이 좌우로 퍼지지 않게 프레임 폭으로 잡아둔다.
+   이 프레임(6~11)에는 전용 화면이 홈과 상품상세뿐이라, 나머지 경로
+   (/shop/items · 주문서 · 약관 · 위시리스트 등)는 쇼핑몰용 넓은 화면으로 떨어져
+   화면 끝까지 퍼졌다. 이 레이아웃의 기준 폭은 홈이 쓰는 Container 와 같은 1100px 이다.
+   홈·상품상세는 풀블리드(히어로 92vh)로 짜인 전용 화면이라 감싸면 안 된다. */
+const Contained = styled.div`
+  width: 100%;
+  max-width: 1100px;
+  margin: 0 auto;
 `
 /* 정보 줄 자체는 원래 가로였는데, 상단 여백 4rem + 28px 브랜드명 + 이탤릭 태그라인 때문에
    푸터가 한 화면 가까이 차지했다("너무 크고 돋보인다"는 가맹점 의견).
@@ -169,6 +205,8 @@ const BlogLayout6 = (props) => {
   const brandName = themeDnsData?.name || 'BRAND';
   const { user, logout } = useAuthContext();
   const [searchOpen, setSearchOpen] = useState(false);
+  // 이 프레임 전용으로 짜인 풀블리드 화면(홈·상품상세)만 폭 제한에서 뺀다. Contained 주석 참고.
+  const isFullBleed = isStorefrontHome(router) || normalizePath(router).startsWith('/shop/item/');
 
   // 로그아웃 후 전체 리로드 — src/views/blog/auth/my-page/demo-2.js 에서 쓰는 것과 같은 방식.
   const onLogout = async () => {
@@ -199,8 +237,10 @@ const BlogLayout6 = (props) => {
             </IconBtn>}
         </SideSlot>
         <LogoArea onClick={() => router.push('/shop')}>
+          {/* logoSrc() 를 쓰지 않고 컬럼을 직접 읽는 자리다(logoSrc 는 내부에서 훅을 부른다).
+              여백 제거 변환은 순수 문자열 조작이라 여기서 그대로 태울 수 있다 — data.js 주석 참고. */}
           {themeDnsData?.logo_img ? (
-            <Logo src={themeDnsData.logo_img} effect="blur" />
+            <Logo src={logoDeliveryUrl(themeDnsData.logo_img)} effect="blur" />
           ) : (
             <BrandText>{brandName}</BrandText>
           )}
@@ -233,7 +273,7 @@ const BlogLayout6 = (props) => {
         </HeaderActions>
       </Header>
       <StorefrontPopups />
-      <Main>{children}</Main>
+      <Main>{isFullBleed ? children : <Contained>{children}</Contained>}</Main>
       <Footer>
         <FooterBrand>{brandName}</FooterBrand>
         {/* 전자상거래법상 표시 의무 항목이 빠져 있었다 —

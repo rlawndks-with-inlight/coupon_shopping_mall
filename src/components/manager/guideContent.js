@@ -7,6 +7,37 @@
 //   cap은 사진 아래 '초록 체크 + 설명' 문구(사장님이 실제 화면에 맞게 자유롭게 수정 가능).
 //   shots가 없는 항목은 스크린샷이 추가되면 캡션 없이 자동 표시됨.
 
+// ── 프레임 계열 ───────────────────────────────────────────────────────────
+// 같은 SHOPGO 몰이라도 프레임에 따라 '메인 화면을 꾸미는 방법'이 아예 다르다.
+// 가이드는 지금까지 계열 구분 없이 모든 항목을 다 보여줬다. 그래서
+//  · 프레임4·5 가맹점은 「디자인관리 › 메인페이지관리」 버튼을 눌러도 쇼핑몰용 경로로 가고
+//    (실제 메뉴는 「블로그 메인페이지관리」 = /designs/blog-main),
+//  · 프레임6~11 가맹점은 아예 없는 메뉴를 찾아 헤맸다(이 계열엔 섹션 배치 UI 자체가 없다).
+// 각 항목에 groups 를 달아 자기 프레임에 해당하는 것만 보이게 한다.
+//   shop    프레임1·2·3   — 디자인관리 › 메인페이지관리 (섹션 배치)
+//   column  프레임4·5     — 디자인관리 › 블로그 메인페이지관리 (같은 섹션 배치, 경로만 다름)
+//   landing 프레임6~11    — 섹션 배치 없음. 대표 상품 + 홈 문구로 홈이 만들어진다.
+// groups 가 없는 항목은 모든 계열에 해당한다.
+export const FRAME_GROUP_LABEL = {
+  shop: '프레임1·2·3',
+  column: '프레임4·5',
+  landing: '프레임6~11',
+};
+
+// 브랜드 → 계열. 판정 기준은 config-navigation 의 SECTION_BUILDER_* 와 같은 규칙이다
+// (블로그 4~9 만 섹션 빌더가 없다). 프레임이 아직 안 정해진 브랜드는 null → 전부 표시.
+export const frameGroupOf = (dns) => {
+  if (Number(dns?.shop_demo_num) > 0) return 'shop';
+  const blog = Number(dns?.blog_demo_num);
+  if (blog >= 4) return 'landing';
+  if (blog > 0) return 'column';
+  return null;
+};
+
+// 계열별 이동 경로 — routeByGroup 이 있으면 그 값이 route 보다 우선한다.
+export const guideRouteOf = (section, group) =>
+  (group && section?.routeByGroup?.[group]) || section?.route || null;
+
 export const GUIDE_SECTIONS = [
   // ── Part 1 : 쇼핑몰 오픈까지 (이 순서대로) ─────────────────────────────
   {
@@ -103,10 +134,11 @@ export const GUIDE_SECTIONS = [
     route: '/manager/products/list',
   },
   {
-    id: 'featured', part: 1, no: '4-1', badge: '조건부',
-    title: '대표 상품 지정 (단일·소수 상품 데모만)',
+    id: 'featured', part: 1, no: '4-1', badge: '필수',
+    groups: ['landing'],
+    title: '대표 상품 지정',
     where: '디자인관리 › 대표 상품',
-    why: '블로그 단일/소수 상품 데모는 홈에 대표 상품을 크게 보여줍니다. 어떤 상품을 대표로 노출할지 지정하세요. (일반 쇼핑몰 데모는 해당 없음 — 등록한 상품이 목록에 자동 노출됩니다.)',
+    why: '이 프레임의 홈은 대표 상품 한두 개를 크게 보여주는 화면입니다. 대표 상품을 지정하지 않으면 홈이 「준비중」으로 남습니다. 상품을 등록한 뒤 반드시 지정해 주세요.',
     steps: [
       '대표 상품 검색·선택',
       '1개 선택 = 단일 상품 홈 / 2개 이상 = 소수 상품 그리드',
@@ -130,8 +162,10 @@ export const GUIDE_SECTIONS = [
   },
   {
     id: 'design', part: 1, no: '6', badge: '권장',
+    groups: ['shop', 'column'],
     title: '메인페이지 꾸미기',
-    where: '디자인관리 › 메인페이지관리',
+    // 프레임4·5 의 메뉴 이름은 「블로그 메인페이지관리」다. 같은 편집기지만 이름·경로가 다르다.
+    where: '디자인관리 › 메인페이지관리 (프레임4·5는 「블로그 메인페이지관리」)',
     why: '홈 화면의 배너·상품 배치를 구성합니다. 4번 상품이 있어야 배치할 상품이 생깁니다.',
     steps: [
       '배너 이미지 등록(기본 배너에서 골라도 됩니다)',
@@ -142,6 +176,24 @@ export const GUIDE_SECTIONS = [
       { img: 'design', cap: '배너 이미지와 상품 섹션을 배치한 뒤 저장합니다.' },
     ],
     route: '/manager/designs/main/all',
+    routeByGroup: {
+      shop: '/manager/designs/main/all',
+      column: '/manager/designs/blog-main/all',
+    },
+  },
+  {
+    id: 'home-texts', part: 1, no: '6', badge: '권장',
+    groups: ['landing'],
+    title: '홈 문구 바꾸기',
+    where: '디자인관리 › 홈 문구',
+    // 이 계열에는 배너·섹션을 배치하는 편집기가 없다. 홈은 '대표 상품 + 정해진 문구'로 만들어진다.
+    // 그래서 「메인페이지관리」를 찾아도 메뉴 자체가 없다 — 없는 걸 찾게 두지 않으려고 항목을 나눴다.
+    why: '이 프레임의 홈은 배너를 직접 배치하는 방식이 아니라, 대표 상품(4-1)과 정해진 자리의 문구로 만들어집니다. 그 문구를 브랜드에 맞게 바꾸는 곳입니다. 비워두면 기본 문구가 그대로 나갑니다.',
+    steps: [
+      '홈 상단 카피·섹션 제목 등 각 자리의 문구 입력',
+      '저장 후 쇼핑몰 홈에서 확인',
+    ],
+    route: '/manager/designs/home-texts',
   },
 
   // ── Part 2 : 메뉴별 상세 안내 (필요할 때 찾아보기) ─────────────────────
@@ -230,8 +282,9 @@ export const GUIDE_SECTIONS = [
   },
   {
     id: 'menu-design', part: 2, badge: '참조',
+    groups: ['shop', 'column'],
     title: '디자인관리',
-    where: '디자인관리 › 메인페이지관리',
+    where: '디자인관리 › 메인페이지관리 (프레임4·5는 「블로그 메인페이지관리」)',
     why: '쇼핑몰 메인페이지에 올릴 슬라이드·섹션을 관리합니다.',
     fields: [
       { label: '섹션 추가', desc: '배너슬라이드·상품슬라이드·특성별 슬라이드 등 다양한 구조를 추가할 수 있습니다.' },
@@ -243,6 +296,24 @@ export const GUIDE_SECTIONS = [
       { img: 'design', cap: '배너·상품 슬라이드 등 섹션을 추가·배치한 뒤 저장합니다.' },
     ],
     route: '/manager/designs/main/all',
+    routeByGroup: {
+      shop: '/manager/designs/main/all',
+      column: '/manager/designs/blog-main/all',
+    },
+  },
+  {
+    id: 'menu-design-landing', part: 2, badge: '참조',
+    groups: ['landing'],
+    title: '디자인관리',
+    where: '디자인관리 › 대표 상품 · 홈 문구',
+    why: '이 프레임의 홈은 섹션을 배치하는 방식이 아닙니다. 「대표 상품」으로 무엇을 보여줄지 정하고, 「홈 문구」로 그 화면의 문구를 바꿉니다.',
+    fields: [
+      { label: '대표 상품', desc: '홈에 크게 보여줄 상품을 지정합니다. 1개면 단일 상품 홈, 2개 이상이면 하단에 그리드로 함께 보입니다. 지정하지 않으면 홈이 「준비중」으로 남습니다.' },
+      { label: '홈 문구', desc: '홈의 정해진 자리(상단 카피·섹션 제목 등)에 들어갈 문구를 바꿉니다. 비워두면 기본 문구가 나갑니다.' },
+      { label: '팝업관리', desc: '다른 프레임과 동일하게 사용할 수 있습니다.' },
+      { label: '배너·섹션 배치', desc: '이 프레임에는 없는 기능입니다. 홈 구성을 바꾸려면 본사(SHOPGO)에 문의하세요.' },
+    ],
+    route: '/manager/designs/featured',
   },
   {
     id: 'settings', part: 2, badge: '참조',
@@ -268,6 +339,8 @@ export const GUIDE_SECTIONS = [
       { label: '정보 · 설정', desc: '쇼핑몰 이름·회사정보(푸터)·카카오 공유 이미지·포인트 정책.' },
       { label: '운영', desc: '주문 상태 처리·취소·환불·회원 관리.' },
       { label: '변경 불가(본사 관리)', desc: '프레임 레이아웃·구조, 도메인 주소, 결제 모듈, 상품카드 기본 스타일 — 필요 시 본사(SHOPGO)에 문의하세요.' },
+      // 프레임 = 몰 전체가 통째로 다른 것, 이라는 오해가 잦다. 실제로 갈리는 건 앞쪽 화면뿐이다.
+      { label: '프레임이 정하는 범위', desc: '프레임에 따라 달라지는 것은 홈·상품 화면의 디자인과 메뉴 구성입니다. 주문서·결제·주문내역·배송지·약관 화면은 모든 프레임이 같은 화면을 씁니다(기능도 동일합니다). 프레임을 바꿔도 상품·주문·회원 데이터는 그대로입니다.' },
     ],
     route: null,
   },

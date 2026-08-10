@@ -11,6 +11,13 @@ display:flex;
 flex-direction:column;
 min-height:100vh;
 `
+/* PC 에서 본문이 좌우로 퍼지지 않게 프레임 폭으로 잡아둔다 — 이유는 BlogLayout1 주석 참고.
+   이 프레임의 기준 폭은 798px 이다(헤더 TopMenuContainer 기준). */
+const Content = styled.div`
+width:100%;
+max-width:798px;
+margin:0 auto;
+`
 const BlogLayout3 = (props) => {
     const { themeMode, onToggleMode } = useSettingsContext();
     const [useLayout, setUseLayout] = useState(true);
@@ -48,7 +55,7 @@ const BlogLayout3 = (props) => {
                                 router
                             }} />
                         <StorefrontPopups />
-                        {children}
+                        <Content>{children}</Content>
                         <Footer
                             data={{
                             }}

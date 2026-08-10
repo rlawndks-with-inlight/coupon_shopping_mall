@@ -95,6 +95,36 @@ align-items:center;
 const PaddingTop = styled.div`
 margin-top:${props => props.pcHeight}px;
 `
+/* 헤더 로고.
+   예전엔 인라인 style 로 height:40px 만 줬다. 그런데 검색창(TextField size=small)도 40px 이라
+   로고가 '브랜드'가 아니라 'UI 부속' 크기였고, 무엇보다 **높이 한 축으로만** 크기를 정한 탓에
+   2단 로고(워드마크 + 아래 태그라인)를 쓰는 가맹점은 태그라인 몫까지 40px 안에 욱여넣게 돼
+   글자가 뭉개졌다. 같은 로고 파일이 관리자 로그인 화면(가로 200px 기준)에서는 멀쩡히 보였다 —
+   파일이 아니라 우리가 재는 축이 문제였다.
+
+   그래서 '한 축'이 아니라 '상자'로 잡는다:
+     height   세로 상한 (고정값 유지 — auto 로 바꾸면 이미지 로드 전 높이가 0이라
+              headerHeight 실측(useEffect)이 어긋나 본문을 덮는다)
+     max-width  가로 상한. 가로형 워드마크가 헤더를 뚫지 않게 막는다
+     object-fit max-width 에 걸려 상자 비율이 안 맞을 때 찌그러지지 않고 여백으로 처리
+   본문 상단 여백은 PaddingTop 이 headerHeight 실측값을 그대로 쓰므로 자동으로 따라온다.
+
+   모바일(≤1000px)은 40px 유지 — ShowMobile 아이콘 4개가 170px 가량을 먹어
+   360px 화면에서 로고 가용폭이 155px 밖에 안 된다. */
+const LogoImg = styled.img`
+height: 40px;
+width: auto;
+/* 모바일 상한을 200px 로 둔다 — 40px × 5:1 = 200px 이라 예전(상한 없음)과 렌더 결과가 같다.
+   150px 으로 잡았더니 가로형 로고가 150×30 으로 **작아졌다**(민원과 반대 방향). */
+max-width: 200px;
+object-fit: contain;
+flex-shrink: 0;
+cursor: pointer;
+@media (min-width:1001px) {
+  height: 56px;
+  max-width: 240px;
+}
+`
 const AuthMenu = styled.div`
 padding:0 0.5rem;
 font-weight:bold;
@@ -263,9 +293,29 @@ const Header = () => {
   ]
   useEffect(() => {
   }, [user])
+  // 헤더 높이 실측 → PaddingTop 이 이 값만큼 본문을 내린다(헤더가 position:fixed 라 흐름을 안 차지).
+  //
+  // [예전 구현의 함정] deps 가 [headerWrappersRef.current, themeCategoryList] 였다.
+  // ref.current 변화는 리렌더를 유발하지 않고, React 는 deps 를 **렌더 시점**에 읽는다.
+  // 그런데 이 헤더는 loading 이 true 인 동안 Wrappers 를 아예 렌더하지 않는다:
+  //   ① 마운트(loading=true)      → ref.current 없음 → 130 으로 폴백
+  //   ② themeCategoryList 도착     → 아직 loading=true → 또 130
+  //   ③ loading=false 로 리렌더     → 이 렌더 시점의 ref.current 는 아직 undefined 라
+  //                                 deps 가 그대로 → **효과가 다시 안 돈다** → 130 에 영구 고정
+  // 실제 헤더는 132px 안팎이라 2px 차이는 눈에 안 띄었지만, 로고를 키우면 그 격차가 그대로 커져
+  // 본문 상단이 헤더 밑에 깔린다. resize·다크모드 전환·로고 지연로드도 같은 이유로 반영이 안 됐다.
+  //
+  // ResizeObserver 로 요소 자체를 관찰하면 위 경우가 전부 한 번에 해결된다
+  // (마운트·로딩 해제·창 크기 변경·이미지 로드 완료·테마 전환 모두 크기 변화로 잡힌다).
   useEffect(() => {
-    setHeaderHeight(headerWrappersRef.current?.clientHeight ?? 130);
-  }, [headerWrappersRef.current, themeCategoryList])
+    const el = headerWrappersRef.current;
+    if (!el) return;
+    const measure = () => setHeaderHeight(el.clientHeight || 130);
+    measure();
+    const observer = new ResizeObserver(measure);
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, [loading, themeCategoryList])
   useEffect(() => {
     if (themeCategoryList) {
       settingHeader();
@@ -456,7 +506,7 @@ const Header = () => {
             ref={headerWrappersRef}
           >
             <TopMenuContainer>
-              <img src={logoSrc()} style={{ height: '40px', width: 'auto', cursor: 'pointer' }}
+              <LogoImg src={logoSrc()}
                 onClick={() => {
                   router.push('/shop')
                 }}

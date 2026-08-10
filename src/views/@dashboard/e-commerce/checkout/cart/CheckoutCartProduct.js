@@ -39,6 +39,22 @@ export default function CheckoutCartProduct({ row, onDelete, onDecrease, onIncre
   const is_blocked = status_known && !isPurchasable(status);
   const status_text = getProductStatus(status)?.text;
 
+  // 옵션 추가금(1개 기준). calculatorPrice 와 **같은 규칙으로** 더해야 한다 —
+  // 거기서는 (product_sale_price + product_option_price) * order_count + delivery_fee 로 총액을 낸다.
+  //
+  // [고친 문제] 옵션에 변동가를 붙이면 총액에는 반영되는데 화면에는 그 근거가 어디에도 없었다.
+  // 고객이 보는 것은 '판매가 10,000원 / 수량 1 / 총액 13,000원' 뿐이라 3,000원이 어디서
+  // 붙었는지 알 수 없었다(가맹점이 값을 잘못 넣은 것처럼 보인다). 옵션명 옆과 가격칸에 근거를 남긴다.
+  const unit = getPriceUnitByLang(currentLang?.value);
+  const optionPriceOf = (option) => parseFloat(option?.option_price) || 0;
+  const option_surcharge = (groups ?? []).reduce(
+    (sum, group) => sum + (group?.options ?? []).reduce((s, option) => s + optionPriceOf(option), 0),
+    0,
+  );
+  // 변동가는 음수도 허용된다(관리자 검증은 NaN 만 막는다) → 부호를 그대로 보여준다.
+  const signedPrice = (value) => `${value < 0 ? '-' : '+'}${commarNumber(Math.abs(value))}${unit}`;
+  const unit_price = (parseFloat(product_sale_price) || 0) + option_surcharge;
+
 
   return (
     <TableRow>
@@ -89,7 +105,14 @@ export default function CheckoutCartProduct({ row, onDelete, onDecrease, onIncre
             <>
               {groups.map((group, index) => {
                 const option_text = (group?.options ?? [])
-                  .map((option) => getOptionLabel(option))
+                  // 변동가가 붙은 옵션은 옆에 금액을 같이 보여준다 — 어느 선택이 얼마를
+                  // 올렸는지가 여기 말고는 드러나는 자리가 없다(총액에는 이미 더해져 있다).
+                  .map((option) => {
+                    const label = getOptionLabel(option);
+                    if (!label) return '';
+                    const add = optionPriceOf(option);
+                    return add === 0 ? label : `${label} (${signedPrice(add)})`;
+                  })
                   .filter((v) => v !== '')
                   .join(' / ');
                 if (!option_text) return null;
@@ -126,6 +149,18 @@ export default function CheckoutCartProduct({ row, onDelete, onDecrease, onIncre
           </Box>
         )}
         {commarNumber(setProductPriceByLang(row, 'product_sale_price', 'ko', currentLang?.value))} {getPriceUnitByLang(currentLang?.value)}
+        {/* 옵션 추가금이 있을 때만 붙인다. 총액(마지막 칸)이 판매가와 다른 이유를 여기서 잇는다:
+            판매가 → 옵션 가감 → 개당 금액 → (수량 곱) → 총액 */}
+        {option_surcharge !== 0 && (
+          <>
+            <Typography variant="caption" sx={{ display: 'block', color: 'text.secondary' }}>
+              {translate('옵션')} {signedPrice(option_surcharge)}
+            </Typography>
+            <Typography variant="caption" sx={{ display: 'block', fontWeight: 700 }}>
+              {translate('개당')} {commarNumber(unit_price)}{unit}
+            </Typography>
+          </>
+        )}
       </TableCell>
       {
         themeDnsData?.id != 74 ?

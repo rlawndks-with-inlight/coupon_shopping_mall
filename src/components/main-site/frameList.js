@@ -1,6 +1,16 @@
+// 프레임 계열 — 11장을 나란히 놓으면 "서로 다른 11개 몰"로 읽히지만,
+// 실제로 갈리는 경계는 3개다. 카탈로그를 이 단위로 묶어 무엇이 같고 무엇이 다른지 밝힌다.
+//   shop    프레임1·2·3   카테고리 메뉴와 상품목록 화면을 갖춘 쇼핑몰형
+//   column  프레임4·5     모바일에 맞춘 좁은 한 컬럼(840px / 720px)
+//   landing 프레임6~11    홈·상품상세만 프레임 전용. 헤더·푸터·장바구니·주문·마이페이지는 6개가 같은 화면을 쓴다
+//                        (레이아웃 파일 자체가 BlogLayout6 하나다)
+// 주문서·결제·주문내역·배송지·약관은 11개 프레임 전부 공용이다.
+export const FRAME_GROUP_ORDER = ['shop', 'column', 'landing'];
+
 export const FRAMES = [
   {
     no: 1,
+    group: 'shop',
     key: 'shop:1',
     title: '탐색 중심형',
     category: 'shop',
@@ -11,6 +21,7 @@ export const FRAMES = [
   },
   {
     no: 2,
+    group: 'shop',
     key: 'shop:2',
     title: '브랜드 무드형',
     category: 'shop',
@@ -21,6 +32,7 @@ export const FRAMES = [
   },
   {
     no: 3,
+    group: 'shop',
     key: 'shop:4',
     title: '다카테고리 잡화몰',
     category: 'shop',
@@ -31,6 +43,7 @@ export const FRAMES = [
   },
   {
     no: 4,
+    group: 'column',
     key: 'blog:1',
     title: '매거진 에디토리얼',
     category: 'blog',
@@ -41,16 +54,22 @@ export const FRAMES = [
   },
   {
     no: 5,
+    group: 'column',
     key: 'blog:2',
-    title: '종합 그리드',
+    // '종합몰'이 아니다 — 720px 한 컬럼이고 상품목록 전용 화면이 없다(/shop/items 는 쇼핑몰1 화면으로 폴백).
+    // 다품목 종합몰을 기대하고 고르면 프레임1·3을 골랐어야 하는 상황이 된다.
+    // 카탈로그·신청서에 보이는 문구는 landingStrings 의 frame.blog:2.* 이며 여기와 같은 내용으로 맞춰 둔다
+    // (이 값은 본사 관리자의 프레임 선택 목록에서 쓰인다).
+    title: '카테고리 그리드',
     category: 'blog',
     demo: 2,
-    keyword: '종합 큐레이션 몰',
-    desc: '다양한 카테고리별 상품 그리드를 빼곡하게 진열. 다품종을 한눈에 보여주는 종합몰 스타일.',
-    recommend: '생활/잡화/뷰티/식품 두루 다루는 종합 셀렉트샵, 큐레이션 쇼핑몰',
+    keyword: '한 컬럼 큐레이션',
+    desc: '카테고리별 상품 그리드를 한 컬럼에 차례로 진열. 모바일에서 스크롤로 둘러보는 구성.',
+    recommend: '품목 수가 많지 않은 큐레이션 셀렉트샵 (상품 수가 많다면 프레임1·3을 권합니다)',
   },
   {
     no: 6,
+    group: 'landing',
     key: 'blog:4',
     title: '럭셔리 미니멀',
     category: 'blog',
@@ -61,6 +80,7 @@ export const FRAMES = [
   },
   {
     no: 7,
+    group: 'landing',
     key: 'blog:5',
     title: '다크 럭셔리',
     category: 'blog',
@@ -71,6 +91,7 @@ export const FRAMES = [
   },
   {
     no: 8,
+    group: 'landing',
     key: 'blog:6',
     title: '신뢰형 단일 브랜드',
     category: 'blog',
@@ -81,6 +102,7 @@ export const FRAMES = [
   },
   {
     no: 9,
+    group: 'landing',
     key: 'blog:7',
     title: '동양 미니멀',
     category: 'blog',
@@ -91,6 +113,7 @@ export const FRAMES = [
   },
   {
     no: 10,
+    group: 'landing',
     key: 'blog:8',
     title: '트렌디 그래픽',
     category: 'blog',
@@ -101,6 +124,7 @@ export const FRAMES = [
   },
   {
     no: 11,
+    group: 'landing',
     key: 'blog:9',
     title: '파스텔 감성',
     category: 'blog',

@@ -1,6 +1,7 @@
 // Spanish locale (auto-generated via Google translate, ko->es)
 
 const es = {
+  "개당": "Por unidad",
   "상품검색": "Búsqueda de productos",
   "검색결과가 없습니다.": "No hay resultados de búsqueda.",
   "기본주소": "dirección básica",

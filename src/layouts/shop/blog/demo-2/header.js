@@ -20,9 +20,30 @@ display: flex;
 flex-direction: column;
 z-index: 10;
 `
+/* padding 을 없앤다 — 헤더 총높이(56px)는 1px 도 안 바뀐다.
+   전역 box-sizing:border-box 라 height:56px + padding 0.5rem 이면 **콘텐츠 상자가 40px** 이고,
+   그게 로고 40px 의 진짜 상한이었다. padding 만 걷어내면 총높이를 유지한 채 안쪽 여유가
+   40px → 56px 로 늘어난다.
+   이 프레임은 헤더가 position:fixed 이고 본문 상단 여백을 각 화면이 56px 로 하드코딩하고 있어서,
+   헤더 높이를 실제로 키우면 그 전부를 함께 고쳐야 한다 — 그 위험을 통째로 피하는 선택이다. */
+/* 로고를 '한 축'이 아니라 '상자'로 잡는다 — 이유는 shop/demo-1/header.js 의 LogoImg 주석 참고.
+   ≤480px 은 변경 전(40px, 상한 없음 = 5:1 기준 200px)을 유지한다. 48px/220px 로 키우면
+   컨테이너(width 90%, 320px 화면에서 288px)에서 우측 아이콘이 밀려 잘린다. */
+const LogoImg = styled.img`
+height: 48px;
+width: auto;
+max-width: 220px;
+object-fit: contain;
+flex-shrink: 0;
+cursor: pointer;
+@media (max-width:480px) {
+  height: 40px;
+  max-width: 200px;
+}
+`
 const TopMenuContainer = styled.div`
 display:flex;
-padding: 0.5rem 0;
+padding: 0;
 max-width: 720px;
 width:90%;
 margin: 0 auto;
@@ -174,7 +195,9 @@ const Header = (props) => {
                                 </>
                                 :
                                 <>
-                                    <img src={logoSrc()} style={{ height: '40px', width: 'auto', cursor: 'pointer' }} onClick={() => { router.push('/shop') }} />
+                                    {/* 위 TopMenuContainer 의 padding:0 과 세트다.
+                                        콘텐츠 상자 56px 안에서 48px 이면 상하 4px 여유가 남는다. */}
+                                    <LogoImg src={logoSrc()} onClick={() => { router.push('/shop') }} />
                                 </>}
 
                             {/* 상품 목록 — 이 헤더에는 상품을 둘러볼 수단이 검색뿐이었다.

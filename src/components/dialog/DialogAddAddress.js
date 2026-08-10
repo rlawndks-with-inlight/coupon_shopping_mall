@@ -16,6 +16,7 @@ import { Row, postCodeStyle, themeObj } from '../elements/styled-components'
 import DaumPostcode from 'react-daum-postcode';
 import { COUNTRIES, KOREA_CODE, isDomestic } from 'src/data/countries';
 import { MenuItem, ToggleButton, ToggleButtonGroup } from '@mui/material';
+import { useLocales } from 'src/locales';
 
 
 
@@ -44,6 +45,8 @@ const EMPTY_FORM = {
 };
 
 const DialogAddAddress = (props) => {
+  // 배송지 입력 라벨이 번역을 안 거쳐 다른 언어에서도 한국어로 남았다.
+  const { translate } = useLocales();
 
   // ** State
   // onDeleteAddress 는 더 이상 저장 경로에서 쓰지 않는다(수정은 update 로 처리).
@@ -142,14 +145,14 @@ const DialogAddAddress = (props) => {
                 fullWidth
                 value={addAddressObj.receiver}
                 margin="dense"
-                label="받는 사람"
+                label={translate('받는 사람')}
                 onChange={(e) => setField('receiver', e.target.value)}
               />
               <TextField
                 fullWidth
                 value={addAddressObj.phone}
                 margin="dense"
-                label="연락처"
+                label={translate('연락처')}
                 placeholder="010-0000-0000"
                 // 국내는 하이픈 자동정리, 해외는 국가번호(+)·공백을 살려야 하므로 그대로 받는다.
                 onChange={(e) => setField('phone',
@@ -188,7 +191,7 @@ const DialogAddAddress = (props) => {
                     fullWidth
                     value={addAddressObj.zonecode}
                     margin="dense"
-                    label="우편번호"
+                    label={translate('우편번호')}
                     InputProps={{ readOnly: true }}
                     placeholder="우편번호 검색으로 입력"
                     onClick={() => setField('is_open_daum_post', true)}
@@ -197,7 +200,7 @@ const DialogAddAddress = (props) => {
                     fullWidth
                     value={addAddressObj.addr}
                     margin="dense"
-                    label="주소"
+                    label={translate('주소')}
                     aria-readonly='true'
                     InputProps={{ readOnly: true }}
                     placeholder="눌러서 우편번호 검색"
@@ -207,7 +210,7 @@ const DialogAddAddress = (props) => {
                     fullWidth
                     value={addAddressObj.detail_addr}
                     margin="dense"
-                    label="상세주소"
+                    label={translate('상세주소')}
                     onChange={(e) => setField('detail_addr', e.target.value)}
                   />
                 </>
@@ -217,7 +220,7 @@ const DialogAddAddress = (props) => {
                     select
                     fullWidth
                     margin="dense"
-                    label="국가"
+                    label={translate('국가')}
                     value={addAddressObj.country_code}
                     onChange={(e) => setField('country_code', e.target.value)}
                   >
@@ -229,7 +232,7 @@ const DialogAddAddress = (props) => {
                     fullWidth
                     value={addAddressObj.addr}
                     margin="dense"
-                    label="주소 (Address line 1)"
+                    label={`${translate('주소')} (Address line 1)`}
                     placeholder="123 Main St"
                     onChange={(e) => setField('addr', e.target.value)}
                   />
@@ -237,7 +240,7 @@ const DialogAddAddress = (props) => {
                     fullWidth
                     value={addAddressObj.detail_addr}
                     margin="dense"
-                    label="상세주소 (Address line 2)"
+                    label={`${translate('상세주소')} (Address line 2)`}
                     placeholder="Apt, Suite 등"
                     onChange={(e) => setField('detail_addr', e.target.value)}
                   />
@@ -245,21 +248,21 @@ const DialogAddAddress = (props) => {
                     fullWidth
                     value={addAddressObj.city}
                     margin="dense"
-                    label="도시 (City)"
+                    label={`${translate('도시')} (City)`}
                     onChange={(e) => setField('city', e.target.value)}
                   />
                   <TextField
                     fullWidth
                     value={addAddressObj.state_region}
                     margin="dense"
-                    label="주/지역 (State / Province)"
+                    label={`${translate('주/지역')} (State / Province)`}
                     onChange={(e) => setField('state_region', e.target.value)}
                   />
                   <TextField
                     fullWidth
                     value={addAddressObj.zonecode}
                     margin="dense"
-                    label="우편번호 (ZIP / Postal code)"
+                    label={`${translate('우편번호')} (ZIP / Postal code)`}
                     onChange={(e) => setField('zonecode', e.target.value)}
                   />
                 </>}
@@ -271,7 +274,7 @@ const DialogAddAddress = (props) => {
                     onChange={(e) => setField('is_default', e.target.checked)}
                   />
                 }
-                label="기본 배송지로 설정"
+                label={translate('기본 배송지로 설정')}
               />
             </DialogContent>
             <DialogActions>

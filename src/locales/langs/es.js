@@ -248,7 +248,20 @@ const es = {
     "배송조회": "Seguimiento",
     "수정": "Editar",
     "KB에스크로 이체 인증마크": "Certificación KB Escrow",
-    "무료배송": "Envío gratis"
+    "무료배송": "Envío gratis",
+    "배송지 관리": "Libreta de direcciones",
+    "배송지 추가": "Añadir dirección",
+    "받는 사람": "Destinatario",
+    "연락처": "Teléfono",
+    "우편번호": "Código postal",
+    "우편번호 검색": "Buscar código postal",
+    "우편번호 검색으로 입력": "Se rellena al buscar",
+    "국내배송": "Nacional",
+    "해외배송": "Internacional",
+    "국가": "País",
+    "도시": "Ciudad",
+    "주/지역": "Estado / Región",
+    "등록된 배송지가 없습니다.": "No hay direcciones guardadas."
 };
 
 export default es;

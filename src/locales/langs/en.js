@@ -253,7 +253,20 @@ const en = {
     "배송조회": "Track Delivery",
     "수정": "Edit",
     "KB에스크로 이체 인증마크": "KB Escrow Certification",
-    "무료배송": "Free Shipping"
+    "무료배송": "Free Shipping",
+    "배송지 관리": "Address Book",
+    "배송지 추가": "Add Address",
+    "받는 사람": "Recipient",
+    "연락처": "Phone",
+    "우편번호": "Postal Code",
+    "우편번호 검색": "Find Postal Code",
+    "우편번호 검색으로 입력": "Filled by postal code search",
+    "국내배송": "Domestic",
+    "해외배송": "International",
+    "국가": "Country",
+    "도시": "City",
+    "주/지역": "State / Region",
+    "등록된 배송지가 없습니다.": "No saved addresses."
 };
 
 export default en;

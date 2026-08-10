@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
-import { Button, Card, CardContent, CardHeader, Pagination, Stack } from '@mui/material';
+import { useRouter } from 'next/router';
+import { Button, Card, CardContent, CardHeader, Pagination, Stack, Typography } from '@mui/material';
 import { useAuthContext } from 'src/layouts/manager/auth/useAuthContext';
 import { useLocales } from 'src/locales';
 import { apiManager } from 'src/utils/api';
@@ -21,9 +22,10 @@ import DialogAddAddress from 'src/components/dialog/DialogAddAddress';
 
 const PAGE_SIZE = 10;
 
-const AddressBookPanel = ({ card = true, title }) => {
+const AddressBookPanel = ({ card = true, title, loginPath = '/shop/auth/login' }) => {
   const { user } = useAuthContext();
   const { translate } = useLocales();
+  const router = useRouter();
 
   const [addressContent, setAddressContent] = useState({});
   const [addAddressOpen, setAddAddressOpen] = useState(false);
@@ -62,6 +64,21 @@ const AddressBookPanel = ({ card = true, title }) => {
   };
 
   const maxPage = makeMaxPage(addressContent?.total, addressContent?.page_size);
+
+  // 비로그인이면 조회 자체가 안 되는데 예전엔 아무 안내 없이 빈 표만 남았다
+  // (블로그형 배송지 화면에도 로그인 가드가 없었다).
+  if (!user?.id) {
+    return (
+      <Stack alignItems="center" spacing={2} sx={{ py: 8 }}>
+        <Typography variant="body2" sx={{ color: 'text.secondary' }}>
+          {translate('로그인을 해주세요.')}
+        </Typography>
+        <Button variant="contained" onClick={() => router.push(loginPath)}>
+          {translate('로그인')}
+        </Button>
+      </Stack>
+    );
+  }
 
   const body = (
     <>

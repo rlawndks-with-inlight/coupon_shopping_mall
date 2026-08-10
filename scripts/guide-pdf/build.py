@@ -246,6 +246,64 @@ def fields_table(fields):
 SHOT_MAX_H = 112 * mm
 SHOT_MAX_W = CONTENT_W
 
+# 여백 자동 정리.
+#
+# 가맹점 화면 캡처는 페이지 전체를 찍은 것이 많아 실제 UI 주위에 흰 여백이 크게 남는다.
+# 실측: access 50% · find-id 64% · find-pw 60% · home-texts 55% 가 여백이다.
+# 그대로 실으면 지면이 성기게 보인다.
+#
+# **원본(public/manual/guide/*.png)은 절대 건드리지 않는다** — 웹 가이드가 같은 파일을 쓴다.
+# 다듬은 사본을 build/shots/ 에 만들어 그것만 PDF 에 넣는다(gitignore 대상).
+TRIM_TOL = 12          # 배경으로 볼 색차 허용치
+TRIM_KEEP = 10         # 잘라낸 뒤 되돌려 줄 여백(px). 바싹 자르면 답답해 보인다
+TRIM_MIN_RATIO = 0.25  # 남는 면적이 이보다 작으면 판정 실패로 보고 원본을 쓴다
+SHOT_CACHE = os.path.join(HERE, 'build', 'shots')
+
+
+def trimmed_path(src):
+    """네 변의 '단색으로 이어지는 띠'만 걷어낸 사본 경로를 돌려준다.
+
+    로고에 쓴 Cloudinary e_trim 과 같은 발상이지만 여기서는 로컬에서 처리한다.
+    잘라낼 게 없으면(대형 관리자 화면 캡처 대부분) 원본 경로를 그대로 돌려준다.
+    """
+    try:
+        from PIL import Image
+        import numpy as np
+    except ImportError:
+        return src  # Pillow 가 없으면 조용히 원본을 쓴다
+
+    try:
+        im = Image.open(src)
+        rgb = im.convert('RGB')
+        a = np.asarray(rgb).astype(int)
+        h, w, _ = a.shape
+        bg = np.array(a[0, 0])
+        near = (np.abs(a - bg).max(axis=2) <= TRIM_TOL)
+        rows, cols = near.all(axis=1), near.all(axis=0)
+        if rows.all() or cols.all():
+            return src  # 전면 단색 — 자를 수 없다
+        top = int(np.argmin(rows))
+        bottom = int(np.argmin(rows[::-1]))
+        left = int(np.argmin(cols))
+        right = int(np.argmin(cols[::-1]))
+        # 되돌려 줄 여백을 감안해 실제 잘라낼 양을 정한다
+        top = max(0, top - TRIM_KEEP)
+        bottom = max(0, bottom - TRIM_KEEP)
+        left = max(0, left - TRIM_KEEP)
+        right = max(0, right - TRIM_KEEP)
+        if top + bottom + left + right < 8:
+            return src  # 다듬을 게 사실상 없다
+        box = (left, top, w - right, h - bottom)
+        cw, ch = box[2] - box[0], box[3] - box[1]
+        if cw <= 0 or ch <= 0 or (cw * ch) / (w * h) < TRIM_MIN_RATIO:
+            return src  # 과하게 잘렸다 — 판정을 못 믿는다
+        os.makedirs(SHOT_CACHE, exist_ok=True)
+        out = os.path.join(SHOT_CACHE, os.path.basename(src))
+        im.crop(box).save(out)
+        return out
+    except Exception:
+        return src  # 어떤 이유로든 실패하면 원본을 쓴다. 여백은 미관 문제일 뿐이다
+
 
 def shot_blocks(shots):
     """이미지와 캡션은 반드시 붙어 있어야 한다(KeepTogether)."""
@@ -254,6 +312,7 @@ def shot_blocks(shots):
         path = sh.get('path')
         if not path or not os.path.exists(path):
             continue
+        path = trimmed_path(path)
         try:
             iw, ih = ImageReader(path).getSize()
         except Exception:

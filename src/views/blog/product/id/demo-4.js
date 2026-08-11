@@ -226,7 +226,7 @@ const Demo4 = () => {
       selectProductGroups, themeCartData, onChangeCartData
     );
     if (result) {
-      toast.success(translate ? translate('장바구니에 성공적으로 추가되었습니다.') : '장바구니에 추가되었습니다.');
+      toast.success(translate ? translate('장바구니에 성공적으로 추가되었습니다.') : translate('장바구니에 추가되었습니다.'));
     }
   };
 

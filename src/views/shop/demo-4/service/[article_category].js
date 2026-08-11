@@ -75,7 +75,7 @@ const ArticlesDemo = (props) => {
         id: 'replies',
         label: translate('답변여부'),
         action: (row) => {
-          return row?.replies.length > 0 ? '답변완료' : '답변안함'
+          return row?.replies.length > 0 ? translate('답변완료') : translate('답변안함')
         }
       }
     ] : []),

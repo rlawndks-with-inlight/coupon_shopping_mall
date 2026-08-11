@@ -105,10 +105,10 @@ const Demo4 = (props) => {
 
     const onChangePassword = async () => {
         if (!pwObj?.password) {
-            return toast.error('현재비밀번호를 입력해주세요.');
+            return toast.error(translate('현재비밀번호를 입력해주세요.'));
         }
         if (!pwObj?.new_password) {
-            return toast.error('새비밀번호를 입력해주세요.');
+            return toast.error(translate('새비밀번호를 입력해주세요.'));
         }
         if (pwObj.new_password != pwObj.new_password_check) {
             return toast.error(translate('비밀번호가 일치하지 않습니다.'));
@@ -132,7 +132,7 @@ const Demo4 = (props) => {
             password: resignPassword,
         })
         if (result) {
-            toast.success('회원탈퇴가 완료되었습니다.');
+            toast.success(translate('회원탈퇴가 완료되었습니다.'));
             setResignPassword('');
             setResignOpen(false);
             onChangeCartData([]);
@@ -269,7 +269,7 @@ const Demo4 = (props) => {
                                     is_default: 1,
                                 })
                                 if (result) {
-                                    toast.success('기본 배송지로 설정되었습니다.')
+                                    toast.success(translate('기본 배송지로 설정되었습니다.'))
                                 }
                             }}
                         >

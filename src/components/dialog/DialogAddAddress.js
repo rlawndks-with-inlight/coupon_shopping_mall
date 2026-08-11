@@ -143,10 +143,10 @@ const DialogAddAddress = (props) => {
           </>
           :
           <>
-            <DialogTitle>{isUpdate ? `주소지 수정` : `주소지 추가`}</DialogTitle>
+            <DialogTitle>{isUpdate ? translate('주소지 수정') : translate('주소지 추가')}</DialogTitle>
             <DialogContent>
               <DialogContentText>
-                {isUpdate ? `수정하실 내용을 입력 후 저장을 눌러주세요.` : `새 배송지를 입력 후 저장을 눌러주세요.`}
+                {isUpdate ? translate('수정하실 내용을 입력 후 저장을 눌러주세요.') : translate('새 배송지를 입력 후 저장을 눌러주세요.')}
               </DialogContentText>
               <TextField
                 autoFocus
@@ -299,7 +299,7 @@ const DialogAddAddress = (props) => {
                 // 주소가 비면 저장하지 않는다. 예전엔 빈 폼 그대로 저장되면서
                 // 멀쩡한 배송지가 빈 주소로 바뀌었다.
                 if (!addAddressObj.addr) {
-                  toast.error('주소를 입력해 주세요.');
+                  toast.error(translate('주소를 입력해 주세요.'));
                   return;
                 }
                 // 받는사람·연락처는 배송에 필요하다. 다만 '명백히 잘못된 값'만 막는다
@@ -318,7 +318,7 @@ const DialogAddAddress = (props) => {
                   }
                 } else {
                   if (!String(addAddressObj.phone || '').trim()) {
-                    toast.error('받는 분 연락처를 입력해 주세요.');
+                    toast.error(translate('받는 분 연락처를 입력해 주세요.'));
                     return;
                   }
                   if (!String(addAddressObj.country_name || '').trim()) {
@@ -326,7 +326,7 @@ const DialogAddAddress = (props) => {
                     return;
                   }
                   if (!String(addAddressObj.city || '').trim()) {
-                    toast.error('도시를 입력해 주세요.');
+                    toast.error(translate('도시를 입력해 주세요.'));
                     return;
                   }
                 }

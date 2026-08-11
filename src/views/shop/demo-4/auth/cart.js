@@ -252,11 +252,11 @@ const CartDemo = (props) => {
       })
     } else if (item?.type == 'certification') {
       if (parseFloat(max_use_point) < parseFloat(payData.use_point)) {
-        toast.error('최대사용가능 포인트를 초과하였습니다.');
+        toast.error(translate('최대사용가능 포인트를 초과하였습니다.'));
         return;
       }
       if (parseFloat(user?.point ?? 0) < parseFloat(payData.use_point)) {
-        toast.error('보유포인트가 부족합니다.');
+        toast.error(translate('보유포인트가 부족합니다.'));
         return;
       }
       setPayLoading(true);
@@ -276,7 +276,7 @@ const CartDemo = (props) => {
       delete pay_data.payment_modules;
       let ord_num = makeOrdNum();
       pay_data.ord_num = ord_num
-      pay_data.item_name = pay_data?.products?.length > 1 ? `${pay_data?.products[0]?.order_name} 외 ${pay_data?.products?.length - 1}건` : (pay_data?.products[0]?.order_name || '상품');
+      pay_data.item_name = pay_data?.products?.length > 1 ? `${pay_data?.products[0]?.order_name} 외 ${pay_data?.products?.length - 1}건` : (pay_data?.products[0]?.order_name || translate('상품'));
       let link = _.find(themeDnsData?.payment_modules, { type: 'virtual_account' })?.virtual_acct_url + `?amount=${pay_data?.amount}`;
       if (_.find(themeDnsData?.payment_modules, { type: 'virtual_account' })?.virtual_acct_url) {
         const popup = window.open(link, ""); // 팝업을 미리 연다.
@@ -292,7 +292,7 @@ const CartDemo = (props) => {
       delete pay_data.payment_modules;
       let ord_num = makeOrdNum();
       pay_data.ord_num = ord_num
-      pay_data.item_name = pay_data?.products?.length > 1 ? `${pay_data?.products[0]?.order_name} 외 ${pay_data?.products?.length - 1}건` : (pay_data?.products[0]?.order_name || '상품');
+      pay_data.item_name = pay_data?.products?.length > 1 ? `${pay_data?.products[0]?.order_name} 외 ${pay_data?.products?.length - 1}건` : (pay_data?.products[0]?.order_name || translate('상품'));
       let link = _.find(themeDnsData?.payment_modules, { type: 'gift_certificate' })?.gift_certificate_url + `?amount=${pay_data?.amount}&name=${user?.name ?? ""}&phone_num=${user?.phone_num ?? ""}`;
       const popup = window.open(link, ""); // 팝업을 미리 연다.
       popup.location.href = link;
@@ -332,18 +332,18 @@ const CartDemo = (props) => {
     }
     if (buyType == 'card') {//카드결제
       if (parseFloat(max_use_point) < parseFloat(payData.use_point)) {
-        toast.error('최대사용가능 포인트를 초과하였습니다.');
+        toast.error(translate('최대사용가능 포인트를 초과하였습니다.'));
         return;
       }
       if (parseFloat(user?.point ?? 0) < parseFloat(payData.use_point)) {
-        toast.error('보유포인트가 부족합니다.');
+        toast.error(translate('보유포인트가 부족합니다.'));
         return;
       }
       setPayLoading(true);
       let result = await onPayProductsByHand(products, payData);
       if (result) {
         await onChangeCartData([]);
-        toast.success('성공적으로 구매에 성공하였습니다.');
+        toast.success(translate('성공적으로 구매에 성공하였습니다.'));
         router.push('/shop/auth/history');
       }
     }
@@ -859,14 +859,14 @@ const CartDemo = (props) => {
                             size='large'
                             onClick={() => {
                               if (!smsPayData.name) {
-                                toast.error('이름을 입력해 주세요.');
+                                toast.error(translate('이름을 입력해 주세요.'));
                                 return;
                               }
                               if (!smsPayData.phone_num || smsPayData.phone_num.length < 10) {
                                 toast.error('핸드폰번호를 정확히 입력해 주세요.');
                                 return;
                               }
-                              toast.success('결제 신청이 완료되었습니다.');
+                              toast.success(translate('결제 신청이 완료되었습니다.'));
                               setSmsPayData({ name: '', phone_num: '' });
                               router.push('/shop/auth/sms-pay-success');
                             }}

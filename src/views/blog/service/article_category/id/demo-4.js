@@ -110,7 +110,7 @@ const Demo4 = (props) => {
 
     const onSave = async () => {
         if (!item?.post_title) {
-            toast.error('제목을 입력해 주세요.');
+            toast.error(translate('제목을 입력해 주세요.'));
             return;
         }
         // 비회원은 이름·연락처·글비밀번호가 있어야 저장할 수 있다(백엔드와 같은 기준).

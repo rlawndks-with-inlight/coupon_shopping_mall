@@ -449,7 +449,7 @@ export default function OrderSheet({ router }) {
       delete pay_data.payment_modules;
       const ord_num = makeOrdNum();
       pay_data.ord_num = ord_num;
-      pay_data.item_name = pay_data?.products?.length > 1 ? `${pay_data?.products[0]?.order_name} 외 ${pay_data?.products?.length - 1}건` : (pay_data?.products[0]?.order_name || '상품');
+      pay_data.item_name = pay_data?.products?.length > 1 ? `${pay_data?.products[0]?.order_name} 외 ${pay_data?.products?.length - 1}건` : (pay_data?.products[0]?.order_name || translate('상품'));
       if (module?.virtual_acct_url) {
         const link = module.virtual_acct_url + `?amount=${pay_data?.amount}`;
         const popup = window.open(link, '');
@@ -485,7 +485,7 @@ export default function OrderSheet({ router }) {
       delete pay_data.payment_modules;
       const ord_num = makeOrdNum();
       pay_data.ord_num = ord_num;
-      pay_data.item_name = pay_data?.products?.length > 1 ? `${pay_data?.products[0]?.order_name} 외 ${pay_data?.products?.length - 1}건` : (pay_data?.products[0]?.order_name || '상품');
+      pay_data.item_name = pay_data?.products?.length > 1 ? `${pay_data?.products[0]?.order_name} 외 ${pay_data?.products?.length - 1}건` : (pay_data?.products[0]?.order_name || translate('상품'));
       if (module?.gift_certificate_url) {
         const link = module.gift_certificate_url + `?amount=${pay_data?.amount}&name=${user?.name ?? ''}&phone_num=${user?.phone_num ?? ''}`;
         const popup = window.open(link, '');

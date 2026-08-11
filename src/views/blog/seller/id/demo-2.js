@@ -163,7 +163,7 @@ const Demo2 = (props) => {
         // 비회원도 담기 허용(카트→주문서에서 비회원 주문비밀번호로 진행)
         let result = await insertCartDataUtil({ ...selectedItem, seller_id: router.query?.id ?? 0 }, selectProductGroups, themeCartData, onChangeCartData);
         if (result) {
-            toast.success('장바구니에 추가되었습니다.');
+            toast.success(translate('장바구니에 추가되었습니다.'));
         }
     }
 

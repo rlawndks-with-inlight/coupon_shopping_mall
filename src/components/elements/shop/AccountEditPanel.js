@@ -75,7 +75,7 @@ const AccountEditPanel = ({ loginPath = '/shop/auth/login' }) => {
       return toast.error(translate('비밀번호 확인란을 똑같이 입력했는지 확인해주세요'));
     }
     if (pw.password === pw.new_password) {
-      return toast.error('현재 비밀번호와 다른 비밀번호를 입력해 주세요.');
+      return toast.error(translate('현재 비밀번호와 다른 비밀번호를 입력해 주세요.'));
     }
     let result = await apiManager('auth/change-password', 'update', {
       password: pw.password,
@@ -91,7 +91,7 @@ const AccountEditPanel = ({ loginPath = '/shop/auth/login' }) => {
     if (!resignPw) return toast.error(translate('비밀번호를 입력해 주세요.'));
     let result = await apiManager('auth/resign', 'update', { password: resignPw });
     if (result) {
-      toast.success('탈퇴가 완료되었습니다.');
+      toast.success(translate('탈퇴가 완료되었습니다.'));
       window.location.href = loginPath;
     }
   };
@@ -126,7 +126,7 @@ const AccountEditPanel = ({ loginPath = '/shop/auth/login' }) => {
                 value={user?.name || user?.nickname || ''}
                 disabled
                 fullWidth
-                helperText={(user?.name || user?.nickname) ? '' : '이름이 등록되어 있지 않습니다. 고객센터로 문의해 주세요.'}
+                helperText={(user?.name || user?.nickname) ? '' : translate('이름이 등록되어 있지 않습니다. 고객센터로 문의해 주세요.')}
               />
               <TextField
                 label={translate('휴대폰번호')}

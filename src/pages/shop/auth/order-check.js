@@ -55,7 +55,7 @@ const OrderDetail = ({ order }) => {
           <KV k={translate('주문현황')} v={getOrderStatusText(order)} />
           <KV k={translate('구매자')} v={`${order?.buyer_name || '-'}${order?.buyer_phone ? ' · ' + order?.buyer_phone : ''}`} />
           {order?.invoice_num && (
-            <KV k="택배사/송장" v={track
+            <KV k={translate("택배사/송장")} v={track
               ? <>{track.courier ? track.courier + ' · ' : ''}{track.invoice}
                 <Box component="a" href={track.url} target="_blank" rel="noreferrer" sx={{ ml: 1, color: 'primary.main', textDecoration: 'underline' }}>{translate('배송조회')}</Box></>
               : order?.invoice_num} />
@@ -67,7 +67,7 @@ const OrderDetail = ({ order }) => {
         <Card sx={{ mb: 2 }}>
           <CardHeader title={translate('배송지')} />
           <CardContent sx={{ pt: 0 }}>
-            {receiver && <KV k="받는분" v={`${receiver}${order?.receiver_phone ? ' · ' + order?.receiver_phone : ''}`} />}
+            {receiver && <KV k={translate("받는분")} v={`${receiver}${order?.receiver_phone ? ' · ' + order?.receiver_phone : ''}`} />}
             {order?.addr && <KV k={translate('주소')} v={`${order?.zonecode ? '(' + order?.zonecode + ') ' : ''}${order?.addr} ${order?.detail_addr || ''}`} />}
           </CardContent>
         </Card>
@@ -107,7 +107,7 @@ const OrderCheck = () => {
 
   const onSearch = async () => {
     if (!form.buyer_phone || !form.password) {
-      toast.error('전화번호와 주문 비밀번호를 입력해 주세요.');
+      toast.error(translate('전화번호와 주문 비밀번호를 입력해 주세요.'));
       return;
     }
     setLoading(true);
@@ -121,7 +121,7 @@ const OrderCheck = () => {
     if (list.length === 0) {
       setOrders([]);
       setSelected(null);
-      toast.error('주문을 찾을 수 없습니다. 전화번호·비밀번호를 확인해 주세요.');
+      toast.error(translate('주문을 찾을 수 없습니다. 전화번호·비밀번호를 확인해 주세요.'));
       return;
     }
     setOrders(list);
@@ -153,7 +153,7 @@ const OrderCheck = () => {
       {/* 여러 건 → 목록에서 선택 */}
       {orders && orders.length > 1 && !selected && (
         <Card sx={{ mb: 2 }}>
-          <CardHeader title={`주문 내역 (${orders.length}건)`} subheader="확인할 주문을 선택하세요." />
+          <CardHeader title={`주문 내역 (${orders.length}건)`} subheader={translate("확인할 주문을 선택하세요.")} />
           <CardContent sx={{ pt: 0 }}>
             <Stack spacing={1.5}>
               {orders.map((o, i) => (

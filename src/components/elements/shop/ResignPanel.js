@@ -24,7 +24,7 @@ const ResignPanel = ({ loginPath = '/shop/auth/login' }) => {
     if (!password) return toast.error(translate('비밀번호를 입력해 주세요.'));
     let result = await apiManager('auth/resign', 'update', { password });
     if (result) {
-      toast.success('탈퇴가 완료되었습니다.');
+      toast.success(translate('탈퇴가 완료되었습니다.'));
       setPassword('');
       // 탈퇴 후에도 남아 있던 토큰으로 화면이 로그인 상태처럼 보이던 문제를 피한다.
       window.location.href = loginPath;

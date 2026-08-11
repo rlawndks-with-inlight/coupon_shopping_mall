@@ -108,7 +108,7 @@ const ArticleDemo = (props) => {
 
         <Title style={{
           marginBottom: '2rem'
-        }}>{formatLang(postCategory, 'post_category_title', currentLang)} {router.query?.id == 'add' ? '작성' : ''}</Title>
+        }}>{formatLang(postCategory, 'post_category_title', currentLang)} {router.query?.id == 'add' ? translate('작성') : ''}</Title>
         {!loading &&
           <>
             <Stack spacing={3}>
@@ -128,11 +128,11 @@ const ArticleDemo = (props) => {
                       <Upload file={item.post_title_file || item.post_title_img} onDrop={(acceptedFiles) => {
                         const newFile = acceptedFiles[0];
                         if (!newFile.type.includes('image')) {
-                          toast.error('이미지 형식만 가능합니다.');
+                          toast.error(translate('이미지 형식만 가능합니다.'));
                           return;
                         }
                         if (newFile.size >= 3 * 1024 * 1024) {
-                          toast.error('이미지 용량은 3MB 이내만 가능합니다.');
+                          toast.error(translate('이미지 용량은 3MB 이내만 가능합니다.'));
                           return;
                         }
                         if (newFile) {

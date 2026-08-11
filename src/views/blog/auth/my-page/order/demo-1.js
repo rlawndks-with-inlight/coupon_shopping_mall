@@ -86,7 +86,7 @@ const Demo1 = (props) => {
                     flat_list.push({
                         seller_id: order?.seller_id || 0,
                         // 셀러 시스템을 쓰지 않아 seller_user_name 은 항상 null — 폴백 문구를 '기본배송' 으로 통일
-                        seller_title: order?.seller_user_name || '기본배송',
+                        seller_title: order?.seller_user_name || translate('기본배송'),
                         order_name: formatLang(order, 'product_name') || order?.order_name,
                         order_count: order_count,
                         order_amount: order_amount,

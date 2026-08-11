@@ -72,13 +72,13 @@ const FindInfoDemo = (props) => {
 
   const onSendPhoneVerifyCode = async () => {
     if (!findUserObj.phone_num) {
-      return toast.error('휴대폰 번호를 입력해주세요.');
+      return toast.error(translate('휴대폰 번호를 입력해주세요.'));
     }
     let result = await apiManager('auth/code', 'create', {
       phone_num: findUserObj.phone_num
     })
     if (result) {
-      toast.success('성공적으로 발송되었습니다.');
+      toast.success(translate('성공적으로 발송되었습니다.'));
       setFindUserObj({
         ...findUserObj,
         phoneToken: result?.phone_token,
@@ -95,31 +95,31 @@ const FindInfoDemo = (props) => {
       obj['find_user_name'] = 1;
     } else if (findType == 1) {
       if (!findUserObj?.user_name) {
-        return toast.error('유저아이디를 입력해주세요.');
+        return toast.error(translate('유저아이디를 입력해주세요.'));
       }
       obj['find_password'] = 1;
       obj['user_name'] = findUserObj?.user_name
     }
     let result = await apiManager('auth/code/check', 'create', obj);
     if (result) {
-      toast.success('성공적으로 인증되었습니다.');
+      toast.success(translate('성공적으로 인증되었습니다.'));
       if (result?.users.length > 0) {
         setFindUserObj({
           ...findUserObj,
           find_user_list: result?.users,
         })
       } else {
-        toast.error('유저를 찾을 수 없습니다.');
+        toast.error(translate('유저를 찾을 수 없습니다.'));
       }
 
     }
   }
   const onChangePassword = async () => {
     if (!findUserObj.password) {
-      return toast.error('비밀번호를 입력해주세요.');
+      return toast.error(translate('비밀번호를 입력해주세요.'));
     }
     if (findUserObj.password != findUserObj.passwordCheck) {
-      return toast.error('비밀번호가 일치하지 않습니다.');
+      return toast.error(translate('비밀번호가 일치하지 않습니다.'));
     }
     let result = await apiManager('auth/change-password', 'update', {
       phone_token: findUserObj.phoneToken,
@@ -128,7 +128,7 @@ const FindInfoDemo = (props) => {
       user_name: findUserObj.user_name,
     })
     if (result) {
-      toast.success('성공적으로 비밀번호가 변경되었습니다.');
+      toast.success(translate('성공적으로 비밀번호가 변경되었습니다.'));
       router.push(`/shop/auth/login`)
     }
   }
@@ -205,7 +205,7 @@ const FindInfoDemo = (props) => {
                         style={{ width: '150px', height: '48px', marginRight: '-0.5rem' }}
                         disabled={!findUserObj.is_send_phone_check_num}
                         onClick={onCheckPhoneVerifyCode}
-                      >{findUserObj.find_user_list.length > 0 ? '확인완료' : '인증번호 확인'}</Button>}
+                      >{findUserObj.find_user_list.length > 0 ? translate('확인완료') : translate('인증번호 확인')}</Button>}
                       onChange={(e) => {
                         setFindUserObj({ ...findUserObj, ['phoneCheck']: e.target.value })
                       }} />
@@ -285,7 +285,7 @@ const FindInfoDemo = (props) => {
                         style={{ width: '150px', height: '48px', marginRight: '-0.5rem' }}
                         disabled={!findUserObj.is_send_phone_check_num}
                         onClick={onCheckPhoneVerifyCode}
-                      >{findUserObj.find_user_list.length > 0 ? '확인완료' : '인증번호 확인'}</Button>}
+                      >{findUserObj.find_user_list.length > 0 ? translate('확인완료') : translate('인증번호 확인')}</Button>}
                       onChange={(e) => {
                         setFindUserObj({ ...findUserObj, ['phoneCheck']: e.target.value })
                       }} />

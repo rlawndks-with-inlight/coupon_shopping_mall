@@ -27,7 +27,7 @@ const DialogPolicy = (props) => {
   // 호출부가 숫자로 넘기든 문자로 넘기든 같은 제목이 나오게 정규화한다.
   // 닫혀 있을 때 type 이 '' 인 호출부가 있어 빈 값은 -1 로 떨어뜨린다(제목 오표기 방지).
   const typeNum = type === '' || type === null || type === undefined ? -1 : Number(type);
-  const title = translate(POLICY_TITLES[typeNum] || '약관');
+  const title = translate(POLICY_TITLES[typeNum] || translate('약관'));
 
   // 모바일은 전체화면. 좁은 폭에서 시트로 읽는 것보다 낫다.
   const fullScreen = useMediaQuery('(max-width:600px)');

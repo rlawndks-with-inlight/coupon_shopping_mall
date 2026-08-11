@@ -237,7 +237,7 @@ const SignUpDemo = (props) => {
         } else if (
           user.user_pw != user.user_pw_check
         ) {
-          toast.error("비밀번호 확인란을 똑같이 입력했는지 확인해주세요");
+          toast.error(translate("비밀번호 확인란을 똑같이 입력했는지 확인해주세요"));
           return;
         } else if (
           !phoneChecked
@@ -257,7 +257,7 @@ const SignUpDemo = (props) => {
       } else if (
         user.user_pw != user.user_pw_check
       ) {
-        toast.error("비밀번호 확인란을 똑같이 입력했는지 확인해주세요");
+        toast.error(translate("비밀번호 확인란을 똑같이 입력했는지 확인해주세요"));
         return;
       }
       // SHOPGO 본사 및 산하 가맹점 전용 : 아이디 찾기(이름+휴대폰번호)에 쓰이므로 이름 필수. 다른 브랜드의 기존 검증 규칙은 그대로.
@@ -290,7 +290,7 @@ const SignUpDemo = (props) => {
     })
     console.log(result)
     if (result?.phone_token) {
-      alert('성공적으로 발송되었습니다.')
+      alert(translate('성공적으로 발송되었습니다.'))
       setPhoneToken(result.phone_token)
     }
   }

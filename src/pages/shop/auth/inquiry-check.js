@@ -38,7 +38,7 @@ const InquiryCheck = () => {
       return;
     }
     if (!String(form.password || '')) {
-      toast.error('글 비밀번호를 입력해 주세요.');
+      toast.error(translate('글 비밀번호를 입력해 주세요.'));
       return;
     }
     setLoading(true);
@@ -105,7 +105,7 @@ const InquiryCheck = () => {
                   >
                     <Stack direction="row" justifyContent="space-between" alignItems="center" spacing={2}>
                       <Typography variant="subtitle2" sx={{ fontWeight: 700 }}>
-                        {row?.post_title || '(제목 없음)'}
+                        {row?.post_title || translate('(제목 없음)')}
                       </Typography>
                       <Typography
                         variant="caption"

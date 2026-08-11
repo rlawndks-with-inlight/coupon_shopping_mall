@@ -159,7 +159,7 @@ const Demo2 = (props) => {
                                             <div style={{ display: 'flex' }}>
                                                 <img src={item.product_img} width='48px' height='48px' style={{ margin: '0 1rem 0 0' }} />
                                                 <div style={{ display: 'flex', flexDirection: 'column' }}>
-                                                    <div>{item.order_name}</div>
+                                                    <div>{formatLang(item, 'product_name') || item.order_name}</div>
                                                     <div>{commarNumberWithUnit(item.order_amount)}</div>
                                                     {item.groups?.length > 0 &&
                                                         <div>옵션 : {item.groups.map((group) => `${formatLang(group, 'group_name')}: ${(group?.options ?? []).map((option) => getOptionLabel(option)).join(' / ')}`).join(', ')}</div>

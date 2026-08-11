@@ -9,6 +9,7 @@ import { apiManager } from 'src/utils/api';
 import { getOptionLabel } from 'src/utils/shop-util';
 import OrderCancelButton from 'src/components/elements/shop/OrderCancelButton';
 import { useLocales } from 'src/locales';
+import { formatLang } from 'src/utils/format';
 
 const ContentContainer = styled.div`
 display:flex;
@@ -86,7 +87,7 @@ const Demo1 = (props) => {
                         seller_id: order?.seller_id || 0,
                         // 셀러 시스템을 쓰지 않아 seller_user_name 은 항상 null — 폴백 문구를 '기본배송' 으로 통일
                         seller_title: order?.seller_user_name || '기본배송',
-                        order_name: order?.order_name ?? order?.product_name,
+                        order_name: formatLang(order, 'product_name') || order?.order_name,
                         order_count: order_count,
                         order_amount: order_amount,
                         unit_price: order_count > 0 ? Math.round(order_amount / order_count) : order_amount,

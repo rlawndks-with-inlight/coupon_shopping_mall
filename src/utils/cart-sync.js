@@ -170,6 +170,15 @@ export const syncCartWithServer = async (products = []) => {
         next.status = server?.status;
         next.product_name = server?.product_name ?? line?.product_name;
         next.product_img = server?.product_img ?? line?.product_img;
+        // 번역본도 함께 되맞춘다.
+        //
+        // 장바구니는 담을 때의 상품 사본을 localStorage 에 들고 있다. 여기서 product_name 만
+        // 서버 최신값으로 갱신하고 lang_obj 는 그대로 두면, 가맹점이 상품명을 고쳤을 때
+        // **한국어 화면은 새 이름, 외국어 화면은 스냅샷에 남은 옛 번역**이 뜬다.
+        // 화면은 formatLang(row,'product_name') 으로 그리므로 두 값이 같이 움직여야 한다.
+        // (서버가 lang_obj 를 안 내려주면 기존 값을 유지한다 — 번역을 잃는 것보다 낫다)
+        next.lang_obj = server?.lang_obj ?? line?.lang_obj;
+        next.product_comment = server?.product_comment ?? line?.product_comment;
 
         // 선택한 옵션의 추가금액도 서버 값으로 맞춘다.
         // 백엔드는 클라이언트가 보낸 option_price 를 무시하고 product_options 에서 직접 읽는다.

@@ -4,6 +4,7 @@ import { themeObj } from "../styled-components"
 import { IconButton } from "@mui/material"
 import { Icon } from "@iconify/react"
 import { LazyLoadImage } from "react-lazy-load-image-component"
+import { formatLang } from 'src/utils/format'
 
 //김인욱 컴포넌트
 const ItemContent = styled.div`
@@ -43,8 +44,8 @@ export const Item5 = (props) => {
                 router.push(`/shop/item/${item.id}`)
             }}>
                 <LazyLoadImage style={{ width: '100%' }} src={item?.product_img} />
-                <ItemText style={{ fontWeight: 'bold' }}>{item?.name}</ItemText>
-                <ItemText style={{ color: themeObj.grey[500] }}>{item?.sub_name}</ItemText>
+                <ItemText style={{ fontWeight: 'bold' }}>{formatLang(item, 'product_name')}</ItemText>
+                <ItemText style={{ color: themeObj.grey[500] }}>{formatLang(item, 'product_comment')}</ItemText>
             </ItemContent>
         </>
     )

@@ -5,7 +5,7 @@ import { useSettingsContext } from 'src/components/settings';
 import { useLocales } from 'src/locales';
 import { useAuthContext } from 'src/layouts/manager/auth/useAuthContext';
 import { LazyLoadImage } from 'react-lazy-load-image-component';
-import { commarNumber, commarNumberWithUnit } from 'src/utils/function';
+import { commarNumber, commarNumberWithUnit, isPurchasable, getProductStatus } from 'src/utils/function';
 import { formatLang } from 'src/utils/format';
 import { apiShop } from 'src/utils/api';
 import { insertCartDataUtil, startBuyNow, selectItemOptionUtil } from 'src/utils/shop-util';
@@ -257,6 +257,9 @@ const Demo7 = () => {
   const img = images[Math.min(imgIdx, Math.max(0, images.length - 1))] ?? '';
   const name = formatLang(item, 'product_name', currentLang);
   const comment = formatLang(item, 'product_comment');
+  // 살 수 있는 상태인지(판매중·새상품만 구매 가능). 상태맵은 프레임1과 같은 것을 쓴다.
+  const purchasable = isPurchasable(item?.status);
+  const productStatusText = getProductStatus(item?.status)?.text;
   const sale = item?.product_sale_price || item?.product_price || 0;
   const orig = item?.product_price || 0;
   const hasSale = orig > sale && sale > 0;
@@ -328,12 +331,25 @@ const Demo7 = () => {
               </div>
             </OptionField>
           </OptionArea>
+          {/* 살 수 없는 상태(품절·중단됨)를 상세에서 바로 알린다 — 예전엔 표시도 없고
+              버튼도 살아 있어, 누르고 나서야 살 수 없다는 걸 알았다. */}
+          {!purchasable && productStatusText &&
+            <div style={{ padding: '10px 14px', borderRadius: '6px', background: '#f5f5f5', color: '#666', fontSize: '13px', fontWeight: 700, textAlign: 'center' }}>
+              {translate(productStatusText)}
+            </div>
+          }
           <ButtonRow>
-            <Btn onClick={handleAddCart}>{translate('장바구니')}</Btn>
-            <Btn $primary onClick={() => startBuyNow(item, selectProductGroups, router)}>求める →</Btn>
+            <Btn disabled={!purchasable} style={purchasable ? undefined : { opacity: 0.45, cursor: 'not-allowed' }} onClick={handleAddCart}>{translate('장바구니')}</Btn>
+            <Btn $primary disabled={!purchasable} style={purchasable ? undefined : { opacity: 0.45, cursor: 'not-allowed' }} onClick={() => startBuyNow(item, selectProductGroups, router)}>求める →</Btn>
           </ButtonRow>
         </InfoSide>
       </Hero>
+      {/* 상품 스펙 — 가맹점이 상품폼에 적어도 프레임1 말고는 어디에도 나오지 않던 값이다. */}
+      {formatLang(item, 'product_spec') &&
+        <div style={{ whiteSpace: 'pre-line', lineHeight: 1.7, fontSize: '14px', color: '#666', background: '#f7f7f7', borderRadius: '6px', padding: '16px', margin: '0 auto', maxWidth: '900px', width: '90%' }}>
+          {formatLang(item, 'product_spec')}
+        </div>
+      }
       {item?.product_description && (
         <DetailSection>
           <DetailTitle>品物の物語</DetailTitle>

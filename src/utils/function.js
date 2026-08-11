@@ -37,6 +37,14 @@ export const getProductStatus = num => {
 }
 export const isPurchasable = (status) => getProductStatus(status).color === 'info';
 
+// 중고 거래를 하는 브랜드인지. 'NEW / USED' 표기는 이 브랜드들만의 개념이다.
+//
+// 상품카드(elements/shop/demo-4·demo-5)가 show_status 로 NEW/USED 칩을 무조건 붙이고 있었는데,
+// show_status 는 그랑파리 전용 특성 id(12·13·14·15·24)를 골랐을 때만 1 이 된다
+// (manager/products/[edit_category]/[id].js). 다른 가맹점은 값이 늘 0 이라
+// 새로 만든 상품에도 검은 'USED' 칩이 붙었다 — 새 상품을 파는 쇼핑몰에서 특히 나쁘다.
+export const isUsedGoodsBrand = (dns) => [5, 74].includes(Number(dns?.id));
+
 // 로그인 후 돌아갈 경로를 고른다.
 //
 // 예전엔 로그인하면 무조건 홈(쇼핑몰형) 또는 마이페이지(블로그형)로 갔다.

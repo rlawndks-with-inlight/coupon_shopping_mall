@@ -62,7 +62,9 @@ const Demo5 = (props) => {
 
     const { themeDnsData } = useSettingsContext();
 
-    const [findType, setFindType] = useState(0);
+    // Tab 의 value 는 Object.keys 가 준 **문자열**('0'·'1')이라 숫자 0 과는 안 맞는다.
+    // 그래서 쿼리가 들어오기 전에는 어느 탭도 선택돼 보이지 않았다.
+    const [findType, setFindType] = useState('0');
     const [phoneNum, setPhoneNum] = useState("");
     const [username, setUsername] = useState("")
     const [userid, setUserid] = useState("")
@@ -82,7 +84,7 @@ const Demo5 = (props) => {
     })
     useEffect(() => {
         if (router.query?.type >= 0) {
-            setFindType(router.query?.type)
+            setFindType(String(router.query?.type ?? 0))
         }
     }, [router.query])
 

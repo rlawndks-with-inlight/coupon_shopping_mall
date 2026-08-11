@@ -5,7 +5,7 @@ import { Row, themeObj } from 'src/components/elements/styled-components';
 import { useSettingsContext } from 'src/components/settings';
 import styled from 'styled-components'
 import _ from 'lodash'
-import { commarNumber, commarNumberWithUnit, getPriceUnitByLang } from 'src/utils/function';
+import { commarNumber, commarNumberWithUnit, getPriceUnitByLang, isPurchasable, getProductStatus } from 'src/utils/function';
 import Slider from 'react-slick';
 import { useTheme } from '@emotion/react';
 import { logoSrc } from 'src/data/data';
@@ -173,6 +173,9 @@ const Demo2 = (props) => {
         slidesToScroll: 1,
     }
 
+    // 살 수 있는 상태인지(판매중·새상품만 구매 가능). 상태맵은 프레임1·3과 같은 것을 쓴다.
+    const purchasable = isPurchasable(item?.status);
+    const productStatusText = getProductStatus(item?.status)?.text;
     const handleAddCart = async () => {
         //옵션 체크 안해도 저장 되는데 이 부분은 수정할 여지가 있어보임
         let result = await insertCartDataUtil({ ...item, seller_id: router.query?.seller_id ?? 0 }, selectProductGroups, themeCartData, onChangeCartData);
@@ -248,7 +251,14 @@ const Demo2 = (props) => {
                             <div style={{ fontSize: themeObj.font_size.size8, color: '' }}>{translate('택배 배송')}</div>
                         </Row>
                     </PriceContainer>
-                    <Button variant='contained' onClick={() => { setCartOpen(true) }}>{translate('구매하기')}</Button>
+                    {/* 품절·중단됨을 상세에서 바로 알린다 — 예전엔 표시도 없고 버튼도 살아 있어
+                        옵션 창까지 열고 나서야 살 수 없다는 걸 알았다. */}
+                    {!purchasable && productStatusText &&
+                      <div style={{ padding: '10px 14px', marginBottom: '0.5rem', borderRadius: '6px', background: '#f5f5f5', color: '#666', fontSize: '13px', fontWeight: 700, textAlign: 'center' }}>
+                        {translate(productStatusText)}
+                      </div>
+                    }
+                    <Button variant='contained' disabled={!purchasable} onClick={() => { setCartOpen(true) }}>{translate('구매하기')}</Button>
                     <div style={{ marginTop: '1rem' }} />
                     <Divider />
                     <ContentContainer>
@@ -256,6 +266,12 @@ const Demo2 = (props) => {
                             {/* ShopGo 산하는 상품후기를 쓰지 않는다.
                                 후기 탭을 숨길 땐 '상품정보'가 남은 폭을 다 쓰게 해야
                                 반쪽짜리 탭 하나가 덩그러니 남지 않는다. */}
+                            {/* 상품 스펙 — 가맹점이 상품폼에 적어도 프레임1 말고는 어디에도 나오지 않던 값이다. */}
+                            {formatLang(item, 'product_spec', currentLang) &&
+                              <div style={{ whiteSpace: 'pre-line', lineHeight: 1.7, fontSize: '14px', color: '#666', background: '#f7f7f7', borderRadius: '6px', padding: '16px', margin: '0 0 1rem 0' }}>
+                                {formatLang(item, 'product_spec', currentLang)}
+                              </div>
+                            }
                             <div style={{ padding: '0 0 1rem 0', fontSize: themeObj.font_size.size8, fontWeight: 'bold', cursor: 'pointer', width: `${isShopgoBrand(themeDnsData) ? '100%' : '50%'}`, textAlign: 'center', borderBottom: `${tab == 0 ? '2px solid black' : ''}` }} onClick={() => { setTab(0) }}>{translate('상품정보')}</div>
                             {!isShopgoBrand(themeDnsData) &&
                                 <div style={{ padding: '0 0 1rem 0', fontSize: themeObj.font_size.size8, fontWeight: 'bold', cursor: 'pointer', width: '50%', textAlign: 'center', borderBottom: `${tab == 1 ? '2px solid black' : ''}` }} onClick={() => { setTab(1) }}>
@@ -479,6 +495,7 @@ const Demo2 = (props) => {
                     <Button
                         variant='outlined'
                         color='primary'
+                        disabled={!purchasable}
                         style={{
                             width: '30%',
                             height: '56px',
@@ -493,6 +510,7 @@ const Demo2 = (props) => {
                     <Button
                         variant='contained'
                         color='primary'
+                        disabled={!purchasable}
                         style={{
                             width: '69%',
                             height: '56px',

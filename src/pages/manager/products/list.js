@@ -30,6 +30,29 @@ const calcAgentPrice = (basePrice, user) => {
   return Math.round(Math.floor(Number(afterSeller.toFixed(6))) / 1000) * 1000;
 }
 
+
+// 필터 체크 여부. searchObj 의 값은 빈 문자열('' = 조건 없음)일 수도, 숫자·문자열일 수도 있다.
+// 0 이 유효한 값이라 단순 truthy 검사를 쓰면 '판매중(0)' 이 영영 체크되지 않는다.
+const isFilterOn = (current, value) =>
+  current !== '' && current !== undefined && current !== null && current == value;
+
+// 상품 상태 목록은 브랜드마다 다르다. 표의 상태 Select 와 상세검색의 상태 필터가
+// 서로 다른 목록을 쓰면 '표에는 있는데 걸러낼 수는 없는 상태'가 생기므로 여기서 한 번만 정한다.
+const productStatusOptions = (brand_id) => {
+  if (brand_id == 5)
+    return [
+      { value: 0, label: '판매중' }, { value: 6, label: '예약중' }, { value: 7, label: '매장문의' },
+      { value: 1, label: '거래진행중' }, { value: 2, label: '품절' }, { value: 3, label: '택배수거' },
+      { value: 4, label: '방문수거' }, { value: 5, label: '비공개' },
+    ];
+  if (brand_id == 74)
+    return [{ value: 0, label: '판매중' }, { value: 5, label: '비공개' }];
+  return [
+    { value: 0, label: '판매중' }, { value: 1, label: '중단됨' }, { value: 2, label: '품절' },
+    { value: 3, label: '새상품' }, { value: 5, label: '비공개' },
+  ];
+};
+
 const ProductList = () => {
 
   const { user } = useAuthContext();
@@ -234,55 +257,20 @@ const ProductList = () => {
         id: 'status',
         label: '상태',
         action: (row) => {
-          if (themeDnsData?.id == 5) {
-            return <Select
-              size="small"
-              defaultValue={row?.status}
-              disabled={user?.level < 40}
-              onChange={(e) => {
-                onChangeStatus(row?.id, e.target.value);
-              }}
-              sx={{ '@media screen and (max-width: 2500px)': { size: 'smaller' } }}
-            >
-              <MenuItem value={0}>{'판매중'}</MenuItem>
-              <MenuItem value={6}>{'예약중'}</MenuItem>
-              <MenuItem value={7}>{'매장문의'}</MenuItem>
-              <MenuItem value={1}>{'거래진행중'}</MenuItem>
-              <MenuItem value={2}>{'품절'}</MenuItem>
-              <MenuItem value={3}>{'택배수거'}</MenuItem>
-              <MenuItem value={4}>{'방문수거'}</MenuItem>
-              <MenuItem value={5}>{'비공개'}</MenuItem>
-            </Select>
-          }
-          else if (themeDnsData?.id == 74) {
-            return <Select
-              size="small"
-              defaultValue={row?.status}
-              onChange={(e) => {
-                onChangeStatus(row?.id, e.target.value);
-              }}
-              sx={{ '@media screen and (max-width: 2500px)': { size: 'smaller' } }}
-            >
-              <MenuItem value={0}>{'판매중'}</MenuItem>
-              <MenuItem value={5}>{'비공개'}</MenuItem>
-            </Select>
-          }
-          else {
-            return <Select
-              size="small"
-              defaultValue={row?.status}
-              onChange={(e) => {
-                onChangeStatus(row?.id, e.target.value);
-              }}
-              sx={{ '@media screen and (max-width: 2500px)': { size: 'smaller' } }}
-            >
-              <MenuItem value={0}>{'판매중'}</MenuItem>
-              <MenuItem value={1}>{'중단됨'}</MenuItem>
-              <MenuItem value={2}>{'품절'}</MenuItem>
-              <MenuItem value={3}>{'새상품'}</MenuItem>
-              <MenuItem value={5}>{'비공개'}</MenuItem>
-            </Select>
-          }
+          // 상태 목록은 브랜드마다 다르다 — 상세검색 필터와 같은 곳(productStatusOptions)에서 가져온다.
+          return <Select
+            size="small"
+            defaultValue={row?.status}
+            disabled={themeDnsData?.id == 5 && user?.level < 40}
+            onChange={(e) => {
+              onChangeStatus(row?.id, e.target.value);
+            }}
+            sx={{ '@media screen and (max-width: 2500px)': { size: 'smaller' } }}
+          >
+            {productStatusOptions(themeDnsData?.id).map((opt) => (
+              <MenuItem key={`row_status_${opt.value}`} value={opt.value}>{opt.label}</MenuItem>
+            ))}
+          </Select>
         },
         sx: (row) => {
           return {
@@ -617,7 +605,13 @@ const ProductList = () => {
       [idx]: children_list
     });
     $(`.category-container-${idx}`).scrollLeft(100000);
-    console.log(searchObj)
+  }
+
+  // 카테고리 필터 해제. onClickCategory 가 세운 상태(선택 경로·자식 목록·조회 조건)를 되돌린다.
+  const onClearCategory = (idx) => {
+    setCurCategories({ ...curCategories, [idx]: [] });
+    setCategoryChildrenList({ ...categoryChildrenList, [idx]: [] });
+    onChangePage({ ...searchObj, category_id: '', category_id0: '', category_id1: '', page: 1 });
   }
 
   const onChangeStatus = async (id, value) => {
@@ -720,6 +714,18 @@ const ProductList = () => {
                   width: '100%',
                   padding: '0.75rem',
                 }}>
+                  {/* 카테고리를 한 번 고르면 '전체'로 되돌릴 방법이 없었다 — 다른 카테고리로
+                      옮겨갈 수만 있고, 필터를 푸는 건 새로고침뿐이었다. */}
+                  <Row style={{ justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.5rem' }}>
+                    <Typography variant="subtitle2" sx={{ color: 'text.secondary' }}>
+                      {group?.category_group_name}
+                    </Typography>
+                    {(curCategories[idx] ?? []).length > 0 &&
+                      <Button size="small" color="inherit" onClick={() => { onClearCategory(idx) }}>
+                        전체
+                      </Button>
+                    }
+                  </Row>
                   <SelectCategoryComponent
                     curCategories={curCategories[idx] ?? []}
                     categories={group?.product_categories}
@@ -763,177 +769,48 @@ const ProductList = () => {
               </div>
             </>
           ))}
-          {detailSearchOpen && themeDnsData.id == 5 &&
-            <>
-              <div style={{ marginLeft: '1rem', marginBottom: '0.25rem', marginTop: '0.25rem' }}>
-                <Typography variant="subtitle2" sx={{ color: 'text.secondary' }}>
-                  위탁상태
-                </Typography>
-                <Row style={{ flexWrap: 'wrap' }}>
+          {/* 위탁상태는 그랑파리(브랜드5) 전용 개념이라 그대로 브랜드 조건 아래 둔다. */}
+          {detailSearchOpen && themeDnsData?.id == 5 &&
+            <div style={{ marginLeft: '1rem', marginBottom: '0.25rem', marginTop: '0.25rem' }}>
+              <Typography variant="subtitle2" sx={{ color: 'text.secondary' }}>
+                위탁상태
+              </Typography>
+              <Row style={{ flexWrap: 'wrap' }}>
+                {[{ value: 0, label: '그랑파리' }, { value: 1, label: '위탁(회원)' }, { value: 2, label: '위탁(비회원)' }].map((opt) => (
                   <FormControlLabel
-                    label={<Typography style={{ fontSize: themeObj.font_size.size6 }}>그랑파리</Typography>}
-                    control={<Checkbox checked={searchObj[`product_type`] == 0 ? true : false} />}
+                    key={`product_type_${opt.value}`}
+                    label={<Typography style={{ fontSize: themeObj.font_size.size6 }}>{opt.label}</Typography>}
+                    control={<Checkbox checked={isFilterOn(searchObj['product_type'], opt.value)} />}
                     onChange={(e) => {
-                      let product_type = searchObj[`product_type`]
-                      if (e.target.checked) {
-                        product_type = 0;
-                      }
-                      onChangePage({
-                        ...searchObj,
-                        [`product_type`]: product_type,
-                      })
+                      // 체크 해제하면 조건을 비운다 — 예전엔 넣기만 하고 지울 수가 없어
+                      // 한 번 고르면 '전체'로 되돌리려면 새로고침해야 했다.
+                      onChangePage({ ...searchObj, ['product_type']: e.target.checked ? opt.value : '', page: 1 })
                     }}
                   />
+                ))}
+              </Row>
+            </div>
+          }
+          {/* 상태 필터는 예전엔 위탁상태와 같은 `id == 5` 조건 안에 들어 있어
+              브랜드5 를 뺀 모든 가맹점에서 아예 뜨지 않았다(표에는 상태 열이 있는데 걸러낼 수만 없었다). */}
+          {detailSearchOpen &&
+            <div style={{ marginLeft: '1rem', marginBottom: '0.25rem', marginTop: '0.25rem' }}>
+              <Typography variant="subtitle2" sx={{ color: 'text.secondary' }}>
+                상태
+              </Typography>
+              <Row style={{ flexWrap: 'wrap' }}>
+                {productStatusOptions(themeDnsData?.id).map((opt) => (
                   <FormControlLabel
-                    label={<Typography style={{ fontSize: themeObj.font_size.size6 }}>위탁(회원)</Typography>}
-                    control={<Checkbox checked={searchObj[`product_type`] == 1 ? true : false} />}
+                    key={`status_${opt.value}`}
+                    label={<Typography style={{ fontSize: themeObj.font_size.size6 }}>{opt.label}</Typography>}
+                    control={<Checkbox checked={isFilterOn(searchObj['status'], opt.value)} />}
                     onChange={(e) => {
-                      let product_type = searchObj[`product_type`];
-                      if (e.target.checked) {
-                        product_type = 1;
-                      }
-                      onChangePage({
-                        ...searchObj,
-                        [`product_type`]: product_type,
-                      })
+                      onChangePage({ ...searchObj, ['status']: e.target.checked ? opt.value : '', page: 1 })
                     }}
                   />
-                  <FormControlLabel
-                    label={<Typography style={{ fontSize: themeObj.font_size.size6 }}>위탁(비회원)</Typography>}
-                    control={<Checkbox checked={searchObj[`product_type`] == 2 ? true : false} />}
-                    onChange={(e) => {
-                      let product_type = searchObj[`product_type`]
-                      if (e.target.checked) {
-                        product_type = 2;
-                      }
-                      onChangePage({
-                        ...searchObj,
-                        [`product_type`]: product_type,
-                      })
-                    }}
-                  />
-                </Row>
-              </div>
-              <div style={{ marginLeft: '1rem', marginBottom: '0.25rem', marginTop: '0.25rem' }}>
-                <Typography variant="subtitle2" sx={{ color: 'text.secondary' }}>
-                  상태
-                </Typography>
-                <Row style={{ flexWrap: 'wrap' }}>
-                  <FormControlLabel
-                    label={<Typography style={{ fontSize: themeObj.font_size.size6 }}>판매중</Typography>}
-                    control={<Checkbox checked={searchObj[`status`] == 0 ? true : false} />}
-                    onChange={(e) => {
-                      let status = searchObj[`status`]
-                      if (e.target.checked) {
-                        status = 0;
-                      }
-                      onChangePage({
-                        ...searchObj,
-                        [`status`]: status,
-                      })
-                    }}
-                  />
-                  <FormControlLabel
-                    label={<Typography style={{ fontSize: themeObj.font_size.size6 }}>예약중</Typography>}
-                    control={<Checkbox checked={searchObj[`status`] == 6 ? true : false} />}
-                    onChange={(e) => {
-                      let status = searchObj[`status`]
-                      if (e.target.checked) {
-                        status = 6;
-                      }
-                      onChangePage({
-                        ...searchObj,
-                        [`status`]: status,
-                      })
-                    }}
-                  />
-                  <FormControlLabel
-                    label={<Typography style={{ fontSize: themeObj.font_size.size6 }}>매장문의</Typography>}
-                    control={<Checkbox checked={searchObj[`status`] == 7 ? true : false} />}
-                    onChange={(e) => {
-                      let status = searchObj[`status`]
-                      if (e.target.checked) {
-                        status = 7;
-                      }
-                      onChangePage({
-                        ...searchObj,
-                        [`status`]: status,
-                      })
-                    }}
-                  />
-                  <FormControlLabel
-                    label={<Typography style={{ fontSize: themeObj.font_size.size6 }}>거래진행중</Typography>}
-                    control={<Checkbox checked={searchObj[`status`] == 1 ? true : false} />}
-                    onChange={(e) => {
-                      let status = searchObj[`status`]
-                      if (e.target.checked) {
-                        status = 1;
-                      }
-                      onChangePage({
-                        ...searchObj,
-                        [`status`]: status,
-                      })
-                    }}
-                  />
-                  <FormControlLabel
-                    label={<Typography style={{ fontSize: themeObj.font_size.size6 }}>품절</Typography>}
-                    control={<Checkbox checked={searchObj[`status`] == 2 ? true : false} />}
-                    onChange={(e) => {
-                      let status = searchObj[`status`]
-                      if (e.target.checked) {
-                        status = 2;
-                      }
-                      onChangePage({
-                        ...searchObj,
-                        [`status`]: status,
-                      })
-                    }}
-                  />
-                  <FormControlLabel
-                    label={<Typography style={{ fontSize: themeObj.font_size.size6 }}>택배수거</Typography>}
-                    control={<Checkbox checked={searchObj[`status`] == 3 ? true : false} />}
-                    onChange={(e) => {
-                      let status = searchObj[`status`]
-                      if (e.target.checked) {
-                        status = 3;
-                      }
-                      onChangePage({
-                        ...searchObj,
-                        [`status`]: status,
-                      })
-                    }}
-                  />
-                  <FormControlLabel
-                    label={<Typography style={{ fontSize: themeObj.font_size.size6 }}>방문수거</Typography>}
-                    control={<Checkbox checked={searchObj[`status`] == 4 ? true : false} />}
-                    onChange={(e) => {
-                      let status = searchObj[`status`]
-                      if (e.target.checked) {
-                        status = 4;
-                      }
-                      onChangePage({
-                        ...searchObj,
-                        [`status`]: status,
-                      })
-                    }}
-                  />
-                  <FormControlLabel
-                    label={<Typography style={{ fontSize: themeObj.font_size.size6 }}>비공개</Typography>}
-                    control={<Checkbox checked={searchObj[`status`] == 5 ? true : false} />}
-                    onChange={(e) => {
-                      let status = searchObj[`status`]
-                      if (e.target.checked) {
-                        status = 5;
-                      }
-                      onChangePage({
-                        ...searchObj,
-                        [`status`]: status,
-                      })
-                    }}
-                  />
-                </Row>
-              </div>
-            </>
+                ))}
+              </Row>
+            </div>
           }
           <Divider />
           <Dialog

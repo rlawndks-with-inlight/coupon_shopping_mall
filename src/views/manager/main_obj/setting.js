@@ -74,6 +74,173 @@ const curTypeNum = (list, type_name, idx) => {
   }
   return count
 }
+// 섹션 헤더의 조작줄(정렬·스타일 입력·순서이동·삭제).
+//
+// ⚠ 반드시 모듈 스코프에 있어야 한다. MainObjSetting 안에 두면 부모가 리렌더될 때마다
+//   새 함수 = 새 컴포넌트 타입이 되어 React 가 하위를 통째로 언마운트→마운트하고,
+//   그 순간 입력칸이 새로 만들어져 한 글자마다 포커스가 빠진다.
+const SectionProcess = props => {
+  const { idx, item, isProductList = 0, contentList, setContentList, onUpSection, onDownSection, deleteSection, userLevel } = props
+  return (
+    <>
+      <Row style={{ marginLeft: 'auto', columnGap: '0.25rem' }}>
+        {/* <Tooltip title="미리 보시려면 클릭해 주세요.">
+          <IconButton sx={{ padding: '0.25rem' }} onClick={() => { onClickPreview(idx) }}>
+            <Icon icon={'icon-park-outline:preview-open'} />
+          </IconButton>
+        </Tooltip> */}
+        {isProductList == 1 &&
+          <>
+            <FormControl variant='outlined' sx={{ width: '30%' }} size='small'>
+              <InputLabel>{`상품 설명 배치`}</InputLabel>
+              <Select
+                size='small'
+                label={`상품 설명 배치`}
+                value={item?.style?.text_align ?? 'center'}
+                onChange={(e) => {
+                  let content_list = [...contentList]
+                  content_list[idx]['style']['text_align'] = e.target.value
+                  setContentList(content_list)
+                }}
+              >
+                <MenuItem value={'left'}>왼쪽</MenuItem>
+                <MenuItem value={'right'}>오른쪽</MenuItem>
+                <MenuItem value={'center'}>가운데</MenuItem>
+              </Select>
+            </FormControl>
+            <TextField
+              size='small'
+              label='배경색상'
+              value={item?.style?.back_color ?? '#FFFFFF'}
+              type='color'
+              style={{
+                border: 'none',
+                minWidth: '80px'
+              }}
+              onChange={e => {
+                let content_list = [...contentList]
+                content_list[idx]['style']['back_color'] = e.target.value
+                setContentList(content_list)
+              }}
+            />
+            <TextField
+              size='small'
+              sx={{ maxWidth: '150px' }}
+              label='슬라이더 속도'
+              type='number'
+              value={item?.style?.slider_speed ?? 0}
+              onChange={e => {
+                let content_list = [...contentList]
+                if (!content_list[idx]?.style) {
+                  content_list[idx]['style'] = {}
+                }
+                content_list[idx]['style']['slider_speed'] = e.target.value
+                setContentList(content_list)
+                //console.log(item)
+              }}
+              InputProps={{
+                endAdornment: <>초</>
+              }}
+            />
+            <TextField
+              size='small'
+              sx={{ maxWidth: '150px' }}
+              label='컨텐츠 개수'
+              type='number'
+              value={item?.style?.rows ?? 1}
+              onChange={e => {
+                let content_list = [...contentList]
+                if (!content_list[idx]?.style) {
+                  content_list[idx]['style'] = {}
+                }
+                content_list[idx]['style']['rows'] = e.target.value
+                setContentList(content_list)
+              }}
+              InputProps={{
+                endAdornment: <>행</>
+              }}
+            />
+          </>
+        }
+        {/*<TextField
+          size='small'
+          sx={{ maxWidth: '150px' }}
+          label='상품 개수'
+          type='number'
+          value={item?.style?.columns ?? 0}
+          onChange={e => {
+            let content_list = [...contentList]
+            if (!content_list[idx]?.style) {
+              content_list[idx]['style'] = {}
+            }
+            content_list[idx]['style']['columns'] = e.target.value
+            setContentList(content_list)
+          }}
+          InputProps={{
+            endAdornment: <>열</>
+          }}
+        />*/}
+        <TextField
+          size='small'
+          sx={{ maxWidth: '150px' }}
+          label='윗마진'
+          placeholder='px(픽셀) 단위'
+          type='number'
+          value={item?.style?.margin_top ?? 0}
+          onChange={e => {
+            let content_list = [...contentList]
+            if (!content_list[idx]?.style) {
+              content_list[idx]['style'] = {}
+            }
+            content_list[idx]['style']['margin_top'] = e.target.value
+            setContentList(content_list)
+            //console.log(item)
+          }}
+          InputProps={{
+            endAdornment: <>px</>
+          }}
+        />
+        <Tooltip title='해당 섹션을 한칸 올리시려면 클릭해 주세요.'>
+          <IconButton
+            sx={{ padding: '0.25rem' }}
+            disabled={idx == 0}
+            onClick={() => {
+              onUpSection(idx)
+            }}
+          >
+            <Icon icon={'grommet-icons:link-up'} />
+          </IconButton>
+        </Tooltip>
+        <Tooltip title='해당 섹션을 한칸 내리시려면 클릭해 주세요.'>
+          <IconButton
+            sx={{ padding: '0.25rem' }}
+            disabled={idx == contentList.length - 1}
+            onClick={() => {
+              onDownSection(idx)
+            }}
+          >
+            <Icon icon={'grommet-icons:link-down'} />
+          </IconButton>
+        </Tooltip>
+        {userLevel >= 40 && (
+          <>
+            <Tooltip title='해당 섹션을 삭제하시려면 클릭해 주세요.'>
+              <IconButton
+                sx={{ padding: '0.25rem' }}
+                onClick={() => {
+                  deleteSection(idx)
+                }}
+              >
+                <Icon icon={'ph:x-bold'} />
+              </IconButton>
+            </Tooltip>
+          </>
+        )}
+      </Row>
+    </>
+  )
+}
+
 const MainObjSetting = props => {
   const mainObjSchemaList = [
     {
@@ -544,176 +711,15 @@ const MainObjSetting = props => {
     )
   }
 
+  // SectionProcess 가 클로저 대신 props 로 받는 값들(모듈 스코프로 올린 이유는 정의부 주석 참고).
+  const sectionCtl = { contentList, setContentList, onUpSection, onDownSection, deleteSection, userLevel: user?.level };
+
   const [sliderOpen, setSliderOpen] = useState(true)
   const handleSlider = (e) => {
     setSliderOpen(e.target.checked)
   }
 
-  const SectionProcess = props => {
-    const { idx, item, isProductList = 0 } = props
-    return (
-      <>
-        <Row style={{ marginLeft: 'auto', columnGap: '0.25rem' }}>
-          {/* <Tooltip title="미리 보시려면 클릭해 주세요.">
-            <IconButton sx={{ padding: '0.25rem' }} onClick={() => { onClickPreview(idx) }}>
-              <Icon icon={'icon-park-outline:preview-open'} />
-            </IconButton>
-          </Tooltip> */}
-          {isProductList == 1 &&
-            <>
-              <FormControl variant='outlined' sx={{ width: '30%' }} size='small'>
-                <InputLabel>{`상품 설명 배치`}</InputLabel>
-                <Select
-                  size='small'
-                  label={`상품 설명 배치`}
-                  value={item?.style?.text_align ?? 'center'}
-                  onChange={(e) => {
-                    let content_list = [...contentList]
-                    content_list[idx]['style']['text_align'] = e.target.value
-                    setContentList(content_list)
-                  }}
-                >
-                  <MenuItem value={'left'}>왼쪽</MenuItem>
-                  <MenuItem value={'right'}>오른쪽</MenuItem>
-                  <MenuItem value={'center'}>가운데</MenuItem>
-                </Select>
-              </FormControl>
-              <TextField
-                size='small'
-                label='배경색상'
-                value={item?.style?.back_color ?? '#FFFFFF'}
-                type='color'
-                style={{
-                  border: 'none',
-                  minWidth: '80px'
-                }}
-                onChange={e => {
-                  let content_list = [...contentList]
-                  content_list[idx]['style']['back_color'] = e.target.value
-                  setContentList(content_list)
-                }}
-              />
-              <TextField
-                size='small'
-                sx={{ maxWidth: '150px' }}
-                label='슬라이더 속도'
-                type='number'
-                value={item?.style?.slider_speed ?? 0}
-                defaultValue={item?.style?.slider_speed ?? 0}
-                onChange={e => {
-                  let content_list = [...contentList]
-                  if (!content_list[idx]?.style) {
-                    content_list[idx]['style'] = {}
-                  }
-                  content_list[idx]['style']['slider_speed'] = e.target.value
-                  setContentList(content_list)
-                  //console.log(item)
-                }}
-                InputProps={{
-                  endAdornment: <>초</>
-                }}
-              />
-              <TextField
-                size='small'
-                sx={{ maxWidth: '150px' }}
-                label='컨텐츠 개수'
-                type='number'
-                value={item?.style?.rows ?? 1}
-                defaultValue={item?.style?.rows ?? 1}
-                onChange={e => {
-                  let content_list = [...contentList]
-                  if (!content_list[idx]?.style) {
-                    content_list[idx]['style'] = {}
-                  }
-                  content_list[idx]['style']['rows'] = e.target.value
-                  setContentList(content_list)
-                }}
-                InputProps={{
-                  endAdornment: <>행</>
-                }}
-              />
-            </>
-          }
-          {/*<TextField
-            size='small'
-            sx={{ maxWidth: '150px' }}
-            label='상품 개수'
-            type='number'
-            value={item?.style?.columns ?? 0}
-            defaultValue={item?.style?.columns ?? 0}
-            onChange={e => {
-              let content_list = [...contentList]
-              if (!content_list[idx]?.style) {
-                content_list[idx]['style'] = {}
-              }
-              content_list[idx]['style']['columns'] = e.target.value
-              setContentList(content_list)
-            }}
-            InputProps={{
-              endAdornment: <>열</>
-            }}
-          />*/}
-          <TextField
-            size='small'
-            sx={{ maxWidth: '150px' }}
-            label='윗마진'
-            placeholder='px(픽셀) 단위'
-            type='number'
-            value={item?.style?.margin_top ?? 0}
-            defaultValue={item?.style?.margin_top ?? 0}
-            onChange={e => {
-              let content_list = [...contentList]
-              if (!content_list[idx]?.style) {
-                content_list[idx]['style'] = {}
-              }
-              content_list[idx]['style']['margin_top'] = e.target.value
-              setContentList(content_list)
-              //console.log(item)
-            }}
-            InputProps={{
-              endAdornment: <>px</>
-            }}
-          />
-          <Tooltip title='해당 섹션을 한칸 올리시려면 클릭해 주세요.'>
-            <IconButton
-              sx={{ padding: '0.25rem' }}
-              disabled={idx == 0}
-              onClick={() => {
-                onUpSection(idx)
-              }}
-            >
-              <Icon icon={'grommet-icons:link-up'} />
-            </IconButton>
-          </Tooltip>
-          <Tooltip title='해당 섹션을 한칸 내리시려면 클릭해 주세요.'>
-            <IconButton
-              sx={{ padding: '0.25rem' }}
-              disabled={idx == contentList.length - 1}
-              onClick={() => {
-                onDownSection(idx)
-              }}
-            >
-              <Icon icon={'grommet-icons:link-down'} />
-            </IconButton>
-          </Tooltip>
-          {user?.level >= 40 && (
-            <>
-              <Tooltip title='해당 섹션을 삭제하시려면 클릭해 주세요.'>
-                <IconButton
-                  sx={{ padding: '0.25rem' }}
-                  onClick={() => {
-                    deleteSection(idx)
-                  }}
-                >
-                  <Icon icon={'ph:x-bold'} />
-                </IconButton>
-              </Tooltip>
-            </>
-          )}
-        </Row>
-      </>
-    )
-  }
+
   const [previewSection, setPreviewSection] = useState(undefined)
   const onClickPreview = idx => {
     let column = contentList[idx]
@@ -829,7 +835,7 @@ const MainObjSetting = props => {
                                 title={`배너슬라이드 ${curTypeNum(contentList, 'banner', idx)}`}
                                 sx={{ paddingLeft: '0' }}
                               />
-                              <SectionProcess idx={idx} item={item} />
+                              <SectionProcess {...sectionCtl} idx={idx} item={item} />
                             </Row>
                             <TextField
                               label='이미지 최소높이'
@@ -1033,7 +1039,7 @@ const MainObjSetting = props => {
                                 title={`버튼형 배너슬라이드 ${curTypeNum(contentList, 'button-banner', idx)}`}
                                 sx={{ paddingLeft: '0' }}
                               />
-                              <SectionProcess idx={idx} item={item} />
+                              <SectionProcess {...sectionCtl} idx={idx} item={item} />
                             </Row>
                             <Upload
                               multiple
@@ -1116,7 +1122,7 @@ const MainObjSetting = props => {
                                   + 텍스트 추가
                                 </Button>
                               </Tooltip>
-                              <SectionProcess idx={idx} item={item} />
+                              <SectionProcess {...sectionCtl} idx={idx} item={item} />
                             </Row>
                             {item?.list &&
                               item.list.map((itm, index) => (
@@ -1167,7 +1173,7 @@ const MainObjSetting = props => {
                                 title={`히어로 상품 ${curTypeNum(contentList, 'item-hero', idx)}`}
                                 sx={{ paddingLeft: '0' }}
                               />
-                              <SectionProcess idx={idx} item={item} isProductList={1} />
+                              <SectionProcess {...sectionCtl} idx={idx} item={item} isProductList={1} />
                             </Row>
                             <TextField
                               select
@@ -1235,7 +1241,7 @@ const MainObjSetting = props => {
                                 title={`상품슬라이드 ${curTypeNum(contentList, 'items', idx)}`}
                                 sx={{ paddingLeft: '0' }}
                               />
-                              <SectionProcess idx={idx} item={item} isProductList={1} />
+                              <SectionProcess {...sectionCtl} idx={idx} item={item} isProductList={1} />
                             </Row>
                             <TextField
                               label='제목'
@@ -1292,7 +1298,7 @@ const MainObjSetting = props => {
                                 title={`ID 선택형 상품슬라이드 ${curTypeNum(contentList, 'items-ids', idx)}`}
                                 sx={{ paddingLeft: '0' }}
                               />
-                              <SectionProcess idx={idx} item={item} isProductList={1} />
+                              <SectionProcess {...sectionCtl} idx={idx} item={item} isProductList={1} />
                             </Row>
                             <TextField
                               label='제목'
@@ -1351,7 +1357,7 @@ const MainObjSetting = props => {
                                   + 카테고리 추가
                                 </Button>
                               </Tooltip>
-                              <SectionProcess idx={idx} item={item} />
+                              <SectionProcess {...sectionCtl} idx={idx} item={item} />
                             </Row>
                             <TextField
                               label='제목'
@@ -1450,7 +1456,7 @@ const MainObjSetting = props => {
                                 title={`에디터 ${curTypeNum(contentList, 'editor', idx)}`}
                                 sx={{ paddingLeft: '0' }}
                               />
-                              <SectionProcess idx={idx} item={item} />
+                              <SectionProcess {...sectionCtl} idx={idx} item={item} />
                             </Row>
                             <ReactQuillComponent
                               value={item.content}
@@ -1483,7 +1489,7 @@ const MainObjSetting = props => {
                               >
                                 + 동영상 링크 추가
                               </Button>
-                              <SectionProcess idx={idx} item={item} />
+                              <SectionProcess {...sectionCtl} idx={idx} item={item} />
                             </Row>
                             <Upload
                               file={item.file || item.src}
@@ -1561,7 +1567,7 @@ const MainObjSetting = props => {
                                 title={`게시판 ${curTypeNum(contentList, 'post', idx)}`}
                                 sx={{ paddingLeft: '0' }}
                               />
-                              <SectionProcess idx={idx} item={item} />
+                              <SectionProcess {...sectionCtl} idx={idx} item={item} />
                             </Row>
                             <Upload
                               file={item.file || item.src}
@@ -1642,7 +1648,7 @@ const MainObjSetting = props => {
                                 title={`셀러섹션 ${curTypeNum(contentList, 'sellers', idx)}`}
                                 sx={{ paddingLeft: '0' }}
                               />
-                              <SectionProcess idx={idx} item={item} />
+                              <SectionProcess {...sectionCtl} idx={idx} item={item} />
                             </Row>
                             <TextField
                               label='제목'
@@ -1671,7 +1677,7 @@ const MainObjSetting = props => {
                                 title={`${_.find(getSettingPropertyList(themePropertyList), { type: item?.type })?.label.split(' - ')[1]} ${curTypeNum(contentList, item?.type, idx)}`}
                                 sx={{ paddingLeft: '0' }}
                               />
-                              <SectionProcess idx={idx} item={item} isProductList={1} />
+                              <SectionProcess {...sectionCtl} idx={idx} item={item} isProductList={1} />
                             </Row>
                             <TextField
                               label='제목'
@@ -1700,7 +1706,7 @@ const MainObjSetting = props => {
                                 title={`상품후기 ${curTypeNum(contentList, 'item-reviews', idx)}`}
                                 sx={{ paddingLeft: '0' }}
                               />
-                              <SectionProcess idx={idx} item={item} />
+                              <SectionProcess {...sectionCtl} idx={idx} item={item} />
                             </Row>
                             <TextField
                               label='제목'
@@ -1729,7 +1735,7 @@ const MainObjSetting = props => {
                                 title={`선택형 상품후기 ${curTypeNum(contentList, 'item-reviews-select', idx)}`}
                                 sx={{ paddingLeft: '0' }}
                               />
-                              <SectionProcess idx={idx} item={item} />
+                              <SectionProcess {...sectionCtl} idx={idx} item={item} />
                             </Row>
                             <TextField
                               label='제목'

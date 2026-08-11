@@ -4,6 +4,7 @@ import { Items } from 'src/components/elements/shop/common'
 import _ from 'lodash'
 import { formatLang } from 'src/utils/format'
 import { useLocales } from 'src/locales'
+import { useSettingsContext } from 'src/components/settings'
 
 const Wrappers = styled.div`
   width:90%;
@@ -13,6 +14,7 @@ const Wrappers = styled.div`
 
 const HomeItems = (props) => {
     const { currentLang } = useLocales();
+    const { themeMode } = useSettingsContext();
     const { column, data, func, is_manager } = props;
     const { router } = func;
     const { style } = column;
@@ -24,6 +26,9 @@ const HomeItems = (props) => {
                 marginTop: `${style?.margin_top}px`,
                 display: 'flex',
                 flexDirection: `${column?.title ? 'column' : 'row'}`,
+                // 메인페이지관리의 '배경색상'은 저장만 되고 어디서도 읽지 않았다.
+                // 어두운 테마에서는 무시한다(HomeItemsPropertyGroups 와 같은 규칙).
+                ...(themeMode != 'dark' && style?.back_color ? { backgroundColor: style.back_color } : {}),
             }}>
                 {column?.title &&
                     <>

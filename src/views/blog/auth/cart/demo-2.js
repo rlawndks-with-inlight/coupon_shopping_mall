@@ -120,11 +120,12 @@ const Cart2 = (props) => {
     const [smsPayData, setSmsPayData] = useState({ name: '', phone_num: '' });
     const [cardFucus, setCardFocus] = useState();
     const [addressContent, setAddressContent] = useState({});
+    // user_id 를 싣지 않는다 — 첫 렌더의 user 를 붙잡아 굳어버리기 때문이다(DialogBuyNow 와 같은 이유).
+    // 백엔드는 user_id 가 없으면 로그인한 본인의 배송지를 준다.
     const [addressSearchObj, setAddressSearchObj] = useState({
         page: 1,
         page_size: 10,
         search: '',
-        user_id: user?.id,
     });
     const [addAddressOpen, setAddAddressOpen] = useState(false);
     const [addAddressObj, setAddAddressObj] = useState({
@@ -190,7 +191,11 @@ const Cart2 = (props) => {
                 toast(translate('상품 가격이 변경되어 최신 금액으로 갱신했습니다.'));
             }
         }
-        onChangeAddressPage(addressSearchObj);
+        // 배송지는 로그인한 사람만 볼 수 있다. 비회원 장바구니에서도 이 함수가 돌아
+        // 매번 거절당하는 요청이 한 번씩 나가고 있었다.
+        if (user?.id) {
+            onChangeAddressPage(addressSearchObj);
+        }
     }
     const onDelete = (idx) => {
         let product_list = [...products];

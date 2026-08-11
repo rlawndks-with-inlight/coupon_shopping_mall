@@ -83,9 +83,26 @@ export const put = async (url, obj) => {
         return false;
     }
 }
+// 쿼리스트링을 만든다.
+//
+// ⚠ new URLSearchParams({ user_id: undefined }) 는 키를 빼는 게 아니라
+//   `user_id=undefined` 라는 **문자열**을 만든다(null 이면 'null'). 서버는 그 값을
+//   Number('undefined') = NaN 으로 읽고 조건을 못 만족시켜 거절한다.
+//   실제로 배송지 조회가 이 이유로 계속 실패하고 있었다(로그인 전에 호출 → user_id=undefined
+//   → '권한이 없습니다'). 백엔드는 'user_id 를 안 주면 본인' 규칙이라 아예 안 보내는 게 맞다.
+//   빈 문자열('')은 '조건 없음'이라는 뜻이 있어 그대로 둔다.
+const toQuery = (params) => {
+    const query = new URLSearchParams();
+    for (const [key, value] of Object.entries(params ?? {})) {
+        if (value === undefined || value === null) continue;
+        query.append(key, value);
+    }
+    return query.toString();
+};
+
 export const get = async (url, params) => {
     try {
-        let query = new URLSearchParams(params).toString()
+        let query = toQuery(params)
 
         const { data: response } = await axios.get(`${url}?${query}`);
 

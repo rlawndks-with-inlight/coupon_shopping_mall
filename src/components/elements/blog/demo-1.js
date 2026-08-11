@@ -122,8 +122,8 @@ export const SellerItem = (props) => {
           <Icon icon='iconamoon:shopping-bag' />
         </IconButton>
       </div>
-      <ItemName onClick={() => { router.push(`/shop/item/${item.id}`) }}>{item?.product_name}</ItemName>
-      <ItemComment onClick={() => { router.push(`/shop/item/${item.id}`) }}>{item?.product_comment}</ItemComment>
+      <ItemName onClick={() => { router.push(`/shop/item/${item.id}`) }}>{formatLang(item, 'product_name')}</ItemName>
+      <ItemComment onClick={() => { router.push(`/shop/item/${item.id}`) }}>{formatLang(item, 'product_comment')}</ItemComment>
     </ItemContent>
   )
 }

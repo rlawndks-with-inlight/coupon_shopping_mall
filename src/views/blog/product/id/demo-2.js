@@ -267,7 +267,7 @@ const Demo2 = (props) => {
                                 <>
                                     <ReactQuill
                                         className='none-padding'
-                                        value={item?.product_description ?? `<body></body>`}
+                                        value={formatLang(item, 'product_description', currentLang) ?? `<body></body>`}
                                         readOnly={true}
                                         theme={"bubble"}
                                         bounds={'.app'}

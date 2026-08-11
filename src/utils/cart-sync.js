@@ -1,5 +1,6 @@
 import { getProductStatus, isPurchasable } from './function';
 import { getLocalStorage } from './local-storage';
+import { formatLang } from './format';
 
 // 장바구니를 서버의 현재 상품 정보로 다시 채운다.
 //
@@ -152,7 +153,7 @@ export const syncCartWithServer = async (products = []) => {
             result.unavailable.push({
                 id,
                 seller_id: toInt(line?.seller_id),
-                name: line?.product_name || `상품 ${id}`,
+                name: formatLang(line, 'product_name') || `상품 ${id}`,
                 label: '판매하지 않는',
             });
             return line;
@@ -196,7 +197,7 @@ export const syncCartWithServer = async (products = []) => {
             result.unavailable.push({
                 id,
                 seller_id: toInt(line?.seller_id),
-                name: next.product_name || `상품 ${id}`,
+                name: formatLang(next, 'product_name') || `상품 ${id}`,
                 label: getProductStatus(server?.status)?.text || '판매하지 않는',
             });
         }

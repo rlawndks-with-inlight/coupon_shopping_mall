@@ -30,7 +30,10 @@ const Badge = styled.span`
 const pHelper = (product, currentLang) => {
   const img = fixImgUrl(product?.product_img);
   const name = formatLang(product, 'product_name', currentLang);
-  const comment = product?.product_comment;
+  // 한줄설명도 번역 대상 컬럼이다(백엔드 lang_obj_columns.products 에 product_comment 가 있다).
+  // 바로 윗줄은 formatLang 을 쓰는데 여기만 컬럼을 직접 읽어서, 프레임4 홈 히어로에서
+  // 상품명은 'pizza' 로 번역되고 그 아래 설명만 "피자" 로 남았다.
+  const comment = formatLang(product, 'product_comment', currentLang);
   const sale = product?.product_sale_price || product?.product_price || 0;
   const orig = product?.product_price || 0;
   const hasSale = orig > sale && sale > 0;

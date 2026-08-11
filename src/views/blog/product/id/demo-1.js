@@ -226,7 +226,7 @@ const Demo1 = (props) => {
             <div style={{ padding: '0 0 1rem 0', fontSize: themeObj.font_size.size8, fontWeight: 'bold' }}>{translate('상품정보')}</div>
             <ReactQuill
               className='none-padding'
-              value={item?.product_description ?? `<body></body>`}
+              value={formatLang(item, 'product_description', currentLang) ?? `<body></body>`}
               readOnly={true}
               theme={"bubble"}
               bounds={'.app'}

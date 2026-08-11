@@ -13,7 +13,7 @@ import { apiManager } from 'src/utils/api';
 import { useSettingsContext } from 'src/components/settings';
 import SecurityQuestionFields from 'src/components/elements/shop/SecurityQuestionFields';
 import { validateSecurityQuestion, securityQuestionPayload } from 'src/data/security-questions';
-import { sanitizePhoneInput, withSignUpName, validateSignUpInput, marketingAgreePayload } from 'src/utils/function';
+import { sanitizePhoneInput, withSignUpName, validateSignUpInput } from 'src/utils/function';
 import { useLocales } from 'src/locales';
 
 const Wrappers = styled.div`
@@ -84,8 +84,8 @@ flex-grow:1;
 
 // 약관 type ↔ 동의 체크박스 대응표.
 // 화살표(>) 를 눌러 약관을 끝까지 읽고 '동의하고 닫기' 를 누르면 여기 대응하는 체크박스가 켜진다.
-// 0=서비스 이용약관(check_2), 1=개인정보 수집 이용 동의(check_3), 2=마케팅 수신(check_4, 현재 비노출)
-const POLICY_CHECK_KEY = { 0: 'check_2', 1: 'check_3', 2: 'check_4' };
+// 0=서비스 이용약관(check_2), 1=개인정보 수집 이용 동의(check_3)
+const POLICY_CHECK_KEY = { 0: 'check_2', 1: 'check_3' };
 
 // 회원가입 김인욱
 const Demo2 = (props) => {
@@ -105,10 +105,8 @@ const Demo2 = (props) => {
     const [activeStep, setActiveStep] = useState(0);
     const [checkboxObj, setCheckboxObj] = useState({
         check_0: false,
-        check_1: false,
         check_2: false,
         check_3: false,
-        check_4: false,
     })
     const [user, setUser] = useState({
         user_name: '',
@@ -151,7 +149,6 @@ const Demo2 = (props) => {
     const onClickNextButton = async () => {
         /*if (activeStep == 0) {
             if (
-                !checkboxObj.check_1 ||
                 !checkboxObj.check_2
             ) {
                 toast.error("필수 항목에 체크해 주세요.");
@@ -191,7 +188,6 @@ const Demo2 = (props) => {
             let result = await apiManager('auth/sign-up', 'create', {
                 ...withSignUpName(user),
                 ...securityQuestionPayload(themeDnsData, user),
-                ...marketingAgreePayload({ marketing: checkboxObj.check_4, sms: false, email: false }),
                 brand_id: themeDnsData?.id,
             });
             if (!result) {
@@ -232,9 +228,6 @@ const Demo2 = (props) => {
                                     setCheckboxObj(check_obj)
                                 }} />
                                 <ChildCheckboxes>
-                                    <FormControlLabel label={<Typography>{translate('만 14세 이상입니다')}<span style={{ color: 'red' }}>{translate('(필수)')}</span></Typography>} control={<Checkbox checked={checkboxObj.check_1} onChange={(e) => {
-                                        setCheckboxObj({ ...checkboxObj, ['check_1']: e.target.checked })
-                                    }} />} />
                                     <DetailedCheckbox>
                                         <FormControlLabel label={<Typography>{translate('서비스 이용약관')}<span style={{ color: 'red' }}>{translate('(필수)')}</span></Typography>} control={<Checkbox checked={checkboxObj.check_2} onChange={(e) => {
                                             setCheckboxObj({ ...checkboxObj, ['check_2']: e.target.checked })
@@ -277,7 +270,7 @@ const Demo2 = (props) => {
                                 </ChildCheckboxes>
                             </CheckBoxes>
                             <Button
-                                disabled={checkboxObj.check_1 && checkboxObj.check_2 && checkboxObj.check_3 ? false : true}
+                                disabled={checkboxObj.check_2 && checkboxObj.check_3 ? false : true}
                                 variant='contained'
                                 color='primary'
                                 size='large'

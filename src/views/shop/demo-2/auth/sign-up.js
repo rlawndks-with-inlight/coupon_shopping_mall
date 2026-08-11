@@ -1,5 +1,5 @@
 import { Button, Checkbox, Divider, FormControl, FormControlLabel, InputLabel, OutlinedInput, Stack, Step, StepLabel, Stepper, TextField, Typography } from '@mui/material';
-import { withSignUpName, validateSignUpInput, marketingAgreePayload, sanitizePhoneInput } from 'src/utils/function';
+import { withSignUpName, validateSignUpInput, sanitizePhoneInput } from 'src/utils/function';
 import { useEffect, useState } from 'react';
 import { themeObj } from 'src/components/elements/styled-components';
 import styled from 'styled-components';
@@ -51,9 +51,6 @@ const SignUpDemo = (props) => {
     check_0: false,
     check_1: false,
     check_2: false,
-    check_3: false,
-    check_4: false,
-    check_5: false,
   })
   const [user, setUser] = useState({
     user_name: '',
@@ -160,7 +157,7 @@ const SignUpDemo = (props) => {
         toast.error(secqErr);
         return;
       }
-      let result = await apiManager('auth/sign-up', 'create', { ...withSignUpName(user), ...securityQuestionPayload(themeDnsData, user), ...marketingAgreePayload({ marketing: checkboxObj.check_3, sms: checkboxObj.check_4, email: checkboxObj.check_5 }), brand_id: themeDnsData?.id });
+      let result = await apiManager('auth/sign-up', 'create', { ...withSignUpName(user), ...securityQuestionPayload(themeDnsData, user), brand_id: themeDnsData?.id });
       if (!result) {
         return;
       }
@@ -220,7 +217,7 @@ const SignUpDemo = (props) => {
         {activeStep == 0 &&
           <Stack spacing={2}>
             <FormControlLabel
-              label={<Typography sx={{ fontWeight: 700, fontSize: themeObj.font_size.size5 }}>{translate('이용약관 및 개인정보수집 및 이용, 쇼핑정보 수신(선택)에 모두 동의합니다.')}</Typography>}
+              label={<Typography sx={{ fontWeight: 700, fontSize: themeObj.font_size.size5 }}>{translate('이용약관 및 개인정보 수집·이용에 모두 동의합니다.')}</Typography>}
               control={<Checkbox checked={checkboxObj.check_0} />}
               onChange={(e) => {
                 let check_obj = {}
@@ -254,30 +251,6 @@ const SignUpDemo = (props) => {
             />
             <PolicyBox>
               <Policy type={1} />
-            </PolicyBox>
-            <FormControlLabel
-              label={<Typography sx={{ fontSize: themeObj.font_size.size6 }}>{translate('쇼핑정보 수신 동의 (선택)')}</Typography>}
-              control={<Checkbox checked={checkboxObj.check_3} onChange={(e) => {
-                setCheckboxObj({ ...checkboxObj, ['check_3']: e.target.checked, ['check_4']: e.target.checked, ['check_5']: e.target.checked, })
-              }} />}
-            />
-            <Divider />
-            <Stack direction="row" spacing={2} flexWrap="wrap">
-              <FormControlLabel
-                label={<Typography sx={{ fontSize: themeObj.font_size.size7 }}>{translate('SMS 수신 동의 (선택)')}</Typography>}
-                control={<Checkbox checked={checkboxObj.check_4} onChange={(e) => {
-                  setCheckboxObj({ ...checkboxObj, ['check_4']: e.target.checked })
-                }} />}
-              />
-              <FormControlLabel
-                label={<Typography sx={{ fontSize: themeObj.font_size.size7 }}>{translate('이메일 수신 동의 (선택)')}</Typography>}
-                control={<Checkbox checked={checkboxObj.check_5} onChange={(e) => {
-                  setCheckboxObj({ ...checkboxObj, ['check_5']: e.target.checked })
-                }} />}
-              />
-            </Stack>
-            <PolicyBox as="div" style={{ color: theme.palette.text.secondary }}>
-              {translate('할인쿠폰 및 혜택, 이벤트, 신상품 소식 등 쇼핑몰에서 제공하는 유익한 쇼핑정보를 SMS나 이메일로 받아보실 수 있습니다. 단, 주문/거래 정보 및 주요 정책과 관련된 내용은 수신동의 여부와 관계없이 발송됩니다. 선택 약관에 동의하지 않으셔도 회원가입은 가능하며, 회원가입 후 회원정보수정 페이지에서 언제든지 수신여부를 변경하실 수 있습니다.')}
             </PolicyBox>
           </Stack>}
 

@@ -603,7 +603,9 @@ const es = {
     "검색어를 입력해 주세요.": "Introduce un término de búsqueda.",
     "찜한 상품": "Lista de deseos",
     "마음에 드는 상품을 찜해보세요.": "Guarda los artículos que te gusten.",
-    "기본 배송지로 설정": "Usar como dirección predeterminada"
+    "기본 배송지로 설정": "Usar como dirección predeterminada",
+    "쇼핑몰 이용안내": "Guía de compra",
+    "이용약관 및 개인정보 수집·이용에 모두 동의합니다.": "Acepto los Términos del servicio y la recogida y el uso de datos personales."
 };
 
 export default es;

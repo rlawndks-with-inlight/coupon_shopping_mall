@@ -91,7 +91,7 @@ const ArticleDemo = (props) => {
         <RowMobileReverceColumn>
           <AuthMenuSideComponent />
           <ContentWrappers>
-            <TitleComponent>{_.find(themePostCategoryList, { id: parseInt(router.query?.article_category) })?.post_category_title}</TitleComponent>
+            <TitleComponent>{formatLang(_.find(themePostCategoryList, { id: parseInt(router.query?.article_category) }), 'post_category_title')}</TitleComponent>
             {!loading &&
               <>
                 <Stack spacing={3}>

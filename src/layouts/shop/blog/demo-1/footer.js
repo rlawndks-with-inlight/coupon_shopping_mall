@@ -151,6 +151,24 @@ const Footer = () => {
               <span>{pvcy_rep_name}</span>
             </InfoRow>
           }
+          {/* 이용약관·개인정보처리방침·이용안내.
+              이 프레임 푸터에만 약관 링크가 통째로 없어서, 고객이 약관을 보려면
+              마이페이지 맨 아래까지 들어가야 했다(11개 프레임 중 여기만 그랬다). */}
+          <InfoRow style={{ columnGap: '0.75rem' }}>
+            <span style={{ cursor: 'pointer', textDecoration: 'underline' }}
+              onClick={() => router.push('/shop/auth/policy?type=0')}>
+              {translate('이용약관')}
+            </span>
+            <span style={{ cursor: 'pointer', textDecoration: 'underline' }}
+              onClick={() => router.push('/shop/auth/policy?type=1')}>
+              {translate('개인정보처리방침')}
+            </span>
+            <span style={{ cursor: 'pointer', textDecoration: 'underline' }}
+              onClick={() => router.push('/shop/auth/policy?type=3')}>
+              {translate('쇼핑몰 이용안내')}
+            </span>
+          </InfoRow>
+
           {/* 로그아웃 — 헤더가 아니라 여기 둔다. 아이콘만으로는 무슨 버튼인지 알기 어렵다. */}
           {user &&
             <InfoRow>

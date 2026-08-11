@@ -15,10 +15,10 @@ import { useLocales } from 'src/locales';
 //
 // props
 //  - open    (bool) 열림 여부
-//  - type    (0|1|2) policy.js 의 type 규약과 동일 — 0=이용약관, 1=개인정보처리방침, 2=저작권정책
+//  - type    (0|1|2|3) policy.js 의 type 규약과 동일 — 0=이용약관, 1=개인정보처리방침, 2=저작권정책, 3=쇼핑몰 이용안내
 //  - onClose (fn)  닫기
 //  - onAgree (fn, 선택) 주면 버튼이 '동의하고 닫기' 가 되고, 누르면 onAgree 실행 후 닫힌다.
-const POLICY_TITLES = ['이용약관', '개인정보처리방침', '저작권정책'];
+const POLICY_TITLES = ['이용약관', '개인정보처리방침', '저작권정책', '쇼핑몰 이용안내'];
 
 const DialogPolicy = (props) => {
   const { translate } = useLocales();

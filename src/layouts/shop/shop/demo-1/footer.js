@@ -107,6 +107,7 @@ const Footer = (props) => {
           <Row style={{ textDecoration: 'underline', marginTop: '4px' }}>
             <Bold style={{ marginRight: 0, cursor: 'pointer' }} onClick={() => { router.push('/shop/auth/policy?type=0') }}>{translate('서비스이용약관')}</Bold>
             <Bold style={{ marginRight: 0, cursor: 'pointer' }} onClick={() => { router.push('/shop/auth/policy?type=1') }}>{translate('개인정보처리방침')}</Bold>
+            <Bold style={{ marginRight: 0, cursor: 'pointer' }} onClick={() => { router.push('/shop/auth/policy?type=3') }}>{translate('쇼핑몰 이용안내')}</Bold>
           </Row>
           <Row>
             {

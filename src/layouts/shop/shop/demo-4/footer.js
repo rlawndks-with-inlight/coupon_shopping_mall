@@ -224,6 +224,11 @@ const Footer = (props) => {
                                                     | Privacy Policy
                                                 </MarginRight>
                                             </Link>
+                                            <Link href={'/shop/auth/policy?type=3'} passHref>
+                                                <MarginRight style={{ cursor: 'pointer' }}>
+                                                    | {translate('쇼핑몰 이용안내')}
+                                                </MarginRight>
+                                            </Link>
                                         </Row>
                                         <br />
                                         {

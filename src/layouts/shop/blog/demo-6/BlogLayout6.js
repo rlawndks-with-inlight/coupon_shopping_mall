@@ -299,6 +299,7 @@ const BlogLayout6 = (props) => {
           <FooterLink onClick={() => router.push('/shop/auth/inquiry-check')}>{translate('비회원 문의조회')}</FooterLink>
           <FooterLink onClick={() => router.push('/shop/auth/policy?type=0')}>{translate('이용약관')}</FooterLink>
           <FooterLink onClick={() => router.push('/shop/auth/policy?type=1')}>{translate('개인정보처리방침')}</FooterLink>
+          <FooterLink onClick={() => router.push('/shop/auth/policy?type=3')}>{translate('쇼핑몰 이용안내')}</FooterLink>
           {/* 로그아웃은 헤더가 아니라 여기 둔다. 헤더는 로고가 가운데 정렬이라
               우측 아이콘이 하나 늘 때마다 로고가 왼쪽으로 밀린다. */}
           {user && <FooterLink onClick={onLogout}>{translate('로그아웃')}</FooterLink>}

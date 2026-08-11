@@ -654,11 +654,8 @@ export const withSignUpName = (user) => ({ ...user, nickname: user?.name ?? '' }
 //
 // 체크박스 키 이름은 프레임마다 다르다(블로그형은 마케팅 동의가 check_4 하나뿐).
 // 그래서 키가 아니라 '무엇에 동의했는가'를 받는다.
-export const marketingAgreePayload = ({ marketing = false, sms = false, email = false } = {}) => ({
-  is_marketing_agree: marketing ? 1 : 0,
-  is_sms_agree: sms ? 1 : 0,
-  is_email_agree: email ? 1 : 0,
-});
+// 수신동의(마케팅·SMS·이메일)는 받지 않기로 했다 — 관련 payload 헬퍼를 제거했다.
+// 이메일 주소를 수집하지 않으므로 이메일 수신동의는 애초에 성립하지 않았다.
 
 // ── 가입 입력 형식 검증 ──────────────────────────────────────────────────────
 // 가입 폼 4곳(프레임1·2·3, 블로그형) 어디에도 형식 검증이 없었다. 빈값만 봤기 때문에

@@ -60,8 +60,8 @@ const { user } = useAuthContext();
         <>
           <Card sx={{ mb: 2 }}>
             <CardContent>
-              <KV k="주문번호" v={order?.ord_num} strong />
-              {order?.appr_num && <KV k="승인번호" v={order?.appr_num} />}
+              <KV k={translate('주문번호')} v={order?.ord_num} strong />
+              {order?.appr_num && <KV k={translate('승인번호')} v={order?.appr_num} />}
               <Divider sx={{ my: 1.5 }} />
               <Stack direction="row" justifyContent="space-between" alignItems="baseline">
                 <Typography variant="subtitle2">{translate('결제금액')}</Typography>
@@ -75,7 +75,7 @@ const { user } = useAuthContext();
               <CardHeader title={translate('배송지')} />
               <CardContent sx={{ pt: 0 }}>
                 {receiver && <KV k="받는분" v={`${receiver}${phone ? ' · ' + phone : ''}`} />}
-                {order?.addr && <KV k="주소" v={`${order?.zonecode ? '(' + order?.zonecode + ') ' : ''}${order?.addr} ${order?.detail_addr || ''}`} />}
+                {order?.addr && <KV k={translate('주소')} v={`${order?.zonecode ? '(' + order?.zonecode + ') ' : ''}${order?.addr} ${order?.detail_addr || ''}`} />}
               </CardContent>
             </Card>
           )}
@@ -121,7 +121,7 @@ const { user } = useAuthContext();
             비회원은 전화번호+주문비밀번호로 보는 주문조회로 보낸다. */}
         <Button fullWidth variant="contained"
           onClick={() => router.push(user?.id ? '/shop/auth/history' : '/shop/auth/order-check')}>
-          {user?.id ? '주문내역 보기' : '주문 조회하기'}
+          {user?.id ? translate('주문내역 보기') : translate('주문 조회하기')}
         </Button>
       </Stack>
     </Wrappers>

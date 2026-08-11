@@ -1,4 +1,5 @@
 import { toast } from "react-hot-toast";
+import i18n from "src/locales/i18n";
 import axios from "./axios";
 import { serialize } from 'object-to-formdata';
 import { getLocalStorage } from "./local-storage";
@@ -15,6 +16,22 @@ const setLastApiError = (message) => {
     last_api_error = { message: String(message ?? ''), at: Date.now() };
 };
 export const getLastApiError = () => last_api_error;
+
+// 서버가 보내는 실패 사유를 화면 언어로 바꿔 띄운다.
+//
+// 백엔드에는 언어 개념이 없어서 메시지가 한국어 한 벌뿐이다. 그래서 영어로 쇼핑몰을
+// 보다가 무언가 실패하면 그 알림만 한국어로 떴다.
+// 사전(locales/langs/*)에 같은 문장이 키로 있으면 그 언어로 바꾸고, 없으면 원문 그대로 둔다
+// — i18next 는 못 찾은 키를 그대로 돌려주므로, 사전에 없는 메시지는 지금과 똑같이 동작한다.
+const serverMessage = (message) => {
+    const text = String(message ?? '').trim();
+    if (!text) return message;
+    try {
+        return i18n.t(text);
+    } catch {
+        return message;
+    }
+};
 
 export const post = async (url, obj) => {
     try {
@@ -33,13 +50,13 @@ export const post = async (url, obj) => {
             return response?.data;
         } else {
             setLastApiError(response?.message);
-            toast.error(response?.message);
+            toast.error(serverMessage(response?.message));
             return false;
         }
     } catch (err) {
         console.log(err)
         setLastApiError(err?.message);
-        toast.error(err?.message);
+        toast.error(serverMessage(err?.message));
         return false;
     }
 }
@@ -49,12 +66,12 @@ export const deleteItem = async (url, obj) => {
         if (response?.result > 0) {
             return response?.data;
         } else {
-            toast.error(response?.message);
+            toast.error(serverMessage(response?.message));
             return false;
         }
     } catch (err) {
         console.log(err)
-        toast.error(err?.response?.data?.message || err?.message);
+        toast.error(serverMessage(err?.response?.data?.message || err?.message));
         return false;
     }
 }
@@ -74,12 +91,12 @@ export const put = async (url, obj) => {
         if (response?.result > 0) {
             return response?.data;
         } else {
-            toast.error(response?.message);
+            toast.error(serverMessage(response?.message));
             return false;
         }
     } catch (err) {
         console.log(err)
-        toast.error(err?.message);
+        toast.error(serverMessage(err?.message));
         return false;
     }
 }
@@ -109,7 +126,7 @@ export const get = async (url, params) => {
         if (response?.result > 0) {
             return response?.data;
         } else {
-            toast.error(response?.message);
+            toast.error(serverMessage(response?.message));
             return false;
         }
     } catch (err) {

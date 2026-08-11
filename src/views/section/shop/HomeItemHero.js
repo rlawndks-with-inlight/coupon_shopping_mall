@@ -238,7 +238,7 @@ const renderSingleCard = (product, router, currentLang, mainColor, isMobile) => 
    단일 상품 - 타입 5: 프로모션 와이드 배너
    홈쇼핑 스타일, 큰 이미지 + 큰 가격 + 강렬한 CTA
    ══════════════════════════════════════ */
-const renderShopPromo = (product, router, currentLang, mainColor, isMobile) => {
+const renderShopPromo = (product, router, currentLang, mainColor, isMobile, translate) => {
   const { img, name, comment, sale, orig, hasSale, disc } = pHelper(product, currentLang);
   return (
     <div style={{
@@ -302,7 +302,7 @@ const renderShopPromo = (product, router, currentLang, mainColor, isMobile) => {
           borderRadius: '12px', fontSize: isMobile ? '15px' : '17px', fontWeight: 'bold',
           textAlign: 'center', letterSpacing: '0.5px', marginTop: '0.5rem',
           boxShadow: `0 8px 24px ${mainColor}60`,
-        }}>{"지금 구매하기 →"}</div>
+        }}>{translate('지금 구매하기 →')}</div>
       </div>
     </div>
   );
@@ -312,7 +312,7 @@ const renderShopPromo = (product, router, currentLang, mainColor, isMobile) => {
    단일 상품 - 타입 6: 풀블리드 이미지 배너
    와이드 풀스크린 이미지 + 좌우 오버레이 카드
    ══════════════════════════════════════ */
-const renderShopFullbleed = (product, router, currentLang, mainColor, isMobile) => {
+const renderShopFullbleed = (product, router, currentLang, mainColor, isMobile, translate) => {
   const { img, name, comment, sale, orig, hasSale, disc } = pHelper(product, currentLang);
   if (isMobile) {
     // 모바일: 세로 스택 (이미지 위, 텍스트 아래)
@@ -355,7 +355,7 @@ const renderShopFullbleed = (product, router, currentLang, mainColor, isMobile) 
             padding: '12px 24px', background: mainColor, color: '#fff',
             borderRadius: '50px', fontSize: '14px', fontWeight: 'bold',
             alignSelf: 'flex-start', marginTop: '0.25rem',
-          }}>{"바로 구매 →"}</div>
+          }}>{translate('바로 구매 →')}</div>
         </div>
       </div>
     );
@@ -402,7 +402,7 @@ const renderShopFullbleed = (product, router, currentLang, mainColor, isMobile) 
           padding: '14px 32px', background: mainColor, color: '#fff',
           borderRadius: '50px', fontSize: '15px', fontWeight: 'bold',
           alignSelf: 'flex-start', marginTop: '0.5rem',
-        }}>{"바로 구매 →"}</div>
+        }}>{translate('바로 구매 →')}</div>
       </div>
     </div>
   );
@@ -478,7 +478,7 @@ const renderShopSpotlight = (product, router, currentLang, mainColor, isMobile) 
    단일 상품 - 타입 8: 그리드 쇼케이스
    이미지 + 좌우 정보 블록 + 하단 가로 CTA
    ══════════════════════════════════════ */
-const renderShopShowcase = (product, router, currentLang, mainColor, isMobile) => {
+const renderShopShowcase = (product, router, currentLang, mainColor, isMobile, translate) => {
   const { img, name, comment, sale, orig, hasSale, disc } = pHelper(product, currentLang);
   if (isMobile) {
     // 모바일: 단일 컬럼 세로 스택
@@ -516,7 +516,7 @@ const renderShopShowcase = (product, router, currentLang, mainColor, isMobile) =
           padding: '14px 0', background: mainColor, color: '#fff',
           borderRadius: '8px', fontSize: '14px', fontWeight: 'bold',
           textAlign: 'center', letterSpacing: '1px',
-        }}>{"구매하기"}</div>
+        }}>{translate('구매하기')}</div>
       </div>
     );
   }
@@ -592,7 +592,7 @@ const renderShopShowcase = (product, router, currentLang, mainColor, isMobile) =
           padding: '10px 0', background: mainColor, color: '#fff',
           borderRadius: '8px', fontSize: '13px', fontWeight: 'bold',
           textAlign: 'center', letterSpacing: '1px',
-        }}>{"구매하기"}</div>
+        }}>{translate('구매하기')}</div>
       </div>
     </div>
   );
@@ -830,7 +830,7 @@ const renderTimeline = (products, router, currentLang, mainColor) => {
    메인 컴포넌트
    ════════════════════════════════════ */
 const HomeItemHero = (props) => {
-  const { currentLang } = useLocales();
+  const { currentLang, translate } = useLocales();
   const { themeDnsData } = useSettingsContext();
   const { column, func = {} } = props;
   const nextRouter = useRouter();
@@ -860,10 +860,10 @@ const HomeItemHero = (props) => {
         {heroType === '2' && renderSingleFullbleed(products[0], wrappedRouter, currentLang, mainColor, isMobile)}
         {heroType === '3' && renderSingleCard(products[0], wrappedRouter, currentLang, mainColor, isMobile)}
         {heroType === '4' && renderSingleMagazine(products[0], wrappedRouter, currentLang, mainColor, brandName, isMobile)}
-        {heroType === '5' && renderShopPromo(products[0], wrappedRouter, currentLang, mainColor, isMobile)}
-        {heroType === '6' && renderShopFullbleed(products[0], wrappedRouter, currentLang, mainColor, isMobile)}
+        {heroType === '5' && renderShopPromo(products[0], wrappedRouter, currentLang, mainColor, isMobile, translate)}
+        {heroType === '6' && renderShopFullbleed(products[0], wrappedRouter, currentLang, mainColor, isMobile, translate)}
         {heroType === '7' && renderShopSpotlight(products[0], wrappedRouter, currentLang, mainColor, isMobile)}
-        {heroType === '8' && renderShopShowcase(products[0], wrappedRouter, currentLang, mainColor, isMobile)}
+        {heroType === '8' && renderShopShowcase(products[0], wrappedRouter, currentLang, mainColor, isMobile, translate)}
       </div>
     );
   }

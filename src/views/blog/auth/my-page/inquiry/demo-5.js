@@ -95,7 +95,7 @@ const Demo5 = (props) => {
                                 <Typography variant="subtitle1">
                                     {item?.post_title || '(제목 없음)'}{' '}
                                     <StatusText answered={answered}>
-                                        {answered ? '답변완료' : '답변 대기중'}
+                                        {answered ? translate('답변완료') : '답변 대기중'}
                                     </StatusText>
                                 </Typography>
                             </AccordionSummary>

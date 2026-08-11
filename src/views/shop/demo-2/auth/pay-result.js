@@ -69,7 +69,7 @@ const PayResultDemo = (props) => {
   const infoRows = [
     { label: translate('주문번호'), value: router.query?.ord_num },
     { label: translate('매입사'), value: router.query?.acquirer },
-    { label: translate('할부기간'), value: router.query?.installment ? (router.query?.installment === '00' ? '일시불' : router.query?.installment.charAt(1) + '개월') : undefined },
+    { label: translate('할부기간'), value: router.query?.installment ? (router.query?.installment === '00' ? translate('일시불') : translate('{{n}}개월', { n: Number(router.query?.installment) })) : undefined },
     { label: translate('구매자명'), value: router.query?.buyer_name },
     { label: translate('구매자 전화번호'), value: router.query?.buyer_phone },
     { label: translate('거래일시'), value: router.query?.trx_dttm },

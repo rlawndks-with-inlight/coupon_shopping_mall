@@ -34,7 +34,7 @@ const InquiryCheck = () => {
 
   const onSearch = async () => {
     if (!String(form.none_user_phone || '').trim()) {
-      toast.error('연락처를 입력해 주세요.');
+      toast.error(translate('연락처를 입력해 주세요.'));
       return;
     }
     if (!String(form.password || '')) {
@@ -75,7 +75,7 @@ const InquiryCheck = () => {
               onKeyDown={(e) => { if (e.key === 'Enter') onSearch(); }}
             />
             <Button variant="contained" size="large" disabled={loading} onClick={onSearch}>
-              {loading ? '조회 중…' : '조회하기'}
+              {loading ? translate('조회 중…') : translate('조회하기')}
             </Button>
           </Stack>
         </CardContent>
@@ -111,7 +111,7 @@ const InquiryCheck = () => {
                         variant="caption"
                         sx={{ whiteSpace: 'nowrap', fontWeight: 700, color: row?.reply_count > 0 ? 'primary.main' : 'text.disabled' }}
                       >
-                        {row?.reply_count > 0 ? '답변완료' : '답변대기'}
+                        {row?.reply_count > 0 ? translate('답변완료') : translate('답변대기')}
                       </Typography>
                     </Stack>
                     <Typography variant="caption" sx={{ color: 'text.secondary', mt: 0.5 }}>

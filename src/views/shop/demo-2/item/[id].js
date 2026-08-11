@@ -137,7 +137,7 @@ const ItemDemo = (props) => {
     if (user) {
       insertWishDataUtil(product, themeWishData, onChangeWishData);
     } else {
-      toast.error('로그인을 해주세요.');
+      toast.error(translate('로그인을 해주세요.'));
     }
   }
 

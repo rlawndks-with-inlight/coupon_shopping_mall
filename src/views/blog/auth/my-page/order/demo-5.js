@@ -35,7 +35,7 @@ const getOptionText = (order) => {
             if (value) parts.push(value);
         });
     });
-    return parts.length > 0 ? parts.join(' / ') : '기본';
+    return parts.join(' / ');   // 비면 '' — 화면에서 translate('기본') 을 붙인다
 }
 
 // 택배 배송조회(네이버 통합조회) — 송장은 `택배사-송장번호` 형식. 송장 없으면 null.
@@ -173,7 +173,7 @@ const Demo5 = (props) => {
                                                 <div style={{ display: 'flex', flexDirection: 'column' }}>
                                                     <div>{formatLang(item, 'product_name') || item.order_name}</div>
                                                     <div>{commarNumberWithUnit(item.order_amount)}</div>
-                                                    <div>옵션 : {getOptionText(item)} / {item.order_count}개</div>
+                                                    <div>{translate('옵션')} : {getOptionText(item) || translate('기본')} / {translate('{{n}}개', { n: item.order_count })}</div>
                                                     <div style={{ marginTop: '0.5rem' }}>{getOrderStatusText(item)} · 주문번호 {item.ord_num}</div>
                                                 </div>
                                             </div>

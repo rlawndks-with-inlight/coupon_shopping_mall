@@ -82,7 +82,7 @@ const PayResultDemo = (props) => {
                 {router.query?.installment &&
                   <Row style={{ margin: '1rem auto auto auto', columnGap: '1rem' }}>
                     <div>{translate('할부기간')}:</div>
-                    <div>{router.query?.installment === '00' ? '일시불' : router.query?.installment.charAt(1) + '개월'}</div>
+                    <div>{router.query?.installment === '00' ? translate('일시불') : translate('{{n}}개월', { n: Number(router.query?.installment) })}</div>
                   </Row>
                 }
                 {router.query?.buyer_name &&

@@ -82,7 +82,7 @@ const Demo5 = (props) => {
             phone_num: userObj?.phone_num,
         })
         if (result) {
-            toast.success('성공적으로 변경되었습니다.');
+            toast.success(translate('성공적으로 변경되었습니다.'));
         }
     }
 
@@ -97,14 +97,14 @@ const Demo5 = (props) => {
         }
         let new_password_check = window.prompt('새 비밀번호를 다시 입력해주세요.');
         if (new_password != new_password_check) {
-            return toast.error('비밀번호가 일치하지 않습니다.');
+            return toast.error(translate('비밀번호가 일치하지 않습니다.'));
         }
         let result = await apiManager('auth/change-password', 'update', {
             password,
             new_password,
         })
         if (result) {
-            toast.success('성공적으로 비밀번호가 변경되었습니다.');
+            toast.success(translate('성공적으로 비밀번호가 변경되었습니다.'));
         }
     }
 
@@ -158,9 +158,9 @@ const Demo5 = (props) => {
                     </div>
                     <TextFieldTitle>{translate('기본 배송지')}</TextFieldTitle>
                     <FormControl sx={{ width: '100%' }}>
-                        <InputLabel>{addressList.length > 0 ? '기본 배송지 선택' : '배송지를 추가해주세요'}</InputLabel>
+                        <InputLabel>{addressList.length > 0 ? translate('기본 배송지 선택') : translate('배송지를 추가해주세요')}</InputLabel>
                         <Select
-                            label={addressList.length > 0 ? '기본 배송지 선택' : '배송지를 추가해주세요'}
+                            label={addressList.length > 0 ? translate('기본 배송지 선택') : translate('배송지를 추가해주세요')}
                             value={defaultAddressId}
                             sx={{
                                 width: '100%'

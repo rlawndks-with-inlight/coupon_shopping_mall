@@ -98,7 +98,7 @@ const Demo2 = (props) => {
                                 <AccordionSummary expandIcon={<Iconify icon="eva:arrow-ios-downward-fill" />}>
                                     <Typography variant="subtitle1">
                                         {item.post_title}
-                                        <Status answered={answered}>{answered ? '답변완료' : '답변 대기중'}</Status>
+                                        <Status answered={answered}>{answered ? translate('답변완료') : '답변 대기중'}</Status>
                                     </Typography>
                                 </AccordionSummary>
                                 <AccordionDetails>

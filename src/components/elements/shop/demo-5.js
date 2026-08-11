@@ -287,7 +287,7 @@ export const AuthMenuSideComponent = (props) => {
   const router = useRouter();
 
   const authLabel = '';
-  const noneAuthLabel = '고객센터';
+  const noneAuthLabel = translate('고객센터');
   const authList = [
     {
       label: translate('회원정보'),
@@ -464,7 +464,7 @@ export const ProductFaq = () => {
       result2 = true;
     }
     if (result && result2) {
-      toast.success("성공적으로 저장 되었습니다.");
+      toast.success(translate("성공적으로 저장 되었습니다."));
       //router.push(`/manager/articles/${router.query?.category_id}`);
     }
   }

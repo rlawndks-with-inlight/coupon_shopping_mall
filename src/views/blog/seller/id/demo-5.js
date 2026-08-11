@@ -163,7 +163,7 @@ const Demo5 = (props) => {
         // 비회원도 담기 허용(로그인 유도 없이 바로 장바구니에 추가)
         let result = insertCartDataUtil({ ...selectedItem, seller_id: router.query?.id ?? 0 }, selectProductGroups, themeCartData, onChangeCartData);
         if (result) {
-            toast.success('장바구니에 성공적으로 추가되었습니다.');
+            toast.success(translate('장바구니에 성공적으로 추가되었습니다.'));
             setCartOpen(false);
             setSelectProductGroups({ count: 1, groups: [] });
         }

@@ -87,7 +87,7 @@ const Demo4 = (props) => {
             phone_num: userObj?.phone_num,
         })
         if (result) {
-            toast.success('성공적으로 변경되었습니다.');
+            toast.success(translate('성공적으로 변경되었습니다.'));
             setIsEditContact(false);
         }
     }
@@ -111,14 +111,14 @@ const Demo4 = (props) => {
             return toast.error('새비밀번호를 입력해주세요.');
         }
         if (pwObj.new_password != pwObj.new_password_check) {
-            return toast.error('비밀번호가 일치하지 않습니다.');
+            return toast.error(translate('비밀번호가 일치하지 않습니다.'));
         }
         let result = await apiManager('auth/change-password', 'update', {
             password: pwObj.password,
             new_password: pwObj.new_password,
         })
         if (result) {
-            toast.success('성공적으로 비밀번호가 변경되었습니다.');
+            toast.success(translate('성공적으로 비밀번호가 변경되었습니다.'));
             setPwObj({});
             setPwOpen(false);
         }
@@ -126,7 +126,7 @@ const Demo4 = (props) => {
 
     const onResign = async () => {
         if (!resignPassword) {
-            return toast.error('비밀번호를 입력해주세요.');
+            return toast.error(translate('비밀번호를 입력해주세요.'));
         }
         let result = await apiManager('auth/resign', 'update', {
             password: resignPassword,
@@ -250,13 +250,13 @@ const Demo4 = (props) => {
                                     setIsEditContact(true)
                                 }
                             }}
-                        >{isEditContact ? '저장' : '변경'}</Button>
+                        >{isEditContact ? translate('저장') : translate('변경')}</Button>
                     </div>
                     <TextFieldTitle>{translate('기본 배송지')}</TextFieldTitle>
                     <FormControl sx={{ width: '100%' }}>
-                        <InputLabel>{addressList.length > 0 ? '기본 배송지를 선택해주세요' : '배송지를 추가해주세요'}</InputLabel>
+                        <InputLabel>{addressList.length > 0 ? translate('기본 배송지를 선택해주세요') : translate('배송지를 추가해주세요')}</InputLabel>
                         <Select
-                            label={addressList.length > 0 ? '기본 배송지를 선택해주세요' : '배송지를 추가해주세요'}
+                            label={addressList.length > 0 ? translate('기본 배송지를 선택해주세요') : translate('배송지를 추가해주세요')}
                             value={selectedAddressId}
                             sx={{
                                 width: '100%'

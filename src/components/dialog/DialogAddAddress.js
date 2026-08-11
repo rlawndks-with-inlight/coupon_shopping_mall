@@ -20,7 +20,7 @@ import { useLocales } from 'src/locales';
 
 
 
-const STEPS = ['배송지 확인', '결제하기'];
+// (예전에 여기 있던 STEPS 는 어디서도 쓰지 않아 지웠다 — 단계 표시는 DialogBuyNow 가 그린다)
 
 // 주소록 한 건의 편집 대상 필드.
 //
@@ -305,7 +305,7 @@ const DialogAddAddress = (props) => {
                 // 받는사람·연락처는 배송에 필요하다. 다만 '명백히 잘못된 값'만 막는다
                 // (형식 강제는 하지 않는다 — 주문서 guardBeforePay 와 같은 기준).
                 if (!String(addAddressObj.receiver || '').trim()) {
-                  toast.error('받는 분 성함을 입력해 주세요.');
+                  toast.error(translate('받는 분 성함을 입력해 주세요.'));
                   return;
                 }
                 // 연락처 형식 검사는 국내 번호 기준(9~11자리)이다.
@@ -313,7 +313,7 @@ const DialogAddAddress = (props) => {
                 // 해외는 '비어 있지 않은지'만 본다 — 최종 확인은 어차피 가맹점이 한다.
                 if (isKR) {
                   if (!isValidPhoneNumber(addAddressObj.phone)) {
-                    toast.error('받는 분 연락처를 정확히 입력해 주세요.');
+                    toast.error(translate('받는 분 연락처를 정확히 입력해 주세요.'));
                     return;
                   }
                 } else {
@@ -322,7 +322,7 @@ const DialogAddAddress = (props) => {
                     return;
                   }
                   if (!String(addAddressObj.country_name || '').trim()) {
-                    toast.error('배송 국가를 입력해 주세요.');
+                    toast.error(translate('배송 국가를 입력해 주세요.'));
                     return;
                   }
                   if (!String(addAddressObj.city || '').trim()) {

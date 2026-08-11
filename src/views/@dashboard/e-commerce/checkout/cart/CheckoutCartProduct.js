@@ -88,7 +88,12 @@ export default function CheckoutCartProduct({ row, onDelete, onDecrease, onIncre
             alignItems="center"
             sx={{ typography: 'body2', color: 'text.secondary' }}
           >
-            {product_comment}
+            {/* 상품 한줄설명도 번역 대상 컬럼이다(lang_obj_columns.products 에 product_comment 가 있다).
+                그런데 여기서는 원문을 그대로 그리고 있어서, 상품명만 번역되고 그 아래 설명은
+                한국어로 남았다 — 상품 상세설명에서 났던 것과 같은 종류의 누락이다. */}
+            {themeDnsData?.setting_obj?.is_use_lang == 1
+              ? formatLang(row, 'product_comment', currentLang)
+              : product_comment}
           </Stack>
         </Stack>
       </TableCell>

@@ -256,7 +256,7 @@ const Demo7 = () => {
   const images = buildProductImages(item, fixImgUrl);
   const img = images[Math.min(imgIdx, Math.max(0, images.length - 1))] ?? '';
   const name = formatLang(item, 'product_name', currentLang);
-  const comment = item?.product_comment;
+  const comment = formatLang(item, 'product_comment');
   const sale = item?.product_sale_price || item?.product_price || 0;
   const orig = item?.product_price || 0;
   const hasSale = orig > sale && sale > 0;

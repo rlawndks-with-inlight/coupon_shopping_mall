@@ -345,7 +345,7 @@ const Demo5 = (props) => {
   // 갤러리: 상품 서브이미지 사용(없으면 대표이미지). 어드민 상품편집에서 서브이미지 등록 시 반영.
   const galleryImgs = [img, ...(product?.sub_images ?? []).map(s => fixImgUrl(s?.product_sub_img))].filter(Boolean);
   const name = formatLang(product, 'product_name', currentLang);
-  const comment = product?.product_comment;
+  const comment = formatLang(product, 'product_comment');
   const sale = product?.product_sale_price || product?.product_price || 0;
   const orig = product?.product_price || 0;
   const hasSale = orig > sale && sale > 0;

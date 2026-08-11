@@ -774,7 +774,7 @@ const CartDemo = (props) => {
                         <Stack>
                           <TextField
                             size='small'
-                            label={themeDnsData?.blog_demo_num > 0 ? '주민번호 앞 6자리(생년월일)' : '주민번호 또는 사업자등록번호'}
+                            label={themeDnsData?.blog_demo_num > 0 ? translate('주민번호 앞 6자리(생년월일)') : translate('주민번호 또는 사업자등록번호')}
                             value={payData.auth_num}
                             onChange={(e) => {
                               let value = e.target.value;

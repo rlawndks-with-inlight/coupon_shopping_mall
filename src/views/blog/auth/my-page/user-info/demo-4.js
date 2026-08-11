@@ -254,9 +254,9 @@ const Demo4 = (props) => {
                     </div>
                     <TextFieldTitle>{translate('기본 배송지')}</TextFieldTitle>
                     <FormControl sx={{ width: '100%' }}>
-                        <InputLabel>{addressList.length > 0 ? translate('기본 배송지를 선택해주세요') : '배송지를 추가해주세요'}</InputLabel>
+                        <InputLabel>{addressList.length > 0 ? translate('기본 배송지를 선택해주세요') : translate('배송지를 추가해주세요')}</InputLabel>
                         <Select
-                            label={addressList.length > 0 ? translate('기본 배송지를 선택해주세요') : '배송지를 추가해주세요'}
+                            label={addressList.length > 0 ? translate('기본 배송지를 선택해주세요') : translate('배송지를 추가해주세요')}
                             value={selectedAddressId}
                             sx={{
                                 width: '100%'

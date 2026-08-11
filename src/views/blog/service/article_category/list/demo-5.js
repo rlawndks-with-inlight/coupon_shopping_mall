@@ -174,7 +174,7 @@ const Demo5 = (props) => {
                                 </RowTitle>
                                 {isInquiry &&
                                     <RowStatus themeMode={themeMode} done={item?.replies?.length > 0}>
-                                        {item?.replies?.length > 0 ? translate('답변완료') : '답변대기'}
+                                        {item?.replies?.length > 0 ? translate('답변완료') : translate('답변대기')}
                                     </RowStatus>}
                             </ListRow>
                         ))
@@ -186,7 +186,7 @@ const Demo5 = (props) => {
                     <div style={{ display: 'flex', justifyContent: 'center', padding: '1rem' }}>
                         <Button variant="outlined" disabled={postLoading}
                             onClick={() => getArticleList(postPage + 1, router.query?.article_category, true)}>
-                            {postLoading ? '불러오는 중...' : `더 보기 (${inquiryList.length}/${postTotal})`}
+                            {postLoading ? translate('불러오는 중...') : `${translate('더 보기')} (${inquiryList.length}/${postTotal})`}
                         </Button>
                     </div>}
                 {category?.is_able_user_add == 1 &&

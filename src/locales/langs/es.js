@@ -696,6 +696,17 @@ const es = {
     // 서버가 내려주는 실패 사유. utils/api.js 의 serverMessage() 가 여기를 찾아
     // 화면 언어로 바꿔 띄운다(없으면 서버가 준 한국어 원문 그대로 나간다).
     "페이레터 결제모듈 설정이 필요합니다. (관리자 결제모듈에 MID=client_id, 결제키=API키 입력)": "Debe configurar el módulo de pago PayLetter (en Administración > Módulos de pago, introduzca MID = client_id y clave de pago = clave API).",
+
+    "주민번호 앞 6자리(생년월일)": "Primeros 6 dígitos del número de identidad (fecha de nacimiento)",
+    "기본 배송지 선택": "Seleccione una dirección predeterminada",
+    "더 보기": "Ver más",
+    "저작권정책": "Política de derechos de autor",
+    "동의하고 닫기": "Aceptar y cerrar",
+    "조회 중…": "Consultando…",
+    "조회 중...": "Consultando...",
+    "약관": "Términos",
+
+    "{{n}}개": "{{n}} unidad(es)",
 };
 
 export default es;

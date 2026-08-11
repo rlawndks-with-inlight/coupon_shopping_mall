@@ -83,7 +83,7 @@ const ArticleDemo = (props) => {
     // (백엔드 shop.controller post.create 와 같은 기준 — 여기서 먼저 걸러 왕복을 줄인다)
     if (!user && router.query?.id == 'add') {
       const invalid = validateGuestInquiry(guestObj);
-      if (invalid) { toast.error(invalid); return; }
+      if (invalid) { toast.error(translate(invalid)); return; }
     }
     if (router.query?.id == 'add') {
       result = await apiShop('post', 'create', {

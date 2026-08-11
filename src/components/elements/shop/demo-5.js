@@ -287,7 +287,7 @@ export const AuthMenuSideComponent = (props) => {
   const router = useRouter();
 
   const authLabel = '';
-  const noneAuthLabel = '고객센터';
+  const noneAuthLabel = translate('고객센터');
   const authList = [
     {
       label: translate('회원정보'),

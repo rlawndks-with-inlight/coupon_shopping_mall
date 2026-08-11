@@ -72,7 +72,7 @@ const ArticleDemo = (props) => {
     // 비회원은 이름·연락처·글비밀번호가 있어야 저장할 수 있다(백엔드와 같은 기준).
     if (!user && router.query?.id == 'add') {
       const invalid = validateGuestInquiry(guestObj);
-      if (invalid) { toast.error(invalid); return; }
+      if (invalid) { toast.error(translate(invalid)); return; }
     }
     if (router.query?.id == 'add') {
       result = await apiShop('post', 'create', {

@@ -289,7 +289,7 @@ export const AuthMenuSideComponent = (props) => {
   const router = useRouter();
 
   const authLabel = 'My GRANDPARIS';
-  const noneAuthLabel = '고객센터';
+  const noneAuthLabel = translate('고객센터');
   const authList = [
     {
       // '회원정보' 그룹은 하나만 둔다.

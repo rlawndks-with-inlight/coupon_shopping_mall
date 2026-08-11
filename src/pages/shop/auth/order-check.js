@@ -50,10 +50,10 @@ const OrderDetail = ({ order }) => {
       <Card sx={{ mb: 2 }}>
         <CardHeader title={translate('주문 정보')} />
         <CardContent sx={{ pt: 0 }}>
-          <KV k="주문번호" v={order?.ord_num} strong />
-          {order?.appr_num && <KV k="승인번호" v={order?.appr_num} />}
-          <KV k="주문현황" v={getOrderStatusText(order)} />
-          <KV k="구매자" v={`${order?.buyer_name || '-'}${order?.buyer_phone ? ' · ' + order?.buyer_phone : ''}`} />
+          <KV k={translate('주문번호')} v={order?.ord_num} strong />
+          {order?.appr_num && <KV k={translate('승인번호')} v={order?.appr_num} />}
+          <KV k={translate('주문현황')} v={getOrderStatusText(order)} />
+          <KV k={translate('구매자')} v={`${order?.buyer_name || '-'}${order?.buyer_phone ? ' · ' + order?.buyer_phone : ''}`} />
           {order?.invoice_num && (
             <KV k="택배사/송장" v={track
               ? <>{track.courier ? track.courier + ' · ' : ''}{track.invoice}
@@ -68,7 +68,7 @@ const OrderDetail = ({ order }) => {
           <CardHeader title={translate('배송지')} />
           <CardContent sx={{ pt: 0 }}>
             {receiver && <KV k="받는분" v={`${receiver}${order?.receiver_phone ? ' · ' + order?.receiver_phone : ''}`} />}
-            {order?.addr && <KV k="주소" v={`${order?.zonecode ? '(' + order?.zonecode + ') ' : ''}${order?.addr} ${order?.detail_addr || ''}`} />}
+            {order?.addr && <KV k={translate('주소')} v={`${order?.zonecode ? '(' + order?.zonecode + ') ' : ''}${order?.addr} ${order?.detail_addr || ''}`} />}
           </CardContent>
         </Card>
       )}
@@ -144,7 +144,7 @@ const OrderCheck = () => {
               onChange={(e) => setForm({ ...form, password: e.target.value })}
               onKeyPress={(e) => { if (e.key === 'Enter') onSearch(); }} />
             <Button variant="contained" size="large" disabled={loading} onClick={onSearch}>
-              {loading ? '조회 중...' : '주문조회'}
+              {loading ? translate('조회 중...') : translate('주문조회')}
             </Button>
           </Stack>
         </CardContent>

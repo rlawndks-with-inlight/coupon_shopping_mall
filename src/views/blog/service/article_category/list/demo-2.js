@@ -184,7 +184,7 @@ const Demo2 = (props) => {
                                                 ? (themeMode == 'dark' ? 'rgba(46,125,50,0.15)' : '#e8f5e9')
                                                 : (themeMode == 'dark' ? 'rgba(255,255,255,0.06)' : '#f5f5f5')
                                         }}>
-                                            {answered ? translate('답변완료') : '답변대기'}
+                                            {answered ? translate('답변완료') : translate('답변대기')}
                                         </StatusBadge>}
                                     <Iconify icon="eva:arrow-ios-forward-fill" />
                                 </ListRow>
@@ -197,7 +197,7 @@ const Demo2 = (props) => {
                     <div style={{ display: 'flex', justifyContent: 'center', padding: '1rem' }}>
                         <Button variant="outlined" disabled={postLoading}
                             onClick={() => getArticleList(postPage + 1, router.query?.article_category, true)}>
-                            {postLoading ? '불러오는 중...' : `더 보기 (${inquiryList.length}/${postTotal})`}
+                            {postLoading ? translate('불러오는 중...') : `${translate('더 보기')} (${inquiryList.length}/${postTotal})`}
                         </Button>
                     </div>}
                 {postCategory?.is_able_user_add == 1 &&

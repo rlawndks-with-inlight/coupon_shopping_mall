@@ -353,7 +353,7 @@ const DialogBuyNow = (props) => {
                           <Card sx={{ marginBottom: '1.5rem' }}>
                             <EmptyContent
                               title={translate('배송지가 없습니다.')}
-                              description="배송지를 추가해 주세요."
+                              description={translate('배송지를 추가해 주세요.')}
                               img=""
                             />
                           </Card>
@@ -525,7 +525,7 @@ const DialogBuyNow = (props) => {
                 <Stack>
                   <TextField
                     size='small'
-                    label={is_blog == 1 ? '주민번호 앞 6자리(생년월일)' : '주민번호 또는 사업자등록번호'}
+                    label={is_blog == 1 ? translate('주민번호 앞 6자리(생년월일)') : translate('주민번호 또는 사업자등록번호')}
                     value={payData.auth_num}
                     onChange={(e) => {
                       let value = e.target.value;
@@ -723,7 +723,7 @@ const DialogBuyNow = (props) => {
                 <Stack>
                   <TextField
                     size='small'
-                    label={is_blog == 1 ? '주민번호 앞 6자리(생년월일)' : '주민번호 또는 사업자등록번호'}
+                    label={is_blog == 1 ? translate('주민번호 앞 6자리(생년월일)') : translate('주민번호 또는 사업자등록번호')}
                     value={payData.auth_num}
                     onChange={(e) => {
                       let value = e.target.value;

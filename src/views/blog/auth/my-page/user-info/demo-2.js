@@ -93,10 +93,10 @@ const Demo2 = (props) => {
 
     const onChangePassword = async () => {
         if (!userObj?.password) {
-            return toast.error('현재비밀번호를 입력해주세요.');
+            return toast.error(translate('현재비밀번호를 입력해주세요.'));
         }
         if (!userObj?.new_password) {
-            return toast.error('새비밀번호를 입력해주세요.');
+            return toast.error(translate('새비밀번호를 입력해주세요.'));
         }
         if (userObj.new_password != userObj.new_password_check) {
             return toast.error(translate('비밀번호가 일치하지 않습니다.'));
@@ -113,8 +113,8 @@ const Demo2 = (props) => {
     }
 
     const onResign = () => {
-        if (window.confirm('정말 회원탈퇴를 진행하시겠습니까?\n탈퇴 후에는 계정 복구가 불가능합니다.')) {
-            toast('회원탈퇴는 본인 확인 절차가 필요합니다. 고객센터로 문의해 주세요.');
+        if (window.confirm(translate('정말 회원탈퇴를 진행하시겠습니까?\n탈퇴 후에는 계정 복구가 불가능합니다.'))) {
+            toast(translate('회원탈퇴는 본인 확인 절차가 필요합니다. 고객센터로 문의해 주세요.'));
         }
     }
 
@@ -165,7 +165,7 @@ const Demo2 = (props) => {
                                     is_default: 1,
                                 });
                                 if (result) {
-                                    toast.success('기본 배송지로 설정되었습니다.');
+                                    toast.success(translate('기본 배송지로 설정되었습니다.'));
                                 }
                             }}
                         >

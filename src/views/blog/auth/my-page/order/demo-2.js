@@ -80,7 +80,7 @@ const Demo2 = (props) => {
                         ...line,
                         trx,
                         seller_id: line?.seller_id ?? 0,
-                        seller_title: line?.seller_user_name || '기본배송',
+                        seller_title: line?.seller_user_name || translate('기본배송'),
                     });
                 }
             }

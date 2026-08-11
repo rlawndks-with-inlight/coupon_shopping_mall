@@ -238,7 +238,7 @@ const Demo9 = () => {
       { ...item, seller_id: router.query?.seller_id ?? 0 },
       selectProductGroups, themeCartData, onChangeCartData
     );
-    if (result) toast.success('장바구니에 추가되었습니다 💕');
+    if (result) toast.success(translate('장바구니에 추가되었습니다 💕'));
   };
 
   const onSelectOption = (group, option) => {

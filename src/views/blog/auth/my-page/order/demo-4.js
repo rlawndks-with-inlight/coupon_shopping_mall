@@ -124,7 +124,7 @@ const Demo4 = (props) => {
                         return <Tab
                             key={idx}
                             // 셀러 시스템 미사용으로 seller_user_name 은 항상 null — 폴백 문구를 '기본배송' 으로 통일
-                            label={data?.seller_user_name || '기본배송'}
+                            label={data?.seller_user_name || translate('기본배송')}
                             value={data?.seller_id}
                             sx={{
                                 borderBottom: '1px solid',

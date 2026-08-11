@@ -266,7 +266,7 @@ const SecurityQuestionBanner = ({ sx = {} }) => {
               value={answer}
               onChange={(e) => setAnswer(e.target.value)}
               placeholder={
-                questionId > 0 ? `예) ${getSecurityQuestionPlaceholder(questionId)}` : '예) 상계동'
+                questionId > 0 ? `예) ${getSecurityQuestionPlaceholder(questionId)}` : translate('예) 상계동')
               }
               inputProps={{ maxLength: 50 }}
               helperText={translate('띄어쓰기와 대소문자는 구분하지 않습니다.')}

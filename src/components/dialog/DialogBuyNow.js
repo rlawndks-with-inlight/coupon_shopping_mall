@@ -299,9 +299,9 @@ const DialogBuyNow = (props) => {
     }], { ...payData });
     if (result) {
       await onChangeCartData([]);
-      toast.success('성공적으로 구매 완료하였습니다.');
+      toast.success(translate('성공적으로 구매 완료하였습니다.'));
       if (is_blog == 1) {
-        alert('성공적으로 구매 완료하였습니다.\n메인 페이지로 이동합니다.')
+        alert(translate('성공적으로 구매 완료하였습니다.\n메인 페이지로 이동합니다.'))
         router.push('/shop')
         return;
       } else if (payData?.user_id) {
@@ -396,7 +396,7 @@ const DialogBuyNow = (props) => {
                       <Row style={{ marginTop: '2rem' }}>
                         <Button variant="contained" onClick={() => {
                           if (!payData.password) {
-                            toast.error('비회원 비밀번호를 입력해 주세요.');
+                            toast.error(translate('비회원 비밀번호를 입력해 주세요.'));
                           } else {
                             setBuyStep(1);
                           }
@@ -627,7 +627,7 @@ const DialogBuyNow = (props) => {
                       return;
                     }
                     if (!smsPayData.phone_num || smsPayData.phone_num.length < 10) {
-                      toast.error('핸드폰번호를 정확히 입력해 주세요.');
+                      toast.error(translate('핸드폰번호를 정확히 입력해 주세요.'));
                       return;
                     }
                     toast.success(translate('결제 신청이 완료되었습니다.'));

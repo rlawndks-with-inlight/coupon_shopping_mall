@@ -74,7 +74,7 @@ const { user } = useAuthContext();
             <Card sx={{ mb: 2 }}>
               <CardHeader title={translate('배송지')} />
               <CardContent sx={{ pt: 0 }}>
-                {receiver && <KV k="받는분" v={`${receiver}${phone ? ' · ' + phone : ''}`} />}
+                {receiver && <KV k={translate("받는분")} v={`${receiver}${phone ? ' · ' + phone : ''}`} />}
                 {order?.addr && <KV k={translate('주소')} v={`${order?.zonecode ? '(' + order?.zonecode + ') ' : ''}${order?.addr} ${order?.detail_addr || ''}`} />}
               </CardContent>
             </Card>

@@ -110,7 +110,7 @@ const ItemDemo = (props) => {
   const handleAddCart = async () => {
     let result = await insertCartDataUtil({ ...product, seller_id: themeDnsData?.seller_id ?? 0 }, selectProductGroups, themeCartData, onChangeCartData);
     if (result) {
-      toast.success("장바구니에 추가되었습니다.");
+      toast.success(translate("장바구니에 추가되었습니다."));
     }
   }
 
@@ -127,7 +127,7 @@ const ItemDemo = (props) => {
     // 개수 대신 특성 하나하나가 실제로 골라졌는지 본다. 옵션그룹은 startBuyNow 안의 공용 검사가 맡는다.
     const characters = product?.characters ?? [];
     if (characters.length > 0 && !characters.every(isCharacterPicked)) {
-      toast.error('옵션을 선택해주세요.');
+      toast.error(translate('옵션을 선택해주세요.'));
       return;
     }
     setBuyOpen(true);

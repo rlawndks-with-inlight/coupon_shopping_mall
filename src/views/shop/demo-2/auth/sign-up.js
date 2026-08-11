@@ -120,7 +120,7 @@ const SignUpDemo = (props) => {
         } else if (
           !phoneChecked
         ) {
-          toast.error("인증번호가 확인되지 않았습니다.");
+          toast.error(translate("인증번호가 확인되지 않았습니다."));
           return;
         }
       } else if (
@@ -188,10 +188,10 @@ const SignUpDemo = (props) => {
       phone_token: phoneToken
     })
     if (result) {
-      alert('인증 완료되었습니다')
+      alert(translate('인증 완료되었습니다'))
       setPhoneChecked(true)
     } else {
-      alert('새로고침하고 다시 시도해주세요.')
+      alert(translate('새로고침하고 다시 시도해주세요.'))
     }
   }
 

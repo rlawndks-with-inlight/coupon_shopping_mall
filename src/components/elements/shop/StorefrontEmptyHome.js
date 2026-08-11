@@ -7,7 +7,7 @@ import { useLocales } from 'src/locales';
 // 이 화면이 뜨는 조건은 딱 하나다 — 대표상품 지정도 없고 판매상품도 0건인 상태.
 // 즉 로딩 중 깜빡임이 아니라 '이제 막 개설해서 아직 상품을 안 올린 가맹점' 이다.
 //
-// 원래 프레임6~11(blog demo-4~9)이 각자 'COMING SOON' / 'Coming Soon' / 'Coming soon' /
+// 원래 blog demo 4~9이 각자 'COMING SOON' / 'Coming Soon' / 'Coming soon' /
 // 'Coming Soon 💕' 을 제각각 찍고 있었다. 영어 단독 문구는 고객에게
 // "아직 안 연 사이트 / 공사중" 으로 읽혀 그대로 이탈 사유가 된다.
 // 브랜드명을 노출해 몰이 살아 있다는 것을 보이고, 준비중이라는 사실을 한국어로 알리는 편이 낫다.

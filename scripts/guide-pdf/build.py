@@ -46,7 +46,7 @@ OUT_PDF = os.path.join(ROOT, 'public', 'manual', 'manager-guide.pdf')
 # ── 폰트 ──────────────────────────────────────────────────────────────────
 # 처음엔 reportlab 내장 CID 폰트(HYGothic-Medium)를 썼다. 폰트 파일이 필요 없어 편했지만
 # **문자 범위가 Adobe-Korea1 로 제한돼 있어 글자가 깨졌다.** verify.py 가 잡아낸 실제 증상:
-#   · 가운뎃점(U+00B7)이 통째로 사라짐 — '프레임1·2·3' → '프레임123'
+#   · 가운뎃점(U+00B7)이 통째로 사라짐 — '프레임1·2' → '프레임12'
 #   · 이모지가 깨지며 뒤따르는 한글까지 오염 — '촀糊봀‰賂판관리」'
 # 그래서 유니코드 커버리지가 넓은 TTF 를 우선 쓰고, 없으면 CID 로 떨어진다.
 def _register_fonts():
@@ -399,7 +399,7 @@ def build():
     story.append(Spacer(1, 5 * mm))
     story.append(Paragraph(
         '프레임 계열에 따라 관리자 메뉴가 다릅니다. 항목 위에 '
-        '<font color="#9ca3af">프레임4·5 전용</font> 같은 표시가 있으면 그 계열에만 해당합니다.',
+        '<font color="#9ca3af">프레임3·4 전용</font> 같은 표시가 있으면 그 계열에만 해당합니다.',
         S['cover_lead']))
     story.append(Spacer(1, 14 * mm))
     story.append(Paragraph(f'발행 {issued}', S['cover_meta']))

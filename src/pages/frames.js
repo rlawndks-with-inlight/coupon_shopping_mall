@@ -21,7 +21,7 @@ const FramesPage = () => {
         <Container maxWidth="lg">
           <Stack spacing={1.5} textAlign="center">
             <Typography sx={{ fontSize: 12, letterSpacing: 4, color: '#888', fontWeight: 700 }}>
-              FRAME CATALOG · 11 DESIGNS
+              FRAME CATALOG · 6 DESIGNS
             </Typography>
             <Typography sx={{ fontSize: { xs: 26, md: 40 }, fontWeight: 900, letterSpacing: '-1.2px' }}>
               {st('frames.title')}
@@ -46,8 +46,8 @@ const FramesPage = () => {
       </Box>
 
       {/* FRAME GRID — 계열별로 묶는다.
-          11장을 나란히 놓으면 "서로 다른 11개 몰"로 읽히는데, 실제로 갈리는 경계는 3개다.
-          특히 프레임6~11은 헤더·푸터·장바구니·주문·마이페이지가 같은 화면이고
+          6장을 나란히 놓으면 "서로 다른 6개 몰"로 읽히는데, 실제로 갈리는 경계는 3개다.
+          특히 프레임5·6은 헤더·푸터·장바구니·주문·마이페이지가 같은 화면이고
           홈과 상품상세 디자인만 다르다 — 그걸 모르고 고르면 기대와 어긋난다. */}
       <Container maxWidth="lg" sx={{ py: { xs: 6, md: 10 } }}>
         {FRAME_GROUP_ORDER.map((group, gi) => {

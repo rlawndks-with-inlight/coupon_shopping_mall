@@ -64,10 +64,10 @@ const SideSlot = styled.div`
 `
 /* 로고를 '한 축'이 아니라 '상자'로 잡는다 — 이유는 shop/demo-1/header.js 의 LogoImg 주석 참고.
    28px 은 판매중 11개 프레임 통틀어 최소값이었고, 같은 헤더의 IconBtn(20px 아이콘 + padding 0.5rem
-   = 36×44px)보다도 작아 로고가 아이콘 하나처럼 보였다. 이 한 곳이 프레임6~11 여섯 개를 담당한다
+   = 36×44px)보다도 작아 로고가 아이콘 하나처럼 보였다. 이 한 곳이 blog demo 4~9 여섯 개를 담당한다
    (ShopLayout.js 가 blog demo 4~9 를 전부 이 레이아웃으로 보낸다).
    이 헤더는 position:sticky 라 흐름 공간을 차지한다 — 높아진 만큼 본문이 자연히 내려가므로
-   상단 여백을 하드코딩한 화면이 없고, 그래서 프레임4·5 와 달리 마음 놓고 키울 수 있다.
+   상단 여백을 하드코딩한 화면이 없고, 그래서 blog demo 1·2 와 달리 마음 놓고 키울 수 있다.
    ≤480px 은 그대로 둔다: 아이콘 5개(36px)+뒤로가기 자리 36px 로 375px 화면에서 로고 몫이
    130px 뿐이라, 이 구간은 과거 로고가 두 줄로 깨진 이력이 있다(아래 IconBtn 주석 참고). */
 const Logo = styled(LazyLoadImage)`
@@ -198,7 +198,7 @@ const FooterLine = styled.div`
 const BlogLayout6 = (props) => {
   // themeCartData: 장바구니 아이콘에 담긴 개수 배지를 붙이기 위해 함께 읽는다.
   const { themeDnsData, themeCartData } = useSettingsContext();
-  // 이 레이아웃(프레임6~11 공용)에는 번역이 아예 없어서 푸터 문구가 늘 한국어였다.
+  // 이 레이아웃(blog demo 4~9 공용)에는 번역이 아예 없어서 푸터 문구가 늘 한국어였다.
   const { translate } = useLocales();
   const router = useRouter();
   const { children } = props;
@@ -218,7 +218,7 @@ const BlogLayout6 = (props) => {
     <Wrapper>
       {/* 블로그 프레임에는 상품 목록 페이지(/blog/items)도 카테고리 메뉴도 없다.
           검색이 홈의 대표상품 외 상품을 찾는 유일한 수단인데 이 헤더엔 진입점이 없었다.
-          (프레임6~11이 이 레이아웃을 공유하므로 한 번만 넣으면 6개가 함께 해결된다) */}
+          (blog demo 4~9 가 이 레이아웃을 공유하므로 한 번만 넣으면 6개가 함께 해결된다) */}
       <DialogSearch
         open={searchOpen}
         handleClose={() => setSearchOpen(false)}
@@ -246,9 +246,9 @@ const BlogLayout6 = (props) => {
           )}
         </LogoArea>
         {/* 아이콘을 한 묶음으로 — Header 가 space-between 이라 낱개로 두면 로고가 가운데서 밀린다.
-            사람 아이콘: 이 레이아웃(프레임6~11 공용)에는 로그인·마이페이지 진입점이 아예 없어서
+            사람 아이콘: 이 레이아웃(blog demo 4~9 공용)에는 로그인·마이페이지 진입점이 아예 없어서
             회원가입을 해도 로그인할 방법이, 주문을 해도 주문내역을 볼 방법이 없었다.
-            로그인 상태면 마이페이지, 아니면 로그인 화면으로 보낸다(프레임4·5와 동일). */}
+            로그인 상태면 마이페이지, 아니면 로그인 화면으로 보낸다(blog demo 1·2 와 동일). */}
         <HeaderActions>
           {/* 상품 목록 — 이 레이아웃에는 상품을 둘러볼 수단이 검색뿐이었다.
               고객이 찾는 물건의 '이름을 이미 알고 있을 때'만 살 수 있었다는 뜻이다.
@@ -267,7 +267,7 @@ const BlogLayout6 = (props) => {
               <Icon icon="iconamoon:shopping-bag" />
             </Badge>
           </IconBtn>
-          {/* 언어 선택 — 이 레이아웃(프레임6~11 공용)에는 언어 UI 가 아예 없어서
+          {/* 언어 선택 — 이 레이아웃(blog demo 4~9 공용)에는 언어 UI 가 아예 없어서
               가맹점 언어 설정이 켜져 있어도 고객이 언어를 바꿀 방법이 없었다. */}
           {themeDnsData?.setting_obj?.is_use_lang == 1 && <LanguagePopover />}
         </HeaderActions>

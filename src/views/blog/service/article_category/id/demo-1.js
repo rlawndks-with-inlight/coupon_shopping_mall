@@ -141,7 +141,7 @@ const Demo1 = (props) => {
             ...(user ? {} : guestObj),
         });
         if (result) {
-            toast.success('성공적으로 저장 되었습니다.');
+            toast.success(translate('성공적으로 저장 되었습니다.'));
             router.push(`/shop/service/${router.query?.article_category}`);
         }
     }
@@ -188,7 +188,7 @@ const Demo1 = (props) => {
                                             <Button variant='contained' onClick={() => {
   const { translate } = useLocales();
                                                 if (!item.post_title) {
-                                                    toast.error('제목을 입력해주세요.');
+                                                    toast.error(translate('제목을 입력해주세요.'));
                                                     return;
                                                 }
                                                 setModal({

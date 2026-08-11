@@ -188,7 +188,7 @@ const Demo1 = (props) => {
                                     mainColor={mainColor}
                                     done={item?.replies?.length > 0}
                                 >
-                                    {item?.replies?.length > 0 ? '답변완료' : '답변대기'}
+                                    {item?.replies?.length > 0 ? translate('답변완료') : '답변대기'}
                                 </AnswerBadge>}
                         </ListRow>
                     ))}

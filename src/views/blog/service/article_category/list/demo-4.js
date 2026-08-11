@@ -184,7 +184,7 @@ const Demo4 = (props) => {
                                 <RowMeta themeMode={themeMode}>
                                     {isInquiryBoard &&
                                         <Status themeMode={themeMode} answered={isAnswered}>
-                                            {isAnswered ? '답변완료' : '답변대기'}
+                                            {isAnswered ? translate('답변완료') : '답변대기'}
                                         </Status>
                                     }
                                     <Iconify icon="eva:arrow-ios-forward-fill" />

@@ -120,7 +120,7 @@ const Demo2 = (props) => {
 
     const onSave = async () => {
         if (!item?.post_title) {
-            toast.error('제목을 입력해주세요.');
+            toast.error(translate('제목을 입력해주세요.'));
             return;
         }
         // 비회원은 이름·연락처·글비밀번호가 있어야 저장할 수 있다(백엔드와 같은 기준).
@@ -134,7 +134,7 @@ const Demo2 = (props) => {
             ...(user ? {} : guestObj),
         });
         if (result) {
-            toast.success('성공적으로 저장 되었습니다.');
+            toast.success(translate('성공적으로 저장 되었습니다.'));
             router.push(`/shop/service/${router.query?.article_category}`);
         }
     }

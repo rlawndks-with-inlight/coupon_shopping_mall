@@ -110,7 +110,7 @@ const ArticleDemo = (props) => {
         <ContentWrapper>
           <Box sx={{ textAlign: 'center', mb: 4 }}>
             <Typography variant='h4' sx={{ fontWeight: 700, letterSpacing: '0.05em' }}>
-              {formatLang(postCategory, 'post_category_title', currentLang)} {router.query?.id == 'add' ? '작성' : ''}
+              {formatLang(postCategory, 'post_category_title', currentLang)} {router.query?.id == 'add' ? translate('작성') : ''}
             </Typography>
             <Box sx={{ width: '40px', height: '2px', margin: '1rem auto 0 auto', backgroundColor: mainColor || themeObj.grey[800] }} />
           </Box>
@@ -134,11 +134,11 @@ const ArticleDemo = (props) => {
                           <Upload file={item.post_title_file || item.post_title_img} onDrop={(acceptedFiles) => {
                             const newFile = acceptedFiles[0];
                             if (!newFile.type.includes('image')) {
-                              toast.error('이미지 형식만 가능합니다.');
+                              toast.error(translate('이미지 형식만 가능합니다.'));
                               return;
                             }
                             if (newFile.size >= 3 * 1024 * 1024) {
-                              toast.error('이미지 용량은 3MB 이내만 가능합니다.');
+                              toast.error(translate('이미지 용량은 3MB 이내만 가능합니다.'));
                               return;
                             }
                             if (newFile) {

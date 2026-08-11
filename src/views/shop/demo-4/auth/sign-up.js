@@ -28,7 +28,8 @@ width: 90%;
 min-height:90vh;
 `
 
-const STEPS = ['약관동의', '정보입력', '가입완료'];
+// ⚠ 단계 이름은 컴포넌트 안에서 만든다. 여기(모듈 최상단)에 두면 translate 를 쓸 수 없어
+//    제목은 'Sign up' 인데 그 밑 단계만 한국어로 남는다.
 const ColorlibConnector = muiStyled(StepConnector)(({ theme }) => ({
   [`&.${stepConnectorClasses.alternativeLabel}`]: {
     top: 22,
@@ -108,6 +109,7 @@ ColorlibStepIcon.propTypes = {
 
 const SignUpDemo = (props) => {
   const { translate } = useLocales();
+  const STEPS = [translate('약관동의'), translate('정보입력'), translate('가입완료')];
   const {
     data: {
 

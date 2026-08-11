@@ -184,7 +184,7 @@ const Demo2 = (props) => {
                                                 ? (themeMode == 'dark' ? 'rgba(46,125,50,0.15)' : '#e8f5e9')
                                                 : (themeMode == 'dark' ? 'rgba(255,255,255,0.06)' : '#f5f5f5')
                                         }}>
-                                            {answered ? '답변완료' : '답변대기'}
+                                            {answered ? translate('답변완료') : '답변대기'}
                                         </StatusBadge>}
                                     <Iconify icon="eva:arrow-ios-forward-fill" />
                                 </ListRow>

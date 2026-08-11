@@ -111,7 +111,7 @@ const InquiryCheck = () => {
                         variant="caption"
                         sx={{ whiteSpace: 'nowrap', fontWeight: 700, color: row?.reply_count > 0 ? 'primary.main' : 'text.disabled' }}
                       >
-                        {row?.reply_count > 0 ? '답변완료' : '답변대기'}
+                        {row?.reply_count > 0 ? translate('답변완료') : '답변대기'}
                       </Typography>
                     </Stack>
                     <Typography variant="caption" sx={{ color: 'text.secondary', mt: 0.5 }}>

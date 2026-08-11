@@ -80,7 +80,7 @@ export const Item2 = (props) => {
     const { item, router, theme_css, seller } = props;
     // 프레임2 상품 카드는 상품명·설명을 원문 그대로 그렸다 — 언어를 바꿔도 상품만 한국어로 남았다.
     // 다른 프레임(1·3·6~11)의 카드는 전부 formatLang 을 거친다. 같은 규칙으로 맞춘다.
-    const { currentLang } = useLocales();
+    const { currentLang, translate } = useLocales();
     const [itemThemeCss, setItemThemeCss] = useState(itemThemeCssDefaultSetting);
     // sub_images 에는 상세설명 이미지 행도 섞여 온다(백엔드가 product_images 를 통째로 담아
     // sub_images·description_images 양쪽에 넣는다). 그 행들은 product_sub_img 가 null 이라
@@ -95,7 +95,7 @@ export const Item2 = (props) => {
         if (user) {
             insertWishDataUtil(item, themeWishData, onChangeWishData);
         } else {
-            toast.error('로그인을 해주세요.')
+            toast.error(translate('로그인을 해주세요.'))
         }
     }
     const item_img_setting = {

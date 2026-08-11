@@ -121,7 +121,7 @@ const { user } = useAuthContext();
             비회원은 전화번호+주문비밀번호로 보는 주문조회로 보낸다. */}
         <Button fullWidth variant="contained"
           onClick={() => router.push(user?.id ? '/shop/auth/history' : '/shop/auth/order-check')}>
-          {user?.id ? '주문내역 보기' : '주문 조회하기'}
+          {user?.id ? translate('주문내역 보기') : translate('주문 조회하기')}
         </Button>
       </Stack>
     </Wrappers>

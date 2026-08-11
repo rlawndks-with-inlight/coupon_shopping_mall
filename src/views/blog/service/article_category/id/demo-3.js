@@ -143,7 +143,7 @@ const Demo3 = (props) => {
             ...(user ? {} : guestObj),
         });
         if (result) {
-            toast.success('성공적으로 저장 되었습니다.');
+            toast.success(translate('성공적으로 저장 되었습니다.'));
             router.push(`/shop/service/${router.query?.article_category}`);
         }
     }

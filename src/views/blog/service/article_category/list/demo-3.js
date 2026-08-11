@@ -187,7 +187,7 @@ const Demo3 = (props) => {
                                         <Writer themeMode={themeMode}>{item?.writer_nickname}</Writer>}
                                     {showStatus &&
                                         <StatusBadge themeMode={themeMode} done={item?.replies?.length > 0}>
-                                            {item?.replies?.length > 0 ? '답변완료' : '답변대기'}
+                                            {item?.replies?.length > 0 ? translate('답변완료') : '답변대기'}
                                         </StatusBadge>}
                                 </RowMeta>
                             </ListRow>

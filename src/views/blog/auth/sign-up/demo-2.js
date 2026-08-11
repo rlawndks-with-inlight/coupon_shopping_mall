@@ -163,12 +163,12 @@ const Demo2 = (props) => {
                 !user.user_pw_check ||
                 !user.phone_num
             ) {
-                toast.error("필수 항목을 입력해 주세요.");
+                toast.error(translate("필수 항목을 입력해 주세요."));
                 return;
             } else if (
                 user.user_pw != user.user_pw_check
             ) {
-                toast.error("비밀번호 확인란을 똑같이 입력했는지 확인해주세요");
+                toast.error(translate("비밀번호 확인란을 똑같이 입력했는지 확인해주세요"));
                 return;
             }
             // 아이디·비밀번호·휴대폰 형식 검증. 예전엔 빈값만 봐서 한 글자 아이디·비밀번호가

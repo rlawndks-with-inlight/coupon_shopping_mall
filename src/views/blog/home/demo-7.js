@@ -369,7 +369,7 @@ const Demo7 = (props) => {
 
   const img = fixImgUrl(product?.product_img);
   const name = formatLang(product, 'product_name', currentLang);
-  const comment = product?.product_comment;
+  const comment = formatLang(product, 'product_comment');
   const sale = product?.product_sale_price || product?.product_price || 0;
   const orig = product?.product_price || 0;
   const hasSale = orig > sale && sale > 0;

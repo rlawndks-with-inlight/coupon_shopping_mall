@@ -8,7 +8,7 @@ import { GUIDE_PART1, GUIDE_PART2, FRAME_GROUP_LABEL, guideRouteOf } from './gui
 // - /manager/guide (로그인 후): showRouteButtons=true, brandId·frameGroup 전달
 //   → '해당 메뉴로 이동' 노출 + 자기 프레임에 해당하는 항목만 표시
 // - 랜딩 /manual (신청 전): showRouteButtons=false, frameGroup 없음
-//   → 버튼 숨김 + 모든 항목 표시(대신 「프레임6~11 전용」 같은 꼬리표를 붙인다)
+//   → 버튼 숨김 + 모든 항목 표시(대신 「프레임5·6 전용」 같은 꼬리표를 붙인다)
 // 스크린샷: /manual/guide/{id}.png 가 있으면 표시, 없으면 '준비중' 자리.
 
 const badgeColor = (badge) => {

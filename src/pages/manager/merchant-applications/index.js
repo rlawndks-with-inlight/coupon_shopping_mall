@@ -100,8 +100,13 @@ const MerchantApplicationsPage = () => {
       id: 'selected_frame',
       label: '프레임',
       action: (r) => {
+        // 판매를 중단한 프레임으로 접수된 과거 신청건도 이름이 보여야 한다.
+        // 그런 항목은 번호가 없으므로(no: null) 번호 없이 '(판매중단)' 을 붙인다 —
+        // f.no.toString() 을 그냥 부르면 여기서 화면이 통째로 죽는다.
         const f = findFrameByKey(r.selected_frame);
-        return f ? `${f.no.toString().padStart(2, '0')} ${f.title}` : '---';
+        if (!f) return r.selected_frame || '---';
+        if (f.no == null) return `(판매중단) ${f.title}`;
+        return `${String(f.no).padStart(2, '0')} ${f.title}`;
       },
     },
     { id: 'referrer_name', label: '영업추천인', action: (r) => r.referrer_name || '---' },
@@ -193,7 +198,9 @@ const MerchantApplicationsPage = () => {
                   label="프레임"
                   value={(() => {
                     const f = findFrameByKey(detail.selected_frame);
-                    return f ? `${f.no.toString().padStart(2, '0')} — ${f.title}` : detail.selected_frame || '---';
+                    if (!f) return detail.selected_frame || '---';
+                    if (f.no == null) return `(판매중단) — ${f.title}`;
+                    return `${String(f.no).padStart(2, '0')} — ${f.title}`;
                   })()}
                 />
                 <DetailRow

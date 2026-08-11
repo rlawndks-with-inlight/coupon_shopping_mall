@@ -148,7 +148,7 @@ const Demo3 = (props) => {
         }
     }
 
-    const categoryTitle = _.find(themePostCategoryList, { id: parseInt(router.query?.article_category) })?.post_category_title;
+    const categoryTitle = formatLang(_.find(themePostCategoryList, { id: parseInt(router.query?.article_category) }), 'post_category_title');
 
     return (
         <>

@@ -37,7 +37,7 @@ import createEmotionCache from '../utils/createEmotionCache';
 import { useTranslation, I18nextProvider } from 'react-i18next';
 import i18n from 'src/locales/i18n';
 import { allLangs } from 'src/locales'
-import { getDemoBrandDns, getDemoNum, maskDemoBrandData } from 'src/components/main-site/frameList'
+import { getDemoBrandDns, getDemoNum, maskDemoBrandData, isRetiredDemoHost } from 'src/components/main-site/frameList'
 import DemoNotice from 'src/components/main-site/DemoNotice'
 
 const clientSideEmotionCache = createEmotionCache();
@@ -173,6 +173,13 @@ App.getInitialProps = async context => {
       const rootDomain = (process.env.MAIN_FRONT_URL || '').replace(/^www\./, '');
       // demo-N.<도메인> 미리보기: 해당 프레임의 기존 브랜드 dns로 조회
       let dnsToQuery = host;
+      // 판매를 중단한 프레임의 미리보기 호스트(demo-7 ~ demo-11)는 갈 곳이 없다.
+      // 그대로 두면 없는 브랜드(demo-7.shopgo.co.kr)를 조회하다 빈 화면이 뜨므로 카탈로그로 보낸다.
+      if (isRetiredDemoHost(host) && ctx?.res) {
+        ctx.res.writeHead(302, { Location: '/frames' });
+        ctx.res.end();
+        return { head_data: {} };
+      }
       const demoBrandDns = getDemoBrandDns(host);
       if (demoBrandDns) {
         dnsToQuery = demoBrandDns;

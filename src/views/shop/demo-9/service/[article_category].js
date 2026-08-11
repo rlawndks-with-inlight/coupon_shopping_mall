@@ -13,6 +13,7 @@ import { useSettingsContext } from "src/components/settings";
 import { useAuthContext } from "src/layouts/manager/auth/useAuthContext";
 import { apiShop } from "src/utils/api";
 import styled from "styled-components";
+import { formatLang } from 'src/utils/format';
 
 const Wrappers = styled.div`
 max-width:1400px;
@@ -143,7 +144,7 @@ const ArticlesDemo = (props) => {
         <RowMobileReverceColumn>
           <AuthMenuSideComponent />
           <ContentWrappers>
-            <TitleComponent>{_.find(themePostCategoryList, { id: parseInt(router.query?.article_category) })?.post_category_title}</TitleComponent>
+            <TitleComponent>{formatLang(_.find(themePostCategoryList, { id: parseInt(router.query?.article_category) }), 'post_category_title')}</TitleComponent>
             <ContentTable
               data={data}
               onChangePage={onChangePage}

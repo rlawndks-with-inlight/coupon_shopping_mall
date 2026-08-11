@@ -43,7 +43,7 @@ const sections = GUIDE_SECTIONS.map((s) => {
 });
 
 const payload = {
-  // 계열 라벨도 함께 넘긴다 — PDF 는 프레임을 모르므로 웹의 '프레임6~11 전용' 꼬리표와 같은 표기를 쓴다.
+  // 계열 라벨도 함께 넘긴다 — PDF 는 프레임을 모르므로 웹의 '프레임5·6 전용' 꼬리표와 같은 표기를 쓴다.
   frameGroupLabel: FRAME_GROUP_LABEL ?? {},
   sections,
 };

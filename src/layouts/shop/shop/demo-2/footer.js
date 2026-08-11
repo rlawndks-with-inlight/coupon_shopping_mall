@@ -69,6 +69,7 @@ const Footer = (props) => {
           <InfoRow style={{ marginTop: '8px', columnGap: '1rem' }}>
             <PolicyLink onClick={() => router.push('/shop/auth/policy?type=0')}>{translate('서비스이용약관')}</PolicyLink>
             <PolicyLink onClick={() => router.push('/shop/auth/policy?type=1')}>{translate('개인정보처리방침')}</PolicyLink>
+            <PolicyLink onClick={() => router.push('/shop/auth/policy?type=3')}>{translate('쇼핑몰 이용안내')}</PolicyLink>
           </InfoRow>
         </ContentWrapper>
       </Wrapper>

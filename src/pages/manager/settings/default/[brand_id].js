@@ -38,7 +38,7 @@ import ReactQuillComponent from 'src/views/manager/react-quill'
 import { apiManager } from 'src/utils/api'
 import { commarNumber } from 'src/utils/function'
 import { BLOG_DEMO_DATA, SHOP_DEMO_DATA } from 'src/data/data'
-import { FRAMES } from 'src/components/main-site/frameList'
+import { FRAMES, LEGACY_FRAMES } from 'src/components/main-site/frameList'
 import { allLangs } from 'src/locales'
 
 const KakaoWrappers = styled.div`
@@ -74,11 +74,17 @@ const OgDescription = styled.div`
 // 판매중 프레임 목록은 frameList.js 의 FRAMES 가 단일 소스다(여기서 매핑을 다시 만들지 않는다).
 // FRAMES 에 없는 조합(미판매·레거시 데모)도 반드시 목록에 남긴다 —
 // 기존 브랜드가 그 값을 쓰고 있는데 목록에서 빠지면 저장하는 순간 값이 날아간다.
-const FRAME_OPTION_KEYS = new Set(FRAMES.map(f => f.key))
+const FRAME_OPTION_KEYS = new Set([...FRAMES, ...LEGACY_FRAMES].map(f => f.key))
 const DEMO_FRAME_OPTIONS = [
   ...FRAMES.map(f => ({
     value: f.key,
     label: `프레임${String(f.no).padStart(2, '0')} · ${f.title}`
+  })),
+  // 판매를 중단한 프레임. 그 값을 쓰는 브랜드가 실제로 있어서 목록에 남겨야 한다 —
+  // 빠지면 '(구) 블로그 데모 5' 같은 raw 라벨로 격하되고, 무엇을 쓰는 몰인지 알 수 없다.
+  ...LEGACY_FRAMES.map(f => ({
+    value: f.key,
+    label: `(판매중단) ${f.title}`
   })),
   ...[
     ...SHOP_DEMO_DATA.map(d => ({ value: `shop:${d.value}`, label: `(구) 쇼핑몰 데모 ${d.value}` })),

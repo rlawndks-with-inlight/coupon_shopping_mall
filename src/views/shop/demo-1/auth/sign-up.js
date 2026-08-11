@@ -13,7 +13,7 @@ import { Icon } from '@iconify/react';
 import { useSettingsContext } from 'src/components/settings';
 import { apiManager } from 'src/utils/api';
 import { useLocales } from 'src/locales';
-import { generateRandomString, withSignUpName, validateSignUpInput, marketingAgreePayload, sanitizePhoneInput } from 'src/utils/function';
+import { generateRandomString, withSignUpName, validateSignUpInput, sanitizePhoneInput } from 'src/utils/function';
 import SecurityQuestionFields from 'src/components/elements/shop/SecurityQuestionFields';
 import { validateSecurityQuestion, securityQuestionPayload } from 'src/data/security-questions';
 import { isShopgoBrand } from 'src/utils/is-shopgo';
@@ -122,9 +122,6 @@ const SignUpDemo = (props) => {
     check_0: false,
     check_1: false,
     check_2: false,
-    check_3: false,
-    check_4: false,
-    check_5: false,
   })
   const [user, setUser] = useState({
     user_name: '',
@@ -231,7 +228,7 @@ const SignUpDemo = (props) => {
         toast.error(secqErr);
         return;
       }
-      let result = await apiManager('auth/sign-up', 'create', { ...withSignUpName(user), ...securityQuestionPayload(themeDnsData, user), ...marketingAgreePayload({ marketing: checkboxObj.check_3, sms: checkboxObj.check_4, email: checkboxObj.check_5 }), brand_id: themeDnsData?.id });
+      let result = await apiManager('auth/sign-up', 'create', { ...withSignUpName(user), ...securityQuestionPayload(themeDnsData, user), brand_id: themeDnsData?.id });
       if (!result) {
         return;
       }
@@ -283,7 +280,7 @@ const SignUpDemo = (props) => {
         <div style={{ marginTop: '2rem' }} />
         {activeStep == 0 &&
           <>
-            <FormControlLabel label={<Typography style={{ fontWeight: 'bold', fontSize: themeObj.font_size.size5 }}> {translate('이용약관 및 개인정보수집 및 이용, 쇼핑정보 수신(선택)에 모두 동의합니다.')}</Typography>} control={<Checkbox checked={checkboxObj.check_0} />} onChange={(e) => {
+            <FormControlLabel label={<Typography style={{ fontWeight: 'bold', fontSize: themeObj.font_size.size5 }}> {translate('이용약관 및 개인정보 수집·이용에 모두 동의합니다.')}</Typography>} control={<Checkbox checked={checkboxObj.check_0} />} onChange={(e) => {
               let check_obj = {}
               if (e.target.checked) {
                 for (let key in checkboxObj) {
@@ -321,32 +318,6 @@ const SignUpDemo = (props) => {
               border: `1px solid ${themeObj.grey[300]}`
             }}>
               <Policy type={1} />
-            </div>
-            <div style={{ marginTop: '1rem' }} />
-            <FormControlLabel label={<Typography style={{ fontSize: themeObj.font_size.size6 }}>{translate('쇼핑정보 수신 동의 (선택)')}</Typography>} control={<Checkbox checked={checkboxObj.check_3} onChange={(e) => {
-
-              setCheckboxObj({ ...checkboxObj, ['check_3']: e.target.checked, ['check_4']: e.target.checked, ['check_5']: e.target.checked, })
-            }} />} />
-            <div style={{ marginTop: '1rem' }} />
-            <Divider />
-            <div style={{ marginTop: '1rem' }} />
-            <Row>
-              <FormControlLabel label={<Typography style={{ fontSize: themeObj.font_size.size7 }}>{translate('SMS 수신 동의 (선택)')}</Typography>} control={<Checkbox checked={checkboxObj.check_4} onChange={(e) => {
-                setCheckboxObj({ ...checkboxObj, ['check_4']: e.target.checked })
-              }} />} />
-              <FormControlLabel label={<Typography style={{ fontSize: themeObj.font_size.size7 }}>{translate('이메일 수신 동의 (선택)')}</Typography>} control={<Checkbox checked={checkboxObj.check_5} onChange={(e) => {
-                setCheckboxObj({ ...checkboxObj, ['check_5']: e.target.checked })
-              }} />} />
-            </Row>
-            <div style={{ marginTop: '0.5rem' }} />
-            <div style={{
-              height: '10rem',
-              overflowY: 'auto',
-              border: `1px solid ${themeObj.grey[300]}`,
-              padding: '2rem',
-              fontSize: themeObj.font_size.size7
-            }}>
-              {translate('할인쿠폰 및 혜택, 이벤트, 신상품 소식 등 쇼핑몰에서 제공하는 유익한 쇼핑정보를 SMS나 이메일로 받아보실 수 있습니다. 단, 주문/거래 정보 및 주요 정책과 관련된 내용은 수신동의 여부와 관계없이 발송됩니다. 선택 약관에 동의하지 않으셔도 회원가입은 가능하며, 회원가입 후 회원정보수정 페이지에서 언제든지 수신여부를 변경하실 수 있습니다.')}
             </div>
           </>}
         {activeStep == 1 &&

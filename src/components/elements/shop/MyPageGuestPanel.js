@@ -3,7 +3,7 @@ import { useRouter } from 'next/router';
 import styled from 'styled-components';
 import { useLocales } from 'src/locales';
 
-// 마이페이지 비로그인 랜딩(쇼핑몰형 프레임1·2·3 공용).
+// 마이페이지 비로그인 랜딩(쇼핑몰형(shop demo 1·2·4) 공용).
 //
 // 마이페이지는 비로그인이어도 로그인 화면으로 튕기지 않고 이 패널을 보여준다.
 // 11개 프레임 중 10개가 이미 이 방식이었고, 프레임3(shop demo-4)만 리다이렉트했다.

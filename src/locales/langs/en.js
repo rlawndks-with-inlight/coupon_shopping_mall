@@ -608,7 +608,9 @@ const en = {
     "검색어를 입력해 주세요.": "Please enter a search term.",
     "찜한 상품": "Wishlist",
     "마음에 드는 상품을 찜해보세요.": "Save the items you like.",
-    "기본 배송지로 설정": "Set as default address"
+    "기본 배송지로 설정": "Set as default address",
+    "쇼핑몰 이용안내": "Shopping Guide",
+    "이용약관 및 개인정보 수집·이용에 모두 동의합니다.": "I agree to the Terms of Service and the collection and use of personal information."
 };
 
 export default en;

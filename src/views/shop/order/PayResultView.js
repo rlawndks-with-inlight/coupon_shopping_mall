@@ -77,7 +77,10 @@ const { user } = useAuthContext();
 
   // 할부개월: '00' = 일시불, 그 외 앞자리 0 을 떼고 'N개월'
   const installment = q.installment
-    ? (q.installment === '00' ? '일시불' : `${String(q.installment).replace(/^0+/, '')}개월`)
+    ? (q.installment === '00'
+      ? translate('일시불')
+      // 개월수는 보간으로 넘긴다 — 'N개월' 의 어순이 언어마다 다르다.
+      : translate('{{n}}개월', { n: String(q.installment).replace(/^0+/, '') }))
     : undefined;
 
   // 승인일시: PG가 'YYYYMMDDHHmmss' 로 준다. 읽기 좋게 끊어 준다.
@@ -105,12 +108,12 @@ const { user } = useAuthContext();
         <Card sx={{ mb: 2 }}>
           <CardHeader title={translate('결제 정보')} />
           <CardContent sx={{ pt: 0 }}>
-            <KV k="주문번호" v={q.ord_num} />
-            <KV k="승인일시" v={trxDttm} />
-            <KV k="매입사" v={q.acquirer} />
-            <KV k="할부기간" v={installment} />
-            <KV k="구매자" v={q.buyer_name} />
-            <KV k="연락처" v={q.buyer_phone} />
+            <KV k={translate("주문번호")} v={q.ord_num} />
+            <KV k={translate("승인일시")} v={trxDttm} />
+            <KV k={translate("매입사")} v={q.acquirer} />
+            <KV k={translate("할부기간")} v={installment} />
+            <KV k={translate("구매자")} v={q.buyer_name} />
+            <KV k={translate("연락처")} v={q.buyer_phone} />
           </CardContent>
         </Card>
       )}
@@ -127,7 +130,7 @@ const { user } = useAuthContext();
               ? (user?.id ? '/shop/auth/history' : '/shop/auth/order-check')
               : '/shop/auth/cart'
           )}>
-          {isSuccess ? (user?.id ? '주문내역 보기' : '주문 조회하기') : '장바구니로'}
+          {isSuccess ? (user?.id ? translate("주문내역 보기") : translate("주문 조회하기")) : translate("장바구니로")}
         </Button>
       </Stack>
 

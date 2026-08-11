@@ -9,6 +9,7 @@ import { apiManager } from 'src/utils/api';
 import { getOptionLabel } from 'src/utils/shop-util';
 import OrderCancelButton from 'src/components/elements/shop/OrderCancelButton';
 import { useLocales } from 'src/locales';
+import { formatLang } from 'src/utils/format';
 
 const ContentContainer = styled.div`
 display:flex;
@@ -170,7 +171,7 @@ const Demo5 = (props) => {
                                             <div style={{ display: 'flex' }}>
                                                 <img src={item.product_img} width='48px' height='48px' style={{ margin: '0 1rem 0 0' }} />
                                                 <div style={{ display: 'flex', flexDirection: 'column' }}>
-                                                    <div>{item.order_name}</div>
+                                                    <div>{formatLang(item, 'product_name') || item.order_name}</div>
                                                     <div>{commarNumberWithUnit(item.order_amount)}</div>
                                                     <div>옵션 : {getOptionText(item)} / {item.order_count}개</div>
                                                     <div style={{ marginTop: '0.5rem' }}>{getOrderStatusText(item)} · 주문번호 {item.ord_num}</div>

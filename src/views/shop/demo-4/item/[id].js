@@ -403,7 +403,7 @@ const ItemDemo = (props) => {
                             </div>
                           </>
                         }
-                        <ItemName style={{ whiteSpace: 'wrap', fontFamily: 'Noto Sans KR', fontSize: '25px' }}>{product?.product_name}</ItemName>
+                        <ItemName style={{ whiteSpace: 'wrap', fontFamily: 'Noto Sans KR', fontSize: '25px' }}>{formatLang(product, 'product_name')}</ItemName>
                         {/*product?.product_code &&
                           <>
                             <ItemCharacter key_name={'상품코드'} value={product?.product_code} />

@@ -15,6 +15,7 @@ import { apiShop } from "src/utils/api";
 import { commarNumber, getOrderStatusText, commarNumberWithUnit } from "src/utils/function";
 import styled from "styled-components";
 import { useLocales } from 'src/locales';
+import { formatLang } from 'src/utils/format';
 
 const Wrappers = styled.div`
 max-width:1400px;
@@ -112,7 +113,7 @@ const MyPageDemo = (props) => {
             style={{ width: 64, height: 64, borderRadius: 1.5, mr: 2 }}
           />
           <Typography noWrap variant='subtitle2' sx={{ maxWidth: 240 }}>
-            {row.product_name}
+            {formatLang(row, 'product_name')}
           </Typography>
         </Row>
       }

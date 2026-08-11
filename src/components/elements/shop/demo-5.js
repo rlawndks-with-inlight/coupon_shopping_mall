@@ -117,7 +117,7 @@ export const Item5 = (props) => {
               undefined.length 에서 TypeError 가 났다. 앱에 ErrorBoundary 가 없어
               그 예외 하나로 페이지가 통째로 백지가 된다. 백엔드에서 빈 자리를 걸러내지만
               여기서도 방어한다. */}
-          {(item?.product_name ?? '').length < 30 ? (item?.product_name ?? '') : `${item.product_name.slice(0, 30)}...`}
+          {((n) => (n.length < 30 ? n : `${n.slice(0, 30)}...`))(formatLang(item, 'product_name') ?? '')}
         </ItemName>
         <ItemDetail variant="subtitle2" style={{ margin: '0 auto', width: '90%' }}>
           {item?.status == 1 ? '거래 진행중'

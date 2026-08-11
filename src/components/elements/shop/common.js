@@ -713,7 +713,7 @@ export const ConsignmentTable = props => {
                         sx={{ width: 64, height: 64, borderRadius: 1.5, mr: 2 }}
                       />
                     </TableCell>
-                    <TableCell>{row?.product_name}</TableCell>
+                    <TableCell>{formatLang(row, 'product_name')}</TableCell>
                     <TableCell>
                       {row?.product_price > row?.product_sale_price && (
                         <Box

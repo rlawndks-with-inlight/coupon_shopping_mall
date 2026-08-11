@@ -404,6 +404,12 @@ const ItemDemo = (props) => {
                           </>
                         }
                         <ItemName style={{ whiteSpace: 'wrap', fontFamily: 'Noto Sans KR', fontSize: '25px' }}>{formatLang(product, 'product_name')}</ItemName>
+                        {/* 상품 스펙 — 가맹점이 상품폼에 적어도 프레임1 말고는 어디에도 나오지 않던 값이다. */}
+                        {formatLang(product, 'product_spec') &&
+                          <div style={{ whiteSpace: 'pre-line', lineHeight: 1.7, fontSize: '14px', color: '#666', background: '#f7f7f7', borderRadius: '6px', padding: '16px', margin: '0 0 1rem 0' }}>
+                            {formatLang(product, 'product_spec')}
+                          </div>
+                        }
                         {/*product?.product_code &&
                           <>
                             <ItemCharacter key_name={'상품코드'} value={product?.product_code} />

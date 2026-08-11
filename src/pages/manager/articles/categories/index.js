@@ -21,11 +21,15 @@ const ArticleCategoryList = () => {
         return row['post_category_title'] ?? "---"
       }
     },
+    // '상태' 열은 다른 목록에서 복사해 온 잔재였다. post_categories 에는 상태 개념이 없고
+    // (post_category.controller 가 저장하는 컬럼: 제목·부모·유저추가·타입·열람대상)
+    // 있지도 않은 row['name'] 을 읽고 있어 어느 줄에서나 "---" 만 찍혔다.
+    // 대신 상위/하위 관계를 보여 준다 — 목록이 평면이라 구분이 안 되던 자리다.
     {
-      id: 'status',
-      label: '상태',
+      id: 'parent_id',
+      label: '구분',
       action: (row) => {
-        return row['name'] ?? "---"
+        return row['parent_id'] > 0 ? '하위 게시판' : '상위 게시판'
       }
     },
     ...(user?.level >= 50 ? [{

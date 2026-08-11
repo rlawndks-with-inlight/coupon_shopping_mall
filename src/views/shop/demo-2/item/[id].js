@@ -205,7 +205,13 @@ const ItemDemo = (props) => {
                           {formatLang(product, 'product_comment', currentLang)}
                         </Typography>
                       }
-                      <Divider sx={{ my: 1 }} />
+                      {/* 상품 스펙 — 가맹점이 상품폼에 적어도 프레임1 말고는 어디에도 나오지 않던 값이다. */}
+                      {formatLang(product, 'product_spec', currentLang) &&
+                        <div style={{ whiteSpace: 'pre-line', lineHeight: 1.7, fontSize: '14px', color: '#666', background: '#f7f7f7', borderRadius: '6px', padding: '16px', margin: '0 0 1rem 0' }}>
+                          {formatLang(product, 'product_spec', currentLang)}
+                        </div>
+                      }
+<Divider sx={{ my: 1 }} />
                       <div style={{ margin: '1rem 0' }}>
                         {hasDiscount &&
                           <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>

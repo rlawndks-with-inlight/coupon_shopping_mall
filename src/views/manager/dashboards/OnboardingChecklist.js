@@ -7,6 +7,7 @@ import { useModal } from 'src/components/dialog/ModalProvider';
 import { apiManager } from 'src/utils/api';
 import { isShopgoMerchant } from 'src/utils/is-shopgo';
 import { HOME_TEXT_SCHEMA } from 'src/data/home-texts';
+import { isShopSectionBuilder, isBlogSectionBuilder, mainDesignRoute } from 'src/utils/section-builder';
 
 // 신규 가맹점 온보딩 체크리스트 — 대시보드 상단.
 // 완료 여부는 이미 로드된 데이터로 자동 감지(표시용). 필수 완료로 "자동으로 사라지지는 않음".
@@ -26,9 +27,8 @@ const OnboardingChecklist = () => {
   const isSingleProductBlog = [4, 5, 6, 7, 8, 9].includes(Number(dns.blog_demo_num));
   // 메인페이지관리(섹션 편집)가 존재하는 데모인지. 고정 레이아웃 데모는 편집 대상이 없으므로
   // '메인페이지 꾸미기'를 띄우면 영영 미완료로 남고 클릭해도 메뉴가 없다. → 홈 문구로 대체.
-  // shop 4·5·6·9는 HomeDemo1을 감싸는 구조라 shop_obj를 쓴다(= 섹션빌더). shop 7·8·10, blog 4~9는 고정 레이아웃.
-  const isSectionBuilder = [1, 2, 3, 4, 5, 6, 9].includes(Number(dns.shop_demo_num))
-    || [1, 2, 3].includes(Number(dns.blog_demo_num));
+  // 판정 규칙은 utils/section-builder 하나만 본다(같은 규칙이 세 곳에 복사돼 있다가 어긋난 적이 있다).
+  const isSectionBuilder = isShopSectionBuilder(dns) || isBlogSectionBuilder(dns);
   const hasHomeTexts = Object.keys(HOME_TEXT_SCHEMA).map(Number).includes(Number(dns.blog_demo_num));
 
   // '상품 등록' 완료 여부는 상품 목록 API 로 직접 센다.
@@ -68,7 +68,7 @@ const OnboardingChecklist = () => {
       { key: 'product', label: '상품 등록', tag: '필수', required: true, done: (productCount ?? 0) > 0, route: '/manager/products/list', note: catDone ? '' : '카테고리를 먼저 등록하세요' },
       ...(isSingleProductBlog ? [{ key: 'featured', label: '대표 상품 지정', tag: '조건부', done: (so?.featured_product_ids?.length ?? 0) > 0, route: '/manager/designs/featured' }] : []),
       { key: 'payment', label: '결제수단 연결', tag: '필수', required: true, hqManaged: true, done: (dns?.payment_modules?.length ?? 0) > 0 },
-      ...(isSectionBuilder ? [{ key: 'design', label: '메인페이지 꾸미기', tag: '권장', done: ((dns?.shop_obj?.length ?? 0) + (dns?.blog_obj?.length ?? 0)) > 0, route: isBlog && !isShop ? '/manager/designs/blog-main/all' : '/manager/designs/main/all' }] : []),
+      ...(isSectionBuilder ? [{ key: 'design', label: '메인페이지 꾸미기', tag: '권장', done: ((dns?.shop_obj?.length ?? 0) + (dns?.blog_obj?.length ?? 0)) > 0, route: mainDesignRoute(dns) }] : []),
       ...(!isSectionBuilder && hasHomeTexts ? [{ key: 'home-texts', label: '홈 화면 문구 작성', tag: '권장', note: '미입력 시 기본 문구', done: Object.keys(so?.home_texts ?? {}).length > 0, route: '/manager/designs/home-texts' }] : []),
     ];
     return list;

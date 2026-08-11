@@ -27,6 +27,7 @@ import { apiManager, apiUtil } from 'src/utils/api'
 import { Col, Row, themeObj } from 'src/components/elements/styled-components'
 import toast from 'react-hot-toast'
 import axios from 'axios'
+import { mainDesignRoute } from 'src/utils/section-builder'
 const BrandList = () => {
   const { setModal } = useModal()
   const { user } = useAuthContext()
@@ -192,15 +193,15 @@ const BrandList = () => {
           id: 'main_edit',
           label: `메인페이지 수정`,
           action: row => {
+            // 예전엔 무조건 쇼핑몰 편집기(/designs/main)로 보냈다. 블로그형 브랜드는
+            // 홈을 blog_obj 로 그리므로 그 화면에는 편집할 섹션이 없어 빈 화면이 떴다.
+            // 섹션빌더가 아닌 프레임(shop 7·8·10, blog 4~9)은 편집 대상 자체가 없어 버튼을 내린다.
+            const route = mainDesignRoute(row, row?.id);
+            if (!route) return <span style={{ color: '#919EAB' }}>{'해당 없음'}</span>;
             return (
               <>
-                <IconButton>
-                  <Icon
-                    icon='material-symbols:edit-outline'
-                    onClick={() => {
-                      router.push(`/manager/designs/main/${row?.id}`)
-                    }}
-                  />
+                <IconButton onClick={() => { router.push(route) }}>
+                  <Icon icon='material-symbols:edit-outline' />
                 </IconButton>
               </>
             )

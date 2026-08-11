@@ -48,7 +48,9 @@ const MyPageDemo = (props) => {
     }
   }
   const { user, isInitialized } = useAuthContext();
-  const [myPageType, setMyPageType] = useState(undefined);
+  // Tab 의 value 는 Object.keys 가 준 **문자열**('0'·'1')이다. 여기를 숫자·undefined 로 두면
+  // 첫 렌더에서 어느 탭에도 안 걸려 선택 표시가 없다(쿼리가 들어와야 뒤늦게 잡힌다).
+  const [myPageType, setMyPageType] = useState('0');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [userObj, setUserObj] = useState({})
   const [addressContent, setAddressContent] = useState({});
@@ -77,7 +79,7 @@ const MyPageDemo = (props) => {
     }
   }, [user])
   useEffect(() => {
-    setMyPageType(router.query?.type ?? 0)
+    setMyPageType(String(router.query?.type ?? 0))
     if (!router.query?.type) {
       // replace 여야 한다. push 면 히스토리에 '쿼리 없는 URL -> ?type=0' 이 쌓여서
       // 뒤로가기를 눌러 쿼리 없는 URL 로 돌아오는 순간 이 effect 가 다시 push 한다

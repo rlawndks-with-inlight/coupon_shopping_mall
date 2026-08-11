@@ -4,6 +4,7 @@ import { useState } from "react";
 import ShopLayout from "src/layouts/shop/ShopLayout";
 import { useSettingsContext } from "src/components/settings";
 
+import WishPanel from "src/components/elements/shop/WishPanel";
 import { WishDemo1 } from "src/views/shop/demo-1";
 import { WishDemo2 } from "src/views/shop/demo-2";
 import { WishDemo3 } from "src/views/shop/demo-3";
@@ -36,10 +37,11 @@ const getDemo = (num, common) => {
     return <WishDemo9 {...common} />
   /*else if (num == 10)
     return <WishDemo10 {...common} />*/
-  // 블로그형(shop_demo_num=0)은 어느 조건에도 안 걸려 백지가 됐다.
-  // 현재 블로그 레이아웃에 찜 진입점은 없지만 주소로 들어오면 빈 화면이 뜬다.
+  // 전용 화면이 없는 프레임(블로그형 포함)은 공용 패널로 그린다.
+  // 예전 폴백은 WishDemo1 이었는데, 그 화면은 쇼핑몰 카드 디스패처를 쓰므로
+  // 블로그형 브랜드에서는 자기 프레임과 생김새가 다른 쇼핑몰 카드가 나왔다.
   else
-    return <WishDemo1 {...common} />
+    return <WishPanel router={common?.func?.router} />
 }
 const Wish = () => {
   const router = useRouter();

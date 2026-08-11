@@ -106,7 +106,10 @@ const ArticlesDemo = (props) => {
         id: 'edit',
         label: translate('관리'),
         action: (row) => {
+          // 답변이 달린 글은 작성자가 더 이상 손댈 수 없다(서버도 같은 규칙으로 막는다 —
+          // back shop.controller post.update/remove). 여기서 열어 두면 눌러도 실패하는 버튼이 된다.
           if (!(user?.id && row?.user_id == user?.id)) return null;
+          if (row?.replies?.length > 0) return null;
           return (
             <>
               <IconButton onClick={() => {

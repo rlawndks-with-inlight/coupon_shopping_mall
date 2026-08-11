@@ -18,6 +18,8 @@ import toast from "react-hot-toast"
 import Link from "next/link"
 import { formatLang } from 'src/utils/format';
 import { useLocales } from 'src/locales';
+import { ProductStatusBadge } from './ProductStatusBadge';
+import { isUsedGoodsBrand } from 'src/utils/function';
 
 const ItemWrapper = styled.a`
 display: flex;
@@ -51,6 +53,7 @@ font-family:'Noto Sans KR';
 }
 `
 const ItemImgContainer = styled.div`
+position: relative;
 width: 100%;
 height: 300px;
 margin: 0 auto;
@@ -107,6 +110,8 @@ export const Item4 = (props) => {
         style={{ cursor: 'pointer', textAlign: `${text_align}`, backgroundColor: `${themeMode != 'dark' ? 'white' : ''}`, margin: '0.25rem' }}
       >
         <ItemImgContainer>
+          {/* 품절·중단됨을 카드에서 알 수 없어, 눌러 들어가야 살 수 없는 상품임을 알았다. */}
+          {!isUsedGoodsBrand(themeDnsData) && <ProductStatusBadge status={item?.status} />}
           <ItemImg src={item?.product_img} style={{ height: '70%' }} />
         </ItemImgContainer>
         <div style={{ color: '#999999', fontWeight: 'bold', fontSize: '11px', width: '90%', margin: '0 auto' }}>
@@ -144,26 +149,30 @@ export const Item4 = (props) => {
                   </>
           }
         </ItemDetail>
-        <div style={{ width: '80%', margin: '0 auto' }}>
-          <Chip
-            size="small"
-            variant="outlined"  //그랑파리 상품에서는 item.status가 0이다 = 판매중, 그 중에서 show_status가 0이면 신상품, 1이면 중고품
-            color={
-              item?.show_status == 1 ?
-                itemStatusList[0]?.color
-                :
-                itemStatusList[1]?.color
-            } //N 및 N-S 등급은 NEW, 그 외는 USED
-            label={
-              item?.show_status == 1 ?
-                itemStatusList[0]?.label
-                :
-                itemStatusList[1].label
-            }
-            style={{
-              margin: '0 auto',
-            }} />
-        </div>
+        {/* NEW/USED 는 중고몰 전용 표기다. show_status 는 그랑파리 전용 특성을 골라야 1 이 되므로
+            다른 가맹점 상품은 값이 늘 0 이라 새 상품에도 검은 'USED' 칩이 붙었다. */}
+        {isUsedGoodsBrand(themeDnsData) &&
+          <div style={{ width: '80%', margin: '0 auto' }}>
+            <Chip
+              size="small"
+              variant="outlined"  //그랑파리 상품에서는 item.status가 0이다 = 판매중, 그 중에서 show_status가 0이면 신상품, 1이면 중고품
+              color={
+                item?.show_status == 1 ?
+                  itemStatusList[0]?.color
+                  :
+                  itemStatusList[1]?.color
+              } //N 및 N-S 등급은 NEW, 그 외는 USED
+              label={
+                item?.show_status == 1 ?
+                  itemStatusList[0]?.label
+                  :
+                  itemStatusList[1].label
+              }
+              style={{
+                margin: '0 auto',
+              }} />
+          </div>
+        }
       </ItemWrapper>
     </Link>
   </>

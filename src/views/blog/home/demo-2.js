@@ -19,6 +19,7 @@ import { getMainObjType } from 'src/utils/function'
 import { getDefaultHomeContent } from 'src/data/default-banners'
 import HomeItemsPropertyGroups from 'src/views/section/blog/HomeItemsPropertyGroups'
 import HomeItemHero from 'src/views/section/shop/HomeItemHero'
+import HomeTextBanner from 'src/views/section/shop/HomeTextBanner'
 import { useLocales } from 'src/locales';
 
 
@@ -139,6 +140,10 @@ const returnHomeContent = (column, data, func) => {
     else if (type == 'items-property-group-:num') return <HomeItemsPropertyGroups column={column} data={data} func={func} />
     else if (type == 'button-banner') return <HomeButtonBanner column={column} data={data} func={func} />
     else if (type == 'items-with-categories') return <HomeItemsWithCategories column={column} data={data} func={func} />
+    // '텍스트형 배너슬라이드'는 메인페이지관리(블로그 편집기)에서 추가할 수 있는데
+    // 여기에 분기가 없어 저장해도 홈에 아무것도 안 나왔다. 쇼핑몰형과 같은 컴포넌트를 쓴다
+    // (프레임4·5 본문 폭에 맞춰 demoType=1 — 최대폭 1140px).
+    else if (type == 'text-banner') return <HomeTextBanner column={column} data={data} func={func} demoType={1} />
     else if (type == 'video-slide') return <HomeVideoSlide column={column} data={data} func={func} />
     else if (type == 'post') return <HomePost column={column} data={data} func={func} />
     else if (type == 'sellers') return <HomeSellers column={column} data={data} func={func} />

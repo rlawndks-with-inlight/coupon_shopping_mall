@@ -55,19 +55,18 @@ const ItemsDemo = (props) => {
     page: 1,
     page_size: 15,
   })
+  // 예전엔 [themeCategoryList] 와 [router.query] 두 effect 가 각각 1페이지를 불러
+  // 화면에 들어올 때마다 같은 조회가 두 번 나갔다. 한 번만 부른다.
+  // (router.isReady 전에는 query 가 비어 있어 '조건 없는 목록' 을 먼저 그리게 된다)
   useEffect(() => {
-    settingPage({
-      page: 1,
-      page_size: 15,
-    });
-  }, [themeCategoryList])
-  useEffect(() => {
+    if (!router.isReady) return;
     settingPage({
       page: 1,
       page_size: 15,
     }, true);
-  }, [router.query])
+  }, [router.isReady, router.query, themeCategoryList])
   const [moreLoading, setMoreLoading] = useState(false);
+  const moreLoadingRef = useRef(false);
   const [loading, setLoading] = useState(true);
   const scrollRef = useRef(null);
   const handleScroll = () => {
@@ -76,7 +75,10 @@ const ItemsDemo = (props) => {
     }
     const { top, bottom } = scrollRef.current.getBoundingClientRect();
     const windowHeight = window.innerHeight;
-    if (top < windowHeight && bottom >= 0 && !moreLoading) {
+    // ⚠ moreLoading(state) 이 아니라 ref 를 본다. 이 핸들러는 deps [] 로 한 번만 등록되므로
+    //   state 를 읽으면 등록 시점의 값(false)에 영원히 묶여 가드가 무의미해진다.
+    if (top < windowHeight && bottom >= 0 && !moreLoadingRef.current) {
+      moreLoadingRef.current = true;
       setMoreLoading(true);
       $('.more-page').trigger("click");
     }
@@ -116,18 +118,19 @@ const ItemsDemo = (props) => {
     })
     setSearchObj(search_obj);
     if (is_first) {
-      setProducts(product_list.content ?? []);
+      setProducts(product_list?.content ?? []);
       setLoading(false);
     } else {
-      setProducts([...products, ...product_list.content ?? []]);
+      // 함수형 갱신 — 이 함수는 async 라 낡은 클로저의 products 를 읽으면 앞 페이지가 사라진다.
+      setProducts((prev) => [...prev, ...(product_list?.content ?? [])]);
     }
     setProductContent(product_list);
+    // 결과가 비었든 실패했든 무조건 푼다. 예전엔 products 가 늘었을 때만 풀어서
+    // 마지막 페이지(빈 응답)에서 스피너가 영영 돌았다.
+    moreLoadingRef.current = false;
+    setMoreLoading(false);
   }
-  useEffect(() => {
-    if (products.length > 0) {
-      setMoreLoading(false);
-    }
-  }, [products])
+
   return (
     <>
       <ContentWrapper>

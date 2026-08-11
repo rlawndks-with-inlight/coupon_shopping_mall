@@ -1,5 +1,5 @@
 
-import { Button, Card, Grid, MenuItem, Select, Stack, TextField, Typography } from "@mui/material";
+import { Alert, Button, Card, Grid, MenuItem, Select, Stack, TextField, Typography } from "@mui/material";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { Row, themeObj } from "src/components/elements/styled-components";
@@ -77,6 +77,13 @@ const PopupEdit = () => {
             <Grid item xs={12} md={6}>
               <Card sx={{ p: 2, height: '100%' }}>
                 <Stack spacing={3}>
+                  {/* 팝업이 언제·어디에 뜨는지 화면에 아무 안내가 없었다. 그래서 '저장했는데 안 뜬다'는
+                      문의가 반복됐다 — 실제로는 홈에서만, 기간 안에서만, 하루 한 번만 뜬다.
+                      (조건: StorefrontPopups 의 isStorefrontHome / shop.controller 의 open_s_dt·open_e_dt) */}
+                  <Alert severity="info" sx={{ fontSize: '0.8rem' }}>
+                    팝업은 <b>홈 화면에서만</b> 뜹니다(상품·게시판 등 다른 화면에는 나오지 않습니다).<br />
+                    아래 <b>시작일~종료일 안</b>에 있을 때만 노출되며, 고객이 <b>‘오늘 하루 보지않기’</b>를 누르면 그날은 다시 뜨지 않습니다.
+                  </Alert>
                   <TextField
                     label='제목'
                     value={item.popup_title}

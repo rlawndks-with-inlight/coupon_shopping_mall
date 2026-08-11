@@ -707,6 +707,12 @@ const es = {
     "약관": "Términos",
 
     "{{n}}개": "{{n}} unidad(es)",
+
+    // 같은 문구인데 코드마다 띄어쓰기·마침표가 달라 사전을 못 찾던 것들.
+    // 화면 파일을 여러 개 고치는 대신 어긋난 표기도 같은 번역을 찾도록 함께 둔다.
+    "성공적으로 발송되었습니다.": "Ha sido enviado exitosamente.",
+    "성공적으로 인증되었습니다.": "Ha sido autenticado exitosamente.",
+    "결제 신청이 완료되었습니다.": "Solicitud de pago enviada",
 };
 
 export default es;

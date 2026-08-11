@@ -712,6 +712,12 @@ const en = {
     "약관": "Terms",
 
     "{{n}}개": "{{n}} item(s)",
+
+    // 같은 문구인데 코드마다 띄어쓰기·마침표가 달라 사전을 못 찾던 것들.
+    // 화면 파일을 여러 개 고치는 대신 어긋난 표기도 같은 번역을 찾도록 함께 둔다.
+    "성공적으로 발송되었습니다.": "It has been successfully sent out.",
+    "성공적으로 인증되었습니다.": "It has been successfully certified.",
+    "결제 신청이 완료되었습니다.": "Payment request submitted",
 };
 
 export default en;

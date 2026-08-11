@@ -187,7 +187,7 @@ const SignUpDemo = (props) => {
       if (
         user.user_pw != user.user_pw_check
       ) {
-        toast.error("비밀번호 확인란을 똑같이 입력했는지 확인해주세요");
+        toast.error(translate("비밀번호 확인란을 똑같이 입력했는지 확인해주세요"));
         return;
       }
       // SHOPGO 본사 및 산하 가맹점 전용 : 아이디 찾기(이름+휴대폰번호)에 쓰이므로 이름 필수. 다른 브랜드의 기존 검증 규칙은 그대로.

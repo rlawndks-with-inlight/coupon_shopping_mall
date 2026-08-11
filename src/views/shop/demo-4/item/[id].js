@@ -235,7 +235,7 @@ const ItemDemo = (props) => {
   const handleAddCart = async () => {
     let result = await insertCartDataUtil({ ...product, seller_id: router.query?.seller_id ?? 0 }, selectProductGroups, themeCartData, onChangeCartData);
     if (result) {
-      toast.success("장바구니에 성공적으로 추가되었습니다.")
+      toast.success(translate("장바구니에 성공적으로 추가되었습니다."))
     }
   };
   const onSelectOption = (group, option, is_option_multiple) => {
@@ -715,7 +715,7 @@ const ItemDemo = (props) => {
                                   })
                                 }
                               } else {
-                                toast.error('로그인을 해주세요.')
+                                toast.error(translate('로그인을 해주세요.'))
                               }
                             }}
                           />

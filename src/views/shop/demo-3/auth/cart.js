@@ -267,7 +267,7 @@ const CartDemo = (props) => {
       delete pay_data.payment_modules;
       let ord_num = makeOrdNum();
       pay_data.ord_num = ord_num
-      pay_data.item_name = pay_data?.products?.length > 1 ? `${pay_data?.products[0]?.order_name} 외 ${pay_data?.products?.length - 1}건` : (pay_data?.products[0]?.order_name || '상품');
+      pay_data.item_name = pay_data?.products?.length > 1 ? `${pay_data?.products[0]?.order_name} 외 ${pay_data?.products?.length - 1}건` : (pay_data?.products[0]?.order_name || translate('상품'));
       let link = _.find(themeDnsData?.payment_modules, { type: 'virtual_account' })?.virtual_acct_url + `?amount=${pay_data?.amount}`;
       if (_.find(themeDnsData?.payment_modules, { type: 'virtual_account' })?.virtual_acct_url) {
         const popup = window.open(link, ""); // 팝업을 미리 연다.
@@ -283,7 +283,7 @@ const CartDemo = (props) => {
       delete pay_data.payment_modules;
       let ord_num = makeOrdNum();
       pay_data.ord_num = ord_num
-      pay_data.item_name = pay_data?.products?.length > 1 ? `${pay_data?.products[0]?.order_name} 외 ${pay_data?.products?.length - 1}건` : (pay_data?.products[0]?.order_name || '상품');
+      pay_data.item_name = pay_data?.products?.length > 1 ? `${pay_data?.products[0]?.order_name} 외 ${pay_data?.products?.length - 1}건` : (pay_data?.products[0]?.order_name || translate('상품'));
       let link = _.find(themeDnsData?.payment_modules, { type: 'gift_certificate' })?.gift_certificate_url + `?amount=${pay_data?.amount}&name=${user?.name ?? ""}&phone_num=${user?.phone_num ?? ""}`;
       const popup = window.open(link, ""); // 팝업을 미리 연다.
       popup.location.href = link;
@@ -734,7 +734,7 @@ const CartDemo = (props) => {
                         <Stack>
                           <TextField
                             size='small'
-                            label={themeDnsData?.blog_demo_num > 0 ? '주민번호 앞 6자리(생년월일)' : '주민번호 또는 사업자등록번호'}
+                            label={themeDnsData?.blog_demo_num > 0 ? translate('주민번호 앞 6자리(생년월일)') : translate('주민번호 또는 사업자등록번호')}
                             value={payData.auth_num}
                             onChange={(e) => {
                               let value = e.target.value;
@@ -841,14 +841,14 @@ const CartDemo = (props) => {
                             size='large'
                             onClick={() => {
                               if (!smsPayData.name) {
-                                toast.error('이름을 입력해 주세요.');
+                                toast.error(translate('이름을 입력해 주세요.'));
                                 return;
                               }
                               if (!smsPayData.phone_num || smsPayData.phone_num.length < 10) {
                                 toast.error('핸드폰번호를 정확히 입력해 주세요.');
                                 return;
                               }
-                              toast.success('결제 신청이 완료되었습니다.');
+                              toast.success(translate('결제 신청이 완료되었습니다.'));
                               setSmsPayData({ name: '', phone_num: '' });
                               router.push('/shop/auth/sms-pay-success');
                             }}

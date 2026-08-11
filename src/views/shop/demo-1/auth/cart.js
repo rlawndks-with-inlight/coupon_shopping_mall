@@ -888,7 +888,7 @@ const CartDemo = (props) => {
                                 toast.error('핸드폰번호를 정확히 입력해 주세요.');
                                 return;
                               }
-                              toast.success('결제 신청이 완료되었습니다.');
+                              toast.success(translate('결제 신청이 완료되었습니다.'));
                               setSmsPayData({ name: '', phone_num: '' });
                               router.push('/shop/auth/sms-pay-success');
                             }}

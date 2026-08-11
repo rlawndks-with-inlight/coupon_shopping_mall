@@ -172,7 +172,7 @@ const SignUpDemo = (props) => {
         !checkboxObj.check_1 ||
         !checkboxObj.check_2
       ) {
-        toast.error("필수 항목에 체크해 주세요.");
+        toast.error(translate("필수 항목에 체크해 주세요."));
         return;
       }
     }
@@ -189,12 +189,12 @@ const SignUpDemo = (props) => {
         // 가입이 영영 막힌다.
         (themeDnsData?.id == 74 && !user.unipass)
       ) {
-        toast.error("필수 항목을 입력해 주세요.");
+        toast.error(translate("필수 항목을 입력해 주세요."));
         return;
       } else if (
         user.user_pw != user.user_pw_check
       ) {
-        toast.error("비밀번호 확인란을 똑같이 입력했는지 확인해주세요");
+        toast.error(translate("비밀번호 확인란을 똑같이 입력했는지 확인해주세요"));
         return;
       }
       // 이 검사는 '가입 허용 번호 화이트리스트(phone_registration)'를 쓰는 브랜드 전용이다.
@@ -576,7 +576,7 @@ const SignUpDemo = (props) => {
                 width: '49%'
               }}
                 onClick={onClickNextButton}
-              >{activeStep == 2 ? '완료' : '다음'}</Button>
+              >{activeStep == 2 ? translate('완료') : translate('다음')}</Button>
             </Row>
           </Wrappers>
         </>
@@ -1035,7 +1035,7 @@ const SignUpDemo = (props) => {
                 width: '49%'
               }}
                 onClick={onClickNextButton}
-              >{activeStep == 2 ? '완료' : '다음'}</Button>
+              >{activeStep == 2 ? translate('완료') : translate('다음')}</Button>
             </Row>
           </Wrappers>
         </>

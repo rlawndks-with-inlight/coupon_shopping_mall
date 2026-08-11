@@ -65,11 +65,16 @@ const DialogBuyNow = (props) => {
   const [payList, setPayList] = useState([]);
   const [cardFucus] = useState()
   const [, setSelectAddress] = useState({});
+  // user_id 를 싣지 않는다.
+  //
+  // 이 초기값은 **첫 렌더 시점의** user 를 붙잡는다. 로그인 복원이 조금 늦으면 user 가 아직
+  // 없어 user_id 가 undefined 로 굳고, 그 뒤 로그인이 끝나도 이 값은 갱신되지 않는다.
+  // 그대로 나간 요청은 서버에서 '권한이 없습니다'로 거절돼 배송지 목록이 영영 비어 보였다.
+  // 백엔드 규칙이 'user_id 를 안 주면 본인'(user_address.controller.list)이라 빼는 쪽이 맞다.
   const [addressSearchObj, setAddressSearchObj] = useState({
     page: 1,
     page_size: 10,
     search: '',
-    user_id: user?.id,
   })
   const [addressContent, setAddressContent] = useState({});
   const payDataInitialSetting = {

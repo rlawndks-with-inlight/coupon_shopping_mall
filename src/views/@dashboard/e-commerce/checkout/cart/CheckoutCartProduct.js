@@ -77,7 +77,7 @@ export default function CheckoutCartProduct({ row, onDelete, onDecrease, onIncre
           </Typography>
           {is_blocked && (
             <Stack direction="row" alignItems="center" spacing={0.5}>
-              <Label color={getProductStatus(status)?.color || 'error'}>{status_text || '판매불가'}</Label>
+              <Label color={getProductStatus(status)?.color || 'error'}>{status_text || translate("판매불가")}</Label>
               <Typography variant="caption" sx={{ color: 'error.main' }}>
                 {translate('이 상품은 결제할 수 없습니다.')}
               </Typography>

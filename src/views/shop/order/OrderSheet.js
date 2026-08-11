@@ -212,7 +212,7 @@ export default function OrderSheet({ router }) {
       items = await getCartDataUtil(themeCartData);
     }
     setProducts(items);
-    await runSync(items, '상품 가격이 변경되어 최신 금액으로 갱신했습니다.');
+    await runSync(items, translate("상품 가격이 변경되어 최신 금액으로 갱신했습니다."));
     onChangeAddressPage(addressSearchObj);
   };
 
@@ -308,11 +308,11 @@ export default function OrderSheet({ router }) {
     // 같은 장바구니로 결제대기 주문이 두 건 쌓이고, 가맹점은 어느 것이 진짜인지 알 수 없다.
     // (수단별 중복 방지는 있었지만 '교차 수단' 차단이 없었다)
     if (Object.keys(createdOrderRef.current).length > 0) {
-      toast.error('이미 접수된 주문이 있습니다. 주문내역에서 확인해 주세요.');
+      toast.error(translate("이미 접수된 주문이 있습니다. 주문내역에서 확인해 주세요."));
       return false;
     }
     if (!agreeAll) {
-      toast.error('주문 내용 및 약관에 동의해 주세요.');
+      toast.error(translate("주문 내용 및 약관에 동의해 주세요."));
       return false;
     }
     // 어느 상품이 문제인지 이름으로 알려준다.
@@ -323,56 +323,58 @@ export default function OrderSheet({ router }) {
       return false;
     }
     if (!payData.addr) {
-      toast.error('배송지를 선택하거나 입력해 주세요.');
+      toast.error(translate("배송지를 선택하거나 입력해 주세요."));
       return false;
     }
     if (!user && !payData.password) {
-      toast.error('비회원 주문 비밀번호를 입력해 주세요.');
+      toast.error(translate("비회원 주문 비밀번호를 입력해 주세요."));
       return false;
     }
     if (!user && (payData.password.length < GUEST_PW_MIN || payData.password.length > GUEST_PW_MAX)) {
-      toast.error(`비회원 주문 비밀번호는 ${GUEST_PW_MIN}~${GUEST_PW_MAX}자로 입력해 주세요.`);
+      // 자릿수를 문장 밖에서 이어붙이지 않고 i18next 보간에 맡긴다 —
+      // 언어마다 숫자가 들어가는 자리가 다르다.
+      toast.error(translate('비회원 주문 비밀번호는 {{min}}~{{max}}자로 입력해 주세요.', { min: GUEST_PW_MIN, max: GUEST_PW_MAX }));
       return false;
     }
     // 전화번호는 배송 연락·주문 확인의 유일한 수단이라 결제 전에 반드시 성립해야 한다.
     // 입력창에서 숫자·하이픈만 받도록 필터링하지만, 빈 값이나 자릿수 미달은 여기서 막는다.
     if (!isValidPhoneNumber(payData.buyer_phone)) {
-      toast.error('구매자 휴대폰번호를 정확히 입력해 주세요.');
+      toast.error(translate("구매자 휴대폰번호를 정확히 입력해 주세요."));
       return false;
     }
     // 해외 연락처는 국가번호(+81 …)가 붙어 국내 자릿수 규칙에 안 맞는다 — 국내일 때만 형식을 본다.
     if (isKR && payData.addr_phone && !isValidPhoneNumber(payData.addr_phone)) {
-      toast.error('받는 분 연락처를 정확히 입력해 주세요.');
+      toast.error(translate("받는 분 연락처를 정확히 입력해 주세요."));
       return false;
     }
     // 주문자 이름은 주문 확인·배송·CS 의 기준값이다. 비회원은 이 값이 유일한 식별 수단인데
     // 검증이 없어 빈 이름으로 결제까지 갔다(백엔드도 비회원 비밀번호 길이만 봤다).
     if (!user && !String(payData.buyer_name ?? '').trim()) {
-      toast.error('주문자 이름을 입력해 주세요.');
+      toast.error(translate("주문자 이름을 입력해 주세요."));
       return false;
     }
     // 주소록을 쓰지 않고 직접 입력하는 경우, 받는 분 성함이 비면 송장을 쓸 수 없다.
     if (directMode && !String(payData.receiver ?? '').trim()) {
-      toast.error('받는 분 성함을 입력해 주세요.');
+      toast.error(translate("받는 분 성함을 입력해 주세요."));
       return false;
     }
     // 주소 자체가 비어 있으면 배송이 불가능하다.
     // 국내는 우편번호 검색을 거쳐야 addr 이 채워지지만, 해외는 전부 직접 입력이라
     // 아무것도 안 쓰고도 결제까지 갈 수 있었다.
     if (directMode && !String(payData.addr ?? '').trim()) {
-      toast.error('배송지 주소를 입력해 주세요.');
+      toast.error(translate("배송지 주소를 입력해 주세요."));
       return false;
     }
     if (directMode && !isKR && !String(payData.country_name ?? '').trim()) {
-      toast.error('배송 국가를 입력해 주세요.');
+      toast.error(translate("배송 국가를 입력해 주세요."));
       return false;
     }
     if (parseFloat(max_use_point) < parseFloat(payData.use_point || 0)) {
-      toast.error('최대사용가능 포인트를 초과하였습니다.');
+      toast.error(translate("최대사용가능 포인트를 초과하였습니다."));
       return false;
     }
     if (parseFloat(user?.point ?? 0) < parseFloat(payData.use_point || 0)) {
-      toast.error('보유포인트가 부족합니다.');
+      toast.error(translate("보유포인트가 부족합니다."));
       return false;
     }
     return true;
@@ -398,7 +400,7 @@ export default function OrderSheet({ router }) {
     // 결제완료 화면 전달용 — 민감정보는 담지 않는다(수기결제 경로와 동일 규칙).
     const { card_num, card_pw, yymm, auth_num, pay_key, mid, tid, payment_modules, password, ...safe } = pay_data;
     try { sessionStorage.setItem('lastOrder', JSON.stringify(safe)); } catch (e) { /* noop */ }
-    toast.success('주문이 접수되었습니다. 입금 확인 후 처리됩니다.');
+    toast.success(translate("주문이 접수되었습니다. 입금 확인 후 처리됩니다."));
   };
 
   const selectPayType = async (item) => {
@@ -438,7 +440,7 @@ export default function OrderSheet({ router }) {
       //   고객은 어디로 입금해야 할지 모르는데 장바구니는 비워졌고, 결제대기 주문만 쌓였다.
       //   입금할 곳이 없으면 주문 자체를 만들지 않는다.
       if (!(module?.virtual_acct_bank && module?.virtual_acct_name && module?.virtual_acct_num)) {
-        toast.error('무통장입금 계좌 정보가 등록되어 있지 않습니다. 판매자에게 문의해 주세요.');
+        toast.error(translate("무통장입금 계좌 정보가 등록되어 있지 않습니다. 판매자에게 문의해 주세요."));
         setBuyType(undefined);
         return;
       }
@@ -460,7 +462,7 @@ export default function OrderSheet({ router }) {
         await finishPendingOrder(pay_data);
       } else {
         // 금액검증 불일치로 거절됐을 때만 낡은 장바구니 값을 실제로 갱신한다.
-        await resyncIfAmountMismatch(started_at, '가격이 변경되어 최신 금액으로 갱신했습니다. 금액을 확인하고 다시 시도해 주세요.');
+        await resyncIfAmountMismatch(started_at, translate("가격이 변경되어 최신 금액으로 갱신했습니다. 금액을 확인하고 다시 시도해 주세요."));
       }
       setPayData(pay_data);
     } else if (item?.type == 'gift_certificate') {
@@ -474,7 +476,7 @@ export default function OrderSheet({ router }) {
       //   주소가 없으면 결제창도 안 열리고 이 화면에 안내도 없어서, 토스트 하나만 뜨고
       //   화면은 그대로인데 장바구니만 비워졌다(주문은 결제대기로 남는다).
       if (!module?.gift_certificate_url) {
-        toast.error('상품권결제 정보가 등록되어 있지 않습니다. 판매자에게 문의해 주세요.');
+        toast.error(translate("상품권결제 정보가 등록되어 있지 않습니다. 판매자에게 문의해 주세요."));
         setBuyType(undefined);
         return;
       }
@@ -496,7 +498,7 @@ export default function OrderSheet({ router }) {
         await finishPendingOrder(pay_data);
       } else {
         // 금액검증 불일치로 거절됐을 때만 낡은 장바구니 값을 실제로 갱신한다.
-        await resyncIfAmountMismatch(started_at, '가격이 변경되어 최신 금액으로 갱신했습니다. 금액을 확인하고 다시 시도해 주세요.');
+        await resyncIfAmountMismatch(started_at, translate("가격이 변경되어 최신 금액으로 갱신했습니다. 금액을 확인하고 다시 시도해 주세요."));
       }
       setPayData(pay_data);
     } else if (item?.type == 'certification_weroute') {
@@ -541,7 +543,7 @@ export default function OrderSheet({ router }) {
       // 성공하면 결제창으로 이동한다. 실패 사유가 '금액이 바뀌었다'일 때만
       // 안내에 그치지 말고 실제로 최신 정보를 다시 받아 곧바로 재시도할 수 있게 한다.
       // (네트워크 오류·데모 미리보기 차단 등은 재동기화로 해결되지 않는다 — 사유 안내만 남긴다)
-      if (!result) await resyncIfAmountMismatch(started_at, '가격이 변경되어 최신 금액으로 갱신했습니다. 금액을 확인하고 다시 결제해 주세요.');
+      if (!result) await resyncIfAmountMismatch(started_at, translate("가격이 변경되어 최신 금액으로 갱신했습니다. 금액을 확인하고 다시 결제해 주세요."));
     } finally {
       setPayLoading(false);
     }
@@ -552,7 +554,7 @@ export default function OrderSheet({ router }) {
     if (buyType != 'card') return;
     if (!guardBeforePay()) return;
     if (!payData.card_num || !payData.yymm || String(payData.yymm).length < 5 || !payData.card_pw) {
-      toast.error('카드 정보를 정확히 입력해 주세요.');
+      toast.error(translate("카드 정보를 정확히 입력해 주세요."));
       return;
     }
     setPayLoading(true);
@@ -570,12 +572,12 @@ export default function OrderSheet({ router }) {
       // 결제완료 화면 전달용 — 카드번호/카드비번/만료일/주민번호/PG키 등 민감정보는 저장하지 않는다.
       const { card_num, card_pw, yymm, auth_num, pay_key, mid, tid, payment_modules, ...safe } = result;
       try { sessionStorage.setItem('lastOrder', JSON.stringify(safe)); } catch (e) { /* noop */ }
-      toast.success('주문이 완료되었습니다.');
+      toast.success(translate("주문이 완료되었습니다."));
       router.push('/shop/auth/order-complete');
     } else {
       // 서버 금액검증 불일치일 때만 낡은 장바구니 값을 실제로 갱신해 준다.
       // 카드 승인 거절·네트워크 오류는 재동기화 대상이 아니다(사유는 이미 안내됐다).
-      await resyncIfAmountMismatch(started_at, '가격이 변경되어 최신 금액으로 갱신했습니다. 금액을 확인하고 다시 결제해 주세요.');
+      await resyncIfAmountMismatch(started_at, translate("가격이 변경되어 최신 금액으로 갱신했습니다. 금액을 확인하고 다시 결제해 주세요."));
     }
   };
 
@@ -612,7 +614,7 @@ export default function OrderSheet({ router }) {
         <Title style={{ marginBottom: '1.5rem' }}>{translate('주문 / 결제')}</Title>
         {products.length == 0 ? (
           <Card sx={{ p: 2 }}>
-            <EmptyContent title={translate('주문할 상품이 없습니다.')} description="장바구니에 상품을 담아 주세요."
+            <EmptyContent title={translate('주문할 상품이 없습니다.')} description={translate("장바구니에 상품을 담아 주세요.")}
               img="/assets/illustrations/illustration_empty_cart.svg" />
           </Card>
         ) : (
@@ -641,7 +643,7 @@ export default function OrderSheet({ router }) {
 
               {/* 주문자 정보 */}
               <Card sx={{ mb: 3 }}>
-                <CardHeader title={translate('주문자 정보')} subheader={isMember ? '계정 정보가 자동 표시됩니다.' : '비회원 주문 정보를 입력해 주세요.'} />
+                <CardHeader title={translate('주문자 정보')} subheader={isMember ? translate("계정 정보가 자동 표시됩니다.") : translate("비회원 주문 정보를 입력해 주세요.")} />
                 <CardContent>
                   {isMember ? (
                     <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2}>
@@ -654,7 +656,7 @@ export default function OrderSheet({ router }) {
                       ) : (
                         <TextField fullWidth size="small" label={translate('휴대폰')} value={payData.buyer_phone}
                           inputMode="tel" placeholder="010-1234-5678"
-                          helperText="계정에 등록된 번호가 없어 직접 입력이 필요합니다."
+                          helperText={translate("계정에 등록된 번호가 없어 직접 입력이 필요합니다.")}
                           onChange={(e) => setPayData({ ...payData, buyer_phone: sanitizePhoneInput(e.target.value) })} />
                       )}
                     </Stack>
@@ -674,7 +676,7 @@ export default function OrderSheet({ router }) {
                         label={translate('비회원 주문 비밀번호 (주문조회 시 사용)')}
                         value={payData.password} inputProps={{ maxLength: GUEST_PW_MAX }}
                         error={!!payData.password && payData.password.length < GUEST_PW_MIN}
-                        helperText={`${GUEST_PW_MIN}~${GUEST_PW_MAX}자로 입력해 주세요. 주문조회 시 필요하니 꼭 기억해 두세요.`}
+                        helperText={translate('{{min}}~{{max}}자로 입력해 주세요. 주문조회 시 필요하니 꼭 기억해 두세요.', { min: GUEST_PW_MIN, max: GUEST_PW_MAX })}
                         onChange={(e) => setPayData({ ...payData, password: e.target.value })} />
                     </Stack>
                   )}
@@ -688,7 +690,7 @@ export default function OrderSheet({ router }) {
                     <Button size="small" variant="soft"
                       startIcon={<Iconify icon={directMode ? 'eva:list-fill' : 'eva:edit-2-fill'} />}
                       onClick={() => setDirectMode(!directMode)}>
-                      {directMode ? '주소록에서 선택' : '직접 입력'}
+                      {directMode ? translate("주소록에서 선택") : translate("직접 입력")}
                     </Button>
                   ) : null} />
                 <CardContent>
@@ -831,7 +833,7 @@ export default function OrderSheet({ router }) {
                           label={<Typography variant="body2">{translate('이용약관 동의')}<Box component="span" sx={{ color: 'error.main' }}>{translate('(필수)')}</Box></Typography>}
                         />
                         <Button size="small" variant="text" onClick={() => setOpenPolicy(openPolicy === 1 ? 0 : 1)}>
-                          {openPolicy === 1 ? '접기' : '보기'}
+                          {openPolicy === 1 ? translate("접기") : translate("보기")}
                         </Button>
                       </Stack>
                       {openPolicy === 1 && (
@@ -845,7 +847,7 @@ export default function OrderSheet({ router }) {
                           label={<Typography variant="body2">{translate('개인정보 수집 및 이용 동의')}<Box component="span" sx={{ color: 'error.main' }}>{translate('(필수)')}</Box></Typography>}
                         />
                         <Button size="small" variant="text" onClick={() => setOpenPolicy(openPolicy === 2 ? 0 : 2)}>
-                          {openPolicy === 2 ? '접기' : '보기'}
+                          {openPolicy === 2 ? translate("접기") : translate("보기")}
                         </Button>
                       </Stack>
                       {openPolicy === 2 && (
@@ -916,12 +918,12 @@ export default function OrderSheet({ router }) {
                         const m = _.find(themeDnsData?.payment_modules, { type: 'virtual_account' });
                         return (m?.virtual_acct_bank && m?.virtual_acct_name && m?.virtual_acct_num) ? (
                           <Stack spacing={1}>
-                            <Typography variant="body2">은행 : {m.virtual_acct_bank}</Typography>
-                            <Typography variant="body2">예금주 : {m.virtual_acct_name}</Typography>
-                            <Typography variant="body2">계좌번호 : {m.virtual_acct_num}</Typography>
+                            <Typography variant="body2">{translate('은행')} : {m.virtual_acct_bank}</Typography>
+                            <Typography variant="body2">{translate('예금주')} : {m.virtual_acct_name}</Typography>
+                            <Typography variant="body2">{translate('계좌번호')} : {m.virtual_acct_num}</Typography>
                             {/* 주문번호를 보여준다. 예전엔 알려주지 않아 비회원은 주문조회조차 못 했다. */}
                             {payData?.ord_num && (
-                              <Typography variant="body2" sx={{ fontWeight: 700 }}>주문번호 : {payData.ord_num}</Typography>
+                              <Typography variant="body2" sx={{ fontWeight: 700 }}>{translate('주문번호')} : {payData.ord_num}</Typography>
                             )}
                             <Typography variant="body2" sx={{ color: 'text.secondary' }}>{translate('입금 후 1일 안에 구매처리됩니다.')}</Typography>
                           </Stack>
@@ -940,7 +942,7 @@ export default function OrderSheet({ router }) {
                       <Stack spacing={1}>
                         <Typography variant="body2">{translate('상품권결제 창에서 결제를 완료해 주세요.')}</Typography>
                         {payData?.ord_num && (
-                          <Typography variant="body2" sx={{ fontWeight: 700 }}>주문번호 : {payData.ord_num}</Typography>
+                          <Typography variant="body2" sx={{ fontWeight: 700 }}>{translate('주문번호')} : {payData.ord_num}</Typography>
                         )}
                         {(() => {
                           const m = _.find(themeDnsData?.payment_modules, { type: 'gift_certificate' });

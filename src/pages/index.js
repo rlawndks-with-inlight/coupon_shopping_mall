@@ -365,6 +365,13 @@ const ShopGoLanding = () => {
             <Typography sx={{ fontSize: { xs: 22, md: 30 }, fontWeight: 900, letterSpacing: '-0.8px', color: '#1a1a1f' }}>
               {t.trustHeading}
             </Typography>
+            {/* 없어진 /security 페이지의 도입문을 대신하는 한 줄 */}
+            <Typography
+              // textWrap: balance — 안 주면 '제공합니다.' 두 글자만 다음 줄로 떨어진다
+              sx={{ fontSize: 14, color: '#666', lineHeight: 1.75, maxWidth: 660, alignSelf: 'center', wordBreak: 'keep-all', textWrap: 'balance', pt: 0.5 }}
+            >
+              {t.trustSub}
+            </Typography>
           </Stack>
           <Grid container spacing={2}>
             {TRUST.map((b) => (

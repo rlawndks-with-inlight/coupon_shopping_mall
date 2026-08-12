@@ -69,12 +69,19 @@ const TARGETS = [
   { icon: 'tabler:building-store', k: 't4' },
 ];
 
-// 메인 최하단 보안/신뢰 섹션 — 사실인 항목만. 전용 페이지(security.js)와 항목·순서 통일.
+// 메인 최하단 보안/신뢰 섹션 — 사실인 항목만.
+//
+// 문구는 사전(trust*)에서 가져온다. 예전엔 여기 한국어를 박아 두고 그대로 그려서
+// 영어·일본어 화면에서도 이 칸만 한국어로 남아 있었다.
+//
+// ⚠ 4번 항목 표현 주의: 결제 콜백이 주는 카드정보(masked)를 transactions.card_num 에
+//   저장한다. '결제정보를 저장하지 않는다'고 쓰면 사실과 어긋난다 —
+//   '전체 카드번호는 저장하지 않는다'가 맞는 표현이다.
 const TRUST = [
-  { icon: 'tabler:credit-card', title: '안전결제', desc: '검증된 PG·PSP를 통해\n안전하게 결제됩니다' },
-  { icon: 'tabler:cloud', title: 'AWS 클라우드 인프라', desc: '검증된 글로벌 클라우드에서\n안정적으로 운영됩니다', logo: '/assets/images/powered-by-aws.png', logoH: 36 },
-  { icon: 'tabler:lock', title: '개인정보 암호화 저장', desc: '이름·연락처·주소 등 개인정보를\n암호화하여 저장합니다' },
-  { icon: 'tabler:shield-lock', title: '결제정보 미보관', desc: '카드번호 등 결제정보는\n서버에 저장하지 않습니다' },
+  { icon: 'tabler:credit-card', k: 'trust1' },
+  { icon: 'tabler:cloud', k: 'trust2', logo: '/assets/images/powered-by-aws.png', logoH: 36 },
+  { icon: 'tabler:lock', k: 'trust3' },
+  { icon: 'tabler:shield-lock', k: 'trust4' },
 ];
 
 // '지금 바로 시작하기' — 제목·설명 + 라인 아이콘 병렬 표시(이런 분께 추천 영역과 동일 구성, 아이콘만 흰색).
@@ -354,12 +361,12 @@ const ShopGoLanding = () => {
               SECURITY &amp; TRUST
             </Typography>
             <Typography sx={{ fontSize: { xs: 22, md: 30 }, fontWeight: 900, letterSpacing: '-0.8px', color: '#1a1a1f' }}>
-              안전하게 운영되는 쇼핑몰
+              {t.trustHeading}
             </Typography>
           </Stack>
           <Grid container spacing={2}>
             {TRUST.map((b) => (
-              <Grid item xs={12} sm={6} md={3} key={b.title}>
+              <Grid item xs={12} sm={6} md={3} key={b.k}>
                 <Box
                   sx={{
                     p: 3,
@@ -387,18 +394,18 @@ const ShopGoLanding = () => {
                     <Icon icon={b.icon} width={22} height={22} />
                   </Box>
                   <Typography sx={{ fontSize: 15, fontWeight: 800, mb: 0.75, color: '#1a1a1f', wordBreak: 'keep-all' }}>
-                    {b.title}
+                    {t[`${b.k}Title`]}
                   </Typography>
                   <Typography
                     sx={{ fontSize: 13, color: '#666', lineHeight: 1.65, whiteSpace: 'pre-line', wordBreak: 'keep-all', flexGrow: 1 }}
                   >
-                    {b.desc}
+                    {t[`${b.k}Desc`]}
                   </Typography>
                   {b.logo && (
                     <Box
                       component="img"
                       src={b.logo}
-                      alt={b.title}
+                      alt={t[`${b.k}Title`]}
                       sx={{ height: b.logoH || 20, width: 'auto', mt: 1.75, alignSelf: 'flex-start' }}
                     />
                   )}
@@ -406,21 +413,6 @@ const ShopGoLanding = () => {
               </Grid>
             ))}
           </Grid>
-          <Stack alignItems="center" sx={{ mt: 4 }}>
-            <Box
-              component="a"
-              href="/security"
-              sx={{
-                fontSize: 13,
-                color: '#888',
-                fontWeight: 700,
-                textDecoration: 'none',
-                '&:hover': { color: '#111', textDecoration: 'underline' },
-              }}
-            >
-              보안 안내 자세히 →
-            </Box>
-          </Stack>
         </Container>
       </Box>
     </>

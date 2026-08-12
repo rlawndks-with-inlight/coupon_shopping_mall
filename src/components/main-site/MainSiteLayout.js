@@ -193,18 +193,26 @@ export const MainSiteHeader = () => {
   );
 };
 
-export const MainSiteFooter = () => (
+// 약관 문서(policyContent)는 한국어 원문만 있지만, 링크 '표기'는 보고 있는 화면의 언어여야 한다.
+// slug → 사전 키. 사전에 없으면 한국어 원문 제목으로 폴백한다(링크가 비어 보이는 것보다 낫다).
+export const policyLabelKey = (slug) =>
+  'policy' + slug.split('-').map((w) => w.charAt(0).toUpperCase() + w.slice(1)).join('');
+
+export const MainSiteFooter = () => {
+  const t = useLandingT();
+  return (
   <Box
     component="footer"
     sx={{ py: 6, bgcolor: '#fafaf7', borderTop: `2px solid ${PRIMARY}` }}
   >
     <Container maxWidth="lg">
       <Stack spacing={2}>
+        {/* 법인명·주소는 법적 표기라 번역하지 않는다 */}
         <Typography sx={{ fontSize: 13, color: '#888', fontWeight: 700 }}>{COMPANY_NAME}</Typography>
         <Typography sx={{ fontSize: 12, color: '#999', lineHeight: 1.8 }}>{COMPANY_ADDRESS}</Typography>
         <Stack direction={{ xs: 'column', sm: 'row' }} spacing={{ xs: 0.5, sm: 3 }} sx={{ pt: 0.5 }}>
           <Typography sx={{ fontSize: 12, color: '#999' }}>
-            쇼핑몰 문의{' '}
+            {t.footerShopInquiry}{' '}
             <Box
               component="a"
               href={`mailto:${SHOP_INQUIRY_EMAIL}`}
@@ -214,7 +222,7 @@ export const MainSiteFooter = () => (
             </Box>
           </Typography>
           <Typography sx={{ fontSize: 12, color: '#999' }}>
-            가맹 및 결제 문의{' '}
+            {t.footerPayInquiry}{' '}
             <Box
               component="a"
               href={`mailto:${PAY_INQUIRY_EMAIL}`}
@@ -238,22 +246,20 @@ export const MainSiteFooter = () => (
                 '&:hover': { textDecoration: 'underline' },
               }}
             >
-              {d.title.replace('SHOPGO ', '')}
+              {t[policyLabelKey(d.slug)] || d.title.replace('SHOPGO ', '')}
             </Box>
           ))}
         </Stack>
         <Box sx={{ pt: 2, borderTop: '1px solid #eee' }}>
           <Typography sx={{ fontSize: 10, color: '#aaa', lineHeight: 1.7 }}>
-            무료 쇼핑몰은 ㈜우진플랫폼이 제공하며,
-            결제서비스는 ㈜포스페이의 결제 솔루션을 통해 제공됩니다.
-            상품의 판매, 계약, 배송, 환불, 고객응대 및 쇼핑몰 운영에 관한 모든 책임은 해당 판매자에게 있으며,
-            양사는 플랫폼 및 결제서비스 제공자로서 거래의 당사자가 아닙니다.
+            {t.footerDisclaimer}
           </Typography>
         </Box>
       </Stack>
     </Container>
   </Box>
-);
+  );
+};
 
 const MainSiteLayout = ({ children }) => (
   <Box sx={{ bgcolor: '#fff', color: '#111', minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>

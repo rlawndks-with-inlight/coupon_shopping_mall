@@ -14,7 +14,7 @@ const FramesPage = () => {
   //  안 잡히는 조립형 URL 이라 /shop 통일 때 누락됐던 자리)
   const buildPreviewUrl = (f) => `https://demo-${f.no}.${MAIN_DOMAIN}/shop`;
 
-  // 계열 순서(쇼핑몰형 → 한 컬럼형 → 단일·소수 상품형)로만 줄을 세우고 줄바꿈은 하지 않는다.
+  // 계열 순서(쇼핑몰형 → 블로그형 → 단일·소수 상품형)로만 줄을 세우고 줄바꿈은 하지 않는다.
   // 계열마다 제목을 달아 2장씩 끊으면 '서로 다른 묶음 3개'로 읽혀 6장을 나란히 못 본다.
   const 프레임순서 = [...FRAMES].sort(
     (a, b) => FRAME_GROUP_ORDER.indexOf(a.group) - FRAME_GROUP_ORDER.indexOf(b.group) || a.no - b.no
@@ -52,7 +52,7 @@ const FramesPage = () => {
       </Box>
 
       {/* FRAME GRID — 3열 2행 한 판.
-          계열(쇼핑몰형·한 컬럼형·단일/소수 상품형)은 카드 우측 상단 배지로만 밝힌다.
+          계열(쇼핑몰형·블로그형·단일/소수 상품형)은 카드 우측 상단 배지로만 밝힌다.
           배지에 마우스를 올리면 그 계열이 무엇인지 설명이 뜬다 — 특히 프레임5·6은
           헤더·푸터·장바구니·주문·마이페이지가 같은 화면이고 홈과 상품상세만 다르다. */}
       <Container maxWidth="lg" sx={{ py: { xs: 6, md: 10 } }}>

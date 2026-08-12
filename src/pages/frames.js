@@ -100,7 +100,9 @@ const FramesPage = () => {
                   <Typography sx={{ fontSize: 11, color: '#888', fontWeight: 700, mb: 0.5 }}>
                     {st('frames.recommendLabel')}
                   </Typography>
-                  <Typography sx={{ fontSize: 12, color: '#444', lineHeight: 1.6 }}>{fi.recommend}</Typography>
+                  {/* 추천업종에 '※ …' 같은 단서 한 줄이 붙는 프레임이 있다(스크롤형).
+                      줄바꿈을 살리지 않으면 업종 뒤에 그대로 이어 붙어 한 문장처럼 읽힌다. */}
+                  <Typography sx={{ fontSize: 12, color: '#444', lineHeight: 1.6, whiteSpace: 'pre-line' }}>{fi.recommend}</Typography>
                 </Box>
                 <Stack direction="row" spacing={1} sx={{ pt: 1 }}>
                   <Button

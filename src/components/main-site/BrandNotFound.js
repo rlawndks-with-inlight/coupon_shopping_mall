@@ -1,5 +1,4 @@
 import styled from 'styled-components';
-import { useRouter } from 'next/router';
 import { useTranslation } from 'react-i18next';
 
 // 등록되지 않은 주소로 들어왔을 때 보여주는 안내.
@@ -87,7 +86,6 @@ const Button = styled.a`
 
 const BrandNotFound = ({ host = '' }) => {
   const { t: translate } = useTranslation();
-  const router = useRouter();
   const mainUrl = `https://${(process.env.NEXT_PUBLIC_MAIN_FRONT_URL || 'shopgo.co.kr').replace(/^https?:\/\//, '')}`;
 
   return (
@@ -96,9 +94,12 @@ const BrandNotFound = ({ host = '' }) => {
       <Title>{translate('이 주소의 쇼핑몰을 찾을 수 없습니다')}</Title>
       <Desc>{translate('주소가 바르게 입력되었는지 확인해 주세요. 문을 닫았거나 아직 개설되지 않은 쇼핑몰일 수 있습니다.')}</Desc>
       {host && <HostName>{host}</HostName>}
+      {/* 갈 곳은 ShopGo 홈 하나뿐이다.
+          예전엔 '무료 쇼핑몰 신청하기'도 뒀는데, router.push('/apply') 는 **지금 이
+          없는 주소 안에서** 이동한다 — mystroe.shopgo.co.kr/apply 로 가서 또 이 화면을
+          만난다. 신청은 ShopGo 홈에서 하면 되므로 버튼을 없앴다. */}
       <Buttons>
         <Button $primary href={mainUrl}>{translate('ShopGo 홈으로')}</Button>
-        <Button onClick={() => router.push('/apply')}>{translate('무료 쇼핑몰 신청하기')}</Button>
       </Buttons>
     </Wrap>
   );

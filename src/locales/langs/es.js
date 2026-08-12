@@ -761,6 +761,12 @@ const es = {
     "수정하실 내용을 입력 후 저장을 눌러주세요.": "Introduzca los cambios y pulse Guardar.",
     "쇼핑": "Compras",
     "비회원은 전화번호와 주문 비밀번호로 조회할 수 있습니다.": "Los invitados pueden consultar su pedido con el teléfono y la contraseña del pedido.",
+
+    // 등록되지 않은 주소 안내(404)
+    "이 주소의 쇼핑몰을 찾을 수 없습니다": "No encontramos ninguna tienda en esta dirección",
+    "주소가 바르게 입력되었는지 확인해 주세요. 문을 닫았거나 아직 개설되지 않은 쇼핑몰일 수 있습니다.": "Compruebe que la dirección sea correcta. Puede que la tienda haya cerrado o que aún no esté abierta.",
+    "ShopGo 홈으로": "Ir a ShopGo",
+    "무료 쇼핑몰 신청하기": "Crear una tienda gratis",
 };
 
 export default es;

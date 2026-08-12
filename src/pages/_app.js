@@ -39,6 +39,7 @@ import i18n from 'src/locales/i18n';
 import { allLangs } from 'src/locales'
 import { getDemoBrandDns, getDemoNum, maskDemoBrandData, isRetiredDemoHost } from 'src/components/main-site/frameList'
 import DemoNotice from 'src/components/main-site/DemoNotice'
+import BrandNotFound from 'src/components/main-site/BrandNotFound'
 
 const clientSideEmotionCache = createEmotionCache();
 
@@ -82,6 +83,27 @@ const App = props => {
       setHeadData(brand_data);
     }
   }, [router.asPath])
+
+  // 등록되지 않은 주소 — 안내만 그리고 끝낸다.
+  //
+  // ⚠ 아래 프로바이더 안쪽에 두면 안 된다. ThemeProvider(src/theme/index.js)는
+  //   `paletteObj?.is_dns_data` 가 참일 때만 children 을 그린다. 브랜드가 없으면
+  //   그 안의 무엇도 렌더되지 않는다 — **이게 없는 주소가 흰 화면이던 원인이다.**
+  //   그래서 안내 화면은 테마 바깥, 번역 프로바이더만 두르고 그린다.
+  if (head_data?.is_brand_not_found) {
+    return (
+      <CacheProvider value={emotionCache}>
+        <Head>
+          <title>ShopGo</title>
+          <meta name='robots' content='noindex' />
+        </Head>
+        <I18nextProvider i18n={i18n}>
+          <BrandNotFound host={head_data?.host} />
+        </I18nextProvider>
+      </CacheProvider>
+    );
+  }
+
   return (
     <>
       <CacheProvider value={emotionCache}>
@@ -191,6 +213,19 @@ App.getInitialProps = async context => {
       const res = await fetch(url)
       head_data = await res.json()
       let dns_data = head_data?.data
+
+      // 등록되지 않은 주소 — 안내 화면을 404 로 내보낸다.
+      //
+      // 와일드카드 DNS·SSL 이라 아무 서브도메인이나 연결은 된다. 예전엔 브랜드를 못 찾으면
+      // 아무것도 렌더하지 않아 **흰 화면에 HTTP 200** 이 나갔다(오타·폐업몰·크롤러가 전부 그랬다).
+      // 방문자는 영문을 모르고, 검색엔진은 죽은 주소를 살아 있는 페이지로 계속 색인했다.
+      //
+      // 메인 호스트(랜딩)는 제외한다 — 거기서 조회가 실패하면 그건 백엔드 장애지 '없는 주소'가
+      // 아니고, 랜딩까지 404 로 덮어버리면 더 나쁘다.
+      if (!dns_data && !isMainHost) {
+        if (ctx?.res) ctx.res.statusCode = 404;
+        return { head_data: { is_brand_not_found: true, host } };
+      }
       // [ShopGo] 마스터(is_main_dns=1)가 아닌 브랜드가 루트(/)로 들어오면 쇼핑몰 홈으로 이동.
       // 마스터 판별을 DB의 is_main_dns로 하므로 MAIN_FRONT_URL 설정과 무관하게 동작.
       // URL 을 /shop 으로 통일한 뒤로는 브랜드 유형과 무관하게 /shop/ 하나다.

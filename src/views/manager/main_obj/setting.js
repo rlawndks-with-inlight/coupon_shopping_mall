@@ -901,29 +901,49 @@ const MainObjSetting = props => {
                               <Typography sx={{ fontSize: 13, color: 'text.secondary', mb: 0.75 }}>
                                 기본 배너 — 클릭하면 위 슬라이드에 추가됩니다. (추가 후 원하는 이미지로 교체하거나 제목·링크를 넣을 수 있어요)
                               </Typography>
-                              <Row style={{ gap: '0.5rem', overflowX: 'auto', paddingBottom: '0.25rem' }}>
+                              {/* 사진이 6장일 땐 가로 스크롤로 충분했는데 업종별 사진이 늘어 20장이 넘는다.
+                                  한 줄로 두면 3천 픽셀을 옆으로 밀어야 해서, 줄바꿈 + 세로 스크롤로 바꾼다.
+                                  썸네일만으로는 '잡화/의류잡화/건어물'을 구분하기 어려워 이름도 함께 보여준다. */}
+                              <Box
+                                sx={{
+                                  display: 'flex', flexWrap: 'wrap', gap: '0.5rem',
+                                  maxHeight: 340, overflowY: 'auto',
+                                  p: 0.5, border: '1px solid #eee', borderRadius: 1,
+                                }}
+                              >
                                 {defaultBanners.map(b => (
                                   <Tooltip title={`'${b.label}' 배너 추가`} key={b.id}>
                                     <Box
-                                      component='img'
-                                      src={b.src}
-                                      alt={b.label}
                                       onClick={() => addDefaultBanner(b, idx)}
                                       sx={{
-                                        width: 160,
-                                        height: Math.round(160 / bannerRatio.aspect),
-                                        objectFit: 'cover',
-                                        borderRadius: 1,
-                                        border: '1px solid #e0e0e0',
-                                        cursor: 'pointer',
-                                        flexShrink: 0,
-                                        transition: 'border-color .15s',
-                                        '&:hover': { borderColor: 'primary.main' }
+                                        width: 160, flexShrink: 0, cursor: 'pointer',
+                                        '&:hover img': { borderColor: 'primary.main' },
                                       }}
-                                    />
+                                    >
+                                      <Box
+                                        component='img'
+                                        src={b.src}
+                                        alt={b.label}
+                                        loading='lazy'
+                                        sx={{
+                                          width: 160,
+                                          height: Math.round(160 / bannerRatio.aspect),
+                                          objectFit: 'cover',
+                                          borderRadius: 1,
+                                          border: '1px solid #e0e0e0',
+                                          display: 'block',
+                                          transition: 'border-color .15s',
+                                        }}
+                                      />
+                                      <Typography
+                                        sx={{ fontSize: 11, color: 'text.secondary', textAlign: 'center', mt: 0.25 }}
+                                      >
+                                        {b.label}
+                                      </Typography>
+                                    </Box>
                                   </Tooltip>
                                 ))}
-                              </Row>
+                              </Box>
                             </Box>
 
                             {/* 배너 슬라이드별 부가 입력(제목·부제목·색상·글자배치·링크).

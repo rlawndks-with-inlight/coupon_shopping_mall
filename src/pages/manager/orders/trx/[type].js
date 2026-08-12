@@ -252,6 +252,28 @@ const TrxList = () => {
         }
       },
     },
+    // 주문서 추가 입력항목(행사일·행사장소 등).
+    //
+    // 이 몰에 서식이 걸려 있을 때만 열을 만든다 — 대부분의 몰은 쓰지 않는 기능이라
+    // 빈 열을 30개 몰에 늘리지 않는다.
+    // ⚠ 본사가 서식을 내리면 이 열도 사라진다. 이미 접수된 주문의 값은 DB 에 남아 있고
+    //   엑셀에는 계속 나오지만, 목록 화면에서는 안 보이게 된다.
+    //   (행마다 판단할 수 없다 — 이 컬럼 정의는 주문 데이터를 불러오기 전에 만들어진다)
+    ...((themeDnsData?.order_form?.fields?.length > 0) ? [{
+      id: 'order_forms',
+      label: '추가 입력정보',
+      action: (row) => (
+        !(row?.order_forms?.length > 0) ? <div style={{ color: '#bbb' }}>---</div> :
+          <Col style={{ gap: '2px', minWidth: '220px' }}>
+            {row.order_forms.map((f) => (
+              <Row key={f.id} style={{ alignItems: 'flex-start', gap: '6px' }}>
+                <div style={{ minWidth: '84px', color: '#888', whiteSpace: 'nowrap' }}>{f.label}</div>
+                <div style={{ whiteSpace: 'pre-wrap', wordBreak: 'break-all' }}>{f.value}</div>
+              </Row>
+            ))}
+          </Col>
+      ),
+    }] : []),
     ...(themeDnsData?.id == 74 ? [
       {
         id: 'invoice_num',

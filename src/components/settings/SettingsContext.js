@@ -176,6 +176,8 @@ export function SettingsProvider({ children }) {
       dns_data['payment_modules'] = data?.payment_modules ?? [];
       dns_data['products'] = data?.products ?? [];
       dns_data['basic_info'] = data?.basic_info ?? "";
+      // 주문서 추가 입력항목(본사가 이 가맹점에 걸어둔 서식). 없으면 null.
+      dns_data['order_form'] = data?.order_form ?? null;
 
 
       onChangeWishData(data?.user_wishs ?? []);

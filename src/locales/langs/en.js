@@ -536,6 +536,7 @@ const en = {
     "배송지를 선택하거나 입력해 주세요.": "Please choose or enter a delivery address.",
     "비회원 주문 비밀번호를 입력해 주세요.": "Please enter a guest order password.",
     "비회원 주문 비밀번호는 {{min}}~{{max}}자로 입력해 주세요.": "The guest order password must be {{min}}–{{max}} characters.",
+    "{{name}}을(를) 입력해 주세요.": "Please enter {{name}}.",
     "{{min}}~{{max}}자로 입력해 주세요. 주문조회 시 필요하니 꼭 기억해 두세요.": "Use {{min}}–{{max}} characters. You will need it to look up your order, so please remember it.",
     "구매자 휴대폰번호를 정확히 입력해 주세요.": "Please enter a valid mobile number for the buyer.",
     "받는 분 연락처를 정확히 입력해 주세요.": "Please enter a valid contact number for the recipient.",

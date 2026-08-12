@@ -531,6 +531,7 @@ const es = {
     "배송지를 선택하거나 입력해 주세요.": "Elige o introduce una dirección de entrega.",
     "비회원 주문 비밀번호를 입력해 주세요.": "Introduce la contraseña de pedido de invitado.",
     "비회원 주문 비밀번호는 {{min}}~{{max}}자로 입력해 주세요.": "La contraseña de invitado debe tener entre {{min}} y {{max}} caracteres.",
+    "{{name}}을(를) 입력해 주세요.": "Introduzca {{name}}.",
     "{{min}}~{{max}}자로 입력해 주세요. 주문조회 시 필요하니 꼭 기억해 두세요.": "Usa entre {{min}} y {{max}} caracteres. La necesitarás para consultar tu pedido.",
     "구매자 휴대폰번호를 정확히 입력해 주세요.": "Introduce un móvil válido del comprador.",
     "받는 분 연락처를 정확히 입력해 주세요.": "Introduce un teléfono válido del destinatario.",

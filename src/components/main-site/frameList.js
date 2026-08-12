@@ -81,7 +81,9 @@ export const FRAMES = [
     no: 6,
     group: 'landing',
     key: 'blog:9',
-    title: "매거진형",
+    // PPT 원문은 '매거진형'이었지만 03(blog:1)과 이름이 겹쳤다.
+    // 06의 실제 특징은 매거진 구성이 아니라 핑크·파스텔 톤과 폴라로이드 감성이다.
+    title: "파스텔 감성형",
     category: 'blog',
     demo: 9,
     keyword: "단일·소수 카테고리",

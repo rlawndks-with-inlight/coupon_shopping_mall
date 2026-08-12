@@ -174,6 +174,19 @@ export const navConfig = () => {
           },
         ],
       },
+      // 전 가맹점 공통 고지: 상품상세 '혜택 안내'.
+      //
+      // ⚠ 이 메뉴는 반드시 이 블록(마스터 전용 목록) 안에 있어야 한다.
+      //   마스터는 여기서 return 으로 빠져나가므로, 아래쪽 '디자인관리' 하위에 넣으면
+      //   조건이 아무리 맞아도 본사 화면에는 영영 안 뜬다(실제로 그렇게 넣었다가 못 찾았다).
+      //   쓰기 권한도 백엔드와 같은 레벨50 기준으로 맞춘다.
+      ...(isDeveloper() ? [
+        {
+          items: [
+            { title: '혜택 안내(전 가맹점)', path: PATH_MANAGER.designs.benefitNotice, icon: ICONS.label },
+          ],
+        },
+      ] : []),
       // 유저관리: 최상위(개발사, 레벨50)만 노출 — shopgo 운영자 계정 추가/관리용
       ...(isDeveloper() ? [
         {
@@ -345,10 +358,8 @@ export const navConfig = () => {
               ...([4, 5, 6, 7, 8, 9].includes(Number(themeDnsData?.blog_demo_num)) ? [{ title: '대표 상품', path: '/manager/designs/featured' }] : []),
               ...(Object.keys(HOME_TEXT_SCHEMA).map(Number).includes(Number(themeDnsData?.blog_demo_num)) ? [{ title: '홈 문구', path: '/manager/designs/home-texts' }] : []),
               { title: '팝업관리', path: PATH_MANAGER.designs.popup },
-              // 혜택 안내는 본사(is_main_dns=1)에서만 보인다 — 여기서 저장하면
-              // 전 가맹점 상품상세에 동시에 반영되므로 가맹점 관리자에게는 노출하지 않는다.
-              ...(themeDnsData?.is_main_dns == 1 && user?.level >= 50
-                ? [{ title: '혜택 안내(전 가맹점)', path: PATH_MANAGER.designs.benefitNotice }] : []),
+              // ※ '혜택 안내(전 가맹점)'는 여기가 아니라 위쪽 마스터 전용 목록에 있다.
+              //   마스터는 이 아래로 내려오지 않고, 가맹점에는 보이면 안 되는 메뉴다.
             ],
           },
         ],

@@ -146,7 +146,7 @@ const Demo3 = (props) => {
                 <Divider sx={{ margin: '5% 0', borderBottomWidth: '10px' }} />
                 <MenuContainer style={{ color: `${themeDnsData?.theme_css?.main_color}`, fontWeight: 'bold' }}>
                     <MenuBox>
-                        쇼핑
+                        {translate('쇼핑')}
                         {(user && (themeDnsData?.seller_point > 0 || themeDnsData?.point_rate > 0)) ?
                             <>
                                 <MenuButton themeMode={themeMode} style={{ marginBottom: '0' }} onClick={() => { router.push('/shop/auth/point') }}>
@@ -187,7 +187,7 @@ const Demo3 = (props) => {
                         비었으면 빈 껍데기가 보이지 않도록 그룹 자체를 렌더하지 않는다. */}
                     {themePostCategoryList?.length > 0 &&
                         <MenuBox>
-                            고객센터
+                            {translate('고객센터')}
                             {/* 읽기 전용 게시판(공지사항 등): 비회원 포함 누구나 */}
                             {themePostCategoryList
                                 .filter(item => item?.is_able_user_add != 1)

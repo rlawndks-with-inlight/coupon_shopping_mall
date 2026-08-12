@@ -300,6 +300,16 @@ const parseLangObj = (lang_obj) => {
     return null;
 }
 
+// 첫 글자만 대문자로. 단어마다 올리는 capitalize 를 쓰면 안 된다 —
+// 스페인어 'aviso de envío' 가 'Aviso De Envío' 가 되어 오히려 틀린 표기가 된다.
+// 한국어·중국어·일본어에는 대문자가 없어 toUpperCase 가 아무 일도 하지 않는다(무해).
+const upperFirst = (text) => {
+    const s = String(text ?? '');
+    const i = s.search(/\S/);          // 앞 공백은 건너뛴다
+    if (i < 0) return s;
+    return s.slice(0, i) + s.charAt(i).toUpperCase() + s.slice(i + 1);
+};
+
 export const formatLang = (obj = {}, column, lang) => {
     const lang_obj = parseLangObj(obj?.lang_obj);
     // lang 은 useLocales().currentLang 객체({value:'cn',...})로 들어오지만
@@ -319,5 +329,11 @@ export const formatLang = (obj = {}, column, lang) => {
     // 못 보고 다시 저장하게 만든다. 게시글·카테고리는 원래부터 대기열을 써서 같은 창이 있었다.
     // ko 슬롯은 정의상 원문 사본이므로 컬럼을 우선해도 표시가 달라지는 경우는 이 '뒤처짐'뿐이다.
     if (code === SOURCE_LANG) return obj?.[column];
-    return (lang_obj?.[column]?.[code]) || obj?.[column];
+    const 번역본 = lang_obj?.[column]?.[code];
+    // 기계번역 결과는 첫 글자가 소문자로 나온다('공지사항' → 'announcement').
+    // 사전에서 온 이웃 문구는 'Orders & Delivery' 처럼 대문자로 시작하니 한 줄 걸러
+    // 어색하다. 번역본을 쓸 때만 첫 글자를 올린다 — 원문(가맹점이 직접 쓴 이름)은
+    // 'adidas' 처럼 일부러 소문자인 경우가 있으므로 건드리지 않는다.
+    if (번역본) return upperFirst(번역본);
+    return obj?.[column];
 }

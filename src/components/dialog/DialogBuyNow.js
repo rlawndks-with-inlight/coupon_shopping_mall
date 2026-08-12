@@ -788,7 +788,7 @@ const DialogBuyNow = (props) => {
             </>}
           {(buyStep == 2 && buyType == 'gift_certificate') &&
             <>
-              상품권결제 준비중입니다...
+              {translate('상품권결제 준비중입니다...')}
               {/* <Iframe src={_.find(themeDnsData?.payment_modules, { type: buyType })?.virtual_acct_url + `?amount=${payData?.amount}`} /> */}
             </>}
         </DialogContent>

@@ -18,6 +18,7 @@ import { useLocales } from 'src/locales';
 import { formatLang } from 'src/utils/format';
 import DialogBuyNow from 'src/components/dialog/DialogBuyNow';
 import QuantityStepper from 'src/components/elements/shop/QuantityStepper';
+import BenefitNotice from 'src/components/elements/shop/BenefitNotice';
 
 
 const ReactQuill = dynamic(() => import('react-quill'), {
@@ -222,6 +223,9 @@ const Demo1 = (props) => {
               <div style={{ fontSize: themeObj.font_size.size8, marginLeft: '0.25rem' }}>{getPriceUnitByLang()}</div>
             </Row>
           </PriceContainer>
+          {/* 혜택 안내(본사 공통). 구매 서랍이 아니라 본문 가격 아래에 둔다 —
+              서랍은 '구매하기'를 눌러야 열려서, 살지 말지 고르는 단계에서는 안 보인다. */}
+          <BenefitNotice sx={{ mb: '0.75rem' }} tone={{ fontSize: 13 }} />
           {/* 품절·중단됨을 상세에서 바로 알린다 — 예전엔 표시도 없고 버튼도 살아 있어
               옵션 창까지 열고 나서야 살 수 없다는 걸 알았다. */}
           {!purchasable && productStatusText &&

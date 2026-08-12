@@ -54,6 +54,7 @@ const initialState = {
   onChangeSellerList: () => { },
   onChangePopupList: () => { },
   onChangeNoneTodayPopupList: () => { },
+  onChangeBenefitNotices: () => { },
 };
 
 // ----------------------------------------------------------------------
@@ -92,6 +93,8 @@ export function SettingsProvider({ children }) {
   const [themeCategoryList, setThemeCategoryList] = useState(defaultSettings.themeCategoryList);
   const [themePropertyList, setThemePropertyList] = useState(defaultSettings.themePropertyList);
   const [themePopupList, setThemePopupList] = useState(defaultSettings.themePopupList);
+  const [themeBenefitNotices, setThemeBenefitNotices] = useState(defaultSettings.themeBenefitNotices);
+  const [themeBenefitNoticeTabs, setThemeBenefitNoticeTabs] = useState(defaultSettings.themeBenefitNoticeTabs);
   const [themeNoneTodayPopupList, setThemeNoneTodayPopupList] = useState(defaultSettings.themeNoneTodayPopupList);
   const [themePostCategoryList, setThemePostCategoryList] = useState(defaultSettings.themePostCategoryList);
   const [themeSellerList, setThemeSellerList] = useState(defaultSettings.themeSellerList);
@@ -179,6 +182,7 @@ export function SettingsProvider({ children }) {
       onChangeCategoryList(data?.product_category_groups ?? []);
       onChangePropertyList(data?.product_property_groups ?? []);
       onChangePopupList(data?.popups ?? []);
+      onChangeBenefitNotices(data?.benefit_notices ?? [], data?.benefit_notice_tabs ?? []);
       onChangePostCategoryList(data?.post_categories ?? []);
       onChangeSellerList(data?.sellers ?? []);
       onChangeDnsData(dns_data);
@@ -299,6 +303,13 @@ export function SettingsProvider({ children }) {
     setThemePopupList(data);
     setLocalStorage('themePopupList', JSON.stringify(data));
   }, [])
+  // 혜택 안내(본사 공통). 줄과 탭이 따로 내려와 화면에서 notice_id 로 묶는다.
+  const onChangeBenefitNotices = useCallback((notices, tabs) => {
+    setThemeBenefitNotices(notices);
+    setThemeBenefitNoticeTabs(tabs);
+    setLocalStorage('themeBenefitNotices', JSON.stringify(notices));
+    setLocalStorage('themeBenefitNoticeTabs', JSON.stringify(tabs));
+  }, [])
   // themeNoneTodayPopupList
   const onChangeNoneTodayPopupList = useCallback((data) => {
     setThemeNoneTodayPopupList(data);
@@ -401,6 +412,9 @@ export function SettingsProvider({ children }) {
       themePropertyList,
       onChangePropertyList,
       themePopupList,
+      themeBenefitNotices,
+      themeBenefitNoticeTabs,
+      onChangeBenefitNotices,
       onChangePopupList,
       themeNoneTodayPopupList,
       onChangeNoneTodayPopupList,
@@ -455,6 +469,9 @@ export function SettingsProvider({ children }) {
       themePropertyList,
       onChangePropertyList,
       themePopupList,
+      themeBenefitNotices,
+      themeBenefitNoticeTabs,
+      onChangeBenefitNotices,
       onChangePopupList,
       themeNoneTodayPopupList,
       onChangeNoneTodayPopupList,

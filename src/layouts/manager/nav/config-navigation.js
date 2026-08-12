@@ -345,6 +345,10 @@ export const navConfig = () => {
               ...([4, 5, 6, 7, 8, 9].includes(Number(themeDnsData?.blog_demo_num)) ? [{ title: '대표 상품', path: '/manager/designs/featured' }] : []),
               ...(Object.keys(HOME_TEXT_SCHEMA).map(Number).includes(Number(themeDnsData?.blog_demo_num)) ? [{ title: '홈 문구', path: '/manager/designs/home-texts' }] : []),
               { title: '팝업관리', path: PATH_MANAGER.designs.popup },
+              // 혜택 안내는 본사(is_main_dns=1)에서만 보인다 — 여기서 저장하면
+              // 전 가맹점 상품상세에 동시에 반영되므로 가맹점 관리자에게는 노출하지 않는다.
+              ...(themeDnsData?.is_main_dns == 1 && user?.level >= 50
+                ? [{ title: '혜택 안내(전 가맹점)', path: PATH_MANAGER.designs.benefitNotice }] : []),
             ],
           },
         ],

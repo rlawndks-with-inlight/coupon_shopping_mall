@@ -12,6 +12,7 @@ import { insertCartDataUtil, startBuyNow, selectItemOptionUtil } from 'src/utils
 import QuantityStepper from 'src/components/elements/shop/QuantityStepper';
 import ProductThumbs, { buildProductImages } from 'src/components/elements/shop/ProductThumbs';
 import toast from 'react-hot-toast';
+import BenefitNotice from 'src/components/elements/shop/BenefitNotice';
 
 /* 상품 상세 - 데모 4: 미니멀 모노크롬 */
 
@@ -280,6 +281,8 @@ const Demo4 = () => {
               {item?.delivery_fee > 0
                   ? <div style={{ fontSize: '13px', color: '#888', marginTop: '6px' }}>{translate('배송비')} {commarNumberWithUnit(item?.delivery_fee)}</div>
                   : <div style={{ fontSize: '13px', color: '#888', marginTop: '6px' }}>{translate('무료배송')}</div>}
+              {/* 혜택 안내(본사 공통). 이 프레임은 흑백·절제된 톤이라 라벨을 더 흐리게 둔다. */}
+              <BenefitNotice sx={{ mt: '10px' }} tone={{ fontSize: 13, labelColor: '#999', textColor: '#333' }} />
             </PriceBlock>
           </div>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>

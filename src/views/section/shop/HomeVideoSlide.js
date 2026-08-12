@@ -3,6 +3,7 @@ import Slider from 'react-slick'
 import styled from 'styled-components'
 import { Row, themeObj } from 'src/components/elements/styled-components'
 import _ from 'lodash'
+import { youtubeEmbedId } from 'src/utils/function'
 
 const FullWrappers = styled.div`
   width:100%;
@@ -114,10 +115,11 @@ const HomeVideoSlide = (props) => {
                         </>}
                 </Row>
                 <Slider {...slide_setting}>
-                    {column?.list && column?.list.map((item, idx) => {
-                        let link = item?.link;
-                        link = link.split('?')[1];
-                        link = link.split('=')[1];
+                    {(column?.list ?? []).map((item, idx) => {
+                        // 못 알아보는 주소(빈 값·youtu.be 단축·오타)는 그 항목만 건너뛴다.
+                        // 예전엔 여기서 그대로 잘라 쓰다 터졌고, 섹션 하나가 터지면 홈 전체가 백지였다.
+                        const link = youtubeEmbedId(item?.link);
+                        if (!link) return null;
                         return <>
                             <Row style={{ flexDirection: 'column', }}>
                                 <Iframe src={`https://www.youtube.com/embed/${link}`} title="YouTube video player" frameBorder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowFullScreen>

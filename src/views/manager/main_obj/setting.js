@@ -1219,12 +1219,19 @@ const MainObjSetting = props => {
                               defaultValue={item.list}
                               value={item.list}
                               onChange={(e, value) => {
-                                handleChangeItemMultiSelect(value, idx)
+                                // 히어로는 상품 1개 전용이다.
+                                //
+                                // 위에서 고른 '디자인 타입'(1~8)은 **상품이 1개일 때만** 적용된다
+                                // (views/section/shop/HomeItemHero.js). 2개 이상이면 순위·폴라로이드 같은
+                                // 복수 디자인으로 조용히 넘어가서, 가맹점은 타입을 아무리 바꿔도
+                                // 화면이 안 변하는 것처럼 보였다. 마지막에 고른 하나만 남긴다.
+                                handleChangeItemMultiSelect(value.slice(-1), idx)
                               }}
                               renderInput={params => (
                                 <TextField
                                   {...params}
-                                  label='강조할 상품 선택 (1개 권장)'
+                                  label='강조할 상품 (1개)'
+                                  helperText='히어로는 상품 1개만 담을 수 있습니다. 새로 고르면 이전 상품이 바뀝니다.'
                                   placeholder='2글자 이상 입력해 주세요.'
                                   onChange={e => {
                                     onSearchProducts(e)

@@ -702,3 +702,21 @@ export const validateSignUpInput = (user = {}) => {
 // (지금은 ManagerLayout 이 대신 밀어주지만 그 레이아웃을 안 쓰는 화면이 생기면 무방비다)
 export const isManagerRouter = (router) =>
   String(router?.pathname ?? '').startsWith('/manager');
+
+// 유튜브 주소에서 영상 id 를 뽑는다.
+//
+// 예전엔 섹션에서 `link.split('?')[1].split('=')[1]` 로 잘랐다. 그래서
+//   · 링크를 비워 두면            → link 가 undefined → TypeError
+//   · https://youtu.be/ID (단축)  → '?' 가 없어 undefined → TypeError
+// 이 두 경우에 **홈 화면 전체가 백지**가 됐다(섹션 하나가 렌더 도중 터지면 그 위 트리가 같이 죽는다).
+// 못 알아보는 주소는 빈 문자열을 돌려주고, 부르는 쪽에서 그 항목만 건너뛴다.
+export const youtubeEmbedId = (url) => {
+    const text = String(url ?? '').trim();
+    if (!text) return '';
+    // 주소가 아니라 id 만 넣은 경우
+    if (/^[\w-]{11}$/.test(text)) return text;
+    const m = text.match(
+        /(?:youtube\.com\/(?:watch\?(?:.*&)?v=|embed\/|shorts\/|live\/)|youtu\.be\/)([\w-]{11})/
+    );
+    return m ? m[1] : '';
+};

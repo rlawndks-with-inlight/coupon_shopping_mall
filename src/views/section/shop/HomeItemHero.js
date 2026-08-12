@@ -14,6 +14,37 @@ const fixImgUrl = (url) => {
   return url;
 };
 
+// 히어로 타입2(전체폭) 는 좌·이미지·우 3열이다.
+//
+// ⚠ 이 3열을 화면 폭(useMediaQuery)으로만 접으면 안 된다. 프레임3·4 는 본문이
+//    840px·720px 짜리 좁은 한 컬럼인데, 브라우저 창은 넓어서 isMobile 이 거짓이다.
+//    그래서 3열이 그대로 유지된 채 눌려, 가격의 '원'과 'VIEW DETAIL' 이 줄바꿈으로
+//    터지고 상품명이 단어 중간에서 끊겼다(프레임4에서 확인).
+//    창 폭이 아니라 **이 섹션이 놓인 칸의 폭**을 기준으로 접어야 한다 → 컨테이너 쿼리.
+// ⚠ 컨테이너 쿼리(@container)를 쓰면 안 된다. 이 저장소의 styled-components 는 5.x 라
+//    내부 stylis 가 그 문법을 모르고 규칙을 통째로 버린다(실제로 CSS 에 한 줄도 안 나왔다).
+//    자리를 못 채우면 알아서 줄바꿈하는 flex-wrap 으로 같은 결과를 낸다 —
+//    이건 **부모 칸의 실제 폭**을 기준으로 접히므로 창 폭과 무관하다.
+const FullbleedBox = styled.div``;
+const FullbleedGrid = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  z-index: 1;
+
+  /* 좌·우 텍스트는 200px 은 있어야 가격의 '원'과 'VIEW DETAIL' 이 안 접힌다.
+     200 + 원 280 + 200 + 여백 64 = 744.
+       · 프레임3(840px, 안쪽 744px) → 딱 맞아 3열 유지
+       · 프레임4(720px, 안쪽 624px) → 모자라 세로로 쌓임
+     프레임5·6 같은 넓은 화면에서는 지금까지와 똑같이 3열이다. */
+  .hero-left, .hero-right { flex: 1 1 200px; min-width: 0; }
+  .hero-left { text-align: right; }
+  .hero-right { text-align: left; }
+  .hero-circle { flex: 0 0 auto; }
+`;
+
 const SectionTitle = styled.div`
   font-size: 22px;
   font-weight: bold;
@@ -114,7 +145,7 @@ const renderSingleBanner = (product, router, currentLang, mainColor, isMobile) =
 const renderSingleFullbleed = (product, router, currentLang, mainColor, isMobile) => {
   const { img, name, comment, sale, orig, hasSale, disc } = pHelper(product, currentLang);
   return (
-    <div style={{
+    <FullbleedBox style={{
       position: 'relative', padding: isMobile ? '2rem 1.25rem' : '3rem 2rem', cursor: 'pointer',
       background: '#1a1a1a', color: '#fff',
       borderRadius: '16px', overflow: 'hidden',
@@ -124,13 +155,8 @@ const renderSingleFullbleed = (product, router, currentLang, mainColor, isMobile
         fontSize: isMobile ? '60px' : '120px', fontWeight: '900', opacity: 0.06,
         lineHeight: 1, letterSpacing: '-8px', fontFamily: 'serif',
       }}>01</div>
-      <div style={{
-        display: 'grid',
-        gridTemplateColumns: isMobile ? '1fr' : '1fr auto 1fr',
-        gap: isMobile ? '1.25rem' : '2rem',
-        alignItems: 'center', position: 'relative', zIndex: 1,
-      }}>
-        <div style={{ textAlign: isMobile ? 'center' : 'right' }}>
+      <FullbleedGrid style={{ gap: isMobile ? '1.25rem' : '2rem' }}>
+        <div className="hero-left">
           <div style={{ fontSize: '11px', letterSpacing: '4px', color: mainColor, fontWeight: 'bold', marginBottom: '0.75rem' }}>EDITOR'S PICK</div>
           <div style={{
             fontSize: isMobile ? '22px' : '28px', fontWeight: '900', lineHeight: 1.2,
@@ -142,7 +168,7 @@ const renderSingleFullbleed = (product, router, currentLang, mainColor, isMobile
             </div>
           )}
         </div>
-        <div style={{
+        <div className="hero-circle" style={{
           display: 'flex', alignItems: 'center', justifyContent: 'center',
           padding: isMobile ? '1rem' : '1.5rem', background: '#fff', borderRadius: '50%',
           width: isMobile ? '180px' : '280px', height: isMobile ? '180px' : '280px',
@@ -150,7 +176,7 @@ const renderSingleFullbleed = (product, router, currentLang, mainColor, isMobile
         }}>
           <LazyLoadImage style={{ maxWidth: isMobile ? '140px' : '220px', maxHeight: isMobile ? '140px' : '220px', objectFit: 'contain' }} src={img} />
         </div>
-        <div style={{ textAlign: isMobile ? 'center' : 'left' }}>
+        <div className="hero-right">
           <div style={{ fontSize: '10px', letterSpacing: '4px', opacity: 0.5, marginBottom: '0.5rem' }}>PRICE</div>
           {hasSale && (
             <div style={{ fontSize: '14px', textDecoration: 'line-through', opacity: 0.4, marginBottom: '0.25rem' }}>
@@ -171,8 +197,8 @@ const renderSingleFullbleed = (product, router, currentLang, mainColor, isMobile
             fontSize: '11px', fontWeight: 'bold', letterSpacing: '3px',
           }}>VIEW DETAIL</div>
         </div>
-      </div>
-    </div>
+      </FullbleedGrid>
+    </FullbleedBox>
   );
 };
 

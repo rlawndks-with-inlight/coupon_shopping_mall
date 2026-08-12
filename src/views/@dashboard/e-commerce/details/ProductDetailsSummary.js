@@ -1,5 +1,6 @@
 import PropTypes from 'prop-types';
 import { useEffect, useState } from 'react';
+import BenefitNotice from 'src/components/elements/shop/BenefitNotice';
 // @mui
 import {
   Box,
@@ -197,6 +198,10 @@ export default function ProductDetailsSummary({ product, onAddCart, onGotoStep, 
                 </>
             }
           </Stack>
+          {/* 혜택 안내(본사 공통). 배송비 바로 아래, 구분선 위 — 가격 정보 묶음의 끝이다.
+              본사에 등록된 것이 없으면 아무것도 그리지 않으므로,
+              이 컴포넌트를 함께 쓰는 다른 클라이언트 몰에는 영향이 없다. */}
+          <BenefitNotice sx={{ mt: 1 }} tone={{ fontSize: 13, labelColor: themeObj.grey[500] }} />
           <Divider sx={{ borderStyle: 'dashed' }} />
           {
             themeDnsData?.id == 95 && product_sale_price > 99999 ?

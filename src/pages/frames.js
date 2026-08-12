@@ -14,6 +14,12 @@ const FramesPage = () => {
   //  안 잡히는 조립형 URL 이라 /shop 통일 때 누락됐던 자리)
   const buildPreviewUrl = (f) => `https://demo-${f.no}.${MAIN_DOMAIN}/shop`;
 
+  // 계열 순서(쇼핑몰형 → 블로그형 → 단일·소수 상품형)로만 줄을 세우고 줄바꿈은 하지 않는다.
+  // 계열마다 제목을 달아 2장씩 끊으면 '서로 다른 묶음 3개'로 읽혀 6장을 나란히 못 본다.
+  const 프레임순서 = [...FRAMES].sort(
+    (a, b) => FRAME_GROUP_ORDER.indexOf(a.group) - FRAME_GROUP_ORDER.indexOf(b.group) || a.no - b.no
+  );
+
   return (
     <Box>
       {/* HERO */}
@@ -33,38 +39,25 @@ const FramesPage = () => {
             </Typography>
             {/* 미리보기는 콘텐츠가 채워진 예시 화면이라 개설 직후 빈 몰과 격차가 크다.
                 "본 화면 그대로 개설된다"는 오해를 카탈로그 단계에서 먼저 막는다. */}
-            <Typography sx={{ fontSize: 13, color: '#8a8a90', maxWidth: 620, alignSelf: 'center', lineHeight: 1.7, textAlign: 'center', pt: 0.5 }}>
+            <Typography sx={{ fontSize: 13, color: '#a8a8b0', maxWidth: 620, alignSelf: 'center', lineHeight: 1.7, textAlign: 'center', pt: 0.5 }}>
               {st('frames.noticeContent')}
             </Typography>
             {/* 프레임을 고르는 것이 '몰 전체'를 고르는 것으로 읽히지 않게, 프레임이 정하는 범위를 먼저 밝힌다.
                 주문서·결제·주문내역 등은 어느 프레임을 골라도 같은 화면이다. */}
-            <Typography sx={{ fontSize: 13, color: '#8a8a90', maxWidth: 620, alignSelf: 'center', lineHeight: 1.7, textAlign: 'center' }}>
+            <Typography sx={{ fontSize: 13, color: '#a8a8b0', maxWidth: 620, alignSelf: 'center', lineHeight: 1.7, textAlign: 'center' }}>
               {st('frames.groupNote')}
             </Typography>
           </Stack>
         </Container>
       </Box>
 
-      {/* FRAME GRID — 계열별로 묶는다.
-          6장을 나란히 놓으면 "서로 다른 6개 몰"로 읽히는데, 실제로 갈리는 경계는 3개다.
-          특히 프레임5·6은 헤더·푸터·장바구니·주문·마이페이지가 같은 화면이고
-          홈과 상품상세 디자인만 다르다 — 그걸 모르고 고르면 기대와 어긋난다. */}
+      {/* FRAME GRID — 3열 2행 한 판.
+          계열(쇼핑몰형·블로그형·단일/소수 상품형)은 카드 우측 상단 배지로만 밝힌다.
+          배지에 마우스를 올리면 그 계열이 무엇인지 설명이 뜬다 — 특히 프레임5·6은
+          헤더·푸터·장바구니·주문·마이페이지가 같은 화면이고 홈과 상품상세만 다르다. */}
       <Container maxWidth="lg" sx={{ py: { xs: 6, md: 10 } }}>
-        {FRAME_GROUP_ORDER.map((group, gi) => {
-          const list = FRAMES.filter((f) => f.group === group);
-          if (!list.length) return null;
-          return (
-        <Box key={group} sx={{ mt: gi === 0 ? 0 : { xs: 6, md: 9 } }}>
-          <Stack spacing={0.75} sx={{ mb: 3, pb: 2, borderBottom: '1px solid #eee' }}>
-            <Typography sx={{ fontSize: { xs: 17, md: 20 }, fontWeight: 900, letterSpacing: '-0.4px' }}>
-              {st(`frames.group.${group}.title`)}
-            </Typography>
-            <Typography sx={{ fontSize: 13, color: '#666', lineHeight: 1.7, wordBreak: 'keep-all' }}>
-              {st(`frames.group.${group}.desc`)}
-            </Typography>
-          </Stack>
         <Grid container spacing={3}>
-          {list.map((f) => {
+          {프레임순서.map((f) => {
             const fi = ft(f.key);
             return (
             <Grid item xs={12} sm={6} md={4} key={f.key}>
@@ -80,19 +73,40 @@ const FramesPage = () => {
                   '&:hover': { borderColor: '#111', boxShadow: '0 6px 24px rgba(0,0,0,0.06)' },
                 }}
               >
-                <Stack direction="row" alignItems="center" justifyContent="space-between">
-                  <Box sx={{ fontSize: 11, letterSpacing: 3, color: '#888', fontWeight: 700 }}>
+                {/* 배지 글자 길이가 언어마다 다르다(en 'Few-product landing'). 자리가 모자라면
+                    말줄임표로 자르지 말고 아랫줄로 내린다 — ml:auto 라서 내려가도 오른쪽에 붙는다. */}
+                <Stack direction="row" alignItems="center" sx={{ flexWrap: 'wrap', rowGap: 0.5, columnGap: 1 }}>
+                  <Box sx={{ fontSize: 11, letterSpacing: 3, color: '#888', fontWeight: 700, whiteSpace: 'nowrap', flexShrink: 0 }}>
                     DEMO · {f.no.toString().padStart(2, '0')}
                   </Box>
+                  {/* 계열 배지. 줄을 나누는 대신 여기서 계열을 밝힌다.
+                      title 은 마우스오버 설명 — 계열 소개 문단이 사라진 자리를 대신한다. */}
+                  <Chip
+                    label={st(`frames.group.${f.group}.short`)}
+                    title={st(`frames.group.${f.group}.desc`)}
+                    size="small"
+                    sx={{
+                      ml: 'auto',
+                      maxWidth: '100%',
+                      fontSize: 11,
+                      height: 22,
+                      fontWeight: 700,
+                      color: '#111',
+                      bgcolor: 'transparent',
+                      border: '1px solid #d8d8d8',
+                    }}
+                  />
+                </Stack>
+                <Stack spacing={1} alignItems="flex-start">
+                  <Typography sx={{ fontSize: 20, fontWeight: 900, letterSpacing: '-0.5px', lineHeight: 1.2 }}>
+                    {fi.title}
+                  </Typography>
                   <Chip
                     label={fi.keyword}
                     size="small"
                     sx={{ fontSize: 11, height: 22, bgcolor: '#fafaf7', color: '#555' }}
                   />
                 </Stack>
-                <Typography sx={{ fontSize: 20, fontWeight: 900, letterSpacing: '-0.5px', lineHeight: 1.2 }}>
-                  {fi.title}
-                </Typography>
                 <Typography sx={{ fontSize: 13, color: '#666', lineHeight: 1.7, flexGrow: 1, whiteSpace: 'pre-line', wordBreak: 'keep-all' }}>
                   {fi.desc}
                 </Typography>
@@ -100,7 +114,9 @@ const FramesPage = () => {
                   <Typography sx={{ fontSize: 11, color: '#888', fontWeight: 700, mb: 0.5 }}>
                     {st('frames.recommendLabel')}
                   </Typography>
-                  <Typography sx={{ fontSize: 12, color: '#444', lineHeight: 1.6 }}>{fi.recommend}</Typography>
+                  {/* 추천업종에 '※ …' 같은 단서 한 줄이 붙는 프레임이 있다(스크롤형).
+                      줄바꿈을 살리지 않으면 업종 뒤에 그대로 이어 붙어 한 문장처럼 읽힌다. */}
+                  <Typography sx={{ fontSize: 12, color: '#444', lineHeight: 1.6, whiteSpace: 'pre-line' }}>{fi.recommend}</Typography>
                 </Box>
                 <Stack direction="row" spacing={1} sx={{ pt: 1 }}>
                   <Button
@@ -139,9 +155,6 @@ const FramesPage = () => {
             );
           })}
         </Grid>
-        </Box>
-          );
-        })}
       </Container>
 
       {/* CTA */}

@@ -17,6 +17,7 @@ import { isShopgoBrand } from 'src/utils/is-shopgo';
 import { formatLang, characterChoices } from 'src/utils/format';
 import QuantityStepper from 'src/components/elements/shop/QuantityStepper';
 import { useLocales } from 'src/locales';
+import BenefitNotice from 'src/components/elements/shop/BenefitNotice';
 
 const ReactQuill = dynamic(() => import('react-quill'), {
   ssr: false,
@@ -227,6 +228,8 @@ const ItemDemo = (props) => {
                       <Typography variant="body2" sx={{ color: 'text.secondary', my: 1 }}>
                         {product?.delivery_fee > 0 ? `${translate('배송비')} ${commarNumberWithUnit(product?.delivery_fee)}` : translate('무료배송')}
                       </Typography>
+                      {/* 혜택 안내(본사 공통) — 배송비 바로 아래 */}
+                      <BenefitNotice sx={{ mb: 1 }} tone={{ fontSize: 13 }} />
                       {/* 옵션그룹(product_option_groups) 선택.
                           이 화면은 특성(characters)만 그리고 옵션그룹은 아예 그리지 않았다.
                           그래서 관리자에서 '옵션'을 등록한 상품은 프레임2 상세에 선택 UI 가 없었고,

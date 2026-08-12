@@ -20,6 +20,7 @@ import DialogBuyNow from 'src/components/dialog/DialogBuyNow';
 import { ProductDetailsReview } from 'src/views/@dashboard/e-commerce/details';
 import { isShopgoBrand } from 'src/utils/is-shopgo';
 import QuantityStepper from 'src/components/elements/shop/QuantityStepper';
+import BenefitNotice from 'src/components/elements/shop/BenefitNotice';
 
 
 const ReactQuill = dynamic(() => import('react-quill'), {
@@ -250,6 +251,8 @@ const Demo2 = (props) => {
                         <Row style={{ alignItems: 'flex-end', marginBottom: '0.5rem' }}>
                             <div style={{ fontSize: themeObj.font_size.size8, color: '' }}>{translate('택배 배송')}</div>
                         </Row>
+                        {/* 혜택 안내(본사 공통). 이 프레임은 배송정보 묶음이 따로 있어 그 아래에 붙인다. */}
+                        <BenefitNotice sx={{ mb: '0.5rem' }} tone={{ fontSize: 13 }} />
                     </PriceContainer>
                     {/* 품절·중단됨을 상세에서 바로 알린다 — 예전엔 표시도 없고 버튼도 살아 있어
                         옵션 창까지 열고 나서야 살 수 없다는 걸 알았다. */}

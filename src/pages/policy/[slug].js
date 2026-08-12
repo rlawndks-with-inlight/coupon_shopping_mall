@@ -1,8 +1,9 @@
 import { useRouter } from 'next/router';
 import Head from 'next/head';
 import { Box, Container, Typography, Stack, Button } from '@mui/material';
-import MainSiteLayout from 'src/components/main-site/MainSiteLayout';
+import MainSiteLayout, { policyLabelKey } from 'src/components/main-site/MainSiteLayout';
 import { POLICY_DOCS, getPolicyDoc } from 'src/components/main-site/policyContent';
+import { useLandingT } from 'src/components/main-site/landingStrings';
 
 // 문단 유형 판별 → 장/조/부칙은 강조 표시
 const lineKind = (s) => {
@@ -16,6 +17,9 @@ const PolicyPage = () => {
   const router = useRouter();
   const slug = router.query?.slug;
   const doc = getPolicyDoc(slug);
+  const t = useLandingT();
+  // 제목·틀은 화면 언어로, 본문은 한국어 원문 그대로. 사전에 없으면 원문 제목으로 폴백한다.
+  const 제목 = (d) => t[policyLabelKey(d.slug)] || d.title.replace('SHOPGO ', '');
 
   return (
     <>
@@ -26,18 +30,22 @@ const PolicyPage = () => {
         <Container maxWidth="md">
           {!doc ? (
             <Stack spacing={2} alignItems="center" sx={{ py: 10 }}>
-              <Typography sx={{ fontSize: 20, fontWeight: 800 }}>문서를 찾을 수 없습니다</Typography>
+              <Typography sx={{ fontSize: 20, fontWeight: 800 }}>{t.policyNotFound}</Typography>
               <Button variant="outlined" onClick={() => router.push('/')} sx={{ borderRadius: 999 }}>
-                홈으로
+                {t.policyHome}
               </Button>
             </Stack>
           ) : (
             <>
               <Typography sx={{ fontSize: { xs: 24, md: 32 }, fontWeight: 900, letterSpacing: '-0.5px', mb: 1 }}>
-                {doc.title}
+                {제목(doc)}
               </Typography>
-              <Typography sx={{ fontSize: 13, color: '#999', mb: 4 }}>
-                시행일: {doc.effectiveDate}
+              <Typography sx={{ fontSize: 13, color: '#999', mb: 1 }}>
+                {t.policyEffective}: {doc.effectiveDate}
+              </Typography>
+              {/* 링크는 각 언어로 뜨는데 본문은 한국어다 — 눌러 들어온 사람이 당황하지 않게 먼저 밝힌다 */}
+              <Typography sx={{ fontSize: 12, color: '#aaa', mb: 4 }}>
+                {t.policyKoreanOnly}
               </Typography>
               <Box sx={{ borderTop: '2px solid #111', pt: 3 }}>
                 {doc.lines.map((line, i) => {
@@ -69,7 +77,7 @@ const PolicyPage = () => {
 
               {/* 다른 약관 바로가기 */}
               <Box sx={{ mt: 6, pt: 3, borderTop: '1px solid #eee' }}>
-                <Typography sx={{ fontSize: 12, color: '#999', mb: 1.5 }}>다른 약관·정책</Typography>
+                <Typography sx={{ fontSize: 12, color: '#999', mb: 1.5 }}>{t.policyOthers}</Typography>
                 <Stack direction="row" flexWrap="wrap" gap={1}>
                   {POLICY_DOCS.filter((d) => d.slug !== doc.slug).map((d) => (
                     <Button
@@ -79,7 +87,7 @@ const PolicyPage = () => {
                       onClick={() => router.push(`/policy/${d.slug}`)}
                       sx={{ color: '#666', fontSize: 12, textTransform: 'none', p: 0.5, minWidth: 0 }}
                     >
-                      {d.title}
+                      {제목(d)}
                     </Button>
                   ))}
                 </Stack>

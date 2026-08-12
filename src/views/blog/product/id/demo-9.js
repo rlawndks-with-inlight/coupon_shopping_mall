@@ -12,6 +12,7 @@ import { insertCartDataUtil, startBuyNow, selectItemOptionUtil } from 'src/utils
 import QuantityStepper from 'src/components/elements/shop/QuantityStepper';
 import ProductThumbs, { buildProductImages } from 'src/components/elements/shop/ProductThumbs';
 import toast from 'react-hot-toast';
+import BenefitNotice from 'src/components/elements/shop/BenefitNotice';
 
 /* 상품 상세 - 데모 9: 파스텔 드림 */
 
@@ -293,6 +294,8 @@ const Demo9 = () => {
             {item?.delivery_fee > 0
                 ? <div style={{ fontSize: '13px', color: '#888', marginTop: '6px' }}>{translate('배송비')} {commarNumberWithUnit(item?.delivery_fee)}</div>
                 : <div style={{ fontSize: '13px', color: '#888', marginTop: '6px' }}>{translate('무료배송')}</div>}
+            {/* 혜택 안내(본사 공통) */}
+            <BenefitNotice sx={{ mt: '10px' }} tone={{ fontSize: 13, labelColor: '#a08b93', textColor: '#4a3f43' }} />
             {item?.groups?.length > 0 && (
               <OptionWrap>
                 {item.groups.map((group) => (

@@ -2,6 +2,8 @@ import { useState, useEffect } from 'react';
 import { Box, Typography, Stack, FormControlLabel, Checkbox, Divider, Dialog, DialogTitle, DialogContent, IconButton, useMediaQuery } from '@mui/material';
 import { Icon } from '@iconify/react';
 import { POLICY_DOCS, getPolicyDoc } from './policyContent';
+import { useLandingT } from './landingStrings';
+import { policyLabelKey } from './MainSiteLayout';
 
 // SHOPGO 가맹점 신청 약관 동의 — 항목별 개별 동의(개인정보보호법상 개별 동의 원칙).
 // 필수 4종(이용약관·이용동의·개인정보처리방침·PG정책) 모두 체크해야 onChange(true) 전달.
@@ -18,6 +20,9 @@ const lineKind = (s) => {
 };
 
 const AgreementBox = ({ onChange, error, errorText }) => {
+  const t = useLandingT();
+  // 약관 '문서'는 한국어 원문뿐이지만 이름·라벨은 보고 있는 화면의 언어로 띄운다.
+  const 제목 = (d) => t[policyLabelKey(d.slug)] || d.title.replace('SHOPGO ', '');
   const [checked, setChecked] = useState(() => {
     const o = {};
     REQUIRED.forEach((d) => (o[d.slug] = false));
@@ -74,9 +79,9 @@ const AgreementBox = ({ onChange, error, errorText }) => {
                 label={
                   <Typography sx={{ fontSize: 13.5 }}>
                     <Box component="span" sx={{ color: '#84cc16', fontWeight: 700, mr: 0.5 }}>
-                      [필수]
+                      {t.agreeRequiredTag}
                     </Box>
-                    {d.title}
+                    {제목(d)}
                   </Typography>
                 }
               />
@@ -89,7 +94,7 @@ const AgreementBox = ({ onChange, error, errorText }) => {
                   color: '#888', fontSize: 12, textDecoration: 'underline', whiteSpace: 'nowrap', px: 0.5,
                 }}
               >
-                보기
+                {t.agreeViewBtn}
               </Box>
             </Box>
           ))}
@@ -98,7 +103,7 @@ const AgreementBox = ({ onChange, error, errorText }) => {
         {/* 관련 정책(열람) */}
         <Divider sx={{ my: 1.5 }} />
         <Typography sx={{ fontSize: 12, color: '#999', mb: 0.75 }}>
-          관련 정책 (가입 시 함께 적용됩니다 · 열람)
+          {t.agreeNoticeTitle}
         </Typography>
         <Stack direction="row" flexWrap="wrap" gap={1.5}>
           {NOTICE.map((d) => (
@@ -112,7 +117,7 @@ const AgreementBox = ({ onChange, error, errorText }) => {
                 color: '#666', fontSize: 12, textDecoration: 'underline', p: 0,
               }}
             >
-              {d.title}
+              {제목(d)}
             </Box>
           ))}
         </Stack>
@@ -120,7 +125,7 @@ const AgreementBox = ({ onChange, error, errorText }) => {
 
       {error && (
         <Typography sx={{ fontSize: 12, color: '#d33', mt: 0.75 }}>
-          {errorText || '필수 약관에 모두 동의해 주세요.'}
+          {errorText || t.agreeAllError}
         </Typography>
       )}
 
@@ -137,10 +142,10 @@ const AgreementBox = ({ onChange, error, errorText }) => {
         {viewDoc && (
           <>
             <DialogTitle sx={{ pr: 6, fontSize: 18, fontWeight: 800 }}>
-              {viewDoc.title}
+              {제목(viewDoc)}
               {viewDoc.effectiveDate && (
                 <Typography sx={{ fontSize: 12, color: '#999', fontWeight: 400, mt: 0.5 }}>
-                  시행일: {viewDoc.effectiveDate}
+                  {t.policyEffective}: {viewDoc.effectiveDate} · {t.policyKoreanOnly}
                 </Typography>
               )}
               <IconButton

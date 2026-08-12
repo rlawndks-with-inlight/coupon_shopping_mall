@@ -69,12 +69,23 @@ const TARGETS = [
   { icon: 'tabler:building-store', k: 't4' },
 ];
 
-// 메인 최하단 보안/신뢰 섹션 — 사실인 항목만. 전용 페이지(security.js)와 항목·순서 통일.
+// 메인 최하단 보안/신뢰 섹션 — 사실인 항목만.
+//
+// 문구는 사전(trust*)에서 가져온다. 예전엔 여기 한국어를 박아 두고 그대로 그려서
+// 영어·일본어 화면에서도 이 칸만 한국어로 남아 있었다.
+//
+// ⚠ 4번 항목 표현 주의 — 2026-08-12 운영 DB 로 확인한 결과다.
+//   transactions.card_num(varchar 20)은 실재하고, 결제 확정 경로 3곳이 여기에 쓴다
+//   (2023년부터 살아 있는 코드다. '컬럼이 없다'고 보고 걷어내려다 되돌린 적 있다).
+//   저장되는 값은 PG 가 마스킹해 보내는 'BIN 6자리 + ****** + 뒤 4자리' 형태다.
+//     예) 949094******5028
+//   그래서 '결제정보를 저장하지 않는다'는 거짓이고,
+//        '전체 카드번호는 저장하지 않습니다'는 참이다. 지금 문구가 정확한 경계다.
 const TRUST = [
-  { icon: 'tabler:credit-card', title: '안전결제', desc: '검증된 PG·PSP를 통해\n안전하게 결제됩니다' },
-  { icon: 'tabler:cloud', title: 'AWS 클라우드 인프라', desc: '검증된 글로벌 클라우드에서\n안정적으로 운영됩니다', logo: '/assets/images/powered-by-aws.png', logoH: 36 },
-  { icon: 'tabler:lock', title: '개인정보 암호화 저장', desc: '이름·연락처·주소 등 개인정보를\n암호화하여 저장합니다' },
-  { icon: 'tabler:shield-lock', title: '결제정보 미보관', desc: '카드번호 등 결제정보는\n서버에 저장하지 않습니다' },
+  { icon: 'tabler:credit-card', k: 'trust1' },
+  { icon: 'tabler:cloud', k: 'trust2', logo: '/assets/images/powered-by-aws.png', logoH: 36 },
+  { icon: 'tabler:lock', k: 'trust3' },
+  { icon: 'tabler:shield-lock', k: 'trust4' },
 ];
 
 // '지금 바로 시작하기' — 제목·설명 + 라인 아이콘 병렬 표시(이런 분께 추천 영역과 동일 구성, 아이콘만 흰색).
@@ -354,12 +365,19 @@ const ShopGoLanding = () => {
               SECURITY &amp; TRUST
             </Typography>
             <Typography sx={{ fontSize: { xs: 22, md: 30 }, fontWeight: 900, letterSpacing: '-0.8px', color: '#1a1a1f' }}>
-              안전하게 운영되는 쇼핑몰
+              {t.trustHeading}
+            </Typography>
+            {/* 없어진 /security 페이지의 도입문을 대신하는 한 줄 */}
+            <Typography
+              // textWrap: balance — 안 주면 '제공합니다.' 두 글자만 다음 줄로 떨어진다
+              sx={{ fontSize: 14, color: '#666', lineHeight: 1.75, maxWidth: 660, alignSelf: 'center', wordBreak: 'keep-all', textWrap: 'balance', pt: 0.5 }}
+            >
+              {t.trustSub}
             </Typography>
           </Stack>
           <Grid container spacing={2}>
             {TRUST.map((b) => (
-              <Grid item xs={12} sm={6} md={3} key={b.title}>
+              <Grid item xs={12} sm={6} md={3} key={b.k}>
                 <Box
                   sx={{
                     p: 3,
@@ -387,18 +405,18 @@ const ShopGoLanding = () => {
                     <Icon icon={b.icon} width={22} height={22} />
                   </Box>
                   <Typography sx={{ fontSize: 15, fontWeight: 800, mb: 0.75, color: '#1a1a1f', wordBreak: 'keep-all' }}>
-                    {b.title}
+                    {t[`${b.k}Title`]}
                   </Typography>
                   <Typography
                     sx={{ fontSize: 13, color: '#666', lineHeight: 1.65, whiteSpace: 'pre-line', wordBreak: 'keep-all', flexGrow: 1 }}
                   >
-                    {b.desc}
+                    {t[`${b.k}Desc`]}
                   </Typography>
                   {b.logo && (
                     <Box
                       component="img"
                       src={b.logo}
-                      alt={b.title}
+                      alt={t[`${b.k}Title`]}
                       sx={{ height: b.logoH || 20, width: 'auto', mt: 1.75, alignSelf: 'flex-start' }}
                     />
                   )}
@@ -406,21 +424,6 @@ const ShopGoLanding = () => {
               </Grid>
             ))}
           </Grid>
-          <Stack alignItems="center" sx={{ mt: 4 }}>
-            <Box
-              component="a"
-              href="/security"
-              sx={{
-                fontSize: 13,
-                color: '#888',
-                fontWeight: 700,
-                textDecoration: 'none',
-                '&:hover': { color: '#111', textDecoration: 'underline' },
-              }}
-            >
-              보안 안내 자세히 →
-            </Box>
-          </Stack>
         </Container>
       </Box>
     </>

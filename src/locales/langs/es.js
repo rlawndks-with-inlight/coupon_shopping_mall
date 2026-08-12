@@ -759,6 +759,8 @@ const es = {
     "주소지 수정": "Editar dirección",
     "새 배송지를 입력 후 저장을 눌러주세요.": "Introduzca la nueva dirección y pulse Guardar.",
     "수정하실 내용을 입력 후 저장을 눌러주세요.": "Introduzca los cambios y pulse Guardar.",
+    "쇼핑": "Compras",
+    "비회원은 전화번호와 주문 비밀번호로 조회할 수 있습니다.": "Los invitados pueden consultar su pedido con el teléfono y la contraseña del pedido.",
 };
 
 export default es;

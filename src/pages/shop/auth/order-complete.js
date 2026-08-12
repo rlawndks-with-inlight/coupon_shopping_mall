@@ -97,10 +97,12 @@ const { user } = useAuthContext();
           )}
 
           <Typography variant="caption" sx={{ color: 'text.secondary', display: 'block', textAlign: 'center', mb: 2 }}>{translate('승인번호·배송현황은 주문내역에서 확인하실 수 있습니다.')}<br />
-            비회원은{' '}
+            {/* 한 문장을 링크 앞뒤로 쪼개 놓으면 언어마다 어순이 달라 조각이 뒤엉킨다
+                (한국어는 서술어가 끝에 오고 영어는 앞에 온다). 문장을 통째로 링크로 둔다. */}
             <Box component="a" onClick={() => router.push('/shop/auth/order-check')}
-              sx={{ color: 'primary.main', textDecoration: 'underline', cursor: 'pointer' }}>{translate('전화번호+주문비밀번호로 조회')}</Box>
-            할 수 있습니다.
+              sx={{ color: 'primary.main', textDecoration: 'underline', cursor: 'pointer' }}>
+              {translate('비회원은 전화번호와 주문 비밀번호로 조회할 수 있습니다.')}
+            </Box>
           </Typography>
         </>
       ) : (

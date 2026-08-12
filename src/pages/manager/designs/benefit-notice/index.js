@@ -128,8 +128,13 @@ const BenefitNoticePage = () => {
         <Stack spacing={2}>
             <Alert severity="warning" sx={{ fontSize: '0.85rem' }}>
                 여기서 저장하면 <b>전 가맹점 상품상세 화면에 동시에 반영</b>됩니다. 가맹점은 끄거나 고칠 수 없습니다.<br />
-                무이자 할부 같은 <b>결제 행사는 결제사(PG) 계약에 따라 실제 적용 여부가 갈립니다.</b> 확인된 내용만 올려 주세요.<br />
+                무이자 할부·카드 적립 같은 <b>혜택은 카드사·결제사(PG) 정책에 따라 실제 적용 여부가 갈립니다.</b> 확인된 내용만 올려 주세요.<br />
                 문구는 한국어로만 쓰시면 됩니다 — 영어·일본어·중국어·스페인어는 저장 후 몇 분 안에 자동으로 채워집니다.
+            </Alert>
+            {/* '적립'도 별도 기능이 아니라 줄 하나다. 화면만 보고는 알 수 없어 적어 둔다. */}
+            <Alert severity="info" sx={{ fontSize: '0.85rem' }}>
+                <b>적립 안내도 여기서 넣습니다.</b> 줄을 하나 더 추가하고 라벨을 <b>적립</b>으로 바꾸면 됩니다
+                (예: 라벨 <b>적립</b> / 요약 <b>카드사 적립 최대 4%</b>). 순서 값이 작은 줄이 위에 옵니다.
             </Alert>
 
             {list.length === 0 &&
@@ -157,7 +162,7 @@ const BenefitNoticePage = () => {
                         <Stack direction={{ xs: 'column', md: 'row' }} spacing={2}>
                             <TextField
                                 label="라벨" value={n.label ?? ''} sx={{ width: { xs: '100%', md: 140 } }}
-                                helperText="왼쪽에 붙는 말 (예: 혜택)"
+                                helperText="왼쪽에 붙는 말 (예: 혜택, 적립)"
                                 onChange={(e) => 바꾸기(idx, 'label', e.target.value)} />
                             <TextField
                                 label="요약 문구" value={n.summary ?? ''} fullWidth

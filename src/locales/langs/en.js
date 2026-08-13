@@ -816,6 +816,13 @@ const en = {
   "이미 처리된 취소 요청입니다.": "This cancellation has already been processed.",
   "취소 기록에 실패했습니다.": "Failed to record the cancellation.",
   "취소에 실패했습니다.": "Cancellation failed.",
+  // 고객 부분 취소요청
+  "주문 취소요청": "Request order cancellation",
+  "취소할 상품과 수량을 골라 주세요. 판매자 확인 후 환불됩니다.": "Choose the items and quantities to cancel. Refunds are issued after the seller confirms.",
+  "판매자 확인 후 환불됩니다.": "Refunds are issued after the seller confirms.",
+  "취소 사유 (선택)": "Reason (optional)",
+  "아무것도 고르지 않으면 주문 전체가 취소 요청됩니다.": "If nothing is selected, the whole order will be requested for cancellation.",
+  "요청 중…": "Requesting…",
 };
 
 export default en;

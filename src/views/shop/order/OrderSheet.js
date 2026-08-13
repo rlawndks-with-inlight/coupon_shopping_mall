@@ -71,7 +71,7 @@ export default function OrderSheet({ router }) {
   const { user } = useAuthContext();
   const { themeCartData, onChangeCartData, themeDnsData } = useSettingsContext();
   const setting_obj = themeDnsData?.setting_obj || {};
-  const { max_use_point = 0, point_rate = 0, use_point_min_price = 0 } = setting_obj;
+  const { max_use_point = 0, point_rate = 0, use_point_min_price = 0, point_policy_type = 'instant', point_use_min = 0 } = setting_obj;
 
   const [products, setProducts] = useState([]);
   // 서버 동기화가 알려준 '구매할 수 없는 상품' 목록(원본).
@@ -387,6 +387,11 @@ export default function OrderSheet({ router }) {
     }
     if (parseFloat(max_use_point) < parseFloat(payData.use_point || 0)) {
       toast.error(translate("최대사용가능 포인트를 초과하였습니다."));
+      return false;
+    }
+    // 적립형: 보유 포인트가 최소 적립 기준(point_use_min) 미만이면 포인트 사용 불가.
+    if (point_policy_type === 'accumulate' && parseFloat(payData.use_point || 0) > 0 && parseFloat(user?.point ?? 0) < parseFloat(point_use_min || 0)) {
+      toast.error(translate("적립 포인트가 최소 사용 기준에 도달하지 않았습니다."));
       return false;
     }
     if (parseFloat(user?.point ?? 0) < parseFloat(payData.use_point || 0)) {

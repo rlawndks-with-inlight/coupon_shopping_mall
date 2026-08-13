@@ -299,7 +299,8 @@ export const navConfig = () => {
               // 포인트관리 메뉴가 주석이라, 고객은 주문서에서 포인트를 쓸 수 있는데
               // 가맹점은 포인트를 지급·조정할 방법이 아예 없었다(페이지 자체는 정상 동작한다 —
               // 주소창에 직접 넣으면 목록·지급 모두 된다). 메뉴만 되살린다.
-              { title: '포인트관리', path: PATH_MANAGER.users.points },
+              // shopgo(본사·산하)는 기존 포인트관리 메뉴 미노출 — 새 포인트 정책으로 대체 예정. 타 클라이언트는 유지.
+              ...(!isShopgoBrand(themeDnsData) ? [{ title: '포인트관리', path: PATH_MANAGER.users.points }] : []),
               //{ title: '찜관리', path: PATH_MANAGER.users.wishs },
             ] : []),
             ...(themeDnsData?.is_use_seller > 0 && user.level >= 10 ? [{ title: '회원가입번호관리', path: PATH_MANAGER.users.phoneRegistration }] : []),

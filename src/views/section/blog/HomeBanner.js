@@ -52,12 +52,17 @@ const PrevArrowStyle = styled.div`
   `
 const BannerImgContainer = styled.div`
 width: 100%;
-height: 424px;
+/* 예전엔 height:424px 고정이라 큰 화면(≥1800px)에선 초광폭(4:1↑)이 돼 배너가 심하게 잘렸다.
+   권장 배너(2000x850=2.35:1)에 맞춰 비율 기반(42.5vw)으로 바꾸고 max-height로 상한만 둔다. */
+height: 42.5vw;
+min-height: 220px;
+max-height: 640px;
 margin: 0 auto;
 border-radius:${props => props.img_list_length >= 2 ? '1rem' : '0'};
 overflow: hidden;
 @media (max-width:840px) {
     height: 45vw;
+    max-height: none;
     border-radius:0;
 }
 `
@@ -71,19 +76,9 @@ display:flex;
 position: relative;
 background-size: cover;
 background-repeat: no-repeat;
-
-animation: ${props => props.iscurrentSlideIndex ? 'zoom-in-out' : ''} 10s ease-in-out infinite;
-@keyframes zoom-in-out {
-    0% {
-        transform: scale(1);
-    }
-    50% {
-        transform: scale(1.02);
-    }
-    100% {
-        transform: scale(1);
-    }
-}
+background-position: center center;
+/* 줌 브리딩(불안정) 제거 — shop 배너와 동일하게 정적으로. */
+animation: none;
 `
 
 const TextContainer = styled.div`

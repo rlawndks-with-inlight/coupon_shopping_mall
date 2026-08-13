@@ -186,8 +186,17 @@ export const navConfig = () => {
       {
         items: [
           { title: '혜택 안내(전 가맹점)', path: PATH_MANAGER.designs.benefitNotice, icon: ICONS.label },
-          // 주문서 추가 입력항목 — 전 가맹점이 아니라 '고른 가맹점'에만 적용된다.
-          { title: '입력항목 서식', path: PATH_MANAGER.designs.orderForm, icon: ICONS.file },
+          // '입력항목 서식'(마스터가 만드는 템플릿)은 메뉴에서 내렸다.
+          //
+          // 왜: 손님 입력항목(행사날짜 등)은 가맹점이 **상품마다** 직접 건다.
+          // 템플릿은 '같은 업종 가맹점이 여럿일 때 한 번 만들어 돌려쓰는' 물건인데,
+          // 지금 예약형 가맹점은 첫돌공방 하나뿐이라 돌려쓸 상대가 없다.
+          // 빈 화면을 메뉴에 두면 '이건 뭐지'가 매번 반복된다.
+          //
+          // ⚠ 지운 게 아니다. 페이지·테이블·API(/order-forms/templates)는 그대로 살아 있고
+          //   상품등록의 '서식 불러오기' 도 계속 동작한다(템플릿이 있으면 버튼이 뜬다).
+          //   돌잔치·출장 업체가 둘 이상 되면 **아래 한 줄의 주석만 풀면** 된다.
+          // { title: '입력항목 서식', path: PATH_MANAGER.designs.orderForm, icon: ICONS.file },
         ],
       },
       // 유저관리: 최상위(개발사, 레벨50)만 노출 — shopgo 운영자 계정 추가/관리용

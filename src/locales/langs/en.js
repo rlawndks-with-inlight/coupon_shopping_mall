@@ -800,6 +800,9 @@ const en = {
   "조합 추가금": "Combination surcharge",
   "상품 정보": "Product information",
   "{{n}}개 남음": "{{n}} left",
+  // 포인트 정책(적립형) — 커밋 6ebd1784 에서 쓰는데 사전에 없었다
+  "적립 포인트가 최소 사용 기준에 도달하지 않았습니다.": "Your accumulated points have not reached the minimum required to use them.",
+  "추가 입력 정보": "Additional information",
 };
 
 export default en;

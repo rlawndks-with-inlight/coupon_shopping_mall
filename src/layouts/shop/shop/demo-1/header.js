@@ -5,6 +5,7 @@ import { Icon } from "@iconify/react"
 import { Row, themeObj } from 'src/components/elements/styled-components'
 import { useTheme } from '@mui/material/styles';
 import { useSettingsContext } from "src/components/settings"
+import { isShopgoBrand } from "src/utils/is-shopgo"
 import { useRouter } from "next/router"
 import { TreeItem, TreeView } from "@mui/lab"
 import { getAllIdsWithParents, returnMoment } from "src/utils/function"
@@ -579,12 +580,12 @@ const Header = () => {
                     <Icon icon={'basil:shopping-bag-outline'} fontSize={'1.8rem'} color={themeMode == 'dark' ? '#fff' : '#000'} />
                   </Badge>
                 </IconButton>
-                <IconButton
+                {!isShopgoBrand(themeDnsData) && <IconButton
                   sx={iconButtonStyle}
                   onClick={() => onToggleMode()}
                 >
                   <Icon icon={themeMode === 'dark' ? 'tabler:sun' : 'tabler:moon-stars'} fontSize={'1.5rem'} color={themeMode == 'dark' ? '#fff' : '#000'} />
-                </IconButton>
+                </IconButton>}
                 {themeDnsData?.setting_obj?.is_use_lang == 1 &&
                   <>
                     <LanguagePopover />
@@ -676,12 +677,12 @@ const Header = () => {
                     <Icon icon={'basil:shopping-bag-outline'} fontSize={'1.8rem'} color={themeMode == 'dark' ? '#fff' : '#000'} />
                   </Badge>
                 </IconButton>
-                <IconButton
+                {!isShopgoBrand(themeDnsData) && <IconButton
                   sx={iconButtonStyle}
                   onClick={() => onToggleMode()}
                 >
                   <Icon icon={themeMode === 'dark' ? 'tabler:sun' : 'tabler:moon-stars'} fontSize={'1.5rem'} color={themeMode == 'dark' ? '#fff' : '#000'} />
-                </IconButton>
+                </IconButton>}
                 {themeDnsData?.setting_obj?.is_use_lang == 1 &&
                   <>
                     <LanguagePopover />

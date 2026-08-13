@@ -795,6 +795,9 @@ const es = {
   "조합 추가금": "Recargo por combinación",
   "상품 정보": "Información del producto",
   "{{n}}개 남음": "Quedan {{n}}",
+  // 포인트 정책(적립형) — 커밋 6ebd1784 에서 쓰는데 사전에 없었다
+  "적립 포인트가 최소 사용 기준에 도달하지 않았습니다.": "Sus puntos acumulados no alcanzan el mínimo requerido para usarlos.",
+  "추가 입력 정보": "Información adicional",
 };
 
 export default es;

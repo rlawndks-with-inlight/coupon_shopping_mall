@@ -99,7 +99,7 @@ const OnboardingChecklist = () => {
     });
   };
 
-  const mainColor = dns?.theme_css?.main_color || '#2e7d32';
+  const mainColor = dns?.theme_css?.main_color || '#00ab55';
 
   return (
     <Card variant="outlined" sx={{ p: { xs: 2, md: 2.5 }, borderRadius: 2, borderColor: '#e0e0e0' }}>

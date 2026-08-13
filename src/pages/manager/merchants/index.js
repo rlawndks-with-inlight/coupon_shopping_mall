@@ -9,6 +9,9 @@ import ManagerLayout from "src/layouts/manager/ManagerLayout";
 import axios from "axios";
 import toast from "react-hot-toast";
 import { commarNumber, returnMoment } from "src/utils/function";
+import { useRouter } from "next/router";
+import { apiManager } from "src/utils/api";
+import { PATH_MANAGER } from "src/data/manager-data";
 
 const PERIODS = [
   { key: 'all', label: '전체' },
@@ -69,6 +72,9 @@ const PhoneLink = ({ value, variant = 'body2' }) => {
 
 const MerchantsPage = () => {
   const [merchants, setMerchants] = useState([]);
+  const router = useRouter();
+  // 브랜드 id → 그 몰에 걸린 서식 이름. 없으면 키가 없다.
+  const [orderFormByBrand, setOrderFormByBrand] = useState({});
   const [summary, setSummary] = useState({ merchant_count: 0, total_sales: 0, order_count: 0 });
   const [period, setPeriod] = useState('all');
   const [loading, setLoading] = useState(false);
@@ -95,6 +101,22 @@ const MerchantsPage = () => {
   };
 
   useEffect(() => { fetchData(period); }, [period]);
+
+  // 어느 가맹점에 주문서 서식이 걸려 있는지. 목록 API 가 주지 않는 정보라 따로 부른다.
+  // 서식 수가 몇 개뿐이라 한 번 받아 브랜드 기준으로 뒤집어 쓴다.
+  // 실패해도 조용히 넘어간다 — 이것 때문에 가맹점 목록이 안 뜨면 안 된다.
+  useEffect(() => {
+    (async () => {
+      try {
+        const data = await apiManager('order-forms', 'list', {});
+        const map = {};
+        (data?.content ?? []).forEach((t) => {
+          (t?.targets ?? []).forEach((g) => { map[g.brand_id] = t.name; });
+        });
+        setOrderFormByBrand(map);
+      } catch (e) { /* 서식을 못 읽어도 목록은 떠야 한다 */ }
+    })();
+  }, []);
 
   const openDetail = async (m) => {
     // 상세 응답 도착 전까지 목록이 이미 가진 값으로 먼저 채워 깜빡임을 줄인다(고객센터 번호는 상세에서만 온다).
@@ -172,13 +194,17 @@ const MerchantsPage = () => {
                   <TableCell align="right">주문</TableCell>
                   <TableCell align="right">매출(원)</TableCell>
                   <TableCell align="center">관리자 계정 / 연락처</TableCell>
+                  {/* 예약·출장 업체가 주문 시 받는 추가 입력항목(행사일 등).
+                      서식은 마스터만 만든다 — 가맹점 어드민에는 이 메뉴가 없다.
+                      여기서 바로 갈 수 있게 해 '가맹점을 고른 뒤 그 몰 것을 만지는' 흐름을 만든다. */}
+                  <TableCell align="center">주문서 추가항목</TableCell>
                   <TableCell align="center">상세</TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
                 {merchants.length === 0 && (
                   <TableRow>
-                    <TableCell colSpan={7} align="center" sx={{ py: 5, color: 'text.secondary' }}>
+                    <TableCell colSpan={8} align="center" sx={{ py: 5, color: 'text.secondary' }}>
                       {loading ? '불러오는 중…' : '개설된 가맹점이 없습니다.'}
                     </TableCell>
                   </TableRow>
@@ -231,6 +257,22 @@ const MerchantsPage = () => {
                           </span>
                         </Tooltip>
                       </Stack>
+                    </TableCell>
+                    <TableCell align="center">
+                      {/* 이 몰에 걸린 서식이 있으면 이름을, 없으면 '설정' 버튼을 보여준다.
+                          어느 쪽이든 누르면 그 가맹점이 선택된 채로 서식 화면이 열린다. */}
+                      {orderFormByBrand[m.id] ? (
+                        <Button size="small" variant="soft" color="info"
+                          startIcon={<Icon icon="solar:clipboard-list-linear" />}
+                          onClick={() => router.push(`${PATH_MANAGER.designs.orderForm}?brand=${m.id}`)}>
+                          {orderFormByBrand[m.id]}
+                        </Button>
+                      ) : (
+                        <Button size="small" variant="text" sx={{ color: 'text.secondary' }}
+                          onClick={() => router.push(`${PATH_MANAGER.designs.orderForm}?brand=${m.id}`)}>
+                          설정
+                        </Button>
+                      )}
                     </TableCell>
                     <TableCell align="center">
                       <Button size="small" variant="outlined" startIcon={<Icon icon="solar:document-text-linear" />}

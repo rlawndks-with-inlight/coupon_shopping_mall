@@ -208,7 +208,7 @@ export const MainSiteFooter = () => {
     <Container maxWidth="lg">
       <Stack spacing={2}>
         {/* 법인명·주소는 법적 표기라 번역하지 않는다 */}
-        <Typography sx={{ fontSize: 13, color: '#888', fontWeight: 700 }}>{COMPANY_NAME}</Typography>
+        <Typography sx={{ fontSize: 13, color: '#888', fontWeight: 500 }}>{COMPANY_NAME}</Typography>
         <Typography sx={{ fontSize: 12, color: '#999', lineHeight: 1.8 }}>{COMPANY_ADDRESS}</Typography>
         <Stack direction={{ xs: 'column', sm: 'row' }} spacing={{ xs: 0.5, sm: 3 }} sx={{ pt: 0.5 }}>
           <Typography sx={{ fontSize: 12, color: '#999' }}>

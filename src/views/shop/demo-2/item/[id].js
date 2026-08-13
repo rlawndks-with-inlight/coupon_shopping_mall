@@ -14,10 +14,13 @@ import DialogBuyNow from 'src/components/dialog/DialogBuyNow';
 import { useAuthContext } from 'src/layouts/manager/auth/useAuthContext';
 import Head from 'next/head';
 import { isShopgoBrand } from 'src/utils/is-shopgo';
-import { formatLang, characterChoices } from 'src/utils/format';
+import { formatLang } from 'src/utils/format';
 import QuantityStepper from 'src/components/elements/shop/QuantityStepper';
 import { useLocales } from 'src/locales';
 import BenefitNotice from 'src/components/elements/shop/BenefitNotice';
+import OrderFormFields from 'src/components/elements/shop/OrderFormFields';
+import ProductOptions from 'src/components/elements/shop/ProductOptions';
+import ProductInfoRows from 'src/components/elements/shop/ProductInfoRows';
 
 const ReactQuill = dynamic(() => import('react-quill'), {
   ssr: false,
@@ -60,6 +63,8 @@ const ItemDemo = (props) => {
     count: 1,
     groups: [],
   });
+  // 주문 추가 입력항목(행사일 등)의 값. 담기·바로구매 때 상품에 실어 보낸다.
+  const [orderFormValues, setOrderFormValues] = useState({});
 
   useEffect(() => {
     getProductInfo();
@@ -109,28 +114,19 @@ const ItemDemo = (props) => {
 
   // 비회원도 장바구니 담기 허용(아래 handleBuyNow와 동일 정책).
   const handleAddCart = async () => {
-    let result = await insertCartDataUtil({ ...product, seller_id: themeDnsData?.seller_id ?? 0 }, selectProductGroups, themeCartData, onChangeCartData);
+    let result = await insertCartDataUtil({ ...product, seller_id: themeDnsData?.seller_id ?? 0 , order_form_values: orderFormValues }, selectProductGroups, themeCartData, onChangeCartData);
     if (result) {
       toast.success(translate("장바구니에 추가되었습니다."));
     }
   }
 
-  // 고른 특성인지 판정 — 특성(characters)은 id 가 없어 이름으로 본다.
-  const isCharacterPicked = (character) => selectProductGroups?.groups?.some(
-    (g) => g?.character_name === character?.character_name && (g?.options?.length ?? 0) > 0
-  );
-
   const handleBuyNow = () => {
     // 비회원도 바로구매 허용(주문서에서 비회원 주문비밀번호로 진행)
     //
-    // 예전 조건은 `groups.length < characters.length` 였다. groups 에는 특성과 옵션그룹이 섞여 쌓이므로
-    // 개수만 세면 '색상만 두 번 고른' 경우도 통과했고, 옵션그룹을 고르면 특성을 안 골라도 통과했다.
-    // 개수 대신 특성 하나하나가 실제로 골라졌는지 본다. 옵션그룹은 startBuyNow 안의 공용 검사가 맡는다.
-    const characters = product?.characters ?? [];
-    if (characters.length > 0 && !characters.every(isCharacterPicked)) {
-      toast.error(translate('옵션을 선택해주세요.'));
-      return;
-    }
+    // 특성(characters) 필수 검사를 여기서 없앴다. 특성은 이제 '보여주기 전용 상품정보'다.
+    // 예전엔 이 화면에서만 특성이 필수 선택이라, 가맹점이 안내대로 '원산지 / 국내산' 을 넣으면
+    // 손님이 '국내산' 버튼을 눌러야만 살 수 있었다(다른 프레임에서는 그냥 표였다).
+    // 옵션·재고·입력항목 검사는 startBuyNow 안의 공용 검사가 전부 맡는다.
     setBuyOpen(true);
   }
 
@@ -161,7 +157,7 @@ const ItemDemo = (props) => {
     {
       value: 'reviews',
       label: `${translate('상품후기')} (${reviewContent?.total ?? 0})`,
-      component: product ? <ProductDetailsReview product={product} reviewContent={reviewContent} onChangePage={(page) => setReviewPage(page)} reviewPage={reviewPage} reviewLoading={reviewLoading} /> : null,
+      component: product ? <ProductDetailsReview product={{ ...product, order_form_values: orderFormValues }} reviewContent={reviewContent} onChangePage={(page) => setReviewPage(page)} reviewPage={reviewPage} reviewLoading={reviewLoading} /> : null,
     },
   ];
   // ShopGo 산하는 상품후기를 쓰지 않는다 — 후기 탭을 감춘다.
@@ -176,7 +172,7 @@ const ItemDemo = (props) => {
       <DialogBuyNow
         buyOpen={buyOpen}
         setBuyOpen={setBuyOpen}
-        product={product}
+        product={{ ...product, order_form_values: orderFormValues }}
         selectProductGroups={selectProductGroups}
       />
       <Wrapper>
@@ -189,7 +185,7 @@ const ItemDemo = (props) => {
                 <>
                   <Grid container spacing={4}>
                     <Grid item xs={12} md={6}>
-                      <ProductDetailsCarousel product={product} />
+                      <ProductDetailsCarousel product={{ ...product, order_form_values: orderFormValues }} />
                     </Grid>
                     <Grid item xs={12} md={6} style={{ display: 'flex', flexDirection: 'column' }}>
                       {/*product?.product_code &&
@@ -230,62 +226,15 @@ const ItemDemo = (props) => {
                       </Typography>
                       {/* 혜택 안내(본사 공통) — 배송비 바로 아래 */}
                       <BenefitNotice sx={{ mb: 1 }} tone={{ fontSize: 13 }} />
-                      {/* 옵션그룹(product_option_groups) 선택.
-                          이 화면은 특성(characters)만 그리고 옵션그룹은 아예 그리지 않았다.
-                          그래서 관리자에서 '옵션'을 등록한 상품은 프레임2 상세에 선택 UI 가 없었고,
-                          고객은 옵션을 고를 방법이 없는 채로 장바구니·바로구매가 막혔다
-                          (공용 검사 assertOptionsSelected 가 '그룹마다 하나 이상' 을 요구한다).
-                          옵션 추가금액도 붙지 않아 실제보다 싸게 주문됐다.
-                          프레임1(ProductDetailsSummary)·프레임4~11 은 원래 그리고 있었다 — 같은 규칙으로 맞춘다. */}
-                      {product?.groups && product?.groups.map((group, gIdx) => (
-                        <div key={group?.id ?? gIdx} style={{ marginTop: '0.5rem' }}>
-                          <Typography variant="body2" sx={{ fontWeight: 600, mb: 0.5 }}>{formatLang(group, 'group_name')}</Typography>
-                          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
-                            {(group?.options ?? []).map((option, oIdx) => (
-                              <Button
-                                key={option?.id ?? oIdx}
-                                variant={selectProductGroups?.groups?.find(g =>
-                                  Number(g?.id) === Number(group?.id)
-                                  && g?.options?.some(o => Number(o?.id) === Number(option?.id))
-                                ) ? 'contained' : 'outlined'}
-                                size="small"
-                                color="inherit"
-                                onClick={() => onSelectOption(group, option)}
-                                sx={{ minWidth: '60px', fontSize: '13px' }}
-                              >
-                                {formatLang(option, 'option_name')}{option?.option_price > 0 ? ` (+${commarNumberWithUnit(option?.option_price)})` : ''}
-                              </Button>
-                            ))}
-                          </div>
-                        </div>
-                      ))}
-                      {product?.characters && product?.characters.map((character, idx) => (
-                        <div key={idx} style={{ marginTop: '0.5rem' }}>
-                          <Typography variant="body2" sx={{ fontWeight: 600, mb: 0.5 }}>{formatLang(character, 'character_name', currentLang)}</Typography>
-                          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
-                            {/* 보이는 건 번역, 고르면 저장되는 건 원문(value). 특성 값은 주문에 그대로
-                                박히므로 번역본을 저장하면 가맹점 주문서가 외국어가 된다. */}
-                            {characterChoices(character, currentLang).map(({ value: option, label }, optIdx) => (
-                              <Button
-                                key={optIdx}
-                                // 저장 형태에 맞춰 판정한다. selectItemOptionUtil 은 'option' 키를 만들지 않고
-                                // options: [{ value: '블랙' }] 로 넣는다 — 예전 판정식(g?.option === option)은
-                                // 늘 undefined 라 무엇을 골라도 버튼이 미선택(outlined) 그대로였다.
-                                variant={selectProductGroups?.groups?.find(g =>
-                                  g?.character_name === character?.character_name
-                                  && (g?.options?.[0]?.value === option || g?.options?.[0]?.option_name === option)
-                                ) ? 'contained' : 'outlined'}
-                                size="small"
-                                color="inherit"
-                                onClick={() => onSelectOption(character, option)}
-                                sx={{ minWidth: '60px', fontSize: '13px' }}
-                              >
-                                {label}
-                              </Button>
-                            ))}
-                          </div>
-                        </div>
-                      ))}
+                      {/* 옵션 · 추가상품 · 조합형 — 프레임 6개 공용 컴포넌트.
+                          예전엔 이 화면이 옵션 UI 를 따로 그렸고, 특성(characters)을
+                          '눌러야만 구매되는 필수 버튼'으로 그렸다. 같은 특성을 프레임3·5·6 은
+                          읽기 전용 정보표로 그려서, 같은 상품이 프레임에 따라 다르게 팔렸다.
+                          이제 고르는 것은 옵션, 보여주는 것은 상품정보로 뜻이 하나다. */}
+                      <ProductOptions product={product} selected={selectProductGroups} onSelect={onSelectOption} sx={{ mt: 1.5 }} />
+                      {/* 손님 입력항목 — 상품에 걸린 것이 있을 때만 나타난다 */}
+                      <OrderFormFields product={product} values={orderFormValues} onChange={setOrderFormValues} sx={{ mt: 2 }} />
+                      <ProductInfoRows product={product} sx={{ mt: 2 }} />
                       {/* 수량 — 이 프레임엔 수량 UI 가 없어서 상세에서 담으면 늘 1개였다.
                           selectProductGroups.count 는 담기·바로구매 양쪽이 이미 읽고 있어
                           여기서 값만 바꿔주면 그대로 연동된다(insertCartDataUtil / startBuyNow). */}

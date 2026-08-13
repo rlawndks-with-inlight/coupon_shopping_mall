@@ -6,6 +6,7 @@ import { Icon } from "@iconify/react"
 import { Col, Row, Title, themeObj } from 'src/components/elements/styled-components'
 import { useTheme } from '@mui/material/styles';
 import { useSettingsContext } from "src/components/settings"
+import { isShopgoBrand } from "src/utils/is-shopgo"
 import { useRouter } from "next/router"
 import { TreeItem, TreeView } from "@mui/lab"
 import { getAllIdsWithParents } from "src/utils/function"
@@ -524,12 +525,12 @@ const Header = () => {
                 >
                   <Badge badgeContent={themeCartData?.length ?? 0} color="error"><Icon icon={'ph:shopping-bag-open-thin'} fontSize={'2.8rem'} color={themeMode == 'dark' ? '#fff' : '#000'} /></Badge>
                 </IconButton>
-                <IconButton
+                {!isShopgoBrand(themeDnsData) && <IconButton
                   sx={iconButtonStyle}
                   onClick={() => onToggleMode()}
                 >
                   <Icon icon={themeMode === 'dark' ? 'ph:sun-thin' : 'ph:moon-stars-thin'} fontSize={'2.8rem'} color={themeMode == 'dark' ? '#fff' : '#000'} />
-                </IconButton>
+                </IconButton>}
                 {/* 언어 선택 — 이 헤더엔 언어 UI 가 없어 설정을 켜도 고객이 언어를 바꿀 수 없었다.
                     (shop demo-1 헤더와 동일하게 PC·모바일 아이콘 묶음 양쪽에 넣는다) */}
                 {themeDnsData?.setting_obj?.is_use_lang == 1 && <LanguagePopover />}
@@ -577,12 +578,12 @@ const Header = () => {
                   <Badge badgeContent={themeCartData?.length ?? 0} color="error"><Icon icon={'ph:shopping-bag-open-thin'} fontSize={'1.8rem'} color={themeMode == 'dark' ? '#fff' : '#000'} /></Badge>
                 </IconButton>
 
-                <IconButton
+                {!isShopgoBrand(themeDnsData) && <IconButton
                   sx={iconButtonStyle}
                   onClick={() => onToggleMode()}
                 >
                   <Icon icon={themeMode === 'dark' ? 'ph:sun-thin' : 'ph:moon-stars-thin'} fontSize={'1.8rem'} color={themeMode == 'dark' ? '#fff' : '#000'} />
-                </IconButton>
+                </IconButton>}
                 {themeDnsData?.setting_obj?.is_use_lang == 1 && <LanguagePopover />}
               </ShowMobile>
             </TopMenuContainer>

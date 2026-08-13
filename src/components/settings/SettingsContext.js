@@ -176,6 +176,8 @@ export function SettingsProvider({ children }) {
       dns_data['payment_modules'] = data?.payment_modules ?? [];
       dns_data['products'] = data?.products ?? [];
       dns_data['basic_info'] = data?.basic_info ?? "";
+      // 손님 입력항목은 여기 없다. 상품마다 다르므로 상품 상세 응답에 실려 온다
+      // (product.order_form_fields). 예전엔 몰 설정에 실려 와서 그 몰의 모든 상품에 같은 칸이 떴다.
 
 
       onChangeWishData(data?.user_wishs ?? []);

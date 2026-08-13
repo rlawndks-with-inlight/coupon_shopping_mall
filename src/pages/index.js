@@ -357,8 +357,8 @@ const ShopGoLanding = () => {
         </Container>
       </Box>
 
-      {/* SECURITY / TRUST — 메인 최하단 */}
-      <Box sx={{ py: { xs: 7, md: 10 }, bgcolor: '#fafaf7', borderTop: '1px solid #eee' }}>
+      {/* SECURITY / TRUST — 메인 최하단. 모바일에선 숨김(요청). */}
+      <Box sx={{ display: { xs: 'none', md: 'block' }, py: { xs: 7, md: 10 }, bgcolor: '#fafaf7', borderTop: '1px solid #eee' }}>
         <Container maxWidth="lg">
           <Stack spacing={1} textAlign="center" mb={5}>
             <Typography sx={{ fontSize: 12, letterSpacing: 4, color: '#888', fontWeight: 700 }}>
@@ -408,7 +408,7 @@ const ShopGoLanding = () => {
                     {t[`${b.k}Title`]}
                   </Typography>
                   <Typography
-                    sx={{ fontSize: 13, color: '#666', lineHeight: 1.65, whiteSpace: 'pre-line', wordBreak: 'keep-all', flexGrow: 1 }}
+                    sx={{ fontSize: 13, color: '#666', lineHeight: 1.65, wordBreak: 'keep-all', textWrap: 'balance', flexGrow: 1 }}
                   >
                     {t[`${b.k}Desc`]}
                   </Typography>

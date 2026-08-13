@@ -1,4 +1,6 @@
 // 판매자 영역 삭제로 Avatar 를 더 이상 쓰지 않아 import 에서 뺐다.
+import ProductAddons from 'src/components/elements/shop/ProductAddons';
+import { requiredGroups } from 'src/data/product-options';
 import { Select, MenuItem, Drawer, FormControl, InputLabel, Button, Divider, Stack } from '@mui/material';
 import { useEffect, useState } from 'react';
 import { Row, themeObj } from 'src/components/elements/styled-components';
@@ -258,7 +260,7 @@ const Demo3 = (props) => {
                 }}
             >
                 <SelectContainer>
-                    {(item?.groups ?? []).map((group) => (
+                    {requiredGroups(item).map((group) => (
                         <>
                             <Stack direction="row" justifyContent="space-between">
                                 <FormControl sx={{ width: '100%' }}>
@@ -284,6 +286,8 @@ const Demo3 = (props) => {
                             </Stack>
                         </>
                     ))}
+                    {/* 추가상품 — 안 골라도 살 수 있다. 프레임 전체가 같은 컴포넌트를 쓴다. */}
+                    <ProductAddons product={item} selected={selectProductGroups} onSelect={onSelectOption} style={{ marginTop: "0.75rem" }} />
                     <DrawerBox style={{ borderBottom: 'none' }}>
                         <Row style={{ justifyContent: 'space-between' }}>
                             <Row style={{ width: '150px', justifyContent: 'space-between', alignItems: 'center', padding: '0.25rem' }}>{translate('상품 금액')}</Row>

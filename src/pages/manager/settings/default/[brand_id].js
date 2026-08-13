@@ -40,6 +40,7 @@ import { commarNumber } from 'src/utils/function'
 import { BLOG_DEMO_DATA, SHOP_DEMO_DATA } from 'src/data/data'
 import { FRAMES, LEGACY_FRAMES } from 'src/components/main-site/frameList'
 import { allLangs } from 'src/locales'
+import { isShopgoMerchant } from 'src/utils/is-shopgo'
 
 const KakaoWrappers = styled.div`
   width: 100%;
@@ -158,7 +159,8 @@ const DefaultSetting = () => {
         }
       ]
       : []),
-    ...(user?.level >= 50
+    // 포인트설정: 본사(50) + shopgo 산하 가맹점에게 노출. shopgo 하위는 적립형/즉시사용형을 직접 설정.
+    ...((user?.level >= 50 || isShopgoMerchant(item))
       ? [
         {
           value: 5,
@@ -376,6 +378,9 @@ const DefaultSetting = () => {
                         <Typography variant='subtitle2' sx={{ color: 'text.secondary' }}>
                           브랜드로고
                         </Typography>
+                        <Typography variant='caption' sx={{ color: 'text.disabled' }}>
+                          가로형 권장 · PNG(투명배경) 권장 · 1MB 이하 (표시 크기는 자동으로 최적화됩니다)
+                        </Typography>
                         <Upload
                           file={item.logo_file || item.logo_img}
                           onDrop={acceptedFiles => {
@@ -397,54 +402,59 @@ const DefaultSetting = () => {
                             })
                           }}
                         />
-                        <Typography variant='subtitle2' sx={{ color: 'text.secondary' }}>
-                          브랜드 다크모드 로고
-                        </Typography>
-                        <Upload
-                          file={item.dark_logo_file || item.dark_logo_img}
-                          onDrop={acceptedFiles => {
-                            const newFile = acceptedFiles[0]
-                            if (newFile) {
-                              setItem({
-                                ...item,
-                                ['dark_logo_file']: Object.assign(newFile, {
-                                  preview: URL.createObjectURL(newFile)
+                        {/* shopgo 산하 가맹점은 다크모드 로고·파비콘 미노출(본사 방침). 로고만 사용. */}
+                        {!isShopgoMerchant(item) && (
+                          <>
+                            <Typography variant='subtitle2' sx={{ color: 'text.secondary' }}>
+                              브랜드 다크모드 로고
+                            </Typography>
+                            <Upload
+                              file={item.dark_logo_file || item.dark_logo_img}
+                              onDrop={acceptedFiles => {
+                                const newFile = acceptedFiles[0]
+                                if (newFile) {
+                                  setItem({
+                                    ...item,
+                                    ['dark_logo_file']: Object.assign(newFile, {
+                                      preview: URL.createObjectURL(newFile)
+                                    })
+                                  })
+                                }
+                              }}
+                              onDelete={() => {
+                                setItem({
+                                  ...item,
+                                  ['dark_logo_img']: '',
+                                  ['dark_logo_file']: undefined
                                 })
-                              })
-                            }
-                          }}
-                          onDelete={() => {
-                            setItem({
-                              ...item,
-                              ['dark_logo_img']: '',
-                              ['dark_logo_file']: undefined
-                            })
-                          }}
-                        />
-                        <Typography variant='subtitle2' sx={{ color: 'text.secondary' }}>
-                          브랜드 파비콘
-                        </Typography>
-                        <Upload
-                          file={item.favicon_file || item.favicon_img}
-                          onDrop={acceptedFiles => {
-                            const newFile = acceptedFiles[0]
-                            if (newFile) {
-                              setItem({
-                                ...item,
-                                ['favicon_file']: Object.assign(newFile, {
-                                  preview: URL.createObjectURL(newFile)
+                              }}
+                            />
+                            <Typography variant='subtitle2' sx={{ color: 'text.secondary' }}>
+                              브랜드 파비콘
+                            </Typography>
+                            <Upload
+                              file={item.favicon_file || item.favicon_img}
+                              onDrop={acceptedFiles => {
+                                const newFile = acceptedFiles[0]
+                                if (newFile) {
+                                  setItem({
+                                    ...item,
+                                    ['favicon_file']: Object.assign(newFile, {
+                                      preview: URL.createObjectURL(newFile)
+                                    })
+                                  })
+                                }
+                              }}
+                              onDelete={() => {
+                                setItem({
+                                  ...item,
+                                  ['favicon_img']: '',
+                                  ['favicon_file']: undefined
                                 })
-                              })
-                            }
-                          }}
-                          onDelete={() => {
-                            setItem({
-                              ...item,
-                              ['favicon_img']: '',
-                              ['favicon_file']: undefined
-                            })
-                          }}
-                        />
+                              }}
+                            />
+                          </>
+                        )}
                       </Stack>
                     </Stack>
                   </Card>
@@ -473,25 +483,28 @@ const DefaultSetting = () => {
                           })
                         }}
                       />
-                      <TextField
-                        label='메인색상'
-                        // 수정 경로에서는 theme_css 에 모듈 기본값을 얹지 않으므로(서버 값 그대로)
-                        // 서버에 값이 없을 때를 대비해 렌더에서만 폴백한다. 저장값은 사용자가 고를 때만 생긴다.
-                        value={item.theme_css?.main_color ?? '#00ab55'}
-                        type='color'
-                        style={{
-                          border: 'none'
-                        }}
-                        onChange={e => {
-                          setItem({
-                            ...item,
-                            ['theme_css']: {
-                              ...item.theme_css,
-                              main_color: e.target.value
-                            }
-                          })
-                        }}
-                      />
+                      {/* shopgo 산하 가맹점은 메인색상 미노출 — 기본값(테마 main_color)으로 고정. */}
+                      {!isShopgoMerchant(item) && (
+                        <TextField
+                          label='메인색상'
+                          // 수정 경로에서는 theme_css 에 모듈 기본값을 얹지 않으므로(서버 값 그대로)
+                          // 서버에 값이 없을 때를 대비해 렌더에서만 폴백한다. 저장값은 사용자가 고를 때만 생긴다.
+                          value={item.theme_css?.main_color ?? '#00ab55'}
+                          type='color'
+                          style={{
+                            border: 'none'
+                          }}
+                          onChange={e => {
+                            setItem({
+                              ...item,
+                              ['theme_css']: {
+                                ...item.theme_css,
+                                main_color: e.target.value
+                              }
+                            })
+                          }}
+                        />
+                      )}
                       {item.id == 5 &&
                         <>
                           <div>
@@ -542,20 +555,23 @@ const DefaultSetting = () => {
                           }
                         </>}
 
-                      <Stack spacing={1}>
-                        <Typography variant='subtitle2' sx={{ color: 'text.secondary' }}>
-                          비고
-                        </Typography>
-                        <ReactQuillComponent
-                          value={item.note}
-                          setValue={value => {
-                            setItem({
-                              ...item,
-                              ['note']: value
-                            })
-                          }}
-                        />
-                      </Stack>
+                      {/* shopgo 산하 가맹점은 비고 미노출. */}
+                      {!isShopgoMerchant(item) && (
+                        <Stack spacing={1}>
+                          <Typography variant='subtitle2' sx={{ color: 'text.secondary' }}>
+                            비고
+                          </Typography>
+                          <ReactQuillComponent
+                            value={item.note}
+                            setValue={value => {
+                              setItem({
+                                ...item,
+                                ['note']: value
+                              })
+                            }}
+                          />
+                        </Stack>
+                      )}
                     </Stack>
                   </Card>
                 </Grid>
@@ -1085,6 +1101,65 @@ const DefaultSetting = () => {
                 <Grid item xs={12} md={6}>
                   <Card sx={{ p: 2, height: '100%' }}>
                     <Stack spacing={3}>
+                      {/* 적립형/즉시사용형 — shopgo 하위 가맹점이 직접 선택. */}
+                      <FormControl variant='outlined'>
+                        <InputLabel>포인트 사용 방식</InputLabel>
+                        <Select
+                          label='포인트 사용 방식'
+                          value={item?.setting_obj?.point_policy_type ?? 'instant'}
+                          onChange={e => {
+                            setItem({
+                              ...item,
+                              ['setting_obj']: {
+                                ...item?.setting_obj,
+                                ['point_policy_type']: e.target.value
+                              }
+                            })
+                          }}
+                        >
+                          <MenuItem value={'instant'}>즉시사용형 (일정 주문금액 이상이면 사용)</MenuItem>
+                          <MenuItem value={'accumulate'}>적립형 (일정 포인트 이상 모이면 사용)</MenuItem>
+                        </Select>
+                      </FormControl>
+                      {(item?.setting_obj?.point_policy_type ?? 'instant') === 'accumulate' ? (
+                        <FormControl variant='outlined'>
+                          <InputLabel>사용 가능 최소 적립 포인트</InputLabel>
+                          <OutlinedInput
+                            type='number'
+                            label='사용 가능 최소 적립 포인트'
+                            value={item?.setting_obj?.point_use_min ?? 0}
+                            endAdornment={<InputAdornment position='end'>P</InputAdornment>}
+                            onChange={e => {
+                              setItem({
+                                ...item,
+                                ['setting_obj']: {
+                                  ...item?.setting_obj,
+                                  ['point_use_min']: e.target.value
+                                }
+                              })
+                            }}
+                          />
+                        </FormControl>
+                      ) : (
+                        <FormControl variant='outlined'>
+                          <InputLabel>포인트 사용가능 최소 주문금액 (배송비제외)</InputLabel>
+                          <OutlinedInput
+                            type='number'
+                            label='포인트 사용가능 최소 주문금액 (배송비제외)'
+                            value={item?.setting_obj?.use_point_min_price ?? 0}
+                            endAdornment={<InputAdornment position='end'>원</InputAdornment>}
+                            onChange={e => {
+                              setItem({
+                                ...item,
+                                ['setting_obj']: {
+                                  ...item?.setting_obj,
+                                  ['use_point_min_price']: e.target.value
+                                }
+                              })
+                            }}
+                          />
+                        </FormControl>
+                      )}
                       <FormControl variant='outlined'>
                         <InputLabel>최대포인트 사용금액</InputLabel>
                         <OutlinedInput
@@ -1098,24 +1173,6 @@ const DefaultSetting = () => {
                               ['setting_obj']: {
                                 ...item?.setting_obj,
                                 ['max_use_point']: e.target.value
-                              }
-                            })
-                          }}
-                        />
-                      </FormControl>
-                      <FormControl variant='outlined'>
-                        <InputLabel>포인트 사용가능 최소 주문금액 (배송비제외)</InputLabel>
-                        <OutlinedInput
-                          type='number'
-                          label='포인트 사용가능 최소 주문금액 (배송비제외)'
-                          value={item?.setting_obj?.use_point_min_price ?? 0}
-                          endAdornment={<InputAdornment position='end'>원</InputAdornment>}
-                          onChange={e => {
-                            setItem({
-                              ...item,
-                              ['setting_obj']: {
-                                ...item?.setting_obj,
-                                ['use_point_min_price']: e.target.value
                               }
                             })
                           }}
@@ -1145,6 +1202,11 @@ const DefaultSetting = () => {
                           }}
                         />
                       </FormControl>
+                      <Typography variant='caption' sx={{ color: 'text.disabled', lineHeight: 1.8 }}>
+                        · 즉시사용형: 주문금액이 최소 주문금액 이상이면 포인트 사용 가능<br />
+                        · 적립형: 보유 포인트가 최소 적립 포인트 이상 모이면 사용 가능<br />
+                        · 적립비율·최대 사용금액은 두 방식 공통 적용
+                      </Typography>
                     </Stack>
                   </Card>
                 </Grid>

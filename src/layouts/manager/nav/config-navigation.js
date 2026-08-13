@@ -186,6 +186,17 @@ export const navConfig = () => {
       {
         items: [
           { title: '혜택 안내(전 가맹점)', path: PATH_MANAGER.designs.benefitNotice, icon: ICONS.label },
+          // '입력항목 서식'(마스터가 만드는 템플릿)은 메뉴에서 내렸다.
+          //
+          // 왜: 손님 입력항목(행사날짜 등)은 가맹점이 **상품마다** 직접 건다.
+          // 템플릿은 '같은 업종 가맹점이 여럿일 때 한 번 만들어 돌려쓰는' 물건인데,
+          // 지금 예약형 가맹점은 첫돌공방 하나뿐이라 돌려쓸 상대가 없다.
+          // 빈 화면을 메뉴에 두면 '이건 뭐지'가 매번 반복된다.
+          //
+          // ⚠ 지운 게 아니다. 페이지·테이블·API(/order-forms/templates)는 그대로 살아 있고
+          //   상품등록의 '서식 불러오기' 도 계속 동작한다(템플릿이 있으면 버튼이 뜬다).
+          //   돌잔치·출장 업체가 둘 이상 되면 **아래 한 줄의 주석만 풀면** 된다.
+          // { title: '입력항목 서식', path: PATH_MANAGER.designs.orderForm, icon: ICONS.file },
         ],
       },
       // 유저관리: 최상위(개발사, 레벨50)만 노출 — shopgo 운영자 계정 추가/관리용
@@ -297,7 +308,8 @@ export const navConfig = () => {
               // 포인트관리 메뉴가 주석이라, 고객은 주문서에서 포인트를 쓸 수 있는데
               // 가맹점은 포인트를 지급·조정할 방법이 아예 없었다(페이지 자체는 정상 동작한다 —
               // 주소창에 직접 넣으면 목록·지급 모두 된다). 메뉴만 되살린다.
-              { title: '포인트관리', path: PATH_MANAGER.users.points },
+              // shopgo(본사·산하)는 기존 포인트관리 메뉴 미노출 — 새 포인트 정책으로 대체 예정. 타 클라이언트는 유지.
+              ...(!isShopgoBrand(themeDnsData) ? [{ title: '포인트관리', path: PATH_MANAGER.users.points }] : []),
               //{ title: '찜관리', path: PATH_MANAGER.users.wishs },
             ] : []),
             ...(themeDnsData?.is_use_seller > 0 && user.level >= 10 ? [{ title: '회원가입번호관리', path: PATH_MANAGER.users.phoneRegistration }] : []),

@@ -6,6 +6,7 @@ import { Icon } from "@iconify/react"
 import { Row } from 'src/components/elements/styled-components'
 import { useTheme } from '@mui/material/styles';
 import { useSettingsContext } from "src/components/settings"
+import { isShopgoBrand } from "src/utils/is-shopgo"
 import { test_categories } from "src/data/test-data"
 import { useRouter } from "next/router"
 import DialogSearch from "src/components/dialog/DialogSearch"
@@ -196,12 +197,12 @@ const Header = (props) => {
                             >
                                 <Icon icon={'basil:shopping-bag-outline'} fontSize={'1.8rem'} color={themeMode == 'dark' || ((isSellerPage || isProductPage) && scrollY < 350) ? '#fff' : '#000'} />
                             </IconButton>
-                            <IconButton
+                            {!isShopgoBrand(themeDnsData) && <IconButton
                                 sx={iconButtonStyle}
                                 onClick={() => onToggleMode()}
                             >
                                 <Icon icon={themeMode === 'dark' ? 'tabler:sun' : 'tabler:moon-stars'} fontSize={'1.5rem'} color={themeMode == 'dark' || ((isSellerPage || isProductPage) && scrollY < 350) ? '#fff' : '#000'} />
-                            </IconButton>
+                            </IconButton>}
                         </TopMenuContainer>
                     </Wrappers>
                 </>}

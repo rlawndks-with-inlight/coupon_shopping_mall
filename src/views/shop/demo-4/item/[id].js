@@ -3,6 +3,8 @@ import { Box, Tab, Tabs, Card, Grid, Divider, Typography, Button, Radio, FormCon
 import { useSettingsContext } from 'src/components/settings';
 import { ProductDetailsCarousel, ProductDetailsReview } from 'src/views/@dashboard/e-commerce/details';
 import { useEffect, useState } from 'react';
+import ProductAddons from 'src/components/elements/shop/ProductAddons';
+import { requiredGroups } from 'src/data/product-options';
 import { SkeletonProductDetails } from 'src/components/skeleton';
 import dynamic from 'next/dynamic'
 import { apiManager, apiShop } from 'src/utils/api';
@@ -296,7 +298,7 @@ const ItemDemo = (props) => {
               이 다이얼로그는 특성(characters)만 그렸다. 그래서 관리자에서 '옵션'을 등록한 상품은
               프레임3에서 고를 방법이 없었고, 공용 검사(assertOptionsSelected)가 '그룹마다 하나 이상'을
               요구하므로 구매·장바구니가 통째로 막혔다. 옵션 추가금액도 붙지 않았다. */}
-          {product?.groups && product?.groups.map((group, gIdx) => (
+          {requiredGroups(product).map((group, gIdx) => (
             <Stack key={group?.id ?? gIdx} direction="row" justifyContent="space-between">
               <FormControl sx={{ width: '100%', marginTop: '1rem' }}>
                 <InputLabel>{formatLang(group, 'group_name')}</InputLabel>
@@ -318,6 +320,8 @@ const ItemDemo = (props) => {
               </FormControl>
             </Stack>
           ))}
+          {/* 추가상품 — 안 골라도 살 수 있다. 프레임 전체가 같은 컴포넌트를 쓴다. */}
+          <ProductAddons product={product} selected={selectProductGroups} onSelect={onSelectOption} style={{ marginTop: '1rem' }} />
           {product?.characters && product?.characters.map((character) => (
             <>
               <Stack direction="row" justifyContent="space-between">

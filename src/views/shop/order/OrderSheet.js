@@ -16,8 +16,9 @@ import EmptyContent from 'src/components/empty-content/EmptyContent';
 import Iconify from 'src/components/iconify/Iconify';
 import { useSettingsContext } from 'src/components/settings';
 import { calcOrderTotals, calculatorPrice, getCartDataUtil, makePayData, onPayProductsByAuth, onPayProductsByHand, onPayProductsByPayletter, onPayProductsByForspay } from 'src/utils/shop-util';
+import { findMissingRequired } from 'src/data/order-form-types';
 import { syncCartWithServer, makeUnavailableMessage, filterUnavailableByProducts } from 'src/utils/cart-sync';
-import { forspayMethodList } from 'src/utils/format';
+import { forspayMethodList, formatLang } from 'src/utils/format';
 import { sanitizePhoneInput, isValidPhoneNumber, makeOrdNum } from 'src/utils/function';
 import { KOREA_CODE, OVERSEAS_CODE, formatOverseasAddress, isDomestic } from 'src/data/countries';
 import Policy from 'src/pages/shop/auth/policy';
@@ -60,7 +61,7 @@ const AMOUNT_MISMATCH_HINT = '결제금액이 변경';
 export default function OrderSheet({ router }) {
   const { setModal } = useModal();
   // 주문서는 다국어를 전혀 거치지 않았다 — 결제 직전 화면인데 라벨이 전부 한국어였다.
-  const { translate } = useLocales();
+  const { translate, currentLang } = useLocales();
   // ⚠ 배송 방식은 country_code 로 판정하면 안 된다.
   //    isDomestic('') 는 true 다(빈 값을 KR 로 보정). 해외를 고르면 country_code 를 비우는데
   //    그게 다시 '국내'로 읽혀 토글이 즉시 되돌아왔다 — 눌리지 않는 것처럼 보였다.
@@ -70,7 +71,7 @@ export default function OrderSheet({ router }) {
   const { user } = useAuthContext();
   const { themeCartData, onChangeCartData, themeDnsData } = useSettingsContext();
   const setting_obj = themeDnsData?.setting_obj || {};
-  const { max_use_point = 0, point_rate = 0, use_point_min_price = 0 } = setting_obj;
+  const { max_use_point = 0, point_rate = 0, use_point_min_price = 0, point_policy_type = 'instant', point_use_min = 0 } = setting_obj;
 
   const [products, setProducts] = useState([]);
   // 서버 동기화가 알려준 '구매할 수 없는 상품' 목록(원본).
@@ -326,6 +327,21 @@ export default function OrderSheet({ router }) {
       toast.error(translate("배송지를 선택하거나 입력해 주세요."));
       return false;
     }
+    // 주문 추가 입력항목의 필수 검사는 상품상세(담기·바로구매)에서 이미 지났다.
+    // 다만 서식이 나중에 바뀌었거나 예전에 담아 둔 장바구니 줄은 값이 비어 있을 수 있으므로
+    // 결제 직전에 한 번 더 본다 — 여기서 막지 않으면 필수 정보 없는 주문이 접수된다.
+    //
+    // ⚠ 항목은 **줄마다 다르다**. 상품마다 거는 것이라 한 주문에 행사날짜를 묻는 상품과
+    //   안 묻는 상품이 섞인다. 예전처럼 몰 설정에서 한 벌만 읽으면 엉뚱한 줄을 검사한다.
+    for (const p of products) {
+      const 항목 = Array.isArray(p?.order_form_fields) ? p.order_form_fields : [];
+      if (!항목.length) continue;
+      const 빠진항목 = findMissingRequired(항목, p?.order_form_values);
+      if (빠진항목) {
+        toast.error(translate('{{name}}을(를) 입력해 주세요.', { name: formatLang(빠진항목, 'label', currentLang) }));
+        return false;
+      }
+    }
     if (!user && !payData.password) {
       toast.error(translate("비회원 주문 비밀번호를 입력해 주세요."));
       return false;
@@ -371,6 +387,11 @@ export default function OrderSheet({ router }) {
     }
     if (parseFloat(max_use_point) < parseFloat(payData.use_point || 0)) {
       toast.error(translate("최대사용가능 포인트를 초과하였습니다."));
+      return false;
+    }
+    // 적립형: 보유 포인트가 최소 적립 기준(point_use_min) 미만이면 포인트 사용 불가.
+    if (point_policy_type === 'accumulate' && parseFloat(payData.use_point || 0) > 0 && parseFloat(user?.point ?? 0) < parseFloat(point_use_min || 0)) {
+      toast.error(translate("적립 포인트가 최소 사용 기준에 도달하지 않았습니다."));
       return false;
     }
     if (parseFloat(user?.point ?? 0) < parseFloat(payData.use_point || 0)) {
@@ -814,6 +835,10 @@ export default function OrderSheet({ router }) {
                 </CardContent>
               </Card>
 
+              {/* ※ 주문 추가 입력항목(행사일 등)은 여기가 아니라 **상품상세**에서 받는다.
+                  값은 장바구니 줄(products[i].order_form_values)에 실려 그대로 백엔드로 간다.
+                  주문서에서 한 번만 받던 때는 날짜가 다른 두 상품을 담으면 하나밖에 못 받았다. */}
+
               {/* 결제수단 (약관 동의 후 선택) */}
               <Card sx={{ mb: 3 }}>
                 <CardHeader title={translate('결제수단')} />
@@ -872,8 +897,8 @@ export default function OrderSheet({ router }) {
                           <Stack direction="row" spacing={1.5} alignItems="center">
                             {fm?.icon && <Iconify icon={fm.icon} width={26} sx={{ color: fm.color, flexShrink: 0 }} />}
                             <Box>
-                              <Typography variant="subtitle2">{item.title}</Typography>
-                              {item.description && <Typography variant="body2" sx={{ color: 'text.secondary' }}>{item.description}</Typography>}
+                              <Typography variant="subtitle2">{translate(item.title)}</Typography>
+                              {item.description && <Typography variant="body2" sx={{ color: 'text.secondary' }}>{translate(item.description)}</Typography>}
                             </Box>
                           </Stack>
                         </Paper>
@@ -968,7 +993,7 @@ export default function OrderSheet({ router }) {
                   {buyType == 'card_fintree' && (
                     <Box sx={{ mt: 3 }}>
                       <Divider sx={{ mb: 2 }} />
-                      <Typography variant="subtitle1" sx={{ mb: 1 }}>{payData?.payment_modules?.title}</Typography>
+                      <Typography variant="subtitle1" sx={{ mb: 1 }}>{translate(payData?.payment_modules?.title || '')}</Typography>
                       <Stack spacing={2}>
                         <Cards cvc={''} focused={undefined} expiry={payData.yymm} name={payData.buyer_name} number={payData.card_num} />
                         <TextField size="small" label={translate('카드 번호')} value={payData.card_num} placeholder="0000 0000 0000 0000"

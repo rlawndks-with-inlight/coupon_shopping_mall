@@ -6,12 +6,24 @@ import toast from "react-hot-toast";
 import { returnMoment, isPurchasable, getProductStatus } from "./function";
 import { getLocalStorage } from "./local-storage";
 import { isDemoHost } from "src/components/main-site/frameList";
+import { findMissingRequired } from "src/data/order-form-types";
+import { requiredGroups, isComboMode, findCombination, optionExtraPrice, maxOrderable } from "src/data/product-options";
 import { makeOrdNum } from 'src/utils/function';
 
 // 브랜드 공통 배송비 정책 (설정 > 배송비설정). 정책이 설정된 경우에만 활성.
 // - delivery_fee_default: 주문당 기본 배송비
 // - free_ship_min: 이 금액 이상이면 무료배송(0=미사용)
 // 정책 미설정(둘 다 0) 브랜드는 active:false → 기존 상품별 배송비 동작을 그대로 유지(하위호환).
+// 이 상품에 걸린 손님 입력항목. 없으면 빈 배열.
+//
+// 상품 상세 응답(product.order_form_fields)에 실려 오고, 장바구니 줄에도 그대로 남는다.
+// 예전엔 몰 설정(themeDnsData.order_form)에서 읽어 **그 몰의 모든 상품**에 같은 칸이 떴다 —
+// 답례품만 사는 손님에게도 행사날짜를 물었다.
+export const getOrderFormFields = (product) => {
+    const fields = product?.order_form_fields;
+    return Array.isArray(fields) ? fields : [];
+};
+
 export const getBrandShipping = (merchandiseSubtotal = 0) => {
     try {
         const dns = JSON.parse(getLocalStorage('themeDnsData') || '{}');
@@ -32,13 +44,10 @@ export const calculatorPrice = (item) => {// 상품별로 가격
         return 0;
     }
     let { product_sale_price, product_price, groups = [], order_count, delivery_fee } = item;
-    let product_option_price = 0;
-
-    for (var i = 0; i < groups.length; i++) {
-        for (var j = 0; j < groups[i]?.options.length; j++) {
-            product_option_price += groups[i]?.options[j]?.option_price ?? 0;
-        }
-    }
+    // 조합형이면 선택옵션의 개별 가격 대신 조합 추가금을 쓴다.
+    // 장바구니 줄은 상품을 통째로 복사하므로 combinations/option_mode 가 줄에 그대로 남아 있다.
+    // 백엔드 recalcOrderAmount 와 규칙이 같아야 한다 — 어긋나면 화면과 청구 금액이 달라진다.
+    const product_option_price = optionExtraPrice(item, { groups });
 
     return {
         subtotal: (product_price + product_option_price) * order_count + delivery_fee,//할인전가격
@@ -441,8 +450,11 @@ const isSameOptionGroup = (saved, group) => {
 //   고를 방법이 없는 화면에서 담기·바로구매가 영구히 막힌다.
 //   반대로 옵션그룹은 **모든 프레임 상세가 그리도록** 맞춰 두었다(프레임2·3 은 이 검사를 넣은 뒤에야
 //   옵션그룹 UI 가 없다는 사실이 드러나서 함께 추가했다). 새 프레임을 만들 때도 같은 전제를 지켜야 한다.
+// ⚠ 추가상품(group_type=1)은 **필수가 아니다**. 이것이 이번 개편의 핵심이다.
+//   예전엔 모든 그룹이 필수였다. 그래서 '한복 +10,000 / 스냅 +300,000' 을 각각
+//   선택지 1개짜리 그룹으로 만든 가맹점의 상품은 355,000원을 붙여야만 살 수 있었다.
 const assertOptionsSelected = (product, selectProductGroups) => {
-    const required = Array.isArray(product?.groups) ? product.groups : [];
+    const required = requiredGroups(product);
     if (required.length == 0) return true;
     const picked = Array.isArray(selectProductGroups?.groups) ? selectProductGroups.groups : [];
     const allPicked = required.every((g) => picked.some(
@@ -452,17 +464,61 @@ const assertOptionsSelected = (product, selectProductGroups) => {
         toast.error('옵션을 선택해 주세요.');
         return false;
     }
+    // 조합형은 '고른 조합이 실제로 파는 조합인지'까지 봐야 한다.
+    // 등록 안 된 조합(예: 분홍/XL 은 안 만듦)을 통과시키면 추가금 0원으로 결제된다.
+    if (isComboMode(product) && (product?.combinations?.length ?? 0) > 0) {
+        if (!findCombination(product, selectProductGroups)) {
+            toast.error('선택하신 조합은 판매하지 않습니다.');
+            return false;
+        }
+    }
     return true;
 };
 
+// 재고 안에 드는지. 화면이 이미 막고 있지만, 장바구니에 담아 둔 사이 재고가 줄 수 있다.
+// 최종 차단은 서버(checkStock)가 하고 여기서는 먼저 알려준다.
+const assertStock = (product, selectProductGroups) => {
+    const 한도 = maxOrderable(product, selectProductGroups);
+    if (한도 === null) return true; // 무제한
+    const 수량 = Math.max(1, parseInt(selectProductGroups?.count) || 1);
+    if (한도 <= 0) { toast.error('품절된 상품입니다.'); return false; }
+    if (수량 > 한도) { toast.error(`재고가 ${한도}개 남았습니다.`); return false; }
+    return true;
+};
+
+// 주문 추가 입력항목(행사일·행사장소 등)의 필수 검사.
+//
+// 옵션 검사와 같은 관문에 둔다 — 담기·바로구매 양쪽이 이미 여기를 지나므로,
+// 한 쪽만 검사하는 실수가 생기지 않는다.
+// 무엇이 빠졌는지 이름으로 알려줘야 한다. '필수 항목을 입력하세요'만 뜨면
+// 항목이 여럿일 때 어디를 채워야 하는지 알 수 없다.
+const assertOrderFormFilled = (product) => {
+    const fields = getOrderFormFields(product);
+    if (!fields.length) return true; // 입력항목이 안 걸린 상품 — 대부분이 여기다
+    const missing = findMissingRequired(fields, product?.order_form_values);
+    if (missing) {
+        toast.error(`${missing.label}을(를) 입력해 주세요.`);
+        return false;
+    }
+    return true;
+};
+
+// ⚠ 추가 입력값은 **상품 객체에 실어** 넘긴다(product.order_form_values).
+//   인자를 하나 더 두면 담기·바로구매·구매 다이얼로그 등 부르는 자리마다 고쳐야 하고,
+//   한 곳만 빠뜨리면 그 경로에서만 값이 조용히 사라진다.
+//   상품에 붙여 두면 DialogBuyNow 처럼 product 를 그대로 넘기는 곳도 저절로 따라온다.
 export const startBuyNow = (product, selectProductGroups, router) => {
     try {
         if (!assertPurchasable(product)) return false;
         if (!assertOptionsSelected(product, selectProductGroups)) return false;
+        if (!assertStock(product, selectProductGroups)) return false;
+        if (!assertOrderFormFilled(product)) return false;
         const item = {
             ...product,
             groups: selectProductGroups?.groups ?? [],
             order_count: selectProductGroups?.count ?? 1,
+            // 값은 이 줄에 붙어 주문서를 거쳐 백엔드까지 그대로 간다.
+            order_form_values: product?.order_form_values ?? {},
         };
         sessionStorage.setItem('buyNowItem', JSON.stringify(item));
         router.push('/shop/auth/order?buynow=1');
@@ -485,7 +541,23 @@ export const cartLineSignature = (line) => {
         .map((g) => `${g?.id ?? g?.character_name ?? g?.group_name ?? ''}:${(g?.options ?? []).map((o) => o?.id ?? o?.value ?? o?.option_name ?? '').sort().join('|')}`)
         .sort()
         .join(';');
-    return `${line?.id ?? 0}/${line?.seller_id ?? 0}/${picked}`;
+    // ⚠ 추가 입력값도 시그니처에 넣는다.
+    //   안 넣으면 '같은 한복을 9월 1일과 9월 8일에 각각' 담았을 때 한 줄로 합쳐지고
+    //   날짜 하나가 조용히 사라진다(수량만 2가 된다).
+    return `${line?.id ?? 0}/${line?.seller_id ?? 0}/${picked}/${orderFormSignature(line?.order_form_values)}`;
+};
+
+// 입력값을 순서에 무관하게 문자열 하나로. 값이 없으면 빈 문자열이라 기존 줄과 그대로 맞는다.
+const orderFormSignature = (values) => {
+    if (!values || typeof values !== 'object') return '';
+    return Object.keys(values)
+        .filter((k) => {
+            const v = values[k];
+            return !(v === undefined || v === null || v === false || String(v).trim() === '');
+        })
+        .sort()
+        .map((k) => `${k}=${Array.isArray(values[k]) ? [...values[k]].sort().join('|') : values[k]}`)
+        .join('&');
 };
 
 export const insertCartDataUtil = (
@@ -500,6 +572,10 @@ export const insertCartDataUtil = (
     try {
         if (!assertPurchasable(product_)) return false;
         if (!assertOptionsSelected(product_, selectProductGroups_)) return false;
+        if (!assertStock(product_, selectProductGroups_)) return false;
+        // 값은 상품 객체에 실려 온다(startBuyNow 주석 참고).
+        const orderFormValues = product_?.order_form_values;
+        if (!assertOrderFormFilled(product_)) return false;
         let cart_data = [...themeCartData];
         let product = product_;
         let selectProductGroups = selectProductGroups_;
@@ -512,7 +588,7 @@ export const insertCartDataUtil = (
         //   · 장바구니에 똑같은 줄이 여러 개 쌓이고
         //   · 목록 key 가 row.id 라 React key 가 중복되며(수량 변경이 엉뚱한 줄에 먹는다)
         //   · 상품별 배송비를 쓰는 브랜드는 배송비가 줄 수마다 중복 계산됐다.
-        const signature = cartLineSignature({ id: product?.id, seller_id: product?.seller_id, groups });
+        const signature = cartLineSignature({ id: product?.id, seller_id: product?.seller_id, groups, order_form_values: orderFormValues });
         const found_idx = cart_data.findIndex((line) => cartLineSignature(line) === signature);
         if (found_idx >= 0) {
             const prev = cart_data[found_idx];
@@ -525,6 +601,7 @@ export const insertCartDataUtil = (
                 ...product,
                 order_count,
                 groups,
+                order_form_values: orderFormValues ?? {},
             });
         }
         onChangeCartData(cart_data);
@@ -599,12 +676,19 @@ export const selectItemOptionUtil = (group, option, selectProductGroups, is_opti
         const current = groups[find_group_idx];
         let options = [...(current?.options ?? [])];
         if (is_option_multiple) {
-            const already = options.some(saved => isSameSelectedOption(saved, option));
-            if (!already) options.push(normalizeSelectedOption(option));
+            // 추가상품은 다시 누르면 빠진다.
+            // 예전엔 넣기만 하고 빼는 길이 없어서, 잘못 고른 추가금을 지우려면
+            // 페이지를 새로고침하는 수밖에 없었다.
+            const idx = options.findIndex(saved => isSameSelectedOption(saved, option));
+            if (idx >= 0) options.splice(idx, 1);
+            else options.push(normalizeSelectedOption(option));
         } else {
             options = [normalizeSelectedOption(option)];
         }
-        groups[find_group_idx] = { ...current, options };
+        // 다 뺐으면 그룹 자체를 지운다 — 빈 그룹이 남으면 '고른 것'으로 세어져
+        // 필수 검사와 장바구니 시그니처가 어긋난다.
+        if (!options.length) groups.splice(find_group_idx, 1);
+        else groups[find_group_idx] = { ...current, options };
     } else {
         groups.push({
             ...group,

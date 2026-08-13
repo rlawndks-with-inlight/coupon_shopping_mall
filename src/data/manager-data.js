@@ -57,6 +57,8 @@ export const PATH_MANAGER = {
     popup: path(ROOTS_MANAGER, '/designs/popup'),
     // 상품상세 혜택 안내 — 본사 전용. 여기서 넣은 것이 전 가맹점 상품상세에 그대로 나간다.
     benefitNotice: path(ROOTS_MANAGER, '/designs/benefit-notice'),
+    // 주문서 추가 입력항목 — 본사 전용. 예약·출장 업체에만 골라서 적용한다.
+    orderForm: path(ROOTS_MANAGER, '/designs/order-form'),
     itemCard: path(ROOTS_MANAGER, '/designs/item-card'),
     blogItemCard: path(ROOTS_MANAGER, '/designs/blog-item-card'),
     settings: path(ROOTS_MANAGER, '/designs/settings')

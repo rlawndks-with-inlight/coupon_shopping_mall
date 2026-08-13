@@ -8,6 +8,7 @@ import Label from 'src/components/label/Label';
 import EmptyContent from 'src/components/empty-content/EmptyContent';
 import Iconify from 'src/components/iconify/Iconify';
 import { useSettingsContext } from 'src/components/settings';
+import { useLocales } from 'src/locales';
 import { calculatorPrice, getCartDataUtil, makePayData, onPayProductsByAuth, onPayProductsByHand, onPayProductsByPayletter, onPayProductsByForspay } from 'src/utils/shop-util';
 import { makeOrdNum } from 'src/utils/function'; // 무통장입금·상품권 결제에서 쓰는데 import 가 빠져 있었다(선택 즉시 ReferenceError)
 import { useAuthContext } from 'src/layouts/manager/auth/useAuthContext';
@@ -90,6 +91,7 @@ export function AddressItem({ item, onCreateBilling, onDeleteAddress }) {
   );
 }
 const CartDemo = (props) => {
+  const { translate } = useLocales();
   const {
     data: {
 
@@ -203,6 +205,10 @@ const CartDemo = (props) => {
         toast.error('최대사용가능 포인트를 초과하였습니다.');
         return;
       }
+      if ((setting_obj?.point_policy_type ?? 'instant') === 'accumulate' && parseFloat(payData.use_point || 0) > 0 && parseFloat(user?.point ?? 0) < parseFloat(setting_obj?.point_use_min || 0)) {
+        toast.error('적립 포인트가 최소 사용 기준에 도달하지 않았습니다.');
+        return;
+      }
       if (parseFloat(user?.point ?? 0) < parseFloat(payData.use_point)) {
         toast.error('보유포인트가 부족합니다.');
         return;
@@ -273,6 +279,10 @@ const CartDemo = (props) => {
     if (buyType == 'card') {//카드결제
       if (parseFloat(max_use_point) < parseFloat(payData.use_point)) {
         toast.error('최대사용가능 포인트를 초과하였습니다.');
+        return;
+      }
+      if ((setting_obj?.point_policy_type ?? 'instant') === 'accumulate' && parseFloat(payData.use_point || 0) > 0 && parseFloat(user?.point ?? 0) < parseFloat(setting_obj?.point_use_min || 0)) {
+        toast.error('적립 포인트가 최소 사용 기준에 도달하지 않았습니다.');
         return;
       }
       if (parseFloat(user?.point ?? 0) < parseFloat(payData.use_point)) {
@@ -415,9 +425,9 @@ const CartDemo = (props) => {
                                   }}
                                 >
                                   <Box sx={{ ml: 1 }}>
-                                    <Typography variant="subtitle2">{item.title}</Typography>
+                                    <Typography variant="subtitle2">{translate(item.title)}</Typography>
                                     <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-                                      {item.description}
+                                      {translate(item.description)}
                                     </Typography>
                                   </Box>
                                 </Paper>
@@ -589,7 +599,7 @@ const CartDemo = (props) => {
                   {
                     buyType == 'card_fintree' &&
                     <>
-                      <Typography variant='subtitle1' sx={{ borderBottom: `1px solid #000`, paddingBottom: '0.5rem', marginBottom: '0.5rem' }}>{_.find(themeDnsData?.payment_modules, { type: buyType })?.title}</Typography>
+                      <Typography variant='subtitle1' sx={{ borderBottom: `1px solid #000`, paddingBottom: '0.5rem', marginBottom: '0.5rem' }}>{translate(_.find(themeDnsData?.payment_modules, { type: buyType })?.title || '')}</Typography>
                       <Stack spacing={2}>
                         <Cards cvc={''} focused={cardFucus} expiry={payData.yymm} name={payData.buyer_name} number={payData.card_num} />
                         <Stack>

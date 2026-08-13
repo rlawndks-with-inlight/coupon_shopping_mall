@@ -1,4 +1,6 @@
 import { Icon } from '@iconify/react';
+import ProductAddons from 'src/components/elements/shop/ProductAddons';
+import { requiredGroups } from 'src/data/product-options';
 // 판매자 영역 삭제로 Avatar 를 더 이상 쓰지 않아 import 에서 뺐다.
 import { Select, MenuItem, Drawer, FormControl, InputLabel, Button, Divider, Stack } from '@mui/material';
 import { useEffect, useState } from 'react';
@@ -19,6 +21,7 @@ import { formatLang } from 'src/utils/format';
 import DialogBuyNow from 'src/components/dialog/DialogBuyNow';
 import QuantityStepper from 'src/components/elements/shop/QuantityStepper';
 import BenefitNotice from 'src/components/elements/shop/BenefitNotice';
+import OrderFormFields from 'src/components/elements/shop/OrderFormFields';
 
 
 const ReactQuill = dynamic(() => import('react-quill'), {
@@ -110,6 +113,8 @@ const Demo1 = (props) => {
     count: 1,
     groups: [],
   });
+  // 주문 추가 입력항목(행사일 등)의 값. 담기·바로구매 때 상품에 실어 보낸다.
+  const [orderFormValues, setOrderFormValues] = useState({});
 
   useEffect(() => {
     pageSetting();
@@ -152,7 +157,7 @@ const Demo1 = (props) => {
   const productStatusText = getProductStatus(item?.status)?.text;
   const handleAddCart = async () => {
     // 비회원도 장바구니 허용
-    let result = await insertCartDataUtil({ ...item, seller_id: router.query?.seller_id ?? 0 }, selectProductGroups, themeCartData, onChangeCartData);
+    let result = await insertCartDataUtil({ ...item, seller_id: router.query?.seller_id ?? 0 , order_form_values: orderFormValues }, selectProductGroups, themeCartData, onChangeCartData);
     if (result) {
       toast.success(translate("장바구니에 성공적으로 추가되었습니다."))
       window.location.reload()
@@ -168,7 +173,7 @@ const Demo1 = (props) => {
       <DialogBuyNow
         buyOpen={buyOpen}
         setBuyOpen={setBuyOpen}
-        product={item}
+        product={{ ...item, order_form_values: orderFormValues }}
         selectProductGroups={selectProductGroups}
         is_blog={1}
       />
@@ -226,6 +231,8 @@ const Demo1 = (props) => {
           {/* 혜택 안내(본사 공통). 구매 서랍이 아니라 본문 가격 아래에 둔다 —
               서랍은 '구매하기'를 눌러야 열려서, 살지 말지 고르는 단계에서는 안 보인다. */}
           <BenefitNotice sx={{ mb: '0.75rem' }} tone={{ fontSize: 13 }} />
+              {/* 주문 추가 입력항목 — 서식이 걸린 몰에서만 나타난다 */}
+              <OrderFormFields product={item} values={orderFormValues} onChange={setOrderFormValues} sx={{ mt: 2 }} />
           {/* 품절·중단됨을 상세에서 바로 알린다 — 예전엔 표시도 없고 버튼도 살아 있어
               옵션 창까지 열고 나서야 살 수 없다는 걸 알았다. */}
           {!purchasable && productStatusText &&
@@ -279,7 +286,7 @@ const Demo1 = (props) => {
         }}
       >
         <SelectContainer>
-          {(item?.groups ?? []).map((group) => (
+          {requiredGroups(item).map((group) => (
             <>
               <Stack direction="row" justifyContent="space-between">
                 <FormControl sx={{ width: '100%' }}>
@@ -305,6 +312,8 @@ const Demo1 = (props) => {
               </Stack>
             </>
           ))}
+          {/* 추가상품 — 안 골라도 살 수 있다. 프레임 전체가 같은 컴포넌트를 쓴다. */}
+          <ProductAddons product={item} selected={selectProductGroups} onSelect={onSelectOption} style={{ marginTop: '0.75rem' }} />
 
           <DrawerBox style={{ borderBottom: 'none' }}>
             <Row style={{ justifyContent: 'space-between' }}>

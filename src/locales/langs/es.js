@@ -798,6 +798,10 @@ const es = {
   // 포인트 정책(적립형) — 커밋 6ebd1784 에서 쓰는데 사전에 없었다
   "적립 포인트가 최소 사용 기준에 도달하지 않았습니다.": "Sus puntos acumulados no alcanzan el mínimo requerido para usarlos.",
   "추가 입력 정보": "Información adicional",
+  // 한정판(1인당 구매 개수)
+  "한정 상품": "Artículo limitado",
+  "1인 {{n}}개까지 구매할 수 있습니다.": "Máximo {{n}} por persona.",
+  "회원만 구매할 수 있습니다.": "Solo para miembros.",
 };
 
 export default es;

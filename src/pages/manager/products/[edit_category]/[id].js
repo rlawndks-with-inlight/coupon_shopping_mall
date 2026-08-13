@@ -30,6 +30,7 @@ import ProductOptionEditor from 'src/components/manager/ProductOptionEditor';
 const 옵션페이로드 = (item) => ({
   option_mode: Number(item?.option_mode) === 1 ? 1 : 0,
   stock_qty: item?.stock_qty ?? '',
+  purchase_limit: item?.purchase_limit ?? '',
   combinations: JSON.stringify((item?.combinations ?? []).filter((c) => (c?.option_names?.length ?? 0) > 0)),
   order_form_fields: JSON.stringify(item?.order_form_fields ?? []),
 });
@@ -654,6 +655,7 @@ const ProductEdit = () => {
     order_form_fields: [],
     option_mode: 0,
     stock_qty: '',
+    purchase_limit: '',
     point_save: 0,
     point_usable: 1,
     cash_usable: 1,
@@ -754,6 +756,7 @@ const ProductEdit = () => {
       product.properties = property_obj;
       // 재고는 NULL 이 '무제한'이다. null 을 그대로 넣으면 MUI 입력칸이 비제어로 바뀌며 경고가 뜬다.
       product.stock_qty = product?.stock_qty ?? '';
+      product.purchase_limit = product?.purchase_limit ?? '';
       product.option_mode = Number(product?.option_mode) || 0;
       product.combinations = product?.combinations ?? [];
       product.order_form_fields = product?.order_form_fields ?? [];

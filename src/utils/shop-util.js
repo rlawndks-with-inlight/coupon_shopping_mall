@@ -455,6 +455,14 @@ const isSameOptionGroup = (saved, group) => {
 //   선택지 1개짜리 그룹으로 만든 가맹점의 상품은 355,000원을 붙여야만 살 수 있었다.
 const assertOptionsSelected = (product, selectProductGroups) => {
     const required = requiredGroups(product);
+    // 목록 카드는 옵션을 안 싣고 담기를 부른다(선택 정보도 없다).
+    // 그때 required 가 비어 있다고 통과시키면 옵션 없는 주문이 그대로 접수된다 —
+    // 그래서 목록 응답에 '골라야 할 옵션이 몇 개인지'(required_option_count)만 실어 두고
+    // 여기서 본다. 개수가 있으면 고를 화면으로 보내야 한다.
+    if (required.length == 0 && Number(product?.required_option_count) > 0) {
+        toast.error('옵션을 선택해 주세요.');
+        return false;
+    }
     if (required.length == 0) return true;
     const picked = Array.isArray(selectProductGroups?.groups) ? selectProductGroups.groups : [];
     const allPicked = required.every((g) => picked.some(
@@ -471,6 +479,21 @@ const assertOptionsSelected = (product, selectProductGroups) => {
             toast.error('선택하신 조합은 판매하지 않습니다.');
             return false;
         }
+    }
+    return true;
+};
+
+// 한정판(1인당 구매수 제한)이 걸린 상품은 **회원만** 살 수 있다.
+//
+// 비회원은 같은 사람인지 확인할 방법이 없어서, 제한을 걸어도 지켜지지 않는다.
+// 여기서는 '로그인했는가'만 본다 — 몇 개까지 샀는지는 서버만 알 수 있다(checkPurchaseLimit).
+// 담기 단계에서 알려주지 않으면, 담아 놓고 결제 직전에야 못 산다는 걸 알게 된다.
+const assertMemberOnly = (product) => {
+    if (!(Number(product?.purchase_limit) > 0)) return true; // 한정 상품이 아니다
+    const 로그인 = typeof window !== 'undefined' && !!localStorage.getItem('accessToken');
+    if (!로그인) {
+        toast.error('회원만 구매할 수 있는 한정 상품입니다. 로그인 후 이용해 주세요.');
+        return false;
     }
     return true;
 };
@@ -510,6 +533,7 @@ const assertOrderFormFilled = (product) => {
 export const startBuyNow = (product, selectProductGroups, router) => {
     try {
         if (!assertPurchasable(product)) return false;
+        if (!assertMemberOnly(product)) return false;
         if (!assertOptionsSelected(product, selectProductGroups)) return false;
         if (!assertStock(product, selectProductGroups)) return false;
         if (!assertOrderFormFilled(product)) return false;
@@ -571,6 +595,7 @@ export const insertCartDataUtil = (
 ) => { //장바구니 버튼 클릭해서 넣기
     try {
         if (!assertPurchasable(product_)) return false;
+        if (!assertMemberOnly(product_)) return false;
         if (!assertOptionsSelected(product_, selectProductGroups_)) return false;
         if (!assertStock(product_, selectProductGroups_)) return false;
         // 값은 상품 객체에 실려 온다(startBuyNow 주석 참고).

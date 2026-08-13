@@ -37,16 +37,7 @@ const FramesPage = () => {
               <br />
               {st('frames.desc2')}
             </Typography>
-            {/* 미리보기는 콘텐츠가 채워진 예시 화면이라 개설 직후 빈 몰과 격차가 크다.
-                "본 화면 그대로 개설된다"는 오해를 카탈로그 단계에서 먼저 막는다. */}
-            <Typography sx={{ fontSize: 13, color: '#a8a8b0', maxWidth: 620, alignSelf: 'center', lineHeight: 1.7, textAlign: 'center', pt: 0.5 }}>
-              {st('frames.noticeContent')}
-            </Typography>
-            {/* 프레임을 고르는 것이 '몰 전체'를 고르는 것으로 읽히지 않게, 프레임이 정하는 범위를 먼저 밝힌다.
-                주문서·결제·주문내역 등은 어느 프레임을 골라도 같은 화면이다. */}
-            <Typography sx={{ fontSize: 13, color: '#a8a8b0', maxWidth: 620, alignSelf: 'center', lineHeight: 1.7, textAlign: 'center' }}>
-              {st('frames.groupNote')}
-            </Typography>
+            {/* 회색 안내 문장(noticeContent·groupNote)은 요청에 따라 제거(모바일·PC 공통). */}
           </Stack>
         </Container>
       </Box>

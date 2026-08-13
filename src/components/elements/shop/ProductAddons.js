@@ -16,7 +16,10 @@ import { addonGroups, isOptionSoldOut, isSameGroup } from 'src/data/product-opti
 const ProductAddons = ({ product, selected, onSelect, style = {} }) => {
     const { translate, currentLang } = useLocales();
     const 추가 = addonGroups(product);
-    if (!추가.length) return null;
+    // 한정판 안내도 여기서 그린다. 이 컴포넌트가 **프레임 11개 전부**에 들어가 있어서,
+    // 따로 만들면 프레임마다 또 배선해야 하고 한 곳만 빠뜨리면 그 프레임에서만 안 뜬다.
+    const 한정 = Number(product?.purchase_limit) > 0 ? Number(product.purchase_limit) : 0;
+    if (!추가.length && !한정) return null;
 
     const 골랐나 = (group, option) =>
         ((selected?.groups ?? []).find((g) => isSameGroup(g, group))?.options ?? [])
@@ -24,6 +27,14 @@ const ProductAddons = ({ product, selected, onSelect, style = {} }) => {
 
     return (
         <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', ...style }}>
+            {/* 한정판 — 담기 전에 알려야 한다. 담아 놓고 결제 직전에 막히면 그게 더 나쁘다. */}
+            {한정 > 0 &&
+                <div style={{ fontSize: '12px', opacity: 0.85, lineHeight: 1.6 }}>
+                    <b>{translate('한정 상품')}</b>{' · '}
+                    {translate('1인 {{n}}개까지 구매할 수 있습니다.', { n: 한정 })}<br />
+                    {translate('회원만 구매할 수 있습니다.')}
+                </div>}
+            {추가.length > 0 && <>
             <div style={{ fontSize: '13px', fontWeight: 700 }}>
                 {translate('추가 상품')}
                 {/* 안 골라도 된다는 것을 반드시 알려야 한다 — 예전 구조에선 전부 필수였다 */}
@@ -72,6 +83,7 @@ const ProductAddons = ({ product, selected, onSelect, style = {} }) => {
                     </div>
                 </div>
             ))}
+            </>}
         </div>
     );
 };

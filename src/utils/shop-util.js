@@ -483,6 +483,21 @@ const assertOptionsSelected = (product, selectProductGroups) => {
     return true;
 };
 
+// 한정판(1인당 구매수 제한)이 걸린 상품은 **회원만** 살 수 있다.
+//
+// 비회원은 같은 사람인지 확인할 방법이 없어서, 제한을 걸어도 지켜지지 않는다.
+// 여기서는 '로그인했는가'만 본다 — 몇 개까지 샀는지는 서버만 알 수 있다(checkPurchaseLimit).
+// 담기 단계에서 알려주지 않으면, 담아 놓고 결제 직전에야 못 산다는 걸 알게 된다.
+const assertMemberOnly = (product) => {
+    if (!(Number(product?.purchase_limit) > 0)) return true; // 한정 상품이 아니다
+    const 로그인 = typeof window !== 'undefined' && !!localStorage.getItem('accessToken');
+    if (!로그인) {
+        toast.error('회원만 구매할 수 있는 한정 상품입니다. 로그인 후 이용해 주세요.');
+        return false;
+    }
+    return true;
+};
+
 // 재고 안에 드는지. 화면이 이미 막고 있지만, 장바구니에 담아 둔 사이 재고가 줄 수 있다.
 // 최종 차단은 서버(checkStock)가 하고 여기서는 먼저 알려준다.
 const assertStock = (product, selectProductGroups) => {
@@ -518,6 +533,7 @@ const assertOrderFormFilled = (product) => {
 export const startBuyNow = (product, selectProductGroups, router) => {
     try {
         if (!assertPurchasable(product)) return false;
+        if (!assertMemberOnly(product)) return false;
         if (!assertOptionsSelected(product, selectProductGroups)) return false;
         if (!assertStock(product, selectProductGroups)) return false;
         if (!assertOrderFormFilled(product)) return false;
@@ -579,6 +595,7 @@ export const insertCartDataUtil = (
 ) => { //장바구니 버튼 클릭해서 넣기
     try {
         if (!assertPurchasable(product_)) return false;
+        if (!assertMemberOnly(product_)) return false;
         if (!assertOptionsSelected(product_, selectProductGroups_)) return false;
         if (!assertStock(product_, selectProductGroups_)) return false;
         // 값은 상품 객체에 실려 온다(startBuyNow 주석 참고).

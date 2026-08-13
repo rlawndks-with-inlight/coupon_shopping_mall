@@ -455,6 +455,14 @@ const isSameOptionGroup = (saved, group) => {
 //   선택지 1개짜리 그룹으로 만든 가맹점의 상품은 355,000원을 붙여야만 살 수 있었다.
 const assertOptionsSelected = (product, selectProductGroups) => {
     const required = requiredGroups(product);
+    // 목록 카드는 옵션을 안 싣고 담기를 부른다(선택 정보도 없다).
+    // 그때 required 가 비어 있다고 통과시키면 옵션 없는 주문이 그대로 접수된다 —
+    // 그래서 목록 응답에 '골라야 할 옵션이 몇 개인지'(required_option_count)만 실어 두고
+    // 여기서 본다. 개수가 있으면 고를 화면으로 보내야 한다.
+    if (required.length == 0 && Number(product?.required_option_count) > 0) {
+        toast.error('옵션을 선택해 주세요.');
+        return false;
+    }
     if (required.length == 0) return true;
     const picked = Array.isArray(selectProductGroups?.groups) ? selectProductGroups.groups : [];
     const allPicked = required.every((g) => picked.some(

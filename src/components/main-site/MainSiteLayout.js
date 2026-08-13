@@ -7,7 +7,7 @@ import LangSwitcher from './LangSwitcher';
 import { POLICY_DOCS } from './policyContent';
 
 export const SERVICE_NAME = 'ShopGo';
-export const COMPANY_NAME = '주식회사 우진플랫폼';
+export const COMPANY_NAME = '㈜우진플랫폼';
 export const COMPANY_ADDRESS = '서울시 영등포구 여의대방로 67길 11, 5층 에이5-41호(여의도동)';
 export const MAIN_DOMAIN = 'shopgo.co.kr';
 export const SHOP_INQUIRY_EMAIL = 'kimin6756@gmail.com'; // ㈜우진플랫폼 (쇼핑몰 문의)

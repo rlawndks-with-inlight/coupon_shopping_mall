@@ -892,8 +892,8 @@ export default function OrderSheet({ router }) {
                           <Stack direction="row" spacing={1.5} alignItems="center">
                             {fm?.icon && <Iconify icon={fm.icon} width={26} sx={{ color: fm.color, flexShrink: 0 }} />}
                             <Box>
-                              <Typography variant="subtitle2">{item.title}</Typography>
-                              {item.description && <Typography variant="body2" sx={{ color: 'text.secondary' }}>{item.description}</Typography>}
+                              <Typography variant="subtitle2">{translate(item.title)}</Typography>
+                              {item.description && <Typography variant="body2" sx={{ color: 'text.secondary' }}>{translate(item.description)}</Typography>}
                             </Box>
                           </Stack>
                         </Paper>
@@ -988,7 +988,7 @@ export default function OrderSheet({ router }) {
                   {buyType == 'card_fintree' && (
                     <Box sx={{ mt: 3 }}>
                       <Divider sx={{ mb: 2 }} />
-                      <Typography variant="subtitle1" sx={{ mb: 1 }}>{payData?.payment_modules?.title}</Typography>
+                      <Typography variant="subtitle1" sx={{ mb: 1 }}>{translate(payData?.payment_modules?.title || '')}</Typography>
                       <Stack spacing={2}>
                         <Cards cvc={''} focused={undefined} expiry={payData.yymm} name={payData.buyer_name} number={payData.card_num} />
                         <TextField size="small" label={translate('카드 번호')} value={payData.card_num} placeholder="0000 0000 0000 0000"

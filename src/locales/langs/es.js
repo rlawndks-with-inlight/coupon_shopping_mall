@@ -768,6 +768,25 @@ const es = {
     "주소가 바르게 입력되었는지 확인해 주세요. 문을 닫았거나 아직 개설되지 않은 쇼핑몰일 수 있습니다.": "Compruebe que la dirección sea correcta. Puede que la tienda haya cerrado o que aún no esté abierta.",
     "ShopGo 홈으로": "Ir a ShopGo",
     "무료 쇼핑몰 신청하기": "Crear una tienda gratis",
+    // Métodos de pago (Forspay) — etiquetas y descripciones; usadas con translate() en OrderSheet (claves = FORSPAY_METHODS del backend)
+    "신용카드": "Tarjeta de crédito/débito",
+    "실시간계좌이체": "Transferencia bancaria en tiempo real",
+    "카카오페이": "KakaoPay",
+    "네이버페이": "NaverPay",
+    "라인페이": "LINE Pay",
+    "해외발행카드": "Tarjeta emitida en el extranjero",
+    "위챗페이": "WeChat Pay",
+    "알리페이": "Alipay",
+    "삼성페이": "Samsung Pay",
+    "국내에서 발행된 신용·체크카드로 결제합니다.": "Pague con una tarjeta de crédito o débito emitida en Corea.",
+    "은행 계좌에서 실시간 이체로 결제합니다.": "Pague mediante transferencia en tiempo real desde su cuenta bancaria.",
+    "카카오페이로 간편하게 결제합니다.": "Pague fácilmente con KakaoPay.",
+    "네이버페이로 간편하게 결제합니다.": "Pague fácilmente con NaverPay.",
+    "라인페이로 간편하게 결제합니다.": "Pague fácilmente con LINE Pay.",
+    "해외에서 발행된 카드로 결제합니다. (Visa/Mastercard 등)": "Pague con una tarjeta emitida en el extranjero (Visa/Mastercard, etc.).",
+    "위챗페이(WeChat Pay)로 결제합니다.": "Pague con WeChat Pay.",
+    "알리페이(Alipay)로 결제합니다.": "Pague con Alipay.",
+    "삼성페이로 결제합니다.": "Pague con Samsung Pay.",
 };
 
 export default es;

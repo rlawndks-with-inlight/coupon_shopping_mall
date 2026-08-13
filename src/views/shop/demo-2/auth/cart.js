@@ -532,9 +532,9 @@ const CartDemo = (props) => {
                                   }}
                                 >
                                   <Box sx={{ ml: 1 }}>
-                                    <Typography variant="subtitle2" sx={{ fontWeight: 700 }}>{item.title}</Typography>
+                                    <Typography variant="subtitle2" sx={{ fontWeight: 700 }}>{translate(item.title)}</Typography>
                                     <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-                                      {item.description}
+                                      {translate(item.description)}
                                     </Typography>
                                   </Box>
                                 </Paper>
@@ -708,7 +708,7 @@ const CartDemo = (props) => {
                     buyType == 'card_fintree' &&
                     <>
                       <CardContent>
-                        <Typography variant='h6' sx={{ fontWeight: 700, borderBottom: `1px solid`, borderColor: 'divider', paddingBottom: '0.75rem', marginBottom: '1rem' }}>{_.find(themeDnsData?.payment_modules, { type: buyType })?.title}</Typography>
+                        <Typography variant='h6' sx={{ fontWeight: 700, borderBottom: `1px solid`, borderColor: 'divider', paddingBottom: '0.75rem', marginBottom: '1rem' }}>{translate(_.find(themeDnsData?.payment_modules, { type: buyType })?.title || '')}</Typography>
                         <Stack spacing={2}>
                           <Cards cvc={''} focused={cardFucus} expiry={payData.yymm} name={payData.buyer_name} number={payData.card_num} />
                           <Stack>

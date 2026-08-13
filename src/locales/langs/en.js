@@ -773,6 +773,25 @@ const en = {
     "주소가 바르게 입력되었는지 확인해 주세요. 문을 닫았거나 아직 개설되지 않은 쇼핑몰일 수 있습니다.": "Please check that the address is correct. The store may have closed, or may not be open yet.",
     "ShopGo 홈으로": "Go to ShopGo",
     "무료 쇼핑몰 신청하기": "Create a free store",
+    // Payment methods (Forspay) — labels & descriptions; used via translate() in OrderSheet (keys = backend FORSPAY_METHODS)
+    "신용카드": "Credit/Debit Card",
+    "실시간계좌이체": "Real-time Bank Transfer",
+    "카카오페이": "KakaoPay",
+    "네이버페이": "NaverPay",
+    "라인페이": "LINE Pay",
+    "해외발행카드": "Overseas-issued Card",
+    "위챗페이": "WeChat Pay",
+    "알리페이": "Alipay",
+    "삼성페이": "Samsung Pay",
+    "국내에서 발행된 신용·체크카드로 결제합니다.": "Pay with a domestically issued credit or debit card.",
+    "은행 계좌에서 실시간 이체로 결제합니다.": "Pay via real-time transfer from your bank account.",
+    "카카오페이로 간편하게 결제합니다.": "Pay easily with KakaoPay.",
+    "네이버페이로 간편하게 결제합니다.": "Pay easily with NaverPay.",
+    "라인페이로 간편하게 결제합니다.": "Pay easily with LINE Pay.",
+    "해외에서 발행된 카드로 결제합니다. (Visa/Mastercard 등)": "Pay with an overseas-issued card (Visa/Mastercard, etc.).",
+    "위챗페이(WeChat Pay)로 결제합니다.": "Pay with WeChat Pay.",
+    "알리페이(Alipay)로 결제합니다.": "Pay with Alipay.",
+    "삼성페이로 결제합니다.": "Pay with Samsung Pay.",
 };
 
 export default en;

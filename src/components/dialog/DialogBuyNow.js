@@ -429,9 +429,9 @@ const DialogBuyNow = (props) => {
                         }}
                       >
                         <Box sx={{ ml: 1 }}>
-                          <Typography variant="subtitle2">{item.title}</Typography>
+                          <Typography variant="subtitle2">{translate(item.title)}</Typography>
                           <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-                            {item.description}
+                            {translate(item.description)}
                           </Typography>
                         </Box>
                       </Paper>

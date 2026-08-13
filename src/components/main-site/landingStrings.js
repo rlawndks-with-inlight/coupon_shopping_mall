@@ -76,7 +76,7 @@ export const LANDING_STRINGS = {
     trust3Title: "개인정보 암호화 저장",
     trust3Desc: "비밀번호·이름·연락처·주소 등을\n암호화하여 저장합니다",
     trust4Title: "결제정보 안전 관리",
-    trust4Desc: "카드 결제는 PG(PSP)사가 처리하며,\nSHOPGO는 전체 카드번호·비밀번호 등을 저장하지 않습니다",
+    trust4Desc: "결제정보는 PG(PSP)사가 처리하며,\nSHOPGO는 전체 카드번호·비밀번호 등을 저장하지 않습니다",
   },
   en: {
     navAbout: 'About',
@@ -152,7 +152,7 @@ export const LANDING_STRINGS = {
     trust3Title: "Encrypted personal data",
     trust3Desc: "Personal data (password, name, contact, address, etc.)\nis stored encrypted",
     trust4Title: "Payment data security",
-    trust4Desc: "Card payments are handled by the PG (PSP) provider;\nSHOPGO does not store full card numbers, card passwords, or similar details",
+    trust4Desc: "Payment information is handled by the PG (PSP) provider;\nSHOPGO does not store full card numbers, card passwords, or similar details",
   },
   ja: {
     navAbout: 'サービス紹介',
@@ -228,7 +228,7 @@ export const LANDING_STRINGS = {
     trust3Title: "個人情報の暗号化保存",
     trust3Desc: "個人情報（パスワード・氏名・連絡先・住所など）は\n暗号化して保存します",
     trust4Title: "決済情報の安全管理",
-    trust4Desc: "カード決済はPG（PSP）会社が処理し、\nSHOPGOはカード番号全体・暗証番号などを保存しません",
+    trust4Desc: "決済情報はPG（PSP）会社が処理し、\nSHOPGOはカード番号全体・暗証番号などを保存しません",
   },
   cn: {
     navAbout: '服务介绍',
@@ -304,7 +304,7 @@ export const LANDING_STRINGS = {
     trust3Title: "个人信息加密存储",
     trust3Desc: "个人信息（密码·姓名·联系方式·地址等）\n均加密存储",
     trust4Title: "支付信息安全管理",
-    trust4Desc: "银行卡支付由PG（PSP）公司处理，\nSHOPGO不存储完整卡号·密码等信息",
+    trust4Desc: "支付信息由PG（PSP）公司处理，\nSHOPGO不存储完整卡号·密码等信息",
   },
   es: {
     navAbout: 'Servicio',
@@ -380,7 +380,7 @@ export const LANDING_STRINGS = {
     trust3Title: "Datos personales cifrados",
     trust3Desc: "Los datos personales (contraseña, nombre, contacto, dirección, etc.)\nse almacenan cifrados",
     trust4Title: "Gestión segura de los datos de pago",
-    trust4Desc: "Los pagos con tarjeta los gestiona el proveedor PG (PSP);\nSHOPGO no almacena el número completo de la tarjeta, la contraseña ni datos similares",
+    trust4Desc: "Los datos de pago los gestiona el proveedor PG (PSP);\nSHOPGO no almacena el número completo de la tarjeta, la contraseña ni datos similares",
   },
 };
 

@@ -246,6 +246,10 @@ const CartDemo = (props) => {
         toast.error(translate('최대사용가능 포인트를 초과하였습니다.'));
         return;
       }
+      if ((setting_obj?.point_policy_type ?? 'instant') === 'accumulate' && parseFloat(payData.use_point || 0) > 0 && parseFloat(user?.point ?? 0) < parseFloat(setting_obj?.point_use_min || 0)) {
+        toast.error(translate('적립 포인트가 최소 사용 기준에 도달하지 않았습니다.'));
+        return;
+      }
       if (parseFloat(user?.point ?? 0) < parseFloat(payData.use_point)) {
         toast.error(translate('보유포인트가 부족합니다.'));
         return;
@@ -316,6 +320,10 @@ const CartDemo = (props) => {
     if (buyType == 'card') {//카드결제
       if (parseFloat(max_use_point) < parseFloat(payData.use_point)) {
         toast.error(translate('최대사용가능 포인트를 초과하였습니다.'));
+        return;
+      }
+      if ((setting_obj?.point_policy_type ?? 'instant') === 'accumulate' && parseFloat(payData.use_point || 0) > 0 && parseFloat(user?.point ?? 0) < parseFloat(setting_obj?.point_use_min || 0)) {
+        toast.error(translate('적립 포인트가 최소 사용 기준에 도달하지 않았습니다.'));
         return;
       }
       if (parseFloat(user?.point ?? 0) < parseFloat(payData.use_point)) {

@@ -12,6 +12,12 @@ export const COMPANY_ADDRESS = '서울시 영등포구 여의대방로 67길 11,
 export const MAIN_DOMAIN = 'shopgo.co.kr';
 export const SHOP_INQUIRY_EMAIL = 'kimin6756@gmail.com'; // ㈜우진플랫폼 (쇼핑몰 문의)
 export const PAY_INQUIRY_EMAIL = 'office@forspay.com'; // ㈜포스페이 (결제 문의)
+// 서비스 운영사 표기 — 결제사(포스페이) + 플랫폼(우진플랫폼). 법적 표기라 번역하지 않는다.
+export const FORSPAY_NAME = '㈜포스페이';
+export const FORSPAY_DESC = '국내 PG · 해외 PSP · 통합결제 서비스';
+export const FORSPAY_ADDRESS = '서울시 성동구 연무장 5가길 25 성수역SKV1타워 1702호';
+export const FORSPAY_URL = 'https://forspay.com/';
+export const PLATFORM_DESC = '무료 쇼핑몰 플랫폼 개발 및 운영';
 
 const HEADER_HEIGHT = 64;
 
@@ -207,30 +213,35 @@ export const MainSiteFooter = () => {
   >
     <Container maxWidth="lg">
       <Stack spacing={2}>
-        {/* 법인명·주소는 법적 표기라 번역하지 않는다 */}
-        <Typography sx={{ fontSize: 13, color: '#888', fontWeight: 700 }}>{COMPANY_NAME}</Typography>
-        <Typography sx={{ fontSize: 12, color: '#999', lineHeight: 1.8 }}>{COMPANY_ADDRESS}</Typography>
-        <Stack direction={{ xs: 'column', sm: 'row' }} spacing={{ xs: 0.5, sm: 3 }} sx={{ pt: 0.5 }}>
-          <Typography sx={{ fontSize: 12, color: '#999' }}>
-            {t.footerShopInquiry}{' '}
-            <Box
-              component="a"
-              href={`mailto:${SHOP_INQUIRY_EMAIL}`}
-              sx={{ color: '#666', fontWeight: 600, textDecoration: 'none', '&:hover': { textDecoration: 'underline' } }}
-            >
-              {SHOP_INQUIRY_EMAIL}
-            </Box>
-          </Typography>
-          <Typography sx={{ fontSize: 12, color: '#999' }}>
-            {t.footerPayInquiry}{' '}
-            <Box
-              component="a"
-              href={`mailto:${PAY_INQUIRY_EMAIL}`}
-              sx={{ color: '#666', fontWeight: 600, textDecoration: 'none', '&:hover': { textDecoration: 'underline' } }}
-            >
-              {PAY_INQUIRY_EMAIL}
-            </Box>
-          </Typography>
+        {/* 서비스 운영사 — 결제사(포스페이) 먼저, 그다음 플랫폼(우진플랫폼). 법인명·주소는 법적 표기라 번역하지 않는다. */}
+        <Typography sx={{ fontSize: 11, letterSpacing: 2, color: '#aaa', fontWeight: 700 }}>서비스 운영사</Typography>
+        <Stack direction={{ xs: 'column', sm: 'row' }} spacing={{ xs: 2.5, sm: 6 }} sx={{ pt: 0.5 }}>
+          {/* 포스페이(결제) 먼저 */}
+          <Stack spacing={0.5}>
+            <Typography sx={{ fontSize: 13, color: '#555', fontWeight: 700 }}>
+              {FORSPAY_NAME}
+              <Box component="a" href={FORSPAY_URL} target="_blank" rel="noreferrer"
+                sx={{ ml: 0.75, fontSize: 11, fontWeight: 500, color: '#999', textDecoration: 'none', '&:hover': { textDecoration: 'underline' } }}>forspay.com</Box>
+            </Typography>
+            <Typography sx={{ fontSize: 12, color: '#999' }}>{FORSPAY_DESC}</Typography>
+            <Typography sx={{ fontSize: 12, color: '#999', lineHeight: 1.8 }}>{FORSPAY_ADDRESS}</Typography>
+            <Typography sx={{ fontSize: 12, color: '#999' }}>
+              {t.footerPayInquiry}{' '}
+              <Box component="a" href={`mailto:${PAY_INQUIRY_EMAIL}`}
+                sx={{ color: '#666', fontWeight: 600, textDecoration: 'none', '&:hover': { textDecoration: 'underline' } }}>{PAY_INQUIRY_EMAIL}</Box>
+            </Typography>
+          </Stack>
+          {/* 우진플랫폼(플랫폼 운영) */}
+          <Stack spacing={0.5}>
+            <Typography sx={{ fontSize: 13, color: '#555', fontWeight: 700 }}>{COMPANY_NAME}</Typography>
+            <Typography sx={{ fontSize: 12, color: '#999' }}>{PLATFORM_DESC}</Typography>
+            <Typography sx={{ fontSize: 12, color: '#999', lineHeight: 1.8 }}>{COMPANY_ADDRESS}</Typography>
+            <Typography sx={{ fontSize: 12, color: '#999' }}>
+              {t.footerShopInquiry}{' '}
+              <Box component="a" href={`mailto:${SHOP_INQUIRY_EMAIL}`}
+                sx={{ color: '#666', fontWeight: 600, textDecoration: 'none', '&:hover': { textDecoration: 'underline' } }}>{SHOP_INQUIRY_EMAIL}</Box>
+            </Typography>
+          </Stack>
         </Stack>
         <Stack direction="row" flexWrap="wrap" gap={{ xs: 1, sm: 2 }} sx={{ pt: 1 }}>
           {POLICY_DOCS.map((d) => (

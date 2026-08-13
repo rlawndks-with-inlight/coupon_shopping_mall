@@ -15,7 +15,7 @@ export const PAY_INQUIRY_EMAIL = 'office@forspay.com'; // ㈜포스페이 (결�
 // 서비스 운영사 표기 — 결제사(포스페이) + 플랫폼(우진플랫폼). 법적 표기라 번역하지 않는다.
 export const FORSPAY_NAME = '㈜포스페이';
 export const FORSPAY_DESC = '국내 PG · 해외 PSP · 통합결제 서비스';
-export const FORSPAY_ADDRESS = '서울시 성동구 연무장 5가길 25 성수역SKV1타워 1702호';
+export const FORSPAY_ADDRESS = '서울시 성동구 연무장5가길 25 성수역SKV1타워 1702호';
 export const FORSPAY_URL = 'https://forspay.com/';
 export const PLATFORM_DESC = '무료 쇼핑몰 플랫폼 개발 및 운영';
 

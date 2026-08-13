@@ -13,14 +13,18 @@ import {
     ORDER_FORM_TYPES, PII_TYPES, CHOICE_TYPES, DATE_TYPES, LENGTH_TYPES,
 } from 'src/data/order-form-types';
 
-// 주문서 추가 입력항목 — 본사 마스터 전용 관리 화면.
+// 손님 입력항목 **서식 템플릿** — 본사 마스터 전용.
 //
-// 예약·출장 업체가 주문받을 때 행사일·행사장소 등을 물어야 하는데 방법이 없었다.
-// 서식을 여기서 만들고 **어느 가맹점에 적용할지**를 지정한다.
-// 가맹점은 이 화면을 보지도, 항목을 고치지도 못한다.
+// ⚠ 이 화면에서 만든 것은 그 자체로는 어느 몰에도 안 뜬다. 만들어 두면
+//   가맹점이 상품등록 화면에서 '서식 불러오기'로 **복사해** 쓴다.
 //
-// ⚠ 지금 설계는 '주문서에서 한 번' 입력받는다. 그래서 적용된 몰에서는
-//   예약 아닌 상품만 산 고객에게도 이 항목들이 뜬다 — 화면에서 그 사실을 밝힌다.
+// 왜 바뀌었나: 처음에는 여기서 가맹점을 고르면 그 몰 전체에 입력칸이 붙었다.
+// 행사날짜는 가맹점의 성질이 아니라 상품의 성질이라, 같은 몰에서 답례품만 사는
+// 손님에게도 행사날짜를 묻는 문제가 있었다. 그래서 실제 적용은 상품 단위로 옮기고,
+// 이 화면은 '상품 100개에 같은 항목을 손으로 넣지 않게 해주는' 템플릿으로 남겼다.
+//
+// 복사한 뒤에는 상품의 것이다 — 여기서 템플릿을 고쳐도 이미 판매 중인 상품은 안 바뀐다.
+// (바뀌면 이미 접수된 주문과 뜻이 어긋난다)
 
 const 빈항목 = () => ({
     id: null, label: '', field_type: 'text', placeholder: '', is_required: 0,
@@ -34,41 +38,20 @@ const OrderFormPage = () => {
     const router = useRouter();
     const [loading, setLoading] = useState(true);
     const [list, setList] = useState([]);
-    const [merchants, setMerchants] = useState([]);
 
-    // 가맹점 현황에서 '?brand=<id>' 로 넘어온다 — 그 가맹점을 고른 채로 시작한다.
-    // 가맹점 목록에서 출발해 그 몰 것을 만지는 흐름을 만들기 위한 것이다
-    // (마스터는 가맹점 어드민에 로그인할 수 없어서, 대신 여기서 그 몰을 고른 상태로 연다).
-    const 넘어온가맹점 = Number(router.query?.brand) || 0;
+    // 가맹점을 고르는 흐름이 사라졌다 — 서식은 이제 어느 몰에도 직접 걸리지 않는 '틀'이고,
+    // 실제 적용은 가맹점이 상품등록 화면에서 불러올 때 일어난다.
+    // (가맹점 현황의 '?brand=' 딥링크도 함께 뺐다. 몰을 골라도 아무 일이 없으므로)
 
     useEffect(() => { if (router.isReady) settingPage(); }, [router.isReady]);
 
     const settingPage = async () => {
-        const [data, m] = await Promise.all([
-            apiManager('order-forms', 'list', {}),
-            apiManager('order-forms/merchants', 'list', {}),
-        ]);
-        const merchantList = m?.content ?? [];
-        let rows = (data?.content ?? []).map((t) => ({
+        const data = await apiManager('order-forms', 'list', {});
+        setList((data?.content ?? []).map((t) => ({
             ...t,
             fields: t?.fields ?? [],
             targets: (t?.targets ?? []).map((x) => ({ brand_id: x.brand_id, dns: x.dns, name: x.brand_name })),
-        }));
-
-        if (넘어온가맹점) {
-            const 걸린것 = rows.filter((t) => t.targets.some((g) => Number(g.brand_id) === 넘어온가맹점));
-            if (걸린것.length > 0) {
-                // 그 몰에 걸린 서식만 먼저 보여준다 — 서식이 여럿일 때 찾아 헤매지 않게.
-                rows = [...걸린것, ...rows.filter((t) => !걸린것.includes(t))];
-            } else {
-                // 아직 없으면 그 가맹점이 선택된 빈 서식을 하나 열어 둔다(저장 전이라 DB 에는 없다).
-                const b = merchantList.find((x) => Number(x.id) === 넘어온가맹점);
-                if (b) rows = [{ ...빈서식(), targets: [{ brand_id: b.id, dns: b.dns, name: b.name }] }, ...rows];
-            }
-        }
-
-        setList(rows);
-        setMerchants(merchantList);
+        })));
         setLoading(false);
     };
 
@@ -122,12 +105,12 @@ const OrderFormPage = () => {
     return (
         <Stack spacing={2}>
             <Alert severity="info" sx={{ fontSize: '0.85rem' }}>
-                예약·출장처럼 <b>주문받을 때 더 물어봐야 하는 업체</b>를 위한 기능입니다.
-                서식을 만들고 <b>적용할 가맹점</b>을 고르면, 그 몰의 <b>상품상세</b>에 입력칸이 생깁니다
-                (네이버 스마트스토어의 &lsquo;구매자 작성형 옵션&rsquo;과 같은 자리).<br />
-                값은 <b>장바구니에 담을 때 상품마다</b> 붙습니다 — 행사일이 다른 상품을 두 개 담아도 각각 남습니다.<br />
-                지금은 그 몰의 <b>모든 상품</b>에 나타납니다. 예약 상품과 일반 상품이 섞인 몰이라면
-                <b>필수는 꼭 필요한 것만</b> 지정해 주세요.<br />
+                예약·출장처럼 <b>주문받을 때 더 물어봐야 하는 업체</b>를 위한 <b>서식 템플릿</b>입니다.<br />
+                <b>여기서 만든 것만으로는 어느 몰에도 나타나지 않습니다.</b> 가맹점이 상품등록 화면의
+                [옵션] → &lsquo;손님이 적는 항목&rsquo;에서 <b>서식 불러오기</b>로 가져다 씁니다.
+                상품 100개에 행사날짜를 하나씩 손으로 넣지 않게 해주는 것이 이 화면의 역할입니다.<br />
+                불러온 뒤에는 <b>그 상품의 것</b>입니다 — 여기서 템플릿을 고쳐도 이미 판매 중인 상품은 바뀌지 않습니다.
+                (바뀌면 이미 접수된 주문과 뜻이 어긋납니다)<br />
                 문구는 한국어로만 쓰시면 됩니다. 나머지 4개 언어는 저장 후 자동으로 채워집니다.
             </Alert>
 
@@ -159,21 +142,10 @@ const OrderFormPage = () => {
                                 onChange={(e) => 바꾸기(i, 'guide', e.target.value)} />
                         </Stack>
 
-                        {/* 적용 가맹점 — 여기서 고른 몰의 주문서에만 나타난다 */}
-                        <Autocomplete
-                            multiple
-                            options={merchants}
-                            value={t.targets}
-                            getOptionLabel={(o) => `${o.dns}${o.name ? ` (${o.name})` : ''}`}
-                            isOptionEqualToValue={(o, v) => Number(o.id ?? o.brand_id) === Number(v.brand_id)}
-                            onChange={(e, v) => 바꾸기(i, 'targets', v.map((x) => ({
-                                brand_id: Number(x.id ?? x.brand_id), dns: x.dns, name: x.name,
-                            })))}
-                            renderInput={(params) => (
-                                <TextField {...params} label="적용할 가맹점"
-                                    helperText="고르지 않으면 어디에도 나타나지 않습니다" />
-                            )}
-                        />
+                        {/* 몰을 지정하는 칸을 뺐다.
+                            적용은 이제 가맹점이 상품마다 하므로 여기서 골라 봐야 아무 일도 일어나지 않는다.
+                            효과 없는 칸을 남겨 두면 '분명히 지정했는데 왜 안 뜨냐'는 문의가 된다.
+                            (order_form_targets 테이블은 그대로 둔다 — 지우면 되돌릴 수 없다) */}
 
                         <Divider />
                         <Stack direction="row" alignItems="center" justifyContent="space-between">

@@ -330,14 +330,16 @@ export default function OrderSheet({ router }) {
     // 주문 추가 입력항목의 필수 검사는 상품상세(담기·바로구매)에서 이미 지났다.
     // 다만 서식이 나중에 바뀌었거나 예전에 담아 둔 장바구니 줄은 값이 비어 있을 수 있으므로
     // 결제 직전에 한 번 더 본다 — 여기서 막지 않으면 필수 정보 없는 주문이 접수된다.
-    const 항목 = themeDnsData?.order_form?.fields ?? [];
-    if (항목.length > 0) {
-      for (const p of products) {
-        const 빠진항목 = findMissingRequired(항목, p?.order_form_values);
-        if (빠진항목) {
-          toast.error(translate('{{name}}을(를) 입력해 주세요.', { name: formatLang(빠진항목, 'label', currentLang) }));
-          return false;
-        }
+    //
+    // ⚠ 항목은 **줄마다 다르다**. 상품마다 거는 것이라 한 주문에 행사날짜를 묻는 상품과
+    //   안 묻는 상품이 섞인다. 예전처럼 몰 설정에서 한 벌만 읽으면 엉뚱한 줄을 검사한다.
+    for (const p of products) {
+      const 항목 = Array.isArray(p?.order_form_fields) ? p.order_form_fields : [];
+      if (!항목.length) continue;
+      const 빠진항목 = findMissingRequired(항목, p?.order_form_values);
+      if (빠진항목) {
+        toast.error(translate('{{name}}을(를) 입력해 주세요.', { name: formatLang(빠진항목, 'label', currentLang) }));
+        return false;
       }
     }
     if (!user && !payData.password) {

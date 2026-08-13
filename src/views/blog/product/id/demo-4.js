@@ -1,4 +1,6 @@
 import { useEffect, useState } from 'react';
+import ProductAddons from 'src/components/elements/shop/ProductAddons';
+import { requiredGroups } from 'src/data/product-options';
 import { useRouter } from 'next/router';
 import styled from 'styled-components';
 import { useSettingsContext } from 'src/components/settings';
@@ -287,13 +289,13 @@ const Demo4 = () => {
               {/* 혜택 안내(본사 공통). 이 프레임은 흑백·절제된 톤이라 라벨을 더 흐리게 둔다. */}
               <BenefitNotice sx={{ mt: '10px' }} tone={{ fontSize: 13, labelColor: '#999', textColor: '#333' }} />
               {/* 주문 추가 입력항목 — 서식이 걸린 몰에서만 나타난다 */}
-              <OrderFormFields values={orderFormValues} onChange={setOrderFormValues} sx={{ mt: 2 }} />
+              <OrderFormFields product={item} values={orderFormValues} onChange={setOrderFormValues} sx={{ mt: 2 }} />
             </PriceBlock>
           </div>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
-            {item?.groups?.length > 0 && (
+            {requiredGroups(item).length > 0 && (
               <OptionGroup>
-                {item.groups.map((group, gIdx) => (
+                {requiredGroups(item).map((group, gIdx) => (
                   <OptionField key={group?.id ?? group?.group_name ?? gIdx}>
                     <OptionLabel>{formatLang(group, 'group_name')}</OptionLabel>
                     <OptionSelect
@@ -315,6 +317,8 @@ const Demo4 = () => {
                 ))}
               </OptionGroup>
             )}
+              {/* 추가상품 — 안 골라도 살 수 있다. 프레임 전체가 같은 컴포넌트를 쓴다. */}
+              <ProductAddons product={item} selected={selectProductGroups} onSelect={onSelectOption} />
             {/* 수량 — 이 프레임엔 수량 UI 가 없어서 늘 1개만 살 수 있었다 */}
             <OptionField>
               <OptionLabel>Quantity</OptionLabel>

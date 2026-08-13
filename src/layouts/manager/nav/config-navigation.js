@@ -187,7 +187,7 @@ export const navConfig = () => {
         items: [
           { title: '혜택 안내(전 가맹점)', path: PATH_MANAGER.designs.benefitNotice, icon: ICONS.label },
           // 주문서 추가 입력항목 — 전 가맹점이 아니라 '고른 가맹점'에만 적용된다.
-          { title: '주문서 추가항목', path: PATH_MANAGER.designs.orderForm, icon: ICONS.file },
+          { title: '입력항목 서식', path: PATH_MANAGER.designs.orderForm, icon: ICONS.file },
         ],
       },
       // 유저관리: 최상위(개발사, 레벨50)만 노출 — shopgo 운영자 계정 추가/관리용

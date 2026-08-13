@@ -1,4 +1,6 @@
 import { Icon } from '@iconify/react';
+import ProductAddons from 'src/components/elements/shop/ProductAddons';
+import { requiredGroups } from 'src/data/product-options';
 // 판매자 영역 삭제로 Avatar 를 더 이상 쓰지 않아 import 에서 뺐다.
 import { Select, MenuItem, Drawer, FormControl, InputLabel, Button, Divider, Stack } from '@mui/material';
 import { useEffect, useState } from 'react';
@@ -230,7 +232,7 @@ const Demo1 = (props) => {
               서랍은 '구매하기'를 눌러야 열려서, 살지 말지 고르는 단계에서는 안 보인다. */}
           <BenefitNotice sx={{ mb: '0.75rem' }} tone={{ fontSize: 13 }} />
               {/* 주문 추가 입력항목 — 서식이 걸린 몰에서만 나타난다 */}
-              <OrderFormFields values={orderFormValues} onChange={setOrderFormValues} sx={{ mt: 2 }} />
+              <OrderFormFields product={item} values={orderFormValues} onChange={setOrderFormValues} sx={{ mt: 2 }} />
           {/* 품절·중단됨을 상세에서 바로 알린다 — 예전엔 표시도 없고 버튼도 살아 있어
               옵션 창까지 열고 나서야 살 수 없다는 걸 알았다. */}
           {!purchasable && productStatusText &&
@@ -284,7 +286,7 @@ const Demo1 = (props) => {
         }}
       >
         <SelectContainer>
-          {(item?.groups ?? []).map((group) => (
+          {requiredGroups(item).map((group) => (
             <>
               <Stack direction="row" justifyContent="space-between">
                 <FormControl sx={{ width: '100%' }}>
@@ -310,6 +312,8 @@ const Demo1 = (props) => {
               </Stack>
             </>
           ))}
+          {/* 추가상품 — 안 골라도 살 수 있다. 프레임 전체가 같은 컴포넌트를 쓴다. */}
+          <ProductAddons product={item} selected={selectProductGroups} onSelect={onSelectOption} style={{ marginTop: '0.75rem' }} />
 
           <DrawerBox style={{ borderBottom: 'none' }}>
             <Row style={{ justifyContent: 'space-between' }}>

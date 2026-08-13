@@ -1,5 +1,4 @@
 import { Box, Checkbox, FormControlLabel, MenuItem, Stack, TextField, Typography } from '@mui/material';
-import { useSettingsContext } from 'src/components/settings';
 import { useLocales } from 'src/locales';
 import { formatLang } from 'src/utils/format';
 import { CHOICE_TYPES, DATE_TYPES, dateRange, parseOptionList } from 'src/data/order-form-types';
@@ -13,8 +12,12 @@ import { CHOICE_TYPES, DATE_TYPES, dateRange, parseOptionList } from 'src/data/o
 //   · 담기 전에 물어야 하는데 결제 직전에 물었다
 // 그래서 상품상세로 옮기고 값도 장바구니 줄에 붙인다.
 //
-// 서식은 본사가 만들고 적용 가맹점을 고른다. 서식이 없으면 아무것도 그리지 않는다 —
-// 대부분의 몰은 이 칸이 없다.
+// 항목은 **가맹점이 상품마다** 건다(마스터가 만든 템플릿을 불러올 수도 있다).
+// 걸린 항목이 없으면 아무것도 그리지 않는다 — 대부분의 상품은 이 칸이 없다.
+//
+// 예전엔 가맹점 단위로 서식 하나를 걸어 그 몰의 모든 상품에 같은 칸이 떴다.
+// 행사날짜는 가맹점의 성질이 아니라 상품의 성질이다 —
+// 같은 몰에서 답례품만 사는 손님에게 행사날짜를 물으면 안 된다.
 //
 // ⚠ 이 컴포넌트는 프레임 6개 상품상세에 그대로 들어간다.
 //   색·글자크기를 스스로 정하지 않는다(어두운 프레임에서 글자가 사라진다).
@@ -25,12 +28,11 @@ import { CHOICE_TYPES, DATE_TYPES, dateRange, parseOptionList } from 'src/data/o
 // 이 기능의 핵심이다. 네이버는 이 항목이 텍스트라 "월/일/요일 형식으로 적어주세요"라고 부탁만 한다.
 const ymd = (d) => (d ? `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}` : undefined);
 
-const OrderFormFields = ({ values, onChange, sx = {} }) => {
-    const { themeDnsData } = useSettingsContext();
+const OrderFormFields = ({ product, values, onChange, sx = {} }) => {
     const { translate, currentLang } = useLocales();
-    const form = themeDnsData?.order_form;
+    const fields = Array.isArray(product?.order_form_fields) ? product.order_form_fields : [];
 
-    if (!(form?.fields?.length > 0)) return null;
+    if (!fields.length) return null;
 
     const 값 = values ?? {};
     const set = (id, v) => onChange?.({ ...값, [String(id)]: v });
@@ -40,12 +42,8 @@ const OrderFormFields = ({ values, onChange, sx = {} }) => {
             <Typography sx={{ fontSize: 13, fontWeight: 700, mb: 1 }}>
                 {translate('추가 입력 정보')}
             </Typography>
-            {form?.guide &&
-                <Typography sx={{ fontSize: 12, color: 'text.secondary', mb: 1.5 }}>
-                    {formatLang(form, 'guide', currentLang)}
-                </Typography>}
             <Stack spacing={2}>
-                {form.fields.map((f) => {
+                {fields.map((f) => {
                     const key = String(f.id);
                     const v = 값[key] ?? (f.field_type === 'multiselect' ? [] : '');
                     const label = formatLang(f, 'label', currentLang);

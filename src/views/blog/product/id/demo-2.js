@@ -1,4 +1,6 @@
 import { Icon } from '@iconify/react';
+import ProductAddons from 'src/components/elements/shop/ProductAddons';
+import { requiredGroups } from 'src/data/product-options';
 import { Select, MenuItem, Drawer, FormControl, InputLabel, Button, Avatar, Divider, Dialog, DialogTitle, DialogContent, DialogActions, IconButton, Stack } from '@mui/material';
 import { useEffect, useState } from 'react';
 import { Row, themeObj } from 'src/components/elements/styled-components';
@@ -257,7 +259,7 @@ const Demo2 = (props) => {
                         {/* 혜택 안내(본사 공통). 이 프레임은 배송정보 묶음이 따로 있어 그 아래에 붙인다. */}
                         <BenefitNotice sx={{ mb: '0.5rem' }} tone={{ fontSize: 13 }} />
               {/* 주문 추가 입력항목 — 서식이 걸린 몰에서만 나타난다 */}
-              <OrderFormFields values={orderFormValues} onChange={setOrderFormValues} sx={{ mt: 2 }} />
+              <OrderFormFields product={item} values={orderFormValues} onChange={setOrderFormValues} sx={{ mt: 2 }} />
                     </PriceContainer>
                     {/* 품절·중단됨을 상세에서 바로 알린다 — 예전엔 표시도 없고 버튼도 살아 있어
                         옵션 창까지 열고 나서야 살 수 없다는 걸 알았다. */}
@@ -371,7 +373,7 @@ const Demo2 = (props) => {
                             ))}
                         </Select>
                     </FormControl> */}
-                    {(item?.groups ?? []).map((group) => (
+                    {requiredGroups(item).map((group) => (
                         <>
                             <Stack direction="row" justifyContent="space-between">
                                 <FormControl sx={{ width: '100%' }}>
@@ -426,6 +428,8 @@ const Demo2 = (props) => {
                             </Stack>
                         </>
                     ))}
+                    {/* 추가상품 — 안 골라도 살 수 있다. 프레임 전체가 같은 컴포넌트를 쓴다. */}
+                    <ProductAddons product={item} selected={selectProductGroups} onSelect={onSelectOption} style={{ marginTop: "0.75rem" }} />
                     {/* {selectOptions.map((option, idx) => (
                         <>
                             <DrawerBox>

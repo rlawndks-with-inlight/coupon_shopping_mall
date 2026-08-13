@@ -792,6 +792,14 @@ const en = {
     "위챗페이(WeChat Pay)로 결제합니다.": "Pay with WeChat Pay.",
     "알리페이(Alipay)로 결제합니다.": "Pay with Alipay.",
     "삼성페이로 결제합니다.": "Pay with Samsung Pay.",
+
+  // 상품 옵션 개편(선택옵션·추가상품·조합형·재고)
+  "추가 상품": "Add-ons",
+  "필요한 것만 고르세요": "Pick only what you need",
+  "선택하신 조합은 판매하지 않습니다.": "That combination is not available.",
+  "조합 추가금": "Combination surcharge",
+  "상품 정보": "Product information",
+  "{{n}}개 남음": "{{n}} left",
 };
 
 export default en;

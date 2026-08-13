@@ -55,6 +55,9 @@ import { useLocales } from 'src/locales';
 import { formatLang } from 'src/utils/format';
 import { isShopgoBrand } from 'src/utils/is-shopgo';
 import OrderFormFields from 'src/components/elements/shop/OrderFormFields';
+import ProductOptions from 'src/components/elements/shop/ProductOptions';
+import ProductInfoRows from 'src/components/elements/shop/ProductInfoRows';
+import { maxOrderable } from 'src/data/product-options';
 // ----------------------------------------------------------------------
 
 ProductDetailsSummary.propTypes = {
@@ -118,6 +121,9 @@ export default function ProductDetailsSummary({ product, onAddCart, onGotoStep, 
     //console.log(select_product_groups)
   }
   const [buyOpen, setBuyOpen] = useState(false);
+  // 재고가 있으면 그 수를 넘겨 못 올리게 한다. 없으면(무제한) 제한하지 않는다.
+  // 예전엔 products 에 없는 컬럼(available)을 보고 있어서 늘 undefined 였다 — 사실상 무제한이었다.
+  const 재고한도 = maxOrderable(product, selectProductGroups);
 
   return (
     <>
@@ -205,8 +211,8 @@ export default function ProductDetailsSummary({ product, onAddCart, onGotoStep, 
               본사에 등록된 것이 없으면 아무것도 그리지 않으므로,
               이 컴포넌트를 함께 쓰는 다른 클라이언트 몰에는 영향이 없다. */}
           <BenefitNotice sx={{ mt: 1 }} tone={{ fontSize: 13, labelColor: themeObj.grey[500] }} />
-              {/* 주문 추가 입력항목 — 서식이 걸린 몰에서만 나타난다 */}
-              <OrderFormFields values={orderFormValues} onChange={setOrderFormValues} sx={{ mt: 2 }} />
+          {/* 상품정보(특성) — 보여주기 전용. 예전엔 이 프레임이 특성을 아예 안 그렸다. */}
+          <ProductInfoRows product={product} sx={{ mt: 1 }} />
           <Divider sx={{ borderStyle: 'dashed' }} />
           {
             themeDnsData?.id == 95 && product_sale_price > 99999 ?
@@ -214,41 +220,10 @@ export default function ProductDetailsSummary({ product, onAddCart, onGotoStep, 
               </>
               :
               <>
-                {groups.map((group) => (
-                  <>
-                    <Stack direction="row" justifyContent="space-between">
-                      <Typography variant="subtitle2" sx={{ height: 40, lineHeight: '40px', flexGrow: 1 }}>
-                        {group?.group_name}
-                      </Typography>
-                      <FormControl size='small'>
-                        <InputLabel id="demo-simple-select-label">{translate('선택')}</InputLabel>
-                        <Select
-                          name="size"
-                          size="small"
-                          sx={{
-                            minWidth: 96,
-                            '& .MuiFormHelperText-root': {
-                              mx: 0,
-                              mt: 1,
-                              textAlign: 'right',
-                            },
-                          }}
-                          label={translate("선택")}
-                          onChange={(e) => {
-                            onSelectOption(group, e.target.value)
-                          }}
-                        >
-                          {group?.options && group?.options.map((option) => (
-                            <MenuItem key={option?.option_name} value={option}>
-                              {option?.option_name}
-                              {(option?.option_price > 0 || option?.option_price < 0) ? ` (${option?.option_price > 0 ? '+' : ''}${commarNumber(setProductPriceByLang(option, 'option_price', price_lang, currentLang?.value))})` : ''}
-                            </MenuItem>
-                          ))}
-                        </Select>
-                      </FormControl>
-                    </Stack>
-                  </>
-                ))}
+                {/* 옵션 · 추가상품 · 조합형. 프레임 6개가 같은 컴포넌트를 쓴다. */}
+                <ProductOptions product={product} selected={selectProductGroups} onSelect={onSelectOption} />
+                {/* 손님 입력항목 — 상품에 걸린 것이 있을 때만 나타난다 */}
+                <OrderFormFields product={product} values={orderFormValues} onChange={setOrderFormValues} />
               </>
           }
           {
@@ -270,7 +245,7 @@ export default function ProductDetailsSummary({ product, onAddCart, onGotoStep, 
                       name="quantity"
                       quantity={selectProductGroups.count}
                       disabledDecrease={selectProductGroups.count <= 1}
-                      disabledIncrease={selectProductGroups.count >= available}
+                      disabledIncrease={재고한도 !== null && selectProductGroups.count >= 재고한도}
                       type='product_page'
                       onIncrease={() => {
                         setSelectProductGroups({

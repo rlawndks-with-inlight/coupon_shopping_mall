@@ -1,4 +1,6 @@
 import { useEffect, useState } from 'react';
+import ProductAddons from 'src/components/elements/shop/ProductAddons';
+import { requiredGroups } from 'src/data/product-options';
 import { useRouter } from 'next/router';
 import styled from 'styled-components';
 import { useSettingsContext } from 'src/components/settings';
@@ -286,9 +288,9 @@ const Demo6 = () => {
           {item?.delivery_fee > 0
               ? <div style={{ fontSize: '13px', color: '#888', marginTop: '6px' }}>{translate('배송비')} {commarNumberWithUnit(item?.delivery_fee)}</div>
               : <div style={{ fontSize: '13px', color: '#888', marginTop: '6px' }}>{translate('무료배송')}</div>}
-          {item?.groups?.length > 0 && (
+          {requiredGroups(item).length > 0 && (
             <OptionArea>
-              {item.groups.map((group) => (
+              {requiredGroups(item).map((group) => (
                 <OptionField key={group?.id}>
                   <OptionName>{formatLang(group, 'group_name')}</OptionName>
                   <OptionSelect defaultValue="" onChange={(e) => handleSelectOption(group, e)}>
@@ -306,6 +308,8 @@ const Demo6 = () => {
               ))}
             </OptionArea>
           )}
+              {/* 추가상품 — 안 골라도 살 수 있다. 프레임 전체가 같은 컴포넌트를 쓴다. */}
+              <ProductAddons product={item} selected={selectProductGroups} onSelect={onSelectOption} />
           {/* 수량 — 이 프레임엔 수량 UI 가 없어서 늘 1개만 살 수 있었다.
               OptionField 는 <label> 이라 버튼이 든 스테퍼를 감싸면 클릭이 엉키므로 쓰지 않는다. */}
           <OptionArea>

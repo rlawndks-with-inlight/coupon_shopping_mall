@@ -31,6 +31,10 @@ const TrxList = () => {
   const [chkpic, setChkpic] = useState({
     check_file: undefined
   })
+  // ⚠ defaultColumns 안에서 data 를 읽는다(추가 입력정보 열 표시 여부).
+  //   const 는 TDZ 라 선언이 아래에 있으면 렌더 중 ReferenceError 가 나고 화면이 백지가 된다.
+  //   그래서 컬럼 정의보다 위에 둔다.
+  const [data, setData] = useState({});
   const defaultColumns = [
     ...(themeDnsData?.setting_obj?.is_use_seller == 2 ? [
       {
@@ -254,12 +258,13 @@ const TrxList = () => {
     },
     // 주문서 추가 입력항목(행사일·행사장소 등).
     //
-    // 이 몰에 서식이 걸려 있을 때만 열을 만든다 — 대부분의 몰은 쓰지 않는 기능이라
-    // 빈 열을 30개 몰에 늘리지 않는다.
-    // ⚠ 본사가 서식을 내리면 이 열도 사라진다. 이미 접수된 주문의 값은 DB 에 남아 있고
-    //   엑셀에는 계속 나오지만, 목록 화면에서는 안 보이게 된다.
-    //   (행마다 판단할 수 없다 — 이 컬럼 정의는 주문 데이터를 불러오기 전에 만들어진다)
-    ...((themeDnsData?.order_form?.fields?.length > 0) ? [{
+    // **불러온 주문 중에 값이 하나라도 있으면** 열을 만든다.
+    //
+    // 예전에는 '이 몰에 서식이 걸려 있으면' 으로 판단했다. 항목이 가맹점 단위가 아니라
+    // 상품 단위가 되면서 그 기준이 사라졌고, 무엇보다 항목을 나중에 내리면
+    // 이미 접수된 주문의 값이 화면에서 통째로 사라졌다.
+    // 실제 데이터로 판단하면 그런 일이 없고, 안 쓰는 몰에 빈 열이 생기지도 않는다.
+    ...(((data?.content ?? []).some((r) => r?.order_forms?.length > 0)) ? [{
       id: 'order_forms',
       label: '추가 입력정보',
       action: (row) => (
@@ -598,7 +603,6 @@ const TrxList = () => {
     ])
   ]
   const router = useRouter();
-  const [data, setData] = useState({});
   const [searchObj, setSearchObj] = useState({
     page: 1,
     page_size: 10,

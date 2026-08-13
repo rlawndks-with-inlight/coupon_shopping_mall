@@ -6,12 +6,27 @@ import toast from "react-hot-toast";
 import { returnMoment, isPurchasable, getProductStatus } from "./function";
 import { getLocalStorage } from "./local-storage";
 import { isDemoHost } from "src/components/main-site/frameList";
+import { findMissingRequired } from "src/data/order-form-types";
 import { makeOrdNum } from 'src/utils/function';
 
 // 브랜드 공통 배송비 정책 (설정 > 배송비설정). 정책이 설정된 경우에만 활성.
 // - delivery_fee_default: 주문당 기본 배송비
 // - free_ship_min: 이 금액 이상이면 무료배송(0=미사용)
 // 정책 미설정(둘 다 0) 브랜드는 active:false → 기존 상품별 배송비 동작을 그대로 유지(하위호환).
+// 이 몰에 걸린 주문 추가 입력항목. 없으면 빈 배열.
+//
+// shop-util 은 리액트 밖이라 SettingsContext 를 못 쓴다 — 배송비 설정과 같은 방식으로
+// localStorage 의 themeDnsData 를 읽는다(SettingsContext 가 거기에 저장해 둔다).
+export const getOrderFormFields = () => {
+    try {
+        const dns = JSON.parse(getLocalStorage('themeDnsData') || '{}');
+        const fields = dns?.order_form?.fields;
+        return Array.isArray(fields) ? fields : [];
+    } catch (e) {
+        return [];
+    }
+};
+
 export const getBrandShipping = (merchandiseSubtotal = 0) => {
     try {
         const dns = JSON.parse(getLocalStorage('themeDnsData') || '{}');
@@ -455,14 +470,38 @@ const assertOptionsSelected = (product, selectProductGroups) => {
     return true;
 };
 
+// 주문 추가 입력항목(행사일·행사장소 등)의 필수 검사.
+//
+// 옵션 검사와 같은 관문에 둔다 — 담기·바로구매 양쪽이 이미 여기를 지나므로,
+// 한 쪽만 검사하는 실수가 생기지 않는다.
+// 무엇이 빠졌는지 이름으로 알려줘야 한다. '필수 항목을 입력하세요'만 뜨면
+// 항목이 여럿일 때 어디를 채워야 하는지 알 수 없다.
+const assertOrderFormFilled = (values) => {
+    const fields = getOrderFormFields();
+    if (!fields.length) return true; // 서식이 안 걸린 몰 — 대부분이 여기다
+    const missing = findMissingRequired(fields, values);
+    if (missing) {
+        toast.error(`${missing.label}을(를) 입력해 주세요.`);
+        return false;
+    }
+    return true;
+};
+
+// ⚠ 추가 입력값은 **상품 객체에 실어** 넘긴다(product.order_form_values).
+//   인자를 하나 더 두면 담기·바로구매·구매 다이얼로그 등 부르는 자리마다 고쳐야 하고,
+//   한 곳만 빠뜨리면 그 경로에서만 값이 조용히 사라진다.
+//   상품에 붙여 두면 DialogBuyNow 처럼 product 를 그대로 넘기는 곳도 저절로 따라온다.
 export const startBuyNow = (product, selectProductGroups, router) => {
     try {
         if (!assertPurchasable(product)) return false;
         if (!assertOptionsSelected(product, selectProductGroups)) return false;
+        if (!assertOrderFormFilled(product?.order_form_values)) return false;
         const item = {
             ...product,
             groups: selectProductGroups?.groups ?? [],
             order_count: selectProductGroups?.count ?? 1,
+            // 값은 이 줄에 붙어 주문서를 거쳐 백엔드까지 그대로 간다.
+            order_form_values: product?.order_form_values ?? {},
         };
         sessionStorage.setItem('buyNowItem', JSON.stringify(item));
         router.push('/shop/auth/order?buynow=1');
@@ -485,7 +524,23 @@ export const cartLineSignature = (line) => {
         .map((g) => `${g?.id ?? g?.character_name ?? g?.group_name ?? ''}:${(g?.options ?? []).map((o) => o?.id ?? o?.value ?? o?.option_name ?? '').sort().join('|')}`)
         .sort()
         .join(';');
-    return `${line?.id ?? 0}/${line?.seller_id ?? 0}/${picked}`;
+    // ⚠ 추가 입력값도 시그니처에 넣는다.
+    //   안 넣으면 '같은 한복을 9월 1일과 9월 8일에 각각' 담았을 때 한 줄로 합쳐지고
+    //   날짜 하나가 조용히 사라진다(수량만 2가 된다).
+    return `${line?.id ?? 0}/${line?.seller_id ?? 0}/${picked}/${orderFormSignature(line?.order_form_values)}`;
+};
+
+// 입력값을 순서에 무관하게 문자열 하나로. 값이 없으면 빈 문자열이라 기존 줄과 그대로 맞는다.
+const orderFormSignature = (values) => {
+    if (!values || typeof values !== 'object') return '';
+    return Object.keys(values)
+        .filter((k) => {
+            const v = values[k];
+            return !(v === undefined || v === null || v === false || String(v).trim() === '');
+        })
+        .sort()
+        .map((k) => `${k}=${Array.isArray(values[k]) ? [...values[k]].sort().join('|') : values[k]}`)
+        .join('&');
 };
 
 export const insertCartDataUtil = (
@@ -500,6 +555,9 @@ export const insertCartDataUtil = (
     try {
         if (!assertPurchasable(product_)) return false;
         if (!assertOptionsSelected(product_, selectProductGroups_)) return false;
+        // 값은 상품 객체에 실려 온다(startBuyNow 주석 참고).
+        const orderFormValues = product_?.order_form_values;
+        if (!assertOrderFormFilled(orderFormValues)) return false;
         let cart_data = [...themeCartData];
         let product = product_;
         let selectProductGroups = selectProductGroups_;
@@ -512,7 +570,7 @@ export const insertCartDataUtil = (
         //   · 장바구니에 똑같은 줄이 여러 개 쌓이고
         //   · 목록 key 가 row.id 라 React key 가 중복되며(수량 변경이 엉뚱한 줄에 먹는다)
         //   · 상품별 배송비를 쓰는 브랜드는 배송비가 줄 수마다 중복 계산됐다.
-        const signature = cartLineSignature({ id: product?.id, seller_id: product?.seller_id, groups });
+        const signature = cartLineSignature({ id: product?.id, seller_id: product?.seller_id, groups, order_form_values: orderFormValues });
         const found_idx = cart_data.findIndex((line) => cartLineSignature(line) === signature);
         if (found_idx >= 0) {
             const prev = cart_data[found_idx];
@@ -525,6 +583,7 @@ export const insertCartDataUtil = (
                 ...product,
                 order_count,
                 groups,
+                order_form_values: orderFormValues ?? {},
             });
         }
         onChangeCartData(cart_data);

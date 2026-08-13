@@ -16,7 +16,6 @@ import EmptyContent from 'src/components/empty-content/EmptyContent';
 import Iconify from 'src/components/iconify/Iconify';
 import { useSettingsContext } from 'src/components/settings';
 import { calcOrderTotals, calculatorPrice, getCartDataUtil, makePayData, onPayProductsByAuth, onPayProductsByHand, onPayProductsByPayletter, onPayProductsByForspay } from 'src/utils/shop-util';
-import OrderFormFields from 'src/components/elements/shop/OrderFormFields';
 import { findMissingRequired } from 'src/data/order-form-types';
 import { syncCartWithServer, makeUnavailableMessage, filterUnavailableByProducts } from 'src/utils/cart-sync';
 import { forspayMethodList, formatLang } from 'src/utils/format';
@@ -328,13 +327,18 @@ export default function OrderSheet({ router }) {
       toast.error(translate("배송지를 선택하거나 입력해 주세요."));
       return false;
     }
-    // 주문서 추가 입력항목의 필수 검사.
-    // 무엇이 빠졌는지 이름으로 말해줘야 한다 — '필수 항목을 입력하세요'만 뜨면
-    // 항목이 여럿일 때 어디를 채워야 하는지 알 수 없다.
-    const 빠진항목 = findMissingRequired(themeDnsData?.order_form?.fields ?? [], payData?.order_form);
-    if (빠진항목) {
-      toast.error(translate('{{name}}을(를) 입력해 주세요.', { name: formatLang(빠진항목, 'label', currentLang) }));
-      return false;
+    // 주문 추가 입력항목의 필수 검사는 상품상세(담기·바로구매)에서 이미 지났다.
+    // 다만 서식이 나중에 바뀌었거나 예전에 담아 둔 장바구니 줄은 값이 비어 있을 수 있으므로
+    // 결제 직전에 한 번 더 본다 — 여기서 막지 않으면 필수 정보 없는 주문이 접수된다.
+    const 항목 = themeDnsData?.order_form?.fields ?? [];
+    if (항목.length > 0) {
+      for (const p of products) {
+        const 빠진항목 = findMissingRequired(항목, p?.order_form_values);
+        if (빠진항목) {
+          toast.error(translate('{{name}}을(를) 입력해 주세요.', { name: formatLang(빠진항목, 'label', currentLang) }));
+          return false;
+        }
+      }
     }
     if (!user && !payData.password) {
       toast.error(translate("비회원 주문 비밀번호를 입력해 주세요."));
@@ -824,15 +828,9 @@ export default function OrderSheet({ router }) {
                 </CardContent>
               </Card>
 
-              {/* 주문서 추가 입력항목(행사일·행사장소 등).
-                  본사가 이 가맹점에 서식을 걸어둔 경우에만 나타난다. 대부분의 몰에서는 아무것도 안 그린다.
-                  배송지 다음에 두는 이유: 배송지를 채운 뒤라 '행사 장소'와 헷갈리지 않는다. */}
-              {/* 값을 payData 안에 담는다. makePayData 가 payData 를 그대로 실어 보내므로
-                  결제수단별 호출 3곳을 건드리지 않아도 백엔드까지 따라간다. */}
-              <OrderFormFields
-                values={payData?.order_form}
-                onChange={(v) => setPayData({ ...payData, order_form: v })}
-              />
+              {/* ※ 주문 추가 입력항목(행사일 등)은 여기가 아니라 **상품상세**에서 받는다.
+                  값은 장바구니 줄(products[i].order_form_values)에 실려 그대로 백엔드로 간다.
+                  주문서에서 한 번만 받던 때는 날짜가 다른 두 상품을 담으면 하나밖에 못 받았다. */}
 
               {/* 결제수단 (약관 동의 후 선택) */}
               <Card sx={{ mb: 3 }}>

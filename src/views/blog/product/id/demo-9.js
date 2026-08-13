@@ -13,6 +13,7 @@ import QuantityStepper from 'src/components/elements/shop/QuantityStepper';
 import ProductThumbs, { buildProductImages } from 'src/components/elements/shop/ProductThumbs';
 import toast from 'react-hot-toast';
 import BenefitNotice from 'src/components/elements/shop/BenefitNotice';
+import OrderFormFields from 'src/components/elements/shop/OrderFormFields';
 
 /* 상품 상세 - 데모 9: 파스텔 드림 */
 
@@ -222,6 +223,8 @@ const Demo9 = () => {
   const { user } = useAuthContext();
   const [item, setItem] = useState(null);
   const [selectProductGroups, setSelectProductGroups] = useState({ count: 1, groups: [] });
+  // 주문 추가 입력항목(행사일 등)의 값. 담기·바로구매 때 상품에 실어 보낸다.
+  const [orderFormValues, setOrderFormValues] = useState({});
   const [imgIdx, setImgIdx] = useState(0);
 
   useEffect(() => {
@@ -296,6 +299,8 @@ const Demo9 = () => {
                 : <div style={{ fontSize: '13px', color: '#888', marginTop: '6px' }}>{translate('무료배송')}</div>}
             {/* 혜택 안내(본사 공통) */}
             <BenefitNotice sx={{ mt: '10px' }} tone={{ fontSize: 13, labelColor: '#a08b93', textColor: '#4a3f43' }} />
+              {/* 주문 추가 입력항목 — 서식이 걸린 몰에서만 나타난다 */}
+              <OrderFormFields values={orderFormValues} onChange={setOrderFormValues} sx={{ mt: 2 }} />
             {item?.groups?.length > 0 && (
               <OptionWrap>
                 {item.groups.map((group) => (
@@ -341,7 +346,7 @@ const Demo9 = () => {
             }
             <ButtonRow>
               <Btn disabled={!purchasable} style={purchasable ? undefined : { opacity: 0.45, cursor: 'not-allowed' }} onClick={handleAddCart}>{translate('🛒 장바구니')}</Btn>
-              <Btn $primary disabled={!purchasable} style={purchasable ? undefined : { opacity: 0.45, cursor: 'not-allowed' }} onClick={() => startBuyNow(item, selectProductGroups, router)}>{translate('구매하기 💫')}</Btn>
+              <Btn $primary disabled={!purchasable} style={purchasable ? undefined : { opacity: 0.45, cursor: 'not-allowed' }} onClick={() => startBuyNow({ ...item, order_form_values: orderFormValues }, selectProductGroups, router)}>{translate('구매하기 💫')}</Btn>
             </ButtonRow>
           </Info>
         </HeroInner>

@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { useRouter } from 'next/router';
 import {
     Alert, Autocomplete, Button, Card, Divider, FormControlLabel, IconButton,
     MenuItem, Stack, Switch, TextField, Typography, Chip,
@@ -30,23 +31,44 @@ const 빈서식 = () => ({ id: null, name: '', guide: '', is_use: 1, fields: [],
 
 const OrderFormPage = () => {
     const { themeDnsData } = useSettingsContext();
+    const router = useRouter();
     const [loading, setLoading] = useState(true);
     const [list, setList] = useState([]);
     const [merchants, setMerchants] = useState([]);
 
-    useEffect(() => { settingPage(); }, []);
+    // 가맹점 현황에서 '?brand=<id>' 로 넘어온다 — 그 가맹점을 고른 채로 시작한다.
+    // 가맹점 목록에서 출발해 그 몰 것을 만지는 흐름을 만들기 위한 것이다
+    // (마스터는 가맹점 어드민에 로그인할 수 없어서, 대신 여기서 그 몰을 고른 상태로 연다).
+    const 넘어온가맹점 = Number(router.query?.brand) || 0;
+
+    useEffect(() => { if (router.isReady) settingPage(); }, [router.isReady]);
 
     const settingPage = async () => {
         const [data, m] = await Promise.all([
             apiManager('order-forms', 'list', {}),
             apiManager('order-forms/merchants', 'list', {}),
         ]);
-        setList((data?.content ?? []).map((t) => ({
+        const merchantList = m?.content ?? [];
+        let rows = (data?.content ?? []).map((t) => ({
             ...t,
             fields: t?.fields ?? [],
             targets: (t?.targets ?? []).map((x) => ({ brand_id: x.brand_id, dns: x.dns, name: x.brand_name })),
-        })));
-        setMerchants(m?.content ?? []);
+        }));
+
+        if (넘어온가맹점) {
+            const 걸린것 = rows.filter((t) => t.targets.some((g) => Number(g.brand_id) === 넘어온가맹점));
+            if (걸린것.length > 0) {
+                // 그 몰에 걸린 서식만 먼저 보여준다 — 서식이 여럿일 때 찾아 헤매지 않게.
+                rows = [...걸린것, ...rows.filter((t) => !걸린것.includes(t))];
+            } else {
+                // 아직 없으면 그 가맹점이 선택된 빈 서식을 하나 열어 둔다(저장 전이라 DB 에는 없다).
+                const b = merchantList.find((x) => Number(x.id) === 넘어온가맹점);
+                if (b) rows = [{ ...빈서식(), targets: [{ brand_id: b.id, dns: b.dns, name: b.name }] }, ...rows];
+            }
+        }
+
+        setList(rows);
+        setMerchants(merchantList);
         setLoading(false);
     };
 
@@ -101,9 +123,11 @@ const OrderFormPage = () => {
         <Stack spacing={2}>
             <Alert severity="info" sx={{ fontSize: '0.85rem' }}>
                 예약·출장처럼 <b>주문받을 때 더 물어봐야 하는 업체</b>를 위한 기능입니다.
-                서식을 만들고 <b>적용할 가맹점</b>을 고르면, 그 몰의 주문서에 입력칸이 생깁니다.<br />
-                입력은 <b>주문서에서 한 번</b> 받습니다 — 적용된 몰에서는 예약이 아닌 상품만 산 고객에게도 이 항목이 보입니다.
-                그래서 <b>필수는 꼭 필요한 것만</b> 지정하시는 편이 좋습니다.<br />
+                서식을 만들고 <b>적용할 가맹점</b>을 고르면, 그 몰의 <b>상품상세</b>에 입력칸이 생깁니다
+                (네이버 스마트스토어의 &lsquo;구매자 작성형 옵션&rsquo;과 같은 자리).<br />
+                값은 <b>장바구니에 담을 때 상품마다</b> 붙습니다 — 행사일이 다른 상품을 두 개 담아도 각각 남습니다.<br />
+                지금은 그 몰의 <b>모든 상품</b>에 나타납니다. 예약 상품과 일반 상품이 섞인 몰이라면
+                <b>필수는 꼭 필요한 것만</b> 지정해 주세요.<br />
                 문구는 한국어로만 쓰시면 됩니다. 나머지 4개 언어는 저장 후 자동으로 채워집니다.
             </Alert>
 

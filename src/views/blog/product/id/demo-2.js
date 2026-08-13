@@ -21,6 +21,7 @@ import { ProductDetailsReview } from 'src/views/@dashboard/e-commerce/details';
 import { isShopgoBrand } from 'src/utils/is-shopgo';
 import QuantityStepper from 'src/components/elements/shop/QuantityStepper';
 import BenefitNotice from 'src/components/elements/shop/BenefitNotice';
+import OrderFormFields from 'src/components/elements/shop/OrderFormFields';
 
 
 const ReactQuill = dynamic(() => import('react-quill'), {
@@ -113,6 +114,8 @@ const Demo2 = (props) => {
         count: 1,
         groups: [],
     });
+  // 주문 추가 입력항목(행사일 등)의 값. 담기·바로구매 때 상품에 실어 보낸다.
+  const [orderFormValues, setOrderFormValues] = useState({});
 
     const [tab, setTab] = useState(0)
     const [reviewPage, setReviewPage] = useState(1)
@@ -179,7 +182,7 @@ const Demo2 = (props) => {
     const productStatusText = getProductStatus(item?.status)?.text;
     const handleAddCart = async () => {
         //옵션 체크 안해도 저장 되는데 이 부분은 수정할 여지가 있어보임
-        let result = await insertCartDataUtil({ ...item, seller_id: router.query?.seller_id ?? 0 }, selectProductGroups, themeCartData, onChangeCartData);
+        let result = await insertCartDataUtil({ ...item, seller_id: router.query?.seller_id ?? 0 , order_form_values: orderFormValues }, selectProductGroups, themeCartData, onChangeCartData);
         if (result) {
             toast.success(translate("장바구니에 성공적으로 추가되었습니다."))
             window.location.reload()
@@ -198,7 +201,7 @@ const Demo2 = (props) => {
             <DialogBuyNow
                 buyOpen={buyOpen}
                 setBuyOpen={setBuyOpen}
-                product={item}
+                product={{ ...item, order_form_values: orderFormValues }}
                 selectProductGroups={selectProductGroups}
                 is_blog={1}
             />
@@ -253,6 +256,8 @@ const Demo2 = (props) => {
                         </Row>
                         {/* 혜택 안내(본사 공통). 이 프레임은 배송정보 묶음이 따로 있어 그 아래에 붙인다. */}
                         <BenefitNotice sx={{ mb: '0.5rem' }} tone={{ fontSize: 13 }} />
+              {/* 주문 추가 입력항목 — 서식이 걸린 몰에서만 나타난다 */}
+              <OrderFormFields values={orderFormValues} onChange={setOrderFormValues} sx={{ mt: 2 }} />
                     </PriceContainer>
                     {/* 품절·중단됨을 상세에서 바로 알린다 — 예전엔 표시도 없고 버튼도 살아 있어
                         옵션 창까지 열고 나서야 살 수 없다는 걸 알았다. */}
@@ -294,7 +299,7 @@ const Demo2 = (props) => {
                                 </>
                                 :
                                 <>
-                                    <ProductDetailsReview product={item} reviewContent={reviewContent} onChangePage={pageSetting} reviewPage={reviewPage} />,
+                                    <ProductDetailsReview product={{ ...item, order_form_values: orderFormValues }} reviewContent={reviewContent} onChangePage={pageSetting} reviewPage={reviewPage} />,
                                 </>
 
                         }

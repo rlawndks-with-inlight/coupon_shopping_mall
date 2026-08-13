@@ -38,6 +38,15 @@ const storefrontRootRewrite = LANDING_HOSTS
 // Remove this if you're not using Fullcalendar features
 
 module.exports = {
+  // 빌드 산출물 폴더. 기본값은 그대로 '.next' 이고, 환경변수를 줄 때만 달라진다.
+  //
+  // 왜 필요한가: 로컬에서 dev 서버를 두 개 띄울 때(본사 관리자 + 가맹점 화면) 둘 다
+  // 같은 '.next' 에 컴파일해 서로를 덮어쓴다. MAIN_FRONT_URL·IS_TEST 는 아래 env 로
+  // **빌드 시점에 코드에 박히는 값**이라, 나중에 뜬 서버의 설정이 먼저 뜬 서버까지 바꿔버린다
+  // (본사 화면이 가맹점으로 둔갑해 /shop 으로 튕겼다).
+  //   NEXT_DIST_DIR=.next-2001 npx next dev -p 2001
+  // 운영 배포는 이 값을 주지 않으므로 동작이 달라지지 않는다.
+  distDir: process.env.NEXT_DIST_DIR || '.next',
   trailingSlash: true,
   reactStrictMode: true,
   // env block은 아래에 통합됨

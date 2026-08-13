@@ -18,6 +18,7 @@ import { formatLang, characterChoices } from 'src/utils/format';
 import QuantityStepper from 'src/components/elements/shop/QuantityStepper';
 import { useLocales } from 'src/locales';
 import BenefitNotice from 'src/components/elements/shop/BenefitNotice';
+import OrderFormFields from 'src/components/elements/shop/OrderFormFields';
 
 const ReactQuill = dynamic(() => import('react-quill'), {
   ssr: false,
@@ -60,6 +61,8 @@ const ItemDemo = (props) => {
     count: 1,
     groups: [],
   });
+  // 주문 추가 입력항목(행사일 등)의 값. 담기·바로구매 때 상품에 실어 보낸다.
+  const [orderFormValues, setOrderFormValues] = useState({});
 
   useEffect(() => {
     getProductInfo();
@@ -109,7 +112,7 @@ const ItemDemo = (props) => {
 
   // 비회원도 장바구니 담기 허용(아래 handleBuyNow와 동일 정책).
   const handleAddCart = async () => {
-    let result = await insertCartDataUtil({ ...product, seller_id: themeDnsData?.seller_id ?? 0 }, selectProductGroups, themeCartData, onChangeCartData);
+    let result = await insertCartDataUtil({ ...product, seller_id: themeDnsData?.seller_id ?? 0 , order_form_values: orderFormValues }, selectProductGroups, themeCartData, onChangeCartData);
     if (result) {
       toast.success(translate("장바구니에 추가되었습니다."));
     }
@@ -161,7 +164,7 @@ const ItemDemo = (props) => {
     {
       value: 'reviews',
       label: `${translate('상품후기')} (${reviewContent?.total ?? 0})`,
-      component: product ? <ProductDetailsReview product={product} reviewContent={reviewContent} onChangePage={(page) => setReviewPage(page)} reviewPage={reviewPage} reviewLoading={reviewLoading} /> : null,
+      component: product ? <ProductDetailsReview product={{ ...product, order_form_values: orderFormValues }} reviewContent={reviewContent} onChangePage={(page) => setReviewPage(page)} reviewPage={reviewPage} reviewLoading={reviewLoading} /> : null,
     },
   ];
   // ShopGo 산하는 상품후기를 쓰지 않는다 — 후기 탭을 감춘다.
@@ -176,7 +179,7 @@ const ItemDemo = (props) => {
       <DialogBuyNow
         buyOpen={buyOpen}
         setBuyOpen={setBuyOpen}
-        product={product}
+        product={{ ...product, order_form_values: orderFormValues }}
         selectProductGroups={selectProductGroups}
       />
       <Wrapper>
@@ -189,7 +192,7 @@ const ItemDemo = (props) => {
                 <>
                   <Grid container spacing={4}>
                     <Grid item xs={12} md={6}>
-                      <ProductDetailsCarousel product={product} />
+                      <ProductDetailsCarousel product={{ ...product, order_form_values: orderFormValues }} />
                     </Grid>
                     <Grid item xs={12} md={6} style={{ display: 'flex', flexDirection: 'column' }}>
                       {/*product?.product_code &&
@@ -230,6 +233,8 @@ const ItemDemo = (props) => {
                       </Typography>
                       {/* 혜택 안내(본사 공통) — 배송비 바로 아래 */}
                       <BenefitNotice sx={{ mb: 1 }} tone={{ fontSize: 13 }} />
+              {/* 주문 추가 입력항목 — 서식이 걸린 몰에서만 나타난다 */}
+              <OrderFormFields values={orderFormValues} onChange={setOrderFormValues} sx={{ mt: 2 }} />
                       {/* 옵션그룹(product_option_groups) 선택.
                           이 화면은 특성(characters)만 그리고 옵션그룹은 아예 그리지 않았다.
                           그래서 관리자에서 '옵션'을 등록한 상품은 프레임2 상세에 선택 UI 가 없었고,

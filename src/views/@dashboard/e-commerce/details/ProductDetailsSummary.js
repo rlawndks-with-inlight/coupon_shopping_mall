@@ -54,6 +54,7 @@ import DialogBuyNow from 'src/components/dialog/DialogBuyNow';
 import { useLocales } from 'src/locales';
 import { formatLang } from 'src/utils/format';
 import { isShopgoBrand } from 'src/utils/is-shopgo';
+import OrderFormFields from 'src/components/elements/shop/OrderFormFields';
 // ----------------------------------------------------------------------
 
 ProductDetailsSummary.propTypes = {
@@ -73,6 +74,8 @@ export default function ProductDetailsSummary({ product, onAddCart, onGotoStep, 
     count: 1,
     groups: [],
   });
+  // 주문 추가 입력항목(행사일 등)의 값. 담기·바로구매 때 상품에 실어 보낸다.
+  const [orderFormValues, setOrderFormValues] = useState({});
 
   const {
     id,
@@ -104,7 +107,7 @@ export default function ProductDetailsSummary({ product, onAddCart, onGotoStep, 
   // 바로 아래 handleBuyNow는 이미 비회원에게 열려 있었는데 담기만 로그인을 요구해 앞뒤가 안 맞았다.
   const handleAddCart = async () => {
     //옵션 체크 안해도 저장 되는데 이 부분은 수정할 여지가 있어보임
-    let result = await insertCartDataUtil({ ...product, seller_id: router.query?.seller_id ?? 0 }, selectProductGroups, themeCartData, onChangeCartData);
+    let result = await insertCartDataUtil({ ...product, seller_id: router.query?.seller_id ?? 0 , order_form_values: orderFormValues }, selectProductGroups, themeCartData, onChangeCartData);
     if (result) {
       toast.success(translate("장바구니에 성공적으로 추가되었습니다."))
     }
@@ -121,7 +124,7 @@ export default function ProductDetailsSummary({ product, onAddCart, onGotoStep, 
       <DialogBuyNow
         buyOpen={buyOpen}
         setBuyOpen={setBuyOpen}
-        product={product}
+        product={{ ...product, order_form_values: orderFormValues }}
         selectProductGroups={selectProductGroups}
       />
       <form>
@@ -202,6 +205,8 @@ export default function ProductDetailsSummary({ product, onAddCart, onGotoStep, 
               본사에 등록된 것이 없으면 아무것도 그리지 않으므로,
               이 컴포넌트를 함께 쓰는 다른 클라이언트 몰에는 영향이 없다. */}
           <BenefitNotice sx={{ mt: 1 }} tone={{ fontSize: 13, labelColor: themeObj.grey[500] }} />
+              {/* 주문 추가 입력항목 — 서식이 걸린 몰에서만 나타난다 */}
+              <OrderFormFields values={orderFormValues} onChange={setOrderFormValues} sx={{ mt: 2 }} />
           <Divider sx={{ borderStyle: 'dashed' }} />
           {
             themeDnsData?.id == 95 && product_sale_price > 99999 ?

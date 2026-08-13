@@ -802,6 +802,15 @@ const es = {
   "한정 상품": "Artículo limitado",
   "1인 {{n}}개까지 구매할 수 있습니다.": "Máximo {{n}} por persona.",
   "회원만 구매할 수 있습니다.": "Solo para miembros.",
+  // 부분취소 — 서버 실패 사유
+  "주문을 특정할 수 없습니다.": "No se pudo identificar el pedido.",
+  "이 결제수단은 부분취소를 지원하지 않습니다. 전체 취소만 가능합니다.": "Este método de pago no admite cancelación parcial. Solo es posible la cancelación total.",
+  "취소할 상품과 수량을 선택해 주세요.": "Seleccione los artículos y las cantidades a cancelar.",
+  "주문에 없는 상품입니다.": "Ese artículo no está en este pedido.",
+  "취소 수량이 올바르지 않습니다.": "La cantidad de cancelación no es válida.",
+  "이미 처리된 취소 요청입니다.": "Esta cancelación ya fue procesada.",
+  "취소 기록에 실패했습니다.": "No se pudo registrar la cancelación.",
+  "취소에 실패했습니다.": "La cancelación falló.",
 };
 
 export default es;

@@ -74,7 +74,7 @@ export const LANDING_STRINGS = {
     trust2Title: "AWS 클라우드 인프라",
     trust2Desc: "검증된 글로벌 클라우드에서\n안정적으로 운영됩니다",
     trust3Title: "개인정보 암호화 저장",
-    trust3Desc: "개인정보(비밀번호·이름·연락처·주소 등)는\n암호화하여 저장합니다",
+    trust3Desc: "비밀번호·이름·연락처·주소 등을\n암호화하여 저장합니다",
     trust4Title: "결제정보 안전 관리",
     trust4Desc: "결제정보는 PG(PSP)사가 처리하며,\nSHOPGO는 카드번호 등 주요 결제정보를 수집·저장하지 않습니다",
   },

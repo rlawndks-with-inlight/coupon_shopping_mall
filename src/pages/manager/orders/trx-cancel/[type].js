@@ -6,6 +6,7 @@ import { Icon } from "@iconify/react";
 import { useRouter } from "next/router";
 import { Col, Row } from "src/components/elements/styled-components";
 import { useModal } from "src/components/dialog/ModalProvider";
+import PartialCancelDialog from "src/components/manager/PartialCancelDialog";
 import { commarNumber } from "src/utils/function";
 import toast from "react-hot-toast";
 import { apiManager, apiUtil } from "src/utils/api";
@@ -272,11 +273,32 @@ const TrxCancelList = () => {
       },
     },*/
     {
+      id: 'cancel',
+      label: '취소',
+      action: (row) => {
+        // 취소를 우리 화면에서 처리해야 DB·재고·포인트가 함께 맞는다.
+        // PG 콘솔에서만 취소하면 우리 쪽은 정상 주문으로 남고 매출·재고가 어긋난다.
+        if (row?.is_cancel == 1 || row?.is_cancel_trans == 1) return <div style={{ color: '#bbb' }}>취소됨</div>;
+        return (
+          <Button size='small' variant='outlined' color='error'
+            onClick={() => { setCancelTrxId(row?.id); }}>
+            부분/전체 취소
+          </Button>
+        );
+      },
+    },
+    {
       id: 'edit',
       label: `수정/삭제`,
       action: (row) => {
         return (
           <>
+      <PartialCancelDialog
+        open={!!cancelTrxId}
+        trxId={cancelTrxId}
+        onClose={() => setCancelTrxId(0)}
+        onDone={() => onChangePage(searchObj)}
+      />
             <IconButton>
               <Icon icon='material-symbols:edit-outline' onClick={() => {
                 // 상대경로면 /manager/orders/trx-cancel/default/{id} 로 해석돼 라우트가 없다(404).
@@ -301,6 +323,8 @@ const TrxCancelList = () => {
   ]
   const router = useRouter();
   const [data, setData] = useState({});
+  // 부분/전체 취소 다이얼로그 대상 주문 id
+  const [cancelTrxId, setCancelTrxId] = useState(0);
   const [searchObj, setSearchObj] = useState({
     page: 1,
     page_size: 10,

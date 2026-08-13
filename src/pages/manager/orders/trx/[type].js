@@ -6,6 +6,7 @@ import { Icon } from "@iconify/react";
 import { useRouter } from "next/router";
 import { Col, Row } from "src/components/elements/styled-components";
 import { useModal } from "src/components/dialog/ModalProvider";
+import PartialCancelDialog from "src/components/manager/PartialCancelDialog";
 import { commarNumber } from "src/utils/function";
 import toast from "react-hot-toast";
 import { apiManager, apiUtil } from "src/utils/api";
@@ -35,6 +36,8 @@ const TrxList = () => {
   //   const 는 TDZ 라 선언이 아래에 있으면 렌더 중 ReferenceError 가 나고 화면이 백지가 된다.
   //   그래서 컬럼 정의보다 위에 둔다.
   const [data, setData] = useState({});
+  // 부분/전체 취소 다이얼로그 대상 주문 id
+  const [cancelTrxId, setCancelTrxId] = useState(0);
   const defaultColumns = [
     ...(themeDnsData?.setting_obj?.is_use_seller == 2 ? [
       {
@@ -545,6 +548,21 @@ const TrxList = () => {
         }
       },
     },*/
+    {
+      id: 'cancel',
+      label: '취소',
+      action: (row) => {
+        // 취소를 우리 화면에서 처리해야 DB·재고·포인트가 함께 맞는다.
+        // PG 콘솔에서만 취소하면 우리 쪽은 정상 주문으로 남고 매출·재고가 어긋난다.
+        if (row?.is_cancel == 1 || row?.is_cancel_trans == 1) return <div style={{ color: '#bbb' }}>취소됨</div>;
+        return (
+          <Button size='small' variant='outlined' color='error'
+            onClick={() => { setCancelTrxId(row?.id); }}>
+            부분/전체 취소
+          </Button>
+        );
+      },
+    },
     ...(themeDnsData?.id == 34 || themeDnsData?.id == 64 || themeDnsData?.id == 84 ? [
       {
         id: 'edit',
@@ -552,6 +570,12 @@ const TrxList = () => {
         action: (row) => {
           return (
             <>
+      <PartialCancelDialog
+        open={!!cancelTrxId}
+        trxId={cancelTrxId}
+        onClose={() => setCancelTrxId(0)}
+        onDone={() => onChangePage(searchObj)}
+      />
               {/* <IconButton>
                 <Icon icon='material-symbols:edit-outline' onClick={() => {
                   router.push(`default/${row?.id}`)

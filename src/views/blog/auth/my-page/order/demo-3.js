@@ -209,7 +209,7 @@ const Demo3 = (props) => {
                                                         }}
                                                     >{translate('배송조회')}</Button>
                                                 {/* 블로그형 프레임에는 취소요청 수단이 아예 없었다 — 공용 버튼으로 통일 */}
-                                                <OrderCancelButton trx={item.trx} onDone={onLoadOrders} sx={{ marginBottom: '1rem', whiteSpace: 'nowrap' }} />
+                                                <OrderCancelButton trx={item.trx} orders={item.trx?.orders} onDone={onLoadOrders} sx={{ marginBottom: '1rem', whiteSpace: 'nowrap' }} />
                                                 </AddressButton>
 
                                             </div>

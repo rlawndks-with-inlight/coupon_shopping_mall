@@ -1,4 +1,5 @@
 import styled from 'styled-components'
+import OrderCancelButton from 'src/components/elements/shop/OrderCancelButton';
 import { commarNumber, getPointType, getPriceUnitByLang, setProductPriceByLang, getOrderStatusText, commarNumberWithUnit } from 'src/utils/function'
 import { itemThemeCssDefaultSetting } from 'src/views/manager/item-card/setting'
 import { useEffect, useState } from 'react'
@@ -426,23 +427,13 @@ export const HistoryTable = props => {
                         ) : row?.trx_status == 1 ? (
                           <>{translate('취소요청됨')}</>
                         ) : canCancel(row) ? (
-                          <Button
-                            size='small'
+                          // 줄·수량을 고를 수 있는 공용 버튼. 예전엔 여기서 바로 '주문 전체'를 요청했다.
+                          <OrderCancelButton
+                            trx={row}
+                            orders={row?.orders}
+                            onDone={() => onChangePage(searchObj)}
                             variant='outlined'
-                            color='error'
-                            startIcon={<Icon icon='material-symbols:cancel-outline' />}
-                            onClick={() => {
-                              setModal({
-                                func: () => {
-                                  onPayCancelRequest(row)
-                                },
-                                icon: 'material-symbols:cancel-outline',
-                                title: translate('주문취소요청 하시겠습니까?')
-                              })
-                            }}
-                          >
-                            {translate('취소요청')}
-                          </Button>
+                          />
                         ) : (
                           <>---</>
                         )}

@@ -1,4 +1,5 @@
 import styled from 'styled-components'
+import OrderCancelButton from 'src/components/elements/shop/OrderCancelButton';
 import { commarNumber, getPointType, getPriceUnitByLang, setProductPriceByLang, getOrderStatusText, commarNumberWithUnit } from 'src/utils/function'
 import { itemThemeCssDefaultSetting } from 'src/views/manager/item-card/setting'
 import { useEffect, useState } from 'react'
@@ -392,27 +393,16 @@ export const HistoryTable = props => {
                                         }
                                         <TableCell>
                                             <Box sx={{ textAlign: 'right', color: 'text.secondary' }}>
-                                                {row?.is_cancel == 1 || row?.trx_status == 1 ? (
-                                                    <>---</>
-                                                ) : (
-                                                    <>
-                                                        <IconButton>
-                                                            <Icon
-                                                                icon='material-symbols:cancel-outline'
-                                                                onClick={() => {
-                                                                    setModal({
-                                                                        func: () => {
-                                                                            onPayCancelRequest(row)
-                                                                        },
-                                                                        icon: 'material-symbols:cancel-outline',
-                                                                        title: translate('주문취소요청 하시겠습니까?')
-                                                                    })
-                                                                    //console.log(row)
-                                                                }}
-                                                            />
-                                                        </IconButton>
-                                                    </>
-                                                )}
+                                                {/* 줄·수량을 고를 수 있는 공용 버튼.
+                                                    예전엔 아이콘 하나로 '주문 전체'를 바로 요청했다.
+                                                    취소 가능 상태 판정도 공용 컴포넌트가 한다 —
+                                                    여기서 따로 세면 백엔드 기준과 어긋난다. */}
+                                                <OrderCancelButton
+                                                    trx={row}
+                                                    orders={row?.orders}
+                                                    onDone={() => onChangePage(searchObj)}
+                                                    variant='outlined'
+                                                />
                                             </Box>
                                         </TableCell>
                                     </TableRow>

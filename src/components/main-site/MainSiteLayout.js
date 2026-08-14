@@ -31,6 +31,14 @@ const PRIMARY = '#a3e635';
 const PRIMARY_HOVER = '#84cc16';
 const ON_PRIMARY = '#1a1a1a';
 
+// 푸터 글씨는 이 회색 하나로만 쓴다.
+// 예전엔 #aaa(제목·면책) · #555(법인명) · #999(본문·링크) · #666(이메일) 네 가지가 섞여
+// 같은 성격의 줄끼리도 밝기가 달랐다. 위계는 색이 아니라 굵기·크기로만 준다.
+//
+// 값을 #666 으로 잡은 이유: 푸터 바탕(#fafaf7)에서 대비 약 5.5:1 이라 10px 면책 문구까지
+// 읽힌다. 기존 주력이던 #999 는 2.8:1, #aaa 는 더 낮아 작은 글씨가 잘 안 보였다.
+const FOOTER_TEXT = '#666';
+
 const NAV = [
   { k: 'navAbout', href: '/#features' },
   { k: 'navFrames', href: '/frames' },
@@ -221,35 +229,37 @@ export const MainSiteFooter = () => {
       <Stack spacing={2}>
         {/* 서비스 운영사 — 결제사(포스페이) 먼저, 그다음 플랫폼(우진플랫폼).
             법인명·주소를 포함해 전부 사전에서 가져온다. 상수는 사전이 비었을 때의 폴백일 뿐이다. */}
-        <Typography sx={{ fontSize: 11, letterSpacing: 2, color: '#aaa', fontWeight: 700 }}>{t.footerOperator}</Typography>
+        <Typography sx={{ fontSize: 11, letterSpacing: 2, color: FOOTER_TEXT, fontWeight: 700 }}>{t.footerOperator}</Typography>
         <Stack direction={{ xs: 'column', sm: 'row' }} spacing={{ xs: 2.5, sm: 6 }} sx={{ pt: 0.5 }}>
           {/* 포스페이(결제) 먼저 */}
           <Stack spacing={0.5}>
-            <Typography sx={{ fontSize: 13, color: '#555', fontWeight: 700 }}>
+            <Typography sx={{ fontSize: 13, color: FOOTER_TEXT, fontWeight: 700 }}>
               {t.footerPayName || FORSPAY_NAME}
               <Box component="a" href={FORSPAY_URL} target="_blank" rel="noreferrer"
-                sx={{ ml: 0.75, fontSize: 11, fontWeight: 500, color: '#999', textDecoration: 'none', '&:hover': { textDecoration: 'underline' } }}>forspay.com</Box>
+                sx={{ ml: 0.75, fontSize: 11, fontWeight: 500, color: FOOTER_TEXT, textDecoration: 'none', '&:hover': { textDecoration: 'underline' } }}>forspay.com</Box>
             </Typography>
-            <Typography sx={{ fontSize: 12, color: '#999' }}>{t.footerPayDesc || FORSPAY_DESC}</Typography>
-            <Typography sx={{ fontSize: 12, color: '#999', lineHeight: 1.8 }}>{t.footerPayAddress || FORSPAY_ADDRESS}</Typography>
-            <Typography sx={{ fontSize: 12, color: '#999' }}>
+            <Typography sx={{ fontSize: 12, color: FOOTER_TEXT }}>{t.footerPayDesc || FORSPAY_DESC}</Typography>
+            <Typography sx={{ fontSize: 12, color: FOOTER_TEXT, lineHeight: 1.8 }}>{t.footerPayAddress || FORSPAY_ADDRESS}</Typography>
+            <Typography sx={{ fontSize: 12, color: FOOTER_TEXT }}>
               {t.footerPayInquiry}{' '}
               <Box component="a" href={`mailto:${PAY_INQUIRY_EMAIL}`}
-                sx={{ color: '#666', fontWeight: 600, textDecoration: 'none', '&:hover': { textDecoration: 'underline' } }}>{PAY_INQUIRY_EMAIL}</Box>
+                sx={{ color: FOOTER_TEXT, fontWeight: 600, textDecoration: 'none', '&:hover': { textDecoration: 'underline' } }}>{PAY_INQUIRY_EMAIL}</Box>
             </Typography>
           </Stack>
           {/* 우진플랫폼(플랫폼 운영) */}
           <Stack spacing={0.5}>
-            <Typography sx={{ fontSize: 13, color: '#555', fontWeight: 700 }}>{t.footerPlatformName || COMPANY_NAME}</Typography>
-            <Typography sx={{ fontSize: 12, color: '#999' }}>{t.footerPlatformDesc || PLATFORM_DESC}</Typography>
-            <Typography sx={{ fontSize: 12, color: '#999', lineHeight: 1.8 }}>{t.footerPlatformAddress || COMPANY_ADDRESS}</Typography>
-            <Typography sx={{ fontSize: 12, color: '#999' }}>
+            <Typography sx={{ fontSize: 13, color: FOOTER_TEXT, fontWeight: 700 }}>{t.footerPlatformName || COMPANY_NAME}</Typography>
+            <Typography sx={{ fontSize: 12, color: FOOTER_TEXT }}>{t.footerPlatformDesc || PLATFORM_DESC}</Typography>
+            <Typography sx={{ fontSize: 12, color: FOOTER_TEXT, lineHeight: 1.8 }}>{t.footerPlatformAddress || COMPANY_ADDRESS}</Typography>
+            <Typography sx={{ fontSize: 12, color: FOOTER_TEXT }}>
               {t.footerShopInquiry}{' '}
               <Box component="a" href={`mailto:${SHOP_INQUIRY_EMAIL}`}
-                sx={{ color: '#666', fontWeight: 600, textDecoration: 'none', '&:hover': { textDecoration: 'underline' } }}>{SHOP_INQUIRY_EMAIL}</Box>
+                sx={{ color: FOOTER_TEXT, fontWeight: 600, textDecoration: 'none', '&:hover': { textDecoration: 'underline' } }}>{SHOP_INQUIRY_EMAIL}</Box>
             </Typography>
           </Stack>
         </Stack>
+        {/* 약관 링크 — 색이 본문과 같아졌으니 밑줄로 링크임을 밝힌다.
+            예전엔 색만으로 구분했는데, 그것도 본문(#999)과 같은 값이라 실은 구분이 안 됐다. */}
         <Stack direction="row" flexWrap="wrap" gap={{ xs: 1, sm: 2 }} sx={{ pt: 1 }}>
           {POLICY_DOCS.map((d) => (
             <Box
@@ -258,10 +268,12 @@ export const MainSiteFooter = () => {
               href={`/policy/${d.slug}`}
               sx={{
                 fontSize: 12,
-                color: '#999',
+                color: FOOTER_TEXT,
                 fontWeight: 400,
-                textDecoration: 'none',
-                '&:hover': { textDecoration: 'underline' },
+                textDecoration: 'underline',
+                textUnderlineOffset: '2px',
+                textDecorationColor: 'rgba(102,102,102,0.35)',
+                '&:hover': { textDecorationColor: FOOTER_TEXT },
               }}
             >
               {t[policyLabelKey(d.slug)] || d.title.replace('SHOPGO ', '')}
@@ -269,7 +281,7 @@ export const MainSiteFooter = () => {
           ))}
         </Stack>
         <Box sx={{ pt: 2, borderTop: '1px solid #eee' }}>
-          <Typography sx={{ fontSize: 10, color: '#aaa', lineHeight: 1.7 }}>
+          <Typography sx={{ fontSize: 10, color: FOOTER_TEXT, lineHeight: 1.7 }}>
             {t.footerDisclaimer}
           </Typography>
         </Box>

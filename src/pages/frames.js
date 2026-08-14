@@ -3,6 +3,7 @@ import { Box, Container, Stack, Typography, Button, Grid, Chip } from '@mui/mate
 import MainSiteLayout, { MAIN_DOMAIN } from 'src/components/main-site/MainSiteLayout';
 import { FRAMES, FRAME_GROUP_ORDER, getFramePreviewBrand } from 'src/components/main-site/frameList';
 import { useSubpageT, useFrameT } from 'src/components/main-site/landingStrings';
+import { MobileBreakText } from 'src/components/main-site/mobileBreak';
 
 const FramesPage = () => {
   const router = useRouter();
@@ -32,13 +33,15 @@ const FramesPage = () => {
             <Typography sx={{ fontSize: { xs: 26, md: 40 }, fontWeight: 900, letterSpacing: '-1.2px' }}>
               {st('frames.title')}
             </Typography>
-            {/* 가운데 정렬 안내문 — 줄바꿈은 레이아웃에서 상속받는다(어절 단위로 끊긴다).
-                textWrap: balance 는 그다음 문제를 본다. 어절에서 끊더라도 끝 어절 하나가
-                혼자 다음 줄로 떨어지면 가운데 정렬에선 유난히 어색하다. 두 줄 길이를 맞춰 준다. */}
+            {/* 가운데 정렬 안내문 — 모바일에서 끊을 자리를 사전의 '|' 로 직접 지정한다.
+                브라우저에 맡기면 기기 폭에 따라 자리가 달라져 끝 어절 하나만 떨어진다.
+                  360px:  … 화면 구성을 / 확인하실 수 있습니다      ← 보기 좋다
+                  390px:  … 화면 구성을 확인하실 / 수 있습니다      ← 한 어절만큼 넓어서 깨진다
+                textWrap: balance 는 남겨 둔다 — '|' 를 안 넣은 언어(중국어 등)의 보험이다. */}
             <Typography sx={{ fontSize: 14, color: '#666', maxWidth: 620, alignSelf: 'center', lineHeight: 1.7, textAlign: 'center', textWrap: 'balance' }}>
-              {st('frames.desc1')}
+              <MobileBreakText text={st('frames.desc1')} />
               <br />
-              {st('frames.desc2')}
+              <MobileBreakText text={st('frames.desc2')} />
             </Typography>
             {/* 회색 안내 문장(noticeContent·groupNote)은 요청에 따라 제거(모바일·PC 공통). */}
           </Stack>
@@ -156,9 +159,9 @@ const FramesPage = () => {
         <Container maxWidth="md">
           <Stack spacing={2} alignItems="center" textAlign="center">
             <Typography sx={{ fontSize: { xs: 20, md: 28 }, fontWeight: 900, letterSpacing: '-0.5px' }}>
-              {st('frames.ctaLine1')}
+              <MobileBreakText text={st('frames.ctaLine1')} />
               <br />
-              {st('frames.ctaLine2')}
+              <MobileBreakText text={st('frames.ctaLine2')} />
             </Typography>
             {
               /*

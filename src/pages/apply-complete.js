@@ -3,6 +3,7 @@ import { Box, Container, Stack, Typography, Button } from '@mui/material';
 import { Icon } from '@iconify/react';
 import MainSiteLayout from 'src/components/main-site/MainSiteLayout';
 import { useSubpageT } from 'src/components/main-site/landingStrings';
+import { MobileBreakText } from 'src/components/main-site/mobileBreak';
 
 const ApplyCompletePage = () => {
   const router = useRouter();
@@ -28,10 +29,11 @@ const ApplyCompletePage = () => {
         <Typography sx={{ fontSize: { xs: 24, md: 32 }, fontWeight: 900, letterSpacing: '-1px' }}>
           {st('complete.title')}
         </Typography>
+        {/* 모바일 줄바꿈 자리는 사전의 '|' 로 지정한다 — 프레임 페이지 안내문과 같은 이유다. */}
         <Typography sx={{ fontSize: 14, color: '#666', lineHeight: 1.8, maxWidth: 420, textWrap: 'balance' }}>
-          {st('complete.desc1')}
+          <MobileBreakText text={st('complete.desc1')} />
           <br />
-          {st('complete.desc2')}
+          <MobileBreakText text={st('complete.desc2')} />
         </Typography>
         <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1.5} sx={{ pt: 2 }}>
           <Button

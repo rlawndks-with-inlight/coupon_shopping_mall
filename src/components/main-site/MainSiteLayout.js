@@ -3,6 +3,7 @@ import { useRouter } from 'next/router';
 import { Box, Container, Stack, Typography, Button, IconButton, Drawer, Divider } from '@mui/material';
 import { Icon } from '@iconify/react';
 import { useLandingT } from './landingStrings';
+import { useWordBreak } from './wordBreak';
 import LangSwitcher from './LangSwitcher';
 import { POLICY_DOCS } from './policyContent';
 
@@ -12,7 +13,12 @@ export const COMPANY_ADDRESS = '서울시 영등포구 여의대방로 67길 11,
 export const MAIN_DOMAIN = 'shopgo.co.kr';
 export const SHOP_INQUIRY_EMAIL = 'kimin6756@gmail.com'; // ㈜우진플랫폼 (쇼핑몰 문의)
 export const PAY_INQUIRY_EMAIL = 'office@forspay.com'; // ㈜포스페이 (결제 문의)
-// 서비스 운영사 표기 — 결제사(포스페이) + 플랫폼(우진플랫폼). 법적 표기라 번역하지 않는다.
+// 서비스 운영사 표기 — 결제사(포스페이) + 플랫폼(우진플랫폼).
+//
+// 아래 상수는 '한국어 원문 겸 폴백'이다. 화면은 사전(footerPay*·footerPlatform*)을 먼저 쓴다.
+// 예전엔 법인명·주소를 법적 표기로 보고 번역하지 않았는데, 영어 화면에서 한 칸 안에
+// 한국어와 영어가 섞여 보인다는 지적이 있어 전부 번역하기로 했다(2026-08-14).
+// 법인명 표기는 footerDisclaimer 안의 표기와 같아야 한다 — 같은 화면에 나란히 보인다.
 export const FORSPAY_NAME = '㈜포스페이';
 export const FORSPAY_DESC = '국내 PG · 해외 PSP · 통합결제 서비스';
 export const FORSPAY_ADDRESS = '서울시 성동구 연무장5가길 25 성수역SKV1타워 1702호';
@@ -213,18 +219,19 @@ export const MainSiteFooter = () => {
   >
     <Container maxWidth="lg">
       <Stack spacing={2}>
-        {/* 서비스 운영사 — 결제사(포스페이) 먼저, 그다음 플랫폼(우진플랫폼). 법인명·주소는 법적 표기라 번역하지 않는다. */}
-        <Typography sx={{ fontSize: 11, letterSpacing: 2, color: '#aaa', fontWeight: 700 }}>서비스 운영사</Typography>
+        {/* 서비스 운영사 — 결제사(포스페이) 먼저, 그다음 플랫폼(우진플랫폼).
+            법인명·주소를 포함해 전부 사전에서 가져온다. 상수는 사전이 비었을 때의 폴백일 뿐이다. */}
+        <Typography sx={{ fontSize: 11, letterSpacing: 2, color: '#aaa', fontWeight: 700 }}>{t.footerOperator}</Typography>
         <Stack direction={{ xs: 'column', sm: 'row' }} spacing={{ xs: 2.5, sm: 6 }} sx={{ pt: 0.5 }}>
           {/* 포스페이(결제) 먼저 */}
           <Stack spacing={0.5}>
             <Typography sx={{ fontSize: 13, color: '#555', fontWeight: 700 }}>
-              {FORSPAY_NAME}
+              {t.footerPayName || FORSPAY_NAME}
               <Box component="a" href={FORSPAY_URL} target="_blank" rel="noreferrer"
                 sx={{ ml: 0.75, fontSize: 11, fontWeight: 500, color: '#999', textDecoration: 'none', '&:hover': { textDecoration: 'underline' } }}>forspay.com</Box>
             </Typography>
-            <Typography sx={{ fontSize: 12, color: '#999' }}>{FORSPAY_DESC}</Typography>
-            <Typography sx={{ fontSize: 12, color: '#999', lineHeight: 1.8 }}>{FORSPAY_ADDRESS}</Typography>
+            <Typography sx={{ fontSize: 12, color: '#999' }}>{t.footerPayDesc || FORSPAY_DESC}</Typography>
+            <Typography sx={{ fontSize: 12, color: '#999', lineHeight: 1.8 }}>{t.footerPayAddress || FORSPAY_ADDRESS}</Typography>
             <Typography sx={{ fontSize: 12, color: '#999' }}>
               {t.footerPayInquiry}{' '}
               <Box component="a" href={`mailto:${PAY_INQUIRY_EMAIL}`}
@@ -233,9 +240,9 @@ export const MainSiteFooter = () => {
           </Stack>
           {/* 우진플랫폼(플랫폼 운영) */}
           <Stack spacing={0.5}>
-            <Typography sx={{ fontSize: 13, color: '#555', fontWeight: 700 }}>{COMPANY_NAME}</Typography>
-            <Typography sx={{ fontSize: 12, color: '#999' }}>{PLATFORM_DESC}</Typography>
-            <Typography sx={{ fontSize: 12, color: '#999', lineHeight: 1.8 }}>{COMPANY_ADDRESS}</Typography>
+            <Typography sx={{ fontSize: 13, color: '#555', fontWeight: 700 }}>{t.footerPlatformName || COMPANY_NAME}</Typography>
+            <Typography sx={{ fontSize: 12, color: '#999' }}>{t.footerPlatformDesc || PLATFORM_DESC}</Typography>
+            <Typography sx={{ fontSize: 12, color: '#999', lineHeight: 1.8 }}>{t.footerPlatformAddress || COMPANY_ADDRESS}</Typography>
             <Typography sx={{ fontSize: 12, color: '#999' }}>
               {t.footerShopInquiry}{' '}
               <Box component="a" href={`mailto:${SHOP_INQUIRY_EMAIL}`}
@@ -272,12 +279,19 @@ export const MainSiteFooter = () => {
   );
 };
 
-const MainSiteLayout = ({ children }) => (
-  <Box sx={{ bgcolor: '#fff', color: '#111', minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
-    <MainSiteHeader />
-    <Box component="main" sx={{ flex: 1 }}>{children}</Box>
-    <MainSiteFooter />
-  </Box>
-);
+// 줄바꿈은 여기 한 군데서만 정한다 — word-break 는 상속되는 속성이라
+// 최상단에 한 번 걸면 헤더·본문·푸터의 모든 글자에 적용된다.
+// 문단마다 keep-all 을 붙이던 방식은 붙이다 빠뜨린 자리가 생겼다(프레임 페이지 히어로 등).
+// 포털로 그려지는 Dialog·Drawer 는 상속을 못 받으므로 그쪽은 useWordBreak() 를 직접 쓴다.
+const MainSiteLayout = ({ children }) => {
+  const wordBreak = useWordBreak();
+  return (
+    <Box sx={{ bgcolor: '#fff', color: '#111', minHeight: '100vh', display: 'flex', flexDirection: 'column', wordBreak }}>
+      <MainSiteHeader />
+      <Box component="main" sx={{ flex: 1 }}>{children}</Box>
+      <MainSiteFooter />
+    </Box>
+  );
+};
 
 export default MainSiteLayout;

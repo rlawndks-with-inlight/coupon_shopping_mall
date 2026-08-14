@@ -112,6 +112,10 @@ const CATEGORIES = [
   },
 ];
 
+// 이 페이지의 wordBreak: 'keep-all' 들은 MainSiteLayout 의 줄바꿈 규칙을 일부러 안 따른다.
+// 그 규칙은 '화면 언어'를 보는데, 위 CATEGORIES 는 아직 한국어로 고정돼 있어
+// 일본어·중국어 화면에서도 한국어가 그대로 나온다. 상속에 맡기면 그 화면에서 깨진다.
+// ▶ FAQ 문구를 사전으로 옮기는 날, 이 keep-all 들을 지우고 상속에 맡기면 된다.
 const FaqPage = () => (
   <Box>
     <Container maxWidth="md" sx={{ py: { xs: 6, md: 10 } }}>
@@ -120,7 +124,7 @@ const FaqPage = () => (
         <Typography sx={{ fontSize: { xs: 26, md: 40 }, fontWeight: 900, letterSpacing: '-1.2px' }}>
           자주 묻는 질문
         </Typography>
-        <Typography sx={{ fontSize: 14, color: '#666', maxWidth: 520, lineHeight: 1.7, wordBreak: 'keep-all' }}>
+        <Typography sx={{ fontSize: 14, color: '#666', maxWidth: 520, lineHeight: 1.7, wordBreak: 'keep-all', textWrap: 'balance' }}>
           가맹점 운영에 자주 나오는 질문을 결제·정산과 쇼핑몰 운영으로 나눠 정리했습니다.
         </Typography>
       </Stack>

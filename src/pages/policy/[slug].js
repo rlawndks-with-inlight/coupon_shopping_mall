@@ -64,6 +64,10 @@ const PolicyPage = () => {
                       </Typography>
                     );
                   }
+                  // keep-all 을 여기에 직접 둔다 — MainSiteLayout 의 줄바꿈 규칙을 안 따른다.
+                  // 그 규칙은 '화면 언어'를 보는데, 이 본문은 화면 언어와 무관하게 늘 한국어다.
+                  // 상속에 맡기면 일본어·중국어 화면에서 normal 이 내려와 한국어 본문이
+                  // 어절 한가운데서 잘린다(… 있습니 / 다).
                   return (
                     <Typography
                       key={i}

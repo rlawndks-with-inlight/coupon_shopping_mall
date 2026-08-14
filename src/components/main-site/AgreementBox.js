@@ -174,6 +174,9 @@ const AgreementBox = ({ onChange, error, errorText }) => {
                   );
                 }
                 return (
+                  // 여기만 keep-all 을 직접 준다. 이유가 둘이다.
+                  //  ① Dialog 는 포털이라 DOM 상 body 바로 밑에 붙는다 — 레이아웃의 줄바꿈 규칙을 상속 못 받는다.
+                  //  ② 약관 본문은 화면 언어와 무관하게 늘 한국어다 — 화면 언어가 아니라 글의 언어를 따라야 한다.
                   <Typography key={i} sx={{ fontSize: 13.5, color: '#444', lineHeight: 1.85, mb: 0.75, whiteSpace: 'pre-wrap', wordBreak: 'keep-all' }}>
                     {line}
                   </Typography>

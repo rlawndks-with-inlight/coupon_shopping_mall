@@ -20,7 +20,7 @@ export const PAY_INQUIRY_EMAIL = 'office@forspay.com'; // ㈜포스페이 (결�
 // 한국어와 영어가 섞여 보인다는 지적이 있어 전부 번역하기로 했다(2026-08-14).
 // 법인명 표기는 footerDisclaimer 안의 표기와 같아야 한다 — 같은 화면에 나란히 보인다.
 export const FORSPAY_NAME = '㈜포스페이';
-export const FORSPAY_DESC = '국내 PG · 해외 PSP · 통합결제 서비스';
+export const FORSPAY_DESC = '국내 PG · 글로벌 통합결제 솔루션 제공';
 export const FORSPAY_ADDRESS = '서울시 성동구 연무장5가길 25 성수역SKV1타워 1702호';
 export const FORSPAY_URL = 'https://forspay.com/';
 export const PLATFORM_DESC = '무료 쇼핑몰 플랫폼 개발 및 운영';

@@ -21,20 +21,12 @@ import {
 import MainSiteLayout, { MAIN_DOMAIN } from 'src/components/main-site/MainSiteLayout';
 import ShopSearch from 'src/components/main-site/ShopSearch';
 import { useLandingT } from 'src/components/main-site/landingStrings';
+// 모바일 줄바꿈 지점('|')을 렌더하는 공용 컴포넌트. 원래 이 파일 안에만 있었는데
+// 프레임·접수완료 화면에서도 같은 문제가 나와 공용으로 옮겼다.
+import { MobileBreakText } from 'src/components/main-site/mobileBreak';
 
 // ShopGo 배포에서만 마스터 랜딩 노출 (.env: NEXT_PUBLIC_IS_SHOPGO=true)
 const IS_SHOPGO = process.env.NEXT_PUBLIC_IS_SHOPGO === 'true';
-
-// 문구의 '|' 위치를 모바일 전용 줄바꿈으로 렌더 (PC에서는 원문 그대로 한 줄로 이어짐)
-const MobileBreakText = ({ text }) =>
-  String(text)
-    .split('|')
-    .map((part, i) => (
-      <Fragment key={i}>
-        {i > 0 && <Box component="br" sx={{ display: { xs: 'block', md: 'none' } }} />}
-        {part}
-      </Fragment>
-    ));
 
 // 문구의 '[[LOGO]]' 위치에 FORSPAY 로고를 인라인 이미지로 삽입 (브랜드명 글씨 대체)
 const FORSPAY_LOGO_SRC = '/assets/images/forspay-logo2.png';

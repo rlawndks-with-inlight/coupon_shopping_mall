@@ -35,9 +35,14 @@ const ON_PRIMARY = '#1a1a1a';
 // 예전엔 #aaa(제목·면책) · #555(법인명) · #999(본문·링크) · #666(이메일) 네 가지가 섞여
 // 같은 성격의 줄끼리도 밝기가 달랐다. 위계는 색이 아니라 굵기·크기로만 준다.
 //
-// 값을 #666 으로 잡은 이유: 푸터 바탕(#fafaf7)에서 대비 약 5.5:1 이라 10px 면책 문구까지
-// 읽힌다. 기존 주력이던 #999 는 2.8:1, #aaa 는 더 낮아 작은 글씨가 잘 안 보였다.
-const FOOTER_TEXT = '#666';
+// 값은 옅은 쪽으로 정했다 — 푸터는 뒤로 물러나 있어야 한다는 판단이다(2026-08-14).
+// 한 번 #666 으로 잡았다가 되돌렸다. 그건 기존 법인명 색(#555)과 거의 같아서
+// '통일'이 아니라 '전체를 진하게'가 돼 버렸다.
+//
+// ⚠ 대비는 푸터 바탕(#fafaf7) 기준 약 2.8:1 로, 접근성 기준(4.5:1)에는 못 미친다.
+//    특히 면책 문구는 10px 이라 더 흐리다. 읽힘보다 톤을 택한 것이고, 되돌리려면
+//    이 상수만 바꾸면 된다 — 이 바탕에서 기준을 넘는 가장 밝은 회색은 #737373(4.53:1)이다.
+const FOOTER_TEXT = '#999';
 
 const NAV = [
   { k: 'navAbout', href: '/#features' },
@@ -272,8 +277,9 @@ export const MainSiteFooter = () => {
                 fontWeight: 400,
                 textDecoration: 'underline',
                 textUnderlineOffset: '2px',
-                textDecorationColor: 'rgba(102,102,102,0.35)',
-                '&:hover': { textDecorationColor: FOOTER_TEXT },
+                // 밑줄은 글자색을 그대로 따른다(별도 색을 두면 통일이 또 깨진다).
+                // 옅은 회색이라 평소엔 눈에 안 띄고, 올리면 굵어져 링크임이 드러난다.
+                '&:hover': { textDecorationThickness: '2px' },
               }}
             >
               {t[policyLabelKey(d.slug)] || d.title.replace('SHOPGO ', '')}

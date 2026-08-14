@@ -28,6 +28,7 @@ import { useEffect, useRef, useState } from 'react'
 import { Row, themeObj } from 'src/components/elements/styled-components'
 import { useSettingsContext } from 'src/components/settings'
 import { Upload } from 'src/components/upload'
+import LogoPreview from 'src/components/manager/LogoPreview'
 import ManagerLayout from 'src/layouts/manager/ManagerLayout'
 import styled from 'styled-components'
 import { createDefaultManagerObj } from 'src/data/manager-data'
@@ -440,6 +441,10 @@ const DefaultSetting = () => {
                             })
                           }}
                         />
+                        {/* 문구로 '작으면 흐려집니다'라고 적어 두는 것과, 그 자리에서
+                            '지금 작습니다'라고 말해 주는 것은 다르다. 실측해 보니 대표 13곳 중
+                            6곳이 이미 미달이었는데 정작 그 가맹점들은 알 방법이 없었다. */}
+                        <LogoPreview file={item.logo_file} url={item.logo_img} />
                         {/* shopgo 산하 가맹점은 다크모드 로고·파비콘 미노출(본사 방침). 로고만 사용. */}
                         {!isShopgoMerchant(item) && (
                           <>
@@ -473,6 +478,7 @@ const DefaultSetting = () => {
                                 })
                               }}
                             />
+                            <LogoPreview file={item.dark_logo_file} url={item.dark_logo_img} dark />
                             <Typography variant='subtitle2' sx={{ color: 'text.secondary' }}>
                               브랜드 파비콘
                             </Typography>

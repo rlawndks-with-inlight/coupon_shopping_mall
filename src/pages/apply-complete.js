@@ -28,7 +28,7 @@ const ApplyCompletePage = () => {
         <Typography sx={{ fontSize: { xs: 24, md: 32 }, fontWeight: 900, letterSpacing: '-1px' }}>
           {st('complete.title')}
         </Typography>
-        <Typography sx={{ fontSize: 14, color: '#666', lineHeight: 1.8, maxWidth: 420 }}>
+        <Typography sx={{ fontSize: 14, color: '#666', lineHeight: 1.8, maxWidth: 420, textWrap: 'balance' }}>
           {st('complete.desc1')}
           <br />
           {st('complete.desc2')}

@@ -32,7 +32,10 @@ const FramesPage = () => {
             <Typography sx={{ fontSize: { xs: 26, md: 40 }, fontWeight: 900, letterSpacing: '-1.2px' }}>
               {st('frames.title')}
             </Typography>
-            <Typography sx={{ fontSize: 14, color: '#666', maxWidth: 620, alignSelf: 'center', lineHeight: 1.7, textAlign: 'center' }}>
+            {/* 가운데 정렬 안내문 — 줄바꿈은 레이아웃에서 상속받는다(어절 단위로 끊긴다).
+                textWrap: balance 는 그다음 문제를 본다. 어절에서 끊더라도 끝 어절 하나가
+                혼자 다음 줄로 떨어지면 가운데 정렬에선 유난히 어색하다. 두 줄 길이를 맞춰 준다. */}
+            <Typography sx={{ fontSize: 14, color: '#666', maxWidth: 620, alignSelf: 'center', lineHeight: 1.7, textAlign: 'center', textWrap: 'balance' }}>
               {st('frames.desc1')}
               <br />
               {st('frames.desc2')}
@@ -98,7 +101,7 @@ const FramesPage = () => {
                     sx={{ fontSize: 11, height: 22, bgcolor: '#fafaf7', color: '#555' }}
                   />
                 </Stack>
-                <Typography sx={{ fontSize: 13, color: '#666', lineHeight: 1.7, flexGrow: 1, whiteSpace: 'pre-line', wordBreak: 'keep-all' }}>
+                <Typography sx={{ fontSize: 13, color: '#666', lineHeight: 1.7, flexGrow: 1, whiteSpace: 'pre-line' }}>
                   {fi.desc}
                 </Typography>
                 <Box sx={{ pt: 1.5, borderTop: '1px dashed #eee' }}>

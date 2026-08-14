@@ -3,6 +3,7 @@ import { useRouter } from 'next/router';
 import { Box, Container, Stack, Typography, Button, IconButton, Drawer, Divider } from '@mui/material';
 import { Icon } from '@iconify/react';
 import { useLandingT } from './landingStrings';
+import { useWordBreak } from './wordBreak';
 import LangSwitcher from './LangSwitcher';
 import { POLICY_DOCS } from './policyContent';
 
@@ -278,12 +279,19 @@ export const MainSiteFooter = () => {
   );
 };
 
-const MainSiteLayout = ({ children }) => (
-  <Box sx={{ bgcolor: '#fff', color: '#111', minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
-    <MainSiteHeader />
-    <Box component="main" sx={{ flex: 1 }}>{children}</Box>
-    <MainSiteFooter />
-  </Box>
-);
+// 줄바꿈은 여기 한 군데서만 정한다 — word-break 는 상속되는 속성이라
+// 최상단에 한 번 걸면 헤더·본문·푸터의 모든 글자에 적용된다.
+// 문단마다 keep-all 을 붙이던 방식은 붙이다 빠뜨린 자리가 생겼다(프레임 페이지 히어로 등).
+// 포털로 그려지는 Dialog·Drawer 는 상속을 못 받으므로 그쪽은 useWordBreak() 를 직접 쓴다.
+const MainSiteLayout = ({ children }) => {
+  const wordBreak = useWordBreak();
+  return (
+    <Box sx={{ bgcolor: '#fff', color: '#111', minHeight: '100vh', display: 'flex', flexDirection: 'column', wordBreak }}>
+      <MainSiteHeader />
+      <Box component="main" sx={{ flex: 1 }}>{children}</Box>
+      <MainSiteFooter />
+    </Box>
+  );
+};
 
 export default MainSiteLayout;

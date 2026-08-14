@@ -21,7 +21,7 @@ const ManualPage = () => {
           <Typography sx={{ fontSize: { xs: 26, md: 40 }, fontWeight: 900, letterSpacing: '-1.2px' }}>
             {st('manual.title')}
           </Typography>
-          <Typography sx={{ fontSize: 14, color: '#666', maxWidth: 560, lineHeight: 1.7 }}>
+          <Typography sx={{ fontSize: 14, color: '#666', maxWidth: 560, lineHeight: 1.7, textWrap: 'balance' }}>
             처음이시라면 아래 순서대로 따라 하시면 쇼핑몰을 열 수 있습니다.
           </Typography>
           <Button

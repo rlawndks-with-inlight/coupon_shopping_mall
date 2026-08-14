@@ -231,7 +231,7 @@ const ShopGoLanding = () => {
             <Typography sx={{ fontSize: { xs: 24, md: 36 }, fontWeight: 900, letterSpacing: '-1px', color: SG.text }}>
               {t.targetsTitle}
             </Typography>
-            <Typography sx={{ fontSize: { xs: 14, md: 16 }, color: SG.gray, lineHeight: 1.7, maxWidth: 660, alignSelf: 'center', pt: 0.5, wordBreak: 'keep-all', textAlign: 'center' }}>
+            <Typography sx={{ fontSize: { xs: 14, md: 16 }, color: SG.gray, lineHeight: 1.7, maxWidth: 660, alignSelf: 'center', pt: 0.5, textAlign: 'center' }}>
               <MobileBreakText text={t.targetsSub} />
             </Typography>
           </Stack>
@@ -256,10 +256,10 @@ const ShopGoLanding = () => {
                   <Box sx={{ mb: 1.5, lineHeight: 0 }}>
                     <Icon icon={item.icon} width={38} height={38} color="#a3e635" />
                   </Box>
-                  <Typography sx={{ fontSize: 16, fontWeight: 800, mb: 1, lineHeight: 1.3, color: SG.text, wordBreak: 'keep-all', minHeight: { xs: 'auto', sm: '2.6em' } }}>
+                  <Typography sx={{ fontSize: 16, fontWeight: 800, mb: 1, lineHeight: 1.3, color: SG.text, minHeight: { xs: 'auto', sm: '2.6em' } }}>
                     {t[`${item.k}Title`]}
                   </Typography>
-                  <Typography sx={{ fontSize: 13, color: SG.gray, lineHeight: 1.6, whiteSpace: 'pre-line', wordBreak: 'keep-all' }}>{t[`${item.k}Desc`]}</Typography>
+                  <Typography sx={{ fontSize: 13, color: SG.gray, lineHeight: 1.6, whiteSpace: 'pre-line' }}>{t[`${item.k}Desc`]}</Typography>
                 </Box>
               </Grid>
             ))}
@@ -370,7 +370,7 @@ const ShopGoLanding = () => {
             {/* 없어진 /security 페이지의 도입문을 대신하는 한 줄 */}
             <Typography
               // textWrap: balance — 안 주면 '제공합니다.' 두 글자만 다음 줄로 떨어진다
-              sx={{ fontSize: 14, color: '#666', lineHeight: 1.75, maxWidth: 660, alignSelf: 'center', wordBreak: 'keep-all', textWrap: 'balance', pt: 0.5 }}
+              sx={{ fontSize: 14, color: '#666', lineHeight: 1.75, maxWidth: 660, alignSelf: 'center', textWrap: 'balance', pt: 0.5 }}
             >
               {t.trustSub}
             </Typography>
@@ -404,11 +404,11 @@ const ShopGoLanding = () => {
                   >
                     <Icon icon={b.icon} width={22} height={22} />
                   </Box>
-                  <Typography sx={{ fontSize: 15, fontWeight: 800, mb: 0.75, color: '#1a1a1f', wordBreak: 'keep-all' }}>
+                  <Typography sx={{ fontSize: 15, fontWeight: 800, mb: 0.75, color: '#1a1a1f' }}>
                     {t[`${b.k}Title`]}
                   </Typography>
                   <Typography
-                    sx={{ fontSize: 13, color: '#666', lineHeight: 1.65, whiteSpace: 'pre-line', wordBreak: 'keep-all', flexGrow: 1 }}
+                    sx={{ fontSize: 13, color: '#666', lineHeight: 1.65, whiteSpace: 'pre-line', flexGrow: 1 }}
                   >
                     {t[`${b.k}Desc`]}
                   </Typography>

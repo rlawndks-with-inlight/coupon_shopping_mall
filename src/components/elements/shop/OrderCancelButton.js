@@ -46,6 +46,14 @@ const OrderCancelButton = ({ trx, orders, onDone, sx, variant = 'outlined' }) =>
   const 고른수량 = (o) => Math.max(0, Math.min(Number(qty[o.id]) || 0, 남은수량(o)));
   const 고른줄 = 줄.filter((o) => 고른수량(o) > 0);
 
+  // 입력을 받는 그 자리에서 남은 수량으로 깎는다.
+  // 그러지 않으면 남음이 1개인데 5 를 친 손님 화면엔 5 가 남고, 실제로는 1개만 요청된다.
+  // inputProps 의 max 는 스피너 화살표만 막을 뿐 키보드 입력·붙여넣기는 안 막는다.
+  const 수량입력 = (o, v) => {
+    const 숫자 = String(v ?? '').replace(/[^0-9]/g, '');
+    setQty({ ...qty, [o.id]: 숫자 === '' ? '' : String(Math.min(Number(숫자), 남은수량(o))) });
+  };
+
   const request = async (items) => {
     setLoading(true);
     try {
@@ -98,8 +106,8 @@ const OrderCancelButton = ({ trx, orders, onDone, sx, variant = 'outlined' }) =>
                   label={translate('수량')}
                   disabled={loading}
                   value={qty[o.id] ?? ''}
-                  onChange={(e) => setQty({ ...qty, [o.id]: e.target.value })}
-                  inputProps={{ min: 0, max: 남은수량(o) }}
+                  onChange={(e) => 수량입력(o, e.target.value)}
+                  inputProps={{ min: 0, max: 남은수량(o), inputMode: 'numeric' }}
                 />
               </Stack>
             ))}

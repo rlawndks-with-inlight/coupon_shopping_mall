@@ -44,6 +44,16 @@ const PartialCancelDialog = ({ open, onClose, trxId, onDone }) => {
     const 고른수량 = (l) => Math.max(0, Math.min(Number(qty[l.order_id]) || 0, l.remain_count));
     const 고른줄 = lines.filter((l) => 고른수량(l) > 0);
 
+    // 입력을 받는 그 자리에서 남은 수량으로 깎는다.
+    //
+    // 예전엔 입력값을 그대로 담아 두고 계산할 때만 깎았다. 그래서 남음이 3개인데 12 를
+    // 치면 칸에는 12 가 남고 환불 예상액은 3개분으로 떴다 — 왜 다른지 알 방법이 없었다.
+    // inputProps 의 max 는 스피너 화살표만 막을 뿐, 키보드로 친 값·붙여넣기는 안 막는다.
+    const 수량입력 = (l, v) => {
+        const 숫자 = String(v ?? '').replace(/[^0-9]/g, '');
+        setQty({ ...qty, [l.order_id]: 숫자 === '' ? '' : String(Math.min(Number(숫자), l.remain_count)) });
+    };
+
     // 미리보기 금액. 서버와 같은 규칙으로 계산한다 —
     // 그 줄의 마지막 수량이면 나머지까지 포함한 '남은 금액 전부' 다.
     const 예상액 = 고른줄.reduce((s, l) => {
@@ -110,8 +120,8 @@ const PartialCancelDialog = ({ open, onClose, trxId, onDone }) => {
                                     label="취소 수량"
                                     disabled={l.remain_count === 0 || busy}
                                     value={qty[l.order_id] ?? ''}
-                                    onChange={(e) => setQty({ ...qty, [l.order_id]: e.target.value })}
-                                    inputProps={{ min: 0, max: l.remain_count }}
+                                    onChange={(e) => 수량입력(l, e.target.value)}
+                                    inputProps={{ min: 0, max: l.remain_count, inputMode: 'numeric' }}
                                 />
                                 <Button size="small" variant="outlined" disabled={l.remain_count === 0 || busy}
                                     onClick={() => setQty({ ...qty, [l.order_id]: l.remain_count })}>전부</Button>

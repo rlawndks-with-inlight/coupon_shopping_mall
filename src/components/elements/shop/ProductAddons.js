@@ -1,7 +1,9 @@
+import { useRouter } from 'next/router';
 import { useLocales } from 'src/locales';
 import { formatLang } from 'src/utils/format';
 import { commarNumber } from 'src/utils/function';
 import { addonGroups, isOptionSoldOut, isSameGroup } from 'src/data/product-options';
+import { useAuthContext } from 'src/layouts/manager/auth/useAuthContext';
 
 // 추가상품 — 안 골라도 살 수 있는 것. 여러 개 고를 수 있고 다시 누르면 빠진다.
 //
@@ -15,6 +17,14 @@ import { addonGroups, isOptionSoldOut, isSameGroup } from 'src/data/product-opti
 //   고정색을 쓰면 어느 프레임에선 글자가 배경에 묻는다. currentColor 로 그 프레임 글자색을 따라간다.
 const ProductAddons = ({ product, selected, onSelect, style = {} }) => {
     const { translate, currentLang } = useLocales();
+    const router = useRouter();
+    // 한정 상품은 회원만 살 수 있다. 그런데 '회원만 구매할 수 있습니다' 만 적혀 있어서
+    // 비회원에게는 막다른 길이었다 — 어디로 가야 하는지 알려주지 않았다.
+    // 로그인 뒤 보던 상품으로 돌아오도록 redirect 를 붙인다(login.js 가 safeRedirectPath 로 받는다).
+    // isInitialized 를 함께 본다. 초기화 전에는 user 가 비어 있어서, 그것만 보면
+    // 로그인한 손님에게도 '로그인하기' 가 잠깐 깜빡인다.
+    const { user, isInitialized } = useAuthContext();
+    const 로그인안함 = isInitialized && !user?.id;
     const 추가 = addonGroups(product);
     // 한정판 안내도 여기서 그린다. 이 컴포넌트가 **프레임 11개 전부**에 들어가 있어서,
     // 따로 만들면 프레임마다 또 배선해야 하고 한 곳만 빠뜨리면 그 프레임에서만 안 뜬다.
@@ -32,7 +42,26 @@ const ProductAddons = ({ product, selected, onSelect, style = {} }) => {
                 <div style={{ fontSize: '12px', opacity: 0.85, lineHeight: 1.6 }}>
                     <b>{translate('한정 상품')}</b>{' · '}
                     {translate('1인 {{n}}개까지 구매할 수 있습니다.', { n: 한정 })}<br />
+                    {/* 안내 문장은 늘 보여 준다 — 로그인 여부와 상관없이 이 상품의 사실이고,
+                        조건에 따라 문장이 생겼다 사라지면 화면이 깜빡인다.
+                        비회원에게만 갈 곳을 덧붙인다. */}
                     {translate('회원만 구매할 수 있습니다.')}
+                    {로그인안함 && <>
+                        {' '}
+                        {/* 색을 정하지 않는다. 프레임 11개의 배경이 제각각이라 고정색은 어딘가에서 묻는다.
+                            밑줄과 굵기로만 링크임을 밝힌다(추가상품 버튼과 같은 원칙). */}
+                        <button
+                            type="button"
+                            onClick={() => router.push(`/shop/auth/login?redirect=${encodeURIComponent(router.asPath)}`)}
+                            style={{
+                                font: 'inherit', fontSize: '12px', color: 'inherit',
+                                background: 'none', border: 'none', padding: 0,
+                                fontWeight: 700, textDecoration: 'underline', cursor: 'pointer',
+                            }}
+                        >
+                            {translate('로그인하기')}
+                        </button>
+                    </>}
                 </div>}
             {추가.length > 0 && <>
             <div style={{ fontSize: '13px', fontWeight: 700 }}>

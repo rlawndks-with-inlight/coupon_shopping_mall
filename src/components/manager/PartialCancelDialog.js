@@ -99,7 +99,10 @@ const PartialCancelDialog = ({ open, onClose, trxId, onDone }) => {
                     <Stack spacing={1.25}>
                         {고른줄.map((l) => (
                             <Stack key={l.order_id} direction="row" justifyContent="space-between" spacing={2}>
-                                <Typography sx={{ fontSize: 14 }} noWrap>{l.order_name}</Typography>
+                                {/* 이름을 자르지 않는다. 확인 화면에서 제일 읽어야 할 것이 '무엇을 취소하는가' 인데
+                                    noWrap 이면 긴 상품명이 말줄임표로 끊겨, 비슷한 이름 둘을 구분할 수 없다.
+                                    minWidth:0 이 있어야 flex 안에서 줄바꿈이 먹는다. */}
+                                <Typography sx={{ fontSize: 14, minWidth: 0 }}>{l.order_name}</Typography>
                                 <Typography sx={{ fontSize: 14, fontWeight: 700, whiteSpace: 'nowrap' }}>
                                     {고른수량(l)}개
                                 </Typography>
@@ -143,7 +146,7 @@ const PartialCancelDialog = ({ open, onClose, trxId, onDone }) => {
                             <Stack key={l.order_id} direction="row" alignItems="center" spacing={1.5}
                                 sx={{ opacity: l.remain_count === 0 ? 0.45 : 1 }}>
                                 <Stack sx={{ flexGrow: 1, minWidth: 0 }}>
-                                    <Typography sx={{ fontSize: 14, fontWeight: 600 }} noWrap>{l.order_name}</Typography>
+                                    <Typography sx={{ fontSize: 14, fontWeight: 600 }}>{l.order_name}</Typography>
                                     <Typography sx={{ fontSize: 12, color: 'text.secondary' }}>
                                         개당 {commarNumber(l.unit_price)}원 · 주문 {l.order_count}개
                                         {l.cancel_count > 0 ? ` · 취소됨 ${l.cancel_count}개` : ''}

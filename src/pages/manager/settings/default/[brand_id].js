@@ -1,4 +1,5 @@
 import {
+  Alert,
   Avatar,
   Button,
   Card,
@@ -28,6 +29,7 @@ import { useEffect, useRef, useState } from 'react'
 import { Row, themeObj } from 'src/components/elements/styled-components'
 import { useSettingsContext } from 'src/components/settings'
 import { Upload } from 'src/components/upload'
+import LogoPreview from 'src/components/manager/LogoPreview'
 import ManagerLayout from 'src/layouts/manager/ManagerLayout'
 import styled from 'styled-components'
 import { createDefaultManagerObj } from 'src/data/manager-data'
@@ -378,9 +380,47 @@ const DefaultSetting = () => {
                         <Typography variant='subtitle2' sx={{ color: 'text.secondary' }}>
                           브랜드로고
                         </Typography>
-                        <Typography variant='caption' sx={{ color: 'text.disabled' }}>
-                          가로형 권장 · PNG(투명배경) 권장 · 1MB 이하 (표시 크기는 자동으로 최적화됩니다)
-                        </Typography>
+                        {/* 예전 문구: '가로형 권장 · PNG(투명배경) 권장 · 1MB 이하 (표시 크기는 자동으로 최적화됩니다)'
+                            가맹점에서 "표시 크기는 자동으로 최적화됩니다"가 무슨 뜻인지,
+                            모든 로고가 일괄 같은 크기로 찍힌다는 말인지 모르겠다는 얘기가 나왔다.
+                            실제 동작을 그대로 풀어 쓴다 — 확인한 내용은 이렇다.
+                              · data.js 의 logoDeliveryUrl 이 e_trim 으로 둘레 여백을 깎고
+                                c_fit 으로 비율을 유지한 채 맞춘다. 자르거나 찌그러뜨리지 않는다.
+                              · 헤더는 height 30~80px + width auto 로 그린다(프레임마다 다름).
+                                즉 '높이는 정해져 있고 가로는 로고 모양대로'다 — 가로형을 권하는 이유.
+                              · 용량 안내('1MB 이하')는 뺐다. 지키게 만드는 장치가 아무 데도 없었다 —
+                                화면(Upload)에 maxSize 가 없고 백엔드(multerConfig.js)는 100MB 에서야 막는다.
+                                게다가 배달 때 f_auto,q_auto 가 알아서 줄인다(실측 393KB → 4.8KB).
+                                지키지도 않고 지킬 필요도 없는 숫자라 지웠다.
+                                ▶ 정말 막아야 할 일이 생기면 이 Upload 에 maxSize 를 주고 문구를 되살릴 것. */}
+                        {/* 수치는 '하한선' 하나만 준다. 목표 규격(예: 900×300)은 일부러 뺐다.
+                            예시를 적으면 그게 규격으로 읽힌다 — 정사각 로고를 가진 가맹점이 거기 맞추려고
+                            늘리거나(찌그러짐) 여백을 채워 넣는다. 여백은 e_trim 이 어차피 깎아 내니 헛수고다.
+                            애초에 로고는 브랜드 마크라 대부분 바꾸지 못한다. 바꿀 수 있는 건 '더 큰 파일로
+                            내보내기' 정도라, 지킬 수도 없는 목표치를 요구하는 꼴이 된다.
+
+                            세로 200px 의 근거 — 프레임별 대표 가맹점 13곳 로고 실측(2026-08-14).
+                            여백을 뺀 세로가 배달 규격(h_176)보다 작으면 늘려 내보내서 흐려지는데,
+                            13곳 중 6곳이 이미 미달이었다 — bs-company 73px · asapmall 83px · jjpay 106px ·
+                            glamup 112px · forsmall 159px · buddymall 174px. 176 에 여유를 얹어 200 으로 적는다.
+
+                            e_trim·c_fit·헤더 40px 같은 건 안 적는다 — 가맹점이 알아야 할 건
+                            규격이 아니라 '내 로고를 다시 만들어야 하나'다. 답은 대개 '아니오'다. */}
+                        <Stack spacing={0.25}>
+                          <Typography variant='caption' sx={{ color: 'text.secondary' }}>
+                            PNG(배경 투명) 권장 · 지금 쓰시는 로고를 그대로 올리시면 됩니다 (맞춰야 할 규격은 없습니다)
+                          </Typography>
+                          {[
+                            '올리신 비율 그대로 자리에 맞춰 들어갑니다. 잘리거나 찌그러지지 않습니다.',
+                            '로고 둘레의 빈 여백은 자동으로 잘립니다. 여백을 넣어 크기를 맞추실 필요는 없습니다.',
+                            '여백을 뺀 로고 부분이 세로 200px보다 작으면 흐려 보일 수 있으니, 되도록 큰 파일로 올려 주세요.',
+                            '헤더는 높이가 정해져 있어, 가로로 긴 로고가 정사각형·세로로 긴 로고보다 크게 보입니다.',
+                          ].map(줄 => (
+                            <Typography key={줄} variant='caption' sx={{ color: 'text.disabled', lineHeight: 1.6 }}>
+                              · {줄}
+                            </Typography>
+                          ))}
+                        </Stack>
                         <Upload
                           file={item.logo_file || item.logo_img}
                           onDrop={acceptedFiles => {
@@ -402,11 +442,21 @@ const DefaultSetting = () => {
                             })
                           }}
                         />
+                        {/* 문구로 '작으면 흐려집니다'라고 적어 두는 것과, 그 자리에서
+                            '지금 작습니다'라고 말해 주는 것은 다르다. 실측해 보니 대표 13곳 중
+                            6곳이 이미 미달이었는데 정작 그 가맹점들은 알 방법이 없었다. */}
+                        <LogoPreview file={item.logo_file} url={item.logo_img} />
                         {/* shopgo 산하 가맹점은 다크모드 로고·파비콘 미노출(본사 방침). 로고만 사용. */}
                         {!isShopgoMerchant(item) && (
                           <>
                             <Typography variant='subtitle2' sx={{ color: 'text.secondary' }}>
                               브랜드 다크모드 로고
+                            </Typography>
+                            {/* '안 올리면 어떻게 되나'가 실제로 헷갈리던 자리다.
+                                data.js 의 logoSrc() 는 dark_logo_img 가 없으면 logo_img 로 폴백한다
+                                (예전엔 폴백이 없어서 고객이 달 아이콘을 누르면 로고가 통째로 사라졌다). */}
+                            <Typography variant='caption' sx={{ color: 'text.disabled', lineHeight: 1.6 }}>
+                              어두운 배경에서 쓰입니다. 안 올리시면 위의 기본 로고가 그대로 쓰입니다.
                             </Typography>
                             <Upload
                               file={item.dark_logo_file || item.dark_logo_img}
@@ -429,8 +479,12 @@ const DefaultSetting = () => {
                                 })
                               }}
                             />
+                            <LogoPreview file={item.dark_logo_file} url={item.dark_logo_img} dark />
                             <Typography variant='subtitle2' sx={{ color: 'text.secondary' }}>
                               브랜드 파비콘
+                            </Typography>
+                            <Typography variant='caption' sx={{ color: 'text.disabled', lineHeight: 1.6 }}>
+                              브라우저 탭에 뜨는 작은 아이콘입니다. 아주 작게 보이니 정사각형에 단순한 그림이 좋습니다.
                             </Typography>
                             <Upload
                               file={item.favicon_file || item.favicon_img}
@@ -602,6 +656,31 @@ const DefaultSetting = () => {
                         <Typography variant='subtitle2' sx={{ color: 'text.secondary' }}>
                           미리보기 이미지
                         </Typography>
+                        {/* 여기는 로고와 정반대라, 수치를 정확히 준다.
+                              로고 — 비율 유지해서 통째로 들어간다. 가맹점이 못 바꾸는 브랜드 마크다.
+                                     그래서 목표 규격을 주면 지킬 수도 없는 걸 요구하는 꼴이 된다.
+                              OG   — 고정 비율로 '잘린다'. 그 용도로 새로 만드는 그림이다.
+                                     규격을 안 주면 만들 방법이 없다.
+                            근거:
+                              · 오른쪽 '카카오톡 링크 전송 시 예시'의 OgImg 가 400x200 = 2:1 이다.
+                                background-size: cover 라 비율이 다르면 실제로 잘린다.
+                              · og:image 는 _app.js 에서 저장된 주소를 그대로 내보낸다(변환 없음).
+                                즉 올린 파일 용량이 그대로 카카오에 전달된다 — 500KB 제한이 진짜로 걸린다.
+                                (카카오 개발자포럼 기준. 로고의 '1MB'처럼 아무도 안 지키는 숫자가 아니다) */}
+                        <Stack spacing={0.25}>
+                          <Typography variant='caption' sx={{ color: 'text.secondary' }}>
+                            가로 : 세로 = 2 : 1 · 800 × 400 권장 · 500KB 이하
+                          </Typography>
+                          {[
+                            '카카오톡으로 쇼핑몰 주소를 보내거나 검색 결과에 뜰 때 함께 보이는 그림입니다.',
+                            '로고와 달리, 비율이 2:1 이 아니면 넘치는 부분이 잘립니다. 중요한 글자는 가장자리에 두지 마세요.',
+                            '500KB를 넘으면 카카오톡에서 미리보기가 아예 뜨지 않습니다.',
+                          ].map(줄 => (
+                            <Typography key={줄} variant='caption' sx={{ color: 'text.disabled', lineHeight: 1.6 }}>
+                              · {줄}
+                            </Typography>
+                          ))}
+                        </Stack>
                         <Upload
                           file={item.og_file || item.og_img}
                           onDrop={acceptedFiles => {
@@ -623,6 +702,17 @@ const DefaultSetting = () => {
                             })
                           }}
                         />
+                        {/* 용량은 고르는 순간 File.size 로 바로 알 수 있다. 저장한 뒤에 알면 늦다 —
+                            카카오는 넘치면 그냥 안 띄우고, 왜 안 뜨는지 알려 주지 않는다.
+                            이미 저장된 주소는 용량을 알 수 없으므로(다른 도메인) 그때는 아무 말도 안 한다. */}
+                        {item.og_file?.size > 500 * 1024 && (
+                          <Alert severity='warning' sx={{ py: 0.5 }}>
+                            <Typography variant='caption'>
+                              올리신 파일이 {Math.round(item.og_file.size / 1024)}KB 입니다. 카카오톡은 500KB가
+                              넘으면 미리보기를 띄우지 않습니다 — 용량을 줄여 다시 올려 주세요.
+                            </Typography>
+                          </Alert>
+                        )}
                       </Stack>
                     </Stack>
                   </Card>

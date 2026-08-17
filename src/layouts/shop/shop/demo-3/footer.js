@@ -34,7 +34,7 @@ letter-spacing:0.08em;
 margin-right:auto;
 `
 const LogoImg = styled.img`
-height:28px;
+height: calc(28px * var(--logo-scale, 1));
 width:auto;
 margin-right:auto;
 `

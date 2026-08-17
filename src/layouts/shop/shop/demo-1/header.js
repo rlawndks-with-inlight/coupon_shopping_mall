@@ -113,17 +113,17 @@ margin-top:${props => props.pcHeight}px;
    모바일(≤1000px)은 40px 유지 — ShowMobile 아이콘 4개가 170px 가량을 먹어
    360px 화면에서 로고 가용폭이 155px 밖에 안 된다. */
 const LogoImg = styled.img`
-height: 40px;
+height: calc(40px * var(--logo-scale, 1));
 width: auto;
 /* 모바일 상한을 200px 로 둔다 — 40px × 5:1 = 200px 이라 예전(상한 없음)과 렌더 결과가 같다.
    150px 으로 잡았더니 가로형 로고가 150×30 으로 **작아졌다**(민원과 반대 방향). */
-max-width: 200px;
+max-width: calc(200px * var(--logo-scale, 1));
 object-fit: contain;
 flex-shrink: 0;
 cursor: pointer;
 @media (min-width:1001px) {
-  height: 56px;
-  max-width: 240px;
+  height: calc(56px * var(--logo-scale, 1));
+  max-width: calc(240px * var(--logo-scale, 1));
 }
 `
 const AuthMenu = styled.div`

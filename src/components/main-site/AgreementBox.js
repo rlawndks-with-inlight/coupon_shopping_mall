@@ -59,7 +59,7 @@ const AgreementBox = ({ onChange, error, errorText }) => {
         {/* 전체 동의 */}
         <FormControlLabel
           control={<Checkbox checked={allChecked} onChange={(e) => toggleAll(e.target.checked)} />}
-          label={<Typography sx={{ fontSize: 15, fontWeight: 800 }}>약관에 전체 동의합니다</Typography>}
+          label={<Typography sx={{ fontSize: 15, fontWeight: 800 }}>{t.agreeAllLabel}</Typography>}
         />
         <Divider sx={{ my: 1.5 }} />
 

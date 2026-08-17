@@ -30,15 +30,15 @@ z-index: 10;
    ≤480px 은 변경 전(40px, 상한 없음 = 5:1 기준 200px)을 유지한다. 48px/220px 로 키우면
    컨테이너(width 90%, 320px 화면에서 288px)에서 우측 아이콘이 밀려 잘린다. */
 const LogoImg = styled.img`
-height: 48px;
+height: calc(48px * var(--logo-scale, 1));
 width: auto;
-max-width: 220px;
+max-width: calc(220px * var(--logo-scale, 1));
 object-fit: contain;
 flex-shrink: 0;
 cursor: pointer;
 @media (max-width:480px) {
-  height: 40px;
-  max-width: 200px;
+  height: calc(40px * var(--logo-scale, 1));
+  max-width: calc(200px * var(--logo-scale, 1));
 }
 `
 const TopMenuContainer = styled.div`

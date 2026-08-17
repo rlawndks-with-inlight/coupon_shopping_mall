@@ -71,7 +71,7 @@ const SideSlot = styled.div`
    ≤480px 은 그대로 둔다: 아이콘 5개(36px)+뒤로가기 자리 36px 로 375px 화면에서 로고 몫이
    130px 뿐이라, 이 구간은 과거 로고가 두 줄로 깨진 이력이 있다(아래 IconBtn 주석 참고). */
 const Logo = styled(LazyLoadImage)`
-  height: 44px;
+  height: calc(44px * var(--logo-scale, 1));
   width: auto;
   /* 폭 상한은 LogoArea 가 건다 — LazyLoadImage 는 effect="blur" 일 때
      <span class="lazy-load-image-background"> 로 한 겹 감싸고, styled() 가 만든 클래스는
@@ -80,7 +80,7 @@ const Logo = styled(LazyLoadImage)`
   max-width: 100%;
   object-fit: contain;
   @media (max-width: 480px) {
-    height: 28px;
+    height: calc(28px * var(--logo-scale, 1));
   }
 `
 const BrandText = styled.div`

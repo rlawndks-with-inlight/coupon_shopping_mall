@@ -39,6 +39,8 @@ import i18n from 'src/locales/i18n';
 import { allLangs } from 'src/locales'
 import { getDemoBrandDns, getDemoNum, maskDemoBrandData, isRetiredDemoHost } from 'src/components/main-site/frameList'
 import DemoNotice from 'src/components/main-site/DemoNotice'
+// 가맹점이 정한 로고 크기를 --logo-scale 로 내려 준다. 그리는 것은 없다.
+import LogoScaleStyle from 'src/components/elements/shop/LogoScaleStyle'
 import BrandNotFound from 'src/components/main-site/BrandNotFound'
 
 const clientSideEmotionCache = createEmotionCache();
@@ -151,6 +153,7 @@ const App = props => {
                             <I18nextProvider i18n={i18n}>
                               <ModalProvider>
                                 {getLayout(<Component {...pageProps} />)}
+                                <LogoScaleStyle />
                                 <DemoNotice />
                                 <Toaster position={'right-top'} toastOptions={{ className: 'react-hot-toast' }} />
                               </ModalProvider>

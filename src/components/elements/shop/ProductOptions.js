@@ -5,7 +5,7 @@ import { commarNumber } from 'src/utils/function';
 import ProductAddons from './ProductAddons';
 import {
     addonGroups, findCombination, isComboMode, isOptionSoldOut,
-    isSameGroup, lowStockCount, pickedRequiredOptionIds, requiredGroups,
+    isSameGroup, lowStockCount, pickedRequiredOptionIds, requiredGroups, selectableOptionIds,
 } from 'src/data/product-options';
 
 // 상품 옵션 선택 — 선택옵션 · 추가상품 · 조합형.
@@ -38,13 +38,23 @@ const ProductOptions = ({ product, selected, onSelect, sx = {} }) => {
     return (
         <Box sx={{ width: '100%', ...sx }}>
             <Stack spacing={2}>
-                {필수.map((group) => (
+                {필수.map((group) => {
+                    // 조합형이면 앞 그룹의 선택과 함께 팔리는 것만 고를 수 있게 한다.
+                    // null 이면 제한 없음(조합형이 아니거나 첫 그룹이거나 앞을 아직 안 골랐다).
+                    const 고를수있는 = selectableOptionIds(product, selected, group);
+                    return (
                     <Box key={group?.id ?? group?.group_name}>
+                        {/* '필수' 를 붙인다. 추가상품에는 '필요한 것만 고르세요' 가 있는데
+                            정작 반드시 골라야 하는 쪽엔 아무 표시가 없어서, 안 고르고 담기를
+                            누른 뒤에야 막혔다. 고르기 전에 알려 주는 게 맞다. */}
                         <Typography sx={{ fontSize: 13, fontWeight: 700, mb: 0.75 }}>
                             {formatLang(group, 'group_name', currentLang)}
+                            <Box component="span" sx={{ ml: 0.75, fontSize: 11, fontWeight: 700, color: 'error.main' }}>
+                                {translate('필수')}
+                            </Box>
                         </Typography>
                         <TextField
-                            select fullWidth size="small"
+                            select fullWidth size="small" required
                             label={translate('선택')}
                             value={고른것(group)[0]?.id ?? ''}
                             onChange={(e) => {
@@ -55,20 +65,26 @@ const ProductOptions = ({ product, selected, onSelect, sx = {} }) => {
                             {(group?.options ?? []).map((option) => {
                                 const 품절 = isOptionSoldOut(option);
                                 const 남음 = lowStockCount(option?.stock_qty);
+                                // 앞에서 고른 것과 같이 파는 조합이 없는 옵션.
+                                // 예전엔 고를 수 있었고, 담기를 눌러야 '판매하지 않습니다' 가 떴다.
+                                const 조합없음 = 고를수있는 !== null && !고를수있는.has(Number(option?.id));
                                 return (
-                                    // 품절 옵션은 목록에 남기되 못 고르게 한다.
+                                    // 품절·조합없음 옵션도 목록에 남기되 못 고르게 한다.
                                     // 아예 지우면 손님은 '원래 없는 색'인지 '지금만 없는 색'인지 알 수 없다.
-                                    <MenuItem key={option?.id} value={option?.id} disabled={품절}>
+                                    <MenuItem key={option?.id} value={option?.id} disabled={품절 || 조합없음}>
                                         {formatLang(option, 'option_name', currentLang)}
                                         {!조합형 && Number(option?.option_price) ?
                                             ` (${Number(option.option_price) > 0 ? '+' : ''}${commarNumber(option.option_price)})` : ''}
-                                        {품절 ? ` — ${translate('품절')}` : (남음 ? ` — ${translate('{{n}}개 남음', { n: 남음 })}` : '')}
+                                        {품절 ? ` — ${translate('품절')}`
+                                            : 조합없음 ? ` — ${translate('이 조합은 판매하지 않습니다')}`
+                                                : (남음 ? ` — ${translate('{{n}}개 남음', { n: 남음 })}` : '')}
                                     </MenuItem>
                                 );
                             })}
                         </TextField>
                     </Box>
-                ))}
+                    );
+                })}
 
                 {/* 조합형에서 안 파는 조합을 고른 경우. 담기 버튼은 shop-util 이 따로 막는다. */}
                 {조합미등록 &&

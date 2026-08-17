@@ -9,6 +9,7 @@
     "export": "next export",
     "deploy": "git pull && NODE_OPTIONS=--dns-result-order=ipv4first next build && pm2 restart front",
     "lint": "eslint --fix \"src/**/*.{js,jsx}\"",
+    "test": "node scripts/checks/run-all.mjs",
     "format": "prettier --write \"src/**/*.{js,jsx}\"",
     "build:icons": "node src/iconify-bundle/bundle-icons-react.js",
     "guide:pdf": "node scripts/guide-pdf/extract.mjs && python scripts/guide-pdf/build.py && python scripts/guide-pdf/verify.py",

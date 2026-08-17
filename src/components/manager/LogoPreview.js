@@ -105,9 +105,9 @@ const 벡터인가 = (file, url) => {
   return /\.svg$/i.test(이름) || /\.svg($|\?)/i.test(주소.split('#')[0]) || 주소.startsWith('data:image/svg')
 }
 
-const 칸 = { height: 40, display: 'block', width: 'auto', maxWidth: '100%' }
+const 칸 = (배율) => ({ height: 40 * (Number(배율) || 100) / 100, display: 'block', width: 'auto', maxWidth: '100%' })
 
-const 배경칸 = ({ 라벨, 색, src }) => (
+const 배경칸 = ({ 라벨, 색, src, 배율 }) => (
   <Stack spacing={0.5} alignItems='center'>
     <Box
       sx={{
@@ -124,7 +124,7 @@ const 배경칸 = ({ 라벨, 색, src }) => (
         minHeight: 64
       }}
     >
-      <Box component='img' src={src} alt='' sx={칸} />
+      <Box component='img' src={src} alt='' sx={칸(배율)} />
     </Box>
     <Typography variant='caption' sx={{ color: 'text.disabled' }}>
       {라벨}
@@ -135,7 +135,8 @@ const 배경칸 = ({ 라벨, 색, src }) => (
 // file  — 방금 고른 파일(있으면 이쪽을 본다). Upload 가 붙여 준 .preview(blob URL)를 쓴다.
 // url   — 이미 저장돼 있는 로고 주소.
 // dark  — 다크모드 로고면 true. 어두운 배경 한 칸만 보여 준다.
-const LogoPreview = ({ file, url, dark = false }) => {
+// scale — 가맹점이 정한 로고 배율(%). 미리보기도 같은 크기로 보여야 조절한 보람이 있다.
+const LogoPreview = ({ file, url, dark = false, scale = 100 }) => {
   const [측정, set측정] = useState(null)
   const [미리보기, set미리보기] = useState('')
 
@@ -177,8 +178,8 @@ const LogoPreview = ({ file, url, dark = false }) => {
         쇼핑몰 상단에서 이렇게 보입니다
       </Typography>
       <Stack direction='row' spacing={1.5} sx={{ flexWrap: 'wrap', rowGap: 1.5 }}>
-        {!dark && <배경칸 라벨='밝은 배경' 색='#ffffff' src={미리보기} />}
-        <배경칸 라벨={dark ? '어두운 배경' : '어두운 배경(다크모드)'} 색='#1a1a1a' src={미리보기} />
+        {!dark && <배경칸 라벨='밝은 배경' 색='#ffffff' src={미리보기} 배율={scale} />}
+        <배경칸 라벨={dark ? '어두운 배경' : '어두운 배경(다크모드)'} 색='#1a1a1a' src={미리보기} 배율={scale} />
       </Stack>
       {측정 && (
         <Typography variant='caption' sx={{ color: 'text.disabled' }}>

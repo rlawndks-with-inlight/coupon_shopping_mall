@@ -66,6 +66,46 @@ export const findCombination = (product, selected) => {
     return list.find((c) => c?.combo_key === key && c?.is_delete != 1) ?? null;
 };
 
+// 조합형에서 '지금 고른 것과 함께 팔리는 조합이 있는' 옵션 id 들.
+// 조합형이 아니거나 조합이 없으면 null — 이때는 제한하지 않는다.
+//
+// [왜 앞 그룹만 보나]
+// 서로 제약하면 막다른 길이 생긴다. 색상=분홍 · 사이즈=S 를 고른 뒤 파랑/L 로 가고 싶은데
+// 파랑/S 도 분홍/L 도 안 판다면, 색상도 사이즈도 못 바꾸고 갇힌다.
+// 앞 그룹은 늘 자유롭게 두면 언제든 처음부터 다시 고를 수 있다.
+// (네이버·카페24 도 앞 선택이 뒤 선택지를 거르는 순서 방식이다)
+//
+// 앞 그룹을 아직 안 골랐으면 고른 것만 조건으로 삼는다 — 부분적으로라도 걸러 주는 게 낫다.
+export const selectableOptionIds = (product, selected, group) => {
+    if (!isComboMode(product)) return null;
+    const list = (Array.isArray(product?.combinations) ? product.combinations : [])
+        .filter((c) => c?.is_delete != 1);
+    if (!list.length) return null;
+
+    const 필수 = requiredGroups(product);
+    const 자리 = 필수.findIndex((g) => isSameGroup(g, group));
+    if (자리 <= 0) return null;             // 첫 그룹은 늘 자유롭다
+
+    const 앞에서고른것 = [];
+    for (const 앞 of 필수.slice(0, 자리)) {
+        const 고름 = (selected?.groups ?? []).find((g) => isSameGroup(g, 앞));
+        for (const o of (고름?.options ?? [])) {
+            const id = Number(o?.id) || 0;
+            if (id) 앞에서고른것.push(id);
+        }
+    }
+    if (!앞에서고른것.length) return null;   // 앞을 하나도 안 골랐으면 거를 근거가 없다
+
+    const 가능 = new Set();
+    for (const c of list) {
+        const ids = String(c?.combo_key ?? '').split('-').map((v) => Number(v) || 0).filter(Boolean);
+        if (!ids.length) continue;
+        if (!앞에서고른것.every((id) => ids.includes(id))) continue;
+        for (const id of ids) 가능.add(id);
+    }
+    return 가능;
+};
+
 // 고른 옵션이 더하는 금액(1개 기준).
 //
 // 조합형은 선택옵션의 개별 가격 대신 **조합 추가금**을 쓴다. 추가상품은 늘 개별 가격이다.

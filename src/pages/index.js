@@ -112,11 +112,12 @@ const SG = {
 // 코드로만 그린 디바이스 목업 (외부 이미지 없음, SSR 안전)
 // 히어로 비주얼: 노트북 + 스마트폰 목업 이미지
 // 파일 위치: public/assets/images/hero-mockup.png (디자인 렌더 이미지)
-const DeviceMockup = () => (
+// alt 는 화면에 안 보이지만 검색엔진과 화면낭독기가 읽는다 — 이 자리만 한국어로 남을 이유가 없다.
+const DeviceMockup = ({ alt }) => (
   <Box
     component="img"
     src="/assets/images/hero-mockup.png"
-    alt="ShopGo 쇼핑몰 미리보기"
+    alt={alt}
     sx={{
       display: 'block',
       width: '100%',
@@ -204,7 +205,7 @@ const ShopGoLanding = () => {
             </Grid>
             {/* 우측: 코드로 만든 디바이스 목업 */}
             <Grid item xs={12} md={6}>
-              <DeviceMockup />
+              <DeviceMockup alt={t.heroImageAlt} />
             </Grid>
           </Grid>
         </Container>

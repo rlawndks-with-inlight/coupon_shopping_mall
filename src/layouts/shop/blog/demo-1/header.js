@@ -26,9 +26,9 @@ transition: background 0.3s ease;
    34px 까지만 올린다 — 헤더 총높이가 1px 도 안 바뀌므로 어떤 화면의 오프셋도 건드릴 필요가 없다.
    더 키우려면 프레임4 전 화면의 상단 여백을 함께 손봐야 한다(그건 별도 작업). */
 const LogoImg = styled.img`
-height: 34px;
+height: calc(34px * var(--logo-scale, 1));
 width: auto;
-max-width: 180px;
+max-width: calc(180px * var(--logo-scale, 1));
 object-fit: contain;
 flex-shrink: 0;
 cursor: pointer;
@@ -36,8 +36,8 @@ cursor: pointer;
    34px 로 키우면 가로형 로고 폭이 140→170px 이 되어 359~391px 구간에서
    우측 아이콘 묶음이 컨테이너 밖으로 밀린다(is_use_lang 을 켠 가맹점은 더 빨리 밀린다). */
 @media (max-width:480px) {
-  height: 28px;
-  max-width: 140px;
+  height: calc(28px * var(--logo-scale, 1));
+  max-width: calc(140px * var(--logo-scale, 1));
 }
 `
 const TopMenuContainer = styled.div`

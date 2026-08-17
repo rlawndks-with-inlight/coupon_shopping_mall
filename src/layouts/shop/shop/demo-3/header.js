@@ -74,12 +74,12 @@ margin-top:150px;
 }
 `
 const LogoImg = styled.img`
-height: 40px;
+height: calc(40px * var(--logo-scale, 1));
 width: auto;
 cursor: pointer;
 margin: 0 auto;
 @media (max-width:300px) {
-  width:52px;
+  width: calc(52px * var(--logo-scale, 1));
   height:auto;
 }
 `

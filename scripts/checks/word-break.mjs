@@ -62,7 +62,9 @@ for (const p of 본사페이지) {
 
 // ── 상속으로 충분한 자리에는 keep-all 을 다시 박지 말 것 ──────────────────
 // 사전에서 문구를 가져오는 화면들이다. 여기에 keep-all 을 박으면 ja/cn 이 넘친다.
-for (const p of ['index.js', 'frames.js', 'apply.js', 'apply-complete.js', 'manual.js']) {
+// faq.js 는 2026-08-14 에 문구를 사전으로 옮겼다. 화면 언어를 따라가므로 상속에 맡긴다 —
+// keep-all 을 다시 박으면 일본어·중국어에서 문장이 통째로 안 끊겨 화면 밖으로 나간다.
+for (const p of ['index.js', 'frames.js', 'apply.js', 'apply-complete.js', 'manual.js', 'faq.js']) {
   eq(`${p} — 하드코딩 keep-all 없음`, /keep-all/.test(주석뺀(rd('src/pages/' + p))), false);
 }
 
@@ -75,7 +77,6 @@ for (const p of ['index.js', 'frames.js', 'apply.js', 'apply-complete.js', 'manu
 for (const [p, 이유] of [
   ['src/pages/policy/[slug].js', '약관 본문은 한국어 원문'],
   ['src/components/main-site/AgreementBox.js', '약관 팝업(포털) + 한국어 원문'],
-  ['src/pages/faq.js', 'FAQ 문구가 아직 한국어 고정'],
 ]) {
   eq(`${p} — keep-all 유지 (${이유})`, /wordBreak: 'keep-all'/.test(주석뺀(rd(p))), true);
 }

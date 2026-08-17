@@ -24,7 +24,9 @@ const PolicyPage = () => {
   return (
     <>
       <Head>
-        <title>{doc ? `${doc.title} · SHOPGO` : 'SHOPGO 정책'}</title>
+        {/* 약관 '문서' 는 한국어 원문뿐이라 doc.title 은 그대로 쓴다.
+            문서를 못 찾았을 때 뜨는 제목까지 한국어일 이유는 없다. */}
+        <title>{doc ? `${doc.title} · SHOPGO` : `${t.policyNotFound} · SHOPGO`}</title>
       </Head>
       <Box sx={{ bgcolor: '#fff', py: { xs: 5, md: 8 } }}>
         <Container maxWidth="md">

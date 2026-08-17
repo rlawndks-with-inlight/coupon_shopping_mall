@@ -797,6 +797,8 @@ const en = {
   "추가 상품": "Add-ons",
   "필요한 것만 고르세요": "Pick only what you need",
   "선택하신 조합은 판매하지 않습니다.": "That combination is not available.",
+  "🔍 디자인 미리보기(데모) 화면입니다 — 로그인·회원가입·결제 등 실제 기능은 동작하지 않습니다.": "🔍 This is a design preview — sign-in, sign-up, payment and other live features are disabled.",
+  "화면에 보이는 상품 · 카테고리 · 배너 등 디자인 구성은 예시입니다. 개설 후 직접 등록·설정하셔야 합니다.": "The products, categories and banners shown here are examples. You set them up yourself after your store opens.",
   "필수": "Required",
   "이 조합은 판매하지 않습니다": "not sold in this combination",
   "주문 전체 취소요청": "Cancel the whole order",

@@ -792,6 +792,8 @@ const es = {
   "추가 상품": "Productos adicionales",
   "필요한 것만 고르세요": "Elija solo lo que necesite",
   "선택하신 조합은 판매하지 않습니다.": "Esa combinación no está disponible.",
+  "🔍 디자인 미리보기(데모) 화면입니다 — 로그인·회원가입·결제 등 실제 기능은 동작하지 않습니다.": "🔍 Esta es una vista previa de diseño: el inicio de sesión, el registro y el pago están deshabilitados.",
+  "화면에 보이는 상품 · 카테고리 · 배너 등 디자인 구성은 예시입니다. 개설 후 직접 등록·설정하셔야 합니다.": "Los productos, categorías y banners que ve son ejemplos. Usted los configura tras abrir su tienda.",
   "필수": "Obligatorio",
   "이 조합은 판매하지 않습니다": "no disponible en esta combinación",
   "주문 전체 취소요청": "Cancelar todo el pedido",

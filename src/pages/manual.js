@@ -22,7 +22,7 @@ const ManualPage = () => {
             {st('manual.title')}
           </Typography>
           <Typography sx={{ fontSize: 14, color: '#666', maxWidth: 560, lineHeight: 1.7, textWrap: 'balance' }}>
-            처음이시라면 아래 순서대로 따라 하시면 쇼핑몰을 열 수 있습니다.
+            {st('manual.intro')}
           </Typography>
           <Button
             variant="text"
@@ -32,7 +32,7 @@ const ManualPage = () => {
             startIcon={<Icon icon="tabler:download" />}
             sx={{ color: '#888', fontSize: 12.5, mt: 0.5 }}
           >
-            PDF로 받기 (선택)
+            {st('manual.pdf')}
           </Button>
         </Stack>
 

@@ -366,11 +366,13 @@ const ApplyPage = () => {
       </Section>
 
       <Section title={st('apply.sec7')}>
+        {/* agreed / agreeLabel 은 넘기지 않는다 — AgreementBox 가 받지 않는 이름이었다.
+            약관 동의가 '한 줄 체크' 에서 '항목별 개별 동의'(개인정보보호법상 원칙)로 바뀌면서
+            라벨은 사전(agreeAllLabel)이, 체크 상태는 AgreementBox 안이 들고 있다.
+            여기서는 '전부 동의했는가' 만 onChange 로 돌려받는다. */}
         <AgreementBox
-          agreed={agreed}
           onChange={setAgreed}
           error={!!errors.agreed}
-          agreeLabel={st('apply.agreeLabel')}
           errorText={st('apply.agreeError')}
         />
       </Section>

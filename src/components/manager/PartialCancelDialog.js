@@ -29,10 +29,15 @@ const PartialCancelDialog = ({ open, onClose, trxId, onDone }) => {
     const [reason, setReason] = useState('');
     const [busy, setBusy] = useState(false);
     const [idemKey, setIdemKey] = useState('');
+    // 확인 단계. 이 버튼은 PG 에 실제 환불을 걸고, 취소한 결제를 되돌리는 수단은 없다 —
+    // 잘못 눌렀으면 손님에게 다시 결제를 받아야 한다. 게다가 [전부] 버튼이 실행 버튼
+    // 바로 옆이라 잘못 누르기 쉬운 자리다.
+    // 모달 위에 모달을 띄우는 대신 이 다이얼로그를 두 단계로 쓴다(자체 Modal 은 본문을 못 넣는다).
+    const [확인단계, set확인단계] = useState(false);
 
     useEffect(() => {
         if (!open || !trxId) return;
-        setLoading(true); setQty({}); setReason(''); setIdemKey(새키());
+        setLoading(true); setQty({}); setReason(''); setIdemKey(새키()); set확인단계(false);
         (async () => {
             const r = await apiManager(`pays/cancel-partial/${trxId}`, 'get', {});
             setState(r ?? null);
@@ -80,29 +85,59 @@ const PartialCancelDialog = ({ open, onClose, trxId, onDone }) => {
     return (
         <Dialog open={!!open} onClose={busy ? undefined : onClose} maxWidth="sm" fullWidth>
             <DialogTitle sx={{ pb: 1 }}>
-                부분 취소
+                {확인단계 ? '이대로 취소할까요?' : '부분 취소'}
                 <Typography sx={{ fontSize: 12, color: 'text.secondary' }}>
-                    취소할 상품과 수량을 고르면 그만큼만 환불됩니다.
+                    {확인단계
+                        ? '아래 내용으로 결제를 취소합니다. 취소한 결제는 되돌릴 수 없습니다.'
+                        : '취소할 상품과 수량을 고르면 그만큼만 환불됩니다.'}
                 </Typography>
             </DialogTitle>
             <DialogContent dividers>
-                {loading && <Typography sx={{ fontSize: 14, py: 2 }}>불러오는 중…</Typography>}
+                {/* 확인 단계 — 무엇을 몇 개, 얼마인지 그대로 적는다.
+                    금액만 보여 주면 무엇이 취소되는지 모른 채 확인을 누르게 된다. */}
+                {확인단계 &&
+                    <Stack spacing={1.25}>
+                        {고른줄.map((l) => (
+                            <Stack key={l.order_id} direction="row" justifyContent="space-between" spacing={2}>
+                                <Typography sx={{ fontSize: 14 }} noWrap>{l.order_name}</Typography>
+                                <Typography sx={{ fontSize: 14, fontWeight: 700, whiteSpace: 'nowrap' }}>
+                                    {고른수량(l)}개
+                                </Typography>
+                            </Stack>
+                        ))}
+                        <Divider />
+                        <Stack direction="row" justifyContent="space-between" alignItems="baseline">
+                            <Typography sx={{ fontSize: 13, color: 'text.secondary' }}>환불 예상액</Typography>
+                            <Typography sx={{ fontSize: 20, fontWeight: 800 }}>{commarNumber(예상액)}원</Typography>
+                        </Stack>
+                        {reason &&
+                            <Typography sx={{ fontSize: 12, color: 'text.secondary' }}>사유 — {reason}</Typography>}
+                        <Alert severity={전부취소 ? 'info' : 'warning'} sx={{ py: 0.5 }}>
+                            <Typography variant="caption">
+                                {전부취소
+                                    ? '주문 전체가 취소되며 배송비도 함께 환불됩니다.'
+                                    : '부분 취소라 배송비는 환불되지 않습니다. 남은 금액이 무료배송 기준에 못 미치면 배송비가 환불액에서 차감됩니다.'}
+                            </Typography>
+                        </Alert>
+                    </Stack>}
 
-                {!loading && !state &&
+                {!확인단계 && loading && <Typography sx={{ fontSize: 14, py: 2 }}>불러오는 중…</Typography>}
+
+                {!확인단계 && !loading && !state &&
                     <Alert severity="error">주문 정보를 불러오지 못했습니다.</Alert>}
 
-                {!loading && state && !state.cancelable &&
+                {!확인단계 && !loading && state && !state.cancelable &&
                     <Alert severity="warning">
                         이미 취소되었거나 출고된 주문입니다. 출고 이후에는 반품/환불 절차로 처리해 주세요.
                     </Alert>}
 
                 {/* 지원 안 하는 PG 에 부분취소를 걸면 전액이 취소된다 — 아예 못 누르게 한다 */}
-                {!loading && state?.cancelable && !state.partial_supported &&
+                {!확인단계 && !loading && state?.cancelable && !state.partial_supported &&
                     <Alert severity="warning">
                         이 주문의 결제수단은 부분 취소를 지원하지 않습니다. 전체 취소만 가능합니다.
                     </Alert>}
 
-                {!loading && state?.cancelable && state.partial_supported &&
+                {!확인단계 && !loading && state?.cancelable && state.partial_supported &&
                     <Stack spacing={1.5}>
                         {lines.map((l) => (
                             <Stack key={l.order_id} direction="row" alignItems="center" spacing={1.5}
@@ -151,14 +186,25 @@ const PartialCancelDialog = ({ open, onClose, trxId, onDone }) => {
                         </Typography>
                     </Stack>}
             </DialogContent>
+            {/* 두 단계로 나눈 이유 —
+                [전부] 버튼이 실행 버튼 바로 옆이라 잘못 누르기 쉬운데, 이 버튼은 PG 에
+                실제 환불을 걸고 되돌릴 수단이 없다. 한 번 더 보고 누르게 한다. */}
             <DialogActions>
-                <Button onClick={onClose} disabled={busy}>닫기</Button>
-                <Button
-                    variant="contained" color="error" onClick={실행}
-                    disabled={busy || !state?.cancelable || !state?.partial_supported || !고른줄.length}
-                >
-                    {busy ? '취소 처리 중…' : `${commarNumber(예상액)}원 취소`}
-                </Button>
+                {!확인단계 && <>
+                    <Button onClick={onClose} disabled={busy}>닫기</Button>
+                    <Button
+                        variant="contained" color="error" onClick={() => set확인단계(true)}
+                        disabled={busy || !state?.cancelable || !state?.partial_supported || !고른줄.length}
+                    >
+                        {`${commarNumber(예상액)}원 취소하기`}
+                    </Button>
+                </>}
+                {확인단계 && <>
+                    <Button onClick={() => set확인단계(false)} disabled={busy}>뒤로</Button>
+                    <Button variant="contained" color="error" onClick={실행} disabled={busy}>
+                        {busy ? '취소 처리 중…' : '네, 취소합니다'}
+                    </Button>
+                </>}
             </DialogActions>
         </Dialog>
     );

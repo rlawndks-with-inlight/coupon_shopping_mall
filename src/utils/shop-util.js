@@ -3,12 +3,28 @@ import { axiosIns } from "./axios";
 import { apiManager } from "./api";
 import axios from "axios";
 import toast from "react-hot-toast";
+import i18n from "src/locales/i18n";
+
 import { returnMoment, isPurchasable, getProductStatus } from "./function";
 import { getLocalStorage } from "./local-storage";
 import { isDemoHost } from "src/components/main-site/frameList";
 import { findMissingRequired } from "src/data/order-form-types";
 import { requiredGroups, isComboMode, findCombination, optionExtraPrice, maxOrderable } from "src/data/product-options";
 import { makeOrdNum } from 'src/utils/function';
+
+// 손님에게 뜨는 안내는 반드시 이걸 거친다.
+//
+// 이 파일은 컴포넌트가 아니라 useLocales() 를 쓸 수 없다. 그래서 예전엔 toast 에
+// 한국어를 그대로 박아 뒀는데, 담기·구매가 막히는 순간의 안내가 전부 한국어로 떴다.
+// 해외 판매가 이 서비스의 소구점인데 정작 '왜 막혔는지'를 못 읽는 셈이었다.
+//
+// api.js 의 serverMessage 와 같은 방식이다 — i18n 을 직접 부르고, 사전 키는
+// 한국어 원문 그대로 쓴다(이 저장소 규칙). i18next 는 못 찾은 키를 원문으로 돌려주므로
+// 사전에 없는 문구도 예전과 똑같이 동작한다.
+// try/catch 는 안전장치다 — 안내 한 줄 때문에 구매 흐름이 끊기면 안 된다.
+const 번역 = (문구, 값) => {
+    try { return i18n.t(문구, 값); } catch { return 문구; }
+};
 
 // 브랜드 공통 배송비 정책 (설정 > 배송비설정). 정책이 설정된 경우에만 활성.
 // - delivery_fee_default: 주문당 기본 배송비
@@ -145,7 +161,7 @@ export const makePayData = async (products_, payData_) => {
 }
 export const onPayProductsByHand = async (products_, payData_) => { // 수기결제(페이베리)
     if (isDemoHost()) {
-        toast.error('데모 미리보기에서는 결제할 수 없습니다.');
+        toast.error(번역('데모 미리보기에서는 결제할 수 없습니다.'));
         return false;
     }
     let products = products_;
@@ -187,7 +203,7 @@ export const onPayProductsByHand = async (products_, payData_) => { // 수기결
 }
 export const onPayProductsByAuth = async (products_, payData_, type) => { // 인증결제(페이베리 & 위루트)
     if (isDemoHost()) {
-        toast.error('데모 미리보기에서는 결제할 수 없습니다.');
+        toast.error(번역('데모 미리보기에서는 결제할 수 없습니다.'));
         return false;
     }
     let products = products_;
@@ -256,7 +272,7 @@ export const onPayProductsByAuth = async (products_, payData_, type) => { // 인
 }
 export const onPayProductsByVirtualAccount = async (products_, payData_) => { // 무통장입금
     if (isDemoHost()) {
-        toast.error('데모 미리보기에서는 결제할 수 없습니다.');
+        toast.error(번역('데모 미리보기에서는 결제할 수 없습니다.'));
         return false;
     }
     let products = products_;
@@ -301,7 +317,7 @@ export const onPayProductsByVirtualAccount = async (products_, payData_) => { //
         });
         if (insert_pay_ready?.id > 0) {
             if (response?.code == '0000') {
-                toast.success('성공적으로 발급 되었습니다.');
+                toast.success(번역('성공적으로 발급 되었습니다.'));
                 return {
                     ...payData,
                     trans_id: insert_pay_ready?.id,
@@ -326,7 +342,7 @@ export const onPayProductsByVirtualAccount = async (products_, payData_) => { //
 }
 export const onPayProductsByPayletter = async (products_, payData_) => { // 카드결제(페이레터-테스트)
     if (isDemoHost()) {
-        toast.error('데모 미리보기에서는 결제할 수 없습니다.');
+        toast.error(번역('데모 미리보기에서는 결제할 수 없습니다.'));
         return false;
     }
     let products = products_;
@@ -357,7 +373,7 @@ export const onPayProductsByPayletter = async (products_, payData_) => { // 카�
 }
 export const onPayProductsByForspay = async (products_, payData_) => { // 인증결제(포스페이)
     if (isDemoHost()) {
-        toast.error('데모 미리보기에서는 결제할 수 없습니다.');
+        toast.error(번역('데모 미리보기에서는 결제할 수 없습니다.'));
         return false;
     }
     let products = products_;
@@ -412,7 +428,8 @@ const assertPurchasable = (product) => {
     if (status === undefined || status === null || status === '') return true;
     if (isPurchasable(status)) return true;
     const label = getProductStatus(status)?.text || '판매하지 않는';
-    toast.error(`${label} 상품입니다.`);
+    // 상태 이름(품절·판매중지 등)도 사전을 거친다 — 안 그러면 문장만 번역되고 이름만 한국어로 남는다.
+    toast.error(번역('{{status}} 상품입니다.', { status: 번역(label) }));
     return false;
 };
 
@@ -460,7 +477,7 @@ const assertOptionsSelected = (product, selectProductGroups) => {
     // 그래서 목록 응답에 '골라야 할 옵션이 몇 개인지'(required_option_count)만 실어 두고
     // 여기서 본다. 개수가 있으면 고를 화면으로 보내야 한다.
     if (required.length == 0 && Number(product?.required_option_count) > 0) {
-        toast.error('옵션을 선택해 주세요.');
+        toast.error(번역('옵션을 선택해 주세요.'));
         return false;
     }
     if (required.length == 0) return true;
@@ -469,14 +486,14 @@ const assertOptionsSelected = (product, selectProductGroups) => {
         (p) => isSameOptionGroup(p, g) && (p?.options?.length ?? 0) > 0
     ));
     if (!allPicked) {
-        toast.error('옵션을 선택해 주세요.');
+        toast.error(번역('옵션을 선택해 주세요.'));
         return false;
     }
     // 조합형은 '고른 조합이 실제로 파는 조합인지'까지 봐야 한다.
     // 등록 안 된 조합(예: 분홍/XL 은 안 만듦)을 통과시키면 추가금 0원으로 결제된다.
     if (isComboMode(product) && (product?.combinations?.length ?? 0) > 0) {
         if (!findCombination(product, selectProductGroups)) {
-            toast.error('선택하신 조합은 판매하지 않습니다.');
+            toast.error(번역('선택하신 조합은 판매하지 않습니다.'));
             return false;
         }
     }
@@ -492,7 +509,7 @@ const assertMemberOnly = (product) => {
     if (!(Number(product?.purchase_limit) > 0)) return true; // 한정 상품이 아니다
     const 로그인 = typeof window !== 'undefined' && !!localStorage.getItem('accessToken');
     if (!로그인) {
-        toast.error('회원만 구매할 수 있는 한정 상품입니다. 로그인 후 이용해 주세요.');
+        toast.error(번역('회원만 구매할 수 있는 한정 상품입니다. 로그인 후 이용해 주세요.'));
         return false;
     }
     return true;
@@ -504,8 +521,8 @@ const assertStock = (product, selectProductGroups) => {
     const 한도 = maxOrderable(product, selectProductGroups);
     if (한도 === null) return true; // 무제한
     const 수량 = Math.max(1, parseInt(selectProductGroups?.count) || 1);
-    if (한도 <= 0) { toast.error('품절된 상품입니다.'); return false; }
-    if (수량 > 한도) { toast.error(`재고가 ${한도}개 남았습니다.`); return false; }
+    if (한도 <= 0) { toast.error(번역('품절된 상품입니다.')); return false; }
+    if (수량 > 한도) { toast.error(번역('재고가 {{n}}개 남았습니다.', { n: 한도 })); return false; }
     return true;
 };
 
@@ -520,7 +537,7 @@ const assertOrderFormFilled = (product) => {
     if (!fields.length) return true; // 입력항목이 안 걸린 상품 — 대부분이 여기다
     const missing = findMissingRequired(fields, product?.order_form_values);
     if (missing) {
-        toast.error(`${missing.label}을(를) 입력해 주세요.`);
+        toast.error(번역('{{name}} 항목을 입력해 주세요.', { name: missing.label }));
         return false;
     }
     return true;

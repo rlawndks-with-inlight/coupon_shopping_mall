@@ -93,7 +93,8 @@ const OrderCancelButton = ({ trx, orders, onDone, sx, variant = 'outlined' }) =>
             {줄.map((o) => (
               <Stack key={o.id} direction="row" alignItems="center" spacing={1.5}>
                 <Stack sx={{ flexGrow: 1, minWidth: 0 }}>
-                  <Typography sx={{ fontSize: 14, fontWeight: 600 }} noWrap>{o?.order_name}</Typography>
+                  {/* 손님도 '무엇을 취소하는지' 를 읽어야 한다 — 긴 상품명을 자르면 비슷한 둘을 못 가른다 */}
+                  <Typography sx={{ fontSize: 14, fontWeight: 600 }}>{o?.order_name}</Typography>
                   <Typography sx={{ fontSize: 12, color: 'text.secondary' }}>
                     {(o?.groups ?? []).flatMap((g) => (g?.options ?? []).map(getOptionLabel)).filter(Boolean).join(' / ')}
                     {(o?.groups?.length > 0) ? ' · ' : ''}

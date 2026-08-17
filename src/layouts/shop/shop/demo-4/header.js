@@ -221,13 +221,13 @@ position: absolute;
 top: 50%;
 left: 50%;
 transform: translate(-50%, -50%);
-height: 88px;
+height: calc(88px * var(--logo-scale, 1));
 @media (max-width:768px) {
     left:20%;
-    height: 66px;
+    height: calc(66px * var(--logo-scale, 1));
 }
 @media (max-width:400px) {
-    height: 44px;
+    height: calc(44px * var(--logo-scale, 1));
 }
 `
 

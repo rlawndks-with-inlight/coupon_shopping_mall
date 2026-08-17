@@ -2,7 +2,7 @@ import { FRONT_ROOT, BACK_ROOT } from './_roots.mjs';
 // logoDeliveryUrl — Cloudinary 로고에만 여백제거(e_trim) 변환을 끼운다.
 // 회귀 방지 핵심: Cloudinary 가 아닌 URL 을 건드리면 그 브랜드 로고가 통째로 깨진다.
 // (백엔드 디스크 업로드 BACK_URL/files/..., 데모 미리보기의 data:image/svg+xml 등)
-import { readFileSync } from 'fs';
+import { readFileSync, readdirSync, statSync } from 'fs';
 
 const SRC = FRONT_ROOT + 'src/data/data.js';
 const code = readFileSync(SRC, 'utf8');
@@ -86,3 +86,46 @@ eq('원본 확장자 유지', out.endsWith('.png'), true);
 
 console.log(`\n통과 ${pass} / 실패 ${fail}`);
 process.exit(fail ? 1 : 0);
+
+// ── 로고 크기 조절(--logo-scale) ──────────────────────────────────────────
+//
+// 로고를 그리는 자리가 프레임 11개에 걸쳐 25곳이 넘고 기준 높이도 제각각이다(28~88px).
+// 그래서 '한 값으로 통일'이 아니라 각자의 기준에 배율을 곱한다.
+// 자리마다 훅을 하나 더 부르면 훅 순서가 깨질 수 있어(demo-7 헤더는 logoSrc() 를
+// 삼항 안에서 조건부로 부른다) CSS 변수로 내린다.
+//
+// 새 프레임을 만들 때 로고에 배율을 안 붙이면 그 프레임만 조절이 안 먹는다 — 여기서 잡는다.
+{
+  const 훑기 = (d, out = []) => {
+    for (const f of readdirSync(d)) {
+      const p = d + '/' + f;
+      if (statSync(p).isDirectory()) 훑기(p, out);
+      else if (/\.js$/.test(f)) out.push(p);
+    }
+    return out;
+  };
+  const 빠진곳 = [];
+  for (const p of 훑기(FRONT_ROOT + 'src/layouts/shop')) {
+    const 원문 = readFileSync(p, 'utf8');
+    if (!/logoSrc\(\)|logoDeliveryUrl\(/.test(원문)) continue;
+    // 로고 크기를 정하는 자리가 있는데 배율이 안 걸린 파일
+    const 크기있음 = /(Logo|LogoImg|MainLogo)\s*=\s*styled/.test(원문)
+      || /logoSrc\(\)[^\n]*(height|width):/.test(원문);
+    if (크기있음 && !원문.includes('--logo-scale')) 빠진곳.push(p.replace(FRONT_ROOT, ''));
+  }
+  eq('프레임 로고에 배율이 다 걸려 있음', 빠진곳, []);
+
+  const 스타일 = readFileSync(FRONT_ROOT + 'src/components/elements/shop/LogoScaleStyle.js', 'utf8');
+  eq('배율을 html 에 건다(포털까지 상속)', /documentElement\.style\.setProperty\('--logo-scale'/.test(스타일), true);
+  eq('_app 이 LogoScaleStyle 을 그린다',
+     /<LogoScaleStyle \/>/.test(readFileSync(FRONT_ROOT + 'src/pages/_app.js', 'utf8')), true);
+  // 이상한 값이 들어와도 화면이 깨지면 안 된다
+  const { logoScaleOf } = new Function(
+    스타일.slice(스타일.indexOf('export const logoScaleOf')).split('\n').slice(0, 5).join('\n')
+      .replace('export const ', 'const ') + '\nreturn { logoScaleOf };')();
+  eq('설정 없으면 1배', logoScaleOf({}), 1);
+  eq('150 → 1.5배', logoScaleOf({ logo_scale: 150 }), 1.5);
+  eq('너무 크면 최대치로', logoScaleOf({ logo_scale: 9999 }), 2);
+  eq('너무 작으면 최소치로', logoScaleOf({ logo_scale: 1 }), 0.6);
+  eq('숫자가 아니면 1배', logoScaleOf({ logo_scale: 'abc' }), 1);
+}

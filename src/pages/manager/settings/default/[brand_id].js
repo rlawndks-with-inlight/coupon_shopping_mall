@@ -18,6 +18,7 @@ import {
   Radio,
   RadioGroup,
   Select,
+  Slider,
   Stack,
   Switch,
   TextField,
@@ -30,6 +31,10 @@ import { Row, themeObj } from 'src/components/elements/styled-components'
 import { useSettingsContext } from 'src/components/settings'
 import { Upload } from 'src/components/upload'
 import LogoPreview from 'src/components/manager/LogoPreview'
+import {
+  LOGO_SCALE_기본, LOGO_SCALE_최소, LOGO_SCALE_최대
+} from 'src/components/elements/shop/LogoScaleStyle'
+
 import ManagerLayout from 'src/layouts/manager/ManagerLayout'
 import styled from 'styled-components'
 import { createDefaultManagerObj } from 'src/data/manager-data'
@@ -43,6 +48,13 @@ import { BLOG_DEMO_DATA, SHOP_DEMO_DATA } from 'src/data/data'
 import { FRAMES, LEGACY_FRAMES } from 'src/components/main-site/frameList'
 import { allLangs } from 'src/locales'
 import { isShopgoMerchant } from 'src/utils/is-shopgo'
+// 저장돼 있지 않으면 기본(100%). 이상한 값이 들어와도 슬라이더가 범위를 벗어나면 안 된다.
+const 로고배율 = (item) => {
+  const v = Number(item?.setting_obj?.logo_scale)
+  if (!v || isNaN(v)) return LOGO_SCALE_기본
+  return Math.min(LOGO_SCALE_최대, Math.max(LOGO_SCALE_최소, v))
+}
+
 
 const KakaoWrappers = styled.div`
   width: 100%;
@@ -445,7 +457,40 @@ const DefaultSetting = () => {
                         {/* 문구로 '작으면 흐려집니다'라고 적어 두는 것과, 그 자리에서
                             '지금 작습니다'라고 말해 주는 것은 다르다. 실측해 보니 대표 13곳 중
                             6곳이 이미 미달이었는데 정작 그 가맹점들은 알 방법이 없었다. */}
-                        <LogoPreview file={item.logo_file} url={item.logo_img} />
+                        <LogoPreview file={item.logo_file} url={item.logo_img} scale={로고배율(item)} />
+                        {/* 로고 크기 조절 — Shopify(Custom logo width) · Squarespace(Logo Height) ·
+                            아임웹(드래그)에 다 있는 기능인데 우리만 없었다. 자동 축소는 하면서
+                            가맹점이 손댈 수단이 없으니, 작아 보여도 할 수 있는 게 없었다.
+                            프레임마다 기준 높이가 다르므로(28~88px) 절대값이 아니라 배율로 준다. */}
+                        <Box sx={{ pt: 1 }}>
+                          <Stack direction='row' justifyContent='space-between' alignItems='baseline'>
+                            <Typography variant='subtitle2' sx={{ color: 'text.secondary' }}>로고 크기</Typography>
+                            <Typography variant='caption' sx={{ color: 'text.secondary', fontWeight: 700 }}>
+                              {로고배율(item)}%
+                            </Typography>
+                          </Stack>
+                          <Typography variant='caption' sx={{ color: 'text.disabled', lineHeight: 1.6 }}>
+                            · 쇼핑몰 상단·하단의 로고 크기를 함께 조절합니다. 위 미리보기에 바로 반영됩니다.
+                          </Typography>
+                          <Slider
+                            value={로고배율(item)}
+                            min={LOGO_SCALE_최소}
+                            max={LOGO_SCALE_최대}
+                            step={5}
+                            marks={[
+                              { value: LOGO_SCALE_최소, label: `${LOGO_SCALE_최소}%` },
+                              { value: LOGO_SCALE_기본, label: '기본' },
+                              { value: LOGO_SCALE_최대, label: `${LOGO_SCALE_최대}%` },
+                            ]}
+                            onChange={(e, v) => {
+                              setItem({
+                                ...item,
+                                ['setting_obj']: { ...item.setting_obj, logo_scale: Number(v) }
+                              })
+                            }}
+                            sx={{ mt: 1 }}
+                          />
+                        </Box>
                         {/* shopgo 산하 가맹점은 다크모드 로고·파비콘 미노출(본사 방침). 로고만 사용. */}
                         {!isShopgoMerchant(item) && (
                           <>

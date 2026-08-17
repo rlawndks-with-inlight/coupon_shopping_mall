@@ -119,7 +119,7 @@ const Footer = () => {
               가로로 늘린다. 예전엔 width:100px 로 폭이 고정돼 있어 stretch 가 안 먹었는데,
               width:auto 로 바꾸면서 그 보호막이 사라졌다 — 빼면 로고가 160px 로 늘어나 찌그러진다. */}
           <img src={logoSrc()}
-            style={{ height: '32px', width: 'auto', maxWidth: '160px', objectFit: 'contain', alignSelf: 'flex-start', marginBottom: '8px', opacity: 0.5 }} />
+            style={{ height: 'calc(32px * var(--logo-scale, 1))', width: 'auto', maxWidth: 'calc(160px * var(--logo-scale, 1))', objectFit: 'contain', alignSelf: 'flex-start', marginBottom: '8px', opacity: 0.5 }} />
           <InfoRow>
             {ceo_name?.length > 1 &&
               <span><Label>{translate('대표')}</Label>{ceo_name}<Separator>|</Separator></span>

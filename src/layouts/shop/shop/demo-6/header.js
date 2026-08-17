@@ -450,7 +450,7 @@ const Header = () => {
             ref={headerWrappersRef}
           >
             <TopMenuContainer style={{ display: `${scrollTop ? 'none' : ''}`, }}>
-              <img src={logoSrc()} style={{ height: '80px', width: 'auto', cursor: 'pointer' }}
+              <img src={logoSrc()} style={{ height: 'calc(80px * var(--logo-scale, 1))', width: 'auto', cursor: 'pointer' }}
                 onClick={() => {
                   router.push('/shop')
                 }}

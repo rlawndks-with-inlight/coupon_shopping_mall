@@ -562,7 +562,7 @@ const Header = () => {
                             :
                             <>
                                 <TopMenuContainer>
-                                    <img src={logoSrc()} style={{ height: '40px', width: 'auto', cursor: 'pointer' }}
+                                    <img src={logoSrc()} style={{ height: 'calc(40px * var(--logo-scale, 1))', width: 'auto', cursor: 'pointer' }}
                                         onClick={() => {
                                             router.push('/shop')
                                         }}

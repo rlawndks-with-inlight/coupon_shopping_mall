@@ -186,7 +186,7 @@ width:78vw;
 
 const MainLogo = styled.img`
 cursor: pointer;
-max-height: 65px;
+max-height: calc(65px * var(--logo-scale, 1));
 `
 
 const Header = () => {

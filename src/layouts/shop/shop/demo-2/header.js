@@ -168,14 +168,14 @@ box-shadow: 0px 4px 4px #00000029;
    96px 고정이라 자동 보정도 없다. PC 는 PaddingTop 이 headerHeight 실측값을 쓰므로 안전하다.
    덧붙여 PC 아이콘이 2.8rem(약 44.8px)이라 로고 40px 는 옆 아이콘보다도 작았다. */
 const LogoImg = styled.img`
-height: 40px;
+height: calc(40px * var(--logo-scale, 1));
 width: auto;
 object-fit: contain;
 flex-shrink: 0;
 cursor: pointer;
 @media (min-width:1001px) {
-  height: 56px;
-  max-width: 260px;
+  height: calc(56px * var(--logo-scale, 1));
+  max-width: calc(260px * var(--logo-scale, 1));
 }
 @media (max-width:1000px) {
   position:absolute;
@@ -184,7 +184,7 @@ cursor: pointer;
   transform: translate(-50%, -50%);
 }
 @media (max-width:300px) {
-  width:52px;
+  width: calc(52px * var(--logo-scale, 1));
   height:auto;
 }
 `

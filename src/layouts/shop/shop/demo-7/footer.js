@@ -119,7 +119,7 @@ const Footer = (props) => {
           </ContentWrapper>
           <ContentWrapper>
             <Row>
-              <img src={logoSrc()} style={{ height: '30px', maxWidth: '150px', }} />
+              <img src={logoSrc()} style={{ height: 'calc(30px * var(--logo-scale, 1))', maxWidth: 'calc(150px * var(--logo-scale, 1))', }} />
             </Row>
             <Row>
               <Bold style={{ cursor: 'pointer', fontWeight: 'bold' }} onClick={() => { router.push('/shop/auth/policy?type=0') }}>{translate('서비스이용약관')}</Bold>

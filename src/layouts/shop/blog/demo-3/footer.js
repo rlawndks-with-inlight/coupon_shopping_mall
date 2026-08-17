@@ -54,7 +54,7 @@ const Footer = () => {
         background: `${themeMode == 'dark' ? '#222222' : themeObj.grey[300]}`
       }}>
         <ContentWrapper>
-          <img src={logoSrc()} style={{ width: '200px' }} />
+          <img src={logoSrc()} style={{ width: 'calc(200px * var(--logo-scale, 1))' }} />
 
           {/*
             <Row>

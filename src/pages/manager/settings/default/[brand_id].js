@@ -1,4 +1,5 @@
 import {
+  Alert,
   Avatar,
   Button,
   Card,
@@ -655,6 +656,31 @@ const DefaultSetting = () => {
                         <Typography variant='subtitle2' sx={{ color: 'text.secondary' }}>
                           미리보기 이미지
                         </Typography>
+                        {/* 여기는 로고와 정반대라, 수치를 정확히 준다.
+                              로고 — 비율 유지해서 통째로 들어간다. 가맹점이 못 바꾸는 브랜드 마크다.
+                                     그래서 목표 규격을 주면 지킬 수도 없는 걸 요구하는 꼴이 된다.
+                              OG   — 고정 비율로 '잘린다'. 그 용도로 새로 만드는 그림이다.
+                                     규격을 안 주면 만들 방법이 없다.
+                            근거:
+                              · 오른쪽 '카카오톡 링크 전송 시 예시'의 OgImg 가 400x200 = 2:1 이다.
+                                background-size: cover 라 비율이 다르면 실제로 잘린다.
+                              · og:image 는 _app.js 에서 저장된 주소를 그대로 내보낸다(변환 없음).
+                                즉 올린 파일 용량이 그대로 카카오에 전달된다 — 500KB 제한이 진짜로 걸린다.
+                                (카카오 개발자포럼 기준. 로고의 '1MB'처럼 아무도 안 지키는 숫자가 아니다) */}
+                        <Stack spacing={0.25}>
+                          <Typography variant='caption' sx={{ color: 'text.secondary' }}>
+                            가로 : 세로 = 2 : 1 · 800 × 400 권장 · 500KB 이하
+                          </Typography>
+                          {[
+                            '카카오톡으로 쇼핑몰 주소를 보내거나 검색 결과에 뜰 때 함께 보이는 그림입니다.',
+                            '로고와 달리, 비율이 2:1 이 아니면 넘치는 부분이 잘립니다. 중요한 글자는 가장자리에 두지 마세요.',
+                            '500KB를 넘으면 카카오톡에서 미리보기가 아예 뜨지 않습니다.',
+                          ].map(줄 => (
+                            <Typography key={줄} variant='caption' sx={{ color: 'text.disabled', lineHeight: 1.6 }}>
+                              · {줄}
+                            </Typography>
+                          ))}
+                        </Stack>
                         <Upload
                           file={item.og_file || item.og_img}
                           onDrop={acceptedFiles => {
@@ -676,6 +702,17 @@ const DefaultSetting = () => {
                             })
                           }}
                         />
+                        {/* 용량은 고르는 순간 File.size 로 바로 알 수 있다. 저장한 뒤에 알면 늦다 —
+                            카카오는 넘치면 그냥 안 띄우고, 왜 안 뜨는지 알려 주지 않는다.
+                            이미 저장된 주소는 용량을 알 수 없으므로(다른 도메인) 그때는 아무 말도 안 한다. */}
+                        {item.og_file?.size > 500 * 1024 && (
+                          <Alert severity='warning' sx={{ py: 0.5 }}>
+                            <Typography variant='caption'>
+                              올리신 파일이 {Math.round(item.og_file.size / 1024)}KB 입니다. 카카오톡은 500KB가
+                              넘으면 미리보기를 띄우지 않습니다 — 용량을 줄여 다시 올려 주세요.
+                            </Typography>
+                          </Alert>
+                        )}
                       </Stack>
                     </Stack>
                   </Card>

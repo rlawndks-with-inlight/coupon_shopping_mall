@@ -127,10 +127,25 @@ const TrxCancelList = () => {
                                 {order?.groups && order?.groups.map((group, idx) => (
                                   <>
                                     <Row>
-                                      <div style={{ /*minWidth: '62px',*/ marginRight: '0.25rem' }}>{group?.group_name}: </div>
+                                      {/* 주문관리 화면과 같은 규칙으로 보여 준다 — 취소내역만 다르면
+                                          같은 주문을 두 화면에서 보고 서로 다르게 읽게 된다. */}
+                                      <div style={{ /*minWidth: '62px',*/ marginRight: '0.25rem' }}>
+                                        {group?.group_name}
+                                        {Number(group?.group_type) === 1 &&
+                                          <span style={{
+                                            marginLeft: '4px', fontSize: '0.72rem', color: '#5a8a1e',
+                                            border: '1px solid #cde3a6', borderRadius: '4px', padding: '0 3px',
+                                          }}>추가상품</span>}
+                                        {': '}
+                                      </div>
                                       {group?.options && group?.options.map((option, idx2) => (
                                         <>
-                                          <div>{getOptionLabel(option)} {/*({option?.option_price > 0 ? '+' : ''}{option?.option_price}) */}</div>{idx2 == group?.options.length - 1 ? '' : <>&nbsp;/&nbsp;</>}                                        </>
+                                          <div>
+                                            {getOptionLabel(option)}
+                                            {Number(option?.option_price)
+                                              ? ` (${Number(option.option_price) > 0 ? '+' : ''}${commarNumber(option.option_price)}원)`
+                                              : ''}
+                                          </div>{idx2 == group?.options.length - 1 ? '' : <>&nbsp;/&nbsp;</>}                                        </>
                                       ))}
                                     </Row>
                                   </>

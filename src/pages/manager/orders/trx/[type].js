@@ -19,6 +19,25 @@ import { sha256 } from "js-sha256";
 import _ from 'lodash';
 import { getOptionLabel } from 'src/utils/shop-util';
 
+// 주문서 추가 입력값을 '주문 줄' 단위로 묶는다(위 열 주석 참고).
+const 입력값묶음 = (row) => {
+  const 값들 = row?.order_forms ?? []
+  if (!값들.length) return []
+  const 묶음 = new Map()
+  for (const f of 값들) {
+    const 키 = String(f?.product_id ?? '')
+    if (!묶음.has(키)) 묶음.set(키, [])
+    묶음.get(키).push(f)
+  }
+  // 묶음이 하나뿐이면 상품명을 붙일 이유가 없다
+  const 여러줄 = 묶음.size > 1
+  return [...묶음.entries()].map(([키, 항목]) => {
+    const 줄 = (row?.orders ?? []).find(o => String(o?.product_id) === 키)
+    return { 키, 상품명: 여러줄 ? (줄?.order_name ?? '') : '', 항목 }
+  })
+}
+
+
 // 택배사 목록 (송장 저장 형식: `택배사-송장번호`, 구매자 주문내역에서 그대로 파싱됨)
 const COURIER_LIST = ['CJ대한통운', '우체국택배', '한진택배', '롯데택배', '로젠택배', '경동택배', 'GS Postbox', 'CU 편의점택배', '대신택배', '일양로지스', '기타'];
 // 택배사·송장번호로 배송조회 (네이버 통합 택배조회 — 택배사 무관하게 동작)
@@ -216,10 +235,30 @@ const TrxList = () => {
                             {order?.groups && order?.groups.map((group, idx) => (
                               <>
                                 <Row>
-                                  <div style={{ /*minWidth: '62px',*/ marginRight: '0.25rem' }}>{group?.group_name}: </div>
+                                  {/* 선택옵션과 추가상품을 구분한다. 예전엔 둘 다 '그룹명: 값' 으로 똑같이 나와서
+                                      필수로 고른 것인지 돈이 붙은 추가상품인지 알 수 없었다.
+                                      (group_type 은 주문 시점 스냅샷 order_groups 에 이미 들어 있다) */}
+                                  <div style={{ /*minWidth: '62px',*/ marginRight: '0.25rem' }}>
+                                    {group?.group_name}
+                                    {Number(group?.group_type) === 1 &&
+                                      <span style={{
+                                        marginLeft: '4px', fontSize: '0.72rem', color: '#5a8a1e',
+                                        border: '1px solid #cde3a6', borderRadius: '4px', padding: '0 3px',
+                                      }}>추가상품</span>}
+                                    {': '}
+                                  </div>
                                   {group?.options && group?.options.map((option, idx2) => (
                                     <>
-                                      <div>{getOptionLabel(option)} {/*({option?.option_price > 0 ? '+' : ''}{option?.option_price}) */}</div>{idx2 == group?.options.length - 1 ? '' : <>&nbsp;/&nbsp;</>}                                    </>
+                                      {/* 금액을 다시 보여 준다. 예전엔 주석으로 막혀 있어서 총액만 보이고
+                                          그 총액이 어떻게 만들어졌는지는 알 수 없었다 — 30만원짜리 출장이
+                                          붙었는지 사이즈만 고른 건지 화면으로 구분이 안 됐다.
+                                          0원이면 안 적는다(조합형은 개별가가 0이고 추가금이 따로 붙는다). */}
+                                      <div>
+                                        {getOptionLabel(option)}
+                                        {Number(option?.option_price)
+                                          ? ` (${Number(option.option_price) > 0 ? '+' : ''}${commarNumber(option.option_price)}원)`
+                                          : ''}
+                                      </div>{idx2 == group?.options.length - 1 ? '' : <>&nbsp;/&nbsp;</>}                                    </>
                                   ))}
                                 </Row>
                               </>
@@ -261,6 +300,15 @@ const TrxList = () => {
     },
     // 주문서 추가 입력항목(행사일·행사장소 등).
     //
+    // ⚠ 값은 '주문 줄' 로 묶어서 보여 준다.
+    //   저장할 때부터 product_id 가 들어 있는데(transaction_order_forms) 화면이 그걸 안 쓰고
+    //   주문 전체를 평평하게 나열했다. 그래서 예약을 두 건 담으면 행사일이 두 개 뜨는데
+    //   어느 쪽이 어느 상품인지 알 수 없었다 — 날짜를 잘못 읽으면 그날 못 간다.
+    //
+    //   줄이 하나뿐이면 상품명을 붙이지 않는다. 대부분의 주문이 그렇고, 붙이면 군더더기다.
+    //   예전 주문은 product_id 가 비어 있을 수 있다(줄 단위 저장을 넣기 전에 접수된 것) —
+    //   그때는 이름을 못 붙이고 예전처럼 나열된다.
+    //
     // **불러온 주문 중에 값이 하나라도 있으면** 열을 만든다.
     //
     // 예전에는 '이 몰에 서식이 걸려 있으면' 으로 판단했다. 항목이 가맹점 단위가 아니라
@@ -273,11 +321,17 @@ const TrxList = () => {
       action: (row) => (
         !(row?.order_forms?.length > 0) ? <div style={{ color: '#bbb' }}>---</div> :
           <Col style={{ gap: '2px', minWidth: '220px' }}>
-            {row.order_forms.map((f) => (
-              <Row key={f.id} style={{ alignItems: 'flex-start', gap: '6px' }}>
-                <div style={{ minWidth: '84px', color: '#888', whiteSpace: 'nowrap' }}>{f.label}</div>
-                <div style={{ whiteSpace: 'pre-wrap', wordBreak: 'break-all' }}>{f.value}</div>
-              </Row>
+            {입력값묶음(row).map((덩어리) => (
+              <Col key={덩어리.키} style={{ gap: '2px' }}>
+                {덩어리.상품명 &&
+                  <div style={{ fontWeight: 700, marginTop: '4px' }}>{덩어리.상품명}</div>}
+                {덩어리.항목.map((f) => (
+                  <Row key={f.id} style={{ alignItems: 'flex-start', gap: '6px' }}>
+                    <div style={{ minWidth: '84px', color: '#888', whiteSpace: 'nowrap' }}>{f.label}</div>
+                    <div style={{ whiteSpace: 'pre-wrap', wordBreak: 'break-all' }}>{f.value}</div>
+                  </Row>
+                ))}
+              </Col>
             ))}
           </Col>
       ),

@@ -797,6 +797,8 @@ const en = {
   "추가 상품": "Add-ons",
   "필요한 것만 고르세요": "Pick only what you need",
   "선택하신 조합은 판매하지 않습니다.": "That combination is not available.",
+  "주문 전체 취소요청": "Cancel the whole order",
+  "고른 상품 취소요청": "Request cancellation",
   "옵션을 선택해 주세요.": "Please choose an option.",
   "품절된 상품입니다.": "This product is sold out.",
   "재고가 {{n}}개 남았습니다.": "Only {{n}} left in stock.",

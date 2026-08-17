@@ -792,6 +792,8 @@ const es = {
   "추가 상품": "Productos adicionales",
   "필요한 것만 고르세요": "Elija solo lo que necesite",
   "선택하신 조합은 판매하지 않습니다.": "Esa combinación no está disponible.",
+  "주문 전체 취소요청": "Cancelar todo el pedido",
+  "고른 상품 취소요청": "Solicitar cancelación",
   "옵션을 선택해 주세요.": "Elija una opción.",
   "품절된 상품입니다.": "Este producto está agotado.",
   "재고가 {{n}}개 남았습니다.": "Solo quedan {{n}} unidades.",

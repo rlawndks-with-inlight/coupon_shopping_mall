@@ -119,17 +119,25 @@ const OrderCancelButton = ({ trx, orders, onDone, sx, variant = 'outlined' }) =>
               value={reason} disabled={loading}
               onChange={(e) => setReason(e.target.value)}
             />
-            {줄선택가능 &&
-              <Typography sx={{ fontSize: 11.5, color: 'text.disabled' }}>
-                {translate('아무것도 고르지 않으면 주문 전체가 취소 요청됩니다.')}
-              </Typography>}
           </Stack>
         </DialogContent>
-        <DialogActions>
+        {/* 넓은 쪽(주문 전체)을 기본값으로 두지 않는다.
+            예전엔 수량을 하나도 안 넣고 누르면 주문 전체가 요청됐다. 안내 문구는 있었지만,
+            상품 하나만 취소하려던 손님이 수량 넣는 걸 놓치면 전부 취소되는 구조였다.
+            이제 고른 게 없으면 아예 못 누르고, 전체 취소는 따로 눌러야 한다.
+            (줄 목록을 안 넘겨주는 옛 화면에서는 예전처럼 전체 요청으로 동작한다) */}
+        <DialogActions sx={{ flexWrap: 'wrap', gap: 1 }}>
           <Button onClick={() => setOpen(false)} disabled={loading}>{translate('닫기')}</Button>
-          <Button variant="contained" color="error" disabled={loading}
+          {줄선택가능 &&
+            <Button variant="outlined" color="error" disabled={loading}
+              onClick={() => request([])}>
+              {translate('주문 전체 취소요청')}
+            </Button>}
+          <Button variant="contained" color="error"
+            disabled={loading || (줄선택가능 && 고른줄.length === 0)}
             onClick={() => request(고른줄.map((o) => ({ order_id: o.id, qty: 고른수량(o) })))}>
-            {loading ? translate('요청 중…') : translate('취소요청')}
+            {loading ? translate('요청 중…')
+              : 줄선택가능 ? translate('고른 상품 취소요청') : translate('취소요청')}
           </Button>
         </DialogActions>
       </Dialog>

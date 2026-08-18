@@ -249,5 +249,42 @@ eq('상세가 selectableOptionIds 를 씀', /selectableOptionIds\(product, selec
 eq('못 고르는 조합은 disabled', /disabled=\{품절 \|\| 조합없음\}/.test(상세원문), true);
 eq("필수 그룹에 '필수' 표시", /translate\('필수'\)/.test(상세원문), true);
 
+// ── 추가상품은 다시 누르면 빠져야 한다 ─────────────────────────────────────
+//
+// 붙잡아 두는 사고:
+//   빼는 코드는 있었는데 `is_option_multiple` 인자로만 켜졌다. ProductAddons 는 true 를
+//   넘기지만 화면 쪽 onSelectOption(group, option) 이 세 번째 인자를 아예 안 받는
+//   프레임이 7개였다 — 그 프레임에서는 추가상품을 **누를 수만 있고 뺄 수 없었다**.
+//   잘못 고른 추가금(성장영상 +45,000 같은 것)을 지우려면 새로고침밖에 없었고,
+//   손님은 그걸 알 방법이 없으니 그대로 결제한다.
+// 이제 그룹 자체(group_type=1)를 보고 정한다 — 화면 11개가 인자를 옳게 넘기길 기대하지 않는다.
+// (빼고 담는 동작 자체는 opt-select.mjs 가 **진짜 selectItemOptionUtil 을 불러와** 확인한다.
+//  여기서 같은 로직을 또 베끼면 진짜 코드와 어긋나도 둘 다 통과해 버린다.
+//  이 파일이 보는 것은 '그 판정을 그룹에서 끌어오는가'와 '화면 배선이 성한가'뿐이다.)
+{
+  const util원문 = 주석뺀(readFileSync(FRONT + 'src/utils/shop-util.js', 'utf8'));
+  eq('shop-util 이 그룹을 보고 정한다', /is_option_multiple \|\| isAddon\(group\)/.test(util원문), true);
+
+  // 추가상품을 그리는 화면은 전부 핸들러가 선언돼 있어야 한다(프레임6 은 없었다)
+  const 그리는화면 = [
+    'src/views/blog/product/id/demo-1.js', 'src/views/blog/product/id/demo-2.js',
+    'src/views/blog/product/id/demo-3.js', 'src/views/blog/product/id/demo-4.js',
+    'src/views/blog/product/id/demo-5.js', 'src/views/blog/product/id/demo-6.js',
+    'src/views/blog/product/id/demo-7.js', 'src/views/blog/product/id/demo-8.js',
+    'src/views/blog/product/id/demo-9.js', 'src/views/shop/demo-4/item/[id].js',
+  ];
+  // 선언 형태는 제각각이다(const · useState 구조분해 · 수입). 그래서 '어떻게 선언됐나'
+  // 대신 '값으로 쓰인 자리를 지우고도 그 이름이 파일에 남아 있나' 로 본다 — jsx-undefined 와 같은 규칙.
+  const 빠진곳 = [];
+  for (const f of 그리는화면) {
+    const s2 = 주석뺀(readFileSync(FRONT + f, 'utf8'));
+    const 값뺀 = s2.replace(/(\s[a-zA-Z_$][\w$]*=\{)[a-zA-Z_$][\w$]*(\})/g, '$1$2');
+    for (const m of s2.matchAll(/\sonSelect=\{([a-zA-Z_$][\w$]*)\}/g)) {
+      if (!new RegExp(`\\b${m[1]}\\b`).test(값뺀)) 빠진곳.push(`${f} → ${m[1]}`);
+    }
+  }
+  eq('추가상품을 그리는 화면에 핸들러가 다 있다', 빠진곳, []);
+}
+
 console.log(`\n통과 ${pass} / 실패 ${fail}`);
 process.exit(fail ? 1 : 0);

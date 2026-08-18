@@ -229,9 +229,17 @@ const Demo6 = () => {
     if (product) { setItem(product); setImgIdx(0); }
   };
 
+  // 선택옵션 — <select> 가 값을 주므로 옵션 객체로 먼저 바꾼다.
   const handleSelectOption = (group, e) => {
     const option = (group?.options ?? []).find((o) => String(o?.id) === e.target.value);
     if (!option) return;
+    onSelectOption(group, option);
+  };
+
+  // 추가상품(ProductAddons)이 부르는 것.
+  // 이 이름이 선언 없이 아래 JSX 에서 쓰이고 있었다 — 이 화면을 열면 ReferenceError 로
+  // 상품상세가 통째로 백지가 된다(컴파일은 통과하므로 빌드로는 안 걸린다).
+  const onSelectOption = (group, option) => {
     const updated = selectItemOptionUtil(group, option, selectProductGroups);
     setSelectProductGroups({ ...updated });
   };

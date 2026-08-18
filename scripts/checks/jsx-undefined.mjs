@@ -38,6 +38,25 @@ const 주석뺀 = (s) => s
 
 const 못찾은것 = [];
 
+// 태그 이름 말고 **속성으로 넘기는 이름**도 같은 방식으로 본다.
+//
+// 붙잡아 두는 사고:
+//   프레임6 상품상세가 <ProductAddons onSelect={onSelectOption} /> 를 그리는데
+//   그 파일엔 onSelectOption 이 없었다(형제 프레임 9개에는 다 있다).
+//   → 'ReferenceError: onSelectOption is not defined'.
+//   속성값은 컴포넌트를 부르기 **전에** 계산되므로, 추가상품이 없는 상품이어도 죽는다.
+//   태그 이름만 보던 위 규칙으로는 안 걸렸다 — 그 이름은 태그가 아니라 값이었다.
+// 이름처럼 생겼지만 선언할 필요가 없는 것들 — 이걸 빼지 않으면 sx={true} 같은 자리가 전부 걸린다.
+const 낱말 = new Set(['true', 'false', 'null', 'undefined', 'NaN', 'Infinity', 'this']);
+
+export const 속성이름들 = (본문) => {
+    const 이름들 = new Set();
+    for (const m of 본문.matchAll(/\s[a-zA-Z_$][\w$]*=\{([a-zA-Z_$][\w$]*)\}/g)) {
+        if (!낱말.has(m[1])) 이름들.add(m[1]);
+    }
+    return 이름들;
+};
+
 for (const p of 훑기(FRONT_ROOT + 'src')) {
     const 원문 = readFileSync(p, 'utf8');
     const 본문 = 주석뺀(원문);
@@ -59,6 +78,36 @@ for (const p of 훑기(FRONT_ROOT + 'src')) {
         if (new RegExp(`\\b${이름}\\b`).test(태그뺀)) continue;   // 어딘가에 선언·수입돼 있다
         못찾은것.push(`${p.replace(FRONT_ROOT, '')} → <${이름}>`);
     }
+
+    // 속성값도 같은 보수적 규칙으로 본다 — 값으로 쓰인 자리를 지우고도 그 이름이
+    // 파일 어딘가에 남아 있으면(선언·수입·구조분해) 통과시킨다.
+    const 값뺀 = 본문.replace(/(\s[a-zA-Z_$][\w$]*=\{)[a-zA-Z_$][\w$]*(\})/g, '$1$2');
+    for (const 이름 of 속성이름들(본문)) {
+        if (new RegExp(`\\b${이름}\\b`).test(값뺀)) continue;
+        못찾은것.push(`${p.replace(FRONT_ROOT, '')} → ={${이름}}`);
+    }
+}
+
+// 규칙이 실제로 그 사고를 잡는지 양쪽으로 확인한다.
+// 검사가 조용하다는 것과 검사가 일한다는 것은 다르다 — 잡는 걸 보여야 믿을 수 있다.
+{
+    const 걸리는가 = (조각) => {
+        const 본문 = 주석뺀(조각);
+        const 값뺀 = 본문.replace(/(\s[a-zA-Z_$][\w$]*=\{)[a-zA-Z_$][\w$]*(\})/g, '$1$2');
+        return [...속성이름들(본문)].filter((이름) => !new RegExp(`\\b${이름}\\b`).test(값뺀));
+    };
+    // 프레임6 에서 실제로 났던 모양 — 선언이 없다
+    eq('선언 없는 핸들러를 잡는다',
+       걸리는가(`const A = () => <ProductAddons onSelect={onSelectOption} />;`), ['onSelectOption']);
+    // 선언이 있으면 조용해야 한다
+    eq('선언이 있으면 안 운다',
+       걸리는가(`const onSelectOption = () => {};\nconst A = () => <ProductAddons onSelect={onSelectOption} />;`), []);
+    // 가져온 것도 조용해야 한다
+    eq('수입한 이름도 안 운다',
+       걸리는가(`import { fmt } from 'x';\nconst A = () => <B render={fmt} />;`), []);
+    // 리터럴은 이름이 아니다
+    eq('true/false/null 은 세지 않는다',
+       걸리는가(`const A = () => <B open={true} hide={false} at={null} />;`), []);
 }
 
 // 같은 파일에서 같은 이름이 여러 번 나오면 한 번만 센다

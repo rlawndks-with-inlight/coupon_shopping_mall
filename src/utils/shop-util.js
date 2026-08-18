@@ -9,7 +9,7 @@ import { returnMoment, isPurchasable, getProductStatus } from "./function";
 import { getLocalStorage } from "./local-storage";
 import { isDemoHost } from "src/components/main-site/frameList";
 import { findMissingRequired } from "src/data/order-form-types";
-import { requiredGroups, isComboMode, findCombination, optionExtraPrice, maxOrderable } from "src/data/product-options";
+import { requiredGroups, isComboMode, findCombination, optionExtraPrice, maxOrderable, isAddon } from "src/data/product-options";
 import { makeOrdNum } from 'src/utils/function';
 
 // 손님에게 뜨는 안내는 반드시 이걸 거친다.
@@ -714,10 +714,20 @@ export const selectItemOptionUtil = (group, option, selectProductGroups, is_opti
     // 특성(characters)은 id 가 없어서 id 매칭이 늘 실패했다 — isSameOptionGroup 참고.
     const find_group_idx = groups.findIndex((saved) => isSameOptionGroup(saved, group));
 
+    // 여러 개 고를 수 있는지는 **그룹 자체가 알고 있다**(추가상품 = group_type 1).
+    //
+    // 예전엔 이 판단을 호출부가 넘겨주는 인자에만 맡겼다. ProductAddons 는 true 를 넘기는데
+    // 화면 쪽 onSelectOption(group, option) 이 세 번째 인자를 받지 않는 프레임이 7개였다 —
+    // 그 프레임에서는 추가상품을 **누를 수만 있고 뺄 수가 없었다**. 잘못 고른 추가금을
+    // 지우려면 새로고침하는 수밖에 없었고, 손님은 그걸 알 방법이 없다.
+    // 화면 11개가 저마다 인자를 옳게 넘기길 기대하는 대신 여기서 그룹을 보고 정한다.
+    // (인자를 넘기면 그것도 존중한다 — 선택옵션은 ProductOptions 가 false 로 부른다)
+    const 여러개고를수있다 = is_option_multiple || isAddon(group);
+
     if (find_group_idx >= 0) {
         const current = groups[find_group_idx];
         let options = [...(current?.options ?? [])];
-        if (is_option_multiple) {
+        if (여러개고를수있다) {
             // 추가상품은 다시 누르면 빠진다.
             // 예전엔 넣기만 하고 빼는 길이 없어서, 잘못 고른 추가금을 지우려면
             // 페이지를 새로고침하는 수밖에 없었다.

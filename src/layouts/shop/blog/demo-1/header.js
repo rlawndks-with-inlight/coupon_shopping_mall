@@ -1,4 +1,5 @@
 import styled from "styled-components"
+import { 사진위아이콘 } from "src/utils/overlay-icon";
 import { IconButton, Badge } from "@mui/material"
 import { useEffect, useState } from "react"
 import { Icon } from "@iconify/react"
@@ -91,7 +92,7 @@ const Header = (props) => {
         <TopMenuContainer>
           {showBackArrow || is_use_step ?
             <IconButton
-              sx={{ padding: '6px', marginLeft: '-6px' }}
+              sx={{ padding: '6px', marginLeft: '-6px', ...사진위아이콘(isTransparent) }}
               onClick={() => {
                 if (is_use_step && activeStep > 0) {
                   setActiveStep(activeStep - 1);

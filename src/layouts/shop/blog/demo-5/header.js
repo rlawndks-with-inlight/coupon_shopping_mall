@@ -1,4 +1,5 @@
 import Logo from "src/components/logo/Logo"
+import { 사진위아이콘 } from "src/utils/overlay-icon";
 import styled from "styled-components"
 import { IconButton, TextField, InputAdornment } from "@mui/material"
 import { useEffect, useState } from "react"
@@ -157,7 +158,8 @@ const Header = (props) => {
                             {isBackArrowShow() || is_use_step ?
                                 <>
                                     <IconButton
-                                        sx={{ ...iconButtonStyle, marginLeft: '-4px' }}
+                                        sx={{ ...iconButtonStyle, marginLeft: '-4px',
+                                              ...사진위아이콘((isSellerPage || isProductPage) && scrollY < 350) }}
                                         onClick={() => {
                                             if (is_use_step && activeStep > 0) {
                                                 setActiveStep(activeStep - 1);

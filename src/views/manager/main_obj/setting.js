@@ -20,8 +20,7 @@ import {
   Stack,
   TextField,
   Tooltip,
-  Typography
-} from '@mui/material'
+  Typography, ListSubheader } from '@mui/material'
 import dynamic from 'next/dynamic'
 import { useCallback, useEffect, useState } from 'react'
 import { Row, themeObj } from 'src/components/elements/styled-components'
@@ -47,6 +46,7 @@ import { homeItemsSetting, homeItemsWithCategoriesSetting } from 'src/views/sect
 import ReactQuillComponent from '../react-quill'
 import { apiManager, uploadFilesByManager } from 'src/utils/api'
 import { getDefaultBanners, getBannerRatio } from 'src/data/default-banners'
+import { 추천섹션 } from 'src/data/frame-sections'
 
 const Tour = dynamic(() => import('reactour'), { ssr: false })
 //메인화면
@@ -380,6 +380,10 @@ const MainObjSetting = props => {
   const { user } = useAuthContext()
   const router = useRouter()
   // 현재 스토어 데모 비율에 맞는 기본 배너 세트/권장크기 (demo-4·5·6·9 = 2:1, 그 외 = 2.35:1)
+  // 이 프레임에서 먼저 권하는 섹션. "데모3처럼 하고 싶은데 어떻게 해요?" 에 답이 되는 자리다.
+  // 막는 게 아니라 순서를 바꾸는 것이다 — 나머지도 아래에서 그대로 고를 수 있다.
+  const 추천목록 = 추천섹션(themeDnsData)
+
   const defaultBanners = getDefaultBanners(themeDnsData?.shop_demo_num)
   const bannerRatio = getBannerRatio(themeDnsData?.shop_demo_num)
 
@@ -1835,11 +1839,23 @@ const MainObjSetting = props => {
                             (안 그러면 섹션을 추가해두고 "몰에 안 나온다"는 문의가 생긴다)
                             여기는 '신규 추가' 목록 필터일 뿐이라 이미 저장된 섹션 데이터에는 영향이 없다.
                             type 값은 위 mainObjSchemaList 정의(sellers / item-reviews / item-reviews-select) 그대로다. */}
-                        {[...mainObjSchemaList, ...getSettingPropertyList(themePropertyList)]
-                          .filter(itm => !(isShopgoBrand(themeDnsData) && ['sellers', 'item-reviews', 'item-reviews-select'].includes(itm.type)))
-                          .map((itm) => {
-                            return <MenuItem value={itm.type}>{itm.label} ({hasTypeCount(contentList, itm.type)})</MenuItem>
-                          })}
+                        {(() => {
+                          const 전체 = [...mainObjSchemaList, ...getSettingPropertyList(themePropertyList)]
+                            .filter(itm => !(isShopgoBrand(themeDnsData) && ['sellers', 'item-reviews', 'item-reviews-select'].includes(itm.type)));
+                          const 줄 = (itm) =>
+                            <MenuItem key={itm.type} value={itm.type}>{itm.label} ({hasTypeCount(contentList, itm.type)})</MenuItem>;
+                          // 추천을 모르는 프레임이면 예전처럼 한 줄로 보여준다.
+                          if (!추천목록.length) return 전체.map(줄);
+                          // 추천 순서는 추천목록에 적힌 순서를 따른다(그 프레임에서 자연스러운 차례다).
+                          const 추천 = 추천목록.map(t => 전체.find(x => x.type === t)).filter(Boolean);
+                          const 나머지 = 전체.filter(x => !추천목록.includes(x.type));
+                          return [
+                            <ListSubheader key="추천">이 프레임에 어울리는 섹션</ListSubheader>,
+                            ...추천.map(줄),
+                            <ListSubheader key="그밖">그 밖의 섹션</ListSubheader>,
+                            ...나머지.map(줄),
+                          ];
+                        })()}
                       </Select>
                       <Button
                         variant='contained'

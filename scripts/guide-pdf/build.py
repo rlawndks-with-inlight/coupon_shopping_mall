@@ -372,7 +372,6 @@ def build():
     fingerprint = data.get('fingerprint', '')
     group_label = data.get('frameGroupLabel', {})
     sections = data.get('sections', [])
-    issued = date.today().strftime('%Y년 %-m월 %-d일') if os.name != 'nt' else date.today().strftime('%Y년 %m월 %d일').replace(' 0', ' ')
 
     doc = GuideDoc(OUT_PDF, pagesize=A4,
                    leftMargin=MARGIN_X, rightMargin=MARGIN_X,
@@ -401,10 +400,6 @@ def build():
         '프레임 계열에 따라 관리자 메뉴가 다릅니다. 항목 위에 '
         '<font color="#9ca3af">프레임3·4 전용</font> 같은 표시가 있으면 그 계열에만 해당합니다.',
         S['cover_lead']))
-    story.append(Spacer(1, 14 * mm))
-    story.append(Paragraph(f'발행 {issued}', S['cover_meta']))
-    story.append(Paragraph('문의 office@forspay.com', S['cover_meta']))
-
     # ── 목차 ─────────────────────────────────────────────────────────────
     story.append(PageBreak())
     story.append(Paragraph('목차', S['toc_head']))

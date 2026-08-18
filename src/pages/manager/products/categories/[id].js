@@ -6,7 +6,6 @@ import { alpha, styled as muiStyled } from '@mui/material/styles';
 import { TreeView, TreeItem, treeItemClasses, useTreeItem } from '@mui/lab';
 import { Button, Card, Grid, IconButton, Stack, TextField, Tooltip, Typography } from "@mui/material";
 import { Row } from "src/components/elements/styled-components";
-import { Upload } from "src/components/upload";
 import PropTypes from 'prop-types';
 import clsx from "clsx";
 import { Icon } from "@iconify/react";
@@ -485,27 +484,10 @@ const CategoryList = () => {
                                                                 </>}
                                                         </Row>
                                                     </>}
-                                                <Upload file={category.category_file || category.category_img} onDrop={(acceptedFiles) => {
-                                                    const newFile = acceptedFiles[0];
-                                                    if (newFile) {
-                                                        setCategory(
-                                                            {
-                                                                ...category,
-                                                                ['category_file']: Object.assign(newFile, {
-                                                                    preview: URL.createObjectURL(newFile),
-                                                                })
-                                                            }
-                                                        );
-                                                    }
-                                                }} onDelete={() => {
-                                                    setCategory(
-                                                        {
-                                                            ...category,
-                                                            ['category_file']: undefined,
-                                                            ['category_img']: '',
-                                                        }
-                                                    )
-                                                }} />
+                                                {/* 카테고리 이미지 입력칸을 없앴다.
+                                                    고객 화면에서 category_img 를 그리는 곳이 한 군데도 없다(테스트 데이터에만 있다).
+                                                    올려 봐야 아무 데도 안 나오는 칸이라 가맹점 시간만 쓴다.
+                                                    이미 올린 10건의 값은 DB 에 그대로 둔다 — 쓰기로 하면 그때 화면부터 만든다. */}
                                                 <TextField label={`${categoryGroup?.category_group_name}명`} value={category.category_name} onChange={(e) => {
                                                     setCategory({
                                                         ...category,
@@ -521,19 +503,9 @@ const CategoryList = () => {
                                                             })
                                                         }} />
                                                     </>}
-                                                <TextField
-                                                    fullWidth
-                                                    label={`${categoryGroup?.category_group_name} 설명`}
-                                                    multiline
-                                                    rows={4}
-                                                    value={category.category_description}
-                                                    onChange={(e) => {
-                                                        setCategory({
-                                                            ...category,
-                                                            ['category_description']: e.target.value
-                                                        })
-                                                    }}
-                                                />
+                                                {/* 카테고리 설명 입력칸을 없앴다.
+                                                    이것도 고객 화면에서 그리는 곳이 없다. 그런데 385개 카테고리에 적혀 있다 —
+                                                    가맹점들이 보이는 줄 알고 써 온 것이다. 값은 DB 에 그대로 둔다. */}
                                                 <Button variant="contained" style={{ marginTop: '100px', height: '56px' }} onClick={() => {
                                                     setModal({
                                                         func: () => { onSave() },

@@ -289,7 +289,10 @@ export const navConfig = () => {
             ...(isUseProductCategoryGroup() ? [{ title: '카테고리 그룹 관리', path: PATH_MANAGER.products.categoryGroups }] : []),
             ...(isManager() ? [...categoryGroupList] : []),
             ...(isUseProductPropertyGroup() ? [{ title: '특성 그룹 관리', path: PATH_MANAGER.products.propertyGroups }] : []),
-            ...(isManager() ? [...propertyGroupList] : []),
+            // 개별 특성 그룹 메뉴('원산지 관리' 같은 것)도 같은 조건으로 묶는다.
+            // 지난번에 '특성 그룹 관리' 만 50 으로 올렸더니, 정작 그룹 이름들은 40 에게 그대로 보였다.
+            // 들어갈 입구를 하나만 막으면 옆문이 열려 있는 셈이다.
+            ...(isUseProductPropertyGroup() ? [...propertyGroupList] : []),
             //{ title: '상품관리', path: PATH_MANAGER.products.list },
             //{ title: '상품문의', path: PATH_MANAGER.products.faq },
             ...(themeDnsData?.setting_obj?.is_use_consignment == 1 ? [

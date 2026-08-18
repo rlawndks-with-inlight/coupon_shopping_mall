@@ -856,16 +856,22 @@ const DefaultSetting = () => {
                           })
                         }}
                       />
-                      <TextField
-                        label='주민등록번호'
-                        value={item.resident_num}
-                        onChange={e => {
-                          setItem({
-                            ...item,
-                            ['resident_num']: e.target.value
-                          })
-                        }}
-                      />
+                      {/* 주민등록번호 — 본사(50)에게만 보인다.
+                          고객 화면 어디에도 안 나가고, 코드 어느 곳에서도 읽지 않는다.
+                          그런데 122개 몰 중 27곳이 채워 뒀다 — 쓰지도 않을 개인정보를 받아 둔 셈이다.
+                          칸을 아예 지우지 않는 이유는 이미 들어간 값을 지울 자리가 필요해서다. */}
+                      {user?.level >= 50 &&
+                        <TextField
+                          label='주민등록번호'
+                          value={item.resident_num}
+                          helperText='고객 화면에 쓰이지 않습니다. 가맹점에게는 보이지 않습니다.'
+                          onChange={e => {
+                            setItem({
+                              ...item,
+                              ['resident_num']: e.target.value
+                            })
+                          }}
+                        />}
                       <TextField
                         label='대표자명'
                         value={item.ceo_name}
@@ -886,16 +892,21 @@ const DefaultSetting = () => {
                           })
                         }}
                       />
-                      <TextField
-                        label='법인설립일자'
-                        value={item.establish_date}
-                        onChange={e => {
-                          setItem({
-                            ...item,
-                            ['establish_date']: e.target.value
-                          })
-                        }}
-                      />
+                      {/* 법인설립일자 — 본사(50)에게만 보인다.
+                          쓰이는 곳은 약관 시행일 한 곳뿐이고, 그마저 created_at 이 있으면 그쪽을 쓴다
+                          (pages/shop/auth/policy.js). 122개 몰 중 19곳만 채워져 있다. */}
+                      {user?.level >= 50 &&
+                        <TextField
+                          label='법인설립일자'
+                          value={item.establish_date}
+                          helperText='약관 시행일이 없을 때만 대신 쓰입니다.'
+                          onChange={e => {
+                            setItem({
+                              ...item,
+                              ['establish_date']: e.target.value
+                            })
+                          }}
+                        />}
                     </Stack>
                   </Card>
                 </Grid>

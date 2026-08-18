@@ -47,3 +47,6 @@ scripts/guide-pdf/build/
 .next-master/
 .next-merchant/
 .next-chotdol/
+.next-forsmall/
+# 로컬 dev 서버 로그(포트별). 저장소에 들어갈 것이 아니다.
+.dev*.log

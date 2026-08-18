@@ -1,4 +1,5 @@
 import { Accordion, AccordionDetails, AccordionSummary, Button, Card, Container, IconButton, MenuItem, Select, Stack, TextField, Typography } from "@mui/material";
+import { COURIER_LIST, 기본택배사 } from 'src/data/couriers';
 import { useEffect, useState } from "react";
 import ManagerLayout from "src/layouts/manager/ManagerLayout";
 import ManagerTable from "src/views/manager/mui/table/ManagerTable";
@@ -40,7 +41,7 @@ const 입력값묶음 = (row) => {
 
 
 // 택배사 목록 (송장 저장 형식: `택배사-송장번호`, 구매자 주문내역에서 그대로 파싱됨)
-const COURIER_LIST = ['CJ대한통운', '우체국택배', '한진택배', '롯데택배', '로젠택배', '경동택배', 'GS Postbox', 'CU 편의점택배', '대신택배', '일양로지스', '기타'];
+
 // 택배사·송장번호로 배송조회 (네이버 통합 택배조회 — 택배사 무관하게 동작)
 const courierTrackUrl = (courier, no) =>
   `https://search.naver.com/search.naver?query=${encodeURIComponent(`${courier || ''} ${no || ''} 택배조회`.trim())}`;
@@ -502,7 +503,10 @@ const TrxList = () => {
           const firstDash = raw.indexOf('-');
           const maybeCourier = firstDash > 0 ? raw.slice(0, firstDash) : '';
           const isCourier = COURIER_LIST.includes(maybeCourier);
-          const [courier, setCourier] = useState(isCourier ? maybeCourier : '');
+          // 아직 택배사를 안 고른 주문은 설정관리에 넣어 둔 기본 택배사로 시작한다.
+          // 늘 같은 택배사를 쓰는 가맹점이 주문마다 같은 값을 고르고 있었다.
+          // (저장은 '저장' 을 눌러야 된다 — 미리 골라 두는 것뿐이고, 주문마다 바꿀 수 있다)
+          const [courier, setCourier] = useState(isCourier ? maybeCourier : 기본택배사(themeDnsData));
           const [invoice, setInvoice] = useState(isCourier ? raw.slice(firstDash + 1) : raw);
           return <Col style={{ rowGap: '0.5rem', minWidth: '190px' }}>
             <Select

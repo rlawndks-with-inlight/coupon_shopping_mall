@@ -7,7 +7,7 @@ import { useRouter } from "next/router";
 import { Col, Row } from "src/components/elements/styled-components";
 import { useModal } from "src/components/dialog/ModalProvider";
 import PartialCancelDialog from "src/components/manager/PartialCancelDialog";
-import { commarNumber } from "src/utils/function";
+import { commarNumber, getOrderStatusText } from "src/utils/function";
 import toast from "react-hot-toast";
 import { apiManager, apiUtil } from "src/utils/api";
 import { useSettingsContext } from "src/components/settings";
@@ -18,6 +18,7 @@ import { Upload } from "src/components/upload";
 import { sha256 } from "js-sha256";
 import _ from 'lodash';
 import { getOptionLabel } from 'src/utils/shop-util';
+import { 엑셀내려받기 } from 'src/utils/excel';
 
 // 주문서 추가 입력값을 '주문 줄' 단위로 묶는다(위 열 주석 참고).
 const 입력값묶음 = (row) => {
@@ -702,6 +703,66 @@ const TrxList = () => {
       //console.log(data_)
     }
   }
+  // ── 엑셀 내려받기 ─────────────────────────────────────────────────────
+  //
+  // 화면은 한 페이지(10건)만 보여주지만 내려받기는 **지금 검색조건 전체**를 받는다 —
+  // 페이지마다 눌러 이어붙이게 하면 그게 곧 실수가 된다.
+  //
+  // ⚠ 이 파일에는 이름·전화·주소가 평문으로 들어간다. DB 는 암호화해 두지만
+  //   엑셀로 나가는 순간 그 보호가 사라진다. 화면에 보이는 값만 담는다(가리지 않는다는 뜻이 아니라,
+  //   화면에서 이미 볼 수 있는 것 이상은 담지 않는다는 뜻이다).
+  const [엑셀중, set엑셀중] = useState(false);
+
+  const 줄글 = (row) => (row?.orders ?? []).map((o, i) => {
+    const 옵션 = (o?.groups ?? [])
+      .map((g) => `${g?.group_name}: ${(g?.options ?? []).map(getOptionLabel).filter(Boolean).join(' / ')}`)
+      .filter(Boolean).join(' | ');
+    return `${i + 1}. ${o?.order_name ?? ''}${옵션 ? ` (${옵션})` : ''} × ${o?.order_count ?? 1}`;
+  }).join('\n');
+
+  const 입력정보글 = (row) => (row?.order_forms ?? [])
+    .map((v) => `${v?.label ?? ''}: ${v?.value ?? ''}`).join('\n');
+
+  const 엑셀열 = [
+    { label: '주문번호', width: 22, value: (r) => r?.ord_num ?? '' },
+    { label: '구매시간', width: 20, value: (r) => r?.created_at ?? '' },
+    { label: '구매자명', width: 12, value: (r) => r?.buyer_name ?? '' },
+    { label: '구매자연락처', width: 16, value: (r) => r?.buyer_phone ?? '' },
+    { label: '받는사람', width: 12, value: (r) => r?.receiver ?? '' },
+    { label: '받는사람연락처', width: 16, value: (r) => r?.receiver_phone ?? '' },
+    { label: '주소', width: 40, value: (r) => `${r?.addr ?? ''} ${r?.detail_addr ?? ''}`.trim() },
+    { label: '주문상품', width: 46, value: 줄글 },
+    { label: '추가 입력정보', width: 28, value: 입력정보글 },
+    { label: '결제금액', width: 12, value: (r) => Number(r?.amount) || 0 },
+    { label: '결제타입', width: 16, value: (r) => _.find(paymentModuleTypeList, { value: r?.trx_method })?.label ?? '' },
+    { label: '상태', width: 12, value: (r) => getOrderStatusText(r) },
+    { label: '송장번호', width: 18, value: (r) => r?.invoice_num ?? '' },
+    { label: '취소여부', width: 10, value: (r) => (r?.is_cancel == 1 || r?.is_cancel_trans == 1 ? '취소' : '') },
+  ];
+
+  const onExcel = async () => {
+    set엑셀중(true);
+    try {
+      // 지금 검색조건 그대로, 페이지만 크게 잡아 다 받는다.
+      const 한번에 = 500;
+      let 모은것 = [];
+      let page = 1;
+      // 총건수를 모르므로 첫 응답의 total 로 몇 바퀴 돌지 정한다.
+      // 무한루프 방지로 20바퀴(=1만건)에서 끊고 알린다 — 조용히 잘라 내려주면 안 된다.
+      for (; page <= 20; page++) {
+        const 결과 = await apiManager('transactions', 'list', { ...searchObj, page, page_size: 한번에 });
+        const 줄 = 결과?.content ?? [];
+        모은것 = [...모은것, ...줄];
+        if (줄.length < 한번에) break;
+      }
+      if (!모은것.length) { toast.error('내려받을 주문이 없습니다.'); return; }
+      if (page > 20) toast.error('건수가 많아 10,000건까지만 받았습니다. 기간을 좁혀 다시 받아 주세요.');
+      엑셀내려받기('주문내역', 엑셀열, 모은것, '주문내역');
+    } finally {
+      set엑셀중(false);
+    }
+  };
+
   const deleteTrx = async (id) => {
     let result = await apiManager('transactions', 'delete', { id: id });
     if (result) {
@@ -773,6 +834,14 @@ const TrxList = () => {
   return (
     <>
       <Stack spacing={3}>
+        {/* 엑셀 내려받기 — 지금 검색조건 전체를 받는다(화면의 한 페이지가 아니다).
+            이 파일에는 이름·전화·주소가 평문으로 들어간다. */}
+        <Row style={{ justifyContent: 'flex-end' }}>
+          <Button variant="outlined" disabled={엑셀중} onClick={onExcel}
+            startIcon={<Icon icon="material-symbols:download" />}>
+            {엑셀중 ? '내려받는 중…' : '엑셀 내려받기'}
+          </Button>
+        </Row>
         <Card>
           <ManagerTable
             data={data}

@@ -1,5 +1,6 @@
 
 import styled from "styled-components"
+import { isBackArrowPath } from "src/utils/blog-shop-route";
 import { IconButton, TextField, InputAdornment, Drawer, Button, Chip, Dialog, Badge } from "@mui/material"
 import { forwardRef, useEffect, useState } from "react"
 import { Icon } from "@iconify/react"
@@ -448,6 +449,12 @@ const Header = () => {
             </NoneShowMobile>
             <TopMenuContainer>
               <ShowMobile style={{ margin: '0 auto 0 -0.5rem' }}>
+                {/* 뒤로가기 — 상품 상세·마이페이지·장바구니에서만.
+                    이 프레임에는 목록으로 돌아갈 수단이 화면에 없었다(블로그형 프레임에는 있다). */}
+                {isBackArrowPath(router) &&
+                  <IconButton sx={iconButtonStyle} onClick={() => router.back()}>
+                    <Icon icon={'ic:round-arrow-back'} fontSize={'1.6rem'} color={themeMode == 'dark' ? '#fff' : '#000'} />
+                  </IconButton>}
                 <IconButton
                   sx={iconButtonStyle}
                   onClick={() => setSideMenuOpen(true)}

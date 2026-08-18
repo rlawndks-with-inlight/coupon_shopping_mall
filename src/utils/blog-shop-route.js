@@ -73,3 +73,16 @@ export const isMyPagePath = (router) => MY_PAGE_PATHS.includes(normalizePath(rou
 // 정확히 이 경로인지(끝 슬래시·쿼리 무시).
 export const isPath = (router, path) =>
   normalizePath(router) === String(path).replace(/\/+$/, '');
+
+// 뒤로가기를 보여야 하는 화면인지.
+//
+// 블로그형 헤더(프레임 3~6)에는 예전부터 있었는데 쇼핑몰형(프레임 1·2)에는 없었다.
+// 상품 상세로 들어간 손님이 목록으로 돌아갈 수단이 화면에 없어서, 모바일에서는
+// 기기 뒤로가기 말고는 방법이 없었다(주소창을 숨긴 상태면 그것도 안 보인다).
+// 판정을 헤더마다 따로 쓰면 곧 어긋나므로 여기 한 곳에 둔다.
+export const isBackArrowPath = (router) => {
+  // /shop/item/:id · /shop/seller/:id 의 두 번째 조각을 본다.
+  const 조각 = String(router?.asPath ?? '').split('?')[0].split('/')[2] ?? '';
+  return 조각 === 'item' || 조각 === 'seller'
+    || isMyPagePath(router) || isPath(router, '/shop/auth/cart');
+};

@@ -16,7 +16,7 @@ import dynamic from 'next/dynamic';
 import LanguagePopover from "src/layouts/manager/header/LanguagePopover"
 import { useLocales } from "src/locales"
 import { formatLang } from "src/utils/format"
-import { isStorefrontHome, isBackArrowPath } from "src/utils/blog-shop-route";
+import { isStorefrontHome } from "src/utils/blog-shop-route";
 const ReactQuill = dynamic(() => import('react-quill'), {
   ssr: false,
   loading: () => <p></p>,
@@ -648,12 +648,6 @@ const Header = () => {
                 </div>
               </NoneShowMobile>
               <ShowMobile style={{ marginLeft: 'auto', columnGap: '0.5rem' }}>
-                {/* 뒤로가기 — 상품 상세·마이페이지·장바구니에서만.
-                    이 프레임에는 목록으로 돌아갈 수단이 화면에 없었다(블로그형 프레임에는 있다). */}
-                {isBackArrowPath(router) &&
-                  <IconButton sx={iconButtonStyle} onClick={() => router.back()}>
-                    <Icon icon={'ic:round-arrow-back'} fontSize={'1.6rem'} color={themeMode == 'dark' ? '#fff' : '#000'} />
-                  </IconButton>}
                 <IconButton
                   sx={iconButtonStyle}
                   onClick={() => setSideMenuOpen(true)}

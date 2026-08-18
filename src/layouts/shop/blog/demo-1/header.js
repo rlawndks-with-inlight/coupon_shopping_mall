@@ -1,5 +1,5 @@
 import styled from "styled-components"
-import { 사진위아이콘 } from "src/utils/overlay-icon";
+import { 헤더배경 } from "src/utils/overlay-icon";
 import { IconButton, Badge } from "@mui/material"
 import { useEffect, useState } from "react"
 import { Icon } from "@iconify/react"
@@ -86,13 +86,14 @@ const Header = (props) => {
         root_path={'/shop/search?keyword='}
       />
       <Wrappers style={{
-        background: isTransparent ? 'transparent' : (isDark ? '#000' : '#fff'),
+        // 사진 위일 때는 어두운 그라데이션을 깐다 — 흰 아이콘이 흰 상품사진에 묻힌다.
+        background: 헤더배경(isTransparent, isDark ? '#000' : '#fff'),
         borderBottom: isTransparent ? 'none' : `1px solid ${isDark ? '#333' : '#eee'}`,
       }}>
         <TopMenuContainer>
           {showBackArrow || is_use_step ?
             <IconButton
-              sx={{ padding: '6px', marginLeft: '-6px', ...사진위아이콘(isTransparent) }}
+              sx={{ padding: '6px', marginLeft: '-6px' }}
               onClick={() => {
                 if (is_use_step && activeStep > 0) {
                   setActiveStep(activeStep - 1);

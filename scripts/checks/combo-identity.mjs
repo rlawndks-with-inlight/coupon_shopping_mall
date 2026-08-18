@@ -181,5 +181,35 @@ const 아직변환전 = (combinations) => (combinations ?? []).some(
   ok('화면도 같은 기준', /조합목록\.length > 20 && !조합펼침/.test(src));
 }
 
+// ── 그룹을 만들면 항목 한 줄이 같이 온다 ──────────────────────────────────
+//
+// 빈 그룹은 서버가 저장할 때 통째로 버린다(백엔드 cleanOptionGroups).
+// 고를 수 있는 항목이 없는 그룹이 붙으면 그 상품을 아예 못 팔기 때문이다.
+// 그래서 이름만 적고 '항목 추가' 를 안 누른 가맹점에게는 적은 내용이 말없이 사라졌다.
+{
+  const 새옵션 = () => ({ option_name: '', option_price: 0, stock_qty: '', is_soldout: 0, _k: 'tmp_x' });
+  const 그룹추가 = (groups, type) => [...groups, {
+    group_name: '', group_description: '', group_type: type,
+    is_able_duplicate_select: type === 1 ? 1 : 0, options: [새옵션()],
+  }];
+
+  const 선택 = 그룹추가([], 0);
+  eq('선택 옵션 추가 → 항목 1줄이 같이 생긴다', 선택[0].options.length, 1);
+  eq('그 항목은 비어 있다(값을 미리 넣지 않는다)', 선택[0].options[0].option_name, '');
+  eq('품절은 꺼진 채로 온다', 선택[0].options[0].is_soldout, 0);
+  eq('재고는 무제한(빈 칸)으로 온다', 선택[0].options[0].stock_qty, '');
+
+  const 추가 = 그룹추가([], 1);
+  eq('추가 상품 만들기 → 항목 1줄이 같이 생긴다', 추가[0].options.length, 1);
+  eq('추가상품은 여러 개 고를 수 있다', 추가[0].is_able_duplicate_select, 1);
+
+  // 이름이 아직 비어 있으므로 조합표는 만들어지지 않는다 —
+  // 빈 이름으로 조합이 생기면 저장 때 서버가 못 풀어 조용히 버려진다.
+  eq('이름을 적기 전에는 조합이 생기지 않는다', 조합목록(선택).length, 0);
+
+  ok('화면도 그룹을 만들 때 항목을 하나 넣는다', /options: \[새옵션\(\)\]/.test(src));
+  ok('항목 추가 버튼도 같은 항목을 쓴다', /options: \[\.\.\.\(groups\[gIdx\]\?\.options \?\? \[\]\), 새옵션\(\)\]/.test(src));
+}
+
 console.log(`\n통과 ${pass} / 실패 ${fail}`);
 process.exit(fail ? 1 : 0);

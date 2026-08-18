@@ -45,9 +45,21 @@ const ProductOptionEditor = ({ item, setItem, disabled = false }) => {
         .filter(({ g }) => g?.is_delete != 1 && (Number(g?.group_type) || 0) === type);
 
     // ── 그룹/옵션 조작 ───────────────────────────────────────────────────────
+    //
+    // 새 옵션에는 화면 전용 식별자(_k)를 붙인다. 아래 옵션키() 참고 —
+    // 이게 있어야 아직 저장 전인 옵션도 이름과 무관하게 같은 조합으로 따라간다.
+    // 백엔드는 모르는 필드라 그냥 무시한다.
+    const 새옵션키 = () => `tmp_${Date.now().toString(36)}_${Math.random().toString(36).slice(2, 8)}`;
+    const 새옵션 = () => ({ option_name: '', option_price: 0, stock_qty: '', is_soldout: 0, _k: 새옵션키() });
+
+    // 그룹을 만들면 빈 항목 한 줄을 같이 놓는다.
+    // 빈 그룹은 저장할 때 서버가 통째로 버린다(cleanOptionGroups) — 고를 수 있는 항목이
+    // 하나도 없는 그룹이 붙으면 그 상품은 아예 못 팔기 때문이다.
+    // 그래서 이름만 적고 '항목 추가'를 안 누른 가맹점에게는 적은 내용이 말없이 사라진 것처럼 보였다.
+    // 한 줄을 미리 놓아 두면 무엇을 채워야 하는 자리인지가 화면에 그대로 드러난다.
     const 그룹추가 = (type) => setGroups([...groups, {
         group_name: '', group_description: '', group_type: type,
-        is_able_duplicate_select: type === 추가상품 ? 1 : 0, options: [],
+        is_able_duplicate_select: type === 추가상품 ? 1 : 0, options: [새옵션()],
     }]);
     const 그룹수정 = (idx, patch) => {
         const next = [...groups];
@@ -60,13 +72,8 @@ const ProductOptionEditor = ({ item, setItem, disabled = false }) => {
         else next.splice(idx, 1);
         setGroups(next);
     };
-    // 새 옵션에는 화면 전용 식별자(_k)를 붙인다. 아래 옵션키() 참고 —
-    // 이게 있어야 아직 저장 전인 옵션도 이름과 무관하게 같은 조합으로 따라간다.
-    // 백엔드는 모르는 필드라 그냥 무시한다.
-    const 새옵션키 = () => `tmp_${Date.now().toString(36)}_${Math.random().toString(36).slice(2, 8)}`;
     const 옵션추가 = (gIdx) => 그룹수정(gIdx, {
-        options: [...(groups[gIdx]?.options ?? []),
-                  { option_name: '', option_price: 0, stock_qty: '', is_soldout: 0, _k: 새옵션키() }],
+        options: [...(groups[gIdx]?.options ?? []), 새옵션()],
     });
     const 옵션수정 = (gIdx, oIdx, patch) => {
         const opts = [...(groups[gIdx]?.options ?? [])];

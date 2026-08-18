@@ -506,7 +506,19 @@ const CategoryList = () => {
                                                 {/* 카테고리 설명 입력칸을 없앴다.
                                                     이것도 고객 화면에서 그리는 곳이 없다. 그런데 385개 카테고리에 적혀 있다 —
                                                     가맹점들이 보이는 줄 알고 써 온 것이다. 값은 DB 에 그대로 둔다. */}
-                                                <Button variant="contained" style={{ marginTop: '100px', height: '56px' }} onClick={() => {
+                                                {/* 이 칸이 무엇을 하는지 한 줄로 알려준다.
+                                                    이미지·설명 칸을 걷어내니 이름 하나만 남아 화면이 비어 보였다.
+                                                    빈 자리를 아무 칸으로 메우는 대신, 저장한 뒤에 무엇을 할 수 있는지 적는다. */}
+                                                <Typography variant="caption" sx={{ color: 'text.secondary', lineHeight: 1.7 }}>
+                                                    · 저장하면 상품 등록·수정 화면에서 이 {categoryGroup?.category_group_name}을(를) 고를 수 있습니다.<br />
+                                                    · 하위 {categoryGroup?.category_group_name}은(는) 왼쪽 목록에서 <b>+</b> 를 눌러 추가합니다.<br />
+                                                    · 왼쪽 목록의 <b>눈</b> 아이콘으로 쇼핑몰 노출을 켜고 끕니다.
+                                                    {categoryGroup?.is_show_header_menu == 1 &&
+                                                        <> <b>별</b> 아이콘을 켜면 상단 메뉴에도 나옵니다.</>}
+                                                </Typography>
+                                                {/* 예전엔 여기 marginTop:100px 이 붙어 있었다. 아래 설명칸이 차지하던 높이를
+                                                    버튼으로 밀어 두려던 값인데, 그 칸을 없앤 뒤로는 버튼만 붕 떠 보인다. */}
+                                                <Button variant="contained" style={{ marginTop: '1.5rem', height: '56px' }} onClick={() => {
                                                     setModal({
                                                         func: () => { onSave() },
                                                         icon: 'material-symbols:edit-outline',

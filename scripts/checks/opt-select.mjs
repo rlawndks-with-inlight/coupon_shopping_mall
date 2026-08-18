@@ -19,7 +19,7 @@ const grab = (name, kind) => {
 // 실제 모듈을 그대로 불러와 주입한다 — 복사본을 만들면 진짜 코드와 어긋나도 테스트가 통과한다.
 const PO = await import('file:///' +
   FRONT_ROOT + 'src/data/product-options.js');
-const { requiredGroups, isComboMode, findCombination, optionExtraPrice, maxOrderable } = PO;
+const { requiredGroups, isComboMode, findCombination, optionExtraPrice, maxOrderable, isAddon } = PO;
 
 const toast = { error: () => {}, success: () => {} };
 const _ = { findIndex: () => -1 };
@@ -37,11 +37,11 @@ const body = [grab('isSameOptionGroup'), grab('assertOptionsSelected'), grab('as
 const 번역 = (문구, 값) => String(문구).replace(/\{\{(\w+)\}\}/g, (_m, k) => (값?.[k] ?? ''));
 
 const fn = new Function('toast', '_', 'requiredGroups', 'isComboMode', 'findCombination',
-                        'optionExtraPrice', 'maxOrderable', '번역', body + `
+                        'optionExtraPrice', 'maxOrderable', 'isAddon', '번역', body + `
   return { isSameOptionGroup, assertOptionsSelected, assertStock, cartLineSignature, selectItemOptionUtil };
 `);
 const { assertOptionsSelected, assertStock, cartLineSignature, selectItemOptionUtil } =
-  fn(toast, _, requiredGroups, isComboMode, findCombination, optionExtraPrice, maxOrderable, 번역);
+  fn(toast, _, requiredGroups, isComboMode, findCombination, optionExtraPrice, maxOrderable, isAddon, 번역);
 
 let pass = 0, fail = 0;
 const t = (name, cond) => { if (cond) { pass++; console.log('  ok  ' + name); } else { fail++; console.log('  FAIL ' + name); } };
@@ -205,6 +205,53 @@ for (const k of 안내키) {
   const 빈언어 = ['ko', 'en', 'ja', 'cn', 'es']
     .filter((l) => !fs.readFileSync(`${FRONT}src/locales/langs/${l}.js`, 'utf8').includes(`"${k}":`));
   t(`안내 사전 — ${k.slice(0, 18)} (5개 언어)` + (빈언어.length ? ' → 없음: ' + 빈언어.join(',') : ''), 빈언어.length === 0);
+}
+
+// ── 추가상품은 다시 누르면 빠져야 한다 ─────────────────────────────────────
+//
+// 붙잡아 두는 사고:
+//   빼는 코드는 있었는데 `is_option_multiple` 인자로만 켜졌다. ProductAddons 는 true 를
+//   넘기지만, 화면 쪽 onSelectOption(group, option) 이 세 번째 인자를 아예 안 받는
+//   프레임이 7개였다 — 그 프레임에서 추가상품은 **누를 수만 있고 뺄 수 없었다**.
+//   잘못 고른 추가금(성장영상 +45,000 같은 것)을 지우려면 새로고침밖에 없었고,
+//   손님은 그걸 알 방법이 없으니 그대로 결제한다.
+// 그래서 그룹 자체(group_type=1)를 보고 정한다. 아래는 **인자를 일부러 안 넘긴다** —
+// 고쳐진 프레임 7개가 그렇게 부르기 때문이다.
+{
+  const 추가그룹 = { id: 20, group_name: '촬영 추가', group_type: 1 };
+  const 영상 = { id: 201, option_name: '성장영상', option_price: 45000 };
+  const 한복 = { id: 202, option_name: '한복', option_price: 10000 };
+  const 이름들 = (s) => (s?.groups ?? []).flatMap((g) => (g.options ?? []).map((o) => o.option_name));
+  const 같나 = (a, b) => JSON.stringify(a) === JSON.stringify(b);
+
+  let s = { count: 1, groups: [] };
+  s = selectItemOptionUtil(추가그룹, 영상, s);
+  t('추가상품 한 번 누르면 담긴다', 같나(이름들(s), ['성장영상']));
+  s = selectItemOptionUtil(추가그룹, 영상, s);
+  t('인자를 안 넘겨도 다시 누르면 빠진다', 같나(이름들(s), []));
+  t('다 빼면 그룹도 사라진다', (s.groups ?? []).length === 0);
+
+  s = selectItemOptionUtil(추가그룹, 영상, s);
+  s = selectItemOptionUtil(추가그룹, 한복, s);
+  t('여러 개 담긴다', 같나(이름들(s), ['성장영상', '한복']));
+  s = selectItemOptionUtil(추가그룹, 영상, s);
+  t('가운데 것만 빠진다', 같나(이름들(s), ['한복']));
+
+  // 선택옵션은 예전과 같아야 한다 — 다시 눌러도 빠지지 않고 바뀐다
+  const 색상g = { id: 10, group_name: '색상', group_type: 0 };
+  const 블랙 = { id: 101, option_name: '블랙' }, 화이트 = { id: 102, option_name: '화이트' };
+  let u = selectItemOptionUtil(색상g, 블랙, { count: 1, groups: [] });
+  u = selectItemOptionUtil(색상g, 화이트, u);
+  t('선택옵션은 바뀐다(쌓이지 않는다)', 같나(이름들(u), ['화이트']));
+  u = selectItemOptionUtil(색상g, 화이트, u, false);
+  t('선택옵션은 다시 눌러도 안 빠진다', 같나(이름들(u), ['화이트']));
+
+  // 추가상품을 담으면 추가금이 실제로 붙어야 한다 — 빠지면 다시 0 이어야 한다
+  const 상품 = { id: 7, option_mode: 0 };
+  let v = selectItemOptionUtil(추가그룹, 영상, { count: 1, groups: [] });
+  t('담으면 추가금이 붙는다', optionExtraPrice(상품, v) === 45000);
+  v = selectItemOptionUtil(추가그룹, 영상, v);
+  t('빼면 추가금도 사라진다', optionExtraPrice(상품, v) === 0);
 }
 
 console.log(`\n통과 ${pass} / 실패 ${fail}`);

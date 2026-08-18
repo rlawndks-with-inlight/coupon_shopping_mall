@@ -308,12 +308,6 @@ const TrxCancelList = () => {
       action: (row) => {
         return (
           <>
-      <PartialCancelDialog
-        open={!!cancelTrxId}
-        trxId={cancelTrxId}
-        onClose={() => setCancelTrxId(0)}
-        onDone={() => onChangePage(searchObj)}
-      />
             <IconButton>
               <Icon icon='material-symbols:edit-outline' onClick={() => {
                 // 상대경로면 /manager/orders/trx-cancel/default/{id} 로 해석돼 라우트가 없다(404).
@@ -463,6 +457,18 @@ const TrxCancelList = () => {
           />
         </Card>
       </Stack>
+
+      {/* 부분/전체 취소 — 표 밖에 **한 번만** 둔다.
+          예전엔 '수정/삭제' 컬럼의 action 안에 있어서 행마다 하나씩 생겼다.
+          모두 같은 open 을 보므로 열 때마다 N개가 함께 열리고 각자 주문을 불러왔다.
+          (같은 컴포넌트를 쓰는 trx/[type].js 에서는 그 컬럼 자체가 조건부라
+           대부분의 가맹점에서 다이얼로그가 아예 없었다 — 눌러도 아무 일도 안 났다) */}
+      <PartialCancelDialog
+        open={!!cancelTrxId}
+        trxId={cancelTrxId}
+        onClose={() => setCancelTrxId(0)}
+        onDone={() => onChangePage(searchObj)}
+      />
     </>
   )
 }

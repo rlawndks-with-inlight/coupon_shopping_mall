@@ -167,5 +167,28 @@ for (const n of [1, 2, 3, 4, 5]) {
   eq(`블로그 마이페이지 demo-${n}: 줄 전달`, /orders=\{item\.trx\?\.orders\}/.test(s4), true);
 }
 
+// ── 다이얼로그는 표 밖에 한 번만 ───────────────────────────────────────────
+//
+// 붙잡아 두는 사고:
+//   <PartialCancelDialog> 가 컬럼 정의('수정/삭제' action) 안에 들어가 있었다. 그런데
+//   그 컬럼은 trx/[type].js 에서 브랜드 34·64·84 에서만 붙는 조건부다 →
+//   나머지 가맹점에서는 다이얼로그가 화면에 아예 없어서, '부분/전체 취소' 를 눌러도
+//   state 만 바뀌고 **아무 일도 일어나지 않았다**. 버튼은 멀쩡히 보이므로
+//   가맹점 입장에서는 기능이 고장 난 게 아니라 없는 것처럼 보인다.
+//   컬럼 안에 두면 행마다 하나씩 생기는 문제도 있다(같은 open 을 보므로 N개가 함께 열린다).
+//
+// 판정: 다이얼로그가 소스에서 columns={defaultColumns} **뒤에** 나와야 한다.
+//       컬럼 정의 안에 있으면 반드시 앞에 온다.
+for (const f of ['src/pages/manager/orders/trx/[type].js',
+                 'src/pages/manager/orders/trx-cancel/[type].js']) {
+  const s5 = readFileSync(FRONT + f, 'utf8');
+  const 다이얼로그 = s5.indexOf('<PartialCancelDialog');
+  const 표 = s5.indexOf('columns={defaultColumns}');
+  const 개수 = (s5.match(/<PartialCancelDialog/g) ?? []).length;
+  const 이름 = f.replace('src/pages/manager/orders/', '');
+  eq(`${이름}: 다이얼로그가 표 밖에 있다`, 다이얼로그 > 표 && 표 > 0, true);
+  eq(`${이름}: 한 번만 그린다`, 개수, 1);
+}
+
 console.log(`\n통과 ${pass} / 실패 ${fail}`);
 process.exit(fail ? 1 : 0);

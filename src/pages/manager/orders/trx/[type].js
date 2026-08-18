@@ -624,12 +624,6 @@ const TrxList = () => {
         action: (row) => {
           return (
             <>
-      <PartialCancelDialog
-        open={!!cancelTrxId}
-        trxId={cancelTrxId}
-        onClose={() => setCancelTrxId(0)}
-        onDone={() => onChangePage(searchObj)}
-      />
               {/* <IconButton>
                 <Icon icon='material-symbols:edit-outline' onClick={() => {
                   router.push(`default/${row?.id}`)
@@ -795,6 +789,19 @@ const TrxList = () => {
           />
         </Card>
       </Stack>
+
+      {/* 부분/전체 취소 — 표 밖에 **한 번만** 둔다.
+          예전엔 '수정/삭제' 컬럼의 action 안에 있었다. 그 컬럼은 브랜드 34·64·84 에서만
+          붙는 조건부라, 나머지 가맹점에서는 다이얼로그가 화면에 아예 없었다 —
+          취소 버튼을 눌러도 state 만 바뀌고 아무 일도 일어나지 않았다.
+          컬럼 안에 두면 행마다 하나씩 생기는 것도 문제다(같은 open 을 보므로 N개가 한꺼번에
+          열리고 각자 주문을 불러온다). 표 밖에 한 번만 두면 두 가지가 같이 해결된다. */}
+      <PartialCancelDialog
+        open={!!cancelTrxId}
+        trxId={cancelTrxId}
+        onClose={() => setCancelTrxId(0)}
+        onDone={() => onChangePage(searchObj)}
+      />
     </>
   )
 }

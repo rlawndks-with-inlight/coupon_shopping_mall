@@ -118,10 +118,7 @@ export const mainObjSchemaList = [
         type: 'banner',
         default_value: {
             type: 'banner',
-            list: [],
-            style: {
-                min_height: 200
-            }
+            list: []
         },
     },
     {

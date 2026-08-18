@@ -248,10 +248,7 @@ const MainObjSetting = props => {
       type: 'banner',
       default_value: {
         type: 'banner',
-        list: [],
-        style: {
-          min_height: 200
-        }
+        list: []
       },
     },
     {
@@ -841,38 +838,11 @@ const MainObjSetting = props => {
                               />
                               <SectionProcess {...sectionCtl} idx={idx} item={item} />
                             </Row>
-                            <TextField
-                              label='이미지 최소높이'
-                              value={item?.style?.min_height ?? 200}
-                              type='number'
-                              InputProps={{
-                                endAdornment: <>px</>
-                              }}
-                              onChange={e => {
-                                let content_list = [...contentList]
-                                if (!content_list[idx]?.style) {
-                                  content_list[idx]['style'] = {}
-                                }
-                                content_list[idx].style['min_height'] = e.target.value
-                                setContentList(content_list)
-                              }}
-                            />
-                            <TextField
-                              label='이미지 최대높이'
-                              value={item?.style?.max_height ?? 750}
-                              type='number'
-                              InputProps={{
-                                endAdornment: <>px</>
-                              }}
-                              onChange={e => {
-                                let content_list = [...contentList]
-                                if (!content_list[idx]?.style) {
-                                  content_list[idx]['style'] = {}
-                                }
-                                content_list[idx].style['max_height'] = e.target.value
-                                setContentList(content_list)
-                              }}
-                            />
+                            {/* '이미지 최소높이 / 최대높이' 입력칸을 없앴다.
+                                높이를 강제하면 컨테이너 비율이 이미지와 달라지고, 배너는 cover 라
+                                그 차이만큼 좌우가 잘린다. 기본값 200px 은 폰에서 늘 걸려서
+                                (390px 폭의 자연 높이는 166px 다) 규격을 지켜 올려도 잘렸다.
+                                이제 배너는 비율로만 그린다 — 조절할 것이 없다. */}
                             <Upload
                               multiple
                               thumbnail={true}

@@ -104,7 +104,6 @@ export const getDefaultHomeContent = (shopDemoNum) => ([
       sub_title_color: '#ffffff',
       link: '',
     })),
-    style: { min_height: 200 },
   },
 ]);
 

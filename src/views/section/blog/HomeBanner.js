@@ -52,17 +52,17 @@ const PrevArrowStyle = styled.div`
   `
 const BannerImgContainer = styled.div`
 width: 100%;
-/* 예전엔 height:424px 고정이라 큰 화면(≥1800px)에선 초광폭(4:1↑)이 돼 배너가 심하게 잘렸다.
-   권장 배너(2000x850=2.35:1)에 맞춰 비율 기반(42.5vw)으로 바꾸고 max-height로 상한만 둔다. */
-height: 42.5vw;
-min-height: 220px;
-max-height: 640px;
+/* 배너는 비율로만 그린다 — 쇼핑몰 쪽 HomeBanner 의 주석 참고.
+   예전엔 42.5vw 높이에 min-height:220px · max-height:640px 를 덧씌웠는데,
+   그 둘이 걸리면 컨테이너 비율이 이미지와 달라져 cover 가 좌우를 잘라냈다.
+   220px 은 폰에서 늘 걸렸다(390px 폭의 자연 높이는 166px 다).
+   상한은 높이가 아니라 폭으로 잡는다 — 잘라내지 않으므로 비율이 산다. */
+max-width: 1506px;
+aspect-ratio: 2000 / 850;
 margin: 0 auto;
 border-radius:${props => props.img_list_length >= 2 ? '1rem' : '0'};
 overflow: hidden;
 @media (max-width:840px) {
-    height: 45vw;
-    max-height: none;
     border-radius:0;
 }
 `
@@ -217,7 +217,6 @@ const HomeBanner = (props) => {
                     {img_list.map((item, idx) => (
                         <>
                             <BannerImgContainer
-                                style={{ minHeight: `${style?.min_height ?? 200}px`, maxHeight: `${style?.max_height ?? 750}px` }}
                                 img_list_length={img_list.length}
                             >
 

@@ -104,7 +104,7 @@ const IconBtn = styled.button`
   &:hover {
     opacity: 0.6;
   }
-  /* 좁은 화면에서는 아이콘 묶음(검색·계정·로그아웃·장바구니·언어)이 헤더 폭을 다 먹어
+  /* 좁은 화면에서는 아이콘 묶음(검색·계정·장바구니·언어)이 헤더 폭을 다 먹어
      로고가 두 줄로 깨진다. 작은 폰에서만 아이콘 폭을 줄인다. */
   @media (max-width: 480px) {
     width: 36px;
@@ -300,9 +300,8 @@ const BlogLayout6 = (props) => {
           <FooterLink onClick={() => router.push('/shop/auth/policy?type=0')}>{translate('이용약관')}</FooterLink>
           <FooterLink onClick={() => router.push('/shop/auth/policy?type=1')}>{translate('개인정보처리방침')}</FooterLink>
           <FooterLink onClick={() => router.push('/shop/auth/policy?type=3')}>{translate('쇼핑몰 이용안내')}</FooterLink>
-          {/* 로그아웃은 헤더가 아니라 여기 둔다. 헤더는 로고가 가운데 정렬이라
-              우측 아이콘이 하나 늘 때마다 로고가 왼쪽으로 밀린다. */}
-          {user && <FooterLink onClick={onLogout}>{translate('로그아웃')}</FooterLink>}
+          {/* 로그아웃은 하단정보에 두지 않는다 — 마이페이지에 있다
+              (블로그 6~9 는 my-page demo-2 로 떨어진다). */}
         </FooterLinks>
         <FooterLine>© {new Date().getFullYear()} {brandName.toUpperCase()} · ALL RIGHTS RESERVED</FooterLine>
       </Footer>

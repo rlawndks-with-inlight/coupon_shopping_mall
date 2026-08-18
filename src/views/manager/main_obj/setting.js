@@ -273,7 +273,7 @@ const MainObjSetting = props => {
       },
     },
     {
-      label: '히어로 상품 (단일 상품 강조)',
+      label: '단일 상품 강조',
       type: 'item-hero',
       default_value: {
         type: 'item-hero',
@@ -1190,7 +1190,7 @@ const MainObjSetting = props => {
                           <>
                             <Row style={{ alignItems: 'end' }}>
                               <CardHeader
-                                title={`히어로 상품 ${curTypeNum(contentList, 'item-hero', idx)}`}
+                                title={`단일 상품 강조 ${curTypeNum(contentList, 'item-hero', idx)}`}
                                 sx={{ paddingLeft: '0' }}
                               />
                               <SectionProcess {...sectionCtl} idx={idx} item={item} isProductList={1} />

@@ -143,6 +143,13 @@ const ProductOptionEditor = ({ item, setItem, disabled = false }) => {
     // 옵션을 지워서 사라진 조합도 여기서 함께 떨어져 나간다.
     useEffect(() => {
         if (!조합형 || !조합목록.length) return;
+        // ⚠ 위 변환(combo_key → option_keys)이 아직 안 끝났으면 손대지 않는다.
+        //   먼저 돌면 기존 값을 하나도 못 찾아 전부 0원·무제한으로 깔아 버리고,
+        //   그 뒤엔 변환 조건(option_keys 없음)도 깨져서 서버 값이 영영 안 돌아온다.
+        //   즉 가맹점이 상품을 열기만 해도 조합표가 날아간다.
+        const 아직변환전 = (item?.combinations ?? []).some(
+            (c) => c?.combo_key && !(c?.option_keys?.length > 0));
+        if (아직변환전) return;
         const 기존 = new Map((item?.combinations ?? [])
             .filter((c) => (c?.option_keys?.length ?? 0) > 0)
             .map((c) => [조합키(c.option_keys), c]));

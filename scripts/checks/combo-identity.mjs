@@ -98,25 +98,88 @@ let 새조합 = 동기화(새것, []);
 eq('저장 전 옵션도 이름 바꾸면 값이 남는다', 동기화(새것, 새조합)[0].add_price, 3000);
 
 
-// ── 조합표를 실제로 쓸 수 있는가 ─────────────────────────────────────────
-// 옵션이 늘면 조합은 곱으로 늘어난다(5 x 5 x 4 = 100줄). 한 칸씩 채우게 두면
-// 기능은 있는데 아무도 못 쓰는 상태가 된다. 그래서 일괄 적용과 접기를 둔다.
-ok('조합표에 일괄 적용이 있다', /일괄적용/.test(src));
-ok('빈 칸은 일괄 적용에서 건드리지 않는다', /String\(일괄\.add_price\)\.trim\(\) !== ''/.test(src));
-ok('줄이 많으면 접어 둔다', /조합목록\.length > 20 && !조합펼침/.test(src));
+// ── 여기서부터는 '코드에 그 글자가 있나' 가 아니라 실제로 돌려 본다 ──────────
+// 글자만 확인하면 '함수는 있는데 안 불린다' 나 '조건이 뒤집혔다' 를 못 잡는다.
 
-// ── 옵션·조합 단위 품절 ───────────────────────────────────────────────────
-// 상품 전체 품절은 '판매상태' 에 이미 있다. 없던 것은 '검정만 잠깐 안 판다' 다.
-// 백엔드(product_options.is_soldout / product_option_combinations.is_soldout)는
-// 예전부터 받고 있었는데 화면에만 없었다.
-ok('옵션 줄에 품절 스위치', /옵션수정\(gIdx, oIdx, \{ is_soldout:/.test(src));
-ok('조합 줄에 품절 스위치', /조합수정\(keys, names, \{ is_soldout:/.test(src));
+// 화면의 일괄적용을 그대로 옮긴다
+const 일괄적용 = (combinations, 일괄) => {
+  const patch = {};
+  if (String(일괄.add_price).trim() !== '') patch.add_price = 일괄.add_price;
+  if (String(일괄.stock_qty).trim() !== '') patch.stock_qty = 일괄.stock_qty;
+  if (!Object.keys(patch).length) return null;
+  return combinations.map((c) => ({ ...c, ...patch }));
+};
+{
+  const 목록 = [
+    { option_keys: ['id:1'], option_names: ['블랙'], add_price: 5000, stock_qty: 20 },
+    { option_keys: ['id:2'], option_names: ['화이트'], add_price: 0, stock_qty: '' },
+  ];
+  eq('빈 칸만 넣으면 아무것도 안 바꾼다', 일괄적용(목록, { add_price: '', stock_qty: '' }), null);
+  const 재고만 = 일괄적용(목록, { add_price: '', stock_qty: 7 });
+  eq('재고만 넣으면 재고만 바뀐다', [재고만[0].add_price, 재고만[0].stock_qty], [5000, 7]);
+  eq('두 번째 줄도 재고만', [재고만[1].add_price, 재고만[1].stock_qty], [0, 7]);
+  const 둘다 = 일괄적용(목록, { add_price: 0, stock_qty: 0 });
+  eq('0 은 빈 칸이 아니다 — 0 도 적용된다', [둘다[0].add_price, 둘다[0].stock_qty], [0, 0]);
+}
 
-// ── 손님 화면 요약 ────────────────────────────────────────────────────────
-// '선택 옵션' 과 '추가 상품' 은 칸 모양이 같아서 어느 쪽에 넣었는지 헷갈린 채 저장하기 쉽다.
-ok('손님이 보게 될 것 요약이 있다', /손님이 보게 될 것/.test(src));
-ok('요약이 필수와 추가를 갈라 말한다', /반드시 골라야 합니다/.test(src) && /원하는 것만 고릅니다/.test(src));
+// ── 서버에서 불러온 직후의 순서 사고 ──────────────────────────────────────
+// 변환(combo_key → option_keys)보다 동기화가 먼저 돌면 기존 값을 하나도 못 찾아
+// 전부 0원·무제한으로 깔아 버린다. 그 뒤엔 변환 조건도 깨져 서버 값이 영영 안 돌아온다.
+// 가맹점이 상품을 열기만 해도 조합표가 날아가는 사고다.
+const 아직변환전 = (combinations) => (combinations ?? []).some(
+  (c) => c?.combo_key && !(c?.option_keys?.length > 0));
+{
+  ok('변환 전이면 동기화를 멈춘다', 아직변환전([{ combo_key: '1-3', add_price: 5000 }]));
+  const 변환후 = [{ combo_key: '1-3', option_keys: ['id:1', 'id:3'], option_names: ['블랙', 'S'], add_price: 5000, stock_qty: 20 }];
+  ok('변환이 끝나면 동기화를 돈다', !아직변환전(변환후));
+  eq('변환 뒤 동기화해도 값이 남는다',
+     동기화(상품(), 변환후).find((c) => c.option_names.join('/') === '블랙/S')?.add_price, 5000);
+  ok('화면 코드에도 같은 방어가 있다', /const 아직변환전 =/.test(src) && /if \(아직변환전\) return;/.test(src));
+}
 
+// ── 품절 값이 저장 payload 까지 실려 가는가 ───────────────────────────────
+{
+  const 조합수정 = (list, keys, names, patch) => {
+    const idx = list.findIndex((c) => 조합키(c?.option_keys ?? []) === 조합키(keys));
+    const next = [...list];
+    if (idx >= 0) next[idx] = { ...next[idx], ...patch };
+    else next.push({ option_keys: keys, option_names: names, add_price: 0, stock_qty: '', ...patch });
+    return next;
+  };
+  let list = 동기화(상품(), []);
+  list = 조합수정(list, ['id:1', 'id:3'], ['블랙', 'S'], { is_soldout: 1 });
+  eq('조합 품절이 값에 남는다', list.find((c) => c.option_names.join('/') === '블랙/S')?.is_soldout, 1);
+  const g = 상품(); g[0].options[0].option_name = '블랙(무광)';
+  eq('이름을 고쳐도 품절이 유지된다',
+     동기화(g, list).find((c) => c.option_names.join('/') === '블랙(무광)/S')?.is_soldout, 1);
+  ok('옵션 줄 스위치가 옵션수정을 부른다', /옵션수정\(gIdx, oIdx, \{ is_soldout:/.test(src));
+  ok('조합 줄 스위치가 조합수정을 부른다', /조합수정\(keys, names, \{ is_soldout:/.test(src));
+}
+
+// ── 손님 화면 요약이 필수와 추가를 제대로 가르는가 ────────────────────────
+{
+  const 요약 = (groups) => ({
+    필수: groups.filter((g) => (Number(g?.group_type) || 0) === 0).map((g) => g.group_name),
+    추가: groups.filter((g) => Number(g?.group_type) === 1).flatMap((g) => 살아있는(g.options).map((o) => o.option_name)),
+  });
+  const r = 요약([
+    { group_name: '색상', group_type: 0, options: [{ option_name: '블랙' }] },
+    { group_name: '촬영 추가', group_type: 1, options: [{ option_name: '성장영상' }, { option_name: '한복', is_delete: 1 }] },
+  ]);
+  eq('선택옵션은 그룹 이름으로', r.필수, ['색상']);
+  eq('추가상품은 항목 이름으로 · 지운 것은 뺀다', r.추가, ['성장영상']);
+  ok('요약이 필수와 추가를 다른 말로 적는다',
+     /반드시 골라야 합니다/.test(src) && /원하는 것만 고릅니다/.test(src));
+}
+
+// ── 조합표 접기 ───────────────────────────────────────────────────────────
+{
+  const 보일줄 = (전체, 펼침) => (전체 > 20 && !펼침 ? 20 : 전체);
+  eq('20줄 이하는 다 보인다', 보일줄(12, false), 12);
+  eq('100줄은 접힌다', 보일줄(100, false), 20);
+  eq('펼치면 다 보인다', 보일줄(100, true), 100);
+  ok('화면도 같은 기준', /조합목록\.length > 20 && !조합펼침/.test(src));
+}
 
 console.log(`\n통과 ${pass} / 실패 ${fail}`);
 process.exit(fail ? 1 : 0);

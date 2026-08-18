@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import {
-    Box, Button, Divider, FormControl, IconButton, InputAdornment, InputLabel,
+    Box, Button, Divider, FormControl, FormControlLabel, IconButton, InputAdornment, InputLabel,
     MenuItem, OutlinedInput, Stack, Switch, TextField, ToggleButton, ToggleButtonGroup, Typography,
 } from '@mui/material';
 import { Icon } from '@iconify/react';
@@ -162,6 +162,19 @@ const ProductOptionEditor = ({ item, setItem, disabled = false }) => {
         if (!같다) set({ combinations: 맞춘것 });
     }, [조합형, 조합목록, item?.combinations]);
 
+    // 조합표 일괄 적용 · 접기 상태
+    const [일괄, set일괄] = useState({ add_price: '', stock_qty: '' });
+    const [조합펼침, set조합펼침] = useState(false);
+    // 빈 칸은 건드리지 않는다 — '재고만 한 번에' 도 되어야 한다.
+    const 일괄적용 = () => {
+        const patch = {};
+        if (String(일괄.add_price).trim() !== '') patch.add_price = 일괄.add_price;
+        if (String(일괄.stock_qty).trim() !== '') patch.stock_qty = 일괄.stock_qty;
+        if (!Object.keys(patch).length) { toast.error('적용할 값을 넣어 주세요.'); return; }
+        set({ combinations: (item?.combinations ?? []).map((c) => ({ ...c, ...patch })) });
+        toast.success(`${조합목록.length}개 조합에 적용했습니다.`);
+    };
+
     const 조합수정 = (keys, names, patch) => {
         const list = [...(item?.combinations ?? [])];
         const idx = list.findIndex((c) => 조합키(c?.option_keys ?? []) === 조합키(keys));
@@ -260,6 +273,18 @@ const ProductOptionEditor = ({ item, setItem, disabled = false }) => {
                             value={o?.stock_qty ?? ''}
                             onChange={(e) => 옵션수정(gIdx, oIdx, { stock_qty: e.target.value })}
                         />}
+                    {/* 옵션 단위 품절.
+                        상품 전체 품절은 '판매상태' 에 이미 있지만, '검정만 잠깐 안 판다' 를
+                        표현할 방법이 없었다. 재고를 0 으로 바꿨다가 원래 수를 기억해
+                        되돌리는 수밖에 없었다 — 재고를 건드리지 않고 잠글 수 있어야 한다.
+                        백엔드(product_options.is_soldout)는 예전부터 받고 있었다. */}
+                    <FormControlLabel
+                        sx={{ mr: 0, whiteSpace: 'nowrap', ...숨김 }}
+                        control={<Switch size="small" disabled={disabled}
+                            checked={!!o?.is_soldout}
+                            onChange={(e) => 옵션수정(gIdx, oIdx, { is_soldout: e.target.checked ? 1 : 0 })} />}
+                        label={<Typography sx={{ fontSize: 12 }}>품절</Typography>}
+                    />
                     <IconButton sx={숨김} onClick={() => 옵션삭제(gIdx, oIdx)}>
                         <Icon icon="material-symbols:delete-outline" />
                     </IconButton>
@@ -268,8 +293,61 @@ const ProductOptionEditor = ({ item, setItem, disabled = false }) => {
         </Stack>
     );
 
+    // 손님 화면 요약 —
+    // 설정만 보고는 '내 손님이 무엇을 보게 되는지' 가 안 그려진다. 특히 '선택 옵션'과
+    // '추가 상품' 은 이름만 다르고 칸 모양이 같아서, 어느 쪽에 넣었는지 헷갈린 채 저장하기 쉽다.
+    // 실제 상품 화면을 여기 띄우면 프레임 테마까지 끌고 와야 하므로, 사실만 요약해 보여 준다.
+    const 요약 = useMemo(() => {
+        const 필수 = 종류별(선택옵션).map(({ g }) => ({
+            name: String(g?.group_name ?? '').trim() || '(이름 없음)',
+            n: 살아있는(g?.options).length,
+        }));
+        const 추가 = 종류별(추가상품).flatMap(({ g }) => 살아있는(g?.options).map((o) => ({
+            name: String(o?.option_name ?? '').trim() || '(이름 없음)',
+            price: Number(o?.option_price) || 0,
+        })));
+        const 입력 = 살아있는(fields).map((f) => ({
+            label: String(f?.label ?? '').trim() || '(이름 없음)',
+            required: !!f?.is_required,
+        }));
+        const 한정 = Number(item?.purchase_limit) > 0 ? Number(item.purchase_limit) : 0;
+        return { 필수, 추가, 입력, 한정 };
+    }, [JSON.stringify(groups), JSON.stringify(fields), item?.purchase_limit]);
+
     return (
         <Stack spacing={4}>
+            {/* ⓪ 손님이 보게 될 것 ---------------------------------------------- */}
+            {(요약.필수.length > 0 || 요약.추가.length > 0 || 요약.입력.length > 0 || 요약.한정 > 0) &&
+                <Box sx={{ p: 2, borderRadius: 1, bgcolor: 'action.hover' }}>
+                    <Typography variant="subtitle2" sx={{ mb: 0.75 }}>손님이 보게 될 것</Typography>
+                    <Stack spacing={0.35}>
+                        {요약.필수.map((g) => (
+                            <Typography key={'r' + g.name} sx={{ fontSize: 13 }}>
+                                · <b>{g.name}</b> — 반드시 골라야 합니다 ({g.n}개 중 1개)
+                                {조합형 ? ' · 조합별 가격' : ''}
+                            </Typography>
+                        ))}
+                        {요약.추가.length > 0 &&
+                            <Typography sx={{ fontSize: 13 }}>
+                                · <b>추가 상품</b> — 원하는 것만 고릅니다 ({요약.추가.map((o) =>
+                                    `${o.name}${o.price ? ` +${o.price.toLocaleString()}원` : ''}`).join(', ')})
+                            </Typography>}
+                        {요약.입력.map((f) => (
+                            <Typography key={'f' + f.label} sx={{ fontSize: 13 }}>
+                                · <b>{f.label}</b> — 손님이 직접 적습니다{f.required ? ' (필수)' : ' (선택)'}
+                            </Typography>
+                        ))}
+                        {요약.한정 > 0 &&
+                            <Typography sx={{ fontSize: 13 }}>
+                                · <b>한정 상품</b> — 1인 {요약.한정}개까지 · 회원만 구매
+                            </Typography>}
+                        {요약.필수.length === 0 && 요약.추가.length === 0 &&
+                            <Typography sx={{ fontSize: 13, color: 'text.disabled' }}>
+                                · 고를 것이 없어 바로 담을 수 있습니다.
+                            </Typography>}
+                    </Stack>
+                </Box>}
+
             {/* ① 선택옵션 ------------------------------------------------------ */}
             <Stack spacing={1.5}>
                 {라벨('선택 옵션')}
@@ -299,8 +377,37 @@ const ProductOptionEditor = ({ item, setItem, disabled = false }) => {
                 <Stack spacing={1}>
                     {라벨('조합별 가격 · 재고')}
                     {도움말(`${조합목록.length}개 조합. 재고를 비우면 무제한입니다.`)}
+
+                    {/* 일괄 적용 —
+                        옵션이 늘면 조합은 곱으로 늘어난다(색상5 × 사이즈5 × 재질4 = 100줄).
+                        한 칸씩 채우게 두면 실제로는 못 쓰는 기능이 된다.
+                        대부분은 '전부 같은 값' 이거나 '몇 개만 예외' 라, 한 번에 깔고
+                        예외만 고치는 편이 빠르다. */}
+                    <Row style={{ columnGap: '0.5rem', alignItems: 'center', flexWrap: 'wrap', rowGap: '0.5rem', ...숨김 }}>
+                        <Typography sx={{ fontSize: 12, color: 'text.disabled', mr: 0.5 }}>전체에 한 번에</Typography>
+                        <FormControl variant="outlined" size="small" sx={{ width: 140 }}>
+                            <InputLabel>추가금</InputLabel>
+                            <OutlinedInput
+                                label="추가금" type="number" value={일괄.add_price}
+                                endAdornment={<InputAdornment position="end">원</InputAdornment>}
+                                onChange={(e) => set일괄({ ...일괄, add_price: e.target.value })} />
+                        </FormControl>
+                        <TextField size="small" sx={{ width: 120 }} type="number" label="재고"
+                            placeholder="무제한" value={일괄.stock_qty}
+                            onChange={(e) => set일괄({ ...일괄, stock_qty: e.target.value })} />
+                        <Button variant="outlined" size="small" sx={{ height: 40 }}
+                            onClick={일괄적용}>{조합목록.length}개 조합에 적용</Button>
+                    </Row>
+
+                    {/* 줄이 많으면 접어 둔다. 스무 줄이 넘어가면 아래 항목(입력항목·상품정보)이
+                        화면 밖으로 밀려 그런 칸이 있다는 것조차 모르게 된다. */}
+                    {조합목록.length > 20 && !조합펼침 &&
+                        <Button variant="text" size="small" sx={{ alignSelf: 'flex-start' }}
+                            onClick={() => set조합펼침(true)}>
+                            조합 {조합목록.length}개 모두 보기
+                        </Button>}
                     <Stack spacing={0.75}>
-                        {조합목록.map((칸) => {
+                        {(조합목록.length > 20 && !조합펼침 ? 조합목록.slice(0, 20) : 조합목록).map((칸) => {
                             const keys = 칸.map((x) => x.k);
                             const names = 칸.map((x) => x.name);
                             const c = 조합찾기(keys) ?? {};
@@ -320,6 +427,14 @@ const ProductOptionEditor = ({ item, setItem, disabled = false }) => {
                                         size="small" sx={{ width: 130 }} type="number" label="재고" placeholder="무제한"
                                         value={c?.stock_qty ?? ''}
                                         onChange={(e) => 조합수정(keys, names, { stock_qty: e.target.value })}
+                                    />
+                                    {/* 조합 단위 품절 — 재고를 건드리지 않고 그 조합만 잠근다 */}
+                                    <FormControlLabel
+                                        sx={{ mr: 0, whiteSpace: 'nowrap', ...숨김 }}
+                                        control={<Switch size="small" disabled={disabled}
+                                            checked={!!c?.is_soldout}
+                                            onChange={(e) => 조합수정(keys, names, { is_soldout: e.target.checked ? 1 : 0 })} />}
+                                        label={<Typography sx={{ fontSize: 12 }}>품절</Typography>}
                                     />
                                 </Row>
                             );

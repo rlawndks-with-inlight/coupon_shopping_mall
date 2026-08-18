@@ -79,7 +79,7 @@ export const GUIDE_SECTIONS = [
       '저장',
     ],
     shots: [
-      { img: 'basic', cap: '상호·로고·대표색상과 회사/판매자 정보를 입력한 뒤 저장합니다.' },
+      { img: 'basic', cap: '「기본정보」 탭에서 브랜드 로고와 쇼핑몰 이름을 설정합니다. 회사정보·포인트·배송비는 상단 다른 탭에서 이어서 입력합니다.' },
     ],
     route: '/manager/settings/default/{id}',
   },
@@ -130,6 +130,7 @@ export const GUIDE_SECTIONS = [
     shots: [
       { img: 'product1', cap: '상품 목록에서 빨간 박스의 「+ 상품 추가」를 누릅니다.' },
       { img: 'product3', cap: '카테고리는 클릭해 담습니다(여러 개 = 칩). 상품명·판매가는 필수입니다.' },
+      { img: 'product4', cap: '상품 등록/수정 화면 전체 — 상단 정보 아래로 선택옵션·재고·한정판·추가상품·입력항목까지 한 화면에서 설정합니다.' },
     ],
     route: '/manager/products/list',
   },

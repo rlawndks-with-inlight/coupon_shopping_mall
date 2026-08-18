@@ -190,5 +190,46 @@ for (const f of ['src/pages/manager/orders/trx/[type].js',
   eq(`${이름}: 한 번만 그린다`, 개수, 1);
 }
 
+// ── 없는 컬럼을 고르지 않는다 ─────────────────────────────────────────────
+//
+// 붙잡아 두는 사고:
+//   getCancelState 의 transactions 조회가 delivery_fee 를 골랐다. 그런데 그 컬럼은
+//   transactions 에 없다 — 배송비는 주문 줄(transaction_orders.delivery_fee)에만 있다.
+//   그 한 칼럼 때문에 조회가 통째로 ER_BAD_FIELD_ERROR 로 죽어서, 부분취소 창은 늘
+//   '주문 정보를 불러오지 못했습니다' 만 띄웠다. 실행 경로도 같은 함수를 쓰므로 함께 죽었다.
+//   즉 부분취소는 처음부터 한 번도 동작한 적이 없다. 화면·금액계산·PG 연동은 다 멀쩡했다.
+//
+// 왜 사람 눈에 안 보였나: 잘못된 것은 컬럼 하나이고, 그 이름은 옆 테이블에 실제로 있다.
+// SQL 은 문자열이라 편집기도 빌드도 아무 말을 안 한다. DB 에 물어봐야만 드러난다.
+//
+// 운영 DB 의 transactions 컬럼(2026-08-18 확인). 조회에 쓰는 이름이 이 안에 있어야 한다.
+// 늘려야 하면 실제 DB 에 그 컬럼이 있는지 먼저 확인하고 여기에 같이 넣을 것.
+const TRANSACTIONS_컬럼 = new Set(`
+  id transaction_id brand_id user_id trx_dt trx_tm cxl_dt cxl_tm is_cancel cancel_type
+  agent_amount seller_id seller_trx_fee seller_amount ord_num password trx_id ori_trx_id
+  issuer acquirer appr_num installment buyer_name buyer_phone addr detail_addr card_num
+  bank_code acct_num virtual_bank_code virtual_acct_num virtual_acct_issued_seq trx_status
+  pay_key mid tid trx_root trx_method amount is_delete item_name created_at updated_at
+  invoice_num use_point is_cancel_trans check_picture have_brother receiver receiver_phone
+  zonecode buyer_name_idx buyer_phone_idx pay_method country_code country_name city state_region
+`.trim().split(/\s+/));
+
+{
+  // ⚠ 파일 전체에서 찾으면 안 된다. 앞쪽 points 조회의 SELECT 에 걸려
+  //    엉뚱한 구간을 캡처하고, 그러면 검사는 늘 조용히 통과한다(실제로 그랬다).
+  //    getCancelState 안으로 먼저 좁히고, 템플릿 리터럴 경계까지 정확히 잡는다.
+  const 함수 = src.slice(src.indexOf('export const getCancelState'));
+  const 조회 = 함수.match(/`SELECT([\s\S]*?)FROM transactions WHERE id=\?`/);
+  eq('getCancelState 가 transactions 를 조회한다', !!조회, true);
+  const 고른컬럼 = (조회?.[1] ?? '')
+    .split(',').map((s) => s.trim()).filter(Boolean)
+    .filter((s) => /^[a-z_][a-z0-9_]*$/i.test(s));   // 별칭·함수 호출은 건너뛴다
+  // 이 숫자가 갑자기 줄면 위 정규식이 또 빗나간 것이다 — 검사가 비어 버리는 걸 막는다
+  eq('컬럼을 10개 뽑았다(정규식이 빗나가지 않았다)', 고른컬럼.length, 10);
+  eq('없는 컬럼을 고르지 않는다', 고른컬럼.filter((c) => !TRANSACTIONS_컬럼.has(c)), []);
+  // 배송비는 줄에서만 더한다 — 거래에는 그 컬럼이 없다
+  eq('배송비는 주문 줄에서 더한다', /state\.lines\.reduce\(\(s, l\) => s \+ \(Number\(l\.delivery_fee\)/.test(src), true);
+}
+
 console.log(`\n통과 ${pass} / 실패 ${fail}`);
 process.exit(fail ? 1 : 0);

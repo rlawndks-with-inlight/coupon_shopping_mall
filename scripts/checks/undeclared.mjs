@@ -58,24 +58,7 @@ const 전역 = new Set([
 //   points/index       : changePasswordUserByManager
 //   blog·shop common   : router
 const 알려진구멍 = new Set([
-    'src/views/blog/auth/find-info/demo-1.js:122  setUserId',
-    'src/views/blog/auth/find-info/demo-1.js:176  setUserName',
-    'src/views/blog/auth/find-info/demo-2.js:122  setUserId',
-    'src/views/blog/auth/find-info/demo-2.js:176  setUserName',
-    'src/views/blog/auth/find-info/demo-3.js:120  setUserId',
-    'src/views/blog/auth/find-info/demo-3.js:174  setUserName',
-    'src/views/blog/auth/find-info/demo-4.js:122  setUserId',
-    'src/views/blog/auth/find-info/demo-4.js:176  setUserName',
-    'src/views/blog/auth/find-info/demo-5.js:122  setUserId',
-    'src/views/blog/auth/find-info/demo-5.js:176  setUserName',
-    'src/views/shop/demo-4/auth/pay-result.js:65  payData',
-    'src/views/shop/demo-9/auth/pay-result.js:63  payData',
-    'src/views/shop/demo-9/auth/cart.js:263  makeOrdNum',
-    'src/views/shop/demo-4/guide/consignment-guide.js:491  index',
-    'src/views/shop/demo-4/guide/consignment-guide.js:492  setOpenAllCategory',
-    'src/pages/manager/users/points/index.js:118  changePasswordUserByManager',
-    'src/components/elements/blog/common.js:561  router',
-    'src/components/elements/shop/common.js:609  router',
+    // (2026-08-18 전부 고쳤다. 새로 생기면 고치고 여기 적지 말 것)
 ]);
 
 const 훑기 = (d, out = []) => {

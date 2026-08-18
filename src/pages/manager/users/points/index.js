@@ -115,7 +115,10 @@ const PointList = () => {
     }
   }
   const onChangeUserPassword = async () => {
-    let result = await changePasswordUserByManager(changePasswordObj);
+    // 없는 함수를 부르고 있었다(changePasswordUserByManager 는 이 저장소 어디에도 없다) —
+    // '변경' 을 누르면 ReferenceError 로 화면이 죽었다.
+    // 같은 일을 하는 다른 화면들(users/list · agents · distributors)이 전부 이 API 를 쓴다.
+    let result = await apiManager('users/change-pw', 'update', changePasswordObj);
     if (result) {
       setDialogObj({
         ...dialogObj,

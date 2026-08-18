@@ -119,7 +119,9 @@ const Demo4 = (props) => {
                                 label={translate('이름')}
                                 sx={{ marginTop: '1.5rem' }}
                                 onChange={(e) => {
-                                    setUserId(e.target.value)
+                                    // 이름 칸이다(name 속성은 userId 로 잘못 붙어 있다). 없는 setUserId 를 불러
+                  // 글자를 치는 순간 ReferenceError 로 화면이 죽었다.
+                  setUsername(e.target.value)
                                 }}
                             />
                             <TextFieldBox>
@@ -173,7 +175,8 @@ const Demo4 = (props) => {
                                 label={translate('아이디')}
                                 sx={{ marginTop: '1.5rem' }}
                                 onChange={(e) => {
-                                    setUserName(e.target.value)
+                                    // 아이디 칸이다(name 속성은 userName 으로 잘못 붙어 있다).
+                  setUserid(e.target.value)
                                 }}
                             />
                             <TextFieldBox>

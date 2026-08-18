@@ -17,6 +17,7 @@ import { useRouter } from "next/router";
 import _ from "lodash";
 import { apiManager } from "src/utils/api";
 import { useSettingsContext } from "src/components/settings";
+import { 상단메뉴있는프레임 } from 'src/data/header-menu-frames';
 
 // ----------------------------------------------------------------------
 
@@ -62,6 +63,9 @@ const CustomContent = forwardRef(function CustomContent(props, ref) {
         onChangeSequence,
         categoryGroup,
     } = props;
+    // 별(상단 메뉴)을 이 프레임에서 쓸 수 있는지 보려면 브랜드 정보가 필요하다.
+    // 훅은 조건 없이 컴포넌트 맨 위에서 부른다 — 조건부로 부르면 훅 순서가 어긋나 화면이 백지가 된다.
+    const { themeDnsData } = useSettingsContext();
     const {
         disabled,
         expanded,
@@ -122,7 +126,11 @@ const CustomContent = forwardRef(function CustomContent(props, ref) {
             >
                 {label}
             </Typography>
-            {categoryGroup?.is_show_header_menu == 1 &&
+            {/* 별(상단 메뉴 노출) — 그 프레임에 상단 카테고리 메뉴가 있을 때만 보인다.
+                예전엔 카테고리 그룹 설정만 보고 떠서, 메뉴 자체가 없는 프레임(매거진형·파스텔
+                감성형 등)에서도 별이 보였고 눌러도 아무 일이 없었다.
+                되지도 않는 버튼을 두면 가맹점은 자기가 잘못 눌렀다고 생각한다. */}
+            {categoryGroup?.is_show_header_menu == 1 && 상단메뉴있는프레임(themeDnsData) &&
                 <>
                     <Tooltip title={`해당 ${categoryGroup?.category_group_name}을(를) 헤더메뉴에 노출 ${category?.is_show_header_menu == 0 ? '안' : ''} 하시려면 클릭해주세요.`}>
                         <IconButton onClick={() => onChangeStatus('is_show_header_menu', category?.id, (category?.is_show_header_menu == 0 ? 1 : 0))}>

@@ -38,7 +38,12 @@ const Header = (props) => {
     const router = useRouter();
 
     const { themeMode, onToggleMode, themeDnsData, themeCategoryList, onChangeCategoryList, onChangePostCategoryList } = useSettingsContext();
-    const headerCategories = (themeCategoryList ?? []).flatMap((g) => g?.product_categories ?? []);
+    // 상단 메뉴에는 '별' 을 켠 카테고리만 올린다(is_show_header_menu).
+    // 예전엔 필터가 없어 전 카테고리가 그대로 나왔다 — 가맹점이 별을 꺼도 안 사라졌다.
+    // 켜지는 것보다 **꺼지지 않는 것**이 문제였다. 어드민에 끄는 버튼이 있는데 안 먹었으니까.
+    const headerCategories = (themeCategoryList ?? [])
+        .flatMap((g) => g?.product_categories ?? [])
+        .filter((c) => c?.is_show_header_menu == 1);
     const [keyword, setKeyword] = useState("");
     const [isSellerPage, setIsSellerPage] = useState(false);
     const [isProductPage, setIsProductPage] = useState(false);

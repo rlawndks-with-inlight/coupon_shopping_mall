@@ -790,7 +790,7 @@ const Header = () => {
                                                                         {group?.sort_type == 0 &&
                                                                             <>
                                                                                 <Row style={{ columnGap: '1rem', flexWrap: 'wrap', rowGap: '2rem', margin: '2rem 0', flexDirection: 'column', color: 'white' }}>
-                                                                                    {group?.product_categories && group?.product_categories.map((category, idx) => (
+                                                                                    {group?.product_categories && group?.product_categories.filter((c) => c?.is_show_header_menu == 1).map((category, idx) => (
                                                                                         <>
                                                                                             {category.category_name != 'WATCH' && category.category_name != 'PRIVATE' && (
                                                                                                 <Row style={{ minWidth: '100px', }}>
@@ -837,7 +837,7 @@ const Header = () => {
                                                                                 </Row>
                                                                                 {/*<div style={{ border: '2px solid red', padding: '0' }} />*/}
                                                                                 <Col style={{ columnGap: '1rem', flexWrap: 'wrap', alignItems: 'flex-start', rowGap: '2rem', maxHeight: '200px', marginBottom: '2rem', color: 'white' }}>
-                                                                                    {group?.product_categories && group?.product_categories.map((category, idx) => {
+                                                                                    {group?.product_categories && group?.product_categories.filter((c) => c?.is_show_header_menu == 1).map((category, idx) => {
                                                                                         return <>
                                                                                             {category.category_name == 'WATCH' && (
                                                                                                 <div style={{ minWidth: '100px', display: 'flex' }}>
@@ -1301,7 +1301,7 @@ const Header = () => {
                                         defaultExpandIcon={<Icon icon={'ic:baseline-plus'} />}
                                         defaultEndIcon={<Icon icon={'mdi:dot'} />}
                                     >
-                                        {group?.product_categories && group?.product_categories.map((item1, idx) => (
+                                        {group?.product_categories && group?.product_categories.filter((c) => c?.is_show_header_menu == 1).map((item1, idx) => (
                                             <>
                                                 {returnSidebarMenu(item1, 0, {
                                                     router,

@@ -98,8 +98,15 @@ export const navConfig = () => {
     }
     return false
   }
+  // 특성 그룹 관리 — 가맹점에게는 감춘다.
+  //
+  // 특성(characters)은 '보여주기 전용 상품정보'로 정리됐다. 고르는 것도, 값이 가격에
+  // 붙는 것도 아니다. 그런데 이름이 '특성'이라 가맹점은 옵션인 줄 알고 들어와서
+  // 키·값을 뒤집어 넣거나 특성값에 가격을 적었다(넣은 6건 중 5건이 오용이었다).
+  // 잘못 넣으면 고객 화면에 그대로 나가므로, 아예 안 보이게 하는 편이 낫다.
+  // 본사(level 50)와 본사 도메인에서는 그대로 쓴다 — 기존 데이터를 손볼 곳이 필요하다.
   const isUseProductPropertyGroup = () => {
-    if (window.location.host.split(':')[0] == process.env.MAIN_FRONT_URL || user?.level >= 40) {
+    if (window.location.host.split(':')[0] == process.env.MAIN_FRONT_URL || user?.level >= 50) {
       return true;
     }
     return false

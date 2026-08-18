@@ -195,7 +195,10 @@ eq('한 주문 안에서도 합산', /lines\.filter\(\(l\) => Number\(l\?\.id\) 
 eq('담기에서 비회원 차단', (util.match(/if \(!assertMemberOnly\(/g) || []).length, 2);
 const addon = readFileSync(FRONT + 'src/components/elements/shop/ProductAddons.js', 'utf8');
 eq('상세에 한정 안내 표시', /한정 상품/.test(addon), true);
-eq('추가상품 없어도 한정 안내는 뜬다', /if \(!추가\.length && !한정\) return null/.test(addon), true);
+// 한정 상품이면 추가상품이 없어도 안내가 떠야 한다 — !한정 이 빠지면 그 안내가 사라진다.
+// 고른 옵션·금액 요약도 같은 자리에서 그리므로 조건이 하나 더 붙어 있다.
+eq('추가상품 없어도 한정 안내는 뜬다', /!추가.length && !한정/.test(addon), true);
+eq('고른 옵션 요약도 같은 자리에서 그린다', /SelectedOptionSummary/.test(addon), true);
 
 
 // ── 조합형: 앞 선택으로 뒤 선택지 거르기 ──────────────────────────────────

@@ -24,6 +24,8 @@ margin-bottom:10vh;
 `
 const Demo2 = (props) => {
     const {
+        // 전체보기(/shop/items)로 쓸 때 true. 제목과 '없을 때' 문구만 달라지고 나머지는 같다.
+        전체보기 = false,
         data: {
 
         },
@@ -69,7 +71,8 @@ const Demo2 = (props) => {
         settingPage({
             page: 1,
             page_size: 15,
-            search: router.query?.keyword ?? '',
+            // 전체보기는 검색어를 쓰지 않는다 — 주소에 keyword 가 남아 있으면 목록이 걸러진다.
+            search: 전체보기 ? '' : (router.query?.keyword ?? ''),
         }, true);
     }, [router.isReady, router.query?.keyword])
     const settingPage = async (search_obj, is_first) => {
@@ -98,8 +101,12 @@ const Demo2 = (props) => {
     return (
         <>
             <Wrappers>
+                {/* 전체보기(/shop/items)도 이 화면을 쓴다.
+                    블로그 프레임에는 전용 상품목록 화면이 없어서, 전체보기가 쇼핑몰 프레임1 목록으로
+                    떨어지고 있었다 — 헤더·카드 폭이 그 레이아웃 기준이라 디자인이 무너져 보였다.
+                    검색은 멀쩡했으므로 그 화면을 그대로 목록으로도 쓴다(제목·빈 문구만 바뀐다). */}
                 <Title>
-                    {translate('상품검색')}
+                    {전체보기 ? translate('전체상품') : translate('상품검색')}
                 </Title>
                 <div style={{
                     marginTop: '1rem'
@@ -128,7 +135,9 @@ const Demo2 = (props) => {
                                     <>
                                         <Col>
                                             <Icon icon={'basil:cancel-outline'} style={{ margin: '8rem auto 1rem auto', fontSize: themeObj.font_size.size1, color: themeObj.grey[300] }} />
-                                            <div style={{ margin: 'auto auto 8rem auto' }}>{translate('검색결과가 없습니다.')}</div>
+                                            <div style={{ margin: 'auto auto 8rem auto' }}>
+                                                {전체보기 ? translate('등록된 상품이 없습니다.') : translate('검색결과가 없습니다.')}
+                                            </div>
                                         </Col>
                                     </>}
                             </>}

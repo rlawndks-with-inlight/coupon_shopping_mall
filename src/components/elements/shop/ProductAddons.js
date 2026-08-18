@@ -3,6 +3,7 @@ import { useLocales } from 'src/locales';
 import { formatLang } from 'src/utils/format';
 import { commarNumber } from 'src/utils/function';
 import { addonGroups, isOptionSoldOut, isSameGroup } from 'src/data/product-options';
+import SelectedOptionSummary, { hasOptionSummary } from './SelectedOptionSummary';
 import { useAuthContext } from 'src/layouts/manager/auth/useAuthContext';
 
 // 추가상품 — 안 골라도 살 수 있는 것. 여러 개 고를 수 있고 다시 누르면 빠진다.
@@ -29,7 +30,12 @@ const ProductAddons = ({ product, selected, onSelect, style = {} }) => {
     // 한정판 안내도 여기서 그린다. 이 컴포넌트가 **프레임 11개 전부**에 들어가 있어서,
     // 따로 만들면 프레임마다 또 배선해야 하고 한 곳만 빠뜨리면 그 프레임에서만 안 뜬다.
     const 한정 = Number(product?.purchase_limit) > 0 ? Number(product.purchase_limit) : 0;
-    if (!추가.length && !한정) return null;
+    // 고른 옵션·최종금액 요약도 여기서 그린다.
+    // 이 컴포넌트가 **프레임 11개 전부**에 들어가 있어서, 요약을 따로 배선하면
+    // 프레임마다 또 붙여야 하고 한 곳만 빠뜨리면 그 프레임에서만 금액이 안 보인다.
+    // (추가상품 취소가 프레임 7개에서 안 되던 것과 같은 부류의 사고를 미리 막는다)
+    const 요약있음 = hasOptionSummary(product, selected);
+    if (!추가.length && !한정 && !요약있음) return null;
 
     const 골랐나 = (group, option) =>
         ((selected?.groups ?? []).find((g) => isSameGroup(g, group))?.options ?? [])
@@ -113,6 +119,10 @@ const ProductAddons = ({ product, selected, onSelect, style = {} }) => {
                 </div>
             ))}
             </>}
+
+            {/* 고른 옵션과 실제로 낼 금액. 상품가와 '조합 추가금' 이 따로 떨어져 있어
+                손님이 머릿속으로 더해야 했다(50,000 + 100,000 = 얼마?). */}
+            {요약있음 && <SelectedOptionSummary product={product} selected={selected} />}
         </div>
     );
 };

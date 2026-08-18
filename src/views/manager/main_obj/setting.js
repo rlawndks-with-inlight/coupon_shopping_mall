@@ -47,6 +47,7 @@ import ReactQuillComponent from '../react-quill'
 import { apiManager, uploadFilesByManager } from 'src/utils/api'
 import { getDefaultBanners, getBannerRatio } from 'src/data/default-banners'
 import { 추천섹션 } from 'src/data/frame-sections'
+import BannerFitNotice from 'src/components/manager/BannerFitNotice'
 
 const Tour = dynamic(() => import('reactour'), { ssr: false })
 //메인화면
@@ -869,6 +870,13 @@ const MainObjSetting = props => {
                                 width: 200,
                                 height: Math.round(200 / bannerRatio.aspect)
                               }}
+                            />
+                            {/* 올린 배너가 화면에서 어떻게 보일지 그 자리에서 알려준다.
+                                배너는 자르지 않으므로 비율이 다르면 여백이 생기는데,
+                                예전엔 저장하고 고객 화면을 열어 봐야 그걸 알 수 있었다. */}
+                            <BannerFitNotice
+                              ratio={bannerRatio}
+                              srcList={(item?.list ?? []).map((img) => img?.file?.preview || img?.src || img).filter((v) => typeof v === 'string')}
                             />
 
                             <Box sx={{ mt: 0.5 }}>

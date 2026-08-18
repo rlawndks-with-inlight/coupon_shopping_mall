@@ -82,7 +82,12 @@ top: 0;
 left: 0;
 display:flex;
 position: relative;
-background-size: ${props => props.type == 1 ? 'contain' : 'cover'};
+/* 배너는 **절대 자르지 않는다**(contain).
+   cover 는 컨테이너와 비율이 다른 이미지의 넘치는 만큼을 잘라낸다. 권장 규격(2000x850)을
+   지키면 잘림이 없지만, 안 지킨 이미지는 소리 없이 잘려 나갔다 — 문구·로고가 든 배너라면
+   그게 그대로 사라진다. 잘린 것은 화면만 봐서는 알 수도 없다.
+   비율이 다르면 남는 자리는 여백으로 둔다. 여백은 보기에 아쉬울 뿐이지만 잘림은 손실이다. */
+background-size: contain;
 background-repeat: no-repeat;
 background-position: center center;
 max-width: ${props => props.type == 1 ? '1600px' : ''};

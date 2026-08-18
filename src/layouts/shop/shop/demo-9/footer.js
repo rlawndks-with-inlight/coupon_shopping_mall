@@ -134,15 +134,18 @@ const Footer = (props) => {
                                                     공지사항
                                                 </Row>
                                             </Link>}
-                                        {/* 로그아웃은 하단정보에 두지 않는다(헤더에 있다).
-                                            비회원에게는 로그인 링크가 필요하므로 그쪽만 남긴다. */}
-                                        {!user &&
-                                            <Row
-                                                style={{ marginBottom: '0.7rem', color: 'white', cursor: 'pointer' }}
-                                                onClick={() => router.push('/shop/auth/login')}
-                                            >
-                                                로그인
-                                            </Row>}
+                                        <Row
+                                            style={{ marginBottom: '0.7rem', color: 'white', cursor: 'pointer' }}
+                                            onClick={() => {
+                                                if (user) {
+                                                    onLogout()
+                                                } else {
+                                                    router.push('/shop/auth/login')
+                                                }
+                                            }}
+                                        >
+                                            {user ? '로그아웃' : '로그인'}
+                                        </Row>
                                         <Link href={'/shop/auth/order-check'} passHref>
                                             <Row style={{ marginBottom: '0.7rem', color: 'white', cursor: 'pointer' }}>
                                                 비회원주문조회

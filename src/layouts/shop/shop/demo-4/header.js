@@ -790,7 +790,7 @@ const Header = () => {
                                                                         {group?.sort_type == 0 &&
                                                                             <>
                                                                                 <Row style={{ columnGap: '1rem', flexWrap: 'wrap', rowGap: '2rem', margin: '2rem 0', flexDirection: 'column', color: 'white' }}>
-                                                                                    {group?.product_categories && group?.product_categories.filter((c) => c?.is_show_header_menu == 1).map((category, idx) => (
+                                                                                    {group?.product_categories && group?.product_categories.map((category, idx) => (
                                                                                         <>
                                                                                             {category.category_name != 'WATCH' && category.category_name != 'PRIVATE' && (
                                                                                                 <Row style={{ minWidth: '100px', }}>
@@ -837,7 +837,7 @@ const Header = () => {
                                                                                 </Row>
                                                                                 {/*<div style={{ border: '2px solid red', padding: '0' }} />*/}
                                                                                 <Col style={{ columnGap: '1rem', flexWrap: 'wrap', alignItems: 'flex-start', rowGap: '2rem', maxHeight: '200px', marginBottom: '2rem', color: 'white' }}>
-                                                                                    {group?.product_categories && group?.product_categories.filter((c) => c?.is_show_header_menu == 1).map((category, idx) => {
+                                                                                    {group?.product_categories && group?.product_categories.map((category, idx) => {
                                                                                         return <>
                                                                                             {category.category_name == 'WATCH' && (
                                                                                                 <div style={{ minWidth: '100px', display: 'flex' }}>
@@ -1291,28 +1291,9 @@ const Header = () => {
                                 </>
                             ))}
                         </>}
-                    {/* {themeCategoryList && themeCategoryList.map((group, index) => (
-                        <>
-                            {group?.is_show_header_menu == 1 &&
-                                <>
-                                    <ColumnMenuTitle>{formatLang(group, 'category_group_name')}</ColumnMenuTitle>
-                                    <TreeView
-                                        defaultCollapseIcon={<Icon icon={'ic:baseline-minus'} />}
-                                        defaultExpandIcon={<Icon icon={'ic:baseline-plus'} />}
-                                        defaultEndIcon={<Icon icon={'mdi:dot'} />}
-                                    >
-                                        {group?.product_categories && group?.product_categories.filter((c) => c?.is_show_header_menu == 1).map((item1, idx) => (
-                                            <>
-                                                {returnSidebarMenu(item1, 0, {
-                                                    router,
-                                                    setSideMenuOpen
-                                                }, index)}
-                                            </>
-                                        ))}
-                                    </TreeView>
-                                </>}
-                        </>
-                    ))} */}
+                    {/* 여기 있던 카테고리 트리 메뉴(약 20줄)를 지웠다. 통째로 주석 처리된 죽은 코드였다.
+                        그 안의 별 플래그를 살아 있는 코드로 잘못 읽어, 이 프레임이
+                        '별로 거른다' 고 판단한 적이 있다. 주석 안 코드는 읽는 사람을 속인다. */}
                     {
                         postCategories.length > 0 &&
                         <>

@@ -126,18 +126,12 @@ const CustomContent = forwardRef(function CustomContent(props, ref) {
             >
                 {label}
             </Typography>
-            {/* 별(상단 메뉴 노출) — 그 프레임에 상단 카테고리 메뉴가 있을 때만 보인다.
-                예전엔 카테고리 그룹 설정만 보고 떠서, 메뉴 자체가 없는 프레임(매거진형·파스텔
-                감성형 등)에서도 별이 보였고 눌러도 아무 일이 없었다.
-                되지도 않는 버튼을 두면 가맹점은 자기가 잘못 눌렀다고 생각한다. */}
-            {categoryGroup?.is_show_header_menu == 1 && 상단메뉴있는프레임(themeDnsData) &&
-                <>
-                    <Tooltip title={`해당 ${categoryGroup?.category_group_name}을(를) 헤더메뉴에 노출 ${category?.is_show_header_menu == 0 ? '안' : ''} 하시려면 클릭해주세요.`}>
-                        <IconButton onClick={() => onChangeStatus('is_show_header_menu', category?.id, (category?.is_show_header_menu == 0 ? 1 : 0))}>
-                            <Icon icon={'iconoir:star-solid'} fontSize={18} style={{ color: `${category?.is_show_header_menu == 1 ? 'rgb(250, 175, 0)' : 'rgba(145, 158, 171, 0.48)'}` }} />
-                        </IconButton>
-                    </Tooltip>
-                </>}
+            {/* 별(상단 메뉴 노출) 아이콘을 없앴다. 만든 카테고리는 상단 메뉴에 그냥 다 올린다.
+                  · 1,404개 중 1,403개가 켜져 있었다 — 아무도 안 쓰던 기능이다
+                  · 아이콘 하나에 툴팁뿐이라 뜻을 알기 어려웠고 노출(눈)과 헷갈렸다
+                  · 블로그형 프레임에는 상단 메뉴 자체가 없어 절반은 눌러도 아무 일이 없었다
+                카테고리를 감추려면 노출(status, 눈 아이콘)이 이미 있다. 두 개는 많다.
+                DB 의 is_show_header_menu 값은 그대로 둔다 — 되살릴 일이 생기면 그때 쓴다. */}
             <Tooltip title={`해당 ${categoryGroup?.category_group_name}을(를) 수정하시려면 클릭해주세요.`}>
                 <IconButton onClick={() => onClickCategoryLabel(category, depth)}>
                     <Icon icon='tabler:edit' fontSize={16} />
@@ -216,7 +210,7 @@ display:flex;
 const ItemTypes = { CARD: 'card' }
 const CategoryList = () => {
     const { setModal } = useModal()
-    const { settingPlatform } = useSettingsContext(); // 카테고리 CRUD 후 themeCategoryList 갱신용
+    const { settingPlatform, themeDnsData } = useSettingsContext(); // 카테고리 CRUD 후 themeCategoryList 갱신용
     const defaultSetting = {
         category_file: '',
         category_name: '',
@@ -521,8 +515,8 @@ const CategoryList = () => {
                                                     · 저장하면 상품 등록·수정 화면에서 이 {categoryGroup?.category_group_name}을(를) 고를 수 있습니다.<br />
                                                     · 하위 {categoryGroup?.category_group_name}은(는) 왼쪽 목록에서 <b>+</b> 를 눌러 추가합니다.<br />
                                                     · 왼쪽 목록의 <b>눈</b> 아이콘으로 쇼핑몰 노출을 켜고 끕니다.
-                                                    {categoryGroup?.is_show_header_menu == 1 &&
-                                                        <> <b>별</b> 아이콘을 켜면 상단 메뉴에도 나옵니다.</>}
+                                                    {상단메뉴있는프레임(themeDnsData) &&
+                                                        <><br />· 노출된 {categoryGroup?.category_group_name}은(는) 쇼핑몰 상단 메뉴에 함께 나옵니다.</>}
                                                 </Typography>
                                                 {/* 예전엔 여기 marginTop:100px 이 붙어 있었다. 아래 설명칸이 차지하던 높이를
                                                     버튼으로 밀어 두려던 값인데, 그 칸을 없앤 뒤로는 버튼만 붕 떠 보인다. */}

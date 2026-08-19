@@ -604,7 +604,7 @@ const Header = () => {
               <NoneShowMobile style={{ width: '100%', flexWrap: 'wrap' }}>
                 {headerCategories.length > 0 && headerCategories.map((item1, idx1) => (
                   <>
-                    {item1?.is_show_header_menu == 1 &&
+                    {
                       <>
                         <CategoryMenuContainer
                           theme={theme}
@@ -658,7 +658,7 @@ const Header = () => {
               >
                 {headerCategories.length > 0 && headerCategories.map((item1, idx1) => (
                   <>
-                    {item1?.is_show_header_menu == 1 &&
+                    {
                       <>
                         <CategoryMenu borderColor={themeMode == 'dark' ? '#fff' : '#000'} themeMode={themeMode} theme={theme} onMouseOver={() => {
                           onHoverCategory(`hover_${item1?.id}`)

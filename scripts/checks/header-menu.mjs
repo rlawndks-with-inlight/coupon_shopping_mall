@@ -1,13 +1,18 @@
 import { FRONT_ROOT } from './_roots.mjs';
 import { readFileSync } from 'fs';
 
-// 카테고리 '별' = 상단 메뉴 노출.
+// 상단 카테고리 메뉴 — 어느 프레임에 있고, 무엇을 올리는가.
 //
-// 붙잡아 두는 사고:
-//  · 상단 메뉴를 그리는 프레임이 별을 안 보고 **전 카테고리**를 뿌렸다.
-//    켜지는 것보다 **꺼지지 않는 것**이 문제였다 — 어드민에 끄는 버튼이 있는데 안 먹었다.
-//  · 상단 메뉴가 아예 없는 프레임에서도 어드민에 별이 떴다.
-//    되지도 않는 버튼을 두면 가맹점은 자기가 잘못 눌렀다고 생각한다.
+// 결론: 만든 카테고리는 **거르지 않고 다 올린다.**
+//   별(is_show_header_menu)로 골라 올리던 것을 없앴다 —
+//   1,404개 중 1,403개가 켜져 있어 아무도 안 쓰던 기능이고, 노출(눈)과 헷갈렸으며,
+//   블로그형 프레임에는 상단 메뉴 자체가 없어 절반은 눌러도 아무 일이 없었다.
+//   카테고리를 감추는 수단은 노출(status)이 이미 있다.
+//
+// 붙잡아 두는 것:
+//  · 별 필터가 되살아나면 안 된다(그 기능은 없앴다).
+//  · 어드민에 별 아이콘이 다시 생기면 안 된다.
+//  · 어느 프레임에 상단 메뉴가 있는지는 '값을 준비하나' 가 아니라 '화면에 그리나' 로 판단한다.
 //  · blog 4~9 는 전부 BlogLayout6 를 쓴다. blog/demo-4·5 의 header.js 는 아무도 import 하지 않는
 //    죽은 파일이라, 그 파일만 보고 '이 프레임은 메뉴가 있다' 고 판단하면 틀린다.
 
@@ -37,12 +42,10 @@ const 걸러야하는헤더 = [
     'src/layouts/shop/shop/demo-7/header.js', 'src/layouts/shop/shop/demo-8/header.js',
     'src/layouts/shop/shop/demo-9/header.js',
 ];
-const 안거르는곳 = 걸러야하는헤더.filter((p) => {
-    const src = readFileSync(FRONT_ROOT + p, 'utf8')
-        .replace(/\/\*[\s\S]*?\*\//g, '').replace(/^\s*\/\/.*$/gm, '');   // 주석 안은 안 돈다
-    return !/is_show_header_menu\s*==\s*1/.test(src);
-});
-eq('상단 메뉴 헤더는 전부 별로 거른다', 안거르는곳, []);
+// 별로 거르던 코드가 되살아나면 안 된다. 만든 카테고리는 다 올린다.
+const 아직거르는곳 = 걸러야하는헤더.filter((p) =>
+    readFileSync(FRONT_ROOT + p, 'utf8').includes('is_show_header_menu'));
+eq('상단 메뉴 헤더가 별로 거르지 않는다', 아직거르는곳, []);
 
 // 블로그 헤더는 카테고리를 화면에 그리지 않는다.
 // 그리기 시작하면 이 검사가 걸리고, 그때 별 필터를 함께 넣어야 한다.
@@ -53,10 +56,13 @@ for (const p of ['src/layouts/shop/blog/demo-2/header.js', 'src/layouts/shop/blo
        /categories|category_name/.test(렌더), false);
 }
 
-// 어드민의 별은 프레임을 함께 본다
+// 어드민에 별 아이콘이 없어야 한다.
+// 정규식 대신 문자열 포함으로 본다 — 아래 세 문자열은 남은 설명 주석에는 나오지 않는다.
 const 어드민 = readFileSync(FRONT_ROOT + 'src/pages/manager/products/categories/[id].js', 'utf8');
-eq('어드민 별이 프레임을 본다',
-   /is_show_header_menu == 1 && 상단메뉴있는프레임\(themeDnsData\)/.test(어드민), true);
+eq('어드민에 별 아이콘이 없다', 어드민.includes('iconoir:star-solid'), false);
+eq('별 토글도 없다', 어드민.includes("onChangeStatus('is_show_header_menu'"), false);
+// 상단 메뉴가 있는 프레임에서만 그 사실을 알린다
+eq('상단 메뉴 안내는 프레임을 보고 띄운다', 어드민.includes('상단메뉴있는프레임(themeDnsData)'), true);
 
 console.log(`\n통과 ${pass} / 실패 ${fail}`);
 process.exit(fail ? 1 : 0);

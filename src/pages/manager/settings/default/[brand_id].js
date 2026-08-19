@@ -50,6 +50,7 @@ import { FRAMES, LEGACY_FRAMES } from 'src/components/main-site/frameList'
 import { allLangs } from 'src/locales'
 import { isShopgoMerchant } from 'src/utils/is-shopgo'
 import { COURIER_LIST } from 'src/data/couriers';
+import { 금액표시, 금액입력 } from 'src/utils/money-input'
 // 저장돼 있지 않으면 기본(100%). 이상한 값이 들어와도 슬라이더가 범위를 벗어나면 안 된다.
 const 로고배율 = (item) => {
   const v = Number(item?.setting_obj?.logo_scale)
@@ -184,9 +185,15 @@ const DefaultSetting = () => {
         }
       ]
       : []),
-    // SEO설정만 가맹점(레벨40)에게 연다 — 자기 몰의 검색 노출 문구는 가맹점이 직접 써야 한다.
+    // SEO설정: 본사만.
+    //
+    // 한 번 가맹점(40)에게 열었다가 되돌린다. '자기 몰의 검색 노출 문구는 가맹점이 직접
+    // 써야 한다' 는 이유였는데, 이 탭에 그런 칸이 없다 — 들어 있는 것은 네이버토큰·구글토큰
+    // 두 칸이 전부고, 둘 다 서치어드바이저·서치콘솔에서 발급받아 붙이는 소유확인 값이다.
+    // 가맹점이 채울 수 있는 성질이 아니고, 비어 있어도 몰은 정상 동작한다.
+    // 탭 이름만 보고 판단했던 것이라 실제 내용으로 다시 잡는다.
     // (데모설정=프레임 교체라 본사 결정 / 포인트=기능 미사용 / 발송번호=문자 게이트웨이 미사용 → 50 유지)
-    ...(user?.level >= 40
+    ...(user?.level >= 50
       ? [
         {
           value: 6,
@@ -1273,16 +1280,17 @@ const DefaultSetting = () => {
                         <FormControl variant='outlined'>
                           <InputLabel>사용 가능 최소 적립 포인트</InputLabel>
                           <OutlinedInput
-                            type='number'
+                            type='text'
+                inputProps={{ inputMode: 'numeric' }}
                             label='사용 가능 최소 적립 포인트'
-                            value={item?.setting_obj?.point_use_min ?? 0}
+                            value={금액표시(item?.setting_obj?.point_use_min ?? 0)}
                             endAdornment={<InputAdornment position='end'>P</InputAdornment>}
                             onChange={e => {
                               setItem({
                                 ...item,
                                 ['setting_obj']: {
                                   ...item?.setting_obj,
-                                  ['point_use_min']: e.target.value
+                                  ['point_use_min']: 금액입력(e)
                                 }
                               })
                             }}
@@ -1292,16 +1300,17 @@ const DefaultSetting = () => {
                         <FormControl variant='outlined'>
                           <InputLabel>포인트 사용가능 최소 주문금액 (배송비제외)</InputLabel>
                           <OutlinedInput
-                            type='number'
+                            type='text'
+                inputProps={{ inputMode: 'numeric' }}
                             label='포인트 사용가능 최소 주문금액 (배송비제외)'
-                            value={item?.setting_obj?.use_point_min_price ?? 0}
+                            value={금액표시(item?.setting_obj?.use_point_min_price ?? 0)}
                             endAdornment={<InputAdornment position='end'>원</InputAdornment>}
                             onChange={e => {
                               setItem({
                                 ...item,
                                 ['setting_obj']: {
                                   ...item?.setting_obj,
-                                  ['use_point_min_price']: e.target.value
+                                  ['use_point_min_price']: 금액입력(e)
                                 }
                               })
                             }}
@@ -1312,15 +1321,16 @@ const DefaultSetting = () => {
                         <InputLabel>최대포인트 사용금액</InputLabel>
                         <OutlinedInput
                           label='최대포인트 사용금액'
-                          type='number'
-                          value={item?.setting_obj?.max_use_point ?? 0}
+                          type='text'
+                          inputProps={{ inputMode: 'numeric' }}
+                          value={금액표시(item?.setting_obj?.max_use_point ?? 0)}
                           endAdornment={<InputAdornment position='end'>원</InputAdornment>}
                           onChange={e => {
                             setItem({
                               ...item,
                               ['setting_obj']: {
                                 ...item?.setting_obj,
-                                ['max_use_point']: e.target.value
+                                ['max_use_point']: 금액입력(e)
                               }
                             })
                           }}
@@ -1481,15 +1491,16 @@ const DefaultSetting = () => {
                         <InputLabel>기본 배송비</InputLabel>
                         <OutlinedInput
                           label='기본 배송비'
-                          type='number'
-                          value={item?.setting_obj?.delivery_fee_default ?? 0}
+                          type='text'
+                          inputProps={{ inputMode: 'numeric' }}
+                          value={금액표시(item?.setting_obj?.delivery_fee_default ?? 0)}
                           endAdornment={<InputAdornment position='end'>원</InputAdornment>}
                           onChange={e => {
                             setItem({
                               ...item,
                               ['setting_obj']: {
                                 ...item?.setting_obj,
-                                ['delivery_fee_default']: e.target.value
+                                ['delivery_fee_default']: 금액입력(e)
                               }
                             })
                           }}
@@ -1503,9 +1514,14 @@ const DefaultSetting = () => {
                           늘 같은 택배사를 쓰는 가맹점이 주문마다 같은 값을 고르고 있었다.
                           주문마다 바꾸는 것은 그대로 된다(여기 값은 시작값일 뿐이다). */}
                       <FormControl variant='outlined'>
-                        <InputLabel>기본 택배사</InputLabel>
+                        {/* ⚠ displayEmpty 를 쓸 때는 라벨을 손으로 올려야 한다(shrink).
+                            안 그러면 값이 비어 있는 동안 라벨이 안 뜨는데, displayEmpty 라
+                            칸에는 '지정 안 함' 이 이미 그려져 있어 두 글자가 겹쳐 보인다.
+                            테두리 홈도 같이 뚫어 준다(notched) — 안 그러면 라벨이 선을 가로지른다.
+                            이 파일의 다른 칸들은 값이 늘 있어서 이 문제가 없다. */}
+                        <InputLabel shrink>기본 택배사</InputLabel>
                         <Select
-                          label='기본 택배사'
+                          input={<OutlinedInput notched label='기본 택배사' />}
                           displayEmpty
                           value={item?.setting_obj?.default_courier ?? ''}
                           onChange={e => {
@@ -1535,15 +1551,16 @@ const DefaultSetting = () => {
                         <InputLabel>무료배송 기준금액</InputLabel>
                         <OutlinedInput
                           label='무료배송 기준금액'
-                          type='number'
-                          value={item?.setting_obj?.free_ship_min ?? 0}
+                          type='text'
+                          inputProps={{ inputMode: 'numeric' }}
+                          value={금액표시(item?.setting_obj?.free_ship_min ?? 0)}
                           endAdornment={<InputAdornment position='end'>원</InputAdornment>}
                           onChange={e => {
                             setItem({
                               ...item,
                               ['setting_obj']: {
                                 ...item?.setting_obj,
-                                ['free_ship_min']: e.target.value
+                                ['free_ship_min']: 금액입력(e)
                               }
                             })
                           }}

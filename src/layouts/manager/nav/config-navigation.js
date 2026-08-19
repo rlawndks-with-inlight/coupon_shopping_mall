@@ -10,6 +10,7 @@ import { apiManager } from 'src/utils/api';
 import { mainObjSchemaList } from 'src/utils/format';
 import { isShopgoBrand, isShopgoMerchant } from 'src/utils/is-shopgo';
 import { HOME_TEXT_SCHEMA } from 'src/data/home-texts';
+import { 본사화면 } from 'src/utils/manager-visibility';
 
 // ----------------------------------------------------------------------
 
@@ -105,12 +106,9 @@ export const navConfig = () => {
   // 키·값을 뒤집어 넣거나 특성값에 가격을 적었다(넣은 6건 중 5건이 오용이었다).
   // 잘못 넣으면 고객 화면에 그대로 나가므로, 아예 안 보이게 하는 편이 낫다.
   // 본사(level 50)와 본사 도메인에서는 그대로 쓴다 — 기존 데이터를 손볼 곳이 필요하다.
-  const isUseProductPropertyGroup = () => {
-    if (window.location.host.split(':')[0] == process.env.MAIN_FRONT_URL || user?.level >= 50) {
-      return true;
-    }
-    return false
-  }
+  // 판정은 utils/manager-visibility.js 한 곳에 둔다 — 메인페이지관리의 섹션 목록도
+  // 같은 기준을 써야 한다(메뉴에서만 감추면 거기서는 그대로 골라진다).
+  const isUseProductPropertyGroup = () => 본사화면(user);
   const isUsePostCategory = () => {
     if (window.location.host.split(':')[0] == process.env.MAIN_FRONT_URL || user?.level >= 50) {
       return true;

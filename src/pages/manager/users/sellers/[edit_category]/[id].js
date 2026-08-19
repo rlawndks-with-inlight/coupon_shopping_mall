@@ -16,6 +16,7 @@ import { apiManager, uploadFileByManager } from "src/utils/api";
 import { bankCodeList } from "src/utils/format";
 import { SelectCategoryComponent } from "src/pages/manager/products/[edit_category]/[id]";
 import { getAllIdsWithParents } from "src/utils/function";
+import { 금액표시, 금액입력 } from 'src/utils/money-input'
 
 
 const SellerEdit = () => {
@@ -837,13 +838,14 @@ const SellerEdit = () => {
                       <Stack spacing={3}>
                         <TextField
                           label='상품 판매 가능한 최소 가격(미설정시 0원)'
-                          value={item.seller_range_u}
-                          type="number"
+                          value={금액표시(item.seller_range_u)}
+                          type='text'
+                          inputProps={{ inputMode: 'numeric' }}
                           onChange={(e) => {
                             setItem(
                               {
                                 ...item,
-                                ['seller_range_u']: e.target.value
+                                ['seller_range_u']: 금액입력(e)
                               }
                             )
                           }} />
@@ -851,13 +853,14 @@ const SellerEdit = () => {
                       <Stack spacing={3}>
                         <TextField
                           label='상품 판매 가능한 최대 가격(미설정시 제한없음)'
-                          value={item.seller_range_o}
-                          type="number"
+                          value={금액표시(item.seller_range_o)}
+                          type='text'
+                          inputProps={{ inputMode: 'numeric' }}
                           onChange={(e) => {
                             setItem(
                               {
                                 ...item,
-                                ['seller_range_o']: e.target.value
+                                ['seller_range_o']: 금액입력(e)
                               }
                             )
                           }} />

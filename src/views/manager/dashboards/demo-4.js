@@ -15,6 +15,7 @@ import { apiManager } from "src/utils/api";
 import { useRouter } from "next/router";
 import toast from "react-hot-toast";
 import { useAuthContext } from "src/layouts/manager/auth/useAuthContext";
+import { 금액표시, 금액입력 } from 'src/utils/money-input'
 
 export const DashboardDemo4 = () => {
 
@@ -490,12 +491,13 @@ export const DashboardDemo4 = () => {
                                 <TextField
                                 autoFocus
                                 fullWidth
-                                value={adjustMoney}
+                                value={금액표시(adjustMoney)}
                                 margin="dense"
-                                type="number"
+                                type='text'
+                inputProps={{ inputMode: 'numeric' }}
                                 label="정산요청금액"
                                 onChange={(e) => {
-                                    setAdjustMoney(e.target.value)
+                                    setAdjustMoney(금액입력(e))
                                 }}
                             />
                                 */

@@ -7,6 +7,7 @@ import { toast } from "react-hot-toast";
 import _ from "lodash";
 import { useModal } from "src/components/dialog/ModalProvider";
 import { apiManager } from "src/utils/api";
+import { 금액표시, 금액입력 } from 'src/utils/money-input'
 
 const PointEdit = () => {
   const { setModal } = useModal()
@@ -68,13 +69,14 @@ const PointEdit = () => {
                     }} />
                   <TextField
                     label='부여할포인트 (음수시 감소건)'
-                    value={item.point}
-                    type="number"
+                    value={금액표시(item.point)}
+                    type='text'
+                          inputProps={{ inputMode: 'numeric' }}
                     onChange={(e) => {
                       setItem(
                         {
                           ...item,
-                          ['point']: e.target.value
+                          ['point']: 금액입력(e)
                         }
                       )
                     }} />

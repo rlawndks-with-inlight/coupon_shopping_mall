@@ -22,6 +22,7 @@ import dynamic from 'next/dynamic'
 import { ProductDetailsCarousel } from "src/views/@dashboard/e-commerce/details";
 import { SkeletonProductDetails } from "src/components/skeleton";
 import ProductOptionEditor from 'src/components/manager/ProductOptionEditor';
+import { 금액표시, 금액입력 } from 'src/utils/money-input'
 
 // 옵션 개편분을 저장 요청에 싣는다.
 //
@@ -1962,14 +1963,15 @@ const ProductEdit = () => {
                         <InputLabel>배송비</InputLabel>
                         <OutlinedInput
                           label='배송비'
-                          type="number"
-                          value={item.delivery_fee}
+                          type='text'
+                          inputProps={{ inputMode: 'numeric' }}
+                          value={금액표시(item.delivery_fee)}
                           endAdornment={<InputAdornment position="end">원</InputAdornment>}
                           onChange={(e) => {
                             setItem(
                               {
                                 ...item,
-                                ['delivery_fee']: e.target.value
+                                ['delivery_fee']: 금액입력(e)
                               }
                             )
                           }} />
@@ -2282,14 +2284,15 @@ const ProductEdit = () => {
                         <OutlinedInput
                           disabled={item?.product_type == 0}
                           label='수수료'
-                          type="number"
-                          value={item.consignment_fee}
+                          type='text'
+                          inputProps={{ inputMode: 'numeric' }}
+                          value={금액표시(item.consignment_fee)}
                           endAdornment={<InputAdornment position="end">{item.consignment_fee_type == 0 ? "원" : '%'}</InputAdornment>}
                           onChange={(e) => {
                             setItem(
                               {
                                 ...item,
-                                ['consignment_fee']: e.target.value
+                                ['consignment_fee']: 금액입력(e)
                               }
                             )
                           }} />

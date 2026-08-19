@@ -10,8 +10,16 @@ import { formatLang } from 'src/utils/format';
 const FullWrappers = styled.div`
   width:100%;
   display:flex;
+  flex-wrap: wrap;
   min-height: 600px;
-  background-image: url('/images/test/notice-banner.jpg');
+  /* 스톡 사진(검은 배경에 주황색 물음표)이 모든 가맹점 게시판 배경으로 깔려 있었다.
+     경로부터 /images/test/ 인 테스트 자산이고, 공지·이벤트 배경으로 뜻도 안 맞았다.
+     이 섹션에는 이미 배경 이미지 업로드 칸이 있다(메인페이지관리 → 게시판).
+     안 올렸을 때의 기본값만 걷어낸다.
+  background-image: url('/images/test/notice-banner.jpg'); */
+  /* 배경을 통째로 비우면 안 된다 — 이 섹션의 글자와 테두리가 전부 흰색이라
+     흰 바닥에 흰 글씨가 된다. 사진을 안 올린 동안은 어두운 바닥을 깔아 둔다. */
+  background-color: #2b2b2b;
   background-size: cover;
   background-repeat: no-repeat;
   background-position: fixed;
@@ -23,7 +31,13 @@ const FullWrappers = styled.div`
   }
 `
 const ContentWrappers = styled.div`
-width:50%;
+/* 화면 폭이 아니라 담긴 자리를 따른다.
+   블로그형 홈은 컬럼이 840px 로 묶여 있어서 1400px 모니터에서도 이 칸은 420px 다.
+   그런데 접히는 조건이 @media(화면 1200px)라 넓은 화면 가지에 그대로 남았고,
+   안의 600px 상자가 420px 칸을 180px 삐져나왔다. flex 에 맡기면 자리가 좁을 때
+   알아서 아래로 내려간다 — 화면 크기를 몰라도 된다. */
+flex: 1 1 320px;
+min-width: 0;
 display:flex;
 flex-direction:column;
 align-items:center;
@@ -45,7 +59,8 @@ padding:1rem;
 display:flex;
 flex-direction:column;
 border:1px solid #fff;
-width:600px;
+width:100%;
+max-width:600px;
 background:#00000099;
 @media (max-width:1200px){
   width:80%;
@@ -56,7 +71,8 @@ display:flex;
 overflow-x: auto;
 white-space: nowrap;
 margin: 0 auto;
-width:600px;
+width:100%;
+max-width:600px;
 @media (max-width:1200px){
   width:80%;
 }

@@ -41,6 +41,11 @@ for (const [이름, dns] of 프레임) {
     eq(`${이름} 추천이 비어 있지 않다`, 목록.length > 0, true);
     eq(`${이름} 추천에 없는 섹션 이름 없음`, 목록.filter((t) => !있는type.has(t)), []);
     eq(`${이름} 첫 추천은 배너`, 목록[0], 'banner');   // 어느 프레임이든 배너부터가 자연스럽다
+    eq(`${이름} 추천에 같은 섹션이 두 번 없다`, 목록.length, new Set(목록).size);
+    // 에디터는 프레임을 안 탄다(자유 편집 영역이라 넣은 대로 나온다). 그런데도 프레임1 에서
+    // 빠져 있었다 — 소개 문구에 '읽을거리' 가 없다는 이유였다. 배송·교환 안내를 홈에 붙일
+    // 자리는 상품이 많은 몰일수록 더 필요하다. 문구를 근거로 다시 빠지지 않게 못 박는다.
+    eq(`${이름} 추천에 에디터가 있다`, 목록.includes('editor'), true);
 }
 
 // 프레임3·4 는 헤더에 카테고리가 없다(좁아서 넣을 수도 없다). 카테고리 이동은
@@ -62,6 +67,20 @@ const src = readFileSync(FRONT_ROOT + 'src/views/manager/main_obj/setting.js', '
 eq('추천 묶음 제목이 있다', /이 프레임에 어울리는 섹션/.test(src), true);
 eq('나머지도 그대로 고를 수 있다', /그 밖의 섹션/.test(src), true);
 eq('추천을 모르면 예전처럼 한 줄', /if \(!추천목록\.length\) return 전체\.map\(줄\);/.test(src), true);
+
+// ── 가맹점에게 감추는 섹션 ────────────────────────────────────────────────
+// '특성 그룹 관리' 는 가맹점 메뉴에서 이미 감췄다. 그런데 특성으로 만들어지는 섹션은
+// 메인페이지관리 목록에 그대로 남아 있어서, 가맹점이 '원산지 - 국산' 같은 섹션을 홈에
+// 올릴 수는 있는데 정작 그 특성을 손볼 곳이 없었다. 두 화면이 같은 기준을 써야 한다.
+eq('섹션 목록도 특성을 가맹점에게 감춘다',
+    /본사화면\(user\) \|\| !String\(itm\.type\)\.startsWith\('items-property-group-'\)/.test(src), true);
+const nav = readFileSync(FRONT_ROOT + 'src/layouts/manager/nav/config-navigation.js', 'utf8');
+eq('메뉴도 같은 판정을 쓴다(각자 다시 짜지 않는다)',
+    /isUseProductPropertyGroup = \(\) => 본사화면\(user\)/.test(nav), true);
+// 감추기는 화면에서만 한다 — level 50 의 권한을 막는 장치가 아니다(의도된 부분).
+const vis = readFileSync(FRONT_ROOT + 'src/utils/manager-visibility.js', 'utf8');
+eq('본사 도메인이면 등급과 무관하게 본사 화면', /MAIN_FRONT_URL\) return true;/.test(vis), true);
+eq('본사는 level 50 부터', /Number\(user\?\.level\) >= 50/.test(vis), true);
 
 console.log(`\n통과 ${pass} / 실패 ${fail}`);
 process.exit(fail ? 1 : 0);

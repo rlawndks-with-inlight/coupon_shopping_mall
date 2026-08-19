@@ -30,6 +30,7 @@ import { base64toFile, getMainObjType } from 'src/utils/function'
 import _, { constant } from 'lodash'
 import { useSettingsContext } from 'src/components/settings'
 import { isShopgoBrand, isShopgoMerchant } from 'src/utils/is-shopgo'
+import { 본사화면 } from 'src/utils/manager-visibility'
 import { useRouter } from 'next/router'
 import CustomBreadcrumbs from 'src/components/custom-breadcrumbs/CustomBreadcrumbs'
 import { toast } from 'react-hot-toast'
@@ -1175,7 +1176,13 @@ const MainObjSetting = props => {
                                 title={`단일 상품 강조 ${curTypeNum(contentList, 'item-hero', idx)}`}
                                 sx={{ paddingLeft: '0' }}
                               />
-                              <SectionProcess {...sectionCtl} idx={idx} item={item} isProductList={1} />
+                              {/* isProductList 를 안 넘긴다 — 그 묶음(상품 설명 배치·배경색상·
+                                  슬라이더 속도·컨텐츠 개수)은 이 섹션에서 하나도 안 쓰인다.
+                                  HomeItemHero 가 읽는 값은 hero_type(디자인 타입)과 margin_top(윗마진)
+                                  둘뿐이다. 넷은 상품슬라이드에서 복사돼 따라온 칸이었고, 고쳐도
+                                  화면이 안 바뀌니 가맹점은 자기가 잘못한 줄 안다.
+                                  윗마진은 이 묶음 밖이라 그대로 남는다. */}
+                              <SectionProcess {...sectionCtl} idx={idx} item={item} />
                             </Row>
                             <TextField
                               select
@@ -1819,7 +1826,13 @@ const MainObjSetting = props => {
                             type 값은 위 mainObjSchemaList 정의(sellers / item-reviews / item-reviews-select) 그대로다. */}
                         {(() => {
                           const 전체 = [...mainObjSchemaList, ...getSettingPropertyList(themePropertyList)]
-                            .filter(itm => !(isShopgoBrand(themeDnsData) && ['sellers', 'item-reviews', 'item-reviews-select'].includes(itm.type)));
+                            .filter(itm => !(isShopgoBrand(themeDnsData) && ['sellers', 'item-reviews', 'item-reviews-select'].includes(itm.type)))
+                            // 특성으로 만들어지는 섹션('원산지 - 국산' 같은 것)도 같이 감춘다.
+                            // '특성 그룹 관리' 는 가맹점에게 이미 안 보인다(config-navigation.js).
+                            // 그런데 이 목록에는 그대로 남아 있어서, 가맹점은 특성 섹션을 홈에 올릴 수는
+                            // 있는데 정작 그 특성을 손볼 곳이 없었다 — 만들 수도 고칠 수도 없는 것을
+                            // 고르게 두지 않는다. 본사(level 50)·본사 도메인에서는 그대로 쓴다.
+                            .filter(itm => 본사화면(user) || !String(itm.type).startsWith('items-property-group-'));
                           const 줄 = (itm) =>
                             <MenuItem key={itm.type} value={itm.type}>{itm.label} ({hasTypeCount(contentList, itm.type)})</MenuItem>;
                           // 추천을 모르는 프레임이면 예전처럼 한 줄로 보여준다.

@@ -61,12 +61,13 @@ const Header = (props) => {
     const router = useRouter();
 
     const { themeMode, onToggleMode, themeDnsData, themeCategoryList, onChangeCategoryList, onChangePostCategoryList } = useSettingsContext();
-    // 상단 메뉴에는 '별' 을 켠 카테고리만 올린다(is_show_header_menu).
-    // 예전엔 필터가 없어 전 카테고리가 그대로 나왔다 — 가맹점이 별을 꺼도 안 사라졌다.
-    // 켜지는 것보다 **꺼지지 않는 것**이 문제였다. 어드민에 끄는 버튼이 있는데 안 먹었으니까.
-    const headerCategories = (themeCategoryList ?? [])
-        .flatMap((g) => g?.product_categories ?? [])
-        .filter((c) => c?.is_show_header_menu == 1);
+    // ⚠ 이 헤더는 카테고리를 **화면에 그리지 않는다.**
+    //    아래 categories state 와 hover 표까지 만들어 두지만 JSX 어디에도 나오지 않는다.
+    //    그래서 카테고리 '별'(상단 메뉴 노출)은 이 프레임에서 아무 의미가 없다.
+    //    한 번 여기에 별 필터를 넣었다가 물렸다 — 안 그리는 목록을 걸러 봐야 소용이 없고,
+    //    오히려 '여기가 상단 메뉴를 그린다' 고 잘못 읽히게 만든다.
+    //    상단 메뉴를 붙일 거라면 그때 이 목록을 렌더하면서 별로 거르면 된다.
+    const headerCategories = (themeCategoryList ?? []).flatMap((g) => g?.product_categories ?? []);
     const [keyword, setKeyword] = useState("");
     const [isSellerPage, setIsSellerPage] = useState(false);
     const [isProductPage, setIsProductPage] = useState(false);

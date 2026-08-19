@@ -51,13 +51,16 @@ const PrevArrowStyle = styled.div`
   `
 
 const Iframe = styled.iframe`
-  width:1016px;
-  height:542px;
+  /* 폭을 굳혀 두면 담긴 자리가 그보다 좁을 때 그대로 삐져나온다.
+     블로그형 홈은 컬럼이 840px 인데 이 값은 1016px 였고, 줄여 주는 조건이
+     @media(화면 1200px)라 1400px 모니터에서는 걸리지도 않았다 — 176px 이 넘쳤다.
+     자리에 맞추되 1016px 은 넘지 않는다(넓은 화면에서는 전과 같은 크기다).
+     높이는 비율로 따라오게 해서 화면 크기를 볼 일을 없앤다. */
+  width: 100%;
+  max-width: 1016px;
+  aspect-ratio: 1016 / 542;
+  height: auto;
   margin: 1rem auto;
-  @media (max-width:1200px) {
-    width: 85vw;
-    height: 45.3vw;
-  }
   `
 const NextArrow = ({ onClick, sx }) => {
     return (

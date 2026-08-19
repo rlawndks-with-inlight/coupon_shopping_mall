@@ -24,7 +24,7 @@ const HomeItemsPropertyGroups = (props) => {
     const { column, data, func, is_manager } = props;
     const { router } = func;
     const { style } = column;
-    const { themeDnsData } = useSettingsContext()
+    const { themeDnsData, themeMode } = useSettingsContext()
     //const [sliderSetting, setSliderSetting] = useState(defaultManagerObj.brands.slider_css)
 
     return (
@@ -33,6 +33,12 @@ const HomeItemsPropertyGroups = (props) => {
                 marginTop: `${style?.margin_top}px`,
                 display: 'flex',
                 flexDirection: `${column?.title ? 'column' : 'row'}`,
+                /* 메인페이지관리의 배경색상·컨텐츠 개수·상품 설명 배치·슬라이더 속도 네 칸은
+                   쇼핑몰형(section/shop/HomeItemsPropertyGroups)에만 전달되고 있었다.
+                   블로그형에서는 아무리 바꿔도 화면이 그대로라 가맹점은 자기가 잘못한 줄 안다.
+                   상품슬라이드(blog/HomeItems)에서 이미 같은 사고를 고쳤다 — 같은 규칙으로 맞춘다.
+                   어두운 테마에서는 배경색을 무시한다(쇼핑몰형과 같다). */
+                ...(themeMode != 'dark' && style?.back_color ? { backgroundColor: style.back_color } : {}),
             }}>
                 <Row style={{ display: 'flex', position: 'relative' }}>
                     {column?.title &&
@@ -56,7 +62,13 @@ const HomeItemsPropertyGroups = (props) => {
                         </>}
                 </Row>
                 <div style={{ marginTop: '1rem', height: '0.25rem', borderTop: `1px solid ${themeDnsData?.theme_css?.main_color} `, borderBottom: `1px solid ${themeDnsData?.theme_css?.main_color} `, }} />
-                <Items items={column?.list} router={router} is_slide={column?.list.length >= 5 ? true : true} />
+                <Items items={column?.list} router={router} is_slide={column?.list.length >= 5 ? true : true}
+                    rows={parseInt(style?.rows ?? 1)}
+                    text_align={style?.text_align}
+                    slide_setting={{
+                        autoplay: style?.slider_speed > 0 ? true : false,
+                        autoplaySpeed: parseInt(style?.slider_speed ?? 0) * 1000
+                    }} />
                 <div style={{ marginTop: '1rem', height: '0.25rem', borderTop: `1px solid ${themeObj.grey[300]} `, }} />
                 {/*<Row>
                     <Button sx={{ margin: '1rem auto' }} variant='outlined' onClick={() => {

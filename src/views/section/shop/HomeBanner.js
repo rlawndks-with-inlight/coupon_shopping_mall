@@ -63,7 +63,10 @@ const PrevArrowStyle = styled.div`
 // 초광폭에서 배너가 끝없이 커지는 것은 max-width 로 잡는다 — 높이를 자르지 않으므로 비율이 산다.
 // (1765px 은 예전 최대높이 750px 이 걸리기 시작하던 폭이다. 보이는 크기를 그대로 유지한다)
 const BannerImgContainer = styled.div`
-width: ${props => props.type == 1 ? '100%' : '78vw'};
+/* 한 장짜리 배너는 꽉 차게 두는 것이 원래 의도였다(테두리 둥글리기도 이때만 끈다).
+   예전에는 그걸 안쪽 상자에 width:100vw 로 넣었는데, 바깥은 묶여 있고 안쪽만 늘어나
+   넘친 만큼이 잘렸다. 폭은 여기 한 곳에서만 정한다. */
+width: ${props => (props.img_list_length < 2 || props.type == 1) ? '100%' : '78vw'};
 max-width: ${props => props.type == 1 ? '2000px' : '1765px'};
 aspect-ratio: ${props => props.type == 1 ? '2 / 1' : '2000 / 850'};
 margin: 0 auto;
@@ -90,7 +93,16 @@ position: relative;
 background-size: contain;
 background-repeat: no-repeat;
 background-position: center center;
-max-width: ${props => props.type == 1 ? '1600px' : ''};
+/* 여기에 max-width 를 두면 안 된다.
+   바깥 상자(BannerImgContainer)가 비율을 정하는데, 안쪽이 그보다 좁아지면
+   안쪽 상자의 비율만 달라진다. contain 은 '안쪽 상자' 기준으로 맞추므로
+   이미지가 그 좁아진 상자에 맞춰 작아지고 남는 자리가 통째로 여백이 된다.
+   실제로 type 1(데모 4·5·6·9)에서 1600px 이 남아 있어,
+     바깥 2000x1000 · 안쪽 1600x1000(=1.6:1) · 이미지 2000x1000(=2:1)
+   이 되어 이미지가 1600x800 으로 줄고 좌우 200px·아래 200px 이 비었다.
+   폭이 1600 미만인 화면에서는 이 값이 안 걸려서 폰에서는 멀쩡해 보였다 —
+   그래서 'PC 에서만' 이상한 것으로 나타났다.
+   초광폭 제한은 바깥 상자의 max-width 하나로 충분하다. */
 margin:0 auto;
 /* 줌 브리딩(불안정)만 제거. 맞춤은 데모별 기존 방식 유지: demo-1·2·3=cover(꽉참), demo-4·5·6·9=contain */
 animation: none;
@@ -256,7 +268,10 @@ const HomeBanner = (props) => {
                                         }
                                     }}
                                     style={{
-                                        width: `${img_list.length >= 2 ? '' : '100vw'}`,
+                                        // ⚠ 예전에는 배너가 한 장이면 여기에 width:100vw 를 박았다.
+                                        //    바깥 상자는 max-width 로 묶여 있는데 안쪽만 화면 폭까지
+                                        //    늘어나니, 넘친 만큼이 overflow:hidden 에 잘려 나가고
+                                        //    이미지가 한쪽으로 밀렸다. 폭은 바깥 상자가 정한다.
                                         backgroundImage: `url(${item.src})`,
                                         cursor: `${item?.link ? 'pointer' : ''}`,
                                     }}

@@ -16,11 +16,18 @@ import { isShopSectionBuilder, isBlogSectionBuilder } from 'src/utils/section-bu
 //   shop:2 비주얼 중심형 · 단일 브랜드 — 큰 배너로 분위기를 잡는다
 //   blog:1 매거진형 — Cover Story · Editor's Pick 구성
 //   blog:2 스크롤형 — 한 컬럼에 카테고리별 상품을 차례로
+//
+// blog:1 에 items-with-categories 를 더한 이유(2026-08-19):
+//   이 프레임들(3·4)은 헤더에 카테고리가 없다. 좁은 폭 때문에 넣을 수도 없어서,
+//   카테고리 이동은 /shop/items 화면의 칩으로 붙였다(CategoryChips.js).
+//   그런데 그건 헤더 아이콘을 한 번 눌러야 닿는다 — 홈에서는 여전히 카테고리가 안 보인다.
+//   이 섹션이 홈에서 카테고리 탭을 그려 주는 유일한 수단이므로 프레임3에도 권한다.
+//   (매거진 성격과 어긋나 보여 뺐던 자리인데, 고를 수 있다는 걸 알려는 줘야 한다)
 
 const 추천 = {
     'shop:1': ['banner', 'items-with-categories', 'items', 'items-ids', 'post'],
     'shop:2': ['banner', 'item-hero', 'items', 'editor', 'video-slide'],
-    'blog:1': ['banner', 'item-hero', 'editor', 'items'],
+    'blog:1': ['banner', 'item-hero', 'editor', 'items', 'items-with-categories'],
     'blog:2': ['banner', 'items', 'items-with-categories', 'editor'],
 };
 

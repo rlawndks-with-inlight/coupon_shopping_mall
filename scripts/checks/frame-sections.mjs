@@ -43,6 +43,14 @@ for (const [이름, dns] of 프레임) {
     eq(`${이름} 첫 추천은 배너`, 목록[0], 'banner');   // 어느 프레임이든 배너부터가 자연스럽다
 }
 
+// 프레임3·4 는 헤더에 카테고리가 없다(좁아서 넣을 수도 없다). 카테고리 이동은
+// /shop/items 의 칩으로 붙였는데 그건 아이콘을 한 번 눌러야 닿는다.
+// 홈에서 카테고리를 보여 주는 수단은 이 섹션뿐이므로 둘 다 추천에 들어 있어야 한다.
+eq('프레임3 추천에 카테고리 섹션이 있다',
+    추천섹션({ shop_demo_num: 0, blog_demo_num: 1 }).includes('items-with-categories'), true);
+eq('프레임4 추천에 카테고리 섹션이 있다',
+    추천섹션({ shop_demo_num: 0, blog_demo_num: 2 }).includes('items-with-categories'), true);
+
 // 판매중단 프레임도 빈손으로 두지 않는다
 eq('판매중단 shop:4 도 추천이 있다', 추천섹션({ shop_demo_num: 4 }).length > 0, true);
 // 섹션빌더가 아닌 프레임은 빈 배열(이 화면에 오지도 않는다)

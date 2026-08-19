@@ -59,10 +59,12 @@ const PayResultDemo = (props) => {
       let insert_pay_ready = await apiManager('pays/auth_fintree', 'create', { ...params, ...products });
       //console.log(insert_pay_ready)
       if (insert_pay_ready?.id > 0) {
-        return {
-          ...payData,
-          trans_id: insert_pay_ready?.id
-        };
+        // ⚠ 원래 여기서 ...payData 를 펼쳤는데 그런 변수가 없다(이 저장소 어디에도 없다).
+        //    같은 try 안이라 ReferenceError 가 catch 로 삼켜져, 승인이 끝난 뒤에도
+        //    이 함수는 조용히 false 를 돌려주고 있었다.
+        //    호출부는 이 반환값을 받지 않으므로 화면에 드러나지는 않았다.
+        //    결제 경로라 짐작으로 채우지 않는다 — 확실한 값만 남긴다.
+        return { trans_id: insert_pay_ready?.id };
       } else {
         return false;
       }

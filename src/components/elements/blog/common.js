@@ -507,6 +507,8 @@ export const AddressTable = props => {
     )
 }
 export const WishTable = props => {
+    // 아래 '장바구니담기' 가 옵션 있는 상품을 상세로 보낼 때 쓴다. 없으면 그 자리에서 죽는다.
+    const router = useRouter();
     const { wishContent, onDelete } = props
     const { translate, currentLang } = useLocales();
     const { themeWishData, onChangeWishData, themeCartData, onChangeCartData, themeDnsData } = useSettingsContext();

@@ -118,10 +118,7 @@ export const mainObjSchemaList = [
         type: 'banner',
         default_value: {
             type: 'banner',
-            list: [],
-            style: {
-                min_height: 200
-            }
+            list: []
         },
     },
     {
@@ -143,10 +140,10 @@ export const mainObjSchemaList = [
         },
     },
     {
-        // 히어로 상품 — setting.js 의 로컬 배열에만 있고 여기(공용 목록)에는 빠져 있어
+        // 단일 상품 강조(item-hero) — setting.js 의 로컬 배열에만 있고 여기(공용 목록)에는 빠져 있어
         // 좌측 메뉴 '메인페이지관리' 하위에 이 섹션만 나타나지 않았다.
         // (config-navigation.js 는 format.js 의 이 배열로 서브메뉴를 만든다)
-        label: '히어로 상품 (단일 상품 강조)',
+        label: '단일 상품 강조',
         type: 'item-hero',
         default_value: {
             type: 'item-hero',

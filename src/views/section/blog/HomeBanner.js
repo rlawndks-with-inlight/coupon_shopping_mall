@@ -52,17 +52,17 @@ const PrevArrowStyle = styled.div`
   `
 const BannerImgContainer = styled.div`
 width: 100%;
-/* 예전엔 height:424px 고정이라 큰 화면(≥1800px)에선 초광폭(4:1↑)이 돼 배너가 심하게 잘렸다.
-   권장 배너(2000x850=2.35:1)에 맞춰 비율 기반(42.5vw)으로 바꾸고 max-height로 상한만 둔다. */
-height: 42.5vw;
-min-height: 220px;
-max-height: 640px;
+/* 배너는 비율로만 그린다 — 쇼핑몰 쪽 HomeBanner 의 주석 참고.
+   예전엔 42.5vw 높이에 min-height:220px · max-height:640px 를 덧씌웠는데,
+   그 둘이 걸리면 컨테이너 비율이 이미지와 달라져 cover 가 좌우를 잘라냈다.
+   220px 은 폰에서 늘 걸렸다(390px 폭의 자연 높이는 166px 다).
+   상한은 높이가 아니라 폭으로 잡는다 — 잘라내지 않으므로 비율이 산다. */
+max-width: 1506px;
+aspect-ratio: 2000 / 850;
 margin: 0 auto;
 border-radius:${props => props.img_list_length >= 2 ? '1rem' : '0'};
 overflow: hidden;
 @media (max-width:840px) {
-    height: 45vw;
-    max-height: none;
     border-radius:0;
 }
 `
@@ -74,7 +74,12 @@ top: 0;
 left: 0;
 display:flex;
 position: relative;
-background-size: cover;
+/* 배너는 **절대 자르지 않는다**(contain).
+   cover 는 컨테이너와 비율이 다른 이미지의 넘치는 만큼을 잘라낸다. 권장 규격(2000x850)을
+   지키면 잘림이 없지만, 안 지킨 이미지는 소리 없이 잘려 나갔다 — 문구·로고가 든 배너라면
+   그게 그대로 사라진다. 잘린 것은 화면만 봐서는 알 수도 없다.
+   비율이 다르면 남는 자리는 여백으로 둔다. 여백은 보기에 아쉬울 뿐이지만 잘림은 손실이다. */
+background-size: contain;
 background-repeat: no-repeat;
 background-position: center center;
 /* 줌 브리딩(불안정) 제거 — shop 배너와 동일하게 정적으로. */
@@ -217,7 +222,6 @@ const HomeBanner = (props) => {
                     {img_list.map((item, idx) => (
                         <>
                             <BannerImgContainer
-                                style={{ minHeight: `${style?.min_height ?? 200}px`, maxHeight: `${style?.max_height ?? 750}px` }}
                                 img_list_length={img_list.length}
                             >
 

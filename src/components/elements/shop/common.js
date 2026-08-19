@@ -315,7 +315,17 @@ export const HistoryTable = props => {
                                               <div style={{ marginRight: '0.25rem' }}>{formatLang(group, 'group_name')}: </div>
                                               {group?.options && group?.options.map((option, idx2) => (
                                                 <>
-                                                  <div>{getOptionLabel(option)} {/*({option?.option_price > 0 ? '+' : ''}{option?.option_price}) */}</div>{idx2 == group?.options.length - 1 ? '' : <>&nbsp;/&nbsp;</>}
+                                                  {/* 옵션 금액을 손님에게도 보여 준다. 예전엔 주석으로 막혀 있어
+                                                      총액만 보이고 그 총액이 어떻게 만들어졌는지 알 수 없었다 —
+                                                      30만원짜리 출장이 붙었는지 사이즈만 고른 건지 구분이 안 됐다.
+                                                      0원이면 안 적는다(조합형은 개별가가 0이고 추가금이 따로 붙는다).
+                                                      관리자 주문내역(pages/manager/orders/trx)과 같은 규칙이다. */}
+                                                  <div>
+                                                    {getOptionLabel(option)}
+                                                    {Number(option?.option_price)
+                                                      ? ` (${Number(option.option_price) > 0 ? '+' : ''}${commarNumberWithUnit(option.option_price, currentLang)})`
+                                                      : ''}
+                                                  </div>{idx2 == group?.options.length - 1 ? '' : <>&nbsp;/&nbsp;</>}
                                                 </>
                                               ))}
                                             </Row>
@@ -545,6 +555,8 @@ export const AddressTable = props => {
   )
 }
 export const WishTable = props => {
+  // 아래 '장바구니담기' 가 옵션 있는 상품을 상세로 보낼 때 쓴다. 없으면 그 자리에서 죽는다.
+  const router = useRouter();
   const { wishContent, onDelete } = props
   const { translate, currentLang } = useLocales();
   const { themeWishData, onChangeWishData, themeCartData, onChangeCartData, themeDnsData } = useSettingsContext();

@@ -289,7 +289,7 @@ const Header = () => {
               <NoneShowMobile style={{ width: '100%' }}>
                 {headerCategories.length > 0 && headerCategories.map((item1, idx1) => (
                   <>
-                    {item1?.is_show_header_menu == 1 &&
+                    {
                       <>
                         <CategoryMenuContainer theme={theme}>
                           <CategoryMenu

@@ -51,15 +51,26 @@ const PrevArrowStyle = styled.div`
     height: 1.5rem;
   }
   `
+// 배너는 **비율로만** 그린다.
+//
+// 예전엔 높이를 vw 로 잡고 그 위에 최소높이(200px)·최대높이(750px)를 덧씌웠다.
+// 그 두 값이 걸리는 순간 컨테이너 비율이 이미지 비율과 달라지고, background-size:cover 라
+// 좌우가 잘린다. 특히 최소높이 200px 은 **폰에서 늘 걸렸다** —
+//   360px 폭: 자연 높이 153px → 200px 로 늘어남 → 비율 1.80 (권장 2.35) → 좌우 약 25% 잘림
+// 2000x850 을 정확히 지켜 올려도 폰에서 잘리는 이유가 이것이었다.
+//
+// 이제 aspect-ratio 로 비율을 고정한다. 높이는 폭을 따라가므로 어떤 화면에서도 안 깨진다.
+// 초광폭에서 배너가 끝없이 커지는 것은 max-width 로 잡는다 — 높이를 자르지 않으므로 비율이 산다.
+// (1765px 은 예전 최대높이 750px 이 걸리기 시작하던 폭이다. 보이는 크기를 그대로 유지한다)
 const BannerImgContainer = styled.div`
 width: ${props => props.type == 1 ? '100%' : '78vw'};
-height: ${props => props.type == 1 ? '50vw' : '33.15vw'};
+max-width: ${props => props.type == 1 ? '2000px' : '1765px'};
+aspect-ratio: ${props => props.type == 1 ? '2 / 1' : '2000 / 850'};
 margin: 0 auto;
 border-radius:${props => props.img_list_length >= 2 ? '1rem' : '0'};
 overflow: hidden;
 @media (max-width:1200px) {
     width: 100vw;
-    height: 42.5vw;
     border-radius:0;
 }
 `
@@ -71,7 +82,12 @@ top: 0;
 left: 0;
 display:flex;
 position: relative;
-background-size: ${props => props.type == 1 ? 'contain' : 'cover'};
+/* 배너는 **절대 자르지 않는다**(contain).
+   cover 는 컨테이너와 비율이 다른 이미지의 넘치는 만큼을 잘라낸다. 권장 규격(2000x850)을
+   지키면 잘림이 없지만, 안 지킨 이미지는 소리 없이 잘려 나갔다 — 문구·로고가 든 배너라면
+   그게 그대로 사라진다. 잘린 것은 화면만 봐서는 알 수도 없다.
+   비율이 다르면 남는 자리는 여백으로 둔다. 여백은 보기에 아쉬울 뿐이지만 잘림은 손실이다. */
+background-size: contain;
 background-repeat: no-repeat;
 background-position: center center;
 max-width: ${props => props.type == 1 ? '1600px' : ''};
@@ -227,7 +243,6 @@ const HomeBanner = (props) => {
                     {img_list.map((item, idx) => (
                         <>
                             <BannerImgContainer
-                                style={{ minHeight: `${style?.min_height ?? 200}px`, maxHeight: `${style?.max_height ?? 750}px` }}
                                 img_list_length={img_list.length}
                                 type={demoType}
                             >

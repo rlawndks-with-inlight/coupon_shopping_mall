@@ -80,7 +80,8 @@ const Footer = () => {
   const router = useRouter();
   const currentPath = router.asPath;
   const [searchOpen, setSearchOpen] = useState(false);
-  // 로그아웃은 헤더가 아니라 푸터에 둔다(헤더는 아이콘만이라 무슨 버튼인지 알기 어렵다).
+  // 로그아웃 처리기. 하단정보에서는 뺐고(마이페이지에 있다) 지금은 쓰이지 않는다 —
+  // 헤더에 다시 붙일 때 쓰라고 남겨 둔다.
   const { user, logout } = useAuthContext();
   const onLogout = async () => {
     await logout();
@@ -169,14 +170,8 @@ const Footer = () => {
             </span>
           </InfoRow>
 
-          {/* 로그아웃 — 헤더가 아니라 여기 둔다. 아이콘만으로는 무슨 버튼인지 알기 어렵다. */}
-          {user &&
-            <InfoRow>
-              <span style={{ cursor: 'pointer', textDecoration: 'underline' }} onClick={onLogout}>
-                {translate('로그아웃')}
-              </span>
-            </InfoRow>
-          }
+          {/* 로그아웃은 하단정보에 두지 않는다 — 여기는 사업자정보·약관 자리다.
+              로그아웃은 마이페이지에 있다(views/blog/auth/my-page/demo-1.js). */}
         </ContentWrapper>
       </Wrappers>
       <BottomNav style={{

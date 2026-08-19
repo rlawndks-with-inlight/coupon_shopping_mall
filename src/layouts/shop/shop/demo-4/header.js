@@ -1291,28 +1291,9 @@ const Header = () => {
                                 </>
                             ))}
                         </>}
-                    {/* {themeCategoryList && themeCategoryList.map((group, index) => (
-                        <>
-                            {group?.is_show_header_menu == 1 &&
-                                <>
-                                    <ColumnMenuTitle>{formatLang(group, 'category_group_name')}</ColumnMenuTitle>
-                                    <TreeView
-                                        defaultCollapseIcon={<Icon icon={'ic:baseline-minus'} />}
-                                        defaultExpandIcon={<Icon icon={'ic:baseline-plus'} />}
-                                        defaultEndIcon={<Icon icon={'mdi:dot'} />}
-                                    >
-                                        {group?.product_categories && group?.product_categories.map((item1, idx) => (
-                                            <>
-                                                {returnSidebarMenu(item1, 0, {
-                                                    router,
-                                                    setSideMenuOpen
-                                                }, index)}
-                                            </>
-                                        ))}
-                                    </TreeView>
-                                </>}
-                        </>
-                    ))} */}
+                    {/* 여기 있던 카테고리 트리 메뉴(약 20줄)를 지웠다. 통째로 주석 처리된 죽은 코드였다.
+                        그 안의 별 플래그를 살아 있는 코드로 잘못 읽어, 이 프레임이
+                        '별로 거른다' 고 판단한 적이 있다. 주석 안 코드는 읽는 사람을 속인다. */}
                     {
                         postCategories.length > 0 &&
                         <>

@@ -708,7 +708,7 @@ const Header = () => {
                                 >
                                     {headerCategories.length > 0 && headerCategories.map((item1, idx1) => (
                                         <>
-                                            {item1?.is_show_header_menu == 1 &&
+                                            {
                                                 <>
                                                     <div style={{ position: 'relative', fontFamily: 'Noto Sans KR' }} className={`menu-${item1?.id}`}>
                                                         <CategoryMenu borderColor={themeMode == 'dark' ? '#fff' : '#000'} onClick={() => {
@@ -802,7 +802,7 @@ const Header = () => {
                                 >
                                     {headerCategories.length > 0 && headerCategories.map((item1, idx1) => (
                                         <>
-                                            {item1?.is_show_header_menu == 1 &&
+                                            {
                                                 <>
                                                     <CategoryMenu borderColor={themeMode == 'dark' ? '#fff' : '#000'} onMouseOver={() => {
                                                         onHoverCategory(`hover_${item1?.id}`)

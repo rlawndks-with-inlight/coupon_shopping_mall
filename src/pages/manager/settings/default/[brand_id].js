@@ -49,6 +49,7 @@ import { BLOG_DEMO_DATA, SHOP_DEMO_DATA } from 'src/data/data'
 import { FRAMES, LEGACY_FRAMES } from 'src/components/main-site/frameList'
 import { allLangs } from 'src/locales'
 import { isShopgoMerchant } from 'src/utils/is-shopgo'
+import { COURIER_LIST } from 'src/data/couriers';
 // 저장돼 있지 않으면 기본(100%). 이상한 값이 들어와도 슬라이더가 범위를 벗어나면 안 된다.
 const 로고배율 = (item) => {
   const v = Number(item?.setting_obj?.logo_scale)
@@ -856,16 +857,22 @@ const DefaultSetting = () => {
                           })
                         }}
                       />
-                      <TextField
-                        label='주민등록번호'
-                        value={item.resident_num}
-                        onChange={e => {
-                          setItem({
-                            ...item,
-                            ['resident_num']: e.target.value
-                          })
-                        }}
-                      />
+                      {/* 주민등록번호 — 본사(50)에게만 보인다.
+                          고객 화면 어디에도 안 나가고, 코드 어느 곳에서도 읽지 않는다.
+                          그런데 122개 몰 중 27곳이 채워 뒀다 — 쓰지도 않을 개인정보를 받아 둔 셈이다.
+                          칸을 아예 지우지 않는 이유는 이미 들어간 값을 지울 자리가 필요해서다. */}
+                      {user?.level >= 50 &&
+                        <TextField
+                          label='주민등록번호'
+                          value={item.resident_num}
+                          helperText='고객 화면에 쓰이지 않습니다. 가맹점에게는 보이지 않습니다.'
+                          onChange={e => {
+                            setItem({
+                              ...item,
+                              ['resident_num']: e.target.value
+                            })
+                          }}
+                        />}
                       <TextField
                         label='대표자명'
                         value={item.ceo_name}
@@ -886,16 +893,21 @@ const DefaultSetting = () => {
                           })
                         }}
                       />
-                      <TextField
-                        label='법인설립일자'
-                        value={item.establish_date}
-                        onChange={e => {
-                          setItem({
-                            ...item,
-                            ['establish_date']: e.target.value
-                          })
-                        }}
-                      />
+                      {/* 법인설립일자 — 본사(50)에게만 보인다.
+                          쓰이는 곳은 약관 시행일 한 곳뿐이고, 그마저 created_at 이 있으면 그쪽을 쓴다
+                          (pages/shop/auth/policy.js). 122개 몰 중 19곳만 채워져 있다. */}
+                      {user?.level >= 50 &&
+                        <TextField
+                          label='법인설립일자'
+                          value={item.establish_date}
+                          helperText='약관 시행일이 없을 때만 대신 쓰입니다.'
+                          onChange={e => {
+                            setItem({
+                              ...item,
+                              ['establish_date']: e.target.value
+                            })
+                          }}
+                        />}
                     </Stack>
                   </Card>
                 </Grid>
@@ -1485,6 +1497,33 @@ const DefaultSetting = () => {
                       </FormControl>
                       <Typography variant='caption' sx={{ color: 'text.secondary' }}>
                         주문 1건당 부과되는 기본 배송비입니다. 0원이면 무료배송으로 표시됩니다.
+                      </Typography>
+
+                      {/* 기본 택배사 — 주문관리에서 택배사를 미리 골라 둔 상태로 띄운다.
+                          늘 같은 택배사를 쓰는 가맹점이 주문마다 같은 값을 고르고 있었다.
+                          주문마다 바꾸는 것은 그대로 된다(여기 값은 시작값일 뿐이다). */}
+                      <FormControl variant='outlined'>
+                        <InputLabel>기본 택배사</InputLabel>
+                        <Select
+                          label='기본 택배사'
+                          displayEmpty
+                          value={item?.setting_obj?.default_courier ?? ''}
+                          onChange={e => {
+                            setItem({
+                              ...item,
+                              ['setting_obj']: {
+                                ...item?.setting_obj,
+                                ['default_courier']: e.target.value
+                              }
+                            })
+                          }}
+                        >
+                          <MenuItem value={''}>{'지정 안 함'}</MenuItem>
+                          {COURIER_LIST.map((c) => <MenuItem key={c} value={c}>{c}</MenuItem>)}
+                        </Select>
+                      </FormControl>
+                      <Typography variant='caption' sx={{ color: 'text.secondary' }}>
+                        주문관리에서 택배사가 이 값으로 미리 골라져 있습니다. 주문마다 바꿀 수 있습니다.
                       </Typography>
                     </Stack>
                   </Card>

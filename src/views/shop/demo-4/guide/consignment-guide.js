@@ -467,8 +467,8 @@ const ConsignmentGuide = () => {
                                     {
                                         group.childs.map((child) => {
                                             return <Typography variant="body2" style={{ cursor: 'pointer' }} onClick={() => {
-                                                router.push(`/shop/items?category_id${index}=${child?.id}&depth=0`)
-                                                setOpenAllCategory("")
+                                                router.push(`/shop/items?category_id=${child?.id}&depth=0`)
+                                                // (헤더에서 복사해 온 자리다. 이 화면엔 닫을 드롭다운이 없어 부르지 않는다)
                                             }}>{langChipSelected == 0 ? child?.category_en_name : child?.category_name}</Typography>
                                         })
 
@@ -488,8 +488,8 @@ const ConsignmentGuide = () => {
                                     {
                                         group.childs.map((child) => {
                                             return <Typography variant="body2" style={{ cursor: 'pointer' }} onClick={() => {
-                                                router.push(`/shop/items?category_id${index}=${child?.id}&depth=0`)
-                                                setOpenAllCategory("")
+                                                router.push(`/shop/items?category_id=${child?.id}&depth=0`)
+                                                // (헤더에서 복사해 온 자리다. 이 화면엔 닫을 드롭다운이 없어 부르지 않는다)
                                             }}>{langChipSelected == 0 ? child?.category_en_name : child?.category_name}</Typography>
                                         })
                                     }

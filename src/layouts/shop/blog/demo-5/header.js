@@ -1,4 +1,5 @@
 import Logo from "src/components/logo/Logo"
+import { 헤더배경 } from "src/utils/overlay-icon";
 import styled from "styled-components"
 import { IconButton, TextField, InputAdornment } from "@mui/material"
 import { useEffect, useState } from "react"
@@ -150,7 +151,9 @@ const Header = (props) => {
                         root_path={'/shop/search?keyword='}
                     />
                     <Wrappers style={{
-                        background: `${(isSellerPage || isProductPage) && scrollY < 350 ? 'transparent' : (themeMode == 'dark' ? '#000' : '#fff')}`
+                        // 사진 위일 때는 어두운 그라데이션을 깐다 — 흰 아이콘이 흰 상품사진에 묻힌다.
+                        background: 헤더배경((isSellerPage || isProductPage) && scrollY < 350,
+                                             themeMode == 'dark' ? '#000' : '#fff')
                     }}
                     >
                         <TopMenuContainer>

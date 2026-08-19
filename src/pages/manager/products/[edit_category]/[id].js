@@ -1356,6 +1356,7 @@ const ProductEdit = () => {
                               {group?.product_properties && group?.product_properties.map((property, idx) => (
                                 <>
                                   <FormControlLabel
+                                    sx={{ alignSelf: 'flex-start', width: 'fit-content' }}
                                     label={<Typography style={{ fontSize: themeObj.font_size.size6 }}>{property?.property_name}</Typography>}
                                     control={
                                       <Checkbox
@@ -1411,6 +1412,7 @@ const ProductEdit = () => {
                             </Typography>
                             <Row style={{ flexWrap: 'wrap' }}>
                               <FormControlLabel
+                                sx={{ alignSelf: 'flex-start', width: 'fit-content' }}
                                 label={<Typography style={{ fontSize: themeObj.font_size.size6 }}>판매중</Typography>}
                                 control={
                                   <Checkbox
@@ -1432,6 +1434,7 @@ const ProductEdit = () => {
                                   />}
                               />
                               <FormControlLabel
+                                sx={{ alignSelf: 'flex-start', width: 'fit-content' }}
                                 label={<Typography style={{ fontSize: themeObj.font_size.size6 }}>예약중</Typography>}
                                 control={
                                   <Checkbox
@@ -1453,6 +1456,7 @@ const ProductEdit = () => {
                                   />}
                               />
                               <FormControlLabel
+                                sx={{ alignSelf: 'flex-start', width: 'fit-content' }}
                                 label={<Typography style={{ fontSize: themeObj.font_size.size6 }}>매장문의</Typography>}
                                 control={
                                   <Checkbox
@@ -1474,6 +1478,7 @@ const ProductEdit = () => {
                                   />}
                               />
                               <FormControlLabel
+                                sx={{ alignSelf: 'flex-start', width: 'fit-content' }}
                                 label={<Typography style={{ fontSize: themeObj.font_size.size6 }}>거래진행중</Typography>}
                                 control={
                                   <Checkbox
@@ -1497,6 +1502,7 @@ const ProductEdit = () => {
                             </Row>
                             <Row style={{ flexWrap: 'wrap' }}>
                               <FormControlLabel
+                                sx={{ alignSelf: 'flex-start', width: 'fit-content' }}
                                 label={<Typography style={{ fontSize: themeObj.font_size.size6 }}>품절</Typography>}
                                 control={
                                   <Checkbox
@@ -1518,6 +1524,7 @@ const ProductEdit = () => {
                                   />}
                               />
                               <FormControlLabel
+                                sx={{ alignSelf: 'flex-start', width: 'fit-content' }}
                                 label={<Typography style={{ fontSize: themeObj.font_size.size6 }}>택배수거</Typography>}
                                 control={
                                   <Checkbox
@@ -1539,6 +1546,7 @@ const ProductEdit = () => {
                                   />}
                               />
                               <FormControlLabel
+                                sx={{ alignSelf: 'flex-start', width: 'fit-content' }}
                                 label={<Typography style={{ fontSize: themeObj.font_size.size6 }}>방문수거</Typography>}
                                 control={
                                   <Checkbox
@@ -1560,6 +1568,7 @@ const ProductEdit = () => {
                                   />}
                               />
                               <FormControlLabel
+                                sx={{ alignSelf: 'flex-start', width: 'fit-content' }}
                                 label={<Typography style={{ fontSize: themeObj.font_size.size6 }}>비공개</Typography>}
                                 control={
                                   <Checkbox
@@ -1588,6 +1597,7 @@ const ProductEdit = () => {
                             </Typography>
                             <Row style={{ flexWrap: 'wrap' }}>
                               <FormControlLabel
+                                sx={{ alignSelf: 'flex-start', width: 'fit-content' }}
                                 label={<Typography style={{ fontSize: themeObj.font_size.size6 }}>그랑파리</Typography>}
                                 control={
                                   <Checkbox
@@ -1609,6 +1619,7 @@ const ProductEdit = () => {
                                   />}
                               />
                               <FormControlLabel
+                                sx={{ alignSelf: 'flex-start', width: 'fit-content' }}
                                 label={<Typography style={{ fontSize: themeObj.font_size.size6 }}>위탁(회원)</Typography>}
                                 control={
                                   <Checkbox
@@ -1629,6 +1640,7 @@ const ProductEdit = () => {
                                   />}
                               />
                               <FormControlLabel
+                                sx={{ alignSelf: 'flex-start', width: 'fit-content' }}
                                 label={<Typography style={{ fontSize: themeObj.font_size.size6 }}>위탁(비회원)</Typography>}
                                 control={
                                   <Checkbox
@@ -1885,7 +1897,7 @@ const ProductEdit = () => {
                                   }} />
                               </FormControl>
                               <FormControlLabel
-                                sx={{ ml: 0 }}
+                                sx={{ ml: 0, alignSelf: 'flex-start', width: 'fit-content' }}
                                 control={<Checkbox
                                   checked={useDiscount}
                                   onChange={(e) => {
@@ -1967,6 +1979,7 @@ const ProductEdit = () => {
                         <>
                           <Row style={{ justifyContent: 'space-between' }}>
                             <FormControlLabel
+                              sx={{ alignSelf: 'flex-start', width: 'fit-content' }}
                               label={<div>마일리지 기본적용<br />(판매가의 0.5%)</div>}
                               control={
                                 <Checkbox
@@ -2004,6 +2017,7 @@ const ProductEdit = () => {
                             </Typography>
                             <Row style={{ flexWrap: 'wrap' }}>
                               <FormControlLabel
+                                sx={{ alignSelf: 'flex-start', width: 'fit-content' }}
                                 label={<Typography style={{ fontSize: themeObj.font_size.size6 }}>마일리지 사용 가능</Typography>}
                                 control={
                                   <Checkbox
@@ -2027,6 +2041,7 @@ const ProductEdit = () => {
                                   />}
                               />
                               <FormControlLabel
+                                sx={{ alignSelf: 'flex-start', width: 'fit-content' }}
                                 label={<Typography style={{ fontSize: themeObj.font_size.size6 }}>현금 사용 가능</Typography>}
                                 control={
                                   <Checkbox
@@ -2050,6 +2065,7 @@ const ProductEdit = () => {
                                   />}
                               />
                               <FormControlLabel
+                                sx={{ alignSelf: 'flex-start', width: 'fit-content' }}
                                 label={<Typography style={{ fontSize: themeObj.font_size.size6 }}>PG사 이용 가능</Typography>}
                                 control={
                                   <Checkbox

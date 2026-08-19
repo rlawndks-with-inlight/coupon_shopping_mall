@@ -1,4 +1,5 @@
 import Logo from "src/components/logo/Logo"
+import { 헤더배경 } from "src/utils/overlay-icon";
 import styled from "styled-components"
 import { IconButton, TextField, InputAdornment } from "@mui/material"
 import { useEffect, useState } from "react"
@@ -37,6 +38,12 @@ const Header = (props) => {
     const router = useRouter();
 
     const { themeMode, onToggleMode, themeDnsData, themeCategoryList, onChangeCategoryList, onChangePostCategoryList } = useSettingsContext();
+    // ⚠ 이 헤더는 카테고리를 **화면에 그리지 않는다.**
+    //    아래 categories state 와 hover 표까지 만들어 두지만 JSX 어디에도 나오지 않는다.
+    //    그래서 카테고리 '별'(상단 메뉴 노출)은 이 프레임에서 아무 의미가 없다.
+    //    한 번 여기에 별 필터를 넣었다가 물렸다 — 안 그리는 목록을 걸러 봐야 소용이 없고,
+    //    오히려 '여기가 상단 메뉴를 그린다' 고 잘못 읽히게 만든다.
+    //    상단 메뉴를 붙일 거라면 그때 이 목록을 렌더하면서 별로 거르면 된다.
     const headerCategories = (themeCategoryList ?? []).flatMap((g) => g?.product_categories ?? []);
     const [keyword, setKeyword] = useState("");
     const [isSellerPage, setIsSellerPage] = useState(false);
@@ -150,7 +157,9 @@ const Header = (props) => {
                         root_path={'/shop/search?keyword='}
                     />
                     <Wrappers style={{
-                        background: `${(isSellerPage || isProductPage) && scrollY < 350 ? 'transparent' : (themeMode == 'dark' ? '#000' : '#fff')}`
+                        // 사진 위일 때는 어두운 그라데이션을 깐다 — 흰 아이콘이 흰 상품사진에 묻힌다.
+                        background: 헤더배경((isSellerPage || isProductPage) && scrollY < 350,
+                                             themeMode == 'dark' ? '#000' : '#fff')
                     }}
                     >
                         <TopMenuContainer>

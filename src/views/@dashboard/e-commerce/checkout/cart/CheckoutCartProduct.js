@@ -12,6 +12,7 @@ import { IncrementerButton } from 'src/components/custom-input';
 import _ from 'lodash';
 import { commarNumber, getPriceUnitByLang, setProductPriceByLang, getProductStatus, isPurchasable } from 'src/utils/function';
 import { getOptionLabel } from 'src/utils/shop-util';
+import { optionExtraPrice } from 'src/data/product-options';
 import { useSettingsContext } from 'src/components/settings';
 import { formatLang } from 'src/utils/format';
 import { useLocales } from 'src/locales';
@@ -47,10 +48,16 @@ export default function CheckoutCartProduct({ row, onDelete, onDecrease, onIncre
   // 붙었는지 알 수 없었다(가맹점이 값을 잘못 넣은 것처럼 보인다). 옵션명 옆과 가격칸에 근거를 남긴다.
   const unit = getPriceUnitByLang(currentLang?.value);
   const optionPriceOf = (option) => parseFloat(option?.option_price) || 0;
-  const option_surcharge = (groups ?? []).reduce(
-    (sum, group) => sum + (group?.options ?? []).reduce((s, option) => s + optionPriceOf(option), 0),
-    0,
-  );
+  // ⚠ 옵션 금액을 여기서 직접 더하면 안 된다.
+  //
+  // 조합형 상품은 선택옵션의 개별가가 0 이고 금액이 **조합 추가금**으로 따로 붙는다.
+  // 직접 더하면 그 금액이 0 으로 나와서, 아래 '옵션 +N / 개당 N' 설명이 통째로 안 떴다.
+  // 그래서 손님 화면에는 '가격 50,000원 · 수량 1 · 총액 150,000원' 만 남아
+  // 10만원이 어디서 붙었는지 알 길이 없었다(가맹점이 값을 잘못 넣은 것처럼 보인다).
+  //
+  // 총액(calculatorPrice)이 쓰는 그 함수를 그대로 쓴다 — 같은 함수라 설명과 총액이 어긋날 수 없다.
+  // 장바구니 줄은 상품을 통째로 복사하므로 combinations·option_mode 가 줄에 그대로 남아 있다.
+  const option_surcharge = optionExtraPrice(row, { groups });
   // 변동가는 음수도 허용된다(관리자 검증은 NaN 만 막는다) → 부호를 그대로 보여준다.
   const signedPrice = (value) => `${value < 0 ? '-' : '+'}${commarNumber(Math.abs(value))}${unit}`;
   const unit_price = (parseFloat(product_sale_price) || 0) + option_surcharge;

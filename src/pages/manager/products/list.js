@@ -18,6 +18,7 @@ import dynamic from "next/dynamic";
 import { useLocales } from "src/locales";
 import { formatLang } from "src/utils/format";
 import toast from "react-hot-toast";
+import { 금액표시, 금액입력 } from 'src/utils/money-input'
 
 const ReactQuill = dynamic(() => import('react-quill'), {
   ssr: false,
@@ -824,12 +825,13 @@ const ProductList = () => {
               <TextField
                 autoFocus
                 fullWidth
-                value={productPrice}
+                value={금액표시(productPrice)}
                 margin="dense"
-                type="number"
+                type='text'
+                inputProps={{ inputMode: 'numeric' }}
                 label="가격설정"
                 onChange={(e) => {
-                  setProductPrice(e.target.value)
+                  setProductPrice(금액입력(e))
                 }}
               />
             </DialogContent>
@@ -855,12 +857,13 @@ const ProductList = () => {
               <TextField
                 autoFocus
                 fullWidth
-                value={productPrice}
+                value={금액표시(productPrice)}
                 margin="dense"
-                type="number"
+                type='text'
+                inputProps={{ inputMode: 'numeric' }}
                 label="가격설정"
                 onChange={(e) => {
-                  setProductPrice(e.target.value)
+                  setProductPrice(금액입력(e))
                 }}
               />
             </DialogContent>

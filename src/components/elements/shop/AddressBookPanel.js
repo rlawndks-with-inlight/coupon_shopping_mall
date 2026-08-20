@@ -120,6 +120,9 @@ const AddressBookPanel = ({ card = true, title, loginPath = '/shop/auth/login' }
       {card ?
         <Card>
           <CardHeader
+            // 제목과 버튼이 한 줄에 나란히 선다. 폭이 좁아지면 서로 밀고 들어가 겹쳐 보였다.
+            // 자리가 모자라면 버튼이 아래로 내려가게 둔다.
+            sx={{ flexWrap: 'wrap', rowGap: 1, '& .MuiCardHeader-action': { m: 0, alignSelf: 'center' } }}
             title={title ?? translate('배송지 관리')}
             action={
               <Button variant="outlined" onClick={() => setAddAddressOpen(true)}>

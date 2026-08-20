@@ -5,6 +5,7 @@ import toast from 'react-hot-toast';
 import { apiManager } from 'src/utils/api';
 import { useAuthContext } from 'src/layouts/manager/auth/useAuthContext';
 import { useLocales } from 'src/locales';
+import PasswordField from 'src/components/elements/PasswordField';
 
 // 회원 탈퇴 — 프레임 구분 없는 공용 패널.
 //
@@ -50,9 +51,9 @@ const ResignPanel = ({ loginPath = '/shop/auth/login' }) => {
       <CardContent>
         <Typography variant="body2" sx={{ color: 'text.secondary', mb: 2 }}>{translate('회원 탈퇴를 하시면 회원 혜택을 더 이상 이용하실 수 없습니다.')}<br />{translate('탈퇴하시려면 비밀번호를 입력하고 탈퇴 버튼을 눌러 주세요.')}</Typography>
         <Stack spacing={2}>
-          <TextField
+          <PasswordField
             label={translate('비밀번호')}
-            type="password"
+
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             onKeyDown={(e) => { if (e.key === 'Enter') onResign(); }}

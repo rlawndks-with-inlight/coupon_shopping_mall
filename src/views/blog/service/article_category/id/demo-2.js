@@ -182,8 +182,7 @@ const Demo2 = (props) => {
                                 <PostTitle themeMode={themeMode}>{formatLang(item, 'post_title') ?? '---'}</PostTitle>
                                 {item?.writer_nickname &&
                                     <PostMeta themeMode={themeMode}>작성자 {item?.writer_nickname}</PostMeta>}
-                                {item?.post_title_img &&
-                                    <img src={item?.post_title_img} style={{ width: '100%', marginTop: '1rem', borderRadius: '8px' }} />}
+
                                 <ReactQuill
                                     className='none-padding'
                                     value={formatLang(item, 'post_content') ?? `<body></body>`}

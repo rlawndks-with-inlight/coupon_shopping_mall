@@ -115,6 +115,33 @@ export function AuthProvider({ children }) {
     initialize();
   }, [initialize]);
 
+  // 세션 이어가기.
+  //
+  // 토큰 수명은 180분인데 로그인할 때 한 번만 발급됐다. 갱신 경로가 없어서, 계속 일하던
+  // 사람도 로그인 후 3시간이 되면 끊겼다 — '무활동 3시간'이 아니라 '로그인 후 3시간'이라
+  // 쓰고 있는 중에 갑자기 로그인 화면으로 튀는 것처럼 보였다.
+  // 백엔드는 /api/auth 를 부를 때 남은 시간이 절반 아래면 토큰을 새로 준다. 그런데 이 화면은
+  // 첫 진입 때 딱 한 번만 그걸 불렀다(SPA 라 화면을 옮겨도 다시 안 부른다) — 그래서 갱신이
+  // 걸릴 기회 자체가 없었다. 여기서 주기적으로 두드려 준다.
+  //
+  // ⚠ 실패해도 로그아웃시키지 않는다. 이 두드림은 '살아 있음'을 알리는 용도일 뿐이고,
+  //   네트워크가 한 번 끊겼다고 작업 중인 사람을 내쫓으면 안 된다.
+  useEffect(() => {
+    if (!state.isAuthenticated) return;
+    const 두드리기 = () => {
+      // 탭이 뒤에 있으면 굳이 부르지 않는다(브라우저가 타이머를 늦추기도 한다).
+      if (typeof document !== 'undefined' && document.visibilityState === 'hidden') return;
+      axios.get('/api/auth').catch(() => { });
+    };
+    const timer = setInterval(두드리기, 20 * 60 * 1000);   // 20분
+    // 다른 탭에서 일하다 돌아왔을 때도 한 번 이어 준다.
+    document.addEventListener('visibilitychange', 두드리기);
+    return () => {
+      clearInterval(timer);
+      document.removeEventListener('visibilitychange', 두드리기);
+    };
+  }, [state.isAuthenticated]);
+
   // LOGIN
   const login = useCallback(async (user_name, user_pw, is_manager, otp_num) => {
     if (isDemoHost()) {
@@ -131,7 +158,14 @@ export function AuthProvider({ children }) {
         user_name,
         user_pw,
         is_manager,
-        otp_num
+        otp_num,
+        // 어느 몰에 로그인하는지 함께 보낸다.
+        //
+        // 서버는 원래 dns 쿠키에서 브랜드를 꺼내 쓰는데, 그 쿠키도 3시간짜리라 로그인 토큰과
+        // 같이 죽는다. 창을 오래 열어 둔 뒤 다시 로그인하면 브랜드를 못 찾아 '가입되지 않은
+        // 회원입니다'(=아이디/비번 오류)가 떴다 — 새로고침하면 되던 이유가 이것이다.
+        // 이 값이 있으면 쿠키가 죽어 있어도 서버가 브랜드를 다시 찾을 수 있다.
+        dns: typeof window !== 'undefined' ? window.location.host.split(':')[0] : '',
       });
       response = res.data;
     } catch (error) {

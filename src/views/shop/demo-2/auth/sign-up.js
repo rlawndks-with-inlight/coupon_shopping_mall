@@ -13,6 +13,7 @@ import { useLocales } from 'src/locales';
 import SecurityQuestionFields from 'src/components/elements/shop/SecurityQuestionFields';
 import { validateSecurityQuestion, securityQuestionPayload } from 'src/data/security-questions';
 import { isShopgoBrand } from 'src/utils/is-shopgo';
+import PasswordField from 'src/components/elements/PasswordField';
 
 const Wrapper = styled.div`
 display:flex;
@@ -269,13 +270,13 @@ const SignUpDemo = (props) => {
                 }
               }}
             />
-            <TextField
+            <PasswordField
               label={translate('비밀번호')}
               fullWidth
               onChange={(e) => {
                 setUser({ ...user, ['user_pw']: e.target.value })
               }}
-              type='password'
+
               value={user.user_pw}
               autoComplete='new-password'
               onKeyPress={(e) => {
@@ -283,13 +284,13 @@ const SignUpDemo = (props) => {
                 }
               }}
             />
-            <TextField
+            <PasswordField
               label={translate('비밀번호확인')}
               fullWidth
               onChange={(e) => {
                 setUser({ ...user, ['user_pw_check']: e.target.value })
               }}
-              type='password'
+
               value={user.user_pw_check}
               autoComplete='new-password'
               onKeyPress={(e) => {

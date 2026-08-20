@@ -14,6 +14,7 @@ import { useModal } from "src/components/dialog/ModalProvider";
 import _ from "lodash";
 import { apiManager, uploadFileByManager } from "src/utils/api";
 import { bankCodeList } from "src/utils/format";
+import PasswordField from 'src/components/elements/PasswordField';
 
 
 const DistributorEdit = () => {
@@ -181,10 +182,10 @@ const DistributorEdit = () => {
                                                 router.query?.edit_category != 'edit' &&
                                                 <>
                                                     <Stack spacing={1}>
-                                                        <TextField
+                                                        <PasswordField
                                                             label='총판 비밀번호'
                                                             value={item.user_pw}
-                                                            type="password"
+
                                                             onChange={(e) => {
                                                                 setItem(
                                                                     {

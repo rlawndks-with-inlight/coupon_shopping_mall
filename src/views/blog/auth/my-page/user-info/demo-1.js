@@ -7,6 +7,7 @@ import { useSettingsContext } from 'src/components/settings';
 import { apiManager } from 'src/utils/api';
 import toast from 'react-hot-toast';
 import { useLocales } from 'src/locales';
+import PasswordField from 'src/components/elements/PasswordField';
 
 // 공지사항, faq 등 상세페이지 김인욱
 const Wrappers = styled.div`
@@ -263,8 +264,8 @@ const Demo1 = (props) => {
           </div>
           {authMode === 'password' &&
             <div style={{ display: 'flex', flexDirection: 'column', marginTop: '1rem' }}>
-              <TextField
-                type='password'
+              <PasswordField
+
                 name='password'
                 placeholder={translate('현재 비밀번호')}
                 value={userObj?.password ?? ''}
@@ -273,8 +274,8 @@ const Demo1 = (props) => {
                 }}
                 sx={{ marginBottom: '1%' }}
               />
-              <TextField
-                type='password'
+              <PasswordField
+
                 name='new_password'
                 placeholder={translate('새 비밀번호')}
                 value={userObj?.new_password ?? ''}
@@ -283,8 +284,8 @@ const Demo1 = (props) => {
                 }}
                 sx={{ marginBottom: '1%' }}
               />
-              <TextField
-                type='password'
+              <PasswordField
+
                 name='new_password_check'
                 placeholder={translate('새 비밀번호 확인')}
                 value={userObj?.new_password_check ?? ''}
@@ -305,8 +306,8 @@ const Demo1 = (props) => {
           {authMode === 'resign' &&
             <div style={{ display: 'flex', flexDirection: 'column', marginTop: '1rem' }}>
               <Typography style={{ color: 'gray', marginBottom: '0.5rem' }}>{translate('회원 탈퇴를 하시면 회원 혜택을 더 이상 이용하실 수 없습니다. 계속하시려면 비밀번호를 입력해주세요.')}</Typography>
-              <TextField
-                type='password'
+              <PasswordField
+
                 name='resign_password'
                 placeholder={translate('비밀번호를 입력해주세요')}
                 value={userObj?.resign_password ?? ''}

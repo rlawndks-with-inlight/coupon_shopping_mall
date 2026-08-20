@@ -16,6 +16,7 @@ import toast from 'react-hot-toast';
 import DialogBuyNow from 'src/components/dialog/DialogBuyNow';
 import { useAuthContext } from 'src/layouts/manager/auth/useAuthContext';
 import { useModal } from 'src/components/dialog/ModalProvider';
+import { 적립예정 } from 'src/data/point-policy';
 
 const ReactQuill = dynamic(() => import('react-quill'), {
   ssr: false,
@@ -442,11 +443,13 @@ const ItemDemo = (props) => {
                                 ''
                       */}
                       <div style={{ borderTop: '1px solid #ccc', borderBottom: '1px solid #ccc', width: '100%', padding: '1rem 0' }} onClick={() => { }}>
-                        {(themeDnsData?.seller_point > 0) && (
+                        {/* seller_point 는 셀러 전용 값이라 일반 가맹점에는 없다.
+                            적립률(setting_obj.point_rate)로 계산한다. */}
+                        {적립예정({ dns: themeDnsData, 결제금액: product?.product_sale_price }) > 0 && (
                           <div style={{ width: '100%', display: 'flex', justifyContent: 'space-between', }}>
                             <div>포인트 적립</div>
                             <div style={{ textAlign: 'right', }}>
-                              구매시 {commarNumber(product?.product_sale_price * themeDnsData?.seller_point)} P
+                              구매시 {commarNumber(적립예정({ dns: themeDnsData, 결제금액: product?.product_sale_price }))} P
                             </div>
                           </div>
                         )}

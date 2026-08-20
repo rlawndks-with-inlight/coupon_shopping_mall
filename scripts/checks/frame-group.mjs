@@ -41,8 +41,16 @@ eq('프레임1·2·3 메인페이지관리 경로', guideRouteOf(design, 'shop')
 // 이게 이번 수정의 본체 — 예전엔 계열과 무관하게 /designs/main/all 로 보냈다.
 eq('프레임4·5 메인페이지관리 경로', guideRouteOf(design, 'column'), '/manager/designs/blog-main/all');
 eq('계열 모를 때 기본 경로', guideRouteOf(design, null), '/manager/designs/main/all');
-const menuDesign = GUIDE_PART2.find((s) => s.id === 'menu-design');
-eq('참조편도 계열별 경로', guideRouteOf(menuDesign, 'column'), '/manager/designs/blog-main/all');
+// 참조편의 디자인관리는 계열마다 다른 항목으로 갈렸다(옛 공용 항목 menu-design 은 없앴다).
+// 계열별로 '어떤 섹션을 어떤 차례로' 를 적어야 해서인데, 그러면 경로도 각 항목에 직접 붙는다
+// — routeByGroup 으로 갈라 줄 필요가 없어졌다. 그래도 도착지는 그대로여야 한다.
+eq('옛 공용 항목은 없앴다', GUIDE_PART2.some((s) => s.id === 'menu-design'), false);
+const designShop = GUIDE_PART2.find((s) => s.id === 'menu-design-shop');
+const designColumn = GUIDE_PART2.find((s) => s.id === 'menu-design-column');
+eq('참조편 프레임1·2 경로', guideRouteOf(designShop, 'shop'), '/manager/designs/main/all');
+eq('참조편 프레임3·4 경로', guideRouteOf(designColumn, 'column'), '/manager/designs/blog-main/all');
+eq('참조편 프레임1·2 는 shop 전용', designShop?.groups, ['shop']);
+eq('참조편 프레임3·4 는 column 전용', designColumn?.groups, ['column']);
 
 // ── 계열별 노출 ────────────────────────────────────────────────────────────
 const visible = (group, list) => list.filter((s) => !s.groups || s.groups.includes(group)).map((s) => s.id);

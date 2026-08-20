@@ -22,6 +22,7 @@ import { isShopgoBrand } from 'src/utils/is-shopgo';
 import { formatLang, characterChoices } from 'src/utils/format';
 import { useLocales } from 'src/locales';
 import QuantityStepper from 'src/components/elements/shop/QuantityStepper';
+import { 적립예정 } from 'src/data/point-policy';
 
 const ReactQuill = dynamic(() => import('react-quill'), {
   ssr: false,
@@ -571,14 +572,14 @@ const ItemDemo = (props) => {
                             </>
                             }
                           />
-                          {
-                            themeDnsData?.id == 74 &&
-                            <>
-                              <div style={{ textAlign: 'right', color: 'gray' }}>
-                                구매시 {commarNumberWithUnit(product?.product_sale_price * themeDnsData?.seller_point)} 적립
-                              </div>
-                            </>
-                          }
+                          {/* 적립 예정 안내.
+                              예전엔 브랜드 74 에만 뜨고, 곱하는 값도 seller_point(셀러 전용 값)였다.
+                              일반 가맹점은 그 값이 없어 NaN 이 되거나 아예 안 보였다.
+                              적립률(setting_obj.point_rate)로 계산하고, 적립을 쓰는 몰이면 보여준다. */}
+                          {적립예정({ dns: themeDnsData, 결제금액: product?.product_sale_price }) > 0 &&
+                            <div style={{ textAlign: 'right', color: 'gray' }}>
+                              구매시 {commarNumber(적립예정({ dns: themeDnsData, 결제금액: product?.product_sale_price }))}P 적립
+                            </div>}
                           {/* 배송비를 상세에 표시한다. 이 프레임에는 배송비 표기가 없어서
                               고객이 장바구니·주문서에 가서야 배송비를 알았다
                               (상세에서 본 금액과 결제 직전 금액이 달라 보인다). */}

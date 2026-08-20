@@ -50,9 +50,6 @@ const TrxList = () => {
   const { setModal } = useModal()
   const { user } = useAuthContext();
   const { themeDnsData } = useSettingsContext();
-  const [chkpic, setChkpic] = useState({
-    check_file: undefined
-  })
   // ⚠ defaultColumns 안에서 data 를 읽는다(추가 입력정보 열 표시 여부).
   //   const 는 TDZ 라 선언이 아래에 있으면 렌더 중 ReferenceError 가 나고 화면이 백지가 된다.
   //   그래서 컬럼 정의보다 위에 둔다.
@@ -61,51 +58,11 @@ const TrxList = () => {
   const [cancelTrxId, setCancelTrxId] = useState(0);
   const defaultColumns = [
     ...(themeDnsData?.setting_obj?.is_use_seller == 2 ? [
-      {
-        id: 'check_img',
-        label: '검품사진',
-        action: (row) => {
-          return row['check_img'] ?? user?.level >= 40 ?
-            <Button variant="outlined"
-              onClick={() => {
-                setModal({
-                  func: () => { updatePicture(row?.id) },
-                  title: <Upload file={chkpic?.check_file || chkpic?.check_img}
-                    onDrop={(acceptedFiles) => {
-                      const newFile = acceptedFiles[0];
-                      if (newFile) {
-                        setChkpic(
-                          {
-                            ['check_file']: Object.assign(newFile, {
-                              preview: URL.createObjectURL(newFile),
-                            })
-                          }
-                        );
-                      }
-                    }}
-                    onDelete={() => {
-                      setChkpic(
-                        {
-                          ['check_file']: undefined,
-                          ['check_img']: '',
-                        }
-                      );
-                    }}
-                  />
-                })
-              }}
-            >
-              업로드
-            </Button>
-            :
-            "---"
-        },
-        sx: (row) => {
-          return {
-            color: `${row?.is_cancel == 1 ? 'red' : ''}`
-          }
-        },
-      },
+      /* 검품사진(check_img) 열을 없앤다.
+         업로드 창은 떴지만 저장하는 함수(updatePicture)의 본문이 통째로 주석 처리돼 있었다 —
+         console.log 만 남아 있어서, 사진을 올리고 확인을 눌러도 아무 일도 일어나지 않았다.
+         고객 화면은 물론 관리자 표에서도 그 값을 다시 보여주는 곳이 없다.
+         되살리려면 저장 경로(transactions update)부터 다시 이어야 한다. */
     ] : [
       {
         id: 'ord_num',
@@ -772,13 +729,6 @@ const TrxList = () => {
     if (result) {
       onChangePage(searchObj);
     }
-  }
-  const updatePicture = async (id) => {
-    console.log(chkpic)
-    //let result = await apiManager('transactions', 'update', { id: id, check_img: chkpic['check_img'] })
-    //if (result) {
-    //onChangePage(searchObj);
-    //}
   }
   const onPayCancel = async (item) => {
 

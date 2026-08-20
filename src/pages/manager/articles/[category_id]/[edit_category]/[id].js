@@ -124,37 +124,43 @@ const ArticleEdit = () => {
                         })}
                       </Select>
                     </>}
-                  <Stack spacing={1}>
-                    <Typography variant="subtitle2" sx={{ color: 'text.secondary' }}>
-                      대표이미지등록
-                    </Typography>
-                    <Upload file={item.post_title_file || item.post_title_img} onDrop={(acceptedFiles) => {
-                      const newFile = acceptedFiles[0];
-                      if (newFile) {
-                        setItem(
-                          {
-                            ...item,
-                            ['post_title_file']: Object.assign(newFile, {
-                              preview: URL.createObjectURL(newFile),
-                            })
-                          }
-                        );
-                      }
-                    }}
-                      onDelete={() => {
-                        setItem(
-                          {
-                            ...item,
-                            ['post_title_file']: undefined,
-                            ['post_title_img']: '',
-                          }
-                        )
+                  {/* 대표이미지는 '갤러리형 게시판'에서만 쓴다.
+                      갤러리형(post_category_type == 1)은 목록이 사진 카드로 깔리고 이 이미지가
+                      그 카드 그림이 된다(components/elements/content-table.js).
+                      공지사항 같은 글 목록형(0)에서는 어디에도 안 나오는데도 칸이 떠 있어서,
+                      사진을 올려 두고 '왜 안 보이냐'는 물음이 나왔다. 쓰는 곳에서만 보여준다. */}
+                  {category?.post_category_type == 1 &&
+                    <Stack spacing={1}>
+                      <Typography variant="subtitle2" sx={{ color: 'text.secondary' }}>
+                        대표이미지등록
+                      </Typography>
+                      <Upload file={item.post_title_file || item.post_title_img} onDrop={(acceptedFiles) => {
+                        const newFile = acceptedFiles[0];
+                        if (newFile) {
+                          setItem(
+                            {
+                              ...item,
+                              ['post_title_file']: Object.assign(newFile, {
+                                preview: URL.createObjectURL(newFile),
+                              })
+                            }
+                          );
+                        }
                       }}
-                      fileExplain={{
-                        width: '(512x512 추천)'//파일 사이즈 설명
-                      }}
-                    />
-                  </Stack>
+                        onDelete={() => {
+                          setItem(
+                            {
+                              ...item,
+                              ['post_title_file']: undefined,
+                              ['post_title_img']: '',
+                            }
+                          )
+                        }}
+                        fileExplain={{
+                          width: '(512x512 추천)'//파일 사이즈 설명
+                        }}
+                      />
+                    </Stack>}
                   <TextField
                     label='제목'
                     value={item.post_title}

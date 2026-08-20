@@ -63,19 +63,25 @@ export const safeRedirectPath = (value, fallback = '/shop') => {
   if (!/^\/[^/\\]/.test(path)) return fallback;
   return path;
 };
+// 포인트 원장 한 줄을 사람 말로 옮긴다.
+//
+// 문구가 개발자 말투였다 — '결제완료건에 의한 포인트', '구매에 사용한 포인트 감소건'.
+// 이 값은 고객 마이페이지의 포인트 내역에 그대로 나간다. 손님이 읽는 글이므로
+// 무슨 일이 있었는지가 바로 보여야 한다.
+// 모르는 값에 '잘못된 타입'이라고 쓰면 고객은 자기 포인트가 잘못된 줄 안다.
 export const getPointType = row => {
   if (row?.type == 0) {
-    return '결제완료건에 의한 포인트'
+    return '구매 적립'
   } else if (row?.type == 5) {
-    return '결제취소건에 의한 포인트'
+    return '주문 취소 정산'
   } else if (row?.type == 10) {
-    return '구매에 사용한 포인트 감소건'
+    return '주문에 사용'
   } else if (row?.type == 15) {
-    return '관리자에 의해 추가'
+    return '관리자 지급'
   } else if (row?.type == 20) {
-    return '관리자에 의한 감소'
+    return '관리자 차감'
   } else {
-    return '잘못된 타입'
+    return '포인트 변동'
   }
 }
 export const getMainObjIdList = (main_obj = [], type, id_list_ = [], is_children) => {

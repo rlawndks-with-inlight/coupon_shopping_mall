@@ -11,6 +11,7 @@ import { logoSrc } from 'src/data/data';
 import { Row } from 'src/components/elements/styled-components';
 import { formatLang } from 'src/utils/format';
 import { useLocales } from 'src/locales';
+import { 포인트쓰는몰 } from 'src/data/point-policy';
 
 const Wrappers = styled.div`
 max-width:720px;
@@ -140,7 +141,7 @@ const Demo2 = (props) => {
                 <MenuContainer style={{ color: `${themeDnsData?.theme_css?.main_color}`, fontWeight: 'bold' }}>
                     <MenuBox>
                         {translate('쇼핑')}
-                        {(user && (themeDnsData?.seller_point > 0 || themeDnsData?.point_rate > 0)) ?
+                        {(user && 포인트쓰는몰(themeDnsData))/* point_rate 는 브랜드 컬럼이 아니라 setting_obj 안에 있다 — themeDnsData?.point_rate 는 늘 undefined 라 이 메뉴가 사실상 안 떴다 */ ?
                             <>
                                 <MenuButton themeMode={themeMode} style={{ marginBottom: '0' }} onClick={() => { router.push('/shop/auth/point') }}>
                                     <MenuText>{translate('포인트 조회')}</MenuText>

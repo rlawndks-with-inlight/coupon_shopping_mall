@@ -394,27 +394,10 @@ const PropertyList = () => {
                                                                 </>}
                                                         </Row>
                                                     </>}
-                                                <Upload file={property.property_file || property.property_img} onDrop={(acceptedFiles) => {
-                                                    const newFile = acceptedFiles[0];
-                                                    if (newFile) {
-                                                        setProperty(
-                                                            {
-                                                                ...property,
-                                                                ['property_file']: Object.assign(newFile, {
-                                                                    preview: URL.createObjectURL(newFile),
-                                                                })
-                                                            }
-                                                        );
-                                                    }
-                                                }} onDelete={() => {
-                                                    setProperty(
-                                                        {
-                                                            ...property,
-                                                            ['property_file']: undefined,
-                                                            ['property_img']: '',
-                                                        }
-                                                    )
-                                                }} />
+                                                {/* 특성 이미지 업로드를 없앤다.
+                                                    올린 값(property_img)을 그리는 곳이 프론트·고객화면 통틀어 0곳이었다.
+                                                    백엔드는 받아서 저장만 한다 — 채워도 아무 데도 안 나온다.
+                                                    특성은 '보여주기 전용 상품정보'로 정리됐고 관리 메뉴도 본사 전용이다. */}
                                                 <TextField label={`${propertyGroup?.property_group_name}명`} value={property.property_name} onChange={(e) => {
                                                     setProperty({
                                                         ...property,

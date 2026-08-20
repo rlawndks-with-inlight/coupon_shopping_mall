@@ -7,6 +7,7 @@ import { useSettingsContext } from 'src/components/settings';
 import { apiManager } from 'src/utils/api';
 import { commarNumber, sanitizePhoneInput, getOrderStatusText } from 'src/utils/function';
 import { useLocales } from 'src/locales';
+import PasswordField from 'src/components/elements/PasswordField';
 
 const Wrappers = styled.div`
   max-width: 640px;
@@ -52,6 +53,9 @@ const OrderDetail = ({ order }) => {
         <CardContent sx={{ pt: 0 }}>
           <KV k={translate('주문번호')} v={order?.ord_num} strong />
           {order?.appr_num && <KV k={translate('승인번호')} v={order?.appr_num} />}
+          {(order?.trx_dt || order?.trx_tm) && <KV k={translate('승인일시')} v={`${order?.trx_dt || ''} ${order?.trx_tm || ''}`.trim()} />}
+          {order?.acquirer && <KV k={translate('매입사')} v={order?.acquirer} />}
+          {order?.installment && <KV k={translate('할부기간')} v={order?.installment === '00' ? translate('일시불') : translate('{{n}}개월', { n: String(order?.installment).replace(/^0+/, '') })} />}
           <KV k={translate('주문현황')} v={getOrderStatusText(order)} />
           <KV k={translate('구매자')} v={`${order?.buyer_name || '-'}${order?.buyer_phone ? ' · ' + order?.buyer_phone : ''}`} />
           {order?.invoice_num && (
@@ -140,7 +144,7 @@ const OrderCheck = () => {
               inputMode="tel"
               onChange={(e) => setForm({ ...form, buyer_phone: sanitizePhoneInput(e.target.value) })}
               onKeyPress={(e) => { if (e.key === 'Enter') onSearch(); }} />
-            <TextField fullWidth size="small" type="password" label={translate('주문 비밀번호')} value={form.password}
+            <PasswordField fullWidth size="small" label={translate('주문 비밀번호')} value={form.password}
               onChange={(e) => setForm({ ...form, password: e.target.value })}
               onKeyPress={(e) => { if (e.key === 'Enter') onSearch(); }} />
             <Button variant="contained" size="large" disabled={loading} onClick={onSearch}>

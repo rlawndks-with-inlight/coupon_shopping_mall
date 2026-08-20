@@ -17,6 +17,7 @@ import { generateRandomString, withSignUpName, validateSignUpInput, sanitizePhon
 import SecurityQuestionFields from 'src/components/elements/shop/SecurityQuestionFields';
 import { validateSecurityQuestion, securityQuestionPayload } from 'src/data/security-questions';
 import { isShopgoBrand } from 'src/utils/is-shopgo';
+import PasswordField from 'src/components/elements/PasswordField';
 
 const Wrappers = styled.div`
 max-width:1000px;
@@ -342,12 +343,12 @@ const SignUpDemo = (props) => {
                 ),
               }}
             />
-            <TextField
+            <PasswordField
               label={translate('비밀번호')}
               onChange={(e) => {
                 setUser({ ...user, ['user_pw']: e.target.value })
               }}
-              type='password'
+
               value={user.user_pw}
               style={inputStyle}
               autoComplete='new-password'
@@ -356,12 +357,12 @@ const SignUpDemo = (props) => {
                 }
               }}
             />
-            <TextField
+            <PasswordField
               label={translate('비밀번호확인')}
               onChange={(e) => {
                 setUser({ ...user, ['user_pw_check']: e.target.value })
               }}
-              type='password'
+
               value={user.user_pw_check}
               style={inputStyle}
               autoComplete='new-password'

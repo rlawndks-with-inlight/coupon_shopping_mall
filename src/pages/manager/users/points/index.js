@@ -9,6 +9,7 @@ import ManagerLayout from "src/layouts/manager/ManagerLayout";
 import { commarNumber, getPointType } from "src/utils/function";
 import ManagerTable from "src/views/manager/mui/table/ManagerTable";
 import { apiManager } from "src/utils/api";
+import PasswordField from 'src/components/elements/PasswordField';
 const PointList = () => {
   const { setModal } = useModal()
   const defaultColumns = [
@@ -137,11 +138,11 @@ const PointList = () => {
           <DialogContentText>
             새 비밀번호를 입력 후 확인을 눌러주세요.
           </DialogContentText>
-          <TextField
+          <PasswordField
             autoFocus
             fullWidth
             value={changePasswordObj.user_pw}
-            type="password"
+
             margin="dense"
             label="새 비밀번호"
             onChange={(e) => {

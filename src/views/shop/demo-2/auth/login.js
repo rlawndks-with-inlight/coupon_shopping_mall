@@ -11,6 +11,7 @@ import { useLocales } from 'src/locales';
 import toast from 'react-hot-toast';
 import { getOptionLabel } from 'src/utils/shop-util';
 import { formatLang } from 'src/utils/format';
+import PasswordField from 'src/components/elements/PasswordField';
 
 const Wrapper = styled.div`
 display:flex;
@@ -128,13 +129,13 @@ const LoginDemo = (props) => {
                 }
               }}
             />
-            <TextField
+            <PasswordField
               fullWidth
               label={translate('비밀번호')}
               onChange={(e) => {
                 setPassword(e.target.value)
               }}
-              type='password'
+
               value={password}
               autoComplete='new-password'
               onKeyPress={(e) => {
@@ -209,13 +210,13 @@ const LoginDemo = (props) => {
                     }
                   }}
                 />
-                <TextField
+                <PasswordField
                   fullWidth
                   label={translate('비회원주문 비밀번호')}
                   onChange={(e) => {
                     setNoneUserObj({ ...noneUserObj, ['password']: e.target.value })
                   }}
-                  type='password'
+
                   value={noneUserObj.password}
                   autoComplete='new-password'
                   onKeyPress={(e) => {

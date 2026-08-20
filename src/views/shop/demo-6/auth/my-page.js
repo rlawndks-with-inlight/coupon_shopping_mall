@@ -1,4 +1,4 @@
-import { Avatar, Box, Button, Card, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Grid, Pagination, Select, Stack, Switch, Tab, Tabs, TextField, Typography } from '@mui/material';
+import { Avatar, Box, Button, Card, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Grid, Pagination, Select, Stack, Switch, Tab, Tabs, TextField, Typography, useMediaQuery } from '@mui/material';
 import { useEffect, useState } from 'react';
 import { AddressTable } from 'src/components/elements/shop/common';
 import { Col, Row, Title, postCodeStyle } from 'src/components/elements/styled-components';
@@ -47,6 +47,9 @@ const MyPageDemo = (props) => {
     }
   }
   const { user } = useAuthContext();
+  // 화면 폭은 훅으로 읽는다. 렌더 중 window 를 직접 읽으면 서버 렌더에서 죽고,
+  // 창 크기를 바꿔도 다시 그려지지 않는다.
+  const isWide = useMediaQuery('(min-width:700px)');
   const [myPageType, setMyPageType] = useState(undefined);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [userObj, setUserObj] = useState({})
@@ -172,7 +175,7 @@ const MyPageDemo = (props) => {
                 </Card>
                 <Pagination
                   sx={{ margin: 'auto' }}
-                  size={window.innerWidth > 700 ? 'medium' : 'small'}
+                  size={isWide ? 'medium' : 'small'}
                   count={makeMaxPage(addressContent?.total, addressContent?.page_size)}
                   page={addressContent?.page}
                   variant='outlined' shape='rounded'

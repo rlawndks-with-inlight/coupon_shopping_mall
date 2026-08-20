@@ -245,7 +245,7 @@ const ArticleDemo = (props) => {
                     <PostTitle>{formatLang(item, 'post_title', currentLang)}</PostTitle>
                   </Row>
                   <PostDate value={item?.created_at} />
-                  <TitleImg src={item?.post_title_img} />
+
                   <ReactQuill
                     className='none-padding'
                     value={formatLang(item, 'post_content', currentLang) ?? `<body></body>`}

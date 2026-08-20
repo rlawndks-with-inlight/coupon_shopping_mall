@@ -215,8 +215,7 @@ const Demo1 = (props) => {
                                     {item?.writer_nickname && <span>{item?.writer_nickname}</span>}
                                     {item?.created_at && <span>{item?.created_at}</span>}
                                 </MetaRow>
-                                {item?.post_title_img &&
-                                    <img src={item?.post_title_img} style={{ width: '100%', marginBottom: '1rem' }} />}
+
                                 <Content themeMode={themeMode} dangerouslySetInnerHTML={{ __html: formatLang(item, 'post_content') ?? '' }} />
                                 {item?.replies && item?.replies.map((reply, idx) => (
                                     <ReplyBox key={idx} themeMode={themeMode}>

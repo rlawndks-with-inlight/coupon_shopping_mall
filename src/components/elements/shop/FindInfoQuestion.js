@@ -20,6 +20,7 @@ import {
 } from 'src/data/security-questions';
 import { apiManager } from 'src/utils/api';
 import { useLocales } from 'src/locales';
+import { PasswordOutlinedInput } from 'src/components/elements/PasswordField';
 
 // SMS 대신 '보안질문'으로 동작하는 아이디찾기 / 비밀번호 재설정 본문(공용).
 //
@@ -255,9 +256,9 @@ const FindInfoQuestion = ({
               </FormControl>
               <FormControl variant="outlined">
                 <InputLabel>{translate('새 비밀번호')}</InputLabel>
-                <OutlinedInput
+                <PasswordOutlinedInput
                   label={translate('새 비밀번호')}
-                  type="password"
+
                   autoComplete="new-password"
                   value={obj.password}
                   onChange={(e) => {
@@ -267,9 +268,9 @@ const FindInfoQuestion = ({
               </FormControl>
               <FormControl variant="outlined">
                 <InputLabel>{translate('새 비밀번호 확인')}</InputLabel>
-                <OutlinedInput
+                <PasswordOutlinedInput
                   label={translate('새 비밀번호 확인')}
-                  type="password"
+
                   autoComplete="new-password"
                   value={obj.passwordCheck}
                   onChange={(e) => {

@@ -209,8 +209,7 @@ const ArticleDemo = (props) => {
                         <PostDate value={item?.created_at} style={{ marginTop: '0.35rem' }} />
                       </Box>
                       <Divider />
-                      {item?.post_title_img &&
-                        <img src={item?.post_title_img} style={{ width: '100%', borderRadius: '4px' }} />}
+
                       <ReactQuill
                         className='none-padding'
                         value={formatLang(item, 'post_content', currentLang) ?? `<body></body>`}

@@ -51,6 +51,7 @@ import { allLangs } from 'src/locales'
 import { isShopgoMerchant } from 'src/utils/is-shopgo'
 import { COURIER_LIST } from 'src/data/couriers';
 import { 금액표시, 금액입력 } from 'src/utils/money-input'
+import PasswordField from 'src/components/elements/PasswordField';
 // 저장돼 있지 않으면 기본(100%). 이상한 값이 들어와도 슬라이더가 범위를 벗어나면 안 된다.
 const 로고배율 = (item) => {
   const v = Number(item?.setting_obj?.logo_scale)
@@ -1224,10 +1225,10 @@ const DefaultSetting = () => {
                 <Grid item xs={12} md={6}>
                   <Card sx={{ p: 2, height: '100%' }}>
                     <Stack spacing={3}>
-                      <TextField
+                      <PasswordField
                         label='본사 비밀번호'
                         value={item?.user_pw}
-                        type='password'
+
                         onChange={e => {
                           setItem({
                             ...item,
@@ -1235,10 +1236,10 @@ const DefaultSetting = () => {
                           })
                         }}
                       />
-                      <TextField
+                      <PasswordField
                         label='본사 비밀번호 확인'
                         value={item?.user_pw_check}
-                        type='password'
+
                         onChange={e => {
                           setItem({
                             ...item,
@@ -1256,67 +1257,52 @@ const DefaultSetting = () => {
                 <Grid item xs={12} md={6}>
                   <Card sx={{ p: 2, height: '100%' }}>
                     <Stack spacing={3}>
-                      {/* 적립형/즉시사용형 — shopgo 하위 가맹점이 직접 선택. */}
+                      {/* '즉시사용형 / 적립형' 택일을 없앴다.
+                          고른 쪽의 조건만 걸려서, 안 고른 쪽 칸은 값을 채워도 아무 효과가 없는
+                          죽은 칸이었다. 두 조건은 서로 다른 것을 막는 별개의 장치이고
+                          (소액 주문에 몰아 쓰기 / 잔돈 포인트 소진), 국내 몰들은 보통 둘 다 건다.
+                          이제 둘 다 조건으로 걸고, 비워 두면(0) 그 조건은 없는 것으로 본다. */}
+                      <Typography variant='body2' sx={{ color: 'text.secondary' }}>
+                        아래 두 조건을 모두 만족해야 포인트를 쓸 수 있습니다. 비워 두면 그 조건은 적용되지 않습니다.
+                      </Typography>
                       <FormControl variant='outlined'>
-                        <InputLabel>포인트 사용 방식</InputLabel>
-                        <Select
-                          label='포인트 사용 방식'
-                          value={item?.setting_obj?.point_policy_type ?? 'instant'}
+                        <InputLabel>사용 가능 최소 적립 포인트</InputLabel>
+                        <OutlinedInput
+                          type='text'
+              inputProps={{ inputMode: 'numeric' }}
+                          label='사용 가능 최소 적립 포인트'
+                          value={금액표시(item?.setting_obj?.point_use_min ?? 0)}
+                          endAdornment={<InputAdornment position='end'>P</InputAdornment>}
                           onChange={e => {
                             setItem({
                               ...item,
                               ['setting_obj']: {
                                 ...item?.setting_obj,
-                                ['point_policy_type']: e.target.value
+                                ['point_use_min']: 금액입력(e)
                               }
                             })
                           }}
-                        >
-                          <MenuItem value={'instant'}>즉시사용형 (일정 주문금액 이상이면 사용)</MenuItem>
-                          <MenuItem value={'accumulate'}>적립형 (일정 포인트 이상 모이면 사용)</MenuItem>
-                        </Select>
+                        />
                       </FormControl>
-                      {(item?.setting_obj?.point_policy_type ?? 'instant') === 'accumulate' ? (
-                        <FormControl variant='outlined'>
-                          <InputLabel>사용 가능 최소 적립 포인트</InputLabel>
-                          <OutlinedInput
-                            type='text'
-                inputProps={{ inputMode: 'numeric' }}
-                            label='사용 가능 최소 적립 포인트'
-                            value={금액표시(item?.setting_obj?.point_use_min ?? 0)}
-                            endAdornment={<InputAdornment position='end'>P</InputAdornment>}
-                            onChange={e => {
-                              setItem({
-                                ...item,
-                                ['setting_obj']: {
-                                  ...item?.setting_obj,
-                                  ['point_use_min']: 금액입력(e)
-                                }
-                              })
-                            }}
-                          />
-                        </FormControl>
-                      ) : (
-                        <FormControl variant='outlined'>
-                          <InputLabel>포인트 사용가능 최소 주문금액 (배송비제외)</InputLabel>
-                          <OutlinedInput
-                            type='text'
-                inputProps={{ inputMode: 'numeric' }}
-                            label='포인트 사용가능 최소 주문금액 (배송비제외)'
-                            value={금액표시(item?.setting_obj?.use_point_min_price ?? 0)}
-                            endAdornment={<InputAdornment position='end'>원</InputAdornment>}
-                            onChange={e => {
-                              setItem({
-                                ...item,
-                                ['setting_obj']: {
-                                  ...item?.setting_obj,
-                                  ['use_point_min_price']: 금액입력(e)
-                                }
-                              })
-                            }}
-                          />
-                        </FormControl>
-                      )}
+                      <FormControl variant='outlined'>
+                        <InputLabel>포인트 사용가능 최소 주문금액 (배송비제외)</InputLabel>
+                        <OutlinedInput
+                          type='text'
+              inputProps={{ inputMode: 'numeric' }}
+                          label='포인트 사용가능 최소 주문금액 (배송비제외)'
+                          value={금액표시(item?.setting_obj?.use_point_min_price ?? 0)}
+                          endAdornment={<InputAdornment position='end'>원</InputAdornment>}
+                          onChange={e => {
+                            setItem({
+                              ...item,
+                              ['setting_obj']: {
+                                ...item?.setting_obj,
+                                ['use_point_min_price']: 금액입력(e)
+                              }
+                            })
+                          }}
+                        />
+                      </FormControl>
                       <FormControl variant='outlined'>
                         <InputLabel>최대포인트 사용금액</InputLabel>
                         <OutlinedInput

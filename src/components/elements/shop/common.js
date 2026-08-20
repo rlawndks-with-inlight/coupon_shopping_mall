@@ -363,7 +363,12 @@ export const HistoryTable = props => {
                         </Col>
                       </Row>
                     </TableCell>
-                    <TableCell>{row.ord_num}{row?.appr_num ? <><br /><span style={{ fontSize: 12, color: '#888' }}>{translate('승인')} {row.appr_num}</span></> : ''}</TableCell>
+                    <TableCell>{row.ord_num}
+                      {row?.appr_num ? <><br /><span style={{ fontSize: 12, color: '#888' }}>{translate('승인')} {row.appr_num}</span></> : ''}
+                      {row?.acquirer ? <><br /><span style={{ fontSize: 12, color: '#888' }}>{row.acquirer}</span></> : ''}
+                      {row?.installment ? <><br /><span style={{ fontSize: 12, color: '#888' }}>{row.installment === '00' ? translate('일시불') : translate('{{n}}개월', { n: String(row.installment).replace(/^0+/, '') })}</span></> : ''}
+                      {(row?.trx_dt || row?.trx_tm) ? <><br /><span style={{ fontSize: 12, color: '#888' }}>{`${row?.trx_dt || ''} ${row?.trx_tm || ''}`.trim()}</span></> : ''}
+                    </TableCell>
                     <TableCell>
                       {row.invoice_num
                         ? row.invoice_num
@@ -519,7 +524,9 @@ export const AddressTable = props => {
   return (
     <>
       <TableContainer>
-        <Table sx={{ minWidth: 720, overflowX: 'auto' }}>
+        {/* 칸이 4개(No·주소·상세주소·버튼)뿐인데 720px 을 강제해, 회원정보수정처럼 좁은
+            카드 안에서는 늘 가로 스크롤이 생기고 오른쪽 버튼이 밀려 보였다. */}
+        <Table sx={{ minWidth: 420, overflowX: 'auto' }}>
           <TableHeadCustom headLabel={TABLE_HEAD} />
           <TableBody>
             {addressContent?.content &&

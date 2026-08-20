@@ -205,8 +205,7 @@ const Demo5 = (props) => {
                                         {item?.created_at && <span>{item?.created_at}</span>}
                                     </PostMeta>
                                 </PostHead>
-                                {item?.post_title_img &&
-                                    <img src={item?.post_title_img} style={{ width: '100%' }} />}
+
                                 <ReactQuill
                                     className='none-padding'
                                     value={formatLang(item, 'post_content') ?? `<body></body>`}

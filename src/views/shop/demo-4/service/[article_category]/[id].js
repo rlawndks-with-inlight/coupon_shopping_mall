@@ -183,7 +183,7 @@ const ArticleDemo = (props) => {
                         <h1 style={{ fontSize: '1rem' }}>{formatLang(item, 'post_title')}</h1>
                       </Row>
                       <PostDate value={item?.created_at} />
-                      <img src={item?.post_title_img} style={{ width: '100%' }} />
+
                       <ReactQuill
                         className='none-padding'
                         value={formatLang(item, 'post_content') ?? `<body></body>`}

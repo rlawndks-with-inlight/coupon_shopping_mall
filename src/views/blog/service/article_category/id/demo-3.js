@@ -202,8 +202,7 @@ const Demo3 = (props) => {
                                     {item?.writer_nickname && <span>{item?.writer_nickname}</span>}
                                     {item?.created_at && <span>{item?.created_at}</span>}
                                 </MetaRow>
-                                {item?.post_title_img &&
-                                    <img src={item?.post_title_img} style={{ width: '100%', marginBottom: '1rem' }} />}
+
                                 <ContentBox themeMode={themeMode}>
                                     <ReactQuill
                                         className='none-padding'

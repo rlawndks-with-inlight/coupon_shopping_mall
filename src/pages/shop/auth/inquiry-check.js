@@ -7,6 +7,7 @@ import { apiShop } from 'src/utils/api';
 import { sanitizePhoneInput } from 'src/utils/function';
 import { useRouter } from 'next/router';
 import { useLocales } from 'src/locales';
+import PasswordField from 'src/components/elements/PasswordField';
 
 // 비회원 1:1문의 조회.
 //
@@ -67,8 +68,8 @@ const InquiryCheck = () => {
               value={form.none_user_phone}
               onChange={(e) => setForm({ ...form, none_user_phone: sanitizePhoneInput(e.target.value) })}
             />
-            <TextField
-              size="small" fullWidth label={translate('글 비밀번호')} type="password"
+            <PasswordField
+              size="small" fullWidth label={translate('글 비밀번호')}
               value={form.password}
               onChange={(e) => setForm({ ...form, password: e.target.value })}
               // 엔터로도 조회되게 한다 — 입력칸이 둘뿐이라 버튼까지 가는 게 번거롭다.

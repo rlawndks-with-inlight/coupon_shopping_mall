@@ -34,6 +34,7 @@ import PayProductsByAuthFintree from 'src/utils/fintree-auth'
 import PayProductsByHandFintree from 'src/utils/fintree-hand'
 import PayProductsByAuthWayup from 'src/utils/wayup-auth'
 import { useLocales } from 'src/locales';
+import PasswordField from 'src/components/elements/PasswordField';
 
 const DialogBuyNow = (props) => {
   const { translate } = useLocales();
@@ -378,13 +379,13 @@ const DialogBuyNow = (props) => {
                         <DialogContentText>
                           {payData.detail_addr}
                         </DialogContentText>
-                        <TextField
+                        <PasswordField
                           autoFocus
                           fullWidth
                           value={payData.password}
                           margin="dense"
                           label={translate('비회원비밀번호')}
-                          type='password'
+
                           onChange={(e) => {
                             setPayData({
                               ...payData,
@@ -493,11 +494,11 @@ const DialogBuyNow = (props) => {
                   />
                 </Stack>
                 <Stack>
-                  <TextField
+                  <PasswordField
                     size='small'
                     label={translate('카드비밀번호 앞 두자리')}
                     value={payData.card_pw}
-                    type='password'
+
                     inputProps={{ maxLength: '2' }}
                     onChange={(e) => {
                       let value = e.target.value;
@@ -539,10 +540,10 @@ const DialogBuyNow = (props) => {
                 {!user &&
                   <>
                     <Stack>
-                      <TextField
+                      <PasswordField
                         size='small'
                         label={translate('비회원주문 비밀번호')}
-                        type='password'
+
                         value={payData.password}
                         onChange={(e) => {
                           let value = e.target.value;
@@ -691,11 +692,11 @@ const DialogBuyNow = (props) => {
                   />
                 </Stack>
                 <Stack>
-                  <TextField
+                  <PasswordField
                     size='small'
                     label={translate('카드비밀번호 앞 두자리')}
                     value={payData.card_pw}
-                    type='password'
+
                     inputProps={{ maxLength: '2' }}
                     onChange={(e) => {
                       let value = e.target.value;
@@ -737,10 +738,10 @@ const DialogBuyNow = (props) => {
                 {!user &&
                   <>
                     <Stack>
-                      <TextField
+                      <PasswordField
                         size='small'
                         label={translate('비회원주문 비밀번호')}
-                        type='password'
+
                         value={payData.password}
                         onChange={(e) => {
                           let value = e.target.value;

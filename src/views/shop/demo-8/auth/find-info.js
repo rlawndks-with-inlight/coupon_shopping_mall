@@ -10,6 +10,7 @@ import { useLocales } from 'src/locales';
 import { apiManager } from 'src/utils/api';
 import { isShopgoBrand } from 'src/utils/is-shopgo';
 import styled from 'styled-components'
+import { PasswordOutlinedInput } from 'src/components/elements/PasswordField';
 
 
 const Wrappers = styled.div`
@@ -214,10 +215,10 @@ const FindInfoDemo = (props) => {
                 <>
                   <FormControl variant="outlined" >
                     <InputLabel>{translate('새비밀번호')}</InputLabel>
-                    <OutlinedInput
+                    <PasswordOutlinedInput
                       label={translate('새비밀번호')}
                       autoComplete='new-password'
-                      type='password'
+
                       value={findUserObj.password}
                       onChange={(e) => {
                         setFindUserObj({ ...findUserObj, ['password']: e.target.value })
@@ -225,10 +226,10 @@ const FindInfoDemo = (props) => {
                   </FormControl>
                   <FormControl variant="outlined" >
                     <InputLabel>{translate('새비밀번호확인')}</InputLabel>
-                    <OutlinedInput
+                    <PasswordOutlinedInput
                       label={translate('새비밀번호확인')}
                       autoComplete='new-password'
-                      type='password'
+
                       value={findUserObj.passwordCheck}
                       onChange={(e) => {
                         setFindUserObj({ ...findUserObj, ['passwordCheck']: e.target.value })

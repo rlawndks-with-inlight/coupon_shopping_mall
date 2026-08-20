@@ -11,6 +11,7 @@ import { useModal } from "src/components/dialog/ModalProvider";
 import { apiManager } from "src/utils/api";
 import { useAuthContext } from "src/layouts/manager/auth/useAuthContext";
 import { userLevelList } from "src/utils/format";
+import PasswordField from 'src/components/elements/PasswordField';
 
 const UserEdit = () => {
   const { setModal } = useModal()
@@ -213,11 +214,11 @@ const UserEdit = () => {
                           }} />
                         {router.query?.edit_category == 'add' &&
                           <>
-                            <TextField
+                            <PasswordField
                               label='패스워드'
                               value={item.user_pw}
 
-                              type='password'
+
                               onChange={(e) => {
                                 setItem(
                                   {
@@ -461,11 +462,11 @@ const UserEdit = () => {
                           />
                           {router.query?.edit_category == 'add' &&
                             <>
-                              <TextField
+                              <PasswordField
                                 label='패스워드'
                                 value={item.user_pw}
 
-                                type='password'
+
                                 onChange={(e) => {
                                   setItem(
                                     {

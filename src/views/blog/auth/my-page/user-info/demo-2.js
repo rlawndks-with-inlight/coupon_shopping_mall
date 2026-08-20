@@ -7,6 +7,7 @@ import { useSettingsContext } from 'src/components/settings';
 import { apiManager } from 'src/utils/api';
 import toast from 'react-hot-toast';
 import { useLocales } from 'src/locales';
+import PasswordField from 'src/components/elements/PasswordField';
 
 // 공지사항, faq 등 상세페이지 김인욱
 const Wrappers = styled.div`
@@ -242,8 +243,8 @@ const Demo2 = (props) => {
                     </div>
                     {authMode === 'password' &&
                         <div style={{ display: 'flex', flexDirection: 'column', marginTop: '1rem' }}>
-                            <TextField
-                                type='password'
+                            <PasswordField
+
                                 name='password'
                                 placeholder={translate('현재 비밀번호')}
                                 value={userObj?.password ?? ''}
@@ -252,8 +253,8 @@ const Demo2 = (props) => {
                                 }}
                                 sx={{ marginBottom: '1%' }}
                             />
-                            <TextField
-                                type='password'
+                            <PasswordField
+
                                 name='new_password'
                                 placeholder={translate('새 비밀번호')}
                                 value={userObj?.new_password ?? ''}
@@ -262,8 +263,8 @@ const Demo2 = (props) => {
                                 }}
                                 sx={{ marginBottom: '1%' }}
                             />
-                            <TextField
-                                type='password'
+                            <PasswordField
+
                                 name='new_password_check'
                                 placeholder={translate('새 비밀번호 확인')}
                                 value={userObj?.new_password_check ?? ''}

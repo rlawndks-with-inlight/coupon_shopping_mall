@@ -1,6 +1,7 @@
 import { Stack, TextField } from '@mui/material';
 import { sanitizePhoneInput } from 'src/utils/function';
 import { useLocales } from 'src/locales';
+import PasswordField from 'src/components/elements/PasswordField';
 
 // 비회원 1:1문의 작성 시 추가로 받는 칸 — 이름 · 연락처 · 글비밀번호.
 //
@@ -47,8 +48,8 @@ const GuestInquiryFields = ({ value = GUEST_INQUIRY_EMPTY, onChange, disabled = 
                 value={value?.none_user_phone ?? ''}
                 onChange={(e) => set('none_user_phone', sanitizePhoneInput(e.target.value))}
             />
-            <TextField
-                size="small" fullWidth label={translate('글 비밀번호')} type="password" disabled={disabled}
+            <PasswordField
+                size="small" fullWidth label={translate('글 비밀번호')} disabled={disabled}
                 placeholder={translate('4자 이상')}
                 value={value?.password ?? ''}
                 onChange={(e) => set('password', e.target.value)}

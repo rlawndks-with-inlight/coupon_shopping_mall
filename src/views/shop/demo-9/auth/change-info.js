@@ -9,6 +9,7 @@ import { useAuthContext } from "src/layouts/manager/auth/useAuthContext";
 import { apiManager, uploadFileByManager } from "src/utils/api";
 import styled from "styled-components";
 import $ from 'jquery';
+import PasswordField from 'src/components/elements/PasswordField';
 
 const Wrappers = styled.div`
 max-width:1400px;
@@ -253,19 +254,19 @@ const ChangeInfoDemo = (props) => {
                   <Grid item xs={12} md={8} style={{ margin: '0 auto 1rem auto' }}>
                     <Card sx={{ p: 3 }}>
                       <Stack spacing={3}>
-                        <TextField name="displayName" label="현재비밀번호" type="password" defaultValue={userObj?.password} value={userObj?.password} onChange={(e) => {
+                        <PasswordField name="displayName" label="현재비밀번호" defaultValue={userObj?.password} value={userObj?.password} onChange={(e) => {
                           setUserObj({
                             ...userObj,
                             ['password']: e.target.value
                           })
                         }} />
-                        <TextField name="new_password" label="새비밀번호" type="password" defaultValue={userObj?.new_password} value={userObj?.new_password} onChange={(e) => {
+                        <PasswordField name="new_password" label="새비밀번호" defaultValue={userObj?.new_password} value={userObj?.new_password} onChange={(e) => {
                           setUserObj({
                             ...userObj,
                             ['new_password']: e.target.value
                           })
                         }} />
-                        <TextField name="new_password_check" label="새비밀번호확인" type="password" defaultValue={userObj?.new_password_check} value={userObj?.new_password_check} onChange={(e) => {
+                        <PasswordField name="new_password_check" label="새비밀번호확인" defaultValue={userObj?.new_password_check} value={userObj?.new_password_check} onChange={(e) => {
                           setUserObj({
                             ...userObj,
                             ['new_password_check']: e.target.value

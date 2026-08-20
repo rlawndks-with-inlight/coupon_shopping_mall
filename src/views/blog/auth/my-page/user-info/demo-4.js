@@ -8,6 +8,7 @@ import { apiManager } from 'src/utils/api';
 import toast from 'react-hot-toast';
 import DialogAddAddress from 'src/components/dialog/DialogAddAddress';
 import { useLocales } from 'src/locales';
+import PasswordField from 'src/components/elements/PasswordField';
 
 // 공지사항, faq 등 상세페이지 김인욱
 const Wrappers = styled.div`
@@ -163,21 +164,21 @@ const Demo4 = (props) => {
                 <DialogContent>
                     <DialogContentText>{translate('현재 비밀번호와 새 비밀번호를 입력해주세요.')}</DialogContentText>
                     <Stack spacing={2} sx={{ marginTop: '1rem', minWidth: '280px' }}>
-                        <TextField
+                        <PasswordField
                             label={translate('현재비밀번호')}
-                            type='password'
+
                             value={pwObj?.password ?? ''}
                             onChange={(e) => { setPwObj({ ...pwObj, password: e.target.value }) }}
                         />
-                        <TextField
+                        <PasswordField
                             label={translate('새비밀번호')}
-                            type='password'
+
                             value={pwObj?.new_password ?? ''}
                             onChange={(e) => { setPwObj({ ...pwObj, new_password: e.target.value }) }}
                         />
-                        <TextField
+                        <PasswordField
                             label={translate('새비밀번호확인')}
-                            type='password'
+
                             value={pwObj?.new_password_check ?? ''}
                             onChange={(e) => { setPwObj({ ...pwObj, new_password_check: e.target.value }) }}
                         />
@@ -193,9 +194,9 @@ const Demo4 = (props) => {
                 <DialogContent>
                     <DialogContentText>{translate('회원 탈퇴를 하시면 회원 혜택을 더 이상 이용하실 수 없습니다.')}<br />{translate('정말 탈퇴하시려면 비밀번호를 입력해주세요.')}</DialogContentText>
                     <Stack spacing={2} sx={{ marginTop: '1rem', minWidth: '280px' }}>
-                        <TextField
+                        <PasswordField
                             label={translate('비밀번호')}
-                            type='password'
+
                             value={resignPassword}
                             onChange={(e) => { setResignPassword(e.target.value) }}
                         />

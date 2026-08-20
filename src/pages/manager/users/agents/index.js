@@ -8,6 +8,7 @@ import { useModal } from "src/components/dialog/ModalProvider";
 import { apiManager } from "src/utils/api";
 import toast from "react-hot-toast";
 import { useAuthContext } from "src/layouts/manager/auth/useAuthContext";
+import PasswordField from 'src/components/elements/PasswordField';
 const test_data = [
     {
         id: 1,
@@ -168,11 +169,11 @@ const AgentList = () => {
                     <DialogContentText>
                         새 비밀번호를 입력 후 확인을 눌러주세요.
                     </DialogContentText>
-                    <TextField
+                    <PasswordField
                         autoFocus
                         fullWidth
                         value={changePasswordObj.user_pw}
-                        type="password"
+
                         margin="dense"
                         label="새 비밀번호"
                         onChange={(e) => {

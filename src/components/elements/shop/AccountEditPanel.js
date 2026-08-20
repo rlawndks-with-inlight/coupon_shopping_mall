@@ -7,6 +7,7 @@ import { useAuthContext } from 'src/layouts/manager/auth/useAuthContext';
 import { useLocales } from 'src/locales';
 import { sanitizePhoneInput, isValidPhoneNumber } from 'src/utils/function';
 import AddressBookPanel from 'src/components/elements/shop/AddressBookPanel';
+import PasswordField from 'src/components/elements/PasswordField';
 
 // 회원정보 수정 — 데모 구분 없는 공용 패널.
 //
@@ -147,25 +148,25 @@ const AccountEditPanel = ({ loginPath = '/shop/auth/login' }) => {
           <CardHeader title={translate('비밀번호 변경')} />
           <CardContent>
             <Stack spacing={2.5}>
-              <TextField
+              <PasswordField
                 label={translate('현재 비밀번호')}
-                type="password"
+
                 value={pw.password}
                 onChange={(e) => setPw({ ...pw, password: e.target.value })}
                 fullWidth
               />
               <Divider />
-              <TextField
+              <PasswordField
                 label={translate('새 비밀번호')}
-                type="password"
+
                 value={pw.new_password}
                 onChange={(e) => setPw({ ...pw, new_password: e.target.value })}
                 placeholder={`${PW_MIN}~${PW_MAX}자`}
                 fullWidth
               />
-              <TextField
+              <PasswordField
                 label={translate('새 비밀번호 확인')}
-                type="password"
+
                 value={pw.new_password_check}
                 onChange={(e) => setPw({ ...pw, new_password_check: e.target.value })}
                 placeholder={translate('새 비밀번호를 다시 입력해 주세요')}
@@ -206,9 +207,9 @@ const AccountEditPanel = ({ loginPath = '/shop/auth/login' }) => {
         <DialogTitle>{translate('회원 탈퇴')}</DialogTitle>
         <DialogContent>
           <Typography variant="body2" sx={{ color: 'text.secondary', mb: 2 }}>{translate('탈퇴하시려면 비밀번호를 입력해 주세요.')}</Typography>
-          <TextField
+          <PasswordField
             label={translate('비밀번호')}
-            type="password"
+
             value={resignPw}
             onChange={(e) => setResignPw(e.target.value)}
             fullWidth

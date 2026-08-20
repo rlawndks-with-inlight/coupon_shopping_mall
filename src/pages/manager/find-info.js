@@ -12,6 +12,7 @@ import { Col } from 'src/components/elements/styled-components';
 import { useSettingsContext } from 'src/components/settings';
 import { isShopgoBrand } from 'src/utils/is-shopgo';
 import FindInfoQuestion from 'src/components/elements/shop/FindInfoQuestion';
+import { PasswordOutlinedInput } from 'src/components/elements/PasswordField';
 
 // 가맹점(매니저) 관리자용 아이디/비밀번호 찾기.
 // 백엔드(SMS 휴대폰 인증) 및 스토어프론트 UI는 이미 존재하며, 여기서는 동일한 3개 엔드포인트를 재사용한다.
@@ -218,10 +219,10 @@ const FindInfo = () => {
                     <>
                       <FormControl variant="outlined">
                         <InputLabel>새 비밀번호</InputLabel>
-                        <OutlinedInput
+                        <PasswordOutlinedInput
                           label="새 비밀번호"
                           autoComplete="new-password"
-                          type="password"
+
                           value={findUserObj.password}
                           onChange={(e) => {
                             setFindUserObj({ ...findUserObj, ['password']: e.target.value });
@@ -230,10 +231,10 @@ const FindInfo = () => {
                       </FormControl>
                       <FormControl variant="outlined">
                         <InputLabel>새 비밀번호 확인</InputLabel>
-                        <OutlinedInput
+                        <PasswordOutlinedInput
                           label="새 비밀번호 확인"
                           autoComplete="new-password"
-                          type="password"
+
                           value={findUserObj.passwordCheck}
                           onChange={(e) => {
                             setFindUserObj({ ...findUserObj, ['passwordCheck']: e.target.value });

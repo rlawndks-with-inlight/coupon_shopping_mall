@@ -12,6 +12,7 @@ import { toast } from 'react-hot-toast';
 import { Icon } from '@iconify/react';
 import LoginLayout from 'src/layouts/login/LoginLayout';
 import { useRouter } from 'next/router';
+import PasswordField from 'src/components/elements/PasswordField';
 
 const Wrappers = styled.div`
 max-width:900px;
@@ -270,12 +271,12 @@ const Register = () => {
                 ),
               }}
             />
-            <TextField
+            <PasswordField
               label='비밀번호'
               onChange={(e) => {
                 setUser({ ...user, ['password']: e.target.value })
               }}
-              type='password'
+
               value={user.password}
               style={inputStyle}
               autoComplete='new-password'
@@ -284,12 +285,12 @@ const Register = () => {
                 }
               }}
             />
-            <TextField
+            <PasswordField
               label='비밀번호 확인'
               onChange={(e) => {
                 setUser({ ...user, ['passwordCheck']: e.target.value })
               }}
-              type='password'
+
               value={user.passwordCheck}
               style={inputStyle}
               autoComplete='new-password'

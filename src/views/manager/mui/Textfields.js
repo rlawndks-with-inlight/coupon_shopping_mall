@@ -7,6 +7,7 @@ import { Masonry } from '@mui/lab';
 import Iconify from '../../../components/iconify';
 //
 import { Block } from '../Block';
+import PasswordField from 'src/components/elements/PasswordField';
 
 // ----------------------------------------------------------------------
 
@@ -67,10 +68,10 @@ export default function Textfields({ variant }) {
           defaultValue="Hello Minimal"
         />
 
-        <TextField
+        <PasswordField
           variant={variant}
           fullWidth
-          type="password"
+
           label="Password"
           autoComplete="current-password"
         />
@@ -185,10 +186,10 @@ export default function Textfields({ variant }) {
       </Block>
 
       <Block title="Type" sx={style}>
-        <TextField
+        <PasswordField
           variant={variant}
           fullWidth
-          type="password"
+
           label="Password"
           autoComplete="current-password"
         />

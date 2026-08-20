@@ -11,6 +11,7 @@ import { commarNumber } from "src/utils/function";
 import { useSettingsContext } from "src/components/settings";
 import { userStatusList, getUserStatusByNum } from "src/utils/format";
 import { useAuthContext } from "src/layouts/manager/auth/useAuthContext";
+import PasswordField from 'src/components/elements/PasswordField';
 const UserList = () => {
   const { themeDnsData } = useSettingsContext();
   const { setModal } = useModal()
@@ -220,11 +221,11 @@ const UserList = () => {
           <DialogContentText>
             새 비밀번호를 입력 후 확인을 눌러주세요.
           </DialogContentText>
-          <TextField
+          <PasswordField
             autoFocus
             fullWidth
             value={changePasswordObj.user_pw}
-            type="password"
+
             margin="dense"
             label="새 비밀번호"
             onChange={(e) => {

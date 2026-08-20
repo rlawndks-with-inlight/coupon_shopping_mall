@@ -17,6 +17,7 @@ import { bankCodeList } from "src/utils/format";
 import { SelectCategoryComponent } from "src/pages/manager/products/[edit_category]/[id]";
 import { getAllIdsWithParents } from "src/utils/function";
 import { 금액표시, 금액입력 } from 'src/utils/money-input'
+import PasswordField from 'src/components/elements/PasswordField';
 
 
 const SellerEdit = () => {
@@ -449,10 +450,10 @@ const SellerEdit = () => {
                           }} />
                       </Stack>
                       <Stack spacing={1}>
-                        <TextField
+                        <PasswordField
                           label={router.query?.edit_category == 'edit' ? '셀러 비밀번호 변경' : '셀러 비밀번호'}
                           value={item.user_pw ?? ''}
-                          type="password"
+
                           autoComplete="new-password"
                           placeholder={router.query?.edit_category == 'edit' ? '비워두면 기존 비밀번호가 유지됩니다.' : ''}
                           helperText={router.query?.edit_category == 'edit' ? '비워두면 기존 비밀번호가 유지됩니다.' : ''}

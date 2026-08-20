@@ -13,6 +13,7 @@ import { useAuthContext } from "src/layouts/manager/auth/useAuthContext";
 import { apiShop } from "src/utils/api";
 import { commarNumber, getOrderStatusText, commarNumberWithUnit } from "src/utils/function";
 import styled from "styled-components";
+import { 포인트쓰는몰 } from 'src/data/point-policy';
 
 const Wrappers = styled.div`
 max-width:1400px;
@@ -251,7 +252,7 @@ const MyPageDemo = (props) => {
                   안녕하세요 :)
                 </div>
                 <Row>
-                  {(user && (themeDnsData?.seller_point > 0 || themeDnsData?.point_rate > 0)) &&
+                  {(user && 포인트쓰는몰(themeDnsData))/* point_rate 는 브랜드 컬럼이 아니라 setting_obj 안에 있다 — themeDnsData?.point_rate 는 늘 undefined 라 이 메뉴가 사실상 안 떴다 */ &&
                     <div style={{ textAlign: 'right', marginRight: '2rem', fontSize: '1rem' }}>
                       포인트<br /><br />
                       <span style={{ fontFamily: 'Playfair Display', }}>

@@ -28,6 +28,7 @@ import { useState } from 'react';
 import { useEffect } from 'react';
 import { useLocales } from 'src/locales';
 import { getPriceUnitByLang } from 'src/utils/function';
+import { 포인트쓰는몰, 포인트사용상한, 적립예정 } from 'src/data/point-policy';
 
 // ----------------------------------------------------------------------
 
@@ -85,7 +86,7 @@ export default function CheckoutSummary({
   // 비회원/미사용 브랜드면 숨김.
   // 추가로 enablePoint 게이트를 둔다 — 카트의 use_point 는 주문서로 전달되지 않아
   // 입력해도 버려진다. 포인트는 주문서에서만 입력받는다.
-  const showPointUsage = enablePoint && !!user && (parseFloat(max_use_point) > 0 || parseFloat(point_rate) > 0);
+  const showPointUsage = enablePoint && !!user && 포인트쓰는몰(themeDnsData);
   // 이번 주문에서 포인트로 깎을 수 있는 상한.
   //
   // 예전엔 보유 포인트와 '최대사용가능 포인트'만 봤다. 주문금액은 보지 않아서,
@@ -97,13 +98,16 @@ export default function CheckoutSummary({
   // 배송비 정책(브랜드 일괄/상품별)을 여기서 다시 해석하지 않고도 정확히 되돌아온다.
   const currentUsedPoint = Math.max(0, parseInt(payData?.use_point) || 0);
   const payableBeforePoint = Math.max(0, (parseFloat(displayTotal) || 0) + currentUsedPoint);
-  // max_use_point 가 0 이면 '포인트 사용 안 함'이라는 뜻이다(기존 동작 유지).
-  const pointCap = Math.max(0, Math.min(
-    parseFloat(user?.point) || 0,
-    parseFloat(max_use_point) || 0,
-    payableBeforePoint,
-  ));
-  // '전체사용': 보유 포인트·최대사용가능 포인트·주문금액 중 가장 작은 값으로 채운다.
+  // 상한과 '왜 못 쓰는지'는 공용 규칙(data/point-policy.js)이 정한다.
+  //
+  // 예전엔 여기서 보유·최대설정·주문금액 세 값만 봤다. 그래서 가맹점이 설정해 둔
+  // '포인트 사용가능 최소 주문금액'·'사용 가능 최소 적립 포인트' 조건이 화면에 반영되지
+  // 않았고, 입력은 되는데 제출에서 막히는(주문서 검사) 어긋남이 났다.
+  const { 상한: pointCap, 이유: 사용불가이유, 기준: 사용불가기준, 단위: 사용불가단위 } =
+    포인트사용상한({ dns: themeDnsData, 보유: user?.point, 주문금액: payableBeforePoint });
+  // 이번 주문으로 쌓일 포인트. 포인트로 깎은 뒤의 결제금액을 기준으로 센다.
+  const 적립예정포인트 = 적립예정({ dns: themeDnsData, 결제금액: displayTotal });
+  // '전체사용': 지금 실제로 쓸 수 있는 상한만큼 채운다.
   const handleUseAllPoint = () => {
     setPayData({
       ...payData,
@@ -158,7 +162,7 @@ export default function CheckoutSummary({
               <Col>
                 <FormControl variant="outlined" size='small' sx={{ maxWidth: '170px', paddingRight: '0' }}>
                   <OutlinedInput
-                    disabled={parseFloat(use_point_min_price) > subtotal - discount}
+                    disabled={pointCap <= 0}
                     error={parseFloat(payData?.use_point) > pointCap}
                     value={payData?.use_point ?? 0}
                     type='number'
@@ -185,12 +189,25 @@ export default function CheckoutSummary({
                       })
                     }} />
                 </FormControl>
+                {/* '잔여'는 쓰고 남은 것으로 읽히는데 이 값은 입력해도 줄지 않는다 — 보유가 맞다. */}
                 <Typography variant="body2" sx={{ color: 'text.secondary', fontSize: '12px' }}>
-                  {translate('잔여 포인트')} ({commarNumber(user?.point)}P)
+                  {translate('보유 포인트')} ({commarNumber(user?.point ?? 0)}P)
                 </Typography>
+                {/* 설정값이 아니라 '이번 주문에서 실제로 쓸 수 있는 값'이다.
+                    보유 500P 인 사람에게 설정값 10,000P 를 알려 주면 그게 더 헷갈린다. */}
                 <Typography variant="body2" sx={{ color: 'text.secondary', fontSize: '12px' }}>
-                  {translate('최대사용가능 포인트')} ({commarNumber(max_use_point)}P)
+                  {translate('이번 주문에 사용 가능')} ({commarNumber(pointCap)}P)
                 </Typography>
+                {/* 못 쓸 때는 조건을 알려 준다 — 그냥 0 으로 두면 고장으로 읽힌다. */}
+                {사용불가이유 &&
+                  <Typography variant="body2" sx={{ color: 'warning.main', fontSize: '12px' }}>
+                    {translate(사용불가이유)}
+                    {사용불가기준 > 0 && ' (' + commarNumber(사용불가기준) + 사용불가단위 + ' 이상)'}
+                  </Typography>}
+                {적립예정포인트 > 0 &&
+                  <Typography variant="body2" sx={{ color: 'text.secondary', fontSize: '12px' }}>
+                    {translate('이번 주문 적립예정')} ({commarNumber(적립예정포인트)}P)
+                  </Typography>}
               </Col>
             </Stack>
           )}

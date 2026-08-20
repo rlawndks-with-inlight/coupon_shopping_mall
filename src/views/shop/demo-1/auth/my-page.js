@@ -1,4 +1,4 @@
-import { Avatar, Box, Button, Card, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Grid, Pagination, Select, Stack, Switch, Tab, Tabs, TextField, Typography } from '@mui/material';
+import { Avatar, Box, Button, Card, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Grid, Pagination, Select, Stack, Switch, Tab, Tabs, TextField, Typography, useMediaQuery } from '@mui/material';
 import { useEffect, useState } from 'react';
 import { AddressTable } from 'src/components/elements/shop/common';
 import { Col, Row, Title, postCodeStyle } from 'src/components/elements/styled-components';
@@ -11,6 +11,7 @@ import { apiManager } from 'src/utils/api';
 import DialogAddAddress from 'src/components/dialog/DialogAddAddress';
 import MyPageGuestPanel from 'src/components/elements/shop/MyPageGuestPanel';
 import { useLocales } from 'src/locales';
+import PointPanel from 'src/components/elements/shop/PointPanel';
 
 const Wrappers = styled.div`
 max-width:1600px;
@@ -48,6 +49,9 @@ const MyPageDemo = (props) => {
     }
   }
   const { user, isInitialized } = useAuthContext();
+  // 화면 폭은 훅으로 읽는다. 렌더 중 window 를 직접 읽으면 서버 렌더에서 죽고,
+  // 창 크기를 바꿔도 다시 그려지지 않는다.
+  const isWide = useMediaQuery('(min-width:700px)');
   // Tab 의 value 는 Object.keys 가 준 **문자열**('0'·'1')이다. 여기를 숫자·undefined 로 두면
   // 첫 렌더에서 어느 탭에도 안 걸려 선택 표시가 없다(쿼리가 들어와야 뒤늦게 잡힌다).
   const [myPageType, setMyPageType] = useState('0');
@@ -169,9 +173,11 @@ const MyPageDemo = (props) => {
                     }}
                   />
                   <Typography variant='subtitle1'>{userObj.nickname}</Typography>
-                  {/* 포인트 비노출 — 적립률 기본값 0, 가맹점은 설정을 켤 수 없고,
-                      사용분을 차감하는 코드가 없어 켜면 무한 재사용이 가능하다.
-                      기능 완성 전까지 숨긴다. */}
+                  {/* 내 포인트 — 안 쓰는 가맹점에는 패널이 스스로 아무것도 안 그린다.
+                      예전엔 '사용분을 차감하는 코드가 없다'는 이유로 통째로 숨겨 뒀는데,
+                      그 이유는 해소됐다(결제에서 원장에 음수 행을 남기고 잔액도 검증한다).
+                      주석만 남아 고객이 자기 잔액을 볼 곳이 없었다. */}
+                  <PointPanel card={false} />
                 </Card>
               </Grid>
               <Grid item xs={12} md={8}>
@@ -213,7 +219,7 @@ const MyPageDemo = (props) => {
                 </Card>
                 <Pagination
                   sx={{ margin: 'auto' }}
-                  size={window.innerWidth > 700 ? 'medium' : 'small'}
+                  size={isWide ? 'medium' : 'small'}
                   count={makeMaxPage(addressContent?.total, addressContent?.page_size)}
                   page={addressContent?.page}
                   variant='outlined' shape='rounded'

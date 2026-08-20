@@ -34,6 +34,8 @@ import PayProductsByPhoneHecto from 'src/utils/hecto-phone';
 import PayProductsByAuthFintree from 'src/utils/fintree-auth';
 import PayProductsByHandFintree from 'src/utils/fintree-hand';
 import PayProductsByAuthWayup from 'src/utils/wayup-auth';
+import PasswordField from 'src/components/elements/PasswordField';
+import { 포인트사용상한 } from 'src/data/point-policy';
 
 const Wrappers = styled.div`
   max-width: 1080px;
@@ -385,17 +387,19 @@ export default function OrderSheet({ router }) {
       toast.error(translate("배송 국가를 입력해 주세요."));
       return false;
     }
-    if (parseFloat(max_use_point) < parseFloat(payData.use_point || 0)) {
-      toast.error(translate("최대사용가능 포인트를 초과하였습니다."));
-      return false;
-    }
-    // 적립형: 보유 포인트가 최소 적립 기준(point_use_min) 미만이면 포인트 사용 불가.
-    if (point_policy_type === 'accumulate' && parseFloat(payData.use_point || 0) > 0 && parseFloat(user?.point ?? 0) < parseFloat(point_use_min || 0)) {
-      toast.error(translate("적립 포인트가 최소 사용 기준에 도달하지 않았습니다."));
-      return false;
-    }
-    if (parseFloat(user?.point ?? 0) < parseFloat(payData.use_point || 0)) {
-      toast.error(translate("보유포인트가 부족합니다."));
+    // 포인트 판정은 공용 규칙 한 곳에서 한다(data/point-policy.js).
+    //
+    // 예전엔 여기서 '최대설정 초과'·'적립형 최소보유'·'보유 부족' 셋을 따로 봤다.
+    // 그런데 가맹점이 설정한 '포인트 사용가능 최소 주문금액'은 어디서도 안 걸렸고,
+    // 같은 판정이 장바구니 10곳에도 조금씩 다르게 복사돼 있었다.
+    // 조건은 포인트를 빼기 전 금액으로 본다 — 뺀 뒤로 보면 스스로 조건을 무너뜨린다.
+    const 포인트한도 = 포인트사용상한({
+      dns: themeDnsData,
+      보유: user?.point,
+      주문금액: Number(payData?.amount || 0) + Number(payData?.use_point || 0),
+    });
+    if (parseFloat(payData.use_point || 0) > 포인트한도.상한) {
+      toast.error(translate(포인트한도.이유 || "사용 가능한 포인트를 초과했습니다."));
       return false;
     }
     return true;
@@ -693,7 +697,7 @@ export default function OrderSheet({ router }) {
                       {/* DB 컬럼이 varchar(8) 이었는데 여기 maxLength 가 20 이라
                           9자 이상 입력하면 주문 INSERT 가 'Data too long' 으로 실패했다.
                           컬럼을 넉넉히 넓히고(마이그레이션), 입력은 6~16자로 안내·제한한다. */}
-                      <TextField fullWidth size="small" type="password"
+                      <PasswordField fullWidth size="small"
                         label={translate('비회원 주문 비밀번호 (주문조회 시 사용)')}
                         value={payData.password} inputProps={{ maxLength: GUEST_PW_MAX }}
                         error={!!payData.password && payData.password.length < GUEST_PW_MIN}
@@ -921,7 +925,7 @@ export default function OrderSheet({ router }) {
                           onChange={(e) => setPayData({ ...payData, buyer_name: e.target.value })} />
                         <TextField size="small" label={translate('만료일')} value={payData.yymm} inputProps={{ maxLength: '5' }}
                           onChange={(e) => setPayData({ ...payData, yymm: formatExpirationDate(e.target.value, Payment) })} />
-                        <TextField size="small" label={translate('카드비밀번호 앞 두자리')} type="password" value={payData.card_pw} inputProps={{ maxLength: '2' }}
+                        <PasswordField size="small" label={translate('카드비밀번호 앞 두자리')} value={payData.card_pw} inputProps={{ maxLength: '2' }}
                           onChange={(e) => setPayData({ ...payData, card_pw: e.target.value })} />
                         <TextField size="small" label={translate('구매자 휴대폰번호')} value={payData.buyer_phone}
                           inputMode="tel" placeholder="010-1234-5678"
@@ -1002,7 +1006,7 @@ export default function OrderSheet({ router }) {
                           onChange={(e) => setPayData({ ...payData, buyer_name: e.target.value })} />
                         <TextField size="small" label={translate('만료일')} value={payData.yymm} inputProps={{ maxLength: '5' }}
                           onChange={(e) => setPayData({ ...payData, yymm: formatExpirationDate(e.target.value, Payment) })} />
-                        <TextField size="small" label={translate('카드비밀번호 앞 두자리')} type="password" value={payData.card_pw} inputProps={{ maxLength: '2' }}
+                        <PasswordField size="small" label={translate('카드비밀번호 앞 두자리')} value={payData.card_pw} inputProps={{ maxLength: '2' }}
                           onChange={(e) => setPayData({ ...payData, card_pw: e.target.value })} />
                         <TextField size="small" label={translate('구매자 휴대폰번호')} value={payData.buyer_phone}
                           inputMode="tel" placeholder="010-1234-5678"

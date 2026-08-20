@@ -26,6 +26,8 @@ import PayProductsByPhoneHecto from 'src/utils/hecto-phone';
 import PayProductsByAuthFintree from 'src/utils/fintree-auth';
 import PayProductsByHandFintree from 'src/utils/fintree-hand';
 import PayProductsByAuthWayup from 'src/utils/wayup-auth';
+import { 포인트사용상한 } from 'src/data/point-policy';
+import PasswordField from 'src/components/elements/PasswordField';
 
 const Wrappers = styled.div`
 max-width:1200px;
@@ -218,8 +220,16 @@ const CartDemo = (props) => {
         toast.error(translate('최대사용가능 포인트를 초과하였습니다.'));
         return;
       }
-      if ((setting_obj?.point_policy_type ?? 'instant') === 'accumulate' && parseFloat(payData.use_point || 0) > 0 && parseFloat(user?.point ?? 0) < parseFloat(setting_obj?.point_use_min || 0)) {
-        toast.error(translate('적립 포인트가 최소 사용 기준에 도달하지 않았습니다.'));
+      // 포인트 조건은 공용 규칙 한 곳에서 본다(data/point-policy.js).
+      // 예전엔 '적립형일 때 최소 보유' 하나만 봤고, 가맹점이 설정한
+      // '포인트 사용가능 최소 주문금액'은 어디서도 안 걸렸다.
+      const 포인트한도 = 포인트사용상한({
+        dns: themeDnsData,
+        보유: user?.point,
+        주문금액: Number(payData?.amount || 0) + Number(payData?.use_point || 0),
+      });
+      if (parseFloat(payData.use_point || 0) > 포인트한도.상한) {
+        toast.error(translate(포인트한도.이유 || '사용 가능한 포인트를 초과했습니다.'));
         return;
       }
       if (parseFloat(user?.point ?? 0) < parseFloat(payData.use_point)) {
@@ -294,8 +304,16 @@ const CartDemo = (props) => {
         toast.error(translate('최대사용가능 포인트를 초과하였습니다.'));
         return;
       }
-      if ((setting_obj?.point_policy_type ?? 'instant') === 'accumulate' && parseFloat(payData.use_point || 0) > 0 && parseFloat(user?.point ?? 0) < parseFloat(setting_obj?.point_use_min || 0)) {
-        toast.error(translate('적립 포인트가 최소 사용 기준에 도달하지 않았습니다.'));
+      // 포인트 조건은 공용 규칙 한 곳에서 본다(data/point-policy.js).
+      // 예전엔 '적립형일 때 최소 보유' 하나만 봤고, 가맹점이 설정한
+      // '포인트 사용가능 최소 주문금액'은 어디서도 안 걸렸다.
+      const 포인트한도 = 포인트사용상한({
+        dns: themeDnsData,
+        보유: user?.point,
+        주문금액: Number(payData?.amount || 0) + Number(payData?.use_point || 0),
+      });
+      if (parseFloat(payData.use_point || 0) > 포인트한도.상한) {
+        toast.error(translate(포인트한도.이유 || '사용 가능한 포인트를 초과했습니다.'));
         return;
       }
       if (parseFloat(user?.point ?? 0) < parseFloat(payData.use_point)) {
@@ -503,11 +521,11 @@ const CartDemo = (props) => {
                             />
                           </Stack>
                           <Stack>
-                            <TextField
+                            <PasswordField
                               size='small'
                               label={translate('카드비밀번호 앞 두자리')}
                               value={payData.card_pw}
-                              type='password'
+
                               inputProps={{ maxLength: '2' }}
                               onChange={(e) => {
                                 let value = e.target.value;
@@ -549,10 +567,10 @@ const CartDemo = (props) => {
                           {!user &&
                             <>
                               <Stack>
-                                <TextField
+                                <PasswordField
                                   size='small'
                                   label={translate('비회원주문 비밀번호')}
-                                  type='password'
+
                                   value={payData.password}
                                   inputProps={{ maxLength: '6' }}
                                   onChange={(e) => {
@@ -662,11 +680,11 @@ const CartDemo = (props) => {
                           />
                         </Stack>
                         <Stack>
-                          <TextField
+                          <PasswordField
                             size='small'
                             label='카드비밀번호 앞 두자리'
                             value={payData.card_pw}
-                            type='password'
+
                             inputProps={{ maxLength: '2' }}
                             onChange={(e) => {
                               let value = e.target.value;
@@ -708,10 +726,10 @@ const CartDemo = (props) => {
                         {!user &&
                           <>
                             <Stack>
-                              <TextField
+                              <PasswordField
                                 size='small'
                                 label='비회원주문 비밀번호'
-                                type='password'
+
                                 value={payData.password}
                                 onChange={(e) => {
                                   let value = e.target.value;

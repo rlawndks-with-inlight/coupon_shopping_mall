@@ -16,6 +16,7 @@ import { commarNumber, getOrderStatusText, commarNumberWithUnit } from "src/util
 import styled from "styled-components";
 import { useLocales } from 'src/locales';
 import { formatLang } from 'src/utils/format';
+import PointPanel from 'src/components/elements/shop/PointPanel';
 
 const Wrappers = styled.div`
 max-width:1400px;
@@ -264,10 +265,11 @@ const MyPageDemo = (props) => {
                 <div style={{ fontSize: '32px' }}>
                   {user?.name} 고객님<br />{translate('안녕하세요 :)')}</div>
                 <Row>
-                  {/* 포인트 비노출 — 신규 가맹점은 point_rate 기본값이 0 이라 적립이 일어나지 않고,
-                      가맹점 관리자(레벨40)는 포인트 설정을 켤 수도 없다(설정 탭이 레벨50 전용).
-                      게다가 사용분을 points 테이블에서 차감하는 코드가 없어(pay.controller 의 INSERT 4곳이 전부 적립)
-                      켜는 순간 같은 포인트를 무한 재사용할 수 있다. 기능이 완성되기 전에는 노출하지 않는다. */}
+                  {/* 내 포인트 — 안 쓰는 가맹점에는 패널이 스스로 아무것도 안 그린다.
+                      예전엔 '사용분을 차감하는 코드가 없다'는 이유로 통째로 숨겨 뒀는데,
+                      그 이유는 해소됐다(결제에서 원장에 음수 행을 남기고 잔액도 검증한다).
+                      주석만 남아 고객이 자기 잔액을 볼 곳이 없었다. */}
+                  <PointPanel card={false} />
                   {/* 위탁을 쓰지 않는 가맹점(setting_obj.is_use_consignment != 1)에는 숨긴다.
                       백엔드가 consignment_products 를 아예 안 내려줘 항상 '0개' 로만 보였다. */}
                   {themeDnsData?.setting_obj?.is_use_consignment == 1 &&

@@ -3,7 +3,7 @@ import { Box, Container, Stack, Typography } from '@mui/material';
 import ManagerLayout from 'src/layouts/manager/ManagerLayout';
 import { useSettingsContext } from 'src/components/settings';
 import GuideBody from 'src/components/manager/GuideBody';
-import { frameGroupOf, FRAME_GROUP_LABEL } from 'src/components/manager/guideContent';
+import { frameGroupOf, frameNoOf, FRAME_GROUP_LABEL } from 'src/components/manager/guideContent';
 
 const GuidePage = () => {
   const { themeDnsData } = useSettingsContext();
@@ -11,6 +11,7 @@ const GuidePage = () => {
   // 프레임에 따라 '메인 화면을 꾸미는 방법'이 다르다 — 해당 없는 안내를 아예 내리고,
   // 지금 어느 계열을 쓰는 몰인지 위에 한 줄로 밝혀 둔다(없는 메뉴를 찾아 헤매지 않도록).
   const frameGroup = frameGroupOf(themeDnsData);
+  const frameNo = frameNoOf(themeDnsData);
 
   return (
     <>
@@ -24,14 +25,14 @@ const GuidePage = () => {
           {frameGroup && (
             <Box sx={{ p: 1.5, borderRadius: 1.5, bgcolor: '#f5f7fa', border: '1px solid #e3e8ef' }}>
               <Typography sx={{ fontSize: 13, color: '#455' }}>
-                이 몰은 <b>{FRAME_GROUP_LABEL[frameGroup]}</b> 계열입니다. 아래 안내는 이 계열에 해당하는 내용만 보여드립니다 —
-                다른 계열에만 있는 메뉴는 관리자 화면에도 나타나지 않습니다.
+                이 몰은 <b>{frameNo ? `프레임${frameNo}` : FRAME_GROUP_LABEL[frameGroup]}</b>입니다. 아래 안내는 이 프레임에 해당하는 내용만 보여드립니다 —
+                다른 프레임에만 있는 메뉴는 관리자 화면에도 나타나지 않습니다.
               </Typography>
             </Box>
           )}
         </Stack>
 
-        <GuideBody showRouteButtons brandId={brandId} frameGroup={frameGroup} />
+        <GuideBody showRouteButtons brandId={brandId} frameGroup={frameGroup} frameNo={frameNo} />
       </Container>
     </>
   );

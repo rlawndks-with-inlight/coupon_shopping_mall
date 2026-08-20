@@ -2,11 +2,13 @@ import { useState } from 'react';
 import { Box, Stack, Typography, Button, Chip, Divider } from '@mui/material';
 import { Icon } from '@iconify/react';
 import { useRouter } from 'next/router';
-import { GUIDE_PART1, GUIDE_PART2, FRAME_GROUP_LABEL, guideRouteOf } from './guideContent';
+import { GUIDE_PART1, GUIDE_PART2, FRAME_GROUP_LABEL, guideRouteOf, guideFieldsOf, guideTitleOf } from './guideContent';
 
 // 단일 소스(guideContent)를 렌더하는 공용 가이드 본문.
-// - /manager/guide (로그인 후): showRouteButtons=true, brandId·frameGroup 전달
+// - /manager/guide (로그인 후): showRouteButtons=true, brandId·frameGroup·frameNo 전달
 //   → '해당 메뉴로 이동' 노출 + 자기 프레임에 해당하는 항목만 표시
+//     (항목 단위는 groups=계열, 그 안의 칸은 frames=프레임 번호까지 좁힌다.
+//      프레임1 몰에서 「프레임2 미리보기는 이렇게」를 읽을 이유가 없다)
 // - 랜딩 /manual (신청 전): showRouteButtons=false, frameGroup 없음
 //   → 버튼 숨김 + 모든 항목 표시(대신 「프레임5·6 전용」 같은 꼬리표를 붙인다)
 // 스크린샷: /manual/guide/{id}.png 가 있으면 표시, 없으면 '준비중' 자리.
@@ -107,9 +109,10 @@ const GuideImage = ({ id, shots }) => {
   );
 };
 
-const GuideCard = ({ s, ordered, showRouteButtons, brandId, router, frameGroup }) => {
+const GuideCard = ({ s, ordered, showRouteButtons, brandId, router, frameGroup, frameNo }) => {
   const bc = badgeColor(s.badge);
   const rawRoute = guideRouteOf(s, frameGroup);
+  const fields = guideFieldsOf(s, frameGroup, frameNo);
   const route = rawRoute ? rawRoute.replace('{id}', brandId ?? '') : null;
   // 프레임을 모르는 화면(신청 전 /manual)에서는 항목을 지우지 않고 어느 계열 것인지만 알려준다.
   const groupTag = !frameGroup && s.groups?.length
@@ -123,7 +126,7 @@ const GuideCard = ({ s, ordered, showRouteButtons, brandId, router, frameGroup }
             {s.no}
           </Box>
         )}
-        <Typography sx={{ fontSize: 17, fontWeight: 800, flex: 1 }}>{s.title}</Typography>
+        <Typography sx={{ fontSize: 17, fontWeight: 800, flex: 1 }}>{guideTitleOf(s, frameNo)}</Typography>
         {groupTag && (
           <Chip label={`${groupTag} 전용`} size="small" sx={{ bgcolor: '#f1f3f6', color: '#5b6472', fontWeight: 700, height: 22 }} />
         )}
@@ -144,7 +147,7 @@ const GuideCard = ({ s, ordered, showRouteButtons, brandId, router, frameGroup }
         </Stack>
       )}
 
-      {s.fields?.length > 0 && <FieldTable fields={s.fields} />}
+      {fields.length > 0 && <FieldTable fields={fields} />}
 
       <GuideImage id={s.id} shots={s.shots} />
 
@@ -157,7 +160,7 @@ const GuideCard = ({ s, ordered, showRouteButtons, brandId, router, frameGroup }
   );
 };
 
-const GuideBody = ({ showRouteButtons = false, brandId, frameGroup = null }) => {
+const GuideBody = ({ showRouteButtons = false, brandId, frameGroup = null, frameNo = null }) => {
   const router = useRouter();
   // 프레임을 알면 자기 계열 항목만 남긴다. 모르면(신청 전 랜딩) 전부 두고 꼬리표만 붙인다.
   const forFrame = (list) => (frameGroup ? list.filter((s) => !s.groups || s.groups.includes(frameGroup)) : list);
@@ -167,7 +170,7 @@ const GuideBody = ({ showRouteButtons = false, brandId, frameGroup = null }) => 
       <Typography sx={{ fontSize: 13, color: '#999', mb: 2 }}>앞 단계가 뒤 단계의 전제입니다.</Typography>
       <Stack spacing={2}>
         {forFrame(GUIDE_PART1).map((s) => (
-          <GuideCard key={s.id} s={s} ordered showRouteButtons={showRouteButtons} brandId={brandId} router={router} frameGroup={frameGroup} />
+          <GuideCard key={s.id} s={s} ordered showRouteButtons={showRouteButtons} brandId={brandId} router={router} frameGroup={frameGroup} frameNo={frameNo} />
         ))}
       </Stack>
 
@@ -183,7 +186,7 @@ const GuideBody = ({ showRouteButtons = false, brandId, frameGroup = null }) => 
       <Typography sx={{ fontSize: 13, color: '#999', mb: 2 }}>각 메뉴가 어떤 역할을 하는지 항목별로 정리했습니다. 특별한 순서 없이, 필요할 때 찾아보세요.</Typography>
       <Stack spacing={2}>
         {forFrame(GUIDE_PART2).map((s) => (
-          <GuideCard key={s.id} s={s} showRouteButtons={showRouteButtons} brandId={brandId} router={router} frameGroup={frameGroup} />
+          <GuideCard key={s.id} s={s} showRouteButtons={showRouteButtons} brandId={brandId} router={router} frameGroup={frameGroup} frameNo={frameNo} />
         ))}
       </Stack>
     </>

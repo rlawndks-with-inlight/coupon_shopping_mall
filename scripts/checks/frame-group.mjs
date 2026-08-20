@@ -1,8 +1,10 @@
 import { FRONT_ROOT, BACK_ROOT } from './_roots.mjs';
 // 가이드 프레임 계열 판정/경로 해석 테스트.
 // 핵심 회귀 방지 대상:
-//  · 프레임4·5 가이드의 '해당 메뉴로 이동'이 쇼핑몰 경로(/designs/main)로 가던 버그
-//  · 프레임6~11 에 없는 메뉴(메인페이지관리)를 안내하던 버그
+//  · 프레임3·4 가이드의 '해당 메뉴로 이동'이 쇼핑몰 경로(/designs/main)로 가던 버그
+//  · 프레임5·6 에 없는 메뉴(메인페이지관리)를 안내하던 버그
+// (아래 이름은 지금 카탈로그(frameList.js)의 번호를 따른다. 저장값→번호 대응은
+//  guide-frame-filter.mjs 가 카탈로그와 직접 대조한다)
 import { readFileSync } from 'fs';
 
 const SRC = FRONT_ROOT + 'src/components/manager/guideContent.js';
@@ -19,12 +21,13 @@ const eq = (name, got, want) => {
 // ── 계열 판정 ──────────────────────────────────────────────────────────────
 eq('프레임1(shop 1)', frameGroupOf({ shop_demo_num: 1, blog_demo_num: 0 }), 'shop');
 eq('프레임2(shop 2)', frameGroupOf({ shop_demo_num: 2 }), 'shop');
-eq('프레임3(shop 4)', frameGroupOf({ shop_demo_num: 4 }), 'shop');
-eq('프레임4(blog 1)', frameGroupOf({ shop_demo_num: 0, blog_demo_num: 1 }), 'column');
-eq('프레임5(blog 2)', frameGroupOf({ blog_demo_num: 2 }), 'column');
+eq('shop 4(판매 중단)', frameGroupOf({ shop_demo_num: 4 }), 'shop');
+eq('프레임3(blog 1)', frameGroupOf({ shop_demo_num: 0, blog_demo_num: 1 }), 'column');
+eq('프레임4(blog 2)', frameGroupOf({ blog_demo_num: 2 }), 'column');
 eq('blog 3(미판매)', frameGroupOf({ blog_demo_num: 3 }), 'column');
-for (const [n, frame] of [[4, 6], [5, 7], [6, 8], [7, 9], [8, 10], [9, 11]]) {
-  eq(`프레임${frame}(blog ${n})`, frameGroupOf({ blog_demo_num: n }), 'landing');
+// blog 4 = 프레임5, blog 9 = 프레임6. 사이 번호(5~8)는 카탈로그에 없지만 같은 계열로 떨어져야 한다.
+for (const n of [4, 5, 6, 7, 8, 9]) {
+  eq(`blog ${n}`, frameGroupOf({ blog_demo_num: n }), 'landing');
 }
 // 쇼핑몰·블로그 둘 다 가진 브랜드는 쇼핑몰 기준(관리자 메뉴가 '쇼핑몰 메인페이지관리'로 뜬다)
 eq('shop+blog 겸용', frameGroupOf({ shop_demo_num: 1, blog_demo_num: 5 }), 'shop');

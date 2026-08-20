@@ -1,15 +1,17 @@
 import { FRONT_ROOT } from './_roots.mjs';
 import { readFileSync } from 'fs';
 
-// 가이드에 적힌 '이 순서로 넣으세요' 가 실제 추천 목록과 같은지 본다.
+// 가이드의 디자인관리 안내가 화면과 어긋나지 않는지 본다.
 //
-// 왜 이런 검사가 필요한가:
-//   guideContent.js 는 import 를 쓸 수 없다. PDF 추출기(extract.mjs)가 그 파일을 data URL 로
-//   감싸 통째로 평가하기 때문에, 다른 파일을 불러오는 순간 경로를 못 찾고 PDF 빌드가 깨진다.
-//   그래서 프레임별 섹션 차례를 frame-sections.js 에서 가져다 쓰지 못하고 옮겨 적었다.
-//   옮겨 적은 값은 반드시 어긋난다 — 한쪽만 고치는 날이 오기 때문이다. 여기서 묶어 둔다.
+// 이 파일이 지키는 것:
+//   · 계열(프레임1·2 / 3·4 / 5·6)별로 항목이 갈라져 있는가
+//   · 없는 메뉴 이름으로 안내하지 않는가
+//   · 미리보기 구성 안내가 프레임마다 있는가
+//   · 우리가 임의로 짠 섹션 차례를 다시 권하지 않는가
 //
-// 판정: 가이드 문장에서 '→' 로 이어진 섹션 이름을 뽑아, 추천 목록의 type 순서와 맞춘다.
+// guideContent.js 는 import 를 쓸 수 없다 — PDF 추출기가 파일을 통째로 평가하므로 다른
+// 파일을 불러오는 순간 PDF 빌드가 깨진다. 그래서 내용을 옮겨 적을 수밖에 없고,
+// 옮겨 적은 것은 언젠가 어긋난다. 그 어긋남을 여기서 잡는다.
 
 const 가이드 = readFileSync(FRONT_ROOT + 'src/components/manager/guideContent.js', 'utf8');
 const 섹션데이터 = readFileSync(FRONT_ROOT + 'src/data/frame-sections.js', 'utf8');
@@ -21,46 +23,13 @@ const t = (name, cond, 곁들임) => {
     else { fail++; console.log('  FAIL ' + name + (곁들임 ? '\n        ' + 곁들임 : '')); }
 };
 
-// 섹션 type ↔ 화면에 보이는 이름(label). 편집기 목록과 같은 이름으로 안내해야 찾을 수 있다.
-const 조각 = 스키마.slice(스키마.indexOf('export const mainObjSchemaList'));
-const 이름 = {};
-for (const m of 조각.matchAll(/label: '([^']+)',\s*\n\s*type: '([^']+)'/g)) 이름[m[2]] = m[1];
-t('섹션 이름표를 읽었다', Object.keys(이름).length >= 10);
-
-// 추천 목록(진짜 값)
-const 추천 = {};
-const 추천조각 = 섹션데이터.slice(섹션데이터.indexOf('const 추천 = {'), 섹션데이터.indexOf('};', 섹션데이터.indexOf('const 추천 = {')));
-for (const m of 추천조각.matchAll(/'(shop:\d|blog:\d)':\s*\[([^\]]+)\]/g)) {
-    추천[m[1]] = m[2].split(',').map((s) => s.trim().replace(/'/g, '')).filter(Boolean);
-}
-t('추천 목록을 읽었다', Object.keys(추천).length === 4, JSON.stringify(Object.keys(추천)));
-
-// 가이드에 적힌 차례
-const 가이드차례 = (라벨) => {
-    const i = 가이드.indexOf(`label: '${라벨}'`);
-    if (i < 0) return null;
-    const desc = 가이드.slice(i, 가이드.indexOf('\n', i));
-    const m = desc.match(/desc: '([^']+)'/);
-    if (!m) return null;
-    // 첫 문장(마침표 앞)까지가 차례다. 뒤 설명에 섹션 이름이 또 나와도 안 섞이게 자른다.
-    const 앞 = m[1].split('. ')[0];
-    return 앞.split('→').map((s) => s.trim()).filter(Boolean);
-};
-
-const 짝 = [
-    ['프레임1 이 순서로', 'shop:1'],
-    ['프레임2 이 순서로', 'shop:2'],
-    ['프레임3 이 순서로', 'blog:1'],
-    ['프레임4 이 순서로', 'blog:2'],
-];
-for (const [라벨, 키] of 짝) {
-    const 적힌것 = 가이드차례(라벨);
-    const 진짜 = (추천[키] ?? []).map((tp) => 이름[tp] ?? ('?' + tp));
-    t(`${라벨} (${키}) 가 추천 목록과 같다`,
-        적힌것 !== null && JSON.stringify(적힌것) === JSON.stringify(진짜),
-        `가이드: ${JSON.stringify(적힌것)}\n        실제 : ${JSON.stringify(진짜)}`);
-}
-
+// 예전에는 가이드에 우리가 짠 섹션 차례를 프레임마다 적어 두고, 그것이
+// frame-sections.js 의 추천 목록과 같은지 여기서 대조했다. 그 문구를 없앴으므로
+// 대조할 대상도 사라졌다 — 이제 가이드는 미리보기 구성만 말한다.
+// (없앤 이유는 guideContent.js 주석 참고: 미리보기와 다른 차례를 나란히 두니 어긋나 보였고,
+// '미리보기엔 에디터도 동영상도 없는데 왜 넣으라 하냐'는 물음이 바로 나왔다)
+// 조리법이 되살아나면 같은 어긋남이 다시 생기므로 그것만 막는다.
+t('가이드가 임의의 섹션 차례를 권하지 않는다', 가이드.indexOf(" 이 순서로', desc:") < 0);
 // ── 계열별 항목이 실제로 갈라져 있는가 ────────────────────────────────────
 // 예전에는 프레임1·2 와 3·4 가 디자인관리 한 항목을 같이 봤다. 그러면 '어떤 섹션을 어떤
 // 차례로' 를 계열별로 적을 수가 없다 — 그게 가맹점이 가장 많이 묻는 것이다.

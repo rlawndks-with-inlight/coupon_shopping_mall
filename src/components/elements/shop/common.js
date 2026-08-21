@@ -420,6 +420,11 @@ export const HistoryTable = props => {
                               ? `${row?.zonecode ? `(${row.zonecode}) ` : ''}${row?.addr ?? ''} ${row?.detail_addr ?? ''}`.trim()
                               : formatOverseasAddress(row)}
                           </div>
+                          {/* 내가 뭐라고 부탁했는지 — 주문 후에 확인할 곳이 여기밖에 없다. */}
+                          {row?.delivery_memo &&
+                            <div style={{ marginTop: 4, color: '#777', whiteSpace: 'pre-line' }}>
+                              {translate('요청')}: {row.delivery_memo}
+                            </div>}
                         </Box>
                       ) : '-'}
                     </TableCell>

@@ -41,7 +41,14 @@ export default function CheckoutCartProductList({
   const 정책 = 배송정책();
   return (
     <TableContainer>
-      <Table sx={{ minWidth: 720, overflowX: 'auto' }}>
+      {/* 720px 을 강제하면 노트북 창을 조금만 줄여도 가로 스크롤이 생긴다.
+          칸이 여섯 개뿐이라 그만큼 필요하지 않다 — 글은 줄바꿈으로 접는다.
+          (긴 상품명이 표를 늘리지 않도록 상품 칸에 keep-all 을 건다) */}
+      <Table sx={{
+        minWidth: 560,
+        overflowX: 'auto',
+        '& td, & th': { wordBreak: 'keep-all', overflowWrap: 'anywhere' },
+      }}>
         <TableHeadCustom headLabel={TABLE_HEAD} />
         <TableBody>
           {products.map((row, idx) => (

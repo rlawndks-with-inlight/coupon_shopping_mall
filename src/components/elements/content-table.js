@@ -21,6 +21,14 @@ width:100%;
 text-align:center;
 border-collapse: collapse;
 min-width:350px;
+/* 줄바꿈으로도 다 못 담는 표가 남는다(칸이 열 개 넘는 주문관리 같은 것).
+   그때 옆으로 밀면 어느 줄을 보고 있는지 놓치므로 첫 칸을 붙박이로 둔다. */
+th:first-child, td:first-child{
+  position:sticky;
+  left:0;
+  z-index:1;
+  background:inherit;
+}
 `
 const Tr = styled.tr`
 width:100%;
@@ -28,8 +36,19 @@ height:26px;
 `
 const Td = styled.td`
 border-bottom:1px solid ${themeObj.grey[300]};
-padding:1rem 0;
-white-space:pre;
+padding:1rem 0.5rem;
+/* 예전엔 white-space:pre 였다. 줄을 절대 바꾸지 않으니 글이 길수록 표가 옆으로 늘어났고,
+   노트북에서는 가로 스크롤을 화면 맨 아래까지 내려가서 좌우로 끌어야 했다.
+   게다가 pre 는 데이터에 든 개행을 그대로 살려서 엉뚱한 자리에서 끊겼다.
+   pre-line = 원문 줄바꿈은 살리되, 칸을 넘치면 알아서 줄을 바꾼다.
+   keep-all  = 한국어를 글자 단위로 쪼개지 않는다(단어째 내려간다).
+   anywhere  = 그래도 안 들어가는 긴 토막(주문번호·URL)은 어디서든 끊어 넘긴다. */
+white-space:pre-line;
+word-break:keep-all;
+overflow-wrap:anywhere;
+vertical-align:top;
+/* 한 칸이 표 전체를 늘리지 못하게 막는다 — 주소·상품명이 길면 두세 줄로 접힌다. */
+max-width:260px;
 `
 const GalleryCol = styled.div`
 display:flex;
@@ -99,7 +118,10 @@ const ContentTable = (props) => {
           <>
             {post_category_type == 0 &&
               <>
-                <div className='subtype-container' style={{ overflowX: 'auto', display: 'flex', width: '100%', margin: '0 auto', flexDirection: 'column' }} >
+                {/* 가로 스크롤 막대가 표 맨 아래에만 있으면, 내용이 긴 표에서는 화면을 한참 내려가야
+                    막대에 닿는다(가맹점 피드백 2026-08-21 — 노트북에서 특히 불편). 스크롤 영역의
+                    높이를 화면 안에 묶어 두면 막대가 늘 화면 안에 남는다. */}
+                <div className='subtype-container' style={{ overflowX: 'auto', overflowY: 'auto', maxHeight: '78vh', display: 'flex', width: '100%', margin: '0 auto', flexDirection: 'column' }} >
                   <Table>
                     <Tr style={{ fontWeight: `bold`, background: `${themeMode == 'dark' ? themeObj.grey[700] : themeObj.grey[200]}`, borderBottom: 'none' }}>
                       {columns && columns.map((col, idx) => (

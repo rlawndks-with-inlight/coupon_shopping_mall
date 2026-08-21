@@ -33,12 +33,16 @@ flex-direction:column;
 position:relative;
 `
 const BannerImg = styled.div`
+/* 상품 사진은 자르지 않는다 — 가로로 긴 상자에 cover 를 걸어 두어서
+   세로로 긴 사진은 위아래가 잘려 나갔다(가맹점 신고 2026-08-21, 프레임3·4).
+   배너와 같은 규칙이다: 비율이 다르면 잘리는 대신 여백이 생긴다.
+   프레임5·6 은 원래부터 object-fit:contain 이라 이 문제가 없었다. */
+background-color:#f7f7f7;
 width:100%;
 height:400px;
 display:flex;
 flex-direction:column;
 align-items:center;
-
 `
 const ContentWrappers = styled.div`
 top:350px;
@@ -183,7 +187,7 @@ const Demo3 = (props) => {
                         <>
                             <BannerImg style={{
                                 backgroundImage: `url(${item})`,
-                                backgroundSize: 'cover',
+                                backgroundSize: 'contain',
                                 backgroundRepeat: 'no-repeat',
                                 backgroundPosition: 'center'
                             }} />

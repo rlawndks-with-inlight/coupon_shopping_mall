@@ -44,8 +44,13 @@ height:26px;
 `
 const Td = styled.td`
 border-bottom:1px solid ${themeObj.grey[300]};
-padding:1rem 0;
-white-space:pre;
+padding:1rem 0.5rem;
+/* 관리자 표와 같은 규칙(content-table.js 주석 참고). pre 는 줄을 안 바꿔서
+   표가 옆으로 늘어나고 가로 스크롤이 생긴다. */
+white-space:pre-line;
+word-break:keep-all;
+overflow-wrap:anywhere;
+vertical-align:top;
 `
 
 const MypageTitle = styled.div`

@@ -102,6 +102,10 @@ export default function OrderSheet({ router }) {
   const [selectedAddrId, setSelectedAddrId] = useState(undefined);
   const [directMode, setDirectMode] = useState(false); // 직접 입력(비회원/신규 배송지)
   const [postOpen, setPostOpen] = useState(false);     // 우편번호 검색 팝업
+  // 받는 사람이 주문자와 같은 경우가 대부분이다. 로그인한 손님에게 이름·연락처를 다시
+  // 치게 하지 않는다 — 기본으로 켜 두고, 다른 사람에게 보낼 때만 끄면 된다.
+  // (비회원은 주문자 정보를 이 화면에서 직접 입력하므로 기본 꺼짐 — 아직 채울 값이 없다)
+  const [sameAsBuyer, setSameAsBuyer] = useState(!!user?.id);
   const [addressSearchObj, setAddressSearchObj] = useState({
     page: 1, page_size: 10, search: '', user_id: user?.id,
   });
@@ -128,6 +132,7 @@ export default function OrderSheet({ router }) {
     card_pw: '',
     addr: '',
     detail_addr: '',
+    delivery_memo: '',
     password: '',
     use_point: 0,
   });
@@ -254,6 +259,19 @@ export default function OrderSheet({ router }) {
   const onDecreaseQuantity = (idx) => setQuantity(idx, (products[idx]?.order_count ?? 1) - 1);
   const onIncreaseQuantity = (idx) => setQuantity(idx, (products[idx]?.order_count ?? 1) + 1);
   const onChangeQuantity = (idx, val) => setQuantity(idx, val);
+
+  // '주문자와 동일' 이 켜져 있는 동안에는 주문자 값을 그대로 따라간다.
+  // 비회원이 이름을 나중에 치는 경우가 있어 한 번만 복사하면 빈 값이 남는다.
+  useEffect(() => {
+    if (!sameAsBuyer) return;
+    const 이름 = user?.id ? (user?.name ?? user?.nickname ?? '') : (payData.buyer_name ?? '');
+    const 전화 = user?.id ? (user?.phone_num ?? payData.buyer_phone ?? '') : (payData.buyer_phone ?? '');
+    setPayData((prev) => (
+      prev.receiver === 이름 && prev.addr_phone === 전화
+        ? prev                                   // 값이 같으면 그대로 둔다(무한 갱신 방지)
+        : { ...prev, receiver: 이름, addr_phone: 전화 }
+    ));
+  }, [sameAsBuyer, user?.id, user?.name, user?.nickname, user?.phone_num, payData.buyer_name, payData.buyer_phone]);
 
   // ── 배송지(주소록) ──
   const onChangeAddressPage = async (search_obj) => {
@@ -780,10 +798,19 @@ export default function OrderSheet({ router }) {
                         <ToggleButton value="OVERSEAS">{translate('해외배송')}</ToggleButton>
                       </ToggleButtonGroup>
 
+                      {/* 대부분 주문자가 곧 받는 사람이다. 켜 두면 위에서 받은 값이 그대로 따라오고,
+                          다른 사람에게 보낼 때만 끄고 직접 적는다. */}
+                      <FormControlLabel
+                        control={<Checkbox size="small" checked={sameAsBuyer}
+                          onChange={(e) => setSameAsBuyer(e.target.checked)} />}
+                        label={<Typography variant="body2">{translate('주문자와 동일')}</Typography>}
+                      />
                       <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2}>
                         <TextField fullWidth size="small" label={translate('받는 사람')} value={payData.receiver || ''}
+                          disabled={sameAsBuyer}
                           onChange={(e) => setPayData({ ...payData, receiver: e.target.value })} />
                         <TextField fullWidth size="small" label={translate('연락처')} value={payData.addr_phone || ''}
+                          disabled={sameAsBuyer}
                           inputMode="tel" placeholder={isKR ? '010-1234-5678' : '+81 90-1234-5678'}
                           // 해외 번호는 국가번호(+)와 공백이 들어간다 — 국내 형식으로 걸러내면 입력이 막힌다.
                           onChange={(e) => setPayData({ ...payData, addr_phone: isKR ? sanitizePhoneInput(e.target.value) : e.target.value })} />
@@ -831,6 +858,14 @@ export default function OrderSheet({ router }) {
                       )}
                       <TextField fullWidth size="small" label={translate('상세주소')} value={payData.detail_addr || ''}
                         onChange={(e) => setPayData({ ...payData, detail_addr: e.target.value })} />
+                      {/* 배송 요청사항 — 받을 자리가 아예 없어서 고객이 전화로 말하거나 포기했다.
+                          주소록이 아니라 '이 주문' 에 남긴다(주소록 행은 나중에 고쳐지거나 지워진다). */}
+                      <TextField fullWidth size="small" multiline minRows={2}
+                        label={translate('배송 요청사항 (선택)')}
+                        placeholder={translate('예) 부재 시 경비실에 맡겨 주세요')}
+                        value={payData.delivery_memo || ''}
+                        inputProps={{ maxLength: 200 }}
+                        onChange={(e) => setPayData({ ...payData, delivery_memo: e.target.value })} />
                       {isMember && addressList.length > 0 && (
                         <Button size="small" variant="text" onClick={() => setDirectMode(false)} sx={{ alignSelf: 'flex-start' }}>{translate('← 주소록에서 선택')}</Button>
                       )}

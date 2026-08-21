@@ -10,7 +10,7 @@ import { LazyLoadImage } from 'react-lazy-load-image-component';
 import { commarNumber, commarNumberWithUnit, isPurchasable, getProductStatus } from 'src/utils/function';
 import { formatLang } from 'src/utils/format';
 import { apiShop } from 'src/utils/api';
-import { insertCartDataUtil, startBuyNow, selectItemOptionUtil } from 'src/utils/shop-util';
+import { insertCartDataUtil, startBuyNow, selectItemOptionUtil, 배송비표시, 무료배송안내 } from 'src/utils/shop-util';
 import QuantityStepper from 'src/components/elements/shop/QuantityStepper';
 import ProductThumbs, { buildProductImages } from 'src/components/elements/shop/ProductThumbs';
 import toast from 'react-hot-toast';
@@ -297,9 +297,10 @@ const Demo8 = () => {
         </PriceCell>
         {/* 배송비를 상세에 표시한다. 예전엔 이 프레임들에 배송비 표기가 없어서
             고객이 장바구니·주문서에 가서야 배송비를 알았다(주문 직전 금액이 달라 보인다). */}
-        {item?.delivery_fee > 0
-            ? <div style={{ fontSize: '13px', color: '#888', marginTop: '6px' }}>{translate('배송비')} {commarNumberWithUnit(item?.delivery_fee)}</div>
-            : <div style={{ fontSize: '13px', color: '#888', marginTop: '6px' }}>{translate('무료배송')}</div>}
+        {배송비표시(item).free
+            ? <div style={{ fontSize: '13px', color: '#888', marginTop: '6px' }}>{translate('무료배송')}</div>
+            : <div style={{ fontSize: '13px', color: '#888', marginTop: '6px' }}>{translate('배송비')} {commarNumberWithUnit(배송비표시(item).fee, currentLang?.value)}
+                {무료배송안내(item, currentLang?.value) && <span> · {무료배송안내(item, currentLang?.value)}</span>}</div>}
       </Hero>
 
       {requiredGroups(item).length > 0 && (

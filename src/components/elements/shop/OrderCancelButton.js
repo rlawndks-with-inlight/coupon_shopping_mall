@@ -1,13 +1,15 @@
 import {
-  Button, Dialog, DialogActions, DialogContent, DialogTitle,
+  Box, Button, Dialog, DialogActions, DialogContent, DialogTitle,
   Divider, Stack, TextField, Typography,
 } from '@mui/material';
 import { useState } from 'react';
 import toast from 'react-hot-toast';
 import { useLocales } from 'src/locales';
 import { apiManager } from 'src/utils/api';
-import { commarNumber } from 'src/utils/function';
+import { commarNumber, commarNumberWithUnit } from 'src/utils/function';
 import { getOptionLabel } from 'src/utils/shop-util';
+import PolicyBody from 'src/components/elements/shop/PolicyBody';
+import { CANCEL } from 'src/data/policy-content';
 
 // 주문취소 요청 버튼 — 공용.
 //
@@ -31,11 +33,12 @@ export const canCancelOrder = (trx) => (
 const 남은수량 = (o) => Math.max(0, (Number(o?.order_count) || 0) - (Number(o?.cancel_count) || 0));
 
 const OrderCancelButton = ({ trx, orders, onDone, sx, variant = 'outlined' }) => {
-  const { translate } = useLocales();
+  const { translate, currentLang } = useLocales();
   const [open, setOpen] = useState(false);
   const [qty, setQty] = useState({});
   const [reason, setReason] = useState('');
   const [loading, setLoading] = useState(false);
+  const [openNotice, setOpenNotice] = useState(false);
 
   if (!canCancelOrder(trx)) return null;
 
@@ -98,8 +101,9 @@ const OrderCancelButton = ({ trx, orders, onDone, sx, variant = 'outlined' }) =>
                   <Typography sx={{ fontSize: 12, color: 'text.secondary' }}>
                     {(o?.groups ?? []).flatMap((g) => (g?.options ?? []).map(getOptionLabel)).filter(Boolean).join(' / ')}
                     {(o?.groups?.length > 0) ? ' · ' : ''}
-                    {commarNumber(o?.order_amount)}
-                    {translate('원')} · {translate('{{n}}개 남음', { n: 남은수량(o) })}
+                    {/* 금액 단위는 화면 언어를 탄다(한국어 '원', 그 외 'KRW') — 단위 전용 헬퍼를 쓴다 */}
+                    {commarNumberWithUnit(o?.order_amount, currentLang?.value)}
+                    {' · '}{translate('{{n}}개 남음', { n: 남은수량(o) })}
                   </Typography>
                 </Stack>
                 <TextField
@@ -112,6 +116,23 @@ const OrderCancelButton = ({ trx, orders, onDone, sx, variant = 'outlined' }) =>
                 />
               </Stack>
             ))}
+
+            {/* 무엇이 취소되고 무엇이 안 되는지를 누르는 자리에서 읽을 수 있어야 한다.
+                예전엔 이 창에 '판매자 확인 후 환불됩니다' 한 줄뿐이라, 출고 뒤에 눌러 보고서야
+                안 된다는 걸 알았다(가맹점 요청 2026-08-21). */}
+            <Stack direction="row" alignItems="center" justifyContent="space-between">
+              <Typography sx={{ fontSize: 12.5, color: 'text.secondary' }}>
+                {translate('주문 취소 및 반품 안내')}
+              </Typography>
+              <Button size="small" variant="text" onClick={() => setOpenNotice((v) => !v)}>
+                {openNotice ? translate('접기') : translate('보기')}
+              </Button>
+            </Stack>
+            {openNotice && (
+              <Box sx={{ maxHeight: '11rem', overflowY: 'auto', border: '1px solid', borderColor: 'divider', borderRadius: 1, p: 1.5 }}>
+                <PolicyBody blocks={CANCEL} vars={{}} />
+              </Box>
+            )}
 
             {줄선택가능 && <Divider />}
             <TextField
@@ -132,13 +153,13 @@ const OrderCancelButton = ({ trx, orders, onDone, sx, variant = 'outlined' }) =>
           {줄선택가능 &&
             <Button variant="outlined" color="error" disabled={loading}
               onClick={() => request([])}>
-              {translate('주문 전체 취소요청')}
+              {translate('전체취소요청')}
             </Button>}
           <Button variant="contained" color="error"
             disabled={loading || (줄선택가능 && 고른줄.length === 0)}
             onClick={() => request(고른줄.map((o) => ({ order_id: o.id, qty: 고른수량(o) })))}>
             {loading ? translate('요청 중…')
-              : 줄선택가능 ? translate('고른 상품 취소요청') : translate('취소요청')}
+              : 줄선택가능 ? translate('부분취소요청') : translate('취소요청')}
           </Button>
         </DialogActions>
       </Dialog>

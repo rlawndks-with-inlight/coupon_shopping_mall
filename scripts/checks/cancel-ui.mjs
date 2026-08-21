@@ -1,0 +1,67 @@
+import { FRONT_ROOT } from './_roots.mjs';
+import { readFileSync, existsSync } from 'fs';
+
+// 손님이 주문을 취소하려고 누르는 자리를 잠근다.
+//
+// 가맹점 피드백(2026-08-21):
+//   · 「주문 전체 취소요청 / 고른 상품 취소요청」이 무슨 말인지 되물어 왔다.
+//     가맹점이 쓰는 말은 「전체취소요청 / 부분취소요청」이다.
+//   · 이 창에는 '판매자 확인 후 환불됩니다' 한 줄뿐이라, 무엇이 취소되고 무엇이 안 되는지를
+//     출고 뒤에 눌러 보고서야 알았다. 이용약관처럼 펼쳐볼 수 있어야 한다는 요청.
+//
+// 안내 본문은 손으로 적지 않는다 — scripts/policy/source/cancel.txt 에서 생성한다.
+// 여기서는 '생성물이 원본과 같은가'까지 본다(원본만 고치고 빌드를 안 돌리면 화면은 옛 문구다).
+
+const 읽기 = (p) => readFileSync(FRONT_ROOT + p, 'utf8');
+let pass = 0, fail = 0;
+const t = (name, cond, 곁들임) => {
+    if (cond) { pass++; console.log('  ok  ' + name); }
+    else { fail++; console.log('  FAIL ' + name + (곁들임 ? '\n        ' + 곁들임 : '')); }
+};
+
+const btn = 읽기('src/components/elements/shop/OrderCancelButton.js');
+
+// ── 버튼 이름 ─────────────────────────────────────────────────────────────
+t('전체취소요청 이라고 쓴다', btn.includes("translate('전체취소요청')"));
+t('부분취소요청 이라고 쓴다', btn.includes("translate('부분취소요청')"));
+t('되물음이 왔던 옛 문구는 없다',
+    !btn.includes('주문 전체 취소요청') && !btn.includes('고른 상품 취소요청'));
+
+// 이름만 바뀌고 동작이 뒤집히면 안 된다 — 아무것도 안 고르면 전체가 요청되던 사고의 재발 방지.
+t('고른 게 없으면 부분취소를 못 누른다', btn.includes('줄선택가능 && 고른줄.length === 0'));
+t('전체취소는 따로 눌러야 한다', btn.includes('onClick={() => request([])}'));
+
+// ── 취소·반품 안내 ────────────────────────────────────────────────────────
+t('취소 창에서 안내를 펼쳐볼 수 있다',
+    btn.includes("translate('주문 취소 및 반품 안내')") && btn.includes('openNotice'));
+t('안내 본문은 생성물을 쓴다(손으로 적지 않는다)',
+    btn.includes("import { CANCEL } from 'src/data/policy-content'") && btn.includes('blocks={CANCEL}'));
+
+// ── 원본 ↔ 생성물 ─────────────────────────────────────────────────────────
+const 원본경로 = 'scripts/policy/source/cancel.txt';
+t('원본 텍스트가 저장소에 있다', existsSync(FRONT_ROOT + 원본경로));
+if (existsSync(FRONT_ROOT + 원본경로)) {
+    const 원본 = 읽기(원본경로).replace(/\r\n/g, '\n');
+    const 생성 = 읽기('src/data/policy-content.js');
+    const i = 생성.indexOf('export const CANCEL = [');
+    t('policy-content 에 CANCEL 이 생성돼 있다', i > 0);
+    const 조각 = i > 0 ? 생성.slice(i, 생성.indexOf('];', i)) : '';
+    // 원본의 모든 문장이 생성물에 그대로 있는가(빌드를 안 돌린 채 원본만 고친 상태를 잡는다)
+    const 문장 = 원본.split('\n').map((l) => l.trim())
+        .filter((l) => l && l !== '주문 취소 및 반품 안내');
+    const 빠진 = 문장.filter((l) => !조각.includes(JSON.stringify(l).slice(1, -1)));
+    t('원본 문장이 모두 생성물에 있다', 빠진.length === 0, 빠진.slice(0, 2).join(' / '));
+    t('제목 줄은 본문에 넣지 않는다(화면이 그린다)', !조각.includes('"주문 취소 및 반품 안내"'));
+}
+
+// ── 약관 화면에서도 열 수 있어야 한다 ─────────────────────────────────────
+// 창을 닫고 나서 다시 읽고 싶을 때 갈 곳이 없으면 안 된다.
+const page = 읽기('src/pages/shop/auth/policy.js');
+t('약관 화면에 취소·반품 안내 종류가 있다', /CANCEL: 4/.test(page) && page.includes("4: '주문 취소 및 반품 안내'"));
+t('약관 화면이 CANCEL 블록을 그린다', page.includes('POLICY_TYPE.CANCEL ? CANCEL'));
+
+// 취소 가능 상태는 서버와 같아야 한다(이 값이 어긋나면 눌러 놓고 거절당한다).
+t('취소 가능 상태가 서버와 같다', btn.includes('const CANCELABLE_STATUS = [0, 5, 10];'));
+
+console.log(`\n통과 ${pass} / 실패 ${fail}`);
+process.exit(fail ? 1 : 0);

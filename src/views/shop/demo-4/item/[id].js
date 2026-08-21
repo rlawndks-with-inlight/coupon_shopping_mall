@@ -13,7 +13,7 @@ import Head from 'next/head';
 import { Row } from 'src/components/elements/styled-components';
 import { commarNumber, isPurchasable, commarNumberWithUnit } from 'src/utils/function';
 import { Icon } from '@iconify/react';
-import { insertCartDataUtil, insertWishDataUtil, selectItemOptionUtil } from 'src/utils/shop-util';
+import { insertCartDataUtil, insertWishDataUtil, selectItemOptionUtil, 배송비표시, 무료배송안내 } from 'src/utils/shop-util';
 import toast from 'react-hot-toast';
 import DialogBuyNow from 'src/components/dialog/DialogBuyNow';
 import { useAuthContext } from 'src/layouts/manager/auth/useAuthContext';
@@ -87,7 +87,7 @@ const ItemDemo = (props) => {
   const { setModal } = useModal();
   const { themeStretch, themeDnsData, themeWishData, onChangeWishData, themeCartData, onChangeCartData, themePropertyList } = useSettingsContext();
   // 이 화면에는 번역이 아예 없었다(formatLang 만 쓰고 UI 문구는 한국어 그대로였다).
-  const { translate } = useLocales();
+  const { translate, currentLang } = useLocales();
   const { user, isInitialized } = useAuthContext();
   const [loading, setLoading] = useState(true);
 
@@ -585,9 +585,11 @@ const ItemDemo = (props) => {
                               (상세에서 본 금액과 결제 직전 금액이 달라 보인다). */}
                           <ItemCharacter
                             key_name={'배송비'}
-                            value={product?.delivery_fee > 0
-                              ? <>{commarNumberWithUnit(product?.delivery_fee)}</>
-                              : <>{translate('무료배송')}</>}
+                            value={배송비표시(product).free
+                              ? <>{translate('무료배송')}</>
+                              : <>{commarNumberWithUnit(배송비표시(product).fee, currentLang?.value)}
+                                {무료배송안내(product, currentLang?.value) &&
+                                  <span style={{ opacity: 0.85 }}> · {무료배송안내(product, currentLang?.value)}</span>}</>}
                           />
                         </div>
                         {/* '10-14일 내 도착 예정(검수 후 배송)' · '배송 전 검수' 는

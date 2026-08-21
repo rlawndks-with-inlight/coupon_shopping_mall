@@ -46,13 +46,21 @@ margin-bottom:16px;
 padding:24px 24px 48px 24px;
 box-shadow:0px 4px 4px #00000029;
 border-radius:8px;
+/* 폭을 내용에 맡겨 두었더니, 글만 몇 줄 넣은 팝업이 손바닥만 하게 떠서
+   무슨 팝업인지 알아볼 수가 없었다(가맹점 피드백 2026-08-21).
+   최소 폭을 주되 화면 밖으로 나가지 않게 vw 로 묶는다. */
 width:auto;
+min-width:min(360px, 82vw);
+max-width:min(560px, 88vw);
 min-height:200px;
+/* 팝업에 넣은 이미지가 원본 크기 그대로 나와 카드를 뚫고 나가던 것도 함께 막는다. */
+img{max-width:100%;height:auto;}
 position:relative;
 opacity:0.95;
 z-index:10;
 @media screen and (max-width:400px) {
 width:78vw;
+min-width:0;
 }
 `;
 

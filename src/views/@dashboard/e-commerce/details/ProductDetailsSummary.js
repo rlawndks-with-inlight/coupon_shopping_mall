@@ -33,7 +33,7 @@ import { fCurrency } from 'src/utils/formatNumber';
 import Iconify from 'src/components/iconify/Iconify';
 import { IncrementerButton } from 'src/components/custom-input';
 import { ColorSinglePicker } from 'src/components/color-utils';
-import { commarNumber, getPriceUnitByLang, getProductStatus, setProductPriceByLang } from 'src/utils/function';
+import { commarNumber, getPriceUnitByLang, getProductStatus, setProductPriceByLang, commarNumberWithUnit } from 'src/utils/function';
 import { PointerText, Row, postCodeStyle, themeObj } from 'src/components/elements/styled-components';
 import { useSettingsContext } from 'src/components/settings';
 import _ from 'lodash';
@@ -46,7 +46,7 @@ import Cards from 'react-credit-cards'
 import { useAuthContext } from 'src/layouts/manager/auth/useAuthContext';
 import { formatCreditCardNumber, formatExpirationDate } from 'src/utils/formatCard';
 import { useModal } from "src/components/dialog/ModalProvider";
-import { insertCartDataUtil, onPayProductsByAuth, onPayProductsByHand, selectItemOptionUtil } from 'src/utils/shop-util';
+import { insertCartDataUtil, onPayProductsByAuth, onPayProductsByHand, selectItemOptionUtil, 배송비표시, 무료배송안내 } from 'src/utils/shop-util';
 import DaumPostcode from 'react-daum-postcode';
 import { apiManager } from 'src/utils/api';
 import { useRouter } from 'next/router';
@@ -195,7 +195,10 @@ export default function ProductDetailsSummary({ product, onAddCart, onGotoStep, 
                     )}
                     {commarNumber(setProductPriceByLang(product, 'product_sale_price', price_lang, currentLang?.value))} {getPriceUnitByLang(currentLang?.value)}
                   </Typography>
-                  <Typography variant="h7" color={themeObj.grey[500]}>{translate('배송비')}: {commarNumber(setProductPriceByLang(product, 'delivery_fee', price_lang, currentLang?.value))}{getPriceUnitByLang(currentLang?.value)}</Typography>
+                  {/* 배송비는 상품값이 아니라 몰 정책을 따른다 — 상세만 0원으로 보이던 문제(shop-util 배송비표시 주석) */}
+                  <Typography variant="h7" color={themeObj.grey[500]}>{translate('배송비')}: {배송비표시(product).free ? translate('무료배송') : commarNumberWithUnit(배송비표시(product).fee, currentLang?.value)}</Typography>
+                  {무료배송안내(product, currentLang?.value) &&
+                    <Typography variant="h7" color={themeObj.grey[500]}>{무료배송안내(product, currentLang?.value)}</Typography>}
                   {
                     themeDnsData?.id == 95 && product_sale_price < 100000 &&
                     <>

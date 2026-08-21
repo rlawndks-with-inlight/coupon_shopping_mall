@@ -7,12 +7,12 @@ import { Row, themeObj } from 'src/components/elements/styled-components';
 import { useSettingsContext } from 'src/components/settings';
 import styled from 'styled-components'
 import _ from 'lodash'
-import { commarNumber, commarNumberWithUnit, getPriceUnitByLang } from 'src/utils/function';
+import { commarNumber, commarNumberWithUnit, getPriceUnitByLang, isPurchasable } from 'src/utils/function';
 import Slider from 'react-slick';
 import { useTheme } from '@emotion/react';
 import dynamic from 'next/dynamic';
 import { apiShop } from 'src/utils/api';
-import { insertCartDataUtil, selectItemOptionUtil } from 'src/utils/shop-util';
+import { insertCartDataUtil, selectItemOptionUtil, 배송비표시 } from 'src/utils/shop-util';
 import { useAuthContext } from 'src/layouts/manager/auth/useAuthContext';
 import toast from 'react-hot-toast';
 import { useLocales } from 'src/locales';
@@ -151,6 +151,10 @@ const Demo3 = (props) => {
         slidesToScroll: 1,
     }
 
+    // 살 수 있는 상태인지(판매중·새상품만). 다른 프레임은 이미 이 판정을 쓰고 있었는데
+    // 이 프레임만 빠져 있어 품절 상품도 버튼이 살아 있었다.
+    const purchasable = isPurchasable(item?.status);
+
     const handleAddCart = async () => {
         // 비회원도 장바구니 담기 허용
         let result = await insertCartDataUtil({ ...item, seller_id: router.query?.seller_id ?? 0 }, selectProductGroups, themeCartData, onChangeCartData);
@@ -221,7 +225,17 @@ const Demo3 = (props) => {
                             <div style={{ fontSize: themeObj.font_size.size8, marginLeft: '0.25rem' }}>{getPriceUnitByLang()}</div>
                         </Row>
                     </PriceContainer>
-                    <Button variant='contained' onClick={() => { setCartOpen(true) }}>{translate('구매하기')}</Button>
+                    {/* 장바구니를 서랍 안에만 두었더니 '담기 버튼이 없다'는 문의가 왔다(가맹점 2026-08-21).
+                        살지 말지 고르는 자리에 담기가 없으면 손님은 그 몰에 담기가 없다고 읽는다.
+                        옵션이 걸린 상품은 고를 자리가 있어야 하므로 서랍을 열고, 옵션이 없으면 바로 담는다. */}
+                    <Row style={{ gap: '0.5rem' }}>
+                      <Button variant='outlined' disabled={!purchasable} style={{ width: '38%' }}
+                        onClick={() => { requiredGroups(item).length > 0 ? setCartOpen(true) : handleAddCart() }}>
+                        {translate('장바구니')}
+                      </Button>
+                      <Button variant='contained' disabled={!purchasable} style={{ width: '62%' }}
+                        onClick={() => { setCartOpen(true) }}>{translate('구매하기')}</Button>
+                    </Row>
                     <div style={{ marginTop: '1rem' }} />
                     <Divider />
                     <ContentContainer>
@@ -298,13 +312,13 @@ const Demo3 = (props) => {
                         <Row style={{ justifyContent: 'space-between' }}>
                             <Row style={{ width: '150px', justifyContent: 'space-between', alignItems: 'center', padding: '0.25rem' }}>{translate('배송비')}</Row>
                             <div>
-                                <span style={{ color: 'red' }}>{commarNumber(item?.delivery_fee)}</span>원
+                                <span style={{ color: 'red' }}>{commarNumber(배송비표시(item).fee)}</span>원
                             </div>
                         </Row>
                         <Row style={{ justifyContent: 'space-between' }}>
                             <Row style={{ width: '150px', justifyContent: 'space-between', alignItems: 'center', padding: '0.25rem' }}>{translate('합계')}</Row>
                             <div>
-                                <span style={{ color: 'red' }}>{commarNumber(parseInt(item?.product_sale_price + item?.delivery_fee))}</span>원
+                                <span style={{ color: 'red' }}>{commarNumber(parseInt((item?.product_sale_price ?? 0) + 배송비표시(item).fee))}</span>원
                             </div>
                         </Row>
                     </DrawerBox>

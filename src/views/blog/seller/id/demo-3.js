@@ -9,7 +9,7 @@ import _ from 'lodash'
 import toast from 'react-hot-toast';
 import { commarNumber, getAllIdsWithParents, getDownToTopChildren } from 'src/utils/function';
 import { apiManager, apiShop } from 'src/utils/api';
-import { insertCartDataUtil, selectItemOptionUtil, startBuyNow } from 'src/utils/shop-util';
+import { insertCartDataUtil, selectItemOptionUtil, startBuyNow, 배송비표시 } from 'src/utils/shop-util';
 import { formatLang } from 'src/utils/format';
 import { useLocales } from 'src/locales';
 
@@ -327,13 +327,13 @@ const Demo3 = (props) => {
                         <Row style={{ justifyContent: 'space-between' }}>
                             <Row style={{ width: '150px', justifyContent: 'space-between', alignItems: 'center', padding: '0.25rem' }}>{translate('배송비')}</Row>
                             <div>
-                                <span style={{ color: 'red' }}>{commarNumber(selectedItem?.delivery_fee)}</span>원
+                                <span style={{ color: 'red' }}>{commarNumber(배송비표시(selectedItem).fee)}</span>원
                             </div>
                         </Row>
                         <Row style={{ justifyContent: 'space-between' }}>
                             <Row style={{ width: '150px', justifyContent: 'space-between', alignItems: 'center', padding: '0.25rem' }}>{translate('합계')}</Row>
                             <div>
-                                <span style={{ color: 'red' }}>{commarNumber(parseInt((selectedItem?.product_sale_price ?? 0) + (selectedItem?.delivery_fee ?? 0)))}</span>원
+                                <span style={{ color: 'red' }}>{commarNumber(parseInt((selectedItem?.product_sale_price ?? 0) + 배송비표시(selectedItem).fee))}</span>원
                             </div>
                         </Row>
                     </DrawerBox>

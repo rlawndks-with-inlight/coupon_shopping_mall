@@ -6,7 +6,7 @@ import { useSettingsContext } from "src/components/settings";
 import { isDemoHost } from "src/components/main-site/frameList";
 import { useLocales } from "src/locales";
 import PolicyBody from "src/components/elements/shop/PolicyBody";
-import { TERMS, PRIVACY, GUIDE } from "src/data/policy-content";
+import { TERMS, PRIVACY, GUIDE, CANCEL } from "src/data/policy-content";
 
 // 약관·개인정보처리방침·이용안내 화면.
 //
@@ -42,12 +42,13 @@ line-height:1.8;
 word-break:keep-all;
 `
 
-export const POLICY_TYPE = { TERMS: 0, PRIVACY: 1, COPYRIGHT: 2, GUIDE: 3 };
+export const POLICY_TYPE = { TERMS: 0, PRIVACY: 1, COPYRIGHT: 2, GUIDE: 3, CANCEL: 4 };
 const TITLES = {
   0: '이용약관',
   1: '개인정보처리방침',
   2: '저작권정책',
   3: '쇼핑몰 이용안내',
+  4: '주문 취소 및 반품 안내',
 };
 
 // 시행일자 — 가맹점이 등록된 날. 관리자에서 손으로 넣는 establish_date 는 대부분 비어 있어
@@ -86,8 +87,9 @@ const Policy = (props) => {
 
   const blocks = current === POLICY_TYPE.PRIVACY ? PRIVACY
     : current === POLICY_TYPE.GUIDE ? GUIDE
-      : current === POLICY_TYPE.TERMS ? TERMS
-        : null;
+      : current === POLICY_TYPE.CANCEL ? CANCEL
+        : current === POLICY_TYPE.TERMS ? TERMS
+          : null;
 
   return (
     <>

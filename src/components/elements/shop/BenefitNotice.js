@@ -104,11 +104,13 @@ const BenefitNotice = ({ tone = {}, sx = {} }) => {
                 })}
             </Box>
 
-            {/* 팝업. 약관 보기 팝업과 같은 방식이라 6개 프레임 위에서 동작이 검증돼 있다. */}
+            {/* 팝업. 약관 보기 팝업과 같은 방식이라 6개 프레임 위에서 동작이 검증돼 있다.
+                폭이 sm(600px) 이라 이미지를 넣으면 그만큼 줄어들어 글씨가 뭉개져 보였다
+                (가맹점 피드백 2026-08-21). 안내문 한 장이 들어갈 만큼 md 로 넓혔다. */}
             <Dialog
                 open={!!open}
                 onClose={() => setOpenId(null)}
-                maxWidth="sm"
+                maxWidth="md"
                 fullWidth
                 fullScreen={fullScreen}
                 scroll="paper"
@@ -148,12 +150,19 @@ const BenefitNotice = ({ tone = {}, sx = {} }) => {
                             {/* 본문은 본사 관리자(레벨50)가 Quill 로 쓴 HTML 이다.
                                 이미지가 팝업 폭을 넘지 않게 막아 둔다 — 카드사 로고를 큰 원본으로
                                 올리면 그대로 가로 스크롤이 생긴다. */}
+                            {/* 이미지를 누르면 원본을 새 창으로 연다 — 팝업을 아무리 넓혀도
+                                원본이 더 큰 안내문은 있기 마련이라, 크게 볼 길을 하나 둔다.
+                                본문이 HTML 이라 각 img 에 핸들러를 달 수 없어 위임으로 받는다. */}
                             <Box
+                                onClick={(e) => {
+                                    const el = e.target;
+                                    if (el?.tagName === 'IMG' && el?.src) window.open(el.src, '_blank', 'noopener,noreferrer');
+                                }}
                                 sx={{
                                     fontSize: 14,
                                     lineHeight: 1.75,
                                     wordBreak: 'keep-all',
-                                    '& img': { maxWidth: '100%', height: 'auto' },
+                                    '& img': { maxWidth: '100%', height: 'auto', cursor: 'zoom-in' },
                                     '& table': { width: '100%', borderCollapse: 'collapse' },
                                     '& p': { margin: '0 0 8px' },
                                 }}

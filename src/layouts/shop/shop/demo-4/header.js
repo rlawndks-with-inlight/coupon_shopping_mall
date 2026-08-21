@@ -21,6 +21,7 @@ import Link from "next/link"
 import { useLocales } from "src/locales"
 import { isStorefrontHome } from "src/utils/blog-shop-route";
 import { formatLang } from 'src/utils/format';
+import { 찜기능사용 } from 'src/data/wish';
 const Wrappers = styled.header`
 width: 100%;
 position: fixed;
@@ -214,7 +215,6 @@ const Header = () => {
         //router.push(`/shop/items?${new URLSearchParams({ ...router.query, search: keyword })}`)
         router.push(`/shop/items?search=${keyword}`)
     }
-    const [isAuthMenuOver, setIsAuthMenuOver] = useState(false)
     const [hoverItems, setHoverItems] = useState({
 
     })
@@ -240,11 +240,7 @@ const Header = () => {
             link_key: '/shop/auth/cart',
             icon: 'mdi:cart',
         },
-        {
-            name: translate('위시리스트'),
-            link_key: '/shop/auth/wish',
-            icon: 'mdi:heart',
-        },
+        // 찜(위시리스트) 항목은 뺐다 — 쓰지 않는 기능이다. 되살리려면 src/data/wish.js 참고.
         {
             name: translate('포인트내역'),
             link_key: '/shop/auth/point',
@@ -626,12 +622,8 @@ const Header = () => {
                                         </Link>
                                     </div>
                                 </NoneShowMobile>
-                                <NoneShowMobile style={{ marginLeft: 'auto', cursor: 'pointer', fontSize: '14px' }} onMouseOver={() => {
-                                    setIsAuthMenuOver(true)
-                                }}
-                                    onMouseLeave={() => {
-                                        setIsAuthMenuOver(false)
-                                    }}
+                                <NoneShowMobile style={{ marginLeft: 'auto', cursor: 'pointer', fontSize: '14px' }} 
+                                    
                                 >
 
                                 </NoneShowMobile>
@@ -861,15 +853,19 @@ const Header = () => {
                                             >
                                                 <Icon icon={themeMode === 'dark' ? 'tabler:sun' : 'tabler:moon-stars'} width={'25px'} color={themeMode == 'dark' ? '#fff' : '#000'} />
                                             </IconButton>
-                                            <Link href={user ? `/shop/auth/wish` : `/shop/auth/login`} passHref>
-                                                <IconButton
-                                                    sx={{ padding: '0' }}
-                                                >
-                                                    <Badge badgeContent={themeCartData.length} color="error">
-                                                        <Icon icon={'basil:heart-outline'} width={'30px'} color={themeMode == 'dark' ? '#fff' : '#000'} />
-                                                    </Badge>
-                                                </IconButton>
-                                            </Link>
+                                            {/* 찜 기능은 쓰지 않는다(src/data/wish.js) — 프레임마다 있고 없고가 갈려 있었다 */}
+                                            {찜기능사용 &&
+                                              <Link href={user ? `/shop/auth/wish` : `/shop/auth/login`} passHref>
+                                                  {/* 찜 기능은 쓰지 않는다(src/data/wish.js) — 프레임마다 있고 없고가 갈려 있었다 */}
+                                                
+                                                  <IconButton
+                                                        sx={{ padding: '0' }}
+                                                    >
+                                                        <Badge badgeContent={themeCartData.length} color="error">
+                                                            <Icon icon={'basil:heart-outline'} width={'30px'} color={themeMode == 'dark' ? '#fff' : '#000'} />
+                                                        </Badge>
+                                                    </IconButton>
+                                              </Link>}
                                             {/* 언어 선택 — 이 헤더엔 언어 UI 가 없어 설정을 켜도 고객이 언어를 바꿀 수 없었다.
                                                 PC 는 이 아이콘 줄, 모바일은 아래 ShowMobile 묶음에 함께 넣는다. */}
                                             {themeDnsData?.setting_obj?.is_use_lang == 1 && <LanguagePopover />}

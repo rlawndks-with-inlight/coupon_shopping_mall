@@ -324,10 +324,7 @@ export const AuthMenuSideComponent = (props) => {
         },
         // 위탁상품관리는 이 브랜드에서 쓰지 않는다.
         // (예전엔 주석이 객체 리터럴 안에 있어 `{}` 빈 항목이 배열에 그대로 남았다)
-        {
-          label: translate('위시리스트'),
-          link: '/shop/auth/wish/',
-        },
+        // 찜(위시리스트) 항목은 뺐다 — 쓰지 않는 기능이다. 되살리려면 src/data/wish.js 참고.
       ]
     },
     /*{

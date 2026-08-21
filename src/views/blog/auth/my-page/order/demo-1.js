@@ -84,6 +84,9 @@ const Demo1 = (props) => {
                     let order_count = order?.order_count || 0;
                     let order_amount = order?.order_amount || 0;
                     flat_list.push({
+                        // 주문(트랜잭션) 원본을 그대로 달고 간다 — 취소요청 버튼이 상태를 여기서 읽는다.
+                        // 이게 빠져 있어서 이 프레임들만 결제대기인데도 취소요청 버튼이 안 떴다.
+                        trx,
                         seller_id: order?.seller_id || 0,
                         // 셀러 시스템을 쓰지 않아 seller_user_name 은 항상 null — 폴백 문구를 '기본배송' 으로 통일
                         seller_title: order?.seller_user_name || translate('기본배송'),

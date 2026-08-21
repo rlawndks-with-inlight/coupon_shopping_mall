@@ -1,6 +1,6 @@
 
 import { useRouter } from "next/router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import ShopLayout from "src/layouts/shop/ShopLayout";
 import { useSettingsContext } from "src/components/settings";
 
@@ -13,7 +13,8 @@ import { WishDemo5 } from "src/views/shop/demo-5";
 import { WishDemo6 } from "src/views/shop/demo-6";
 import { WishDemo7 } from "src/views/shop/demo-7";
 import { WishDemo8 } from "src/views/shop/demo-8";
-import { WishDemo9 } from "src/views/shop/demo-9";
+import { WishDemo9 } from "src/views/shop/demo-9";
+import { 찜기능사용 } from 'src/data/wish';
 //import { WishDemo10 } from "src/views/shop/demo-10";
 
 const getDemo = (num, common) => {
@@ -46,6 +47,13 @@ const getDemo = (num, common) => {
 const Wish = () => {
   const router = useRouter();
   const { themeDnsData } = useSettingsContext();
+
+  // 찜은 쓰지 않는 기능이다(src/data/wish.js). 화면에서 진입점을 다 감췄어도
+  // 주소를 직접 치거나 예전 링크가 남아 있으면 들어와진다 — 그러면 '없앴다'가 아니다.
+  useEffect(() => {
+    if (!찜기능사용) router.replace('/shop');
+  }, []);
+  if (!찜기능사용) return <></>;
 
   return (
     <>

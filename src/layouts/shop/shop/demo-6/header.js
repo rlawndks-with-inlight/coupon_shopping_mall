@@ -18,7 +18,8 @@ import $ from 'jquery'
 import LanguagePopover from "src/layouts/manager/header/LanguagePopover"
 import { useLocales } from "src/locales"
 import { formatLang } from "src/utils/format"
-import { isStorefrontHome } from "src/utils/blog-shop-route";
+import { isStorefrontHome } from "src/utils/blog-shop-route";
+import { 찜기능사용 } from 'src/data/wish';
 const Wrappers = styled.header`
 width: 100%;
 top: 0;
@@ -166,7 +167,6 @@ const Header = () => {
   const onSearch = () => {
     router.push(`/shop/search?keyword=${keyword}`)
   }
-  const [isAuthMenuOver, setIsAuthMenuOver] = useState(false)
   const [hoverItems, setHoverItems] = useState({
 
   })
@@ -178,10 +178,7 @@ const Header = () => {
       name: translate('장바구니'),
       link_key: 'cart'
     },
-    {
-      name: translate('찜목록'),
-      link_key: 'wish'
-    },
+    // 찜(위시리스트) 항목은 뺐다 — 쓰지 않는 기능이다. 되살리려면 src/data/wish.js 참고.
     {
       name: translate('포인트내역'),
       link_key: 'point'
@@ -417,12 +414,8 @@ const Header = () => {
                   }}
                 />
               </NoneShowMobile>
-              <NoneShowMobile style={{ marginLeft: 'auto', cursor: 'pointer', fontSize: '14px' }} onMouseOver={() => {
-                setIsAuthMenuOver(true)
-              }}
-                onMouseLeave={() => {
-                  setIsAuthMenuOver(false)
-                }}
+              <NoneShowMobile style={{ marginLeft: 'auto', cursor: 'pointer', fontSize: '14px' }} 
+                
               >
                 <Col>
                   <Row style={{ marginBottom: "1rem", marginLeft: 'auto' }}>
@@ -438,20 +431,22 @@ const Header = () => {
                     >
                       <Icon icon={'ph:user-thin'} fontSize={'2.5rem'} color={themeMode == 'dark' ? '#fff' : '#000'} />
                     </IconButton>
-                    <IconButton
-                      sx={iconButtonStyle}
-                      onClick={() => {
-                        if (user) {
-                          router.push(`/shop/auth/wish`)
-                        } else {
-                          router.push(`/shop/auth/login`)
-                        }
-                      }}
-                    >
-                      <Badge badgeContent={themeWishData.length} color="error">
-                        <Icon icon={'ph:heart-thin'} fontSize={'2.5rem'} color={themeMode == 'dark' ? '#fff' : '#000'} />
-                      </Badge>
-                    </IconButton>
+                    {/* 찜 기능은 쓰지 않는다(src/data/wish.js) — 프레임마다 있고 없고가 갈려 있었다 */}
+                    {찜기능사용 &&
+                      <IconButton
+                        sx={iconButtonStyle}
+                        onClick={() => {
+                          if (user) {
+                            router.push(`/shop/auth/wish`)
+                          } else {
+                            router.push(`/shop/auth/login`)
+                          }
+                        }}
+                      >
+                        <Badge badgeContent={themeWishData.length} color="error">
+                          <Icon icon={'ph:heart-thin'} fontSize={'2.5rem'} color={themeMode == 'dark' ? '#fff' : '#000'} />
+                        </Badge>
+                      </IconButton>}
 
                     <IconButton
                       sx={iconButtonStyle}
@@ -479,7 +474,7 @@ const Header = () => {
                       </>}
                   </Row>
                   <div>
-                    <div className="fade-in-text" style={{ display: `${isAuthMenuOver ? 'flex' : 'none'}`, alignItems: 'center' }}>
+                    <div className="fade-in-text" style={{ display: 'flex', alignItems: 'center' }}>
                       {user ?
                         <>
                           {authList.map((item, idx) => (
@@ -513,19 +508,6 @@ const Header = () => {
 
                         </>}
 
-                    </div>
-                    <div className="fade-in-text" style={{ display: `${isAuthMenuOver ? 'none' : 'flex'}`, alignItems: 'center' }}>
-                      {user ?
-                        <>
-                          <AuthMenu theme={theme} style={{ borderRight: 'none' }}>{translate('마이페이지')}</AuthMenu>
-                        </>
-                        :
-                        <>
-                          <AuthMenu theme={theme}>{translate('회원가입')}</AuthMenu>
-                          <AuthMenu theme={theme} style={{ borderRight: 'none' }}>{translate('로그인')}</AuthMenu>
-                        </>}
-
-                      <Icon icon={'ic:baseline-plus'} color={themeMode == 'dark' ? '#fff' : '#000'} />
                     </div>
                   </div>
                 </Col>

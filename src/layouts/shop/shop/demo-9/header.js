@@ -171,7 +171,6 @@ const Header = () => {
         setKeyword("");
         router.push(`/shop/items?keyword=${keyword}`)
     }
-    const [isAuthMenuOver, setIsAuthMenuOver] = useState(false)
     const [hoverItems, setHoverItems] = useState({
 
     })
@@ -183,10 +182,7 @@ const Header = () => {
             name: translate('장바구니'),
             link_key: 'cart'
         },
-        {
-            name: translate('찜목록'),
-            link_key: 'wish'
-        },
+        // 찜(위시리스트) 항목은 뺐다 — 쓰지 않는 기능이다. 되살리려면 src/data/wish.js 참고.
         /*{
             name: translate('포인트내역'),
             link_key: 'point'
@@ -321,8 +317,7 @@ const Header = () => {
                         setSideMenuOpen(false);
                     }}>{formatLang(item, 'category_name', currentLang)}</div>}
                     nodeId={item.id}
-                    style={{ margin: '0.25rem 0' }}
-                >
+                    style={{ margin: '0.25rem 0' }}>
                     {item.children.length > 0 &&
                         <>
                             {item.children.map((item2, idx) => (
@@ -376,16 +371,9 @@ const Header = () => {
                             <Wrappers style={{
                                 background: `${themeMode == 'dark' ? '#000' : '#fff'}`
                             }}
-                                ref={headerWrappersRef}
-                            >
+                                ref={headerWrappersRef}>
                                 <TopMenuContainer>
-                                    <NoneShowMobile style={{ marginLeft: 'auto', cursor: 'pointer', fontSize: '14px' }} onMouseOver={() => {
-                                        setIsAuthMenuOver(true)
-                                    }}
-                                        onMouseLeave={() => {
-                                            setIsAuthMenuOver(false)
-                                        }}
-                                    >
+                                    <NoneShowMobile style={{ marginLeft: 'auto', cursor: 'pointer', fontSize: '14px' }}>
                                         <div className="fade-in-text" style={{ display: 'flex', alignItems: 'center', fontSize: '12px', fontFamily: 'Noto Sans KR', height: '32.8px', marginLeft: 'auto' }}>
                                             {user ?
                                                 <>
@@ -394,16 +382,14 @@ const Header = () => {
                                                             <AuthMenu
                                                                 theme={theme}
                                                                 hoverColor={themeMode == 'dark' ? '#fff' : '#000'}
-                                                                onClick={() => { router.push(`/shop/auth/${item.link_key}`) }}
-                                                            >{item.name}</AuthMenu>
+                                                                onClick={() => { router.push(`/shop/auth/${item.link_key}`) }}>{item.name}</AuthMenu>
                                                         </>
                                                     ))}
                                                     <AuthMenu
                                                         theme={theme}
                                                         hoverColor={themeMode == 'dark' ? '#fff' : '#000'}
                                                         onClick={onLogout}
-                                                        style={{ borderRight: `none` }}
-                                                    >{translate('로그아웃')}</AuthMenu>
+                                                        style={{ borderRight: `none` }}>{translate('로그아웃')}</AuthMenu>
                                                 </>
                                                 :
                                                 <>
@@ -413,8 +399,7 @@ const Header = () => {
                                                                 theme={theme}
                                                                 hoverColor={themeMode == 'dark' ? '#fff' : '#000'}
                                                                 onClick={() => { router.push(`/shop/auth/${item.link_key}`) }}
-                                                                style={{ borderRight: `${idx == noneAuthList.length - 1 ? 'none' : ''}` }}
-                                                            >{item.name}</AuthMenu>
+                                                                style={{ borderRight: `${idx == noneAuthList.length - 1 ? 'none' : ''}` }}>{item.name}</AuthMenu>
                                                         </>
                                                     ))}
 
@@ -449,8 +434,7 @@ const Header = () => {
                                                         <IconButton
                                                             edge='end'
                                                             onClick={() => onSearch()}
-                                                            aria-label='toggle password visibility'
-                                                        >
+                                                            aria-label='toggle password visibility'>
                                                             <Icon icon={'tabler:search'} />
                                                         </IconButton>
                                                     </InputAdornment>
@@ -473,8 +457,7 @@ const Header = () => {
                                                         ...dialogOpenObj,
                                                         ['search']: true
                                                     })
-                                                }}
-                                            >
+                                                }}>
                                                 <Icon icon={'tabler:search'} fontSize={'1.5rem'} color={themeMode == 'dark' ? '#fff' : '#000'} />
                                             </IconButton>
                                             <IconButton
@@ -485,24 +468,21 @@ const Header = () => {
                                                     } else {
                                                         router.push(`/shop/auth/login`)
                                                     }
-                                                }}
-                                            >
+                                                }}>
                                                 <Badge badgeContent={themeCartData.length} color="error">
                                                     <Icon icon={'basil:shopping-bag-outline'} fontSize={'1.8rem'} color={themeMode == 'dark' ? '#fff' : '#000'} />
                                                 </Badge>
                                             </IconButton>
                                             <IconButton
                                                 sx={iconButtonStyle}
-                                                onClick={() => setSideMenuOpen(true)}
-                                            >
+                                                onClick={() => setSideMenuOpen(true)}>
                                                 <Icon icon={'basil:menu-solid'} fontSize={'2rem'} color={themeMode == 'dark' ? '#fff' : '#000'} />
                                             </IconButton>
                                             {
                                                 /*
                                                 <IconButton
                                                 sx={iconButtonStyle}
-                                                onClick={() => onToggleMode()}
-                                            >
+                                                onClick={() => onToggleMode()}>
                                                 <Icon icon={themeMode === 'dark' ? 'tabler:sun' : 'tabler:moon-stars'} fontSize={'1.5rem'} color={themeMode == 'dark' ? '#fff' : '#000'} />
                                             </IconButton>
                                                 */
@@ -521,8 +501,7 @@ const Header = () => {
                                     <NoneShowMobile>
                                         <IconButton
                                             onClick={() => setSideMenuOpen(true)}
-                                            sx={{ marginRight: '1rem' }}
-                                        >
+                                            sx={{ marginRight: '1rem' }}>
                                             <Icon icon={'basil:menu-solid'} fontSize={'2rem'} color={themeMode == 'dark' ? '#fff' : '#000'} />
                                         </IconButton>
                                     </NoneShowMobile>
@@ -531,8 +510,7 @@ const Header = () => {
                                             width: '100%',
                                             flexWrap: 'wrap'
                                         }}
-                                        className="none-scroll pc-menu-content"
-                                    >
+                                        className="none-scroll pc-menu-content">
                                         {headerCategories.length > 0 && headerCategories.map((item1, idx1) => (
                                             <>
                                                 {
@@ -617,8 +595,7 @@ const Header = () => {
                                         whiteSpace: 'nowrap',
                                         overflowX: 'auto',
                                     }}
-                                        className="none-scroll"
-                                    >
+                                        className="none-scroll">
                                         {headerCategories.length > 0 && headerCategories.map((item1, idx1) => (
                                             <>
                                                 {
@@ -628,8 +605,7 @@ const Header = () => {
                                                         }}
                                                             onClick={() => {
                                                                 router.push(`/shop/items?category_id=${item1?.id}`)
-                                                            }}
-                                                        >
+                                                            }}>
                                                             <div>{formatLang(item1, 'category_name', currentLang)}</div>
                                                         </CategoryMenu>
                                                     </>}
@@ -661,15 +637,13 @@ const Header = () => {
                 }}
                 PaperProps={{ style: { zIndex: 1300 } }}
                 style={{
-                }}
-            >
+                }}>
                 <div onClick={() => setSideMenuOpen(false)} style={{ display: 'flex', justifyContent: 'flex-end', padding: '10px 14px', cursor: 'pointer', fontSize: '24px', lineHeight: 1, color: '#333' }}>✕</div>
                 <ColumnMenuContainer style={{
                     background: (themeMode == 'dark' ? '#222' : '#fff'),
                     color: (themeMode == 'dark' ? '#fff' : '#000'),
                 }}
-                    className="none-scroll"
-                >
+                    className="none-scroll">
                     {/*themeDnsData?.setting_obj?.is_use_seller == 1 &&
                         <>
                             <ColumnMenuTitle>{translate('셀러')}</ColumnMenuTitle>
@@ -688,8 +662,7 @@ const Header = () => {
                             <TreeView
                                 defaultCollapseIcon={<Icon icon={'ic:baseline-minus'} />}
                                 defaultExpandIcon={<Icon icon={'ic:baseline-plus'} />}
-                                defaultEndIcon={<Icon icon={'mdi:dot'} />}
-                            >
+                                defaultEndIcon={<Icon icon={'mdi:dot'} />}>
                                 {group?.product_categories && group?.product_categories.map((item1, idx) => (
                                     <>
                                         {returnSidebarMenu(item1, 0, {
@@ -708,8 +681,7 @@ const Header = () => {
                             <TreeView
                                 defaultCollapseIcon={<Icon icon={'ic:baseline-minus'} />}
                                 defaultExpandIcon={<Icon icon={'ic:baseline-plus'} />}
-                                defaultEndIcon={<Icon icon={'mdi:dot'} />}
-                            >
+                                defaultEndIcon={<Icon icon={'mdi:dot'} />}>
                                 <TreeItem label={<div
                                     style={{
                                         marginLeft: '0.25rem'
@@ -718,8 +690,7 @@ const Header = () => {
                                         router.push(`/shop/items?property_ids0=48&depth=0`);
                                         setSideMenuOpen(false);
                                     }}>{translate('공용')}</div>}
-                                    style={{ margin: '0.25rem 0' }}
-                                >
+                                    style={{ margin: '0.25rem 0' }}>
                                 </TreeItem>
                                 <TreeItem label={<div
                                     style={{
@@ -729,8 +700,7 @@ const Header = () => {
                                         router.push(`/shop/items?property_ids0=47&depth=0`);
                                         setSideMenuOpen(false);
                                     }}>{translate('남성')}</div>}
-                                    style={{ margin: '0.25rem 0' }}
-                                >
+                                    style={{ margin: '0.25rem 0' }}>
                                 </TreeItem>
                                 <TreeItem label={<div
                                     style={{
@@ -740,8 +710,7 @@ const Header = () => {
                                         router.push(`/shop/items?property_ids0=46&depth=0`);
                                         setSideMenuOpen(false);
                                     }}>{translate('여성')}</div>}
-                                    style={{ margin: '0.25rem 0' }}
-                                >
+                                    style={{ margin: '0.25rem 0' }}>
                                 </TreeItem>
                             </TreeView>
                         </>

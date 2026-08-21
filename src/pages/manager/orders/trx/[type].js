@@ -392,8 +392,12 @@ const TrxList = () => {
       {
         id: 'created_at',
         label: '구매시간',
+        // trx_dt·trx_tm 은 PG 승인 시각이라 결제완료된 건에만 있다.
+        // 결제대기(포스페이 승인 미확정)·무통장 주문은 늘 비어서 '--- ---' 로만 보였고,
+        // 가맹점은 '주문시간이 안 찍힌다'고 읽었다. 승인 전에는 주문 접수시각(created_at)을 보여준다.
         action: (row) => {
-          return `${row['trx_dt'] ?? "---"} ${row['trx_tm'] ?? "---"}`
+          const 승인 = `${row['trx_dt'] ?? ''} ${row['trx_tm'] ?? ''}`.trim();
+          return 승인 || (row['created_at'] ?? '---');
         },
         sx: (row) => {
           return {

@@ -226,7 +226,10 @@ export const HistoryTable = props => {
     { id: 'ord_num', label: translate('주문번호') },
     { id: 'invoice_num', label: translate('송장번호') },
     { id: 'amount', label: translate('총액') },
-    { id: 'buyer_name', label: translate('구매자명') },
+    // ⚠ 여기 칸 수는 아래 <TableRow> 의 <TableCell> 수와 반드시 같아야 한다.
+    //    예전에는 '구매자명' 과 맨 뒤 빈 칸이 머리에만 있어서, 배송지부터 값이 한 칸씩 왼쪽으로
+    //    밀려 보였다(배송지 자리에 주문상태가, 업데이트일 자리에 취소요청이 찍혔다).
+    //    받는사람·연락처·주소는 아래 '배송지' 칸이 함께 보여주므로 구매자명 칸은 따로 두지 않는다.
     // 배송지 — 주문내역에 '어디로 보내지는지'가 아예 없었다.
     // 배송지는 주문 시점 값이 주문에 박혀 저장되므로(주소록을 나중에 고쳐도 안 바뀐다)
     // 고객이 배송 사고를 확인할 유일한 근거인데 화면에 나오질 않았다.
@@ -235,7 +238,6 @@ export const HistoryTable = props => {
     //{ id: 'trx_date', label: translate('주문일'), align: 'right' },
     ...(themeDnsData?.id == 64 || themeDnsData?.id == 84 ? [] : [{ id: 'date', label: translate('업데이트일'), align: 'right' }]),
     { id: 'cancel', label: translate('주문취소요청'), align: 'right' },
-    { id: '' },
   ];
   const { setModal } = useModal()
   const onPayCancelRequest = async row => {

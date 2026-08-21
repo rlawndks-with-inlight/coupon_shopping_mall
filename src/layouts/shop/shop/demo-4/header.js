@@ -1,4 +1,5 @@
-import Logo from "src/components/logo/Logo"
+import Logo from "src/components/logo/Logo"
+import StorefrontPopups from 'src/components/elements/shop/StorefrontPopups';
 import styled from "styled-components"
 import { IconButton, TextField, InputAdornment, Drawer, Badge, Button, Typography, Chip } from "@mui/material"
 import { forwardRef, useEffect, useRef, useState } from "react"
@@ -16,15 +17,10 @@ import { useAuthContext } from "src/layouts/manager/auth/useAuthContext"
 import LanguagePopover from "src/layouts/manager/header/LanguagePopover"
 import { logoSrc } from "src/data/data"
 import $ from 'jquery'
-import dynamic from 'next/dynamic';
 import Link from "next/link"
 import { useLocales } from "src/locales"
 import { isStorefrontHome } from "src/utils/blog-shop-route";
 import { formatLang } from 'src/utils/format';
-const ReactQuill = dynamic(() => import('react-quill'), {
-    ssr: false,
-    loading: () => <p>Loading ...</p>,
-})
 const Wrappers = styled.header`
 width: 100%;
 position: fixed;
@@ -176,34 +172,6 @@ flex-direction:column;
   display: flex;
 }
 `
-const PopupContainer = styled.div`
-position:fixed;
-top:16px;
-left:0px;
-display:flex;
-flex-wrap:wrap;
-z-index:9999;
-`
-const PopupContent = styled.div`
-/* 카드 배경은 테마와 무관하게 항상 흰색이다.
-   글자색을 지정하지 않으면 MUI 테마 글자색(다크모드=흰색)을 물려받아
-   흰 배경에 흰 글자가 되어 팝업 내용이 통째로 안 보였다. */
-color:#212121;
-background:#fff;
-margin-right:16px;
-margin-bottom:16px;
-padding:24px 24px 48px 24px;
-box-shadow:0px 4px 4px #00000029;
-border-radius:8px;
-width:auto;
-min-height:200px;
-position:relative;
-opacity:0.95;
-z-index:10;
-@media screen and (max-width:400px) { 
-width:78vw;
-}
-`
 const PopoverContainer = styled.div`
 position: fixed;
 left: 50%;
@@ -252,7 +220,6 @@ const Header = () => {
     })
     const [sideMenuOpen, setSideMenuOpen] = useState(false);
     const [categories, setCategories] = useState([]);
-    const [popups, setPopups] = useState([]);
     const [postCategories, setPostCategories] = useState([]);
     const [loading, setLoading] = useState(true);
     const [openAllCategory, setOpenAllCategory] = useState("")
@@ -325,7 +292,6 @@ const Header = () => {
     }, [themeCategoryList])
     const settingHeader = async () => {
         setLoading(true);
-        setPopups(themePopupList)
         setPostCategories(themePostCategoryList);
         setCategories(headerCategories);
         let hover_list = getAllIdsWithParents(headerCategories);
@@ -460,41 +426,9 @@ const Header = () => {
                     </>
                     :
                     <>
-                        {popups.length > 0 && isStorefrontHome(router) ?
-                            <>
-                                <PopupContainer>
-                                    {popups && popups.map((item, idx) => (
-                                        <>
-                                            { }
-                                            <PopupContent>
-                                                <Icon icon='ion:close' style={{ color: `${themeMode == 'dark' ? '#fff' : '#222'}`, position: 'absolute', right: '8px', top: '8px', fontSize: themeObj.font_size.size8, cursor: 'pointer' }} onClick={() => {
-                                                    let popup_list = [...popups];
-                                                    popup_list.splice(idx, 1);
-                                                    setPopups(popup_list);
-                                                }} />
-                                                <ReactQuill
-                                                    className='none-padding'
-                                                    value={item?.popup_content ?? `<body></body>`}
-                                                    readOnly={true}
-                                                    theme={"bubble"}
-                                                    bounds={'.app'}
-                                                />
-                                                <div style={{ display: 'flex', alignItems: 'center', position: 'absolute', left: '8px', bottom: '8px', cursor: 'pointer' }} onClick={() => {
-                                                    let popup_list = [...popups];
-                                                    popup_list.splice(idx, 1);
-                                                    setPopups(popup_list);
-                                                }}>
-                                                    <Icon icon='ion:close' style={{ color: `${themeMode == 'dark' ? '#fff' : '#222'}`, fontSize: themeObj.font_size.size8, marginRight: '4px', }} onClick={() => { }} />
-                                                    <div style={{ fontSize: themeObj.font_size.size8, }}>{translate('오늘 하루 보지않기')}</div>
-                                                </div>
-                                            </PopupContent>
-                                        </>
-                                    ))}
-                                </PopupContainer>
-                            </>
-                            :
-                            <>
-                            </>}
+                        {/* 팝업은 공용 컴포넌트가 그린다 — 예전엔 헤더마다 복사본이 있어서
+                            크기·z-index 같은 수정이 이 프레임에만 반영되지 않았다. */}
+                        <StorefrontPopups />
                         <Wrappers style={{
                             background: `${themeMode == 'dark' ? '#000' : '#fff'}`,
                         }}

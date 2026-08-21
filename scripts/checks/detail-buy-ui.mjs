@@ -34,6 +34,14 @@ t('팝업에 최소 폭이 있다', /min-width:min\(360px, 82vw\);/.test(popup))
 t('팝업이 화면을 넘지 않는다', /max-width:min\(560px, 88vw\);/.test(popup));
 t('작은 화면에서는 최소 폭을 풀어 준다', /min-width:0;/.test(popup));
 t('팝업 안 이미지가 카드를 뚫지 않는다', /img\{max-width:100%;height:auto;\}/.test(popup));
+// 헤더마다 복사본을 그리고 있으면 여기 고친 것이 그 프레임에는 하나도 반영되지 않는다.
+// 실제로 프레임1(mbc01)이 그랬다 — 로컬로 띄워 보고서야 드러났다.
+for (const n of [1, 4, 5, 6, 7, 8, 9]) {
+    const h = 읽기(`src/layouts/shop/shop/demo-${n}/header.js`);
+    t(`shop demo-${n} 헤더가 공용 팝업을 쓴다`, h.includes('<StorefrontPopups />'));
+    t(`shop demo-${n} 헤더에 팝업 복사본이 없다`, !h.includes('<PopupContainer>'));
+}
+
 // 예전에 고친 것들 — 같이 잠가 둔다(헤더 뒤로 숨어 못 닫던 문제, 다크모드 흰 글자 문제).
 t('팝업이 헤더보다 위에 있다', /z-index:1300;/.test(popup));
 t('팝업 글자색을 고정한다', /color:#212121;/.test(popup));

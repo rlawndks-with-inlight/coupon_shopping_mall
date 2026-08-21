@@ -13,7 +13,7 @@ import DialogActions from '@mui/material/DialogActions'
 
 import { Box, Card, Checkbox, CircularProgress, DialogContentText, FormControlLabel, Paper, RadioGroup, Stack, TextField } from '@mui/material'
 import { Row, postCodeStyle, themeObj } from '../elements/styled-components'
-import DaumPostcode from 'react-daum-postcode';
+import PostcodeBox from 'src/components/elements/shop/PostcodeBox';
 import { KOREA_CODE, OVERSEAS_CODE, isDomestic } from 'src/data/countries';
 import { MenuItem, ToggleButton, ToggleButtonGroup } from '@mui/material';
 import { useLocales } from 'src/locales';
@@ -139,7 +139,7 @@ const DialogAddAddress = (props) => {
               <Box sx={{ fontWeight: 700 }}>{translate('우편번호 검색')}</Box>
               <Button size="small" color="inherit" onClick={() => setField('is_open_daum_post', false)}>{translate('닫기')}</Button>
             </Box>
-            <DaumPostcode style={postCodeStyle} onComplete={onSelectAddress} />
+            <PostcodeBox onComplete={onSelectAddress} />
           </>
           :
           <>

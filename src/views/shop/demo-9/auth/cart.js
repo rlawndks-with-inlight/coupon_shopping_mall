@@ -17,7 +17,6 @@ import Cards from 'react-credit-cards'
 import { formatCreditCardNumber, formatExpirationDate } from 'src/utils/formatCard';
 import { useModal } from 'src/components/dialog/ModalProvider';
 import toast from 'react-hot-toast';
-import DaumPostcode from 'react-daum-postcode';
 import { apiManager } from 'src/utils/api';
 import DialogAddAddress from 'src/components/dialog/DialogAddAddress';
 import PayProductsByAuthHecto from 'src/utils/hecto-auth';

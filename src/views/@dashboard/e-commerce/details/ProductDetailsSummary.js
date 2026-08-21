@@ -47,7 +47,6 @@ import { useAuthContext } from 'src/layouts/manager/auth/useAuthContext';
 import { formatCreditCardNumber, formatExpirationDate } from 'src/utils/formatCard';
 import { useModal } from "src/components/dialog/ModalProvider";
 import { insertCartDataUtil, onPayProductsByAuth, onPayProductsByHand, selectItemOptionUtil, 배송비표시, 무료배송안내 } from 'src/utils/shop-util';
-import DaumPostcode from 'react-daum-postcode';
 import { apiManager } from 'src/utils/api';
 import { useRouter } from 'next/router';
 import DialogBuyNow from 'src/components/dialog/DialogBuyNow';

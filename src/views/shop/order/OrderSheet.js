@@ -27,7 +27,7 @@ import { formatCreditCardNumber, formatExpirationDate } from 'src/utils/formatCa
 import { useModal } from 'src/components/dialog/ModalProvider';
 import { apiManager, getLastApiError } from 'src/utils/api';
 import DialogAddAddress from 'src/components/dialog/DialogAddAddress';
-import DaumPostcode from 'react-daum-postcode';
+import PostcodeBox from 'src/components/elements/shop/PostcodeBox';
 import { useLocales } from 'src/locales';
 import PayProductsByAuthHecto from 'src/utils/hecto-auth';
 import PayProductsByPhoneHecto from 'src/utils/hecto-phone';
@@ -632,7 +632,7 @@ export default function OrderSheet({ router }) {
           <Box sx={{ fontWeight: 700 }}>{translate('우편번호 검색')}</Box>
           <Button size="small" color="inherit" onClick={() => setPostOpen(false)}>{translate('닫기')}</Button>
         </Box>
-        <DaumPostcode style={postCodeStyle} onComplete={onCompletePost} />
+        <PostcodeBox onComplete={onCompletePost} />
       </Dialog>
 
       <Wrappers>

@@ -47,7 +47,7 @@ export default function CheckoutCartProductList({
       <Table sx={{
         minWidth: 560,
         overflowX: 'auto',
-        '& td, & th': { wordBreak: 'keep-all', overflowWrap: 'anywhere' },
+        '& td, & th': { wordBreak: 'keep-all', overflowWrap: 'break-word' },
       }}>
         <TableHeadCustom headLabel={TABLE_HEAD} />
         <TableBody>

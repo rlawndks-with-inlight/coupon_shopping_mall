@@ -13,7 +13,8 @@ import { readFileSync, existsSync } from 'fs';
 // 지금 규칙(관리자 표·고객 표 공통):
 //   white-space:pre-line   원문 줄바꿈은 살리되 칸을 넘치면 줄을 바꾼다
 //   word-break:keep-all    한국어를 글자 단위로 쪼개지 않는다
-//   overflow-wrap:anywhere 그래도 안 들어가는 긴 토막(주문번호·URL)은 끊어 넘긴다
+//   overflow-wrap:break-word 그래도 안 들어가는 긴 토막(주문번호·URL)만 끊어 넘긴다
+//   (anywhere 는 쓰면 안 된다 — 아래 마지막 묶음 주석 참고)
 
 const 읽기 = (p) => readFileSync(FRONT_ROOT + p, 'utf8');
 let pass = 0, fail = 0;
@@ -35,7 +36,7 @@ for (const f of 표파일) {
     t(`${이름} 에 white-space:pre 단독 규칙이 없다`, !/white-space: ?pre;/.test(s));
     t(`${이름} 이 줄을 바꾼다`, /white-space: ?pre-line;/.test(s));
     t(`${이름} 이 한국어를 단어째 넘긴다`, /word-break: ?keep-all;/.test(s));
-    t(`${이름} 이 긴 토막도 끊어 넘긴다`, /overflow-wrap: ?anywhere;/.test(s));
+    t(`${이름} 이 긴 토막만 끊어 넘긴다`, /overflow-wrap: ?break-word;/.test(s));
 }
 
 // 관리자 표: 첫 칸 붙박이 + 스크롤 영역이 화면 안에 남는지
@@ -62,6 +63,17 @@ t('관리자 표: 글은 단어째 접힌다', /wordBreak: 'keep-all'/.test(매�
 t('관리자 표: 버튼·칩·입력은 줄을 바꾸지 않는다', /MuiButton-root[\s\S]{0,80}whiteSpace: 'nowrap'/.test(매니저표));
 const 주문관리 = 읽기('src/pages/manager/orders/trx/[type].js');
 t('부분/전체 취소 버튼이 한 줄로 나온다', /whiteSpace: 'nowrap'[\s\S]{0,120}부분\/전체 취소/.test(주문관리));
+
+// ── overflow-wrap 은 anywhere 가 아니라 break-word 여야 한다 ──────────────
+// 둘 다 줄을 끊지만 '칸의 최소 너비' 계산이 다르다.
+//   anywhere   → 최소 너비를 글자 하나로 본다 → 표가 칸을 극단으로 좁힌다
+//                (관리자 주문관리에서 주소가 '김/성/모/·/0/1/0/…' 로 쪼개졌다)
+//   break-word → 최소 너비는 가장 긴 단어, 넘칠 때만 끊는다
+for (const f of [...표파일,
+    'src/views/manager/mui/table/ManagerTable.js',
+    'src/views/@dashboard/e-commerce/checkout/cart/CheckoutCartProductList.js']) {
+    t(`${f.split('/').pop()} 에 anywhere 가 없다`, !/anywhere/.test(읽기(f).replace(/\/\*[\s\S]*?\*\//g, '').replace(/^\s*\/\/.*$/gm, '')));
+}
 
 console.log(`\n통과 ${pass} / 실패 ${fail}`);
 process.exit(fail ? 1 : 0);

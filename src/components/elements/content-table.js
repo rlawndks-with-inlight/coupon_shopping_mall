@@ -42,10 +42,12 @@ padding:1rem 0.5rem;
    게다가 pre 는 데이터에 든 개행을 그대로 살려서 엉뚱한 자리에서 끊겼다.
    pre-line = 원문 줄바꿈은 살리되, 칸을 넘치면 알아서 줄을 바꾼다.
    keep-all  = 한국어를 글자 단위로 쪼개지 않는다(단어째 내려간다).
-   anywhere  = 그래도 안 들어가는 긴 토막(주문번호·URL)은 어디서든 끊어 넘긴다. */
+   break-word= 그래도 안 들어가는 긴 토막(주문번호·URL)만 끊어 넘긴다.
+               anywhere 를 쓰면 안 된다 — 그건 칸의 '최소 너비' 까지 글자 하나로 보게 만들어서,
+               표가 칸을 극단으로 좁힌다(주소가 한 글자씩 세로로 쪼개졌다). */
 white-space:pre-line;
 word-break:keep-all;
-overflow-wrap:anywhere;
+overflow-wrap:break-word;
 vertical-align:top;
 /* 한 칸이 표 전체를 늘리지 못하게 막는다 — 주소·상품명이 길면 두세 줄로 접힌다. */
 max-width:260px;

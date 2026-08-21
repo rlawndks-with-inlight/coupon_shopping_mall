@@ -153,7 +153,7 @@ eq('취소 실행 시 요청 마감', /UPDATE transaction_cancel_requests[\s\S]{
 const btn = readFileSync(FRONT + 'src/components/elements/shop/OrderCancelButton.js', 'utf8');
 eq('고객도 줄·수량을 고른다', /items: items \?\? \[\]/.test(btn), true);
 eq('고객 화면도 남은 수량 초과 불가', /Math\.min\(Number\(qty\[o\.id\]\) \|\| 0, 남은수량\(o\)\)/.test(btn), true);
-eq('취소 가능 상태는 백엔드와 같은 값', /CANCELABLE_STATUS = \[0, 5, 10\]/.test(btn), true);
+eq('취소 가능 상태는 백엔드와 같은 값', /CANCELABLE_STATUS = \[5, 10\]/.test(btn), true);
 for (const rel of ['src/components/elements/shop/common.js', 'src/components/elements/blog/common.js']) {
   const s3 = readFileSync(FRONT + rel, 'utf8');
   const 이름 = rel.includes('blog') ? '블로그 주문내역' : '쇼핑몰 주문내역';

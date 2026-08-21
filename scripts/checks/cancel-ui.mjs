@@ -1,4 +1,4 @@
-import { FRONT_ROOT } from './_roots.mjs';
+import { FRONT_ROOT, BACK_ROOT, 백엔드있음 } from './_roots.mjs';
 import { readFileSync, existsSync } from 'fs';
 
 // 손님이 주문을 취소하려고 누르는 자리를 잠근다.
@@ -61,7 +61,23 @@ t('약관 화면에 취소·반품 안내 종류가 있다', /CANCEL: 4/.test(pa
 t('약관 화면이 CANCEL 블록을 그린다', page.includes('POLICY_TYPE.CANCEL ? CANCEL'));
 
 // 취소 가능 상태는 서버와 같아야 한다(이 값이 어긋나면 눌러 놓고 거절당한다).
-t('취소 가능 상태가 서버와 같다', btn.includes('const CANCELABLE_STATUS = [0, 5, 10];'));
+//
+// 결제대기(0)는 취소요청 대상이 아니다 — 승인되지 않은 주문이라 돌려줄 돈이 없다.
+// 여기 0 이 들어가면 결제도 안 된 주문에 취소요청이 쌓이고, 가맹점은 환불할 것도 없는
+// 건을 처리해야 한다(2026-08-21 지적). 세 곳이 같은 값을 써야 한다:
+//   OrderCancelButton(버튼 노출) · shop/common.js(표의 판정) · 백엔드 cancelRequest(진짜 관문)
+t('취소 가능 상태에 결제대기가 없다', btn.includes('const CANCELABLE_STATUS = [5, 10];'));
+const 표 = 읽기('src/components/elements/shop/common.js');
+t('주문내역 표도 같은 값을 쓴다', 표.includes('const CANCELABLE_STATUS = [5, 10];'));
+
+// 백엔드가 진짜 관문이다. 화면에서 감춰도 옛 화면·직접 호출이 남아 있다.
+if (백엔드있음) {
+    const 서버 = readFileSync(BACK_ROOT + 'controllers/transaction.controller.js', 'utf8');
+    t('서버도 결제대기를 막는다', 서버.includes('const CANCELABLE_STATUS = [5, 10];'));
+    t('결제대기는 이유를 따로 알려준다', 서버.includes('아직 결제가 완료되지 않은 주문입니다'));
+} else {
+    console.log('  (백엔드 저장소가 없어 서버 쪽 검사는 건너뜀)');
+}
 
 console.log(`\n통과 ${pass} / 실패 ${fail}`);
 process.exit(fail ? 1 : 0);

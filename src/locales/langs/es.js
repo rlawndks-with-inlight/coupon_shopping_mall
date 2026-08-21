@@ -687,6 +687,7 @@ const es = {
     "카테고리 id는 필수 입니다.": "El ID de categoría es obligatorio.",
     "이미 취소 요청된 주문입니다.": "Ya se ha solicitado la cancelación de este pedido.",
     "이미 취소 처리된 주문입니다.": "Este pedido ya ha sido cancelado.",
+    "아직 결제가 완료되지 않은 주문입니다. 결제하지 않으시면 주문이 진행되지 않습니다.": "Este pedido aún no se ha pagado. No se procesará hasta completar el pago.",
     "존재하지 않는 주문번호 입니다.": "Ese número de pedido no existe.",
     "존재하지 않는 주문입니다.": "Ese pedido no existe.",
     "주문 비밀번호를 입력해 주세요.": "Introduzca la contraseña del pedido.",

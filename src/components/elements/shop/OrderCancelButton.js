@@ -19,8 +19,11 @@ import { CANCEL } from 'src/data/policy-content';
 //
 // 뷰 5개에 각각 심으면 판정 조건이 곧 어긋나므로 한 곳에 모은다.
 // 취소 가능 상태는 백엔드 cancelRequest 의 CANCELABLE_STATUS 와 반드시 같은 값을 유지할 것.
-//   0=결제대기, 5=결제완료, 10=입고 까지만. 출고(15) 이후는 취소가 아니라 반품 절차다.
-const CANCELABLE_STATUS = [0, 5, 10];
+//   5=결제완료, 10=입고 만. 출고(15) 이후는 취소가 아니라 반품 절차다.
+// 결제대기(0)는 뺀다 — 아직 승인되지 않은 주문이라 돌려줄 돈이 없다.
+// 예전엔 여기 0 이 있어서, 결제도 안 된 주문에 취소요청이 쌓이고
+// 가맹점은 환불할 것도 없는 건을 처리해야 했다(2026-08-21 지적).
+const CANCELABLE_STATUS = [5, 10];
 
 export const canCancelOrder = (trx) => (
   trx?.is_cancel != 1

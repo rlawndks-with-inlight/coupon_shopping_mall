@@ -428,7 +428,10 @@ export default function ManagerTable(props) {
             </>
           }
         </TableHeaderContainer>
-        <div style={{ width: '100%', overflow: 'auto' }}>
+        {/* 가로 스크롤 막대가 표 맨 아래에만 있으면, 줄이 많은 표에서는 화면을 한참 내려가야
+            막대에 닿는다(가맹점 피드백 — 노트북에서 특히 불편). 스크롤 영역을 화면 높이 안에
+            묶어 두면 막대가 늘 화면 안에 남는다. 머리줄·첫 칸은 아래 sx 에서 붙박이로 만든다. */}
+        <div style={{ width: '100%', overflow: 'auto', maxHeight: '76vh' }}>
           {!data.content ?
             <>
               <Row style={{ height: '400px' }}>
@@ -437,7 +440,24 @@ export default function ManagerTable(props) {
             </>
             :
             <>
-              <Table sx={{ minWidth: 800, overflowX: 'auto' }}>
+              <Table stickyHeader sx={{
+                minWidth: 800,
+                overflowX: 'auto',
+                /* 옆으로 밀어도 '어느 줄인지' 를 놓치지 않게 첫 칸을 붙박이로 둔다.
+                   머리줄의 첫 칸은 세로·가로 양쪽으로 고정되므로 z-index 가 더 높아야 한다. */
+                '& tbody td:first-of-type, & thead th:first-of-type': {
+                  position: 'sticky', left: 0, zIndex: 2,
+                  /* 배경을 inherit 로 두면 투명이라, 옆으로 밀 때 뒤 칸 글자가 이 칸을 뚫고 비친다
+                     (주문번호 위에 구매시간이 겹쳐 보였다). 불투명한 색을 직접 준다. */
+                  background: (theme) => theme.palette.background.paper,
+                },
+                '& thead th': { background: (theme) => theme.palette.background.paper },
+                '& thead th:first-of-type': { zIndex: 3 },
+                /* 글은 줄을 바꿔 접되(한국어는 단어째), 버튼·선택 같은 조작 요소는 접지 않는다 —
+                   접히면 버튼 상자 밖으로 글씨가 삐져나온다. */
+                '& td': { wordBreak: 'keep-all', overflowWrap: 'break-word', verticalAlign: 'top' },
+                '& td .MuiButton-root, & td .MuiChip-root, & td .MuiInputBase-root': { whiteSpace: 'nowrap' },
+              }}>
                 <TableHeadCustom
                   headLabel={columns}
                   sx={{ wordBreak: 'keep-all' }}

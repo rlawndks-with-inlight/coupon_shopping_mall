@@ -53,7 +53,7 @@ padding:1rem 0.5rem;
    표가 옆으로 늘어나고 가로 스크롤이 생긴다. */
 white-space:pre-line;
 word-break:keep-all;
-overflow-wrap:anywhere;
+overflow-wrap:break-word;
 vertical-align:top;
 `
 

@@ -49,5 +49,19 @@ const 장바구니 = 읽기('src/views/@dashboard/e-commerce/checkout/cart/Check
 t('장바구니가 720px 를 강제하지 않는다', !/minWidth: 720/.test(장바구니));
 t('장바구니 글자도 단어째 넘긴다', /wordBreak: 'keep-all'/.test(장바구니));
 
+// ── 관리자 표(ManagerTable) ───────────────────────────────────────────────
+// ⚠ 관리자 화면(주문관리·회원관리…)이 쓰는 표는 content-table 이 아니라 이쪽이다.
+//   처음에 content-table 만 고쳐서 '뭐가 바뀐 거냐' 는 말을 들었다 — 두 개를 헷갈리지 말 것.
+const 매니저표 = 읽기('src/views/manager/mui/table/ManagerTable.js');
+t('관리자 표: 스크롤 영역이 화면 안에 묶여 있다', /maxHeight: '76vh'/.test(매니저표),
+    '막대가 표 맨 아래에만 있으면 줄이 많을 때 거기까지 내려가야 한다');
+t('관리자 표: 머리줄이 붙박이다', /<Table stickyHeader/.test(매니저표));
+t('관리자 표: 첫 칸이 붙박이다', /tbody td:first-of-type[\s\S]{0,120}position: 'sticky'/.test(매니저표));
+t('관리자 표: 글은 단어째 접힌다', /wordBreak: 'keep-all'/.test(매니저표));
+// 버튼 글씨가 접히면 상자 밖으로 삐져나온다 — 조작 요소는 접지 않는다.
+t('관리자 표: 버튼·칩·입력은 줄을 바꾸지 않는다', /MuiButton-root[\s\S]{0,80}whiteSpace: 'nowrap'/.test(매니저표));
+const 주문관리 = 읽기('src/pages/manager/orders/trx/[type].js');
+t('부분/전체 취소 버튼이 한 줄로 나온다', /whiteSpace: 'nowrap'[\s\S]{0,120}부분\/전체 취소/.test(주문관리));
+
 console.log(`\n통과 ${pass} / 실패 ${fail}`);
 process.exit(fail ? 1 : 0);

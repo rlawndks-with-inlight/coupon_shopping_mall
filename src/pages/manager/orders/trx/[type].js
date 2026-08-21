@@ -582,7 +582,10 @@ const TrxList = () => {
         // PG 콘솔에서만 취소하면 우리 쪽은 정상 주문으로 남고 매출·재고가 어긋난다.
         if (row?.is_cancel == 1 || row?.is_cancel_trans == 1) return <div style={{ color: '#bbb' }}>취소됨</div>;
         return (
+          // 글씨가 두 줄로 접히면 버튼 상자 밖으로 삐져나온다(칸이 좁을 때).
+          // 조작 요소는 줄을 바꾸지 않는다 — 표 규칙은 ManagerTable 의 sx 참고.
           <Button size='small' variant='outlined' color='error'
+            sx={{ whiteSpace: 'nowrap', px: 1 }}
             onClick={() => { setCancelTrxId(row?.id); }}>
             부분/전체 취소
           </Button>

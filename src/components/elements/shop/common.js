@@ -226,7 +226,10 @@ export const HistoryTable = props => {
     { id: 'ord_num', label: translate('주문번호') },
     { id: 'invoice_num', label: translate('송장번호') },
     { id: 'amount', label: translate('총액') },
-    { id: 'buyer_name', label: translate('구매자명') },
+    // ⚠ 여기 칸 수는 아래 <TableRow> 의 <TableCell> 수와 반드시 같아야 한다.
+    //    예전에는 '구매자명' 과 맨 뒤 빈 칸이 머리에만 있어서, 배송지부터 값이 한 칸씩 왼쪽으로
+    //    밀려 보였다(배송지 자리에 주문상태가, 업데이트일 자리에 취소요청이 찍혔다).
+    //    받는사람·연락처·주소는 아래 '배송지' 칸이 함께 보여주므로 구매자명 칸은 따로 두지 않는다.
     // 배송지 — 주문내역에 '어디로 보내지는지'가 아예 없었다.
     // 배송지는 주문 시점 값이 주문에 박혀 저장되므로(주소록을 나중에 고쳐도 안 바뀐다)
     // 고객이 배송 사고를 확인할 유일한 근거인데 화면에 나오질 않았다.
@@ -235,7 +238,6 @@ export const HistoryTable = props => {
     //{ id: 'trx_date', label: translate('주문일'), align: 'right' },
     ...(themeDnsData?.id == 64 || themeDnsData?.id == 84 ? [] : [{ id: 'date', label: translate('업데이트일'), align: 'right' }]),
     { id: 'cancel', label: translate('주문취소요청'), align: 'right' },
-    { id: '' },
   ];
   const { setModal } = useModal()
   const onPayCancelRequest = async row => {
@@ -246,9 +248,12 @@ export const HistoryTable = props => {
     }
   }
   // 취소 요청이 가능한 주문 상태. 백엔드 cancelRequest 의 CANCELABLE_STATUS 와 같은 값을 유지할 것.
-  // 0=결제대기, 5=결제완료, 10=입고 까지만 취소 가능. 출고(15) 이후는 반품 절차.
+  // 5=결제완료, 10=입고 만 취소 가능. 출고(15) 이후는 반품 절차.
   // 기존에는 상태와 무관하게 버튼이 떠서, 배송완료된 주문에도 취소 아이콘이 보였다.
-  const CANCELABLE_STATUS = [0, 5, 10];
+  // 결제대기(0)는 뺀다 — 아직 승인되지 않은 주문이라 돌려줄 돈이 없다.
+  // 예전엔 여기 0 이 있어서, 결제도 안 된 주문에 취소요청이 쌓이고
+  // 가맹점은 환불할 것도 없는 건을 처리해야 했다(2026-08-21 지적).
+  const CANCELABLE_STATUS = [5, 10];
   const canCancel = row => (
     row?.is_cancel != 1
     && row?.is_cancel_trans != 1
@@ -415,6 +420,11 @@ export const HistoryTable = props => {
                               ? `${row?.zonecode ? `(${row.zonecode}) ` : ''}${row?.addr ?? ''} ${row?.detail_addr ?? ''}`.trim()
                               : formatOverseasAddress(row)}
                           </div>
+                          {/* 내가 뭐라고 부탁했는지 — 주문 후에 확인할 곳이 여기밖에 없다. */}
+                          {row?.delivery_memo &&
+                            <div style={{ marginTop: 4, color: '#777', whiteSpace: 'pre-line' }}>
+                              {translate('요청')}: {row.delivery_memo}
+                            </div>}
                         </Box>
                       ) : '-'}
                     </TableCell>

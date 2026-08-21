@@ -63,7 +63,10 @@ const Header = (props) => {
     const path = router.asPath.split('/')[2];
     // /blog/product/:id → /shop/item/:id 로 통일됐다. 'product' 만 보면 상품 상세에서
     // 헤더가 상세 모드로 안 바뀌어 대표 이미지를 덮고 뒤로가기 화살표가 사라진다.
-    setIsDetailPage(path == 'item' || path == 'seller');
+    // 상품상세는 더 이상 '상세 모드'가 아니다 — 다른 화면과 같은 헤더(로고 + 불투명)를 쓴다.
+    // 예전엔 로고 자리를 뒤로가기가 차지하고 헤더가 사진 위에 투명하게 얹혔다.
+    // 셀러 페이지는 그대로 둔다(요청 범위가 상품상세다).
+    setIsDetailPage(path == 'seller');
   }, [router.asPath])
 
   useEffect(() => {

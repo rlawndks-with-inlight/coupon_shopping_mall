@@ -13,6 +13,9 @@ const FILES = [
   'src/views/shop/order/OrderSheet.js',
   'src/views/shop/order/PayResultView.js',
   'src/views/@dashboard/e-commerce/checkout/cart/CheckoutCartProduct.js',
+  // 표 아래 배송비 안내가 여기 있다. 줄 칸(Product)만 보고 목록(List)을 빼 두면
+  // '배송비는 주문당 1회' 같은 새 문구가 외국어 화면에서 한국어로 뜬다.
+  'src/views/@dashboard/e-commerce/checkout/cart/CheckoutCartProductList.js',
   // 상품상세 옵션 영역. 프레임 11개가 전부 이 세 컴포넌트를 쓰므로 여기 빠진 문구는
   // 모든 몰의 외국어 화면에서 한국어로 뜬다.
   //
@@ -23,6 +26,8 @@ const FILES = [
   'src/components/elements/shop/ProductAddons.js',
   'src/components/elements/shop/ProductInfoRows.js',
   'src/components/elements/shop/OrderFormFields.js',
+  // 취소요청 창 — 손님이 직접 누르는 자리다. 프레임 11개가 이 하나를 같이 쓴다.
+  'src/components/elements/shop/OrderCancelButton.js',
 ];
 const LANGS = ['ko', 'en', 'ja', 'cn', 'es'];
 

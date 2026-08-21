@@ -17,7 +17,8 @@ import { useAuthContext } from "src/layouts/manager/auth/useAuthContext"
 import LanguagePopover from "src/layouts/manager/header/LanguagePopover"
 import { logoSrc } from "src/data/data"
 import Slider from "react-slick"
-import { useRef } from "react"
+import { useRef } from "react"
+import { 찜기능사용 } from 'src/data/wish';
 
 const Wrappers = styled.header`
 width: 100%;
@@ -217,10 +218,7 @@ const authList = [
     name: "장바구니",
     link_key: 'cart'
   },
-  {
-    name: "찜목록",
-    link_key: 'wish'
-  },
+  // 찜(위시리스트) 항목은 뺐다 — 쓰지 않는 기능이다. 되살리려면 src/data/wish.js 참고.
   // 포인트 비노출 — 적립·차감이 완성되지 않아 항상 0 P 로만 보인다(demo-5 헤더와 동일 처리).
   /*{
     name: '포인트내역',
@@ -503,18 +501,20 @@ const Header = () => {
                     )
                   }}
                 />
-                <IconButton
-                  sx={{ ...iconButtonStyle, marginRight: '0.5rem' }}
-                  onClick={() => {
-                    if (user) {
-                      router.push(`/shop/auth/wish`)
-                    } else {
-                      router.push(`/shop/auth/login`)
-                    }
-                  }}
-                >
-                  <Badge badgeContent={themeWishData?.length ?? 0} color="error"><Icon icon={'ph:heart-thin'} fontSize={'2.8rem'} color={themeMode == 'dark' ? '#fff' : '#000'} /></Badge>
-                </IconButton>
+                {/* 찜 기능은 쓰지 않는다(src/data/wish.js) — 프레임마다 있고 없고가 갈려 있었다 */}
+                {찜기능사용 &&
+                  <IconButton
+                    sx={{ ...iconButtonStyle, marginRight: '0.5rem' }}
+                    onClick={() => {
+                      if (user) {
+                        router.push(`/shop/auth/wish`)
+                      } else {
+                        router.push(`/shop/auth/login`)
+                      }
+                    }}
+                  >
+                    <Badge badgeContent={themeWishData?.length ?? 0} color="error"><Icon icon={'ph:heart-thin'} fontSize={'2.8rem'} color={themeMode == 'dark' ? '#fff' : '#000'} /></Badge>
+                  </IconButton>}
                 <IconButton
                   sx={{ ...iconButtonStyle, marginRight: '0.5rem' }}
                   onClick={() => {
@@ -555,18 +555,20 @@ const Header = () => {
               </NoneShowMobile>
               */}
               <ShowMobile style={{ marginLeft: 'auto' }}>
-                <IconButton
-                  sx={iconButtonStyle}
-                  onClick={() => {
-                    if (user) {
-                      router.push(`/shop/auth/wish`)
-                    } else {
-                      router.push(`/shop/auth/login`)
-                    }
-                  }}
-                >
-                  <Badge badgeContent={themeWishData?.length ?? 0} color="error"><Icon icon={'ph:heart-thin'} fontSize={'1.8rem'} color={themeMode == 'dark' ? '#fff' : '#000'} /></Badge>
-                </IconButton>
+                {/* 찜 기능은 쓰지 않는다(src/data/wish.js) — 프레임마다 있고 없고가 갈려 있었다 */}
+                {찜기능사용 &&
+                  <IconButton
+                    sx={iconButtonStyle}
+                    onClick={() => {
+                      if (user) {
+                        router.push(`/shop/auth/wish`)
+                      } else {
+                        router.push(`/shop/auth/login`)
+                      }
+                    }}
+                  >
+                    <Badge badgeContent={themeWishData?.length ?? 0} color="error"><Icon icon={'ph:heart-thin'} fontSize={'1.8rem'} color={themeMode == 'dark' ? '#fff' : '#000'} /></Badge>
+                  </IconButton>}
                 <IconButton
                   sx={iconButtonStyle}
                   onClick={() => {

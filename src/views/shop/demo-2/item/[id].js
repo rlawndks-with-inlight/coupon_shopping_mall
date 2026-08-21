@@ -8,7 +8,7 @@ import dynamic from 'next/dynamic'
 import { apiManager, apiShop } from 'src/utils/api';
 import { commarNumber, getProductStatus, commarNumberWithUnit } from 'src/utils/function';
 import { Icon } from '@iconify/react';
-import { insertCartDataUtil, insertWishDataUtil, selectItemOptionUtil } from 'src/utils/shop-util';
+import { insertCartDataUtil, insertWishDataUtil, selectItemOptionUtil, 배송비표시, 무료배송안내 } from 'src/utils/shop-util';
 import toast from 'react-hot-toast';
 import DialogBuyNow from 'src/components/dialog/DialogBuyNow';
 import { useAuthContext } from 'src/layouts/manager/auth/useAuthContext';
@@ -222,7 +222,12 @@ const ItemDemo = (props) => {
                       </div>
                       <Divider sx={{ my: 1 }} />
                       <Typography variant="body2" sx={{ color: 'text.secondary', my: 1 }}>
-                        {product?.delivery_fee > 0 ? `${translate('배송비')} ${commarNumberWithUnit(product?.delivery_fee)}` : translate('무료배송')}
+                        {/* 배송비는 상품값이 아니라 몰 정책을 따른다(shop-util 배송비표시 주석) */}
+                        {배송비표시(product).free
+                          ? translate('무료배송')
+                          : `${translate('배송비')} ${commarNumberWithUnit(배송비표시(product).fee, currentLang?.value)}`}
+                        {무료배송안내(product, currentLang?.value) &&
+                          <span style={{ marginLeft: 6, opacity: 0.85 }}>· {무료배송안내(product, currentLang?.value)}</span>}
                       </Typography>
                       {/* 혜택 안내(본사 공통) — 배송비 바로 아래 */}
                       <BenefitNotice sx={{ mb: 1 }} tone={{ fontSize: 13 }} />

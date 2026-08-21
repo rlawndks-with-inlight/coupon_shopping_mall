@@ -314,10 +314,7 @@ export const AuthMenuSideComponent = (props) => {
           label: translate('위탁상품관리'),
           link: '/shop/auth/consignment/',
         },
-        {
-          label: translate('위시리스트'),
-          link: '/shop/auth/wish/',
-        },
+        // 찜(위시리스트) 항목은 뺐다 — 쓰지 않는 기능이다. 되살리려면 src/data/wish.js 참고.
       ]
     },
     /*{

@@ -13,7 +13,7 @@ import { useTheme } from '@emotion/react';
 import { logoSrc } from 'src/data/data';
 import dynamic from 'next/dynamic';
 import { apiManager, apiShop } from 'src/utils/api';
-import { insertCartDataUtil, selectItemOptionUtil } from 'src/utils/shop-util';
+import { insertCartDataUtil, selectItemOptionUtil, 배송비표시 } from 'src/utils/shop-util';
 import { useAuthContext } from 'src/layouts/manager/auth/useAuthContext';
 import toast from 'react-hot-toast';
 import { useLocales } from 'src/locales';
@@ -37,14 +37,22 @@ margin: 0 auto 56px auto;
 display:flex;
 flex-direction:column;
 position:relative;
+/* 헤더가 더 이상 사진 위에 투명하게 얹히지 않는다(로고가 보이는 보통 헤더로 통일).
+   그래서 첫 화면이 헤더에 가리지 않도록 헤더 높이만큼 띄운다.
+   이 프레임의 헤더는 position:fixed 이고 높이가 56px 다(레이아웃 주석 참고). */
+padding-top:56px;
 `
 const BannerImg = styled.div`
+/* 상품 사진은 자르지 않는다 — 가로로 긴 상자에 cover 를 걸어 두어서
+   세로로 긴 사진은 위아래가 잘려 나갔다(가맹점 신고 2026-08-21, 프레임3·4).
+   배너와 같은 규칙이다: 비율이 다르면 잘리는 대신 여백이 생긴다.
+   프레임5·6 은 원래부터 object-fit:contain 이라 이 문제가 없었다. */
+background-color:#f7f7f7;
 width:100%;
 height:400px;
 display:flex;
 flex-direction:column;
 align-items:center;
-
 `
 const ContentWrappers = styled.div`
 top:350px;
@@ -213,7 +221,7 @@ const Demo2 = (props) => {
                         <>
                             <BannerImg style={{
                                 backgroundImage: `url(${item})`,
-                                backgroundSize: 'cover',
+                                backgroundSize: 'contain',
                                 backgroundRepeat: 'no-repeat',
                                 backgroundPosition: 'center'
                             }} />
@@ -248,7 +256,7 @@ const Demo2 = (props) => {
                             <div style={{ fontSize: themeObj.font_size.size8, color: '', fontWeight: 'bold', marginBottom: '0.5rem' }}>{translate('배송정보')}</div>
                         </Row>
                         <Row style={{ alignItems: 'flex-end', }}>
-                            <div style={{ fontSize: themeObj.font_size.size8, color: '' }}>{translate('배송비 :')}<span style={{ color: theme.palette.error.main }}>{commarNumberWithUnit(item?.delivery_fee ?? 0)}</span></div>
+                            <div style={{ fontSize: themeObj.font_size.size8, color: '' }}>{translate('배송비 :')}<span style={{ color: theme.palette.error.main }}>{배송비표시(item).free ? translate('무료배송') : commarNumberWithUnit(배송비표시(item).fee, currentLang?.value)}</span></div>
                         </Row>
                         <Row style={{ alignItems: 'flex-end', }}>
                             <div style={{ fontSize: themeObj.font_size.size8, color: '' }}>{translate('합배송 무제한')}</div>
@@ -268,7 +276,17 @@ const Demo2 = (props) => {
                         {translate(productStatusText)}
                       </div>
                     }
-                    <Button variant='contained' disabled={!purchasable} onClick={() => { setCartOpen(true) }}>{translate('구매하기')}</Button>
+                    {/* 장바구니를 서랍 안에만 두었더니 '담기 버튼이 없다'는 문의가 왔다(가맹점 2026-08-21).
+                        살지 말지 고르는 자리에 담기가 없으면 손님은 그 몰에 담기가 없다고 읽는다.
+                        옵션이 걸린 상품은 고를 자리가 있어야 하므로 서랍을 열고, 옵션이 없으면 바로 담는다. */}
+                    <Row style={{ gap: '0.5rem' }}>
+                      <Button variant='outlined' disabled={!purchasable} style={{ width: '38%' }}
+                        onClick={() => { requiredGroups(item).length > 0 ? setCartOpen(true) : handleAddCart() }}>
+                        {translate('장바구니')}
+                      </Button>
+                      <Button variant='contained' disabled={!purchasable} style={{ width: '62%' }}
+                        onClick={() => { setCartOpen(true) }}>{translate('구매하기')}</Button>
+                    </Row>
                     <div style={{ marginTop: '1rem' }} />
                     <Divider />
                     <ContentContainer>
@@ -485,13 +503,13 @@ const Demo2 = (props) => {
                         <Row style={{ justifyContent: 'space-between' }}>
                             <Row style={{ width: '150px', justifyContent: 'space-between', alignItems: 'center', padding: '0.25rem' }}>{translate('배송비')}</Row>
                             <div>
-                                <span style={{ color: 'red' }}>{commarNumber(item?.delivery_fee)}</span>원
+                                <span style={{ color: 'red' }}>{commarNumber(배송비표시(item).fee)}</span>원
                             </div>
                         </Row>
                         <Row style={{ justifyContent: 'space-between' }}>
                             <Row style={{ width: '150px', justifyContent: 'space-between', alignItems: 'center', padding: '0.25rem' }}>{translate('합계')}</Row>
                             <div>
-                                <span style={{ color: 'red' }}>{commarNumber(parseInt(item?.product_sale_price + item?.delivery_fee))}</span>원
+                                <span style={{ color: 'red' }}>{commarNumber(parseInt((item?.product_sale_price ?? 0) + 배송비표시(item).fee))}</span>원
                             </div>
                         </Row>
                     </DrawerBox>

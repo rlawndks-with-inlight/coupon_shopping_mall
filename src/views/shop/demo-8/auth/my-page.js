@@ -6,7 +6,6 @@ import { useAuthContext } from 'src/layouts/manager/auth/useAuthContext';
 import { fData } from 'src/utils/formatNumber';
 import { commarNumber, makeMaxPage } from 'src/utils/function';
 import styled from 'styled-components'
-import DaumPostcode from 'react-daum-postcode';
 import { apiManager } from 'src/utils/api';
 import DialogAddAddress from 'src/components/dialog/DialogAddAddress';
 import { useLocales } from 'src/locales';

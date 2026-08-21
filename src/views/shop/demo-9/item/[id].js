@@ -16,7 +16,8 @@ import toast from 'react-hot-toast';
 import DialogBuyNow from 'src/components/dialog/DialogBuyNow';
 import { useAuthContext } from 'src/layouts/manager/auth/useAuthContext';
 import { useModal } from 'src/components/dialog/ModalProvider';
-import { 적립예정 } from 'src/data/point-policy';
+import { 적립예정 } from 'src/data/point-policy';
+import { 찜기능사용 } from 'src/data/wish';
 
 const ReactQuill = dynamic(() => import('react-quill'), {
   ssr: false,
@@ -546,14 +547,16 @@ const ItemDemo = (props) => {
                             }
                           }}
                         >
-                          <Icon
-                            icon={themeWishData.map(wish => { return wish?.product_id }).includes(product?.id) ? 'ph:heart-fill' : 'ph:heart-light'}
-                            style={{
-                              width: '30px',
-                              height: '30px',
-                              color: '#EF6253',
-                            }}
-                          />
+                          {/* 찜 기능은 쓰지 않는다(src/data/wish.js) — 프레임마다 있고 없고가 갈려 있었다 */}
+                          {찜기능사용 &&
+                            <Icon
+                              icon={themeWishData.map(wish => { return wish?.product_id }).includes(product?.id) ? 'ph:heart-fill' : 'ph:heart-light'}
+                              style={{
+                                width: '30px',
+                                height: '30px',
+                                color: '#EF6253',
+                              }}
+                            />}
                         </Box>
                       </Row>
                     </Grid>

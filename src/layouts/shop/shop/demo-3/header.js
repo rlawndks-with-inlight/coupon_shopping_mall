@@ -150,10 +150,7 @@ const authList = [
     name: "장바구니",
     link_key: 'cart'
   },
-  {
-    name: "찜목록",
-    link_key: 'wish'
-  },
+  // 찜(위시리스트) 항목은 뺐다 — 쓰지 않는 기능이다. 되살리려면 src/data/wish.js 참고.
   {
     name: "포인트내역",
     link_key: 'point'

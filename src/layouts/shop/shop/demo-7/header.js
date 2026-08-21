@@ -1,4 +1,5 @@
-import Logo from "src/components/logo/Logo"
+import Logo from "src/components/logo/Logo"
+import StorefrontPopups from 'src/components/elements/shop/StorefrontPopups';
 import styled from "styled-components"
 import { IconButton, TextField, InputAdornment, Drawer, Badge } from "@mui/material"
 import { forwardRef, useEffect, useRef, useState } from "react"
@@ -14,15 +15,11 @@ import DialogSearch from "src/components/dialog/DialogSearch"
 import { useAuthContext } from "src/layouts/manager/auth/useAuthContext"
 import { logoSrc } from "src/data/data"
 import $ from 'jquery'
-import dynamic from 'next/dynamic';
 import LanguagePopover from "src/layouts/manager/header/LanguagePopover"
 import { useLocales } from "src/locales"
 import { formatLang } from "src/utils/format"
-import { isStorefrontHome } from "src/utils/blog-shop-route";
-const ReactQuill = dynamic(() => import('react-quill'), {
-    ssr: false,
-    loading: () => <p></p>,
-})
+import { isStorefrontHome } from "src/utils/blog-shop-route";
+import { 찜기능사용 } from 'src/data/wish';
 const Wrappers = styled.header`
 width: 100%;
 position: fixed;
@@ -159,35 +156,6 @@ flex-direction:column;
   display: flex;
 }
 `
-const PopupContainer = styled.div`
-position:fixed;
-top:16px;
-left:0px;
-display:flex;
-flex-wrap:wrap;
-z-index:20;
-`
-const PopupContent = styled.div`
-/* 카드 배경은 테마와 무관하게 항상 흰색이다.
-   글자색을 지정하지 않으면 MUI 테마 글자색(다크모드=흰색)을 물려받아
-   흰 배경에 흰 글자가 되어 팝업 내용이 통째로 안 보였다. */
-color:#212121;
-background:#fff;
-margin-right:16px;
-margin-bottom:16px;
-padding:24px 24px 48px 24px;
-box-shadow:0px 4px 4px #00000029;
-border-radius:8px;
-width:auto;
-min-height:200px;
-position:relative;
-opacity:0.95;
-z-index:10;
-@media screen and (max-width:400px) { 
-width:78vw;
-}
-`
-
 const Header = () => {
 
     const router = useRouter();
@@ -202,12 +170,10 @@ const Header = () => {
     const onSearch = () => {
         router.push(`/shop/search?keyword=${keyword}`)
     }
-    const [isAuthMenuOver, setIsAuthMenuOver] = useState(false)
     const [hoverItems, setHoverItems] = useState({
 
     })
     const [sideMenuOpen, setSideMenuOpen] = useState(false);
-    const [popups, setPopups] = useState([]);
     const [postCategories, setPostCategories] = useState([]);
     const [loading, setLoading] = useState(true);
 
@@ -216,10 +182,7 @@ const Header = () => {
             name: translate('장바구니'),
             link_key: 'cart'
         },
-        {
-            name: translate('찜목록'),
-            link_key: 'wish'
-        },
+        // 찜(위시리스트) 항목은 뺐다 — 쓰지 않는 기능이다. 되살리려면 src/data/wish.js 참고.
         {
             name: translate('포인트내역'),
             link_key: 'point'
@@ -260,7 +223,6 @@ const Header = () => {
     }, [themeCategoryList])
     const settingHeader = async () => {
         setLoading(true);
-        setPopups(themePopupList)
         setPostCategories(themePostCategoryList);
         let hover_list = getAllIdsWithParents(headerCategories);
         let hover_items = {};
@@ -404,49 +366,9 @@ const Header = () => {
                 </>
                 :
                 <>
-                    {popups.length > 0 && router.asPath == '/shop/main/' ?
-                        <>
-                            <PopupContainer>
-                                {popups && popups.map((item, idx) => (
-                                    <>
-                                        {!(themeNoneTodayPopupList[`${returnMoment().substring(0, 10)}`] ?? []).includes(item?.id) &&
-                                            <>
-                                                <PopupContent>
-                                                    <Icon icon='ion:close' style={{ color: `${themeMode == 'dark' ? '#fff' : '#222'}`, position: 'absolute', right: '8px', top: '8px', fontSize: themeObj.font_size.size8, cursor: 'pointer' }} onClick={() => {
-                                                        let popup_list = [...popups];
-                                                        popup_list.splice(idx, 1);
-                                                        setPopups(popup_list);
-                                                    }} />
-                                                    <ReactQuill
-                                                        className='none-padding'
-                                                        value={item?.popup_content ?? `<body></body>`}
-                                                        readOnly={true}
-                                                        theme={"bubble"}
-                                                        bounds={'.app'}
-                                                    />
-                                                    <Row style={{ alignItems: 'center', position: 'absolute', left: '8px', bottom: '8px', cursor: 'pointer' }}
-                                                        onClick={() => {
-                                                            let none_today_popup_list = { ...themeNoneTodayPopupList };
-                                                            if (!none_today_popup_list[`${returnMoment().substring(0, 10)}`]) {
-                                                                none_today_popup_list[`${returnMoment().substring(0, 10)}`] = [];
-                                                            }
-                                                            none_today_popup_list[`${returnMoment().substring(0, 10)}`].push(item?.id);
-                                                            onChangeNoneTodayPopupList(none_today_popup_list);
-                                                        }}
-                                                    >
-                                                        <Icon icon='ion:close' style={{ color: `${themeMode == 'dark' ? '#fff' : '#222'}`, fontSize: themeObj.font_size.size8, marginRight: '4px' }} onClick={() => { }} />
-                                                        <div style={{ fontSize: themeObj.font_size.size8, }}>{translate('오늘 하루 보지않기')}</div>
-                                                    </Row>
-                                                </PopupContent>
-                                            </>}
-                                    </>
-                                ))}
-                            </PopupContainer>
-
-                        </>
-                        :
-                        <>
-                        </>}
+                    {/* 팝업은 공용 컴포넌트가 그린다 — 예전엔 헤더마다 복사본이 있어서
+                        크기·z-index 같은 수정이 이 프레임에만 반영되지 않았다. */}
+                    <StorefrontPopups />
                     <Wrappers style={{
                         background: `${isStorefrontHome(router) ? (scrollTop && themeMode != 'dark' ? 'white' : 'transparent') : (themeMode == 'dark' ? '#000' : '#fff')}`,
 
@@ -493,14 +415,10 @@ const Header = () => {
                                             cursor: 'pointer',
                                             fontSize: '14px',
                                         }}
-                                        onMouseOver={() => {
-                                            setIsAuthMenuOver(true)
-                                        }}
-                                        onMouseLeave={() => {
-                                            setIsAuthMenuOver(false)
-                                        }}
+                                        
+                                        
                                     >
-                                        <div className="fade-in-text" style={{ display: `${isAuthMenuOver ? 'flex' : 'none'}`, alignItems: 'center' }}>
+                                        <div className="fade-in-text" style={{ display: 'flex', alignItems: 'center' }}>
                                             {user ?
                                                 <>
                                                     {authList.map((item, idx) => (
@@ -535,25 +453,6 @@ const Header = () => {
 
                                                 </>}
 
-                                        </div>
-                                        <div className="fade-in-text" style={{ display: `${isAuthMenuOver ? 'none' : 'flex'}`, alignItems: 'center' }}>
-                                            {user ?
-                                                <>
-                                                    <AuthMenu theme={theme} style={{ borderRight: 'none', color: `${(themeDnsData?.id == 63 || themeDnsData?.id == 59) && themeMode != 'dark' ? 'black' : (themeDnsData?.id == 63 || themeDnsData?.id == 59) && themeMode == 'dark' ? 'white' : scrollTop && themeMode != 'dark' ? '' : 'white'}` }}>
-                                                        {translate('마이페이지')}
-                                                    </AuthMenu>
-                                                </>
-                                                :
-                                                <>
-                                                    <AuthMenu theme={theme} style={{ color: `${(themeDnsData?.id == 63 || themeDnsData?.id == 59) && themeMode != 'dark' ? 'black' : (themeDnsData?.id == 63 || themeDnsData?.id == 59) && themeMode == 'dark' ? 'white' : scrollTop ? '' : 'white'}` }}>
-                                                        {translate('회원가입')}
-                                                    </AuthMenu>
-                                                    <AuthMenu theme={theme} style={{ borderRight: 'none', color: `${(themeDnsData?.id == 63 || themeDnsData?.id == 59) && themeMode != 'dark' ? 'black' : (themeDnsData?.id == 63 || themeDnsData?.id == 59) && themeMode == 'dark' ? 'white' : scrollTop && themeMode != 'dark' ? '' : 'white'}` }}>
-                                                        {translate('로그인')}
-                                                    </AuthMenu>
-                                                </>}
-
-                                            <Icon icon={'ic:baseline-plus'} color={themeMode == 'dark' ? '#fff' : '#000'} />
                                         </div>
                                     </NoneShowMobile>
 
@@ -608,20 +507,22 @@ const Header = () => {
                                         >
                                             <Icon icon={'basil:user-outline'} fontSize={'1.8rem'} color={themeMode == 'dark' ? '#fff' : '#000'} />
                                         </IconButton>
-                                        <IconButton
-                                            sx={iconButtonStyle}
-                                            onClick={() => {
-                                                if (user) {
-                                                    router.push(`/shop/auth/wish`)
-                                                } else {
-                                                    router.push(`/shop/auth/login`)
-                                                }
-                                            }}
-                                        >
-                                            <Badge badgeContent={themeWishData.length} color="error">
-                                                <Icon icon={'basil:heart-outline'} fontSize={'2rem'} color={themeMode == 'dark' ? '#fff' : '#000'} />
-                                            </Badge>
-                                        </IconButton>
+                                        {/* 찜 기능은 쓰지 않는다(src/data/wish.js) — 프레임마다 있고 없고가 갈려 있었다 */}
+                                        {찜기능사용 &&
+                                          <IconButton
+                                              sx={iconButtonStyle}
+                                              onClick={() => {
+                                                  if (user) {
+                                                      router.push(`/shop/auth/wish`)
+                                                  } else {
+                                                      router.push(`/shop/auth/login`)
+                                                  }
+                                              }}
+                                          >
+                                              <Badge badgeContent={themeWishData.length} color="error">
+                                                  <Icon icon={'basil:heart-outline'} fontSize={'2rem'} color={themeMode == 'dark' ? '#fff' : '#000'} />
+                                              </Badge>
+                                          </IconButton>}
 
                                         <IconButton
                                             sx={iconButtonStyle}
@@ -648,14 +549,10 @@ const Header = () => {
                                                 <LanguagePopover />
                                             </>}
                                     </NoneShowMobile>
-                                    <NoneShowMobile style={{ marginLeft: 'auto', cursor: 'pointer', fontSize: '14px' }} onMouseOver={() => {
-                                        setIsAuthMenuOver(true)
-                                    }}
-                                        onMouseLeave={() => {
-                                            setIsAuthMenuOver(false)
-                                        }}
+                                    <NoneShowMobile style={{ marginLeft: 'auto', cursor: 'pointer', fontSize: '14px' }} 
+                                        
                                     >
-                                        <div className="fade-in-text" style={{ display: `${isAuthMenuOver ? 'flex' : 'none'}`, alignItems: 'center' }}>
+                                        <div className="fade-in-text" style={{ display: 'flex', alignItems: 'center' }}>
                                             {user ?
                                                 <>
                                                     {authList.map((item, idx) => (
@@ -689,19 +586,6 @@ const Header = () => {
 
                                                 </>}
 
-                                        </div>
-                                        <div className="fade-in-text" style={{ display: `${isAuthMenuOver ? 'none' : 'flex'}`, alignItems: 'center' }}>
-                                            {user ?
-                                                <>
-                                                    <AuthMenu theme={theme} style={{ borderRight: 'none' }}>{translate('마이페이지')}</AuthMenu>
-                                                </>
-                                                :
-                                                <>
-                                                    <AuthMenu theme={theme}>{translate('회원가입')}</AuthMenu>
-                                                    <AuthMenu theme={theme} style={{ borderRight: 'none' }}>{translate('로그인')}</AuthMenu>
-                                                </>}
-
-                                            <Icon icon={'ic:baseline-plus'} color={themeMode == 'dark' ? '#fff' : '#000'} />
                                         </div>
                                     </NoneShowMobile>
                                     <ShowMobile style={{ marginLeft: 'auto', columnGap: '0.5rem' }}>

@@ -27,7 +27,7 @@ CheckoutCartProduct.propTypes = {
   onIncrease: PropTypes.func,
   onChangeQuantity: PropTypes.func,
 };
-export default function CheckoutCartProduct({ row, onDelete, onDecrease, onIncrease, onChangeQuantity, calculatorPrice }) {
+export default function CheckoutCartProduct({ row, onDelete, onDecrease, onIncrease, onChangeQuantity, calculatorPrice, ship_active = false, line_delivery = 0, is_first_line = false }) {
   // status 가 빠져 있어 장바구니에서는 품절·판매중단 상품이 판매중과 똑같이 보였다.
   // 결제 직전 백엔드 하드블록에서야 막히는데 그때도 어느 상품인지 알려주지 않았다.
   const { product_name, product_comment, size, price, colors, cover, available, delivery_fee, product_sale_price, groups, order_count, product_price, product_img, status } = row;
@@ -149,7 +149,13 @@ export default function CheckoutCartProduct({ row, onDelete, onDecrease, onIncre
         </Stack>
       </TableCell>
       <TableCell>
-        {commarNumber(setProductPriceByLang(row, 'delivery_fee', 'ko', currentLang?.value))} {getPriceUnitByLang(currentLang?.value)}
+        {/* 정책이 켜진 몰은 배송비가 주문당 1회라 줄마다 값을 찍으면 거짓말이 된다.
+            첫 줄에 한 번 적고 나머지 줄은 '—' 로 둔다(표 아래 안내가 이유를 설명한다). */}
+        {ship_active
+          ? (line_delivery > 0
+            ? <>{commarNumber(line_delivery)} {getPriceUnitByLang(currentLang?.value)}</>
+            : (is_first_line ? translate('무료') : '—'))
+          : <>{commarNumber(setProductPriceByLang(row, 'delivery_fee', 'ko', currentLang?.value))} {getPriceUnitByLang(currentLang?.value)}</>}
       </TableCell>
       <TableCell>
         {product_price > product_sale_price && (

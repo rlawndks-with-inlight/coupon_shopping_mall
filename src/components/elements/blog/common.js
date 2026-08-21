@@ -267,9 +267,11 @@ export const HistoryTable = props => {
         { id: 'buyer_name', label: translate('구매자명') },
         { id: 'trx_status', label: translate('주문상태') },
         { id: 'trx_date', label: translate('주문일'), align: 'right' },
-        //{ id: 'date', label: translate('업데이트일'), align: 'right' },
+        // ⚠ 칸 수는 아래 <TableRow> 의 <TableCell> 수와 반드시 같아야 한다.
+        //    업데이트일이 머리에서만 빠져 있어서, 그 값이 '주문취소요청' 칸 아래에 찍히고
+        //    취소 버튼은 이름 없는 맨 끝 칸으로 밀려 있었다(쇼핑몰형에서도 같은 어긋남이 있었다).
+        ...(themeDnsData?.id == 64 || themeDnsData?.id == 84 ? [] : [{ id: 'date', label: translate('업데이트일'), align: 'right' }]),
         { id: 'cancel', label: translate('주문취소요청'), align: 'right' },
-        { id: '' },
     ];
     const { setModal } = useModal()
     const onPayCancelRequest = async row => {

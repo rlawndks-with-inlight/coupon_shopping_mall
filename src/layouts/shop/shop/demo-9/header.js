@@ -1,4 +1,5 @@
-import Logo from "src/components/logo/Logo"
+import Logo from "src/components/logo/Logo"
+import StorefrontPopups from 'src/components/elements/shop/StorefrontPopups';
 import styled from "styled-components"
 import { IconButton, TextField, InputAdornment, Drawer, Badge } from "@mui/material"
 import { forwardRef, useEffect, useRef, useState } from "react"
@@ -14,15 +15,10 @@ import DialogSearch from "src/components/dialog/DialogSearch"
 import { useAuthContext } from "src/layouts/manager/auth/useAuthContext"
 import { logoSrc } from "src/data/data"
 import $ from 'jquery'
-import dynamic from 'next/dynamic';
 import LanguagePopover from "src/layouts/manager/header/LanguagePopover"
 import { useLocales } from "src/locales"
 import { formatLang } from "src/utils/format"
 import { isStorefrontHome } from "src/utils/blog-shop-route";
-const ReactQuill = dynamic(() => import('react-quill'), {
-    ssr: false,
-    loading: () => <p></p>,
-})
 const Wrappers = styled.header`
 width: 100%;
 position: fixed;
@@ -155,35 +151,6 @@ flex-direction:column;
   display: flex;
 }
 `
-const PopupContainer = styled.div`
-position:fixed;
-top:16px;
-left:0px;
-display:flex;
-flex-wrap:wrap;
-z-index:20;
-`
-const PopupContent = styled.div`
-/* 카드 배경은 테마와 무관하게 항상 흰색이다.
-   글자색을 지정하지 않으면 MUI 테마 글자색(다크모드=흰색)을 물려받아
-   흰 배경에 흰 글자가 되어 팝업 내용이 통째로 안 보였다. */
-color:#212121;
-background:#fff;
-margin-right:16px;
-margin-bottom:16px;
-padding:24px 24px 48px 24px;
-box-shadow:0px 4px 4px #00000029;
-border-radius:8px;
-width:300px;
-min-height:200px;
-position:relative;
-opacity:0.95;
-z-index:10;
-@media screen and (max-width:400px) { 
-width:78vw;
-}
-`
-
 const MainLogo = styled.img`
 cursor: pointer;
 max-height: calc(65px * var(--logo-scale, 1));
@@ -204,12 +171,10 @@ const Header = () => {
         setKeyword("");
         router.push(`/shop/items?keyword=${keyword}`)
     }
-    const [isAuthMenuOver, setIsAuthMenuOver] = useState(false)
     const [hoverItems, setHoverItems] = useState({
 
     })
     const [sideMenuOpen, setSideMenuOpen] = useState(false);
-    const [popups, setPopups] = useState([]);
     const [postCategories, setPostCategories] = useState([]);
     const [loading, setLoading] = useState(true);
     const authList = [
@@ -217,10 +182,7 @@ const Header = () => {
             name: translate('장바구니'),
             link_key: 'cart'
         },
-        {
-            name: translate('찜목록'),
-            link_key: 'wish'
-        },
+        // 찜(위시리스트) 항목은 뺐다 — 쓰지 않는 기능이다. 되살리려면 src/data/wish.js 참고.
         /*{
             name: translate('포인트내역'),
             link_key: 'point'
@@ -266,7 +228,6 @@ const Header = () => {
     }, [themeCategoryList])
     const settingHeader = async () => {
         setLoading(true);
-        setPopups(themePopupList)
         setPostCategories(themePostCategoryList);
         let hover_list = getAllIdsWithParents(headerCategories);
         let hover_items = {};
@@ -356,8 +317,7 @@ const Header = () => {
                         setSideMenuOpen(false);
                     }}>{formatLang(item, 'category_name', currentLang)}</div>}
                     nodeId={item.id}
-                    style={{ margin: '0.25rem 0' }}
-                >
+                    style={{ margin: '0.25rem 0' }}>
                     {item.children.length > 0 &&
                         <>
                             {item.children.map((item2, idx) => (
@@ -405,62 +365,15 @@ const Header = () => {
                         </>
                         :
                         <>
-                            {popups.length > 0 && isStorefrontHome(router) ?
-                                <>
-                                    <PopupContainer>
-                                        {popups && popups.map((item, idx) => (
-                                            <>
-                                                {!(themeNoneTodayPopupList[`${returnMoment().substring(0, 10)}`] ?? []).includes(item?.id) &&
-                                                    <>
-                                                        <PopupContent>
-                                                            <Icon icon='ion:close' style={{ color: `${themeMode == 'dark' ? '#fff' : '#222'}`, position: 'absolute', right: '8px', top: '8px', fontSize: themeObj.font_size.size8, cursor: 'pointer' }} onClick={() => {
-                                                                let popup_list = [...popups];
-                                                                popup_list.splice(idx, 1);
-                                                                setPopups(popup_list);
-                                                            }} />
-                                                            <ReactQuill
-                                                                className='none-padding'
-                                                                value={item?.popup_content ?? `<body></body>`}
-                                                                readOnly={true}
-                                                                theme={"bubble"}
-                                                                bounds={'.app'}
-                                                            />
-                                                            <Row style={{ alignItems: 'center', position: 'absolute', left: '8px', bottom: '8px', cursor: 'pointer' }}
-                                                                onClick={() => {
-                                                                    let none_today_popup_list = { ...themeNoneTodayPopupList };
-                                                                    if (!none_today_popup_list[`${returnMoment().substring(0, 10)}`]) {
-                                                                        none_today_popup_list[`${returnMoment().substring(0, 10)}`] = [];
-                                                                    }
-                                                                    none_today_popup_list[`${returnMoment().substring(0, 10)}`].push(item?.id);
-                                                                    onChangeNoneTodayPopupList(none_today_popup_list);
-                                                                }}
-                                                            >
-                                                                <Icon icon='ion:close' style={{ color: `${themeMode == 'dark' ? '#fff' : '#222'}`, fontSize: themeObj.font_size.size8, marginRight: '4px' }} onClick={() => { }} />
-                                                                <div style={{ fontSize: themeObj.font_size.size8, }}>{translate('오늘 하루 보지않기')}</div>
-                                                            </Row>
-                                                        </PopupContent>
-                                                    </>}
-                                            </>
-                                        ))}
-                                    </PopupContainer>
-
-                                </>
-                                :
-                                <>
-                                </>}
+                            {/* 팝업은 공용 컴포넌트가 그린다 — 예전엔 헤더마다 복사본이 있어서
+                                크기·z-index 같은 수정이 이 프레임에만 반영되지 않았다. */}
+                            <StorefrontPopups />
                             <Wrappers style={{
                                 background: `${themeMode == 'dark' ? '#000' : '#fff'}`
                             }}
-                                ref={headerWrappersRef}
-                            >
+                                ref={headerWrappersRef}>
                                 <TopMenuContainer>
-                                    <NoneShowMobile style={{ marginLeft: 'auto', cursor: 'pointer', fontSize: '14px' }} onMouseOver={() => {
-                                        setIsAuthMenuOver(true)
-                                    }}
-                                        onMouseLeave={() => {
-                                            setIsAuthMenuOver(false)
-                                        }}
-                                    >
+                                    <NoneShowMobile style={{ marginLeft: 'auto', cursor: 'pointer', fontSize: '14px' }}>
                                         <div className="fade-in-text" style={{ display: 'flex', alignItems: 'center', fontSize: '12px', fontFamily: 'Noto Sans KR', height: '32.8px', marginLeft: 'auto' }}>
                                             {user ?
                                                 <>
@@ -469,16 +382,14 @@ const Header = () => {
                                                             <AuthMenu
                                                                 theme={theme}
                                                                 hoverColor={themeMode == 'dark' ? '#fff' : '#000'}
-                                                                onClick={() => { router.push(`/shop/auth/${item.link_key}`) }}
-                                                            >{item.name}</AuthMenu>
+                                                                onClick={() => { router.push(`/shop/auth/${item.link_key}`) }}>{item.name}</AuthMenu>
                                                         </>
                                                     ))}
                                                     <AuthMenu
                                                         theme={theme}
                                                         hoverColor={themeMode == 'dark' ? '#fff' : '#000'}
                                                         onClick={onLogout}
-                                                        style={{ borderRight: `none` }}
-                                                    >{translate('로그아웃')}</AuthMenu>
+                                                        style={{ borderRight: `none` }}>{translate('로그아웃')}</AuthMenu>
                                                 </>
                                                 :
                                                 <>
@@ -488,8 +399,7 @@ const Header = () => {
                                                                 theme={theme}
                                                                 hoverColor={themeMode == 'dark' ? '#fff' : '#000'}
                                                                 onClick={() => { router.push(`/shop/auth/${item.link_key}`) }}
-                                                                style={{ borderRight: `${idx == noneAuthList.length - 1 ? 'none' : ''}` }}
-                                                            >{item.name}</AuthMenu>
+                                                                style={{ borderRight: `${idx == noneAuthList.length - 1 ? 'none' : ''}` }}>{item.name}</AuthMenu>
                                                         </>
                                                     ))}
 
@@ -524,8 +434,7 @@ const Header = () => {
                                                         <IconButton
                                                             edge='end'
                                                             onClick={() => onSearch()}
-                                                            aria-label='toggle password visibility'
-                                                        >
+                                                            aria-label='toggle password visibility'>
                                                             <Icon icon={'tabler:search'} />
                                                         </IconButton>
                                                     </InputAdornment>
@@ -548,8 +457,7 @@ const Header = () => {
                                                         ...dialogOpenObj,
                                                         ['search']: true
                                                     })
-                                                }}
-                                            >
+                                                }}>
                                                 <Icon icon={'tabler:search'} fontSize={'1.5rem'} color={themeMode == 'dark' ? '#fff' : '#000'} />
                                             </IconButton>
                                             <IconButton
@@ -560,24 +468,21 @@ const Header = () => {
                                                     } else {
                                                         router.push(`/shop/auth/login`)
                                                     }
-                                                }}
-                                            >
+                                                }}>
                                                 <Badge badgeContent={themeCartData.length} color="error">
                                                     <Icon icon={'basil:shopping-bag-outline'} fontSize={'1.8rem'} color={themeMode == 'dark' ? '#fff' : '#000'} />
                                                 </Badge>
                                             </IconButton>
                                             <IconButton
                                                 sx={iconButtonStyle}
-                                                onClick={() => setSideMenuOpen(true)}
-                                            >
+                                                onClick={() => setSideMenuOpen(true)}>
                                                 <Icon icon={'basil:menu-solid'} fontSize={'2rem'} color={themeMode == 'dark' ? '#fff' : '#000'} />
                                             </IconButton>
                                             {
                                                 /*
                                                 <IconButton
                                                 sx={iconButtonStyle}
-                                                onClick={() => onToggleMode()}
-                                            >
+                                                onClick={() => onToggleMode()}>
                                                 <Icon icon={themeMode === 'dark' ? 'tabler:sun' : 'tabler:moon-stars'} fontSize={'1.5rem'} color={themeMode == 'dark' ? '#fff' : '#000'} />
                                             </IconButton>
                                                 */
@@ -596,8 +501,7 @@ const Header = () => {
                                     <NoneShowMobile>
                                         <IconButton
                                             onClick={() => setSideMenuOpen(true)}
-                                            sx={{ marginRight: '1rem' }}
-                                        >
+                                            sx={{ marginRight: '1rem' }}>
                                             <Icon icon={'basil:menu-solid'} fontSize={'2rem'} color={themeMode == 'dark' ? '#fff' : '#000'} />
                                         </IconButton>
                                     </NoneShowMobile>
@@ -606,8 +510,7 @@ const Header = () => {
                                             width: '100%',
                                             flexWrap: 'wrap'
                                         }}
-                                        className="none-scroll pc-menu-content"
-                                    >
+                                        className="none-scroll pc-menu-content">
                                         {headerCategories.length > 0 && headerCategories.map((item1, idx1) => (
                                             <>
                                                 {
@@ -692,8 +595,7 @@ const Header = () => {
                                         whiteSpace: 'nowrap',
                                         overflowX: 'auto',
                                     }}
-                                        className="none-scroll"
-                                    >
+                                        className="none-scroll">
                                         {headerCategories.length > 0 && headerCategories.map((item1, idx1) => (
                                             <>
                                                 {
@@ -703,8 +605,7 @@ const Header = () => {
                                                         }}
                                                             onClick={() => {
                                                                 router.push(`/shop/items?category_id=${item1?.id}`)
-                                                            }}
-                                                        >
+                                                            }}>
                                                             <div>{formatLang(item1, 'category_name', currentLang)}</div>
                                                         </CategoryMenu>
                                                     </>}
@@ -736,15 +637,13 @@ const Header = () => {
                 }}
                 PaperProps={{ style: { zIndex: 1300 } }}
                 style={{
-                }}
-            >
+                }}>
                 <div onClick={() => setSideMenuOpen(false)} style={{ display: 'flex', justifyContent: 'flex-end', padding: '10px 14px', cursor: 'pointer', fontSize: '24px', lineHeight: 1, color: '#333' }}>✕</div>
                 <ColumnMenuContainer style={{
                     background: (themeMode == 'dark' ? '#222' : '#fff'),
                     color: (themeMode == 'dark' ? '#fff' : '#000'),
                 }}
-                    className="none-scroll"
-                >
+                    className="none-scroll">
                     {/*themeDnsData?.setting_obj?.is_use_seller == 1 &&
                         <>
                             <ColumnMenuTitle>{translate('셀러')}</ColumnMenuTitle>
@@ -763,8 +662,7 @@ const Header = () => {
                             <TreeView
                                 defaultCollapseIcon={<Icon icon={'ic:baseline-minus'} />}
                                 defaultExpandIcon={<Icon icon={'ic:baseline-plus'} />}
-                                defaultEndIcon={<Icon icon={'mdi:dot'} />}
-                            >
+                                defaultEndIcon={<Icon icon={'mdi:dot'} />}>
                                 {group?.product_categories && group?.product_categories.map((item1, idx) => (
                                     <>
                                         {returnSidebarMenu(item1, 0, {
@@ -783,8 +681,7 @@ const Header = () => {
                             <TreeView
                                 defaultCollapseIcon={<Icon icon={'ic:baseline-minus'} />}
                                 defaultExpandIcon={<Icon icon={'ic:baseline-plus'} />}
-                                defaultEndIcon={<Icon icon={'mdi:dot'} />}
-                            >
+                                defaultEndIcon={<Icon icon={'mdi:dot'} />}>
                                 <TreeItem label={<div
                                     style={{
                                         marginLeft: '0.25rem'
@@ -793,8 +690,7 @@ const Header = () => {
                                         router.push(`/shop/items?property_ids0=48&depth=0`);
                                         setSideMenuOpen(false);
                                     }}>{translate('공용')}</div>}
-                                    style={{ margin: '0.25rem 0' }}
-                                >
+                                    style={{ margin: '0.25rem 0' }}>
                                 </TreeItem>
                                 <TreeItem label={<div
                                     style={{
@@ -804,8 +700,7 @@ const Header = () => {
                                         router.push(`/shop/items?property_ids0=47&depth=0`);
                                         setSideMenuOpen(false);
                                     }}>{translate('남성')}</div>}
-                                    style={{ margin: '0.25rem 0' }}
-                                >
+                                    style={{ margin: '0.25rem 0' }}>
                                 </TreeItem>
                                 <TreeItem label={<div
                                     style={{
@@ -815,8 +710,7 @@ const Header = () => {
                                         router.push(`/shop/items?property_ids0=46&depth=0`);
                                         setSideMenuOpen(false);
                                     }}>{translate('여성')}</div>}
-                                    style={{ margin: '0.25rem 0' }}
-                                >
+                                    style={{ margin: '0.25rem 0' }}>
                                 </TreeItem>
                             </TreeView>
                         </>

@@ -13,7 +13,7 @@ import Head from 'next/head';
 import { Row } from 'src/components/elements/styled-components';
 import { commarNumber, isPurchasable, commarNumberWithUnit } from 'src/utils/function';
 import { Icon } from '@iconify/react';
-import { insertCartDataUtil, insertWishDataUtil, selectItemOptionUtil } from 'src/utils/shop-util';
+import { insertCartDataUtil, insertWishDataUtil, selectItemOptionUtil, 배송비표시, 무료배송안내 } from 'src/utils/shop-util';
 import toast from 'react-hot-toast';
 import DialogBuyNow from 'src/components/dialog/DialogBuyNow';
 import { useAuthContext } from 'src/layouts/manager/auth/useAuthContext';
@@ -23,6 +23,7 @@ import { formatLang, characterChoices } from 'src/utils/format';
 import { useLocales } from 'src/locales';
 import QuantityStepper from 'src/components/elements/shop/QuantityStepper';
 import { 적립예정 } from 'src/data/point-policy';
+import { 찜기능사용 } from 'src/data/wish';
 
 const ReactQuill = dynamic(() => import('react-quill'), {
   ssr: false,
@@ -87,7 +88,7 @@ const ItemDemo = (props) => {
   const { setModal } = useModal();
   const { themeStretch, themeDnsData, themeWishData, onChangeWishData, themeCartData, onChangeCartData, themePropertyList } = useSettingsContext();
   // 이 화면에는 번역이 아예 없었다(formatLang 만 쓰고 UI 문구는 한국어 그대로였다).
-  const { translate } = useLocales();
+  const { translate, currentLang } = useLocales();
   const { user, isInitialized } = useAuthContext();
   const [loading, setLoading] = useState(true);
 
@@ -585,9 +586,11 @@ const ItemDemo = (props) => {
                               (상세에서 본 금액과 결제 직전 금액이 달라 보인다). */}
                           <ItemCharacter
                             key_name={'배송비'}
-                            value={product?.delivery_fee > 0
-                              ? <>{commarNumberWithUnit(product?.delivery_fee)}</>
-                              : <>{translate('무료배송')}</>}
+                            value={배송비표시(product).free
+                              ? <>{translate('무료배송')}</>
+                              : <>{commarNumberWithUnit(배송비표시(product).fee, currentLang?.value)}
+                                {무료배송안내(product, currentLang?.value) &&
+                                  <span style={{ opacity: 0.85 }}> · {무료배송안내(product, currentLang?.value)}</span>}</>}
                           />
                         </div>
                         {/* '10-14일 내 도착 예정(검수 후 배송)' · '배송 전 검수' 는
@@ -698,32 +701,34 @@ const ItemDemo = (props) => {
                               }
                             }}
                           >{translate('장바구니')}</Button>
-                          <Icon
-                            icon={themeWishData.map(wish => { return wish?.product_id }).includes(product?.id) ? 'ph:heart-fill' : 'ph:heart-light'}
-                            style={{
-                              width: '30px',
-                              height: '30px',
-                              color: `${themeDnsData?.theme_css.main_color}`,
-                              cursor: 'pointer',
-                              margin: '0 1rem'
-                            }}
-                            onClick={async () => {
-                              if (user) {
-                                let result = await insertWishDataUtil(product, themeWishData, onChangeWishData);
-                                if (result?.is_add) {
-                                  setModal({
-                                    func: () => {
-                                      router.push(`/shop/auth/wish`)
-                                    },
-                                    icon: 'mdi:heart',
-                                    title: translate('상품이 위시리스트에 담겼습니다\n바로 확인 하시겠습니까?')
-                                  })
+                          {/* 찜 기능은 쓰지 않는다(src/data/wish.js) — 프레임마다 있고 없고가 갈려 있었다 */}
+                          {찜기능사용 &&
+                            <Icon
+                              icon={themeWishData.map(wish => { return wish?.product_id }).includes(product?.id) ? 'ph:heart-fill' : 'ph:heart-light'}
+                              style={{
+                                width: '30px',
+                                height: '30px',
+                                color: `${themeDnsData?.theme_css.main_color}`,
+                                cursor: 'pointer',
+                                margin: '0 1rem'
+                              }}
+                              onClick={async () => {
+                                if (user) {
+                                  let result = await insertWishDataUtil(product, themeWishData, onChangeWishData);
+                                  if (result?.is_add) {
+                                    setModal({
+                                      func: () => {
+                                        router.push(`/shop/auth/wish`)
+                                      },
+                                      icon: 'mdi:heart',
+                                      title: translate('상품이 위시리스트에 담겼습니다\n바로 확인 하시겠습니까?')
+                                    })
+                                  }
+                                } else {
+                                  toast.error(translate('로그인을 해주세요.'))
                                 }
-                              } else {
-                                toast.error(translate('로그인을 해주세요.'))
-                              }
-                            }}
-                          />
+                              }}
+                            />}
                         </Row>
                       </div>
                     </Grid>

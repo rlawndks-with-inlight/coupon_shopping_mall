@@ -161,12 +161,21 @@ const toBlocks = (text, { docTitle, headings }) => {
   return out;
 };
 
+// ── 주문 취소 및 반품 안내 ─────────────────────────────────────────────
+// 가맹점 요청(2026-08-21): 취소를 누르는 자리에서 '무엇이 되고 무엇이 안 되는지'를
+// 이용약관처럼 펼쳐볼 수 있어야 한다. 약관 제15~18조에 흩어져 있던 내용을 손님 말로 모은 것이다.
+const cancel = read('cancel.txt');
+const CANCEL_HEADINGS = new Set([
+  '배송 전 취소', '배송 후 취소·반품', '단순 변심에 의한 취소·반품', '상품 하자 및 오배송',
+]);
+
 const TERMS = toBlocks(terms, { docTitle: '인터넷 쇼핑몰 『{{shop}} 사이버몰』 이용약관' });
 const PRIVACY = toBlocks(privacy, { docTitle: '개인정보처리방침' });
 const GUIDE = toBlocks(guide, { docTitle: '쇼핑몰 이용안내', headings: GUIDE_HEADINGS });
+const CANCEL = toBlocks(cancel, { docTitle: '주문 취소 및 반품 안내', headings: CANCEL_HEADINGS });
 
 const banned = [/적립금/, /쿠폰/, /소셜 로그인/, /마케팅/, /이메일주소/];
-for (const [name, blocks] of [['약관', TERMS], ['방침', PRIVACY], ['안내', GUIDE]]) {
+for (const [name, blocks] of [['약관', TERMS], ['방침', PRIVACY], ['안내', GUIDE], ['취소안내', CANCEL]]) {
   for (const [, v] of blocks) {
     for (const re of banned) {
       if (re.test(v)) throw new Error(`${name}에 빼기로 한 표현이 남았다: ${re} :: ${v.slice(0, 70)}`);
@@ -187,6 +196,6 @@ const header = `// ⚠ 이 파일은 자동 생성된다. 직접 고치지 마�
 // {{company}} {{shop}} {{date}} {{pvcyName}} {{phone}} 는 화면에서 브랜드 값으로 채운다.
 `;
 
-fs.writeFileSync(OUT, header + '\n' + dump('TERMS', TERMS) + '\n' + dump('PRIVACY', PRIVACY) + '\n' + dump('GUIDE', GUIDE));
-console.log(`생성 완료 — 약관 ${TERMS.length}블록 / 방침 ${PRIVACY.length}블록 / 안내 ${GUIDE.length}블록`);
+fs.writeFileSync(OUT, header + '\n' + dump('TERMS', TERMS) + '\n' + dump('PRIVACY', PRIVACY) + '\n' + dump('GUIDE', GUIDE) + '\n' + dump('CANCEL', CANCEL));
+console.log(`생성 완료 — 약관 ${TERMS.length}블록 / 방침 ${PRIVACY.length}블록 / 안내 ${GUIDE.length}블록 / 취소안내 ${CANCEL.length}블록`);
 console.log(`조문 수: ${TERMS.filter(([t, v]) => t === 'h' && /^제\d+조/.test(v)).length}`);

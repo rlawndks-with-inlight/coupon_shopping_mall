@@ -17,7 +17,8 @@ import DialogBuyNow from 'src/components/dialog/DialogBuyNow';
 import { useAuthContext } from 'src/layouts/manager/auth/useAuthContext';
 import { useModal } from 'src/components/dialog/ModalProvider';
 import { ProductFaq } from 'src/components/elements/shop/demo-4';
-import { isShopgoBrand } from 'src/utils/is-shopgo';
+import { isShopgoBrand } from 'src/utils/is-shopgo';
+import { 찜기능사용 } from 'src/data/wish';
 
 const ReactQuill = dynamic(() => import('react-quill'), {
   ssr: false,
@@ -448,32 +449,34 @@ const ItemDemo = (props) => {
                             }
                           }}
                         >장바구니</Button>
-                        <Icon
-                          icon={themeWishData.map(wish => { return wish?.product_id }).includes(product?.id) ? 'ph:heart-fill' : 'ph:heart-light'}
-                          style={{
-                            width: '30px',
-                            height: '30px',
-                            color: '#FF5B0D',
-                            cursor: 'pointer',
-                            margin: '0 1rem'
-                          }}
-                          onClick={async () => {
-                            if (user) {
-                              let result = await insertWishDataUtil(product, themeWishData, onChangeWishData);
-                              if (result?.is_add) {
-                                setModal({
-                                  func: () => {
-                                    router.push(`/shop/auth/wish`)
-                                  },
-                                  icon: 'mdi:heart',
-                                  title: '상품이 위시리스트에 담겼습니다\n바로 확인 하시겠습니까?'
-                                })
+                        {/* 찜 기능은 쓰지 않는다(src/data/wish.js) — 프레임마다 있고 없고가 갈려 있었다 */}
+                        {찜기능사용 &&
+                          <Icon
+                            icon={themeWishData.map(wish => { return wish?.product_id }).includes(product?.id) ? 'ph:heart-fill' : 'ph:heart-light'}
+                            style={{
+                              width: '30px',
+                              height: '30px',
+                              color: '#FF5B0D',
+                              cursor: 'pointer',
+                              margin: '0 1rem'
+                            }}
+                            onClick={async () => {
+                              if (user) {
+                                let result = await insertWishDataUtil(product, themeWishData, onChangeWishData);
+                                if (result?.is_add) {
+                                  setModal({
+                                    func: () => {
+                                      router.push(`/shop/auth/wish`)
+                                    },
+                                    icon: 'mdi:heart',
+                                    title: '상품이 위시리스트에 담겼습니다\n바로 확인 하시겠습니까?'
+                                  })
+                                }
+                              } else {
+                                toast.error('로그인을 해주세요.')
                               }
-                            } else {
-                              toast.error('로그인을 해주세요.')
-                            }
-                          }}
-                        />
+                            }}
+                          />}
                       </Row>
                     </Grid>
                   </Grid>

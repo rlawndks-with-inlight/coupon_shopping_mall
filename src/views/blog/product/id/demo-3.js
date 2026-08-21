@@ -7,12 +7,12 @@ import { Row, themeObj } from 'src/components/elements/styled-components';
 import { useSettingsContext } from 'src/components/settings';
 import styled from 'styled-components'
 import _ from 'lodash'
-import { commarNumber, commarNumberWithUnit, getPriceUnitByLang } from 'src/utils/function';
+import { commarNumber, commarNumberWithUnit, getPriceUnitByLang, isPurchasable } from 'src/utils/function';
 import Slider from 'react-slick';
 import { useTheme } from '@emotion/react';
 import dynamic from 'next/dynamic';
 import { apiShop } from 'src/utils/api';
-import { insertCartDataUtil, selectItemOptionUtil } from 'src/utils/shop-util';
+import { insertCartDataUtil, selectItemOptionUtil, 배송비표시 } from 'src/utils/shop-util';
 import { useAuthContext } from 'src/layouts/manager/auth/useAuthContext';
 import toast from 'react-hot-toast';
 import { useLocales } from 'src/locales';
@@ -31,14 +31,22 @@ margin: 0 auto 56px auto;
 display:flex;
 flex-direction:column;
 position:relative;
+/* 헤더가 더 이상 사진 위에 투명하게 얹히지 않는다(로고가 보이는 보통 헤더로 통일).
+   그래서 첫 화면이 헤더에 가리지 않도록 헤더 높이만큼 띄운다.
+   이 프레임의 헤더는 position:fixed 이고 높이가 56px 다(레이아웃 주석 참고). */
+padding-top:56px;
 `
 const BannerImg = styled.div`
+/* 상품 사진은 자르지 않는다 — 가로로 긴 상자에 cover 를 걸어 두어서
+   세로로 긴 사진은 위아래가 잘려 나갔다(가맹점 신고 2026-08-21, 프레임3·4).
+   배너와 같은 규칙이다: 비율이 다르면 잘리는 대신 여백이 생긴다.
+   프레임5·6 은 원래부터 object-fit:contain 이라 이 문제가 없었다. */
+background-color:#f7f7f7;
 width:100%;
 height:400px;
 display:flex;
 flex-direction:column;
 align-items:center;
-
 `
 const ContentWrappers = styled.div`
 top:350px;
@@ -97,11 +105,8 @@ const Demo3 = (props) => {
     } = props;
     const { translate } = useLocales();
     const { themeMode, themeCartData, onChangeCartData, themePostCategoryList } = useSettingsContext();
-  // '1:1문의' 는 예전엔 /shop/auth/inquiry(= 내가 쓴 문의 목록)로 갔다.
   // 목록은 마이페이지 '고객센터'에서 게시판으로 들어가면 그대로 보이므로 메뉴에서 뺐고,
   // 여기 버튼은 실제로 글을 쓰는 화면으로 보낸다. 게시판이 없으면 예전 경로로 폴백.
-  const inquiryBoard = (themePostCategoryList ?? []).find((c) => c?.is_able_user_add == 1);
-  const goInquiry = () => router.push(inquiryBoard?.id ? `/shop/service/${inquiryBoard.id}/add` : '/shop/auth/inquiry');
     const { user } = useAuthContext();
 
     const theme = useTheme();
@@ -151,6 +156,10 @@ const Demo3 = (props) => {
         slidesToScroll: 1,
     }
 
+    // 살 수 있는 상태인지(판매중·새상품만). 다른 프레임은 이미 이 판정을 쓰고 있었는데
+    // 이 프레임만 빠져 있어 품절 상품도 버튼이 살아 있었다.
+    const purchasable = isPurchasable(item?.status);
+
     const handleAddCart = async () => {
         // 비회원도 장바구니 담기 허용
         let result = await insertCartDataUtil({ ...item, seller_id: router.query?.seller_id ?? 0 }, selectProductGroups, themeCartData, onChangeCartData);
@@ -179,29 +188,13 @@ const Demo3 = (props) => {
                         <>
                             <BannerImg style={{
                                 backgroundImage: `url(${item})`,
-                                backgroundSize: 'cover',
+                                backgroundSize: 'contain',
                                 backgroundRepeat: 'no-repeat',
                                 backgroundPosition: 'center'
                             }} />
                         </>
                     ))}
                 </Slider>
-                <ContentWrappers style={{
-                    background: `${themeMode == 'dark' ? '#000' : '#fff'}`,
-                    position: 'absolute'
-                }}>
-                    {/* 판매자(셀러) 표시 영역을 제거했다. (demo-1 과 동일한 죽은 코드)
-                        상품상세 API 가 seller 중첩 객체를 내려주지 않아 item.seller?.profile_img / nickname 이
-                        항상 undefined 였다 → 기본 사람 아이콘 + 빈 이름이 뜨고, 클릭하면 /shop/seller/undefined 로 이동했다.
-                        1:1문의 버튼은 셀러와 무관하므로 남기고(이동 대상은 아래 goInquiry 참고),
-                        혼자 남으면 왼쪽에 붙으므로 justifyContent 를 flex-end 로 바꿨다. */}
-                    <Row style={{ justifyContent: 'flex-end' }}>
-                        <Button variant='outlined' onClick={goInquiry} sx={{
-                            height: '30px',
-                        }}>{translate('1:1문의')}</Button>
-                    </Row>
-
-                </ContentWrappers>
                 <ContentWrappers style={{
                     background: `${themeMode == 'dark' ? '#000' : '#fff'}`,
                 }}>
@@ -221,7 +214,17 @@ const Demo3 = (props) => {
                             <div style={{ fontSize: themeObj.font_size.size8, marginLeft: '0.25rem' }}>{getPriceUnitByLang()}</div>
                         </Row>
                     </PriceContainer>
-                    <Button variant='contained' onClick={() => { setCartOpen(true) }}>{translate('구매하기')}</Button>
+                    {/* 장바구니를 서랍 안에만 두었더니 '담기 버튼이 없다'는 문의가 왔다(가맹점 2026-08-21).
+                        살지 말지 고르는 자리에 담기가 없으면 손님은 그 몰에 담기가 없다고 읽는다.
+                        옵션이 걸린 상품은 고를 자리가 있어야 하므로 서랍을 열고, 옵션이 없으면 바로 담는다. */}
+                    <Row style={{ gap: '0.5rem' }}>
+                      <Button variant='outlined' disabled={!purchasable} style={{ width: '38%' }}
+                        onClick={() => { requiredGroups(item).length > 0 ? setCartOpen(true) : handleAddCart() }}>
+                        {translate('장바구니')}
+                      </Button>
+                      <Button variant='contained' disabled={!purchasable} style={{ width: '62%' }}
+                        onClick={() => { setCartOpen(true) }}>{translate('구매하기')}</Button>
+                    </Row>
                     <div style={{ marginTop: '1rem' }} />
                     <Divider />
                     <ContentContainer>
@@ -298,13 +301,13 @@ const Demo3 = (props) => {
                         <Row style={{ justifyContent: 'space-between' }}>
                             <Row style={{ width: '150px', justifyContent: 'space-between', alignItems: 'center', padding: '0.25rem' }}>{translate('배송비')}</Row>
                             <div>
-                                <span style={{ color: 'red' }}>{commarNumber(item?.delivery_fee)}</span>원
+                                <span style={{ color: 'red' }}>{commarNumber(배송비표시(item).fee)}</span>원
                             </div>
                         </Row>
                         <Row style={{ justifyContent: 'space-between' }}>
                             <Row style={{ width: '150px', justifyContent: 'space-between', alignItems: 'center', padding: '0.25rem' }}>{translate('합계')}</Row>
                             <div>
-                                <span style={{ color: 'red' }}>{commarNumber(parseInt(item?.product_sale_price + item?.delivery_fee))}</span>원
+                                <span style={{ color: 'red' }}>{commarNumber(parseInt((item?.product_sale_price ?? 0) + 배송비표시(item).fee))}</span>원
                             </div>
                         </Row>
                     </DrawerBox>

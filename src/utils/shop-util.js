@@ -5,7 +5,7 @@ import axios from "axios";
 import toast from "react-hot-toast";
 import i18n from "src/locales/i18n";
 
-import { returnMoment, isPurchasable, getProductStatus } from "./function";
+import { returnMoment, isPurchasable, getProductStatus, commarNumberWithUnit } from "./function";
 import { getLocalStorage } from "./local-storage";
 import { isDemoHost } from "src/components/main-site/frameList";
 import { findMissingRequired } from "src/data/order-form-types";
@@ -40,20 +40,54 @@ export const getOrderFormFields = (product) => {
     return Array.isArray(fields) ? fields : [];
 };
 
-export const getBrandShipping = (merchandiseSubtotal = 0) => {
+export const 배송정책 = () => {
     try {
         const dns = JSON.parse(getLocalStorage('themeDnsData') || '{}');
         const s = dns?.setting_obj || {};
         const base = parseInt(s.delivery_fee_default || 0) || 0;
         const freeMin = parseInt(s.free_ship_min || 0) || 0;
-        const active = base > 0 || freeMin > 0;
-        if (!active) return { active: false, fee: 0 };
-        const fee = (freeMin > 0 && Number(merchandiseSubtotal) >= freeMin) ? 0 : base;
-        return { active: true, fee };
+        return { active: base > 0 || freeMin > 0, base, freeMin };
     } catch (e) {
-        return { active: false, fee: 0 };
+        return { active: false, base: 0, freeMin: 0 };
     }
 }
+
+export const getBrandShipping = (merchandiseSubtotal = 0) => {
+    const p = 배송정책();
+    if (!p.active) return { active: false, fee: 0 };
+    const fee = (p.freeMin > 0 && Number(merchandiseSubtotal) >= p.freeMin) ? 0 : p.base;
+    return { active: true, fee };
+}
+
+// 상품상세·장바구니 줄에 보여줄 배송비.
+//
+// [고친 문제] 이 자리들은 상품 테이블의 delivery_fee 를 그대로 찍고 있었다. 브랜드 배송비
+// 정책(설정관리 › 배송비설정)을 쓰는 몰은 상품별 값이 0 이라 상세에 '배송비 0원'으로 보였고,
+// 장바구니 합계에서만 3,000원이 튀어나왔다. 손님은 무료배송인 줄 알고 담았다가 결제 직전에
+// 배송비를 만나고, 가맹점은 '설정한 배송비가 화면에 안 나온다'고 본다.
+//
+// 상세에서는 아직 몇 개를 담을지 모르므로 **이 상품 하나 기준**으로 판정하고,
+// 무료 기준이 있으면 그 기준을 함께 알려 준다(그래야 장바구니에서 0원이 되는 이유가 설명된다).
+//
+// 반환: { active, fee, free, freeMin }
+//   active=false 면 정책 미설정 몰이라 예전처럼 상품별 delivery_fee 를 쓴다.
+export const 배송비표시 = (item) => {
+    const 상품가 = Number(item?.product_sale_price ?? item?.product_price ?? 0) || 0;
+    const 정책 = getBrandShipping(상품가);
+    if (!정책.active) {
+        const 값 = Number(item?.delivery_fee ?? 0) || 0;
+        return { active: false, fee: 값, free: 값 <= 0, freeMin: 0 };
+    }
+    return { active: true, fee: 정책.fee, free: 정책.fee <= 0, freeMin: 배송정책().freeMin };
+};
+
+// 「50,000원 이상 무료배송」 안내. 무료 기준이 없거나 이 상품만으로 이미 무료면 빈 문자열.
+// 이 한 줄이 있어야 장바구니에서 배송비가 0 이 되는 이유가 설명된다.
+export const 무료배송안내 = (item, lang) => {
+    const s = 배송비표시(item);
+    if (!s.active || s.free || !(s.freeMin > 0)) return '';
+    return 번역('{{amount}} 이상 무료배송', { amount: commarNumberWithUnit(s.freeMin, lang) });
+};
 
 export const calculatorPrice = (item) => {// 상품별로 가격
     if (!item) {

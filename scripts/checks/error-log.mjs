@@ -60,7 +60,7 @@ for (const f of ['controllers/pay.controller.js', 'controllers/transaction.contr
 const pay = 읽기('controllers/pay.controller.js');
 t('포스페이 세션 실패 시 보낸 값을 남긴다', pay.includes('[forspay] 세션 생성 실패'));
 t('App key 는 길이만 남긴다',
-    /app_key_len=\$\{String\(creds\?\.app_key \?\? ''\)\.length\}/.test(pay) && !/app_key=\$\{creds/.test(pay),
+    /app_key_len=\$\{진단\.app_key_len\}/.test(pay) && !/app_key=\$\{creds/.test(pay),
     '키 값이 로그에 남으면 안 된다');
 
 console.log(`\n통과 ${pass} / 실패 ${fail}`);

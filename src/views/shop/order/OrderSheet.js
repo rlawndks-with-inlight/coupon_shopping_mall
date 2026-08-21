@@ -21,7 +21,7 @@ import { syncCartWithServer, makeUnavailableMessage, filterUnavailableByProducts
 import { forspayMethodList, formatLang } from 'src/utils/format';
 import { sanitizePhoneInput, isValidPhoneNumber, makeOrdNum } from 'src/utils/function';
 import { KOREA_CODE, OVERSEAS_CODE, formatOverseasAddress, isDomestic } from 'src/data/countries';
-import Policy from 'src/pages/shop/auth/policy';
+import Policy, { POLICY_TYPE } from 'src/pages/shop/auth/policy';
 import { useAuthContext } from 'src/layouts/manager/auth/useAuthContext';
 import { formatCreditCardNumber, formatExpirationDate } from 'src/utils/formatCard';
 import { useModal } from 'src/components/dialog/ModalProvider';
@@ -917,6 +917,20 @@ export default function OrderSheet({ router }) {
                       {openPolicy === 2 && (
                         <Box sx={{ height: '12rem', overflowY: 'auto', border: '1px solid', borderColor: 'divider', borderRadius: 1 }}>
                           <Policy type={1} />
+                        </Box>
+                      )}
+                      {/* 취소·반품 안내 — 동의 항목이 아니라 '읽을 수 있게' 두는 것이다.
+                          이용약관과 같은 방식으로 접었다 폈다 한다(가맹점 요청 2026-08-21).
+                          본문은 손으로 적지 않고 scripts/policy/source/cancel.txt 에서 생성한 것을 쓴다. */}
+                      <Stack direction="row" alignItems="center" justifyContent="space-between">
+                        <Typography variant="body2">{translate('주문 취소 및 반품 안내')}</Typography>
+                        <Button size="small" variant="text" onClick={() => setOpenPolicy(openPolicy === 3 ? 0 : 3)}>
+                          {openPolicy === 3 ? translate("접기") : translate("보기")}
+                        </Button>
+                      </Stack>
+                      {openPolicy === 3 && (
+                        <Box sx={{ height: '12rem', overflowY: 'auto', border: '1px solid', borderColor: 'divider', borderRadius: 1, mt: 1 }}>
+                          <Policy type={POLICY_TYPE.CANCEL} embedded />
                         </Box>
                       )}
                     </Stack>

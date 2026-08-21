@@ -70,6 +70,23 @@ t('취소 가능 상태에 결제대기가 없다', btn.includes('const CANCELAB
 const 표 = 읽기('src/components/elements/shop/common.js');
 t('주문내역 표도 같은 값을 쓴다', 표.includes('const CANCELABLE_STATUS = [5, 10];'));
 
+// ── 배송비 기준은 양쪽 화면에 같이 ──────────────────────────────────────
+// 관리자 창에는 있는데 손님 창에는 없었다 — 손님은 취소를 누르기 전에 배송비가 어떻게
+// 되는지 알 수 없었다(가맹점 지적 2026-08-21). 두 화면이 같은 말을 해야 한다.
+const 관리자창 = 읽기('src/components/manager/PartialCancelDialog.js');
+for (const 문구 of ['부분 취소에는 배송비가 환불되지 않습니다', '배송비도 함께 환불됩니다']) {
+    t(`손님 창에도 「${문구}」 가 있다`, btn.includes(문구));
+    t(`관리자 창에도 「${문구}」 가 있다`, 관리자창.includes(문구));
+}
+// 금액 계산은 서버가 한다 — 화면이 따로 계산하면 어긋났을 때 어느 쪽이 맞는지 알 수 없다.
+t('손님 창이 배송비를 직접 계산하지 않는다', !/환불예상|예상액/.test(btn));
+
+// ── 주문서에서도 미리 읽을 수 있다 ──────────────────────────────────────
+const 주문서 = 읽기('src/views/shop/order/OrderSheet.js');
+t('주문서에 취소·반품 안내 보기가 있다',
+    주문서.includes("translate('주문 취소 및 반품 안내')") && 주문서.includes('POLICY_TYPE.CANCEL'));
+t('동의 항목이 아니라 읽을거리로 둔다', !/agree3/.test(주문서));
+
 // 백엔드가 진짜 관문이다. 화면에서 감춰도 옛 화면·직접 호출이 남아 있다.
 if (백엔드있음) {
     const 서버 = readFileSync(BACK_ROOT + 'controllers/transaction.controller.js', 'utf8');

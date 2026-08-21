@@ -843,6 +843,8 @@ const es = {
   "전체취소요청": "Cancelar todo el pedido",
   "부분취소요청": "Cancelar artículos seleccionados",
   "주문 취소 및 반품 안내": "Cancelación de pedidos y devoluciones",
+  "부분 취소에는 배송비가 환불되지 않습니다. 남은 금액이 무료배송 기준에 못 미치면 배송비가 환불액에서 차감됩니다.": "En una cancelación parcial no se reembolsa el envío. Si el importe restante queda por debajo del mínimo para envío gratis, el envío se descuenta del reembolso.",
+  "주문 전체가 취소되며 배송비도 함께 환불됩니다.": "Se cancelará todo el pedido y también se reembolsará el envío.",
   "취소할 상품과 수량을 골라 주세요. 판매자 확인 후 환불됩니다.": "Elija los artículos y cantidades a cancelar. El reembolso se realiza tras la confirmación del vendedor.",
   "판매자 확인 후 환불됩니다.": "El reembolso se realiza tras la confirmación del vendedor.",
   "취소 사유 (선택)": "Motivo (opcional)",

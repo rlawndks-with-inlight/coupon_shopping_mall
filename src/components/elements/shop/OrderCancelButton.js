@@ -137,6 +137,16 @@ const OrderCancelButton = ({ trx, orders, onDone, sx, variant = 'outlined' }) =>
               </Box>
             )}
 
+            {/* 배송비가 어떻게 되는지는 취소를 누르기 전에 알아야 한다.
+                관리자 창(PartialCancelDialog)에는 있었는데 정작 손님 화면에는 없었다
+                (가맹점 지적 2026-08-21). 문구·규칙을 그쪽과 같게 맞춘다.
+                금액은 서버가 계산한다 — 화면이 따로 계산하면 어긋났을 때 어느 쪽이 맞는지 알 수 없다. */}
+            <Typography sx={{ fontSize: 12, color: 'text.secondary' }}>
+              {고른줄.length > 0 && !줄.every((o) => 고른수량(o) === 남은수량(o))
+                ? translate('부분 취소에는 배송비가 환불되지 않습니다. 남은 금액이 무료배송 기준에 못 미치면 배송비가 환불액에서 차감됩니다.')
+                : translate('주문 전체가 취소되며 배송비도 함께 환불됩니다.')}
+            </Typography>
+
             {줄선택가능 && <Divider />}
             <TextField
               size="small" fullWidth multiline minRows={2}

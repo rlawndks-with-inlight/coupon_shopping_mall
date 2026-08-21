@@ -136,9 +136,11 @@ const Header = (props) => {
         setDialogOpenObj(obj);
     }
     const isBackArrowShow = () => {
-        if (isProductPage) {
+        // 상품상세에서 로고를 뒤로가기로 바꾸지 않는다 — 어느 몰인지 안 보이고,
+        // 그 화면만 헤더가 딴판이 된다(가맹점 요청 2026-08-21).
+        /*if (isProductPage) {
             return true;
-        }
+        }*/
         if (router.asPath.includes('/my-page') || router.asPath.includes('/cart')) {
             return true;
         }
@@ -158,7 +160,7 @@ const Header = (props) => {
                     />
                     <Wrappers style={{
                         // 사진 위일 때는 어두운 그라데이션을 깐다 — 흰 아이콘이 흰 상품사진에 묻힌다.
-                        background: 헤더배경((isSellerPage || isProductPage) && scrollY < 350,
+                        background: 헤더배경(isSellerPage && scrollY < 350,
                                              themeMode == 'dark' ? '#000' : '#fff')
                     }}
                     >
@@ -175,7 +177,7 @@ const Header = (props) => {
                                             router.back()
                                         }}
                                     >
-                                        <Icon icon={'ic:round-arrow-back'} fontSize={'1.8rem'} color={themeMode == 'dark' || ((isSellerPage || isProductPage) && scrollY < 350) ? '#fff' : '#000'} />
+                                        <Icon icon={'ic:round-arrow-back'} fontSize={'1.8rem'} color={themeMode == 'dark' || (isSellerPage && scrollY < 350) ? '#fff' : '#000'} />
                                     </IconButton>
                                 </>
                                 :
@@ -191,25 +193,25 @@ const Header = (props) => {
                                     })
                                 }}
                             >
-                                <Icon icon={'tabler:search'} fontSize={'1.5rem'} color={themeMode == 'dark' || ((isSellerPage || isProductPage) && scrollY < 350) ? '#fff' : '#000'} />
+                                <Icon icon={'tabler:search'} fontSize={'1.5rem'} color={themeMode == 'dark' || (isSellerPage && scrollY < 350) ? '#fff' : '#000'} />
                             </IconButton>
                             <IconButton
                                 sx={iconButtonStyle}
                                 onClick={() => router.push('/shop/auth/my-page')}
                             >
-                                <Icon icon={'basil:user-outline'} fontSize={'1.8rem'} color={themeMode == 'dark' || ((isSellerPage || isProductPage) && scrollY < 350) ? '#fff' : '#000'} />
+                                <Icon icon={'basil:user-outline'} fontSize={'1.8rem'} color={themeMode == 'dark' || (isSellerPage && scrollY < 350) ? '#fff' : '#000'} />
                             </IconButton>
                             <IconButton
                                 sx={iconButtonStyle}
                                 onClick={() => router.push('/shop/auth/cart')}
                             >
-                                <Icon icon={'basil:shopping-bag-outline'} fontSize={'1.8rem'} color={themeMode == 'dark' || ((isSellerPage || isProductPage) && scrollY < 350) ? '#fff' : '#000'} />
+                                <Icon icon={'basil:shopping-bag-outline'} fontSize={'1.8rem'} color={themeMode == 'dark' || (isSellerPage && scrollY < 350) ? '#fff' : '#000'} />
                             </IconButton>
                             <IconButton
                                 sx={iconButtonStyle}
                                 onClick={() => onToggleMode()}
                             >
-                                <Icon icon={themeMode === 'dark' ? 'tabler:sun' : 'tabler:moon-stars'} fontSize={'1.5rem'} color={themeMode == 'dark' || ((isSellerPage || isProductPage) && scrollY < 350) ? '#fff' : '#000'} />
+                                <Icon icon={themeMode === 'dark' ? 'tabler:sun' : 'tabler:moon-stars'} fontSize={'1.5rem'} color={themeMode == 'dark' || (isSellerPage && scrollY < 350) ? '#fff' : '#000'} />
                             </IconButton>
                         </TopMenuContainer>
                     </Wrappers>

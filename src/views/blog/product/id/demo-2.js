@@ -37,6 +37,10 @@ margin: 0 auto 56px auto;
 display:flex;
 flex-direction:column;
 position:relative;
+/* 헤더가 더 이상 사진 위에 투명하게 얹히지 않는다(로고가 보이는 보통 헤더로 통일).
+   그래서 첫 화면이 헤더에 가리지 않도록 헤더 높이만큼 띄운다.
+   이 프레임의 헤더는 position:fixed 이고 높이가 56px 다(레이아웃 주석 참고). */
+padding-top:56px;
 `
 const BannerImg = styled.div`
 /* 상품 사진은 자르지 않는다 — 가로로 긴 상자에 cover 를 걸어 두어서

@@ -106,5 +106,25 @@ const 혜택 = 읽기('src/components/elements/shop/BenefitNotice.js');
 t('혜택 안내 폭을 넓혔다', /maxWidth="md"/.test(혜택));
 t('이미지를 눌러 원본을 볼 수 있다', /el\?\.tagName === 'IMG'/.test(혜택) && /cursor: 'zoom-in'/.test(혜택));
 
+// ── 상품상세 헤더 ────────────────────────────────────────────────────────
+// 상품상세만 로고 대신 뒤로가기가 뜨고 헤더가 사진 위에 투명하게 얹혔다.
+// 그 화면에서만 어느 몰인지 안 보였다(가맹점 요청 2026-08-21 — 보통 헤더로 통일).
+t('프레임3 상세는 상세모드가 아니다', 읽기('src/layouts/shop/blog/demo-1/header.js')
+    .includes("setIsDetailPage(path == 'seller');"));
+for (const n of [2, 3, 4, 5]) {
+    const h = 읽기(`src/layouts/shop/blog/demo-${n}/header.js`);
+    const 주석뺀 = h.replace(/\/\*[\s\S]*?\*\//g, '');
+    t(`blog demo-${n} 상세에 뒤로가기를 안 띄운다`, !/if \(isProductPage\) \{[\s\S]{0,40}return true;/.test(주석뺀));
+    t(`blog demo-${n} 상세 헤더가 투명하지 않다`, !주석뺀.includes('isProductPage) && scrollY < 350'));
+}
+// 헤더가 겹치지 않게 상세 화면이 그만큼 띄워야 한다 — 안 그러면 사진 위쪽이 헤더에 가린다.
+for (const n of [1, 2, 3]) {
+    t(`blog 상세 demo-${n} 이 헤더 높이만큼 띄운다`, 읽기(`src/views/blog/product/id/demo-${n}.js`).includes('padding-top:56px;'));
+}
+// 사진은 자르지 않는다(프레임5·6 과 같은 규칙).
+for (const n of [1, 2, 3]) {
+    t(`blog 상세 demo-${n} 사진을 자르지 않는다`, 읽기(`src/views/blog/product/id/demo-${n}.js`).includes("backgroundSize: 'contain'"));
+}
+
 console.log(`\n통과 ${pass} / 실패 ${fail}`);
 process.exit(fail ? 1 : 0);

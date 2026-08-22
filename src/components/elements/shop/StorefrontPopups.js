@@ -1,7 +1,7 @@
 import { Icon } from "@iconify/react";
 import dynamic from "next/dynamic";
 import { useRouter } from "next/router";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import styled from "styled-components";
 import { useSettingsContext } from "src/components/settings";
 import { useLocales } from "src/locales";
@@ -141,9 +141,25 @@ const StorefrontPopups = () => {
 
   const [popups, setPopups] = useState([]);
 
+  // 홈인지 아닌지. 팝업은 홈에서만 뜬다.
+  const 홈 = isStorefrontHome(router);
+
+  // 「닫기」는 '이번에 보고 있는 홈 화면에서만' 닫는 것이다.
+  // 쇼핑몰 안에서 화면을 옮기는 것은 페이지를 새로 여는 게 아니라 본문만 갈아끼우는 방식이라,
+  // 헤더에 사는 이 컴포넌트는 계속 살아 있고 닫힌 상태도 그대로 남았다.
+  // 그래서 다른 화면을 보다 로고를 눌러 홈으로 돌아와도 팝업이 다시 뜨지 않았다 —
+  // 새로고침해야만 떴다(2026-08-22 확인). 「오늘 하루 보지않기」가 따로 있는데
+  // 「닫기」까지 하루 종일 닫아 두면 두 버튼이 같은 일을 하는 셈이다.
+  // 홈에 '들어오는 순간' 마다 되살린다. 홈 안에서 닫은 것은 닫힌 채로 둔다.
+  const 지난번 = useRef({ 홈: false, 목록: null });
   useEffect(() => {
-    setPopups(themePopupList ?? []);
-  }, [themePopupList]);
+    const 목록 = themePopupList ?? [];
+    const 홈진입 = 홈 && !지난번.current.홈;
+    // 목록이 나중에 도착하는 경우가 있다(설정 API 응답). 그때도 한 번 채운다.
+    const 목록바뀜 = 목록 !== 지난번.current.목록;
+    if (홈 && (홈진입 || 목록바뀜)) setPopups(목록);
+    지난번.current = { 홈: 홈, 목록: 목록 };
+  }, [홈, themePopupList]);
 
   // ESC 로 닫는다. 훅은 조건 없이 항상 부른다(아래 early return 보다 반드시 위에 있어야 한다).
   useEffect(() => {
@@ -153,8 +169,8 @@ const StorefrontPopups = () => {
   }, []);
 
   // 홈에서만 띄운다. 가맹점 도메인 루트는 rewrite 로 asPath 가 '/' 라
-  // '/shop/' 만 보면 안 되므로 isStorefrontHome 을 쓴다.
-  if (!(popups?.length > 0) || !isStorefrontHome(router)) return <></>;
+  // '/shop/' 만 보면 안 되므로 isStorefrontHome 을 쓴다(위 훅과 같은 판정).
+  if (!(popups?.length > 0) || !홈) return <></>;
 
   const today = returnMoment().substring(0, 10);
   const hiddenToday = themeNoneTodayPopupList?.[today] ?? [];

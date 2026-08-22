@@ -35,7 +35,11 @@ export const canCancelOrder = (trx) => (
 // 주문 한 줄에서 아직 취소 안 된 수량.
 const 남은수량 = (o) => Math.max(0, (Number(o?.order_count) || 0) - (Number(o?.cancel_count) || 0));
 
-const OrderCancelButton = ({ trx, orders, onDone, sx, variant = 'outlined' }) => {
+// password: 비회원 주문조회 화면에서 넘겨주는 주문비밀번호.
+// 비회원 주문은 user_id 가 0 으로 저장돼 로그인 대조로는 본인 확인이 불가능하다.
+// 서버는 이 값이 맞으면 본인으로 본다(조회에 쓰는 것과 같은 확인).
+// 회원 주문내역에서 부를 때는 안 넘긴다 — 그쪽은 로그인으로 확인된다.
+const OrderCancelButton = ({ trx, orders, onDone, sx, variant = 'outlined', password }) => {
   const { translate, currentLang } = useLocales();
   const [open, setOpen] = useState(false);
   const [qty, setQty] = useState({});
@@ -67,6 +71,8 @@ const OrderCancelButton = ({ trx, orders, onDone, sx, variant = 'outlined' }) =>
         // 아무것도 안 고르면 서버가 '남은 전부' 로 본다(옛 화면 호환).
         items: items ?? [],
         reason: reason || null,
+        // 회원 경로에서는 undefined 라 키 자체가 실리지 않는다.
+        ...(password ? { password } : {}),
       });
       if (result) {
         toast.success(translate('취소요청이 완료되었습니다.'));

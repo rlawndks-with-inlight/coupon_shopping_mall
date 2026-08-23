@@ -55,6 +55,17 @@ const LogoArea = styled.div`
   @media (max-width: 520px) {
     max-width: 130px;
   }
+  /* LazyLoadImage(effect="blur")는 <span class="lazy-load-image-background"> 로 한 겹 감싸는데
+     styled() 가 만든 클래스는 그 span 이 아니라 안쪽 <img> 에 붙는다(Logo 주석 참고).
+     그래서 Logo 에만 상한을 걸면 span 은 옛 크기 그대로 남아 로고가 안 커진다.
+     여기서 span 을 직접 잡는다 — Logo 의 값과 반드시 같이 움직여야 한다. */
+  @media (max-width: 480px) {
+    .lazy-load-image-background {
+      height: auto;
+      max-height: calc(56px * var(--logo-scale, 1));
+      max-width: 130px;
+    }
+  }
 `
 /* 헤더 좌측 슬롯(뒤로가기 버튼 자리). 우측 액션과 같은 flex 를 가져 로고를 가운데로 민다. */
 const SideSlot = styled.div`
@@ -79,8 +90,22 @@ const Logo = styled(LazyLoadImage)`
      안 줄어서 상한이 헛돈다. flex-shrink 도 같은 이유로 여기서는 무의미하다. */
   max-width: 100%;
   object-fit: contain;
+  /* 모바일에서 높이를 못 박으면 안 된다.
+     28px 로 고정돼 있었는데, 정사각형에 가까운 로고(예: 247x176)는 그 높이에서 폭이
+     39px 밖에 안 나온다. 자리는 130px 인데 30% 만 쓰는 셈이라 로고가 아이콘보다 작아 보였다.
+     (배율 0.7 인 가맹점은 19.6px 까지 내려가 27x20 으로 그려졌다 — 실제로 그렇게 보였다)
+
+     그래서 높이 대신 '상자'로 가둔다. 어느 모양이든 알아서 상한에 닿는다.
+       정사각형 로고 → 높이가 상한  55x39
+       가로로 긴 로고 → 폭이 상한   130x30  (LogoArea 의 130px 안에 들어와 안 잘린다)
+
+     56px 인 이유: 재 보니 72px 부터 헤더가 73 → 83px 로 밀린다. 56px 이 헤더를 안 건드리는 최대다.
+     ⚠ 여기만 고치면 안 된다 — LazyLoadImage 가 감싸는 span 에도 같은 상한이 필요하다(LogoArea 참고). */
   @media (max-width: 480px) {
-    height: calc(28px * var(--logo-scale, 1));
+    height: auto;
+    width: auto;
+    max-height: calc(56px * var(--logo-scale, 1));
+    max-width: 130px;
   }
 `
 const BrandText = styled.div`

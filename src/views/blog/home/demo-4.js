@@ -50,7 +50,8 @@ const HeroLeft = styled.div`
 const HeroTop = styled.div`
   display: flex;
   justify-content: space-between;
-  font-size: 11px;
+  /* 12px 아래로 내리지 말 것 — 이 화면의 작은 글씨 기본 단계가 12px 이다(18곳). */
+  font-size: 12px;
   letter-spacing: 3px;
   text-transform: uppercase;
   margin-bottom: 3rem;
@@ -137,7 +138,8 @@ const BigNum = styled.div`
   margin-bottom: 0.5rem;
 `
 const BigNumLabel = styled.div`
-  font-size: 11px;
+  /* 12px 아래로 내리지 말 것 — 이 화면의 작은 글씨 기본 단계가 12px 이다(18곳). */
+  font-size: 12px;
   letter-spacing: 2px;
   text-transform: uppercase;
 `
@@ -213,7 +215,8 @@ const PriceSection = styled.section`
   }
 `
 const PriceLabel = styled.div`
-  font-size: 11px;
+  /* 12px 아래로 내리지 말 것 — 이 화면의 작은 글씨 기본 단계가 12px 이다(18곳). */
+  font-size: 12px;
   letter-spacing: 4px;
   text-transform: uppercase;
   opacity: 0.6;

@@ -233,7 +233,8 @@ const FooterLink = styled.span`
   }
 `
 const FooterLine = styled.div`
-  font-size: 10px;
+  /* 저작권 줄도 12px 로 맞춘다 — 이 화면에서 유일하게 10px 이었다. */
+  font-size: 12px;
   opacity: 0.3;
   letter-spacing: 2px;
   margin-top: 0.9rem;

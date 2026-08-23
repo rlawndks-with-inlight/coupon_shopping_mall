@@ -96,7 +96,7 @@ const Footer = () => {
             {/* 로그아웃은 하단정보에 두지 않는다 — 마이페이지에 있다. */}
           </Row>
 
-          <Row style={{ fontSize: '10px' }}>
+          <Row style={{ fontSize: '12px' }}>
             {company_name.length > 1 &&
               <>
                 <MarginRight>{company_name}</MarginRight>
@@ -116,21 +116,21 @@ const Footer = () => {
               </>
             }
           </Row>
-          <Row style={{ fontSize: '10px' }}>
+          <Row style={{ fontSize: '12px' }}>
             {mail_order_num.length > 1 &&
               <>
                 <MarginRight>{translate('통신판매업신고')} {mail_order_num}</MarginRight>
               </>
             }
           </Row>
-          <Row style={{ fontSize: '10px' }}>
+          <Row style={{ fontSize: '12px' }}>
             {addr.length > 1 &&
               <>
                 <MarginRight>{addr}</MarginRight>
               </>
             }
           </Row>
-          <Row style={{ fontSize: '10px' }}>
+          <Row style={{ fontSize: '12px' }}>
             {phone_num.length > 1 &&
               <>
                 <MarginRight>{translate('고객센터')} {phone_num}</MarginRight>
@@ -143,7 +143,7 @@ const Footer = () => {
               </>
             }
           </Row>
-          <Row style={{ fontSize: '10px' }}>
+          <Row style={{ fontSize: '12px' }}>
             {pvcy_rep_name.length > 1 &&
               <>
                 <MarginRight>{translate('개인정보 보호책임자')} {pvcy_rep_name}</MarginRight>

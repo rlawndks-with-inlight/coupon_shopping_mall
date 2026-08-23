@@ -41,7 +41,11 @@ const Field = styled.input`
   background: none;
   color: inherit;
   font: inherit;
-  font-size: 14px;
+  /* ⚠ 16px 아래로 내리지 말 것.
+     iOS 사파리는 글자가 16px 미만인 입력칸을 누르면 화면을 자동으로 확대한다.
+     확대된 뒤 저절로 돌아오지 않아서, 손님은 가로로 밀린 화면에서 나머지를 채우게 된다.
+     예전 값이 14px 이었다(프레임5 상품상세에서 실제로 확대가 걸렸다). */
+  font-size: 16px;
   text-align: center;
   &:focus { outline: none; }
   /* 스피너는 스테퍼 버튼과 겹쳐 보이므로 숨긴다 */

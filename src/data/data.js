@@ -39,6 +39,14 @@ export const logoDeliveryUrl = (url) => {
 // ⚠ 이 함수는 안에서 useSettingsContext() 를 부르는 **사실상 훅**이다. 훅을 더 넣지 말 것
 //   (shop/demo-7/header.js 는 이걸 삼항 안에서 조건부로 호출한다 — 훅이 늘면 순서가 깨진다).
 //   logoDeliveryUrl 은 순수 문자열 조작이라 안전하다.
+// ⚠ 이름은 평범한 함수처럼 생겼지만 **훅이다** (안에서 useSettingsContext 를 쓴다).
+//    반드시 컴포넌트 맨 위에서 부르고 그 값을 쓸 것. JSX 안에서 바로 부르면 안 된다.
+//
+//    실제로 그래서 깨졌다: 헤더들이 <LogoImg src={logoSrc()} /> 를 {loading ? ... : ...}
+//    분기 안에 두고 있었다. 첫 렌더(loading=true)에는 안 불리고 그다음 렌더에만 불려
+//    훅 개수가 26 → 27 로 바뀌었고, React 가 "change in the order of Hooks" 를 띄웠다.
+//    이 상태는 화면이 통째로 백지가 되는 부류의 문제다.
+//    (검사: scripts/checks/logo-hook.mjs 가 이 형태를 다시 못 만들게 막는다)
 export const logoSrc = () => {
   const { themeDnsData, themeMode } = useSettingsContext();
   // 다크모드 로고를 등록하지 않은 가맹점 처리.

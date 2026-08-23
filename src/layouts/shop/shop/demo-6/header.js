@@ -159,6 +159,10 @@ const Header = () => {
   const theme = useTheme();
   const { translate, currentLang } = useLocales();
   const { themeMode, onToggleMode, themeCategoryList, themeDnsData, themePopupList, themeNoneTodayPopupList, onChangeNoneTodayPopupList, themePostCategoryList, onChangePopupList, themeWishData, themeCartData, onChangeCartData, onChangeWishData, themeSellerList } = useSettingsContext();
+  // logoSrc() 는 안에서 useSettingsContext() 를 쓴다 - 즉 훅이다.
+  // 아래 JSX 의 loading 분기 안에서 부르면 첫 렌더에는 안 불리고 그다음 렌더에만 불려
+  // 훅 순서가 바뀐다(React: change in the order of Hooks). 여기서 한 번만 부른다.
+  const 로고주소 = logoSrc();
   const headerCategories = (themeCategoryList ?? []).flatMap((g) => g?.product_categories ?? []);
   const { user, logout } = useAuthContext();
   const headerWrappersRef = useRef();
@@ -372,7 +376,7 @@ const Header = () => {
             ref={headerWrappersRef}
           >
             <TopMenuContainer style={{ display: `${scrollTop ? 'none' : ''}`, }}>
-              <img src={logoSrc()} style={{ height: 'calc(80px * var(--logo-scale, 1))', width: 'auto', cursor: 'pointer' }}
+              <img src={로고주소} style={{ height: 'calc(80px * var(--logo-scale, 1))', width: 'auto', cursor: 'pointer' }}
                 onClick={() => {
                   router.push('/shop')
                 }}

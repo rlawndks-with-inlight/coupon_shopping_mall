@@ -255,6 +255,10 @@ const Header = () => {
   // themeWishData·themeCartData: 아이콘에 담긴 개수 배지를 붙이기 위해 함께 읽는다.
   // 이 헤더만 배지가 없어서, 담아도 헤더가 아무 반응이 없었다(프레임1·3 은 원래 있다).
   const { themeMode, onToggleMode, onChangeCartData, onChangeWishData, themePostCategoryList, themeCategoryList, themeDnsData, themeWishData, themeCartData } = useSettingsContext();
+  // logoSrc() 는 안에서 useSettingsContext() 를 쓴다 - 즉 훅이다.
+  // 아래 JSX 의 loading 분기 안에서 부르면 첫 렌더에는 안 불리고 그다음 렌더에만 불려
+  // 훅 순서가 바뀐다(React: change in the order of Hooks). 여기서 한 번만 부른다.
+  const 로고주소 = logoSrc();
   const headerCategories = (themeCategoryList ?? []).flatMap((g) => g?.product_categories ?? []);
   const { user, logout } = useAuthContext();
   const { currentLang, translate } = useLocales();
@@ -465,7 +469,7 @@ const Header = () => {
                   <Icon icon={'iconamoon:search-thin'} fontSize={'1.7rem'} color={themeMode == 'dark' ? '#fff' : '#000'} />
                 </IconButton>
               </ShowMobile>
-              <LogoImg src={logoSrc()}
+              <LogoImg src={로고주소}
                 onClick={() => {
                   router.push('/shop')
                 }}

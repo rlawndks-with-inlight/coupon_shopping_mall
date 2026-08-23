@@ -38,6 +38,10 @@ const Header = (props) => {
     const router = useRouter();
 
     const { themeMode, onToggleMode, themeDnsData, themeCategoryList, onChangeCategoryList, onChangePostCategoryList } = useSettingsContext();
+  // logoSrc() 는 안에서 useSettingsContext() 를 쓴다 - 즉 훅이다.
+  // 아래 JSX 의 loading 분기 안에서 부르면 첫 렌더에는 안 불리고 그다음 렌더에만 불려
+  // 훅 순서가 바뀐다(React: change in the order of Hooks). 여기서 한 번만 부른다.
+  const 로고주소 = logoSrc();
     const headerCategories = (themeCategoryList ?? []).flatMap((g) => g?.product_categories ?? []);
     const [keyword, setKeyword] = useState("");
     const [isSellerPage, setIsSellerPage] = useState(false);
@@ -176,7 +180,7 @@ const Header = (props) => {
                                 </>
                                 :
                                 <>
-                                    <img src={logoSrc()} style={{ height: 'calc(40px * var(--logo-scale, 1))', width: 'auto', cursor: 'pointer' }} onClick={() => { router.push('/shop') }} />
+                                    <img src={로고주소} style={{ height: 'calc(40px * var(--logo-scale, 1))', width: 'auto', cursor: 'pointer' }} onClick={() => { router.push('/shop') }} />
                                 </>}
                             <IconButton
                                 sx={{ ...iconButtonStyle, marginLeft: 'auto' }}

@@ -36,9 +36,21 @@ cursor: pointer;
 /* 좁은 화면은 변경 전(28px, 상한 없음 = 5:1 기준 140px)을 그대로 유지한다.
    34px 로 키우면 가로형 로고 폭이 140→170px 이 되어 359~391px 구간에서
    우측 아이콘 묶음이 컨테이너 밖으로 밀린다(is_use_lang 을 켠 가맹점은 더 빨리 밀린다). */
+/* 높이를 못 박으면 로고가 자리를 다 못 쓴다.
+   이 가맹점 로고는 8:1 가로형인데 상자가 91x18 이라 실제로 그려지는 건 91x11 이었다.
+   높이 대신 상자로 가둬 어느 모양이든 알아서 상한에 닿게 한다. */
 @media (max-width:480px) {
-  height: calc(28px * var(--logo-scale, 1));
+  height: auto;
+  width: auto;
+  max-height: calc(40px * var(--logo-scale, 1));
   max-width: calc(140px * var(--logo-scale, 1));
+}
+/* 361px 이상에서만 조금 더 넓힌다.
+   320px 에서 180px 상한을 주면 우측 아이콘 묶음이 컨테이너 밖으로 11px 밀린다(실측).
+   360·390px 에서는 밀림 0 이라 그 구간만 키운다 — 요즘 기기는 대부분 여기 있다.
+   측정값(가로형 로고 기준): 91x11 → 117x14 */
+@media (min-width:361px) and (max-width:480px) {
+  max-width: calc(180px * var(--logo-scale, 1));
 }
 `
 const TopMenuContainer = styled.div`

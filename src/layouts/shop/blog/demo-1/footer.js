@@ -68,7 +68,9 @@ transition: opacity 0.2s;
 &:hover { opacity:1; }
 `
 const NavLabel = styled.span`
-font-size:10px;
+/* 12px 아래로 내리지 말 것. 이 화면의 작은 글씨 기본 단계가 12px 이고(13곳),
+   여기만 10px 이었다. 올려도 탭바 높이는 56px 그대로다(실측). */
+font-size:12px;
 font-weight:500;
 `
 

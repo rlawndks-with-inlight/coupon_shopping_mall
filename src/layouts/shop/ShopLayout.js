@@ -28,6 +28,10 @@ import SecurityQuestionBanner from "src/components/elements/shop/SecurityQuestio
 import GuestSignupPrompt from "src/components/elements/shop/GuestSignupPrompt";
 import { isBlogBrand } from "src/utils/blog-shop-route";
 
+/* 손님 화면(스토어프론트) 전체를 감싼다.
+   className 을 하나 달아 두는 이유: 헤더 아이콘의 터치 영역을 넓히는 규칙을
+   손님 화면에만 걸기 위해서다(styles/globals.css 의 '.storefront header button' 참고).
+   관리자 화면에도 <header> 가 있을 수 있어 태그만으로 고르면 거기까지 딸려간다. */
 const Wrappers = styled.div`
 
 `
@@ -129,7 +133,7 @@ const ShopLayout = ({ children, scrollToTop }) => {
     <>
       {!loading &&
         <>
-          <Wrappers /*style={{fontFamily:'Noto Sans KR'}}*/>
+          <Wrappers className="storefront" /*style={{fontFamily:'Noto Sans KR'}}*/>
             {getDemo(layoutDemoNum, {
               data: {
                 category: layoutFamily

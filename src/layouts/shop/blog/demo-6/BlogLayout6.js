@@ -47,6 +47,13 @@ const LogoArea = styled.div`
   cursor: pointer;
   flex: 0 0 auto;
   justify-content: center;
+  /* 모바일에서는 가운데 두지 않는다.
+     아이콘 5개가 오른쪽에 몰려 있어 가운데 로고는 '왼쪽이 텅 빈' 모양이 되고,
+     로고 자리도 양옆을 균등하게 비우느라 130px 로 좁아진다.
+     왼쪽으로 붙이면 그 여백을 로고가 쓴다. (PC 는 가운데 정렬 그대로) */
+  @media (max-width: 480px) {
+    justify-content: flex-start;
+  }
   /* 로고 폭 상한. Logo(styled(LazyLoadImage))가 아니라 여기에 거는 이유는 Logo 주석 참고.
      481~519px 구간에서 가로형 로고 + 언어선택 켠 가맹점이면 아이콘 묶음이 우측 패딩을 뚫고
      나가 문서에 가로 스크롤바가 생겼다(이 헤더는 sticky 라 잘리는 게 아니라 페이지가 흔들린다). */
@@ -55,12 +62,29 @@ const LogoArea = styled.div`
   @media (max-width: 520px) {
     max-width: 130px;
   }
+  /* LazyLoadImage(effect="blur")는 <span class="lazy-load-image-background"> 로 한 겹 감싸는데
+     styled() 가 만든 클래스는 그 span 이 아니라 안쪽 <img> 에 붙는다(Logo 주석 참고).
+     그래서 Logo 에만 상한을 걸면 span 은 옛 크기 그대로 남아 로고가 안 커진다.
+     여기서 span 을 직접 잡는다 — Logo 의 값과 반드시 같이 움직여야 한다. */
+  @media (max-width: 480px) {
+    .lazy-load-image-background {
+      height: auto;
+      max-height: calc(56px * var(--logo-scale, 1));
+      /* Logo 의 값과 반드시 같이 움직여야 한다 */
+      max-width: min(130px, calc(100vw - 244px));
+    }
+  }
 `
 /* 헤더 좌측 슬롯(뒤로가기 버튼 자리). 우측 액션과 같은 flex 를 가져 로고를 가운데로 민다. */
 const SideSlot = styled.div`
   display: flex;
   align-items: center;
   flex: 1;
+  /* 로고를 가운데 세우는 힘이 이 flex:1 이다(반대쪽 HeaderActions 와 균형).
+     모바일에서는 그 힘을 푼다 — 뒤로가기 버튼 자리만 차지하고, 로고는 그 옆에 붙는다. */
+  @media (max-width: 480px) {
+    flex: 0 0 auto;
+  }
 `
 /* 로고를 '한 축'이 아니라 '상자'로 잡는다 — 이유는 shop/demo-1/header.js 의 LogoImg 주석 참고.
    28px 은 판매중 11개 프레임 통틀어 최소값이었고, 같은 헤더의 IconBtn(20px 아이콘 + padding 0.5rem
@@ -79,8 +103,26 @@ const Logo = styled(LazyLoadImage)`
      안 줄어서 상한이 헛돈다. flex-shrink 도 같은 이유로 여기서는 무의미하다. */
   max-width: 100%;
   object-fit: contain;
+  /* 모바일에서 높이를 못 박으면 안 된다.
+     28px 로 고정돼 있었는데, 정사각형에 가까운 로고(예: 247x176)는 그 높이에서 폭이
+     39px 밖에 안 나온다. 자리는 130px 인데 30% 만 쓰는 셈이라 로고가 아이콘보다 작아 보였다.
+     (배율 0.7 인 가맹점은 19.6px 까지 내려가 27x20 으로 그려졌다 — 실제로 그렇게 보였다)
+
+     그래서 높이 대신 '상자'로 가둔다. 어느 모양이든 알아서 상한에 닿는다.
+       정사각형 로고 → 높이가 상한  55x39
+       가로로 긴 로고 → 폭이 상한   130x30  (LogoArea 의 130px 안에 들어와 안 잘린다)
+
+     56px 인 이유: 재 보니 72px 부터 헤더가 73 → 83px 로 밀린다. 56px 이 헤더를 안 건드리는 최대다.
+     ⚠ 여기만 고치면 안 된다 — LazyLoadImage 가 감싸는 span 에도 같은 상한이 필요하다(LogoArea 참고). */
   @media (max-width: 480px) {
-    height: calc(28px * var(--logo-scale, 1));
+    height: auto;
+    width: auto;
+    max-height: calc(56px * var(--logo-scale, 1));
+    /* 폭 상한은 화면에 맞춰 줄어야 한다.
+       130px 로 못 박았더니 가로형 로고 + 좌측정렬 조합에서 320px 화면에 가로 스크롤이
+       50px, 360px 에서 10px 생겼다(실측). 이 헤더는 sticky 라 페이지 자체가 흔들린다.
+       244px 은 아이콘 5개(36px)와 뒤로가기 자리·여백이 반드시 써야 하는 몫이다. 236px 로는 4px 모자랐다(실측). */
+    max-width: min(130px, calc(100vw - 244px));
   }
 `
 const BrandText = styled.div`
@@ -165,7 +207,8 @@ const FooterInfo = styled.div`
   flex-wrap: wrap;
   justify-content: center;
   gap: 0.75rem 1.1rem;
-  font-size: 11px;
+  /* 12px 아래로 내리지 말 것 — 모바일에서 사업자 정보가 읽히지 않는다(실측 11px). */
+  font-size: 12px;
   opacity: 0.42;
   line-height: 1.7;
 `
@@ -180,7 +223,8 @@ const FooterLinks = styled.div`
   margin-top: 0.7rem;
 `
 const FooterLink = styled.span`
-  font-size: 11px;
+  /* 12px 아래로 내리지 말 것 — 모바일에서 사업자 정보가 읽히지 않는다(실측 11px). */
+  font-size: 12px;
   opacity: 0.55;
   cursor: pointer;
   text-decoration: underline;
@@ -189,7 +233,8 @@ const FooterLink = styled.span`
   }
 `
 const FooterLine = styled.div`
-  font-size: 10px;
+  /* 저작권 줄도 12px 로 맞춘다 — 이 화면에서 유일하게 10px 이었다. */
+  font-size: 12px;
   opacity: 0.3;
   letter-spacing: 2px;
   margin-top: 0.9rem;

@@ -156,3 +156,39 @@ a {
 img[src=""] {
   display: none;
 }
+
+/* 손님 화면 헤더 아이콘의 '누를 수 있는 넓이'를 세로로 넓힌다.
+
+   [왜]
+   모바일에서 재 보니 헤더 아이콘이 27~36px 이었다. 애플은 44px, 구글은 48px 을 권한다.
+   손가락 끝은 그보다 넓어서 작은 아이콘은 두세 번 눌러야 들어가는 일이 생긴다.
+
+   [왜 세로만인가]
+   가로로 넓힐 수가 없다. 아이콘 사이 틈을 재 보니 0~8px 뿐이라(프레임5·6 은 0),
+   44px 로 넓히면 영역이 서로 겹쳐 **옆 아이콘이 눌린다** — 헛누름보다 나쁘다.
+   실제로 시험해 보니 네 방향 중 한 방향에서 이웃이 잡혔다.
+   세로는 다르다. 헤더 높이가 56~100px 인데 아이콘은 27~40px 이라 위아래로 이웃이 없다.
+   손가락은 세로로도 그만큼 빗나가고, 헤더는 화면 맨 위라 위로 벗어나기 쉽다.
+
+   [왜 ::after 인가]
+   아이콘을 키우거나 padding 을 주면 헤더 높이가 밀려 프레임 5개의 배치가 전부 흔들린다.
+   눈에 안 보이는 ::after 로 '누르는 넓이'만 깐다 — 배치는 1px 도 안 변한다.
+   left/right 를 0 으로 둬서 가로는 버튼 폭 그대로다(이웃과 겹칠 수가 없다).
+
+   [범위]
+   .storefront 안의 header 만. 관리자 화면에도 <header> 가 있을 수 있는데 그쪽은 마우스로
+   쓰므로 넓힐 이유가 없고, 표의 좁은 칸에서는 오히려 서로 겹친다. */
+.storefront header button,
+.storefront header .MuiIconButton-root {
+  position: relative;
+}
+.storefront header button::after,
+.storefront header .MuiIconButton-root::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 50%;
+  height: 44px;
+  transform: translateY(-50%);
+}

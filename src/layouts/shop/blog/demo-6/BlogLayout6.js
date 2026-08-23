@@ -207,7 +207,8 @@ const FooterInfo = styled.div`
   flex-wrap: wrap;
   justify-content: center;
   gap: 0.75rem 1.1rem;
-  font-size: 11px;
+  /* 12px 아래로 내리지 말 것 — 모바일에서 사업자 정보가 읽히지 않는다(실측 11px). */
+  font-size: 12px;
   opacity: 0.42;
   line-height: 1.7;
 `
@@ -222,7 +223,8 @@ const FooterLinks = styled.div`
   margin-top: 0.7rem;
 `
 const FooterLink = styled.span`
-  font-size: 11px;
+  /* 12px 아래로 내리지 말 것 — 모바일에서 사업자 정보가 읽히지 않는다(실측 11px). */
+  font-size: 12px;
   opacity: 0.55;
   cursor: pointer;
   text-decoration: underline;

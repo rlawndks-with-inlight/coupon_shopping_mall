@@ -896,7 +896,7 @@ export default function OrderSheet({ router }) {
                           control={<Checkbox size="small" checked={agree1} onChange={(e) => setAgree1(e.target.checked)} />}
                           label={<Typography variant="body2">{translate('이용약관 동의')}<Box component="span" sx={{ color: 'error.main' }}>{translate('(필수)')}</Box></Typography>}
                         />
-                        <Button size="small" variant="text" onClick={() => setOpenPolicy(openPolicy === 1 ? 0 : 1)}>
+                        <Button size="small" variant="text" sx={{ minHeight: 40, px: 1.5 }} onClick={() => setOpenPolicy(openPolicy === 1 ? 0 : 1)}>
                           {openPolicy === 1 ? translate("접기") : translate("보기")}
                         </Button>
                       </Stack>
@@ -910,7 +910,7 @@ export default function OrderSheet({ router }) {
                           control={<Checkbox size="small" checked={agree2} onChange={(e) => setAgree2(e.target.checked)} />}
                           label={<Typography variant="body2">{translate('개인정보 수집 및 이용 동의')}<Box component="span" sx={{ color: 'error.main' }}>{translate('(필수)')}</Box></Typography>}
                         />
-                        <Button size="small" variant="text" onClick={() => setOpenPolicy(openPolicy === 2 ? 0 : 2)}>
+                        <Button size="small" variant="text" sx={{ minHeight: 40, px: 1.5 }} onClick={() => setOpenPolicy(openPolicy === 2 ? 0 : 2)}>
                           {openPolicy === 2 ? translate("접기") : translate("보기")}
                         </Button>
                       </Stack>
@@ -924,7 +924,7 @@ export default function OrderSheet({ router }) {
                           본문은 손으로 적지 않고 scripts/policy/source/cancel.txt 에서 생성한 것을 쓴다. */}
                       <Stack direction="row" alignItems="center" justifyContent="space-between">
                         <Typography variant="body2">{translate('주문 취소 및 반품 안내')}</Typography>
-                        <Button size="small" variant="text" onClick={() => setOpenPolicy(openPolicy === 3 ? 0 : 3)}>
+                        <Button size="small" variant="text" sx={{ minHeight: 40, px: 1.5 }} onClick={() => setOpenPolicy(openPolicy === 3 ? 0 : 3)}>
                           {openPolicy === 3 ? translate("접기") : translate("보기")}
                         </Button>
                       </Stack>

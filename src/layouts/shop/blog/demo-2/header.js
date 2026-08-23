@@ -37,9 +37,19 @@ max-width: calc(220px * var(--logo-scale, 1));
 object-fit: contain;
 flex-shrink: 0;
 cursor: pointer;
+/* 프레임3 과 같은 이유로 높이 대신 상자로 가둔다.
+   정사각형에 가까운 로고(184x176)가 40px 높이에 묶여 42x40 으로만 그려지고 있었다.
+   헤더 높이는 56px 로 고정이라(로고를 56px 로 해도 헤더가 안 커졌다 — 즉 넘치면 잘린다)
+   상하 여백을 4px 씩 남기는 48px 이 상한이다. 320·360·390px 전부 아이콘 밀림 0 을 확인했다.
+   측정값: 42x40 → 50x48 */
 @media (max-width:480px) {
-  height: calc(40px * var(--logo-scale, 1));
-  max-width: calc(200px * var(--logo-scale, 1));
+  height: auto;
+  width: auto;
+  max-height: calc(48px * var(--logo-scale, 1));
+  /* 폭 상한을 화면에 맞춰 줄인다.
+     200px 로 못 박으면 가로형 로고가 320px 화면에서 우측 아이콘을 30px 밀어냈다(실측).
+     240px 은 이 헤더에서 로고가 아니라 아이콘·여백이 반드시 써야 하는 몫이다. */
+  max-width: min(calc(200px * var(--logo-scale, 1)), calc(100vw - 240px));
 }
 `
 const TopMenuContainer = styled.div`

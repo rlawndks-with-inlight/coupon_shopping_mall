@@ -396,7 +396,9 @@ const Demo4 = (props) => {
 
       <Manifesto>
         <ManifestoText>
-          "{comment || 'One product. Endless quality. Made with absolute dedication.'}"
+          {/* 짧은 장식 라벨(№ 001·Signature·Premium…)은 디자인의 일부라 영어로 둔다.
+              이건 문장이라 다르다 — 영어 화면에만 맞고 한국어 화면에는 안 맞는다. */}
+          "{comment || translate('하나의 제품. 끝없는 품질. 온 정성을 담아 만듭니다.')}"
         </ManifestoText>
       </Manifesto>
 

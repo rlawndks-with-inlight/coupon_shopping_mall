@@ -864,6 +864,7 @@ const en = {
   "회원으로 구매하시겠어요?": "Would you like to sign up first?",
   "비회원으로 계속": "Continue as guest",
   "회원이 되시면 주문내역을 한곳에서 확인하고, 배송지를 저장해 다음 주문부터 더 빠르게 하실 수 있습니다. 물론 회원가입 없이 그대로 진행하셔도 됩니다.": "As a member you can see all your orders in one place and save an address so future orders are quicker. You are also welcome to continue without signing up.",
+  "하나의 제품. 끝없는 품질. 온 정성을 담아 만듭니다.": "One product. Endless quality. Made with absolute dedication.",
 };
 
 export default en;

@@ -859,6 +859,7 @@ const es = {
   "회원으로 구매하시겠어요?": "¿Quiere registrarse primero?",
   "비회원으로 계속": "Continuar como invitado",
   "회원이 되시면 주문내역을 한곳에서 확인하고, 배송지를 저장해 다음 주문부터 더 빠르게 하실 수 있습니다. 물론 회원가입 없이 그대로 진행하셔도 됩니다.": "Como miembro puede ver todos sus pedidos en un solo lugar y guardar una dirección para agilizar los próximos. También puede continuar sin registrarse.",
+  "하나의 제품. 끝없는 품질. 온 정성을 담아 만듭니다.": "Un solo producto. Calidad sin fin. Hecho con absoluta dedicación.",
 };
 
 export default es;

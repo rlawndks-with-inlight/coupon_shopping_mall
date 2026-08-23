@@ -850,6 +850,16 @@ const es = {
   "취소 사유 (선택)": "Motivo (opcional)",
   "아무것도 고르지 않으면 주문 전체가 취소 요청됩니다.": "Si no selecciona nada, se solicitará la cancelación de todo el pedido.",
   "요청 중…": "Solicitando…",
+  "종류": "Tipo",
+  "연도": "Año",
+  "브랜드": "La marca",
+  "더보기": "Ver más",
+  "{{brand}} 시그니처 제품입니다. 단 하나의 제품에 모든 정성을 담아 완성했습니다.": "El producto insignia de {{brand}}. Todo nuestro empeño está en esta única pieza.",
+  "{{brand}}은(는) 단 하나의 제품에 집중하는 브랜드입니다. 여러 가지를 만들기보다 진심으로 자신 있는 하나에 몰입합니다.": "{{brand}} es una marca dedicada a un solo producto. En vez de hacer muchas cosas, nos volcamos en aquella en la que de verdad creemos.",
+  "회원으로 구매하시겠어요?": "¿Quiere registrarse primero?",
+  "비회원으로 계속": "Continuar como invitado",
+  "회원이 되시면 주문내역을 한곳에서 확인하고, 배송지를 저장해 다음 주문부터 더 빠르게 하실 수 있습니다. 물론 회원가입 없이 그대로 진행하셔도 됩니다.": "Como miembro puede ver todos sus pedidos en un solo lugar y guardar una dirección para agilizar los próximos. También puede continuar sin registrarse.",
+  "하나의 제품. 끝없는 품질. 온 정성을 담아 만듭니다.": "Un solo producto. Calidad sin fin. Hecho con absoluta dedicación.",
 };
 
 export default es;

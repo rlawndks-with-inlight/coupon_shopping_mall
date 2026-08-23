@@ -46,6 +46,10 @@ scripts/guide-pdf/build/
 .next-build/
 .next-master/
 .next-merchant/
+# 로컬에서 dev 서버를 포트별로 여러 개 띄울 때 쓰는 산출물 폴더.
+#   MAIN_FRONT_URL=<가맹점dns> NEXT_DIST_DIR=.next-2001 npx next dev -p 2001
+# 같은 .next 를 쓰면 나중에 뜬 서버가 먼저 뜬 서버의 설정까지 덮어쓴다(next.config.js 주석 참고).
+.next-2[0-9][0-9][0-9]/
 .next-chotdol/
 .next-forsmall/
 # 로컬 dev 서버 로그(포트별). 저장소에 들어갈 것이 아니다.

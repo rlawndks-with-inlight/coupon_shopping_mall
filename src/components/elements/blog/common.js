@@ -558,14 +558,14 @@ export const WishTable = props => {
                                             {commarNumber(setProductPriceByLang(row, 'amount', 'ko', currentLang?.value))} {getPriceUnitByLang(currentLang?.value)}
                                         </TableCell>
                                         <TableCell>
-                                            <Button variant='outlined' onClick={() => {
+                                            <Button variant='outlined' onClick={async () => {
                                                 // 골라야 할 옵션이 있으면 목록에서 담지 않고 고를 화면으로 보낸다.
                                                 // 목록 응답에는 옵션 내용이 없어 담아도 '무엇을 산 것인지'가 안 남는다.
                                                 if (Number(row?.required_option_count) > 0) {
                                                     router.push(`/shop/item/${row?.id}`);
                                                     return;
                                                 }
-                                                insertCartDataUtil(row, false, themeCartData, onChangeCartData)
+                                                await insertCartDataUtil(row, false, themeCartData, onChangeCartData)
                                             }}>
                                                 {translate('장바구니담기')}
                                             </Button>

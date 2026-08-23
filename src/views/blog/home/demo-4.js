@@ -3,7 +3,7 @@ import { useSettingsContext } from 'src/components/settings'
 import { themeObj } from 'src/components/elements/styled-components'
 import { LazyLoadImage } from 'react-lazy-load-image-component'
 import { commarNumber, commarNumberWithUnit } from 'src/utils/function'
-import { formatLang } from 'src/utils/format'
+import { formatLang, 홈문구 } from 'src/utils/format'
 import { useFeaturedProduct, useFeaturedProducts, getFeaturedCardData } from 'src/utils/use-featured-product'
 import { useLocales } from 'src/locales'
 import StorefrontEmptyHome from 'src/components/elements/shop/StorefrontEmptyHome'
@@ -312,12 +312,12 @@ const FeaturedPrice = styled.div`
 `
 
 const Demo4 = (props) => {
-  const { currentLang } = useLocales();
+  const { translate, currentLang } = useLocales();
   const { themeDnsData } = useSettingsContext();
   const { func } = props;
   const router = func?.router;
   const brandName = themeDnsData?.name || 'BRAND';
-  const t = themeDnsData?.setting_obj?.home_texts?.demo4 ?? {}; // 가맹점 편집 문구(미입력 시 기본값)
+  const t = themeDnsData?.setting_obj?.home_texts?.demo4 ?? {}; // 가맹점 편집 문구(미입력 시 기본값). 읽을 때는 홈문구() 로 — 언어별 번역이 lang_obj 에 들어 있다.
   const product = useFeaturedProduct();
   const featuredProducts = useFeaturedProducts({ excludeId: product?.id });
 
@@ -350,22 +350,22 @@ const Demo4 = (props) => {
           <div>
             <HeroTop>
               <span>{brandName}</span>
-              <span>{t.edition || '№ 001'}</span>
+              <span>{홈문구(t, 'edition', currentLang) || '№ 001'}</span>
             </HeroTop>
             <HeroTitle>{name}</HeroTitle>
             <HeroMeta>
               <div>
-                <MetaLabel>Type</MetaLabel>
-                <MetaValue>{t.type_value || 'Signature'}</MetaValue>
+                <MetaLabel>{translate('종류')}</MetaLabel>
+                <MetaValue>{홈문구(t, 'type_value', currentLang) || 'Signature'}</MetaValue>
               </div>
               <div>
-                <MetaLabel>Year</MetaLabel>
+                <MetaLabel>{translate('연도')}</MetaLabel>
                 <MetaValue>{new Date().getFullYear()}</MetaValue>
               </div>
             </HeroMeta>
           </div>
           <div>
-            <CTABtn onClick={goTo}>Buy Now →</CTABtn>
+            <CTABtn onClick={goTo}>{translate('구매하기')} →</CTABtn>
           </div>
         </HeroLeft>
         <HeroRight>
@@ -377,47 +377,49 @@ const Demo4 = (props) => {
         <BigNumGrid>
           <BigNumCell>
             <BigNum>01</BigNum>
-            <BigNumLabel>{t.bignum1_label || 'Premium'}</BigNumLabel>
+            <BigNumLabel>{홈문구(t, 'bignum1_label', currentLang) || 'Premium'}</BigNumLabel>
           </BigNumCell>
           <BigNumCell>
             <BigNum>02</BigNum>
-            <BigNumLabel>{t.bignum2_label || 'Crafted'}</BigNumLabel>
+            <BigNumLabel>{홈문구(t, 'bignum2_label', currentLang) || 'Crafted'}</BigNumLabel>
           </BigNumCell>
           <BigNumCell>
             <BigNum>03</BigNum>
-            <BigNumLabel>{t.bignum3_label || 'Timeless'}</BigNumLabel>
+            <BigNumLabel>{홈문구(t, 'bignum3_label', currentLang) || 'Timeless'}</BigNumLabel>
           </BigNumCell>
           <BigNumCell>
             <BigNum>04</BigNum>
-            <BigNumLabel>{t.bignum4_label || 'Unique'}</BigNumLabel>
+            <BigNumLabel>{홈문구(t, 'bignum4_label', currentLang) || 'Unique'}</BigNumLabel>
           </BigNumCell>
         </BigNumGrid>
       </BigNumSection>
 
       <Manifesto>
         <ManifestoText>
-          "{comment || 'One product. Endless quality. Made with absolute dedication.'}"
+          {/* 짧은 장식 라벨(№ 001·Signature·Premium…)은 디자인의 일부라 영어로 둔다.
+              이건 문장이라 다르다 — 영어 화면에만 맞고 한국어 화면에는 안 맞는다. */}
+          "{comment || translate('하나의 제품. 끝없는 품질. 온 정성을 담아 만듭니다.')}"
         </ManifestoText>
       </Manifesto>
 
       <InfoSection>
         <InfoLeft>
-          <InfoHeading>The Product</InfoHeading>
+          <InfoHeading>{translate('상품')}</InfoHeading>
           <InfoBody>
-            {comment || `${brandName} 시그니처 제품입니다. 단 하나의 제품에 모든 정성을 담아 완성했습니다.`}
+            {comment || translate('{{brand}} 시그니처 제품입니다. 단 하나의 제품에 모든 정성을 담아 완성했습니다.', { brand: brandName })}
           </InfoBody>
         </InfoLeft>
         <InfoRight>
-          <InfoHeading>The Brand</InfoHeading>
+          <InfoHeading>{translate('브랜드')}</InfoHeading>
           <InfoBody>
-            {t.brand_intro || `${brandName}은(는) 단 하나의 제품에 집중하는 브랜드입니다. 여러 가지를 만들기보다 진심으로 자신 있는 하나에 몰입합니다.`}
+            {홈문구(t, 'brand_intro', currentLang) || translate('{{brand}}은(는) 단 하나의 제품에 집중하는 브랜드입니다. 여러 가지를 만들기보다 진심으로 자신 있는 하나에 몰입합니다.', { brand: brandName })}
           </InfoBody>
         </InfoRight>
       </InfoSection>
 
       {featuredProducts.length > 0 && (
         <FeaturedSection>
-          <InfoHeading>More</InfoHeading>
+          <InfoHeading>{translate('더보기')}</InfoHeading>
           <FeaturedGrid>
             {featuredProducts.map((item) => {
               const c = getFeaturedCardData(item, currentLang);
@@ -443,14 +445,14 @@ const Demo4 = (props) => {
       )}
 
       <PriceSection>
-        <PriceLabel>Price</PriceLabel>
+        <PriceLabel>{translate('가격')}</PriceLabel>
         {hasSale && (
           <div style={{ fontSize: '18px', textDecoration: 'line-through', opacity: 0.4, marginBottom: '0.5rem' }}>
             {commarNumberWithUnit(orig)} · {disc}% OFF
           </div>
         )}
         <PriceValue>{commarNumberWithUnit(sale)}</PriceValue>
-        <CTABtn onClick={goTo}>Order Now →</CTABtn>
+        <CTABtn onClick={goTo}>{translate('주문하기')} →</CTABtn>
       </PriceSection>
     </Wrapper>
   );

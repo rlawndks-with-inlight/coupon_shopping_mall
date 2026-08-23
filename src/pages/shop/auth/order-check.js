@@ -5,6 +5,7 @@ import styled from 'styled-components';
 import ShopLayout from 'src/layouts/shop/ShopLayout';
 import { useSettingsContext } from 'src/components/settings';
 import { apiManager } from 'src/utils/api';
+import OrderCancelButton, { canCancelOrder } from 'src/components/elements/shop/OrderCancelButton';
 import { commarNumber, sanitizePhoneInput, getOrderStatusText } from 'src/utils/function';
 import { useLocales } from 'src/locales';
 import PasswordField from 'src/components/elements/PasswordField';
@@ -129,7 +130,12 @@ const OrderCheck = () => {
       return;
     }
     setOrders(list);
-    setSelected(list.length === 1 ? list[0] : null);
+    // 취소요청 직후에도 이 함수로 다시 조회한다. 그때 보던 주문을 그대로 열어 둬야
+    // 손님이 "요청이 됐나" 를 바로 확인할 수 있다(예전 방식대로면 목록으로 튕긴다).
+    setSelected((prev) => {
+      const 보던것 = prev?.ord_num && list.find((o) => o?.ord_num === prev.ord_num);
+      return 보던것 || (list.length === 1 ? list[0] : null);
+    });
   };
 
   return (
@@ -187,6 +193,21 @@ const OrderCheck = () => {
             <Button size="small" onClick={() => setSelected(null)} sx={{ mb: 1 }}>{translate('← 목록으로')}</Button>
           )}
           <OrderDetail order={selected} />
+          {/* 비회원도 스스로 취소요청을 할 수 있어야 한다.
+              예전엔 이 화면에 취소 수단이 없었다. 비회원 주문은 user_id 가 0 이라
+              서버의 로그인 대조를 통과할 수 없었고, 취소는 늘 「권한이 없습니다」로 막혔다.
+              전체 주문의 대부분이 비회원이라 그 문의가 전부 가맹점 전화로 갔다.
+              여기서 방금 조회에 쓴 주문비밀번호를 그대로 본인 확인에 쓴다. */}
+          {canCancelOrder(selected) && (
+            <Stack direction="row" justifyContent="flex-end" sx={{ mb: 3 }}>
+              <OrderCancelButton
+                trx={selected}
+                orders={selected?.orders}
+                password={form.password}
+                onDone={onSearch}
+              />
+            </Stack>
+          )}
         </>
       )}
     </Wrappers>

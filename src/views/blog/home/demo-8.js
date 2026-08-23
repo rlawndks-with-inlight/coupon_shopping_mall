@@ -2,7 +2,7 @@ import styled from 'styled-components'
 import { useSettingsContext } from 'src/components/settings'
 import { LazyLoadImage } from 'react-lazy-load-image-component'
 import { commarNumber, commarNumberWithUnit } from 'src/utils/function'
-import { formatLang } from 'src/utils/format'
+import { formatLang, 홈문구 } from 'src/utils/format'
 import { useFeaturedProduct, useFeaturedProducts, getFeaturedCardData } from 'src/utils/use-featured-product'
 import { useLocales } from 'src/locales'
 import StorefrontEmptyHome from 'src/components/elements/shop/StorefrontEmptyHome'
@@ -342,7 +342,7 @@ const Demo8 = (props) => {
   const { func } = props;
   const router = func?.router;
   const brandName = themeDnsData?.name || 'BRAND';
-  const t = themeDnsData?.setting_obj?.home_texts?.demo8 ?? {}; // 가맹점 편집 문구(미입력 시 기본값)
+  const t = themeDnsData?.setting_obj?.home_texts?.demo8 ?? {}; // 가맹점 편집 문구(미입력 시 기본값). 읽을 때는 홈문구() 로 — 언어별 번역이 lang_obj 에 들어 있다.
   const product = useFeaturedProduct();
   const featuredProducts = useFeaturedProducts({ excludeId: product?.id });
 
@@ -397,8 +397,8 @@ const Demo8 = (props) => {
       </Hero>
 
       <Manifesto>
-        {t.manifesto ? (
-          <ManifestoBig>{t.manifesto}</ManifestoBig>
+        {홈문구(t, 'manifesto', currentLang) ? (
+          <ManifestoBig>{홈문구(t, 'manifesto', currentLang)}</ManifestoBig>
         ) : (
           <ManifestoBig>
             One <ManifestoAccent>product</ManifestoAccent>.<br />
@@ -409,20 +409,20 @@ const Demo8 = (props) => {
 
       <Facts>
         <FactCell>
-          <FactNum>{t.fact1_num || '01'}</FactNum>
-          <FactLabel>{t.fact1_label || 'Single SKU'}</FactLabel>
+          <FactNum>{홈문구(t, 'fact1_num', currentLang) || '01'}</FactNum>
+          <FactLabel>{홈문구(t, 'fact1_label', currentLang) || 'Single SKU'}</FactLabel>
         </FactCell>
         <FactCell>
-          <FactNum>{t.fact2_num || '100'}</FactNum>
-          <FactLabel>{t.fact2_label || '% quality'}</FactLabel>
+          <FactNum>{홈문구(t, 'fact2_num', currentLang) || '100'}</FactNum>
+          <FactLabel>{홈문구(t, 'fact2_label', currentLang) || '% quality'}</FactLabel>
         </FactCell>
         <FactCell>
-          <FactNum>{t.fact3_num || '∞'}</FactNum>
-          <FactLabel>{t.fact3_label || 'Dedication'}</FactLabel>
+          <FactNum>{홈문구(t, 'fact3_num', currentLang) || '∞'}</FactNum>
+          <FactLabel>{홈문구(t, 'fact3_label', currentLang) || 'Dedication'}</FactLabel>
         </FactCell>
         <FactCell>
-          <FactNum>{t.fact4_num || '0'}</FactNum>
-          <FactLabel>{t.fact4_label || 'Filler'}</FactLabel>
+          <FactNum>{홈문구(t, 'fact4_num', currentLang) || '0'}</FactNum>
+          <FactLabel>{홈문구(t, 'fact4_label', currentLang) || 'Filler'}</FactLabel>
         </FactCell>
       </Facts>
 
@@ -452,8 +452,8 @@ const Demo8 = (props) => {
       )}
 
       <FinalCTA onClick={goTo}>
-        <FinalHuge>{t.cta_title || 'Get it now'}</FinalHuge>
-        <FinalSmall>{t.cta_sub || 'tap anywhere to purchase'}</FinalSmall>
+        <FinalHuge>{홈문구(t, 'cta_title', currentLang) || 'Get it now'}</FinalHuge>
+        <FinalSmall>{홈문구(t, 'cta_sub', currentLang) || 'tap anywhere to purchase'}</FinalSmall>
       </FinalCTA>
     </Wrapper>
   );

@@ -1,4 +1,5 @@
 import _ from "lodash";
+import { askGuestSignup } from './guest-prompt';
 import { axiosIns } from "./axios";
 import { apiManager } from "./api";
 import axios from "axios";
@@ -581,13 +582,16 @@ const assertOrderFormFilled = (product) => {
 //   인자를 하나 더 두면 담기·바로구매·구매 다이얼로그 등 부르는 자리마다 고쳐야 하고,
 //   한 곳만 빠뜨리면 그 경로에서만 값이 조용히 사라진다.
 //   상품에 붙여 두면 DialogBuyNow 처럼 product 를 그대로 넘기는 곳도 저절로 따라온다.
-export const startBuyNow = (product, selectProductGroups, router) => {
+export const startBuyNow = async (product, selectProductGroups, router) => {
     try {
         if (!assertPurchasable(product)) return false;
         if (!assertMemberOnly(product)) return false;
         if (!assertOptionsSelected(product, selectProductGroups)) return false;
         if (!assertStock(product, selectProductGroups)) return false;
         if (!assertOrderFormFilled(product)) return false;
+        // 살 수 있는 상품인 게 확인된 뒤에 묻는다.
+        // 앞에 두면 품절 상품을 눌러도 회원가입 창부터 뜬다.
+        if (!(await askGuestSignup())) return false;
         const item = {
             ...product,
             groups: selectProductGroups?.groups ?? [],
@@ -635,7 +639,10 @@ const orderFormSignature = (values) => {
         .join('&');
 };
 
-export const insertCartDataUtil = (
+// ⚠ async 다. 호출부는 반드시 await 할 것 —
+//   안 하면 Promise 가 참으로 읽혀, 담기지도 않았는데 '담았습니다' 가 뜨고 새로고침까지 한다.
+//   (검사 guest-prompt.mjs 가 호출부 전체를 훑어 못 박는다)
+export const insertCartDataUtil = async (
     product_,
     selectProductGroups_ = {
         count: 1,
@@ -652,6 +659,8 @@ export const insertCartDataUtil = (
         // 값은 상품 객체에 실려 온다(startBuyNow 주석 참고).
         const orderFormValues = product_?.order_form_values;
         if (!assertOrderFormFilled(product_)) return false;
+        // 담을 수 있는 게 확인된 뒤에 묻는다(품절·옵션 미선택이면 창이 뜨면 안 된다).
+        if (!(await askGuestSignup())) return false;
         let cart_data = [...themeCartData];
         let product = product_;
         let selectProductGroups = selectProductGroups_;

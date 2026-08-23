@@ -163,9 +163,9 @@ const Demo1 = (props) => {
         setSelectProductGroups(select_product_groups);
     }
 
-    const handleAddCart = () => {
+    const handleAddCart = async () => {
         // 비회원도 장바구니 담기 허용
-        let result = insertCartDataUtil({ ...selectedItem, seller_id: router.query?.id ?? 0 }, selectProductGroups, themeCartData, onChangeCartData);
+        let result = await insertCartDataUtil({ ...selectedItem, seller_id: router.query?.id ?? 0 }, selectProductGroups, themeCartData, onChangeCartData);
         if (result) {
             toast.success(translate("장바구니에 성공적으로 추가되었습니다."));
             setCartOpen(false);

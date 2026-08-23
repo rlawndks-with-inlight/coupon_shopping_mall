@@ -2,7 +2,7 @@ import styled from 'styled-components'
 import { useSettingsContext } from 'src/components/settings'
 import { LazyLoadImage } from 'react-lazy-load-image-component'
 import { commarNumber, commarNumberWithUnit } from 'src/utils/function'
-import { formatLang } from 'src/utils/format'
+import { formatLang, 홈문구 } from 'src/utils/format'
 import { useFeaturedProduct, useFeaturedProducts, getFeaturedCardData } from 'src/utils/use-featured-product'
 import { useLocales } from 'src/locales'
 import StorefrontEmptyHome from 'src/components/elements/shop/StorefrontEmptyHome'
@@ -373,7 +373,7 @@ const Demo9 = (props) => {
   const { func } = props;
   const router = func?.router;
   const brandName = themeDnsData?.name || 'BRAND';
-  const t = themeDnsData?.setting_obj?.home_texts?.demo9 ?? {}; // 가맹점 편집 문구(미입력 시 기본값)
+  const t = themeDnsData?.setting_obj?.home_texts?.demo9 ?? {}; // 가맹점 편집 문구(미입력 시 기본값). 읽을 때는 홈문구() 로 — 언어별 번역이 lang_obj 에 들어 있다.
   const product = useFeaturedProduct();
   const featuredProducts = useFeaturedProducts({ excludeId: product?.id });
 
@@ -444,7 +444,7 @@ const Demo9 = (props) => {
 
       <QuoteSection>
         <Quote>
-          {t.quote ? t.quote : (
+          {홈문구(t, 'quote', currentLang) ? 홈문구(t, 'quote', currentLang) : (
             <>
               "<QuoteHighlight>{translate('하나만 만들어도 제대로')}</QuoteHighlight>,<br />
               그게 바로 {brandName}의 방식이에요."
@@ -480,7 +480,7 @@ const Demo9 = (props) => {
       )}
 
       <FinalCTA>
-        <FinalTitle>{t.final_title ? t.final_title : (<>지금이 {brandName}과<br />{translate('함께할 순간이에요 💕')}</>)}</FinalTitle>
+        <FinalTitle>{홈문구(t, 'final_title', currentLang) ? 홈문구(t, 'final_title', currentLang) : (<>지금이 {brandName}과<br />{translate('함께할 순간이에요 💕')}</>)}</FinalTitle>
         <div style={{ margin: '2rem 0' }}>
           <HeroPrice style={{ fontSize: '40px' }}>{commarNumberWithUnit(sale)}</HeroPrice>
         </div>

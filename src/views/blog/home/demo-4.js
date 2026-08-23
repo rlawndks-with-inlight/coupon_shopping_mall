@@ -3,7 +3,7 @@ import { useSettingsContext } from 'src/components/settings'
 import { themeObj } from 'src/components/elements/styled-components'
 import { LazyLoadImage } from 'react-lazy-load-image-component'
 import { commarNumber, commarNumberWithUnit } from 'src/utils/function'
-import { formatLang } from 'src/utils/format'
+import { formatLang, 홈문구 } from 'src/utils/format'
 import { useFeaturedProduct, useFeaturedProducts, getFeaturedCardData } from 'src/utils/use-featured-product'
 import { useLocales } from 'src/locales'
 import StorefrontEmptyHome from 'src/components/elements/shop/StorefrontEmptyHome'
@@ -317,7 +317,7 @@ const Demo4 = (props) => {
   const { func } = props;
   const router = func?.router;
   const brandName = themeDnsData?.name || 'BRAND';
-  const t = themeDnsData?.setting_obj?.home_texts?.demo4 ?? {}; // 가맹점 편집 문구(미입력 시 기본값)
+  const t = themeDnsData?.setting_obj?.home_texts?.demo4 ?? {}; // 가맹점 편집 문구(미입력 시 기본값). 읽을 때는 홈문구() 로 — 언어별 번역이 lang_obj 에 들어 있다.
   const product = useFeaturedProduct();
   const featuredProducts = useFeaturedProducts({ excludeId: product?.id });
 
@@ -350,13 +350,13 @@ const Demo4 = (props) => {
           <div>
             <HeroTop>
               <span>{brandName}</span>
-              <span>{t.edition || '№ 001'}</span>
+              <span>{홈문구(t, 'edition', currentLang) || '№ 001'}</span>
             </HeroTop>
             <HeroTitle>{name}</HeroTitle>
             <HeroMeta>
               <div>
                 <MetaLabel>{translate('종류')}</MetaLabel>
-                <MetaValue>{t.type_value || 'Signature'}</MetaValue>
+                <MetaValue>{홈문구(t, 'type_value', currentLang) || 'Signature'}</MetaValue>
               </div>
               <div>
                 <MetaLabel>{translate('연도')}</MetaLabel>
@@ -377,19 +377,19 @@ const Demo4 = (props) => {
         <BigNumGrid>
           <BigNumCell>
             <BigNum>01</BigNum>
-            <BigNumLabel>{t.bignum1_label || 'Premium'}</BigNumLabel>
+            <BigNumLabel>{홈문구(t, 'bignum1_label', currentLang) || 'Premium'}</BigNumLabel>
           </BigNumCell>
           <BigNumCell>
             <BigNum>02</BigNum>
-            <BigNumLabel>{t.bignum2_label || 'Crafted'}</BigNumLabel>
+            <BigNumLabel>{홈문구(t, 'bignum2_label', currentLang) || 'Crafted'}</BigNumLabel>
           </BigNumCell>
           <BigNumCell>
             <BigNum>03</BigNum>
-            <BigNumLabel>{t.bignum3_label || 'Timeless'}</BigNumLabel>
+            <BigNumLabel>{홈문구(t, 'bignum3_label', currentLang) || 'Timeless'}</BigNumLabel>
           </BigNumCell>
           <BigNumCell>
             <BigNum>04</BigNum>
-            <BigNumLabel>{t.bignum4_label || 'Unique'}</BigNumLabel>
+            <BigNumLabel>{홈문구(t, 'bignum4_label', currentLang) || 'Unique'}</BigNumLabel>
           </BigNumCell>
         </BigNumGrid>
       </BigNumSection>
@@ -412,7 +412,7 @@ const Demo4 = (props) => {
         <InfoRight>
           <InfoHeading>{translate('브랜드')}</InfoHeading>
           <InfoBody>
-            {t.brand_intro || translate('{{brand}}은(는) 단 하나의 제품에 집중하는 브랜드입니다. 여러 가지를 만들기보다 진심으로 자신 있는 하나에 몰입합니다.', { brand: brandName })}
+            {홈문구(t, 'brand_intro', currentLang) || translate('{{brand}}은(는) 단 하나의 제품에 집중하는 브랜드입니다. 여러 가지를 만들기보다 진심으로 자신 있는 하나에 몰입합니다.', { brand: brandName })}
           </InfoBody>
         </InfoRight>
       </InfoSection>

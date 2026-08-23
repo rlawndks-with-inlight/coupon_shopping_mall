@@ -3,7 +3,7 @@ import { useSettingsContext } from 'src/components/settings'
 import { themeObj } from 'src/components/elements/styled-components'
 import { LazyLoadImage } from 'react-lazy-load-image-component'
 import { commarNumber, commarNumberWithUnit } from 'src/utils/function'
-import { formatLang } from 'src/utils/format'
+import { formatLang, 홈문구 } from 'src/utils/format'
 import { useFeaturedProduct, useFeaturedProducts, getFeaturedCardData } from 'src/utils/use-featured-product'
 import { useLocales } from 'src/locales'
 import StorefrontEmptyHome from 'src/components/elements/shop/StorefrontEmptyHome'
@@ -429,7 +429,7 @@ const Demo6 = (props) => {
   const router = func?.router;
   const mainColor = themeDnsData?.theme_css?.main_color || '#8B7355';
   const brandName = themeDnsData?.name || 'BRAND';
-  const t = themeDnsData?.setting_obj?.home_texts?.demo6 ?? {}; // 가맹점 편집 문구(미입력 시 기본값)
+  const t = themeDnsData?.setting_obj?.home_texts?.demo6 ?? {}; // 가맹점 편집 문구(미입력 시 기본값). 읽을 때는 홈문구() 로 — 언어별 번역이 lang_obj 에 들어 있다.
   const product = useFeaturedProduct();
   const featuredProducts = useFeaturedProducts({ excludeId: product?.id });
 
@@ -490,22 +490,22 @@ const Demo6 = (props) => {
       {/* 3. Features */}
       <Section>
         <Container>
-          <SectionHeading>{t.feature_heading || `Why ${brandName}`}</SectionHeading>
+          <SectionHeading>{홈문구(t, 'feature_heading', currentLang) || `Why ${brandName}`}</SectionHeading>
           <FeatureGrid>
             <FeatureCard>
               <FeatureIcon>✦</FeatureIcon>
-              <FeatureTitle>{t.feature1_title || 'Premium Quality'}</FeatureTitle>
-              <FeatureDesc>{t.feature1_desc || '최고급 원료와 장인의 손길로 완성된 품질. 엄선된 재료만을 사용합니다.'}</FeatureDesc>
+              <FeatureTitle>{홈문구(t, 'feature1_title', currentLang) || 'Premium Quality'}</FeatureTitle>
+              <FeatureDesc>{홈문구(t, 'feature1_desc', currentLang) || '최고급 원료와 장인의 손길로 완성된 품질. 엄선된 재료만을 사용합니다.'}</FeatureDesc>
             </FeatureCard>
             <FeatureCard>
               <FeatureIcon>♡</FeatureIcon>
-              <FeatureTitle>{t.feature2_title || 'Thoughtful Design'}</FeatureTitle>
-              <FeatureDesc>{t.feature2_desc || '오랜 시간 다듬어진 디자인. 일상에 품격을 더하는 섬세한 디테일.'}</FeatureDesc>
+              <FeatureTitle>{홈문구(t, 'feature2_title', currentLang) || 'Thoughtful Design'}</FeatureTitle>
+              <FeatureDesc>{홈문구(t, 'feature2_desc', currentLang) || '오랜 시간 다듬어진 디자인. 일상에 품격을 더하는 섬세한 디테일.'}</FeatureDesc>
             </FeatureCard>
             <FeatureCard>
               <FeatureIcon>✧</FeatureIcon>
-              <FeatureTitle>{t.feature3_title || 'Time-honored'}</FeatureTitle>
-              <FeatureDesc>{t.feature3_desc || '전통과 현대의 조화. 변하지 않는 가치를 담아 오래도록 함께하는 선택.'}</FeatureDesc>
+              <FeatureTitle>{홈문구(t, 'feature3_title', currentLang) || 'Time-honored'}</FeatureTitle>
+              <FeatureDesc>{홈문구(t, 'feature3_desc', currentLang) || '전통과 현대의 조화. 변하지 않는 가치를 담아 오래도록 함께하는 선택.'}</FeatureDesc>
             </FeatureCard>
           </FeatureGrid>
         </Container>
@@ -521,7 +521,7 @@ const Demo6 = (props) => {
             <StoryLabel $color={mainColor}>Our Story</StoryLabel>
             <StoryTitle>{translate('단 하나의 완성,')}<br />{brandName}</StoryTitle>
             <StoryBody>
-              {t.story_body ? t.story_body : (
+              {홈문구(t, 'story_body', currentLang) ? 홈문구(t, 'story_body', currentLang) : (
                 <>{translate('오랜 시간 연구와 다듬음을 거쳐 완성된 단 하나의 제품입니다.')}<br /><br />
                   저희는 여러 가지를 한꺼번에 만들기보다, 진심으로 자신 있는 하나에 집중합니다.
                   이것이 저희가 고객에게 드릴 수 있는 가장 정성스러운 선물입니다.
@@ -584,9 +584,9 @@ const Demo6 = (props) => {
       {/* 7. Final CTA */}
       <FinalCTA $color={mainColor}>
         <Container>
-          <FinalCTATitle>{t.final_title || `Experience ${brandName}`}</FinalCTATitle>
+          <FinalCTATitle>{홈문구(t, 'final_title', currentLang) || `Experience ${brandName}`}</FinalCTATitle>
           <FinalCTADesc>
-            {t.final_desc ? t.final_desc : (
+            {홈문구(t, 'final_desc', currentLang) ? 홈문구(t, 'final_desc', currentLang) : (
               <>
                 지금 바로 {brandName}의 시그니처를 만나보세요.
                 <br />{translate('한 번의 선택이 일상을 바꿉니다.')}</>

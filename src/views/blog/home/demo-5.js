@@ -2,7 +2,7 @@ import styled from 'styled-components'
 import { useSettingsContext } from 'src/components/settings'
 import { LazyLoadImage } from 'react-lazy-load-image-component'
 import { commarNumber, commarNumberWithUnit } from 'src/utils/function'
-import { formatLang } from 'src/utils/format'
+import { formatLang, 홈문구 } from 'src/utils/format'
 import { useFeaturedProduct, useFeaturedProducts, getFeaturedCardData } from 'src/utils/use-featured-product'
 import { useLocales } from 'src/locales'
 import StorefrontEmptyHome from 'src/components/elements/shop/StorefrontEmptyHome'
@@ -324,7 +324,7 @@ const Demo5 = (props) => {
   const { func } = props;
   const router = func?.router;
   const brandName = themeDnsData?.name || 'BRAND';
-  const t = themeDnsData?.setting_obj?.home_texts?.demo5 ?? {}; // 가맹점 편집 문구(미입력 시 기본값)
+  const t = themeDnsData?.setting_obj?.home_texts?.demo5 ?? {}; // 가맹점 편집 문구(미입력 시 기본값). 읽을 때는 홈문구() 로 — 언어별 번역이 lang_obj 에 들어 있다.
   const product = useFeaturedProduct();
   const featuredProducts = useFeaturedProducts({ excludeId: product?.id });
 
@@ -377,22 +377,22 @@ const Demo5 = (props) => {
       </Hero>
 
       <SpecSection>
-        <SectionHeading>{t.spec_heading || 'Excellence, Defined'}</SectionHeading>
+        <SectionHeading>{홈문구(t, 'spec_heading', currentLang) || 'Excellence, Defined'}</SectionHeading>
         <SpecGrid>
           <SpecCell>
             <SpecIcon>✦</SpecIcon>
-            <SpecTitle>{t.spec1_title || 'Pure Craftsmanship'}</SpecTitle>
-            <SpecDesc>{t.spec1_desc || '한 땀 한 땀 정성으로 완성된 장인의 작품.'}</SpecDesc>
+            <SpecTitle>{홈문구(t, 'spec1_title', currentLang) || 'Pure Craftsmanship'}</SpecTitle>
+            <SpecDesc>{홈문구(t, 'spec1_desc', currentLang) || '한 땀 한 땀 정성으로 완성된 장인의 작품.'}</SpecDesc>
           </SpecCell>
           <SpecCell>
             <SpecIcon>♦</SpecIcon>
-            <SpecTitle>{t.spec2_title || 'Rare Materials'}</SpecTitle>
-            <SpecDesc>{t.spec2_desc || '세계 각지에서 엄선된 최고의 원료만을 사용.'}</SpecDesc>
+            <SpecTitle>{홈문구(t, 'spec2_title', currentLang) || 'Rare Materials'}</SpecTitle>
+            <SpecDesc>{홈문구(t, 'spec2_desc', currentLang) || '세계 각지에서 엄선된 최고의 원료만을 사용.'}</SpecDesc>
           </SpecCell>
           <SpecCell>
             <SpecIcon>♛</SpecIcon>
-            <SpecTitle>{t.spec3_title || 'Timeless Elegance'}</SpecTitle>
-            <SpecDesc>{t.spec3_desc || '유행에 흔들리지 않는 영원한 아름다움.'}</SpecDesc>
+            <SpecTitle>{홈문구(t, 'spec3_title', currentLang) || 'Timeless Elegance'}</SpecTitle>
+            <SpecDesc>{홈문구(t, 'spec3_desc', currentLang) || '유행에 흔들리지 않는 영원한 아름다움.'}</SpecDesc>
           </SpecCell>
         </SpecGrid>
       </SpecSection>
@@ -402,7 +402,7 @@ const Demo5 = (props) => {
           <StoryLabel>MAISON STORY</StoryLabel>
           <StoryTitle>The Art of {brandName}</StoryTitle>
           <StoryQuote>
-            {t.story_quote || '"완벽을 추구한다는 것은 평범한 것을 만드는 것이 아닙니다. 오랜 시간 수많은 시도 끝에 단 하나의 답을 찾아내는 여정입니다."'}
+            {홈문구(t, 'story_quote', currentLang) || '"완벽을 추구한다는 것은 평범한 것을 만드는 것이 아닙니다. 오랜 시간 수많은 시도 끝에 단 하나의 답을 찾아내는 여정입니다."'}
           </StoryQuote>
         </StoryInner>
       </StorySection>

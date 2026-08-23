@@ -307,6 +307,16 @@ const upperFirst = (text) => {
     return s.slice(0, i) + s.charAt(i).toUpperCase() + s.slice(i + 1);
 };
 
+// 가맹점이 홈 화면(디자인관리 › 홈 문구)에 직접 넣은 문구를 화면 언어로 읽는다.
+//
+// 이 값들은 brands.setting_obj 안의 JSON 이라 번역 대기열(테이블+컬럼 단위)에 담을 수 없다.
+// 대신 저장 시점에 백엔드(lang-process.js brandSettingLang)가 번역해서 같은 묶음 안에
+// lang_obj 로 넣어 둔다. 여기서는 formatLang 이 그 lang_obj 를 읽기만 하면 된다.
+//
+// 번역이 없으면(언어팩 꺼짐·번역 실패·한국어 화면) 원문을 그대로 돌려준다.
+// 그래서 화면 쪽 `홈문구(t, '키', currentLang) || '기본값'` 이 예전과 똑같이 동작한다.
+export const 홈문구 = (t, key, lang) => formatLang(t ?? {}, key, lang);
+
 export const formatLang = (obj = {}, column, lang) => {
     const lang_obj = parseLangObj(obj?.lang_obj);
     // lang 은 useLocales().currentLang 객체({value:'cn',...})로 들어오지만

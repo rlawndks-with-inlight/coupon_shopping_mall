@@ -25,6 +25,7 @@ import BlogLayout4 from "./blog/demo-4/BlogLayout2";
 import BlogLayout5 from "./blog/demo-5/BlogLayout2";
 import BlogLayout6 from "./blog/demo-6/BlogLayout6";
 import SecurityQuestionBanner from "src/components/elements/shop/SecurityQuestionBanner";
+import GuestSignupPrompt from "src/components/elements/shop/GuestSignupPrompt";
 import { isBlogBrand } from "src/utils/blog-shop-route";
 
 const Wrappers = styled.div`
@@ -141,6 +142,9 @@ const ShopLayout = ({ children, scrollToTop }) => {
               children: (
                 <>
                   <SecurityQuestionBanner />
+                  {/* 비로그인 손님이 담기·바로구매를 누르면 회원가입을 한 번 권한다.
+                      창 자체는 여기 한 번만 걸고, 부르는 곳은 shop-util 의 두 길목이다. */}
+                  <GuestSignupPrompt />
                   {children}
                 </>
               ),

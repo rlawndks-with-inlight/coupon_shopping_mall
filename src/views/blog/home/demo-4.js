@@ -312,7 +312,7 @@ const FeaturedPrice = styled.div`
 `
 
 const Demo4 = (props) => {
-  const { currentLang } = useLocales();
+  const { translate, currentLang } = useLocales();
   const { themeDnsData } = useSettingsContext();
   const { func } = props;
   const router = func?.router;
@@ -355,17 +355,17 @@ const Demo4 = (props) => {
             <HeroTitle>{name}</HeroTitle>
             <HeroMeta>
               <div>
-                <MetaLabel>Type</MetaLabel>
+                <MetaLabel>{translate('종류')}</MetaLabel>
                 <MetaValue>{t.type_value || 'Signature'}</MetaValue>
               </div>
               <div>
-                <MetaLabel>Year</MetaLabel>
+                <MetaLabel>{translate('연도')}</MetaLabel>
                 <MetaValue>{new Date().getFullYear()}</MetaValue>
               </div>
             </HeroMeta>
           </div>
           <div>
-            <CTABtn onClick={goTo}>Buy Now →</CTABtn>
+            <CTABtn onClick={goTo}>{translate('구매하기')} →</CTABtn>
           </div>
         </HeroLeft>
         <HeroRight>
@@ -402,22 +402,22 @@ const Demo4 = (props) => {
 
       <InfoSection>
         <InfoLeft>
-          <InfoHeading>The Product</InfoHeading>
+          <InfoHeading>{translate('상품')}</InfoHeading>
           <InfoBody>
-            {comment || `${brandName} 시그니처 제품입니다. 단 하나의 제품에 모든 정성을 담아 완성했습니다.`}
+            {comment || translate('{{brand}} 시그니처 제품입니다. 단 하나의 제품에 모든 정성을 담아 완성했습니다.', { brand: brandName })}
           </InfoBody>
         </InfoLeft>
         <InfoRight>
-          <InfoHeading>The Brand</InfoHeading>
+          <InfoHeading>{translate('브랜드')}</InfoHeading>
           <InfoBody>
-            {t.brand_intro || `${brandName}은(는) 단 하나의 제품에 집중하는 브랜드입니다. 여러 가지를 만들기보다 진심으로 자신 있는 하나에 몰입합니다.`}
+            {t.brand_intro || translate('{{brand}}은(는) 단 하나의 제품에 집중하는 브랜드입니다. 여러 가지를 만들기보다 진심으로 자신 있는 하나에 몰입합니다.', { brand: brandName })}
           </InfoBody>
         </InfoRight>
       </InfoSection>
 
       {featuredProducts.length > 0 && (
         <FeaturedSection>
-          <InfoHeading>More</InfoHeading>
+          <InfoHeading>{translate('더보기')}</InfoHeading>
           <FeaturedGrid>
             {featuredProducts.map((item) => {
               const c = getFeaturedCardData(item, currentLang);
@@ -443,14 +443,14 @@ const Demo4 = (props) => {
       )}
 
       <PriceSection>
-        <PriceLabel>Price</PriceLabel>
+        <PriceLabel>{translate('가격')}</PriceLabel>
         {hasSale && (
           <div style={{ fontSize: '18px', textDecoration: 'line-through', opacity: 0.4, marginBottom: '0.5rem' }}>
             {commarNumberWithUnit(orig)} · {disc}% OFF
           </div>
         )}
         <PriceValue>{commarNumberWithUnit(sale)}</PriceValue>
-        <CTABtn onClick={goTo}>Order Now →</CTABtn>
+        <CTABtn onClick={goTo}>{translate('주문하기')} →</CTABtn>
       </PriceSection>
     </Wrapper>
   );

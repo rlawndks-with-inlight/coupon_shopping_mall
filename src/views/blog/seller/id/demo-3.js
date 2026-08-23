@@ -159,9 +159,9 @@ const Demo3 = (props) => {
         setSelectProductGroups({ ...select_product_groups });
     }
 
-    const handleAddCart = () => {
+    const handleAddCart = async () => {
         // 비회원도 담기 허용(카트→주문서에서 비회원 주문비밀번호로 진행)
-        let result = insertCartDataUtil(
+        let result = await insertCartDataUtil(
             { ...selectedItem, seller_id: router.query?.id ?? 0 },
             selectProductGroups, themeCartData, onChangeCartData
         );

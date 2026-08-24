@@ -23,7 +23,7 @@ import 'react-credit-cards/es/styles-compiled.css'
 // lazy image
 import 'react-lazy-load-image-component/src/effects/blur.css'
 import { Toaster } from 'react-hot-toast'
-import { ogDeliveryUrl } from 'src/data/data'
+import { ogDeliveryUrl, canonicalUrl } from 'src/data/data'
 import { AuthProvider } from 'src/layouts/manager/auth/JwtContext'
 import { useEffect } from 'react'
 import ThemeContrast from 'src/components/settings/ThemeContrast'
@@ -121,7 +121,7 @@ const App = props => {
           <meta property='og:title' content={head_data?.name || headData?.name} />
           {/* 원본을 그대로 내보내면 카카오톡이 못 가져간다(500KB 상한). 800x400 으로 줄여 보낸다. */}
           <meta property='og:image' content={ogDeliveryUrl(head_data?.og_img || headData?.og_img)} />
-          <meta property='og:url' content={'https://' + head_data?.dns || headData?.dns} />
+          <meta property='og:url' content={canonicalUrl(head_data?.dns || headData?.dns)} />
           <meta property='og:description' content={head_data?.og_description || headData?.og_description} />
           <meta name='author' content='purplevery' />
           <meta

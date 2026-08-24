@@ -56,6 +56,24 @@ export const logoDeliveryUrl = (url) => {
   return src.replace('/upload/', `/upload/${LOGO_TRANSFORM}/`);
 };
 
+// 이 몰의 '정식 주소'. og:url 로 내보내는 값이다.
+//
+// 수집기(카카오·페이스북 등)는 og:url 을 그 문서의 대표 주소로 본다.
+// 그래서 여기 값이 실제 열리는 주소와 다르면, 같은 페이지가 여러 주소로 흩어져
+// 미리보기 캐시도 따로 잡힌다(가맹점이 겪은 '주소마다 다르게 나온다'가 이것이다).
+//
+// 고친 것 두 가지 — 둘 다 실제로 틀려 있었다.
+//   · components/head 는 'https:' + dns 라 슬래시 두 개가 빠졌다 → https:mbc01... (깨진 주소)
+//   · _app.js 는 ('https://' + dns) || 폴백 이라 앞이 항상 참이다.
+//     dns 가 없으면 'https://undefined' 가 나가고 폴백은 영영 안 쓰인다.
+// 끝의 '/' 는 next.config.js 의 trailingSlash: true 와 맞춘 것이다 —
+// 실제로 열리는 정식 주소가 'https://도메인/' 이다.
+export const canonicalUrl = (dns) => {
+  const d = String(dns ?? '').trim().replace(/^https?:\/\//, '').replace(/\/+$/, '');
+  if (!d) return '';
+  return `https://${d}/`;
+};
+
 // 카카오톡·SNS 미리보기 이미지 주소. 저장된 원본을 800x400 / 60KB 안팎으로 줄여 내보낸다.
 // 클라우디너리에 올라간 것만 손대고, 밖에서 온 주소는 그대로 둔다(변환을 붙일 수 없다).
 export const ogDeliveryUrl = (url) => {

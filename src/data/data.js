@@ -22,12 +22,44 @@ import { useSettingsContext } from 'src/components/settings';
 const CLOUDINARY_DELIVERY = 'https://res.cloudinary.com/';
 const LOGO_TRANSFORM = 'e_trim/h_176,w_560,c_fit,f_auto,q_auto';
 
+// 카카오톡 미리보기(og:image)용 변환.
+//
+// [왜 필요한가]
+// 가맹점이 올린 원본이 규격도 용량도 손대지 않은 채 그대로 og:image 로 나갔다.
+// mbc01 은 1923x818 · 2,608KB 짜리가 나가고 있었다. 미리보기 한 장에 2.6MB 를 태울 이유가 없고,
+// 카카오 권장 규격(2:1 · 800x400)과도 안 맞아 어디서 잘릴지 가맹점이 알 수 없었다.
+//
+// ⚠ '500KB 를 넘으면 카카오가 아예 안 가져간다'는 말이 이 저장소에 있었는데,
+//   출처가 불분명하고 확인된 적이 없다. 근거로 쓰지 말 것.
+//   실제로 '바꿔도 반영이 안 되던' 원인은 용량이 아니라 **카카오의 URL 단위 캐시**였다
+//   (주소 뒤에 ?v=2 를 붙이니 글·그림이 즉시 새로 떴다 — 2026-08-24 확인).
+//   그러니 이 변환은 '안 뜨는 것을 뜨게 하는 수단'이 아니라 규격·용량을 바로잡는 것이다.
+//
+// [값]
+//   c_fill,g_auto  카카오 권장 비율 2:1 로 채워 자른다(g_auto = 중요한 부분을 남긴다)
+//   w_800,h_400    카카오 권장 크기
+//   f_jpg          형식을 못 박는다. f_auto 는 webp 를 내줄 수 있는데 카카오 수집기가
+//                  가져가지 못하면 미리보기가 통째로 비어 버린다.
+//   q_auto:good    실측 2,608KB → 62KB
+const OG_TRANSFORM = 'c_fill,g_auto,w_800,h_400,f_jpg,q_auto:good';
+
 export const logoDeliveryUrl = (url) => {
   const src = String(url ?? '');
   if (!src.startsWith(CLOUDINARY_DELIVERY)) return src;
   if (!src.includes('/upload/')) return src;
   if (src.includes('/upload/e_trim')) return src;
   return src.replace('/upload/', `/upload/${LOGO_TRANSFORM}/`);
+};
+
+// 카카오톡·SNS 미리보기 이미지 주소. 저장된 원본을 800x400 / 60KB 안팎으로 줄여 내보낸다.
+// 클라우디너리에 올라간 것만 손대고, 밖에서 온 주소는 그대로 둔다(변환을 붙일 수 없다).
+export const ogDeliveryUrl = (url) => {
+  const src = String(url ?? '');
+  if (!src.startsWith(CLOUDINARY_DELIVERY)) return src;
+  if (!src.includes('/upload/')) return src;
+  // 이미 변환이 걸린 주소는 두 번 붙이지 않는다.
+  if (src.includes('/upload/c_fill')) return src;
+  return src.replace('/upload/', `/upload/${OG_TRANSFORM}/`);
 };
 
 // 로고 미등록 브랜드 처리:

@@ -767,18 +767,28 @@ const DefaultSetting = () => {
                         {/* 바꾼 직후에 안 바뀌어 보이는 진짜 이유는 카카오의 URL 단위 캐시다.
                             2026-08-24 에 실제로 겪었고, 주소 뒤에 ?v=2 를 붙이니 즉시 새 카드가 떴다.
                             '주소를 바꿔 보내기'를 먼저 안내하는 이유: 카카오 계정도, 개발자 사이트도 필요 없다.
+                            ⚠ 물음표가 빠진 /v=2 는 404 다(경로로 읽힌다). 그런데 _app.js 가 어느 페이지든
+                              같은 og 를 내보내서 미리보기 카드는 멀쩡해 보인다 — 손님만 오류 페이지로 간다.
+                              실제로 그렇게 보낸 사례가 있어(2026-08-24) 경고를 눈에 띄게 붙였다.
                             (개발자 도구의 캐시 초기화는 어떤 계정이어야 하는지 확인되지 않았다 — 확인 전에는
                              가맹점에게 그걸 먼저 시키지 않는다) */}
                         {(item.og_file || item.og_img) && (
                           <Alert severity='info' sx={{ py: 0.5 }}>
-                            <Typography variant='caption'>
+                            <Typography variant='caption' component='div'>
                               <b>바꾸신 내용이 카카오톡에 바로 안 보이나요?</b> 저장이 안 된 것이 아닙니다.
                               카카오톡이 주소마다 예전 내용을 기억해 두기 때문입니다.
-                              주소 뒤에 <b>?v=2</b> 를 붙여서 보내 보세요 &mdash;
-                              예: {`https://${item?.dns || '내쇼핑몰주소'}/?v=2`}
-                              <br />
-                              화면은 똑같이 열리고, 바꾸신 내용이 바로 보입니다.
-                              (다음에 또 바꾸시면 v=3, v=4 처럼 숫자만 올리시면 됩니다)
+                              아래 주소로 한 번 보내시면 바뀐 내용이 바로 보입니다.
+                              <Box component='code' sx={{
+                                display: 'block', my: 0.75, px: 1, py: 0.75, borderRadius: 1,
+                                bgcolor: 'background.neutral', fontSize: 13, wordBreak: 'break-all',
+                              }}>
+                                {`https://${item?.dns || '내쇼핑몰주소'}/?v=2`}
+                              </Box>
+                              화면은 평소와 똑같이 열립니다. 다음에 또 바꾸시면 <b>v=3</b>, <b>v=4</b> 처럼 숫자만 올리세요.
+                              <Box sx={{ mt: 0.5, color: 'error.main' }}>
+                                <b>물음표(?)를 꼭 넣으세요.</b> 물음표 없이 <b>/v=2</b> 로 보내면
+                                미리보기는 멀쩡해 보여도 손님이 누를 때 &lsquo;페이지 없음&rsquo; 이 뜹니다.
+                              </Box>
                             </Typography>
                           </Alert>
                         )}

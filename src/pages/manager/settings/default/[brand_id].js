@@ -719,17 +719,21 @@ const DefaultSetting = () => {
                             근거:
                               · 오른쪽 '카카오톡 링크 전송 시 예시'의 OgImg 가 400x200 = 2:1 이다.
                                 background-size: cover 라 비율이 다르면 실제로 잘린다.
-                              · og:image 는 _app.js 에서 저장된 주소를 그대로 내보낸다(변환 없음).
-                                즉 올린 파일 용량이 그대로 카카오에 전달된다 — 500KB 제한이 진짜로 걸린다.
-                                (카카오 개발자포럼 기준. 로고의 '1MB'처럼 아무도 안 지키는 숫자가 아니다) */}
+                              · 규격·용량은 이제 시스템이 맞춰서 내보낸다(data.js 의 ogDeliveryUrl).
+                                예전에는 저장된 주소를 그대로 내보내서 1923x818 · 2,608KB 짜리가 그대로 나갔다.
+                                지금은 800x400 · 62KB 로 나간다.
+                                ⚠ 예전에 여기 '500KB 넘으면 카카오가 안 가져간다'고 적혀 있었다. 사실이 아니다.
+                                  2,608KB 짜리도 카카오가 그대로 가져갔다(2026-08-24, ?v=2 로 확인).
+                                  '바꿔도 반영이 안 되던' 원인은 용량이 아니라 카카오의 URL 단위 캐시였다. */}
                         <Stack spacing={0.25}>
                           <Typography variant='caption' sx={{ color: 'text.secondary' }}>
-                            가로 : 세로 = 2 : 1 · 800 × 400 권장 · 500KB 이하
+                            가로 : 세로 = 2 : 1 · 800 × 400 권장
                           </Typography>
                           {[
                             '카카오톡으로 쇼핑몰 주소를 보내거나 검색 결과에 뜰 때 함께 보이는 그림입니다.',
                             '로고와 달리, 비율이 2:1 이 아니면 넘치는 부분이 잘립니다. 중요한 글자는 가장자리에 두지 마세요.',
-                            '500KB를 넘으면 카카오톡에서 미리보기가 아예 뜨지 않습니다.',
+                            '용량은 신경 쓰지 않으셔도 됩니다. 큰 파일을 올리셔도 카카오톡에 맞는 크기로 줄여서 내보냅니다.',
+                            '바꾸신 내용이 카카오톡에 바로 안 보이면 아래 안내를 참고하세요.',
                           ].map(줄 => (
                             <Typography key={줄} variant='caption' sx={{ color: 'text.disabled', lineHeight: 1.6 }}>
                               · {줄}
@@ -760,11 +764,42 @@ const DefaultSetting = () => {
                         {/* 용량은 고르는 순간 File.size 로 바로 알 수 있다. 저장한 뒤에 알면 늦다 —
                             카카오는 넘치면 그냥 안 띄우고, 왜 안 뜨는지 알려 주지 않는다.
                             이미 저장된 주소는 용량을 알 수 없으므로(다른 도메인) 그때는 아무 말도 안 한다. */}
-                        {item.og_file?.size > 500 * 1024 && (
-                          <Alert severity='warning' sx={{ py: 0.5 }}>
-                            <Typography variant='caption'>
-                              올리신 파일이 {Math.round(item.og_file.size / 1024)}KB 입니다. 카카오톡은 500KB가
-                              넘으면 미리보기를 띄우지 않습니다 — 용량을 줄여 다시 올려 주세요.
+                        {/* '주소 뒤에 ?v=2 를 붙여 보내라'고 안내했었는데 걷어낸다.
+                            편법을 가맹점에게 외우게 하는 것도 문제지만, 물음표를 빠뜨린 /v=2 는
+                            404 인데 미리보기만 멀쩡해 보여서 손님만 오류 페이지로 간다.
+
+                            카카오가 캐시를 지우는 공식 도구를 준다(로그인 필요, 직접 확인함).
+                            REST API 는 없다 — 데브톡에서 물어봤지만 답이 없다. 즉 저장할 때
+                            우리가 대신 지워 줄 방법이 없다. 그래서 '사람이 눌러야 하는 일'을
+                            최대한 줄인다: 주소를 클립보드에 넣고 도구를 새 창으로 연다. 붙여넣기만 하면 된다.
+
+                            ⚠ 캐시를 지워도 '이미 보낸 대화방'에는 옛 카드가 남는다.
+                              카카오 공식 안내가 "새로운 대화방에서 테스트하라"고 못 박는다. */}
+                        {(item.og_file || item.og_img) && (
+                          <Alert severity='info' sx={{ py: 0.5 }}>
+                            <Typography variant='caption' component='div'>
+                              <b>바꾸신 내용이 카카오톡에 바로 안 보이나요?</b> 저장이 안 된 것이 아닙니다.
+                              카카오톡이 주소마다 예전 내용을 기억해 두기 때문입니다.
+                              아래 버튼을 눌러 한 번 지워 주시면 바로 반영됩니다.
+                              <Button
+                                size='small'
+                                variant='outlined'
+                                sx={{ mt: 1, mb: 0.5 }}
+                                onClick={async () => {
+                                  const 주소 = `https://${item?.dns || ''}/`;
+                                  try { await navigator.clipboard.writeText(주소); } catch (e) { /* 붙여넣기는 손으로 해도 된다 */ }
+                                  window.open('https://developers.kakao.com/tool/clear/og', '_blank', 'noopener');
+                                }}
+                              >
+                                카카오 미리보기 새로고침
+                              </Button>
+                              <Box component='div' sx={{ color: 'text.disabled' }}>
+                                쇼핑몰 주소가 복사됩니다. 열린 창에 붙여넣고 「초기화」를 누르세요.
+                                (카카오 계정 로그인이 필요합니다)
+                              </Box>
+                              <Box component='div' sx={{ mt: 0.5, color: 'error.main' }}>
+                                <b>확인은 새 대화방에서 하세요.</b> 이미 보낸 대화방에는 예전 카드가 그대로 남습니다.
+                              </Box>
                             </Typography>
                           </Alert>
                         )}

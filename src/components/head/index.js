@@ -1,4 +1,5 @@
 import Head from "next/head";
+import { ogDeliveryUrl, canonicalUrl } from "src/data/data";
 const HeadContent = ({ dns_data }) => {
   return (
     <>
@@ -14,8 +15,9 @@ const HeadContent = ({ dns_data }) => {
         <meta httpEquiv="Content-Type" content="text/html; charset=utf-8" />
         <meta property="og:type" content="website" />
         <meta property="og:title" content={dns_data?.name} />
-        <meta property="og:image" content={dns_data?.og_img} />
-        <meta property="og:url" content={'https:' + dns_data?.dns} />
+        {/* 원본을 그대로 내보내면 카카오톡이 못 가져간다(500KB 상한). 800x400 으로 줄여 보낸다. */}
+        <meta property="og:image" content={ogDeliveryUrl(dns_data?.og_img)} />
+        <meta property="og:url" content={canonicalUrl(dns_data?.dns)} />
         <meta property="og:description" content={dns_data?.og_description} />
         <meta name="author" content="purplevery" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=5.0, user-scalable=0" />

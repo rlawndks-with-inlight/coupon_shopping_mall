@@ -337,20 +337,29 @@ export const navConfig = () => {
               ...(isUsePostCategory() ? [{ title: '게시판 카테고리 관리', path: PATH_MANAGER.articles.categories }] : []),
               ...(user?.level >= 10 && user?.level <= 20
                 ? postCategoryList.filter((item) => item.id === 91)
-                : postCategoryList)
+                : postCategoryList),
+              // 팝업관리는 원래 디자인관리 아래 있었다. 가맹점 의견으로 여기로 옮겼다 —
+              // 공지·문의처럼 '손님에게 알리는 것'이라 한자리에 모이는 편이 찾기 쉽다.
+              //
+              // ⚠ 주소는 /manager/designs/popup 그대로 둔다. 파일을 articles 아래로 옮기면
+              //   가맹점 북마크와 매니저 가이드의 링크가 통째로 깨진다. 메뉴 위치만 옮긴 것이다.
+              //
+              // 권한도 이 그룹(레벨 10 이상)에 맞춘다. 예전 디자인관리는 40 이상이었으므로
+              // 레벨 10~20 계정에도 새로 보이게 된다 — 의도한 변경이다.
+              { title: '팝업관리', path: PATH_MANAGER.designs.popup },
             ],
           },
         ],
       },
     ] : []),
-    ...(isManager() ? [
-      {
-        items: [
-          {
-            title: '디자인관리',
-            path: PATH_MANAGER.designs.root,
-            icon: ICONS.label,
-            children: [
+    // 디자인관리 — 하위 항목이 하나도 없으면 그룹 자체를 내린다.
+    //
+    // 여기 하위는 전부 조건부다(데모 번호·레벨50·설정값). 팝업관리를 게시판관리로 옮기면서
+    // '모든 조건이 안 맞는 조합'에서는 하위가 통째로 빌 수 있게 됐다.
+    // 빈 채로 두면 눌렀을 때 /manager/designs 로 갔다가 메인페이지관리로 튕긴다 —
+    // 그 몰에는 메인페이지관리가 없는데도. 그래서 비면 아예 안 그린다.
+    ...((() => {
+      const 디자인_하위 = [
               // { title: '기본설정', path: PATH_MANAGER.designs.settings },
               ...(themeDnsData?.shop_demo_num > 0 && isShopSectionBuilder ? [{
                 title: `${themeDnsData?.shop_demo_num > 0 && themeDnsData?.blog_demo_num > 0 ? '쇼핑몰 ' : ''}메인페이지관리`, path: PATH_MANAGER.designs.main, children: [
@@ -378,14 +387,22 @@ export const navConfig = () => {
               ...((isDeveloper() && themeDnsData?.blog_demo_num > 0 && themeDnsData?.setting_obj?.is_use_item_card_style == 1) ? [{ title: `${themeDnsData?.shop_demo_num > 0 && themeDnsData?.blog_demo_num > 0 ? '블로그 ' : ''}상품카드관리`, path: PATH_MANAGER.designs.blogItemCard }] : []),
               ...([4, 5, 6, 7, 8, 9].includes(Number(themeDnsData?.blog_demo_num)) ? [{ title: '대표 상품', path: '/manager/designs/featured' }] : []),
               ...(Object.keys(HOME_TEXT_SCHEMA).map(Number).includes(Number(themeDnsData?.blog_demo_num)) ? [{ title: '홈 문구', path: '/manager/designs/home-texts' }] : []),
-              { title: '팝업관리', path: PATH_MANAGER.designs.popup },
+              // ※ '팝업관리'는 게시판관리 아래로 옮겼다(가맹점 의견). 주소는 그대로다.
               // ※ '혜택 안내(전 가맹점)'는 여기가 아니라 위쪽 마스터 전용 목록에 있다.
               //   마스터는 이 아래로 내려오지 않고, 가맹점에는 보이면 안 되는 메뉴다.
-            ],
+      ];
+      if (!isManager() || 디자인_하위.length === 0) return [];
+      return [{
+        items: [
+          {
+            title: '디자인관리',
+            path: PATH_MANAGER.designs.root,
+            icon: ICONS.label,
+            children: 디자인_하위,
           },
         ],
-      },
-    ] : []),
+      }];
+    })()),
     ...(isManager() ? [
       {
         items: [

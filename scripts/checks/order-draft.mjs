@@ -133,8 +133,11 @@ const prompt = 읽기('src/components/elements/shop/GuestSignupPrompt.js');
 const util = 읽기('src/utils/guest-prompt.js');
 const shop = 읽기('src/utils/shop-util.js');
 
-t('주문서에서도 유도한다', /askGuestSignup\(\);/.test(sheet),
-    "'주문하기'는 카트 화면 10개에 흩어져 있다 — 도착지인 주문서에 한 번 건다");
+// 주문서에서는 권하지 않는다. 넣었다가 걷어냈다(2026-08-25) —
+// 이름·연락처·배송지를 다 쓰고 비회원 주문 비밀번호까지 정한 뒤에 물으면 방해로만 읽힌다.
+// 유도는 그 앞 단계(담기·바로구매)에서 이미 한다. 그 둘을 거치지 않고 주문서에 닿는 길은 없다.
+t('주문서에서는 유도하지 않는다', !/askGuestSignup\(/.test(주석제거(sheet)),
+    '주문서까지 온 손님을 붙잡으면 유도가 아니라 이탈이 된다');
 t('장바구니 담기에서 유도한다', /if \(!\(await askGuestSignup\(\)\)\) return false;/.test(shop));
 t('담기·바로구매 두 길목 모두에 있다', (shop.match(/await askGuestSignup\(\)/g) ?? []).length === 2);
 

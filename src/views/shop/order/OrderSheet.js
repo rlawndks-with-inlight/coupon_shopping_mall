@@ -17,7 +17,7 @@ import Iconify from 'src/components/iconify/Iconify';
 import { useSettingsContext } from 'src/components/settings';
 import { calcOrderTotals, calculatorPrice, getCartDataUtil, makePayData, onPayProductsByAuth, onPayProductsByHand, onPayProductsByPayletter, onPayProductsByForspay } from 'src/utils/shop-util';
 import { loadOrderDraft, saveOrderDraft, clearOrderDraft } from 'src/utils/order-draft';
-import { askGuestSignup } from 'src/utils/guest-prompt';
+
 import { findMissingRequired } from 'src/data/order-form-types';
 import { syncCartWithServer, makeUnavailableMessage, filterUnavailableByProducts } from 'src/utils/cart-sync';
 import { forspayMethodList, formatLang } from 'src/utils/format';
@@ -143,18 +143,15 @@ export default function OrderSheet({ router }) {
     getCart();
   }, []);
 
-  // ── 비로그인 손님에게 회원가입 권하기 ───────────────────────────────────
+  // ⚠ 이 화면에서는 회원가입을 권하지 않는다. 넣었다가 걷어냈다(2026-08-25).
   //
-  // '주문하기' 버튼은 카트 화면 10개(shop 데모 9 + blog 공용)에 흩어져 있다.
-  // 열 군데에 각각 걸면 프레임이 늘 때 또 빠지므로, 둘 다 도착하는 이 화면에 한 번 건다
-  // (바로구매도 장바구니도 결국 여기로 온다).
+  //   주문서까지 온 손님은 이미 사기로 마음먹은 사람이다. 이름·연락처·배송지를 다 쓰고
+  //   비회원 주문 비밀번호까지 정한 뒤에 "회원가입 하시겠어요?" 가 뜨면 방해로만 읽힌다.
+  //   유도가 아니라 이탈을 만든다.
   //
-  // 창 자체는 답을 기다리지만 여기서는 결과를 쓰지 않는다 — 「회원가입」·「로그인」을
-  // 고르면 창이 알아서 그 화면으로 보내고, 「비회원으로 계속」이면 이 화면에 그대로 남는다.
-  // 막는 장치가 아니다(utils/guest-prompt.js 주석 참고).
-  useEffect(() => {
-    askGuestSignup();
-  }, []);
+  //   유도는 그 앞 단계(장바구니 담기·바로구매)에서 이미 한다. 그 둘을 거치지 않고
+  //   주문서에 닿는 길은 없으므로, 모든 손님은 결국 한 번은 권유를 본다.
+  //   (shop-util.js 의 insertCartDataUtil · startBuyNow — utils/guest-prompt.js 주석 참고)
 
   // ── 쓰다 만 주문서 되살리기 ─────────────────────────────────────────────
   //

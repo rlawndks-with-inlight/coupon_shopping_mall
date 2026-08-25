@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import Head from 'next/head';
-import { Container, Card, Stack, Typography, Button, TextField, Alert } from '@mui/material';
+import { Container, Card, Stack, Typography, Button, TextField, Alert, Box } from '@mui/material';
 import { toast } from 'react-hot-toast';
 import ManagerLayout from 'src/layouts/manager/ManagerLayout';
 import { useSettingsContext } from 'src/components/settings';

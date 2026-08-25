@@ -3,9 +3,9 @@ import { useRouter } from 'next/router';
 import { Button, Dialog, DialogActions, DialogContent, DialogTitle, Stack, Typography } from '@mui/material';
 import { useAuthContext } from 'src/layouts/manager/auth/useAuthContext';
 import { useLocales } from 'src/locales';
-import { setGuestPromptOpener, 그만묻기설정, 그만묻나 } from 'src/utils/guest-prompt';
+import { setGuestPromptOpener } from 'src/utils/guest-prompt';
 
-// 비로그인 손님이 담기·바로구매를 누르면 한 번 뜨는 창.
+// 비로그인 손님이 담기·바로구매를 누르거나 주문서에 들어올 때 뜨는 창.
 //
 // 가맹점 의견(2026-08-23): "비회원으로 그냥 진행되는 것보다 회원가입을 한 번 유도하고
 // 진행되는 편이 좋겠다."
@@ -34,7 +34,7 @@ const GuestSignupPrompt = () => {
             // 세션 복원이 끝나기 전에는 묻지 않는다.
             // useAuthContext 는 첫 렌더에서 user 가 null 이고 저장된 토큰으로 복원한 뒤에야 채워진다.
             // 그 사이를 '비로그인' 으로 보면 로그인한 손님도 새로고침 직후 창을 보게 된다.
-            if (!준비됨 || 지금유저 || 그만묻나()) { resolve(true); return; }
+            if (!준비됨 || 지금유저) { resolve(true); return; }
             응답.current = resolve;
             setOpen(true);
         }));
@@ -49,7 +49,9 @@ const GuestSignupPrompt = () => {
         if (r) r(계속);
     };
 
-    const 비회원으로 = () => { 그만묻기설정(); 닫기(true); };
+    // 「비회원으로 계속」을 골라도 기억하지 않는다 — 다음번에 또 묻는다.
+    // 가맹점 요청(2026-08-25): 한 번 넘기면 그 방문 내내 안 뜨는 것이 약하다.
+    const 비회원으로 = () => { 닫기(true); };
 
     const 이동 = (경로) => {
         // 담던 상품은 장바구니(localStorage)에 아직 안 들어갔다. 그래서 '멈춤'으로 응답하고

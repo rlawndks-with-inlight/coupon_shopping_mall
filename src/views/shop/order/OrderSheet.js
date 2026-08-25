@@ -16,6 +16,8 @@ import EmptyContent from 'src/components/empty-content/EmptyContent';
 import Iconify from 'src/components/iconify/Iconify';
 import { useSettingsContext } from 'src/components/settings';
 import { calcOrderTotals, calculatorPrice, getCartDataUtil, makePayData, onPayProductsByAuth, onPayProductsByHand, onPayProductsByPayletter, onPayProductsByForspay } from 'src/utils/shop-util';
+import { loadOrderDraft, saveOrderDraft, clearOrderDraft } from 'src/utils/order-draft';
+import { askGuestSignup } from 'src/utils/guest-prompt';
 import { findMissingRequired } from 'src/data/order-form-types';
 import { syncCartWithServer, makeUnavailableMessage, filterUnavailableByProducts } from 'src/utils/cart-sync';
 import { forspayMethodList, formatLang } from 'src/utils/format';
@@ -140,6 +142,55 @@ export default function OrderSheet({ router }) {
   useEffect(() => {
     getCart();
   }, []);
+
+  // ── 비로그인 손님에게 회원가입 권하기 ───────────────────────────────────
+  //
+  // '주문하기' 버튼은 카트 화면 10개(shop 데모 9 + blog 공용)에 흩어져 있다.
+  // 열 군데에 각각 걸면 프레임이 늘 때 또 빠지므로, 둘 다 도착하는 이 화면에 한 번 건다
+  // (바로구매도 장바구니도 결국 여기로 온다).
+  //
+  // 창 자체는 답을 기다리지만 여기서는 결과를 쓰지 않는다 — 「회원가입」·「로그인」을
+  // 고르면 창이 알아서 그 화면으로 보내고, 「비회원으로 계속」이면 이 화면에 그대로 남는다.
+  // 막는 장치가 아니다(utils/guest-prompt.js 주석 참고).
+  useEffect(() => {
+    askGuestSignup();
+  }, []);
+
+  // ── 쓰다 만 주문서 되살리기 ─────────────────────────────────────────────
+  //
+  // 주문자 정보·배송지는 이 컴포넌트 상태에만 있어서, 화면을 벗어났다 돌아오면 백지가 됐다
+  // (결제창 취소·회원가입 유도·새로고침·뒤로가기 — 길이 여럿이다).
+  // 가맹점 제보: "비회원 주문 비밀번호를 안 넣었을 때 주문자 정보·배송지가 원복돼
+  // 다시 써야 한다." 원인이 무엇이든 되돌아오면 지워지는 건 같으므로 값을 붙들어 둔다.
+  //
+  // ⚠ 카드정보와 **비회원 주문 비밀번호는 저장하지 않는다**(utils/order-draft.js 참고).
+  //   그래서 돌아온 손님이 다시 쓰는 것은 비밀번호 한 칸뿐이다.
+  // ⚠ 이 표시는 반드시 **state** 여야 한다. useRef 로 두면 지워진다 —
+  //   ref 는 그 자리에서 바로 true 가 되므로, 같은 커밋에서 이어 도는 아래 저장 useEffect 가
+  //   아직 반영되지 않은 **빈 초기값**을 초안에 덮어쓴다. 개발 모드의 StrictMode 는
+  //   마운트를 두 번 하는데, 두 번째 마운트에서 그 빈 초안을 읽어 아무것도 못 되살린다.
+  //   (실제로 그렇게 만들었다가 로컬 확인에서 값이 전부 날아가는 걸 보고 고쳤다)
+  //   state 로 두면 저장은 '복원이 반영된 다음 렌더'부터 시작된다.
+  const [초안복원끝, set초안복원끝] = useState(false);
+  useEffect(() => {
+    const 초안 = loadOrderDraft();
+    if (초안) {
+      setPayData((prev) => ({ ...prev, ...초안.payData, brand_id: prev.brand_id }));
+      const s = 초안.화면상태 ?? {};
+      if (typeof s.addrMode === 'string') setAddrMode(s.addrMode);
+      if (typeof s.directMode === 'boolean') setDirectMode(s.directMode);
+      if (typeof s.sameAsBuyer === 'boolean') setSameAsBuyer(s.sameAsBuyer);
+      // 동의는 되살리지 않는다 — 약관 동의는 그때마다 사람이 직접 눌러야 한다.
+    }
+    // 초안이 없어도 표시는 해야 한다. 안 하면 첫 방문에는 아무것도 저장되지 않는다.
+    set초안복원끝(true);
+  }, []);
+
+  // 값이 바뀔 때마다 담아 둔다.
+  useEffect(() => {
+    if (!초안복원끝) return;
+    saveOrderDraft(payData, { addrMode, directMode, sameAsBuyer });
+  }, [초안복원끝, payData, addrMode, directMode, sameAsBuyer]);
 
   // 동의를 해제하면 이미 펼쳐진 결제수단 영역을 닫는다.
   // 핀트리·헥토·웨이업 결제 컴포넌트는 자기 결제 버튼을 갖고 있어 guardBeforePay를 타지 않는다.
@@ -443,6 +494,8 @@ export default function OrderSheet({ router }) {
     // 결제완료 화면 전달용 — 민감정보는 담지 않는다(수기결제 경로와 동일 규칙).
     const { card_num, card_pw, yymm, auth_num, pay_key, mid, tid, payment_modules, password, ...safe } = pay_data;
     try { sessionStorage.setItem('lastOrder', JSON.stringify(safe)); } catch (e) { /* noop */ }
+    // 주문이 접수됐으므로 쓰다 만 내용은 지운다 — 남기면 다음 주문서에 지난 배송지가 뜨다.
+    clearOrderDraft();
     toast.success(translate("주문이 접수되었습니다. 입금 확인 후 처리됩니다."));
   };
 
@@ -615,6 +668,8 @@ export default function OrderSheet({ router }) {
       // 결제완료 화면 전달용 — 카드번호/카드비번/만료일/주민번호/PG키 등 민감정보는 저장하지 않는다.
       const { card_num, card_pw, yymm, auth_num, pay_key, mid, tid, payment_modules, ...safe } = result;
       try { sessionStorage.setItem('lastOrder', JSON.stringify(safe)); } catch (e) { /* noop */ }
+      // 결제가 끝났으니 쓰다 만 내용은 지운다(finishPendingOrder 와 같은 이유).
+      clearOrderDraft();
       toast.success(translate("주문이 완료되었습니다."));
       router.push('/shop/auth/order-complete');
     } else {

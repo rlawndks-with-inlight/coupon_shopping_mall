@@ -1,4 +1,4 @@
-import { FRONT_ROOT } from './_roots.mjs';
+import { FRONT_ROOT, 주석제거 } from './_roots.mjs';
 import { readFileSync } from 'fs';
 
 // 팝업관리 메뉴 위치.
@@ -24,8 +24,8 @@ const nav = 읽기('src/layouts/manager/nav/config-navigation.js');
 
 // 주석을 걷어내고 '진짜 코드'만 본다 — 주석에 남은 옛 흔적을 코드로 착각하면 안 된다.
 // (예전에 주석 안의 logoSrc() 를 코드로 보고 엉뚱한 파일을 고친 적이 있다.)
-const 코드 = nav.replace(/\/\*[\s\S]*?\*\//g, '').split('\n')
-    .map((l) => l.replace(/(^|[^:])\/\/.*$/, '$1')).join('\n');
+// ⚠ 직접 짜지 말 것 — CRLF 파일에서 조용히 새는 함정이 있다(_roots.mjs 주석 참고).
+const 코드 = 주석제거(nav);
 
 // ── ① 주소는 그대로 ──────────────────────────────────────────────────────
 t('팝업 주소는 designs/popup 그대로', /PATH_MANAGER\.designs\.popup/.test(코드),

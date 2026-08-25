@@ -148,25 +148,32 @@ export default function CheckoutCartProduct({ row, onDelete, onDecrease, onIncre
             </>}
         </Stack>
       </TableCell>
-      <TableCell>
+      {/* 금액 칸은 줄을 끊지 않는다.
+          가맹점 제보(2026-08-24): "원화 금액 폰트 안맞음 — '원' 글자가 하단으로 내려감".
+          폰트가 아니라 줄바꿈이었다. 두 가지가 겹쳤다:
+            ① 숫자와 단위 사이에 공백이 있었다({commarNumber(x)} {단위}) → 거기서 끊긴다
+            ② 공백을 없애도 한글은 CSS 기본값에서 **음절 아무 데서나** 끊긴다
+               (scripts/checks/word-break.mjs 주석 참고) → '50,00 / 0원' 도 가능하다
+          ① 은 붙여서, ② 는 nowrap 으로 막는다. 금액은 길어야 열 몇 글자라 폭 문제도 없다. */}
+      <TableCell sx={{ whiteSpace: 'nowrap' }}>
         {/* 정책이 켜진 몰은 배송비가 주문당 1회라 줄마다 값을 찍으면 거짓말이 된다.
             첫 줄에 한 번 적고 나머지 줄은 '—' 로 둔다(표 아래 안내가 이유를 설명한다). */}
         {ship_active
           ? (line_delivery > 0
-            ? <>{commarNumber(line_delivery)} {getPriceUnitByLang(currentLang?.value)}</>
+            ? <>{commarNumber(line_delivery)}{getPriceUnitByLang(currentLang?.value)}</>
             : (is_first_line ? translate('무료') : '—'))
-          : <>{commarNumber(setProductPriceByLang(row, 'delivery_fee', 'ko', currentLang?.value))} {getPriceUnitByLang(currentLang?.value)}</>}
+          : <>{commarNumber(setProductPriceByLang(row, 'delivery_fee', 'ko', currentLang?.value))}{getPriceUnitByLang(currentLang?.value)}</>}
       </TableCell>
-      <TableCell>
+      <TableCell sx={{ whiteSpace: 'nowrap' }}>
         {product_price > product_sale_price && (
           <Box
             component="span"
             sx={{ color: 'text.disabled', textDecoration: 'line-through', mr: 0.5 }}
           >
-            {commarNumber(setProductPriceByLang(row, 'product_price', 'ko', currentLang?.value))} {getPriceUnitByLang(currentLang?.value)}
+            {commarNumber(setProductPriceByLang(row, 'product_price', 'ko', currentLang?.value))}{getPriceUnitByLang(currentLang?.value)}
           </Box>
         )}
-        {commarNumber(setProductPriceByLang(row, 'product_sale_price', 'ko', currentLang?.value))} {getPriceUnitByLang(currentLang?.value)}
+        {commarNumber(setProductPriceByLang(row, 'product_sale_price', 'ko', currentLang?.value))}{getPriceUnitByLang(currentLang?.value)}
         {/* 옵션 추가금이 있을 때만 붙인다. 총액(마지막 칸)이 판매가와 다른 이유를 여기서 잇는다:
             판매가 → 옵션 가감 → 개당 금액 → (수량 곱) → 총액 */}
         {option_surcharge !== 0 && (
@@ -201,7 +208,7 @@ export default function CheckoutCartProduct({ row, onDelete, onDecrease, onIncre
           ''
       }
 
-      <TableCell align="right">{commarNumber(setProductPriceByLang(calculatorPrice(row), 'total', 'ko', currentLang?.value))} {getPriceUnitByLang(currentLang?.value)}</TableCell>
+      <TableCell align="right" sx={{ whiteSpace: 'nowrap' }}>{commarNumber(setProductPriceByLang(calculatorPrice(row), 'total', 'ko', currentLang?.value))}{getPriceUnitByLang(currentLang?.value)}</TableCell>
 
       <TableCell align="right">
         <IconButton onClick={onDelete}>

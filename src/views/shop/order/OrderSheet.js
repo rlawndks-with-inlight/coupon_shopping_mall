@@ -138,6 +138,10 @@ export default function OrderSheet({ router }) {
     password: '',
     use_point: 0,
   });
+  // 비회원 주문 비밀번호 확인 칸. **payData 밖에 둔다** —
+  // payData 는 서버로 나가고 초안(order-draft)으로도 저장되는 그릇이라,
+  // 확인용 값까지 거기 담으면 안 나가야 할 곳으로 따라간다. 화면에서만 쓴다.
+  const [passwordCheck, setPasswordCheck] = useState('');
 
   useEffect(() => {
     getCart();
@@ -412,6 +416,13 @@ export default function OrderSheet({ router }) {
     }
     if (!user && !payData.password) {
       toast.error(translate("비회원 주문 비밀번호를 입력해 주세요."));
+      return false;
+    }
+    // 확인 칸과 다르면 막는다. 가려서 입력하는 칸이라 오타를 알 방법이 없는데,
+    // 이 비밀번호는 비회원이 자기 주문을 찾는 유일한 열쇠다(재발급 수단이 없다).
+    // 길이 검사보다 먼저 본다 — 둘 다 틀렸을 때 '자릿수' 만 알려주면 오타를 못 찾는다.
+    if (!user && passwordCheck !== payData.password) {
+      toast.error(translate("비회원 주문 비밀번호가 일치하지 않습니다."));
       return false;
     }
     if (!user && (payData.password.length < GUEST_PW_MIN || payData.password.length > GUEST_PW_MAX)) {
@@ -773,6 +784,19 @@ export default function OrderSheet({ router }) {
                         error={!!payData.password && payData.password.length < GUEST_PW_MIN}
                         helperText={translate('{{min}}~{{max}}자로 입력해 주세요. 주문조회 시 필요하니 꼭 기억해 두세요.', { min: GUEST_PW_MIN, max: GUEST_PW_MAX })}
                         onChange={(e) => setPayData({ ...payData, password: e.target.value })} />
+                      {/* 확인 칸. 가맹점 요청(2026-08-24) — 회원가입 화면에는 있는데 여기만 없었다.
+                          가려서 입력하는 칸이라 오타를 알 방법이 없고, 이 비밀번호는
+                          **비회원이 자기 주문을 찾는 유일한 열쇠**다. 틀리면 주문조회도
+                          취소요청도 영영 못 한다(재발급 수단이 없다). 그래서 한 번 더 받는다.
+                          ⚠ 이 값은 payData 에 넣지 않는다 — 화면에서만 쓰고 서버로도, 초안으로도 안 나간다. */}
+                      <PasswordField fullWidth size="small"
+                        label={translate('비회원 주문 비밀번호 확인')}
+                        value={passwordCheck} inputProps={{ maxLength: GUEST_PW_MAX }}
+                        error={!!passwordCheck && passwordCheck !== payData.password}
+                        helperText={!!passwordCheck && passwordCheck !== payData.password
+                          ? translate('비밀번호가 일치하지 않습니다.')
+                          : translate('확인을 위해 한 번 더 입력해 주세요.')}
+                        onChange={(e) => setPasswordCheck(e.target.value)} />
                     </Stack>
                   )}
                 </CardContent>

@@ -25,28 +25,60 @@ const Wrapper = styled.div`
 `
 
 /* Hero - 풀스크린 분할 */
+/* 히어로는 사진(왼쪽) · 글(오른쪽) 두 칸이다.
+   가맹점 요청(2026-08-24, 2026-08-26 보완): "사진 이미지와 제목 이미지 순서 변경.
+   모바일상에서도 사진 이미지가 먼저 나오는게 좋을 듯" — PC 도 좌우를 바꾼다.
+
+   ⚠ 예전에는 글이 왼쪽이라 모바일에서만 CSS order 로 사진을 끌어올렸다.
+     이제 PC·모바일 모두 사진이 먼저이므로 **DOM 순서 자체가 사진 → 글** 이다.
+     order 뒤집기는 필요 없어졌다(있으면 오히려 두 번 뒤집힌다). */
 const Hero = styled.section`
   display: grid;
   grid-template-columns: 1fr 1fr;
-  min-height: 100vh;
+  /* 헤더가 sticky 라 위에서 제 높이만큼 자리를 차지한다.
+     100vh 를 그대로 쓰면 히어로 아랫단이 늘 화면 밖으로 밀려
+     **'구매하기' 버튼이 잘린 채** 보였다. 헤더 높이(약 5rem)를 뺀다.
+     svh 는 모바일 주소창이 접혔다 펴질 때 높이가 튀지 않게 한다
+     (못 읽는 브라우저는 윗줄 vh 를 쓴다 — 그래서 두 줄을 겹쳐 둔다). */
+  min-height: calc(100vh - 5rem);
+  min-height: calc(100svh - 5rem);
   border-bottom: 1px solid #000;
   @media (max-width: 840px) {
     grid-template-columns: 1fr;
-    min-height: 80vh;
+    min-height: 0;
   }
 `
-const HeroLeft = styled.div`
+const HeroInfo = styled.div`
   padding: 4rem 3rem;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
-  border-right: 1px solid #000;
+  /* 세로 구분선은 사진 칸(HeroMedia)의 오른쪽으로 옮겼다 — 사진이 왼쪽이 되었기 때문이다. */
+  min-width: 0;
   @media (max-width: 840px) {
-    border-right: none;
-    /* 모바일 구분선은 여기가 아니라 HeroRight(사진) 아래에 있다.
-       사진을 위로 올렸으므로(HeroRight 의 order:-1), 글 아래에 선을 그으면
-       Hero 자체의 border-bottom 과 겹쳐 두 줄이 되고 정작 사진과 글 사이는 붙어 버린다. */
-    padding: 3rem 1.5rem;
+    /* 모바일 구분선은 여기가 아니라 사진 아래에 있다.
+       글 아래에 그으면 Hero 자체의 border-bottom 과 겹쳐 두 줄이 된다. */
+    padding: 2.25rem 1.5rem;
+  }
+`
+/* 위쪽 한 줄(상호 · № 001)은 편집 디자인의 머리글이라 위에 붙여 두고,
+   제목·정보·버튼은 남은 자리 한가운데 모은다.
+
+   ⚠ 예전에는 justify-content: space-between 으로 버튼을 칸 맨 아래에 붙였다.
+     100vh 짜리 칸이라 글과 버튼 사이에 **화면 절반이 빈 채로** 남았고,
+     버튼은 화면 밖으로 밀려 잘렸다. 가운데 모으면 두 문제가 같이 사라진다. */
+const HeroBody = styled.div`
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+`
+const HeroCta = styled.div`
+  margin-top: 3rem;
+  /* 모바일에서는 위아래 여백을 조금씩 줄인다.
+     안 줄이면 히어로가 첫 화면보다 10px 남짓 길어져 **'구매하기' 가 접힌 자리 아래**로 넘어갔다.
+     사진 크기는 건드리지 않는다 — 사진을 먼저 보여 달라는 것이 요청의 본뜻이다. */
+  @media (max-width: 840px) {
+    margin-top: 2rem;
   }
 `
 const HeroTop = styled.div`
@@ -58,17 +90,20 @@ const HeroTop = styled.div`
   text-transform: uppercase;
   margin-bottom: 3rem;
 `
+/* 96px 고정이었다. 좌우를 나눈 화면에서 한 칸은 창의 절반뿐이라,
+   1100~1400px 짜리 노트북에서 긴 상품명이 칸을 넘치거나 두세 줄로 무너졌다.
+   칸 너비를 따라가게 하고(글자 크기 5vw), 위아래로만 묶어 둔다.
+   자간도 px 이 아니라 em 이라야 글자가 작아질 때 같이 좁아진다. */
 const HeroTitle = styled.h1`
-  font-size: 96px;
+  font-size: clamp(44px, 5vw, 96px);
   font-weight: 900;
-  line-height: 0.9;
-  letter-spacing: -5px;
+  line-height: 0.92;
+  letter-spacing: -0.05em;
   margin: 0;
   text-transform: uppercase;
-  @media (max-width: 840px) {
-    font-size: 48px;
-    letter-spacing: -2px;
-  }
+  /* 한글 상품명이 아무 글자에서나 갈라지지 않게 한다(CSS 기본값이 그렇다). */
+  word-break: keep-all;
+  overflow-wrap: anywhere;
 `
 const HeroMeta = styled.div`
   display: grid;
@@ -86,33 +121,31 @@ const MetaLabel = styled.div`
 const MetaValue = styled.div`
   font-weight: bold;
 `
-const HeroRight = styled.div`
+const HeroMedia = styled.div`
   padding: 4rem;
   display: flex;
   align-items: center;
   justify-content: center;
   background: #f5f5f5;
+  /* 두 칸을 가르는 세로선. 사진이 왼쪽이 되었으므로 선도 이쪽 오른쪽으로 왔다. */
+  border-right: 1px solid #000;
   @media (max-width: 840px) {
-    padding: 3rem 1.5rem;
-    /* 모바일에서는 사진이 먼저 온다.
-       가맹점 요청(2026-08-24): "사진 이미지와 제목 이미지 순서 변경 부탁드립니다.
-       모바일상에서도 사진 이미지가 먼저 나오는게 좋을 듯 합니다".
-       데스크톱은 좌(글)·우(사진) 두 칸이라 사진이 이미 눈에 들어오는데,
-       한 칸으로 접히면 글이 화면을 다 차지해 사진을 보려면 스크롤해야 했다.
-       ⚠ JSX 순서를 바꾸지 않고 CSS order 로만 뒤집는다 —
-         DOM 순서를 바꾸면 데스크톱의 좌/우가 함께 뒤집히고 테두리 규칙도 어긋난다. */
-    order: -1;
-    /* 사진과 글 사이 구분선. 데스크톱에서는 HeroLeft 의 border-right 가 그 역할을 한다. */
+    padding: 2rem 1.25rem;
+    border-right: none;
+    /* 한 칸으로 접히면 사진과 글 사이를 가로선이 가른다. */
     border-bottom: 1px solid #000;
   }
 `
+/* 400px 고정이었다. 1920px 화면에서 한 칸이 960px 인데 사진은 400px 이라
+   회색 칸 안에서 **사진이 동동 떠 보였다**(빈 자리가 사진보다 넓었다).
+   칸 너비를 따라 커지되 지나치게 커지지는 않게 위를 막는다. */
 const HeroImage = styled(LazyLoadImage)`
-  width: 400px;
-  height: 400px;
+  width: 100%;
+  max-width: 620px;
+  aspect-ratio: 1 / 1;
   object-fit: contain;
   @media (max-width: 840px) {
-    width: 280px;
-    height: 280px;
+    max-width: 340px;
   }
 `
 
@@ -360,13 +393,18 @@ const Demo4 = (props) => {
 
   return (
     <Wrapper>
+      {/* 사진이 먼저다 — PC 는 왼쪽 칸, 모바일은 위 칸.
+          DOM 순서가 곧 화면 순서라 CSS order 로 뒤집지 않는다. */}
       <Hero>
-        <HeroLeft>
-          <div>
-            <HeroTop>
-              <span>{brandName}</span>
-              <span>{홈문구(t, 'edition', currentLang) || '№ 001'}</span>
-            </HeroTop>
+        <HeroMedia>
+          <HeroImage src={img} effect="blur" onClick={goTo} style={{ cursor: 'pointer' }} />
+        </HeroMedia>
+        <HeroInfo>
+          <HeroTop>
+            <span>{brandName}</span>
+            <span>{홈문구(t, 'edition', currentLang) || '№ 001'}</span>
+          </HeroTop>
+          <HeroBody>
             <HeroTitle>{name}</HeroTitle>
             <HeroMeta>
               <div>
@@ -378,14 +416,11 @@ const Demo4 = (props) => {
                 <MetaValue>{new Date().getFullYear()}</MetaValue>
               </div>
             </HeroMeta>
-          </div>
-          <div>
-            <CTABtn onClick={goTo}>{translate('구매하기')} →</CTABtn>
-          </div>
-        </HeroLeft>
-        <HeroRight>
-          <HeroImage src={img} effect="blur" onClick={goTo} style={{ cursor: 'pointer' }} />
-        </HeroRight>
+            <HeroCta>
+              <CTABtn onClick={goTo}>{translate('구매하기')} →</CTABtn>
+            </HeroCta>
+          </HeroBody>
+        </HeroInfo>
       </Hero>
 
       <BigNumSection>

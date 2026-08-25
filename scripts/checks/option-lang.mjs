@@ -82,6 +82,21 @@ for (const [표, 칸] of [
         '목록에 없으면 스케줄러가 격리(is_confirm=2)해 버린다');
 }
 
+// ── 백필 스크립트가 스케줄러와 같은 조인을 갖고 있나 ─────────────────────
+//
+// brand_id 컬럼이 없는 표는 부모로 조인해야 한다. 두 곳이 같은 목록을 따로 갖고 있어서
+// 한쪽에만 추가하면 어긋난다 — 실제로 그랬다.
+// 백필은 표 하나를 건너뛰는 게 아니라 **Unknown column 으로 통째로 멈춘다.**
+// 그래서 옵션 번역을 채우려고 돌렸을 때 아무것도 못 채우고 죽어 있었다.
+const backfill = 주석제거(읽기('scripts/lang-backfill.js'));
+const 조인필요 = [...sched.matchAll(/table == '([a-z_]+)'/g)].map((m) => m[1]);
+const 백필조인 = new Set([...backfill.matchAll(/table === '([a-z_]+)'/g)].map((m) => m[1]));
+t('조인이 필요한 표를 스케줄러에서 찾았다', 조인필요.length >= 4);
+for (const 표 of 조인필요) {
+    t(`백필도 '${표}' 를 부모로 조인한다`, 백필조인.has(표),
+        'brand_id 가 없는 표라 WHERE brand_id=? 로 떨어지면 백필 전체가 멈춘다');
+}
+
 // 언어팩을 안 켠 몰에서는 아무 일도 없어야 한다 — 대부분의 몰이 그렇다.
 const util = 주석제거(읽기('utils.js/util.js'));
 t('언어팩 꺼진 몰은 그냥 지나간다', /is_use_lang != 1\)\s*\{\s*return;/.test(util),

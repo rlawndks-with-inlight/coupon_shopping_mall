@@ -177,6 +177,8 @@ t('홈문구는 1400 으로 자르지 않는다', /번호구간 \? \d{4} : 1400/
 const 캡처화면 = 주석제거(읽기('src/pages/manager/designs/preview-capture.js'));
 t('찍는 몰의 상호를 지운다', /name: '브랜드명'/.test(캡처화면),
     "안 지우면 남의 몰 상호가 다른 가맹점 관리자 화면에 박힌다");
+t('타입·섹션 그림에도 같은 가림막을 씌운다', /value=\{견본설정\(원본설정\)\}/.test(캡처화면),
+    "홈 문구만 가렸더니 디자인 타입4 에 'mbc01 · EDITORIAL' 이 남아 있었다");
 t('찍는 몰의 상품을 견본으로 바꾼다', /products: 견본상품들\(/.test(캡처화면));
 t('대표상품 지정도 비운다', /featured_product_ids: \[\]/.test(캡처화면),
     '비우지 않으면 useFeaturedProduct 가 그 몰 상품을 API 로 다시 불러온다');

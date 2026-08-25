@@ -23,6 +23,22 @@ import BlogHome9 from 'src/views/blog/home/demo-9';
 
 const 홈데모 = { 4: BlogHome4, 5: BlogHome5, 6: BlogHome6, 7: BlogHome7, 8: BlogHome8, 9: BlogHome9 };
 
+// 찍는 몰의 상호를 지운 설정을 만든다.
+//
+// [왜] 여기서 만든 그림은 저장소에 들어가 **모든 가맹점** 관리자 화면에 뜬다.
+//   mbc01 에서 찍었더니 디자인 타입4 에 'mbc01 · EDITORIAL', 홈 문구 안내에 'MBC01' 이
+//   그대로 박혔다. 자기 몰에서 안내를 보는데 남의 상호가 떠 있으면
+//   '이 그림이 내 것이 맞나' 부터 의심하게 된다.
+//   섹션 견본에 실제 가맹점 상품을 안 쓰는 것과 같은 이유다(data/section-preview.js 주석).
+//
+// ⚠ 전역 상태를 건드리지 않는다. onChangeDnsData 는 localStorage 까지 바꿔서,
+//   사람이 이 화면을 자기 브라우저로 열면 그 몰 설정이 오염된다.
+//   여기서만 통하는 Provider 로 감싼다.
+const 견본설정 = (원본, 덧씌울것 = {}) => ({
+  ...원본,
+  themeDnsData: { ...원본.themeDnsData, name: '브랜드명', ...덧씌울것 },
+});
+
 // 「홈 문구」가 화면 어디에 나오는지 보여주는 그림을 만든다.
 //
 // 문구 자리에 그 칸의 이름(① 에디션 표기 …)을 넣고 홈을 그대로 그린다 —
@@ -37,33 +53,24 @@ const 홈문구미리보기 = ({ demoNum }) => {
   const 화면 = 홈데모[demoNum];
   const 스키마 = HOME_TEXT_SCHEMA[demoNum];
   if (!화면 || !스키마) return null;
-  const 가짜 = {
-    ...원본,
-    themeDnsData: {
-      ...원본.themeDnsData,
-      // 찍는 몰의 이름과 상품을 지운다.
-      //
-      // 처음엔 그냥 찍었더니 mbc01 에서 찍은 그림이 저장소에 들어갔고,
-      // **다른 몰 관리자 화면에 'MBC01' 과 그 몰의 상품(떡갈비)이 그대로 박혔다.**
-      // 자기 몰에서 안내를 보는데 남의 상호가 떠 있으면 '이 그림이 내 것이 맞나' 부터 의심하게 된다.
-      // 섹션 미리보기에서 견본 상품을 쓰는 이유와 같은 이유다(data/section-preview.js 주석).
-      //
-      // products 를 한 건 채워 두면 useFeaturedProduct 가 그걸 집어 API 조회를 안 한다.
-      // 대표상품 지정(featured_product_ids)도 비워야 그 조회로 새지 않는다.
-      name: '브랜드명',
-      // 넷을 준다 — 데모 6·8 은 히어로 말고 하단 갤러리에도 상품을 깐다.
-      // 한 건만 주면 useFeaturedProducts 가 빈 배열을 돌려줘 그 자리가 빈 칸으로 찍힌다.
-      products: 견본상품들(4),
-      setting_obj: {
-        ...(원본.themeDnsData?.setting_obj ?? {}),
-        shop_demo_num: 0,
-        blog_demo_num: demoNum,
-        featured_product_ids: [],
-        featured_product_id: null,
-        home_texts: { [`demo${demoNum}`]: 홈문구표시값(스키마.fields) },
-      },
+  // 상호는 견본설정() 이 지운다. 여기서는 상품까지 견본으로 바꾼다 —
+  // 홈 데모는 그 몰의 대표 상품을 크게 그려서, 안 바꾸면 남의 몰 물건이 박힌다.
+  //
+  // products 를 채워 두면 useFeaturedProduct 가 그걸 집어 API 조회를 안 한다.
+  // 대표상품 지정(featured_product_ids)도 비워야 그 조회로 새지 않는다.
+  // 넷을 주는 이유는 데모 6·8 이 히어로 말고 하단 갤러리에도 상품을 깔기 때문이다 —
+  // 한 건만 주면 useFeaturedProducts 가 빈 배열을 돌려줘 그 자리가 빈 칸으로 찍힌다.
+  const 가짜 = 견본설정(원본, {
+    products: 견본상품들(4),
+    setting_obj: {
+      ...(원본.themeDnsData?.setting_obj ?? {}),
+      shop_demo_num: 0,
+      blog_demo_num: demoNum,
+      featured_product_ids: [],
+      featured_product_id: null,
+      home_texts: { [`demo${demoNum}`]: 홈문구표시값(스키마.fields) },
     },
-  };
+  });
   const Home = 화면;
   return (
     <SettingsContext.Provider value={가짜}>
@@ -112,6 +119,9 @@ const 섹션그리기 = (type, column, data, func) => {
 
 const PreviewCapture = () => {
   const router = useRouter();
+  // 타입·섹션 그림도 같은 가림막을 쓴다. 디자인 타입4 는 브랜드 상호를 그려서,
+  // 안 씌우면 'mbc01 · EDITORIAL' 이 모든 가맹점 화면에 박힌다(실제로 그랬다).
+  const 원본설정 = useSettingsContext();
   const 고른타입 = String(router.query?.type ?? '');
   const 고른섹션 = String(router.query?.section ?? '');
   // 섹션 렌더러 몇 개가 data.windowWidth 를 읽는다(배너 간격 계산 등). 안 주면 NaN 이 된다.
@@ -127,6 +137,7 @@ const PreviewCapture = () => {
   const 하나만 = !!(고른타입 || 고른섹션 || 고른홈문구);
 
   return (
+    <SettingsContext.Provider value={견본설정(원본설정)}>
     <div style={{ background: '#fff', padding: '24px' }}>
       {!하나만 && (
         <div style={{ fontSize: 13, color: '#888', marginBottom: 16 }}>
@@ -165,6 +176,7 @@ const PreviewCapture = () => {
         </div>
       ))}
     </div>
+    </SettingsContext.Provider>
   );
 };
 

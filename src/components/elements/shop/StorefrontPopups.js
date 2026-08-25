@@ -7,6 +7,7 @@ import { useSettingsContext } from "src/components/settings";
 import { useLocales } from "src/locales";
 import { returnMoment } from "src/utils/function";
 import { isStorefrontHome } from "src/utils/blog-shop-route";
+import { formatLang } from "src/utils/format";
 
 // 스토어프론트 홈 팝업.
 //
@@ -132,7 +133,7 @@ export const 팝업내용있음 = (item) =>
 
 const StorefrontPopups = () => {
   const router = useRouter();
-  const { translate } = useLocales();
+  const { translate, currentLang } = useLocales();
   const {
     themePopupList,
     themeNoneTodayPopupList,
@@ -196,7 +197,9 @@ const StorefrontPopups = () => {
             {String(item?.popup_title ?? '').trim() &&
               <CardHead>
                 <Icon icon="mdi:bell-outline" width={18} height={18} style={{ flexShrink: 0, color: '#666' }} />
-                <span style={{ flex: 1 }}>{item?.popup_title}</span>
+                {/* 번역을 거친다. 번역이 없으면 formatLang 이 원문으로 폴백한다.
+                    예전에는 원문을 그대로 그려서, 외국어 화면에 팝업만 한국어로 떴다. */}
+                <span style={{ flex: 1 }}>{formatLang(item, 'popup_title', currentLang)}</span>
               </CardHead>}
             {/* 본문이 비어 있으면 칸 자체를 없앤다 — 안 그러면 제목 아래에 흰 여백만 남는다
                 (제목만 적고 내용은 비워 둔 팝업이 실제로 있다). */}
@@ -204,7 +207,7 @@ const StorefrontPopups = () => {
             <CardBody>
               <ReactQuill
                 className='none-padding'
-                value={item?.popup_content ?? `<body></body>`}
+                value={formatLang(item, 'popup_content', currentLang) || `<body></body>`}
                 readOnly={true}
                 theme={"bubble"}
                 bounds={'.app'}

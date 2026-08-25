@@ -76,7 +76,12 @@ t('이미지만 있어도 그린다', 있음({ popup_content: '<p><img src="a.pn
 t('제목만 있어도 그린다', 있음({ popup_content: '', popup_title: '공지' }) === true);
 t('아무것도 없으면 안 그린다', 있음({}) === false);
 // 제목은 관리자에서 받아 두고 화면에 안 쓰던 값이다 — 이제 카드 머리에 보여준다.
-t('제목을 화면에 쓴다', /item\?\.popup_title\}<\/span>/.test(popup));
+// 2026-08-26: 원문을 그대로 그리다가 formatLang 경유로 바꿨다(외국어 화면에 팝업만 한국어로 떴다).
+t('제목을 화면에 쓴다', /formatLang\(item, 'popup_title'[^)]*\)\}<\/span>/.test(popup),
+    '카드 머리에 제목이 있어야 한다');
+t('제목·내용이 번역을 거친다',
+    /formatLang\(item, 'popup_title'/.test(popup) && /formatLang\(item, 'popup_content'/.test(popup),
+    '원문을 그대로 그리면 외국어 화면에 팝업만 한국어로 뜬다');
 
 // 「닫기」와 「오늘 하루 보지않기」는 하는 일이 달라야 한다.
 // 예전엔 둘 다 사실상 같았다 — 헤더에 사는 컴포넌트라 화면을 옮겨도 닫힌 상태가 남아서,

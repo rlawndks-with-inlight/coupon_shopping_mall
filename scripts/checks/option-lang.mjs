@@ -1,5 +1,5 @@
 import { BACK_ROOT, 백엔드있음, 주석제거 } from './_roots.mjs';
-import { readFileSync } from 'fs';
+import { readFileSync, existsSync } from 'fs';
 
 // 옵션·옵션그룹·특성이 외국어 화면에서 한국어로 남던 문제 (2026-08-26).
 //
@@ -97,8 +97,32 @@ for (const 표 of 조인필요) {
         'brand_id 가 없는 표라 WHERE brand_id=? 로 떨어지면 백필 전체가 멈춘다');
 }
 
-// 언어팩을 안 켠 몰에서는 아무 일도 없어야 한다 — 대부분의 몰이 그렇다.
 const util = 주석제거(읽기('utils.js/util.js'));
+
+// ── 팝업·혜택안내 (2026-08-26) ───────────────────────────────────────────
+//
+// 팝업은 세 군데가 동시에 비어 있었다: 테이블에 lang_obj 없음 · 대상 목록에 없음 ·
+// 화면이 원문을 그대로 그림. 하나만 채우면 여전히 한국어로 나오므로 셋 다 본다.
+t('팝업이 번역 대상 목록에 있다', /popups: \[[\s\S]*?'popup_title'[\s\S]*?'popup_content'/.test(sched));
+t('팝업 본문을 HTML 로 다룬다', /popups: \['popup_content'\]/.test(util),
+    'Quill 이 만든 마크업이라 통째로 번역기에 넣으면 태그가 깨진다');
+const popupCtrl = 주석제거(읽기('controllers/popup.controller.js'));
+t('팝업 저장이 대기열에 싣는다', (popupCtrl.match(/settingLangs\(/g) ?? []).length === 2,
+    '만들 때와 고칠 때 둘 다 실어야 한다');
+t('팝업 마이그레이션 파일이 있다',
+    existsSync(BACK_ROOT + 'migrations/2026-08-26_popups_lang_obj.sql'),
+    'popups 에는 lang_obj 컬럼이 없다 — 컬럼 없이 목록에만 넣으면 스케줄러가 실패한다');
+
+// 혜택안내 팝업 머리글. 화면은 formatLang 으로 부르는데 대상 목록에 없어 늘 원문이었다.
+t('혜택안내 popup_title 이 대상에 있다',
+    /benefit_notices: \[[\s\S]*?'popup_title'/.test(sched));
+
+// 대상 목록에 표를 새로 넣을 때 마이그레이션이 늦으면 백필이 통째로 멈춘다.
+t('백필이 lang_obj 없는 표를 건너뛴다',
+    /COLUMN_NAME = 'lang_obj'/.test(backfill) && /건너뜁니다/.test(backfill),
+    '한 표를 건너뛰는 게 아니라 Unknown column 으로 전체가 멈춘다');
+
+// 언어팩을 안 켠 몰에서는 아무 일도 없어야 한다 — 대부분의 몰이 그렇다.
 t('언어팩 꺼진 몰은 그냥 지나간다', /is_use_lang != 1\)\s*\{\s*return;/.test(util),
     '이 가드가 없으면 언어를 안 쓰는 몰까지 번역 대기열을 채운다');
 

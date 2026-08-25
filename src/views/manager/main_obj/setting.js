@@ -417,6 +417,11 @@ const MainObjSetting = props => {
   const [item, setItem] = useState(() => createDefaultManagerObj('brands'))
   const [contentList, setContentList] = useState([])
   const [sectionType, setSectionType] = useState('banner')
+  // 「그 밖의 섹션」 펼침 여부. 기본은 접힘 —
+  // 가맹점 요청(2026-08-24): "해당 타입별로 추가할 수 있는 섹션만 있으면 될듯 합니다.
+  // 나머지는 안보이는게 가맹점들의 혼란은 없앨 수 있을 듯 합니다."
+  // 없애지 않고 접기만 하는 이유는 목록을 만드는 자리의 주석 참고.
+  const [그밖열림, set그밖열림] = useState(false)
   const [productContent, setProductContent] = useState({
     total: 100,
     content: []
@@ -1869,11 +1874,32 @@ const MainObjSetting = props => {
                           // 추천 순서는 추천목록에 적힌 순서를 따른다(그 프레임에서 자연스러운 차례다).
                           const 추천 = 추천목록.map(t => 전체.find(x => x.type === t)).filter(Boolean);
                           const 나머지 = 전체.filter(x => !추천목록.includes(x.type));
+                          // 이미 쓰고 있는 섹션이 '그 밖' 에 있으면 처음부터 펼쳐 둔다 —
+                          // 접힌 채로 두면 자기가 쓰던 것이 사라진 줄 안다.
+                          const 쓰는중 = 나머지.some(x => hasTypeCount(contentList, x.type) > 0);
+                          const 펼침 = 그밖열림 || 쓰는중;
                           return [
                             <ListSubheader key="추천">이 프레임에 어울리는 섹션</ListSubheader>,
                             ...추천.map(줄),
-                            <ListSubheader key="그밖">그 밖의 섹션</ListSubheader>,
-                            ...나머지.map(줄),
+                            // ⚠ 「그 밖의 섹션」을 **없애지 않는다**. 접기만 한다.
+                            //   가맹점 요청은 "나머지는 안 보이는게 혼란을 없앨 수 있을 듯" 이었는데,
+                            //   DB를 보니 그 섹션들을 실제로 쓰는 몰이 8곳 있다(동영상·상품후기·셀러·
+                            //   특성그룹 등). 없애면 그 몰들은 자기가 쓰던 섹션을 다시 못 만든다.
+                            //   특성그룹 섹션은 가맹점 상품 데이터에서 파생돼 추천 목록에 넣을 수도 없다.
+                            //   (frame-sections.js 주석도 "못 쓰는 섹션 목록이 아니다 — 막지 않고 권하기만
+                            //    한다" 로 못 박아 두었다)
+                            //   그래서 기본은 접어 두고, 필요한 사람만 펴서 쓰게 한다.
+                            <ListSubheader key="그밖" sx={{ lineHeight: 2.2 }}>
+                              <Box
+                                component="span"
+                                onClick={(e) => { e.stopPropagation(); set그밖열림(v => !v) }}
+                                sx={{ cursor: 'pointer', userSelect: 'none', display: 'inline-flex', alignItems: 'center', gap: 0.5 }}
+                              >
+                                그 밖의 섹션 ({나머지.length})
+                                <span style={{ fontSize: 11 }}>{펼침 ? '▲ 접기' : '▼ 더 보기'}</span>
+                              </Box>
+                            </ListSubheader>,
+                            ...(펼침 ? 나머지.map(줄) : []),
                           ];
                         })()}
                       </Select>

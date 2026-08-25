@@ -43,7 +43,9 @@ const HeroLeft = styled.div`
   border-right: 1px solid #000;
   @media (max-width: 840px) {
     border-right: none;
-    border-bottom: 1px solid #000;
+    /* 모바일 구분선은 여기가 아니라 HeroRight(사진) 아래에 있다.
+       사진을 위로 올렸으므로(HeroRight 의 order:-1), 글 아래에 선을 그으면
+       Hero 자체의 border-bottom 과 겹쳐 두 줄이 되고 정작 사진과 글 사이는 붙어 버린다. */
     padding: 3rem 1.5rem;
   }
 `
@@ -92,6 +94,16 @@ const HeroRight = styled.div`
   background: #f5f5f5;
   @media (max-width: 840px) {
     padding: 3rem 1.5rem;
+    /* 모바일에서는 사진이 먼저 온다.
+       가맹점 요청(2026-08-24): "사진 이미지와 제목 이미지 순서 변경 부탁드립니다.
+       모바일상에서도 사진 이미지가 먼저 나오는게 좋을 듯 합니다".
+       데스크톱은 좌(글)·우(사진) 두 칸이라 사진이 이미 눈에 들어오는데,
+       한 칸으로 접히면 글이 화면을 다 차지해 사진을 보려면 스크롤해야 했다.
+       ⚠ JSX 순서를 바꾸지 않고 CSS order 로만 뒤집는다 —
+         DOM 순서를 바꾸면 데스크톱의 좌/우가 함께 뒤집히고 테두리 규칙도 어긋난다. */
+    order: -1;
+    /* 사진과 글 사이 구분선. 데스크톱에서는 HeroLeft 의 border-right 가 그 역할을 한다. */
+    border-bottom: 1px solid #000;
   }
 `
 const HeroImage = styled(LazyLoadImage)`

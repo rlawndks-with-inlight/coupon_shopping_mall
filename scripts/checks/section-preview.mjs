@@ -127,5 +127,43 @@ t('그 밖의 섹션을 목록에서 없애지 않았다',
 t('몇 개가 숨어 있는지 보여준다', /그 밖의 섹션 \(\{나머지\.length\}\)/.test(setting),
     '개수를 모르면 눌러 볼 이유가 없다');
 
+// ── 「홈 문구」 위치 안내 (요청서 10번) ──────────────────────────────────
+//
+// [제보] "정확히 어디 문구 인지 이미지로 보여주면 좋을 듯 합니다."
+//
+// 좌표를 손으로 적어 두지 않는다. 문구 자리에 그 칸의 이름(① 에디션 표기 …)을 넣고
+// 홈을 그대로 찍는다 — 사진 속 글자가 곧 라벨이라, 디자인이 바뀌어 자리가 옮겨져도
+// 다시 찍기만 하면 맞는다.
+const { HOME_TEXT_SCHEMA } = await import(
+    'data:text/javascript;base64,' + Buffer.from(읽기('src/data/home-texts.js')).toString('base64'));
+const { 홈문구표시값, homeTextPreviewSrc } = await import(
+    'data:text/javascript;base64,' + Buffer.from(소스).toString('base64'));
+
+const 데모번호들 = Object.keys(HOME_TEXT_SCHEMA).map(Number);
+t('홈 문구를 지원하는 데모가 있다', 데모번호들.length >= 6);
+for (const n of 데모번호들) {
+    const abs = FRONT_ROOT + 'public' + homeTextPreviewSrc(n);
+    t(`데모${n} 홈문구 안내 그림이 있다`, existsSync(abs),
+        'node scripts/section-preview/capture.cjs 로 만든다');
+}
+{
+    // 표시값이 칸 순서대로 번호를 붙여야 편집 화면의 라벨과 맞는다.
+    const 값 = 홈문구표시값(HOME_TEXT_SCHEMA[4].fields);
+    t('표시값에 번호가 붙는다', String(값.edition).startsWith('①'));
+    t('표시값이 칸 이름을 담는다', String(값.edition).includes('에디션 표기'));
+    t('모든 칸에 값이 있다', HOME_TEXT_SCHEMA[4].fields.every((f) => !!값[f.key]),
+        '빈 값이면 데모가 자기 기본값을 써서 그 자리가 어느 칸인지 안 드러난다');
+}
+const 홈문구화면 = 주석제거(읽기('src/pages/manager/designs/home-texts.js'));
+t('편집 화면이 안내 그림을 보여준다', /<HomeTextGuide demoNum=\{demoNum\}/.test(홈문구화면));
+t('편집 화면 라벨에도 같은 번호를 붙인다', /\['①','②'/.test(홈문구화면),
+    '그림의 번호와 칸의 번호가 다르면 안내가 안 된다');
+t('그림이 없으면 아무것도 안 그린다', /onError=\{\(\) => set있음\(false\)\}/.test(홈문구화면));
+
+// 캡처 화면이 전역 설정을 건드리지 않아야 한다.
+t('캡처 화면이 전역 설정을 안 건드린다', !/onChangeDnsData/.test(page),
+    'onChangeDnsData 는 localStorage 까지 바꿔서, 사람이 이 화면을 열면 그 몰 설정이 오염된다');
+t('지역 Provider 로 문구만 갈아끼운다', /SettingsContext\.Provider/.test(page));
+
 console.log(`\n통과 ${pass} / 실패 ${fail}`);
 process.exit(fail ? 1 : 0);

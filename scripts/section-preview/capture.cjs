@@ -116,11 +116,17 @@ const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
     const 섹션타입들 = [...섹션소스.matchAll(/\{ type: '([a-z-]+)', label: '[^']*'(,?\s*skip: true)?/g)]
         .filter((m) => !m[2])
         .map((m) => m[1]);
+    // 「홈 문구」 위치 안내 — 블로그 데모 4~9 (HOME_TEXT_SCHEMA 의 키)
+    const 홈문구소스 = fs.readFileSync(path.resolve(__dirname, '../../src/data/home-texts.js'), 'utf8');
+    const 홈데모들 = [...홈문구소스.matchAll(/^  (\d+): \{$/gm)].map((m) => Number(m[1]));
+
     const 찍을것 = [
         ...Array.from({ length: 8 }, (_, i) => ({ q: `type=${i + 1}`, 이름: `타입${i + 1}` })),
         ...섹션타입들.map((t) => ({ q: `section=${t}`, 이름: `섹션 ${t}` })),
+        ...홈데모들.map((n) => ({ q: `hometext=${n}`, 이름: `홈문구 데모${n}` })),
     ];
-    console.log(`찍을 것 ${찍을것.length}개 (디자인 타입 8 · 섹션 ${섹션타입들.length})
+    console.log(`찍을 것 ${찍을것.length}개 `
+        + `(디자인 타입 8 · 섹션 ${섹션타입들.length} · 홈문구 ${홈데모들.length})
 `);
 
     let 만든수 = 0;

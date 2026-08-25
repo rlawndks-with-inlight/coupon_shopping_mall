@@ -148,3 +148,27 @@ export const SECTION_SAMPLES = [
 ];
 
 export const sectionPreviewSrc = (type) => `/section-preview/section-${type}.png`;
+
+// ─────────────────────────────────────────────────────────────────────────
+// 「홈 문구」가 화면 어디에 나오는지 (요청서 10번).
+//
+// [제보] "정확히 어디 문구 인지 이미지로 보여주면 좋을 듯 합니다."
+//
+// 좌표를 손으로 적어 두지 않는다. 대신 **문구 자리에 그 칸의 이름을 넣고** 홈을 찍는다 —
+// 사진 속 글자가 곧 라벨이 되므로 좌표 데이터가 아예 필요 없고,
+// 디자인이 바뀌어 자리가 옮겨져도 다시 찍기만 하면 맞는다.
+//
+// ⚠ 값이 빈 칸이면 데모가 자기 기본값을 쓴다(예: '№ 001'). 그래서 반드시 채워 넣어야
+//   그 자리가 어느 칸인지 드러난다.
+
+// HOME_TEXT_SCHEMA 의 필드 목록을 '① 라벨' 로 채운 home_texts 객체로 바꾼다.
+export const 홈문구표시값 = (fields) => {
+    const 번호 = ['①', '②', '③', '④', '⑤', '⑥', '⑦', '⑧', '⑨', '⑩', '⑪', '⑫'];
+    const out = {};
+    (fields ?? []).forEach((f, i) => {
+        out[f.key] = `${번호[i] ?? `(${i + 1})`} ${f.label}`;
+    });
+    return out;
+};
+
+export const homeTextPreviewSrc = (demoNum) => `/section-preview/home-text-${demoNum}.png`;

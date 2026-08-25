@@ -9,7 +9,53 @@ import HomeItemsWithCategories from 'src/views/section/blog/HomeItemsWithCategor
 import HomeVideoSlide from 'src/views/section/blog/HomeVideoSlide';
 import HomePost from 'src/views/section/blog/HomePost';
 import HomeTextBanner from 'src/views/section/shop/HomeTextBanner';
-import { HERO_TYPES, SECTION_SAMPLES, 견본상품 } from 'src/data/section-preview';
+import { HERO_TYPES, SECTION_SAMPLES, 견본상품, 홈문구표시값 } from 'src/data/section-preview';
+import { HOME_TEXT_SCHEMA } from 'src/data/home-texts';
+// SettingsContext 는 index.js 가 재export 하지 않는다 — 정의 파일에서 직접 가져온다.
+import { SettingsContext } from 'src/components/settings/SettingsContext';
+import { useSettingsContext } from 'src/components/settings';
+import BlogHome4 from 'src/views/blog/home/demo-4';
+import BlogHome5 from 'src/views/blog/home/demo-5';
+import BlogHome6 from 'src/views/blog/home/demo-6';
+import BlogHome7 from 'src/views/blog/home/demo-7';
+import BlogHome8 from 'src/views/blog/home/demo-8';
+import BlogHome9 from 'src/views/blog/home/demo-9';
+
+const 홈데모 = { 4: BlogHome4, 5: BlogHome5, 6: BlogHome6, 7: BlogHome7, 8: BlogHome8, 9: BlogHome9 };
+
+// 「홈 문구」가 화면 어디에 나오는지 보여주는 그림을 만든다.
+//
+// 문구 자리에 그 칸의 이름(① 에디션 표기 …)을 넣고 홈을 그대로 그린다 —
+// 사진 속 글자가 곧 라벨이라 좌표를 손으로 적어 둘 필요가 없고,
+// 디자인이 바뀌어 자리가 옮겨져도 다시 찍기만 하면 맞는다.
+//
+// ⚠ 전역 상태를 건드리지 않는다. onChangeDnsData 는 localStorage 까지 바꿔서,
+//   사람이 이 화면을 자기 브라우저로 열면 그 몰 설정이 오염된다.
+//   여기서만 통하는 Provider 로 감싼다.
+const 홈문구미리보기 = ({ demoNum }) => {
+  const 원본 = useSettingsContext();
+  const 화면 = 홈데모[demoNum];
+  const 스키마 = HOME_TEXT_SCHEMA[demoNum];
+  if (!화면 || !스키마) return null;
+  const 가짜 = {
+    ...원본,
+    themeDnsData: {
+      ...원본.themeDnsData,
+      setting_obj: {
+        ...(원본.themeDnsData?.setting_obj ?? {}),
+        shop_demo_num: 0,
+        blog_demo_num: demoNum,
+        home_texts: { [`demo${demoNum}`]: 홈문구표시값(스키마.fields) },
+      },
+    },
+  };
+  const Home = 화면;
+  return (
+    <SettingsContext.Provider value={가짜}>
+      <Home />
+    </SettingsContext.Provider>
+  );
+};
 
 // 관리자 화면에 넣을 미리보기 이미지를 만들기 위한 캡처 전용 화면.
 //
@@ -57,11 +103,13 @@ const PreviewCapture = () => {
   const data = { windowWidth: 1100 };
   const func = {};
 
-  const 타입들 = 고른섹션 ? [] : (고른타입 ? HERO_TYPES.filter((t) => String(t.value) === 고른타입) : HERO_TYPES);
+  const 홈문구모드 = !!router.query?.hometext;
+  const 타입들 = (고른섹션 || 홈문구모드) ? [] : (고른타입 ? HERO_TYPES.filter((t) => String(t.value) === 고른타입) : HERO_TYPES);
   // skip 표시된 섹션은 견본으로 제대로 안 그려진다(이유는 section-preview.js 주석).
   const 쓸섹션 = SECTION_SAMPLES.filter((x) => !x.skip);
-  const 섹션들 = 고른타입 ? [] : (고른섹션 ? 쓸섹션.filter((s) => s.type === 고른섹션) : 쓸섹션);
-  const 하나만 = !!(고른타입 || 고른섹션);
+  const 섹션들 = (고른타입 || 홈문구모드) ? [] : (고른섹션 ? 쓸섹션.filter((s) => s.type === 고른섹션) : 쓸섹션);
+  const 고른홈문구 = String(router.query?.hometext ?? '');
+  const 하나만 = !!(고른타입 || 고른섹션 || 고른홈문구);
 
   return (
     <div style={{ background: '#fff', padding: '24px' }}>
@@ -86,6 +134,12 @@ const PreviewCapture = () => {
           </div>
         </div>
       ))}
+
+      {!!고른홈문구 && (
+        <div data-capture={`home-text-${고른홈문구}`} style={{ width: 1100, background: '#fff' }}>
+          <홈문구미리보기 demoNum={Number(고른홈문구)} />
+        </div>
+      )}
 
       {섹션들.map((s) => (
         <div key={`s${s.type}`} style={{ marginBottom: 40 }}>

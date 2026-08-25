@@ -50,6 +50,28 @@ const Wrappers = styled.div`
 // 공용 주문서(주문/결제) — 단일 페이지. demo-9 카트의 결제 로직을 그대로 이식하되
 // 스텝퍼가 아니라 모든 섹션(주문상품·주문자·배송지·결제수단·약관·요약)을 한 화면에 표시한다.
 // 결제모듈(payment_modules)에 설정된 수단만 노출. 가짜 sms_pay는 이식 대상에서 제외.
+// 바로구매 보관함(sessionStorage.buyNowItem) 읽기·쓰기.
+//
+// ⚠ 예전에는 **객체 하나**만 담았고, 되쓸 때도 list[0] 만 저장했다.
+//   옵션을 여러 줄 고르고 바로구매를 누르면 첫 줄만 남고 나머지가 조용히 사라진다
+//   (상품상세에서 '선택한 옵션' 을 여러 줄로 쌓을 수 있게 되면서 생긴 자리다).
+//   그래서 배열로 담고, 예전에 담긴 객체 하나도 그대로 읽는다(탭에 남아 있을 수 있다).
+const 바로구매읽기 = (raw) => {
+    try {
+        const v = JSON.parse(raw);
+        if (Array.isArray(v)) return v.filter(Boolean);
+        return v ? [v] : [];
+    } catch (e) { return []; }
+};
+const 바로구매쓰기 = (list) => {
+    try {
+        const 것 = (Array.isArray(list) ? list : []).filter(Boolean);
+        if (!것.length) sessionStorage.removeItem('buyNowItem');
+        // 한 줄이면 예전과 같은 모양(객체)으로 둔다 — 다른 화면이 그대로 읽는다.
+        else sessionStorage.setItem('buyNowItem', JSON.stringify(것.length === 1 ? 것[0] : 것));
+    } catch (e) { /* noop */ }
+};
+
 // 비회원 주문 비밀번호 길이. DB transactions.password 컬럼 크기와 함께 관리한다.
 // (마이그레이션 2026-08-07_widen_transactions_password.sql 로 컬럼을 넓혔다)
 const GUEST_PW_MIN = 6;
@@ -238,7 +260,7 @@ export default function OrderSheet({ router }) {
     // 조회에 실패한 라인은 sync.unavailable 에 들어오지 않는다(실패는 차단 사유가 아니다).
     setUnavailableRaw(sync.unavailable);
     if (isBuyNow()) {
-      try { sessionStorage.setItem('buyNowItem', JSON.stringify(sync.items[0] ?? null)); } catch (e) { /* noop */ }
+      바로구매쓰기(sync.items);
     } else {
       onChangeCartData(sync.items);
     }
@@ -266,7 +288,7 @@ export default function OrderSheet({ router }) {
       // 바로구매: sessionStorage의 단일 상품 사용(장바구니 무관)
       try {
         const raw = sessionStorage.getItem('buyNowItem');
-        if (raw) items = [JSON.parse(raw)];
+        if (raw) items = 바로구매읽기(raw);
       } catch (e) { /* noop */ }
     } else {
       items = await getCartDataUtil(themeCartData);
@@ -286,10 +308,7 @@ export default function OrderSheet({ router }) {
     const list = [...products];
     list.splice(idx, 1);
     if (isBuyNow()) {
-      try {
-        if (list.length > 0) sessionStorage.setItem('buyNowItem', JSON.stringify(list[0]));
-        else sessionStorage.removeItem('buyNowItem');
-      } catch (e) { /* noop */ }
+      바로구매쓰기(list);
     } else {
       onChangeCartData(list);
     }
@@ -302,7 +321,7 @@ export default function OrderSheet({ router }) {
     const count = Math.max(1, parseInt(next) || 1);
     const list = products.map((item, i) => (i == idx ? { ...item, order_count: count } : item));
     if (isBuyNow()) {
-      try { sessionStorage.setItem('buyNowItem', JSON.stringify(list[0] ?? null)); } catch (e) { /* noop */ }
+      바로구매쓰기(list);
     } else {
       onChangeCartData(list);
     }

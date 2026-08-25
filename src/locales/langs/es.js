@@ -183,6 +183,8 @@ const es = {
   "포인트내역이 없습니다.": "No tiene sentido la historia.",
   "상품금액": "Cantidad de producto",
   "선택한 옵션": "Opciones seleccionadas",
+  "빼기": "Quitar",
+  "고르던 옵션을 마저 선택해 주세요.": "Termina de elegir la opción que empezaste.",
   "전체상품": "Todos los productos",
   "등록된 상품이 없습니다.": "No hay productos registrados.",
   "옵션 금액": "Importe de opciones",

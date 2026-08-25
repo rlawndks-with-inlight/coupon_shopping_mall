@@ -188,6 +188,8 @@ const en = {
   "포인트내역이 없습니다.": "There are no point details.",
   "상품금액": "Commodity amount",
   "선택한 옵션": "Selected options",
+  "빼기": "Remove",
+  "고르던 옵션을 마저 선택해 주세요.": "Please finish choosing the option you started.",
   "전체상품": "All products",
   "등록된 상품이 없습니다.": "No products have been registered.",
   "옵션 금액": "Options total",

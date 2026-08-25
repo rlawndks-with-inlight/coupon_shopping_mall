@@ -1,9 +1,13 @@
+import { useEffect } from 'react';
 import { useRouter } from 'next/router';
 import { useLocales } from 'src/locales';
 import { formatLang } from 'src/utils/format';
 import { commarNumber } from 'src/utils/function';
 import { addonGroups, isOptionSoldOut, isSameGroup } from 'src/data/product-options';
+import { 줄조작표 } from 'src/utils/shop-util';
 import SelectedOptionSummary, { hasOptionSummary } from './SelectedOptionSummary';
+import SelectedOptionLines from './SelectedOptionLines';
+import { isRequiredComplete, purchaseUnits, requiredGroups } from 'src/data/product-options';
 import { useAuthContext } from 'src/layouts/manager/auth/useAuthContext';
 
 // 추가상품 — 안 골라도 살 수 있는 것. 여러 개 고를 수 있고 다시 누르면 빠진다.
@@ -34,8 +38,53 @@ const ProductAddons = ({ product, selected, onSelect, style = {} }) => {
     // 이 컴포넌트가 **프레임 11개 전부**에 들어가 있어서, 요약을 따로 배선하면
     // 프레임마다 또 붙여야 하고 한 곳만 빠뜨리면 그 프레임에서만 금액이 안 보인다.
     // (추가상품 취소가 프레임 7개에서 안 되던 것과 같은 부류의 사고를 미리 막는다)
+    // ── 골라야 할 것을 다 고르면 한 줄로 확정하고, 드롭다운을 비운다 ────
+    //
+    // [왜 여기인가]
+    // 프레임마다 옵션 UI 를 따로 그린다. 공용 ProductOptions 를 쓰는 화면은 둘뿐이고
+    // (프레임1·2) 블로그 계열은 각자 <select> 를 그려 onSelectOption 을 부른다.
+    // 그 19곳에 인자를 하나 더 넘기게 하면 한 곳만 빠뜨려도 그 화면에서만 안 먹는다 —
+    // 예전에 추가상품 인자를 그렇게 놓쳐 7개 프레임에서 추가상품을 못 뺐다.
+    // 이 컴포넌트는 **프레임 11개 전부**에 들어가 있고 product 와 selected 를 둘 다 받는다.
+    //
+    // [왜 '완성되는 순간' 인가]
+    // '다른 조합으로 바뀔 때 직전 것을 쌓는' 방식도 만들어 봤는데 버렸다.
+    // 드롭다운을 하나씩 바꾸면 중간 조합(크기만 바꾼 상태)이 **손님이 원한 적 없는 줄**로
+    // 쌓인다. 장바구니에 없던 물건이 늘어나는 것이라 화면이 지저분한 것보다 훨씬 나쁘다.
+    //
+    // [드롭다운 비우기]
+    // 프레임들의 <select> 는 defaultValue 로 그린 **비제어 요소**라 상태를 비워도
+    // 화면에는 방금 고른 값이 남는다. 값은 비었는데 골라진 것처럼 보이고,
+    // 같은 것을 다시 고르면 onChange 가 안 나서 되담을 수도 없다.
+    // 프레임 19곳을 고치는 대신 여기서 한 번에 되돌린다 —
+    // **이 상품의 필수 옵션 이름을 가진 select 만** 골라서 건드린다(다른 select 는 그대로).
+    const 완성됨 = isRequiredComplete(product, selected?.groups);
+    useEffect(() => {
+        if (!완성됨) return;
+        onSelect?.({ [줄조작표]: { type: 'close' } }, null);
+        try {
+            const 필수이름 = new Set(
+                requiredGroups(product).flatMap((g) => (g?.options ?? [])
+                    .map((o) => String(o?.option_name ?? '').trim()).filter(Boolean)));
+            if (!필수이름.size) return;
+            for (const sel of document.querySelectorAll('select')) {
+                const 이상품것 = [...sel.options].some((o) => {
+                    // 화면은 '중 (+1,000원)' 처럼 금액을 덧붙여 그린다 — 앞부분으로 맞춘다.
+                    const t = String(o.textContent ?? '').trim();
+                    for (const 이름 of 필수이름) if (t === 이름 || t.startsWith(이름 + ' ')) return true;
+                    return false;
+                });
+                if (이상품것) sel.selectedIndex = 0;
+            }
+        } catch (e) { /* 화면 되돌리기 실패가 구매를 막으면 안 된다 */ }
+    }, [완성됨]);
+
     const 요약있음 = hasOptionSummary(product, selected);
-    if (!추가.length && !한정 && !요약있음) return null;
+    // 확정된 줄이 있으면 줄 목록을 그린다(요약 대신).
+    // 요약은 '지금 고르는 중인 조합 하나'를 보여주는 것이라, 줄이 쌓인 뒤에도 같이 띄우면
+    // 같은 금액이 두 번 적힌 것처럼 보인다.
+    const 줄있음 = purchaseUnits(selected).some((u) => u.쌓인줄);
+    if (!추가.length && !한정 && !요약있음 && !줄있음) return null;
 
     const 골랐나 = (group, option) =>
         ((selected?.groups ?? []).find((g) => isSameGroup(g, group))?.options ?? [])
@@ -122,7 +171,9 @@ const ProductAddons = ({ product, selected, onSelect, style = {} }) => {
 
             {/* 고른 옵션과 실제로 낼 금액. 상품가와 '조합 추가금' 이 따로 떨어져 있어
                 손님이 머릿속으로 더해야 했다(50,000 + 100,000 = 얼마?). */}
-            {요약있음 && <SelectedOptionSummary product={product} selected={selected} />}
+            {줄있음
+                ? <SelectedOptionLines product={product} selected={selected} onSelect={onSelect} />
+                : (요약있음 && <SelectedOptionSummary product={product} selected={selected} />)}
         </div>
     );
 };

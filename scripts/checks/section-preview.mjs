@@ -165,5 +165,20 @@ t('캡처 화면이 전역 설정을 안 건드린다', !/onChangeDnsData/.test(
     'onChangeDnsData 는 localStorage 까지 바꿔서, 사람이 이 화면을 열면 그 몰 설정이 오염된다');
 t('지역 Provider 로 문구만 갈아끼운다', /SettingsContext\.Provider/.test(page));
 
+// ── 카테고리탭 섹션의 폭 터짐 (미리보기를 못 만들던 원인) ────────────────
+//
+// 상품 자리를 <Row>(맨 display:flex)로 감싸면 안의 react-slick 이 '내용만큼' 넓어지는
+// 칸에 놓인다. 슬라이더는 제 칸 폭을 재서 트랙에 px 로 박고, 그 트랙이 다시 칸을 넓힌다 —
+// 잴 때마다 두 배가 되어 33,554,404px(2^25)까지 갔고 상품 격자가 통째로 비어 나왔다.
+// 되돌아가기 쉬운 자리라(둘러싼 <Row> 하나 차이) 검사로 못 박아 둔다.
+const 카테고리탭 = 주석제거(읽기('src/views/section/blog/HomeItemsWithCategories.js'));
+t('카테고리탭 섹션의 상품 자리가 flex 칸이 아니다',
+    !/<Row>\s*\{column\?\.list/.test(카테고리탭),
+    '<Row> 로 감싸면 슬라이더 폭이 2^25 로 튄다');
+t('카테고리탭 섹션의 상품 자리 폭이 100% 로 못박혀 있다',
+    /width: '100%' \}\}>\s*\{column\?\.list/.test(카테고리탭),
+    '잴 값이 고정되어야 슬라이더의 폭 되먹임이 끊긴다');
+t('왜 그랬는지 적어 두었다', /33,554,404px|2\^25/.test(읽기('src/views/section/blog/HomeItemsWithCategories.js')));
+
 console.log(`\n통과 ${pass} / 실패 ${fail}`);
 process.exit(fail ? 1 : 0);

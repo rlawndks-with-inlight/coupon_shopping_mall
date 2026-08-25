@@ -101,7 +101,17 @@ const HomeItemsWithCategories = (props) => {
                     <CategoryTabs onClickItemCategory={onClickItemCategory} column={column} itemCategory={itemCategory} idx={idx} />
                 </HeaderContainer>
                 <div style={{ marginTop: '1rem' }} />
-                <Row>
+                {/* [증상] 탭까지는 그려지는데 상품 격자가 통째로 비어 나온다.
+                    재 보면 슬라이더 폭이 **33,554,404px(2^25)** 이었다.
+                    [원인] 여기가 <Row> 였다 — 맨 `display:flex` 라 안의 슬라이더가
+                    '내용만큼' 넓어지는 칸이 된다. react-slick 은 제 칸 폭을 재서
+                    트랙에 px 로 박는데, 그 트랙이 다시 칸을 넓히므로 잴 때마다 두 배가 된다.
+                    2^25 는 그 되먹임이 한계까지 간 자국이다.
+                    [수정] 폭을 100% 로 못박는다. 잴 값이 고정되면 되먹임이 끊긴다.
+                    상품슬라이드(HomeItems)가 멀쩡했던 이유도 이것이다 —
+                    거기는 Items 를 세로 flex 안에 바로 두어 폭이 늘 꽉 차 있었다.
+                    flex 였던 것을 되돌리지 말 것: 한 번에 한 탭만 그리므로 나란히 놓을 것이 없다. */}
+                <div style={{ width: '100%' }}>
                     {column?.list && column?.list.map((item, index) => (
                         <>
                             {itemCategory == index &&
@@ -110,7 +120,7 @@ const HomeItemsWithCategories = (props) => {
                                 </>}
                         </>
                     ))}
-                </Row>
+                </div>
             </Wrappers>
         </>
     )

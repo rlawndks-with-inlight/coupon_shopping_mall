@@ -93,18 +93,20 @@ export const SECTION_SAMPLES = [
         column: { type: 'items', title: '인기 상품', sub_title: '', list: 견본상품들(4), style: {} } },
     { type: 'items-ids', label: 'ID 선택형 상품슬라이드',
         column: { type: 'items-ids', title: '이달의 추천', sub_title: '', list: 견본상품들(4), style: {} } },
-    // ⚠ 카테고리탭별 상품리스트는 미리보기를 만들지 않는다(skip).
-    //
-    // 제목과 탭(상의·하의)까지는 제대로 그려지는데 **상품 격자가 비어 나온다**.
-    // 게다가 그 빈 영역의 높이가 33,554,432px(2^25)로 튀어서 크롬이 캡처 자체를 거절했다.
-    // 같은 견본 상품으로 '상품슬라이드'(HomeItems)는 멀쩡히 그려지므로 데이터 모양 문제는 아니다 —
-    // 차이는 HomeItems 가 Items 에 is_slide·type·length·idx 를 넘기는데
-    // HomeItemsWithCategories 는 하나도 안 넘긴다는 점이다.
-    //
-    // 대충 채운 빈 그림을 넣으면 미리보기가 오히려 오해를 만든다(타입7 흰 원에서 겪었다).
-    // 그래서 이 섹션만 비워 두고, 관리자 화면은 이미지가 없으면 아무것도 안 그린다.
-    // ▶ 남은 일: 이 섹션이 실제 몰에서도 같은지 확인할 것. 8개 몰이 쓰고 있다.
-    { type: 'items-with-categories', label: '카테고리탭별 상품리스트', skip: true },
+    // 이 섹션은 한동안 미리보기를 못 만들었다(skip 이었다). 탭까지만 그려지고
+    // 상품 격자가 비었으며, 그 빈 영역 높이가 33,554,432px(2^25)라 크롬이 캡처를 거절했다.
+    // 견본 데이터 탓이 아니라 섹션 자체의 결함이었다 —
+    // 원인과 수정은 views/section/blog/HomeItemsWithCategories.js 주석에 적었다.
+    // 지금은 정상이라 다른 섹션과 똑같이 찍는다.
+    { type: 'items-with-categories', label: '카테고리탭별 상품리스트',
+        column: {
+            type: 'items-with-categories', title: '카테고리별 상품', sub_title: '', is_vertical: 0,
+            list: [
+                { category_name: '상의', list: 견본상품들(4) },
+                { category_name: '하의', list: 견본상품들(4) },
+            ],
+            style: {},
+        } },
     { type: 'item-hero', label: '단일 상품 강조',
         column: { type: 'item-hero', title: '', list: [견본상품], style: { hero_type: '1' } } },
     { type: 'button-banner', label: '버튼형 배너슬라이드',

@@ -144,14 +144,35 @@ const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
           const el = document.querySelector('[data-capture]');
           if (!el) return null;
           const r = el.getBoundingClientRect();
-          return { 이름: el.getAttribute('data-capture'), x: r.left + scrollX, y: r.top + scrollY,
-                   w: Math.round(r.width), h: Math.round(r.height) };`);
+          const 상자 = { 이름: el.getAttribute('data-capture'), x: r.left + scrollX, y: r.top + scrollY,
+                         w: Math.round(r.width), h: Math.round(r.height) };
+          // 홈 문구 안내는 '번호가 붙은 자리' 만 보이면 된다.
+          // 홈 전체를 위에서부터 찍으면 첫 화면(히어로)이 뷰포트 높이를 통째로 먹어서,
+          // 정작 번호들은 1400px 아래에 깔린다. 번호가 든 구간만 잘라 낸다.
+          const 번호 = ['①','②','③','④','⑤','⑥','⑦','⑧','⑨','⑩','⑪','⑫'];
+          const walk = document.createTreeWalker(el, NodeFilter.SHOW_TEXT);
+          let node; let 위 = Infinity; let 아래 = -Infinity;
+          while (node = walk.nextNode()) {
+            if (!번호.some((b) => (node.textContent || '').includes(b))) continue;
+            const p = node.parentElement; if (!p) continue;
+            const q = p.getBoundingClientRect();
+            위 = Math.min(위, q.top + scrollY); 아래 = Math.max(아래, q.bottom + scrollY);
+          }
+          if (위 === Infinity) return 상자;
+          // 번호만 딱 자르면 어느 자리인지 알 수 없다 — 앞뒤로 여백을 둬 주변이 함께 보이게 한다.
+          const 시작 = Math.max(상자.y, 위 - 140);
+          const 끝 = Math.min(상자.y + 상자.h, 아래 + 160);
+          return { ...상자, y: 시작, h: Math.round(끝 - 시작), 번호구간: true };`);
         if (!b) { console.log(`  ${항목.이름}: 상자를 못 찾음 (로그인 상태와 주소를 확인하세요)`); continue; }
         if (b.h < 20) { console.log(`  ${항목.이름}: 높이 ${b.h} — 건너뜀`); continue; }
-        // 너무 긴 섹션은 잘라 낸다. 미리보기는 '어떤 모양인지' 만 보여주면 되고,
-        // 크롬은 아주 큰 clip 을 요청하면 'Unable to capture screenshot' 으로 거절한다
-        // (카테고리탭 섹션이 실제로 그렇게 실패했다).
-        const 높이 = Math.min(b.h, 1400);
+        // 너무 긴 것은 잘라 낸다. 크롬은 아주 큰 clip 을 요청하면
+        // 'Unable to capture screenshot' 으로 거절한다.
+        //
+        // 한도가 둘인 이유: 섹션 미리보기는 '어떤 모양인지' 만 보이면 되지만,
+        // 홈 문구 안내는 **번호가 하나라도 잘리면 그 칸을 못 찾는다** — 안내가 안 되는 것이다.
+        // 처음엔 둘 다 1400 으로 잘랐다가, 여섯 장 중 다섯 장에서 번호가 **한 개도**
+        // 안 보이는 채로 배포될 뻔했다(데모5·6·7·8·9 전멸, 데모4 는 7개 중 2개만).
+        const 높이 = Math.min(b.h, b.번호구간 ? 2800 : 1400);
         // clip.scale 은 deviceScaleFactor 와 곱해진다 — 여기서 또 키우면 빈 그림이 나온다.
         let shot;
         try {

@@ -70,7 +70,7 @@ export const heroPreviewSrc = (value) => `/section-preview/item-hero-${value}.pn
 // ⚠ 여기 type 값은 utils/format.js 의 mainObjSchemaList 와 같아야 한다.
 //   다르면 '고를 수는 있는데 미리보기가 없는' 섹션이 생긴다(검사가 잡는다).
 
-const 견본상품들 = (n) => Array.from({ length: n }, (_, i) => ({
+export const 견본상품들 = (n) => Array.from({ length: n }, (_, i) => ({
     ...견본상품,
     id: i + 1,
     product_name: `샘플 상품 ${i + 1}`,

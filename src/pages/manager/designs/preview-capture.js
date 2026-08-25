@@ -9,7 +9,7 @@ import HomeItemsWithCategories from 'src/views/section/blog/HomeItemsWithCategor
 import HomeVideoSlide from 'src/views/section/blog/HomeVideoSlide';
 import HomePost from 'src/views/section/blog/HomePost';
 import HomeTextBanner from 'src/views/section/shop/HomeTextBanner';
-import { HERO_TYPES, SECTION_SAMPLES, 견본상품, 홈문구표시값 } from 'src/data/section-preview';
+import { HERO_TYPES, SECTION_SAMPLES, 견본상품, 견본상품들, 홈문구표시값 } from 'src/data/section-preview';
 import { HOME_TEXT_SCHEMA } from 'src/data/home-texts';
 // SettingsContext 는 index.js 가 재export 하지 않는다 — 정의 파일에서 직접 가져온다.
 import { SettingsContext } from 'src/components/settings/SettingsContext';
@@ -41,10 +41,25 @@ const 홈문구미리보기 = ({ demoNum }) => {
     ...원본,
     themeDnsData: {
       ...원본.themeDnsData,
+      // 찍는 몰의 이름과 상품을 지운다.
+      //
+      // 처음엔 그냥 찍었더니 mbc01 에서 찍은 그림이 저장소에 들어갔고,
+      // **다른 몰 관리자 화면에 'MBC01' 과 그 몰의 상품(떡갈비)이 그대로 박혔다.**
+      // 자기 몰에서 안내를 보는데 남의 상호가 떠 있으면 '이 그림이 내 것이 맞나' 부터 의심하게 된다.
+      // 섹션 미리보기에서 견본 상품을 쓰는 이유와 같은 이유다(data/section-preview.js 주석).
+      //
+      // products 를 한 건 채워 두면 useFeaturedProduct 가 그걸 집어 API 조회를 안 한다.
+      // 대표상품 지정(featured_product_ids)도 비워야 그 조회로 새지 않는다.
+      name: '브랜드명',
+      // 넷을 준다 — 데모 6·8 은 히어로 말고 하단 갤러리에도 상품을 깐다.
+      // 한 건만 주면 useFeaturedProducts 가 빈 배열을 돌려줘 그 자리가 빈 칸으로 찍힌다.
+      products: 견본상품들(4),
       setting_obj: {
         ...(원본.themeDnsData?.setting_obj ?? {}),
         shop_demo_num: 0,
         blog_demo_num: demoNum,
+        featured_product_ids: [],
+        featured_product_id: null,
         home_texts: { [`demo${demoNum}`]: 홈문구표시값(스키마.fields) },
       },
     },

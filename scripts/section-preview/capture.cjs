@@ -59,8 +59,12 @@ const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
         .then((r) => { try { return JSON.parse(r.result?.value ?? 'null'); } catch { return r.result?.value; } });
 
     await send('Page.enable'); await send('Runtime.enable');
-    // 배율 2 로 찍어 관리자 화면에서 줄여 써도 흐려지지 않게 한다.
-    await send('Emulation.setDeviceMetricsOverride', { width: 1100, height: 1400, deviceScaleFactor: 2, mobile: false });
+    // 배율 1 로 찍는다(폭 960px 그대로).
+    //
+    // 처음엔 배율 2 로 찍었는데, 사진이 들어가는 섹션(배너·버튼형배너)이 **한 장에 1.7MB** 가 됐다.
+    // 관리자 화면에서는 카드 폭(300px 남짓)으로 줄여 보여주므로 960px 이면 이미 3배가 넘는다.
+    // 저장소에 들어가는 파일이라 무게가 곧 비용이다 — 필요 이상으로 키우지 않는다.
+    await send('Emulation.setDeviceMetricsOverride', { width: 1100, height: 1400, deviceScaleFactor: 1, mobile: false });
 
     const 렌더대기 = async (최소 = 100) => {
         for (let i = 0; i < 40; i++) {
@@ -106,9 +110,22 @@ const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
     //   섹션 렌더러들이 LazyLoadImage 를 써서 **화면에 들어와야** 사진을 불러오는데,
     //   스크롤로 두 번 훑어도 마지막 타입은 끝내 안 실렸다.
     //   하나씩 열면 늘 화면 안에 있으므로 그 문제가 사라진다. 조금 느린 대신 확실하다.
+    // 찍을 목록 — 디자인 타입 8종 + 섹션 종류들. 목록은 src/data/section-preview.js 가 갖는다.
+    const 섹션소스 = fs.readFileSync(path.resolve(__dirname, '../../src/data/section-preview.js'), 'utf8');
+    // skip: true 로 표시된 섹션은 뺀다(견본으로 제대로 안 그려지는 것 — 이유는 그 파일 주석).
+    const 섹션타입들 = [...섹션소스.matchAll(/\{ type: '([a-z-]+)', label: '[^']*'(,?\s*skip: true)?/g)]
+        .filter((m) => !m[2])
+        .map((m) => m[1]);
+    const 찍을것 = [
+        ...Array.from({ length: 8 }, (_, i) => ({ q: `type=${i + 1}`, 이름: `타입${i + 1}` })),
+        ...섹션타입들.map((t) => ({ q: `section=${t}`, 이름: `섹션 ${t}` })),
+    ];
+    console.log(`찍을 것 ${찍을것.length}개 (디자인 타입 8 · 섹션 ${섹션타입들.length})
+`);
+
     let 만든수 = 0;
-    for (let n = 1; n <= 8; n++) {
-        await send('Page.navigate', { url: `${BASE}/manager/designs/preview-capture?type=${n}` });
+    for (const 항목 of 찍을것) {
+        await send('Page.navigate', { url: `${BASE}/manager/designs/preview-capture?${항목.q}` });
         await 렌더대기(30);
         await sleep(2200);
         // 사진이 다 실릴 때까지 기다린다. 안 실린 채로 찍으면 빈 칸이 된다.
@@ -123,16 +140,29 @@ const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
           const r = el.getBoundingClientRect();
           return { 이름: el.getAttribute('data-capture'), x: r.left + scrollX, y: r.top + scrollY,
                    w: Math.round(r.width), h: Math.round(r.height) };`);
-        if (!b) { console.log(`  타입${n}: 상자를 못 찾음 (로그인 상태와 주소를 확인하세요)`); continue; }
-        if (b.h < 20) { console.log(`  타입${n}: 높이 ${b.h} — 건너뜀`); continue; }
+        if (!b) { console.log(`  ${항목.이름}: 상자를 못 찾음 (로그인 상태와 주소를 확인하세요)`); continue; }
+        if (b.h < 20) { console.log(`  ${항목.이름}: 높이 ${b.h} — 건너뜀`); continue; }
+        // 너무 긴 섹션은 잘라 낸다. 미리보기는 '어떤 모양인지' 만 보여주면 되고,
+        // 크롬은 아주 큰 clip 을 요청하면 'Unable to capture screenshot' 으로 거절한다
+        // (카테고리탭 섹션이 실제로 그렇게 실패했다).
+        const 높이 = Math.min(b.h, 1400);
         // clip.scale 은 deviceScaleFactor 와 곱해진다 — 여기서 또 키우면 빈 그림이 나온다.
-        const shot = await send('Page.captureScreenshot', {
-            format: 'png', captureBeyondViewport: true,
-            clip: { x: b.x, y: b.y, width: b.w, height: b.h, scale: 1 },
-        });
+        let shot;
+        try {
+            shot = await send('Page.captureScreenshot', {
+                format: 'png', captureBeyondViewport: true,
+                clip: { x: b.x, y: b.y, width: b.w, height: 높이, scale: 1 },
+            });
+        } catch (e) {
+            // 한 장이 실패해도 나머지는 계속 찍는다. 처음엔 여기서 통째로 멈춰
+            // 앞서 찍은 것만 남고 뒤는 아예 안 만들어졌다.
+            console.log(`  ${항목.이름}: 캡처 실패 — ${String(e.message).slice(0, 80)}`);
+            continue;
+        }
         const file = path.join(OUT, `${b.이름}.png`);
         fs.writeFileSync(file, Buffer.from(shot.data, 'base64'));
-        console.log(`  ${b.이름}.png  ${b.w}x${b.h}  ${Math.round(fs.statSync(file).size / 1024)}KB`);
+        console.log(`  ${b.이름}.png  ${b.w}x${높이}${높이 < b.h ? ` (원래 ${b.h}, 잘라냄)` : ''}`
+            + `  ${Math.round(fs.statSync(file).size / 1024)}KB`);
         만든수++;
     }
 

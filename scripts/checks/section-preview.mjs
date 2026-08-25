@@ -19,7 +19,7 @@ const t = (name, cond, 곁들임) => {
 const 읽기 = (p) => readFileSync(FRONT_ROOT + p, 'utf8');
 
 const 소스 = 읽기('src/data/section-preview.js');
-const { HERO_TYPES, 견본상품, heroPreviewSrc } =
+const { HERO_TYPES, 견본상품, heroPreviewSrc, SECTION_SAMPLES, sectionPreviewSrc } =
     await import('data:text/javascript;base64,' + Buffer.from(소스).toString('base64'));
 
 // ── 목록 ─────────────────────────────────────────────────────────────────
@@ -71,8 +71,37 @@ t('캡처 표식이 있다', /data-capture=/.test(page));
 const nav = 주석제거(읽기('src/layouts/manager/nav/config-navigation.js'));
 t('캡처 화면은 메뉴에 없다', !/preview-capture/.test(nav));
 
+// ── 섹션 종류별 미리보기 (요청서 8번의 나머지) ───────────────────────────
+//
+// [제보] "가맹점에서는 섹션 가지고 정확한 이미지를 알기 어렵습니다.
+//        해당 페이지 각 색션별로 이미지화 해서 보여줄 수 있게 요청 드립니다."
+const 섹션정의 = 읽기('src/utils/format.js');
+for (const s of SECTION_SAMPLES) {
+    // 견본의 type 이 실제 섹션 목록에 있어야 한다.
+    // 어긋나면 '고를 수는 있는데 미리보기가 없는' 섹션이 생긴다.
+    t(`섹션 '${s.type}' 이 실제 목록에 있다`, 섹션정의.includes(`type: '${s.type}'`));
+    if (s.skip) {
+        // 일부러 안 만든 것. 이유가 코드에 남아 있어야 다음 사람이 '왜 없지' 로 헤매지 않는다.
+        t(`섹션 '${s.type}' 은 왜 뺐는지 적어 두었다`, /33,554,432px|캡처 자체를 거절/.test(소스));
+        continue;
+    }
+    const abs = FRONT_ROOT + 'public' + sectionPreviewSrc(s.type);
+    const 있음 = existsSync(abs);
+    t(`섹션 '${s.type}' 미리보기 이미지가 있다`, 있음,
+        'node scripts/section-preview/capture.cjs 로 만든다');
+    // 얇은 띠 섹션(텍스트배너 26px)도 있어서 크기 기준은 낮게 잡는다 —
+    // 여기서 보려는 것은 '아예 안 만들어진 것' 이다.
+    if (있음) t(`섹션 '${s.type}' 이미지가 0바이트가 아니다`, statSync(abs).size > 1024);
+}
+t('견본 목록이 섹션 목록보다 적지 않다', SECTION_SAMPLES.length >= 9,
+    '섹션이 늘면 견본도 함께 늘려야 한다 — 안 그러면 그 섹션만 미리보기가 없다');
+t('고른 섹션의 미리보기를 보여준다', /<SectionPreview type=\{sectionType\}/.test(setting));
+
 const script = 읽기('scripts/section-preview/capture.cjs');
-t('스크립트가 타입마다 새로 연다', /preview-capture\?type=\$\{n\}/.test(script));
+t('스크립트가 skip 섹션을 건너뛴다', /skip: true/.test(script));
+t('한 장 실패해도 나머지는 계속 찍는다', /캡처 실패/.test(script),
+    '처음엔 여기서 통째로 멈춰 뒤의 것이 아예 안 만들어졌다');
+t('스크립트가 타입마다 새로 연다', /preview-capture\?\$\{항목\.q\}/.test(script));
 t('사진이 다 실릴 때까지 기다린다', /naturalWidth === 0/.test(script));
 t('운영 계정을 파일에 적지 않는다', !/PREVIEW_PW\s*=\s*['"][^'"]+['"]/.test(script),
     '이 파일은 저장소에 남는다 — 계정은 환경변수로 받는다');

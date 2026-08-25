@@ -49,13 +49,27 @@ import { apiManager, uploadFilesByManager } from 'src/utils/api'
 import { getDefaultBanners, getBannerRatio } from 'src/data/default-banners'
 import { 추천섹션 } from 'src/data/frame-sections'
 import BannerFitNotice from 'src/components/manager/BannerFitNotice'
-import { HERO_TYPES, heroPreviewSrc } from 'src/data/section-preview'
+import { HERO_TYPES, heroPreviewSrc, sectionPreviewSrc } from 'src/data/section-preview'
 
 // 고른 디자인 타입이 어떤 모양인지 보여준다.
 //
 // 이미지는 scripts/section-preview/capture.cjs 가 만들어 public/section-preview 에 둔다.
 // 아직 안 만들어졌거나 파일이 없으면 **아무것도 그리지 않는다** —
 // 깨진 이미지 아이콘이 뜨면 가맹점은 자기가 뭘 잘못한 줄 안다.
+// 고른 섹션이 어떤 모양인지 보여준다. HeroTypePreview 와 같은 규칙이다 —
+// 이미지가 없으면 아무것도 그리지 않는다(깨진 아이콘을 보여주지 않는다).
+const SectionPreview = ({ type }) => {
+  const [있음, set있음] = useState(true)
+  useEffect(() => { set있음(true) }, [type])
+  if (!있음 || !type) return null
+  return (
+    <Box sx={{ mt: 1, border: '1px solid #eee', borderRadius: 1, overflow: 'hidden', lineHeight: 0 }}>
+      <img src={sectionPreviewSrc(type)} alt="" onError={() => set있음(false)}
+        style={{ width: '100%', display: 'block' }} />
+    </Box>
+  )
+}
+
 const HeroTypePreview = ({ value }) => {
   const [있음, set있음] = useState(true)
   const src = heroPreviewSrc(value || '1')
@@ -1903,6 +1917,12 @@ const MainObjSetting = props => {
                           ];
                         })()}
                       </Select>
+                      {/* 고른 섹션이 어떤 모양인지 보여준다.
+                          가맹점 요청(2026-08-24): "가맹점에서는 섹션 가지고 정확한 이미지를
+                          알기 어렵습니다. 각 색션별로 이미지화 해서 보여줄 수 있게 요청 드립니다."
+                          이미지는 node scripts/section-preview/capture.cjs 로 다시 만든다.
+                          아직 없는 섹션은 아무것도 안 그린다(SectionPreview 의 onError). */}
+                      <SectionPreview type={sectionType} />
                       <Button
                         variant='contained'
                         className='content-add'

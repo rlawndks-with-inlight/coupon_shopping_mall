@@ -16,6 +16,8 @@ import EmptyContent from 'src/components/empty-content/EmptyContent';
 import Iconify from 'src/components/iconify/Iconify';
 import { useSettingsContext } from 'src/components/settings';
 import { calcOrderTotals, calculatorPrice, getCartDataUtil, makePayData, onPayProductsByAuth, onPayProductsByHand, onPayProductsByPayletter, onPayProductsByForspay } from 'src/utils/shop-util';
+import { loadOrderDraft, saveOrderDraft, clearOrderDraft } from 'src/utils/order-draft';
+
 import { findMissingRequired } from 'src/data/order-form-types';
 import { syncCartWithServer, makeUnavailableMessage, filterUnavailableByProducts } from 'src/utils/cart-sync';
 import { forspayMethodList, formatLang } from 'src/utils/format';
@@ -48,6 +50,28 @@ const Wrappers = styled.div`
 // 공용 주문서(주문/결제) — 단일 페이지. demo-9 카트의 결제 로직을 그대로 이식하되
 // 스텝퍼가 아니라 모든 섹션(주문상품·주문자·배송지·결제수단·약관·요약)을 한 화면에 표시한다.
 // 결제모듈(payment_modules)에 설정된 수단만 노출. 가짜 sms_pay는 이식 대상에서 제외.
+// 바로구매 보관함(sessionStorage.buyNowItem) 읽기·쓰기.
+//
+// ⚠ 예전에는 **객체 하나**만 담았고, 되쓸 때도 list[0] 만 저장했다.
+//   옵션을 여러 줄 고르고 바로구매를 누르면 첫 줄만 남고 나머지가 조용히 사라진다
+//   (상품상세에서 '선택한 옵션' 을 여러 줄로 쌓을 수 있게 되면서 생긴 자리다).
+//   그래서 배열로 담고, 예전에 담긴 객체 하나도 그대로 읽는다(탭에 남아 있을 수 있다).
+const 바로구매읽기 = (raw) => {
+    try {
+        const v = JSON.parse(raw);
+        if (Array.isArray(v)) return v.filter(Boolean);
+        return v ? [v] : [];
+    } catch (e) { return []; }
+};
+const 바로구매쓰기 = (list) => {
+    try {
+        const 것 = (Array.isArray(list) ? list : []).filter(Boolean);
+        if (!것.length) sessionStorage.removeItem('buyNowItem');
+        // 한 줄이면 예전과 같은 모양(객체)으로 둔다 — 다른 화면이 그대로 읽는다.
+        else sessionStorage.setItem('buyNowItem', JSON.stringify(것.length === 1 ? 것[0] : 것));
+    } catch (e) { /* noop */ }
+};
+
 // 비회원 주문 비밀번호 길이. DB transactions.password 컬럼 크기와 함께 관리한다.
 // (마이그레이션 2026-08-07_widen_transactions_password.sql 로 컬럼을 넓혔다)
 const GUEST_PW_MIN = 6;
@@ -136,10 +160,60 @@ export default function OrderSheet({ router }) {
     password: '',
     use_point: 0,
   });
+  // 비회원 주문 비밀번호 확인 칸. **payData 밖에 둔다** —
+  // payData 는 서버로 나가고 초안(order-draft)으로도 저장되는 그릇이라,
+  // 확인용 값까지 거기 담으면 안 나가야 할 곳으로 따라간다. 화면에서만 쓴다.
+  const [passwordCheck, setPasswordCheck] = useState('');
 
   useEffect(() => {
     getCart();
   }, []);
+
+  // ⚠ 이 화면에서는 회원가입을 권하지 않는다. 넣었다가 걷어냈다(2026-08-25).
+  //
+  //   주문서까지 온 손님은 이미 사기로 마음먹은 사람이다. 이름·연락처·배송지를 다 쓰고
+  //   비회원 주문 비밀번호까지 정한 뒤에 "회원가입 하시겠어요?" 가 뜨면 방해로만 읽힌다.
+  //   유도가 아니라 이탈을 만든다.
+  //
+  //   유도는 그 앞 단계(장바구니 담기·바로구매)에서 이미 한다. 그 둘을 거치지 않고
+  //   주문서에 닿는 길은 없으므로, 모든 손님은 결국 한 번은 권유를 본다.
+  //   (shop-util.js 의 insertCartDataUtil · startBuyNow — utils/guest-prompt.js 주석 참고)
+
+  // ── 쓰다 만 주문서 되살리기 ─────────────────────────────────────────────
+  //
+  // 주문자 정보·배송지는 이 컴포넌트 상태에만 있어서, 화면을 벗어났다 돌아오면 백지가 됐다
+  // (결제창 취소·회원가입 유도·새로고침·뒤로가기 — 길이 여럿이다).
+  // 가맹점 제보: "비회원 주문 비밀번호를 안 넣었을 때 주문자 정보·배송지가 원복돼
+  // 다시 써야 한다." 원인이 무엇이든 되돌아오면 지워지는 건 같으므로 값을 붙들어 둔다.
+  //
+  // ⚠ 카드정보와 **비회원 주문 비밀번호는 저장하지 않는다**(utils/order-draft.js 참고).
+  //   그래서 돌아온 손님이 다시 쓰는 것은 비밀번호 한 칸뿐이다.
+  // ⚠ 이 표시는 반드시 **state** 여야 한다. useRef 로 두면 지워진다 —
+  //   ref 는 그 자리에서 바로 true 가 되므로, 같은 커밋에서 이어 도는 아래 저장 useEffect 가
+  //   아직 반영되지 않은 **빈 초기값**을 초안에 덮어쓴다. 개발 모드의 StrictMode 는
+  //   마운트를 두 번 하는데, 두 번째 마운트에서 그 빈 초안을 읽어 아무것도 못 되살린다.
+  //   (실제로 그렇게 만들었다가 로컬 확인에서 값이 전부 날아가는 걸 보고 고쳤다)
+  //   state 로 두면 저장은 '복원이 반영된 다음 렌더'부터 시작된다.
+  const [초안복원끝, set초안복원끝] = useState(false);
+  useEffect(() => {
+    const 초안 = loadOrderDraft();
+    if (초안) {
+      setPayData((prev) => ({ ...prev, ...초안.payData, brand_id: prev.brand_id }));
+      const s = 초안.화면상태 ?? {};
+      if (typeof s.addrMode === 'string') setAddrMode(s.addrMode);
+      if (typeof s.directMode === 'boolean') setDirectMode(s.directMode);
+      if (typeof s.sameAsBuyer === 'boolean') setSameAsBuyer(s.sameAsBuyer);
+      // 동의는 되살리지 않는다 — 약관 동의는 그때마다 사람이 직접 눌러야 한다.
+    }
+    // 초안이 없어도 표시는 해야 한다. 안 하면 첫 방문에는 아무것도 저장되지 않는다.
+    set초안복원끝(true);
+  }, []);
+
+  // 값이 바뀔 때마다 담아 둔다.
+  useEffect(() => {
+    if (!초안복원끝) return;
+    saveOrderDraft(payData, { addrMode, directMode, sameAsBuyer });
+  }, [초안복원끝, payData, addrMode, directMode, sameAsBuyer]);
 
   // 동의를 해제하면 이미 펼쳐진 결제수단 영역을 닫는다.
   // 핀트리·헥토·웨이업 결제 컴포넌트는 자기 결제 버튼을 갖고 있어 guardBeforePay를 타지 않는다.
@@ -186,7 +260,7 @@ export default function OrderSheet({ router }) {
     // 조회에 실패한 라인은 sync.unavailable 에 들어오지 않는다(실패는 차단 사유가 아니다).
     setUnavailableRaw(sync.unavailable);
     if (isBuyNow()) {
-      try { sessionStorage.setItem('buyNowItem', JSON.stringify(sync.items[0] ?? null)); } catch (e) { /* noop */ }
+      바로구매쓰기(sync.items);
     } else {
       onChangeCartData(sync.items);
     }
@@ -214,7 +288,7 @@ export default function OrderSheet({ router }) {
       // 바로구매: sessionStorage의 단일 상품 사용(장바구니 무관)
       try {
         const raw = sessionStorage.getItem('buyNowItem');
-        if (raw) items = [JSON.parse(raw)];
+        if (raw) items = 바로구매읽기(raw);
       } catch (e) { /* noop */ }
     } else {
       items = await getCartDataUtil(themeCartData);
@@ -234,10 +308,7 @@ export default function OrderSheet({ router }) {
     const list = [...products];
     list.splice(idx, 1);
     if (isBuyNow()) {
-      try {
-        if (list.length > 0) sessionStorage.setItem('buyNowItem', JSON.stringify(list[0]));
-        else sessionStorage.removeItem('buyNowItem');
-      } catch (e) { /* noop */ }
+      바로구매쓰기(list);
     } else {
       onChangeCartData(list);
     }
@@ -250,7 +321,7 @@ export default function OrderSheet({ router }) {
     const count = Math.max(1, parseInt(next) || 1);
     const list = products.map((item, i) => (i == idx ? { ...item, order_count: count } : item));
     if (isBuyNow()) {
-      try { sessionStorage.setItem('buyNowItem', JSON.stringify(list[0] ?? null)); } catch (e) { /* noop */ }
+      바로구매쓰기(list);
     } else {
       onChangeCartData(list);
     }
@@ -366,6 +437,13 @@ export default function OrderSheet({ router }) {
       toast.error(translate("비회원 주문 비밀번호를 입력해 주세요."));
       return false;
     }
+    // 확인 칸과 다르면 막는다. 가려서 입력하는 칸이라 오타를 알 방법이 없는데,
+    // 이 비밀번호는 비회원이 자기 주문을 찾는 유일한 열쇠다(재발급 수단이 없다).
+    // 길이 검사보다 먼저 본다 — 둘 다 틀렸을 때 '자릿수' 만 알려주면 오타를 못 찾는다.
+    if (!user && passwordCheck !== payData.password) {
+      toast.error(translate("비회원 주문 비밀번호가 일치하지 않습니다."));
+      return false;
+    }
     if (!user && (payData.password.length < GUEST_PW_MIN || payData.password.length > GUEST_PW_MAX)) {
       // 자릿수를 문장 밖에서 이어붙이지 않고 i18next 보간에 맡긴다 —
       // 언어마다 숫자가 들어가는 자리가 다르다.
@@ -443,6 +521,8 @@ export default function OrderSheet({ router }) {
     // 결제완료 화면 전달용 — 민감정보는 담지 않는다(수기결제 경로와 동일 규칙).
     const { card_num, card_pw, yymm, auth_num, pay_key, mid, tid, payment_modules, password, ...safe } = pay_data;
     try { sessionStorage.setItem('lastOrder', JSON.stringify(safe)); } catch (e) { /* noop */ }
+    // 주문이 접수됐으므로 쓰다 만 내용은 지운다 — 남기면 다음 주문서에 지난 배송지가 뜨다.
+    clearOrderDraft();
     toast.success(translate("주문이 접수되었습니다. 입금 확인 후 처리됩니다."));
   };
 
@@ -615,6 +695,8 @@ export default function OrderSheet({ router }) {
       // 결제완료 화면 전달용 — 카드번호/카드비번/만료일/주민번호/PG키 등 민감정보는 저장하지 않는다.
       const { card_num, card_pw, yymm, auth_num, pay_key, mid, tid, payment_modules, ...safe } = result;
       try { sessionStorage.setItem('lastOrder', JSON.stringify(safe)); } catch (e) { /* noop */ }
+      // 결제가 끝났으니 쓰다 만 내용은 지운다(finishPendingOrder 와 같은 이유).
+      clearOrderDraft();
       toast.success(translate("주문이 완료되었습니다."));
       router.push('/shop/auth/order-complete');
     } else {
@@ -721,6 +803,19 @@ export default function OrderSheet({ router }) {
                         error={!!payData.password && payData.password.length < GUEST_PW_MIN}
                         helperText={translate('{{min}}~{{max}}자로 입력해 주세요. 주문조회 시 필요하니 꼭 기억해 두세요.', { min: GUEST_PW_MIN, max: GUEST_PW_MAX })}
                         onChange={(e) => setPayData({ ...payData, password: e.target.value })} />
+                      {/* 확인 칸. 가맹점 요청(2026-08-24) — 회원가입 화면에는 있는데 여기만 없었다.
+                          가려서 입력하는 칸이라 오타를 알 방법이 없고, 이 비밀번호는
+                          **비회원이 자기 주문을 찾는 유일한 열쇠**다. 틀리면 주문조회도
+                          취소요청도 영영 못 한다(재발급 수단이 없다). 그래서 한 번 더 받는다.
+                          ⚠ 이 값은 payData 에 넣지 않는다 — 화면에서만 쓰고 서버로도, 초안으로도 안 나간다. */}
+                      <PasswordField fullWidth size="small"
+                        label={translate('비회원 주문 비밀번호 확인')}
+                        value={passwordCheck} inputProps={{ maxLength: GUEST_PW_MAX }}
+                        error={!!passwordCheck && passwordCheck !== payData.password}
+                        helperText={!!passwordCheck && passwordCheck !== payData.password
+                          ? translate('비밀번호가 일치하지 않습니다.')
+                          : translate('확인을 위해 한 번 더 입력해 주세요.')}
+                        onChange={(e) => setPasswordCheck(e.target.value)} />
                     </Stack>
                   )}
                 </CardContent>

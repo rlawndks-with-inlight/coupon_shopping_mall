@@ -1,4 +1,4 @@
-import { BACK_ROOT, 백엔드있음 } from './_roots.mjs';
+import { BACK_ROOT, 백엔드있음, 주석제거 } from './_roots.mjs';
 import { readFileSync, readdirSync } from 'fs';
 
 // Redis 캐시 삭제 — scanIterator 의 v4/v5 계약 차이.
@@ -115,8 +115,9 @@ const 직접부름 = [];
 for (const f of 컨트롤러들) {
     const s = readFileSync(BACK_ROOT + 'controllers/' + f, 'utf8');
     // 주석은 빼고 본다(왜 그렇게 했는지 남긴 이력에 단어가 들어 있다).
-    const 코드 = s.replace(/\/\*[\s\S]*?\*\//g, '').split('\n')
-        .map((l) => l.replace(/(^|[^:])\/\/.*$/, '$1')).join('\n');
+    // ⚠ 직접 짜지 말 것 — CRLF 파일에서 조용히 샌다(_roots.mjs 주석 참고).
+    //   실제로 이 검사도 그래서 컨트롤러 주석을 못 걸러내고 있었다.
+    const 코드 = 주석제거(s);
     if (/\.scanIterator\s*\(/.test(코드)) 직접부름.push(f);
 }
 t('컨트롤러에서 scanIterator 를 직접 부르지 않는다', 직접부름.length === 0,

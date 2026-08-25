@@ -10,7 +10,7 @@ import { returnMoment, isPurchasable, getProductStatus, commarNumberWithUnit } f
 import { getLocalStorage } from "./local-storage";
 import { isDemoHost } from "src/components/main-site/frameList";
 import { findMissingRequired } from "src/data/order-form-types";
-import { requiredGroups, isComboMode, findCombination, optionExtraPrice, maxOrderable, isAddon } from "src/data/product-options";
+import { requiredGroups, isComboMode, findCombination, optionExtraPrice, maxOrderable, isAddon, closeOptionLine, optionLines, purchaseUnits, removeOptionLine, setOptionLineCount } from "src/data/product-options";
 import { makeOrdNum } from 'src/utils/function';
 
 // 손님에게 뜨는 안내는 반드시 이걸 거친다.
@@ -517,9 +517,21 @@ const assertOptionsSelected = (product, selectProductGroups) => {
     }
     if (required.length == 0) return true;
     const picked = Array.isArray(selectProductGroups?.groups) ? selectProductGroups.groups : [];
+    // 지금 드롭다운에 떠 있는 조합이 완성됐는지.
     const allPicked = required.every((g) => picked.some(
         (p) => isSameOptionGroup(p, g) && (p?.options?.length ?? 0) > 0
     ));
+    // 쌓아 둔 줄이 있으면, 지금 것이 덜 골라졌더라도 담을 것은 있다.
+    // 다만 덜 골라진 채로 두면 그 조합만 조용히 빠지므로 마저 고르게 한다 —
+    // 모르고 잃는 것보다 한 번 막는 편이 낫다.
+    if (optionLines(selectProductGroups).length) {
+        const 고르다만것 = picked.some((p) => (p?.options?.length ?? 0) > 0);
+        if (고르다만것 && !allPicked) {
+            toast.error(번역('고르던 옵션을 마저 선택해 주세요.'));
+            return false;
+        }
+        return true;
+    }
     if (!allPicked) {
         toast.error(번역('옵션을 선택해 주세요.'));
         return false;
@@ -553,11 +565,15 @@ const assertMemberOnly = (product) => {
 // 재고 안에 드는지. 화면이 이미 막고 있지만, 장바구니에 담아 둔 사이 재고가 줄 수 있다.
 // 최종 차단은 서버(checkStock)가 하고 여기서는 먼저 알려준다.
 const assertStock = (product, selectProductGroups) => {
-    const 한도 = maxOrderable(product, selectProductGroups);
-    if (한도 === null) return true; // 무제한
-    const 수량 = Math.max(1, parseInt(selectProductGroups?.count) || 1);
-    if (한도 <= 0) { toast.error(번역('품절된 상품입니다.')); return false; }
-    if (수량 > 한도) { toast.error(번역('재고가 {{n}}개 남았습니다.', { n: 한도 })); return false; }
+    // 고른 옵션이 여러 줄이면 **줄마다** 본다.
+    // 줄마다 옵션 조합이 다르므로 재고 한도도 줄마다 다르다 —
+    // 합쳐서 한 번만 보면 '빨강은 남았는데 파랑이 품절' 인 경우를 놓친다.
+    for (const 단위 of purchaseUnits(selectProductGroups)) {
+        const 한도 = maxOrderable(product, { groups: 단위.groups });
+        if (한도 === null) continue; // 무제한
+        if (한도 <= 0) { toast.error(번역('품절된 상품입니다.')); return false; }
+        if (단위.count > 한도) { toast.error(번역('재고가 {{n}}개 남았습니다.', { n: 한도 })); return false; }
+    }
     return true;
 };
 
@@ -592,14 +608,18 @@ export const startBuyNow = async (product, selectProductGroups, router) => {
         // 살 수 있는 상품인 게 확인된 뒤에 묻는다.
         // 앞에 두면 품절 상품을 눌러도 회원가입 창부터 뜬다.
         if (!(await askGuestSignup())) return false;
-        const item = {
+        // 고른 옵션이 여러 줄이면 줄마다 하나씩 만든다.
+        // 줄이 없으면(옵션 없는 상품·목록 카드에서 부른 경우) 예전과 똑같이 하나다 —
+        // purchaseUnits 가 그 경우를 한 줄짜리 배열로 돌려준다.
+        const items = purchaseUnits(selectProductGroups).map((u) => ({
             ...product,
-            groups: selectProductGroups?.groups ?? [],
-            order_count: selectProductGroups?.count ?? 1,
+            groups: u.groups,
+            order_count: u.count,
             // 값은 이 줄에 붙어 주문서를 거쳐 백엔드까지 그대로 간다.
             order_form_values: product?.order_form_values ?? {},
-        };
-        sessionStorage.setItem('buyNowItem', JSON.stringify(item));
+        }));
+        // 주문서는 buyNowItem 을 배열로도 읽는다(예전 형태인 객체 하나도 그대로 읽는다).
+        sessionStorage.setItem('buyNowItem', JSON.stringify(items.length === 1 ? items[0] : items));
         router.push('/shop/auth/order?buynow=1');
     } catch (e) {
         console.log(e);
@@ -664,30 +684,36 @@ export const insertCartDataUtil = async (
         let cart_data = [...themeCartData];
         let product = product_;
         let selectProductGroups = selectProductGroups_;
-        const order_count = Math.max(1, parseInt(selectProductGroups?.count) || 1);
-        const groups = selectProductGroups?.groups ?? [];
 
-        // 같은 상품을 같은 옵션으로 또 담으면 새 줄을 만들지 않고 수량을 합친다.
-        //
-        // 예전엔 무조건 push 했다. 그래서
-        //   · 장바구니에 똑같은 줄이 여러 개 쌓이고
-        //   · 목록 key 가 row.id 라 React key 가 중복되며(수량 변경이 엉뚱한 줄에 먹는다)
-        //   · 상품별 배송비를 쓰는 브랜드는 배송비가 줄 수마다 중복 계산됐다.
-        const signature = cartLineSignature({ id: product?.id, seller_id: product?.seller_id, groups, order_form_values: orderFormValues });
-        const found_idx = cart_data.findIndex((line) => cartLineSignature(line) === signature);
-        if (found_idx >= 0) {
-            const prev = cart_data[found_idx];
-            cart_data[found_idx] = {
-                ...prev,
-                order_count: Math.max(1, (parseInt(prev?.order_count) || 1) + order_count),
-            };
-        } else {
-            cart_data.push({
-                ...product,
-                order_count,
-                groups,
-                order_form_values: orderFormValues ?? {},
-            });
+        // 고른 옵션이 여러 줄이면 줄마다 담는다.
+        // 줄이 없으면(옵션 없는 상품·목록 카드에서 부른 경우) purchaseUnits 가
+        // 한 줄짜리 배열을 돌려주므로 예전과 똑같이 한 번만 담긴다.
+        for (const 단위 of purchaseUnits(selectProductGroups)) {
+            const order_count = 단위.count;
+            const groups = 단위.groups;
+
+            // 같은 상품을 같은 옵션으로 또 담으면 새 줄을 만들지 않고 수량을 합친다.
+            //
+            // 예전엔 무조건 push 했다. 그래서
+            //   · 장바구니에 똑같은 줄이 여러 개 쌓이고
+            //   · 목록 key 가 row.id 라 React key 가 중복되며(수량 변경이 엉뚱한 줄에 먹는다)
+            //   · 상품별 배송비를 쓰는 브랜드는 배송비가 줄 수마다 중복 계산됐다.
+            const signature = cartLineSignature({ id: product?.id, seller_id: product?.seller_id, groups, order_form_values: orderFormValues });
+            const found_idx = cart_data.findIndex((line) => cartLineSignature(line) === signature);
+            if (found_idx >= 0) {
+                const prev = cart_data[found_idx];
+                cart_data[found_idx] = {
+                    ...prev,
+                    order_count: Math.max(1, (parseInt(prev?.order_count) || 1) + order_count),
+                };
+            } else {
+                cart_data.push({
+                    ...product,
+                    order_count,
+                    groups,
+                    order_form_values: orderFormValues ?? {},
+                });
+            }
         }
         onChangeCartData(cart_data);
         return true;
@@ -747,6 +773,30 @@ const isSameSelectedOption = (saved, option) =>
         : saved?.value === option;
 
 export const selectItemOptionUtil = (group, option, selectProductGroups, is_option_multiple) => {//아이템 옵션 선택하기
+    // ── 선택 목록(줄) 조작 통로 ──────────────────────────────────────────
+    //
+    // '선택한 옵션' 목록에서 수량을 바꾸거나 줄을 지우려면 selectProductGroups 를
+    // 고쳐야 하는데, 그 상태는 프레임 19곳이 각자 들고 있다. 프레임마다 새 콜백을
+    // 배선하면 한 곳만 빠뜨려도 그 화면에서만 수량이 안 바뀐다 —
+    // 예전에 추가상품 인자를 그렇게 놓쳐 7개 프레임에서 추가상품을 못 뺐다.
+    //
+    // 그래서 **이미 모든 프레임이 쓰는 이 길목**으로 함께 보낸다.
+    // 화면은 onSelect({ [줄조작표]: {...} }) 로 부르고 여기서 갈라낸다.
+    const 줄조작 = group?.[줄조작표];
+    if (줄조작) {
+        // 지금 드롭다운에 떠 있는 조합(아직 안 쌓인 것)의 수량·삭제.
+        if (줄조작.type === 'currentCount') {
+            const n = Math.floor(Number(줄조작.count) || 0);
+            if (n <= 0) return { ...selectProductGroups, groups: [], count: 1 };
+            return { ...selectProductGroups, count: n };
+        }
+        if (줄조작.type === 'clearCurrent') return { ...selectProductGroups, groups: [], count: 1 };
+        if (줄조작.type === 'commit') return closeOptionLine(selectProductGroups, 줄조작.groups);
+        if (줄조작.type === 'close') return closeOptionLine(selectProductGroups);
+        if (줄조작.type === 'remove') return removeOptionLine(selectProductGroups, 줄조작.key);
+        if (줄조작.type === 'count') return setOptionLineCount(selectProductGroups, 줄조작.key, 줄조작.count);
+        return selectProductGroups;
+    }
     // 넘겨받은 객체를 변형하지 않고 새 객체를 만들어 돌려준다.
     //
     // 예전엔 인자를 그대로 고쳐서 되돌려줬다. 호출부 11곳이 전부
@@ -786,12 +836,29 @@ export const selectItemOptionUtil = (group, option, selectProductGroups, is_opti
         else groups[find_group_idx] = { ...current, options };
     } else {
         groups.push({
-            ...group,
+            ...깨끗한그룹(group),
             options: [normalizeSelectedOption(option)]
         });
     }
-    return { ...selectProductGroups, groups };
+    const 다음 = { ...selectProductGroups, groups };
+
+    // 골라야 할 것을 전부 골랐을 때 '한 줄로 확정' 하는 일은 여기서 하지 않는다.
+    // 이 함수는 상품을 모르기 때문이다(호출부 19곳이 넘겨주지 않는다).
+    // 대신 상품을 아는 ProductAddons 가 완성된 순간 줄조작 'close' 를 보낸다 —
+    // 그 컴포넌트는 프레임 11개 전부에 들어가 있어 한 곳만 빠뜨릴 여지가 없다.
+    return 다음;
 }
+
+// 선택 목록(줄) 조작을 실어 보내는 키 이름. 위 selectItemOptionUtil 주석 참고.
+export const 줄조작표 = '__lineOp';
+
+// 화면이 실어 보낸 내부 표식(줄조작 등)은 저장 전에 벗긴다.
+// 안 벗기면 장바구니(localStorage)와 주문 payload 에 그대로 실려 서버까지 간다.
+const 깨끗한그룹 = (group) => {
+    if (!group || typeof group !== 'object') return group;
+    const { [줄조작표]: _버림, ...나머지 } = group;
+    return 나머지;
+};
 export const getWishDataUtil = async () => {//아이템찜 불러오기
     let result = await apiManager('user-wishs/items', 'list');
     return result;

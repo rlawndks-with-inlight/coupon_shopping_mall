@@ -19,7 +19,9 @@ const grab = (name, kind) => {
 // 실제 모듈을 그대로 불러와 주입한다 — 복사본을 만들면 진짜 코드와 어긋나도 테스트가 통과한다.
 const PO = await import('file:///' +
   FRONT_ROOT + 'src/data/product-options.js');
-const { requiredGroups, isComboMode, findCombination, optionExtraPrice, maxOrderable, isAddon } = PO;
+// optionLines·purchaseUnits·closeOptionLine 은 '선택한 옵션 줄 쌓기'(option-lines.mjs) 로 들어온 의존이다.
+const { requiredGroups, isComboMode, findCombination, optionExtraPrice, maxOrderable, isAddon,
+        optionLines, purchaseUnits, closeOptionLine, removeOptionLine, setOptionLineCount } = PO;
 
 const toast = { error: () => {}, success: () => {} };
 const _ = { findIndex: () => -1 };
@@ -37,11 +39,14 @@ const body = [grab('isSameOptionGroup'), grab('assertOptionsSelected'), grab('as
 const 번역 = (문구, 값) => String(문구).replace(/\{\{(\w+)\}\}/g, (_m, k) => (값?.[k] ?? ''));
 
 const fn = new Function('toast', '_', 'requiredGroups', 'isComboMode', 'findCombination',
-                        'optionExtraPrice', 'maxOrderable', 'isAddon', '번역', body + `
+                        'optionExtraPrice', 'maxOrderable', 'isAddon', '번역',
+                        'optionLines', 'purchaseUnits', 'closeOptionLine', 'removeOptionLine', 'setOptionLineCount',
+                        body + `
   return { isSameOptionGroup, assertOptionsSelected, assertStock, cartLineSignature, selectItemOptionUtil };
 `);
 const { assertOptionsSelected, assertStock, cartLineSignature, selectItemOptionUtil } =
-  fn(toast, _, requiredGroups, isComboMode, findCombination, optionExtraPrice, maxOrderable, isAddon, 번역);
+  fn(toast, _, requiredGroups, isComboMode, findCombination, optionExtraPrice, maxOrderable, isAddon, 번역,
+     optionLines, purchaseUnits, closeOptionLine, removeOptionLine, setOptionLineCount);
 
 let pass = 0, fail = 0;
 const t = (name, cond) => { if (cond) { pass++; console.log('  ok  ' + name); } else { fail++; console.log('  FAIL ' + name); } };

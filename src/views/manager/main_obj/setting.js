@@ -49,6 +49,45 @@ import { apiManager, uploadFilesByManager } from 'src/utils/api'
 import { getDefaultBanners, getBannerRatio } from 'src/data/default-banners'
 import { 추천섹션 } from 'src/data/frame-sections'
 import BannerFitNotice from 'src/components/manager/BannerFitNotice'
+import { HERO_TYPES, heroPreviewSrc, sectionPreviewSrc } from 'src/data/section-preview'
+
+// 고른 디자인 타입이 어떤 모양인지 보여준다.
+//
+// 이미지는 scripts/section-preview/capture.cjs 가 만들어 public/section-preview 에 둔다.
+// 아직 안 만들어졌거나 파일이 없으면 **아무것도 그리지 않는다** —
+// 깨진 이미지 아이콘이 뜨면 가맹점은 자기가 뭘 잘못한 줄 안다.
+// 고른 섹션이 어떤 모양인지 보여준다. HeroTypePreview 와 같은 규칙이다 —
+// 이미지가 없으면 아무것도 그리지 않는다(깨진 아이콘을 보여주지 않는다).
+const SectionPreview = ({ type }) => {
+  const [있음, set있음] = useState(true)
+  useEffect(() => { set있음(true) }, [type])
+  if (!있음 || !type) return null
+  return (
+    <Box sx={{ mt: 1, border: '1px solid #eee', borderRadius: 1, overflow: 'hidden', lineHeight: 0 }}>
+      <img src={sectionPreviewSrc(type)} alt="" onError={() => set있음(false)}
+        style={{ width: '100%', display: 'block' }} />
+    </Box>
+  )
+}
+
+const HeroTypePreview = ({ value }) => {
+  const [있음, set있음] = useState(true)
+  const src = heroPreviewSrc(value || '1')
+  // 타입을 바꾸면 다시 시도해야 한다. 안 그러면 한 번 없던 타입을 본 뒤로
+  // 있는 타입까지 영영 안 보인다.
+  useEffect(() => { set있음(true) }, [value])
+  if (!있음) return null
+  return (
+    <Box sx={{ mt: 1, border: '1px solid #eee', borderRadius: 1, overflow: 'hidden', lineHeight: 0 }}>
+      <img
+        src={src}
+        alt=""
+        onError={() => set있음(false)}
+        style={{ width: '100%', display: 'block' }}
+      />
+    </Box>
+  )
+}
 
 const Tour = dynamic(() => import('reactour'), { ssr: false })
 //메인화면
@@ -392,6 +431,11 @@ const MainObjSetting = props => {
   const [item, setItem] = useState(() => createDefaultManagerObj('brands'))
   const [contentList, setContentList] = useState([])
   const [sectionType, setSectionType] = useState('banner')
+  // 「그 밖의 섹션」 펼침 여부. 기본은 접힘 —
+  // 가맹점 요청(2026-08-24): "해당 타입별로 추가할 수 있는 섹션만 있으면 될듯 합니다.
+  // 나머지는 안보이는게 가맹점들의 혼란은 없앨 수 있을 듯 합니다."
+  // 없애지 않고 접기만 하는 이유는 목록을 만드는 자리의 주석 참고.
+  const [그밖열림, set그밖열림] = useState(false)
   const [productContent, setProductContent] = useState({
     total: 100,
     content: []
@@ -1184,6 +1228,11 @@ const MainObjSetting = props => {
                                   윗마진은 이 묶음 밖이라 그대로 남는다. */}
                               <SectionProcess {...sectionCtl} idx={idx} item={item} />
                             </Row>
+                            {/* 디자인 타입 — 이름만으로는 어떤 모양인지 알 수 없다.
+                                가맹점 요청(2026-08-24): "타입만 가지고 정확한 이미지를 알기 어렵습니다.
+                                각 타입별로 이미지화 해서 보여줄 수 있게 요청 드립니다."
+                                목록은 src/data/section-preview.js 한 곳에 둔다(캡처 화면·스크립트와 공유).
+                                이미지는 node scripts/section-preview/capture.cjs 로 다시 만든다. */}
                             <TextField
                               select
                               label='디자인 타입'
@@ -1195,15 +1244,14 @@ const MainObjSetting = props => {
                               }}
                               SelectProps={{ native: true }}
                             >
-                              <option value='1'>타입1: 매거진 커버 스토리 (에디토리얼)</option>
-                              <option value='2'>타입2: 매거진 피처 스프레드 (다크)</option>
-                              <option value='3'>타입3: 매거진 인터뷰 (인용구 중심)</option>
-                              <option value='4'>타입4: 매거진 에디토리얼 (Serif 감성)</option>
-                              <option value='5'>타입5: 프로모션 와이드 배너 (홈쇼핑 스타일)</option>
-                              <option value='6'>타입6: 풀블리드 이미지 배너 (프리미엄 쇼핑몰)</option>
-                              <option value='7'>타입7: 스포트라이트 (다크 럭셔리)</option>
-                              <option value='8'>타입8: 그리드 쇼케이스 (모듈식 블록)</option>
+                              {HERO_TYPES.map(t => (
+                                <option key={t.value} value={String(t.value)}>{`타입${t.value}: ${t.label}`}</option>
+                              ))}
                             </TextField>
+                            {/* 고른 타입이 어떤 모양인지 바로 보여준다.
+                                이미지가 아직 안 만들어졌으면 아무것도 그리지 않는다(onError) —
+                                깨진 이미지 아이콘이 뜨면 가맹점은 자기가 잘못한 줄 안다. */}
+                            <HeroTypePreview value={item?.style?.hero_type || '1'} />
                             <TextField
                               label='제목'
                               value={item.title}
@@ -1840,14 +1888,41 @@ const MainObjSetting = props => {
                           // 추천 순서는 추천목록에 적힌 순서를 따른다(그 프레임에서 자연스러운 차례다).
                           const 추천 = 추천목록.map(t => 전체.find(x => x.type === t)).filter(Boolean);
                           const 나머지 = 전체.filter(x => !추천목록.includes(x.type));
+                          // 이미 쓰고 있는 섹션이 '그 밖' 에 있으면 처음부터 펼쳐 둔다 —
+                          // 접힌 채로 두면 자기가 쓰던 것이 사라진 줄 안다.
+                          const 쓰는중 = 나머지.some(x => hasTypeCount(contentList, x.type) > 0);
+                          const 펼침 = 그밖열림 || 쓰는중;
                           return [
                             <ListSubheader key="추천">이 프레임에 어울리는 섹션</ListSubheader>,
                             ...추천.map(줄),
-                            <ListSubheader key="그밖">그 밖의 섹션</ListSubheader>,
-                            ...나머지.map(줄),
+                            // ⚠ 「그 밖의 섹션」을 **없애지 않는다**. 접기만 한다.
+                            //   가맹점 요청은 "나머지는 안 보이는게 혼란을 없앨 수 있을 듯" 이었는데,
+                            //   DB를 보니 그 섹션들을 실제로 쓰는 몰이 8곳 있다(동영상·상품후기·셀러·
+                            //   특성그룹 등). 없애면 그 몰들은 자기가 쓰던 섹션을 다시 못 만든다.
+                            //   특성그룹 섹션은 가맹점 상품 데이터에서 파생돼 추천 목록에 넣을 수도 없다.
+                            //   (frame-sections.js 주석도 "못 쓰는 섹션 목록이 아니다 — 막지 않고 권하기만
+                            //    한다" 로 못 박아 두었다)
+                            //   그래서 기본은 접어 두고, 필요한 사람만 펴서 쓰게 한다.
+                            <ListSubheader key="그밖" sx={{ lineHeight: 2.2 }}>
+                              <Box
+                                component="span"
+                                onClick={(e) => { e.stopPropagation(); set그밖열림(v => !v) }}
+                                sx={{ cursor: 'pointer', userSelect: 'none', display: 'inline-flex', alignItems: 'center', gap: 0.5 }}
+                              >
+                                그 밖의 섹션 ({나머지.length})
+                                <span style={{ fontSize: 11 }}>{펼침 ? '▲ 접기' : '▼ 더 보기'}</span>
+                              </Box>
+                            </ListSubheader>,
+                            ...(펼침 ? 나머지.map(줄) : []),
                           ];
                         })()}
                       </Select>
+                      {/* 고른 섹션이 어떤 모양인지 보여준다.
+                          가맹점 요청(2026-08-24): "가맹점에서는 섹션 가지고 정확한 이미지를
+                          알기 어렵습니다. 각 색션별로 이미지화 해서 보여줄 수 있게 요청 드립니다."
+                          이미지는 node scripts/section-preview/capture.cjs 로 다시 만든다.
+                          아직 없는 섹션은 아무것도 안 그린다(SectionPreview 의 onError). */}
+                      <SectionPreview type={sectionType} />
                       <Button
                         variant='contained'
                         className='content-add'

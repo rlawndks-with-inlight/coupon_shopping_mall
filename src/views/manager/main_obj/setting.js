@@ -49,6 +49,31 @@ import { apiManager, uploadFilesByManager } from 'src/utils/api'
 import { getDefaultBanners, getBannerRatio } from 'src/data/default-banners'
 import { 추천섹션 } from 'src/data/frame-sections'
 import BannerFitNotice from 'src/components/manager/BannerFitNotice'
+import { HERO_TYPES, heroPreviewSrc } from 'src/data/section-preview'
+
+// 고른 디자인 타입이 어떤 모양인지 보여준다.
+//
+// 이미지는 scripts/section-preview/capture.cjs 가 만들어 public/section-preview 에 둔다.
+// 아직 안 만들어졌거나 파일이 없으면 **아무것도 그리지 않는다** —
+// 깨진 이미지 아이콘이 뜨면 가맹점은 자기가 뭘 잘못한 줄 안다.
+const HeroTypePreview = ({ value }) => {
+  const [있음, set있음] = useState(true)
+  const src = heroPreviewSrc(value || '1')
+  // 타입을 바꾸면 다시 시도해야 한다. 안 그러면 한 번 없던 타입을 본 뒤로
+  // 있는 타입까지 영영 안 보인다.
+  useEffect(() => { set있음(true) }, [value])
+  if (!있음) return null
+  return (
+    <Box sx={{ mt: 1, border: '1px solid #eee', borderRadius: 1, overflow: 'hidden', lineHeight: 0 }}>
+      <img
+        src={src}
+        alt=""
+        onError={() => set있음(false)}
+        style={{ width: '100%', display: 'block' }}
+      />
+    </Box>
+  )
+}
 
 const Tour = dynamic(() => import('reactour'), { ssr: false })
 //메인화면
@@ -1184,6 +1209,11 @@ const MainObjSetting = props => {
                                   윗마진은 이 묶음 밖이라 그대로 남는다. */}
                               <SectionProcess {...sectionCtl} idx={idx} item={item} />
                             </Row>
+                            {/* 디자인 타입 — 이름만으로는 어떤 모양인지 알 수 없다.
+                                가맹점 요청(2026-08-24): "타입만 가지고 정확한 이미지를 알기 어렵습니다.
+                                각 타입별로 이미지화 해서 보여줄 수 있게 요청 드립니다."
+                                목록은 src/data/section-preview.js 한 곳에 둔다(캡처 화면·스크립트와 공유).
+                                이미지는 node scripts/section-preview/capture.cjs 로 다시 만든다. */}
                             <TextField
                               select
                               label='디자인 타입'
@@ -1195,15 +1225,14 @@ const MainObjSetting = props => {
                               }}
                               SelectProps={{ native: true }}
                             >
-                              <option value='1'>타입1: 매거진 커버 스토리 (에디토리얼)</option>
-                              <option value='2'>타입2: 매거진 피처 스프레드 (다크)</option>
-                              <option value='3'>타입3: 매거진 인터뷰 (인용구 중심)</option>
-                              <option value='4'>타입4: 매거진 에디토리얼 (Serif 감성)</option>
-                              <option value='5'>타입5: 프로모션 와이드 배너 (홈쇼핑 스타일)</option>
-                              <option value='6'>타입6: 풀블리드 이미지 배너 (프리미엄 쇼핑몰)</option>
-                              <option value='7'>타입7: 스포트라이트 (다크 럭셔리)</option>
-                              <option value='8'>타입8: 그리드 쇼케이스 (모듈식 블록)</option>
+                              {HERO_TYPES.map(t => (
+                                <option key={t.value} value={String(t.value)}>{`타입${t.value}: ${t.label}`}</option>
+                              ))}
                             </TextField>
+                            {/* 고른 타입이 어떤 모양인지 바로 보여준다.
+                                이미지가 아직 안 만들어졌으면 아무것도 그리지 않는다(onError) —
+                                깨진 이미지 아이콘이 뜨면 가맹점은 자기가 잘못한 줄 안다. */}
+                            <HeroTypePreview value={item?.style?.hero_type || '1'} />
                             <TextField
                               label='제목'
                               value={item.title}

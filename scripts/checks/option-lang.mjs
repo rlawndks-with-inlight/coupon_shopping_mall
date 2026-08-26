@@ -122,6 +122,26 @@ t('백필이 lang_obj 없는 표를 건너뛴다',
     /COLUMN_NAME = 'lang_obj'/.test(backfill) && /건너뜁니다/.test(backfill),
     '한 표를 건너뛰는 게 아니라 Unknown column 으로 전체가 멈춘다');
 
+// ── HTML 본문 번역이 조각수 불일치로 포기하던 것 (2026-08-26) ────────────
+//
+// 텍스트 조각을 줄바꿈으로 이어 한 번에 번역하고 다시 쪼개는데, 번역기가 줄을 합치거나
+// 더 쪼개면 수가 어긋난다. 예전에는 그때 그 언어를 통째로 포기했다 —
+// **문단이 여러 개인 글이 조용히 원문으로 남았다.** 언어마다 결과가 달라
+// 같은 팝업이 일본어는 되고 영어·중국어·스페인어만 빠졌다(mbc01·테스트01 실측).
+// 게시글 본문·상품 상세설명·혜택안내 탭도 같은 규칙을 탄다.
+{
+    const g = util.slice(util.indexOf('export const gtransHtml'));
+    const 본체 = g.slice(0, g.indexOf('export const settingLangs'));
+    t('조각수가 어긋나도 포기하지 않는다',
+        !/parts\.length !== texts\.length\) \{[\s\S]{0,200}?return null;/.test(본체),
+        '어긋나자마자 null 을 돌려주면 문단 여러 개인 글은 영영 원문으로 남는다');
+    t('어긋나면 조각별로 다시 번역한다', /for \(const t of texts\)/.test(본체));
+    t('조각 하나라도 실패하면 그 언어는 포기한다', /if \(!r\) \{[\s\S]{0,160}?return null;/.test(본체),
+        '반쪽만 번역하면 한 문단만 한국어로 남아 더 이상해 보인다');
+    t('먼저 한 번에 보내 본다', 본체.indexOf('texts.join') < 본체.indexOf('for (const t of texts)'),
+        '조각별 번역은 호출이 문단 수만큼 늘어난다 — 어긋났을 때만 쓴다');
+}
+
 // 언어팩을 안 켠 몰에서는 아무 일도 없어야 한다 — 대부분의 몰이 그렇다.
 t('언어팩 꺼진 몰은 그냥 지나간다', /is_use_lang != 1\)\s*\{\s*return;/.test(util),
     '이 가드가 없으면 언어를 안 쓰는 몰까지 번역 대기열을 채운다');

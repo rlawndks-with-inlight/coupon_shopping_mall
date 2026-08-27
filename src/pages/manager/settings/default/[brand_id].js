@@ -1634,6 +1634,32 @@ const DefaultSetting = () => {
                     </Stack>
                   </Card>
                 </Grid>
+                {/* 배송 안내(가맹점별 자유 텍스트). setting_obj.delivery_info 에 저장 —
+                    백엔드 컬럼 추가 없이 JSON 설정에 얹는다. 상품 상세의 혜택 안내 아래에 렌더된다(BenefitNotice). */}
+                <Grid item xs={12} md={12}>
+                  <Card sx={{ p: 2 }}>
+                    <Stack spacing={1}>
+                      <Typography variant='subtitle2' sx={{ color: 'text.secondary' }}>
+                        배송 안내 (상품 상세의 혜택 아래에 표시)
+                      </Typography>
+                      <ReactQuillComponent
+                        value={item?.setting_obj?.delivery_info ?? ''}
+                        setValue={value => {
+                          setItem({
+                            ...item,
+                            ['setting_obj']: {
+                              ...item?.setting_obj,
+                              ['delivery_info']: value
+                            }
+                          })
+                        }}
+                      />
+                      <Typography variant='caption' sx={{ color: 'text.secondary' }}>
+                        배송 기간·택배사·교환/반품 등 안내를 자유롭게 적으면, 각 상품 상세페이지의 혜택 안내 아래에 표시됩니다. 비워두면 표시되지 않습니다.
+                      </Typography>
+                    </Stack>
+                  </Card>
+                </Grid>
               </>
             )}
 

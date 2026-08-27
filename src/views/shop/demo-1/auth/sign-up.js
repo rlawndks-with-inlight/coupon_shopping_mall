@@ -345,6 +345,7 @@ const SignUpDemo = (props) => {
             />
             <PasswordField
               label={translate('비밀번호')}
+              helperText={translate('8~20자로 입력해 주세요. (아이디와 다르게)')}
               onChange={(e) => {
                 setUser({ ...user, ['user_pw']: e.target.value })
               }}

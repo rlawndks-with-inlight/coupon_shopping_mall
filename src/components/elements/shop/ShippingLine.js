@@ -29,7 +29,17 @@ const 기본톤 = { fontSize: 13, color: '#888', gap: 6 };
 const ShippingLine = ({ item, tone = {}, sx = {}, style = {}, showLabel = true }) => {
     const { translate, currentLang } = useLocales();
     const t = { ...기본톤, ...tone };
-    if (!item) return null;
+    // 상품이 아직 안 왔으면 아무것도 그리지 않는다.
+    //
+    // [증상] 상세를 열면 배송비 줄이 잠깐 틀린 값으로 보였다가 바뀐다.
+    //   배송비표시() 는 판매가로 무료 여부를 따지는데, 로딩 중에는 그 값이 0 이다.
+    //   0 은 무료기준(3만원)에 못 미치므로 '배송비 5,000원 · 30,000원 이상 무료배송' 이 먼저 뜨고,
+    //   상품이 도착하면 '무료배송' 으로 바뀐다 — 손님 눈에는 값이 튀는 것으로 보인다.
+    //   (2026-08-28 mbc03 운영 화면에서 실제로 관찰했다)
+    // 가격을 알기 전에는 말하지 않는 편이 낫다.
+    // 가격이 0 인지로 재지 않는다 — 0원 상품이 정말 있을 수 있고, 그때 배송 안내가 사라진다.
+    // '아직 안 왔다' 의 확실한 신호는 id 가 없다는 것이다.
+    if (!item?.id) return null;
 
     const 배송 = 배송비표시(item);
     const 안내 = 무료배송안내(item, currentLang?.value);

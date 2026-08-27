@@ -100,6 +100,7 @@ const ItemsDemo = (props) => {
     }, true);
   }, [router.query])
   const [moreLoading, setMoreLoading] = useState(false);
+  const moreLoadingRef = useRef(false);
   const [loading, setLoading] = useState(true);
   const scrollRef = useRef(null);
   const handleScroll = () => {
@@ -108,7 +109,10 @@ const ItemsDemo = (props) => {
     }
     const { top, bottom } = scrollRef.current.getBoundingClientRect();
     const windowHeight = window.innerHeight;
-    if (top < windowHeight && bottom >= 0 && !moreLoading) {
+    // ⚠ moreLoading(state) 이 아니라 ref 를 본다. 이 핸들러는 deps [] 로 한 번만 등록되므로
+    //   state 를 읽으면 등록 시점의 값(false)에 영원히 묶여 가드가 무의미해진다(바닥에서 반복 발사 → 흔들림).
+    if (top < windowHeight && bottom >= 0 && !moreLoadingRef.current) {
+      moreLoadingRef.current = true;
       setMoreLoading(true);
       $('.more-page').trigger("click");
     }
@@ -151,15 +155,15 @@ const ItemsDemo = (props) => {
       setProducts(product_list.content ?? []);
       setLoading(false);
     } else {
-      setProducts([...products, ...product_list.content ?? []]);
+      // 함수형 갱신 — 이 함수는 async 라 낡은 클로저의 products 를 읽으면 앞 페이지가 사라진다.
+      setProducts((prev) => [...prev, ...(product_list?.content ?? [])]);
     }
     setProductContent(product_list);
+    // 결과가 비었든 실패했든 무조건 푼다(가드 ref 포함). 예전엔 products 가 늘었을 때만 풀어서
+    // 마지막 페이지(빈 응답)에서 스피너가 영영 돌았고, 가드가 안 풀려 이후 로드도 막혔다.
+    moreLoadingRef.current = false;
+    setMoreLoading(false);
   }
-  useEffect(() => {
-    if (products.length > 0) {
-      setMoreLoading(false);
-    }
-  }, [products])
   return (
     <>
       <ContentWrapper>

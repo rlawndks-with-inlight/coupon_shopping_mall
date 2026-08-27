@@ -31,7 +31,12 @@ eq('프론트 유형 = 백엔드 화이트리스트',
   ORDER_FORM_TYPES.map((t) => t.value).sort(), [...백엔드유형].sort());
 
 // 개인정보 유형도 양쪽이 같아야 한다 — 어긋나면 전화번호가 평문으로 남는다
-const helper = readFileSync(BACK + 'utils.js/order-form.js', 'utf8');
+// 읽을 때 캐리지리턴을 지운다.
+//   이 저장소는 core.autocrlf=true 라, 브랜치를 옮기기만 해도 작업트리가 CRLF 로 다시 쓰인다.
+//   그러면 아래 `f.label,` 다음에 줄바꿈을 직접 적은 정규식이 캐리지리턴에 걸려 빗나가고,
+//   **파일 내용은 멀쩡한데 검사만 빨간불**이 된다(2026-08-27 에 실제로 그랬다).
+//   더 나쁜 쪽은 '없음'을 확인하는 검사다 — 그건 조용히 통과해 버린다.
+const helper = readFileSync(BACK + 'utils.js/order-form.js', 'utf8').replace(/[\r]/g, '');
 const 백엔드PII = [...helper.slice(helper.indexOf('PII_FIELD_TYPES = ['), helper.indexOf('];', helper.indexOf('PII_FIELD_TYPES = [')))
   .matchAll(/'([a-z]+)'/g)].map((m) => m[1]);
 eq('암호화 유형이 양쪽 같음', [...PII_TYPES].sort(), [...백엔드PII].sort());

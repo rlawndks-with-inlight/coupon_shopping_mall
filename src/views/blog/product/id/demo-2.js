@@ -23,6 +23,7 @@ import { ProductDetailsReview } from 'src/views/@dashboard/e-commerce/details';
 import { isShopgoBrand } from 'src/utils/is-shopgo';
 import QuantityStepper from 'src/components/elements/shop/QuantityStepper';
 import BenefitNotice from 'src/components/elements/shop/BenefitNotice';
+import ShippingLine from 'src/components/elements/shop/ShippingLine';
 import OrderFormFields from 'src/components/elements/shop/OrderFormFields';
 
 
@@ -256,7 +257,12 @@ const Demo2 = (props) => {
                             <div style={{ fontSize: themeObj.font_size.size8, color: '', fontWeight: 'bold', marginBottom: '0.5rem' }}>{translate('배송정보')}</div>
                         </Row>
                         <Row style={{ alignItems: 'flex-end', }}>
-                            <div style={{ fontSize: themeObj.font_size.size8, color: '' }}>{translate('배송비 :')}<span style={{ color: theme.palette.error.main }}>{배송비표시(item).free ? translate('무료배송') : commarNumberWithUnit(배송비표시(item).fee, currentLang?.value)}</span></div>
+                            {/* 이 프레임은 '배송정보' 표 묶음이라 라벨을 여기서 그린다.
+                                금액·무료기준 문구는 ShippingLine 에서 가져온다(다른 프레임과 같은 말). */}
+                            <div style={{ fontSize: themeObj.font_size.size8, color: '', display: 'flex', gap: '0.25rem' }}>{translate('배송비')}
+                                <span style={{ color: theme.palette.error.main }}>
+                                    <ShippingLine item={item} showLabel={false} tone={{ fontSize: 'inherit', color: 'inherit', gap: 0 }} />
+                                </span></div>
                         </Row>
                         <Row style={{ alignItems: 'flex-end', }}>
                             <div style={{ fontSize: themeObj.font_size.size8, color: '' }}>{translate('합배송 무제한')}</div>

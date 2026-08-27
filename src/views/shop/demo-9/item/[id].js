@@ -10,6 +10,7 @@ import { styled as muiStyle } from '@mui/material'
 import Head from 'next/head';
 import { Row } from 'src/components/elements/styled-components';
 import { commarNumber, getProductStatus, commarNumberWithUnit } from 'src/utils/function';
+import ShippingLine from 'src/components/elements/shop/ShippingLine';
 import { Icon } from '@iconify/react';
 import { insertCartDataUtil, insertWishDataUtil, selectItemOptionUtil } from 'src/utils/shop-util';
 import toast from 'react-hot-toast';
@@ -364,6 +365,13 @@ const ItemDemo = (props) => {
                             {commarNumberWithUnit(parseInt(product?.product_sale_price))}
                           </>
                           }
+                        />
+                        {/* 배송비. 이 프레임엔 표기가 아예 없어서 손님이 장바구니에 가서야 알았다.
+                            ⚠ 아래 상품코드·속성·특성 행들은 전부 블록주석 안이다 — 여기(주석 밖)에 둔다.
+                            라벨은 ItemCharacter 가 그리므로 showLabel 은 끈다. */}
+                        <ItemCharacter
+                          key_name={'배송비'}
+                          value={<ShippingLine item={product} showLabel={false} tone={{ fontSize: 'inherit', color: 'inherit', gap: 0 }} />}
                         />
                       </div>
 

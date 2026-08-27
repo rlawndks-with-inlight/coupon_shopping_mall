@@ -21,6 +21,7 @@ import { useModal } from 'src/components/dialog/ModalProvider';
 import { isShopgoBrand } from 'src/utils/is-shopgo';
 import { formatLang, characterChoices } from 'src/utils/format';
 import { useLocales } from 'src/locales';
+import ShippingLine from 'src/components/elements/shop/ShippingLine';
 import QuantityStepper from 'src/components/elements/shop/QuantityStepper';
 import { 적립예정 } from 'src/data/point-policy';
 import { 찜기능사용 } from 'src/data/wish';
@@ -584,13 +585,11 @@ const ItemDemo = (props) => {
                           {/* 배송비를 상세에 표시한다. 이 프레임에는 배송비 표기가 없어서
                               고객이 장바구니·주문서에 가서야 배송비를 알았다
                               (상세에서 본 금액과 결제 직전 금액이 달라 보인다). */}
+                          {/* 이 프레임은 표 형태라 라벨('배송비')을 ItemCharacter 가 그린다.
+                              값 쪽 문구만 ShippingLine 에서 가져온다 — 안쪽 여백은 표에 맞춰 0 으로. */}
                           <ItemCharacter
                             key_name={'배송비'}
-                            value={배송비표시(product).free
-                              ? <>{translate('무료배송')}</>
-                              : <>{commarNumberWithUnit(배송비표시(product).fee, currentLang?.value)}
-                                {무료배송안내(product, currentLang?.value) &&
-                                  <span style={{ opacity: 0.85 }}> · {무료배송안내(product, currentLang?.value)}</span>}</>}
+                            value={<ShippingLine item={product} showLabel={false} tone={{ fontSize: 'inherit', color: 'inherit', gap: 0 }} />}
                           />
                         </div>
                         {/* '10-14일 내 도착 예정(검수 후 배송)' · '배송 전 검수' 는

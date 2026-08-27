@@ -17,6 +17,7 @@ import { isShopgoBrand } from 'src/utils/is-shopgo';
 import { formatLang } from 'src/utils/format';
 import QuantityStepper from 'src/components/elements/shop/QuantityStepper';
 import { useLocales } from 'src/locales';
+import ShippingLine from 'src/components/elements/shop/ShippingLine';
 import BenefitNotice from 'src/components/elements/shop/BenefitNotice';
 import OrderFormFields from 'src/components/elements/shop/OrderFormFields';
 import ProductOptions from 'src/components/elements/shop/ProductOptions';
@@ -221,14 +222,8 @@ const ItemDemo = (props) => {
                         </Typography>
                       </div>
                       <Divider sx={{ my: 1 }} />
-                      <Typography variant="body2" sx={{ color: 'text.secondary', my: 1 }}>
-                        {/* 배송비는 상품값이 아니라 몰 정책을 따른다(shop-util 배송비표시 주석) */}
-                        {배송비표시(product).free
-                          ? translate('무료배송')
-                          : `${translate('배송비')} ${commarNumberWithUnit(배송비표시(product).fee, currentLang?.value)}`}
-                        {무료배송안내(product, currentLang?.value) &&
-                          <span style={{ marginLeft: 6, opacity: 0.85 }}>· {무료배송안내(product, currentLang?.value)}</span>}
-                      </Typography>
+                      {/* 배송비 한 줄 — 문구는 ShippingLine 한 곳에서만 만든다. */}
+                      <ShippingLine item={product} tone={{ fontSize: 14, color: 'rgba(0,0,0,0.6)', gap: 8 }} />
                       {/* 혜택 안내(본사 공통) — 배송비 바로 아래 */}
                       <BenefitNotice sx={{ mb: 1 }} tone={{ fontSize: 13 }} />
                       {/* 옵션 · 추가상품 · 조합형 — 프레임 6개 공용 컴포넌트.

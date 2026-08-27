@@ -17,6 +17,7 @@ import DialogBuyNow from 'src/components/dialog/DialogBuyNow';
 import { useAuthContext } from 'src/layouts/manager/auth/useAuthContext';
 import { useModal } from 'src/components/dialog/ModalProvider';
 import { ProductFaq } from 'src/components/elements/shop/demo-4';
+import ShippingLine from 'src/components/elements/shop/ShippingLine';
 import { isShopgoBrand } from 'src/utils/is-shopgo';
 import { 찜기능사용 } from 'src/data/wish';
 
@@ -325,6 +326,12 @@ const ItemDemo = (props) => {
                           />
                         </>
                       }
+                      {/* 배송비. 이 프레임은 표 형태라 라벨은 ItemCharacter 가 그린다.
+                          가맹점이 설정관리 › 배송비설정에 넣은 값을 손님이 상세에서 바로 본다. */}
+                      <ItemCharacter
+                        key_name={'배송비'}
+                        value={<ShippingLine item={product} showLabel={false} tone={{ fontSize: 'inherit', color: 'inherit', gap: 0 }} />}
+                      />
                       {/* <ProductDetailsSummary
                         product={product}
                         cart={""}

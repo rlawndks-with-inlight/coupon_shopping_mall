@@ -6,6 +6,7 @@ import { Icon } from '@iconify/react';
 import { useSettingsContext } from 'src/components/settings';
 import { useLocales } from 'src/locales';
 import { formatLang } from 'src/utils/format';
+import DeliveryNotice from 'src/components/elements/shop/DeliveryNotice';
 
 // 상품상세 '혜택 안내' — 가격 아래 한 줄, 누르면 팝업.
 //
@@ -44,7 +45,6 @@ export const useBenefitNotices = () => {
 
 const BenefitNotice = ({ tone = {}, sx = {} }) => {
     const { translate, currentLang } = useLocales();
-    const { themeDnsData } = useSettingsContext();
     const list = useBenefitNotices();
     const [openId, setOpenId] = useState(null);
     const [tabIdx, setTabIdx] = useState(0);
@@ -53,14 +53,9 @@ const BenefitNotice = ({ tone = {}, sx = {} }) => {
     const t = { ...기본톤, ...tone };
     const open = list.find((n) => n.id === openId);
 
-    // 배송 안내(가맹점별). 관리자 '설정관리 › 배송비설정' 탭에서 setting_obj.delivery_info 로 저장한다.
-    // 혜택(본사 공통) 바로 아래에 렌더한다. Quill 빈 값(<p><br></p>·&nbsp;)은 없는 것으로 본다.
-    const deliveryHtml = themeDnsData?.setting_obj?.delivery_info ?? '';
-    const hasDelivery = /<img/i.test(deliveryHtml)
-        || deliveryHtml.replace(/<[^>]*>/g, '').replace(/&nbsp;/g, '').trim().length > 0;
-
-    // 혜택도 없고 배송 안내도 없으면 아무것도 그리지 않는다(가격 아래 빈 여백 방지).
-    if (!(list.length > 0) && !hasDelivery) return null;
+    // 혜택(본사 공통)이 없으면 배송 안내(가맹점별·SHOPGO 하위 전용)만 단독으로 그린다.
+    // 배송 안내도 없으면 DeliveryNotice 가 null 을 반환하므로 가격 아래 빈 여백이 안 생긴다.
+    if (!(list.length > 0)) return <DeliveryNotice tone={tone} sx={sx} />;
 
     const 열기 = (n) => {
         if (!(n?.tabs?.length > 0)) return; // 볼 내용이 없으면 누를 것도 없다
@@ -112,22 +107,8 @@ const BenefitNotice = ({ tone = {}, sx = {} }) => {
                 })}
             </Box>
 
-            {/* 배송 안내(가맹점별) — 혜택 바로 아래. 톤(색·글자크기)은 프레임이 준 값을 그대로 따른다. */}
-            {hasDelivery ? (
-                <Box
-                    sx={{
-                        mt: list.length > 0 ? `${t.rowGap + 4}px` : 0,
-                        fontSize: `${t.fontSize}px`,
-                        color: t.textColor,
-                        lineHeight: 1.7,
-                        wordBreak: 'keep-all',
-                        '& img': { maxWidth: '100%', height: 'auto' },
-                        '& p': { margin: '0 0 4px' },
-                        '& table': { width: '100%', borderCollapse: 'collapse' },
-                    }}
-                    dangerouslySetInnerHTML={{ __html: deliveryHtml }}
-                />
-            ) : null}
+            {/* 배송 안내(가맹점별, SHOPGO 하위 전용) — 혜택 바로 아래. */}
+            <DeliveryNotice tone={tone} topGap={list.length > 0} />
 
             {/* 팝업. 약관 보기 팝업과 같은 방식이라 6개 프레임 위에서 동작이 검증돼 있다.
                 폭이 sm(600px) 이라 이미지를 넣으면 그만큼 줄어들어 글씨가 뭉개져 보였다

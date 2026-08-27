@@ -1635,7 +1635,9 @@ const DefaultSetting = () => {
                   </Card>
                 </Grid>
                 {/* 배송 안내(가맹점별 자유 텍스트). setting_obj.delivery_info 에 저장 —
-                    백엔드 컬럼 추가 없이 JSON 설정에 얹는다. 상품 상세의 혜택 안내 아래에 렌더된다(BenefitNotice). */}
+                    백엔드 컬럼 추가 없이 JSON 설정에 얹는다. 상품 상세의 혜택 안내 아래에 렌더된다.
+                    SHOPGO 하위 전용 기능이라 그 외 브랜드 설정에는 노출하지 않는다. */}
+                {isShopgoMerchant(item) && (
                 <Grid item xs={12} md={12}>
                   <Card sx={{ p: 2 }}>
                     <Stack spacing={1}>
@@ -1660,6 +1662,7 @@ const DefaultSetting = () => {
                     </Stack>
                   </Card>
                 </Grid>
+                )}
               </>
             )}
 

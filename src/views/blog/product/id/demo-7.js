@@ -13,6 +13,7 @@ import { apiShop } from 'src/utils/api';
 import { insertCartDataUtil, startBuyNow, selectItemOptionUtil, 배송비표시, 무료배송안내 } from 'src/utils/shop-util';
 import QuantityStepper from 'src/components/elements/shop/QuantityStepper';
 import ProductThumbs, { buildProductImages } from 'src/components/elements/shop/ProductThumbs';
+import DeliveryNotice from 'src/components/elements/shop/DeliveryNotice';
 import toast from 'react-hot-toast';
 
 /* 상품 상세 - 데모 7: 일본 젠 / 와비사비 */
@@ -297,6 +298,8 @@ const Demo7 = () => {
                 : <div style={{ fontSize: '13px', color: '#888', marginTop: '6px' }}>{translate('배송비')} {commarNumberWithUnit(배송비표시(item).fee, currentLang?.value)}
                     {무료배송안내(item, currentLang?.value) && <span> · {무료배송안내(item, currentLang?.value)}</span>}</div>}
           </PriceBlock>
+          {/* 배송 안내(SHOPGO 하위 전용) — 배송비 아래 */}
+          <DeliveryNotice tone={{ fontSize: 13 }} sx={{ mt: '8px' }} />
           {requiredGroups(item).length > 0 && (
             <OptionArea>
               {requiredGroups(item).map((group, gIdx) => (

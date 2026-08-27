@@ -705,6 +705,8 @@ const es = {
     "주문 비밀번호를 입력해 주세요.": "Introduzca la contraseña del pedido.",
     "출고된 주문은 취소할 수 없습니다. 반품/환불은 판매자에게 문의해 주세요.": "Los pedidos enviados no se pueden cancelar. Contacte con el vendedor para devoluciones o reembolsos.",
     "수수료율이 100%보다 큽니다.": "La tasa de comisión supera el 100 %.",
+    "수수료율은 0보다 작을 수 없습니다.": "La tasa de comisión no puede ser inferior a 0.",
+    "포인트 적립률은 0보다 작을 수 없습니다.": "La tasa de acumulación de puntos no puede ser inferior a 0.",
     "잘못된 접근입니다.": "Solicitud no válida.",
     "추가중 에러": "Se produjo un error al añadir.",
     "포인트 적립률이 100%보다 큽니다": "La tasa de acumulación de puntos supera el 100 %.",

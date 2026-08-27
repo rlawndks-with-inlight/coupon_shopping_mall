@@ -710,6 +710,8 @@ const en = {
     "주문 비밀번호를 입력해 주세요.": "Please enter the order password.",
     "출고된 주문은 취소할 수 없습니다. 반품/환불은 판매자에게 문의해 주세요.": "Orders that have shipped cannot be cancelled. Please contact the seller for returns or refunds.",
     "수수료율이 100%보다 큽니다.": "The commission rate is greater than 100%.",
+    "수수료율은 0보다 작을 수 없습니다.": "The commission rate cannot be less than 0.",
+    "포인트 적립률은 0보다 작을 수 없습니다.": "The point earn rate cannot be less than 0.",
     "잘못된 접근입니다.": "Invalid request.",
     "추가중 에러": "An error occurred while adding.",
     "포인트 적립률이 100%보다 큽니다": "The point earning rate is greater than 100%.",

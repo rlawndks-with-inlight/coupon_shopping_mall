@@ -77,5 +77,44 @@ if (!백엔드있음) {
         /checkStock|findMissingRequiredOption/.test(결제) && /checkPurchaseLimit/.test(결제));
 }
 
+// ── 적립률·수수료 (2026-08-27 2차) ──────────────────────────────────────
+//
+// 「포인트 적립비율」 칸은 % 인데 값이 그냥 숫자다. '1000원 적립' 으로 오해해 1000 을 치면
+// 1,000% 로 읽혀 **결제금액의 열 배가 적립된다.** 위쪽 한도가 아예 없었다.
+// 게다가 적립을 세는 곳이 pay.controller 세 자리에 흩어져 정책 함수를 안 거치고 있었다.
+const 프론트정책 = 주석제거(프론트('src/data/point-policy.js'));
+t('화면 정책에 적립률 상한이 있다', /적립률: Math\.min\(적립상한퍼센트,/.test(프론트정책));
+const 설정화면 = 주석제거(프론트('src/pages/manager/settings/default/[brand_id].js'));
+t('적립률 칸이 0~100 으로 잘린다',
+    /Math\.min\(100, Math\.max\(0, parseInt\(e\.target\.value\)/.test(설정화면));
+
+// ⚠ 총판(users/distributors)은 넣지 않는다. 그 화면의 수수료 칸은 **주석 처리된 죽은 코드**다
+//   (206줄부터 <Stack> 통째로 막혀 있다). 처음엔 모르고 거기까지 고쳤다가 되돌렸다 —
+//   주석제거를 거친 검사가 '안 고쳤다' 고 알려 줘서 알았다.
+//   살아 있는 자리만 센다. 죽은 코드를 고치면 diff 만 늘고 아무것도 달라지지 않는다.
+for (const f of ['users/agents', 'users/sellers']) {
+    const 화면 = 주석제거(프론트(`src/pages/manager/${f}/[edit_category]/[id].js`));
+    t(`${f} 수수료 칸이 음수를 막는다`, /trx_fee'\]: 음수막기\(/.test(화면));
+}
+
+if (백엔드있음) {
+    const 백2 = (p) => readFileSync(BACK_ROOT + p, 'utf8');
+    const 정책 = 주석제거(백2('utils.js/point-policy.js'));
+    t('서버 정책에 적립률 상한이 있다', /적립률: Math\.min\(적립상한퍼센트,/.test(정책));
+    t('적립 계산이 한 곳에만 있다', (정책.match(/export const 적립예정/g) ?? []).length === 1);
+
+    const 결제2 = 주석제거(백2('controllers/pay.controller.js'));
+    t('결제가 적립을 직접 곱하지 않는다', !/point_rate \?\? 0\) \/ 100/.test(결제2),
+        '정책 함수를 안 거치면 적립률 상한이 안 걸린다');
+    t('적립을 정책 함수로 센다', (결제2.match(/적립예정\(/g) ?? []).length >= 3);
+
+    const 유저 = 주석제거(백2('controllers/user.controller.js'));
+    t('서버가 음수 수수료를 막는다',
+        (유저.match(/수수료율은 0보다 작을 수 없습니다/g) ?? []).length === 2,
+        'create·update 두 자리 모두여야 한다');
+    t('서버가 음수 적립률을 막는다',
+        (유저.match(/포인트 적립률은 0보다 작을 수 없습니다/g) ?? []).length === 2);
+}
+
 console.log(`\n통과 ${pass} / 실패 ${fail}`);
 process.exit(fail ? 1 : 0);

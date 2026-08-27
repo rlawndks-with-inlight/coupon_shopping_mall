@@ -1370,12 +1370,18 @@ const DefaultSetting = () => {
                           type='number'
                           value={item?.setting_obj?.point_rate ?? 0}
                           endAdornment={<InputAdornment position='end'>%</InputAdornment>}
+                          inputProps={{ min: 0, max: 100 }}
                           onChange={e => {
+                            // % 인데 값이 그냥 숫자라 '1000원 적립' 으로 오해해 1000 을 치기 쉽다.
+                            // 1,000% 로 읽히면 결제금액의 열 배가 적립된다. 0~100 으로 자른다
+                            // (서버 point-policy 의 적립상한퍼센트와 같은 값이어야 한다).
+                            const v = String(e.target.value ?? '').trim() === ''
+                              ? '' : String(Math.min(100, Math.max(0, parseInt(e.target.value) || 0)));
                             setItem({
                               ...item,
                               ['setting_obj']: {
                                 ...item?.setting_obj,
-                                ['point_rate']: e.target.value
+                                ['point_rate']: v
                               }
                             })
                           }}

@@ -18,6 +18,20 @@ const t = (name, cond) => { if (cond) { pass++; console.log('  ok  ' + name); } 
 
 const jwt = readFileSync(FRONT_ROOT + 'src/layouts/manager/auth/JwtContext.js', 'utf8');
 
+// ── 프론트: 물어보지 못한 것을 '로그인 안 됨' 으로 읽지 않는다 ──────────
+//
+// [증상] 로그인한 지 한 시간도 안 됐는데 갑자기 로그인 화면이 떴다.
+// [원인] 백엔드는 실패 코드를 HTTP 500 으로 내려보낸다(util.js 의 response).
+//   axios 는 2xx 가 아니면 reject 하므로, DB 가 한 번 삐끗하거나(운영 로그에
+//   'packets out of order' 91건 · 'Socket closed' 8건 · ETIMEDOUT 4건) 배포 중 재시작에
+//   걸리거나 네트워크가 잠깐 끊기면 catch 로 떨어졌고, 그 catch 가 즉시 로그아웃시켰다.
+//   initialize 는 페이지를 새로 열 때마다 돈다 — 관리자에는 window.location 이동이 있어 자주다.
+// [수정] 실패하면 몇 번 더 물어본다. 서버가 200 으로 '사용자 없음' 을 말한 경우만 진짜 로그아웃.
+t('물어보지 못하면 다시 물어본다', /for \(const 기다림 of \[0, 1000, 3000\]\)/.test(jwt));
+t('재시도 중에는 로그아웃시키지 않는다', /마지막오류 = e;/.test(jwt));
+t('끝내 못 물어봤을 때만 포기한다', /if \(마지막오류\) throw 마지막오류;/.test(jwt));
+t('사용자 없음(200)은 그대로 로그인 화면', /response\?\.data\?\.id > 0/.test(jwt));
+
 // ── 프론트: 주기적으로 살아 있음을 알린다 ────────────────────────────────
 t('세션 두드리기가 있다', /setInterval\(두드리기/.test(jwt));
 t('탭으로 돌아왔을 때도 이어 준다', /visibilitychange/.test(jwt));

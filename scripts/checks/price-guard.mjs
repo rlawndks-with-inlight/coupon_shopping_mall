@@ -1,0 +1,81 @@
+import { FRONT_ROOT, BACK_ROOT, 백엔드있음, 주석제거 } from './_roots.mjs';
+import { readFileSync } from 'fs';
+
+// 가맹점이 잘못 넣은 값 / 화면을 거치지 않은 요청이 결제금액까지 흔들던 자리들 (2026-08-27).
+//
+// [제보] 관리자 목록에 한 상품의 가격이 73,000 과 93,000 두 개로 보인다. 할인은 켠 적이 없다.
+//
+// [원인] 관리자에는 '할인 표시' 를 저장하는 칸이 없다. 열 때마다 `정가 > 판매가` 로 되짚어
+//   체크 상태를 만든다. 그래서 **할인 중이던 상품은 열자마자 체크가 켜져 있고**,
+//   그 상태에서 판매가만 고치면 정가가 옛 값에 남는다 — 사람이 체크를 누른 적이 없어도 그렇다.
+//     · 새 판매가 > 옛 정가 → 주문서에 음수 할인('할인 20,000원' 인데 총액이 더 큼)
+//     · 새 판매가 < 옛 정가 → 가맹점이 설정한 적 없는 할인율이 고객 화면에 뜬다
+//   실측 295건.
+//
+// [함께 드러난 것] 옵션 변동가·조합 추가금에 **음수를 넣을 수 있었다.**
+//   결제 재계산(recalcOrderAmount)은 금액 위조를 막으려고 DB 의 옵션 가격을 그대로 믿는다.
+//   그래서 음수 옵션 하나면 그 방어가 통째로 우회된다. pay.controller 주석도 그 점을 적어 뒀었다.
+//
+// 화면 검증은 안내일 뿐이다 — 요청은 화면을 거치지 않고도 보낼 수 있으므로 **서버가 최종 방어선**이다.
+// 두 곳을 함께 못 박는다.
+
+let pass = 0, fail = 0;
+const t = (name, cond, 곁들임) => {
+    if (cond) { pass++; console.log('  ok  ' + name); }
+    else { fail++; console.log('  FAIL ' + name + (곁들임 ? '\n        ' + 곁들임 : '')); }
+};
+const 프론트 = (p) => readFileSync(FRONT_ROOT + p, 'utf8');
+
+// ── 화면: 미숙한 입력을 저장 전에 알아차리게 한다 ────────────────────────
+const 폼 = 주석제거(프론트('src/pages/manager/products/[edit_category]/[id].js'));
+t('판매가를 올리면 정가가 따라간다', /const 할인성립 = useDiscount && 정가 > value/.test(폼),
+    "'체크가 꺼져 있을 때만' 이 기준이면, 자동으로 켜진 상태에서 정가가 옛 값에 남는다");
+t('할인이 깨지면 체크도 내린다', /if \(useDiscount\) setUseDiscount\(false\)/.test(폼),
+    '값과 화면이 어긋난 채로 남지 않게 한다');
+t('저장 시 정가 ≤ 판매가를 막는다', /할인 전 가격\(정가\)은 판매가보다 높아야 합니다/.test(폼));
+t('판매가 칸이 음수를 안 받는다', /Math\.max\(0, parseInt\(e\.target\.value\.replace/.test(폼));
+
+const 옵션폼 = 주석제거(프론트('src/components/manager/ProductOptionEditor.js'));
+t('옵션 편집기에 음수막기가 있다', /const 음수막기 = /.test(옵션폼));
+for (const 칸 of ['option_price', 'stock_qty', 'add_price', 'purchase_limit']) {
+    t(`'${칸}' 입력이 음수막기를 거친다`,
+        new RegExp(`${칸}: 음수막기\\(`).test(옵션폼),
+        'type="number" 는 키보드로 치는 - 를 막지 않는다');
+}
+t('빈 칸은 그대로 둔다', /String\(v \?\? ''\)\.trim\(\) === '' \? ''/.test(옵션폼),
+    "재고에서 '비움 = 무제한' 이라는 뜻이 사라지면 안 된다");
+
+// ── 서버: 최종 방어선 ────────────────────────────────────────────────────
+if (!백엔드있음) {
+    console.log('  건너뜀 — 백엔드 저장소가 없다(서버에는 프론트만 배포된다)');
+} else {
+    const 백 = (p) => readFileSync(BACK_ROOT + p, 'utf8');
+    const 상품 = 주석제거(백('controllers/product.controller.js'));
+    t('서버가 가격을 정리한다', /const 가격정리 = /.test(상품));
+    t('가격정리를 create·update 양쪽에서 부른다',
+        (상품.match(/가격정리\(obj\);/g) ?? []).length === 2,
+        '한쪽만 부르면 만들 때는 되는데 고치면 안 되는 버그가 된다');
+    t('서버가 정가 < 판매가를 바로잡는다',
+        /if \(obj\.product_price < obj\.product_sale_price\) obj\.product_price = obj\.product_sale_price;/.test(상품));
+    t('서버가 음수 가격을 막는다', /const 음수없이 = \(v\) => Math\.max\(0,/.test(상품));
+
+    const 옵션 = 주석제거(백('utils.js/product-options.js'));
+    t('서버가 옵션 변동가의 음수를 막는다', /option_price: 음수없는정수\(/.test(옵션),
+        '음수 옵션 하나면 결제금액 재계산 방어가 통째로 우회된다');
+    t('서버가 조합 추가금의 음수를 막는다', /음수없는정수\(c\?\.add_price/.test(옵션));
+    t('서버가 음수 재고를 0 으로 접는다', /return isNaN\(n\) \? null : Math\.max\(0, n\);/.test(옵션));
+    t('재고 비움은 여전히 무제한이다', /if \(v === '' \|\| v === null \|\| v === undefined\) return null;/.test(옵션),
+        '0 으로 접으면 저장하는 순간 전 상품이 품절이 된다');
+
+    // 이미 단단한 것들 — 함께 잠가 둔다(되돌아가면 금액 위조가 열린다).
+    const 결제 = 주석제거(백('controllers/pay.controller.js'));
+    t('결제금액을 서버가 다시 계산한다', /const recalcOrderAmount = async/.test(결제));
+    t('주문 수량이 1 이상인지 본다', /!Number\.isInteger\(count\) \|\| count <= 0/.test(결제));
+    t('포인트 잔액을 확인한다', /보유 포인트가 부족합니다/.test(결제));
+    t('포인트 사용 상한을 확인한다', /포인트사용상한\(/.test(결제));
+    t('재고·필수옵션·구매제한을 서버에서 본다',
+        /checkStock|findMissingRequiredOption/.test(결제) && /checkPurchaseLimit/.test(결제));
+}
+
+console.log(`\n통과 ${pass} / 실패 ${fail}`);
+process.exit(fail ? 1 : 0);

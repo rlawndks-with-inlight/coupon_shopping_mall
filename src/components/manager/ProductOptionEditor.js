@@ -30,6 +30,15 @@ const 추가상품 = 1;
 const 라벨 = (t) => <Typography variant="subtitle2" sx={{ color: 'text.secondary' }}>{t}</Typography>;
 const 도움말 = (t) => <Typography sx={{ fontSize: 12, color: 'text.disabled', mt: -0.5 }}>{t}</Typography>;
 
+// 돈·수량 칸에 음수가 들어가지 못하게 한다.
+//
+// type="number" 는 스피너를 줄 뿐 키보드로 '-' 를 치는 것을 막지 않는다.
+// 옵션 변동가가 음수면 손님이 그 옵션을 고르는 것만으로 결제금액이 깎인다 —
+// 서버(product-options.js)에서도 막지만, 여기서 막아야 가맹점이 저장 전에 알아차린다.
+// 빈 문자열은 그대로 둔다. 재고에서 '비움 = 무제한' 이라는 뜻이기 때문이다.
+const 음수막기 = (v) => (String(v ?? '').trim() === '' ? '' : String(Math.max(0, parseInt(v) || 0)));
+const 음수막기속성 = { inputProps: { min: 0 } };
+
 const ProductOptionEditor = ({ item, setItem, disabled = false }) => {
     const groups = item?.groups ?? [];
     const characters = item?.characters ?? [];
@@ -277,7 +286,8 @@ const ProductOptionEditor = ({ item, setItem, disabled = false }) => {
                                 label={추가상품인가 ? '가격' : '변동가'} type="number"
                                 value={o?.option_price ?? 0}
                                 endAdornment={<InputAdornment position="end">원</InputAdornment>}
-                                onChange={(e) => 옵션수정(gIdx, oIdx, { option_price: e.target.value })}
+                                onChange={(e) => 옵션수정(gIdx, oIdx, { option_price: 음수막기(e.target.value) })}
+                                inputProps={{ min: 0 }}
                             />
                         </FormControl>}
                     {!(조합형 && !추가상품인가) &&
@@ -285,7 +295,8 @@ const ProductOptionEditor = ({ item, setItem, disabled = false }) => {
                             size="small" sx={{ width: 130 }} type="number" label="재고"
                             placeholder="무제한"
                             value={o?.stock_qty ?? ''}
-                            onChange={(e) => 옵션수정(gIdx, oIdx, { stock_qty: e.target.value })}
+                            onChange={(e) => 옵션수정(gIdx, oIdx, { stock_qty: 음수막기(e.target.value) })}
+                            InputProps={음수막기속성}
                         />}
                     {/* 옵션 단위 품절.
                         상품 전체 품절은 '판매상태' 에 이미 있지만, '검정만 잠깐 안 판다' 를
@@ -404,11 +415,13 @@ const ProductOptionEditor = ({ item, setItem, disabled = false }) => {
                             <OutlinedInput
                                 label="추가금" type="number" value={일괄.add_price}
                                 endAdornment={<InputAdornment position="end">원</InputAdornment>}
-                                onChange={(e) => set일괄({ ...일괄, add_price: e.target.value })} />
+                                onChange={(e) => set일괄({ ...일괄, add_price: 음수막기(e.target.value) })}
+                                inputProps={{ min: 0 }} />
                         </FormControl>
                         <TextField size="small" sx={{ width: 120 }} type="number" label="재고"
                             placeholder="무제한" value={일괄.stock_qty}
-                            onChange={(e) => set일괄({ ...일괄, stock_qty: e.target.value })} />
+                            onChange={(e) => set일괄({ ...일괄, stock_qty: 음수막기(e.target.value) })}
+                            InputProps={음수막기속성} />
                         <Button variant="outlined" size="small" sx={{ height: 40 }}
                             onClick={일괄적용}>{조합목록.length}개 조합에 적용</Button>
                     </Row>
@@ -434,13 +447,15 @@ const ProductOptionEditor = ({ item, setItem, disabled = false }) => {
                                         <OutlinedInput
                                             label="추가금" type="number" value={c?.add_price ?? 0}
                                             endAdornment={<InputAdornment position="end">원</InputAdornment>}
-                                            onChange={(e) => 조합수정(keys, names, { add_price: e.target.value })}
+                                            onChange={(e) => 조합수정(keys, names, { add_price: 음수막기(e.target.value) })}
+                                            inputProps={{ min: 0 }}
                                         />
                                     </FormControl>
                                     <TextField
                                         size="small" sx={{ width: 130 }} type="number" label="재고" placeholder="무제한"
                                         value={c?.stock_qty ?? ''}
-                                        onChange={(e) => 조합수정(keys, names, { stock_qty: e.target.value })}
+                                        onChange={(e) => 조합수정(keys, names, { stock_qty: 음수막기(e.target.value) })}
+                                        InputProps={음수막기속성}
                                     />
                                     {/* 조합 단위 품절 — 재고를 건드리지 않고 그 조합만 잠근다 */}
                                     <FormControlLabel
@@ -476,7 +491,8 @@ const ProductOptionEditor = ({ item, setItem, disabled = false }) => {
                     size="small" sx={{ width: 200 }} type="number" placeholder="제한 없음"
                     label="1인 최대 구매 수량"
                     value={item?.purchase_limit ?? ''}
-                    onChange={(e) => set({ purchase_limit: e.target.value })}
+                    onChange={(e) => set({ purchase_limit: 음수막기(e.target.value) })}
+                    InputProps={음수막기속성}
                 />
                 {Number(item?.purchase_limit) > 0 &&
                     도움말('⚠ 이 상품은 비회원이 구매할 수 없게 됩니다. 취소된 주문은 개수에서 빠집니다.')}

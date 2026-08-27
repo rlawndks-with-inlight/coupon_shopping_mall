@@ -47,6 +47,7 @@ import { useAuthContext } from 'src/layouts/manager/auth/useAuthContext';
 import { formatCreditCardNumber, formatExpirationDate } from 'src/utils/formatCard';
 import { useModal } from "src/components/dialog/ModalProvider";
 import { insertCartDataUtil, onPayProductsByAuth, onPayProductsByHand, selectItemOptionUtil, 배송비표시, 무료배송안내 } from 'src/utils/shop-util';
+import ShippingLine from 'src/components/elements/shop/ShippingLine';
 import { apiManager } from 'src/utils/api';
 import { useRouter } from 'next/router';
 import DialogBuyNow from 'src/components/dialog/DialogBuyNow';
@@ -194,10 +195,9 @@ export default function ProductDetailsSummary({ product, onAddCart, onGotoStep, 
                     )}
                     {commarNumber(setProductPriceByLang(product, 'product_sale_price', price_lang, currentLang?.value))} {getPriceUnitByLang(currentLang?.value)}
                   </Typography>
-                  {/* 배송비는 상품값이 아니라 몰 정책을 따른다 — 상세만 0원으로 보이던 문제(shop-util 배송비표시 주석) */}
-                  <Typography variant="h7" color={themeObj.grey[500]}>{translate('배송비')}: {배송비표시(product).free ? translate('무료배송') : commarNumberWithUnit(배송비표시(product).fee, currentLang?.value)}</Typography>
-                  {무료배송안내(product, currentLang?.value) &&
-                    <Typography variant="h7" color={themeObj.grey[500]}>{무료배송안내(product, currentLang?.value)}</Typography>}
+                  {/* 배송비 한 줄. 문구는 ShippingLine 한 곳에서만 만든다 — 프레임마다 따로 그리다
+                      '배송비:' / '배송비 :' / 가운뎃점 앞 공백 유무가 갈렸다(2026-08-28 실측). */}
+                  <ShippingLine item={product} tone={{ fontSize: 13, color: themeObj.grey[500], gap: 4 }} />
                   {
                     themeDnsData?.id == 95 && product_sale_price < 100000 &&
                     <>

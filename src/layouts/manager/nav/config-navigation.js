@@ -8,7 +8,7 @@ import { useAuthContext } from '../auth/useAuthContext';
 import { useEffect, useState } from 'react';
 import { apiManager } from 'src/utils/api';
 import { mainObjSchemaList } from 'src/utils/format';
-import { isShopgoBrand, isShopgoMerchant } from 'src/utils/is-shopgo';
+import { isShopgoBrand, isShopgoMerchant, SHOPGO_MASTER_ID } from 'src/utils/is-shopgo';
 import { HOME_TEXT_SCHEMA } from 'src/data/home-texts';
 import { 본사화면 } from 'src/utils/manager-visibility';
 
@@ -133,10 +133,12 @@ export const navConfig = () => {
     }
     return false
   }
-  // 현재 로드된 브랜드가 마스터(메인)인지로 판단. 가맹점 신청 관리 등 마스터 전용 메뉴용.
-  // 터널 환경에선 모든 데모가 같은 host라, host가 아니라 브랜드의 is_main_dns로 구분.
+  // 가맹점 관리(신청/현황 등) 마스터 전용 메뉴용. 실제 마스터는 ShopGo 본사(id 98) 하나뿐이다.
+  // 예전엔 is_main_dns==1 로 봤는데, 에이삽몰(11)·그랑파리(10)도 is_main_dns=1 이지만 하위 가맹점 0 이라
+  // 남의(shopgo) 가맹점 데이터를 보고 정작 자기 판매 메뉴는 숨겨졌다. (merchant-application 은 백엔드가
+  // 마스터=shopgo(MAIN_FRONT_URL) 고정 조회) → 실제 마스터인 ShopGo 본사 id 로 판별한다.
   const isMasterSite = () => {
-    return themeDnsData?.is_main_dns == 1;
+    return Number(themeDnsData?.id) === SHOPGO_MASTER_ID;
   }
   // 홈을 shop_obj/blog_obj 섹션 배열로 그리는 데모(=메인페이지관리로 편집 가능한 데모).
   // shop 4·5·6·9는 자체 파일이 HomeDemo1을 감싸는 구조라 shop_obj를 그대로 쓴다(= 섹션빌더).

@@ -941,6 +941,12 @@ const ProductEdit = () => {
       toast.error('카테고리를 한 개 이상 선택해 주세요.');
       return;
     }
+    // 할인 표시를 켰는데 정가가 판매가보다 높지 않으면 할인이 성립하지 않는다.
+    // 그대로 저장하면 정가가 화면에서 사라진 채 DB 에 남아, 나중에 값만 어긋나 보인다.
+    if (useDiscount && !(parseFloat(item?.product_price) > parseFloat(item?.product_sale_price))) {
+      toast.error('할인 전 가격(정가)은 판매가보다 높아야 합니다. 할인이 없다면 「할인 표시하기」를 꺼 주세요.');
+      return;
+    }
     // 손님이 적는 항목 — 이름 없는 항목은 서버가 버린다. 조용히 버리면 왜 사라졌는지 모른다.
     for (const f of (item?.order_form_fields ?? []).filter((x) => x?.is_delete != 1)) {
       if (!String(f?.label ?? '').trim()) {
@@ -1886,15 +1892,32 @@ const ProductEdit = () => {
                                   value={salePrice}
                                   endAdornment={<InputAdornment position="end">원</InputAdornment>}
                                   onChange={(e) => {
-                                    let value = parseInt(e.target.value.replace(/,/g, '')) || 0
-                                    // 할인 미사용이면 정가(product_price)도 판매가와 동일하게 맞춰 할인 표시가 뜨지 않게 한다
+                                    let value = Math.max(0, parseInt(e.target.value.replace(/,/g, '')) || 0)
+                                    // 정가(product_price)를 언제 따라 올릴 것인가.
+                                    //
+                                    // 예전 규칙은 '할인 표시가 꺼져 있을 때만' 이었다. 그런데 이 체크는
+                                    // 저장되는 값이 아니라 열 때마다 `정가 > 판매가` 로 되짚은 추측이다.
+                                    // 그래서 할인 중이던 상품은 **열자마자 체크가 켜져 있고**, 거기서 판매가만
+                                    // 고치면 정가가 옛 값에 남았다 — 사람이 체크를 누른 적이 없어도 그렇게 된다
+                                    // (2026-08-27 확인, 295건).
+                                    //   · 새 판매가가 옛 정가보다 높으면 → 주문서에 음수 할인이 뜬다
+                                    //   · 낮으면 → 가맹점이 설정한 적 없는 할인율이 고객 화면에 뜬다
+                                    //
+                                    // 기준을 체크가 아니라 **값**으로 바꾼다. 판매가가 정가 이상이 되면
+                                    // 할인은 성립하지 않으므로 정가도 함께 올린다.
+                                    const 정가 = item?.product_price || 0
+                                    const 할인성립 = useDiscount && 정가 > value
                                     setItem({
                                       ...item,
                                       ['product_sale_price']: value,
-                                      ...(useDiscount ? {} : { ['product_price']: value }),
+                                      ...(할인성립 ? {} : { ['product_price']: value }),
                                     })
                                     setSalePrice(value.toLocaleString('ko-KR'))
-                                    if (!useDiscount) setPrice(value.toLocaleString('ko-KR'))
+                                    if (!할인성립) {
+                                      setPrice(value.toLocaleString('ko-KR'))
+                                      // 할인이 깨졌으면 체크도 내려 화면과 값이 어긋나지 않게 한다.
+                                      if (useDiscount) setUseDiscount(false)
+                                    }
                                   }} />
                               </FormControl>
                               <FormControlLabel
@@ -1922,7 +1945,7 @@ const ProductEdit = () => {
                                     value={price}
                                     endAdornment={<InputAdornment position="end">원</InputAdornment>}
                                     onChange={(e) => {
-                                      let value = parseInt(e.target.value.replace(/,/g, '')) || 0
+                                      let value = Math.max(0, parseInt(e.target.value.replace(/,/g, '')) || 0)
                                       setItem({ ...item, ['product_price']: value })
                                       setPrice(value.toLocaleString('ko-KR'))
                                     }} />

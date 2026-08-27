@@ -41,6 +41,7 @@ const Demo2 = (props) => {
     const [products, setProducts] = useState([]);
     const [productContent, setProductContent] = useState({});
     const [moreLoading, setMoreLoading] = useState(false);
+    const moreLoadingRef = useRef(false);
     const [loading, setLoading] = useState(true);
     const scrollRef = useRef(null);
     const [searchObj, setSearchObj] = useState({
@@ -54,7 +55,10 @@ const Demo2 = (props) => {
         }
         const { top, bottom } = scrollRef.current.getBoundingClientRect();
         const windowHeight = window.innerHeight;
-        if (top < windowHeight && bottom >= 0 && !moreLoading) {
+        // ⚠ moreLoading(state) 이 아니라 ref 를 본다. 이 핸들러는 deps [] 로 한 번만 등록되므로
+        //   state 를 읽으면 등록 시점의 값(false)에 영원히 묶여 가드가 무의미해진다(바닥에서 반복 발사 → 흔들림).
+        if (top < windowHeight && bottom >= 0 && !moreLoadingRef.current) {
+            moreLoadingRef.current = true;
             setMoreLoading(true);
             $('.more-page').trigger("click");
         }
@@ -96,15 +100,15 @@ const Demo2 = (props) => {
             setProducts(product_list.content ?? []);
             setLoading(false);
         } else {
-            setProducts([...products, ...product_list.content ?? []]);
+            // 함수형 갱신 — 이 함수는 async 라 낡은 클로저의 products 를 읽으면 앞 페이지가 사라진다.
+            setProducts((prev) => [...prev, ...(product_list?.content ?? [])]);
         }
         setProductContent(product_list);
+        // 결과가 비었든 실패했든 무조건 푼다(가드 ref 포함). 예전엔 products 가 늘었을 때만 풀어서
+        // 마지막 페이지(빈 응답)에서 스피너가 영영 돌았고, 가드가 안 풀려 이후 로드도 막혔다.
+        moreLoadingRef.current = false;
+        setMoreLoading(false);
     }
-    useEffect(() => {
-        if (products.length > 0) {
-            setMoreLoading(false);
-        }
-    }, [products])
     // 카테고리를 고른 상태면 제목도 그 이름으로 바꾼다 —
     // '전체상품' 인 채로 개수만 줄면 고객은 걸러진 줄 모르고 '상품이 없는 가게' 로 읽는다.
     // 칩을 안 그리는 프레임(5·6)에서는 제목도 건드리지 않는다 — 주소에 옛 id 가 남아 있을 수 있다.
@@ -175,10 +179,14 @@ const Demo2 = (props) => {
                             :
                             <>
                                 <Button className='more-page' onClick={() => {
-                                    settingPage({
-                                        ...searchObj,
-                                        page: searchObj?.page + 1
-                                    })
+                                    // 가드 없으면 마지막 페이지 바닥에서 빈 페이지를 무한 요청하며
+                                    // moreLoading·센티넬이 껌뻑여 화면이 흔들린다(서버도 계속 때린다).
+                                    if (products.length < productContent?.total) {
+                                        settingPage({
+                                            ...searchObj,
+                                            page: searchObj?.page + 1
+                                        })
+                                    }
                                 }} ref={scrollRef} />
                             </>}
                     </>

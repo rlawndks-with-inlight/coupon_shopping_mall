@@ -35,13 +35,21 @@ const 수 = (v) => {
     return Number.isFinite(n) ? n : 0;
 };
 
+// 적립률 상한(%). 100% 를 넘는 적립은 팔수록 손해라 뜻이 성립하지 않는다.
+export const 적립상한퍼센트 = 100;
+
 export const 포인트정책 = (dns) => {
     const s = dns?.setting_obj ?? {};
     return {
         최소주문금액: Math.max(0, 수(s.use_point_min_price)),
         최소보유: Math.max(0, 수(s.point_use_min)),
         최대사용: Math.max(0, 수(s.max_use_point)),
-        적립률: Math.max(0, 수(s.point_rate)),
+        // 적립률에는 위도 있어야 한다.
+        //
+        // 「포인트 적립비율」 칸은 % 인데 값이 그냥 숫자다. 1000 을 넣으면 1,000% 로 읽혀
+        // **결제금액의 열 배가 포인트로 적립된다.** 「1000원 적립」으로 오해해 치기 쉽다.
+        // 서버 사본(utils.js/point-policy.js)과 같은 값이어야 한다.
+        적립률: Math.min(적립상한퍼센트, Math.max(0, 수(s.point_rate))),
     };
 };
 

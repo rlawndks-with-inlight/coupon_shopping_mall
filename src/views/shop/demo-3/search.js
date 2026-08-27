@@ -182,10 +182,13 @@ const SearchDemo = (props) => {
               :
               <>
                 <Button className='more-page' onClick={() => {
-                  settingPage({
-                    ...searchObj,
-                    page: searchObj?.page + 1
-                  })
+                  // 마지막 페이지 바닥에서 빈 페이지를 무한 요청하며 화면이 흔들리는 것을 막는다.
+                  if (products.length < productContent?.total) {
+                    settingPage({
+                      ...searchObj,
+                      page: searchObj?.page + 1
+                    })
+                  }
                 }} ref={scrollRef} />
               </>}
           </>

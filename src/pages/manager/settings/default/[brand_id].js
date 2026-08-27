@@ -1065,7 +1065,10 @@ const DefaultSetting = () => {
                             })
                           }}
                         />
-                      </Stack>
+                      <Typography variant='caption' sx={{ color: 'text.disabled', mt: 0.5, lineHeight: 1.7 }}>
+                          켜면 셀러(판매자) 기능이 열리고, 상품 등록 화면의 가격 칸이 「상품가」 한 칸으로 바뀝니다.
+                        </Typography>
+                        </Stack>
                       <Stack>
                         <FormControlLabel control={<Switch checked={item.setting_obj?.is_use_consignment == 1} />} label="위탁 사용여부"
                           onChange={(e) => {
@@ -1078,7 +1081,10 @@ const DefaultSetting = () => {
                             })
                           }}
                         />
-                      </Stack>
+                      <Typography variant='caption' sx={{ color: 'text.disabled', mt: 0.5, lineHeight: 1.7 }}>
+                          켜면 상품을 다른 회원에게 위탁해 판매할 수 있습니다.
+                        </Typography>
+                        </Stack>
                       <Stack>
                         <FormControlLabel control={<Switch checked={item.setting_obj?.is_use_item_card_style == 1} />} label="상품카드스타일 사용여부"
                           onChange={(e) => {
@@ -1091,7 +1097,10 @@ const DefaultSetting = () => {
                             })
                           }}
                         />
-                      </Stack>
+                      <Typography variant='caption' sx={{ color: 'text.disabled', mt: 0.5, lineHeight: 1.7 }}>
+                          켜면 상품카드관리에서 카드 모양을 직접 고칠 수 있습니다.
+                        </Typography>
+                        </Stack>
                       <Stack>
                         <FormControlLabel control={<Switch checked={item.setting_obj?.is_use_shop_obj_style == 1} />} label="메인페이지 스타일 사용여부"
                           onChange={(e) => {
@@ -1104,7 +1113,10 @@ const DefaultSetting = () => {
                             })
                           }}
                         />
-                      </Stack>
+                      <Typography variant='caption' sx={{ color: 'text.disabled', mt: 0.5, lineHeight: 1.7 }}>
+                          켜면 좌측에 「메인페이지관리」가 나타나 홈을 섹션으로 구성할 수 있습니다(쇼핑몰형).
+                        </Typography>
+                        </Stack>
                       <Stack>
                         <FormControlLabel control={<Switch checked={item.setting_obj?.is_use_blog_obj_style == 1} />} label="블로그 메인페이지 스타일 사용여부"
                           onChange={(e) => {
@@ -1117,7 +1129,10 @@ const DefaultSetting = () => {
                             })
                           }}
                         />
-                      </Stack>
+                      <Typography variant='caption' sx={{ color: 'text.disabled', mt: 0.5, lineHeight: 1.7 }}>
+                          켜면 좌측에 「메인페이지관리」가 나타나 홈을 섹션으로 구성할 수 있습니다(블로그형).
+                        </Typography>
+                        </Stack>
                       <Stack>
                         <FormControlLabel control={<Switch checked={item?.is_use_otp == 1} />} label="otp 사용여부"
                           onChange={(e) => {
@@ -1127,17 +1142,31 @@ const DefaultSetting = () => {
                             })
                           }}
                         />
-                      </Stack>
+                      <Typography variant='caption' sx={{ color: 'text.disabled', mt: 0.5, lineHeight: 1.7 }}>
+                          켜면 관리자 로그인에 OTP(일회용 번호)를 추가로 요구합니다.
+                        </Typography>
+                        </Stack>
                       <Stack>
                         <FormControlLabel control={<Switch checked={item?.is_closure == 1} />} label="폐쇄몰 사용여부"
                           onChange={(e) => {
+                            // 이 스위치 하나로 **비로그인 방문자가 쇼핑몰을 통째로 못 보게 된다**
+                            // (ShopLayout 이 로그인 화면으로 돌린다).
+                            // 라벨이 '폐쇄몰 사용여부' 뿐이라 무슨 일이 일어나는지 알기 어렵다 —
+                            // 켤 때만 한 번 확인을 받는다(끄는 것은 되돌리는 쪽이라 묻지 않는다).
+                            if (e.target.checked
+                              && !window.confirm('폐쇄몰로 바꾸면 로그인한 회원만 쇼핑몰을 볼 수 있습니다. 비회원에게는 상품도 보이지 않습니다. 계속할까요?')) {
+                              return;
+                            }
                             setItem({
                               ...item,
                               ['is_closure']: e.target.checked ? 1 : 0,
                             })
                           }}
                         />
-                      </Stack>
+                      <Typography variant='caption' sx={{ color: 'text.disabled', mt: 0.5, lineHeight: 1.7 }}>
+                          ⚠ 켜면 로그인한 회원만 쇼핑몰을 볼 수 있습니다. 비회원은 상품도 볼 수 없습니다.
+                        </Typography>
+                        </Stack>
                       <Stack>
                         <FormControlLabel control={<Switch checked={item?.setting_obj?.is_sign_up_status_1 == 1} />} label="가입시 승인후 정상"
                           onChange={(e) => {
@@ -1150,7 +1179,10 @@ const DefaultSetting = () => {
                             })
                           }}
                         />
-                      </Stack>
+                      <Typography variant='caption' sx={{ color: 'text.disabled', mt: 0.5, lineHeight: 1.7 }}>
+                          ⚠ 켜면 새로 가입한 회원이 「승인 대기」 상태가 됩니다. 승인 전에는 구매할 수 없습니다.
+                        </Typography>
+                        </Stack>
                       <Stack>
                         <FormControlLabel control={<Switch checked={item.setting_obj?.is_use_lang == 1} />} label="언어팩 사용여부"
                           onChange={(e) => {
@@ -1221,7 +1253,10 @@ const DefaultSetting = () => {
                               </Row>
                             </RadioGroup>
                           </>}
-                      </Stack>
+                      <Typography variant='caption' sx={{ color: 'text.disabled', mt: 0.5, lineHeight: 1.7 }}>
+                          켜면 쇼핑몰에 언어 선택이 생기고, 상품명·옵션·게시글이 자동으로 번역됩니다(저장 후 1~2분).
+                        </Typography>
+                        </Stack>
 
 
                     </Stack>
@@ -1370,12 +1405,18 @@ const DefaultSetting = () => {
                           type='number'
                           value={item?.setting_obj?.point_rate ?? 0}
                           endAdornment={<InputAdornment position='end'>%</InputAdornment>}
+                          inputProps={{ min: 0, max: 100 }}
                           onChange={e => {
+                            // % 인데 값이 그냥 숫자라 '1000원 적립' 으로 오해해 1000 을 치기 쉽다.
+                            // 1,000% 로 읽히면 결제금액의 열 배가 적립된다. 0~100 으로 자른다
+                            // (서버 point-policy 의 적립상한퍼센트와 같은 값이어야 한다).
+                            const v = String(e.target.value ?? '').trim() === ''
+                              ? '' : String(Math.min(100, Math.max(0, parseInt(e.target.value) || 0)));
                             setItem({
                               ...item,
                               ['setting_obj']: {
                                 ...item?.setting_obj,
-                                ['point_rate']: e.target.value
+                                ['point_rate']: v
                               }
                             })
                           }}
@@ -1593,6 +1634,35 @@ const DefaultSetting = () => {
                     </Stack>
                   </Card>
                 </Grid>
+                {/* 배송 안내(가맹점별 자유 텍스트). setting_obj.delivery_info 에 저장 —
+                    백엔드 컬럼 추가 없이 JSON 설정에 얹는다. 상품 상세의 혜택 안내 아래에 렌더된다.
+                    SHOPGO 하위 전용 기능이라 그 외 브랜드 설정에는 노출하지 않는다. */}
+                {isShopgoMerchant(item) && (
+                <Grid item xs={12} md={12}>
+                  <Card sx={{ p: 2 }}>
+                    <Stack spacing={1}>
+                      <Typography variant='subtitle2' sx={{ color: 'text.secondary' }}>
+                        배송 안내 (상품 상세의 혜택 아래에 표시)
+                      </Typography>
+                      <ReactQuillComponent
+                        value={item?.setting_obj?.delivery_info ?? ''}
+                        setValue={value => {
+                          setItem({
+                            ...item,
+                            ['setting_obj']: {
+                              ...item?.setting_obj,
+                              ['delivery_info']: value
+                            }
+                          })
+                        }}
+                      />
+                      <Typography variant='caption' sx={{ color: 'text.secondary' }}>
+                        배송 기간·택배사·교환/반품 등 안내를 자유롭게 적으면, 각 상품 상세페이지의 혜택 안내 아래에 표시됩니다. 비워두면 표시되지 않습니다.
+                      </Typography>
+                    </Stack>
+                  </Card>
+                </Grid>
+                )}
               </>
             )}
 

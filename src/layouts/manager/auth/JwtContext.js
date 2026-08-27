@@ -72,10 +72,39 @@ export function AuthProvider({ children }) {
 
   const storageAvailable = localStorageAvailable();
 
+  // 로그인 여부를 묻는다.
+  //
+  // ⚠ '서버가 아니라고 했다' 와 '물어보지 못했다' 는 다르다.
+  //
+  //   [증상] 토큰이 멀쩡한데도(로그인한 지 한 시간도 안 됐는데) 갑자기 로그인 화면이 떴다.
+  //   [원인] 백엔드는 실패 코드를 **HTTP 500** 으로 내려보낸다(utils.js/util.js 의 response).
+  //     axios 는 2xx 가 아니면 reject 하므로, DB 가 한 번 삐끗하거나(운영 로그에
+  //     'packets out of order' 91건 · 'Socket closed' 8건 · ETIMEDOUT 4건이 쌓여 있다)
+  //     배포 중 재시작에 걸리거나 네트워크가 잠깐 끊기면 그대로 catch 로 떨어졌고,
+  //     그 catch 가 **곧바로 로그아웃 상태로 만들었다.**
+  //     initialize 는 페이지를 새로 열 때마다 돈다 — 관리자에는 window.location 이동이 있어
+  //     자주 불린다. 그래서 '아무 때나' 튕기는 것처럼 보였다.
+  //   [수정] 물어보지 못했으면 몇 번 더 물어본다. 그래도 안 되면 그때 로그아웃으로 본다.
+  //     서버가 200 으로 '사용자 없음' 을 말한 경우는 그대로 로그인 화면으로 보낸다(그건 진짜다).
+  const 잠깐 = (ms) => new Promise((r) => setTimeout(r, ms));
+
   const initialize = useCallback(async () => {
     let user = undefined;
     try {
-      const { data: response } = await axios.get(`/api/auth`);
+      let response = null;
+      let 마지막오류 = null;
+      // 0초 → 1초 → 3초. pm2 재시작 정도는 이 사이에 끝난다.
+      for (const 기다림 of [0, 1000, 3000]) {
+        if (기다림) await 잠깐(기다림);
+        try {
+          response = (await axios.get(`/api/auth`))?.data;
+          마지막오류 = null;
+          break;
+        } catch (e) {
+          마지막오류 = e;
+        }
+      }
+      if (마지막오류) throw 마지막오류;
 
       if (response?.data?.id > 0) {
 

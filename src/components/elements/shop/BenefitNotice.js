@@ -6,6 +6,7 @@ import { Icon } from '@iconify/react';
 import { useSettingsContext } from 'src/components/settings';
 import { useLocales } from 'src/locales';
 import { formatLang } from 'src/utils/format';
+import DeliveryNotice from 'src/components/elements/shop/DeliveryNotice';
 
 // 상품상세 '혜택 안내' — 가격 아래 한 줄, 누르면 팝업.
 //
@@ -52,7 +53,9 @@ const BenefitNotice = ({ tone = {}, sx = {} }) => {
     const t = { ...기본톤, ...tone };
     const open = list.find((n) => n.id === openId);
 
-    if (!(list.length > 0)) return null;
+    // 혜택(본사 공통)이 없으면 배송 안내(가맹점별·SHOPGO 하위 전용)만 단독으로 그린다.
+    // 배송 안내도 없으면 DeliveryNotice 가 null 을 반환하므로 가격 아래 빈 여백이 안 생긴다.
+    if (!(list.length > 0)) return <DeliveryNotice tone={tone} sx={sx} />;
 
     const 열기 = (n) => {
         if (!(n?.tabs?.length > 0)) return; // 볼 내용이 없으면 누를 것도 없다
@@ -103,6 +106,9 @@ const BenefitNotice = ({ tone = {}, sx = {} }) => {
                     );
                 })}
             </Box>
+
+            {/* 배송 안내(가맹점별, SHOPGO 하위 전용) — 혜택 바로 아래. */}
+            <DeliveryNotice tone={tone} topGap={list.length > 0} />
 
             {/* 팝업. 약관 보기 팝업과 같은 방식이라 6개 프레임 위에서 동작이 검증돼 있다.
                 폭이 sm(600px) 이라 이미지를 넣으면 그만큼 줄어들어 글씨가 뭉개져 보였다

@@ -16,6 +16,11 @@ import { apiManager, uploadFileByManager } from "src/utils/api";
 import { bankCodeList } from "src/utils/format";
 import PasswordField from 'src/components/elements/PasswordField';
 
+// 수수료율은 음수가 될 수 없다. 음수면 판매가가 원가 아래로 내려간다.
+// 화면은 안내일 뿐이고 서버(user.controller)에서도 막는다.
+// 빈 칸은 그대로 둔다 — '설정 안 함' 이라는 뜻이 사라지면 안 된다.
+const 음수막기 = (v) => (String(v ?? '').trim() === '' ? '' : String(Math.max(0, Number(v) || 0)));
+
 
 const AgentEdit = () => {
     const { setModal } = useModal()
@@ -246,7 +251,7 @@ const AgentEdit = () => {
                                                         setItem(
                                                             {
                                                                 ...item,
-                                                                ['oper_trx_fee']: e.target.value
+                                                                ['oper_trx_fee']: 음수막기(e.target.value)
                                                             }
                                                         )
                                                     }} />

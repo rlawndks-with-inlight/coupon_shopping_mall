@@ -13,6 +13,7 @@ import { apiShop } from 'src/utils/api';
 import { insertCartDataUtil, startBuyNow, selectItemOptionUtil, 배송비표시, 무료배송안내 } from 'src/utils/shop-util';
 import QuantityStepper from 'src/components/elements/shop/QuantityStepper';
 import ProductThumbs, { buildProductImages } from 'src/components/elements/shop/ProductThumbs';
+import DeliveryNotice from 'src/components/elements/shop/DeliveryNotice';
 import toast from 'react-hot-toast';
 
 /* 상품 상세 - 데모 8: 브루탈리스트 */
@@ -303,6 +304,8 @@ const Demo8 = () => {
                 {무료배송안내(item, currentLang?.value) && <span> · {무료배송안내(item, currentLang?.value)}</span>}</div>}
       </Hero>
 
+      {/* 배송 안내(SHOPGO 하위 전용) — 배송비 아래 */}
+      <DeliveryNotice tone={{ fontSize: 13 }} sx={{ mt: '8px' }} />
       {requiredGroups(item).length > 0 && (
         <OptionSection>
           {requiredGroups(item).map((group, gIdx) => (

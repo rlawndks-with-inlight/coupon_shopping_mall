@@ -336,7 +336,7 @@ const Demo4 = (props) => {
                             <TextField
                                 name='password'
                                 type={watchable_1 ? '' : 'password'}
-                                placeholder={translate('영문 소문자, 숫자 조합 / 8~20자')}
+                                placeholder={translate('8~20자로 입력해 주세요. (아이디와 다르게)')}
                                 sx={{
                                     marginBottom: '1%'
                                 }}

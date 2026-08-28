@@ -648,6 +648,7 @@ const es = {
     "승인 대기중입니다.": "Pendiente de aprobación.",
     "아이디는 4~20자로 입력해 주세요.": "El ID debe tener entre 4 y 20 caracteres.",
     "라벨은 8자 이내로 입력해 주세요.": "La etiqueta debe tener 8 caracteres o menos.",
+    "결제를 시작할 수 없습니다. 잠시 후 다시 시도해 주세요.": "No se pudo iniciar el pago. Vuelve a intentarlo en un momento.",
     "아이디는 영문 소문자·숫자·밑줄(_)만 사용할 수 있습니다.": "El ID solo puede contener minúsculas, números y guiones bajos (_).",
     "아이디와 비밀번호를 입력해 주세요.": "Introduzca su ID y contraseña.",
     "아이디와 이름을 모두 입력해 주세요.": "Introduzca su ID y su nombre.",

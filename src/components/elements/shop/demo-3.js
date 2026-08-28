@@ -159,11 +159,7 @@ export const Item3 = memo((props) => {
                 }}>
                     <ProductStatusBadge status={item?.status} />
                     <ItemImg src={item?.product_img} onClick={goDetail} />
-                    <HeartButton onClick={onClickHeart}>
-                        <Icon icon={is_wished ? 'mdi:heart' : 'mdi:heart-outline'} fontSize={'1.6rem'} style={{
-                            color: `${is_wished ? 'red' : themeObj.grey[700]}`
-                        }} />
-                    </HeartButton>
+                    {/* 찜(위시리스트) 하트 제거 — 안 쓰는 기능이라 다른 프레임·기본 카드와 통일. */}
                 </ItemImgFrame>
                 <ItemTextContainer onClick={goDetail}>
                     <ItemEyebrow>{formatLang(item, 'product_comment', currentLang)}</ItemEyebrow>

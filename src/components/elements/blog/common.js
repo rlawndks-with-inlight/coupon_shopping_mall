@@ -81,6 +81,9 @@ const RailCard = styled.div`
   @media (max-width: 1150px) { width: ${props => props.$wTablet || '31%'}; }
   @media (max-width: 850px) { width: 47%; }
   @media (max-width: 650px) { width: 62%; }
+  /* 블로그 Item3/4/5 는 루트에 width:23.5% 를 박아 4열 그리드를 가정한다.
+     레일에선 셀이 폭을 정하므로 카드 루트는 셀을 꽉 채워야 한다 — 안 그러면 쪼그라든다. */
+  & > * { width: 100% !important; }
 `
 const RailArrow = styled.button`
   position: absolute;

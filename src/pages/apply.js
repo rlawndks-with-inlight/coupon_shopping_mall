@@ -10,6 +10,7 @@ import {
   Grid,
   InputAdornment,
   MenuItem,
+  Select,
   Divider,
   Alert,
 } from '@mui/material';
@@ -60,6 +61,70 @@ const Field = ({ label, required, children }) => (
     {children}
   </Box>
 );
+
+// 이메일 입력 — [아이디] @ [도메인] + 도메인 선택(직접입력/주요 도메인).
+//
+// ⚠ 부모에는 늘 **완성된 이메일 문자열 하나**(local@domain)만 넘긴다.
+//   폼 상태(ceo_email·manager_email)·백엔드 검증·저장·메일 발송은 예전과 100% 동일하다
+//   — 바뀌는 것은 입력 위젯의 겉모습뿐이다(값 형식이 그대로여야 저장/전송이 안 깨진다).
+const EMAIL_DOMAINS = ['gmail.com', 'naver.com', 'daum.net', 'hanmail.net', 'nate.com', 'kakao.com'];
+
+const EmailField = ({ value = '', onChange, error, helperText }) => {
+  const at = String(value).indexOf('@');
+  const local = at >= 0 ? value.slice(0, at) : value;
+  const domain = at >= 0 ? value.slice(at + 1) : '';
+  const preset = EMAIL_DOMAINS.includes(domain);
+  // 프리셋 도메인이면 도메인칸을 잠그고, 그 외(빈값·직접입력)엔 직접 입력하게 연다.
+  const [manual, setManual] = useState(!preset);
+  const useManual = manual || !preset;
+
+  const emit = (l, d) => {
+    const L = String(l ?? '').trim();
+    const D = String(d ?? '').trim();
+    onChange(L || D ? `${L}@${D}` : '');
+  };
+  const onSelect = (v) => {
+    if (v === '__manual__') { setManual(true); emit(local, domain); }
+    else { setManual(false); emit(local, v); }
+  };
+
+  return (
+    <Box>
+      <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1, alignItems: 'center' }}>
+        <TextField
+          size="small" placeholder="아이디"
+          value={local}
+          onChange={(e) => emit(e.target.value, domain)}
+          error={!!error}
+          sx={{ flex: '1 1 90px', minWidth: 90 }}
+        />
+        <Typography sx={{ color: '#888' }}>@</Typography>
+        <TextField
+          size="small" placeholder="도메인"
+          value={domain}
+          onChange={(e) => emit(local, e.target.value)}
+          disabled={!useManual}
+          error={!!error}
+          sx={{ flex: '1 1 110px', minWidth: 110 }}
+        />
+        <Select
+          size="small"
+          value={useManual ? '__manual__' : domain}
+          onChange={(e) => onSelect(e.target.value)}
+          sx={{ flex: '0 0 auto', minWidth: 100 }}
+        >
+          <MenuItem value="__manual__">직접입력</MenuItem>
+          {EMAIL_DOMAINS.map((d) => <MenuItem key={d} value={d}>{d}</MenuItem>)}
+        </Select>
+      </Box>
+      {helperText ? (
+        <Typography sx={{ fontSize: 12, color: error ? '#d33' : '#888', mt: 0.5, ml: 0.5 }}>
+          {helperText}
+        </Typography>
+      ) : null}
+    </Box>
+  );
+};
 
 const ApplyPage = () => {
   const router = useRouter();
@@ -227,12 +292,9 @@ const ApplyPage = () => {
           </Grid>
           <Grid item xs={12} sm={4}>
             <Field label={st('apply.fCeoEmail')} required>
-              <TextField
-                fullWidth
-                size="small"
-                placeholder="ceo@example.com"
+              <EmailField
                 value={form.ceo_email}
-                onChange={(e) => set('ceo_email', e.target.value.trim())}
+                onChange={(v) => set('ceo_email', v)}
                 error={!!errors.ceo_email}
                 helperText={errors.ceo_email || ''}
               />
@@ -270,12 +332,9 @@ const ApplyPage = () => {
           </Grid>
           <Grid item xs={12} sm={4}>
             <Field label={st('apply.fMgrEmail')} required>
-              <TextField
-                fullWidth
-                size="small"
-                placeholder="manager@example.com"
+              <EmailField
                 value={form.manager_email}
-                onChange={(e) => set('manager_email', e.target.value.trim())}
+                onChange={(v) => set('manager_email', v)}
                 error={!!errors.manager_email}
                 helperText={errors.manager_email || ''}
               />

@@ -48,6 +48,7 @@ import { formatCreditCardNumber, formatExpirationDate } from 'src/utils/formatCa
 import { useModal } from "src/components/dialog/ModalProvider";
 import { insertCartDataUtil, onPayProductsByAuth, onPayProductsByHand, selectItemOptionUtil, 배송비표시, 무료배송안내 } from 'src/utils/shop-util';
 import ShippingLine from 'src/components/elements/shop/ShippingLine';
+import DeliveryNotice from 'src/components/elements/shop/DeliveryNotice';
 import { apiManager } from 'src/utils/api';
 import { useRouter } from 'next/router';
 import DialogBuyNow from 'src/components/dialog/DialogBuyNow';
@@ -198,6 +199,8 @@ export default function ProductDetailsSummary({ product, onAddCart, onGotoStep, 
                   {/* 배송비 한 줄. 문구는 ShippingLine 한 곳에서만 만든다 — 프레임마다 따로 그리다
                       '배송비:' / '배송비 :' / 가운뎃점 앞 공백 유무가 갈렸다(2026-08-28 실측). */}
                   <ShippingLine item={product} tone={{ fontSize: 13, color: themeObj.grey[500], gap: 4 }} />
+                  {/* 배송 안내(가맹점별·SHOPGO 하위 전용) — 배송비 바로 아래. 둘은 한 묶음이라 떼어 놓지 않는다. */}
+                  <DeliveryNotice tone={{ fontSize: 13 }} sx={{ mt: '6px' }} />
                   {
                     themeDnsData?.id == 95 && product_sale_price < 100000 &&
                     <>

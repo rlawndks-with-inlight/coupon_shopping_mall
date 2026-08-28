@@ -18,6 +18,7 @@ import { formatLang } from 'src/utils/format';
 import QuantityStepper from 'src/components/elements/shop/QuantityStepper';
 import { useLocales } from 'src/locales';
 import ShippingLine from 'src/components/elements/shop/ShippingLine';
+import DeliveryNotice from 'src/components/elements/shop/DeliveryNotice';
 import BenefitNotice from 'src/components/elements/shop/BenefitNotice';
 import OrderFormFields from 'src/components/elements/shop/OrderFormFields';
 import ProductOptions from 'src/components/elements/shop/ProductOptions';
@@ -224,6 +225,8 @@ const ItemDemo = (props) => {
                       <Divider sx={{ my: 1 }} />
                       {/* 배송비 한 줄 — 문구는 ShippingLine 한 곳에서만 만든다. */}
                       <ShippingLine item={product} tone={{ fontSize: 14, color: 'rgba(0,0,0,0.6)', gap: 8 }} />
+                      {/* 배송 안내(가맹점별·SHOPGO 하위 전용) — 배송비 바로 아래. 둘은 한 묶음이라 떼어 놓지 않는다. */}
+                      <DeliveryNotice tone={{ fontSize: 13 }} sx={{ mt: '6px' }} />
                       {/* 혜택 안내(본사 공통) — 배송비 바로 아래 */}
                       <BenefitNotice sx={{ mb: 1 }} tone={{ fontSize: 13 }} />
                       {/* 옵션 · 추가상품 · 조합형 — 프레임 6개 공용 컴포넌트.

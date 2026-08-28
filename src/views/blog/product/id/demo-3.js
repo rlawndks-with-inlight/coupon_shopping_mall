@@ -17,6 +17,7 @@ import { useAuthContext } from 'src/layouts/manager/auth/useAuthContext';
 import toast from 'react-hot-toast';
 import { useLocales } from 'src/locales';
 import ShippingLine from 'src/components/elements/shop/ShippingLine';
+import DeliveryNotice from 'src/components/elements/shop/DeliveryNotice';
 import DialogBuyNow from 'src/components/dialog/DialogBuyNow';
 import { formatLang } from 'src/utils/format';
 
@@ -218,6 +219,8 @@ const Demo3 = (props) => {
                     {/* 배송비. 이 프레임도 구매 서랍에만 있어서, 가맹점이 배송비를 설정해도
                         손님은 '구매하기'를 누르기 전엔 볼 수 없었다(blog-1 과 같은 문제). */}
                     <ShippingLine item={item} tone={{ gap: 8 }} />
+                    {/* 배송 안내(가맹점별·SHOPGO 하위 전용) — 배송비 바로 아래. 둘은 한 묶음이라 떼어 놓지 않는다. */}
+                    <DeliveryNotice tone={{ fontSize: 13 }} sx={{ mt: '6px' }} />
                     {/* 장바구니를 서랍 안에만 두었더니 '담기 버튼이 없다'는 문의가 왔다(가맹점 2026-08-21).
                         살지 말지 고르는 자리에 담기가 없으면 손님은 그 몰에 담기가 없다고 읽는다.
                         옵션이 걸린 상품은 고를 자리가 있어야 하므로 서랍을 열고, 옵션이 없으면 바로 담는다. */}

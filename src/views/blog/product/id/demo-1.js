@@ -22,6 +22,7 @@ import DialogBuyNow from 'src/components/dialog/DialogBuyNow';
 import QuantityStepper from 'src/components/elements/shop/QuantityStepper';
 import BenefitNotice from 'src/components/elements/shop/BenefitNotice';
 import ShippingLine from 'src/components/elements/shop/ShippingLine';
+import DeliveryNotice from 'src/components/elements/shop/DeliveryNotice';
 import OrderFormFields from 'src/components/elements/shop/OrderFormFields';
 
 
@@ -221,6 +222,8 @@ const Demo1 = (props) => {
               가맹점이 배송비를 설정해도 손님은 '구매하기'를 누르기 전엔 볼 수 없었다
               (2026-08-28 mbc03 에서 확인). 서랍의 표기는 합계 계산용이라 그대로 둔다. */}
           <ShippingLine item={item} tone={{ gap: 8 }} />
+          {/* 배송 안내(가맹점별·SHOPGO 하위 전용) — 배송비 바로 아래. 둘은 한 묶음이라 떼어 놓지 않는다. */}
+          <DeliveryNotice tone={{ fontSize: 13 }} sx={{ mt: '6px' }} />
           {/* 혜택 안내(본사 공통). 구매 서랍이 아니라 본문 가격 아래에 둔다 —
               서랍은 '구매하기'를 눌러야 열려서, 살지 말지 고르는 단계에서는 안 보인다. */}
           <BenefitNotice sx={{ mb: '0.75rem' }} tone={{ fontSize: 13 }} />

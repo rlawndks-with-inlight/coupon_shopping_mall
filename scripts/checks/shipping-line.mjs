@@ -74,6 +74,24 @@ const 세어보기 = (p) => {
     return n;
 };
 
+// 이 화면이 세 조각을 어떤 순서로 그리는가 (주석 안의 것은 세지 않는다).
+const 그린순서 = (p) => {
+    const ast = parse(readFileSync(FRONT_ROOT + p, 'utf8'), {
+        sourceType: 'module', errorRecovery: true,
+        plugins: ['jsx', 'classProperties', 'optionalChaining', 'nullishCoalescingOperator'],
+    });
+    const 찾음 = [];
+    const 돌기 = (x) => {
+        if (!x || typeof x !== 'object') return;
+        if (Array.isArray(x)) return x.forEach(돌기);
+        if (x.type === 'JSXOpeningElement' && ['ShippingLine', 'DeliveryNotice', 'BenefitNotice'].includes(x.name?.name))
+            찾음.push([x.start, x.name.name]);
+        for (const k of Object.keys(x)) if (k !== 'loc' && !k.endsWith('Comments')) 돌기(x[k]);
+    };
+    돌기(ast.program);
+    return 찾음.sort((a, b) => a[0] - b[0]).map((x) => x[1]);
+};
+
 const 살아있나 = (p, 이름) => {
     const ast = parse(readFileSync(FRONT_ROOT + p, 'utf8'), {
         sourceType: 'module', errorRecovery: true,
@@ -103,7 +121,23 @@ for (const [이름, p] of 프레임) {
     const n = 살아있나(p, 'ShippingLine');
     t(`${이름} 이 배송비를 보여준다`, n > 0,
         '주석 안에 넣으면 AST 에 안 잡힌다 — shop-9 은 파일 절반이 블록주석이다');
+
+    // 배송비와 배송 안내는 붙어 있어야 한다.
+    //
+    // [사연] 예전에는 BenefitNotice 가 배송 안내를 품고 있었다. 그래서 배송비 줄을 가격 아래에
+    //   넣자 화면이 '무료배송 / 혜택 카드사 무이자… / 제주추가 10,000원…' 이 되어
+    //   배송 이야기 둘 사이에 혜택이 끼었다(가맹점 지적 2026-08-28).
+    //   배송 안내를 BenefitNotice 밖으로 빼고 배송비 바로 아래로 옮겼다.
+    const 순서 = 그린순서(p);
+    const i배 = 순서.indexOf('ShippingLine'), i안 = 순서.indexOf('DeliveryNotice');
+    t(`${이름} 은 배송비 바로 아래에 배송 안내가 온다`, i안 === i배 + 1,
+        `지금 순서: ${순서.join(' → ') || '(없음)'} — 사이에 다른 것이 끼면 한 묶음으로 안 읽힌다`);
 }
+
+// BenefitNotice 는 배송 안내를 품지 않는다 — 품으면 배송비와 사이가 벌어진다.
+const 혜택 = readFileSync(FRONT_ROOT + 'src/components/elements/shop/BenefitNotice.js', 'utf8');
+t('BenefitNotice 가 배송 안내를 품지 않는다', !/<DeliveryNotice/.test(혜택),
+    '혜택이 배송비와 배송 안내 사이에 끼게 된다 — 배송 안내는 화면이 직접 그린다');
 
 console.log(`\n통과 ${pass} / 실패 ${fail}`);
 process.exit(fail ? 1 : 0);

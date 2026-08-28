@@ -18,6 +18,7 @@ import { useAuthContext } from 'src/layouts/manager/auth/useAuthContext';
 import { useModal } from 'src/components/dialog/ModalProvider';
 import { ProductFaq } from 'src/components/elements/shop/demo-4';
 import ShippingLine from 'src/components/elements/shop/ShippingLine';
+import DeliveryNotice from 'src/components/elements/shop/DeliveryNotice';
 import { isShopgoBrand } from 'src/utils/is-shopgo';
 import { 찜기능사용 } from 'src/data/wish';
 
@@ -332,6 +333,8 @@ const ItemDemo = (props) => {
                         key_name={'배송비'}
                         value={<ShippingLine item={product} showLabel={false} tone={{ fontSize: 'inherit', color: 'inherit', gap: 0 }} />}
                       />
+                      {/* 배송 안내(가맹점별·SHOPGO 하위 전용) — 배송비 바로 아래. 둘은 한 묶음이라 떼어 놓지 않는다. */}
+                      <DeliveryNotice tone={{ fontSize: 13 }} sx={{ mt: '6px' }} />
                       {/* <ProductDetailsSummary
                         product={product}
                         cart={""}

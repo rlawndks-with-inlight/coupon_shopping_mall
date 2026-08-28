@@ -22,9 +22,7 @@ import DialogBuyNow from 'src/components/dialog/DialogBuyNow';
 import { ProductDetailsReview } from 'src/views/@dashboard/e-commerce/details';
 import { isShopgoBrand } from 'src/utils/is-shopgo';
 import QuantityStepper from 'src/components/elements/shop/QuantityStepper';
-import BenefitNotice from 'src/components/elements/shop/BenefitNotice';
-import ShippingLine from 'src/components/elements/shop/ShippingLine';
-import DeliveryNotice from 'src/components/elements/shop/DeliveryNotice';
+import DetailNotices from 'src/components/elements/shop/DetailNotices';
 import OrderFormFields from 'src/components/elements/shop/OrderFormFields';
 
 
@@ -254,29 +252,14 @@ const Demo2 = (props) => {
                             <div style={{ fontSize: themeObj.font_size.size8, marginLeft: '0.25rem' }}>{getPriceUnitByLang()}</div>
                         </Row>
                         <Divider style={{ margin: '1rem 0' }} />
+                        {/* 배송정보 묶음 — 다른 프레임과 같은 표(DetailNotices)를 쓴다.
+                            예전에는 이 프레임만 자기 라벨 칸을 따로 그려서, 톤·정렬을 다른 5개와
+                            공유하지 않았다(라벨이 길어지면 여기만 어긋난다). 제목 '배송정보' 는 남긴다 —
+                            이 프레임의 특징이고, 표는 그 아래에 들어간다. */}
                         <Row style={{ alignItems: 'flex-end', }}>
                             <div style={{ fontSize: themeObj.font_size.size8, color: '', fontWeight: 'bold', marginBottom: '0.5rem' }}>{translate('배송정보')}</div>
                         </Row>
-                        <Row style={{ alignItems: 'flex-end', }}>
-                            {/* 이 프레임은 '배송정보' 표 묶음이라 라벨을 여기서 그린다.
-                                금액·무료기준 문구는 ShippingLine 에서 가져온다(다른 프레임과 같은 말). */}
-                            <div style={{ fontSize: themeObj.font_size.size8, color: '', display: 'flex', gap: '0.25rem' }}>{translate('배송비')}
-                                <span style={{ color: theme.palette.error.main }}>
-                                    <ShippingLine item={item} showLabel={false} />
-                                </span></div>
-                        </Row>
-                        {/* 배송 안내(가맹점별·SHOPGO 하위 전용) — 배송비 바로 아래. 둘은 한 묶음이라 떼어 놓지 않는다.
-                            ⚠ 위 빨간 span 안이 아니라 밖에 둔다. 저건 '배송비 금액' 을 강조하는 색이고,
-                               배송 안내는 금액이 아니라 별개의 안내문이다. */}
-                        <Row style={{ alignItems: 'flex-end' }}>
-                            <DeliveryNotice indent={0} />
-                        </Row>
-                        {/* '합배송 무제한' · '택배 배송' 을 여기에 박아 두었었다(2026-08-28 제거).
-                            설정과 무관하게 이 프레임에서만 무조건 떴다 — 가맹점이 끄거나 고칠 수 없었고,
-                            그렇게 배송하지 않는 몰에도 그 정책을 손님에게 말하고 있었다.
-                            필요한 가맹점은 설정관리 › 배송비설정의 배송 안내에 직접 쓴다(위 DeliveryNotice). */}
-                        {/* 혜택 안내(본사 공통). 이 프레임은 배송정보 묶음이 따로 있어 그 아래에 붙인다. */}
-                        <BenefitNotice sx={{ mb: '0.5rem' }} tone={{ fontSize: 13 }} />
+                        <DetailNotices item={item} sx={{ marginBottom: '0.5rem' }} />
               {/* 주문 추가 입력항목 — 서식이 걸린 몰에서만 나타난다 */}
               <OrderFormFields product={item} values={orderFormValues} onChange={setOrderFormValues} sx={{ mt: 2 }} />
                     </PriceContainer>

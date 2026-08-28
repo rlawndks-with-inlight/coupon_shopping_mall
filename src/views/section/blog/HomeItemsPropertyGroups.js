@@ -64,7 +64,7 @@ const HomeItemsPropertyGroups = (props) => {
                         </>}
                 </Row>
                 <div style={{ marginTop: '1rem', height: '0.25rem', borderTop: `1px solid ${themeDnsData?.theme_css?.main_color} `, borderBottom: `1px solid ${themeDnsData?.theme_css?.main_color} `, }} />
-                <Items items={column?.list} router={router} is_slide={column?.list.length >= 5 ? true : true}
+                <Items items={column?.list} router={router} rail
                     rows={parseInt(style?.rows ?? 1)}
                     text_align={style?.text_align}
                     slide_setting={{

@@ -45,7 +45,7 @@ const HomeItems = (props) => {
                 {/* 메인페이지관리의 '컨텐츠 개수·상품 설명 배치·슬라이더 속도' 세 입력은
                     쇼핑몰형(section/shop/HomeItems)에만 전달되고 있어서, blog demo 1·2 에서는
                     아무리 바꿔도 화면이 그대로였다. 쇼핑몰형과 같은 규칙으로 넘긴다. */}
-                <Items items={(column?.list ?? [])} router={router} is_slide={column?.list.length >= 5 ? true : false} type={1} length={column?.list?.length} idx={idx}
+                <Items items={(column?.list ?? [])} router={router} rail type={1} length={column?.list?.length} idx={idx}
                     rows={parseInt(style?.rows ?? 1)}
                     text_align={style?.text_align}
                     slide_setting={{

@@ -2,7 +2,7 @@ import styled from 'styled-components'
 import OrderCancelButton from 'src/components/elements/shop/OrderCancelButton';
 import { commarNumber, getPointType, getPriceUnitByLang, setProductPriceByLang, getOrderStatusText, commarNumberWithUnit } from 'src/utils/function'
 import { itemThemeCssDefaultSetting } from 'src/views/manager/item-card/setting'
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useRef } from 'react'
 import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, IconButton, TextField } from '@mui/material'
 import { Icon } from '@iconify/react'
 import Slider from 'react-slick'
@@ -53,6 +53,54 @@ const ItemWrapper = styled.div`
   @media (max-width: 650px) {
     width: ${props => (props.theme_css?.container?.is_vertical == 1 ? '100%' : '49%')};
   }
+`
+
+/* 메인 상품 슬라이드용 '레일' — 왼쪽부터 한 줄로 깔고 폭을 넘으면 가로 스크롤.
+   예전 react-slick 격자 캐러셀은 slidesPerRow 배수를 못 채우면 빈 칸이 생겼는데(쿠팡·네이버엔 없는 문제),
+   레일은 개수(1·5·10 …)와 무관하게 항상 자연스럽다. 목록/검색 그리드는 이 레일을 쓰지 않는다(rail prop). */
+const RailWrap = styled.div`
+  position: relative;
+  width: 100%;
+`
+const RailTrack = styled.div`
+  display: flex;
+  gap: 1.2%;
+  overflow-x: auto;
+  scroll-behavior: smooth;
+  scroll-snap-type: x proximity;
+  -webkit-overflow-scrolling: touch;
+  padding: 0.25rem 0 0.75rem;
+  scrollbar-width: thin;
+  &::-webkit-scrollbar { height: 6px; }
+  &::-webkit-scrollbar-thumb { background: #00000022; border-radius: 3px; }
+`
+const RailCard = styled.div`
+  flex: 0 0 auto;
+  width: ${props => props.$w || '19%'};
+  scroll-snap-align: start;
+  @media (max-width: 1150px) { width: ${props => props.$wTablet || '31%'}; }
+  @media (max-width: 850px) { width: 47%; }
+  @media (max-width: 650px) { width: 62%; }
+`
+const RailArrow = styled.button`
+  position: absolute;
+  top: calc(50% - 22px);
+  z-index: 2;
+  width: 44px;
+  height: 44px;
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  background: #ffffffee;
+  box-shadow: 0 2px 8px #00000026;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #333;
+  &.prev { left: -6px; }
+  &.next { right: -6px; }
+  /* 모바일은 스와이프로 넘기므로 화살표를 감춘다. */
+  @media (max-width: 850px) { display: none; }
 `
 
 export const Seller = props => {
@@ -117,8 +165,26 @@ export const Item = props => {
 }
 export const Items = props => {
     const { themeDnsData } = useSettingsContext()
-    const { items, router, is_slide, slide_setting = {}, slide_ref, seller, rows = 1, autoplaySpeed = 2500, text_align = 'center', item_column = 0, type, length, idx } = props;
+    const { items, router, is_slide, rail = false, slide_setting = {}, slide_ref, seller, rows = 1, autoplaySpeed = 2500, text_align = 'center', item_column = 0, type, length, idx } = props;
     const [itemThemeCss, setItemThemeCss] = useState(itemThemeCssDefaultSetting)
+    const railRef = useRef(null)
+    // 화살표는 카드가 화면 폭을 넘칠 때(스크롤할 게 있을 때)만 보인다.
+    const [railOverflow, setRailOverflow] = useState(false)
+
+    useEffect(() => {
+        if (!rail) return
+        const el = railRef.current
+        if (!el) return
+        const check = () => setRailOverflow(el.scrollWidth > el.clientWidth + 4)
+        check()
+        window.addEventListener('resize', check)
+        return () => window.removeEventListener('resize', check)
+    }, [rail, items, itemThemeCss])
+    const scrollRail = (dir) => {
+        const el = railRef.current
+        if (!el) return
+        el.scrollBy({ left: dir * el.clientWidth * 0.8, behavior: 'smooth' })
+    }
 
     useEffect(() => {
         if (themeDnsData) {
@@ -178,9 +244,30 @@ export const Items = props => {
         rows: rows,
         ...slide_setting
     }
+    const vertical = itemThemeCss?.container?.is_vertical == 1
     return (
         <>
             {
+                rail ?
+                    <RailWrap>
+                        {railOverflow &&
+                            <RailArrow className='prev' onClick={() => scrollRail(-1)} aria-label='이전 상품'>
+                                <Icon icon='ic:round-chevron-left' width={26} />
+                            </RailArrow>}
+                        <RailTrack ref={railRef}>
+                            {items &&
+                                items.map((item, idx2) => (
+                                    <RailCard key={idx2} $w={vertical ? '31%' : '19%'} $wTablet={vertical ? '48%' : '31%'}>
+                                        <Item item={item} router={router} theme_css={itemThemeCss} seller={seller} text_align={text_align} type={type} length={length} idx={idx} />
+                                    </RailCard>
+                                ))}
+                        </RailTrack>
+                        {railOverflow &&
+                            <RailArrow className='next' onClick={() => scrollRail(1)} aria-label='다음 상품'>
+                                <Icon icon='ic:round-chevron-right' width={26} />
+                            </RailArrow>}
+                    </RailWrap>
+                    :
                 type == 2 ?
                     <>
                         <div style={{ display: 'flex', flexWrap: 'wrap' }}>

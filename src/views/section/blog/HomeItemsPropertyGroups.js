@@ -32,7 +32,9 @@ const HomeItemsPropertyGroups = (props) => {
             <Wrappers style={{
                 marginTop: `${style?.margin_top}px`,
                 display: 'flex',
-                flexDirection: `${column?.title ? 'column' : 'row'}`,
+                // 제목이 없으면 'row'가 되어 Row·Border·Items 가 전부 가로로 붙어 깨졌다.
+                // 자식은 세로로 쌓이는 게 맞으므로 제목 유무와 무관하게 'column' 고정.
+                flexDirection: 'column',
                 /* 메인페이지관리의 배경색상·컨텐츠 개수·상품 설명 배치·슬라이더 속도 네 칸은
                    쇼핑몰형(section/shop/HomeItemsPropertyGroups)에만 전달되고 있었다.
                    블로그형에서는 아무리 바꿔도 화면이 그대로라 가맹점은 자기가 잘못한 줄 안다.

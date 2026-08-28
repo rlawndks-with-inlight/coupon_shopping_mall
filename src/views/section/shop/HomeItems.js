@@ -25,7 +25,10 @@ const HomeItems = (props) => {
             <Wrappers style={{
                 marginTop: `${style?.margin_top}px`,
                 display: 'flex',
-                flexDirection: `${column?.title ? 'column' : 'row'}`,
+                // 제목이 없으면 'row'가 되어 스페이서 div 옆에 슬라이더가 가로로 붙고,
+                // 슬라이더가 폭을 못 잡아 상품이 깨져 보였다. 자식은 [선택적 제목][스페이서][전폭 슬라이더]라
+                // 제목 유무와 무관하게 항상 세로로 쌓는 게 맞다.
+                flexDirection: 'column',
                 // 메인페이지관리의 '배경색상'은 저장만 되고 어디서도 읽지 않았다.
                 // 어두운 테마에서는 무시한다(HomeItemsPropertyGroups 와 같은 규칙).
                 ...(themeMode != 'dark' && style?.back_color ? { backgroundColor: style.back_color } : {}),

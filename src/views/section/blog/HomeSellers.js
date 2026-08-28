@@ -17,7 +17,9 @@ const HomeSellers = (props) => {
             <Wrappers style={{
                 marginTop: `${style?.margin_top}px`,
                 display: 'flex',
-                flexDirection: `${column?.title ? 'column' : 'row'}`,
+                // 제목이 없으면 'row'가 되어 스페이서 div 옆에 슬라이더가 가로로 붙어 깨졌다.
+                // 제목 유무와 무관하게 세로로 쌓는 게 맞다('column' 고정).
+                flexDirection: 'column',
             }}>
                 {column?.title &&
                     <>

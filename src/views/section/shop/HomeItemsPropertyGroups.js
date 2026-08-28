@@ -64,7 +64,9 @@ const HomeItemsPropertyGroups = (props) => {
             <Wrappers style={{
                 marginTop: `${style?.margin_top}px`,
                 display: 'flex',
-                flexDirection: `${column?.title ? 'column' : 'row'}`,
+                // 제목이 없으면 'row'가 되어 Row·Border·Items 가 전부 가로로 붙어 깨졌다.
+                // 자식은 세로로 쌓이는 게 맞으므로 제목 유무와 무관하게 'column' 고정.
+                flexDirection: 'column',
             }}>
                 <Row style={{ display: 'flex', position: 'relative' }}>
                     {column?.title &&

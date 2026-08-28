@@ -172,8 +172,9 @@ const HomeBanner = (props) => {
     };
 
     let slide_setting = {
-        centerMode: true,
-        centerPadding: (img_list.length >= 2 ? (windowWidth > 1200 ? '10%' : 0) : 0), // 이미지 간격을 조절할 수 있는 값입니다.
+        // peek(양옆에 이웃 배너가 삐져나오는 centerMode) 제거 — 여러 장이어도 한 장씩 꽉 차게 보인다(가맹점 요청 2026-08-28).
+        centerMode: false,
+        centerPadding: 0,
         infinite: true,
         speed: 500,
         autoplay: false,

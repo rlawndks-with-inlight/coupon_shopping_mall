@@ -258,7 +258,9 @@ export const Items = props => {
                             {items &&
                                 items.map((item, idx2) => (
                                     <RailCard key={idx2} $w={vertical ? '31%' : '19%'} $wTablet={vertical ? '48%' : '31%'}>
-                                        <Item item={item} router={router} theme_css={itemThemeCss} seller={seller} text_align={text_align} type={type} length={length} idx={idx} />
+                                        {/* 레일 카드는 개수와 무관하게 항상 같은 일반 카드로 — type/length/idx 를 넘기면
+                                            Item2 의 length==1 대형 단독 레이아웃이나 type==1&&idx==0 featured 레이아웃이 튀어나온다. */}
+                                        <Item item={item} router={router} theme_css={itemThemeCss} seller={seller} text_align={text_align} />
                                     </RailCard>
                                 ))}
                         </RailTrack>

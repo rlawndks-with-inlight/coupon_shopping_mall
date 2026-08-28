@@ -386,12 +386,19 @@ const ProductOptionEditor = ({ item, setItem, disabled = false }) => {
                         <ToggleButton value={0}>따로 고르기</ToggleButton>
                         <ToggleButton value={1}>조합으로 고르기</ToggleButton>
                     </ToggleButtonGroup>
-                    <Typography sx={{ fontSize: 12, color: 'text.disabled' }}>
-                        {조합형
-                            ? '색상×사이즈처럼 조합마다 가격·재고를 따로 매깁니다.'
-                            : '옵션마다 변동가·재고를 각각 매깁니다.'}
-                    </Typography>
                 </Row>
+                {/* 두 방식 정의 — 고르기 전에 차이를 알 수 있게 둘 다 항상 보여주고, 지금 선택한 쪽을 진하게 표시.
+                    예전엔 활성 모드 한 줄만 떠서 무엇이 다른지 몰랐다(가맹점 지적). */}
+                <Stack spacing={0.5} sx={{ mt: 0.25 }}>
+                    <Typography sx={{ fontSize: 12, color: 조합형 ? 'text.disabled' : 'text.primary', lineHeight: 1.5 }}>
+                        <b>따로 고르기</b> — 옵션마다 가격·재고를 각각 매깁니다. 손님이 고른 옵션들의 추가금이 합산됩니다.
+                        <span style={{ color: '#9aa0a6' }}> (예: 화이트+0원, 사이즈 L+2,000원 → 화이트·L 선택 시 판매가+2,000원)</span>
+                    </Typography>
+                    <Typography sx={{ fontSize: 12, color: 조합형 ? 'text.primary' : 'text.disabled', lineHeight: 1.5 }}>
+                        <b>조합으로 고르기</b> — 색상×사이즈처럼 옵션을 조합한 경우마다 가격·재고를 따로 정합니다.
+                        <span style={{ color: '#9aa0a6' }}> (예: 검정/M만 품절, 빨강/L만 +3,000원처럼 조합별로 다르게)</span>
+                    </Typography>
+                </Stack>
                 {종류별(선택옵션).map(({ g, idx }) => 옵션줄(g, idx, false))}
                 <Button variant="outlined" sx={{ height: 48, ...숨김 }}
                     onClick={() => 그룹추가(선택옵션)}>선택 옵션 추가</Button>

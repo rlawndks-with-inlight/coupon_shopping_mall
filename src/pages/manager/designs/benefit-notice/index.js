@@ -80,10 +80,23 @@ const BenefitNoticePage = () => {
         }));
     };
 
+// 라벨 글자수 상한. 서버(benefit_notice.controller 의 라벨상한)와 **같은 값**이어야 한다.
+//
+// 상품상세에서 라벨은 왼쪽 칸이고, 그 칸은 가장 긴 라벨에 맞춰 늘어난다(DetailNotices 그리드).
+// 라벨이 길수록 오른쪽 내용 칸이 좁아진다 — 모바일 375px 실측:
+//     2자 → 내용 281px   8자 → 236px   14자 → 163px   20자 → 91px(한 줄에 7글자)
+// 화면이 깨지지는 않고 조용히 읽기 나빠진다. 그래서 입력할 때 막는다.
+const 라벨상한 = 8;
     const 저장 = async (idx) => {
         const n = list[idx];
         if (!String(n.summary ?? '').trim()) {
             toast.error('요약 문구를 입력해 주세요. 상품상세에 이 글이 보입니다.');
+            return;
+        }
+        // 라벨은 서버도 막지만(그쪽이 진짜 관문이다), 저장을 눌러 봐야 아는 것보다
+        // 여기서 미리 알려 주는 편이 낫다.
+        if ([...String(n.label ?? '').trim()].length > 라벨상한) {
+            toast.error(`라벨은 ${라벨상한}자 이내로 입력해 주세요. 길면 상품상세에서 내용 칸이 좁아집니다.`);
             return;
         }
         // 제목 없는 탭은 서버가 버린다 — 저장하기 전에 미리 알린다.
@@ -162,7 +175,9 @@ const BenefitNoticePage = () => {
                         <Stack direction={{ xs: 'column', md: 'row' }} spacing={2}>
                             <TextField
                                 label="라벨" value={n.label ?? ''} sx={{ width: { xs: '100%', md: 140 } }}
-                                helperText="왼쪽에 붙는 말 (예: 혜택, 적립)"
+                                inputProps={{ maxLength: 라벨상한 }}
+                                error={[...String(n.label ?? '')].length > 라벨상한}
+                                helperText={`왼쪽에 붙는 말 (예: 혜택, 적립) · ${[...String(n.label ?? '')].length}/${라벨상한}자`}
                                 onChange={(e) => 바꾸기(idx, 'label', e.target.value)} />
                             <TextField
                                 label="요약 문구" value={n.summary ?? ''} fullWidth

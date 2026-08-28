@@ -1,4 +1,4 @@
-import { FRONT_ROOT, BACK_ROOT } from './_roots.mjs';
+import { FRONT_ROOT, BACK_ROOT, 백엔드있음 } from './_roots.mjs';
 // 상품상세 '혜택 안내' 배선 고정.
 //
 // 붙잡아 두는 것:
@@ -120,6 +120,43 @@ const mig = rd(BACK + 'migrations/2026-08-12_benefit_notices.sql');
 eq('테이블 2개 생성', (mig.match(/CREATE TABLE IF NOT EXISTS/g) || []).length, 2);
 eq('번역 컬럼 포함', (mig.match(/lang_obj/g) || []).length >= 2, true);
 eq('백업 경고 있음', /DB 백업/.test(mig), true);
+
+
+// ── 라벨 글자수 상한 (2026-08-28) ────────────────────────────────────────
+//
+// [왜 막나]
+// 상품상세에서 라벨은 왼쪽 칸이고, 그 칸은 **가장 긴 라벨에 맞춰 늘어난다**(DetailNotices 그리드).
+// 라벨이 길수록 오른쪽 내용 칸이 좁아진다. 모바일 375px 실측:
+//     2자 → 내용 281px   8자 → 236px   14자 → 163px   20자 → 91px(한 줄에 7글자)
+// 화면이 깨지거나 넘치지는 않는다 — 그리드가 조용히 흡수한다. 그래서 더 위험하다.
+// DB 는 varchar(50) 이지만 그건 저장 한계일 뿐 화면이 견디는 값이 아니다.
+if (백엔드있음) {
+    const 컨트롤러 = rd(BACK + 'controllers/benefit_notice.controller.js');
+    const 관리자 = rd(FRONT + 'src/pages/manager/designs/benefit-notice/index.js');
+
+    const 서버값 = 컨트롤러.match(/export const 라벨상한 = (\d+);/)?.[1];
+    const 화면값 = 관리자.match(/const 라벨상한 = (\d+);/)?.[1];
+    eq('서버에 라벨 상한이 있다', !!서버값, true);
+    eq('관리자 화면에 라벨 상한이 있다', !!화면값, true);
+    eq('서버와 화면의 상한이 같다', 서버값 === 화면값, true);
+
+    // 서버 검증이 **진짜 관문**이다. 입력란은 API 를 직접 부르면 우회된다.
+    eq('서버가 create·update 두 자리에서 막는다',
+        (주석뺀(컨트롤러).match(/const 라벨오류 = 라벨검사\(/g) ?? []).length, 2);
+
+    // 서버 메시지는 프론트 사전에서 글자 그대로 찾는다. 템플릿으로 조립하면 번역이 안 된다.
+    eq('서버 메시지가 고정 문구다', /'라벨은 \d+자 이내로 입력해 주세요\.'/.test(컨트롤러), true);
+    const 문구숫자 = 컨트롤러.match(/'라벨은 (\d+)자 이내로 입력해 주세요\.'/)?.[1];
+    eq('문구의 숫자가 상한과 같다', 문구숫자 === 서버값, true);
+
+    for (const L of ['ko', 'en', 'ja', 'cn', 'es']) {
+        eq(`${L} 사전에 라벨 상한 문구가 있다`,
+            rd(FRONT + `src/locales/langs/${L}.js`).includes(`"라벨은 ${서버값}자 이내로 입력해 주세요."`), true);
+    }
+
+    // 입력란도 막아 둔다 — 저장을 눌러 봐야 아는 것보다 낫다.
+    eq('입력란에 길이 제한이 걸려 있다', /maxLength: 라벨상한/.test(관리자), true);
+}
 
 console.log(`\n통과 ${pass} / 실패 ${fail}`);
 process.exit(fail ? 1 : 0);

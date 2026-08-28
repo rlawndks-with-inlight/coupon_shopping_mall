@@ -652,6 +652,7 @@ const en = {
     "서버 에러 발생": "A server error occurred.",
     "승인 대기중입니다.": "Pending approval.",
     "아이디는 4~20자로 입력해 주세요.": "The ID must be 4-20 characters.",
+    "라벨은 8자 이내로 입력해 주세요.": "Keep the label within 8 characters.",
     "아이디는 영문 소문자·숫자·밑줄(_)만 사용할 수 있습니다.": "The ID may contain only lowercase letters, numbers, and underscores (_).",
     "아이디와 비밀번호를 입력해 주세요.": "Please enter your ID and password.",
     "아이디와 이름을 모두 입력해 주세요.": "Please enter both your ID and name.",

@@ -11,7 +11,9 @@ const FullWrappers = styled.div`
   width:100%;
   display:flex;
   flex-wrap: wrap;
-  min-height: 600px;
+  /* 예전 min-height 600/800px 은 배경 이미지·글이 적을 때 거대한 검은 빈 띠가 됐다. 필요한 만큼만 차지하도록 줄인다. */
+  min-height: 360px;
+  padding: 2rem 0;
   /* 스톡 사진(검은 배경에 주황색 물음표)이 모든 가맹점 게시판 배경으로 깔려 있었다.
      경로부터 /images/test/ 인 테스트 자산이고, 공지·이벤트 배경으로 뜻도 안 맞았다.
      이 섹션에는 이미 배경 이미지 업로드 칸이 있다(메인페이지관리 → 게시판).
@@ -22,12 +24,13 @@ const FullWrappers = styled.div`
   background-color: #2b2b2b;
   background-size: cover;
   background-repeat: no-repeat;
-  background-position: fixed;
+  /* 'fixed' 는 background-position 의 유효값이 아니다(무효). 가운데 정렬이 의도였다. */
+  background-position: center;
   margin: 0 auto;
   background-attachment: fixed;
   @media (max-width:1200px){
     flex-direction:column;
-    min-height: 800px;
+    min-height: 460px;
   }
 `
 const ContentWrappers = styled.div`
@@ -128,16 +131,16 @@ const HomePost = (props) => {
             <PostBox>
               <PostCategoryTitle>
                 <div>
-                  {formatLang(column?.list[categoryId], 'post_category_title')}
+                  {formatLang(column?.list?.[categoryId], 'post_category_title')}
                 </div>
-                <IconButton onClick={() => router.push(`/shop/service/${column?.list[categoryId]?.id}`)}>
+                <IconButton onClick={() => router.push(`/shop/service/${column?.list?.[categoryId]?.id}`)}>
                   <Icon icon={'ic:baseline-plus'} style={{ color: '#fff' }} />
                 </IconButton>
               </PostCategoryTitle>
               
-              {column?.list[categoryId]?.recent_posts && column?.list[categoryId]?.recent_posts.map((item, idx) => (
+              {column?.list?.[categoryId]?.recent_posts && column?.list?.[categoryId]?.recent_posts.map((item, idx) => (
                 <>
-                  <PostTitle onClick={() => router.push(`/shop/service/${column?.list[categoryId]?.id}/${item?.id}/`)}>{item?.post_title}</PostTitle>
+                  <PostTitle onClick={() => router.push(`/shop/service/${column?.list?.[categoryId]?.id}/${item?.id}/`)}>{item?.post_title}</PostTitle>
                 </>
               ))}
             </PostBox>

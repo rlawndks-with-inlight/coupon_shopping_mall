@@ -81,14 +81,18 @@ const HomeVideoSlide = (props) => {
     const { column, data, func, is_manager } = props;
     const { style } = column;
 
+    // 유효한 영상이 1개 이하면 넘길 게 없다 — 화살표·autoplay·infinite 를 끈다(혼자 돌던 문제).
+    const validCount = (column?.list ?? []).filter(it => youtubeEmbedId(it?.link)).length
+    const single = validCount <= 1
     let slide_setting = {
-        infinite: true,
+        infinite: !single,
         speed: 500,
-        autoplay: true,
+        autoplay: !single,
         autoplaySpeed: 2500,
         slidesToShow: 1,
         slidesToScroll: 1,
         dots: false,
+        arrows: !single,
         nextArrow: <NextArrow onClick sx={{ top: window.innerWidth > 1200 ? '200px' : '15vw' }} />,
         prevArrow: <PrevArrow onClick sx={{ top: window.innerWidth > 1200 ? '200px' : '15vw' }} />,
     }
@@ -99,7 +103,7 @@ const HomeVideoSlide = (props) => {
                 backgroundImage: `url(${column?.src})`,
                 backgroundSize: 'cover',
                 backgroundRepeat: 'no-repeat',
-                backgroundPosition: 'fixed',
+                backgroundPosition: 'center',
                 display: 'flex',
                 flexDirection: 'column',
                 margin: `0 auto`,

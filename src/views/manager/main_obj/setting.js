@@ -164,43 +164,10 @@ const SectionProcess = props => {
                 setContentList(content_list)
               }}
             />
-            <TextField
-              size='small'
-              sx={{ maxWidth: '150px' }}
-              label='슬라이더 속도'
-              type='number'
-              value={item?.style?.slider_speed ?? 0}
-              onChange={e => {
-                let content_list = [...contentList]
-                if (!content_list[idx]?.style) {
-                  content_list[idx]['style'] = {}
-                }
-                content_list[idx]['style']['slider_speed'] = e.target.value
-                setContentList(content_list)
-                //console.log(item)
-              }}
-              InputProps={{
-                endAdornment: <>초</>
-              }}
-            />
-            <TextField
-              size='small'
-              sx={{ maxWidth: '150px' }}
-              label='컨텐츠 개수'
-              type='number'
-              value={item?.style?.rows ?? 1}
-              onChange={e => {
-                let content_list = [...contentList]
-                if (!content_list[idx]?.style) {
-                  content_list[idx]['style'] = {}
-                }
-                content_list[idx]['style']['rows'] = e.target.value
-                setContentList(content_list)
-              }}
-              InputProps={{
-                endAdornment: <>행</>
-              }}
-            />
+            {/* '슬라이더 속도(초)'·'컨텐츠 개수(행)' 입력은 제거했다.
+                상품 슬라이드가 가로 스크롤 레일로 바뀌면서 두 값은 더 이상 화면에 반영되지 않는다
+                (레일은 autoplay 속도도, 다중 행도 쓰지 않는다). 남겨두면 가맹점이 바꿔도 아무 일이
+                안 일어나 자기가 잘못한 줄 안다. 저장된 값은 건드리지 않고 입력칸만 감춘다. */}
           </>
         }
         {/*<TextField

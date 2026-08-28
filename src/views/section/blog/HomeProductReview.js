@@ -56,7 +56,8 @@ const Review = (props) => {
       <ReviewContainer onClick={() => {
         router.push(`/shop/item/${item?.product_id}`)
       }}>
-        <LazyLoadImage src={item?.profile_img} style={{ width: '100%', height: 'auto' }} />
+        {/* height:auto 면 후기 이미지 비율이 제각각이라 한 줄의 카드 높이가 들쭉날쭉했다. 정사각으로 고정한다. */}
+        <LazyLoadImage src={item?.profile_img} style={{ width: '100%', aspectRatio: '1 / 1', height: 'auto', objectFit: 'cover' }} />
         <Row style={{ flexDirection: 'column', padding: '0.5rem', rowGap: '0.25rem' }}>
           <div style={{ color: themeObj.grey[500] }}>{item?.nickname}</div>
           <Rating value={item?.scope / 2} readOnly={true} precision={0.5} />

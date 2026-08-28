@@ -107,7 +107,8 @@ const HomeItemsWithCategories = (props) => {
                         <>
                             {itemCategory == index &&
                                 <>
-                                    <Items items={item?.list} router={router} />
+                                    {/* 상품 슬라이드와 같은 레일로 통일(카테고리별 상품도 왼쪽정렬 가로 스크롤). */}
+                                    <Items items={item?.list} router={router} rail />
                                 </>}
                         </>
                     ))}

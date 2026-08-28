@@ -122,15 +122,7 @@ export const Seller = props => {
 
 export const Sellers = props => {
     const { sellers = [], router } = props
-    const item_list_setting = {
-        infinite: true,
-        speed: 500,
-        autoplay: false,
-        autoplaySpeed: 2500,
-        slidesToShow: 2,
-        slidesToScroll: 1,
-        dots: false
-    }
+    // (예전의 슬라이더 설정 item_list_setting 은 어디서도 쓰이지 않아 제거했다. 판매자는 그리드로 나열한다.)
     return (
         <>
             <ItemsContainer>

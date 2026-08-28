@@ -1,8 +1,6 @@
-import Slider from 'react-slick'
 import styled from 'styled-components'
-import { Col, Row } from 'src/components/elements/styled-components'
+import { Row } from 'src/components/elements/styled-components'
 import _ from 'lodash'
-import { useRouter } from 'next/router'
 
 const Wrappers = styled.div`
   width:90%;
@@ -47,56 +45,17 @@ font-size:170%;
 const HomeTextBanner = (props) => {
     const { column, data, func, is_manager, demoType } = props;
     const { style } = column;
-    const router = useRouter()
-    const getSlideToShow = () => {
-        let list_length = (column?.list ?? [])?.length;
-        if (demoType != 1) {
-            if (window.innerWidth > 1350) {
-                if (list_length >= 7) {
-                    return 7
-                } else {
-                    return list_length
-                }
-            }
-            if (window.innerWidth > 1000) {
-                if (list_length >= 5) {
-                    return 5
-                } else {
-                    return list_length
-                }
-    
-            }
-            if (list_length >= 3) {
-                return 3
-            } else {
-                return list_length
-            }
-        } else if (demoType == 1) {
-            return list_length
-        } 
-    }
-    const getBannerWidth = () => {
-        if (window.innerWidth > 1350) {
-            return parseInt(1350 / getSlideToShow()) - 48
-        }
-        return parseInt(window.innerWidth / getSlideToShow()) - 48
-    }
-    let slide_setting = {
-        infinite: true,
-        speed: 500,
-        autoplay: true,
-        autoplaySpeed: 2500,
-        slidesToShow: getSlideToShow(),
-        slidesToScroll: 1,
-        dots: false,
-    }
+    // (이 섹션은 슬라이더가 아니라 텍스트 링크를 한 줄로 나열한다. 예전의 slide_setting·
+    //  getSlideToShow·getBannerWidth 는 어디서도 렌더에 쓰이지 않아 제거했다.)
     return (
         <>
-            <Wrappers style={{ marginTop: `${style?.margin_top}px`, maxWidth: `${router}` }} type={demoType}>
-            <Row>
+            {/* maxWidth 에 라우터 객체가 문자열로 들어가 "[object Object]"(무효값)였다 — 제거. */}
+            <Wrappers style={{ marginTop: `${style?.margin_top}px` }} type={demoType}>
+            {/* 항목이 많거나 길면 nowrap 때문에 모바일에서 가로로 넘쳤다 — 줄바꿈을 허용한다. */}
+            <Row style={{ flexWrap: 'wrap', justifyContent: 'center', rowGap: '0.5rem' }}>
                     {column?.list && (column?.list ?? []).map((item, idx) => (
                         <>
-                        {idx != 0 && <div style={{borderRight:'1px solid black',}} />}
+                        {idx != 0 && <div style={{ borderRight: '1px solid #ccc', height: '1.2em', margin: 'auto 0.75rem' }} />}
                                 <TextCover>
                                     <Texts 
                                     onClick={() => {

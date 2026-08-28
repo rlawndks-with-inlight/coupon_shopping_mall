@@ -1,6 +1,6 @@
 import styled from 'styled-components'
 import { themeObj } from 'src/components/elements/styled-components'
-import { Items, Sellers } from 'src/components/elements/shop/common'
+import { Sellers } from 'src/components/elements/shop/common'
 import _ from 'lodash'
 
 const Wrappers = styled.div`
@@ -30,7 +30,9 @@ const HomeSellers = (props) => {
                             </>}
                     </>}
                 <div style={{ marginTop: '1rem' }} />
-                <Sellers sellers={[...column?.list ?? [],...column?.list ?? [],...column?.list ?? []]} router={router} />
+                {/* 예전엔 리스트를 3배 복제해 넘겼다(죽은 슬라이더를 채우려던 잔재).
+                    같은 판매자가 3번 반복 노출됐다 — 원본 그대로 한 번만 넘긴다. */}
+                <Sellers sellers={column?.list ?? []} router={router} />
             </Wrappers>
         </>
     )

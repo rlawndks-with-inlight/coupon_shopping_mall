@@ -43,10 +43,14 @@ const HomeButtonBanner = (props) => {
         }
         return parseInt(window.innerWidth / getSlideToShow()) - 48
     }
+    // 배너가 노출 칸 수 이하로 다 보이면 슬라이드할 게 없다.
+    // 이때 infinite+autoplay 를 켜두면 react-slick 이 클론을 만들어 저절로 미끄러지고 빈 칸이 스친다.
+    const listCount = (column?.list ?? []).length
+    const fits = listCount <= getSlideToShow()
     let slide_setting = {
-        infinite: true,
+        infinite: !fits,
         speed: 500,
-        autoplay: true,
+        autoplay: !fits,
         autoplaySpeed: 2500,
         slidesToShow: getSlideToShow(),
         slidesToScroll: 1,
@@ -54,7 +58,8 @@ const HomeButtonBanner = (props) => {
     }
     return (
         <>
-            <Wrappers style={{ marginTop: `${style?.margin_top}px`, maxWidth: `${router}` }}>
+            {/* maxWidth 에 라우터 객체가 문자열로 들어가 "[object Object]"(무효값)였다 — 제거. */}
+            <Wrappers style={{ marginTop: `${style?.margin_top}px` }}>
                 <Slider {...slide_setting} className='margin-slide'>
                     {column?.list && (column?.list ?? []).map((item, idx) => (
                         <>

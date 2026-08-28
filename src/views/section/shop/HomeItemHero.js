@@ -760,10 +760,13 @@ const renderPolaroid = (products, router, currentLang, mainColor) => {
    ══════════════════════════════════════ */
 const renderCompare = (products, router, currentLang, mainColor) => {
   return (
+    // 열이 상품 수만큼 고정이라 좁은 화면에서 몸통이 통째로 가로로 넘쳤다.
+    // 자체 가로 스크롤로 가두고(minWidth 로 열 폭 유지), 몸통 스크롤을 막는다.
+    <div style={{ overflowX: 'auto', margin: '0 auto', maxWidth: '100%' }}>
     <div style={{
       border: '1px solid #e8e8e8', borderRadius: '12px', overflow: 'hidden',
       display: 'grid', gridTemplateColumns: `repeat(${products.length}, 1fr)`,
-      maxWidth: `${products.length * 260}px`, margin: '0 auto',
+      maxWidth: `${products.length * 260}px`, minWidth: `${products.length * 150}px`, margin: '0 auto',
     }}>
       {products.map((product, idx) => {
         const { img, name, comment, sale, orig, hasSale, disc } = pHelper(product, currentLang);
@@ -800,6 +803,7 @@ const renderCompare = (products, router, currentLang, mainColor) => {
         );
       })}
     </div>
+    </div>
   );
 };
 
@@ -809,9 +813,11 @@ const renderCompare = (products, router, currentLang, mainColor) => {
    ══════════════════════════════════════ */
 const renderTimeline = (products, router, currentLang, mainColor) => {
   return (
+    // 가로 한 줄이라 상품이 많거나 화면이 좁으면 몸통이 넘쳤다 — 자체 가로 스크롤로 가둔다.
+    <div style={{ overflowX: 'auto' }}>
     <div style={{
       display: 'flex', alignItems: 'center', justifyContent: 'space-around',
-      position: 'relative', padding: '60px 0',
+      position: 'relative', padding: '60px 0', minWidth: `${products.length * 150}px`,
     }}>
       {/* 가로 연결선 */}
       <div style={{
@@ -848,6 +854,7 @@ const renderTimeline = (products, router, currentLang, mainColor) => {
           </div>
         );
       })}
+    </div>
     </div>
   );
 };

@@ -260,6 +260,7 @@ const SignUpDemo = (props) => {
             <TextField
               label={translate('아이디')}
               fullWidth
+              helperText={translate('영문 소문자·숫자·밑줄(_) / 4~20자')}
               onChange={(e) => {
                 setUser({ ...user, ['user_name']: e.target.value })
               }}

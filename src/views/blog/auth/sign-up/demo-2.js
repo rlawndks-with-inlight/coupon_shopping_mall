@@ -358,7 +358,8 @@ const Demo2 = (props) => {
                             <TextFieldTitle>{translate('아이디')}</TextFieldTitle>
                             <TextField
                                 name='username'
-                                placeholder={translate('영문 소문자, 숫자, 특수문자 가능 / 4~20자')}
+                                placeholder={translate('아이디를 입력해주세요.')}
+                                helperText={translate('영문 소문자·숫자·밑줄(_) / 4~20자')}
                                 sx={{
                                     marginBottom: '1%'
                                 }}
@@ -371,7 +372,8 @@ const Demo2 = (props) => {
                             <TextField
                                 name='password'
                                 type={watchable_1 ? '' : 'password'}
-                                placeholder={translate('8~20자로 입력해 주세요. (아이디와 다르게)')}
+                                placeholder={translate('비밀번호를 입력해주세요')}
+                                helperText={translate('8~20자로 입력해 주세요. (아이디와 다르게)')}
                                 sx={{
                                     marginBottom: '1%'
                                 }}
@@ -411,7 +413,8 @@ const Demo2 = (props) => {
                                 shop 데모 9개는 모두 받고 있고, 안 받으면 마이페이지 '이름' 이 영영 빈칸이다. */}
                             <TextFieldTitle>{translate('이름')}</TextFieldTitle>
                             <TextField
-                                placeholder={translate('주문·배송에 사용됩니다')}
+                                placeholder={translate('이름을 입력해주세요.')}
+                                helperText={translate('주문·배송에 사용됩니다')}
                                 sx={{
                                     marginBottom: '1%'
                                 }}
@@ -435,7 +438,8 @@ const Demo2 = (props) => {
                             */}
                             <TextFieldTitle>{translate('휴대폰번호')}</TextFieldTitle>
                             <TextField
-                                placeholder={translate('숫자와 하이픈(-)만 입력')}
+                                placeholder={translate('휴대폰번호를 입력해주세요.')}
+                                helperText={translate('숫자와 하이픈(-)만 입력')}
                                 sx={{
                                     marginBottom: '1%'
                                 }}

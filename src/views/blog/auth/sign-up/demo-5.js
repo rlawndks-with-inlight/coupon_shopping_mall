@@ -327,7 +327,8 @@ const Demo5 = (props) => {
                             <TextFieldTitle>{translate('아이디')}</TextFieldTitle>
                             <TextField
                                 name='username'
-                                placeholder={translate('영문 소문자, 숫자, 특수문자 가능 / 4~20자')}
+                                placeholder={translate('아이디를 입력해주세요.')}
+                                helperText={translate('영문 소문자·숫자·밑줄(_) / 4~20자')}
                                 sx={{
                                     marginBottom: '1%'
                                 }}
@@ -336,7 +337,8 @@ const Demo5 = (props) => {
                             <TextField
                                 name='password'
                                 type={watchable_1 ? '' : 'password'}
-                                placeholder={translate('8~20자로 입력해 주세요. (아이디와 다르게)')}
+                                placeholder={translate('비밀번호를 입력해주세요')}
+                                helperText={translate('8~20자로 입력해 주세요. (아이디와 다르게)')}
                                 sx={{
                                     marginBottom: '1%'
                                 }}

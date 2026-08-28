@@ -486,7 +486,8 @@ const ProductOptionEditor = ({ item, setItem, disabled = false }) => {
                     <TextField
                         size="small" sx={{ width: 200 }} type="number" placeholder="무제한"
                         value={item?.stock_qty ?? ''}
-                        onChange={(e) => set({ stock_qty: e.target.value })}
+                        onChange={(e) => set({ stock_qty: 음수막기(e.target.value) })}
+                        InputProps={음수막기속성}
                     />
                 </Stack>}
 

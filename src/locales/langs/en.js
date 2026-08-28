@@ -649,6 +649,7 @@ const en = {
     "비밀번호는 100자 이하로 입력해 주세요.": "The password must be 100 characters or fewer.",
     "비밀번호는 8~20자로 입력해 주세요.": "The password must be 8-20 characters.",
     "8~20자로 입력해 주세요. (아이디와 다르게)": "Use 8-20 characters, different from your ID.",
+    "재고와 1인 구매 수량은 0 이상으로 입력해 주세요.": "Stock and per-person purchase limit must be 0 or more.",
     "비밀번호는 8자 이상으로 입력해 주세요.": "The password must be at least 8 characters.",
     "비밀번호를 아이디와 다르게 입력해 주세요.": "The password must be different from your ID.",
     "서버 에러 발생": "A server error occurred.",

@@ -19,7 +19,7 @@ import { useModal } from 'src/components/dialog/ModalProvider';
 import { ProductFaq } from 'src/components/elements/shop/demo-4';
 import ShippingLine from 'src/components/elements/shop/ShippingLine';
 import DeliveryNotice from 'src/components/elements/shop/DeliveryNotice';
-import { isShopgoBrand } from 'src/utils/is-shopgo';
+import { isShopgoBrand } from 'src/utils/is-shopgo';
 import { 찜기능사용 } from 'src/data/wish';
 
 const ReactQuill = dynamic(() => import('react-quill'), {
@@ -111,7 +111,7 @@ const ItemDemo = (props) => {
     });
     data['sub_images'] = data['sub_images'].map((img) => {
       return img?.product_sub_img
-    })
+    }).filter(Boolean) // 상세설명 전용 행은 product_sub_img 가 비어 있다 — 걸러야 빈 썸네일(엑박)이 안 생긴다.
     if (data?.product_img) {
       data['sub_images'].unshift(data?.product_img)
     }

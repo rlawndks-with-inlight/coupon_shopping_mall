@@ -71,7 +71,7 @@ const ItemDemo = (props) => {
     }
     data['sub_images'] = data['sub_images'].map((img) => {
       return img?.product_sub_img
-    })
+    }).filter(Boolean) // 상세설명 전용 행은 product_sub_img 가 비어 있다 — 걸러야 빈 썸네일(엑박)이 안 생긴다.
     if (data?.product_img) {
       data['sub_images'].unshift(data?.product_img)
     }

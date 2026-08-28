@@ -131,7 +131,7 @@ const Demo1 = (props) => {
       id: router.query?.id
     })
     if (product) {
-      product['images'] = [...[product?.product_img], ...product?.sub_images.map(item => { return item.product_sub_img })];
+      product['images'] = [product?.product_img, ...product?.sub_images.map(item => item.product_sub_img)].filter(Boolean);
       setItem(product)
 
     }

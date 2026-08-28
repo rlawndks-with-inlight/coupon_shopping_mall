@@ -146,7 +146,7 @@ const ItemDemo = (props) => {
       let sub_image = data?.sub_images;
       let description_image = data?.sub_images;
 
-      data['sub_images'] = (sub_image ?? []).map((img) => img?.product_sub_img).filter((img) => img !== null && img !== undefined)
+      data['sub_images'] = (sub_image ?? []).map((img) => img?.product_sub_img).filter(Boolean) // '' 도 걸러야 함(상세설명 전용 행). null/undefined 만 거르면 빈 문자열이 통과해 엑박.
       data['description_images'] = (description_image ?? []).map((img) => img?.product_description_img).filter((img) => img !== null && img !== undefined)
       data['images'] = data['sub_images'];
       setProduct(data);
@@ -162,7 +162,7 @@ const ItemDemo = (props) => {
       }
       data['sub_images'] = data['sub_images'].map((img) => {
         return img?.product_sub_img
-      })
+      }).filter(Boolean) // 상세설명 전용 행은 product_sub_img 가 비어 있다 — 걸러야 빈 썸네일(엑박)이 안 생긴다.
       if (data?.product_img) {
         data['sub_images'].unshift(data?.product_img)
       }

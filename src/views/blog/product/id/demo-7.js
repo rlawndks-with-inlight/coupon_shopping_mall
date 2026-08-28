@@ -297,7 +297,7 @@ const Demo7 = () => {
             <ShippingLine item={item} />
           </PriceBlock>
           {/* 배송 안내(SHOPGO 하위 전용) — 배송비 아래 */}
-          <DeliveryNotice tone={{ fontSize: 13 }} sx={{ mt: '8px' }} />
+          <DeliveryNotice sx={{ mt: '8px' }} />
           {requiredGroups(item).length > 0 && (
             <OptionArea>
               {requiredGroups(item).map((group, gIdx) => (

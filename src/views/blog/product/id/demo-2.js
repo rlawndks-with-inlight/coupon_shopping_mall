@@ -264,7 +264,7 @@ const Demo2 = (props) => {
                                 <span style={{ color: theme.palette.error.main }}>
                                     <ShippingLine item={item} showLabel={false} tone={{ fontSize: 'inherit', color: 'inherit', gap: 0 }} />
                                     {/* 배송 안내(가맹점별·SHOPGO 하위 전용) — 배송비 바로 아래. 둘은 한 묶음이라 떼어 놓지 않는다. */}
-                                    <DeliveryNotice tone={{ fontSize: 13 }} sx={{ mt: '6px' }} />
+                                    <DeliveryNotice sx={{ mt: '6px' }} />
                                 </span></div>
                         </Row>
                         <Row style={{ alignItems: 'flex-end', }}>

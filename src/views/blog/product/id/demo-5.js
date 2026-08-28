@@ -319,7 +319,7 @@ const Demo5 = () => {
               고객이 장바구니·주문서에 가서야 배송비를 알았다(주문 직전 금액이 달라 보인다). */}
           <ShippingLine item={item} />
           {/* 배송 안내(SHOPGO 하위 전용) — 배송비 아래 */}
-          <DeliveryNotice tone={{ fontSize: 13 }} sx={{ mt: '8px' }} />
+          <DeliveryNotice sx={{ mt: '8px' }} />
           {requiredGroups(item).length > 0 && (
             <OptionGroup>
               {requiredGroups(item).map((group, gIdx) => (

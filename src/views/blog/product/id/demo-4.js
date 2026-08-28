@@ -287,7 +287,7 @@ const Demo4 = () => {
                   고객이 장바구니·주문서에 가서야 배송비를 알았다(주문 직전 금액이 달라 보인다). */}
               <ShippingLine item={item} />
               {/* 배송 안내(가맹점별·SHOPGO 하위 전용) — 배송비 바로 아래. 둘은 한 묶음이라 떼어 놓지 않는다. */}
-              <DeliveryNotice tone={{ fontSize: 13 }} sx={{ mt: '6px' }} />
+              <DeliveryNotice sx={{ mt: '6px' }} />
               {/* 혜택 안내(본사 공통). 이 프레임은 흑백·절제된 톤이라 라벨을 더 흐리게 둔다. */}
               <BenefitNotice sx={{ mt: '10px' }} tone={{ fontSize: 13, labelColor: '#999', textColor: '#333' }} />
               {/* 주문 추가 입력항목 — 서식이 걸린 몰에서만 나타난다 */}

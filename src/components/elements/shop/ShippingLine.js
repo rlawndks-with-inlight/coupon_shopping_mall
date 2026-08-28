@@ -22,7 +22,19 @@ import { 배송비표시, 무료배송안내 } from 'src/utils/shop-util';
 // ⚠ 배송비는 상품 테이블의 delivery_fee 가 아니라 **몰 정책**(설정관리 › 배송비설정)을 따른다.
 //   정책을 쓰는 몰은 상품별 값이 0 이라, 예전엔 상세에 '배송비 0원' 으로 보이고
 //   장바구니에서만 금액이 튀어나왔다. 판정은 shop-util 의 배송비표시() 가 한다.
-const 기본톤 = { fontSize: 13, color: '#888', gap: 6 };
+// 배송비 줄과 배송 안내가 함께 쓰는 톤. **여기 한 곳에서만 정한다.**
+//
+// [왜 묶었나] 둘은 화면에서 붙어 있는데 값이 따로 놀았다:
+//     배송비 줄   #888 · 줄간격 기본
+//     배송 안내   #333 · 줄간격 1.7
+//   글자색과 줄간격이 달라 한 묶음이 아니라 서로 다른 것처럼 보였다(가맹점 지적 2026-08-28).
+//   키 이름마저 color / textColor 로 달라서, 한쪽만 고치면 또 어긋난다.
+//
+// #666 은 둘의 가운데다. #888 은 배송 추가비용을 알리기엔 너무 흐리고,
+// #333 은 본문만큼 진해서 가격보다 눈에 띈다.
+export const 배송톤 = { fontSize: 13, color: '#666', gap: 6, lineHeight: 1.7 };
+
+const 기본톤 = 배송톤;
 
 // showLabel=false 는 표 형태 프레임용이다(shop-4). 왼쪽 칸이 이미 '배송비' 라서
 // 여기서 또 붙이면 '배송비 | 배송비 5,000원' 이 된다. 금액과 무료기준 문구는 그대로 쓴다.
@@ -43,7 +55,7 @@ const ShippingLine = ({ item, tone = {}, sx = {}, style = {}, showLabel = true }
 
     const 배송 = 배송비표시(item);
     const 안내 = 무료배송안내(item, currentLang?.value);
-    const 꾸밈 = { fontSize: `${t.fontSize}px`, color: t.color, marginTop: `${t.gap}px`, ...style, ...sx };
+    const 꾸밈 = { fontSize: `${t.fontSize}px`, color: t.color, lineHeight: t.lineHeight, marginTop: `${t.gap}px`, ...style, ...sx };
 
     if (배송.free) return <div style={꾸밈}>{translate('무료배송')}</div>;
 

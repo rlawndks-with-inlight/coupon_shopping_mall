@@ -1,6 +1,7 @@
 import { Box } from '@mui/material';
 import { useSettingsContext } from 'src/components/settings';
 import { isShopgoBrand } from 'src/utils/is-shopgo';
+import { 배송톤 } from 'src/components/elements/shop/ShippingLine';
 
 // 상품상세 '배송 안내' — 가맹점이 관리자 '설정관리 › 배송비설정' 탭에서
 // setting_obj.delivery_info(리치텍스트)로 넣는다.
@@ -11,7 +12,10 @@ import { isShopgoBrand } from 'src/utils/is-shopgo';
 // 혜택(BenefitNotice) 바로 아래에 두는 것을 기본으로 하고, 혜택 UI 가 없는 프레임에선
 // 단독으로 가격/배송 묶음 아래에 둔다. 톤(색·글자크기)은 프레임이 준 값을 그대로 따른다.
 // 비어 있으면(<p><br></p>·&nbsp; 등) 아무것도 그리지 않는다.
-const 기본톤 = { textColor: '#333', fontSize: 13, rowGap: 6 };
+// 톤은 ShippingLine 과 **같은 값**을 쓴다. 둘은 화면에서 붙어 있어서
+// 글자색·줄간격이 다르면 한 묶음으로 안 읽힌다(그래서 한 곳에서만 정한다).
+// textColor 는 예전 이름이라 계속 받아 준다 — 넘어오면 그게 이긴다.
+const 기본톤 = { textColor: 배송톤.color, fontSize: 배송톤.fontSize, rowGap: 6, lineHeight: 배송톤.lineHeight };
 
 const DeliveryNotice = ({ tone = {}, sx = {}, topGap = false }) => {
     const { themeDnsData } = useSettingsContext();
@@ -28,7 +32,7 @@ const DeliveryNotice = ({ tone = {}, sx = {}, topGap = false }) => {
                 mt: topGap ? `${t.rowGap + 4}px` : 0,
                 fontSize: `${t.fontSize}px`,
                 color: t.textColor,
-                lineHeight: 1.7,
+                lineHeight: t.lineHeight,
                 wordBreak: 'keep-all',
                 '& img': { maxWidth: '100%', height: 'auto' },
                 '& p': { margin: '0 0 4px' },

@@ -221,9 +221,9 @@ const Demo1 = (props) => {
           {/* 배송비. 혜택과 같은 이유로 본문에 둔다 — 이 프레임은 구매 서랍에만 있어서
               가맹점이 배송비를 설정해도 손님은 '구매하기'를 누르기 전엔 볼 수 없었다
               (2026-08-28 mbc03 에서 확인). 서랍의 표기는 합계 계산용이라 그대로 둔다. */}
-          <ShippingLine item={item} tone={{ gap: 8 }} />
+          <ShippingLine item={item} />
           {/* 배송 안내(가맹점별·SHOPGO 하위 전용) — 배송비 바로 아래. 둘은 한 묶음이라 떼어 놓지 않는다. */}
-          <DeliveryNotice sx={{ mt: '6px' }} />
+          <DeliveryNotice />
           {/* 혜택 안내(본사 공통). 구매 서랍이 아니라 본문 가격 아래에 둔다 —
               서랍은 '구매하기'를 눌러야 열려서, 살지 말지 고르는 단계에서는 안 보인다. */}
           <BenefitNotice sx={{ mb: '0.75rem' }} tone={{ fontSize: 13 }} />

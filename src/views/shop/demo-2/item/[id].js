@@ -224,9 +224,9 @@ const ItemDemo = (props) => {
                       </div>
                       <Divider sx={{ my: 1 }} />
                       {/* 배송비 한 줄 — 문구는 ShippingLine 한 곳에서만 만든다. */}
-                      <ShippingLine item={product} tone={{ gap: 8 }} />
+                      <ShippingLine item={product} />
                       {/* 배송 안내(가맹점별·SHOPGO 하위 전용) — 배송비 바로 아래. 둘은 한 묶음이라 떼어 놓지 않는다. */}
-                      <DeliveryNotice sx={{ mt: '6px' }} />
+                      <DeliveryNotice />
                       {/* 혜택 안내(본사 공통) — 배송비 바로 아래 */}
                       <BenefitNotice sx={{ mb: 1 }} tone={{ fontSize: 13 }} />
                       {/* 옵션 · 추가상품 · 조합형 — 프레임 6개 공용 컴포넌트.

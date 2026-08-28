@@ -1,7 +1,7 @@
 import { Box } from '@mui/material';
 import { useSettingsContext } from 'src/components/settings';
 import { isShopgoBrand } from 'src/utils/is-shopgo';
-import { 배송톤 } from 'src/components/elements/shop/ShippingLine';
+import { 상세톤, 내용들여쓰기 } from 'src/components/elements/shop/detail-tone';
 
 // 상품상세 '배송 안내' — 가맹점이 관리자 '설정관리 › 배송비설정' 탭에서
 // setting_obj.delivery_info(리치텍스트)로 넣는다.
@@ -12,14 +12,15 @@ import { 배송톤 } from 'src/components/elements/shop/ShippingLine';
 // 혜택(BenefitNotice) 바로 아래에 두는 것을 기본으로 하고, 혜택 UI 가 없는 프레임에선
 // 단독으로 가격/배송 묶음 아래에 둔다. 톤(색·글자크기)은 프레임이 준 값을 그대로 따른다.
 // 비어 있으면(<p><br></p>·&nbsp; 등) 아무것도 그리지 않는다.
-// 톤은 ShippingLine 과 **같은 값**을 쓴다. 둘은 화면에서 붙어 있어서
-// 글자색·줄간격이 다르면 한 묶음으로 안 읽힌다(그래서 한 곳에서만 정한다).
+// 톤은 배송비·혜택과 **같은 값**을 쓴다(detail-tone). 셋이 한 표처럼 붙어 있어서
+// 글자색·줄간격·칸 폭이 다르면 따로 노는 것처럼 보인다.
 // textColor 는 예전 이름이라 계속 받아 준다 — 넘어오면 그게 이긴다.
-const 기본톤 = { textColor: 배송톤.color, fontSize: 배송톤.fontSize, rowGap: 6, lineHeight: 배송톤.lineHeight };
+const 기본톤 = 상세톤;
 
-const DeliveryNotice = ({ tone = {}, sx = {}, topGap = false }) => {
+const DeliveryNotice = ({ tone = {}, sx = {}, topGap = false, indent }) => {
     const { themeDnsData } = useSettingsContext();
     const t = { ...기본톤, ...tone };
+    const 들여 = indent === undefined ? 내용들여쓰기(t) : indent;
     const html = themeDnsData?.setting_obj?.delivery_info ?? '';
     const has = /<img/i.test(html)
         || html.replace(/<[^>]*>/g, '').replace(/&nbsp;/g, '').trim().length > 0;
@@ -29,7 +30,8 @@ const DeliveryNotice = ({ tone = {}, sx = {}, topGap = false }) => {
     return (
         <Box
             sx={{
-                mt: topGap ? `${t.rowGap + 4}px` : 0,
+                mt: topGap ? `${t.rowGap + 4}px` : `${t.rowGap}px`,
+                ml: `${들여}px`,
                 fontSize: `${t.fontSize}px`,
                 color: t.textColor,
                 lineHeight: t.lineHeight,

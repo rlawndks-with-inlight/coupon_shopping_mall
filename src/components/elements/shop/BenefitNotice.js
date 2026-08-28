@@ -4,6 +4,7 @@ import {
 } from '@mui/material';
 import { Icon } from '@iconify/react';
 import { useSettingsContext } from 'src/components/settings';
+import { 상세톤 } from 'src/components/elements/shop/detail-tone';
 import { useLocales } from 'src/locales';
 import { formatLang } from 'src/utils/format';
 
@@ -21,14 +22,9 @@ import { formatLang } from 'src/utils/format';
 // 비어 있으면 아무것도 그리지 않는다. 본사가 아직 안 넣었거나 다른 클라이언트 몰이면
 // 목록이 비는데, 그때 빈 줄이 남으면 가격 아래 여백만 늘어난다.
 
-const 기본톤 = {
-    labelColor: '#888',
-    textColor: '#333',
-    fontSize: 13,
-    labelWidth: 52,
-    gap: 10,
-    rowGap: 6,
-};
+// 톤은 배송비·배송 안내와 **같은 값**을 쓴다(detail-tone).
+// 셋이 가격 아래에 한 표처럼 붙어 있어서, 라벨 칸 폭이 어긋나면 세로줄이 안 맞는다.
+const 기본톤 = 상세톤;
 
 export const useBenefitNotices = () => {
     const { themeBenefitNotices, themeBenefitNoticeTabs } = useSettingsContext();

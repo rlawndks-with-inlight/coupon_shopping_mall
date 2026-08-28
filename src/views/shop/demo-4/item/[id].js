@@ -590,11 +590,12 @@ const ItemDemo = (props) => {
                               값 쪽 문구만 ShippingLine 에서 가져온다 — 안쪽 여백은 표에 맞춰 0 으로. */}
                           <ItemCharacter
                             key_name={'배송비'}
-                            value={<ShippingLine item={product} showLabel={false} tone={{ fontSize: 'inherit', color: 'inherit', gap: 0 }} />}
+                            value={<ShippingLine item={product} showLabel={false} />}
                           />
                         </div>
                         {/* 배송 안내(가맹점별·SHOPGO 하위 전용) — 배송비 바로 아래. 둘은 한 묶음이라 떼어 놓지 않는다. */}
-                        <DeliveryNotice sx={{ mt: '6px' }} />
+                        {/* 이 프레임은 왼쪽 라벨 칸을 직접 그리므로 들여쓰기는 프레임이 맡는다. */}
+                        <DeliveryNotice indent={0} />
                         {/* '10-14일 내 도착 예정(검수 후 배송)' · '배송 전 검수' 는
                             해외직구 브랜드(74)의 운영 정책 문구다. 프레임3 으로 팔리면서
                             국내 배송만 하는 가맹점 상품에도 그대로 붙어 고객에게 틀린 배송기간을

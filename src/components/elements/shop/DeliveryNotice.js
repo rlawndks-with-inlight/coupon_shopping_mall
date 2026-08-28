@@ -17,7 +17,7 @@ import { 상세톤, 내용들여쓰기 } from 'src/components/elements/shop/deta
 // textColor 는 예전 이름이라 계속 받아 준다 — 넘어오면 그게 이긴다.
 const 기본톤 = 상세톤;
 
-const DeliveryNotice = ({ tone = {}, sx = {}, topGap = false, indent }) => {
+const DeliveryNotice = ({ tone = {}, sx = {}, topGap = false, indent, inGrid = false }) => {
     const { themeDnsData } = useSettingsContext();
     const t = { ...기본톤, ...tone };
     const 들여 = indent === undefined ? 내용들여쓰기(t) : indent;
@@ -30,8 +30,10 @@ const DeliveryNotice = ({ tone = {}, sx = {}, topGap = false, indent }) => {
     return (
         <Box
             sx={{
-                mt: topGap ? `${t.rowGap + 4}px` : `${t.rowGap}px`,
-                ml: `${들여}px`,
+                // 그리드 모드에서는 값 칸(2열)에 놓인다 — 여백·들여쓰기는 그리드가 정한다.
+                ...(inGrid
+                    ? { gridColumn: 2 }
+                    : { mt: topGap ? `${t.rowGap + 4}px` : `${t.rowGap}px`, ml: `${들여}px` }),
                 fontSize: `${t.fontSize}px`,
                 color: t.textColor,
                 lineHeight: t.lineHeight,

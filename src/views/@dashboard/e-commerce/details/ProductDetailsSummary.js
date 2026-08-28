@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types';
 import { useEffect, useState } from 'react';
-import BenefitNotice from 'src/components/elements/shop/BenefitNotice';
+import DetailNotices from 'src/components/elements/shop/DetailNotices';
 // @mui
 import {
   Box,
@@ -47,8 +47,6 @@ import { useAuthContext } from 'src/layouts/manager/auth/useAuthContext';
 import { formatCreditCardNumber, formatExpirationDate } from 'src/utils/formatCard';
 import { useModal } from "src/components/dialog/ModalProvider";
 import { insertCartDataUtil, onPayProductsByAuth, onPayProductsByHand, selectItemOptionUtil, 배송비표시, 무료배송안내 } from 'src/utils/shop-util';
-import ShippingLine from 'src/components/elements/shop/ShippingLine';
-import DeliveryNotice from 'src/components/elements/shop/DeliveryNotice';
 import { apiManager } from 'src/utils/api';
 import { useRouter } from 'next/router';
 import DialogBuyNow from 'src/components/dialog/DialogBuyNow';
@@ -196,11 +194,9 @@ export default function ProductDetailsSummary({ product, onAddCart, onGotoStep, 
                     )}
                     {commarNumber(setProductPriceByLang(product, 'product_sale_price', price_lang, currentLang?.value))} {getPriceUnitByLang(currentLang?.value)}
                   </Typography>
-                  {/* 배송비 한 줄. 문구는 ShippingLine 한 곳에서만 만든다 — 프레임마다 따로 그리다
-                      '배송비:' / '배송비 :' / 가운뎃점 앞 공백 유무가 갈렸다(2026-08-28 실측). */}
-                  <ShippingLine item={product} />
-                  {/* 배송 안내(가맹점별·SHOPGO 하위 전용) — 배송비 바로 아래. 둘은 한 묶음이라 떼어 놓지 않는다. */}
-                  <DeliveryNotice />
+                  {/* 가격 아래 안내 묶음 — 배송비 · 배송 안내 · 혜택을 한 표로 그린다.
+                      라벨 칸을 함께 나누므로 혜택 라벨이 몇 글자든 세로줄이 맞는다(DetailNotices). */}
+                  <DetailNotices item={product} />
                   {
                     themeDnsData?.id == 95 && product_sale_price < 100000 &&
                     <>
@@ -212,10 +208,6 @@ export default function ProductDetailsSummary({ product, onAddCart, onGotoStep, 
                 </>
             }
           </Stack>
-          {/* 혜택 안내(본사 공통). 배송비 바로 아래, 구분선 위 — 가격 정보 묶음의 끝이다.
-              본사에 등록된 것이 없으면 아무것도 그리지 않으므로,
-              이 컴포넌트를 함께 쓰는 다른 클라이언트 몰에는 영향이 없다. */}
-          <BenefitNotice sx={{ mt: 1 }} tone={{ fontSize: 13, labelColor: themeObj.grey[500] }} />
           {/* 상품정보(특성) — 보여주기 전용. 예전엔 이 프레임이 특성을 아예 안 그렸다. */}
           <ProductInfoRows product={product} sx={{ mt: 1 }} />
           <Divider sx={{ borderStyle: 'dashed' }} />

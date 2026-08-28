@@ -28,7 +28,7 @@ import { 상세톤 } from 'src/components/elements/shop/detail-tone';
 // ⚠ 배송비는 상품 테이블의 delivery_fee 가 아니라 **몰 정책**(설정관리 › 배송비설정)을 따른다.
 //   정책을 쓰는 몰은 상품별 값이 0 이라, 예전엔 상세에 '배송비 0원' 으로 보이고
 //   장바구니에서만 금액이 튀어나왔다. 판정은 shop-util 의 배송비표시() 가 한다.
-const ShippingLine = ({ item, tone = {}, sx = {}, style = {}, showLabel = true }) => {
+const ShippingLine = ({ item, tone = {}, sx = {}, style = {}, showLabel = true, inGrid = false }) => {
     const { translate, currentLang } = useLocales();
     const t = { ...상세톤, ...tone };
 
@@ -52,16 +52,22 @@ const ShippingLine = ({ item, tone = {}, sx = {}, style = {}, showLabel = true }
     // 표 형태 프레임: 값만 넘긴다. 칸 맞추기는 그 프레임이 한다.
     if (!showLabel) return <span style={{ ...style, ...sx }}>{값}</span>;
 
+    const 라벨칸 = <div style={{ color: t.labelColor, whiteSpace: 'nowrap' }}>{translate('배송비')}</div>;
+    const 값칸 = <div style={{ color: t.textColor }}>{값}</div>;
+
+    // 그리드 모드: 자기 행 상자를 만들지 않고 **칸 두 개만** 내놓는다.
+    // 그래야 혜택 줄과 같은 그리드에 들어가 라벨 칸 폭을 함께 나눈다
+    // (각자 행을 만들면 라벨이 길어질 때 행마다 따로 늘어나 세로줄이 어긋난다).
+    if (inGrid) return <>{라벨칸}{값칸}</>;
+
     return (
         <div style={{
             display: 'flex', alignItems: 'flex-start', columnGap: `${t.gap}px`,
             fontSize: `${t.fontSize}px`, lineHeight: t.lineHeight,
             marginTop: `${t.rowGap}px`, ...style, ...sx,
         }}>
-            <div style={{ color: t.labelColor, flex: `0 0 ${t.labelWidth}px`, whiteSpace: 'nowrap' }}>
-                {translate('배송비')}
-            </div>
-            <div style={{ color: t.textColor }}>{값}</div>
+            <div style={{ flex: `0 0 ${t.labelWidth}px` }}>{라벨칸}</div>
+            {값칸}
         </div>
     );
 };

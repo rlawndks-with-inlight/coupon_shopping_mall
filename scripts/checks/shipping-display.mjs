@@ -74,11 +74,13 @@ const 표시자리 = [
 for (const f of 표시자리) {
     const src = 읽기(f);
     const 주석뺀 = src.replace(/\/\*[\s\S]*?\*\//g, '').replace(/^\s*\/\/.*$/gm, '');
-    // 2026-08-28 부터 대부분의 프레임은 공용 <ShippingLine> 을 쓴다. 그 안에서 배송비표시() 를
+    // 2026-08-28 부터 프레임은 <DetailNotices>(배송비·배송안내·혜택을 한 표로) 를 쓴다.
+    // 표 형태 프레임만 <ShippingLine> 을 직접 쓴다.
+    // 예전 주석: 대부분의 프레임은 공용 <ShippingLine> 을 쓴다. 그 안에서 배송비표시() 를
     // 부르므로 정책을 거치는 것은 같다. 둘 중 하나면 통과 — 직접 부르는 자리도 아직 남아 있다
     // (구매 서랍의 금액 계산표는 합계를 내야 해서 값이 필요하다).
     t(`${f.split('/').slice(-2).join('/')} 는 정책을 거친다`,
-        주석뺀.includes('배송비표시(') || 주석뺀.includes('<ShippingLine'),
+        주석뺀.includes('배송비표시(') || 주석뺀.includes('<ShippingLine') || 주석뺀.includes('<DetailNotices'),
         '상품 테이블의 delivery_fee 를 그대로 쓰면 정책을 쓰는 몰이 0원으로 보인다');
     // 화면에 찍는 자리에서 delivery_fee 를 직접 읽으면 안 된다(장바구니에 담을 때 넘기는 건 무관).
     const 직접 = [...주석뺀.matchAll(/commarNumber\w*\((?:[^()]*)delivery_fee/g)].map((m) => m[0]);

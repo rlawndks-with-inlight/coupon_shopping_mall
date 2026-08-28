@@ -12,9 +12,8 @@ import { formatLang } from 'src/utils/format';
 import { apiShop } from 'src/utils/api';
 import { insertCartDataUtil, startBuyNow, selectItemOptionUtil, 배송비표시, 무료배송안내 } from 'src/utils/shop-util';
 import QuantityStepper from 'src/components/elements/shop/QuantityStepper';
-import ShippingLine from 'src/components/elements/shop/ShippingLine';
+import DetailNotices from 'src/components/elements/shop/DetailNotices';
 import ProductThumbs, { buildProductImages } from 'src/components/elements/shop/ProductThumbs';
-import DeliveryNotice from 'src/components/elements/shop/DeliveryNotice';
 import toast from 'react-hot-toast';
 
 /* 상품 상세 - 데모 5: 다크 럭셔리 (Maison) */
@@ -315,11 +314,9 @@ const Demo5 = () => {
             <SalePrice>{commarNumberWithUnit(sale)}</SalePrice>
             {hasSale && <OrigPrice>{commarNumberWithUnit(orig)}</OrigPrice>}
           </PriceBlock>
-          {/* 배송비를 상세에 표시한다. 예전엔 이 프레임들에 배송비 표기가 없어서
-              고객이 장바구니·주문서에 가서야 배송비를 알았다(주문 직전 금액이 달라 보인다). */}
-          <ShippingLine item={item} />
-          {/* 배송 안내(SHOPGO 하위 전용) — 배송비 아래 */}
-          <DeliveryNotice />
+          {/* 가격 아래 안내 묶음 — 배송비 · 배송 안내 · 혜택을 한 표로 그린다.
+              라벨 칸을 함께 나누므로 혜택 라벨이 몇 글자든 세로줄이 맞는다(DetailNotices). */}
+          <DetailNotices item={item} />
           {requiredGroups(item).length > 0 && (
             <OptionGroup>
               {requiredGroups(item).map((group, gIdx) => (

@@ -12,11 +12,9 @@ import { formatLang } from 'src/utils/format';
 import { apiShop } from 'src/utils/api';
 import { insertCartDataUtil, startBuyNow, selectItemOptionUtil, 배송비표시, 무료배송안내 } from 'src/utils/shop-util';
 import QuantityStepper from 'src/components/elements/shop/QuantityStepper';
-import ShippingLine from 'src/components/elements/shop/ShippingLine';
-import DeliveryNotice from 'src/components/elements/shop/DeliveryNotice';
+import DetailNotices from 'src/components/elements/shop/DetailNotices';
 import ProductThumbs, { buildProductImages } from 'src/components/elements/shop/ProductThumbs';
 import toast from 'react-hot-toast';
-import BenefitNotice from 'src/components/elements/shop/BenefitNotice';
 import OrderFormFields from 'src/components/elements/shop/OrderFormFields';
 
 /* 상품 상세 - 데모 4: 미니멀 모노크롬 */
@@ -283,13 +281,9 @@ const Demo4 = () => {
                 <SalePrice>{commarNumberWithUnit(sale)}</SalePrice>
                 {hasSale && <Discount>{disc}% OFF</Discount>}
               </PriceRow>
-              {/* 배송비를 상세에 표시한다. 예전엔 이 프레임들에 배송비 표기가 없어서
-                  고객이 장바구니·주문서에 가서야 배송비를 알았다(주문 직전 금액이 달라 보인다). */}
-              <ShippingLine item={item} />
-              {/* 배송 안내(가맹점별·SHOPGO 하위 전용) — 배송비 바로 아래. 둘은 한 묶음이라 떼어 놓지 않는다. */}
-              <DeliveryNotice />
-              {/* 혜택 안내(본사 공통). 이 프레임은 흑백·절제된 톤이라 라벨을 더 흐리게 둔다. */}
-              <BenefitNotice sx={{ mt: '10px' }} tone={{ fontSize: 13, labelColor: '#999', textColor: '#333' }} />
+              {/* 가격 아래 안내 묶음 — 배송비 · 배송 안내 · 혜택을 한 표로 그린다.
+                  라벨 칸을 함께 나누므로 혜택 라벨이 몇 글자든 세로줄이 맞는다(DetailNotices). */}
+              <DetailNotices item={item} />
               {/* 주문 추가 입력항목 — 서식이 걸린 몰에서만 나타난다 */}
               <OrderFormFields product={item} values={orderFormValues} onChange={setOrderFormValues} sx={{ mt: 2 }} />
             </PriceBlock>

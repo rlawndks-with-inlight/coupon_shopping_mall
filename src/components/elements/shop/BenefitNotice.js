@@ -38,7 +38,7 @@ export const useBenefitNotices = () => {
     }, [themeBenefitNotices, themeBenefitNoticeTabs]);
 };
 
-const BenefitNotice = ({ tone = {}, sx = {} }) => {
+const BenefitNotice = ({ tone = {}, sx = {}, inGrid = false }) => {
     const { translate, currentLang } = useLocales();
     const list = useBenefitNotices();
     const [openId, setOpenId] = useState(null);
@@ -66,14 +66,19 @@ const BenefitNotice = ({ tone = {}, sx = {} }) => {
 
     return (
         <>
-            <Box sx={{ display: 'flex', flexDirection: 'column', rowGap: `${t.rowGap}px`, ...sx }}>
+            <Box sx={inGrid
+                // 그리드 모드: 이 상자는 칸을 만들지 않고 자식(라벨·값)을 바로 그리드에 넘긴다.
+                // 그래야 배송비 줄과 라벨 칸 폭을 함께 나눈다 — 각자 행을 만들면
+                // 라벨이 길어질 때 행마다 따로 늘어나 세로줄이 어긋난다(2026-08-28 실측).
+                ? { display: 'contents' }
+                : { display: 'flex', flexDirection: 'column', rowGap: `${t.rowGap}px`, ...sx }}>
                 {list.map((n) => {
                     const 누를수있음 = n?.tabs?.length > 0;
                     return (
                         <Box
                             key={n.id}
                             onClick={() => 열기(n)}
-                            sx={{
+                            sx={inGrid ? { display: 'contents' } : {
                                 display: 'flex',
                                 alignItems: 'flex-start',
                                 columnGap: `${t.gap}px`,
@@ -84,10 +89,15 @@ const BenefitNotice = ({ tone = {}, sx = {} }) => {
                                 minHeight: 누를수있음 ? 24 : 'auto',
                             }}
                         >
-                            <Box sx={{ color: t.labelColor, flex: `0 0 ${t.labelWidth}px`, whiteSpace: 'nowrap' }}>
+                            <Box sx={{
+                                color: t.labelColor, whiteSpace: 'nowrap',
+                                cursor: 누를수있음 ? 'pointer' : 'default',
+                                ...(inGrid ? {} : { flex: `0 0 ${t.labelWidth}px` }),
+                            }}>
                                 {formatLang(n, 'label', currentLang)}
                             </Box>
-                            <Box sx={{ color: t.textColor, display: 'flex', alignItems: 'center', flexWrap: 'wrap', columnGap: '6px', minWidth: 0 }}>
+                            <Box sx={{ color: t.textColor, display: 'flex', alignItems: 'center', flexWrap: 'wrap', columnGap: '6px', minWidth: 0,
+                                       cursor: 누를수있음 ? 'pointer' : 'default' }}>
                                 {n?.icon_img ? (
                                     <Box
                                         component="img"

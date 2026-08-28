@@ -84,7 +84,7 @@ const 그린순서 = (p) => {
     const 돌기 = (x) => {
         if (!x || typeof x !== 'object') return;
         if (Array.isArray(x)) return x.forEach(돌기);
-        if (x.type === 'JSXOpeningElement' && ['ShippingLine', 'DeliveryNotice', 'BenefitNotice'].includes(x.name?.name))
+        if (x.type === 'JSXOpeningElement' && ['DetailNotices', 'ShippingLine', 'DeliveryNotice', 'BenefitNotice'].includes(x.name?.name))
             찾음.push([x.start, x.name.name]);
         for (const k of Object.keys(x)) if (k !== 'loc' && !k.endsWith('Comments')) 돌기(x[k]);
     };
@@ -114,25 +114,54 @@ const 살아있나 = (p, 이름) => {
 // 그러면 사람이 검사를 꺼 버린다 — 그게 진짜 위험이다.
 const 껍데기 = (p) => 세어보기(p) === 0;
 
+// 2026-08-28 부터 세로로 쌓는 프레임은 <DetailNotices> 하나만 쓴다.
+// 그 안에서 배송비·배송안내·혜택이 **한 그리드**에 들어가 라벨 칸을 함께 나눈다.
+//
+// [왜 그리드여야 하나]
+// 예전에는 세 줄이 각자 행을 만들어서, 혜택 라벨이 길어지면 그 행만 라벨 칸이 늘어났다.
+// 실측(2026-08-28): '혜택'(2글자) 값x 298/298 맞음 → '무이자할부'(5글자) 298/307 어긋남
+//                   → '카드사혜택안내'(7글자) 298/331 어긋남
+// 숫자로 라벨 폭을 크게 잡는 건 미봉책이다 — 한 글자만 더 길어지면 다시 어긋나고 아무도 모른다.
 for (const [이름, p] of 프레임) {
     if (껍데기(p)) { pass++; console.log(`  ok  ${이름} — 아직 안 만든 껍데기(건너뜀)`); continue; }
-    if (p.includes('/shop/') && 살아있나(p, 'ProductDetailsSummary') > 0) 위임.add(이름);
-    if (위임.has(이름)) { pass++; console.log(`  ok  ${이름} — 공용 요약에 위임`); continue; }
-    const n = 살아있나(p, 'ShippingLine');
-    t(`${이름} 이 배송비를 보여준다`, n > 0,
-        '주석 안에 넣으면 AST 에 안 잡힌다 — shop-9 은 파일 절반이 블록주석이다');
-
-    // 배송비와 배송 안내는 붙어 있어야 한다.
-    //
-    // [사연] 예전에는 BenefitNotice 가 배송 안내를 품고 있었다. 그래서 배송비 줄을 가격 아래에
-    //   넣자 화면이 '무료배송 / 혜택 카드사 무이자… / 제주추가 10,000원…' 이 되어
-    //   배송 이야기 둘 사이에 혜택이 끼었다(가맹점 지적 2026-08-28).
-    //   배송 안내를 BenefitNotice 밖으로 빼고 배송비 바로 아래로 옮겼다.
+    // 공용 요약(ProductDetailsSummary)에 맡기는 프레임은 자기 파일에 없어도 된다.
+    // ⚠ 이 판정은 **파서로** 한다. 글자로 세면 주석 안의 <ProductDetailsSummary/> 까지 위임으로
+    //   읽는다 — shop-5 가 정확히 그랬다(import 는 있고 렌더는 주석 안).
+    if (p.includes('/shop/') && 살아있나(p, 'ProductDetailsSummary') > 0) {
+        pass++; console.log(`  ok  ${이름} — 공용 요약에 위임`); continue;
+    }
     const 순서 = 그린순서(p);
+    const 묶음 = 순서.includes('DetailNotices');
+    if (묶음) {
+        // 묶음을 쓰면 배치는 DetailNotices 가 보장한다 — 프레임이 따로 배치하지 않았는지만 본다.
+        t(`${이름} 은 안내 묶음을 쓴다`, !순서.some((x) => x !== 'DetailNotices'),
+            `묶음과 낱개를 섞으면 두 번 그려진다: ${순서.join(' → ')}`);
+        continue;
+    }
+    // 표 형태 프레임(자기 라벨 칸이 있다)은 낱개로 쓴다. 그때도 배송비 바로 아래가 배송 안내여야 한다.
     const i배 = 순서.indexOf('ShippingLine'), i안 = 순서.indexOf('DeliveryNotice');
+    t(`${이름} 이 배송비를 보여준다`, i배 >= 0,
+        '주석 안에 넣으면 AST 에 안 잡힌다 — shop-9 은 파일 절반이 블록주석이다');
     t(`${이름} 은 배송비 바로 아래에 배송 안내가 온다`, i안 === i배 + 1,
-        `지금 순서: ${순서.join(' → ') || '(없음)'} — 사이에 다른 것이 끼면 한 묶음으로 안 읽힌다`);
+        `지금 순서: ${순서.join(' → ') || '(없음)'}`);
 }
+
+// 묶음 컴포넌트가 그리드로 칸을 나누는지 — 이게 정렬의 근거다.
+const 묶음소스 = readFileSync(FRONT_ROOT + 'src/components/elements/shop/DetailNotices.js', 'utf8');
+t('안내 묶음이 그리드다', /display: 'grid'/.test(묶음소스));
+t('라벨 칸이 가장 긴 라벨에 맞춰 늘어난다', /minmax\(\$\{t\.labelWidth\}px, max-content\)/.test(묶음소스),
+    '고정 폭이면 라벨이 길어질 때 값 칸이 밀려 세로줄이 어긋난다');
+t('세 줄을 모두 넣는다',
+    /<ShippingLine[^>]*inGrid/.test(묶음소스) && /<DeliveryNotice[^>]*inGrid/.test(묶음소스) && /<BenefitNotice[^>]*inGrid/.test(묶음소스));
+
+// 각 조각이 그리드 모드에서 자기 행 상자를 만들지 않아야 칸을 함께 나눈다.
+const 배송소스 = readFileSync(FRONT_ROOT + 'src/components/elements/shop/ShippingLine.js', 'utf8');
+t('배송비가 그리드 모드에서 칸만 내놓는다', /if \(inGrid\) return <>/.test(배송소스));
+const 혜택소스2 = readFileSync(FRONT_ROOT + 'src/components/elements/shop/BenefitNotice.js', 'utf8');
+t('혜택이 그리드 모드에서 행 상자를 만들지 않는다', /display: 'contents'/.test(혜택소스2),
+    "행 상자를 만들면 그 행만 라벨 칸이 따로 늘어난다");
+const 안내소스 = readFileSync(FRONT_ROOT + 'src/components/elements/shop/DeliveryNotice.js', 'utf8');
+t('배송 안내가 값 칸에 놓인다', /gridColumn: 2/.test(안내소스));
 
 // BenefitNotice 는 배송 안내를 품지 않는다 — 품으면 배송비와 사이가 벌어진다.
 const 혜택 = readFileSync(FRONT_ROOT + 'src/components/elements/shop/BenefitNotice.js', 'utf8');

@@ -17,9 +17,7 @@ import { isShopgoBrand } from 'src/utils/is-shopgo';
 import { formatLang } from 'src/utils/format';
 import QuantityStepper from 'src/components/elements/shop/QuantityStepper';
 import { useLocales } from 'src/locales';
-import ShippingLine from 'src/components/elements/shop/ShippingLine';
-import DeliveryNotice from 'src/components/elements/shop/DeliveryNotice';
-import BenefitNotice from 'src/components/elements/shop/BenefitNotice';
+import DetailNotices from 'src/components/elements/shop/DetailNotices';
 import OrderFormFields from 'src/components/elements/shop/OrderFormFields';
 import ProductOptions from 'src/components/elements/shop/ProductOptions';
 import ProductInfoRows from 'src/components/elements/shop/ProductInfoRows';
@@ -223,12 +221,9 @@ const ItemDemo = (props) => {
                         </Typography>
                       </div>
                       <Divider sx={{ my: 1 }} />
-                      {/* 배송비 한 줄 — 문구는 ShippingLine 한 곳에서만 만든다. */}
-                      <ShippingLine item={product} />
-                      {/* 배송 안내(가맹점별·SHOPGO 하위 전용) — 배송비 바로 아래. 둘은 한 묶음이라 떼어 놓지 않는다. */}
-                      <DeliveryNotice />
-                      {/* 혜택 안내(본사 공통) — 배송비 바로 아래 */}
-                      <BenefitNotice sx={{ mb: 1 }} tone={{ fontSize: 13 }} />
+                      {/* 가격 아래 안내 묶음 — 배송비 · 배송 안내 · 혜택을 한 표로 그린다.
+                          라벨 칸을 함께 나누므로 혜택 라벨이 몇 글자든 세로줄이 맞는다(DetailNotices). */}
+                      <DetailNotices item={product} />
                       {/* 옵션 · 추가상품 · 조합형 — 프레임 6개 공용 컴포넌트.
                           예전엔 이 화면이 옵션 UI 를 따로 그렸고, 특성(characters)을
                           '눌러야만 구매되는 필수 버튼'으로 그렸다. 같은 특성을 프레임3·5·6 은

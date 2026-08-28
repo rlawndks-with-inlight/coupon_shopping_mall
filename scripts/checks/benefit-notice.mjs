@@ -31,10 +31,16 @@ const 화면 = {
   '프레임5': 'src/views/blog/product/id/demo-4.js',
   '프레임6': 'src/views/blog/product/id/demo-9.js',
 };
+// 2026-08-28 부터 대부분의 프레임은 <DetailNotices> 를 쓴다 — 배송비·배송안내·혜택을
+// 한 그리드에 넣어 라벨 칸을 함께 나누게 한 묶음 컴포넌트다(그 안에서 BenefitNotice 를 그린다).
+// blog-2 처럼 자기 '배송정보' 표를 가진 프레임만 아직 BenefitNotice 를 직접 쓴다.
+// 어느 쪽이든 '혜택이 그 화면에 나온다' 는 사실은 같다.
 for (const [이름, rel] of Object.entries(화면)) {
   const s = 주석뺀(rd(FRONT + rel));
-  eq(`${이름} import`, /import BenefitNotice from 'src\/components\/elements\/shop\/BenefitNotice'/.test(s), true);
-  eq(`${이름} 사용`, /<BenefitNotice[\s/>]/.test(s), true);
+  const 묶음 = /<DetailNotices[\s/>]/.test(s);
+  eq(`${이름} import`, 묶음
+    || /import BenefitNotice from 'src\/components\/elements\/shop\/BenefitNotice'/.test(s), true);
+  eq(`${이름} 사용`, 묶음 || /<BenefitNotice[\s/>]/.test(s), true);
 }
 
 // ── 공용 컴포넌트 ────────────────────────────────────────────────────────

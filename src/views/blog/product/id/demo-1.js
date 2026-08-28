@@ -20,9 +20,7 @@ import { useLocales } from 'src/locales';
 import { formatLang } from 'src/utils/format';
 import DialogBuyNow from 'src/components/dialog/DialogBuyNow';
 import QuantityStepper from 'src/components/elements/shop/QuantityStepper';
-import BenefitNotice from 'src/components/elements/shop/BenefitNotice';
-import ShippingLine from 'src/components/elements/shop/ShippingLine';
-import DeliveryNotice from 'src/components/elements/shop/DeliveryNotice';
+import DetailNotices from 'src/components/elements/shop/DetailNotices';
 import OrderFormFields from 'src/components/elements/shop/OrderFormFields';
 
 
@@ -218,15 +216,9 @@ const Demo1 = (props) => {
               <div style={{ fontSize: themeObj.font_size.size8, marginLeft: '0.25rem' }}>{getPriceUnitByLang()}</div>
             </Row>
           </PriceContainer>
-          {/* 배송비. 혜택과 같은 이유로 본문에 둔다 — 이 프레임은 구매 서랍에만 있어서
-              가맹점이 배송비를 설정해도 손님은 '구매하기'를 누르기 전엔 볼 수 없었다
-              (2026-08-28 mbc03 에서 확인). 서랍의 표기는 합계 계산용이라 그대로 둔다. */}
-          <ShippingLine item={item} />
-          {/* 배송 안내(가맹점별·SHOPGO 하위 전용) — 배송비 바로 아래. 둘은 한 묶음이라 떼어 놓지 않는다. */}
-          <DeliveryNotice />
-          {/* 혜택 안내(본사 공통). 구매 서랍이 아니라 본문 가격 아래에 둔다 —
-              서랍은 '구매하기'를 눌러야 열려서, 살지 말지 고르는 단계에서는 안 보인다. */}
-          <BenefitNotice sx={{ mb: '0.75rem' }} tone={{ fontSize: 13 }} />
+          {/* 가격 아래 안내 묶음 — 배송비 · 배송 안내 · 혜택을 한 표로 그린다.
+              라벨 칸을 함께 나누므로 혜택 라벨이 몇 글자든 세로줄이 맞는다(DetailNotices). */}
+          <DetailNotices item={item} />
               {/* 주문 추가 입력항목 — 서식이 걸린 몰에서만 나타난다 */}
               <OrderFormFields product={item} values={orderFormValues} onChange={setOrderFormValues} sx={{ mt: 2 }} />
           {/* 품절·중단됨을 상세에서 바로 알린다 — 예전엔 표시도 없고 버튼도 살아 있어

@@ -1,4 +1,5 @@
 import styled from 'styled-components'
+import ProductNotFound from 'src/components/elements/shop/ProductNotFound';
 import { Box, Tab, Tabs, Card, Grid, Divider, } from '@mui/material';
 import { test_item } from 'src/data/test-data';
 import { useSettingsContext } from 'src/components/settings';
@@ -39,6 +40,7 @@ const ItemDemo = (props) => {
   const { themeStretch, themeDnsData } = useSettingsContext();
 
   const [loading, setLoading] = useState(true);
+  const [notFound, setNotFound] = useState(false);
 
   const [currentTab, setCurrentTab] = useState('description');
   const [product, setProduct] = useState({});
@@ -65,6 +67,8 @@ const ItemDemo = (props) => {
       id: router.query?.id
     });
     if (!data) {
+      // 없는 상품 주소로 들어오면 예전엔 빈 {} 로 그리다가 캐러셀에서 화면이 죽었다.
+      setNotFound(true);
       setLoading(false);
       return;
     }
@@ -131,6 +135,8 @@ const ItemDemo = (props) => {
         <ContentWrapper>
           {loading ?
             <SkeletonProductDetails />
+            : notFound ?
+            <ProductNotFound />
             :
             <>
               {product && (

@@ -665,6 +665,8 @@ const en = {
     "재고와 1인 구매 수량이 너무 큽니다. 다시 확인해 주세요.": "That stock or limit is too large. Please check again.",
     "선택할 수 없는 값이 들어왔습니다. 화면을 새로고침한 뒤 다시 해 주세요.": "An invalid selection was received. Refresh the page and try again.",
     "상품명을 입력해 주세요.": "Please enter a product name.",
+    "판매가 끝났거나 주소가 잘못되었습니다.": "It may have been removed, or the link is wrong.",
+    "다른 상품 보기": "See other products",
     "포인트는 정수로만 입력해 주세요.": "Points must be whole numbers.",
     "0 포인트는 지급하거나 차감할 수 없습니다.": "You cannot grant or deduct 0 points.",
     "한 번에 주고받을 수 있는 포인트를 넘었습니다. 다시 확인해 주세요.": "That exceeds the points allowed in one transaction. Please check again.",

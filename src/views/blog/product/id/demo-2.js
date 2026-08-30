@@ -23,6 +23,7 @@ import { ProductDetailsReview } from 'src/views/@dashboard/e-commerce/details';
 import { isShopgoBrand } from 'src/utils/is-shopgo';
 import QuantityStepper from 'src/components/elements/shop/QuantityStepper';
 import DetailNotices from 'src/components/elements/shop/DetailNotices';
+import ProductNotFound from 'src/components/elements/shop/ProductNotFound';
 import OrderFormFields from 'src/components/elements/shop/OrderFormFields';
 
 
@@ -115,6 +116,8 @@ const Demo2 = (props) => {
     const theme = useTheme();
 
     const [item, setItem] = useState({});
+    // 없는 상품이면 빈 껍데기가 그려지던 자리다 — 무슨 일인지 말해 준다.
+    const [notFound, setNotFound] = useState(false);
     const [scrollY, setScrollY] = useState(0);
     const [cartOpen, setCartOpen] = useState(false)
     const [selectOptions, setSelectOptions] = useState([]);
@@ -141,8 +144,9 @@ const Demo2 = (props) => {
         let product = await apiShop('product', 'get', {
             id: router.query?.id
         })
+        if (!product) { setNotFound(true); }
         if (product) {
-            product['images'] = [product?.product_img, ...product?.sub_images.map(item => item.product_sub_img)].filter(Boolean);
+            product['images'] = [product?.product_img, ...(product?.sub_images ?? []).map(item => item.product_sub_img)].filter(Boolean);
             setItem(product)
             //console.log(product)
 
@@ -206,6 +210,8 @@ const Demo2 = (props) => {
     }
 
     const [buyOpen, setBuyOpen] = useState(false);
+    if (notFound) return <ProductNotFound />;
+
     return (
         <>
             <DialogBuyNow

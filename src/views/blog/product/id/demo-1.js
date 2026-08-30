@@ -21,6 +21,7 @@ import { formatLang } from 'src/utils/format';
 import DialogBuyNow from 'src/components/dialog/DialogBuyNow';
 import QuantityStepper from 'src/components/elements/shop/QuantityStepper';
 import DetailNotices from 'src/components/elements/shop/DetailNotices';
+import ProductNotFound from 'src/components/elements/shop/ProductNotFound';
 import OrderFormFields from 'src/components/elements/shop/OrderFormFields';
 
 
@@ -110,6 +111,8 @@ const Demo1 = (props) => {
   const theme = useTheme();
 
   const [item, setItem] = useState({});
+  // 없는 상품이면 빈 껍데기가 그려지던 자리다 — 무슨 일인지 말해 준다.
+  const [notFound, setNotFound] = useState(false);
   const [scrollY, setScrollY] = useState(0);
   const [cartOpen, setCartOpen] = useState(false)
   const [selectOptions, setSelectOptions] = useState([]);
@@ -131,9 +134,11 @@ const Demo1 = (props) => {
       id: router.query?.id
     })
     if (product) {
-      product['images'] = [product?.product_img, ...product?.sub_images.map(item => item.product_sub_img)].filter(Boolean);
+      product['images'] = [product?.product_img, ...(product?.sub_images ?? []).map(item => item.product_sub_img)].filter(Boolean);
       setItem(product)
 
+    } else {
+      setNotFound(true);
     }
   }
 
@@ -172,6 +177,8 @@ const Demo1 = (props) => {
     let select_product_groups = selectItemOptionUtil(group, option, selectProductGroups, is_option_multiple);
     setSelectProductGroups(select_product_groups);
   }
+
+  if (notFound) return <ProductNotFound />;
 
   return (
     <>

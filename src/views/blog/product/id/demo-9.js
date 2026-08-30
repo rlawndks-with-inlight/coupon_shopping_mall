@@ -13,6 +13,7 @@ import { apiShop } from 'src/utils/api';
 import { insertCartDataUtil, startBuyNow, selectItemOptionUtil, 배송비표시, 무료배송안내 } from 'src/utils/shop-util';
 import QuantityStepper from 'src/components/elements/shop/QuantityStepper';
 import DetailNotices from 'src/components/elements/shop/DetailNotices';
+import ProductNotFound from 'src/components/elements/shop/ProductNotFound';
 import ProductThumbs, { buildProductImages } from 'src/components/elements/shop/ProductThumbs';
 import toast from 'react-hot-toast';
 import OrderFormFields from 'src/components/elements/shop/OrderFormFields';
@@ -224,6 +225,8 @@ const Demo9 = () => {
   const { themeDnsData, themeCartData, onChangeCartData } = useSettingsContext();
   const { user } = useAuthContext();
   const [item, setItem] = useState(null);
+  // 없는 상품이면 Loading 에서 영원히 멈추던 자리다 — 무슨 일인지 말해 준다.
+  const [notFound, setNotFound] = useState(false);
   const [selectProductGroups, setSelectProductGroups] = useState({ count: 1, groups: [] });
   // 주문 추가 입력항목(행사일 등)의 값. 담기·바로구매 때 상품에 실어 보낸다.
   const [orderFormValues, setOrderFormValues] = useState({});
@@ -235,7 +238,7 @@ const Demo9 = () => {
 
   const loadProduct = async () => {
     const product = await apiShop('product', 'get', { id: router.query?.id });
-    if (product) { setItem(product); setImgIdx(0); }
+    if (product) { setItem(product); setImgIdx(0); } else { setNotFound(true); }
   };
 
   const handleAddCart = async () => {
@@ -252,6 +255,7 @@ const Demo9 = () => {
     setSelectProductGroups({ ...next });
   };
 
+  if (notFound) return <Wrapper><ProductNotFound /></Wrapper>;
   if (!item) return <Wrapper><DetailSection>Loading...</DetailSection></Wrapper>;
 
   // 대표이미지 + 서브이미지.

@@ -660,6 +660,8 @@ const es = {
     "재고와 1인 구매 수량이 너무 큽니다. 다시 확인해 주세요.": "El stock o el límite es demasiado grande. Revísalo.",
     "선택할 수 없는 값이 들어왔습니다. 화면을 새로고침한 뒤 다시 해 주세요.": "Se recibió una selección no válida. Actualiza la página e inténtalo de nuevo.",
     "상품명을 입력해 주세요.": "Escribe el nombre del producto.",
+    "판매가 끝났거나 주소가 잘못되었습니다.": "Puede haberse retirado o el enlace es incorrecto.",
+    "다른 상품 보기": "Ver otros productos",
     "포인트는 정수로만 입력해 주세요.": "Los puntos deben ser números enteros.",
     "0 포인트는 지급하거나 차감할 수 없습니다.": "No se pueden dar ni quitar 0 puntos.",
     "한 번에 주고받을 수 있는 포인트를 넘었습니다. 다시 확인해 주세요.": "Supera los puntos permitidos por operación. Revísalo.",

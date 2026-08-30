@@ -100,7 +100,10 @@ export default function ProductDetailsCarousel({ product, type = '' }) {
     setSelectedImage(-1);
   };
 
-  let val = product.sub_images.length > 0 && product.sub_images[0].product_sub_file
+  // ⚠ 이 줄만 ?. 가 빠져 있었다. 없는 상품 주소로 들어오면 product 가 {} 라
+  //   `undefined.length` 로 **화면이 통째로 죽었다**(Application error 영어 한 줄).
+  //   아래 줄들은 전부 ?. 를 쓰고 있었다 — 한 자리만 빠져도 프레임 전체가 백지가 된다.
+  let val = product.sub_images?.length > 0 && product.sub_images?.[0]?.product_sub_file
     ? product.sub_images?.length
     : product.sub_images?.filter(
       item => typeof item === 'object' && item !== null && 'product_sub_img' in item && item['product_sub_img'] != null

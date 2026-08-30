@@ -1,4 +1,5 @@
 import styled from 'styled-components'
+import ProductNotFound from 'src/components/elements/shop/ProductNotFound';
 import { Grid, Typography, Button, Divider, Stack, Tab, Tabs, Chip } from '@mui/material';
 import { useSettingsContext } from 'src/components/settings';
 import { ProductDetailsCarousel, ProductDetailsReview } from 'src/views/@dashboard/e-commerce/details';
@@ -53,6 +54,7 @@ const ItemDemo = (props) => {
   // 프레임2 상세는 다국어를 전혀 거치지 않았다 — 언어를 바꿔도 상품명·설명·탭 이름이 한국어로 남았다.
   const { translate, currentLang } = useLocales();
   const [loading, setLoading] = useState(true);
+  const [notFound, setNotFound] = useState(false);
   const [currentTab, setCurrentTab] = useState('description');
   const [product, setProduct] = useState({});
   const [reviewPage, setReviewPage] = useState(1);
@@ -83,6 +85,8 @@ const ItemDemo = (props) => {
       seller_id: themeDnsData?.seller_id ?? 0
     });
     if (!data) {
+      // 없는 상품 주소로 들어오면 예전엔 빈 {} 로 그리다가 캐러셀에서 화면이 죽었다.
+      setNotFound(true);
       setLoading(false);
       return;
     }
@@ -179,6 +183,8 @@ const ItemDemo = (props) => {
         <ContentWrapper>
           {loading ?
             <SkeletonProductDetails />
+            : notFound ?
+            <ProductNotFound />
             :
             <>
               {product && (

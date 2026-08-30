@@ -236,7 +236,10 @@ function Placeholder({ sx, ...other }) {
         </Typography>
 
         <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-          {other?.sub_title || translate('파일을 드롭다운 하거나 업로드 해주세요.')}
+          {/* '드롭다운' 은 선택 목록을 뜻하는 다른 말이다. 파일을 끌어다 놓는 것은 '드래그 앤 드롭' 이라
+              인터넷을 잘 모르는 가맹점 사장님에게는 오히려 헷갈리는 안내였다.
+              영어·중국어·일본어 번역도 그 잘못을 그대로 옮겨 놓았었다(drop down / 下拉 / ドロップダウン). */}
+          {other?.sub_title || translate('파일을 끌어다 놓거나 눌러서 올려 주세요.')}
         </Typography>
         <Typography variant="body2" sx={{ color: 'text.secondary' }}>
           {other.fileExplain?.width}

@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
+import EmptyResult from 'src/components/elements/shop/EmptyResult';
 import styled from 'styled-components'
 import { useTheme } from "@emotion/react";
 import { useRouter } from "next/router";
@@ -205,7 +206,7 @@ const ItemsDemo = (props) => {
                   <>
                     <Col>
                       <Icon icon={'basil:cancel-outline'} style={{ margin: '8rem auto 1rem auto', fontSize: themeObj.font_size.size1, color: themeObj.grey[300] }} />
-                      <div style={{ margin: 'auto auto 8rem auto' }}>{translate('검색결과가 없습니다.')}</div>
+                      <div style={{ margin: 'auto auto 8rem auto' }}><EmptyResult /></div>
                     </Col>
                   </>}
               </>}

@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import EmptyResult from 'src/components/elements/shop/EmptyResult';
 import { test_items } from 'src/data/test-data';
 import styled from 'styled-components'
 import { Col, Row, Title, themeObj } from 'src/components/elements/styled-components';
@@ -160,7 +161,7 @@ const Demo2 = (props) => {
                                         <Col>
                                             <Icon icon={'basil:cancel-outline'} style={{ margin: '8rem auto 1rem auto', fontSize: themeObj.font_size.size1, color: themeObj.grey[300] }} />
                                             <div style={{ margin: 'auto auto 8rem auto' }}>
-                                                {전체보기 ? translate('등록된 상품이 없습니다.') : translate('검색결과가 없습니다.')}
+                                                <EmptyResult 전체보기={전체보기} />
                                             </div>
                                         </Col>
                                     </>}

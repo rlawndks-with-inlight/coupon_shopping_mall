@@ -1,4 +1,5 @@
 import { Box, Checkbox, FormControlLabel, MenuItem, Stack, TextField, Typography } from '@mui/material';
+import { getOrderFormFields } from 'src/utils/shop-util';
 import { useLocales } from 'src/locales';
 import { formatLang } from 'src/utils/format';
 import { CHOICE_TYPES, DATE_TYPES, dateRange, parseOptionList } from 'src/data/order-form-types';
@@ -30,7 +31,10 @@ const ymd = (d) => (d ? `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(
 
 const OrderFormFields = ({ product, values, onChange, sx = {} }) => {
     const { translate, currentLang } = useLocales();
-    const fields = Array.isArray(product?.order_form_fields) ? product.order_form_fields : [];
+    // ⚠ 예전엔 여기서 product.order_form_fields 를 직접 읽었다. 그래서 본사가 이 기능을
+    //   꺼도 손님 화면에는 계속 떴다(상품에 값이 남아 있으므로). 공용 헬퍼를 쓴다 —
+    //   getOrderFormFields 가 브랜드 설정(is_use_order_form)을 함께 본다.
+    const fields = getOrderFormFields(product);
 
     if (!fields.length) return null;
 

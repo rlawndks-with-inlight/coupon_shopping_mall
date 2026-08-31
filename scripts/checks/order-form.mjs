@@ -157,7 +157,11 @@ eq('장바구니 시그니처에 값 포함', /orderFormSignature\(line\?\.order
 const cmp = 주석뺀(readFileSync(FRONT + 'src/components/elements/shop/OrderFormFields.js', 'utf8'));
 // 서식이 없으면 아무것도 안 그린다 — 대부분의 몰은 이 카드가 없다
 eq('항목 없으면 렌더 안 함', /if \(!fields\.length\) return null/.test(cmp), true);
-eq('항목은 상품에서 받는다', /product\?\.order_form_fields/.test(cmp), true);
+// 항목은 **상품마다** 다르다(몰 설정 한 벌이 아니다). 지금은 공용 헬퍼를 거치는데,
+// 그 헬퍼가 product 를 받아 상품별 값을 돌려주고 브랜드 설정(사용여부)까지 함께 본다.
+eq('항목은 상품에서 받는다', /getOrderFormFields\(product\)/.test(cmp), true);
+const 유틸 = 주석뺀(readFileSync(FRONT + 'src/utils/shop-util.js', 'utf8'));
+eq('헬퍼가 상품별 값을 준다', /product\?\.order_form_fields/.test(유틸), true);
 // 리드타임을 달력 min 으로 넣어야 '못 고르게' 막힌다. 안내문만으로는 못 막는다.
 eq('달력에 min 적용', /min: 날짜시간 \?/.test(cmp), true);
 eq('라벨도 번역 경유', /formatLang\(f, 'label'/.test(cmp), true);

@@ -40,6 +40,17 @@ t('손님 화면도 꺼진 몰에서는 항목을 안 준다',
 t('설정을 못 읽으면 끈 것으로 본다', /catch \(e\) \{\s*return \[\];/.test(유틸),
     '기본은 꺼짐이다 — 못 읽었다고 켜 두면 안 된다');
 
+// ⚠ 값을 읽는 자리가 세 곳이다. 하나라도 직접 읽으면 껐는데 계속 보인다(실측으로 걸렸다).
+//   손님 화면(OrderFormFields) · 결제 전 필수검사(OrderSheet) · 담기 검사(shop-util).
+const 필드화면 = 읽기('src/components/elements/shop/OrderFormFields.js');
+t('손님 화면이 헬퍼를 쓴다', /getOrderFormFields\(product\)/.test(필드화면),
+    'product.order_form_fields 를 직접 읽으면 브랜드 설정을 못 본다');
+const 주문서 = 읽기('src/views/shop/order/OrderSheet.js');
+t('결제 전 필수검사도 헬퍼를 쓴다', /const 항목 = getOrderFormFields\(p\)/.test(주문서),
+    '직접 읽으면 껐는데도 필수 항목 때문에 결제가 막힌다');
+t('어디서도 직접 읽지 않는다',
+    !/Array\.isArray\(p(roduct)?\?\.order_form_fields\)/.test(필드화면 + 주문서));
+
 // ── ② 기본 택배사 ──────────────────────────────────────────────────────
 const 택배 = 읽기('src/components/elements/shop/CourierLine.js');
 t('택배사 줄이 공용 헬퍼를 쓴다', /기본택배사/.test(택배),

@@ -15,7 +15,7 @@ import Label from 'src/components/label/Label';
 import EmptyContent from 'src/components/empty-content/EmptyContent';
 import Iconify from 'src/components/iconify/Iconify';
 import { useSettingsContext } from 'src/components/settings';
-import { calcOrderTotals, calculatorPrice, getCartDataUtil, makePayData, onPayProductsByAuth, onPayProductsByHand, onPayProductsByPayletter, onPayProductsByForspay } from 'src/utils/shop-util';
+import { calcOrderTotals, calculatorPrice, getCartDataUtil, makePayData, onPayProductsByAuth, onPayProductsByHand, onPayProductsByPayletter, onPayProductsByForspay, getOrderFormFields } from 'src/utils/shop-util';
 import { loadOrderDraft, saveOrderDraft, clearOrderDraft } from 'src/utils/order-draft';
 
 import { findMissingRequired } from 'src/data/order-form-types';
@@ -425,7 +425,9 @@ export default function OrderSheet({ router }) {
     // ⚠ 항목은 **줄마다 다르다**. 상품마다 거는 것이라 한 주문에 행사날짜를 묻는 상품과
     //   안 묻는 상품이 섞인다. 예전처럼 몰 설정에서 한 벌만 읽으면 엉뚱한 줄을 검사한다.
     for (const p of products) {
-      const 항목 = Array.isArray(p?.order_form_fields) ? p.order_form_fields : [];
+      // ⚠ 공용 헬퍼를 쓴다. 직접 읽으면 본사가 이 기능을 꺼도 상품에 남은 값 때문에
+      //   **껐는데 결제가 막히는** 몰이 생긴다(필수 항목이면 여기서 걸린다).
+      const 항목 = getOrderFormFields(p);
       if (!항목.length) continue;
       const 빠진항목 = findMissingRequired(항목, p?.order_form_values);
       if (빠진항목) {

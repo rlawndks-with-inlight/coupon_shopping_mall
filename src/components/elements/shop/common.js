@@ -88,6 +88,13 @@ const RailCard = styled.div`
   /* 일부 카드는 루트에 자기 폭(예: width 23.5%)을 박아 4열 그리드를 가정한다.
      레일에선 셀이 폭을 정하므로 카드 루트는 셀을 꽉 채워야 한다 — 안 그러면 쪼그라든다. */
   & > * { width: 100% !important; }
+  /* ⚠ 레일이 손가락으로 안 밀리던 원인 (2026-08-31 제보 · 실측으로 잡음).
+     slick-carousel 의 기본 CSS 가 **모든** .slick-slider 에 touch-action: pan-y 를 박는다.
+     pan-y 는 '세로 말고는 브라우저가 손대지 마라' 는 뜻이라, 카드 안에 슬라이더가 있는
+     프레임2 에서는 사진 위를 가로로 밀어도 레일이 꿈쩍하지 않았다
+     (사진 위 → scrollLeft 0 / 글자 위 → 222 로 갈렸다. 사진이 카드의 대부분이다).
+     레일 안에서는 가로로 미는 주체가 레일이어야 하므로 여기서 되돌린다. */
+  .slick-slider, .slick-list { touch-action: auto; }
 `
 const RailArrow = styled.button`
   position: absolute;

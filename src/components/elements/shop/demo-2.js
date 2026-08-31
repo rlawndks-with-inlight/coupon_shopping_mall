@@ -105,6 +105,15 @@ export const Item2 = (props) => {
         autoplaySpeed: 2500,
         slidesToScroll: 1,
         dots: false,
+        // ⚠ 이 카드만 사진칸에 슬라이더를 하나 더 갖고 있다(다른 프레임 카드에는 없다).
+        //   메인화면 상품줄은 가로로 미는 '레일' 인데, 그 안에서 카드가 손가락을 가져가면
+        //   **레일이 안 밀린다**(2026-08-31 제보). 사진이 카드의 대부분이라 사실상 못 민다.
+        //   사진은 알아서 돌아가고(autoplay) 손님은 눌러서 상품으로 들어가면 되므로,
+        //   손가락 동작은 바깥 레일에 양보한다.
+        //   (CSS 쪽도 같이 풀어야 한다 — common.js 의 RailCard 주석 참고)
+        swipe: false,
+        draggable: false,
+        touchMove: false,
     }
     return (
         <>

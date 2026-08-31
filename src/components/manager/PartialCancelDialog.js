@@ -41,6 +41,17 @@ const PartialCancelDialog = ({ open, onClose, trxId, onDone }) => {
         (async () => {
             const r = await apiManager(`pays/cancel-partial/${trxId}`, 'get', {});
             setState(r ?? null);
+            // 고객이 취소요청한 상품·수량을 미리 채운다 — 관리자가 고객 요청을 손으로 옮겨 적지 않게,
+            // 그리고 '부분인지 전체인지, 어떤 상품인지' 를 그 자리에서 바로 보게 한다.
+            if (r?.has_request) {
+                const pre = {};
+                (r.lines ?? []).forEach((l) => {
+                    const n = Math.min(Number(l.requested_count) || 0, Number(l.remain_count) || 0);
+                    if (n > 0) pre[l.order_id] = String(n);
+                });
+                setQty(pre);
+                if (r.request_reason) setReason(r.request_reason);
+            }
             setLoading(false);
         })();
     }, [open, trxId]);
@@ -66,6 +77,12 @@ const PartialCancelDialog = ({ open, onClose, trxId, onDone }) => {
         return s + (n === l.remain_count ? l.remain_amount : l.unit_price * n);
     }, 0);
     const 전부취소 = lines.length > 0 && lines.every((l) => 고른수량(l) === l.remain_count);
+
+    // 고객이 낸 취소요청 요약 — 부분/전체인지, 어떤 상품 몇 개인지.
+    const 요청줄 = lines.filter((l) => Number(l.requested_count) > 0);
+    const 요청합계 = lines.reduce((s, l) => s + Math.min(Number(l.requested_count) || 0, l.remain_count), 0);
+    const 남은합계 = lines.reduce((s, l) => s + l.remain_count, 0);
+    const 전체요청 = 요청줄.length > 0 && 요청합계 >= 남은합계;
 
     const 실행 = async () => {
         if (!고른줄.length) { toast.error('취소할 상품과 수량을 선택해 주세요.'); return; }
@@ -142,6 +159,20 @@ const PartialCancelDialog = ({ open, onClose, trxId, onDone }) => {
 
                 {!확인단계 && !loading && state?.cancelable && state.partial_supported &&
                     <Stack spacing={1.5}>
+                        {/* 고객이 취소요청을 낸 경우 — 부분/전체인지, 어떤 상품 몇 개인지 한눈에 보여준다.
+                            요청 수량은 아래 칸에 미리 채워져 있으니 관리자는 확인 후 실행만 하면 된다. */}
+                        {state?.has_request && (
+                            <Alert severity="info" sx={{ py: 0.5 }}>
+                                <Typography variant="caption">
+                                    고객이 <b>{전체요청 ? '전체' : '부분'} 취소</b>를 요청했습니다
+                                    {요청줄.length > 0
+                                        ? ` — ${요청줄.map((l) => `${l.order_name} ${Math.min(Number(l.requested_count), l.remain_count)}개`).join(', ')}`
+                                        : ''}
+                                    . 요청 수량을 미리 채웠으니 확인 후 실행하세요.
+                                    {state?.request_reason ? ` · 사유: ${state.request_reason}` : ''}
+                                </Typography>
+                            </Alert>
+                        )}
                         {lines.map((l) => (
                             <Stack key={l.order_id} direction="row" alignItems="center" spacing={1.5}
                                 sx={{ opacity: l.remain_count === 0 ? 0.45 : 1 }}>
@@ -150,6 +181,7 @@ const PartialCancelDialog = ({ open, onClose, trxId, onDone }) => {
                                     <Typography sx={{ fontSize: 12, color: 'text.secondary' }}>
                                         개당 {commarNumber(l.unit_price)}원 · 주문 {l.order_count}개
                                         {l.cancel_count > 0 ? ` · 취소됨 ${l.cancel_count}개` : ''}
+                                        {Number(l.requested_count) > 0 ? ` · 고객요청 ${Math.min(Number(l.requested_count), l.remain_count)}개` : ''}
                                         {' · '}<b>남음 {l.remain_count}개</b>
                                     </Typography>
                                 </Stack>

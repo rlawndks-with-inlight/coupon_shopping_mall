@@ -415,6 +415,62 @@ export const onPayProductsByPayletter = async (products_, payData_) => { // 카�
         return false;
     }
 }
+// 포스페이 forspay_ui 결제 팝업 열기 + 메시징(문서 규격).
+//   1) window.open(popup_url) — 데스크톱은 크기 지정 팝업(닫기 X), 모바일은 새 탭.
+//   2) 팝업의 FORSPAY_READY 수신 → init_payload 를 팝업으로 postMessage.
+//   3) FORSPAY_RESULT 수신 → 성공/실패 처리(결과페이지로 이동).
+// ★ 최종 확정은 서버 웹훅(noti_url)이 진실원 — 이 메시지/이동은 UX용이다.
+const openForspayPopup = (res, payData) => {
+    const isMobile = /iPhone|Android|iPad|iPod|Mobile/i.test(navigator.userAgent);
+    const features = isMobile ? '' : 'width=500,height=760,menubar=no,toolbar=no,location=no,status=no,resizable=yes,scrollbars=yes';
+    const popup = window.open(res.popup_url, 'forspay_pay', features);
+    if (!popup) {
+        toast.error(번역('팝업이 차단되어 결제창을 열 수 없습니다. 팝업 허용 후 다시 시도해 주세요.'));
+        return;
+    }
+    let popupOrigin = '*';
+    try { popupOrigin = new URL(res.popup_url).origin; } catch (e) { }
+    const ord_num = res?.init_payload?.order?.ord_num || payData?.ord_num || '';
+    let handled = false;
+
+    const cleanup = () => {
+        window.removeEventListener('message', onMessage);
+        clearInterval(closedTimer);
+    };
+    const goResult = (result_cd) => {
+        if (handled) return;
+        handled = true;
+        cleanup();
+        try { popup.close(); } catch (e) { }
+        window.location.href = `/shop/auth/pay-result?result_cd=${encodeURIComponent(result_cd)}&ord_num=${encodeURIComponent(ord_num)}`;
+    };
+    const onMessage = (e) => {
+        // 팝업 출처만 신뢰한다(보안).
+        if (popupOrigin !== '*' && e.origin !== popupOrigin) return;
+        const d = e.data || {};
+        if (d.type === 'FORSPAY_READY') {
+            try { popup.postMessage(res.init_payload, popupOrigin); } catch (err) { }
+            return;
+        }
+        if (d.type === 'FORSPAY_RESULT') {
+            if (d.success || d.code === '0000') goResult('0000');
+            else goResult(d.code || '9999'); // 예: PV999 = 사용자 취소
+        }
+    };
+    window.addEventListener('message', onMessage);
+
+    // 결과 없이 팝업이 닫히면(사용자가 그냥 닫음) 취소로 본다.
+    // 결제됐다면 FORSPAY_RESULT 가 먼저 오므로 실패 페이지로 튕기지 않고 안내만 한다
+    // (혹시 결제됐다면 웹훅이 이미 확정 — 주문내역에서 확인된다).
+    const closedTimer = setInterval(() => {
+        if (handled) return;
+        if (popup.closed) {
+            cleanup();
+            toast(번역('결제가 완료되지 않았습니다. 결제하셨다면 주문내역에서 확인해 주세요.'));
+        }
+    }, 800);
+};
+
 export const onPayProductsByForspay = async (products_, payData_) => { // 인증결제(포스페이)
     if (isDemoHost()) {
         toast.error(번역('데모 미리보기에서는 결제할 수 없습니다.'));
@@ -439,9 +495,17 @@ export const onPayProductsByForspay = async (products_, payData_) => { // 인증
     delete payData.payment_modules;
     try {
         let res = await apiManager('pays/auth_forspay', 'create', payData);
-        if (res?.id > 0 && res?.launch_page_url) {
-            window.location.href = res.launch_page_url; // 포스페이 PG 결제창으로 이동
-            return { ...payData, trans_id: res.id };
+        if (res?.id > 0) {
+            // forspay_ui: 포스페이 자체 결제 팝업 + 메시징(백엔드 FORSPAY_CHECKOUT_MODE=forspay_ui 일 때).
+            if (res.checkout_mode === 'forspay_ui' && res.popup_url) {
+                openForspayPopup(res, payData);
+                return { ...payData, trans_id: res.id };
+            }
+            // direct_pg_ui(기존): PG 결제창 URL 로 이동.
+            if (res.launch_page_url) {
+                window.location.href = res.launch_page_url;
+                return { ...payData, trans_id: res.id };
+            }
         }
         return false;
     } catch (err) {

@@ -30,9 +30,20 @@ export const DashboardDemo2 = () => {
     const [sDt, setSDt] = useState(new Date());
     const [eDt, setEDt] = useState(new Date());
     const [data, setData] = useState({});
+    // 취소요청 '처리 대기' 건수 — 상단 통계 위젯은 기간 필터(기본 '오늘')를 타므로,
+    // 처리해야 할 취소요청은 기간과 무관하게 '누적'으로 보여준다(대시보드 로드시 1회 조회).
+    const [취소요청대기, set취소요청대기] = useState(0);
 
     useEffect(() => {
         onChangePage(searchObj)
+    }, [])
+
+    useEffect(() => {
+        (async () => {
+            // cancel_status=1 = 취소요청(trx_status=1 AND 미취소). 기간을 안 넘겨 누적으로 센다.
+            const r = await apiManager('transactions', 'list', { cancel_status: 1, page: 1, page_size: 1 });
+            set취소요청대기(Number(r?.total) || 0);
+        })();
     }, [])
 
     const onChangePage = async (search_obj) => {
@@ -264,6 +275,22 @@ export const DashboardDemo2 = () => {
                                 router.push(`/manager/orders/trx-cancel/2`)
                             }}
                         />
+                    </Grid>
+                    {/* 처리 대기 — 관리자가 확인·처리해야 할 것들(누적). 취소요청은 기간 필터와 무관하게 여기 뜬다. */}
+                    <Grid item xs={12} md={12}>
+                        <Typography variant="subtitle1" >처리 대기</Typography>
+                    </Grid>
+                    <Grid item xs={12} md={12}>
+                        <Row style={{ alignItems: 'center', width: '100%', justifyContent: 'space-between', maxWidth: `300px` }}>
+                            <Button variant="outlined" style={{ cursor: 'pointer' }} onClick={() => { router.push(`/manager/orders/trx-cancel/1`) }}>
+                                취소요청
+                            </Button>
+                            <Row style={{ fontWeight: 'bold' }}>
+                                <div style={{ marginRight: '1rem' }}>처리대기 : </div>
+                                <div style={{ color: themeDnsData?.theme_css?.main_color }}>{commarNumber(취소요청대기)}</div>
+                                <div>건</div>
+                            </Row>
+                        </Row>
                     </Grid>
                     <Grid item xs={12} md={12}>
                         <Typography variant="subtitle1" >문의관리</Typography>

@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import {
     Alert, Button, Dialog, DialogActions, DialogContent, DialogTitle,
-    Divider, IconButton, Stack, TextField, Typography,
+    Divider, IconButton, Stack, TextField, Typography, Switch, FormControlLabel,
 } from '@mui/material';
 import { Icon } from '@iconify/react';
 import toast from 'react-hot-toast';
@@ -34,10 +34,14 @@ const PartialCancelDialog = ({ open, onClose, trxId, onDone }) => {
     // 바로 옆이라 잘못 누르기 쉬운 자리다.
     // 모달 위에 모달을 띄우는 대신 이 다이얼로그를 두 단계로 쓴다(자체 Modal 은 본문을 못 넣는다).
     const [확인단계, set확인단계] = useState(false);
+    // 고객 취소요청이 있으면 요청 범위로 수량을 잠근다(전체요청→전체, 부분요청→그 항목만).
+    // 관리자가 '고객 요청과 다르게 직접 조정'을 켜야 수동 편집이 열린다 —
+    // 고객이 요청을 잘못 냈을 때만 의도적으로 다르게 취소하도록.
+    const [직접조정, set직접조정] = useState(false);
 
     useEffect(() => {
         if (!open || !trxId) return;
-        setLoading(true); setQty({}); setReason(''); setIdemKey(새키()); set확인단계(false);
+        setLoading(true); setQty({}); setReason(''); setIdemKey(새키()); set확인단계(false); set직접조정(false);
         (async () => {
             const r = await apiManager(`pays/cancel-partial/${trxId}`, 'get', {});
             setState(r ?? null);
@@ -83,6 +87,8 @@ const PartialCancelDialog = ({ open, onClose, trxId, onDone }) => {
     const 요청합계 = lines.reduce((s, l) => s + Math.min(Number(l.requested_count) || 0, l.remain_count), 0);
     const 남은합계 = lines.reduce((s, l) => s + l.remain_count, 0);
     const 전체요청 = 요청줄.length > 0 && 요청합계 >= 남은합계;
+    // 요청이 있고 아직 직접조정을 안 켰으면 수량 칸을 잠근다.
+    const 잠금 = !!state?.has_request && !직접조정;
 
     const 실행 = async () => {
         if (!고른줄.length) { toast.error('취소할 상품과 수량을 선택해 주세요.'); return; }
@@ -168,7 +174,7 @@ const PartialCancelDialog = ({ open, onClose, trxId, onDone }) => {
                                     {요청줄.length > 0
                                         ? ` — ${요청줄.map((l) => `${l.order_name} ${Math.min(Number(l.requested_count), l.remain_count)}개`).join(', ')}`
                                         : ''}
-                                    . 요청 수량을 미리 채웠으니 확인 후 실행하세요.
+                                    . 요청 범위로 채워 <b>잠겨</b> 있습니다 — 다르게 취소하려면 아래 '직접 조정'을 켜세요.
                                     {state?.request_reason ? ` · 사유: ${state.request_reason}` : ''}
                                 </Typography>
                             </Alert>
@@ -188,15 +194,29 @@ const PartialCancelDialog = ({ open, onClose, trxId, onDone }) => {
                                 <TextField
                                     size="small" type="number" sx={{ width: 96 }}
                                     label="취소 수량"
-                                    disabled={l.remain_count === 0 || busy}
+                                    disabled={l.remain_count === 0 || busy || 잠금}
                                     value={qty[l.order_id] ?? ''}
                                     onChange={(e) => 수량입력(l, e.target.value)}
                                     inputProps={{ min: 0, max: l.remain_count, inputMode: 'numeric' }}
                                 />
-                                <Button size="small" variant="outlined" disabled={l.remain_count === 0 || busy}
+                                <Button size="small" variant="outlined" disabled={l.remain_count === 0 || busy || 잠금}
                                     onClick={() => setQty({ ...qty, [l.order_id]: l.remain_count })}>전부</Button>
                             </Stack>
                         ))}
+
+                        {/* 고객 요청이 있을 때만 잠금/직접조정 토글을 둔다. 요청이 없으면(관리자 자체 취소) 원래대로 자유 편집. */}
+                        {state?.has_request && (
+                            <FormControlLabel
+                                sx={{ ml: 0 }}
+                                control={<Switch size="small" checked={직접조정} onChange={(e) => set직접조정(e.target.checked)} disabled={busy} />}
+                                label={<Typography sx={{ fontSize: 12.5 }}>고객 요청과 다르게 직접 조정</Typography>}
+                            />
+                        )}
+                        {직접조정 && (
+                            <Alert severity="warning" sx={{ py: 0.5 }}>
+                                <Typography variant="caption">고객이 요청한 내용과 다르게 취소합니다. 처리 후 고객에게 안내가 필요할 수 있습니다.</Typography>
+                            </Alert>
+                        )}
 
                         <Divider />
                         <TextField
@@ -231,7 +251,9 @@ const PartialCancelDialog = ({ open, onClose, trxId, onDone }) => {
                         variant="contained" color="error" onClick={() => set확인단계(true)}
                         disabled={busy || !state?.cancelable || !state?.partial_supported || !고른줄.length}
                     >
-                        {`${commarNumber(예상액)}원 취소하기`}
+                        {잠금
+                            ? `요청대로 취소하기 (${commarNumber(예상액)}원)`
+                            : `${commarNumber(예상액)}원 취소하기`}
                     </Button>
                 </>}
                 {확인단계 && <>

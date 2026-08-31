@@ -53,6 +53,18 @@ const GuestSignupPrompt = () => {
     // 가맹점 요청(2026-08-25): 한 번 넘기면 그 방문 내내 안 뜨는 것이 약하다.
     const 비회원으로 = () => { 닫기(true); };
 
+    // 배경(어두운 여백)을 누르거나 ESC 로 닫는 것은 **「비회원으로 계속」이 아니다.**
+    //
+    // 제보(2026-08-31, 모바일): 창 바깥을 눌렀더니 창만 닫히는 게 아니라 주문서로 넘어갔다.
+    // 예전에는 바깥 닫기도 비회원으로() 로 보내서 '계속' 으로 응답했기 때문이다.
+    // 휴대폰은 창 밖 여백이 넓어 손이 스치기 쉬운데, 그 한 번이 곧 결제 진행이 됐다.
+    // 창 닫기는 어느 화면에서나 '없던 일로' 라는 뜻이므로 그대로 맞춘다 —
+    // 진행하려면 창 안의 세 버튼 중 하나를 눌러야 한다.
+    //
+    // ⚠ 그래도 응답은 반드시 한다(멈춤=false). 응답을 빼면 담기가 영영 안 끝나
+    //   버튼이 먹통이 된다 — 아래 닫기() 주석 참고.
+    const 바깥닫기 = () => { 닫기(false); };
+
     const 이동 = (경로) => {
         // 담던 상품은 장바구니(localStorage)에 아직 안 들어갔다. 그래서 '멈춤'으로 응답하고
         // 손님이 돌아와 다시 누르게 한다 — 반쯤 담긴 상태로 남기는 것보다 낫다.
@@ -61,7 +73,7 @@ const GuestSignupPrompt = () => {
     };
 
     return (
-        <Dialog open={open} onClose={비회원으로} maxWidth="xs" fullWidth>
+        <Dialog open={open} onClose={바깥닫기} maxWidth="xs" fullWidth>
             <DialogTitle sx={{ pb: 1 }}>{translate('회원으로 구매하시겠어요?')}</DialogTitle>
             <DialogContent>
                 <Typography variant="body2" sx={{ color: 'text.secondary' }}>

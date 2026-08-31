@@ -14,7 +14,7 @@ import { insertCartDataUtil, startBuyNow, selectItemOptionUtil, 배송비표시,
 import QuantityStepper from 'src/components/elements/shop/QuantityStepper';
 import DetailNotices from 'src/components/elements/shop/DetailNotices';
 import ProductNotFound from 'src/components/elements/shop/ProductNotFound';
-import ProductThumbs, { buildProductImages } from 'src/components/elements/shop/ProductThumbs';
+import ProductThumbs, { buildProductImages, imageSwipeHandlers } from 'src/components/elements/shop/ProductThumbs';
 import toast from 'react-hot-toast';
 import OrderFormFields from 'src/components/elements/shop/OrderFormFields';
 
@@ -279,7 +279,7 @@ const Demo9 = () => {
           {/* ImageWrap 은 overflow:hidden 인 블롭 모양이라 썸네일을 안에 넣으면 잘린다 — 밖에 둔다.
               HeroInner 는 2열 그리드라 이미지 칸 하나로 묶어야 오른쪽 정보 칸을 밀지 않는다. */}
           <div>
-            <ImageWrap>
+            <ImageWrap {...imageSwipeHandlers(images, imgIdx, setImgIdx)}>
               <HeroImage src={img} effect="blur" />
             </ImageWrap>
             <div style={{ display: 'flex', justifyContent: 'center' }}>

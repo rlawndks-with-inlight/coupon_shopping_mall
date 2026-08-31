@@ -14,7 +14,7 @@ import { insertCartDataUtil, startBuyNow, selectItemOptionUtil, 배송비표시,
 import QuantityStepper from 'src/components/elements/shop/QuantityStepper';
 import DetailNotices from 'src/components/elements/shop/DetailNotices';
 import ProductNotFound from 'src/components/elements/shop/ProductNotFound';
-import ProductThumbs, { buildProductImages } from 'src/components/elements/shop/ProductThumbs';
+import ProductThumbs, { buildProductImages, imageSwipeHandlers } from 'src/components/elements/shop/ProductThumbs';
 import toast from 'react-hot-toast';
 import OrderFormFields from 'src/components/elements/shop/OrderFormFields';
 
@@ -265,7 +265,7 @@ const Demo4 = () => {
       <Hero>
         <ImageSide>
           {/* 이미지 컨테이너가 가로 flex 라 썸네일을 그냥 두면 이미지 옆에 붙는다 — 세로로 묶는다. */}
-          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', position: 'relative', zIndex: 1, maxWidth: '100%' }}>
+          <div {...imageSwipeHandlers(images, imgIdx, setImgIdx)} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', position: 'relative', zIndex: 1, maxWidth: '100%' }}>
             <HeroImage src={img} effect="blur" />
             <ProductThumbs images={images} activeIndex={imgIdx} onSelect={setImgIdx} />
           </div>

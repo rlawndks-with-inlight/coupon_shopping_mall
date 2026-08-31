@@ -113,7 +113,13 @@ export default function ProductDetailsCarousel({ product, type = '' }) {
     dots: false,
     arrows: false,
     slidesToShow: 1,
-    draggable: false,
+    // ⚠ 예전에 draggable:false 였다(2026-08-31 걷어냄).
+    //   react-slick 에서 draggable 은 **마우스에만** 걸린다(터치는 swipe 가 따로 본다).
+    //   그래서 휴대폰에서는 밀려 넘어가는데 PC 에서는 마우스로 끌 수 없었다 — 실제로 재 보니
+    //   모바일 0→1, PC 0→0 이었다. 같은 화면에서 되고 안 되는 게 갈릴 이유가 없다.
+    //   기본값(true)으로 두면 둘 다 된다. 사진을 눌러 크게 보는 것(Lightbox)은 그대로다 —
+    //   react-slick 은 실제로 민 경우에만 클릭을 삼킨다.
+    draggable: true,
     slidesToScroll: 1,
     adaptiveHeight: true,
     beforeChange: (current, next) => setCurrentIndex(next),

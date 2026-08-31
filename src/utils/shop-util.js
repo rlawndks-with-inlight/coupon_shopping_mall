@@ -415,21 +415,21 @@ export const onPayProductsByPayletter = async (products_, payData_) => { // 카�
         return false;
     }
 }
-// 포스페이 forspay_ui 결제 팝업 열기 + 메시징(문서 규격).
-//   1) window.open(popup_url) — 데스크톱은 크기 지정 팝업(닫기 X), 모바일은 새 탭.
-//   2) 팝업의 FORSPAY_READY 수신 → init_payload 를 팝업으로 postMessage.
-//   3) FORSPAY_RESULT 수신 → 성공/실패 처리(결과페이지로 이동).
-// ★ 최종 확정은 서버 웹훅(noti_url)이 진실원 — 이 메시지/이동은 UX용이다.
-const openForspayPopup = (res, payData) => {
-    const isMobile = /iPhone|Android|iPad|iPod|Mobile/i.test(navigator.userAgent);
-    const features = isMobile ? '' : 'width=500,height=760,menubar=no,toolbar=no,location=no,status=no,resizable=yes,scrollbars=yes';
-    const popup = window.open(res.popup_url, 'forspay_pay', features);
-    if (!popup) {
-        toast.error(번역('팝업이 차단되어 결제창을 열 수 없습니다. 팝업 허용 후 다시 시도해 주세요.'));
-        return;
+// 미리 열어둔 팝업(popup)을 결제 URL(target)로 navigate 하고 결과 메시징을 건다.
+//   - forspay_ui: 팝업의 FORSPAY_READY 수신 → init_payload postMessage.
+//   - 두 방식 공통: FORSPAY_RESULT 수신 → 성공/실패 결과페이지로 이동.
+//   - 팝업을 못 열었으면(차단) 전체 리다이렉트로 폴백(최소 결제는 되게).
+const startForspayWindow = (popup, res, payData, target, features) => {
+    const isForspayUi = res?.checkout_mode === 'forspay_ui';
+    if (!popup || popup.closed) {
+        // 팝업 차단 폴백: 새 창 재시도 → 실패 시 현재 창 이동.
+        popup = window.open(target, 'forspay_pay', features);
+        if (!popup) { window.location.href = target; return; }
+    } else {
+        popup.location.href = target; // 미리 연 빈 팝업을 결제 URL로 이동(sync_blank_then_navigate)
     }
     let popupOrigin = '*';
-    try { popupOrigin = new URL(res.popup_url).origin; } catch (e) { }
+    try { popupOrigin = new URL(target).origin; } catch (e) { }
     const ord_num = res?.init_payload?.order?.ord_num || payData?.ord_num || '';
     let handled = false;
 
@@ -445,10 +445,10 @@ const openForspayPopup = (res, payData) => {
         window.location.href = `/shop/auth/pay-result?result_cd=${encodeURIComponent(result_cd)}&ord_num=${encodeURIComponent(ord_num)}`;
     };
     const onMessage = (e) => {
-        // 팝업 출처만 신뢰한다(보안).
+        // 팝업 출처만 신뢰한다(보안). 확정은 어차피 웹훅이 하므로 UX 실패는 손해가 없다.
         if (popupOrigin !== '*' && e.origin !== popupOrigin) return;
         const d = e.data || {};
-        if (d.type === 'FORSPAY_READY') {
+        if (isForspayUi && d.type === 'FORSPAY_READY') {
             try { popup.postMessage(res.init_payload, popupOrigin); } catch (err) { }
             return;
         }
@@ -459,9 +459,7 @@ const openForspayPopup = (res, payData) => {
     };
     window.addEventListener('message', onMessage);
 
-    // 결과 없이 팝업이 닫히면(사용자가 그냥 닫음) 취소로 본다.
-    // 결제됐다면 FORSPAY_RESULT 가 먼저 오므로 실패 페이지로 튕기지 않고 안내만 한다
-    // (혹시 결제됐다면 웹훅이 이미 확정 — 주문내역에서 확인된다).
+    // 결과 없이 팝업이 닫히면 안내만(실패 페이지로 튕기지 않음). 결제됐다면 웹훅이 이미 확정 — 주문내역에서 확인.
     const closedTimer = setInterval(() => {
         if (handled) return;
         if (popup.closed) {
@@ -476,39 +474,46 @@ export const onPayProductsByForspay = async (products_, payData_) => { // 인증
         toast.error(번역('데모 미리보기에서는 결제할 수 없습니다.'));
         return false;
     }
-    let products = products_;
-    let payData = await makePayData(products, payData_);
-    // 구매자가 고른 결제수단 키(card/bank/kakaopay/…). 선택 옵션에 실려 옴. 기본은 신용카드.
-    const pay_method = payData_?.payment_modules?.pay_method || 'card';
-    let ord_num = makeOrdNum('FS');
-    if (payData?.products?.length > 1 || !payData?.item_name) {
-        payData.item_name = payData?.products?.length > 1 ? `${payData?.products[0]?.order_name} 외 ${payData?.products?.length - 1}건` : (payData?.products[0]?.order_name || '상품');
-    }
     const isMobile = /iPhone|Android|iPad|iPod|Mobile/i.test(navigator.userAgent);
-    payData = {
-        ...payData,
-        ord_num,
-        pay_method,
-        front_url: window.location.origin, // 결제완료 후 리다이렉트할 프론트 주소
-        user_agent: isMobile ? 'MW' : 'WP',
-    };
-    delete payData.payment_modules;
+    // 포스페이 권장(ping browser.defaults): open_mode=popup, sync_blank_then_navigate.
+    // 결제 클릭과 같은 동기 실행에서 빈 팝업을 먼저 연다(팝업 차단 회피). 세션 생성 후 그 팝업을 결제 URL로 navigate.
+    // ★ 최종 확정은 서버 웹훅(noti_url)이 진실원 — 팝업/메시지/이동은 UX용이다.
+    const features = isMobile ? '' : 'width=480,height=760,scrollbars=yes,resizable=yes';
+    let popup = null;
+    try { popup = window.open('', 'forspay_pay', features); } catch (e) { popup = null; }
+    const 팝업닫기 = () => { try { if (popup && !popup.closed) popup.close(); } catch (e) { } };
+
     try {
+        let products = products_;
+        let payData = await makePayData(products, payData_);
+        // 구매자가 고른 결제수단 키(card/bank/kakaopay/…). 선택 옵션에 실려 옴. 기본은 신용카드.
+        const pay_method = payData_?.payment_modules?.pay_method || 'card';
+        let ord_num = makeOrdNum('FS');
+        if (payData?.products?.length > 1 || !payData?.item_name) {
+            payData.item_name = payData?.products?.length > 1 ? `${payData?.products[0]?.order_name} 외 ${payData?.products?.length - 1}건` : (payData?.products[0]?.order_name || '상품');
+        }
+        payData = {
+            ...payData,
+            ord_num,
+            pay_method,
+            front_url: window.location.origin, // 결제완료 후 리다이렉트할 프론트 주소
+            user_agent: isMobile ? 'MW' : 'WP',
+        };
+        delete payData.payment_modules;
+
         let res = await apiManager('pays/auth_forspay', 'create', payData);
         if (res?.id > 0) {
-            // forspay_ui: 포스페이 자체 결제 팝업 + 메시징(백엔드 FORSPAY_CHECKOUT_MODE=forspay_ui 일 때).
-            if (res.checkout_mode === 'forspay_ui' && res.popup_url) {
-                openForspayPopup(res, payData);
-                return { ...payData, trans_id: res.id };
-            }
-            // direct_pg_ui(기존): PG 결제창 URL 로 이동.
-            if (res.launch_page_url) {
-                window.location.href = res.launch_page_url;
+            // forspay_ui → embed.popup_url / direct_pg_ui → launch_page_url. 둘 다 팝업으로 연다(포스페이 권장).
+            const target = (res.checkout_mode === 'forspay_ui') ? res.popup_url : res.launch_page_url;
+            if (target) {
+                startForspayWindow(popup, res, payData, target, features);
                 return { ...payData, trans_id: res.id };
             }
         }
+        팝업닫기();
         return false;
     } catch (err) {
+        팝업닫기();
         console.log(err);
         return false;
     }

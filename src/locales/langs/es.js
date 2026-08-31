@@ -206,6 +206,7 @@ const es = {
   "파일을 끌어다 놓거나 눌러서 올려 주세요.": "Arrastra un archivo aquí o haz clic para subirlo.",
   "장바구니에 성공적으로 추가되었습니다.": "장바구니에 성공적으로 추가되었습니다.",
   "배송비": "tarifa de entrega",
+  "택배사": "Transportista",
   "선택": "seleccionar",
   "수량": "cantidad",
   "바로구매": "Comprar ahora",

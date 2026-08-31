@@ -211,6 +211,7 @@ const en = {
   "파일을 끌어다 놓거나 눌러서 올려 주세요.": "Drag a file here, or click to upload.",
   "장바구니에 성공적으로 추가되었습니다.": "It has been successfully added to your shopping cart.",
   "배송비": "Delivery charge",
+  "택배사": "Courier",
   "선택": "Choice",
   "수량": "Quantity",
   "바로구매": "Buy right away",

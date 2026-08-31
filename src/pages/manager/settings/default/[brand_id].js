@@ -1070,6 +1070,22 @@ const DefaultSetting = () => {
                         </Typography>
                         </Stack>
                       <Stack>
+                      {/* 손님이 적는 항목(행사날짜·각인문구 등) 사용여부.
+                          가맹점이 상품마다 거는 기능인데 대부분의 몰에는 필요가 없어서
+                          기본은 꺼짐이다. 본사가 켠 몰에서만 상품등록에 그 구역이 뜨고
+                          손님 화면(상품상세)에도 나타난다. */}
+                      <Stack>
+                        <FormControlLabel control={<Switch checked={item.setting_obj?.is_use_order_form == 1} />} label="손님 입력항목 사용여부"
+                          onChange={(e) => {
+                            setItem({
+                              ...item,
+                              setting_obj: {
+                                ...item.setting_obj,
+                                is_use_order_form: e.target.checked ? 1 : 0
+                              }
+                            })
+                          }} />
+                      </Stack>
                         <FormControlLabel control={<Switch checked={item.setting_obj?.is_use_consignment == 1} />} label="위탁 사용여부"
                           onChange={(e) => {
                             setItem({

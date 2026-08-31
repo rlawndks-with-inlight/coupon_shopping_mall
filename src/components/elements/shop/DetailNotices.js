@@ -1,6 +1,7 @@
 import ShippingLine from 'src/components/elements/shop/ShippingLine';
 import DeliveryNotice from 'src/components/elements/shop/DeliveryNotice';
 import BenefitNotice from 'src/components/elements/shop/BenefitNotice';
+import CourierLine from 'src/components/elements/shop/CourierLine';
 import { 상세톤 } from 'src/components/elements/shop/detail-tone';
 
 // 상품 가격 아래의 안내 묶음 — 배송비 · 배송 안내 · 혜택을 **한 표로** 그린다.
@@ -45,6 +46,7 @@ const DetailNotices = ({ item, tone = {}, sx = {}, style = {} }) => {
             }}
         >
             <ShippingLine item={item} inGrid tone={tone} />
+            <CourierLine inGrid tone={tone} />
             <DeliveryNotice inGrid tone={tone} />
             <BenefitNotice inGrid tone={tone} />
         </div>

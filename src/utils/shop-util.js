@@ -37,6 +37,15 @@ const 번역 = (문구, 값) => {
 // 예전엔 몰 설정(themeDnsData.order_form)에서 읽어 **그 몰의 모든 상품**에 같은 칸이 떴다 —
 // 답례품만 사는 손님에게도 행사날짜를 물었다.
 export const getOrderFormFields = (product) => {
+    // 본사가 켠 몰에서만 쓴다(설정관리 › 데모설정 › 손님 입력항목 사용여부). 기본은 꺼짐.
+    // 껐는데 상품에 값이 남아 있어도 손님 화면에는 안 나오고 필수검사도 안 걸린다 —
+    // '안 보이는 걸로' 가 반쪽이면 껐는데도 구매가 막히는 몰이 생긴다.
+    try {
+        const dns = JSON.parse(getLocalStorage('themeDnsData') || '{}');
+        if (Number(dns?.setting_obj?.is_use_order_form) !== 1) return [];
+    } catch (e) {
+        return [];
+    }
     const fields = product?.order_form_fields;
     return Array.isArray(fields) ? fields : [];
 };

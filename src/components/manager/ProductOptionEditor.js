@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
+import { useSettingsContext } from 'src/components/settings';
 import {
     Box, Button, Divider, FormControl, FormControlLabel, IconButton, InputAdornment, InputLabel,
     MenuItem, OutlinedInput, Stack, Switch, TextField, ToggleButton, ToggleButtonGroup, Typography,
@@ -40,6 +41,10 @@ const 음수막기 = (v) => (String(v ?? '').trim() === '' ? '' : String(Math.ma
 const 음수막기속성 = { inputProps: { min: 0 } };
 
 const ProductOptionEditor = ({ item, setItem, disabled = false }) => {
+    // '손님이 적는 항목' 은 본사가 브랜드마다 켜 주는 기능이다(설정관리 › 데모설정).
+    // 켜지 않은 몰에서는 이 구역 자체를 감춘다 — 기본값은 꺼짐이다.
+    const { themeDnsData } = useSettingsContext();
+    const 입력항목쓴다 = Number(themeDnsData?.setting_obj?.is_use_order_form) === 1;
     const groups = item?.groups ?? [];
     const characters = item?.characters ?? [];
     const fields = item?.order_form_fields ?? [];
@@ -519,7 +524,8 @@ const ProductOptionEditor = ({ item, setItem, disabled = false }) => {
 
             <Divider />
 
-            {/* ④ 손님 입력항목 ------------------------------------------------- */}
+            {/* ④ 손님 입력항목 — 본사가 켠 몰에서만 보인다 ------------------- */}
+            {입력항목쓴다 &&
             <Stack spacing={1.5}>
                 {라벨('손님이 적는 항목')}
                 {도움말('행사날짜·각인문구처럼 손님에게 직접 받아야 하는 내용입니다. 상품 상세에서 가격 아래에 나타납니다.')}
@@ -598,7 +604,7 @@ const ProductOptionEditor = ({ item, setItem, disabled = false }) => {
                     onClick={() => set({ order_form_fields: [...fields, { label: '', field_type: 'text', is_required: 0 }] })}>
                     입력 항목 추가
                 </Button>
-            </Stack>
+            </Stack>}
 
             <Divider />
 

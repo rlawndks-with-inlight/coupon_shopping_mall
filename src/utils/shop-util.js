@@ -475,12 +475,16 @@ export const onPayProductsByForspay = async (products_, payData_) => { // 인증
         return false;
     }
     const isMobile = /iPhone|Android|iPad|iPod|Mobile/i.test(navigator.userAgent);
-    // 포스페이 권장(ping browser.defaults): open_mode=popup, sync_blank_then_navigate.
-    // 결제 클릭과 같은 동기 실행에서 빈 팝업을 먼저 연다(팝업 차단 회피). 세션 생성 후 그 팝업을 결제 URL로 navigate.
+    // PC: 팝업 창(닫기로 취소). 포스페이 권장(ping browser.defaults)의 sync_blank_then_navigate 대로
+    // 결제 클릭과 같은 동기 실행에서 빈 팝업을 먼저 연다(팝업 차단 회피) → 세션 생성 후 결제 URL로 navigate.
+    // 모바일: 팝업 창 개념이 없어 새 탭이 되고 카카오페이 등 앱 결제가 불안정하다 →
+    //         같은 탭 리다이렉트가 표준·안정적이라 팝업을 열지 않는다(뒤로가기로 취소, 모바일 PG 표준).
     // ★ 최종 확정은 서버 웹훅(noti_url)이 진실원 — 팝업/메시지/이동은 UX용이다.
-    const features = isMobile ? '' : 'width=480,height=760,scrollbars=yes,resizable=yes';
+    const features = 'width=480,height=760,scrollbars=yes,resizable=yes';
     let popup = null;
-    try { popup = window.open('', 'forspay_pay', features); } catch (e) { popup = null; }
+    if (!isMobile) {
+        try { popup = window.open('', 'forspay_pay', features); } catch (e) { popup = null; }
+    }
     const 팝업닫기 = () => { try { if (popup && !popup.closed) popup.close(); } catch (e) { } };
 
     try {
@@ -503,10 +507,14 @@ export const onPayProductsByForspay = async (products_, payData_) => { // 인증
 
         let res = await apiManager('pays/auth_forspay', 'create', payData);
         if (res?.id > 0) {
-            // forspay_ui → embed.popup_url / direct_pg_ui → launch_page_url. 둘 다 팝업으로 연다(포스페이 권장).
+            // forspay_ui → embed.popup_url / direct_pg_ui → launch_page_url.
             const target = (res.checkout_mode === 'forspay_ui') ? res.popup_url : res.launch_page_url;
             if (target) {
-                startForspayWindow(popup, res, payData, target, features);
+                if (popup) {
+                    startForspayWindow(popup, res, payData, target, features); // PC: 팝업 + 메시징
+                } else {
+                    window.location.href = target; // 모바일: 같은 탭 이동(표준·앱결제 안정)
+                }
                 return { ...payData, trans_id: res.id };
             }
         }

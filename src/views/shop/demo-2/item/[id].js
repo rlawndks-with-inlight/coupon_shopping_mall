@@ -10,6 +10,7 @@ import { apiManager, apiShop } from 'src/utils/api';
 import { commarNumber, getProductStatus, commarNumberWithUnit } from 'src/utils/function';
 import { Icon } from '@iconify/react';
 import { insertCartDataUtil, insertWishDataUtil, selectItemOptionUtil, 배송비표시, 무료배송안내 } from 'src/utils/shop-util';
+import { 찜기능사용 } from 'src/data/wish';
 import toast from 'react-hot-toast';
 import DialogBuyNow from 'src/components/dialog/DialogBuyNow';
 import { useAuthContext } from 'src/layouts/manager/auth/useAuthContext';
@@ -251,9 +252,11 @@ const ItemDemo = (props) => {
                       </Stack>
                       <div style={{ marginTop: 'auto', paddingTop: '2rem' }}>
                         <Stack direction="row" spacing={1}>
-                          <Button variant="outlined" color="inherit" onClick={handleWish} sx={{ minWidth: '50px' }}>
-                            <Icon icon={themeWishData?.map(itm => itm?.product_id).includes(product?.id) ? 'mdi:heart' : 'mdi:heart-outline'} fontSize="1.5rem" style={{ color: themeWishData?.map(itm => itm?.product_id).includes(product?.id) ? 'red' : '' }} />
-                          </Button>
+                          {/* 찜 기능은 쓰지 않는다(src/data/wish.js) — 프레임마다 있고 없고가 갈려 있었다 */}
+                          {찜기능사용 &&
+                            <Button variant="outlined" color="inherit" onClick={handleWish} sx={{ minWidth: '50px' }}>
+                              <Icon icon={themeWishData?.map(itm => itm?.product_id).includes(product?.id) ? 'mdi:heart' : 'mdi:heart-outline'} fontSize="1.5rem" style={{ color: themeWishData?.map(itm => itm?.product_id).includes(product?.id) ? 'red' : '' }} />
+                            </Button>}
                           <Button variant="outlined" color="inherit" onClick={handleAddCart} disabled={getProductStatus(product?.status).color != 'info' || !(product?.product_sale_price > 0)} sx={{ flex: 1, fontWeight: 600 }}>
                             {translate('장바구니')}
                           </Button>

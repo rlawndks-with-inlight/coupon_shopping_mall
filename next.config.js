@@ -47,6 +47,7 @@ module.exports = {
   //   NEXT_DIST_DIR=.next-2001 npx next dev -p 2001
   // 운영 배포는 이 값을 주지 않으므로 동작이 달라지지 않는다.
   distDir: process.env.NEXT_DIST_DIR || '.next',
+  poweredByHeader: false, // 'X-Powered-By: Next.js' 노출 제거(출품 전 점검)
   trailingSlash: true,
   reactStrictMode: true,
   // env block은 아래에 통합됨

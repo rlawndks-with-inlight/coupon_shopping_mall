@@ -74,7 +74,7 @@ export const Item2 = (props) => {
                                     {item.product_sale_price < item.product_price &&
                                         <>
                                             <div style={{ color: 'red', marginRight: '0.25rem', fontSize: '16px' }}>
-                                                {commarNumber((item.product_price - item.product_sale_price) * 100 / item.product_price) + '%'}
+                                                {Math.round((item.product_price - item.product_sale_price) * 100 / item.product_price) + '%'}
                                             </div>
                                         </>}
                                     {item.product_sale_price < item.product_price &&
@@ -108,7 +108,7 @@ export const Item2 = (props) => {
                                                 {item.product_sale_price < item.product_price &&
                                                     <>
                                                         <div style={{ color: 'red', marginRight: '0.25rem', fontSize: themeObj.font_size.size7, fontWeight: 'bold' }}>
-                                                            {commarNumber((item.product_price - item.product_sale_price) * 100 / item.product_price) + '%'}
+                                                            {Math.round((item.product_price - item.product_sale_price) * 100 / item.product_price) + '%'}
                                                         </div>
                                                         {item.product_sale_price < item.product_price &&
                                                             <>
@@ -139,7 +139,7 @@ export const Item2 = (props) => {
                                                 {item.product_sale_price < item.product_price &&
                                                     <>
                                                         <div style={{ color: 'red', marginRight: '0.25rem' }}>
-                                                            {commarNumber((item.product_price - item.product_sale_price) * 100 / item.product_price) + '%'}
+                                                            {Math.round((item.product_price - item.product_sale_price) * 100 / item.product_price) + '%'}
                                                         </div>
                                                     </>}
                                                 {item.product_sale_price < item.product_price &&

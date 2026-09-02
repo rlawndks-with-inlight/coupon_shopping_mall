@@ -7,6 +7,7 @@ import { useSettingsContext } from 'src/components/settings';
 import { useAuthContext } from 'src/layouts/manager/auth/useAuthContext';
 import styled from 'styled-components';
 import { useLocales } from 'src/locales';
+import { getPriceUnitByLang } from 'src/utils/function';
 
 const Wrappers = styled.div`
   max-width: 720px;
@@ -41,7 +42,7 @@ const { user } = useAuthContext();
     } catch (e) { /* noop */ }
   }, []);
 
-  const won = (n) => `${Number(n || 0).toLocaleString()}원`;
+  const won = (n) => `${Number(n || 0).toLocaleString()}${getPriceUnitByLang()}`; // 통화 단위는 언어별
   const products = order?.products || [];
   const receiver = order?.receiver || order?.buyer_name;
   const phone = order?.addr_phone || order?.buyer_phone;
@@ -87,7 +88,7 @@ const { user } = useAuthContext();
                 <Stack spacing={1}>
                   {products.map((p, i) => (
                     <Stack key={i} direction="row" justifyContent="space-between">
-                      <Typography variant="body2">{p?.order_name} · {p?.order_count}개</Typography>
+                      <Typography variant="body2">{p?.order_name} · {p?.order_count}{translate('개')}</Typography>
                       <Typography variant="body2" sx={{ fontWeight: 700 }}>{won(p?.order_amount)}</Typography>
                     </Stack>
                   ))}

@@ -155,23 +155,24 @@ const Demo2 = (props) => {
                                         background: `${themeMode == 'dark' ? '#222' : '#fff'}`
                                     }}>
 
-                                        <div style={{ display: 'flex', justifyContent: 'space-between', padding: '1rem' }}>
-                                            <div style={{ display: 'flex' }}>
-                                                <img src={item.product_img} width='48px' height='48px' style={{ margin: '0 1rem 0 0' }} />
-                                                <div style={{ display: 'flex', flexDirection: 'column' }}>
+                                        {/* 모바일(390px)에서 오른쪽 배송 칸이 nowrap 이라 카드가 옆으로 넘쳤다 → 줄바꿈 허용 + 텍스트 칸 min-width:0 */}
+                                        <div style={{ display: 'flex', justifyContent: 'space-between', padding: '1rem', flexWrap: 'wrap', gap: '0.5rem' }}>
+                                            <div style={{ display: 'flex', minWidth: 0 }}>
+                                                <img src={item.product_img} alt={formatLang(item, 'product_name') || item.order_name || ''} width='48px' height='48px' style={{ margin: '0 1rem 0 0', objectFit: 'cover', borderRadius: '6px', flexShrink: 0 }} />
+                                                <div style={{ display: 'flex', flexDirection: 'column', minWidth: 0 }}>
                                                     <div>{formatLang(item, 'product_name') || item.order_name}</div>
                                                     <div>{commarNumberWithUnit(item.order_amount)}</div>
                                                     {item.groups?.length > 0 &&
-                                                        <div>옵션 : {item.groups.map((group) => `${formatLang(group, 'group_name')}: ${(group?.options ?? []).map((option) => getOptionLabel(option)).join(' / ')}`).join(', ')}</div>
+                                                        <div>{translate('옵션')} : {item.groups.map((group) => `${formatLang(group, 'group_name')}: ${(group?.options ?? []).map((option) => getOptionLabel(option)).join(' / ')}`).join(', ')}</div>
                                                     }
-                                                    <div>수량 : {item.order_count}개</div>
-                                                    <div style={{ marginTop: '0.5rem' }}>주문번호 : {item.trx?.ord_num}</div>
-                                                    <div>주문현황 : {getOrderStatusText(item.trx)}</div>
+                                                    <div>{translate('수량')} : {item.order_count}{translate('개')}</div>
+                                                    <div style={{ marginTop: '0.5rem' }}>{translate('주문번호')} : {item.trx?.ord_num}</div>
+                                                    <div>{translate('주문현황')} : {getOrderStatusText(item.trx)}</div>
                                                 </div>
                                             </div>
                                             <AddressButton>
                                                 {(item.trx?.receiver || item.trx?.buyer_name) &&
-                                                    <div style={{ fontSize: '0.85rem', marginBottom: '0.25rem', whiteSpace: 'nowrap' }}>받는분 : {item.trx?.receiver || item.trx?.buyer_name}</div>
+                                                    <div style={{ fontSize: '0.85rem', marginBottom: '0.25rem' }}>{translate('받는분')} : {item.trx?.receiver || item.trx?.buyer_name}</div>
                                                 }
                                                 {item.trx?.addr &&
                                                     // 해외 주소는 나라마다 순서가 달라 국내 형식(주소+상세주소)으로는 표기가 안 된다
@@ -183,7 +184,7 @@ const Demo2 = (props) => {
                                                     </div>
                                                 }
                                                 {item.trx?.invoice_num &&
-                                                    <div style={{ fontSize: '0.85rem', marginBottom: '1rem' }}>송장 : {item.trx?.invoice_num}</div>
+                                                    <div style={{ fontSize: '0.85rem', marginBottom: '1rem' }}>{translate('송장')} : {item.trx?.invoice_num}</div>
                                                 }
                                                 <Button
                                                     variant='outlined'

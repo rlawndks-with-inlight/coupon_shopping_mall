@@ -6,7 +6,7 @@ import ShopLayout from 'src/layouts/shop/ShopLayout';
 import { useSettingsContext } from 'src/components/settings';
 import { apiManager } from 'src/utils/api';
 import OrderCancelButton, { canCancelOrder } from 'src/components/elements/shop/OrderCancelButton';
-import { commarNumber, sanitizePhoneInput, getOrderStatusText } from 'src/utils/function';
+import { commarNumber, sanitizePhoneInput, getOrderStatusText, getPriceUnitByLang } from 'src/utils/function';
 import { useLocales } from 'src/locales';
 import PasswordField from 'src/components/elements/PasswordField';
 
@@ -40,7 +40,7 @@ const parseInvoice = (invoice_num) => {
   };
 };
 
-const won = (n) => `${commarNumber(n || 0)}원`;
+const won = (n) => `${commarNumber(n || 0)}${getPriceUnitByLang()}`; // 통화 단위는 언어별(원/$ 등) — '원' 고정이면 외국어 화면에서 튄다
 
 // 주문 상세(읽기전용) — 회원/비회원 공통 표시
 const OrderDetail = ({ order }) => {
@@ -86,7 +86,7 @@ const OrderDetail = ({ order }) => {
           <Stack spacing={1} divider={<Divider flexItem />}>
             {(order?.orders || []).map((o, i) => (
               <Stack key={i} direction="row" justifyContent="space-between">
-                <Typography variant="body2">{o?.order_name} · {o?.order_count}개</Typography>
+                <Typography variant="body2">{o?.order_name} · {o?.order_count}{translate('개')}</Typography>
                 <Typography variant="body2" sx={{ fontWeight: 700 }}>{won(o?.order_amount)}</Typography>
               </Stack>
             ))}
@@ -176,7 +176,7 @@ const OrderCheck = () => {
                       <Typography variant="subtitle2">{o?.ord_num}</Typography>
                       <Typography variant="body2" sx={{ color: 'text.secondary' }}>
                         {getOrderStatusText(o)} · {(o?.orders?.[0]?.order_name) || '-'}
-                        {o?.orders?.length > 1 ? ` 외 ${o.orders.length - 1}건` : ''}
+                        {o?.orders?.length > 1 ? ` ${translate('외 {{n}}건', { n: String(o.orders.length - 1) })}` : ''}
                       </Typography>
                     </Box>
                     <Typography variant="subtitle2">{won(o?.amount)}</Typography>

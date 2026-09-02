@@ -406,7 +406,7 @@ const DialogBuyNow = (props) => {
                     </>
                     :
                     <>
-                      <DialogTitle>{`주소지 선택`}</DialogTitle>
+                      <DialogTitle>{translate('주소지 선택')}</DialogTitle>
                       <DialogContent>
                         <DialogContentText>{translate('새 주소를 입력후 저장을 눌러주세요.')}</DialogContentText>
                       </DialogContent>

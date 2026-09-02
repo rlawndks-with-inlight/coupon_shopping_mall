@@ -130,7 +130,7 @@ export const Item1 = memo((props) => {
                                     {item.product_sale_price < item.product_price &&
                                         <>
                                             <div style={{ color: 'red', marginRight: '0.25rem' }}>
-                                                {commarNumber((item.product_price - item.product_sale_price) * 100 / item.product_price) + '%'}
+                                                {Math.round((item.product_price - item.product_sale_price) * 100 / item.product_price) + '%'}
                                             </div>
                                         </>}
                                     <div>{commarNumber(setProductPriceByLang(item, 'product_sale_price', item?.price_lang, currentLang?.value))} {getPriceUnitByLang(currentLang?.value)}</div>

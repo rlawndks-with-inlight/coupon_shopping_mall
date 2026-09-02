@@ -160,18 +160,18 @@ const Demo4 = (props) => {
                                         background: `${themeMode == 'dark' ? '#222' : '#fff'}`
                                     }}>
 
-                                        <div style={{ display: 'flex', justifyContent: 'space-between', padding: '1rem' }}>
-                                            <div style={{ display: 'flex' }}>
-                                                <img src={item?.product_img} width='48px' height='48px' style={{ margin: '0 1rem 0 0' }} />
-                                                <div style={{ display: 'flex', flexDirection: 'column' }}>
+                                        <div style={{ display: 'flex', justifyContent: 'space-between', padding: '1rem', flexWrap: 'wrap', gap: '0.5rem' }}>
+                                            <div style={{ display: 'flex', minWidth: 0 }}>
+                                                <img src={item?.product_img} alt={formatLang(item, 'product_name') || item?.order_name || ''} width='48px' height='48px' style={{ margin: '0 1rem 0 0', objectFit: 'cover', borderRadius: '6px', flexShrink: 0 }} />
+                                                <div style={{ display: 'flex', flexDirection: 'column', minWidth: 0 }}>
                                                     <div>{formatLang(item, 'product_name') || item?.order_name}</div>
                                                     <div>{commarNumberWithUnit(item?.order_amount)}</div>
-                                                    <div>옵션 : {getOptionText(item) || '-'} / {item?.order_count}개</div>
-                                                    <div style={{ marginTop: '0.5rem' }}>주문번호 : {item?.trx?.ord_num}</div>
-                                                    <div>주문상태 : {getOrderStatusText(item?.trx)}</div>
-                                                    <div>받는분 : {item?.trx?.receiver || item?.trx?.buyer_name || '-'}</div>
-                                                    <div>배송지 : {item?.trx?.addr ? `${item?.trx?.addr} ${item?.trx?.detail_addr || ''}` : '-'}</div>
-                                                    <div>송장번호 : {item?.trx?.invoice_num || '-'}</div>
+                                                    <div>{translate('옵션')} : {getOptionText(item) || '-'} / {item?.order_count}{translate('개')}</div>
+                                                    <div style={{ marginTop: '0.5rem' }}>{translate('주문번호')} : {item?.trx?.ord_num}</div>
+                                                    <div>{translate('주문현황')} : {getOrderStatusText(item?.trx)}</div>
+                                                    <div>{translate('받는분')} : {item?.trx?.receiver || item?.trx?.buyer_name || '-'}</div>
+                                                    <div>{translate('배송지')} : {item?.trx?.addr ? `${item?.trx?.addr} ${item?.trx?.detail_addr || ''}` : '-'}</div>
+                                                    <div>{translate('송장번호')} : {item?.trx?.invoice_num || '-'}</div>
                                                 </div>
                                             </div>
                                             <AddressButton>

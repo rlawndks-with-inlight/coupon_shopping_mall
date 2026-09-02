@@ -480,7 +480,8 @@ const Demo9 = (props) => {
       )}
 
       <FinalCTA>
-        <FinalTitle>{홈문구(t, 'final_title', currentLang) ? 홈문구(t, 'final_title', currentLang) : (<>지금이 {brandName}과<br />{translate('함께할 순간이에요 💕')}</>)}</FinalTitle>
+        {/* 문장 전체를 한 키로 보간한다 — 반만 번역되면 "지금이 Brand과 / Time to make it yours" 처럼 섞여 나온다 */}
+        <FinalTitle>{홈문구(t, 'final_title', currentLang) ? 홈문구(t, 'final_title', currentLang) : translate('지금이 {{brand}}과 함께할 순간이에요 💕', { brand: brandName })}</FinalTitle>
         <div style={{ margin: '2rem 0' }}>
           <HeroPrice style={{ fontSize: '40px' }}>{commarNumberWithUnit(sale)}</HeroPrice>
         </div>

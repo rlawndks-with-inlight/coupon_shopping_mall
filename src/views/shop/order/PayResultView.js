@@ -6,6 +6,7 @@ import styled from 'styled-components';
 import { useSettingsContext } from 'src/components/settings';
 import { useAuthContext } from 'src/layouts/manager/auth/useAuthContext';
 import { useLocales } from 'src/locales';
+import { apiManager } from 'src/utils/api';
 
 // 공용 결제결과 화면 — 데모 구분 없는 단일 화면.
 //
@@ -67,6 +68,25 @@ const { user } = useAuthContext();
     clearedRef.current = true;
     try { sessionStorage.removeItem('buyNowItem'); } catch (e) { /* noop */ }
     onChangeCartData([]);
+  }, [router.isReady, isSuccess]);
+
+  // 포스페이 서버 확정.
+  //
+  // 문서상 브라우저 복귀(return_url·FORSPAY_RESULT)는 UX용이라 정산 근거가 못 된다.
+  // 특히 PC 팝업 흐름은 결과를 받으면 이 프론트 페이지로 바로 와서 backend /forspay/return(정산)을
+  // 건너뛴다 → 승인됐는데 결제대기로 남는다. 여기서 거래조회 기반 서버 확정을 한 번 호출해
+  // approved 면 정산(멱등·원자적)시켜 그 구멍을 메운다. (모바일 리다이렉트는 이미 return 에서
+  // 정산돼 멱등 no-op) 포스페이(FS) 성공 복귀에만 건다 — 다른 PG/실패 화면은 건드리지 않는다.
+  // 화면 표시는 URL 파라미터 기준 그대로라, 이 호출이 실패해도 페이지는 정상이다(웹훅·대사가 나중에 메움).
+  const confirmedRef = useRef(false);
+  useEffect(() => {
+    if (!router.isReady || confirmedRef.current) return;
+    const ord = String(q.ord_num || '');
+    if (!isSuccess || !ord.startsWith('FS')) return;
+    confirmedRef.current = true;
+    (async () => {
+      try { await apiManager('pays/forspay/confirm', 'create', { ord_num: ord }); } catch (e) { /* best-effort */ }
+    })();
   }, [router.isReady, isSuccess]);
 
   const view = isTestBrand

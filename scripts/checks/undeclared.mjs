@@ -33,7 +33,11 @@ const 전역 = new Set([
     'window', 'document', 'navigator', 'location', 'history', 'localStorage', 'sessionStorage',
     'fetch', 'Headers', 'Request', 'Response', 'FormData', 'Blob', 'File', 'FileReader', 'URL',
     'URLSearchParams', 'Image', 'Audio', 'Event', 'CustomEvent', 'MutationObserver',
-    'IntersectionObserver', 'ResizeObserver', 'XMLHttpRequest', 'AbortController', 'alert',
+    'IntersectionObserver', 'ResizeObserver', 'XMLHttpRequest', 'AbortController',
+    // AbortSignal 은 AbortController 와 짝인데 빠져 있었다 — sitemap 이 AbortSignal.timeout()
+    // 으로 8초 제한을 거는데 '못 가져온 이름' 으로 잡혀 헛경보가 났다(2026-09-03).
+    // 브라우저·Node 18+ 둘 다 있는 표준 전역이다.
+    'AbortSignal', 'alert',
     'confirm', 'prompt', 'scrollTo', 'scrollBy', 'scroll', 'open', 'close', 'print', 'postMessage', 'self', 'top', 'parent', 'innerWidth', 'innerHeight', 'pageYOffset', 'pageXOffset', 'getComputedStyle', 'matchMedia', 'CSS', 'DOMParser', 'Node', 'Element',
     'HTMLElement', 'Canvas', 'HTMLCanvasElement', 'crypto', 'performance', 'screen', 'frames',
     // Node · 번들러

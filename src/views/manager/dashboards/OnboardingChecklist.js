@@ -3,20 +3,31 @@ import { Card, Box, Stack, Typography, Button, LinearProgress, IconButton } from
 import { Icon } from '@iconify/react';
 import { useRouter } from 'next/router';
 import { useSettingsContext } from 'src/components/settings';
-import { useModal } from 'src/components/dialog/ModalProvider';
 import { apiManager } from 'src/utils/api';
 import { isShopgoMerchant } from 'src/utils/is-shopgo';
 import { HOME_TEXT_SCHEMA } from 'src/data/home-texts';
 import { isShopSectionBuilder, isBlogSectionBuilder, mainDesignRoute } from 'src/utils/section-builder';
 
 // 신규 가맹점 온보딩 체크리스트 — 대시보드 상단.
-// 완료 여부는 이미 로드된 데이터로 자동 감지(표시용). 필수 완료로 "자동으로 사라지지는 않음".
-// 사용자가 '닫기'(X) → 2차 확인 후에만 setting_obj.onboarding_dismissed 저장(서버·매장 공유) → 이후 미노출.
+// 완료 여부는 이미 로드된 데이터로 자동 감지(표시용). 필수 완료로 자동으로 접히지는 않는다.
+//
+// [닫기 → 접기로 바꾼 이유 — 2026-08-31 요청]
+// 원래는 X 를 누르면 setting_obj.onboarding_dismissed 가 저장되며 **영영 사라졌다.**
+//   · 범위가 매장 전체다 — 직원 한 명이 누르면 사장님 화면에서도 없어진다.
+//   · 기기를 가리지 않는다. 다른 PC·폰에서도 안 보인다.
+//   · **되살리는 길이 어디에도 없었다.** DB 를 직접 고치는 수밖에 없었다.
+// 인터넷을 잘 모르는 가맹점이 "이게 뭐지" 하고 확인을 누르면 그날로 안내가 사라졌다.
+// 그래서 「없애기」를 「접기」로 바꿨다 — 한 줄로 접힐 뿐 언제든 다시 편다.
+//
+// ⚠ 다시 '영구 숨김' 으로 되돌리지 말 것. 없앨 거면 되살리는 길을 먼저 만들어야 한다.
+// ⚠ 예전에 닫아 버린 매장(onboarding_dismissed=1)도 **접힌 상태로 되살아난다.**
+//   그래서 DB 손볼 것 없이 그 매장들이 안내를 되찾는다.
 const OnboardingChecklist = () => {
   const router = useRouter();
-  const { setModal } = useModal();
   const { themeDnsData, themeCategoryList } = useSettingsContext();
-  const [hidden, setHidden] = useState(false);
+  // null = 이번 화면에서 아직 안 건드림 → 서버에 저장된 값을 따른다.
+  // (저장 뒤에도 themeDnsData 는 그대로라, 이 값이 있어야 방금 누른 게 화면에 남는다)
+  const [접힘로컬, set접힘로컬] = useState(null);
 
   const dns = themeDnsData ?? {};
   const so = dns.setting_obj ?? {};
@@ -43,14 +54,15 @@ const OnboardingChecklist = () => {
   useEffect(() => {
     let alive = true;
     // 체크리스트가 뜨지 않는 브랜드에서는 굳이 부르지 않는다(아래 early return 과 같은 조건).
-    if (!dns?.id || !isShopgoMerchant(dns) || so?.onboarding_dismissed == 1) return;
+    // ⚠ 접혀 있어도 부른다 — 접힌 줄에도 「n/m 완료」를 보여 주기 때문이다.
+    if (!dns?.id || !isShopgoMerchant(dns)) return;
     (async () => {
       const result = await apiManager('products', 'list', { page: 1, page_size: 1 });
       if (!alive || !result) return;
       setProductCount(Number(result?.total ?? result?.content?.length ?? 0) || 0);
     })();
     return () => { alive = false; };
-  }, [dns?.id, so?.onboarding_dismissed]);
+  }, [dns?.id]);
 
   const catDone = (themeCategoryList ?? []).some((g) => (g?.product_categories?.length ?? 0) > 0);
   // 마이그레이션 브랜드는 합성 그룹 id=0(falsy) 이므로 존재 여부로 판단(?? 0 로 0 도 유효 라우팅).
@@ -76,30 +88,47 @@ const OnboardingChecklist = () => {
 
   const doneCount = steps.filter((s) => s.done).length;
   const requiredAllDone = steps.filter((s) => s.required).every((s) => s.done);
-  const dismissed = so?.onboarding_dismissed == 1;
 
-  // 닫기(X→2차확인) 또는 이전 닫기 이력 → 미노출. (필수 완료로는 자동으로 사라지지 않음)
-  if (hidden || dismissed) return null;
+  // 예전에 '닫기'로 없앴던 매장은 접힌 것으로 본다(위 주석 참고).
+  const 접힘 = 접힘로컬 ?? (so?.onboarding_collapsed == 1 || so?.onboarding_dismissed == 1);
+
   // SHOPGO 산하 가맹점만 대상 (본사·타 클라이언트 브랜드 제외)
   if (!isShopgoMerchant(dns)) return null;
 
-  const doDismiss = () => {
-    setHidden(true);
+  // 접고 펴는 것을 매장에 기억시킨다 — 새로고침할 때마다 다시 펴지면 접은 뜻이 없다.
+  // 되돌릴 수 있는 상태라 확인 팝업을 두지 않는다(영구 삭제가 아니라 접는 것이다).
+  const 접기토글 = () => {
+    const 다음 = !접힘;
+    set접힘로컬(다음);
     apiManager('brands', 'update', {
       id: dns?.id,
-      setting_obj: { ...so, onboarding_dismissed: 1 },
+      // 옛 플래그는 0 으로 지운다 — 안 지우면 다시 펴도 새로고침 때 또 접힌다.
+      setting_obj: { ...so, onboarding_collapsed: 다음 ? 1 : 0, onboarding_dismissed: 0 },
     }).catch(() => {});
-  };
-  // X 클릭 → 2차 확인 후에만 영구 숨김
-  const onDismiss = () => {
-    setModal({
-      func: () => doDismiss(),
-      icon: 'mdi:close-circle-outline',
-      title: '이 안내를 닫으시겠어요? 닫으면 다시 표시되지 않습니다.',
-    });
   };
 
   const mainColor = dns?.theme_css?.main_color || '#00ab55';
+
+  // 접힌 모습 — 제목과 진행도만 한 줄. 줄 아무 데나 눌러도 펴진다(휴대폰에서 화살표만 노리기 어렵다).
+  if (접힘) {
+    return (
+      <Card
+        variant="outlined"
+        onClick={접기토글}
+        sx={{ px: { xs: 2, md: 2.5 }, py: 1.25, borderRadius: 2, borderColor: '#e0e0e0', cursor: 'pointer' }}
+      >
+        <Stack direction="row" alignItems="center" justifyContent="space-between" spacing={1}>
+          <Stack direction="row" alignItems="center" spacing={1} sx={{ minWidth: 0 }}>
+            <Typography sx={{ fontSize: 14, fontWeight: 800, whiteSpace: 'nowrap' }}>🚀 쇼핑몰 오픈 준비</Typography>
+            <Typography sx={{ fontSize: 13, color: '#888', whiteSpace: 'nowrap' }}>{doneCount}/{steps.length} 완료</Typography>
+          </Stack>
+          <IconButton size="small" aria-label="펼치기">
+            <Icon icon="mdi:chevron-down" fontSize="1.2rem" />
+          </IconButton>
+        </Stack>
+      </Card>
+    );
+  }
 
   return (
     <Card variant="outlined" sx={{ p: { xs: 2, md: 2.5 }, borderRadius: 2, borderColor: '#e0e0e0' }}>
@@ -107,8 +136,9 @@ const OnboardingChecklist = () => {
         <Typography sx={{ fontSize: 16, fontWeight: 800 }}>🚀 쇼핑몰 오픈 준비</Typography>
         <Stack direction="row" alignItems="center" spacing={1}>
           <Typography sx={{ fontSize: 13, color: '#888' }}>{doneCount}/{steps.length} 완료</Typography>
-          <IconButton size="small" onClick={onDismiss} aria-label="닫기">
-            <Icon icon="mdi:close" fontSize="1.1rem" />
+          {/* ⚠ X(닫기)가 아니다 — 없애는 게 아니라 접는다. 위 헤더 주석 참고. */}
+          <IconButton size="small" onClick={접기토글} aria-label="접기">
+            <Icon icon="mdi:chevron-up" fontSize="1.2rem" />
           </IconButton>
         </Stack>
       </Stack>
@@ -170,7 +200,7 @@ const OnboardingChecklist = () => {
             {requiredAllDone ? (
               <>
                 <Box component="span" sx={{ color: mainColor, fontWeight: 700 }}>완료</Box>
-                <Box component="span" sx={{ color: '#888' }}> — 판매를 시작할 수 있어요. 이 안내는 우측 상단 ✕로 닫을 수 있습니다.</Box>
+                <Box component="span" sx={{ color: '#888' }}> — 판매를 시작할 수 있어요. 이 안내는 우측 상단에서 접어 둘 수 있습니다.</Box>
               </>
             ) : (
               <>

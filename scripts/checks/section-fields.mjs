@@ -17,10 +17,14 @@ const 설정 = readFileSync(FRONT_ROOT + 'src/views/manager/main_obj/setting.js'
 let pass = 0, fail = 0;
 const t = (name, cond) => { if (cond) { pass++; console.log('  ok  ' + name); } else { fail++; console.log('  FAIL ' + name); } };
 
-// isProductList={1} 을 넘기면 네 칸이 함께 뜬다.
-const 네칸 = ['text_align', 'back_color', 'slider_speed', 'rows'];
-t('네 칸이 한 묶음으로 뜬다', /isProductList == 1 &&/.test(설정)
-    && 네칸.every((k) => 설정.includes(`['${k}']`)));
+// isProductList={1} 을 넘기면 두 칸이 함께 뜬다.
+// 2026-09-02: 상품 슬라이드가 '레일(가로 스크롤)' 로 바뀌면서 슬라이더 속도·컨텐츠 개수 칸은 읽는 곳이 없어 제거했다.
+//   되지도 않는 칸은 없는 것보다 나쁘다 — 남은 건 배치(text_align)·배경색(back_color) 뿐이다.
+const 두칸 = ['text_align', 'back_color'];
+const 사라진칸 = ['slider_speed', 'rows'];
+t('두 칸이 한 묶음으로 뜬다', /isProductList == 1 &&/.test(설정)
+    && 두칸.every((k) => 설정.includes(`['${k}']`)));
+t('레일 전환으로 안 쓰는 슬라이더 칸은 없다', 사라진칸.every((k) => !설정.includes(`['${k}']`)));
 
 // 섹션 블록을 잘라 그 안에서 isProductList 를 넘겼는지 본다.
 const 블록 = (type) => {
@@ -45,7 +49,7 @@ for (const [type, 파일들] of 대상) {
     const 뜬다 = 네칸띄우나(type);
     // ⚠ some 이 아니라 every 다. 프레임마다 컴포넌트가 따로라, 한쪽만 읽으면 그 프레임에서는
     //   여전히 죽은 칸이다 — 실제로 블로그형 특성 섹션이 그랬다(쇼핑몰형만 네 칸을 썼다).
-    const 쓴다 = 네칸.every((k) => 파일들.every((f) => 읽나(f, k)));
+    const 쓴다 = 두칸.every((k) => 파일들.every((f) => 읽나(f, k)));
     t(`${type}: 칸을 띄우는 것과 값을 쓰는 것이 맞는다 (칸 ${뜬다 ? '뜸' : '안뜸'} / 값 ${쓴다 ? '씀' : '안씀'})`,
         뜬다 === 쓴다);
 }

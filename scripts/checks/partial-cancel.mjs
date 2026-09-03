@@ -93,8 +93,9 @@ eq('원장이 PG 호출보다 먼저',
 eq('중복 키는 거부', /ER_DUP_ENTRY/.test(c), true);
 // PG 가 실패하면 돈이 안 움직였으니 원장을 지워 재시도할 수 있어야 한다
 eq('PG 실패 시 원장 삭제', /DELETE FROM transaction_cancels WHERE id=\?/.test(c), true);
-// 취소 가능 상태는 전체취소와 같은 기준
-eq('출고 전만 취소', /CANCELABLE_STATUS = \[0, 5, 10\]/.test(c), true);
+// 취소 가능 상태는 전체취소와 같은 기준. 2026-09-02 부터 '취소요청(1)' 건도 포함 —
+// 고객이 취소요청한 주문을 관리자가 실행할 때 "이미 취소/출고" 로 막히던 것을 풀었다. 출고(20+) 이후는 여전히 불가.
+eq('출고 전만 취소(취소요청 포함)', /CANCELABLE_STATUS = \[0, 1, 5, 10\]/.test(c), true);
 // 재고는 그 줄이 고른 옵션만, 취소 수량만큼만
 const po = readFileSync(BACK + 'utils.js/product-options.js', 'utf8');
 eq('부분 재고복구에 cancel_id', /kind, cancel_id\)\s*\n\s*VALUES \(\?,\?,\?,\?,\?,'in',\?\)/.test(po), true);

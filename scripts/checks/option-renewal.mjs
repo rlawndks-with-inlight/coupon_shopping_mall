@@ -52,7 +52,9 @@ eq('음수 재고 방지', /GREATEST\(IFNULL\(stock_qty,0\) \+ \?, 0\)/.test(po)
 // 차감은 **조건부 한 문장**이어야 한다. 무조건 빼면 마지막 1개를 두 사람이 동시에 사도
 // 둘 다 통과하고 재고만 0 이 된다. WHERE stock_qty >= ? 로 DB 가 한 명만 통과시킨다.
 eq('차감은 조건부(초과판매 차단)', /SET stock_qty = stock_qty - \?[\s\S]{0,120}stock_qty >= \?/.test(po), true);
-eq('차감 실패를 로그로 남김', /초과 판매 — 주문/.test(po), true);
+// 2026-09-03: 차감 실패(초과판매)는 이제 로그만 남기지 않고 false 를 돌려 주문을 중단시킨다(결제 전이라 돈은 안 움직인다).
+eq('차감 실패를 로그로 남김', /초과 판매 차단 — 주문/.test(po), true);
+eq('차감 실패는 false 로 주문을 중단시킨다', /초과 판매 차단[\s\S]{0,400}return false;/.test(po), true);
 // 재고 NULL 은 무제한 — 검사에서 건너뛴다
 eq('NULL 은 무제한', /if \(need\.stock === null \|\| need\.stock === undefined\) continue/.test(po), true);
 // 같은 옵션을 두 줄에 나눠 담아 재고를 우회하지 못하게 합산해서 본다
@@ -78,8 +80,11 @@ eq('복구 실패는 취소를 막지 않음', /\[취소\] 재고 복구 실패/
 const ready = pay.slice(pay.indexOf('  ready: async'), pay.indexOf('  result: async'));
 eq('결제 실패 12경로 전부 재고 복구',
   (ready.match(/return 결제실패응답\(trans_id, req, res, -100,/g) || []).length, 12);
-eq('차감 이후 맨 응답이 안 남음', /return response\(req, res, -100,/.test(
-  ready.slice(ready.indexOf('await decreaseStock'))), false);
+// 2026-09-03: 차감 실패(초과판매)면 결제 전에 주문을 멈춘다. 그 응답은 반드시 결제실패정리(재고 원복) 뒤에만 나가야 한다.
+const 차감이후 = ready.slice(ready.indexOf('await decreaseStock'), ready.indexOf('if (trx_method == 1)'));
+eq('차감 실패 응답은 결제실패정리 뒤에만', /await 결제실패정리\(trans_id\);\s*\n\s*return response\(req, res, -100,/.test(차감이후), true);
+eq('차감 이후 정리 없는 맨 응답이 없음',
+  (차감이후.match(/return response\(req, res, -100,/g) || []).length, 1);
 // 예외로 빠져도 놓아준다. trans_id 가 try 밖에 있어야 catch 에서 보인다.
 eq('예외 경로도 복구', /if \(trans_id\) await 결제실패정리\(trans_id\)/.test(pay), true);
 eq('trans_id 를 try 밖에 선언', /let trans_id = 0;[\s\S]{0,20}try \{/.test(pay), true);

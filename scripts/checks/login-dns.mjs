@@ -33,7 +33,8 @@ if (!existsSync(BACK_ROOT + 'controllers/auth.controller.js')) {
     // setting_obj 는 토큰에서 꺼내면 객체, DB 에서 꺼내면 문자열이다. 안 맞추면
     // is_use_seller 판정이 조용히 어긋나 셀러몰 로그인 갈래가 바뀐다.
     t('setting_obj 모양을 맞춘다', /typeof brand\.setting_obj === 'string'/.test(조각));
-    t('다음 요청을 위해 쿠키를 다시 굽는다', /res\.cookie\("dns", makeUserToken\(brand\)/.test(조각));
+    // 2026-09-03 토큰 종류 분리: dns 쿠키는 makeDnsToken(kind:'dns') 으로 굽는다 — 사용자 토큰과 바꿔 쓰지 못하게.
+    t('다음 요청을 위해 쿠키를 다시 굽는다', /res\.cookie\("dns", makeDnsToken\(brand\)/.test(조각));
     // decode_dns 를 const 로 두면 되살릴 수가 없다(이 버그의 원래 모양).
     t('decode_dns 를 다시 담을 수 있다', /let decode_dns = checkDns\(req\.cookies\.dns\);/.test(조각));
 }

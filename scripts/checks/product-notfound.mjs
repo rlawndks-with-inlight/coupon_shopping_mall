@@ -42,7 +42,10 @@ const 안내 = 읽기('src/components/elements/shop/ProductNotFound.js');
 t('안내가 한국어다', /상품을 찾을 수 없습니다\./.test(안내));
 t('안내가 번역을 탄다', /translate\(/.test(안내),
     '문구를 그대로 박으면 외국어 화면에서도 한국어로 나간다');
-t('돌아갈 길을 준다', /router\.push\('\/'\)/.test(안내) && /router\.push\('\/shop\/items'\)/.test(안내),
+// ⚠ 홈은 '/' 가 아니라 '/shop' 이다. 루트로 보내면 본사 ShopGo 랜딩이 뜬다 —
+//   루트를 몰 홈으로 돌리는 장치가 둘 있지만 **둘 다 서버 쪽**이라 화면 안 이동에는 안 걸린다.
+//   (자세한 사연과 전수 검사는 storefront-home-link.mjs 에 있다)
+t('돌아갈 길을 준다', /router\.push\('\/shop'\)/.test(안내) && /router\.push\('\/shop\/items'\)/.test(안내),
     '빠져나갈 버튼이 없으면 뒤로가기 말고는 방법이 없다');
 
 // 화면을 죽이던 그 한 줄

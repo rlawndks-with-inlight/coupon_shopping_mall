@@ -50,9 +50,15 @@ const ProductNotFound = ({ sx = {}, style = {} }) => {
                 >
                     {translate('다른 상품 보기')}
                 </button>
+                {/* ⚠ '/' 가 아니라 '/shop' 이다.
+                    루트로 보내면 **본사 ShopGo 랜딩**이 뜬다. 브랜드 주소의 루트를 몰 홈으로
+                    돌리는 장치는 두 개인데(next.config 의 rewrite, _app 의 302) **둘 다 서버 쪽**이라
+                    router.push 같은 화면 안 이동에는 걸리지 않는다.
+                    그래서 주소창에 직접 치면 몰 홈이 뜨는데 이 버튼만 랜딩으로 샜다(2026-09-03 제보).
+                    프레임 로고도 전부 '/shop' 을 쓴다 — 같은 곳으로 맞춘다. */}
                 <button
                     type="button"
-                    onClick={() => router.push('/')}
+                    onClick={() => router.push('/shop')}
                     style={{
                         padding: '11px 20px', fontSize: '14px', cursor: 'pointer',
                         border: '1px solid currentColor', borderRadius: '4px',

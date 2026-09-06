@@ -23,7 +23,7 @@ import 'react-credit-cards/es/styles-compiled.css'
 // lazy image
 import 'react-lazy-load-image-component/src/effects/blur.css'
 import { Toaster } from 'react-hot-toast'
-import { ogDeliveryUrl, canonicalUrl } from 'src/data/data'
+import { ogDeliveryUrl, canonicalUrl, faviconUrl } from 'src/data/data'
 import { AuthProvider } from 'src/layouts/manager/auth/JwtContext'
 import { useEffect } from 'react'
 import ThemeContrast from 'src/components/settings/ThemeContrast'
@@ -107,14 +107,21 @@ const App = props => {
     );
   }
 
+  const favicon = faviconUrl(Object.keys(head_data ?? {}).length > 0 ? head_data : headData);
+
   return (
     <>
       <CacheProvider value={emotionCache}>
         <Head>
           <title>{head_data?.name || headData?.name}</title>
           <meta name='description' content={head_data?.og_description || headData?.og_description} />
-          <link rel='shortcut icon' href={head_data?.favicon_img || headData?.favicon_img} />
-          <link rel='apple-touch-icon' sizes='180x180' href={head_data?.favicon_img || headData?.favicon_img} />
+          {/* 값이 있을 때만 그린다 — 없으면 href='null' 이 나가 /지금경로/null 404 가 난다(faviconUrl 주석) */}
+          {favicon && (
+            <>
+              <link rel='shortcut icon' href={favicon} />
+              <link rel='apple-touch-icon' sizes='180x180' href={favicon} />
+            </>
+          )}
           <meta name='keywords' content={head_data?.name || headData?.name} />
           <meta httpEquiv='Content-Type' content='text/html; charset=utf-8' />
           <meta property='og:type' content='website' />

@@ -239,6 +239,10 @@ export default function OrderSheet({ router }) {
       buyer_name: prev.buyer_name || user?.name || user?.nickname || '',
       buyer_phone: prev.buyer_phone || sanitizePhoneInput(user?.phone_num ?? ''),
     }));
+    // 배송지 목록도 여기서 부른다 — 예전엔 getCart 가 로그인 여부와 무관하게 불렀다.
+    // 그래서 비회원 주문서에서도 매번 '권한이 없습니다'(403) 가 났고(조용히 버려져 화면엔 안 떴다),
+    // 정작 회원은 user 가 도착하기 전에 부른 탓에 첫 조회가 빈손으로 끝나기도 했다.
+    onChangeAddressPage(addressSearchObj);
   }, [user?.id]);
 
   const isBuyNow = () => (typeof window !== 'undefined' && window.location.search.includes('buynow'));
@@ -295,7 +299,8 @@ export default function OrderSheet({ router }) {
     }
     setProducts(items);
     await runSync(items, translate("상품 가격이 변경되어 최신 금액으로 갱신했습니다."));
-    onChangeAddressPage(addressSearchObj);
+    // ⚠ 배송지 목록은 여기서 부르지 않는다 — 로그인한 사람에게만 있는 자료라
+    //   위 [user?.id] 효과가 맡는다(비회원 403 · 회원 첫 조회 실패 둘 다 이 자리 때문이었다).
   };
 
   // ── 주문상품 수량/삭제 ──

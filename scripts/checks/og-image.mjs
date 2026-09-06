@@ -89,8 +89,12 @@ t('끝 슬래시가 여러 개여도 하나로', canonicalUrl('a.com///') === 'h
 // 한 곳이라도 빠지면 그 경로로 들어온 손님에게는 예전처럼 원본이 나간다.
 const app = 읽기('src/pages/_app.js');
 const head = 읽기('src/components/head/index.js');
-t('_app.js 가 함수를 가져온다', /import \{ ogDeliveryUrl, canonicalUrl \} from 'src\/data\/data'/.test(app));
-t('head 컴포넌트가 함수를 가져온다', /import \{ ogDeliveryUrl, canonicalUrl \} from "src\/data\/data";/.test(head));
+// 같은 자리에서 다른 도우미(faviconUrl 등)도 함께 가져오므로 목록 전체를 글자 그대로 비교하지 않는다.
+// 보려는 것은 '두 자리가 이 두 함수를 가져오는가' 뿐이다.
+const 가져오나 = (src, quote) => new RegExp(
+    'import \\{[^}]*\\bogDeliveryUrl\\b[^}]*\\bcanonicalUrl\\b[^}]*\\} from ' + quote + 'src/data/data' + quote).test(src);
+t('_app.js 가 함수를 가져온다', 가져오나(app, "'"));
+t('head 컴포넌트가 함수를 가져온다', 가져오나(head, '"'));
 t('_app.js og:image 가 변환을 거친다', /og:image' content=\{ogDeliveryUrl\(/.test(app));
 t('head og:image 가 변환을 거친다', /og:image" content=\{ogDeliveryUrl\(/.test(head));
 t('_app.js og:url 이 정식 주소를 쓴다', /og:url' content=\{canonicalUrl\(/.test(app));

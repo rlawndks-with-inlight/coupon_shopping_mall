@@ -1,6 +1,7 @@
 import Head from "next/head";
-import { ogDeliveryUrl, canonicalUrl } from "src/data/data";
+import { ogDeliveryUrl, canonicalUrl, faviconUrl } from "src/data/data";
 const HeadContent = ({ dns_data }) => {
+  const favicon = faviconUrl(dns_data);
   return (
     <>
       <Head>
@@ -9,8 +10,13 @@ const HeadContent = ({ dns_data }) => {
           name='description'
           content={dns_data?.og_description}
         />
-        <link rel='shortcut icon' href={dns_data?.favicon_img} />
-        <link rel="apple-touch-icon" sizes="180x180" href={dns_data?.favicon_img} />
+        {/* 값이 있을 때만 그린다 — 없으면 href='null' 이 나가 /지금경로/null 404 가 난다(faviconUrl 주석) */}
+        {favicon && (
+          <>
+            <link rel='shortcut icon' href={favicon} />
+            <link rel="apple-touch-icon" sizes="180x180" href={favicon} />
+          </>
+        )}
         <meta name='keywords' content={dns_data?.name} />
         <meta httpEquiv="Content-Type" content="text/html; charset=utf-8" />
         <meta property="og:type" content="website" />

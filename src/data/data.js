@@ -74,6 +74,24 @@ export const canonicalUrl = (dns) => {
   return `https://${d}/`;
 };
 
+// 브라우저 탭 아이콘(파비콘) 주소.
+//
+// ⚠ 값이 없을 때 그냥 넘기면 안 된다. React 는 href={null} 을 **문자열 'null'** 로 렌더하고,
+//   브라우저는 그걸 상대경로로 읽어 지금 보고 있는 주소 뒤에 붙여 부른다 —
+//   `/shop/items/null`, `/shop/auth/pay-result/null` … 이 404 가 페이지를 열 때마다 두 번씩 났다
+//   (2026-09-03 시연 로그에서 확인. 브랜드 127개 중 63개가 파비콘 미등록이다).
+//   그래서 여기서 빈 문자열로 정리하고, 호출부는 값이 있을 때만 <link> 를 그린다.
+//
+// 파비콘이 없으면 로고를 대신 쓴다 — 탭에서 알아볼 수 있는 그림이 하나라도 있는 편이 낫다.
+// 둘 다 없으면 기본 그림을 만들지 않는다(로고 정책과 같다 — logoSrc 주석 참고).
+export const faviconUrl = (dns_data) => {
+  const pick = (v) => {
+    const s = String(v ?? '').trim();
+    return s && s !== 'null' && s !== 'undefined' ? s : '';
+  };
+  return pick(dns_data?.favicon_img) || pick(dns_data?.logo_img);
+};
+
 // 카카오톡·SNS 미리보기 이미지 주소. 저장된 원본을 800x400 / 60KB 안팎으로 줄여 내보낸다.
 // 클라우디너리에 올라간 것만 손대고, 밖에서 온 주소는 그대로 둔다(변환을 붙일 수 없다).
 export const ogDeliveryUrl = (url) => {

@@ -149,7 +149,9 @@ const GuideCard = ({ s, ordered, showRouteButtons, brandId, router, frameGroup, 
 
       {fields.length > 0 && <FieldTable fields={fields} />}
 
-      <GuideImage id={s.id} shots={s.shots} />
+      {/* noShot: 찍을 화면이 아예 없는 항목(본사 처리·범위 설명). '준비중' 자리를 띄우면
+          있어야 할 그림이 빠진 것처럼 보이므로 아무것도 그리지 않는다. */}
+      {!s.noShot && <GuideImage id={s.id} shots={s.shots} />}
 
       {showRouteButtons && route && (
         <Button size="small" variant="outlined" onClick={() => router.push(route)} endIcon={<Icon icon="mdi:arrow-right" />} sx={{ mt: 1.5 }}>

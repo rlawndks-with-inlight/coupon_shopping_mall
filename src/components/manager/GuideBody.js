@@ -85,7 +85,12 @@ const FieldTable = ({ fields }) => (
 // - 없으면 {id}.png / {id}1~3.png 자동 후보로 캡션 없이 렌더.
 // - 전부 없으면 '준비중' 자리.
 const GuideImage = ({ id, shots }) => {
-  const list = shots && shots.length ? shots : [id, `${id}1`, `${id}2`, `${id}3`].map((c) => ({ img: c }));
+  // shots 가 없으면 {id}.png 한 장만 찾는다.
+  // 예전엔 {id}1~3.png 까지 넷을 찔러 봤다. 넣어 둔 사진이 하나뿐인 항목에서는 나머지 셋이
+  // 전부 404 라, 가이드를 한 번 열 때마다 없는 파일 12개를 부르고 있었다(2026-09-06 확인).
+  // 화면에는 티가 안 나지만(ShotCard 가 스스로 숨는다) 서버 로그가 그만큼 더러워진다.
+  // 사진을 여러 장 붙이려면 shots 에 적는다 — 캡션도 그때 함께 단다(PDF 추출기도 같은 규칙이다).
+  const list = shots && shots.length ? shots : [{ img: id }];
   const [resolved, setResolved] = useState({});
   const anyOk = Object.values(resolved).some(Boolean);
   const allResolved = list.every((sh) => resolved[sh.img] !== undefined);

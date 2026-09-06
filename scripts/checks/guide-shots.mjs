@@ -36,8 +36,8 @@ for (const id of ids) {
     const j = 소스.indexOf('\n  {', i);
     const 본문 = 소스.slice(i, j < 0 ? 소스.length : j);
     const shots = [...본문.matchAll(/img: '([^']+)'/g)].map((m) => m[1]);
-    // GuideBody 와 같은 규칙: shots 가 없으면 {id}.png / {id}1~3.png 를 찾아본다.
-    const 후보 = shots.length ? shots : [id, `${id}1`, `${id}2`, `${id}3`];
+    // GuideBody·PDF 추출기와 같은 규칙: shots 가 없으면 {id}.png 한 장만 본다.
+    const 후보 = shots.length ? shots : [id];
     if (후보.some((x) => 있는사진.has(x))) continue;
     if (/noShot: true/.test(본문)) continue;
     준비중.push(id);
@@ -55,6 +55,10 @@ t('GuideBody 가 noShot 을 존중한다', /!s\.noShot && <GuideImage/.test(body
     'noShot 을 달아도 렌더러가 무시하면 준비중 자리가 그대로 뜬다');
 t('준비중 자리는 남겨 둔다(사진만 빠졌을 때 표시)', /스크린샷 준비중/.test(body),
     '자리 자체를 없애면 사진을 넣기로 한 항목이 비어도 아무도 모른다');
+
+// 없는 파일을 찔러 보지 않는다 — 가이드 한 번 열 때마다 404 12개가 나던 자리다.
+t('사진 후보를 번호로 늘려 찾지 않는다', !/\$\{id\}1/.test(body),
+    '여러 장을 붙이려면 shots 목록에 적는다(캡션도 그때 단다)');
 
 console.log(`\n통과 ${pass} / 실패 ${fail}`);
 process.exit(fail ? 1 : 0);

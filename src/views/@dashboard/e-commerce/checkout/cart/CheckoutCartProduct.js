@@ -76,7 +76,9 @@ export default function CheckoutCartProduct({ row, onDelete, onDecrease, onIncre
         />
 
         <Stack spacing={0.5}>
-          <Typography noWrap variant="subtitle2" sx={{ maxWidth: 240, cursor: 'pointer' }} onClick={() => { router.push(`/shop/item/${row?.id}`) }}>
+          {/* 휴대폰 카드에서는 오른쪽 위에 삭제 버튼이 얹히므로 그만큼 좁힌다 —
+              240 그대로 두면 상품명이 휴지통 아이콘 아래로 파고든다(실측 28px 겹침). */}
+          <Typography noWrap variant="subtitle2" sx={{ maxWidth: { xs: 175, sm: 240 }, cursor: 'pointer' }} onClick={() => { router.push(`/shop/item/${row?.id}`) }}>
             {
               themeDnsData?.setting_obj?.is_use_lang == 1 ?
                 formatLang(row, 'product_name', currentLang)

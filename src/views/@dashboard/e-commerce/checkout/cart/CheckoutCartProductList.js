@@ -52,6 +52,10 @@ const 모바일카드 = {
       px: 0,
       py: 0.5,
       textAlign: 'left',
+      // ⚠ MUI 는 align="right" 칸에 flex-direction: row-reverse 를 건다(.MuiTableCell-alignRight).
+      //   그대로 두면 카드에서 라벨이 값 **뒤로** 밀려 '37,000원 총액' 처럼 거꾸로 읽힌다.
+      flexDirection: 'row',
+      justifyContent: 'flex-start',
     },
     '& td[data-label]:before': {
       content: 'attr(data-label)',

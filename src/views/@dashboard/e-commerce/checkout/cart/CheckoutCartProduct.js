@@ -49,6 +49,8 @@ export default function CheckoutCartProduct({ row, onPeek, onDelete, onDecrease,
   // 붙었는지 알 수 없었다(가맹점이 값을 잘못 넣은 것처럼 보인다). 옵션명 옆과 가격칸에 근거를 남긴다.
   const unit = getPriceUnitByLang(currentLang?.value);
   const option_texts = orderLineOptionTexts(row, currentLang?.value);
+  // 추가상품 줄 — 상품가·배송비 없이 추가상품 가격 × 수량뿐이다(shop-util 의 isAddonLine·calculatorPrice).
+  const 추가상품줄 = Number(row?.addon_line) === 1;
   // ⚠ 옵션 금액을 여기서 직접 더하면 안 된다.
   //
   // 조합형 상품은 선택옵션의 개별가가 0 이고 금액이 **조합 추가금**으로 따로 붙는다.
@@ -89,6 +91,9 @@ export default function CheckoutCartProduct({ row, onPeek, onDelete, onDecrease,
                 product_name
             }
           </Typography>
+          {추가상품줄 && (
+            <Box><Label color="info">{translate('추가 상품')}</Label></Box>
+          )}
           {is_blocked && (
             <Stack direction="row" alignItems="center" spacing={0.5}>
               <Label color={getProductStatus(status)?.color || 'error'}>{status_text || translate("판매불가")}</Label>
@@ -156,6 +161,11 @@ export default function CheckoutCartProduct({ row, onPeek, onDelete, onDecrease,
                (scripts/checks/word-break.mjs 주석 참고) → '50,00 / 0원' 도 가능하다
           ① 은 붙여서, ② 는 nowrap 으로 막는다. 금액은 길어야 열 몇 글자라 폭 문제도 없다. */}
       <TableCell data-label={translate('가격')} sx={{ whiteSpace: 'nowrap' }}>
+        {/* 추가상품 줄의 가격은 그 추가상품 가격이다 — 상품 판매가·정가·배송비를 여기 적으면 손님이 두 번 내는 줄 안다 */}
+        {추가상품줄 ? (
+          <>{commarNumber(option_surcharge)}{unit}</>
+        ) : (
+        <>
         {product_price > product_sale_price && (
           <Box
             component="span"
@@ -188,6 +198,8 @@ export default function CheckoutCartProduct({ row, onPeek, onDelete, onDecrease,
               {translate('개당')} {commarNumber(unit_price)}{unit}
             </Typography>
           </>
+        )}
+        </>
         )}
       </TableCell>
       {

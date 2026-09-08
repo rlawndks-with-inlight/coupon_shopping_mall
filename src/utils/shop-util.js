@@ -10,7 +10,7 @@ import { returnMoment, isPurchasable, getProductStatus, commarNumberWithUnit } f
 import { getLocalStorage } from "./local-storage";
 import { isDemoHost } from "src/components/main-site/frameList";
 import { findMissingRequired } from "src/data/order-form-types";
-import { requiredGroups, isComboMode, findCombination, optionExtraPrice, maxOrderable, isAddon, closeOptionLine, optionLines, optionLineKey, purchaseUnits, removeOptionLine, setOptionLineCount } from "src/data/product-options";
+import { requiredGroups, isComboMode, findCombination, optionExtraPrice, maxOrderable, isAddon, closeOptionLine, optionLines, purchaseUnits, removeOptionLine, setOptionLineCount, toggleAddonLine } from "src/data/product-options";
 import { makeOrdNum } from 'src/utils/function';
 
 // 손님에게 뜨는 안내는 반드시 이걸 거친다.
@@ -99,20 +99,32 @@ export const 무료배송안내 = (item, lang) => {
     return 번역('{{amount}} 이상 무료배송', { amount: commarNumberWithUnit(s.freeMin, lang) });
 };
 
+// 추가상품 줄인가(장바구니·주문서 줄). 상품가·배송비 없이 추가상품 옵션 가격 × 수량뿐이다.
+export const isAddonLine = (line) => Number(line?.addon_line) === 1;
+
+// 줄의 배송비(정책 안 쓰는 몰의 상품별 배송비). 추가상품 줄에는 안 붙는다 — 본상품 줄이 이미 냈다.
+// 장바구니 동기화가 delivery_fee 를 서버 값으로 되맞추므로 줄에 0 을 심어 두는 것만으론 부족하다.
+const 줄배송비 = (line) => (isAddonLine(line) ? 0 : (Number(line?.delivery_fee) || 0));
+
 export const calculatorPrice = (item) => {// 상품별로 가격
     if (!item) {
         return 0;
     }
-    let { product_sale_price, product_price, groups = [], order_count, delivery_fee } = item;
+    let { product_sale_price, product_price, groups = [], order_count } = item;
     // 조합형이면 선택옵션의 개별 가격 대신 조합 추가금을 쓴다.
     // 장바구니 줄은 상품을 통째로 복사하므로 combinations/option_mode 가 줄에 그대로 남아 있다.
     // 백엔드 recalcOrderAmount 와 규칙이 같아야 한다 — 어긋나면 화면과 청구 금액이 달라진다.
     const product_option_price = optionExtraPrice(item, { groups });
+    // 추가상품 줄: 상품가 0, 정가 0(할인 없음), 배송비 0. 백엔드도 같은 규칙이다.
+    const 추가상품 = isAddonLine(item);
+    const 판매가 = 추가상품 ? 0 : (Number(product_sale_price) || 0);
+    const 정가 = 추가상품 ? 0 : (Number(product_price) || 0);
+    const delivery_fee = 줄배송비(item);
 
     return {
-        subtotal: (product_price + product_option_price) * order_count + delivery_fee,//할인전가격
-        total: (product_sale_price + product_option_price) * order_count + delivery_fee,//결과
-        discount: (product_price - product_sale_price) * order_count//할인가
+        subtotal: (정가 + product_option_price) * order_count + delivery_fee,//할인전가격
+        total: (판매가 + product_option_price) * order_count + delivery_fee,//결과
+        discount: (정가 - 판매가) * order_count//할인가
     }
 }
 // 주문 금액 계산 — '화면에 보여줄 값'과 '실제로 청구할 값'이 같은 함수를 쓰게 한다.
@@ -133,7 +145,7 @@ export const calcOrderTotals = (products_, use_point = 0) => {
     let merchTotal = 0;
     for (let i = 0; i < products.length; i++) {
         const calc = calculatorPrice(products[i]);
-        const lineDelivery = products[i]?.delivery_fee ?? 0;
+        const lineDelivery = 줄배송비(products[i]);
         const lineMerch = (calc?.total ?? 0) - lineDelivery;
         merchByIdx[i] = lineMerch;
         merchTotal += lineMerch;
@@ -142,7 +154,7 @@ export const calcOrderTotals = (products_, use_point = 0) => {
     let delivery = 0;
     const lineDeliveries = [];
     for (let i = 0; i < products.length; i++) {
-        const d = ship.active ? (i === 0 ? ship.fee : 0) : (products[i]?.delivery_fee ?? 0);
+        const d = ship.active ? (i === 0 ? ship.fee : 0) : 줄배송비(products[i]);
         lineDeliveries[i] = d;
         delivery += d;
     }
@@ -167,9 +179,12 @@ export const makePayData = async (products_, payData_) => {
     let merchTotal = 0;
     const merchByIdx = [];
     for (var i = 0; i < products.length; i++) {
-        products[i].order_name = products[i]?.product_name;
+        // 추가상품 줄은 이름에 표시를 남긴다 — 관리자 주문관리·부분취소·주문내역이 order_name 만으로도 읽히게.
+        products[i].order_name = isAddonLine(products[i])
+            ? `${products[i]?.product_name} (추가상품)`
+            : products[i]?.product_name;
         const calc = await calculatorPrice(products[i]);
-        const lineDelivery = products[i]?.delivery_fee ?? 0;
+        const lineDelivery = 줄배송비(products[i]);
         const lineMerch = (calc?.total ?? 0) - lineDelivery;
         merchByIdx[i] = lineMerch;
         merchTotal += lineMerch;
@@ -182,7 +197,7 @@ export const makePayData = async (products_, payData_) => {
     for (var i = 0; i < products.length; i++) {
         const lineDelivery = ship.active
             ? (i === 0 ? ship.fee : 0)
-            : (products[i]?.delivery_fee ?? 0);
+            : 줄배송비(products[i]);
         const order_amount = merchByIdx[i] + lineDelivery;
         amount += order_amount;
         products[i] = {
@@ -193,6 +208,8 @@ export const makePayData = async (products_, payData_) => {
             order_count: products[i]?.order_count,
             groups: products[i]?.groups,
             seller_id: products[i]?.seller_id ?? 0,
+            // 서버(recalcOrderAmount)가 이 표시로 '상품가 없이 추가상품 가격만' 으로 다시 계산한다
+            addon_line: isAddonLine(products[i]) ? 1 : 0,
         }
     }
     payData = {
@@ -703,6 +720,8 @@ export const startBuyNow = async (product, selectProductGroups, router) => {
             order_count: u.count,
             // 값은 이 줄에 붙어 주문서를 거쳐 백엔드까지 그대로 간다.
             order_form_values: product?.order_form_values ?? {},
+            addon_line: u.addon ? 1 : 0,
+            ...(u.addon ? { delivery_fee: 0 } : {}),
         }));
         // 주문서는 buyNowItem 을 배열로도 읽는다(예전 형태인 객체 하나도 그대로 읽는다).
         sessionStorage.setItem('buyNowItem', JSON.stringify(items.length === 1 ? items[0] : items));
@@ -729,7 +748,8 @@ export const cartLineSignature = (line) => {
     // ⚠ 추가 입력값도 시그니처에 넣는다.
     //   안 넣으면 '같은 한복을 9월 1일과 9월 8일에 각각' 담았을 때 한 줄로 합쳐지고
     //   날짜 하나가 조용히 사라진다(수량만 2가 된다).
-    return `${line?.id ?? 0}/${line?.seller_id ?? 0}/${picked}/${orderFormSignature(line?.order_form_values)}`;
+    // 추가상품 줄은 같은 상품·같은 옵션이라도 본상품 줄과 다른 줄이다.
+    return `${line?.id ?? 0}/${line?.seller_id ?? 0}/${picked}/${orderFormSignature(line?.order_form_values)}${isAddonLine(line) ? '/addon' : ''}`;
 };
 
 // 입력값을 순서에 무관하게 문자열 하나로. 값이 없으면 빈 문자열이라 기존 줄과 그대로 맞는다.
@@ -784,7 +804,8 @@ export const insertCartDataUtil = async (
             //   · 장바구니에 똑같은 줄이 여러 개 쌓이고
             //   · 목록 key 가 row.id 라 React key 가 중복되며(수량 변경이 엉뚱한 줄에 먹는다)
             //   · 상품별 배송비를 쓰는 브랜드는 배송비가 줄 수마다 중복 계산됐다.
-            const signature = cartLineSignature({ id: product?.id, seller_id: product?.seller_id, groups, order_form_values: orderFormValues });
+            const addon_line = 단위.addon ? 1 : 0;
+            const signature = cartLineSignature({ id: product?.id, seller_id: product?.seller_id, groups, order_form_values: orderFormValues, addon_line });
             const found_idx = cart_data.findIndex((line) => cartLineSignature(line) === signature);
             if (found_idx >= 0) {
                 const prev = cart_data[found_idx];
@@ -798,6 +819,9 @@ export const insertCartDataUtil = async (
                     order_count,
                     groups,
                     order_form_values: orderFormValues ?? {},
+                    // 추가상품 줄 — 상품가·배송비 없이 추가상품 가격만(calculatorPrice 가 이 표시를 본다)
+                    addon_line,
+                    ...(addon_line ? { delivery_fee: 0 } : {}),
                 });
             }
         }
@@ -882,57 +906,8 @@ const isSameSelectedOption = (saved, option) =>
         ? saved?.id === option?.id
         : saved?.value === option;
 
-// 이미 쌓인 줄에 추가상품을 붙이거나 뺀다.
-//
-// [왜 필요한가 — 2026-09-08 가맹점 제보로 재확인]
-// 필수 옵션을 다 고르면 그 조합은 곧바로 '줄' 로 쌓이고 **지금 선택은 비워진다**(ProductAddons).
-// 그 뒤에 추가상품을 누르면 빈 '지금 선택' 에 들어가는데, purchaseUnits 는 줄이 하나라도 있으면
-// 지금 선택을 '고르다 만 것' 으로 보고 통째로 버린다.
-//   → 버튼은 눌린 모양(굵게·배경 바뀜)인데 금액에도, 요약에도, 장바구니에도 없다.
-//   실측(mbc05 떡갈비): 갯수 먼저 고르고 매운소스를 누르면 50,000원 그대로.
-//                      매운소스 먼저 누르고 갯수를 고르면 50,500원(정상).
-//   손님은 고른 추가상품이 빠진 채로 주문하게 된다.
-//
-// 그래서 그런 추가상품은 '지금 선택' 이 아니라 **방금 만든 줄** 에 직접 붙인다.
-// 상태 자체를 맞추는 쪽으로 고친다 — purchaseUnits 에서 읽을 때 기워 넣으면
-// 화면에 보이는 줄과 실제 저장된 선택이 갈린다.
-//
-// ⚠ 줄이 여럿이면 **마지막 줄**에 붙는다. 어느 줄인지 물어보는 편이 정확하지만 지금 화면에는
-//   줄을 고르는 수단이 없다. 조용히 버리는 것보다는 낫다 —
-//   줄을 골라 붙이게 하려면 SelectedOptionLines 에 그 수단부터 만들어야 한다.
-const 추가상품을줄에붙이기 = (selected, group, option) => {
-    const lines = [...optionLines(selected)];
-    if (!lines.length) return selected;
-    const i = lines.length - 1;
-    const groups = [...(lines[i].groups ?? [])];
-    const gi = groups.findIndex((saved) => isSameOptionGroup(saved, group));
-    if (gi >= 0) {
-        const options = [...(groups[gi].options ?? [])];
-        const oi = options.findIndex((saved) => isSameSelectedOption(saved, option));
-        // 다시 누르면 빠진다 — 지금 선택에서와 같은 규칙이라야 손님이 헷갈리지 않는다.
-        if (oi >= 0) options.splice(oi, 1);
-        else options.push(normalizeSelectedOption(option));
-        // 다 빼면 그룹째 지운다(빈 그룹이 남으면 줄 열쇠가 어긋난다).
-        if (!options.length) groups.splice(gi, 1);
-        else groups[gi] = { ...groups[gi], options };
-    } else {
-        groups.push({ ...깨끗한그룹(group), options: [normalizeSelectedOption(option)] });
-    }
-    const key = optionLineKey(groups);
-    // 붙이고 나니 다른 줄과 같은 조합이 됐으면 합친다. 줄이 둘로 갈리면 손님은 왜 갈렸는지 모른다
-    // (closeOptionLine 이 같은 조합을 합치는 것과 같은 이유다).
-    const 같은줄 = lines.findIndex((l, idx) => idx !== i && l.key === key);
-    if (같은줄 >= 0) {
-        lines[같은줄] = {
-            ...lines[같은줄],
-            count: (Number(lines[같은줄].count) || 1) + (Number(lines[i].count) || 1),
-        };
-        lines.splice(i, 1);
-    } else {
-        lines[i] = { ...lines[i], key, groups };
-    }
-    return { ...selected, lines };
-};
+// 추가상품은 더 이상 필수 조합 줄에 붙지 않는다 — 제 줄을 갖는다(data/product-options.js 의 toggleAddonLine 주석).
+// 2026-09-08 까지는 '방금 만든 줄에 붙이는' 갈래가 있었다(줄 수량에 묶여 소스만 3개를 살 수 없었다).
 
 export const selectItemOptionUtil = (group, option, selectProductGroups, is_option_multiple) => {//아이템 옵션 선택하기
     // ── 선택 목록(줄) 조작 통로 ──────────────────────────────────────────
@@ -959,14 +934,9 @@ export const selectItemOptionUtil = (group, option, selectProductGroups, is_opti
         if (줄조작.type === 'count') return setOptionLineCount(selectProductGroups, 줄조작.key, 줄조작.count);
         return selectProductGroups;
     }
-    // 추가상품인데 **이미 줄이 쌓여 있고** 지금 고르는 중인 필수 조합이 없다면,
-    // '지금 선택' 이 아니라 방금 만든 줄에 붙인다(추가상품을줄에붙이기 주석 참고).
-    // 이 갈래가 없으면 그 추가상품은 purchaseUnits 에서 통째로 버려진다.
-    if (isAddon(group)
-        && optionLines(selectProductGroups).length > 0
-        && !(selectProductGroups?.groups ?? []).some((g) => !isAddon(g))) {
-        return 추가상품을줄에붙이기(selectProductGroups, group, option);
-    }
+    // 추가상품은 '지금 선택' 에 들어가지 않는다 — 제 줄(addons)로 간다. 누르면 생기고 다시 누르면 빠진다.
+    // 수량은 그 줄의 −/+ 로 따로 정한다(줄조작 count/remove 가 addons 도 함께 다룬다).
+    if (isAddon(group)) return toggleAddonLine(selectProductGroups, group, option);
     // 넘겨받은 객체를 변형하지 않고 새 객체를 만들어 돌려준다.
     //
     // 예전엔 인자를 그대로 고쳐서 되돌려줬다. 호출부 11곳이 전부

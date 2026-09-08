@@ -163,6 +163,8 @@ export const syncCartWithServer = async (products = []) => {
 
         // 금액 관련 값만 서버 값으로 맞춘다.
         for (const k of ['product_sale_price', 'product_price', 'delivery_fee']) {
+            // 추가상품 줄의 배송비는 늘 0 이다 — 서버 상품값으로 되맞추면 배송비가 두 번 붙는다.
+            if (k === 'delivery_fee' && toInt(line?.addon_line) === 1) { next[k] = 0; continue; }
             const sv = toNum(server?.[k]);
             if (toNum(line?.[k]) != sv) result.priceChanged = true;
             next[k] = sv;

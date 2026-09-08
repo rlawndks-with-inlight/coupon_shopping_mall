@@ -6,6 +6,10 @@
 // ----------------------------------------------------------------------
 
 const vi = {
+  "본상품이 빠져 추가상품도 함께 뺐습니다.": "Sản phẩm bổ sung đã bị xóa vì sản phẩm chính không còn.",
+  "추가상품은 본상품과 함께 주문할 수 있습니다.": "Sản phẩm bổ sung chỉ có thể đặt cùng sản phẩm chính.",
+  "옵션을 먼저 골라 주세요.": "Vui lòng chọn tùy chọn trước.",
+  "추가 상품": "Sản phẩm bổ sung",
   "상품검색": "Tìm kiếm sản phẩm",
   "검색결과가 없습니다.": "Không tìm thấy kết quả tìm kiếm.",
   "기본주소": "Địa chỉ mặc định",

@@ -247,6 +247,16 @@ export default function OrderSheet({ router }) {
 
   const isBuyNow = () => (typeof window !== 'undefined' && window.location.search.includes('buynow'));
 
+  // 본상품이 없는 추가상품 줄을 걷어낸다(네이버·카페24 규칙 — 추가상품은 본상품과 함께만).
+  // 장바구니에서 본상품만 지우고 오면 소스 3개 1,500원짜리 주문이 되는데, 서버도 이 주문을 거부한다.
+  // 여기서 먼저 걷어내고 알려야 손님이 결제 단계에서 영문 모를 거절을 받지 않는다.
+  const 고아추가상품걷기 = (list) => {
+    const 본상품 = new Set((list ?? []).filter((p) => Number(p?.addon_line) !== 1).map((p) => `${p?.id}/${p?.seller_id ?? 0}`));
+    const kept = (list ?? []).filter((p) => Number(p?.addon_line) !== 1 || 본상품.has(`${p?.id}/${p?.seller_id ?? 0}`));
+    if (kept.length !== (list ?? []).length) toast(translate('본상품이 빠져 추가상품도 함께 뺐습니다.'));
+    return kept;
+  };
+
   // 서버의 현재 상품정보로 주문 라인을 갱신한다.
   //
   // 장바구니는 '담을 때의 가격'을 localStorage 에 그대로 들고 있다. 그 사이 관리자가
@@ -297,6 +307,7 @@ export default function OrderSheet({ router }) {
     } else {
       items = await getCartDataUtil(themeCartData);
     }
+    items = 고아추가상품걷기(items);
     setProducts(items);
     await runSync(items, translate("상품 가격이 변경되어 최신 금액으로 갱신했습니다."));
     // ⚠ 배송지 목록은 여기서 부르지 않는다 — 로그인한 사람에게만 있는 자료라
@@ -310,8 +321,9 @@ export default function OrderSheet({ router }) {
   // 예전엔 여기서도 onChangeCartData 를 불러, 바로구매 상품을 지우면
   // 엉뚱하게 고객의 진짜 장바구니가 비워졌다.
   const onDelete = (idx) => {
-    const list = [...products];
+    let list = [...products];
     list.splice(idx, 1);
+    list = 고아추가상품걷기(list);
     if (isBuyNow()) {
       바로구매쓰기(list);
     } else {
@@ -417,6 +429,12 @@ export default function OrderSheet({ router }) {
     // 여러 건을 담은 고객은 무엇을 빼야 하는지 알 수 없었다.
     if (unavailable.length > 0) {
       toast.error(makeUnavailableMessage(unavailable));
+      return false;
+    }
+    // 추가상품만 남은 주문은 서버가 거부한다 — 먼저 알린다(걷어내기가 놓친 경우의 마지막 관문).
+    if (products.some((p) => Number(p?.addon_line) === 1
+        && !products.some((m) => Number(m?.addon_line) !== 1 && m?.id == p?.id && (m?.seller_id ?? 0) == (p?.seller_id ?? 0)))) {
+      toast.error(translate('추가상품은 본상품과 함께 주문할 수 있습니다.'));
       return false;
     }
     if (!payData.addr) {
@@ -729,7 +747,8 @@ export default function OrderSheet({ router }) {
     // 옵션 글은 표의 옵션 칸과 같은 함수, 줄 금액은 표의 총액과 같은 계산(merchByIdx)이다.
     items: products.map((p, i) => ({
       key: `${cartLineSignature(p)}#${i}`,
-      name: themeDnsData?.setting_obj?.is_use_lang == 1 ? formatLang(p, 'product_name', currentLang) : (p?.product_name ?? ''),
+      name: (Number(p?.addon_line) === 1 ? `${translate('추가 상품')} · ` : '')
+        + (themeDnsData?.setting_obj?.is_use_lang == 1 ? formatLang(p, 'product_name', currentLang) : (p?.product_name ?? '')),
       options: orderLineOptionTexts(p, currentLang?.value),
       count: Number(p?.order_count) || 1,
       amount: orderTotals.merchByIdx?.[i] ?? 0,

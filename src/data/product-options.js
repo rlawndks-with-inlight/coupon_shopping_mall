@@ -224,6 +224,37 @@ export const isRequiredComplete = (product, groups) => {
 export const optionLines = (selected) =>
     Array.isArray(selected?.lines) ? selected.lines : [];
 
+// ── 추가상품 줄 ─────────────────────────────────────────────────────────
+//
+// [왜 — 2026-09-09 사장님 결정, 네이버·카페24 방식]
+// 추가상품은 **제 줄, 제 수량**이다. 예전엔 필수 조합 줄 안에 붙어 줄 수량에 묶였다 —
+// 갈비 1개에 소스 3개가 불가능했고, 가맹점 제보(8/24) "추가옵션 1개만 구매가능" 이 바로 그것이었다.
+//
+// [모델] selected.addons = [{ key, groups: [{ …추가상품그룹, addon_line: 1, options: [옵션] }], count }]
+//   · 누르면 생기고(1개) 다시 누르면 빠진다. 수량은 줄의 −/+ 로.
+//   · purchaseUnits 가 본상품 단위 뒤에 addon: true 로 붙여 준다 → 장바구니 줄 { …상품, groups, order_count, addon_line: 1 }
+//   · 금액은 추가상품 옵션 가격 × 수량뿐(상품가 없음, 배송비 없음) — calculatorPrice·백엔드 recalcOrderAmount 가 같은 규칙.
+//   · 본상품 없이는 못 산다 — 주문서가 본상품 없는 추가상품 줄을 걷어내고, 서버가 다시 거부한다.
+// ⚠ 그룹 객체에 addon_line: 1 을 심는다. 주문 저장 시 order_groups JSON 에 그대로 남아
+//   부분취소가 '추가상품 줄'임을 알고 옵션 재고만 되돌린다(본상품 재고를 건드리지 않는다).
+export const addonLines = (selected) =>
+    Array.isArray(selected?.addons) ? selected.addons : [];
+
+export const addonLineKey = (group, option) =>
+    `addon:${group?.id ?? group?.group_name ?? ''}:${option?.id ?? option?.value ?? option?.option_name ?? ''}`;
+
+export const hasAddonLine = (selected, group, option) =>
+    addonLines(selected).some((a) => a.key === addonLineKey(group, option));
+
+export const toggleAddonLine = (selected, group, option) => {
+    const key = addonLineKey(group, option);
+    const addons = addonLines(selected);
+    if (addons.some((a) => a.key === key)) return { ...selected, addons: addons.filter((a) => a.key !== key) };
+    const { options: _목록, ...그룹 } = (group && typeof group === 'object') ? group : {};
+    const 옵션 = (option && typeof option === 'object') ? { ...option } : { value: option };
+    return { ...selected, addons: [...addons, { key, groups: [{ ...그룹, addon_line: 1, options: [옵션] }], count: 1 }] };
+};
+
 // 지금 고르는 중인 조합을 줄로 확정한다.
 //
 // 완성됐는지는 **부르는 쪽이 이미 판정한 뒤**다(shop-util 의 selectItemOptionUtil).
@@ -266,9 +297,11 @@ export const closeOptionLine = (selected, groups_) => {
 //   그런 상품에서 감추면 수량을 정할 길이 사라진다 — 그래서 '필수 옵션이 있는가' 로 가른다.
 export const 수량은옵션줄에서정한다 = (product) => requiredGroups(product).length > 0;
 
+// 줄 빼기 — 필수 조합 줄과 추가상품 줄 둘 다 열쇠(key)로 찾는다(같은 통로로 온다).
 export const removeOptionLine = (selected, key) => ({
     ...selected,
     lines: optionLines(selected).filter((l) => l.key !== key),
+    addons: addonLines(selected).filter((a) => a.key !== key),
 });
 
 // 줄 수량 바꾸기. 0 이하로 내리면 줄을 지운다(− 를 계속 누르면 빠지는 것이 자연스럽다).
@@ -278,6 +311,7 @@ export const setOptionLineCount = (selected, key, count) => {
     return {
         ...selected,
         lines: optionLines(selected).map((l) => (l.key === key ? { ...l, count: n } : l)),
+        addons: addonLines(selected).map((a) => (a.key === key ? { ...a, count: n } : a)),
     };
 };
 
@@ -306,7 +340,11 @@ export const purchaseUnits = (selected) => {
         if (i >= 0) 단위[i] = { ...단위[i], count: 단위[i].count + n };
         else 단위.push({ key, groups: 지금, count: n, 쌓인줄: false });
     }
+    // 추가상품 줄 — 본상품 단위 뒤에 붙는다(제 줄·제 수량). 담기·바로구매는 이것을 addon_line 줄로 만든다.
+    const 추가 = addonLines(selected).map((a) => ({
+        key: a.key, groups: a.groups ?? [], count: Math.max(1, Number(a.count) || 1), 쌓인줄: true, addon: true,
+    }));
     // 옵션이 아예 없는 상품(줄도 없고 고른 것도 없다)은 예전처럼 한 단위다.
-    if (!단위.length) return [{ groups: [], count: Math.max(1, Number(selected?.count) || 1) }];
-    return 단위;
+    if (!단위.length) return [{ groups: [], count: Math.max(1, Number(selected?.count) || 1) }, ...추가];
+    return [...단위, ...추가];
 };

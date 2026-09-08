@@ -6,6 +6,10 @@
 // ----------------------------------------------------------------------
 
 const fr = {
+  "본상품이 빠져 추가상품도 함께 뺐습니다.": "L'article additionnel a été retiré car le produit principal a été supprimé.",
+  "추가상품은 본상품과 함께 주문할 수 있습니다.": "Les articles additionnels ne peuvent être commandés qu'avec le produit principal.",
+  "옵션을 먼저 골라 주세요.": "Veuillez d'abord choisir les options.",
+  "추가 상품": "Articles additionnels",
   "상품검색": "",
   "검색결과가 없습니다.": "",
   "기본주소": "",

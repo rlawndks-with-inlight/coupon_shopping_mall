@@ -21,13 +21,15 @@ const PO = await import('file:///' +
   FRONT_ROOT + 'src/data/product-options.js');
 // optionLines·purchaseUnits·closeOptionLine 은 '선택한 옵션 줄 쌓기'(option-lines.mjs) 로 들어온 의존이다.
 const { requiredGroups, isComboMode, findCombination, optionExtraPrice, maxOrderable, isAddon,
-        optionLines, purchaseUnits, closeOptionLine, removeOptionLine, setOptionLineCount } = PO;
+        optionLines, purchaseUnits, closeOptionLine, removeOptionLine, setOptionLineCount,
+        toggleAddonLine } = PO;   // 추가상품은 제 줄로 간다(2026-09-09) — selectItemOptionUtil 이 부른다
 
 const toast = { error: () => {}, success: () => {} };
 const _ = { findIndex: () => -1 };
 // cartLineSignature 가 orderFormSignature 를 부른다 — 같이 안 떼어오면 ReferenceError 로 죽는다.
 // (주문 추가 입력값이 다르면 장바구니 줄이 합쳐지면 안 되므로 시그니처에 들어간다)
-const body = [grab('isSameOptionGroup'), grab('assertOptionsSelected'), grab('assertStock'),
+// cartLineSignature 는 isAddonLine 도 부른다(추가상품 줄은 본상품 줄과 합쳐지면 안 된다 — 2026-09-09).
+const body = [grab('isAddonLine'), grab('isSameOptionGroup'), grab('assertOptionsSelected'), grab('assertStock'),
               grab('cartLineSignature'),
               grab('orderFormSignature'),
               grab('normalizeSelectedOption'), grab('isSameSelectedOption'), grab('selectItemOptionUtil')]
@@ -41,12 +43,13 @@ const 번역 = (문구, 값) => String(문구).replace(/\{\{(\w+)\}\}/g, (_m, k)
 const fn = new Function('toast', '_', 'requiredGroups', 'isComboMode', 'findCombination',
                         'optionExtraPrice', 'maxOrderable', 'isAddon', '번역',
                         'optionLines', 'purchaseUnits', 'closeOptionLine', 'removeOptionLine', 'setOptionLineCount',
+                        'toggleAddonLine',
                         body + `
   return { isSameOptionGroup, assertOptionsSelected, assertStock, cartLineSignature, selectItemOptionUtil };
 `);
 const { assertOptionsSelected, assertStock, cartLineSignature, selectItemOptionUtil } =
   fn(toast, _, requiredGroups, isComboMode, findCombination, optionExtraPrice, maxOrderable, isAddon, 번역,
-     optionLines, purchaseUnits, closeOptionLine, removeOptionLine, setOptionLineCount);
+     optionLines, purchaseUnits, closeOptionLine, removeOptionLine, setOptionLineCount, toggleAddonLine);
 
 let pass = 0, fail = 0;
 const t = (name, cond) => { if (cond) { pass++; console.log('  ok  ' + name); } else { fail++; console.log('  FAIL ' + name); } };
@@ -119,13 +122,13 @@ t('선택옵션은 여전히 필수', assertOptionsSelected(돌상2, { groups: [
 let s3 = selectItemOptionUtil(크기, 크기.options[0], { count: 1, groups: [] });
 t('선택옵션만 고르면 통과(추가상품 안 골라도)', assertOptionsSelected(돌상2, s3) === true);
 
-// 추가상품은 여러 개 고를 수 있고 다시 누르면 빠진다
+// 추가상품은 여러 개 고를 수 있고 다시 누르면 빠진다 — 제 줄(addons)로 간다(2026-09-09). 지금 선택(groups)은 그대로.
 s3 = selectItemOptionUtil(한복, 한복.options[0], s3, true);
-t('추가상품 담김', s3.groups.length === 2);
+t('추가상품 담김(제 줄)', s3.groups.length === 1 && (s3.addons ?? []).length === 1);
 s3 = selectItemOptionUtil(스냅, 스냅.options[0], s3, true);
-t('추가상품 두 개 담김', s3.groups.length === 3);
+t('추가상품 두 개 담김', (s3.addons ?? []).length === 2);
 s3 = selectItemOptionUtil(한복, 한복.options[0], s3, true);
-t('다시 누르면 빠진다(예전엔 뺄 방법이 없었다)', s3.groups.length === 2);
+t('다시 누르면 빠진다(예전엔 뺄 방법이 없었다)', (s3.addons ?? []).length === 1);
 t('빠진 뒤에도 구매 가능', assertOptionsSelected(돌상2, s3) === true);
 
 // ── 조합형 ─────────────────────────────────────────────────────────────────
@@ -164,7 +167,10 @@ const 조합plus = { ...조합상품, groups: [색, 사이즈2, 한복] };
 let c5 = selectItemOptionUtil(색, 색.options[0], { count: 1, groups: [] });
 c5 = selectItemOptionUtil(사이즈2, 사이즈2.options[1], c5);
 c5 = selectItemOptionUtil(한복, 한복.options[0], c5, true);
-t('조합 5,000 + 추가상품 10,000', optionExtraPrice(조합plus, c5) === 15000);
+// 추가상품은 제 줄이라 조합 줄의 금액(5,000)과 추가상품 줄의 금액(10,000)이 따로 선다
+const 추가금5 = purchaseUnits(c5).filter((u) => u.addon)
+  .reduce((a, u) => a + optionExtraPrice(조합plus, { groups: u.groups }) * u.count, 0);
+t('조합 5,000 + 추가상품 10,000(제 줄)', optionExtraPrice(조합plus, c5) === 5000 && 추가금5 === 10000);
 
 // ── 재고 ───────────────────────────────────────────────────────────────────
 // NULL 은 무제한이다. 0 이 아니다 — 0 으로 접으면 마이그레이션 직후 전 상품이 품절이 된다.
@@ -226,19 +232,21 @@ for (const k of 안내키) {
   const 추가그룹 = { id: 20, group_name: '촬영 추가', group_type: 1 };
   const 영상 = { id: 201, option_name: '성장영상', option_price: 45000 };
   const 한복 = { id: 202, option_name: '한복', option_price: 10000 };
-  const 이름들 = (s) => (s?.groups ?? []).flatMap((g) => (g.options ?? []).map((o) => o.option_name));
+  // 추가상품은 '지금 선택'(groups)이 아니라 제 줄(addons)로 간다(2026-09-09, addon-lines.mjs). 이름은 두 곳을 합쳐 읽는다.
+  const 이름들 = (s) => [...(s?.groups ?? []), ...((s?.addons ?? []).flatMap((a) => a.groups ?? []))]
+    .flatMap((g) => (g.options ?? []).map((o) => o.option_name));
   const 같나 = (a, b) => JSON.stringify(a) === JSON.stringify(b);
 
   let s = { count: 1, groups: [] };
   s = selectItemOptionUtil(추가그룹, 영상, s);
-  t('추가상품 한 번 누르면 담긴다', 같나(이름들(s), ['성장영상']));
+  t('추가상품 한 번 누르면 제 줄로 담긴다(지금 선택에는 안 들어간다)', 같나(이름들(s), ['성장영상']) && (s.addons ?? []).length === 1 && (s.groups ?? []).length === 0);
   s = selectItemOptionUtil(추가그룹, 영상, s);
   t('인자를 안 넘겨도 다시 누르면 빠진다', 같나(이름들(s), []));
-  t('다 빼면 그룹도 사라진다', (s.groups ?? []).length === 0);
+  t('다 빼면 줄도 사라진다', (s.addons ?? []).length === 0 && (s.groups ?? []).length === 0);
 
   s = selectItemOptionUtil(추가그룹, 영상, s);
   s = selectItemOptionUtil(추가그룹, 한복, s);
-  t('여러 개 담긴다', 같나(이름들(s), ['성장영상', '한복']));
+  t('여러 개 담긴다(줄 둘)', 같나(이름들(s), ['성장영상', '한복']) && (s.addons ?? []).length === 2);
   s = selectItemOptionUtil(추가그룹, 영상, s);
   t('가운데 것만 빠진다', 같나(이름들(s), ['한복']));
 
@@ -251,12 +259,15 @@ for (const k of 안내키) {
   u = selectItemOptionUtil(색상g, 화이트, u, false);
   t('선택옵션은 다시 눌러도 안 빠진다', 같나(이름들(u), ['화이트']));
 
-  // 추가상품을 담으면 추가금이 실제로 붙어야 한다 — 빠지면 다시 0 이어야 한다
+  // 추가상품을 담으면 추가금이 실제로 붙어야 한다 — 빠지면 다시 0 이어야 한다.
+  // 추가상품은 제 줄이므로 금액은 구매 단위(purchaseUnits 의 addon 단위)에서 읽는다 — 화면(SelectedOptionLines)과 같은 길.
   const 상품 = { id: 7, option_mode: 0 };
+  const 추가금 = (sel) => purchaseUnits(sel).filter((u) => u.addon)
+    .reduce((a, u) => a + optionExtraPrice(상품, { groups: u.groups }) * u.count, 0);
   let v = selectItemOptionUtil(추가그룹, 영상, { count: 1, groups: [] });
-  t('담으면 추가금이 붙는다', optionExtraPrice(상품, v) === 45000);
+  t('담으면 추가금이 붙는다', 추가금(v) === 45000);
   v = selectItemOptionUtil(추가그룹, 영상, v);
-  t('빼면 추가금도 사라진다', optionExtraPrice(상품, v) === 0);
+  t('빼면 추가금도 사라진다', 추가금(v) === 0);
 }
 
 console.log(`\n통과 ${pass} / 실패 ${fail}`);

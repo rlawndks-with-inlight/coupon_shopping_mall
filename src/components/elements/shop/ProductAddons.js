@@ -3,7 +3,7 @@ import { useRouter } from 'next/router';
 import { useLocales } from 'src/locales';
 import { formatLang } from 'src/utils/format';
 import { commarNumber } from 'src/utils/function';
-import { addonGroups, isOptionSoldOut, isSameGroup } from 'src/data/product-options';
+import { addonGroups, isOptionSoldOut, hasAddonLine } from 'src/data/product-options';
 import { 줄조작표 } from 'src/utils/shop-util';
 import SelectedOptionSummary, { hasOptionSummary } from './SelectedOptionSummary';
 import SelectedOptionLines from './SelectedOptionLines';
@@ -86,9 +86,8 @@ const ProductAddons = ({ product, selected, onSelect, style = {} }) => {
     const 줄있음 = purchaseUnits(selected).some((u) => u.쌓인줄);
     if (!추가.length && !한정 && !요약있음 && !줄있음) return null;
 
-    const 골랐나 = (group, option) =>
-        ((selected?.groups ?? []).find((g) => isSameGroup(g, group))?.options ?? [])
-            .some((o) => String(o?.id) === String(option?.id));
+    // 추가상품은 제 줄(addons)에 있다 — 눌린 표시도 거기서 본다(2026-09-09, toggleAddonLine 주석).
+    const 골랐나 = (group, option) => hasAddonLine(selected, group, option);
 
     return (
         <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', ...style }}>

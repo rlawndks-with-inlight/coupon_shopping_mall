@@ -55,7 +55,8 @@ export default function DialogProductPeek({ open, row, onClose }) {
   const 글 = (col) => (번역 ? formatLang(상품, col, currentLang) : 상품?.[col]) ?? '';
   const images = buildProductImages(상품);
   const 옵션들 = orderLineOptionTexts(row, currentLang?.value);
-  const 개당 = (parseFloat(row?.product_sale_price) || 0) + optionExtraPrice(row, { groups: row?.groups ?? [] });
+  // 추가상품 줄이면 상품가 없이 추가상품 가격만(장바구니·주문서와 같은 규칙)
+  const 개당 = (Number(row?.addon_line) === 1 ? 0 : (parseFloat(row?.product_sale_price) || 0)) + optionExtraPrice(row, { groups: row?.groups ?? [] });
   const 수량 = Number(row?.order_count) || 1;
   const 설명 = 글('product_description');
 

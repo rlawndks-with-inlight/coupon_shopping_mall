@@ -195,7 +195,8 @@ eq('서버가 1인 구매수 검사', /await checkPurchaseLimit\(user_id, 줄\)/
 // 취소된 주문은 개수에서 빠져야 한다. 안 그러면 취소해도 영영 못 산다.
 eq('취소 주문은 안 센다', /t\.is_cancel = 0 AND t\.is_cancel_trans = 0/.test(po), true);
 // 같은 상품을 옵션만 달리해 여러 줄로 담아 제한을 우회하지 못하게 합산한다
-eq('한 주문 안에서도 합산', /lines\.filter\(\(l\) => Number\(l\?\.id\) === pid\)/.test(po), true);
+// 추가상품 줄(addon_line)은 본상품 개수가 아니라 빼고 센다(2026-09-09, addon-lines.mjs)
+eq('한 주문 안에서도 합산', /lines\.filter\(\(l\) => Number\(l\?\.id\) === pid && !isAddonLine\(l\)\)/.test(po), true);
 // 담기 단계에서 알려야 한다 — 담아 놓고 결제 직전에 막히면 그게 더 나쁘다
 eq('담기에서 비회원 차단', (util.match(/if \(!assertMemberOnly\(/g) || []).length, 2);
 const addon = readFileSync(FRONT + 'src/components/elements/shop/ProductAddons.js', 'utf8');

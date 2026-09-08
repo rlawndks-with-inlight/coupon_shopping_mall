@@ -76,9 +76,10 @@ export default function CheckoutCartProduct({ row, onDelete, onDecrease, onIncre
         />
 
         <Stack spacing={0.5}>
-          {/* 휴대폰 카드에서는 오른쪽 위에 삭제 버튼이 얹히므로 그만큼 좁힌다 —
-              240 그대로 두면 상품명이 휴지통 아이콘 아래로 파고든다(실측 28px 겹침). */}
-          <Typography noWrap variant="subtitle2" sx={{ maxWidth: { xs: 175, sm: 240 }, cursor: 'pointer' }} onClick={() => { router.push(`/shop/item/${row?.id}`) }}>
+          {/* 삭제 버튼이 같은 칸에 붙어 있으므로 그만큼 좁힌다.
+              PC 쪽 200 은 폭을 맞추려고 정한 값이다 — 240 이면 표가 734px 이 되어
+              본문(712px)을 22px 넘긴다(실측). 200 이면 약 694px 로 들어간다. */}
+          <Typography noWrap variant="subtitle2" sx={{ maxWidth: { xs: 175, sm: 200 }, cursor: 'pointer' }} onClick={() => { router.push(`/shop/item/${row?.id}`) }}>
             {
               themeDnsData?.setting_obj?.is_use_lang == 1 ?
                 formatLang(row, 'product_name', currentLang)

@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import ProductAddons from 'src/components/elements/shop/ProductAddons';
-import { requiredGroups } from 'src/data/product-options';
+import { requiredGroups, 수량은옵션줄에서정한다 } from 'src/data/product-options';
 import { useRouter } from 'next/router';
 import styled from 'styled-components';
 import { useSettingsContext } from 'src/components/settings';
@@ -320,6 +320,7 @@ const Demo4 = () => {
               {/* 추가상품 — 안 골라도 살 수 있다. 프레임 전체가 같은 컴포넌트를 쓴다. */}
               <ProductAddons product={item} selected={selectProductGroups} onSelect={onSelectOption} />
             {/* 수량 — 이 프레임엔 수량 UI 가 없어서 늘 1개만 살 수 있었다 */}
+            {!수량은옵션줄에서정한다(item) &&
             <OptionField>
               <OptionLabel>Quantity</OptionLabel>
               <div>
@@ -328,7 +329,7 @@ const Demo4 = () => {
                   onChange={(count) => setSelectProductGroups((prev) => ({ ...prev, count }))}
                 />
               </div>
-            </OptionField>
+            </OptionField>}
             {/* 살 수 없는 상태(품절·중단됨)를 상세에서 바로 알린다 — 예전엔 표시도 없고
                 버튼도 살아 있어, 누르고 나서야 살 수 없다는 걸 알았다. */}
             {!purchasable && productStatusText &&

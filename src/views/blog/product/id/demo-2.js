@@ -1,6 +1,6 @@
 import { Icon } from '@iconify/react';
 import ProductAddons from 'src/components/elements/shop/ProductAddons';
-import { requiredGroups } from 'src/data/product-options';
+import { requiredGroups, 수량은옵션줄에서정한다 } from 'src/data/product-options';
 import { Select, MenuItem, Drawer, FormControl, InputLabel, Button, Avatar, Divider, Dialog, DialogTitle, DialogContent, DialogActions, IconButton, Stack } from '@mui/material';
 import { useEffect, useState } from 'react';
 import { Row, themeObj } from 'src/components/elements/styled-components';
@@ -515,13 +515,14 @@ const Demo2 = (props) => {
                     </DrawerBox>
                     {/* 수량 — 이 프레임엔 수량 UI 가 없어서 상세에서 담으면 늘 1개였다.
                         selectProductGroups.count 는 담기·바로구매 양쪽이 이미 읽는다. */}
+                    {!수량은옵션줄에서정한다(item) &&
                     <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginTop: '1rem' }}>
                       <div>{translate('수량')}</div>
                       <QuantityStepper
                         value={selectProductGroups?.count ?? 1}
                         onChange={(count) => setSelectProductGroups((prev) => ({ ...prev, count }))}
                       />
-                    </div>
+                    </div>}
                     <Button
                         variant='outlined'
                         color='primary'

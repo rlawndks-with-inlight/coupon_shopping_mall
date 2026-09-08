@@ -1,6 +1,6 @@
 import { Icon } from '@iconify/react';
 import ProductAddons from 'src/components/elements/shop/ProductAddons';
-import { requiredGroups } from 'src/data/product-options';
+import { requiredGroups, 수량은옵션줄에서정한다 } from 'src/data/product-options';
 // 판매자 영역 삭제로 Avatar 를 더 이상 쓰지 않아 import 에서 뺐다.
 import { Select, MenuItem, Drawer, FormControl, InputLabel, Button, Divider, Stack } from '@mui/material';
 import { useEffect, useState } from 'react';
@@ -341,14 +341,17 @@ const Demo1 = (props) => {
             </Row>
           </DrawerBox>
           {/* 수량 — 이 프레임엔 수량 UI 가 없어서 상세에서 담으면 늘 1개였다.
-              selectProductGroups.count 는 담기·바로구매 양쪽이 이미 읽는다. */}
+              selectProductGroups.count 는 담기·바로구매 양쪽이 이미 읽는다.
+              ⚠ 옵션 줄이 쌓이면 수량은 줄마다 정한다 — 그때 이 칸은 아무 일도 안 했다
+                (근거는 data/product-options.js 의 수량은옵션줄에서정한다 주석). */}
+          {!수량은옵션줄에서정한다(item) &&
           <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginTop: '1rem' }}>
             <div>{translate('수량')}</div>
             <QuantityStepper
               value={selectProductGroups?.count ?? 1}
               onChange={(count) => setSelectProductGroups((prev) => ({ ...prev, count }))}
             />
-          </div>
+          </div>}
           <Button
             variant='outlined'
             color='primary'

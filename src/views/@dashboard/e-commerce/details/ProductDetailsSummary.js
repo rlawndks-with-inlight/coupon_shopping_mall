@@ -56,7 +56,7 @@ import { isShopgoBrand } from 'src/utils/is-shopgo';
 import OrderFormFields from 'src/components/elements/shop/OrderFormFields';
 import ProductOptions from 'src/components/elements/shop/ProductOptions';
 import ProductInfoRows from 'src/components/elements/shop/ProductInfoRows';
-import { maxOrderable } from 'src/data/product-options';
+import { maxOrderable, 수량은옵션줄에서정한다 } from 'src/data/product-options';
 // ----------------------------------------------------------------------
 
 ProductDetailsSummary.propTypes = {
@@ -232,6 +232,10 @@ export default function ProductDetailsSummary({ product, onAddCart, onGotoStep, 
               </>
               :
               <>
+                {/* 옵션 줄이 쌓이면 수량은 줄마다 정한다 — 그때 이 칸은 아무 일도 안 했다.
+                    값이 다른 수량칸이 둘 보이는데 하나가 먹통이라 손님이 3개로 알고 1개를 받았다.
+                    (판정 근거는 data/product-options.js 의 수량은옵션줄에서정한다 주석) */}
+                {!수량은옵션줄에서정한다(product) &&
                 <Stack direction="row" justifyContent="space-between">
                   <Typography variant="subtitle2" sx={{ height: 36, lineHeight: '36px' }}>
                     {translate('수량')}
@@ -264,7 +268,7 @@ export default function ProductDetailsSummary({ product, onAddCart, onGotoStep, 
                       }}
                     />
                   </Stack>
-                </Stack>
+                </Stack>}
                 <Divider sx={{ borderStyle: 'dashed' }} />
                 <Stack direction="row" spacing={2}>
                   <Button

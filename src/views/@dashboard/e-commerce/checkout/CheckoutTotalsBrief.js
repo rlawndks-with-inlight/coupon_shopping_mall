@@ -23,6 +23,7 @@ CheckoutTotalsBrief.propTypes = {
   shipActive: PropTypes.bool,   // 브랜드 배송비 정책이 켜져 있는가(0원이면 '무료배송' 으로 읽는다)
   usedPoint: PropTypes.number,
   total: PropTypes.number,      // 실제 청구액(포인트 차감 후)
+  dense: PropTypes.bool,        // 바깥 여백·윗줄 없이 — 이미 여백이 있는 상자(결제수단 패널) 안에 넣을 때
 };
 
 const 줄 = ({ label, value, strong }) => (
@@ -32,13 +33,13 @@ const 줄 = ({ label, value, strong }) => (
   </Stack>
 );
 
-export default function CheckoutTotalsBrief({ subtotal = 0, discount = 0, shipping = 0, shipActive = false, usedPoint = 0, total = 0 }) {
+export default function CheckoutTotalsBrief({ subtotal = 0, discount = 0, shipping = 0, shipActive = false, usedPoint = 0, total = 0, dense = false }) {
   const { translate } = useLocales();
   const 단위 = getPriceUnitByLang();
   const 돈 = (n) => `${fCurrency(Number(n) || 0) || '0'}${단위}`;
   return (
-    <Box sx={{ px: 2, pb: 2 }}>
-      <Divider sx={{ mb: 1.5 }} />
+    <Box sx={dense ? {} : { px: 2, pb: 2 }}>
+      {!dense && <Divider sx={{ mb: 1.5 }} />}
       <Stack spacing={0.75}>
         <줄 label={translate('총액')} value={돈(subtotal)} />
         {Number(discount) > 0 && <줄 label={translate('할인')} value={돈(-discount)} />}

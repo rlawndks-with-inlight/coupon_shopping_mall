@@ -29,7 +29,8 @@ t('요약 부품이 index 에서 내보내진다', index.includes("export { defa
 t('주문서가 요약 부품을 쓴다', sheet.includes('<CheckoutTotalsBrief'));
 {
   const 상품 = idx(sheet, "title={translate('주문 상품')}");
-  const 요약 = idx(sheet, '<CheckoutTotalsBrief');
+  // 결제수단 패널(JSX 앞에 정의)에도 같은 부품이 있으므로 '주문 상품' 뒤의 것을 본다
+  const 요약 = sheet.indexOf('<CheckoutTotalsBrief', 상품);
   const 주문자 = idx(sheet, "title={translate('주문자 정보')}");
   t('요약은 상품 목록과 주문자 정보 사이에 있다(= 상품 목록 바로 아래)', 상품 < 요약 && 요약 < 주문자);
 }
@@ -38,9 +39,9 @@ t('요약 부품은 스스로 배송비를 계산하지 않는다(호출부 값�
   !/import[^\n]*(getBrandShipping|calcOrderTotals)/.test(brief) && !/(getBrandShipping|calcOrderTotals)\(/.test(brief));
 t('요약 부품에 총 결제금액 줄이 있다', brief.includes("translate('총 결제금액')"));
 t('요약 부품에 포인트 입력란은 없다(입력은 사이드바 한 곳)', !brief.includes('OutlinedInput') && !brief.includes('use_point'));
-t('사이드바 요약과 아래 요약이 같은 값(요약.subtotal / 요약.discount)을 받는다',
-  (sheet.match(/subtotal=\{요약\.subtotal\}/g) || []).length === 2
-  && (sheet.match(/discount=\{요약\.discount\}/g) || []).length === 2);
+t('사이드바 요약·목록 아래 요약·결제수단 패널이 같은 값(요약.subtotal / 요약.discount)을 받는다',
+  (sheet.match(/subtotal=\{요약\.subtotal\}/g) || []).length === 3
+  && (sheet.match(/discount=\{요약\.discount\}/g) || []).length === 3);
 
 // ── 4. 고른 결제수단 아래 패널 ────────────────────────────────────────────
 t('결제수단패널이 정의돼 있다', sheet.includes('const 결제수단패널 = ()'));
@@ -51,10 +52,19 @@ t('결제수단패널이 정의돼 있다', sheet.includes('const 결제수단�
   t('패널은 결제수단 map **안에서** 그려진다(고른 수단 바로 아래)', map시작 < 패널호출 && 패널호출 < map끝);
   t('고른 수단(selected)에만 붙는다', sheet.includes('{selected && 패널있는수단.includes(buyType) && 결제수단패널()}'));
 }
-t('패널 머리에 총 결제금액이 있다',
-  /const 결제수단패널 = \(\) => \([\s\S]*?translate\('총 결제금액'\)[\s\S]*?commarNumberWithUnit\(orderTotals\.amount/.test(sheet));
-t('포스페이·페이레터 결제하기 버튼이 패널 안에 있다',
-  /const 결제수단패널 = \(\) => \([\s\S]*?\(buyType == 'auth_forspay' \|\| buyType == 'card_payletter'\)[\s\S]*?onPaySelectedRedirect\(\)/.test(sheet));
+{
+  // 요청서 예시 그림의 순서: 고른 수단 → 주문 요약정보(총액·할인·배송비·총 결제금액) → 선택한 결제수단·결제하기
+  const 패널 = sheet.slice(idx(sheet, 'const 결제수단패널 = ()'), idx(sheet, 'paymentModules.map((item, idx) =>'));
+  t('패널 머리에 주문 요약정보가 있다', 패널.includes("translate('주문 요약정보')"));
+  t('패널의 요약은 같은 부품(CheckoutTotalsBrief)으로, 청구액을 그대로 받는다',
+    /<CheckoutTotalsBrief dense[\s\S]*?total=\{orderTotals\.amount\}/.test(패널));
+  const 요약자리 = 패널.indexOf('<CheckoutTotalsBrief');
+  const 버튼자리 = 패널.indexOf("translate('결제하기')");
+  t('요약이 결제하기보다 위에 있다(그림과 같은 순서)', 요약자리 > 0 && 버튼자리 > 요약자리);
+  t('선택한 결제수단 이름을 결제하기 위에 적는다', 패널.includes("translate('선택한 결제수단:')"));
+  t('포스페이·페이레터 결제하기 버튼이 패널 안에 있다',
+    /\(buyType == 'auth_forspay' \|\| buyType == 'card_payletter'\)[\s\S]*?onPaySelectedRedirect\(\)/.test(패널));
+}
 {
   // 사이드바(우측 요약)에는 결제하기가 없어야 한다 — 두 곳에 두면 어느 쪽을 눌러야 하는지 다시 헷갈린다
   const 우측 = sheet.slice(idx(sheet, '── 우: 결제 요약 ──'));

@@ -21,7 +21,7 @@ import { loadOrderDraft, saveOrderDraft, clearOrderDraft } from 'src/utils/order
 import { findMissingRequired } from 'src/data/order-form-types';
 import { syncCartWithServer, makeUnavailableMessage, filterUnavailableByProducts } from 'src/utils/cart-sync';
 import { forspayMethodList, formatLang } from 'src/utils/format';
-import { sanitizePhoneInput, isValidPhoneNumber, makeOrdNum, commarNumberWithUnit } from 'src/utils/function';
+import { sanitizePhoneInput, isValidPhoneNumber, makeOrdNum } from 'src/utils/function';
 import { KOREA_CODE, OVERSEAS_CODE, formatOverseasAddress, isDomestic } from 'src/data/countries';
 import Policy, { POLICY_TYPE } from 'src/pages/shop/auth/policy';
 import { useAuthContext } from 'src/layouts/manager/auth/useAuthContext';
@@ -735,26 +735,35 @@ export default function OrderSheet({ router }) {
   // 화면에 아무 변화가 없다고 느끼고(테두리만 바뀐다) 다음에 뭘 해야 할지 몰랐다.
   // 수기결제 입력란·무통장 안내도 목록 끝에 붙어 있어 고른 수단과 멀었다.
   //
-  // 고른 수단 바로 밑에 「총 결제금액 + 다음 동작(결제하기 / 입력란 / 안내)」 을 붙인다.
+  // 고른 수단 바로 밑에 「주문 요약정보(총액·할인·배송비·총 결제금액) + 다음 동작(결제하기 / 입력란 / 안내)」 을
+  // 붙인다. 요청서의 예시 그림이 정확히 이 순서다: 신용카드 → 주문 요약정보 → 선택한 결제수단·결제하기 → 나머지 수단.
   // 결제 로직은 그대로다 — 자리만 옮겼다.
   const 패널있는수단 = ['card', 'virtual_account', 'gift_certificate', 'card_fintree', 'certification_fintree',
     'card_hecto', 'phone_hecto', 'certification_wayup', 'card_payletter', 'auth_forspay'];
+  const 고른수단이름 = () => _.find(paymentModules, (m) => m?.type == buyType && (buyType != 'auth_forspay' || m?.pay_method == buyPayMethod))?.title || '-';
   const 결제수단패널 = () => (
     <Box sx={{ mt: 1.5, p: 2, borderRadius: 1, border: '1px dashed', borderColor: 'primary.main' }}>
-      <Stack direction="row" justifyContent="space-between" alignItems="baseline" sx={{ mb: 1.5 }}>
-        <Typography variant="subtitle2">{translate('총 결제금액')}</Typography>
-        <Typography variant="subtitle1" sx={{ color: 'error.main', fontWeight: 700 }}>
-          {commarNumberWithUnit(orderTotals.amount, currentLang?.value)}
-        </Typography>
-      </Stack>
+      <Typography variant="subtitle2" sx={{ mb: 1 }}>{translate('주문 요약정보')}</Typography>
+      {/* 값은 상품 목록 아래·사이드바와 같은 것을 받는다 — 세 곳이 서로 다른 금액을 보이면 안 된다 */}
+      <CheckoutTotalsBrief dense
+        subtotal={요약.subtotal}
+        discount={요약.discount}
+        shipping={orderTotals.delivery}
+        shipActive={orderTotals.shipActive}
+        usedPoint={orderTotals.usedPoint}
+        total={orderTotals.amount}
+      />
       {/* 리다이렉트형(포스페이/페이레터) — 여기서 결제창으로 간다 */}
       {(buyType == 'auth_forspay' || buyType == 'card_payletter') && (
-        <Button fullWidth variant="contained" size="large" disabled={payLoading}
-          onClick={() => setModal({
-            func: () => { onPaySelectedRedirect(); },
-            icon: 'ion:card-outline',
-            title: translate('결제를 진행하시겠습니까?'),
-          })}>{translate('결제하기')}</Button>
+        <Box sx={{ mt: 2 }}>
+          <Typography variant="body2" sx={{ mb: 1, textAlign: 'center' }}>{translate('선택한 결제수단:')}<b>{translate(고른수단이름())}</b></Typography>
+          <Button fullWidth variant="contained" size="large" disabled={payLoading}
+            onClick={() => setModal({
+              func: () => { onPaySelectedRedirect(); },
+              icon: 'ion:card-outline',
+              title: translate('결제를 진행하시겠습니까?'),
+            })}>{translate('결제하기')}</Button>
+        </Box>
       )}
       {/* 카드 수기결제 입력 */}
       {buyType == 'card' && (

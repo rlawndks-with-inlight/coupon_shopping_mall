@@ -15,13 +15,13 @@ import Label from 'src/components/label/Label';
 import EmptyContent from 'src/components/empty-content/EmptyContent';
 import Iconify from 'src/components/iconify/Iconify';
 import { useSettingsContext } from 'src/components/settings';
-import { calcOrderTotals, calculatorPrice, getCartDataUtil, makePayData, onPayProductsByAuth, onPayProductsByHand, onPayProductsByPayletter, onPayProductsByForspay, getOrderFormFields } from 'src/utils/shop-util';
+import { calcOrderTotals, calculatorPrice, getCartDataUtil, makePayData, onPayProductsByAuth, onPayProductsByHand, onPayProductsByPayletter, onPayProductsByForspay, getOrderFormFields, orderLineOptionTexts, cartLineSignature, 배송정책 } from 'src/utils/shop-util';
 import { loadOrderDraft, saveOrderDraft, clearOrderDraft } from 'src/utils/order-draft';
 
 import { findMissingRequired } from 'src/data/order-form-types';
 import { syncCartWithServer, makeUnavailableMessage, filterUnavailableByProducts } from 'src/utils/cart-sync';
 import { forspayMethodList, formatLang } from 'src/utils/format';
-import { sanitizePhoneInput, isValidPhoneNumber, makeOrdNum } from 'src/utils/function';
+import { sanitizePhoneInput, isValidPhoneNumber, makeOrdNum, commarNumberWithUnit } from 'src/utils/function';
 import { KOREA_CODE, OVERSEAS_CODE, formatOverseasAddress, isDomestic } from 'src/data/countries';
 import Policy, { POLICY_TYPE } from 'src/pages/shop/auth/policy';
 import { useAuthContext } from 'src/layouts/manager/auth/useAuthContext';
@@ -721,7 +721,26 @@ export default function OrderSheet({ router }) {
   // 요약에 넘길 '할인 전 총액'과 '할인'. 사이드바 요약과 상품 목록 아래 요약이 **같은 값**을 받아야 한다 —
   // 두 곳이 각자 계산하면 언젠가 서로 다른 금액을 보여 준다.
   const 할인합 = _.sum(_.map(products, (item) => calculatorPrice(item).discount));
-  const 요약 = { subtotal: orderTotals.merchTotal + 할인합, discount: 할인합 };
+  const 배송정책값 = 배송정책();
+  const 요약 = {
+    subtotal: orderTotals.merchTotal + 할인합,
+    discount: 할인합,
+    // 무엇을 몇 개 — 사이드바 요약·결제수단 패널에 들어간다(가맹점 요청 2026-09-09 「요약에 옵션도 정리」).
+    // 옵션 글은 표의 옵션 칸과 같은 함수, 줄 금액은 표의 총액과 같은 계산(merchByIdx)이다.
+    items: products.map((p, i) => ({
+      key: `${cartLineSignature(p)}#${i}`,
+      name: themeDnsData?.setting_obj?.is_use_lang == 1 ? formatLang(p, 'product_name', currentLang) : (p?.product_name ?? ''),
+      options: orderLineOptionTexts(p, currentLang?.value),
+      count: Number(p?.order_count) || 1,
+      amount: orderTotals.merchByIdx?.[i] ?? 0,
+    })),
+    // '주문당 1회 · 5만원 이상 무료' — 표 아래에 홀로 두지 않고 배송비 값 바로 곁에 적는다
+    배송비안내: orderTotals.shipActive
+      ? [translate('배송비는 주문당 1회 부과됩니다.'),
+         배송정책값.freeMin > 0 ? translate('{{amount}} 이상 무료배송', { amount: commarNumberWithUnit(배송정책값.freeMin, currentLang?.value) }) : '']
+        .filter(Boolean).join(' ')
+      : '',
+  };
 
   const paymentModules = (themeDnsData?.payment_modules || []).filter((m) => m?.type != 'sms_pay');
   const addressList = addressContent?.content || [];
@@ -746,6 +765,7 @@ export default function OrderSheet({ router }) {
       <Typography variant="subtitle2" sx={{ mb: 1 }}>{translate('주문 요약정보')}</Typography>
       {/* 값은 상품 목록 아래·사이드바와 같은 것을 받는다 — 세 곳이 서로 다른 금액을 보이면 안 된다 */}
       <CheckoutTotalsBrief dense
+        items={요약.items}
         subtotal={요약.subtotal}
         discount={요약.discount}
         shipping={orderTotals.delivery}
@@ -911,9 +931,10 @@ export default function OrderSheet({ router }) {
           <Grid container spacing={3}>
             {/* ── 좌: 주문 정보 ── */}
             <Grid item xs={12} md={8}>
-              {/* 주문상품 */}
+              {/* 주문상품 — 카드 제목(「주문 상품」)은 두지 않는다(2026-09-09 사장님 결정).
+                  PC 는 바로 아래 '상품·옵션·가격·수량·총액' 줄이, 휴대폰은 카드 안 라벨이 제목 노릇을 하고
+                  바로 위에 「주문 / 결제」 페이지 제목이 있다. 제목까지 두면 머리만 둘이 겹친다. */}
               <Card sx={{ mb: 3 }}>
-                <CardHeader title={translate('주문 상품')} />
                 {unavailable.length > 0 && (
                   // 토스트는 사라지므로, 결제가 막힌 이유는 화면에 계속 남겨 둔다.
                   <Box sx={{ mx: 2, mb: 1, p: 1.5, borderRadius: 1, bgcolor: 'error.lighter' }}>
@@ -928,10 +949,13 @@ export default function OrderSheet({ router }) {
                   onDecreaseQuantity={onDecreaseQuantity}
                   onIncreaseQuantity={onIncreaseQuantity}
                   onChangeQuantity={onChangeQuantity}
+                  showShippingNote={false}
                 />
                 {/* 상품 목록 바로 아래 금액 요약 — 가맹점 요청(2026-09-08) 「주문내역 하단에 최종결제금액 안내」.
-                    휴대폰에서는 사이드바 요약이 결제수단 목록 아래로 내려가 얼마인지 한참 뒤에야 보였다. */}
+                    휴대폰에서는 사이드바 요약이 결제수단 목록 아래로 내려가 얼마인지 한참 뒤에야 보였다.
+                    상품 목록(items)은 안 넘긴다 — 바로 위 표와 겹친다. */}
                 <CheckoutTotalsBrief
+                  shippingNote={요약.배송비안내}
                   subtotal={요약.subtotal}
                   discount={요약.discount}
                   shipping={orderTotals.delivery}
@@ -1246,6 +1270,7 @@ export default function OrderSheet({ router }) {
               <Box sx={{ position: { md: 'sticky' }, top: 24 }}>
                 <CheckoutSummary
                   enableDiscount
+                  items={요약.items}
                   themeDnsData={themeDnsData}
                   payData={payData}
                   setPayData={setPayData}

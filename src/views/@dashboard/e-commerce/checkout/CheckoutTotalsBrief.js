@@ -3,8 +3,9 @@ import { Box, Divider, Stack, Typography } from '@mui/material';
 import { fCurrency } from 'src/utils/formatNumber';
 import { getPriceUnitByLang } from 'src/utils/function';
 import { useLocales } from 'src/locales';
+import CheckoutSummaryItems from './CheckoutSummaryItems';
 
-// 주문 상품 목록 **바로 아래** 에 붙는 금액 요약.
+// 주문 상품 목록 **바로 아래** 와 고른 결제수단 아래 패널에 붙는 금액 요약.
 //
 // [왜 — 가맹점 요청 2026-09-08 「주문내역 하단에 최종결제금액 안내」]
 // 주문서의 금액 요약(CheckoutSummary)은 PC 에선 오른쪽 사이드바, 휴대폰에선 결제수단 목록
@@ -24,27 +25,34 @@ CheckoutTotalsBrief.propTypes = {
   usedPoint: PropTypes.number,
   total: PropTypes.number,      // 실제 청구액(포인트 차감 후)
   dense: PropTypes.bool,        // 바깥 여백·윗줄 없이 — 이미 여백이 있는 상자(결제수단 패널) 안에 넣을 때
+  shippingNote: PropTypes.string, // 배송비 줄 아래 한 줄 설명("주문당 1회 · 5만원 이상 무료") — 배송비 값 바로 곁에 둔다
+  items: PropTypes.array,       // 무엇을 몇 개(CheckoutSummaryItems). 표 바로 아래에서는 안 넘긴다(표와 겹친다)
 };
 
-const 줄 = ({ label, value, strong }) => (
-  <Stack direction="row" justifyContent="space-between" alignItems="baseline">
-    <Typography variant={strong ? 'subtitle1' : 'body2'} sx={{ color: strong ? 'text.primary' : 'text.secondary' }}>{label}</Typography>
-    <Typography variant={strong ? 'subtitle1' : 'subtitle2'} sx={{ color: strong ? 'error.main' : 'text.primary', fontVariantNumeric: 'tabular-nums' }}>{value}</Typography>
-  </Stack>
+const 줄 = ({ label, value, strong, note }) => (
+  <Box>
+    <Stack direction="row" justifyContent="space-between" alignItems="baseline">
+      <Typography variant={strong ? 'subtitle1' : 'body2'} sx={{ color: strong ? 'text.primary' : 'text.secondary' }}>{label}</Typography>
+      <Typography variant={strong ? 'subtitle1' : 'subtitle2'} sx={{ color: strong ? 'error.main' : 'text.primary', fontVariantNumeric: 'tabular-nums' }}>{value}</Typography>
+    </Stack>
+    {note && <Typography variant="caption" sx={{ color: 'text.secondary', display: 'block', textAlign: 'right' }}>{note}</Typography>}
+  </Box>
 );
 
-export default function CheckoutTotalsBrief({ subtotal = 0, discount = 0, shipping = 0, shipActive = false, usedPoint = 0, total = 0, dense = false }) {
+export default function CheckoutTotalsBrief({ subtotal = 0, discount = 0, shipping = 0, shipActive = false, usedPoint = 0, total = 0, dense = false, shippingNote = '', items = [] }) {
   const { translate } = useLocales();
   const 단위 = getPriceUnitByLang();
   const 돈 = (n) => `${fCurrency(Number(n) || 0) || '0'}${단위}`;
   return (
-    <Box sx={dense ? {} : { px: 2, pb: 2 }}>
-      {!dense && <Divider sx={{ mb: 1.5 }} />}
-      <Stack spacing={0.75}>
+    // 좌우 24px — 카드 제목(CardHeader)·표의 바깥 칸과 같은 선에 맞춘다
+    <Box sx={dense ? {} : { px: 3, pb: 3 }}>
+      {!dense && <Divider sx={{ mb: 2 }} />}
+      <Stack spacing={1}>
+        <CheckoutSummaryItems items={items} />
         <줄 label={translate('총액')} value={돈(subtotal)} />
         {Number(discount) > 0 && <줄 label={translate('할인')} value={돈(-discount)} />}
         {(shipActive || Number(shipping) > 0) && (
-          <줄 label={translate('배송비')} value={Number(shipping) > 0 ? 돈(shipping) : translate('무료배송')} />
+          <줄 label={translate('배송비')} value={Number(shipping) > 0 ? 돈(shipping) : translate('무료배송')} note={shippingNote} />
         )}
         {Number(usedPoint) > 0 && <줄 label={translate('사용할 포인트')} value={`-${fCurrency(usedPoint)}P`} />}
         <Divider sx={{ my: 0.5 }} />

@@ -29,6 +29,7 @@ import { useEffect } from 'react';
 import { useLocales } from 'src/locales';
 import { getPriceUnitByLang } from 'src/utils/function';
 import { 포인트쓰는몰, 포인트사용상한, 적립예정 } from 'src/data/point-policy';
+import CheckoutSummaryItems from './CheckoutSummaryItems';
 
 // ----------------------------------------------------------------------
 
@@ -59,7 +60,10 @@ export default function CheckoutSummary({
   enablePoint = true,
   payData,
   setPayData,
-  themeDnsData
+  themeDnsData,
+  // 무엇을 몇 개인지(상품명·옵션·수량·줄 금액). 주문서가 넘긴다 — 가맹점 요청(2026-09-09)
+  // 「주문 요약정보에 총액만 넣지 말고 옵션도 정리할 것」. 안 넘기는 카트 화면은 예전 그대로다.
+  items = [],
 }) {
   const { user } = useAuthContext();
   const { translate } = useLocales();
@@ -128,6 +132,7 @@ export default function CheckoutSummary({
       />
       <CardContent>
         <Stack spacing={2}>
+          <CheckoutSummaryItems items={items} />
           <Stack direction="row" justifyContent="space-between">
             <Typography variant="body2" sx={{ color: 'text.secondary' }}>
               {translate('총액')}
@@ -135,12 +140,16 @@ export default function CheckoutSummary({
             <Typography variant="subtitle2">{subtotal ? fCurrency(subtotal ?? 0) : '0'}{getPriceUnitByLang()}</Typography>
           </Stack>
 
-          <Stack direction="row" justifyContent="space-between">
-            <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-              {translate('할인')}
-            </Typography>
-            <Typography variant="subtitle2">{discount ? fCurrency(-discount) : '0'}{getPriceUnitByLang()}</Typography>
-          </Stack>
+          {/* 할인은 가맹점이 상품에 정가를 판매가보다 높게 적었을 때만 생긴다(정가 − 판매가).
+              없는데 '할인 0원' 을 늘 보여 주면 "무슨 할인인가" 를 되묻게 된다 — 있을 때만 적는다. */}
+          {Number(discount) > 0 && (
+            <Stack direction="row" justifyContent="space-between">
+              <Typography variant="body2" sx={{ color: 'text.secondary' }}>
+                {translate('할인')}
+              </Typography>
+              <Typography variant="subtitle2">{fCurrency(-discount)}{getPriceUnitByLang()}</Typography>
+            </Stack>
+          )}
           {/* brandShip.active 는 '브랜드 일괄 배송비 정책'을 켠 경우에만 true 다.
               정책을 안 켜고 상품별 배송비만 쓰는 브랜드는 fee > 0 인데도 이 줄이 숨겨져,
               총액과 총 결제금액이 배송비만큼 어긋나 보였다(청구액은 정상). */}

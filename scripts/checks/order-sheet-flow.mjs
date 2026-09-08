@@ -28,8 +28,8 @@ const index = 읽기('src/views/@dashboard/e-commerce/checkout/index.js');
 t('요약 부품이 index 에서 내보내진다', index.includes("export { default as CheckoutTotalsBrief }"));
 t('주문서가 요약 부품을 쓴다', sheet.includes('<CheckoutTotalsBrief'));
 {
-  const 상품 = idx(sheet, "title={translate('주문 상품')}");
-  // 결제수단 패널(JSX 앞에 정의)에도 같은 부품이 있으므로 '주문 상품' 뒤의 것을 본다
+  const 상품 = idx(sheet, '{/* 주문상품');
+  // 결제수단 패널(JSX 앞에 정의)에도 같은 부품이 있으므로 '주문상품' 카드 뒤의 것을 본다
   const 요약 = sheet.indexOf('<CheckoutTotalsBrief', 상품);
   const 주문자 = idx(sheet, "title={translate('주문자 정보')}");
   t('요약은 상품 목록과 주문자 정보 사이에 있다(= 상품 목록 바로 아래)', 상품 < 요약 && 요약 < 주문자);
@@ -78,6 +78,75 @@ for (const type of ['card', 'virtual_account', 'gift_certificate', 'card_fintree
 }
 t('결제 로직 자체는 그대로다(onPayByHand · onPaySelectedRedirect 둘 다 남아 있다)',
   sheet.includes('const onPayByHand = async') && sheet.includes('const onPaySelectedRedirect = async'));
+
+// ── 2026-09-09 가맹점 2차 지적 ─────────────────────────────────────────────
+// ② '상품'·'총액' 은 가장자리에, '주문 상품' 제목은 안쪽에 — 선이 안 맞았다. 표 바깥 칸·카드·요약을 24px 로 맞춘다.
+//    '배송비는 주문당 1회…' 가 표와 요약 사이에 홀로 떠 있었다 — 배송비 값 곁으로 옮긴다.
+// ③ 주문 요약정보에 총액만 있고 무엇을 샀는지가 없었다 — 상품명·옵션·수량·줄 금액을 넣는다.
+const list = 읽기('src/views/@dashboard/e-commerce/checkout/cart/CheckoutCartProductList.js');
+const line = 읽기('src/views/@dashboard/e-commerce/checkout/cart/CheckoutCartProduct.js');
+const summary = 읽기('src/views/@dashboard/e-commerce/checkout/CheckoutSummary.js');
+const items = 읽기('src/views/@dashboard/e-commerce/checkout/CheckoutSummaryItems.js');
+const util = 읽기('src/utils/shop-util.js');
+
+t('표의 바깥 칸이 카드 제목과 같은 24px 에서 시작한다',
+  list.includes("'& td:first-of-type, & th:first-of-type': { pl: 3 }") && list.includes("'& td:last-of-type, & th:last-of-type': { pr: 3 }"));
+t('카드 배치에서는 그 여백을 되돌린다(카드가 제 여백을 가진다)',
+  /const 카드배치 = \{[\s\S]*?'& td:first-of-type': \{ pl: 0 \}[\s\S]*?'& td:last-of-type': \{ pr: 0 \}/.test(list));
+t('카드도 24px 선에서 시작한다', /const 카드배치 = \{[\s\S]{0,200}px: 3,/.test(list));
+t('표 아래 배송비 안내는 끌 수 있고 주문서는 끈다',
+  list.includes('showShippingNote && totals.shipActive') && sheet.includes('showShippingNote={false}'));
+t('주문서는 배송비 안내를 요약의 배송비 줄 곁에 둔다',
+  sheet.includes('shippingNote={요약.배송비안내}') && brief.includes('note={shippingNote}'));
+t('배송비 안내 문구는 표와 같은 사전 키를 쓴다',
+  sheet.includes("translate('배송비는 주문당 1회 부과됩니다.')") && sheet.includes("translate('{{amount}} 이상 무료배송'"));
+t('요약 부품(목록 아래)도 24px 여백이다', brief.includes('{ px: 3, pb: 3 }'));
+
+t('옵션 글은 한 함수가 만든다(표 칸·요약이 같은 글)',
+  util.includes('export const orderLineOptionTexts = (row, lang)')
+  && line.includes("import { orderLineOptionTexts } from 'src/utils/shop-util'")
+  && sheet.includes('options: orderLineOptionTexts(p, currentLang?.value)'));
+t('표 칸은 옵션 글을 직접 만들지 않는다', !line.includes('getOptionLabel('));
+t('요약 목록 부품이 있고 상품명·옵션·수량·금액을 받는다',
+  items.includes('export default function CheckoutSummaryItems') && /options\s*:\s*PropTypes\.arrayOf/.test(items) && items.includes('it.count') && items.includes('it.amount'));
+t('사이드바 요약과 결제수단 패널이 상품 목록(items)을 받는다',
+  (sheet.match(/items=\{요약\.items\}/g) || []).length === 2 && summary.includes('<CheckoutSummaryItems items={items} />'));
+t('표 바로 아래 요약에는 상품 목록을 넣지 않는다(표와 겹친다)', (() => {
+  const 상품 = idx(sheet, '{/* 주문상품');
+  const 요약 = sheet.indexOf('<CheckoutTotalsBrief', 상품);
+  const 끝 = sheet.indexOf('/>', 요약);
+  return !sheet.slice(요약, 끝).includes('items=');
+})());
+t('줄 금액은 표의 총액과 같은 계산(merchByIdx)이다', sheet.includes('amount: orderTotals.merchByIdx?.[i] ?? 0'));
+t('할인은 있을 때만 적는다(정가 > 판매가일 때만 생긴다)',
+  /Number\(discount\) > 0 && \(/.test(summary) && brief.includes('Number(discount) > 0 &&'));
+
+// ── 2026-09-09 사장님 결정 ────────────────────────────────────────────────
+// · 줄의 사진·이름을 누르면 상품 페이지로 가지 않고 그 자리에서 「상품 정보」 창을 연다(새 탭도, 링크 제거도 아님)
+// · 「주문 상품」 카드 제목은 두지 않는다(표 머리줄·페이지 제목이 그 역할을 한다)
+const peek = 읽기('src/components/dialog/DialogProductPeek.js');
+t('상품 정보 창이 있다', peek.includes('export default function DialogProductPeek'));
+t('창은 어디로도 나가지 않는다(router·href 없음)', !/router\.push|href=|window\.open/.test(peek));
+t('창에 사진·이름·고른 옵션·수량·개당·상세설명이 있다',
+  peek.includes('buildProductImages(상품)') && peek.includes("글('product_name')") && peek.includes('orderLineOptionTexts(row')
+  && peek.includes("translate('수량')") && peek.includes("translate('개당')") && peek.includes("글('product_description')"));
+t('휴대폰에서는 전체화면이다', peek.includes('fullScreen={휴대폰}'));
+// 줄은 가격·상태만 동기화돼 상세설명·추가 사진이 없을 수 있다 — 창을 열 때 받아 채운다(쿠키 없는 조회라 이력이 안 남는다)
+t('상세설명·사진이 없으면 창을 열 때 받아온다',
+  peek.includes("import { fetchServerProduct } from 'src/utils/cart-sync'") && peek.includes('fetchServerProduct(row.id, row?.seller_id)')
+  && 읽기('src/utils/cart-sync.js').includes('export const fetchServerProduct'));
+t('줄의 값(고른 옵션·수량)이 상세보다 우선한다', peek.includes("row?.[k] === undefined ? detail[k] : row[k]"));
+// MUI 프레임 상품 페이지는 sub_images 를 문자열 배열로 펴 두고, 줄이 그것을 그대로 복사한다 — 객체만 읽으면 사진이 1장이 된다
+{
+  const thumbs = 읽기('src/components/elements/shop/ProductThumbs.js');
+  t('사진 목록은 문자열·객체 두 모양의 sub_images 를 다 읽고 겹침을 뺀다',
+    thumbs.includes("typeof s === 'string' ? s : s?.product_sub_img") && thumbs.includes('new Set([item?.product_img, ...subs]'));
+}
+t('줄의 사진·이름은 창을 연다(상품 페이지로 안 간다)',
+  !line.includes('router.push') && !line.includes("from 'next/router'") && (line.match(/onClick=\{상품보기\}/g) || []).length === 2);
+t('목록이 창을 들고 있어 주문서·장바구니 둘 다 같은 창이다',
+  list.includes('<DialogProductPeek open={!!peek} row={peek}') && list.includes('onPeek={() => setPeek(row)}'));
+t('「주문 상품」 카드 제목이 없다', !sheet.includes("title={translate('주문 상품')}"));
 
 console.log(`\n통과 ${pass} / 실패 ${fail}`);
 if (fail) process.exit(1);

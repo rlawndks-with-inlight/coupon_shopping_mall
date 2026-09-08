@@ -29,8 +29,22 @@ import { useSettingsContext } from 'src/components/settings';
 //   각 칸의 data-label 을 :before 로 앞에 세워 '무엇의 값인지' 만 보탠다.
 // ⚠ 라벨은 translate 를 거친 값이라 언어마다 다르다. 그래서 총액만 data-total 로 따로 잡는다
 //   (라벨 글자로 고르면 영어·중국어 화면에서 굵게가 안 먹는다).
-const 모바일카드 = {
-  '@media (max-width:599.95px)': {
+// 표가 들어갈 만큼 넓을 때만 표로 보여준다.
+//
+// [왜 폭을 재나 — 2026-09-08]
+// 600px 이라는 화면 폭으로 가르고 있었는데, 실제로 재 보니 **휴대폰만 빼고 전부 잘려 있었다.**
+//     화면  600px  표 930 / 본문 552   총액 안 보임
+//     화면  900px  표 930 / 본문 544   총액 안 보임   (여기서부터 오른쪽에 요약이 붙어 본문이 더 좁다)
+//     화면 1200px  표 930 / 본문 712   총액 안 보임
+//     화면 1440px  표 930 / 본문 712   총액 안 보임   (페이지 폭이 1200 으로 묶여 더 안 넓어진다)
+// 기준이 화면 폭이 아니라 **그 칸이 표를 담을 만큼 넓은가** 이기 때문이다.
+// 그래서 컨테이너 폭으로 가른다 — 요약이 옆에 붙든, 창을 반으로 쪼개든 알아서 맞는다.
+//
+// ⚠ 컨테이너 질의를 모르는 옛 브라우저는 **카드로 남는다**(아래 max-width 미디어 규칙).
+//   안전한 쪽으로 떨어지는 것이다 — 카드는 좁아도 값이 다 보이고, 표는 잘린다.
+const 들어가는폭 = 700;
+
+const 카드배치 = {
     minWidth: 0,
     display: 'block',
     '& thead': { display: 'none' },
@@ -65,9 +79,13 @@ const 모바일카드 = {
       color: 'text.secondary',
     },
     '& td[data-total]': { fontWeight: 700 },
-    // 삭제 버튼은 라벨이 없다 — 카드 오른쪽 위 모서리로 뺀다.
-    '& td:last-of-type': { position: 'absolute', top: 4, right: 4, p: 0, display: 'block' },
-  },
+};
+
+const 모바일카드 = {
+  // 휴대폰 — 컨테이너 질의를 모르는 브라우저에서도 이 규칙은 먹는다.
+  [`@media (max-width:599.95px)`]: 카드배치,
+  // 그 위 구간 — 본문이 표를 담기엔 좁을 때(태블릿·작은 노트북·요약이 옆에 붙은 화면).
+  [`@container (max-width:${들어가는폭 - 1}px)`]: 카드배치,
 };
 
 export default function CheckoutCartProductList({
@@ -79,30 +97,31 @@ export default function CheckoutCartProductList({
 }) {
   const { translate, currentLang } = useLocales();
   const { themeDnsData } = useSettingsContext();
+  // 배송비 칸과 삭제 칸을 뺐다(2026-09-08). 왜인지는 아래 '들어가는폭' 주석 참고.
   const TABLE_HEAD = [
     { id: 'product', label: translate('상품') },
     { id: 'option', label: translate('옵션') },
-    { id: 'delivery_fee', label: translate('배송비') },
     { id: 'price', label: translate('가격') },
     ...(themeDnsData?.id != 74 ? [
       { id: 'count', label: translate('수량') },
     ] : []),
     { id: 'totalPrice', label: translate('총액'), align: 'right' },
-    { id: '' },
   ];
   // 배송비는 주문 단위로 정해진다(정책이 켜진 몰). 합계와 같은 함수로 계산해야
   // 표의 줄과 아래 요약이 어긋나지 않는다.
   const totals = calcOrderTotals(products);
   const 정책 = 배송정책();
   return (
-    <TableContainer>
+    <TableContainer sx={{ containerType: 'inline-size' }}>
       {/* 720px 을 강제하면 노트북 창을 조금만 줄여도 가로 스크롤이 생긴다.
           칸이 여섯 개뿐이라 그만큼 필요하지 않다 — 글은 줄바꿈으로 접는다.
           (긴 상품명이 표를 늘리지 않도록 상품 칸에 keep-all 을 건다) */}
       <Table sx={{
         minWidth: 560,
         overflowX: 'auto',
-        '& td, & th': { wordBreak: 'keep-all', overflowWrap: 'break-word' },
+        // 칸 좌우 여백 16 → 8. 칸을 둘 줄이고도 66px 이 모자랐다(실측) —
+        // 여백까지 줄여야 본문 폭 안에 들어간다. 글이 붙어 보일 만큼 좁지는 않다.
+        '& td, & th': { wordBreak: 'keep-all', overflowWrap: 'break-word', px: 1 },
         ...모바일카드,
       }}>
         <TableHeadCustom headLabel={TABLE_HEAD} />

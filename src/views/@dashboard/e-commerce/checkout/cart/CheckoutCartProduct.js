@@ -107,6 +107,13 @@ export default function CheckoutCartProduct({ row, onDelete, onDecrease, onIncre
               : product_comment}
           </Stack>
         </Stack>
+        {/* 삭제는 제 칸을 갖고 있었는데 상품 칸 안으로 들여왔다.
+            칸 하나(68px + 여백)를 줄여야 표가 본문 폭 안에 들어간다 —
+            줄이지 않으면 어떤 PC 화면에서도 「총액」이 잘린다(실측 표 930px / 본문 712px).
+            휴대폰 카드에서도 이미 오른쪽 위에 있던 자리라 위치가 달라지지 않는다. */}
+        <IconButton onClick={onDelete} sx={{ ml: 'auto', flexShrink: 0 }} aria-label={translate('삭제')}>
+          <Iconify icon="eva:trash-2-outline" />
+        </IconButton>
       </TableCell>
       <TableCell data-label={translate('옵션')}>
         {/* 옵션 칸이 늘 비어 있던 자리.
@@ -159,15 +166,6 @@ export default function CheckoutCartProduct({ row, onDelete, onDecrease, onIncre
             ② 공백을 없애도 한글은 CSS 기본값에서 **음절 아무 데서나** 끊긴다
                (scripts/checks/word-break.mjs 주석 참고) → '50,00 / 0원' 도 가능하다
           ① 은 붙여서, ② 는 nowrap 으로 막는다. 금액은 길어야 열 몇 글자라 폭 문제도 없다. */}
-      <TableCell data-label={translate('배송비')} sx={{ whiteSpace: 'nowrap' }}>
-        {/* 정책이 켜진 몰은 배송비가 주문당 1회라 줄마다 값을 찍으면 거짓말이 된다.
-            첫 줄에 한 번 적고 나머지 줄은 '—' 로 둔다(표 아래 안내가 이유를 설명한다). */}
-        {ship_active
-          ? (line_delivery > 0
-            ? <>{commarNumber(line_delivery)}{getPriceUnitByLang(currentLang?.value)}</>
-            : (is_first_line ? translate('무료') : '—'))
-          : <>{commarNumber(setProductPriceByLang(row, 'delivery_fee', 'ko', currentLang?.value))}{getPriceUnitByLang(currentLang?.value)}</>}
-      </TableCell>
       <TableCell data-label={translate('가격')} sx={{ whiteSpace: 'nowrap' }}>
         {product_price > product_sale_price && (
           <Box
@@ -178,6 +176,18 @@ export default function CheckoutCartProduct({ row, onDelete, onDecrease, onIncre
           </Box>
         )}
         {commarNumber(setProductPriceByLang(row, 'product_sale_price', 'ko', currentLang?.value))}{getPriceUnitByLang(currentLang?.value)}
+        {/* 배송비 칸을 따로 두지 않는다(2026-09-08).
+            정책을 켠 몰은 배송비가 **주문당 1회**라 첫 줄에만 값이 찍히고 나머지 줄은 전부 '—' 였다 —
+            줄마다 자리를 차지할 만한 정보가 아니고 표 바로 아래에 이미 안내가 있다.
+            그 칸을 줄여야 표가 본문 폭(712px) 안에 들어간다.
+            (커머스 UX 연구 Baymard 도 줄에는 썸네일·이름·옵션·수량·금액을 두고
+             배송비는 주문 단위 항목으로 두라고 한다)
+            다만 정책을 **안 쓰는** 몰은 상품마다 배송비가 다르므로 그 몰에서만 여기에 적는다. */}
+        {!ship_active && Number(setProductPriceByLang(row, 'delivery_fee', 'ko', currentLang?.value)) > 0 && (
+          <Typography variant="caption" sx={{ display: 'block', color: 'text.secondary' }}>
+            {translate('배송비')} +{commarNumber(setProductPriceByLang(row, 'delivery_fee', 'ko', currentLang?.value))}{unit}
+          </Typography>
+        )}
         {/* 옵션 추가금이 있을 때만 붙인다. 총액(마지막 칸)이 판매가와 다른 이유를 여기서 잇는다:
             판매가 → 옵션 가감 → 개당 금액 → (수량 곱) → 총액 */}
         {option_surcharge !== 0 && (
@@ -214,11 +224,6 @@ export default function CheckoutCartProduct({ row, onDelete, onDecrease, onIncre
 
       <TableCell data-label={translate('총액')} data-total="1" align="right" sx={{ whiteSpace: 'nowrap' }}>{commarNumber(setProductPriceByLang(calculatorPrice(row), 'total', 'ko', currentLang?.value))}{getPriceUnitByLang(currentLang?.value)}</TableCell>
 
-      <TableCell align="right">
-        <IconButton onClick={onDelete}>
-          <Iconify icon="eva:trash-2-outline" />
-        </IconButton>
-      </TableCell>
     </TableRow>
   );
 }

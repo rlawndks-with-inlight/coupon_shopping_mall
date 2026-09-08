@@ -10,7 +10,7 @@ import { returnMoment, isPurchasable, getProductStatus, commarNumberWithUnit } f
 import { getLocalStorage } from "./local-storage";
 import { isDemoHost } from "src/components/main-site/frameList";
 import { findMissingRequired } from "src/data/order-form-types";
-import { requiredGroups, isComboMode, findCombination, optionExtraPrice, maxOrderable, isAddon, closeOptionLine, optionLines, purchaseUnits, removeOptionLine, setOptionLineCount } from "src/data/product-options";
+import { requiredGroups, isComboMode, findCombination, optionExtraPrice, maxOrderable, isAddon, closeOptionLine, optionLines, optionLineKey, purchaseUnits, removeOptionLine, setOptionLineCount } from "src/data/product-options";
 import { makeOrdNum } from 'src/utils/function';
 
 // 손님에게 뜨는 안내는 반드시 이걸 거친다.
@@ -858,6 +858,58 @@ const isSameSelectedOption = (saved, option) =>
         ? saved?.id === option?.id
         : saved?.value === option;
 
+// 이미 쌓인 줄에 추가상품을 붙이거나 뺀다.
+//
+// [왜 필요한가 — 2026-09-08 가맹점 제보로 재확인]
+// 필수 옵션을 다 고르면 그 조합은 곧바로 '줄' 로 쌓이고 **지금 선택은 비워진다**(ProductAddons).
+// 그 뒤에 추가상품을 누르면 빈 '지금 선택' 에 들어가는데, purchaseUnits 는 줄이 하나라도 있으면
+// 지금 선택을 '고르다 만 것' 으로 보고 통째로 버린다.
+//   → 버튼은 눌린 모양(굵게·배경 바뀜)인데 금액에도, 요약에도, 장바구니에도 없다.
+//   실측(mbc05 떡갈비): 갯수 먼저 고르고 매운소스를 누르면 50,000원 그대로.
+//                      매운소스 먼저 누르고 갯수를 고르면 50,500원(정상).
+//   손님은 고른 추가상품이 빠진 채로 주문하게 된다.
+//
+// 그래서 그런 추가상품은 '지금 선택' 이 아니라 **방금 만든 줄** 에 직접 붙인다.
+// 상태 자체를 맞추는 쪽으로 고친다 — purchaseUnits 에서 읽을 때 기워 넣으면
+// 화면에 보이는 줄과 실제 저장된 선택이 갈린다.
+//
+// ⚠ 줄이 여럿이면 **마지막 줄**에 붙는다. 어느 줄인지 물어보는 편이 정확하지만 지금 화면에는
+//   줄을 고르는 수단이 없다. 조용히 버리는 것보다는 낫다 —
+//   줄을 골라 붙이게 하려면 SelectedOptionLines 에 그 수단부터 만들어야 한다.
+const 추가상품을줄에붙이기 = (selected, group, option) => {
+    const lines = [...optionLines(selected)];
+    if (!lines.length) return selected;
+    const i = lines.length - 1;
+    const groups = [...(lines[i].groups ?? [])];
+    const gi = groups.findIndex((saved) => isSameOptionGroup(saved, group));
+    if (gi >= 0) {
+        const options = [...(groups[gi].options ?? [])];
+        const oi = options.findIndex((saved) => isSameSelectedOption(saved, option));
+        // 다시 누르면 빠진다 — 지금 선택에서와 같은 규칙이라야 손님이 헷갈리지 않는다.
+        if (oi >= 0) options.splice(oi, 1);
+        else options.push(normalizeSelectedOption(option));
+        // 다 빼면 그룹째 지운다(빈 그룹이 남으면 줄 열쇠가 어긋난다).
+        if (!options.length) groups.splice(gi, 1);
+        else groups[gi] = { ...groups[gi], options };
+    } else {
+        groups.push({ ...깨끗한그룹(group), options: [normalizeSelectedOption(option)] });
+    }
+    const key = optionLineKey(groups);
+    // 붙이고 나니 다른 줄과 같은 조합이 됐으면 합친다. 줄이 둘로 갈리면 손님은 왜 갈렸는지 모른다
+    // (closeOptionLine 이 같은 조합을 합치는 것과 같은 이유다).
+    const 같은줄 = lines.findIndex((l, idx) => idx !== i && l.key === key);
+    if (같은줄 >= 0) {
+        lines[같은줄] = {
+            ...lines[같은줄],
+            count: (Number(lines[같은줄].count) || 1) + (Number(lines[i].count) || 1),
+        };
+        lines.splice(i, 1);
+    } else {
+        lines[i] = { ...lines[i], key, groups };
+    }
+    return { ...selected, lines };
+};
+
 export const selectItemOptionUtil = (group, option, selectProductGroups, is_option_multiple) => {//아이템 옵션 선택하기
     // ── 선택 목록(줄) 조작 통로 ──────────────────────────────────────────
     //
@@ -882,6 +934,14 @@ export const selectItemOptionUtil = (group, option, selectProductGroups, is_opti
         if (줄조작.type === 'remove') return removeOptionLine(selectProductGroups, 줄조작.key);
         if (줄조작.type === 'count') return setOptionLineCount(selectProductGroups, 줄조작.key, 줄조작.count);
         return selectProductGroups;
+    }
+    // 추가상품인데 **이미 줄이 쌓여 있고** 지금 고르는 중인 필수 조합이 없다면,
+    // '지금 선택' 이 아니라 방금 만든 줄에 붙인다(추가상품을줄에붙이기 주석 참고).
+    // 이 갈래가 없으면 그 추가상품은 purchaseUnits 에서 통째로 버려진다.
+    if (isAddon(group)
+        && optionLines(selectProductGroups).length > 0
+        && !(selectProductGroups?.groups ?? []).some((g) => !isAddon(g))) {
+        return 추가상품을줄에붙이기(selectProductGroups, group, option);
     }
     // 넘겨받은 객체를 변형하지 않고 새 객체를 만들어 돌려준다.
     //

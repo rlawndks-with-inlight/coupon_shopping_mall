@@ -382,6 +382,8 @@ const ProductOptionEditor = ({ item, setItem, disabled = false }) => {
             <Stack spacing={1.5}>
                 {라벨('선택 옵션')}
                 {도움말('손님이 반드시 골라야 살 수 있는 것입니다. 색상·사이즈처럼요.')}
+                {/* 옵션별 재고 칸은 빈 칸 안의 흐린 「무제한」 뿐이라 놓치기 쉽다 — 조합형 섹션과 같은 문장을 여기도 둔다(2026-09-09) */}
+                {도움말('재고를 비우면 무제한, 0을 넣으면 그 옵션만 품절이 됩니다.')}
                 <Row style={{ columnGap: '0.75rem', alignItems: 'center' }}>
                     <ToggleButtonGroup
                         exclusive size="small" disabled={disabled}
@@ -517,6 +519,7 @@ const ProductOptionEditor = ({ item, setItem, disabled = false }) => {
             <Stack spacing={1.5}>
                 {라벨('추가 상품')}
                 {도움말('안 골라도 살 수 있는 것입니다. 손님이 필요한 것만 고릅니다. 여러 개 고를 수 있습니다.')}
+                {도움말('재고를 비우면 무제한, 0을 넣으면 그 추가상품만 품절이 됩니다.')}
                 {종류별(추가상품).map(({ g, idx }) => 옵션줄(g, idx, true))}
                 <Button variant="outlined" sx={{ height: 48, ...숨김 }}
                     onClick={() => 그룹추가(추가상품)}>추가 상품 만들기</Button>

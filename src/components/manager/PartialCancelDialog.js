@@ -7,6 +7,7 @@ import { Icon } from '@iconify/react';
 import toast from 'react-hot-toast';
 import { apiManager } from 'src/utils/api';
 import { commarNumber } from 'src/utils/function';
+import { getOptionLabel } from 'src/utils/shop-util';
 
 // 주문 '줄' 단위 취소.
 //
@@ -21,6 +22,17 @@ import { commarNumber } from 'src/utils/function';
 // 같은 클릭이 두 번 도착해도 DB(UNIQUE)가 두 번째를 막게 하는 키.
 // 취소는 실제 환불이라 이중 실행이 곧 이중 환불이다. 버튼 잠금만으로는 부족하다.
 const 새키 = () => `pc_${Date.now()}_${Math.random().toString(36).slice(2, 10)}`;
+
+// 줄이 고른 옵션을 한 줄 글로. 같은 상품을 옵션만 다르게 두 줄 주문하면(사과 중과 2 / 대과 1)
+// 이름이 똑같아서, 이게 없으면 어느 줄을 취소하는지 알 수 없다(2026-09-09 점검).
+// 서버(cancelState)가 order_groups 스냅샷을 그대로 준다 — 주문관리 목록과 같은 표기다.
+const 옵션글 = (line) => (Array.isArray(line?.order_groups) ? line.order_groups : [])
+    .map((g) => {
+        const 값 = (g?.options ?? []).map(getOptionLabel).filter(Boolean).join(' / ');
+        const 이름 = g?.group_name ?? g?.character_name ?? '';
+        return 값 ? (이름 ? `${이름}: ${값}` : 값) : '';
+    })
+    .filter(Boolean).join(', ');
 
 const PartialCancelDialog = ({ open, onClose, trxId, onDone }) => {
     const [loading, setLoading] = useState(true);
@@ -125,7 +137,10 @@ const PartialCancelDialog = ({ open, onClose, trxId, onDone }) => {
                                 {/* 이름을 자르지 않는다. 확인 화면에서 제일 읽어야 할 것이 '무엇을 취소하는가' 인데
                                     noWrap 이면 긴 상품명이 말줄임표로 끊겨, 비슷한 이름 둘을 구분할 수 없다.
                                     minWidth:0 이 있어야 flex 안에서 줄바꿈이 먹는다. */}
-                                <Typography sx={{ fontSize: 14, minWidth: 0 }}>{l.order_name}</Typography>
+                                <Stack sx={{ minWidth: 0 }}>
+                                    <Typography sx={{ fontSize: 14 }}>{l.order_name}</Typography>
+                                    {옵션글(l) && <Typography sx={{ fontSize: 12, color: 'text.secondary' }}>{옵션글(l)}</Typography>}
+                                </Stack>
                                 <Typography sx={{ fontSize: 14, fontWeight: 700, whiteSpace: 'nowrap' }}>
                                     {고른수량(l)}개
                                 </Typography>
@@ -172,7 +187,7 @@ const PartialCancelDialog = ({ open, onClose, trxId, onDone }) => {
                                 <Typography variant="caption">
                                     고객이 <b>{전체요청 ? '전체' : '부분'} 취소</b>를 요청했습니다
                                     {요청줄.length > 0
-                                        ? ` — ${요청줄.map((l) => `${l.order_name} ${Math.min(Number(l.requested_count), l.remain_count)}개`).join(', ')}`
+                                        ? ` — ${요청줄.map((l) => `${l.order_name}${옵션글(l) ? ` (${옵션글(l)})` : ''} ${Math.min(Number(l.requested_count), l.remain_count)}개`).join(', ')}`
                                         : ''}
                                     . 요청 범위로 채워 <b>잠겨</b> 있습니다 — 다르게 취소하려면 아래 '직접 조정'을 켜세요.
                                     {state?.request_reason ? ` · 사유: ${state.request_reason}` : ''}
@@ -184,6 +199,7 @@ const PartialCancelDialog = ({ open, onClose, trxId, onDone }) => {
                                 sx={{ opacity: l.remain_count === 0 ? 0.45 : 1 }}>
                                 <Stack sx={{ flexGrow: 1, minWidth: 0 }}>
                                     <Typography sx={{ fontSize: 14, fontWeight: 600 }}>{l.order_name}</Typography>
+                                    {옵션글(l) && <Typography sx={{ fontSize: 12.5 }}>{옵션글(l)}</Typography>}
                                     <Typography sx={{ fontSize: 12, color: 'text.secondary' }}>
                                         개당 {commarNumber(l.unit_price)}원 · 주문 {l.order_count}개
                                         {l.cancel_count > 0 ? ` · 취소됨 ${l.cancel_count}개` : ''}

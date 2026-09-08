@@ -10,7 +10,7 @@ import toast from 'react-hot-toast';
 import Cards from 'react-credit-cards';
 import Payment from 'payment';
 import { Title, postCodeStyle } from 'src/components/elements/styled-components';
-import { CheckoutCartProductList, CheckoutSummary } from 'src/views/@dashboard/e-commerce/checkout';
+import { CheckoutCartProductList, CheckoutSummary, CheckoutTotalsBrief } from 'src/views/@dashboard/e-commerce/checkout';
 import Label from 'src/components/label/Label';
 import EmptyContent from 'src/components/empty-content/EmptyContent';
 import Iconify from 'src/components/iconify/Iconify';
@@ -21,7 +21,7 @@ import { loadOrderDraft, saveOrderDraft, clearOrderDraft } from 'src/utils/order
 import { findMissingRequired } from 'src/data/order-form-types';
 import { syncCartWithServer, makeUnavailableMessage, filterUnavailableByProducts } from 'src/utils/cart-sync';
 import { forspayMethodList, formatLang } from 'src/utils/format';
-import { sanitizePhoneInput, isValidPhoneNumber, makeOrdNum } from 'src/utils/function';
+import { sanitizePhoneInput, isValidPhoneNumber, makeOrdNum, commarNumberWithUnit } from 'src/utils/function';
 import { KOREA_CODE, OVERSEAS_CODE, formatOverseasAddress, isDomestic } from 'src/data/countries';
 import Policy, { POLICY_TYPE } from 'src/pages/shop/auth/policy';
 import { useAuthContext } from 'src/layouts/manager/auth/useAuthContext';
@@ -718,10 +718,159 @@ export default function OrderSheet({ router }) {
   // 한 번 더 얹었다. 무료배송 판정 기준도 서로 달라서(화면 '상품가+배송비' / 청구 '상품가만')
   // 배송비 정책을 켠 브랜드에서 고객이 본 금액과 결제되는 금액이 어긋났다.
   const orderTotals = calcOrderTotals(products, payData?.use_point);
+  // 요약에 넘길 '할인 전 총액'과 '할인'. 사이드바 요약과 상품 목록 아래 요약이 **같은 값**을 받아야 한다 —
+  // 두 곳이 각자 계산하면 언젠가 서로 다른 금액을 보여 준다.
+  const 할인합 = _.sum(_.map(products, (item) => calculatorPrice(item).discount));
+  const 요약 = { subtotal: orderTotals.merchTotal + 할인합, discount: 할인합 };
 
   const paymentModules = (themeDnsData?.payment_modules || []).filter((m) => m?.type != 'sms_pay');
   const addressList = addressContent?.content || [];
   const isMember = !!user;
+
+  // ── 고른 결제수단 **바로 아래** 에 붙는 패널 ──────────────────────────────
+  //
+  // [왜 — 가맹점 요청 2026-09-08 「결제수단 선택 후 결제하기가 너무 밑에 있어 헷갈림」]
+  // 포스페이·페이레터는 수단을 고른 뒤 「결제하기」 를 눌러야 하는데, 그 버튼이 오른쪽 요약 카드에 있었다.
+  // 휴대폰에서는 요약 카드가 결제수단 7개 **아래** 로 내려가서, 신용카드를 누른 손님은
+  // 화면에 아무 변화가 없다고 느끼고(테두리만 바뀐다) 다음에 뭘 해야 할지 몰랐다.
+  // 수기결제 입력란·무통장 안내도 목록 끝에 붙어 있어 고른 수단과 멀었다.
+  //
+  // 고른 수단 바로 밑에 「총 결제금액 + 다음 동작(결제하기 / 입력란 / 안내)」 을 붙인다.
+  // 결제 로직은 그대로다 — 자리만 옮겼다.
+  const 패널있는수단 = ['card', 'virtual_account', 'gift_certificate', 'card_fintree', 'certification_fintree',
+    'card_hecto', 'phone_hecto', 'certification_wayup', 'card_payletter', 'auth_forspay'];
+  const 결제수단패널 = () => (
+    <Box sx={{ mt: 1.5, p: 2, borderRadius: 1, border: '1px dashed', borderColor: 'primary.main' }}>
+      <Stack direction="row" justifyContent="space-between" alignItems="baseline" sx={{ mb: 1.5 }}>
+        <Typography variant="subtitle2">{translate('총 결제금액')}</Typography>
+        <Typography variant="subtitle1" sx={{ color: 'error.main', fontWeight: 700 }}>
+          {commarNumberWithUnit(orderTotals.amount, currentLang?.value)}
+        </Typography>
+      </Stack>
+      {/* 리다이렉트형(포스페이/페이레터) — 여기서 결제창으로 간다 */}
+      {(buyType == 'auth_forspay' || buyType == 'card_payletter') && (
+        <Button fullWidth variant="contained" size="large" disabled={payLoading}
+          onClick={() => setModal({
+            func: () => { onPaySelectedRedirect(); },
+            icon: 'ion:card-outline',
+            title: translate('결제를 진행하시겠습니까?'),
+          })}>{translate('결제하기')}</Button>
+      )}
+      {/* 카드 수기결제 입력 */}
+      {buyType == 'card' && (
+        <Box>
+          <Stack spacing={2}>
+            <Cards cvc={''} focused={undefined} expiry={payData.yymm} name={payData.buyer_name} number={payData.card_num} />
+            <TextField size="small" label={translate('카드 번호')} value={payData.card_num} placeholder="0000 0000 0000 0000"
+              onChange={(e) => setPayData({ ...payData, card_num: formatCreditCardNumber(e.target.value, Payment) })} />
+            <TextField size="small" label={translate('카드 사용자명')} value={payData.buyer_name}
+              onChange={(e) => setPayData({ ...payData, buyer_name: e.target.value })} />
+            <TextField size="small" label={translate('만료일')} value={payData.yymm} inputProps={{ maxLength: '5' }}
+              onChange={(e) => setPayData({ ...payData, yymm: formatExpirationDate(e.target.value, Payment) })} />
+            <PasswordField size="small" label={translate('카드비밀번호 앞 두자리')} value={payData.card_pw} inputProps={{ maxLength: '2' }}
+              onChange={(e) => setPayData({ ...payData, card_pw: e.target.value })} />
+            <TextField size="small" label={translate('구매자 휴대폰번호')} value={payData.buyer_phone}
+              inputMode="tel" placeholder="010-1234-5678"
+              onChange={(e) => setPayData({ ...payData, buyer_phone: sanitizePhoneInput(e.target.value) })} />
+            <TextField size="small" label={translate('주민번호 또는 사업자등록번호')} value={payData.auth_num}
+              onChange={(e) => setPayData({ ...payData, auth_num: e.target.value })} />
+            <Button variant="contained" size="large" onClick={() => setModal({
+              func: () => { onPayByHand(); }, icon: 'ion:card-outline', title: translate('정말로 결제 하시겠습니까?'),
+            })}>{translate('결제하기')}</Button>
+          </Stack>
+        </Box>
+      )}
+
+      {/* 무통장/가상계좌 안내 */}
+      {buyType == 'virtual_account' && (
+        <Box>
+          {(() => {
+            const m = _.find(themeDnsData?.payment_modules, { type: 'virtual_account' });
+            return (m?.virtual_acct_bank && m?.virtual_acct_name && m?.virtual_acct_num) ? (
+              <Stack spacing={1}>
+                <Typography variant="body2">{translate('은행')} : {m.virtual_acct_bank}</Typography>
+                <Typography variant="body2">{translate('예금주')} : {m.virtual_acct_name}</Typography>
+                <Typography variant="body2">{translate('계좌번호')} : {m.virtual_acct_num}</Typography>
+                {/* 주문번호를 보여준다. 예전엔 알려주지 않아 비회원은 주문조회조차 못 했다. */}
+                {payData?.ord_num && (
+                  <Typography variant="body2" sx={{ fontWeight: 700 }}>{translate('주문번호')} : {payData.ord_num}</Typography>
+                )}
+                <Typography variant="body2" sx={{ color: 'text.secondary' }}>{translate('입금 후 1일 안에 구매처리됩니다.')}</Typography>
+              </Stack>
+            ) : <Typography variant="body2">{translate('무통장입금을 준비중입니다...')}</Typography>;
+          })()}
+        </Box>
+      )}
+
+      {/* 상품권결제 안내.
+          예전엔 이 블록이 아예 없었다. 상품권결제를 고르면 주문만 만들어지고
+          토스트 하나 뜬 뒤 화면은 그대로였다 — 장바구니는 비워졌는데 고객은
+          무엇을 해야 하는지 알 수 없었고, 결제창 팝업이 차단되면 완전히 막혔다. */}
+      {buyType == 'gift_certificate' && (
+        <Box>
+          <Stack spacing={1}>
+            <Typography variant="body2">{translate('상품권결제 창에서 결제를 완료해 주세요.')}</Typography>
+            {payData?.ord_num && (
+              <Typography variant="body2" sx={{ fontWeight: 700 }}>{translate('주문번호')} : {payData.ord_num}</Typography>
+            )}
+            {(() => {
+              const m = _.find(themeDnsData?.payment_modules, { type: 'gift_certificate' });
+              // 팝업이 차단되면 위에서 연 창이 안 뜬다. 직접 열 수 있는 링크를 남긴다.
+              return m?.gift_certificate_url ? (
+                <Button
+                  variant="outlined"
+                  size="small"
+                  sx={{ alignSelf: 'flex-start' }}
+                  onClick={() => {
+                    const link = m.gift_certificate_url
+                      + `?amount=${payData?.amount}&name=${user?.name ?? ''}&phone_num=${user?.phone_num ?? ''}`;
+                    window.open(link, '');
+                  }}>{translate('결제창 다시 열기')}</Button>
+              ) : null;
+            })()}
+            <Typography variant="body2" sx={{ color: 'text.secondary' }}>{translate('결제 확인 후 구매처리됩니다.')}</Typography>
+          </Stack>
+        </Box>
+      )}
+
+      {/* 핀트리 카드결제 */}
+      {buyType == 'card_fintree' && (
+        <Box>
+          <Typography variant="subtitle1" sx={{ mb: 1 }}>{translate(payData?.payment_modules?.title || '')}</Typography>
+          <Stack spacing={2}>
+            <Cards cvc={''} focused={undefined} expiry={payData.yymm} name={payData.buyer_name} number={payData.card_num} />
+            <TextField size="small" label={translate('카드 번호')} value={payData.card_num} placeholder="0000 0000 0000 0000"
+              onChange={(e) => setPayData({ ...payData, card_num: formatCreditCardNumber(e.target.value, Payment) })} />
+            <TextField size="small" label={translate('카드 사용자명')} value={payData.buyer_name}
+              onChange={(e) => setPayData({ ...payData, buyer_name: e.target.value })} />
+            <TextField size="small" label={translate('만료일')} value={payData.yymm} inputProps={{ maxLength: '5' }}
+              onChange={(e) => setPayData({ ...payData, yymm: formatExpirationDate(e.target.value, Payment) })} />
+            <PasswordField size="small" label={translate('카드비밀번호 앞 두자리')} value={payData.card_pw} inputProps={{ maxLength: '2' }}
+              onChange={(e) => setPayData({ ...payData, card_pw: e.target.value })} />
+            <TextField size="small" label={translate('구매자 휴대폰번호')} value={payData.buyer_phone}
+              inputMode="tel" placeholder="010-1234-5678"
+              onChange={(e) => setPayData({ ...payData, buyer_phone: sanitizePhoneInput(e.target.value) })} />
+            <TextField size="small" label={translate('주민번호 또는 사업자등록번호')} value={payData.auth_num}
+              onChange={(e) => setPayData({ ...payData, auth_num: e.target.value })} />
+            <PayProductsByHandFintree props={[products, payData]} />
+          </Stack>
+        </Box>
+      )}
+
+      {buyType == 'certification_fintree' && (
+        <Box><PayProductsByAuthFintree props={[products, payData]} /></Box>
+      )}
+      {buyType == 'card_hecto' && (
+        <Box><PayProductsByAuthHecto props={[products, payData]} /></Box>
+      )}
+      {buyType == 'phone_hecto' && (
+        <Box><PayProductsByPhoneHecto props={[products, payData]} /></Box>
+      )}
+      {buyType == 'certification_wayup' && (
+        <Box><PayProductsByAuthWayup props={[products, payData]} /></Box>
+      )}
+  </Box>
+  );
 
   return (
     <>
@@ -770,6 +919,16 @@ export default function OrderSheet({ router }) {
                   onDecreaseQuantity={onDecreaseQuantity}
                   onIncreaseQuantity={onIncreaseQuantity}
                   onChangeQuantity={onChangeQuantity}
+                />
+                {/* 상품 목록 바로 아래 금액 요약 — 가맹점 요청(2026-09-08) 「주문내역 하단에 최종결제금액 안내」.
+                    휴대폰에서는 사이드바 요약이 결제수단 목록 아래로 내려가 얼마인지 한참 뒤에야 보였다. */}
+                <CheckoutTotalsBrief
+                  subtotal={요약.subtotal}
+                  discount={요약.discount}
+                  shipping={orderTotals.delivery}
+                  shipActive={orderTotals.shipActive}
+                  usedPoint={orderTotals.usedPoint}
+                  total={orderTotals.amount}
                 />
               </Card>
 
@@ -1046,17 +1205,21 @@ export default function OrderSheet({ router }) {
                       const selected = buyType == item?.type && (item?.type != 'auth_forspay' || buyPayMethod == item?.pay_method);
                       const fm = item?.pay_method ? _.find(forspayMethodList, { key: item.pay_method }) : null; // 결제수단 로고
                       return (
-                        <Paper key={idx} variant="outlined"
-                          sx={{ p: 2, cursor: 'pointer', borderColor: selected ? 'primary.main' : 'divider', borderWidth: selected ? 2 : 1 }}
-                          onClick={() => selectPayType(item)}>
-                          <Stack direction="row" spacing={1.5} alignItems="center">
-                            {fm?.icon && <Iconify icon={fm.icon} width={26} sx={{ color: fm.color, flexShrink: 0 }} />}
-                            <Box>
-                              <Typography variant="subtitle2">{translate(item.title)}</Typography>
-                              {item.description && <Typography variant="body2" sx={{ color: 'text.secondary' }}>{translate(item.description)}</Typography>}
-                            </Box>
-                          </Stack>
-                        </Paper>
+                        <Box key={idx}>
+                          <Paper variant="outlined"
+                            sx={{ p: 2, cursor: 'pointer', borderColor: selected ? 'primary.main' : 'divider', borderWidth: selected ? 2 : 1 }}
+                            onClick={() => selectPayType(item)}>
+                            <Stack direction="row" spacing={1.5} alignItems="center">
+                              {fm?.icon && <Iconify icon={fm.icon} width={26} sx={{ color: fm.color, flexShrink: 0 }} />}
+                              <Box>
+                                <Typography variant="subtitle2">{translate(item.title)}</Typography>
+                                {item.description && <Typography variant="body2" sx={{ color: 'text.secondary' }}>{translate(item.description)}</Typography>}
+                              </Box>
+                            </Stack>
+                          </Paper>
+                          {/* 고른 수단 바로 아래 — 총 결제금액과 다음 동작(결제수단패널 주석 참고) */}
+                          {selected && 패널있는수단.includes(buyType) && 결제수단패널()}
+                        </Box>
                       );
                     })}
                     {paymentModules.length == 0 && (
@@ -1064,123 +1227,6 @@ export default function OrderSheet({ router }) {
                     )}
                   </Stack>
 
-                  {/* 카드 수기결제 입력 */}
-                  {buyType == 'card' && (
-                    <Box sx={{ mt: 3 }}>
-                      <Divider sx={{ mb: 2 }} />
-                      <Stack spacing={2}>
-                        <Cards cvc={''} focused={undefined} expiry={payData.yymm} name={payData.buyer_name} number={payData.card_num} />
-                        <TextField size="small" label={translate('카드 번호')} value={payData.card_num} placeholder="0000 0000 0000 0000"
-                          onChange={(e) => setPayData({ ...payData, card_num: formatCreditCardNumber(e.target.value, Payment) })} />
-                        <TextField size="small" label={translate('카드 사용자명')} value={payData.buyer_name}
-                          onChange={(e) => setPayData({ ...payData, buyer_name: e.target.value })} />
-                        <TextField size="small" label={translate('만료일')} value={payData.yymm} inputProps={{ maxLength: '5' }}
-                          onChange={(e) => setPayData({ ...payData, yymm: formatExpirationDate(e.target.value, Payment) })} />
-                        <PasswordField size="small" label={translate('카드비밀번호 앞 두자리')} value={payData.card_pw} inputProps={{ maxLength: '2' }}
-                          onChange={(e) => setPayData({ ...payData, card_pw: e.target.value })} />
-                        <TextField size="small" label={translate('구매자 휴대폰번호')} value={payData.buyer_phone}
-                          inputMode="tel" placeholder="010-1234-5678"
-                          onChange={(e) => setPayData({ ...payData, buyer_phone: sanitizePhoneInput(e.target.value) })} />
-                        <TextField size="small" label={translate('주민번호 또는 사업자등록번호')} value={payData.auth_num}
-                          onChange={(e) => setPayData({ ...payData, auth_num: e.target.value })} />
-                        <Button variant="contained" size="large" onClick={() => setModal({
-                          func: () => { onPayByHand(); }, icon: 'ion:card-outline', title: translate('정말로 결제 하시겠습니까?'),
-                        })}>{translate('결제하기')}</Button>
-                      </Stack>
-                    </Box>
-                  )}
-
-                  {/* 무통장/가상계좌 안내 */}
-                  {buyType == 'virtual_account' && (
-                    <Box sx={{ mt: 3 }}>
-                      <Divider sx={{ mb: 2 }} />
-                      {(() => {
-                        const m = _.find(themeDnsData?.payment_modules, { type: 'virtual_account' });
-                        return (m?.virtual_acct_bank && m?.virtual_acct_name && m?.virtual_acct_num) ? (
-                          <Stack spacing={1}>
-                            <Typography variant="body2">{translate('은행')} : {m.virtual_acct_bank}</Typography>
-                            <Typography variant="body2">{translate('예금주')} : {m.virtual_acct_name}</Typography>
-                            <Typography variant="body2">{translate('계좌번호')} : {m.virtual_acct_num}</Typography>
-                            {/* 주문번호를 보여준다. 예전엔 알려주지 않아 비회원은 주문조회조차 못 했다. */}
-                            {payData?.ord_num && (
-                              <Typography variant="body2" sx={{ fontWeight: 700 }}>{translate('주문번호')} : {payData.ord_num}</Typography>
-                            )}
-                            <Typography variant="body2" sx={{ color: 'text.secondary' }}>{translate('입금 후 1일 안에 구매처리됩니다.')}</Typography>
-                          </Stack>
-                        ) : <Typography variant="body2">{translate('무통장입금을 준비중입니다...')}</Typography>;
-                      })()}
-                    </Box>
-                  )}
-
-                  {/* 상품권결제 안내.
-                      예전엔 이 블록이 아예 없었다. 상품권결제를 고르면 주문만 만들어지고
-                      토스트 하나 뜬 뒤 화면은 그대로였다 — 장바구니는 비워졌는데 고객은
-                      무엇을 해야 하는지 알 수 없었고, 결제창 팝업이 차단되면 완전히 막혔다. */}
-                  {buyType == 'gift_certificate' && (
-                    <Box sx={{ mt: 3 }}>
-                      <Divider sx={{ mb: 2 }} />
-                      <Stack spacing={1}>
-                        <Typography variant="body2">{translate('상품권결제 창에서 결제를 완료해 주세요.')}</Typography>
-                        {payData?.ord_num && (
-                          <Typography variant="body2" sx={{ fontWeight: 700 }}>{translate('주문번호')} : {payData.ord_num}</Typography>
-                        )}
-                        {(() => {
-                          const m = _.find(themeDnsData?.payment_modules, { type: 'gift_certificate' });
-                          // 팝업이 차단되면 위에서 연 창이 안 뜬다. 직접 열 수 있는 링크를 남긴다.
-                          return m?.gift_certificate_url ? (
-                            <Button
-                              variant="outlined"
-                              size="small"
-                              sx={{ alignSelf: 'flex-start' }}
-                              onClick={() => {
-                                const link = m.gift_certificate_url
-                                  + `?amount=${payData?.amount}&name=${user?.name ?? ''}&phone_num=${user?.phone_num ?? ''}`;
-                                window.open(link, '');
-                              }}>{translate('결제창 다시 열기')}</Button>
-                          ) : null;
-                        })()}
-                        <Typography variant="body2" sx={{ color: 'text.secondary' }}>{translate('결제 확인 후 구매처리됩니다.')}</Typography>
-                      </Stack>
-                    </Box>
-                  )}
-
-                  {/* 핀트리 카드결제 */}
-                  {buyType == 'card_fintree' && (
-                    <Box sx={{ mt: 3 }}>
-                      <Divider sx={{ mb: 2 }} />
-                      <Typography variant="subtitle1" sx={{ mb: 1 }}>{translate(payData?.payment_modules?.title || '')}</Typography>
-                      <Stack spacing={2}>
-                        <Cards cvc={''} focused={undefined} expiry={payData.yymm} name={payData.buyer_name} number={payData.card_num} />
-                        <TextField size="small" label={translate('카드 번호')} value={payData.card_num} placeholder="0000 0000 0000 0000"
-                          onChange={(e) => setPayData({ ...payData, card_num: formatCreditCardNumber(e.target.value, Payment) })} />
-                        <TextField size="small" label={translate('카드 사용자명')} value={payData.buyer_name}
-                          onChange={(e) => setPayData({ ...payData, buyer_name: e.target.value })} />
-                        <TextField size="small" label={translate('만료일')} value={payData.yymm} inputProps={{ maxLength: '5' }}
-                          onChange={(e) => setPayData({ ...payData, yymm: formatExpirationDate(e.target.value, Payment) })} />
-                        <PasswordField size="small" label={translate('카드비밀번호 앞 두자리')} value={payData.card_pw} inputProps={{ maxLength: '2' }}
-                          onChange={(e) => setPayData({ ...payData, card_pw: e.target.value })} />
-                        <TextField size="small" label={translate('구매자 휴대폰번호')} value={payData.buyer_phone}
-                          inputMode="tel" placeholder="010-1234-5678"
-                          onChange={(e) => setPayData({ ...payData, buyer_phone: sanitizePhoneInput(e.target.value) })} />
-                        <TextField size="small" label={translate('주민번호 또는 사업자등록번호')} value={payData.auth_num}
-                          onChange={(e) => setPayData({ ...payData, auth_num: e.target.value })} />
-                        <PayProductsByHandFintree props={[products, payData]} />
-                      </Stack>
-                    </Box>
-                  )}
-
-                  {buyType == 'certification_fintree' && (
-                    <Box sx={{ mt: 3 }}><Divider sx={{ mb: 2 }} /><PayProductsByAuthFintree props={[products, payData]} /></Box>
-                  )}
-                  {buyType == 'card_hecto' && (
-                    <Box sx={{ mt: 3 }}><Divider sx={{ mb: 2 }} /><PayProductsByAuthHecto props={[products, payData]} /></Box>
-                  )}
-                  {buyType == 'phone_hecto' && (
-                    <Box sx={{ mt: 3 }}><Divider sx={{ mb: 2 }} /><PayProductsByPhoneHecto props={[products, payData]} /></Box>
-                  )}
-                  {buyType == 'certification_wayup' && (
-                    <Box sx={{ mt: 3 }}><Divider sx={{ mb: 2 }} /><PayProductsByAuthWayup props={[products, payData]} /></Box>
-                  )}
                 </CardContent>
               </Card>
 
@@ -1197,28 +1243,17 @@ export default function OrderSheet({ router }) {
                   total={orderTotals.amount}
                   shipping={orderTotals.delivery}
                   shipActive={orderTotals.shipActive}
-                  discount={_.sum(_.map(products, (item) => calculatorPrice(item, payData).discount))}
+                  discount={요약.discount}
                   // '총액'은 할인 전 상품가(배송비 제외)로 넘긴다 = merchTotal(할인가) + 할인액.
                   // (1) 화면에서 '총액 − 할인 + 배송비 − 포인트 = 총 결제금액' 이 맞아떨어진다.
                   //     merchTotal 만 넘기면 이미 할인이 반영된 값이라 할인 행을 또 빼는 셈이 돼 계산이 안 맞았다.
                   // (2) CheckoutSummary 의 포인트 입력 잠금 기준이 subtotal - discount 인데,
                   //     merchTotal 을 넘기면 할인이 이중 차감돼 기준금액이 실제보다 작게 나온다.
                   //     그래서 카트에선 포인트를 넣을 수 있는데 주문서에선 잠기는 불일치가 있었다. 같이 해소된다.
-                  subtotal={orderTotals.merchTotal + _.sum(_.map(products, (item) => calculatorPrice(item).discount))}
+                  subtotal={요약.subtotal}
                 />
                 <Typography variant="caption" sx={{ color: 'text.secondary', display: 'block', mt: 1, textAlign: 'center' }}>{translate('결제수단을 선택한 뒤 결제 방법(결제하기 버튼 또는 입력란)에 따라 진행하세요.')}</Typography>
-                {(buyType == 'auth_forspay' || buyType == 'card_payletter') && (
-                  <Box sx={{ mt: 2 }}>
-                    <Typography variant="body2" sx={{ mb: 1, textAlign: 'center' }}>{translate('선택한 결제수단:')}<b>{_.find(paymentModules, (m) => m?.type == buyType && (buyType != 'auth_forspay' || m?.pay_method == buyPayMethod))?.title || '-'}</b>
-                    </Typography>
-                    <Button fullWidth variant="contained" size="large" disabled={payLoading}
-                      onClick={() => setModal({
-                        func: () => { onPaySelectedRedirect(); },
-                        icon: 'ion:card-outline',
-                        title: translate('결제를 진행하시겠습니까?'),
-                      })}>{translate('결제하기')}</Button>
-                  </Box>
-                )}
+                {/* 「결제하기」 는 여기 없다 — 고른 결제수단 바로 아래(결제수단패널)에 붙는다. */}
               </Box>
             </Grid>
           </Grid>

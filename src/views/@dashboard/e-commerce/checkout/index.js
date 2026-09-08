@@ -12,4 +12,5 @@ export { default as CheckoutPaymentMethods } from './payment/CheckoutPaymentMeth
 
 export { default as CheckoutSteps } from './CheckoutSteps';
 export { default as CheckoutSummary } from './CheckoutSummary';
+export { default as CheckoutTotalsBrief } from './CheckoutTotalsBrief';
 export { default as CheckoutOrderComplete } from './CheckoutOrderComplete';

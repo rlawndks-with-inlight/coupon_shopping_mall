@@ -62,7 +62,7 @@ const getBrandParams = () => {
 //    이 상세 API 뿐이라 다른 엔드포인트로 갈아탈 수 없으므로,
 //    쿠키를 빼고(credentials:'omit') 익명으로 물어본다.
 //    상세 응답에서 사용자에 따라 달라지는 값은 없다(셀러가는 seller_id 쿼리로 정해진다).
-const fetchServerProduct = async (id, seller_id) => {
+export const fetchServerProduct = async (id, seller_id) => {
     if (typeof window === 'undefined' || typeof fetch !== 'function') return { state: ERROR };
     const { brand_id, root_id } = getBrandParams();
     if (!(brand_id > 0)) return { state: ERROR }; // 브랜드를 모르면 판단할 수 없다 — 실패로 본다

@@ -11,29 +11,30 @@ import { ColorPreview } from 'src/components/color-utils';
 import { IncrementerButton } from 'src/components/custom-input';
 import _ from 'lodash';
 import { commarNumber, getPriceUnitByLang, setProductPriceByLang, getProductStatus, isPurchasable } from 'src/utils/function';
-import { getOptionLabel } from 'src/utils/shop-util';
+import { orderLineOptionTexts } from 'src/utils/shop-util';
 import { optionExtraPrice } from 'src/data/product-options';
 import { useSettingsContext } from 'src/components/settings';
 import { formatLang } from 'src/utils/format';
 import { useLocales } from 'src/locales';
-import { useRouter } from 'next/router';
 
 // ----------------------------------------------------------------------
 
 CheckoutCartProduct.propTypes = {
   row: PropTypes.object,
+  onPeek: PropTypes.func,     // 사진·이름을 눌렀을 때 — 상품 페이지로 가지 않고 그 자리에서 「상품 정보」 창을 연다
   onDelete: PropTypes.func,
   onDecrease: PropTypes.func,
   onIncrease: PropTypes.func,
   onChangeQuantity: PropTypes.func,
 };
-export default function CheckoutCartProduct({ row, onDelete, onDecrease, onIncrease, onChangeQuantity, calculatorPrice, ship_active = false, line_delivery = 0, is_first_line = false }) {
+export default function CheckoutCartProduct({ row, onPeek, onDelete, onDecrease, onIncrease, onChangeQuantity, calculatorPrice, ship_active = false, line_delivery = 0, is_first_line = false }) {
   // status 가 빠져 있어 장바구니에서는 품절·판매중단 상품이 판매중과 똑같이 보였다.
   // 결제 직전 백엔드 하드블록에서야 막히는데 그때도 어느 상품인지 알려주지 않았다.
   const { product_name, product_comment, size, price, colors, cover, available, delivery_fee, product_sale_price, groups, order_count, product_price, product_img, status } = row;
   const { themeDnsData } = useSettingsContext();
   const { currentLang, translate } = useLocales();
-  const router = useRouter();
+  // 예전엔 상품 페이지로 이동했다. 주문서는 검토 단계라 밖으로 내보내지 않는다(DialogProductPeek 주석).
+  const 상품보기 = () => { onPeek?.(); };
 
   // status 를 아는 경우에만 표시한다. 값이 없으면(옛 장바구니 데이터) 아무 표시도 하지 않는다.
   const status_known = !(status === undefined || status === null || status === '');
@@ -47,7 +48,7 @@ export default function CheckoutCartProduct({ row, onDelete, onDecrease, onIncre
   // 고객이 보는 것은 '판매가 10,000원 / 수량 1 / 총액 13,000원' 뿐이라 3,000원이 어디서
   // 붙었는지 알 수 없었다(가맹점이 값을 잘못 넣은 것처럼 보인다). 옵션명 옆과 가격칸에 근거를 남긴다.
   const unit = getPriceUnitByLang(currentLang?.value);
-  const optionPriceOf = (option) => parseFloat(option?.option_price) || 0;
+  const option_texts = orderLineOptionTexts(row, currentLang?.value);
   // ⚠ 옵션 금액을 여기서 직접 더하면 안 된다.
   //
   // 조합형 상품은 선택옵션의 개별가가 0 이고 금액이 **조합 추가금**으로 따로 붙는다.
@@ -72,14 +73,15 @@ export default function CheckoutCartProduct({ row, onDelete, onDecrease, onIncre
           alt="product image"
           src={product_img}
           sx={{ width: 64, height: 64, borderRadius: 1.5, mr: 2, cursor: 'pointer' }}
-          onClick={() => { router.push(`/shop/item/${row?.id}`) }}
+          onClick={상품보기}
         />
 
         <Stack spacing={0.5}>
           {/* 삭제 버튼이 같은 칸에 붙어 있으므로 그만큼 좁힌다.
-              PC 쪽 200 은 폭을 맞추려고 정한 값이다 — 240 이면 표가 734px 이 되어
-              본문(712px)을 22px 넘긴다(실측). 200 이면 약 694px 로 들어간다. */}
-          <Typography noWrap variant="subtitle2" sx={{ maxWidth: { xs: 175, sm: 200 }, cursor: 'pointer' }} onClick={() => { router.push(`/shop/item/${row?.id}`) }}>
+              PC 쪽 값은 폭을 맞추려고 정한 것이다 — 240 이면 표가 734px 이 되어 본문(712px)을
+              22px 넘긴다(실측). 200 이면 약 694px. 바깥 칸 여백을 8→24 로 넓히며(카드 제목과
+              같은 선) 32px 이 더 필요해져 168 로 줄였다. */}
+          <Typography noWrap variant="subtitle2" sx={{ maxWidth: { xs: 175, sm: 168 }, cursor: 'pointer' }} onClick={상품보기}>
             {
               themeDnsData?.setting_obj?.is_use_lang == 1 ?
                 formatLang(row, 'product_name', currentLang)
@@ -125,34 +127,20 @@ export default function CheckoutCartProduct({ row, onDelete, onDecrease, onIncre
                 그래서 옵션그룹을 쓰는 상품은 옵션명이 통째로 사라졌다.
             두 형태(+ 옛 데이터의 깨진 형태)를 모두 흡수하는 getOptionLabel 을 쓴다. */}
         <Stack spacing={0.5}>
-          {groups && groups.length > 0 ?
+          {/* 글은 orderLineOptionTexts 가 만든다 — 주문 요약정보(사이드바·결제수단 패널)와 같은 글이어야 한다.
+              변동가가 붙은 옵션은 옆에 금액이 같이 붙는다(어느 선택이 얼마를 올렸는지 여기 말고는 드러나는 자리가 없다). */}
+          {option_texts.length > 0 ?
             <>
-              {groups.map((group, index) => {
-                const option_text = (group?.options ?? [])
-                  // 변동가가 붙은 옵션은 옆에 금액을 같이 보여준다 — 어느 선택이 얼마를
-                  // 올렸는지가 여기 말고는 드러나는 자리가 없다(총액에는 이미 더해져 있다).
-                  .map((option) => {
-                    const label = getOptionLabel(option);
-                    if (!label) return '';
-                    const add = optionPriceOf(option);
-                    return add === 0 ? label : `${label} (${signedPrice(add)})`;
-                  })
-                  .filter((v) => v !== '')
-                  .join(' / ');
-                if (!option_text) return null;
-                return (
-                  <Stack
-                    key={group?.id ?? group?.group_name ?? index}
-                    direction="row"
-                    alignItems="center"
-                    sx={{ typography: 'body2', color: 'text.secondary' }}
-                  >
-                    <div style={{ display: 'flex', flexWrap: 'wrap' }}>
-                      {group?.group_name ? `${group?.group_name}: ` : ''}{option_text}
-                    </div>
-                  </Stack>
-                );
-              })}
+              {option_texts.map((text, index) => (
+                <Stack
+                  key={groups?.[index]?.id ?? groups?.[index]?.group_name ?? index}
+                  direction="row"
+                  alignItems="center"
+                  sx={{ typography: 'body2', color: 'text.secondary' }}
+                >
+                  <div style={{ display: 'flex', flexWrap: 'wrap' }}>{text}</div>
+                </Stack>
+              ))}
             </>
             :
             <>

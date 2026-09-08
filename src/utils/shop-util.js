@@ -835,6 +835,30 @@ export const getOptionLabel = (option) => {
     return '';
 };
 
+// 주문 줄의 옵션을 사람이 읽는 글로 — 그룹마다 한 줄.  예) "중량: 2kg 대과( 5-7) (+7,000원)"
+//
+// 주문서 표의 옵션 칸과 주문 요약정보(사이드바·결제수단 패널)가 **같은 글**을 써야 한다.
+// 두 곳이 각자 만들면 한쪽만 추가금이 빠지거나 그룹 이름이 빠진다(2026-09-09 요약에 옵션을 넣으며 합침).
+// 변동가는 음수도 허용되므로 부호를 그대로 적는다. 조합형의 조합 추가금은 옵션 개별가가 아니라
+// 여기 안 나온다 — 그건 가격 칸의 '옵션 +N' 이 맡는다(optionExtraPrice).
+export const orderLineOptionTexts = (row, lang) => {
+    const groups = Array.isArray(row?.groups) ? row.groups : [];
+    const 부호금액 = (v) => `${v < 0 ? '-' : '+'}${commarNumberWithUnit(Math.abs(v), lang)}`;
+    return groups.map((group) => {
+        const text = (group?.options ?? [])
+            .map((option) => {
+                const label = getOptionLabel(option);
+                if (!label) return '';
+                const add = parseFloat(option?.option_price) || 0;
+                return add === 0 ? label : `${label} (${부호금액(add)})`;
+            })
+            .filter((v) => v !== '')
+            .join(' / ');
+        if (!text) return '';
+        return group?.group_name ? `${group.group_name}: ${text}` : text;
+    }).filter(Boolean);
+};
+
 // 선택한 옵션 하나를 저장 형태로 맞춘다.
 //
 // 옵션 값은 두 형태로 들어온다:

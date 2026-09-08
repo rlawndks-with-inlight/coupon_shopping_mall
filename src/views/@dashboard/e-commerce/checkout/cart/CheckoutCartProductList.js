@@ -1,5 +1,7 @@
 import { commarNumberWithUnit } from 'src/utils/function';
 import PropTypes from 'prop-types';
+import { useState } from 'react';
+import DialogProductPeek from 'src/components/dialog/DialogProductPeek';
 // @mui
 import { Box, Table, TableBody, TableContainer } from '@mui/material';
 // components
@@ -47,8 +49,14 @@ const 들어가는폭 = 700;
 const 카드배치 = {
     minWidth: 0,
     display: 'block',
+    // 카드도 카드 제목(CardHeader 24px)과 같은 선에서 시작한다
+    boxSizing: 'border-box',
+    px: 3,
     '& thead': { display: 'none' },
     '& tbody': { display: 'block' },
+    // 표에서 바깥 칸에 준 24px 여백은 카드에선 필요 없다(카드 자체가 안쪽 여백을 가진다)
+    '& td:first-of-type': { pl: 0 },
+    '& td:last-of-type': { pr: 0 },
     '& tr': {
       display: 'block',
       position: 'relative',
@@ -94,6 +102,9 @@ export default function CheckoutCartProductList({
   onIncreaseQuantity,
   onDecreaseQuantity,
   onChangeQuantity,
+  // 표 아래 '배송비는 주문당 1회…' 안내. 주문서는 이 안내를 금액 요약의 배송비 줄 곁으로 옮기므로 끈다 —
+  // 표와 요약 사이에 홀로 떠 있으면 어디에 붙은 말인지 애매하다(가맹점 지적 2026-09-09). 카트는 그대로 둔다.
+  showShippingNote = true,
 }) {
   const { translate, currentLang } = useLocales();
   const { themeDnsData } = useSettingsContext();
@@ -111,7 +122,11 @@ export default function CheckoutCartProductList({
   // 표의 줄과 아래 요약이 어긋나지 않는다.
   const totals = calcOrderTotals(products);
   const 정책 = 배송정책();
+  // 줄의 사진·이름을 누르면 여는 「상품 정보」 창. 주문서·장바구니가 같은 목록을 쓰므로 둘 다 같은 창이다.
+  const [peek, setPeek] = useState(null);
   return (
+    <>
+    <DialogProductPeek open={!!peek} row={peek} onClose={() => setPeek(null)} />
     <TableContainer sx={{ containerType: 'inline-size' }}>
       {/* 720px 을 강제하면 노트북 창을 조금만 줄여도 가로 스크롤이 생긴다.
           칸이 여섯 개뿐이라 그만큼 필요하지 않다 — 글은 줄바꿈으로 접는다.
@@ -122,6 +137,10 @@ export default function CheckoutCartProductList({
         // 칸 좌우 여백 16 → 8. 칸을 둘 줄이고도 66px 이 모자랐다(실측) —
         // 여백까지 줄여야 본문 폭 안에 들어간다. 글이 붙어 보일 만큼 좁지는 않다.
         '& td, & th': { wordBreak: 'keep-all', overflowWrap: 'break-word', px: 1 },
+        // 바깥 칸만 24px — 카드 제목(CardHeader)·아래 금액 요약과 같은 선에 맞춘다.
+        // 예전엔 '상품' 이 8px, 제목이 24px 에서 시작해 제목만 안쪽으로 밀려 보였다(가맹점 지적 2026-09-09).
+        '& td:first-of-type, & th:first-of-type': { pl: 3 },
+        '& td:last-of-type, & th:last-of-type': { pr: 3 },
         ...모바일카드,
       }}>
         <TableHeadCustom headLabel={TABLE_HEAD} />
@@ -132,6 +151,7 @@ export default function CheckoutCartProductList({
               // key 가 겹치면 수량 변경·삭제가 엉뚱한 줄에 먹는다. 옵션까지 포함한 시그니처를 쓴다.
               key={`${cartLineSignature(row)}#${idx}`}
               row={row}
+              onPeek={() => setPeek(row)}
               onDelete={() => onDelete(idx)}
               onDecrease={() => onDecreaseQuantity(idx)}
               onIncrease={() => onIncreaseQuantity(idx)}
@@ -146,12 +166,13 @@ export default function CheckoutCartProductList({
       </Table>
       {/* 줄마다 0원으로 보이던 배송비의 근거를 표 바로 아래에 적는다.
           '왜 상품엔 0원인데 합계엔 3,000원인가'가 가맹점·손님 양쪽의 물음이었다. */}
-      {totals.shipActive && (
-        <Box sx={{ px: 1, py: 1.25, fontSize: 12.5, color: 'text.secondary' }}>
+      {showShippingNote && totals.shipActive && (
+        <Box sx={{ px: 3, py: 1.25, fontSize: 12.5, color: 'text.secondary' }}>
           {translate('배송비는 주문당 1회 부과됩니다.')}
           {정책.freeMin > 0 && ` ${translate('{{amount}} 이상 무료배송', { amount: commarNumberWithUnit(정책.freeMin, currentLang?.value) })}`}
         </Box>
       )}
     </TableContainer>
+    </>
   );
 }

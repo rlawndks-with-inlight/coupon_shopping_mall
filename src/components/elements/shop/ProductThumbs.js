@@ -99,11 +99,15 @@ export const imageSwipeHandlers = (images = [], index = 0, onSelect) => {
 };
 
 // 대표이미지 + 서브이미지를 한 배열로 만든다. fix 는 각 프레임의 fixImgUrl.
-export const buildProductImages = (item, fix = (u) => u) => [
-  item?.product_img,
-  ...((item?.sub_images ?? []).map((s) => s?.product_sub_img)),
-]
-  .filter(Boolean)
-  .map(fix);
+// ⚠ sub_images 는 두 모양으로 온다.
+//   서버·블로그 프레임: [{ product_sub_img: url, … }]
+//   MUI 프레임(shop:1·2) 상품 페이지: [url, url, …] — 대표이미지까지 문자열로 펴 둔다.
+//   장바구니·바로구매 줄은 그 페이지의 상품을 통째로 복사하므로 주문서(상품 정보 창)에는
+//   문자열 배열이 온다. 객체만 읽으면 사진이 1장으로 줄어든다(2026-09-09 확인). 둘 다 읽고 겹치는 것은 뺀다.
+export const buildProductImages = (item, fix = (u) => u) => {
+  const subs = (Array.isArray(item?.sub_images) ? item.sub_images : [])
+    .map((s) => (typeof s === 'string' ? s : s?.product_sub_img));
+  return [...new Set([item?.product_img, ...subs].filter(Boolean))].map(fix);
+};
 
 export default ProductThumbs;

@@ -65,7 +65,9 @@ export default function CheckoutCartProduct({ row, onDelete, onDecrease, onIncre
 
   return (
     <TableRow>
-      <TableCell sx={{ display: 'flex', alignItems: 'center' }}>
+      {/* 휴대폰에서는 표가 카드로 쌓인다(CheckoutCartProductList 의 모바일카드 참고).
+          이 칸만 라벨 없이 사진+이름 줄로 남는다 — 그래서 data-label 을 안 붙인다. */}
+      <TableCell sx={{ display: 'flex', alignItems: 'center', '@media (max-width:599.95px)': { alignItems: 'flex-start', pr: 5 } }}>
         <Image
           alt="product image"
           src={product_img}
@@ -104,7 +106,7 @@ export default function CheckoutCartProduct({ row, onDelete, onDecrease, onIncre
           </Stack>
         </Stack>
       </TableCell>
-      <TableCell>
+      <TableCell data-label={translate('옵션')}>
         {/* 옵션 칸이 늘 비어 있던 자리.
             (1) 그룹 이름 필드가 틀렸다 — 옵션그룹(product_option_groups)은 group_name 이고
                 character_name 은 상품 스펙(product_characters)의 필드라 여기선 항상 undefined 였다.
@@ -155,7 +157,7 @@ export default function CheckoutCartProduct({ row, onDelete, onDecrease, onIncre
             ② 공백을 없애도 한글은 CSS 기본값에서 **음절 아무 데서나** 끊긴다
                (scripts/checks/word-break.mjs 주석 참고) → '50,00 / 0원' 도 가능하다
           ① 은 붙여서, ② 는 nowrap 으로 막는다. 금액은 길어야 열 몇 글자라 폭 문제도 없다. */}
-      <TableCell sx={{ whiteSpace: 'nowrap' }}>
+      <TableCell data-label={translate('배송비')} sx={{ whiteSpace: 'nowrap' }}>
         {/* 정책이 켜진 몰은 배송비가 주문당 1회라 줄마다 값을 찍으면 거짓말이 된다.
             첫 줄에 한 번 적고 나머지 줄은 '—' 로 둔다(표 아래 안내가 이유를 설명한다). */}
         {ship_active
@@ -164,7 +166,7 @@ export default function CheckoutCartProduct({ row, onDelete, onDecrease, onIncre
             : (is_first_line ? translate('무료') : '—'))
           : <>{commarNumber(setProductPriceByLang(row, 'delivery_fee', 'ko', currentLang?.value))}{getPriceUnitByLang(currentLang?.value)}</>}
       </TableCell>
-      <TableCell sx={{ whiteSpace: 'nowrap' }}>
+      <TableCell data-label={translate('가격')} sx={{ whiteSpace: 'nowrap' }}>
         {product_price > product_sale_price && (
           <Box
             component="span"
@@ -190,7 +192,7 @@ export default function CheckoutCartProduct({ row, onDelete, onDecrease, onIncre
       {
         themeDnsData?.id != 74 ?
           <>
-            <TableCell>
+            <TableCell data-label={translate('수량')}>
               <Box sx={{ width: 96, textAlign: 'right' }}>
                 <IncrementerButton
                   quantity={order_count}
@@ -208,7 +210,7 @@ export default function CheckoutCartProduct({ row, onDelete, onDecrease, onIncre
           ''
       }
 
-      <TableCell align="right" sx={{ whiteSpace: 'nowrap' }}>{commarNumber(setProductPriceByLang(calculatorPrice(row), 'total', 'ko', currentLang?.value))}{getPriceUnitByLang(currentLang?.value)}</TableCell>
+      <TableCell data-label={translate('총액')} data-total="1" align="right" sx={{ whiteSpace: 'nowrap' }}>{commarNumber(setProductPriceByLang(calculatorPrice(row), 'total', 'ko', currentLang?.value))}{getPriceUnitByLang(currentLang?.value)}</TableCell>
 
       <TableCell align="right">
         <IconButton onClick={onDelete}>

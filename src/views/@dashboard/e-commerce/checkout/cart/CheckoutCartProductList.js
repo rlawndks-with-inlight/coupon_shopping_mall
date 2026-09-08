@@ -15,6 +15,57 @@ import { useSettingsContext } from 'src/components/settings';
 
 
 
+// 휴대폰에서는 표를 버리고 줄마다 카드로 쌓는다.
+//
+// [왜 — 2026-09-08 가맹점 제보(mbc01예시.pptx): "옵션내용에 대한 내역 보여줬으면 좋겠음"]
+// 이 표는 칸이 여섯 개(상품·옵션·배송비·가격·수량·총액)다. 휴대폰(폭 359px)에서 재 보니
+// 표가 930px 로 벌어지고 **상품 칸 하나가 352px** 을 먹어 나머지가 전부 화면 밖으로 나갔다.
+// 가로로 밀면 볼 수는 있었지만(overflow-x:auto) 밀 수 있다는 표시가 없어 아무도 밀지 않는다.
+//   → 손님이 주문서에서 보는 것은 위쪽 '상품 이름' 하나와 아래쪽 '총 결제금액' 하나뿐이었다.
+//     자기가 고른 옵션도, 거기 붙은 추가금도 주문서 어디에서도 확인할 수 없었다.
+//
+// ⚠ 값을 새로 그리지 않는다. 칸(td)은 그대로 두고 배치만 세로로 바꾼다 —
+//   옵션명·추가금·개당금액·총액을 다시 계산하는 코드를 만들면 표와 카드가 언젠가 어긋난다.
+//   각 칸의 data-label 을 :before 로 앞에 세워 '무엇의 값인지' 만 보탠다.
+// ⚠ 라벨은 translate 를 거친 값이라 언어마다 다르다. 그래서 총액만 data-total 로 따로 잡는다
+//   (라벨 글자로 고르면 영어·중국어 화면에서 굵게가 안 먹는다).
+const 모바일카드 = {
+  '@media (max-width:599.95px)': {
+    minWidth: 0,
+    display: 'block',
+    '& thead': { display: 'none' },
+    '& tbody': { display: 'block' },
+    '& tr': {
+      display: 'block',
+      position: 'relative',
+      border: '1px solid',
+      borderColor: 'divider',
+      borderRadius: 1,
+      p: 1.5,
+      mb: 1.5,
+    },
+    '& td': {
+      display: 'flex',
+      alignItems: 'flex-start',
+      gap: 1.5,
+      border: 0,
+      px: 0,
+      py: 0.5,
+      textAlign: 'left',
+    },
+    '& td[data-label]:before': {
+      content: 'attr(data-label)',
+      flex: '0 0 64px',
+      fontSize: 12.5,
+      lineHeight: 1.9,
+      color: 'text.secondary',
+    },
+    '& td[data-total]': { fontWeight: 700 },
+    // 삭제 버튼은 라벨이 없다 — 카드 오른쪽 위 모서리로 뺀다.
+    '& td:last-of-type': { position: 'absolute', top: 4, right: 4, p: 0, display: 'block' },
+  },
+};
+
 export default function CheckoutCartProductList({
   products,
   onDelete,
@@ -48,6 +99,7 @@ export default function CheckoutCartProductList({
         minWidth: 560,
         overflowX: 'auto',
         '& td, & th': { wordBreak: 'keep-all', overflowWrap: 'break-word' },
+        ...모바일카드,
       }}>
         <TableHeadCustom headLabel={TABLE_HEAD} />
         <TableBody>

@@ -2,7 +2,7 @@ import PropTypes from 'prop-types';
 import { Button, FormControl, InputAdornment, OutlinedInput, Stack, Typography } from '@mui/material';
 import { Col } from 'src/components/elements/styled-components';
 import { useAuthContext } from 'src/layouts/manager/auth/useAuthContext';
-import { commarNumber } from 'src/utils/function';
+import { commarNumber, getPriceUnitByLang } from 'src/utils/function';
 import { useLocales } from 'src/locales';
 import { 포인트쓰는몰, 포인트사용상한, 적립예정 } from 'src/data/point-policy';
 
@@ -94,7 +94,8 @@ export default function CheckoutPointField({ themeDnsData, payData, setPayData, 
       {사용불가이유 &&
         <Typography variant="body2" sx={{ color: 'warning.main', fontSize: '12px' }}>
           {translate(사용불가이유)}
-          {사용불가기준 > 0 && ' (' + commarNumber(사용불가기준) + 사용불가단위 + ' 이상)'}
+          {/* 꼬리도 번역한다 — 예전엔 「이상」 과 「원」 이 한국어로 박혀 영어 화면에도 그대로 나왔다 */}
+          {사용불가기준 > 0 && ` (${translate('{{n}} 이상', { n: commarNumber(사용불가기준) + (사용불가단위 === '원' ? getPriceUnitByLang() : 사용불가단위) })})`}
         </Typography>}
       {적립예정포인트 > 0 &&
         <Typography variant="body2" sx={{ color: 'text.secondary', fontSize: '12px' }}>

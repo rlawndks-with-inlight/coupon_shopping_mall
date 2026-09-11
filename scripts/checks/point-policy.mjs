@@ -171,5 +171,26 @@ if (!existsSync(BACK_ROOT + 'utils.js/point-policy.js')) {
     t('조건은 포인트 빼기 전 금액으로 본다', /expected\.amount \|\| 0\) \+ Number\(expected\.usedPoint/.test(결제));
 }
 
+// ── 포인트 칸 문구는 손님이 고를 수 있는 언어에 다 있어야 한다(2026-09-11) ─────────────
+// 예전엔 「이번 주문에 사용 가능」·「이번 주문 적립예정」·못 쓰는 이유 3개가 어느 사전에도 없었고,
+// 이유 뒤 「(… 이상)」 은 한국어와 '원' 이 박혀 있어 영어 화면에도 한국어가 섞였다.
+{
+  const 칸 = readFileSync(FRONT_ROOT + 'src/views/@dashboard/e-commerce/checkout/CheckoutPointField.js', 'utf8');
+  const 규칙 = readFileSync(FRONT_ROOT + 'src/data/point-policy.js', 'utf8');
+  const 문구 = new Set([...칸.matchAll(/translate\('([^']+)'/g)].map((m) => m[1]));
+  for (const m of 규칙.matchAll(/이유: '([^']+)'/g)) 문구.add(m[1]);
+  const 고를수있는언어 = [...readFileSync(FRONT_ROOT + 'src/locales/config-lang.js', 'utf8').matchAll(/value: '([a-z]+)'/g)].map((m) => m[1]);
+  t('손님 언어 목록을 읽었다(ko·en 포함 4개 이상)', 고를수있는언어.length >= 4 && 고를수있는언어.includes('en'));
+  const 빠짐 = [];
+  for (const 언어 of 고를수있는언어) {
+    if (언어 === 'ko') continue; // 한국어는 키가 곧 원문
+    const 사전 = (await import('file:///' + FRONT_ROOT + `src/locales/langs/${언어}.js`)).default;
+    for (const k of 문구) if (!사전[k]) 빠짐.push(`${언어}: ${k}`);
+  }
+  t(`포인트 칸 문구 ${문구.size}개가 손님 언어 사전에 다 있다`, 빠짐.length === 0, 빠짐.join(' / '));
+  t('못 쓰는 이유 뒤 「(… 이상)」 도 번역하고, 돈 단위는 언어별로 붙인다',
+    칸.includes("translate('{{n}} 이상'") && 칸.includes("사용불가단위 === '원' ? getPriceUnitByLang() : 사용불가단위") && !칸.includes("' 이상)'"));
+}
+
 console.log(`\n통과 ${pass} / 실패 ${fail}`);
 process.exit(fail ? 1 : 0);

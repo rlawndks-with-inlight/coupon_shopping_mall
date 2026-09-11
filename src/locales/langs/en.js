@@ -6,6 +6,8 @@
 // ----------------------------------------------------------------------
 
 const en = {
+  "상품금액 · {{n}}개": "Items ({{n}})",
+  "옵션·추가상품": "Options & add-ons",
   "본상품이 빠져 추가상품도 함께 뺐습니다.": "The add-on was removed because its main product is gone.",
   "추가상품은 본상품과 함께 주문할 수 있습니다.": "Add-ons can only be ordered together with the main product.",
   "옵션을 먼저 골라 주세요.": "Please choose the options first.",

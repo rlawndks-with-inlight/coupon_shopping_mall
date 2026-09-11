@@ -10,26 +10,18 @@ import {
   CardHeader,
   Typography,
   CardContent,
-  InputAdornment,
-  FormControl,
-  InputLabel,
-  OutlinedInput,
 } from '@mui/material';
 // utils
 import { fCurrency } from '../../../../utils/formatNumber';
 // components
 import Iconify from 'src/components/iconify/Iconify';
-import { Col } from 'src/components/elements/styled-components';
-import { useAuthContext } from 'src/layouts/manager/auth/useAuthContext';
 import { useSettingsContext } from 'src/components/settings';
-import { commarNumber } from 'src/utils/function';
 import { getBrandShipping } from 'src/utils/shop-util';
 import { useState } from 'react';
 import { useEffect } from 'react';
 import { useLocales } from 'src/locales';
 import { getPriceUnitByLang } from 'src/utils/function';
-import { 포인트쓰는몰, 포인트사용상한, 적립예정 } from 'src/data/point-policy';
-import CheckoutSummaryItems from './CheckoutSummaryItems';
+import CheckoutPointField from './CheckoutPointField';
 
 // ----------------------------------------------------------------------
 
@@ -56,16 +48,22 @@ export default function CheckoutSummary({
   enableEdit = false,
   enableDiscount = false,
   // 포인트 입력란 노출 여부. 기본 true — 기존 호출부(주문서 등)의 동작을 그대로 유지한다.
-  // 카트에서는 false 를 넘긴다(아래 showPointUsage 주석 참고).
+  // 카트에서는 false 를 넘긴다(아래 CheckoutPointField 주석 참고).
   enablePoint = true,
   payData,
   setPayData,
   themeDnsData,
-  // 무엇을 몇 개인지(상품명·옵션·수량·줄 금액). 주문서가 넘긴다 — 가맹점 요청(2026-09-09)
-  // 「주문 요약정보에 총액만 넣지 말고 옵션도 정리할 것」. 안 넘기는 카트 화면은 예전 그대로다.
-  items = [],
+  // 금액 나누기(주문서가 orderAmountBreakdown 으로 넘긴다) — 상품금액·N개 / 옵션·추가상품.
+  // 9/9 요청 「요약에 옵션도 정리」 를 상품 목록 대신 금액 한 줄로 살린다(2026-09-11 사장님 결정, 안 A).
+  // 목록은 넣지 않는다 — 상품 카드와 같은 줄이 한 페이지에 세 번 나와 어색했다.
+  // 안 넘기는 카트 화면은 예전처럼 '총액' 한 줄이다.
+  goods,
+  options = 0,
+  count = 0,
+  // 배송비 줄 아래 한 줄 설명("주문당 1회 · 5만원 이상 무료"). 주문서 PC 에서는 상품 목록 아래 요약을 숨기므로
+  // 그 요약에 붙어 있던 이 안내를 여기서 보여 준다(2026-09-11). 카트는 표 아래에 따로 적으므로 안 넘긴다.
+  shippingNote = '',
 }) {
-  const { user } = useAuthContext();
   const { translate } = useLocales();
   const { setting_obj } = themeDnsData;
   const { use_point_min_price = 0, max_use_point = 0, point_rate = 0 } = setting_obj;
@@ -86,38 +84,8 @@ export default function CheckoutSummary({
   const displayTotal = hasExplicitShipping
     ? total
     : (fallbackShip.active ? ((total ?? 0) + fallbackShip.fee) : total);
-  // 포인트 UI 노출 게이트: 로그인(user) && 포인트설정값 존재(최대사용가능 포인트 또는 적립률이 truthy)일 때만 노출.
-  // 비회원/미사용 브랜드면 숨김.
-  // 추가로 enablePoint 게이트를 둔다 — 카트의 use_point 는 주문서로 전달되지 않아
-  // 입력해도 버려진다. 포인트는 주문서에서만 입력받는다.
-  const showPointUsage = enablePoint && !!user && 포인트쓰는몰(themeDnsData);
-  // 이번 주문에서 포인트로 깎을 수 있는 상한.
-  //
-  // 예전엔 보유 포인트와 '최대사용가능 포인트'만 봤다. 주문금액은 보지 않아서,
-  // 주문금액보다 큰 포인트를 넣을 수 있었고 '총 결제금액'이 음수로 표시된 뒤
-  // 결제 시점에 서버 금액검증에서 거절됐다(고객은 이유를 알 수 없다).
-  //
-  // 기준금액은 화면에 뜬 '총 결제금액'에 지금 입력된 포인트를 도로 더해서 얻는다.
-  // calcOrderTotals 가 amount = 상품가 + 배송비 - 포인트 로 계산하므로 이러면
-  // 배송비 정책(브랜드 일괄/상품별)을 여기서 다시 해석하지 않고도 정확히 되돌아온다.
-  const currentUsedPoint = Math.max(0, parseInt(payData?.use_point) || 0);
-  const payableBeforePoint = Math.max(0, (parseFloat(displayTotal) || 0) + currentUsedPoint);
-  // 상한과 '왜 못 쓰는지'는 공용 규칙(data/point-policy.js)이 정한다.
-  //
-  // 예전엔 여기서 보유·최대설정·주문금액 세 값만 봤다. 그래서 가맹점이 설정해 둔
-  // '포인트 사용가능 최소 주문금액'·'사용 가능 최소 적립 포인트' 조건이 화면에 반영되지
-  // 않았고, 입력은 되는데 제출에서 막히는(주문서 검사) 어긋남이 났다.
-  const { 상한: pointCap, 이유: 사용불가이유, 기준: 사용불가기준, 단위: 사용불가단위 } =
-    포인트사용상한({ dns: themeDnsData, 보유: user?.point, 주문금액: payableBeforePoint });
-  // 이번 주문으로 쌓일 포인트. 포인트로 깎은 뒤의 결제금액을 기준으로 센다.
-  const 적립예정포인트 = 적립예정({ dns: themeDnsData, 결제금액: displayTotal });
-  // '전체사용': 지금 실제로 쓸 수 있는 상한만큼 채운다.
-  const handleUseAllPoint = () => {
-    setPayData({
-      ...payData,
-      use_point: pointCap,
-    });
-  };
+  // 포인트 입력칸은 CheckoutPointField 가 그린다(회원·포인트 쓰는 몰에서만 스스로 나타난다).
+  // 카트는 enablePoint=false — 카트의 use_point 는 주문서로 전달되지 않아 입력해도 버려진다.
   return (
     <Card sx={{ mb: 3 }}>
       <CardHeader
@@ -132,13 +100,31 @@ export default function CheckoutSummary({
       />
       <CardContent>
         <Stack spacing={2}>
-          <CheckoutSummaryItems items={items} />
-          <Stack direction="row" justifyContent="space-between">
-            <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-              {translate('총액')}
-            </Typography>
-            <Typography variant="subtitle2">{subtotal ? fCurrency(subtotal ?? 0) : '0'}{getPriceUnitByLang()}</Typography>
-          </Stack>
+          {Number.isFinite(goods) ? (
+            <>
+              <Stack direction="row" justifyContent="space-between">
+                <Typography variant="body2" sx={{ color: 'text.secondary' }}>
+                  {translate('상품금액 · {{n}}개', { n: Number(count) || 0 })}
+                </Typography>
+                <Typography variant="subtitle2">{fCurrency(goods) || '0'}{getPriceUnitByLang()}</Typography>
+              </Stack>
+              {Number(options) !== 0 && (
+                <Stack direction="row" justifyContent="space-between">
+                  <Typography variant="body2" sx={{ color: 'text.secondary' }}>
+                    {translate('옵션·추가상품')}
+                  </Typography>
+                  <Typography variant="subtitle2">{Number(options) < 0 ? '-' : '+'}{fCurrency(Math.abs(Number(options)))}{getPriceUnitByLang()}</Typography>
+                </Stack>
+              )}
+            </>
+          ) : (
+            <Stack direction="row" justifyContent="space-between">
+              <Typography variant="body2" sx={{ color: 'text.secondary' }}>
+                {translate('총액')}
+              </Typography>
+              <Typography variant="subtitle2">{subtotal ? fCurrency(subtotal ?? 0) : '0'}{getPriceUnitByLang()}</Typography>
+            </Stack>
+          )}
 
           {/* 할인은 가맹점이 상품에 정가를 판매가보다 높게 적었을 때만 생긴다(정가 − 판매가).
               없는데 '할인 0원' 을 늘 보여 주면 "무슨 할인인가" 를 되묻게 된다 — 있을 때만 적는다. */}
@@ -154,71 +140,21 @@ export default function CheckoutSummary({
               정책을 안 켜고 상품별 배송비만 쓰는 브랜드는 fee > 0 인데도 이 줄이 숨겨져,
               총액과 총 결제금액이 배송비만큼 어긋나 보였다(청구액은 정상). */}
           {(brandShip.active || brandShip.fee > 0) && (
-            <Stack direction="row" justifyContent="space-between">
-              <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-                {translate('배송비')}
-              </Typography>
-              <Typography variant="subtitle2">
-                {brandShip.fee > 0 ? `${fCurrency(brandShip.fee)}${getPriceUnitByLang()}` : translate('무료배송')}
-              </Typography>
-            </Stack>
+            <Box>
+              <Stack direction="row" justifyContent="space-between">
+                <Typography variant="body2" sx={{ color: 'text.secondary' }}>
+                  {translate('배송비')}
+                </Typography>
+                <Typography variant="subtitle2">
+                  {brandShip.fee > 0 ? `${fCurrency(brandShip.fee)}${getPriceUnitByLang()}` : translate('무료배송')}
+                </Typography>
+              </Stack>
+              {/* 안내는 금액 아래 한 줄로 따로 — 금액 칸 안에 넣으면 긴 문장이 「배송비」 글자를 두 줄로 꺾는다(PC 오른쪽 상자 폭) */}
+              {shippingNote && <Typography variant="caption" sx={{ color: 'text.secondary', display: 'block', textAlign: 'right', mt: 0.25 }}>{shippingNote}</Typography>}
+            </Box>
           )}
-          {showPointUsage && (
-            <Stack direction="row" justifyContent="space-between">
-              <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-                {translate('사용할 포인트')}
-              </Typography>
-              <Col>
-                <FormControl variant="outlined" size='small' sx={{ maxWidth: '170px', paddingRight: '0' }}>
-                  <OutlinedInput
-                    disabled={pointCap <= 0}
-                    error={parseFloat(payData?.use_point) > pointCap}
-                    value={payData?.use_point ?? 0}
-                    type='number'
-                    inputProps={{ min: 0, max: pointCap }}
-                    sx={{ paddingRight: '8px' }}
-                    endAdornment={<>
-                      <InputAdornment position="end">P</InputAdornment>
-                      <Button size='small' onClick={handleUseAllPoint}>
-                        {translate('전체사용')}
-                      </Button>
-                    </>}
-                    onChange={(e) => {
-                      // 상한을 넘겨 입력하면 그 자리에서 상한으로 깎는다.
-                      // (그냥 두면 총 결제금액이 음수로 뜨고 결제 시점에 서버가 거절한다)
-                      const raw = e.target.value;
-                      if (raw === '') {
-                        setPayData({ ...payData, use_point: '' });
-                        return;
-                      }
-                      const num = Math.max(0, parseInt(raw) || 0);
-                      setPayData({
-                        ...payData,
-                        use_point: Math.min(num, pointCap),
-                      })
-                    }} />
-                </FormControl>
-                {/* '잔여'는 쓰고 남은 것으로 읽히는데 이 값은 입력해도 줄지 않는다 — 보유가 맞다. */}
-                <Typography variant="body2" sx={{ color: 'text.secondary', fontSize: '12px' }}>
-                  {translate('보유 포인트')} ({commarNumber(user?.point ?? 0)}P)
-                </Typography>
-                {/* 설정값이 아니라 '이번 주문에서 실제로 쓸 수 있는 값'이다.
-                    보유 500P 인 사람에게 설정값 10,000P 를 알려 주면 그게 더 헷갈린다. */}
-                <Typography variant="body2" sx={{ color: 'text.secondary', fontSize: '12px' }}>
-                  {translate('이번 주문에 사용 가능')} ({commarNumber(pointCap)}P)
-                </Typography>
-                {/* 못 쓸 때는 조건을 알려 준다 — 그냥 0 으로 두면 고장으로 읽힌다. */}
-                {사용불가이유 &&
-                  <Typography variant="body2" sx={{ color: 'warning.main', fontSize: '12px' }}>
-                    {translate(사용불가이유)}
-                    {사용불가기준 > 0 && ' (' + commarNumber(사용불가기준) + 사용불가단위 + ' 이상)'}
-                  </Typography>}
-                {적립예정포인트 > 0 &&
-                  <Typography variant="body2" sx={{ color: 'text.secondary', fontSize: '12px' }}>
-                    {translate('이번 주문 적립예정')} ({commarNumber(적립예정포인트)}P)
-                  </Typography>}
-              </Col>
-            </Stack>
+          {enablePoint && (
+            <CheckoutPointField themeDnsData={themeDnsData} payData={payData} setPayData={setPayData} total={displayTotal} />
           )}
           <Divider />
 

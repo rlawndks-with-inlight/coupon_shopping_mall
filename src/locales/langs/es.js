@@ -1,6 +1,8 @@
 // Spanish locale (auto-generated via Google translate, ko->es)
 
 const es = {
+  "상품금액 · {{n}}개": "Productos ({{n}})",
+  "옵션·추가상품": "Opciones y adicionales",
   "본상품이 빠져 추가상품도 함께 뺐습니다.": "Se quitó el producto adicional porque su producto principal fue eliminado.",
   "추가상품은 본상품과 함께 주문할 수 있습니다.": "Los productos adicionales solo se pueden pedir junto con el producto principal.",
   "옵션을 먼저 골라 주세요.": "Elija primero las opciones.",

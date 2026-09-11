@@ -6,6 +6,8 @@
 // ----------------------------------------------------------------------
 
 const fr = {
+  "상품금액 · {{n}}개": "Articles ({{n}})",
+  "옵션·추가상품": "Options et suppléments",
   "본상품이 빠져 추가상품도 함께 뺐습니다.": "L'article additionnel a été retiré car le produit principal a été supprimé.",
   "추가상품은 본상품과 함께 주문할 수 있습니다.": "Les articles additionnels ne peuvent être commandés qu'avec le produit principal.",
   "옵션을 먼저 골라 주세요.": "Veuillez d'abord choisir les options.",

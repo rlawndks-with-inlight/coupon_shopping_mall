@@ -170,6 +170,33 @@ export const calcOrderTotals = (products_, use_point = 0) => {
     };
 };
 
+// 주문 요약의 금액 줄을 나눈다 — 상품금액(본상품 정가×수량) · 옵션·추가상품(옵션가×수량) · 할인(정가−판매가).
+//
+// [왜 — 2026-09-11 사장님 결정(안 A)]
+// 주문 요약정보에 상품명·옵션 목록을 넣었더니 상품 카드와 같은 줄이 한 페이지에 세 번 나왔다
+// (상품 카드 · 오른쪽 요약 · 결제수단 아래 패널). 아마존·가맹점이 준 타 쇼핑몰 예시는 목록을 한 곳에만 두고
+// 요약은 금액만 적는다. 9/9 요청 「요약에 옵션도 정리」 는 옵션을 금액 한 줄로 따로 보여 주는 것으로 살린다.
+//
+// 상품금액 + 옵션·추가상품 − 할인 = calcOrderTotals().merchTotal — 같은 계산을 쪼갠 것이라 청구액과 어긋날 수 없다.
+// count 는 본상품 개수다(갈비 2개 → 2). 상품금액이 '개수 × 단가' 로 바로 검산되게 한다. 추가상품은 옆 줄에 있다.
+// ⚠ 정가가 판매가보다 작거나 비어 있으면(정가를 안 넣은 옛 상품) 할인은 0 으로 본다. 그대로 빼면
+//   할인이 음수가 되어 요약의 합이 안 맞는다(상품금액 칸에 옵션값만 남는 식으로).
+export const orderAmountBreakdown = (products_) => {
+    const products = Array.isArray(products_) ? products_ : [];
+    let goods = 0, options = 0, discount = 0, count = 0;
+    for (const p of products) {
+        const n = Math.max(0, Number(p?.order_count) || 0);
+        options += optionExtraPrice(p, { groups: p?.groups ?? [] }) * n;
+        if (isAddonLine(p)) continue;        // 추가상품 줄은 상품가가 없다 — 옵션·추가상품 줄에만 들어간다
+        const 판매가 = Number(p?.product_sale_price) || 0;
+        const 정가 = Math.max(Number(p?.product_price) || 0, 판매가);
+        goods += 정가 * n;
+        discount += (정가 - 판매가) * n;
+        count += n;
+    }
+    return { goods, options, discount, count };
+};
+
 export const makePayData = async (products_, payData_) => {
     let products = products_;
     let amount = 0;

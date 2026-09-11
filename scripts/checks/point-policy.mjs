@@ -71,8 +71,15 @@ t('적립은 소수점을 버린다', 적립예정({ dns: 몰({ point_rate: 3 })
 t('비율이 0 이면 적립 없음', 적립예정({ dns: 몰({ point_rate: 0 }), 결제금액: 99999 }) === 0);
 
 // ── 화면 배선 ───────────────────────────────────────────────────────────
-const 요약 = readFileSync(FRONT_ROOT + 'src/views/@dashboard/e-commerce/checkout/CheckoutSummary.js', 'utf8');
-t('주문 요약이 공용 규칙을 쓴다', /from 'src\/data\/point-policy'/.test(요약));
+// 포인트 입력칸은 CheckoutPointField 한 곳에서 그린다(2026-09-11). 주문서 PC 는 오른쪽 상자(CheckoutSummary),
+// 휴대폰은 결제수단 위 칸(OrderSheet)이 같은 부품을 쓴다.
+const 요약 = readFileSync(FRONT_ROOT + 'src/views/@dashboard/e-commerce/checkout/CheckoutPointField.js', 'utf8');
+const 요약상자 = readFileSync(FRONT_ROOT + 'src/views/@dashboard/e-commerce/checkout/CheckoutSummary.js', 'utf8');
+const 주문서 = readFileSync(FRONT_ROOT + 'src/views/shop/order/OrderSheet.js', 'utf8');
+t('주문 요약 상자와 휴대폰 포인트 칸이 같은 부품을 쓴다',
+    요약상자.includes("import CheckoutPointField from './CheckoutPointField'") && 주문서.includes('<CheckoutPointField withLabel={false}'));
+t('회원·포인트 몰이 아니면 칸을 안 그린다', 요약.includes('if (!user || !포인트쓰는몰(themeDnsData)) return null;'));
+t('포인트 칸이 공용 규칙을 쓴다', /from 'src\/data\/point-policy'/.test(요약));
 t("'잔여 포인트' 라는 잘못된 이름을 안 쓴다", !/translate\('잔여 포인트'\)/.test(요약));
 t('보유 포인트로 부른다', /translate\('보유 포인트'\)/.test(요약));
 t('설정값이 아니라 실제 사용가능액을 보여준다', /translate\('이번 주문에 사용 가능'\)[\s\S]{0,80}commarNumber\(pointCap\)/.test(요약));

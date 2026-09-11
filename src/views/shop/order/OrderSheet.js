@@ -11,11 +11,12 @@ import Cards from 'react-credit-cards';
 import Payment from 'payment';
 import { Title, postCodeStyle } from 'src/components/elements/styled-components';
 import { CheckoutCartProductList, CheckoutSummary, CheckoutTotalsBrief } from 'src/views/@dashboard/e-commerce/checkout';
+import CheckoutPointField from 'src/views/@dashboard/e-commerce/checkout/CheckoutPointField';
 import Label from 'src/components/label/Label';
 import EmptyContent from 'src/components/empty-content/EmptyContent';
 import Iconify from 'src/components/iconify/Iconify';
 import { useSettingsContext } from 'src/components/settings';
-import { calcOrderTotals, calculatorPrice, getCartDataUtil, makePayData, onPayProductsByAuth, onPayProductsByHand, onPayProductsByPayletter, onPayProductsByForspay, getOrderFormFields, orderLineOptionTexts, cartLineSignature, 배송정책 } from 'src/utils/shop-util';
+import { calcOrderTotals, getCartDataUtil, makePayData, onPayProductsByAuth, onPayProductsByHand, onPayProductsByPayletter, onPayProductsByForspay, getOrderFormFields, orderAmountBreakdown, 배송정책 } from 'src/utils/shop-util';
 import { loadOrderDraft, saveOrderDraft, clearOrderDraft } from 'src/utils/order-draft';
 
 import { findMissingRequired } from 'src/data/order-form-types';
@@ -37,7 +38,8 @@ import PayProductsByAuthFintree from 'src/utils/fintree-auth';
 import PayProductsByHandFintree from 'src/utils/fintree-hand';
 import PayProductsByAuthWayup from 'src/utils/wayup-auth';
 import PasswordField from 'src/components/elements/PasswordField';
-import { 포인트사용상한 } from 'src/data/point-policy';
+import StickyBelowHeader from 'src/components/elements/shop/StickyBelowHeader';
+import { 포인트사용상한, 포인트쓰는몰 } from 'src/data/point-policy';
 
 const Wrappers = styled.div`
   max-width: 1080px;
@@ -736,23 +738,19 @@ export default function OrderSheet({ router }) {
   // 한 번 더 얹었다. 무료배송 판정 기준도 서로 달라서(화면 '상품가+배송비' / 청구 '상품가만')
   // 배송비 정책을 켠 브랜드에서 고객이 본 금액과 결제되는 금액이 어긋났다.
   const orderTotals = calcOrderTotals(products, payData?.use_point);
-  // 요약에 넘길 '할인 전 총액'과 '할인'. 사이드바 요약과 상품 목록 아래 요약이 **같은 값**을 받아야 한다 —
-  // 두 곳이 각자 계산하면 언젠가 서로 다른 금액을 보여 준다.
-  const 할인합 = _.sum(_.map(products, (item) => calculatorPrice(item).discount));
+  // 요약 세 곳(상품 목록 아래 · 결제수단 패널 · 오른쪽 요약)이 **같은 값**을 받는다 —
+  // 각자 계산하면 언젠가 서로 다른 금액을 보여 준다.
+  // 상품 목록(상품명·옵션)은 요약에 넣지 않는다 — 상품 카드 한 곳에만 둔다(2026-09-11 사장님 결정, 안 A).
+  // 옵션은 「옵션·추가상품」 금액 한 줄로 따로 보인다(orderAmountBreakdown 주석).
+  const 금액나눔 = orderAmountBreakdown(products);
   const 배송정책값 = 배송정책();
   const 요약 = {
-    subtotal: orderTotals.merchTotal + 할인합,
-    discount: 할인합,
-    // 무엇을 몇 개 — 사이드바 요약·결제수단 패널에 들어간다(가맹점 요청 2026-09-09 「요약에 옵션도 정리」).
-    // 옵션 글은 표의 옵션 칸과 같은 함수, 줄 금액은 표의 총액과 같은 계산(merchByIdx)이다.
-    items: products.map((p, i) => ({
-      key: `${cartLineSignature(p)}#${i}`,
-      name: (Number(p?.addon_line) === 1 ? `${translate('추가 상품')} · ` : '')
-        + (themeDnsData?.setting_obj?.is_use_lang == 1 ? formatLang(p, 'product_name', currentLang) : (p?.product_name ?? '')),
-      options: orderLineOptionTexts(p, currentLang?.value),
-      count: Number(p?.order_count) || 1,
-      amount: orderTotals.merchByIdx?.[i] ?? 0,
-    })),
+    goods: 금액나눔.goods,
+    options: 금액나눔.options,
+    count: 금액나눔.count,
+    discount: 금액나눔.discount,
+    // 할인 전 총액(상품금액 + 옵션). 사이드바가 배송비를 스스로 계산할 때만 쓰는 값이다(주문서는 배송비를 넘긴다).
+    subtotal: 금액나눔.goods + 금액나눔.options,
     // '주문당 1회 · 5만원 이상 무료' — 표 아래에 홀로 두지 않고 배송비 값 바로 곁에 적는다
     배송비안내: orderTotals.shipActive
       ? [translate('배송비는 주문당 1회 부과됩니다.'),
@@ -776,34 +774,50 @@ export default function OrderSheet({ router }) {
   // 고른 수단 바로 밑에 「주문 요약정보(총액·할인·배송비·총 결제금액) + 다음 동작(결제하기 / 입력란 / 안내)」 을
   // 붙인다. 요청서의 예시 그림이 정확히 이 순서다: 신용카드 → 주문 요약정보 → 선택한 결제수단·결제하기 → 나머지 수단.
   // 결제 로직은 그대로다 — 자리만 옮겼다.
+  //
+  // [PC 와 휴대폰을 나눈다 — 2026-09-11 사장님 결정]
+  // 이 요청은 사실상 휴대폰 문제였다(요청서 캡처도 휴대폰 화면). 휴대폰에서는 오른쪽 상자가 결제수단 목록
+  // 아래로 떨어져 금액과 결제하기가 멀었다. PC 는 오른쪽 상자가 스크롤을 따라다녀서 그런 문제가 없다.
+  // 그래서 PC 는 장바구니와 같은 두 칸 — 오른쪽 상자에서 금액을 보고 결제한다(아마존·가맹점 예시와 같은 구성).
+  // 이 패널의 요약·결제하기는 **휴대폰에서만** 보이고, PC 에서는 입력란(수기결제 등)만 남는다.
+  // 같은 금액이 PC 에서 패널과 오른쪽 상자에 나란히 두 번 보이던 것이 이것으로 없어진다.
   const 패널있는수단 = ['card', 'virtual_account', 'gift_certificate', 'card_fintree', 'certification_fintree',
     'card_hecto', 'phone_hecto', 'certification_wayup', 'card_payletter', 'auth_forspay'];
   const 고른수단이름 = () => _.find(paymentModules, (m) => m?.type == buyType && (buyType != 'auth_forspay' || m?.pay_method == buyPayMethod))?.title || '-';
+  // 결제창으로 넘어가는 결제수단(포스페이/페이레터) — 입력란 없이 「결제하기」 로 결제창을 연다
+  const 리다이렉트형 = buyType == 'auth_forspay' || buyType == 'card_payletter';
+  // 「선택한 결제수단 + 결제하기」 는 한 곳에서 만든다 — 휴대폰은 패널, PC 는 오른쪽 상자가 쓴다(둘 중 하나만 보인다)
+  const 결제하기버튼 = () => (
+    <>
+      <Typography variant="body2" sx={{ mb: 1, textAlign: 'center' }}>{translate('선택한 결제수단:')}{' '}<b>{translate(고른수단이름())}</b></Typography>
+      <Button fullWidth variant="contained" size="large" disabled={payLoading}
+        onClick={() => setModal({
+          func: () => { onPaySelectedRedirect(); },
+          icon: 'ion:card-outline',
+          title: translate('결제를 진행하시겠습니까?'),
+        })}>{translate('결제하기')}</Button>
+    </>
+  );
   const 결제수단패널 = () => (
-    <Box sx={{ mt: 1.5, p: 2, borderRadius: 1, border: '1px dashed', borderColor: 'primary.main' }}>
-      <Typography variant="subtitle2" sx={{ mb: 1 }}>{translate('주문 요약정보')}</Typography>
-      {/* 값은 상품 목록 아래·사이드바와 같은 것을 받는다 — 세 곳이 서로 다른 금액을 보이면 안 된다 */}
-      <CheckoutTotalsBrief dense
-        items={요약.items}
-        subtotal={요약.subtotal}
-        discount={요약.discount}
-        shipping={orderTotals.delivery}
-        shipActive={orderTotals.shipActive}
-        usedPoint={orderTotals.usedPoint}
-        total={orderTotals.amount}
-      />
-      {/* 리다이렉트형(포스페이/페이레터) — 여기서 결제창으로 간다 */}
-      {(buyType == 'auth_forspay' || buyType == 'card_payletter') && (
-        <Box sx={{ mt: 2 }}>
-          <Typography variant="body2" sx={{ mb: 1, textAlign: 'center' }}>{translate('선택한 결제수단:')}<b>{translate(고른수단이름())}</b></Typography>
-          <Button fullWidth variant="contained" size="large" disabled={payLoading}
-            onClick={() => setModal({
-              func: () => { onPaySelectedRedirect(); },
-              icon: 'ion:card-outline',
-              title: translate('결제를 진행하시겠습니까?'),
-            })}>{translate('결제하기')}</Button>
-        </Box>
-      )}
+    // 포스페이·페이레터는 PC 에서 패널에 남는 것이 없다(결제하기가 오른쪽 상자에 있다) — 빈 점선 상자를 안 그린다
+    <Box sx={{ mt: 1.5, p: 2, borderRadius: 1, border: '1px dashed', borderColor: 'primary.main', display: { xs: 'block', md: 리다이렉트형 ? 'none' : 'block' } }}>
+      {/* 휴대폰 전용 — 주문 요약정보 + 결제하기 */}
+      <Box sx={{ display: { xs: 'block', md: 'none' } }}>
+        <Typography variant="subtitle2" sx={{ mb: 1 }}>{translate('주문 요약정보')}</Typography>
+        {/* 값은 상품 목록 아래·사이드바와 같은 것을 받는다 — 세 곳이 서로 다른 금액을 보이면 안 된다 */}
+        <CheckoutTotalsBrief dense
+          goods={요약.goods}
+          options={요약.options}
+          count={요약.count}
+          discount={요약.discount}
+          shipping={orderTotals.delivery}
+          shipActive={orderTotals.shipActive}
+          usedPoint={orderTotals.usedPoint}
+          total={orderTotals.amount}
+        />
+        {/* 리다이렉트형(포스페이/페이레터) — 여기서 결제창으로 간다 */}
+        {리다이렉트형 && <Box sx={{ mt: 2 }}>{결제하기버튼()}</Box>}
+      </Box>
       {/* 카드 수기결제 입력 */}
       {buyType == 'card' && (
         <Box>
@@ -972,16 +986,22 @@ export default function OrderSheet({ router }) {
                 />
                 {/* 상품 목록 바로 아래 금액 요약 — 가맹점 요청(2026-09-08) 「주문내역 하단에 최종결제금액 안내」.
                     휴대폰에서는 사이드바 요약이 결제수단 목록 아래로 내려가 얼마인지 한참 뒤에야 보였다.
-                    상품 목록(items)은 안 넘긴다 — 바로 위 표와 겹친다. */}
-                <CheckoutTotalsBrief
-                  shippingNote={요약.배송비안내}
-                  subtotal={요약.subtotal}
-                  discount={요약.discount}
-                  shipping={orderTotals.delivery}
-                  shipActive={orderTotals.shipActive}
-                  usedPoint={orderTotals.usedPoint}
-                  total={orderTotals.amount}
-                />
+                    상품 목록(items)은 안 넘긴다 — 바로 위 표와 겹친다.
+                    ⚠ 휴대폰 전용이다(2026-09-11 사장님 결정). PC 는 오른쪽 상자가 표 바로 옆 같은 높이에서 같은 금액을
+                    보여 줘서, 여기까지 두면 같은 숫자가 나란히 두 번 보였다. */}
+                <Box sx={{ display: { xs: 'block', md: 'none' } }}>
+                  <CheckoutTotalsBrief
+                    shippingNote={요약.배송비안내}
+                    goods={요약.goods}
+                    options={요약.options}
+                    count={요약.count}
+                    discount={요약.discount}
+                    shipping={orderTotals.delivery}
+                    shipActive={orderTotals.shipActive}
+                    usedPoint={orderTotals.usedPoint}
+                    total={orderTotals.amount}
+                  />
+                </Box>
               </Card>
 
               {/* 주문자 정보 */}
@@ -1191,6 +1211,18 @@ export default function OrderSheet({ router }) {
                   값은 장바구니 줄(products[i].order_form_values)에 실려 그대로 백엔드로 간다.
                   주문서에서 한 번만 받던 때는 날짜가 다른 두 상품을 담으면 하나밖에 못 받았다. */}
 
+              {/* 사용할 포인트 — 휴대폰 전용 자리(2026-09-11). PC 는 오른쪽 상자 안에 있다.
+                  휴대폰에서는 오른쪽 상자를 숨기므로 이 칸을 결제수단 **위** 에 둔다 — 포인트를 쓰면 총 결제금액이
+                  바뀌므로 결제수단을 고르기 전에 정해야 한다(예전엔 결제수단 목록보다 아래, 페이지 맨 끝이었다). */}
+              {isMember && 포인트쓰는몰(themeDnsData) && (
+                <Card sx={{ mb: 3, display: { xs: 'block', md: 'none' } }}>
+                  <CardHeader title={translate('사용할 포인트')} />
+                  <CardContent>
+                    <CheckoutPointField withLabel={false} themeDnsData={themeDnsData} payData={payData} setPayData={setPayData} total={orderTotals.amount} />
+                  </CardContent>
+                </Card>
+              )}
+
               {/* 결제수단 (약관 동의 후 선택) */}
               <Card sx={{ mb: 3 }}>
                 <CardHeader title={translate('결제수단')} />
@@ -1284,12 +1316,18 @@ export default function OrderSheet({ router }) {
 
             </Grid>
 
-            {/* ── 우: 결제 요약 ── */}
-            <Grid item xs={12} md={4}>
-              <Box sx={{ position: { md: 'sticky' }, top: 24 }}>
+            {/* ── 우: 결제 요약 ── PC 전용(2026-09-11 사장님 결정)
+                장바구니와 같은 두 칸 — 오른쪽 상자에서 금액·포인트를 보고 결제한다(장바구니의 「주문하기」 자리).
+                휴대폰에서는 이 칸이 결제수단 목록 아래로 떨어져 같은 금액을 세 번째로 보여 줄 뿐이라 숨긴다
+                (휴대폰은 상품 아래 요약 + 고른 결제수단 아래 결제하기, 포인트는 결제수단 위). */}
+            <Grid item xs={12} md={4} sx={{ display: { xs: 'none', md: 'block' } }}>
+              {/* 헤더 밑에 붙여 따라온다 — top: 24 고정이던 때는 고정 헤더(162px) 밑에 상자 윗부분이 가려졌다 */}
+              <StickyBelowHeader>
                 <CheckoutSummary
                   enableDiscount
-                  items={요약.items}
+                  goods={요약.goods}
+                  options={요약.options}
+                  count={요약.count}
                   themeDnsData={themeDnsData}
                   payData={payData}
                   setPayData={setPayData}
@@ -1304,10 +1342,16 @@ export default function OrderSheet({ router }) {
                   //     merchTotal 을 넘기면 할인이 이중 차감돼 기준금액이 실제보다 작게 나온다.
                   //     그래서 카트에선 포인트를 넣을 수 있는데 주문서에선 잠기는 불일치가 있었다. 같이 해소된다.
                   subtotal={요약.subtotal}
+                  shippingNote={요약.배송비안내}
                 />
-                <Typography variant="caption" sx={{ color: 'text.secondary', display: 'block', mt: 1, textAlign: 'center' }}>{translate('결제수단을 선택한 뒤 결제 방법(결제하기 버튼 또는 입력란)에 따라 진행하세요.')}</Typography>
-                {/* 「결제하기」 는 여기 없다 — 고른 결제수단 바로 아래(결제수단패널)에 붙는다. */}
-              </Box>
+                {/* PC 결제 자리 — 포스페이·페이레터는 여기서 결제창을 연다. 수기결제처럼 입력란이 있는 수단은
+                    결제수단 아래 입력란 안에 결제 버튼이 있으므로 여기서는 안내만 한다. */}
+                {리다이렉트형 ? (
+                  <Box sx={{ mt: 2 }}>{결제하기버튼()}</Box>
+                ) : (
+                  <Typography variant="caption" sx={{ color: 'text.secondary', display: 'block', mt: 1, textAlign: 'center' }}>{translate('결제수단을 선택한 뒤 결제 방법(결제하기 버튼 또는 입력란)에 따라 진행하세요.')}</Typography>
+                )}
+              </StickyBelowHeader>
             </Grid>
           </Grid>
         )}

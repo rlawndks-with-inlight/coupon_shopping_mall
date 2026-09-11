@@ -6,6 +6,8 @@
 // ----------------------------------------------------------------------
 
 const vi = {
+  "상품금액 · {{n}}개": "Tiền hàng ({{n}} sản phẩm)",
+  "옵션·추가상품": "Tùy chọn & sản phẩm thêm",
   "본상품이 빠져 추가상품도 함께 뺐습니다.": "Sản phẩm bổ sung đã bị xóa vì sản phẩm chính không còn.",
   "추가상품은 본상품과 함께 주문할 수 있습니다.": "Sản phẩm bổ sung chỉ có thể đặt cùng sản phẩm chính.",
   "옵션을 먼저 골라 주세요.": "Vui lòng chọn tùy chọn trước.",

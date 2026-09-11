@@ -85,7 +85,7 @@ t('주문서 줄에 「추가 상품」 표가 붙고 가격 칸은 추가상품
 const sheet = 읽기(FRONT_ROOT, 'src/views/shop/order/OrderSheet.js');
 t('주문서가 본상품 없는 추가상품 줄을 걷어낸다(불러올 때·지울 때)', sheet.includes('const 고아추가상품걷기 = (list)') && sheet.includes('items = 고아추가상품걷기(items);') && sheet.includes('list = 고아추가상품걷기(list);'));
 t('결제 관문에서도 한 번 더 본다', sheet.includes("toast.error(translate('추가상품은 본상품과 함께 주문할 수 있습니다.'));"));
-for (const lang of ['ko', 'en', 'cn', 'ja', 'es', 'fr', 'vi', 'ar']) {
+for (const lang of ['ko', 'en', 'cn', 'ja', 'es']) { // 쓰는 언어 다섯(fr·vi·ar 사전은 2026-09-12 삭제)
     const d = 읽기(FRONT_ROOT, `src/locales/langs/${lang}.js`);
     t(`${lang} 사전에 새 문구가 있다`, d.includes('"본상품이 빠져 추가상품도 함께 뺐습니다.":') && d.includes('"추가상품은 본상품과 함께 주문할 수 있습니다.":') && d.includes('"추가 상품":'));
 }

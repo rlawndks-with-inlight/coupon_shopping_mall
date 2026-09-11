@@ -8,8 +8,8 @@ import { join, relative } from 'path';
 //   · 주문서 포인트 칸 「이번 주문에 사용 가능」·「이번 주문 적립예정」 이 어느 사전에도 없어 영어 화면에도 한국어로 나왔다
 //   · 결제 미완료 안내(shop-util)와 프레임7·8 홈·가입 문구 등 36개가 영어·일본어·스페인어 사전에 빠져 있었다
 // 사전 키 = 한국어 원문이라 ko 는 빠져도 화면이 같다 — 나머지 언어만 본다.
-// 언어 목록은 config-lang(화면에서 고르는 목록)에서 읽는다. src/locales/langs 의 fr·vi·ar 는 템플릿 잔재로
-// 어디서도 불러오지 않는다 — 보지 않는다.
+// 언어 목록은 config-lang(화면에서 고르는 목록)에서 읽는다. src/locales/langs 에 있던 fr·vi·ar 는 2023 템플릿 잔재라
+// 2026-09-12 에 지웠다(어디서도 불러오지 않았다) — 아래에서 폴더에 쓰는 언어 파일만 남았는지도 본다.
 // 본사 화면(main-site)은 자체 사전(landingStrings)을 쓰고 main-site-i18n.mjs 가 따로 본다 — 여기선 뺀다.
 // 글자 키만 본다. translate(변수) 는 여기서 못 잡는다(포인트 칸 이유 문구처럼 따로 검사한다 — point-policy.mjs).
 
@@ -25,6 +25,9 @@ t('언어 목록을 읽었다(ko·en 포함 4개 이상)', 언어목록.length >
 const i18n = 읽기('src/locales/i18n.js');
 t('사전을 부르는 곳(i18n.js)이 언어 목록의 사전을 전부 부른다',
   언어목록.every((l) => new RegExp(`from '\\./langs/${l}'`).test(i18n)));
+// 안 쓰는 사전이 남아 있으면 누락을 셀 때 섞여 들어가 없는 문제를 보고하게 된다(2026-09-11 에 실제로 그랬다).
+const 사전파일 = readdirSync(FRONT_ROOT + 'src/locales/langs').filter((f) => f.endsWith('.js')).map((f) => f.slice(0, -3)).sort();
+t('사전 폴더에는 쓰는 언어 파일만 있다', JSON.stringify(사전파일) === JSON.stringify([...언어목록].sort()), 사전파일.join(','));
 
 const 볼언어 = 언어목록.filter((l) => l !== 'ko');
 const 사전 = {};

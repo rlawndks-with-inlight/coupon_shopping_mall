@@ -167,7 +167,7 @@ const Demo2 = (props) => {
                                                     }
                                                     <div>{translate('수량')} : {item.order_count}{translate('개')}</div>
                                                     <div style={{ marginTop: '0.5rem' }}>{translate('주문번호')} : {item.trx?.ord_num}</div>
-                                                    <div>{translate('주문현황')} : {getOrderStatusText(item.trx)}</div>
+                                                    <div>{translate('주문현황')} : {translate(getOrderStatusText(item.trx))}</div>
                                                 </div>
                                             </div>
                                             <AddressButton>

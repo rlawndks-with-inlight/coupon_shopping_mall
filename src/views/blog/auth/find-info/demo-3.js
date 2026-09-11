@@ -145,7 +145,7 @@ const Demo3 = (props) => {
                                     onClick={() => {
                                         setButtonText("재전송")
                                     }}
-                                >{buttonText}</Button>
+                                >{translate(buttonText)}</Button>
                             </TextFieldBox>
                             <TextField
                                 name='certificationNum'
@@ -200,7 +200,7 @@ const Demo3 = (props) => {
                                     onClick={() => {
                                         setButtonText("재전송")
                                     }}
-                                >{buttonText}</Button>
+                                >{translate(buttonText)}</Button>
                             </TextFieldBox>
                             <TextField
                                 name='certificationNum'

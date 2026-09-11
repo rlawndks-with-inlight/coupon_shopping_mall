@@ -59,7 +59,7 @@ const OrderDetail = ({ order }) => {
           {/* installment 가 숫자 0(일시불)이면 `0 && ...` 이 0 으로 평가돼 화면에 '0' 이 찍혔다.
               할부가 실제로 있을 때(개월>0)만 표시한다 — 일시불/0/빈값은 숨긴다. */}
           {Number(order?.installment) > 0 && <KV k={translate('할부기간')} v={translate('{{n}}개월', { n: String(Number(order?.installment)) })} />}
-          <KV k={translate('주문현황')} v={getOrderStatusText(order)} />
+          <KV k={translate('주문현황')} v={translate(getOrderStatusText(order))} />
           <KV k={translate('구매자')} v={`${order?.buyer_name || '-'}${order?.buyer_phone ? ' · ' + order?.buyer_phone : ''}`} />
           {order?.invoice_num && (
             <KV k={translate("택배사/송장")} v={track
@@ -175,7 +175,7 @@ const OrderCheck = () => {
                     <Box>
                       <Typography variant="subtitle2">{o?.ord_num}</Typography>
                       <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-                        {getOrderStatusText(o)} · {(o?.orders?.[0]?.order_name) || '-'}
+                        {translate(getOrderStatusText(o))} · {(o?.orders?.[0]?.order_name) || '-'}
                         {o?.orders?.length > 1 ? ` ${translate('외 {{n}}건', { n: String(o.orders.length - 1) })}` : ''}
                       </Typography>
                     </Box>

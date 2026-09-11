@@ -111,7 +111,7 @@ const Demo1 = (props) => {
                         }}>
                             <PointInfo>
                                 <PointDate>{row?.created_at ?? '---'}</PointDate>
-                                <PointType>{getPointType(row)}</PointType>
+                                <PointType>{translate(getPointType(row))}</PointType>
                             </PointInfo>
                             <PointAmount style={{
                                 color: `${row['point'] > 0 ? '#2e7d32' : '#d32f2f'}`

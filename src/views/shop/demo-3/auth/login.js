@@ -294,7 +294,7 @@ const LoginDemo = (props) => {
               </OrderRow>
               <OrderRow>
                 <Typography variant='subtitle2' style={{ color: themeObj.grey[600], textTransform: 'uppercase', letterSpacing: '0.05em' }}>{translate('주문현황')}</Typography>
-                <Typography variant='body2'>{getOrderStatusText(noneUserTrxObj)}</Typography>
+                <Typography variant='body2'>{translate(getOrderStatusText(noneUserTrxObj))}</Typography>
               </OrderRow>
               <OrderRow>
                 <Typography variant='subtitle2' style={{ color: themeObj.grey[600], textTransform: 'uppercase', letterSpacing: '0.05em' }}>{translate('송장번호')}</Typography>

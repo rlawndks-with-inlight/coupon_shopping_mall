@@ -168,7 +168,7 @@ const Demo4 = (props) => {
                                                     <div>{commarNumberWithUnit(item?.order_amount)}</div>
                                                     <div>{translate('옵션')} : {getOptionText(item) || '-'} / {item?.order_count}{translate('개')}</div>
                                                     <div style={{ marginTop: '0.5rem' }}>{translate('주문번호')} : {item?.trx?.ord_num}</div>
-                                                    <div>{translate('주문현황')} : {getOrderStatusText(item?.trx)}</div>
+                                                    <div>{translate('주문현황')} : {translate(getOrderStatusText(item?.trx))}</div>
                                                     <div>{translate('받는분')} : {item?.trx?.receiver || item?.trx?.buyer_name || '-'}</div>
                                                     <div>{translate('배송지')} : {item?.trx?.addr ? `${item?.trx?.addr} ${item?.trx?.detail_addr || ''}` : '-'}</div>
                                                     <div>{translate('송장번호')} : {item?.trx?.invoice_num || '-'}</div>

@@ -523,8 +523,8 @@ const Demo6 = (props) => {
             <StoryBody>
               {홈문구(t, 'story_body', currentLang) ? 홈문구(t, 'story_body', currentLang) : (
                 <>{translate('오랜 시간 연구와 다듬음을 거쳐 완성된 단 하나의 제품입니다.')}<br /><br />
-                  저희는 여러 가지를 한꺼번에 만들기보다, 진심으로 자신 있는 하나에 집중합니다.
-                  이것이 저희가 고객에게 드릴 수 있는 가장 정성스러운 선물입니다.
+                  {translate('저희는 여러 가지를 한꺼번에 만들기보다, 진심으로 자신 있는 하나에 집중합니다.')}{' '}
+                  {translate('이것이 저희가 고객에게 드릴 수 있는 가장 정성스러운 선물입니다.')}
                 </>
               )}
             </StoryBody>

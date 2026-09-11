@@ -139,7 +139,7 @@ const Demo5 = (props) => {
                         {pointList.map((row, idx) => (
                             <PointRow key={row?.id ?? idx}>
                                 <PointInfo>
-                                    <PointReason>{getPointType(row)}</PointReason>
+                                    <PointReason>{translate(getPointType(row))}</PointReason>
                                     <PointDate>{row?.created_at ?? '---'}</PointDate>
                                 </PointInfo>
                                 <PointAmount style={{

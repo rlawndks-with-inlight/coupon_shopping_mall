@@ -87,7 +87,7 @@ const Demo4 = (props) => {
                     {pointList.map((row, idx) => (
                         <Point key={idx}>
                             <div style={{ display: 'flex', flexDirection: 'column' }}>
-                                <div style={{ fontWeight: 'bold' }}>{getPointType(row)}</div>
+                                <div style={{ fontWeight: 'bold' }}>{translate(getPointType(row))}</div>
                                 <div style={{ fontSize: '12px', color: '#999' }}>{row?.created_at ?? '---'}</div>
                             </div>
                             <div style={{

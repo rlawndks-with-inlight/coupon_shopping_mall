@@ -180,7 +180,7 @@ const Demo1 = (props) => {
 
                                         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '0.75rem 1rem 0', fontSize: '0.85rem', opacity: 0.8 }}>
                                             <div>{translate('주문번호')} {item.ord_num}</div>
-                                            <div>{getOrderStatusText(item)}</div>
+                                            <div>{translate(getOrderStatusText(item))}</div>
                                         </div>
 
                                         <div style={{ display: 'flex', justifyContent: 'space-between', padding: '1rem', flexWrap: 'wrap', gap: '0.5rem' }}>

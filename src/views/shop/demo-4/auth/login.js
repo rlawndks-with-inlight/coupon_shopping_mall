@@ -321,7 +321,7 @@ const LoginDemo = (props) => {
               </Col>
               <Col style={{ margin: 'auto', width: '100%', maxWidth: '500px' }}>
                 <Typography variant='subtitle1'>{translate('주문현황')}</Typography>
-                <Typography variant='body2'>{getOrderStatusText(noneUserTrxObj)}</Typography>
+                <Typography variant='body2'>{translate(getOrderStatusText(noneUserTrxObj))}</Typography>
               </Col>
               <Col style={{ margin: 'auto', width: '100%', maxWidth: '500px' }}>
                 <Typography variant='subtitle1'>{translate('송장번호')}</Typography>

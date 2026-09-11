@@ -297,7 +297,7 @@ const Demo5 = (props) => {
                                     onClick={() => {
                                         setButtonText("재전송")
                                     }}
-                                >{buttonText}</Button>
+                                >{translate(buttonText)}</Button>
                             </TextFieldBox>
                             <TextField
                                 name='certificationNum'

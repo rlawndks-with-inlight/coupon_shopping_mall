@@ -134,7 +134,7 @@ const Demo5 = (props) => {
                 >
                     {_.uniqBy(orderList, 'trx_status').map((data, idx) => {
                         return <Tab
-                            label={getOrderStatusText(data)}
+                            label={translate(getOrderStatusText(data))}
                             value={data.trx_status}
                             sx={{
                                 borderBottom: '1px solid',
@@ -177,7 +177,7 @@ const Demo5 = (props) => {
                                                     <div>{formatLang(item, 'product_name') || item.order_name}</div>
                                                     <div>{commarNumberWithUnit(item.order_amount)}</div>
                                                     <div>{translate('옵션')} : {getOptionText(item) || translate('기본')} / {translate('{{n}}개', { n: item.order_count })}</div>
-                                                    <div style={{ marginTop: '0.5rem' }}>{getOrderStatusText(item)} · 주문번호 {item.ord_num}</div>
+                                                    <div style={{ marginTop: '0.5rem' }}>{translate(getOrderStatusText(item))} · {translate('주문번호')} {item.ord_num}</div>
                                                 </div>
                                             </div>
                                             <AddressButton>
@@ -201,11 +201,11 @@ const Demo5 = (props) => {
                                         {(item.receiver || item.addr || item.invoice_num) &&
                                             <div style={{ padding: '0 1rem 1rem 1rem', fontSize: '0.9rem' }}>
                                                 {item.receiver &&
-                                                    <div>받는분 : {item.receiver}{item.receiver_phone ? ` (${item.receiver_phone})` : ''}</div>}
+                                                    <div>{translate('받는분')} : {item.receiver}{item.receiver_phone ? ` (${item.receiver_phone})` : ''}</div>}
                                                 {item.addr &&
-                                                    <div>배송지 : {item.addr} {item.detail_addr || ''}</div>}
+                                                    <div>{translate('배송지')} : {item.addr} {item.detail_addr || ''}</div>}
                                                 {item.invoice_num &&
-                                                    <div>송장번호 : {item.invoice_num}</div>}
+                                                    <div>{translate('송장번호')} : {item.invoice_num}</div>}
                                             </div>
                                         }
                                     </ItemBox>

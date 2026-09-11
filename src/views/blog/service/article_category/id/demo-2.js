@@ -181,7 +181,7 @@ const Demo2 = (props) => {
                             <DetailCard themeMode={themeMode} style={{ marginTop: '1rem' }}>
                                 <PostTitle themeMode={themeMode}>{formatLang(item, 'post_title') ?? '---'}</PostTitle>
                                 {item?.writer_nickname &&
-                                    <PostMeta themeMode={themeMode}>작성자 {item?.writer_nickname}</PostMeta>}
+                                    <PostMeta themeMode={themeMode}>{translate('작성자')} {item?.writer_nickname}</PostMeta>}
 
                                 <ReactQuill
                                     className='none-padding'

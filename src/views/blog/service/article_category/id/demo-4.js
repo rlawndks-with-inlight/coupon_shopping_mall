@@ -187,7 +187,7 @@ const Demo4 = (props) => {
                                 {isAnswered &&
                                     item.replies.map((reply, idx) => (
                                         <AnswerBox key={reply?.id ?? idx} themeMode={themeMode}>
-                                            <AnswerLabel themeMode={themeMode}>답변{reply?.post_title ? ` - ${reply.post_title}` : ''}</AnswerLabel>
+                                            <AnswerLabel themeMode={themeMode}>{translate('답변')}{reply?.post_title ? ` - ${reply.post_title}` : ''}</AnswerLabel>
                                             <Content themeMode={themeMode} dangerouslySetInnerHTML={{ __html: formatLang(reply, 'post_content') ?? '' }} />
                                         </AnswerBox>
                                     ))

@@ -66,7 +66,7 @@ const Demo2 = (props) => {
             <Wrappers>
                 <Title style={{ paddingBottom: '0' }}>{translate('포인트 조회')}</Title>
                 <SubTitle>{translate('상품 구매 포인트는 구매 14일 이후 사용할 수 있습니다')}<br />{translate('보유 포인트는 결제 시 사용할 수 있습니다')}</SubTitle>
-                <Balance>보유 포인트 : {commarNumber(user?.point)}P</Balance>
+                <Balance>{translate('보유 포인트')} : {commarNumber(user?.point)}P</Balance>
                 <ContentContainer style={{
                     background: `${themeMode == 'dark' ? '#000' : '#F6F6F6'}`
                 }}>
@@ -75,7 +75,7 @@ const Demo2 = (props) => {
                             background: `${themeMode == 'dark' ? '#222' : '#fff'}`
                         }}>
                             <div style={{ display: 'flex', flexDirection: 'column' }}>
-                                <div>{getPointType(row)}</div>
+                                <div>{translate(getPointType(row))}</div>
                                 <div style={{ fontSize: '0.85rem', marginTop: '0.25rem', opacity: 0.7 }}>{row?.created_at ?? '---'}</div>
                             </div>
                             <div style={{

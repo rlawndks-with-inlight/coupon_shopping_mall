@@ -109,7 +109,7 @@ const Demo3 = (props) => {
     }
 
     const onResign = async () => {
-        if (!window.confirm('정말 회원탈퇴 하시겠습니까?')) {
+        if (!window.confirm(translate('정말 회원탈퇴 하시겠습니까?'))) {
             return;
         }
         let password = window.prompt('본인 확인을 위해 비밀번호를 입력해주세요.');

@@ -248,7 +248,7 @@ const SignUpDemo = (props) => {
     })
     console.log(result)
     if (result?.phone_token) {
-      alert('성공적으로 발송되었습니다.')
+      alert(translate('성공적으로 발송되었습니다.'))
       setPhoneToken(result.phone_token)
     }
   }

@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { IconButton, InputAdornment, OutlinedInput, TextField } from '@mui/material';
 import { Icon } from '@iconify/react';
+import { useLocales } from 'src/locales';
 
 // 비밀번호 입력칸 — 눈 아이콘으로 보였다 감췄다 한다.
 //
@@ -16,6 +17,7 @@ import { Icon } from '@iconify/react';
 //   넘어온 값을 살려 두고 눈만 덧붙인다.
 const PasswordField = ({ InputProps, ...rest }) => {
     const [보임, set보임] = useState(false);
+    const { translate } = useLocales();
     return (
         <TextField
             {...rest}
@@ -31,7 +33,7 @@ const PasswordField = ({ InputProps, ...rest }) => {
                                 edge="end"
                                 size="small"
                                 // 스크린리더·키보드 사용자를 위한 이름. 눈 모양만으로는 뜻이 안 전해진다.
-                                aria-label={보임 ? '비밀번호 숨기기' : '비밀번호 보기'}
+                                aria-label={translate(보임 ? '비밀번호 숨기기' : '비밀번호 보기')}
                                 // 폼 안에서 엔터·탭이 이 버튼에 걸려 저장이 막히지 않게 한다.
                                 type="button"
                                 tabIndex={-1}
@@ -55,6 +57,7 @@ export default PasswordField;
 // 그래서 껍데기는 그대로 두고 눈 아이콘만 붙인다.
 export const PasswordOutlinedInput = ({ endAdornment, ...rest }) => {
     const [보임, set보임] = useState(false);
+    const { translate } = useLocales();
     return (
         <OutlinedInput
             {...rest}
@@ -67,7 +70,7 @@ export const PasswordOutlinedInput = ({ endAdornment, ...rest }) => {
                             onClick={() => set보임((v) => !v)}
                             edge="end"
                             size="small"
-                            aria-label={보임 ? '비밀번호 숨기기' : '비밀번호 보기'}
+                            aria-label={translate(보임 ? '비밀번호 숨기기' : '비밀번호 보기')}
                             type="button"
                             tabIndex={-1}
                         >

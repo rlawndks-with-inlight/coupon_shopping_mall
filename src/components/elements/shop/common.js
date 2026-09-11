@@ -174,6 +174,7 @@ export const Item = props => {
 }
 export const Items = props => {
   const { themeDnsData } = useSettingsContext()
+  const { translate } = useLocales()
   const { items, router, is_slide, rail = false, slide_setting = {}, slide_ref, seller, rows = 1, autoplaySpeed = 2500, text_align = 'center', item_column = 0 } = props;
   const [itemThemeCss, setItemThemeCss] = useState(itemThemeCssDefaultSetting)
   const railRef = useRef(null)
@@ -255,7 +256,7 @@ export const Items = props => {
       {rail ? (
         <RailWrap>
           {railOverflow &&
-            <RailArrow className='prev' onClick={() => scrollRail(-1)} aria-label='이전 상품'>
+            <RailArrow className='prev' onClick={() => scrollRail(-1)} aria-label={translate('이전 상품')}>
               <Icon icon='ic:round-chevron-left' width={26} />
             </RailArrow>}
           <RailTrack ref={railRef}>
@@ -267,7 +268,7 @@ export const Items = props => {
               ))}
           </RailTrack>
           {railOverflow &&
-            <RailArrow className='next' onClick={() => scrollRail(1)} aria-label='다음 상품'>
+            <RailArrow className='next' onClick={() => scrollRail(1)} aria-label={translate('다음 상품')}>
               <Icon icon='ic:round-chevron-right' width={26} />
             </RailArrow>}
         </RailWrap>
@@ -591,7 +592,7 @@ export const PointTable = props => {
                   <TableRow>
                     <TableCell>{`${row['point'] > 0 ? '+' : ''}` + commarNumber(row['point'])}</TableCell>
                     <TableCell>{row?.created_at ?? "---"}</TableCell>
-                    <TableCell>{getPointType(row)}</TableCell>
+                    <TableCell>{translate(getPointType(row))}</TableCell>
                   </TableRow>
                 </>
               ))}

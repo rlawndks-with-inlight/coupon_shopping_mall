@@ -3,7 +3,7 @@ import { Row, themeObj } from 'src/components/elements/styled-components'
 import { useLocales } from 'src/locales'
 import { formatLang } from 'src/utils/format'
 import { LazyLoadImage } from 'react-lazy-load-image-component'
-import { commarNumber, commarNumberWithUnit } from 'src/utils/function'
+import { commarNumber, commarNumberWithUnit, getPriceUnitByLang } from 'src/utils/function'
 import { useSettingsContext } from 'src/components/settings'
 import { useRouter } from 'next/router'
 import { useMediaQuery } from '@mui/material'
@@ -320,7 +320,7 @@ const renderShopPromo = (product, router, currentLang, mainColor, isMobile, tran
           <div style={{ display: 'flex', alignItems: 'baseline', gap: '0.5rem', flexWrap: 'wrap' }}>
             {hasSale && <span style={{ fontSize: isMobile ? '16px' : '22px', fontWeight: 'bold', color: '#ff3333' }}>{disc}%</span>}
             <span style={{ fontSize: isMobile ? '28px' : '42px', fontWeight: '900', color: '#1a1a1a', letterSpacing: '-0.5px' }}>{commarNumber(sale)}</span>
-            <span style={{ fontSize: isMobile ? '14px' : '18px', fontWeight: 'bold' }}>원</span>
+            <span style={{ fontSize: isMobile ? '14px' : '18px', fontWeight: 'bold' }}>{getPriceUnitByLang()}</span>
           </div>
         </div>
         <div style={{

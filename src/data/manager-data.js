@@ -42,6 +42,7 @@ export const PATH_MANAGER = {
     categories: path(ROOTS_MANAGER, '/products/categories'),
     consignments: path(ROOTS_MANAGER, '/products/consignments'),
     faq: path(ROOTS_MANAGER, '/products/faq'),
+    reviews: path(ROOTS_MANAGER, '/products/reviews'),
   },
   articles: {
     root: path(ROOTS_MANAGER, '/articles'),

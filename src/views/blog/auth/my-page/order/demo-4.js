@@ -8,6 +8,8 @@ import { commarNumber, getOrderStatusText, commarNumberWithUnit } from 'src/util
 import { apiManager } from 'src/utils/api';
 import { getOptionLabel } from 'src/utils/shop-util';
 import OrderCancelButton from 'src/components/elements/shop/OrderCancelButton';
+import ReviewWriteButton from 'src/components/elements/shop/review/ReviewWriteButton';
+import useReviewWritable from 'src/components/elements/shop/review/useReviewWritable';
 import { useLocales } from 'src/locales';
 import { formatLang } from 'src/utils/format';
 
@@ -71,6 +73,8 @@ const Demo4 = (props) => {
     const [orderList, setOrderList] = useState([]);
     // 최초 렌더에서 목록이 [] 이라 "주문 내역이 없습니다" 가 깜빡이는 걸 막기 위한 로딩 플래그
     const [loading, setLoading] = useState(true);
+    // 줄마다 「후기 쓰기」 — 쓸 수 있는지는 서버가 판정한 것을 한 번 받아 둔다.
+    const { byOrder: reviewLines, refresh: refreshReviewLines } = useReviewWritable();
 
     useEffect(() => {
         getOrderList();
@@ -189,6 +193,7 @@ const Demo4 = (props) => {
                                                 >{translate('배송조회')}</Button>
                                                 {/* 블로그형 프레임에는 취소요청 수단이 아예 없었다 — 공용 버튼으로 통일 */}
                                                 <OrderCancelButton trx={item.trx} orders={item.trx?.orders} onDone={getOrderList} sx={{ marginBottom: '1rem', whiteSpace: 'nowrap' }} />
+                                                <ReviewWriteButton line={reviewLines[item.id]} onDone={refreshReviewLines} sx={{ marginBottom: '1rem' }} />
                                             </AddressButton>
 
                                         </div>

@@ -7,7 +7,7 @@ import { LazyLoadImage } from 'react-lazy-load-image-component'
 import { Rating, Typography } from '@mui/material'
 import { useRouter } from 'next/router'
 import { useSettingsContext } from 'src/components/settings'
-import { isShopgoBrand } from 'src/utils/is-shopgo'
+import { isReviewEnabled, reviewImageOf, dateOnly } from 'src/utils/review'
 
 const Wrappers = styled.div`
   width:90%;
@@ -57,10 +57,10 @@ const Review = (props) => {
         router.push(`/shop/item/${item?.product_id}`)
       }}>
         {/* height:auto 면 후기 이미지 비율이 제각각이라 한 줄의 카드 높이가 들쭉날쭉했다. 정사각으로 고정한다. */}
-        <LazyLoadImage src={item?.profile_img} style={{ width: '100%', aspectRatio: '1 / 1', height: 'auto', objectFit: 'cover' }} />
+        <LazyLoadImage src={reviewImageOf(item)} style={{ width: '100%', aspectRatio: '1 / 1', height: 'auto', objectFit: 'cover' }} />
         <Row style={{ flexDirection: 'column', padding: '0.5rem', rowGap: '0.25rem' }}>
-          <div style={{ color: themeObj.grey[500] }}>{item?.nickname}</div>
-          <Rating value={item?.scope / 2} readOnly={true} precision={0.5} />
+          <div style={{ color: themeObj.grey[500], fontSize: '12px' }}>{item?.writer ?? item?.nickname}{item?.created_at ? ` · ${dateOnly(item.created_at)}` : ''}</div>
+          <Rating value={Number(item?.scope) || 0} readOnly={true} precision={1} size='small' />
           <Typography variant='subtitle2'>
             {item?.title}
           </Typography>
@@ -78,7 +78,7 @@ const HomeProductReview = (props) => {
   // 별점만 빼면 빈 후기 카드가 남으므로 섹션 통째로 렌더하지 않는다.
   // useSettingsContext 는 훅이라 조기 return 위에서 호출해야 훅 순서가 어긋나지 않는다.
   const { themeDnsData } = useSettingsContext();
-  if (isShopgoBrand(themeDnsData)) return null;
+  if (!isReviewEnabled(themeDnsData)) return null;
 
   const { column, data, func, is_manager } = props;
   const { style } = column;

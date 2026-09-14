@@ -20,7 +20,8 @@ import { useLocales } from 'src/locales';
 import { formatLang } from 'src/utils/format';
 import DialogBuyNow from 'src/components/dialog/DialogBuyNow';
 import { ProductDetailsReview } from 'src/views/@dashboard/e-commerce/details';
-import { isShopgoBrand } from 'src/utils/is-shopgo';
+import { isReviewEnabled } from 'src/utils/review';
+import useReviewSummary from 'src/components/elements/shop/review/useReviewSummary';
 import QuantityStepper from 'src/components/elements/shop/QuantityStepper';
 import DetailNotices from 'src/components/elements/shop/DetailNotices';
 import ProductNotFound from 'src/components/elements/shop/ProductNotFound';
@@ -134,6 +135,8 @@ const Demo2 = (props) => {
     const [reviewPage, setReviewPage] = useState(1)
     const [reviewContent, setReviewContent] = useState({})
     const [reviewTotal, setReviewTotal] = useState(0)
+    // 후기 수(탭 라벨)는 요약 훅이 60초 공유로 가져온다.
+    const { summary: reviewSummary } = useReviewSummary(item?.id, isReviewEnabled(themeDnsData));
 
     useEffect(() => {
         pageSetting(1);
@@ -300,10 +303,10 @@ const Demo2 = (props) => {
                                 {formatLang(item, 'product_spec', currentLang)}
                               </div>
                             }
-                            <div style={{ padding: '0 0 1rem 0', fontSize: themeObj.font_size.size8, fontWeight: 'bold', cursor: 'pointer', width: `${isShopgoBrand(themeDnsData) ? '100%' : '50%'}`, textAlign: 'center', borderBottom: `${tab == 0 ? '2px solid black' : ''}` }} onClick={() => { setTab(0) }}>{translate('상품정보')}</div>
-                            {!isShopgoBrand(themeDnsData) &&
+                            <div style={{ padding: '0 0 1rem 0', fontSize: themeObj.font_size.size8, fontWeight: 'bold', cursor: 'pointer', width: `${isReviewEnabled(themeDnsData) ? '50%' : '100%'}`, textAlign: 'center', borderBottom: `${tab == 0 ? '2px solid black' : ''}` }} onClick={() => { setTab(0) }}>{translate('상품정보')}</div>
+                            {isReviewEnabled(themeDnsData) &&
                                 <div style={{ padding: '0 0 1rem 0', fontSize: themeObj.font_size.size8, fontWeight: 'bold', cursor: 'pointer', width: '50%', textAlign: 'center', borderBottom: `${tab == 1 ? '2px solid black' : ''}` }} onClick={() => { setTab(1) }}>
-                                    상품후기({reviewTotal})
+                                    {translate('상품후기')}({reviewSummary?.count ?? 0})
                                 </div>}
                         </Row>
                         {
@@ -319,7 +322,7 @@ const Demo2 = (props) => {
                                 </>
                                 :
                                 <>
-                                    <ProductDetailsReview product={{ ...item, order_form_values: orderFormValues }} reviewContent={reviewContent} onChangePage={pageSetting} reviewPage={reviewPage} />,
+                                    <ProductDetailsReview product={item} variant="compact" defaultOpen />
                                 </>
 
                         }

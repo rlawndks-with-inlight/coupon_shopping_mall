@@ -218,6 +218,15 @@ const DefaultSetting = () => {
         }
       ]
       : []),
+    // 후기설정 — 가맹점이 직접 켜고 끈다(2026-09-14 결정). 값은 setting_obj 에 얹는다(컬럼 추가 없음).
+    ...(user?.level >= 40
+      ? [
+        {
+          value: 9,
+          label: '후기설정'
+        }
+      ]
+      : []),
     /*...(user?.level >= 40
       ? [
         {
@@ -1555,6 +1564,98 @@ const DefaultSetting = () => {
                           }}
                         />
                       </FormControl>
+                    </Stack>
+                  </Card>
+                </Grid>
+              </>
+            )}
+            {/* 후기설정 — 손님 화면의 후기·별점을 켜고 끄고, 작성 규칙을 정한다.
+                기본값·상한은 src/utils/review.js(프론트)·utils.js/review-policy.js(백엔드)와 같다. */}
+            {currentTab == 9 && (
+              <>
+                <Grid item xs={12} md={6}>
+                  <Card sx={{ p: 2, height: '100%' }}>
+                    <Stack spacing={1.5}>
+                      <FormControlLabel
+                        control={<Switch checked={Number(item?.setting_obj?.is_use_review) === 1}
+                          onChange={e => setItem({ ...item, ['setting_obj']: { ...item?.setting_obj, ['is_use_review']: e.target.checked ? 1 : 0 } })} />}
+                        label='후기 사용' />
+                      <Typography variant='caption' sx={{ color: 'text.secondary' }}>
+                        끄면 손님 화면의 후기·별점이 모두 사라집니다. 이미 쓴 후기는 지워지지 않고, 다시 켜면 그대로 보입니다.
+                      </Typography>
+                      <FormControlLabel
+                        control={<Switch checked={item?.setting_obj?.review_allow_photo === undefined || item?.setting_obj?.review_allow_photo === '' || Number(item?.setting_obj?.review_allow_photo) === 1}
+                          onChange={e => setItem({ ...item, ['setting_obj']: { ...item?.setting_obj, ['review_allow_photo']: e.target.checked ? 1 : 0 } })} />}
+                        label='사진 첨부 허용' />
+                      <Typography variant='caption' sx={{ color: 'text.secondary' }}>
+                        끄면 글만 받습니다. 사진은 한 후기에 최대 5장입니다.
+                      </Typography>
+                      <FormControlLabel
+                        control={<Switch checked={item?.setting_obj?.review_use_helpful === undefined || item?.setting_obj?.review_use_helpful === '' || Number(item?.setting_obj?.review_use_helpful) === 1}
+                          onChange={e => setItem({ ...item, ['setting_obj']: { ...item?.setting_obj, ['review_use_helpful']: e.target.checked ? 1 : 0 } })} />}
+                        label='도움돼요 버튼' />
+                      <Typography variant='caption' sx={{ color: 'text.secondary' }}>
+                        후기마다 「도움돼요」 버튼과 「도움순」 정렬을 보여 줍니다. 회원만, 후기당 한 번, 자기 후기는 못 누릅니다. 끄면 버튼과 정렬만 사라지고 쌓인 수는 남습니다.
+                      </Typography>
+                      <FormControl variant='outlined'>
+                        <InputLabel>최소 글자 수</InputLabel>
+                        <OutlinedInput label='최소 글자 수' type='text' inputProps={{ inputMode: 'numeric' }}
+                          value={item?.setting_obj?.review_min_length ?? 10}
+                          endAdornment={<InputAdornment position='end'>자</InputAdornment>}
+                          onChange={e => setItem({ ...item, ['setting_obj']: { ...item?.setting_obj, ['review_min_length']: e.target.value.replace(/[^0-9]/g, '') } })} />
+                      </FormControl>
+                      <Typography variant='caption' sx={{ color: 'text.secondary' }}>
+                        「좋아요」 한마디짜리 후기를 막습니다. 1~200자, 비우면 10자.
+                      </Typography>
+                    </Stack>
+                  </Card>
+                </Grid>
+                <Grid item xs={12} md={6}>
+                  <Card sx={{ p: 2, height: '100%' }}>
+                    <Stack spacing={1.5}>
+                      <FormControl variant='outlined'>
+                        <InputLabel>작성 가능 기간</InputLabel>
+                        <OutlinedInput label='작성 가능 기간' type='text' inputProps={{ inputMode: 'numeric' }}
+                          value={item?.setting_obj?.review_window_days ?? 90}
+                          endAdornment={<InputAdornment position='end'>일</InputAdornment>}
+                          onChange={e => setItem({ ...item, ['setting_obj']: { ...item?.setting_obj, ['review_window_days']: e.target.value.replace(/[^0-9]/g, '') } })} />
+                      </FormControl>
+                      <Typography variant='caption' sx={{ color: 'text.secondary' }}>
+                        배송완료 처리(또는 출고 3일 후)부터 며칠까지 쓸 수 있는지. 7~365일, 비우면 90일.
+                      </Typography>
+                      <FormControl variant='outlined'>
+                        <InputLabel>수정 가능 기간</InputLabel>
+                        <OutlinedInput label='수정 가능 기간' type='text' inputProps={{ inputMode: 'numeric' }}
+                          value={item?.setting_obj?.review_edit_days ?? 7}
+                          endAdornment={<InputAdornment position='end'>일</InputAdornment>}
+                          onChange={e => setItem({ ...item, ['setting_obj']: { ...item?.setting_obj, ['review_edit_days']: e.target.value.replace(/[^0-9]/g, '') } })} />
+                      </FormControl>
+                      <Typography variant='caption' sx={{ color: 'text.secondary' }}>
+                        손님이 쓴 뒤 며칠까지 고칠 수 있는지. 삭제는 언제나 됩니다. 0~90일, 비우면 7일.
+                      </Typography>
+                      <FormControl variant='outlined'>
+                        <InputLabel>BEST 고정 개수</InputLabel>
+                        <OutlinedInput label='BEST 고정 개수' type='text' inputProps={{ inputMode: 'numeric' }}
+                          value={item?.setting_obj?.review_best_max ?? 3}
+                          endAdornment={<InputAdornment position='end'>개</InputAdornment>}
+                          onChange={e => setItem({ ...item, ['setting_obj']: { ...item?.setting_obj, ['review_best_max']: e.target.value.replace(/[^0-9]/g, '') } })} />
+                      </FormControl>
+                      <Typography variant='caption' sx={{ color: 'text.secondary' }}>
+                        후기관리에서 BEST 로 지정해 상품마다 맨 위에 고정할 수 있는 수. 0~10개, 비우면 3개.
+                      </Typography>
+                    </Stack>
+                  </Card>
+                </Grid>
+                <Grid item xs={12}>
+                  <Card sx={{ p: 2 }}>
+                    <Stack spacing={1}>
+                      <TextField label='작성 안내문' multiline minRows={2} inputProps={{ maxLength: 300 }}
+                        value={item?.setting_obj?.review_notice ?? ''}
+                        placeholder='예: 사진과 함께 남겨 주시면 다른 손님께 큰 도움이 됩니다.'
+                        onChange={e => setItem({ ...item, ['setting_obj']: { ...item?.setting_obj, ['review_notice']: e.target.value } })} />
+                      <Typography variant='caption' sx={{ color: 'text.secondary' }}>
+                        후기 작성 창 위에 그대로 보입니다. 300자까지. 비우면 안 보입니다.
+                      </Typography>
                     </Stack>
                   </Card>
                 </Grid>

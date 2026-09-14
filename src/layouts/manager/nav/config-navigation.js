@@ -297,6 +297,8 @@ export const navConfig = () => {
           icon: ICONS.cart,
           children: [
             { title: '상품관리', path: PATH_MANAGER.products.list },
+            // 후기관리 — 답글·숨김·BEST. 켜고 끄기는 설정관리 › 기본설정 › 「후기설정」 탭(2026-09-14 후기 재도입).
+            { title: '후기관리', path: PATH_MANAGER.products.reviews },
             ...(isUseProductCategoryGroup() ? [{ title: '카테고리 그룹 관리', path: PATH_MANAGER.products.categoryGroups }] : []),
             ...(isManager() ? [...categoryGroupList] : []),
             ...(isUseProductPropertyGroup() ? [{ title: '특성 그룹 관리', path: PATH_MANAGER.products.propertyGroups }] : []),

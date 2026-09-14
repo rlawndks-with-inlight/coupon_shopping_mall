@@ -18,7 +18,7 @@ import toast from 'react-hot-toast';
 import DialogBuyNow from 'src/components/dialog/DialogBuyNow';
 import { useAuthContext } from 'src/layouts/manager/auth/useAuthContext';
 import { useModal } from 'src/components/dialog/ModalProvider';
-import { isShopgoBrand } from 'src/utils/is-shopgo';
+import { isReviewEnabled } from 'src/utils/review';
 import { formatLang, characterChoices } from 'src/utils/format';
 import { useLocales } from 'src/locales';
 import ShippingLine from 'src/components/elements/shop/ShippingLine';
@@ -236,7 +236,7 @@ const ItemDemo = (props) => {
   ];
   // ShopGo 산하는 상품후기를 쓰지 않는다 — 후기 탭을 감춘다.
   // (별점과 작성 버튼은 ProductDetailsSummary·ProductDetailsReview 에서 함께 막는다)
-  const TABS = ALL_TABS.filter((t) => t?.value !== 'reviews' || !isShopgoBrand(themeDnsData));
+  const TABS = ALL_TABS.filter((t) => t?.value !== 'reviews' || isReviewEnabled(themeDnsData));
   // 비회원도 장바구니 담기 허용(다른 데모와 동일 정책).
   const handleAddCart = async () => {
     let result = await insertCartDataUtil({ ...product, seller_id: router.query?.seller_id ?? 0 }, selectProductGroups, themeCartData, onChangeCartData);

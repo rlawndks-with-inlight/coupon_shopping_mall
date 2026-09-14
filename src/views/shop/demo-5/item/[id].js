@@ -19,7 +19,7 @@ import { useModal } from 'src/components/dialog/ModalProvider';
 import { ProductFaq } from 'src/components/elements/shop/demo-4';
 import ShippingLine from 'src/components/elements/shop/ShippingLine';
 import DeliveryNotice from 'src/components/elements/shop/DeliveryNotice';
-import { isShopgoBrand } from 'src/utils/is-shopgo';
+import { isReviewEnabled } from 'src/utils/review';
 import { 찜기능사용 } from 'src/data/wish';
 
 const ReactQuill = dynamic(() => import('react-quill'), {
@@ -157,7 +157,7 @@ const ItemDemo = (props) => {
   ];
   // ShopGo 산하는 상품후기를 쓰지 않는다 — 후기 탭을 감춘다.
   // (별점과 작성 버튼은 ProductDetailsSummary·ProductDetailsReview 에서 함께 막는다)
-  const TABS = ALL_TABS.filter((t) => t?.value !== 'reviews' || !isShopgoBrand(themeDnsData));
+  const TABS = ALL_TABS.filter((t) => t?.value !== 'reviews' || isReviewEnabled(themeDnsData));
   const handleAddCart = async () => {
     if (user) {
       let result = await insertCartDataUtil({ ...product, seller_id: router.query?.seller_id ?? 0 }, selectProductGroups, themeCartData, onChangeCartData);

@@ -15,7 +15,8 @@ import toast from 'react-hot-toast';
 import DialogBuyNow from 'src/components/dialog/DialogBuyNow';
 import { useAuthContext } from 'src/layouts/manager/auth/useAuthContext';
 import Head from 'next/head';
-import { isShopgoBrand } from 'src/utils/is-shopgo';
+import { isReviewEnabled } from 'src/utils/review';
+import useReviewSummary from 'src/components/elements/shop/review/useReviewSummary';
 import { formatLang } from 'src/utils/format';
 import QuantityStepper from 'src/components/elements/shop/QuantityStepper';
 import { useLocales } from 'src/locales';
@@ -58,10 +59,7 @@ const ItemDemo = (props) => {
   const [notFound, setNotFound] = useState(false);
   const [currentTab, setCurrentTab] = useState('description');
   const [product, setProduct] = useState({});
-  const [reviewPage, setReviewPage] = useState(1);
   const [buyOpen, setBuyOpen] = useState(false);
-  const [reviewContent, setReviewContent] = useState({});
-  const [reviewLoading, setReviewLoading] = useState(false);
   const [selectProductGroups, setSelectProductGroups] = useState({
     count: 1,
     groups: [],
@@ -73,11 +71,8 @@ const ItemDemo = (props) => {
     getProductInfo();
   }, [router.query?.id])
 
-  useEffect(() => {
-    if (product?.id) {
-      getReviewInfo(reviewPage);
-    }
-  }, [product?.id, reviewPage])
+  // 후기 수(탭 라벨)는 요약 훅이 60초 공유로 가져온다. 목록·정렬·작성은 ProductDetailsReview 가 스스로 한다.
+  const { summary: reviewSummary } = useReviewSummary(product?.id, isReviewEnabled(themeDnsData));
 
   const getProductInfo = async () => {
     if (!router.query?.id) return;
@@ -100,16 +95,6 @@ const ItemDemo = (props) => {
     setLoading(false);
   }
 
-  const getReviewInfo = async (page) => {
-    setReviewLoading(true);
-    let review_data = await apiManager('product-reviews', 'list', {
-      page: page,
-      product_id: router.query?.id,
-      page_size: 10,
-    })
-    setReviewContent(review_data);
-    setReviewLoading(false);
-  }
 
   const onSelectOption = (group, option) => {
     let select_product_groups = selectItemOptionUtil(group, option, selectProductGroups);
@@ -161,13 +146,12 @@ const ItemDemo = (props) => {
     },
     {
       value: 'reviews',
-      label: `${translate('상품후기')} (${reviewContent?.total ?? 0})`,
-      component: product ? <ProductDetailsReview product={{ ...product, order_form_values: orderFormValues }} reviewContent={reviewContent} onChangePage={(page) => setReviewPage(page)} reviewPage={reviewPage} reviewLoading={reviewLoading} /> : null,
+      label: `${translate('상품후기')} (${reviewSummary?.count ?? 0})`,
+      component: product ? <ProductDetailsReview product={product} variant="full" /> : null,
     },
   ];
-  // ShopGo 산하는 상품후기를 쓰지 않는다 — 후기 탭을 감춘다.
-  // (별점과 작성 버튼은 ProductDetailsSummary·ProductDetailsReview 에서 함께 막는다)
-  const TABS = ALL_TABS.filter((t) => t?.value !== 'reviews' || !isShopgoBrand(themeDnsData));
+  // 후기 탭은 가맹점이 「후기설정」에서 켰을 때만(isReviewEnabled). 별점 줄·후기 영역도 같은 판정을 쓴다.
+  const TABS = ALL_TABS.filter((t) => t?.value !== 'reviews' || isReviewEnabled(themeDnsData));
 
   return (
     <>

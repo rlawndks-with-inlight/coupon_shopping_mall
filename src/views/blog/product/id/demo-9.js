@@ -17,6 +17,8 @@ import ProductNotFound from 'src/components/elements/shop/ProductNotFound';
 import ProductThumbs, { buildProductImages, imageSwipeHandlers } from 'src/components/elements/shop/ProductThumbs';
 import toast from 'react-hot-toast';
 import OrderFormFields from 'src/components/elements/shop/OrderFormFields';
+import { ProductDetailsReview } from 'src/views/@dashboard/e-commerce/details';
+import ReviewScorePill from 'src/components/elements/shop/review/ReviewScorePill';
 
 /* 상품 상세 - 데모 9: 파스텔 드림 */
 
@@ -298,6 +300,9 @@ const Demo9 = () => {
               <Price>{commarNumberWithUnit(sale)}</Price>
               {hasSale && <OrigPrice>{commarNumberWithUnit(orig)}</OrigPrice>}
             </PriceWrap>
+            {/* 별점 알약 「★4.7 · 후기 6」 — 후기 섹션은 긴 Product Story 아래라 여기서 안 보인다.
+                누르면 「⭐ Review」 로 내려간다(네이버 방식). 후기 0건·꺼진 몰이면 안 그린다. */}
+            <ReviewScorePill product={item} accent={CORAL} sx={{ alignSelf: 'flex-start', mt: -0.5 }} />
             {/* 가격 아래 안내 묶음 — 배송비 · 배송 안내 · 혜택을 한 표로 그린다.
                 라벨 칸을 함께 나누므로 혜택 라벨이 몇 글자든 세로줄이 맞는다(DetailNotices). */}
             <DetailNotices item={item} />
@@ -368,6 +373,9 @@ const Demo9 = () => {
           <DetailContent dangerouslySetInnerHTML={{ __html: formatLang(item, 'product_description') }} />
         </DetailSection>
       )}
+      {/* 후기 — 프레임6(파스텔)은 「Product Story」와 같은 꼴의 「⭐ Review」 섹션, 둥근 카드·핑크 별(설계 §7.5).
+          꺼진 몰에서는 아무것도 안 그린다. */}
+      <ProductDetailsReview product={item} variant="pastel" />
     </Wrapper>
   );
 };

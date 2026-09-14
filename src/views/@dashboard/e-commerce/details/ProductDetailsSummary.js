@@ -52,7 +52,7 @@ import { useRouter } from 'next/router';
 import DialogBuyNow from 'src/components/dialog/DialogBuyNow';
 import { useLocales } from 'src/locales';
 import { formatLang } from 'src/utils/format';
-import { isShopgoBrand } from 'src/utils/is-shopgo';
+import { isReviewEnabled } from 'src/utils/review';
 import OrderFormFields from 'src/components/elements/shop/OrderFormFields';
 import ProductOptions from 'src/components/elements/shop/ProductOptions';
 import ProductInfoRows from 'src/components/elements/shop/ProductInfoRows';
@@ -167,13 +167,13 @@ export default function ProductDetailsSummary({ product, onAddCart, onGotoStep, 
                 {formatLang(product, 'product_spec', currentLang)}
               </Box>}
 
-            {/* ShopGo 산하는 상품후기를 쓰지 않는다 — 별점도 함께 감춘다.
-                후기 탭이 없는데 별점만 남으면 근거 없는 숫자가 된다. */}
-            {!isShopgoBrand(themeDnsData) && (
+            {/* 후기가 있을 때만 별점을 그린다 — 0건의 빈 별점은 나쁜 상품처럼 보인다.
+                켜고 끄기는 가맹점 「후기설정」(isReviewEnabled). 값은 1~5 정수 평균(소수 첫째 자리). */}
+            {isReviewEnabled(themeDnsData) && (Number(product?.product_review_count) || 0) > 0 && (
               <Stack direction="row" alignItems="center" spacing={1}>
-                <Rating value={product_average_scope} precision={0.1} readOnly />
+                <Rating value={Number(product_average_scope) || 0} precision={0.1} readOnly size="small" />
                 <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-                  ({commarNumber(product_average_scope)})
+                  {(Number(product_average_scope) || 0).toFixed(1)} ({product?.product_review_count})
                 </Typography>
               </Stack>
             )}

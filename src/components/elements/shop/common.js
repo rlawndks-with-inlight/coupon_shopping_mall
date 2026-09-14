@@ -1,5 +1,7 @@
 import styled from 'styled-components'
 import OrderCancelButton from 'src/components/elements/shop/OrderCancelButton';
+import ReviewWriteButton from 'src/components/elements/shop/review/ReviewWriteButton';
+import useReviewWritable from 'src/components/elements/shop/review/useReviewWritable';
 import { commarNumber, getPointType, getPriceUnitByLang, setProductPriceByLang, getOrderStatusText, commarNumberWithUnit } from 'src/utils/function'
 import { itemThemeCssDefaultSetting } from 'src/views/manager/item-card/setting'
 import { useEffect, useState, useRef } from 'react'
@@ -329,6 +331,8 @@ export const HistoryTable = props => {
     { id: 'cancel', label: translate('주문취소요청'), align: 'right' },
   ];
   const { setModal } = useModal()
+  // 줄마다 「후기 쓰기」 — 쓸 수 있는지는 서버가 판정한 것을 한 번 받아 둔다(product-reviews/writable).
+  const { byOrder: reviewLines, refresh: refreshReviewLines } = useReviewWritable();
   const onPayCancelRequest = async row => {
     let result = await apiManager(`transactions/${row?.id}/cancel-request`, 'create')
     if (result) {
@@ -436,6 +440,7 @@ export const HistoryTable = props => {
                                   <div style={{ minWidth: '62px' }}>{translate('가격')}: </div>
                                   <div>{commarNumber(setProductPriceByLang(order, 'order_amount', 'ko', currentLang?.value))} {getPriceUnitByLang(currentLang?.value)}</div>
                                 </Row>
+                                <ReviewWriteButton line={reviewLines[order?.id]} onDone={refreshReviewLines} sx={{ mt: 0.5 }} />
                                 {
                                   /*
                                   <Row>

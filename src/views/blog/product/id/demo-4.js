@@ -17,6 +17,7 @@ import ProductNotFound from 'src/components/elements/shop/ProductNotFound';
 import ProductThumbs, { buildProductImages, imageSwipeHandlers } from 'src/components/elements/shop/ProductThumbs';
 import toast from 'react-hot-toast';
 import OrderFormFields from 'src/components/elements/shop/OrderFormFields';
+import { ProductDetailsReview } from 'src/views/@dashboard/e-commerce/details';
 
 /* 상품 상세 - 데모 4: 미니멀 모노크롬 */
 
@@ -291,6 +292,9 @@ const Demo4 = () => {
               {/* 주문 추가 입력항목 — 서식이 걸린 몰에서만 나타난다 */}
               <OrderFormFields product={item} values={orderFormValues} onChange={setOrderFormValues} sx={{ mt: 2 }} />
             </PriceBlock>
+            {/* 후기 — 프레임5(프리미엄 에디토리얼)는 작품 카탈로그라 「REVIEWS N — 4.7」 한 줄만 두고
+                누르면 오른쪽 패널로 연다(설계 §7.5). 꺼진 몰에서는 아무것도 안 그린다. */}
+            <ProductDetailsReview product={item} variant="panel" />
           </div>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
             {requiredGroups(item).length > 0 && (

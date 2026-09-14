@@ -23,6 +23,7 @@ import QuantityStepper from 'src/components/elements/shop/QuantityStepper';
 import DetailNotices from 'src/components/elements/shop/DetailNotices';
 import ProductNotFound from 'src/components/elements/shop/ProductNotFound';
 import OrderFormFields from 'src/components/elements/shop/OrderFormFields';
+import { ProductDetailsReview } from 'src/views/@dashboard/e-commerce/details';
 
 
 const ReactQuill = dynamic(() => import('react-quill'), {
@@ -255,6 +256,12 @@ const Demo1 = (props) => {
                 {formatLang(item, 'product_spec', currentLang)}
               </div>
             }
+            {/* 후기 — 프레임3(매거진형)은 「후기 N · ★4.7」 접이식 한 줄(설계 §7.5).
+                상품정보(설명) **위**에 둔다: 설명이 이미지 수십 장이면 아래 둔 후기는 끝까지 내려야 보인다(2026-09-14).
+                닫혀 있으면 한 줄뿐이라 설명을 가리지 않고, 열면 그 자리에 펼쳐진다.
+                켜고 끄기는 가맹점 「후기설정」; 컴포넌트가 스스로 판정해 꺼진 몰에서는 아무것도 안 그린다. */}
+            <ProductDetailsReview product={item} variant="compact" />
+            <div style={{ marginTop: '1.5rem' }} />
             <div style={{ padding: '0 0 1rem 0', fontSize: themeObj.font_size.size8, fontWeight: 'bold' }}>{translate('상품정보')}</div>
             <ReactQuill
               className='none-padding'

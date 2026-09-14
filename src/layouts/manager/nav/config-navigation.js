@@ -137,6 +137,9 @@ export const navConfig = () => {
   // 예전엔 is_main_dns==1 로 봤는데, 에이삽몰(11)·그랑파리(10)도 is_main_dns=1 이지만 하위 가맹점 0 이라
   // 남의(shopgo) 가맹점 데이터를 보고 정작 자기 판매 메뉴는 숨겨졌다. (merchant-application 은 백엔드가
   // 마스터=shopgo(MAIN_FRONT_URL) 고정 조회) → 실제 마스터인 ShopGo 본사 id 로 판별한다.
+  // 무통장·상품권·수기처럼 사람이 확인해야 결제완료가 되는 수단이 하나라도 있는가
+  const 입금대기수단있음 = (dns) => (dns?.payment_modules ?? []).some((m) =>
+    ['virtual_account', 'gift_certificate', 'hand_oleuda', 'card', 'card_fintree'].includes(m?.type) || [1, 3, 5, 10, 11].includes(Number(m?.trx_type)));
   const isMasterSite = () => {
     return Number(themeDnsData?.id) === SHOPGO_MASTER_ID;
   }
@@ -253,7 +256,15 @@ export const navConfig = () => {
               title: '주문관리', path: PATH_MANAGER.orders.trx + '/all',
               children: [
                 { title: '전체', path: PATH_MANAGER.orders.trx + '/all' },
-                { title: '결제대기', path: PATH_MANAGER.orders.trx + '/0' },
+                // 샵고 가맹점(포스페이만 씀)의 결제대기는 사실상 '결제창만 열고 승인 안 난 건'이라
+                // 「결제실패/미완료」로 보여 준다(가맹점 요청서 2026-09-11 ① → 사장님 결정).
+                // 무통장·상품권처럼 진짜 입금 대기가 있는 가맹점에만 「결제대기(입금확인)」 를 같이 둔다.
+                ...(isShopgoMerchant(themeDnsData)
+                  ? [
+                    { title: '결제실패/미완료', path: PATH_MANAGER.orders.trx + '/failed' },
+                    ...(입금대기수단있음(themeDnsData) ? [{ title: '결제대기(입금확인)', path: PATH_MANAGER.orders.trx + '/0' }] : []),
+                  ]
+                  : [{ title: '결제대기', path: PATH_MANAGER.orders.trx + '/0' }]),
                 { title: '결제완료', path: PATH_MANAGER.orders.trx + '/5' },
                 ...(themeDnsData?.id != 5 ?
                   [

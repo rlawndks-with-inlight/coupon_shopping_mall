@@ -302,7 +302,8 @@ const TrxCancelList = () => {
         );
       },
     },
-    {
+    // 수정·삭제는 마스터(본사, level 50)만 — 가맹점 요청서 2026-09-11 ② → 사장님 결정. 서버도 50 을 요구한다.
+    ...(Number(user?.level) >= 50 ? [{
       id: 'edit',
       label: `수정/삭제`,
       action: (row) => {
@@ -328,7 +329,7 @@ const TrxCancelList = () => {
           </>
         )
       }
-    },
+    }] : []),
   ]
   const router = useRouter();
   const [data, setData] = useState({});

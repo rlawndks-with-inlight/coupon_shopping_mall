@@ -132,6 +132,24 @@ const ApplyPage = () => {
   const ft = useFrameT();
   const [form, setForm] = useState(initial);
   const [agreed, setAgreed] = useState(false);
+  // 희망 주소 중복 — 제출 뒤에야 알던 것을 입력하는 즉시 알려 준다(가맹점 요청서 2026-09-11 ⑤-2).
+  // 검사 자체는 서버(/merchant-application/check-slug)에 이미 있었다: 운영 중인 몰 + 대기 중 신청.
+  // idle | checking | ok | taken. 형식이 틀리면 idle(형식 오류는 vSlug 가 말한다).
+  const [slugCheck, setSlugCheck] = useState('idle');
+  useEffect(() => {
+    const slug = String(form.desired_slug || '').toLowerCase().trim();
+    if (!isValidSlug(slug)) { setSlugCheck('idle'); return undefined; }
+    let alive = true;
+    setSlugCheck('checking');
+    const timer = setTimeout(async () => {
+      try {
+        const { data } = await axios.get('/api/merchant-application/check-slug', { params: { name: slug } });
+        if (!alive) return;
+        setSlugCheck(data?.data?.available === false ? 'taken' : (data?.data?.available === true ? 'ok' : 'idle'));
+      } catch (e) { if (alive) setSlugCheck('idle'); }
+    }, 500);
+    return () => { alive = false; clearTimeout(timer); };
+  }, [form.desired_slug]);
   const [submitting, setSubmitting] = useState(false);
   const [errors, setErrors] = useState({});
 
@@ -155,6 +173,7 @@ const ApplyPage = () => {
     if (!form.manager_name.trim()) e.manager_name = st('apply.vMgrName');
     if (!isValidPhone(form.manager_phone)) e.manager_phone = st('apply.vMgrPhone');
     if (!form.manager_email.trim() || !isValidEmail(form.manager_email)) e.manager_email = st('apply.vEmail');
+    if (!form.referrer_name.trim()) e.referrer_name = st('apply.vReferrer');
     if (!isValidSlug(form.desired_slug)) {
       e.desired_slug = st('apply.vSlug');
     }
@@ -165,6 +184,11 @@ const ApplyPage = () => {
   };
 
   const onSubmit = async () => {
+    if (slugCheck === 'taken') {
+      setErrors((prev) => ({ ...prev, desired_slug: st('apply.tDupSlug') }));
+      toast.error(st('apply.tDupSlug'));
+      return;
+    }
     if (!validate()) {
       toast.error(st('apply.tCheckInput'));
       return;
@@ -186,6 +210,9 @@ const ApplyPage = () => {
       } else if (data?.result === -101) {
         setErrors((prev) => ({ ...prev, desired_slug: st('apply.tDupSlug') }));
         toast.error(st('apply.tDupSlug'));
+      } else if (data?.result === -105) {
+        setErrors((prev) => ({ ...prev, referrer_name: st('apply.vReferrer') }));
+        toast.error(st('apply.vReferrer'));
       } else {
         toast.error(data?.message || st('apply.tError'));
       }
@@ -196,6 +223,9 @@ const ApplyPage = () => {
       if (resp?.result === -101) {
         setErrors((prev) => ({ ...prev, desired_slug: st('apply.tDupSlug') }));
         toast.error(st('apply.tDupSlug'));
+      } else if (resp?.result === -105) {
+        setErrors((prev) => ({ ...prev, referrer_name: st('apply.vReferrer') }));
+        toast.error(st('apply.vReferrer'));
       } else if (resp?.result === -200 || resp?.result == null) {
         toast.error(st('apply.tServerError'));
       } else if (resp?.message) {
@@ -357,13 +387,16 @@ const ApplyPage = () => {
             </Field>
           </Grid>
           <Grid item xs={12} sm={6}>
-            <Field label={st('apply.fReferrer')}>
+            {/* 영업추천인 필수 — 추천인 없으면 신청 불가(가맹점 요청서 2026-09-11 → 사장님 결정). 서버도 -105 로 거부한다. */}
+            <Field label={st('apply.fReferrer')} required>
               <TextField
                 fullWidth
                 size="small"
                 placeholder={st('apply.phReferrer')}
                 value={form.referrer_name}
                 onChange={(e) => set('referrer_name', e.target.value)}
+                error={!!errors.referrer_name}
+                helperText={errors.referrer_name || ''}
               />
             </Field>
           </Grid>
@@ -378,8 +411,12 @@ const ApplyPage = () => {
             placeholder={st('apply.phSlug')}
             value={form.desired_slug}
             onChange={(e) => set('desired_slug', e.target.value.toLowerCase().trim())}
-            error={!!errors.desired_slug}
-            helperText={errors.desired_slug || `${st('apply.exampleLabel')}: ${form.desired_slug || st('apply.slugExampleWord')}.${MAIN_DOMAIN}`}
+            error={!!errors.desired_slug || slugCheck === 'taken'}
+            helperText={errors.desired_slug
+              || (slugCheck === 'taken' ? st('apply.tDupSlug')
+                : slugCheck === 'ok' ? `${st('apply.slugOk')} — ${form.desired_slug}.${MAIN_DOMAIN}`
+                  : slugCheck === 'checking' ? st('apply.slugChecking')
+                    : `${st('apply.exampleLabel')}: ${form.desired_slug || st('apply.slugExampleWord')}.${MAIN_DOMAIN}`)}
             InputProps={{
               endAdornment: <InputAdornment position="end">.{MAIN_DOMAIN}</InputAdornment>,
             }}

@@ -84,7 +84,8 @@ const pay = readFileSync(BACK + 'controllers/pay.controller.js', 'utf8');
 eq('부분취소 지원 PG 화이트리스트', /const PARTIAL_CANCEL_METHODS = \[41\]/.test(pay), true);
 eq('미지원 PG 는 막는다', /이 결제수단은 부분취소를 지원하지 않습니다/.test(pay), true);
 // 금액은 서버가 계산한다 — 화면이 보낸 금액을 믿으면 임의 환불이 된다
-eq('화면에서 금액을 받지 않는다', /const \{ items, reason, idem_key \} = req\.body/.test(pay), true);
+// shipped_confirm 은 '출고 후 취소를 관리자가 확인했다'는 표시일 뿐 금액이 아니다(2026-09-14)
+eq('화면에서 금액을 받지 않는다', /const \{ items, reason, idem_key, shipped_confirm \} = req\.body/.test(pay), true);
 eq('브랜드 소유 확인', (pay.match(/canWriteBrand\(decode_user, state\.trx\?\.brand_id\)/g) || []).length, 2);
 const c = readFileSync(BACK + 'utils.js/cancel.js', 'utf8');
 // 원장을 PG 호출 **전에** 넣어야 같은 클릭의 이중 실행을 끊는다

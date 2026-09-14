@@ -253,7 +253,9 @@ export const getUserLevelByNumber = num => {
   else return '잘못된레벨'
 }
 export const getTrxStatusByNumber = num => {
-  if (num == 0) return '결제대기'
+  // -1: 결제창만 열고 승인 안 난 채 방치돼 시스템이 정리한 건(cleanup-abandoned). 손님 화면엔 안 나온다.
+  if (num == -1) return '결제실패/미완료'
+  else if (num == 0) return '결제대기'
   else if (num == 1) return '취소요청'
   else if (num == 5) return '결제완료'
   else if (num == 10) return '입고'

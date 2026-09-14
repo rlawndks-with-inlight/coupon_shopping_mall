@@ -32,7 +32,7 @@ eq('실패해도 던지지 않는다', (c.match(/catch \(e\) \{/g) || []).length
 
 // ── 모든 취소 경로가 공용을 쓴다 ───────────────────────────────────────────
 eq('PG 취소 경로 6곳이 markCanceled 사용', (pay.match(/await markCanceled\(/g) || []).length, 6);
-eq('핀트리는 is_cancel 컬럼', /markCanceled\(id, \{ column: 'is_cancel' \}\)/.test(pay), true);
+eq('핀트리는 is_cancel 컬럼', /markCanceled\(id, \{ column: 'is_cancel', actor: actorOf\(decode_user, 'admin'\) \}\)/.test(pay), true);
 // 옛 인라인 포인트 처리가 남아 있으면 공용과 겹쳐 **이중 환불**이 된다
 eq('인라인 포인트 처리 제거됨', /type: 5,\s*\n\s*trans_id: result\?\.insertId/.test(pay), false);
 eq('취소 경로에 개별 updateQuery 안 남음',

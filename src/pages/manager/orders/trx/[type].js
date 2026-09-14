@@ -8,6 +8,7 @@ import { useRouter } from "next/router";
 import { Col, Row } from "src/components/elements/styled-components";
 import { useModal } from "src/components/dialog/ModalProvider";
 import PartialCancelDialog from "src/components/manager/PartialCancelDialog";
+import TrxHistoryDialog from "src/components/manager/TrxHistoryDialog";
 import { commarNumber, getOrderStatusText } from "src/utils/function";
 import toast from "react-hot-toast";
 import { apiManager, apiUtil } from "src/utils/api";
@@ -56,6 +57,10 @@ const TrxList = () => {
   const [data, setData] = useState({});
   // 부분/전체 취소 다이얼로그 대상 주문 id
   const [cancelTrxId, setCancelTrxId] = useState(0);
+  // 상태 변경 이력 창 대상 주문 id
+  const [historyTrxId, setHistoryTrxId] = useState(0);
+  // 거래 수정·삭제는 마스터(본사, level 50)만 — 가맹점 요청서 2026-09-11 ①② → 사장님 결정. 서버(transaction.controller)도 50 을 요구한다.
+  const 마스터 = Number(user?.level) >= 50;
   const defaultColumns = [
     ...(themeDnsData?.setting_obj?.is_use_seller == 2 ? [
       /* 검품사진(check_img) 열을 없앤다.
@@ -522,6 +527,8 @@ const TrxList = () => {
       id: 'trx_status',
       label: '상태',
       action: (row) => {
+        // 결제실패/미완료(-1) — 시스템이 정리한 건. 사람이 상태를 정할 일이 없다.
+        if (Number(row?.trx_status) < 0) return <div style={{ color: '#999', whiteSpace: 'nowrap' }}>결제실패/미완료</div>;
         return <Select
           size="small"
           defaultValue={row?.trx_status}
@@ -529,7 +536,9 @@ const TrxList = () => {
             onChangeStatus(row?.id, e.target.value);
           }}
         >
-          <MenuItem value={0}>{'결제대기'}</MenuItem>
+          {/* 결제대기(0)로는 되돌릴 수 없다(가맹점 요청서 2026-09-11 ④, 서버도 거부).
+              지금 결제대기인 행(무통장 입금 대기 등)만 현재값 표시용으로 남긴다 — 고를 수는 없다. */}
+          {row?.trx_status == 0 && <MenuItem value={0} disabled>{'결제대기'}</MenuItem>}
           <MenuItem value={1}>{'취소요청'}</MenuItem>
           <MenuItem value={5}>{'결제완료'}</MenuItem>
           {/* shopgo 하위 가맹점은 창고 입고 단계를 쓰지 않아 '입고완료'를 숨긴다.
@@ -581,6 +590,7 @@ const TrxList = () => {
         // 취소를 우리 화면에서 처리해야 DB·재고·포인트가 함께 맞는다.
         // PG 콘솔에서만 취소하면 우리 쪽은 정상 주문으로 남고 매출·재고가 어긋난다.
         if (row?.is_cancel == 1 || row?.is_cancel_trans == 1) return <div style={{ color: '#bbb' }}>취소됨</div>;
+        if (Number(row?.trx_status) < 0) return <div style={{ color: '#bbb' }}>결제 안 됨</div>;
         return (
           // 글씨가 두 줄로 접히면 버튼 상자 밖으로 삐져나온다(칸이 좁을 때).
           // 조작 요소는 줄을 바꾸지 않는다 — 표 규칙은 ManagerTable 의 sx 참고.
@@ -592,7 +602,15 @@ const TrxList = () => {
         );
       },
     },
-    ...(themeDnsData?.id == 34 || themeDnsData?.id == 64 || themeDnsData?.id == 84 ? [
+    {
+      id: 'history',
+      label: '이력',
+      action: (row) => (
+        <Button size='small' variant='text' sx={{ whiteSpace: 'nowrap', px: 1 }} onClick={() => setHistoryTrxId(row?.id)}>이력</Button>
+      ),
+    },
+    // 수정·삭제 열은 마스터 계정에만 붙는다. 가맹점 관리자 화면에는 열 자체가 없다.
+    ...(!마스터 ? [] : themeDnsData?.id == 34 || themeDnsData?.id == 64 || themeDnsData?.id == 84 ? [
       {
         id: 'edit',
         label: `수정 / 삭제`,
@@ -663,7 +681,12 @@ const TrxList = () => {
     pageSetting();
   }, [router.query])
   const pageSetting = () => {
-    onChangePage({ ...searchObj, trx_status: (router.query?.type == 'all' || !router.query?.type) ? '' : router.query?.type, page: 1 });
+    // 메뉴 → 조회 조건(가맹점 요청서 2026-09-11 ①):
+    //   failed  : 「결제실패/미완료」 — 시스템이 정리한 -1 + 아직 정리 전인 버려진 결제대기(카드/간편 창만 열고 승인 안 남)
+    //   0       : 샵고 가맹점은 진짜 대기(무통장·상품권)만(kind=waiting), 그 밖 가맹점은 예전처럼 결제대기 전부
+    const type = router.query?.type;
+    const kind = type == 'failed' ? 'failed' : (type == '0' && isShopgoMerchant(themeDnsData) ? 'waiting' : '');
+    onChangePage({ ...searchObj, kind, trx_status: (type == 'all' || !type || type == 'failed') ? '' : type, page: 1 });
   }
   const onChangePage = async (obj) => {
     setSearchObj(obj);
@@ -839,6 +862,7 @@ const TrxList = () => {
         onClose={() => setCancelTrxId(0)}
         onDone={() => onChangePage(searchObj)}
       />
+      <TrxHistoryDialog open={!!historyTrxId} trxId={historyTrxId} onClose={() => setHistoryTrxId(0)} />
     </>
   )
 }

@@ -154,8 +154,8 @@ export const DashboardDemo2 = () => {
                     </Grid>
                     <Grid item xs={12} md={3}>
                         <AppWidget
-                            title="결제대기"
-                            total={data?.trx?.trx_0 ?? 0}
+                            title={isShopgoMerchant(themeDnsData) ? '결제실패/미완료' : '결제대기'}
+                            total={isShopgoMerchant(themeDnsData) ? ((data?.trx?.['trx_-1'] ?? 0) + (data?.trx?.trx_0 ?? 0)) : (data?.trx?.trx_0 ?? 0)}
                             icon="medical-icon:waiting-area"
                             color="info"
                             sx={{ cursor: 'pointer' }}
@@ -163,7 +163,7 @@ export const DashboardDemo2 = () => {
                                 series: getPercentByNumber(data?.trx_sum, data?.trx?.trx_0),
                             }}
                             onClick={() => {
-                                router.push(`/manager/orders/trx/0`)
+                                router.push(isShopgoMerchant(themeDnsData) ? `/manager/orders/trx/failed` : `/manager/orders/trx/0`)
                             }}
                         />
                     </Grid>

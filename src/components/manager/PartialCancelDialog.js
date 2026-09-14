@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import {
     Alert, Button, Dialog, DialogActions, DialogContent, DialogTitle,
-    Divider, IconButton, Stack, TextField, Typography, Switch, FormControlLabel,
+    Divider, IconButton, Stack, TextField, Typography, Switch, FormControlLabel, Checkbox,
 } from '@mui/material';
 import { Icon } from '@iconify/react';
 import toast from 'react-hot-toast';
@@ -50,10 +50,13 @@ const PartialCancelDialog = ({ open, onClose, trxId, onDone }) => {
     // 관리자가 '고객 요청과 다르게 직접 조정'을 켜야 수동 편집이 열린다 —
     // 고객이 요청을 잘못 냈을 때만 의도적으로 다르게 취소하도록.
     const [직접조정, set직접조정] = useState(false);
+    // 출고 이후(출고완료·배송중·배송완료) 취소 — 관리자가 회수를 확인했다고 눌러야 열린다(가맹점 요청서 2026-09-11 ④-2 → 사장님 결정).
+    // 서버(cancel.js)는 이 표시(shipped_confirm) 없이는 출고 후 취소를 거부한다.
+    const [회수확인, set회수확인] = useState(false);
 
     useEffect(() => {
         if (!open || !trxId) return;
-        setLoading(true); setQty({}); setReason(''); setIdemKey(새키()); set확인단계(false); set직접조정(false);
+        setLoading(true); setQty({}); setReason(''); setIdemKey(새키()); set확인단계(false); set직접조정(false); set회수확인(false);
         (async () => {
             const r = await apiManager(`pays/cancel-partial/${trxId}`, 'get', {});
             setState(r ?? null);
@@ -109,6 +112,7 @@ const PartialCancelDialog = ({ open, onClose, trxId, onDone }) => {
             items: 고른줄.map((l) => ({ order_id: l.order_id, qty: 고른수량(l) })),
             reason: reason || null,
             idem_key: idemKey,
+            shipped_confirm: state?.shipped && 회수확인 ? 1 : 0,
         });
         setBusy(false);
         if (!r) return;                        // 실패 사유는 apiManager 가 토스트로 띄운다
@@ -153,6 +157,8 @@ const PartialCancelDialog = ({ open, onClose, trxId, onDone }) => {
                         </Stack>
                         {reason &&
                             <Typography sx={{ fontSize: 12, color: 'text.secondary' }}>사유 — {reason}</Typography>}
+                        {state?.shipped &&
+                            <Alert severity="error" sx={{ py: 0.5 }}><Typography variant="caption">출고된 주문을 회수 확인 후 취소합니다. 이 내용은 상태 변경 이력에 남습니다.</Typography></Alert>}
                         <Alert severity={전부취소 ? 'info' : 'warning'} sx={{ py: 0.5 }}>
                             <Typography variant="caption">
                                 {전부취소
@@ -167,18 +173,29 @@ const PartialCancelDialog = ({ open, onClose, trxId, onDone }) => {
                 {!확인단계 && !loading && !state &&
                     <Alert severity="error">주문 정보를 불러오지 못했습니다.</Alert>}
 
-                {!확인단계 && !loading && state && !state.cancelable &&
+                {!확인단계 && !loading && state && !state.cancelable && !state.cancelable_after_confirm &&
                     <Alert severity="warning">
-                        이미 취소되었거나 출고된 주문입니다. 출고 이후에는 반품/환불 절차로 처리해 주세요.
+                        이미 취소된 주문입니다.
+                    </Alert>}
+
+                {/* 출고 이후 — 상품이 이미 나갔다. 회수(반품)를 확인했다고 관리자가 직접 표시해야 아래 수량 칸과 실행 버튼이 열린다. */}
+                {!확인단계 && !loading && state?.cancelable_after_confirm &&
+                    <Alert severity="warning" sx={{ mb: 1.5 }}>
+                        <Typography variant="body2" sx={{ fontWeight: 700 }}>출고된 주문입니다.</Typography>
+                        <Typography variant="caption" sx={{ display: 'block' }}>
+                            상품이 이미 나갔으므로 환불하면 상품과 돈이 둘 다 손님에게 갈 수 있습니다. 상품을 돌려받았거나 돌려받기로 손님과 합의한 뒤 취소해 주세요.
+                        </Typography>
+                        <FormControlLabel sx={{ mt: 0.5 }} control={<Checkbox size="small" checked={회수확인} onChange={(e) => set회수확인(e.target.checked)} />}
+                            label={<Typography variant="body2">상품을 회수했거나 회수하기로 손님과 합의했습니다 — 출고된 주문을 취소합니다</Typography>} />
                     </Alert>}
 
                 {/* 지원 안 하는 PG 에 부분취소를 걸면 전액이 취소된다 — 아예 못 누르게 한다 */}
-                {!확인단계 && !loading && state?.cancelable && !state.partial_supported &&
+                {!확인단계 && !loading && (state?.cancelable || (state?.cancelable_after_confirm && 회수확인)) && !state.partial_supported &&
                     <Alert severity="warning">
                         이 주문의 결제수단은 부분 취소를 지원하지 않습니다. 전체 취소만 가능합니다.
                     </Alert>}
 
-                {!확인단계 && !loading && state?.cancelable && state.partial_supported &&
+                {!확인단계 && !loading && (state?.cancelable || (state?.cancelable_after_confirm && 회수확인)) && state.partial_supported &&
                     <Stack spacing={1.5}>
                         {/* 고객이 취소요청을 낸 경우 — 부분/전체인지, 어떤 상품 몇 개인지 한눈에 보여준다.
                             요청 수량은 아래 칸에 미리 채워져 있으니 관리자는 확인 후 실행만 하면 된다. */}
@@ -265,7 +282,7 @@ const PartialCancelDialog = ({ open, onClose, trxId, onDone }) => {
                     <Button onClick={onClose} disabled={busy}>닫기</Button>
                     <Button
                         variant="contained" color="error" onClick={() => set확인단계(true)}
-                        disabled={busy || !state?.cancelable || !state?.partial_supported || !고른줄.length}
+                        disabled={busy || !(state?.cancelable || (state?.cancelable_after_confirm && 회수확인)) || !state?.partial_supported || !고른줄.length}
                     >
                         {잠금
                             ? `요청대로 취소하기 (${commarNumber(예상액)}원)`

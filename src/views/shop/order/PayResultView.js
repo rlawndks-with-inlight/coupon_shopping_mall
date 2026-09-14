@@ -7,6 +7,7 @@ import { useSettingsContext } from 'src/components/settings';
 import { useAuthContext } from 'src/layouts/manager/auth/useAuthContext';
 import { useLocales } from 'src/locales';
 import { apiManager } from 'src/utils/api';
+import { clearOrderDraft } from 'src/utils/order-draft';
 
 // 공용 결제결과 화면 — 데모 구분 없는 단일 화면.
 //
@@ -68,6 +69,10 @@ const { user } = useAuthContext();
     clearedRef.current = true;
     try { sessionStorage.removeItem('buyNowItem'); } catch (e) { /* noop */ }
     onChangeCartData([]);
+    // 주문이 끝났으니 쓰다 만 주문서 내용(주문자·배송지)도 지운다.
+    // 수기결제·무통장은 OrderSheet 가 지우는데, 포스페이처럼 결제창으로 나갔다 이 화면으로 돌아오는 결제는
+    // 그 코드를 지나지 않아 다음 주문서에 지난 손님 정보가 그대로 떴다(가맹점 요청서 2026-09-11 ③).
+    clearOrderDraft();
   }, [router.isReady, isSuccess]);
 
   // 포스페이 서버 확정.

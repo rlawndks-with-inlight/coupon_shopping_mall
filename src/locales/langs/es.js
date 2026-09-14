@@ -9,6 +9,7 @@ const es = {
   "포인트가 모자랍니다": "Puntos insuficientes",
   "주문금액이 모자랍니다": "Importe del pedido insuficiente",
   "{{n}} 이상": "mín. {{n}}",
+  "결제실패/미완료": "Pago fallido / incompleto",
   "결제대기": "Pago pendiente",
   "결제완료": "Pago completado",
   "입고": "En almacén",

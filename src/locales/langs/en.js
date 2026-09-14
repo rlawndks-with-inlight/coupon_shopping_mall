@@ -14,6 +14,7 @@ const en = {
   "포인트가 모자랍니다": "Not enough points",
   "주문금액이 모자랍니다": "Order amount too low",
   "{{n}} 이상": "min. {{n}}",
+  "결제실패/미완료": "Payment failed / incomplete",
   "결제대기": "Awaiting payment",
   "결제완료": "Payment complete",
   "입고": "In warehouse",

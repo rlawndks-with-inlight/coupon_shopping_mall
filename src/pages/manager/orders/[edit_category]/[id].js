@@ -31,6 +31,13 @@ const OrderEdit = () => {
     useEffect(() => {
         settingPage();
     }, [])
+    // 거래 수정은 마스터(본사, level 50)만 — 서버(transactions update)도 50 을 요구하므로 화면만 열려도 저장은 안 된다.
+    useEffect(() => {
+        if (user && !(Number(user?.level) >= 50)) {
+            toast.error('거래 수정은 마스터 계정만 할 수 있습니다.');
+            router.replace('/manager/orders/trx/all');
+        }
+    }, [user])
     const settingPage = async () => {
         if (router.query?.edit_category == 'edit') {
             let data = await apiManager('transactions', 'get', { id: router.query?.id });

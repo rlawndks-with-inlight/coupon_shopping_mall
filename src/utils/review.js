@@ -9,8 +9,8 @@ import { isShopgoBrand } from 'src/utils/is-shopgo';
 // 설계 문서: ShopGo 후기·별점 설계(2026-09-07, 결정 반영 09-14).
 
 // shopgo 산하 몰의 is_use_review 가 비어 있을 때의 기본값. 백엔드 REVIEW_DEFAULT_ON_SHOPGO 와 같아야 한다.
-// 배포 첫날은 꺼짐(false)으로 올려 forsmall·mbc01 에서 확인한 뒤 true 로 바꾼다.
-export const REVIEW_DEFAULT_ON_SHOPGO = false;
+// 2026-09-15 사장님 결정: 산하 몰도 기본 켜짐, 대신 가맹점이 「후기설정」에서 끌 수 있다. (배포 첫날만 꺼짐으로 확인했다)
+export const REVIEW_DEFAULT_ON_SHOPGO = true;
 
 // 비어 있으면(미설정) 기본값 d. ⚠ Number('') 은 0 이라 그냥 Number 로 읽으면 '미설정' 이 0 이 된다.
 const 수 = (v, d) => {

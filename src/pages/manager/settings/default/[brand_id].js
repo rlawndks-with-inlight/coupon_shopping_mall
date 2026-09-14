@@ -1577,11 +1577,11 @@ const DefaultSetting = () => {
                   <Card sx={{ p: 2, height: '100%' }}>
                     <Stack spacing={1.5}>
                       <FormControlLabel
-                        control={<Switch checked={Number(item?.setting_obj?.is_use_review) === 1}
+                        control={<Switch checked={item?.setting_obj?.is_use_review === undefined || item?.setting_obj?.is_use_review === null || item?.setting_obj?.is_use_review === '' || Number(item?.setting_obj?.is_use_review) === 1}
                           onChange={e => setItem({ ...item, ['setting_obj']: { ...item?.setting_obj, ['is_use_review']: e.target.checked ? 1 : 0 } })} />}
                         label='후기 사용' />
                       <Typography variant='caption' sx={{ color: 'text.secondary' }}>
-                        끄면 손님 화면의 후기·별점이 모두 사라집니다. 이미 쓴 후기는 지워지지 않고, 다시 켜면 그대로 보입니다.
+                        기본은 켜짐입니다. 끄면 손님 화면의 후기·별점이 모두 사라집니다. 이미 쓴 후기는 지워지지 않고, 다시 켜면 그대로 보입니다.
                       </Typography>
                       <FormControlLabel
                         control={<Switch checked={item?.setting_obj?.review_allow_photo === undefined || item?.setting_obj?.review_allow_photo === '' || Number(item?.setting_obj?.review_allow_photo) === 1}

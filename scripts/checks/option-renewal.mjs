@@ -90,7 +90,8 @@ eq('예외 경로도 복구', /if \(trans_id\) await 결제실패정리\(trans_i
 eq('trans_id 를 try 밖에 선언', /let trans_id = 0;[\s\S]{0,20}try \{/.test(pay), true);
 // 결제창 닫고 사라진 거래를 지울 때도 놓아줘야 한다 — 안 그러면 영영 잠긴다.
 const cleanup = readFileSync(BACK + 'utils.js/schedules/cleanup-abandoned.js', 'utf8');
-eq('버려진 결제대기 정리 시 재고 복구', /await restoreStock\(id\)/.test(cleanup), true);
+// 2026-09-14: applyCancelEffects(재고 복구 + 사용 포인트 환불) — 안에서 restoreStock 을 부른다
+eq('버려진 결제대기 정리 시 재고 복구', /await applyCancelEffects\(id\)/.test(cleanup), true);
 eq('원장은 복구 뒤에 지운다',
   cleanup.indexOf('await restoreStock(id)') < cleanup.indexOf('DELETE FROM product_stock_moves'), true);
 

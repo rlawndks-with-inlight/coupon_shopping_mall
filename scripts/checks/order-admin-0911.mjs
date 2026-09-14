@@ -102,7 +102,7 @@ if (백엔드있음) {
     (pay.match(/kind: 'approve'/g) || []).length === 3 && trx.includes("kind: 'cancel_request'") && (cancel.match(/kind: 'cancel'/g) || []).length === 2 && 정리.includes("kind: 'failed'"));
   t('이력 조회 API 는 브랜드 소유 검증을 거친다(GET /transactions/:id/logs)', 라우트.includes(".route('/:id/logs')") && trx.includes('logs: async (req, res, next) => {') && /logs: async[\s\S]*?loadOwnedRow\(readPool, table_name, id, decode_user\)/.test(trx));
   // ③ 결제실패
-  t('서버: 정리 잡이 지우지 않고 -1 로 표시한다(재고 복구는 그대로)', 정리.includes('UPDATE transactions SET trx_status = -1 WHERE id IN (?) AND trx_status = 0') && !정리.includes('DELETE FROM transactions') && 정리.includes('await restoreStock(id)'));
+  t('서버: 정리 잡이 지우지 않고 -1 로 표시한다(재고·포인트는 되돌린다)', 정리.includes('UPDATE transactions SET trx_status = -1 WHERE id IN (?) AND trx_status = 0') && !정리.includes('DELETE FROM transactions') && 정리.includes('await applyCancelEffects(id)'));
   t('서버: 목록 kind=failed/waiting 필터, 손님은 -1 을 못 본다', trx.includes("if (kind === 'failed') {") && trx.includes("} else if (kind === 'waiting') {") && trx.includes('AND ${table_name}.trx_status >= 0'));
   // ⑥ 출고 후 취소
   t('서버: 출고 후 취소는 shipped_confirm 이 있을 때만(cancel.js)', cancel.includes('export const SHIPPED_STATUS = [15, 20, 25];') && cancel.includes('if (!(state.cancelable_after_confirm && allow_shipped)) {') && pay.includes('allow_shipped: Number(shipped_confirm) === 1,'));
@@ -110,6 +110,14 @@ if (백엔드있음) {
   t('서버: 취소 창 응답에 출고 여부가 있다', pay.includes('shipped: state.shipped,') && pay.includes('cancelable_after_confirm: state.cancelable_after_confirm,'));
   // ⑧ 추천인
   t('서버: 영업추천인 없으면 신청 거부(-105)', 신청.includes('return response(req, res, -105, "영업추천인을 입력해 주세요", false);'));
+  // 배포 후 자체 점검(2026-09-14)에서 잡은 것들
+  const 정산 = 읽기(BACK_ROOT, 'controllers/seller_adjustments.controller.js');
+  t('셀러 정산은 결제완료 이후(>=5)만 센다 — -1 결제실패가 매출로 들어가면 안 된다', (정산.match(/WHERE trx_status >= 5 AND is_cancel = 0 AND is_cancel_trans = 0/g) || []).length === 6 && !정산.includes('trx_status != 0 AND trx_status != 1'));
+  t('서버: 결제실패/미완료(-1) 주문은 사람이 다른 상태로 올릴 수 없다', util.includes('if (이전상태 < 0) {') && util.includes('결제실패/미완료 주문은 상태를 바꿀 수 없습니다'));
+  t('정리 잡은 사용 포인트도 돌려준다(applyCancelEffects)', 정리.includes('await applyCancelEffects(id)') && !정리.includes('await restoreStock(id)'));
+  const 늦은 = 읽기(BACK_ROOT, 'utils.js/late-approve.js');
+  t('정리된 뒤 늦게 승인되면 재고·사용 포인트를 다시 잡고 이력에 남긴다(승인 확정 3곳)',
+    (pay.match(/await 늦은승인정리\(/g) || []).length === 3 && 늦은.includes("if (!tid || Number(trx?.trx_status) !== -1) return null;") && 늦은.includes('await decreaseStock(tid, lines)') && 늦은.includes('type: 10'));
   // 자리 계산을 실제로 돌린다 — 이력 helper 의 상태 이름
   {
     const src = 로그.slice(로그.indexOf('export const STATUS_TEXT'), 로그.indexOf('export const actorOf'));

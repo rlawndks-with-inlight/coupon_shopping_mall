@@ -46,7 +46,8 @@ eq('예외 경로도 정리', /if \(trans_id\) await 결제실패정리\(trans_i
 
 // ── 버려진 결제대기 정리 ──────────────────────────────────────────────────
 const cleanup = readFileSync(BACK + 'utils.js/schedules/cleanup-abandoned.js', 'utf8');
-eq('정리 시 재고 복구', /await restoreStock\(id\)/.test(cleanup), true);
+// 2026-09-14: 재고만이 아니라 사용 포인트도 돌려준다(applyCancelEffects 가 restoreStock 을 부른다)
+eq('정리 시 재고·사용 포인트 복구', /await applyCancelEffects\(id\)/.test(cleanup), true);
 
 // ── 부분취소 마이그레이션 불변식 ──────────────────────────────────────────
 const mig = readFileSync(BACK + 'migrations/2026-08-13_partial_cancel.sql', 'utf8');

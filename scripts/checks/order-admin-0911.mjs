@@ -67,6 +67,8 @@ t('출고완료(15) 단계가 남아 있다(메뉴·드롭다운)', 메뉴.inclu
 
 // ── ⑧ 신청서 ─────────────────────────────────────────────────────────
 t('신청서: 영업추천인 필수', 신청서.includes("if (!form.referrer_name.trim()) e.referrer_name = st('apply.vReferrer');") && 신청서.includes("<Field label={st('apply.fReferrer')} required>"));
+t('신청서: 칸을 고치면 그 칸의 빨간 안내가 사라진다(중복확인 결과를 가리지 않게)',
+  신청서.includes("setErrors((prev) => (prev[k] ?") && 신청서.includes(": prev));"));
 t('신청서: 희망 주소를 입력하면 바로 중복을 확인한다(check-slug)', 신청서.includes("axios.get('/api/merchant-application/check-slug', { params: { name: slug } })") && 신청서.includes("if (slugCheck === 'taken') {"));
 {
   const 문구 = 읽기(FRONT_ROOT, 'src/components/main-site/landingStrings.js');

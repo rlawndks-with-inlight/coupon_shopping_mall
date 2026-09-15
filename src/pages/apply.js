@@ -153,7 +153,13 @@ const ApplyPage = () => {
   const [submitting, setSubmitting] = useState(false);
   const [errors, setErrors] = useState({});
 
-  const set = (k, v) => setForm((prev) => ({ ...prev, [k]: v }));
+  const set = (k, v) => {
+    setForm((prev) => ({ ...prev, [k]: v }));
+    // 고치는 중인 칸의 빨간 안내는 지운다.
+    // 제출을 한 번 누르면 그 뒤로는 값을 바로잡아도 다음 제출 때까지 옛 안내가 남아 있었고,
+    // 희망 주소 칸에서는 그 안내가 「사용할 수 있는 주소입니다」 까지 가렸다(2026-09-15).
+    setErrors((prev) => (prev[k] ? { ...prev, [k]: '' } : prev));
+  };
 
   useEffect(() => {
     if (!router.isReady) return;

@@ -102,8 +102,27 @@ const PartialCancelDialog = ({ open, onClose, trxId, onDone }) => {
     const 요청합계 = lines.reduce((s, l) => s + Math.min(Number(l.requested_count) || 0, l.remain_count), 0);
     const 남은합계 = lines.reduce((s, l) => s + l.remain_count, 0);
     const 전체요청 = 요청줄.length > 0 && 요청합계 >= 남은합계;
+    // 출고 뒤에는 회수 확인을 누르기 전까지 수량 칸을 잠근다.
+    // 목록 자체는 보여 준다 — 결제가 끝난 주문이라 '무엇이 얼마인지' 는 확인 전에도 봐야 한다.
+    const 회수잠금 = !!state?.cancelable_after_confirm && !회수확인;
     // 요청이 있고 아직 직접조정을 안 켰으면 수량 칸을 잠근다.
-    const 잠금 = !!state?.has_request && !직접조정;
+    const 잠금 = (!!state?.has_request && !직접조정) || 회수잠금;
+
+    // 실행 버튼에 적는 말.
+    // 고른 것이 없으면 예상액이 0 이라 「0원 취소하기」 가 됐다 —
+    // 결제완료된 주문을 0원에 취소하겠다는 말로 읽힌다(가맹점 확인 2026-09-15).
+    // 금액은 취소할 것이 정해졌을 때만 적고, 그전에는 무엇이 남았는지 적는다.
+    // (서버도 금액 0 은 거부한다 — cancel.js 「환불할 금액이 없습니다」)
+    const 실행글 = () => {
+        if (loading || !state) return '취소하기';
+        if (!state.cancelable && !state.cancelable_after_confirm) return '취소할 수 없는 주문입니다';
+        if (회수잠금) return '회수 확인 후 취소할 수 있습니다';
+        if (!state.partial_supported) return '전체 취소만 가능합니다';
+        if (!고른줄.length) return '취소할 상품과 수량을 고르세요';
+        return 잠금
+            ? `요청대로 취소하기 (${commarNumber(예상액)}원)`
+            : `${commarNumber(예상액)}원 취소하기`;
+    };
 
     const 실행 = async () => {
         if (!고른줄.length) { toast.error('취소할 상품과 수량을 선택해 주세요.'); return; }
@@ -190,12 +209,12 @@ const PartialCancelDialog = ({ open, onClose, trxId, onDone }) => {
                     </Alert>}
 
                 {/* 지원 안 하는 PG 에 부분취소를 걸면 전액이 취소된다 — 아예 못 누르게 한다 */}
-                {!확인단계 && !loading && (state?.cancelable || (state?.cancelable_after_confirm && 회수확인)) && !state.partial_supported &&
+                {!확인단계 && !loading && (state?.cancelable || state?.cancelable_after_confirm) && !state.partial_supported &&
                     <Alert severity="warning">
                         이 주문의 결제수단은 부분 취소를 지원하지 않습니다. 전체 취소만 가능합니다.
                     </Alert>}
 
-                {!확인단계 && !loading && (state?.cancelable || (state?.cancelable_after_confirm && 회수확인)) && state.partial_supported &&
+                {!확인단계 && !loading && (state?.cancelable || state?.cancelable_after_confirm) && state.partial_supported &&
                     <Stack spacing={1.5}>
                         {/* 고객이 취소요청을 낸 경우 — 부분/전체인지, 어떤 상품 몇 개인지 한눈에 보여준다.
                             요청 수량은 아래 칸에 미리 채워져 있으니 관리자는 확인 후 실행만 하면 된다. */}
@@ -260,8 +279,9 @@ const PartialCancelDialog = ({ open, onClose, trxId, onDone }) => {
 
                         <Stack direction="row" justifyContent="space-between" alignItems="baseline">
                             <Typography sx={{ fontSize: 13, color: 'text.secondary' }}>환불 예상액</Typography>
+                            {/* 아직 고른 것이 없으면 금액 대신 줄표. 「0원」 은 0원에 환불한다는 말로 읽힌다. */}
                             <Typography sx={{ fontSize: 18, fontWeight: 700 }}>
-                                {commarNumber(예상액)}원
+                                {고른줄.length ? `${commarNumber(예상액)}원` : '—'}
                             </Typography>
                         </Stack>
                         {/* 배송비 규칙은 서버가 판단한다. 여기서는 그 가능성만 알린다 —
@@ -284,9 +304,7 @@ const PartialCancelDialog = ({ open, onClose, trxId, onDone }) => {
                         variant="contained" color="error" onClick={() => set확인단계(true)}
                         disabled={busy || !(state?.cancelable || (state?.cancelable_after_confirm && 회수확인)) || !state?.partial_supported || !고른줄.length}
                     >
-                        {잠금
-                            ? `요청대로 취소하기 (${commarNumber(예상액)}원)`
-                            : `${commarNumber(예상액)}원 취소하기`}
+                        {실행글()}
                     </Button>
                 </>}
                 {확인단계 && <>

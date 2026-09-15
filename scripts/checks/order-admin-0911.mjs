@@ -61,6 +61,15 @@ t('취소 창: 출고된 주문은 회수 확인 칸을 눌러야 실행 버튼�
   && 취소창.includes("disabled={busy || !(state?.cancelable || (state?.cancelable_after_confirm && 회수확인)) || !state?.partial_supported || !고른줄.length}")
   && 취소창.includes('shipped_confirm: state?.shipped && 회수확인 ? 1 : 0,'));
 t('취소 창: 출고 안내가 있고 창을 열 때마다 확인이 풀린다', 취소창.includes('출고된 주문입니다.') && 취소창.includes('set회수확인(false);'));
+t('취소 창: 고른 것이 없으면 「0원 취소하기」 라고 적지 않는다(결제완료 주문을 0원에 취소하는 말로 읽힌다)',
+  취소창.includes('{실행글()}')
+  && 취소창.includes("if (회수잠금) return '회수 확인 후 취소할 수 있습니다';")
+  && 취소창.includes("if (!고른줄.length) return '취소할 상품과 수량을 고르세요';")
+  && 취소창.includes("{고른줄.length ? `${commarNumber(예상액)}원` : '—'}"));
+t('취소 창: 회수 확인 전에도 주문 줄과 금액은 보인다(수량 칸만 잠근다)',
+  취소창.includes('const 회수잠금 = !!state?.cancelable_after_confirm && !회수확인;')
+  && 취소창.includes('const 잠금 = (!!state?.has_request && !직접조정) || 회수잠금;')
+  && 취소창.includes('(state?.cancelable || state?.cancelable_after_confirm) && state.partial_supported &&'));
 
 // ── ⑦ 출고완료는 그대로 ───────────────────────────────────────────────
 t('출고완료(15) 단계가 남아 있다(메뉴·드롭다운)', 메뉴.includes("{ title: '출고완료', path: PATH_MANAGER.orders.trx + '/15' }") && 목록.includes("<MenuItem value={15}>{'출고완료'}</MenuItem>"));

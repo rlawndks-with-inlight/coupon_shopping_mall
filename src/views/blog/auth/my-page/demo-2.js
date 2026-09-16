@@ -113,7 +113,15 @@ const Demo2 = (props) => {
                     {user ?
                         <>
                             <MenuButton themeMode={themeMode} onClick={() => { router.push('/shop/auth/change-info') }}>
-                                <MenuText>{user.nickname}</MenuText>
+                                <MenuText>
+                                    {user.nickname}
+                                    {/* 닉네임만 있으면 눌러서 무엇이 나오는지 알 수 없었다.
+                                        탈퇴는 이 줄 너머 '회원정보 수정' 화면 맨 아래에 있는데,
+                                        이름표가 없어 찾을 방법이 없었다(2026-09-17). */}
+                                    <span style={{ marginLeft: '10px', fontSize: '13px', color: '#888888' }}>
+                                        {translate('회원정보 수정')}
+                                    </span>
+                                </MenuText>
                                 <IconButton style={{ width: '24px', height: '56px', padding: '0', marginRight: '18px' }}>
                                     <Icon icon='ep:arrow-right' color='black' />
                                 </IconButton>
@@ -235,7 +243,12 @@ const Demo2 = (props) => {
                     {
                         user &&
                         <>
-                            <Row style={{ marginTop: '2rem', cursor: 'pointer', textDecoration: 'underline' }} onClick={() => { onLogout() }}>{translate('로그아웃')}</Row>
+                            {/* 개인정보처리방침에 「마이페이지 → 회원탈퇴」 메뉴를 쓰라고 적어 두었는데 그런 메뉴가 없었다.
+                                눈에 띄는 버튼으로 두지는 않는다 — 실수로 누를 자리가 아니다. 로그아웃 옆 작은 글씨로 둔다. */}
+                            <Row style={{ marginTop: '2rem', columnGap: '20px' }}>
+                                <span style={{ cursor: 'pointer', textDecoration: 'underline' }} onClick={() => { onLogout() }}>{translate('로그아웃')}</span>
+                                <span style={{ cursor: 'pointer', textDecoration: 'underline', color: 'gray' }} onClick={() => { router.push('/shop/auth/resign') }}>{translate('회원탈퇴')}</span>
+                            </Row>
                         </>
                     }
                 </MenuContainer>

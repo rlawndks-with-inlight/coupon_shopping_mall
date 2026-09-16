@@ -126,5 +126,30 @@ for (const n of [1, 2, 3]) {
     t(`blog 상세 demo-${n} 사진을 자르지 않는다`, 읽기(`src/views/blog/product/id/demo-${n}.js`).includes("backgroundSize: 'contain'"));
 }
 
+
+// ── 마이페이지에서 회원탈퇴로 가는 길 ────────────────────────────────────
+// 탈퇴 기능·화면은 6종이 늘 같았는데 입구만 갈려 있었다.
+// 블로그형 4종은 닉네임 줄이 유일한 입구였고 거기 이름표가 없어 손님이 찾을 수 없었다.
+// 개인정보처리방침은 「마이페이지 → 회원탈퇴」 메뉴를 쓰라고 안내한다 — 그 메뉴를 만들어 맞췄다(2026-09-17).
+// 눈에 띄는 버튼으로 키우지 않는다. 확인 단계도 늘리지 않는다
+// (개정 전자상거래법 제21조의2 '취소·탈퇴 등의 방해' — 탈퇴 의사를 2단계 이상 되묻는 것이 위반 예시다).
+for (const 파일 of [
+    'src/views/shop/demo-1/auth/my-page.js',
+    'src/views/shop/demo-2/auth/my-page.js',
+    'src/views/blog/auth/my-page/demo-1.js',
+    'src/views/blog/auth/my-page/demo-2.js',
+    'src/views/blog/auth/my-page/demo-4.js',
+]) {
+    const src = 읽기(파일);
+    t(`${파일.split('/').slice(-2).join('/')} 마이페이지에 회원탈퇴 입구가 있다`,
+        src.includes("router.push('/shop/auth/resign')") && src.includes("translate('회원탈퇴')"));
+}
+// 블로그형은 닉네임 줄이 입구다 — 거기 이름표가 붙어 있어야 한다.
+for (const n of [1, 2, 4]) {
+    const src = 읽기(`src/views/blog/auth/my-page/demo-${n}.js`);
+    t(`blog demo-${n} 닉네임 줄에 「회원정보 수정」 이름표가 있다`,
+        /\{user\.nickname\}[\s\S]{0,400}translate\('회원정보 수정'\)/.test(src));
+}
+
 console.log(`\n통과 ${pass} / 실패 ${fail}`);
 process.exit(fail ? 1 : 0);

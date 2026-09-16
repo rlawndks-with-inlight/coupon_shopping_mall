@@ -208,7 +208,16 @@ const MyPageDemo = (props) => {
                     </Box>
                     {/* 여기 입력은 표시 전용이다(전부 disabled). 실제 수정은 공용 화면에서 한다.
                         예전엔 아무 동작도 없는 '변경사항 저장' 버튼만 있어서 눌러도 아무 일이 없었다. */}
-                    <Stack direction="row" justifyContent="flex-end" sx={{ mt: 3 }}>
+                    {/* 탈퇴 입구. 개인정보처리방침이 「마이페이지 → 회원탈퇴」 를 안내하는데 그런 메뉴가 없었다.
+                        눈에 띄는 버튼으로 두지 않는다 — 실수로 누를 자리가 아니라 작은 글씨로 나란히 둔다(2026-09-17). */}
+                    <Stack direction="row" justifyContent="flex-end" alignItems="center" spacing={2.5} sx={{ mt: 3 }}>
+                      <Typography
+                        variant="body2"
+                        sx={{ color: 'text.secondary', textDecoration: 'underline', cursor: 'pointer' }}
+                        onClick={() => router.push('/shop/auth/resign')}
+                      >
+                        {translate('회원탈퇴')}
+                      </Typography>
                       <Button variant="contained" onClick={() => router.push('/shop/auth/change-info')}>
                         {translate('회원정보 수정')}
                       </Button>

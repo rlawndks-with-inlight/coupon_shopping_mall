@@ -8,6 +8,7 @@ import { useLocales } from 'src/locales';
 import { sanitizePhoneInput, isValidPhoneNumber } from 'src/utils/function';
 import AddressBookPanel from 'src/components/elements/shop/AddressBookPanel';
 import PasswordField from 'src/components/elements/PasswordField';
+import { useResignGuard, ResignBlockNotice } from 'src/components/elements/shop/ResignGuard';
 
 // 회원정보 수정 — 데모 구분 없는 공용 패널.
 //
@@ -87,6 +88,9 @@ const AccountEditPanel = ({ loginPath = '/shop/auth/login' }) => {
       setPw({ password: '', new_password: '', new_password_check: '' });
     }
   };
+
+  // 진행 중인 주문이 있으면 탈퇴를 막는다(서버 resign-guard.js 와 같은 기준).
+  const guard = useResignGuard(!!user?.id);
 
   const onResign = async () => {
     if (!resignPw) return toast.error(translate('비밀번호를 입력해 주세요.'));
@@ -193,9 +197,10 @@ const AccountEditPanel = ({ loginPath = '/shop/auth/login' }) => {
         <Card>
           <CardHeader title={translate('회원 탈퇴')} />
           <CardContent>
+            <ResignBlockNotice guard={guard} />
             <Typography variant="body2" sx={{ color: 'text.secondary', mb: 2 }}>{translate('회원 탈퇴를 하시면 회원 혜택을 더 이상 이용하실 수 없습니다.')}</Typography>
             <Stack direction="row" justifyContent="flex-end">
-              <Button variant="outlined" color="error" onClick={() => setResignOpen(true)}>
+              <Button variant="outlined" color="error" disabled={!guard.canResign} onClick={() => setResignOpen(true)}>
                 {translate('회원 탈퇴')}
               </Button>
             </Stack>

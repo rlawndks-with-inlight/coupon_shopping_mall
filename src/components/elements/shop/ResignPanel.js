@@ -6,6 +6,7 @@ import { apiManager } from 'src/utils/api';
 import { useAuthContext } from 'src/layouts/manager/auth/useAuthContext';
 import { useLocales } from 'src/locales';
 import PasswordField from 'src/components/elements/PasswordField';
+import { useResignGuard, ResignBlockNotice } from 'src/components/elements/shop/ResignGuard';
 
 // 회원 탈퇴 — 프레임 구분 없는 공용 패널.
 //
@@ -20,6 +21,8 @@ const ResignPanel = ({ loginPath = '/shop/auth/login' }) => {
   const { user } = useAuthContext();
   const { translate } = useLocales();
   const [password, setPassword] = useState('');
+  // 진행 중인 주문이 있으면 탈퇴를 막는다(서버 resign-guard.js 와 같은 기준).
+  const guard = useResignGuard(!!user?.id);
 
   const onResign = async () => {
     if (!password) return toast.error(translate('비밀번호를 입력해 주세요.'));
@@ -49,6 +52,7 @@ const ResignPanel = ({ loginPath = '/shop/auth/login' }) => {
     <Card>
       <CardHeader title={translate('회원 탈퇴')} />
       <CardContent>
+        <ResignBlockNotice guard={guard} />
         <Typography variant="body2" sx={{ color: 'text.secondary', mb: 2 }}>{translate('회원 탈퇴를 하시면 회원 혜택을 더 이상 이용하실 수 없습니다.')}<br />{translate('탈퇴하시려면 비밀번호를 입력하고 탈퇴 버튼을 눌러 주세요.')}</Typography>
         <Stack spacing={2}>
           <PasswordField
@@ -58,9 +62,10 @@ const ResignPanel = ({ loginPath = '/shop/auth/login' }) => {
             onChange={(e) => setPassword(e.target.value)}
             onKeyDown={(e) => { if (e.key === 'Enter') onResign(); }}
             fullWidth
+            disabled={!guard.canResign}
           />
           <Stack direction="row" justifyContent="flex-end">
-            <Button variant="contained" color="error" onClick={onResign}>
+            <Button variant="contained" color="error" onClick={onResign} disabled={!guard.canResign}>
               {translate('회원 탈퇴')}
             </Button>
           </Stack>

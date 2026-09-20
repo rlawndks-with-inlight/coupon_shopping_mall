@@ -67,6 +67,11 @@ const Footer = (props) => {
               프레임2에는 이 링크가 어디에도 없어서, 회원가입 화면 안에서만 볼 수 있었다
               (비회원·기존회원은 열람 불가). 다른 프레임(예: demo-1 footer)과 같은 자리·같은 경로로 맞춘다. */}
           <InfoRow style={{ marginTop: '8px', columnGap: '1rem' }}>
+            {/* 비회원 주문조회 — 회원가입 없이 주문한 손님이 주문·배송을 확인하는 유일한 길이다.
+              이 프레임에는 로그인 화면 안에만 있어서, 로그인할 이유가 없는 비회원은 찾지 못했다.
+              프레임5·6(BlogLayout6)이 이미 이 자리에 두고 있어 6종을 같은 모양으로 맞춘다(2026-09-18).
+              가맹점 이용가이드도 「쇼핑몰 하단 비회원 주문조회」 라고 안내한다. */}
+            <PolicyLink onClick={() => router.push('/shop/auth/order-check')}>{translate('비회원 주문조회')}</PolicyLink>
             <PolicyLink onClick={() => router.push('/shop/auth/policy?type=0')}>{translate('서비스이용약관')}</PolicyLink>
             <PolicyLink onClick={() => router.push('/shop/auth/policy?type=1')}>{translate('개인정보처리방침')}</PolicyLink>
             <PolicyLink onClick={() => router.push('/shop/auth/policy?type=3')}>{translate('쇼핑몰 이용안내')}</PolicyLink>

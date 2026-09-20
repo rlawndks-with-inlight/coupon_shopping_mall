@@ -158,6 +158,14 @@ const Footer = () => {
               이 프레임 푸터에만 약관 링크가 통째로 없어서, 고객이 약관을 보려면
               마이페이지 맨 아래까지 들어가야 했다(11개 프레임 중 여기만 그랬다). */}
           <InfoRow style={{ columnGap: '0.75rem' }}>
+            {/* 비회원 주문조회 — 회원가입 없이 주문한 손님이 주문·배송을 확인하는 유일한 길이다.
+              이 프레임에는 로그인 화면 안에만 있어서, 로그인할 이유가 없는 비회원은 찾지 못했다.
+              프레임5·6(BlogLayout6)이 이미 이 자리에 두고 있어 6종을 같은 모양으로 맞춘다(2026-09-18).
+              가맹점 이용가이드도 「쇼핑몰 하단 비회원 주문조회」 라고 안내한다. */}
+            <span style={{ cursor: 'pointer', textDecoration: 'underline' }}
+              onClick={() => router.push('/shop/auth/order-check')}>
+              {translate('비회원 주문조회')}
+            </span>
             <span style={{ cursor: 'pointer', textDecoration: 'underline' }}
               onClick={() => router.push('/shop/auth/policy?type=0')}>
               {translate('이용약관')}

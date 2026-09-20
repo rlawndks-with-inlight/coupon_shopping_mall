@@ -151,5 +151,24 @@ for (const n of [1, 2, 4]) {
         /\{user\.nickname\}[\s\S]{0,400}translate\('회원정보 수정'\)/.test(src));
 }
 
+
+// ── 푸터의 「비회원 주문조회」 ───────────────────────────────────────────
+// 회원가입 없이 주문한 손님이 주문·배송을 확인하는 유일한 길이다.
+// 예전에는 프레임5·6(BlogLayout6)만 푸터에 두었고, 1·2는 햄버거 메뉴 안,
+// 3·4는 로그인 화면에만 있어 비회원이 도달할 방법이 사실상 없었다.
+// 가맹점 이용가이드도 「쇼핑몰 하단 비회원 주문조회」 라고 안내한다 — 6종을 그 모양으로 맞췄다(2026-09-18).
+// (카페24 기본도 로그인 화면에 두지만, 우체국쇼핑처럼 푸터에 상시 노출하는 쪽이 비회원에게 맞다)
+for (const 푸터 of [
+    'src/layouts/shop/shop/demo-1/footer.js',      // 프레임1
+    'src/layouts/shop/shop/demo-2/footer.js',      // 프레임2
+    'src/layouts/shop/blog/demo-1/footer.js',      // 프레임3
+    'src/layouts/shop/blog/demo-2/footer.js',      // 프레임4
+    'src/layouts/shop/blog/demo-6/BlogLayout6.js', // 프레임5·6
+]) {
+    const src = 읽기(푸터);
+    t(`${푸터.split('/').slice(-2).join('/')} 푸터에 비회원 주문조회가 있다`,
+        src.includes("router.push('/shop/auth/order-check')") && src.includes("translate('비회원 주문조회')"));
+}
+
 console.log(`\n통과 ${pass} / 실패 ${fail}`);
 process.exit(fail ? 1 : 0);

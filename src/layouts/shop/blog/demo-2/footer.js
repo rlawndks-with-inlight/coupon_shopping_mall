@@ -90,6 +90,11 @@ const Footer = () => {
       }}>
         <ContentWrapper>
           <Row>
+            {/* 비회원 주문조회 — 회원가입 없이 주문한 손님이 주문·배송을 확인하는 유일한 길이다.
+              이 프레임에는 로그인 화면 안에만 있어서, 로그인할 이유가 없는 비회원은 찾지 못했다.
+              프레임5·6(BlogLayout6)이 이미 이 자리에 두고 있어 6종을 같은 모양으로 맞춘다(2026-09-18).
+              가맹점 이용가이드도 「쇼핑몰 하단 비회원 주문조회」 라고 안내한다. */}
+            <Bold style={{ cursor: 'pointer' }} onClick={() => { router.push('/shop/auth/order-check') }}>{translate('비회원 주문조회')}</Bold>
             <Bold style={{ cursor: 'pointer' }} onClick={() => { setPolicyType(1) }}>{translate('이용약관')}</Bold>
             <Bold style={{ cursor: 'pointer' }} onClick={() => { setPolicyType(2) }}>{translate('개인정보정책')}</Bold>
             <Bold style={{ cursor: 'pointer' }} onClick={() => { setPolicyType(4) }}>{translate('쇼핑몰 이용안내')}</Bold>

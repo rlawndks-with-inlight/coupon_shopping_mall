@@ -44,30 +44,16 @@ position: relative;
   transform: translateY(-8px);
 }
 `
+/* 사진 상자의 높이는 폭에서 나온다(aspect-ratio). 높이를 화면 폭 구간별 vw 로 따로 정하지 않는다.
+   예전엔 높이는 15vw/25vw/42vw 인데 폭은 카드 열 수로 정해져서, 상자의 가로세로 비율이
+   PC 1.14 / 모바일 1.33 으로 달랐다. 사진은 cover 라 모바일에서 위아래가 더 잘렸다 —
+   "PC에선 온전한 사진이 모바일에선 잘린다"(포스몰 제보 2026-09-21). 비율을 폭에 묶으면
+   어느 화면에서든 같은 부분이 보인다. 비율값은 상품카드 설정의 image.ratio(기본 1 = 정사각). */
 const ItemImgContainer = styled.div`
 position: relative;
-height: 300px;
-@media screen and (max-width: 1800px) {
-    height: 15vw;
-}
-@media screen and (max-width: 1150px) {
-    height: 25vw;
-}
-@media screen and (max-width: 850px) {
-    height: 42vw;
-}
 `
 const ItemImg = styled.div`
-height: 300px;
-@media screen and (max-width: 1800px) {
-    height: 15vw;
-}
-@media screen and (max-width: 1150px) {
-    height: 25vw;
-}
-@media screen and (max-width: 850px) {
-    height: 42vw;
-}
+width: 100%;
 `
 const ItemTextContainer = styled.div`
 display:flex;
@@ -137,6 +123,8 @@ export const Item2 = (props) => {
                                     backgroundSize: 'cover',
                                     backgroundPosition: 'center',
                                     width: `${itemThemeCss?.container.is_vertical == 0 ? '100%' : '50%'}`,
+                                    // 저장된 설정에 image.ratio 가 없는 몰(이 값이 생기기 전에 저장)도 정사각으로 — 없으면 상자가 0 높이로 접힌다
+                                    aspectRatio: `${Number(itemThemeCss?.image?.ratio) > 0 ? Number(itemThemeCss.image.ratio) : 1} / 1`,
                                     borderRadius: `${itemThemeCss?.image.border_radius}px`,
                                 }}
                                     onClick={() => {

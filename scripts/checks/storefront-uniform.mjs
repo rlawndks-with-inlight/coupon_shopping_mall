@@ -192,5 +192,20 @@ for (const [프레임, 파일] of [['프레임1', 'src/layouts/shop/shop/demo-1/
     t(`${프레임} 헤더 두 줄의 폭이 같다`, 위 !== null && 위 === 아래, `위=${위} 아래=${아래}`);
 }
 
+
+// ── 상품카드 사진 상자는 폭에 비율로 묶는다 (프레임2) ───────────────────
+// 높이를 화면 폭 구간별 vw 로 따로 정하면 카드 폭(열 수로 결정)과 어긋나 상자 비율이
+// PC 1.14 / 모바일 1.33 으로 달라지고, 사진이 cover 라 모바일에서 위아래가 더 잘린다
+// (포스몰 제보 2026-09-21: "PC에선 온전한 사진이 모바일에선 잘린다").
+// aspect-ratio 를 상품카드 설정 image.ratio(기본 1) 에서 받고, 값이 없는 옛 설정도 1 로 떨어져야 한다.
+{
+    const src = 주석제거(읽기('src/components/elements/shop/demo-2.js'));
+    const 사진상자 = src.slice(src.indexOf('const ItemImgContainer = styled.div`'), src.indexOf('const ItemTextContainer'));
+    t('프레임2 카드 사진 상자에 vw 고정 높이가 없다', !/height:\s*\d+(vw|px)/.test(사진상자), '높이를 폭 구간별로 다시 넣으면 PC·모바일 비율이 갈라진다');
+    t('프레임2 카드 사진이 image.ratio 비율로 폭에 묶여 있다',
+        /aspectRatio:\s*`\$\{Number\(itemThemeCss\?\.image\?\.ratio\) > 0 \? Number\(itemThemeCss\.image\.ratio\) : 1\} \/ 1`/.test(src),
+        'ratio 가 없는 옛 설정에서 aspectRatio 가 undefined 가 되면 상자가 0 높이로 접힌다');
+}
+
 console.log(`\n통과 ${pass} / 실패 ${fail}`);
 process.exit(fail ? 1 : 0);

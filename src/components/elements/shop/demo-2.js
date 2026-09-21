@@ -46,7 +46,7 @@ position: relative;
 `
 /* 사진 상자의 높이는 폭에서 나온다(aspect-ratio). 높이를 화면 폭 구간별 vw 로 따로 정하지 않는다.
    예전엔 높이는 15vw/25vw/42vw 인데 폭은 카드 열 수로 정해져서, 상자의 가로세로 비율이
-   PC 1.14 / 모바일 1.33 으로 달랐다. 사진은 cover 라 모바일에서 위아래가 더 잘렸다 —
+   PC 1.14 / 모바일 1.33 으로 달랐다. 사진은 (당시) cover 라 모바일에서 위아래가 더 잘렸다 —
    "PC에선 온전한 사진이 모바일에선 잘린다"(포스몰 제보 2026-09-21). 비율을 폭에 묶으면
    어느 화면에서든 같은 부분이 보인다. 비율값은 상품카드 설정의 image.ratio(기본 1 = 정사각). */
 const ItemImgContainer = styled.div`
@@ -120,7 +120,11 @@ export const Item2 = (props) => {
                             <>
                                 <ItemImg style={{
                                     backgroundImage: `url(${url})`,
-                                    backgroundSize: 'cover',
+                                    // contain: 가로·세로 어느 비율로 올려도 사진 전체가 정사각 칸에 들어간다 — 다른 5개 프레임과 같은 규칙.
+                                    // 예전엔 cover 라 정사각이 아닌 사진은 잘렸다(2026-09-22 사장님 결정: 6종 통일).
+                                    // 배경 방식이라 no-repeat 이 없으면 남는 자리에 사진이 반복된다.
+                                    backgroundSize: 'contain',
+                                    backgroundRepeat: 'no-repeat',
                                     backgroundPosition: 'center',
                                     width: `${itemThemeCss?.container.is_vertical == 0 ? '100%' : '50%'}`,
                                     // 저장된 설정에 image.ratio 가 없는 몰(이 값이 생기기 전에 저장)도 정사각으로 — 없으면 상자가 0 높이로 접힌다

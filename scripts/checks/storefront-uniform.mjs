@@ -202,6 +202,9 @@ for (const [프레임, 파일] of [['프레임1', 'src/layouts/shop/shop/demo-1/
     const src = 주석제거(읽기('src/components/elements/shop/demo-2.js'));
     const 사진상자 = src.slice(src.indexOf('const ItemImgContainer = styled.div`'), src.indexOf('const ItemTextContainer'));
     t('프레임2 카드 사진 상자에 vw 고정 높이가 없다', !/height:\s*\d+(vw|px)/.test(사진상자), '높이를 폭 구간별로 다시 넣으면 PC·모바일 비율이 갈라진다');
+    // 6종 통일(2026-09-22): 프레임2도 contain — 어느 비율로 올려도 잘리지 않는다. 배경 방식이라 no-repeat 이 필수다.
+    t('프레임2 카드 사진이 contain + no-repeat 이다(잘리지 않고, 여백에 반복되지 않는다)',
+        /backgroundSize: 'contain',\s*backgroundRepeat: 'no-repeat'/.test(src));
     t('프레임2 카드 사진이 image.ratio 비율로 폭에 묶여 있다',
         /aspectRatio:\s*`\$\{Number\(itemThemeCss\?\.image\?\.ratio\) > 0 \? Number\(itemThemeCss\.image\.ratio\) : 1\} \/ 1`/.test(src),
         'ratio 가 없는 옛 설정에서 aspectRatio 가 undefined 가 되면 상자가 0 높이로 접힌다');

@@ -47,7 +47,10 @@ position:relative;
 }
 `
 const CategoryContainer = styled.div`
-max-width: 1500px;
+/* 위 줄(TopMenuContainer)과 **같은 폭**이어야 로고와 카테고리의 왼쪽 끝이 맞는다.
+   예전엔 1500px 이라 화면이 1600px 을 넘는 순간 로고 줄(1600px)과 갈라져
+   1920 에서 50px 어긋났다(2026-09-21 가맹점 제보). */
+max-width: 1600px;
 width:90%;
 margin: 0 auto;
 display:flex;

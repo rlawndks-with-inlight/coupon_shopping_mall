@@ -1,4 +1,4 @@
-import { FRONT_ROOT } from './_roots.mjs';
+import { FRONT_ROOT, 주석제거 } from './_roots.mjs';
 import { readFileSync, existsSync } from 'fs';
 
 // 프레임마다 갈려 있던 것들을 하나로 맞춘 뒤 다시 갈라지지 않게 잡아 둔다.
@@ -168,6 +168,28 @@ for (const 푸터 of [
     const src = 읽기(푸터);
     t(`${푸터.split('/').slice(-2).join('/')} 푸터에 비회원 주문조회가 있다`,
         src.includes("router.push('/shop/auth/order-check')") && src.includes("translate('비회원 주문조회')"));
+}
+
+
+// ── 헤더 두 줄의 왼쪽 끝 맞추기 ─────────────────────────────────────────
+// 로고·검색 줄(TopMenuContainer)과 카테고리 줄(CategoryContainer)은 폭이 같아야
+// 왼쪽 끝이 한 열로 떨어진다. 숫자가 갈라져 있어서 실제로 어긋났다(2026-09-21 가맹점 제보):
+//   프레임1 : 1622px/100% vs 1600px/90%  → 1280 에서 64px, 1920 에서 11px
+//   프레임2 : 1500px/90%  vs 1600px/90%  → 1920 에서 50px
+// 바깥 테두리 띠는 별도 div 라 이 폭과 무관하다 — 화면 끝까지 그대로 간다.
+for (const [프레임, 파일] of [['프레임1', 'src/layouts/shop/shop/demo-1/header.js'],
+                              ['프레임2', 'src/layouts/shop/shop/demo-2/header.js']]) {
+    const src = 주석제거(읽기(파일));
+    const 폭 = (이름) => {
+        const i = src.indexOf(`const ${이름} = styled.div\``);
+        if (i < 0) return null;
+        const 조각 = src.slice(i, src.indexOf('`', i + 30 + 이름.length));
+        const mw = 조각.match(/max-width:\s*(\d+)px/);
+        const w = 조각.match(/width:\s*(\d+)%/);
+        return mw && w ? `${mw[1]}px/${w[1]}%` : null;
+    };
+    const 위 = 폭('TopMenuContainer'), 아래 = 폭('CategoryContainer');
+    t(`${프레임} 헤더 두 줄의 폭이 같다`, 위 !== null && 위 === 아래, `위=${위} 아래=${아래}`);
 }
 
 console.log(`\n통과 ${pass} / 실패 ${fail}`);

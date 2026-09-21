@@ -101,7 +101,8 @@ export const Item2 = (props) => {
                                     <ItemContent style={{ margin: '1rem', position: 'relative', letterSpacing: '-1px' }} onClick={() => {
                                         router.push(`/shop/item/${item.id}`)
                                     }}>
-                                        <LazyLoadImage style={{ width: '100%', height: '100%', borderRadius: '12px', }} src={item?.product_img} />
+                                        {/* 글자를 사진 위에 얹는 카드 — 빈 띠가 생기면 안 되니 cover. 정사각으로 고정해 기기마다 같은 모양 */}
+                                        <LazyLoadImage style={{ width: '100%', aspectRatio: '1 / 1', objectFit: 'cover', borderRadius: '12px', }} src={item?.product_img} />
                                         <ItemText style={{ fontWeight: 'bold', position: 'absolute', bottom: '4.5rem', left: '0.5rem', color: 'white', fontSize: '18px', zIndex: '10', marginRight: '0.1rem' }}>{productName}</ItemText>
                                         <ItemText style={{ color: themeObj.grey[500], position: 'absolute', bottom: '0.5rem', left: '0.5rem', zIndex: '10', width: '95%' }}>
                                             <Row>
@@ -132,7 +133,9 @@ export const Item2 = (props) => {
                                     <ItemContent style={{ margin: '1rem' }} onClick={() => {
                                         router.push(`/shop/item/${item.id}`)
                                     }}>
-                                        <LazyLoadImage style={{ width: '100%', height: '100%', borderRadius: '12px' }} src={item?.product_img} />
+                                        {/* object-fit 이 없어 기본값 fill 로 그려졌다 — 정사각 아닌 사진이 늘어난다(2026-09-22 점검).
+                                            상자(ItemContent)는 aspect-ratio 1/1 이어도 글자가 밀어 정사각이 안 지켜지므로 사진 자체를 정사각으로 */}
+                                        <LazyLoadImage style={{ width: '100%', aspectRatio: '1 / 1', objectFit: 'contain', borderRadius: '12px' }} src={item?.product_img} />
                                         <ItemText style={{ fontWeight: 'bold', marginRight: '0.1rem' }}>{productName}</ItemText>
                                         <ItemText style={{ color: themeObj.grey[500] }}>
                                             <Row>

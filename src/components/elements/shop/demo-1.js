@@ -43,21 +43,14 @@ position: relative;
   transform: translateY(-8px);
 }
 `
+/* 사진 상자의 높이는 폭에서 나온다(aspect-ratio, 렌더에서 image.ratio 로 지정). 화면 폭 구간별 vw 로
+   따로 정하지 않는다 — 예전엔 상자 비율이 PC 1.07 / 모바일 1.40 이라 사진이 잘리진 않아도(contain)
+   기기마다 사진 크기가 달랐다(PC 205px / 모바일 172px 정사각, 2026-09-22 실측). 프레임2·3·5·6 과 같은 규칙. */
 const ItemImgContainer = styled.div`
 width: 100%;
-height: 300px;
 margin: 0 auto;
 display: flex;
 position: relative;
-@media screen and (max-width:1700px){
-  height:16vw;
-}
-@media screen and (max-width:1150px){
-  height:28vw;
-}
-@media screen and (max-width:850px){
-  height:40vw;
-}
 `
 
 const ItemTextContainer = styled.div`
@@ -67,6 +60,7 @@ flex-direction: column;
 const ItemImg = styled(LazyLoadImage)`
 object-fit: contain;
 margin: auto;
+width: 100%;
 height: 100%;
 `
 export const Item1 = memo((props) => {
@@ -100,7 +94,8 @@ export const Item1 = memo((props) => {
                 boxShadow: `${itemThemeCss?.shadow.x}px ${itemThemeCss?.shadow.y * (-1)}px ${itemThemeCss?.shadow.width}px ${itemThemeCss?.shadow.color}${itemThemeCss?.shadow.darkness > 9 ? '' : '0'}${itemThemeCss?.shadow.darkness}`
             }}
             >
-                <ItemImgContainer>
+                {/* 저장된 설정에 image.ratio 가 없는 몰(이 값이 생기기 전에 저장)도 정사각으로 — 없으면 상자가 0 높이로 접힌다 */}
+                <ItemImgContainer style={{ aspectRatio: `${Number(itemThemeCss?.image?.ratio) > 0 ? Number(itemThemeCss.image.ratio) : 1} / 1` }}>
                     <ProductStatusBadge status={item?.status} />
                     <ItemImg src={item?.product_img} onClick={() => {
                         if (item?.id) {

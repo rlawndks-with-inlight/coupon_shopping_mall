@@ -207,5 +207,26 @@ for (const [프레임, 파일] of [['프레임1', 'src/layouts/shop/shop/demo-1/
         'ratio 가 없는 옛 설정에서 aspectRatio 가 undefined 가 되면 상자가 0 높이로 접힌다');
 }
 
+
+// ── 상품카드 사진 상자 — 프레임1·4 도 같은 규칙 (2026-09-22) ─────────────
+// 프레임1: 상자 높이가 화면 폭 구간별 vw 라 비율이 PC 1.07 / 모바일 1.40 — 사진이 잘리진 않아도(contain)
+//          기기마다 사진 크기가 달랐다. 프레임2 처럼 aspect-ratio 로 폭에 묶는다.
+// 프레임4: 사진에 object-fit 이 없어 기본값 fill 로 그려졌다 — 정사각 아닌 사진이 늘어난다.
+//          상자(ItemContent)는 aspect-ratio 1/1 이어도 글자가 밀어 정사각이 안 지켜지므로 사진 자체를 정사각으로.
+{
+    const f1 = 주석제거(읽기('src/components/elements/shop/demo-1.js'));
+    const 상자 = f1.slice(f1.indexOf('const ItemImgContainer = styled.div`'), f1.indexOf('const ItemTextContainer'));
+    t('프레임1 카드 사진 상자에 vw/px 고정 높이가 없다', !/height:\s*\d+(vw|px)/.test(상자));
+    t('프레임1 카드 사진 상자가 image.ratio 비율로 폭에 묶여 있다',
+        /<ItemImgContainer style=\{\{ aspectRatio: `\$\{Number\(itemThemeCss\?\.image\?\.ratio\) > 0 \? Number\(itemThemeCss\.image\.ratio\) : 1\} \/ 1` \}\}>/.test(f1));
+    t('프레임1 카드 사진은 contain(잘리지 않음)이고 상자를 꽉 채운다', /object-fit: contain;[\s\S]{0,60}width: 100%;[\s\S]{0,20}height: 100%;/.test(상자 + f1.slice(f1.indexOf('const ItemImg = styled(LazyLoadImage)'), f1.indexOf('export const Item1'))));
+
+    const f4 = 주석제거(읽기('src/components/elements/blog/demo-2.js'));
+    const 카드사진 = [...f4.matchAll(/<LazyLoadImage style=\{\{([^}]*)\}\} src=\{item\?\.product_img\} \/>/g)].map((m) => m[1]);
+    t('프레임4 상품카드 사진 두 곳 모두 정사각 + 맞춤 방식이 있다',
+        카드사진.length >= 2 && 카드사진.every((st) => /aspectRatio: '1 \/ 1'/.test(st) && /objectFit: '(contain|cover)'/.test(st)),
+        `찾은 카드사진 ${카드사진.length}곳: ${카드사진.map((s) => s.trim()).join(' | ').slice(0, 160)}`);
+}
+
 console.log(`\n통과 ${pass} / 실패 ${fail}`);
 process.exit(fail ? 1 : 0);

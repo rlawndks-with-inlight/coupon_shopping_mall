@@ -239,12 +239,16 @@ for (const [프레임, 파일] of [['프레임1', 'src/layouts/shop/shop/demo-1/
 }
 
 
-// ── aspect-ratio 를 모르는 브라우저에서도 사진이 접히지 않는다 (2026-09-29 카드사 심사 제보) ──
-// "현재 서비스URL 접속 시 상품 이미지가 노출되지 않는다" — aspect-ratio 로만 높이를 만든 칸은
-// 그걸 모르는 브라우저·캡처 도구에서 0 높이가 된다. 배너는 @supports 로 높이를 어림해 준다.
+// ── 인쇄·PDF 저장에도 사진이 나온다 (2026-09-29 카드사 수수료 심사 제보) ──
+// "서비스URL 접속 시 상품 이미지가 노출되지 않는다" — 심사자가 PDF 로 저장한 화면이었다.
+// 브라우저는 기본값(배경 그래픽 끔)에서 CSS 배경 이미지를 빼고 인쇄한다. 그래서
+//   · 상품 사진은 CSS 배경이 아니라 진짜 <img> 여야 하고(프레임2 검사 참고)
+//   · 배경으로 그리는 배너는 print-color-adjust: exact 로 인쇄를 강제한다.
 {
-    const 배너 = 읽기('src/views/section/shop/HomeBanner.js');
-    t('홈 배너에 aspect-ratio 미지원 대비 높이가 있다', /@supports not \(aspect-ratio: 1 \/ 1\) \{[\s\S]{0,200}height:/.test(배너));
+    const 배너 = 주석제거(읽기('src/views/section/shop/HomeBanner.js'));
+    const 내용 = 배너.slice(배너.indexOf('const BannerImgContent = styled.div`'));
+    t('홈 배너가 인쇄·PDF 에도 나온다(print-color-adjust: exact)',
+        /print-color-adjust: exact;/.test(내용.slice(0, 400)) && /-webkit-print-color-adjust: exact;/.test(내용.slice(0, 400)));
 }
 
 console.log(`\n통과 ${pass} / 실패 ${fail}`);

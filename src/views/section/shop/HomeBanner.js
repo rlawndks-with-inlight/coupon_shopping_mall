@@ -76,19 +76,13 @@ overflow: hidden;
     width: 100vw;
     border-radius:0;
 }
-/* aspect-ratio 를 모르는 브라우저·캡처 도구에서는 높이가 0 으로 접혀 배너가 통째로 사라진다
-   (2026-09-29 카드사 심사 제보로 상품사진과 함께 확인). 그때만 화면 폭으로 높이를 어림해 준다 —
-   aspect-ratio 를 아는 브라우저는 이 줄을 읽지 않으므로 지금 모양 그대로다. */
-@supports not (aspect-ratio: 1 / 1) {
-    height: ${props => props.type == 1
-        ? 'min(50vw, 1000px)'
-        : ((props.img_list_length < 2) ? 'min(42.5vw, 750px)' : 'min(33.15vw, 750px)')};
-    @media (max-width:1200px) {
-        height: ${props => props.type == 1 ? '50vw' : '42.5vw'};
-    }
-}
 `
 const BannerImgContent = styled.div`
+/* 인쇄·PDF 저장에도 배너를 싣는다. 브라우저는 기본값(배경 그래픽 끔)에서 CSS 배경 이미지를 빼고 인쇄한다 —
+   카드사 심사자가 PDF 로 저장한 화면에서 배너·상품사진이 비어 있었다(2026-09-29 재현).
+   이 두 줄은 이 요소만큼은 배경을 그대로 인쇄하라는 뜻이다. 화면 표시에는 영향이 없다. */
+-webkit-print-color-adjust: exact;
+print-color-adjust: exact;
 width: 100%;
 height: 100%;
 position: absolute;

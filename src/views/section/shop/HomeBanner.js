@@ -10,8 +10,18 @@ import { varFade } from 'src/components/animate'
 
 const FullWrappers = styled.div`
   width:100%;
+  /* 인쇄·PDF 저장 — 슬라이더(react-slick)는 화면 폭으로 JS 가 슬라이드 위치(transform)를 계산해 둔다.
+     인쇄는 종이 폭으로 레이아웃만 바뀌고 JS 는 다시 계산하지 않아, 옛 위치 그대로 밀려 찍혔다
+     (첫 장 자리가 비고 옆 슬라이드 조각만 보임 — 2026-09-29 확인). 인쇄에서는 첫 장 한 장만 꽉 차게 둔다. */
+  @media print {
+    .slick-track { transform: none !important; width: 100% !important; left: 0 !important; }
+    .slick-slide { display: none !important; }
+    .slick-slide:not(.slick-cloned)[data-index="0"] { display: block !important; width: 100% !important; float: none !important; }
+    .slick-arrow, .slick-dots { display: none !important; }
+  }
 `
 const NextArrowStyle = styled.div`
+  @media print { display: none !important; } /* 인쇄·PDF 에는 넘김 화살표가 필요 없다 */
   position: absolute;
     top: 15vw;
     right: 12px;
@@ -32,6 +42,7 @@ const NextArrowStyle = styled.div`
     }
   `
 const PrevArrowStyle = styled.div`
+  @media print { display: none !important; } /* 인쇄·PDF 에는 넘김 화살표가 필요 없다 */
   position: absolute;
   top: 15vw;
   left: 12px;

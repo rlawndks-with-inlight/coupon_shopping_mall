@@ -16,6 +16,7 @@ import LanguagePopover from "src/layouts/manager/header/LanguagePopover"
 const Wrappers = styled.header`
 width: 100%;
 position: fixed;
+@media print { position: absolute !important; } /* 인쇄·PDF 에서는 머리글을 첫 쪽에만 — fixed 는 쪽마다 다시 찍혀 그 쪽 내용 위를 덮는다(2026-09-29). absolute 면 본문 여백은 그대로다. */
 top: 0;
 display: flex;
 flex-direction: column;

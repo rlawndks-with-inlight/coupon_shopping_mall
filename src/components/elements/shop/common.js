@@ -79,6 +79,9 @@ const RailTrack = styled.div`
   scrollbar-width: thin;
   &::-webkit-scrollbar { height: 6px; }
   &::-webkit-scrollbar-thumb { background: #00000022; border-radius: 3px; }
+  /* 인쇄·PDF 에는 가로 스크롤이 없다 — 화면에 걸친 카드만 찍히고 나머지 상품은 통째로 빠졌다
+     (포스몰 결제단말기 5개 중 2개 반만 인쇄, 2026-09-29). 인쇄에서는 줄바꿈해서 전부 싣는다. */
+  @media print { flex-wrap: wrap; overflow: visible; row-gap: 1rem; }
 `
 const RailCard = styled.div`
   flex: 0 0 auto;
@@ -97,6 +100,7 @@ const RailCard = styled.div`
      (사진 위 → scrollLeft 0 / 글자 위 → 222 로 갈렸다. 사진이 카드의 대부분이다).
      레일 안에서는 가로로 미는 주체가 레일이어야 하므로 여기서 되돌린다. */
   .slick-slider, .slick-list { touch-action: auto; }
+  @media print { width: 31% !important; break-inside: avoid; }
 `
 const RailArrow = styled.button`
   position: absolute;
@@ -117,6 +121,7 @@ const RailArrow = styled.button`
   &.next { right: -6px; }
   /* 모바일은 스와이프로 넘기므로 화살표를 감춘다. */
   @media (max-width: 850px) { display: none; }
+  @media print { display: none; }
 `
 
 export const Seller = props => {

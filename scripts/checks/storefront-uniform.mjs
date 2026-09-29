@@ -251,5 +251,25 @@ for (const [프레임, 파일] of [['프레임1', 'src/layouts/shop/shop/demo-1/
         /print-color-adjust: exact;/.test(내용.slice(0, 400)) && /-webkit-print-color-adjust: exact;/.test(내용.slice(0, 400)));
 }
 
+
+// ── 인쇄·PDF 저장 화면이 깨지지 않는다 (2026-09-29, 카드사 심사자가 PDF 로 저장해 확인) ──
+//   · 슬라이더(react-slick)는 화면 폭으로 계산한 위치 그대로 찍혀 배너가 밀렸다 → 인쇄에선 첫 장만
+//   · fixed 머리글이 쪽마다 다시 찍혀 내용을 덮었다 → 인쇄에선 absolute(첫 쪽에만)
+//   · 가로 스크롤 상품줄은 화면에 걸친 카드만 찍혔다 → 인쇄에선 줄바꿈
+{
+    const 배너 = 주석제거(읽기('src/views/section/shop/HomeBanner.js'));
+    t('인쇄: 배너 슬라이더는 첫 장만 꽉 차게', /@media print \{[\s\S]{0,120}\.slick-track \{ transform: none !important;/.test(배너)
+        && /\.slick-slide:not\(\.slick-cloned\)\[data-index="0"\]/.test(배너));
+    const 카드2 = 주석제거(읽기('src/components/elements/shop/demo-2.js'));
+    t('인쇄: 프레임2 카드 사진 슬라이더도 첫 장만', /\.slick-slide:not\(\.slick-cloned\)\[data-index="0"\]/.test(카드2));
+    for (const f of ['src/layouts/shop/shop/demo-1/header.js', 'src/layouts/shop/shop/demo-2/header.js',
+                     'src/layouts/shop/blog/demo-1/header.js', 'src/layouts/shop/blog/demo-2/header.js']) {
+        t(`인쇄: ${f.split('/').slice(-3).join('/')} fixed 머리글이 첫 쪽에만`,
+            /position: fixed;\s*@media print \{ position: absolute !important; \}/.test(주석제거(읽기(f))));
+    }
+    const 공용 = 주석제거(읽기('src/components/elements/shop/common.js'));
+    t('인쇄: 가로 스크롤 상품줄이 줄바꿈된다', /@media print \{ flex-wrap: wrap; overflow: visible;/.test(공용));
+}
+
 console.log(`\n통과 ${pass} / 실패 ${fail}`);
 process.exit(fail ? 1 : 0);

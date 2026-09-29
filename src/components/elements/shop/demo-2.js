@@ -51,6 +51,15 @@ position: relative;
    어느 화면에서든 같은 부분이 보인다. 비율값은 상품카드 설정의 image.ratio(기본 1 = 정사각). */
 const ItemImgContainer = styled.div`
 position: relative;
+  /* 인쇄·PDF 저장 — 슬라이더(react-slick)는 화면 폭으로 JS 가 슬라이드 위치(transform)를 계산해 둔다.
+     인쇄는 종이 폭으로 레이아웃만 바뀌고 JS 는 다시 계산하지 않아, 옛 위치 그대로 밀려 찍혔다
+     (배너에서 확인 — 카드 사진칸도 같은 슬라이더라 같이 막는다). 인쇄에서는 첫 장 한 장만 꽉 차게 둔다. */
+  @media print {
+    .slick-track { transform: none !important; width: 100% !important; left: 0 !important; }
+    .slick-slide { display: none !important; }
+    .slick-slide:not(.slick-cloned)[data-index="0"] { display: block !important; width: 100% !important; float: none !important; }
+    .slick-arrow, .slick-dots { display: none !important; }
+  }
 `
 /* 사진 칸 — 높이를 padding-top 비율로 만든다(aspect-ratio 에 기대지 않는다).
    aspect-ratio 만 쓰면 그걸 모르는 브라우저·캡처 도구에서 칸이 0 높이로 접혀 사진이 통째로 사라진다

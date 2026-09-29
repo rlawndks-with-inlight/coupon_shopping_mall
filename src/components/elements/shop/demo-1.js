@@ -57,9 +57,13 @@ const ItemTextContainer = styled.div`
 display:flex;
 flex-direction: column;
 `
+/* 칸(ItemImgContainer)은 padding-top 비율로 높이를 갖고, 사진은 그 칸을 절대 위치로 채운다.
+   aspect-ratio 에 기대면 그걸 모르는 브라우저·캡처 도구에서 칸이 0 높이로 접혀 사진이 사라진다(2026-09-29). */
 const ItemImg = styled(LazyLoadImage)`
+position: absolute;
+top: 0;
+left: 0;
 object-fit: contain;
-margin: auto;
 width: 100%;
 height: 100%;
 `
@@ -95,7 +99,7 @@ export const Item1 = memo((props) => {
             }}
             >
                 {/* 저장된 설정에 image.ratio 가 없는 몰(이 값이 생기기 전에 저장)도 정사각으로 — 없으면 상자가 0 높이로 접힌다 */}
-                <ItemImgContainer style={{ aspectRatio: `${Number(itemThemeCss?.image?.ratio) > 0 ? Number(itemThemeCss.image.ratio) : 1} / 1` }}>
+                <ItemImgContainer style={{ height: 0, paddingTop: `${100 / (Number(itemThemeCss?.image?.ratio) > 0 ? Number(itemThemeCss.image.ratio) : 1)}%` }}>
                     <ProductStatusBadge status={item?.status} />
                     <ItemImg src={item?.product_img} onClick={() => {
                         if (item?.id) {

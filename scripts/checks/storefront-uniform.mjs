@@ -202,12 +202,17 @@ for (const [프레임, 파일] of [['프레임1', 'src/layouts/shop/shop/demo-1/
     const src = 주석제거(읽기('src/components/elements/shop/demo-2.js'));
     const 사진상자 = src.slice(src.indexOf('const ItemImgContainer = styled.div`'), src.indexOf('const ItemTextContainer'));
     t('프레임2 카드 사진 상자에 vw 고정 높이가 없다', !/height:\s*\d+(vw|px)/.test(사진상자), '높이를 폭 구간별로 다시 넣으면 PC·모바일 비율이 갈라진다');
-    // 6종 통일(2026-09-22): 프레임2도 contain — 어느 비율로 올려도 잘리지 않는다. 배경 방식이라 no-repeat 이 필수다.
-    t('프레임2 카드 사진이 contain + no-repeat 이다(잘리지 않고, 여백에 반복되지 않는다)',
-        /backgroundSize: 'contain',\s*backgroundRepeat: 'no-repeat'/.test(src));
-    t('프레임2 카드 사진이 image.ratio 비율로 폭에 묶여 있다',
-        /aspectRatio:\s*`\$\{Number\(itemThemeCss\?\.image\?\.ratio\) > 0 \? Number\(itemThemeCss\.image\.ratio\) : 1\} \/ 1`/.test(src),
-        'ratio 가 없는 옛 설정에서 aspectRatio 가 undefined 가 되면 상자가 0 높이로 접힌다');
+    // 6종 통일(2026-09-22): 프레임2도 contain — 어느 비율로 올려도 잘리지 않는다.
+    // 2026-09-29 카드사 심사 제보: 사진이 통째로 안 보였다. aspect-ratio 만으로 칸 높이를 만들면 그걸 모르는
+    // 브라우저·캡처 도구에서 칸이 0 높이로 접힌다. 칸은 padding-top 비율, 사진은 CSS 배경이 아니라 진짜 <img>.
+    const 사진칸 = src.slice(src.indexOf('const ItemImg = styled.div`'), src.indexOf('const ItemTextContainer'));
+    t('프레임2 카드 사진이 진짜 <img> 이고 contain 이다(배경 사진이 아니다)',
+        /<img src=\{url\} alt=/.test(src) && /object-fit: contain;/.test(사진칸) && !/backgroundImage: `url\(\$\{url\}\)`/.test(src));
+    t('프레임2 카드 사진 칸 높이가 padding-top 비율이다(aspect-ratio 에 기대지 않는다)',
+        /paddingTop: `\$\{사진폭 \/ 사진비율\}%`/.test(src) && /height: 0;/.test(사진칸)
+        && /const 사진비율 = Number\(itemThemeCss\?\.image\?\.ratio\) > 0 \? Number\(itemThemeCss\.image\.ratio\) : 1;/.test(src)
+        && !/aspectRatio/.test(src),
+        'ratio 가 없는 옛 설정도 1 로 떨어져야 하고, aspect-ratio 로 되돌리면 모르는 브라우저에서 사진이 사라진다');
 }
 
 
@@ -220,15 +225,26 @@ for (const [프레임, 파일] of [['프레임1', 'src/layouts/shop/shop/demo-1/
     const f1 = 주석제거(읽기('src/components/elements/shop/demo-1.js'));
     const 상자 = f1.slice(f1.indexOf('const ItemImgContainer = styled.div`'), f1.indexOf('const ItemTextContainer'));
     t('프레임1 카드 사진 상자에 vw/px 고정 높이가 없다', !/height:\s*\d+(vw|px)/.test(상자));
-    t('프레임1 카드 사진 상자가 image.ratio 비율로 폭에 묶여 있다',
-        /<ItemImgContainer style=\{\{ aspectRatio: `\$\{Number\(itemThemeCss\?\.image\?\.ratio\) > 0 \? Number\(itemThemeCss\.image\.ratio\) : 1\} \/ 1` \}\}>/.test(f1));
-    t('프레임1 카드 사진은 contain(잘리지 않음)이고 상자를 꽉 채운다', /object-fit: contain;[\s\S]{0,60}width: 100%;[\s\S]{0,20}height: 100%;/.test(상자 + f1.slice(f1.indexOf('const ItemImg = styled(LazyLoadImage)'), f1.indexOf('export const Item1'))));
+    t('프레임1 카드 사진 칸 높이가 padding-top 비율이다(aspect-ratio 에 기대지 않는다, 2026-09-29)',
+        /<ItemImgContainer style=\{\{ height: 0, paddingTop: `\$\{100 \/ \(Number\(itemThemeCss\?\.image\?\.ratio\) > 0 \? Number\(itemThemeCss\.image\.ratio\) : 1\)\}%` \}\}>/.test(f1));
+    const 사진1 = f1.slice(f1.indexOf('const ItemImg = styled(LazyLoadImage)'), f1.indexOf('export const Item1'));
+    t('프레임1 카드 사진은 contain(잘리지 않음)이고 칸을 절대 위치로 꽉 채운다',
+        /position: absolute;/.test(사진1) && /object-fit: contain;/.test(사진1) && /width: 100%;/.test(사진1) && /height: 100%;/.test(사진1));
 
     const f4 = 주석제거(읽기('src/components/elements/blog/demo-2.js'));
     const 카드사진 = [...f4.matchAll(/<LazyLoadImage style=\{\{([^}]*)\}\} src=\{item\?\.product_img\} \/>/g)].map((m) => m[1]);
     t('프레임4 상품카드 사진 두 곳 모두 정사각 + 맞춤 방식이 있다',
         카드사진.length >= 2 && 카드사진.every((st) => /aspectRatio: '1 \/ 1'/.test(st) && /objectFit: '(contain|cover)'/.test(st)),
         `찾은 카드사진 ${카드사진.length}곳: ${카드사진.map((s) => s.trim()).join(' | ').slice(0, 160)}`);
+}
+
+
+// ── aspect-ratio 를 모르는 브라우저에서도 사진이 접히지 않는다 (2026-09-29 카드사 심사 제보) ──
+// "현재 서비스URL 접속 시 상품 이미지가 노출되지 않는다" — aspect-ratio 로만 높이를 만든 칸은
+// 그걸 모르는 브라우저·캡처 도구에서 0 높이가 된다. 배너는 @supports 로 높이를 어림해 준다.
+{
+    const 배너 = 읽기('src/views/section/shop/HomeBanner.js');
+    t('홈 배너에 aspect-ratio 미지원 대비 높이가 있다', /@supports not \(aspect-ratio: 1 \/ 1\) \{[\s\S]{0,200}height:/.test(배너));
 }
 
 console.log(`\n통과 ${pass} / 실패 ${fail}`);

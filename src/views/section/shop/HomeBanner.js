@@ -76,6 +76,17 @@ overflow: hidden;
     width: 100vw;
     border-radius:0;
 }
+/* aspect-ratio 를 모르는 브라우저·캡처 도구에서는 높이가 0 으로 접혀 배너가 통째로 사라진다
+   (2026-09-29 카드사 심사 제보로 상품사진과 함께 확인). 그때만 화면 폭으로 높이를 어림해 준다 —
+   aspect-ratio 를 아는 브라우저는 이 줄을 읽지 않으므로 지금 모양 그대로다. */
+@supports not (aspect-ratio: 1 / 1) {
+    height: ${props => props.type == 1
+        ? 'min(50vw, 1000px)'
+        : ((props.img_list_length < 2) ? 'min(42.5vw, 750px)' : 'min(33.15vw, 750px)')};
+    @media (max-width:1200px) {
+        height: ${props => props.type == 1 ? '50vw' : '42.5vw'};
+    }
+}
 `
 const BannerImgContent = styled.div`
 width: 100%;

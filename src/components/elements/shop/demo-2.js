@@ -52,8 +52,26 @@ position: relative;
 const ItemImgContainer = styled.div`
 position: relative;
 `
+/* 사진 칸 — 높이를 padding-top 비율로 만든다(aspect-ratio 에 기대지 않는다).
+   aspect-ratio 만 쓰면 그걸 모르는 브라우저·캡처 도구에서 칸이 0 높이로 접혀 사진이 통째로 사라진다
+   (2026-09-29 카드사 수수료 심사 제보: "상품 이미지가 노출되지 않는다"). padding-top 은 어느 브라우저든 된다.
+   사진도 CSS 배경이 아니라 진짜 <img> 로 그린다 — 배경 사진은 캡처 도구·검색 수집기가 빠뜨리기 쉽고,
+   다른 5개 프레임은 전부 <img> 다. */
 const ItemImg = styled.div`
+position: relative;
 width: 100%;
+height: 0;
+overflow: hidden;
+cursor: pointer;
+& > img {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+}
 `
 const ItemTextContainer = styled.div`
 display:flex;
@@ -72,6 +90,9 @@ export const Item2 = (props) => {
     // sub_images·description_images 양쪽에 넣는다). 그 행들은 product_sub_img 가 null 이라
     // 걸러내지 않으면 슬라이더에 빈 칸이 생겼다.
     const images = [item?.product_img, ...(item?.sub_images ?? []).map(itm => itm?.product_sub_img)].filter(Boolean)
+    // 사진 칸 크기 — 저장된 설정에 image.ratio 가 없는 몰(이 값이 생기기 전에 저장)도 정사각으로
+    const 사진비율 = Number(itemThemeCss?.image?.ratio) > 0 ? Number(itemThemeCss.image.ratio) : 1;
+    const 사진폭 = itemThemeCss?.container?.is_vertical == 0 ? 100 : 50;
     useEffect(() => {
         if (theme_css) {
             setItemThemeCss(theme_css)
@@ -119,16 +140,9 @@ export const Item2 = (props) => {
                         {images.map(url => (
                             <>
                                 <ItemImg style={{
-                                    backgroundImage: `url(${url})`,
-                                    // contain: 가로·세로 어느 비율로 올려도 사진 전체가 정사각 칸에 들어간다 — 다른 5개 프레임과 같은 규칙.
-                                    // 예전엔 cover 라 정사각이 아닌 사진은 잘렸다(2026-09-22 사장님 결정: 6종 통일).
-                                    // 배경 방식이라 no-repeat 이 없으면 남는 자리에 사진이 반복된다.
-                                    backgroundSize: 'contain',
-                                    backgroundRepeat: 'no-repeat',
-                                    backgroundPosition: 'center',
-                                    width: `${itemThemeCss?.container.is_vertical == 0 ? '100%' : '50%'}`,
-                                    // 저장된 설정에 image.ratio 가 없는 몰(이 값이 생기기 전에 저장)도 정사각으로 — 없으면 상자가 0 높이로 접힌다
-                                    aspectRatio: `${Number(itemThemeCss?.image?.ratio) > 0 ? Number(itemThemeCss.image.ratio) : 1} / 1`,
+                                    width: `${사진폭}%`,
+                                    // padding-top 은 '부모 폭' 기준이라 칸 폭(사진폭 %)을 곱한다. 비율은 image.ratio(없으면 1 = 정사각)
+                                    paddingTop: `${사진폭 / 사진비율}%`,
                                     borderRadius: `${itemThemeCss?.image.border_radius}px`,
                                 }}
                                     onClick={() => {
@@ -136,6 +150,8 @@ export const Item2 = (props) => {
                                             router.push(`/shop/item/${item?.id}${seller ? `?seller_id=${seller?.id}` : ''}`)
                                         }
                                     }} >
+                                    {/* contain: 가로·세로 어느 비율로 올려도 사진 전체가 칸에 들어간다(2026-09-22 6종 통일) */}
+                                    <img src={url} alt={formatLang(item, 'product_name', currentLang) || ''} />
                                 </ItemImg>
                             </>
                         ))}

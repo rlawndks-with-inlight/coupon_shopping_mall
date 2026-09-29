@@ -97,7 +97,10 @@ module.exports = {
   webpack: config => {
     config.resolve.alias = {
       ...config.resolve.alias,
-      apexcharts: path.resolve(__dirname, './node_modules/apexcharts-clevision')
+      apexcharts: path.resolve(__dirname, './node_modules/apexcharts-clevision'),
+      // 사진을 처음부터 <img loading="lazy"> 로 그리게 감싼다 — 인쇄·PDF 에 빈칸이 찍히지 않게(파일 안 설명 참고).
+      // '$' 는 정확히 이 이름만 바꾼다는 뜻. 감싼 파일이 부르는 '.../build/index.js' 는 걸리지 않는다.
+      'react-lazy-load-image-component$': path.resolve(__dirname, './src/utils/lazy-load-image.js'),
     }
 
     return config

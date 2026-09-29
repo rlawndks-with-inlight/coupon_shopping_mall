@@ -269,6 +269,27 @@ for (const [프레임, 파일] of [['프레임1', 'src/layouts/shop/shop/demo-1/
     }
     const 공용 = 주석제거(읽기('src/components/elements/shop/common.js'));
     t('인쇄: 가로 스크롤 상품줄이 줄바꿈된다', /@media print \{ flex-wrap: wrap; overflow: visible;/.test(공용));
+
+    const 블로그공용 = 주석제거(읽기('src/components/elements/blog/common.js'));
+    t('인쇄: 블로그형 가로 스크롤 상품줄도 줄바꿈된다(프레임4)', /@media print \{ flex-wrap: wrap; overflow: visible;/.test(블로그공용));
+    const 블로그배너 = 주석제거(읽기('src/views/section/blog/HomeBanner.js'));
+    t('인쇄: 블로그형 배너도 첫 장만 + 배경 인쇄 강제(프레임3)',
+        /\.slick-slide:not\(\.slick-cloned\)\[data-index="0"\]/.test(블로그배너) && /BannerImgContent = styled\.div`\s*-webkit-print-color-adjust: exact;\s*print-color-adjust: exact;/.test(블로그배너));
+    for (const side of ['shop', 'blog']) {
+        t(`인쇄: ${side}/HomePost 배경 사진 인쇄 강제`, /print-color-adjust: exact;/.test(주석제거(읽기(`src/views/section/${side}/HomePost.js`))));
+        t(`인쇄: ${side}/HomeVideoSlide 배경 사진 인쇄 강제`, /printColorAdjust: 'exact'/.test(주석제거(읽기(`src/views/section/${side}/HomeVideoSlide.js`))));
+    }
+}
+
+// ── 스크롤 없이 바로 인쇄해도 사진이 빈칸이 아니다 (2026-09-29) ──
+// react-lazy-load-image-component 는 화면에 들어오기 전엔 <img> 대신 빈 자리만 그려, 인쇄에 빈칸으로 찍혔다.
+// next.config.js 의 alias 로 모든 import 를 src/utils/lazy-load-image.js 로 돌려 <img loading="lazy"> 를 바로 그린다.
+{
+    const 설정 = 읽기('next.config.js');
+    t('LazyLoadImage import 가 감싼 파일로 간다(alias)', /'react-lazy-load-image-component\$': path\.resolve\(__dirname, '\.\/src\/utils\/lazy-load-image\.js'\)/.test(설정));
+    const 감쌈 = 주석제거(읽기('src/utils/lazy-load-image.js'));
+    t('감싼 LazyLoadImage 는 바로 그리고 지연은 브라우저에 맡긴다', /loading="lazy" \{\.\.\.props\} visibleByDefault/.test(감쌈)
+        && /from 'react-lazy-load-image-component\/build\/index\.js'/.test(감쌈));
 }
 
 console.log(`\n통과 ${pass} / 실패 ${fail}`);

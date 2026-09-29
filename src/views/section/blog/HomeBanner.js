@@ -9,8 +9,17 @@ import { Button } from '@mui/material'
 import { varFade } from 'src/components/animate'
 const FullWrappers = styled.div`
   width:100%;
+  /* 인쇄·PDF 저장 — 슬라이더(react-slick)는 화면 폭으로 JS 가 슬라이드 위치(transform)를 계산해 둔다.
+     인쇄는 JS 를 다시 돌리지 않아 옛 위치로 밀려 찍힌다. 인쇄에서는 첫 장 한 장만 꽉 차게 둔다(shop/HomeBanner.js 와 같은 처리). */
+  @media print {
+    .slick-track { transform: none !important; width: 100% !important; left: 0 !important; }
+    .slick-slide { display: none !important; }
+    .slick-slide:not(.slick-cloned)[data-index="0"] { display: block !important; width: 100% !important; float: none !important; }
+    .slick-arrow, .slick-dots { display: none !important; }
+  }
 `
 const NextArrowStyle = styled.div`
+  @media print { display: none !important; } /* 인쇄·PDF 에는 넘김 화살표가 필요 없다 */
   position: absolute;
     top: 15vw;
     right: 12px;
@@ -31,6 +40,7 @@ const NextArrowStyle = styled.div`
     }
   `
 const PrevArrowStyle = styled.div`
+  @media print { display: none !important; } /* 인쇄·PDF 에는 넘김 화살표가 필요 없다 */
   position: absolute;
   top: 15vw;
   left: 12px;
@@ -67,6 +77,9 @@ overflow: hidden;
 }
 `
 const BannerImgContent = styled.div`
+/* 인쇄·PDF 저장에도 배너를 싣는다 — 브라우저 기본값(배경 그래픽 끔)은 CSS 배경 이미지를 빼고 인쇄한다(2026-09-29 카드사 심사). */
+-webkit-print-color-adjust: exact;
+print-color-adjust: exact;
 width: 100%;
 height: 100%;
 position: absolute;

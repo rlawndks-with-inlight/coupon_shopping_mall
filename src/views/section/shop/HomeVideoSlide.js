@@ -104,6 +104,9 @@ const HomeVideoSlide = (props) => {
                 backgroundSize: 'cover',
                 backgroundRepeat: 'no-repeat',
                 backgroundPosition: 'center',
+                // 배경 사진을 인쇄·PDF 에도 싣는다(브라우저 기본값은 배경 그래픽을 뺀다).
+                WebkitPrintColorAdjust: 'exact',
+                printColorAdjust: 'exact',
                 display: 'flex',
                 flexDirection: 'column',
                 margin: `0 auto`,

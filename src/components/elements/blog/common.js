@@ -73,6 +73,8 @@ const RailTrack = styled.div`
   scrollbar-width: thin;
   &::-webkit-scrollbar { height: 6px; }
   &::-webkit-scrollbar-thumb { background: #00000022; border-radius: 3px; }
+  /* 인쇄·PDF 에는 가로 스크롤이 없다 — 화면에 걸친 카드만 찍히고 나머지는 빠진다(shop/common.js 와 같은 처리). */
+  @media print { flex-wrap: wrap; overflow: visible; row-gap: 1rem; }
 `
 const RailCard = styled.div`
   flex: 0 0 auto;
@@ -84,6 +86,7 @@ const RailCard = styled.div`
   /* 블로그 Item3/4/5 는 루트에 width:23.5% 를 박아 4열 그리드를 가정한다.
      레일에선 셀이 폭을 정하므로 카드 루트는 셀을 꽉 채워야 한다 — 안 그러면 쪼그라든다. */
   & > * { width: 100% !important; }
+  @media print { width: 31% !important; break-inside: avoid; }
 `
 const RailArrow = styled.button`
   position: absolute;
@@ -104,6 +107,7 @@ const RailArrow = styled.button`
   &.next { right: -6px; }
   /* 모바일은 스와이프로 넘기므로 화살표를 감춘다. */
   @media (max-width: 850px) { display: none; }
+  @media print { display: none; }
 `
 
 export const Seller = props => {

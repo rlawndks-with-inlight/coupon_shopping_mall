@@ -9,6 +9,9 @@ import { formatLang } from 'src/utils/format';
 
 const FullWrappers = styled.div`
   width:100%;
+  /* 배경 사진을 인쇄·PDF 에도 싣는다(브라우저 기본값은 배경 그래픽을 뺀다). */
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
   display:flex;
   flex-wrap: wrap;
   /* 예전 min-height 600/800px 은 배경 이미지·글이 적을 때 거대한 검은 빈 띠가 됐다. 필요한 만큼만 차지하도록 줄인다. */

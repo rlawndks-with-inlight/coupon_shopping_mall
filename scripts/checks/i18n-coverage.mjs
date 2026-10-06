@@ -26,6 +26,7 @@ const 언어목록 = [...읽기('src/locales/config-lang.js').matchAll(/value: '
 t('언어 목록을 읽었다(ko·en 포함 4개 이상)', 언어목록.length >= 4 && 언어목록.includes('ko') && 언어목록.includes('en'));
 const i18n = 읽기('src/locales/i18n.js');
 t("사전에 없는 문구는 한국어 원문으로 대체한다(fallbackLng: 'ko')", /^\s*fallbackLng: 'ko',/m.test(i18n));
+t('페이지 언어 표시(<html lang>)를 고른 언어로 맞춘다', /i18n\.on\('languageChanged'.*documentElement\.lang/.test(i18n) && /'cn' \? 'zh'/.test(i18n));
 t('사전을 부르는 곳(i18n.js)이 언어 목록의 사전을 전부 부른다',
   언어목록.every((l) => new RegExp(`from '\\./langs/${l}'`).test(i18n)));
 // 안 쓰는 사전이 남아 있으면 누락을 셀 때 섞여 들어가 없는 문제를 보고하게 된다(2026-09-11 에 실제로 그랬다).

@@ -45,4 +45,17 @@ i18n
     },
   });
 
+// 페이지 언어 표시(<html lang>)를 지금 고른 언어로 맞춘다.
+// 없으면 브라우저(특히 휴대폰 크롬·삼성 인터넷)가 글자를 보고 언어를 추측해 엉뚱한 자동번역을 제안하고,
+// 손님이 그 번역을 켠 채 사이트 언어를 바꾸면 두 번역이 겹쳐 글자가 섞여 보인다(2026-10-06 점검).
+// 사전 이름 cn 은 표준 언어 코드가 아니라 zh 로 바꿔 적는다.
+const toHtmlLang = (l) => {
+  const base = String(l || 'ko').split('-')[0];
+  return base === 'cn' ? 'zh' : base;
+};
+if (typeof document !== 'undefined') {
+  document.documentElement.lang = toHtmlLang(i18n.language);
+  i18n.on('languageChanged', (l) => { document.documentElement.lang = toHtmlLang(l); });
+}
+
 export default i18n;

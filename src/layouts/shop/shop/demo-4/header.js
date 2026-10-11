@@ -1,5 +1,4 @@
-import Logo from "src/components/logo/Logo"
-import StorefrontPopups from 'src/components/elements/shop/StorefrontPopups';
+import Logo from "src/components/logo/Logo"import StorefrontPopups from 'src/components/elements/shop/StorefrontPopups';
 import styled from "styled-components"
 import { IconButton, TextField, InputAdornment, Drawer, Badge, Button, Typography, Chip } from "@mui/material"
 import { forwardRef, useEffect, useRef, useState } from "react"
@@ -204,7 +203,7 @@ const Header = () => {
     const router = useRouter();
     const theme = useTheme();
     const { translate } = useLocales();
-    const { themeMode, onToggleMode, themeCategoryList, themeDnsData, themePopupList, themePostCategoryList, onChangePopupList, themeWishData, themeCartData, onChangeCartData, onChangeWishData, themeSellerList } = useSettingsContext();
+    const { themeMode, onToggleMode, themeCategoryList, themeDnsData, themePopupList, themePostCategoryList, onChangePopupList, themeWishData, themeCartData, onChangeCartData, onChangeWishData, themeSellerList, themePropertyList } = useSettingsContext();
   // logoSrc() 는 안에서 useSettingsContext() 를 쓴다 - 즉 훅이다.
   // 아래 JSX 의 loading 분기 안에서 부르면 첫 렌더에는 안 불리고 그다음 렌더에만 불려
   // 훅 순서가 바뀐다(React: change in the order of Hooks). 여기서 한 번만 부른다.
@@ -228,7 +227,34 @@ const Header = () => {
     const [loading, setLoading] = useState(true);
     const [openAllCategory, setOpenAllCategory] = useState("")
     const [langChipSelected, setLangChipSelected] = useState(0)
-    const { sort, categoryGroup } = CategorySorter(themeCategoryList)
+    // thegrazia(74) 셀러몰의 'ALL BRAND' 메뉴. 예전엔 카테고리 '브랜드' 그룹을 펼쳐 보여줬는데
+    // 2026-08-07 정규화로 브랜드가 속성이 되면서 그 그룹이 없어져 메뉴가 사라졌다.
+    // 브랜드 속성을 같은 모양의 그룹으로 만들어 끼운다 — 아래 메뉴·정렬(ABC/가나다) 코드는 그대로 쓴다.
+    // 영문명은 서버(shop.controller)가 옛 브랜드 카테고리에서 되찾아 property_en_name 으로 준다.
+    const brandProps = Number(themeDnsData?.id) == 74
+        ? ((themePropertyList ?? []).find((g) => g?.property_group_name === '브랜드')?.product_properties ?? [])
+        : [];
+    const headerCategoryGroups = brandProps.length > 0
+        ? [
+            themeCategoryList?.[0] ?? { id: 0, category_group_name: '카테고리', product_categories: [] },
+            {
+                id: 'brand',
+                category_group_name: '브랜드',
+                sort_type: 1,
+                product_categories: brandProps.map((p) => ({
+                    id: p?.id,
+                    category_name: p?.property_name,
+                    category_en_name: p?.property_en_name ?? p?.property_name,
+                    is_brand_property: 1,
+                })),
+            },
+        ]
+        : themeCategoryList;
+    // 브랜드 속성으로 만든 항목은 브랜드 필터(property_ids1)로, 나머지는 예전처럼 카테고리로.
+    const brandMenuHref = (child) => child?.is_brand_property
+        ? `/shop/items?property_ids1=${child?.id}`
+        : `/shop/items?category_id=${child?.id}`;
+    const { sort, categoryGroup } = CategorySorter(headerCategoryGroups)
     const [textChipSelected, setTextChipSelected] = useState('A')
 
     const allCategoryRef = useRef([]);
@@ -306,7 +332,7 @@ const Header = () => {
     }
     const handleOutsideClick = (e) => {
         let is_contain = false;
-        for (var i = 0; i < themeCategoryList.length; i++) {
+        for (var i = 0; i < (headerCategoryGroups ?? []).length; i++) { // 브랜드 그룹(74)까지 — 그 안을 누르면 닫히지 않게
             if (allCategoryRef.current[i] && allCategoryRef.current[i].contains(e.target)) {
                 is_contain = true;
             }
@@ -398,7 +424,7 @@ const Header = () => {
 
     useEffect(() => {
         sort(LANGCODE.ENG)
-    }, [])
+    }, [brandProps.length])
 
     const alphabetList = [
         'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N',
@@ -888,7 +914,7 @@ const Header = () => {
                                 }}>
                                 <CategoryContainer>
                                     <NoneShowMobile style={{ fontSize: '90%', fontWeight: 'bold' }}>
-                                        {themeCategoryList.map((group, index) => {
+                                        {(headerCategoryGroups ?? []).map((group, index) => {
                                             if (group?.category_group_name == '브랜드') {
                                                 return <div ref={(element) => {
                                                     allCategoryRef.current[index] = element;
@@ -1009,7 +1035,7 @@ const Header = () => {
                                                                                                 {
                                                                                                     group.childs.map((child) => {
                                                                                                         return <>
-                                                                                                            <Link href={`/shop/items?category_id=${child?.id}`} passHref>
+                                                                                                            <Link href={brandMenuHref(child)} passHref>
                                                                                                                 <Chip
                                                                                                                     label={langChipSelected == 0 ? child?.category_en_name : formatLang(child, 'category_name')}
                                                                                                                     sx={{
@@ -1038,7 +1064,7 @@ const Header = () => {
                                                                                                 {
                                                                                                     group.childs.map((child) => {
                                                                                                         return <>
-                                                                                                            <Link href={`/shop/items?category_id=${child?.id}`} passHref>
+                                                                                                            <Link href={brandMenuHref(child)} passHref>
                                                                                                                 <Chip
                                                                                                                     label={langChipSelected == 0 ? child?.category_en_name : formatLang(child, 'category_name')}
                                                                                                                     sx={{

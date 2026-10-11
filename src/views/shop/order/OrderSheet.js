@@ -98,6 +98,8 @@ export default function OrderSheet({ router }) {
   const isKR = addrMode === 'KR';
   const { user } = useAuthContext();
   const { themeCartData, onChangeCartData, themeDnsData } = useSettingsContext();
+  // thegrazia(74)만 개인통관고유부호를 주문서에서 받는다(해외직구).
+  const 통관부호필요 = Number(themeDnsData?.id) == 74;
   const setting_obj = themeDnsData?.setting_obj || {};
   const { max_use_point = 0, point_rate = 0, use_point_min_price = 0, point_policy_type = 'instant', point_use_min = 0 } = setting_obj;
 
@@ -162,6 +164,8 @@ export default function OrderSheet({ router }) {
     password: '',
     use_point: 0,
   });
+  // 주문서에 따로 적은 값이 우선, 없으면 회원정보의 번호.
+  const 통관부호값 = String(payData?.unipass ?? user?.unipass ?? '');
   // 비회원 주문 비밀번호 확인 칸. **payData 밖에 둔다** —
   // payData 는 서버로 나가고 초안(order-draft)으로도 저장되는 그릇이라,
   // 확인용 값까지 거기 담으면 안 나가야 할 곳으로 따라간다. 화면에서만 쓴다.
@@ -486,6 +490,12 @@ export default function OrderSheet({ router }) {
     // 해외 연락처는 국가번호(+81 …)가 붙어 국내 자릿수 규칙에 안 맞는다 — 국내일 때만 형식을 본다.
     if (isKR && payData.addr_phone && !isValidPhoneNumber(payData.addr_phone)) {
       toast.error(translate("받는 분 연락처를 정확히 입력해 주세요."));
+      return false;
+    }
+    // thegrazia(74) 해외직구 — 개인통관고유부호가 있어야 통관된다. 서버(pay.ready)도 같은 형식으로 검사하고
+    // 회원정보에 저장한다. 회원정보에 이미 있으면 그 값이 채워져 있다.
+    if (통관부호필요 && !/^P\d{12}$/.test(통관부호값)) {
+      toast.error(translate("개인통관고유부호를 정확히 입력해 주세요. (P로 시작하는 13자리)"));
       return false;
     }
     // 주문자 이름은 주문 확인·배송·CS 의 기준값이다. 비회원은 이 값이 유일한 식별 수단인데
@@ -1022,6 +1032,12 @@ export default function OrderSheet({ router }) {
                           helperText={translate("계정에 등록된 번호가 없어 직접 입력이 필요합니다.")}
                           onChange={(e) => setPayData({ ...payData, buyer_phone: sanitizePhoneInput(e.target.value) })} />
                       )}
+                      {통관부호필요 &&
+                        <TextField fullWidth size="small" label={translate('개인통관고유부호')} value={통관부호값}
+                          placeholder="P123456789012" inputProps={{ maxLength: 13 }}
+                          error={!!통관부호값 && !/^P\d{12}$/.test(통관부호값)}
+                          helperText={translate("해외직구 통관에 필요합니다. 입력한 번호는 회원정보에 저장됩니다.")}
+                          onChange={(e) => setPayData({ ...payData, unipass: e.target.value.replace(/\s/g, '').toUpperCase() })} />}
                     </Stack>
                   ) : (
                     <Stack spacing={2}>

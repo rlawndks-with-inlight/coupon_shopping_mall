@@ -111,6 +111,7 @@ const ItemsDemo = (props) => {
     router.query.search,
     router.query.keyword,
     router.query.property_ids0,
+    router.query.property_ids1,
     router.query.page,
     router.query.page_size,
     router.query.not_show_select_menu,
@@ -262,9 +263,28 @@ const ItemsDemo = (props) => {
     };
   }, [loading, router.query])
 
+  // thegrazia(74) 브랜드 필터. 예전엔 카테고리 '브랜드' 그룹(themeCategoryList[1])을 칩으로 깔았는데
+  // 2026-08-07 정규화로 브랜드가 상품 속성('브랜드' 속성 그룹)이 되면서 필터가 통째로 사라졌다.
+  // 성별 칩이 property_ids0 을 쓰므로 브랜드는 property_ids1 로 따로 건다(둘 다 걸면 AND).
+  const brandGroup = Number(themeDnsData?.id) == 74
+    ? (themePropertyList ?? []).find((g) => g?.property_group_name === '브랜드')
+    : null;
+  const selectedBrand = _.find(brandGroup?.product_properties ?? [], { id: parseInt(router.query?.property_ids1) });
+  const onClickBrand = (brand) => {
+    const parsedUrl = queryString.parseUrl(router.asPath).query;
+    if (parsedUrl[`property_ids1`] == brand?.id) delete parsedUrl[`property_ids1`];
+    else parsedUrl[`property_ids1`] = brand?.id;
+    delete parsedUrl[`page`];
+    router.push(queryString.stringifyUrl({ url: queryString.parseUrl(router.asPath).url, query: parsedUrl }));
+  };
+
   return (
     <>
       <ContentWrapper width={'90%'}>
+        {selectedBrand && !router.query?.property_ids0 && !router.query?.category_id &&
+          <Title style={{ marginTop: '100px', fontFamily: 'Playfair Display', color: '#000', fontWeight: 'normal', fontSize: '90px', marginLeft: '0' }}>
+            {selectedBrand?.property_name}
+          </Title>}
 
         {router.query?.property_ids0 &&
           <>
@@ -319,6 +339,30 @@ const ItemsDemo = (props) => {
               }
             </Row>
             <>
+              {(brandGroup?.product_properties ?? []).length > 0 &&
+                <Row>
+                  <BrandFilter style={{ fontFamily: 'Playfair Display', overflowY: 'auto', background: `${themeMode == 'dark' ? '#222' : '#FEF8F4'}`, width: '100%' }}>
+                    <Row style={{ flexWrap: 'wrap', display: 'flex', alignItems: 'center', borderBottom: '1px solid #999999' }}>
+                      <div style={{ margin: '0.5rem', fontSize: '22px', fontWeight: 'bold' }}>Brand</div>
+                      {brandGroup.product_properties.map((brand) => (
+                        <Chip
+                          key={`brand_${brand?.id}`}
+                          label={brand?.property_name}
+                          sx={{
+                            margin: '0.5rem 0rem 0.5rem 0',
+                            fontSize: '16px',
+                            cursor: 'pointer',
+                            background: `${selectedBrand?.id == brand?.id ? (themeMode == 'dark' ? '#999999' : 'white') : 'transparent'}`,
+                            '&:hover': {
+                              background: `${themeMode == 'dark' ? '#999999' : 'white'}`,
+                            },
+                          }}
+                          onClick={() => onClickBrand(brand)}
+                        />
+                      ))}
+                    </Row>
+                  </BrandFilter>
+                </Row>}
               <Row>
                 <BrandFilter style={{ fontFamily: 'Playfair Display', overflowY: 'auto', background: `${themeMode == 'dark' ? '#222' : '#FEF8F4'}`, width: '100%' }}>
                   <Row>

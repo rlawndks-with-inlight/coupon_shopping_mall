@@ -7,6 +7,7 @@ import { isDemoHost } from "src/components/main-site/frameList";
 import { useLocales } from "src/locales";
 import PolicyBody from "src/components/elements/shop/PolicyBody";
 import { TERMS, PRIVACY, GUIDE, CANCEL } from "src/data/policy-content";
+import { graziaPrivacy, isGraziaPolicy } from "src/data/policy-grazia";
 
 // 약관·개인정보처리방침·이용안내 화면.
 //
@@ -85,7 +86,8 @@ const Policy = (props) => {
     phone: themeDnsData?.phone_num || '',
   };
 
-  const blocks = current === POLICY_TYPE.PRIVACY ? PRIVACY
+  // thegrazia(74)는 개인정보처리방침을 보정해서 쓴다(통관부호 수집·관세청 제공 고지, 닉네임·보안질문 제외 — policy-grazia.js).
+  const blocks = current === POLICY_TYPE.PRIVACY ? (isGraziaPolicy(themeDnsData) ? graziaPrivacy(PRIVACY) : PRIVACY)
     : current === POLICY_TYPE.GUIDE ? GUIDE
       : current === POLICY_TYPE.CANCEL ? CANCEL
         : current === POLICY_TYPE.TERMS ? TERMS

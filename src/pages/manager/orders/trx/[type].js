@@ -861,6 +861,18 @@ const TrxList = () => {
         trxId={cancelTrxId}
         onClose={() => setCancelTrxId(0)}
         onDone={() => onChangePage(searchObj)}
+        // thegrazia(74) 만 연다 — 다른 몰은 옛 전체취소가 이미 막혀 있던 상태 그대로 둔다(2026-10-10 범위 결정).
+        onFullCancel={themeDnsData?.id != 74 ? undefined : () => {
+          // 부분취소 미지원 결제수단 — 기존 전체취소(onPayCancel) 흐름으로 넘긴다.
+          const row = (data?.content ?? []).find((r) => r?.id == cancelTrxId);
+          setCancelTrxId(0);
+          if (!row) return;
+          setModal({
+            func: () => { onPayCancel(row) },
+            icon: 'material-symbols:cancel-outline',
+            title: '결제를 전체 취소하시겠습니까? 취소한 결제는 되돌릴 수 없습니다.'
+          })
+        }}
       />
       <TrxHistoryDialog open={!!historyTrxId} trxId={historyTrxId} onClose={() => setHistoryTrxId(0)} />
     </>

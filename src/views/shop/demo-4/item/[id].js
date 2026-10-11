@@ -11,7 +11,7 @@ import { apiManager, apiShop } from 'src/utils/api';
 import { styled as muiStyle } from '@mui/material'
 import Head from 'next/head';
 import { Row } from 'src/components/elements/styled-components';
-import { commarNumber, isPurchasable, commarNumberWithUnit } from 'src/utils/function';
+import { commarNumber, isPurchasable, commarNumberWithUnit, 본사결제불가, 본사결제불가안내 } from 'src/utils/function';
 import { Icon } from '@iconify/react';
 import { insertCartDataUtil, insertWishDataUtil, selectItemOptionUtil, 배송비표시, 무료배송안내 } from 'src/utils/shop-util';
 import toast from 'react-hot-toast';
@@ -588,10 +588,12 @@ const ItemDemo = (props) => {
                               (상세에서 본 금액과 결제 직전 금액이 달라 보인다). */}
                           {/* 이 프레임은 표 형태라 라벨('배송비')을 ItemCharacter 가 그린다.
                               값 쪽 문구만 ShippingLine 에서 가져온다 — 안쪽 여백은 표에 맞춰 0 으로. */}
-                          <ItemCharacter
-                            key_name={'배송비'}
-                            value={<ShippingLine item={product} showLabel={false} />}
-                          />
+                          {/* thegrazia(74) 셀러몰은 배송비 줄을 쓰지 않는다(2026-10-10 결정 — 예전 화면 유지) */}
+                          {Number(themeDnsData?.id) != 74 &&
+                            <ItemCharacter
+                              key_name={'배송비'}
+                              value={<ShippingLine item={product} showLabel={false} />}
+                            />}
                         </div>
                         {/* 배송 안내(가맹점별·SHOPGO 하위 전용) — 배송비 바로 아래. 둘은 한 묶음이라 떼어 놓지 않는다. */}
                         {/* 이 프레임은 왼쪽 라벨 칸을 직접 그리므로 들여쓰기는 프레임이 맡는다. */}
@@ -646,23 +648,23 @@ const ItemDemo = (props) => {
                             <Icon icon={'mdi:check-bold'} />
                           </>}*/
                           onClick={() => {
-                            // 해외직구 전용 로직(로그인 강제 + 개인통관고유부호 검증)을 걷어내고
-                            // 다른 데모와 동일하게 비회원 바로구매를 허용한다.
-                            // 원래 shop:4는 unipass 필수 해외직구 데모였으나, 지금은 일반 가맹점이 쓰는
-                            // 프레임3이라 그 제약이 그대로 남아 비회원 구매가 막혀 있었다.
-                            /* 되살릴 경우 아래 블록을 복구할 것 (브랜드 74 = 해외직구 본사)
-                            if (themeDnsData?.id == 74 && !themeDnsData?.seller_id) {
-                              toast.error('본사페이지에서는 결제가 진행되지 않습니다.')
-                              return;
-                            }
-                            if (user) {
-                              if (user?.unipass) { ... } else {
-                                toast.error('개인통관고유부호가 존재하지 않습니다. 관리자에 문의하세요.')
+                            // 다른 브랜드는 비회원 바로구매를 허용한다(프레임3 공용).
+                            // thegrazia(74) 셀러몰만 예전 해외직구 규칙을 지킨다 — 본사 결제 불가 ·
+                            // 로그인 · 개인통관고유부호(2026-10-10 복구).
+                            if (Number(themeDnsData?.id) == 74) {
+                              if (본사결제불가(themeDnsData)) {
+                                toast.error(본사결제불가안내)
+                                return;
                               }
-                            } else {
-                              toast.error('로그인을 해주세요.')
+                              if (!user) {
+                                toast.error('로그인을 해주세요.')
+                                return;
+                              }
+                              if (!user?.unipass) {
+                                toast.error('개인통관고유부호가 존재하지 않습니다. 관리자에 문의하세요.')
+                                return;
+                              }
                             }
-                            */
                             if (needOptionSelect()) {
                               setCharacterSelect(true);
                               setBuyOrCart('buy');

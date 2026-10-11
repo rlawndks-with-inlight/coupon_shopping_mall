@@ -116,6 +116,7 @@ const ItemsDemo = (props) => {
     router.query.search,
     router.query.keyword,
     router.query.property_ids0,
+    router.query.property_ids1,
     router.query.page,
     router.query.page_size,
     router.query.not_show_select_menu,
@@ -274,6 +275,14 @@ const ItemsDemo = (props) => {
     <>
       <ContentWrapper width={'90%'}>
 
+        {/* thegrazia(74) 셀러몰 ALL BRAND 메뉴(property_ids1)로 들어왔을 때 브랜드명을 제목으로 */}
+        {router.query?.property_ids1 && !router.query?.property_ids0 && !router.query?.category_id &&
+          <Title style={{ marginTop: '100px', fontFamily: 'Playfair Display', color: themeMode == 'dark' ? '#fff' : '#000', fontWeight: 'normal', fontSize: '90px', marginLeft: '0' }}>
+            {(() => {
+              const brand = _.find((themePropertyList ?? []).find((g) => g?.property_group_name === '브랜드')?.product_properties ?? [], { id: parseInt(router.query?.property_ids1) });
+              return brand?.property_en_name || brand?.property_name || '';
+            })()}
+          </Title>}
         {router.query?.property_ids0 &&
           <>
             <Title style={{ marginTop: '100px', fontFamily: 'Playfair Display', color: themeMode == 'dark' ? '#fff' : '#000', fontWeight: 'normal', fontSize: '90px', marginLeft: '0' }}>

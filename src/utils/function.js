@@ -44,6 +44,10 @@ export const isPurchasable = (status) => getProductStatus(status).color === 'inf
 // (manager/products/[edit_category]/[id].js). 다른 가맹점은 값이 늘 0 이라
 // 새로 만든 상품에도 검은 'USED' 칩이 붙었다 — 새 상품을 파는 쇼핑몰에서 특히 나쁘다.
 export const isUsedGoodsBrand = (dns) => [5, 74].includes(Number(dns?.id));
+// thegrazia(74)는 셀러몰에서만 판다 — 본사 사이트(셀러몰이 아닌 호스트)에서는 결제하지 않는다.
+// 서버(pay.ready)도 같은 규칙으로 거절한다. 화면은 주문서를 다 쓰기 전에 미리 알려 주는 용도다.
+export const 본사결제불가 = (dns) => Number(dns?.id) == 74 && !(Number(dns?.seller_id) > 0);
+export const 본사결제불가안내 = '본사페이지에서는 결제가 진행되지 않습니다.';
 
 // 로그인 후 돌아갈 경로를 고른다.
 //

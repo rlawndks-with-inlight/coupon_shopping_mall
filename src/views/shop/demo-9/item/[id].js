@@ -9,7 +9,7 @@ import { apiManager, apiShop } from 'src/utils/api';
 import { styled as muiStyle } from '@mui/material'
 import Head from 'next/head';
 import { Row } from 'src/components/elements/styled-components';
-import { commarNumber, getProductStatus, commarNumberWithUnit } from 'src/utils/function';
+import { commarNumber, getProductStatus, commarNumberWithUnit, 본사결제불가, 본사결제불가안내 } from 'src/utils/function';
 import ShippingLine from 'src/components/elements/shop/ShippingLine';
 import DeliveryNotice from 'src/components/elements/shop/DeliveryNotice';
 import { Icon } from '@iconify/react';
@@ -359,7 +359,9 @@ const ItemDemo = (props) => {
                         <ItemName style={{ whiteSpace: 'wrap', marginTop: '1rem', fontSize: '22px', fontWeight: 'bold', letterSpacing: '-1px' }}>
                           {product?.product_name}
                         </ItemName>
-                        <Chip size="small" sx={{ mt: 1, alignSelf: 'flex-start', fontWeight: 700 }} label={getProductStatus(product?.status).text} color={getProductStatus(product?.status).color || 'default'} variant="soft" />
+                        {/* thegrazia(74)는 상태 칩·배송비 줄을 쓰지 않는다(2026-10-10 결정 — 예전 화면 유지) */}
+                        {Number(themeDnsData?.id) != 74 &&
+                          <Chip size="small" sx={{ mt: 1, alignSelf: 'flex-start', fontWeight: 700 }} label={getProductStatus(product?.status).text} color={getProductStatus(product?.status).color || 'default'} variant="soft" />}
                         <ItemCharacter
                           key_name={'판매가'}
                           value={<>
@@ -370,10 +372,11 @@ const ItemDemo = (props) => {
                         {/* 배송비. 이 프레임엔 표기가 아예 없어서 손님이 장바구니에 가서야 알았다.
                             ⚠ 아래 상품코드·속성·특성 행들은 전부 블록주석 안이다 — 여기(주석 밖)에 둔다.
                             라벨은 ItemCharacter 가 그리므로 showLabel 은 끈다. */}
-                        <ItemCharacter
-                          key_name={'배송비'}
-                          value={<ShippingLine item={product} showLabel={false} />}
-                        />
+                        {Number(themeDnsData?.id) != 74 &&
+                          <ItemCharacter
+                            key_name={'배송비'}
+                            value={<ShippingLine item={product} showLabel={false} />}
+                          />}
                         {/* 배송 안내(가맹점별·SHOPGO 하위 전용) — 배송비 바로 아래. 둘은 한 묶음이라 떼어 놓지 않는다. */}
                         {/* 이 프레임은 왼쪽 라벨 칸을 직접 그리므로 들여쓰기는 프레임이 맡는다. */}
                         <DeliveryNotice indent={0} />
@@ -518,6 +521,11 @@ const ItemDemo = (props) => {
                             }
                           }}
                           onClick={() => {
+                            // thegrazia(74) 본사 사이트에서는 결제하지 않는다 — 셀러몰에서만 판다.
+                            if (본사결제불가(themeDnsData)) {
+                              toast.error(본사결제불가안내)
+                              return;
+                            }
                             // 비회원도 바로구매 허용(주문서에서 비회원 주문비밀번호로 진행)
                             if (product?.characters?.length > 0) {
                               setCharacterSelect(true);
@@ -528,6 +536,9 @@ const ItemDemo = (props) => {
                             }
                           }}
                         >구매하기</Button>
+                        {/* 찜 기능을 끈 동안(src/data/wish.js)은 칸 자체를 그리지 않는다 — 하트를 숨기고 칸만 남겨
+                            구매하기 옆에 빈 네모가 떠 있었다(누르면 찜에 담기고 없는 찜목록으로 안내했다). */}
+                        {찜기능사용 &&
                         <Box
                           onClick={async () => {
                             if (user) {
@@ -569,7 +580,7 @@ const ItemDemo = (props) => {
                                 color: '#EF6253',
                               }}
                             />}
-                        </Box>
+                        </Box>}
                       </Row>
                     </Grid>
                   </Grid>

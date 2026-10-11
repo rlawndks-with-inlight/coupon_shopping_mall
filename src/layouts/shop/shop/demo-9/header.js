@@ -161,12 +161,13 @@ const Header = () => {
     const router = useRouter();
     const theme = useTheme();
     const { translate, currentLang } = useLocales();
-    const { themeMode, onToggleMode, themeCategoryList, themeDnsData, themePopupList, themeNoneTodayPopupList, onChangeNoneTodayPopupList, themePostCategoryList, onChangePopupList, themeWishData, themeCartData, onChangeCartData, onChangeWishData, themeSellerList } = useSettingsContext();
+    const { themeMode, onToggleMode, themeCategoryList, themeDnsData, themePopupList, themeNoneTodayPopupList, onChangeNoneTodayPopupList, themePostCategoryList, onChangePopupList, themeWishData, themeCartData, onChangeCartData, onChangeWishData, themeSellerList, themePropertyList } = useSettingsContext();
   // logoSrc() 는 안에서 useSettingsContext() 를 쓴다 - 즉 훅이다.
   // 아래 JSX 의 loading 분기 안에서 부르면 첫 렌더에는 안 불리고 그다음 렌더에만 불려
   // 훅 순서가 바뀐다(React: change in the order of Hooks). 여기서 한 번만 부른다.
   const 로고주소 = logoSrc();
     const headerCategories = (themeCategoryList ?? []).flatMap((g) => g?.product_categories ?? []);
+    const brandMenu = (themePropertyList ?? []).find((g) => g?.property_group_name === '브랜드')?.product_properties ?? [];
     const { user, logout } = useAuthContext();
     const headerWrappersRef = useRef();
     const [headerHeight, setHeaderHeight] = useState(130);
@@ -678,6 +679,32 @@ const Header = () => {
                             </TreeView>
                         </>
                     ))}
+                    {/* thegrazia(74) 브랜드 메뉴. 예전엔 카테고리 '브랜드' 그룹이 위 map 에서 함께 그려졌는데
+                        2026-08-07 정규화로 브랜드가 속성이 되면서 메뉴에서 사라졌다. 속성으로 다시 그린다. */}
+                    {
+                        themeDnsData?.id == 74 && (brandMenu ?? []).length > 0 &&
+                        <>
+                            <ColumnMenuTitle>{'브랜드'}</ColumnMenuTitle>
+                            <TreeView
+                                defaultCollapseIcon={<Icon icon={'ic:baseline-minus'} />}
+                                defaultExpandIcon={<Icon icon={'ic:baseline-plus'} />}
+                                defaultEndIcon={<Icon icon={'mdi:dot'} />}>
+                                {brandMenu.map((brand) => (
+                                    <TreeItem key={`brand_${brand?.id}`} nodeId={`brand_${brand?.id}`} label={<div
+                                        style={{
+                                            marginLeft: '0.25rem'
+                                        }}
+                                        onClick={() => {
+                                            router.push(`/shop/items?property_ids1=${brand?.id}`);
+                                            setSideMenuOpen(false);
+                                        }}>{brand?.property_name}</div>}
+                                        style={{ margin: '0.25rem 0' }}
+                                    >
+                                    </TreeItem>
+                                ))}
+                            </TreeView>
+                        </>
+                    }
                     {
                         themeDnsData?.id == 74 &&
                         <>

@@ -90,6 +90,33 @@ const SellerEdit = () => {
   const [brandEdit, setBrandEdit] = useState(false);
 
 
+  // 카테고리 정규화(2026-08-07)를 마친 브랜드는 브랜드가 카테고리가 아니라 '브랜드' 속성이다.
+  // 그 뒤로 themeCategoryList 는 합성 그룹 하나뿐이라 index==1(브랜드 그룹)이 없어
+  // 노출 브랜드를 고르는 칸이 통째로 사라졌다. 이 그룹이 있으면 속성으로 고르게 한다.
+  // 서버(sellers get)는 옛 카테고리 번호로 저장된 값도 속성 번호로 바꿔 내려준다.
+  const brandPropertyGroup = (themePropertyList ?? []).find((g) => g?.property_group_name === '브랜드');
+  const brandPropertyOptions = brandPropertyGroup?.product_properties ?? [];
+  const selectedBrandProperties = String(item?.seller_brand ?? '')
+    .replace(/["\[\]]/g, '').split(',').map((v) => parseInt(v)).filter((v) => v > 0)
+    .map((id) => brandPropertyOptions.find((o) => o?.id == id))
+    .filter(Boolean);
+  const brandPropertyPicker = (
+    <Stack spacing={1}>
+      <Typography variant="subtitle2" sx={{ color: 'text.secondary' }}>노출 브랜드</Typography>
+      <Autocomplete
+        multiple
+        options={brandPropertyOptions}
+        value={selectedBrandProperties}
+        getOptionLabel={(o) => o?.property_name ?? ''}
+        isOptionEqualToValue={(o, v) => o?.id == v?.id}
+        onChange={(e, v) => setItem({ ...item, seller_brand: v.map((o) => o.id).join(',') })}
+        renderInput={(params) => (
+          <TextField {...params} placeholder="브랜드 검색" helperText="비워 두면 전체 브랜드를 노출합니다. 노출 브랜드를 바꾸면 이 셀러에게 등록된 상품이 초기화됩니다." />
+        )}
+      />
+    </Stack>
+  );
+
   const handleSelectCategory = (index, category) => {
     let ids = category.map(cat => cat.id);
     ids = ids.join(',')
@@ -749,11 +776,13 @@ const SellerEdit = () => {
                                   ))}
                                 </>
                               }
+                              {brandPropertyGroup && brandPropertyPicker}
+                              {!brandPropertyGroup &&
                               <Button variant="outlined" style={{ maxWidth: '200px' }} onClick={() => { setBrandEdit(!brandEdit) }}>
                                 노출 브랜드 재설정
-                              </Button>
+                              </Button>}
                               {
-                                brandEdit &&
+                                !brandPropertyGroup && brandEdit &&
                                 <>
                                   {themeCategoryList.map((group, index) => (
                                     <>
@@ -820,6 +849,7 @@ const SellerEdit = () => {
                                   </Stack>
                                 </>
                               ))}
+                              {brandPropertyGroup && brandPropertyPicker}
                             </Stack>
                           </>
                       }

@@ -34,7 +34,11 @@ const 옵션글 = (line) => (Array.isArray(line?.order_groups) ? line.order_grou
     })
     .filter(Boolean).join(', ');
 
-const PartialCancelDialog = ({ open, onClose, trxId, onDone }) => {
+// onFullCancel: 부분취소를 지원하지 않는 결제수단(예: thegrazia 의 핀트리)을 위한 전체 취소 통로.
+//   예전엔 이 경우 '전체 취소만 가능합니다' 라고만 적고 버튼을 꺼 두었는데, 옛 전체취소 버튼은
+//   주석 처리돼 있어 이런 주문은 화면에서 취소할 길이 없었다(2026-10-10 발견).
+//   호출부가 기존 전체취소(pays/cancel) 흐름을 넘겨준다.
+const PartialCancelDialog = ({ open, onClose, trxId, onDone, onFullCancel }) => {
     const [loading, setLoading] = useState(true);
     const [state, setState] = useState(null);
     const [qty, setQty] = useState({});          // { [order_id]: 취소수량 }
@@ -298,7 +302,16 @@ const PartialCancelDialog = ({ open, onClose, trxId, onDone }) => {
                 [전부] 버튼이 실행 버튼 바로 옆이라 잘못 누르기 쉬운데, 이 버튼은 PG 에
                 실제 환불을 걸고 되돌릴 수단이 없다. 한 번 더 보고 누르게 한다. */}
             <DialogActions>
-                {!확인단계 && <>
+                {!확인단계 && !loading && state && !state.partial_supported && onFullCancel && <>
+                    <Button onClick={onClose} disabled={busy}>닫기</Button>
+                    <Button
+                        variant="contained" color="error" onClick={() => onFullCancel()}
+                        disabled={busy || !(state?.cancelable || (state?.cancelable_after_confirm && 회수확인))}
+                    >
+                        {회수잠금 ? '회수 확인 후 취소할 수 있습니다' : '전체 취소하기'}
+                    </Button>
+                </>}
+                {!확인단계 && !(!loading && state && !state.partial_supported && onFullCancel) && <>
                     <Button onClick={onClose} disabled={busy}>닫기</Button>
                     <Button
                         variant="contained" color="error" onClick={() => set확인단계(true)}

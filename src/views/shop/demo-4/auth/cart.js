@@ -1,5 +1,5 @@
 import { Box, Button, Card, CardContent, CardHeader, CircularProgress, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, FormControlLabel, Grid, Paper, Radio, RadioGroup, Stack, TextField, Typography } from '@mui/material';
-import { makeOrdNum } from 'src/utils/function';
+import { makeOrdNum, 본사결제불가, 본사결제불가안내 } from 'src/utils/function';
 import { useEffect, useMemo, useState } from 'react';
 import { Row, Title, postCodeStyle } from 'src/components/elements/styled-components';
 import { CheckoutCartProductList, CheckoutSteps, CheckoutSummary } from 'src/views/@dashboard/e-commerce/checkout';
@@ -932,6 +932,11 @@ const CartDemo = (props) => {
                   // 늘 undefined → NaN 이었고, `NaN <= 0` 은 false 라 **한 번도 비활성이 된 적이 없다**.
                   disabled={products.length === 0 || _.sum(_.map(products, (item) => (parseInt(item?.order_count) || 0) * (parseFloat(item?.product_sale_price) || 0))) <= 0}
                   onClick={() => {
+                    // thegrazia(74) 본사 사이트에서는 결제하지 않는다(서버 pay.ready 도 거절).
+                    if (본사결제불가(themeDnsData)) {
+                      toast.error(본사결제불가안내);
+                      return;
+                    }
                     router.push('/shop/auth/order');
                   }}
                 >

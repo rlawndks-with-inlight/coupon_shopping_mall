@@ -78,7 +78,7 @@ export const Item9 = (props) => {
 
     const { currentLang, translate } = useLocales();
     const { user } = useAuthContext();
-    const { themeWishData, onChangeWishData } = useSettingsContext();
+    const { themeWishData, onChangeWishData, themeDnsData } = useSettingsContext();
     const { item, router, theme_css, seller } = props;
     const [itemThemeCss, setItemThemeCss] = useState(itemThemeCssDefaultSetting);
     useEffect(() => {
@@ -106,7 +106,8 @@ export const Item9 = (props) => {
             }}
             >
                 <ItemImgContainer>
-                    <ProductStatusBadge status={item?.status} />
+                    {/* thegrazia(74)는 상태 배지를 쓰지 않는다(2026-10-10 결정 — 예전 화면 유지) */}
+                    {Number(themeDnsData?.id) != 74 && <ProductStatusBadge status={item?.status} />}
                     <ItemImg src={item?.product_img} onClick={() => {
                         if (item?.id) {
                             router.push(`/shop/item/${item?.id}${seller ? `?seller_id=${seller?.id}` : ''}`)

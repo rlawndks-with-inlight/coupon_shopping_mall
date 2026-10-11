@@ -305,7 +305,9 @@ export const navConfig = () => {
             // 개별 특성 그룹 메뉴('원산지 관리' 같은 것)도 같은 조건으로 묶는다.
             // 지난번에 '특성 그룹 관리' 만 50 으로 올렸더니, 정작 그룹 이름들은 40 에게 그대로 보였다.
             // 들어갈 입구를 하나만 막으면 옆문이 열려 있는 셈이다.
-            ...(isUseProductPropertyGroup() ? [...propertyGroupList] : []),
+            // thegrazia(74)는 브랜드·성별·코너를 속성 그룹으로 운영한다(2026-08-07 정규화로 브랜드도 속성이 됐다).
+            // 그 관리자(40)에게는 개별 그룹 메뉴('브랜드 관리' 등)를 그대로 보여준다 — 새 브랜드를 직접 추가해야 한다.
+            ...((isUseProductPropertyGroup() || (Number(themeDnsData?.id) == 74 && Number(user?.level) >= 40)) ? [...propertyGroupList] : []),
             //{ title: '상품관리', path: PATH_MANAGER.products.list },
             //{ title: '상품문의', path: PATH_MANAGER.products.faq },
             ...(themeDnsData?.setting_obj?.is_use_consignment == 1 ? [

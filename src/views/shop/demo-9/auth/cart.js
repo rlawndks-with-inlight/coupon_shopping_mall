@@ -1,5 +1,5 @@
 import { Box, Button, Card, CardContent, CardHeader, CircularProgress, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, FormControlLabel, Grid, Paper, Radio, RadioGroup, Stack, TextField, Typography } from '@mui/material';
-import { makeOrdNum } from 'src/utils/function';
+import { makeOrdNum, 본사결제불가, 본사결제불가안내 } from 'src/utils/function';
 import { useEffect, useState } from 'react';
 import { Row, Title, postCodeStyle } from 'src/components/elements/styled-components';
 import { CheckoutCartProductList, CheckoutSteps, CheckoutSummary } from 'src/views/@dashboard/e-commerce/checkout';
@@ -876,6 +876,11 @@ const CartDemo = (props) => {
                   variant="contained"
                   disabled={products.length <= 0}
                   onClick={() => {
+                    // thegrazia(74) 본사 사이트에서는 결제하지 않는다(서버 pay.ready 도 거절).
+                    if (본사결제불가(themeDnsData)) {
+                      toast.error(본사결제불가안내);
+                      return;
+                    }
                     router.push('/shop/auth/order');
                   }}
                 >

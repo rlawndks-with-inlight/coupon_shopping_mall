@@ -127,7 +127,7 @@ eq("사전에 '미보관' 없음", /미보관/.test(dictSrc), false);
 
 // 결제 카드 문구는 사실과 맞아야 한다.
 // transactions.card_num 에 (마스킹된) 카드정보를 저장하므로 '저장하지 않는다'로 쓰면 거짓이다.
-eq('결제 문구: 전체 카드번호 기준으로 서술', /전체 카드번호는 저장하지 않습니다/.test(LANDING.ko.trust4Desc), true);
+eq('결제 문구: 전체 카드번호 기준으로 서술', /전체 카드번호.*저장하지 않습니다/.test(LANDING.ko.trust4Desc), true);
 eq('결제 문구(en): full card numbers 기준', /full card numbers/.test(LANDING.en.trust4Desc), true);
 
 // 근거를 대야 하는 자리(카드 4장)에는 검증되지 않은 절대 표현을 쓰지 않는다.

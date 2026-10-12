@@ -175,7 +175,7 @@ const LoginDemo = (props) => {
         <Divider sx={{ my: 5 }}><Typography variant='caption' sx={{ color: 'text.secondary', px: 1 }}>{translate('아직 회원이 아니신가요?')}</Typography></Divider>
 
         <Col style={{ alignItems: 'center', textAlign: 'center' }}>
-          <Typography variant='body2' sx={{ color: 'text.secondary', whiteSpace: 'pre', lineHeight: 1.7, mb: 2.5 }}>
+          <Typography variant='body2' sx={{ color: 'text.secondary', whiteSpace: 'pre-line', lineHeight: 1.7, mb: 2.5 }}>
             {translate('지금 회원가입을 하시면\n 다양하고 특별한 혜택이 준비되어 있습니다.')}
           </Typography>
           <Button

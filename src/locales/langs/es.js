@@ -637,6 +637,7 @@ const es = {
     "인기있는 셀러 ❤️": "Vendedores populares ❤️",
     "🛍️ 대표 상품": "🛍️ Destacado",
     "하나만 만들어도 제대로": "Uno solo, bien hecho",
+    "그게 바로 {{name}}의 방식이에요.": "Así es como lo hace {{name}}.",
     "함께할 순간이에요 💕": "Es el momento 💕",
     "지금이 {{brand}}과 함께할 순간이에요 💕": "Es el momento de disfrutar {{brand}} 💕",
     "🛒 장바구니": "🛒 Añadir al carrito",

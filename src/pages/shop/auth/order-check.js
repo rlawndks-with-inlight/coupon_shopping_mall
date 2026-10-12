@@ -14,7 +14,9 @@ const Wrappers = styled.div`
   max-width: 640px;
   width: 92%;
   min-height: 70vh;
-  margin: 4vh auto 8vh;
+  /* 위 5rem = 공용 Title·주문서와 같은 기준. 4vh(약 36px)였을 땐 blog 프레임의 고정 머리글(55px)이
+     제목을 덮었다(프레임3 「비회원 주문조회」, 2026-10-12 점검). */
+  margin: 5rem auto 8vh;
 `;
 
 const KV = ({ k, v, strong }) => (

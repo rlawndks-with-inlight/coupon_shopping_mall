@@ -209,7 +209,8 @@ const CartDemo = (props) => {
         toast(translate('상품 가격이 변경되어 최신 금액으로 갱신했습니다.'));
       }
     }
-    onChangeAddressPage(addressSearchObj);
+    // 배송지 목록은 회원 것만 있다 — 비회원이 부르면 403 만 남는다(2026-10-12 점검).
+    if (user?.id) onChangeAddressPage(addressSearchObj);
   }
   const onDelete = (idx) => {
     let product_list = [...products];

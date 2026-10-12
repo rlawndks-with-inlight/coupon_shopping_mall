@@ -64,6 +64,10 @@ const App = props => {
           localStorage.setItem(`i18nextLng`, head_data?.setting_obj?.default_lang || 'ko')
         }
       }
+      // 저장값만 바꾸면 화면 언어(i18n)는 처음 읽은 값 그대로 남는다 — 언어팩을 끈 몰에 예전 영어 선택이 남은
+      // 방문자는 문구는 영어, 가격 단위(저장값을 읽는다)는 '원' 으로 섞여 보였다(2026-10-12 점검). 둘을 맞춘다.
+      const 저장언어 = localStorage.getItem('i18nextLng');
+      if (저장언어 && i18n.language !== 저장언어) i18n.changeLanguage(저장언어);
 
       setHeadData(head_data)
     }

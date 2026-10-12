@@ -146,7 +146,7 @@ const LoginDemo = (props) => {
         </Row>
         <Col style={{ alignItems: 'center', margin: '2rem auto' }}>
           <div style={{ fontSize: themeObj.font_size.size4, marginBottom: '1rem' }}>{translate('아직 회원이 아니신가요?')}</div>
-          <div style={{ color: themeObj.grey[500], whiteSpace: 'pre', textAlign: 'center' }}>
+          <div style={{ color: themeObj.grey[500], whiteSpace: 'pre-line', textAlign: 'center' }}>
             {translate('지금 회원가입을 하시면\n 다양하고 특별한 혜택이 준비되어 있습니다.')}
           </div>
           <Button variant="outlined" style={{

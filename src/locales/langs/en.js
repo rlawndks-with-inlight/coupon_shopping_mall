@@ -642,6 +642,7 @@ const en = {
     "인기있는 셀러 ❤️": "Popular Sellers ❤️",
     "🛍️ 대표 상품": "🛍️ Featured",
     "하나만 만들어도 제대로": "One product, done right",
+    "그게 바로 {{name}}의 방식이에요.": "That's the {{name}} way.",
     "함께할 순간이에요 💕": "Time to make it yours 💕",
     "휴대폰 인증을 먼저 완료해 주세요.": "Please complete phone verification first.",
     "주문번호가 중복되었습니다. 다시 시도해 주세요.": "Duplicate order number. Please try again.",

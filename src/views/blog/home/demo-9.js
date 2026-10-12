@@ -447,7 +447,7 @@ const Demo9 = (props) => {
           {홈문구(t, 'quote', currentLang) ? 홈문구(t, 'quote', currentLang) : (
             <>
               "<QuoteHighlight>{translate('하나만 만들어도 제대로')}</QuoteHighlight>,<br />
-              그게 바로 {brandName}의 방식이에요."
+              {translate('그게 바로 {{name}}의 방식이에요.', { name: brandName })}"
             </>
           )}
         </Quote>

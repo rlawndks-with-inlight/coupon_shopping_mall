@@ -13,6 +13,7 @@ import { toast } from "react-hot-toast";
 import { useModal } from "src/components/dialog/ModalProvider";
 import _ from "lodash";
 import { apiManager, uploadFileByManager } from "src/utils/api";
+import { confirmSellerPriceImpact } from "src/utils/seller-impact";
 import { bankCodeList } from "src/utils/format";
 import { SelectCategoryComponent } from "src/pages/manager/products/[edit_category]/[id]";
 import { getAllIdsWithParents } from "src/utils/function";
@@ -88,6 +89,8 @@ const SellerEdit = () => {
   const [categoryChildrenList, setCategoryChildrenList] = useState({});
   const [categoryEdit, setCategoryEdit] = useState(false);
   const [brandEdit, setBrandEdit] = useState(false);
+  // 불러온 담당 영업자·수수료 — 저장으로 이것들이 바뀌면 셀러 상품 가격이 다시 계산되므로 먼저 알린다.
+  const [불러온값, set불러온값] = useState(null);
 
 
   // 카테고리 정규화(2026-08-07)를 마친 브랜드는 브랜드가 카테고리가 아니라 '브랜드' 속성이다.
@@ -171,6 +174,7 @@ const SellerEdit = () => {
         // ⚠ 비밀번호칸은 항상 '빈 값'으로 시작한다. 서버가 내려준 값을 절대 채워넣지 않는다.
         //    (비워두면 onSave 가 user_pw 키 자체를 보내지 않아 기존 비밀번호가 그대로 유지된다)
         setItem({ ...data, user_pw: '' });
+        set불러온값({ oper_id: data?.oper_id, seller_trx_fee: data?.seller_trx_fee, seller_trx_fee_type: data?.seller_trx_fee_type });
       }
     }
 
@@ -213,7 +217,7 @@ const SellerEdit = () => {
     });
     $(`.category-container-${idx}`).scrollLeft(100000);
   }
-  const onSave = async () => {
+  const onSave = async (영향확인됨 = false) => {
     let result = undefined;
     let obj = { ...item };
     if (user?.level == 20 || user?.level == 15) {
@@ -222,6 +226,21 @@ const SellerEdit = () => {
     }
     if (item?.seller_range_o != 0 && item?.seller_range_u >= item?.seller_range_o) {
       toast.error('상품 판매 가능한 최소 가격이 최대 가격보다 낮아야 합니다.')
+      return;
+    }
+    // 담당 영업자(위에서 저장하는 사람으로 바뀌는 경우 포함)나 셀러 수수료가 바뀌면
+    // 서버가 이 셀러 상품의 공급가·판매가를 다시 계산한다 — 저장 전에 영향을 보여주고 확인받는다.
+    const 바뀜 = 불러온값 && (
+      Number(obj?.oper_id || 0) !== Number(불러온값.oper_id || 0)
+      || Number(obj?.seller_trx_fee) !== Number(불러온값.seller_trx_fee)
+      || Number(obj?.seller_trx_fee_type || 0) !== Number(불러온값.seller_trx_fee_type || 0));
+    if (router.query?.edit_category == 'edit' && !영향확인됨 && 바뀜) {
+      await confirmSellerPriceImpact({
+        params: { seller_id: router.query?.id, oper_id: obj?.oper_id, seller_trx_fee: obj?.seller_trx_fee, seller_trx_fee_type: obj?.seller_trx_fee_type },
+        setModal,
+        대상: 'seller',
+        onConfirm: () => onSave(true),
+      });
       return;
     }
     if (router.query?.edit_category == 'edit') {

@@ -16,6 +16,7 @@ import _ from "lodash";
 import { useModal } from "src/components/dialog/ModalProvider";
 import ReactQuillComponent from "src/views/manager/react-quill";
 import { apiManager, uploadFilesByManager } from "src/utils/api";
+import { confirmSellerPriceImpact } from "src/utils/seller-impact";
 import { useAuthContext } from "src/layouts/manager/auth/useAuthContext";
 import { styled as muiStyle } from '@mui/material'
 import dynamic from 'next/dynamic'
@@ -620,6 +621,8 @@ const ProductEdit = () => {
 
   const [price, setPrice] = useState('')
   const [salePrice, setSalePrice] = useState('')
+  // 불러온 본사 판매가 — 저장할 때 바뀌었는지 보고, 바뀌었으면 셀러 가격 영향을 먼저 알린다.
+  const [불러온판매가, set불러온판매가] = useState(null)
   const [useDiscount, setUseDiscount] = useState(false) // 할인 표시 사용 여부(정가를 판매가보다 높게 별도 입력)
   const [point, setPoint] = useState('')
   const [defPoint, setDefPoint] = useState(0)
@@ -764,6 +767,7 @@ const ProductEdit = () => {
       setItem(product)
       setPrice(product?.product_price.toLocaleString('ko-KR'))
       setSalePrice(product?.product_sale_price.toLocaleString('ko-KR'))
+      set불러온판매가(Number(product?.product_sale_price))
       // 정가(product_price)가 판매가(product_sale_price)보다 클 때만 '할인 표시' 사용으로 간주
       setUseDiscount((product?.product_price || 0) > (product?.product_sale_price || 0))
       setPoint(product?.point_save?.toLocaleString('ko-KR'))
@@ -922,7 +926,7 @@ const ProductEdit = () => {
     setSelectedCategoryIds(selectedCategoryIds.filter((x) => Number(x) !== Number(cid)));
   };
 
-  const onSave = async (type, sort) => {
+  const onSave = async (type, sort, 영향확인됨 = false) => {
     // 필수값 검증.
     //
     // 예전엔 옵션 변동가 NaN 검사 하나뿐이라, 상품명이 비고 판매가가 0 인 상품이 그대로
@@ -1010,6 +1014,17 @@ const ProductEdit = () => {
         return;
       }
     }*/
+    // 셀러몰 브랜드에서 본사 판매가를 바꾸면 그 상품을 파는 셀러들의 공급가·판매가가 함께 바뀐다(서버가 다시 계산).
+    // 사진 업로드 전에 묻는다 — 취소했을 때 올라간 사진이 남지 않게.
+    if (type == 'edit' && item?.id && !영향확인됨 && themeDnsData?.setting_obj?.is_use_seller == 1
+      && 불러온판매가 !== null && Number(item?.product_sale_price) !== 불러온판매가) {
+      await confirmSellerPriceImpact({
+        params: { product_id: item.id, sale_price: Number(item?.product_sale_price) },
+        setModal,
+        onConfirm: () => onSave(type, sort, true),
+      });
+      return;
+    }
     let obj = item;
     //console.log(obj)
     if (sort) {

@@ -46,7 +46,10 @@ const Modal = ({ modal, unSetModal }) => {
         </>}
       <DialogTitle sx={{ margin: '0 auto' }}>{modal?.title}</DialogTitle>
       <DialogContent>
-        <DialogContentText id="alert-dialog-description">
+        {/* content 는 선택 — 제목만 쓰던 기존 확인창은 그대로다. 줄바꿈(
+)을 그대로 보여준다. */}
+        <DialogContentText id="alert-dialog-description" sx={{ whiteSpace: 'pre-line', maxWidth: 520 }}>
+          {modal?.content}
         </DialogContentText>
       </DialogContent>
       <DialogActions sx={{ margin: '0 auto' }}>

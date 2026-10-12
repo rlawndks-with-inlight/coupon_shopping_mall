@@ -158,7 +158,8 @@ const ProductList = () => {
                 user?.level >= 15 ?
                   <>
                     <div>
-                      {commarNumber(Math.round(Math.floor(Number((row['product_sale_price'] * (1 + (user?.oper_trx_fee ?? 0))).toFixed(6))) / 1000) * 1000)} (본사)
+                      {/* 영업자 이상은 영업자 수수료까지만 얹은 값. 예전엔 고정금액형(type 1)도 비율로 곱했다. */}
+                      {commarNumber(calcAgentPrice(row['product_sale_price'], { oper_trx_fee: user?.oper_trx_fee, oper_trx_fee_type: user?.oper_trx_fee_type, seller_trx_fee: 0 }))} (본사)
                     </div>
                   </>
                   :

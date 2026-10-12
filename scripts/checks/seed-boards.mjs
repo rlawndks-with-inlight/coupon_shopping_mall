@@ -104,5 +104,10 @@ t('컨트롤러가 게시판 목록을 따로 들고 있지 않다',
 t('게시판 실패가 몰 생성을 막지 않는다', /try \{\s*await seedDefaultBoards/.test(브랜드),
     '여기서 에러를 내면 이미 만들어진 브랜드와 관리자 계정이 붕 뜬다');
 
+// 승인 경로는 몰을 처음부터 언어팩 켜짐으로 만든다 → '꺼짐→켜짐' 일괄 등록을 안 탄다.
+// 게시판을 심을 때 직접 대기열에 올리지 않으면 영어 화면에 「공지사항」「1:1문의」가 남는다(해담수산, 2026-10-12).
+t('언어팩 켜진 몰은 게시판 이름을 번역 대기열에 올린다',
+    /is_use_lang == 1/.test(유틸) && /insertQuery\('lang_processes'/.test(유틸) && /table_name: 'post_categories'/.test(유틸));
+
 console.log(`\n통과 ${pass} / 실패 ${fail}`);
 process.exit(fail ? 1 : 0);

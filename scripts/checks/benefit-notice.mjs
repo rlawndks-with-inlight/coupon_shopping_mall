@@ -158,5 +158,21 @@ if (백엔드있음) {
     eq('입력란에 길이 제한이 걸려 있다', /maxLength: 라벨상한/.test(관리자), true);
 }
 
+// 제목·요약 강조(style_obj, 2026-10-14) — 비면 예전 모양, 색은 #rrggbb·크기는 정해진 셋만.
+{
+    const 손님 = 주석뺀(rd(FRONT + 'src/components/elements/shop/BenefitNotice.js'));
+    const 관리 = 주석뺀(rd(FRONT + 'src/pages/manager/designs/benefit-notice/index.js'));
+    eq('손님 화면: 팝업 제목 색·크기를 style_obj 에서',
+        /color: 혜택꾸밈\(open\)\.title_color/.test(손님) && /style=\{\{ fontSize: 혜택제목크기\[혜택꾸밈\(open\)\.title_size\]/.test(손님), true);
+    eq('손님 화면: 요약 문구 색을 style_obj 에서(없으면 기존 색)', /color: 혜택꾸밈\(n\)\.summary_color \|\| t\.textColor/.test(손님), true);
+    eq('관리자: 저장할 때 style_obj 를 보낸다', /style_obj: JSON\.stringify\(혜택꾸밈\(n\)\)/.test(관리), true);
+    if (백엔드있음) {
+        const 서버 = rd(BACK + 'controllers/benefit_notice.controller.js');
+        eq('서버: 색은 #rrggbb, 크기는 normal/large/xlarge 만',
+            /\^#\[0-9a-fA-F\]\{6\}\$/.test(서버) && /\['normal', 'large', 'xlarge'\]/.test(서버), true);
+        eq('서버: 등록·수정 모두 style_obj 를 거른 값으로 저장', (서버.match(/style_obj: 꾸밈정리\(style_obj\)/g) || []).length === 2, true);
+    }
+}
+
 console.log(`\n통과 ${pass} / 실패 ${fail}`);
 process.exit(fail ? 1 : 0);

@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import {
-    Alert, Button, Card, Divider, IconButton, Stack, Switch, TextField, Typography, FormControlLabel,
+    Alert, Button, Card, Divider, IconButton, Stack, Switch, TextField, Typography, FormControlLabel, MenuItem,
 } from '@mui/material';
 import { Icon } from '@iconify/react';
 import { toast } from 'react-hot-toast';
@@ -8,6 +8,7 @@ import ManagerLayout from 'src/layouts/manager/ManagerLayout';
 import { apiManager } from 'src/utils/api';
 import ReactQuillComponent from 'src/views/manager/react-quill';
 import { useSettingsContext } from 'src/components/settings';
+import { 혜택제목크기, 혜택제목크기목록, 혜택꾸밈 } from 'src/utils/benefit-style';
 
 // 상품상세 '혜택 안내' — 본사 전용 관리 화면.
 //
@@ -25,6 +26,7 @@ const 빈줄 = () => ({
     summary: '',
     icon_img: '',
     popup_title: '',
+    style_obj: {},
     sort: 0,
     is_show: 1,
     tabs: [],
@@ -47,6 +49,15 @@ const BenefitNoticePage = () => {
 
     const 바꾸기 = (idx, key, value) => {
         setList((prev) => prev.map((n, i) => (i === idx ? { ...n, [key]: value } : n)));
+    };
+    // 제목·요약 꾸밈(style_obj) 한 칸 바꾸기. 빈 값은 키째 뺀다 — 서버도 빈 칸은 저장하지 않는다.
+    const 꾸밈바꾸기 = (idx, key, value) => {
+        setList((prev) => prev.map((n, i) => {
+            if (i !== idx) return n;
+            const next = { ...혜택꾸밈(n) };
+            if (value) next[key] = value; else delete next[key];
+            return { ...n, style_obj: next };
+        }));
     };
 
     const 탭바꾸기 = (idx, tabIdx, key, value) => {
@@ -87,6 +98,17 @@ const BenefitNoticePage = () => {
 //     2자 → 내용 281px   8자 → 236px   14자 → 163px   20자 → 91px(한 줄에 7글자)
 // 화면이 깨지지는 않고 조용히 읽기 나빠진다. 그래서 입력할 때 막는다.
 const 라벨상한 = 8;
+
+// 색 한 칸 — 고르기 + 지금 값 + 「기본으로」. 비우면 손님 화면은 예전 색 그대로다.
+const 색칸 = ({ label, value, onChange }) => (
+    <Stack direction="row" spacing={1} alignItems="center">
+        <Typography sx={{ fontSize: 14, minWidth: 92 }}>{label}</Typography>
+        <input type="color" value={value || '#212b36'} onChange={(e) => onChange(e.target.value)}
+            style={{ width: 40, height: 32, border: 'none', background: 'none', padding: 0, cursor: 'pointer' }} />
+        <Typography sx={{ fontSize: 13, color: 'text.secondary', minWidth: 64 }}>{value || '기본'}</Typography>
+        {value ? <Button size="small" onClick={() => onChange('')}>기본으로</Button> : null}
+    </Stack>
+);
     const 저장 = async (idx) => {
         const n = list[idx];
         if (!String(n.summary ?? '').trim()) {
@@ -106,7 +128,7 @@ const 라벨상한 = 8;
         }
         const payload = {
             label: n.label, summary: n.summary, icon_img: n.icon_img,
-            popup_title: n.popup_title, sort: Number(n.sort) || 0,
+            popup_title: n.popup_title, style_obj: JSON.stringify(혜택꾸밈(n)), sort: Number(n.sort) || 0,
             is_show: n.is_show ? 1 : 0, tabs: n.tabs,
         };
         const result = n.id
@@ -198,6 +220,30 @@ const 라벨상한 = 8;
                                 label="아이콘 이미지 주소" value={n.icon_img ?? ''} fullWidth
                                 helperText="요약 문구 앞에 붙는 작은 이미지(선택). 비워도 됩니다"
                                 onChange={(e) => 바꾸기(idx, 'icon_img', e.target.value)} />
+                        </Stack>
+
+                        {/* 제목·요약 강조(2026-10-14 요청: 「제목을 강조할 수단이 없다」). 비우면 예전 모양 그대로. */}
+                        <Stack spacing={1.5} sx={{ p: 2, borderRadius: 1, bgcolor: 'background.neutral' }}>
+                            <Typography sx={{ fontWeight: 700, fontSize: 14 }}>강조</Typography>
+                            <Stack direction={{ xs: 'column', md: 'row' }} spacing={2} alignItems={{ md: 'center' }}>
+                                <색칸 label="팝업 제목 색" value={혜택꾸밈(n).title_color} onChange={(v) => 꾸밈바꾸기(idx, 'title_color', v)} />
+                                <TextField select size="small" label="팝업 제목 크기" sx={{ width: { xs: '100%', md: 160 } }}
+                                    value={혜택꾸밈(n).title_size || 'normal'}
+                                    onChange={(e) => 꾸밈바꾸기(idx, 'title_size', e.target.value === 'normal' ? '' : e.target.value)}>
+                                    {혜택제목크기목록.map((o) => <MenuItem key={o.value} value={o.value}>{o.label}</MenuItem>)}
+                                </TextField>
+                                <색칸 label="요약 문구 색" value={혜택꾸밈(n).summary_color} onChange={(v) => 꾸밈바꾸기(idx, 'summary_color', v)} />
+                            </Stack>
+                            {/* 손님 화면과 같은 기준(benefit-style.js)으로 그린 미리보기 */}
+                            <Stack spacing={0.5}>
+                                <Typography sx={{ fontSize: 12, color: 'text.secondary' }}>미리보기</Typography>
+                                <Typography sx={{ fontWeight: 800, fontSize: 혜택제목크기[혜택꾸밈(n).title_size] ?? 혜택제목크기.normal, color: 혜택꾸밈(n).title_color || 'text.primary' }}>
+                                    {n.popup_title || n.label || '팝업 제목'}
+                                </Typography>
+                                <Typography sx={{ fontSize: 14, color: 혜택꾸밈(n).summary_color || 'text.secondary' }}>
+                                    {n.summary || '요약 문구'}
+                                </Typography>
+                            </Stack>
                         </Stack>
 
                         <Divider />

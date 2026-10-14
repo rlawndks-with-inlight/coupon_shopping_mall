@@ -7,6 +7,7 @@ import { useSettingsContext } from 'src/components/settings';
 import { 상세톤 } from 'src/components/elements/shop/detail-tone';
 import { useLocales } from 'src/locales';
 import { formatLang } from 'src/utils/format';
+import { 혜택제목크기, 혜택꾸밈 } from 'src/utils/benefit-style';
 
 // 상품상세 '혜택 안내' — 가격 아래 한 줄, 누르면 팝업.
 //
@@ -96,7 +97,7 @@ const BenefitNotice = ({ tone = {}, sx = {}, inGrid = false }) => {
                             }}>
                                 {formatLang(n, 'label', currentLang)}
                             </Box>
-                            <Box sx={{ color: t.textColor, display: 'flex', alignItems: 'center', flexWrap: 'wrap', columnGap: '6px', minWidth: 0,
+                            <Box sx={{ color: 혜택꾸밈(n).summary_color || t.textColor, display: 'flex', alignItems: 'center', flexWrap: 'wrap', columnGap: '6px', minWidth: 0,
                                        cursor: 누를수있음 ? 'pointer' : 'default' }}>
                                 {n?.icon_img ? (
                                     <Box
@@ -132,7 +133,10 @@ const BenefitNotice = ({ tone = {}, sx = {}, inGrid = false }) => {
             >
                 {open ? (
                     <>
-                        <DialogTitle sx={{ pr: 6, fontSize: 18, fontWeight: 800 }}>
+                        {/* 제목 색·크기는 본사가 고른 값(style_obj) — 없으면 예전 그대로 18px·기본색 */}
+                        <DialogTitle sx={{ pr: 6, fontWeight: 800, color: 혜택꾸밈(open).title_color || undefined }}
+                            // 크기는 style 로 준다 — sx 의 fontSize 는 테마 제목(h6)의 화면폭별 크기에 덮였다(18px 은 테마 값이 우연히 같았던 것).
+                            style={{ fontSize: 혜택제목크기[혜택꾸밈(open).title_size] ?? 혜택제목크기.normal }}>
                             {formatLang(open, 'popup_title', currentLang) || formatLang(open, 'label', currentLang)}
                             <IconButton
                                 onClick={() => setOpenId(null)}

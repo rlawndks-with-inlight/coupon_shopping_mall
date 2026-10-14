@@ -47,11 +47,12 @@ export const forspayMethodList = [
     { key: 'bank', label: '실시간계좌이체', icon: 'mdi:bank-outline', color: '#5B6472' },
     { key: 'kakaopay', label: '카카오페이', icon: 'simple-icons:kakaotalk', color: '#FEE500' },
     { key: 'naverpay', label: '네이버페이', icon: 'simple-icons:naver', color: '#03C75A' },
-    { key: 'linepay', label: '라인페이', icon: 'simple-icons:line', color: '#00C300' },
     { key: 'foreign_card', label: '해외발행카드', icon: 'mdi:earth', color: '#5B6472' },
     { key: 'wechat', label: '위챗페이', icon: 'simple-icons:wechat', color: '#09B83E' },
     { key: 'alipay', label: '알리페이', icon: 'simple-icons:alipay', color: '#1677FF' },
     { key: 'samsungpay', label: '삼성페이 (준비중·협력사 확인 필요)', icon: 'simple-icons:samsungpay', color: '#1428A0', pending: true },
+    // 라인페이는 맨 뒤 — 백엔드 FORSPAY_METHODS 와 같은 순서로 둔다(2026-10-14).
+    { key: 'linepay', label: '라인페이', icon: 'simple-icons:line', color: '#00C300' },
 ]
 // 포스페이 PG provider — 빈 값이면 모듈 기본(MID) 또는 포스페이 자동 라우팅.
 export const forspayProviderList = [

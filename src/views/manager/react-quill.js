@@ -3,6 +3,7 @@ import { useMemo, useEffect } from "react";
 import { useRef } from "react";
 import { uploadFileByManager } from "src/utils/api";
 import { base64toFile } from "src/utils/function";
+import toast from "react-hot-toast";
 const ReactQuill = dynamic(() => import('react-quill'), {
     ssr: false,
     loading: () => <p>Loading ...</p>,
@@ -44,6 +45,11 @@ const ReactQuillComponent = (props) => {
     } = props;
 
     const quillRef = useRef(null);
+    // 업로드가 끝났을 때 '그 시점의 최신 내용' 에 주소를 반영하려고 둔다(아래 onChange 설명).
+    const latestRef = useRef(value);
+    const setValueRef = useRef(setValue);
+    setValueRef.current = setValue;
+    const 올리는중 = useRef(new Map()); // base64 → 업로드 Promise (같은 그림을 두 번 올리지 않게)
 
     // 툴바 버튼에 한글 설명(title) 주입.
     //
@@ -121,6 +127,37 @@ const ReactQuillComponent = (props) => {
                     [{ align: '' }, { align: 'center' }, { align: 'right' }, { align: 'justify' }],
                     ['clean'],
                 ],
+                handlers: {
+                    // 이미지 버튼 — 여러 장을 한 번에 고르고, 먼저 올린 뒤 주소로 넣는다.
+                    // Quill 기본 동작은 한 장만 고를 수 있고, base64 를 편집기에 넣은 뒤 onChange 에서 바꿔치기했다.
+                    // 그 방식은 업로드 중에 연달아 넣거나 기존 그림 앞에 넣으면 그림이 사라졌다
+                    // (해담수산 「상품설명에 이미지가 하나밖에 안 올라간다」, 2026-10-14 재현).
+                    image: function () {
+                        const quill = this.quill;
+                        const input = document.createElement('input');
+                        input.type = 'file';
+                        input.accept = 'image/*';
+                        input.multiple = true;
+                        input.onchange = async () => {
+                            const files = Array.from(input.files || []);
+                            if (!files.length) return;
+                            const range = quill.getSelection(true);
+                            const 안내 = toast.loading(`이미지 ${files.length}장 올리는 중...`);
+                            const 결과 = await Promise.all(files.map((file) => uploadFileByManager({ file }).catch(() => false)));
+                            toast.dismiss(안내);
+                            let index = range?.index ?? quill.getLength();
+                            let 실패 = 0;
+                            for (const r of 결과) {
+                                if (!r?.url) { 실패++; continue; }
+                                quill.insertEmbed(index, 'image', r.url, 'user');
+                                index++;
+                            }
+                            quill.setSelection(index, 0, 'user');
+                            if (실패) toast.error(`이미지 ${실패}장을 올리지 못했습니다. 다시 시도해 주세요.`);
+                        };
+                        input.click();
+                    },
+                },
             },
             clipboard: {
                 matchVisual: false,
@@ -157,24 +194,40 @@ const ReactQuillComponent = (props) => {
                 modules={modules}
                 formats={formats}
                 ref={quillRef}
-                onChange={async (e) => {
-                    let note = e;
-                    if (e.includes('<img src="') && e.includes('base64,')) {
-                        let base64_list = e.split('<img src="');
-                        for (var i = 0; i < base64_list.length; i++) {
-                            if (base64_list[i].includes('base64,')) {
-                                let img_src = base64_list[i];
-                                img_src = await img_src.split(`"></p>`);
-                                let base64 = img_src[0];
-                                img_src = await base64toFile(img_src[0], 'note.png');
-                                const response = await uploadFileByManager({
-                                    file: img_src
-                                });
-                                note = await note.replace(base64, response?.url)
+                onChange={(html) => {
+                    // 붙여넣기·끌어다 놓기로 들어온 base64 그림을 올려서 주소로 바꾼다.
+                    // 예전엔 '<img src="' 로 자르고 '"></p>' 까지를 그림으로 봤다. 그림 뒤에 다른 그림·글자가
+                    // 이어지면 잘못 잘려 atob 에서 터졌고, 그 뒤로는 setValue 가 안 불려 상태가 굳었다.
+                    // 또 업로드를 기다린 뒤 '그때의 note' 로 setValue 해서, 그 사이 넣은 그림이 덮여 사라졌다.
+                    // 지금은 바로 setValue 하고, 업로드가 끝나면 최신 내용(latestRef)에 주소만 바꿔 넣는다.
+                    latestRef.current = html;
+                    setValue(html);
+                    const 그림들 = [...new Set([...html.matchAll(/<img[^>]*?src="(data:image\/[^;"]+;base64,[^"]+)"/g)].map((m) => m[1]))];
+                    for (const data of 그림들) {
+                        if (올리는중.current.has(data)) continue;
+                        const 작업 = uploadFileByManager({ file: base64toFile(data, 'note.png') })
+                            .then((r) => r?.url || false)
+                            .catch(() => false);
+                        올리는중.current.set(data, 작업);
+                        작업.then((url) => {
+                            올리는중.current.delete(data);
+                            const 지금 = latestRef.current ?? '';
+                            if (!지금.includes(data)) return; // 그새 지운 그림
+                            let 바뀐 = 지금;
+                            if (url) {
+                                바뀐 = 지금.split(data).join(url);
+                            } else {
+                                // 못 올린 그림은 빼고 알린다 — base64 째로 저장되면 설명이 수 MB 로 불어난다.
+                                const 위치 = 지금.indexOf(data);
+                                const 시작 = 지금.lastIndexOf('<img', 위치);
+                                const 끝 = 지금.indexOf('>', 위치 + data.length);
+                                if (시작 >= 0 && 끝 >= 0) 바뀐 = 지금.slice(0, 시작) + 지금.slice(끝 + 1);
+                                toast.error('이미지를 올리지 못해 뺐습니다. 다시 넣어 주세요.');
                             }
-                        }
+                            latestRef.current = 바뀐;
+                            setValueRef.current(바뀐);
+                        });
                     }
-                    setValue(note);
                 }} />
         </>
     )

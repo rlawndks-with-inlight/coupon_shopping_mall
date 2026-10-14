@@ -979,7 +979,9 @@ const ProductEdit = () => {
         return;
       }
       if (liveOptions.some((o) => !String(o?.option_name ?? '').trim())) {
-        toast.error(`'${g.group_name}' 의 옵션 이름을 입력해 주세요.`);
+        // 화면의 칸 이름은 「항목명」이다. 「옵션 이름」이라고 하면 이미 채운 그룹 이름 칸(예: 색상)을 가리키는 줄 안다.
+        // 「선택 옵션 추가」가 빈 항목 한 줄을 미리 넣어 두므로, 「항목 추가」를 더 누르면 빈 줄이 남기 쉽다(2026-10-14 점검).
+        toast.error(`'${g.group_name}' 에 항목명이 비어 있는 줄이 있습니다. 항목명을 입력하거나 그 줄을 지워 주세요.`);
         return;
       }
     }
@@ -1056,6 +1058,15 @@ const ProductEdit = () => {
     upload_files_d = await uploadFilesByManager({
       images: upload_files_d,
     })
+    // 한 장이라도 못 올렸으면 저장하지 않는다.
+    // 예전엔 실패한 사진이 url 없이(undefined) 넘어가 **안내 없이 빠진 채 저장**됐다 — 가맹점은 다 올라간 줄 안다
+    // (2026-10-14 점검: 개별사진 3장 중 1장 실패 → 2장만 저장, 안내 없음). 후기 사진 창과 같은 규칙.
+    // 흔한 원인은 크기 — Cloudinary 무료 플랜은 장당 10MB·2,500만 화소까지만 받는다.
+    const 못올린수 = [...(upload_files || []), ...(upload_files_d || [])].filter((u) => !u?.url).length;
+    if (못올린수 > 0) {
+      toast.error(`사진 ${못올린수}장을 올리지 못해 저장하지 않았습니다. 사진 크기(장당 10MB 이하)를 확인하고 다시 저장해 주세요.`);
+      return;
+    }
     let upload_idx = 0;
     let upload_idx_d = 0;
     for (var i = 0; i < obj.sub_images.length; i++) {

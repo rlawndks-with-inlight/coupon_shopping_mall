@@ -388,9 +388,11 @@ const DefaultSetting = () => {
       </Dialog>
       {!loading && (
         <>
-          <Row style={{ margin: '0 0 1rem 0', columnGap: '0.5rem' }}>
+          {/* 휴대폰 폭에서 탭 글자가 세 줄로 접히고 오른쪽이 화면 밖으로 나갔다(2026-10-14 점검) — 넘치면 다음 줄로. */}
+          <Row style={{ margin: '0 0 1rem 0', columnGap: '0.5rem', rowGap: '0.5rem', flexWrap: 'wrap' }}>
             {tab_list.map(tab => (
               <Button
+                sx={{ whiteSpace: 'nowrap' }}
                 variant={tab.value == currentTab ? 'contained' : 'outlined'}
                 onClick={() => {
                   setCurrentTab(tab.value)

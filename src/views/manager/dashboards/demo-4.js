@@ -196,13 +196,13 @@ export const DashboardDemo4 = () => {
                                                 />
                                             </Row>
                                         </>}
-                                    <Row style={{ columnGap: '0.5rem' }}>
-                                        <Button variant="outlined" sx={{ flexGrow: 1 }} onClick={() => onClickDateButton(0)}>오늘</Button>
-                                        <Button variant="outlined" sx={{ flexGrow: 1 }} onClick={() => onClickDateButton(7)}>7일</Button>
-                                        <Button variant="outlined" sx={{ flexGrow: 1 }} onClick={() => onClickDateButton(15)}>15일</Button>
-                                        <Button variant="outlined" sx={{ flexGrow: 1 }} onClick={() => onClickDateButton(30)}>1개월</Button>
-                                        <Button variant="outlined" sx={{ flexGrow: 1 }} onClick={() => onClickDateButton(90)}>3개월</Button>
-                                        <Button variant="outlined" sx={{ flexGrow: 1 }} onClick={() => onClickDateButton(365)}>1년</Button>
+                                    <Row style={{ columnGap: '0.5rem', rowGap: '0.5rem', flexWrap: 'wrap' /* 휴대폰 폭에서 화면 밖으로 밀리던 것(2026-10-14) */ }}>
+                                        <Button variant="outlined" sx={{ flexGrow: 1, minWidth: 0, whiteSpace: 'nowrap' }} onClick={() => onClickDateButton(0)}>오늘</Button>
+                                        <Button variant="outlined" sx={{ flexGrow: 1, minWidth: 0, whiteSpace: 'nowrap' }} onClick={() => onClickDateButton(7)}>7일</Button>
+                                        <Button variant="outlined" sx={{ flexGrow: 1, minWidth: 0, whiteSpace: 'nowrap' }} onClick={() => onClickDateButton(15)}>15일</Button>
+                                        <Button variant="outlined" sx={{ flexGrow: 1, minWidth: 0, whiteSpace: 'nowrap' }} onClick={() => onClickDateButton(30)}>1개월</Button>
+                                        <Button variant="outlined" sx={{ flexGrow: 1, minWidth: 0, whiteSpace: 'nowrap' }} onClick={() => onClickDateButton(90)}>3개월</Button>
+                                        <Button variant="outlined" sx={{ flexGrow: 1, minWidth: 0, whiteSpace: 'nowrap' }} onClick={() => onClickDateButton(365)}>1년</Button>
                                     </Row>
                                 </Row>
 
@@ -410,13 +410,13 @@ export const DashboardDemo4 = () => {
                                                 />
                                             </Row>
                                         </>}
-                                    <Row style={{ columnGap: '0.5rem' }}>
-                                        <Button variant="outlined" sx={{ flexGrow: 1 }} onClick={() => onClickDateButton(0)}>오늘</Button>
-                                        <Button variant="outlined" sx={{ flexGrow: 1 }} onClick={() => onClickDateButton(7)}>7일</Button>
-                                        <Button variant="outlined" sx={{ flexGrow: 1 }} onClick={() => onClickDateButton(15)}>15일</Button>
-                                        <Button variant="outlined" sx={{ flexGrow: 1 }} onClick={() => onClickDateButton(30)}>1개월</Button>
-                                        <Button variant="outlined" sx={{ flexGrow: 1 }} onClick={() => onClickDateButton(90)}>3개월</Button>
-                                        <Button variant="outlined" sx={{ flexGrow: 1 }} onClick={() => onClickDateButton(365)}>1년</Button>
+                                    <Row style={{ columnGap: '0.5rem', rowGap: '0.5rem', flexWrap: 'wrap' /* 휴대폰 폭에서 화면 밖으로 밀리던 것(2026-10-14) */ }}>
+                                        <Button variant="outlined" sx={{ flexGrow: 1, minWidth: 0, whiteSpace: 'nowrap' }} onClick={() => onClickDateButton(0)}>오늘</Button>
+                                        <Button variant="outlined" sx={{ flexGrow: 1, minWidth: 0, whiteSpace: 'nowrap' }} onClick={() => onClickDateButton(7)}>7일</Button>
+                                        <Button variant="outlined" sx={{ flexGrow: 1, minWidth: 0, whiteSpace: 'nowrap' }} onClick={() => onClickDateButton(15)}>15일</Button>
+                                        <Button variant="outlined" sx={{ flexGrow: 1, minWidth: 0, whiteSpace: 'nowrap' }} onClick={() => onClickDateButton(30)}>1개월</Button>
+                                        <Button variant="outlined" sx={{ flexGrow: 1, minWidth: 0, whiteSpace: 'nowrap' }} onClick={() => onClickDateButton(90)}>3개월</Button>
+                                        <Button variant="outlined" sx={{ flexGrow: 1, minWidth: 0, whiteSpace: 'nowrap' }} onClick={() => onClickDateButton(365)}>1년</Button>
                                     </Row>
                                 </Row>
 

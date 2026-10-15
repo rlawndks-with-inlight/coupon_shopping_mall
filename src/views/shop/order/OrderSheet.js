@@ -28,7 +28,7 @@ import Policy, { POLICY_TYPE } from 'src/pages/shop/auth/policy';
 import { useAuthContext } from 'src/layouts/manager/auth/useAuthContext';
 import { formatCreditCardNumber, formatExpirationDate } from 'src/utils/formatCard';
 import { useModal } from 'src/components/dialog/ModalProvider';
-import { apiManager, getLastApiError } from 'src/utils/api';
+import { apiManager, apiShop, getLastApiError } from 'src/utils/api';
 import DialogAddAddress from 'src/components/dialog/DialogAddAddress';
 import PostcodeBox from 'src/components/elements/shop/PostcodeBox';
 import { useLocales } from 'src/locales';
@@ -769,7 +769,25 @@ export default function OrderSheet({ router }) {
       : '',
   };
 
-  const paymentModules = (themeDnsData?.payment_modules || []).filter((m) => m?.type != 'sms_pay');
+  // 결제수단 — 처음엔 몰 설정 응답(3분 캐시 + 포스페이 대분류 5분 저장)으로 그리고,
+  // 주문서가 열리면 포스페이에 '지금' 확인한 목록(/api/shop/payment-methods)으로 갈아 끼운다.
+  // 그 사이 포스페이에서 꺼진 대분류(예: 계좌이체)를 손님이 눌러 결제창에서 실패하던 것을 막는다(2026-10-15).
+  // 확인이 실패하거나 느리면(서버가 2.5초에서 끊는다) 처음 목록을 그대로 쓴다.
+  const [최신결제수단, set최신결제수단] = useState(null);
+  useEffect(() => {
+    let 살아있음 = true;
+    apiShop('payment-methods', 'get', {})
+      .then((list) => { if (살아있음 && Array.isArray(list)) set최신결제수단(list); })
+      .catch(() => {});
+    return () => { 살아있음 = false; };
+  }, []);
+  const paymentModules = (최신결제수단 ?? themeDnsData?.payment_modules ?? []).filter((m) => m?.type != 'sms_pay');
+  // 이미 고른 수단이 새 목록에서 빠졌으면 선택을 푼다 — 사라진 수단으로 결제하기가 남지 않게.
+  useEffect(() => {
+    if (!최신결제수단 || !buyType) return;
+    const 남아있음 = 최신결제수단.some((m) => m?.type == buyType && (buyType != 'auth_forspay' || m?.pay_method == buyPayMethod));
+    if (!남아있음) { setBuyType(undefined); setBuyPayMethod(undefined); }
+  }, [최신결제수단]);
   const addressList = addressContent?.content || [];
   const isMember = !!user;
 

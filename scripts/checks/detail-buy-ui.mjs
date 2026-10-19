@@ -38,8 +38,8 @@ t('가운데 정렬', /align-items:center;/.test(popup) && /justify-content:cent
 t('카드에 최소 크기가 있다', /width:420px;/.test(popup) && /max-width:min\(420px, 92vw\);/.test(popup));
 t('좁은 화면·긴 내용에서도 넘치지 않는다', /max-height:86vh;/.test(popup) && /overflow-y:auto;/.test(popup));
 t('팝업 안 이미지가 카드를 뚫지 않는다', /img\{max-width:100%;height:auto;display:block;margin:0 auto;[^}]*\}/.test(popup));
-// 이미지 팝업은 원본 폭만큼 넓히되 760px·화면 92% 를 넘지 않는다(2026-10-19 — 420px 고정이라 안내 이미지 글씨를 못 읽었다).
-t('이미지 팝업은 넓히되 상한이 있다', /&\.이미지팝업\{\s*width:max-content;\s*min-width:min\(420px, 92vw\);\s*max-width:min\(760px, 92vw\);/.test(popup));
+// 이미지 팝업은 사진 원본 해상도대로 — 화면보다 클 때만 화면 92% 에 맞춘다(2026-10-19 — 420px 고정이라 안내 이미지 글씨를 못 읽었다).
+t('이미지 팝업은 사진 원본 해상도대로(화면보다 클 때만 화면에 맞춤)', /&\.이미지팝업\{\s*width:max-content;\s*min-width:min\(420px, 92vw\);\s*max-width:92vw;/.test(popup));
 t('팝업 이미지를 누르면 원본을 연다', /el\?\.tagName === 'IMG' && el\?\.src\) window\.open\(el\.src/.test(popup));
 // 닫는 길이 여러 개여야 한다 — 예전엔 모서리의 작은 X 하나뿐이었다.
 t('배경을 눌러 닫는다', /<Dim onClick=\{\(\) => setPopups\(\[\]\)\}>/.test(popup));

@@ -19,6 +19,7 @@ import { useLocales } from "src/locales";
 import { formatLang } from "src/utils/format";
 import toast from "react-hot-toast";
 import { 금액표시, 금액입력 } from 'src/utils/money-input'
+import QrDialog, { 상품주소 } from 'src/components/manager/QrDialog'
 
 const ReactQuill = dynamic(() => import('react-quill'), {
   ssr: false,
@@ -60,6 +61,7 @@ const ProductList = () => {
   const { setModal } = useModal()
   const { themeCategoryList, themeDnsData, themePropertyList } = useSettingsContext();
   const { currentLang, translate } = useLocales();
+  const [qr, setQr] = useState(null); // 상품 QR 창(2026-10-19)
 
   const defaultColumns = [
     /*{
@@ -360,6 +362,16 @@ const ProductList = () => {
         )
       }
     },*/
+    // 상품 QR — 매장 POP·전단에 인쇄해 손님이 찍으면 이 상품 페이지가 열린다(2026-10-19).
+    {
+      id: 'qr',
+      label: 'QR',
+      action: (row) => (
+        <IconButton onClick={() => setQr({ url: 상품주소(themeDnsData, row?.id), title: row?.product_name, fileName: `qr-product-${row?.id}` })}>
+          <Icon icon='mdi:qrcode' />
+        </IconButton>
+      )
+    },
     ...(user?.level >= 40 ? [
       {
         id: 'edit',
@@ -707,6 +719,7 @@ const ProductList = () => {
 
   return (
     <>
+      <QrDialog open={!!qr} onClose={() => setQr(null)} url={qr?.url} title={qr?.title} fileName={qr?.fileName} />
       <Stack spacing={3}>
         <Card>
           <div style={{ display: 'flex' }}>

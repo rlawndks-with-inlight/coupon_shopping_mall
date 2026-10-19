@@ -42,6 +42,8 @@ import { createDefaultManagerObj } from 'src/data/manager-data'
 import { toast } from 'react-hot-toast'
 import { useModal } from 'src/components/dialog/ModalProvider'
 import { useAuthContext } from 'src/layouts/manager/auth/useAuthContext'
+import QrDialog, { 몰주소 } from 'src/components/manager/QrDialog'
+import { Icon } from '@iconify/react'
 import ReactQuillComponent from 'src/views/manager/react-quill'
 import { apiManager } from 'src/utils/api'
 import { commarNumber } from 'src/utils/function'
@@ -136,6 +138,7 @@ const DefaultSetting = () => {
   const [currentTab, setCurrentTab] = useState(0)
   // 모듈 전역 기본객체를 그대로 넣으면 이 화면에서 변형될 때 원본이 오염된다(브랜드 추가 시 직전 브랜드가 섞임).
   const [item, setItem] = useState(() => createDefaultManagerObj('brands'))
+  const [몰qr, set몰qr] = useState(false) // 내 쇼핑몰 QR 창(2026-10-19)
   const [saveLoading, setSaveLoading] = useState(false)
   const [useBasicInfo, setUseBasicInfo] = useState(false)
   // 화면 진입 시점의 값(깊은 복사). 저장할 때 '실제로 바뀐 키'만 가려내는 기준으로만 쓴다.
@@ -401,6 +404,13 @@ const DefaultSetting = () => {
                 {tab.label}
               </Button>
             ))}
+            {/* 내 쇼핑몰 QR — 찍으면 몰 첫 화면이 열린다(매장·명함·전단용, 2026-10-19) */}
+            <Button sx={{ whiteSpace: 'nowrap', marginLeft: 'auto' }} variant='outlined' startIcon={<Icon icon='mdi:qrcode' />}
+              onClick={() => set몰qr(true)}>
+              내 쇼핑몰 QR
+            </Button>
+            <QrDialog open={몰qr} onClose={() => set몰qr(false)} url={`${몰주소({ dns: item?.dns })}/`}
+              title={item?.name} fileName={`qr-shop-${item?.id ?? ''}`} />
           </Row>
           <Grid container spacing={3}>
             {currentTab == 0 && (

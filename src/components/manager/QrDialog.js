@@ -17,7 +17,8 @@ export const 몰주소 = (themeDnsData) => {
 };
 export const 상품주소 = (themeDnsData, id) => `${몰주소(themeDnsData)}/shop/item/${id}/`;
 
-const QrDialog = ({ open, onClose, url, title, fileName = 'qr' }) => {
+// QR + 주소 + 「이미지 저장」「주소 복사」 — 창(QrDialog) 안에도, 기본설정 칸 안에도 그대로 쓴다.
+export const QrPanel = ({ url, title, fileName = 'qr', size = 240, 버튼보임 = true }) => {
   const 큰QR = useRef(null);
 
   const 저장 = () => {
@@ -62,29 +63,37 @@ const QrDialog = ({ open, onClose, url, title, fileName = 'qr' }) => {
   };
 
   return (
-    <Dialog open={!!open} onClose={onClose} maxWidth="xs" fullWidth>
-      <DialogTitle>QR 코드</DialogTitle>
-      <DialogContent>
-        <Stack alignItems="center" spacing={1.5}>
-          {title ? <Typography sx={{ fontWeight: 700, textAlign: 'center', wordBreak: 'keep-all' }}>{title}</Typography> : null}
-          <QRCodeCanvas value={url || ''} size={240} level="M" includeMargin />
-          <Link href={url} target="_blank" rel="noopener noreferrer" sx={{ fontSize: 12, wordBreak: 'break-all', textAlign: 'center' }}>{url}</Link>
-          <Typography sx={{ fontSize: 12, color: 'text.secondary', textAlign: 'center', wordBreak: 'keep-all' }}>
-            휴대폰 카메라로 찍으면 이 페이지가 열립니다. 「이미지 저장」은 인쇄용(QR 1024px) 이미지입니다.
-          </Typography>
+    <Stack alignItems="center" spacing={1.5}>
+      {title ? <Typography sx={{ fontWeight: 700, textAlign: 'center', wordBreak: 'keep-all' }}>{title}</Typography> : null}
+      <QRCodeCanvas value={url || ''} size={size} level="M" includeMargin />
+      <Link href={url} target="_blank" rel="noopener noreferrer" sx={{ fontSize: 12, wordBreak: 'break-all', textAlign: 'center' }}>{url}</Link>
+      <Typography sx={{ fontSize: 12, color: 'text.secondary', textAlign: 'center', wordBreak: 'keep-all' }}>
+        휴대폰 카메라로 찍으면 이 페이지가 열립니다. 「이미지 저장」은 인쇄용(QR 1024px) 이미지입니다.
+      </Typography>
+      {버튼보임 ? (
+        <Stack direction="row" spacing={1}>
+          <Button onClick={복사} startIcon={<Icon icon="mdi:content-copy" />}>주소 복사</Button>
+          <Button variant="contained" onClick={저장} startIcon={<Icon icon="mdi:download" />}>이미지 저장</Button>
         </Stack>
-        {/* 인쇄용 큰 QR — 화면에는 그리지 않고 저장할 때만 쓴다 */}
-        <div ref={큰QR} style={{ display: 'none' }}>
-          <QRCodeCanvas value={url || ''} size={1024} level="M" />
-        </div>
-      </DialogContent>
-      <DialogActions>
-        <Button onClick={복사} startIcon={<Icon icon="mdi:content-copy" />}>주소 복사</Button>
-        <Button variant="contained" onClick={저장} startIcon={<Icon icon="mdi:download" />}>이미지 저장</Button>
-        <Button onClick={onClose}>닫기</Button>
-      </DialogActions>
-    </Dialog>
+      ) : null}
+      {/* 인쇄용 큰 QR — 화면에는 그리지 않고 저장할 때만 쓴다 */}
+      <div ref={큰QR} style={{ display: 'none' }}>
+        <QRCodeCanvas value={url || ''} size={1024} level="M" />
+      </div>
+    </Stack>
   );
 };
+
+const QrDialog = ({ open, onClose, url, title, fileName = 'qr' }) => (
+  <Dialog open={!!open} onClose={onClose} maxWidth="xs" fullWidth>
+    <DialogTitle>QR 코드</DialogTitle>
+    <DialogContent>
+      <QrPanel url={url} title={title} fileName={fileName} />
+    </DialogContent>
+    <DialogActions>
+      <Button onClick={onClose}>닫기</Button>
+    </DialogActions>
+  </Dialog>
+);
 
 export default QrDialog;

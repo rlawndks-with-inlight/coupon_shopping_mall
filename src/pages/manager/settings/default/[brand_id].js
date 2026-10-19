@@ -42,7 +42,7 @@ import { createDefaultManagerObj } from 'src/data/manager-data'
 import { toast } from 'react-hot-toast'
 import { useModal } from 'src/components/dialog/ModalProvider'
 import { useAuthContext } from 'src/layouts/manager/auth/useAuthContext'
-import QrDialog, { 몰주소 } from 'src/components/manager/QrDialog'
+import { QrPanel, 몰주소 } from 'src/components/manager/QrDialog'
 import { Icon } from '@iconify/react'
 import ReactQuillComponent from 'src/views/manager/react-quill'
 import { apiManager } from 'src/utils/api'
@@ -138,7 +138,6 @@ const DefaultSetting = () => {
   const [currentTab, setCurrentTab] = useState(0)
   // 모듈 전역 기본객체를 그대로 넣으면 이 화면에서 변형될 때 원본이 오염된다(브랜드 추가 시 직전 브랜드가 섞임).
   const [item, setItem] = useState(() => createDefaultManagerObj('brands'))
-  const [몰qr, set몰qr] = useState(false) // 내 쇼핑몰 QR 창(2026-10-19)
   const [saveLoading, setSaveLoading] = useState(false)
   const [useBasicInfo, setUseBasicInfo] = useState(false)
   // 화면 진입 시점의 값(깊은 복사). 저장할 때 '실제로 바뀐 키'만 가려내는 기준으로만 쓴다.
@@ -404,13 +403,6 @@ const DefaultSetting = () => {
                 {tab.label}
               </Button>
             ))}
-            {/* 내 쇼핑몰 QR — 찍으면 몰 첫 화면이 열린다(매장·명함·전단용, 2026-10-19) */}
-            <Button sx={{ whiteSpace: 'nowrap', marginLeft: 'auto' }} variant='outlined' startIcon={<Icon icon='mdi:qrcode' />}
-              onClick={() => set몰qr(true)}>
-              내 쇼핑몰 QR
-            </Button>
-            <QrDialog open={몰qr} onClose={() => set몰qr(false)} url={`${몰주소({ dns: item?.dns })}/`}
-              title={item?.name} fileName={`qr-shop-${item?.id ?? ''}`} />
           </Row>
           <Grid container spacing={3}>
             {currentTab == 0 && (
@@ -702,6 +694,20 @@ const DefaultSetting = () => {
                           />
                         </Stack>
                       )}
+                    </Stack>
+                  </Card>
+                </Grid>
+                {/* 내 쇼핑몰 QR — 찍으면 몰 첫 화면이 열린다(매장·명함·전단용, 2026-10-19).
+                    처음엔 탭 줄 오른쪽 버튼이었는데 눈에 안 띈다고 해서(사장님) 기본정보 안에 늘 보이게 둔다. */}
+                <Grid item xs={12} md={6}>
+                  <Card sx={{ p: 2, height: '100%' }}>
+                    <Stack spacing={2}>
+                      <CardHeader title={`내 쇼핑몰 QR 코드`} sx={{ padding: '0' }} />
+                      <Typography variant='body2' sx={{ color: 'text.secondary' }}>
+                        매장 계산대·명함·전단·포장지에 인쇄해 두면 손님이 휴대폰 카메라로 찍어 바로 쇼핑몰에 들어옵니다.
+                        상품별 QR 은 상품관리 목록의 「QR」 칸에서 만들 수 있습니다.
+                      </Typography>
+                      <QrPanel url={`${몰주소({ dns: item?.dns })}/`} title={item?.name} fileName={`qr-shop-${item?.id ?? ''}`} size={180} />
                     </Stack>
                   </Card>
                 </Grid>

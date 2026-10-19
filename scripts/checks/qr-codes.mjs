@@ -19,7 +19,7 @@ const 수정 = 읽기('src/pages/manager/products/[edit_category]/[id].js');
 const 설정 = 읽기('src/pages/manager/settings/default/[brand_id].js');
 t('상품 목록에 QR 칸', /id: 'qr',[\s\S]{0,200}상품주소\(themeDnsData, row\?\.id\)/.test(목록) && /<QrDialog /.test(목록));
 t('상품 수정 화면에 QR 버튼', /상품주소\(themeDnsData, item\?\.id\)/.test(수정) && /QR 코드/.test(수정));
-t('기본설정에 내 쇼핑몰 QR', /내 쇼핑몰 QR/.test(설정) && /몰주소\(\{ dns: item\?\.dns \}\)/.test(설정));
+t('기본정보 탭에 「내 쇼핑몰 QR 코드」 칸이 늘 보인다(버튼 뒤에 숨기지 않는다)', /내 쇼핑몰 QR 코드/.test(설정) && /<QrPanel url=\{`\$\{몰주소\(\{ dns: item\?\.dns \}\)\}\/`\}/.test(설정));
 
 console.log(`\n통과 ${pass} / 실패 ${fail}`);
 process.exit(fail ? 1 : 0);

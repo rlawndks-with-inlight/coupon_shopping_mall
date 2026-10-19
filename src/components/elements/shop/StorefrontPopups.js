@@ -73,6 +73,14 @@ flex-direction:column;
 width:420px;
 max-width:min(420px, 92vw);
 max-height:86vh;
+/* 이미지가 든 팝업은 이미지 원본 폭만큼 넓힌다(최대 760px). 420px 고정일 땐 카드사 무이자 안내처럼
+   글자가 빽빽한 이미지(원본 949px)가 41% 로 줄어 읽을 수 없었다(2026-10-19 포스몰).
+   max-content 라 원본이 작은 이미지는 420px 그대로다. 길면 아래 본문이 스크롤된다. */
+&.이미지팝업{
+  width:max-content;
+  min-width:min(420px, 92vw);
+  max-width:min(760px, 92vw);
+}
 `;
 
 const CardHead = styled.div`
@@ -91,7 +99,7 @@ const CardBody = styled.div`
 padding:4px 16px 12px 16px;
 overflow-y:auto;
 /* 팝업에 넣은 이미지가 원본 크기 그대로 나와 카드를 뚫고 나가던 것도 함께 막는다. */
-img{max-width:100%;height:auto;display:block;margin:0 auto;}
+img{max-width:100%;height:auto;display:block;margin:0 auto;cursor:zoom-in;}
 .ql-editor{padding:8px 0;}
 `;
 
@@ -127,6 +135,9 @@ export const 팝업본문있음 = (item) => {
   const 글 = html.replace(/<[^>]*>/g, '').replace(/&nbsp;/g, ' ').trim();
   return 글.length > 0 || /<img|<video|<iframe/i.test(html);
 };
+
+// 본문에 이미지가 있으면 카드를 넓힌다(위 .이미지팝업).
+const 이미지있음 = (item) => /<img/i.test(String(item?.popup_content ?? ''));
 
 export const 팝업내용있음 = (item) =>
   팝업본문있음(item) || String(item?.popup_title ?? '').trim().length > 0;
@@ -191,7 +202,7 @@ const StorefrontPopups = () => {
       {/* 카드 안을 누른 것이 배경 클릭으로 새어 나가면, 내용을 읽으려다 팝업이 닫힌다. */}
       <CardRow onClick={(e) => e.stopPropagation()}>
         {보일것.map((item, idx) => (
-          <PopupCard key={item?.id ?? idx}>
+          <PopupCard key={item?.id ?? idx} className={이미지있음(item) ? '이미지팝업' : undefined}>
             {/* 관리자에서 받아 두고 화면 어디에도 안 쓰던 값이다. 제목이 있으면 무슨 알림인지
                 한 줄로 먼저 읽히고, 내용이 이미지 한 장뿐일 때도 맥락이 남는다. */}
             {String(item?.popup_title ?? '').trim() &&
@@ -204,7 +215,12 @@ const StorefrontPopups = () => {
             {/* 본문이 비어 있으면 칸 자체를 없앤다 — 안 그러면 제목 아래에 흰 여백만 남는다
                 (제목만 적고 내용은 비워 둔 팝업이 실제로 있다). */}
             {팝업본문있음(item) &&
-            <CardBody>
+            <CardBody
+              // 이미지를 누르면 원본을 새 탭으로 연다 — 휴대폰은 화면 폭이 좁아 넓혀도 작다. 크게 보고 손가락으로 확대하게.
+              onClick={(e) => {
+                const el = e.target;
+                if (el?.tagName === 'IMG' && el?.src) window.open(el.src, '_blank', 'noopener,noreferrer');
+              }}>
               <ReactQuill
                 className='none-padding'
                 value={formatLang(item, 'popup_content', currentLang) || `<body></body>`}

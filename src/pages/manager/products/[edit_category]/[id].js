@@ -16,6 +16,7 @@ import _ from "lodash";
 import { useModal } from "src/components/dialog/ModalProvider";
 import ReactQuillComponent from "src/views/manager/react-quill";
 import QrDialog, { 상품주소 } from 'src/components/manager/QrDialog';
+import { isShopgoBrand } from 'src/utils/is-shopgo';
 import { apiManager, uploadFilesByManager } from "src/utils/api";
 import { confirmSellerPriceImpact } from "src/utils/seller-impact";
 import { useAuthContext } from "src/layouts/manager/auth/useAuthContext";
@@ -2508,15 +2509,17 @@ const ProductEdit = () => {
                           </Button>
                         </>
                       }
-                      {/* 상품 QR — 매장 POP·전단용(2026-10-19) */}
-                      <Button variant="outlined" startIcon={<Icon icon="mdi:qrcode" />} style={{ height: '48px', marginLeft: 'auto' }}
-                        onClick={() => setQr열기(true)}>
-                        QR 코드
-                      </Button>
-                      <QrDialog open={qr열기} onClose={() => setQr열기(false)} url={상품주소(themeDnsData, item?.id)}
-                        title={item?.product_name} fileName={`qr-product-${item?.id}`} />
+                      {/* 상품 QR — 매장 POP·전단용(2026-10-19). ShopGo 산하 몰 전용 */}
+                      {isShopgoBrand(themeDnsData) && <>
+                        <Button variant="outlined" startIcon={<Icon icon="mdi:qrcode" />} style={{ height: '48px', marginLeft: 'auto' }}
+                          onClick={() => setQr열기(true)}>
+                          QR 코드
+                        </Button>
+                        <QrDialog open={qr열기} onClose={() => setQr열기(false)} url={상품주소(themeDnsData, item?.id)}
+                          title={item?.product_name} fileName={`qr-product-${item?.id}`} />
+                      </>}
                       <Button variant="contained" style={{
-                        height: '48px', width: '180px', marginLeft: '1rem',
+                        height: '48px', width: '180px', marginLeft: isShopgoBrand(themeDnsData) ? '1rem' : 'auto',
                       }} onClick={() => {
                         setModal({
                           func: () => { onSave('edit') },

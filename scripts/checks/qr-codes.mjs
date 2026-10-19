@@ -17,9 +17,11 @@ t('인쇄용 이미지는 큰 QR(1024px)로 만든다', /<QRCodeCanvas value=\{u
 const 목록 = 읽기('src/pages/manager/products/list.js');
 const 수정 = 읽기('src/pages/manager/products/[edit_category]/[id].js');
 const 설정 = 읽기('src/pages/manager/settings/default/[brand_id].js');
-t('상품 목록에 QR 칸', /id: 'qr',[\s\S]{0,200}상품주소\(themeDnsData, row\?\.id\)/.test(목록) && /<QrDialog /.test(목록));
-t('상품 수정 화면에 QR 버튼', /상품주소\(themeDnsData, item\?\.id\)/.test(수정) && /QR 코드/.test(수정));
-t('기본정보 탭에 「내 쇼핑몰 QR 코드」 칸이 늘 보인다(버튼 뒤에 숨기지 않는다)', /내 쇼핑몰 QR 코드/.test(설정) && /<QrPanel url=\{`\$\{몰주소\(\{ dns: item\?\.dns \}\)\}\/`\}/.test(설정));
+// ShopGo 한정(2026-10-19 사장님) — 다른 계열 몰 관리자 화면에는 QR 이 나오지 않는다.
+t('상품 목록 QR 칸은 ShopGo 산하 몰만', /\.\.\.\(isShopgoBrand\(themeDnsData\) \? \[\{\s*id: 'qr',[\s\S]{0,300}상품주소\(themeDnsData, row\?\.id\)/.test(목록) && /<QrDialog /.test(목록));
+t('상품 수정 QR 버튼은 ShopGo 산하 몰만', /\{isShopgoBrand\(themeDnsData\) && <>[\s\S]{0,300}QR 코드[\s\S]{0,300}상품주소\(themeDnsData, item\?\.id\)/.test(수정));
+t('내 쇼핑몰 QR 은 쇼핑몰명·도메인 칸 안(도메인 아래), ShopGo 산하 몰만',
+  /label='도메인'[\s\S]{0,2500}\{isShopgoBrand\(item\) && \([\s\S]{0,400}내 쇼핑몰 QR 코드[\s\S]{0,600}<QrPanel url=\{`\$\{몰주소\(\{ dns: item\?\.dns \}\)\}\/`\}/.test(설정));
 
 console.log(`\n통과 ${pass} / 실패 ${fail}`);
 process.exit(fail ? 1 : 0);

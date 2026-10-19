@@ -50,7 +50,7 @@ import { commarNumber } from 'src/utils/function'
 import { BLOG_DEMO_DATA, SHOP_DEMO_DATA } from 'src/data/data'
 import { FRAMES, LEGACY_FRAMES } from 'src/components/main-site/frameList'
 import { allLangs } from 'src/locales'
-import { isShopgoMerchant } from 'src/utils/is-shopgo'
+import { isShopgoMerchant, isShopgoBrand } from 'src/utils/is-shopgo'
 import { COURIER_LIST } from 'src/data/couriers';
 import { 금액표시, 금액입력 } from 'src/utils/money-input'
 import PasswordField from 'src/components/elements/PasswordField';
@@ -627,6 +627,18 @@ const DefaultSetting = () => {
                           }}
                         />
                       )}
+                      {/* 내 쇼핑몰 QR — 찍으면 몰 첫 화면이 열린다(매장·명함·전단용, 2026-10-19). ShopGo 산하 몰 전용.
+                          처음엔 탭 줄 오른쪽 버튼 → 따로 칸 → 사장님 의견대로 쇼핑몰명·도메인 아래 빈 자리에 둔다. */}
+                      {isShopgoBrand(item) && (
+                        <Stack spacing={1} sx={{ pt: 2, borderTop: '1px dashed', borderColor: 'divider' }}>
+                          <Typography variant='subtitle2'>내 쇼핑몰 QR 코드</Typography>
+                          <Typography variant='body2' sx={{ color: 'text.secondary' }}>
+                            매장 계산대·명함·전단·포장지에 인쇄해 두면 손님이 휴대폰 카메라로 찍어 바로 쇼핑몰에 들어옵니다.
+                            상품별 QR 은 상품관리 목록의 「QR」 칸에서 만들 수 있습니다.
+                          </Typography>
+                          <QrPanel url={`${몰주소({ dns: item?.dns })}/`} title={item?.name} fileName={`qr-shop-${item?.id ?? ''}`} size={180} />
+                        </Stack>
+                      )}
                       {item.id == 5 &&
                         <>
                           <div>
@@ -694,20 +706,6 @@ const DefaultSetting = () => {
                           />
                         </Stack>
                       )}
-                    </Stack>
-                  </Card>
-                </Grid>
-                {/* 내 쇼핑몰 QR — 찍으면 몰 첫 화면이 열린다(매장·명함·전단용, 2026-10-19).
-                    처음엔 탭 줄 오른쪽 버튼이었는데 눈에 안 띈다고 해서(사장님) 기본정보 안에 늘 보이게 둔다. */}
-                <Grid item xs={12} md={6}>
-                  <Card sx={{ p: 2, height: '100%' }}>
-                    <Stack spacing={2}>
-                      <CardHeader title={`내 쇼핑몰 QR 코드`} sx={{ padding: '0' }} />
-                      <Typography variant='body2' sx={{ color: 'text.secondary' }}>
-                        매장 계산대·명함·전단·포장지에 인쇄해 두면 손님이 휴대폰 카메라로 찍어 바로 쇼핑몰에 들어옵니다.
-                        상품별 QR 은 상품관리 목록의 「QR」 칸에서 만들 수 있습니다.
-                      </Typography>
-                      <QrPanel url={`${몰주소({ dns: item?.dns })}/`} title={item?.name} fileName={`qr-shop-${item?.id ?? ''}`} size={180} />
                     </Stack>
                   </Card>
                 </Grid>

@@ -20,6 +20,7 @@ import { formatLang } from "src/utils/format";
 import toast from "react-hot-toast";
 import { 금액표시, 금액입력 } from 'src/utils/money-input'
 import QrDialog, { 상품주소 } from 'src/components/manager/QrDialog'
+import { isShopgoBrand } from 'src/utils/is-shopgo'
 
 const ReactQuill = dynamic(() => import('react-quill'), {
   ssr: false,
@@ -362,8 +363,8 @@ const ProductList = () => {
         )
       }
     },*/
-    // 상품 QR — 매장 POP·전단에 인쇄해 손님이 찍으면 이 상품 페이지가 열린다(2026-10-19).
-    {
+    // 상품 QR — 매장 POP·전단에 인쇄해 손님이 찍으면 이 상품 페이지가 열린다(2026-10-19). ShopGo 산하 몰 전용.
+    ...(isShopgoBrand(themeDnsData) ? [{
       id: 'qr',
       label: 'QR',
       action: (row) => (
@@ -371,7 +372,7 @@ const ProductList = () => {
           <Icon icon='mdi:qrcode' />
         </IconButton>
       )
-    },
+    }] : []),
     ...(user?.level >= 40 ? [
       {
         id: 'edit',

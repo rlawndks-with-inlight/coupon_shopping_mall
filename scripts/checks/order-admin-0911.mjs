@@ -105,7 +105,7 @@ if (백엔드있음) {
   t('서버: 거래 삭제·수정은 level 50 (두 곳)', (trx.match(/if \(!decode_user \|\| decode_user\?\.level < 50\) \{/g) || []).length === 2 && !/decode_user\?\.level < 40\) \{/.test(trx.slice(trx.indexOf('update: async'), trx.indexOf('update: async') + 900)));
   // ④ 결제대기로 되돌리기 거부 + 이력
   t('서버: 상태 드롭다운이 결제대기(0)·음수로 되돌리는 요청을 거부한다', util.includes("if (!(Number(value) > 0)) {") && util.includes('결제대기로는 되돌릴 수 없습니다'));
-  t('서버: 상태 변경 전 값을 읽어 이력에 남긴다', util.includes("const [[이전]] = await readPool.query(`SELECT trx_status FROM transactions WHERE id=? ${scope.sql}`") && util.includes("kind: 'status', from_status: 이전상태, to_status: Number(value)"));
+  t('서버: 상태 변경 전 값을 읽어 이력에 남긴다', util.includes("const [[이전]] = await readPool.query(`SELECT trx_status, trx_method FROM transactions WHERE id=? ${scope.sql}`") && util.includes("kind: 'status', from_status: 이전상태, to_status: Number(value)"));
   // ⑤ 이력
   t('이력 테이블 마이그레이션', 마이그.includes('CREATE TABLE IF NOT EXISTS transaction_status_logs') && 마이그.includes('INDEX idx_trx_status_logs_trans (trans_id, id)'));
   t('이력 쓰기는 절대 던지지 않고 테이블이 없어도 지나간다', 로그.includes("if (e?.code === 'ER_NO_SUCH_TABLE')") && /export const logTrx = async[\s\S]*?catch \(e\)/.test(로그));

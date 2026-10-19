@@ -1,5 +1,5 @@
 import { useRouter } from 'next/router';
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Box, Button, Card, CardContent, CardHeader, Stack, Typography } from '@mui/material';
 import { Icon } from '@iconify/react';
 import styled from 'styled-components';
@@ -20,7 +20,8 @@ import { clearOrderDraft } from 'src/utils/order-draft';
 //
 // [표시 데이터]
 //  PG 가 쿼리스트링으로 돌려주는 값만 쓴다(서버 조회 없음).
-//  result_cd '0000' = 성공, 그 외 = 실패. 브랜드 77 은 테스트 결제 안내를 따로 띄운다(기존 동작 유지).
+//  result_cd '0000' = 성공, '0001' = 확인 중(포스페이 복귀 시점에 거래조회가 아직 안 끝남), 그 외 = 실패.
+//  브랜드 77 은 테스트 결제 안내를 따로 띄운다(기존 동작 유지).
 
 const Wrappers = styled.div`
   max-width: 720px;
@@ -51,7 +52,33 @@ const { user } = useAuthContext();
 
   const q = router.query || {};
   const isTestBrand = themeDnsData?.id == 77;   // 기존 동작 보존
-  const isSuccess = q.result_cd === '0000';
+
+  // 확인 중(0001): 결제창에서 돌아온 순간 포스페이 거래조회가 늦거나 아직 승인 전이면 서버가 '실패' 대신 0001 을 준다.
+  // 예전엔 곧바로 '결제에 실패하였습니다' + 「장바구니로」를 보여 줘서, 실제로는 결제된 손님이 다시 결제할 수 있었다
+  // (2026-10-19 오픈 전 점검). 여기서 몇 번 더 서버 확정(confirm)을 물어 본 뒤에 판단한다.
+  const isPending = q.result_cd === '0001';
+  const [확인상태, set확인상태] = useState('idle'); // idle | checking | confirmed | unknown
+  useEffect(() => {
+    if (!router.isReady || !isPending || 확인상태 !== 'idle') return;
+    const ord = String(q.ord_num || '');
+    if (!ord) { set확인상태('unknown'); return; }
+    set확인상태('checking');
+    let 멈춤 = false;
+    (async () => {
+      for (let i = 0; i < 6 && !멈춤; i++) {
+        await new Promise((r) => setTimeout(r, 3000));
+        try {
+          const r = await apiManager('pays/forspay/confirm', 'create', { ord_num: ord });
+          if (r?.settled) { if (!멈춤) set확인상태('confirmed'); return; }
+        } catch (e) { /* 다음 회차에 다시 */ }
+      }
+      if (!멈춤) set확인상태('unknown');
+    })();
+    return () => { 멈춤 = true; };
+  }, [router.isReady, isPending]);
+  const 확인중 = isPending && (확인상태 === 'idle' || 확인상태 === 'checking');
+  const 확인불명 = isPending && 확인상태 === 'unknown';
+  const isSuccess = q.result_cd === '0000' || (isPending && 확인상태 === 'confirmed');
 
   // 결제 성공으로 돌아왔으면 장바구니를 비운다.
   //
@@ -98,7 +125,11 @@ const { user } = useAuthContext();
     ? { icon: 'mdi:progress-clock', color: '#f0a020', title: translate('테스트결제 진행중입니다.') }
     : isSuccess
       ? { icon: 'mdi:check-circle-outline', color: mainColor, title: translate('결제에 성공하였습니다.') }
-      : { icon: 'mdi:close-circle-outline', color: '#d33', title: translate('결제에 실패하였습니다.') };
+      : 확인중
+        ? { icon: 'mdi:progress-clock', color: '#f0a020', title: translate('결제를 확인하고 있습니다.') }
+        : 확인불명
+          ? { icon: 'mdi:help-circle-outline', color: '#f0a020', title: translate('결제 확인이 늦어지고 있습니다.') }
+          : { icon: 'mdi:close-circle-outline', color: '#d33', title: translate('결제에 실패하였습니다.') };
 
   // 할부개월: '00' = 일시불, 그 외 앞자리 0 을 떼고 'N개월'
   const installment = q.installment
@@ -125,7 +156,13 @@ const { user } = useAuthContext();
           {view.title}
         </Typography>
         {!isSuccess && !isTestBrand && (
-          <Typography variant="body2" sx={{ color: 'text.secondary', mt: 0.75, textAlign: 'center' }}>{translate('결제가 완료되지 않았습니다. 다시 시도해 주세요.')}</Typography>
+          <Typography variant="body2" sx={{ color: 'text.secondary', mt: 0.75, textAlign: 'center', wordBreak: 'keep-all' }}>
+            {확인중
+              ? translate('잠시만 기다려 주세요. 창을 닫거나 다시 결제하지 마세요.')
+              : 확인불명
+                ? translate('카드사·간편결제 앱에서 결제 여부를 확인해 주세요. 결제되었다면 주문내역에 곧 반영되고, 결제되지 않았다면 다시 주문해 주세요.')
+                : translate('결제가 완료되지 않았습니다. 다시 시도해 주세요.')}
+          </Typography>
         )}
       </Stack>
 
@@ -149,13 +186,13 @@ const { user } = useAuthContext();
         {/* 실패 시엔 주문내역이 없으므로 장바구니로 되돌려 재시도를 돕는다.
             성공이어도 비회원은 /shop/auth/history 가 늘 빈 표라(회원 주문만 조회한다)
             전화번호+주문비밀번호로 보는 주문조회로 보낸다. */}
-        <Button fullWidth variant="contained"
+        <Button fullWidth variant="contained" disabled={확인중}
           onClick={() => router.push(
-            isSuccess
+            (isSuccess || 확인불명)
               ? (user?.id ? '/shop/auth/history' : '/shop/auth/order-check')
               : '/shop/auth/cart'
           )}>
-          {isSuccess ? (user?.id ? translate("주문내역 보기") : translate("주문 조회하기")) : translate("장바구니로")}
+          {(isSuccess || 확인중 || 확인불명) ? (user?.id ? translate("주문내역 보기") : translate("주문 조회하기")) : translate("장바구니로")}
         </Button>
       </Stack>
 

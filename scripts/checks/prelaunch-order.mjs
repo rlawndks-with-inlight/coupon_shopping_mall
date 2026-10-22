@@ -15,6 +15,15 @@ const t = (name, cond) => { if (cond) { pass++; console.log('  ok  ' + name); } 
 
 const 결과 = 읽기(FRONT_ROOT, 'src/views/shop/order/PayResultView.js');
 t('결과페이지: 0001 은 확인 중 → confirm 을 몇 번 다시 묻는다', /const isPending = q\.result_cd === '0001';/.test(결과) && /for \(let i = 0; i < 6 && !멈춤; i\+\+\)[\s\S]{0,200}apiManager\('pays\/forspay\/confirm', 'create', \{ ord_num: ord \}\)/.test(결과));
+// 승인일시: 포스페이는 'YYYY-MM-DD HH:mm:ss' — 자리로 자르면 '2026--1-0- 22: 1' 이 된다(2026-10-22)
+{
+  const 식 = 결과.match(/const trxDttm = \(\(\) => \{([\s\S]*?)\}\)\(\);/);
+  const 계산 = 식 && new Function('q', 식[1]);
+  t('결과페이지: 승인일시는 두 모양 모두 YYYY-MM-DD HH:mm', !!계산
+    && 계산({ trx_dttm: '2026-10-22 11:27:32' }) === '2026-10-22 11:27'
+    && 계산({ trx_dttm: '20261022112732' }) === '2026-10-22 11:27'
+    && 계산({}) === undefined);
+}
 t('결과페이지: CANCEL(결제창 닫음)·PV999(손님 취소)는 「결제가 취소되었습니다」', /const isCanceled = \['CANCEL', 'PV999'\]\.includes/.test(결과) && /translate\('결제가 취소되었습니다\.'\)/.test(결과));
 t('결과페이지: 확인 중·불명일 때는 「장바구니로」가 아니라 주문내역으로', /\(isSuccess \|\| 확인불명\)\s*\? \(user\?\.id \? '\/shop\/auth\/history' : '\/shop\/auth\/order-check'\)/.test(결과) && /disabled=\{확인중\}/.test(결과));
 

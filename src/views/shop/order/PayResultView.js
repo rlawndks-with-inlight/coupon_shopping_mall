@@ -146,11 +146,14 @@ const { user } = useAuthContext();
       : translate('{{n}}개월', { n: String(q.installment).replace(/^0+/, '') }))
     : undefined;
 
-  // 승인일시: PG가 'YYYYMMDDHHmmss' 로 준다. 읽기 좋게 끊어 준다.
+  // 승인일시: PG 마다 모양이 다르다 — 'YYYYMMDDHHmmss'(예전 PG) 또는 'YYYY-MM-DD HH:mm:ss'(포스페이).
+  // 숫자만 골라 끊는다. 예전엔 앞의 모양만 가정하고 자리로 잘라서, 포스페이 값이
+  // '2026--1-0- 22: 1' 로 보였다(2026-10-22 발견).
   const trxDttm = (() => {
     const v = String(q.trx_dttm || '');
-    if (v.length < 14) return q.trx_dttm || undefined;
-    return `${v.slice(0, 4)}-${v.slice(4, 6)}-${v.slice(6, 8)} ${v.slice(8, 10)}:${v.slice(10, 12)}`;
+    const d = v.replace(/\D/g, '');
+    if (d.length < 12) return v || undefined;
+    return `${d.slice(0, 4)}-${d.slice(4, 6)}-${d.slice(6, 8)} ${d.slice(8, 10)}:${d.slice(10, 12)}`;
   })();
 
   const hasDetail = q.ord_num || q.acquirer || installment || q.buyer_name || q.buyer_phone || trxDttm;

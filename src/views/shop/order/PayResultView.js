@@ -79,6 +79,11 @@ const { user } = useAuthContext();
   const 확인중 = isPending && (확인상태 === 'idle' || 확인상태 === 'checking');
   const 확인불명 = isPending && 확인상태 === 'unknown';
   const isSuccess = q.result_cd === '0000' || (isPending && 확인상태 === 'confirmed');
+  // 손님이 결제창을 닫거나 취소한 경우 — '실패'가 아니라 '취소'로 보여 준다(2026-10-22 사장님).
+  //   CANCEL : 우리 서버 복귀 경로에서 포스페이에 거래가 아예 없을 때(모바일에서 결제창 X → 409 not_found)
+  //   PV999  : 포스페이 문서 「Buyer cancelled in the payment window」(PC 팝업 FORSPAY_RESULT)
+  // 그 밖의 코드(PV9999 미지원 기능, 카드 거절 등)는 그대로 '결제에 실패하였습니다'.
+  const isCanceled = ['CANCEL', 'PV999'].includes(String(q.result_cd ?? ''));
 
   // 결제 성공으로 돌아왔으면 장바구니를 비운다.
   //
@@ -129,7 +134,9 @@ const { user } = useAuthContext();
         ? { icon: 'mdi:progress-clock', color: '#f0a020', title: translate('결제를 확인하고 있습니다.') }
         : 확인불명
           ? { icon: 'mdi:help-circle-outline', color: '#f0a020', title: translate('결제 확인이 늦어지고 있습니다.') }
-          : { icon: 'mdi:close-circle-outline', color: '#d33', title: translate('결제에 실패하였습니다.') };
+          : isCanceled
+            ? { icon: 'mdi:close-circle-outline', color: '#9e9e9e', title: translate('결제가 취소되었습니다.') }
+            : { icon: 'mdi:close-circle-outline', color: '#d33', title: translate('결제에 실패하였습니다.') };
 
   // 할부개월: '00' = 일시불, 그 외 앞자리 0 을 떼고 'N개월'
   const installment = q.installment
@@ -161,7 +168,9 @@ const { user } = useAuthContext();
               ? translate('잠시만 기다려 주세요. 창을 닫거나 다시 결제하지 마세요.')
               : 확인불명
                 ? translate('카드사·간편결제 앱에서 결제 여부를 확인해 주세요. 결제되었다면 주문내역에 곧 반영되고, 결제되지 않았다면 다시 주문해 주세요.')
-                : translate('결제가 완료되지 않았습니다. 다시 시도해 주세요.')}
+                : isCanceled
+                  ? translate('결제가 진행되지 않아 주문이 접수되지 않았습니다.')
+                  : translate('결제가 완료되지 않았습니다. 다시 시도해 주세요.')}
           </Typography>
         )}
       </Stack>

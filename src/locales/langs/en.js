@@ -251,6 +251,8 @@ const en = {
   "주소지 추가": "Add Address",
   "결제에 성공하였습니다.": "The payment was successful.",
   "결제에 실패하였습니다.": "Payment failed.",
+  "결제가 취소되었습니다.": "Payment was canceled.",
+  "결제가 진행되지 않아 주문이 접수되지 않았습니다.": "Your order was not placed because the payment was not completed.",
   "이 쇼핑몰에서 사용할 수 없는 결제수단입니다.": "This payment method is not available in this store.",
   "이미 취소된 주문입니다.": "This order has already been canceled.",
   "부분취소한 주문입니다. 「부분취소」 창에서 남은 수량을 모두 선택해 취소해 주세요.": "This order has been partially canceled. Please select all remaining items in the Partial Cancel window to cancel.",

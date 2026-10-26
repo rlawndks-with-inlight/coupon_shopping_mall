@@ -47,6 +47,9 @@ export const forspayMethodList = [
     { key: 'bank', label: '실시간계좌이체', icon: 'mdi:bank-outline', color: '#5B6472' },
     { key: 'kakaopay', label: '카카오페이', icon: 'simple-icons:kakaotalk', color: '#FEE500' },
     { key: 'naverpay', label: '네이버페이', icon: 'simple-icons:naver', color: '#03C75A' },
+    // 페이코·토스페이(2026-10-26 포스페이 간편결제 지갑 route 4·5) — 브랜드 아이콘이 아이콘 세트에 없어 지갑 아이콘 + 브랜드 색
+    { key: 'payco', label: '페이코', icon: 'mdi:wallet-outline', color: '#FA2828' },
+    { key: 'tosspay', label: '토스페이', icon: 'mdi:wallet-outline', color: '#0064FF' },
     { key: 'foreign_card', label: '해외발행카드', icon: 'mdi:earth', color: '#5B6472' },
     { key: 'wechat', label: '위챗페이', icon: 'simple-icons:wechat', color: '#09B83E' },
     { key: 'alipay', label: '알리페이', icon: 'simple-icons:alipay', color: '#1677FF' },

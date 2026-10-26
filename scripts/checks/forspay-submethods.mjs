@@ -41,6 +41,19 @@ if (결제가능) {
 }
 
 t('주문서 목록은 결제가능으로 거른다', /if \(!결제가능\(allowedIds, m\)\) return false;/.test(al));
+
+// 페이코·토스페이(간편결제 route 4·5) — 프론트 아이콘 목록과 백엔드 카탈로그 키가 같아야 한다
+const 페이코 = 수단.find((m) => m.key === 'payco'), 토스 = 수단.find((m) => m.key === 'tosspay');
+t('페이코=간편결제 route 4, 토스페이=route 5', 페이코?.pg === 3 && 페이코?.route === '4' && 토스?.pg === 3 && 토스?.route === '5');
+const 프론트목록 = readFileSync(new URL('../../src/utils/format.js', import.meta.url), 'utf8').match(/export const forspayMethodList = \[([\s\S]*?)\n\]/)?.[1] ?? '';
+const 프론트키 = [...프론트목록.matchAll(/key: '(\w+)'/g)].map((m) => m[1]);
+t('프론트 결제수단 목록 키 = 백엔드 카탈로그 키(같은 순서)', 프론트키.join(',') === 수단.map((m) => m.key).join(','));
+
+// 거절 코드 → 손님 안내(원문은 보이지 않는다)
+t('거절 코드 PV408·PV407·PV413·PV433 은 우리 문구로 안내', ['PV408', 'PV407', 'PV413', 'PV433'].every((c) => new RegExp(`${c}: '`).test(fs)));
+t('세션 생성 실패·결제창 주소 없음 둘 다 거절 안내를 쓴다',
+  /거절안내\(거절코드\(session\)\) \?\? 결제시작실패문구/.test(pay) && /거절안내\(거절코드\(e\?\.response\?\.data\)\) \?\? 결제시작실패문구/.test(pay));
+t('포스페이 경고(warnings)는 1시간에 한 번 서버 기록', /export const 경고기록 = async/.test(al) && /EX: 3600/.test(al));
 t('ping 에서 sub_methods[대분류].available 을 읽는다', /checkout\?\.sub_methods/.test(fs) && /v\?\.available/.test(fs));
 t('결제창 실패 뒤 다시 확인은 세부 수단까지(수단 전체를 넘긴다)', /실패후대분류다시확인\(brand_id, creds\.app_key, fsMethod\)/.test(pay));
 

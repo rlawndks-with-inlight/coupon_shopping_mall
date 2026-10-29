@@ -1607,6 +1607,13 @@ const DefaultSetting = () => {
                         끄면 글만 받습니다. 사진은 한 후기에 최대 5장입니다.
                       </Typography>
                       <FormControlLabel
+                        control={<Switch checked={item?.setting_obj?.review_allow_guest === undefined || item?.setting_obj?.review_allow_guest === null || item?.setting_obj?.review_allow_guest === '' || Number(item?.setting_obj?.review_allow_guest) === 1}
+                          onChange={e => setItem({ ...item, ['setting_obj']: { ...item?.setting_obj, ['review_allow_guest']: e.target.checked ? 1 : 0 } })} />}
+                        label='비회원 구매자 후기 허용' />
+                      <Typography variant='caption' sx={{ color: 'text.secondary' }}>
+                        비회원으로 산 손님도 비회원 주문조회(전화번호+주문비밀번호)에서 본인을 확인하고 후기를 씁니다. 작성자는 주문자 이름을 가려 표시합니다(예: 김**). 끄면 회원 주문만 받습니다.
+                      </Typography>
+                      <FormControlLabel
                         control={<Switch checked={item?.setting_obj?.review_use_helpful === undefined || item?.setting_obj?.review_use_helpful === '' || Number(item?.setting_obj?.review_use_helpful) === 1}
                           onChange={e => setItem({ ...item, ['setting_obj']: { ...item?.setting_obj, ['review_use_helpful']: e.target.checked ? 1 : 0 } })} />}
                         label='도움돼요 버튼' />

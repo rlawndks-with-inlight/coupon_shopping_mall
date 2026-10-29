@@ -6,6 +6,12 @@
 // ----------------------------------------------------------------------
 
 const en = {
+  "회원은 로그인 후 후기를 쓸 수 있어요.": "Members can write a review after logging in.",
+  "비회원으로 구매하셨다면 주문조회에서 쓸 수 있어요.": "Bought as a guest? Write it from Order Lookup.",
+  "상품을 받으신 뒤 주문조회에서 후기를 남길 수 있어요.": "After you receive the item, you can leave a review from Order Lookup.",
+  "이 몰은 회원 구매자만 후기를 받습니다.": "This shop accepts reviews from member purchases only.",
+  "회원으로 주문하신 경우 로그인 후 주문내역에서 써 주세요.": "If you ordered as a member, please write it from Order History after logging in.",
+  "주문 정보를 확인할 수 없습니다. 전화번호와 주문 비밀번호를 다시 확인해 주세요.": "We couldn't verify your order. Please check your phone number and order password.",
   "도움돼요": "Helpful",
   "관리자 계정으로는 누를 수 없습니다.": "Manager accounts cannot vote.",
   "이 몰에서는 도움돼요를 쓰지 않습니다.": "This shop does not use helpful votes.",

@@ -36,7 +36,7 @@ if (백엔드있음) {
         '구매 판정 없이 저장하면 2026-08-07 에 감췄던 이유로 되돌아간다');
     t('작성은 로그인한 본인 이름으로만(body 의 user_id 를 안 쓴다)', /user_id: userId/.test(ctrl) && !/user_id: req\.body/.test(ctrl));
     t('손님 목록은 숨긴 후기를 뺀다', /is_hidden=0/.test(ctrl));
-    t('손님 목록의 작성자는 마스킹된다', /writer: maskWriter\(/.test(ctrl));
+    t('손님 목록의 작성자는 마스킹된다(회원 maskWriter · 비회원 가린 이름)', /writer: Number\(row\.user_id\) > 0 \? maskWriter\(/.test(ctrl));
     t('관리자 답글·숨김·BEST 는 레벨 10 이상', (ctrl.match(/checkLevel\(req\.cookies\.token, 10, res\)/g) || []).length >= 4);
     // 주석에도 '/:id' 가 적혀 있다(왜 앞에 두는지 설명) — 코드만 본다.
     const route = 주석제거(readFileSync(BACK_ROOT + 'routes/product_review.route.js', 'utf8'));
@@ -110,6 +110,32 @@ if (백엔드있음) {
     t('도움돼요 건수는 실제로 바뀐 때만 ±1', /ins\.affectedRows > 0/.test(ctrl2) && /del\.affectedRows > 0/.test(ctrl2));
     t('도움돼요 경로가 /:id 앞에 있다', route2.indexOf("'/:id/helpful'") > -1 && route2.indexOf("'/:id/helpful'") < route2.indexOf("'/:id'"));
     t('도움돼요 표 마이그레이션 ③ 이 있다', existsSync(BACK_ROOT + 'migrations/2026-09-14_product_review_votes.sql'));
+}
+
+// ── 비회원 구매자 후기(2026-10-29) ─────────────────────────────────────
+t('후기설정 탭이 review_allow_guest 를 저장한다', /\['review_allow_guest'\]: e\.target\.checked \? 1 : 0/.test(설정));
+t('프론트가 allow_guest 를 같은 기본값(켜짐)으로 읽는다', /review_allow_guest === ''\) \? true/.test(front));
+{
+    const oc = 읽기('src/pages/shop/auth/order-check.js');
+    t('비회원 주문조회가 후기 판정을 몸통(POST)으로 부른다', /apiManager\('product-reviews\/guest\/writable', 'create'/.test(oc));
+    t('비회원 주문조회의 주문 줄마다 후기 버튼(guest 전달)', /<ReviewWriteButton line=\{reviewLines\[o\.id\]\} guest=\{guest\}/.test(oc));
+    const dlg = 읽기('src/components/elements/shop/review/ReviewWriteDialog.js');
+    t('작성창이 비회원이면 guest 경로로 보낸다', /guest \? 'product-reviews\/guest' : 'product-reviews'/.test(dlg));
+}
+if (백엔드있음) {
+    const back3 = readFileSync(BACK_ROOT + 'utils.js/review-policy.js', 'utf8');
+    const ctrl3 = 주석제거(readFileSync(BACK_ROOT + 'controllers/product_review.controller.js', 'utf8'));
+    const route3 = 주석제거(readFileSync(BACK_ROOT + 'routes/product_review.route.js', 'utf8'));
+    const idx3 = readFileSync(BACK_ROOT + 'index.js', 'utf8');
+    t('백엔드도 allow_guest 기본 켜짐', /review_allow_guest === ''\) \? true/.test(back3));
+    t('비회원 판정은 guest 플래그일 때만 소유 검사를 건너뛴다', /if \(!guest && \(!\(Number\(userId\) > 0\)/.test(back3));
+    t('비회원은 회원 주문에 못 쓴다', /if \(Number\(trx\?\.user_id\) > 0\) return \{ ok: false, state: 'not_owner'/.test(back3));
+    t('비회원 본인 확인 = 전화번호+주문비밀번호+이 몰+비회원 주문', /guestTrxIds/.test(ctrl3) && /orderPasswordCandidates\(password\)/.test(ctrl3) && /\(user_id IS NULL OR user_id<=0\)/.test(ctrl3));
+    t('비회원 작성·수정·삭제가 모두 주문 확인을 거친다', (ctrl3.match(/guestTrxIds\(brandId, guestCred\(req\)\)/g) || []).length >= 3);
+    t('비회원 작성자는 가린 이름(guest_name)', /guest_name: guestName/.test(ctrl3) && /row\.guest_name \|\| '구매자'/.test(ctrl3));
+    t('비회원 경로가 /:id 앞에 있다', route3.indexOf("'/guest/writable'") > -1 && route3.indexOf("'/guest/:id'") < route3.indexOf("'/:id'"));
+    t('비회원 후기 경로에 횟수 제한', /app\.use\('\/api\/product-reviews\/guest', guestReviewLimiter\)/.test(idx3));
+    t('비회원 후기 마이그레이션 ④ 가 있다', existsSync(BACK_ROOT + 'migrations/2026-10-29_product_reviews_guest.sql'));
 }
 
 console.log(`\n통과 ${pass} / 실패 ${fail}`);

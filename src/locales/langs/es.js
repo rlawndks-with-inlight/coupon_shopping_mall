@@ -1,6 +1,12 @@
 // Spanish locale (auto-generated via Google translate, ko->es)
 
 const es = {
+  "회원은 로그인 후 후기를 쓸 수 있어요.": "Los miembros pueden escribir una reseña tras iniciar sesión.",
+  "비회원으로 구매하셨다면 주문조회에서 쓸 수 있어요.": "¿Compraste como invitado? Escríbela desde Consultar pedido.",
+  "상품을 받으신 뒤 주문조회에서 후기를 남길 수 있어요.": "Tras recibir el producto, podrás dejar una reseña desde Consultar pedido.",
+  "이 몰은 회원 구매자만 후기를 받습니다.": "Esta tienda solo acepta reseñas de compras de miembros.",
+  "회원으로 주문하신 경우 로그인 후 주문내역에서 써 주세요.": "Si pediste como miembro, escríbela desde Historial de pedidos tras iniciar sesión.",
+  "주문 정보를 확인할 수 없습니다. 전화번호와 주문 비밀번호를 다시 확인해 주세요.": "No pudimos verificar tu pedido. Revisa tu teléfono y la contraseña del pedido.",
   "도움돼요": "Útil",
   "관리자 계정으로는 누를 수 없습니다.": "Las cuentas de administrador no pueden votar.",
   "이 몰에서는 도움돼요를 쓰지 않습니다.": "Esta tienda no usa votos de utilidad.",

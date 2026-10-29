@@ -8,6 +8,7 @@ import { useAuthContext } from 'src/layouts/manager/auth/useAuthContext';
 import styled from 'styled-components';
 import { useLocales } from 'src/locales';
 import { getPriceUnitByLang } from 'src/utils/function';
+import { reviewSettings } from 'src/utils/review';
 
 const Wrappers = styled.div`
   max-width: 720px;
@@ -104,6 +105,9 @@ const { user } = useAuthContext();
               sx={{ color: 'primary.main', textDecoration: 'underline', cursor: 'pointer' }}>
               {translate('비회원은 전화번호와 주문 비밀번호로 조회할 수 있습니다.')}
             </Box>
+            {!user?.id && reviewSettings(themeDnsData).enabled && reviewSettings(themeDnsData).allow_guest && (
+              <><br />{translate('상품을 받으신 뒤 주문조회에서 후기를 남길 수 있어요.')}</>
+            )}
           </Typography>
         </>
       ) : (

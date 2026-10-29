@@ -38,6 +38,8 @@ export const reviewSettings = (dns) => {
   return {
     enabled: isReviewEnabled(dns),
     allow_photo: (s.review_allow_photo === undefined || s.review_allow_photo === null || s.review_allow_photo === '') ? true : Number(s.review_allow_photo) === 1,
+    // 비회원 구매자 후기(비회원 주문조회에서 본인 확인 후 작성). 백엔드 review-policy.js 와 같은 기본값(켜짐).
+    allow_guest: (s.review_allow_guest === undefined || s.review_allow_guest === null || s.review_allow_guest === '') ? true : Number(s.review_allow_guest) === 1,
     // 「도움돼요」 버튼(+도움순 정렬). 백엔드 review-policy.js 와 같은 기본값(켜짐).
     use_helpful: (s.review_use_helpful === undefined || s.review_use_helpful === null || s.review_use_helpful === '') ? true : Number(s.review_use_helpful) === 1,
     min_length: Math.min(200, Math.max(1, Math.floor(수(s.review_min_length, 10)))),

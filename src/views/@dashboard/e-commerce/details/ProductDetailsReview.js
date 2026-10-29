@@ -77,7 +77,13 @@ export default function ProductDetailsReview({ product, variant = 'full', defaul
   // 「후기 쓰기」 — 로그인 → 내가 쓸 수 있는 이 상품의 주문 줄을 서버에 묻는다.
   const startWrite = async () => {
     if (!(user?.id > 0)) {
-      toast.error(<PointerText onClick={() => router.push('/shop/auth/login')}>{translate('로그인을 해주세요.')}</PointerText>);
+      toast.error(
+        <span>
+          <PointerText onClick={() => router.push('/shop/auth/login')}>{translate('회원은 로그인 후 후기를 쓸 수 있어요.')}</PointerText>
+          {settings.allow_guest && (
+            <><br /><PointerText onClick={() => router.push('/shop/auth/order-check')}>{translate('비회원으로 구매하셨다면 주문조회에서 쓸 수 있어요.')}</PointerText></>
+          )}
+        </span>, { duration: 6000 });
       return;
     }
     const res = await apiManager('product-reviews/writable', 'list', { product_id: productId });

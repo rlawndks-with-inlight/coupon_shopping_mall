@@ -1,6 +1,9 @@
 import PropTypes from 'prop-types';
 import { useState } from 'react';
 import { Button, Stack, Typography } from '@mui/material';
+import { toast } from 'react-hot-toast';
+import { apiManager } from 'src/utils/api';
+import { useModal } from 'src/components/dialog/ModalProvider';
 import { useRouter } from 'next/router';
 import { useLocales } from 'src/locales';
 import { useSettingsContext } from 'src/components/settings';
@@ -15,12 +18,14 @@ ReviewWriteButton.propTypes = {
   line: PropTypes.object,
   onDone: PropTypes.func,
   sx: PropTypes.object,
+  guest: PropTypes.object,  // 비회원 주문조회에서: { buyer_phone, password }. 있으면 작성 뒤에도 이 자리에서 수정·삭제한다
 };
 
-export default function ReviewWriteButton({ line, onDone, sx }) {
+export default function ReviewWriteButton({ line, onDone, sx, guest }) {
   const { translate } = useLocales();
   const { themeDnsData } = useSettingsContext();
   const router = useRouter();
+  const { setModal } = useModal();
   const [open, setOpen] = useState(false);
   if (!line) return null;
 
@@ -34,7 +39,7 @@ export default function ReviewWriteButton({ line, onDone, sx }) {
         {left !== null && left <= 7 && (
           <Typography variant="caption" sx={{ color: 'error.main', whiteSpace: 'nowrap' }}>D-{left}</Typography>
         )}
-        <ReviewWriteDialog open={open} onClose={() => setOpen(false)} line={line} onDone={onDone} />
+        <ReviewWriteDialog open={open} onClose={() => setOpen(false)} line={line} onDone={onDone} guest={guest} />
       </Stack>
     );
   }
@@ -44,6 +49,29 @@ export default function ReviewWriteButton({ line, onDone, sx }) {
         <Typography variant="caption" sx={{ color: 'text.disabled', ...sx }}>
           {line.review_hidden === '주문 취소' ? translate('취소된 주문의 후기는 표시되지 않습니다.') : translate('숨김 처리된 후기입니다.')}
         </Typography>
+      );
+    }
+    // 비회원은 상품 화면에서 '내 후기'를 알아볼 방법이 없다 — 이 자리에서 고치고(기간 안) 지운다.
+    if (guest && line.review) {
+      const canEdit = line.review.editable_until && new Date(line.review.editable_until).getTime() > Date.now();
+      const remove = () => setModal({
+        icon: 'material-symbols:delete-outline',
+        title: translate('정말 삭제하시겠습니까?'),
+        func: async () => {
+          const ok = await apiManager(`product-reviews/guest/${line.review.id}/delete`, 'create', { guest });
+          if (ok) { toast.success(translate('후기를 삭제했어요.')); onDone?.(); }
+        },
+      });
+      return (
+        <Stack direction="row" alignItems="center" spacing={0.5} sx={sx}>
+          <Button variant="text" size="small" sx={{ whiteSpace: 'nowrap' }}
+            onClick={() => router.push(productPath(themeDnsData, line.product_id))}>
+            {translate('후기 작성 완료')}
+          </Button>
+          {canEdit && <Button variant="outlined" size="small" onClick={() => setOpen(true)}>{translate('수정')}</Button>}
+          <Button variant="text" size="small" color="inherit" onClick={remove}>{translate('삭제')}</Button>
+          <ReviewWriteDialog open={open} onClose={() => setOpen(false)} line={line} review={line.review} onDone={onDone} guest={guest} />
+        </Stack>
       );
     }
     return (

@@ -9,6 +9,8 @@ import OrderCancelButton, { canCancelOrder } from 'src/components/elements/shop/
 import { commarNumber, sanitizePhoneInput, getOrderStatusText, getPriceUnitByLang } from 'src/utils/function';
 import { useLocales } from 'src/locales';
 import PasswordField from 'src/components/elements/PasswordField';
+import ReviewWriteButton from 'src/components/elements/shop/review/ReviewWriteButton';
+import { reviewSettings } from 'src/utils/review';
 
 const Wrappers = styled.div`
   max-width: 640px;
@@ -45,7 +47,7 @@ const parseInvoice = (invoice_num) => {
 const won = (n) => `${commarNumber(n || 0)}${getPriceUnitByLang()}`; // 통화 단위는 언어별(원/$ 등) — '원' 고정이면 외국어 화면에서 튄다
 
 // 주문 상세(읽기전용) — 회원/비회원 공통 표시
-const OrderDetail = ({ order }) => {
+const OrderDetail = ({ order, reviewLines, guest, onReviewDone }) => {
   const { translate } = useLocales();
   const track = parseInvoice(order?.invoice_num);
   const receiver = order?.receiver || order?.buyer_name;
@@ -87,10 +89,16 @@ const OrderDetail = ({ order }) => {
         <CardContent sx={{ pt: 0 }}>
           <Stack spacing={1} divider={<Divider flexItem />}>
             {(order?.orders || []).map((o, i) => (
-              <Stack key={i} direction="row" justifyContent="space-between">
-                <Typography variant="body2">{o?.order_name} · {o?.order_count}{translate('개')}</Typography>
-                <Typography variant="body2" sx={{ fontWeight: 700 }}>{won(o?.order_amount)}</Typography>
-              </Stack>
+              <Box key={i}>
+                <Stack direction="row" justifyContent="space-between">
+                  <Typography variant="body2">{o?.order_name} · {o?.order_count}{translate('개')}</Typography>
+                  <Typography variant="body2" sx={{ fontWeight: 700 }}>{won(o?.order_amount)}</Typography>
+                </Stack>
+                {/* 비회원 구매자 후기 — 받은 뒤(배송완료·출고 3일 뒤)부터 이 줄에 「후기 쓰기」가 생긴다. 판정은 서버. */}
+                {reviewLines?.[o?.id] && (
+                  <ReviewWriteButton line={reviewLines[o.id]} guest={guest} onDone={onReviewDone} sx={{ mt: 0.75, justifyContent: 'flex-end' }} />
+                )}
+              </Box>
             ))}
           </Stack>
           <Divider sx={{ my: 1.5 }} />
@@ -113,6 +121,19 @@ const OrderCheck = () => {
   const [orders, setOrders] = useState(null); // 조회 결과(배열) / null=미조회
   const [selected, setSelected] = useState(null);
   const [loading, setLoading] = useState(false);
+  // 조회에 성공한 전화번호·비밀번호(입력칸을 고쳐도 후기·취소 확인은 조회한 값으로 한다)
+  const [cred, setCred] = useState(null);
+  const [reviewLines, setReviewLines] = useState({});
+  const reviewOn = reviewSettings(themeDnsData);
+
+  // 비회원 후기 판정 — 몸통으로 보낸다(비밀번호가 주소·로그에 남지 않게).
+  const loadReviewLines = async (c) => {
+    if (!c || !reviewOn.enabled || !reviewOn.allow_guest) { setReviewLines({}); return; }
+    const res = await apiManager('product-reviews/guest/writable', 'create', { guest: c });
+    const map = {};
+    for (const l of res?.lines ?? []) map[l.order_id] = l;
+    setReviewLines(map);
+  };
 
   const onSearch = async () => {
     if (!form.buyer_phone || !form.password) {
@@ -134,6 +155,9 @@ const OrderCheck = () => {
       return;
     }
     setOrders(list);
+    const c = { buyer_phone: form.buyer_phone, password: form.password };
+    setCred(c);
+    loadReviewLines(c);
     // 취소요청 직후에도 이 함수로 다시 조회한다. 그때 보던 주문을 그대로 열어 둬야
     // 손님이 "요청이 됐나" 를 바로 확인할 수 있다(예전 방식대로면 목록으로 튕긴다).
     setSelected((prev) => {
@@ -196,7 +220,7 @@ const OrderCheck = () => {
           {orders && orders.length > 1 && (
             <Button size="small" onClick={() => setSelected(null)} sx={{ mb: 1 }}>{translate('← 목록으로')}</Button>
           )}
-          <OrderDetail order={selected} />
+          <OrderDetail order={selected} reviewLines={reviewLines} guest={cred} onReviewDone={() => loadReviewLines(cred)} />
           {/* 비회원도 스스로 취소요청을 할 수 있어야 한다.
               예전엔 이 화면에 취소 수단이 없었다. 비회원 주문은 user_id 가 0 이라
               서버의 로그인 대조를 통과할 수 없었고, 취소는 늘 「권한이 없습니다」로 막혔다.

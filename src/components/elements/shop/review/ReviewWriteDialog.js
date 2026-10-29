@@ -27,9 +27,10 @@ ReviewWriteDialog.propTypes = {
   review: PropTypes.object,   // 수정일 때 기존 후기
   onDone: PropTypes.func,
   accent: PropTypes.string,
+  guest: PropTypes.object,    // 비회원: { buyer_phone, password } — 비회원 주문조회가 방금 쓴 값
 };
 
-export default function ReviewWriteDialog({ open, onClose, line, review, onDone, accent }) {
+export default function ReviewWriteDialog({ open, onClose, line, review, onDone, accent, guest }) {
   const { translate } = useLocales();
   const { themeDnsData } = useSettingsContext();
   const settings = reviewSettings(themeDnsData);
@@ -77,9 +78,12 @@ export default function ReviewWriteDialog({ open, onClose, line, review, onDone,
       urls = [...urls, ...ok];
     }
     const body = { scope, content: text, images: JSON.stringify(urls.slice(0, settings.max_images)) };
+    // 비회원은 매 요청에 전화번호+주문비밀번호를 같이 보내 서버가 그 주문의 주인인지 다시 확인한다.
+    const base = guest ? 'product-reviews/guest' : 'product-reviews';
+    const extra = guest ? { guest } : {};
     const result = review?.id
-      ? await apiManager('product-reviews', 'update', { ...body, id: review.id })
-      : await apiManager('product-reviews', 'create', { ...body, order_id: line?.order_id });
+      ? await apiManager(base, 'update', { ...body, ...extra, id: review.id })
+      : await apiManager(base, 'create', { ...body, ...extra, order_id: line?.order_id });
     setBusy(false);
     if (result) {
       toast.success(translate(review?.id ? '후기를 수정했어요.' : '후기가 등록됐어요.'));

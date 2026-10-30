@@ -60,6 +60,12 @@ if (!백엔드있음) {
   t('상태 변경: 포스페이 결제대기(0)는 가맹점이 못 바꾼다(50 이상 제외)', /이전상태 === 0 && Number\(이전\.trx_method\) === 41 && Number\(decode_user\?\.level\) < 50/.test(util));
   t('한정수량: 결제실패·미완료(-1)와 부분취소 수량은 안 센다', /t\.is_delete = 0 AND t\.trx_status >= 0/.test(opt) && /o\.order_count - IFNULL\(o\.cancel_count, 0\)/.test(opt));
   t('대사: 승인됐는데 결제대기·미완료인 주문을 같은 확정 함수로 살린다', /WHERE trx_method=41 AND trx_status IN \(0, -1\)/.test(rec) && /settleForspayTransaction\(t\.id, txn\)/.test(rec) && /export \{ settleForspayTransaction \};/.test(pay));
+  // 대사 속도(2026-10-30): 포스페이 조회 한도(키당 분당 60회)를 넘기면 500 — 2초 간격·500 이면 1분 쉬고 1회 재시도
+  t('대사: 포스페이 조회 사이 최소 2초, 모든 조회가 같은 문(천천히)을 지난다',
+    /FORSPAY_RECONCILE_CALL_GAP_MS \?\? '2000'/.test(rec) && /beforeEach: 천천히/.test(rec) && /await 천천히\(\); return forspayGetTransaction/.test(rec));
+  t('대사: 500·429 는 1분 쉬고 한 번만 다시, 그래도 실패면 건너뜀', /\[429, 500, 502, 503\]\.includes/.test(rec) && /const 한도쉼ms\s*= 60_000;/.test(rec));
+  t('대사: 8~21일 결제는 하루 한 번, 승인 복구는 2일, 회차 겹침 방지', /오래된것도 \? 최근일수 : Math\.min\(매번일수, 최근일수\)/.test(rec)
+    && /FORSPAY_RECOVER_DAYS \?\? '2'/.test(rec) && /forspay-reconcile\.lock/.test(rec));
   t('비회원 주문 목록: -1 숨김', /\$\{HIDE_ABANDONED_PENDING\} AND trx_status >= 0 ORDER BY id DESC LIMIT 50/.test(trx));
 }
 

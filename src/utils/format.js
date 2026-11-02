@@ -42,6 +42,11 @@ export const paymentModuleTypeList = [
 ]
 // 포스페이(41) 결제수단 — 어드민 노출/라우팅 설정용. 백엔드 FORSPAY_METHODS와 동일 키.
 // icon: @iconify 아이콘명, color: 브랜드 색(매장 결제수단 목록 앞 로고에 사용)
+// 주문·취소 목록과 엑셀에 보일 결제타입 이름. 가맹점 화면에는 결제사 이름을 뺀다(2026-11-02 요청).
+// 결제모듈관리(개발자 전용)는 PG 를 구분해야 하므로 paymentModuleTypeList 를 그대로 쓴다.
+export const trxMethodLabel = (value) => (
+    value == 41 ? '인증결제' : paymentModuleTypeList.find((itm) => itm.value === value)?.label
+);
 export const forspayMethodList = [
     { key: 'card', label: '신용카드(국내발행)', icon: 'mdi:credit-card-outline', color: '#5B6472' },
     { key: 'bank', label: '실시간계좌이체', icon: 'mdi:bank-outline', color: '#5B6472' },

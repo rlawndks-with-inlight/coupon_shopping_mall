@@ -14,7 +14,7 @@ import toast from "react-hot-toast";
 import { apiManager, apiUtil } from "src/utils/api";
 import { useSettingsContext } from "src/components/settings";
 import { isShopgoMerchant } from "src/utils/is-shopgo";
-import { paymentModuleTypeList, forspayMethodList } from "src/utils/format";
+import { trxMethodLabel, forspayMethodList } from "src/utils/format";
 import { useAuthContext } from "src/layouts/manager/auth/useAuthContext";
 import { Upload } from "src/components/upload";
 import { sha256 } from "js-sha256";
@@ -456,7 +456,7 @@ const TrxList = () => {
       id: 'trx_method',
       label: '결제타입',
       action: (row) => {
-        const base = _.find(paymentModuleTypeList, { value: row?.trx_method })?.label ?? "---";
+        const base = trxMethodLabel(row?.trx_method) ?? "---";
         // 포스페이(41)는 산하 결제수단(카드/카카오 등)까지 표시
         if (row?.trx_method == 41 && row?.pay_method) {
           const sub = _.find(forspayMethodList, { key: row?.pay_method })?.label;
@@ -732,7 +732,7 @@ const TrxList = () => {
     { label: '주문상품', width: 46, value: 줄글 },
     { label: '추가 입력정보', width: 28, value: 입력정보글 },
     { label: '결제금액', width: 12, value: (r) => Number(r?.amount) || 0 },
-    { label: '결제타입', width: 16, value: (r) => _.find(paymentModuleTypeList, { value: r?.trx_method })?.label ?? '' },
+    { label: '결제타입', width: 16, value: (r) => trxMethodLabel(r?.trx_method) ?? '' },
     { label: '상태', width: 12, value: (r) => getOrderStatusText(r) },
     { label: '송장번호', width: 18, value: (r) => r?.invoice_num ?? '' },
     { label: '취소여부', width: 10, value: (r) => (r?.is_cancel == 1 || r?.is_cancel_trans == 1 ? '취소' : '') },

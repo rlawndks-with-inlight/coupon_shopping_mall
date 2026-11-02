@@ -11,7 +11,7 @@ import { commarNumber } from "src/utils/function";
 import toast from "react-hot-toast";
 import { apiManager, apiUtil } from "src/utils/api";
 import { useSettingsContext } from "src/components/settings";
-import { cancelTypeList, paymentModuleTypeList } from "src/utils/format";
+import { cancelTypeList, trxMethodLabel } from "src/utils/format";
 import { sha256 } from "js-sha256";
 import { useAuthContext } from "src/layouts/manager/auth/useAuthContext";
 import _ from 'lodash';
@@ -214,7 +214,7 @@ const TrxCancelList = () => {
       id: 'trx_method',
       label: '결제타입',
       action: (row) => {
-        return _.find(paymentModuleTypeList, { value: row?.trx_method })?.label ?? "---"
+        return trxMethodLabel(row?.trx_method) ?? "---"
       }
     },
     {

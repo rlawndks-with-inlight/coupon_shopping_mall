@@ -35,7 +35,8 @@ const Wrappers = styled.div`
 const 손님용사유 = (code, message) => {
   const s = String(message ?? '').replace(/\s+/g, ' ').trim();
   if (!s || s.length > 100 || /^PV/i.test(String(code ?? ''))) return '';
-  if (/[{}<>\[\]=;`$]|SQL|exception|https?:/i.test(s)) return '';
+  // 긴 숫자는 전화번호·계좌번호일 수 있다 — 이 문구는 손님 브라우저를 거쳐 오므로 연락처가 든 문구는 믿지 않는다
+  if (/[{}<>\[\]=;`$]|SQL|exception|https?:|\d[\d\s-]{6,}/i.test(s)) return '';
   return s;
 };
 
@@ -108,7 +109,10 @@ const { user } = useAuthContext();
       if (저장값?.ord_num === ord) message = String(저장값.message ?? '');
     } catch (e) { /* 사유 없이 간다 */ }
     if (!isCanceled) set실패사유(손님용사유(code, message));
-    apiManager('pays/forspay/fail-reason', 'create', { ord_num: ord, code, message }).catch(() => { });
+    // 모바일은 복귀 때 서버가 사유를 받아 둔다 — 여기서 돌려받아 보여 준다
+    apiManager('pays/forspay/fail-reason', 'create', { ord_num: ord, code, message })
+      .then((r) => { if (!isCanceled && !message) set실패사유(손님용사유(code, r?.message)); })
+      .catch(() => { });
   }, [router.isReady, isSuccess, isPending, q.ord_num, q.result_cd]);
 
   // 결제 성공으로 돌아왔으면 장바구니를 비운다.

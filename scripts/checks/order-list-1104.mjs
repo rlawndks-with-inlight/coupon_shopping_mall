@@ -53,6 +53,7 @@ t('사유는 주소에 싣지 않는다(sessionStorage, 주문번호 대조)', /
     && 고름('PV500', '통신 오류') === ''
     && 고름('699', "SQLSTATE[HY000] Access denied for user") === ''
     && 고름('699', 'x'.repeat(101)) === ''
+    && 고름('699', '010-1234-5678 로 연락 주세요') === ''
     && 고름('699', '') === '');
 }
 t('실패 사유 칸은 「결제실패/미완료」 목록에만', /\.\.\.\(실패목록 \? \[\{\s*id: 'fail_reason'/.test(목록) && /const 실패목록 = useRouter\(\)\.query\?\.type == 'failed';/.test(목록));
@@ -71,8 +72,8 @@ if (!백엔드있음) {
   t('서버: 취소 완료 주문은 상태 변경 거부(본사 제외)', /is_cancel_trans\) === 1\) && Number\(decode_user\?\.level\) < 50\) \{\s*return response\(req, res, -100, "취소 완료된 주문은 상태를 바꿀 수 없습니다\."/.test(util));
   t('서버: 승인 전 주문은 전체·부분취소 거부(본사 제외)', (pay.match(/결제확인전\((trx|state\.trx)\) && Number\(decode_user\?\.level\) < 50/g) ?? []).length === 2);
   // 실패 사유는 표시용 — 공개 API 라 받는 범위를 좁히고, 주문 상태를 절대 바꾸지 않는다
-  const 사유함수 = pay.slice(pay.indexOf('forspayFailReason: async'), pay.indexOf('// 브랜드별 페이레터 인증정보'));
-  t('서버: 사유는 포스페이 미결제·주문 직후·몇 줄까지만', /trx_method=41 AND trx_status IN \(0, -1\)/.test(사유함수) && /INTERVAL \? HOUR/.test(사유함수) && /이전\.length >= 결제창사유최대/.test(사유함수));
+  const 사유함수 = pay.slice(pay.indexOf('const 결제창사유저장 ='), pay.indexOf('const 결제실패정리 ='));
+  t('서버: 사유는 포스페이 미결제·주문 직후·몇 줄까지만', /trx_method=41 AND trx_status IN \(0, -1\)/.test(사유함수) && /INTERVAL \? HOUR/.test(사유함수) && /이전\.length < 결제창사유최대/.test(사유함수));
   t('서버: 사유 저장은 이력 한 줄뿐 — 주문을 고치거나 확정하지 않는다', /logTrx\(/.test(사유함수) && !/UPDATE|settleForspay|markCanceled|writePool/.test(사유함수));
   {
     const 식 = pay.match(/const 결제창사유정리 = \(v\) => \{([\s\S]*?)\n\};/);
@@ -84,6 +85,12 @@ if (!백엔드있음) {
       && 정리({ a: 1 }) === '');
   }
   t('서버: 사유는 관리자 실패 목록에만 붙는다', /kind === 'failed' && !손님화면/.test(trx));
+  // 모바일 복귀: 주소의 코드는 실패·취소 구분에만 — 승인은 여전히 거래조회로만
+  const 복귀 = pay.slice(pay.indexOf('forspayReturn: async'), pay.indexOf('forspayCallback: async'));
+  t('복귀: 승인 판단이 복귀 코드보다 먼저다', 복귀.indexOf("txn?.status === 'approved'") > 0 && 복귀.indexOf("txn?.status === 'approved'") < 복귀.indexOf('const 복귀코드'));
+  t('복귀: 복귀 코드로 결제를 확정하지 않는다', !/복귀코드[^\n]*settleForspay|settleForspay[^\n]*복귀코드/.test(복귀));
+  t('복귀: 실패 코드는 그대로 결과 화면으로, 문구는 주소에 안 싣는다', 복귀.includes('new URLSearchParams({ result_cd: 복귀코드, ord_num: ord })') && !복귀.includes('result_msg: '));
+  t('복귀: 결제창 성공인데 거래가 안 보이면 취소가 아니라 확인 중', 복귀.includes("(없음 && 복귀코드 === '0000')"));
 }
 
 console.log(`\n통과 ${pass} / 실패 ${fail}`);

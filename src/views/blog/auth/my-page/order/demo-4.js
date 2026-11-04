@@ -83,7 +83,7 @@ const Demo4 = (props) => {
     // 로그인 회원의 실 주문목록을 불러와 주문상품 단위로 펼쳐 렌더한다.
     const getOrderList = async () => {
         try {
-            let data = await apiManager('transactions', 'list', { page: 1, page_size: 20 });
+            let data = await apiManager('transactions', 'list', { page: 1, page_size: 20, type: 'user' }); // 내 주문만 + 취소 건 포함, 실패 건 제외
             let content = data?.content ?? [];
             let items = [];
             content.forEach((trx) => {

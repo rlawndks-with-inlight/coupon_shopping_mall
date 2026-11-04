@@ -72,7 +72,7 @@ const Demo2 = (props) => {
     // 실 주문내역 로드 → 주문라인(orders[]) 단위로 평탄화해서 셀러 탭/목록 렌더에 사용
     const getOrderList = async () => {
         try {
-            let data = await apiManager('transactions', 'list', { page: 1, page_size: 20 });
+            let data = await apiManager('transactions', 'list', { page: 1, page_size: 20, type: 'user' }); // 내 주문만 + 취소 건 포함, 실패 건 제외
             let content = data?.content ?? [];
             let flat = [];
             for (var i = 0; i < content.length; i++) {

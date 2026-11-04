@@ -9,7 +9,7 @@ import { Col, Row } from "src/components/elements/styled-components";
 import { useModal } from "src/components/dialog/ModalProvider";
 import PartialCancelDialog from "src/components/manager/PartialCancelDialog";
 import TrxHistoryDialog from "src/components/manager/TrxHistoryDialog";
-import { commarNumber, getOrderStatusText } from "src/utils/function";
+import { commarNumber, getOrderStatusText, 포스페이미승인 } from "src/utils/function";
 import toast from "react-hot-toast";
 import { apiManager, apiUtil } from "src/utils/api";
 import { useSettingsContext } from "src/components/settings";
@@ -61,6 +61,7 @@ const TrxList = () => {
   const [historyTrxId, setHistoryTrxId] = useState(0);
   // 거래 수정·삭제는 마스터(본사, level 50)만 — 가맹점 요청서 2026-09-11 ①② → 사장님 결정. 서버(transaction.controller)도 50 을 요구한다.
   const 마스터 = Number(user?.level) >= 50;
+  const 실패목록 = useRouter().query?.type == 'failed';
   const defaultColumns = [
     ...(themeDnsData?.setting_obj?.is_use_seller == 2 ? [
       /* 검품사진(check_img) 열을 없앤다.
@@ -480,6 +481,11 @@ const TrxList = () => {
           // (저장은 '저장' 을 눌러야 된다 — 미리 골라 두는 것뿐이고, 주문마다 바꿀 수 있다)
           const [courier, setCourier] = useState(isCourier ? maybeCourier : 기본택배사(themeDnsData));
           const [invoice, setInvoice] = useState(isCourier ? raw.slice(firstDash + 1) : raw);
+          // 취소됐거나 결제가 안 된 주문은 발송할 일이 없다 — 입력칸 대신 저장된 값만 보여 준다.
+          // ⚠ 위 useState 보다 앞으로 옮기면 안 된다(행마다 훅 개수가 달라진다).
+          if (row?.is_cancel == 1 || row?.is_cancel_trans == 1 || Number(row?.trx_status) < 0 || (!마스터 && 포스페이미승인(row))) {
+            return <div style={{ color: '#999', whiteSpace: 'nowrap' }}>{raw || '---'}</div>;
+          }
           return <Col style={{ rowGap: '0.5rem', minWidth: '190px' }}>
             <Select
               size={'small'}
@@ -527,8 +533,12 @@ const TrxList = () => {
       id: 'trx_status',
       label: '상태',
       action: (row) => {
+        // 전체 목록에 남는 취소 건 — 진행 상태를 다시 매길 일이 없다.
+        if (row?.is_cancel == 1 || row?.is_cancel_trans == 1) return <div style={{ color: '#d32f2f', whiteSpace: 'nowrap' }}>취소완료</div>;
         // 결제실패/미완료(-1) — 시스템이 정리한 건. 사람이 상태를 정할 일이 없다.
         if (Number(row?.trx_status) < 0) return <div style={{ color: '#999', whiteSpace: 'nowrap' }}>결제실패/미완료</div>;
+        // 포스페이 승인 전 — 예전엔 드롭다운이 열려 있어 결제된 주문과 구분되지 않았다(본사 50 이상은 그대로 둔다).
+        if (!마스터 && 포스페이미승인(row)) return <div style={{ color: '#999', whiteSpace: 'nowrap' }}>결제 미완료</div>;
         return <Select
           size="small"
           defaultValue={row?.trx_status}
@@ -556,6 +566,12 @@ const TrxList = () => {
         }
       },
     },
+    // 결제창이 알려 준 사유(포스페이 요청 2026-11-04 ④). 결제창을 그냥 닫은 건이나 이 기능 전 주문은 비어 있다.
+    ...(실패목록 ? [{
+      id: 'fail_reason',
+      label: '실패 사유',
+      action: (row) => <div style={{ minWidth: '150px', fontSize: '13px', wordBreak: 'keep-all' }}>{row?.fail_reason ?? '---'}</div>,
+    }] : []),
     /*{
       id: 'created_at',
       label: '결제취소',
@@ -590,7 +606,8 @@ const TrxList = () => {
         // 취소를 우리 화면에서 처리해야 DB·재고·포인트가 함께 맞는다.
         // PG 콘솔에서만 취소하면 우리 쪽은 정상 주문으로 남고 매출·재고가 어긋난다.
         if (row?.is_cancel == 1 || row?.is_cancel_trans == 1) return <div style={{ color: '#bbb' }}>취소됨</div>;
-        if (Number(row?.trx_status) < 0) return <div style={{ color: '#bbb' }}>결제 안 됨</div>;
+        if (Number(row?.trx_status) < 0) return <div style={{ color: '#bbb', whiteSpace: 'nowrap' }}>결제 안 됨</div>;
+        if (!마스터 && 포스페이미승인(row)) return <div style={{ color: '#bbb', whiteSpace: 'nowrap' }}>결제 안 됨</div>;
         return (
           // 글씨가 두 줄로 접히면 버튼 상자 밖으로 삐져나온다(칸이 좁을 때).
           // 조작 요소는 줄을 바꾸지 않는다 — 표 규칙은 ManagerTable 의 sx 참고.
@@ -684,8 +701,12 @@ const TrxList = () => {
     // 메뉴 → 조회 조건(가맹점 요청서 2026-09-11 ①):
     //   failed  : 「결제실패/미완료」 — 시스템이 정리한 -1 + 아직 정리 전인 버려진 결제대기(카드/간편 창만 열고 승인 안 남)
     //   0       : 샵고 가맹점은 진짜 대기(무통장·상품권)만(kind=waiting), 그 밖 가맹점은 예전처럼 결제대기 전부
+    //   all     : 샵고 가맹점은 결제된 주문 + 취소된 주문만(kind=settled, 포스페이 요청 2026-11-04 ④⑤), 그 밖 가맹점은 예전처럼 전부
     const type = router.query?.type;
-    const kind = type == 'failed' ? 'failed' : (type == '0' && isShopgoMerchant(themeDnsData) ? 'waiting' : '');
+    const 샵고 = isShopgoMerchant(themeDnsData);
+    const kind = type == 'failed' ? 'failed'
+      : (type == '0' && 샵고) ? 'waiting'
+        : ((type == 'all' || !type) && 샵고) ? 'settled' : '';
     onChangePage({ ...searchObj, kind, trx_status: (type == 'all' || !type || type == 'failed') ? '' : type, page: 1 });
   }
   const onChangePage = async (obj) => {
@@ -733,9 +754,11 @@ const TrxList = () => {
     { label: '추가 입력정보', width: 28, value: 입력정보글 },
     { label: '결제금액', width: 12, value: (r) => Number(r?.amount) || 0 },
     { label: '결제타입', width: 16, value: (r) => trxMethodLabel(r?.trx_method) ?? '' },
-    { label: '상태', width: 12, value: (r) => getOrderStatusText(r) },
+    { label: '상태', width: 12, value: (r) => (포스페이미승인(r) ? '결제 미완료' : getOrderStatusText(r)) },
     { label: '송장번호', width: 18, value: (r) => r?.invoice_num ?? '' },
     { label: '취소여부', width: 10, value: (r) => (r?.is_cancel == 1 || r?.is_cancel_trans == 1 ? '취소' : '') },
+    // 「결제실패/미완료」에서 받을 때만, 맨 뒤에 — 앞 열의 순서는 가맹점 서식이라 흔들지 않는다
+    ...(실패목록 ? [{ label: '실패 사유', width: 34, value: (r) => r?.fail_reason ?? '' }] : []),
   ];
 
   const onExcel = async () => {

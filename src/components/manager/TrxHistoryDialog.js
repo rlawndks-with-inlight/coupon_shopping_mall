@@ -15,8 +15,9 @@ const 종류글 = {
     cancel_request: '취소요청',
     cancel: '취소',
     failed: '결제실패/미완료 정리',
+    pay_fail: '결제창 실패 사유',
 };
-const 종류색 = { status: 'default', approve: 'success', cancel_request: 'warning', cancel: 'error', failed: 'default' };
+const 종류색 = { status: 'default', approve: 'success', cancel_request: 'warning', cancel: 'error', failed: 'default', pay_fail: 'default' };
 
 const 처리자글 = (r) => {
     if (r?.actor_type === 'system') return '시스템(PG 통지·자동)';

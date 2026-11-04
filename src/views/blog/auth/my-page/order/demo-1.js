@@ -80,7 +80,7 @@ const Demo1 = (props) => {
     // 로그인 회원의 실 주문내역 로드 → 트랜잭션을 order-line 단위로 평탄화(셀러 탭/아이템 렌더용)
     const onLoadOrders = async () => {
         try {
-            let data = await apiManager('transactions', 'list', { page: 1, page_size: 20 });
+            let data = await apiManager('transactions', 'list', { page: 1, page_size: 20, type: 'user' }); // 내 주문만 + 취소 건 포함, 실패 건 제외
             let content = data?.content || [];
             let flat_list = [];
             content.forEach((trx) => {
@@ -185,7 +185,7 @@ const Demo1 = (props) => {
 
                                         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '0.75rem 1rem 0', fontSize: '0.85rem', opacity: 0.8 }}>
                                             <div>{translate('주문번호')} {item.ord_num}</div>
-                                            <div>{translate(getOrderStatusText(item))}</div>
+                                            <div>{translate(getOrderStatusText(item.trx))}</div>
                                         </div>
 
                                         <div style={{ display: 'flex', justifyContent: 'space-between', padding: '1rem', flexWrap: 'wrap', gap: '0.5rem' }}>

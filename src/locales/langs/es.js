@@ -715,6 +715,7 @@ const es = {
     "결제수단을 선택한 뒤 결제 방법(결제하기 버튼 또는 입력란)에 따라 진행하세요.": "Elige un método y continúa con el botón o los campos.",
     "결제를 진행하시겠습니까?": "¿Continuar con el pago?",
     "결제가 완료되지 않았습니다. 다시 시도해 주세요.": "El pago no se completó. Inténtalo de nuevo.",
+    "실패 사유": "Motivo",
     "결제창 다시 열기": "Reabrir la ventana de pago",
     "상품권결제 창에서 결제를 완료해 주세요.": "Completa el pago en la ventana del vale.",
     "결제 확인 후 구매처리됩니다.": "Se procesa al confirmarse el pago.",

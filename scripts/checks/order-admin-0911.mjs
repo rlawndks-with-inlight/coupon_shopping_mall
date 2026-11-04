@@ -41,9 +41,9 @@ t('포스페이 복귀 화면이 주문서 초안을 지운다(성공 시)', 결
 // ── ③ 결제실패/미완료 ─────────────────────────────────────────────────
 t('샵고 가맹점 메뉴는 결제대기 대신 결제실패/미완료', 메뉴.includes("{ title: '결제실패/미완료', path: PATH_MANAGER.orders.trx + '/failed' }") && 메뉴.includes("isShopgoMerchant(themeDnsData)\n                  ? ["));
 t('입금 대기 수단이 있는 샵고 가맹점에만 결제대기(입금확인) 메뉴', 메뉴.includes("입금대기수단있음(themeDnsData) ? [{ title: '결제대기(입금확인)'"));
-t('목록은 failed → kind=failed, 샵고 가맹점의 0 → kind=waiting', 목록.includes("const kind = type == 'failed' ? 'failed' : (type == '0' && isShopgoMerchant(themeDnsData) ? 'waiting' : '');"));
+t('목록은 failed → kind=failed, 샵고 가맹점의 0 → kind=waiting', 목록.includes("const kind = type == 'failed' ? 'failed'\n      : (type == '0' && 샵고) ? 'waiting'"));
 t('상태 이름에 결제실패/미완료(-1)가 있다', 함수.includes("if (num == -1) return '결제실패/미완료'"));
-t('결제실패/미완료 행은 상태 드롭다운·취소 버튼 대신 글자', 목록.includes("if (Number(row?.trx_status) < 0) return <div style={{ color: '#999', whiteSpace: 'nowrap' }}>결제실패/미완료</div>;") && 목록.includes("if (Number(row?.trx_status) < 0) return <div style={{ color: '#bbb' }}>결제 안 됨</div>;"));
+t('결제실패/미완료 행은 상태 드롭다운·취소 버튼 대신 글자', 목록.includes("if (Number(row?.trx_status) < 0) return <div style={{ color: '#999', whiteSpace: 'nowrap' }}>결제실패/미완료</div>;") && 목록.includes("if (Number(row?.trx_status) < 0) return <div style={{ color: '#bbb', whiteSpace: 'nowrap' }}>결제 안 됨</div>;"));
 
 // ── ④ 결제대기로 되돌리기 금지 ────────────────────────────────────────────
 t('상태 드롭다운에 고를 수 있는 결제대기가 없다(현재값 표시용 disabled 만)',
@@ -105,7 +105,7 @@ if (백엔드있음) {
   t('서버: 거래 삭제·수정은 level 50 (두 곳)', (trx.match(/if \(!decode_user \|\| decode_user\?\.level < 50\) \{/g) || []).length === 2 && !/decode_user\?\.level < 40\) \{/.test(trx.slice(trx.indexOf('update: async'), trx.indexOf('update: async') + 900)));
   // ④ 결제대기로 되돌리기 거부 + 이력
   t('서버: 상태 드롭다운이 결제대기(0)·음수로 되돌리는 요청을 거부한다', util.includes("if (!(Number(value) > 0)) {") && util.includes('결제대기로는 되돌릴 수 없습니다'));
-  t('서버: 상태 변경 전 값을 읽어 이력에 남긴다', util.includes("const [[이전]] = await readPool.query(`SELECT trx_status, trx_method FROM transactions WHERE id=? ${scope.sql}`") && util.includes("kind: 'status', from_status: 이전상태, to_status: Number(value)"));
+  t('서버: 상태 변경 전 값을 읽어 이력에 남긴다', util.includes("const [[이전]] = await readPool.query(`SELECT trx_status, trx_method, is_cancel, is_cancel_trans FROM transactions WHERE id=? ${scope.sql}`") && util.includes("kind: 'status', from_status: 이전상태, to_status: Number(value)"));
   // ⑤ 이력
   t('이력 테이블 마이그레이션', 마이그.includes('CREATE TABLE IF NOT EXISTS transaction_status_logs') && 마이그.includes('INDEX idx_trx_status_logs_trans (trans_id, id)'));
   t('이력 쓰기는 절대 던지지 않고 테이블이 없어도 지나간다', 로그.includes("if (e?.code === 'ER_NO_SUCH_TABLE')") && /export const logTrx = async[\s\S]*?catch \(e\)/.test(로그));

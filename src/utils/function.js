@@ -290,6 +290,11 @@ export const getOrderStatusText = (row = {}) => {
   if (Number(row?.amount) < 0) return '결제취소';
   return getTrxStatusByNumber(row?.trx_status);
 }
+// 포스페이 승인 전 주문(trx_status 0). 결제창을 열었을 뿐 돈이 들어오지 않았다 —
+// 승인이 나면 시스템이 결제완료로 올리고, 안 나면 한 시간쯤 뒤 -1 로 정리한다. 가맹점이 손댈 일이 없다.
+// 무통장·상품권처럼 입금을 기다리는 결제대기는 해당하지 않는다.
+export const 포스페이미승인 = (row = {}) => Number(row?.trx_method) === 41 && Number(row?.trx_status) === 0
+  && Number(row?.is_cancel) !== 1 && Number(row?.is_cancel_trans) !== 1;
 export const getMyPageParamByNumber = num => {
   if (num == 0) return 'users'
   else if (num == 10) return 'sellers'

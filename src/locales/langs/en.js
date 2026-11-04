@@ -720,6 +720,7 @@ const en = {
     "결제수단을 선택한 뒤 결제 방법(결제하기 버튼 또는 입력란)에 따라 진행하세요.": "Choose a payment method, then continue with the button or the fields shown.",
     "결제를 진행하시겠습니까?": "Proceed with payment?",
     "결제가 완료되지 않았습니다. 다시 시도해 주세요.": "The payment was not completed. Please try again.",
+    "실패 사유": "Reason",
     "결제창 다시 열기": "Reopen Payment Window",
     "상품권결제 창에서 결제를 완료해 주세요.": "Please complete the payment in the gift certificate window.",
     "결제 확인 후 구매처리됩니다.": "Your order is processed once payment is confirmed.",

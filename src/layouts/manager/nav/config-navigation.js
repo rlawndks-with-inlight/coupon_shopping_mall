@@ -255,6 +255,7 @@ export const navConfig = () => {
             {
               title: '주문관리', path: PATH_MANAGER.orders.trx + '/all',
               children: [
+                // 샵고 가맹점의 전체는 결제가 된 주문과 취소된 주문만 보여 준다(포스페이 요청 2026-11-04 ④⑤). 실패 건은 아래 메뉴로.
                 { title: '전체', path: PATH_MANAGER.orders.trx + '/all' },
                 // 샵고 가맹점(포스페이만 씀)의 결제대기는 사실상 '결제창만 열고 승인 안 난 건'이라
                 // 「결제실패/미완료」로 보여 준다(가맹점 요청서 2026-09-11 ① → 사장님 결정).

@@ -30,6 +30,15 @@ const Wrappers = styled.div`
   margin: 4vh auto 8vh;
 `;
 
+// 결제창이 알려 준 실패 사유 중 손님에게 보여 줘도 되는 것만 고른다.
+// PV 코드는 설정·통신 문제라 손님이 할 수 있는 게 없고, 포스페이가 SQL 원문을 보낸 적도 있다(scripts/checks/pg-message.mjs).
+const 손님용사유 = (code, message) => {
+  const s = String(message ?? '').replace(/\s+/g, ' ').trim();
+  if (!s || s.length > 100 || /^PV/i.test(String(code ?? ''))) return '';
+  if (/[{}<>\[\]=;`$]|SQL|exception|https?:/i.test(s)) return '';
+  return s;
+};
+
 // 라벨-값 한 줄. 값이 없으면 줄 자체를 그리지 않는다(PG마다 돌려주는 필드가 달라서).
 const KV = ({ k, v }) => {
   if (v === undefined || v === null || v === '') return null;
@@ -84,6 +93,23 @@ const { user } = useAuthContext();
   //   PV999  : 포스페이 문서 「Buyer cancelled in the payment window」(PC 팝업 FORSPAY_RESULT)
   // 그 밖의 코드(PV9999 미지원 기능, 카드 거절 등)는 그대로 '결제에 실패하였습니다'.
   const isCanceled = ['CANCEL', 'PV999'].includes(String(q.result_cd ?? ''));
+
+  // 결제창이 알려 준 실패 사유 — 손님에게 보여 주고, 가맹점 「결제실패/미완료」 목록에 남긴다(포스페이 요청 2026-11-04 ④).
+  // 주문번호가 맞을 때만 쓴다. 저장은 표시용이고 주문 상태를 바꾸지 않는다.
+  const [실패사유, set실패사유] = useState('');
+  useEffect(() => {
+    if (!router.isReady || isSuccess || isPending) return;
+    const ord = String(q.ord_num || '');
+    const code = String(q.result_cd || '');
+    if (!ord || !code) return;
+    let message = '';
+    try {
+      const 저장값 = JSON.parse(sessionStorage.getItem('forspayFail') || 'null');
+      if (저장값?.ord_num === ord) message = String(저장값.message ?? '');
+    } catch (e) { /* 사유 없이 간다 */ }
+    if (!isCanceled) set실패사유(손님용사유(code, message));
+    apiManager('pays/forspay/fail-reason', 'create', { ord_num: ord, code, message }).catch(() => { });
+  }, [router.isReady, isSuccess, isPending, q.ord_num, q.result_cd]);
 
   // 결제 성공으로 돌아왔으면 장바구니를 비운다.
   //
@@ -174,6 +200,11 @@ const { user } = useAuthContext();
                 : isCanceled
                   ? translate('결제가 진행되지 않아 주문이 접수되지 않았습니다.')
                   : translate('결제가 완료되지 않았습니다. 다시 시도해 주세요.')}
+          </Typography>
+        )}
+        {실패사유 && !isTestBrand && (
+          <Typography variant="body2" sx={{ color: 'text.secondary', mt: 0.5, textAlign: 'center', wordBreak: 'keep-all' }}>
+            {translate('실패 사유')}: {실패사유}
           </Typography>
         )}
       </Stack>

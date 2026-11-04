@@ -30,6 +30,7 @@ const HistoryDemo = (props) => {
   const [searchObj, setSearchObj] = useState({
     page: 1,
     page_size: 10,
+    type: 'user', // 내 주문만 + 취소 건 포함, 실패 건 제외 — 관리자 계정으로 열어도 같다
   })
   useEffect(() => {
     onChangePage(searchObj);

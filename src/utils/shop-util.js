@@ -481,11 +481,15 @@ const startForspayWindow = (popup, res, payData, target, features) => {
         window.removeEventListener('message', onMessage);
         clearInterval(closedTimer);
     };
-    const goResult = (result_cd) => {
+    const goResult = (result_cd, message) => {
         if (handled) return;
         handled = true;
         cleanup();
         try { popup.close(); } catch (e) { }
+        // 실패 사유는 주소에 싣지 않는다 — 주소로 넘기면 아무 문구나 넣은 링크로 결과 화면을 꾸밀 수 있다.
+        if (typeof message === 'string' && message) {
+            try { sessionStorage.setItem('forspayFail', JSON.stringify({ ord_num, message: message.slice(0, 300) })); } catch (e) { }
+        }
         window.location.href = `/shop/auth/pay-result?result_cd=${encodeURIComponent(result_cd)}&ord_num=${encodeURIComponent(ord_num)}`;
     };
     const onMessage = (e) => {
@@ -498,7 +502,7 @@ const startForspayWindow = (popup, res, payData, target, features) => {
         }
         if (d.type === 'FORSPAY_RESULT') {
             if (d.success || d.code === '0000') goResult('0000');
-            else goResult(d.code || '9999'); // 예: PV999 = 사용자 취소
+            else goResult(d.code || '9999', d.message); // 예: PV999 = 사용자 취소
         }
     };
     window.addEventListener('message', onMessage);

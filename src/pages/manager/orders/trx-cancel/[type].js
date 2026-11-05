@@ -200,8 +200,10 @@ const TrxCancelList = () => {
     },
     {
       id: 'updated_at',
-      label: '업데이트시간',
+      label: '처리시간',
+      // 취소된 주문은 실제 취소 시각을 보여 준다. updated_at 은 우리가 반영한 때라 대조 주기만큼 늦다.
       action: (row) => {
+        if (row['cancelled_at']) return <div style={{ color: '#d32f2f', whiteSpace: 'nowrap' }}>취소 {row['cancelled_at']}</div>;
         return row['updated_at'] ?? "---"
       },
       sx: (row) => {

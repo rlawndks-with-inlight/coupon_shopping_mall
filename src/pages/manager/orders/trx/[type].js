@@ -414,8 +414,10 @@ const TrxList = () => {
     ]),
     {
       id: 'updated_at',
-      label: '업데이트시간',
+      label: '처리시간',
+      // 취소된 주문은 실제 취소 시각을 보여 준다. updated_at 은 우리가 반영한 때라 대조 주기만큼 늦다.
       action: (row) => {
+        if (row['cancelled_at']) return <div style={{ color: '#d32f2f', whiteSpace: 'nowrap' }}>취소 {row['cancelled_at']}</div>;
         return row['updated_at'] ?? "---"
       },
       sx: (row) => {
@@ -757,6 +759,8 @@ const TrxList = () => {
     { label: '상태', width: 12, value: (r) => (포스페이미승인(r) ? '결제 미완료' : getOrderStatusText(r)) },
     { label: '송장번호', width: 18, value: (r) => r?.invoice_num ?? '' },
     { label: '취소여부', width: 10, value: (r) => (r?.is_cancel == 1 || r?.is_cancel_trans == 1 ? '취소' : '') },
+    // 실제 취소 시각 — 앞 열 순서는 그대로 두고 그 뒤에 붙인다
+    { label: '취소시간', width: 20, value: (r) => r?.cancelled_at ?? '' },
     // 「결제실패/미완료」에서 받을 때만, 맨 뒤에 — 앞 열의 순서는 가맹점 서식이라 흔들지 않는다
     ...(실패목록 ? [{ label: '실패 사유', width: 34, value: (r) => r?.fail_reason ?? '' }] : []),
   ];

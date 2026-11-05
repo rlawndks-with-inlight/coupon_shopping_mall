@@ -44,6 +44,8 @@ if (!백엔드있음) {
   }
   t('대조: 포스페이 시각을 넘긴다', /markCanceled\(t\.id, \{ cancelled_at: cancelledAt \}\)/.test(대조));
   t('웹훅: 포스페이 시각을 넘긴다', /note: '포스페이 취소 통지\(전액\)', cancelled_at: cancelledAt \}/.test(결제));
+  // 어드민 취소 약 1분 뒤 포스페이 통지가 돌아온다(주문 11568778) — 같은 취소를 이력에 두 줄 쓰지 않는다
+  t('이력: 이미 취소된 주문이면 또 쓰지 않는다', /\$\{column\} AS canceled FROM transactions/.test(취소) && /if \(Number\(이전\?\.canceled\) !== 1\) await logTrx\(\{ trans_id: tid/.test(취소));
   t('취소 목록: 기간 검색도 실제 취소 시각', /const 취소완료목록 = cancel_status == 2 && !손님화면;/.test(거래) && /조회조건 = \{ \.\.\.req\.query, s_dt: undefined, e_dt: undefined \};/.test(거래));
   t('손님 화면에는 취소 시각을 붙이지 않는다', /if \(!손님화면 && data\?\.content\?\.length > 0\) \{\s*try \{\s*const 취소된원주문/.test(거래));
   t('대시보드 취소 건수: 실제 취소일', /trx_cancel_counts_sql \+= ` AND \$\{실제취소시각식\(table_name\)\} <= \? `/.test(대시));

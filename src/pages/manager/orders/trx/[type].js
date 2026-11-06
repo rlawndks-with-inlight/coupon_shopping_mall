@@ -1,6 +1,6 @@
 import { Accordion, AccordionDetails, AccordionSummary, Button, Card, Container, IconButton, MenuItem, Select, Stack, TextField, Typography } from "@mui/material";
 import { COURIER_LIST, 기본택배사 } from 'src/data/couriers';
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import ManagerLayout from "src/layouts/manager/ManagerLayout";
 import ManagerTable from "src/views/manager/mui/table/ManagerTable";
 import { Icon } from "@iconify/react";
@@ -47,6 +47,9 @@ const 입력값묶음 = (row) => {
 const courierTrackUrl = (courier, no) =>
   `https://search.naver.com/search.naver?query=${encodeURIComponent(`${courier || ''} ${no || ''} 택배조회`.trim())}`;
 
+// 취소요청은 가맹점이 처리해야 할 건이라 상태 칸을 눈에 띄게 칠한다(가맹점 문의 2026-11-06).
+const 취소요청강조 = { bgcolor: '#ffebee', color: '#d32f2f', fontWeight: 700, '& .MuiOutlinedInput-notchedOutline': { borderColor: '#ef9a9a' } };
+
 const TrxList = () => {
   const { setModal } = useModal()
   const { user } = useAuthContext();
@@ -72,10 +75,14 @@ const TrxList = () => {
     ] : [
       {
         id: 'ord_num',
-        label: '주문번호',
-        action: (row) => {
-          return row['ord_num'] ?? "---"
-        },
+        label: '주문번호 / 승인번호',
+        // 주문관리는 주문번호만, 주문취소관리는 승인번호만 보여서 두 화면에서 같은 주문을 맞춰 볼 수 없었다(2026-11-06) — 두 화면 모두 둘 다.
+        action: (row) => (
+          <div style={{ whiteSpace: 'nowrap' }}>
+            <div>{row['ord_num'] || '---'}</div>
+            {row['appr_num'] ? <div style={{ fontSize: '12px', color: '#888' }}>승인 {row['appr_num']}</div> : null}
+          </div>
+        ),
         sx: (row) => {
           return {
             color: `${row?.is_cancel == 1 ? 'red' : ''}`
@@ -544,6 +551,7 @@ const TrxList = () => {
         return <Select
           size="small"
           defaultValue={row?.trx_status}
+          sx={row?.trx_status == 1 ? 취소요청강조 : undefined}
           onChange={(e) => {
             onChangeStatus(row?.id, e.target.value);
           }}
@@ -711,14 +719,17 @@ const TrxList = () => {
         : ((type == 'all' || !type) && 샵고) ? 'settled' : '';
     onChangePage({ ...searchObj, kind, trx_status: (type == 'all' || !type || type == 'failed') ? '' : type, page: 1 });
   }
+  // 탭을 빨리 옮기면 앞 탭의 늦은 응답이 지금 탭 목록을 덮어쓴다(취소요청 탭에 취소완료 건이 보임) — 마지막 요청의 응답만 쓴다.
+  const 조회번호 = useRef(0);
   const onChangePage = async (obj) => {
+    const 이번 = ++조회번호.current;
     setSearchObj(obj);
     setData({
       ...data,
       content: undefined
     });
     let data_ = await apiManager('transactions', 'list', obj);
-    if (data_) {
+    if (data_ && 이번 === 조회번호.current) {
       setData(data_);
       //console.log(data_)
     }
@@ -745,6 +756,7 @@ const TrxList = () => {
 
   const 엑셀열 = [
     { label: '주문번호', width: 22, value: (r) => r?.ord_num ?? '' },
+    { label: '승인번호', width: 14, value: (r) => r?.appr_num ?? '' },
     { label: '구매시간', width: 20, value: (r) => r?.created_at ?? '' },
     { label: '구매자명', width: 12, value: (r) => r?.buyer_name ?? '' },
     { label: '구매자연락처', width: 16, value: (r) => r?.buyer_phone ?? '' },

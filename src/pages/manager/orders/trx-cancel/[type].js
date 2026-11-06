@@ -1,5 +1,5 @@
 import { Accordion, AccordionDetails, AccordionSummary, Button, Card, Container, FormControl, IconButton, InputLabel, MenuItem, Select, Stack, TextField, Typography } from "@mui/material";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import ManagerLayout from "src/layouts/manager/ManagerLayout";
 import ManagerTable from "src/views/manager/mui/table/ManagerTable";
 import { Icon } from "@iconify/react";
@@ -23,11 +23,15 @@ const TrxCancelList = () => {
   const { user } = useAuthContext()
   const defaultColumns = [
     {
-      id: 'appr_num',
-      label: '승인번호',
-      action: (row) => {
-        return row['appr_num'] ?? "---"
-      },
+      id: 'ord_num',
+      label: '주문번호 / 승인번호',
+      // 주문관리는 주문번호만, 주문취소관리는 승인번호만 보여서 두 화면에서 같은 주문을 맞춰 볼 수 없었다(2026-11-06) — 두 화면 모두 둘 다.
+      action: (row) => (
+        <div style={{ whiteSpace: 'nowrap' }}>
+          <div>{row['ord_num'] || '---'}</div>
+          {row['appr_num'] ? <div style={{ fontSize: '12px', color: '#888' }}>승인 {row['appr_num']}</div> : null}
+        </div>
+      ),
       sx: (row) => {
         return {
           color: `${row?.is_cancel == 1 ? 'red' : ''}`
@@ -351,14 +355,17 @@ const TrxCancelList = () => {
   const pageSetting = () => {
     onChangePage({ ...searchObj, cancel_status: (router.query?.type == 'all' || !router.query?.type) ? '' : router.query?.type, page: 1 });
   }
+  // 탭을 빨리 옮기면 앞 탭의 늦은 응답이 지금 탭 목록을 덮어쓴다(취소요청 탭에 취소완료 건이 보임) — 마지막 요청의 응답만 쓴다.
+  const 조회번호 = useRef(0);
   const onChangePage = async (obj) => {
+    const 이번 = ++조회번호.current;
     setSearchObj(obj);
     setData({
       ...data,
       content: undefined
     });
     let data_ = await apiManager('transactions', 'list', obj);
-    if (data_) {
+    if (data_ && 이번 === 조회번호.current) {
       setData(data_);
     }
   }

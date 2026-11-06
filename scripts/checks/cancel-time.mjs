@@ -17,6 +17,17 @@ for (const [이름, 화면] of [['주문 목록', 목록], ['취소 목록', 취
   t(`${이름}: 시간 칸은 처리시간 하나`, /id: 'updated_at',\s*label: '처리시간'/.test(화면) && !/label: '업데이트시간'/.test(화면) && !/id: 'cancelled_at'/.test(화면));
   t(`${이름}: 취소 건은 실제 취소 시각, 나머지는 마지막 변경 시각`, /if \(row\['cancelled_at'\]\) return <div style=\{\{ color: '#d32f2f', whiteSpace: 'nowrap' \}\}>취소 \{row\['cancelled_at'\]\}<\/div>;\s*return row\['updated_at'\] \?\? "---"/.test(화면));
 }
+// 탭을 빨리 옮기면 앞 탭(취소완료)의 늦은 응답이 취소요청 탭을 덮어썼다(2026-11-06 운영 재현) — 마지막 요청만 쓴다
+for (const [이름, 화면] of [['주문 목록', 목록], ['취소 목록', 취소목록]]) {
+  t(`${이름}: 늦게 온 앞 탭 응답은 버린다`, /const 이번 = \+\+조회번호\.current;/.test(화면) && /if \(data_ && 이번 === 조회번호\.current\) \{/.test(화면));
+}
+// 취소요청은 가맹점이 처리할 건 — 상태 칸을 빨갛게(가맹점 문의 2026-11-06)
+t('주문 목록: 취소요청 상태 칸 강조', /sx=\{row\?\.trx_status == 1 \? 취소요청강조 : undefined\}/.test(목록) && /const 취소요청강조 = \{ bgcolor: '#ffebee', color: '#d32f2f'/.test(목록));
+// 주문관리는 주문번호만, 주문취소관리는 승인번호만 보였다(2026-11-06) — 두 화면 모두 한 칸에 둘 다
+for (const [이름, 화면] of [['주문 목록', 목록], ['취소 목록', 취소목록]]) {
+  t(`${이름}: 주문번호 / 승인번호 한 칸`, /label: '주문번호 \/ 승인번호'/.test(화면) && /<div>\{row\['ord_num'\] \|\| '---'\}<\/div>/.test(화면) && /승인 \{row\['appr_num'\]\}/.test(화면) && !/id: 'appr_num',\s*label: '승인번호'/.test(화면));
+}
+t('엑셀: 주문번호 바로 뒤 승인번호', /label: '주문번호', width: 22[^\n]*\n\s*\{ label: '승인번호', width: 14, value: \(r\) => r\?\.appr_num \?\? '' \}/.test(목록));
 t('엑셀: 취소시간은 취소여부 바로 뒤', /label: '취소여부'[^\n]*\n[^\n]*\n\s*\{ label: '취소시간', width: 20, value: \(r\) => r\?\.cancelled_at \?\? '' \}/.test(목록));
 
 // ── 서버 ───────────────────────────────────────────────────────────────
@@ -46,6 +57,7 @@ if (!백엔드있음) {
   t('웹훅: 포스페이 시각을 넘긴다', /note: '포스페이 취소 통지\(전액\)', cancelled_at: cancelledAt \}/.test(결제));
   // 어드민 취소 약 1분 뒤 포스페이 통지가 돌아온다(주문 11568778) — 같은 취소를 이력에 두 줄 쓰지 않는다
   t('이력: 이미 취소된 주문이면 또 쓰지 않는다', /\$\{column\} AS canceled FROM transactions/.test(취소) && /if \(Number\(이전\?\.canceled\) !== 1\) await logTrx\(\{ trans_id: tid/.test(취소));
+  t('취소 실패 로그: PG 응답을 통째로 남기지 않는다(연락처)', !/PG 실패 trans_id=\$\{tid\}: \$\{JSON\.stringify/.test(취소));
   t('취소 목록: 기간 검색도 실제 취소 시각', /const 취소완료목록 = cancel_status == 2 && !손님화면;/.test(거래) && /조회조건 = \{ \.\.\.req\.query, s_dt: undefined, e_dt: undefined \};/.test(거래));
   t('손님 화면에는 취소 시각을 붙이지 않는다', /if \(!손님화면 && data\?\.content\?\.length > 0\) \{\s*try \{\s*const 취소된원주문/.test(거래));
   t('대시보드 취소 건수: 실제 취소일', /trx_cancel_counts_sql \+= ` AND \$\{실제취소시각식\(table_name\)\} <= \? `/.test(대시));

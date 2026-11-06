@@ -12,10 +12,10 @@ const t = (name, cond) => { if (cond) { pass++; console.log('  ok  ' + name); } 
 // ── 화면 ───────────────────────────────────────────────────────────────
 const 목록 = 읽기(FRONT_ROOT, 'src/pages/manager/orders/trx/[type].js');
 const 취소목록 = 읽기(FRONT_ROOT, 'src/pages/manager/orders/trx-cancel/[type].js');
-// 「업데이트시간」과 「취소시간」을 따로 두지 않는다(2026-11-05 사장님 지적) — 처리시간 한 칸에 취소 건은 실제 취소 시각
+// 처리시간 칸은 없앴다(가맹점 요청 2026-11-06 — 이력에서 본다). 그 전엔 「업데이트시간」·「취소시간」을 처리시간 한 칸으로 합쳤었다(11-05).
+// 실제 취소 시각은 엑셀 「취소시간」 열에 그대로 남는다(아래).
 for (const [이름, 화면] of [['주문 목록', 목록], ['취소 목록', 취소목록]]) {
-  t(`${이름}: 시간 칸은 처리시간 하나`, /id: 'updated_at',\s*label: '처리시간'/.test(화면) && !/label: '업데이트시간'/.test(화면) && !/id: 'cancelled_at'/.test(화면));
-  t(`${이름}: 취소 건은 실제 취소 시각, 나머지는 마지막 변경 시각`, /if \(row\['cancelled_at'\]\) return <div style=\{\{ color: '#d32f2f', whiteSpace: 'nowrap' \}\}>취소 \{row\['cancelled_at'\]\}<\/div>;\s*return row\['updated_at'\] \?\? "---"/.test(화면));
+  t(`${이름}: 처리시간·업데이트시간·취소시간 칸 없음`, !/id: 'updated_at'/.test(화면) && !/label: '처리시간'/.test(화면) && !/label: '업데이트시간'/.test(화면) && !/id: 'cancelled_at'/.test(화면));
 }
 // 탭을 빨리 옮기면 앞 탭(취소완료)의 늦은 응답이 취소요청 탭을 덮어썼다(2026-11-06 운영 재현) — 마지막 요청만 쓴다
 for (const [이름, 화면] of [['주문 목록', 목록], ['취소 목록', 취소목록]]) {

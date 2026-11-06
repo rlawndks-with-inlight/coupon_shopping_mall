@@ -7,7 +7,7 @@ import {
   MobileDatePicker,
   DesktopDatePicker,
 } from '@mui/x-date-pickers';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Row } from 'src/components/elements/styled-components';
 import styled from 'styled-components';
 import Scrollbar from 'src/components/scrollbar/Scrollbar';
@@ -40,8 +40,36 @@ justify-content:space-between;
 }
 `
 
+// 옆으로 밀어도 '어느 줄인지' 를 놓치지 않게 앞 칸을 붙박이로 둔다.
+// 기본은 첫 칸 하나. 주문 목록처럼 앞에 좁은 칸(체크칸·번호)이 있으면 sticky_lead=[폭px, …] 로 넘긴다 —
+// 그 칸들을 정해진 폭으로 붙이고, 바로 다음 칸(주문번호)까지 붙인다(2026-11-06: 체크칸만 붙고 주문번호가 밀려 사라졌다).
+// 배경을 inherit 로 두면 투명이라, 옆으로 밀 때 뒤 칸 글자가 이 칸을 뚫고 비친다 — 불투명한 색을 직접 준다.
+// 머리줄의 붙박이 칸은 세로·가로 양쪽으로 고정되므로 z-index 가 더 높아야 한다.
+const 붙박이칸 = (앞칸 = []) => {
+  const 폭들 = Array.isArray(앞칸) ? 앞칸.map(Number).filter((n) => n > 0) : [];
+  const 바탕 = (theme) => theme.palette.background.paper;
+  const 규칙 = {};
+  let 왼쪽 = 0;
+  폭들.forEach((폭, i) => {
+    규칙[`& tbody td:nth-of-type(${i + 1}), & thead th:nth-of-type(${i + 1})`] = {
+      position: 'sticky', left: 왼쪽, zIndex: 2, background: 바탕,
+      width: 폭, minWidth: 폭, maxWidth: 폭, paddingLeft: '6px', paddingRight: '6px',
+    };
+    규칙[`& thead th:nth-of-type(${i + 1})`] = { zIndex: 3 };
+    왼쪽 += 폭;
+  });
+  const n = 폭들.length + 1;
+  규칙[`& tbody td:nth-of-type(${n}), & thead th:nth-of-type(${n})`] = {
+    position: 'sticky', left: 왼쪽, zIndex: 2, background: 바탕,
+    // 붙박이 칸 오른쪽에 옅은 경계 — 밀린 칸이 그 밑으로 들어가는 게 보이게
+    boxShadow: (theme) => (폭들.length ? `inset -1px 0 0 ${theme.palette.divider}` : 'none'),
+  };
+  규칙[`& thead th:nth-of-type(${n})`] = { zIndex: 3 };
+  return 규칙;
+};
+
 export default function ManagerTable(props) {
-  const { columns, data, add_button_text, add_link, onClickSeller, onChangePage, searchObj, want_move_card, table, detail_search, onToggle, minimal = false, type } = props;
+  const { columns, data, add_button_text, add_link, onClickSeller, onChangePage, searchObj, want_move_card, table, detail_search, onToggle, minimal = false, type, date_presets = false, sticky_lead = [] } = props;
   const { page, page_size } = props?.searchObj;
   const { themeDnsData } = useSettingsContext();
   const { user } = useAuthContext();
@@ -53,8 +81,49 @@ export default function ManagerTable(props) {
   const router = useRouter();
 
   const { settingPlatform } = useSettingsContext();
+  // 가로 스크롤 막대가 늘 화면 안에 있게 — 표 영역 높이를 '남은 화면 높이'에 맞춘다(2026-11-06 재발).
+  // 예전엔 76vh 로 묶었는데, 표 위(검색·날짜 버튼·일괄 막대)가 높아지면 76vh 가 화면 밖까지 내려가
+  // 낮은 해상도(1366×768)에서 막대를 보려면 맨 아래까지 내려가야 했다. 표 위가 다시 높아져도 이 계산이 따라간다.
+  const 스크롤칸 = useRef(null);
+  const [표높이, set표높이] = useState('76vh');
+  useEffect(() => {
+    const 맞추기 = () => {
+      const el = 스크롤칸.current;
+      if (!el) return;
+      const 위 = el.getBoundingClientRect().top + window.scrollY; // 페이지 맨 위 기준
+      const 아래여백 = 76; // 표 밑 쪽 넘김 줄(Pagination)
+      set표높이(`${Math.max(320, Math.round(window.innerHeight - 위 - 아래여백))}px`);
+    };
+    맞추기();
+    window.addEventListener('resize', 맞추기);
+    // 표 위 영역 높이는 데이터·버튼이 그려지며 바뀐다 — 문서 크기가 바뀔 때마다 다시 잰다(같은 값이면 다시 그리지 않는다)
+    const 관찰 = typeof ResizeObserver !== 'undefined' ? new ResizeObserver(맞추기) : null;
+    관찰?.observe(document.body);
+    return () => { window.removeEventListener('resize', 맞추기); 관찰?.disconnect(); };
+  }, []);
   const [sDt, setSDt] = useState(undefined);
   const [eDt, setEDt] = useState(undefined);
+  // 기간 바로 고르기(오늘·어제·7일…) — 주문 목록에서만 켠다(date_presets). 가맹점 요청 2026-11-06.
+  const [기간, set기간] = useState('');
+  const 기간고르기 = (key) => {
+    const 날 = (뒤로) => { const d = new Date(); d.setHours(0, 0, 0, 0); d.setDate(d.getDate() - 뒤로); return d; };
+    const 달전 = (n) => { const d = 날(0); d.setMonth(d.getMonth() - n); return d; };
+    const 범위 = {
+      today: [날(0), 날(0)],
+      yesterday: [날(1), 날(1)],
+      week: [날(6), 날(0)],
+      month: [달전(1), 날(0)],
+      quarter: [달전(3), 날(0)],
+      all: [null, null],
+    }[key];
+    if (!범위) return;
+    const [시작, 끝] = 범위;
+    set기간(key);
+    setSDt(시작 ?? null);
+    setEDt(끝 ?? null);
+    const 글 = (d) => (d ? returnMoment(false, d).substring(0, 10) : '');
+    onChangePage({ ...searchObj, s_dt: 글(시작), e_dt: 글(끝), page: 1 });
+  };
   const [keyword, setKeyWord] = useState("");
   const [contentList, setContentList] = useState(undefined);
   const [anchor, setAnchor] = useState(null)
@@ -154,7 +223,9 @@ export default function ManagerTable(props) {
       onChangeSequence={onChangeSequence}
       want_move_card={want_move_card}
     />
-  }, [contentList])
+    // columns 도 본다 — 예전엔 contentList 만 봐서, 목록을 다시 읽기 전까지 처음 그린 열 정의(그때의 상태값)를 붙들었다.
+    // 그래서 주문 목록 체크칸이 눌러도 체크 표시가 안 바뀌었다(2026-11-06). 줄은 row.id 로 묶여 있어 칸 안의 입력값은 그대로다.
+  }, [contentList, columns])
 
   const onSort = (e, prop) => {
     const isDesc = checked === prop && order === 'desc';
@@ -254,6 +325,7 @@ export default function ManagerTable(props) {
                               format='yyyy-MM-dd'
                               onChange={(newValue) => {
                                 setSDt(newValue);
+                                set기간('');
                                 onChangePage({ ...searchObj, s_dt: returnMoment(false, new Date(newValue)).substring(0, 10) })
                               }}
                               renderInput={(params) => <TextField fullWidth {...params} margin="normal" />}
@@ -266,6 +338,7 @@ export default function ManagerTable(props) {
                               format='yyyy-MM-dd'
                               onChange={(newValue) => {
                                 setEDt(newValue);
+                                set기간('');
                                 onChangePage({ ...searchObj, e_dt: returnMoment(false, new Date(newValue)).substring(0, 10) })
                               }}
                               renderInput={(params) => <TextField fullWidth {...params} margin="normal" />}
@@ -298,6 +371,14 @@ export default function ManagerTable(props) {
                               slotProps={{ textField: { size: 'small' } }}
                             />
                           </>}
+                        {date_presets &&
+                          <Row style={{ columnGap: '0.35rem', flexWrap: 'wrap', alignItems: 'center', marginRight: '1.5rem' }}>
+                            {[['today', '오늘'], ['yesterday', '어제'], ['week', '7일'], ['month', '1개월'], ['quarter', '3개월'], ['all', '전체 기간']].map(([key, 이름]) => (
+                              <Button key={key} size='small' variant={기간 === key ? 'contained' : 'outlined'}
+                                sx={{ minWidth: 0, px: 1.25, whiteSpace: 'nowrap' }}
+                                onClick={() => 기간고르기(key)}>{이름}</Button>
+                            ))}
+                          </Row>}
                       </Row>
                     </>
                   }
@@ -431,7 +512,7 @@ export default function ManagerTable(props) {
         {/* 가로 스크롤 막대가 표 맨 아래에만 있으면, 줄이 많은 표에서는 화면을 한참 내려가야
             막대에 닿는다(가맹점 피드백 — 노트북에서 특히 불편). 스크롤 영역을 화면 높이 안에
             묶어 두면 막대가 늘 화면 안에 남는다. 머리줄·첫 칸은 아래 sx 에서 붙박이로 만든다. */}
-        <div style={{ width: '100%', overflow: 'auto', maxHeight: '76vh' }}>
+        <div ref={스크롤칸} style={{ width: '100%', overflow: 'auto', maxHeight: 표높이 }}>
           {!data.content ?
             <>
               <Row style={{ height: '400px' }}>
@@ -445,14 +526,8 @@ export default function ManagerTable(props) {
                 overflowX: 'auto',
                 /* 옆으로 밀어도 '어느 줄인지' 를 놓치지 않게 첫 칸을 붙박이로 둔다.
                    머리줄의 첫 칸은 세로·가로 양쪽으로 고정되므로 z-index 가 더 높아야 한다. */
-                '& tbody td:first-of-type, & thead th:first-of-type': {
-                  position: 'sticky', left: 0, zIndex: 2,
-                  /* 배경을 inherit 로 두면 투명이라, 옆으로 밀 때 뒤 칸 글자가 이 칸을 뚫고 비친다
-                     (주문번호 위에 구매시간이 겹쳐 보였다). 불투명한 색을 직접 준다. */
-                  background: (theme) => theme.palette.background.paper,
-                },
+                ...붙박이칸(sticky_lead),
                 '& thead th': { background: (theme) => theme.palette.background.paper },
-                '& thead th:first-of-type': { zIndex: 3 },
                 /* 글은 줄을 바꿔 접되(한국어는 단어째), 버튼·선택 같은 조작 요소는 접지 않는다 —
                    접히면 버튼 상자 밖으로 글씨가 삐져나온다. */
                 '& td': { wordBreak: 'keep-all', overflowWrap: 'break-word', verticalAlign: 'top' },

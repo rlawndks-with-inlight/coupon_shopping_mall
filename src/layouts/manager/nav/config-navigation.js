@@ -260,9 +260,9 @@ export const navConfig = () => {
                 // 샵고 가맹점(포스페이만 씀)의 결제대기는 사실상 '결제창만 열고 승인 안 난 건'이라
                 // 「결제실패/미완료」로 보여 준다(가맹점 요청서 2026-09-11 ① → 사장님 결정).
                 // 무통장·상품권처럼 진짜 입금 대기가 있는 가맹점에만 「결제대기(입금확인)」 를 같이 둔다.
+                // 「결제실패/미완료」는 맨 아래(가맹점 요청 2026-11-06 — 자주 안 보는 메뉴라 결제완료가 위로 와야 한다).
                 ...(isShopgoMerchant(themeDnsData)
                   ? [
-                    { title: '결제실패/미완료', path: PATH_MANAGER.orders.trx + '/failed' },
                     ...(입금대기수단있음(themeDnsData) ? [{ title: '결제대기(입금확인)', path: PATH_MANAGER.orders.trx + '/0' }] : []),
                   ]
                   : [{ title: '결제대기', path: PATH_MANAGER.orders.trx + '/0' }]),
@@ -276,6 +276,7 @@ export const navConfig = () => {
                 ),
                 { title: '배송중', path: PATH_MANAGER.orders.trx + '/20' },
                 { title: '배송완료', path: PATH_MANAGER.orders.trx + '/25' },
+                ...(isShopgoMerchant(themeDnsData) ? [{ title: '결제실패/미완료', path: PATH_MANAGER.orders.trx + '/failed' }] : []),
               ],
             },
             {

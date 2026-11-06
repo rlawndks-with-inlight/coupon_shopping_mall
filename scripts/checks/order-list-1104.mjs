@@ -69,7 +69,8 @@ if (!백엔드있음) {
   t('서버: settled = 결제된 주문 + 취소된 주문', /kind === 'settled'\) \{\s*sql \+= ` AND \(\$\{table_name\}\.trx_status >= 1 OR \$\{table_name\}\.is_cancel_trans = 1\) `/.test(trx));
   t('서버: settled·type=user 는 원장 행만 빼고 취소 건을 남긴다', /if \(kind === 'settled' \|\| type == 'user'\) \{[\s\S]{0,300}sql \+= ` AND is_cancel=0 `;\s*\} else if \(cancel_status\)/.test(trx));
   t('서버: 상태별 탭·판매 중단 프레임의 기본 조건은 그대로', /\} else \{\s*sql \+= ` AND is_cancel=0 AND is_cancel_trans=0 `;\s*\}\s*if \(cancel_type\)/.test(trx));
-  t('서버: 취소 완료 주문은 상태 변경 거부(본사 제외)', /is_cancel_trans\) === 1\) && Number\(decode_user\?\.level\) < 50\) \{\s*return response\(req, res, -100, "취소 완료된 주문은 상태를 바꿀 수 없습니다\."/.test(util));
+  // 규칙은 한 건·일괄 공용 주문상태검사로 옮겼다(2026-11-06) — 거부 사유를 돌려주면 한 건 변경이 그대로 응답한다
+  t('서버: 취소 완료 주문은 상태 변경 거부(본사 제외)', /is_cancel_trans\) === 1\) && Number\(decode_user\?\.level\) < 50\) \{\s*return \{ 거부: "취소 완료된 주문은 상태를 바꿀 수 없습니다\."/.test(util) && /if \(검사\.거부\) return response\(req, res, -100, 검사\.거부, false\);/.test(util));
   t('서버: 승인 전 주문은 전체·부분취소 거부(본사 제외)', (pay.match(/결제확인전\((trx|state\.trx)\) && Number\(decode_user\?\.level\) < 50/g) ?? []).length === 2);
   // 실패 사유는 표시용 — 공개 API 라 받는 범위를 좁히고, 주문 상태를 절대 바꾸지 않는다
   const 사유함수 = pay.slice(pay.indexOf('const 결제창사유저장 ='), pay.indexOf('const 포스페이결과판정 ='));

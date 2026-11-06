@@ -54,10 +54,30 @@ t('장바구니 글자도 단어째 넘긴다', /wordBreak: 'keep-all'/.test(장
 // ⚠ 관리자 화면(주문관리·회원관리…)이 쓰는 표는 content-table 이 아니라 이쪽이다.
 //   처음에 content-table 만 고쳐서 '뭐가 바뀐 거냐' 는 말을 들었다 — 두 개를 헷갈리지 말 것.
 const 매니저표 = 읽기('src/views/manager/mui/table/ManagerTable.js');
-t('관리자 표: 스크롤 영역이 화면 안에 묶여 있다', /maxHeight: '76vh'/.test(매니저표),
+// 76vh 로 묶었더니 표 위(검색·날짜 버튼·일괄 막대)가 높아지자 1366×768 에서 막대가 다시 화면 밖으로 갔다(2026-11-06 재발).
+// 이제 '남은 화면 높이' 를 재서 묶는다 — 표 위가 높아지면 같이 줄어든다.
+t('관리자 표: 스크롤 영역이 남은 화면 높이에 묶여 있다', /<div ref=\{스크롤칸\} style=\{\{ width: '100%', overflow: 'auto', maxHeight: 표높이 \}\}>/.test(매니저표)
+    && /window\.innerHeight - 위 - 아래여백/.test(매니저표) && /new ResizeObserver\(맞추기\)/.test(매니저표) && /window\.addEventListener\('resize', 맞추기\)/.test(매니저표),
     '막대가 표 맨 아래에만 있으면 줄이 많을 때 거기까지 내려가야 한다');
+{
+  // 실제 높이 계산: 768 화면, 표가 365 에서 시작하면 768-365-76=327 → 가로 막대가 768 안
+  const 식 = 매니저표.match(/set표높이\(`\$\{(Math\.max\(320, Math\.round\(window\.innerHeight - 위 - 아래여백\)\))\}px`\)/);
+  const 셈 = 식 && new Function('window', '위', '아래여백', `return ${식[1]};`);
+  t('관리자 표: 768 화면에서 표 아래(막대)가 화면 안', !!셈 && 365 + 셈({ innerHeight: 768 }, 365, 76) <= 768 && 셈({ innerHeight: 600 }, 500, 76) === 320);
+}
 t('관리자 표: 머리줄이 붙박이다', /<Table stickyHeader/.test(매니저표));
-t('관리자 표: 첫 칸이 붙박이다', /tbody td:first-of-type[\s\S]{0,120}position: 'sticky'/.test(매니저표));
+{
+  // 붙박이 칸: 기본은 첫 칸, 주문 목록은 체크칸·번호 다음 주문번호까지
+  const 몸 = 매니저표.slice(매니저표.indexOf('const 붙박이칸 ='), 매니저표.indexOf('export default function ManagerTable'));
+  const 붙박이칸 = new Function(`${몸}; return 붙박이칸;`)();
+  const 기본 = 붙박이칸([]);
+  const 주문 = 붙박이칸([44, 64]);
+  t('관리자 표: 기본은 첫 칸이 붙박이', 기본['& tbody td:nth-of-type(1), & thead th:nth-of-type(1)']?.position === 'sticky' && 기본['& tbody td:nth-of-type(1), & thead th:nth-of-type(1)']?.left === 0);
+  t('관리자 표: 앞 칸 폭을 주면 그 다음 칸(주문번호)까지 붙는다', 주문['& tbody td:nth-of-type(2), & thead th:nth-of-type(2)']?.left === 44 && 주문['& tbody td:nth-of-type(3), & thead th:nth-of-type(3)']?.left === 108 && 주문['& thead th:nth-of-type(3)']?.zIndex === 3);
+  t('관리자 표: ManagerTable 이 붙박이 규칙을 쓴다', /\.\.\.붙박이칸\(sticky_lead\),/.test(매니저표));
+}
+const 주문목록 = 읽기('src/pages/manager/orders/trx/[type].js');
+t('주문 목록: 체크칸·번호 폭을 넘겨 주문번호까지 붙인다', /sticky_lead=\{실패목록 \? \[64\] : \[44, 64\]\}/.test(주문목록));
 t('관리자 표: 글은 단어째 접힌다', /wordBreak: 'keep-all'/.test(매니저표));
 // 버튼 글씨가 접히면 상자 밖으로 삐져나온다 — 조작 요소는 접지 않는다.
 t('관리자 표: 버튼·칩·입력은 줄을 바꾸지 않는다', /MuiButton-root[\s\S]{0,80}whiteSpace: 'nowrap'/.test(매니저표));

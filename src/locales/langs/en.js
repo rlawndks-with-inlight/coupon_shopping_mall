@@ -1113,6 +1113,15 @@ const en = {
   "비회원으로 계속": "Continue as guest",
   "회원이 되시면 주문내역을 한곳에서 확인하고, 배송지를 저장해 다음 주문부터 더 빠르게 하실 수 있습니다. 물론 회원가입 없이 그대로 진행하셔도 됩니다.": "As a member you can see all your orders in one place and save an address so future orders are quicker. You are also welcome to continue without signing up.",
   "하나의 제품. 끝없는 품질. 온 정성을 담아 만듭니다.": "One product. Endless quality. Made with absolute dedication.",
+  // 주문 이력 메모(관리자 화면, 2026-11-06)
+  "일괄로 바꿀 수 없는 상태입니다.": "This status cannot be applied in bulk.",
+  "바꿀 주문을 선택해 주세요.": "Please select the orders to change.",
+  "한 번에 100건까지 바꿀 수 있습니다.": "You can change up to 100 orders at a time.",
+  "사유를 고칠 수 있는 취소 기록이 아닙니다.": "This is not a cancellation record whose reason can be edited.",
+  "고칠 수 있는 메모가 아닙니다.": "This is not a memo you can edit.",
+  "본인이 쓴 메모만 고칠 수 있습니다.": "You can only edit memos you wrote.",
+  "메모 내용을 입력해 주세요.": "Please enter the memo.",
+  "메모를 저장하지 못했습니다.": "The memo could not be saved.",
 };
 
 export default en;

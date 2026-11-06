@@ -40,6 +40,12 @@ t('포스페이 복귀 화면이 주문서 초안을 지운다(성공 시)', 결
 
 // ── ③ 결제실패/미완료 ─────────────────────────────────────────────────
 t('샵고 가맹점 메뉴는 결제대기 대신 결제실패/미완료', 메뉴.includes("{ title: '결제실패/미완료', path: PATH_MANAGER.orders.trx + '/failed' }") && 메뉴.includes("isShopgoMerchant(themeDnsData)\n                  ? ["));
+// 결제실패/미완료는 맨 아래 — 배송완료 다음(가맹점 요청 2026-11-06)
+{
+  const 묶음 = 메뉴.slice(메뉴.indexOf("title: '주문관리', path: PATH_MANAGER.orders.trx + '/all'"), 메뉴.indexOf("title: '주문취소관리'"));
+  const 자리 = (s) => 묶음.indexOf(s);
+  t('결제실패/미완료는 배송완료 다음, 결제완료보다 아래', 자리("title: '결제실패/미완료'") > 자리("title: '배송완료'") && 자리("title: '결제완료'") < 자리("title: '결제실패/미완료'") && 자리("title: '전체'") < 자리("title: '결제완료'"));
+}
 t('입금 대기 수단이 있는 샵고 가맹점에만 결제대기(입금확인) 메뉴', 메뉴.includes("입금대기수단있음(themeDnsData) ? [{ title: '결제대기(입금확인)'"));
 t('목록은 failed → kind=failed, 샵고 가맹점의 0 → kind=waiting', 목록.includes("const kind = type == 'failed' ? 'failed'\n      : (type == '0' && 샵고) ? 'waiting'"));
 t('상태 이름에 결제실패/미완료(-1)가 있다', 함수.includes("if (num == -1) return '결제실패/미완료'"));

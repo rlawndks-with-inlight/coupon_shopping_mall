@@ -7,6 +7,7 @@ import { useRouter } from "next/router";
 import { Col, Row } from "src/components/elements/styled-components";
 import { useModal } from "src/components/dialog/ModalProvider";
 import PartialCancelDialog from "src/components/manager/PartialCancelDialog";
+import TrxHistoryDialog from "src/components/manager/TrxHistoryDialog";
 import { commarNumber } from "src/utils/function";
 import toast from "react-hot-toast";
 import { apiManager, apiUtil } from "src/utils/api";
@@ -16,6 +17,10 @@ import { sha256 } from "js-sha256";
 import { useAuthContext } from "src/layouts/manager/auth/useAuthContext";
 import _ from 'lodash';
 import { getOptionLabel } from 'src/utils/shop-util';
+
+// 취소완료 탭의 줄은 원래 주문이 아니라 취소 원장 줄(is_cancel=1, 금액 음수, transaction_id → 원래 주문)이다.
+// 이력은 원래 주문에 쌓이므로 원장 줄이면 원래 주문의 이력을 연다(2026-11-06 미리보기에서 빈 이력으로 발견).
+const 이력주문 = (row) => (row?.is_cancel == 1 && Number(row?.transaction_id) > 0 ? row.transaction_id : row?.id);
 
 const TrxCancelList = () => {
   const { setModal } = useModal()
@@ -32,6 +37,20 @@ const TrxCancelList = () => {
           {row['appr_num'] ? <div style={{ fontSize: '12px', color: '#888' }}>승인 {row['appr_num']}</div> : null}
         </div>
       ),
+      sx: (row) => {
+        return {
+          color: `${row?.is_cancel == 1 ? 'red' : ''}`
+        }
+      },
+    },
+    // 구매시간은 주문번호 바로 오른쪽(가맹점 요청 2026-11-06). 승인 전이면 접수 시각 — 주문관리와 같은 규칙.
+    {
+      id: 'created_at',
+      label: '구매시간',
+      action: (row) => {
+        const 승인 = `${row['trx_dt'] ?? ''} ${row['trx_tm'] ?? ''}`.trim();
+        return 승인 || (row['created_at'] ?? '---');
+      },
       sx: (row) => {
         return {
           color: `${row?.is_cancel == 1 ? 'red' : ''}`
@@ -190,32 +209,7 @@ const TrxCancelList = () => {
         }
       },
     },
-    {
-      id: 'created_at',
-      label: '구매시간',
-      action: (row) => {
-        return `${row['trx_dt']} ${row['trx_tm']}`
-      },
-      sx: (row) => {
-        return {
-          color: `${row?.is_cancel == 1 ? 'red' : ''}`
-        }
-      },
-    },
-    {
-      id: 'updated_at',
-      label: '처리시간',
-      // 취소된 주문은 실제 취소 시각을 보여 준다. updated_at 은 우리가 반영한 때라 대조 주기만큼 늦다.
-      action: (row) => {
-        if (row['cancelled_at']) return <div style={{ color: '#d32f2f', whiteSpace: 'nowrap' }}>취소 {row['cancelled_at']}</div>;
-        return row['updated_at'] ?? "---"
-      },
-      sx: (row) => {
-        return {
-          color: `${row?.is_cancel == 1 ? 'red' : ''}`
-        }
-      },
-    },
+    // 「처리시간」 칸은 없앴다 — 언제 누가 무엇을 바꿨는지는 「이력」에 다 있다(가맹점 요청 2026-11-06).
     {
       id: 'trx_method',
       label: '결제타입',
@@ -308,6 +302,14 @@ const TrxCancelList = () => {
         );
       },
     },
+    // 이력은 주문관리 탭에만 있었다 — 취소요청·취소완료에서도 본다(가맹점 요청 2026-11-06). 취소 사유도 이력에 남는다.
+    {
+      id: 'history',
+      label: '이력',
+      action: (row) => (
+        <Button size='small' variant='text' sx={{ whiteSpace: 'nowrap', px: 1 }} onClick={() => setHistoryTrxId(이력주문(row))}>이력</Button>
+      ),
+    },
     // 수정·삭제는 마스터(본사, level 50)만 — 가맹점 요청서 2026-09-11 ② → 사장님 결정. 서버도 50 을 요구한다.
     ...(Number(user?.level) >= 50 ? [{
       id: 'edit',
@@ -341,6 +343,8 @@ const TrxCancelList = () => {
   const [data, setData] = useState({});
   // 부분/전체 취소 다이얼로그 대상 주문 id
   const [cancelTrxId, setCancelTrxId] = useState(0);
+  // 상태 변경 이력 창 대상 주문 id
+  const [historyTrxId, setHistoryTrxId] = useState(0);
   const [searchObj, setSearchObj] = useState({
     page: 1,
     page_size: 10,
@@ -463,6 +467,7 @@ const TrxCancelList = () => {
             columns={defaultColumns}
             searchObj={searchObj}
             onChangePage={onChangePage}
+            date_presets
             add_button_text={''}
           />
         </Card>
@@ -491,6 +496,7 @@ const TrxCancelList = () => {
           })
         }}
       />
+      <TrxHistoryDialog open={!!historyTrxId} trxId={historyTrxId} onClose={() => setHistoryTrxId(0)} />
     </>
   )
 }

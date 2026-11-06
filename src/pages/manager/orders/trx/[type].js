@@ -1,4 +1,4 @@
-import { Accordion, AccordionDetails, AccordionSummary, Button, Card, Container, IconButton, MenuItem, Select, Stack, TextField, Typography } from "@mui/material";
+import { Accordion, AccordionDetails, AccordionSummary, Button, Card, Checkbox, Container, FormControlLabel, IconButton, MenuItem, Select, Stack, TextField, Typography } from "@mui/material";
 import { COURIER_LIST, 기본택배사 } from 'src/data/couriers';
 import { useEffect, useRef, useState } from "react";
 import ManagerLayout from "src/layouts/manager/ManagerLayout";
@@ -50,6 +50,16 @@ const courierTrackUrl = (courier, no) =>
 // 취소요청은 가맹점이 처리해야 할 건이라 상태 칸을 눈에 띄게 칠한다(가맹점 문의 2026-11-06).
 const 취소요청강조 = { bgcolor: '#ffebee', color: '#d32f2f', fontWeight: 700, '& .MuiOutlinedInput-notchedOutline': { borderColor: '#ef9a9a' } };
 
+// 확인 팝업·일괄 변경에 쓰는 상태 이름(드롭다운과 같은 이름)
+const 상태이름 = { 0: '결제대기', 1: '취소요청', 5: '결제완료', 10: '입고완료', 15: '출고완료', 20: '배송중', 25: '배송완료' };
+// 일괄로 고를 수 있는 상태 — 취소요청은 한 건씩만(서버 util.controller 일괄상태와 같다)
+const 일괄상태 = [5, 10, 15, 20, 25];
+const 일괄최대 = 100;
+
+// 취소완료 탭의 줄은 원래 주문이 아니라 취소 원장 줄(is_cancel=1, 금액 음수, transaction_id → 원래 주문)이다.
+// 이력은 원래 주문에 쌓이므로 원장 줄이면 원래 주문의 이력을 연다(2026-11-06 미리보기에서 빈 이력으로 발견).
+const 이력주문 = (row) => (row?.is_cancel == 1 && Number(row?.transaction_id) > 0 ? row.transaction_id : row?.id);
+
 const TrxList = () => {
   const { setModal } = useModal()
   const { user } = useAuthContext();
@@ -62,10 +72,39 @@ const TrxList = () => {
   const [cancelTrxId, setCancelTrxId] = useState(0);
   // 상태 변경 이력 창 대상 주문 id
   const [historyTrxId, setHistoryTrxId] = useState(0);
+  // 일괄 상태 변경(가맹점 요청 2026-11-06): 체크한 주문 id 와 고른 상태
+  const [선택, set선택] = useState([]);
+  const [일괄값, set일괄값] = useState('');
+  const [일괄중, set일괄중] = useState(false);
   // 거래 수정·삭제는 마스터(본사, level 50)만 — 가맹점 요청서 2026-09-11 ①② → 사장님 결정. 서버(transaction.controller)도 50 을 요구한다.
   const 마스터 = Number(user?.level) >= 50;
   const 실패목록 = useRouter().query?.type == 'failed';
+  // 상태를 사람이 바꿀 수 있는 줄인지 — 드롭다운이 열리는 조건과 같다(서버도 같은 규칙으로 다시 본다)
+  const 바꿀수있음 = (row) => !(row?.is_cancel == 1 || row?.is_cancel_trans == 1) && Number(row?.trx_status) >= 0 && (마스터 || !포스페이미승인(row));
+  // 일괄 변경에 고를 수 있는 줄 — 취소요청(1)은 손님이 취소를 원한 주문이라 한 건씩만 바꾼다(서버도 건너뛴다)
+  const 일괄가능 = (row) => 바꿀수있음(row) && Number(row?.trx_status) !== 1;
   const defaultColumns = [
+    // 체크칸 — 일괄 상태 변경용. 결제실패/미완료 목록은 바꿀 수 있는 주문이 없어 두지 않는다.
+    ...(실패목록 ? [] : [{
+      id: 'select',
+      label: '',
+      action: (row) => (
+        <Checkbox size="small" sx={{ p: 0.5 }}
+          disabled={!일괄가능(row)}
+          checked={선택.includes(row?.id)}
+          onChange={(e) => set선택((앞) => e.target.checked ? [...앞, row.id] : 앞.filter((x) => x !== row.id))} />
+      ),
+    }]),
+    // 번호 — 게시판식 역순(맨 위 최신이 가장 큰 번호). 새 주문이 들어와도 기존 주문 번호는 그대로다(가맹점 요청 2026-11-06).
+    {
+      id: 'no',
+      label: '번호',
+      action: (row) => {
+        const 줄 = (data?.content ?? []).findIndex((r) => r?.id === row?.id);
+        const 번호 = Number(data?.total ?? 0) - (Number(searchObj?.page || 1) - 1) * Number(searchObj?.page_size || 10) - 줄;
+        return <div style={{ color: '#888', whiteSpace: 'nowrap' }}>{줄 >= 0 && 번호 > 0 ? 번호 : ''}</div>;
+      },
+    },
     ...(themeDnsData?.setting_obj?.is_use_seller == 2 ? [
       /* 검품사진(check_img) 열을 없앤다.
          업로드 창은 떴지만 저장하는 함수(updatePicture)의 본문이 통째로 주석 처리돼 있었다 —
@@ -83,6 +122,25 @@ const TrxList = () => {
             {row['appr_num'] ? <div style={{ fontSize: '12px', color: '#888' }}>승인 {row['appr_num']}</div> : null}
           </div>
         ),
+        sx: (row) => {
+          return {
+            color: `${row?.is_cancel == 1 ? 'red' : ''}`
+          }
+        },
+      },
+    ]),
+    // 구매시간은 주문번호 바로 오른쪽(가맹점 요청 2026-11-06).
+    ...(themeDnsData?.id == 74 ? [] : [
+      {
+        id: 'created_at',
+        label: '구매시간',
+        // trx_dt·trx_tm 은 PG 승인 시각이라 결제완료된 건에만 있다.
+        // 결제대기(포스페이 승인 미확정)·무통장 주문은 늘 비어서 '--- ---' 로만 보였고,
+        // 가맹점은 '주문시간이 안 찍힌다'고 읽었다. 승인 전에는 주문 접수시각(created_at)을 보여준다.
+        action: (row) => {
+          const 승인 = `${row['trx_dt'] ?? ''} ${row['trx_tm'] ?? ''}`.trim();
+          return 승인 || (row['created_at'] ?? '---');
+        },
         sx: (row) => {
           return {
             color: `${row?.is_cancel == 1 ? 'red' : ''}`
@@ -401,38 +459,8 @@ const TrxList = () => {
           }
         },
       },
-    ] : [
-      {
-        id: 'created_at',
-        label: '구매시간',
-        // trx_dt·trx_tm 은 PG 승인 시각이라 결제완료된 건에만 있다.
-        // 결제대기(포스페이 승인 미확정)·무통장 주문은 늘 비어서 '--- ---' 로만 보였고,
-        // 가맹점은 '주문시간이 안 찍힌다'고 읽었다. 승인 전에는 주문 접수시각(created_at)을 보여준다.
-        action: (row) => {
-          const 승인 = `${row['trx_dt'] ?? ''} ${row['trx_tm'] ?? ''}`.trim();
-          return 승인 || (row['created_at'] ?? '---');
-        },
-        sx: (row) => {
-          return {
-            color: `${row?.is_cancel == 1 ? 'red' : ''}`
-          }
-        },
-      },
-    ]),
-    {
-      id: 'updated_at',
-      label: '처리시간',
-      // 취소된 주문은 실제 취소 시각을 보여 준다. updated_at 은 우리가 반영한 때라 대조 주기만큼 늦다.
-      action: (row) => {
-        if (row['cancelled_at']) return <div style={{ color: '#d32f2f', whiteSpace: 'nowrap' }}>취소 {row['cancelled_at']}</div>;
-        return row['updated_at'] ?? "---"
-      },
-      sx: (row) => {
-        return {
-          color: `${row?.is_cancel == 1 ? 'red' : ''}`
-        }
-      },
-    },
+    ] : []),
+    // 「처리시간」 칸은 없앴다 — 언제 누가 무엇을 바꿨는지는 「이력」에 다 있다(가맹점 요청 2026-11-06).
     {
       id: 'addr',
       label: '주소',
@@ -550,10 +578,19 @@ const TrxList = () => {
         if (!마스터 && 포스페이미승인(row)) return <div style={{ color: '#999', whiteSpace: 'nowrap' }}>결제 미완료</div>;
         return <Select
           size="small"
-          defaultValue={row?.trx_status}
+          // 값은 저장된 상태 그대로(확인 팝업에서 취소하면 그대로 남는다). 바꾸면 저장 뒤 목록을 다시 읽는다.
+          value={row?.trx_status}
           sx={row?.trx_status == 1 ? 취소요청강조 : undefined}
           onChange={(e) => {
-            onChangeStatus(row?.id, e.target.value);
+            const 새값 = Number(e.target.value);
+            if (새값 === Number(row?.trx_status)) return;
+            // 바꾸기 전에 한 번 더 묻는다(가맹점 요청 2026-11-06)
+            setModal({
+              func: () => { onChangeStatus(row?.id, 새값) },
+              icon: 'material-symbols:published-with-changes',
+              title: '주문 상태를 바꿀까요?',
+              content: `${row?.ord_num || `주문 #${row?.id}`}\n${상태이름[Number(row?.trx_status)] ?? row?.trx_status} → ${상태이름[새값] ?? 새값}`,
+            });
           }}
         >
           {/* 결제대기(0)로는 되돌릴 수 없다(가맹점 요청서 2026-09-11 ④, 서버도 거부).
@@ -633,7 +670,7 @@ const TrxList = () => {
       id: 'history',
       label: '이력',
       action: (row) => (
-        <Button size='small' variant='text' sx={{ whiteSpace: 'nowrap', px: 1 }} onClick={() => setHistoryTrxId(row?.id)}>이력</Button>
+        <Button size='small' variant='text' sx={{ whiteSpace: 'nowrap', px: 1 }} onClick={() => setHistoryTrxId(이력주문(row))}>이력</Button>
       ),
     },
     // 수정·삭제 열은 마스터 계정에만 붙는다. 가맹점 관리자 화면에는 열 자체가 없다.
@@ -850,6 +887,26 @@ const TrxList = () => {
     }
     //console.log(item)
   }
+  // 목록이 바뀌면(페이지·탭·검색·저장 후 다시 읽기) 체크를 비운다 — 안 보이는 주문이 선택된 채 남지 않게
+  useEffect(() => { set선택([]); }, [data?.content]);
+  const onBulkStatus = async () => {
+    const ids = 선택.slice(0, 일괄최대);
+    if (!ids.length || 일괄값 === '') return;
+    set일괄중(true);
+    const r = await apiUtil(`transactions/trx_status/bulk`, 'update', { ids, value: Number(일괄값) });
+    set일괄중(false);
+    if (r) {
+      const 건너뜀 = Array.isArray(r?.skipped) ? r.skipped : [];
+      if (건너뜀.length) {
+        const 사유 = [...new Set(건너뜀.map((x) => x?.사유).filter(Boolean))].slice(0, 2).join(' / ');
+        toast(`${r?.changed ?? 0}건 변경, ${건너뜀.length}건 건너뜀${사유 ? ` — ${사유}` : ''}`, { duration: 6000 });
+      } else {
+        toast.success(`${r?.changed ?? 0}건을 ${상태이름[Number(일괄값)]}(으)로 바꿨습니다.`);
+      }
+      set일괄값('');
+    }
+    onChangePage(searchObj);
+  }
   const onChangeStatus = async (id, value) => {
     let result = await apiUtil(`transactions/trx_status`, 'update', {
       id,
@@ -873,6 +930,36 @@ const TrxList = () => {
           </Button>
         </Row>
         <Card>
+          {!실패목록 && (() => {
+            const 보이는 = (data?.content ?? []).filter(일괄가능).map((r) => r.id);
+            const 다고름 = 보이는.length > 0 && 보이는.every((id) => 선택.includes(id));
+            return (
+              <Stack direction="row" spacing={1.5} alignItems="center" flexWrap="wrap" useFlexGap
+                sx={{ px: 2, pt: 2, pb: 0.5 }}>
+                <FormControlLabel sx={{ mr: 0 }}
+                  control={<Checkbox size="small" checked={다고름} indeterminate={!다고름 && 선택.length > 0}
+                    disabled={!보이는.length}
+                    onChange={(e) => set선택(e.target.checked ? 보이는 : [])} />}
+                  label={<Typography variant="body2">이 화면 전체 선택</Typography>} />
+                <Typography variant="body2" sx={{ fontWeight: 700, color: 선택.length ? 'primary.main' : 'text.disabled' }}>
+                  선택 {선택.length}건
+                </Typography>
+                <Select size="small" displayEmpty value={일괄값} onChange={(e) => set일괄값(e.target.value)} sx={{ minWidth: 150 }}>
+                  <MenuItem value="">바꿀 상태 선택</MenuItem>
+                  {일괄상태.filter((v) => v !== 10 || !isShopgoMerchant(themeDnsData)).map((v) => <MenuItem key={v} value={v}>{상태이름[v]}</MenuItem>)}
+                </Select>
+                <Button variant="contained" size="small" disabled={!선택.length || 일괄값 === '' || 일괄중}
+                  onClick={() => setModal({
+                    func: onBulkStatus,
+                    icon: 'material-symbols:published-with-changes',
+                    title: `선택한 ${선택.length}건의 상태를 바꿀까요?`,
+                    content: `→ ${상태이름[일괄값]}\n취소된 주문, 취소요청 주문, 결제가 확인되지 않은 주문, 그 사이 상태가 바뀐 주문은 건너뜁니다.`,
+                  })}>
+                  {일괄중 ? '바꾸는 중…' : '선택한 주문 상태 변경'}
+                </Button>
+              </Stack>
+            );
+          })()}
           <ManagerTable
             data={data}
             // defaultColumns 를 매 렌더 계산본 그대로 넘긴다.
@@ -884,6 +971,9 @@ const TrxList = () => {
             columns={defaultColumns}
             searchObj={searchObj}
             onChangePage={onChangePage}
+            date_presets
+            // 옆으로 밀어도 체크칸·번호·주문번호가 붙어 있게(결제실패/미완료 목록엔 체크칸이 없다)
+            sticky_lead={실패목록 ? [64] : [44, 64]}
             add_button_text={''}
           />
         </Card>

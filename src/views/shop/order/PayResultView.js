@@ -67,6 +67,28 @@ const { user } = useAuthContext();
   // 예전엔 곧바로 '결제에 실패하였습니다' + 「장바구니로」를 보여 줘서, 실제로는 결제된 손님이 다시 결제할 수 있었다
   // (2026-10-19 오픈 전 점검). 여기서 몇 번 더 서버 확정(confirm)을 물어 본 뒤에 판단한다.
   const isPending = q.result_cd === '0001';
+  // PC 팝업(VERIFY): 팝업 메시지(win_cd)만으로 결과를 정하지 않는다. 서버가 모바일 복귀와 같은 판정으로 정한 코드로
+  // 주소를 바꿔 달면, 아래 화면 분기가 모바일과 똑같이 돈다(2026-11-06). 판정 요청이 실패하면 '모름'(0001)이다.
+  const isVerify = q.result_cd === 'VERIFY';
+  useEffect(() => {
+    if (!router.isReady || !isVerify) return;
+    const ord = String(q.ord_num || '');
+    let message = '';
+    try {
+      const 저장값 = JSON.parse(sessionStorage.getItem('forspayFail') || 'null');
+      if (저장값?.ord_num === ord) message = String(저장값.message ?? '');
+    } catch (e) { /* 사유 없이 간다 */ }
+    let 멈춤 = false;
+    (async () => {
+      let 판정 = { result_cd: '0001', ord_num: ord };
+      try {
+        const r = await apiManager('pays/forspay/verify', 'create', { ord_num: ord, code: String(q.win_cd || ''), message });
+        if (r?.result_cd) 판정 = { result_cd: String(r.result_cd), ord_num: ord, ...(r.trx_dttm ? { trx_dttm: String(r.trx_dttm) } : {}) };
+      } catch (e) { /* 모름 → 확인 중 */ }
+      if (!멈춤) router.replace({ pathname: router.pathname, query: 판정 });
+    })();
+    return () => { 멈춤 = true; };
+  }, [router.isReady, isVerify]);
   const [확인상태, set확인상태] = useState('idle'); // idle | checking | confirmed | unknown
   useEffect(() => {
     if (!router.isReady || !isPending || 확인상태 !== 'idle') return;
@@ -86,7 +108,7 @@ const { user } = useAuthContext();
     })();
     return () => { 멈춤 = true; };
   }, [router.isReady, isPending]);
-  const 확인중 = isPending && (확인상태 === 'idle' || 확인상태 === 'checking');
+  const 확인중 = isVerify || (isPending && (확인상태 === 'idle' || 확인상태 === 'checking'));
   const 확인불명 = isPending && 확인상태 === 'unknown';
   const isSuccess = q.result_cd === '0000' || (isPending && 확인상태 === 'confirmed');
   // 손님이 결제창을 닫거나 취소한 경우 — '실패'가 아니라 '취소'로 보여 준다(2026-10-22 사장님).
@@ -99,7 +121,7 @@ const { user } = useAuthContext();
   // 주문번호가 맞을 때만 쓴다. 저장은 표시용이고 주문 상태를 바꾸지 않는다.
   const [실패사유, set실패사유] = useState('');
   useEffect(() => {
-    if (!router.isReady || isSuccess || isPending) return;
+    if (!router.isReady || isSuccess || isPending || isVerify) return;
     const ord = String(q.ord_num || '');
     const code = String(q.result_cd || '');
     if (!ord || !code) return;
@@ -113,7 +135,7 @@ const { user } = useAuthContext();
     apiManager('pays/forspay/fail-reason', 'create', { ord_num: ord, code, message })
       .then((r) => { if (!isCanceled && !message) set실패사유(손님용사유(code, r?.message)); })
       .catch(() => { });
-  }, [router.isReady, isSuccess, isPending, q.ord_num, q.result_cd]);
+  }, [router.isReady, isSuccess, isPending, isVerify, q.ord_num, q.result_cd]);
 
   // 결제 성공으로 돌아왔으면 장바구니를 비운다.
   //

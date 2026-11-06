@@ -42,7 +42,7 @@ if (!백엔드있음) {
   t('웹훅: sign_key 가 있으면 서명이 없어도 거부', /const ok = !!body\.signature && forspayVerifySig\(/.test(pay));
   t('복귀: trans 와 ord 가 같은 주문이어야', /String\(transId\) !== String\(trx\.id\)/.test(pay));
   // 미결제(손님 취소) 세션은 포스페이가 409 not_found — '확인 중'이 아니라 결제 안 됨(9999)으로(2026-10-22)
-  t('복귀: 409/404(거래 없음)는 결제 안 됨 — 확인 중(0001)으로 보내지 않는다', /없음 = st === 409 \|\| st === 404; 조회실패 = !없음;/.test(pay) && /if \(조회실패 \|\| \(!없음 && !txn\?\.status\)/.test(pay) && /if \(없음\) \{\s*return res\.redirect\(302, `\$\{resultBase\}\?\$\{new URLSearchParams\(\{ result_cd: 'CANCEL'/.test(pay));
+  t('복귀: 409/404(거래 없음)는 결제 안 됨 — 확인 중(0001)으로 보내지 않는다', /없음 = st === 409 \|\| st === 404; 조회실패 = !없음;/.test(pay) && /if \(조회실패 \|\| \(!없음 && !txn\?\.status\)/.test(pay) && pay.includes("if (없음) return { result_cd: 'CANCEL', txn };"));
   t('확정: 0·-1 에서만, 주문번호·금액 대조', /WHERE id=\? AND trx_status IN \(0, -1\) AND IFNULL\(is_cancel_trans,0\)=0/.test(pay)
     && /String\(txn\?\.ord_num \?\? ''\) !== String\(trx\.ord_num \?\? ''\)/.test(pay) && /Number\(txn\?\.amount\) !== Number\(trx\.amount\)/.test(pay));
   t('ready: 몰에 등록된 결제모듈만', /SELECT id FROM payment_modules WHERE brand_id=\? AND trx_type=\? LIMIT 1`, \[brand_id, trx_method\]/.test(pay));

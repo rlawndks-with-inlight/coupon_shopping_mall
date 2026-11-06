@@ -490,7 +490,10 @@ const startForspayWindow = (popup, res, payData, target, features) => {
         if (typeof message === 'string' && message) {
             try { sessionStorage.setItem('forspayFail', JSON.stringify({ ord_num, message: message.slice(0, 300) })); } catch (e) { }
         }
-        window.location.href = `/shop/auth/pay-result?result_cd=${encodeURIComponent(result_cd)}&ord_num=${encodeURIComponent(ord_num)}`;
+        // 팝업 메시지로 결과를 정하지 않는다 — 결과 화면이 서버 판정(pays/forspay/verify)을 받아 바꿔 단다(VERIFY).
+        // 예전엔 메시지 그대로 띄워서 승인된 결제가 「실패」로(→ 다시 결제), 승인 안 된 결제가 「성공」으로 보일 수 있었다(2026-11-06).
+        // 모바일은 복귀가 서버(forspayReturn)를 거쳐 같은 판정을 받는다.
+        window.location.href = `/shop/auth/pay-result?result_cd=VERIFY&win_cd=${encodeURIComponent(result_cd || '')}&ord_num=${encodeURIComponent(ord_num)}`;
     };
     const onMessage = (e) => {
         // 팝업 출처만 신뢰한다(보안). 확정은 어차피 웹훅이 하므로 UX 실패는 손해가 없다.
@@ -507,13 +510,11 @@ const startForspayWindow = (popup, res, payData, target, features) => {
     };
     window.addEventListener('message', onMessage);
 
-    // 결과 없이 팝업이 닫히면 안내만(실패 페이지로 튕기지 않음). 결제됐다면 웹훅이 이미 확정 — 주문내역에서 확인.
+    // 결과 메시지 없이 팝업이 닫혀도 서버에 물어 본다 — 승인 직후 창을 닫았으면 결제된 것이고, 아니면 「결제가 취소되었습니다」.
+    // 예전엔 안내만 띄우고 주문서에 남겨 둬서, 결제된 손님이 모르고 다시 결제할 수 있었다(2026-11-06).
     const closedTimer = setInterval(() => {
         if (handled) return;
-        if (popup.closed) {
-            cleanup();
-            toast(번역('결제가 완료되지 않았습니다. 결제하셨다면 주문내역에서 확인해 주세요.'));
-        }
+        if (popup.closed) goResult('');
     }, 800);
 };
 

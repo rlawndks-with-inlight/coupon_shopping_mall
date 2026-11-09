@@ -1,6 +1,6 @@
 import { commarNumberWithUnit } from 'src/utils/function';
 import PropTypes from 'prop-types';
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import DialogProductPeek from 'src/components/dialog/DialogProductPeek';
 // @mui
 import { Box, Table, TableBody, TableContainer } from '@mui/material';
@@ -124,10 +124,36 @@ export default function CheckoutCartProductList({
   const 정책 = 배송정책();
   // 줄의 사진·이름을 누르면 여는 「상품 정보」 창. 주문서·장바구니가 같은 목록을 쓰므로 둘 다 같은 창이다.
   const [peek, setPeek] = useState(null);
+  // 표가 실제로 칸 안에 들어가는지 재서, 안 들어가면 카드로 바꾼다.
+  // 위의 '들어가는폭'(700px)은 한국어 기준이다. 영어·중국어는 'KRW'·긴 옵션명 때문에 같은 표가 830px 까지 벌어져
+  // PC 에서도 「총액」이 잘리고 가로 스크롤이 생겼다(2026-11-09 전체 점검, 본문 712px).
+  // 언어·상품마다 폭이 달라 숫자 하나로는 못 맞춘다 — 그래서 잰다.
+  // 카드로 바꾸면 표 폭이 줄어 다시 '들어간다'고 읽히므로, 넘쳤을 때 필요했던 폭을 기억해 두고 그만큼 넓어질 때만 표로 되돌린다.
+  const 상자Ref = useRef(null);
+  const 필요폭Ref = useRef(0);
+  const [넘침, set넘침] = useState(false);
+  useEffect(() => { 필요폭Ref.current = 0; set넘침(false); }, [currentLang?.value, products?.length]);
+  useEffect(() => {
+    const 상자 = 상자Ref.current;
+    if (!상자 || typeof ResizeObserver === 'undefined') return undefined;
+    const 재기 = () => {
+      const 표 = 상자.querySelector('table');
+      if (!표) return;
+      if (!넘침) {
+        if (표.scrollWidth > 상자.clientWidth + 1) { 필요폭Ref.current = 표.scrollWidth; set넘침(true); }
+      } else if (상자.clientWidth >= 필요폭Ref.current) {
+        set넘침(false);
+      }
+    };
+    재기();
+    const 관찰 = new ResizeObserver(재기);
+    관찰.observe(상자);
+    return () => 관찰.disconnect();
+  }, [넘침, products, currentLang?.value]);
   return (
     <>
     <DialogProductPeek open={!!peek} row={peek} onClose={() => setPeek(null)} />
-    <TableContainer sx={{ containerType: 'inline-size' }}>
+    <TableContainer ref={상자Ref} sx={{ containerType: 'inline-size' }}>
       {/* 720px 을 강제하면 노트북 창을 조금만 줄여도 가로 스크롤이 생긴다.
           칸이 여섯 개뿐이라 그만큼 필요하지 않다 — 글은 줄바꿈으로 접는다.
           (긴 상품명이 표를 늘리지 않도록 상품 칸에 keep-all 을 건다) */}
@@ -141,7 +167,7 @@ export default function CheckoutCartProductList({
         // 예전엔 '상품' 이 8px, 제목이 24px 에서 시작해 제목만 안쪽으로 밀려 보였다(가맹점 지적 2026-09-09).
         '& td:first-of-type, & th:first-of-type': { pl: 3 },
         '& td:last-of-type, & th:last-of-type': { pr: 3 },
-        ...모바일카드,
+        ...(넘침 ? 카드배치 : 모바일카드),
       }}>
         <TableHeadCustom headLabel={TABLE_HEAD} />
         <TableBody>

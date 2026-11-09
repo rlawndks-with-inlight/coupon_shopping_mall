@@ -1,13 +1,14 @@
 import { useRouter } from 'next/router';
 import { useEffect, useRef, useState } from 'react';
-import { Box, Button, Card, CardContent, CardHeader, Stack, Typography } from '@mui/material';
+import { Box, Button, Card, CardContent, CardHeader, Dialog, DialogActions, DialogContent, DialogTitle, Stack, Typography } from '@mui/material';
+import toast from 'react-hot-toast';
 import { Icon } from '@iconify/react';
 import styled from 'styled-components';
 import { useSettingsContext } from 'src/components/settings';
 import { useAuthContext } from 'src/layouts/manager/auth/useAuthContext';
 import { useLocales } from 'src/locales';
 import { apiManager } from 'src/utils/api';
-import { clearOrderDraft } from 'src/utils/order-draft';
+import { clearOrderDraft, peekRetryDraft } from 'src/utils/order-draft';
 
 // 공용 결제결과 화면 — 데모 구분 없는 단일 화면.
 //
@@ -210,6 +211,44 @@ const { user } = useAuthContext();
 
   const hasDetail = q.ord_num || q.acquirer || installment || q.buyer_name || q.buyer_phone || trxDttm;
 
+  // 결제가 안 된 주문의 입력값으로 주문서로 돌아가기(2026-11-09 사장님 결정 + 가맹점 기준).
+  //   취소(결제창 닫기·취소) → 이 화면을 거치지 않고 그 주문서로 바로 돌아간다
+  //   실패(잔액 부족 등)     → 실패 사유를 보여 주고 「다시 결제하기」
+  //   확인 지연              → 「다시 결제하기」. 단 결제됐을 수 있으니 누를 때 서버에 한 번 더 묻고, 그래도 모르면 확인 창
+  // 이 탭에 그 주문의 입력값이 없으면(다른 탭·앱에서 돌아옴 등) 예전처럼 장바구니로 안내한다.
+  const [다시결제, set다시결제] = useState(null);
+  const 결제안됨 = router.isReady && !isTestBrand && !isSuccess && !확인중;
+  useEffect(() => {
+    set다시결제(결제안됨 ? peekRetryDraft(String(q.ord_num || '')) : null);
+  }, [결제안됨, q.ord_num]);
+  const 주문서로 = (replace = false) => {
+    const ord = encodeURIComponent(String(q.ord_num || ''));
+    const url = `/shop/auth/order?${다시결제?.buynow ? 'buynow=1&' : ''}retry=${ord}`;
+    if (replace) router.replace(url); else router.push(url);
+  };
+  // 취소는 바로 돌아간다(뒤로 가기에 이 화면이 남지 않게 replace). 실패 사유 기록(위 effect)은 이미 보낸 뒤다.
+  const 바로돌아감 = !!다시결제 && isCanceled && !확인불명;
+  useEffect(() => {
+    if (!바로돌아감) return;
+    toast(translate('결제가 취소되었습니다.'));
+    주문서로(true);
+  }, [바로돌아감]);
+  const [지연확인창, set지연확인창] = useState(false);
+  const [다시묻는중, set다시묻는중] = useState(false);
+  const 다시결제하기 = async () => {
+    if (!확인불명) { 주문서로(); return; }
+    set다시묻는중(true);
+    try {
+      const r = await apiManager('pays/forspay/confirm', 'create', { ord_num: String(q.ord_num || '') });
+      if (r?.settled) {
+        set확인상태('confirmed');
+        toast.success(translate('결제가 확인되었습니다.'));
+        return;
+      }
+    } catch (e) { /* 모름 → 확인 창 */ } finally { set다시묻는중(false); }
+    set지연확인창(true);
+  };
+
   return (
     <Wrappers>
       <Stack alignItems="center" sx={{ pt: 4, pb: 3 }}>
@@ -249,6 +288,34 @@ const { user } = useAuthContext();
         </Card>
       )}
 
+      <Dialog open={지연확인창} onClose={() => set지연확인창(false)} maxWidth="xs" fullWidth>
+        <DialogTitle>{translate('결제 여부를 먼저 확인해 주세요')}</DialogTitle>
+        <DialogContent>
+          <Typography variant="body2" sx={{ wordBreak: 'keep-all' }}>
+            {translate('결제가 됐는지 아직 확인되지 않았습니다. 카드사·간편결제 앱에서 결제되지 않은 것을 확인한 뒤 다시 결제해 주세요. 이미 결제된 상태에서 다시 결제하면 두 번 결제됩니다.')}
+          </Typography>
+        </DialogContent>
+        <DialogActions>
+          <Button color="inherit" onClick={() => set지연확인창(false)}>{translate('취소')}</Button>
+          <Button variant="contained" onClick={() => { set지연확인창(false); 주문서로(); }}>{translate('확인했습니다, 다시 결제하기')}</Button>
+        </DialogActions>
+      </Dialog>
+
+      {바로돌아감 ? null : 다시결제 ? (
+        <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1.5} sx={{ mt: 3 }}>
+          {확인불명 ? (
+            <Button fullWidth variant="outlined" color="inherit"
+              onClick={() => router.push(user?.id ? '/shop/auth/history' : '/shop/auth/order-check')}>
+              {user?.id ? translate("주문내역 보기") : translate("주문 조회하기")}
+            </Button>
+          ) : (
+            <Button fullWidth variant="outlined" color="inherit" onClick={() => router.push('/shop/auth/cart')}>
+              {translate('장바구니로')}
+            </Button>
+          )}
+          <Button fullWidth variant="contained" disabled={다시묻는중} onClick={다시결제하기}>{translate('다시 결제하기')}</Button>
+        </Stack>
+      ) : (
       <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1.5} sx={{ mt: 3 }}>
         <Button fullWidth variant="outlined" color="inherit"
           onClick={() => router.push(isBlogOnly ? '/shop' : '/shop')}>{translate('쇼핑 계속하기')}</Button>
@@ -264,6 +331,7 @@ const { user } = useAuthContext();
           {(isSuccess || 확인중 || 확인불명) ? (user?.id ? translate("주문내역 보기") : translate("주문 조회하기")) : translate("장바구니로")}
         </Button>
       </Stack>
+      )}
 
       <Box sx={{ mt: 3, textAlign: 'center' }}>
         <Typography variant="caption" sx={{ color: 'text.disabled' }}>{translate('결제 관련 문의는 판매자 고객센터로 연락해 주세요.')}</Typography>

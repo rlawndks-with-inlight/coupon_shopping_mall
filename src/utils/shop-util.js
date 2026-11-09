@@ -12,6 +12,7 @@ import { isDemoHost } from "src/components/main-site/frameList";
 import { findMissingRequired } from "src/data/order-form-types";
 import { requiredGroups, isComboMode, findCombination, optionExtraPrice, maxOrderable, isAddon, closeOptionLine, optionLines, purchaseUnits, removeOptionLine, setOptionLineCount, toggleAddonLine } from "src/data/product-options";
 import { makeOrdNum } from 'src/utils/function';
+import { stampRetryDraft } from 'src/utils/order-draft';
 
 // 손님에게 뜨는 안내는 반드시 이걸 거친다.
 //
@@ -448,6 +449,7 @@ export const onPayProductsByPayletter = async (products_, payData_) => { // 카�
     try {
         let res = await apiManager('pays/card_payletter', 'create', payData);
         if (res?.id > 0 && (res?.online_url || res?.mobile_url)) {
+            stampRetryDraft(ord_num); // 실패·취소 시 「다시 결제하기」가 이 주문의 입력값을 찾는다
             const isMobile = /iPhone|Android|iPad|iPod|Mobile/i.test(navigator.userAgent);
             const payUrl = (isMobile && res?.mobile_url) ? res.mobile_url : (res.online_url || res.mobile_url);
             window.location.href = payUrl; // 페이레터 결제창으로 이동
@@ -556,6 +558,7 @@ export const onPayProductsByForspay = async (products_, payData_) => { // 인증
 
         let res = await apiManager('pays/auth_forspay', 'create', payData);
         if (res?.id > 0) {
+            stampRetryDraft(ord_num); // 실패·취소 시 「다시 결제하기」가 이 주문의 입력값을 찾는다
             // forspay_ui → embed.popup_url / direct_pg_ui → launch_page_url.
             const target = (res.checkout_mode === 'forspay_ui') ? res.popup_url : res.launch_page_url;
             if (target) {

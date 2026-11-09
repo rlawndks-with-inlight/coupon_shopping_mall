@@ -1,20 +1,16 @@
 import { FRONT_ROOT, 주석제거 } from './_roots.mjs';
 import { readFileSync } from 'fs';
 
-// 쓰다 만 주문서를 붙들어 두는 장치 + 비회원 회원가입 유도.
+// 주문서 입력값 보관 + 비회원 회원가입 유도.
 //
-// [가맹점 제보 두 건 — 2026-08-25]
-//  ① "비회원 주문 비밀번호를 안 넣으면 주문자 정보·배송지가 원복돼 다시 써야 한다."
-//  ② "회원가입 유도가 바로구매에서 한 번만 뜨고, 장바구니→주문하기 에서는 아예 안 뜬다.
-//     그냥 계속 유도해 달라."
+// [보관 규칙 — 2026-11-09 사장님 결정]
+//  주문서는 보관하지 않는다. 예외는 결제창까지 갔다가 실패·취소된 주문 하나 —
+//  결과 화면 「다시 결제하기」(?retry=주문번호)로 온 주문서에만 그 주문의 입력값을 채운다.
+//  (8/25 '늘 남기기' 로 만들었다가 9/11·11/9 '주문을 마치고 새로 주문하는데 지난 정보가 뜬다' 를 두 번 받았다)
 //
-// ①은 트리거를 재현하지 못했다(guardBeforePay 가 막는 것만으로는 값이 안 지워진다 —
-// 로컬에서 직접 확인했다). 다만 구조는 분명하다: 주문자 정보·배송지는 OrderSheet 의
-// useState 에만 있어서 **화면을 벗어났다 돌아오면 무조건 백지**다. 결제창 취소, 회원가입
-// 유도, 새로고침, 뒤로가기 — 길이 여럿이라 트리거를 쫓는 대신 값을 붙들어 둔다.
+// ⚠ 카드정보와 비회원 주문 비밀번호는 어느 경우에도 저장하지 않는다.
 //
-// ⚠ 붙들어 두되 **카드정보와 비회원 주문 비밀번호는 저장하지 않는다**.
-//   편의보다 앞선다. 이 검사가 지키는 것도 그것이다.
+// [회원가입 유도 — 2026-08-25 제보] 담기·바로구매에서 매번 묻는다(아래 묶음).
 
 let pass = 0, fail = 0;
 const t = (name, cond, 곁들임) => {
@@ -23,19 +19,19 @@ const t = (name, cond, 곁들임) => {
 };
 const 읽기 = (p) => readFileSync(FRONT_ROOT + p, 'utf8');
 
-// ── 초안 저장 도구를 실제로 돌린다 ───────────────────────────────────────
+// ── 보관 도구를 실제로 돌린다 ─────────────────────────────────────────────
 const draft소스 = 읽기('src/utils/order-draft.js');
-// sessionStorage 를 가짜로 끼워 넣고 실제 함수를 돌린다.
-const 만들기 = () => {
+// sessionStorage 와 시계를 가짜로 끼워 넣고 실제 함수를 돌린다.
+const 만들기 = (지금 = () => 1_000_000) => {
     const 창고 = new Map();
-    const mod = new Function('sessionStorage',
+    const mod = new Function('sessionStorage', 'Date',
         draft소스.replace(/export const /g, 'const ')
-        + '\nreturn { saveOrderDraft, loadOrderDraft, clearOrderDraft };'
+        + '\nreturn { saveRetryDraft, stampRetryDraft, peekRetryDraft, takeRetryDraft, saveSessionDraft, takeSessionDraft, clearOrderDraft };'
     )({
         getItem: (k) => (창고.has(k) ? 창고.get(k) : null),
         setItem: (k, v) => 창고.set(k, String(v)),
         removeItem: (k) => 창고.delete(k),
-    });
+    }, { now: () => 지금() });
     return { ...mod, 창고 };
 };
 
@@ -51,82 +47,146 @@ const 원본 = {
     // 매번 새로 만들어야 하는 것들
     ord_num: 'FS20260825ABC', amount: 30000, item_name: '떡갈비', products: [{ id: 1 }],
 };
+const 주문 = 'FS20261109AAA';
 
 {
-    const { saveOrderDraft, loadOrderDraft } = 만들기();
-    saveOrderDraft(원본, { addrMode: 'KR', directMode: true, sameAsBuyer: false });
-    const 다시 = loadOrderDraft();
-
+    const { saveRetryDraft, stampRetryDraft, peekRetryDraft, takeRetryDraft } = 만들기();
+    saveRetryDraft(원본, { addrMode: 'KR', directMode: true, sameAsBuyer: false, selectedAddrId: 7 }, true);
+    t('주문번호가 달리기 전에는 「다시 결제하기」가 없다', peekRetryDraft(주문) === null && takeRetryDraft(주문) === null);
+    stampRetryDraft(주문);
+    t('주문번호가 달리면 그 주문에 「다시 결제하기」가 있다', peekRetryDraft(주문)?.buynow === true);
+    t('다른 주문번호로는 못 꺼낸다', peekRetryDraft('FS20261109BBB') === null && takeRetryDraft('FS20261109BBB') === null,
+        '다른 주문의 결과 화면·주소로 지난 손님 정보가 뜨면 안 된다');
+    const 다시 = takeRetryDraft(주문);
     t('되살린 것이 있다', !!다시 && !!다시.payData);
-    // 손님이 다시 치지 않아도 되는 것들
     for (const k of ['buyer_name', 'buyer_phone', 'receiver', 'addr_phone', 'addr', 'detail_addr', 'zonecode', 'delivery_memo']) {
         t(`${k} 가 되살아난다`, 다시.payData[k] === 원본[k]);
     }
-    // 절대 저장하면 안 되는 것들
     for (const k of ['password', 'card_num', 'card_pw', 'yymm', 'auth_num', 'pay_key', 'mid', 'tid', 'payment_modules']) {
         t(`${k} 는 저장되지 않는다`, 다시.payData[k] === undefined,
             k === 'password' ? '비회원 주문 비밀번호다 — 편의보다 앞선다' : '결제 민감정보다');
     }
-    // 매번 새로 만들어야 하는 것들
     for (const k of ['ord_num', 'amount', 'item_name', 'products']) {
         t(`${k} 는 되살리지 않는다`, 다시.payData[k] === undefined,
             k === 'ord_num' ? '지난 주문번호로 결제가 시도된다' : '금액·상품은 서버 값으로 다시 계산한다');
     }
-    t('화면 상태(배송지 모드)도 함께 되살린다',
-        다시.화면상태.addrMode === 'KR' && 다시.화면상태.directMode === true && 다시.화면상태.sameAsBuyer === false);
+    t('화면 상태(배송지 모드·고른 배송지)도 함께 되살린다',
+        다시.화면상태.addrMode === 'KR' && 다시.화면상태.directMode === true && 다시.화면상태.sameAsBuyer === false && 다시.화면상태.selectedAddrId === 7);
+    t('꺼내도 지우지 않는다(다시 결제하기 주문서 새로고침)', takeRetryDraft(주문) !== null);
+}
+// 주문번호는 방금 담은 '대기' 에만 단다
+{
+    let 시각 = 1_000_000;
+    const { saveRetryDraft, stampRetryDraft, peekRetryDraft } = 만들기(() => 시각);
+    saveRetryDraft(원본, {}, false);
+    시각 += 3 * 60 * 1000;
+    stampRetryDraft(주문);
+    t('오래된 대기에는 주문번호를 달지 않는다', peekRetryDraft(주문) === null,
+        '주문서 밖(바로구매 창 등)에서 낸 결제가 지난 입력값을 집어 가면 안 된다');
+}
+{
+    const { saveRetryDraft, stampRetryDraft, peekRetryDraft } = 만들기();
+    saveRetryDraft(원본, {}, false);
+    stampRetryDraft(주문);
+    stampRetryDraft('FS20261109BBB');
+    t('이미 주문번호가 달렸으면 바꾸지 않는다', peekRetryDraft(주문) !== null && peekRetryDraft('FS20261109BBB') === null);
 }
 // 저장된 문자열 자체에도 남으면 안 된다(객체만 걸러내고 저장은 통째로 하는 실수 방지)
 {
-    const { saveOrderDraft, 창고 } = 만들기();
-    saveOrderDraft(원본, {});
-    const 날것 = 창고.get('orderDraft') ?? '';
-    t('저장된 문자열에 비밀번호가 없다', !날것.includes('guest1234'));
-    t('저장된 문자열에 카드번호가 없다', !날것.includes('4111111111111111'));
+    const { saveRetryDraft, 창고 } = 만들기();
+    saveRetryDraft(원본, {}, false);
+    const 날것 = 창고.get('orderRetry') ?? '';
+    t('저장된 문자열에 비밀번호가 없다', !!날것 && !날것.includes('guest1234'));
+    t('저장된 문자열에 카드번호가 없다', !!날것 && !날것.includes('4111111111111111'));
 }
-// 지우기
+// 지우기 — 예전 '늘 남기기' 자리(orderDraft)도 함께
 {
-    const { saveOrderDraft, loadOrderDraft, clearOrderDraft } = 만들기();
-    saveOrderDraft(원본, {});
+    const { saveRetryDraft, stampRetryDraft, takeRetryDraft, clearOrderDraft, 창고 } = 만들기();
+    창고.set('orderDraft', JSON.stringify({ payData: { buyer_name: '예전' } }));
+    saveRetryDraft(원본, {}, false);
+    stampRetryDraft(주문);
     clearOrderDraft();
-    t('지우면 되살릴 것이 없다', loadOrderDraft() === null,
-        '안 지우면 다음 주문서에 지난 배송지가 그대로 뜬다');
+    t('지우면 되살릴 것이 없다', takeRetryDraft(주문) === null);
+    t('예전 보관 자리도 지운다', !창고.has('orderDraft'), '예전 초안이 남은 손님 탭에 지난 정보가 남는다');
 }
 // 망가진 값
 {
-    const { loadOrderDraft, 창고 } = 만들기();
-    창고.set('orderDraft', '{망가진');
-    t('깨진 값이면 없는 셈 친다', loadOrderDraft() === null);
-    창고.set('orderDraft', '{"화면상태":{}}');
-    t('payData 가 없으면 없는 셈 친다', loadOrderDraft() === null);
+    const { peekRetryDraft, takeRetryDraft, 창고 } = 만들기();
+    창고.set('orderRetry', '{망가진');
+    t('깨진 값이면 없는 셈 친다', peekRetryDraft(주문) === null && takeRetryDraft(주문) === null);
+    창고.set('orderRetry', JSON.stringify({ ord_num: 주문 }));
+    t('payData 가 없으면 없는 셈 친다', takeRetryDraft(주문) === null);
 }
 {
-    const { saveOrderDraft, loadOrderDraft } = 만들기();
-    saveOrderDraft(undefined, undefined);
-    t('빈 값을 넣어도 죽지 않는다', loadOrderDraft() !== undefined);
+    const { saveRetryDraft, takeRetryDraft } = 만들기();
+    saveRetryDraft(undefined, undefined, undefined);
+    t('빈 값을 넣어도 죽지 않는다', takeRetryDraft('') === null);
 }
 
-// ── OrderSheet 가 실제로 쓰는가 ──────────────────────────────────────────
+// ── 주문서·결과 화면·결제 시작이 실제로 쓰는가 ─────────────────────────────
 const sheet = 읽기('src/views/shop/order/OrderSheet.js');
-t('주문서가 초안을 되살린다', /const 초안 = loadOrderDraft\(\)/.test(sheet));
-t('주문서가 초안을 저장한다', /saveOrderDraft\(payData, \{ addrMode, directMode, sameAsBuyer \}\)/.test(sheet));
-t('복원이 끝나기 전에는 저장하지 않는다', /if \(!초안복원끝\) return;/.test(sheet),
-    '빈 초기값으로 초안을 덮어쓰면 되살릴 것이 없어진다');
-// ⚠ 이 표시는 ref 가 아니라 state 여야 한다.
-//   ref 는 그 자리에서 바로 true 가 되므로, 같은 커밋에서 이어 도는 저장 useEffect 가
-//   아직 반영되지 않은 **빈 초기값**을 초안에 덮어쓴다. StrictMode 는 마운트를 두 번
-//   하는데, 두 번째 마운트가 그 빈 초안을 읽어 아무것도 못 되살린다.
-//   실제로 ref 로 만들었다가 로컬 확인에서 값이 전부 날아가는 걸 보고 고쳤다.
-t('복원 표시를 state 로 둔다', /const \[초안복원끝, set초안복원끝\] = useState\(false\)/.test(sheet),
-    'useRef 로 두면 같은 커밋에서 빈 값이 초안을 덮어쓴다');
-t('저장 useEffect 가 복원 표시를 의존성으로 가진다', /\[초안복원끝, payData, addrMode, directMode, sameAsBuyer\]/.test(sheet),
-    '빼면 복원 직후의 값이 저장되지 않는다');
-t('초안이 없어도 저장은 시작된다', /set초안복원끝\(true\);\s*\}, \[\]\);/.test(sheet),
-    '표시를 if 안에 두면 초안이 없는 첫 방문에는 아무것도 저장되지 않는다');
-// 접수/결제 완료 두 자리 모두에서 지워야 한다.
-t('주문 접수·결제 완료 시 초안을 지운다', (sheet.match(/clearOrderDraft\(\);/g) ?? []).length >= 2,
-    '무통장·상품권(finishPendingOrder)과 수기카드 두 곳 다 필요하다');
+const 결과 = 읽기('src/views/shop/order/PayResultView.js');
+const 결제 = 읽기('src/utils/shop-util.js');
+t('주문서가 늘 남기던 저장을 하지 않는다', !/saveOrderDraft|loadOrderDraft/.test(주석제거(sheet)),
+    '9/11·11/9 — 주문을 마치고 새로 주문하는데 지난 손님 정보가 떴다');
+t('주문서: 새로고침(같은 주소)·결제창에서 뒤로 가기일 때만 쓰던 값을 꺼낸다',
+    /if \(항목 && 항목\.name === window\.location\.href\) 온길 = 항목\.type;/.test(sheet)
+    && /let 초안 = \(온길 === 'reload' \|\| 온길 === 'back_forward'\) \? takeSessionDraft\(지금주소\) : null;/.test(sheet),
+    '탐색 기록은 문서를 처음 연 주소의 것이다 — 다른 화면을 새로고침한 뒤 메뉴로 와도 reload 로 읽힌다');
+t('주문서: 그 밖에는 ?retry= 로 왔을 때만 채운다', /if \(!초안 && 다시결제\) 초안 = takeRetryDraft\(다시결제\);/.test(sheet));
+t('주문서: 다른 길로 열면 남은 값을 지운다', /if \(!초안\) \{\s*clearOrderDraft\(\);\s*\} else \{/.test(sheet));
+t('주문서: 새로고침용 저장은 복원이 끝난 뒤에 시작한다', /const \[보관준비, set보관준비\] = useState\(false\);/.test(sheet)
+    && /if \(!보관준비\) return;\s*saveSessionDraft\(/.test(sheet), 'ref 로 두면 같은 커밋에서 빈 값이 덮어쓴다');
+t('주문서: 회원은 직접 쓴 값이 있을 때만 묻는다(회원정보·주문자와 동일·주소록 선택은 안 셈)',
+    sheet.includes("직접씀('buyer_name', user?.id ? (user?.name || user?.nickname) : '')")
+    && sheet.includes("(!sameAsBuyer && (직접씀('receiver', 고른주소?.receiver)")
+    && sheet.includes('.some((k) => 직접씀(k, 고른주소?.[k]))'));
+t('주문서: 나갈 때 가맹점 문구로 묻는다', /translate\('기존 정보가 사라집니다\. 정말 다른 화면으로 넘어가시겠습니까\?'\)/.test(sheet)
+    && /router\.events\.on\('routeChangeStart', 이동시작\)/.test(sheet) && /router\.beforePopState\(/.test(sheet));
+t('주문서: 결제 결과·주문 완료로 가는 길은 묻지 않는다', /\/\\\/shop\\\/auth\\\/\(pay-result\|order-complete\)\$\//.test(sheet));
+t('주문서: 탭 닫기(beforeunload)로는 묻지 않는다', !/beforeunload/.test(주석제거(sheet)),
+    '브라우저 기본 창은 새로고침에도 떠서 「새로고침은 그대로」와 부딪힌다');
+t('주문서: 떠날 때 확인 장치를 풀어 둔다', /router\.events\.off\('routeChangeStart', 이동시작\)/.test(sheet) && /router\.beforePopState\(\(\) => true\)/.test(sheet),
+    '안 풀면 다른 화면에서도 뒤로 가기가 막힌다');
+t('결제창으로 가기 전에 담는다', /saveRetryDraft\(payData, \{ addrMode, directMode, sameAsBuyer, selectedAddrId \}, isBuyNow\(\)\);\s*try \{\s*let result = false;/.test(sheet));
+t('주문이 안 만들어지면 담은 것을 지운다', /if \(!result\) \{\s*\/\/[^\n]*\n\s*clearOrderDraft\(\);/.test(sheet));
+t('주문 접수·결제 완료 시 지운다', (sheet.match(/clearOrderDraft\(\);/g) ?? []).length >= 3,
+    '무통장·상품권(finishPendingOrder)과 수기카드, 주문서 열 때 — 모두 필요하다');
 t('약관 동의는 되살리지 않는다', !/setAgree1\(.*초안|초안.*agree/.test(sheet),
     '동의는 그때마다 사람이 직접 눌러야 한다');
+t('포스페이·페이레터가 주문을 만든 뒤 주문번호를 단다', (결제.match(/stampRetryDraft\(ord_num\);/g) ?? []).length === 2
+    && /if \(res\?\.id > 0\) \{\s*stampRetryDraft\(ord_num\);/.test(결제));
+t('결과 화면: 결제 확인 중에는 「다시 결제하기」를 찾지 않는다',
+    /const 결제안됨 = router\.isReady && !isTestBrand && !isSuccess && !확인중;/.test(결과)
+    && /set다시결제\(결제안됨 \? peekRetryDraft\(String\(q\.ord_num \|\| ''\)\) : null\);/.test(결과));
+t('결과 화면: 결제창 닫기·취소는 그 주문서로 바로 돌아간다', /const 바로돌아감 = !!다시결제 && isCanceled && !확인불명;/.test(결과)
+    && /if \(!바로돌아감\) return;\s*toast\(translate\('결제가 취소되었습니다\.'\)\);\s*주문서로\(true\);/.test(결과));
+t('결과 화면: 「다시 결제하기」는 그 주문번호로 주문서를 연다',
+    /const url = `\/shop\/auth\/order\?\$\{다시결제\?\.buynow \? 'buynow=1&' : ''\}retry=\$\{ord\}`;/.test(결과));
+t('결과 화면: 확인 지연에서 누르면 서버에 한 번 더 묻는다', /if \(!확인불명\) \{ 주문서로\(\); return; \}[\s\S]{0,200}apiManager\('pays\/forspay\/confirm'/.test(결과)
+    && /if \(r\?\.settled\) \{\s*set확인상태\('confirmed'\);/.test(결과), '결제됐는데 다시 결제하면 이중 결제다');
+t('결과 화면: 그래도 모르면 확인 창을 거쳐야 주문서로 간다', /set지연확인창\(true\);/.test(결과)
+    && /onClick=\{\(\) => \{ set지연확인창\(false\); 주문서로\(\); \}\}/.test(결과));
+t('결과 화면: 입력값이 있으면 「쇼핑 계속하기」 대신 「다시 결제하기」', /\{바로돌아감 \? null : 다시결제 \? \([\s\S]{0,900}translate\('다시 결제하기'\)/.test(결과));
+for (const l of ['ko', 'en', 'ja', 'cn', 'es']) {
+    const 사전 = 읽기(`src/locales/langs/${l}.js`);
+    t(`나가기·확인 지연 문구 번역이 있다(${l})`, ['기존 정보가 사라집니다. 정말 다른 화면으로 넘어가시겠습니까?', '결제가 확인되었습니다.', '결제 여부를 먼저 확인해 주세요', '확인했습니다, 다시 결제하기']
+        .every((k) => 사전.includes(`"${k}": "`)));
+}
+// 새로고침용 보관을 실제로 돌린다
+{
+    const { saveSessionDraft, takeSessionDraft, clearOrderDraft } = 만들기();
+    saveSessionDraft(원본, { addrMode: 'KR' }, '/shop/auth/order/?buynow=1');
+    t('새로고침: 같은 주소면 꺼낸다', takeSessionDraft('/shop/auth/order/?buynow=1')?.payData?.buyer_name === '홍길동');
+    t('새로고침: 다른 주문서(장바구니↔바로구매)면 꺼내지 않는다', takeSessionDraft('/shop/auth/order/') === null);
+    t('새로고침: 비밀번호·카드는 남기지 않는다', takeSessionDraft('/shop/auth/order/?buynow=1')?.payData?.password === undefined
+        && takeSessionDraft('/shop/auth/order/?buynow=1')?.payData?.card_num === undefined);
+    clearOrderDraft();
+    t('새로고침: 지우면 꺼낼 것이 없다', takeSessionDraft('/shop/auth/order/?buynow=1') === null);
+}
+for (const l of ['ko', 'en', 'ja', 'cn', 'es']) {
+    t(`「다시 결제하기」 번역이 있다(${l})`, /"다시 결제하기": "[^"]+"/.test(읽기(`src/locales/langs/${l}.js`)));
+}
 
 // ── 회원가입 유도 ────────────────────────────────────────────────────────
 const prompt = 읽기('src/components/elements/shop/GuestSignupPrompt.js');

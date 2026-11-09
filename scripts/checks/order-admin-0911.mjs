@@ -36,7 +36,7 @@ t('주문취소관리: 수정/삭제 열은 마스터에만 붙는다', 취소�
 t('주문 수정 화면은 마스터가 아니면 돌려보낸다', 수정화면.includes("if (user && !(Number(user?.level) >= 50)) {") && 수정화면.includes("router.replace('/manager/orders/trx/all')"));
 
 // ── ② 초안 지우기 ─────────────────────────────────────────────────────
-t('포스페이 복귀 화면이 주문서 초안을 지운다(성공 시)', 결과화면.includes("import { clearOrderDraft } from 'src/utils/order-draft'") && /if \(!isSuccess \|\| clearedRef\.current\) return;[\s\S]*?clearOrderDraft\(\);/.test(결과화면));
+t('포스페이 복귀 화면이 주문서 초안을 지운다(성공 시)', /import \{ clearOrderDraft[^}]*\} from 'src\/utils\/order-draft'/.test(결과화면) && /if \(!isSuccess \|\| clearedRef\.current\) return;[\s\S]*?clearOrderDraft\(\);/.test(결과화면));
 
 // ── ③ 결제실패/미완료 ─────────────────────────────────────────────────
 t('샵고 가맹점 메뉴는 결제대기 대신 결제실패/미완료', 메뉴.includes("{ title: '결제실패/미완료', path: PATH_MANAGER.orders.trx + '/failed' }") && 메뉴.includes("isShopgoMerchant(themeDnsData)\n                  ? ["));

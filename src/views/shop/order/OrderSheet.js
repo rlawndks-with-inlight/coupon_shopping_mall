@@ -17,7 +17,7 @@ import EmptyContent from 'src/components/empty-content/EmptyContent';
 import Iconify from 'src/components/iconify/Iconify';
 import { useSettingsContext } from 'src/components/settings';
 import { calcOrderTotals, getCartDataUtil, makePayData, onPayProductsByAuth, onPayProductsByHand, onPayProductsByPayletter, onPayProductsByForspay, getOrderFormFields, orderAmountBreakdown, 배송정책 } from 'src/utils/shop-util';
-import { loadOrderDraft, saveOrderDraft, clearOrderDraft } from 'src/utils/order-draft';
+import { saveRetryDraft, takeRetryDraft, saveSessionDraft, takeSessionDraft, clearOrderDraft } from 'src/utils/order-draft';
 
 import { findMissingRequired } from 'src/data/order-form-types';
 import { syncCartWithServer, makeUnavailableMessage, filterUnavailableByProducts } from 'src/utils/cart-sync';
@@ -185,41 +185,114 @@ export default function OrderSheet({ router }) {
   //   주문서에 닿는 길은 없으므로, 모든 손님은 결국 한 번은 권유를 본다.
   //   (shop-util.js 의 insertCartDataUtil · startBuyNow — utils/guest-prompt.js 주석 참고)
 
-  // ── 쓰다 만 주문서 되살리기 ─────────────────────────────────────────────
+  // ── 입력값 보관: 새로고침·결제 취소·「다시 결제하기」일 때만 ────────────────────
   //
-  // 주문자 정보·배송지는 이 컴포넌트 상태에만 있어서, 화면을 벗어났다 돌아오면 백지가 됐다
-  // (결제창 취소·회원가입 유도·새로고침·뒤로가기 — 길이 여럿이다).
-  // 가맹점 제보: "비회원 주문 비밀번호를 안 넣었을 때 주문자 정보·배송지가 원복돼
-  // 다시 써야 한다." 원인이 무엇이든 되돌아오면 지워지는 건 같으므로 값을 붙들어 둔다.
+  // 주문서는 열 때마다 빈칸(회원은 회원정보)으로 시작한다(2026-11-09 사장님 결정).
+  // 결제창까지 갔다가 실패·취소된 주문은 결과 화면(?retry=주문번호)을 거쳐 돌아왔을 때
+  // 그 주문에 썼던 값을 채운다. 자세한 흐름은 utils/order-draft.js.
   //
-  // ⚠ 카드정보와 **비회원 주문 비밀번호는 저장하지 않는다**(utils/order-draft.js 참고).
-  //   그래서 돌아온 손님이 다시 쓰는 것은 비밀번호 한 칸뿐이다.
-  // ⚠ 이 표시는 반드시 **state** 여야 한다. useRef 로 두면 지워진다 —
-  //   ref 는 그 자리에서 바로 true 가 되므로, 같은 커밋에서 이어 도는 아래 저장 useEffect 가
-  //   아직 반영되지 않은 **빈 초기값**을 초안에 덮어쓴다. 개발 모드의 StrictMode 는
-  //   마운트를 두 번 하는데, 두 번째 마운트에서 그 빈 초안을 읽어 아무것도 못 되살린다.
-  //   (실제로 그렇게 만들었다가 로컬 확인에서 값이 전부 날아가는 걸 보고 고쳤다)
-  //   state 로 두면 저장은 '복원이 반영된 다음 렌더'부터 시작된다.
-  const [초안복원끝, set초안복원끝] = useState(false);
+  // ⚠ 카드정보와 **비회원 주문 비밀번호는 저장하지 않는다**. 약관 동의도 다시 누른다.
+  // ⚠ 다른 길로 열린 주문서는 남은 값을 지운다 — 남겨 두면 다음 주문에 지난 손님 정보가 뜬다
+  //   (9/11·11/9 지적: 주문을 마치고 새로 주문하는데 이전 정보가 나왔다).
+  //
+  // 가맹점 기준(같은 날): 새로고침하면 남는다. 결제창을 닫거나 취소하면 결과 화면이 이 주문서로 바로 돌려보낸다
+  // (?retry=, 그때도 채운다). 휴대폰에서 결제창을 뒤로 가기로 빠져나와도 취소와 같으니 남긴다.
+  //
+  // ⚠ '새로고침' 은 브라우저 탐색 기록(navigation 항목)으로 판단한다. 그 항목은 **문서를 처음 연 주소**의 것이라,
+  //   다른 화면을 새로고침한 뒤 메뉴로 주문서에 와도 type 이 reload 다 — 주소가 지금 주소와 같을 때만 믿는다.
+  // ⚠ 복원 표시는 state 여야 한다. ref 로 두면 같은 커밋의 저장 useEffect 가 빈 초기값으로 덮어쓴다
+  //   (StrictMode 두 번째 마운트가 그 빈 값을 읽는다 — 실제로 겪었다).
+  const [보관준비, set보관준비] = useState(false);
   useEffect(() => {
-    const 초안 = loadOrderDraft();
-    if (초안) {
+    const 지금주소 = window.location.pathname + window.location.search;
+    let 온길 = '';
+    try {
+      const 항목 = performance.getEntriesByType('navigation')[0];
+      if (항목 && 항목.name === window.location.href) 온길 = 항목.type;
+    } catch (e) { /* 모르면 새로 연 것으로 친다 */ }
+    const 다시결제 = new URLSearchParams(window.location.search).get('retry');
+    let 초안 = (온길 === 'reload' || 온길 === 'back_forward') ? takeSessionDraft(지금주소) : null;
+    if (!초안 && 다시결제) 초안 = takeRetryDraft(다시결제);
+    if (!초안) {
+      clearOrderDraft();
+    } else {
       setPayData((prev) => ({ ...prev, ...초안.payData, brand_id: prev.brand_id }));
       const s = 초안.화면상태 ?? {};
       if (typeof s.addrMode === 'string') setAddrMode(s.addrMode);
       if (typeof s.directMode === 'boolean') setDirectMode(s.directMode);
       if (typeof s.sameAsBuyer === 'boolean') setSameAsBuyer(s.sameAsBuyer);
-      // 동의는 되살리지 않는다 — 약관 동의는 그때마다 사람이 직접 눌러야 한다.
+      if (s.selectedAddrId !== undefined && s.selectedAddrId !== null) setSelectedAddrId(s.selectedAddrId);
     }
-    // 초안이 없어도 표시는 해야 한다. 안 하면 첫 방문에는 아무것도 저장되지 않는다.
-    set초안복원끝(true);
+    set보관준비(true);
   }, []);
 
-  // 값이 바뀔 때마다 담아 둔다.
+  // 새로고침용으로 쓰는 동안 계속 담는다(꺼내는 건 위 조건일 때만).
   useEffect(() => {
-    if (!초안복원끝) return;
-    saveOrderDraft(payData, { addrMode, directMode, sameAsBuyer });
-  }, [초안복원끝, payData, addrMode, directMode, sameAsBuyer]);
+    if (!보관준비) return;
+    saveSessionDraft(payData, { addrMode, directMode, sameAsBuyer, selectedAddrId }, window.location.pathname + window.location.search);
+  }, [보관준비, payData, addrMode, directMode, sameAsBuyer, selectedAddrId]);
+
+  // ── 다른 화면으로 나갈 때 확인 ──────────────────────────────────────────
+  // 가맹점 기준: 뒤로 가기·다른 화면 이동이면 "기존 정보가 사라집니다 …" 를 묻는다. 새로고침은 묻지 않는다(남으니까).
+  // ⚠ 탭 닫기·주소창 입력은 묻지 않는다 — 브라우저가 문구를 못 바꾸게 하고, 그 기본 창(beforeunload)은
+  //   새로고침에도 똑같이 떠서 '새로고침은 그대로' 와 부딪힌다.
+  // 아무것도 안 쓴 주문서, 결제창·결과 화면으로 가는 길, 이미 접수된 주문(무통장 등)은 묻지 않는다.
+  // '입력' 은 손님이 직접 쓴 값만 센다. 회원정보로 채운 주문자, '주문자와 동일' 로 따라온 받는 사람,
+  // 주소록에서 고른 배송지는 나가도 다시 불러오므로 사라지는 정보가 아니다(2026-11-09 사장님 확인).
+  const 입력있음Ref = useRef(false);
+  {
+    const 같게 = (v) => String(v ?? '').trim();
+    const 번호 = (v) => String(v ?? '').replace(/\D/g, '');
+    const 직접씀 = (칸, 기준, 다듬기 = 같게) => { const v = 다듬기(payData?.[칸]); return !!v && v !== 다듬기(기준); };
+    // addressList 는 아래에서 만든다 — 여기서는 원본을 직접 본다.
+    const 고른주소 = user?.id ? (addressContent?.content ?? []).find((a) => a?.id == selectedAddrId) : null;
+    입력있음Ref.current = !!(
+      payData?.password || passwordCheck || 같게(payData?.delivery_memo)
+      || 직접씀('buyer_name', user?.id ? (user?.name || user?.nickname) : '')
+      || 직접씀('buyer_phone', user?.id ? user?.phone_num : '', 번호)
+      || (!sameAsBuyer && (직접씀('receiver', 고른주소?.receiver) || 직접씀('addr_phone', 고른주소?.phone, 번호)))
+      || ['addr', 'detail_addr', 'zonecode', 'city', 'state_region', 'country_name'].some((k) => 직접씀(k, 고른주소?.[k]))
+    );
+  }
+  const 나가기문구Ref = useRef('');
+  나가기문구Ref.current = translate('기존 정보가 사라집니다. 정말 다른 화면으로 넘어가시겠습니까?');
+  useEffect(() => {
+    if (!router?.events) return undefined;
+    const 내기록 = window.history.state;
+    const 그냥가도됨 = (url) => {
+      const 경로 = String(url || '').split('?')[0].replace(/\/$/, '');
+      return 경로.endsWith('/shop/auth/order') || /\/shop\/auth\/(pay-result|order-complete)$/.test(경로);
+    };
+    const 나가도되나 = () => !입력있음Ref.current || Object.keys(createdOrderRef.current).length > 0 || window.confirm(나가기문구Ref.current);
+    let 이미물음 = false;
+    // 뒤로 가기: 브라우저는 이미 한 칸 물러난 뒤다. 머무르면 이 화면 기록을 다시 쌓아 주소를 되돌린다.
+    router.beforePopState(({ as }) => {
+      if (그냥가도됨(as)) return true;
+      if (나가도되나()) { 이미물음 = true; clearOrderDraft(); return true; }
+      if (내기록) window.history.pushState(내기록, '', 내기록.as ?? window.location.href);
+      return false;
+    });
+    // 메뉴·링크·버튼으로 이동
+    const 이동시작 = (url) => {
+      if (이미물음) { 이미물음 = false; return; }
+      if (그냥가도됨(url)) return;
+      if (!나가도되나()) {
+        router.events.emit('routeChangeError');
+        // Next 페이지 라우터에는 이동을 멈추는 다른 방법이 없다 — 던져서 멈춘다.
+        throw '주문서에 머무름';
+      }
+      clearOrderDraft();
+    };
+    // 위에서 던진 것은 오류가 아니다 — 콘솔·오류 화면에 띄우지 않는다.
+    const 멈춤무시 = (e) => { if (e?.reason === '주문서에 머무름') e.preventDefault(); };
+    router.events.on('routeChangeStart', 이동시작);
+    window.addEventListener('unhandledrejection', 멈춤무시);
+    return () => {
+      router.events.off('routeChangeStart', 이동시작);
+      window.removeEventListener('unhandledrejection', 멈춤무시);
+      router.beforePopState(() => true);
+    };
+  }, []);
 
   // 동의를 해제하면 이미 펼쳐진 결제수단 영역을 닫는다.
   // 핀트리·헥토·웨이업 결제 컴포넌트는 자기 결제 버튼을 갖고 있어 guardBeforePay를 타지 않는다.
@@ -693,6 +766,9 @@ export default function OrderSheet({ router }) {
     if (!guardBeforePay()) return;
     setPayLoading(true);
     const started_at = Date.now();
+    // 결제창에서 실패·취소되면 결과 화면 「다시 결제하기」가 이 값으로 주문서를 채운다.
+    // 주문번호는 주문이 만들어진 뒤 shop-util 이 단다(stampRetryDraft).
+    saveRetryDraft(payData, { addrMode, directMode, sameAsBuyer, selectedAddrId }, isBuyNow());
     try {
       let result = false;
       if (buyType == 'auth_forspay') {
@@ -703,7 +779,11 @@ export default function OrderSheet({ router }) {
       // 성공하면 결제창으로 이동한다. 실패 사유가 '금액이 바뀌었다'일 때만
       // 안내에 그치지 말고 실제로 최신 정보를 다시 받아 곧바로 재시도할 수 있게 한다.
       // (네트워크 오류·데모 미리보기 차단 등은 재동기화로 해결되지 않는다 — 사유 안내만 남긴다)
-      if (!result) await resyncIfAmountMismatch(started_at, translate("가격이 변경되어 최신 금액으로 갱신했습니다. 금액을 확인하고 다시 결제해 주세요."));
+      if (!result) {
+        // 주문이 안 만들어졌다 — 결제창으로 가지 않았으니 남길 것도 없다.
+        clearOrderDraft();
+        await resyncIfAmountMismatch(started_at, translate("가격이 변경되어 최신 금액으로 갱신했습니다. 금액을 확인하고 다시 결제해 주세요."));
+      }
     } finally {
       setPayLoading(false);
     }

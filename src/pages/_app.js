@@ -72,6 +72,16 @@ const App = props => {
       setHeadData(head_data)
     }
   }, [])
+  // <html lang> 을 지금 보이는 언어에 맞춘다(서버는 몰 기본 언어로만 내려 준다 — _document 참고).
+  useEffect(() => {
+    const 맞추기 = (lng) => {
+      const 코드 = String(lng || '').toLowerCase().split('-')[0];
+      document.documentElement.lang = 코드 === 'cn' ? 'zh' : (코드 || 'ko');
+    };
+    맞추기(i18n.language);
+    i18n.on('languageChanged', 맞추기);
+    return () => i18n.off('languageChanged', 맞추기);
+  }, [])
   useEffect(() => {
     let route_list = router.asPath.split('/');
     let is_normal_page = true;

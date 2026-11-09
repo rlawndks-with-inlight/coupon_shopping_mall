@@ -13,6 +13,7 @@ import { findMissingRequired } from "src/data/order-form-types";
 import { requiredGroups, isComboMode, findCombination, optionExtraPrice, maxOrderable, isAddon, closeOptionLine, optionLines, purchaseUnits, removeOptionLine, setOptionLineCount, toggleAddonLine } from "src/data/product-options";
 import { makeOrdNum } from 'src/utils/function';
 import { stampRetryDraft } from 'src/utils/order-draft';
+import { formatLang } from 'src/utils/format';
 
 // 손님에게 뜨는 안내는 반드시 이걸 거친다.
 //
@@ -903,10 +904,14 @@ export const getOptionLabel = (option) => {
 export const orderLineOptionTexts = (row, lang) => {
     const groups = Array.isArray(row?.groups) ? row.groups : [];
     const 부호금액 = (v) => `${v < 0 ? '-' : '+'}${commarNumberWithUnit(Math.abs(v), lang)}`;
+    // 옵션명·그룹명도 번역본으로 보인다 — 상품 화면(ProductOptions)은 formatLang 으로 번역해 보이는데
+    // 여기만 원문을 써서, 영어 화면 주문서에 「옵션: 옵션 2. 10미 추가」가 한국어로 남았다(해담수산 2026-11-09).
+    // 번역본이 없으면 formatLang 이 원문을 돌려준다. 화면 표시용이다 — 주문에 저장되는 값은 건드리지 않는다.
+    const 번역 = (obj, column, 원문) => (obj && typeof obj === 'object' && lang ? formatLang(obj, column, lang) : '') || 원문;
     return groups.map((group) => {
         const text = (group?.options ?? [])
             .map((option) => {
-                const label = getOptionLabel(option);
+                const label = 번역(option, 'option_name', getOptionLabel(option));
                 if (!label) return '';
                 const add = parseFloat(option?.option_price) || 0;
                 return add === 0 ? label : `${label} (${부호금액(add)})`;
@@ -914,7 +919,7 @@ export const orderLineOptionTexts = (row, lang) => {
             .filter((v) => v !== '')
             .join(' / ');
         if (!text) return '';
-        return group?.group_name ? `${group.group_name}: ${text}` : text;
+        return group?.group_name ? `${번역(group, 'group_name', group.group_name)}: ${text}` : text;
     }).filter(Boolean);
 };
 

@@ -161,6 +161,10 @@ export default function CheckoutCartProduct({ row, onPeek, onDelete, onDecrease,
                (scripts/checks/word-break.mjs 주석 참고) → '50,00 / 0원' 도 가능하다
           ① 은 붙여서, ② 는 nowrap 으로 막는다. 금액은 길어야 열 몇 글자라 폭 문제도 없다. */}
       <TableCell data-label={translate('가격')} sx={{ whiteSpace: 'nowrap' }}>
+        {/* 내용을 한 덩어리(Box)로 묶는다. 휴대폰 카드에서는 칸이 flex 줄이라, 묶지 않으면
+            '정가 · 판매가 · 옵션 +N · 개당 N' 이 세로로 쌓이지 않고 한 줄로 늘어서 카드 밖으로 나갔다
+            (해담수산 2026-11-09 제보 — 실측 399px/274px, 영어는 KRW 가 붙어 500px). */}
+        <Box sx={{ minWidth: 0 }}>
         {/* 추가상품 줄의 가격은 그 추가상품 가격이다 — 상품 판매가·정가·배송비를 여기 적으면 손님이 두 번 내는 줄 안다 */}
         {추가상품줄 ? (
           <>{commarNumber(option_surcharge)}{unit}</>
@@ -201,6 +205,7 @@ export default function CheckoutCartProduct({ row, onPeek, onDelete, onDecrease,
         )}
         </>
         )}
+        </Box>
       </TableCell>
       {
         themeDnsData?.id != 74 ?

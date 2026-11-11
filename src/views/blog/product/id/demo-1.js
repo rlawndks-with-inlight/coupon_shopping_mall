@@ -3,7 +3,7 @@ import ProductAddons from 'src/components/elements/shop/ProductAddons';
 import { requiredGroups, shownOptionIndex, 수량은옵션줄에서정한다 } from 'src/data/product-options';
 // 판매자 영역 삭제로 Avatar 를 더 이상 쓰지 않아 import 에서 뺐다.
 import { Select, MenuItem, Drawer, FormControl, InputLabel, Button, Divider, Stack } from '@mui/material';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Row, themeObj } from 'src/components/elements/styled-components';
 import { useSettingsContext } from 'src/components/settings';
 import styled from 'styled-components'
@@ -21,6 +21,8 @@ import { formatLang } from 'src/utils/format';
 import DialogBuyNow from 'src/components/dialog/DialogBuyNow';
 import QuantityStepper from 'src/components/elements/shop/QuantityStepper';
 import DetailNotices from 'src/components/elements/shop/DetailNotices';
+import ProductInfoRows from 'src/components/elements/shop/ProductInfoRows';
+import ProductThumbs from 'src/components/elements/shop/ProductThumbs';
 import ProductNotFound from 'src/components/elements/shop/ProductNotFound';
 import OrderFormFields from 'src/components/elements/shop/OrderFormFields';
 import { ProductDetailsReview } from 'src/views/@dashboard/e-commerce/details';
@@ -124,6 +126,9 @@ const Demo1 = (props) => {
   });
   // 주문 추가 입력항목(행사일 등)의 값. 담기·바로구매 때 상품에 실어 보낸다.
   const [orderFormValues, setOrderFormValues] = useState({});
+  // 큰 사진 번호 — 슬라이더와 작은 사진 줄이 같이 쓴다(훅이라 아래 notFound return 보다 위에 둔다).
+  const [사진번호, set사진번호] = useState(0);
+  const 슬라이더Ref = useRef(null);
 
   useEffect(() => {
     pageSetting();
@@ -155,6 +160,7 @@ const Demo1 = (props) => {
     };
   }, []);
   const sliderSetting = {
+    afterChange: (i) => set사진번호(i),
     infinite: true,
     speed: 500,
     autoplay: false,
@@ -192,7 +198,7 @@ const Demo1 = (props) => {
       />
 
       <Wrappers>
-        <Slider {...sliderSetting}>
+        <Slider ref={슬라이더Ref} {...sliderSetting}>
           {item?.images && item?.images.map((item, idx) => (
             <>
               <BannerImg style={{
@@ -204,6 +210,13 @@ const Demo1 = (props) => {
             </>
           ))}
         </Slider>
+        {/* 사진 넘김 표시 — 이 프레임은 슬라이더에 화살표·점이 없어(slick 테마 CSS 를 안 쓴다) 사진이 더 있다는 걸
+            손님이 알 수 없었다. 다른 프레임(1·2·5·6)과 같은 작은 사진 줄을 붙이고, 슬라이더와 같은 번호를 쓴다. */}
+        {(item?.images?.length ?? 0) > 1 &&
+          <div style={{ display: 'flex', justifyContent: 'center', padding: '0 1rem', color: themeMode == 'dark' ? '#fff' : '#222' }}>
+            <ProductThumbs images={item.images} activeIndex={사진번호}
+              onSelect={(i) => { set사진번호(i); 슬라이더Ref.current?.slickGoTo(i); }} />
+          </div>}
         <ContentWrappers style={{
           background: `${themeMode == 'dark' ? '#000' : '#fff'}`,
         }}>
@@ -227,6 +240,8 @@ const Demo1 = (props) => {
           {/* 가격 아래 안내 묶음 — 배송비 · 배송 안내 · 혜택을 한 표로 그린다.
               라벨 칸을 함께 나누므로 혜택 라벨이 몇 글자든 세로줄이 맞는다(DetailNotices). */}
           <DetailNotices item={item} />
+          {/* 상품 정보(원산지 등, 보여 주기 전용) — 프레임1·2 와 같은 자리(구매 버튼 위). 비어 있으면 아무것도 안 그린다. */}
+          <ProductInfoRows product={item} sx={{ mt: 1.5, mb: 1 }} />
               {/* 주문 추가 입력항목 — 서식이 걸린 몰에서만 나타난다 */}
               <OrderFormFields product={item} values={orderFormValues} onChange={setOrderFormValues} sx={{ mt: 2 }} />
           {/* 품절·중단됨을 상세에서 바로 알린다 — 예전엔 표시도 없고 버튼도 살아 있어

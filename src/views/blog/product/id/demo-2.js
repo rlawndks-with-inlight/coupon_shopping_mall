@@ -2,7 +2,7 @@ import { Icon } from '@iconify/react';
 import ProductAddons from 'src/components/elements/shop/ProductAddons';
 import { requiredGroups, shownOptionIndex, 수량은옵션줄에서정한다 } from 'src/data/product-options';
 import { Select, MenuItem, Drawer, FormControl, InputLabel, Button, Avatar, Divider, Dialog, DialogTitle, DialogContent, DialogActions, IconButton, Stack } from '@mui/material';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Row, themeObj } from 'src/components/elements/styled-components';
 import { useSettingsContext } from 'src/components/settings';
 import styled from 'styled-components'
@@ -24,6 +24,8 @@ import { isReviewEnabled } from 'src/utils/review';
 import useReviewSummary from 'src/components/elements/shop/review/useReviewSummary';
 import QuantityStepper from 'src/components/elements/shop/QuantityStepper';
 import DetailNotices from 'src/components/elements/shop/DetailNotices';
+import ProductInfoRows from 'src/components/elements/shop/ProductInfoRows';
+import ProductThumbs from 'src/components/elements/shop/ProductThumbs';
 import ProductNotFound from 'src/components/elements/shop/ProductNotFound';
 import OrderFormFields from 'src/components/elements/shop/OrderFormFields';
 
@@ -130,6 +132,9 @@ const Demo2 = (props) => {
     });
   // 주문 추가 입력항목(행사일 등)의 값. 담기·바로구매 때 상품에 실어 보낸다.
   const [orderFormValues, setOrderFormValues] = useState({});
+    // 큰 사진 번호 — 슬라이더와 작은 사진 줄이 같이 쓴다(훅이라 아래 notFound return 보다 위에 둔다).
+    const [사진번호, set사진번호] = useState(0);
+    const 슬라이더Ref = useRef(null);
 
     const [tab, setTab] = useState(0)
     const [reviewPage, setReviewPage] = useState(1)
@@ -186,6 +191,7 @@ const Demo2 = (props) => {
         };
     }, []);
     const sliderSetting = {
+        afterChange: (i) => set사진번호(i),
         infinite: true,
         speed: 500,
         autoplay: false,
@@ -225,7 +231,7 @@ const Demo2 = (props) => {
                 is_blog={1}
             />
             <Wrappers>
-                <Slider {...sliderSetting}>
+                <Slider ref={슬라이더Ref} {...sliderSetting}>
                     {item?.images && item?.images.map((item, idx) => (
                         <>
                             <BannerImg style={{
@@ -237,6 +243,13 @@ const Demo2 = (props) => {
                         </>
                     ))}
                 </Slider>
+                {/* 사진 넘김 표시 — 이 프레임은 슬라이더에 화살표·점이 없어(slick 테마 CSS 를 안 쓴다) 사진이 더 있다는 걸
+                    손님이 알 수 없었다. 다른 프레임(1·2·5·6)과 같은 작은 사진 줄을 붙이고, 슬라이더와 같은 번호를 쓴다. */}
+                {(item?.images?.length ?? 0) > 1 &&
+                  <div style={{ display: 'flex', justifyContent: 'center', padding: '0 1rem', color: themeMode == 'dark' ? '#fff' : '#222' }}>
+                    <ProductThumbs images={item.images} activeIndex={사진번호}
+                      onSelect={(i) => { set사진번호(i); 슬라이더Ref.current?.slickGoTo(i); }} />
+                  </div>}
 
                 <ContentWrappers style={{
                     background: `${themeMode == 'dark' ? '#000' : '#fff'}`,
@@ -269,6 +282,8 @@ const Demo2 = (props) => {
                             <div style={{ fontSize: themeObj.font_size.size8, color: '', fontWeight: 'bold', marginBottom: '0.5rem' }}>{translate('배송정보')}</div>
                         </Row>
                         <DetailNotices item={item} sx={{ marginBottom: '0.5rem' }} />
+                        {/* 상품 정보(원산지 등, 보여 주기 전용) — 프레임1·2 와 같은 자리(구매 버튼 위). 비어 있으면 아무것도 안 그린다. */}
+                        <ProductInfoRows product={item} sx={{ mt: 1, mb: 1 }} />
               {/* 주문 추가 입력항목 — 서식이 걸린 몰에서만 나타난다 */}
               <OrderFormFields product={item} values={orderFormValues} onChange={setOrderFormValues} sx={{ mt: 2 }} />
                     </PriceContainer>
@@ -293,16 +308,17 @@ const Demo2 = (props) => {
                     <div style={{ marginTop: '1rem' }} />
                     <Divider />
                     <ContentContainer>
+                        {/* 상품 스펙 — 탭 줄(Row) **바깥**, 그 위에 둔다. 줄 안에 두면 탭과 나란히 서서
+                            왼쪽에 좁은 칸으로 눌렸다(2026-11-11 확인). 프레임3 과 같은 자리다. */}
+                        {formatLang(item, 'product_spec', currentLang) &&
+                          <div style={{ whiteSpace: 'pre-line', lineHeight: 1.7, fontSize: '14px', color: '#666', background: '#f7f7f7', borderRadius: '6px', padding: '16px', margin: '1rem 0 0 0' }}>
+                            {formatLang(item, 'product_spec', currentLang)}
+                          </div>
+                        }
                         <Row style={{ width: '100%', marginBottom: '1rem', paddingTop: '1rem' }}>
                             {/* ShopGo 산하는 상품후기를 쓰지 않는다.
                                 후기 탭을 숨길 땐 '상품정보'가 남은 폭을 다 쓰게 해야
                                 반쪽짜리 탭 하나가 덩그러니 남지 않는다. */}
-                            {/* 상품 스펙 — 가맹점이 상품폼에 적어도 프레임1 말고는 어디에도 나오지 않던 값이다. */}
-                            {formatLang(item, 'product_spec', currentLang) &&
-                              <div style={{ whiteSpace: 'pre-line', lineHeight: 1.7, fontSize: '14px', color: '#666', background: '#f7f7f7', borderRadius: '6px', padding: '16px', margin: '0 0 1rem 0' }}>
-                                {formatLang(item, 'product_spec', currentLang)}
-                              </div>
-                            }
                             <div style={{ padding: '0 0 1rem 0', fontSize: themeObj.font_size.size8, fontWeight: 'bold', cursor: 'pointer', width: `${isReviewEnabled(themeDnsData) ? '50%' : '100%'}`, textAlign: 'center', borderBottom: `${tab == 0 ? '2px solid black' : ''}` }} onClick={() => { setTab(0) }}>{translate('상품정보')}</div>
                             {isReviewEnabled(themeDnsData) &&
                                 <div style={{ padding: '0 0 1rem 0', fontSize: themeObj.font_size.size8, fontWeight: 'bold', cursor: 'pointer', width: '50%', textAlign: 'center', borderBottom: `${tab == 1 ? '2px solid black' : ''}` }} onClick={() => { setTab(1) }}>

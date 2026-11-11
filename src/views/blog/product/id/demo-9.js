@@ -13,6 +13,7 @@ import { apiShop } from 'src/utils/api';
 import { insertCartDataUtil, startBuyNow, selectItemOptionUtil, 배송비표시, 무료배송안내 } from 'src/utils/shop-util';
 import QuantityStepper from 'src/components/elements/shop/QuantityStepper';
 import DetailNotices from 'src/components/elements/shop/DetailNotices';
+import ProductInfoRows from 'src/components/elements/shop/ProductInfoRows';
 import ProductNotFound from 'src/components/elements/shop/ProductNotFound';
 import ProductThumbs, { buildProductImages, imageSwipeHandlers } from 'src/components/elements/shop/ProductThumbs';
 import toast from 'react-hot-toast';
@@ -306,6 +307,8 @@ const Demo9 = () => {
             {/* 가격 아래 안내 묶음 — 배송비 · 배송 안내 · 혜택을 한 표로 그린다.
                 라벨 칸을 함께 나누므로 혜택 라벨이 몇 글자든 세로줄이 맞는다(DetailNotices). */}
             <DetailNotices item={item} />
+            {/* 상품 정보(원산지 등, 보여 주기 전용) — 프레임1·2 와 같은 자리(가격 안내 아래, 구매 버튼 위). 비어 있으면 아무것도 안 그린다. */}
+            <ProductInfoRows product={item} sx={{ mt: 1.5 }} />
               {/* 주문 추가 입력항목 — 서식이 걸린 몰에서만 나타난다 */}
               <OrderFormFields product={item} values={orderFormValues} onChange={setOrderFormValues} sx={{ mt: 2 }} />
             {requiredGroups(item).length > 0 && (

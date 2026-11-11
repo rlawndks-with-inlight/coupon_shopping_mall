@@ -31,13 +31,15 @@ const Wrappers = styled.div`
   margin: 4vh auto 8vh;
 `;
 
-// 결제창이 알려 준 실패 사유 중 손님에게 보여 줘도 되는 것만 고른다.
-// PV 코드는 설정·통신 문제라 손님이 할 수 있는 게 없고, 포스페이가 SQL 원문을 보낸 적도 있다(scripts/checks/pg-message.mjs).
+// 실패 사유는 서버가 정한 문구를 받아 보여 준다 — 같은 이유는 결제수단과 관계없이 같은 문구, 묶지 않은 것은 원문 그대로
+// (back utils.js/payments/fail-reason.js, 2026-11-11).
+// 서버 문구라도 한 번 더 거른다 — 포스페이가 SQL 원문을 보낸 적이 있다(scripts/checks/pg-message.mjs).
 const 손님용사유 = (code, message) => {
   const s = String(message ?? '').replace(/\s+/g, ' ').trim();
-  if (!s || s.length > 100 || /^PV/i.test(String(code ?? ''))) return '';
+  if (!s || s.length > 200) return '';
   // 긴 숫자는 전화번호·계좌번호일 수 있다 — 이 문구는 손님 브라우저를 거쳐 오므로 연락처가 든 문구는 믿지 않는다
-  if (/[{}<>\[\]=;`$]|SQL|exception|https?:|\d[\d\s-]{6,}/i.test(s)) return '';
+  // 대괄호는 막지 않는다 — 통일하지 않은 문구는 결제사 코드([-780] 등)까지 원문 그대로 보여 준다(2026-11-11)
+  if (/[{}<>=;`$]|SQL|exception|https?:|\d[\d\s-]{6,}/i.test(s)) return '';
   return s;
 };
 
@@ -131,10 +133,9 @@ const { user } = useAuthContext();
       const 저장값 = JSON.parse(sessionStorage.getItem('forspayFail') || 'null');
       if (저장값?.ord_num === ord) message = String(저장값.message ?? '');
     } catch (e) { /* 사유 없이 간다 */ }
-    if (!isCanceled) set실패사유(손님용사유(code, message));
-    // 모바일은 복귀 때 서버가 사유를 받아 둔다 — 여기서 돌려받아 보여 준다
+    // PC 는 결제창 원문을 보내 남기고, 모바일은 복귀 때 서버가 이미 받아 뒀다 — 어느 쪽이든 서버가 정한 문구를 받아 보여 준다
     apiManager('pays/forspay/fail-reason', 'create', { ord_num: ord, code, message })
-      .then((r) => { if (!isCanceled && !message) set실패사유(손님용사유(code, r?.message)); })
+      .then((r) => { if (!isCanceled) set실패사유(손님용사유(code, r?.message)); })
       .catch(() => { });
   }, [router.isReady, isSuccess, isPending, isVerify, q.ord_num, q.result_cd]);
 
@@ -269,7 +270,7 @@ const { user } = useAuthContext();
         )}
         {실패사유 && !isTestBrand && (
           <Typography variant="body2" sx={{ color: 'text.secondary', mt: 0.5, textAlign: 'center', wordBreak: 'keep-all' }}>
-            {translate('실패 사유')}: {실패사유}
+            {translate('실패 사유')}: {translate(실패사유)}
           </Typography>
         )}
       </Stack>

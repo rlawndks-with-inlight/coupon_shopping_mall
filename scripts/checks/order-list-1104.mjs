@@ -48,11 +48,12 @@ t('사유는 주소에 싣지 않는다(sessionStorage, 주문번호 대조)', /
 {
   const 식 = 결과.match(/const 손님용사유 = \(code, message\) => \{([\s\S]*?)\n\};/);
   const 고름 = 식 && new Function('code', 'message', 식[1]);
-  t('손님 화면: 카드 사유는 보이고, PV 코드·SQL·긴 문구는 안 보인다', !!고름
+  // PV 코드도 이제 서버가 정한 문구(fail-reason.js)를 받아 보여 준다(2026-11-11) — 화면은 SQL·연락처·긴 문구만 한 번 더 거른다
+  t('손님 화면: 서버 문구는 보이고, SQL·긴 문구·연락처는 안 보인다', !!고름
     && 고름('699', '잔액이 부족합니다') === '잔액이 부족합니다'
-    && 고름('PV500', '통신 오류') === ''
+    && 고름('PV500', '결제사와 연결이 원활하지 않습니다. 잠시 후 다시 시도해 주세요.') === '결제사와 연결이 원활하지 않습니다. 잠시 후 다시 시도해 주세요.'
     && 고름('699', "SQLSTATE[HY000] Access denied for user") === ''
-    && 고름('699', 'x'.repeat(101)) === ''
+    && 고름('699', 'x'.repeat(201)) === ''
     && 고름('699', '010-1234-5678 로 연락 주세요') === ''
     && 고름('699', '') === '');
 }
@@ -91,7 +92,8 @@ if (!백엔드있음) {
   const 모바일복귀 = pay.slice(pay.indexOf('forspayReturn: async'), pay.indexOf('forspayCallback: async'));
   t('판정: 승인 판단이 결제창 코드보다 먼저다', 복귀.indexOf("txn?.status === 'approved'") > 0 && 복귀.indexOf("txn?.status === 'approved'") < 복귀.indexOf('const 복귀코드'));
   t('판정: 결제창 코드로 결제를 확정하지 않는다', !/복귀코드[^\n]*settleForspay|settleForspay[^\n]*복귀코드/.test(복귀));
-  t('판정: 실패 코드는 그대로, 문구는 주소에 안 싣는다', 복귀.includes('if (복귀실패) return { result_cd: 복귀코드, txn };') && !모바일복귀.includes('result_msg: ') && 모바일복귀.includes(': { result_cd, ord_num: ord };'));
+  // 손님이 멈춘 실패(30563 「결제 취소 또는 결제시간 초과」)만 취소로 바꾼다 — pay-fail-reason.mjs(2026-11-11)
+  t('판정: 실패 코드는 그대로(손님이 멈춘 것만 취소), 문구는 주소에 안 싣는다', 복귀.includes("return { result_cd: 사유분류.취소 ? 'CANCEL' : 사유분류.확인필요 ? '0001' : 복귀코드, txn };") && !모바일복귀.includes('result_msg: ') && 모바일복귀.includes(': { result_cd, ord_num: ord };'));
   t('판정: 결제창 성공인데 거래가 안 보이면 취소가 아니라 확인 중', 복귀.includes("(없음 && 복귀코드 === '0000')"));
   t('모바일 복귀는 공용 판정을 쓴다', 모바일복귀.includes('await 포스페이결과판정(trx, { 복귀코드원본: data.result_cd, 복귀문구: data.result_msg })'));
 }

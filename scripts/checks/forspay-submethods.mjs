@@ -50,7 +50,10 @@ const 프론트키 = [...프론트목록.matchAll(/key: '(\w+)'/g)].map((m) => m
 t('프론트 결제수단 목록 키 = 백엔드 카탈로그 키(같은 순서)', 프론트키.join(',') === 수단.map((m) => m.key).join(','));
 
 // 거절 코드 → 손님 안내(원문은 보이지 않는다)
-t('거절 코드 PV408·PV407·PV413·PV433 은 우리 문구로 안내', ['PV408', 'PV407', 'PV413', 'PV433'].every((c) => new RegExp(`${c}: '`).test(fs)));
+// 문구 원본은 fail-reason.js 한 곳(결제창 실패 사유와 같은 이유면 같은 문구, 2026-11-11) — 코드별 기대 문구는 pay-fail-reason.mjs
+const 사유 = readFileSync(BACK_ROOT + 'utils.js/payments/fail-reason.js', 'utf8');
+t('거절 코드 PV408·PV407·PV413·PV433 은 우리 문구로 안내', /export const 거절안내 = \(code\) => 수단거절안내\(code\);/.test(fs)
+  && ['PV408', 'PV407', 'PV413', 'PV433'].every((c) => new RegExp(`${c}: '`).test(사유)));
 t('세션 생성 실패·결제창 주소 없음 둘 다 거절 안내를 쓴다',
   /거절안내\(거절코드\(session\)\) \?\? 결제시작실패문구/.test(pay) && /거절안내\(거절코드\(e\?\.response\?\.data\)\) \?\? 결제시작실패문구/.test(pay));
 t('포스페이 경고(warnings)는 1시간에 한 번 서버 기록', /export const 경고기록 = async/.test(al) && /EX: 3600/.test(al));

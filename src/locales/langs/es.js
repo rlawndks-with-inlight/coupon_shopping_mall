@@ -1123,6 +1123,19 @@ const es = {
   "본인이 쓴 메모만 고칠 수 있습니다.": "Solo puede editar las notas que usted escribió.",
   "메모 내용을 입력해 주세요.": "Introduzca el contenido de la nota.",
   "메모를 저장하지 못했습니다.": "No se pudo guardar la nota.",
+  // 결제 실패 사유 — 결제수단과 관계없이 같은 이유는 같은 문구(back utils.js/payments/fail-reason.js 실패문구와 같아야 한다. 한도·결제수단 불가는 위의 포스페이 거절 안내 문구를 함께 쓴다)
+  "잔액이 부족합니다.": "Saldo insuficiente.",
+  "거래가 정지된 카드입니다. 카드사에 확인해 주세요.": "Esta tarjeta está suspendida. Consulta con el emisor de la tarjeta.",
+  "결제가 완료됐는지 결제 앱에서 먼저 확인해 주세요. 이미 결제됐다면 다시 결제하지 마세요.": "Comprueba primero en tu app de pago si el pago se completó. Si ya se realizó, no vuelvas a pagar.",
+  "결제사와 연결이 원활하지 않습니다. 잠시 후 다시 시도해 주세요.": "Hay problemas de conexión con el proveedor de pagos. Inténtalo de nuevo en unos momentos.",
+  "지금은 결제할 수 없는 시간입니다. 잠시 후 다시 시도해 주세요.": "No se pueden realizar pagos en este horario. Inténtalo de nuevo más tarde.",
+  "같은 카드로 오늘 결제할 수 있는 횟수를 넘었습니다. 다른 결제수단을 선택해 주세요.": "Esta tarjeta alcanzó el número de pagos permitidos hoy. Elige otro método de pago.",
+  "카드 비밀번호 또는 생년월일이 필요합니다. 다시 시도해 주세요.": "Se necesita el PIN de la tarjeta o la fecha de nacimiento. Inténtalo de nuevo.",
+  "이 카드사의 카드로는 결제할 수 없습니다. 다른 카드를 선택해 주세요.": "No se aceptan tarjetas de este emisor. Elige otra tarjeta.",
+  "이 카드로는 결제할 수 없습니다. 다른 카드를 선택해 주세요.": "Esta tarjeta no se puede usar. Elige otra tarjeta.",
+  "선택하신 할부 개월로는 결제할 수 없습니다. 할부 개월을 줄여 다시 시도해 주세요.": "El plazo de cuotas seleccionado no está disponible. Elige menos meses e inténtalo de nuevo.",
+  "지금 이 쇼핑몰에서 결제를 진행할 수 없습니다. 판매자에게 문의해 주세요.": "En este momento no se pueden realizar pagos en esta tienda. Contacta con el vendedor.",
+  "결제사에서 결제를 승인하지 않았습니다. 다른 결제수단을 선택해 주세요.": "El proveedor de pagos no aprobó el pago. Elige otro método de pago.",
 };
 
 export default es;

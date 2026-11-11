@@ -221,6 +221,23 @@ export const isRequiredComplete = (product, groups) => {
     return 필수.every((r) => 고른것.some((g) => isSameGroup(g, r) && (g?.options?.length ?? 0) > 0));
 };
 
+// 이 그룹 드롭다운에 지금 보여 줄 옵션의 순번(group.options 안). 보여 줄 게 없으면 -1.
+//
+// 필수를 다 고른 순간에는 -1 이다. 다 고르면 ProductAddons 가 그 조합을 「선택한 옵션」 줄로 옮기고
+// 드롭다운을 비우는데, 그건 화면을 한 번 그린 **뒤**라 고른 이름이 보였다 사라지며 깜빡였다(2026-11-11 지적).
+// 드롭다운이 이 값을 그대로 쓰면(제어 컴포넌트) 값이 남는 순간 자체가 없다.
+// 그룹이 여럿이면 앞 그룹만 고른 동안은 고른 값이 그대로 보인다.
+// 프레임마다 드롭다운이 다르다(공용 ProductOptions · MUI Select · 기본 <select>) — 다 이 함수 하나를 본다.
+export const shownOptionIndex = (product, selected, group) => {
+    if (isRequiredComplete(product, selected?.groups)) return -1;
+    const 고른 = (selected?.groups ?? []).find((g) => isSameGroup(g, group))?.options?.[0];
+    if (!고른) return -1;
+    return (group?.options ?? []).findIndex((o) =>
+        (o?.id !== undefined && o?.id !== null && 고른?.id !== undefined && 고른?.id !== null)
+            ? String(o.id) === String(고른.id)
+            : o?.option_name === 고른?.option_name);
+};
+
 export const optionLines = (selected) =>
     Array.isArray(selected?.lines) ? selected.lines : [];
 

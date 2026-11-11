@@ -1,6 +1,6 @@
 import { Icon } from '@iconify/react';
 import ProductAddons from 'src/components/elements/shop/ProductAddons';
-import { requiredGroups, 수량은옵션줄에서정한다 } from 'src/data/product-options';
+import { requiredGroups, shownOptionIndex, 수량은옵션줄에서정한다 } from 'src/data/product-options';
 // 판매자 영역 삭제로 Avatar 를 더 이상 쓰지 않아 import 에서 뺐다.
 import { Select, MenuItem, Drawer, FormControl, InputLabel, Button, Divider, Stack } from '@mui/material';
 import { useEffect, useState } from 'react';
@@ -309,6 +309,9 @@ const Demo1 = (props) => {
                       width: '100%'
                     }}
                     placeholder={formatLang(group, 'group_name')}
+                    // 화면이 값을 쥔다 — 다 고르면 비워 그린다(shownOptionIndex 주석). 예전엔 값을 안 쥐어서
+                    // 조합이 「선택한 옵션」 줄로 옮겨진 뒤에도 드롭다운에 고른 값이 그대로 남았다.
+                    value={group?.options?.[shownOptionIndex(item, selectProductGroups, group)] ?? ''}
                     onChange={(e) => {
                       onSelectOption(group, e.target.value)
                     }}

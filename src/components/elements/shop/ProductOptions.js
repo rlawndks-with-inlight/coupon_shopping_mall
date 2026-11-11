@@ -5,7 +5,7 @@ import { commarNumber } from 'src/utils/function';
 import ProductAddons from './ProductAddons';
 import {
     addonGroups, findCombination, isComboMode, isOptionSoldOut,
-    isSameGroup, lowStockCount, pickedRequiredOptionIds, requiredGroups, selectableOptionIds,
+    isSameGroup, lowStockCount, pickedRequiredOptionIds, requiredGroups, selectableOptionIds, shownOptionIndex,
 } from 'src/data/product-options';
 
 // 상품 옵션 선택 — 선택옵션 · 추가상품 · 조합형.
@@ -32,8 +32,8 @@ const ProductOptions = ({ product, selected, onSelect, sx = {} }) => {
         && pickedRequiredOptionIds(product, selected).length === 필수.length
         && 필수.length > 0 && !고른조합;
 
-    // 저장된 선택에서 이 그룹이 무엇을 골랐는지
-    const 고른것 = (group) => (selected?.groups ?? []).find((g) => isSameGroup(g, group))?.options ?? [];
+    // 드롭다운에 보여 줄 값 — 다 고른 순간엔 비운다(깜빡임 방지, shownOptionIndex 주석).
+    const 보일값 = (group) => { const i = shownOptionIndex(product, selected, group); return i >= 0 ? (group.options[i]?.id ?? '') : ''; };
 
     return (
         <Box sx={{ width: '100%', ...sx }}>
@@ -56,7 +56,7 @@ const ProductOptions = ({ product, selected, onSelect, sx = {} }) => {
                         <TextField
                             select fullWidth size="small" required
                             label={translate('선택')}
-                            value={고른것(group)[0]?.id ?? ''}
+                            value={보일값(group)}
                             onChange={(e) => {
                                 const opt = (group?.options ?? []).find((o) => String(o.id) === String(e.target.value));
                                 if (opt) onSelect?.(group, opt, false);

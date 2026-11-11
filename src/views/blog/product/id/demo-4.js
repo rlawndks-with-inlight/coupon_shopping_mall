@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import ProductAddons from 'src/components/elements/shop/ProductAddons';
-import { requiredGroups, 수량은옵션줄에서정한다 } from 'src/data/product-options';
+import { requiredGroups, shownOptionIndex, 수량은옵션줄에서정한다 } from 'src/data/product-options';
 import { useRouter } from 'next/router';
 import styled from 'styled-components';
 import { useSettingsContext } from 'src/components/settings';
@@ -303,7 +303,9 @@ const Demo4 = () => {
                   <OptionField key={group?.id ?? group?.group_name ?? gIdx}>
                     <OptionLabel>{formatLang(group, 'group_name')}</OptionLabel>
                     <OptionSelect
-                      defaultValue=""
+                      // 화면이 값을 쥔다 — 다 고르면 비워 그린다(shownOptionIndex 주석). defaultValue 였을 땐
+                      // 고른 값이 그려진 뒤에 ProductAddons 가 되돌려서 깜빡였다.
+                      value={(() => { const i = shownOptionIndex(item, selectProductGroups, group); return i >= 0 ? String(i) : ''; })()}
                       onChange={(e) => {
                         if (e.target.value === '') return;
                         const option = group?.options?.[Number(e.target.value)];

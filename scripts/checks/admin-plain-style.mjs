@@ -21,7 +21,7 @@ const 버릇 = [
 const 예외 = [
   /🔍 디자인 미리보기\(데모\) 화면입니다 — 로그인/, // 번역 사전의 키(외국어 화면용). 키를 바꾸면 5개 언어 사전을 같이 바꿔야 한다.
   /원활한 (서비스 )?제공을 위하여/,                // 약관(policyContent) — 법률 문서의 표준 문구
-  /가장 빠르고 간편하게/,                          // 랜딩 첫 화면 큰 제목(광고 문구) — 사장님 결정 대기
+  /가장 빠르고 간편하게/,                          // 랜딩 첫 화면 큰 제목(광고 문구) — 그대로 두기로 함(사장님 2026-11-11)
 ];
 const 폴더 = ['src/pages/manager', 'src/views/manager', 'src/components/manager', 'src/layouts/manager', 'src/components/main-site', 'src/pages/manual.js'];
 const 파일들 = [];

@@ -1,5 +1,6 @@
 import Head from 'next/head';
-import { Box, Container, Stack, Typography } from '@mui/material';
+import { Box, Button, Container, Stack, Typography } from '@mui/material';
+import { Icon } from '@iconify/react';
 import ManagerLayout from 'src/layouts/manager/ManagerLayout';
 import { useSettingsContext } from 'src/components/settings';
 import GuideBody from 'src/components/manager/GuideBody';
@@ -18,7 +19,17 @@ const GuidePage = () => {
       <Head><title>관리자 이용가이드</title></Head>
       <Container maxWidth="md" sx={{ py: { xs: 3, md: 5 } }}>
         <Stack spacing={1} sx={{ mb: 4 }}>
-          <Typography sx={{ fontSize: { xs: 22, md: 28 }, fontWeight: 900 }}>관리자 이용가이드</Typography>
+          <Stack direction="row" alignItems="center" justifyContent="space-between" spacing={1} flexWrap="wrap" useFlexGap>
+            <Typography sx={{ fontSize: { xs: 22, md: 28 }, fontWeight: 900 }}>관리자 이용가이드</Typography>
+            {/* 랜딩(/manual)과 같은 파일. PDF 는 프레임을 가리지 않고 전 항목이 들어 있다(프레임별 꼬리표로 구분). */}
+            <Button
+              variant="outlined" size="small" href="/manual/manager-guide.pdf" download="쇼핑몰_관리자_이용가이드.pdf"
+              startIcon={<Icon icon="tabler:download" />}
+              sx={{ color: '#333', borderColor: '#ccc', fontWeight: 700, whiteSpace: 'nowrap' }}
+            >
+              PDF 다운로드
+            </Button>
+          </Stack>
           <Typography sx={{ fontSize: 14, color: '#666', lineHeight: 1.7 }}>
             처음이시라면 <b>아래 순서대로</b> 따라 하시면 쇼핑몰을 열 수 있습니다. 앞 단계가 뒤 단계의 준비가 되니 순서를 지켜주세요.
           </Typography>

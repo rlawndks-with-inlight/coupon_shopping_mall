@@ -167,16 +167,70 @@ const GuideCard = ({ s, ordered, showRouteButtons, brandId, router, frameGroup, 
   );
 };
 
+// 목차로 이동 — 항목 카드에는 scrollMarginTop 이 있어 상단 바에 가리지 않는다.
+// 주소창 #해시를 쓰지 않고 직접 스크롤한다(관리자 레이아웃·Next 라우터가 해시 변경을 다시 그리지 않게).
+const 이동 = (id) => (e) => {
+  e.preventDefault();
+  document.getElementById(id)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+};
+
+const TocLink = ({ s, ordered, frameGroup, frameNo }) => {
+  // 프레임을 모르는 화면(/manual)에선 계열이 다른 항목끼리 번호·제목이 겹친다 — 계열명으로 가른다.
+  const groupTag = !frameGroup && s.groups?.length
+    ? s.groups.map((g) => FRAME_GROUP_LABEL[g]).filter(Boolean).join(' · ')
+    : null;
+  return (
+    <Box
+      component="a" href={`#${s.id}`} onClick={이동(s.id)}
+      sx={{ display: 'flex', alignItems: 'baseline', gap: 0.75, py: 0.5, color: '#333', textDecoration: 'none', fontSize: 13.5, lineHeight: 1.5, '&:hover': { color: '#2e6bd6', textDecoration: 'underline' } }}
+    >
+      {ordered && <Box component="span" sx={{ minWidth: 26, fontWeight: 800, color: '#111' }}>{s.no}</Box>}
+      <span>{guideTitleOf(s, frameNo)}</span>
+      {groupTag && <Box component="span" sx={{ fontSize: 11.5, color: '#999', whiteSpace: 'nowrap' }}>({groupTag})</Box>}
+    </Box>
+  );
+};
+
+const GuideToc = ({ part1, part2, frameGroup, frameNo }) => (
+  <Box id="guide-toc" sx={{ mb: 4, p: { xs: 2, md: 2.5 }, border: '1px solid #e3e8ef', borderRadius: 2, bgcolor: '#fafbfc', scrollMarginTop: 90 }}>
+    <Typography sx={{ fontSize: 16, fontWeight: 800, mb: 1.5 }}>목차</Typography>
+    <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr' }, columnGap: 4, rowGap: 2 }}>
+      <Box>
+        <Typography sx={{ fontSize: 13, fontWeight: 700, color: '#2e7d32', mb: 0.5 }}>① 쇼핑몰 오픈까지</Typography>
+        {part1.map((s) => <TocLink key={s.id} s={s} ordered frameGroup={frameGroup} frameNo={frameNo} />)}
+      </Box>
+      <Box>
+        <Typography sx={{ fontSize: 13, fontWeight: 700, color: '#2e6bd6', mb: 0.5 }}>② 메뉴별 상세 안내</Typography>
+        {part2.map((s) => <TocLink key={s.id} s={s} frameGroup={frameGroup} frameNo={frameNo} />)}
+      </Box>
+    </Box>
+  </Box>
+);
+
 const GuideBody = ({ showRouteButtons = false, brandId, frameGroup = null, frameNo = null }) => {
   const router = useRouter();
   // 프레임을 알면 자기 계열 항목만 남긴다. 모르면(신청 전 랜딩) 전부 두고 꼬리표만 붙인다.
   const forFrame = (list) => (frameGroup ? list.filter((s) => !s.groups || s.groups.includes(frameGroup)) : list);
+  const part1 = forFrame(GUIDE_PART1);
+  const part2 = forFrame(GUIDE_PART2);
   return (
     <>
+      <GuideToc part1={part1} part2={part2} frameGroup={frameGroup} frameNo={frameNo} />
+
+      {/* 긴 문서라 읽다가 목차로 돌아갈 길을 늘 둔다.
+          오른쪽 아래 구석엔 레이아웃의 「맨 위로」 둥근 버튼(오른쪽 약 46px·아래 약 64px, 40px)이 있다 — 그 왼쪽 옆에 나란히 둔다. */}
+      <Button
+        href="#guide-toc" onClick={이동('guide-toc')} variant="contained" size="small"
+        startIcon={<Icon icon="mdi:format-list-bulleted" />}
+        sx={{ position: 'fixed', right: 100, bottom: 69, zIndex: 1100, borderRadius: 5, boxShadow: 3, bgcolor: '#111', '&:hover': { bgcolor: '#333' } }}
+      >
+        목차
+      </Button>
+
       <Typography sx={{ fontSize: 18, fontWeight: 800, mb: 0.5 }}>① 쇼핑몰 오픈까지 — 이 순서대로</Typography>
       <Typography sx={{ fontSize: 13, color: '#999', mb: 2 }}>앞 단계가 뒤 단계의 전제입니다.</Typography>
       <Stack spacing={2}>
-        {forFrame(GUIDE_PART1).map((s) => (
+        {part1.map((s) => (
           <GuideCard key={s.id} s={s} ordered showRouteButtons={showRouteButtons} brandId={brandId} router={router} frameGroup={frameGroup} frameNo={frameNo} />
         ))}
       </Stack>
@@ -192,7 +246,7 @@ const GuideBody = ({ showRouteButtons = false, brandId, frameGroup = null, frame
       <Typography sx={{ fontSize: 18, fontWeight: 800, mb: 0.5 }}>② 메뉴별 상세 안내</Typography>
       <Typography sx={{ fontSize: 13, color: '#999', mb: 2 }}>각 메뉴가 어떤 역할을 하는지 항목별로 정리했습니다. 특별한 순서 없이, 필요할 때 찾아보세요.</Typography>
       <Stack spacing={2}>
-        {forFrame(GUIDE_PART2).map((s) => (
+        {part2.map((s) => (
           <GuideCard key={s.id} s={s} showRouteButtons={showRouteButtons} brandId={brandId} router={router} frameGroup={frameGroup} frameNo={frameNo} />
         ))}
       </Stack>

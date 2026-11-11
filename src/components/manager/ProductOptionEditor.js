@@ -353,23 +353,23 @@ const ProductOptionEditor = ({ item, setItem, disabled = false }) => {
                     <Stack spacing={0.35}>
                         {요약.필수.map((g) => (
                             <Typography key={'r' + g.name} sx={{ fontSize: 13 }}>
-                                · <b>{g.name}</b> — 반드시 골라야 합니다 ({g.n}개 중 1개)
+                                · <b>{g.name}</b>: 반드시 골라야 합니다 ({g.n}개 중 1개)
                                 {조합형 ? ' · 조합별 가격' : ''}
                             </Typography>
                         ))}
                         {요약.추가.length > 0 &&
                             <Typography sx={{ fontSize: 13 }}>
-                                · <b>추가 상품</b> — 원하는 것만 고릅니다 ({요약.추가.map((o) =>
+                                · <b>추가 상품</b>: 원하는 것만 고릅니다 ({요약.추가.map((o) =>
                                     `${o.name}${o.price ? ` +${o.price.toLocaleString()}원` : ''}`).join(', ')})
                             </Typography>}
                         {요약.입력.map((f) => (
                             <Typography key={'f' + f.label} sx={{ fontSize: 13 }}>
-                                · <b>{f.label}</b> — 손님이 직접 적습니다{f.required ? ' (필수)' : ' (선택)'}
+                                · <b>{f.label}</b>: 손님이 직접 적습니다{f.required ? ' (필수)' : ' (선택)'}
                             </Typography>
                         ))}
                         {요약.한정 > 0 &&
                             <Typography sx={{ fontSize: 13 }}>
-                                · <b>한정 상품</b> — 1인 {요약.한정}개까지 · 회원만 구매
+                                · <b>한정 상품</b>: 1인 {요약.한정}개까지 · 회원만 구매
                             </Typography>}
                         {요약.필수.length === 0 && 요약.추가.length === 0 &&
                             <Typography sx={{ fontSize: 13, color: 'text.disabled' }}>
@@ -398,11 +398,11 @@ const ProductOptionEditor = ({ item, setItem, disabled = false }) => {
                     예전엔 활성 모드 한 줄만 떠서 무엇이 다른지 몰랐다(가맹점 지적). */}
                 <Stack spacing={0.5} sx={{ mt: 0.25 }}>
                     <Typography sx={{ fontSize: 12, color: 조합형 ? 'text.disabled' : 'text.primary', lineHeight: 1.5 }}>
-                        <b>따로 고르기</b> — 옵션마다 가격·재고를 각각 매깁니다. 손님이 고른 옵션들의 추가금이 합산됩니다.
+                        <b>따로 고르기</b>: 옵션마다 가격·재고를 각각 매깁니다. 손님이 고른 옵션들의 추가금이 합산됩니다.
                         <span style={{ color: '#9aa0a6' }}> (예: 화이트+0원, 사이즈 L+2,000원 → 화이트·L 선택 시 판매가+2,000원)</span>
                     </Typography>
                     <Typography sx={{ fontSize: 12, color: 조합형 ? 'text.primary' : 'text.disabled', lineHeight: 1.5 }}>
-                        <b>조합으로 고르기</b> — 색상×사이즈처럼 옵션을 조합한 경우마다 가격·재고를 따로 정합니다.
+                        <b>조합으로 고르기</b>: 색상×사이즈처럼 옵션을 조합한 경우마다 가격·재고를 따로 정합니다.
                         <span style={{ color: '#9aa0a6' }}> (예: 검정/M만 품절, 빨강/L만 +3,000원처럼 조합별로 다르게)</span>
                     </Typography>
                 </Stack>
@@ -501,7 +501,7 @@ const ProductOptionEditor = ({ item, setItem, disabled = false }) => {
             {/* 한정판 — 1인당 구매 개수 -------------------------------------------- */}
             <Stack spacing={1}>
                 {라벨('한정판 (1인당 구매 개수)')}
-                {도움말('비우면 제한 없습니다. 숫자를 넣으면 그 상품은 회원만 살 수 있습니다 — 비회원은 같은 사람인지 확인할 방법이 없어 제한이 지켜지지 않습니다.')}
+                {도움말('비우면 제한 없습니다. 숫자를 넣으면 그 상품은 회원만 살 수 있습니다. 비회원은 같은 사람인지 확인할 방법이 없어 제한이 지켜지지 않습니다.')}
                 <TextField
                     size="small" sx={{ width: 200 }} type="number" placeholder="제한 없음"
                     label="1인 최대 구매 수량"
@@ -510,7 +510,7 @@ const ProductOptionEditor = ({ item, setItem, disabled = false }) => {
                     InputProps={음수막기속성}
                 />
                 {Number(item?.purchase_limit) > 0 &&
-                    도움말('⚠ 이 상품은 비회원이 구매할 수 없게 됩니다. 취소된 주문은 개수에서 빠집니다.')}
+                    도움말('이 상품은 비회원이 구매할 수 없게 됩니다. 취소된 주문은 개수에서 빠집니다.')}
             </Stack>
 
             <Divider />

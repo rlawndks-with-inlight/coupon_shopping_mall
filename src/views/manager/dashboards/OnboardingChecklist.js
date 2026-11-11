@@ -200,12 +200,12 @@ const OnboardingChecklist = () => {
             {requiredAllDone ? (
               <>
                 <Box component="span" sx={{ color: mainColor, fontWeight: 700 }}>완료</Box>
-                <Box component="span" sx={{ color: '#888' }}> — 판매를 시작할 수 있어요. 이 안내는 우측 상단에서 접어 둘 수 있습니다.</Box>
+                <Box component="span" sx={{ color: '#888' }}>. 판매를 시작할 수 있습니다. 이 안내는 우측 상단에서 접어 둘 수 있습니다.</Box>
               </>
             ) : (
               <>
                 <Box component="span" sx={{ color: '#d33', fontWeight: 700 }}>아직</Box>
-                <Box component="span" sx={{ color: '#888' }}> — 카테고리·상품·결제수단이 모두 완료되면 판매가 시작됩니다.</Box>
+                <Box component="span" sx={{ color: '#888' }}>. 카테고리·상품·결제수단이 모두 완료되면 판매가 시작됩니다.</Box>
               </>
             )}
           </Typography>

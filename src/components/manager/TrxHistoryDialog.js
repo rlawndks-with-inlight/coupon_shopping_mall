@@ -216,7 +216,7 @@ const TrxHistoryDialog = ({ open, onClose, trxId }) => {
                 {!loading && !failed && 메모가능 &&
                     <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1} sx={{ p: 2, alignItems: { sm: 'flex-start' } }}>
                         <TextField size="small" multiline minRows={1} maxRows={4} fullWidth
-                            placeholder="메모 남기기 (예: 고객과 통화 — 교환 접수)"
+                            placeholder="메모 남기기 (예: 고객과 통화, 교환 접수)"
                             value={새메모} disabled={바쁨}
                             inputProps={{ maxLength: 메모최대 }}
                             onChange={(e) => set새메모(e.target.value)} />

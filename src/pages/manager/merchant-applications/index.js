@@ -179,7 +179,7 @@ const MerchantApplicationsPage = () => {
         {detail && (
           <>
             <DialogTitle sx={{ fontWeight: 800 }}>
-              신청 상세 — #{detail.id} {detail.business_name}
+              신청 상세 #{detail.id} · {detail.business_name}
               <Box sx={{ ml: 1, display: 'inline-block' }}>
                 <StatusChip status={detail.status} />
               </Box>
@@ -199,8 +199,8 @@ const MerchantApplicationsPage = () => {
                   value={(() => {
                     const f = findFrameByKey(detail.selected_frame);
                     if (!f) return detail.selected_frame || '---';
-                    if (f.no == null) return `(판매중단) — ${f.title}`;
-                    return `${String(f.no).padStart(2, '0')} — ${f.title}`;
+                    if (f.no == null) return `(판매중단) ${f.title}`;
+                    return `${String(f.no).padStart(2, '0')} · ${f.title}`;
                   })()}
                 />
                 <DetailRow

@@ -81,11 +81,11 @@ for (const id of ['menu-design-shop', 'menu-design-column', 'category']) {
 }
 
 // ── 4. 제목도 좁힌다 ─────────────────────────────────────────────────────
-eq('프레임1 제목', guideTitleOf(섹션('menu-design-shop'), 1), '디자인관리 — 프레임1');
-eq('프레임4 제목', guideTitleOf(섹션('menu-design-column'), 4), '디자인관리 — 프레임4');
-eq('프레임 모를 때 제목', guideTitleOf(섹션('menu-design-shop'), null), '디자인관리 — 프레임1·2');
+eq('프레임1 제목', guideTitleOf(섹션('menu-design-shop'), 1), '디자인관리 (프레임1)');
+eq('프레임4 제목', guideTitleOf(섹션('menu-design-column'), 4), '디자인관리 (프레임4)');
+eq('프레임 모를 때 제목', guideTitleOf(섹션('menu-design-shop'), null), '디자인관리 (프레임1·2)');
 // 번호 없는 틀(판매 중단)은 계열 제목 그대로 — 없는 번호를 지어내지 않는다
-eq('번호 없는 틀 제목', guideTitleOf(섹션('menu-design-shop'), frameNoOf({ shop_demo_num: 4 })), '디자인관리 — 프레임1·2');
+eq('번호 없는 틀 제목', guideTitleOf(섹션('menu-design-shop'), frameNoOf({ shop_demo_num: 4 })), '디자인관리 (프레임1·2)');
 
 // ── 5. 화면 배선 ─────────────────────────────────────────────────────────
 const body = 읽기('src/components/manager/GuideBody.js');

@@ -227,8 +227,8 @@ const GuideBody = ({ showRouteButtons = false, brandId, frameGroup = null, frame
         목차
       </Button>
 
-      <Typography sx={{ fontSize: 18, fontWeight: 800, mb: 0.5 }}>① 쇼핑몰 오픈까지 — 이 순서대로</Typography>
-      <Typography sx={{ fontSize: 13, color: '#999', mb: 2 }}>앞 단계가 뒤 단계의 전제입니다.</Typography>
+      <Typography sx={{ fontSize: 18, fontWeight: 800, mb: 0.5 }}>① 쇼핑몰 오픈까지 (이 순서대로)</Typography>
+      <Typography sx={{ fontSize: 13, color: '#999', mb: 2 }}>앞 단계를 해 두어야 뒤 단계를 할 수 있습니다.</Typography>
       <Stack spacing={2}>
         {part1.map((s) => (
           <GuideCard key={s.id} s={s} ordered showRouteButtons={showRouteButtons} brandId={brandId} router={router} frameGroup={frameGroup} frameNo={frameNo} />
@@ -237,7 +237,7 @@ const GuideBody = ({ showRouteButtons = false, brandId, frameGroup = null, frame
 
       <Box sx={{ my: 3, p: 2, borderRadius: 2, bgcolor: '#eaf7ee', border: '1px solid #cbe6d2' }}>
         <Typography sx={{ fontSize: 14, fontWeight: 700, color: '#2e7d32' }}>
-          ✅ 카테고리 · 상품 · 결제수단이 모두 준비되면 판매가 시작됩니다.
+          카테고리 · 상품 · 결제수단이 모두 준비되면 판매가 시작됩니다.
         </Typography>
       </Box>
 

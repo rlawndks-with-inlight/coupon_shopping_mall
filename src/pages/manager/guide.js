@@ -36,8 +36,8 @@ const GuidePage = () => {
           {frameGroup && (
             <Box sx={{ p: 1.5, borderRadius: 1.5, bgcolor: '#f5f7fa', border: '1px solid #e3e8ef' }}>
               <Typography sx={{ fontSize: 13, color: '#455' }}>
-                이 몰은 <b>{frameNo ? `프레임${frameNo}` : FRAME_GROUP_LABEL[frameGroup]}</b>입니다. 아래 안내는 이 프레임에 해당하는 내용만 보여드립니다 —
-                다른 프레임에만 있는 메뉴는 관리자 화면에도 나타나지 않습니다.
+                이 몰은 <b>{frameNo ? `프레임${frameNo}` : FRAME_GROUP_LABEL[frameGroup]}</b>입니다. 아래 안내에는 이 프레임에 해당하는 내용만 나옵니다.
+                다른 프레임에만 있는 메뉴는 이 관리자 화면에도 없습니다.
               </Typography>
             </Box>
           )}

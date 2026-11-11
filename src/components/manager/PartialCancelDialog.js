@@ -179,7 +179,7 @@ const PartialCancelDialog = ({ open, onClose, trxId, onDone, onFullCancel }) => 
                             <Typography sx={{ fontSize: 20, fontWeight: 800 }}>{commarNumber(예상액)}원</Typography>
                         </Stack>
                         {reason &&
-                            <Typography sx={{ fontSize: 12, color: 'text.secondary' }}>사유 — {reason}</Typography>}
+                            <Typography sx={{ fontSize: 12, color: 'text.secondary' }}>사유: {reason}</Typography>}
                         {state?.shipped &&
                             <Alert severity="error" sx={{ py: 0.5 }}><Typography variant="caption">출고된 주문을 회수 확인 후 취소합니다. 이 내용은 상태 변경 이력에 남습니다.</Typography></Alert>}
                         <Alert severity={전부취소 ? 'info' : 'warning'} sx={{ py: 0.5 }}>
@@ -209,7 +209,7 @@ const PartialCancelDialog = ({ open, onClose, trxId, onDone, onFullCancel }) => 
                             상품이 이미 나갔으므로 환불하면 상품과 돈이 둘 다 손님에게 갈 수 있습니다. 상품을 돌려받았거나 돌려받기로 손님과 합의한 뒤 취소해 주세요.
                         </Typography>
                         <FormControlLabel sx={{ mt: 0.5 }} control={<Checkbox size="small" checked={회수확인} onChange={(e) => set회수확인(e.target.checked)} />}
-                            label={<Typography variant="body2">상품을 회수했거나 회수하기로 손님과 합의했습니다 — 출고된 주문을 취소합니다</Typography>} />
+                            label={<Typography variant="body2">상품을 회수했거나 회수하기로 손님과 합의했습니다. 출고된 주문을 취소합니다.</Typography>} />
                     </Alert>}
 
                 {/* 지원 안 하는 PG 에 부분취소를 걸면 전액이 취소된다 — 아예 못 누르게 한다 */}
@@ -229,7 +229,7 @@ const PartialCancelDialog = ({ open, onClose, trxId, onDone, onFullCancel }) => 
                                     {요청줄.length > 0
                                         ? ` — ${요청줄.map((l) => `${l.order_name}${옵션글(l) ? ` (${옵션글(l)})` : ''} ${Math.min(Number(l.requested_count), l.remain_count)}개`).join(', ')}`
                                         : ''}
-                                    . 요청 범위로 채워 <b>잠겨</b> 있습니다 — 다르게 취소하려면 아래 '직접 조정'을 켜세요.
+                                    . 요청 범위로 채워 <b>잠겨</b> 있습니다. 다르게 취소하려면 아래 '직접 조정'을 켜세요.
                                     {state?.request_reason ? ` · 사유: ${state.request_reason}` : ''}
                                 </Typography>
                             </Alert>

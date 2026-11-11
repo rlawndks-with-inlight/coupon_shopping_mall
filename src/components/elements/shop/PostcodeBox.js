@@ -16,9 +16,14 @@ import { postCodeStyle } from 'src/components/elements/styled-components';
 //
 //   DOM 을 지우는 일은 React 에게 맡긴다 — autoClose 를 끄고, 닫는 것은 우리 상태로 한다.
 //   그래서 onComplete 를 넘길 때는 반드시 그 안에서 창을 닫아야 한다(안 그러면 계속 떠 있는다).
+// 스크립트 주소 — 카카오 공지(2026-11): t1.daumcdn.net 도메인이 2026-11-30 에 종료되니 t1.kakaocdn.net 으로 바꾸라.
+// 라이브러리(react-daum-postcode 3.1.3)의 기본값이 옛 주소라 여기서 덮어쓴다. 검색창 상단 공지도 이걸 바꾸면 사라진다.
+const 우편번호스크립트 = 'https://t1.kakaocdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js';
+
 const PostcodeBox = ({ onComplete, style, ...rest }) => (
   <DaumPostcode
     {...rest}
+    scriptUrl={우편번호스크립트}
     style={{ ...postCodeStyle, ...(style ?? {}) }}
     autoClose={false}
     onComplete={onComplete}

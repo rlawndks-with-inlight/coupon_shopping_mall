@@ -929,7 +929,28 @@ const ProductEdit = () => {
     setSelectedCategoryIds(selectedCategoryIds.filter((x) => Number(x) !== Number(cid)));
   };
 
-  const onSave = async (type, sort, 영향확인됨 = false) => {
+  // 「신규 상품으로 등록」(복사)은 원본에서 번호(id)를 떼어 새것으로 보낸다.
+  //   · 옵션그룹·옵션·입력항목은 서버가 id 가 있으면 '그 상품의 기존 행 수정'(WHERE product_id=새 상품)으로
+  //     처리한다 — 새 상품엔 그 행이 없으니 아무것도 안 들어가 옵션이 통째로 빠졌다.
+  //   · 사진은 조회 때 개별·상세 사진이 한 목록(allImages)으로 양쪽에 같이 실려 온다. 그대로 보내면
+  //     개별사진에 빈 칸이, 상세사진에 중복이 생겼다(원본 3·3장 → 복사본 6·6장).
+  //   그래서 지운 것을 빼고, 사진은 제 칸 값이 있는 것만 남기고, id 를 모두 뗀다.
+  const 복사본으로 = (it) => {
+    const 살아있는 = (list) => (Array.isArray(list) ? list : []).filter((x) => x?.is_delete != 1);
+    const id떼기 = ({ id, product_id, group_id, ...rest }) => rest;
+    return {
+      ...it,
+      groups: 살아있는(it?.groups).map((g) => ({ ...id떼기(g), options: 살아있는(g?.options).map(id떼기) })),
+      characters: 살아있는(it?.characters).map(id떼기),
+      order_form_fields: 살아있는(it?.order_form_fields).map(id떼기),
+      combinations: (it?.combinations ?? []).map(id떼기),
+      sub_images: 살아있는(it?.sub_images).filter((x) => x?.product_sub_img || x?.product_sub_file).map(id떼기),
+      description_images: 살아있는(it?.description_images).filter((x) => x?.product_description_img || x?.product_description_file).map(id떼기),
+    };
+  };
+  const onSave = (type, sort, 영향확인됨 = false) => 저장하기(type, sort, 영향확인됨, type == 'copy' ? 복사본으로(item) : item);
+  // item 을 인자로 받아 바깥 상태를 가린다 — 복사일 때 바꾼 사본으로 저장한다.
+  const 저장하기 = async (type, sort, 영향확인됨, item) => {
     // 필수값 검증.
     //
     // 예전엔 옵션 변동가 NaN 검사 하나뿐이라, 상품명이 비고 판매가가 0 인 상품이 그대로

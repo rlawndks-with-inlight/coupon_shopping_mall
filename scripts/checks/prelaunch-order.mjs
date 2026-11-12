@@ -25,7 +25,7 @@ t('결과페이지: 0001 은 확인 중 → confirm 을 몇 번 다시 묻는다
     && 계산({}) === undefined);
 }
 t('결과페이지: CANCEL(결제창 닫음)·PV999(손님 취소)는 「결제가 취소되었습니다」', /const isCanceled = \['CANCEL', 'PV999'\]\.includes/.test(결과) && /translate\('결제가 취소되었습니다\.'\)/.test(결과));
-t('결과페이지: 확인 중·불명일 때는 「장바구니로」가 아니라 주문내역으로', /\(isSuccess \|\| 확인불명\)\s*\? \(user\?\.id \? '\/shop\/auth\/history' : '\/shop\/auth\/order-check'\)/.test(결과) && /disabled=\{확인중\}/.test(결과));
+t('결과페이지: 확인 중·불명일 때는 「장바구니로」가 아니라 주문내역으로(비회원은 그 주문 조회로, guest-lookup-entry.mjs)', /\(isSuccess \|\| 확인불명\)\s*\? \(user\?\.id \? '\/shop\/auth\/history' : 비회원조회주소\(q\.ord_num\)\)/.test(결과) && /disabled=\{확인중\}/.test(결과));
 
 if (!백엔드있음) {
   console.log('  (백엔드 없음 — 서버 검사 건너뜀)');

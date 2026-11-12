@@ -1,4 +1,5 @@
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
+import { useRouter } from 'next/router';
 import { Box, Button, Card, CardContent, CardHeader, Divider, Stack, TextField, Typography } from '@mui/material';
 import toast from 'react-hot-toast';
 import styled from 'styled-components';
@@ -11,6 +12,7 @@ import { useLocales } from 'src/locales';
 import PasswordField from 'src/components/elements/PasswordField';
 import ReviewWriteButton from 'src/components/elements/shop/review/ReviewWriteButton';
 import { reviewSettings } from 'src/utils/review';
+import { 비회원조회꺼내기 } from 'src/utils/guest-lookup';
 
 const Wrappers = styled.div`
   max-width: 640px;
@@ -114,6 +116,8 @@ const OrderDetail = ({ order, reviewLines, guest, onReviewDone }) => {
 
 // 비회원 주문조회 — 전화번호 + 주문비밀번호.
 // 백엔드: transactions/0 GET { brand_id, buyer_phone, password } → 해당 브랜드의 매칭 주문 배열.
+// 비회원 조회의 입구는 이 화면 하나다(2026-11-12). 로그인 화면의 조회 칸은 입력값을 들고 이리로 온다(src/utils/guest-lookup.js),
+// 결제 직후 「주문 조회하기」는 주소에 주문번호(?ord=)를 실어 와서, 조회하면 목록 대신 그 주문 상세가 바로 열린다(취소요청 버튼이 거기 있다).
 const OrderCheck = () => {
   const { translate } = useLocales();
   const { themeDnsData } = useSettingsContext();
@@ -125,6 +129,10 @@ const OrderCheck = () => {
   const [cred, setCred] = useState(null);
   const [reviewLines, setReviewLines] = useState({});
   const reviewOn = reviewSettings(themeDnsData);
+  const router = useRouter();
+  // 결제 직후 들어온 주문번호 — 조회 결과에 있으면 그 주문 상세를 바로 연다
+  const 열주문 = useRef('');
+  const 넘김처리됨 = useRef(false);
 
   // 비회원 후기 판정 — 몸통으로 보낸다(비밀번호가 주소·로그에 남지 않게).
   const loadReviewLines = async (c) => {
@@ -135,16 +143,18 @@ const OrderCheck = () => {
     setReviewLines(map);
   };
 
-  const onSearch = async () => {
-    if (!form.buyer_phone || !form.password) {
+  // 넘김: 로그인 화면에서 들고 온 값으로 바로 조회할 때. 버튼·엔터·취소 뒤 다시 조회는 입력칸 값을 쓴다.
+  const onSearch = async (넘김) => {
+    const 값 = typeof 넘김?.buyer_phone === 'string' ? 넘김 : form;
+    if (!값.buyer_phone || !값.password) {
       toast.error(translate('전화번호와 주문 비밀번호를 입력해 주세요.'));
       return;
     }
     setLoading(true);
     const data = await apiManager('transactions/0', 'get', {
       brand_id: themeDnsData?.id,
-      buyer_phone: form.buyer_phone,
-      password: form.password,
+      buyer_phone: 값.buyer_phone,
+      password: 값.password,
     });
     setLoading(false);
     const list = Array.isArray(data) ? data : (data && Object.keys(data).length > 0 ? [data] : []);
@@ -155,16 +165,28 @@ const OrderCheck = () => {
       return;
     }
     setOrders(list);
-    const c = { buyer_phone: form.buyer_phone, password: form.password };
+    const c = { buyer_phone: 값.buyer_phone, password: 값.password };
     setCred(c);
     loadReviewLines(c);
     // 취소요청 직후에도 이 함수로 다시 조회한다. 그때 보던 주문을 그대로 열어 둬야
     // 손님이 "요청이 됐나" 를 바로 확인할 수 있다(예전 방식대로면 목록으로 튕긴다).
     setSelected((prev) => {
       const 보던것 = prev?.ord_num && list.find((o) => o?.ord_num === prev.ord_num);
-      return 보던것 || (list.length === 1 ? list[0] : null);
+      const 방금주문 = 열주문.current && list.find((o) => o?.ord_num === 열주문.current);
+      return 보던것 || 방금주문 || (list.length === 1 ? list[0] : null);
     });
   };
+
+  // 처음 열릴 때 한 번: 주소의 주문번호를 기억하고, 로그인 화면에서 넘긴 전화번호·비밀번호가 있으면 채워서 바로 조회한다
+  useEffect(() => {
+    if (!router.isReady || 넘김처리됨.current) return;
+    넘김처리됨.current = true;
+    열주문.current = String(router.query?.ord || '');
+    const 넘김 = 비회원조회꺼내기();
+    if (!넘김) return;
+    setForm(넘김);
+    if (넘김.buyer_phone && 넘김.password) onSearch(넘김);
+  }, [router.isReady]);
 
   return (
     <Wrappers>

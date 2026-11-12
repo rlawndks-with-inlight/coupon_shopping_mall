@@ -9,6 +9,7 @@ import { useAuthContext } from 'src/layouts/manager/auth/useAuthContext';
 import { useLocales } from 'src/locales';
 import { apiManager } from 'src/utils/api';
 import { clearOrderDraft, peekRetryDraft } from 'src/utils/order-draft';
+import { 비회원조회주소 } from 'src/utils/guest-lookup';
 
 // 공용 결제결과 화면 — 데모 구분 없는 단일 화면.
 //
@@ -306,7 +307,7 @@ const { user } = useAuthContext();
         <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1.5} sx={{ mt: 3 }}>
           {확인불명 ? (
             <Button fullWidth variant="outlined" color="inherit"
-              onClick={() => router.push(user?.id ? '/shop/auth/history' : '/shop/auth/order-check')}>
+              onClick={() => router.push(user?.id ? '/shop/auth/history' : 비회원조회주소(q.ord_num))}>
               {user?.id ? translate("주문내역 보기") : translate("주문 조회하기")}
             </Button>
           ) : (
@@ -326,7 +327,7 @@ const { user } = useAuthContext();
         <Button fullWidth variant="contained" disabled={확인중}
           onClick={() => router.push(
             (isSuccess || 확인불명)
-              ? (user?.id ? '/shop/auth/history' : '/shop/auth/order-check')
+              ? (user?.id ? '/shop/auth/history' : 비회원조회주소(q.ord_num)) // 비회원은 조회하면 이 주문 상세가 바로 열린다
               : '/shop/auth/cart'
           )}>
           {(isSuccess || 확인중 || 확인불명) ? (user?.id ? translate("주문내역 보기") : translate("주문 조회하기")) : translate("장바구니로")}

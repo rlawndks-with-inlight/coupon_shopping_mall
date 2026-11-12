@@ -9,6 +9,7 @@ import styled from 'styled-components';
 import { useLocales } from 'src/locales';
 import { getPriceUnitByLang } from 'src/utils/function';
 import { reviewSettings } from 'src/utils/review';
+import { 비회원조회주소 } from 'src/utils/guest-lookup';
 
 const Wrappers = styled.div`
   max-width: 720px;
@@ -101,7 +102,7 @@ const { user } = useAuthContext();
           <Typography variant="caption" sx={{ color: 'text.secondary', display: 'block', textAlign: 'center', mb: 2 }}>{translate('승인번호·배송현황은 주문내역에서 확인하실 수 있습니다.')}<br />
             {/* 한 문장을 링크 앞뒤로 쪼개 놓으면 언어마다 어순이 달라 조각이 뒤엉킨다
                 (한국어는 서술어가 끝에 오고 영어는 앞에 온다). 문장을 통째로 링크로 둔다. */}
-            <Box component="a" onClick={() => router.push('/shop/auth/order-check')}
+            <Box component="a" onClick={() => router.push(비회원조회주소(order?.ord_num))}
               sx={{ color: 'primary.main', textDecoration: 'underline', cursor: 'pointer' }}>
               {translate('비회원은 전화번호와 주문 비밀번호로 조회할 수 있습니다.')}
             </Box>
@@ -127,7 +128,7 @@ const { user } = useAuthContext();
             결제 직후 가장 많이 눌리는 버튼이라 '주문이 사라졌다'로 읽힌다.
             비회원은 전화번호+주문비밀번호로 보는 주문조회로 보낸다. */}
         <Button fullWidth variant="contained"
-          onClick={() => router.push(user?.id ? '/shop/auth/history' : '/shop/auth/order-check')}>
+          onClick={() => router.push(user?.id ? '/shop/auth/history' : 비회원조회주소(order?.ord_num))}>
           {user?.id ? translate('주문내역 보기') : translate('주문 조회하기')}
         </Button>
       </Stack>

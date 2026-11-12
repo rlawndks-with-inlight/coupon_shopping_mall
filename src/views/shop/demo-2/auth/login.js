@@ -12,6 +12,7 @@ import toast from 'react-hot-toast';
 import { getOptionLabel } from 'src/utils/shop-util';
 import { formatLang } from 'src/utils/format';
 import PasswordField from 'src/components/elements/PasswordField';
+import { 비회원조회로 } from 'src/utils/guest-lookup';
 
 const Wrapper = styled.div`
 display:flex;
@@ -63,7 +64,6 @@ const LoginDemo = (props) => {
     buyer_phone: '',
     password: ''
   })
-  const [noneUserTrxObj, setNoneUserTrxObj] = useState({});
 
   useEffect(() => {
     if (router.query?.scroll_to) {
@@ -85,24 +85,11 @@ const LoginDemo = (props) => {
     }
 
   }
-  const onCheckNoneUserPay = async () => {
-    let data = await apiManager(`transactions/0`, 'get', noneUserObj);
-    if (data) {
-      // 전화번호 조회는 여러 건(배열)을 반환할 수 있어 안전하게 처리한다.
-      const trx = Array.isArray(data) ? (data[0] ?? {}) : data;
-      setNoneUserTrxObj(trx ?? {});
-    }
+  // 비회원 주문조회는 「비회원 주문조회」 화면 한 곳에서 한다(2026-11-12, src/utils/guest-lookup.js).
+  // 예전엔 여기서 조회해 이 자리에 그렸는데, 여러 건이어도 최근 한 건만 보였고 취소요청·후기가 없었다.
+  const onCheckNoneUserPay = () => {
+    비회원조회로(router, noneUserObj);
   }
-
-  const renderRow = (label, value) => (
-    <>
-      <Row style={{ justifyContent: 'space-between', alignItems: 'flex-start', columnGap: '1rem', padding: '0.85rem 0' }}>
-        <Typography variant='body2' sx={{ color: 'text.secondary', minWidth: '90px' }}>{label}</Typography>
-        <Typography variant='body2' sx={{ fontWeight: 600, textAlign: 'right', wordBreak: 'break-all' }}>{value}</Typography>
-      </Row>
-      <Divider />
-    </>
-  )
 
   return (
     <Wrapper>
@@ -238,57 +225,6 @@ const LoginDemo = (props) => {
           </>}
       </ContentWrapper>
 
-      {Object.keys(noneUserTrxObj).length > 0 &&
-        <ResultWrapper>
-          <Card variant='outlined' sx={{ p: { xs: 2.5, sm: 4 }, borderRadius: '4px' }}>
-            <Typography variant='h6' sx={{ fontWeight: 700, mb: 1 }}>{translate('주문조회 결과')}</Typography>
-            <Divider sx={{ mb: 1 }} />
-            {renderRow(translate('주문번호'), noneUserTrxObj?.ord_num)}
-            {renderRow(translate('승인번호'), noneUserTrxObj?.appr_num)}
-            {renderRow(translate('구매자명'), noneUserTrxObj?.buyer_name)}
-            {renderRow(translate('구매자휴대폰번호'), noneUserTrxObj?.buyer_phone)}
-            {renderRow(translate('주문현황'), getOrderStatusText(noneUserTrxObj))}
-            {renderRow(translate('송장번호'), noneUserTrxObj?.invoice_num)}
-            <Row style={{ padding: '0.85rem 0', flexDirection: 'column' }}>
-              <Typography variant='body2' sx={{ color: 'text.secondary', mb: 1.5 }}>{translate('주문상세')}</Typography>
-              <Col style={{ rowGap: '1rem' }}>
-                {noneUserTrxObj?.orders && noneUserTrxObj?.orders.map((order, index) => (
-                  <Box key={index} sx={{ backgroundColor: themeObj.grey[100], borderRadius: '4px', p: 2 }}>
-                    <Col style={{ rowGap: '0.35rem' }}>
-                      <Row>
-                        <div style={{ minWidth: '62px', fontWeight: 'bold' }}>No.{index + 1}</div>
-                      </Row>
-                      <Row style={{ flexWrap: 'wrap' }}>
-                        <div style={{ minWidth: '62px', color: themeObj.grey[600] }}>{translate('주문명')}: </div>
-                        <div style={{ wordBreak: 'break-all' }}>{order?.order_name}</div>
-                      </Row>
-                      {order?.groups.length > 0 &&
-                        <Row>
-                          <div style={{ minWidth: '62px', color: themeObj.grey[600] }}>{translate('옵션정보')}: </div>
-                          <Col>
-                            {order?.groups && order?.groups.map((group, idx) => (
-                              <Row key={idx}>
-                                <div style={{ minWidth: '62px', marginRight: '0.25rem' }}>{formatLang(group, 'group_name')}: </div>
-                                {group?.options && group?.options.map((option, idx2) => (
-                                  <>
-                                    <div>{getOptionLabel(option)} </div>{idx2 == group?.options.length - 1 ? '' : <>&nbsp;/&nbsp;</>}
-                                  </>
-                                ))}
-                              </Row>
-                            ))}
-                          </Col>
-                        </Row>}
-                      <Row>
-                        <div style={{ minWidth: '62px', color: themeObj.grey[600] }}>{translate('가격')}: </div>
-                        <div style={{ fontWeight: 600 }}>{commarNumber(order?.order_amount)}</div>
-                      </Row>
-                    </Col>
-                  </Box>
-                ))}
-              </Col>
-            </Row>
-          </Card>
-        </ResultWrapper>}
     </Wrapper>
   )
 }

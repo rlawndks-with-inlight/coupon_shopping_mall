@@ -117,7 +117,7 @@ const OrderExcelDialog = ({ open, onClose, dns, 처음조건, 선택수 = 0, 받
                     </>}
 
                     <Typography variant="caption" color="text.secondary">
-                        파일에는 구매자·받는사람의 이름, 연락처, 주소가 그대로 들어갑니다. 받은 파일은 필요한 곳에만 쓰고 보관에 주의해 주세요.
+                        파일에는 구매자·받는사람의 이름, 연락처, 주소가 그대로 들어갑니다. 받은 파일은 필요한 곳에만 쓰고 보관에 주의해 주세요. 내려받으면 받은 사람과 시각, 건수가 기록됩니다.
                     </Typography>
                 </Stack>
             </DialogContent>

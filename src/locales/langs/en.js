@@ -1141,6 +1141,9 @@ const en = {
   "선택하신 할부 개월로는 결제할 수 없습니다. 할부 개월을 줄여 다시 시도해 주세요.": "The selected installment period is not available. Please choose fewer months and try again.",
   "지금 이 쇼핑몰에서 결제를 진행할 수 없습니다. 판매자에게 문의해 주세요.": "Payment is not available at this store right now. Please contact the seller.",
   "결제사에서 결제를 승인하지 않았습니다. 다른 결제수단을 선택해 주세요.": "The payment provider did not approve the payment. Please choose another payment method.",
+  // 송장 엑셀 등록(관리자, 2026-11-12) — transaction.controller 메시지라 검사가 사전을 요구한다
+  "올린 파일에서 주문을 찾지 못했습니다. 「주문번호」와 「송장번호」 칸이 있는지 확인해 주세요.": "Couldn't find any orders in the uploaded file. Please check that it has the 「주문번호」 (order number) and 「송장번호」 (tracking number) columns.",
+  "한 번에 1,000줄까지 올릴 수 있습니다. 나눠서 올려 주세요.": "You can upload up to 1,000 rows at a time. Please split the file and upload again.",
 };
 
 export default en;

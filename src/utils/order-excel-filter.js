@@ -60,3 +60,9 @@ export const 엑셀조건 = ({ s_dt, e_dt, statuses, search }) => ({
     search: search || '',
     statuses: statuses.join(','),
 });
+
+// 상태 열쇠 → 이름(엑셀 내려받기 기록 화면이 조건을 글로 보여 줄 때)
+export const 상태이름표 = {
+    waiting: '결제대기(입금확인)', 0: '결제대기', 5: '결제완료', 10: '입고완료', 15: '출고완료',
+    20: '배송중', 25: '배송완료', 1: '취소요청', cancelled: '취소완료', failed: '결제실패/미완료',
+};

@@ -285,6 +285,8 @@ export const navConfig = () => {
                 { title: '취소완료', path: PATH_MANAGER.orders.trxCancel + '/2' },
               ],
             },
+            // 엑셀 내려받기 기록 — 최상위 관리자(level 50)만(사장님 요청 2026-11-12). 서버도 50 미만은 막는다.
+            ...(Number(user?.level) >= 50 ? [{ title: '엑셀 내려받기 기록', path: '/manager/orders/excel-logs' }] : []),
           ],
         },
       ],

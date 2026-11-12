@@ -24,6 +24,8 @@ import { 엑셀내려받기 } from 'src/utils/excel';
 import OrderExcelDialog from 'src/components/manager/OrderExcelDialog';
 import { 구매자칸, 상품명칸, 수량칸, 금액칸, 주문번호칸, 구매시간칸, 받는사람칸, 주소칸 } from 'src/components/manager/OrderColumns';
 import { 메뉴상태 } from 'src/utils/order-excel-filter';
+import InvoiceExcelDialog from 'src/components/manager/InvoiceExcelDialog';
+import axios from 'axios';
 
 // 주문서 추가 입력값을 '주문 줄' 단위로 묶는다(위 열 주석 참고).
 const 입력값묶음 = (row) => {
@@ -619,6 +621,7 @@ const TrxList = () => {
   //   화면에서 이미 볼 수 있는 것 이상은 담지 않는다는 뜻이다).
   const [엑셀중, set엑셀중] = useState(false);
   const [엑셀창, set엑셀창] = useState(false);
+  const [송장창, set송장창] = useState(false);
 
   const 줄글 = (row) => (row?.orders ?? []).map((o, i) => {
     const 옵션 = (o?.groups ?? [])
@@ -680,6 +683,8 @@ const TrxList = () => {
       if (잘림) toast.error('건수가 많아 10,000건까지만 받았습니다. 기간을 좁혀 다시 받아 주세요.');
       const 실패사유열 = 체크만 ? 실패목록 : String(조건?.statuses ?? '').split(',').includes('failed');
       엑셀내려받기('주문내역', 엑셀열(실패사유열), 모은것, '주문내역');
+      // 내려받기 기록(최상위 관리자만 봄, 2026-11-12) — 사람은 서버가 로그인으로 정한다. 기록이 실패해도 파일은 이미 받았으니 조용히 넘어간다.
+      axios.post('/api/excel-logs', { kind: 'orders', scope: 체크만 ? 'selected' : 'condition', conditions: 체크만 ? undefined : 조건, row_count: 모은것.length }).catch(() => {});
       set엑셀창(false);
     } finally {
       set엑셀중(false);
@@ -772,12 +777,19 @@ const TrxList = () => {
       <Stack spacing={3}>
         {/* 엑셀 내려받기 — 창에서 기간·상태를 고르거나 체크한 주문만 받는다.
             이 파일에는 이름·전화·주소가 평문으로 들어간다. */}
-        <Row style={{ justifyContent: 'flex-end' }}>
+        <Row style={{ justifyContent: 'flex-end', columnGap: '0.5rem', flexWrap: 'wrap', rowGap: '0.5rem' }}>
+          {/* 송장 엑셀 등록 — 내려받은 엑셀에 송장번호를 적어 올린다(가맹점 요청 2026-11-12). 서버도 관리자(40 이상)만 받는다. */}
+          {!실패목록 && Number(user?.level) >= 40 &&
+            <Button variant="outlined" onClick={() => set송장창(true)}
+              startIcon={<Icon icon="material-symbols:upload" />}>
+              송장 엑셀 등록
+            </Button>}
           <Button variant="outlined" disabled={엑셀중} onClick={() => set엑셀창(true)}
             startIcon={<Icon icon="material-symbols:download" />}>
             {엑셀중 ? '내려받는 중…' : '엑셀 내려받기'}
           </Button>
         </Row>
+        <InvoiceExcelDialog open={송장창} onClose={() => set송장창(false)} onDone={() => onChangePage(searchObj)} dns={themeDnsData} />
         <OrderExcelDialog
           open={엑셀창}
           onClose={() => set엑셀창(false)}

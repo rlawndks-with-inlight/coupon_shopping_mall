@@ -105,7 +105,11 @@ const 목록 = 주석제거(읽기(FRONT_ROOT, 'src/pages/manager/orders/trx/[ty
 const 창 = 주석제거(읽기(FRONT_ROOT, 'src/components/manager/InvoiceExcelDialog.js'));
 const 메뉴 = 읽기(FRONT_ROOT, 'src/layouts/manager/nav/config-navigation.js');
 const 기록화면 = 주석제거(읽기(FRONT_ROOT, 'src/pages/manager/orders/excel-logs.js'));
-t('주문관리: 「송장 엑셀 등록」은 관리자(40 이상)에게, 결제실패 목록엔 없음', /\{!실패목록 && Number\(user\?\.level\) >= 40 &&\s*<Button[^>]*onClick=\{\(\) => set송장창\(true\)\}/.test(목록));
+// 2026-11-12 사장님 결정: 송장 엑셀 등록은 보류(운영 검증 뒤 다시). 단추·창만 감추고 서버·창 코드는 남긴다.
+t('주문관리: 「송장 엑셀 등록」은 보류 중이라 감춘다(켜면 관리자 40 이상, 결제실패 목록엔 없음)',
+  /export const 송장엑셀사용 = false;/.test(창) && /\{송장엑셀사용 && !실패목록 && Number\(user\?\.level\) >= 40 &&\s*<Button[^>]*onClick=\{\(\) => set송장창\(true\)\}/.test(목록)
+  && /\{송장엑셀사용 && <InvoiceExcelDialog/.test(목록));
+t('이용가이드: 보류 중에는 송장 엑셀 등록을 안내하지 않는다', !/송장 엑셀/.test(읽기(FRONT_ROOT, 'src/components/manager/guideContent.js')));
 t('송장 창: JSON 으로 보낸다(multipart 는 필드 500개 제한)', /axios\.post\('\/api\/transactions\/invoice-bulk', \{ rows, apply: apply \? 1 : 0 \}\)/.test(창));
 t('송장 창: 미리 확인 뒤 「N건 저장」, 바뀌는 줄은 경고', /\$\{commarNumber\(저장할수\)\}건 저장/.test(창) && /새 번호로 바뀝니다/.test(창));
 t('주문관리: 내려받은 뒤 기록을 남긴다(실패해도 조용히)', /axios\.post\('\/api\/excel-logs', \{ kind: 'orders'[\s\S]{0,160}\}\)\.catch\(\(\) => \{\}\);/.test(목록));

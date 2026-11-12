@@ -24,7 +24,7 @@ import { 엑셀내려받기 } from 'src/utils/excel';
 import OrderExcelDialog from 'src/components/manager/OrderExcelDialog';
 import { 구매자칸, 상품명칸, 수량칸, 금액칸, 주문번호칸, 구매시간칸, 받는사람칸, 주소칸 } from 'src/components/manager/OrderColumns';
 import { 메뉴상태 } from 'src/utils/order-excel-filter';
-import InvoiceExcelDialog from 'src/components/manager/InvoiceExcelDialog';
+import InvoiceExcelDialog, { 송장엑셀사용 } from 'src/components/manager/InvoiceExcelDialog';
 import axios from 'axios';
 
 // 주문서 추가 입력값을 '주문 줄' 단위로 묶는다(위 열 주석 참고).
@@ -778,8 +778,9 @@ const TrxList = () => {
         {/* 엑셀 내려받기 — 창에서 기간·상태를 고르거나 체크한 주문만 받는다.
             이 파일에는 이름·전화·주소가 평문으로 들어간다. */}
         <Row style={{ justifyContent: 'flex-end', columnGap: '0.5rem', flexWrap: 'wrap', rowGap: '0.5rem' }}>
-          {/* 송장 엑셀 등록 — 내려받은 엑셀에 송장번호를 적어 올린다(가맹점 요청 2026-11-12). 서버도 관리자(40 이상)만 받는다. */}
-          {!실패목록 && Number(user?.level) >= 40 &&
+          {/* 송장 엑셀 등록 — 내려받은 엑셀에 송장번호를 적어 올린다(가맹점 요청 2026-11-12). 서버도 관리자(40 이상)만 받는다.
+              지금은 보류(송장엑셀사용 = false, InvoiceExcelDialog.js 참고). */}
+          {송장엑셀사용 && !실패목록 && Number(user?.level) >= 40 &&
             <Button variant="outlined" onClick={() => set송장창(true)}
               startIcon={<Icon icon="material-symbols:upload" />}>
               송장 엑셀 등록
@@ -789,7 +790,7 @@ const TrxList = () => {
             {엑셀중 ? '내려받는 중…' : '엑셀 내려받기'}
           </Button>
         </Row>
-        <InvoiceExcelDialog open={송장창} onClose={() => set송장창(false)} onDone={() => onChangePage(searchObj)} dns={themeDnsData} />
+        {송장엑셀사용 && <InvoiceExcelDialog open={송장창} onClose={() => set송장창(false)} onDone={() => onChangePage(searchObj)} dns={themeDnsData} />}
         <OrderExcelDialog
           open={엑셀창}
           onClose={() => set엑셀창(false)}

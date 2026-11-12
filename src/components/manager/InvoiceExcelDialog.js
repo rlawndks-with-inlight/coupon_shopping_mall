@@ -17,6 +17,12 @@ import { 송장엑셀읽기 } from 'src/utils/invoice-excel';
 //   ② 「N건 저장」을 누르면 서버가 지금 값으로 다시 판정해 등록·변경 줄만 저장한다. 주문마다 이력에 「(엑셀)」로 남는다.
 // 판정 규칙은 서버 utils.js/invoice-bulk.js 한 곳에 있다(화면은 파일을 읽어 넘기기만 한다).
 
+// 화면에 띄울지 — 사장님 결정(2026-11-12)으로 보류 중. 운영에서 검증한 뒤 다시 켠다.
+//   끌 때 서버 API(POST /api/transactions/invoice-bulk)와 이 창 코드는 그대로 두고 단추만 감췄다.
+//   다시 켤 때 할 일: 1,000줄 제한에 「같음」 줄까지 세는 문제, CSV 한글 인코딩, 중복 줄 표시, 중간 실패 안내(2026-11-12 점검),
+//   이용가이드 「송장 엑셀 등록」 항목·사진(order-invoice-excel) 되살리기.
+export const 송장엑셀사용 = false;
+
 const 결과색 = { 등록: 'success', 변경: 'warning', 같음: 'default', 오류: 'error' };
 const 보일순서 = { 오류: 0, 변경: 1, 등록: 2, 같음: 3 };
 

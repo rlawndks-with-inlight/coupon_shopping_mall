@@ -16,7 +16,7 @@ import { fCurrency } from '../../../../utils/formatNumber';
 // components
 import Iconify from 'src/components/iconify/Iconify';
 import { useSettingsContext } from 'src/components/settings';
-import { getBrandShipping } from 'src/utils/shop-util';
+import { getBrandShipping, 섬안내문 } from 'src/utils/shop-util';
 import { useState } from 'react';
 import { useEffect } from 'react';
 import { useLocales } from 'src/locales';
@@ -63,6 +63,8 @@ export default function CheckoutSummary({
   // 배송비 줄 아래 한 줄 설명("주문당 1회 · 5만원 이상 무료"). 주문서 PC 에서는 상품 목록 아래 요약을 숨기므로
   // 그 요약에 붙어 있던 이 안내를 여기서 보여 준다(2026-09-11). 카트는 표 아래에 따로 적으므로 안 넘긴다.
   shippingNote = '',
+  // 제주·도서산간 추가배송비 { region, fee, blocked } — 주문서가 calcOrderTotals().island 를 넘긴다(카트는 주소를 몰라 안 넘김)
+  island = null,
 }) {
   const { translate } = useLocales();
   const { setting_obj } = themeDnsData;
@@ -153,6 +155,14 @@ export default function CheckoutSummary({
               {shippingNote && <Typography variant="caption" sx={{ color: 'text.secondary', display: 'block', textAlign: 'right', mt: 0.25 }}>{shippingNote}</Typography>}
             </Box>
           )}
+          {Number(island?.fee) > 0 && (
+            <Stack direction="row" justifyContent="space-between">
+              <Typography variant="body2" sx={{ color: 'text.secondary' }}>
+                {translate(island.region === 'jeju' ? '제주 추가배송비' : '도서산간 추가배송비')}
+              </Typography>
+              <Typography variant="subtitle2">+{fCurrency(island.fee)}{getPriceUnitByLang()}</Typography>
+            </Stack>
+          )}
           {enablePoint && (
             <CheckoutPointField themeDnsData={themeDnsData} payData={payData} setPayData={setPayData} total={displayTotal} />
           )}
@@ -169,6 +179,15 @@ export default function CheckoutSummary({
               </Typography> */}
             </Box>
           </Stack>
+          {/* 장바구니(주소를 아직 모름) — 제주·도서산간 추가배송비가 있는 몰이면 미리 알린다. 주문서는 island 를 넘겨 금액 줄로 보여 준다. */}
+          {island === null && 섬안내문() && (
+            <Typography variant="caption" sx={{ color: 'text.secondary', display: 'block' }}>{섬안내문()}</Typography>
+          )}
+          {island?.blocked && (
+            <Typography variant="body2" sx={{ color: 'error.main', fontWeight: 600 }}>
+              {translate(island.region === 'jeju' ? '이 쇼핑몰은 제주 지역으로 배송하지 않습니다. 다른 주소를 선택해 주세요.' : '이 쇼핑몰은 도서산간 지역으로 배송하지 않습니다. 다른 주소를 선택해 주세요.')}
+            </Typography>
+          )}
         </Stack>
       </CardContent>
     </Card>

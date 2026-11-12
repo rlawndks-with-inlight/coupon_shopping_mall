@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Col } from 'src/components/elements/styled-components';
 import { commarNumber } from 'src/utils/function';
-import { getOptionLabel } from 'src/utils/shop-util';
+import { getOptionLabel, 섬추가비 } from 'src/utils/shop-util';
 
 // 주문관리·주문취소관리 표가 같이 쓰는 칸(가맹점 요청 2026-11-12).
 // 칸 순서: 구매자 → 상품명·수량·금액 → 주문번호/승인번호 → 구매시간 → 받는사람 → 주소.
@@ -103,15 +103,22 @@ export const 수량칸 = {
 };
 
 // 결제금액(배송비 포함). 배송비가 붙었으면 아래에 작게 적는다. 취소 원장 줄은 음수(돌려준 금액)다.
+// 제주·도서산간 추가배송비(island_fee)는 줄 배송비에 들어 있다 — 나눠 적는다(「배송비 3,000원 + 제주 3,000원」).
+const 섬이름 = (region) => (region === 'jeju' ? '제주' : region === 'island' ? '도서산간' : '');
 export const 금액칸 = {
   id: 'amount',
   label: '금액',
   action: (row) => {
     const 배송비 = (row?.orders ?? []).reduce((s, o) => s + (Number(o?.delivery_fee) || 0), 0);
+    const 섬비 = Math.max(0, Number(row?.island_fee) || 0);
+    const 기본 = Math.max(0, 배송비 - 섬비);
+    const 글 = 섬비 > 0
+      ? `${기본 > 0 ? `배송비 ${commarNumber(기본)}원` : '무료배송'} + ${섬이름(row?.island_region) || '추가'} ${commarNumber(섬비)}원`
+      : (배송비 > 0 ? `배송비 ${commarNumber(배송비)}원 포함` : '');
     return (
       <div style={{ whiteSpace: 'nowrap', textAlign: 'right' }}>
         <div style={{ fontWeight: 600 }}>{commarNumber(row['amount'])}원</div>
-        {배송비 > 0 ? <div style={작은글}>배송비 {commarNumber(배송비)}원 포함</div> : null}
+        {글 ? <div style={작은글}>{글}</div> : null}
       </div>
     );
   },
@@ -151,6 +158,22 @@ export const 받는사람칸 = {
   sx: 취소빨강,
 };
 
+// 주소 칸의 제주·도서산간 표시 — 주문할 때 저장된 판정(island_region)을 쓰고,
+// 지금 몰 설정이 그 지역 「배송 안 함」이면 빨갛게 알린다(설정을 바꾸기 전에 들어온 주문 — 손님과 연락하거나 전체 취소).
+const 섬표시 = ({ row }) => {
+  if (row?.is_cancel == 1) return null;
+  const 지금 = 섬추가비({ zonecode: row?.zonecode, addr: row?.addr, country_code: row?.country_code });
+  const region = row?.island_region || ((지금.region === 'jeju' || 지금.region === 'island') ? 지금.region : '');
+  if (!region) return null;
+  const 막힘 = 지금.blocked && 지금.region === region;
+  return (
+    <div style={{ marginTop: '4px', display: 'flex', gap: '4px', flexWrap: 'wrap' }}>
+      <span style={{ fontSize: '12px', fontWeight: 600, padding: '0 6px', borderRadius: '10px', background: region === 'jeju' ? '#e6f0fa' : '#fff4dd', color: region === 'jeju' ? '#1f6fb2' : '#a15c00' }}>{섬이름(region)}</span>
+      {막힘 && <span style={{ fontSize: '12px', fontWeight: 600, padding: '0 6px', borderRadius: '10px', background: '#fde9e9', color: '#c23b3b' }}>배송 안 함 지역</span>}
+    </div>
+  );
+};
+
 export const 주소칸 = {
   id: 'addr',
   label: '주소',
@@ -158,6 +181,7 @@ export const 주소칸 = {
     <Col style={{ minWidth: '200px' }}>
       <div>{row['zonecode'] ? `(${row['zonecode']}) ` : ''}{row['addr'] ?? '---'}</div>
       <div>{row['detail_addr'] ?? ''}</div>
+      <섬표시 row={row} />
       {/* 배송 요청사항 — 송장에 옮겨 적어야 하는 값이라 주소 바로 아래에 붙인다. */}
       {row['delivery_memo'] &&
         <div style={{ marginTop: '4px', padding: '4px 8px', background: '#fff8e1', borderRadius: '4px', fontSize: '12.5px', whiteSpace: 'pre-line' }}>

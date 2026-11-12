@@ -38,7 +38,7 @@ t('상품명 칸은 훅을 컴포넌트 안에서 쓴다(action 안에서 useSta
   && /const 상품칸 = \(\{ row \}\) => \{\s*const \[펼침, set펼침\] = useState\(false\);/.test(공용));
 t('여러 줄이면 「외 N건 보기」로 펼친다', /외 \$\{줄들\.length - 1\}건 보기/.test(공용));
 t('옵션 금액이 상품명 아래에 그대로 보인다(예전 펼침과 같은 표기)', /commarNumber\(option\.option_price\)\}원\)/.test(공용));
-t('금액 칸: 결제금액 + 배송비 포함 표시', /\{commarNumber\(row\['amount'\]\)\}원/.test(공용) && /배송비 \{commarNumber\(배송비\)\}원 포함/.test(공용));
+t('금액 칸: 결제금액 + 배송비 포함 표시', /\{commarNumber\(row\['amount'\]\)\}원/.test(공용) && /배송비 \$?\{commarNumber\(배송비\)\}원 포함/.test(공용));
 t('받는사람은 주소 칸에서 떼어 따로', /export const 받는사람칸 = \{\s*id: 'receiver',\s*label: '받는사람 \/ 연락처'/.test(공용) && !/export const 주소칸[\s\S]{0,400}row\['receiver'\]/.test(공용));
 t('주문관리 파일 맨 위 상수들이 그대로(취소요청 강조·상태 이름·일괄·이력주문·입력값묶음)',
   ['const 취소요청강조 =', 'const 상태이름 =', 'const 일괄상태 =', 'const 일괄최대 =', 'const 이력주문 =', 'const 입력값묶음 ='].every((x) => 코드.includes(x)));

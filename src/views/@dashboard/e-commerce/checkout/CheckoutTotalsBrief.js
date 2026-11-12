@@ -31,7 +31,8 @@ CheckoutTotalsBrief.propTypes = {
   usedPoint: PropTypes.number,
   total: PropTypes.number,      // 실제 청구액(포인트 차감 후)
   dense: PropTypes.bool,        // 바깥 여백·윗줄 없이 — 이미 여백이 있는 상자(결제수단 패널) 안에 넣을 때
-  shippingNote: PropTypes.string, // 배송비 줄 아래 한 줄 설명("주문당 1회 · 5만원 이상 무료") — 배송비 값 바로 곁에 둔다
+  shippingNote: PropTypes.string,
+  island: PropTypes.object,      // 제주·도서산간 추가배송비 { region, fee, blocked } — 주문서가 넘기는 orderTotals.island // 배송비 줄 아래 한 줄 설명("주문당 1회 · 5만원 이상 무료") — 배송비 값 바로 곁에 둔다
 };
 
 const 줄 = ({ label, value, strong, note }) => (
@@ -44,7 +45,7 @@ const 줄 = ({ label, value, strong, note }) => (
   </Box>
 );
 
-export default function CheckoutTotalsBrief({ goods = 0, options = 0, count = 0, discount = 0, shipping = 0, shipActive = false, usedPoint = 0, total = 0, dense = false, shippingNote = '' }) {
+export default function CheckoutTotalsBrief({ goods = 0, options = 0, count = 0, discount = 0, shipping = 0, shipActive = false, usedPoint = 0, total = 0, dense = false, shippingNote = '', island = null }) {
   const { translate } = useLocales();
   const 단위 = getPriceUnitByLang();
   const 돈 = (n) => `${fCurrency(Number(n) || 0) || '0'}${단위}`;
@@ -61,9 +62,18 @@ export default function CheckoutTotalsBrief({ goods = 0, options = 0, count = 0,
         {(shipActive || Number(shipping) > 0) && (
           <줄 label={translate('배송비')} value={Number(shipping) > 0 ? 돈(shipping) : translate('무료배송')} note={shippingNote} />
         )}
+        {/* 제주·도서산간 추가배송비 — 배송비와 따로 한 줄(무료배송이어도 붙는다) */}
+        {Number(island?.fee) > 0 && (
+          <줄 label={translate(island.region === 'jeju' ? '제주 추가배송비' : '도서산간 추가배송비')} value={`+${돈(island.fee)}`} />
+        )}
         {Number(usedPoint) > 0 && <줄 label={translate('사용할 포인트')} value={`-${fCurrency(usedPoint)}P`} />}
         <Divider sx={{ my: 0.5 }} />
         <줄 strong label={translate('총 결제금액')} value={돈(total)} />
+        {island?.blocked && (
+          <Typography variant="body2" sx={{ color: 'error.main', fontWeight: 600 }}>
+            {translate(island.region === 'jeju' ? '이 쇼핑몰은 제주 지역으로 배송하지 않습니다. 다른 주소를 선택해 주세요.' : '이 쇼핑몰은 도서산간 지역으로 배송하지 않습니다. 다른 주소를 선택해 주세요.')}
+          </Typography>
+        )}
       </Stack>
     </Box>
   );

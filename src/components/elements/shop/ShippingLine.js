@@ -1,6 +1,6 @@
 import { useLocales } from 'src/locales';
 import { commarNumberWithUnit } from 'src/utils/function';
-import { 배송비표시, 무료배송안내 } from 'src/utils/shop-util';
+import { 배송비표시, 무료배송안내, 섬안내문 } from 'src/utils/shop-util';
 import { 상세톤 } from 'src/components/elements/shop/detail-tone';
 
 // 상품상세의 '배송비' 한 줄. **모든 프레임이 이걸 쓴다.**
@@ -45,9 +45,15 @@ const ShippingLine = ({ item, tone = {}, sx = {}, style = {}, showLabel = true, 
 
     const 배송 = 배송비표시(item);
     const 안내 = 무료배송안내(item, currentLang?.value);
-    const 값 = 배송.free
-        ? translate('무료')
-        : <>{commarNumberWithUnit(배송.fee, currentLang?.value)}{안내 ? <span> · {안내}</span> : null}</>;
+    // 제주·도서산간 추가배송비 안내(몰이 설정했을 때만) — 배송비 값 아래 한 줄. 금액까지 보인다(사장님 결정 2026-11-12).
+    const 섬 = 섬안내문(currentLang?.value);
+    const 섬줄 = 섬 ? <div style={{ fontSize: '0.92em', color: t.labelColor, marginTop: '2px' }}>{섬}</div> : null;
+    const 값 = <>
+        {배송.free
+            ? translate('무료')
+            : <>{commarNumberWithUnit(배송.fee, currentLang?.value)}{안내 ? <span> · {안내}</span> : null}</>}
+        {섬줄}
+    </>;
 
     // 표 형태 프레임: 값만 넘긴다. 칸 맞추기는 그 프레임이 한다.
     if (!showLabel) return <span style={{ ...style, ...sx }}>{값}</span>;

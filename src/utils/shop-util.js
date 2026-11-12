@@ -14,6 +14,7 @@ import { requiredGroups, isComboMode, findCombination, optionExtraPrice, maxOrde
 import { makeOrdNum } from 'src/utils/function';
 import { stampRetryDraft } from 'src/utils/order-draft';
 import { formatLang } from 'src/utils/format';
+import { 추가배송비, 추가비줄, 섬안내 } from './island-fee';
 
 // 손님에게 뜨는 안내는 반드시 이걸 거친다.
 //
@@ -63,6 +64,28 @@ export const 배송정책 = () => {
         return { active: false, base: 0, freeMin: 0 };
     }
 }
+
+// 제주·도서산간 추가배송비(2026-11-12) — 판정·금액은 island-fee.js(서버와 같은 파일).
+// 배송지가 없으면(아직 주소를 안 고름) 0원. 설정 안 한 몰도 0원이라 예전과 같다.
+const 몰설정 = () => {
+    try { return JSON.parse(getLocalStorage('themeDnsData') || '{}')?.setting_obj || {}; } catch (e) { return {}; }
+};
+export const 섬추가비 = (배송지) => (배송지
+    ? 추가배송비({ zonecode: 배송지?.zonecode, addr: 배송지?.addr, country_code: 배송지?.country_code }, 몰설정())
+    : { region: 'normal', fee: 0, blocked: false });
+// 상품 상세·장바구니 안내 한 줄 — 설정 안 한 몰은 빈 문자열.
+// 예) 「제주 +3,000원, 그 밖의 섬 지역 +5,000원 추가배송비가 있습니다.」 / 배송 안 함이면 「제주 지역은 배송하지 않습니다.」
+export const 섬안내문 = (lang) => {
+    const 항목 = 섬안내(몰설정());
+    if (!항목.length) return '';
+    const 받음 = 항목.filter((x) => x.mode === 'charge');
+    const 안함 = 항목.filter((x) => x.mode === 'block');
+    const 이름 = (r) => (r === 'jeju' ? 번역('제주') : 번역('그 밖의 섬 지역'));
+    const 글 = [];
+    if (받음.length) 글.push(번역('{{list}} 추가배송비가 있습니다.', { list: 받음.map((x) => `${이름(x.region)} +${commarNumberWithUnit(x.amount, lang)}`).join(', ') }));
+    if (안함.length) 글.push(번역('{{list}} 지역은 배송하지 않습니다.', { list: 안함.map((x) => 이름(x.region)).join(', ') }));
+    return 글.join(' ');
+};
 
 export const getBrandShipping = (merchandiseSubtotal = 0) => {
     const p = 배송정책();
@@ -141,7 +164,9 @@ export const calculatorPrice = (item) => {// 상품별로 가격
 //   라인 상품가 = calculatorPrice(item).total - 그 라인의 delivery_fee
 //   배송비      = 브랜드 정책이 켜져 있으면 주문당 1회, 아니면 상품별 delivery_fee 합
 //   결제금액    = 상품가 합 + 배송비 - 사용포인트
-export const calcOrderTotals = (products_, use_point = 0) => {
+// 배송지(주문서의 payData)를 주면 제주·도서산간 추가배송비를 더한다 — makePayData 와 같은 규칙.
+// delivery 는 기본 배송비만(「배송비」 줄), 추가비는 island.fee 로 따로(「제주 추가배송비」 줄). amount 에는 둘 다 들어간다.
+export const calcOrderTotals = (products_, use_point = 0, 배송지 = null) => {
     const products = Array.isArray(products_) ? products_ : [];
     const merchByIdx = [];
     let merchTotal = 0;
@@ -160,15 +185,18 @@ export const calcOrderTotals = (products_, use_point = 0) => {
         lineDeliveries[i] = d;
         delivery += d;
     }
+    const island = 섬추가비(배송지);
+    if (island.fee > 0 && products.length) lineDeliveries[추가비줄(products)] += island.fee;
     const point = Math.max(0, parseInt(use_point) || 0);
     return {
         merchTotal,
         delivery,
         shipActive: ship.active,
         usedPoint: point,
-        amount: merchTotal + delivery - point,
+        amount: merchTotal + delivery + island.fee - point,
         merchByIdx,
         lineDeliveries,
+        island,
     };
 };
 
@@ -222,11 +250,16 @@ export const makePayData = async (products_, payData_) => {
     // 2) 브랜드 배송비 정책이 설정돼 있으면 주문단위 배송비로 대체(첫 상품에 1회 부과),
     //    미설정이면 기존 상품별 배송비를 그대로 사용(하위호환).
     const ship = getBrandShipping(merchTotal);
+    // 3) 제주·도서산간 추가배송비 — 주문당 한 번, 첫 본상품 줄에 얹는다(서버 recalcOrderAmount 와 같은 자리·같은 금액).
+    //    「배송 안 함」 지역이면 주문서가 결제 전에 막는다. 여기까지 오면 서버가 거절한다.
+    const 섬 = 섬추가비(payData);
+    const 섬줄 = 추가비줄(products);
 
     for (var i = 0; i < products.length; i++) {
-        const lineDelivery = ship.active
+        const lineDelivery = (ship.active
             ? (i === 0 ? ship.fee : 0)
-            : 줄배송비(products[i]);
+            : 줄배송비(products[i]))
+            + (i === 섬줄 ? 섬.fee : 0);
         const order_amount = merchByIdx[i] + lineDelivery;
         amount += order_amount;
         products[i] = {

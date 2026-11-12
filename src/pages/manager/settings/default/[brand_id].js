@@ -54,6 +54,7 @@ import { isShopgoMerchant, isShopgoBrand } from 'src/utils/is-shopgo'
 import { COURIER_LIST } from 'src/data/couriers';
 import { 금액표시, 금액입력 } from 'src/utils/money-input'
 import PasswordField from 'src/components/elements/PasswordField';
+import IslandFeeSettings from 'src/components/manager/IslandFeeSettings';
 // 저장돼 있지 않으면 기본(100%). 이상한 값이 들어와도 슬라이더가 범위를 벗어나면 안 된다.
 const 로고배율 = (item) => {
   const v = Number(item?.setting_obj?.logo_scale)
@@ -1790,6 +1791,13 @@ const DefaultSetting = () => {
                       </Typography>
                     </Stack>
                   </Card>
+                </Grid>
+                {/* 제주·도서산간 추가배송비(2026-11-12) — 몰마다 지역별 추가비 없음·받기·배송 안 함 + 지역 기준 */}
+                <Grid item xs={12} md={12}>
+                  <IslandFeeSettings
+                    value={item?.setting_obj?.island_fee}
+                    onChange={(v) => setItem({ ...item, ['setting_obj']: { ...item?.setting_obj, ['island_fee']: v } })}
+                  />
                 </Grid>
                 {/* 배송 안내(가맹점별 자유 텍스트). setting_obj.delivery_info 에 저장 —
                     백엔드 컬럼 추가 없이 JSON 설정에 얹는다. 상품 상세의 혜택 안내 아래에 렌더된다.

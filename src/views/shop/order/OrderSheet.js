@@ -593,6 +593,11 @@ export default function OrderSheet({ router }) {
       toast.error(translate("배송 국가를 입력해 주세요."));
       return false;
     }
+    // 제주·도서산간 「배송 안 함」 지역(몰 설정) — 결제 전에 막는다. 서버(pay.ready)도 같은 판정으로 거절한다.
+    if (orderTotals.island?.blocked) {
+      toast.error(translate(orderTotals.island.region === 'jeju' ? '이 쇼핑몰은 제주 지역으로 배송하지 않습니다. 다른 주소를 선택해 주세요.' : '이 쇼핑몰은 도서산간 지역으로 배송하지 않습니다. 다른 주소를 선택해 주세요.'));
+      return false;
+    }
     // 포인트 판정은 공용 규칙 한 곳에서 한다(data/point-policy.js).
     //
     // 예전엔 여기서 '최대설정 초과'·'적립형 최소보유'·'보유 부족' 셋을 따로 봤다.
@@ -827,7 +832,8 @@ export default function OrderSheet({ router }) {
   // 예전엔 요약 카드가 자체 계산했고, 상품별 배송비가 포함된 합계에 브랜드 배송비를
   // 한 번 더 얹었다. 무료배송 판정 기준도 서로 달라서(화면 '상품가+배송비' / 청구 '상품가만')
   // 배송비 정책을 켠 브랜드에서 고객이 본 금액과 결제되는 금액이 어긋났다.
-  const orderTotals = calcOrderTotals(products, payData?.use_point);
+  // 배송지(payData)를 넘겨 제주·도서산간 추가배송비까지 계산한다(2026-11-12) — makePayData·서버와 같은 규칙.
+  const orderTotals = calcOrderTotals(products, payData?.use_point, payData);
   // 요약 세 곳(상품 목록 아래 · 결제수단 패널 · 오른쪽 요약)이 **같은 값**을 받는다 —
   // 각자 계산하면 언젠가 서로 다른 금액을 보여 준다.
   // 상품 목록(상품명·옵션)은 요약에 넣지 않는다 — 상품 카드 한 곳에만 둔다(2026-09-11 사장님 결정, 안 A).
@@ -922,6 +928,7 @@ export default function OrderSheet({ router }) {
           shipActive={orderTotals.shipActive}
           usedPoint={orderTotals.usedPoint}
           total={orderTotals.amount}
+          island={orderTotals.island}
         />
         {/* 리다이렉트형(포스페이/페이레터) — 여기서 결제창으로 간다 */}
         {리다이렉트형 && <Box sx={{ mt: 2 }}>{결제하기버튼()}</Box>}
@@ -1108,6 +1115,7 @@ export default function OrderSheet({ router }) {
                     shipActive={orderTotals.shipActive}
                     usedPoint={orderTotals.usedPoint}
                     total={orderTotals.amount}
+                    island={orderTotals.island}
                   />
                 </Box>
               </Card>
@@ -1457,6 +1465,7 @@ export default function OrderSheet({ router }) {
                   //     그래서 카트에선 포인트를 넣을 수 있는데 주문서에선 잠기는 불일치가 있었다. 같이 해소된다.
                   subtotal={요약.subtotal}
                   shippingNote={요약.배송비안내}
+                  island={orderTotals.island}
                 />
                 {/* PC 결제 자리 — 포스페이·페이레터는 여기서 결제창을 연다. 수기결제처럼 입력란이 있는 수단은
                     결제수단 아래 입력란 안에 결제 버튼이 있으므로 여기서는 안내만 한다. */}

@@ -658,6 +658,9 @@ const TrxList = () => {
     { label: '상태', width: 12, value: (r) => (포스페이미승인(r) ? '결제 미완료' : getOrderStatusText(r)) },
     { label: '취소여부', width: 10, value: (r) => (r?.is_cancel == 1 || r?.is_cancel_trans == 1 ? '취소' : '') },
     { label: '취소시간', width: 20, value: (r) => r?.cancelled_at ?? '' },
+    // 제주·도서산간 추가배송비(2026-11-12) — 주문할 때 저장된 값. 금액 열의 배송비에 이미 들어 있다.
+    { label: '추가배송비 지역', width: 14, value: (r) => (Number(r?.island_fee) > 0 ? (r?.island_region === 'jeju' ? '제주' : r?.island_region === 'island' ? '도서산간' : '') : '') },
+    { label: '추가배송비', width: 12, value: (r) => (Number(r?.island_fee) > 0 ? Number(r.island_fee) : '') },
     // 「결제실패/미완료」를 넣어 받을 때만, 표처럼 상태 뒤 맨 끝에
     ...(실패사유열 ? [{ label: '실패 사유', width: 34, value: (r) => r?.fail_reason ?? '' }] : []),
   ];

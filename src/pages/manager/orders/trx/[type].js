@@ -633,26 +633,32 @@ const TrxList = () => {
   const 입력정보글 = (row) => (row?.order_forms ?? [])
     .map((v) => `${v?.label ?? ''}: ${v?.value ?? ''}`).join('\n');
 
+  // 열 순서는 위 표(OrderColumns.js)와 같다 — 구매자 → 상품·수량·금액 → 주문번호·승인번호 → 구매시간 →
+  // 받는사람 → 주소·배송요청 → 추가 입력정보 → 결제타입 → 송장번호 → 상태(사장님 요청 2026-11-12, 표 순서를 바꾼 d519c62f 에 맞춤).
+  // 표 칸 순서를 바꾸면 여기도 같이 바꾼다. 송장 엑셀 등록은 열 이름으로 찾으므로 순서와 무관하다(invoice-excel.js).
   const 엑셀열 = (실패사유열) => [
-    { label: '주문번호', width: 22, value: (r) => r?.ord_num ?? '' },
-    { label: '승인번호', width: 14, value: (r) => r?.appr_num ?? '' },
-    { label: '구매시간', width: 20, value: (r) => r?.created_at ?? '' },
     { label: '구매자명', width: 12, value: (r) => r?.buyer_name ?? '' },
     { label: '구매자연락처', width: 16, value: (r) => r?.buyer_phone ?? '' },
+    { label: '주문상품', width: 46, value: 줄글 },
+    // 표의 「수량」 칸처럼 주문 줄 수량의 합
+    { label: '수량', width: 8, value: (r) => (r?.orders ?? []).reduce((s, o) => s + (Number(o?.order_count) || 0), 0) },
+    { label: '결제금액', width: 12, value: (r) => Number(r?.amount) || 0 },
+    { label: '주문번호', width: 22, value: (r) => r?.ord_num ?? '' },
+    { label: '승인번호', width: 14, value: (r) => r?.appr_num ?? '' },
+    // 표의 「구매시간」과 같은 값 — 승인 시각, 승인 전(결제대기 등)이면 주문 접수 시각(OrderColumns.js 구매시간칸)
+    { label: '구매시간', width: 20, value: (r) => `${r?.trx_dt ?? ''} ${r?.trx_tm ?? ''}`.trim() || (r?.created_at ?? '') },
     { label: '받는사람', width: 12, value: (r) => r?.receiver ?? '' },
     { label: '받는사람연락처', width: 16, value: (r) => r?.receiver_phone ?? '' },
-    { label: '배송요청사항', width: 30, value: (r) => r?.delivery_memo ?? '' },
     { label: '주소', width: 40, value: (r) => `${r?.addr ?? ''} ${r?.detail_addr ?? ''}`.trim() },
-    { label: '주문상품', width: 46, value: 줄글 },
+    // 표에서는 주소 바로 아래 노란 칸
+    { label: '배송요청사항', width: 30, value: (r) => r?.delivery_memo ?? '' },
     { label: '추가 입력정보', width: 28, value: 입력정보글 },
-    { label: '결제금액', width: 12, value: (r) => Number(r?.amount) || 0 },
     { label: '결제타입', width: 16, value: (r) => trxMethodLabel(r?.trx_method) ?? '' },
-    { label: '상태', width: 12, value: (r) => (포스페이미승인(r) ? '결제 미완료' : getOrderStatusText(r)) },
     { label: '송장번호', width: 18, value: (r) => r?.invoice_num ?? '' },
+    { label: '상태', width: 12, value: (r) => (포스페이미승인(r) ? '결제 미완료' : getOrderStatusText(r)) },
     { label: '취소여부', width: 10, value: (r) => (r?.is_cancel == 1 || r?.is_cancel_trans == 1 ? '취소' : '') },
-    // 실제 취소 시각 — 앞 열 순서는 그대로 두고 그 뒤에 붙인다
     { label: '취소시간', width: 20, value: (r) => r?.cancelled_at ?? '' },
-    // 「결제실패/미완료」를 넣어 받을 때만, 맨 뒤에 — 앞 열의 순서는 가맹점 서식이라 흔들지 않는다
+    // 「결제실패/미완료」를 넣어 받을 때만, 표처럼 상태 뒤 맨 끝에
     ...(실패사유열 ? [{ label: '실패 사유', width: 34, value: (r) => r?.fail_reason ?? '' }] : []),
   ];
 

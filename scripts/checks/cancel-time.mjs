@@ -1,5 +1,6 @@
 import { readFileSync } from 'fs';
 import { FRONT_ROOT, BACK_ROOT, 백엔드있음 } from './_roots.mjs';
+import { 칸펼치기 } from './_order-columns.mjs'; // 공용 칸(OrderColumns.js)을 화면 소스에 펼쳐 넣는다(2026-11-12)
 
 // 취소 시각은 '우리가 반영한 때'가 아니라 '실제로 취소된 때'다(2026-11-05 결정).
 //   승인번호 30034440: 포스페이 취소 16:12:45 → 대조가 18:05 반영 → 칸에는 UTC 09:05:14 가 저장돼 있었다.
@@ -10,8 +11,8 @@ let pass = 0, fail = 0;
 const t = (name, cond) => { if (cond) { pass++; console.log('  ok  ' + name); } else { fail++; console.log('  FAIL ' + name); } };
 
 // ── 화면 ───────────────────────────────────────────────────────────────
-const 목록 = 읽기(FRONT_ROOT, 'src/pages/manager/orders/trx/[type].js');
-const 취소목록 = 읽기(FRONT_ROOT, 'src/pages/manager/orders/trx-cancel/[type].js');
+const 목록 = 칸펼치기(읽기(FRONT_ROOT, 'src/pages/manager/orders/trx/[type].js'));
+const 취소목록 = 칸펼치기(읽기(FRONT_ROOT, 'src/pages/manager/orders/trx-cancel/[type].js'));
 // 처리시간 칸은 없앴다(가맹점 요청 2026-11-06 — 이력에서 본다). 그 전엔 「업데이트시간」·「취소시간」을 처리시간 한 칸으로 합쳤었다(11-05).
 // 실제 취소 시각은 엑셀 「취소시간」 열에 그대로 남는다(아래).
 for (const [이름, 화면] of [['주문 목록', 목록], ['취소 목록', 취소목록]]) {
@@ -58,7 +59,7 @@ if (!백엔드있음) {
   // 어드민 취소 약 1분 뒤 포스페이 통지가 돌아온다(주문 11568778) — 같은 취소를 이력에 두 줄 쓰지 않는다
   t('이력: 이미 취소된 주문이면 또 쓰지 않는다', /\$\{column\} AS canceled FROM transactions/.test(취소) && /if \(Number\(이전\?\.canceled\) !== 1\) await logTrx\(\{ trans_id: tid/.test(취소));
   t('취소 실패 로그: PG 응답을 통째로 남기지 않는다(연락처)', !/PG 실패 trans_id=\$\{tid\}: \$\{JSON\.stringify/.test(취소));
-  t('취소 목록: 기간 검색도 실제 취소 시각', /const 취소완료목록 = cancel_status == 2 && !손님화면;/.test(거래) && /조회조건 = \{ \.\.\.req\.query, s_dt: undefined, e_dt: undefined \};/.test(거래));
+  t('취소 목록: 기간 검색도 실제 취소 시각', /const 취소완료목록 = cancel_status == 2 && !손님화면( && !엑셀상태)?;/.test(거래) && /조회조건 = \{ \.\.\.req\.query, s_dt: undefined, e_dt: undefined \};/.test(거래));
   t('손님 화면에는 취소 시각을 붙이지 않는다', /if \(!손님화면 && data\?\.content\?\.length > 0\) \{\s*try \{\s*const 취소된원주문/.test(거래));
   t('대시보드 취소 건수: 실제 취소일', /trx_cancel_counts_sql \+= ` AND \$\{실제취소시각식\(table_name\)\} <= \? `/.test(대시));
   t('가맹점 상세 취소 건수: 실제 취소일', /is_cancel=1 AND is_delete=0\$\{cancelWhere\}/.test(신청));

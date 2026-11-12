@@ -1,5 +1,6 @@
 import { readFileSync } from 'fs';
 import { FRONT_ROOT, BACK_ROOT, 백엔드있음 } from './_roots.mjs';
+import { 칸펼치기 } from './_order-columns.mjs'; // 공용 칸(OrderColumns.js)을 화면 소스에 펼쳐 넣는다(2026-11-12)
 
 // 관리자 주문 화면 가맹점 피드백(2026-11-06)
 //   ① 처리시간 칸 없앰(이력에서 본다)        — cancel-time.mjs 가 지킨다
@@ -12,8 +13,8 @@ const 읽기 = (root, p) => readFileSync(root + p, 'utf8');
 let pass = 0, fail = 0;
 const t = (name, cond) => { if (cond) { pass++; console.log('  ok  ' + name); } else { fail++; console.log('  FAIL ' + name); } };
 
-const 목록 = 읽기(FRONT_ROOT, 'src/pages/manager/orders/trx/[type].js');
-const 취소목록 = 읽기(FRONT_ROOT, 'src/pages/manager/orders/trx-cancel/[type].js');
+const 목록 = 칸펼치기(읽기(FRONT_ROOT, 'src/pages/manager/orders/trx/[type].js'));
+const 취소목록 = 칸펼치기(읽기(FRONT_ROOT, 'src/pages/manager/orders/trx-cancel/[type].js'));
 const 표 = 읽기(FRONT_ROOT, 'src/views/manager/mui/table/ManagerTable.js');
 const 이력창 = 읽기(FRONT_ROOT, 'src/components/manager/TrxHistoryDialog.js');
 

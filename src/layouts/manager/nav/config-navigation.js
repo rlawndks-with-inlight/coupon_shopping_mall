@@ -11,6 +11,7 @@ import { mainObjSchemaList } from 'src/utils/format';
 import { isShopgoBrand, isShopgoMerchant, SHOPGO_MASTER_ID } from 'src/utils/is-shopgo';
 import { HOME_TEXT_SCHEMA } from 'src/data/home-texts';
 import { 본사화면 } from 'src/utils/manager-visibility';
+import { 입금대기수단있음 } from 'src/utils/order-menu';
 
 // ----------------------------------------------------------------------
 
@@ -137,9 +138,7 @@ export const navConfig = () => {
   // 예전엔 is_main_dns==1 로 봤는데, 에이삽몰(11)·그랑파리(10)도 is_main_dns=1 이지만 하위 가맹점 0 이라
   // 남의(shopgo) 가맹점 데이터를 보고 정작 자기 판매 메뉴는 숨겨졌다. (merchant-application 은 백엔드가
   // 마스터=shopgo(MAIN_FRONT_URL) 고정 조회) → 실제 마스터인 ShopGo 본사 id 로 판별한다.
-  // 무통장·상품권·수기처럼 사람이 확인해야 결제완료가 되는 수단이 하나라도 있는가
-  const 입금대기수단있음 = (dns) => (dns?.payment_modules ?? []).some((m) =>
-    ['virtual_account', 'gift_certificate', 'hand_oleuda', 'card', 'card_fintree'].includes(m?.type) || [1, 3, 5, 10, 11].includes(Number(m?.trx_type)));
+  // 무통장·상품권·수기처럼 사람이 확인해야 결제완료가 되는 수단이 있는가 — src/utils/order-menu.js(엑셀 창과 같이 쓴다)
   const isMasterSite = () => {
     return Number(themeDnsData?.id) === SHOPGO_MASTER_ID;
   }

@@ -1,4 +1,4 @@
-import { Accordion, AccordionDetails, AccordionSummary, Button, Card, Container, FormControl, IconButton, InputLabel, MenuItem, Select, Stack, TextField, Typography } from "@mui/material";
+import { Button, Card, Container, FormControl, IconButton, InputLabel, MenuItem, Select, Stack, TextField, Typography } from "@mui/material";
 import { useEffect, useRef, useState } from "react";
 import ManagerLayout from "src/layouts/manager/ManagerLayout";
 import ManagerTable from "src/views/manager/mui/table/ManagerTable";
@@ -17,6 +17,7 @@ import { sha256 } from "js-sha256";
 import { useAuthContext } from "src/layouts/manager/auth/useAuthContext";
 import _ from 'lodash';
 import { getOptionLabel } from 'src/utils/shop-util';
+import { 구매자칸, 상품명칸, 수량칸, 금액칸, 주문번호칸, 구매시간칸, 받는사람칸, 주소칸 } from 'src/components/manager/OrderColumns';
 
 // 취소완료 탭의 줄은 원래 주문이 아니라 취소 원장 줄(is_cancel=1, 금액 음수, transaction_id → 원래 주문)이다.
 // 이력은 원래 주문에 쌓이므로 원장 줄이면 원래 주문의 이력을 연다(2026-11-06 미리보기에서 빈 이력으로 발견).
@@ -27,48 +28,14 @@ const TrxCancelList = () => {
   const { themeDnsData } = useSettingsContext();
   const { user } = useAuthContext()
   const defaultColumns = [
-    {
-      id: 'ord_num',
-      label: '주문번호 / 승인번호',
-      // 주문관리는 주문번호만, 주문취소관리는 승인번호만 보여서 두 화면에서 같은 주문을 맞춰 볼 수 없었다(2026-11-06) — 두 화면 모두 둘 다.
-      action: (row) => (
-        <div style={{ whiteSpace: 'nowrap' }}>
-          <div>{row['ord_num'] || '---'}</div>
-          {row['appr_num'] ? <div style={{ fontSize: '12px', color: '#888' }}>승인 {row['appr_num']}</div> : null}
-        </div>
-      ),
-      sx: (row) => {
-        return {
-          color: `${row?.is_cancel == 1 ? 'red' : ''}`
-        }
-      },
-    },
-    // 구매시간은 주문번호 바로 오른쪽(가맹점 요청 2026-11-06). 승인 전이면 접수 시각 — 주문관리와 같은 규칙.
-    {
-      id: 'created_at',
-      label: '구매시간',
-      action: (row) => {
-        const 승인 = `${row['trx_dt'] ?? ''} ${row['trx_tm'] ?? ''}`.trim();
-        return 승인 || (row['created_at'] ?? '---');
-      },
-      sx: (row) => {
-        return {
-          color: `${row?.is_cancel == 1 ? 'red' : ''}`
-        }
-      },
-    },
-    /*{
-      id: 'card_num',
-      label: '카드번호',
-      action: (row) => {
-        return row['card_num'] ?? "---"
-      },
-      sx: (row) => {
-        return {
-          color: `${row?.is_cancel == 1 ? 'red' : ''}`
-        }
-      },
-    },*/
+    // 칸 정의는 OrderColumns.js(주문관리와 같이 쓴다). 순서: 구매자 → 상품명·수량·금액 → 주문번호/승인번호 → 구매시간 → 받는사람 → 주소(가맹점 요청 2026-11-12).
+    // 예전 「구매금액」 펼침은 상품 줄을 두 번 겹쳐 돌려서(map 안에 같은 map) 상품 2줄 주문이 4줄로 보였다 — 공용 칸으로 바꾸며 없어졌다.
+    구매자칸,
+    상품명칸,
+    수량칸,
+    금액칸,
+    주문번호칸,
+    구매시간칸,
     ...(themeDnsData?.setting_obj?.is_use_seller > 0 && user?.level >= 15 ? [
       {
         id: 'seller_mall',
@@ -96,119 +63,8 @@ const TrxCancelList = () => {
         },
       },
     ] : []),
-    {
-      id: 'buyer_name',
-      label: '구매자명',
-      action: (row) => {
-        return row['buyer_name'] ?? "---"
-      },
-      sx: (row) => {
-        return {
-          color: `${row?.is_cancel == 1 ? 'red' : ''}`
-        }
-      },
-    },
-    {
-      id: 'buyer_phone',
-      label: '구매자휴대폰번호',
-      action: (row) => {
-        return row['buyer_phone'] ?? "---"
-      },
-      sx: (row) => {
-        return {
-          color: `${row?.is_cancel == 1 ? 'red' : ''}`
-        }
-      },
-    },
-    {
-      id: 'orders',
-      label: '구매금액',
-      action: (row) => {
-        return <Accordion key={row?.id} style={{ boxShadow: "none", background: 'transparent' }} disabled={!(row?.orders?.length > 0)}>
-          <AccordionSummary expandIcon={<Icon icon="eva:arrow-ios-downward-fill" />}>
-            <Typography variant="subtitle1">{commarNumber(row['amount'])}원</Typography>
-          </AccordionSummary>
-          <AccordionDetails>
-            <Col>
-              {row?.orders && row?.orders.map((order, index) => (
-                <>
-                  {row?.orders && row?.orders.map((order, index) => (
-                    <>
-                      <Col>
-                        <Row>
-                          <div style={{ minWidth: '62px', fontWeight: 'bold' }} >{index + 1}.</div>
-                          <div style={{ whiteSpace: 'nowrap', cursor: 'pointer' }}
-                            onClick={() => { /*user?.level > 20 &&*/ window.open(`/manager/products/edit/${order?.product_id}`) }}>
-                            {order?.order_name}
-                          </div>
-                        </Row>
-                        {order?.groups.length > 0 &&
-                          <>
-                            <Row>
-                              <div style={{ minWidth: '62px' }}>옵션정보 </div>
-                              <Col>
-                                {order?.groups && order?.groups.map((group, idx) => (
-                                  <>
-                                    <Row>
-                                      {/* 주문관리 화면과 같은 규칙으로 보여 준다 — 취소내역만 다르면
-                                          같은 주문을 두 화면에서 보고 서로 다르게 읽게 된다. */}
-                                      <div style={{ /*minWidth: '62px',*/ marginRight: '0.25rem' }}>
-                                        {group?.group_name}
-                                        {Number(group?.group_type) === 1 &&
-                                          <span style={{
-                                            marginLeft: '4px', fontSize: '0.72rem', color: '#5a8a1e',
-                                            border: '1px solid #cde3a6', borderRadius: '4px', padding: '0 3px',
-                                          }}>추가상품</span>}
-                                        {': '}
-                                      </div>
-                                      {group?.options && group?.options.map((option, idx2) => (
-                                        <>
-                                          <div>
-                                            {getOptionLabel(option)}
-                                            {Number(option?.option_price)
-                                              ? ` (${Number(option.option_price) > 0 ? '+' : ''}${commarNumber(option.option_price)}원)`
-                                              : ''}
-                                          </div>{idx2 == group?.options.length - 1 ? '' : <>&nbsp;/&nbsp;</>}                                        </>
-                                      ))}
-                                    </Row>
-                                  </>
-                                ))}
-                              </Col>
-                            </Row>
-                          </>}
-                        <Row>
-                          <div style={{ minWidth: '62px' }}>가격: </div>
-                          <div>{commarNumber(order?.order_amount)}</div>
-                        </Row>
-                        {/*
-                        <Row>
-                      <div style={{ minWidth: '62px' }}>배송비: </div>
-                      <div>{commarNumber(order?.delivery_fee)}</div>
-                    </Row>
-                        */}
-                        {order?.seller_id > 0 &&
-                          <>
-                            <Row>
-                              <div style={{ minWidth: '62px' }}>셀러아이디: </div>
-                              <div>{order?.seller_user_name}</div>
-                            </Row>
-                          </>}
-                      </Col>
-                    </>
-                  ))}
-                  <br />
-                </>
-              ))}
-            </Col>
-          </AccordionDetails>
-        </Accordion>
-      },
-      sx: (row) => {
-        return {
-          color: `${row?.is_cancel == 1 ? 'red' : ''}`
-        }
-      },
-    },
+    받는사람칸,
+    주소칸,
     // 「처리시간」 칸은 없앴다 — 언제 누가 무엇을 바꿨는지는 「이력」에 다 있다(가맹점 요청 2026-11-06).
     {
       id: 'trx_method',
@@ -216,18 +72,6 @@ const TrxCancelList = () => {
       action: (row) => {
         return trxMethodLabel(row?.trx_method) ?? "---"
       }
-    },
-    {
-      id: 'addr',
-      label: '주소',
-      action: (row) => {
-        return row['addr'] ?? "---"
-      },
-      sx: (row) => {
-        return {
-          color: `${row?.is_cancel == 1 ? 'red' : ''}`
-        }
-      },
     },
     /*{
       id: 'invoice_num',

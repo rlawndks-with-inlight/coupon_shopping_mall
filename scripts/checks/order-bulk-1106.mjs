@@ -1,5 +1,6 @@
 import { readFileSync } from 'fs';
 import { FRONT_ROOT, BACK_ROOT, 백엔드있음 } from './_roots.mjs';
+import { 칸펼치기 } from './_order-columns.mjs'; // 공용 칸(OrderColumns.js)을 화면 소스에 펼쳐 넣는다(2026-11-12)
 
 // 주문 목록 — 번호·일괄 상태 변경·상태 변경 확인 창(가맹점 요청 2026-11-06, 사장님 선택)
 //   번호: 게시판식 역순 / 일괄: 모든 탭에서 상태를 골라 적용(체크한 주문만) / 확인 창: 모든 상태 변경
@@ -8,7 +9,7 @@ const 읽기 = (root, p) => readFileSync(root + p, 'utf8');
 let pass = 0, fail = 0;
 const t = (name, cond) => { if (cond) { pass++; console.log('  ok  ' + name); } else { fail++; console.log('  FAIL ' + name); } };
 
-const 목록 = 읽기(FRONT_ROOT, 'src/pages/manager/orders/trx/[type].js');
+const 목록 = 칸펼치기(읽기(FRONT_ROOT, 'src/pages/manager/orders/trx/[type].js'));
 const 표 = 읽기(FRONT_ROOT, 'src/views/manager/mui/table/ManagerTable.js');
 
 // 번호
@@ -18,7 +19,7 @@ const 표 = 읽기(FRONT_ROOT, 'src/views/manager/mui/table/ManagerTable.js');
   t('번호: 역순 — 총 87건 1쪽 맨 위 87, 2쪽 맨 위 77', !!셈 && 셈({ total: 87 }, 0, { page: 1, page_size: 10 }) === 87 && 셈({ total: 87 }, 0, { page: 2, page_size: 10 }) === 77 && 셈({ total: 87 }, 9, { page: 1, page_size: 10 }) === 78);
   t('번호: 새 주문이 들어와도 기존 주문 번호는 그대로(총 +1, 줄 +1)', !!셈 && 셈({ total: 87 }, 3, { page: 1, page_size: 10 }) === 셈({ total: 88 }, 4, { page: 1, page_size: 10 }));
 }
-t('번호·체크칸이 맨 앞', 목록.indexOf("id: 'select'") < 목록.indexOf("id: 'no'") && 목록.indexOf("id: 'no'") < 목록.indexOf("id: 'ord_num'"));
+t('번호·체크칸이 맨 앞', 목록.indexOf("id: 'select'") < 목록.indexOf("id: 'no'") && 목록.indexOf("id: 'no'") < 목록.indexOf("id: 'buyer_name'"));
 
 // 확인 창(한 건)
 t('한 건 변경: 바로 저장하지 않고 확인 창에서 「확인」일 때만', /setModal\(\{\s*func: \(\) => \{ onChangeStatus\(row\?\.id, 새값\) \},[\s\S]{0,120}title: '주문 상태를 바꿀까요\?'/.test(목록) && !/onChange=\{\(e\) => \{\s*onChangeStatus\(row\?\.id, e\.target\.value\);/.test(목록));

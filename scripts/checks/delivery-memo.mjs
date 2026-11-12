@@ -1,5 +1,6 @@
 import { FRONT_ROOT, BACK_ROOT, 백엔드있음 } from './_roots.mjs';
 import { readFileSync, existsSync } from 'fs';
+import { 칸펼치기 } from './_order-columns.mjs'; // 공용 칸(OrderColumns.js)을 화면 소스에 펼쳐 넣는다(2026-11-12)
 
 // 배송 요청사항과 '주문자와 동일'.
 //
@@ -35,7 +36,7 @@ t('요청사항 길이를 제한한다', /maxLength: 200/.test(sheet));
 t('payData 에 자리가 있다', /delivery_memo: '',/.test(sheet));
 
 // 관리자가 볼 수 있어야 한다 — 화면과 엑셀 양쪽.
-const 관리자 = 읽기('src/pages/manager/orders/trx/[type].js');
+const 관리자 = 칸펼치기(읽기('src/pages/manager/orders/trx/[type].js'));
 t('관리자 주문관리에 보인다', /row\['delivery_memo'\]/.test(관리자));
 t('엑셀에도 나간다', /label: '배송요청사항'/.test(관리자));
 // 손님도 자기가 뭐라고 적었는지 다시 볼 수 있어야 한다.

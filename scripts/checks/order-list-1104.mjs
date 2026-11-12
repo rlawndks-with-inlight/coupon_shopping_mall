@@ -86,7 +86,7 @@ if (!백엔드있음) {
       && 정리('SQLSTATE[HY000] (SQL: select * from x)') === ''
       && 정리({ a: 1 }) === '');
   }
-  t('서버: 사유는 관리자 실패 목록에만 붙는다', /kind === 'failed' && !손님화면/.test(trx));
+  t('서버: 사유는 관리자 실패 목록에만 붙는다', /\(kind === 'failed' \|\| 엑셀상태\?\.includes\('failed'\)\) && !손님화면/.test(trx));
   // 결제창 결과 판정(모바일 복귀·PC 팝업 공용, 2026-11-06): 결제창 코드는 실패·취소 구분에만 — 승인은 여전히 거래조회로만
   const 복귀 = pay.slice(pay.indexOf('const 포스페이결과판정 ='), pay.indexOf('const 결제실패정리 ='));
   const 모바일복귀 = pay.slice(pay.indexOf('forspayReturn: async'), pay.indexOf('forspayCallback: async'));

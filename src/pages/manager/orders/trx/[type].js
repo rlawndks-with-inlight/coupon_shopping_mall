@@ -1,4 +1,4 @@
-import { Accordion, AccordionDetails, AccordionSummary, Button, Card, Checkbox, Container, FormControlLabel, IconButton, MenuItem, Select, Stack, TextField, Typography } from "@mui/material";
+import { Button, Card, Checkbox, Container, FormControlLabel, IconButton, MenuItem, Select, Stack, TextField, Typography } from "@mui/material";
 import { COURIER_LIST, 기본택배사 } from 'src/data/couriers';
 import { useEffect, useRef, useState } from "react";
 import ManagerLayout from "src/layouts/manager/ManagerLayout";
@@ -21,6 +21,9 @@ import { sha256 } from "js-sha256";
 import _ from 'lodash';
 import { getOptionLabel } from 'src/utils/shop-util';
 import { 엑셀내려받기 } from 'src/utils/excel';
+import OrderExcelDialog from 'src/components/manager/OrderExcelDialog';
+import { 구매자칸, 상품명칸, 수량칸, 금액칸, 주문번호칸, 구매시간칸, 받는사람칸, 주소칸 } from 'src/components/manager/OrderColumns';
+import { 메뉴상태 } from 'src/utils/order-excel-filter';
 
 // 주문서 추가 입력값을 '주문 줄' 단위로 묶는다(위 열 주석 참고).
 const 입력값묶음 = (row) => {
@@ -105,6 +108,37 @@ const TrxList = () => {
         return <div style={{ color: '#888', whiteSpace: 'nowrap' }}>{줄 >= 0 && 번호 > 0 ? 번호 : ''}</div>;
       },
     },
+    // 칸 정의는 OrderColumns.js(주문취소관리와 같이 쓴다). 순서: 구매자 → 상품명·수량·금액 → 주문번호/승인번호 → 구매시간 → 받는사람 → 주소(2026-11-12).
+    구매자칸,
+    ...(themeDnsData?.id == 5 ? [
+      {
+        id: 'product_code',
+        label: '상품코드',
+        action: (row) => {
+          return <div style={{ display: 'flex', flexDirection: 'column' }}>
+            {row?.orders && row?.orders.map((order, index) => (
+              <div>{order?.product_code}</div>
+            ))}
+          </div>
+        }
+      }
+    ] : []),
+    ...(themeDnsData?.id == 5 ? [
+      {
+        id: 'product_img',
+        label: '상품이미지',
+        action: (row) => {
+          return <div style={{ display: 'flex', flexDirection: 'column', cursor: 'pointer' }}>
+            {row?.orders && row?.orders.map((order, index) => (
+              <img src={order?.product_img} style={{ maxWidth: '84px' }} onClick={() => { window.open(`/shop/item/${order?.product_id}`) }} />
+            ))}
+          </div>
+        }
+      }
+    ] : []),
+    상품명칸,
+    수량칸,
+    금액칸,
     ...(themeDnsData?.setting_obj?.is_use_seller == 2 ? [
       /* 검품사진(check_img) 열을 없앤다.
          업로드 창은 떴지만 저장하는 함수(updatePicture)의 본문이 통째로 주석 처리돼 있었다 —
@@ -112,41 +146,11 @@ const TrxList = () => {
          고객 화면은 물론 관리자 표에서도 그 값을 다시 보여주는 곳이 없다.
          되살리려면 저장 경로(transactions update)부터 다시 이어야 한다. */
     ] : [
-      {
-        id: 'ord_num',
-        label: '주문번호 / 승인번호',
-        // 주문관리는 주문번호만, 주문취소관리는 승인번호만 보여서 두 화면에서 같은 주문을 맞춰 볼 수 없었다(2026-11-06) — 두 화면 모두 둘 다.
-        action: (row) => (
-          <div style={{ whiteSpace: 'nowrap' }}>
-            <div>{row['ord_num'] || '---'}</div>
-            {row['appr_num'] ? <div style={{ fontSize: '12px', color: '#888' }}>승인 {row['appr_num']}</div> : null}
-          </div>
-        ),
-        sx: (row) => {
-          return {
-            color: `${row?.is_cancel == 1 ? 'red' : ''}`
-          }
-        },
-      },
+      주문번호칸,
     ]),
     // 구매시간은 주문번호 바로 오른쪽(가맹점 요청 2026-11-06).
     ...(themeDnsData?.id == 74 ? [] : [
-      {
-        id: 'created_at',
-        label: '구매시간',
-        // trx_dt·trx_tm 은 PG 승인 시각이라 결제완료된 건에만 있다.
-        // 결제대기(포스페이 승인 미확정)·무통장 주문은 늘 비어서 '--- ---' 로만 보였고,
-        // 가맹점은 '주문시간이 안 찍힌다'고 읽었다. 승인 전에는 주문 접수시각(created_at)을 보여준다.
-        action: (row) => {
-          const 승인 = `${row['trx_dt'] ?? ''} ${row['trx_tm'] ?? ''}`.trim();
-          return 승인 || (row['created_at'] ?? '---');
-        },
-        sx: (row) => {
-          return {
-            color: `${row?.is_cancel == 1 ? 'red' : ''}`
-          }
-        },
-      },
+      구매시간칸,
     ]),
     /*{
       id: 'card_num',
@@ -187,147 +191,8 @@ const TrxList = () => {
         },
       },
     ] : []),
-    ...(themeDnsData?.id == 5 ? [
-      {
-        id: 'product_code',
-        label: '상품코드',
-        action: (row) => {
-          return <div style={{ display: 'flex', flexDirection: 'column' }}>
-            {row?.orders && row?.orders.map((order, index) => (
-              <div>{order?.product_code}</div>
-            ))}
-          </div>
-        }
-      }
-    ] : []),
-    ...(themeDnsData?.id == 5 ? [
-      {
-        id: 'product_img',
-        label: '상품이미지',
-        action: (row) => {
-          return <div style={{ display: 'flex', flexDirection: 'column', cursor: 'pointer' }}>
-            {row?.orders && row?.orders.map((order, index) => (
-              <img src={order?.product_img} style={{ maxWidth: '84px' }} onClick={() => { window.open(`/shop/item/${order?.product_id}`) }} />
-            ))}
-          </div>
-        }
-      }
-    ] : []),
-    {
-      id: 'buyer_name',
-      label: '구매자명',
-      action: (row) => {
-        return row['buyer_name'] ?? "---"
-      },
-      sx: (row) => {
-        return {
-          color: `${row?.is_cancel == 1 ? 'red' : ''}`
-        }
-      },
-    },
-    {
-      id: 'buyer_phone',
-      label: '구매자휴대폰번호',
-      action: (row) => {
-        return row['buyer_phone'] ?? "---"
-      },
-      sx: (row) => {
-        return {
-          color: `${row?.is_cancel == 1 ? 'red' : ''}`
-        }
-      },
-    },
-    {
-      id: 'orders',
-      label: '구매금액',
-      action: (row) => {
-        return <Accordion key={row?.id} style={{ boxShadow: "none", background: 'transparent' }} disabled={!(row?.orders?.length > 0)}>
-          <AccordionSummary expandIcon={<Icon icon="eva:arrow-ios-downward-fill" />}>
-            <Typography variant="subtitle1">{commarNumber(row['amount'])}원</Typography>
-          </AccordionSummary>
-          <AccordionDetails>
-            <Col>
-              {row?.orders && row?.orders.map((order, index) => (
-                <>
-                  <Col>
-                    <Row>
-                      <div style={{ minWidth: '62px', fontWeight: 'bold' }} >{index + 1}.</div>
-                      <div style={{ whiteSpace: 'nowrap', cursor: 'pointer' }}
-                        onClick={() => { /*user?.level > 20 &&*/ window.open(`/manager/products/edit/${order?.product_id}`) }}>
-                        {order?.order_name}
-                      </div>
-                    </Row>
-                    {order?.groups.length > 0 &&
-                      <>
-                        <Row>
-                          <div style={{ minWidth: '62px' }}>옵션정보 </div>
-                          <Col>
-                            {order?.groups && order?.groups.map((group, idx) => (
-                              <>
-                                <Row>
-                                  {/* 선택옵션과 추가상품을 구분한다. 예전엔 둘 다 '그룹명: 값' 으로 똑같이 나와서
-                                      필수로 고른 것인지 돈이 붙은 추가상품인지 알 수 없었다.
-                                      (group_type 은 주문 시점 스냅샷 order_groups 에 이미 들어 있다) */}
-                                  <div style={{ /*minWidth: '62px',*/ marginRight: '0.25rem' }}>
-                                    {group?.group_name}
-                                    {Number(group?.group_type) === 1 &&
-                                      <span style={{
-                                        marginLeft: '4px', fontSize: '0.72rem', color: '#5a8a1e',
-                                        border: '1px solid #cde3a6', borderRadius: '4px', padding: '0 3px',
-                                      }}>추가상품</span>}
-                                    {': '}
-                                  </div>
-                                  {group?.options && group?.options.map((option, idx2) => (
-                                    <>
-                                      {/* 금액을 다시 보여 준다. 예전엔 주석으로 막혀 있어서 총액만 보이고
-                                          그 총액이 어떻게 만들어졌는지는 알 수 없었다 — 30만원짜리 출장이
-                                          붙었는지 사이즈만 고른 건지 화면으로 구분이 안 됐다.
-                                          0원이면 안 적는다(조합형은 개별가가 0이고 추가금이 따로 붙는다). */}
-                                      <div>
-                                        {getOptionLabel(option)}
-                                        {Number(option?.option_price)
-                                          ? ` (${Number(option.option_price) > 0 ? '+' : ''}${commarNumber(option.option_price)}원)`
-                                          : ''}
-                                      </div>{idx2 == group?.options.length - 1 ? '' : <>&nbsp;/&nbsp;</>}                                    </>
-                                  ))}
-                                </Row>
-                              </>
-                            ))}
-                          </Col>
-                        </Row>
-                      </>}
-                    <Row>
-                      <div style={{ minWidth: '62px' }}>가격: </div>
-                      <div>{commarNumber(order?.order_amount)}</div>
-                    </Row>
-                    {
-                      /*
-                      <Row>
-                      <div style={{ minWidth: '62px' }}>배송비: </div>
-                      <div>{commarNumber(order?.delivery_fee)}</div>
-                    </Row>
-                      */
-                    }
-                    {order?.seller_id > 0 &&
-                      <>
-                        <Row>
-                          <div style={{ minWidth: '62px' }}>셀러아이디: </div>
-                          <div>{order?.seller_user_name}</div>
-                        </Row>
-                      </>}
-                  </Col>
-                </>
-              ))}
-            </Col>
-          </AccordionDetails>
-        </Accordion>
-      },
-      sx: (row) => {
-        return {
-          color: `${row?.is_cancel == 1 ? 'red' : ''}`
-        }
-      },
-    },
+    받는사람칸,
+    주소칸,
     // 주문서 추가 입력항목(행사일·행사장소 등).
     //
     // ⚠ 값은 '주문 줄' 로 묶어서 보여 준다.
@@ -461,35 +326,6 @@ const TrxList = () => {
       },
     ] : []),
     // 「처리시간」 칸은 없앴다 — 언제 누가 무엇을 바꿨는지는 「이력」에 다 있다(가맹점 요청 2026-11-06).
-    {
-      id: 'addr',
-      label: '주소',
-      action: (row) => {
-        return <Col onClick={() => { /*console.log(row)*/ }}>
-
-          {/* 받는사람·연락처는 주문서에서 입력받아 transactions 에 저장되는데
-              (pay.controller 가 receiver·receiver_phone·zonecode 로 저장한다)
-              이 컬럼이 주소만 찍어서 관리자가 볼 수 없었다 — 송장을 쓸 수가 없다. */}
-          {(row['receiver'] || row['receiver_phone']) &&
-            <div style={{ fontWeight: 600 }}>
-              {row['receiver'] ?? ''}{row['receiver_phone'] ? ` · ${row['receiver_phone']}` : ''}
-            </div>}
-          <div>{row['zonecode'] ? `(${row['zonecode']}) ` : ''}{row['addr'] ?? "---"}</div>
-          <div>{row['detail_addr'] ?? ""}</div>
-          {/* 배송 요청사항 — 손님이 적어도 관리자가 못 보면 적으나 마나다.
-              송장에 옮겨 적어야 하는 값이라 주소 바로 아래에 붙인다. */}
-          {row['delivery_memo'] &&
-            <div style={{ marginTop: '4px', padding: '4px 8px', background: '#fff8e1', borderRadius: '4px', fontSize: '12.5px', whiteSpace: 'pre-line' }}>
-              요청: {row['delivery_memo']}
-            </div>}
-        </Col>
-      },
-      sx: (row) => {
-        return {
-          color: `${row?.is_cancel == 1 ? 'red' : ''}`
-        }
-      },
-    },
     {
       id: 'trx_method',
       label: '결제타입',
@@ -773,13 +609,16 @@ const TrxList = () => {
   }
   // ── 엑셀 내려받기 ─────────────────────────────────────────────────────
   //
-  // 화면은 한 페이지(10건)만 보여주지만 내려받기는 **지금 검색조건 전체**를 받는다 —
+  // 버튼을 누르면 창(OrderExcelDialog)이 열린다. 기간·상태를 고르거나(처음엔 지금 보는 조건이 채워져 있다),
+  // 표에서 체크한 주문만 받는다(가맹점 요청 2026-11-12).
+  // 화면은 한 페이지(10건)만 보여주지만 조건으로 받으면 **조건에 맞는 주문 전체**를 받는다 —
   // 페이지마다 눌러 이어붙이게 하면 그게 곧 실수가 된다.
   //
   // ⚠ 이 파일에는 이름·전화·주소가 평문으로 들어간다. DB 는 암호화해 두지만
   //   엑셀로 나가는 순간 그 보호가 사라진다. 화면에 보이는 값만 담는다(가리지 않는다는 뜻이 아니라,
   //   화면에서 이미 볼 수 있는 것 이상은 담지 않는다는 뜻이다).
   const [엑셀중, set엑셀중] = useState(false);
+  const [엑셀창, set엑셀창] = useState(false);
 
   const 줄글 = (row) => (row?.orders ?? []).map((o, i) => {
     const 옵션 = (o?.groups ?? [])
@@ -791,7 +630,7 @@ const TrxList = () => {
   const 입력정보글 = (row) => (row?.order_forms ?? [])
     .map((v) => `${v?.label ?? ''}: ${v?.value ?? ''}`).join('\n');
 
-  const 엑셀열 = [
+  const 엑셀열 = (실패사유열) => [
     { label: '주문번호', width: 22, value: (r) => r?.ord_num ?? '' },
     { label: '승인번호', width: 14, value: (r) => r?.appr_num ?? '' },
     { label: '구매시간', width: 20, value: (r) => r?.created_at ?? '' },
@@ -810,28 +649,38 @@ const TrxList = () => {
     { label: '취소여부', width: 10, value: (r) => (r?.is_cancel == 1 || r?.is_cancel_trans == 1 ? '취소' : '') },
     // 실제 취소 시각 — 앞 열 순서는 그대로 두고 그 뒤에 붙인다
     { label: '취소시간', width: 20, value: (r) => r?.cancelled_at ?? '' },
-    // 「결제실패/미완료」에서 받을 때만, 맨 뒤에 — 앞 열의 순서는 가맹점 서식이라 흔들지 않는다
-    ...(실패목록 ? [{ label: '실패 사유', width: 34, value: (r) => r?.fail_reason ?? '' }] : []),
+    // 「결제실패/미완료」를 넣어 받을 때만, 맨 뒤에 — 앞 열의 순서는 가맹점 서식이라 흔들지 않는다
+    ...(실패사유열 ? [{ label: '실패 사유', width: 34, value: (r) => r?.fail_reason ?? '' }] : []),
   ];
 
-  const onExcel = async () => {
+  // { 조건 } — 창에서 고른 기간·상태로 서버에서 다 받는다 / { 선택: true } — 표에서 체크한 줄만
+  const onExcel = async ({ 조건, 선택: 체크만 } = {}) => {
     set엑셀중(true);
     try {
-      // 지금 검색조건 그대로, 페이지만 크게 잡아 다 받는다.
-      const 한번에 = 500;
       let 모은것 = [];
-      let page = 1;
-      // 총건수를 모르므로 첫 응답의 total 로 몇 바퀴 돌지 정한다.
-      // 무한루프 방지로 20바퀴(=1만건)에서 끊고 알린다 — 조용히 잘라 내려주면 안 된다.
-      for (; page <= 20; page++) {
-        const 결과 = await apiManager('transactions', 'list', { ...searchObj, page, page_size: 한번에 });
-        const 줄 = 결과?.content ?? [];
-        모은것 = [...모은것, ...줄];
-        if (줄.length < 한번에) break;
+      let 잘림 = false;
+      if (체크만) {
+        // 체크는 목록이 바뀌면 풀리므로(아래 useEffect) 체크한 줄은 모두 지금 불러온 목록 안에 있다
+        모은것 = (data?.content ?? []).filter((r) => 선택.includes(r?.id));
+      } else {
+        const 한번에 = 500;
+        let page = 1;
+        // 무한루프 방지로 20바퀴(=1만건)에서 끊고 알린다 — 조용히 잘라 내려주면 안 된다.
+        for (; page <= 20; page++) {
+          const 결과 = await apiManager('transactions', 'list', { ...조건, page, page_size: 한번에 });
+          // 중간에 한 번이라도 실패하면 받다 만 파일을 내주지 않는다 — 빈 응답을 '마지막 쪽'으로 읽으면 조용히 빠진다
+          if (!결과) { toast.error('주문을 다 불러오지 못했습니다. 잠시 뒤 다시 받아 주세요.'); return; }
+          const 줄 = 결과?.content ?? [];
+          모은것 = [...모은것, ...줄];
+          if (줄.length < 한번에) break;
+        }
+        잘림 = page > 20;
       }
       if (!모은것.length) { toast.error('내려받을 주문이 없습니다.'); return; }
-      if (page > 20) toast.error('건수가 많아 10,000건까지만 받았습니다. 기간을 좁혀 다시 받아 주세요.');
-      엑셀내려받기('주문내역', 엑셀열, 모은것, '주문내역');
+      if (잘림) toast.error('건수가 많아 10,000건까지만 받았습니다. 기간을 좁혀 다시 받아 주세요.');
+      const 실패사유열 = 체크만 ? 실패목록 : String(조건?.statuses ?? '').split(',').includes('failed');
+      엑셀내려받기('주문내역', 엑셀열(실패사유열), 모은것, '주문내역');
+      set엑셀창(false);
     } finally {
       set엑셀중(false);
     }
@@ -921,14 +770,23 @@ const TrxList = () => {
   return (
     <>
       <Stack spacing={3}>
-        {/* 엑셀 내려받기 — 지금 검색조건 전체를 받는다(화면의 한 페이지가 아니다).
+        {/* 엑셀 내려받기 — 창에서 기간·상태를 고르거나 체크한 주문만 받는다.
             이 파일에는 이름·전화·주소가 평문으로 들어간다. */}
         <Row style={{ justifyContent: 'flex-end' }}>
-          <Button variant="outlined" disabled={엑셀중} onClick={onExcel}
+          <Button variant="outlined" disabled={엑셀중} onClick={() => set엑셀창(true)}
             startIcon={<Icon icon="material-symbols:download" />}>
             {엑셀중 ? '내려받는 중…' : '엑셀 내려받기'}
           </Button>
         </Row>
+        <OrderExcelDialog
+          open={엑셀창}
+          onClose={() => set엑셀창(false)}
+          dns={themeDnsData}
+          처음조건={{ s_dt: searchObj?.s_dt, e_dt: searchObj?.e_dt, search: searchObj?.search, statuses: 메뉴상태(router.query?.type, themeDnsData) }}
+          선택수={선택.length}
+          받는중={엑셀중}
+          onDownload={onExcel}
+        />
         <Card>
           {!실패목록 && (() => {
             const 보이는 = (data?.content ?? []).filter(일괄가능).map((r) => r.id);

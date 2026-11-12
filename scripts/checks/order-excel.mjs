@@ -38,7 +38,8 @@ eq('파일이름에 날짜가 붙는다', 파일이름('주문내역', new Date(
 // ── 화면 배선 ────────────────────────────────────────────────────────────
 const src = readFileSync(FRONT_ROOT + 'src/pages/manager/orders/trx/[type].js', 'utf8');
 eq('내려받기 버튼이 있다', /엑셀 내려받기/.test(src), true);
-eq('지금 검색조건 전체를 받는다', /\{ \.\.\.searchObj, page, page_size: 한번에 \}/.test(src), true);
+eq('창에서 고른 조건 전체를 받는다(2026-11-12 창으로 바뀜)', /\{ \.\.\.조건, page, page_size: 한번에 \}/.test(src), true);
+eq('중간에 못 받은 쪽이 있으면 받다 만 파일을 내주지 않는다', /if \(!결과\) \{ toast\.error\(/.test(src), true);
 eq('한 페이지만 받고 끝내지 않는다', /if \(줄\.length < 한번에\) break;/.test(src), true);
 eq('잘랐으면 알린다', /10,000건까지만 받았습니다/.test(src), true);
 eq('누르는 동안 다시 못 누른다', /disabled=\{엑셀중\}/.test(src), true);

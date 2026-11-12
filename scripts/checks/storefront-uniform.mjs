@@ -1,5 +1,6 @@
 import { FRONT_ROOT, 주석제거 } from './_roots.mjs';
 import { readFileSync, existsSync } from 'fs';
+import { 칸펼치기 } from './_order-columns.mjs'; // 공용 칸(OrderColumns.js)을 화면 소스에 펼쳐 넣는다(2026-11-12)
 
 // 프레임마다 갈려 있던 것들을 하나로 맞춘 뒤 다시 갈라지지 않게 잡아 둔다.
 // (가맹점 피드백 2026-08-21)
@@ -88,7 +89,7 @@ t('찜 주소로 들어와도 홈으로 보낸다',
 t('찜 데이터를 지우지는 않는다', existsSync(FRONT_ROOT + 'src/components/elements/shop/WishPanel.js'));
 
 // ── 관리자 주문조회: 구매시간 ─────────────────────────────────────────────
-const 관리자 = 읽기('src/pages/manager/orders/trx/[type].js');
+const 관리자 = 칸펼치기(읽기('src/pages/manager/orders/trx/[type].js'));
 t('승인 전에는 접수시각을 보여준다',
     관리자.includes("return 승인 || (row['created_at'] ?? '---');"),
     "trx_dt·trx_tm 은 PG 승인 시각이라 결제대기 건은 늘 비어 있다");

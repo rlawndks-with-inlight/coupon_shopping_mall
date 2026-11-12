@@ -10,6 +10,7 @@ import {
   Typography,
 } from '@mui/material';
 import { useState } from 'react';
+import { 고객센터번호표시 } from 'src/utils/cs-phone';
 import toast from 'react-hot-toast';
 import { Col } from 'src/components/elements/styled-components';
 import { useSettingsContext } from 'src/components/settings';
@@ -152,9 +153,9 @@ const FindInfoQuestion = ({
       ) : (
         <>
           <Typography variant="body2" sx={{ color: 'text.secondary' }}>{translate('비밀번호를 찾을 수 없으면 고객센터로 문의해 주세요.')}</Typography>
-          {themeDnsData?.phone_num ? (
+          {고객센터번호표시(themeDnsData) ? (
             <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-              {themeDnsData?.phone_num}
+              {고객센터번호표시(themeDnsData)}
             </Typography>
           ) : (
             <></>

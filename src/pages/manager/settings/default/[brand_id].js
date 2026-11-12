@@ -992,13 +992,30 @@ const DefaultSetting = () => {
                           })
                         }}
                       />
+                      {/* 고객센터 전화번호 — 예전 이름은 「휴대폰번호」였지만 쓰임은 쇼핑몰 하단 「고객센터」다
+                          (가맹점 신청서도 「고객센터 번호」로 받는다). 1588 같은 대표번호도 들어간다.
+                          2번은 setting_obj.cs_phone_2 — 보여 주는 쪽은 src/utils/cs-phone.js 하나만 쓴다. */}
                       <TextField
-                        label='휴대폰번호'
-                        value={item.phone_num}
+                        label='고객센터 전화번호'
+                        value={item.phone_num ?? ''}
+                        placeholder='1588-0000'
+                        helperText='쇼핑몰 하단 「고객센터」에 나옵니다. 대표번호·일반전화·휴대폰 모두 됩니다.'
                         onChange={e => {
                           setItem({
                             ...item,
                             ['phone_num']: e.target.value
+                          })
+                        }}
+                      />
+                      <TextField
+                        label='고객센터 전화번호 2 (선택)'
+                        value={item.setting_obj?.cs_phone_2 ?? ''}
+                        placeholder='010-0000-0000'
+                        helperText='번호가 둘이면 여기에 넣으세요. 하단에 「고객센터 1588-0000 / 010-0000-0000」처럼 함께 나옵니다.'
+                        onChange={e => {
+                          setItem({
+                            ...item,
+                            ['setting_obj']: { ...item.setting_obj, cs_phone_2: e.target.value }
                           })
                         }}
                       />

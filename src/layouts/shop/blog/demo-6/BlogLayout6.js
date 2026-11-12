@@ -11,6 +11,7 @@ import { isStorefrontHome, normalizePath } from "src/utils/blog-shop-route";
 import LanguagePopover from "src/layouts/manager/header/LanguagePopover";
 import { Badge } from "@mui/material";
 import { useLocales } from "src/locales";
+import { 고객센터번호표시 } from "src/utils/cs-phone";
 import { logoDeliveryUrl } from "src/data/data";
 
 /* 단일 상품 전용 럭셔리 레이아웃 — 심플 헤더 + 심플 푸터 */
@@ -335,7 +336,7 @@ const BlogLayout6 = (props) => {
           {themeDnsData?.ceo_name && <div>{translate('대표')} · {themeDnsData.ceo_name}</div>}
           {themeDnsData?.business_num && <div>{translate('사업자등록번호')} · {themeDnsData.business_num}</div>}
           {themeDnsData?.mail_order_num && <div>{translate('통신판매업신고번호')} · {themeDnsData.mail_order_num}</div>}
-          {themeDnsData?.phone_num && <div>{translate('고객센터')} · {themeDnsData.phone_num}</div>}
+          {고객센터번호표시(themeDnsData) && <div>{translate('고객센터')} · {고객센터번호표시(themeDnsData)}</div>}
           {themeDnsData?.addr && <div>{translate('주소')} · {themeDnsData.addr}</div>}
           {themeDnsData?.pvcy_rep_name && <div>{translate('개인정보보호책임자')} · {themeDnsData.pvcy_rep_name}</div>}
         </FooterInfo>

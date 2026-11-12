@@ -3,6 +3,7 @@ import { useSettingsContext } from "src/components/settings"
 import styled from "styled-components"
 import { logoSrc } from "src/data/data"
 import { useLocales } from "src/locales"
+import { 고객센터번호표시 } from "src/utils/cs-phone"
 import { Icon } from "@iconify/react"
 import { useRouter } from "next/router"
 import { useState } from "react"
@@ -141,8 +142,8 @@ const Footer = () => {
             </InfoRow>
           }
           <InfoRow>
-            {phone_num?.length > 1 &&
-              <span><Label>{translate('고객센터')}</Label>{phone_num}<Separator>|</Separator></span>
+            {고객센터번호표시(themeDnsData) &&
+              <span><Label>{translate('고객센터')}</Label>{고객센터번호표시(themeDnsData)}<Separator>|</Separator></span>
             }
             {fax_num?.length > 1 &&
               <span><Label>{translate('팩스')}</Label>{fax_num}</span>

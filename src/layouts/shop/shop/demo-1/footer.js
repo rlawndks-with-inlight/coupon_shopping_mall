@@ -1,6 +1,7 @@
 import { useTheme } from "@emotion/react"
 import { useSettingsContext } from "src/components/settings"
 import { useLocales } from "src/locales"
+import { 고객센터번호표시 } from "src/utils/cs-phone"
 import styled from "styled-components"
 import { useEffect } from "react"
 
@@ -65,6 +66,7 @@ const Footer = (props) => {
     pvcy_rep_name,
     mail_order_num
   } = themeDnsData;
+  const 고객센터 = 고객센터번호표시(themeDnsData); // 1·2번 번호(src/utils/cs-phone.js)
 
 
   useEffect(() => {
@@ -99,7 +101,7 @@ const Footer = (props) => {
             {addr && <Field><Bold>{translate('주소')}</Bold>{addr}</Field>}
             {business_num && <Field><Bold>{translate('사업자등록번호')}</Bold>{business_num}</Field>}
             {ceo_name && <Field><Bold>{translate('대표')}</Bold>{ceo_name}</Field>}
-            {phone_num && <Field><Bold>{translate('고객센터')}</Bold>{phone_num}</Field>}
+            {고객센터 && <Field><Bold>{translate('고객센터')}</Bold>{고객센터}</Field>}
             {fax_num && <Field><Bold>{translate('팩스')}</Bold>{fax_num}</Field>}
             {pvcy_rep_name && <Field><Bold>{translate('개인정보 보호책임자')}</Bold>{pvcy_rep_name}</Field>}
             {mail_order_num && <Field><Bold>{translate('통신판매번호')}</Bold>{mail_order_num}</Field>}

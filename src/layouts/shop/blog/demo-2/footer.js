@@ -3,6 +3,7 @@ import { useSettingsContext } from "src/components/settings"
 import { useAuthContext } from "src/layouts/manager/auth/useAuthContext"
 import styled from "styled-components"
 import { useLocales } from "src/locales"
+import { 고객센터번호표시 } from "src/utils/cs-phone"
 import { useState } from "react"
 import { Icon } from "@iconify/react"
 import DialogPolicy from 'src/components/dialog/DialogPolicy'
@@ -80,6 +81,7 @@ const Footer = () => {
   const business_num = s(d.business_num);
   const ceo_name = s(d.ceo_name);
   const phone_num = s(d.phone_num);
+  const 고객센터 = 고객센터번호표시(d); // 1·2번 번호(src/utils/cs-phone.js)
   const fax_num = s(d.fax_num);
   const mail_order_num = s(d.mail_order_num);
   const pvcy_rep_name = s(d.pvcy_rep_name);
@@ -136,9 +138,9 @@ const Footer = () => {
             }
           </Row>
           <Row style={{ fontSize: '12px' }}>
-            {phone_num.length > 1 &&
+            {고객센터 &&
               <>
-                <MarginRight>{translate('고객센터')} {phone_num}</MarginRight>
+                <MarginRight>{translate('고객센터')} {고객센터}</MarginRight>
                 <MarginRight>|</MarginRight>
               </>
             }

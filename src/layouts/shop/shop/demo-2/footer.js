@@ -2,6 +2,7 @@ import styled from "styled-components"
 import { useRouter } from "next/router"
 import { useSettingsContext } from "src/components/settings"
 import { useLocales } from "src/locales"
+import { 고객센터번호표시 } from "src/utils/cs-phone"
 
 const Wrapper = styled.footer`
 width:100%;
@@ -43,6 +44,7 @@ const Footer = (props) => {
   const router = useRouter();
   const { themeDnsData, themeMode } = useSettingsContext();
   const { company_name, addr, business_num, ceo_name, phone_num, fax_num, mail_order_num, pvcy_rep_name } = themeDnsData;
+  const 고객센터 = 고객센터번호표시(themeDnsData); // 1·2번 번호(src/utils/cs-phone.js)
 
   return (
     <>
@@ -59,7 +61,7 @@ const Footer = (props) => {
           </InfoRow>
           {addr && <InfoRow><Label>{translate('주소')}</Label><span>{addr}</span></InfoRow>}
           <InfoRow>
-            {phone_num && <span><Label>{translate('고객센터')}</Label>{phone_num}<Sep>|</Sep></span>}
+            {고객센터 && <span><Label>{translate('고객센터')}</Label>{고객센터}<Sep>|</Sep></span>}
             {fax_num && <span><Label>{translate('팩스')}</Label>{fax_num}</span>}
           </InfoRow>
           {pvcy_rep_name && <InfoRow><Label>{translate('개인정보 보호책임자')}</Label><span>{pvcy_rep_name}</span></InfoRow>}

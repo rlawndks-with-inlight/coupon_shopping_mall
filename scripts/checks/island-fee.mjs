@@ -78,7 +78,7 @@ if (백엔드있음) {
   eq('추가비 없는 예전 주문은 예전과 같다', 조정({ 전체취소: false, 취소후남은상품가: 30000, 총배송비: 0, setting }), -3000);
 
   const 결제 = 주석제거(읽기(BACK_ROOT, 'controllers/pay.controller.js'));
-  t('서버 재계산: 배송지를 넘기고, 첫 본상품 줄에 추가비를 얹는다', /recalcOrderAmount\(brand_id, products, use_point, seller_id, \{ zonecode, addr, country_code \}\)/.test(결제)
+  t('서버 재계산: 배송지를 넘기고, 첫 본상품 줄에 추가비를 얹는다', /recalcOrderAmount\(brand_id, products, use_point, seller_id, \{ zonecode, addr, country_code, country_name \}\)/.test(결제)
     && /\+ \(i === 섬줄 \? 섬\.fee : 0\)/.test(결제));
   t('서버 재계산: 「배송 안 함」이면 결제를 받지 않는다', /if \(expected\.blocked\) \{/.test(결제) && /if \(섬\.blocked\) return \{ blocked: true, region: 섬\.region \};/.test(결제));
   t('주문 저장: 칸이 있을 때만 island_region·island_fee', /await hasColumn\('transactions', 'island_fee'\)/.test(결제) && /island_fee: Number\(island\?\.fee\) \|\| 0/.test(결제));
@@ -97,6 +97,22 @@ t('주문서: 「배송 안 함」 지역이면 결제 전에 막는다', /if \(
 t('상품 상세: 공용 배송비 줄에 안내(금액까지)', /섬안내문\(currentLang\?\.value\)/.test(읽기(FRONT_ROOT, 'src/components/elements/shop/ShippingLine.js')));
 t('설정 화면: 배송비설정 탭에 붙어 있다', /<IslandFeeSettings/.test(읽기(FRONT_ROOT, 'src/pages/manager/settings/default/[brand_id].js')));
 t('관리자 주문: 금액 칸에 추가비를 나눠 적고 주소 칸에 표시', /섬비 > 0/.test(읽기(FRONT_ROOT, 'src/components/manager/OrderColumns.js')) && /<섬표시 row=\{row\} \/>/.test(읽기(FRONT_ROOT, 'src/components/manager/OrderColumns.js')));
+
+// ── 11/12 점검 뒤 고친 것 ──
+eq('해외로 골라도 나라가 대한민국이면 국내로 판정(추가비 회피 막기)', 판({ zonecode: '63100', addr: '제주특별자치도 제주시 1', country_code: 'ZZ', country_name: '대한민국' }).region, 'jeju');
+eq('해외로 골라도 주소가 국내 시·도로 시작하면 국내로 판정', 판({ zonecode: '40200', addr: '경북 울릉군 울릉읍 1', country_code: 'ZZ', country_name: 'USA' }).region, 'island');
+eq('진짜 해외 주소는 우편번호가 겹쳐도 해외(프랑스 63000)', 판({ zonecode: '63000', addr: '12 Rue Blatin, Clermont-Ferrand', country_code: 'ZZ', country_name: 'France' }).region, 'overseas');
+t('규칙 상한은 저장 칸 수 제한 안쪽(80개)', f.규칙최대 === 80);
+t('화면 판정에 나라 이름도 넘긴다', /country_name: 배송지\?\.country_name/.test(유틸));
+t('「배송 안 함」 안내 문장 틀에 「지역」이 또 붙지 않는다', !/\{\{list\}\} 지역은 배송하지 않습니다/.test(유틸) && /\{\{list\}\}에는 배송하지 않습니다/.test(유틸));
+const api = 읽기(FRONT_ROOT, 'src/utils/api.js');
+t('몰 저장: 추가배송비를 바꾼 화면만 island_fee 를 보낸다', /if \(table == 'brands'\) obj = 섬설정빼고\(obj\);/.test(api) && /섬설정저장 === true/.test(api));
+t('설정 화면: 추가배송비가 바뀐 경우만 섬설정저장', /섬설정저장 \}\)/.test(읽기(FRONT_ROOT, 'src/pages/manager/settings/default/[brand_id].js')));
+if (백엔드있음) {
+    const 브랜드 = 읽기(BACK_ROOT, 'controllers/brand.controller.js');
+    t('서버: island_fee 가 안 오면 DB 값을 유지한다', /JSON_EXTRACT\(setting_obj, '\$\.island_fee'\)/.test(브랜드) && /island_fee: 기존값/.test(브랜드));
+    t('서버: 결제 재계산에 나라 이름도 넘긴다', /\{ zonecode, addr, country_code, country_name \}/.test(읽기(BACK_ROOT, 'controllers/pay.controller.js')));
+}
 
 console.log(`\n통과 ${pass} / 실패 ${fail}`);
 process.exit(fail ? 1 : 0);

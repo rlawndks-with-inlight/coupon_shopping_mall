@@ -350,7 +350,10 @@ const DefaultSetting = () => {
         return
       }
       setSaveLoading(true);
-      result = await apiManager('brands', 'update', { ...payload, id: obj?.id || getTargetBrandId() })
+      // 추가배송비 카드를 실제로 바꿨을 때만 island_fee 를 보낸다(api.js 섬설정빼고)
+      const 섬설정저장 = payload?.setting_obj !== undefined
+        && !isSameValue(loadedItemRef.current?.setting_obj?.island_fee, obj?.setting_obj?.island_fee)
+      result = await apiManager('brands', 'update', { ...payload, id: obj?.id || getTargetBrandId(), 섬설정저장 })
     } else {
       //추가
       if (!obj?.user_name || !obj?.user_pw || !obj?.seller_name || !obj?.user_pw_check) {

@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Col } from 'src/components/elements/styled-components';
-import { commarNumber } from 'src/utils/function';
+import { commarNumber, 포스페이미승인 } from 'src/utils/function';
 import { getOptionLabel, 섬추가비 } from 'src/utils/shop-util';
 
 // 주문관리·주문취소관리 표가 같이 쓰는 칸(가맹점 요청 2026-11-12).
@@ -162,10 +162,13 @@ export const 받는사람칸 = {
 // 지금 몰 설정이 그 지역 「배송 안 함」이면 빨갛게 알린다(설정을 바꾸기 전에 들어온 주문 — 손님과 연락하거나 전체 취소).
 const 섬표시 = ({ row }) => {
   if (row?.is_cancel == 1) return null;
-  const 지금 = 섬추가비({ zonecode: row?.zonecode, addr: row?.addr, country_code: row?.country_code });
+  const 지금 = 섬추가비({ zonecode: row?.zonecode, addr: row?.addr, country_code: row?.country_code, country_name: row?.country_name });
   const region = row?.island_region || ((지금.region === 'jeju' || 지금.region === 'island') ? 지금.region : '');
   if (!region) return null;
-  const 막힘 = 지금.blocked && 지금.region === region;
+  // 「배송 안 함 지역」은 가맹점이 손댈 주문에만 붙인다 — 결제대기(입금 전)·결제완료·입고.
+  //   이미 출고·배송된 주문, 취소요청, 결제실패, 포스페이 승인 전(돈이 안 들어옴), 취소 원장 줄에는 붙이지 않는다(11/12 점검).
+  const 손댈주문 = [0, 5, 10].includes(Number(row?.trx_status)) && !포스페이미승인(row) && !(Number(row?.amount) < 0);
+  const 막힘 = 손댈주문 && 지금.blocked && 지금.region === region;
   return (
     <div style={{ marginTop: '4px', display: 'flex', gap: '4px', flexWrap: 'wrap' }}>
       <span style={{ fontSize: '12px', fontWeight: 600, padding: '0 6px', borderRadius: '10px', background: region === 'jeju' ? '#e6f0fa' : '#fff4dd', color: region === 'jeju' ? '#1f6fb2' : '#a15c00' }}>{섬이름(region)}</span>

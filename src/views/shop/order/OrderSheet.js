@@ -589,7 +589,11 @@ export default function OrderSheet({ router }) {
       toast.error(translate("배송지 주소를 입력해 주세요."));
       return false;
     }
-    if (directMode && !isKR && !String(payData.country_name ?? '').trim()) {
+    // 해외배송이면 나라는 꼭 받는다. 입력 폼이 보이는 경우(비회원·주소록이 빈 회원·직접 입력) 모두 —
+    //   예전엔 directMode 일 때만 봐서 비회원은 나라를 비운 채 결제할 수 있었고, 그러면 국내 주소로 판정돼
+    //   해외 우편번호(예: 프랑스 63000)에 제주 추가배송비가 붙었다(11/12 점검).
+    const 입력폼 = directMode || !(user && (addressContent?.content ?? []).length > 0);
+    if (입력폼 && !isKR && !String(payData.country_name ?? '').trim()) {
       toast.error(translate("배송 국가를 입력해 주세요."));
       return false;
     }

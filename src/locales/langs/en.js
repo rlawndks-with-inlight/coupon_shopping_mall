@@ -1145,7 +1145,7 @@ const en = {
   "제주": "Jeju",
   "그 밖의 섬 지역": "other island areas",
   "{{list}} 추가배송비가 있습니다.": "Extra shipping fee applies: {{list}}.",
-  "{{list}} 지역은 배송하지 않습니다.": "We do not ship to {{list}}.",
+  "{{list}}에는 배송하지 않습니다.": "We do not ship to {{list}}.",
   "제주 추가배송비": "Jeju extra shipping",
   "도서산간 추가배송비": "Remote island extra shipping",
   "이 쇼핑몰은 제주 지역으로 배송하지 않습니다. 다른 주소를 선택해 주세요.": "This store does not ship to Jeju. Please choose another address.",

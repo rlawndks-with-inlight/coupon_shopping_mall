@@ -71,10 +71,11 @@ const 몰설정 = () => {
     try { return JSON.parse(getLocalStorage('themeDnsData') || '{}')?.setting_obj || {}; } catch (e) { return {}; }
 };
 export const 섬추가비 = (배송지) => (배송지
-    ? 추가배송비({ zonecode: 배송지?.zonecode, addr: 배송지?.addr, country_code: 배송지?.country_code }, 몰설정())
+    ? 추가배송비({ zonecode: 배송지?.zonecode, addr: 배송지?.addr, country_code: 배송지?.country_code, country_name: 배송지?.country_name }, 몰설정())
     : { region: 'normal', fee: 0, blocked: false });
 // 상품 상세·장바구니 안내 한 줄 — 설정 안 한 몰은 빈 문자열.
-// 예) 「제주 +3,000원, 그 밖의 섬 지역 +5,000원 추가배송비가 있습니다.」 / 배송 안 함이면 「제주 지역은 배송하지 않습니다.」
+// 예) 「제주 +3,000원, 그 밖의 섬 지역 +5,000원 추가배송비가 있습니다.」 / 배송 안 함이면 「제주에는 배송하지 않습니다.」
+//    「그 밖의 섬 지역」에 이미 '지역'이 있으니 문장 틀에 '지역'을 또 넣지 않는다(「…섬 지역 지역은」이 됐었다).
 export const 섬안내문 = (lang) => {
     const 항목 = 섬안내(몰설정());
     if (!항목.length) return '';
@@ -83,7 +84,7 @@ export const 섬안내문 = (lang) => {
     const 이름 = (r) => (r === 'jeju' ? 번역('제주') : 번역('그 밖의 섬 지역'));
     const 글 = [];
     if (받음.length) 글.push(번역('{{list}} 추가배송비가 있습니다.', { list: 받음.map((x) => `${이름(x.region)} +${commarNumberWithUnit(x.amount, lang)}`).join(', ') }));
-    if (안함.length) 글.push(번역('{{list}} 지역은 배송하지 않습니다.', { list: 안함.map((x) => 이름(x.region)).join(', ') }));
+    if (안함.length) 글.push(번역('{{list}}에는 배송하지 않습니다.', { list: 안함.map((x) => 이름(x.region)).join(', ') }));
     return 글.join(' ');
 };
 

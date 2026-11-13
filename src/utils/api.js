@@ -153,12 +153,25 @@ export const apiManager = async (table, type, params) => {
         return post(`${base_url}/${table}`, obj);
     }
     if (type == 'update') {
+        if (table == 'brands') obj = 섬설정빼고(obj);
         return put(`${base_url}/${table}/${params?.id ?? ""}`, obj);
     }
     if (type == 'delete') {
         return deleteItem(`${base_url}/${table}/${params?.id}`);
     }
 }
+// 몰 정보 저장(brands update)에서 제주·도서산간 추가배송비(setting_obj.island_fee)는
+// 그 설정 카드를 실제로 바꿨을 때(섬설정저장: true)만 보낸다(11/12 점검).
+//   setting_obj 는 서버에서 통째로 바뀌는데, 여러 화면(대시보드 안내 접기·추천상품·홈 문구·상품카드·메인 화면 설정)이
+//   화면을 열 때 받아 둔 setting_obj 를 그대로 다시 보낸다. 그 사이 다른 탭에서 바꾼 추가배송비가
+//   옛 값으로 돌아가거나 사라질 수 있었다. 안 보내면 서버가 DB 값을 그대로 둔다(brand.controller update).
+const 섬설정빼고 = (obj) => {
+    const { 섬설정저장, ...나머지 } = obj ?? {};
+    const so = 나머지?.setting_obj;
+    if (섬설정저장 === true || !so || typeof so !== 'object' || Array.isArray(so) || !('island_fee' in so)) return 나머지;
+    const { island_fee, ...so나머지 } = so;
+    return { ...나머지, setting_obj: so나머지 };
+};
 export const apiShop = async (table, type = 'get', params) => {
     let obj = await settingParams(table, type, params);
     if (!(obj?.brand_id > 0)) {

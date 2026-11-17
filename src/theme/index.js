@@ -26,7 +26,8 @@ ThemeProvider.propTypes = {
 // bodyWithoutDns: 몰 정보(themeDnsData)를 기다리지 않고 본문을 바로 그린다 — 서버 HTML 에 본문이 실린다.
 //   샵고 소개 페이지(랜딩·이용가이드·디자인·FAQ·신청)만 켠다(_app 의 서버본문). 이 페이지들은 몰 정보 없이도
 //   그려지게 짜여 있다. 몰 화면은 상품·카테고리·결제수단을 몰 정보에서 읽으므로 아직 기다린다(검색 노출 2단계, 2026-11-17).
-export default function ThemeProvider({ children, bodyWithoutDns = false }) {
+// fallback: 몰 정보를 기다리는 동안 대신 그릴 것 — 가맹점 몰의 검색엔진용 본문(숨김, src/components/seo/SearchBody.js).
+export default function ThemeProvider({ children, bodyWithoutDns = false, fallback = null }) {
   const { themeMode, themeDirection, themeDnsData } = useSettingsContext();
   const [paletteObj, setPaletteObj] = useState(palette(themeMode))
   useEffect(() => {
@@ -67,10 +68,10 @@ export default function ThemeProvider({ children, bodyWithoutDns = false }) {
       <MUIThemeProvider theme={theme}>
         <CssBaseline />
         <GlobalStyles />
-        {(paletteObj?.is_dns_data || bodyWithoutDns) &&
+        {(paletteObj?.is_dns_data || bodyWithoutDns) ?
           <>
             {children}
-          </>}
+          </> : fallback}
       </MUIThemeProvider>
     </StyledEngineProvider>
   );

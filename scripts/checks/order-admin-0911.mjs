@@ -11,7 +11,7 @@ import { readFileSync } from 'fs';
 //   ⑦ 출고완료·배송완료는 그대로 둔다
 //   ⑧ 신청서 영업추천인 필수 · 희망 주소 즉시 중복확인
 
-const 읽기 = (root, p) => readFileSync(root + p, 'utf8');
+const 읽기 = (root, p) => readFileSync(root + p, 'utf8').replace(/\r/g, ''); // 작업 사본이 CRLF 여도 같은 결과(git 은 LF 로 저장)
 let pass = 0, fail = 0;
 const t = (name, cond, 곁들임) => {
   if (cond) { pass++; console.log('  ok  ' + name); }

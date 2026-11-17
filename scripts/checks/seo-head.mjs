@@ -104,9 +104,18 @@ t('관리자 브랜드 목록: 검색 노출 칸',읽기(FRONT_ROOT, 'src/pages/
 // ⑧ 2단계(2026-11-17): 샵고 소개 페이지는 본문을 서버에서 그린다
 t('서버본문: 메인 사이트 소개 페이지 5개만', s.서버본문(true, '/') && s.서버본문(true, '/manual') && s.서버본문(true, '/apply') && !s.서버본문(true, '/shop') && !s.서버본문(false, '/') && !s.서버본문(true, '/manager/settings'));
 const 테마 = 주석제거(읽기(FRONT_ROOT, 'src/theme/index.js'));
-t('ThemeProvider: bodyWithoutDns 면 몰 정보 없이 그린다', 테마.includes('(paletteObj?.is_dns_data || bodyWithoutDns) &&'));
+t('ThemeProvider: bodyWithoutDns 면 몰 정보 없이 그린다, 기다리는 동안엔 fallback', 테마.includes('(paletteObj?.is_dns_data || bodyWithoutDns) ?') && 테마.includes(': fallback}'));
+
+// ⑨ 2단계-②(2026-11-17): 가맹점 몰은 몰 정보를 기다리는 동안 검색엔진용 본문(숨김)을 싣는다
+t('검색본문종류: 첫 화면·목록·상세만', s.검색본문종류('/shop') === 'home' && s.검색본문종류('/shop/items') === 'list' && s.검색본문종류('/shop/item/[id]') === 'product' && s.검색본문종류('/shop/auth/login') === null && s.검색본문종류('/') === null);
+t('상품 목록은 첫 화면·목록에서만 받는다', s.상품목록받을페이지('/shop') && s.상품목록받을페이지('/shop/items') && !s.상품목록받을페이지('/shop/item/[id]'));
+t('_app: 메인 사이트·데모·검색 끈 몰은 안 싣는다', app.includes('(!메인사이트 && !getDemoBrandDns(호스트) && !검색막힘(hd))') && app.includes('<ThemeProvider bodyWithoutDns={본문서버} fallback={검색용본문}>'));
+t('_app: 상품 목록은 with_products 로 요청(메인·데모 제외)', app.includes("!isMainHost && !demoBrandDns && 상품목록받을페이지(ctx?.pathname) ? '&with_products=1' : ''"));
+const 본문 = 주석제거(읽기(FRONT_ROOT, 'src/components/seo/SearchBody.js'));
+t('SearchBody: 손님 눈에는 숨김·aria-hidden·링크 tabIndex -1', 본문.includes("clip: 'rect(0, 0, 0, 0)'") && 본문.includes("aria-hidden='true'") && !/<a (?![^>]*tabIndex=\{-1\})/.test(본문));
+t('SearchBody: 번역(i18n) 안 씀 — 첫 화면 언어가 서버와 어긋나므로', !/useTranslation|useLocales|i18n/.test(본문));
 t('ThemeProvider: injectFirst 안 씀(서버 캐시를 건너뛰므로)', !/StyledEngineProvider injectFirst/.test(테마));
-t('_app: 서버본문 판정을 ThemeProvider 에 넘긴다', app.includes('<ThemeProvider bodyWithoutDns={본문서버}>') && app.includes('서버본문(메인사이트, router.pathname)'));
+t('_app: 서버본문 판정을 ThemeProvider 에 넘긴다', app.includes('<ThemeProvider bodyWithoutDns={본문서버}') && app.includes('서버본문(메인사이트, router.pathname)'));
 const 문서 = 주석제거(읽기(FRONT_ROOT, 'src/pages/_document.js'));
 t('_document: emotion 스타일을 요청마다 모아 head 에 담는다', 문서.includes('createEmotionServer(emotionCache)') && 문서.includes('<App emotionCache={emotionCache} {...props} />') && 문서.includes('{this.props.emotionStyleTags}'));
 t('_document: 스타일 자리(emotion-insertion-point)가 스타일보다 앞', 문서.indexOf('emotion-insertion-point') > 0 && 문서.indexOf('emotion-insertion-point') < 문서.indexOf('{this.props.emotionStyleTags}'));
@@ -122,7 +131,10 @@ if (백엔드있음) {
   t('백: 소개 빈칸이면 og_description 안 덮음', dc.includes("if (String(product.product_comment ?? '').trim()) brand.og_description"));
   t('백: ssr_content.product 채움', dc.includes('brand.ssr_content.product = {'));
   t('백: search-brands 는 본사 아래·안 지움·안 닫음·검색 켜짐만', dc.includes('searchBrands: async') && dc.includes('m.is_main_dns = 1') && dc.includes('b.is_closure = 0') && dc.includes('!검색막힘(r.seo_obj)'));
-  t('백: search-brands 경로', 읽기(BACK_ROOT, 'routes/domain.route.js').includes("route('/search-brands')"));
+  t('백: 상품 목록은 응답에만(with_products), 지운·숨긴 상품 제외, 검색 끈 몰 제외', dc.includes('상품목록포함 ? await 상품목록붙이기(brand) : brand') && /WHERE brand_id = \? AND is_delete = 0 AND status != 5/.test(dc) && dc.includes('검색막힘(brand?.seo_obj)) return brand'));
+  const 유틸 = 주석제거(읽기(BACK_ROOT, 'utils.js/util.js'));
+  t('백: dns 쿠키(토큰)에 ssr_content 를 안 싣는다(헤더 한도)', /const \{ ssr_content, \.\.\.나머지 \} = 공개용브랜드\(brand\);\s*return makeUserToken\(\{ \.\.\.나머지, kind: 'dns' \}\)/.test(유틸));
+  t('백: search-brands 경로',읽기(BACK_ROOT, 'routes/domain.route.js').includes("route('/search-brands')"));
   const dcm = await import('file:///' + BACK_ROOT + 'controllers/domain.controller.js').catch(() => null);
   if (dcm?.검색막힘) {
     t('백 검색막힘: 프론트와 같은 기준', dcm.검색막힘('{"search_hidden":true}') && !dcm.검색막힘('{"naver_token":""}') && !dcm.검색막힘(null) && !dcm.검색막힘('깨짐'));

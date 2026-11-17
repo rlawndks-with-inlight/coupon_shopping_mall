@@ -24,7 +24,7 @@ import 'react-credit-cards/es/styles-compiled.css'
 import 'react-lazy-load-image-component/src/effects/blur.css'
 import { Toaster } from 'react-hot-toast'
 import { ogDeliveryUrl, faviconUrl } from 'src/data/data'
-import { 페이지주소, 색인제외, 검색막힘, 서버본문, 제목, 설명문, 대표이미지, 구조화데이터, 구조화데이터문자열 } from 'src/utils/seo-head'
+import { 페이지주소, 색인제외, 검색막힘, 서버본문, 상품목록받을페이지, 제목, 설명문, 대표이미지, 구조화데이터, 구조화데이터문자열 } from 'src/utils/seo-head'
 import { AuthProvider } from 'src/layouts/manager/auth/JwtContext'
 import { useEffect } from 'react'
 import ThemeContrast from 'src/components/settings/ThemeContrast'
@@ -44,6 +44,7 @@ import DemoNotice from 'src/components/main-site/DemoNotice'
 // 가맹점이 정한 로고 크기를 --logo-scale 로 내려 준다. 그리는 것은 없다.
 import LogoScaleStyle from 'src/components/elements/shop/LogoScaleStyle'
 import BrandNotFound from 'src/components/main-site/BrandNotFound'
+import SearchBody from 'src/components/seo/SearchBody'
 
 const clientSideEmotionCache = createEmotionCache();
 
@@ -140,6 +141,10 @@ const App = props => {
   //   router.pathname(페이지 파일 경로)은 서버와 브라우저 첫 화면이 같은 값이라 그리는 내용이 어긋나지 않는다.
   //   몰 주소의 / 는 상점 화면으로 바뀌어(next.config) pathname 이 / 가 아니고, 메인사이트 조건으로도 한 번 더 막는다.
   const 본문서버 = 서버본문(메인사이트, router.pathname);
+  // 검색 노출 2단계-②: 가맹점 몰은 몰 정보를 기다리는 동안 검색엔진용 본문을 숨겨서 싣는다(SearchBody).
+  //   데모 미리보기(demo-N)는 실제 가맹점 정보를 가리는 화면이라 싣지 않고, 「검색엔진 노출」을 끈 몰도 뺀다.
+  const 검색용본문 = (!메인사이트 && !getDemoBrandDns(호스트) && !검색막힘(hd))
+    ? <SearchBody hd={hd} pathname={router.pathname} /> : null;
 
   return (
     <>
@@ -191,7 +196,7 @@ const App = props => {
                   <ThemeContrast>
                     <ThemeRtlLayout>
                       <MotionLazyContainer>
-                        <ThemeProvider bodyWithoutDns={본문서버}>
+                        <ThemeProvider bodyWithoutDns={본문서버} fallback={검색용본문}>
                           <ThemeLocalization>
                             <I18nextProvider i18n={i18n}>
                               <ModalProvider>
@@ -255,7 +260,9 @@ App.getInitialProps = async context => {
         // 메인 호스트는 마스터 브랜드(메인 도메인) 조회
         dnsToQuery = rootDomain;
       }
-      const url = `${process.env.BACK_URL}/api/domain?dns=${dnsToQuery}&product_id=${product_id}&post_id=${post_id}&seller_id=${seller_id}`;
+      // 몰 첫 화면·전체 상품 목록은 검색엔진용 상품 목록도 받는다(SearchBody). 메인 사이트·데모 미리보기는 필요 없다.
+      const 상품목록 = !isMainHost && !demoBrandDns && 상품목록받을페이지(ctx?.pathname) ? '&with_products=1' : '';
+      const url = `${process.env.BACK_URL}/api/domain?dns=${dnsToQuery}&product_id=${product_id}&post_id=${post_id}&seller_id=${seller_id}${상품목록}`;
       const res = await fetch(url)
       head_data = await res.json()
       let dns_data = head_data?.data

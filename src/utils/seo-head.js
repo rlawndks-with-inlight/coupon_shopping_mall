@@ -41,6 +41,17 @@ export const 페이지주소 = (host, asPath, 메인사이트 = false) => {
 export const 서버본문경로 = ['/', '/manual', '/frames', '/faq', '/apply'];
 export const 서버본문 = (메인사이트, pathname) => !!메인사이트 && 서버본문경로.includes(pathname);
 
+// 가맹점 몰의 검색엔진용 본문(src/components/seo/SearchBody.js)을 싣는 페이지 — 값은 페이지 파일 경로(router.pathname).
+//   몰 첫 화면(/ 는 next.config 가 /shop 으로 바꿔 보여 준다)·전체 상품 목록·상품 상세.
+export const 검색본문종류 = (pathname) => {
+  if (pathname === '/shop/item/[id]') return 'product';
+  if (pathname === '/shop/items') return 'list';
+  if (pathname === '/shop' || pathname === '/shop/home') return 'home';
+  return null;
+};
+// 상품 목록을 함께 받아 오는 페이지(백엔드 /api/domain?with_products=1) — 상세는 그 상품 하나면 된다.
+export const 상품목록받을페이지 = (pathname) => ['home', 'list'].includes(검색본문종류(pathname));
+
 // 브라우저에서 i18n 을 처음 만들 때(모듈 로드 시점) 이 페이지가 서버 본문 페이지인지. __NEXT_DATA__ 로 판단한다.
 //   _app 의 메인사이트 판정(NEXT_PUBLIC_IS_SHOPGO + head_data.is_main_dns)과 같은 기준이다.
 export const 서버본문으로시작 = () => {

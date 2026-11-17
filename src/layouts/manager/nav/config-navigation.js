@@ -216,6 +216,24 @@ export const navConfig = () => {
           ],
         },
       ] : []),
+      // 설정관리: 최상위(레벨50)만 — 본사 화면은 위에서 return 하므로 아래쪽 '설정관리'가 영영 안 뜬다.
+      //   그래서 레벨50도 본사 화면에서 SEO설정(네이버·구글 소유확인, 검색엔진 노출)에 갈 길이 없었다(2026-11-17 사장님 확인).
+      //   브랜드설정 목록 → 몰 「수정」 → SEO설정 탭으로 각 몰(가맹점 포함)을 고친다. 본사 계정(레벨40)에는 안 보인다(의도).
+      ...(isDeveloper() ? [
+        {
+          items: [
+            {
+              title: '설정관리',
+              path: PATH_MANAGER.settings.default + `/${themeDnsData?.id}`,
+              icon: ICONS.setting,
+              children: [
+                { title: '기본설정', path: PATH_MANAGER.settings.default + `/${themeDnsData?.id}` },
+                { title: '브랜드설정', path: PATH_MANAGER.settings.brands },
+              ],
+            },
+          ],
+        },
+      ] : []),
     ];
   }
   return [

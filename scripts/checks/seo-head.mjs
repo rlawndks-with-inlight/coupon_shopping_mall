@@ -91,7 +91,15 @@ t('검색막힘: 거짓·깨진 값은 노출', !s.검색막힘({ seo_obj: { sea
 t('_app: 끈 몰은 모든 페이지 noindex', app.includes('(색인제외(router.asPath) || 검색막힘(hd))'));
 const 설정 = 읽기(FRONT_ROOT, 'src/pages/manager/settings/default/[brand_id].js');
 t('관리자 SEO설정: 「검색엔진 노출」 스위치(seo_obj.search_hidden)', 설정.includes("label='검색엔진 노출'") && 설정.includes("['search_hidden']: !e.target.checked"));
-t('관리자 브랜드 목록: 검색 노출 칸', 읽기(FRONT_ROOT, 'src/pages/manager/settings/brands/index.js').includes("id: 'search_open'"));
+{
+  // 본사 화면(ShopGo 98)은 전용 메뉴만 보이고 return 한다 — 레벨50도 SEO설정에 갈 길이 없었다(2026-11-17).
+  const 메뉴 = 주석제거(읽기(FRONT_ROOT, 'src/layouts/manager/nav/config-navigation.js'));
+  const 시작 = 메뉴.indexOf('if (isMasterSite()) {');
+  const 본사블록 = 메뉴.slice(시작, 메뉴.indexOf('\n  return [', 시작)); // 본사 전용 return 블록만(아래 일반 메뉴의 설정관리와 섞이지 않게)
+  t('본사 블록을 잘라 왔다', 시작 > 0 && 본사블록.length > 200 && 본사블록.length < 메뉴.length / 2);
+  t('본사 화면 메뉴: 레벨50에게 설정관리(기본설정·브랜드설정)', /\.\.\.\(isDeveloper\(\) \? \[[\s\S]*?title: '설정관리'[\s\S]*?PATH_MANAGER\.settings\.brands/.test(본사블록));
+}
+t('관리자 브랜드 목록: 검색 노출 칸',읽기(FRONT_ROOT, 'src/pages/manager/settings/brands/index.js').includes("id: 'search_open'"));
 
 // ⑧ 2단계(2026-11-17): 샵고 소개 페이지는 본문을 서버에서 그린다
 t('서버본문: 메인 사이트 소개 페이지 5개만', s.서버본문(true, '/') && s.서버본문(true, '/manual') && s.서버본문(true, '/apply') && !s.서버본문(true, '/shop') && !s.서버본문(false, '/') && !s.서버본문(true, '/manager/settings'));

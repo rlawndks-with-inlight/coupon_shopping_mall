@@ -24,7 +24,7 @@ import 'react-credit-cards/es/styles-compiled.css'
 import 'react-lazy-load-image-component/src/effects/blur.css'
 import { Toaster } from 'react-hot-toast'
 import { ogDeliveryUrl, faviconUrl } from 'src/data/data'
-import { 페이지주소, 색인제외, 검색막힘, 제목, 설명문, 대표이미지, 구조화데이터, 구조화데이터문자열 } from 'src/utils/seo-head'
+import { 페이지주소, 색인제외, 검색막힘, 서버본문, 제목, 설명문, 대표이미지, 구조화데이터, 구조화데이터문자열 } from 'src/utils/seo-head'
 import { AuthProvider } from 'src/layouts/manager/auth/JwtContext'
 import { useEffect } from 'react'
 import ThemeContrast from 'src/components/settings/ThemeContrast'
@@ -37,7 +37,7 @@ import ThemeLocalization from 'src/locales/ThemeLocalization'
 import ThemeRtlLayout from 'src/components/settings/ThemeRtlLayout';
 import createEmotionCache from '../utils/createEmotionCache';
 import { useTranslation, I18nextProvider } from 'react-i18next';
-import i18n from 'src/locales/i18n';
+import i18n, { 미룬언어가져오기 } from 'src/locales/i18n';
 import { allLangs } from 'src/locales'
 import { getDemoBrandDns, getDemoNum, maskDemoBrandData, isRetiredDemoHost } from 'src/components/main-site/frameList'
 import DemoNotice from 'src/components/main-site/DemoNotice'
@@ -67,6 +67,9 @@ const App = props => {
       }
       // 저장값만 바꾸면 화면 언어(i18n)는 처음 읽은 값 그대로 남는다 — 언어팩을 끈 몰에 예전 영어 선택이 남은
       // 방문자는 문구는 영어, 가격 단위(저장값을 읽는다)는 '원' 으로 섞여 보였다(2026-10-12 점검). 둘을 맞춘다.
+      // 서버에서 본문을 그린 페이지는 첫 화면을 서버 언어로 시작했다(src/locales/i18n.js 미룬언어) — 여기서 손님이 고른 언어로 바꾼다.
+      const 미룬 = 미룬언어가져오기();
+      if (미룬 && allLangs.some(l => l.value === 미룬)) localStorage.setItem('i18nextLng', 미룬);
       const 저장언어 = localStorage.getItem('i18nextLng');
       if (저장언어 && i18n.language !== 저장언어) i18n.changeLanguage(저장언어);
 
@@ -133,6 +136,10 @@ const App = props => {
   const 쪽설명 = 설명문(hd);
   const 쪽이미지 = ogDeliveryUrl(대표이미지(hd, 메인사이트, 호스트));
   const 구조화 = 구조화데이터문자열(구조화데이터(hd, 이주소, router.asPath));
+  // 검색 노출 2단계: 샵고 소개 페이지는 본문을 서버에서 그린다(ThemeProvider bodyWithoutDns).
+  //   router.pathname(페이지 파일 경로)은 서버와 브라우저 첫 화면이 같은 값이라 그리는 내용이 어긋나지 않는다.
+  //   몰 주소의 / 는 상점 화면으로 바뀌어(next.config) pathname 이 / 가 아니고, 메인사이트 조건으로도 한 번 더 막는다.
+  const 본문서버 = 서버본문(메인사이트, router.pathname);
 
   return (
     <>
@@ -184,7 +191,7 @@ const App = props => {
                   <ThemeContrast>
                     <ThemeRtlLayout>
                       <MotionLazyContainer>
-                        <ThemeProvider>
+                        <ThemeProvider bodyWithoutDns={본문서버}>
                           <ThemeLocalization>
                             <I18nextProvider i18n={i18n}>
                               <ModalProvider>

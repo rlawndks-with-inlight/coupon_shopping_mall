@@ -31,8 +31,10 @@ ok('메인 호스트는 404 로 덮지 않는다', /if\s*\(!dns_data\s*&&\s*!isM
 // ── ② 안내 화면은 테마 프로바이더 바깥에서 그린다 ────────────────────────
 // ThemeProvider 가 브랜드 없을 때 children 을 막는다는 사실 자체를 고정한다.
 // (이 게이트가 사라지면 이 테스트의 전제가 바뀌므로 같이 깨져야 한다)
+// 2026-11-17(검색 노출 2단계): 샵고 소개 페이지만 bodyWithoutDns 로 이 게이트를 건너뛴다.
+//   그건 메인 사이트(브랜드가 있는 곳)에서만 켜지므로 없는 주소에는 해당 없다 — 전제는 그대로다(seo-head.mjs ⑧).
 ok('ThemeProvider 는 브랜드가 있을 때만 children 을 그린다',
-  /paletteObj\?\.is_dns_data\s*&&/.test(theme));
+  /\(paletteObj\?\.is_dns_data(\s*\|\|\s*bodyWithoutDns)?\)\s*&&|paletteObj\?\.is_dns_data\s*&&/.test(theme));
 
 const 이른반환 = app.indexOf('if (head_data?.is_brand_not_found)');
 const 프로바이더 = app.indexOf('<AuthProvider>');

@@ -36,6 +36,23 @@ export const 페이지주소 = (host, asPath, 메인사이트 = false) => {
 };
 
 // 검색 결과에 안 나와도 되는 화면(로그인·장바구니·마이페이지·결제·검색 결과).
+// 본문을 서버에서 그리는 페이지(검색 노출 2단계, 2026-11-17) — 샵고 소개 페이지만. 값은 페이지 파일 경로(router.pathname).
+//   몰 화면은 상품·카테고리·결제수단을 브라우저에서 받은 몰 정보로 그리므로 아직 넣지 않는다.
+export const 서버본문경로 = ['/', '/manual', '/frames', '/faq', '/apply'];
+export const 서버본문 = (메인사이트, pathname) => !!메인사이트 && 서버본문경로.includes(pathname);
+
+// 브라우저에서 i18n 을 처음 만들 때(모듈 로드 시점) 이 페이지가 서버 본문 페이지인지. __NEXT_DATA__ 로 판단한다.
+//   _app 의 메인사이트 판정(NEXT_PUBLIC_IS_SHOPGO + head_data.is_main_dns)과 같은 기준이다.
+export const 서버본문으로시작 = () => {
+  try {
+    if (typeof window === 'undefined' || process.env.NEXT_PUBLIC_IS_SHOPGO !== 'true') return false;
+    const d = window.__NEXT_DATA__ || JSON.parse(document.getElementById('__NEXT_DATA__')?.textContent || '{}');
+    return 서버본문(d?.props?.head_data?.is_main_dns == 1, d?.page);
+  } catch (e) {
+    return false;
+  }
+};
+
 // 몰 전체 검색 노출 끔 — 관리자 SEO설정 「검색엔진 노출」(seo_obj.search_hidden). 값이 없으면 노출(새 몰 기본 켜짐).
 //   백엔드 domain.controller 의 검색막힘 과 같은 기준이다.
 export const 검색막힘 = (hd) => {

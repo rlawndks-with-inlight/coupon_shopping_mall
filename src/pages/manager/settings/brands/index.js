@@ -28,6 +28,7 @@ import { Col, Row, themeObj } from 'src/components/elements/styled-components'
 import toast from 'react-hot-toast'
 import axios from 'axios'
 import { mainDesignRoute } from 'src/utils/section-builder'
+import { 검색막힘 } from 'src/utils/seo-head'
 const BrandList = () => {
   const { setModal } = useModal()
   const { user } = useAuthContext()
@@ -166,6 +167,14 @@ const BrandList = () => {
       : []),
     ...(user?.level >= 50
       ? [
+        {
+          // 관리자 브랜드 설정 → SEO설정 「검색엔진 노출」 값. 끈 몰은 검색엔진이 못 가져간다(robots.txt 전부 막기).
+          id: 'search_open',
+          label: '검색 노출',
+          action: (row) => (검색막힘(row)
+            ? <Typography variant='body2' sx={{ color: 'text.disabled' }}>끔</Typography>
+            : <Typography variant='body2' sx={{ color: 'success.main', fontWeight: 600 }}>켜짐</Typography>)
+        },
         {
           id: 'sitemap',
           label: `사이트맵 링크이동`,

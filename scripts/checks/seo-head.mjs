@@ -10,6 +10,8 @@ import { FRONT_ROOT, BACK_ROOT, 백엔드있음, 주석제거 } from './_roots.m
 //   ④ 로그인·장바구니·마이페이지·검색은 noindex
 //   ⑤ 사이트맵: 메인=소개 페이지, 몰=첫 화면·목록·상품, 로그인류 없음, 데모 호스트는 비움 / robots 는 호스트별 Sitemap 줄
 //   ⑥ 백엔드: 지운·숨긴 상품은 제목·검색 정보 안 만듦, 한 줄 소개 null 이 "null" 로 안 나감
+//   ⑦ 「검색엔진 노출」 끈 몰(seo_obj.search_hidden, 2026-11-17): noindex·robots 전부 막기·빈 사이트맵,
+//      값 없으면 켜짐(새 몰 기본), 메인 sitemap.xml 은 켜진 몰을 묶는 sitemapindex
 
 let pass = 0, fail = 0;
 const t = (name, cond) => { if (cond) { pass++; console.log('  ok  ' + name); } else { fail++; console.log('  FAIL ' + name); } };
@@ -68,13 +70,28 @@ t('_app: 요청 호스트를 page_host 로 넘긴다', app.includes('page_host: 
 // ⑤
 const sm = 읽기(FRONT_ROOT, 'src/pages/sitemap.xml.js');
 t('사이트맵: 로그인·가입·주문조회 없음', !/\/shop\/auth\//.test(주석제거(sm)));
-t('사이트맵: 메인=소개·가이드', sm.includes("'/manual/'") && sm.includes("메인호스트(host)"));
+const smp = 읽기(FRONT_ROOT, 'src/pages/sitemap-pages.xml.js');
+t('사이트맵: 메인=소개·가이드(sitemap-pages.xml)', smp.includes("'/manual/'") && smp.includes('메인호스트(host)'));
+t('사이트맵: 메인 sitemap.xml 은 묶음(sitemapindex) — 소개 목록 + 켜진 몰', sm.includes('<sitemapindex') && sm.includes('/sitemap-pages.xml') && sm.includes('/api/domain/search-brands'));
+t('사이트맵: 끈 몰·없는 주소는 빈 목록', /몰\.상태 === '없음' \|\| \(몰\.상태 === '있음' && 검색막힘\(몰\.브랜드\)\)\) return 보내기\(res, 주소목록xml\(\[\]\)\)/.test(sm));
 t('사이트맵: 데모 호스트 비움', sm.includes('데모호스트(host)'));
 t('정적 robots.txt 없음(호스트별 페이지와 충돌)', !existsSync(FRONT_ROOT + 'public/robots.txt'));
 const rb = 읽기(FRONT_ROOT, 'src/pages/robots.txt.js');
 t('robots: Sitemap 줄·데모 전부 막기', rb.includes('Sitemap: https://${host}/sitemap.xml') && rb.includes("'Disallow: /'"));
 const h = await import('file:///' + FRONT_ROOT + 'src/utils/seo-host.js');
 t('데모 호스트 판정', h.데모호스트('demo-3.shopgo.co.kr') && !h.데모호스트('mbc02.shopgo.co.kr'));
+t('robots: 끈 몰·없는 주소는 전부 막기, 백엔드 실패는 안 막음', rb.includes("몰.상태 === '없음' || (몰.상태 === '있음' && 검색막힘(몰.브랜드))"));
+eq('사이트맵 목록 비면 빈 urlset', h.주소목록xml([]), '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n</urlset>\n');
+t('사이트맵 주소 & 이스케이프', h.주소목록xml(['https://a/?x=1&y=2']).includes('<loc>https://a/?x=1&amp;y=2</loc>'));
+
+// ⑦
+t('검색막힘: 값 없으면 노출(새 몰 기본 켜짐)', !s.검색막힘({}) && !s.검색막힘({ seo_obj: { naver_token: '' } }) && !s.검색막힘(undefined));
+t('검색막힘: 참이면 막힘(객체·문자열 저장 모두)', s.검색막힘({ seo_obj: { search_hidden: true } }) && s.검색막힘({ seo_obj: '{"search_hidden": true}' }) && s.검색막힘({ seo_obj: { search_hidden: 1 } }));
+t('검색막힘: 거짓·깨진 값은 노출', !s.검색막힘({ seo_obj: { search_hidden: false } }) && !s.검색막힘({ seo_obj: '{깨짐' }));
+t('_app: 끈 몰은 모든 페이지 noindex', app.includes('(색인제외(router.asPath) || 검색막힘(hd))'));
+const 설정 = 읽기(FRONT_ROOT, 'src/pages/manager/settings/default/[brand_id].js');
+t('관리자 SEO설정: 「검색엔진 노출」 스위치(seo_obj.search_hidden)', 설정.includes("label='검색엔진 노출'") && 설정.includes("['search_hidden']: !e.target.checked"));
+t('관리자 브랜드 목록: 검색 노출 칸', 읽기(FRONT_ROOT, 'src/pages/manager/settings/brands/index.js').includes("id: 'search_open'"));
 
 // ⑥
 if (백엔드있음) {
@@ -82,7 +99,17 @@ if (백엔드있음) {
   t('백: 지운·숨긴 상품 제외', /FROM products WHERE id = \? AND brand_id = \? AND is_delete = 0 AND status != 5/.test(dc));
   t('백: 소개 빈칸이면 og_description 안 덮음', dc.includes("if (String(product.product_comment ?? '').trim()) brand.og_description"));
   t('백: ssr_content.product 채움', dc.includes('brand.ssr_content.product = {'));
+  t('백: search-brands 는 본사 아래·안 지움·안 닫음·검색 켜짐만', dc.includes('searchBrands: async') && dc.includes('m.is_main_dns = 1') && dc.includes('b.is_closure = 0') && dc.includes('!검색막힘(r.seo_obj)'));
+  t('백: search-brands 경로', 읽기(BACK_ROOT, 'routes/domain.route.js').includes("route('/search-brands')"));
+  const dcm = await import('file:///' + BACK_ROOT + 'controllers/domain.controller.js').catch(() => null);
+  if (dcm?.검색막힘) {
+    t('백 검색막힘: 프론트와 같은 기준', dcm.검색막힘('{"search_hidden":true}') && !dcm.검색막힘('{"naver_token":""}') && !dcm.검색막힘(null) && !dcm.검색막힘('깨짐'));
+  }
+  const mg = 읽기(BACK_ROOT, 'migrations/2026-11-17_search_hidden.sql');
+  const 끌몰 = (mg.match(/WHERE is_delete = 0\s+AND id IN \(([^)]+)\)/) || [])[1]?.split(',').map((x) => Number(x.trim())) || [];
+  t('마이그레이션: 98·99·141 은 안 끔, 포항과메기(130)·첫돌공방(105)은 끔', 끌몰.length > 30 && ![98, 99, 141].some((i) => 끌몰.includes(i)) && 끌몰.includes(130) && 끌몰.includes(105));
+  t('마이그레이션: 다른 프로젝트 브랜드(2~97) 안 건드림', 끌몰.every((i) => i >= 100));
 }
 
-console.log(`\n${pass} ok, ${fail} fail`);
+console.log(`\n통과 ${pass} / 실패 ${fail}`);
 process.exit(fail ? 1 : 0);

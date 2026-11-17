@@ -24,7 +24,7 @@ import 'react-credit-cards/es/styles-compiled.css'
 import 'react-lazy-load-image-component/src/effects/blur.css'
 import { Toaster } from 'react-hot-toast'
 import { ogDeliveryUrl, faviconUrl } from 'src/data/data'
-import { 페이지주소, 색인제외, 제목, 설명문, 대표이미지, 구조화데이터, 구조화데이터문자열 } from 'src/utils/seo-head'
+import { 페이지주소, 색인제외, 검색막힘, 제목, 설명문, 대표이미지, 구조화데이터, 구조화데이터문자열 } from 'src/utils/seo-head'
 import { AuthProvider } from 'src/layouts/manager/auth/JwtContext'
 import { useEffect } from 'react'
 import ThemeContrast from 'src/components/settings/ThemeContrast'
@@ -141,7 +141,7 @@ const App = props => {
           <title>{쪽제목}</title>
           {쪽설명 && <meta name='description' content={쪽설명} />}
           {이주소 && <link rel='canonical' href={이주소} />}
-          {색인제외(router.asPath) && <meta name='robots' content='noindex' />}
+          {(색인제외(router.asPath) || 검색막힘(hd)) && <meta name='robots' content='noindex' />}
           {/* 값이 있을 때만 그린다 — 없으면 href='null' 이 나가 /지금경로/null 404 가 난다(faviconUrl 주석) */}
           {favicon && (
             <>

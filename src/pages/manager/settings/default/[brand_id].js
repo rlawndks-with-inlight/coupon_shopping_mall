@@ -1496,6 +1496,22 @@ const DefaultSetting = () => {
             )}
             {currentTab == 6 && (
               <>
+                {/* 검색엔진 노출 — 시험·견본 몰을 검색에서 빼려고 둔다(2026-11-17 사장님 결정, 새 몰 기본 켜짐).
+                    값은 seo_obj.search_hidden(참=끔). 끄면 프론트가 모든 페이지 noindex·robots.txt 전부 막기·빈 사이트맵,
+                    샵고 메인 사이트맵 묶음에서도 빠진다(src/pages/robots.txt.js·sitemap.xml.js, 백엔드 domain search-brands). */}
+                <Grid item xs={12}>
+                  <Card sx={{ p: 2 }}>
+                    <Stack spacing={1}>
+                      <FormControlLabel
+                        control={<Switch checked={!(item?.seo_obj?.search_hidden === true || item?.seo_obj?.search_hidden === 1 || item?.seo_obj?.search_hidden === '1' || item?.seo_obj?.search_hidden === 'true')}
+                          onChange={e => setItem({ ...item, ['seo_obj']: { ...item?.seo_obj, ['search_hidden']: !e.target.checked } })} />}
+                        label='검색엔진 노출' />
+                      <Typography variant='caption' sx={{ color: 'text.secondary' }}>
+                        켜 두면 구글·네이버가 이 몰을 수집해 검색 결과에 보여 줍니다. 시험용이나 견본 몰은 끄세요. 끄면 검색엔진이 이 몰의 어떤 페이지도 가져가지 않고, 이미 검색에 나오던 페이지도 다음 수집 때부터 빠집니다. 손님이 주소로 들어오는 것은 그대로 됩니다.
+                      </Typography>
+                    </Stack>
+                  </Card>
+                </Grid>
                 <Grid item xs={12} md={6}>
                   <Card sx={{ p: 2, height: '100%' }}>
                     <Stack spacing={3}>

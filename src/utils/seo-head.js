@@ -36,6 +36,15 @@ export const 페이지주소 = (host, asPath, 메인사이트 = false) => {
 };
 
 // 검색 결과에 안 나와도 되는 화면(로그인·장바구니·마이페이지·결제·검색 결과).
+// 몰 전체 검색 노출 끔 — 관리자 SEO설정 「검색엔진 노출」(seo_obj.search_hidden). 값이 없으면 노출(새 몰 기본 켜짐).
+//   백엔드 domain.controller 의 검색막힘 과 같은 기준이다.
+export const 검색막힘 = (hd) => {
+  let o = hd?.seo_obj;
+  if (typeof o === 'string') { try { o = JSON.parse(o); } catch { o = {}; } }
+  const v = o?.search_hidden;
+  return v === true || v === 1 || v === '1' || v === 'true';
+};
+
 export const 색인제외 = (asPath) => {
   const 경로 = 경로만(asPath);
   return 경로.startsWith('/shop/auth/') || 경로.startsWith('/shop/search/') || 경로.startsWith('/manager/');

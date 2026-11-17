@@ -177,7 +177,7 @@ const BrandList = () => {
                   <Icon
                     icon='cil:sitemap'
                     onClick={() => {
-                      window.open(`https://${row?.dns}/sitemap-${row?.id}.xml`)
+                      window.open(`https://${row?.dns}/sitemap.xml`) // 사이트맵은 호스트마다 /sitemap.xml 하나다(sitemap-ID.xml 은 없는 주소)
                     }}
                   />
                 </IconButton >

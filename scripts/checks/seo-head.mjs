@@ -1,0 +1,88 @@
+import { readFileSync, existsSync } from 'fs';
+import { FRONT_ROOT, BACK_ROOT, 백엔드있음, 주석제거 } from './_roots.mjs';
+
+// 검색 노출 1단계(2026-11-17).
+//   본문은 아직 브라우저에서만 그려지므로, 검색엔진이 처음 받는 <head> 에 제목·설명·대표 주소·상품 정보를 채운다.
+// 붙잡아 두는 것:
+//   ① 대표 주소: 쿼리 버림(분류 category_id 만 남김), 가맹점 /shop/ → 루트, 메인 사이트는 그대로
+//   ② 설명이 빈 몰·상품도 설명이 나간다, 상품은 가격 포함
+//   ③ 상품 상세는 schema.org Product(가격·KRW·판매상태), 몰 첫 화면은 Organization
+//   ④ 로그인·장바구니·마이페이지·검색은 noindex
+//   ⑤ 사이트맵: 메인=소개 페이지, 몰=첫 화면·목록·상품, 로그인류 없음, 데모 호스트는 비움 / robots 는 호스트별 Sitemap 줄
+//   ⑥ 백엔드: 지운·숨긴 상품은 제목·검색 정보 안 만듦, 한 줄 소개 null 이 "null" 로 안 나감
+
+let pass = 0, fail = 0;
+const t = (name, cond) => { if (cond) { pass++; console.log('  ok  ' + name); } else { fail++; console.log('  FAIL ' + name); } };
+const eq = (name, got, want) => t(`${name}${JSON.stringify(got) === JSON.stringify(want) ? '' : `\n       got  ${JSON.stringify(got)}\n       want ${JSON.stringify(want)}`}`, JSON.stringify(got) === JSON.stringify(want));
+const 읽기 = (root, p) => readFileSync(root + p, 'utf8').replace(/\r/g, '');
+
+const s = await import('file:///' + FRONT_ROOT + 'src/utils/seo-head.js');
+
+// ①
+eq('상품 상세 주소', s.페이지주소('mbc02.shopgo.co.kr', '/shop/item/123?ref=x#a'), 'https://mbc02.shopgo.co.kr/shop/item/123/');
+eq('분류 목록은 category_id 만 남김', s.페이지주소('a.kr', '/shop/items/?category_id=5&sort=2'), 'https://a.kr/shop/items/?category_id=5');
+eq('목록 정렬·필터만 있으면 쿼리 없음', s.페이지주소('a.kr', '/shop/items/?sort=2'), 'https://a.kr/shop/items/');
+eq('가맹점 /shop/ → 루트', s.페이지주소('a.kr', '/shop'), 'https://a.kr/');
+eq('가맹점 루트', s.페이지주소('a.kr', '/'), 'https://a.kr/');
+eq('메인 사이트 경로는 그대로', s.페이지주소('shopgo.co.kr', '/manual', true), 'https://shopgo.co.kr/manual/');
+eq('포트·스킴 떼기', s.페이지주소('http://a.kr:3000/', '/'), 'https://a.kr/');
+eq('호스트 없으면 빈 값', s.페이지주소('', '/'), '');
+
+// ②
+const 몰 = { name: '포항과메기', og_description: '  청정 바다 ', logo_img: 'https://x/logo.png' };
+eq('몰 소개 있으면 그대로(공백 정리)', s.설명문(몰), '청정 바다');
+eq('몰 소개 없으면 이름으로', s.설명문({ name: 'mbc02' }), 'mbc02 온라인 쇼핑몰');
+const 상품몰 = { name: 'mbc02 - 광어회', ssr_content: { product: { id: 1, name: '광어회', comment: '', price: 12000, list_price: 15000, status: 0, shop_name: 'mbc02', img: 'https://x/p.jpg' } } };
+eq('상품 설명: 소개 없으면 상품명+가격+몰', s.설명문(상품몰), '광어회 | 판매가 12,000원 | mbc02');
+eq('상품 설명: 소개 있으면 소개', s.설명문({ ssr_content: { product: { name: 'A', comment: '맛있는 회', price: 0, shop_name: 'B' } } }), '맛있는 회 | B');
+t('설명은 160자 이내', s.설명문({ og_description: '가'.repeat(300) }).length === 160);
+eq('대표 이미지 없으면 로고', s.대표이미지(몰), 'https://x/logo.png');
+eq('메인 사이트는 둘 다 없으면 랜딩 그림', s.대표이미지({}, true, 'shopgo.co.kr'), 'https://shopgo.co.kr/assets/images/hero-mockup.png');
+eq('가맹점은 없으면 빈 값', s.대표이미지({}, false, 'a.kr'), '');
+t('랜딩 그림 파일이 있다', existsSync(FRONT_ROOT + 'public' + s.메인기본이미지));
+eq('메인 사이트 첫 화면 제목', s.제목({ name: 'ShopGo' }, '/', true), 'ShopGo 샵고 | 포스페이 가맹점 무료 쇼핑몰');
+eq('가맹점 제목은 몰 이름', s.제목({ name: '포항과메기' }, '/', false), '포항과메기');
+
+// ③
+const p = s.구조화데이터(상품몰, 'https://mbc02.shopgo.co.kr/shop/item/1/', '/shop/item/1');
+eq('Product 형식', p?.['@type'], 'Product');
+eq('가격·통화', [p?.offers?.price, p?.offers?.priceCurrency], ['12000', 'KRW']);
+eq('판매중=InStock', p?.offers?.availability, 'https://schema.org/InStock');
+eq('품절=OutOfStock', s.구조화데이터({ ssr_content: { product: { name: 'a', price: 1, status: 2 } } }, 'https://a/', '/')?.offers?.availability, 'https://schema.org/OutOfStock');
+t('가격 0 이면 offers 없음', !s.구조화데이터({ ssr_content: { product: { name: 'a', price: 0, status: 0 } } }, 'https://a/', '/').offers);
+eq('몰 첫 화면 = Organization', s.구조화데이터(몰, 'https://a.kr/', '/')?.['@type'], 'Organization');
+eq('그 밖의 화면은 없음', s.구조화데이터(몰, 'https://a.kr/shop/items/', '/shop/items/'), null);
+t('</script> 로 닫히지 않음', !s.구조화데이터문자열({ name: '</script><b>' }).includes('<'));
+
+// ④
+t('로그인 noindex', s.색인제외('/shop/auth/login'));
+t('검색 noindex', s.색인제외('/shop/search/?keyword=a'));
+t('상품 상세는 색인', !s.색인제외('/shop/item/3'));
+
+// _app 이 실제로 쓰는지
+const app = 주석제거(읽기(FRONT_ROOT, 'src/pages/_app.js'));
+t('_app: canonical·noindex·ld+json 을 그린다', app.includes("rel='canonical'") && app.includes("content='noindex'") && app.includes('application/ld+json'));
+t('_app: 인증 메타는 값 있을 때만', /seo_obj\?\.naver_token \|\| ''\)\.trim\(\) &&/.test(app));
+t('_app: 요청 호스트를 page_host 로 넘긴다', app.includes('page_host: host'));
+
+// ⑤
+const sm = 읽기(FRONT_ROOT, 'src/pages/sitemap.xml.js');
+t('사이트맵: 로그인·가입·주문조회 없음', !/\/shop\/auth\//.test(주석제거(sm)));
+t('사이트맵: 메인=소개·가이드', sm.includes("'/manual/'") && sm.includes("메인호스트(host)"));
+t('사이트맵: 데모 호스트 비움', sm.includes('데모호스트(host)'));
+t('정적 robots.txt 없음(호스트별 페이지와 충돌)', !existsSync(FRONT_ROOT + 'public/robots.txt'));
+const rb = 읽기(FRONT_ROOT, 'src/pages/robots.txt.js');
+t('robots: Sitemap 줄·데모 전부 막기', rb.includes('Sitemap: https://${host}/sitemap.xml') && rb.includes("'Disallow: /'"));
+const h = await import('file:///' + FRONT_ROOT + 'src/utils/seo-host.js');
+t('데모 호스트 판정', h.데모호스트('demo-3.shopgo.co.kr') && !h.데모호스트('mbc02.shopgo.co.kr'));
+
+// ⑥
+if (백엔드있음) {
+  const dc = 주석제거(읽기(BACK_ROOT, 'controllers/domain.controller.js'));
+  t('백: 지운·숨긴 상품 제외', /FROM products WHERE id = \? AND brand_id = \? AND is_delete = 0 AND status != 5/.test(dc));
+  t('백: 소개 빈칸이면 og_description 안 덮음', dc.includes("if (String(product.product_comment ?? '').trim()) brand.og_description"));
+  t('백: ssr_content.product 채움', dc.includes('brand.ssr_content.product = {'));
+}
+
+console.log(`\n${pass} ok, ${fail} fail`);
+process.exit(fail ? 1 : 0);

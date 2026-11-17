@@ -23,7 +23,8 @@ import 'react-credit-cards/es/styles-compiled.css'
 // lazy image
 import 'react-lazy-load-image-component/src/effects/blur.css'
 import { Toaster } from 'react-hot-toast'
-import { ogDeliveryUrl, canonicalUrl, faviconUrl } from 'src/data/data'
+import { ogDeliveryUrl, faviconUrl } from 'src/data/data'
+import { 페이지주소, 색인제외, 제목, 설명문, 대표이미지, 구조화데이터, 구조화데이터문자열 } from 'src/utils/seo-head'
 import { AuthProvider } from 'src/layouts/manager/auth/JwtContext'
 import { useEffect } from 'react'
 import ThemeContrast from 'src/components/settings/ThemeContrast'
@@ -47,7 +48,7 @@ import BrandNotFound from 'src/components/main-site/BrandNotFound'
 const clientSideEmotionCache = createEmotionCache();
 
 const App = props => {
-  const { Component, pageProps, head_data = {}, emotionCache = clientSideEmotionCache } = props
+  const { Component, pageProps, head_data = {}, page_host = '', emotionCache = clientSideEmotionCache } = props
   const getLayout = Component.getLayout ?? (page => page)
 
   const router = useRouter();
@@ -123,12 +124,24 @@ const App = props => {
 
   const favicon = faviconUrl(Object.keys(head_data ?? {}).length > 0 ? head_data : headData);
 
+  // 검색엔진용 값(src/utils/seo-head.js). 서버 응답(head_data)이 있으면 그것, 화면 이동 뒤엔 저장된 브랜드 정보.
+  const hd = Object.keys(head_data ?? {}).length > 0 ? head_data : headData;
+  const 호스트 = page_host || (typeof window !== 'undefined' ? window.location.hostname : '');
+  const 메인사이트 = process.env.NEXT_PUBLIC_IS_SHOPGO === 'true' && hd?.is_main_dns == 1;
+  const 이주소 = 페이지주소(호스트, router.asPath, 메인사이트);
+  const 쪽제목 = 제목(hd, router.asPath, 메인사이트);
+  const 쪽설명 = 설명문(hd);
+  const 쪽이미지 = ogDeliveryUrl(대표이미지(hd, 메인사이트, 호스트));
+  const 구조화 = 구조화데이터문자열(구조화데이터(hd, 이주소, router.asPath));
+
   return (
     <>
       <CacheProvider value={emotionCache}>
         <Head>
-          <title>{head_data?.name || headData?.name}</title>
-          <meta name='description' content={head_data?.og_description || headData?.og_description} />
+          <title>{쪽제목}</title>
+          {쪽설명 && <meta name='description' content={쪽설명} />}
+          {이주소 && <link rel='canonical' href={이주소} />}
+          {색인제외(router.asPath) && <meta name='robots' content='noindex' />}
           {/* 값이 있을 때만 그린다 — 없으면 href='null' 이 나가 /지금경로/null 404 가 난다(faviconUrl 주석) */}
           {favicon && (
             <>
@@ -139,11 +152,12 @@ const App = props => {
           <meta name='keywords' content={head_data?.name || headData?.name} />
           <meta httpEquiv='Content-Type' content='text/html; charset=utf-8' />
           <meta property='og:type' content='website' />
-          <meta property='og:title' content={head_data?.name || headData?.name} />
+          <meta property='og:title' content={쪽제목} />
           {/* 원본을 그대로 내보내면 카카오톡이 못 가져간다(500KB 상한). 800x400 으로 줄여 보낸다. */}
-          <meta property='og:image' content={ogDeliveryUrl(head_data?.og_img || headData?.og_img)} />
-          <meta property='og:url' content={canonicalUrl(head_data?.dns || headData?.dns)} />
-          <meta property='og:description' content={head_data?.og_description || headData?.og_description} />
+          {쪽이미지 && <meta property='og:image' content={쪽이미지} />}
+          {이주소 && <meta property='og:url' content={이주소} />}
+          {쪽설명 && <meta property='og:description' content={쪽설명} />}
+          {구조화 && <script type='application/ld+json' dangerouslySetInnerHTML={{ __html: 구조화 }} />}
           <meta name='author' content='purplevery' />
           <meta
             name='viewport'
@@ -154,14 +168,13 @@ const App = props => {
           <meta name='apple-mobile-web-app-status-bar-style' content='black-translucent' />
           <meta name='apple-mobile-web-app-title' content={head_data?.name || headData?.name} />
           <meta name='theme-color' content={head_data?.theme_css?.main_color || headData?.theme_css?.main_color} />
-          <meta
-            name='naver-site-verification'
-            content={head_data?.seo_obj?.naver_token || headData?.seo_obj?.naver_token}
-          />
-          <meta
-            name='google-site-verification'
-            content={head_data?.seo_obj?.google_token || headData?.seo_obj?.google_token}
-          />
+          {/* 서치어드바이저·서치콘솔 소유 확인. 관리자 브랜드 설정의 인증 칸에 넣은 값이 있을 때만 그린다. */}
+          {String(hd?.seo_obj?.naver_token || '').trim() && (
+            <meta name='naver-site-verification' content={String(hd.seo_obj.naver_token).trim()} />
+          )}
+          {String(hd?.seo_obj?.google_token || '').trim() && (
+            <meta name='google-site-verification' content={String(hd.seo_obj.google_token).trim()} />
+          )}
         </Head>
         <AuthProvider>
           <ReduxProvider store={store}>
@@ -278,7 +291,8 @@ App.getInitialProps = async context => {
       // 데모 미리보기(demo-N.*)에서는 실제 가맹점의 민감 사업자/개인정보를 '데모N'으로 가린다.
       // (서버 렌더 단계에서 치환해 __NEXT_DATA__로도 실제 값이 노출되지 않게 함)
       return {
-        head_data: demoBrandDns ? maskDemoBrandData(dns_data, getDemoNum(host)) : dns_data
+        head_data: demoBrandDns ? maskDemoBrandData(dns_data, getDemoNum(host)) : dns_data,
+        page_host: host,
       }
     } else {
       return {

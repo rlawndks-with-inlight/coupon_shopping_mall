@@ -93,11 +93,15 @@ const head = 읽기('src/components/head/index.js');
 // 보려는 것은 '두 자리가 이 두 함수를 가져오는가' 뿐이다.
 const 가져오나 = (src, quote) => new RegExp(
     'import \\{[^}]*\\bogDeliveryUrl\\b[^}]*\\bcanonicalUrl\\b[^}]*\\} from ' + quote + 'src/data/data' + quote).test(src);
-t('_app.js 가 함수를 가져온다', 가져오나(app, "'"));
+// _app 은 2026-11-17(검색 노출 1단계)부터 og:url 을 페이지마다 그 페이지 주소로 낸다(src/utils/seo-head.js 페이지주소).
+//   예전엔 모든 페이지가 몰 첫 화면 주소였다 — 상품 링크를 공유해도 수집기가 첫 화면 주소로 묶어 캐시했다.
+//   첫 화면의 og:url 은 여전히 https://<몰>/ 이라 아래 '카카오 캐시 지우기' 안내(첫 화면 주소)는 그대로 맞다.
+//   빈 값·슬래시 처리는 seo-head.mjs 가 붙잡는다.
+t('_app.js 가 함수를 가져온다', /import \{[^}]*\bogDeliveryUrl\b[^}]*\} from 'src\/data\/data'/.test(app) && /import \{[^}]*페이지주소[^}]*\} from 'src\/utils\/seo-head'/.test(app));
 t('head 컴포넌트가 함수를 가져온다', 가져오나(head, '"'));
-t('_app.js og:image 가 변환을 거친다', /og:image' content=\{ogDeliveryUrl\(/.test(app));
+t('_app.js og:image 가 변환을 거친다', /const 쪽이미지 = ogDeliveryUrl\(/.test(app) && /og:image' content=\{쪽이미지\}/.test(app));
 t('head og:image 가 변환을 거친다', /og:image" content=\{ogDeliveryUrl\(/.test(head));
-t('_app.js og:url 이 정식 주소를 쓴다', /og:url' content=\{canonicalUrl\(/.test(app));
+t('_app.js og:url 이 정식 주소(이 페이지)를 쓴다', /const 이주소 = 페이지주소\(/.test(app) && /og:url' content=\{이주소\}/.test(app));
 t('head og:url 이 정식 주소를 쓴다', /og:url" content=\{canonicalUrl\(/.test(head));
 
 // ── 설정 화면 안내 ────────────────────────────────────────────────────────

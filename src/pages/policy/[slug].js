@@ -90,7 +90,7 @@ const PolicyPage = () => {
                       key={d.slug}
                       size="small"
                       variant="text"
-                      onClick={() => router.push(`/policy/${d.slug}`)}
+                      onClick={() => router.push(`/policy/${d.slug}/`)}
                       sx={{ color: '#666', fontSize: 12, textTransform: 'none', p: 0.5, minWidth: 0 }}
                     >
                       {제목(d)}

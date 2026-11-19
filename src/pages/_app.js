@@ -264,8 +264,12 @@ App.getInitialProps = async context => {
       const 상품목록 = !isMainHost && !demoBrandDns && 상품목록받을페이지(ctx?.pathname) ? '&with_products=1' : '';
       const url = `${process.env.BACK_URL}/api/domain?dns=${dnsToQuery}&product_id=${product_id}&post_id=${post_id}&seller_id=${seller_id}${상품목록}`;
       const res = await fetch(url)
-      head_data = await res.json()
+      head_data = await res.json().catch(() => ({}))
       let dns_data = head_data?.data
+      // 백엔드는 실패를 HTTP 500 + result 음수로 준다(앱 규칙). 「등록된 도메인이 아닙니다」(-120)도 500 이다.
+      // 그래서 아래 !res.ok 검사만 있으면 없는 주소가 404 까지 못 가고 빈 화면 200 으로 나갔다
+      // (2026-08-31 ~ 11-19, 구글 서치콘솔 「soft 404」). -120 만 골라 '없는 몰' 로 본다 — 429·다른 5xx 는 여전히 아니다.
+      const 없는몰 = head_data?.result === -120;
 
       // ⚠ '대답을 못 받은 것' 과 '없는 몰' 은 다르다 (2026-08-31).
       //
@@ -276,7 +280,7 @@ App.getInitialProps = async context => {
       //
       // 이 조회는 <head> 의 제목·og 태그를 채우는 용도일 뿐이다. 화면에 필요한 브랜드 정보는
       // SettingsContext 가 클라이언트에서 다시 불러온다 — 그래서 여기서 비우고 넘어가도 몰은 뜬다.
-      if (!res.ok) {
+      if (!res.ok && !없는몰) {
         return { head_data: {} };
       }
 
@@ -302,6 +306,9 @@ App.getInitialProps = async context => {
         ctx.res.end();
         return { head_data: {} };
       }
+      // 없는 상품 주소(지움·숨김) — 화면은 그대로(「상품을 찾을 수 없음」) 두고 응답 코드만 404 로 한다.
+      // 200 이면 구글이 soft 404 로 잡는다. 판정은 백엔드가 상세 API 와 같은 조건으로 한다(domain.controller).
+      if (dns_data?.ssr_content?.product_missing && ctx?.res) ctx.res.statusCode = 404;
       // 데모 미리보기(demo-N.*)에서는 실제 가맹점의 민감 사업자/개인정보를 '데모N'으로 가린다.
       // (서버 렌더 단계에서 치환해 __NEXT_DATA__로도 실제 값이 노출되지 않게 함)
       return {

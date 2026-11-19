@@ -143,7 +143,19 @@ if (백엔드있음) {
   const 끌몰 = (mg.match(/WHERE is_delete = 0\s+AND id IN \(([^)]+)\)/) || [])[1]?.split(',').map((x) => Number(x.trim())) || [];
   t('마이그레이션: 98·99·141 은 안 끔, 포항과메기(130)·첫돌공방(105)은 끔', 끌몰.length > 30 && ![98, 99, 141].some((i) => 끌몰.includes(i)) && 끌몰.includes(130) && 끌몰.includes(105));
   t('마이그레이션: 다른 프로젝트 브랜드(2~97) 안 건드림', 끌몰.every((i) => i >= 100));
+  // ⑩ soft 404(2026-11-19 서치콘솔): 없는 상품은 백엔드가 알려 주고 프론트가 404 로 답한다.
+  t('백: 없는 상품이면 product_missing', /brand\.ssr_content\.product = \{[\s\S]*?\}\s*else\s*\{\s*brand\.ssr_content\.product_missing = true;/.test(dc));
 }
+
+// ⑩ soft 404·리디렉션 (2026-11-19 서치콘솔 「soft 404」「리디렉션이 포함된 페이지」)
+// 백엔드는 「등록된 도메인이 아닙니다」를 HTTP 500 + result -120 으로 준다. !res.ok 만 보면 없는 몰이 빈 화면 200 이 된다.
+t('_app: -120 은 없는 몰로 본다', app.includes('const 없는몰 = head_data?.result === -120;'));
+t('_app: !res.ok 이어도 -120 이면 404 판정까지 간다', app.includes('if (!res.ok && !없는몰) {'));
+t('_app: 500 본문이 JSON 이 아니어도 안 터진다', app.includes('await res.json().catch(() => ({}))'));
+t('_app: 없는 상품은 404', app.includes('if (dns_data?.ssr_content?.product_missing && ctx?.res) ctx.res.statusCode = 404;'));
+// trailingSlash: true 라 슬래시 없는 내부 링크는 308 을 거친다 — 구글이 그 주소를 「리디렉션」으로 따로 센다.
+const 바닥 = 읽기(FRONT_ROOT, 'src/components/main-site/MainSiteLayout.js');
+t('메인 바닥글 약관 링크는 슬래시로 끝난다', 바닥.includes('href={`/policy/${d.slug}/`}') && !바닥.includes('href={`/policy/${d.slug}`}'));
 
 console.log(`\n통과 ${pass} / 실패 ${fail}`);
 process.exit(fail ? 1 : 0);

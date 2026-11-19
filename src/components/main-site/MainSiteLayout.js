@@ -270,7 +270,7 @@ export const MainSiteFooter = () => {
             <Box
               key={d.slug}
               component="a"
-              href={`/policy/${d.slug}`}
+              href={`/policy/${d.slug}/`}
               sx={{
                 fontSize: 12,
                 color: FOOTER_TEXT,

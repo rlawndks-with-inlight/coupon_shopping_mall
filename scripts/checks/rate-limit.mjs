@@ -35,12 +35,13 @@ const 읽기 = (p) => readFileSync(p, 'utf8').split(String.fromCharCode(13)).joi
 
 // ── 프론트: 429·5xx 를 '없는 몰' 로 읽지 않는다 ──────────────────────────
 const 앱 = 읽기('src/pages/_app.js');
-t('응답이 200 이 아니면 없는 몰로 단정하지 않는다', /if \(!res\.ok\) \{/.test(앱),
+// 2026-11-19: 백엔드는 '없는 도메인'도 HTTP 500(result -120)으로 준다 — 그것만 골라 404 로 보낸다(seo-head.mjs ⑩).
+t('응답이 200 이 아니면 없는 몰로 단정하지 않는다(-120 만 예외)', /if \(!res\.ok && !없는몰\) \{/.test(앱) && 앱.includes('const 없는몰 = head_data?.result === -120;'),
     '429 의 본문도 data:false 라, 그것만 보면 멀쩡한 몰이 404 가 된다');
 // ⚠ is_brand_not_found 는 두 곳에 있다 — 위쪽(96줄 부근)은 '안내 화면을 그리는' 자리고,
 //   뒤쪽이 '404 로 판정하는' 자리다. 앞의 것과 비교하면 늘 빨간불이 된다(내가 한 번 밟았다).
 t('그 검사가 404 판정보다 앞이다',
-    앱.indexOf('if (!res.ok) {') < 앱.indexOf('is_brand_not_found: true'),
+    앱.indexOf('if (!res.ok && !없는몰) {') < 앱.indexOf('is_brand_not_found: true'),
     '뒤에 두면 이미 404 로 나간 뒤다');
 t('브랜드없음 판정 자체는 남아 있다', /is_brand_not_found: true/.test(앱),
     '진짜 없는 주소는 계속 404 여야 한다 — 죽은 주소가 색인되면 안 된다');

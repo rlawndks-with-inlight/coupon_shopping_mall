@@ -72,6 +72,9 @@ export async function getServerSideProps({ req, res }) {
       const j = await r.json();
       for (const p of j?.data?.content || []) {
         if (!(p?.id > 0)) continue;
+        // 숨긴 상품(status 5)은 손님 화면에 없고 상세 주소도 404 다 — 사이트맵에 넣으면 서치콘솔 오류가 된다(2026-11-19).
+        //   목록 API 는 관리자 화면과 같이 쓰여서 숨긴 상품도 준다.
+        if (Number(p?.status) === 5) continue;
         const u = `${base}/shop/item/${p.id}/`;
         urls.push(u);
         if (p?.updated_at || p?.created_at) lastmod[u] = String(p.updated_at || p.created_at).slice(0, 10);

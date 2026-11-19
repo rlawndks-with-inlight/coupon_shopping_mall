@@ -154,6 +154,7 @@ t('_app: !res.ok 이어도 -120 이면 404 판정까지 간다', app.includes('i
 t('_app: 500 본문이 JSON 이 아니어도 안 터진다', app.includes('await res.json().catch(() => ({}))'));
 t('_app: 없는 상품은 404', app.includes('if (dns_data?.ssr_content?.product_missing && ctx?.res) ctx.res.statusCode = 404;'));
 // trailingSlash: true 라 슬래시 없는 내부 링크는 308 을 거친다 — 구글이 그 주소를 「리디렉션」으로 따로 센다.
+t('사이트맵: 숨긴 상품(status 5)은 뺀다 — 상세가 404 라서', sm.includes('if (Number(p?.status) === 5) continue;'));
 const 바닥 = 읽기(FRONT_ROOT, 'src/components/main-site/MainSiteLayout.js');
 t('메인 바닥글 약관 링크는 슬래시로 끝난다', 바닥.includes('href={`/policy/${d.slug}/`}') && !바닥.includes('href={`/policy/${d.slug}`}'));
 

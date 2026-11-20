@@ -1,5 +1,5 @@
 import { FRONT_ROOT, BACK_ROOT } from './_roots.mjs';
-// 여러 곳으로 보내기(2026-11-20) — 결제 한 번(포스페이 주문번호 G), 배송지마다 주문(G, G-2 … G-10, pay_group=G).
+// 여러 곳으로 배송(2026-11-20) — 결제 한 번(포스페이 주문번호 G), 배송지마다 주문(G, G-2 … G-10, pay_group=G).
 // 사장님 결정: 최대 10곳 · 무료배송은 배송지별 · 비회원도 · 「선물하기」라고 부르지 않는다.
 // 붙잡아 두는 것:
 //  ① 묶음 계산(주문번호·현금 환불 합) — 실제 함수를 가짜 DB 로 돌린다
@@ -79,10 +79,10 @@ const 주문서 = 앞('src/views/shop/order/OrderSheet.js');
 const 편집 = 앞('src/views/shop/order/MultiShipEditor.js');
 const util = 앞('src/utils/shop-util.js');
 const 설정 = 앞('src/pages/manager/settings/default/[brand_id].js');
-t('⑤ 켠 몰·포스페이 있을 때만 「여러 곳으로 보내기」, 켜면 포스페이만 보인다',
+t('⑤ 켠 몰·포스페이 있을 때만 「여러 곳으로 배송」, 켜면 포스페이만 보인다',
   /const 여러곳가능 = !\[0, '0', false, 'false'\]\.includes\(themeDnsData\?\.setting_obj\?\.multi_ship\) && 모든결제수단\.some\(\(m\) => m\?\.type == 'auth_forspay'\);/.test(주문서)
   && /const paymentModules = 여러곳 \? 모든결제수단\.filter\(\(m\) => m\?\.type == 'auth_forspay'\) : 모든결제수단;/.test(주문서));
-t('⑤ 결제 전 검사(수량 다 나누기·받는 분·연락처·주소·추가상품·배송 안 함·포인트)', /const 문제 = 여러곳검사\(곳들, products, isValidPhoneNumber, 보내는방식\);/.test(주문서) && /여러 곳으로 보내기에서는 포인트를 사용할 수 없습니다/.test(주문서));
+t('⑤ 결제 전 검사(수량 다 나누기·받는 분·연락처·주소·추가상품·배송 안 함·포인트)', /const 문제 = 여러곳검사\(곳들, products, isValidPhoneNumber, 보내는방식\);/.test(주문서) && /여러 곳으로 배송할 때는 포인트를 사용할 수 없습니다/.test(주문서));
 t('⑤ 금액은 배송지별 calcOrderTotals 의 합', /const 곳금액 = 여러곳 \? 곳별금액\(곳들, products, 보내는방식\) : null;/.test(주문서) && /calcOrderTotals\(곳의줄\(곳, products, 방식\), 0, \{ \.\.\.곳, country_code: 'KR' \}\)/.test(편집));
 t('⑤ 결제: 배송지마다 makePayData, 목록은 JSON 한 칸', /const d = await makePayData\(줄, \{ \.\.\.배송지, use_point: 0 \}\);/.test(util) && /destinations_json: JSON\.stringify\(destinations\)/.test(util));
 // 주석의 「선물하기라고 부르지 않는다」는 빼고, 화면 글자·코드에만 없는지 본다
@@ -130,11 +130,22 @@ t('⑦ 회원은 주소록에서 고른다, 다 쓴 배송지는 접는다, 배�
   && /if \(펼친 !== k && 곳완성\(곳, isValidPhone\)\)/.test(편집) && /배송비는 배송지마다 \{\{fee\}\}이고, 한 곳에 \{\{min\}\} 이상 보내면 그 곳은 무료입니다\./.test(편집));
 t('⑦ 결제 후: 완료 화면에 「배송지 N곳」, 비회원 조회는 목록부터, 주문 상태에 받는 분', /sessionStorage\.setItem\('multiShipOrder'/.test(util)
   && /배송지 \{\{n\}\}곳으로 나눠 주문되었습니다/.test(앞('src/views/shop/order/PayResultView.js'))
-  && /\(여러곳주문 \? null : 방금주문\)/.test(앞('src/pages/shop/auth/order-check.js')) && /row\?\.pay_group \? ` · \$\{translate\('여러 곳 주문'\)\}/.test(앞('src/utils/function.js')));
+  && /\(여러곳주문 \? null : 방금주문\)/.test(앞('src/pages/shop/auth/order-check.js')) && /row\?\.pay_group \? ` · \$\{translate\('여러 곳 배송'\)\}/.test(앞('src/utils/function.js')));
 t('⑧ 결제실패/미완료는 묶음을 첫 주문 한 줄로 접고 「몇 곳 · 합계」를 붙인다(메뉴·엑셀 같은 조건)',
   /if \(await hasColumn\('transactions', 'pay_group'\)\) sql \+= ` AND \$\{묶음첫줄식\(table_name\)\} `;/.test(백('controllers/transaction.controller.js'))
   && /String\(k\) === 'failed' && await hasColumn\('transactions', 'pay_group'\)/.test(백('controllers/transaction.controller.js'))
   && /pay_group IS NULL OR \$\{t\}\.ord_num = \$\{t\}\.pay_group/.test(pg) && /배송지 \{row\.group_count\}곳 · 합계/.test(앞('src/components/manager/OrderColumns.js')));
+
+// 11/20 저녁 — 이름은 「여러 곳으로 배송 (선물 등)」, 작은 체크칸 대신 꽉 찬 두 단추, 1개만 담으면 나눠 보내기 막기
+const 고르기 = 주문서.slice(주문서.indexOf('{여러곳가능 && ('), 주문서.indexOf('{여러곳 ? ('));
+t('⑨ 한 곳/여러 곳은 꽉 찬 두 단추(작은 체크칸 아님)', /<ToggleButtonGroup exclusive fullWidth/.test(고르기) && !/Checkbox/.test(고르기)
+  && /minHeight: 52/.test(고르기) && /translate\('한 곳으로 배송'\)/.test(고르기) && /translate\('여러 곳으로 배송 \(선물 등\)'\)/.test(고르기));
+t('⑨ 꺼져 있을 때 무엇을 할 수 있는지 한 줄 안내', /\{!여러곳 && \(/.test(고르기) && /최대 \{\{n\}\}곳까지 보낼 수 있습니다/.test(고르기));
+t('⑨ 켤 때 하던 일(배송지 준비·국내·포인트 0·포스페이 아닌 결제수단 해제)은 그대로', /set곳들\(처음곳들\(payData, products\)\)/.test(고르기) && /setAddrMode\('KR'\)/.test(고르기)
+  && /use_point: 0/.test(고르기) && /buyType != 'auth_forspay'/.test(고르기));
+t('⑨ 1개만 담으면 나눠 보내기를 못 누르고, 나눠 보내기 중 1개가 되면 같은 상품 보내기로', /const 나눔가능 = 담은개수 >= 2;/.test(편집)
+  && /<ToggleButton value="split" disabled=\{!나눔가능\}>/.test(편집) && /if \(!나눔가능 && 방식 === 'split'\) set방식\('same'\)/.test(편집));
+t('⑨ 옛 이름 「여러 곳으로 보내기」가 남지 않는다', ![주문서, 편집, 설정, pay].some((x) => /여러 곳으로 보내기/.test(x)));
 
 console.log(`\n통과 ${pass} / 실패 ${fail}`);
 process.exit(fail ? 1 : 0);

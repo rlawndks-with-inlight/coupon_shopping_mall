@@ -210,9 +210,9 @@ export const 주문번호칸 = {
     <div style={{ whiteSpace: 'nowrap' }}>
       <div>{row['ord_num'] || '---'}</div>
       {row['appr_num'] ? <div style={작은글}>승인 {row['appr_num']}</div> : null}
-      {/* 여러 곳으로 보내기(2026-11-20) — 결제 한 번에 주문 여러 건. 포스페이에는 이 결제번호 하나로 남는다 */}
-      {row?.pay_group ? <div style={{ ...작은글, color: '#1f6fb2' }}>여러 곳 주문 · 결제번호 {row.pay_group}</div> : null}
-      {/* 결제실패/미완료 탭은 여러 곳 주문을 첫 주문 한 줄로 접는다 — 몇 곳·합계를 여기 적는다(서버 묶음요약붙이기) */}
+      {/* 여러 곳으로 배송(2026-11-20) — 결제 한 번에 주문 여러 건. 포스페이에는 이 결제번호 하나로 남는다 */}
+      {row?.pay_group ? <div style={{ ...작은글, color: '#1f6fb2' }}>여러 곳 배송 · 결제번호 {row.pay_group}</div> : null}
+      {/* 결제실패/미완료 탭은 여러 곳 배송을 첫 주문 한 줄로 접는다 — 몇 곳·합계를 여기 적는다(서버 묶음요약붙이기) */}
       {Number(row?.group_count) > 1 ? <div style={{ ...작은글, color: '#1f6fb2' }}>배송지 {row.group_count}곳 · 합계 {commarNumber(row.group_amount)}원</div> : null}
     </div>
   ),

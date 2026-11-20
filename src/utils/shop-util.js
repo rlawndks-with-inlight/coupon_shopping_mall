@@ -555,7 +555,7 @@ const startForspayWindow = (popup, res, payData, target, features) => {
     }, 800);
 };
 
-// 여러 곳으로 보내기(2026-11-20) — 결제 한 번(포스페이), 서버가 배송지마다 주문을 만든다.
+// 여러 곳으로 배송(2026-11-20) — 결제 한 번(포스페이), 서버가 배송지마다 주문을 만든다.
 // 배송지마다 makePayData 로 줄 금액·배송비를 만든다(무료배송·제주 추가비가 배송지별, 서버 여러곳주문과 같은 규칙).
 // 배송지 목록은 JSON 한 칸(destinations_json)으로 보낸다 — 폼 칸으로 풀면 서버의 요청당 칸 한도에 걸린다.
 // 곳들: [{ receiver, addr_phone, zonecode, addr, detail_addr, delivery_memo, 수량: { [줄 번호]: 개수 } }]

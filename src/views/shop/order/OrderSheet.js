@@ -17,7 +17,7 @@ import EmptyContent from 'src/components/empty-content/EmptyContent';
 import Iconify from 'src/components/iconify/Iconify';
 import { useSettingsContext } from 'src/components/settings';
 import { calcOrderTotals, getCartDataUtil, makePayData, onPayProductsByAuth, onPayProductsByHand, onPayProductsByPayletter, onPayProductsByForspay, onPayProductsByForspayMulti, getOrderFormFields, orderAmountBreakdown, 배송정책 } from 'src/utils/shop-util';
-import MultiShipEditor, { 처음곳들, 곳별금액, 곳의줄, 여러곳검사 } from 'src/views/shop/order/MultiShipEditor';
+import MultiShipEditor, { 처음곳들, 곳별금액, 곳의줄, 여러곳검사, 최대곳 } from 'src/views/shop/order/MultiShipEditor';
 import { saveRetryDraft, takeRetryDraft, saveSessionDraft, takeSessionDraft, clearOrderDraft } from 'src/utils/order-draft';
 
 import { findMissingRequired } from 'src/data/order-form-types';
@@ -131,7 +131,7 @@ export default function OrderSheet({ router }) {
   const [selectedAddrId, setSelectedAddrId] = useState(undefined);
   const [directMode, setDirectMode] = useState(false); // 직접 입력(비회원/신규 배송지)
   const [postOpen, setPostOpen] = useState(false);     // 우편번호 검색 팝업
-  // 여러 곳으로 보내기(2026-11-20) — 결제 한 번에 배송지 최대 10곳. 켠 몰·국내·포스페이일 때만.
+  // 여러 곳으로 배송(2026-11-20) — 결제 한 번에 배송지 최대 10곳. 켠 몰·국내·포스페이일 때만.
   const [여러곳, set여러곳] = useState(false);
   const [곳들, set곳들] = useState([]);
   // 보내는 방식 — same: 담은 상품을 받는 분마다 똑같이(수량이 배송지 수만큼 곱해진다, 기본) / split: 담은 수량을 배송지에 나눈다
@@ -240,7 +240,7 @@ export default function OrderSheet({ router }) {
       if (typeof s.directMode === 'boolean') setDirectMode(s.directMode);
       if (typeof s.sameAsBuyer === 'boolean') setSameAsBuyer(s.sameAsBuyer);
       if (s.selectedAddrId !== undefined && s.selectedAddrId !== null) setSelectedAddrId(s.selectedAddrId);
-      // 여러 곳으로 보내기 — 배송지 10곳을 다시 쓰게 하지 않는다(결제 실패·취소 뒤 「다시 결제하기」, 새로고침).
+      // 여러 곳으로 배송 — 배송지 10곳을 다시 쓰게 하지 않는다(결제 실패·취소 뒤 「다시 결제하기」, 새로고침).
       //   나눠 둔 수량이 지금 상품과 안 맞으면 결제 전 검사가 알려 준다.
       if (s.여러곳 === true && Array.isArray(s.곳들) && s.곳들.length >= 2) { set여러곳(true); set곳들(s.곳들); set보내는방식(s.보내는방식 === 'split' ? 'split' : 'same'); }
     }
@@ -273,7 +273,7 @@ export default function OrderSheet({ router }) {
       || 직접씀('buyer_phone', user?.id ? user?.phone_num : '', 번호)
       || (!sameAsBuyer && (직접씀('receiver', 고른주소?.receiver) || 직접씀('addr_phone', 고른주소?.phone, 번호)))
       || ['addr', 'detail_addr', 'zonecode', 'city', 'state_region', 'country_name'].some((k) => 직접씀(k, 고른주소?.[k]))
-      // 여러 곳으로 보내기에 쓴 배송지도 나가면 사라지는 입력이다
+      // 여러 곳으로 배송에 쓴 배송지도 나가면 사라지는 입력이다
       || (여러곳 && 곳들.some((곳) => ['receiver', 'addr_phone', 'addr', 'detail_addr', 'delivery_memo'].some((k) => 같게(곳?.[k]))))
     );
   }
@@ -508,7 +508,7 @@ export default function OrderSheet({ router }) {
   const onCompletePost = (data) => {
     const 주소 = data?.roadAddress || data?.address || '';
     if (우편대상 !== null) {
-      // 여러 곳으로 보내기의 배송지 하나
+      // 여러 곳으로 배송의 배송지 하나
       set곳들((prev) => prev.map((곳, i) => (i === 우편대상 ? { ...곳, zonecode: data?.zonecode, addr: 주소 } : 곳)));
       set우편대상(null);
     } else {
@@ -648,12 +648,12 @@ export default function OrderSheet({ router }) {
       return false;
     }
     if (여러곳) {
-      // 여러 곳으로 보내기 — 배송지·수량 나누기·추가상품·배송 안 함 지역(서버 여러곳주문도 같은 것을 본다)
+      // 여러 곳으로 배송 — 배송지·수량 나누기·추가상품·배송 안 함 지역(서버 여러곳주문도 같은 것을 본다)
       const 문제 = 여러곳검사(곳들, products, isValidPhoneNumber, 보내는방식);
       if (문제) { toast.error(translate(문제[0], 문제[1])); return false; }
       const 막힌곳 = 곳별금액(곳들, products, 보내는방식).findIndex((t) => t.island?.blocked);
       if (막힌곳 >= 0) { toast.error(translate('{{n}}번째 배송지: 이 쇼핑몰은 그 지역으로 배송하지 않습니다.', { n: 막힌곳 + 1 })); return false; }
-      if (parseFloat(payData.use_point || 0) > 0) { toast.error(translate('여러 곳으로 보내기에서는 포인트를 사용할 수 없습니다.')); return false; }
+      if (parseFloat(payData.use_point || 0) > 0) { toast.error(translate('여러 곳으로 배송할 때는 포인트를 사용할 수 없습니다.')); return false; }
     }
     return true;
   };
@@ -819,8 +819,8 @@ export default function OrderSheet({ router }) {
     try {
       let result = false;
       if (여러곳) {
-        // 여러 곳으로 보내기는 포스페이로만(서버도 막는다)
-        if (buyType != 'auth_forspay') { toast.error(translate('여러 곳으로 보내기는 이 결제수단으로 할 수 없습니다.')); return; }
+        // 여러 곳으로 배송은 포스페이로만(서버도 막는다)
+        if (buyType != 'auth_forspay') { toast.error(translate('여러 곳으로 배송은 이 결제수단으로 할 수 없습니다.')); return; }
         // 배송지마다 보낼 줄을 여기서 정해 넘긴다(같은 상품 보내기면 담은 상품 그대로, 나눠 보내기면 나눈 수량)
         result = await onPayProductsByForspayMulti(products.map((p) => ({ ...p })), payData, 곳들.map((곳) => ({ ...곳, 줄: 곳의줄(곳, products, 보내는방식) })));
       } else if (buyType == 'auth_forspay') {
@@ -880,7 +880,7 @@ export default function OrderSheet({ router }) {
   // 한 번 더 얹었다. 무료배송 판정 기준도 서로 달라서(화면 '상품가+배송비' / 청구 '상품가만')
   // 배송비 정책을 켠 브랜드에서 고객이 본 금액과 결제되는 금액이 어긋났다.
   // 배송지(payData)를 넘겨 제주·도서산간 추가배송비까지 계산한다(2026-11-12) — makePayData·서버와 같은 규칙.
-  // 여러 곳으로 보내기면 배송지마다 계산한 값을 합친다(배송비·무료배송·제주 추가비가 배송지별).
+  // 여러 곳으로 배송이면 배송지마다 계산한 값을 합친다(배송비·무료배송·제주 추가비가 배송지별).
   const 곳금액 = 여러곳 ? 곳별금액(곳들, products, 보내는방식) : null;
   const orderTotals = 여러곳
     ? 곳금액.reduce((합, t) => ({
@@ -928,7 +928,7 @@ export default function OrderSheet({ router }) {
     return () => { 살아있음 = false; };
   }, []);
   const 모든결제수단 = (최신결제수단 ?? themeDnsData?.payment_modules ?? []).filter((m) => m?.type != 'sms_pay');
-  // 여러 곳으로 보내기 — 기본 켜짐(사장님 2026-11-20). 몰 설정에서 끈 몰(multi_ship=0)이 아니고 포스페이가 있을 때(서버도 같은 조건)
+  // 여러 곳으로 배송 — 기본 켜짐(사장님 2026-11-20). 몰 설정에서 끈 몰(multi_ship=0)이 아니고 포스페이가 있을 때(서버도 같은 조건)
   const 여러곳가능 = ![0, '0', false, 'false'].includes(themeDnsData?.setting_obj?.multi_ship) && 모든결제수단.some((m) => m?.type == 'auth_forspay');
   const paymentModules = 여러곳 ? 모든결제수단.filter((m) => m?.type == 'auth_forspay') : 모든결제수단;
   // 이미 고른 수단이 새 목록에서 빠졌으면 선택을 푼다 — 사라진 수단으로 결제하기가 남지 않게.
@@ -1255,11 +1255,15 @@ export default function OrderSheet({ router }) {
                     </Button>
                   ) : null} />
                 <CardContent>
+                  {/* 한 곳 / 여러 곳 고르기. 처음엔 작은 체크칸이었는데 「주문자와 동일」 같은 보조 옵션처럼 보여
+                      지나치기 쉽고 휴대폰에서 누르기 작았다(사장님 11/20) — 배송지 칸 맨 위에 꽉 찬 너비의 두 단추로 둔다. */}
                   {여러곳가능 && (
-                    <FormControlLabel sx={{ mb: 1 }}
-                      control={<Checkbox size="small" checked={여러곳}
-                        onChange={(e) => {
-                          const 켬 = e.target.checked;
+                    <Box sx={{ mb: 2.5 }}>
+                      <ToggleButtonGroup exclusive fullWidth color="primary" value={여러곳 ? 'multi' : 'one'}
+                        onChange={(e, v) => {
+                          if (!v) return;
+                          const 켬 = v === 'multi';
+                          if (켬 === 여러곳) return;
                           set여러곳(켬);
                           if (켬) {
                             set곳들(처음곳들(payData, products));
@@ -1267,9 +1271,22 @@ export default function OrderSheet({ router }) {
                             if (Number(payData?.use_point) > 0) setPayData({ ...payData, use_point: 0 });
                             if (buyType && buyType != 'auth_forspay') { setBuyType(undefined); setBuyPayMethod(undefined); }
                           }
-                        }} />}
-                      label={<Typography variant="body2">{translate('여러 곳으로 보내기')}</Typography>}
-                    />
+                        }}>
+                        <ToggleButton value="one" sx={{ minHeight: 52, gap: 0.75, wordBreak: 'keep-all', lineHeight: 1.3 }}>
+                          <Iconify icon="eva:pin-outline" width={20} sx={{ flexShrink: 0 }} />
+                          {translate('한 곳으로 배송')}
+                        </ToggleButton>
+                        <ToggleButton value="multi" sx={{ minHeight: 52, gap: 0.75, wordBreak: 'keep-all', lineHeight: 1.3 }}>
+                          <Iconify icon="eva:gift-outline" width={20} sx={{ flexShrink: 0 }} />
+                          {translate('여러 곳으로 배송 (선물 등)')}
+                        </ToggleButton>
+                      </ToggleButtonGroup>
+                      {!여러곳 && (
+                        <Typography variant="caption" sx={{ color: 'text.secondary', display: 'block', mt: 0.75, wordBreak: 'keep-all' }}>
+                          {translate('받는 분이 여럿이면 한 번 결제로 최대 {{n}}곳까지 보낼 수 있습니다.', { n: 최대곳 })}
+                        </Typography>
+                      )}
+                    </Box>
                   )}
                   {여러곳 ? (
                     <MultiShipEditor products={products} 곳들={곳들} set곳들={set곳들} isValidPhone={isValidPhoneNumber}
@@ -1530,7 +1547,7 @@ export default function OrderSheet({ router }) {
               <StickyBelowHeader>
                 <CheckoutSummary
                   enableDiscount
-                  // 여러 곳으로 보내기는 포인트를 함께 못 쓴다 — 입력칸을 숨긴다(서버도 거절한다)
+                  // 여러 곳으로 배송은 포인트를 함께 못 쓴다 — 입력칸을 숨긴다(서버도 거절한다)
                   enablePoint={!여러곳}
                   goods={요약.goods}
                   options={요약.options}

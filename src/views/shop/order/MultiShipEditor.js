@@ -1,11 +1,11 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Box, Button, Dialog, DialogContent, DialogTitle, IconButton, Paper, Stack, TextField, ToggleButton, ToggleButtonGroup, Typography } from '@mui/material';
 import Iconify from 'src/components/iconify/Iconify';
 import { useLocales } from 'src/locales';
 import { calcOrderTotals, isAddonLine, getOptionLabel, 배송정책, 섬안내문 } from 'src/utils/shop-util';
 import { commarNumberWithUnit, sanitizePhoneInput } from 'src/utils/function';
 
-// 여러 곳으로 보내기 — 주문서의 배송지 칸(2026-11-20).
+// 여러 곳으로 배송 — 주문서의 배송지 칸(2026-11-20).
 //
 // 한 번 결제하고 상품을 최대 10곳에 보낸다. 주문은 배송지마다 따로 만들어진다(서버 pay.controller 여러곳주문).
 // 배송비·무료배송 기준·제주 추가비는 **배송지마다** 따로 계산한다(사장님 결정) — 여기 보이는 금액이 곧 청구액이다
@@ -102,6 +102,9 @@ export default function MultiShipEditor({ products, 곳들, set곳들, 방식, s
     고치기(k, { 수량: { ...곳들[k].수량, [i]: n } });
   };
   const 담은개수 = products.reduce((s, p) => s + (Number(p?.order_count) || 0), 0);
+  // 1개만 담았으면 나눌 것이 없다(사장님 11/20) — 나눠 보내기 단추를 막고, 나눠 보내기 중에 1개가 되면 같은 상품 보내기로 돌린다
+  const 나눔가능 = 담은개수 >= 2;
+  useEffect(() => { if (!나눔가능 && 방식 === 'split') set방식('same'); }, [나눔가능, 방식]);
   // 배송비 규칙을 이 몰의 실제 금액으로 적는다
   const 정책 = 배송정책();
   const 배송비글 = !정책.active
@@ -124,8 +127,13 @@ export default function MultiShipEditor({ products, 곳들, set곳들, 방식, s
           set방식(v);
         }}>
         <ToggleButton value="same">{translate('모두 같은 상품 보내기')}</ToggleButton>
-        <ToggleButton value="split">{translate('담은 수량 나눠 보내기')}</ToggleButton>
+        <ToggleButton value="split" disabled={!나눔가능}>{translate('담은 수량 나눠 보내기')}</ToggleButton>
       </ToggleButtonGroup>
+      {!나눔가능 && (
+        <Typography variant="caption" sx={{ color: 'text.secondary', mt: -1.25, wordBreak: 'keep-all' }}>
+          {translate('담은 수량 나눠 보내기')}: {translate('2개 이상 담았을 때 쓸 수 있습니다.')}
+        </Typography>
+      )}
       <Box>
         <Typography variant="body2" sx={{ wordBreak: 'keep-all' }}>
           {방식 === 'same'

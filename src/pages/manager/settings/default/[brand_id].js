@@ -1818,14 +1818,14 @@ const DefaultSetting = () => {
                     onChange={(v) => setItem({ ...item, ['setting_obj']: { ...item?.setting_obj, ['island_fee']: v } })}
                   />
                 </Grid>
-                {/* 여러 곳으로 보내기(2026-11-20) — 결제 한 번에 배송지 최대 10곳. 기본 켜짐이고, 끈 몰(0)만 주문서에서 빠진다(서버도 같은 값을 본다). */}
+                {/* 여러 곳으로 배송(2026-11-20) — 결제 한 번에 배송지 최대 10곳. 기본 켜짐이고, 끈 몰(0)만 주문서에서 빠진다(서버도 같은 값을 본다). */}
                 <Grid item xs={12} md={12}>
                   <Card sx={{ p: 2 }}>
                     <Stack spacing={0.5}>
                       <FormControlLabel
                         control={<Switch checked={![0, '0', false, 'false'].includes(item?.setting_obj?.multi_ship)}
                           onChange={(e) => setItem({ ...item, ['setting_obj']: { ...item?.setting_obj, ['multi_ship']: e.target.checked ? 1 : 0 } })} />}
-                        label='여러 곳으로 보내기'
+                        label='여러 곳으로 배송'
                       />
                       <Typography variant='caption' sx={{ color: 'text.secondary' }}>
                         처음부터 켜져 있습니다. 손님이 한 번 결제하고 상품을 최대 10곳에 보낼 수 있습니다. 주문은 배송지마다 따로 들어와 송장·상태·취소를 한 곳씩 처리합니다.

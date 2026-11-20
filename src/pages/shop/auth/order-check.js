@@ -175,7 +175,7 @@ const OrderCheck = () => {
     setSelected((prev) => {
       const 보던것 = prev?.ord_num && list.find((o) => o?.ord_num === prev.ord_num);
       const 방금주문 = 열주문.current && list.find((o) => o?.ord_num === 열주문.current);
-      // 여러 곳으로 보내기 주문은 배송지마다 주문이 따로다 — 첫 주문 상세로 바로 가지 않고 목록에서 배송지별로 고르게 한다(2026-11-20)
+      // 여러 곳으로 배송 주문은 배송지마다 주문이 따로다 — 첫 주문 상세로 바로 가지 않고 목록에서 배송지별로 고르게 한다(2026-11-20)
       const 여러곳주문 = 방금주문?.pay_group && list.filter((o) => o?.pay_group === 방금주문.pay_group).length > 1;
       return 보던것 || (여러곳주문 ? null : 방금주문) || (list.length === 1 ? list[0] : null);
     });

@@ -276,7 +276,7 @@ const { user } = useAuthContext();
         )}
       </Stack>
 
-      {/* 여러 곳으로 보내기 — 주문이 배송지마다 따로 만들어졌음을 알린다(주문서가 결제 직전에 남긴 표시, 같은 주문번호일 때만) */}
+      {/* 여러 곳으로 배송 — 주문이 배송지마다 따로 만들어졌음을 알린다(주문서가 결제 직전에 남긴 표시, 같은 주문번호일 때만) */}
       {isSuccess && (() => {
         try {
           const m = JSON.parse(sessionStorage.getItem('multiShipOrder') || 'null');

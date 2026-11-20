@@ -93,7 +93,7 @@ const 주문서 = 주석제거(읽기(FRONT_ROOT, 'src/views/shop/order/OrderShe
 t('화면 계산: 결제 데이터와 요약이 같은 규칙(첫 본상품 줄에 얹음)', /const 섬 = 섬추가비\(payData\);/.test(유틸) && /\+ \(i === 섬줄 \? 섬\.fee : 0\)/.test(유틸)
   && /amount: merchTotal \+ delivery \+ island\.fee - point,/.test(유틸));
 t('주문서: 배송지를 넘겨 계산하고 요약 세 곳에 추가비 줄', /calcOrderTotals\(products, payData\?\.use_point, payData\)/.test(주문서) && (주문서.match(/island=\{orderTotals\.island\}/g) || []).length === 3);
-t('주문서: 「배송 안 함」 지역이면 결제 전에 막는다', /if \(orderTotals\.island\?\.blocked\) \{/.test(주문서));
+t('주문서: 「배송 안 함」 지역이면 결제 전에 막는다', /if \((?:!여러곳 && )?orderTotals\.island\?\.blocked\) \{/.test(주문서) && /곳별금액\(곳들, products, 보내는방식\)\.findIndex\(\(t\) => t\.island\?\.blocked\)/.test(주문서));
 t('상품 상세: 공용 배송비 줄에 안내(금액까지)', /섬안내문\(currentLang\?\.value\)/.test(읽기(FRONT_ROOT, 'src/components/elements/shop/ShippingLine.js')));
 t('설정 화면: 배송비설정 탭에 붙어 있다', /<IslandFeeSettings/.test(읽기(FRONT_ROOT, 'src/pages/manager/settings/default/[brand_id].js')));
 t('관리자 주문: 금액 칸에 추가비를 나눠 적고 주소 칸에 표시', /섬비 > 0/.test(읽기(FRONT_ROOT, 'src/components/manager/OrderColumns.js')) && /<섬표시 row=\{row\} \/>/.test(읽기(FRONT_ROOT, 'src/components/manager/OrderColumns.js')));

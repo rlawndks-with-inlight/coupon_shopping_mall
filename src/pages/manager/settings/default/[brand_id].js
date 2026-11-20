@@ -1818,6 +1818,22 @@ const DefaultSetting = () => {
                     onChange={(v) => setItem({ ...item, ['setting_obj']: { ...item?.setting_obj, ['island_fee']: v } })}
                   />
                 </Grid>
+                {/* 여러 곳으로 보내기(2026-11-20) — 결제 한 번에 배송지 최대 10곳. 켠 몰만 주문서에 단추가 보인다(서버도 같은 값을 본다). */}
+                <Grid item xs={12} md={12}>
+                  <Card sx={{ p: 2 }}>
+                    <Stack spacing={0.5}>
+                      <FormControlLabel
+                        control={<Switch checked={Number(item?.setting_obj?.multi_ship) === 1}
+                          onChange={(e) => setItem({ ...item, ['setting_obj']: { ...item?.setting_obj, ['multi_ship']: e.target.checked ? 1 : 0 } })} />}
+                        label='여러 곳으로 보내기'
+                      />
+                      <Typography variant='caption' sx={{ color: 'text.secondary' }}>
+                        손님이 한 번 결제하고 상품을 최대 10곳에 나눠 보낼 수 있습니다. 주문은 배송지마다 따로 들어와 송장·상태·취소를 한 곳씩 처리합니다.
+                        배송비와 무료배송 기준, 제주·도서산간 추가배송비는 배송지마다 따로 계산합니다. 포인트는 함께 쓸 수 없습니다.
+                      </Typography>
+                    </Stack>
+                  </Card>
+                </Grid>
                 {/* 배송 안내(가맹점별 자유 텍스트). setting_obj.delivery_info 에 저장 —
                     백엔드 컬럼 추가 없이 JSON 설정에 얹는다. 상품 상세의 혜택 안내 아래에 렌더된다.
                     SHOPGO 하위 전용 기능이라 그 외 브랜드 설정에는 노출하지 않는다. */}

@@ -102,7 +102,7 @@ eq('서버가 필수항목 재검사', /findMissingOrderFormField\(줄\)/.test(p
 eq('결제 전 재고 검사', /await checkStock\(줄\)/.test(pay), true);
 eq('결제 후 재고 차감', /await decreaseStock\(trans_id, products\)/.test(pay), true);
 // 취소 부수처리는 utils.js/cancel.js 로 모았다 — PG 경로 6곳이 같은 것을 쓴다.
-eq('취소 경로가 공용 처리를 쓴다', (pay.match(/await markCanceled\(/g) || []).length, 6);
+eq('취소 경로가 공용 처리를 쓴다', (pay.match(/await markCanceled\(/g) || []).length, 7);   // 7번째: 묶음 전액취소 통지(2026-11-20)
 // 서식은 자기 브랜드 기준(혜택 안내와 달리 부모가 아니다)
 // 몰 설정에는 더 이상 서식이 실리지 않는다. 상품마다 다르므로 상품 상세에 실려 간다.
 // 여기 남아 있으면 그 몰의 모든 상품에 같은 칸이 떠서, 답례품만 사는 손님에게도 행사날짜를 묻는다.

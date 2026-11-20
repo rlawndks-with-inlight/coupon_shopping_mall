@@ -31,7 +31,8 @@ eq('전체취소는 남은 전부 정산', /전체 \? 남은회수 :/.test(c) &&
 eq('실패해도 던지지 않는다', (c.match(/catch \(e\) \{/g) || []).length >= 3, true);
 
 // ── 모든 취소 경로가 공용을 쓴다 ───────────────────────────────────────────
-eq('PG 취소 경로 6곳이 markCanceled 사용', (pay.match(/await markCanceled\(/g) || []).length, 6);
+// 7번째는 포스페이 통지의 결제 묶음(여러 곳으로 보내기) 전액취소 — 묶음 주문을 하나씩 같은 공용 처리로(2026-11-20)
+eq('PG 취소 경로 7곳이 markCanceled 사용', (pay.match(/await markCanceled\(/g) || []).length, 7);
 eq('핀트리는 is_cancel 컬럼', /markCanceled\(id, \{ column: 'is_cancel', actor: actorOf\(decode_user, 'admin'\) \}\)/.test(pay), true);
 // 옛 인라인 포인트 처리가 남아 있으면 공용과 겹쳐 **이중 환불**이 된다
 eq('인라인 포인트 처리 제거됨', /type: 5,\s*\n\s*trans_id: result\?\.insertId/.test(pay), false);

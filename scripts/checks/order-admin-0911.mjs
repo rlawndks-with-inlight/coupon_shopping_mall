@@ -116,7 +116,7 @@ if (백엔드있음) {
   t('이력 테이블 마이그레이션', 마이그.includes('CREATE TABLE IF NOT EXISTS transaction_status_logs') && 마이그.includes('INDEX idx_trx_status_logs_trans (trans_id, id)'));
   t('이력 쓰기는 절대 던지지 않고 테이블이 없어도 지나간다', 로그.includes("if (e?.code === 'ER_NO_SUCH_TABLE')") && /export const logTrx = async[\s\S]*?catch \(e\)/.test(로그));
   t('이력 기록 지점: 승인 확정 3곳·취소요청·취소 실행·전체취소·정리',
-    (pay.match(/kind: 'approve'/g) || []).length === 3 && trx.includes("kind: 'cancel_request'") && (cancel.match(/kind: 'cancel'/g) || []).length === 2 && 정리.includes("kind: 'failed'"));
+    (pay.match(/kind: 'approve'/g) || []).length === 4 && trx.includes("kind: 'cancel_request'") && (cancel.match(/kind: 'cancel'/g) || []).length === 2 && 정리.includes("kind: 'failed'"));
   t('이력 조회 API 는 브랜드 소유 검증을 거친다(GET /transactions/:id/logs)', 라우트.includes(".route('/:id/logs')") && trx.includes('logs: async (req, res, next) => {') && /logs: async[\s\S]*?loadOwnedRow\(readPool, table_name, id, decode_user\)/.test(trx));
   // ③ 결제실패
   t('서버: 정리 잡이 지우지 않고 -1 로 표시한다(재고·포인트는 되돌린다)', 정리.includes('UPDATE transactions SET trx_status = -1 WHERE id IN (?) AND trx_status = 0') && !정리.includes('DELETE FROM transactions') && 정리.includes('await applyCancelEffects(id)'));
@@ -134,7 +134,7 @@ if (백엔드있음) {
   t('정리 잡은 사용 포인트도 돌려준다(applyCancelEffects)', 정리.includes('await applyCancelEffects(id)') && !정리.includes('await restoreStock(id)'));
   const 늦은 = 읽기(BACK_ROOT, 'utils.js/late-approve.js');
   t('정리된 뒤 늦게 승인되면 재고·사용 포인트를 다시 잡고 이력에 남긴다(승인 확정 3곳)',
-    (pay.match(/await 늦은승인정리\(/g) || []).length === 3 && 늦은.includes("if (!tid || Number(trx?.trx_status) !== -1) return null;") && 늦은.includes('await decreaseStock(tid, lines)') && 늦은.includes('type: 10'));
+    (pay.match(/await 늦은승인정리\(/g) || []).length === 4 && 늦은.includes("if (!tid || Number(trx?.trx_status) !== -1) return null;") && 늦은.includes('await decreaseStock(tid, lines)') && 늦은.includes('type: 10'));
   // 자리 계산을 실제로 돌린다 — 이력 helper 의 상태 이름
   {
     const src = 로그.slice(로그.indexOf('export const STATUS_TEXT'), 로그.indexOf('export const actorOf'));

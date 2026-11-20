@@ -71,7 +71,8 @@ eq('추가상품은 개별가 유지', /추가상품\(종류 1\)은 조합과 �
 // ⚠ 새 테이블 조회가 실패해도 결제가 막히면 안 된다(마이그레이션 전 배포)
 eq('조합 조회 실패해도 결제 진행', /조합형 금액 조회 실패\(추가금 0원으로 진행\)/.test(pay), true);
 // 재고는 결제 '전'에 막고, 차감 실패는 결제를 막지 않는다
-eq('재고 검사는 결제 전', pay.indexOf('await checkStock(줄)') < pay.indexOf('encForSave(\'transactions\''), true);
+// 여러 곳 주문(여러곳주문)이 ready 앞에 있어 encForSave 가 먼저 나온다 — 각 흐름 안에서 비교한다(2026-11-20)
+eq('재고 검사는 결제 전', pay.indexOf('await checkStock(줄)') < pay.lastIndexOf('encForSave(\'transactions\'') && pay.indexOf('await checkStock(모든줄)') < pay.indexOf('encForSave(\'transactions\''), true);
 eq('차감 실패는 주문을 막지 않음', /재고 차감 실패\(주문은 그대로 진행\)/.test(pay), true);
 // 부수처리는 utils.js/cancel.js 로 옮겼다(취소 경로마다 달랐던 것을 하나로).
 eq('복구 실패는 취소를 막지 않음', /\[취소\] 재고 복구 실패/.test(readFileSync(BACK + 'utils.js/cancel.js', 'utf8')), true);

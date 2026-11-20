@@ -86,7 +86,7 @@ t('② 손님 창: 같은 규칙', /const 고른수량 = \(o\) => 함께\[o\.id\
 
 // ── ④ 포스페이 콘솔 취소 대조 ───────────────────────────────────────────
 t('④ 대조 함수: 포스페이 취소 합계 > 우리 현금 환불이면 멈춘다', /const 포스페이취소대조 = async \(trx, 이미현금\) =>/.test(pay)
-  && /if \(포스페이 > \(Number\(이미현금\) \|\| 0\)\)/.test(pay) && /forspayGetCancelRecords\(\{ app_key: creds\.app_key, ord_num: trx\.ord_num \}\)/.test(pay));
+  && /if \(포스페이 > \(Number\(이미현금\) \|\| 0\)\)/.test(pay) && /forspayGetCancelRecords\(\{ app_key: creds\.app_key, ord_num: 결제주문번호\(trx\) \}\)/.test(pay));
 t('④ 대조 조회가 실패하면 취소하지 않는다', /포스페이 취소 내역을 확인하지 못했습니다/.test(pay));
 t('④ 부분취소 실행에 대조를 건다', /pgPrecheck: async \(\{ trx, 이미현금 \}\) => 포스페이취소대조\(trx, 이미현금\)/.test(pay));
 t('④ 전체취소(포스페이)에도 건다 — 콘솔에서 일부 취소된 주문에 전액을 걸지 않게', /const 대조 = await 포스페이취소대조\(trx, 0\);/.test(pay)
@@ -166,7 +166,10 @@ t('① 엑셀: 취소여부에 「부분취소」, 부분취소 환불액 열', 
   t('⑤ 환불 없이 빼면 포인트도 움직이지 않는다', /if \(환불액 > 0 \|\| 전체취소\) await applyCancelEffects/.test(cancel));
   t('⑧ 일부 취소요청은 주문 상태를 바꾸지 않는다', /const 일부요청 = 기록됨 && 요청합 > 0 && 요청합 < 남은합;/.test(trxCtrl) && /if \(!일부요청\) \{\s*\n\s*await updateQuery/.test(trxCtrl));
   t('⑧ 처리 안 한 요청이 있으면 다시 받지 않는다', /이미 취소요청한 상품이 있습니다/.test(trxCtrl));
-  t('⑧ 취소요청 탭·엑셀·손님 반품조회가 요청 기록으로도 잡는다', (trxCtrl.match(/요청대기식\(/g) || []).length >= 3);
+  // EXISTS 를 OR 로 붙이면 100만 건 몰에서 인덱스를 못 타 3ms → 5초가 됐다(11/20 검토) — 작은 테이블에서 id 를 먼저 찾아, 있을 때만 덧붙인다
+  t('⑧ 취소요청 탭·엑셀·손님 반품조회가 요청 기록으로도 잡는다(id 목록으로, EXISTS 를 OR 로 붙이지 않는다)',
+    (trxCtrl.match(/await 요청대기주문\(decode_dns\?\.id\)/g) || []).length >= 3 && !/OR EXISTS \(SELECT 1 FROM transaction_cancel/.test(trxCtrl)
+    && /: ` AND trx_status=1 AND is_cancel=0 AND is_cancel_trans=0 `;/.test(trxCtrl));
   t('⑧ 요청 거절(관리자 40+) — 요청 닫고 취소요청 상태면 결제완료로', /rejectCancelRequest: async/.test(trxCtrl) && /\.route\('\/:id\/cancel-request\/reject'\)/.test(trxRoute)
     && /Number\(decode_user\?\.level\) < 40/.test(trxCtrl));
   t('⑧ 상태를 직접 바꾸면 요청을 닫고, 일괄 변경은 요청 걸린 주문을 건너뛴다', /const 닫음 = await 취소요청닫기\(id\);/.test(util) && /취소요청이 걸린 주문은 한 건씩/.test(util));
@@ -190,9 +193,16 @@ t('① 엑셀: 취소여부에 「부분취소」, 부분취소 환불액 열', 
 // ── 11/20 3차: 취소완료 탭에 부분취소·손님 화면 상태/환불 ───────────────────
 {
   const 취소화면 = 앞('src/pages/manager/orders/trx-cancel/[type].js');
-  t('⑫ 취소완료 탭에 부분취소 주문도(전체/전체취소/부분취소 거르기)', /취소구분 === 'full' \? ` AND is_cancel=1 `/.test(trxCtrl) && /AND \(is_cancel=1 OR \$\{부분취소줄\}\)/.test(trxCtrl)
+  t('⑫ 취소완료 탭에 부분취소 주문도(전체/전체취소/부분취소 거르기)', /취소구분 === 'full' \? ` AND is_cancel=1 `/.test(trxCtrl) && /\(부분식 \? ` AND \(is_cancel=1 OR \$\{부분식\}\) ` : ` AND is_cancel=1 `\)/.test(trxCtrl)
+    && /const 부분식 = 주문목록식\(await 부분취소주문\(decode_dns\?\.id\), table_name\);/.test(trxCtrl)
     && /\[\['', '전체'\], \['full', '전체취소'\], \['partial', '부분취소'\]\]/.test(취소화면) && /cancel_kind: '', page: 1/.test(취소화면));
-  t('⑫ 손님 반품/환불 조회에 일부 취소된 주문도', /OR EXISTS \(SELECT 1 FROM transaction_cancels tc WHERE tc\.trans_id=\$\{table_name\}\.id\)\) AND is_cancel=0 `/.test(trxCtrl));
+  t('⑫ 손님 반품/환불 조회에 일부 취소된 주문도', /const 덧붙임 = 주문목록식\(\[\.\.\.\(await 요청대기주문\(decode_dns\?\.id\)\), \.\.\.\(await 부분취소주문\(decode_dns\?\.id\)\)\], table_name\);/.test(trxCtrl));
+  // 주문목록식을 실제로 돌린다 — 숫자만 들어가고(SQL 에 그대로 넣는다), 비면 null
+  {
+    const i = cancel.indexOf('export const 주문목록식 = '); const 몸 = cancel.slice(i, cancel.indexOf('\n};', i) + 3).replace(/^export /, '');
+    const 주문목록식 = new Function(몸 + '\nreturn 주문목록식;')();
+    eq('⑫ 주문 id 목록 조건: 숫자만·중복 제거, 비면 null', [주문목록식([5, '7', 5, 'x', -1, "1 OR 1=1"], 't'), 주문목록식([]), 주문목록식(null)], ['t.id IN (5,7)', null, null]);
+  }
   const fn = 앞('src/utils/function.js');
   t('⑬ 손님 상태 「결제완료 · 일부 취소 / 취소요청 중」', /export const 주문상태꼬리 = /.test(fn) && /꼬리\.push\('일부 취소'\)/.test(fn) && /꼬리\.push\('취소요청 중'\)/.test(fn));
   const 상태자리 = ['src/components/elements/blog/common.js', 'src/components/elements/shop/common.js', 'src/pages/shop/auth/order-check.js',

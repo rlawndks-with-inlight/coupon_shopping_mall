@@ -16,7 +16,8 @@ import Label from 'src/components/label/Label';
 import EmptyContent from 'src/components/empty-content/EmptyContent';
 import Iconify from 'src/components/iconify/Iconify';
 import { useSettingsContext } from 'src/components/settings';
-import { calcOrderTotals, getCartDataUtil, makePayData, onPayProductsByAuth, onPayProductsByHand, onPayProductsByPayletter, onPayProductsByForspay, getOrderFormFields, orderAmountBreakdown, 배송정책 } from 'src/utils/shop-util';
+import { calcOrderTotals, getCartDataUtil, makePayData, onPayProductsByAuth, onPayProductsByHand, onPayProductsByPayletter, onPayProductsByForspay, onPayProductsByForspayMulti, getOrderFormFields, orderAmountBreakdown, 배송정책 } from 'src/utils/shop-util';
+import MultiShipEditor, { 처음곳들, 곳별금액, 곳의줄, 여러곳검사 } from 'src/views/shop/order/MultiShipEditor';
 import { saveRetryDraft, takeRetryDraft, saveSessionDraft, takeSessionDraft, clearOrderDraft } from 'src/utils/order-draft';
 
 import { findMissingRequired } from 'src/data/order-form-types';
@@ -130,6 +131,23 @@ export default function OrderSheet({ router }) {
   const [selectedAddrId, setSelectedAddrId] = useState(undefined);
   const [directMode, setDirectMode] = useState(false); // 직접 입력(비회원/신규 배송지)
   const [postOpen, setPostOpen] = useState(false);     // 우편번호 검색 팝업
+  // 여러 곳으로 보내기(2026-11-20) — 결제 한 번에 배송지 최대 10곳. 켠 몰·국내·포스페이일 때만.
+  const [여러곳, set여러곳] = useState(false);
+  const [곳들, set곳들] = useState([]);
+  // 보내는 방식 — same: 담은 상품을 받는 분마다 똑같이(수량이 배송지 수만큼 곱해진다, 기본) / split: 담은 수량을 배송지에 나눈다
+  const [보내는방식, set보내는방식] = useState('same');
+  const [우편대상, set우편대상] = useState(null);   // 우편번호 검색이 채울 배송지 번호(null 이면 보통 배송지)
+  // 상품 줄이 바뀌면(삭제·수량 변경) 나눠 둔 수량을 처음으로 되돌린다 — 수량은 줄 번호로 기억해서,
+  //   줄이 빠지면 번호가 밀려 다른 상품에 붙는다(합계가 우연히 맞으면 검사도 통과한다). 주소는 그대로 둔다.
+  const 상품꼴 = products.map((p) => `${p?.id}/${p?.addon_line ?? 0}/${JSON.stringify(p?.groups ?? [])}/${p?.order_count}`).join('|');
+  const 지난상품꼴 = useRef('');
+  useEffect(() => {
+    if (여러곳 && 보내는방식 === 'split' && 지난상품꼴.current && 지난상품꼴.current !== 상품꼴) {
+      set곳들((prev) => prev.map((곳, k) => ({ ...곳, 수량: k === 0 ? Object.fromEntries(products.map((p, i) => [i, Number(p?.order_count) || 0])) : {} })));
+      toast(translate('상품이 바뀌어 배송지별 수량을 처음으로 되돌렸습니다. 다시 나눠 주세요.'));
+    }
+    지난상품꼴.current = 상품꼴;
+  }, [상품꼴, 여러곳, 보내는방식]);
   // 받는 사람이 주문자와 같은 경우가 대부분이다. 로그인한 손님에게 이름·연락처를 다시
   // 치게 하지 않는다 — 기본으로 켜 두고, 다른 사람에게 보낼 때만 끄면 된다.
   // (비회원은 주문자 정보를 이 화면에서 직접 입력하므로 기본 꺼짐 — 아직 채울 값이 없다)
@@ -222,6 +240,9 @@ export default function OrderSheet({ router }) {
       if (typeof s.directMode === 'boolean') setDirectMode(s.directMode);
       if (typeof s.sameAsBuyer === 'boolean') setSameAsBuyer(s.sameAsBuyer);
       if (s.selectedAddrId !== undefined && s.selectedAddrId !== null) setSelectedAddrId(s.selectedAddrId);
+      // 여러 곳으로 보내기 — 배송지 10곳을 다시 쓰게 하지 않는다(결제 실패·취소 뒤 「다시 결제하기」, 새로고침).
+      //   나눠 둔 수량이 지금 상품과 안 맞으면 결제 전 검사가 알려 준다.
+      if (s.여러곳 === true && Array.isArray(s.곳들) && s.곳들.length >= 2) { set여러곳(true); set곳들(s.곳들); set보내는방식(s.보내는방식 === 'split' ? 'split' : 'same'); }
     }
     set보관준비(true);
   }, []);
@@ -229,8 +250,8 @@ export default function OrderSheet({ router }) {
   // 새로고침용으로 쓰는 동안 계속 담는다(꺼내는 건 위 조건일 때만).
   useEffect(() => {
     if (!보관준비) return;
-    saveSessionDraft(payData, { addrMode, directMode, sameAsBuyer, selectedAddrId }, window.location.pathname + window.location.search);
-  }, [보관준비, payData, addrMode, directMode, sameAsBuyer, selectedAddrId]);
+    saveSessionDraft(payData, { addrMode, directMode, sameAsBuyer, selectedAddrId, 여러곳, 곳들, 보내는방식 }, window.location.pathname + window.location.search);
+  }, [보관준비, payData, addrMode, directMode, sameAsBuyer, selectedAddrId, 여러곳, 곳들, 보내는방식]);
 
   // ── 다른 화면으로 나갈 때 확인 ──────────────────────────────────────────
   // 가맹점 기준: 뒤로 가기·다른 화면 이동이면 "기존 정보가 사라집니다 …" 를 묻는다. 새로고침은 묻지 않는다(남으니까).
@@ -252,6 +273,8 @@ export default function OrderSheet({ router }) {
       || 직접씀('buyer_phone', user?.id ? user?.phone_num : '', 번호)
       || (!sameAsBuyer && (직접씀('receiver', 고른주소?.receiver) || 직접씀('addr_phone', 고른주소?.phone, 번호)))
       || ['addr', 'detail_addr', 'zonecode', 'city', 'state_region', 'country_name'].some((k) => 직접씀(k, 고른주소?.[k]))
+      // 여러 곳으로 보내기에 쓴 배송지도 나가면 사라지는 입력이다
+      || (여러곳 && 곳들.some((곳) => ['receiver', 'addr_phone', 'addr', 'detail_addr', 'delivery_memo'].some((k) => 같게(곳?.[k]))))
     );
   }
   const 나가기문구Ref = useRef('');
@@ -483,7 +506,14 @@ export default function OrderSheet({ router }) {
   };
   // 우편번호 검색 완료 → 주소/우편번호 반영(직접 입력 모드)
   const onCompletePost = (data) => {
-    setPayData({ ...payData, zonecode: data?.zonecode, addr: data?.roadAddress || data?.address || '' });
+    const 주소 = data?.roadAddress || data?.address || '';
+    if (우편대상 !== null) {
+      // 여러 곳으로 보내기의 배송지 하나
+      set곳들((prev) => prev.map((곳, i) => (i === 우편대상 ? { ...곳, zonecode: data?.zonecode, addr: 주소 } : 곳)));
+      set우편대상(null);
+    } else {
+      setPayData({ ...payData, zonecode: data?.zonecode, addr: 주소 });
+    }
     setPostOpen(false);
   };
 
@@ -516,7 +546,7 @@ export default function OrderSheet({ router }) {
       toast.error(translate('추가상품은 본상품과 함께 주문할 수 있습니다.'));
       return false;
     }
-    if (!payData.addr) {
+    if (!여러곳 && !payData.addr) {
       toast.error(translate("배송지를 선택하거나 입력해 주세요."));
       return false;
     }
@@ -561,7 +591,7 @@ export default function OrderSheet({ router }) {
       return false;
     }
     // 해외 연락처는 국가번호(+81 …)가 붙어 국내 자릿수 규칙에 안 맞는다 — 국내일 때만 형식을 본다.
-    if (isKR && payData.addr_phone && !isValidPhoneNumber(payData.addr_phone)) {
+    if (!여러곳 && isKR && payData.addr_phone && !isValidPhoneNumber(payData.addr_phone)) {
       toast.error(translate("받는 분 연락처를 정확히 입력해 주세요."));
       return false;
     }
@@ -578,14 +608,14 @@ export default function OrderSheet({ router }) {
       return false;
     }
     // 주소록을 쓰지 않고 직접 입력하는 경우, 받는 분 성함이 비면 송장을 쓸 수 없다.
-    if (directMode && !String(payData.receiver ?? '').trim()) {
+    if (!여러곳 && directMode && !String(payData.receiver ?? '').trim()) {
       toast.error(translate("받는 분 성함을 입력해 주세요."));
       return false;
     }
     // 주소 자체가 비어 있으면 배송이 불가능하다.
     // 국내는 우편번호 검색을 거쳐야 addr 이 채워지지만, 해외는 전부 직접 입력이라
     // 아무것도 안 쓰고도 결제까지 갈 수 있었다.
-    if (directMode && !String(payData.addr ?? '').trim()) {
+    if (!여러곳 && directMode && !String(payData.addr ?? '').trim()) {
       toast.error(translate("배송지 주소를 입력해 주세요."));
       return false;
     }
@@ -593,12 +623,12 @@ export default function OrderSheet({ router }) {
     //   예전엔 directMode 일 때만 봐서 비회원은 나라를 비운 채 결제할 수 있었고, 그러면 국내 주소로 판정돼
     //   해외 우편번호(예: 프랑스 63000)에 제주 추가배송비가 붙었다(11/12 점검).
     const 입력폼 = directMode || !(user && (addressContent?.content ?? []).length > 0);
-    if (입력폼 && !isKR && !String(payData.country_name ?? '').trim()) {
+    if (!여러곳 && 입력폼 && !isKR && !String(payData.country_name ?? '').trim()) {
       toast.error(translate("배송 국가를 입력해 주세요."));
       return false;
     }
     // 제주·도서산간 「배송 안 함」 지역(몰 설정) — 결제 전에 막는다. 서버(pay.ready)도 같은 판정으로 거절한다.
-    if (orderTotals.island?.blocked) {
+    if (!여러곳 && orderTotals.island?.blocked) {
       toast.error(translate(orderTotals.island.region === 'jeju' ? '이 쇼핑몰은 제주 지역으로 배송하지 않습니다. 다른 주소를 선택해 주세요.' : '이 쇼핑몰은 도서산간 지역으로 배송하지 않습니다. 다른 주소를 선택해 주세요.'));
       return false;
     }
@@ -616,6 +646,14 @@ export default function OrderSheet({ router }) {
     if (parseFloat(payData.use_point || 0) > 포인트한도.상한) {
       toast.error(translate(포인트한도.이유 || "사용 가능한 포인트를 초과했습니다."));
       return false;
+    }
+    if (여러곳) {
+      // 여러 곳으로 보내기 — 배송지·수량 나누기·추가상품·배송 안 함 지역(서버 여러곳주문도 같은 것을 본다)
+      const 문제 = 여러곳검사(곳들, products, isValidPhoneNumber, 보내는방식);
+      if (문제) { toast.error(translate(문제[0], 문제[1])); return false; }
+      const 막힌곳 = 곳별금액(곳들, products, 보내는방식).findIndex((t) => t.island?.blocked);
+      if (막힌곳 >= 0) { toast.error(translate('{{n}}번째 배송지: 이 쇼핑몰은 그 지역으로 배송하지 않습니다.', { n: 막힌곳 + 1 })); return false; }
+      if (parseFloat(payData.use_point || 0) > 0) { toast.error(translate('여러 곳으로 보내기에서는 포인트를 사용할 수 없습니다.')); return false; }
     }
     return true;
   };
@@ -777,10 +815,15 @@ export default function OrderSheet({ router }) {
     const started_at = Date.now();
     // 결제창에서 실패·취소되면 결과 화면 「다시 결제하기」가 이 값으로 주문서를 채운다.
     // 주문번호는 주문이 만들어진 뒤 shop-util 이 단다(stampRetryDraft).
-    saveRetryDraft(payData, { addrMode, directMode, sameAsBuyer, selectedAddrId }, isBuyNow());
+    saveRetryDraft(payData, { addrMode, directMode, sameAsBuyer, selectedAddrId, 여러곳, 곳들, 보내는방식 }, isBuyNow());
     try {
       let result = false;
-      if (buyType == 'auth_forspay') {
+      if (여러곳) {
+        // 여러 곳으로 보내기는 포스페이로만(서버도 막는다)
+        if (buyType != 'auth_forspay') { toast.error(translate('여러 곳으로 보내기는 이 결제수단으로 할 수 없습니다.')); return; }
+        // 배송지마다 보낼 줄을 여기서 정해 넘긴다(같은 상품 보내기면 담은 상품 그대로, 나눠 보내기면 나눈 수량)
+        result = await onPayProductsByForspayMulti(products.map((p) => ({ ...p })), payData, 곳들.map((곳) => ({ ...곳, 줄: 곳의줄(곳, products, 보내는방식) })));
+      } else if (buyType == 'auth_forspay') {
         result = await onPayProductsByForspay(products.map((p) => ({ ...p })), payData);
       } else if (buyType == 'card_payletter') {
         result = await onPayProductsByPayletter(products.map((p) => ({ ...p })), payData);
@@ -837,12 +880,25 @@ export default function OrderSheet({ router }) {
   // 한 번 더 얹었다. 무료배송 판정 기준도 서로 달라서(화면 '상품가+배송비' / 청구 '상품가만')
   // 배송비 정책을 켠 브랜드에서 고객이 본 금액과 결제되는 금액이 어긋났다.
   // 배송지(payData)를 넘겨 제주·도서산간 추가배송비까지 계산한다(2026-11-12) — makePayData·서버와 같은 규칙.
-  const orderTotals = calcOrderTotals(products, payData?.use_point, payData);
+  // 여러 곳으로 보내기면 배송지마다 계산한 값을 합친다(배송비·무료배송·제주 추가비가 배송지별).
+  const 곳금액 = 여러곳 ? 곳별금액(곳들, products, 보내는방식) : null;
+  const orderTotals = 여러곳
+    ? 곳금액.reduce((합, t) => ({
+        ...합,
+        merchTotal: 합.merchTotal + t.merchTotal,
+        delivery: 합.delivery + t.delivery,
+        shipActive: 합.shipActive || t.shipActive,
+        amount: 합.amount + t.amount,
+        island: { fee: 합.island.fee + (Number(t.island?.fee) || 0), region: 합.island.region === 'jeju' || t.island?.region === 'jeju' ? 'jeju' : (t.island?.region !== 'normal' ? t.island?.region : 합.island.region), blocked: 합.island.blocked || !!t.island?.blocked },
+      }), { merchTotal: 0, delivery: 0, shipActive: false, usedPoint: 0, amount: 0, island: { fee: 0, region: 'normal', blocked: false } })
+    : calcOrderTotals(products, payData?.use_point, payData);
   // 요약 세 곳(상품 목록 아래 · 결제수단 패널 · 오른쪽 요약)이 **같은 값**을 받는다 —
   // 각자 계산하면 언젠가 서로 다른 금액을 보여 준다.
   // 상품 목록(상품명·옵션)은 요약에 넣지 않는다 — 상품 카드 한 곳에만 둔다(2026-09-11 사장님 결정, 안 A).
   // 옵션은 「옵션·추가상품」 금액 한 줄로 따로 보인다(orderAmountBreakdown 주석).
-  const 금액나눔 = orderAmountBreakdown(products);
+  // 여러 곳으로 「같은 상품 보내기」면 담은 상품이 받는 분 한 명 몫이라 금액·개수가 배송지 수만큼 곱해진다
+  const 곱 = 여러곳 && 보내는방식 === 'same' ? Math.max(1, 곳들.length) : 1;
+  const 금액나눔 = (() => { const b = orderAmountBreakdown(products); return { goods: b.goods * 곱, options: b.options * 곱, discount: b.discount * 곱, count: b.count * 곱 }; })();
   const 배송정책값 = 배송정책();
   const 요약 = {
     goods: 금액나눔.goods,
@@ -852,7 +908,7 @@ export default function OrderSheet({ router }) {
     // 할인 전 총액(상품금액 + 옵션). 사이드바가 배송비를 스스로 계산할 때만 쓰는 값이다(주문서는 배송비를 넘긴다).
     subtotal: 금액나눔.goods + 금액나눔.options,
     // '주문당 1회 · 5만원 이상 무료' — 표 아래에 홀로 두지 않고 배송비 값 바로 곁에 적는다
-    배송비안내: orderTotals.shipActive
+    배송비안내: 여러곳 ? translate('배송비는 배송지마다 따로 계산됩니다.') : orderTotals.shipActive
       ? [translate('배송비는 주문당 1회 부과됩니다.'),
          배송정책값.freeMin > 0 ? translate('{{amount}} 이상 무료배송', { amount: commarNumberWithUnit(배송정책값.freeMin, currentLang?.value) }) : '']
         .filter(Boolean).join(' ')
@@ -871,7 +927,10 @@ export default function OrderSheet({ router }) {
       .catch(() => {});
     return () => { 살아있음 = false; };
   }, []);
-  const paymentModules = (최신결제수단 ?? themeDnsData?.payment_modules ?? []).filter((m) => m?.type != 'sms_pay');
+  const 모든결제수단 = (최신결제수단 ?? themeDnsData?.payment_modules ?? []).filter((m) => m?.type != 'sms_pay');
+  // 여러 곳으로 보내기 — 몰 설정에서 켰고, 국내 배송이고, 포스페이가 있을 때만(서버도 같은 조건)
+  const 여러곳가능 = Number(themeDnsData?.setting_obj?.multi_ship) === 1 && 모든결제수단.some((m) => m?.type == 'auth_forspay');
+  const paymentModules = 여러곳 ? 모든결제수단.filter((m) => m?.type == 'auth_forspay') : 모든결제수단;
   // 이미 고른 수단이 새 목록에서 빠졌으면 선택을 푼다 — 사라진 수단으로 결제하기가 남지 않게.
   useEffect(() => {
     if (!최신결제수단 || !buyType) return;
@@ -1062,12 +1121,12 @@ export default function OrderSheet({ router }) {
       <DialogAddAddress addAddressOpen={addAddressOpen} setAddAddressOpen={setAddAddressOpen} onAddAddress={onAddAddress} />
       <DialogAddAddress addAddressOpen={updateAddressOpen} setAddAddressOpen={setUpdatedAddressOpen}
         onAddAddress={onAddAddress} type={'update'} id={addressID} onDeleteAddress={onDeleteAddress} />
-      <Dialog open={postOpen} onClose={() => setPostOpen(false)}
+      <Dialog open={postOpen} onClose={() => { setPostOpen(false); set우편대상(null); }}
         fullScreen={typeof window !== 'undefined' && window.innerWidth < 700}
         PaperProps={{ style: { width: typeof window !== 'undefined' && window.innerWidth >= 700 ? '600px' : '100%', maxWidth: '100%' } }}>
         <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', px: 2, py: 1.25, borderBottom: '1px solid #eee' }}>
           <Box sx={{ fontWeight: 700 }}>{translate('우편번호 검색')}</Box>
-          <Button size="small" color="inherit" onClick={() => setPostOpen(false)}>{translate('닫기')}</Button>
+          <Button size="small" color="inherit" onClick={() => { setPostOpen(false); set우편대상(null); }}>{translate('닫기')}</Button>
         </Box>
         <PostcodeBox onComplete={onCompletePost} />
       </Dialog>
@@ -1188,7 +1247,7 @@ export default function OrderSheet({ router }) {
               {/* 배송지 */}
               <Card sx={{ mb: 3 }}>
                 <CardHeader title={translate('배송지')}
-                  action={isMember && addressList.length > 0 ? (
+                  action={!여러곳 && isMember && addressList.length > 0 ? (
                     <Button size="small" variant="soft"
                       startIcon={<Iconify icon={directMode ? 'eva:list-fill' : 'eva:edit-2-fill'} />}
                       onClick={() => setDirectMode(!directMode)}>
@@ -1196,7 +1255,27 @@ export default function OrderSheet({ router }) {
                     </Button>
                   ) : null} />
                 <CardContent>
-                  {isMember && addressList.length > 0 && !directMode ? (
+                  {여러곳가능 && (
+                    <FormControlLabel sx={{ mb: 1 }}
+                      control={<Checkbox size="small" checked={여러곳}
+                        onChange={(e) => {
+                          const 켬 = e.target.checked;
+                          set여러곳(켬);
+                          if (켬) {
+                            set곳들(처음곳들(payData, products));
+                            setAddrMode('KR');
+                            if (Number(payData?.use_point) > 0) setPayData({ ...payData, use_point: 0 });
+                            if (buyType && buyType != 'auth_forspay') { setBuyType(undefined); setBuyPayMethod(undefined); }
+                          }
+                        }} />}
+                      label={<Typography variant="body2">{translate('여러 곳으로 보내기')}</Typography>}
+                    />
+                  )}
+                  {여러곳 ? (
+                    <MultiShipEditor products={products} 곳들={곳들} set곳들={set곳들} isValidPhone={isValidPhoneNumber}
+                      방식={보내는방식} set방식={set보내는방식} addressList={addressList}
+                      on우편번호={(k) => { set우편대상(k); setPostOpen(true); }} />
+                  ) : isMember && addressList.length > 0 && !directMode ? (
                     <Stack spacing={1.5}>
                       {addressList.map((item, idx) => (
                         <Paper key={idx} variant="outlined"
@@ -1340,7 +1419,7 @@ export default function OrderSheet({ router }) {
               {/* 사용할 포인트 — 휴대폰 전용 자리(2026-09-11). PC 는 오른쪽 상자 안에 있다.
                   휴대폰에서는 오른쪽 상자를 숨기므로 이 칸을 결제수단 **위** 에 둔다 — 포인트를 쓰면 총 결제금액이
                   바뀌므로 결제수단을 고르기 전에 정해야 한다(예전엔 결제수단 목록보다 아래, 페이지 맨 끝이었다). */}
-              {isMember && 포인트쓰는몰(themeDnsData) && (
+              {isMember && 포인트쓰는몰(themeDnsData) && !여러곳 && (
                 <Card sx={{ mb: 3, display: { xs: 'block', md: 'none' } }}>
                   <CardHeader title={translate('사용할 포인트')} />
                   <CardContent>
@@ -1451,6 +1530,8 @@ export default function OrderSheet({ router }) {
               <StickyBelowHeader>
                 <CheckoutSummary
                   enableDiscount
+                  // 여러 곳으로 보내기는 포인트를 함께 못 쓴다 — 입력칸을 숨긴다(서버도 거절한다)
+                  enablePoint={!여러곳}
                   goods={요약.goods}
                   options={요약.options}
                   count={요약.count}

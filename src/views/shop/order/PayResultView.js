@@ -276,6 +276,19 @@ const { user } = useAuthContext();
         )}
       </Stack>
 
+      {/* 여러 곳으로 보내기 — 주문이 배송지마다 따로 만들어졌음을 알린다(주문서가 결제 직전에 남긴 표시, 같은 주문번호일 때만) */}
+      {isSuccess && (() => {
+        try {
+          const m = JSON.parse(sessionStorage.getItem('multiShipOrder') || 'null');
+          if (!m || String(m.ord_num) !== String(q.ord_num) || !(Number(m.count) > 1)) return null;
+          return (
+            <Typography variant="body2" sx={{ textAlign: 'center', mb: 2, wordBreak: 'keep-all' }}>
+              {translate('배송지 {{n}}곳으로 나눠 주문되었습니다. 주문내역에서 배송지별로 확인할 수 있습니다.', { n: Number(m.count) })}
+            </Typography>
+          );
+        } catch (e) { return null; }
+      })()}
+
       {hasDetail && (
         <Card sx={{ mb: 2 }}>
           <CardHeader title={translate('결제 정보')} />

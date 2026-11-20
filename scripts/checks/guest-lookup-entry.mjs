@@ -28,7 +28,7 @@ t('비밀번호는 주소에 싣지 않는다(sessionStorage, 꺼내면 지움, 
 const 조회 = 읽기('src/pages/shop/auth/order-check.js');
 t('비회원 주문조회: 넘겨받은 값으로 바로 조회하고 꺼낸 값은 지운다', /const 넘김 = 비회원조회꺼내기\(\);/.test(조회) && /if \(넘김\.buyer_phone && 넘김\.password\) onSearch\(넘김\);/.test(조회));
 t('비회원 주문조회: 주소의 주문번호가 결과에 있으면 그 주문 상세를 연다', /열주문\.current = String\(router\.query\?\.ord \|\| ''\);/.test(조회)
-  && /return 보던것 \|\| 방금주문 \|\| \(list\.length === 1 \? list\[0\] : null\);/.test(조회));
+  && /return 보던것 \|\| (?:방금주문|\(여러곳주문 \? null : 방금주문\)) \|\| \(list\.length === 1 \? list\[0\] : null\);/.test(조회));
 t('비회원 주문조회: 버튼 클릭(이벤트 인자)은 입력칸 값을 쓴다', /const 값 = typeof 넘김\?\.buyer_phone === 'string' \? 넘김 : form;/.test(조회));
 t('비회원 주문조회: 상세에 취소요청 버튼은 그대로', /canCancelOrder\(selected\) && \(/.test(조회) && /<OrderCancelButton/.test(조회));
 

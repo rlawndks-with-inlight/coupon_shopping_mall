@@ -88,7 +88,7 @@ t('결제수단패널이 정의돼 있다', sheet.includes('const 결제수단�
     sheet.split('shippingNote={요약.배송비안내}').length - 1 === 2 && summary.includes('{shippingNote && <Typography'));
   const 포인트칸 = sheet.slice(idx(sheet, '{/* 사용할 포인트 — 휴대폰 전용 자리'), idx(sheet, '{/* 결제수단 (약관 동의 후 선택) */}'));
   t('휴대폰 포인트 칸은 결제수단 바로 위, 회원·포인트 몰에서만',
-    포인트칸.includes('{isMember && 포인트쓰는몰(themeDnsData) && (') && 포인트칸.includes("display: { xs: 'block', md: 'none' }") && 포인트칸.includes('<CheckoutPointField withLabel={false}'));
+    포인트칸.includes('{isMember && 포인트쓰는몰(themeDnsData) && !여러곳 && (') && 포인트칸.includes("display: { xs: 'block', md: 'none' }") && 포인트칸.includes('<CheckoutPointField withLabel={false}'));
   t('PC 포인트 칸은 오른쪽 상자 안(같은 부품)', summary.includes('<CheckoutPointField themeDnsData={themeDnsData} payData={payData} setPayData={setPayData} total={displayTotal} />'));
 }
 // 수기결제·무통장·핀트리·헥토 입력란도 목록 끝이 아니라 패널 안이다
@@ -138,7 +138,7 @@ t('옵션은 「옵션·추가상품」 금액 한 줄 — 0 이면 안 나오�
   brief.includes("{Number(options) !== 0 && <줄 label={translate('옵션·추가상품')} value={부호돈(options)} />}")
   && summary.includes("{Number(options) !== 0 && (") && summary.includes("{Number(options) < 0 ? '-' : '+'}"));
 t('카트 화면처럼 금액 나누기를 안 넘기면 예전 「총액」 한 줄', summary.includes('Number.isFinite(goods) ?') && summary.includes("translate('총액')"));
-t('주문서가 금액 나누기를 한 번 계산해 세 곳에 나눠 준다', sheet.includes('const 금액나눔 = orderAmountBreakdown(products);'));
+t('주문서가 금액 나누기를 한 번 계산해 세 곳에 나눠 준다', (sheet.match(/orderAmountBreakdown\(products\)/g) ?? []).length === 1 && /const 금액나눔 = /.test(sheet));
 t('할인은 있을 때만 적는다(정가 > 판매가일 때만 생긴다)',
   /Number\(discount\) > 0 && \(/.test(summary) && brief.includes('Number(discount) > 0 &&'));
 

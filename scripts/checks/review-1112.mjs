@@ -21,7 +21,7 @@ t('② 잘림 안내는 남은 주문이 있을 때만', /잘림 = page > 20 && 
 const 칸 = 읽기(FRONT_ROOT, 'src/components/manager/OrderColumns.js');
 t('③ 배송 안 함 표시는 결제대기·결제완료·입고 주문에만', /\[0, 5, 10\]\.includes\(Number\(row\?\.trx_status\)\) && !포스페이미승인\(row\)/.test(칸) && /const 막힘 = 손댈주문 && /.test(칸));
 const 주문서 = 읽기(FRONT_ROOT, 'src/views/shop/order/OrderSheet.js');
-t('④ 해외 나라 필수는 비회원에게도', /const 입력폼 = directMode \|\| !\(user && \(addressContent\?\.content \?\? \[\]\)\.length > 0\);/.test(주문서) && /if \(입력폼 && !isKR && !String\(payData\.country_name/.test(주문서));
+t('④ 해외 나라 필수는 비회원에게도', /const 입력폼 = directMode \|\| !\(user && \(addressContent\?\.content \?\? \[\]\)\.length > 0\);/.test(주문서) && /if \((?:!여러곳 && )?입력폼 && !isKR && !String\(payData\.country_name/.test(주문서));
 const 가이드 = readFileSync(FRONT_ROOT + 'src/components/manager/guideContent.js', 'utf8');
 t('⑤ 가이드: 맨 왼쪽은 체크칸', !/맨 왼쪽은 번호/.test(가이드) && /맨 왼쪽은 체크칸/.test(가이드));
 

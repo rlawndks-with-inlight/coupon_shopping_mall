@@ -294,7 +294,9 @@ export const 주문상태꼬리 = (row = {}) => {
   if (Number(row?.trx_status) !== 1 && Number(row?.cancel_request_count) > 0) 꼬리.push('취소요청 중');
   return 꼬리;
 };
-export const 손님주문상태 = (row, translate) => [getOrderStatusText(row), ...주문상태꼬리(row)].map((k) => translate(k)).join(' · ');
+// 여러 곳으로 보내기 주문(pay_group)은 받는 분이 주문마다 달라, 어느 주문이 누구 것인지 상태 옆에 적는다(2026-11-20)
+export const 손님주문상태 = (row, translate) => [getOrderStatusText(row), ...주문상태꼬리(row)].map((k) => translate(k)).join(' · ')
+  + (row?.pay_group ? ` · ${translate('여러 곳 주문')}${row?.receiver ? ` (${translate('받는 분')} ${row.receiver})` : ''}` : '');
 export const getOrderStatusText = (row = {}) => {
   if (Number(row?.is_cancel) === 1 || Number(row?.is_cancel_trans) === 1) return '취소완료';
   // 금액이 음수인 행은 예전 데이터의 취소 표기 방식이다(기존 화면들이 쓰던 규칙을 유지).

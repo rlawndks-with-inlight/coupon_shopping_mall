@@ -148,13 +148,13 @@ t('주문서: 탭 닫기(beforeunload)로는 묻지 않는다', !/beforeunload/.
     '브라우저 기본 창은 새로고침에도 떠서 「새로고침은 그대로」와 부딪힌다');
 t('주문서: 떠날 때 확인 장치를 풀어 둔다', /router\.events\.off\('routeChangeStart', 이동시작\)/.test(sheet) && /router\.beforePopState\(\(\) => true\)/.test(sheet),
     '안 풀면 다른 화면에서도 뒤로 가기가 막힌다');
-t('결제창으로 가기 전에 담는다', /saveRetryDraft\(payData, \{ addrMode, directMode, sameAsBuyer, selectedAddrId \}, isBuyNow\(\)\);\s*try \{\s*let result = false;/.test(sheet));
+t('결제창으로 가기 전에 담는다', /saveRetryDraft\(payData, \{ addrMode, directMode, sameAsBuyer, selectedAddrId(?:, 여러곳, 곳들, 보내는방식)? \}, isBuyNow\(\)\);\s*try \{\s*let result = false;/.test(sheet));
 t('주문이 안 만들어지면 담은 것을 지운다', /if \(!result\) \{\s*\/\/[^\n]*\n\s*clearOrderDraft\(\);/.test(sheet));
 t('주문 접수·결제 완료 시 지운다', (sheet.match(/clearOrderDraft\(\);/g) ?? []).length >= 3,
     '무통장·상품권(finishPendingOrder)과 수기카드, 주문서 열 때 — 모두 필요하다');
 t('약관 동의는 되살리지 않는다', !/setAgree1\(.*초안|초안.*agree/.test(sheet),
     '동의는 그때마다 사람이 직접 눌러야 한다');
-t('포스페이·페이레터가 주문을 만든 뒤 주문번호를 단다', (결제.match(/stampRetryDraft\(ord_num\);/g) ?? []).length === 2
+t('포스페이·페이레터가 주문을 만든 뒤 주문번호를 단다', (결제.match(/stampRetryDraft\(ord_num\);/g) ?? []).length === 3
     && /if \(res\?\.id > 0\) \{\s*stampRetryDraft\(ord_num\);/.test(결제));
 t('결과 화면: 결제 확인 중에는 「다시 결제하기」를 찾지 않는다',
     /const 결제안됨 = router\.isReady && !isTestBrand && !isSuccess && !확인중;/.test(결과)

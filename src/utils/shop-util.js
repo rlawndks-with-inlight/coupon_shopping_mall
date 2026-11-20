@@ -555,6 +555,72 @@ const startForspayWindow = (popup, res, payData, target, features) => {
     }, 800);
 };
 
+// 여러 곳으로 보내기(2026-11-20) — 결제 한 번(포스페이), 서버가 배송지마다 주문을 만든다.
+// 배송지마다 makePayData 로 줄 금액·배송비를 만든다(무료배송·제주 추가비가 배송지별, 서버 여러곳주문과 같은 규칙).
+// 배송지 목록은 JSON 한 칸(destinations_json)으로 보낸다 — 폼 칸으로 풀면 서버의 요청당 칸 한도에 걸린다.
+// 곳들: [{ receiver, addr_phone, zonecode, addr, detail_addr, delivery_memo, 수량: { [줄 번호]: 개수 } }]
+export const onPayProductsByForspayMulti = async (products_, payData_, 곳들) => {
+    if (isDemoHost()) {
+        toast.error(번역('데모 미리보기에서는 결제할 수 없습니다.'));
+        return false;
+    }
+    const isMobile = /iPhone|Android|iPad|iPod|Mobile/i.test(navigator.userAgent);
+    const features = 'width=480,height=760,scrollbars=yes,resizable=yes';
+    let popup = null;
+    if (!isMobile) {
+        try { popup = window.open('', 'forspay_pay', features); } catch (e) { popup = null; }
+    }
+    const 팝업닫기 = () => { try { if (popup && !popup.closed) popup.close(); } catch (e) { } };
+    try {
+        const products = Array.isArray(products_) ? products_ : [];
+        const destinations = [];
+        let amount = 0;
+        for (const 곳 of 곳들) {
+            // 주문서가 배송지마다 보낼 줄(곳.줄)을 정해 넘긴다 — 같은 상품 보내기·나눠 보내기 모두. 없으면 나눈 수량으로.
+            const 줄 = Array.isArray(곳?.줄) ? 곳.줄.map((p) => ({ ...p }))
+                : products.map((p, i) => ({ ...p, order_count: Number(곳?.수량?.[i]) || 0 })).filter((p) => p.order_count > 0);
+            const 배송지 = { zonecode: 곳.zonecode, addr: 곳.addr, country_code: 'KR', country_name: '' };
+            const d = await makePayData(줄, { ...배송지, use_point: 0 });
+            amount += Number(d.amount) || 0;
+            destinations.push({
+                receiver: 곳.receiver, addr_phone: 곳.addr_phone, zonecode: 곳.zonecode, addr: 곳.addr,
+                detail_addr: 곳.detail_addr || '', delivery_memo: 곳.delivery_memo || '', products: d.products,
+            });
+        }
+        const pay_method = payData_?.payment_modules?.pay_method || 'card';
+        const ord_num = makeOrdNum('FS');
+        const 첫줄 = destinations[0]?.products?.[0]?.order_name || '상품';
+        const 줄수 = destinations.reduce((s, d) => s + d.products.length, 0);
+        const body = {
+            brand_id: payData_?.brand_id, user_id: payData_?.user_id,
+            buyer_name: payData_?.buyer_name, buyer_phone: payData_?.buyer_phone, password: payData_?.password,
+            item_name: 줄수 > 1 ? `${첫줄} 외 ${줄수 - 1}건` : 첫줄,
+            amount, use_point: 0, ord_num, pay_method,
+            front_url: window.location.origin,
+            user_agent: isMobile ? 'MW' : 'WP',
+            destinations_json: JSON.stringify(destinations),
+        };
+        const res = await apiManager('pays/auth_forspay', 'create', body);
+        if (res?.id > 0) {
+            stampRetryDraft(ord_num);
+            // 결제 완료 화면이 「배송지 N곳으로 나눠 주문되었습니다」를 보이게 — 주문번호와 곳 수만 남긴다
+            try { sessionStorage.setItem('multiShipOrder', JSON.stringify({ ord_num, count: destinations.length })); } catch (e) { /* noop */ }
+            const target = (res.checkout_mode === 'forspay_ui') ? res.popup_url : res.launch_page_url;
+            if (target) {
+                if (popup) startForspayWindow(popup, res, { ...body, ord_num }, target, features);
+                else window.location.href = target;
+                return { ...body, trans_id: res.id, group_count: res.group_count };
+            }
+        }
+        팝업닫기();
+        return false;
+    } catch (err) {
+        팝업닫기();
+        console.log(err);
+        return false;
+    }
+}
+
 export const onPayProductsByForspay = async (products_, payData_) => { // 인증결제(포스페이)
     if (isDemoHost()) {
         toast.error(번역('데모 미리보기에서는 결제할 수 없습니다.'));

@@ -81,7 +81,7 @@ if (백엔드있음) {
   eq('서버 상태 열쇠 = 화면 상태 열쇠 전부', [...new Set(서버키)].sort(), [...new Set([...키(그밖), ...키(샵고무통장)])].sort());
   t('서버: 손님 화면에서는 statuses 를 안 본다', /const 엑셀상태 = 손님화면 \? null : 엑셀상태읽기\(req\.query\.statuses\);/.test(서버));
   t('서버: 아는 상태가 없으면 아무것도 안 준다(조건이 빠져 전부 나가지 않게)', /: ` AND 1=0 `;/.test(서버));
-  t('서버: statuses 가 오면 목록 조건(kind·cancel_status)을 건너뛴다', /if \(엑셀상태\) \{[\s\S]{0,300}\} else if \(kind === 'failed'\)/.test(서버)
+  t('서버: statuses 가 오면 목록 조건(kind·cancel_status)을 건너뛴다', /if \(엑셀상태\) \{[\s\S]{0,900}\} else if \(kind === 'failed'\)/.test(서버)
     && /if \(is_confirm && !엑셀상태\)/.test(서버) && /if \(엑셀상태\) \{\s*\} else if \(kind === 'settled' \|\| type == 'user'\)/.test(서버));
   t('서버: 결제실패를 넣어 받으면 실패 사유를 붙인다', /\(kind === 'failed' \|\| 엑셀상태\?\.includes\('failed'\)\)/.test(서버));
 }

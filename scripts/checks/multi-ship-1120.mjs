@@ -37,7 +37,11 @@ const t = (n, c) => eq(n, !!c, true);
   가짜 = [{ trans_id: 1, s: 30000, n: 2 }];
   eq('① 부분취소를 거듭해 전부 취소된 주문은 원장 합(금액을 또 더하지 않는다)', await f.묶음현금환불([{ id: 1, amount: 30000, is_cancel_trans: 1 }]), 30000);
   t('① 묶음은 주문번호 목록으로 찾는다(445만 행에 새 인덱스 없이)', /WHERE ord_num IN \(\$\{번호\.map/.test(pg) && /AND pay_group=\? AND IFNULL\(is_cancel,0\)=0/.test(pg));
-  t('① 마이그레이션: 칸만 INSTANT 로, 인덱스 없음', /ADD COLUMN pay_group VARCHAR\(64\) NULL/.test(마이그) && /ALGORITHM=INSTANT/.test(마이그) && !/ADD INDEX|CREATE INDEX/i.test(마이그));
+  // ord_num 만 utf8mb4_unicode_ci 다 — 표 기본 정렬로 만들면 ord_num = pay_group 비교가 Illegal mix of collations 로 죽는다(11/20 배포 중 발견)
+  t('① 마이그레이션: 칸만 INSTANT 로, 인덱스 없음, 정렬 방식은 ord_num 과 같게', /ADD COLUMN pay_group VARCHAR\(64\) CHARACTER SET utf8mb4 COLLATE ', @주문번호정렬/.test(마이그) && /ALGORITHM=INSTANT/.test(마이그) && !/ADD INDEX|CREATE INDEX/i.test(마이그));
+  const 정렬맞춤 = 백('migrations/2026-11-20_pay_group_collation.sql');
+  t('① 정렬 맞춤 마이그레이션: 빈 칸일 때만 INSTANT 로 지우고 다시 만든다', /SET @고칠것 := \(@다름 AND @값있음 = 0\);/.test(정렬맞춤)
+    && /DROP COLUMN pay_group, ALGORITHM=INSTANT/.test(정렬맞춤) && /COLLATE ', @주문번호정렬/.test(정렬맞춤));
 }
 
 // ── ② 결제 확정 ───────────────────────────────────────────────────────────
@@ -61,7 +65,7 @@ t('④ ready: destinations_json 이 있으면 여러곳주문(주체·결제수�
   && pay.indexOf('if (req.body?.destinations_json) {') < pay.indexOf('── 결제금액 검증(서버 재계산)'));
 t('④ 막는 것: 2~10곳·포스페이만·셀러몰·포인트·칸 없음·몰 설정 꺼짐',
   /목록\.length < 2 \|\| 목록\.length > 묶음최대/.test(pay) && /Number\(trx_method\) !== 41/.test(pay) && /Number\(seller_id\) > 0/.test(pay)
-  && /\(parseInt\(use_point\) \|\| 0\) > 0/.test(pay) && /hasColumn\('transactions', 'pay_group'\)/.test(pay) && /Number\(s\?\.multi_ship\) === 1/.test(pay));
+  && /\(parseInt\(use_point\) \|\| 0\) > 0/.test(pay) && /hasColumn\('transactions', 'pay_group'\)/.test(pay) && /if \(\[0, '0', false, 'false'\]\.includes\(s\?\.multi_ship\)\) return response/.test(pay));
 t('④ 배송지마다 금액 재계산(국내 주소로 — 무료배송·제주 추가비가 배송지별)', /recalcOrderAmount\(brand_id, 줄, 0, 0, \{ zonecode: 우편, addr: 주소, country_code: 'KR'/.test(pay));
 t('④ 화면 합계 = 서버 합계여야 결제', /client_amount !== 합계/.test(pay));
 t('④ 상품 상태·옵션·한정·재고·입력항목은 모든 배송지 줄을 합쳐서', /SELECT id, status FROM products WHERE id IN/.test(pay.slice(pay.indexOf('async function 여러곳주문')))
@@ -76,7 +80,7 @@ const 편집 = 앞('src/views/shop/order/MultiShipEditor.js');
 const util = 앞('src/utils/shop-util.js');
 const 설정 = 앞('src/pages/manager/settings/default/[brand_id].js');
 t('⑤ 켠 몰·포스페이 있을 때만 「여러 곳으로 보내기」, 켜면 포스페이만 보인다',
-  /const 여러곳가능 = Number\(themeDnsData\?\.setting_obj\?\.multi_ship\) === 1 && 모든결제수단\.some\(\(m\) => m\?\.type == 'auth_forspay'\);/.test(주문서)
+  /const 여러곳가능 = !\[0, '0', false, 'false'\]\.includes\(themeDnsData\?\.setting_obj\?\.multi_ship\) && 모든결제수단\.some\(\(m\) => m\?\.type == 'auth_forspay'\);/.test(주문서)
   && /const paymentModules = 여러곳 \? 모든결제수단\.filter\(\(m\) => m\?\.type == 'auth_forspay'\) : 모든결제수단;/.test(주문서));
 t('⑤ 결제 전 검사(수량 다 나누기·받는 분·연락처·주소·추가상품·배송 안 함·포인트)', /const 문제 = 여러곳검사\(곳들, products, isValidPhoneNumber, 보내는방식\);/.test(주문서) && /여러 곳으로 보내기에서는 포인트를 사용할 수 없습니다/.test(주문서));
 t('⑤ 금액은 배송지별 calcOrderTotals 의 합', /const 곳금액 = 여러곳 \? 곳별금액\(곳들, products, 보내는방식\) : null;/.test(주문서) && /calcOrderTotals\(곳의줄\(곳, products, 방식\), 0, \{ \.\.\.곳, country_code: 'KR' \}\)/.test(편집));
@@ -84,7 +88,8 @@ t('⑤ 결제: 배송지마다 makePayData, 목록은 JSON 한 칸', /const d = 
 // 주석의 「선물하기라고 부르지 않는다」는 빼고, 화면 글자·코드에만 없는지 본다
 const 주석뺌 = (x) => x.split('\n').filter((l) => !/^\s*(\/\/|\*|\{\/\*)/.test(l)).join('\n');
 t('⑤ 「선물하기」라는 이름을 쓰지 않는다', !/선물하기/.test(주석뺌(편집)) && !/선물하기/.test(주석뺌(util.slice(util.indexOf('onPayProductsByForspayMulti')))) && !/선물하기/.test(주석뺌(주문서)));
-t('⑤ 관리자 배송비설정에 켜기 스위치(기본 꺼짐)', /\['multi_ship'\]: e\.target\.checked \? 1 : 0/.test(설정) && /checked=\{Number\(item\?\.setting_obj\?\.multi_ship\) === 1\}/.test(설정));
+// 기본 켜짐(사장님 2026-11-20) — 값이 없으면 켜진 것이고, 명시적으로 끈 몰(0)만 꺼진다. 주문서·서버·설정 화면이 같은 규칙.
+t('⑤ 관리자 배송비설정 스위치(기본 켜짐, 끄면 0)', /\['multi_ship'\]: e\.target\.checked \? 1 : 0/.test(설정) && /checked=\{!\[0, '0', false, 'false'\]\.includes\(item\?\.setting_obj\?\.multi_ship\)\}/.test(설정));
 
 // 11/20 재검토에서 고친 것
 t('⑥ 「다시 결제하기」·새로고침이 배송지 목록을 되살린다(10곳을 다시 쓰게 하지 않는다)',
@@ -93,8 +98,9 @@ t('⑥ 「다시 결제하기」·새로고침이 배송지 목록을 되살린�
   && /if \(s\.여러곳 === true && Array\.isArray\(s\.곳들\) && s\.곳들\.length >= 2\) \{ set여러곳\(true\); set곳들\(s\.곳들\); set보내는방식\(/.test(주문서));
 t('⑥ 상품 줄이 바뀌면 배송지별 수량을 되돌린다(줄 번호가 밀려 다른 상품에 붙지 않게)', /지난상품꼴\.current !== 상품꼴/.test(주문서) && /상품이 바뀌어 배송지별 수량을 처음으로 되돌렸습니다/.test(주문서));
 t('⑥ 여러 곳이면 PC 포인트 칸도 숨긴다', /enablePoint=\{!여러곳\}/.test(주문서));
-t('⑥ 다른 화면의 옛 설정 저장이 스위치를 끄지 못한다(보내지 않았을 때만 DB 값 유지)',
-  /설정\.multi_ship === undefined\) \{/.test(백('controllers/brand.controller.js')) && /JSON_EXTRACT\(setting_obj, '\$\.multi_ship'\)/.test(백('controllers/brand.controller.js')));
+t('⑥ 다른 화면의 옛 설정 저장이 스위치 값을 지우지 못한다(끈 몰이 조용히 다시 켜지지 않게, 보내지 않았을 때만 DB 값 0·1 유지)',
+  /설정\.multi_ship === undefined\) \{/.test(백('controllers/brand.controller.js')) && /JSON_EXTRACT\(setting_obj, '\$\.multi_ship'\)/.test(백('controllers/brand.controller.js'))
+  && /if \(m !== null && m !== undefined\) \{/.test(백('controllers/brand.controller.js')));
 
 // 편집 화면의 계산을 실제로 돌린다(React 없이 순수 함수만)
 {

@@ -928,8 +928,8 @@ export default function OrderSheet({ router }) {
     return () => { 살아있음 = false; };
   }, []);
   const 모든결제수단 = (최신결제수단 ?? themeDnsData?.payment_modules ?? []).filter((m) => m?.type != 'sms_pay');
-  // 여러 곳으로 보내기 — 몰 설정에서 켰고, 국내 배송이고, 포스페이가 있을 때만(서버도 같은 조건)
-  const 여러곳가능 = Number(themeDnsData?.setting_obj?.multi_ship) === 1 && 모든결제수단.some((m) => m?.type == 'auth_forspay');
+  // 여러 곳으로 보내기 — 기본 켜짐(사장님 2026-11-20). 몰 설정에서 끈 몰(multi_ship=0)이 아니고 포스페이가 있을 때(서버도 같은 조건)
+  const 여러곳가능 = ![0, '0', false, 'false'].includes(themeDnsData?.setting_obj?.multi_ship) && 모든결제수단.some((m) => m?.type == 'auth_forspay');
   const paymentModules = 여러곳 ? 모든결제수단.filter((m) => m?.type == 'auth_forspay') : 모든결제수단;
   // 이미 고른 수단이 새 목록에서 빠졌으면 선택을 푼다 — 사라진 수단으로 결제하기가 남지 않게.
   useEffect(() => {
